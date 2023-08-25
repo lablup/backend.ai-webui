@@ -147,18 +147,16 @@ class BackendAiResourcePresetList extends BackendAIPage {
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
             <mwc-icon class="fg green">developer_board</mwc-icon>
-            <span
-              >${this._markIfUnlimited(rowData.item.resource_slots.cpu)}</span
-            >
+            <span>
+              ${this._markIfUnlimited(rowData.item.resource_slots.cpu)}
+            </span>
             <span class="indicator">${_t('general.cores')}</span>
           </div>
           <div class="layout horizontal configuration">
             <mwc-icon class="fg green">memory</mwc-icon>
-            <span
-              >${this._markIfUnlimited(
-                rowData.item.resource_slots.mem_gib,
-              )}</span
-            >
+            <span>
+              ${this._markIfUnlimited(rowData.item.resource_slots.mem_gib)}
+            </span>
             <span class="indicator">GiB</span>
           </div>
         </div>
@@ -167,11 +165,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
             ? html`
                 <div class="layout horizontal configuration">
                   <mwc-icon class="fg green">view_module</mwc-icon>
-                  <span
-                    >${this._markIfUnlimited(
+                  <span>
+                    ${this._markIfUnlimited(
                       rowData.item.resource_slots['cuda.device'],
-                    )}</span
-                  >
+                    )}
+                  </span>
                   <span class="indicator">GPU</span>
                 </div>
               `
@@ -180,11 +178,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
             ? html`
                 <div class="layout horizontal configuration">
                   <mwc-icon class="fg green">view_module</mwc-icon>
-                  <span
-                    >${this._markIfUnlimited(
+                  <span>
+                    ${this._markIfUnlimited(
                       rowData.item.resource_slots['cuda.shares'],
-                    )}</span
-                  >
+                    )}
+                  </span>
                   <span class="indicator">FGPU</span>
                 </div>
               `
@@ -234,7 +232,12 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
   _indexRenderer(root, column, rowData) {
     const idx = rowData.index + 1;
-    render(html` <div>${idx}</div> `, root);
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root,
+    );
   }
 
   render() {
@@ -270,21 +273,18 @@ class BackendAiResourcePresetList extends BackendAIPage {
               resizable
               path="name"
               header="${_t('resourcePreset.Name')}"
-            >
-            </vaadin-grid-sort-column>
+            ></vaadin-grid-sort-column>
             <vaadin-grid-column
               width="150px"
               resizable
               header="${_t('resourcePreset.Resources')}"
               .renderer="${this._boundResourceRenderer}"
-            >
-            </vaadin-grid-column>
+            ></vaadin-grid-column>
             <vaadin-grid-column
               resizable
               header="${_t('general.Control')}"
               .renderer="${this._boundControlRenderer}"
-            >
-            </vaadin-grid-column>
+            ></vaadin-grid-column>
           </vaadin-grid>
           <backend-ai-list-status
             id="list-status"
@@ -379,8 +379,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
             icon="check"
             label="${_t('button.SaveChanges')}"
             @click="${() => this._modifyResourceTemplate()}"
-          >
-          </mwc-button>
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog
@@ -467,8 +466,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
             icon="add"
             label="${_t('button.Add')}"
             @click="${this._createPreset}"
-          >
-          </mwc-button>
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog

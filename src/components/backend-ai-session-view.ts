@@ -542,8 +542,7 @@ export default class BackendAISessionView extends BackendAIPage {
         elevation="1"
         horizontalsize="2x"
         style="display:none;"
-      >
-      </lablup-activity-panel>
+      ></lablup-activity-panel>
       <lablup-activity-panel elevation="1" autowidth narrow noheader>
         <div slot="message">
           <h3
@@ -612,9 +611,9 @@ export default class BackendAISessionView extends BackendAIPage {
                           class="horizontal layout start center"
                           @click="${() => this._openExportToCsvDialog()}"
                         >
-                          <mwc-icon style="color:#242424;padding-right:10px;"
-                            >get_app</mwc-icon
-                          >
+                          <mwc-icon style="color:#242424;padding-right:10px;">
+                            get_app
+                          </mwc-icon>
                           ${_t('session.exportCSV')}
                         </a>
                       </mwc-list-item>
@@ -652,28 +651,32 @@ export default class BackendAISessionView extends BackendAIPage {
             ></backend-ai-session-list>
           </div>
           ${this.enableInferenceWorkload
-            ? html` <div
-                id="inference-lists"
-                class="tab-content"
-                style="display:none;"
-              >
-                <backend-ai-session-list
-                  id="inference-jobs"
-                  condition="inference"
-                ></backend-ai-session-list>
-              </div>`
+            ? html`
+                <div
+                  id="inference-lists"
+                  class="tab-content"
+                  style="display:none;"
+                >
+                  <backend-ai-session-list
+                    id="inference-jobs"
+                    condition="inference"
+                  ></backend-ai-session-list>
+                </div>
+              `
             : html``}
           ${this.enableSFTPSession
-            ? html` <div
-                id="system-lists"
-                class="tab-content"
-                style="display:none;"
-              >
-                <backend-ai-session-list
-                  id="system-jobs"
-                  condition="system"
-                ></backend-ai-session-list>
-              </div>`
+            ? html`
+                <div
+                  id="system-lists"
+                  class="tab-content"
+                  style="display:none;"
+                >
+                  <backend-ai-session-list
+                    id="system-jobs"
+                    condition="system"
+                  ></backend-ai-session-list>
+                </div>
+              `
             : html``}
           <div id="finished-lists" class="tab-content" style="display:none;">
             <backend-ai-session-list
@@ -709,8 +712,7 @@ export default class BackendAISessionView extends BackendAIPage {
               value="${this._getFirstDateOfMonth()}"
               required
               @change="${this._validateDateRange}"
-            >
-            </mwc-textfield>
+            ></mwc-textfield>
             <mwc-textfield
               id="date-to"
               label="To"
@@ -718,8 +720,7 @@ export default class BackendAISessionView extends BackendAIPage {
               value="${new Date().toISOString().substring(0, 10)}"
               required
               @change="${this._validateDateRange}"
-            >
-            </mwc-textfield>
+            ></mwc-textfield>
           </div>
           <div class="horizontal center layout">
             <mwc-formfield label="Export All-time data">

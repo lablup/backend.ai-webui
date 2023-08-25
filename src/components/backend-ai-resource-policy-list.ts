@@ -216,14 +216,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             resizable
             header="${_t('resourcePolicy.Resources')}"
             .renderer="${this._boundResourceRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             resizable
             header="${_t('resourcePolicy.Concurrency')}"
             .renderer="${this._boundConcurrencyRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-sort-column
             resizable
             header="${_t('resourcePolicy.ClusterSize')}"
@@ -234,16 +232,14 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             resizable
             header="${_t('resourcePolicy.StorageNodes')}"
             .renderer="${this._boundStorageNodesRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             frozen-to-end
             width="110px"
             resizable
             header="${_t('general.Control')}"
             .renderer="${this._boundControlRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status
           id="list-status"
@@ -541,7 +537,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
    */
   _indexRenderer(root, column, rowData) {
     const idx = rowData.index + 1;
-    render(html` <div>${idx}</div> `, root);
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root,
+    );
   }
 
   _displayResourcesByResourceUnit(
@@ -582,24 +583,24 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
             <mwc-icon class="fg green indicator">developer_board</mwc-icon>
-            <span
-              >${this._displayResourcesByResourceUnit(
+            <span>
+              ${this._displayResourcesByResourceUnit(
                 rowData.item.total_resource_slots.cpu,
                 false,
                 'cpu',
-              )}</span
-            >
+              )}
+            </span>
             <span class="indicator">cores</span>
           </div>
           <div class="layout horizontal configuration">
             <mwc-icon class="fg green indicator">memory</mwc-icon>
-            <span
-              >${this._displayResourcesByResourceUnit(
+            <span>
+              ${this._displayResourcesByResourceUnit(
                 rowData.item.total_resource_slots.mem,
                 false,
                 'mem',
-              )}</span
-            >
+              )}
+            </span>
             <span class="indicator">GB</span>
           </div>
         </div>
@@ -608,13 +609,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             ? html`
                 <div class="layout horizontal configuration">
                   <mwc-icon class="fg green indicator">view_module</mwc-icon>
-                  <span
-                    >${this._displayResourcesByResourceUnit(
+                  <span>
+                    ${this._displayResourcesByResourceUnit(
                       rowData.item.total_resource_slots.cuda_device,
                       false,
                       'cuda_device',
-                    )}</span
-                  >
+                    )}
+                  </span>
                   <span class="indicator">GPU</span>
                 </div>
               `
@@ -623,13 +624,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             ? html`
                 <div class="layout horizontal configuration">
                   <mwc-icon class="fg green indicator">view_module</mwc-icon>
-                  <span
-                    >${this._displayResourcesByResourceUnit(
+                  <span>
+                    ${this._displayResourcesByResourceUnit(
                       rowData.item.total_resource_slots.cuda_shares,
                       false,
                       'cuda_shares',
-                    )}</span
-                  >
+                    )}
+                  </span>
                   <span class="indicator">fGPU</span>
                 </div>
               `
@@ -638,24 +639,24 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
             <mwc-icon class="fg green indicator">cloud_queue</mwc-icon>
-            <span
-              >${this._displayResourcesByResourceUnit(
+            <span>
+              ${this._displayResourcesByResourceUnit(
                 rowData.item.max_vfolder_size,
                 true,
                 'max_vfolder_size',
-              )}</span
-            >
+              )}
+            </span>
             <span class="indicator">GB</span>
           </div>
           <div class="layout horizontal configuration">
             <mwc-icon class="fg green indicator">folder</mwc-icon>
-            <span
-              >${this._displayResourcesByResourceUnit(
+            <span>
+              ${this._displayResourcesByResourceUnit(
                 rowData.item.max_vfolder_count,
                 false,
                 'max_vfolder_count',
-              )}</span
-            >
+              )}
+            </span>
             <span class="indicator">Folders</span>
           </div>
         </div>
@@ -705,15 +706,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             class="fg blue controls-running"
             ?disabled=${!this.is_super_admin}
             @click="${(e) => this._launchResourcePolicyDialog(e)}"
-          >
-          </mwc-icon-button>
+          ></mwc-icon-button>
           <mwc-icon-button
             icon="delete"
             class="fg red controls-running"
             ?disabled=${!this.is_super_admin}
             @click="${(e) => this._openDeleteResourcePolicyListDialog(e)}"
-          >
-          </mwc-icon-button>
+          ></mwc-icon-button>
         </div>
       `,
       root,
@@ -779,14 +778,15 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div class="layout horizontal center flex">
           <div class="vertical start layout around-justified">
             ${allowedVFolderHostsInfo.map(
-              (host) =>
-                html` <lablup-shields
+              (host) => html`
+                <lablup-shields
                   app=""
                   color="darkgreen"
                   ui="round"
                   description="${host}"
                   style="margin-bottom:3px;"
-                ></lablup-shields>`,
+                ></lablup-shields>
+              `,
             )}
           </div>
         </div>

@@ -1318,12 +1318,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 <div class="site-name"><span class="bold">Backend</span>.AI</div>
                 ${
                   this.siteDescription
-                    ? html` <div
-                        class="site-name"
-                        style="font-size:13px;text-align:left;"
-                      >
-                        ${this.siteDescription}
-                      </div>`
+                    ? html`
+                        <div
+                          class="site-name"
+                          style="font-size:13px;text-align:left;"
+                        >
+                          ${this.siteDescription}
+                        </div>
+                      `
                     : html``
                 }
               </div>
@@ -1392,34 +1394,38 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </mwc-list-item>
             ${
               this.supportServing
-                ? html` <mwc-list-item
-                    graphic="icon"
-                    ?selected="${this._page === 'serving'}"
-                    @click="${() => this._moveTo('/serving')}"
-                    ?disabled="${this.blockedMenuitem.includes('session')}"
-                  >
-                    <i
-                      class="fa fa-rocket"
-                      slot="graphic"
-                      id="serving-menu-icon"
-                    ></i>
-                    <span class="full-menu">${_t('webui.menu.Serving')}</span>
-                  </mwc-list-item>`
+                ? html`
+                    <mwc-list-item
+                      graphic="icon"
+                      ?selected="${this._page === 'serving'}"
+                      @click="${() => this._moveTo('/serving')}"
+                      ?disabled="${this.blockedMenuitem.includes('session')}"
+                    >
+                      <i
+                        class="fa fa-rocket"
+                        slot="graphic"
+                        id="serving-menu-icon"
+                      ></i>
+                      <span class="full-menu">${_t('webui.menu.Serving')}</span>
+                    </mwc-list-item>
+                  `
                 : html``
             }
             ${
               this._useExperiment
-                ? html` <mwc-list-item
-                    graphic="icon"
-                    ?selected="${this._page === 'experiment'}"
-                    @click="${() => this._moveTo('/experiment')}"
-                    ?disabled="${this.blockedMenuitem.includes('experiment')}"
-                  >
-                    <i class="fas fa-flask" slot="graphic"></i>
-                    <span class="full-menu"
-                      >${_t('webui.menu.Experiments')}</span
+                ? html`
+                    <mwc-list-item
+                      graphic="icon"
+                      ?selected="${this._page === 'experiment'}"
+                      @click="${() => this._moveTo('/experiment')}"
+                      ?disabled="${this.blockedMenuitem.includes('experiment')}"
                     >
-                  </mwc-list-item>`
+                      <i class="fas fa-flask" slot="graphic"></i>
+                      <span class="full-menu">
+                        ${_t('webui.menu.Experiments')}
+                      </span>
+                    </mwc-list-item>
+                  `
                 : html``
             }
               <mwc-list-item graphic="icon" ?selected="${
@@ -1455,9 +1461,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                         slot="graphic"
                         id="pipeline-menu-icon"
                       ></i>
-                      <span class="full-menu"
-                        >${_t('webui.menu.Pipeline')}</span
-                      >
+                      <span class="full-menu">
+                        ${_t('webui.menu.Pipeline')}
+                      </span>
                     </mwc-list-item>
                     <mwc-list-item
                       graphic="icon"
@@ -1473,9 +1479,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                         slot="graphic"
                         id="pipeline-job-menu-icon"
                       ></i>
-                      <span class="full-menu"
-                        >${_t('webui.menu.PipelineJob')}</span
-                      >
+                      <span class="full-menu">
+                        ${_t('webui.menu.PipelineJob')}
+                      </span>
                     </mwc-list-item>
                   `
                 : html``
@@ -1497,9 +1503,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                         slot="graphic"
                         id="agent-summary-menu-icon"
                       ></i>
-                      <span class="full-menu"
-                        >${_t('webui.menu.AgentSummary')}</span
-                      >
+                      <span class="full-menu">
+                        ${_t('webui.menu.AgentSummary')}
+                      </span>
                     </mwc-list-item>
                   `
             }
@@ -1541,7 +1547,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             }
             ${
               this.is_admin
-                ? html` <h3 class="full-menu">
+                ? html`
+                    <h3 class="full-menu">
                       ${_t('webui.menu.Administration')}
                     </h3>
                     <mwc-list-item
@@ -1568,10 +1575,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                         slot="graphic"
                         id="environments-menu-icon"
                       ></i>
-                      <span class="full-menu"
-                        >${_t('webui.menu.Environments')}</span
-                      >
-                    </mwc-list-item>`
+                      <span class="full-menu">
+                        ${_t('webui.menu.Environments')}
+                      </span>
+                    </mwc-list-item>
+                  `
                 : html``
             }
                 ${
@@ -1614,9 +1622,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                         slot="graphic"
                         id="resources-menu-icon"
                       ></i>
-                      <span class="full-menu"
-                        >${_t('webui.menu.Resources')}</span
-                      >
+                      <span class="full-menu">
+                        ${_t('webui.menu.Resources')}
+                      </span>
                     </mwc-list-item>
                     <mwc-list-item
                       graphic="icon"
@@ -1629,9 +1637,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                         slot="graphic"
                         id="configurations-menu-icon"
                       ></i>
-                      <span class="full-menu"
-                        >${_t('webui.menu.Configurations')}</span
-                      >
+                      <span class="full-menu">
+                        ${_t('webui.menu.Configurations')}
+                      </span>
                     </mwc-list-item>
                     <mwc-list-item
                       graphic="icon"
@@ -1644,9 +1652,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                         slot="graphic"
                         id="maintenance-menu-icon"
                       ></i>
-                      <span class="full-menu"
-                        >${_t('webui.menu.Maintenance')}</span
-                      >
+                      <span class="full-menu">
+                        ${_t('webui.menu.Maintenance')}
+                      </span>
                     </mwc-list-item>
                     <mwc-list-item
                       graphic="icon"
@@ -1659,9 +1667,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                         slot="graphic"
                         id="information-menu-icon"
                       ></i>
-                      <span class="full-menu"
-                        >${_t('webui.menu.Information')}</span
-                      >
+                      <span class="full-menu">
+                        ${_t('webui.menu.Information')}
+                      </span>
                     </mwc-list-item>
                     ${'page' in this.plugins
                       ? this.plugins['page']
@@ -1711,9 +1719,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     this.allow_signout === true
                       ? html`
                           ·
-                          <a @click="${() => this.loginPanel.signout()}"
-                            >${_t('webui.menu.LeaveService')}</a
-                          >
+                          <a @click="${() => this.loginPanel.signout()}">
+                            ${_t('webui.menu.LeaveService')}
+                          </a>
                         `
                       : html``
                   }
@@ -1749,9 +1757,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   this.allow_signout === true
                     ? html`
                         ·
-                        <a @click="${() => this.loginPanel.signout()}"
-                          >${_t('webui.menu.LeaveService')}</a
-                        >
+                        <a @click="${() => this.loginPanel.signout()}">
+                          ${_t('webui.menu.LeaveService')}
+                        </a>
                       `
                     : html``
                 }

@@ -796,8 +796,9 @@ export default class BackendAIImport extends BackendAIPage {
                 fullwidth
                 @click="${() => this.createNotebookBadge()}"
                 icon="code"
-                >${_t('import.CreateButtonCode')}</mwc-button
               >
+                ${_t('import.CreateButtonCode')}
+              </mwc-button>
               <mwc-textarea
                 id="notebook-badge-code"
                 label="${_t('import.NotebookBadgeCodeHTML')}"

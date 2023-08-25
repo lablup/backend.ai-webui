@@ -202,18 +202,22 @@ export default class BackendAIChart extends LitElement {
       <div class="layout vertical center">
         <div id="ctn-chartjs${this.idx}">
           ${this.type == 'bar'
-            ? html`<chart-js
-                id="chart"
-                type="bar"
-                .data="${this.chartData}"
-                .options="${this.options}"
-              ></chart-js>`
-            : html`<chart-js
-                id="chart"
-                type="line"
-                .data="${this.chartData}"
-                .options="${this.options}"
-              ></chart-js>`}
+            ? html`
+                <chart-js
+                  id="chart"
+                  type="bar"
+                  .data="${this.chartData}"
+                  .options="${this.options}"
+                ></chart-js>
+              `
+            : html`
+                <chart-js
+                  id="chart"
+                  type="line"
+                  .data="${this.chartData}"
+                  .options="${this.options}"
+                ></chart-js>
+              `}
         </div>
       </div>
     `;

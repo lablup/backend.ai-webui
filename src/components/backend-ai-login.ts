@@ -1892,8 +1892,7 @@ export default class BackendAILogin extends BackendAIPage {
                         ? _t('login.ClickToUseIAM')
                         : _t('login.ClickToUseID')}"
                       @click="${() => this._changeSigninMode()}"
-                    >
-                    </mwc-button>
+                    ></mwc-button>
                   </div>
                 `
               : html``}
@@ -1922,8 +1921,7 @@ export default class BackendAILogin extends BackendAIPage {
                   icon="email"
                   value="${this.user_id}"
                   @keyup="${this._submitIfEnter}"
-                >
-                </mwc-textfield>
+                ></mwc-textfield>
                 <div class="horizontal flex layout">
                   <mwc-textfield
                     type="password"
@@ -1933,16 +1931,14 @@ export default class BackendAILogin extends BackendAIPage {
                     icon="vpn_key"
                     value="${this.password}"
                     @keyup="${this._submitIfEnter}"
-                  >
-                  </mwc-textfield>
+                  ></mwc-textfield>
                   <mwc-icon-button-toggle
                     off
                     onIcon="visibility"
                     offIcon="visibility_off"
                     style="position: absolute; right: 0;"
                     @click="${(e) => this._togglePasswordVisibility(e.target)}"
-                  >
-                  </mwc-icon-button-toggle>
+                  ></mwc-icon-button-toggle>
                 </div>
                 <mwc-textfield
                   type="number"
@@ -1952,8 +1948,7 @@ export default class BackendAILogin extends BackendAIPage {
                   icon="pin"
                   value="${this.otp}"
                   @keyup="${this._submitIfEnter}"
-                >
-                </mwc-textfield>
+                ></mwc-textfield>
               </fieldset>
             </form>
             <form
@@ -1969,8 +1964,7 @@ export default class BackendAILogin extends BackendAIPage {
                   icon="lock"
                   value="${this.api_key}"
                   @keyup="${this._submitIfEnter}"
-                >
-                </mwc-textfield>
+                ></mwc-textfield>
                 <mwc-textfield
                   type="password"
                   id="id_secret_key"
@@ -1979,8 +1973,7 @@ export default class BackendAILogin extends BackendAIPage {
                   icon="vpn_key"
                   value="${this.secret_key}"
                   @keyup="${this._submitIfEnter}"
-                >
-                </mwc-textfield>
+                ></mwc-textfield>
               </fieldset>
             </form>
             <form>
@@ -1994,20 +1987,19 @@ export default class BackendAILogin extends BackendAIPage {
                     id="endpoint-button"
                     icon="cloud_queue"
                     @click="${() => this._toggleEndpoint()}"
-                  >
-                  </mwc-icon-button>
+                  ></mwc-icon-button>
                   <mwc-menu
                     id="endpoint-list"
                     @selected="${() => this._updateEndpoint()}"
                   >
-                    <mwc-list-item disabled
-                      >${_t('login.EndpointHistory')}</mwc-list-item
-                    >
+                    <mwc-list-item disabled>
+                      ${_t('login.EndpointHistory')}
+                    </mwc-list-item>
                     ${this.endpoints.length === 0
                       ? html`
-                          <mwc-list-item value=""
-                            >${_t('login.NoEndpointSaved')}</mwc-list-item
-                          >
+                          <mwc-list-item value="">
+                            ${_t('login.NoEndpointSaved')}
+                          </mwc-list-item>
                         `
                       : html``}
                     ${this.endpoints.map(
@@ -2017,13 +2009,13 @@ export default class BackendAILogin extends BackendAIPage {
                             class="horizontal justified center flex layout"
                             style="width:365px;"
                           >
-                            <span>${item}</span><span class="flex"></span>
+                            <span>${item}</span>
+                            <span class="flex"></span>
                             <mwc-icon-button
                               class="endpoint-control-button"
                               icon="delete"
                               @click="${() => this._deleteEndpoint(item)}"
-                            >
-                            </mwc-icon-button>
+                            ></mwc-icon-button>
                           </div>
                         </mwc-list-item>
                       `,
@@ -2041,8 +2033,7 @@ export default class BackendAILogin extends BackendAIPage {
                     validationMessage="${_text('login.EndpointStartWith')}"
                     value="${this.api_endpoint}"
                     @keyup="${this._submitIfEnter}"
-                  >
-                  </mwc-textfield>
+                  ></mwc-textfield>
                   <mwc-icon-button
                     icon="info"
                     class="fg grey info"
@@ -2058,8 +2049,7 @@ export default class BackendAILogin extends BackendAIPage {
                   label="${_t('login.Endpoint')}"
                   icon="cloud"
                   value=""
-                >
-                </mwc-textfield>
+                ></mwc-textfield>
                 <mwc-button
                   unelevated
                   fullwidth
@@ -2068,8 +2058,7 @@ export default class BackendAILogin extends BackendAIPage {
                   style="padding-top: 10px;"
                   label="${_t('login.Login')}"
                   @click="${() => this._login()}"
-                >
-                </mwc-button>
+                ></mwc-button>
                 ${this.singleSignOnVendors.includes('saml')
                   ? html`
                       <mwc-button
@@ -2092,13 +2081,14 @@ export default class BackendAILogin extends BackendAIPage {
                             outlined
                             label="${_t('login.SignUp')}"
                             @click="${() => this._showSignupDialog()}"
-                          >
-                          </mwc-button>
+                          ></mwc-button>
                         </div>
                       `
                     : html``}
                   ${this.signup_support && this.allowAnonymousChangePassword
-                    ? html` <span class="flex"></span> `
+                    ? html`
+                        <span class="flex"></span>
+                      `
                     : html``}
                   ${this.allowAnonymousChangePassword
                     ? html`
@@ -2114,8 +2104,7 @@ export default class BackendAILogin extends BackendAIPage {
                             label="${_t('login.ChangePassword')}"
                             @click="${() =>
                               this._showChangePasswordEmailDialog()}"
-                          >
-                          </mwc-button>
+                          ></mwc-button>
                         </div>
                       `
                     : html``}
@@ -2138,8 +2127,7 @@ export default class BackendAILogin extends BackendAIPage {
               this.notification.text = _text('login.PasswordChanged');
               this.notification.show();
             }}"
-          >
-          </backend-ai-react-reset-password-required-modal>
+          ></backend-ai-react-reset-password-required-modal>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog
@@ -2163,8 +2151,7 @@ export default class BackendAILogin extends BackendAIPage {
             label="E-mail"
             value=""
             @keyup="${this._signoutIfEnter}"
-          >
-          </mwc-textfield>
+          ></mwc-textfield>
           <mwc-textfield
             type="password"
             name="signout_password"
@@ -2173,8 +2160,7 @@ export default class BackendAILogin extends BackendAIPage {
             label="Password"
             value=""
             @keyup="${this._signoutIfEnter}"
-          >
-          </mwc-textfield>
+          ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
@@ -2184,8 +2170,7 @@ export default class BackendAILogin extends BackendAIPage {
             icon="check"
             label="${_t('login.LeaveService')}"
             @click="${() => this._signout()}"
-          >
-          </mwc-button>
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog
@@ -2251,8 +2236,7 @@ export default class BackendAILogin extends BackendAIPage {
                   fullwidth
                   label="${_t('login.CancelLogin')}"
                   @click="${(e) => this._cancelLogin(e)}"
-                >
-                </mwc-button>
+                ></mwc-button>
               </div>
             `
           : html``}

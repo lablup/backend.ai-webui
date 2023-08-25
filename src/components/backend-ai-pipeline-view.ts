@@ -526,31 +526,31 @@ export default class BackendAIPipelineView extends BackendAIPage {
                           this.pipelineConfig.environment &&
                           this.pipelineConfig.version
                             ? html`
-                                <span
-                                  >Environment:
+                                <span>
+                                  Environment:
                                   ${this.pipelineConfig.environment}:${this
-                                    .pipelineConfig.version}</span
-                                >
+                                    .pipelineConfig.version}
+                                </span>
                               `
                             : ''
                         }
                         ${
                           this.pipelineConfig.scaling_group
                             ? html`
-                                <span
-                                  >Scaling group:
-                                  ${this.pipelineConfig.scaling_group}</span
-                                >
+                                <span>
+                                  Scaling group:
+                                  ${this.pipelineConfig.scaling_group}
+                                </span>
                               `
                             : ''
                         }
                         ${
                           this.pipelineConfig.folder_host
                             ? html`
-                                <span
-                                  >Folder: ${this.pipelineFolderName}
-                                  (${this.pipelineConfig.folder_host})</span
-                                >
+                                <span>
+                                  Folder: ${this.pipelineFolderName}
+                                  (${this.pipelineConfig.folder_host})
+                                </span>
                               `
                             : ''
                         }

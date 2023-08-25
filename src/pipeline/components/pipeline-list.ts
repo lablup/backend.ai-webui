@@ -412,7 +412,12 @@ export default class PipelineList extends BackendAIPage {
    * */
   indexRenderer(root, column, rowData) {
     const idx = rowData.index + 1;
-    render(html` <div>${idx}</div> `, root);
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root,
+    );
   }
 
   /**
@@ -429,8 +434,9 @@ export default class PipelineList extends BackendAIPage {
           <a
             class="pipeline-link"
             @click="${() => this.loadPipeline(rowData.item)}"
-            >${rowData.item.name}</a
           >
+            ${rowData.item.name}
+          </a>
         </div>
       `,
       root,
@@ -456,20 +462,17 @@ export default class PipelineList extends BackendAIPage {
             icon="info"
             class="fg green"
             @click="${() => this._launchPipelineDetailDialog(rowData.item)}"
-          >
-          </mwc-icon-button>
+          ></mwc-icon-button>
           <mwc-icon-button
             icon="account_tree"
             class="fg blue"
             @click="${() => this.loadPipeline(rowData.item)}"
-          >
-          </mwc-icon-button>
+          ></mwc-icon-button>
           <mwc-icon-button
             icon="delete_forever"
             class="fg red"
             @click="${() => this._launchPipelineDeleteDialog(rowData.item)}"
-          >
-          </mwc-icon-button>
+          ></mwc-icon-button>
         </div>
       `,
       root,
@@ -519,27 +522,29 @@ export default class PipelineList extends BackendAIPage {
    */
   renderCreatePipelineDialogTemplate() {
     // language=HTML
-    return html` <backend-ai-dialog
-      id="create-pipeline"
-      fixed
-      backdrop
-      blockscrolling
-      persistent
-      narrowLayout
-    >
-      <span slot="title">Create Pipeline</span>
-      <div slot="content" class="vertical layout flex">
-        <pipeline-configuration-form></pipeline-configuration-form>
-      </div>
-      <div slot="footer" class="horizontal layout end-justified flex">
-        <mwc-button
-          class="full-width"
-          unelevated
-          label="Create Pipeline"
-          @click="${() => this._createPipeline()}"
-        ></mwc-button>
-      </div>
-    </backend-ai-dialog>`;
+    return html`
+      <backend-ai-dialog
+        id="create-pipeline"
+        fixed
+        backdrop
+        blockscrolling
+        persistent
+        narrowLayout
+      >
+        <span slot="title">Create Pipeline</span>
+        <div slot="content" class="vertical layout flex">
+          <pipeline-configuration-form></pipeline-configuration-form>
+        </div>
+        <div slot="footer" class="horizontal layout end-justified flex">
+          <mwc-button
+            class="full-width"
+            unelevated
+            label="Create Pipeline"
+            @click="${() => this._createPipeline()}"
+          ></mwc-button>
+        </div>
+      </backend-ai-dialog>
+    `;
   }
 
   /**
@@ -549,34 +554,37 @@ export default class PipelineList extends BackendAIPage {
    */
   renderDeletePipelineDialogTemplate() {
     // language=HTML
-    return html` <backend-ai-dialog
-      id="delete-pipeline"
-      fixed
-      backdrop
-      blockscrolling
-      persistent
-    >
-      <span slot="title">Delete Pipeline</span>
-      <div slot="content" class="vertical layout flex">
-        <span>
-          Are you sure you want to delete this pipeline?<br />
-          This process cannot be undone!
-        </span>
-      </div>
-      <div slot="footer" class="horizontal end-justified flex layout">
-        <div class="flex"></div>
-        <mwc-button
-          label="Cancel"
-          @click="${() => this._hideDialogById('#delete-pipeline')}"
-        ></mwc-button>
-        <mwc-button
-          unelevated
-          class="delete"
-          label="Delete"
-          @click="${this._deletePipeline}"
-        ></mwc-button>
-      </div>
-    </backend-ai-dialog>`;
+    return html`
+      <backend-ai-dialog
+        id="delete-pipeline"
+        fixed
+        backdrop
+        blockscrolling
+        persistent
+      >
+        <span slot="title">Delete Pipeline</span>
+        <div slot="content" class="vertical layout flex">
+          <span>
+            Are you sure you want to delete this pipeline?
+            <br />
+            This process cannot be undone!
+          </span>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <div class="flex"></div>
+          <mwc-button
+            label="Cancel"
+            @click="${() => this._hideDialogById('#delete-pipeline')}"
+          ></mwc-button>
+          <mwc-button
+            unelevated
+            class="delete"
+            label="Delete"
+            @click="${this._deletePipeline}"
+          ></mwc-button>
+        </div>
+      </backend-ai-dialog>
+    `;
   }
 
   /**
@@ -590,89 +598,91 @@ export default class PipelineList extends BackendAIPage {
     // FIXME: Hide owner info since its only provided by UUID
     // FIXME: type casting `any` for suppress undefined posibility error
     const parsedPipelineInfo: any = PipelineUtils._parsePipelineInfo(pipeline);
-    return html` <backend-ai-dialog
-      id="pipeline-detail"
-      fixed
-      backdrop
-      blockscrolling
-      persistent
-    >
-      <span slot="title">Pipeline Detail</span>
-      <div slot="content" class="vertical layout flex">
-        <!--<div class="horizontal flex layout wrap justified center pipeline-detail-items">
+    return html`
+      <backend-ai-dialog
+        id="pipeline-detail"
+        fixed
+        backdrop
+        blockscrolling
+        persistent
+      >
+        <span slot="title">Pipeline Detail</span>
+        <div slot="content" class="vertical layout flex">
+          <!--<div class="horizontal flex layout wrap justified center pipeline-detail-items">
             <div class="vertical center start-justified flex">
               <div class="title">Owner</div>
               <div class="description"></div>
             </div>
         </div>-->
-        <div
-          class="horizontal flex layout wrap justified center pipeline-detail-items"
-        >
-          <div class="vertical center start-justified flex">
-            <div class="title">Name</div>
-            <div class="description">${parsedPipelineInfo.name}</div>
+          <div
+            class="horizontal flex layout wrap justified center pipeline-detail-items"
+          >
+            <div class="vertical center start-justified flex">
+              <div class="title">Name</div>
+              <div class="description">${parsedPipelineInfo.name}</div>
+            </div>
           </div>
-        </div>
-        <div
-          class="horizontal flex layout wrap justified center pipeline-detail-items"
-        >
-          <div class="vertical center start-justified flex">
-            <div class="title">Description</div>
-            <div class="description">${parsedPipelineInfo.description}</div>
+          <div
+            class="horizontal flex layout wrap justified center pipeline-detail-items"
+          >
+            <div class="vertical center start-justified flex">
+              <div class="title">Description</div>
+              <div class="description">${parsedPipelineInfo.description}</div>
+            </div>
           </div>
-        </div>
-        <div
-          class="horizontal flex layout wrap justified center pipeline-detail-items"
-        >
-          <div class="vertical center start-justified flex">
-            <div class="title">ID</div>
-            <div class="description">${parsedPipelineInfo.id}</div>
+          <div
+            class="horizontal flex layout wrap justified center pipeline-detail-items"
+          >
+            <div class="vertical center start-justified flex">
+              <div class="title">ID</div>
+              <div class="description">${parsedPipelineInfo.id}</div>
+            </div>
           </div>
-        </div>
-        <div
-          class="horizontal flex layout wrap justified center pipeline-detail-items"
-        >
-          <div class="vertical center start-justified flex">
-            <div class="title">YAML</div>
+          <div
+            class="horizontal flex layout wrap justified center pipeline-detail-items"
+          >
+            <div class="vertical center start-justified flex">
+              <div class="title">YAML</div>
+            </div>
+            <mwc-button
+              unelevated
+              label="SEE YAML"
+              icon="description"
+              @click="${() =>
+                this._launchPipelineYAMLDialog(parsedPipelineInfo.yaml)}"
+            ></mwc-button>
           </div>
-          <mwc-button
-            unelevated
-            label="SEE YAML"
-            icon="description"
-            @click="${() =>
-              this._launchPipelineYAMLDialog(parsedPipelineInfo.yaml)}"
-          ></mwc-button>
-        </div>
-        <div
-          class="horizontal flex layout wrap justified center pipeline-detail-items"
-        >
-          <div class="vertical center start-justified flex">
-            <div class="title">Version</div>
-            <div class="description">
-              ${parsedPipelineInfo.version
-                ? parsedPipelineInfo.version
-                : 'None'}
+          <div
+            class="horizontal flex layout wrap justified center pipeline-detail-items"
+          >
+            <div class="vertical center start-justified flex">
+              <div class="title">Version</div>
+              <div class="description">
+                ${parsedPipelineInfo.version
+                  ? parsedPipelineInfo.version
+                  : 'None'}
+              </div>
+            </div>
+          </div>
+          <div
+            class="horizontal flex layout wrap justified center pipeline-detail-items"
+          >
+            <div class="vertical center start-justified flex">
+              <div class="title">Created at</div>
+              <div class="description">${parsedPipelineInfo.created_at}</div>
+            </div>
+          </div>
+          <div
+            class="horizontal flex layout wrap justified center pipeline-detail-items"
+          >
+            <div class="vertical center start-justified flex">
+              <div class="title">Last modified</div>
+              <div class="description">${parsedPipelineInfo.last_modified}</div>
             </div>
           </div>
         </div>
-        <div
-          class="horizontal flex layout wrap justified center pipeline-detail-items"
-        >
-          <div class="vertical center start-justified flex">
-            <div class="title">Created at</div>
-            <div class="description">${parsedPipelineInfo.created_at}</div>
-          </div>
-        </div>
-        <div
-          class="horizontal flex layout wrap justified center pipeline-detail-items"
-        >
-          <div class="vertical center start-justified flex">
-            <div class="title">Last modified</div>
-            <div class="description">${parsedPipelineInfo.last_modified}</div>
-          </div>
-        </div>
-      </div>
-    </backend-ai-dialog>`;
+      </backend-ai-dialog>
+    `;
   }
 
   /**
@@ -682,23 +692,25 @@ export default class PipelineList extends BackendAIPage {
    */
   renderPipelineYAMLDialogTemplate() {
     // language=HTML
-    return html` <backend-ai-dialog
-      class="yaml"
-      id="pipeline-yaml-dialog"
-      fixed
-      backdrop
-      blockscrolling
-    >
-      <span slot="title">${`Pipeline Data (YAML)`}</span>
-      <div slot="content">
-        <lablup-codemirror
-          id="yaml-data"
-          mode="yaml"
-          readonly
-          useLineWrapping
-        ></lablup-codemirror>
-      </div>
-    </backend-ai-dialog>`;
+    return html`
+      <backend-ai-dialog
+        class="yaml"
+        id="pipeline-yaml-dialog"
+        fixed
+        backdrop
+        blockscrolling
+      >
+        <span slot="title">${`Pipeline Data (YAML)`}</span>
+        <div slot="content">
+          <lablup-codemirror
+            id="yaml-data"
+            mode="yaml"
+            readonly
+            useLineWrapping
+          ></lablup-codemirror>
+        </div>
+      </backend-ai-dialog>
+    `;
   }
 
   render() {

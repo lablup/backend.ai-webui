@@ -204,29 +204,64 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
 
   _indexRenderer(root, column, rowData) {
     const idx = rowData.index + 1;
-    render(html` <div>${idx}</div> `, root);
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root,
+    );
   }
 
   _nameRenderer(root, column, rowData) {
-    render(html` <div>${rowData.item.name}</div> `, root);
+    render(
+      html`
+        <div>${rowData.item.name}</div>
+      `,
+      root,
+    );
   }
 
   _descriptionRenderer(root, column, rowData) {
-    render(html` <div>${rowData.item.description}</div> `, root);
+    render(
+      html`
+        <div>${rowData.item.description}</div>
+      `,
+      root,
+    );
   }
   _driverRenderer(root, column, rowData) {
-    render(html` <div>${rowData.item.driver}</div> `, root);
+    render(
+      html`
+        <div>${rowData.item.driver}</div>
+      `,
+      root,
+    );
   }
   _driverOptsRenderer(root, column, rowData) {
-    render(html` <div>${rowData.item.driver_opts}</div> `, root);
+    render(
+      html`
+        <div>${rowData.item.driver_opts}</div>
+      `,
+      root,
+    );
   }
 
   _schedulerRenderer(root, column, rowData) {
-    render(html` <div>${rowData.item.scheduler}</div> `, root);
+    render(
+      html`
+        <div>${rowData.item.scheduler}</div>
+      `,
+      root,
+    );
   }
 
   _schedulerOptsRenderer(root, column, rowData) {
-    render(html` <div>${rowData.item.scheduler_opts}</div> `, root);
+    render(
+      html`
+        <div>${rowData.item.scheduler_opts}</div>
+      `,
+      root,
+    );
   }
 
   _launchDialogById(id) {
@@ -470,8 +505,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           icon="add"
           label="${_t('button.Add')}"
           @click=${() => this._launchDialogById('#create-scaling-group-dialog')}
-        >
-        </mwc-button>
+        ></mwc-button>
       </h4>
       <div class="list-wrapper">
         <vaadin-grid
@@ -485,56 +519,47 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             header="#"
             width="40px"
             .renderer=${this._indexRenderer}
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             flex-grow="1"
             header="${_t('resourceGroup.Name')}"
             .renderer=${this._boundNameRenderer}
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             flex-grow="1"
             header="${_t('resourceGroup.Description')}"
             .renderer=${this._boundDescriptionRenderer}
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             flex-grow="1"
             header="${_t('resourceGroup.ActiveStatus')}"
             .renderer=${this._activeStatusRenderer}
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             flex-grow="1"
             header="${_t('resourceGroup.Driver')}"
             .renderer=${this._boundDriverRenderer}
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             flex-grow="1"
             header="${_t('resourceGroup.DriverOptions')}"
             .renderer=${this._boundDriverOptsRenderer}
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             flex-grow="1"
             header="${_t('resourceGroup.Scheduler')}"
             .renderer=${this._boundSchedulerRenderer}
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             flex-grow="1"
             header="${_t('resourceGroup.SchedulerOptions')}"
             .renderer=${this._boundSchedulerOptsRenderer}
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             flex-grow="1"
             header="${_t('general.Control')}"
             .renderer=${this._boundControlRenderer}
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status
           id="list-status"
@@ -609,8 +634,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             <mwc-switch
               id="modify-scaling-group-active"
               style="margin-right:10px;"
-            >
-            </mwc-switch>
+            ></mwc-switch>
           </div>
           <mwc-select
             id="modify-scaling-group-scheduler"
@@ -668,8 +692,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             label="${_t('button.Delete')}"
             style="box-sizing: border-box;"
             @click="${this._deleteScalingGroup}"
-          >
-          </mwc-button>
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

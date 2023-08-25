@@ -231,11 +231,13 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   timeStampRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html` <div class="layout vertical">
-        <span class="monospace ${rowData.item.isError ? `error-cell` : ``}"
-          >${rowData.item.timestamp_hr}</span
-        >
-      </div>`,
+      html`
+        <div class="layout vertical">
+          <span class="monospace ${rowData.item.isError ? `error-cell` : ``}">
+            ${rowData.item.timestamp_hr}
+          </span>
+        </div>
+      `,
       root,
     );
   }
@@ -250,11 +252,13 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   statusRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html` <div class="layout vertical">
-        <span class="${rowData.item.isError ? `error-cell` : ``}"
-          >${rowData.item.statusCode + ` ` + rowData.item.statusText}</span
-        >
-      </div>`,
+      html`
+        <div class="layout vertical">
+          <span class="${rowData.item.isError ? `error-cell` : ``}">
+            ${rowData.item.statusCode + ` ` + rowData.item.statusText}
+          </span>
+        </div>
+      `,
       root,
     );
   }
@@ -269,11 +273,13 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   errTitleRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html` <div class="layout vertical">
-        <span class="${rowData.item.isError ? `error-cell` : ``}"
-          >${rowData.item.title}</span
-        >
-      </div>`,
+      html`
+        <div class="layout vertical">
+          <span class="${rowData.item.isError ? `error-cell` : ``}">
+            ${rowData.item.title}
+          </span>
+        </div>
+      `,
       root,
     );
   }
@@ -288,11 +294,13 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   errMsgRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html` <div class="layout vertical">
-        <span class="${rowData.item.isError ? `error-cell` : ``}"
-          >${rowData.item.message}</span
-        >
-      </div>`,
+      html`
+        <div class="layout vertical">
+          <span class="${rowData.item.isError ? `error-cell` : ``}">
+            ${rowData.item.message}
+          </span>
+        </div>
+      `,
       root,
     );
   }
@@ -307,11 +315,13 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   errTypeRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html` <div class="layout vertical">
-        <span class="${rowData.item.isError ? `error-cell` : ``}"
-          >${rowData.item.type}</span
-        >
-      </div>`,
+      html`
+        <div class="layout vertical">
+          <span class="${rowData.item.isError ? `error-cell` : ``}">
+            ${rowData.item.type}
+          </span>
+        </div>
+      `,
       root,
     );
   }
@@ -326,11 +336,13 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   methodRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html` <div class="layout vertical">
-        <span class="${rowData.item.isError ? `error-cell` : ``}"
-          >${rowData.item.requestMethod}</span
-        >
-      </div>`,
+      html`
+        <div class="layout vertical">
+          <span class="${rowData.item.isError ? `error-cell` : ``}">
+            ${rowData.item.requestMethod}
+          </span>
+        </div>
+      `,
       root,
     );
   }
@@ -345,11 +357,13 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   reqUrlRender(root, column?, rowData?) {
     render(
       // language=HTML
-      html` <div class="layout vertical">
-        <span class="monospace ${rowData.item.isError ? `error-cell` : ``}"
-          >${rowData.item.requestUrl}</span
-        >
-      </div>`,
+      html`
+        <div class="layout vertical">
+          <span class="monospace ${rowData.item.isError ? `error-cell` : ``}">
+            ${rowData.item.requestUrl}
+          </span>
+        </div>
+      `,
       root,
     );
   }
@@ -364,11 +378,13 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   paramRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html` <div class="layout vertical">
-        <span class="monospace ${rowData.item.isError ? `error-cell` : ``}"
-          >${rowData.item.requestParameters}</span
-        >
-      </div>`,
+      html`
+        <div class="layout vertical">
+          <span class="monospace ${rowData.item.isError ? `error-cell` : ``}">
+            ${rowData.item.requestParameters}
+          </span>
+        </div>
+      `,
       root,
     );
   }
@@ -392,8 +408,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
             auto-width
             header="${_t('logs.TimeStamp')}"
             .renderer="${this.boundTimeStampRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             resizable
             flex-grow="0"
@@ -401,8 +416,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
             auto-width
             header="${_t('logs.Status')}"
             .renderer="${this.boundStatusRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             resizable
             flex-grow="0"
@@ -410,8 +424,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
             auto-width
             header="${_t('logs.ErrorTitle')}"
             .renderer="${this.boundErrTitleRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             resizable
             flex-grow="0"
@@ -419,8 +432,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
             auto-width
             header="${_t('logs.ErrorMessage')}"
             .renderer="${this.boundErrMsgRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             width="50px"
             flex-grow="0"
@@ -428,8 +440,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
             auto-width
             header="${_t('logs.ErrorType')}"
             .renderer="${this.boundErrTypeRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             resizable
             flex-grow="0"
@@ -437,8 +448,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
             auto-width
             header="${_t('logs.Method')}"
             .renderer="${this.boundMethodRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             resizable
             flex-grow="0"
@@ -446,16 +456,14 @@ export default class BackendAiErrorLogList extends BackendAIPage {
             auto-width
             header="${_t('logs.RequestUrl')}"
             .renderer="${this.boundReqUrlRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             resizable
             auto-width
             text-align="start"
             header="${_t('logs.Parameters')}"
             .renderer="${this.boundParamRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status
           id="list-status"

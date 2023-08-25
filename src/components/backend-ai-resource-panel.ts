@@ -518,12 +518,12 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         <div slot="message">
           <div class="horizontal justified layout wrap indicators">
             ${this.is_superadmin
-              ? html` <div
-                  class="vertical layout center system-health-indicator"
-                >
-                  <div class="big indicator">${this.agents}</div>
-                  <span>${_tr('summary.ConnectedNodes')}</span>
-                </div>`
+              ? html`
+                  <div class="vertical layout center system-health-indicator">
+                    <div class="big indicator">${this.agents}</div>
+                    <span>${_tr('summary.ConnectedNodes')}</span>
+                  </div>
+                `
               : html``}
             <div class="vertical layout center system-health-indicator">
               <div class="big indicator">${this.sessions}</div>
@@ -532,7 +532,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
           </div>
           <div class="vertical-card" style="align-items: flex-start">
             ${this.is_superadmin
-              ? html` <div class="layout horizontal center flex resource">
+              ? html`
+                  <div class="layout horizontal center flex resource">
                     <div
                       class="layout vertical center center-justified resource-name"
                     >
@@ -558,12 +559,12 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                       ></lablup-progress-bar>
                     </div>
                     <div class="layout vertical center center-justified">
-                      <span class="percentage start-bar"
-                        >${parseInt(this.cpu_total_percent) + '%'}</span
-                      >
-                      <span class="percentage end-bar"
-                        >${parseInt(this.cpu_percent) + '%'}</span
-                      >
+                      <span class="percentage start-bar">
+                        ${parseInt(this.cpu_total_percent) + '%'}
+                      </span>
+                      <span class="percentage end-bar">
+                        ${parseInt(this.cpu_percent) + '%'}
+                      </span>
                     </div>
                   </div>
                   <div class="resource-line"></div>
@@ -601,18 +602,18 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                       ></lablup-progress-bar>
                     </div>
                     <div class="layout vertical center center-justified">
-                      <span class="percentage start-bar"
-                        >${this.mem_total_usage_ratio.toFixed(1) + '%'}</span
-                      >
-                      <span class="percentage end-bar"
-                        >${(parseInt(this.mem_used) !== 0
+                      <span class="percentage start-bar">
+                        ${this.mem_total_usage_ratio.toFixed(1) + '%'}
+                      </span>
+                      <span class="percentage end-bar">
+                        ${(parseInt(this.mem_used) !== 0
                           ? (
                               (parseInt(this.mem_used) /
                                 parseInt(this.mem_total)) *
                               100
                             ).toFixed(0)
-                          : '0') + '%'}</span
-                      >
+                          : '0') + '%'}
+                      </span>
                     </div>
                   </div>
                   ${this.cuda_gpu_total ||
@@ -622,7 +623,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                   this.ipu_total ||
                   this.atom_total ||
                   this.warboy_total
-                    ? html` <div class="resource-line"></div>
+                    ? html`
+                        <div class="resource-line"></div>
                         <div class="layout horizontal center flex resource">
                           <div
                             class="layout vertical center center-justified resource-name"
@@ -656,15 +658,15 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                 <div
                                   class="layout vertical center center-justified"
                                 >
-                                  <span class="percentage start-bar"
-                                    >${this.cuda_gpu_used !== 0
+                                  <span class="percentage start-bar">
+                                    ${this.cuda_gpu_used !== 0
                                       ? (
                                           (this.cuda_gpu_used /
                                             this.cuda_gpu_total) *
                                           100
                                         ).toFixed(1)
-                                      : 0}%</span
-                                  >
+                                      : 0}%
+                                  </span>
                                   <span class="percentage end-bar">&nbsp;</span>
                                 </div>
                               `
@@ -696,21 +698,22 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                 <div
                                   class="layout vertical center center-justified"
                                 >
-                                  <span class="percentage start-bar"
-                                    >${this.cuda_fgpu_used !== 0
+                                  <span class="percentage start-bar">
+                                    ${this.cuda_fgpu_used !== 0
                                       ? (
                                           (this.cuda_fgpu_used /
                                             this.cuda_fgpu_total) *
                                           100
                                         ).toFixed(1)
-                                      : 0}%</span
-                                  >
+                                      : 0}%
+                                  </span>
                                   <span class="percentage end-bar">&nbsp;</span>
                                 </div>
                               `
                             : html``}
                           ${this.rocm_gpu_total
-                            ? html` <div
+                            ? html`
+                                <div
                                   class="layout vertical start-justified wrap"
                                 >
                                   <lablup-progress-bar
@@ -734,15 +737,16 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                 <div
                                   class="layout vertical center center-justified"
                                 >
-                                  <span class="percentage start-bar"
-                                    >${this.rocm_gpu_used.toFixed(1) +
-                                    '%'}</span
-                                  >
+                                  <span class="percentage start-bar">
+                                    ${this.rocm_gpu_used.toFixed(1) + '%'}
+                                  </span>
                                   <span class="percentage end-bar">&nbsp;</span>
-                                </div>`
+                                </div>
+                              `
                             : html``}
                           ${this.tpu_total
-                            ? html` <div
+                            ? html`
+                                <div
                                   class="layout vertical start-justified wrap"
                                 >
                                   <lablup-progress-bar
@@ -764,14 +768,16 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                 <div
                                   class="layout vertical center center-justified"
                                 >
-                                  <span class="percentage start-bar"
-                                    >${this.tpu_used.toFixed(1) + '%'}</span
-                                  >
+                                  <span class="percentage start-bar">
+                                    ${this.tpu_used.toFixed(1) + '%'}
+                                  </span>
                                   <span class="percentage end-bar"></span>
-                                </div>`
+                                </div>
+                              `
                             : html``}
                           ${this.ipu_total
-                            ? html` <div
+                            ? html`
+                                <div
                                   class="layout vertical start-justified wrap"
                                 >
                                   <lablup-progress-bar
@@ -793,14 +799,16 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                 <div
                                   class="layout vertical center center-justified"
                                 >
-                                  <span class="percentage start-bar"
-                                    >${this.ipu_used.toFixed(1) + '%'}</span
-                                  >
+                                  <span class="percentage start-bar">
+                                    ${this.ipu_used.toFixed(1) + '%'}
+                                  </span>
                                   <span class="percentage end-bar"></span>
-                                </div>`
+                                </div>
+                              `
                             : html``}
                           ${this.atom_total
-                            ? html` <div
+                            ? html`
+                                <div
                                   class="layout vertical start-justified wrap"
                                 >
                                   <lablup-progress-bar
@@ -822,14 +830,16 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                 <div
                                   class="layout vertical center center-justified"
                                 >
-                                  <span class="percentage start-bar"
-                                    >${this.atom_used.toFixed(1) + '%'}</span
-                                  >
+                                  <span class="percentage start-bar">
+                                    ${this.atom_used.toFixed(1) + '%'}
+                                  </span>
                                   <span class="percentage end-bar"></span>
-                                </div>`
+                                </div>
+                              `
                             : html``}
                           ${this.warboy_total
-                            ? html` <div
+                            ? html`
+                                <div
                                   class="layout vertical start-justified wrap"
                                 >
                                   <lablup-progress-bar
@@ -853,37 +863,38 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                 <div
                                   class="layout vertical center center-justified"
                                 >
-                                  <span class="percentage start-bar"
-                                    >${this.warboy_used.toFixed(1) + '%'}</span
-                                  >
+                                  <span class="percentage start-bar">
+                                    ${this.warboy_used.toFixed(1) + '%'}
+                                  </span>
                                   <span class="percentage end-bar"></span>
-                                </div>`
+                                </div>
+                              `
                             : html``}
-                        </div>`
+                        </div>
+                      `
                     : html``}
                   <div class="vertical start layout" style="margin-top:30px;">
                     <div class="horizontal layout resource-legend-stack">
                       <div class="resource-legend-icon start"></div>
-                      <span class="resource-legend"
-                        >${_t('summary.Reserved')}
-                        ${_t('resourcePolicy.Resources')}</span
-                      >
+                      <span class="resource-legend">
+                        ${_t('summary.Reserved')}
+                        ${_t('resourcePolicy.Resources')}
+                      </span>
                     </div>
                     <div class="horizontal layout resource-legend-stack">
                       <div class="resource-legend-icon end"></div>
-                      <span class="resource-legend"
-                        >${_t('summary.Used')}
-                        ${_t('resourcePolicy.Resources')}</span
-                      >
+                      <span class="resource-legend">
+                        ${_t('summary.Used')} ${_t('resourcePolicy.Resources')}
+                      </span>
                     </div>
                     <div class="horizontal layout">
                       <div class="resource-legend-icon total"></div>
-                      <span class="resource-legend"
-                        >${_t('summary.Total')}
-                        ${_t('resourcePolicy.Resources')}</span
-                      >
+                      <span class="resource-legend">
+                        ${_t('summary.Total')} ${_t('resourcePolicy.Resources')}
+                      </span>
                     </div>
-                  </div>`
+                  </div>
+                `
               : html``}
           </div>
         </div>

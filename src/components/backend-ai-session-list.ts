@@ -1288,7 +1288,12 @@ export default class BackendAISessionList extends BackendAIPage {
    * */
   _indexRenderer(root, column, rowData) {
     const idx = rowData.index + 1;
-    render(html` <div>${idx}</div> `, root);
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root,
+    );
   }
 
   /**
@@ -1916,8 +1921,8 @@ export default class BackendAISessionList extends BackendAIPage {
       '#status-detail',
     ) as HTMLDivElement;
     const statusDialogContent: Array<TemplateResult> = [];
-    statusDialogContent.push(
-      html` <div class="vertical layout justified start">
+    statusDialogContent.push(html`
+      <div class="vertical layout justified start">
         <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">
           ${_text('session.Status')}
         </h3>
@@ -1927,8 +1932,8 @@ export default class BackendAISessionList extends BackendAIPage {
           ui="round"
           style="padding-left:10px;padding-right:10px;"
         ></lablup-shields>
-      </div>`,
-    );
+      </div>
+    `);
 
     if (
       tmpSessionStatus.hasOwnProperty('kernel') ||
@@ -1945,22 +1950,24 @@ export default class BackendAISessionList extends BackendAIPage {
             <div class="vertical layout flex" style="width:100%;">
               <mwc-list>
                 <mwc-list-item twoline noninteractive class="predicate-check">
-                  <span class="subheading"
-                    ><strong>Kernel Exit Code</strong></span
-                  >
+                  <span class="subheading">
+                    <strong>Kernel Exit Code</strong>
+                  </span>
                   <span
                     class="monospace predicate-check-comment"
                     slot="secondary"
-                    >${tmpSessionStatus.kernel?.exit_code ?? 'null'}</span
                   >
+                    ${tmpSessionStatus.kernel?.exit_code ?? 'null'}
+                  </span>
                 </mwc-list-item>
                 <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">Session Status</span>
                   <span
                     class="monospace predicate-check-comment"
                     slot="secondary"
-                    >${tmpSessionStatus.session?.status}</span
                   >
+                    ${tmpSessionStatus.session?.status}
+                  </span>
                 </mwc-list-item>
               </mwc-list>
             </div>
@@ -1987,28 +1994,31 @@ export default class BackendAISessionList extends BackendAIPage {
                   <span
                     class="monospace predicate-check-comment"
                     slot="secondary"
-                    >${tmpSessionStatus.scheduler.msg}</span
                   >
+                    ${tmpSessionStatus.scheduler.msg}
+                  </span>
                 </mwc-list-item>
                 <mwc-list-item twoline noninteractive class="predicate-check">
-                  <span class="subheading"
-                    >${_text('session.TotalRetries')}</span
-                  >
+                  <span class="subheading">
+                    ${_text('session.TotalRetries')}
+                  </span>
                   <span
                     class="monospace predicate-check-comment"
                     slot="secondary"
-                    >${tmpSessionStatus.scheduler.retries}</span
                   >
+                    ${tmpSessionStatus.scheduler.retries}
+                  </span>
                 </mwc-list-item>
                 <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.LastTry')}</span>
                   <span
                     class="monospace predicate-check-comment"
                     slot="secondary"
-                    >${this._humanReadableTime(
-                      tmpSessionStatus.scheduler.last_try,
-                    )}</span
                   >
+                    ${this._humanReadableTime(
+                      tmpSessionStatus.scheduler.last_try,
+                    )}
+                  </span>
                 </mwc-list-item>
               </mwc-list>
             </div>
@@ -2016,8 +2026,12 @@ export default class BackendAISessionList extends BackendAIPage {
           <lablup-expansion summary="Predicates">
             <div slot="title" class="horizontal layout center start-justified">
               ${failedCount > 0
-                ? html` <mwc-icon class="fg red">cancel</mwc-icon> `
-                : html` <mwc-icon class="fg green">check_circle</mwc-icon> `}
+                ? html`
+                    <mwc-icon class="fg red">cancel</mwc-icon>
+                  `
+                : html`
+                    <mwc-icon class="fg green">check_circle</mwc-icon>
+                  `}
               Predicate Checks
             </div>
             <span slot="description">
@@ -2026,42 +2040,54 @@ export default class BackendAISessionList extends BackendAIPage {
             </span>
             <mwc-list>
               ${tmpSessionStatus.scheduler.failed_predicates.map((item) => {
-                return html` ${item.name === 'reserved_time'
-                    ? html` <mwc-list-item
-                        twoline
-                        graphic="icon"
-                        noninteractive
-                        class="predicate-check"
-                      >
-                        <span>${item.name}</span>
-                        <span slot="secondary" class="predicate-check-comment"
-                          >${item.msg +
-                          ': ' +
-                          tmpSessionStatus.reserved_time}</span
+                return html`
+                  ${item.name === 'reserved_time'
+                    ? html`
+                        <mwc-list-item
+                          twoline
+                          graphic="icon"
+                          noninteractive
+                          class="predicate-check"
                         >
-                        <mwc-icon
-                          slot="graphic"
-                          class="fg red inverted status-check"
-                          >close</mwc-icon
+                          <span>${item.name}</span>
+                          <span
+                            slot="secondary"
+                            class="predicate-check-comment"
+                          >
+                            ${item.msg + ': ' + tmpSessionStatus.reserved_time}
+                          </span>
+                          <mwc-icon
+                            slot="graphic"
+                            class="fg red inverted status-check"
+                          >
+                            close
+                          </mwc-icon>
+                        </mwc-list-item>
+                      `
+                    : html`
+                        <mwc-list-item
+                          twoline
+                          graphic="icon"
+                          noninteractive
+                          class="predicate-check"
                         >
-                      </mwc-list-item>`
-                    : html` <mwc-list-item
-                        twoline
-                        graphic="icon"
-                        noninteractive
-                        class="predicate-check"
-                      >
-                        <span>${item.name}</span>
-                        <span slot="secondary" class="predicate-check-comment"
-                          >${item.msg}</span
-                        >
-                        <mwc-icon
-                          slot="graphic"
-                          class="fg red inverted status-check"
-                          >close</mwc-icon
-                        >
-                      </mwc-list-item>`}
-                  <li divider role="separator"></li>`;
+                          <span>${item.name}</span>
+                          <span
+                            slot="secondary"
+                            class="predicate-check-comment"
+                          >
+                            ${item.msg}
+                          </span>
+                          <mwc-icon
+                            slot="graphic"
+                            class="fg red inverted status-check"
+                          >
+                            close
+                          </mwc-icon>
+                        </mwc-list-item>
+                      `}
+                  <li divider role="separator"></li>
+                `;
               })}
               ${tmpSessionStatus.scheduler.passed_predicates.map((item) => {
                 return html`
@@ -2071,7 +2097,8 @@ export default class BackendAISessionList extends BackendAIPage {
                       slot="graphic"
                       class="fg green inverted status-check"
                       style="padding-left:5px;"
-                      >checked
+                    >
+                      checked
                     </mwc-icon>
                   </mwc-list-item>
                   <li divider role="separator"></li>
@@ -2492,8 +2519,9 @@ ${item.traceback}</pre
         <mwc-list-item class="util-detail-menu-header">
           <div>
             ${_text('session.Utilization')} / ${_text('session.Threshold')} (%)
-          </div> </mwc-list-item
-        >${Object.keys(utilizationExtra).map((item) => {
+          </div>
+        </mwc-list-item>
+        ${Object.keys(utilizationExtra).map((item) => {
           let [utilization, threshold] = utilizationExtra[item];
           utilization =
             utilization >= 0 ? parseFloat(utilization).toFixed(1) : '-';
@@ -2545,13 +2573,13 @@ ${item.traceback}</pre
           ></lablup-shields>
           ${rowData.item.type === 'INFERENCE'
             ? html`
-                <span style="font-size:12px;margin-top:5px;"
-                  >Inference requests: ${inferenceMetrics.requests}</span
-                >
-                <span style="font-size:12px;"
-                  >Inference API last response time (ms):
-                  ${inferenceMetrics.last_response_ms}</span
-                >
+                <span style="font-size:12px;margin-top:5px;">
+                  Inference requests: ${inferenceMetrics.requests}
+                </span>
+                <span style="font-size:12px;">
+                  Inference API last response time (ms):
+                  ${inferenceMetrics.last_response_ms}
+                </span>
               `
             : ``}
         </div>
@@ -2660,8 +2688,8 @@ ${rowData.item[this.sessionNameField]}</pre
               <div class="vertical start layout">
                 ${rowData.item.sessionTags
                   ? rowData.item.sessionTags.map(
-                      (item) =>
-                        html` <div class="horizontal center layout">
+                      (item) => html`
+                        <div class="horizontal center layout">
                           ${item.map((item) => {
                             if (item.category === 'Env') {
                               item.category = item.tag;
@@ -2681,7 +2709,8 @@ ${rowData.item[this.sessionNameField]}</pre
                               ></lablup-shields>
                             `;
                           })}
-                        </div>`,
+                        </div>
+                      `,
                     )
                   : html``}
                 ${rowData.item.additional_reqs
@@ -2781,8 +2810,7 @@ ${rowData.item[this.sessionNameField]}</pre
                   @click="${(e) => this._showAppLauncher(e)}"
                   ?disabled="${!mySession}"
                   icon="apps"
-                >
-                </mwc-icon-button>
+                ></mwc-icon-button>
                 <vaadin-tooltip
                   for="${rowData.index + '-apps'}"
                   text="${_t('session.SeeAppDialog')}"
@@ -2973,13 +3001,15 @@ ${rowData.item[this.sessionNameField]}</pre
             </div>
           </div>
           ${rowData.item.scaling_group
-            ? html` <div class="layout horizontal center flex">
-                <div class="layout horizontal center configuration">
-                  <mwc-icon class="fg green indicator">work</mwc-icon>
-                  <span>${rowData.item.scaling_group}</span>
-                  <span class="indicator">RG</span>
+            ? html`
+                <div class="layout horizontal center flex">
+                  <div class="layout horizontal center configuration">
+                    <mwc-icon class="fg green indicator">work</mwc-icon>
+                    <span>${rowData.item.scaling_group}</span>
+                    <span class="indicator">RG</span>
+                  </div>
                 </div>
-              </div>`
+              `
             : html``}
           <div class="layout vertical flex" style="padding-left: 25px">
             <div class="layout horizontal center configuration">
@@ -3128,96 +3158,110 @@ ${rowData.item[this.sessionNameField]}</pre
             </div>
             ${rowData.item.cuda_gpu_slot &&
             parseInt(rowData.item.cuda_gpu_slot) > 0
-              ? html` <div class="horizontal start-justified center layout">
-                  <div class="usage-items">GPU(util)</div>
+              ? html`
                   <div class="horizontal start-justified center layout">
-                    <lablup-progress-bar
-                      class="usage"
-                      progress="${rowData.item.cuda_util /
-                      (rowData.item.cuda_gpu_slot * 100)}"
-                      description=""
-                    ></lablup-progress-bar>
+                    <div class="usage-items">GPU(util)</div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.cuda_util /
+                        (rowData.item.cuda_gpu_slot * 100)}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
                   </div>
-                </div>`
+                `
               : html``}
             ${rowData.item.cuda_fgpu_slot &&
             parseFloat(rowData.item.cuda_fgpu_slot) > 0
-              ? html` <div class="horizontal start-justified center layout">
-                  <div class="usage-items">GPU(util)</div>
+              ? html`
                   <div class="horizontal start-justified center layout">
-                    <lablup-progress-bar
-                      class="usage"
-                      progress="${rowData.item.cuda_util /
-                      (rowData.item.cuda_fgpu_slot * 100)}"
-                      description=""
-                    ></lablup-progress-bar>
+                    <div class="usage-items">GPU(util)</div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.cuda_util /
+                        (rowData.item.cuda_fgpu_slot * 100)}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
                   </div>
-                </div>`
+                `
               : html``}
             ${rowData.item.rocm_gpu_slot &&
             parseFloat(rowData.item.cuda_rocm_gpu_slot) > 0
-              ? html` <div class="horizontal start-justified center layout">
-                  <div class="usage-items">GPU(util)</div>
+              ? html`
                   <div class="horizontal start-justified center layout">
-                    <lablup-progress-bar
-                      class="usage"
-                      progress="${rowData.item.rocm_util /
-                      (rowData.item.rocm_gpu_slot * 100)}"
-                      description=""
-                    ></lablup-progress-bar>
+                    <div class="usage-items">GPU(util)</div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.rocm_util /
+                        (rowData.item.rocm_gpu_slot * 100)}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
                   </div>
-                </div>`
+                `
               : html``}
             ${rowData.item.cuda_fgpu_slot || rowData.item.rocm_gpu_slot
-              ? html` <div class="horizontal start-justified center layout">
-                  <div class="usage-items">GPU(mem)</div>
+              ? html`
                   <div class="horizontal start-justified center layout">
-                    <lablup-progress-bar
-                      class="usage"
-                      progress="${rowData.item.cuda_mem_ratio}"
-                      description=""
-                    ></lablup-progress-bar>
+                    <div class="usage-items">GPU(mem)</div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.cuda_mem_ratio}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
                   </div>
-                </div>`
+                `
               : html``}
             ${rowData.item.tpu_slot && parseFloat(rowData.item.tpu_slot) > 0
-              ? html` <div class="horizontal start-justified center layout">
-                  <div class="usage-items">TPU(util)</div>
+              ? html`
                   <div class="horizontal start-justified center layout">
-                    <lablup-progress-bar
-                      class="usage"
-                      progress="${rowData.item.tpu_util /
-                      (rowData.item.tpu_slot * 100)}"
-                      description=""
-                    ></lablup-progress-bar>
+                    <div class="usage-items">TPU(util)</div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.tpu_util /
+                        (rowData.item.tpu_slot * 100)}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
                   </div>
-                </div>`
+                `
               : html``}
             ${rowData.item.ipu_slot && parseFloat(rowData.item.ipu_slot) > 0
-              ? html` <div class="horizontal start-justified center layout">
-                  <div class="usage-items">IPU(util)</div>
+              ? html`
                   <div class="horizontal start-justified center layout">
-                    <lablup-progress-bar
-                      class="usage"
-                      progress="${rowData.item.ipu_util /
-                      (rowData.item.ipu_slot * 100)}"
-                      description=""
-                    ></lablup-progress-bar>
+                    <div class="usage-items">IPU(util)</div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.ipu_util /
+                        (rowData.item.ipu_slot * 100)}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
                   </div>
-                </div>`
+                `
               : html``}
             ${rowData.item.atom_slot && parseFloat(rowData.item.atom_slot) > 0
-              ? html` <div class="horizontal start-justified center layout">
-                  <div class="usage-items">ATOM(util)</div>
+              ? html`
                   <div class="horizontal start-justified center layout">
-                    <lablup-progress-bar
-                      class="usage"
-                      progress="${rowData.item.atom_util /
-                      (rowData.item.atom_slot * 100)}"
-                      description=""
-                    ></lablup-progress-bar>
+                    <div class="usage-items">ATOM(util)</div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.atom_util /
+                        (rowData.item.atom_slot * 100)}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
                   </div>
-                </div>`
+                `
               : html``}
             <div class="horizontal start-justified center layout">
               <div class="usage-items">I/O</div>
@@ -3236,77 +3280,89 @@ ${rowData.item[this.sessionNameField]}</pre
     } else if (this.condition === 'finished') {
       render(
         // language=HTML
-        html` <div class="layout horizontal center flex">
-            <mwc-icon class="fg green indicator" style="margin-right:3px;"
-              >developer_board</mwc-icon
-            >
+        html`
+          <div class="layout horizontal center flex">
+            <mwc-icon class="fg green indicator" style="margin-right:3px;">
+              developer_board
+            </mwc-icon>
             ${rowData.item.cpu_used_time.D
-              ? html` <div class="vertical center-justified center layout">
-                  <span style="font-size:11px"
-                    >${rowData.item.cpu_used_time.D}</span
-                  >
-                  <span class="indicator">day</span>
-                </div>`
+              ? html`
+                  <div class="vertical center-justified center layout">
+                    <span style="font-size:11px">
+                      ${rowData.item.cpu_used_time.D}
+                    </span>
+                    <span class="indicator">day</span>
+                  </div>
+                `
               : html``}
             ${rowData.item.cpu_used_time.H
-              ? html` <div class="vertical center-justified center layout">
-                  <span style="font-size:11px"
-                    >${rowData.item.cpu_used_time.H}</span
-                  >
-                  <span class="indicator">hour</span>
-                </div>`
+              ? html`
+                  <div class="vertical center-justified center layout">
+                    <span style="font-size:11px">
+                      ${rowData.item.cpu_used_time.H}
+                    </span>
+                    <span class="indicator">hour</span>
+                  </div>
+                `
               : html``}
             ${rowData.item.cpu_used_time.M
-              ? html` <div class="vertical start layout">
-                  <span style="font-size:11px"
-                    >${rowData.item.cpu_used_time.M}</span
-                  >
-                  <span class="indicator">min.</span>
-                </div>`
+              ? html`
+                  <div class="vertical start layout">
+                    <span style="font-size:11px">
+                      ${rowData.item.cpu_used_time.M}
+                    </span>
+                    <span class="indicator">min.</span>
+                  </div>
+                `
               : html``}
             ${rowData.item.cpu_used_time.S
-              ? html` <div class="vertical start layout">
-                  <span style="font-size:11px"
-                    >${rowData.item.cpu_used_time.S}</span
-                  >
-                  <span class="indicator">sec.</span>
-                </div>`
+              ? html`
+                  <div class="vertical start layout">
+                    <span style="font-size:11px">
+                      ${rowData.item.cpu_used_time.S}
+                    </span>
+                    <span class="indicator">sec.</span>
+                  </div>
+                `
               : html``}
             ${rowData.item.cpu_used_time.MS
-              ? html` <div class="vertical start layout">
-                  <span style="font-size:11px"
-                    >${rowData.item.cpu_used_time.MS}</span
-                  >
-                  <span class="indicator">msec.</span>
-                </div>`
+              ? html`
+                  <div class="vertical start layout">
+                    <span style="font-size:11px">
+                      ${rowData.item.cpu_used_time.MS}
+                    </span>
+                    <span class="indicator">msec.</span>
+                  </div>
+                `
               : html``}
             ${rowData.item.cpu_used_time.NODATA
-              ? html` <div class="vertical start layout">
-                  <span style="font-size:11px">No data</span>
-                </div>`
+              ? html`
+                  <div class="vertical start layout">
+                    <span style="font-size:11px">No data</span>
+                  </div>
+                `
               : html``}
           </div>
           <div class="layout horizontal center flex">
-            <mwc-icon class="fg blue indicator" style="margin-right:3px;"
-              >device_hub</mwc-icon
-            >
+            <mwc-icon class="fg blue indicator" style="margin-right:3px;">
+              device_hub
+            </mwc-icon>
             <div class="vertical start layout">
-              <span style="font-size:9px"
-                >${rowData.item.io_read_bytes_mb}<span class="indicator"
-                  >MB</span
-                ></span
-              >
+              <span style="font-size:9px">
+                ${rowData.item.io_read_bytes_mb}
+                <span class="indicator">MB</span>
+              </span>
               <span class="indicator">READ</span>
             </div>
             <div class="vertical start layout">
-              <span style="font-size:8px"
-                >${rowData.item.io_write_bytes_mb}<span class="indicator"
-                  >MB</span
-                ></span
-              >
+              <span style="font-size:8px">
+                ${rowData.item.io_write_bytes_mb}
+                <span class="indicator">MB</span>
+              </span>
               <span class="indicator">WRITE</span>
             </div>
-          </div>`,
+          </div>
+        `,
         root,
       );
     }
@@ -3443,7 +3499,9 @@ ${rowData.item[this.sessionNameField]}</pre
       },
     );
 
-    const contentTemplate = html`${contentTemplates}`;
+    const contentTemplate = html`
+      ${contentTemplates}
+    `;
     render(contentTemplate, root);
   }
 
@@ -3636,9 +3694,9 @@ ${rowData.item[this.sessionNameField]}</pre
       <backend-ai-dialog id="commit-session-dialog" fixed backdrop>
         <span slot="title">${_t('session.CommitSession')}</span>
         <div slot="content" class="vertical layout center flex">
-          <span style="font-size:14px;margin:auto 20px;"
-            >${_t('session.DescCommitSession')}</span
-          >
+          <span style="font-size:14px;margin:auto 20px;">
+            ${_t('session.DescCommitSession')}
+          </span>
           <mwc-list style="width:100%">
             <mwc-list-item twoline noninteractive class="commit-session-info">
               <span class="subheading">Session Name</span>
@@ -3657,9 +3715,9 @@ ${rowData.item[this.sessionNameField]}</pre
               </span>
             </mwc-list-item>
             <mwc-list-item twoline noninteractive class="commit-session-info">
-              <span class="subheading"
-                ><strong>Environment and Version</strong></span
-              >
+              <span class="subheading">
+                <strong>Environment and Version</strong>
+              </span>
               <span class="monospace" slot="secondary">
                 ${commitSessionInfo
                   ? html`
@@ -3693,13 +3751,15 @@ ${rowData.item[this.sessionNameField]}</pre
                         ></lablup-shields>
                       `,
                     )
-                  : html` <lablup-shields
-                      app=""
-                      color="green"
-                      description="-"
-                      ui="round"
-                      style="right-below-margin"
-                    ></lablup-shields>`}
+                  : html`
+                      <lablup-shields
+                        app=""
+                        color="green"
+                        description="-"
+                        ui="round"
+                        style="right-below-margin"
+                      ></lablup-shields>
+                    `}
               </span>
             </mwc-list-item>
           </mwc-list>
@@ -3778,8 +3838,7 @@ ${rowData.item[this.sessionNameField]}</pre
                     flex-grow="0"
                     text-align="center"
                     .renderer="${this._boundCheckboxRenderer}"
-                  >
-                  </vaadin-grid-column>
+                  ></vaadin-grid-column>
                 `
               : html``
           }
@@ -3799,8 +3858,7 @@ ${rowData.item[this.sessionNameField]}</pre
                       : 'User ID'}"
                     resizable
                     .renderer="${this._boundUserInfoRenderer}"
-                  >
-                  </lablup-grid-sort-filter-column>
+                  ></lablup-grid-sort-filter-column>
                 `
               : html``
           }
@@ -3850,8 +3908,7 @@ ${rowData.item[this.sessionNameField]}</pre
                     flex-grow="0"
                     .headerRenderer="${this._boundIdleChecksHeaderderer}"
                     .renderer="${this._boundIdleChecksRenderer}"
-                  >
-                  </vaadin-grid-column>
+                  ></vaadin-grid-column>
                 `
               : html``
           }
@@ -3886,8 +3943,7 @@ ${rowData.item[this.sessionNameField]}</pre
                     resizable
                     header="${_t('session.Agent')}"
                     .renderer="${this._boundAgentRenderer}"
-                  >
-                  </lablup-grid-sort-filter-column>
+                  ></lablup-grid-sort-filter-column>
                 `
               : html``
           }

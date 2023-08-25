@@ -529,12 +529,14 @@ export default class PipelineJobList extends BackendAIPage {
             class="vertical layout start center-justified"
             style="font-size:15px;"
           >
-            <span class="horizontal layout"
-              ><mwc-icon>calendar_today</mwc-icon>${createdAt}</span
-            >
-            <span class="horizontal layout"
-              ><mwc-icon>alarm</mwc-icon>${duration}</span
-            >
+            <span class="horizontal layout">
+              <mwc-icon>calendar_today</mwc-icon>
+              ${createdAt}
+            </span>
+            <span class="horizontal layout">
+              <mwc-icon>alarm</mwc-icon>
+              ${duration}
+            </span>
           </mwc-list-item>
         `,
         root,
@@ -605,8 +607,9 @@ export default class PipelineJobList extends BackendAIPage {
           <a
             class="pipeline-link"
             @click="${() => this._loadPipelineJobView(rowData.item)}"
-            >${rowData.item.name}</a
           >
+            ${rowData.item.name}
+          </a>
         `,
         root,
       );
@@ -667,16 +670,16 @@ export default class PipelineJobList extends BackendAIPage {
     // language=HTML
     return html`
       <backend-ai-dialog id="pipeline-job-detail-dialog" fixed backdrop>
-        <span slot="title"
-          >${this.pipelineJobInfo.name || 'Pipeline Details'}</span
-        >
+        <span slot="title">
+          ${this.pipelineJobInfo.name || 'Pipeline Details'}
+        </span>
         <div slot="content" role="listbox" class="horizontal center layout">
           <mwc-list class="vertical center layout">
             <mwc-list-item twoline>
               <span><strong>ID</strong></span>
-              <span class="monospace" slot="secondary"
-                >${this.pipelineJobInfo.id}</span
-              >
+              <span class="monospace" slot="secondary">
+                ${this.pipelineJobInfo.id}
+              </span>
             </mwc-list-item>
             <mwc-list-item twoline>
               <span><strong>Created At</strong></span>
@@ -729,21 +732,25 @@ export default class PipelineJobList extends BackendAIPage {
               ? html`
                   <mwc-list-item twoline>
                     <span><strong>Ownership</strong></span>
-                    <span class="monospace" slot="secondary"
-                      >${this.pipelineJobInfo.ownership}</span
-                    >
+                    <span class="monospace" slot="secondary">
+                      ${this.pipelineJobInfo.ownership}
+                    </span>
                   </mwc-list-item>
                 `
               : html``}
             <mwc-list-item twoline>
               <span><strong>Mounted Folder</strong></span>
-              <span class="monospace" slot="secondary"
-                >${this.pipelineJobInfo.yaml?.mounts?.length > 0
+              <span class="monospace" slot="secondary">
+                ${this.pipelineJobInfo.yaml?.mounts?.length > 0
                   ? this.pipelineJobInfo.yaml.mounts.map(
-                      (vfolder) => html` ${vfolder} `,
+                      (vfolder) => html`
+                        ${vfolder}
+                      `,
                     )
-                  : html`No mount`}</span
-              >
+                  : html`
+                      No mount
+                    `}
+              </span>
             </mwc-list-item>
             <mwc-list-item id="workflow-item" twoline>
               <span><strong>View Workflow File</strong></span>
@@ -754,8 +761,7 @@ export default class PipelineJobList extends BackendAIPage {
                 icon="assignment"
                 label="View workflow file"
                 @click="${() => this._launchWorkFlowDialog()}"
-              >
-              </mwc-button>
+              ></mwc-button>
             </mwc-list-item>
           </mwc-list>
         </div>

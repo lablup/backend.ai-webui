@@ -656,8 +656,8 @@ export default class BackendAISummary extends BackendAIPage {
               <div slot="message">
                 ${this.invitations.length > 0
                   ? this.invitations.map(
-                      (invitation, index) =>
-                        html` <lablup-activity-panel
+                      (invitation, index) => html`
+                        <lablup-activity-panel
                           class="inner-panel"
                           noheader
                           autowidth
@@ -669,10 +669,10 @@ export default class BackendAISummary extends BackendAIPage {
                               <h3 style="padding-top:10px;">
                                 From ${invitation.inviter}
                               </h3>
-                              <span class="invitation_folder_name"
-                                >${_t('summary.FolderName')}:
-                                ${invitation.vfolder_name}</span
-                              >
+                              <span class="invitation_folder_name">
+                                ${_t('summary.FolderName')}:
+                                ${invitation.vfolder_name}
+                              </span>
                               <div class="horizontal center layout">
                                 ${_t('summary.Permission')}:
                                 ${[...invitation.perm].map(
@@ -708,9 +708,12 @@ export default class BackendAISummary extends BackendAIPage {
                               </div>
                             </div>
                           </div>
-                        </lablup-activity-panel>`,
+                        </lablup-activity-panel>
+                      `,
                     )
-                  : html` <p>${_text('summary.NoInvitations')}</p>`}
+                  : html`
+                      <p>${_text('summary.NoInvitations')}</p>
+                    `}
               </div>
             </lablup-activity-panel>
           </div>
@@ -802,20 +805,22 @@ export default class BackendAISummary extends BackendAIPage {
                                       ui="flat"
                                     ></lablup-shields>
                                     ${this.update_checker.updateNeeded
-                                      ? html` <mwc-icon-button
-                                          class="update-button"
-                                          icon="new_releases"
-                                          @click="${() => {
-                                            window.open(
-                                              this.update_checker.updateURL,
-                                              '_blank',
-                                            );
-                                          }}"
-                                        ></mwc-icon-button>`
+                                      ? html`
+                                          <mwc-icon-button
+                                            class="update-button"
+                                            icon="new_releases"
+                                            @click="${() => {
+                                              window.open(
+                                                this.update_checker.updateURL,
+                                                '_blank',
+                                              );
+                                            }}"
+                                          ></mwc-icon-button>
+                                        `
                                       : html`
-                                          <mwc-icon class="update-icon"
-                                            >done</mwc-icon
-                                          >
+                                          <mwc-icon class="update-icon">
+                                            done
+                                          </mwc-icon>
                                         `}
                                   </div>
                                 </div>
@@ -839,7 +844,8 @@ export default class BackendAISummary extends BackendAIPage {
                     </lablup-activity-panel>
                     ${
                       this.is_superadmin
-                        ? html` <lablup-activity-panel
+                        ? html`
+                            <lablup-activity-panel
                               class="footer-menu"
                               noheader
                               autowidth
@@ -881,18 +887,17 @@ export default class BackendAISummary extends BackendAIPage {
                                     <i
                                       class="fas fa-desktop larger left-end-icon"
                                     ></i>
-                                    <span
-                                      >${_t(
-                                        'summary.ChangeSystemSetting',
-                                      )}</span
-                                    >
+                                    <span>
+                                      ${_t('summary.ChangeSystemSetting')}
+                                    </span>
                                     <i
                                       class="fas fa-chevron-right right-end-icon"
                                     ></i>
                                   </div>
                                 </a>
                               </div>
-                            </lablup-activity-panel>`
+                            </lablup-activity-panel>
+                          `
                         : html``
                     }
 

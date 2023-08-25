@@ -620,8 +620,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             header="#"
             text-align="center"
             .renderer="${this._boundIndexRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <lablup-grid-sort-filter-column
             path="name"
             width="80px"
@@ -636,8 +635,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             resizable
             header="ID"
             .renderer="${this._boundIDRenderer}"
-          >
-          </lablup-grid-sort-filter-column>
+          ></lablup-grid-sort-filter-column>
           <lablup-grid-sort-filter-column
             path="host"
             width="105px"
@@ -703,8 +701,8 @@ export default class BackendAiStorageList extends BackendAIPage {
             resizable
             header="${_t('data.folders.Control')}"
             .renderer="${this._boundControlFolderListRenderer}"
-          ></vaadin-grid-column
-          >-->
+          ></vaadin-grid-column>
+          -->
         </vaadin-grid>
         <backend-ai-list-status
           id="list-status"
@@ -744,16 +742,17 @@ export default class BackendAiStorageList extends BackendAIPage {
                     <mwc-list-item
                       value="${unit}"
                       ?selected="${unit == this.maxSize.unit}"
-                      >${unit}</mwc-list-item
                     >
+                      ${unit}
+                    </mwc-list-item>
                   `,
                 )}
               </mwc-select>
             </div>
-            <span class="helper-text"
-              >${_t('data.folders.MaxFolderQuota')} :
-              ${this.maxSize.value + ' ' + this.maxSize.unit}</span
-            >
+            <span class="helper-text">
+              ${_t('data.folders.MaxFolderQuota')} :
+              ${this.maxSize.value + ' ' + this.maxSize.unit}
+            </span>
           </div>
           <mwc-select
             class="full-width fixed-position"
@@ -764,9 +763,9 @@ export default class BackendAiStorageList extends BackendAIPage {
           >
             ${Object.keys(this.permissions).map(
               (key) => html`
-                <mwc-list-item value="${this.permissions[key]}"
-                  >${this.permissions[key]}</mwc-list-item
-                >
+                <mwc-list-item value="${this.permissions[key]}">
+                  ${this.permissions[key]}
+                </mwc-list-item>
               `,
             )}
           </mwc-select>
@@ -913,19 +912,19 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-list>
             <mwc-list-item twoline>
               <span><strong>ID</strong></span>
-              <span class="monospace" slot="secondary"
-                >${this.folderInfo.id}</span
-              >
+              <span class="monospace" slot="secondary">
+                ${this.folderInfo.id}
+              </span>
             </mwc-list-item>
             ${this.folderInfo.is_owner
               ? html`
                   <mwc-list-item twoline>
-                    <span
-                      ><strong>${_t('data.folders.Ownership')}</strong></span
-                    >
-                    <span slot="secondary"
-                      >${_t('data.folders.DescYouAreFolderOwner')}</span
-                    >
+                    <span>
+                      <strong>${_t('data.folders.Ownership')}</strong>
+                    </span>
+                    <span slot="secondary">
+                      ${_t('data.folders.DescYouAreFolderOwner')}
+                    </span>
                   </mwc-list-item>
                 `
               : html``}
@@ -940,33 +939,39 @@ export default class BackendAiStorageList extends BackendAIPage {
             ${this.folderInfo.permission
               ? html`
                   <mwc-list-item twoline>
-                    <span
-                      ><strong>${_t('data.folders.Permission')}</strong></span
-                    >
+                    <span>
+                      <strong>${_t('data.folders.Permission')}</strong>
+                    </span>
                     <div slot="secondary" class="horizontal layout">
                       ${this._hasPermission(this.folderInfo, 'r')
-                        ? html` <lablup-shields
-                            app=""
-                            color="green"
-                            description="R"
-                            ui="flat"
-                          ></lablup-shields>`
+                        ? html`
+                            <lablup-shields
+                              app=""
+                              color="green"
+                              description="R"
+                              ui="flat"
+                            ></lablup-shields>
+                          `
                         : html``}
                       ${this._hasPermission(this.folderInfo, 'w')
-                        ? html` <lablup-shields
-                            app=""
-                            color="blue"
-                            description="W"
-                            ui="flat"
-                          ></lablup-shields>`
+                        ? html`
+                            <lablup-shields
+                              app=""
+                              color="blue"
+                              description="W"
+                              ui="flat"
+                            ></lablup-shields>
+                          `
                         : html``}
                       ${this._hasPermission(this.folderInfo, 'd')
-                        ? html` <lablup-shields
-                            app=""
-                            color="red"
-                            description="D"
-                            ui="flat"
-                          ></lablup-shields>`
+                        ? html`
+                            <lablup-shields
+                              app=""
+                              color="red"
+                              description="D"
+                              ui="flat"
+                            ></lablup-shields>
+                          `
                         : html``}
                     </div>
                   </mwc-list-item>
@@ -975,20 +980,20 @@ export default class BackendAiStorageList extends BackendAIPage {
             ${this.enableStorageProxy
               ? html`
                   <mwc-list-item twoline>
-                    <span
-                      ><strong>${_t('data.folders.Cloneable')}</strong></span
-                    >
+                    <span>
+                      <strong>${_t('data.folders.Cloneable')}</strong>
+                    </span>
                     <span class="monospace" slot="secondary">
                       ${this.folderInfo.cloneable
                         ? html`
-                            <mwc-icon class="cloneable" style="color:green;"
-                              >check_circle</mwc-icon
-                            >
+                            <mwc-icon class="cloneable" style="color:green;">
+                              check_circle
+                            </mwc-icon>
                           `
                         : html`
-                            <mwc-icon class="cloneable" style="color:red;"
-                              >block</mwc-icon
-                            >
+                            <mwc-icon class="cloneable" style="color:red;">
+                              block
+                            </mwc-icon>
                           `}
                     </span>
                   </mwc-list-item>
@@ -998,9 +1003,9 @@ export default class BackendAiStorageList extends BackendAIPage {
             this._checkFolderSupportSizeQuota(this.folderInfo.host)
               ? html`
                   <mwc-list-item twoline>
-                    <span
-                      ><strong>${_t('data.folders.FolderUsage')}</strong></span
-                    >
+                    <span>
+                      <strong>${_t('data.folders.FolderUsage')}</strong>
+                    </span>
                     <span class="monospace" slot="secondary">
                       ${_t('data.folders.FolderUsing')}:
                       ${this.folderInfo.used_bytes >= 0
@@ -1142,8 +1147,9 @@ export default class BackendAiStorageList extends BackendAIPage {
                                   path="item"
                                   @click="${(e) => this._gotoFolder(e)}"
                                   dest="${item}"
-                                  >${item}</a
                                 >
+                                  ${item}
+                                </a>
                               `}
                         </li>
                       `,
@@ -1183,7 +1189,9 @@ export default class BackendAiStorageList extends BackendAIPage {
                 </div>
                 <div class="horizontal layout center progress-item flex">
                   ${this.currentUploadFile?.complete
-                    ? html` <mwc-icon>check</mwc-icon> `
+                    ? html`
+                        <mwc-icon>check</mwc-icon>
+                      `
                     : html``}
                   <div
                     class="vertical layout progress-item"
@@ -1221,38 +1229,33 @@ export default class BackendAiStorageList extends BackendAIPage {
               resizable
               header="#"
               .renderer="${this._boundIndexRenderer}"
-            >
-            </vaadin-grid-column>
+            ></vaadin-grid-column>
             <vaadin-grid-sort-column
               flex-grow="2"
               resizable
               header="${_t('data.explorer.Name')}"
               path="filename"
               .renderer="${this._boundFileNameRenderer}"
-            >
-            </vaadin-grid-sort-column>
+            ></vaadin-grid-sort-column>
             <vaadin-grid-sort-column
               flex-grow="2"
               resizable
               header="${_t('data.explorer.Created')}"
               path="ctime"
               .renderer="${this._boundCreatedTimeRenderer}"
-            >
-            </vaadin-grid-sort-column>
+            ></vaadin-grid-sort-column>
             <vaadin-grid-sort-column
               path="size"
               auto-width
               resizable
               header="${_t('data.explorer.Size')}"
-            >
-            </vaadin-grid-sort-column>
+            ></vaadin-grid-sort-column>
             <vaadin-grid-column
               resizable
               auto-width
               header="${_t('data.explorer.Actions')}"
               .renderer="${this._boundControlFileListRenderer}"
-            >
-            </vaadin-grid-column>
+            ></vaadin-grid-column>
           </vaadin-grid>
         </div>
       </backend-ai-dialog>
@@ -1300,8 +1303,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                   label="${_t('data.explorer.EnterEmailAddress')}"
                   maxLength="64"
                   placeholder="${_text('maxLength.64chars')}"
-                >
-                </mwc-textfield>
+                ></mwc-textfield>
               </div>
               <div>
                 <mwc-icon-button
@@ -1362,13 +1364,11 @@ export default class BackendAiStorageList extends BackendAIPage {
             <vaadin-grid-column
               header="${_t('data.explorer.InviteeEmail')}"
               .renderer="${this._boundInviteeInfoRenderer}"
-            >
-            </vaadin-grid-column>
+            ></vaadin-grid-column>
             <vaadin-grid-column
               header="${_t('data.explorer.Permission')}"
               .renderer="${this._boundPermissionRenderer}"
-            >
-            </vaadin-grid-column>
+            ></vaadin-grid-column>
           </vaadin-grid>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
@@ -1422,30 +1422,30 @@ export default class BackendAiStorageList extends BackendAIPage {
           </p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button outlined @click="${(e) => this._hideDialog(e)}"
-            >${_t('button.Cancel')}</mwc-button
-          >
-          <mwc-button raised @click="${(e) => this._deleteFileWithCheck(e)}"
-            >${_t('button.Okay')}</mwc-button
-          >
+          <mwc-button outlined @click="${(e) => this._hideDialog(e)}">
+            ${_t('button.Cancel')}
+          </mwc-button>
+          <mwc-button raised @click="${(e) => this._deleteFileWithCheck(e)}">
+            ${_t('button.Okay')}
+          </mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="download-file-dialog" fixed backdrop>
         <span slot="title">${_t('data.explorer.DownloadFile')}</span>
         <div slot="content">
           <a href="${this.downloadURL}">
-            <mwc-button outlined
-              >${_t('data.explorer.TouchToDownload')}</mwc-button
-            >
+            <mwc-button outlined>
+              ${_t('data.explorer.TouchToDownload')}
+            </mwc-button>
           </a>
         </div>
         <div
           slot="footer"
           class="horizontal end-justified flex layout distancing"
         >
-          <mwc-button @click="${(e) => this._hideDialog(e)}"
-            >${_t('button.Close')}</mwc-button
-          >
+          <mwc-button @click="${(e) => this._hideDialog(e)}">
+            ${_t('button.Close')}
+          </mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="file-extension-change-dialog" fixed backdrop>
@@ -1508,13 +1508,13 @@ export default class BackendAiStorageList extends BackendAIPage {
             <mwc-checkbox
               @change="${(e) => this._toggleShowFilebrowserNotification(e)}"
             ></mwc-checkbox>
-            <span style="font-size:0.8rem;"
-              >${_text('dialog.hide.DonotShowThisAgain')}</span
-            >
+            <span style="font-size:0.8rem;">
+              ${_text('dialog.hide.DonotShowThisAgain')}
+            </span>
           </div>
-          <mwc-button unelevated @click="${(e) => this._hideDialog(e)}"
-            >${_t('button.Confirm')}</mwc-button
-          >
+          <mwc-button unelevated @click="${(e) => this._hideDialog(e)}">
+            ${_t('button.Confirm')}
+          </mwc-button>
         </div>
       </backend-ai-dialog>
     `;
@@ -1600,20 +1600,22 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   permissionRenderer(root, column?, rowData?) {
     render(
-      html` <div class="vertical layout">
-        <mwc-select label="${_t('data.folders.SelectPermission')}">
-          <option ?selected=${rowData.item.perm === 'ro'} value="ro">
-            ${_t('data.folders.View')}
-          </option>
-          <option ?selected=${rowData.item.perm === 'rw'} value="rw">
-            ${_t('data.folders.Edit')}
-          </option>
-          <option ?selected=${rowData.item.perm === 'wd'} value="wd">
-            ${_t('data.folders.EditDelete')}
-          </option>
-          <option value="kickout">${_t('data.folders.KickOut')}</option>
-        </mwc-select>
-      </div>`,
+      html`
+        <div class="vertical layout">
+          <mwc-select label="${_t('data.folders.SelectPermission')}">
+            <option ?selected=${rowData.item.perm === 'ro'} value="ro">
+              ${_t('data.folders.View')}
+            </option>
+            <option ?selected=${rowData.item.perm === 'rw'} value="rw">
+              ${_t('data.folders.Edit')}
+            </option>
+            <option ?selected=${rowData.item.perm === 'wd'} value="wd">
+              ${_t('data.folders.EditDelete')}
+            </option>
+            <option value="kickout">${_t('data.folders.KickOut')}</option>
+          </mwc-select>
+        </div>
+      `,
       root,
     );
     /* this.shadowRoot?.querySelector('mwc-select')?.requestUpdate().then(() => {
@@ -1697,7 +1699,9 @@ export default class BackendAiStorageList extends BackendAIPage {
         <vaadin-item class="progress-item">
           <div>
             ${rowData.item.complete
-              ? html` <mwc-icon>check</mwc-icon> `
+              ? html`
+                  <mwc-icon>check</mwc-icon>
+                `
               : html``}
           </div>
         </vaadin-item>
@@ -1733,7 +1737,9 @@ export default class BackendAiStorageList extends BackendAIPage {
   inviteeInfoRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html` <div>${rowData.item.shared_to.email}</div> `,
+      html`
+        <div>${rowData.item.shared_to.email}</div>
+      `,
       root,
     );
   }
@@ -1811,7 +1817,9 @@ export default class BackendAiStorageList extends BackendAIPage {
   indexRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html`${this._indexFrom1(rowData.index)}`,
+      html`
+        ${this._indexFrom1(rowData.index)}
+      `,
       root,
     );
   }
@@ -2103,28 +2111,34 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         <div class="horizontal center-justified wrap layout">
           ${this._hasPermission(rowData.item, 'r')
-            ? html` <lablup-shields
-                app=""
-                color="green"
-                description="R"
-                ui="flat"
-              ></lablup-shields>`
+            ? html`
+                <lablup-shields
+                  app=""
+                  color="green"
+                  description="R"
+                  ui="flat"
+                ></lablup-shields>
+              `
             : html``}
           ${this._hasPermission(rowData.item, 'w')
-            ? html` <lablup-shields
-                app=""
-                color="blue"
-                description="W"
-                ui="flat"
-              ></lablup-shields>`
+            ? html`
+                <lablup-shields
+                  app=""
+                  color="blue"
+                  description="W"
+                  ui="flat"
+                ></lablup-shields>
+              `
             : html``}
           ${this._hasPermission(rowData.item, 'd')
-            ? html` <lablup-shields
-                app=""
-                color="red"
-                description="D"
-                ui="flat"
-              ></lablup-shields>`
+            ? html`
+                <lablup-shields
+                  app=""
+                  color="red"
+                  description="D"
+                  ui="flat"
+                ></lablup-shields>
+              `
             : html``}
         </div>
       `,
@@ -2144,12 +2158,14 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         ${rowData.item.is_owner
-          ? html` <div
-              class="horizontal center-justified center layout"
-              style="pointer-events: none;"
-            >
-              <mwc-icon-button class="fg green" icon="done"></mwc-icon-button>
-            </div>`
+          ? html`
+              <div
+                class="horizontal center-justified center layout"
+                style="pointer-events: none;"
+              >
+                <mwc-icon-button class="fg green" icon="done"></mwc-icon-button>
+              </div>
+            `
           : html``}
       `,
       root,
@@ -2168,9 +2184,11 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         ${rowData.item.cloneable
-          ? html` <div class="horizontal center-justified center layout">
-              <mwc-icon-button class="fg green" icon="done"></mwc-icon-button>
-            </div>`
+          ? html`
+              <div class="horizontal center-justified center layout">
+                <mwc-icon-button class="fg green" icon="done"></mwc-icon-button>
+              </div>
+            `
           : html``}
       `,
       root,
@@ -2209,8 +2227,12 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         <div class="layout vertical center-justified">
           ${rowData.item.type == 'user'
-            ? html`<mwc-icon>person</mwc-icon>`
-            : html`<mwc-icon class="fg green">group</mwc-icon>`}
+            ? html`
+                <mwc-icon>person</mwc-icon>
+              `
+            : html`
+                <mwc-icon class="fg green">group</mwc-icon>
+              `}
         </div>
       `,
       root,

@@ -1361,9 +1361,9 @@ export default class PipelineConfigurationForm extends LitElement {
     render(
       html`
         <div class="horizontal layout center">
-          <span id="vfolder-header-title"
-            >${_t('session.launcher.FolderAlias')}</span
-          >
+          <span id="vfolder-header-title">
+            ${_t('session.launcher.FolderAlias')}
+          </span>
           <mwc-icon-button
             icon="info"
             class="fg green info"
@@ -1422,13 +1422,13 @@ export default class PipelineConfigurationForm extends LitElement {
         required
         fixedMenuPosition
       >
-        <mwc-list-item value="Choose Pipeline Type" disabled
-          >Choose Pipeline Type</mwc-list-item
-        >
+        <mwc-list-item value="Choose Pipeline Type" disabled>
+          Choose Pipeline Type
+        </mwc-list-item>
         ${this.pipelineTypes.map((item) => {
-          return html`<mwc-list-item id="${item}" value="${item}"
-            >${item}</mwc-list-item
-          >`;
+          return html`
+            <mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>
+          `;
         })}
       </mwc-select>
     `;
@@ -1470,21 +1470,26 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   renderScalingGroupTemplate() {
     // language=HTML
-    return html` <mwc-select
-      class="full-width"
-      id="scaling-group-select"
-      label="Scaling Group"
-      fixedMenuPosition
-    >
-      ${this.scalingGroups.map((item, idx) => {
-        return html`<mwc-list-item
-          id="${item}"
-          value="${item}"
-          ?selected="${idx === 0}"
-          >${item}</mwc-list-item
-        >`;
-      })}
-    </mwc-select>`;
+    return html`
+      <mwc-select
+        class="full-width"
+        id="scaling-group-select"
+        label="Scaling Group"
+        fixedMenuPosition
+      >
+        ${this.scalingGroups.map((item, idx) => {
+          return html`
+            <mwc-list-item
+              id="${item}"
+              value="${item}"
+              ?selected="${idx === 0}"
+            >
+              ${item}
+            </mwc-list-item>
+          `;
+        })}
+      </mwc-select>
+    `;
   }
 
   /**
@@ -1494,7 +1499,8 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   renderEnvironmentTemplate() {
     // language=HTML
-    return html` <mwc-select
+    return html`
+      <mwc-select
         class="full-width"
         id="environment-select"
         icon="code"
@@ -1551,8 +1557,7 @@ export default class PipelineConfigurationForm extends LitElement {
                           class="fg blue info"
                           @click="${(e) =>
                             this._showKernelDescription(e, item)}"
-                        >
-                        </mwc-icon-button>
+                        ></mwc-icon-button>
                       </div>
                     </div>
                   </mwc-list-item>
@@ -1600,15 +1605,15 @@ export default class PipelineConfigurationForm extends LitElement {
                         ? item.app
                         : ''}"
                       description="${item.tag}"
-                    >
-                    </lablup-shields>
+                    ></lablup-shields>
                   `,
                 )}
               </div>
             </mwc-list-item>
           `,
         )}
-      </mwc-select>`;
+      </mwc-select>
+    `;
   }
 
   /**
@@ -1628,9 +1633,9 @@ export default class PipelineConfigurationForm extends LitElement {
         useLineWrapping
         required
       ></lablup-codemirror>
-      <span id="codemirror-validation-message" style="display:none;"
-        >This command field is required.</span
-      >
+      <span id="codemirror-validation-message" style="display:none;">
+        This command field is required.
+      </span>
     `;
   }
 
@@ -1641,14 +1646,13 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   renderGeneralTabTemplate() {
     // language=HTML
-    return html` <div
-      id="general"
-      class="vertical layout center flex tab-content"
-    >
-      ${this.renderNameTemplate()} ${this.renderPipelineTypeTemplate()}
-      ${this.renderScalingGroupTemplate()} ${this.renderEnvironmentTemplate()}
-      ${this.renderDescriptionTemplate()}
-    </div>`;
+    return html`
+      <div id="general" class="vertical layout center flex tab-content">
+        ${this.renderNameTemplate()} ${this.renderPipelineTypeTemplate()}
+        ${this.renderScalingGroupTemplate()} ${this.renderEnvironmentTemplate()}
+        ${this.renderDescriptionTemplate()}
+      </div>
+    `;
   }
 
   /**
@@ -1675,14 +1679,16 @@ export default class PipelineConfigurationForm extends LitElement {
    * @returns {string} stringified html
    */
   renderResourcesTaskTabTemplate(isRequired = false) {
-    return html` <div
-      id="resources"
-      class="vertical layout center flex tab-content"
-      style="display:none;"
-    >
-      ${this.renderScalingGroupTemplate()} ${this.renderEnvironmentTemplate()}
-      ${this.renderResourceContentTemplate(isRequired)}
-    </div>`;
+    return html`
+      <div
+        id="resources"
+        class="vertical layout center flex tab-content"
+        style="display:none;"
+      >
+        ${this.renderScalingGroupTemplate()} ${this.renderEnvironmentTemplate()}
+        ${this.renderResourceContentTemplate(isRequired)}
+      </div>
+    `;
   }
 
   /**
@@ -1693,13 +1699,15 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   renderResourcesTabTemplate(isRequired = false) {
     // language=HTML
-    return html` <div
-      id="resources"
-      class="vertical layout center flex tab-content"
-      style="display:none;"
-    >
-      ${this.renderResourceContentTemplate(isRequired)}
-    </div>`;
+    return html`
+      <div
+        id="resources"
+        class="vertical layout center flex tab-content"
+        style="display:none;"
+      >
+        ${this.renderResourceContentTemplate(isRequired)}
+      </div>
+    `;
   }
 
   /**
@@ -1756,43 +1764,46 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   renderMountsTabTemplate() {
     // language=HTML
-    return html` <div
-      id="mounts"
-      class="vertical layout center flex tab-content"
-      style="display:none;"
-    >
-      <mwc-select
-        class="full-width"
-        id="storage-mount-select"
-        icon="storage"
-        label="Storage hosts"
-        ?required=${this.allowedStorageHostList.length > 0}
-        style="z-index:10"
+    return html`
+      <div
+        id="mounts"
+        class="vertical layout center flex tab-content"
+        style="display:none;"
       >
-        ${this.allowedStorageHostList.map((storageHost) => {
-          return html`
-            <mwc-list-item
-              ?selected="${storageHost === this.selectedStorageHost}"
-              value="${storageHost}"
-              >${storageHost}</mwc-list-item
-            >
-          `;
-        })}
-      </mwc-select>
-      <mwc-textfield
-        id="mount-folder-input"
-        label="Pipeline Folder Name (Optional)"
-        type="text"
-        maxLength="64"
-        placeholder=""
-        helper="${_text('maxLength.64chars')}"
-      ></mwc-textfield>
-      <lablup-expansion class="vfolder" name="vfolder">
-        <span slot="title">Additional mount (Optional)</span>
-        ${this.renderAdditionalVFolderListTemplate()}
-        ${this.renderMountedResultTemplate()}
-      </lablup-expansion>
-    </div>`;
+        <mwc-select
+          class="full-width"
+          id="storage-mount-select"
+          icon="storage"
+          label="Storage hosts"
+          ?required=${this.allowedStorageHostList.length > 0}
+          style="z-index:10"
+        >
+          ${this.allowedStorageHostList.map((storageHost) => {
+            return html`
+              <mwc-list-item
+                ?selected="${storageHost === this.selectedStorageHost}"
+                value="${storageHost}"
+              >
+                ${storageHost}
+              </mwc-list-item>
+            `;
+          })}
+        </mwc-select>
+        <mwc-textfield
+          id="mount-folder-input"
+          label="Pipeline Folder Name (Optional)"
+          type="text"
+          maxLength="64"
+          placeholder=""
+          helper="${_text('maxLength.64chars')}"
+        ></mwc-textfield>
+        <lablup-expansion class="vfolder" name="vfolder">
+          <span slot="title">Additional mount (Optional)</span>
+          ${this.renderAdditionalVFolderListTemplate()}
+          ${this.renderMountedResultTemplate()}
+        </lablup-expansion>
+      </div>
+    `;
   }
 
   /**
@@ -1802,14 +1813,16 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   renderMountsTaskTabTemplate() {
     // language=HTML
-    return html` <div
-      id="mounts"
-      class="vertical layout center flex tab-content"
-      style="display:none;"
-    >
-      ${this.renderAdditionalVFolderListTemplate()}
-      ${this.renderMountedResultTemplate(this.pipelineVfolder)}
-    </div>`;
+    return html`
+      <div
+        id="mounts"
+        class="vertical layout center flex tab-content"
+        style="display:none;"
+      >
+        ${this.renderAdditionalVFolderListTemplate()}
+        ${this.renderMountedResultTemplate(this.pipelineVfolder)}
+      </div>
+    `;
   }
 
   /**
@@ -1865,29 +1878,40 @@ export default class PipelineConfigurationForm extends LitElement {
       <div class="vfolder-mounted-list">
         ${this.selectedVfolders.length > 0 ||
         this.autoMountedVfolders.length > 0
-          ? html` <ul class="vfolder-list">
-              ${[
-                ...this.selectedVfolders,
-                pipelineVfolder !== '' ? pipelineVfolder : null,
-              ].map(
-                (item) => html`
-                  <li>
-                    <mwc-icon>folder_open</mwc-icon>
-                    ${item}
-                    ${item in this.folderMapping
-                      ? this.folderMapping[item].startsWith('/')
-                        ? html` (&#10140; ${this.folderMapping[item]})`
-                        : html`(&#10140; /home/work/${this.folderMapping[item]})`
-                      : html`(&#10140; /home/work/${item})`}
-                  </li>
-                `,
-              )}
-              ${this.autoMountedVfolders.map(
-                (item) => html`
-                  <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
-                `,
-              )}
-            </ul>`
+          ? html`
+              <ul class="vfolder-list">
+                ${[
+                  ...this.selectedVfolders,
+                  pipelineVfolder !== '' ? pipelineVfolder : null,
+                ].map(
+                  (item) => html`
+                    <li>
+                      <mwc-icon>folder_open</mwc-icon>
+                      ${item}
+                      ${item in this.folderMapping
+                        ? this.folderMapping[item].startsWith('/')
+                          ? html`
+                              (&#10140; ${this.folderMapping[item]})
+                            `
+                          : html`
+                              (&#10140; /home/work/${this.folderMapping[item]})
+                            `
+                        : html`
+                            (&#10140; /home/work/${item})
+                          `}
+                    </li>
+                  `,
+                )}
+                ${this.autoMountedVfolders.map(
+                  (item) => html`
+                    <li>
+                      <mwc-icon>folder_special</mwc-icon>
+                      ${item.name}
+                    </li>
+                  `,
+                )}
+              </ul>
+            `
           : html`
               <div class="vertical layout center flex blank-box-large">
                 <span>${_t('session.launcher.NoFolderMounted')}</span>

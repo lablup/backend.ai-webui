@@ -1530,11 +1530,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                   >
                     <span
                       style="font-weight:600;margin-left:20px;margin-right:15px;"
-                      >Endpoint URL:
-                    </span>
-                    <span style="font-family:monospace;"
-                      >${this.endpointURL}</span
                     >
+                      Endpoint URL:
+                    </span>
+                    <span style="font-family:monospace;">
+                      ${this.endpointURL}
+                    </span>
                   </div>
                 `
               : html``
@@ -1550,21 +1551,23 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                         ${item.title}
                       </h3>
                     `
-                  : html` <div
-                      class="vertical layout center center-justified app-icon"
-                    >
-                      <mwc-icon-button
-                        class="fg apps green"
-                        .app="${item.name}"
-                        .app-name="${item.name}"
-                        .url-postfix="${item.redirect}"
-                        @click="${(e) =>
-                          this._runThisAppWithConfirmationIfNeeded(e)}"
+                  : html`
+                      <div
+                        class="vertical layout center center-justified app-icon"
                       >
-                        <img src="${item.src}" />
-                      </mwc-icon-button>
-                      <span class="label">${item.title}</span>
-                    </div>`}
+                        <mwc-icon-button
+                          class="fg apps green"
+                          .app="${item.name}"
+                          .app-name="${item.name}"
+                          .url-postfix="${item.redirect}"
+                          @click="${(e) =>
+                            this._runThisAppWithConfirmationIfNeeded(e)}"
+                        >
+                          <img src="${item.src}" />
+                        </mwc-icon-button>
+                        <span class="label">${item.title}</span>
+                      </div>
+                    `}
               `,
             )}
           </div>

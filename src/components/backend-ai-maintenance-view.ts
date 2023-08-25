@@ -117,8 +117,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
               label="${_t('maintenance.RecalculateUsage')}"
               icon="refresh"
               @click="${() => this.recalculate_usage()}"
-            >
-            </mwc-button>
+            ></mwc-button>
           </div>
         </lablup-activity-panel>
         <lablup-activity-panel title="${_t('maintenance.ImagesEnvironment')}">
@@ -137,8 +136,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
                 label="${_t('maintenance.RescanImages')}"
                 icon="refresh"
                 @click="${() => this.rescan_images()}"
-              >
-              </mwc-button>
+              ></mwc-button>
             </div>
             <div
               class="horizontal flex layout wrap setting-item temporarily-hide"
@@ -154,8 +152,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
                 disabled
                 label="${_t('maintenance.CleanupImages')}"
                 icon="delete"
-              >
-              </mwc-button>
+              ></mwc-button>
             </div>
           </div>
         </lablup-activity-panel>

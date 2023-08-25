@@ -299,7 +299,12 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
 
   _indexRenderer(root, column, rowData) {
     const idx = rowData.index + 1;
-    render(html` <div>${idx}</div> `, root);
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root,
+    );
   }
 
   _launchDialogById(id: string) {
@@ -717,8 +722,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           icon="add"
           label="${_t('button.Add')}"
           @click=${this._launchCreateDialog}
-        >
-        </mwc-button>
+        ></mwc-button>
       </h4>
       <vaadin-grid
         theme="row-stripes column-borders compact"
@@ -731,51 +735,44 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           header="#"
           width="40px"
           .renderer=${this._indexRenderer}
-        >
-        </vaadin-grid-column>
+        ></vaadin-grid-column>
         <vaadin-grid-column
           frozen
           flex-grow="1"
           header="${_t('resourceGroup.Name')}"
           path="name"
           resizable
-        >
-        </vaadin-grid-column>
+        ></vaadin-grid-column>
         <vaadin-grid-column
           flex-grow="1"
           header="${_t('resourceGroup.Description')}"
           path="description"
           resizable
-        >
-        </vaadin-grid-column>
+        ></vaadin-grid-column>
         <vaadin-grid-column
           flex-grow="1"
           header="${_t('resourceGroup.ActiveStatus')}"
           resizable
           .renderer=${this._activeStatusRenderer}
-        >
-        </vaadin-grid-column>
+        ></vaadin-grid-column>
         <vaadin-grid-column
           flex-grow="1"
           header="${_t('resourceGroup.PublicStatus')}"
           resizable
           .renderer=${this._isPublicRenderer}
-        >
-        </vaadin-grid-column>
+        ></vaadin-grid-column>
         <vaadin-grid-column
           flex-grow="1"
           header="${_t('resourceGroup.Driver')}"
           path="driver"
           resizable
-        >
-        </vaadin-grid-column>
+        ></vaadin-grid-column>
         <vaadin-grid-column
           flex-grow="1"
           header="${_t('resourceGroup.Scheduler')}"
           path="scheduler"
           resizable
-        >
-        </vaadin-grid-column>
+        ></vaadin-grid-column>
         ${this.enableWSProxyAddr
           ? html`
               <vaadin-grid-column
@@ -783,8 +780,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                 header="${_t('resourceGroup.WsproxyAddress')}"
                 path="wsproxy_addr"
                 resizable
-              >
-              </vaadin-grid-column>
+              ></vaadin-grid-column>
             `
           : html``}
         <vaadin-grid-column
@@ -793,8 +789,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           width="150px"
           header="${_t('general.Control')}"
           .renderer=${this._boundControlRenderer}
-        >
-        </vaadin-grid-column>
+        ></vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog
         id="resource-group-dialog"
@@ -805,8 +800,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         <span slot="title">
           ${this.resourceGroupInfo?.name
             ? _t('resourceGroup.ModifyResourceGroup')
-            : _t('resourceGroup.CreateResourceGroup')}</span
-        >
+            : _t('resourceGroup.CreateResourceGroup')}
+        </span>
         <div slot="content" class="login-panel intro centered">
           ${Object.keys(this.resourceGroupInfo).length === 0
             ? html`
@@ -899,8 +894,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               ?selected="${Object.keys(this.resourceGroupInfo).length > 0
                 ? this.resourceGroupInfo.is_active
                 : true}"
-            >
-            </mwc-switch>
+            ></mwc-switch>
             ${this.enableIsPublic
               ? html`
                   <p style="margin-left: 18px;color:rgba(0, 0, 0, 0.6);">
@@ -912,8 +906,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                     ?selected="${Object.keys(this.resourceGroupInfo).length > 0
                       ? this.resourceGroupInfo.is_public
                       : true}"
-                  >
-                  </mwc-switch>
+                  ></mwc-switch>
                 `
               : html``}
           </div>
@@ -921,9 +914,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
             ? html`
                 <br />
                 <lablup-expansion id="scheduler-options-input-form">
-                  <span slot="title"
-                    >${_t('resourceGroup.SchedulerOptions')}</span
-                  >
+                  <span slot="title">
+                    ${_t('resourceGroup.SchedulerOptions')}
+                  </span>
                   <div class="vertical layout flex">
                     <mwc-textfield
                       type="number"
@@ -964,8 +957,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                   icon="save"
                   label="${_t('button.Save')}"
                   @click="${this._modifyResourceGroup}"
-                >
-                </mwc-button>
+                ></mwc-button>
               `
             : html`
                 <mwc-button
@@ -1000,8 +992,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
             label="${_t('button.Delete')}"
             style="box-sizing: border-box;"
             @click="${this._deleteResourceGroup}"
-          >
-          </mwc-button>
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog
@@ -1011,10 +1002,11 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         blockscrolling
       >
         ${Object.keys(this.resourceGroupInfo).length > 0
-          ? html` <span slot="title" class="horizontal center layout">
-                <span style="margin-right:15px;"
-                  >${_text('resourceGroup.ResourceGroupDetail')}</span
-                >
+          ? html`
+              <span slot="title" class="horizontal center layout">
+                <span style="margin-right:15px;">
+                  ${_text('resourceGroup.ResourceGroupDetail')}
+                </span>
               </span>
               <div slot="content" class="intro">
                 <div class="horizontal layout" style="margin-bottom:15px;">
@@ -1031,9 +1023,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                       </vaadin-item>
                       <vaadin-item>
                         <div>
-                          <strong
-                            >${_text('resourceGroup.ActiveStatus')}</strong
-                          >
+                          <strong>
+                            ${_text('resourceGroup.ActiveStatus')}
+                          </strong>
                         </div>
                         <lablup-shields
                           app=""
@@ -1050,11 +1042,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                         ? html`
                             <vaadin-item>
                               <div>
-                                <strong
-                                  >${_text(
-                                    'resourceGroup.PublicStatus',
-                                  )}</strong
-                                >
+                                <strong>
+                                  ${_text('resourceGroup.PublicStatus')}
+                                </strong>
                               </div>
                               <lablup-shields
                                 app=""
@@ -1089,11 +1079,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                         ? html`
                             <vaadin-item>
                               <div>
-                                <strong
-                                  >${_text(
-                                    'resourceGroup.WsproxyAddress',
-                                  )}</strong
-                                >
+                                <strong>
+                                  ${_text('resourceGroup.WsproxyAddress')}
+                                </strong>
                               </div>
                               <div class="scheduler-option-value">
                                 ${this.resourceGroupInfo?.wsproxy_addr ??
@@ -1118,38 +1106,45 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                                 ),
                               ).map(([key, value]: any) => {
                                 if (key === 'allowed_session_types') {
-                                  return html` <vaadin-item>
-                                    <div>
-                                      <strong>allowed session types</strong>
-                                    </div>
-                                    <div class="scheduler-option-value">
-                                      ${value.join(', ')}
-                                    </div>
-                                  </vaadin-item>`;
-                                } else if (key === 'pending_timeout') {
-                                  return html` <vaadin-item>
-                                    <div><strong>pending timeout</strong></div>
-                                    <div class="scheduler-option-value">
-                                      ${value +
-                                      ' ' +
-                                      _text('resourceGroup.TimeoutSeconds')}
-                                    </div>
-                                  </vaadin-item>`;
-                                } else if (key === 'config') {
-                                  if (value['num_retries_to_skip']) {
-                                    return html` <vaadin-item>
+                                  return html`
+                                    <vaadin-item>
                                       <div>
-                                        <strong
-                                          ># retries to skip pending
-                                          session</strong
-                                        >
+                                        <strong>allowed session types</strong>
                                       </div>
                                       <div class="scheduler-option-value">
-                                        ${value['num_retries_to_skip'] +
-                                        ' ' +
-                                        _text('resourceGroup.RetriesToSkip')}
+                                        ${value.join(', ')}
                                       </div>
-                                    </vaadin-item>`;
+                                    </vaadin-item>
+                                  `;
+                                } else if (key === 'pending_timeout') {
+                                  return html`
+                                    <vaadin-item>
+                                      <div>
+                                        <strong>pending timeout</strong>
+                                      </div>
+                                      <div class="scheduler-option-value">
+                                        ${value +
+                                        ' ' +
+                                        _text('resourceGroup.TimeoutSeconds')}
+                                      </div>
+                                    </vaadin-item>
+                                  `;
+                                } else if (key === 'config') {
+                                  if (value['num_retries_to_skip']) {
+                                    return html`
+                                      <vaadin-item>
+                                        <div>
+                                          <strong>
+                                            # retries to skip pending session
+                                          </strong>
+                                        </div>
+                                        <div class="scheduler-option-value">
+                                          ${value['num_retries_to_skip'] +
+                                          ' ' +
+                                          _text('resourceGroup.RetriesToSkip')}
+                                        </div>
+                                      </vaadin-item>
+                                    `;
                                   } else {
                                     return '';
                                   }
@@ -1174,10 +1169,10 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                   <mwc-textarea
                     readonly
                     value="${this.resourceGroupInfo?.description ?? ''}"
-                  >
-                  </mwc-textarea>
+                  ></mwc-textarea>
                 </div>
-              </div>`
+              </div>
+            `
           : ``}
       </backend-ai-dialog>
     `;

@@ -343,8 +343,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
             icon="add"
             label="${_t('button.Add')}"
             @click="${() => this._openComponentAddDialog()}"
-          >
-          </mwc-button>
+          ></mwc-button>
           ${this.componentsSelected.length === 1
             ? html`
                 <mwc-button
@@ -354,8 +353,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
                   icon="edit"
                   label="${_t('button.Edit')}"
                   @click="${() => this._openComponentUpdateDialog()}"
-                >
-                </mwc-button>
+                ></mwc-button>
               `
             : html``}
           ${this.componentsSelected.length > 0
@@ -367,8 +365,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
                   icon="delete"
                   label="${_t('button.Delete')}"
                   @click="${() => this._openComponentDeleteDialog()}"
-                >
-                </mwc-button>
+                ></mwc-button>
               `
             : html``}
           ${this.componentsSelected.length === 2
@@ -380,8 +377,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
                   icon="trending_up"
                   label="${_t('pipeline.Component.Connect')}"
                   @click="${() => this._connectTwoComponents()}"
-                >
-                </mwc-button>
+                ></mwc-button>
               `
             : html``}
           <span class="flex"></span>
@@ -391,8 +387,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
             icon="play_arrow"
             label="${_t('pipeline.RunPipeline')}"
             @click="${() => this._runPipeline()}"
-          >
-          </mwc-button>
+          ></mwc-button>
         </div>
         <backend-ai-pipeline-component-create
           ?active="${this.active}"

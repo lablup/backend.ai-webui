@@ -2952,9 +2952,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     render(
       html`
         <div class="horizontal layout center">
-          <span id="vfolder-header-title"
-            >${_t('session.launcher.FolderAlias')}</span
-          >
+          <span id="vfolder-header-title">
+            ${_t('session.launcher.FolderAlias')}
+          </span>
           <mwc-icon-button
             icon="info"
             class="fg green info"
@@ -4433,8 +4433,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         ?disabled="${!this.enableLaunchButton}"
         icon="power_settings_new"
         @click="${() => this._launchSessionDialog()}"
-        >${_t('session.launcher.Start')}</mwc-button
       >
+        ${_t('session.launcher.Start')}
+      </mwc-button>
       <backend-ai-dialog
         id="new-session-dialog"
         narrowLayout
@@ -4443,11 +4444,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         persistent
         @dialog-closed="${() => this._toggleScheduleTime(true)}"
       >
-        <span slot="title"
-          >${this.newSessionDialogTitle
+        <span slot="title">
+          ${this.newSessionDialogTitle
             ? this.newSessionDialogTitle
-            : _t('session.launcher.StartNewSession')}</span
-        >
+            : _t('session.launcher.StartNewSession')}
+        </span>
         <form
           slot="content"
           id="launch-session-form"
@@ -4544,8 +4545,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                 class="fg blue info"
                                 @click="${(e) =>
                                   this._showKernelDescription(e, item)}"
-                              >
-                              </mwc-icon-button>
+                              ></mwc-icon-button>
                             </div>
                           </div>
                         </mwc-list-item>
@@ -4612,8 +4612,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                     : ''}"
                                   description="${item.tag}"
                                   class="horizontal layout center center-justified"
-                                >
-                                </lablup-shields>
+                                ></lablup-shields>
                               `,
                             )}
                           </div>
@@ -4645,16 +4644,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               validationMessage="${_text(
                 'session.launcher.SessionNameAllowCondition',
               )}"
-            >
-            </mwc-textfield>
+            ></mwc-textfield>
             <div
               class="vertical layout center flex"
               id="batch-mode-config-section"
               style="display:none;"
             >
-              <span class="launcher-item-title" style="width:386px;"
-                >${_t('session.launcher.BatchModeConfig')}</span
-              >
+              <span class="launcher-item-title" style="width:386px;">
+                ${_t('session.launcher.BatchModeConfig')}
+              </span>
               <div class="horizontal layout start-justified">
                 <div style="width:370px;font-size:12px;">
                   ${_t('session.launcher.StartUpCommand')}*
@@ -4692,9 +4690,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               rightIconName="settings"
               .rightCustomFunction="${() => this._showEnvDialog()}"
             >
-              <span slot="title"
-                >${_t('session.launcher.SetEnvironmentVariable')}</span
-              >
+              <span slot="title">
+                ${_t('session.launcher.SetEnvironmentVariable')}
+              </span>
               <div class="environment-variables-container">
                 ${this.environ.length > 0
                   ? html`
@@ -4747,9 +4745,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     .rightCustomFunction="${() =>
                       this._showPreOpenPortDialog()}"
                   >
-                    <span slot="title"
-                      >${_t('session.launcher.SetPreopenPorts')}</span
-                    >
+                    <span slot="title">
+                      ${_t('session.launcher.SetPreopenPorts')}
+                    </span>
                     <div class="preopen-ports-container">
                       ${this.preOpenPorts.length > 0
                         ? html`
@@ -4770,11 +4768,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                           `
                         : html`
                             <div class="vertical layout center flex blank-box">
-                              <span
-                                >${_t(
+                              <span>
+                                ${_t(
                                   'session.launcher.NoPreOpenPortsConfigured',
-                                )}</span
-                              >
+                                )}
+                              </span>
                             </div>
                           `}
                     </div>
@@ -4785,9 +4783,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               name="ownership"
               style="--expansion-content-padding:15px 0;"
             >
-              <span slot="title"
-                >${_t('session.launcher.SetSessionOwner')}</span
-              >
+              <span slot="title">
+                ${_t('session.launcher.SetSessionOwner')}
+              </span>
               <div class="vertical layout">
                 <div class="horizontal center layout">
                   <mwc-textfield
@@ -4804,8 +4802,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     icon="refresh"
                     class="blue"
                     @click="${() => this._fetchSessionOwnerGroups()}"
-                  >
-                  </mwc-icon-button>
+                  ></mwc-icon-button>
                 </div>
                 <mwc-select
                   id="owner-accesskey"
@@ -4914,11 +4911,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ? html``
                   : html`
                       <div class="vertical layout center flex blank-box-medium">
-                        <span
-                          >${_t(
-                            'session.launcher.NoAvailableFolderToMount',
-                          )}</span
-                        >
+                        <span>
+                          ${_t('session.launcher.NoAvailableFolderToMount')}
+                        </span>
                       </div>
                     `}
               </div>
@@ -4930,9 +4925,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 ? 'block'
                 : 'none'};"
             >
-              <span slot="title"
-                >${_t('session.launcher.ModelStorageToMount')}</span
-              >
+              <span slot="title">
+                ${_t('session.launcher.ModelStorageToMount')}
+              </span>
               <div class="vfolder-list">
                 <vaadin-grid
                   theme="row-stripes column-borders compact"
@@ -4978,20 +4973,28 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                         ${this.selectedVfolders.map(
                           (item) => html`
                             <li>
-                              <mwc-icon>folder_open</mwc-icon>${item}
+                              <mwc-icon>folder_open</mwc-icon>
+                              ${item}
                               ${item in this.folderMapping
                                 ? this.folderMapping[item].startsWith('/')
-                                  ? html` (&#10140; ${this.folderMapping[item]})`
-                                  : html`(&#10140;
-                                    /home/work/${this.folderMapping[item]})`
-                                : html`(&#10140; /home/work/${item})`}
+                                  ? html`
+                                      (&#10140; ${this.folderMapping[item]})
+                                    `
+                                  : html`
+                                      (&#10140;
+                                      /home/work/${this.folderMapping[item]})
+                                    `
+                                : html`
+                                    (&#10140; /home/work/${item})
+                                  `}
                             </li>
                           `,
                         )}
                         ${this.autoMountedVfolders.map(
                           (item) => html`
                             <li>
-                              <mwc-icon>folder_special</mwc-icon>${item.name}
+                              <mwc-icon>folder_special</mwc-icon>
+                              ${item.name}
                             </li>
                           `,
                         )}
@@ -5080,7 +5083,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                         <div style="width:110px;">${item.name}</div>
                         <div style="display:none">(</div>
                         <div style="width:50px;text-align:right;">
-                          ${item.cpu}<span style="display:none">CPU</span>
+                          ${item.cpu}
+                          <span style="display:none">CPU</span>
                         </div>
                         <div style="width:50px;text-align:right;">
                           ${item.mem}GiB
@@ -5096,29 +5100,45 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                 ).toFixed(2)}
                                 GiB
                               `
-                            : html`64MB`}
+                            : html`
+                                64MB
+                              `}
                         </div>
                         <div style="width:80px;text-align:right;">
                           ${item.cuda_device && item.cuda_device > 0
-                            ? html`${item.cuda_device} GPU`
+                            ? html`
+                                ${item.cuda_device} GPU
+                              `
                             : html``}
                           ${item.cuda_shares && item.cuda_shares > 0
-                            ? html`${item.cuda_shares} GPU`
+                            ? html`
+                                ${item.cuda_shares} GPU
+                              `
                             : html``}
                           ${item.rocm_device && item.rocm_device > 0
-                            ? html`${item.rocm_device} GPU`
+                            ? html`
+                                ${item.rocm_device} GPU
+                              `
                             : html``}
                           ${item.tpu_device && item.tpu_device > 0
-                            ? html`${item.tpu_device} TPU`
+                            ? html`
+                                ${item.tpu_device} TPU
+                              `
                             : html``}
                           ${item.ipu_device && item.ipu_device > 0
-                            ? html`${item.ipu_device} IPU`
+                            ? html`
+                                ${item.ipu_device} IPU
+                              `
                             : html``}
                           ${item.atom_device && item.atom_device > 0
-                            ? html`${item.atom_device} ATOM`
+                            ? html`
+                                ${item.atom_device} ATOM
+                              `
                             : html``}
                           ${item.warboy_device && item.warboy_device > 0
-                            ? html`${item.warboy_device} Warboy`
+                            ? html`
+                                ${item.warboy_device} Warboy
+                              `
                             : html``}
                         </div>
                         <div style="display:none">)</div>
@@ -5142,7 +5162,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                         <div>
                           <h4>${_t('session.launcher.NoSuitablePreset')}</h4>
                           <div style="font-size:12px;">
-                            Use advanced settings to <br />start custom session
+                            Use advanced settings to
+                            <br />
+                            start custom session
                           </div>
                         </div>
                       </mwc-list-item>
@@ -5151,9 +5173,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               </mwc-select>
             </div>
             <lablup-expansion name="resource-group">
-              <span slot="title"
-                >${_t('session.launcher.CustomAllocation')}</span
-              >
+              <span slot="title">
+                ${_t('session.launcher.CustomAllocation')}
+              </span>
               <div class="vertical layout">
                 <div>
                   <mwc-list-item hasMeta class="resource-type">
@@ -5337,8 +5359,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                               icon="info"
                               @click="${(e) =>
                                 this._showResourceDescription(e, item)}"
-                            >
-                            </mwc-icon-button>
+                            ></mwc-icon-button>
                           </div>
                         </mwc-list-item>
                       `,
@@ -5381,9 +5402,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 `
               : html``}
             <lablup-expansion name="hpc-option-group">
-              <span slot="title"
-                >${_t('session.launcher.HPCOptimization')}</span
-              >
+              <span slot="title">
+                ${_t('session.launcher.HPCOptimization')}
+              </span>
               <div class="vertical center layout">
                 <div class="horizontal center center-justified flex layout">
                   <div style="width:313px;">
@@ -5411,8 +5432,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       style="width:120px;"
                       pattern="[0-9]+"
                       @change="${(e) => this._validateInput(e)}"
-                    >
-                    </mwc-textfield>
+                    ></mwc-textfield>
                     <mwc-icon-button
                       icon="info"
                       class="fg green info"
@@ -5438,8 +5458,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       style="width:120px;"
                       pattern="[0-9]+"
                       @change="${(e) => this._validateInput(e)}"
-                    >
-                    </mwc-textfield>
+                    ></mwc-textfield>
                     <mwc-icon-button
                       icon="info"
                       class="fg green info"
@@ -5544,38 +5563,38 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     class="vertical layout center center-justified resource-allocated"
                   >
                     <p>${_t('session.launcher.CPU')}</p>
-                    <span
-                      >${this.cpu_request *
+                    <span>
+                      ${this.cpu_request *
                       this.cluster_size *
-                      this.session_request}</span
-                    >
+                      this.session_request}
+                    </span>
                     <p>Core</p>
                   </div>
                   <div
                     class="vertical layout center center-justified resource-allocated"
                   >
                     <p>${_t('session.launcher.Memory')}</p>
-                    <span
-                      >${this._roundResourceAllocation(
+                    <span>
+                      ${this._roundResourceAllocation(
                         this.mem_request *
                           this.cluster_size *
                           this.session_request,
                         1,
-                      )}</span
-                    >
+                      )}
+                    </span>
                     <p>GiB</p>
                   </div>
                   <div
                     class="vertical layout center center-justified resource-allocated"
                   >
                     <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
-                    <span
-                      >${this._conditionalGiBtoMiB(
+                    <span>
+                      ${this._conditionalGiBtoMiB(
                         this.shmem_request *
                           this.cluster_size *
                           this.session_request,
-                      )}</span
-                    >
+                      )}
+                    </span>
                     <p>
                       ${this._conditionalGiBtoMiBunit(
                         this.shmem_request *
@@ -5588,14 +5607,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     class="vertical layout center center-justified resource-allocated"
                   >
                     <p>${this._acceleratorName(this.gpu_request_type)}</p>
-                    <span
-                      >${this._roundResourceAllocation(
+                    <span>
+                      ${this._roundResourceAllocation(
                         this.gpu_request *
                           this.cluster_size *
                           this.session_request,
                         2,
-                      )}</span
-                    >
+                      )}
+                    </span>
                     <p>${_t('session.launcher.GPUSlot')}</p>
                   </div>
                 </div>
@@ -5618,21 +5637,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       class="vertical layout center center-justified resource-allocated"
                     >
                       <p>${_t('session.launcher.Memory')}</p>
-                      <span
-                        >${this._roundResourceAllocation(
-                          this.mem_request,
-                          1,
-                        )}</span
-                      >
+                      <span>
+                        ${this._roundResourceAllocation(this.mem_request, 1)}
+                      </span>
                       <p>GiB</p>
                     </div>
                     <div
                       class="vertical layout center center-justified resource-allocated"
                     >
                       <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
-                      <span
-                        >${this._conditionalGiBtoMiB(this.shmem_request)}</span
-                      >
+                      <span>
+                        ${this._conditionalGiBtoMiB(this.shmem_request)}
+                      </span>
                       <p>
                         ${this._conditionalGiBtoMiBunit(this.shmem_request)}
                       </p>
@@ -5653,11 +5669,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 >
                   <div class="horizontal layout">
                     <p>×</p>
-                    <span
-                      >${this.cluster_size <= 1
+                    <span>
+                      ${this.cluster_size <= 1
                         ? this.session_request
-                        : this.cluster_size}</span
-                    >
+                        : this.cluster_size}
+                    </span>
                   </div>
                   <p class="small">${_t('session.launcher.Container')}</p>
                 </div>
@@ -5667,20 +5683,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 >
                   <div class="horizontal layout">
                     <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
-                    <span style="text-align:center;"
-                      >${this.cluster_mode === 'single-node'
+                    <span style="text-align:center;">
+                      ${this.cluster_mode === 'single-node'
                         ? _t('session.launcher.SingleNode')
-                        : _t('session.launcher.MultiNode')}</span
-                    >
+                        : _t('session.launcher.MultiNode')}
+                    </span>
                   </div>
                   <p class="small">${_t('session.launcher.AllocateNode')}</p>
                 </div>
               </div>
             </div>
             ${this.mode !== 'inference'
-              ? html` <p class="title">
-                    ${_t('session.launcher.MountedFolders')}
-                  </p>
+              ? html`
+                  <p class="title">${_t('session.launcher.MountedFolders')}</p>
                   <div id="mounted-folders-container">
                     ${this.selectedVfolders.length > 0 ||
                     this.autoMountedVfolders.length > 0
@@ -5689,22 +5704,30 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                             ${this.selectedVfolders.map(
                               (item) => html`
                                 <li>
-                                  <mwc-icon>folder_open</mwc-icon>${item}
+                                  <mwc-icon>folder_open</mwc-icon>
+                                  ${item}
                                   ${item in this.folderMapping
                                     ? this.folderMapping[item].startsWith('/')
-                                      ? html` (&#10140;
-                                        ${this.folderMapping[item]})`
-                                      : html`(&#10140;
-                                        /home/work/${this.folderMapping[item]})`
-                                    : html`(&#10140; /home/work/${item})`}
+                                      ? html`
+                                          (&#10140; ${this.folderMapping[item]})
+                                        `
+                                      : html`
+                                          (&#10140;
+                                          /home/work/${this.folderMapping[
+                                            item
+                                          ]})
+                                        `
+                                    : html`
+                                        (&#10140; /home/work/${item})
+                                      `}
                                 </li>
                               `,
                             )}
                             ${this.autoMountedVfolders.map(
                               (item) => html`
                                 <li>
-                                  <mwc-icon>folder_special</mwc-icon
-                                  >${item.name}
+                                  <mwc-icon>folder_special</mwc-icon>
+                                  ${item.name}
                                 </li>
                               `,
                             )}
@@ -5712,12 +5735,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                         `
                       : html`
                           <div class="vertical layout center flex blank-box">
-                            <span
-                              >${_t('session.launcher.NoFolderMounted')}</span
-                            >
+                            <span>
+                              ${_t('session.launcher.NoFolderMounted')}
+                            </span>
                           </div>
                         `}
-                  </div>`
+                  </div>
+                `
               : html``}
             <p class="title">
               ${_t('session.launcher.EnvironmentVariablePaneTitle')}
@@ -5788,11 +5812,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                         `
                       : html`
                           <div class="vertical layout center flex blank-box">
-                            <span
-                              >${_t(
-                                'session.launcher.NoPreOpenPortsConfigured',
-                              )}</span
-                            >
+                            <span>
+                              ${_t('session.launcher.NoPreOpenPortsConfigured')}
+                            </span>
                           </div>
                         `}
                   </div>
@@ -5815,9 +5837,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               icon="rowing"
               @click="${() => this._newSessionWithConfirmation()}"
             >
-              <span id="launch-button-msg"
-                >${this.launchButtonMessageTextContent}</span
-              >
+              <span id="launch-button-msg">
+                ${this.launchButtonMessageTextContent}
+              </span>
             </mwc-button>
             <mwc-icon-button
               id="next-button"
@@ -5840,9 +5862,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         persistent
         closeWithConfirmation
       >
-        <span slot="title"
-          >${_t('session.launcher.SetEnvironmentVariable')}</span
-        >
+        <span slot="title">
+          ${_t('session.launcher.SetEnvironmentVariable')}
+        </span>
         <span slot="action">
           <mwc-icon-button
             icon="info"
@@ -5885,8 +5907,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             icon="add"
             class="horizontal flex layout center"
             @click="${() => this._appendEnvRow()}"
-            >Add</mwc-button
           >
+            Add
+          </mwc-button>
         </div>
         <div slot="footer" class="horizontal layout">
           <mwc-button
@@ -5964,8 +5987,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             class="horizontal flex layout center"
             ?disabled="${this.isExceedMaxCountForPreopenPorts}"
             @click="${() => this._appendPreOpenPortRow()}"
-            >Add</mwc-button
           >
+            Add
+          </mwc-button>
         </div>
         <div slot="footer" class="horizontal layout">
           <mwc-button
@@ -6039,16 +6063,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             label="${_text('button.Cancel')}"
             @click="${() => this.closeDialog('env-config-confirmation')}"
             style="width:auto;margin-right:10px;"
-          >
-          </mwc-button>
+          ></mwc-button>
           <mwc-button
             unelevated
             id="env-config-reset-button"
             label="${_text('button.DismissAndProceed')}"
             @click="${() => this._closeAndResetEnvInput()}"
             style="width:auto;"
-          >
-          </mwc-button>
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="preopen-ports-config-confirmation" warning fixed>
@@ -6064,16 +6086,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             @click="${() =>
               this.closeDialog('preopen-ports-config-confirmation')}"
             style="width:auto;margin-right:10px;"
-          >
-          </mwc-button>
+          ></mwc-button>
           <mwc-button
             unelevated
             id="preopen-ports-config-reset-button"
             label="${_text('button.DismissAndProceed')}"
             @click="${() => this._closeAndResetPreOpenPortInput()}"
             style="width:auto;"
-          >
-          </mwc-button>
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

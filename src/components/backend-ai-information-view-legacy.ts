@@ -183,8 +183,12 @@ export default class BackendAiInformationViewLegacy extends BackendAIPage {
                 <div class="horizontal center end-justified layout" style="width:30%;">
                 ${
                   this.account_changed
-                    ? html`<mwc-icon>done</mwc-icon>`
-                    : html`<mwc-icon>warning</mwc-icon>`
+                    ? html`
+                        <mwc-icon>done</mwc-icon>
+                      `
+                    : html`
+                        <mwc-icon>warning</mwc-icon>
+                      `
                 }
                 </div>
               </div>
@@ -197,8 +201,12 @@ export default class BackendAiInformationViewLegacy extends BackendAIPage {
                 <div class="horizontal center end-justified layout" style="width:30%;">
                 ${
                   this.use_ssl
-                    ? html`<mwc-icon>done</mwc-icon>`
-                    : html`<mwc-icon class="fg red">warning</mwc-icon>`
+                    ? html`
+                        <mwc-icon>done</mwc-icon>
+                      `
+                    : html`
+                        <mwc-icon class="fg red">warning</mwc-icon>
+                      `
                 }
                 </div>
               </div>
@@ -264,8 +272,12 @@ export default class BackendAiInformationViewLegacy extends BackendAIPage {
               <div class="horizontal center end-justified layout" style="width:30%;">
               ${
                 this.license_valid
-                  ? html`<mwc-icon>done</mwc-icon>`
-                  : html`<mwc-icon class="fg red">warning</mwc-icon>`
+                  ? html`
+                      <mwc-icon>done</mwc-icon>
+                    `
+                  : html`
+                      <mwc-icon class="fg red">warning</mwc-icon>
+                    `
               }
               </div>
             </div>

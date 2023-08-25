@@ -801,7 +801,12 @@ export default class BackendAIAgentList extends BackendAIPage {
    */
   _indexRenderer(root, column, rowData) {
     const idx = rowData.index + 1;
-    render(html` <div>${idx}</div> `, root);
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root,
+    );
   }
 
   /**
@@ -924,30 +929,34 @@ export default class BackendAIAgentList extends BackendAIPage {
       elapsed = this._elapsed2(rowData.item.lost_at, Date.now());
       render(
         // language=HTML
-        html` <div class="layout vertical">
-          <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
-          <lablup-shields
-            app="${_t('agent.Terminated')}"
-            color="yellow"
-            description="${elapsed}"
-            ui="round"
-          ></lablup-shields>
-        </div>`,
+        html`
+          <div class="layout vertical">
+            <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
+            <lablup-shields
+              app="${_t('agent.Terminated')}"
+              color="yellow"
+              description="${elapsed}"
+              ui="round"
+            ></lablup-shields>
+          </div>
+        `,
         root,
       );
     } else {
       elapsed = this._elapsed2(rowData.item.first_contact, Date.now());
       render(
         // language=HTML
-        html` <div class="layout vertical">
-          <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
-          <lablup-shields
-            app="${_t('agent.Running')}"
-            color="darkgreen"
-            description="${elapsed}"
-            ui="round"
-          ></lablup-shields>
-        </div>`,
+        html`
+          <div class="layout vertical">
+            <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
+            <lablup-shields
+              app="${_t('agent.Running')}"
+              color="darkgreen"
+              description="${elapsed}"
+              ui="round"
+            ></lablup-shields>
+          </div>
+        `,
         root,
       );
     }
@@ -963,223 +972,224 @@ export default class BackendAIAgentList extends BackendAIPage {
   resourceRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html` <div class="layout flex">
-        ${rowData.item.cpu_slots
-          ? html` <div
-              class="layout horizontal center-justified flex progress-bar-section"
-            >
-              <div class="layout horizontal start resource-indicator">
-                <mwc-icon class="fg green">developer_board</mwc-icon>
-                <span class="monospace" style="padding-left:5px;"
-                  >${rowData.item.used_cpu_slots}/${rowData.item
-                    .cpu_slots}</span
+      html`
+        <div class="layout flex">
+          ${rowData.item.cpu_slots
+            ? html`
+                <div
+                  class="layout horizontal center-justified flex progress-bar-section"
                 >
-                <span class="indicator">${_t('general.cores')}</span>
-              </div>
-              <span class="flex"></span>
-              <lablup-progress-bar
-                id="cpu-usage-bar"
-                progress="${rowData.item.cpu_total_usage_ratio}"
-                description="${rowData.item.total_cpu_percent}%"
-              ></lablup-progress-bar>
-            </div>`
-          : html``}
-        ${rowData.item.mem_slots
-          ? html` <div
-              class="layout horizontal center-justified flex progress-bar-section"
-            >
-              <div class="layout horizontal start resource-indicator">
-                <mwc-icon class="fg green">memory</mwc-icon>
-                <span class="monospace" style="padding-left:5px;"
-                  >${rowData.item.used_mem_slots}/${rowData.item
-                    .mem_slots}</span
+                  <div class="layout horizontal start resource-indicator">
+                    <mwc-icon class="fg green">developer_board</mwc-icon>
+                    <span class="monospace" style="padding-left:5px;">
+                      ${rowData.item.used_cpu_slots}/${rowData.item.cpu_slots}
+                    </span>
+                    <span class="indicator">${_t('general.cores')}</span>
+                  </div>
+                  <span class="flex"></span>
+                  <lablup-progress-bar
+                    id="cpu-usage-bar"
+                    progress="${rowData.item.cpu_total_usage_ratio}"
+                    description="${rowData.item.total_cpu_percent}%"
+                  ></lablup-progress-bar>
+                </div>
+              `
+            : html``}
+          ${rowData.item.mem_slots
+            ? html`
+                <div
+                  class="layout horizontal center-justified flex progress-bar-section"
                 >
-                <span class="indicator">GiB</span>
-              </div>
-              <span class="flex"></span>
-              <lablup-progress-bar
-                id="mem-usage-bar"
-                progress="${rowData.item.mem_total_usage_ratio}"
-                description="${rowData.item.total_mem_percent}%"
-              ></lablup-progress-bar>
-            </div>`
-          : html``}
-        ${rowData.item.cuda_gpu_slots
-          ? html`
-              <div
-                class="layout horizontal center-justified flex progress-bar-section"
-              >
-                <div class="layout horizontal start resource-indicator">
-                  <img
-                    class="indicator-icon fg green"
-                    src="/resources/icons/file_type_cuda.svg"
-                  />
-                  <span class="monospace" style="padding-left:5px;"
-                    >${rowData.item.used_cuda_gpu_slots}/${rowData.item
-                      .cuda_gpu_slots}</span
-                  >
-                  <span class="indicator">GPU</span>
+                  <div class="layout horizontal start resource-indicator">
+                    <mwc-icon class="fg green">memory</mwc-icon>
+                    <span class="monospace" style="padding-left:5px;">
+                      ${rowData.item.used_mem_slots}/${rowData.item.mem_slots}
+                    </span>
+                    <span class="indicator">GiB</span>
+                  </div>
+                  <span class="flex"></span>
+                  <lablup-progress-bar
+                    id="mem-usage-bar"
+                    progress="${rowData.item.mem_total_usage_ratio}"
+                    description="${rowData.item.total_mem_percent}%"
+                  ></lablup-progress-bar>
                 </div>
-                <span class="flex"></span>
-                <lablup-progress-bar
-                  id="gpu-bar"
-                  progress="${rowData.item.used_cuda_gpu_slots_ratio}"
-                  description="${rowData.item.total_cuda_gpu_percent}%"
-                ></lablup-progress-bar>
-              </div>
-            `
-          : html``}
-        ${rowData.item.cuda_fgpu_slots
-          ? html`
-              <div
-                class="layout horizontal center-justified flex progress-bar-section"
-              >
-                <div class="layout horizontal start resource-indicator">
-                  <img
-                    class="indicator-icon fg green"
-                    src="/resources/icons/file_type_cuda.svg"
-                  />
-                  <span class="monospace" style="padding-left:5px;"
-                    >${rowData.item.used_cuda_fgpu_slots}/${rowData.item
-                      .cuda_fgpu_slots}</span
-                  >
-                  <span class="indicator">fGPU</span>
+              `
+            : html``}
+          ${rowData.item.cuda_gpu_slots
+            ? html`
+                <div
+                  class="layout horizontal center-justified flex progress-bar-section"
+                >
+                  <div class="layout horizontal start resource-indicator">
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/file_type_cuda.svg"
+                    />
+                    <span class="monospace" style="padding-left:5px;">
+                      ${rowData.item.used_cuda_gpu_slots}/${rowData.item
+                        .cuda_gpu_slots}
+                    </span>
+                    <span class="indicator">GPU</span>
+                  </div>
+                  <span class="flex"></span>
+                  <lablup-progress-bar
+                    id="gpu-bar"
+                    progress="${rowData.item.used_cuda_gpu_slots_ratio}"
+                    description="${rowData.item.total_cuda_gpu_percent}%"
+                  ></lablup-progress-bar>
                 </div>
-                <span class="flex"></span>
-                <lablup-progress-bar
-                  id="vgpu-bar"
-                  progress="${rowData.item.used_cuda_fgpu_slots_ratio}"
-                  description="${rowData.item.used_cuda_fgpu_slots}"
-                ></lablup-progress-bar>
-              </div>
-            `
-          : html``}
-        ${rowData.item.rocm_gpu_slots
-          ? html`
-              <div
-                class="layout horizontal center-justified flex progress-bar-section"
-              >
-                <div class="layout horizontal start resource-indicator">
-                  <img
-                    class="indicator-icon fg green"
-                    src="/resources/icons/ROCm.png"
-                  />
-                  <span class="monospace" style="padding-left:5px;"
-                    >${rowData.item.used_rocm_gpu_slots}/${rowData.item
-                      .rocm_gpu_slots}</span
-                  >
-                  <span class="indicator">ROCm</span>
+              `
+            : html``}
+          ${rowData.item.cuda_fgpu_slots
+            ? html`
+                <div
+                  class="layout horizontal center-justified flex progress-bar-section"
+                >
+                  <div class="layout horizontal start resource-indicator">
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/file_type_cuda.svg"
+                    />
+                    <span class="monospace" style="padding-left:5px;">
+                      ${rowData.item.used_cuda_fgpu_slots}/${rowData.item
+                        .cuda_fgpu_slots}
+                    </span>
+                    <span class="indicator">fGPU</span>
+                  </div>
+                  <span class="flex"></span>
+                  <lablup-progress-bar
+                    id="vgpu-bar"
+                    progress="${rowData.item.used_cuda_fgpu_slots_ratio}"
+                    description="${rowData.item.used_cuda_fgpu_slots}"
+                  ></lablup-progress-bar>
                 </div>
-                <span class="flex"></span>
-                <lablup-progress-bar
-                  id="rocm-gpu-bar"
-                  progress="${rowData.item.used_rocm_gpu_slots_ratio}"
-                  description="${rowData.item.used_rocm_gpu_slots}"
-                ></lablup-progress-bar>
-              </div>
-            `
-          : html``}
-        ${rowData.item.tpu_slots
-          ? html`
-              <div
-                class="layout horizontal center-justified flex progress-bar-section"
-              >
-                <div class="layout horizontal start resource-indicator">
-                  <img
-                    class="indicator-icon fg green"
-                    src="/resources/icons/tpu.svg"
-                  />
-                  <span class="monospace" style="padding-left:5px;"
-                    >${rowData.item.used_tpu_slots}/${rowData.item
-                      .tpu_slots}</span
-                  >
-                  <span class="indicator">TPU</span>
+              `
+            : html``}
+          ${rowData.item.rocm_gpu_slots
+            ? html`
+                <div
+                  class="layout horizontal center-justified flex progress-bar-section"
+                >
+                  <div class="layout horizontal start resource-indicator">
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/ROCm.png"
+                    />
+                    <span class="monospace" style="padding-left:5px;">
+                      ${rowData.item.used_rocm_gpu_slots}/${rowData.item
+                        .rocm_gpu_slots}
+                    </span>
+                    <span class="indicator">ROCm</span>
+                  </div>
+                  <span class="flex"></span>
+                  <lablup-progress-bar
+                    id="rocm-gpu-bar"
+                    progress="${rowData.item.used_rocm_gpu_slots_ratio}"
+                    description="${rowData.item.used_rocm_gpu_slots}"
+                  ></lablup-progress-bar>
                 </div>
-                <span class="flex"></span>
-                <lablup-progress-bar
-                  id="tpu-bar"
-                  progress="${rowData.item.used_tpu_slots_ratio}"
-                  description="${rowData.item.used_tpu_slots}"
-                ></lablup-progress-bar>
-              </div>
-            `
-          : html``}
-        ${rowData.item.ipu_slots
-          ? html`
-              <div
-                class="layout horizontal center-justified flex progress-bar-section"
-              >
-                <div class="layout horizontal start resource-indicator">
-                  <img
-                    class="indicator-icon fg green"
-                    src="/resources/icons/ipu.svg"
-                  />
-                  <span class="monospace" style="padding-left:5px;"
-                    >${rowData.item.used_ipu_slots}/${rowData.item
-                      .ipu_slots}</span
-                  >
-                  <span class="indicator">IPU</span>
+              `
+            : html``}
+          ${rowData.item.tpu_slots
+            ? html`
+                <div
+                  class="layout horizontal center-justified flex progress-bar-section"
+                >
+                  <div class="layout horizontal start resource-indicator">
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/tpu.svg"
+                    />
+                    <span class="monospace" style="padding-left:5px;">
+                      ${rowData.item.used_tpu_slots}/${rowData.item.tpu_slots}
+                    </span>
+                    <span class="indicator">TPU</span>
+                  </div>
+                  <span class="flex"></span>
+                  <lablup-progress-bar
+                    id="tpu-bar"
+                    progress="${rowData.item.used_tpu_slots_ratio}"
+                    description="${rowData.item.used_tpu_slots}"
+                  ></lablup-progress-bar>
                 </div>
-                <span class="flex"></span>
-                <lablup-progress-bar
-                  id="ipu-bar"
-                  progress="${rowData.item.used_ipu_slots_ratio}"
-                  description="${rowData.item.used_ipu_slots}"
-                ></lablup-progress-bar>
-              </div>
-            `
-          : html``}
-        ${rowData.item.atom_slots
-          ? html`
-              <div
-                class="layout horizontal center-justified flex progress-bar-section"
-              >
-                <div class="layout horizontal start resource-indicator">
-                  <img
-                    class="indicator-icon fg green"
-                    src="/resources/icons/rebel.svg"
-                  />
-                  <span class="monospace" style="padding-left:5px;"
-                    >${rowData.item.used_atom_slots}/${rowData.item
-                      .atom_slots}</span
-                  >
-                  <span class="indicator">ATOM</span>
+              `
+            : html``}
+          ${rowData.item.ipu_slots
+            ? html`
+                <div
+                  class="layout horizontal center-justified flex progress-bar-section"
+                >
+                  <div class="layout horizontal start resource-indicator">
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/ipu.svg"
+                    />
+                    <span class="monospace" style="padding-left:5px;">
+                      ${rowData.item.used_ipu_slots}/${rowData.item.ipu_slots}
+                    </span>
+                    <span class="indicator">IPU</span>
+                  </div>
+                  <span class="flex"></span>
+                  <lablup-progress-bar
+                    id="ipu-bar"
+                    progress="${rowData.item.used_ipu_slots_ratio}"
+                    description="${rowData.item.used_ipu_slots}"
+                  ></lablup-progress-bar>
                 </div>
-                <span class="flex"></span>
-                <lablup-progress-bar
-                  id="atom-bar"
-                  progress="${rowData.item.used_atom_slots_ratio}"
-                  description="${rowData.item.used_atom_slots}"
-                ></lablup-progress-bar>
-              </div>
-            `
-          : html``}
-        ${rowData.item.warboy_slots
-          ? html`
-              <div
-                class="layout horizontal center-justified flex progress-bar-section"
-              >
-                <div class="layout horizontal start resource-indicator">
-                  <img
-                    class="indicator-icon fg green"
-                    src="/resources/icons/furiosa.svg"
-                  />
-                  <span class="monospace" style="padding-left:5px;"
-                    >${rowData.item.used_warboy_slots}/${rowData.item
-                      .warboy_slots}</span
-                  >
-                  <span class="indicator">Warboy</span>
+              `
+            : html``}
+          ${rowData.item.atom_slots
+            ? html`
+                <div
+                  class="layout horizontal center-justified flex progress-bar-section"
+                >
+                  <div class="layout horizontal start resource-indicator">
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/rebel.svg"
+                    />
+                    <span class="monospace" style="padding-left:5px;">
+                      ${rowData.item.used_atom_slots}/${rowData.item.atom_slots}
+                    </span>
+                    <span class="indicator">ATOM</span>
+                  </div>
+                  <span class="flex"></span>
+                  <lablup-progress-bar
+                    id="atom-bar"
+                    progress="${rowData.item.used_atom_slots_ratio}"
+                    description="${rowData.item.used_atom_slots}"
+                  ></lablup-progress-bar>
                 </div>
-                <span class="flex"></span>
-                <lablup-progress-bar
-                  id="warboy-bar"
-                  progress="${rowData.item.used_warboy_slots_ratio}"
-                  description="${rowData.item.used_warboy_slots}"
-                ></lablup-progress-bar>
-              </div>
-            `
-          : html``}
-      </div>`,
+              `
+            : html``}
+          ${rowData.item.warboy_slots
+            ? html`
+                <div
+                  class="layout horizontal center-justified flex progress-bar-section"
+                >
+                  <div class="layout horizontal start resource-indicator">
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/furiosa.svg"
+                    />
+                    <span class="monospace" style="padding-left:5px;">
+                      ${rowData.item.used_warboy_slots}/${rowData.item
+                        .warboy_slots}
+                    </span>
+                    <span class="indicator">Warboy</span>
+                  </div>
+                  <span class="flex"></span>
+                  <lablup-progress-bar
+                    id="warboy-bar"
+                    progress="${rowData.item.used_warboy_slots_ratio}"
+                    description="${rowData.item.used_warboy_slots}"
+                  ></lablup-progress-bar>
+                </div>
+              `
+            : html``}
+        </div>
+      `,
       root,
     );
   }
@@ -1194,13 +1204,17 @@ export default class BackendAIAgentList extends BackendAIPage {
   schedulableRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html` <div class="layout horizontal center center-justified wrap">
-        ${rowData.item?.schedulable
-          ? html`
-              <mwc-icon class="fg green schedulable">check_circle</mwc-icon>
-            `
-          : html` <mwc-icon class="fg red schedulable">block</mwc-icon> `}
-      </div>`,
+      html`
+        <div class="layout horizontal center center-justified wrap">
+          ${rowData.item?.schedulable
+            ? html`
+                <mwc-icon class="fg green schedulable">check_circle</mwc-icon>
+              `
+            : html`
+                <mwc-icon class="fg red schedulable">block</mwc-icon>
+              `}
+        </div>
+      `,
       root,
     );
   }
@@ -1339,7 +1353,9 @@ export default class BackendAIAgentList extends BackendAIPage {
     } else {
       render(
         // language=HTML
-        html`${_t('agent.NoAvailableLiveStat')}`,
+        html`
+          ${_t('agent.NoAvailableLiveStat')}
+        `,
         root,
       );
     }
@@ -1394,7 +1410,9 @@ export default class BackendAIAgentList extends BackendAIPage {
                 </div>
               </div>
             `
-          : html` <span>-</span> `}
+          : html`
+              <span>-</span>
+            `}
       `,
       root,
     );
@@ -1410,45 +1428,55 @@ export default class BackendAIAgentList extends BackendAIPage {
   statusRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html` <div class="layout vertical start justified wrap">
-        <lablup-shields
-          app="Agent"
-          color="${this._heartbeatColor(rowData.item.status)}"
-          description="${rowData.item.version}"
-          ui="round"
-        ></lablup-shields>
-        ${rowData.item.cuda_plugin
-          ? html` <lablup-shields
-                app="CUDA Plugin"
-                color="blue"
-                description="${rowData.item.cuda_plugin['version']}"
-                ui="round"
-              ></lablup-shields>
-              ${rowData.item.cuda_fgpu_slots
-                ? html`
-                    <lablup-shields
-                      app=""
-                      color="blue"
-                      description="Fractional GPU™"
-                      ui="round"
-                    ></lablup-shields>
-                  `
-                : html``}
-              ${rowData.item.cuda_plugin?.cuda_version
-                ? html` <lablup-shields
-                    app="CUDA"
-                    color="green"
-                    description="${rowData.item.cuda_plugin['cuda_version']}"
-                    ui="round"
-                  ></lablup-shields>`
-                : html` <lablup-shields
-                    app="CUDA Disabled"
-                    color="green"
-                    description=""
-                    ui="flat"
-                  ></lablup-shields>`}`
-          : html``}
-      </div>`,
+      html`
+        <div class="layout vertical start justified wrap">
+          <lablup-shields
+            app="Agent"
+            color="${this._heartbeatColor(rowData.item.status)}"
+            description="${rowData.item.version}"
+            ui="round"
+          ></lablup-shields>
+          ${rowData.item.cuda_plugin
+            ? html`
+                <lablup-shields
+                  app="CUDA Plugin"
+                  color="blue"
+                  description="${rowData.item.cuda_plugin['version']}"
+                  ui="round"
+                ></lablup-shields>
+                ${rowData.item.cuda_fgpu_slots
+                  ? html`
+                      <lablup-shields
+                        app=""
+                        color="blue"
+                        description="Fractional GPU™"
+                        ui="round"
+                      ></lablup-shields>
+                    `
+                  : html``}
+                ${rowData.item.cuda_plugin?.cuda_version
+                  ? html`
+                      <lablup-shields
+                        app="CUDA"
+                        color="green"
+                        description="${rowData.item.cuda_plugin[
+                          'cuda_version'
+                        ]}"
+                        ui="round"
+                      ></lablup-shields>
+                    `
+                  : html`
+                      <lablup-shields
+                        app="CUDA Disabled"
+                        color="green"
+                        description=""
+                        ui="flat"
+                      ></lablup-shields>
+                    `}
+              `
+            : html``}
+        </div>
+      `,
       root,
     );
   }
@@ -1474,55 +1502,58 @@ export default class BackendAIAgentList extends BackendAIPage {
   controlRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html` <div
-        id="controls"
-        class="layout horizontal flex center"
-        agent-id="${rowData.item.addr}"
-      >
-        <mwc-icon-button
-          class="fg green controls-running"
-          icon="assignment"
-          @click="${() => this.showAgentDetailDialog(rowData.item.id)}"
-        ></mwc-icon-button>
-        ${this._isRunning()
-          ? html`
-              ${this._enableAgentSchedulable
-                ? html`
-                    <mwc-icon-button
-                      class="fg blue controls-running"
-                      icon="settings"
-                      @click="${() => this._showConfigDialog(rowData.item.id)}"
-                    ></mwc-icon-button>
-                  `
-                : html``}
-              <mwc-icon-button
-                class="temporarily-hide fg green controls-running"
-                icon="refresh"
-                @click="${() => this._loadAgentList()}"
-              ></mwc-icon-button>
-              <mwc-icon-button
-                class="temporarily-hide fg controls-running"
-                disabled
-                icon="build"
-              ></mwc-icon-button>
-              <mwc-icon-button
-                class="temporarily-hide fg controls-running"
-                disabled
-                icon="alarm"
-              ></mwc-icon-button>
-              <mwc-icon-button
-                class="temporarily-hide fg controls-running"
-                disabled
-                icon="pause"
-              ></mwc-icon-button>
-              <mwc-icon-button
-                class="temporarily-hide fg controls-running"
-                disabled
-                icon="delete"
-              ></mwc-icon-button>
-            `
-          : html``}
-      </div>`,
+      html`
+        <div
+          id="controls"
+          class="layout horizontal flex center"
+          agent-id="${rowData.item.addr}"
+        >
+          <mwc-icon-button
+            class="fg green controls-running"
+            icon="assignment"
+            @click="${() => this.showAgentDetailDialog(rowData.item.id)}"
+          ></mwc-icon-button>
+          ${this._isRunning()
+            ? html`
+                ${this._enableAgentSchedulable
+                  ? html`
+                      <mwc-icon-button
+                        class="fg blue controls-running"
+                        icon="settings"
+                        @click="${() =>
+                          this._showConfigDialog(rowData.item.id)}"
+                      ></mwc-icon-button>
+                    `
+                  : html``}
+                <mwc-icon-button
+                  class="temporarily-hide fg green controls-running"
+                  icon="refresh"
+                  @click="${() => this._loadAgentList()}"
+                ></mwc-icon-button>
+                <mwc-icon-button
+                  class="temporarily-hide fg controls-running"
+                  disabled
+                  icon="build"
+                ></mwc-icon-button>
+                <mwc-icon-button
+                  class="temporarily-hide fg controls-running"
+                  disabled
+                  icon="alarm"
+                ></mwc-icon-button>
+                <mwc-icon-button
+                  class="temporarily-hide fg controls-running"
+                  disabled
+                  icon="pause"
+                ></mwc-icon-button>
+                <mwc-icon-button
+                  class="temporarily-hide fg controls-running"
+                  disabled
+                  icon="delete"
+                ></mwc-icon-button>
+              `
+            : html``}
+        </div>
+      `,
       root,
     );
   }
@@ -1599,22 +1630,25 @@ export default class BackendAIAgentList extends BackendAIPage {
         <div slot="content">
           <div class="horizontal start around-justified layout flex">
             ${this.agentDetail?.cpu_util_live
-              ? html` <div class="vertical layout start-justified flex">
-                  <h3>CPU</h3>
-                  ${this.agentDetail.cpu_util_live.map(
-                    (item) =>
-                      html` <div
-                        class="horizontal start-justified center layout"
-                        style="padding:0 5px;"
-                      >
-                        <div class="agent-detail-title">CPU${item.num}</div>
-                        <lablup-progress-bar
-                          class="cpu"
-                          progress="${item.pct / 100.0}"
-                        ></lablup-progress-bar>
-                      </div>`,
-                  )}
-                </div>`
+              ? html`
+                  <div class="vertical layout start-justified flex">
+                    <h3>CPU</h3>
+                    ${this.agentDetail.cpu_util_live.map(
+                      (item) => html`
+                        <div
+                          class="horizontal start-justified center layout"
+                          style="padding:0 5px;"
+                        >
+                          <div class="agent-detail-title">CPU${item.num}</div>
+                          <lablup-progress-bar
+                            class="cpu"
+                            progress="${item.pct / 100.0}"
+                          ></lablup-progress-bar>
+                        </div>
+                      `,
+                    )}
+                  </div>
+                `
               : html``}
             <div class="vertical layout start-justified flex">
               <h3>Memory</h3>
@@ -1633,131 +1667,133 @@ export default class BackendAIAgentList extends BackendAIPage {
                       class="horizontal layout justified"
                       style="width:100px;"
                     >
-                      <span>TX: </span>
-                      <span
-                        >${BackendAIAgentList.bytesToMB(
+                      <span>TX:</span>
+                      <span>
+                        ${BackendAIAgentList.bytesToMB(
                           this.agentDetail.live_stat.node.net_tx.current,
-                        )}MiB</span
-                      >
+                        )}MiB
+                      </span>
                     </div>
                     <div
                       class="horizontal layout justified flex"
                       style="width:100px;"
                     >
-                      <span>RX: </span>
-                      <span
-                        >${BackendAIAgentList.bytesToMB(
+                      <span>RX:</span>
+                      <span>
+                        ${BackendAIAgentList.bytesToMB(
                           this.agentDetail.live_stat.node.net_rx.current,
-                        )}MiB</span
-                      >
+                        )}MiB
+                      </span>
                     </div>
                   `
-                : html` <p>${_t('agent.NoNetworkSignal')}</p> `}
+                : html`
+                    <p>${_t('agent.NoNetworkSignal')}</p>
+                  `}
             </div>
             ${this.agentDetail?.cuda_util_live
-              ? html` <div class="vertical layout start-justified flex">
-                  <h3>CUDA Devices</h3>
-                  <h4>Utilization</h4>
-                  ${this.agentDetail.cuda_util_live.map(
-                    (item) =>
-                      html` <div
-                        class="horizontal start-justified center layout"
-                      >
-                        <div class="agent-detail-title">CUDA${item.idx}</div>
+              ? html`
+                  <div class="vertical layout start-justified flex">
+                    <h3>CUDA Devices</h3>
+                    <h4>Utilization</h4>
+                    ${this.agentDetail.cuda_util_live.map(
+                      (item) => html`
                         <div class="horizontal start-justified center layout">
-                          <lablup-progress-bar
-                            class="cuda"
-                            progress="${item.pct / 100.0}"
-                          ></lablup-progress-bar>
+                          <div class="agent-detail-title">CUDA${item.idx}</div>
+                          <div class="horizontal start-justified center layout">
+                            <lablup-progress-bar
+                              class="cuda"
+                              progress="${item.pct / 100.0}"
+                            ></lablup-progress-bar>
+                          </div>
                         </div>
-                      </div>`,
-                  )}
-                  <h4>Memory</h4>
-                  ${this.agentDetail.cuda_mem_live.map(
-                    (item) =>
-                      html` <div
-                        class="horizontal start-justified center layout"
-                      >
-                        <div class="agent-detail-title">CUDA${item.idx}</div>
+                      `,
+                    )}
+                    <h4>Memory</h4>
+                    ${this.agentDetail.cuda_mem_live.map(
+                      (item) => html`
                         <div class="horizontal start-justified center layout">
-                          <lablup-progress-bar
-                            class="cuda"
-                            progress="${item.pct / 100.0}"
-                          ></lablup-progress-bar>
+                          <div class="agent-detail-title">CUDA${item.idx}</div>
+                          <div class="horizontal start-justified center layout">
+                            <lablup-progress-bar
+                              class="cuda"
+                              progress="${item.pct / 100.0}"
+                            ></lablup-progress-bar>
+                          </div>
                         </div>
-                      </div>`,
-                  )}
-                </div>`
+                      `,
+                    )}
+                  </div>
+                `
               : html``}
             ${this.agentDetail?.rocm_util_live
-              ? html` <div class="vertical layout start-justified flex">
-                  <h3>ROCm Devices</h3>
-                  <h4>Utilization</h4>
-                  ${this.agentDetail.rocm_util_live.map(
-                    (item) =>
-                      html` <div
-                        class="horizontal start-justified center layout"
-                      >
-                        <div class="agent-detail-title">ROCm${item.num}</div>
+              ? html`
+                  <div class="vertical layout start-justified flex">
+                    <h3>ROCm Devices</h3>
+                    <h4>Utilization</h4>
+                    ${this.agentDetail.rocm_util_live.map(
+                      (item) => html`
                         <div class="horizontal start-justified center layout">
-                          <lablup-progress-bar
-                            class="cuda"
-                            progress="${item.pct / 100.0}"
-                          ></lablup-progress-bar>
+                          <div class="agent-detail-title">ROCm${item.num}</div>
+                          <div class="horizontal start-justified center layout">
+                            <lablup-progress-bar
+                              class="cuda"
+                              progress="${item.pct / 100.0}"
+                            ></lablup-progress-bar>
+                          </div>
                         </div>
-                      </div>`,
-                  )}
-                  <h4>Memory</h4>
-                  ${this.agentDetail.rocm_mem_live.map(
-                    (item) =>
-                      html` <div
-                        class="horizontal start-justified center layout"
-                      >
-                        <div class="agent-detail-title">ROCm${item.num}</div>
+                      `,
+                    )}
+                    <h4>Memory</h4>
+                    ${this.agentDetail.rocm_mem_live.map(
+                      (item) => html`
                         <div class="horizontal start-justified center layout">
-                          <lablup-progress-bar
-                            class="cuda"
-                            progress="${item.pct / 100.0}"
-                          ></lablup-progress-bar>
+                          <div class="agent-detail-title">ROCm${item.num}</div>
+                          <div class="horizontal start-justified center layout">
+                            <lablup-progress-bar
+                              class="cuda"
+                              progress="${item.pct / 100.0}"
+                            ></lablup-progress-bar>
+                          </div>
                         </div>
-                      </div>`,
-                  )}
-                </div>`
+                      `,
+                    )}
+                  </div>
+                `
               : html``}
             ${this.agentDetail?.tpu_util_live
-              ? html` <div class="vertical layout start-justified flex">
-                  <h3>TPU Devices</h3>
-                  <h4>Utilization</h4>
-                  ${this.agentDetail.tpu_util_live.map(
-                    (item) =>
-                      html` <div
-                        class="horizontal start-justified center layout"
-                      >
-                        <div class="agent-detail-title">TPU${item.num}</div>
+              ? html`
+                  <div class="vertical layout start-justified flex">
+                    <h3>TPU Devices</h3>
+                    <h4>Utilization</h4>
+                    ${this.agentDetail.tpu_util_live.map(
+                      (item) => html`
                         <div class="horizontal start-justified center layout">
-                          <lablup-progress-bar
-                            class="cuda"
-                            progress="${item.pct / 100.0}"
-                          ></lablup-progress-bar>
+                          <div class="agent-detail-title">TPU${item.num}</div>
+                          <div class="horizontal start-justified center layout">
+                            <lablup-progress-bar
+                              class="cuda"
+                              progress="${item.pct / 100.0}"
+                            ></lablup-progress-bar>
+                          </div>
                         </div>
-                      </div>`,
-                  )}
-                  <h4>Memory</h4>
-                  ${this.agentDetail.tpu_mem_live.map(
-                    (item) =>
-                      html` <div
-                        class="horizontal start-justified center layout"
-                      >
-                        <div class="agent-detail-title">TPU${item.num}</div>
+                      `,
+                    )}
+                    <h4>Memory</h4>
+                    ${this.agentDetail.tpu_mem_live.map(
+                      (item) => html`
                         <div class="horizontal start-justified center layout">
-                          <lablup-progress-bar
-                            class="cuda"
-                            progress="${item.pct / 100.0}"
-                          ></lablup-progress-bar>
+                          <div class="agent-detail-title">TPU${item.num}</div>
+                          <div class="horizontal start-justified center layout">
+                            <lablup-progress-bar
+                              class="cuda"
+                              progress="${item.pct / 100.0}"
+                            ></lablup-progress-bar>
+                          </div>
                         </div>
-                      </div>`,
-                  )}
-                </div>`
+                      `,
+                    )}
+                  </div>
+                `
               : html``}
           </div>
         </div>
@@ -1831,23 +1867,20 @@ export default class BackendAIAgentList extends BackendAIPage {
             path="id"
             header="${_t('agent.Endpoint')}"
             .renderer="${this._boundEndpointRenderer}"
-          >
-          </vaadin-grid-sort-column>
+          ></vaadin-grid-sort-column>
           <vaadin-grid-column
             auto-width
             resizable
             header="${_t('agent.Region')}"
             .renderer="${this._boundRegionRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-sort-column
             auto-width
             flex-grow="0"
             resizable
             path="architecture"
             header="${_t('agent.Architecture')}"
-          >
-          </vaadin-grid-sort-column>
+          ></vaadin-grid-sort-column>
           <vaadin-grid-sort-column
             resizable
             path="first_contact"
@@ -1855,22 +1888,19 @@ export default class BackendAIAgentList extends BackendAIPage {
             flex-grow="0"
             header="${_t('agent.Starts')}"
             .renderer="${this._boundContactDateRenderer}"
-          >
-          </vaadin-grid-sort-column>
+          ></vaadin-grid-sort-column>
           <vaadin-grid-column
             resizable
             width="200px"
             header="${_t('agent.Allocation')}"
             .renderer="${this._boundResourceRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             resizable
             width="185px"
             header="${_t('agent.Utilization')}"
             .renderer="${this._boundUtilizationRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             resizable
             header="${_t('agent.DiskPerc')}"

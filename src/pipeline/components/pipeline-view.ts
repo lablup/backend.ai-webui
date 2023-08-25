@@ -544,33 +544,38 @@ export default class PipelineView extends BackendAIPage {
    */
   renderRunPipelineDialogTemplate() {
     // language=HTML
-    return html` <backend-ai-dialog
-      id="run-pipeline"
-      fixed
-      backdrop
-      blockscrolling
-      persistent
-    >
-      <span slot="title">Run Pipeline</span>
-      <div slot="content" class="vertical layout center center-justified flex">
-        <p style="font-weight: bold; font-size:1rem;">
-          Ready to instantiate pipeline
-        </p>
-        <p style="font-size:1rem;">${this.pipelineInfo.name}</p>
-      </div>
-      <div slot="footer" class="horizontal layout end-justified flex">
-        <mwc-button
-          outlined
-          label="Cancel"
-          @click="${() => this._hideDialogById('#run-pipeline')}"
-        ></mwc-button>
-        <mwc-button
-          unelevated
-          label="Proceed"
-          @click="${() => this._runPipeline()}"
-        ></mwc-button>
-      </div>
-    </backend-ai-dialog>`;
+    return html`
+      <backend-ai-dialog
+        id="run-pipeline"
+        fixed
+        backdrop
+        blockscrolling
+        persistent
+      >
+        <span slot="title">Run Pipeline</span>
+        <div
+          slot="content"
+          class="vertical layout center center-justified flex"
+        >
+          <p style="font-weight: bold; font-size:1rem;">
+            Ready to instantiate pipeline
+          </p>
+          <p style="font-size:1rem;">${this.pipelineInfo.name}</p>
+        </div>
+        <div slot="footer" class="horizontal layout end-justified flex">
+          <mwc-button
+            outlined
+            label="Cancel"
+            @click="${() => this._hideDialogById('#run-pipeline')}"
+          ></mwc-button>
+          <mwc-button
+            unelevated
+            label="Proceed"
+            @click="${() => this._runPipeline()}"
+          ></mwc-button>
+        </div>
+      </backend-ai-dialog>
+    `;
   }
 
   /**
@@ -625,9 +630,9 @@ export default class PipelineView extends BackendAIPage {
         persistent
         narrowLayout
       >
-        <span slot="title"
-          >${this.isNodeSelected ? 'Edit Task' : 'Add Task'}</span
-        >
+        <span slot="title">
+          ${this.isNodeSelected ? 'Edit Task' : 'Add Task'}
+        </span>
         <div slot="content" class="vertical layout center flex">
           <pipeline-configuration-form
             id="task"

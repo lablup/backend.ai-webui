@@ -269,7 +269,8 @@ export abstract class SelectBase extends FormElement {
 
     const describedby = this.shouldRenderHelperText ? 'helper-text' : undefined;
 
-    return html` <div class="mdc-select ${classMap(classes)}">
+    return html`
+      <div class="mdc-select ${classMap(classes)}">
         <input
           class="formElement"
           .value=${this.value}
@@ -334,7 +335,8 @@ export abstract class SelectBase extends FormElement {
           <slot></slot>
         </mwc-menu>
       </div>
-      ${this.renderHelperText()}`;
+      ${this.renderHelperText()}
+    `;
   }
 
   protected renderRipple() {
@@ -342,7 +344,9 @@ export abstract class SelectBase extends FormElement {
       return nothing;
     }
 
-    return html` <span class="mdc-select__ripple"></span> `;
+    return html`
+      <span class="mdc-select__ripple"></span>
+    `;
   }
 
   protected renderOutline() {
@@ -350,13 +354,15 @@ export abstract class SelectBase extends FormElement {
       return nothing;
     }
 
-    return html` <mwc-notched-outline
-      .width=${this.outlineWidth}
-      .open=${this.outlineOpen}
-      class="mdc-notched-outline"
-    >
-      ${this.renderLabel()}
-    </mwc-notched-outline>`;
+    return html`
+      <mwc-notched-outline
+        .width=${this.outlineWidth}
+        .open=${this.outlineOpen}
+        class="mdc-notched-outline"
+      >
+        ${this.renderLabel()}
+      </mwc-notched-outline>
+    `;
   }
 
   protected renderLabel() {
@@ -365,9 +371,9 @@ export abstract class SelectBase extends FormElement {
     }
 
     return html`
-      <span .floatingLabelFoundation=${floatingLabel(this.label)} id="label"
-        >${this.label}</span
-      >
+      <span .floatingLabelFoundation=${floatingLabel(this.label)} id="label">
+        ${this.label}
+      </span>
     `;
   }
 
@@ -376,9 +382,9 @@ export abstract class SelectBase extends FormElement {
       return nothing;
     }
 
-    return html`<mwc-icon class="mdc-select__icon"
-      ><div>${this.icon}</div></mwc-icon
-    >`;
+    return html`
+      <mwc-icon class="mdc-select__icon"><div>${this.icon}</div></mwc-icon>
+    `;
   }
 
   protected renderLineRipple() {
@@ -386,7 +392,9 @@ export abstract class SelectBase extends FormElement {
       return nothing;
     }
 
-    return html` <span .lineRippleFoundation=${lineRipple()}></span> `;
+    return html`
+      <span .lineRippleFoundation=${lineRipple()}></span>
+    `;
   }
 
   protected renderHelperText() {
@@ -399,12 +407,11 @@ export abstract class SelectBase extends FormElement {
       'mdc-select-helper-text--validation-msg': showValidationMessage,
     };
 
-    return html` <p
-      class="mdc-select-helper-text ${classMap(classes)}"
-      id="helper-text"
-    >
-      ${showValidationMessage ? this.validationMessage : this.helper}
-    </p>`;
+    return html`
+      <p class="mdc-select-helper-text ${classMap(classes)}" id="helper-text">
+        ${showValidationMessage ? this.validationMessage : this.helper}
+      </p>
+    `;
   }
 
   protected createAdapter(): MDCSelectAdapter {

@@ -301,7 +301,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
               <div class="vertical center-justified layout setting-desc-select">
                 <div class="title">${_t('settings.ImagePullBehavior')}</div>
                 <div class="description-extra">
-                  ${_tr('settings.DescImagePullBehavior')}<br />
+                  ${_tr('settings.DescImagePullBehavior')}
+                  <br />
                   ${_t('settings.Require2003orAbove')}
                 </div>
               </div>
@@ -314,14 +315,15 @@ export default class BackendAiSettingsView extends BackendAIPage {
                   @selected="${(e) => this.setImagePullingBehavior(e)}"
                 >
                   ${this.imagePullingBehavior.map(
-                    (item) =>
-                      html` <mwc-list-item
+                    (item) => html`
+                      <mwc-list-item
                         value="${item.behavior}"
                         ?selected=${this.options['image_pulling_behavior'] ===
                         item.behavior}
                       >
                         ${item.name}
-                      </mwc-list-item>`,
+                      </mwc-list-item>
+                    `,
                   )}
                 </mwc-select>
               </div>
@@ -436,9 +438,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       <div class="description-shrink">
                         ${_tr('settings.DescCUDAGPUsupport')}
                         ${this.options['cuda_fgpu']
-                          ? html`<br />${_t(
-                                'settings.CUDAGPUdisabledByFGPUsupport',
-                              )}`
+                          ? html`
+                              <br />
+                              ${_t('settings.CUDAGPUdisabledByFGPUsupport')}
+                            `
                           : html``}
                       </div>
                     </div>
@@ -478,7 +481,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     >
                       <div class="title">${_t('settings.Scheduler')}</div>
                       <div class="description-shrink">
-                        ${_t('settings.SchedulerConfiguration')}<br />
+                        ${_t('settings.SchedulerConfiguration')}
+                        <br />
                         ${_t('settings.Require2009orAbove')}
                       </div>
                     </div>
@@ -507,7 +511,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     >
                       <div class="title">${_t('settings.FractionalGPU')}</div>
                       <div class="description-shrink">
-                        ${_t('settings.DescFractionalGPU')} <br />
+                        ${_t('settings.DescFractionalGPU')}
+                        <br />
                         ${_t('settings.RequireFGPUPlugin')}
                       </div>
                     </div>
@@ -527,9 +532,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     >
                       <div class="title">${_t('settings.TPU')}</div>
                       <div class="description-shrink">
-                        ${_t('settings.DescTPU')} <br />${_t(
-                          'settings.RequireTPUPlugin',
-                        )}
+                        ${_t('settings.DescTPU')}
+                        <br />
+                        ${_t('settings.RequireTPUPlugin')}
                       </div>
                     </div>
                     <div
@@ -548,9 +553,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     >
                       <div class="title">${_t('settings.IPUsupport')}</div>
                       <div class="description-shrink">
-                        ${_tr('settings.DescIPUsupport')} <br />${_t(
-                          'settings.RequireIPUPlugin',
-                        )}
+                        ${_tr('settings.DescIPUsupport')}
+                        <br />
+                        ${_t('settings.RequireIPUPlugin')}
                       </div>
                     </div>
                     <div
@@ -569,9 +574,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     >
                       <div class="title">${_t('settings.ATOMsupport')}</div>
                       <div class="description-shrink">
-                        ${_tr('settings.DescATOMsupport')} <br />${_t(
-                          'settings.RequireATOMPlugin',
-                        )}
+                        ${_tr('settings.DescATOMsupport')}
+                        <br />
+                        ${_t('settings.RequireATOMPlugin')}
                       </div>
                     </div>
                     <div
@@ -590,9 +595,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     >
                       <div class="title">${_t('settings.Warboysupport')}</div>
                       <div class="description-shrink">
-                        ${_tr('settings.DescWarboysupport')} <br />${_t(
-                          'settings.RequireWarboyPlugin',
-                        )}
+                        ${_tr('settings.DescWarboysupport')}
+                        <br />
+                        ${_t('settings.RequireWarboyPlugin')}
                       </div>
                     </div>
                     <div
@@ -618,9 +623,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
           persistent
           closeWithConfirmation
         >
-          <span slot="title" class="horizontal layout center"
-            >${_tr('settings.ConfigPerJobSchduler')}</span
-          >
+          <span slot="title" class="horizontal layout center">
+            ${_tr('settings.ConfigPerJobSchduler')}
+          </span>
           <span slot="action">
             <mwc-icon-button
               icon="info"
@@ -643,10 +648,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
               @selected="${(e) => this.changeSelectedScheduleType(e)}"
             >
               ${this.jobschedulerType.map(
-                (item) =>
-                  html` <mwc-list-item value="${item}">
+                (item) => html`
+                  <mwc-list-item value="${item}">
                     ${item.toUpperCase()}
-                  </mwc-list-item>`,
+                  </mwc-list-item>
+                `,
               )}
             </mwc-select>
             <h4>${_t('settings.SchedulerOptions')}</h4>
@@ -698,9 +704,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
           persistent
           closeWithConfirmation
         >
-          <span slot="title" class="horizontal layout center"
-            >${_tr('settings.OverlayNetworkSettings')}</span
-          >
+          <span slot="title" class="horizontal layout center">
+            ${_tr('settings.OverlayNetworkSettings')}
+          </span>
           <span slot="action">
             <mwc-icon-button
               icon="info"
@@ -778,16 +784,14 @@ export default class BackendAiSettingsView extends BackendAIPage {
               style="width:auto;"
               label="${_t('button.Cancel')}"
               @click="${() => this.closeDialog('env-config-confirmation')}"
-            >
-            </mwc-button>
+            ></mwc-button>
             <mwc-button
               unelevated
               id="env-config-reset-button"
               style="width:auto;margin-right:10px;"
               label="${_t('button.DismissAndProceed')}"
               @click="${() => this.closeAndResetEnvInput()}"
-            >
-            </mwc-button>
+            ></mwc-button>
           </div>
         </backend-ai-dialog>
       </div>

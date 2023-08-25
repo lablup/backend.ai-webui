@@ -36,7 +36,9 @@ export default class TestPlugin extends BackendAIPage {
 
   render() {
     // language=HTML
-    return html` <div>This is test plugin.</div> `;
+    return html`
+      <div>This is test plugin.</div>
+    `;
   }
 }
 

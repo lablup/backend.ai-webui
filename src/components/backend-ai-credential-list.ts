@@ -638,7 +638,12 @@ export default class BackendAICredentialList extends BackendAIPage {
    */
   _indexRenderer(root, column, rowData) {
     const idx = rowData.index + 1;
-    render(html` <div>${idx}</div> `, root);
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root,
+    );
   }
 
   /**
@@ -697,8 +702,7 @@ export default class BackendAICredentialList extends BackendAIPage {
             flat
             inverted
             @click="${(e) => this._showKeypairDetail(e)}"
-          >
-          </mwc-icon-button>
+          ></mwc-icon-button>
           <mwc-icon-button
             class="fg blue"
             icon="settings"
@@ -706,8 +710,7 @@ export default class BackendAICredentialList extends BackendAIPage {
             flat
             inverted
             @click="${(e) => this._modifyResourcePolicy(e)}"
-          >
-          </mwc-icon-button>
+          ></mwc-icon-button>
           ${this.isAdmin && this._isActive()
             ? html`
                 <mwc-icon-button
@@ -717,8 +720,7 @@ export default class BackendAICredentialList extends BackendAIPage {
                   flat
                   inverted
                   @click="${(e) => this._revokeKey(e)}"
-                >
-                </mwc-icon-button>
+                ></mwc-icon-button>
                 <mwc-icon-button
                   class="fg red"
                   icon="delete_forever"
@@ -726,8 +728,7 @@ export default class BackendAICredentialList extends BackendAIPage {
                   flat
                   inverted
                   @click="${(e) => this._deleteKeyPairDialog(e)}"
-                >
-                </mwc-icon-button>
+                ></mwc-icon-button>
               `
             : html``}
           ${this._isActive() === false
@@ -739,8 +740,7 @@ export default class BackendAICredentialList extends BackendAIPage {
                   flat
                   inverted
                   @click="${(e) => this._reuseKey(e)}"
-                >
-                </mwc-icon-button>
+                ></mwc-icon-button>
               `
             : html``}
         </div>
@@ -759,7 +759,9 @@ export default class BackendAICredentialList extends BackendAIPage {
   accessKeyRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html` <div class="monospace">${rowData.item.access_key}</div> `,
+      html`
+        <div class="monospace">${rowData.item.access_key}</div>
+      `,
       root,
     );
   }
@@ -876,14 +878,14 @@ export default class BackendAICredentialList extends BackendAIPage {
             <span class="indicator">Sess.</span>
           </div>
           <div class="vertical start layout">
-            <span style="font-size:8px"
-              >${rowData.item.rate_limit}
-              <span class="indicator">req./15m.</span></span
-            >
-            <span style="font-size:8px"
-              >${rowData.item.num_queries}
-              <span class="indicator">queries</span></span
-            >
+            <span style="font-size:8px">
+              ${rowData.item.rate_limit}
+              <span class="indicator">req./15m.</span>
+            </span>
+            <span style="font-size:8px">
+              ${rowData.item.num_queries}
+              <span class="indicator">queries</span>
+            </span>
           </div>
         </div>
       `,
@@ -901,7 +903,9 @@ export default class BackendAICredentialList extends BackendAIPage {
   userIdRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html` <span>${this._getUserId(rowData.item.user_id)}</span> `,
+      html`
+        <span>${this._getUserId(rowData.item.user_id)}</span>
+      `,
       root,
     );
   }
@@ -1168,8 +1172,7 @@ export default class BackendAICredentialList extends BackendAIPage {
             resizable
             header="${_t('general.Control')}"
             .renderer="${this._boundControlRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status
           id="list-status"
@@ -1182,7 +1185,8 @@ export default class BackendAICredentialList extends BackendAIPage {
         <div slot="content">
           <p>
             You are deleting the credentials of user
-            <span style="color:red">${this.deleteKeyPairUserName}</span>.
+            <span style="color:red">${this.deleteKeyPairUserName}</span>
+            .
           </p>
           <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
@@ -1294,9 +1298,9 @@ export default class BackendAICredentialList extends BackendAIPage {
         backdrop
         blockscrolling
       >
-        <span slot="title"
-          >${_t('credential.ModifyKeypairResourcePolicy')}</span
-        >
+        <span slot="title">
+          ${_t('credential.ModifyKeypairResourcePolicy')}
+        </span>
 
         <div slot="content" class="vertical layout">
           <div class="vertical layout center-justified">
@@ -1305,10 +1309,11 @@ export default class BackendAICredentialList extends BackendAIPage {
               label="${_t('credential.SelectPolicy')}"
             >
               ${Object.keys(this.resourcePolicy).map(
-                (rp) =>
-                  html` <mwc-list-item value=${this.resourcePolicy[rp].name}>
+                (rp) => html`
+                  <mwc-list-item value=${this.resourcePolicy[rp].name}>
                     ${this.resourcePolicy[rp].name}
-                  </mwc-list-item>`,
+                  </mwc-list-item>
+                `,
               )}
             </mwc-select>
           </div>
@@ -1348,15 +1353,13 @@ export default class BackendAICredentialList extends BackendAIPage {
             label="${_text('button.Cancel')}"
             @click="${(e) => this._hideDialog(e)}"
             style="width:auto;margin-right:10px;"
-          >
-          </mwc-button>
+          ></mwc-button>
           <mwc-button
             unelevated
             label="${_text('button.DismissAndProceed')}"
             @click="${() => this._confirmAndSaveKeypairModification()}"
             style="width:auto;"
-          >
-          </mwc-button>
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

@@ -495,10 +495,14 @@ export default class BackendAiSignup extends BackendAIPage {
         persistent
         disablefocustrap
       >
-        <span slot="title"
-          >${this.allowSignupWithoutConfirmation
-            ? html` ${_t('signup.Signup')}`
-            : html`${_t('signup.SignupBETA')} `}
+        <span slot="title">
+          ${this.allowSignupWithoutConfirmation
+            ? html`
+                ${_t('signup.Signup')}
+              `
+            : html`
+                ${_t('signup.SignupBETA')}
+              `}
         </span>
         <div slot="content" class="vertical flex layout">
           <mwc-textfield
@@ -555,8 +559,7 @@ export default class BackendAiSignup extends BackendAIPage {
               onIcon="visibility"
               offIcon="visibility_off"
               @click="${(e) => this._togglePasswordVisibility(e.target)}"
-            >
-            </mwc-icon-button-toggle>
+            ></mwc-icon-button-toggle>
           </div>
           <div class="horizontal flex layout">
             <mwc-textfield
@@ -576,8 +579,7 @@ export default class BackendAiSignup extends BackendAIPage {
               onIcon="visibility"
               offIcon="visibility_off"
               @click="${(e) => this._togglePasswordVisibility(e.target)}"
-            >
-            </mwc-icon-button-toggle>
+            ></mwc-icon-button-toggle>
           </div>
           <div
             style="margin-top:10px;"

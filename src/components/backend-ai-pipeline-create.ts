@@ -599,22 +599,20 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
             autofocus
             label="${_t('pipeline.PipelineDialog.Name')}"
             maxLength="30"
-          >
-          </mwc-textfield>
+          ></mwc-textfield>
           <mwc-textfield
             id="pipeline-description"
             type="text"
             label="${_t('pipeline.PipelineDialog.Description')}"
             maxLength="200"
-          >
-          </mwc-textfield>
+          ></mwc-textfield>
           <mwc-select
             id="pipeline-environment"
             label="${_t('pipeline.PipelineDialog.Environment')}"
           >
-            <mwc-list-item style="display:none;" value="None"
-              >${_t('session.launcher.ChooseEnvironment')}</mwc-list-item
-            >
+            <mwc-list-item style="display:none;" value="None">
+              ${_t('session.launcher.ChooseEnvironment')}
+            </mwc-list-item>
             ${this.languages.map(
               (item) => html`
                 <mwc-list-item
@@ -650,8 +648,9 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
                   id="${item}"
                   value="${item}"
                   ?selected="${idx === 0}"
-                  >${item}</mwc-list-item
                 >
+                  ${item}
+                </mwc-list-item>
               `,
             )}
           </mwc-select>
@@ -674,9 +673,9 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
           <mwc-select id="pipeline-folder-host" label="${_t('data.Host')}">
             ${this.vhosts.map(
               (item, idx) => html`
-                <mwc-list-item value="${item}" ?selected="${idx === 0}"
-                  >${item}</mwc-list-item
-                >
+                <mwc-list-item value="${item}" ?selected="${idx === 0}">
+                  ${item}
+                </mwc-list-item>
               `,
             )}
           </mwc-select>

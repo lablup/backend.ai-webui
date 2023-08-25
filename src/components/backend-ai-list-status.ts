@@ -71,7 +71,9 @@ export default class BackendAIListStatus extends BackendAIPage {
             `
           : html`
               ${this.statusCondition === 'no-data'
-                ? html` <span class="list-message">${this.message}</span> `
+                ? html`
+                    <span class="list-message">${this.message}</span>
+                  `
                 : html``}
             `}
       </div>

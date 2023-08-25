@@ -571,7 +571,12 @@ class BackendAIRegistryList extends BackendAIPage {
    */
   private _indexRenderer(root: HTMLElement, column: HTMLElement, rowData) {
     const idx = rowData.index + 1;
-    render(html` <div>${idx}</div> `, root);
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root,
+    );
   }
 
   /**
@@ -583,7 +588,9 @@ class BackendAIRegistryList extends BackendAIPage {
    */
   private _hostNameRenderer(root: HTMLElement, column: HTMLElement, rowData) {
     render(
-      html` <div>${decodeURIComponent(rowData.item['hostname'])}</div> `,
+      html`
+        <div>${decodeURIComponent(rowData.item['hostname'])}</div>
+      `,
       root,
     );
   }
@@ -603,7 +610,12 @@ class BackendAIRegistryList extends BackendAIPage {
     column: HTMLElement,
     rowData,
   ) {
-    render(html` <div>${rowData.item['']}</div> `, root);
+    render(
+      html`
+        <div>${rowData.item['']}</div>
+      `,
+      root,
+    );
   }
 
   /**
@@ -731,16 +743,14 @@ class BackendAIRegistryList extends BackendAIPage {
             header="#"
             text-align="center"
             .renderer=${this._indexRenderer}
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             flex-grow="1"
             auto-width
             header="${_t('registry.Hostname')}"
             .renderer=${this._hostNameRenderer}
             resizable
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             flex-grow="2"
             auto-width
@@ -748,8 +758,7 @@ class BackendAIRegistryList extends BackendAIPage {
             resizable
             .renderer=${this._registryUrlRenderer}
             resizable
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             flex-grow="0"
             auto-width
@@ -757,8 +766,7 @@ class BackendAIRegistryList extends BackendAIPage {
             header="${_t('registry.Type')}"
             path="type"
             resizable
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             flex-grow="0"
             auto-width
@@ -766,22 +774,19 @@ class BackendAIRegistryList extends BackendAIPage {
             header="${_t('registry.HarborProject')}"
             path="project"
             resizable
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             flex-grow="1"
             header="${_t('registry.Username')}"
             path="username"
             resizable
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             flex-grow="1"
             header="${_t('registry.Password')}"
             .renderer="${this._boundPasswordRenderer}"
             resizable
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             flex-grow="0"
             width="60px"
@@ -793,8 +798,7 @@ class BackendAIRegistryList extends BackendAIPage {
             flex-grow="1"
             header="${_t('general.Control')}"
             .renderer=${this._boundControlsRenderer}
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status
           id="list-status"
@@ -808,11 +812,11 @@ class BackendAIRegistryList extends BackendAIPage {
         backdrop
         blockscrolling
       >
-        <span slot="title"
-          >${this._editMode
+        <span slot="title">
+          ${this._editMode
             ? _t('registry.ModifyRegistry')
-            : _t('registry.AddRegistry')}</span
-        >
+            : _t('registry.AddRegistry')}
+        </span>
         <div slot="content" class="login-panel intro centered">
           <div class="horizontal center-justified layout flex">
             <mwc-textfield

@@ -144,8 +144,9 @@ export default class LablupTermsOfService extends LitElement {
                       <mwc-list-item
                         value="${item.text}"
                         ?selected="${this.tosLanguage === item.code}"
-                        >${item.text}</mwc-list-item
                       >
+                        ${item.text}
+                      </mwc-list-item>
                     `,
                   )}
                 </mwc-select>

@@ -231,16 +231,18 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
           <div id="pipeline-description" class="layout vertical">
             ${this.pipelineSelectedConfig &&
             this.pipelineSelectedConfig.description
-              ? html` <span>${this.pipelineSelectedConfig.description}</span> `
+              ? html`
+                  <span>${this.pipelineSelectedConfig.description}</span>
+                `
               : html``}
             ${this.pipelineSelectedConfig &&
             this.pipelineSelectedConfig.environment
               ? html`
-                  <span class="indicator monospace"
-                    >${this.pipelineSelectedConfig.environment +
+                  <span class="indicator monospace">
+                    ${this.pipelineSelectedConfig.environment +
                     ':' +
-                    this.pipelineSelectedConfig.version}</span
-                  >
+                    this.pipelineSelectedConfig.version}
+                  </span>
                 `
               : html``}
           </div>

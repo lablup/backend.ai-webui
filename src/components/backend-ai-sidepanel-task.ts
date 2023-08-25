@@ -111,19 +111,21 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
         <h3>${_t('sidepanel.BackgroundTasks')}</h3>
         <mwc-list>
           ${this.tasks.map(
-            (item: any) =>
-              html` <mwc-list-item graphic="icon" twoline>
-                  <mwc-icon
-                    id="summary-menu-icon"
-                    slot="graphic"
-                    id="activities-icon"
-                    class="fg black"
-                    >${this._taskIcon(item.tasktype)}</mwc-icon
-                  >
-                  <span class="title">${item.tasktitle}</span>
-                  <span slot="secondary">${_t('sidepanel.Running')}</span>
-                </mwc-list-item>
-                <li divider role="separator"></li>`,
+            (item: any) => html`
+              <mwc-list-item graphic="icon" twoline>
+                <mwc-icon
+                  id="summary-menu-icon"
+                  slot="graphic"
+                  id="activities-icon"
+                  class="fg black"
+                >
+                  ${this._taskIcon(item.tasktype)}
+                </mwc-icon>
+                <span class="title">${item.tasktitle}</span>
+                <span slot="secondary">${_t('sidepanel.Running')}</span>
+              </mwc-list-item>
+              <li divider role="separator"></li>
+            `,
           )}
           ${this.tasks.length === 0
             ? html`

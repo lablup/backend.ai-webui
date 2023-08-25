@@ -185,8 +185,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
               pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"
               maxLength="64"
               placeholder="${_t('maxLength.64chars')}"
-            >
-            </mwc-textfield>
+            ></mwc-textfield>
             <mwc-textfield
               id="password1"
               label="${_t('webui.menu.NewPassword')}"
@@ -195,8 +194,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
               validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
               pattern=${BackendAiCommonUtils.passwordRegex}
               maxLength="64"
-            >
-            </mwc-textfield>
+            ></mwc-textfield>
             <mwc-textfield
               id="password2"
               label="${_t('webui.menu.NewPasswordAgain')}"
@@ -205,8 +203,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
               validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
               pattern=${BackendAiCommonUtils.passwordRegex}
               maxLength="64"
-            >
-            </mwc-textfield>
+            ></mwc-textfield>
             <div style="height:1em"></div>
           </div>
         </div>

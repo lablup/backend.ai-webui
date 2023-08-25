@@ -312,8 +312,9 @@ export default class BackendAIMultiSelect extends LitElement {
                 <mwc-check-list-item
                   value=${item}
                   ?selected="${this.selectedItemList.includes(item)}"
-                  >${item}</mwc-check-list-item
                 >
+                  ${item}
+                </mwc-check-list-item>
               `,
             )}
           </mwc-list>
@@ -322,8 +323,9 @@ export default class BackendAIMultiSelect extends LitElement {
       <span
         class="validation-msg"
         style="display:${this._valid ? 'none' : 'block'}"
-        >${this.validationMessage}</span
       >
+        ${this.validationMessage}
+      </span>
     `;
   }
 }

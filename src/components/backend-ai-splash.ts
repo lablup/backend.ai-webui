@@ -125,10 +125,18 @@ export default class BackendAISplash extends LitElement {
             <li><span id="valid-until" class="detail">
               ${
                 this.license === 'Subscription'
-                  ? html`Subscription is active until ${this.validUntil}`
+                  ? html`
+                      Subscription is active until ${this.validUntil}
+                    `
                   : html``
               }
-              ${this.license === 'Perpetual' ? html`Perpetual License` : html``}
+              ${
+                this.license === 'Perpetual'
+                  ? html`
+                      Perpetual License
+                    `
+                  : html``
+              }
               </span></li>
             <li style="margin-top:15px;"><span id="mode-detail" class="detail">Backend.AI Cluster</span> <span id="manager-build-detail" class="detail">${
               this.managerVersion

@@ -81,12 +81,13 @@ export default class BackendAiSidepanelNotification extends BackendAIPage {
         <h3>${_t('sidepanel.Notification')}</h3>
         <mwc-list>
           ${this.notifications.map(
-            (item: any) =>
-              html` <mwc-list-item twoline>
-                  <span>${item.outerText}</span>
-                  <span slot="secondary">${item.getAttribute('created')}</span>
-                </mwc-list-item>
-                <li divider role="separator"></li>`,
+            (item: any) => html`
+              <mwc-list-item twoline>
+                <span>${item.outerText}</span>
+                <span slot="secondary">${item.getAttribute('created')}</span>
+              </mwc-list-item>
+              <li divider role="separator"></li>
+            `,
           )}
           ${this.notifications.length === 0
             ? html`

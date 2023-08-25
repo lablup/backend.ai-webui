@@ -457,11 +457,11 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
         <span slot="title">${_t('pipeline.ComponentDialog.DeleteTitle')}</span>
         <div slot="content" class="layout vertical">
           <p>${_t('session.CheckAgainDialog')}</p>
-          <span
-            >${this.selectedNodes && this.selectedNodes.length > 0
+          <span>
+            ${this.selectedNodes && this.selectedNodes.length > 0
               ? this.selectedNodes.join(' | ')
-              : ''}</span
-          >
+              : ''}
+          </span>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <div class="flex"></div>

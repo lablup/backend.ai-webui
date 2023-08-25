@@ -183,8 +183,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
           <div id="registry-lists" class="tab-content">
             <backend-ai-registry-list
               ?active="${this._activeTab === 'registry-lists'}"
-            >
-            </backend-ai-registry-list>
+            ></backend-ai-registry-list>
           </div>
         </div>
       </lablup-activity-panel>

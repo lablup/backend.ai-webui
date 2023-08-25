@@ -718,13 +718,14 @@ export default class BackendAiUserDropdownMenu extends LitElement {
                     label="${_t('general.AccessKey')}"
                     @selected="${(e) => this._showSecretKey(e)}">
           ${this.keyPairInfo.keypairs?.map(
-            (item) =>
-              html` <mwc-list-item
+            (item) => html`
+              <mwc-list-item
                 value="${item.access_key}"
                 ?selected=${this.loggedAccount.access_key === item.access_key}
               >
                 ${item.access_key}
-              </mwc-list-item>`,
+              </mwc-list-item>
+            `,
           )}
         </mwc-select>
         <mwc-textfield id="secretkey" disabled type="text"
@@ -784,8 +785,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
                       this.totpActivated
                         ? this._confirmRemovingTotp(e)
                         : this._startActivatingTotp(e)}"
-                  >
-                  </mwc-switch>
+                  ></mwc-switch>
                 </div>
               `
             : html``

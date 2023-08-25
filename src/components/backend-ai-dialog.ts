@@ -258,8 +258,7 @@ export default class BackendAIDialog extends LitElement {
                     flat
                     inverted
                     @click="${() => this._hideDialog()}"
-                  >
-                  </mwc-icon-button>
+                  ></mwc-icon-button>
                 `}
           </h3>
           <div class="content content-area">

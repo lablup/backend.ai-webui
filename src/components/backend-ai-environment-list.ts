@@ -1215,7 +1215,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         <div class="layout horizontal center flex">
           <div class="layout horizontal configuration">
             <mwc-icon class="fg green indicator">developer_board</mwc-icon>
-            <span>${rowData.item.cpu_limit_min}</span> ~
+            <span>${rowData.item.cpu_limit_min}</span>
+            ~
             <span>${this._markIfUnlimited(rowData.item.cpu_limit_max)}</span>
             <span class="indicator">${_t('general.cores')}</span>
           </div>
@@ -1223,7 +1224,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         <div class="layout horizontal center flex">
           <div class="layout horizontal configuration">
             <mwc-icon class="fg green indicator">memory</mwc-icon>
-            <span>${rowData.item.mem_limit_min}</span> ~
+            <span>${rowData.item.mem_limit_min}</span>
+            ~
             <span>${this._markIfUnlimited(rowData.item.mem_limit_max)}</span>
           </div>
         </div>
@@ -1235,12 +1237,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                     class="indicator-icon fg green"
                     src="/resources/icons/file_type_cuda.svg"
                   />
-                  <span>${rowData.item.cuda_device_limit_min}</span> ~
-                  <span
-                    >${this._markIfUnlimited(
-                      rowData.item.cuda_device_limit_max,
-                    )}</span
-                  >
+                  <span>${rowData.item.cuda_device_limit_min}</span>
+                  ~
+                  <span>
+                    ${this._markIfUnlimited(rowData.item.cuda_device_limit_max)}
+                  </span>
                   <span class="indicator">CUDA GPU</span>
                 </div>
               </div>
@@ -1251,12 +1252,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
                   <mwc-icon class="fg green indicator">apps</mwc-icon>
-                  <span>${rowData.item.cuda_shares_limit_min}</span> ~
-                  <span
-                    >${this._markIfUnlimited(
-                      rowData.item.cuda_shares_limit_max,
-                    )}</span
-                  >
+                  <span>${rowData.item.cuda_shares_limit_min}</span>
+                  ~
+                  <span>
+                    ${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}
+                  </span>
                   <span class="indicator">CUDA FGPU</span>
                 </div>
               </div>
@@ -1270,12 +1270,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                     class="indicator-icon fg green"
                     src="/resources/icons/ROCm.png"
                   />
-                  <span>${rowData.item.rocm_device_limit_min}</span> ~
-                  <span
-                    >${this._markIfUnlimited(
-                      rowData.item.rocm_device_limit_max,
-                    )}</span
-                  >
+                  <span>${rowData.item.rocm_device_limit_min}</span>
+                  ~
+                  <span>
+                    ${this._markIfUnlimited(rowData.item.rocm_device_limit_max)}
+                  </span>
                   <span class="indicator">ROCm GPU</span>
                 </div>
               </div>
@@ -1286,12 +1285,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
                   <mwc-icon class="fg green indicator">apps</mwc-icon>
-                  <span>${rowData.item.tpu_device_limit_min}</span> ~
-                  <span
-                    >${this._markIfUnlimited(
-                      rowData.item.tpu_device_limit_max,
-                    )}</span
-                  >
+                  <span>${rowData.item.tpu_device_limit_min}</span>
+                  ~
+                  <span>
+                    ${this._markIfUnlimited(rowData.item.tpu_device_limit_max)}
+                  </span>
                   <span class="indicator">TPU</span>
                 </div>
               </div>
@@ -1302,12 +1300,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
                   <mwc-icon class="fg green indicator">apps</mwc-icon>
-                  <span>${rowData.item.ipu_device_limit_min}</span> ~
-                  <span
-                    >${this._markIfUnlimited(
-                      rowData.item.ipu_device_limit_max,
-                    )}</span
-                  >
+                  <span>${rowData.item.ipu_device_limit_min}</span>
+                  ~
+                  <span>
+                    ${this._markIfUnlimited(rowData.item.ipu_device_limit_max)}
+                  </span>
                   <span class="indicator">IPU</span>
                 </div>
               </div>
@@ -1318,12 +1315,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
                   <mwc-icon class="fg green indicator">apps</mwc-icon>
-                  <span>${rowData.item.atom_device_limit_min}</span> ~
-                  <span
-                    >${this._markIfUnlimited(
-                      rowData.item.atom_device_limit_max,
-                    )}</span
-                  >
+                  <span>${rowData.item.atom_device_limit_min}</span>
+                  ~
+                  <span>
+                    ${this._markIfUnlimited(rowData.item.atom_device_limit_max)}
+                  </span>
                   <span class="indicator">ATOM</span>
                 </div>
               </div>
@@ -1334,12 +1330,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
                   <mwc-icon class="fg green indicator">apps</mwc-icon>
-                  <span>${rowData.item.warboy_device_limit_min}</span> ~
-                  <span
-                    >${this._markIfUnlimited(
+                  <span>${rowData.item.warboy_device_limit_min}</span>
+                  ~
+                  <span>
+                    ${this._markIfUnlimited(
                       rowData.item.warboy_device_limit_max,
-                    )}</span
-                  >
+                    )}
+                  </span>
                   <span class="indicator">Warboy</span>
                 </div>
               </div>
@@ -1372,8 +1369,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               this._launchDialogById('#modify-image-dialog');
               this.requestUpdate();
             }}
-          >
-          </mwc-icon-button>
+          ></mwc-icon-button>
           <mwc-icon-button
             class="fg controls-running pink"
             icon="apps"
@@ -1386,8 +1382,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               this._launchDialogById('#modify-app-dialog');
               this.requestUpdate();
             }}
-          >
-          </mwc-icon-button>
+          ></mwc-icon-button>
         </div>
       `,
       root,
@@ -1547,15 +1542,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             flex-grow="0"
             text-align="center"
             auto-select
-          >
-          </vaadin-grid-selection-column>
+          ></vaadin-grid-selection-column>
           <vaadin-grid-sort-column
             path="installed"
             flex-grow="0"
             header="${_t('environment.Status')}"
             .renderer="${this._boundInstallRenderer}"
-          >
-          </vaadin-grid-sort-column>
+          ></vaadin-grid-sort-column>
           <lablup-grid-sort-filter-column
             path="registry"
             width="80px"
@@ -1590,39 +1583,34 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             width="110px"
             header="${_t('environment.Base')}"
             .renderer="${this._boundBaseImageRenderer}"
-          >
-          </lablup-grid-sort-filter-column>
+          ></lablup-grid-sort-filter-column>
           <lablup-grid-sort-filter-column
             path="additional_req"
             width="50px"
             resizable
             header="${_t('environment.Constraint')}"
             .renderer="${this._boundConstraintRenderer}"
-          >
-          </lablup-grid-sort-filter-column>
+          ></lablup-grid-sort-filter-column>
           <lablup-grid-sort-filter-column
             path="digest"
             resizable
             header="${_t('environment.Digest')}"
             .renderer="${this._boundDigestRenderer}"
-          >
-          </lablup-grid-sort-filter-column>
+          ></lablup-grid-sort-filter-column>
           <vaadin-grid-column
             width="150px"
             flex-grow="0"
             resizable
             header="${_t('environment.ResourceLimit')}"
             .renderer="${this._boundRequirementsRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             frozen-to-end
             width="110px"
             resizable
             header="${_t('general.Control')}"
             .renderer=${this._boundControlsRenderer}
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status
           id="list-status"
@@ -1810,8 +1798,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                   class="fg pink"
                   icon="remove"
                   @click=${(e) => this._checkDeleteAppInfo(e)}
-                >
-                </mwc-icon-button>
+                ></mwc-icon-button>
               </div>
             `,
           )}
@@ -1823,8 +1810,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               class="fg pink"
               icon="add"
               @click=${() => this._addRow()}
-            >
-            </mwc-icon-button>
+            ></mwc-icon-button>
           </div>
           <span style="color:red;">${this.servicePortsMsg}</span>
         </div>
@@ -1845,7 +1831,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           <p style="margin:auto; ">
             <span style="color:blue;">
               ${this.installImageNameList.map((el) => {
-                return html`${el}<br />`;
+                return html`
+                  ${el}
+                  <br />
+                `;
               })}
             </span>
           </p>
@@ -1879,7 +1868,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           <p style="margin:auto; ">
             <span style="color:blue;">
               ${this.deleteImageNameList.map((el) => {
-                return html`${el}<br />`;
+                return html`
+                  ${el}
+                  <br />
+                `;
               })}
             </span>
           </p>

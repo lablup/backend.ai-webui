@@ -519,14 +519,14 @@ export default class PipelineJobView extends BackendAIPage {
             </div>
             <div class="layout horizontal center configuration">
               <mwc-icon class="fg green indicator">memory</mwc-icon>
-              <span
-                >${parseFloat(
+              <span>
+                ${parseFloat(
                   globalThis.backendaiclient.utils.changeBinaryUnit(
                     rowData.item.config.resources.mem,
                     'g',
                   ),
-                )}</span
-              >
+                )}
+              </span>
               <span class="indicator">GB</span>
             </div>
             ${rowData.item.config.resources['cuda.shares']
@@ -564,7 +564,12 @@ export default class PipelineJobView extends BackendAIPage {
       rowData,
     ) => {
       // name
-      render(html` <span>${rowData.item.config.name}</span> `, root);
+      render(
+        html`
+          <span>${rowData.item.config.name}</span>
+        `,
+        root,
+      );
     };
 
     // sortable columns
@@ -574,7 +579,12 @@ export default class PipelineJobView extends BackendAIPage {
       rowData,
     ) => {
       // type
-      render(html` <span>${rowData.item.config.type}</span> `, root);
+      render(
+        html`
+          <span>${rowData.item.config.type}</span>
+        `,
+        root,
+      );
     };
   }
 
@@ -646,12 +656,15 @@ export default class PipelineJobView extends BackendAIPage {
                 ?disabled="${this.pipelineJobs.length <= 0}"
               >
                 ${this.pipelineJobs?.map((job) => {
-                  return html` <mwc-list-item
-                    value="${job.name}"
-                    ?selected="${job.name === this.pipelineJobInfo.name}"
-                    @click="${(e) => this._changePipelineJob(e)}"
-                    >${job.name}</mwc-list-item
-                  >`;
+                  return html`
+                    <mwc-list-item
+                      value="${job.name}"
+                      ?selected="${job.name === this.pipelineJobInfo.name}"
+                      @click="${(e) => this._changePipelineJob(e)}"
+                    >
+                      ${job.name}
+                    </mwc-list-item>
+                  `;
                 })}
               </mwc-select>
               <mwc-list-item twoline>

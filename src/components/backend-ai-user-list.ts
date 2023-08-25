@@ -471,7 +471,12 @@ export default class BackendAIUserList extends BackendAIPage {
    * */
   _indexRenderer(root, column, rowData) {
     const idx = rowData.index + 1;
-    render(html` <div>${idx}</div> `, root);
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root,
+    );
   }
 
   /**
@@ -522,7 +527,12 @@ export default class BackendAIUserList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    */
   userIdRenderer(root, column?, rowData?) {
-    render(html` <span>${this._getUserId(rowData.item.email)}</span> `, root);
+    render(
+      html`
+        <span>${this._getUserId(rowData.item.email)}</span>
+      `,
+      root,
+    );
   }
 
   /**
@@ -534,7 +544,9 @@ export default class BackendAIUserList extends BackendAIPage {
    */
   userNameRenderer(root, column?, rowData?) {
     render(
-      html` <span>${this._getUsername(rowData.item.username)}</span> `,
+      html`
+        <span>${this._getUsername(rowData.item.username)}</span>
+      `,
       root,
     );
   }
@@ -581,8 +593,12 @@ export default class BackendAIUserList extends BackendAIPage {
       html`
         <div class="layout horizontal center center-justified wrap">
           ${rowData.item?.totp_activated
-            ? html` <mwc-icon class="fg green totp">check_circle</mwc-icon> `
-            : html` <mwc-icon class="fg red totp">block</mwc-icon> `}
+            ? html`
+                <mwc-icon class="fg green totp">check_circle</mwc-icon>
+              `
+            : html`
+                <mwc-icon class="fg red totp">block</mwc-icon>
+              `}
         </div>
       `,
       root,
@@ -635,13 +651,15 @@ export default class BackendAIUserList extends BackendAIPage {
               `
             : html``}
           ${this.condition !== 'active'
-            ? html` <lablup-grid-sort-filter-column
-                auto-width
-                path="status"
-                header="${_t('credential.Status')}"
-                resizable
-                .renderer="${this._userStatusRenderer}"
-              ></lablup-grid-sort-filter-column>`
+            ? html`
+                <lablup-grid-sort-filter-column
+                  auto-width
+                  path="status"
+                  header="${_t('credential.Status')}"
+                  resizable
+                  .renderer="${this._userStatusRenderer}"
+                ></lablup-grid-sort-filter-column>
+              `
             : html``}
           <vaadin-grid-column
             frozen-to-end
@@ -662,7 +680,8 @@ export default class BackendAIUserList extends BackendAIPage {
         <div slot="content">
           <p>
             You are inactivating the user
-            <span style="color:red">${this.signoutUserName}</span>.
+            <span style="color:red">${this.signoutUserName}</span>
+            .
           </p>
           <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>

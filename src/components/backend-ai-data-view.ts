@@ -279,11 +279,13 @@ export default class BackendAIData extends BackendAIPage {
       _t('data.usage.Caution'),
       _t('data.usage.Insufficient'),
     ][idx];
-    return html`<div
-      class="host-status-indicator ${type.toLocaleLowerCase()} self-center"
-    >
-      ${showTitle ? title : ''}
-    </div>`;
+    return html`
+      <div
+        class="host-status-indicator ${type.toLocaleLowerCase()} self-center"
+      >
+        ${showTitle ? title : ''}
+      </div>
+    `;
   }
   render() {
     // language=HTML
@@ -301,26 +303,25 @@ export default class BackendAIData extends BackendAIPage {
                   title="general"
                   label="${_t('data.Folders')}"
                   @click="${(e) => this._showTab(e.target)}"
-                >
-                </mwc-tab>
+                ></mwc-tab>
                 <mwc-tab
                   title="data"
                   label="${_t('data.Pipeline')}"
                   @click="${(e) => this._showTab(e.target)}"
-                >
-                </mwc-tab>
+                ></mwc-tab>
                 <mwc-tab
                   title="automount"
                   label="${_t('data.AutomountFolders')}"
                   @click="${(e) => this._showTab(e.target)}"
                 ></mwc-tab>
                 ${this.enableInferenceWorkload
-                  ? html` <mwc-tab
-                      title="model"
-                      label="${_t('data.Models')}"
-                      @click="${(e) => this._showTab(e.target)}"
-                    >
-                    </mwc-tab>`
+                  ? html`
+                      <mwc-tab
+                        title="model"
+                        label="${_t('data.Models')}"
+                        @click="${(e) => this._showTab(e.target)}"
+                      ></mwc-tab>
+                    `
                   : html``}
               </mwc-tab-bar>
               <span class="flex"></span>
@@ -373,21 +374,23 @@ export default class BackendAIData extends BackendAIPage {
               ></backend-ai-storage-list>
             </div>
             ${this.enableInferenceWorkload
-              ? html` <div
-                  id="model-folder-lists"
-                  class="tab-content"
-                  style="display:none;"
-                >
-                  <div class="horizontal layout">
-                    <p>${_t('data.DialogModelFolder')}</p>
+              ? html`
+                  <div
+                    id="model-folder-lists"
+                    class="tab-content"
+                    style="display:none;"
+                  >
+                    <div class="horizontal layout">
+                      <p>${_t('data.DialogModelFolder')}</p>
+                    </div>
+                    <backend-ai-storage-list
+                      id="model-folder-storage"
+                      storageType="model"
+                      ?active="${this.active === true &&
+                      this._activeTab === 'model'}"
+                    ></backend-ai-storage-list>
                   </div>
-                  <backend-ai-storage-list
-                    id="model-folder-storage"
-                    storageType="model"
-                    ?active="${this.active === true &&
-                    this._activeTab === 'model'}"
-                  ></backend-ai-storage-list>
-                </div>`
+                `
               : html``}
           </div>
         </lablup-activity-panel>
@@ -417,27 +420,28 @@ export default class BackendAIData extends BackendAIPage {
                 this.storageProxyInfo[item] &&
                 this.storageProxyInfo[item]?.usage &&
                 this.storageProxyInfo[item]?.usage?.percentage;
-              return html`<mwc-list-item
-                hasMeta
-                value="${item}"
-                ?selected="${item === this.vhost}"
-              >
-                <div class="horizontal layout justified center">
-                  <span>${item}</span>
-                  ${html`
-                    &nbsp;
-                    ${typeof percentage === 'number'
-                      ? this.renderStatusIndicator(percentage, false)
-                      : ''}
-                  `}
-                </div>
-                <mwc-icon-button
-                  slot="meta"
-                  icon="info"
-                  @click="${(e) => this._showStorageDescription(e, item)}"
+              return html`
+                <mwc-list-item
+                  hasMeta
+                  value="${item}"
+                  ?selected="${item === this.vhost}"
                 >
-                </mwc-icon-button>
-              </mwc-list-item>`;
+                  <div class="horizontal layout justified center">
+                    <span>${item}</span>
+                    ${html`
+                      &nbsp;
+                      ${typeof percentage === 'number'
+                        ? this.renderStatusIndicator(percentage, false)
+                        : ''}
+                    `}
+                  </div>
+                  <mwc-icon-button
+                    slot="meta"
+                    icon="info"
+                    @click="${(e) => this._showStorageDescription(e, item)}"
+                  ></mwc-icon-button>
+                </mwc-list-item>
+              `;
             })}
           </mwc-select>
           <div
@@ -470,9 +474,9 @@ export default class BackendAIData extends BackendAIPage {
             >
               ${this.allowed_folder_type.includes('user')
                 ? html`
-                    <mwc-list-item value="user" selected
-                      >${_t('data.User')}</mwc-list-item
-                    >
+                    <mwc-list-item value="user" selected>
+                      ${_t('data.User')}
+                    </mwc-list-item>
                   `
                 : html``}
               ${this.is_admin && this.allowed_folder_type.includes('group')
@@ -480,8 +484,9 @@ export default class BackendAIData extends BackendAIPage {
                     <mwc-list-item
                       value="group"
                       ?selected="${!this.allowed_folder_type.includes('user')}"
-                      >${_t('data.Project')}</mwc-list-item
                     >
+                      ${_t('data.Project')}
+                    </mwc-list-item>
                   `
                 : html``}
             </mwc-select>
@@ -499,8 +504,9 @@ export default class BackendAIData extends BackendAIPage {
                         <mwc-list-item
                           value="${item.name}"
                           ?selected="${idx === 0}"
-                          >${item.name}</mwc-list-item
                         >
+                          ${item.name}
+                        </mwc-list-item>
                       `,
                     )}
                   </mwc-select>
@@ -518,9 +524,9 @@ export default class BackendAIData extends BackendAIPage {
                   >
                     ${this.usageModes.map(
                       (item, idx) => html`
-                        <mwc-list-item value="${item}" ?selected="${idx === 0}"
-                          >${item}</mwc-list-item
-                        >
+                        <mwc-list-item value="${item}" ?selected="${idx === 0}">
+                          ${item}
+                        </mwc-list-item>
                       `,
                     )}
                   </mwc-select>
@@ -532,9 +538,9 @@ export default class BackendAIData extends BackendAIPage {
                   >
                     ${this.permissions.map(
                       (item, idx) => html`
-                        <mwc-list-item value="${item}" ?selected="${idx === 0}"
-                          >${item}</mwc-list-item
-                        >
+                        <mwc-list-item value="${item}" ?selected="${idx === 0}">
+                          ${item}
+                        </mwc-list-item>
                       `,
                     )}
                   </mwc-select>
@@ -600,8 +606,7 @@ export default class BackendAIData extends BackendAIPage {
                     slot="meta"
                     icon="info"
                     @click="${(e) => this._showStorageDescription(e, item)}"
-                  >
-                  </mwc-icon-button>
+                  ></mwc-icon-button>
                 </mwc-list-item>
               `,
             )}
@@ -617,9 +622,9 @@ export default class BackendAIData extends BackendAIPage {
             >
               ${this.allowed_folder_type.includes('user')
                 ? html`
-                    <mwc-list-item value="user" selected
-                      >${_t('data.User')}</mwc-list-item
-                    >
+                    <mwc-list-item value="user" selected>
+                      ${_t('data.User')}
+                    </mwc-list-item>
                   `
                 : html``}
               ${this.is_admin && this.allowed_folder_type.includes('group')
@@ -627,8 +632,9 @@ export default class BackendAIData extends BackendAIPage {
                     <mwc-list-item
                       value="group"
                       ?selected="${!this.allowed_folder_type.includes('user')}"
-                      >${_t('data.Project')}</mwc-list-item
                     >
+                      ${_t('data.Project')}
+                    </mwc-list-item>
                   `
                 : html``}
             </mwc-select>
@@ -645,8 +651,9 @@ export default class BackendAIData extends BackendAIPage {
                         <mwc-list-item
                           value="${item.name}"
                           ?selected="${idx === 0}"
-                          >${item.name}</mwc-list-item
                         >
+                          ${item.name}
+                        </mwc-list-item>
                       `,
                     )}
                   </mwc-select>
@@ -664,9 +671,9 @@ export default class BackendAIData extends BackendAIPage {
                   >
                     ${this.usageModes.map(
                       (item, idx) => html`
-                        <mwc-list-item value="${item}" ?selected="${idx === 0}"
-                          >${item}</mwc-list-item
-                        >
+                        <mwc-list-item value="${item}" ?selected="${idx === 0}">
+                          ${item}
+                        </mwc-list-item>
                       `,
                     )}
                   </mwc-select>
@@ -678,9 +685,9 @@ export default class BackendAIData extends BackendAIPage {
                   >
                     ${this.permissions.map(
                       (item, idx) => html`
-                        <mwc-list-item value="${item}" ?selected="${idx === 0}"
-                          >${item}</mwc-list-item
-                        >
+                        <mwc-list-item value="${item}" ?selected="${idx === 0}">
+                          ${item}
+                        </mwc-list-item>
                       `,
                     )}
                   </mwc-select>
@@ -696,8 +703,7 @@ export default class BackendAIData extends BackendAIPage {
                   <mwc-switch
                     id="clone-folder-cloneable"
                     style="margin-right:10px;"
-                  >
-                  </mwc-switch>
+                  ></mwc-switch>
                 </div>
               `
             : html``}

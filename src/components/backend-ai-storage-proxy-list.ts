@@ -263,7 +263,12 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
    */
   _indexRenderer(root, column, rowData) {
     const idx = rowData.index + 1;
-    render(html` <div>${idx}</div> `, root);
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root,
+    );
   }
 
   /**
@@ -367,9 +372,9 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
           <div class="layout horizontal center flex">
             <div class="layout horizontal start resource-indicator">
               <mwc-icon class="fg green">data_usage</mwc-icon>
-              <span class="indicator" style="padding-left:5px;"
-                >${_t('session.Usage')}</span
-              >
+              <span class="indicator" style="padding-left:5px;">
+                ${_t('session.Usage')}
+              </span>
             </div>
             <span class="flex"></span>
             <div class="layout vertical center">
@@ -406,20 +411,22 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   capabilitiesRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html` <div class="layout vertical start justified wrap">
-        ${rowData.item.capabilities
-          ? rowData.item.capabilities.map(
-              (item) => html`
-                <lablup-shields
-                  app=""
-                  color="blue"
-                  description="${item}"
-                  ui="round"
-                ></lablup-shields>
-              `,
-            )
-          : html``}
-      </div>`,
+      html`
+        <div class="layout vertical start justified wrap">
+          ${rowData.item.capabilities
+            ? rowData.item.capabilities.map(
+                (item) => html`
+                  <lablup-shields
+                    app=""
+                    color="blue"
+                    description="${item}"
+                    ui="round"
+                  ></lablup-shields>
+                `,
+              )
+            : html``}
+        </div>
+      `,
       root,
     );
   }
@@ -457,23 +464,27 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     }
     render(
       // language=HTML
-      html` <div
-        id="controls"
-        class="layout horizontal flex center"
-        agent-id="${rowData.item.id}"
-      >
-        <mwc-icon-button
-          class="fg green controls-running"
-          icon="assignment"
-          ?disabled="${perfMetricDisabled}"
-          @click="${(e) => this.showStorageProxyDetailDialog(rowData.item.id)}"
-        ></mwc-icon-button>
-        <mwc-icon-button
-          class="fg blue controls-running"
-          icon="settings"
-          @click="${() => this._moveTo(`/storage-settings/${rowData.item.id}`)}"
-        ></mwc-icon-button>
-      </div>`,
+      html`
+        <div
+          id="controls"
+          class="layout horizontal flex center"
+          agent-id="${rowData.item.id}"
+        >
+          <mwc-icon-button
+            class="fg green controls-running"
+            icon="assignment"
+            ?disabled="${perfMetricDisabled}"
+            @click="${(e) =>
+              this.showStorageProxyDetailDialog(rowData.item.id)}"
+          ></mwc-icon-button>
+          <mwc-icon-button
+            class="fg blue controls-running"
+            icon="settings"
+            @click="${() =>
+              this._moveTo(`/storage-settings/${rowData.item.id}`)}"
+          ></mwc-icon-button>
+        </div>
+      `,
       root,
     );
   }
@@ -511,22 +522,19 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
             width="80px"
             header="${_t('agent.Endpoint')}"
             .renderer="${this._boundEndpointRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             width="100px"
             resizable
             header="${_t('agent.BackendType')}"
             .renderer="${this._boundTypeRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             resizable
             width="60px"
             header="${_t('agent.Resources')}"
             .renderer="${this._boundResourceRenderer}"
-          >
-          </vaadin-grid-column>
+          ></vaadin-grid-column>
           <vaadin-grid-column
             width="130px"
             flex-grow="0"
@@ -558,27 +566,33 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         <div slot="content">
           <div class="horizontal start start-justified layout">
             ${'cpu_util_live' in this.storageProxyDetail
-              ? html` <div>
-                  <h3>CPU</h3>
-                  <div class="horizontal wrap layout" style="max-width:600px;">
-                    ${this.storageProxyDetail.cpu_util_live.map(
-                      (item) =>
-                        html` <div
-                          class="horizontal start-justified center layout"
-                          style="padding:0 5px;"
-                        >
-                          <div style="font-size:8px;width:35px;">
-                            CPU${item.num}
+              ? html`
+                  <div>
+                    <h3>CPU</h3>
+                    <div
+                      class="horizontal wrap layout"
+                      style="max-width:600px;"
+                    >
+                      ${this.storageProxyDetail.cpu_util_live.map(
+                        (item) => html`
+                          <div
+                            class="horizontal start-justified center layout"
+                            style="padding:0 5px;"
+                          >
+                            <div style="font-size:8px;width:35px;">
+                              CPU${item.num}
+                            </div>
+                            <lablup-progress-bar
+                              class="cpu"
+                              progress="${item.pct / 100.0}"
+                              description=""
+                            ></lablup-progress-bar>
                           </div>
-                          <lablup-progress-bar
-                            class="cpu"
-                            progress="${item.pct / 100.0}"
-                            description=""
-                          ></lablup-progress-bar>
-                        </div>`,
-                    )}
+                        `,
+                      )}
+                    </div>
                   </div>
-                </div>`
+                `
               : html``}
             <div style="margin-left:10px;">
               <h3>Memory</h3>

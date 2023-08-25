@@ -111,8 +111,7 @@ export default class BackendAIProjectSwitcher extends LitElement {
               value="${this.currentProject}"
               .items="${this.projects}"
               @change="${(e) => this.changeGroup(e)}"
-            >
-            </vaadin-combo-box>
+            ></vaadin-combo-box>
           </div>
         </div>
       </div>

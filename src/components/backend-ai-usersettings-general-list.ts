@@ -1063,14 +1063,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               @selected="${(e) => this.setUserLanguage(e)}"
             >
               ${this.supportLanguages.map(
-                (item) =>
-                  html` <mwc-list-item
+                (item) => html`
+                  <mwc-list-item
                     value="${item.code}"
                     ?selected=${globalThis.backendaioptions.get('language') ===
                     item.code}
                   >
                     ${item.name}
-                  </mwc-list-item>`,
+                  </mwc-list-item>
+                `,
               )}
             </mwc-select>
           </div>
@@ -1136,8 +1137,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               id="ssh-keypair-details"
               icon="more"
               @click="${this._openSSHKeypairRefreshDialog}"
-            >
-            </mwc-icon-button>
+            ></mwc-icon-button>
           </div>
         </div>
         <div class="horizontal layout wrap setting-item">
@@ -1201,7 +1201,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           : html``}
       </div>
       ${this.shell_script_edit
-        ? html` <h3 class="horizontal center layout">
+        ? html`
+            <h3 class="horizontal center layout">
               <span>${_t('usersettings.ShellEnvironments')}</span>
               <span class="flex"></span>
             </h3>
@@ -1240,7 +1241,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                   ></mwc-switch>
                 </div>
               </div>
-            </div>`
+            </div>
+          `
         : html``}
       <backend-ai-dialog
         id="bootstrap-dialog"
@@ -1291,10 +1293,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         persistent
         closeWithConfirmation
       >
-        <span slot="title"
-          >${_t('usersettings.Edit_ShellScriptTitle_1')} ${this.rcfile}
-          ${_t('usersettings.Edit_ShellScriptTitle_2')}</span
-        >
+        <span slot="title">
+          ${_t('usersettings.Edit_ShellScriptTitle_1')} ${this.rcfile}
+          ${_t('usersettings.Edit_ShellScriptTitle_2')}
+        </span>
         <div slot="content" class="vertical layout terminal-area">
           <mwc-select
             id="select-rcfile-type"
@@ -1309,14 +1311,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             helper=${_t('dialog.warning.WillBeAppliedToNewSessions')}
           >
             ${this.rcfiles.map(
-              (item: any) =>
-                html` <mwc-list-item
+              (item: any) => html`
+                <mwc-list-item
                   id="${item.path}"
                   value="${item.path}"
                   ?selected=${this.rcfile === item.path}
                 >
                   ${item.path}
-                </mwc-list-item>`,
+                </mwc-list-item>
+              `,
             )}
           </mwc-select>
           <div style="background-color:#272823;height:100%;">
@@ -1393,7 +1396,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       >
         <span slot="title">${_t('usersettings.SSHKeypairManagement')}</span>
         <div slot="content" style="max-width:500px">
-          <span slot="title"> ${_t('usersettings.CurrentSSHPublicKey')}</span>
+          <span slot="title">${_t('usersettings.CurrentSSHPublicKey')}</span>
           <mwc-textarea
             outlined
             readonly

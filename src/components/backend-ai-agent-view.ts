@@ -162,11 +162,13 @@ export default class BackendAIAgentView extends BackendAIPage {
               )}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>-->
               ${this.enableStorageProxy
-                ? html` <mwc-tab
-                    title="storage-proxy-lists"
-                    label="${_t('general.StorageProxies')}"
-                    @click="${(e) => this._showTab(e.target)}"
-                  ></mwc-tab>`
+                ? html`
+                    <mwc-tab
+                      title="storage-proxy-lists"
+                      label="${_t('general.StorageProxies')}"
+                      @click="${(e) => this._showTab(e.target)}"
+                    ></mwc-tab>
+                  `
                 : html``}
               <mwc-tab
                 title="scaling-group-lists"
@@ -193,17 +195,19 @@ export default class BackendAIAgentView extends BackendAIPage {
             ></backend-ai-agent-list>
           </div>
           ${this.enableStorageProxy
-            ? html` <div
-                id="storage-proxy-lists"
-                class="tab-content"
-                style="display:none;"
-              >
-                <backend-ai-storage-proxy-list
-                  id="storage-proxies"
-                  ?active="${this._status === 'active' &&
-                  this._tab === 'storage-proxy-lists'}"
-                ></backend-ai-storage-proxy-list>
-              </div>`
+            ? html`
+                <div
+                  id="storage-proxy-lists"
+                  class="tab-content"
+                  style="display:none;"
+                >
+                  <backend-ai-storage-proxy-list
+                    id="storage-proxies"
+                    ?active="${this._status === 'active' &&
+                    this._tab === 'storage-proxy-lists'}"
+                  ></backend-ai-storage-proxy-list>
+                </div>
+              `
             : html``}
           <div
             id="scaling-group-lists"
@@ -214,8 +218,7 @@ export default class BackendAIAgentView extends BackendAIPage {
               id="scaling-groups"
               ?active="${this._status === 'active' &&
               this._tab === 'scaling-group-lists'}"
-            >
-            </backend-ai-resource-group-list>
+            ></backend-ai-resource-group-list>
           </div>
         </div>
       </lablup-activity-panel>

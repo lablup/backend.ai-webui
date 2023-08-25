@@ -1213,9 +1213,9 @@ export default class BackendAICredentialView extends BackendAIPage {
                             class="horizontal layout start center"
                             @click="${this._openExportToCsvDialog}"
                           >
-                            <mwc-icon style="color:#242424;padding-right:10px;"
-                              >get_app</mwc-icon
-                            >
+                            <mwc-icon style="color:#242424;padding-right:10px;">
+                              get_app
+                            </mwc-icon>
                             ${_t('credential.exportCSV')}
                           </a>
                         </mwc-list-item>
