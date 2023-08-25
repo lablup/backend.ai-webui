@@ -1,6 +1,9 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { passwordPattern } from './ResetPasswordRequired';
+import TOTPActivateModal from './TOTPActivateModal';
+import { ExclamationCircleFilled } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import {
   Modal,
   ModalProps,
@@ -31,6 +34,11 @@ const UserProfileSettingModal: React.FC<Props> = ({
 
   const [messageApi, contextHolder] = message.useMessage();
 
+  const [modal, modalContextHolder] = Modal.useModal();
+
+  const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
+    useToggle(false);
+
   const baiClient = useSuspendedBackendaiClient();
 
   const { data: isManagerSupportingTOTP } = useTanQuery(
@@ -53,7 +61,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
       suspense: false,
     },
   );
-  const totpActivated = userInfo?.user.totp_activated;
+  let totpActivated = userInfo?.user.totp_activated;
 
   const { data: keyPairInfo } = useTanQuery(
     'keyPairInfo',
@@ -103,6 +111,12 @@ const UserProfileSettingModal: React.FC<Props> = ({
         values.new_password,
         values.new_password2,
       );
+    },
+  });
+
+  const mutationToRemoveTotp = useTanMutation({
+    mutationFn: (email: string) => {
+      return baiClient.remove_totp(email);
     },
   });
 
@@ -216,7 +230,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
 
   return (
     <>
-      {contextHolder}
       <Modal
         okText={t('webui.menu.Update')}
         cancelText={t('webui.menu.Cancel')}
@@ -295,18 +308,68 @@ const UserProfileSettingModal: React.FC<Props> = ({
           >
             <Input.Password />
           </Form.Item>
-          {totpSupported ? (
-            <Form.Item label={t('webui.menu.TotpActivated')}>
+          {!!totpActivated && (
+            <Form.Item
+              name="totpActivated"
+              label={t('webui.menu.TotpActivated')}
+              valuePropName="checked"
+            >
               <Switch
                 defaultChecked={totpActivated}
-                onChange={(e) => (totpActivated ? 'testtrue' : 'testfalse')}
+                onChange={(checked: boolean) => {
+                  if (checked) {
+                    toggleTOTPActivateModal();
+                  } else {
+                    if (totpActivated) {
+                      form.setFieldValue('totpActivated', true);
+                      modal.confirm({
+                        title: t('totp.TurnOffTotp'),
+                        icon: <ExclamationCircleFilled />,
+                        content: t('totp.ConfirmTotpRemovalBody'),
+                        okText: t('button.Yes'),
+                        okType: 'danger',
+                        cancelText: t('button.No'),
+                        onOk() {
+                          mutationToRemoveTotp.mutate(baiClient.email || '', {
+                            onSuccess: () => {
+                              message.success(
+                                t('totp.RemoveTotpSetupCompleted'),
+                              );
+                              totpActivated = false;
+                              form.setFieldValue('totpActivated', false);
+                            },
+                            onError: (error: any) => {
+                              message.error(error.message);
+                            },
+                          });
+                        },
+                        onCancel() {
+                          form.setFieldValue('totpActivated', true);
+                        },
+                      });
+                    }
+                  }
+                }}
               />
             </Form.Item>
-          ) : (
-            ''
           )}
         </Form>
+        {!!totpSupported && (
+          <TOTPActivateModal
+            open={isOpenTOTPActivateModal}
+            onRequestClose={(success) => {
+              if (success) {
+                totpActivated = true;
+              } else {
+                form.setFieldValue('totp_activated', false);
+              }
+              toggleTOTPActivateModal();
+            }}
+          />
+        )}
       </Modal>
+      {contextHolder}
+      {modalContextHolder}
     </>
   );
 };
