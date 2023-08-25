@@ -60,7 +60,14 @@
       "AgentSummary": "__NOT_TRANSLATED__",
       "SetupTotp": "__NOT_TRANSLATED__",
       "TotpActivated": "__NOT_TRANSLATED__",
-      "AIAccelerator": "__NOT_TRANSLATED__"
+      "AIAccelerator": "__NOT_TRANSLATED__",
+      "Serving": "__NOT_TRANSLATED__",
+      "Notifications": "__NOT_TRANSLATED__",
+      "Tasks": "__NOT_TRANSLATED__",
+      "YouMushChangeYourPassword": "__NOT_TRANSLATED__",
+      "NewPasswordCannotBeSame": "__NOT_TRANSLATED__",
+      "PleaseConfirmYourPassword": "__NOT_TRANSLATED__",
+      "InputNewPassword": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "ТРЕБУЕТСЯ ВХОД",
     "YouAreOffline": "Вы сейчас не в сети",
@@ -114,7 +121,8 @@
     "connectingToCluster": "Подключение к Backend.AI кластеру ...",
     "DownloadWebUIApp": "__NOT_TRANSLATED__",
     "IPUEnabled": "__NOT_TRANSLATED__",
-    "ATOMEnabled": "__NOT_TRANSLATED__"
+    "ATOMEnabled": "__NOT_TRANSLATED__",
+    "WarboyEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -246,7 +254,17 @@
       "ImageDoesNotProvideModelPath": "__NOT_TRANSLATED__",
       "ModelStorageToMount": "__NOT_TRANSLATED__",
       "AIAccelerator": "__NOT_TRANSLATED__",
-      "DescAIAccelerator": "__NOT_TRANSLATED__"
+      "DescAIAccelerator": "__NOT_TRANSLATED__",
+      "SessionAlreadyExists": "__NOT_TRANSLATED__",
+      "PreOpenPortTitle": "__NOT_TRANSLATED__",
+      "DescSetPreOpenPort": "__NOT_TRANSLATED__",
+      "SetPreopenPorts": "__NOT_TRANSLATED__",
+      "PreOpenPortConfigurationDone": "__NOT_TRANSLATED__",
+      "NoPreOpenPortsConfigured": "__NOT_TRANSLATED__",
+      "PortsTitleWithRange": "__NOT_TRANSLATED__",
+      "PrePortConfigWillDisappear": "__NOT_TRANSLATED__",
+      "PreOpenPortPanelTitle": "__NOT_TRANSLATED__",
+      "PreOpenPortRange": "__NOT_TRANSLATED__"
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -283,7 +301,9 @@
       "AppMustBeRunDialog": "Доступ к этому приложению и его использование возможно только в том случае, если оно уже запущено через терминал. В противном случае вы будете перенаправлены на страницу с ошибкой, которая возникает, когда приложение не запущено.",
       "ConfirmAndRun": "Я проверил и начну",
       "Prepared": "Готовый",
-      "App": "__NOT_TRANSLATED__"
+      "App": "__NOT_TRANSLATED__",
+      "NoExistingConnectionExample": "Нет примера подключения для копирования.",
+      "SSHConnectionExampleClipboardCopy": "Пример подключения SSH скопирован в буфер обмена."
     },
     "TensorboardPath": "Каталог журналов для TensorBoard",
     "InputTensorboardPath": "Введите каталог журнала, на который будет ссылаться TensorBoard. Обратите внимание, что каталог журналов не будет создан автоматически.",
@@ -331,6 +351,10 @@
     "Message": "сообщение",
     "EnvironmentInfo": "__NOT_TRANSLATED__",
     "DownloadingSessionLogs": "__NOT_TRANSLATED__",
+    "VSCodeRemoteConnection": "__NOT_TRANSLATED__",
+    "VSCodeRemoteDescription": "__NOT_TRANSLATED__",
+    "VSCodeRemotePasswordTitle": "__NOT_TRANSLATED__",
+    "VSCodeRemoteNoticeSSHConfig": "__NOT_TRANSLATED__",
     "ElapsedTime": "__NOT_TRANSLATED__",
     "Timeout": "__NOT_TRANSLATED__",
     "SessionLifetime": "__NOT_TRANSLATED__",
@@ -359,7 +383,15 @@
     "GracePeriodDesc": "__NOT_TRANSLATED__",
     "UtilizationThreshold": "__NOT_TRANSLATED__",
     "UtilizationThresholdDesc": "__NOT_TRANSLATED__",
-    "ExpiresAfter": "__NOT_TRANSLATED__"
+    "ExpiresAfter": "__NOT_TRANSLATED__",
+    "ConnectionExample": "__NOT_TRANSLATED__",
+    "System": "__NOT_TRANSLATED__",
+    "SFTPExtraNotification": "__NOT_TRANSLATED__",
+    "ConnectionNotice": "__NOT_TRANSLATED__",
+    "ReadMore": "__NOT_TRANSLATED__",
+    "Readless": "__NOT_TRANSLATED__",
+    "Readmore": "__NOT_TRANSLATED__",
+    "SessionType": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",
@@ -394,7 +426,9 @@
     "Reset": "Перезагрузить",
     "EnterManually": "__NOT_TRANSLATED__",
     "OptOut": "__NOT_TRANSLATED__",
-    "Activate": "__NOT_TRANSLATED__"
+    "Activate": "__NOT_TRANSLATED__",
+    "Unset": "__NOT_TRANSLATED__",
+    "OK": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Конечная точка",
@@ -498,7 +532,8 @@
       "PleaseSelectOption": "Пожалуйста, выберите один вариант",
       "LetterNumber-_dot": "Допускает буквы, цифры и -_.",
       "NameAlreadyExists": "Название политики уже существует!",
-      "ValidationFailed": "Проверка не удалась"
+      "ValidationFailed": "Проверка не удалась",
+      "PleaseSelectOptions": "Пожалуйста, выберите варианты"
     },
     "ProjectAndGroup": "Проекты и группы",
     "ModifyKeypairResourcePolicy": "Изменить политику ресурсов пары ключей",
@@ -522,7 +557,8 @@
     "KeypairDetail": "__NOT_TRANSLATED__",
     "AdminCanOnlyRemoveTotp": "__NOT_TRANSLATED__",
     "KeySeccessfullyDeleted": "__NOT_TRANSLATED__",
-    "SignoutSeccessfullyFinished": "__NOT_TRANSLATED__"
+    "SignoutSeccessfullyFinished": "__NOT_TRANSLATED__",
+    "ModifyUserDetail": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Папки",
@@ -602,7 +638,11 @@
       "FolderInfo": "__NOT_TRANSLATED__",
       "OpenAFolder": "__NOT_TRANSLATED__",
       "Status": "__NOT_TRANSLATED__",
-      "Serve": "__NOT_TRANSLATED__"
+      "Serve": "__NOT_TRANSLATED__",
+      "CloneFolder": "__NOT_TRANSLATED__",
+      "LeaveFolder": "__NOT_TRANSLATED__",
+      "ShareFolder": "__NOT_TRANSLATED__",
+      "ModifyPermissions": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Удалить...",
@@ -647,7 +687,25 @@
       "NotEnoughResourceForFileBrowserSession": "Недостаточно ресурсов (cpu: 1 Core, mem: 0,5GB) для создания сеанса для просмотра файлов. пожалуйста, проверьте доступные ресурсы.",
       "NoImagesSupportingFileBrowser": "Пока нет изображений, поддерживающих просмотрщик файлов. Для загрузки папок требуется по крайней мере одно или несколько изображений, поддерживающих просмотрщик файлов.",
       "ClickFilebrowserButton": "Чтобы загрузить папку (и), нажмите кнопку «Выполнить просмотрщик файлов».",
-      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__"
+      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__",
+      "ExecuteSSH/SFTP": "__NOT_TRANSLATED__",
+      "NoImagesSupportingSystemSession": "__NOT_TRANSLATED__",
+      "SftpScalingGroupsDoNotExist": "__NOT_TRANSLATED__",
+      "ExecutingSSH/SFTPSession": "__NOT_TRANSLATED__",
+      "RunSSH/SFTPserver": "__NOT_TRANSLATED__",
+      "SFTPSessionNotAvailable": "__NOT_TRANSLATED__",
+      "StartingSSH/SFTPSession": "__NOT_TRANSLATED__",
+      "UploadFolder": "__NOT_TRANSLATED__",
+      "EmptyFilesAndFoldersAreNotUploaded": "__NOT_TRANSLATED__",
+      "FolderAlreadyExists": "__NOT_TRANSLATED__",
+      "NumberOfSFTPSessionsExceededTitle": "__NOT_TRANSLATED__",
+      "NumberOfSFTPSessionsExceededBody": "__NOT_TRANSLATED__",
+      "Serve": "__NOT_TRANSLATED__",
+      "FolderInfo": "__NOT_TRANSLATED__",
+      "CloneFolder": "__NOT_TRANSLATED__",
+      "Rename": "__NOT_TRANSLATED__",
+      "FolderOptionUpdate": "__NOT_TRANSLATED__",
+      "LeaveFolder": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Введите адрес электронной почты",
@@ -657,7 +715,8 @@
       "InvitationError": "Приглашение не прошло. Пользователь уже может быть приглашен.",
       "Shared": "Успешно предоставлен доступ к групповой папке",
       "NoOneWasShared": "Не удалось предоставить общий доступ к папке группы",
-      "SharingError": "Не удалось отправить. Возможно, пользователь уже находится в совместном доступе или не принадлежит соответствующему проекту."
+      "SharingError": "Не удалось отправить. Возможно, пользователь уже находится в совместном доступе или не принадлежит соответствующему проекту.",
+      "FolderSharingNotAvailableToUser": "__NOT_TRANSLATED__"
     },
     "permission": {
       "NoChanges": "Никаких изменений не внесено",
@@ -673,13 +732,21 @@
       "StatusOfSelectedHost": "__NOT_TRANSLATED__",
       "Status": "__NOT_TRANSLATED__",
       "used": "__NOT_TRANSLATED__"
-    }
+    },
+    "SelectStorageHost": "__NOT_TRANSLATED__",
+    "NumberOfFolders": "__NOT_TRANSLATED__",
+    "Limit": "__NOT_TRANSLATED__",
+    "ProjectFolder": "__NOT_TRANSLATED__",
+    "QuotaPerStorageVolume": "__NOT_TRANSLATED__",
+    "HostDetails": "__NOT_TRANSLATED__",
+    "Used": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {
       "CannotBeUndone": "ВНИМАНИЕ: это нельзя отменить!",
       "LogDeletion": "Вы уверены, что хотите удалить все сообщения журнала?",
-      "WillBeAppliedToNewSessions": "Это обновление будет применено к новым сеансам."
+      "WillBeAppliedToNewSessions": "Это обновление будет применено к новым сеансам.",
+      "Required": "__NOT_TRANSLATED__"
     },
     "ask": {
       "DoYouWantToProceed": "Вы хотите продолжить?"
@@ -818,6 +885,8 @@
     "AutoLogout": "Автоматический выход",
     "DescAutoLogout": "Автоматический выход из системы, если все зарегистрированные страницы закрыты, кроме страниц, созданных в сеансе для приложений (например, блокнот jupyter, веб-терминал и т. Д.)",
     "BootstrapScriptDescription": "__NOT_TRANSLATED__",
+    "NoExistingVSCodePassword": "__NOT_TRANSLATED__",
+    "VSCodePasswordClipboardCopy": "__NOT_TRANSLATED__",
     "SSHKeypairEnterManually": "__NOT_TRANSLATED__",
     "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__",
     "SavedGitTokenValues": "__NOT_TRANSLATED__",
@@ -943,7 +1012,10 @@
     "ResourceGroupDetail": "Сведения о группе ресурсов",
     "RetriesToSkip": "__NOT_TRANSLATED__",
     "NoGroupToDisplay": "__NOT_TRANSLATED__",
-    "AllowedSessionTypes": "__NOT_TRANSLATED__"
+    "AllowedSessionTypes": "__NOT_TRANSLATED__",
+    "Domain": "Домен",
+    "Public": "__NOT_TRANSLATED__",
+    "PublicStatus": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Общий",
@@ -1006,10 +1078,18 @@
     }
   },
   "statistics": {
-    "Usage": "Применение",
+    "UsageHistory": "История использования",
     "SelectPeriod": "Выберите период",
     "1Day": "1 день",
-    "1Week": "1 неделя"
+    "1Week": "1 неделя",
+    "UsageHistoryDesc": "__NOT_TRANSLATED__",
+    "SessionsDesc": "__NOT_TRANSLATED__",
+    "CPUDesc": "__NOT_TRANSLATED__",
+    "MemoryDesc": "__NOT_TRANSLATED__",
+    "GPUDesc": "__NOT_TRANSLATED__",
+    "IOReadDesc": "__NOT_TRANSLATED__",
+    "IOWriteDesc": "__NOT_TRANSLATED__",
+    "UsageHistoryNote": "__NOT_TRANSLATED__"
   },
   "language": {
     "Browser": "Браузер",
@@ -1038,7 +1118,7 @@
     "DescAllowAgentSideRegistration": "Разрешить агенту зарегистрироваться в качестве менеджера. <br/> Используйте, только если кластер Backend.AI управляется в безопасном месте.",
     "Plugins": "Плагины",
     "CUDAGPUsupport": "Поддержка CUDA GPU",
-    "DescCUDAGPUsupport": "Поддержка графического процессора NVidia CUDA. <br/> Требуется подключаемый модуль Backend.AI CUDA.",
+    "DescCUDAGPUsupport": "Поддержка графического процессора NVIDIA CUDA. <br/> Требуется подключаемый модуль Backend.AI CUDA.",
     "CUDAGPUdisabledByFGPUsupport": "Отключено, поскольку в системе используется плагин Fractional GPU.",
     "ROCMGPUsupport": "Поддержка графического процессора ROCm",
     "DescROCMGPUsupport": "Поддержка графического процессора AMD ROCm. <br/> Требуется подключаемый модуль Backend.AI ROCm.",
@@ -1088,7 +1168,10 @@
     "ATOMsupport": "__NOT_TRANSLATED__",
     "DescATOMsupport": "__NOT_TRANSLATED__",
     "RequireIPUPlugin": "__NOT_TRANSLATED__",
-    "RequireATOMPlugin": "__NOT_TRANSLATED__"
+    "RequireATOMPlugin": "__NOT_TRANSLATED__",
+    "Warboysupport": "__NOT_TRANSLATED__",
+    "DescWarboysupport": "__NOT_TRANSLATED__",
+    "RequireWarboyPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Успешно обновлено",
@@ -1172,7 +1255,8 @@
       "LoginWithSAML": "__NOT_TRANSLATED__"
     },
     "EndpointInfo": "__NOT_TRANSLATED__",
-    "DescEndpoint": "__NOT_TRANSLATED__"
+    "DescEndpoint": "__NOT_TRANSLATED__",
+    "EndpointStartWith": "__NOT_TRANSLATED__"
   },
   "signup": {
     "SignupBETA": "Регистрация (только приглашение в бета-версию)",
@@ -1291,7 +1375,8 @@
     "CreatingComputeSession": "Создание вычислительного сеанса ...",
     "SessionStillPreparing": "Сессия все еще находится в стадии подготовки. Перезагрузите через некоторое время",
     "ComputeSessionPrepared": "Вычислительная сессия подготовлена",
-    "sessionStatusIs": "Статус сеанса"
+    "sessionStatusIs": "Статус сеанса",
+    "EmptyProject": "__NOT_TRANSLATED__"
   },
   "error": {
     "UpdateError": "Ошибка обновления",
@@ -1341,6 +1426,7 @@
     "ValueRequired": "НужноЗначение",
     "InputTooShort": "ВводОченьКороток"
   },
+  "OpenVSCodeRemote": "__NOT_TRANSLATED__",
   "totp": {
     "OTP": "__NOT_TRANSLATED__",
     "TotpRemoved": "__NOT_TRANSLATED__",
@@ -1349,6 +1435,77 @@
     "ScanQRToEnable": "__NOT_TRANSLATED__",
     "TypeInAuthKey": "__NOT_TRANSLATED__",
     "EnterConfirmationCode": "__NOT_TRANSLATED__",
-    "ConfirmTotpRemovalBody": "__NOT_TRANSLATED__"
+    "ConfirmTotpRemovalBody": "__NOT_TRANSLATED__",
+    "TotpSetupNotAvailable": "__NOT_TRANSLATED__",
+    "TurnOffTotp": "__NOT_TRANSLATED__",
+    "RemoveTotpSetupCompleted": "__NOT_TRANSLATED__"
+  },
+  "inputLimit": {
+    "4to64chars": "__NOT_TRANSLATED__"
+  },
+  "storageHost": {
+    "quotaSettings": {
+      "SelectDomain": "__NOT_TRANSLATED__",
+      "AllowNumberAndDot": "__NOT_TRANSLATED__",
+      "SelectProject": "__NOT_TRANSLATED__",
+      "SelectFirst": "__NOT_TRANSLATED__",
+      "ClickSettingButton": "__NOT_TRANSLATED__",
+      "AddQuotaConfigs": "__NOT_TRANSLATED__",
+      "QuotaScopeId": "__NOT_TRANSLATED__",
+      "UnsetCustomSettings": "__NOT_TRANSLATED__",
+      "ConfirmUnsetCustomQuota": "__NOT_TRANSLATED__",
+      "QuotaScopeSuccessfullyUpdated": "__NOT_TRANSLATED__",
+      "QuotaSettings": "__NOT_TRANSLATED__",
+      "SelectUser": "__NOT_TRANSLATED__"
+    },
+    "ResourcePolicySuccessfullyUpdated": "__NOT_TRANSLATED__",
+    "ResourcePolicySuccessfullyCreated": "__NOT_TRANSLATED__",
+    "ResourcePolicySettings": "__NOT_TRANSLATED__",
+    "BeCarefulToSetProjectResourcePolicy": "__NOT_TRANSLATED__",
+    "MaxFolderSize": "__NOT_TRANSLATED__",
+    "HardLimit": "__NOT_TRANSLATED__",
+    "Usage": "__NOT_TRANSLATED__",
+    "UnsetResourcePolicy": "__NOT_TRANSLATED__",
+    "DoYouWantToUseDefaultValue": "__NOT_TRANSLATED__",
+    "SelectProjectOrUserFirst": "__NOT_TRANSLATED__",
+    "ResourcePolicy": "__NOT_TRANSLATED__",
+    "Used": "__NOT_TRANSLATED__",
+    "Total": "__NOT_TRANSLATED__",
+    "QuotaSettings": "__NOT_TRANSLATED__",
+    "ForUser": "__NOT_TRANSLATED__",
+    "ForProject": "__NOT_TRANSLATED__",
+    "QuotaDoesNotSupported": "__NOT_TRANSLATED__",
+    "BeCarefulToSetUserResourcePolicy": "__NOT_TRANSLATED__"
+  },
+  "modelService": {
+    "EditModelService": "__NOT_TRANSLATED__",
+    "DesiredSessionCount": "__NOT_TRANSLATED__",
+    "OnlyAllowsNonNegativeIntegers": "__NOT_TRANSLATED__",
+    "StartNewServing": "__NOT_TRANSLATED__",
+    "ServiceName": "__NOT_TRANSLATED__",
+    "OpenToPublic": "__NOT_TRANSLATED__",
+    "DesiredRoutingCount": "__NOT_TRANSLATED__",
+    "Services": "__NOT_TRANSLATED__",
+    "RoutingInfo": "__NOT_TRANSLATED__",
+    "ServiceInfo": "__NOT_TRANSLATED__",
+    "EndpointName": "__NOT_TRANSLATED__",
+    "EndpointId": "__NOT_TRANSLATED__",
+    "SessionOwner": "__NOT_TRANSLATED__",
+    "ServiceEndpoint": "__NOT_TRANSLATED__",
+    "NoServiceEndpoint": "__NOT_TRANSLATED__",
+    "RoutesInfo": "__NOT_TRANSLATED__",
+    "RouteId": "__NOT_TRANSLATED__",
+    "SessionId": "__NOT_TRANSLATED__",
+    "Status": "__NOT_TRANSLATED__",
+    "TrafficRatio": "__NOT_TRANSLATED__",
+    "StartService": "__NOT_TRANSLATED__",
+    "Controls": "__NOT_TRANSLATED__",
+    "RoutingsCount": "__NOT_TRANSLATED__",
+    "Active/Total": "__NOT_TRANSLATED__",
+    "Public": "__NOT_TRANSLATED__",
+    "YouAreAboutToTerminate": "__NOT_TRANSLATED__",
+    "FailedToStartService": "__NOT_TRANSLATED__",
+    "ServingRouteErrorModalTitle": "__NOT_TRANSLATED__",
+    "ClearErrors": "__NOT_TRANSLATED__"
   }
 }

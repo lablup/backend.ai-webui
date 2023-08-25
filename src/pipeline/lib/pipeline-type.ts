@@ -2,17 +2,17 @@
  * Pipeline Information interface
  */
 export interface PipelineInfoBase {
-  name: string,
-  description: string,
+  name: string;
+  description: string;
   storage: {
-    host: string,
-    name: string,
-    id: string, // uuid for vfolder
-  },
-  yaml: string,
-  dataflow: object,
-  is_active: boolean,
-};
+    host: string;
+    name: string;
+    id: string; // uuid for vfolder
+  };
+  yaml: string;
+  dataflow: object;
+  is_active: boolean;
+}
 
 /**
  * Pipeline Information class
@@ -21,9 +21,9 @@ export class PipelineInfo implements PipelineInfoBase {
   name: string;
   description: string;
   storage: {
-    host: string,
-    name: string,
-    id: string,
+    host: string;
+    name: string;
+    id: string;
   };
   yaml: string;
   dataflow: object;
@@ -57,7 +57,6 @@ export interface PipelineInfoExtendedBase extends PipelineInfoBase {
  *
  */
 export class PipelineInfoExtended implements PipelineInfoExtendedBase {
-
   created_at: string;
   dataflow: object;
   description: string;
@@ -68,13 +67,12 @@ export class PipelineInfoExtended implements PipelineInfoExtendedBase {
   name: string;
   owner: string;
   storage: {
-    host: string,
-    name: string,
-    id: string,
+    host: string;
+    name: string;
+    id: string;
   };
   version: string;
   yaml: string;
-
 
   constructor() {
     this.created_at = '';
@@ -100,31 +98,31 @@ export class PipelineInfoExtended implements PipelineInfoExtendedBase {
  * Pipeline Info (YAML) interface
  */
 export interface PipelineYAMLBase {
-  name: string,
-  description: string,
+  name: string;
+  description: string;
   ownership: {
-    domain_name: string,
-    group_name: string,
-  },
-  environment: PipelineEnvironment,
-  resources: PipelineResources,
+    domain_name: string;
+    group_name: string;
+  };
+  environment: PipelineEnvironment;
+  resources: PipelineResources;
   resource_opts: {
-    shmem: string,
-  },
-  mounts: Array<string>,
+    shmem: string;
+  };
+  mounts: Array<string>;
 }
 
 export class PipelineYAML implements PipelineYAMLBase {
   name: string;
   description: string;
   ownership: {
-    domain_name: string,
-    group_name: string,
+    domain_name: string;
+    group_name: string;
   };
   environment: PipelineEnvironment;
   resources: PipelineResources;
   resource_opts: {
-    shmem: string,
+    shmem: string;
   };
   mounts: Array<string>;
 
@@ -137,7 +135,7 @@ export class PipelineYAML implements PipelineYAMLBase {
     };
     this.environment = new PipelineEnvironment();
     this.resources = new PipelineResources();
-    this.resource_opts = {shmem: ''};
+    this.resource_opts = { shmem: '' };
     this.mounts = [];
   }
 }
@@ -145,11 +143,12 @@ export class PipelineYAML implements PipelineYAMLBase {
 /**
  * Pipeline Job interface
  */
-export interface PipelineJobBase extends Omit<PipelineInfoExtendedBase, 'storage' | 'is_active' | 'version'> {
-  pipeline: string, // pipeline uuid
-  result: string,
-  status: string,
-  terminated_at: string
+export interface PipelineJobBase
+  extends Omit<PipelineInfoExtendedBase, 'storage' | 'is_active' | 'version'> {
+  pipeline: string; // pipeline uuid
+  result: string;
+  status: string;
+  terminated_at: string;
 }
 
 export class PipelineJob implements PipelineJobBase {
@@ -188,16 +187,16 @@ export class PipelineJob implements PipelineJobBase {
  * Task interface
  */
 export interface PipelineTaskNodeBase {
-  name: string,
-  inputs: number,
-  outputs: number,
-  class: string,
-  pos_x: number,
-  pos_y: number,
+  name: string;
+  inputs: number;
+  outputs: number;
+  class: string;
+  pos_x: number;
+  pos_y: number;
   // FIXME: need to be converted to string because of "cuda.device" and "cuda.shares"
-  data: string,
+  data: string;
   // data: PipelineTaskDetail,
-  html: string,
+  html: string;
 }
 
 export class PipelineTaskNode implements PipelineTaskNodeBase {
@@ -224,10 +223,11 @@ export class PipelineTaskNode implements PipelineTaskNodeBase {
   }
 }
 
-export interface PipelineTaskBase extends Omit<PipelineYAMLBase, 'ownership' | 'description'> {
-  module_uri: string,
-  type: string,
-  dependencies? : Array<string>,
+export interface PipelineTaskBase
+  extends Omit<PipelineYAMLBase, 'ownership' | 'description'> {
+  module_uri: string;
+  type: string;
+  dependencies?: Array<string>;
 }
 
 export class PipelineTask implements PipelineTaskBase {
@@ -235,18 +235,18 @@ export class PipelineTask implements PipelineTaskBase {
   environment: PipelineEnvironment;
   resources: PipelineResources;
   resource_opts: {
-    shmem: string,
+    shmem: string;
   };
   mounts: Array<string>;
   module_uri: string;
   type: string;
-  dependencies? : Array<string>;
+  dependencies?: Array<string>;
 
   constructor() {
     this.name = '';
     this.environment = new PipelineEnvironment();
     this.resources = new PipelineResources();
-    this.resource_opts = {shmem: ''};
+    this.resource_opts = { shmem: '' };
     this.mounts = [];
     this.module_uri = '';
     this.type = '';
@@ -258,14 +258,14 @@ export class PipelineTask implements PipelineTaskBase {
  * Task data interface partially used in PipelineTaskNode interface
  */
 export interface PipelineTaskDetailBase {
-  type: string,
-  environment: PipelineEnvironment,
-  resources: PipelineResources,
+  type: string;
+  environment: PipelineEnvironment;
+  resources: PipelineResources;
   resource_opts: {
-    shmem: string,
-  },
-  command: string,
-  mounts: Array<string>,
+    shmem: string;
+  };
+  command: string;
+  mounts: Array<string>;
 }
 
 export class PipelineTaskDetail implements PipelineTaskDetailBase {
@@ -273,7 +273,7 @@ export class PipelineTaskDetail implements PipelineTaskDetailBase {
   environment: PipelineEnvironment;
   resources: PipelineResources;
   resource_opts: {
-    shmem: string
+    shmem: string;
   };
   command: string;
   mounts: Array<string>;
@@ -282,7 +282,7 @@ export class PipelineTaskDetail implements PipelineTaskDetailBase {
     this.type = '';
     this.environment = new PipelineEnvironment();
     this.resources = new PipelineResources();
-    this.resource_opts = {shmem: ''};
+    this.resource_opts = { shmem: '' };
     this.command = '';
     this.mounts = [];
   }
@@ -291,16 +291,24 @@ export class PipelineTaskDetail implements PipelineTaskDetailBase {
 /**
  * The type of key list excluded in pipeline task instance
  */
-type ExcludedKeyListInPipelineTaskInstance = 'dataflow' | 'description' | 'email' | 'name' | 'owner' | 'pipeline' | 'yaml';
+type ExcludedKeyListInPipelineTaskInstance =
+  | 'dataflow'
+  | 'description'
+  | 'email'
+  | 'name'
+  | 'owner'
+  | 'pipeline'
+  | 'yaml';
 
 /**
  * Task instance interface
  *
  */
-export interface PipelineTaskInstanceBase extends Omit<PipelineJobBase, ExcludedKeyListInPipelineTaskInstance> {
-  compute_session_id: string,
-  config: object,
-  pipeline_job: string, // pipeline job uuid
+export interface PipelineTaskInstanceBase
+  extends Omit<PipelineJobBase, ExcludedKeyListInPipelineTaskInstance> {
+  compute_session_id: string;
+  config: object;
+  pipeline_job: string; // pipeline job uuid
 }
 
 export class PipelineTaskInstance implements PipelineTaskInstanceBase {
@@ -332,10 +340,10 @@ export class PipelineTaskInstance implements PipelineTaskInstanceBase {
  *
  */
 export interface SessionEventWebHookBase {
-  type: string,
-  event: string,
-  session_id: string, // session uuid
-  when: string, // datetime field
+  type: string;
+  event: string;
+  session_id: string; // session uuid
+  when: string; // datetime field
 }
 
 export class SessionEventWebHook implements SessionEventWebHookBase {
@@ -356,21 +364,21 @@ export class SessionEventWebHook implements SessionEventWebHookBase {
  * Resources used in pipeline
  */
 export interface PipelineResourcesBase {
-  cpu: string,
-  mem: string,
-  "cuda.shares"?: string,
-  "cuda.device"?: string,
+  cpu: string;
+  mem: string;
+  'cuda.shares'?: string;
+  'cuda.device'?: string;
 }
 
 export class PipelineResources implements PipelineResourcesBase {
   cpu: string;
   mem: string;
-  "cuda.shares"?: string;
-  "cuda.device"?: string;
+  'cuda.shares'?: string;
+  'cuda.device'?: string;
 
   constructor() {
     this.cpu = '';
-    this.mem= '';
+    this.mem = '';
   }
 }
 
@@ -378,9 +386,9 @@ export class PipelineResources implements PipelineResourcesBase {
  * Environment detail used in pipeline
  */
 export interface PipelineEnvironmentBase {
-  image: string,
-  envs: object,
-  'scaling-group': string,
+  image: string;
+  envs: object;
+  'scaling-group': string;
 }
 
 export class PipelineEnvironment implements PipelineEnvironmentBase {
@@ -389,9 +397,9 @@ export class PipelineEnvironment implements PipelineEnvironmentBase {
   'scaling-group': string;
 
   constructor() {
-    this.image = ''
+    this.image = '';
     this.envs = {};
-    this["scaling-group"] = '';
+    this['scaling-group'] = '';
   }
 }
 
@@ -401,5 +409,5 @@ export class PipelineEnvironment implements PipelineEnvironmentBase {
 export enum PipelineTaskType {
   github = 'Import from GitHub',
   gitlab = 'Import from GitLab',
-  custom = 'Custom Task'
+  custom = 'Custom Task',
 }

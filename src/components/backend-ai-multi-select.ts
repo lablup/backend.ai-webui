@@ -2,24 +2,21 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
-
+import '../plastics/lablup-shields/lablup-shields';
 import {
   IronFlex,
   IronFlexReverse,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import {BackendAiStyles} from './backend-ai-general-styles';
-
-import '@material/mwc-list/mwc-check-list-item';
+import { BackendAiStyles } from './backend-ai-general-styles';
 import '@material/mwc-icon-button/mwc-icon-button';
+import '@material/mwc-list/mwc-check-list-item';
 import '@material/mwc-list/mwc-list';
-
-import '../plastics/lablup-shields/lablup-shields';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { get as _text } from 'lit-translate';
+import { customElement, property, query, state } from 'lit/decorators.js';
 
 /**
  Backend.AI Multi Select
@@ -46,13 +43,18 @@ export default class BackendAIMultiSelect extends LitElement {
   @query('#list') private comboBox;
   @query('#menu', true) private menu;
   @query('#dropdown-icon', true) private dropdownIcon;
-  @property({type: Array}) selectedItemList;
-  @property({type: String, attribute: 'label'}) label = '';
-  @property({type: Array}) items;
+  @property({ type: Array }) selectedItemList;
+  @property({ type: Array }) items;
+  @property({ type: String, attribute: 'label' }) label = '';
+  @property({ type: String, attribute: 'validation-message' })
+  validationMessage = '';
   // TODO: Clear button to remove all selected
   // TODO: AutoComplete(filtering)
-  @property({type: Boolean, attribute: 'enable-clear-button'}) enableClearButton = false;
-  @property({type: Boolean, attribute: 'open-up'}) openUp = false;
+  @property({ type: Boolean, attribute: 'enable-clear-button' })
+  enableClearButton = false;
+  @property({ type: Boolean, attribute: 'open-up' }) openUp = false;
+  @property({ type: Boolean, attribute: 'required' }) required = false;
+  @state() private _valid = true;
 
   constructor() {
     super();
@@ -77,6 +79,7 @@ export default class BackendAIMultiSelect extends LitElement {
         span.title {
           font-size: var(--select-title-font-size, 14px);
           font-weight: var(--select-title-font-weight, 500);
+          padding-left: var(--select-title-padding-left, 0px);
         }
 
         mwc-button {
@@ -85,19 +88,25 @@ export default class BackendAIMultiSelect extends LitElement {
           --mdc-theme-on-primary: var(--selected-item-theme-font-color);
           --mdc-typography-font-family: var(--selected-item-font-family);
           --mdc-typography-button-font-size: var(--selected-item-font-size);
-          --mdc-typography-button-text-transform: var(--selected-item-text-transform);
+          --mdc-typography-button-text-transform: var(
+            --selected-item-text-transform
+          );
         }
 
         mwc-button[unelevated] {
           --mdc-theme-primary: var(--selected-item-unelevated-theme-color);
-          --mdc-theme-on-primary: var(--selected-item-unelevated-theme-font-color);
+          --mdc-theme-on-primary: var(
+            --selected-item-unelevated-theme-font-color
+          );
         }
 
         mwc-button[outlined] {
           --mdc-theme-primary: var(--selected-item-outlined-theme-color);
-          --mdc-theme-on-primary: var(--selected-item-outlined-theme-font-color);
+          --mdc-theme-on-primary: var(
+            --selected-item-outlined-theme-font-color
+          );
         }
-        
+
         mwc-list {
           font-family: var(--general-font-family);
           width: 100%;
@@ -116,19 +125,30 @@ export default class BackendAIMultiSelect extends LitElement {
           background-color: var(--select-background-color, #efefef);
         }
 
+        div.invalid {
+          border: 1px solid var(--select-error-color, #b00020);
+        }
+
         .selected-area {
           background-color: var(--select-background-color, #efefef);
           border-radius: var(--selected-area-border-radius, 5px);
-          border: var(--selected-area-border, 1px solid rgba(0,0,0,1));
+          border: var(--selected-area-border, 1px solid rgba(0, 0, 0, 1));
           padding: var(--selected-area-padding, 10px);
           min-height: var(--selected-area-min-height, 24px);
           height: var(--selected-area-height, auto);
         }
 
         .expand {
-          transform:rotateX(180deg) !important;
+          transform: rotateX(180deg) !important;
         }
-      `
+
+        .validation-msg {
+          font-size: var(--selected-validation-msg-font-size, 12px);
+          padding-right: var(--selected-validation-msg-padding, 16px);
+          padding-left: var(--selected-validation-msg-padding, 16px);
+          color: var(--select-error-color, #b00020);
+        }
+      `,
     ];
   }
 
@@ -171,8 +191,11 @@ export default class BackendAIMultiSelect extends LitElement {
    */
   _modifyListPosition(listCount = 0) {
     const itemHeight = BackendAIMultiSelect.DEFAULT_ITEM_HEIGHT;
-    const extraMargin = (listCount === this.items.length) ? BackendAIMultiSelect.DEFAULT_ITEM_MARGIN : 0;
-    const totalHeight = `-${(itemHeight * listCount + extraMargin)}px`;
+    const extraMargin =
+      listCount === this.items.length
+        ? BackendAIMultiSelect.DEFAULT_ITEM_MARGIN
+        : 0;
+    const totalHeight = `-${itemHeight * listCount + extraMargin}px`;
     if (this.openUp) {
       this.comboBox.style.top = totalHeight;
     } else {
@@ -187,8 +210,11 @@ export default class BackendAIMultiSelect extends LitElement {
    */
   _updateSelection(e) {
     const selectedItemIndices = [...e.detail.index];
-    const selectedItems = this.comboBox.items.filter((item, index, array) => selectedItemIndices.includes(index)).map((item) => item.value);
+    const selectedItems = this.comboBox.items
+      .filter((item, index, array) => selectedItemIndices.includes(index))
+      .map((item) => item.value);
     this.selectedItemList = selectedItems;
+    this._checkValidity();
   }
 
   /**
@@ -204,7 +230,9 @@ export default class BackendAIMultiSelect extends LitElement {
         this.comboBox.toggle(index);
       }
     });
-    this.selectedItemList = this.selectedItemList.filter((item) => item !== itemToDeselect.label);
+    this.selectedItemList = this.selectedItemList.filter(
+      (item) => item !== itemToDeselect.label,
+    );
   }
 
   /**
@@ -218,9 +246,15 @@ export default class BackendAIMultiSelect extends LitElement {
     this.selectedItemList = [];
   }
 
+  _checkValidity() {
+    this._valid = !this.required || this.selectedItemList.length > 0;
+  }
+
   firstUpdated() {
-    this.openUp = (this.getAttribute('open-up') !== null);
+    this.openUp = this.getAttribute('open-up') !== null;
     this.label = this.getAttribute('label') ?? '';
+    this.validationMessage = this.getAttribute('validation-message') ?? '';
+    this._checkValidity();
   }
 
   connectedCallback(): void {
@@ -234,27 +268,64 @@ export default class BackendAIMultiSelect extends LitElement {
   render() {
     // language=HTML
     return html`
-    <span class="title">${this.label}</span>
-    <div class="layout ${this.openUp ? `vertical-reverse` : `vertical`}">
-      <div class="horizontal layout justified start selected-area center">
-        <div class="horizontal layout start-justified wrap">
-          ${this.selectedItemList.map((item) => html`
-            <mwc-button unelevated trailingIcon label=${item} icon="close"
-                @click=${(e) => this._deselectItem(e)}></mwc-button>
-            `)}
+      <span class="title">${this.label}</span>
+      <div class="layout ${this.openUp ? `vertical-reverse` : `vertical`}">
+        <div
+          class="horizontal layout justified start selected-area center ${this
+            .required && this.selectedItemList.length === 0
+            ? 'invalid'
+            : ''}"
+        >
+          <div class="horizontal layout start-justified wrap">
+            ${this.selectedItemList.map(
+              (item) => html`
+                <mwc-button
+                  unelevated
+                  trailingIcon
+                  label=${item}
+                  icon="close"
+                  @click=${(e) => this._deselectItem(e)}
+                ></mwc-button>
+              `,
+            )}
+          </div>
+          <mwc-icon-button-toggle
+            id="dropdown-icon"
+            onIcon="arrow_drop_down"
+            offIcon="arrow_drop_down"
+            @icon-button-toggle-change="${(e) => this._toggleMenuVisibility(e)}"
+          ></mwc-icon-button-toggle>
         </div>
-        <mwc-icon-button-toggle id="dropdown-icon" 
-            onIcon="arrow_drop_down" offIcon="arrow_drop_down"
-            @icon-button-toggle-change="${(e) => this._toggleMenuVisibility(e)}"></mwc-icon-button-toggle>
+        <div
+          id="menu"
+          class="vertical layout flex"
+          style="position:relative;display:none;"
+        >
+          <mwc-list
+            id="list"
+            activatable
+            multi
+            @selected="${(e) => this._updateSelection(e)}"
+          >
+            ${this.items.map(
+              (item) => html`
+                <mwc-check-list-item
+                  value=${item}
+                  ?selected="${this.selectedItemList.includes(item)}"
+                >
+                  ${item}
+                </mwc-check-list-item>
+              `,
+            )}
+          </mwc-list>
+        </div>
       </div>
-      <div id="menu" class="vertical layout flex" style="position:relative;display:none;">
-        <mwc-list id="list" activatable multi @selected="${(e) => this._updateSelection(e)}">
-          ${this.items.map((item) => html`
-            <mwc-check-list-item value=${item} ?selected="${this.selectedItemList.includes(item)}">${item}</mwc-check-list-item>
-          `)}
-        </mwc-list>
-      </div>
-    </div>
+      <span
+        class="validation-msg"
+        style="display:${this._valid ? 'none' : 'block'}"
+      >
+        ${this.validationMessage}
+      </span>
     `;
   }
 }

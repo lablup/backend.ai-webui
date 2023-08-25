@@ -2,17 +2,10 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-
-import {get as _text} from 'lit-translate';
-
-import 'weightless/dialog';
-import 'weightless/banner';
-import 'weightless/progress-bar';
-import 'weightless/title';
-
 import './backend-ai-indicator';
+import { CSSResultGroup, html, LitElement } from 'lit';
+import { get as _text } from 'lit-translate';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Backend.AI Indicator pool for Console
@@ -28,13 +21,13 @@ import './backend-ai-indicator';
  */
 @customElement('backend-ai-indicator-pool')
 export default class BackendAIIndicatorPool extends LitElement {
-  @property({type: Number}) value = 0;
-  @property({type: Number}) step = 0;
+  @property({ type: Number }) value = 0;
+  @property({ type: Number }) step = 0;
 
-  @property({type: String}) text = '';
-  @property({type: String}) mode = 'determinate';
-  @property({type: Object}) dialog;
-  @property({type: Array}) pool;
+  @property({ type: String }) text = '';
+  @property({ type: String }) mode = 'determinate';
+  @property({ type: Object }) dialog;
+  @property({ type: Array }) pool;
 
   constructor() {
     super();
@@ -64,7 +57,7 @@ export default class BackendAIIndicatorPool extends LitElement {
     indicator.value = 0;
     indicator.text = _text('notification.Initializing');
     indicator.mode = mode;
-    indicator.style.bottom = (20 + 90 * this.step) + 'px';
+    indicator.style.bottom = 20 + 90 * this.step + 'px';
     document.body.appendChild(indicator);
     this.pool.push(indicator);
     this.step = this.pool.length;
@@ -110,8 +103,7 @@ export default class BackendAIIndicatorPool extends LitElement {
 
   render() {
     // language=HTML
-    return html`
-    `;
+    return html``;
   }
 }
 

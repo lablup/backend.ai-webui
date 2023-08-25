@@ -10,13 +10,13 @@
 
  Modified for Backend.AI Console Project / Lit-element with TypeScript
  */
-
-import {css} from 'lit';
+import { css } from 'lit';
 
 export const PaperColor =
   // language=CSS
   css`
-    :host > *, html {
+    :host > *,
+    html {
       /* Material Design color palette for Google products */
       --google-red-100: #f4c7c3;
       --google-red-300: #e67c73;
@@ -328,6 +328,6 @@ export const PaperColor =
       --light-divider-opacity: 0.12;
       --light-disabled-opacity: 0.3; /* or hint text or icon */
       --light-secondary-opacity: 0.7;
-      --light-primary-opacity: 1.0;
+      --light-primary-opacity: 1;
     }
   `;

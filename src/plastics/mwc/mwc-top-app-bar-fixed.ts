@@ -16,12 +16,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {styles} from '@material/mwc-top-app-bar/mwc-top-app-bar.css';
-import {css} from 'lit';
-import {customElement} from 'lit/decorators.js';
-import {BackendAiStyles} from '../../components/backend-ai-general-styles';
-
-import {TopAppBarFixedBase} from '@material/mwc-top-app-bar-fixed/mwc-top-app-bar-fixed-base';
+import { BackendAiStyles } from '../../components/backend-ai-general-styles';
+import { TopAppBarFixedBase } from '@material/mwc-top-app-bar-fixed/mwc-top-app-bar-fixed-base';
+import { styles } from '@material/mwc-top-app-bar/mwc-top-app-bar.css';
+import { css } from 'lit';
+import { customElement } from 'lit/decorators.js';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -33,13 +32,15 @@ declare global {
 export class TopAppBarFixed extends TopAppBarFixedBase {
   static get styles() {
     //let LegacyCSS = css(BackendAiStyles.toString());
-    return [styles, BackendAiStyles,
+    return [
+      styles,
+      BackendAiStyles,
       css`
         .mdc-top-app-bar {
           width: calc(100% - var(--mdc-drawer-width, 256px));
         }
         .mdc-top-app-bar__title {
-          padding-left:0;
+          padding-left: 0;
         }
         .mdc-top-app-bar--prominent .mdc-top-app-bar__row {
           height: 96px;
@@ -54,6 +55,7 @@ export class TopAppBarFixed extends TopAppBarFixedBase {
             min-width: 375px !important;
           }
         }
-      `];
+      `,
+    ];
   }
 }
