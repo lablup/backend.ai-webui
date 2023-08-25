@@ -14,7 +14,6 @@ import {
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button, Dropdown, MenuProps } from 'antd';
-import { update } from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
