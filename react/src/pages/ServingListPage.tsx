@@ -3,12 +3,13 @@ import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
-import { baiSignedRequestWithPromise } from '../helper';
+import { baiSignedRequestWithPromise, _humanReadableTime } from '../helper';
 import {
   useCurrentProjectValue,
   useSuspendedBackendaiClient,
   useUpdatableState,
 } from '../hooks';
+import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
   ServingListPageQuery,
@@ -85,6 +86,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   }, 7000);
 
   const { endpoint_list: modelServiceList } =
+  // TODO: need to convert LazyLoadQuery to pagination query with option
     useLazyLoadQuery<ServingListPageQuery>(
       graphql`
         query ServingListPageQuery(
@@ -110,6 +112,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               resource_slots
               url
               open_to_public
+              created_at
+              created_user
               desired_session_count @required(action: NONE)
               routings {
                 routing_id
@@ -329,6 +333,20 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   render: (text, row) => (
                     <EndpointStatusTag endpointFrgmt={row} />
                   ),
+                },
+                {
+                  title: t('modelService.CreatedAt'),
+                  dataIndex: 'created_at',
+                  render: (created_at) => {
+                    return _humanReadableTime(created_at);
+                  },
+                  sorter: true,
+                  sortDirections: ["ascend", "descend"],
+                  // TODO: pagination query order
+                  // sortOrder: getSortOrderByName(
+                  //   paginationStates.order,
+                  //   "statusChanged"
+                  // ),
                 },
                 {
                   title: t('modelService.DesiredSessionCount'),

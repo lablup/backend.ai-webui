@@ -87,6 +87,16 @@ export const _humanReadableBinarySize = (
   );
 };
 
+/**
+ * Change date of any type to human readable date time.
+ *
+ * @param {Date} d   - string or DateTime object to convert
+ * @return {Date}   - Formatted date / time to be human-readable text.
+ */
+export const _humanReadableTime = (date: string) => {
+  return new Date(date).toUTCString();
+}
+
 export const GBToBytes = (value = 0) => {
   const gigabyte = Math.pow(10, 9);
   return Math.round(gigabyte * value);
@@ -115,4 +125,8 @@ export const usageIndicatorColor = (percentage: number) => {
     : percentage < 90
     ? 'rgb(223, 179, 23)'
     : '#ef5350';
+};
+
+export const offset_to_cursor = (offset: number): string => {
+  return window.btoa(`arrayconnection:${offset}`);
 };
