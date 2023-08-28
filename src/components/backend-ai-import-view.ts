@@ -529,7 +529,7 @@ export default class BackendAIImport extends BackendAIPage {
     const group = ''; // user ownership
     const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
     let host = vhost_info.default;
-    if (url.includes('github.com/')) {
+    if (new URL(url).host === 'github.com') {
       host = (
         this.shadowRoot?.querySelector('#github-add-folder-host') as Select
       ).value;
@@ -542,7 +542,7 @@ export default class BackendAIImport extends BackendAIPage {
     return globalThis.backendaiclient.vfolder
       .create(name, host, group, usageMode, permission)
       .then((value) => {
-        if (url.includes('github.com/')) {
+        if (new URL(url).host === 'github.com') {
           this.importNotebookMessage = _text('import.FolderName') + name;
         } else {
           this.importGitlabMessage = _text('import.FolderName') + name;
@@ -565,7 +565,7 @@ export default class BackendAIImport extends BackendAIPage {
     });
     if (vfolders.includes(name)) {
       this.notification.text = _text('import.FolderAlreadyExists');
-      if (url.includes('github.com/')) {
+      if (new URL(url).host === 'github.com') {
         this.importNotebookMessage = this.notification.text;
       } else {
         this.importGitlabMessage = this.notification.text;
