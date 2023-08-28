@@ -34,7 +34,12 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({ ...props }) => {
             }
           >
             {process.env.NODE_ENV === 'development' && (
-              <Flex direction="column" gap="sm" align="start">
+              <Flex
+                direction="column"
+                gap="sm"
+                align="center"
+                style={{ width: '100%' }}
+              >
                 <Alert
                   type="info"
                   showIcon
