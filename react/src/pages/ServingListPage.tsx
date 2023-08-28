@@ -340,13 +340,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   render: (created_at) => {
                     return _humanReadableTime(created_at);
                   },
-                  sorter: true,
-                  sortDirections: ["ascend", "descend"],
-                  // TODO: pagination query order
-                  // sortOrder: getSortOrderByName(
-                  //   paginationStates.order,
-                  //   "statusChanged"
-                  // ),
+                  sorter: (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
                 },
                 {
                   title: t('modelService.DesiredSessionCount'),
