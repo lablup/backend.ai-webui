@@ -10,16 +10,7 @@ import {
 } from './__generated__/UserSettingModalQuery.graphql';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  Form,
-  Input,
-  Select,
-  Switch,
-  message,
-  Typography,
-  Modal,
-  theme,
-} from 'antd';
+import { Form, Input, Select, Switch, message, Typography, Modal } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useDeferredValue } from 'react';
@@ -47,7 +38,6 @@ const UserSettingModal: React.FC<Props> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
     open: boolean;
