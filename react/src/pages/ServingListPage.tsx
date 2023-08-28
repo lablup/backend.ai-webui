@@ -9,7 +9,7 @@ import {
   useSuspendedBackendaiClient,
   useUpdatableState,
 } from '../hooks';
-import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
+// import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
   ServingListPageQuery,
@@ -340,6 +340,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   render: (created_at) => {
                     return _humanReadableTime(created_at);
                   },
+                  defaultSortOrder: 'descend',
                   sorter: (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
                 },
                 {
