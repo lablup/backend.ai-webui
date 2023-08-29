@@ -14,6 +14,7 @@ import {
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button, Dropdown, MenuProps } from 'antd';
+import _ from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -37,7 +38,7 @@ const UserDropdownMenu: React.FC = () => {
 
   const getUsername = () => {
     let name =
-      baiClient.full_name?.replace(/\s+/g, '').length > 0
+      _.trim(baiClient.full_name).length > 0
         ? baiClient.full_name
         : baiClient.email;
     // mask username only when the configuration is enabled
