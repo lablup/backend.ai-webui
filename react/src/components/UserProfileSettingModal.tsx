@@ -15,7 +15,7 @@ import {
   Switch,
 } from 'antd';
 import _ from 'lodash';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface Props extends ModalProps {
@@ -61,7 +61,9 @@ const UserProfileSettingModal: React.FC<Props> = ({
       suspense: false,
     },
   );
-  let totpActivated = userInfo?.user.totp_activated;
+  const [totpActivated, setTotpActivated] = useState(
+    userInfo?.user.totp_activated,
+  );
 
   const { data: keyPairInfo } = useTanQuery(
     'keyPairInfo',
@@ -308,7 +310,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
           >
             <Input.Password />
           </Form.Item>
-          {!!totpActivated && (
+          {!!totpSupported && (
             <Form.Item
               name="totpActivated"
               label={t('webui.menu.TotpActivated')}
@@ -335,7 +337,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
                               message.success(
                                 t('totp.RemoveTotpSetupCompleted'),
                               );
-                              totpActivated = false;
                               form.setFieldValue('totpActivated', false);
                             },
                             onError: (error: any) => {
@@ -359,7 +360,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
             open={isOpenTOTPActivateModal}
             onRequestClose={(success) => {
               if (success) {
-                totpActivated = true;
+                setTotpActivated(true);
               } else {
                 form.setFieldValue('totp_activated', false);
               }
