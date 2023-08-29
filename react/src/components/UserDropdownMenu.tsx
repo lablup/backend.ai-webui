@@ -155,8 +155,8 @@ const UserDropdownMenu: React.FC = () => {
   ];
 
   return (
-    <>
-      {fullName}
+    <div style={{ marginLeft: '10px' }}>
+      <b>{fullName}</b>
       <Dropdown menu={{ items }} trigger={['click']}>
         <Button type="text" shape="circle">
           <UserOutlined style={{ fontSize: '20px' }} />
@@ -167,7 +167,7 @@ const UserDropdownMenu: React.FC = () => {
         onRequestClose={() => toggleUserProfileModal()}
         onRequestUpdateFullName={(newFullName) => updateFullName(newFullName)}
       />
-    </>
+    </div>
   );
 };
 
