@@ -1,6 +1,8 @@
+import EnvVarFormList from '../components/EnvVarFormList';
 import Flex, { FlexProps } from '../components/Flex';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems from '../components/ImageEnvironmentSelectFormItems';
+import ResourceAllocationFormItems from '../components/ResourceAllocationFormItems';
 import ResourceGroupSelect from '../components/ResourceGroupSelect';
 import SliderInputItem from '../components/SliderInputFormItem';
 import VFolderSelect from '../components/VFolderSelect';
@@ -211,7 +213,10 @@ const SessionLauncherPage = () => {
                   <>
                     <Card title="Environment" bodyStyle={{ width: 640 }}>
                       <ImageEnvironmentSelectFormItems />
-                      <Form.Item label="Environment variables"></Form.Item>
+
+                      <Form.Item label="Environment Variables">
+                        <EnvVarFormList name={'envvars'} />
+                      </Form.Item>
                     </Card>
                     <Card title="Resources" bodyStyle={{ maxWidth: 640 }}>
                       <Form.Item
@@ -225,70 +230,7 @@ const SessionLauncherPage = () => {
                       >
                         <ResourceGroupSelect autoSelectDefault />
                       </Form.Item>
-                      <SliderInputItem
-                        name={'cpu'}
-                        label={t('session.launcher.CPU')}
-                        tooltip={<Trans i18nKey={'session.launcher.DescCPU'} />}
-                        // min={parseInt(
-                        //   _.find(
-                        //     currentImage?.resource_limits,
-                        //     (i) => i?.key === 'cpu',
-                        //   )?.min || '0',
-                        // )}
-                        // max={parseInt(
-                        //   _.find(
-                        //     currentImage?.resource_limits,
-                        //     (i) => i?.key === 'cpu',
-                        //   )?.max || '100',
-                        // )}
-                        inputNumberProps={{
-                          addonAfter: t('session.launcher.Core'),
-                        }}
-                        required
-                        rules={[
-                          {
-                            required: true,
-                          },
-                        ]}
-                      />
-                      <SliderInputItem
-                        name={'mem'}
-                        label={t('session.launcher.Memory')}
-                        tooltip={
-                          <Trans i18nKey={'session.launcher.DescMemory'} />
-                        }
-                        max={30}
-                        inputNumberProps={{
-                          addonAfter: 'GB',
-                        }}
-                        step={0.05}
-                        required
-                        rules={[
-                          {
-                            required: true,
-                          },
-                        ]}
-                      />
-                      <SliderInputItem
-                        name={'shmem'}
-                        label={t('session.launcher.SharedMemory')}
-                        tooltip={
-                          <Trans
-                            i18nKey={'session.launcher.DescSharedMemory'}
-                          />
-                        }
-                        max={30}
-                        step={0.1}
-                        inputNumberProps={{
-                          addonAfter: 'GB',
-                        }}
-                        required
-                        rules={[
-                          {
-                            required: true,
-                          },
-                        ]}
-                      />
+                      <ResourceAllocationFormItems />
                     </Card>
                   </>
                 )}
