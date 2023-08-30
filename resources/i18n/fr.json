@@ -739,7 +739,9 @@
     "ProjectFolder": "__NOT_TRANSLATED__",
     "QuotaPerStorageVolume": "__NOT_TRANSLATED__",
     "HostDetails": "__NOT_TRANSLATED__",
-    "Used": "__NOT_TRANSLATED__"
+    "Used": "__NOT_TRANSLATED__",
+    "Pipeline": "__NOT_TRANSLATED__",
+    "DialogDataFolder": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {
@@ -1498,6 +1500,7 @@
     "YouAreAboutToTerminate": "__NOT_TRANSLATED__",
     "FailedToStartService": "__NOT_TRANSLATED__",
     "ServingRouteErrorModalTitle": "__NOT_TRANSLATED__",
-    "ClearErrors": "__NOT_TRANSLATED__"
+    "ClearErrors": "__NOT_TRANSLATED__",
+    "CreatedAt": "__NOT_TRANSLATED__"
   }
 }

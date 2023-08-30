@@ -423,7 +423,8 @@
     "YouAreAboutToTerminate": "아래의 서비스를 삭제하려고 합니다: ",
     "ClearErrors": "오류 지우고 재시도",
     "ServingRouteErrorModalTitle": "서빙 라우트 에러",
-    "FailedToStartService": "서비스를 생성하지 못했습니다."
+    "FailedToStartService": "서비스를 생성하지 못했습니다.",
+    "CreatedAt": "생성 시각"
   },
   "button": {
     "Cancel": "취소",
