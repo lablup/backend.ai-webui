@@ -261,9 +261,10 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           </Descriptions.Item>
         </Descriptions>
       </Card>
-      <Typography.Title level={4} style={{ margin: 0 }}>
+      {/* <Typography.Title level={4} style={{ margin: 0 }}>
         {t('modelService.RoutesInfo')}
-      </Typography.Title>
+      </Typography.Title> */}
+      <Card title={t('modelService.RoutesInfo')}>
       <Table
         scroll={{ x: 'max-content' }}
         columns={[
@@ -309,7 +310,9 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         ]}
         pagination={false}
         dataSource={endpoint?.routings as Routing[]}
+        bordered
       />
+      </Card>
       <ServingRouteErrorModal
         open={!!selectedSessionErrorForModal}
         inferenceSessionErrorFrgmt={selectedSessionErrorForModal}
