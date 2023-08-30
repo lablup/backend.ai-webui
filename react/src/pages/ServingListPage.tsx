@@ -3,7 +3,7 @@ import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
-import { baiSignedRequestWithPromise, _humanReadableTime } from '../helper';
+import { baiSignedRequestWithPromise } from '../helper';
 import {
   useCurrentProjectValue,
   useSuspendedBackendaiClient,
