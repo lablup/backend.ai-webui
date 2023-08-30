@@ -1,4 +1,4 @@
-import { offset_to_cursor } from "../helper";
+// import { offset_to_cursor } from "../helper";
 import { LazyLoadQueryOptions } from "../helper/types";
 import { SorterResult } from "antd/lib/table/interface";
 import _ from "lodash";
@@ -64,7 +64,7 @@ export const useRelayPaginationQueryOptions = <
   getVariables = ({ page, pageSize, order, filter }) => {
     return {
       first: pageSize,
-      after: page > 1 ? offset_to_cursor((page - 1) * pageSize - 1) : undefined,
+    //   after: page > 1 ? offset_to_cursor((page - 1) * pageSize - 1) : undefined,
       order: order,
       filter: filter,
     };
@@ -168,7 +168,7 @@ export const useRelayPaginationQueryOptions = <
       isPending,
       variables,
       filter,
-      after: page > 1 ? offset_to_cursor((page - 1) * pageSize - 1) : undefined,
+    //   after: page > 1 ? offset_to_cursor((page - 1) * pageSize - 1) : undefined,
     },
     {
       refresh,
