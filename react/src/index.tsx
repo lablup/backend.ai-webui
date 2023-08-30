@@ -1,5 +1,6 @@
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
+import SessionLauncherPage from './pages/SessionLauncherPage';
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
@@ -58,7 +59,10 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <SessionList>{props.children}</SessionList>
+        <Routes>
+          <Route path="/session" element={<SessionList />} />
+          <Route path="/session/start" element={<SessionLauncherPage />} />
+        </Routes>
       </DefaultProviders>
     );
   }),
