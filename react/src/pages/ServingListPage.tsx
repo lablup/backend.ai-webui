@@ -9,6 +9,7 @@ import {
   useSuspendedBackendaiClient,
   useUpdatableState,
 } from '../hooks';
+import { default as dayjs } from 'dayjs';
 // import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
@@ -338,10 +339,15 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   title: t('modelService.CreatedAt'),
                   dataIndex: 'created_at',
                   render: (created_at) => {
-                    return _humanReadableTime(created_at);
+                    return dayjs(created_at).format('YYYY/MM/DD HH:MM:ss');
                   },
                   defaultSortOrder: 'descend',
-                  sorter: (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+                  sortDirections: ['descend', 'ascend', 'descend'],
+                  sorter: (a, b) => {
+                    const date1 = dayjs(a.created_at);
+                    const date2 = dayjs(b.created_at);
+                    return date1.diff(date2);
+                  },
                 },
                 {
                   title: t('modelService.DesiredSessionCount'),
