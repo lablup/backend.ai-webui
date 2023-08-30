@@ -821,15 +821,20 @@ export const BackendAiStyles = [
     }
 
     span.start-bar {
-      margin-bottom: 5px;
-      margin-left: 5px;
       padding-bottom: 5px;
+      width: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     span.end-bar {
       margin-top: 5px;
-      margin-left: 5px;
       padding-bottom: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 30px;
     }
 
     span.helper-text {
