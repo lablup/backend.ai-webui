@@ -425,7 +425,7 @@
     "ServingRouteErrorModalTitle": "서빙 라우트 에러",
     "FailedToStartService": "서비스를 생성하지 못했습니다.",
     "CreatedAt": "생성 시각",
-    "GeneratedTokens": "__NOT_TRANSLATED__"
+    "GeneratedTokens": "생성된 토큰 목록"
   },
   "button": {
     "Cancel": "취소",
