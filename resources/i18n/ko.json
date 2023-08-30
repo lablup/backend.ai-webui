@@ -424,7 +424,8 @@
     "ClearErrors": "오류 지우고 재시도",
     "ServingRouteErrorModalTitle": "서빙 라우트 에러",
     "FailedToStartService": "서비스를 생성하지 못했습니다.",
-    "CreatedAt": "생성 시각"
+    "CreatedAt": "생성 시각",
+    "GeneratedTokens": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "취소",

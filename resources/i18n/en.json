@@ -429,6 +429,7 @@
     "ServiceEndpoint": "Service Endpoint",
     "NoServiceEndpoint": "No Service Endpoint",
     "RoutesInfo": "Routes Info",
+    "GeneratedTokens": "Generated Tokens",
     "RouteId": "Route ID",
     "SessionId": "Session ID",
     "TrafficRatio": "Traffic Ratio",

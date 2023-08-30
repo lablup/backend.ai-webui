@@ -261,9 +261,14 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           </Descriptions.Item>
         </Descriptions>
       </Card>
-      {/* <Typography.Title level={4} style={{ margin: 0 }}>
-        {t('modelService.RoutesInfo')}
-      </Typography.Title> */}
+      <Card title={t('modelService.GeneratedTokens')}>
+        <Table
+          scroll={{ x: 'max-content'}}
+          columns={[]}
+          pagination={false}
+          bordered>
+          </Table>
+      </Card>
       <Card title={t('modelService.RoutesInfo')}>
       <Table
         scroll={{ x: 'max-content' }}
