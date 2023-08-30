@@ -557,7 +557,7 @@
   },
   "credential": {
     "Permission": "권한",
-    "KeyAge": "키 수명",
+    "KeyAge": "키 경과시간",
     "Allocation": "할당",
     "Information": "정보",
     "Created": "생성일",
