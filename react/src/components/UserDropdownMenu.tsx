@@ -133,7 +133,10 @@ const UserDropdownMenu: React.FC = () => {
       key: 'preferences',
       icon: <HolderOutlined />,
       onClick: () => {
-        dispatchEvent('moveToUserSettingPage', null);
+        dispatchEvent('moveTo', {
+          path: '/usersettings',
+          parms: { tab: 'general' },
+        });
       },
     },
     {
@@ -141,7 +144,10 @@ const UserDropdownMenu: React.FC = () => {
       key: 'logs',
       icon: <FileTextOutlined />,
       onClick: () => {
-        dispatchEvent('moveToLogPage', null);
+        dispatchEvent('moveTo', {
+          path: '/usersettings',
+          parms: { tab: 'logs' },
+        });
       },
     },
     {

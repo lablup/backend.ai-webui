@@ -1803,8 +1803,27 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 <div slot="actionItems" style="margin:0;">
                   <div class="horizontal flex center layout">
                     <backend-ai-project-switcher></backend-ai-project-switcher>
-                    <div class="vertical-line" style="height:20px;margin:0;"></div>
-                    <backend-ai-user-dropdown-menu></backend-ai-user-dropdown-menu>
+                    <backend-ai-react-user-dropdown-menu
+                      @moveTo="${(e: CustomEvent) => {
+                        const currentPage = globalThis.location
+                          .toString()
+                          .split(/[/]+/)
+                          .pop();
+                        const path = e.detail.path;
+                        const parms = e.detail.parms;
+                        globalThis.history.pushState({}, '', path);
+                        store.dispatch(
+                          navigate(decodeURIComponent(path), parms),
+                        );
+                        if (currentPage && currentPage === 'usersettings') {
+                          const event = new CustomEvent(
+                            'backend-ai-usersettings',
+                            {},
+                          );
+                          document.dispatchEvent(event);
+                        }
+                      }}"
+                    ></backend-ai-react-user-dropdown-menu>
                   </div>
                   <div id="password-change-request" class="horizontal layout center end-justified" style="display:${
                     this.needPasswordChange ? 'flex' : 'none'
