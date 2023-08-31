@@ -1801,7 +1801,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   <p>${_t('webui.menu.WelcomeMessage_2')}</p>
                 </div>
                 <div slot="actionItems" style="margin:0;">
-                  <div class="horizontal flex center layout">
+                  <div class="horizontal flex center layout" style="gap:15px" > 
                     <backend-ai-project-switcher></backend-ai-project-switcher>
                     <backend-ai-react-user-dropdown-menu
                       @moveTo="${(e: CustomEvent) => {

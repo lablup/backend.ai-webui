@@ -1,6 +1,8 @@
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useWebComponentInfo } from './DefaultProviders';
+import Flex from './Flex';
 import UserProfileSettingModal from './UserProfileSettingModal';
 import {
   UserOutlined,
@@ -13,72 +15,38 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Button, Dropdown, MenuProps } from 'antd';
-import _ from 'lodash';
+import { Avatar, Dropdown, MenuProps } from 'antd';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const UserDropdownMenu: React.FC = () => {
   const { t } = useTranslation();
-
   const { dispatchEvent } = useWebComponentInfo();
-
   const baiClient = useSuspendedBackendaiClient();
+  const [userInfo] = useCurrentUserInfo();
+  const [open, setOpen] = useState(false);
 
-  const { data: userInfo } = useTanQuery(
+  const { data: roleData } = useTanQuery<{
+    user: {
+      role: string;
+    };
+  }>(
     'getUserRole',
     () => {
-      return baiClient.user.get(baiClient.email, ['role']);
+      return baiClient.user.get(userInfo.email, ['role']);
     },
     {
       suspense: false,
     },
   );
-  const userRole = userInfo?.user.role;
-
-  const getUsername = () => {
-    let name =
-      _.trim(baiClient.full_name).length > 0
-        ? baiClient.full_name
-        : baiClient.email;
-    // mask username only when the configuration is enabled
-    if (baiClient._config.maskUserInfo) {
-      const maskStartIdx = 2;
-      const emailPattern =
-        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-      const isEmail: boolean = emailPattern.test(name);
-      const maskLength = isEmail
-        ? name.split('@')[0].length - maskStartIdx
-        : name.length - maskStartIdx;
-      name = maskString(name, '*', maskStartIdx, maskLength);
-    }
-    return name;
-  };
-
-  const maskString = (
-    value = '',
-    maskChar = '*',
-    startFrom = 0,
-    maskLength = 0,
-  ) => {
-    // clamp mask length
-    maskLength =
-      startFrom + maskLength > value.length ? value.length : maskLength;
-    return (
-      value.substring(0, startFrom) +
-      maskChar.repeat(maskLength) +
-      value.substring(startFrom + maskLength, value.length)
-    );
-  };
-
-  const [fullName, updateFullName] = useState(getUsername());
+  const userRole = roleData?.user.role;
 
   const [isOpenUserProfileModal, { toggle: toggleUserProfileModal }] =
     useToggle(false);
 
   const items: MenuProps['items'] = [
     {
-      label: fullName,
+      label: userInfo.username,
       key: 'userFullName',
       icon: <UserOutlined />,
       disabled: true,
@@ -88,7 +56,7 @@ const UserDropdownMenu: React.FC = () => {
       },
     },
     {
-      label: baiClient.email,
+      label: userInfo.email,
       key: 'userEmail',
       icon: <MailOutlined />,
       disabled: true,
@@ -162,19 +130,30 @@ const UserDropdownMenu: React.FC = () => {
   ];
 
   return (
-    <div style={{ marginLeft: '10px' }}>
-      <b>{fullName}</b>
-      <Dropdown menu={{ items }} trigger={['click']}>
-        <Button type="text" shape="circle">
-          <UserOutlined style={{ fontSize: '20px' }} />
-        </Button>
+    <>
+      <Dropdown
+        open={open}
+        menu={{ items }}
+        trigger={['click']}
+        onOpenChange={(open) => setOpen(open)}
+      >
+        <Flex
+          direction="row"
+          gap="sm"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            setOpen(!open);
+          }}
+        >
+          <b>{userInfo.username}</b>
+          <Avatar icon={<UserOutlined />} />
+        </Flex>
       </Dropdown>
       <UserProfileSettingModal
         open={isOpenUserProfileModal}
         onRequestClose={() => toggleUserProfileModal()}
-        onRequestUpdateFullName={(newFullName) => updateFullName(newFullName)}
       />
-    </div>
+    </>
   );
 };
 

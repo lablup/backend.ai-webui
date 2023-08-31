@@ -116,3 +116,19 @@ export const usageIndicatorColor = (percentage: number) => {
     ? 'rgb(223, 179, 23)'
     : '#ef5350';
 };
+
+export const maskString = (
+  value = '',
+  maskChar = '*',
+  startFrom = 0,
+  maskLength = 0,
+) => {
+  // clamp mask length
+  maskLength =
+    startFrom + maskLength > value.length ? value.length : maskLength;
+  return (
+    value.substring(0, startFrom) +
+    maskChar.repeat(maskLength) +
+    value.substring(startFrom + maskLength, value.length)
+  );
+};
