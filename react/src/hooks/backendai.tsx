@@ -129,7 +129,7 @@ export const useCurrentUserInfo = () => {
             },
             {
               onSuccess: () => {
-                options?.onError && options.onError(newFullName);
+                options?.onSuccess && options.onSuccess(newFullName);
                 document.dispatchEvent(
                   new CustomEvent('current-user-info-changed', {
                     detail: newFullName,
