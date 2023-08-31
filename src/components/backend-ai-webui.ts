@@ -130,7 +130,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'mn',
     'id',
   ];
-  @property({ type: Array }) blockedMenuitem;
+  @property({ type: Array }) blockedMenuItem;
   @property({ type: Number }) minibarWidth = 88;
   @property({ type: Number }) sidebarWidth = 250;
   @property({ type: Number }) sidepanelWidth = 250;
@@ -195,7 +195,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   constructor() {
     super();
-    this.blockedMenuitem = [];
+    this.blockedMenuItem = [];
   }
 
   static get styles(): CSSResultGroup {
@@ -444,7 +444,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.edition = config.license.edition;
     }
     if (typeof config.menu !== 'undefined' && 'blocklist' in config.menu) {
-      this.blockedMenuitem = config.menu.blocklist.split(',');
+      this.blockedMenuItem = config.menu.blocklist.split(',');
     }
     if (
       typeof config.general !== 'undefined' &&
@@ -607,7 +607,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.optionalPages
         .filter((item) => !item.available)
         .map((item) => item.page)
-        .includes(this._page)
+        .includes(this._page) ||
+      this.blockedMenuItem.includes(this._page)
     ) {
       this._page = 'error';
       globalThis.history.pushState({}, '', '/error');
@@ -1368,14 +1369,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             }" @click="${() =>
               this._moveTo(
                 '/summary',
-              )}" ?disabled="${this.blockedMenuitem.includes('summary')}">
+              )}" ?disabled="${this.blockedMenuItem.includes('summary')}">
               <i class="fas fa-th-large" slot="graphic" id="summary-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Summary')}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${
               this._page === 'job'
             }" @click="${() =>
-              this._moveTo('/job')}" ?disabled="${this.blockedMenuitem.includes(
+              this._moveTo('/job')}" ?disabled="${this.blockedMenuItem.includes(
               'job',
             )}">
               <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
@@ -1386,7 +1387,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             }" @click="${() =>
               this._moveTo(
                 '/session',
-              )}" ?disabled="${this.blockedMenuitem.includes('session')}">
+              )}" ?disabled="${this.blockedMenuItem.includes('session')}">
               <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
               <span class="full-menu">${_t(
                 'webui.menu.Sessions',
@@ -1399,7 +1400,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                       graphic="icon"
                       ?selected="${this._page === 'serving'}"
                       @click="${() => this._moveTo('/serving')}"
-                      ?disabled="${this.blockedMenuitem.includes('session')}"
+                      ?disabled="${this.blockedMenuItem.includes('serving')}"
                     >
                       <i
                         class="fa fa-rocket"
@@ -1418,7 +1419,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                       graphic="icon"
                       ?selected="${this._page === 'experiment'}"
                       @click="${() => this._moveTo('/experiment')}"
-                      ?disabled="${this.blockedMenuitem.includes('experiment')}"
+                      ?disabled="${this.blockedMenuItem.includes('experiment')}"
                     >
                       <i class="fas fa-flask" slot="graphic"></i>
                       <span class="full-menu">
@@ -1433,7 +1434,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               }" @click="${() =>
                 this._moveTo(
                   '/import',
-                )}" ?disabled="${this.blockedMenuitem.includes('import')}">
+                )}" ?disabled="${this.blockedMenuItem.includes('import')}">
                 <i class="fas fa-play" slot="graphic" id="import-menu-icon"></i>
                 <span class="full-menu">${_t('webui.menu.Import&Run')}</span>
               </mwc-list-item>
@@ -1442,7 +1443,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             }" @click="${() =>
               this._moveTo(
                 '/data',
-              )}" ?disabled="${this.blockedMenuitem.includes('data')}">
+              )}" ?disabled="${this.blockedMenuItem.includes('data')}">
               <i class="fas fa-cloud-upload-alt" slot="graphic" id="data-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Data&Storage')}</span>
             </mwc-list-item>
@@ -1453,7 +1454,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                       graphic="icon"
                       ?selected="${this._page === 'pipeline'}"
                       @click="${() => this._moveTo('/pipeline')}"
-                      ?disabled="${this.blockedMenuitem.includes('pipeline')}"
+                      ?disabled="${this.blockedMenuItem.includes('pipeline')}"
                       style="display:none;"
                     >
                       <i
@@ -1469,7 +1470,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                       graphic="icon"
                       ?selected="${this._page === 'pipeline-job'}"
                       @click="${() => this._moveTo('/pipeline-job')}"
-                      ?disabled="${this.blockedMenuitem.includes(
+                      ?disabled="${this.blockedMenuItem.includes(
                         'pipeline-job',
                       )}"
                       style="display:none;"
@@ -1494,7 +1495,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                       graphic="icon"
                       ?selected="${this._page === 'agent-summary'}"
                       @click="${() => this._moveTo('/agent-summary')}"
-                      ?disabled="${this.blockedMenuitem.includes(
+                      ?disabled="${this.blockedMenuItem.includes(
                         'agent-summary',
                       )}"
                     >
@@ -1514,7 +1515,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             }" @click="${() =>
               this._moveTo(
                 '/statistics',
-              )}" ?disabled="${this.blockedMenuitem.includes('statistics')}">
+              )}" ?disabled="${this.blockedMenuItem.includes('statistics')}">
               <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Statistics')}</span>
             </mwc-list-item>
