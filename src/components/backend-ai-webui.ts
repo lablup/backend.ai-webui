@@ -1810,10 +1810,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                           .split(/[/]+/)
                           .pop();
                         const path = e.detail.path;
-                        const parms = e.detail.parms;
+                        const params = e.detail.params;
                         globalThis.history.pushState({}, '', path);
                         store.dispatch(
-                          navigate(decodeURIComponent(path), parms),
+                          navigate(decodeURIComponent(path), params),
                         );
                         if (currentPage && currentPage === 'usersettings') {
                           const event = new CustomEvent(

@@ -135,7 +135,7 @@ const UserDropdownMenu: React.FC = () => {
       onClick: () => {
         dispatchEvent('moveTo', {
           path: '/usersettings',
-          parms: { tab: 'general' },
+          params: { tab: 'general' },
         });
       },
     },
@@ -146,7 +146,7 @@ const UserDropdownMenu: React.FC = () => {
       onClick: () => {
         dispatchEvent('moveTo', {
           path: '/usersettings',
-          parms: { tab: 'logs' },
+          params: { tab: 'logs' },
         });
       },
     },
