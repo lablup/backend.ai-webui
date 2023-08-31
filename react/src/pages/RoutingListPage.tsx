@@ -4,9 +4,11 @@ import Flex from '../components/Flex';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
 import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
+import EndpointTokenList from '../components/EndpointTokenList';
+
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
 import { baiSignedRequestWithPromise } from '../helper';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState, useCurrentProjectValue } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
   RoutingListPageQuery,
@@ -76,7 +78,16 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     useState<ServingRouteErrorModalFragment$key | null>(null);
   const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] =
     useState(false);
-
+  const curProject = useCurrentProjectValue();
+  const [paginationState] = useState<{
+    current: number;
+    pageSize: number;
+  }>({
+    current: 1,
+    pageSize: 100,
+  });
+  const [servicesFetchKey, updateServicesFetchKey] =
+    useUpdatableState('initial-fetch');
   const { endpoint } = useLazyLoadQuery<RoutingListPageQuery>(
     graphql`
       query RoutingListPageQuery($endpointId: UUID!) {
@@ -113,6 +124,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       fetchKey,
     },
   );
+
   const mutationToClearError = useTanMutation(() => {
     if (!endpoint) return;
     return baiSignedRequestWithPromise({
@@ -262,12 +274,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         </Descriptions>
       </Card>
       <Card title={t('modelService.GeneratedTokens')}>
-        <Table
-          scroll={{ x: 'max-content'}}
-          columns={[]}
-          pagination={false}
-          bordered>
-          </Table>
+        <EndpointTokenList></EndpointTokenList>
       </Card>
       <Card title={t('modelService.RoutesInfo')}>
       <Table
