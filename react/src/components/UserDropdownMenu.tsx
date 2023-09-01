@@ -14,7 +14,7 @@ import {
   FileTextOutlined,
   LogoutOutlined,
 } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
+import { useDebounce, useToggle } from 'ahooks';
 import { Avatar, Dropdown, MenuProps } from 'antd';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +25,11 @@ const UserDropdownMenu: React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
   const [open, setOpen] = useState(false);
+  const debouncedOpenToFixDropdownMenu = useDebounce(open, {
+    wait: 100,
+    leading: true,
+    trailing: false,
+  });
 
   const { data: roleData } = useTanQuery<{
     user: {
@@ -132,19 +137,12 @@ const UserDropdownMenu: React.FC = () => {
   return (
     <>
       <Dropdown
-        open={open}
         menu={{ items }}
         trigger={['click']}
-        onOpenChange={(open) => setOpen(!open)}
+        open={debouncedOpenToFixDropdownMenu}
+        onOpenChange={(v) => setOpen(v)}
       >
-        <Flex
-          direction="row"
-          gap="sm"
-          style={{ cursor: 'pointer' }}
-          onClick={() => {
-            setOpen(!open);
-          }}
-        >
+        <Flex direction="row" gap="sm">
           <b>{userInfo.username}</b>
           <Avatar icon={<UserOutlined />} />
         </Flex>
