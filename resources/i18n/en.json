@@ -425,6 +425,8 @@
     "ServiceInfo": "Service Info",
     "CreatedAt": "Created At",
     "StartService": "Start Service",
+    "GenerateToken": "Generate Token",
+    "GenerateNewToken": "Generate new token",
     "SessionOwner": "Session Owner",
     "ServiceEndpoint": "Service Endpoint",
     "NoServiceEndpoint": "No Service Endpoint",
@@ -436,7 +438,11 @@
     "YouAreAboutToTerminate": "You are about to terminate ",
     "ClearErrors": "Clear error and retry",
     "ServingRouteErrorModalTitle": "Serving Route Error",
-    "FailedToStartService": "Failed to create service."
+    "FailedToStartService": "Failed to create service.",
+    "CurrentTime": "Current time",
+    "ExpiredTime": "Expired time",
+    "ValidTimeInfo": "Valid time info",
+    "Generate": "Generate"
   },
   "button": {
     "Cancel": "Cancel",
