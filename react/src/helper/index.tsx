@@ -95,7 +95,7 @@ export const _humanReadableBinarySize = (
  */
 export const _humanReadableTime = (date: string) => {
   return new Date(date).toUTCString();
-}
+};
 
 export const GBToBytes = (value = 0) => {
   const gigabyte = Math.pow(10, 9);

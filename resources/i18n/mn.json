@@ -1502,5 +1502,11 @@
     "ServingRouteErrorModalTitle": "__NOT_TRANSLATED__",
     "ClearErrors": "__NOT_TRANSLATED__",
     "CreatedAt": "__NOT_TRANSLATED__"
+  },
+  "ErrorBoundary": {
+    "title": "__NOT_TRANSLATED__",
+    "reloadPage": "__NOT_TRANSLATED__",
+    "resetErrorBoundary": "__NOT_TRANSLATED__",
+    "displayOnlyDevEnv": "__NOT_TRANSLATED__"
   }
 }
