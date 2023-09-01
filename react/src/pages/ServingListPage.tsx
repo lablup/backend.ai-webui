@@ -9,7 +9,6 @@ import {
   useSuspendedBackendaiClient,
   useUpdatableState,
 } from '../hooks';
-import { default as dayjs } from 'dayjs';
 // import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
@@ -25,6 +24,7 @@ import {
 import { useRafInterval } from 'ahooks';
 import { Button, Table, Tabs, Typography, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
+import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
 import React, {
   PropsWithChildren,
@@ -87,7 +87,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   }, 7000);
 
   const { endpoint_list: modelServiceList } =
-  // TODO: need to convert LazyLoadQuery to pagination query with option
+    // TODO: need to convert LazyLoadQuery to pagination query with option
     useLazyLoadQuery<ServingListPageQuery>(
       graphql`
         query ServingListPageQuery(

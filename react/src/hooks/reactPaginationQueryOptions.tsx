@@ -1,24 +1,24 @@
 // import { offset_to_cursor } from "../helper";
-import { LazyLoadQueryOptions } from "../helper/types";
-import { SorterResult } from "antd/lib/table/interface";
-import _ from "lodash";
-import { useState } from "react";
+import { LazyLoadQueryOptions } from '../helper/types';
+import { SorterResult } from 'antd/lib/table/interface';
+import _ from 'lodash';
+import { useState } from 'react';
 import {
   fetchQuery,
   GraphQLTaggedNode,
   useRelayEnvironment,
-} from "react-relay";
+} from 'react-relay';
 import {
   ArrayParam,
   NumberParam,
   ObjectParam,
   useQueryParams,
-} from "use-query-params";
+} from 'use-query-params';
 
-export type SorterInterface = Pick<SorterResult<any>, "field" | "order">;
+export type SorterInterface = Pick<SorterResult<any>, 'field' | 'order'>;
 
 export const antdSorterResultToOrder = (
-  sorter: SorterInterface | SorterInterface[]
+  sorter: SorterInterface | SorterInterface[],
 ) => {
   const sorterArray = _.castArray(sorter).filter((s) => s.field);
 
@@ -27,22 +27,22 @@ export const antdSorterResultToOrder = (
       _.isNull(s.order)
         ? undefined
         : `${_.snakeCase(s.field as string).toUpperCase()}_${
-            s.order === "ascend" ? "ASC" : "DESC"
-          }`
-    )
+            s.order === 'ascend' ? 'ASC' : 'DESC'
+          }`,
+    ),
   );
 };
 
 export const orderToAntdSorterResult = (order: string[]) => {
   return _.map(order, (o) => {
-    const names = o.split("_");
+    const names = o.split('_');
     const orderKey = names.pop();
-    const field = _.camelCase(names.join("_"));
+    const field = _.camelCase(names.join('_'));
     return {
       field,
-      order: (orderKey === "ASC" ? "ascend" : "descend") as
-        | "ascend"
-        | "descend"
+      order: (orderKey === 'ASC' ? 'ascend' : 'descend') as
+        | 'ascend'
+        | 'descend'
         | null,
     };
   });
@@ -57,14 +57,14 @@ export const getSortOrderByName = (order: string[], name: string) => {
 export const useRelayPaginationQueryOptions = <
   // Q, N,
   O,
-  F
+  F,
 >({
   query,
   defaultVariables,
   getVariables = ({ page, pageSize, order, filter }) => {
     return {
       first: pageSize,
-    //   after: page > 1 ? offset_to_cursor((page - 1) * pageSize - 1) : undefined,
+      //   after: page > 1 ? offset_to_cursor((page - 1) * pageSize - 1) : undefined,
       order: order,
       filter: filter,
     };
@@ -105,7 +105,7 @@ export const useRelayPaginationQueryOptions = <
   const [refreshedQueryOptions, setRefreshedQueryOptions] =
     useState<LazyLoadQueryOptions>({
       fetchKey: 0,
-      fetchPolicy: "store-and-network",
+      fetchPolicy: 'store-and-network',
     });
 
   const prevLocationRef = window.location.href;
@@ -117,7 +117,7 @@ export const useRelayPaginationQueryOptions = <
     newFilter: F | undefined = defaultVariables.filter,
     options?: {
       withoutPendingStatus: boolean;
-    }
+    },
   ) => {
     if (options?.withoutPendingStatus !== true) {
       setIsPending(true);
@@ -130,7 +130,7 @@ export const useRelayPaginationQueryOptions = <
         pageSize: newPageSize,
         order: newOrder,
         filter: newFilter,
-      })
+      }),
     ).subscribe({
       complete: () => {
         if (window.location.href !== prevLocationRef) return;
@@ -145,7 +145,7 @@ export const useRelayPaginationQueryOptions = <
         });
         setRefreshedQueryOptions((prev) => ({
           ...prev,
-          fetchPolicy: "store-only",
+          fetchPolicy: 'store-only',
           fetchKey: new Date().toISOString(),
         }));
       },
@@ -168,7 +168,7 @@ export const useRelayPaginationQueryOptions = <
       isPending,
       variables,
       filter,
-    //   after: page > 1 ? offset_to_cursor((page - 1) * pageSize - 1) : undefined,
+      //   after: page > 1 ? offset_to_cursor((page - 1) * pageSize - 1) : undefined,
     },
     {
       refresh,

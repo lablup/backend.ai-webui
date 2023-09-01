@@ -1,3 +1,4 @@
+import BAIErrorBoundary from './components/BAIErrorBoundary';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
 import React, { Suspense } from 'react';
@@ -47,7 +48,9 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <Information />
+        <BAIErrorBoundary>
+          <Information />
+        </BAIErrorBoundary>
       </DefaultProviders>
     );
   }),
@@ -69,10 +72,12 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <Routes>
-          <Route path="/serving" element={<ServingList />} />
-          <Route path="/serving/:serviceId" element={<RoutingList />} />
-        </Routes>
+        <BAIErrorBoundary>
+          <Routes>
+            <Route path="/serving" element={<ServingList />} />
+            <Route path="/serving/:serviceId" element={<RoutingList />} />
+          </Routes>
+        </BAIErrorBoundary>
       </DefaultProviders>
     );
   }),
@@ -92,10 +97,12 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <StorageHostSettingPage
-          key={props.value}
-          storageHostId={props.value || ''}
-        />
+        <BAIErrorBoundary>
+          <StorageHostSettingPage
+            key={props.value}
+            storageHostId={props.value || ''}
+          />
+        </BAIErrorBoundary>
       </DefaultProviders>
     );
   }),

@@ -1,4 +1,4 @@
-import { useLazyLoadQuery } from "react-relay";
+import { useLazyLoadQuery } from 'react-relay';
 
 export type LazyLoadQueryOptions = ArgumentTypes<typeof useLazyLoadQuery>[2];
 

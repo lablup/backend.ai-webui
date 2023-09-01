@@ -1529,5 +1529,11 @@
     "TotpSetupNotAvailable": "이중 인증 설정이 불가합니다.",
     "RemoveTotpSetupCompleted": "이중 인증이 비활성화 되었습니다.",
     "TurnOffTotp": "이중 인증 비활성화"
+  },
+  "ErrorBoundary": {
+    "title": "에러가 발생했습니다.",
+    "reloadPage": "페이지 새로고침",
+    "resetErrorBoundary": "ErrorBoundary 초기화",
+    "displayOnlyDevEnv": "이 에러 블록은 WebUI 개발 환경에서만 표시됩니다."
   }
 }
