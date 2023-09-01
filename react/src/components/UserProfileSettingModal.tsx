@@ -9,20 +9,10 @@ import customCSS from './UserProfileSettingModal.css?raw';
 import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  Modal,
-  ModalProps,
-  Input,
-  Form,
-  Select,
-  SelectProps,
-  message,
-  Switch,
-  theme,
-} from 'antd';
+import { Modal, ModalProps, Input, Form, Select, message, Switch } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import _, { update } from 'lodash';
-import React, { useDeferredValue, useEffect, useState } from 'react';
+import _ from 'lodash';
+import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -51,7 +41,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
   const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
     useToggle(false);
   const baiClient = useSuspendedBackendaiClient();
-  const { token } = theme.useToken();
 
   const { data: isManagerSupportingTOTP } = useTanQuery(
     'isManagerSupportingTOTP',
@@ -59,7 +48,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
       return baiClient.isManagerSupportingTOTP();
     },
     {
-      suspense: false,
+      suspense: true,
     },
   );
   const totpSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
