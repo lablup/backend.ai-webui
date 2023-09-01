@@ -94,9 +94,23 @@ const EndpointTokenList: React.FC<EndpointTokenListProps> = ({
   return (
     <Table
     scroll={{ x: 'max-content'}}
-    columns={[]}
+    columns={[
+      {
+        title: 'Token',
+        dataIndex: 'token',
+        fixed: 'left'
+      },
+      {
+        title: 'Created at',
+        dataIndex: 'created_at',
+      },
+      {
+        title: 'Valid Until',
+        dataIndex: 'valid_until',
+      },
+    ]}
     pagination={false}
-    dataSource={ (endpoint_token_list?.items || []) as EndpointToken[]}>
+    dataSource={ (endpoint_token_list?.items) as EndpointToken[]}>
     </Table>
   )
 }
