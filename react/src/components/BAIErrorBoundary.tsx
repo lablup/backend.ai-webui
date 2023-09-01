@@ -6,10 +6,12 @@ import {
   ErrorBoundary,
   ErrorBoundaryPropsWithRender,
 } from 'react-error-boundary';
+import { useTranslation } from 'react-i18next';
 
 interface BAIErrorBoundaryProps
   extends Omit<ErrorBoundaryPropsWithRender, 'fallbackRender'> {}
 const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({ ...props }) => {
+  const { t } = useTranslation();
   return (
     <ErrorBoundary
       {...props}
@@ -18,52 +20,51 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({ ...props }) => {
         return (
           <Result
             status="warning"
-            title="There is a problem with your request."
+            title={t('ErrorBoundary.title')}
             extra={
-              <Button
-                type="primary"
-                key="console"
-                onClick={() => {
-                  // resetErrorBoundary();
-                  window.location.reload();
-                }}
-                icon={<ReloadOutlined />}
-              >
-                Reload the page
-              </Button>
-            }
-          >
-            {process.env.NODE_ENV === 'development' && (
-              <Flex
-                direction="column"
-                gap="sm"
-                align="center"
-                style={{ width: '100%' }}
-              >
-                <Alert
-                  type="info"
-                  showIcon
-                  description={
-                    <Flex direction="column" align="start" gap={'md'}>
-                      <Button
-                        type="default"
-                        icon={<ReloadOutlined />}
-                        onClick={() => {
-                          resetErrorBoundary();
-                        }}
-                      >
-                        Reset Error Boundary
-                      </Button>
-                      <Typography.Text>{error.message}</Typography.Text>
-                    </Flex>
-                  }
-                  message={
-                    'This error block is displayed only in WebUI development environment.'
-                  }
-                />
+              <Flex direction="column" gap="md">
+                <Button
+                  type="primary"
+                  key="console"
+                  onClick={() => {
+                    // resetErrorBoundary();
+                    window.location.reload();
+                  }}
+                  icon={<ReloadOutlined />}
+                >
+                  {t('ErrorBoundary.reloadPage')}
+                </Button>
+                {process.env.NODE_ENV === 'development' && (
+                  <Flex
+                    direction="column"
+                    gap="sm"
+                    align="center"
+                    style={{ width: '100%' }}
+                  >
+                    <Alert
+                      type="info"
+                      showIcon
+                      description={
+                        <Flex direction="column" align="start" gap={'md'}>
+                          <Button
+                            type="default"
+                            icon={<ReloadOutlined />}
+                            onClick={() => {
+                              resetErrorBoundary();
+                            }}
+                          >
+                            {t('ErrorBoundary.resetErrorBoundary')}
+                          </Button>
+                          <Typography.Text>{error.message}</Typography.Text>
+                        </Flex>
+                      }
+                      message={t('ErrorBoundary.displayOnlyDevEnv')}
+                    />
+                  </Flex>
+                )}
               </Flex>
-            )}
-          </Result>
+            }
+          ></Result>
         );
       }}
     />

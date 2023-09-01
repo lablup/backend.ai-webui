@@ -1520,5 +1520,11 @@
   "explorer": {
     "ValueRequired": "ValueRequired",
     "InputTooShort": "InputTooShort"
+  },
+  "ErrorBoundary": {
+    "title": "An error has occurred.",
+    "reloadPage": "Reload the page",
+    "resetErrorBoundary": "Reset ErrorBoundary",
+    "displayOnlyDevEnv": "This error block is displayed only in WebUI development environment."
   }
 }
