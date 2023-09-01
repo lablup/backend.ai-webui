@@ -273,8 +273,19 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           </Descriptions.Item>
         </Descriptions>
       </Card>
-      <Card title={t('modelService.GeneratedTokens')}>
-        <EndpointTokenList></EndpointTokenList>
+      <Card
+        title={t('modelService.GeneratedTokens')}
+        extra={
+          <Button
+            type="primary"
+            onClick={() => {
+              setIsOpenTokenGenerationModal(true);
+            }}
+            >
+            {t('modelService.GenerateToken')}
+          </Button>
+        }>
+        <EndpointTokenList endpoint_id={endpoint?.endpoint_id}></EndpointTokenList>
       </Card>
       <Card title={t('modelService.RoutesInfo')}>
       <Table

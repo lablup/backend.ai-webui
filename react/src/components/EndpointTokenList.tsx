@@ -32,7 +32,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 type EndpointToken = NonNullable<NonNullable<NonNullable<NonNullable<EndpointTokenListQuery$data>['endpoint_token_list']>['items']>[0]>;
 
-const EndpointTokenList: React.FC<PropsWithChildren> = ({ children }) => {
+export interface EndpointTokenListProps {
+  endpoint_id: string;
+}
+
+const EndpointTokenList: React.FC<EndpointTokenListProps> = ({
+  endpoint_id,
+}) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
@@ -50,10 +56,12 @@ const EndpointTokenList: React.FC<PropsWithChildren> = ({ children }) => {
       query EndpointTokenListQuery(
         $offset: Int!
         $limit: Int!
+        $endpointID: UUID!
       ) {
         endpoint_token_list(
           offset: $offset
-          limit: $limit)
+          limit: $limit
+          endpoint_id: $endpointID)
           {
             total_count
             items {
@@ -72,6 +80,7 @@ const EndpointTokenList: React.FC<PropsWithChildren> = ({ children }) => {
       {
         offset: (paginationState.current - 1) * paginationState.pageSize,
         limit: paginationState.pageSize,
+        endpointID: endpoint_id,
       },
       {
         fetchPolicy:
