@@ -365,6 +365,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             })
           }
         }}
+        endpoint_id={endpoint?.endpoint_id || ''}
       ></EndpointTokenGenerationModal>
     </Flex>
   );
