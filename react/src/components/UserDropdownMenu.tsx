@@ -135,7 +135,7 @@ const UserDropdownMenu: React.FC = () => {
         open={open}
         menu={{ items }}
         trigger={['click']}
-        onOpenChange={(open) => setOpen(open)}
+        onOpenChange={(open) => setOpen(!open)}
       >
         <Flex
           direction="row"
