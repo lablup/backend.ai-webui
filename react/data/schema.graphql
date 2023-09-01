@@ -111,6 +111,7 @@ type ComputeContainer implements Item {
   occupied_slots: JSONString
   live_stat: JSONString
   last_stat: JSONString
+  preopen_ports: [Int]
 }
 
 type ComputeContainerList implements PaginatedList {
@@ -390,6 +391,8 @@ type Endpoint implements Item {
   cluster_mode: String
   cluster_size: Int
   open_to_public: Boolean
+  created_at: DateTime!
+  terminated_at: DateTime
   routings: [Routing]
   retries: Int
   status: String
@@ -398,6 +401,22 @@ type Endpoint implements Item {
 
 type EndpointList implements PaginatedList {
   items: [Endpoint]!
+  total_count: Int!
+}
+
+type EndpointToken implements Item {
+  id: ID
+  token: String!
+  endpoint_id: UUID!
+  domain: String!
+  project: String!
+  session_owner: UUID!
+  created_at: DateTime!
+  valid_until: DateTime
+}
+
+type EndpointTokenList implements PaginatedList {
+  items: [EndpointToken]!
   total_count: Int!
 }
 
@@ -767,9 +786,9 @@ type Mutations {
   rescan_images(registry: String): RescanImages
   preload_image(references: [String]!, target_agents: [String]!): PreloadImage
   unload_image(references: [String]!, target_agents: [String]!): UnloadImage
-  modify_image(architecture: String = "x86_64", props: ModifyImageInput!, target: String!): ModifyImage
-  forget_image(architecture: String = "x86_64", reference: String!): ForgetImage
-  alias_image(alias: String!, architecture: String = "x86_64", target: String!): AliasImage
+  modify_image(architecture: String = "aarch64", props: ModifyImageInput!, target: String!): ModifyImage
+  forget_image(architecture: String = "aarch64", reference: String!): ForgetImage
+  alias_image(alias: String!, architecture: String = "aarch64", target: String!): AliasImage
   dealias_image(alias: String!): DealiasImage
   clear_images(registry: String): ClearImages
   create_keypair_resource_policy(name: String!, props: CreateKeyPairResourcePolicyInput!): CreateKeyPairResourcePolicy
@@ -851,7 +870,7 @@ type Queries {
   group(id: UUID!, domain_name: String): Group
   groups_by_name(name: String!, domain_name: String): [Group]
   groups(domain_name: String, is_active: Boolean): [Group]
-  image(reference: String!, architecture: String = "x86_64"): Image
+  image(reference: String!, architecture: String = "aarch64"): Image
   images(is_installed: Boolean, is_operation: Boolean): [Image]
   user(domain_name: String, email: String): User
   user_from_uuid(domain_name: String, user_id: ID): User
@@ -877,6 +896,9 @@ type Queries {
   storage_volume_list(limit: Int!, offset: Int!, filter: String, order: String): StorageVolumeList
   vfolder_list(limit: Int!, offset: Int!, filter: String, order: String, domain_name: String, group_id: UUID, access_key: String): VirtualFolderList
   vfolder_permission_list(limit: Int!, offset: Int!, filter: String, order: String): VirtualFolderPermissionList
+  vfolder_own_list(limit: Int!, offset: Int!, filter: String, order: String, domain_name: String, access_key: String): VirtualFolderList
+  vfolder_invited_list(limit: Int!, offset: Int!, filter: String, order: String, domain_name: String, access_key: String): VirtualFolderList
+  vfolder_project_list(limit: Int!, offset: Int!, filter: String, order: String, domain_name: String, access_key: String): VirtualFolderList
   vfolders(domain_name: String, group_id: String, access_key: String): [VirtualFolder]
   compute_session(id: UUID!): ComputeSession
   compute_container(id: UUID!): ComputeContainer
@@ -889,6 +911,8 @@ type Queries {
   endpoint_list(limit: Int!, offset: Int!, filter: String, order: String, domain_name: String, group_id: String, access_key: String, project: UUID): EndpointList
   routing(routing_id: UUID!): Routing
   routing_list(limit: Int!, offset: Int!, filter: String, order: String, endpoint_id: UUID): RoutingList
+  endpoint_token(token: String!): EndpointToken
+  endpoint_token_list(limit: Int!, offset: Int!, filter: String, order: String, endpoint_id: UUID): EndpointTokenList
   quota_scope(storage_host_name: String!, quota_scope_id: String!): QuotaScope
 }
 
@@ -940,6 +964,7 @@ type Routing implements Item {
   session: UUID
   status: String
   traffic_ratio: Float
+  created_at: DateTime
 }
 
 type RoutingList implements PaginatedList {
@@ -1096,4 +1121,3 @@ type VirtualFolderPermissionList implements PaginatedList {
   items: [VirtualFolderPermission]!
   total_count: Int!
 }
-

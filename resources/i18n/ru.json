@@ -1500,7 +1500,8 @@
     "YouAreAboutToTerminate": "__NOT_TRANSLATED__",
     "FailedToStartService": "__NOT_TRANSLATED__",
     "ServingRouteErrorModalTitle": "__NOT_TRANSLATED__",
-    "ClearErrors": "__NOT_TRANSLATED__"
+    "ClearErrors": "__NOT_TRANSLATED__",
+    "CreatedAt": "__NOT_TRANSLATED__"
   },
   "ErrorBoundary": {
     "title": "__NOT_TRANSLATED__",
