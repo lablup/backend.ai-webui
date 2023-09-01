@@ -1,8 +1,12 @@
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
+import BAIModal from './BAIModal';
 import { passwordPattern } from './ResetPasswordRequired';
 import TOTPActivateModal from './TOTPActivateModal';
+// @ts-ignore
+import customCSS from './UserProfileSettingModal.css?raw';
+import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
@@ -14,10 +18,13 @@ import {
   SelectProps,
   message,
   Switch,
+  theme,
 } from 'antd';
-import _ from 'lodash';
-import React, { useState } from 'react';
+import graphql from 'babel-plugin-relay/macro';
+import _, { update } from 'lodash';
+import React, { useDeferredValue, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
 
 interface Props extends ModalProps {
   onRequestClose: (success?: boolean) => void;
@@ -30,11 +37,12 @@ type UserProfileFormValues = {
   newPassword?: string;
   access_key?: string;
   secret_key?: string;
+  totp_activated: boolean;
 };
 
 const UserProfileSettingModal: React.FC<Props> = ({
   onRequestClose,
-  ...ModalProps
+  ...baiModalProps
 }) => {
   const { t } = useTranslation();
   const [form] = Form.useForm<UserProfileFormValues>();
@@ -43,6 +51,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
   const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
     useToggle(false);
   const baiClient = useSuspendedBackendaiClient();
+  const { token } = theme.useToken();
 
   const { data: isManagerSupportingTOTP } = useTanQuery(
     'isManagerSupportingTOTP',
@@ -56,66 +65,54 @@ const UserProfileSettingModal: React.FC<Props> = ({
   const totpSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
 
   const [userInfo, userMutations] = useCurrentUserInfo();
+  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const deferredMergedFetchKey = useDeferredValue(fetchKey);
 
-  const { data: userTotpActivated } = useTanQuery(
-    'totpActivated',
-    () => {
-      return baiClient.user.get(userInfo.email, ['totp_activated']);
+  const { user } = useLazyLoadQuery<UserProfileSettingModalQuery>(
+    graphql`
+      query UserProfileSettingModalQuery(
+        $email: String!
+        $isNotSupportTotp: Boolean!
+      ) {
+        user(email: $email) {
+          id
+          totp_activated @skipOnClient(if: $isNotSupportTotp)
+          ...TOTPActivateModalFragment
+        }
+      }
+    `,
+    {
+      email: userInfo.email,
+      isNotSupportTotp: !totpSupported,
     },
     {
-      suspense: false,
+      fetchPolicy: 'network-only',
+      fetchKey: deferredMergedFetchKey,
     },
-  );
-  const [totpActivated, setTotpActivated] = useState(
-    userTotpActivated?.user.totp_activated,
   );
 
-  const { data: keyPairInfo } = useTanQuery(
-    'keyPairInfo',
+  const { data: keyPairs } = useTanQuery<
+    {
+      secret_key: string;
+      access_key: string;
+    }[]
+  >(
+    'baiClient.keypair.list',
     () => {
-      return baiClient.keypair.list(
-        userInfo.email,
-        ['access_key', 'secret_key'],
-        true,
-      );
+      return baiClient.keypair
+        .list(userInfo.email, ['access_key', 'secret_key'], true)
+        .then((res: any) => res.keypairs);
     },
     {
-      suspense: false,
+      suspense: true,
     },
   );
-  const selectOptions: SelectProps['options'] = [];
-  if (keyPairInfo) {
-    for (let i = 0; i < keyPairInfo.keypairs.length; i++) {
-      selectOptions.push({
-        value: keyPairInfo.keypairs[i].secret_key,
-        label: keyPairInfo.keypairs[i].access_key,
-      });
-    }
-    const matchLoggedAccount = _.find(keyPairInfo.keypairs, [
-      'access_key',
-      baiClient._config.accessKey,
-    ]);
-    form.setFieldsValue({
-      access_key: matchLoggedAccount?.access_key,
-      secret_key: matchLoggedAccount?.secret_key,
-    });
-  }
 
   const mutationToRemoveTotp = useTanMutation({
     mutationFn: (email: string) => {
       return baiClient.remove_totp(email);
     },
   });
-
-  const onSelectAccessKey = (value: string) => {
-    const matchLoggedAccount = _.find(keyPairInfo.keypairs, [
-      'secret_key',
-      value,
-    ]);
-    form.setFieldsValue({
-      secret_key: matchLoggedAccount.secret_key,
-    });
-  };
 
   const onSubmit = () => {
     form.validateFields().then((values) => {
@@ -144,7 +141,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
                     content: t('webui.menu.PasswordUpdated'),
                   });
                   onRequestClose(true);
-                  form.resetFields();
                 },
                 onError: (e) => {
                   messageApi.open({
@@ -170,11 +166,11 @@ const UserProfileSettingModal: React.FC<Props> = ({
 
   return (
     <>
-      <Modal
+      <style>{customCSS}</style>
+      <BAIModal
         okText={t('webui.menu.Update')}
         cancelText={t('webui.menu.Cancel')}
         onCancel={() => {
-          form.resetFields(); //prevent browser password saving onCancel
           onRequestClose();
         }}
         confirmLoading={userInfo.isPendingMutation}
@@ -182,13 +178,21 @@ const UserProfileSettingModal: React.FC<Props> = ({
         centered
         destroyOnClose
         title={t('webui.menu.MyAccountInformation')}
-        {...ModalProps}
+        {...baiModalProps}
       >
-        <Form layout="vertical" form={form}>
+        <Form
+          layout="vertical"
+          form={form}
+          initialValues={{
+            full_name: userInfo.full_name,
+            totp_activated: user?.totp_activated || false,
+            access_key: keyPairs?.[0].access_key,
+          }}
+          preserve={false}
+        >
           <Form.Item
             name="full_name"
             label={t('webui.menu.FullName')}
-            initialValue={baiClient.full_name}
             rules={[
               () => ({
                 validator(_, value) {
@@ -204,18 +208,28 @@ const UserProfileSettingModal: React.FC<Props> = ({
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            name="access_key"
-            label={t('general.AccessKey')}
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="access_key" label={t('general.AccessKey')}>
             <Select
-              options={selectOptions}
-              onSelect={onSelectAccessKey}
+              options={_.map(keyPairs, (keyPair) => ({
+                value: keyPair.access_key,
+              }))}
+              // onSelect={onSelectAccessKey}
             ></Select>
           </Form.Item>
-          <Form.Item name="secret_key" label={t('general.SecretKey')}>
-            <Input disabled />
+          <Form.Item
+            label={t('general.SecretKey')}
+            shouldUpdate={(prev, next) => prev.access_key !== next.access_key}
+          >
+            {({ getFieldValue }) => (
+              <Input.Password
+                value={
+                  _.find(keyPairs, ['access_key', getFieldValue('access_key')])
+                    ?.secret_key
+                }
+                className="disabled_style_readonly"
+                readOnly
+              />
+            )}
           </Form.Item>
           <Form.Item
             name="originalPassword"
@@ -273,18 +287,17 @@ const UserProfileSettingModal: React.FC<Props> = ({
           </Form.Item>
           {!!totpSupported && (
             <Form.Item
-              name="totpActivated"
+              name="totp_activated"
               label={t('webui.menu.TotpActivated')}
               valuePropName="checked"
             >
               <Switch
-                defaultChecked={totpActivated}
                 onChange={(checked: boolean) => {
                   if (checked) {
                     toggleTOTPActivateModal();
                   } else {
-                    if (totpActivated) {
-                      form.setFieldValue('totpActivated', true);
+                    if (user?.totp_activated) {
+                      form.setFieldValue('totp_activated', true);
                       modal.confirm({
                         title: t('totp.TurnOffTotp'),
                         icon: <ExclamationCircleFilled />,
@@ -298,7 +311,8 @@ const UserProfileSettingModal: React.FC<Props> = ({
                               message.success(
                                 t('totp.RemoveTotpSetupCompleted'),
                               );
-                              form.setFieldValue('totpActivated', false);
+                              updateFetchKey();
+                              form.setFieldValue('totp_activated', false);
                             },
                             onError: (error: any) => {
                               message.error(error.message);
@@ -306,7 +320,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
                           });
                         },
                         onCancel() {
-                          form.setFieldValue('totpActivated', true);
+                          form.setFieldValue('totp_activated', true);
                         },
                       });
                     }
@@ -318,10 +332,11 @@ const UserProfileSettingModal: React.FC<Props> = ({
         </Form>
         {!!totpSupported && (
           <TOTPActivateModal
+            userFrgmt={user}
             open={isOpenTOTPActivateModal}
             onRequestClose={(success) => {
               if (success) {
-                setTotpActivated(true);
+                updateFetchKey();
               } else {
                 form.setFieldValue('totp_activated', false);
               }
@@ -329,7 +344,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
             }}
           />
         )}
-      </Modal>
+      </BAIModal>
       {contextHolder}
       {modalContextHolder}
     </>

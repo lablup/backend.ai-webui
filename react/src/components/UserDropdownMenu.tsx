@@ -142,7 +142,7 @@ const UserDropdownMenu: React.FC = () => {
         open={debouncedOpenToFixDropdownMenu}
         onOpenChange={(v) => setOpen(v)}
       >
-        <Flex direction="row" gap="sm">
+        <Flex direction="row" gap="sm" style={{ cursor: 'pointer' }}>
           <b>{userInfo.username}</b>
           <Avatar icon={<UserOutlined />} />
         </Flex>
