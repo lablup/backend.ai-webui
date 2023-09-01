@@ -3,7 +3,6 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
-import UserProfileSettingModal from './UserProfileSettingModal';
 import {
   UserOutlined,
   MailOutlined,
@@ -15,7 +14,7 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons';
 import { useDebounce, useToggle } from 'ahooks';
-import { Avatar, Dropdown, MenuProps } from 'antd';
+import { Avatar, Dropdown, Grid, MenuProps, Typography } from 'antd';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -25,6 +24,7 @@ const UserDropdownMenu: React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
   const [open, setOpen] = useState(false);
+  const screens = Grid.useBreakpoint();
   const debouncedOpenToFixDropdownMenu = useDebounce(open, {
     wait: 100,
     leading: true,
@@ -45,9 +45,6 @@ const UserDropdownMenu: React.FC = () => {
     },
   );
   const userRole = roleData?.user.role;
-
-  const [isOpenUserProfileModal, { toggle: toggleUserProfileModal }] =
-    useToggle(false);
 
   const items: MenuProps['items'] = [
     {
@@ -98,7 +95,10 @@ const UserDropdownMenu: React.FC = () => {
       key: 'userProfileSetting',
       icon: <LockOutlined />,
       onClick: () => {
-        toggleUserProfileModal();
+        // toggleUserProfileModal();
+        dispatchEvent('moveTo', {
+          path: '#userprofile',
+        });
       },
     },
     {
@@ -143,14 +143,12 @@ const UserDropdownMenu: React.FC = () => {
         onOpenChange={(v) => setOpen(v)}
       >
         <Flex direction="row" gap="sm" style={{ cursor: 'pointer' }}>
-          <b>{userInfo.username}</b>
+          {screens.md && (
+            <Typography.Text strong>{userInfo.username}</Typography.Text>
+          )}
           <Avatar icon={<UserOutlined />} />
         </Flex>
       </Dropdown>
-      <UserProfileSettingModal
-        open={isOpenUserProfileModal}
-        onRequestClose={() => toggleUserProfileModal()}
-      />
     </>
   );
 };
