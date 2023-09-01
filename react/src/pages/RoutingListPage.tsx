@@ -4,6 +4,7 @@ import Flex from '../components/Flex';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
 import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
+import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
 import EndpointTokenList from '../components/EndpointTokenList';
 
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
@@ -78,6 +79,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     useState<ServingRouteErrorModalFragment$key | null>(null);
   const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] =
     useState(false);
+  const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] = useState(false);
   const curProject = useCurrentProjectValue();
   const [paginationState] = useState<{
     current: number;
@@ -344,7 +346,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       <ModelServiceSettingModal
         open={isOpenModelServiceSettingModal}
         onRequestClose={(success) => {
-          setIsOpenModelServiceSettingModal(false);
+          setIsOpenTokenGenerationModal(false);
           if (success) {
             startRefetchTransition(() => {
               updateFetchKey();
@@ -353,6 +355,17 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         }}
         endpointFrgmt={endpoint}
       />
+      <EndpointTokenGenerationModal
+        open={isOpenTokenGenerationModal}
+        onRequestClose={(success) => {
+          setIsOpenTokenGenerationModal(false);
+          if (success) {
+            startRefetchTransition(() => {
+              updateFetchKey();
+            })
+          }
+        }}
+      ></EndpointTokenGenerationModal>
     </Flex>
   );
 };
