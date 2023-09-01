@@ -35,15 +35,15 @@ const UserInfoModal = React.lazy(() => import('./components/UserInfoModal'));
 const UserSettingsModal = React.lazy(
   () => import('./components/UserSettingModal'),
 );
-// const UserProfileSettingModal = React.lazy(
-//   () => import("./components/UserProfileSettingModal")
-// );
-// const MaintenancePage = React.lazy(() => import("./pages/MaintenancePage"));
+
 const ManageAppsModal = React.lazy(
   () => import('./components/ManageAppsModal'),
 );
 const UserDropdownMenu = React.lazy(
   () => import('./components/UserDropdownMenu'),
+);
+const UserProfileSettingModal = React.lazy(
+  () => import('./components/UserProfileSettingModal'),
 );
 
 customElements.define(
@@ -174,6 +174,21 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <UserDropdownMenu />
+      </DefaultProviders>
+    );
+  }),
+);
+customElements.define(
+  'backend-ai-react-user-profile-setting-dialog',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <UserProfileSettingModal
+          open={props.value === 'true'}
+          onRequestClose={() => {
+            props.dispatchEvent('close', null);
+          }}
+        />
       </DefaultProviders>
     );
   }),
