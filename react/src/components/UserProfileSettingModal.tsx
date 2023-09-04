@@ -98,8 +98,8 @@ const UserProfileSettingModal: React.FC<Props> = ({
   );
 
   const mutationToRemoveTotp = useTanMutation({
-    mutationFn: (email: string) => {
-      return baiClient.remove_totp(email);
+    mutationFn: () => {
+      return baiClient.remove_totp();
     },
   });
 
