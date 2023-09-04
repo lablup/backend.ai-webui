@@ -87,7 +87,7 @@ export const useCurrentUserInfo = () => {
     return () => {
       document.removeEventListener('current-user-info-changed', handler);
     };
-  }, []);
+  }, [baiClient]);
 
   const mutationToUpdateUserFullName = useTanMutation({
     mutationFn: (values: { email: string; full_name: string }) => {
