@@ -1,21 +1,14 @@
 import EnvVarFormList from '../components/EnvVarFormList';
-import Flex, { FlexProps } from '../components/Flex';
+import Flex from '../components/Flex';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems from '../components/ImageEnvironmentSelectFormItems';
 import ResourceAllocationFormItems from '../components/ResourceAllocationFormItems';
 import ResourceGroupSelect from '../components/ResourceGroupSelect';
-import SliderInputItem from '../components/SliderInputFormItem';
-import VFolderSelect from '../components/VFolderSelect';
-import { useTanQuery } from '../hooks/reactQueryAlias';
-import {
-  BlockOutlined,
-  CheckOutlined,
-  HistoryOutlined,
-  PlayCircleOutlined,
-} from '@ant-design/icons';
+import { BlockOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import {
   Button,
   Card,
+  Checkbox,
   DatePicker,
   Form,
   Input,
@@ -23,15 +16,13 @@ import {
   Select,
   StepProps,
   Steps,
-  StepsProps,
-  Tabs,
   TimePicker,
   Typography,
   theme,
 } from 'antd';
 import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 const SessionLauncherPage = () => {
   const { token } = theme.useToken();
@@ -41,6 +32,9 @@ const SessionLauncherPage = () => {
 
   const [form] = Form.useForm<{
     sessionType: 'interactive' | 'batch' | 'inference';
+    batch: {
+      enabled: boolean;
+    };
   }>();
 
   // use getFieldValue to get value from form even if item is not mounted
@@ -130,7 +124,7 @@ const SessionLauncherPage = () => {
                               label: (
                                 <SessionTypeItem
                                   title="🏃‍♀️ Make, test and run"
-                                  description="Interactive mode allows you to create, test and run code interactively via juptyer notebook, visual studio code, etc."
+                                  description="Interactive mode allows you to create, test and run code interactively via jupyter notebook, visual studio code, etc."
                                 />
                               ),
                               value: 'interactive',
@@ -156,7 +150,25 @@ const SessionLauncherPage = () => {
                           ]}
                         />
                       </Form.Item>
-                      <Form.Item label="Session name" help="slkadfjalsjdlfjsf">
+                      <Form.Item
+                        label="Session name"
+                        name="name"
+                        rules={[
+                          {
+                            max: 64,
+                            message: t(
+                              'session.Validation.SessionNameTooLong64',
+                            ),
+                          },
+                          {
+                            pattern:
+                              /^(?:[a-zA-Z0-9][a-zA-Z0-9._-]{2,}[a-zA-Z0-9])?$/,
+                            message: t(
+                              'session.Validation.PleaseFollowSessionNameRule',
+                            ).toString(),
+                          },
+                        ]}
+                      >
                         <Input />
                       </Form.Item>
                     </Card>
@@ -172,11 +184,43 @@ const SessionLauncherPage = () => {
                         </Form.Item>
                         <Form.Item label="Schedule time">
                           <Flex direction="row" gap={'xs'}>
-                            <Form.Item noStyle name={['batch', 'scheduleDate']}>
-                              <DatePicker />
+                            <Form.Item
+                              noStyle
+                              name={['batch', 'enabled']}
+                              valuePropName="checked"
+                            >
+                              <Checkbox>{t('button.Activate')}</Checkbox>
                             </Form.Item>
-                            <Form.Item noStyle name={['batch', 'scheduleTime']}>
-                              <TimePicker />
+                            <Form.Item
+                              noStyle
+                              // dependencies={[['batch', 'enabled']]}
+                              shouldUpdate={(prev, next) => {
+                                return (
+                                  // @ts-ignore
+                                  prev.batch?.enabled !== next.batch?.enabled
+                                );
+                              }}
+                            >
+                              {() => {
+                                const disabled =
+                                  form.getFieldValue('batch')?.enabled !== true;
+                                return (
+                                  <>
+                                    <Form.Item
+                                      name={['batch', 'scheduleDate']}
+                                      noStyle
+                                    >
+                                      <DatePicker disabled={disabled} />
+                                    </Form.Item>
+                                    <Form.Item
+                                      noStyle
+                                      name={['batch', 'scheduleTime']}
+                                    >
+                                      <TimePicker disabled={disabled} />
+                                    </Form.Item>
+                                  </>
+                                );
+                              }}
                             </Form.Item>
                           </Flex>
                         </Form.Item>
@@ -244,7 +288,55 @@ const SessionLauncherPage = () => {
                 {/* Step Start*/}
                 {currentStepKey === 'network' && (
                   <>
-                    <Card title="Network"></Card>
+                    <Card title="Network">
+                      <Form.Item
+                        label={t('session.launcher.PreOpenPortTitle')}
+                        help={t('session.launcher.PreOpenPortRange')}
+                        rules={
+                          [
+                            // {
+                            //   pattern:
+                            //     /^(102[4-9]|10[3-9][0-9]|1[1-9][0-9]{2}|[2-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$/,
+                            //   message: t('session.launcher.PreOpenPortRange'),
+                            // },
+                            // TODO: find a way to validate each item
+                            // ({ getFieldValue }) => ({
+                            //   validator(rule, values) {
+                            //     console.log('sadfasdfasdf');
+                            //     if (
+                            //       _.every(values, (v) =>
+                            //         /^(102[4-9]|10[3-9][0-9]|1[1-9][0-9]{2}|[2-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$/.test(
+                            //           v,
+                            //         ),
+                            //       )
+                            //     ) {
+                            //       return Promise.resolve();
+                            //     }
+                            //     return Promise.reject(
+                            //       new Error(
+                            //         'The new password that you entered do not match!',
+                            //       ),
+                            //     );
+                            //   },
+                            // }),
+                          ]
+                        }
+                      >
+                        <Select
+                          mode="tags"
+                          style={{ width: '100%' }}
+                          // placeholder={t('session.launcher.preopen')}
+                          onChange={(value) => {
+                            console.log(value);
+                          }}
+                          // TODO: find a way to allow only options event if tokenSeparators is set
+                          options={[]}
+                          suffixIcon={null}
+                          open={false}
+                          tokenSeparators={[',', ' ']}
+                        />
+                      </Form.Item>
+                    </Card>
                   </>
                 )}
 

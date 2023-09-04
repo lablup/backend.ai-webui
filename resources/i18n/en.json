@@ -361,7 +361,9 @@
       "SessionNameRequired": "Session name is required",
       "SluggedStrings": "Slugged strings (>3 chars)",
       "EnterValidSessionName": "Enter valid session name",
-      "SessionNameAlreadyExist": "Session name already exists"
+      "SessionNameAlreadyExist": "Session name already exists",
+      "SessionNameTooLong64": "Please enter 64 characters or less.",
+      "PleaseFollowSessionNameRule": "Please enter a combination of at least 3 letters, numbers, '.', '_', and '-'."
     },
     "EnterValidSessionName": "EnterValidSessionName",
     "EnvironmentInfo": "Environment Info",
