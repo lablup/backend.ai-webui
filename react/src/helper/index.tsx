@@ -127,6 +127,22 @@ export const usageIndicatorColor = (percentage: number) => {
     : '#ef5350';
 };
 
+export const maskString = (
+  value = '',
+  maskChar = '*',
+  startFrom = 0,
+  maskLength = 0,
+) => {
+  // clamp mask length
+  maskLength =
+    startFrom + maskLength > value.length ? value.length : maskLength;
+  return (
+    value.substring(0, startFrom) +
+    maskChar.repeat(maskLength) +
+    value.substring(startFrom + maskLength, value.length)
+  );
+};
+
 export const offset_to_cursor = (offset: number): string => {
   return window.btoa(`arrayconnection:${offset}`);
 };

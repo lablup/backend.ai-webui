@@ -1,19 +1,45 @@
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
-import { useWebComponentInfo } from './DefaultProviders';
+import BAIModal from './BAIModal';
 import { passwordPattern } from './ResetPasswordRequired';
-import { Modal, Input, Form, Select, SelectProps, message, Switch } from 'antd';
+import TOTPActivateModal from './TOTPActivateModal';
+// @ts-ignore
+import customCSS from './UserProfileSettingModal.css?raw';
+import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
+import { ExclamationCircleFilled } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
+import { Modal, ModalProps, Input, Form, Select, message, Switch } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React from 'react';
+import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
 
-const UserProfileSettingModal: React.FC = () => {
+interface Props extends ModalProps {
+  onRequestClose: (success?: boolean) => void;
+}
+
+type UserProfileFormValues = {
+  full_name: string;
+  originalPassword?: string;
+  newPasswordConfirm?: string;
+  newPassword?: string;
+  access_key?: string;
+  secret_key?: string;
+  totp_activated: boolean;
+};
+
+const UserProfileSettingModal: React.FC<Props> = ({
+  onRequestClose,
+  ...baiModalProps
+}) => {
   const { t } = useTranslation();
-
-  const [form] = Form.useForm();
-
+  const [form] = Form.useForm<UserProfileFormValues>();
   const [messageApi, contextHolder] = message.useMessage();
-
+  const [modal, modalContextHolder] = Modal.useModal();
+  const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
+    useToggle(false);
   const baiClient = useSuspendedBackendaiClient();
 
   const { data: isManagerSupportingTOTP } = useTanQuery(
@@ -22,212 +48,143 @@ const UserProfileSettingModal: React.FC = () => {
       return baiClient.isManagerSupportingTOTP();
     },
     {
-      suspense: false,
+      suspense: true,
     },
   );
   const totpSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
 
-  const { data: userInfo } = useTanQuery(
-    'totpActivated',
-    () => {
-      return baiClient.user.get(baiClient.email, ['totp_activated']);
+  const [userInfo, userMutations] = useCurrentUserInfo();
+  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const deferredMergedFetchKey = useDeferredValue(fetchKey);
+
+  const { user } = useLazyLoadQuery<UserProfileSettingModalQuery>(
+    graphql`
+      query UserProfileSettingModalQuery(
+        $email: String!
+        $isNotSupportTotp: Boolean!
+      ) {
+        user(email: $email) {
+          id
+          totp_activated @skipOnClient(if: $isNotSupportTotp)
+          ...TOTPActivateModalFragment
+        }
+      }
+    `,
+    {
+      email: userInfo.email,
+      isNotSupportTotp: !totpSupported,
     },
     {
-      suspense: false,
+      fetchPolicy: 'network-only',
+      fetchKey: deferredMergedFetchKey,
     },
   );
-  const totpActivated = userInfo?.user.totp_activated;
 
-  const { data: keyPairInfo } = useTanQuery(
-    'keyPairInfo',
+  const { data: keyPairs } = useTanQuery<
+    {
+      secret_key: string;
+      access_key: string;
+    }[]
+  >(
+    'baiClient.keypair.list',
     () => {
-      return baiClient.keypair.list(
-        baiClient.email,
-        ['access_key', 'secret_key'],
-        true,
-      );
+      return baiClient.keypair
+        .list(userInfo.email, ['access_key', 'secret_key'], true)
+        .then((res: any) => res.keypairs);
     },
     {
-      suspense: false,
+      suspense: true,
     },
   );
-  const selectOptions: SelectProps['options'] = [];
-  if (keyPairInfo) {
-    for (let i = 0; i < keyPairInfo.keypairs.length; i++) {
-      selectOptions.push({
-        value: keyPairInfo.keypairs[i].secret_key,
-        label: keyPairInfo.keypairs[i].access_key,
-      });
-    }
-    const matchLoggedAccount = _.find(keyPairInfo.keypairs, [
-      'access_key',
-      baiClient._config.accessKey,
-    ]);
-    form.setFieldsValue({
-      access_key: matchLoggedAccount?.access_key,
-      secret_key: matchLoggedAccount?.secret_key,
-    });
-  }
 
-  const { value, dispatchEvent } = useWebComponentInfo();
-  let parsedValue: {
-    isOpenUserPrefDialog: boolean;
-  };
-  try {
-    parsedValue = JSON.parse(value || '');
-  } catch (error) {
-    parsedValue = {
-      isOpenUserPrefDialog: false,
-    };
-  }
-
-  const { isOpenUserPrefDialog } = parsedValue;
-
-  const mutationToUpdateUserFullName = useTanMutation({
-    mutationFn: (values: { email: string; full_name: string }) => {
-      return baiClient.update_full_name(values.email, values.full_name);
+  const mutationToRemoveTotp = useTanMutation({
+    mutationFn: () => {
+      return baiClient.remove_totp();
     },
   });
 
-  const mutationToUpdateUserPassword = useTanMutation({
-    mutationFn: (values: {
-      old_password: string;
-      new_password: string;
-      new_password2: string;
-    }) => {
-      return baiClient.update_password(
-        values.old_password,
-        values.new_password,
-        values.new_password2,
-      );
-    },
-  });
-
-  const onSelectAccessKey = (value: string) => {
-    const matchLoggedAccount = _.find(keyPairInfo.keypairs, [
-      'secret_key',
-      value,
-    ]);
-    form.setFieldsValue({
-      secret_key: matchLoggedAccount.secret_key,
-    });
-  };
-
-  const updateFullName = (newFullName: string) => {
-    if (baiClient.full_name !== newFullName) {
-      mutationToUpdateUserFullName.mutate(
-        {
-          full_name: newFullName,
-          email: baiClient.email,
-        },
-        {
-          onSuccess: () => {
+  const onSubmit = () => {
+    form.validateFields().then((values) => {
+      userMutations.updateFullName(values.full_name, {
+        onSuccess: (newFullName) => {
+          if (newFullName !== userInfo.full_name) {
             messageApi.open({
               type: 'success',
               content: t('webui.menu.FullnameUpdated'),
             });
-            dispatchEvent('updateFullName', { newFullName });
-          },
-          onError: (error: any) => {
-            messageApi.open({
-              type: 'error',
-              content: error.message,
-            });
-          },
-        },
-      );
-    }
-  };
+          }
 
-  const updatePassword = (
-    oldPassword: string,
-    newPassword: string,
-    newPassword2: string,
-  ) => {
-    if (!oldPassword && !newPassword && !newPassword2) {
-      dispatchEvent('cancel', null);
-      return;
-    }
-    if (!oldPassword) {
-      messageApi.open({
-        type: 'error',
-        content: t('webui.menu.InputOriginalPassword'),
-      });
-      return;
-    }
-    if (!newPassword) {
-      messageApi.open({
-        type: 'error',
-        content: t('webui.menu.InputNewPassword'),
-      });
-      return;
-    }
-    if (newPassword !== newPassword2) {
-      messageApi.open({
-        type: 'error',
-        content: t('webui.menu.NewPasswordMismatch'),
-      });
-      return;
-    }
-    mutationToUpdateUserPassword.mutate(
-      {
-        old_password: oldPassword,
-        new_password: newPassword,
-        new_password2: newPassword2,
-      },
-      {
-        onSuccess: () => {
-          messageApi.open({
-            type: 'success',
-            content: t('webui.menu.PasswordUpdated'),
-          });
-          dispatchEvent('cancel', null);
+          if (
+            values.newPassword &&
+            values.newPasswordConfirm &&
+            values.originalPassword
+          ) {
+            userMutations.updatePassword(
+              {
+                new_password: values.newPassword,
+                new_password2: values.newPasswordConfirm,
+                old_password: values.originalPassword,
+              },
+              {
+                onSuccess: () => {
+                  messageApi.open({
+                    type: 'success',
+                    content: t('webui.menu.PasswordUpdated'),
+                  });
+                  onRequestClose(true);
+                },
+                onError: (e) => {
+                  messageApi.open({
+                    type: 'error',
+                    content: e.message,
+                  });
+                },
+              },
+            );
+          } else {
+            onRequestClose(true);
+          }
         },
-        onError: (error: any) => {
+        onError: (e) => {
           messageApi.open({
             type: 'error',
-            content: error.message,
+            content: e.message,
           });
         },
-        onSettled: () => {
-          form.setFieldsValue({
-            originalPassword: '',
-            newPassword: '',
-            newPasswordConfirm: '',
-          });
-        },
-      },
-    );
-  };
-
-  const onSubmit = () => {
-    form.validateFields().then((values) => {
-      updateFullName(values.full_name);
-      updatePassword(
-        values.originalPassword,
-        values.newPassword,
-        values.newPasswordConfirm,
-      );
+      });
     });
   };
 
   return (
     <>
-      {contextHolder}
-      <Modal
-        open={isOpenUserPrefDialog}
+      <style>{customCSS}</style>
+      <BAIModal
         okText={t('webui.menu.Update')}
         cancelText={t('webui.menu.Cancel')}
-        onCancel={() => dispatchEvent('cancel', null)}
+        onCancel={() => {
+          onRequestClose();
+        }}
+        confirmLoading={userInfo.isPendingMutation}
         onOk={() => onSubmit()}
         centered
+        destroyOnClose
         title={t('webui.menu.MyAccountInformation')}
+        {...baiModalProps}
       >
-        <Form layout="vertical" form={form}>
+        <Form
+          layout="horizontal"
+          labelCol={{ span: 8 }}
+          form={form}
+          initialValues={{
+            full_name: userInfo.full_name,
+            totp_activated: user?.totp_activated || false,
+            access_key: keyPairs?.[0].access_key,
+          }}
+          preserve={false}
+        >
           <Form.Item
             name="full_name"
             label={t('webui.menu.FullName')}
-            initialValue={baiClient.full_name}
             rules={[
               () => ({
                 validator(_, value) {
@@ -243,22 +200,49 @@ const UserProfileSettingModal: React.FC = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            name="access_key"
-            label={t('general.AccessKey')}
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="access_key" label={t('general.AccessKey')}>
             <Select
-              options={selectOptions}
-              onSelect={onSelectAccessKey}
+              options={_.map(keyPairs, (keyPair) => ({
+                value: keyPair.access_key,
+              }))}
+              // onSelect={onSelectAccessKey}
             ></Select>
           </Form.Item>
-          <Form.Item name="secret_key" label={t('general.SecretKey')}>
-            <Input disabled />
+          <Form.Item
+            label={t('general.SecretKey')}
+            shouldUpdate={(prev, next) => prev.access_key !== next.access_key}
+          >
+            {({ getFieldValue }) => (
+              <Input.Password
+                value={
+                  _.find(keyPairs, ['access_key', getFieldValue('access_key')])
+                    ?.secret_key
+                }
+                className="disabled_style_readonly"
+                readOnly
+              />
+            )}
           </Form.Item>
           <Form.Item
             name="originalPassword"
             label={t('webui.menu.OriginalPassword')}
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (
+                    !value &&
+                    (getFieldValue('newPassword') ||
+                      getFieldValue('newPasswordConfirm'))
+                  ) {
+                    return Promise.reject(
+                      new Error(t('webui.menu.InputOriginalPassword')),
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              }),
+            ]}
+            dependencies={['newPassword', 'newPasswordConfirm']}
           >
             <Input.Password />
           </Form.Item>
@@ -277,6 +261,7 @@ const UserProfileSettingModal: React.FC = () => {
           <Form.Item
             name="newPasswordConfirm"
             label={t('webui.menu.NewPasswordAgain')}
+            dependencies={['newPassword']}
             rules={[
               ({ getFieldValue }) => ({
                 validator(_, value) {
@@ -284,7 +269,7 @@ const UserProfileSettingModal: React.FC = () => {
                     return Promise.resolve();
                   }
                   return Promise.reject(
-                    new Error(t('environment.PasswordsDoNotMatch')),
+                    new Error(t('webui.menu.NewPasswordMismatch')),
                   );
                 },
               }),
@@ -292,22 +277,68 @@ const UserProfileSettingModal: React.FC = () => {
           >
             <Input.Password />
           </Form.Item>
-          {totpSupported ? (
-            <Form.Item label={t('webui.menu.TotpActivated')}>
+          {!!totpSupported && (
+            <Form.Item
+              name="totp_activated"
+              label={t('webui.menu.TotpActivated')}
+              valuePropName="checked"
+            >
               <Switch
-                defaultChecked={totpActivated}
-                onChange={(e) =>
-                  totpActivated
-                    ? dispatchEvent('confirmRemovingTotp', null)
-                    : dispatchEvent('startActivatingTotp', null)
-                }
+                onChange={(checked: boolean) => {
+                  if (checked) {
+                    toggleTOTPActivateModal();
+                  } else {
+                    if (user?.totp_activated) {
+                      form.setFieldValue('totp_activated', true);
+                      modal.confirm({
+                        title: t('totp.TurnOffTotp'),
+                        icon: <ExclamationCircleFilled />,
+                        content: t('totp.ConfirmTotpRemovalBody'),
+                        okText: t('button.Yes'),
+                        okType: 'danger',
+                        cancelText: t('button.No'),
+                        onOk() {
+                          mutationToRemoveTotp.mutate(undefined, {
+                            onSuccess: () => {
+                              message.success(
+                                t('totp.RemoveTotpSetupCompleted'),
+                              );
+                              updateFetchKey();
+                              form.setFieldValue('totp_activated', false);
+                            },
+                            onError: (error: any) => {
+                              message.error(error.message);
+                            },
+                          });
+                        },
+                        onCancel() {
+                          form.setFieldValue('totp_activated', true);
+                        },
+                      });
+                    }
+                  }
+                }}
               />
             </Form.Item>
-          ) : (
-            ''
           )}
         </Form>
-      </Modal>
+        {!!totpSupported && (
+          <TOTPActivateModal
+            userFrgmt={user}
+            open={isOpenTOTPActivateModal}
+            onRequestClose={(success) => {
+              if (success) {
+                updateFetchKey();
+              } else {
+                form.setFieldValue('totp_activated', false);
+              }
+              toggleTOTPActivateModal();
+            }}
+          />
+        )}
+      </BAIModal>
+      {contextHolder}
+      {modalContextHolder}
     </>
   );
 };

@@ -139,6 +139,7 @@ const UserSettingModal: React.FC<Props> = ({
           ok
           msg
           user {
+            id
             email
             username
             need_password_change
