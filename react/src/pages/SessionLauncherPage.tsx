@@ -11,12 +11,12 @@ import {
   Checkbox,
   DatePicker,
   Form,
+  Grid,
   Input,
   Segmented,
   Select,
   StepProps,
   Steps,
-  TimePicker,
   Typography,
   theme,
 } from 'antd';
@@ -29,6 +29,7 @@ const SessionLauncherPage = () => {
 
   const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
+  const screens = Grid.useBreakpoint();
 
   const [form] = Form.useForm<{
     sessionType: 'interactive' | 'batch' | 'inference';
@@ -78,44 +79,52 @@ const SessionLauncherPage = () => {
     | 'review' = steps[currentStep]?.key;
 
   return (
-    <Flex direction="column" align="stretch" style={{ margin: token.marginSM }}>
+    <Flex
+      direction="column"
+      align="stretch"
+      style={{ padding: token.paddingSM, width: '100%' }}
+    >
       <Flex direction="row" justify="between">
         <Typography.Title level={2} style={{ marginTop: 0 }}>
           Start session
         </Typography.Title>
-        <Flex>
-          {currentStep === 0 && (
-            <Button type="link" icon={<BlockOutlined />}>
-              Start using a template
-            </Button>
-          )}
-        </Flex>
       </Flex>
       <Flex direction="row" gap="md" align="start">
-        <Flex direction="column">
-          <Steps
-            size="small"
-            direction="vertical"
-            current={currentStep}
-            onChange={(nextCurrent) => {
-              setCurrentStep(nextCurrent);
-            }}
-            items={steps}
-          />
-        </Flex>
+        {screens.md && (
+          <Flex direction="column">
+            <Steps
+              size="small"
+              direction="vertical"
+              current={currentStep}
+              onChange={(nextCurrent) => {
+                setCurrentStep(nextCurrent);
+              }}
+              items={steps}
+            />
+          </Flex>
+        )}
 
-        <Flex direction="column">
+        <Flex
+          direction="column"
+          align="stretch"
+          style={{ flex: 1, maxWidth: 700 }}
+        >
           <Suspense fallback={<FlexActivityIndicator />}>
             <Form form={form} layout="vertical" requiredMark="optional">
               <Flex
                 direction="column"
                 align="stretch"
-                style={{ width: 960 }}
                 gap="md"
+                // style={{  }}
               >
                 {/* Step 0 fields */}
                 {currentStep === 0 && (
                   <>
+                    <Flex justify="end">
+                      <Button type="link" icon={<BlockOutlined />}>
+                        Start using a template
+                      </Button>
+                    </Flex>
                     <Card title="Session type">
                       <Form.Item name="sessionType">
                         <Segmented
@@ -138,15 +147,15 @@ const SessionLauncherPage = () => {
                               ),
                               value: 'batch',
                             },
-                            {
-                              label: (
-                                <SessionTypeItem
-                                  title="🤖 Run a inference service"
-                                  description="Inference allow you dynamically scale your mode service"
-                                />
-                              ),
-                              value: 'inference',
-                            },
+                            // {
+                            //   label: (
+                            //     <SessionTypeItem
+                            //       title="🤖 Run a inference service"
+                            //       description="Inference allow you dynamically scale your mode service"
+                            //     />
+                            //   ),
+                            //   value: 'inference',
+                            // },
                           ]}
                         />
                       </Form.Item>
@@ -210,14 +219,18 @@ const SessionLauncherPage = () => {
                                       name={['batch', 'scheduleDate']}
                                       noStyle
                                     >
-                                      <DatePicker disabled={disabled} />
+                                      <DatePicker
+                                        disabled={disabled}
+                                        showTime
+                                        placeholder="Select time"
+                                      />
                                     </Form.Item>
-                                    <Form.Item
+                                    {/* <Form.Item
                                       noStyle
                                       name={['batch', 'scheduleTime']}
                                     >
                                       <TimePicker disabled={disabled} />
-                                    </Form.Item>
+                                    </Form.Item> */}
                                   </>
                                 );
                               }}
@@ -228,10 +241,7 @@ const SessionLauncherPage = () => {
                     )}
 
                     {sessionType === 'inference' && (
-                      <Card
-                        title="Inference Mode Configuration"
-                        bodyStyle={{ width: 640 }}
-                      >
+                      <Card title="Inference Mode Configuration">
                         <Form.Item
                           name={['inference', 'vFolderName']}
                           label={t('session.launcher.ModelStorageToMount')}
@@ -255,14 +265,14 @@ const SessionLauncherPage = () => {
                 {/* Step Start*/}
                 {currentStepKey === 'environment' && (
                   <>
-                    <Card title="Environment" bodyStyle={{ width: 640 }}>
+                    <Card title="Environment">
                       <ImageEnvironmentSelectFormItems />
 
                       <Form.Item label="Environment Variables">
                         <EnvVarFormList name={'envvars'} />
                       </Form.Item>
                     </Card>
-                    <Card title="Resources" bodyStyle={{ maxWidth: 640 }}>
+                    <Card title="Resources">
                       <Form.Item
                         name="resourceGroup"
                         label={t('session.ResourceGroup')}
