@@ -299,7 +299,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           </Descriptions.Item>
           <Descriptions.Item label={t('modelService.ServiceEndpoint')}>
             {endpoint?.url ? (
-              endpoint?.url
+              <Typography.Text copyable>{endpoint?.url}</Typography.Text>
             ) : (
               <Tag>{t('modelService.NoServiceEndpoint')}</Tag>
             )}
