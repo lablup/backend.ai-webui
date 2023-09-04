@@ -54,7 +54,7 @@ const SessionLauncherPage = () => {
       },
       sessionType !== 'inference' && {
         title: 'Storage',
-        key: 'storage&network',
+        key: 'storage',
       },
       {
         title: 'Network',
@@ -292,7 +292,7 @@ const SessionLauncherPage = () => {
                 {/* Step Start*/}
                 {currentStepKey === 'storage' && (
                   <>
-                    <Card title="Storage"></Card>
+                    <Card title="Storage">vFolder & alias</Card>
                   </>
                 )}
                 {/* Step Start*/}
