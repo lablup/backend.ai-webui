@@ -366,10 +366,12 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
                 <span>
                   {
                     // FIXME: temporally add GMT (timezone need to be added in serverside)
-                    dayjs(
-                      (row.valid_until as string) +
-                        (row.created_at as string).split(/(?=\+)/g)[1],
-                    ).format('YYYY/MM/DD ddd HH:MM:ss')
+                    row.valid_until
+                      ? dayjs(
+                          (row.valid_until as string) +
+                            (row.created_at as string).split(/(?=\+)/g)[1],
+                        ).format('YYYY/MM/DD ddd HH:MM:ss')
+                      : '-'
                   }
                 </span>
               ),

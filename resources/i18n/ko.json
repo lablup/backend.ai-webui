@@ -432,7 +432,9 @@
     "GenerateToken": "토큰 생성",
     "Generate": "생성하기",
     "TokenGenerated": "토큰 생성이 완료되었습니다.",
-    "TokenGenerationFailed": "토큰 생성에 실패하였습니다. 잠시 후 다시 시도해주세요."
+    "TokenGenerationFailed": "토큰 생성에 실패하였습니다. 잠시 후 다시 시도해주세요.",
+    "PleaseSelectTime": "만료 시간을 선택해주세요!",
+    "ExpiredDate": "토큰 만료 시각"
   },
   "button": {
     "Cancel": "취소",

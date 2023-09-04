@@ -444,7 +444,9 @@
     "ValidTimeInfo": "Valid time info",
     "Generate": "Generate",
     "TokenGenerated": "Token generated",
-    "TokenGenerationFailed": "Token generation failed. please try again."
+    "TokenGenerationFailed": "Token generation failed. please try again.",
+    "PleaseSelectTime": "Please select time!",
+    "ExpiredDate": "Expired Date"
   },
   "button": {
     "Cancel": "Cancel",
