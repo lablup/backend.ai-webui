@@ -9,6 +9,7 @@ import {
   useSuspendedBackendaiClient,
   useUpdatableState,
 } from '../hooks';
+// import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
   ServingListPageQuery,
@@ -23,6 +24,7 @@ import {
 import { useRafInterval } from 'ahooks';
 import { Button, Table, Tabs, Typography, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
+import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
 import React, {
   PropsWithChildren,
@@ -85,6 +87,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   }, 7000);
 
   const { endpoint_list: modelServiceList } =
+    // TODO: need to convert LazyLoadQuery to pagination query with option
     useLazyLoadQuery<ServingListPageQuery>(
       graphql`
         query ServingListPageQuery(
@@ -110,6 +113,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               resource_slots
               url
               open_to_public
+              created_at
+              created_user
               desired_session_count @required(action: NONE)
               routings {
                 routing_id
@@ -329,6 +334,20 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   render: (text, row) => (
                     <EndpointStatusTag endpointFrgmt={row} />
                   ),
+                },
+                {
+                  title: t('modelService.CreatedAt'),
+                  dataIndex: 'created_at',
+                  render: (created_at) => {
+                    return dayjs(created_at).format('YYYY/MM/DD HH:MM:ss');
+                  },
+                  defaultSortOrder: 'descend',
+                  sortDirections: ['descend', 'ascend', 'descend'],
+                  sorter: (a, b) => {
+                    const date1 = dayjs(a.created_at);
+                    const date2 = dayjs(b.created_at);
+                    return date1.diff(date2);
+                  },
                 },
                 {
                   title: t('modelService.DesiredSessionCount'),

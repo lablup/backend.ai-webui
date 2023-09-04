@@ -1,3 +1,4 @@
+import BAIErrorBoundary from './components/BAIErrorBoundary';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
 import React, { Suspense } from 'react';
@@ -34,12 +35,15 @@ const UserInfoModal = React.lazy(() => import('./components/UserInfoModal'));
 const UserSettingsModal = React.lazy(
   () => import('./components/UserSettingModal'),
 );
-// const UserProfileSettingModal = React.lazy(
-//   () => import("./components/UserProfileSettingModal")
-// );
-// const MaintenancePage = React.lazy(() => import("./pages/MaintenancePage"));
+
 const ManageAppsModal = React.lazy(
   () => import('./components/ManageAppsModal'),
+);
+const UserDropdownMenu = React.lazy(
+  () => import('./components/UserDropdownMenu'),
+);
+const UserProfileSettingModal = React.lazy(
+  () => import('./components/UserProfileSettingModal'),
 );
 
 customElements.define(
@@ -47,7 +51,9 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <Information />
+        <BAIErrorBoundary>
+          <Information />
+        </BAIErrorBoundary>
       </DefaultProviders>
     );
   }),
@@ -69,10 +75,12 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <Routes>
-          <Route path="/serving" element={<ServingList />} />
-          <Route path="/serving/:serviceId" element={<RoutingList />} />
-        </Routes>
+        <BAIErrorBoundary>
+          <Routes>
+            <Route path="/serving" element={<ServingList />} />
+            <Route path="/serving/:serviceId" element={<RoutingList />} />
+          </Routes>
+        </BAIErrorBoundary>
       </DefaultProviders>
     );
   }),
@@ -92,10 +100,12 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <StorageHostSettingPage
-          key={props.value}
-          storageHostId={props.value || ''}
-        />
+        <BAIErrorBoundary>
+          <StorageHostSettingPage
+            key={props.value}
+            storageHostId={props.value || ''}
+          />
+        </BAIErrorBoundary>
       </DefaultProviders>
     );
   }),
@@ -153,6 +163,32 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <ManageAppsModal />
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-user-dropdown-menu',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <UserDropdownMenu />
+      </DefaultProviders>
+    );
+  }),
+);
+customElements.define(
+  'backend-ai-react-user-profile-setting-dialog',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <UserProfileSettingModal
+          open={props.value === 'true'}
+          onRequestClose={() => {
+            props.dispatchEvent('close', null);
+          }}
+        />
       </DefaultProviders>
     );
   }),
