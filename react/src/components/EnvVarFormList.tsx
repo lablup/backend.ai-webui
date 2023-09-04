@@ -1,12 +1,12 @@
 import Flex from './Flex';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Space } from 'antd';
+import { Button, Form, Input } from 'antd';
 import { FormListProps } from 'antd/lib/form';
 import _ from 'lodash';
 import React from 'react';
 
-interface EnvVarFormList extends Omit<FormListProps, 'children'> {}
-const EnvVarFormList: React.FC<EnvVarFormList> = ({ ...props }) => {
+interface EnvVarFormListProps extends Omit<FormListProps, 'children'> {}
+const EnvVarFormList: React.FC<EnvVarFormListProps> = ({ ...props }) => {
   return (
     <Form.List {...props}>
       {(fields, { add, remove }) => {
