@@ -17,7 +17,7 @@ Backend.AI Web UI focuses to
 
  * Serve as desktop app (windows, macOS and Linux) and web service
  * Provide both basic administration and user mode
-    * Use CLI for detailed administration features such as domain administation
+    * Use CLI for detailed administration features such as domain administration
  * Versatile devices ready such as mobile, tablet and desktop.
  * Built-in websocket proxy feature for apps
 
@@ -72,7 +72,7 @@ Backend.AI Web UI focuses to
      * Add/remove docker registries
  * User management
     * User creation / deletion / key management / resource templates
- * Keypair management
+ * Key Pair management
     * Allocate resource limitation for keys
     * Add / remove resource policies for keys
  * Manager settings
