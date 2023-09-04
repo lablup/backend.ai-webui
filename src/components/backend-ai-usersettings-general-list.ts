@@ -8,25 +8,6 @@ import {
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-
-import 'weightless/switch';
-import 'weightless/select';
-import 'weightless/icon';
-import 'weightless/button';
-import 'weightless/label';
-
-import {Button} from '@material/mwc-button';
-import {IconButton} from '@material/mwc-icon-button';
-import '@material/mwc-switch';
-import {Select} from '@material/mwc-select';
-import {TextArea} from '@material/mwc-textarea';
-import {TextField} from '@material/mwc-textfield';
-import {List} from '@material/mwc-list';
-import '@material/mwc-list/mwc-list-item';
-
-import {default as PainKiller} from './backend-ai-painkiller';
-import './lablup-loading-spinner';
-import './lablup-codemirror';
 import './backend-ai-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
@@ -35,9 +16,12 @@ import './lablup-codemirror';
 import './lablup-loading-spinner';
 import { Button } from '@material/mwc-button';
 import { IconButton } from '@material/mwc-icon-button';
+import { List } from '@material/mwc-list';
+import '@material/mwc-list/mwc-list-item';
 import { Select } from '@material/mwc-select';
 import '@material/mwc-switch';
 import { TextArea } from '@material/mwc-textarea';
+import { TextField } from '@material/mwc-textfield';
 import { css, CSSResultGroup, html } from 'lit';
 import {
   get as _text,
@@ -81,15 +65,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     { name: _t('language.Mongolian'), code: 'mn' },
     { name: _t('language.Indonesian'), code: 'id' },
   ];
-  @property({type: Boolean}) beta_feature_panel = false;
-  @property({type: Boolean}) shell_script_edit = false;
-  @property({type: Array}) rcfiles;
-  @property({type: String}) rcfile = '';
-  @property({type: String}) prevRcfile = '';
-  @property({type: String}) preferredSSHPort = '';
-  @property({type: String}) publicSSHkey = '';
-  @property({type: Array}) gitToken;
-  @property({type: Object}) gitTokenValues = Object();
+  @property({ type: Boolean }) beta_feature_panel = false;
+  @property({ type: Boolean }) shell_script_edit = false;
+  @property({ type: Array }) rcfiles;
+  @property({ type: String }) rcfile = '';
+  @property({ type: String }) prevRcfile = '';
+  @property({ type: String }) preferredSSHPort = '';
+  @property({ type: String }) publicSSHkey = '';
+  @property({ type: Array }) gitToken;
+  @property({ type: Object }) gitTokenValues = Object();
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#bootstrap-editor') bootstrapEditor!: LablupCodemirror;
   @query('#usersetting-editor') userSettingEditor!: LablupCodemirror;
@@ -111,8 +95,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @query('#ssh-keypair-form-dialog') sshKeypairFormDialog!: BackendAIDialog;
   @query('#entered-ssh-public-key') enteredSSHPublicKeyInput!: TextArea;
   @query('#entered-ssh-private-key') enteredSSHPrivateKeyInput!: TextArea;
-  @query('#git-token-management-dialog') gitTokenManagementDialog!: BackendAIDialog;
-  @query('#save-git-token-management-dialog') saveGitTokenManagementDialog!: BackendAIDialog;
+  @query('#git-token-management-dialog')
+  gitTokenManagementDialog!: BackendAIDialog;
+  @query('#save-git-token-management-dialog')
+  saveGitTokenManagementDialog!: BackendAIDialog;
   @query('#id_github_token') githubTokenInput!: TextField;
   @query('#id_gitlab_token') gitlabTokenInput!: TextField;
   @query('#git-token-list') gitTokenList!: List;
@@ -917,34 +903,40 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   async _openGitTokenRefreshDialog() {
     globalThis.backendaiclient.userConfig.fetchGitToken().then((resp) => {
       for (let i = 0; i < resp.length; i++) {
-        if (resp[i].domain === "github.com") {
+        if (resp[i].domain === 'github.com') {
           this.githubTokenInput.value = resp[i].token;
-        } else if (resp[i].domain === "gitlab.com") {
+        } else if (resp[i].domain === 'gitlab.com') {
           this.gitlabTokenInput.value = resp[i].token;
         } else {
           let newListItem = document.createElement('mwc-list-item');
           let newDomainTextField = document.createElement('mwc-textfield');
-          newDomainTextField.type = "text";
-          newDomainTextField.className = "service_domain";
-          newDomainTextField.style.width = "auto";
+          newDomainTextField.type = 'text';
+          newDomainTextField.className = 'service_domain';
+          newDomainTextField.style.width = 'auto';
           newDomainTextField.value = resp[i].domain;
-          newDomainTextField.addEventListener('input', (e) => this._validateGitDomainName(e));
-          newDomainTextField.validationMessage="${_text('session.Validation.EnterValidSessionName')}";
+          newDomainTextField.addEventListener('input', (e) =>
+            this._validateGitDomainName(e),
+          );
+          newDomainTextField.validationMessage =
+            "${_text('session.Validation.EnterValidSessionName')}";
           newListItem.appendChild(newDomainTextField);
           let newTokenTextField = document.createElement('mwc-textfield');
-          newTokenTextField.type = "text";
-          newTokenTextField.className = "service_token";
-          newTokenTextField.style.width = "auto";
+          newTokenTextField.type = 'text';
+          newTokenTextField.className = 'service_token';
+          newTokenTextField.style.width = 'auto';
           newTokenTextField.value = resp[i].token;
           newListItem.appendChild(newTokenTextField);
-          let newItemRemoveButtonField = document.createElement('mwc-icon-button');
-          newItemRemoveButtonField.className = "green minus-btn";
-          newItemRemoveButtonField.icon="remove";
+          let newItemRemoveButtonField =
+            document.createElement('mwc-icon-button');
+          newItemRemoveButtonField.className = 'green minus-btn';
+          newItemRemoveButtonField.icon = 'remove';
           newItemRemoveButtonField.addEventListener('click', (e) => {
             this._deleteGitTokenList(e.target);
           });
           newListItem.appendChild(newItemRemoveButtonField);
-          this.shadowRoot?.querySelector('#git-token-list')?.appendChild(newListItem);
+          this.shadowRoot
+            ?.querySelector('#git-token-list')
+            ?.appendChild(newListItem);
         }
       }
       this.gitTokenManagementDialog.show();
@@ -952,39 +944,43 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   _hideGitTokenManagementDialog() {
-    (this.shadowRoot?.querySelector('#git-token-list'))?.querySelectorAll('mwc-list-item').forEach((e) => {
-      switch (e.querySelector('mwc-textfield')?.id) {
-        case 'id_github_domain':
-          this.githubTokenInput.value = '';
-          break;
-        case 'id_gitlab_domain':
-          this.gitlabTokenInput.value = '';
-          break;
-        default:
-          e.remove();
-      }
-      
-    });
+    this.shadowRoot?.querySelector('#git-token-list')
+      ?.querySelectorAll('mwc-list-item')
+      .forEach((e) => {
+        switch (e.querySelector('mwc-textfield')?.id) {
+          case 'id_github_domain':
+            this.githubTokenInput.value = '';
+            break;
+          case 'id_gitlab_domain':
+            this.gitlabTokenInput.value = '';
+            break;
+          default:
+            e.remove();
+        }
+      });
     this.gitTokenManagementDialog.hide();
   }
 
   _addGitTokenList() {
     let newListItem = document.createElement('mwc-list-item');
     let newDomainTextField = document.createElement('mwc-textfield');
-    newDomainTextField.type = "text";
-    newDomainTextField.className = "service_domain";
-    newDomainTextField.style.width = "auto";
-    newDomainTextField.addEventListener('input', (e) => this._validateGitDomainName(e));
-    newDomainTextField.validationMessage="${_text('session.Validation.EnterValidSessionName')}";
+    newDomainTextField.type = 'text';
+    newDomainTextField.className = 'service_domain';
+    newDomainTextField.style.width = 'auto';
+    newDomainTextField.addEventListener('input', (e) =>
+      this._validateGitDomainName(e),
+    );
+    newDomainTextField.validationMessage =
+      "${_text('session.Validation.EnterValidSessionName')}";
     newListItem.appendChild(newDomainTextField);
     let newTokenTextField = document.createElement('mwc-textfield');
-    newTokenTextField.type = "text";
-    newTokenTextField.className = "service_token";
-    newTokenTextField.style.width = "auto";
+    newTokenTextField.type = 'text';
+    newTokenTextField.className = 'service_token';
+    newTokenTextField.style.width = 'auto';
     newListItem.appendChild(newTokenTextField);
     let newItemRemoveButtonField = document.createElement('mwc-icon-button');
-    newItemRemoveButtonField.className = "green minus-btn";
-    newItemRemoveButtonField.icon="remove";
+    newItemRemoveButtonField.className = 'green minus-btn';
+    newItemRemoveButtonField.icon = 'remove';
     newItemRemoveButtonField.addEventListener('click', (e) => {
       this._deleteGitTokenList(e.target);
     });
@@ -994,12 +990,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   async _saveGitTokenManagement() {
     this._parseGitTokenList();
-    globalThis.backendaiclient.userConfig.updateGitToken(this.gitTokenValues)
+    globalThis.backendaiclient.userConfig
+      .updateGitToken(this.gitTokenValues)
       .then((res) => {
         this.notification.text = _text('usersettings.SavedGitTokenValues');
         this.notification.show();
         this._hideSaveGitTokenManagementDialog();
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log(err);
         if (err && err.message) {
           this._hideSaveGitTokenManagementDialog();
@@ -1014,16 +1012,25 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   _parseGitTokenList() {
     this.gitTokenValues = {};
     const container = this.shadowRoot?.querySelector('#git-token-list');
-    const rows = container?.querySelectorAll('mwc-list-item') as NodeListOf<Element>;
-    const nonempty = (row) => Array.prototype.filter.call(
-      row.querySelectorAll('mwc-textfield'), (tf) => tf.value.length === 0
-    ).length === 0;
+    const rows = container?.querySelectorAll(
+      'mwc-list-item',
+    ) as NodeListOf<Element>;
+    const nonempty = (row) =>
+      Array.prototype.filter.call(
+        row.querySelectorAll('mwc-textfield'),
+        (tf) => tf.value.length === 0,
+      ).length === 0;
     const encodeRow = (row) => {
-      const items: Array<any> = Array.prototype.map.call(row.querySelectorAll('mwc-textfield'), (tf) => tf.value);
+      const items: Array<any> = Array.prototype.map.call(
+        row.querySelectorAll('mwc-textfield'),
+        (tf) => tf.value,
+      );
       this.gitTokenValues[items[0]] = items[1];
       return items;
     };
-    Array.prototype.filter.call(rows, (row) => nonempty(row)).map((row) => encodeRow(row));
+    Array.prototype.filter
+      .call(rows, (row) => nonempty(row))
+      .map((row) => encodeRow(row));
   }
 
   _deleteGitTokenList(e) {
@@ -1040,38 +1047,44 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   _validateGitDomainName(item) {
     let gitDomainList: string[] = [];
-    (this.shadowRoot?.querySelector('#git-token-list'))?.querySelectorAll('mwc-list-item').forEach((e) => {
-      let selectedItem = e.querySelectorAll('mwc-textfield');
-      if (selectedItem[0] !== item.target) {
-        gitDomainList.push(selectedItem[0]?.value);
-      }
-    });
+    this.shadowRoot?.querySelector('#git-token-list')
+      ?.querySelectorAll('mwc-list-item')
+      .forEach((e) => {
+        let selectedItem = e.querySelectorAll('mwc-textfield');
+        if (selectedItem[0] !== item.target) {
+          gitDomainList.push(selectedItem[0]?.value);
+        }
+      });
 
     item.target.validityTransform = (value, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
           //item.target.validationMessage = _text('session.Validation.SessionNameRequired');
-          this.notification.text = _text('session.Validation.SessionNameRequired');
+          this.notification.text = _text(
+            'session.Validation.SessionNameRequired',
+          );
           this.notification.show();
           return {
             valid: nativeValidity.valid,
-            valueMissing: !nativeValidity.valid
+            valueMissing: !nativeValidity.valid,
           };
         } else if (nativeValidity.patternMismatch) {
           //item.target.validationMessage = _text('session.Validation.SluggedStrings');
-          this.notification.text =  _text('session.Validation.SluggedStrings');
+          this.notification.text = _text('session.Validation.SluggedStrings');
           this.notification.show();
           return {
             valid: nativeValidity.valid,
-            patternMismatch: !nativeValidity.valid
+            patternMismatch: !nativeValidity.valid,
           };
         } else {
           //item.target.validationMessage = _text('session.Validation.EnterValidSessionName');
-          this.notification.text = _text('session.Validation.EnterValidSessionName');
+          this.notification.text = _text(
+            'session.Validation.EnterValidSessionName',
+          );
           this.notification.show();
           return {
             valid: nativeValidity.valid,
-            customError: !nativeValidity.valid
+            customError: !nativeValidity.valid,
           };
         }
       } else {
@@ -1079,16 +1092,17 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         if (gitDomainList.indexOf(value) !== -1) {
           isValid = false;
           //item.target.validationMessage = _text('session.Validation.SessionNameAlreadyExist');
-          this.notification.text = _text('session.Validation.SessionNameAlreadyExist');
+          this.notification.text = _text(
+            'session.Validation.SessionNameAlreadyExist',
+          );
           this.notification.show();
         }
         return {
           valid: isValid,
-          customError: !isValid
+          customError: !isValid,
         };
       }
-  }
-
+    };
   }
 
   /**
@@ -1352,14 +1366,16 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         <div class="horizontal layout wrap setting-item">
           <div class="vertical start start-justified layout setting-desc">
             <div class="title">${_t('usersettings.GitTokenManagement')}</div>
-            <div class="description">${_tr('usersettings.DescSSHKeypairManagement')}</div>
+            <div class="description">
+              ${_tr('usersettings.DescSSHKeypairManagement')}
+            </div>
           </div>
           <div class="vertical center-justified layout flex end">
             <mwc-icon-button
-                id="ssh-keypair-details"
-                icon="more"
-                @click="${this._openGitTokenRefreshDialog}">
-            </mwc-icon-button>
+              id="ssh-keypair-details"
+              icon="more"
+              @click="${this._openGitTokenRefreshDialog}"
+            ></mwc-icon-button>
           </div>
         </div>
         <div class="horizontal layout wrap setting-item">
@@ -1751,53 +1767,95 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           ></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="git-token-management-dialog" fixed backdrop persistent>
+      <backend-ai-dialog
+        id="git-token-management-dialog"
+        fixed
+        backdrop
+        persistent
+      >
         <span slot="title">${_t('usersettings.GitTokenManagement')}</span>
         <div slot="content" style="width:440px">
           <mwc-list id="git-token-list">
-            <div class="horizontal layout flex" style="width:380px;margin-left:20px">
-              <h4 class="flex layout">${_text('usersettings.GitServiceDomain')}</h4>
-              <h4 class="flex layout">${_text('usersettings.GitServiceToken')}</h4>
+            <div
+              class="horizontal layout flex"
+              style="width:380px;margin-left:20px"
+            >
+              <h4 class="flex layout">
+                ${_text('usersettings.GitServiceDomain')}
+              </h4>
+              <h4 class="flex layout">
+                ${_text('usersettings.GitServiceToken')}
+              </h4>
             </div>
             <mwc-list-item>
-              <mwc-textfield type="text" id="id_github_domain"
-                validationMessage="${_text('session.Validation.EnterValidSessionName')}"
-                value="github.com" readonly></mwc-textfield>
+              <mwc-textfield
+                type="text"
+                id="id_github_domain"
+                validationMessage="${_text(
+                  'session.Validation.EnterValidSessionName',
+                )}"
+                value="github.com"
+                readonly
+              ></mwc-textfield>
               <mwc-textfield type="text" id="id_github_token"></mwc-textfield>
             </mwc-list-item>
             <mwc-list-item>
-              <mwc-textfield type="text" id="id_gitlab_domain"
-                validationMessage="${_text('session.Validation.EnterValidSessionName')}"
-                value="gitlab.com" readonly></mwc-textfield>
+              <mwc-textfield
+                type="text"
+                id="id_gitlab_domain"
+                validationMessage="${_text(
+                  'session.Validation.EnterValidSessionName',
+                )}"
+                value="gitlab.com"
+                readonly
+              ></mwc-textfield>
               <mwc-textfield type="text" id="id_gitlab_token"></mwc-textfield>
             </mwc-list-item>
           </mwc-list>
-          <mwc-button id="env-add-btn" outlined icon="add" class="horizontal flex layout center"
-              @click="${() => this._addGitTokenList()}">${_t('button.Add')}</mwc-button>
+          <mwc-button
+            id="env-add-btn"
+            outlined
+            icon="add"
+            class="horizontal flex layout center"
+            @click="${() => this._addGitTokenList()}"
+          >
+            ${_t('button.Add')}
+          </mwc-button>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
             label="${_t('button.Save')}"
-            @click="${this._openSaveGitTokenManagementDialog}"></mwc-button>
+            @click="${this._openSaveGitTokenManagementDialog}"
+          ></mwc-button>
           <mwc-button
             label="${_t('button.Close')}"
-            @click="${this._hideGitTokenManagementDialog}"></mwc-button>
+            @click="${this._hideGitTokenManagementDialog}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="save-git-token-management-dialog" warning fixed backdrop>
-        <span slot="title">${_t('usersettings.ConfirmSaveGitTokenValues')}</span>
-          <div slot="content" class="vertical layout">
-            <p>${_t('usersettings.DescSaveGitTokenValues')}</p>
-          </div>
-          <div slot="footer" class="horizontal end-justified flex layout">
-            <mwc-button
-              label="${_t('button.Save')}"
-              @click="${this._saveGitTokenManagement}"></mwc-button>
-            <mwc-button
-              label="${_t('button.Close')}"
-              @click="${this._hideSaveGitTokenManagementDialog}"></mwc-button>
-          </div>
-        </backend-ai-dialog>
+      <backend-ai-dialog
+        id="save-git-token-management-dialog"
+        warning
+        fixed
+        backdrop
+      >
+        <span slot="title">
+          ${_t('usersettings.ConfirmSaveGitTokenValues')}
+        </span>
+        <div slot="content" class="vertical layout">
+          <p>${_t('usersettings.DescSaveGitTokenValues')}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+            label="${_t('button.Save')}"
+            @click="${this._saveGitTokenManagement}"
+          ></mwc-button>
+          <mwc-button
+            label="${_t('button.Close')}"
+            @click="${this._hideSaveGitTokenManagementDialog}"
+          ></mwc-button>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 }
