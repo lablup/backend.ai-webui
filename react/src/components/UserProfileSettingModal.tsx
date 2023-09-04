@@ -295,7 +295,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
                         okType: 'danger',
                         cancelText: t('button.No'),
                         onOk() {
-                          mutationToRemoveTotp.mutate(userInfo.email || '', {
+                          mutationToRemoveTotp.mutate(undefined, {
                             onSuccess: () => {
                               message.success(
                                 t('totp.RemoveTotpSetupCompleted'),
