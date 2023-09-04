@@ -6,3 +6,7 @@ declare module 'babel-plugin-relay/macro' {
 
 type ArrayElement<ArrayType extends readonly unknown[]> =
   ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
+
+type ArgumentTypes<F extends Function> = F extends (...args: infer A) => any
+  ? A
+  : never;

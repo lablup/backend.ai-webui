@@ -38,7 +38,6 @@ const UserSettingModal: React.FC<Props> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
-  // const { token } = theme.useToken();
   const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
     open: boolean;
@@ -140,6 +139,7 @@ const UserSettingModal: React.FC<Props> = ({
           ok
           msg
           user {
+            id
             email
             username
             need_password_change

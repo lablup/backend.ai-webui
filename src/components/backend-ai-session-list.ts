@@ -2862,7 +2862,7 @@ ${rowData.item[this.sessionNameField]}</pre
           ${this._isRunning && this.condition === 'system'
             ? html`
                 <mwc-icon-button
-                  class="fg apps green"
+                  class="fg green controls-running"
                   id="${rowData.index + '-sftp-connection-info'}"
                   @click="${() =>
                     this._openSFTPSessionConnectionInfoDialog(rowData.item.id)}"

@@ -180,6 +180,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Object }) loggedAccount = Object();
   @property({ type: Object }) roleInfo = Object();
   @property({ type: Object }) keyPairInfo = Object();
+  @property({ type: Boolean }) isOpenUserProfileDialog = false;
   @query('#app-body') appBody!: Drawer;
   @query('#app-page') appPage!: HTMLDivElement;
   @query('#content-body') contentBody!: Drawer;
@@ -1800,23 +1801,48 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   <p class="user-name">${this._getUsername()}</p>
                   <p>${_t('webui.menu.WelcomeMessage_2')}</p>
                 </div>
-                <div slot="actionItems" style="margin:0;">
-                  <div class="horizontal flex center layout">
-                    <backend-ai-project-switcher></backend-ai-project-switcher>
-                    <div class="vertical-line" style="height:20px;margin:0;"></div>
-                    <backend-ai-user-dropdown-menu></backend-ai-user-dropdown-menu>
-                  </div>
-                  <div id="password-change-request" class="horizontal layout center end-justified" style="display:${
-                    this.needPasswordChange ? 'flex' : 'none'
-                  };">
-                    <span>${_t('webui.menu.PleaseChangeYourPassword')} (${_t(
-                      'webui.menu.PasswordChangePlace',
-                    )})</span>
-                    <mwc-icon-button @click="${() =>
-                      this._hidePasswordChangeRequest()}">
-                      <i class="fa fa-times"></i>
-                    </mwc-icon-button>
-                  </div>
+                  <backend-ai-project-switcher slot="actionItems" style="margin-right:10px;"></backend-ai-project-switcher>
+                  <backend-ai-react-user-dropdown-menu
+                  slot="actionItems"
+                        @moveTo="${(e: CustomEvent) => {
+                          const currentPage = globalThis.location
+                            .toString()
+                            .split(/[/]+/)
+                            .pop();
+                          const path = e.detail.path;
+                          if (path === '#userprofile') {
+                            this.isOpenUserProfileDialog = true;
+                            return;
+                          }
+                          const params = e.detail.params;
+                          globalThis.history.pushState({}, '', path);
+                          store.dispatch(
+                            navigate(decodeURIComponent(path), params),
+                          );
+                          if (currentPage && currentPage === 'usersettings') {
+                            const event = new CustomEvent(
+                              'backend-ai-usersettings',
+                              {},
+                            );
+                            document.dispatchEvent(event);
+                          }
+                        }}"
+                      ></backend-ai-react-user-dropdown-menu>
+                    <backend-ai-react-user-profile-setting-dialog value="${
+                      this.isOpenUserProfileDialog ? 'true' : 'false'
+                    }" @close="${() => {
+                      this.isOpenUserProfileDialog = false;
+                    }}"></backend-ai-react-user-profile-setting-dialog>
+                <div id="password-change-request" class="horizontal layout center end-justified" style="display:${
+                  this.needPasswordChange ? 'flex' : 'none'
+                };">
+                  <span>${_t('webui.menu.PleaseChangeYourPassword')} (${_t(
+                    'webui.menu.PasswordChangePlace',
+                  )})</span>
+                  <mwc-icon-button @click="${() =>
+                    this._hidePasswordChangeRequest()}">
+                    <i class="fa fa-times"></i>
+                  </mwc-icon-button>
                 </div>
               </mwc-top-app-bar-fixed>
 

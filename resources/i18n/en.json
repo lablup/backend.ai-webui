@@ -425,6 +425,7 @@
     "OnlyAllowsNonNegativeIntegers": "Only allows non-negative integers",
     "RoutingInfo": "Routing Info",
     "ServiceInfo": "Service Info",
+    "CreatedAt": "Created At",
     "StartService": "Start Service",
     "SessionOwner": "Session Owner",
     "ServiceEndpoint": "Service Endpoint",
@@ -1522,5 +1523,11 @@
   "explorer": {
     "ValueRequired": "ValueRequired",
     "InputTooShort": "InputTooShort"
+  },
+  "ErrorBoundary": {
+    "title": "An error has occurred.",
+    "reloadPage": "Reload the page",
+    "resetErrorBoundary": "Reset ErrorBoundary",
+    "displayOnlyDevEnv": "This error block is displayed only in WebUI development environment."
   }
 }
