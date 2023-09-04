@@ -121,33 +121,29 @@ export const useCurrentUserInfo = () => {
         newFullName: string,
         options?: mutationOptions<string>,
       ) => {
-        if (baiClient.full_name !== newFullName) {
-          mutationToUpdateUserFullName.mutate(
-            {
-              full_name: newFullName,
-              email: baiClient.email,
+        mutationToUpdateUserFullName.mutate(
+          {
+            full_name: newFullName,
+            email: baiClient.email,
+          },
+          {
+            onSuccess: () => {
+              options?.onSuccess && options.onSuccess(newFullName);
+              document.dispatchEvent(
+                new CustomEvent('current-user-info-changed', {
+                  detail: newFullName,
+                }),
+              );
+              _setUserInfo((v) => ({
+                ...v,
+                full_name: newFullName,
+              }));
             },
-            {
-              onSuccess: () => {
-                options?.onSuccess && options.onSuccess(newFullName);
-                document.dispatchEvent(
-                  new CustomEvent('current-user-info-changed', {
-                    detail: newFullName,
-                  }),
-                );
-                _setUserInfo((v) => ({
-                  ...v,
-                  full_name: newFullName,
-                }));
-              },
-              onError: (error: any) => {
-                options?.onError && options.onError(error);
-              },
+            onError: (error: any) => {
+              options?.onError && options.onError(error);
             },
-          );
-        } else {
-          options?.onSuccess && options.onSuccess(newFullName);
-        }
+          },
+        );
       },
       updatePassword: (
         params: {
