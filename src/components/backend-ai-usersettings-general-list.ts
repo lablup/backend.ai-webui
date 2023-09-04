@@ -901,6 +901,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * Fetch Existing Git Tokens from Server
    */
   async _openGitTokenRefreshDialog() {
+    this._clearGitTokenInputList();
     globalThis.backendaiclient.userConfig.fetchGitToken().then((resp) => {
       for (let i = 0; i < resp.length; i++) {
         if (resp[i].domain === 'github.com') {
@@ -943,8 +944,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     });
   }
 
-  _hideGitTokenManagementDialog() {
-    this.shadowRoot?.querySelector('#git-token-list')
+  _clearGitTokenInputList() {
+    this.shadowRoot
+      ?.querySelector('#git-token-list')
       ?.querySelectorAll('mwc-list-item')
       .forEach((e) => {
         switch (e.querySelector('mwc-textfield')?.id) {
@@ -958,6 +960,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             e.remove();
         }
       });
+  }
+
+  _hideGitTokenManagementDialog() {
+    this._clearGitTokenInputList();
     this.gitTokenManagementDialog.hide();
   }
 
@@ -1047,7 +1053,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   _validateGitDomainName(item) {
     let gitDomainList: string[] = [];
-    this.shadowRoot?.querySelector('#git-token-list')
+    this.shadowRoot
+      ?.querySelector('#git-token-list')
       ?.querySelectorAll('mwc-list-item')
       .forEach((e) => {
         let selectedItem = e.querySelectorAll('mwc-textfield');
