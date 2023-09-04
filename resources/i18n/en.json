@@ -442,7 +442,9 @@
     "CurrentTime": "Current time",
     "ExpiredTime": "Expired time",
     "ValidTimeInfo": "Valid time info",
-    "Generate": "Generate"
+    "Generate": "Generate",
+    "TokenGenerated": "Token generated",
+    "TokenGenerationFailed": "Token generation failed. please try again."
   },
   "button": {
     "Cancel": "Cancel",

@@ -1507,7 +1507,9 @@
     "GenerateNewToken": "__NOT_TRANSLATED__",
     "GenerateToken": "__NOT_TRANSLATED__",
     "Generate": "__NOT_TRANSLATED__",
-    "CreatedAt": "__NOT_TRANSLATED__"
+    "CreatedAt": "__NOT_TRANSLATED__",
+    "TokenGenerated": "__NOT_TRANSLATED__",
+    "TokenGenerationFailed": "__NOT_TRANSLATED__"
   },
   "ErrorBoundary": {
     "title": "__NOT_TRANSLATED__",
