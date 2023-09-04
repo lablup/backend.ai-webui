@@ -739,7 +739,9 @@
     "ProjectFolder": "__NOT_TRANSLATED__",
     "QuotaPerStorageVolume": "__NOT_TRANSLATED__",
     "HostDetails": "__NOT_TRANSLATED__",
-    "Used": "__NOT_TRANSLATED__"
+    "Used": "__NOT_TRANSLATED__",
+    "Pipeline": "__NOT_TRANSLATED__",
+    "DialogDataFolder": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {
@@ -1345,7 +1347,14 @@
     "ImportGitlabRepo": "__NOT_TRANSLATED__",
     "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
     "GitlabURL": "__NOT_TRANSLATED__",
-    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__",
+    "GithubBadRequest": "__NOT_TRANSLATED__",
+    "GithubBadCredentials": "__NOT_TRANSLATED__",
+    "GitlabInternalError": "__NOT_TRANSLATED__",
+    "GitlabBadRequest": "__NOT_TRANSLATED__",
+    "GitlabBadCredentials": "__NOT_TRANSLATED__",
+    "GitlabAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGithubTokenError": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistik Bulan Ini",

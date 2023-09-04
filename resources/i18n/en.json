@@ -1439,6 +1439,7 @@
     "GithubInternalError": "Github Internal Error.",
     "GithubAPILimitError": "Github API Limitation Error.",
     "GithubAPIEtcError": "Github Server Issue.",
+    "ImportGithubTokenError": "Don't access the Github repository. check Github Token value and permission.",
     "ImportGitlabRepo": "Import Gitlab Repository",
     "GitlabRepoWillBeFolder": "Imported Gitlab repositories are converted to folders and can be mounted when session starts.",
     "GitlabURL": "Gitlab URL",
@@ -1448,7 +1449,8 @@
     "GitlabBadRequest": "GitlabBadRequest",
     "GitlabBadCredentials": "GitlabBadCredentials",
     "GitlabAPILimitError": "GitlabAPILimitError",
-    "GitlabAPIEtcError": "GitlabAPIEtcError"
+    "GitlabAPIEtcError": "GitlabAPIEtcError",
+    "GitlabInternalError": "GitlabInternalError"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistics for This Month",
