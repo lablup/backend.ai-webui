@@ -107,10 +107,12 @@ const UserProfileSettingModal: React.FC<Props> = ({
     form.validateFields().then((values) => {
       userMutations.updateFullName(values.full_name, {
         onSuccess: (newFullName) => {
-          messageApi.open({
-            type: 'success',
-            content: t('webui.menu.FullnameUpdated'),
-          });
+          if (newFullName !== userInfo.full_name) {
+            messageApi.open({
+              type: 'success',
+              content: t('webui.menu.FullnameUpdated'),
+            });
+          }
 
           if (
             values.newPassword &&
