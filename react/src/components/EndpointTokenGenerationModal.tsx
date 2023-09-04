@@ -13,6 +13,7 @@ import {
   Tag,
   theme,
 } from 'antd';
+import { default as dayjs } from 'dayjs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -59,8 +60,10 @@ const EndpointTokenGenerationModal: React.FC<
     mutationFn: (values: EndpointTokenGenerationInput) => {
       const currentTime = new Date();
       const body = {
-        valid_until: Math.round(
-          currentTime.getTime() / 1000 + (values.valid_until as number),
+        valid_until: Math.floor(
+          dayjs()
+            .add(values.valid_until as number, 'second')
+            .valueOf() / 1000,
         ),
       };
       return baiSignedRequestWithPromise({

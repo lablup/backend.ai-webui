@@ -1,15 +1,17 @@
 import CopyableCodeText from '../components/CopyableCodeText';
 import EndpointStatusTag from '../components/EndpointStatusTag';
+import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
 import Flex from '../components/Flex';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
 import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
-import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
-import EndpointTokenList from '../components/EndpointTokenList';
-
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
 import { baiSignedRequestWithPromise } from '../helper';
-import { useSuspendedBackendaiClient, useUpdatableState, useCurrentProjectValue } from '../hooks';
+import {
+  useSuspendedBackendaiClient,
+  useUpdatableState,
+  useCurrentProjectValue,
+} from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
   RoutingListPageQuery,
@@ -36,6 +38,7 @@ import {
   theme,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
+import { default as dayjs } from 'dayjs';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
@@ -63,6 +66,18 @@ interface RoutingListPageProps {}
 type EndPoint = NonNullable<RoutingListPageQuery$data['endpoint']>;
 type Routing = NonNullable<NonNullable<EndPoint['routings']>[0]>;
 
+const dayDiff = (a: any, b: any) => {
+  const date1 = dayjs(a.created_at);
+  const date2 = dayjs(b.created_at);
+  return date1.diff(date2);
+};
+
+const isExpired = (date: any) => {
+  const timeFromNow = dayjs();
+  const expiredDate = dayjs(date);
+  return timeFromNow.diff(expiredDate) > 0;
+};
+
 const RoutingListPage: React.FC<RoutingListPageProps> = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -79,8 +94,10 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     useState<ServingRouteErrorModalFragment$key | null>(null);
   const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] =
     useState(false);
-  const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] = useState(false);
+  const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
+    useState(false);
   const curProject = useCurrentProjectValue();
+  const { Paragraph, Text } = Typography;
   const [paginationState] = useState<{
     current: number;
     pageSize: number;
@@ -90,42 +107,67 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
   });
   const [servicesFetchKey, updateServicesFetchKey] =
     useUpdatableState('initial-fetch');
-  const { endpoint } = useLazyLoadQuery<RoutingListPageQuery>(
-    graphql`
-      query RoutingListPageQuery($endpointId: UUID!) {
-        endpoint(endpoint_id: $endpointId) {
-          name
-          endpoint_id
-          image
-          desired_session_count
-          url
-          open_to_public
-          errors {
-            session_id
-            ...ServingRouteErrorModalFragment
+  const { endpoint, endpoint_token_list } =
+    useLazyLoadQuery<RoutingListPageQuery>(
+      graphql`
+        query RoutingListPageQuery(
+          $endpointId: UUID!
+          $tokenListOffset: Int!
+          $tokenListLimit: Int!
+        ) {
+          endpoint(endpoint_id: $endpointId) {
+            name
+            endpoint_id
+            image
+            desired_session_count
+            url
+            open_to_public
+            errors {
+              session_id
+              ...ServingRouteErrorModalFragment
+            }
+            retries
+            routings {
+              routing_id
+              session
+              traffic_ratio
+              endpoint
+              status
+            }
+            ...EndpointStatusTagFragment
+            ...ModelServiceSettingModal_endpoint
           }
-          retries
-          routings {
-            routing_id
-            session
-            traffic_ratio
-            endpoint
-            status
+          endpoint_token_list(
+            offset: $tokenListOffset
+            limit: $tokenListLimit
+            endpoint_id: $endpointId
+          ) {
+            total_count
+            items {
+              id
+              token
+              endpoint_id
+              domain
+              project
+              session_owner
+              created_at
+              valid_until
+            }
           }
-          ...EndpointStatusTagFragment
-          ...ModelServiceSettingModal_endpoint
         }
-      }
-    `,
-    {
-      endpointId: serviceId,
-    },
-    {
-      fetchPolicy:
-        fetchKey === 'initial-fetch' ? 'store-and-network' : 'network-only',
-      fetchKey,
-    },
-  );
+      `,
+      {
+        tokenListOffset:
+          (paginationState.current - 1) * paginationState.pageSize,
+        tokenListLimit: paginationState.pageSize,
+        endpointId: serviceId,
+      },
+      {
+        fetchPolicy:
+          fetchKey === 'initial-fetch' ? 'store-and-network' : 'network-only',
+        fetchKey,
+      },
+    );
 
   const mutationToClearError = useTanMutation(() => {
     if (!endpoint) return;
@@ -283,60 +325,123 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             onClick={() => {
               setIsOpenTokenGenerationModal(true);
             }}
-            >
+          >
             {t('modelService.GenerateToken')}
           </Button>
-        }>
-        <EndpointTokenList endpoint_id={endpoint?.endpoint_id}></EndpointTokenList>
+        }
+      >
+        <Table
+          scroll={{ x: 'max-content' }}
+          columns={[
+            {
+              title: '#',
+              render: (id, record, index) => {
+                ++index;
+                return index;
+              },
+              showSorterTooltip: false,
+            },
+            {
+              title: 'Token',
+              dataIndex: 'token',
+              fixed: 'left',
+              render: (text, row) => (
+                <Text ellipsis copyable style={{ width: 150 }}>
+                  {row.token}
+                </Text>
+              ),
+            },
+            {
+              title: 'Status',
+              render: (text, row) => (
+                <Tag color={isExpired(row.valid_until) ? 'red' : 'green'}>
+                  {isExpired(row.valid_until) ? 'Expired' : 'Valid'}
+                </Tag>
+              ),
+            },
+            {
+              title: 'Valid Until',
+              dataIndex: 'valid_until',
+              render: (text, row) => (
+                <span>
+                  {
+                    // FIXME: temporally add GMT (timezone need to be added in serverside)
+                    dayjs(
+                      (row.valid_until as string) +
+                        (row.created_at as string).split(/(?=\+)/g)[1],
+                    ).format('YYYY/MM/DD ddd HH:MM:ss')
+                  }
+                </span>
+              ),
+              defaultSortOrder: 'descend',
+              sortDirections: ['descend', 'ascend', 'descend'],
+              sorter: dayDiff,
+            },
+            {
+              title: 'Created at',
+              dataIndex: 'created_at',
+              render: (text, row) => (
+                <span>
+                  {dayjs(row.created_at).format('YYYY/MM/DD ddd HH:MM:ss')}
+                </span>
+              ),
+              defaultSortOrder: 'descend',
+              sortDirections: ['descend', 'ascend', 'descend'],
+              sorter: dayDiff,
+            },
+          ]}
+          pagination={false}
+          dataSource={endpoint_token_list?.items}
+        ></Table>
       </Card>
       <Card title={t('modelService.RoutesInfo')}>
-      <Table
-        scroll={{ x: 'max-content' }}
-        columns={[
-          {
-            title: t('modelService.RouteId'),
-            dataIndex: 'routing_id',
-            fixed: 'left',
-          },
-          {
-            title: t('modelService.SessionId'),
-            dataIndex: 'session',
-          },
-          {
-            title: t('modelService.Status'),
-            render: (_, { session, status }) =>
-              status && (
-                <>
-                  <Tag
-                    color={applyStatusColor(status)}
-                    key={status}
-                    style={{ marginRight: 0 }}
-                  >
-                    {status.toUpperCase()}
-                  </Tag>
-                  {status === 'FAILED_TO_START' && (
-                    <Popover>
-                      <Button
-                        size="small"
-                        type="text"
-                        icon={<QuestionCircleOutlined />}
-                        style={{ color: token.colorTextSecondary }}
-                        onClick={() => openSessionErrorModal(session)}
-                      />
-                    </Popover>
-                  )}
-                </>
-              ),
-          },
-          {
-            title: t('modelService.TrafficRatio'),
-            dataIndex: 'traffic_ratio',
-          },
-        ]}
-        pagination={false}
-        dataSource={endpoint?.routings as Routing[]}
-        bordered
-      />
+        <Table
+          scroll={{ x: 'max-content' }}
+          columns={[
+            {
+              title: t('modelService.RouteId'),
+              dataIndex: 'routing_id',
+              fixed: 'left',
+            },
+            {
+              title: t('modelService.SessionId'),
+              dataIndex: 'session',
+            },
+            {
+              title: t('modelService.Status'),
+              render: (_, { session, status }) =>
+                status && (
+                  <>
+                    <Tag
+                      color={applyStatusColor(status)}
+                      key={status}
+                      style={{ marginRight: 0 }}
+                    >
+                      {status.toUpperCase()}
+                    </Tag>
+                    {status === 'FAILED_TO_START' && (
+                      <Popover>
+                        <Button
+                          size="small"
+                          type="text"
+                          icon={<QuestionCircleOutlined />}
+                          style={{ color: token.colorTextSecondary }}
+                          onClick={() => openSessionErrorModal(session)}
+                        />
+                      </Popover>
+                    )}
+                  </>
+                ),
+            },
+            {
+              title: t('modelService.TrafficRatio'),
+              dataIndex: 'traffic_ratio',
+            },
+          ]}
+          pagination={false}
+          dataSource={endpoint?.routings as Routing[]}
+          bordered
+        />
       </Card>
       <ServingRouteErrorModal
         open={!!selectedSessionErrorForModal}
@@ -362,7 +467,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           if (success) {
             startRefetchTransition(() => {
               updateFetchKey();
-            })
+            });
           }
         }}
         endpoint_id={endpoint?.endpoint_id || ''}
