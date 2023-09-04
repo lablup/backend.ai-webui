@@ -4,16 +4,8 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import TimeContainer from './TimeContainer';
-import {
-  DescriptionsProps,
-  Form,
-  message,
-  Select,
-  Space,
-  Tag,
-  theme,
-} from 'antd';
-import { default as dayjs } from 'dayjs';
+import { DatePicker, Form, message, Space, Tag, theme } from 'antd';
+import { Dayjs, default as dayjs } from 'dayjs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -29,25 +21,6 @@ interface EndpointTokenGenerationInput {
   valid_until?: number; // set second as unit
 }
 
-const unitPerTime = {
-  second: {
-    range: Array.from(Array(60).keys()),
-    toSecond: 1,
-  },
-  minute: {
-    range: Array.from(Array(60).keys()),
-    toSecond: 60,
-  },
-  hour: {
-    range: Array.from(Array(12).keys()),
-    toSecond: 60 * 60,
-  },
-  day: {
-    range: Array.from(Array(30).keys()),
-    toSecond: 60 * 60 * 24,
-  }, // FIXME: temporally hardcode for a month at maximum
-};
-
 const EndpointTokenGenerationModal: React.FC<
   EndpointTokenGenerationModalProps
 > = ({ onRequestClose, onCancel, endpoint_id, ...baiModalProps }) => {
@@ -56,15 +29,20 @@ const EndpointTokenGenerationModal: React.FC<
   const baiClient = useSuspendedBackendaiClient();
   const [form] = Form.useForm();
 
+  const dateTimeConfig = {
+    rules: [
+      {
+        type: 'object' as const,
+        required: true,
+        message: t('modelService.PleaseSelectTime'),
+      },
+    ],
+  };
+
   const mutationToGenerateToken = useTanMutation({
     mutationFn: (values: EndpointTokenGenerationInput) => {
-      const currentTime = new Date();
       const body = {
-        valid_until: Math.floor(
-          dayjs()
-            .add(values.valid_until as number, 'second')
-            .valueOf() / 1000,
-        ),
+        valid_until: values.valid_until,
       };
       return baiSignedRequestWithPromise({
         method: 'POST',
@@ -78,11 +56,9 @@ const EndpointTokenGenerationModal: React.FC<
   // Apply any operation after clicking OK button
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
     form.validateFields().then((values) => {
-      const validUntil =
-        values.day * unitPerTime.day.toSecond +
-        values.hour * unitPerTime.hour.toSecond +
-        values.minute * unitPerTime.minute.toSecond +
-        values.second * unitPerTime.second.toSecond;
+      const validUntil = Math.floor(
+        dayjs(values.datetime.format('YYYY-MM-DD HH:mm:ss')).valueOf() / 1000,
+      );
       mutationToGenerateToken.mutate(
         {
           valid_until: validUntil,
@@ -119,72 +95,35 @@ const EndpointTokenGenerationModal: React.FC<
       centered
       title={t('modelService.GenerateNewToken')}
     >
-      <h3>Expired time from now</h3>
       <Form
         preserve={false}
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 20 }}
         initialValues={{
-          second: unitPerTime.second.range[0],
-          minute: unitPerTime.minute.range[0],
-          hour: unitPerTime.hour.range[0],
-          day: unitPerTime.day.range[0],
+          datetime: dayjs(),
         }}
         validateTrigger={['onChange', 'onBlur']}
-        style={{}}
+        style={{ maxWidth: 500 }}
         form={form}
       >
         <Flex direction="row" align="stretch" justify="around">
-          <Form.Item name="day">
-            <Select
-              options={unitPerTime.day.range.map((day) => ({
-                label: day,
-                value: day,
-                title: 'day',
-              }))}
-              style={{ width: 60 }}
-            ></Select>
+          <Form.Item
+            name="datetime"
+            label={t('modelService.ExpiredDate')}
+            {...dateTimeConfig}
+          >
+            <DatePicker
+              showTime
+              format="YYYY-MM-DD HH:mm:ss"
+              style={{ width: 200 }}
+            />
           </Form.Item>
-          Days
-          <Form.Item name="hour">
-            <Select
-              options={unitPerTime.hour.range.map((hour) => ({
-                label: hour,
-                value: hour,
-                title: 'hour',
-              }))}
-              style={{ width: 60 }}
-            ></Select>
-          </Form.Item>
-          Hour(s)
-          <Form.Item name="minute">
-            <Select
-              options={unitPerTime.minute.range.map((minute) => ({
-                label: minute,
-                value: minute,
-                title: 'minute',
-              }))}
-              style={{ width: 60 }}
-            ></Select>
-          </Form.Item>
-          Minute(s)
-          <Form.Item name="second">
-            <Select
-              options={unitPerTime.second.range.map((second) => ({
-                label: second,
-                value: second,
-                title: 'second',
-              }))}
-              style={{ width: 60 }}
-            ></Select>
-          </Form.Item>
-          Second(s)
         </Flex>
+        {/* <Flex direction="row" align="stretch" justify="end">
+          <Tag style={{height: 30}}>{t('modelService.CurrentTime')}</Tag>
+          <TimeContainer></TimeContainer>
+        </Flex> */}
       </Form>
-      <Space wrap>
-        <Tag>{t('modelService.CurrentTime')}</Tag>
-        <TimeContainer></TimeContainer>
-      </Space>
     </BAIModal>
   );
 };
