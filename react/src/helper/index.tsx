@@ -145,7 +145,6 @@ export function iSizeToSize(
   const sizeUnit = size.slice(-1).toUpperCase();
   const sizeValue = parseFloat(size.slice(0, -1));
   const sizeIndex = sizes.indexOf(sizeUnit);
-  console.log('###', size);
   if (sizeIndex === -1 || isNaN(sizeValue)) {
     throw new Error('Invalid size format');
   }
