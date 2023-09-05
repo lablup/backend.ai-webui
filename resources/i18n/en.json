@@ -451,7 +451,7 @@
     "TokenExpiredDateError": "The token expiration time must be after the current time",
     "ServiceNameRule": "Only allow 4 to 64 characters of alphanumeric, underscore(_), hyphen(-), and period(.) and it must end with an alphanumeric character.",
     "FormValidationFailed": "Form validation failed",
-    "resources": "resources"
+    "resources": "Resources"
   },
   "button": {
     "Cancel": "Cancel",
