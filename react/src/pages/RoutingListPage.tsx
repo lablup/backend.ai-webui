@@ -446,7 +446,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       <ModelServiceSettingModal
         open={isOpenModelServiceSettingModal}
         onRequestClose={(success) => {
-          setIsOpenTokenGenerationModal(false);
+          setIsOpenModelServiceSettingModal(false);
           if (success) {
             startRefetchTransition(() => {
               updateFetchKey();
