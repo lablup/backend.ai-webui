@@ -87,6 +87,26 @@ export const humanReadableBinarySize = (
   );
 };
 
+export function bytesToBinarySize(
+  bytes: number,
+  targetUnit?: 'Bytes' | 'KiB' | 'MiB' | 'GiB' | 'TiB' | 'PiB' | 'EiB',
+): {
+  number: number;
+  unit: string;
+} {
+  const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB'];
+  if (bytes === 0)
+    return {
+      number: 0,
+      unit: 'Bytes',
+    };
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return {
+    number: parseFloat((bytes / Math.pow(1024, i)).toFixed(2)),
+    unit: sizes[i],
+  };
+}
+
 /**
  * Change date of any type to human readable date time.
  *
@@ -111,6 +131,35 @@ export const bytesToGB = (
   if (!bytes) return bytes;
   return (bytes / 10 ** 9).toFixed(decimalPoint);
 };
+
+export function iSizeToSize(
+  size: string,
+  targetSizeUnit?: string,
+  fixed: number = 2,
+): {
+  number: number;
+  numberFixed: string;
+  unit: string;
+} {
+  const sizes = ['B', 'K', 'M', 'G', 'T', 'P', 'E'];
+  const sizeUnit = size.slice(-1).toUpperCase();
+  const sizeValue = parseFloat(size.slice(0, -1));
+  const sizeIndex = sizes.indexOf(sizeUnit);
+  console.log('###', size);
+  if (sizeIndex === -1 || isNaN(sizeValue)) {
+    throw new Error('Invalid size format');
+  }
+  const bytes = sizeValue * Math.pow(1024, sizeIndex);
+  const targetIndex = targetSizeUnit
+    ? sizes.indexOf(targetSizeUnit.toUpperCase())
+    : sizeIndex;
+  const targetBytes = bytes / Math.pow(1024, targetIndex);
+  return {
+    number: targetBytes,
+    numberFixed: targetBytes.toFixed(fixed),
+    unit: sizes[targetIndex],
+  };
+}
 
 export type QuotaScopeType = 'project' | 'user';
 export const addQuotaScopeTypePrefix = (type: QuotaScopeType, str: string) => {

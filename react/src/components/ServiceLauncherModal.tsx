@@ -1,4 +1,4 @@
-import { baiSignedRequestWithPromise } from '../helper';
+import { baiSignedRequestWithPromise, iSizeToSize } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentDomainValue } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
@@ -331,6 +331,16 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       rules={[
                         {
                           required: true,
+                        },
+                        {
+                          type: 'number',
+                          min: iSizeToSize(
+                            _.find(
+                              currentImage?.resource_limits,
+                              (i) => i?.key === 'mem',
+                            )?.min || '0B',
+                            'G',
+                          ).number,
                         },
                       ]}
                     />
