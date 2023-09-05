@@ -342,6 +342,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       >
         <Table
           scroll={{ x: 'max-content' }}
+          rowKey={'endpoint_id'}
           columns={[
             {
               title: '#',
@@ -454,6 +455,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           ]}
           pagination={false}
           dataSource={endpoint?.routings as Routing[]}
+          rowKey={'routing_id'}
           bordered
         />
       </Card>

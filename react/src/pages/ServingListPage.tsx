@@ -268,6 +268,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             <Table
               loading={isRefetchPending}
               scroll={{ x: 'max-content' }}
+              rowKey={'endpoint_id'}
               dataSource={(sortedEndpointList || []) as Endpoint[]}
               columns={[
                 {
