@@ -77,7 +77,7 @@ const EndpointTokenGenerationModal: React.FC<
 
   // Apply any operation after clicking Cancel button
   const handleCancel = () => {
-    onRequestClose(true);
+    onRequestClose();
   };
 
   return (
