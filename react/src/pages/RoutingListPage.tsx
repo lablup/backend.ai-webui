@@ -244,17 +244,22 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           ) : (
             <></>
           )}
-          <Tooltip title={t('button.Refresh')}>
-            <Button
-              loading={isPendingRefetch}
-              icon={<ReloadOutlined />}
-              onClick={() => {
-                startRefetchTransition(() => {
-                  updateFetchKey();
-                });
-              }}
-            />
-          </Tooltip>
+          <Button
+            loading={isPendingRefetch}
+            icon={<ReloadOutlined />}
+            onClick={() => {
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            }}
+          >
+            {t('button.Refresh')}
+          </Button>
+        </Flex>
+      </Flex>
+      <Card
+        title={t('modelService.ServiceInfo')}
+        extra={
           <Button
             type="primary"
             icon={<SettingOutlined />}
@@ -265,9 +270,8 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           >
             {t('button.Edit')}
           </Button>
-        </Flex>
-      </Flex>
-      <Card title={t('modelService.ServiceInfo')}>
+        }
+      >
         <Descriptions
           bordered
           column={{ xxl: 3, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}
