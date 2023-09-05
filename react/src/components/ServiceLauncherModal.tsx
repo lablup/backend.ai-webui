@@ -154,9 +154,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           message.error(t('modelService.FailedToStartService'));
         },
       });
-      new Promise((resolve, reject) => {}).then(() => {
-        onRequestClose(true);
-      });
     });
   };
 
