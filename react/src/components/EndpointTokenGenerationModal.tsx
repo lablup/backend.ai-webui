@@ -3,7 +3,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import { DatePicker, Form, message } from 'antd';
+import { Alert, DatePicker, Form, message } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -83,9 +83,6 @@ const EndpointTokenGenerationModal: React.FC<
   return (
     <BAIModal
       {...baiModalProps}
-      style={{
-        zIndex: 10000,
-      }}
       destroyOnClose
       onOk={handleOk}
       onCancel={handleCancel}
@@ -97,26 +94,32 @@ const EndpointTokenGenerationModal: React.FC<
       <Form
         preserve={false}
         labelCol={{ span: 10 }}
-        wrapperCol={{ span: 20 }}
         initialValues={{
-          datetime: dayjs(),
+          datetime: dayjs().add(24, 'hour'),
         }}
         validateTrigger={['onChange', 'onBlur']}
         style={{ maxWidth: 500 }}
         form={form}
       >
-        <Flex direction="row" align="stretch" justify="around">
-          <Form.Item
-            name="datetime"
-            label={t('modelService.ExpiredDate')}
-            {...dateTimeConfig}
-          >
-            <DatePicker
-              showTime
-              format="YYYY-MM-DD HH:mm:ss"
-              style={{ width: 200 }}
-            />
-          </Form.Item>
+        <Flex direction="column" gap="sm" align="stretch">
+          <Alert
+            type="info"
+            showIcon
+            message={t('modelService.TokenExpiredDateHelp')}
+          />
+          <Flex direction="row" align="stretch" justify="around">
+            <Form.Item
+              name="datetime"
+              label={t('modelService.ExpiredDate')}
+              {...dateTimeConfig}
+            >
+              <DatePicker
+                showTime
+                format="YYYY-MM-DD HH:mm:ss"
+                style={{ width: 200 }}
+              />
+            </Form.Item>
+          </Flex>
         </Flex>
         {/* <Flex direction="row" align="stretch" justify="end">
           <Tag style={{height: 30}}>{t('modelService.CurrentTime')}</Tag>

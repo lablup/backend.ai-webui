@@ -434,7 +434,8 @@
     "TokenGenerated": "토큰 생성이 완료되었습니다.",
     "TokenGenerationFailed": "토큰 생성에 실패하였습니다. 잠시 후 다시 시도해주세요.",
     "PleaseSelectTime": "만료 시간을 선택해주세요!",
-    "ExpiredDate": "토큰 만료 시각"
+    "ExpiredDate": "토큰 만료 시각",
+    "TokenExpiredDateHelp": "토큰 만료 시각 기본 값은 24시간 뒤입니다."
   },
   "button": {
     "Cancel": "취소",

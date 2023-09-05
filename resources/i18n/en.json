@@ -446,7 +446,8 @@
     "TokenGenerated": "Token generated",
     "TokenGenerationFailed": "Token generation failed. please try again.",
     "PleaseSelectTime": "Please select time!",
-    "ExpiredDate": "Expired Date"
+    "ExpiredDate": "Expired Date",
+    "TokenExpiredDateHelp": "The default token expiration time is 24 hours later."
   },
   "button": {
     "Cancel": "Cancel",

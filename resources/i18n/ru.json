@@ -1511,7 +1511,8 @@
     "TokenGenerated": "__NOT_TRANSLATED__",
     "TokenGenerationFailed": "__NOT_TRANSLATED__",
     "PleaseSelectTime": "__NOT_TRANSLATED__",
-    "ExpiredDate": "__NOT_TRANSLATED__"
+    "ExpiredDate": "__NOT_TRANSLATED__",
+    "TokenExpiredDateHelp": "__NOT_TRANSLATED__"
   },
   "ErrorBoundary": {
     "title": "__NOT_TRANSLATED__",
