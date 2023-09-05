@@ -118,7 +118,7 @@ const EndpointTokenGenerationModal: React.FC<
                   required: true,
                   message: t('modelService.PleaseSelectTime'),
                 },
-                ({ getFieldValue }) => ({
+                () => ({
                   validator(_, value) {
                     if (value.isAfter(dayjs())) {
                       return Promise.resolve();

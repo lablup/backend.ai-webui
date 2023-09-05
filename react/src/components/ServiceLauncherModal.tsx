@@ -198,7 +198,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             name="serviceName"
             rules={[
               {
-                max: 20,
+                pattern: /^(?=.{4,64}$)\w[\w.-]*\w$/,
+                message: t('modelService.ServiceNameRule'),
               },
             ]}
           >
