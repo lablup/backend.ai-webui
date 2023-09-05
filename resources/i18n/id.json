@@ -208,7 +208,7 @@
       "ProxyNotReady": "Proksi belum siap. Periksa pengaturan proksi untuk detailnya.",
       "ProxyConfiguratorNotResponding": "Konfigurator proksi tidak merespons.",
       "SettingUpProxyForApp": "Menyiapkan proksi untuk aplikasi...",
-      "AddingKernelToSocketQueue": "Menambahkan kernel ke antrian soket...",
+      "FailedToConnectCoordinator": "Gagal terhubung ke administrasi aplikasi. Harap periksa koneksi jaringan dan pengaturan firewall Anda.",
       "ManualImageName": "Nama Image (Manual)",
       "NotEnoughResource": "Tidak cukup sumber daya",
       "ResourceAllocationTemplate": "Template Alokasi Sumber Daya",

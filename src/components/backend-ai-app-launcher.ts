@@ -785,7 +785,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       uri = uri + '&is_inference=true';
     }
     uri += '&protocol=' + (servicePortInfo.protocol || 'tcp');
-    this.indicator.set(50, _text('session.launcher.AddingKernelToSocketQueue'));
+    this.indicator.set(
+      50,
+      _text('session.launcher.FailedToConnectCoordinator'),
+    );
     const rqst_proxy = {
       method: 'GET',
       app: app,

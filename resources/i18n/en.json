@@ -239,7 +239,7 @@
       "ProxyNotReady": "Proxy is not ready yet. Check proxy settings for detail.",
       "ProxyConfiguratorNotResponding": "Proxy configurator is not responding.",
       "SettingUpProxyForApp": "Setting up proxy for the app...",
-      "AddingKernelToSocketQueue": "Adding kernel to socket queue...",
+      "FailedToConnectCoordinator": "Failed to connect to the app administration. Please check your network connection and firewall settings.",
       "ManualImageName": "Image Name (Manual)",
       "NotEnoughResource": "Not enough resource",
       "ResourceAllocationTemplate": "Resource Allocation Template",
