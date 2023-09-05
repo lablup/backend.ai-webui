@@ -328,6 +328,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           columns={[
             {
               title: '#',
+              fixed: 'left',
               render: (id, record, index) => {
                 ++index;
                 return index;
@@ -387,6 +388,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           ]}
           pagination={false}
           dataSource={endpoint_token_list?.items}
+          bordered
         ></Table>
       </Card>
       <Card title={t('modelService.RoutesInfo')}>
