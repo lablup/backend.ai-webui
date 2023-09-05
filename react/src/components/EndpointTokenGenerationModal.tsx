@@ -17,7 +17,7 @@ interface EndpointTokenGenerationModalProps
 }
 
 interface EndpointTokenGenerationInput {
-  valid_until?: number; // set second as unit
+  valid_until?: number; // Unix epoch time
 }
 
 const EndpointTokenGenerationModal: React.FC<
@@ -27,18 +27,14 @@ const EndpointTokenGenerationModal: React.FC<
   const baiClient = useSuspendedBackendaiClient();
   const [form] = Form.useForm();
 
-  const dateTimeConfig = {
-    rules: [
-      {
-        type: 'object' as const,
-        required: true,
-        message: t('modelService.PleaseSelectTime'),
-      },
-    ],
-  };
-
-  const mutationToGenerateToken = useTanMutation({
-    mutationFn: (values: EndpointTokenGenerationInput) => {
+  const mutationToGenerateToken = useTanMutation<
+    unknown,
+    {
+      message?: string;
+    },
+    EndpointTokenGenerationInput
+  >({
+    mutationFn: (values) => {
       const body = {
         valid_until: values.valid_until,
       };
@@ -67,8 +63,13 @@ const EndpointTokenGenerationModal: React.FC<
             onRequestClose(true);
           },
           onError: (err) => {
-            message.error(t('modelService.TokenGenerationFailed'));
-            console.log(err);
+            if (err?.message?.includes('valid_until is older than now')) {
+              message.error(t('modelService.TokenExpiredDateError'));
+              return;
+            } else {
+              message.error(t('modelService.TokenGenerationFailed'));
+              console.log(err);
+            }
           },
         },
       );
@@ -111,7 +112,23 @@ const EndpointTokenGenerationModal: React.FC<
             <Form.Item
               name="datetime"
               label={t('modelService.ExpiredDate')}
-              {...dateTimeConfig}
+              rules={[
+                {
+                  type: 'object' as const,
+                  required: true,
+                  message: t('modelService.PleaseSelectTime'),
+                },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (value.isAfter(dayjs())) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error(t('modelService.TokenExpiredDateError')),
+                    );
+                  },
+                }),
+              ]}
             >
               <DatePicker
                 showTime
