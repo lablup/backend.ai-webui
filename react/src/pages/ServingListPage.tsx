@@ -295,7 +295,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                         type="text"
                         icon={<SettingOutlined />}
                         style={
-                          row.desired_session_count > 0
+                          row.desired_session_count >= 0
                             ? {
                                 color: '#29b6f6',
                               }
@@ -312,7 +312,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                         icon={
                           <DeleteOutlined
                             style={
-                              row.desired_session_count > 0
+                              row.desired_session_count >= 0
                                 ? {
                                     color: token.colorError,
                                   }
