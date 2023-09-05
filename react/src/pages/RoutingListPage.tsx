@@ -7,11 +7,7 @@ import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
 import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
 import { baiSignedRequestWithPromise } from '../helper';
-import {
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-  useCurrentProjectValue,
-} from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
   RoutingListPageQuery,
@@ -96,8 +92,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     useState(false);
   const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
     useState(false);
-  const curProject = useCurrentProjectValue();
-  const { Paragraph, Text } = Typography;
+  // const curProject = useCurrentProjectValue();
   const [paginationState] = useState<{
     current: number;
     pageSize: number;
@@ -105,8 +100,6 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     current: 1,
     pageSize: 100,
   });
-  const [servicesFetchKey, updateServicesFetchKey] =
-    useUpdatableState('initial-fetch');
   const { endpoint, endpoint_token_list } =
     useLazyLoadQuery<RoutingListPageQuery>(
       graphql`
@@ -346,9 +339,9 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               dataIndex: 'token',
               fixed: 'left',
               render: (text, row) => (
-                <Text ellipsis copyable style={{ width: 150 }}>
+                <Typography.Text ellipsis copyable style={{ width: 150 }}>
                   {row.token}
-                </Text>
+                </Typography.Text>
               ),
             },
             {

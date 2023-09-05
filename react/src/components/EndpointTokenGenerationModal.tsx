@@ -3,9 +3,8 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import TimeContainer from './TimeContainer';
-import { DatePicker, Form, message, Space, Tag, theme } from 'antd';
-import { Dayjs, default as dayjs } from 'dayjs';
+import { DatePicker, Form, message } from 'antd';
+import dayjs from 'dayjs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -25,7 +24,6 @@ const EndpointTokenGenerationModal: React.FC<
   EndpointTokenGenerationModalProps
 > = ({ onRequestClose, onCancel, endpoint_id, ...baiModalProps }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const [form] = Form.useForm();
 
