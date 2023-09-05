@@ -1512,7 +1512,11 @@
     "TokenGenerationFailed": "__NOT_TRANSLATED__",
     "PleaseSelectTime": "__NOT_TRANSLATED__",
     "ExpiredDate": "__NOT_TRANSLATED__",
-    "TokenExpiredDateHelp": "__NOT_TRANSLATED__"
+    "TokenExpiredDateHelp": "__NOT_TRANSLATED__",
+    "TokenExpiredDateError": "__NOT_TRANSLATED__",
+    "FormValidationFailed": "__NOT_TRANSLATED__",
+    "ServiceNameRule": "__NOT_TRANSLATED__",
+    "resources": "__NOT_TRANSLATED__"
   },
   "ErrorBoundary": {
     "title": "__NOT_TRANSLATED__",

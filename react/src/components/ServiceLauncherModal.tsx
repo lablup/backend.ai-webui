@@ -145,16 +145,25 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     // setTimeout(() => {
     //   setConfirmLoading(false);
     // }, 2000);
-    form.validateFields().then((values) => {
-      mutationToCreateService.mutate(values, {
-        onSuccess: () => {
-          onRequestClose(true);
-        },
-        onError: (error) => {
-          message.error(t('modelService.FailedToStartService'));
-        },
+    form
+      .validateFields()
+      .then((values) => {
+        mutationToCreateService.mutate(values, {
+          onSuccess: () => {
+            onRequestClose(true);
+          },
+          onError: (error) => {
+            message.error(t('modelService.FailedToStartService'));
+          },
+        });
+      })
+      .catch((err) => {
+        if (err.errorFields?.[0].errors?.[0]) {
+          message.error(err.errorFields?.[0].errors?.[0]);
+        } else {
+          message.error(t('modelService.FormValidationFailed'));
+        }
       });
-    });
   };
 
   // Apply any operation after clicking Cancel button
@@ -197,6 +206,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               {
                 pattern: /^(?=.{4,64}$)\w[\w.-]*\w$/,
                 message: t('modelService.ServiceNameRule'),
+              },
+              {
+                required: true,
               },
             ]}
           >
