@@ -50,7 +50,7 @@ export const useBaiSignedRequestWithPromise = () => {
  * @param {number} decimalPoint decimal point set to 2 as a default
  * @return {string} converted file size to human readable value
  */
-export const _humanReadableDecimalSize = (bytes = 0, decimalPoint = 2) => {
+export const humanReadableDecimalSize = (bytes = 0, decimalPoint = 2) => {
   if (bytes === 0) return '0 Bytes';
   const k = Math.pow(10, 3);
   decimalPoint = decimalPoint < 0 ? 0 : decimalPoint;
@@ -62,7 +62,7 @@ export const _humanReadableDecimalSize = (bytes = 0, decimalPoint = 2) => {
   );
 };
 
-export const _humanReadableBinarySize = (
+export const humanReadableBinarySize = (
   bytes = 0,
   decimalPoint = 2,
   compact = false,
