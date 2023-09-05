@@ -109,10 +109,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           },
         },
       };
-      if (resourceSlots?.cuda === 'shares') {
+      if (resourceSlots?.['cuda.shares']) {
         body['config'].resources['cuda.shares'] = values.gpu;
       }
-      if (resourceSlots?.cuda === 'device') {
+      if (resourceSlots?.['cuda.device']) {
         body['config'].resources['cuda.device'] = values.gpu;
       }
       if (values.shmem && values.shmem > 0) {
@@ -342,32 +342,31 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         },
                       ]}
                     />
-                    {resourceSlots.cuda !== undefined ? (
-                      <SliderInputItem
-                        style={{ marginBottom: 0 }}
-                        name={'gpu'}
-                        label={t('session.launcher.AIAccelerator')}
-                        tooltip={
-                          <Trans
-                            i18nKey={'session.launcher.DescAIAccelerator'}
-                          />
-                        }
-                        max={30}
-                        step={0.1}
-                        inputNumberProps={{
-                          //TODO: change unit based on resource limit
-                          addonAfter: 'GPU',
-                        }}
-                        required
-                        rules={[
-                          {
-                            required: true,
-                          },
-                        ]}
-                      />
-                    ) : (
-                      <></>
-                    )}
+                    {resourceSlots?.['cuda.device'] ||
+                      (resourceSlots?.['cuda.shares'] && (
+                        <SliderInputItem
+                          style={{ marginBottom: 0 }}
+                          name={'gpu'}
+                          label={t('session.launcher.AIAccelerator')}
+                          tooltip={
+                            <Trans
+                              i18nKey={'session.launcher.DescAIAccelerator'}
+                            />
+                          }
+                          max={30}
+                          step={resourceSlots['cuda.shares'] ? 0.1 : 1}
+                          inputNumberProps={{
+                            //TODO: change unit based on resource limit
+                            addonAfter: 'GPU',
+                          }}
+                          required
+                          rules={[
+                            {
+                              required: true,
+                            },
+                          ]}
+                        />
+                      ))}
                   </>
                 );
               }}
