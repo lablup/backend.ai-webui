@@ -4,6 +4,7 @@ import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationM
 import Flex from '../components/Flex';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
+import ResourcesNumbers from '../components/ResourcesNumbers';
 import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
 import { baiSignedRequestWithPromise } from '../helper';
@@ -16,6 +17,7 @@ import {
 import {
   CheckOutlined,
   CloseOutlined,
+  PlusOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
   SettingOutlined,
@@ -120,6 +122,8 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               ...ServingRouteErrorModalFragment
             }
             retries
+            resource_group
+            resource_slots
             routings {
               routing_id
               session
@@ -274,7 +278,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       >
         <Descriptions
           bordered
-          column={{ xxl: 3, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}
+          column={{ xxl: 3, xl: 3, lg: 2, md: 1, sm: 1, xs: 1 }}
           style={{
             backgroundColor: token.colorBgBase,
           }}
@@ -304,6 +308,14 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           <Descriptions.Item label={t('modelService.OpenToPublic')}>
             {endpoint?.open_to_public ? <CheckOutlined /> : <CloseOutlined />}
           </Descriptions.Item>
+          <Descriptions.Item label={t('modelService.resources')} span={2}>
+            <Flex direction="row" gap={'sm'}>
+              {endpoint?.resource_group}
+              <ResourcesNumbers
+                {...JSON.parse(endpoint?.resource_slots || '{}')}
+              />
+            </Flex>
+          </Descriptions.Item>
           <Descriptions.Item label="Image">
             {endpoint?.image && (
               <Flex direction="row" gap={'xs'}>
@@ -319,6 +331,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         extra={
           <Button
             type="primary"
+            icon={<PlusOutlined />}
             onClick={() => {
               setIsOpenTokenGenerationModal(true);
             }}
