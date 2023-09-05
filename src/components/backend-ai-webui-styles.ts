@@ -484,7 +484,7 @@ export const BackendAIWebUIStyles = [
     #main-toolbar {
       background-color: var(--general-menu-background-color);
       color: var(--general-menu-color);
-      z-index: 1;
+      z-index: 5;
       overflow: visible;
       --mdc-theme-on-primary: black;
       --mdc-theme-primary: rgba(247, 246, 246, 1);
