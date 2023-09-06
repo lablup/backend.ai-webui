@@ -382,7 +382,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
                       ? dayjs(
                           (row.valid_until as string) +
                             (row.created_at as string).split(/(?=\+)/g)[1],
-                        ).format('YYYY/MM/DD ddd HH:MM:ss')
+                        ).format('YYYY/MM/DD ddd HH:mm:ss')
                       : '-'
                   }
                 </span>
@@ -396,7 +396,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               dataIndex: 'created_at',
               render: (text, row) => (
                 <span>
-                  {dayjs(row.created_at).format('YYYY/MM/DD ddd HH:MM:ss')}
+                  {dayjs(row.created_at).format('YYYY/MM/DD ddd HH:mm:ss')}
                 </span>
               ),
               defaultSortOrder: 'descend',

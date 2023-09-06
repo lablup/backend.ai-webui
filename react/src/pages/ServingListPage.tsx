@@ -349,7 +349,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   title: t('modelService.CreatedAt'),
                   dataIndex: 'created_at',
                   render: (created_at) => {
-                    return dayjs(created_at).format('YYYY/MM/DD HH:MM:ss');
+                    return dayjs(created_at).format('YYYY/MM/DD HH:mm:ss');
                   },
                   defaultSortOrder: 'descend',
                   sortDirections: ['descend', 'ascend', 'descend'],
