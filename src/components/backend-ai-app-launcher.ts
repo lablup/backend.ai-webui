@@ -792,7 +792,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       app: app,
       uri: uri,
     };
-    return await this.sendRequest(rqst_proxy).catch((err) => {
+    return this.sendRequest(rqst_proxy).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -802,6 +802,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         );
       }
       this.notification.show(true, err);
+      throw err;
     });
   }
 
