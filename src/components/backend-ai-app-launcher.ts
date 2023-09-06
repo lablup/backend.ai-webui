@@ -9,6 +9,7 @@ import {
 import BackendAIDialog from './backend-ai-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
 import './lablup-expansion';
 import '@material/mwc-button';
 import { Checkbox } from '@material/mwc-checkbox';
@@ -785,16 +786,23 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       uri = uri + '&is_inference=true';
     }
     uri += '&protocol=' + (servicePortInfo.protocol || 'tcp');
-    this.indicator.set(
-      50,
-      _text('session.launcher.FailedToConnectCoordinator'),
-    );
+    this.indicator.set(50, _text('session.launcher.AddingKernelToSocketQueue'));
     const rqst_proxy = {
       method: 'GET',
       app: app,
       uri: uri,
     };
-    return await this.sendRequest(rqst_proxy);
+    return await this.sendRequest(rqst_proxy).catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+      } else {
+        this.notification.text = PainKiller.relieve(
+          _text('session.launcher.FailedToConnectCoordinator'),
+        );
+      }
+      this.notification.show(true, err);
+    });
   }
 
   /**

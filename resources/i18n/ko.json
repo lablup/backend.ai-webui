@@ -225,6 +225,7 @@
       "ProxyNotReady": "프록시 서버가 아직 준비되지 않았습니다. 프록시 설정을 확인하십시오",
       "ProxyConfiguratorNotResponding": "프록시 구성자가 응답하지 않습니다.",
       "SettingUpProxyForApp": "애플리케이션을 위한 프록시를 설정합니다...",
+      "AddingKernelToSocketQueue": "커널을 소켓 큐에 추가합니다...",
       "FailedToConnectCoordinator": "앱 접속 관리자 연결에 실패했습니다. 네트워크 연결 및 방화벽 상태를 확인해주세요.",
       "ManualImageName": "환경 이름 (수동)",
       "NotEnoughResource": "할당 가능한 자원 부족",
