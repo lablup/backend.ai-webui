@@ -209,6 +209,7 @@
       "ProxyConfiguratorNotResponding": "Le configurateur de proxy ne répond pas.",
       "SettingUpProxyForApp": "Configuration du proxy pour l'application...",
       "AddingKernelToSocketQueue": "Ajout du noyau à la file d'attente des sockets...",
+      "FailedToConnectCoordinator": "Gagal terhubung ke administrasi aplikasi. Harap periksa koneksi jaringan dan pengaturan firewall Anda.",
       "ManualImageName": "Nom de l'image (manuel)",
       "NotEnoughResource": "Pas assez de ressources",
       "ResourceAllocationTemplate": "Modèle d'allocation de ressources",

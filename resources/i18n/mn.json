@@ -209,6 +209,7 @@
       "ProxyConfiguratorNotResponding": "Прокси тохируулагч хариу өгөхгүй байна.",
       "SettingUpProxyForApp": "Апп-д прокси тохируулж байна ...",
       "AddingKernelToSocketQueue": "Цөмийг сокет дараалалд нэмж оруулах ...",
+      "FailedToConnectCoordinator": "Өргөдлийн аппликейшнтай холбогдох амжилтгүй боллоо. Сүлжээний холболт болон цахилгаан хорогдлын тохиргоог шалгана уу.",
       "ManualImageName": "Image нэр (гар арга)",
       "NotEnoughResource": "Нөөц хангалттай биш байна",
       "ResourceAllocationTemplate": "Нөөцийг хуваарилах загвар",

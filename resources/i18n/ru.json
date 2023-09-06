@@ -209,6 +209,7 @@
       "ProxyConfiguratorNotResponding": "Конфигуратор прокси не отвечает.",
       "SettingUpProxyForApp": "Настройка прокси для приложения ...",
       "AddingKernelToSocketQueue": "Добавление ядра в очередь сокетов ...",
+      "FailedToConnectCoordinator": "Не удалось подключиться к администрированию приложения. Пожалуйста, проверьте ваше сетевое подключение и настройки брандмауэра.",
       "ManualImageName": "Имя изображения (вручную)",
       "NotEnoughResource": "Недостаточно ресурса",
       "ResourceAllocationTemplate": "Шаблон распределения ресурсов",
