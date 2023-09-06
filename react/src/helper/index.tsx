@@ -140,6 +140,7 @@ export function iSizeToSize(
   number: number;
   numberFixed: string;
   unit: string;
+  numberUnit: string;
 } {
   const sizes = ['B', 'K', 'M', 'G', 'T', 'P', 'E'];
   const sizeUnit = size.slice(-1).toUpperCase();
@@ -153,10 +154,12 @@ export function iSizeToSize(
     ? sizes.indexOf(targetSizeUnit.toUpperCase())
     : sizeIndex;
   const targetBytes = bytes / Math.pow(1024, targetIndex);
+  const numberFixed = targetBytes.toFixed(fixed);
   return {
     number: targetBytes,
-    numberFixed: targetBytes.toFixed(fixed),
+    numberFixed,
     unit: sizes[targetIndex],
+    numberUnit: `${numberFixed}${sizes[targetIndex]}`,
   };
 }
 
