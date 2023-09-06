@@ -31,7 +31,6 @@ import './backend-ai-sidepanel-notification';
 import './backend-ai-sidepanel-task';
 import './backend-ai-splash';
 import BackendAITasker from './backend-ai-tasker';
-import './backend-ai-user-dropdown-menu';
 import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
 import './lablup-notification';
 import LablupTermsOfService from './lablup-terms-of-service';
