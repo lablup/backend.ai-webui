@@ -1,4 +1,4 @@
-import { _humanReadableDecimalSize } from '../helper/index';
+import { humanReadableDecimalSize } from '../helper/index';
 import Flex from './Flex';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
@@ -201,13 +201,13 @@ const ResourcePolicyCard: React.FC<Props> = ({
               {project_resource_policy
                 ? project_resource_policy &&
                   project_resource_policy?.max_vfolder_size !== -1
-                  ? _humanReadableDecimalSize(
+                  ? humanReadableDecimalSize(
                       project_resource_policy?.max_vfolder_size,
                     )
                   : '-'
                 : user_resource_policy &&
                   user_resource_policy?.max_vfolder_size !== -1
-                ? _humanReadableDecimalSize(
+                ? humanReadableDecimalSize(
                     user_resource_policy?.max_vfolder_size,
                   )
                 : '-'}

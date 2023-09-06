@@ -82,7 +82,6 @@ const ModelServiceSettingModal: React.FC<Props> = ({
 
   return (
     <BAIModal
-      {...baiModalProps}
       style={{
         zIndex: 10000,
       }}
@@ -93,6 +92,7 @@ const ModelServiceSettingModal: React.FC<Props> = ({
         loading: mutationToUpdateService.isLoading,
       }}
       title={t('modelService.EditModelService')}
+      {...baiModalProps}
     >
       <Flex direction="row" align="stretch" justify="around">
         <Form
