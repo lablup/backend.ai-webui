@@ -159,6 +159,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
     <>
       <style>{customCSS}</style>
       <BAIModal
+        {...baiModalProps}
         okText={t('webui.menu.Update')}
         cancelText={t('webui.menu.Cancel')}
         onCancel={() => {
@@ -169,7 +170,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
         centered
         destroyOnClose
         title={t('webui.menu.MyAccountInformation')}
-        {...baiModalProps}
       >
         <Form
           layout="horizontal"

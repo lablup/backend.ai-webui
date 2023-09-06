@@ -108,6 +108,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               image
               model
               domain
+              status
               project
               resource_group
               resource_slots
@@ -268,6 +269,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             <Table
               loading={isRefetchPending}
               scroll={{ x: 'max-content' }}
+              rowKey={'endpoint_id'}
               dataSource={(sortedEndpointList || []) as Endpoint[]}
               columns={[
                 {
@@ -295,13 +297,17 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                         type="text"
                         icon={<SettingOutlined />}
                         style={
-                          row.desired_session_count > 0
-                            ? {
+                          row.desired_session_count < 0 ||
+                          row.status?.toLowerCase() === 'destroying'
+                            ? undefined
+                            : {
                                 color: '#29b6f6',
                               }
-                            : undefined
                         }
-                        disabled={row.desired_session_count < 0}
+                        disabled={
+                          row.desired_session_count < 0 ||
+                          row.status?.toLowerCase() === 'destroying'
+                        }
                         onClick={() => {
                           setIsOpenModelServiceSettingModal(true);
                           setSelectedModelService(row);
@@ -312,15 +318,19 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                         icon={
                           <DeleteOutlined
                             style={
-                              row.desired_session_count > 0
-                                ? {
+                              row.desired_session_count < 0 ||
+                              row.status?.toLowerCase() === 'destroying'
+                                ? undefined
+                                : {
                                     color: token.colorError,
                                   }
-                                : undefined
                             }
                           />
                         }
-                        disabled={row.desired_session_count < 0}
+                        disabled={
+                          row.desired_session_count < 0 ||
+                          row.status?.toLowerCase() === 'destroying'
+                        }
                         onClick={() => {
                           setIsOpenModelServiceTerminatingModal(true);
                           setSelectedModelService(row);
@@ -339,7 +349,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   title: t('modelService.CreatedAt'),
                   dataIndex: 'created_at',
                   render: (created_at) => {
-                    return dayjs(created_at).format('YYYY/MM/DD HH:MM:ss');
+                    return dayjs(created_at).format('YYYY/MM/DD HH:mm:ss');
                   },
                   defaultSortOrder: 'descend',
                   sortDirections: ['descend', 'ascend', 'descend'],

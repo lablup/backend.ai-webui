@@ -1,7 +1,4 @@
-import {
-  _humanReadableDecimalSize,
-  usageIndicatorColor,
-} from '../helper/index';
+import { humanReadableDecimalSize, usageIndicatorColor } from '../helper/index';
 import { StorageHostResourcePanelFragment$key } from './__generated__/StorageHostResourcePanelFragment.graphql';
 import { Progress, Descriptions, Typography, Tag } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
@@ -56,12 +53,12 @@ const StorageHostResourcePanel: React.FC<{
         <Typography.Text type="secondary">
           {t('storageHost.Used')}:{' '}
         </Typography.Text>
-        {_humanReadableDecimalSize(storageUsage?.used_bytes)}
+        {humanReadableDecimalSize(storageUsage?.used_bytes)}
         <Typography.Text type="secondary">{' / '}</Typography.Text>
         <Typography.Text type="secondary">
           {t('storageHost.Total')}:{' '}
         </Typography.Text>
-        {_humanReadableDecimalSize(storageUsage?.capacity_bytes)}
+        {humanReadableDecimalSize(storageUsage?.capacity_bytes)}
       </Descriptions.Item>
       <Descriptions.Item label={t('agent.Endpoint')}>
         {resource?.path}

@@ -22,8 +22,10 @@ const EndpointStatusTag: React.FC<EndpointStatusTagProps> = ({
   let color = 'default';
   switch (endpoint?.status?.toUpperCase()) {
     case 'RUNNING':
+    case 'HEALTHY':
       color = 'success';
       break;
+
     // case 'TERMINATED':
     //   color = 'default';
     //   break;

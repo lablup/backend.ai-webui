@@ -265,7 +265,8 @@
       "PortsTitleWithRange": "__NOT_TRANSLATED__",
       "PrePortConfigWillDisappear": "__NOT_TRANSLATED__",
       "PreOpenPortPanelTitle": "__NOT_TRANSLATED__",
-      "PreOpenPortRange": "__NOT_TRANSLATED__"
+      "PreOpenPortRange": "__NOT_TRANSLATED__",
+      "MinMemory": "__NOT_TRANSLATED__"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -1502,7 +1503,22 @@
     "FailedToStartService": "__NOT_TRANSLATED__",
     "ServingRouteErrorModalTitle": "__NOT_TRANSLATED__",
     "ClearErrors": "__NOT_TRANSLATED__",
-    "CreatedAt": "__NOT_TRANSLATED__"
+    "GeneratedTokens": "__NOT_TRANSLATED__",
+    "CurrentTime": "__NOT_TRANSLATED__",
+    "ExpiredTime": "__NOT_TRANSLATED__",
+    "GenerateNewToken": "__NOT_TRANSLATED__",
+    "GenerateToken": "__NOT_TRANSLATED__",
+    "Generate": "__NOT_TRANSLATED__",
+    "CreatedAt": "__NOT_TRANSLATED__",
+    "TokenGenerated": "__NOT_TRANSLATED__",
+    "TokenGenerationFailed": "__NOT_TRANSLATED__",
+    "PleaseSelectTime": "__NOT_TRANSLATED__",
+    "ExpiredDate": "__NOT_TRANSLATED__",
+    "TokenExpiredDateHelp": "__NOT_TRANSLATED__",
+    "TokenExpiredDateError": "__NOT_TRANSLATED__",
+    "FormValidationFailed": "__NOT_TRANSLATED__",
+    "ServiceNameRule": "__NOT_TRANSLATED__",
+    "resources": "__NOT_TRANSLATED__"
   },
   "ErrorBoundary": {
     "title": "__NOT_TRANSLATED__",
