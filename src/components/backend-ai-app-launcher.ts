@@ -483,9 +483,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     this.preOpenedPortList = [];
     const preOpenAppNameList = servicePorts
-      .filter((item) => item.protocol === 'preopen')
+      ?.filter((item) => item.protocol === 'preopen')
       .map((item) => item.name);
-    preOpenAppNameList.forEach((elm) => {
+    preOpenAppNameList?.forEach((elm) => {
       this.preOpenedPortList.push({
         name: elm,
         title: elm,
@@ -493,11 +493,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         src: '/resources/icons/default_app.svg',
       });
     });
-    const filteredAppServices = appServices.filter(
-      (item) => !preOpenAppNameList.includes(item),
-    );
+    const filteredAppServices =
+      appServices?.filter((item) => !preOpenAppNameList?.includes(item)) ??
+      appServices;
     this.appSupportList = [];
-    if (!filteredAppServices.includes('ttyd')) {
+    if (!filteredAppServices?.includes('ttyd')) {
       this.appSupportList.push({
         // Force push terminal
         name: 'ttyd',
