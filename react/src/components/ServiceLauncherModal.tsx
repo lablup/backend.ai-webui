@@ -333,16 +333,28 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         {
                           required: true,
                         },
-                        {
-                          type: 'number',
-                          min: iSizeToSize(
-                            _.find(
-                              currentImage?.resource_limits,
-                              (i) => i?.key === 'mem',
-                            )?.min || '0B',
-                            'G',
-                          ).number,
-                        },
+                        ({ getFieldValue }) => ({
+                          validator(_form, value) {
+                            const sizeGInfo = iSizeToSize(
+                              _.find(
+                                currentImage?.resource_limits,
+                                (i) => i?.key === 'mem',
+                              )?.min || '0B',
+                              'G',
+                            );
+
+                            if (sizeGInfo.number > value) {
+                              return Promise.reject(
+                                new Error(
+                                  t('session.launcher.MinMemory', {
+                                    size: sizeGInfo.numberUnit,
+                                  }),
+                                ),
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        }),
                       ]}
                     />
                     <SliderInputItem

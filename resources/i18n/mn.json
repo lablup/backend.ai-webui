@@ -264,7 +264,8 @@
       "PortsTitleWithRange": "__NOT_TRANSLATED__",
       "PrePortConfigWillDisappear": "__NOT_TRANSLATED__",
       "PreOpenPortPanelTitle": "__NOT_TRANSLATED__",
-      "PreOpenPortRange": "__NOT_TRANSLATED__"
+      "PreOpenPortRange": "__NOT_TRANSLATED__",
+      "MinMemory": "__NOT_TRANSLATED__"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",

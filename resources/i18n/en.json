@@ -278,7 +278,8 @@
       "PrePortConfigWillDisappear": "Any unsaved preopen ports will be disappeared.",
       "PreOpenPortConfigurationDone": "Preopen ports configured successfully.",
       "PreOpenPortPanelTitle": "Preopen ports to set (optional)",
-      "PreOpenPortRange": "Preopen ports are only available from 1024 to 65535."
+      "PreOpenPortRange": "Preopen ports are only available from 1024 to 65535.",
+      "MinMemory": "The minimum memory capacity for the currently selected runtime environment is {{size}}iB."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
