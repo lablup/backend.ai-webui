@@ -85,8 +85,14 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const [form] = Form.useForm<ServiceLauncherFormInput>();
   const [resourceSlots] = useResourceSlots();
 
-  const mutationToCreateService = useTanMutation({
-    mutationFn: (values: ServiceLauncherFormInput) => {
+  const mutationToCreateService = useTanMutation<
+    unknown,
+    {
+      message?: string;
+    },
+    ServiceLauncherFormInput
+  >({
+    mutationFn: (values) => {
       const image: string = `${values.environments.image?.registry}/${values.environments.image?.name}:${values.environments.image?.tag}`;
       const body: ServiceCreateType = {
         name: values.serviceName,
@@ -153,7 +159,15 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             onRequestClose(true);
           },
           onError: (error) => {
-            message.error(t('modelService.FailedToStartService'));
+            if (error?.message) {
+              message.error(
+                _.truncate(error?.message, {
+                  length: 200,
+                }),
+              );
+            } else {
+              message.error(t('modelService.FailedToStartService'));
+            }
           },
         });
       })
