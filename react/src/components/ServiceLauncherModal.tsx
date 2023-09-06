@@ -322,11 +322,12 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       tooltip={
                         <Trans i18nKey={'session.launcher.DescMemory'} />
                       }
-                      max={30}
+                      max={64}
+                      min={0}
                       inputNumberProps={{
-                        addonAfter: 'GB',
+                        addonAfter: 'GiB',
                       }}
-                      step={0.05}
+                      step={0.25}
                       required
                       rules={[
                         {
@@ -350,10 +351,11 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       tooltip={
                         <Trans i18nKey={'session.launcher.DescSharedMemory'} />
                       }
-                      max={30}
-                      step={0.1}
+                      max={64}
+                      min={0}
+                      step={0.25}
                       inputNumberProps={{
-                        addonAfter: 'GB',
+                        addonAfter: 'GiB',
                       }}
                       required
                       rules={[
