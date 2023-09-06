@@ -7,7 +7,7 @@ import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
 import ResourcesNumbers from '../components/ResourcesNumbers';
 import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
-import { baiSignedRequestWithPromise } from '../helper';
+import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
@@ -68,12 +68,6 @@ const dayDiff = (a: any, b: any) => {
   const date1 = dayjs(a.created_at);
   const date2 = dayjs(b.created_at);
   return date1.diff(date2);
-};
-
-const isExpired = (date: any) => {
-  const timeFromNow = dayjs();
-  const expiredDate = dayjs(date);
-  return timeFromNow.diff(expiredDate) > 0;
 };
 
 const RoutingListPage: React.FC<RoutingListPageProps> = () => {
@@ -365,11 +359,14 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             },
             {
               title: 'Status',
-              render: (text, row) => (
-                <Tag color={isExpired(row.valid_until) ? 'red' : 'green'}>
-                  {isExpired(row.valid_until) ? 'Expired' : 'Valid'}
-                </Tag>
-              ),
+              render: (text, row) => {
+                const isExpired = dayjs.utc(row.valid_until).isBefore();
+                return (
+                  <Tag color={isExpired ? 'red' : 'green'}>
+                    {isExpired ? 'Expired' : 'Valid'}
+                  </Tag>
+                );
+              },
             },
             {
               title: 'Valid Until',
@@ -377,12 +374,9 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               render: (text, row) => (
                 <span>
                   {
-                    // FIXME: temporally add GMT (timezone need to be added in serverside)
+                    // FIXME: temporally parse UTC and change to timezone (timezone need to be added in server side)
                     row.valid_until
-                      ? dayjs(
-                          (row.valid_until as string) +
-                            (row.created_at as string).split(/(?=\+)/g)[1],
-                        ).format('YYYY/MM/DD ddd HH:mm:ss')
+                      ? dayjs.utc(row.valid_until).tz().format('ll LTS')
                       : '-'
                   }
                 </span>
@@ -395,9 +389,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               title: 'Created at',
               dataIndex: 'created_at',
               render: (text, row) => (
-                <span>
-                  {dayjs(row.created_at).format('YYYY/MM/DD ddd HH:mm:ss')}
-                </span>
+                <span>{dayjs(row.created_at).format('ll LT')}</span>
               ),
               defaultSortOrder: 'descend',
               sortDirections: ['descend', 'ascend', 'descend'],
