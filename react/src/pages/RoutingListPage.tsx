@@ -405,7 +405,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             },
           ]}
           pagination={false}
-          dataSource={endpoint_token_list?.items}
+          dataSource={filterNonNullItems(endpoint_token_list?.items)}
           bordered
         ></Table>
       </Card>
