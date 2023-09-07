@@ -2087,9 +2087,7 @@ export default class BackendAILogin extends BackendAIPage {
                   ? html`
                       <mwc-button
                         id="sso-login-saml-button"
-                        label="${_t('login.SingleSignOn.LoginWithRealm', {
-                          realmName: this.ssoRealmName || 'SAML',
-                        })}"
+                        label="${_t('login.SingleSignOn.LoginWithSAML')}"
                         fullwidth
                         @click="${() => this.loginWithSAML()}"
                       ></mwc-button>
