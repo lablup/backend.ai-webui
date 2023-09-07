@@ -1349,7 +1349,7 @@
     "PleaseInputLoginInfo": "로그인을 위한 ID 와 PW를 입력해주세요.",
     "TooManyAttempt": "너무 많은 로그인 시도가 있었습니다. 잠시동안 로그인 시도가 차단되었습니다.",
     "SingleSignOn": {
-      "LoginWithSAML": "SAML 로그인"
+      "LoginWithRealm": "Login with {{ realmName }}"
     },
     "EndpointStartWith": "http:// 혹은 https:// 로 시작해야 합니다."
   },

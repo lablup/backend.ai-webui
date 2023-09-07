@@ -116,6 +116,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) enable2FA = false;
   @property({ type: Boolean }) force2FA = false;
   @property({ type: Array }) singleSignOnVendors: string[] = [];
+  @property({ type: Array }) ssoRealmName = '';
   @property({ type: Array }) allow_image_list;
   @property({ type: Array }) endpoints;
   @property({ type: Object }) logoutTimerBeforeOneMin;
@@ -737,6 +738,14 @@ export default class BackendAILogin extends BackendAIPage {
         : [],
     } as ConfigValueObject) as string[];
 
+    // Single sign-on vendors array
+    this.ssoRealmName = this._getConfigValueByExists(generalConfig, {
+      valueType: 'string',
+      defaultValue: '',
+      // sanitize whitespace on user-input after splitting
+      value: generalConfig?.ssoRealmName ? generalConfig?.ssoRealmName : '',
+    } as ConfigValueObject) as string;
+
     // Enable container commit flag
     this._enableContainerCommit = this._getConfigValueByExists(generalConfig, {
       valueType: 'boolean',
@@ -1110,6 +1119,20 @@ export default class BackendAILogin extends BackendAIPage {
 
   async loginWithSAML() {
     const rqst = this.client?.newUnsignedRequest('POST', '/saml/login', null);
+    const form = document.createElement('form');
+    const redirect_to = document.createElement('input');
+    form.appendChild(redirect_to);
+    document.body.appendChild(form);
+    form.setAttribute('method', 'POST');
+    form.setAttribute('action', rqst?.uri as string); // TODO: need to check its behavior.
+    redirect_to.setAttribute('type', 'hidden');
+    redirect_to.setAttribute('name', 'redirect_to');
+    redirect_to.setAttribute('value', window.location.href);
+    form.submit();
+  }
+
+  async loginWithOpenID() {
+    const rqst = this.client?.newUnsignedRequest('POST', '/openid/login', null);
     const form = document.createElement('form');
     const redirect_to = document.createElement('input');
     form.appendChild(redirect_to);
@@ -1695,6 +1718,7 @@ export default class BackendAILogin extends BackendAIPage {
         globalThis.backendaiclient._config.maskUserInfo = this.maskUserInfo;
         globalThis.backendaiclient._config.singleSignOnVendors =
           this.singleSignOnVendors;
+        globalThis.backendaiclient._config.ssoRealmName = this.ssoRealmName;
         globalThis.backendaiclient._config.enableContainerCommit =
           this._enableContainerCommit;
         globalThis.backendaiclient._config.appDownloadUrl = this.appDownloadUrl;
@@ -2063,9 +2087,23 @@ export default class BackendAILogin extends BackendAIPage {
                   ? html`
                       <mwc-button
                         id="sso-login-saml-button"
-                        label="${_t('login.SingleSignOn.LoginWithSAML')}"
+                        label="${_t('login.SingleSignOn.LoginWithRealm', {
+                          realmName: this.ssoRealmName || 'SAML',
+                        })}"
                         fullwidth
                         @click="${() => this.loginWithSAML()}"
+                      ></mwc-button>
+                    `
+                  : html``}
+                ${this.singleSignOnVendors.includes('openid')
+                  ? html`
+                      <mwc-button
+                        id="sso-login-openid-button"
+                        label="${_t('login.SingleSignOn.LoginWithRealm', {
+                          realmName: this.ssoRealmName || 'OpenID',
+                        })}"
+                        fullwidth
+                        @click="${() => this.loginWithOpenID()}"
                       ></mwc-button>
                     `
                   : html``}
