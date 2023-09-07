@@ -84,6 +84,11 @@
         "SpectrumScale",
         "GPFS"
       ]
+    },
+    "auto": {
+      "name": "Auto",
+      "description": "Automatically select the host with the least usage among the accessible folders for users. This prevents the folders from being concentrated on a single host.",
+      "icon": "local.png"
     }
   }
 }

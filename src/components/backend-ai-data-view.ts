@@ -423,7 +423,7 @@ export default class BackendAIData extends BackendAIPage {
               return html`
                 <mwc-list-item
                   hasMeta
-                  value="${item}"
+                  .value="${item}"
                   ?selected="${item === this.vhost}"
                 >
                   <div class="horizontal layout justified center">
@@ -938,14 +938,62 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   /**
+   * Returns original vhost name of the lowest usage folder that the user can access.
+   * If the usage percentage of the vhost is empty, set auto select vhost to default folder.
+   *
+   * @param {Object} vhostInfo - Result of globalThis.backendaiclient.vfolder.list_hosts()
+   * @return {string} - auto selected vhost name
+   */
+  _getAutoSelectedVhostName(vhostInfo) {
+    const lowestPercentage = Math.min(
+      ...Object.values(vhostInfo.volume_info).map(
+        (item: any) => item?.usage?.percentage,
+      ),
+    );
+    return (
+      Object.keys(vhostInfo.volume_info).find(
+        (key) =>
+          vhostInfo.volume_info[key]?.usage?.percentage === lowestPercentage,
+      ) ?? vhostInfo.default
+    );
+  }
+
+  /**
+   * Returns volume_info of the lowest usage folder that the user can access.
+   * If the usage percentage of the vhost is empty, set auto select vhost to default folder.
+   *
+   * @param {Object} vhostInfo - Result of globalThis.backendaiclient.vfolder.list_hosts()
+   * @return {Object} - volume_info of auto selected vhost
+   */
+  _getAutoSelectedVhostInfo(vhostInfo) {
+    const lowestPercentage = Math.min(
+      ...Object.values(vhostInfo.volume_info).map(
+        (item: any) => item?.usage?.percentage,
+      ),
+    );
+    return (
+      Object.values(vhostInfo.volume_info).find(
+        (item: any) => item?.usage?.percentage === lowestPercentage,
+      ) ?? vhostInfo.volume_info[vhostInfo.default]
+    );
+  }
+
+  async _getAutoSelectedVhostIncludedList() {
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+    vhostInfo.allowed.unshift('auto');
+    vhostInfo.volume_info.auto = this._getAutoSelectedVhostInfo(vhostInfo);
+    return vhostInfo;
+  }
+
+  /**
    * Clone folder dialog.
    */
   async _cloneFolderDialog() {
-    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+    const vhostInfo = await this._getAutoSelectedVhostIncludedList();
     this.addFolderNameInput.value = ''; // reset folder name
     this.vhosts = vhostInfo.allowed;
-    this.vhost = vhostInfo.default;
-    this.selectedVhost = vhostInfo.default;
+    this.vhost = 'auto';
+    this.selectedVhost = 'auto';
     if (this.allowed_folder_type.includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
@@ -960,11 +1008,11 @@ export default class BackendAIData extends BackendAIPage {
    * Add folder dialog.
    */
   async _addFolderDialog() {
-    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+    const vhostInfo = await this._getAutoSelectedVhostIncludedList();
     this.addFolderNameInput.value = ''; // reset folder name
     this.vhosts = vhostInfo.allowed;
-    this.vhost = vhostInfo.default;
-    this.selectedVhost = vhostInfo.default;
+    this.vhost = 'auto';
+    this.selectedVhost = 'auto';
     if (this.allowed_folder_type.includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
@@ -973,7 +1021,7 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   async _getStorageProxyInformation() {
-    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+    const vhostInfo = await this._getAutoSelectedVhostIncludedList();
     this.storageProxyInfo = vhostInfo.volume_info || {};
   }
 
@@ -995,8 +1043,8 @@ export default class BackendAIData extends BackendAIPage {
     e.stopPropagation();
     if (item in this.storageInfo) {
       this._helpDescriptionTitle = this.storageInfo[item].name;
-      this._helpDescription = this.storageInfo[item].description;
       this._helpDescriptionIcon = this.storageInfo[item].icon;
+      this._helpDescription = this.storageInfo[item].description;
     } else {
       this._helpDescriptionTitle = item;
       this._helpDescriptionIcon = 'local.png';
@@ -1017,10 +1065,14 @@ export default class BackendAIData extends BackendAIPage {
   /**
    * Add folder with name, host, type, usage mode and permission.
    */
-  _addFolder() {
+  async _addFolder() {
     const name = this.addFolderNameInput.value;
-    const host = (this.shadowRoot?.querySelector('#add-folder-host') as Select)
+    let host = (this.shadowRoot?.querySelector('#add-folder-host') as Select)
       .value;
+    if (host === 'auto') {
+      const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+      host = this._getAutoSelectedVhostName(vhostInfo);
+    }
     let ownershipType = (
       this.shadowRoot?.querySelector('#add-folder-type') as Select
     ).value;
@@ -1107,9 +1159,12 @@ export default class BackendAIData extends BackendAIPage {
       this.cloneFolderNameInput.value,
       true,
     );
-    const host = (
-      this.shadowRoot?.querySelector('#clone-folder-host') as Select
-    ).value;
+    let host = (this.shadowRoot?.querySelector('#clone-folder-host') as Select)
+      .value;
+    if (host === 'auto') {
+      const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+      host = this._getAutoSelectedVhostName(vhostInfo);
+    }
     let ownershipType = (
       this.shadowRoot?.querySelector('#clone-folder-type') as Select
     ).value;
