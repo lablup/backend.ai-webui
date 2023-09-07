@@ -738,11 +738,10 @@ export default class BackendAILogin extends BackendAIPage {
         : [],
     } as ConfigValueObject) as string[];
 
-    // Single sign-on vendors array
+    // custom realm name
     this.ssoRealmName = this._getConfigValueByExists(generalConfig, {
       valueType: 'string',
       defaultValue: '',
-      // sanitize whitespace on user-input after splitting
       value: generalConfig?.ssoRealmName ? generalConfig?.ssoRealmName : '',
     } as ConfigValueObject) as string;
 
