@@ -1248,7 +1248,7 @@
     "PleaseInputLoginInfo": "Нэвтрэхийн тулд ID болон нууц үгээ оруулна уу.",
     "TooManyAttempt": "Хэт олон нэвтрэх оролдлого хийсэн. Нэвтрэх оролдлогыг хэсэг хугацаанд хаасан байна.",
     "SingleSignOn": {
-      "LoginWithSAML": "__NOT_TRANSLATED__"
+      "LoginWithRealm": "__NOT_TRANSLATED__"
     },
     "EndpointInfo": "__NOT_TRANSLATED__",
     "DescEndpoint": "__NOT_TRANSLATED__",
