@@ -41,7 +41,7 @@ const ResourceNumber: React.FC<Props> = ({ type, value: amount, extra }) => {
       <ResourceTypeIcon type={type} />
       <Typography.Text>
         {units[type] === 'GiB'
-          ? iSizeToSize(amount + 'b', 'g', 0).number
+          ? iSizeToSize(amount + 'b', 'g', 2).numberFixed
           : amount}
       </Typography.Text>
       <Typography.Text type="secondary">{units[type]}</Typography.Text>
