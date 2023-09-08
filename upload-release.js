@@ -47,13 +47,13 @@ const getUploadURL = async (releaseId) => {
 
 const main = async () => {
     if (process.argv.length !== 3) {
-        console.error('usage: node upload-release.js <folder containing DMG files>')
+        console.error('usage: node upload-release.js <folder containing DMG/ZIP files>')
         process.exit(1)
     }
     const folder = process.argv[2]
     let DMGs = []
     try {
-        DMGs = (await fs.promises.readdir(folder)).filter((s) => !s.startsWith('.') && s.endsWith('.dmg'))
+        DMGs = (await fs.promises.readdir(folder)).filter((s) => !s.startsWith('.') && (s.endsWith('.dmg') || s.endsWith('.zip')))
     } catch (e) {
         console.error(e.message)
         process.exit(1)
