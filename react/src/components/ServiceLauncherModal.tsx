@@ -385,35 +385,35 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         },
                       ]}
                     />
-                    {resourceSlots?.['cuda.device'] ||
-                      (resourceSlots?.['cuda.shares'] && (
-                        <SliderInputItem
-                          style={{ marginBottom: 0 }}
-                          name={'gpu'}
-                          label={t('session.launcher.AIAccelerator')}
-                          tooltip={
-                            <Trans
-                              i18nKey={'session.launcher.DescAIAccelerator'}
-                            />
-                          }
-                          max={
-                            resourceSlots['cuda.shares']
-                              ? baiClient._config.maxCUDASharesPerContainer
-                              : baiClient._config.maxCUDADevicesPerContainer
-                          }
-                          step={resourceSlots['cuda.shares'] ? 0.1 : 1}
-                          inputNumberProps={{
-                            //TODO: change unit based on resource limit
-                            addonAfter: 'GPU',
-                          }}
-                          required
-                          rules={[
-                            {
-                              required: true,
-                            },
-                          ]}
-                        />
-                      ))}
+                    {(resourceSlots?.['cuda.device'] ||
+                      resourceSlots?.['cuda.shares']) && (
+                      <SliderInputItem
+                        style={{ marginBottom: 0 }}
+                        name={'gpu'}
+                        label={t('session.launcher.AIAccelerator')}
+                        tooltip={
+                          <Trans
+                            i18nKey={'session.launcher.DescAIAccelerator'}
+                          />
+                        }
+                        max={
+                          resourceSlots['cuda.shares']
+                            ? baiClient._config.maxCUDASharesPerContainer
+                            : baiClient._config.maxCUDADevicesPerContainer
+                        }
+                        step={resourceSlots['cuda.shares'] ? 0.1 : 1}
+                        inputNumberProps={{
+                          //TODO: change unit based on resource limit
+                          addonAfter: 'GPU',
+                        }}
+                        required
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
+                      />
+                    )}
                   </>
                 );
               }}
