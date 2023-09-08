@@ -11,7 +11,7 @@
       },
       "display_icon": "cpu"
     },
-    "ram": {
+    "mem": {
       "slot_name": "ram",
       "description": "Memory",
       "human_readable_name": "RAM",
