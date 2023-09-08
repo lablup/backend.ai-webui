@@ -1,11 +1,6 @@
-import {
-  bytesToBinarySize,
-  humanReadableBinarySize,
-  iSizeToSize,
-} from '../helper';
+import { iSizeToSize } from '../helper';
 import Flex from './Flex';
-import { Tag, Tooltip, Typography } from 'antd';
-import _ from 'lodash';
+import { Tooltip, Typography } from 'antd';
 import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
