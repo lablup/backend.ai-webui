@@ -4,7 +4,7 @@ import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationM
 import Flex from '../components/Flex';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
-import ResourcesNumbers from '../components/ResourcesNumbers';
+import ResourceNumber from '../components/ResourceNumber';
 import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
 import { baiSignedRequestWithPromise } from '../helper';
@@ -37,6 +37,7 @@ import {
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
+import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
@@ -310,10 +311,17 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           </Descriptions.Item>
           <Descriptions.Item label={t('modelService.resources')} span={2}>
             <Flex direction="row" gap={'sm'}>
-              {endpoint?.resource_group}
-              <ResourcesNumbers
-                {...JSON.parse(endpoint?.resource_slots || '{}')}
-              />
+              <Tooltip title={t('session.ResourceGroup')}>
+                <Tag>{endpoint?.resource_group}</Tag>
+              </Tooltip>
+              {_.map(
+                JSON.parse(endpoint?.resource_slots || '{}'),
+                (value, type) => {
+                  return (
+                    <ResourceNumber key={type} type={type} value={value} />
+                  );
+                },
+              )}
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item label="Image">
