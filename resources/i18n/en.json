@@ -1003,7 +1003,16 @@
     "NoExistingVSCodePassword": "No VS Code password to be copied.",
     "VSCodePasswordClipboardCopy": "VS Code password has been copied to the clipboard.",
     "SSHKeypairEnterManually": "SSH Keypair",
-    "SSHKeypairEnterManuallyFinished": "SSH Keypair has been successfully registered."
+    "SSHKeypairEnterManuallyFinished": "SSH Keypair has been successfully registered.",
+    "GitTokenManagement": "Git Repository Token Management",
+    "DescGitTokenManagement": "Manage Github, Gitlab and some repo's service Tokens.",
+    "GithubTokenValue": "Github Token Value",
+    "GitlabTokenValue": "Gitlab Token Value",
+    "ConfirmSaveGitTokenValues": "Confirm to save Git Service Tokens",
+    "DescSaveGitTokenValues": "Save Git Service Tokens",
+    "SavedGitTokenValues": "Successfully Saved Git Service Token",
+    "GitServiceDomain": "Git Service Domain",
+    "GitServiceToken": "Git Service Token"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
@@ -1449,10 +1458,18 @@
     "GithubInternalError": "Github Internal Error.",
     "GithubAPILimitError": "Github API Limitation Error.",
     "GithubAPIEtcError": "Github Server Issue.",
+    "ImportGithubTokenError": "Don't access the Github repository. check Github Token value and permission.",
     "ImportGitlabRepo": "Import Gitlab Repository",
     "GitlabRepoWillBeFolder": "Imported Gitlab repositories are converted to folders and can be mounted when session starts.",
     "GitlabURL": "Gitlab URL",
-    "GitlabDefaultBranch": "Gitlab Branch Name"
+    "GitlabDefaultBranch": "Gitlab Branch Name",
+    "GithubBadRequest": "Github Bad Request",
+    "GithubBadCredentials": "GithubBadCredentials",
+    "GitlabBadRequest": "GitlabBadRequest",
+    "GitlabBadCredentials": "GitlabBadCredentials",
+    "GitlabAPILimitError": "GitlabAPILimitError",
+    "GitlabAPIEtcError": "GitlabAPIEtcError",
+    "GitlabInternalError": "GitlabInternalError"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistics for This Month",

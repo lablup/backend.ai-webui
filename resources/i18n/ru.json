@@ -892,7 +892,15 @@
     "NoExistingVSCodePassword": "__NOT_TRANSLATED__",
     "VSCodePasswordClipboardCopy": "__NOT_TRANSLATED__",
     "SSHKeypairEnterManually": "__NOT_TRANSLATED__",
-    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__"
+    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__",
+    "SavedGitTokenValues": "__NOT_TRANSLATED__",
+    "GitTokenManagement": "__NOT_TRANSLATED__",
+    "GithubTokenValue": "__NOT_TRANSLATED__",
+    "GitlabTokenValue": "__NOT_TRANSLATED__",
+    "ConfirmSaveGitTokenValues": "__NOT_TRANSLATED__",
+    "DescSaveGitTokenValues": "__NOT_TRANSLATED__",
+    "GitServiceDomain": "__NOT_TRANSLATED__",
+    "GitServiceToken": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Расширенное использование веб-терминала: копирование содержимого терминала",
@@ -1341,7 +1349,14 @@
     "ImportGitlabRepo": "__NOT_TRANSLATED__",
     "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
     "GitlabURL": "__NOT_TRANSLATED__",
-    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__",
+    "GithubBadRequest": "__NOT_TRANSLATED__",
+    "GithubBadCredentials": "__NOT_TRANSLATED__",
+    "GitlabInternalError": "__NOT_TRANSLATED__",
+    "GitlabBadRequest": "__NOT_TRANSLATED__",
+    "GitlabBadCredentials": "__NOT_TRANSLATED__",
+    "GitlabAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGithubTokenError": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Статистика за этот месяц",

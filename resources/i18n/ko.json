@@ -991,7 +991,16 @@
     "DescAutoLogout": "세션 내 앱을 실행하기 위해 생성된 페이지를 제외한 모든 Backend.AI 웹 UI 페이지가 닫힐 경우 자동으로 로그아웃됩니다.",
     "NoExistingVSCodePassword": "복사할 VS Code 패스워드가 없습니다.",
     "VSCodePasswordClipboardCopy": "VS Code 패스워드가 클립보드에 복사되었습니다.",
-    "SSHKeypairEnterManuallyFinished": "SSH 키페어 등록이 성공적으로 완료되었습니다."
+    "SSHKeypairEnterManuallyFinished": "SSH 키페어 등록이 성공적으로 완료되었습니다.",
+    "GitTokenManagement": "Git 저장소 Token 관리",
+    "DescGitTokenManagement": "Github, Gitlab 등 여러 Git 저장소 Token을 관리합니다.",
+    "GithubTokenValue": "Github 토큰값",
+    "GitlabTokenValue": "Gitlab 토큰값",
+    "ConfirmSaveGitTokenValues": "Git 서비스 토큰 저장 확인",
+    "DescSaveGitTokenValues": "Git 서비스 토큰을 저장합니다",
+    "SavedGitTokenValues": "Git 서비스 토큰을 성공적으로 저장하였습니다.",
+    "GitServiceDomain": "Git 서비스 도메인",
+    "GitServiceToken": "Git 서비스 토큰"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",
@@ -1437,10 +1446,18 @@
     "GithubInternalError": "Github 저장소가 잠시 중단되었습니다. 잠시 후 시도하시기 바랍니다.",
     "GithubAPILimitError": "Github API 호출횟수가 많습니다. 잠시 후에 시도하시기 바랍니다.",
     "GithubAPIEtcError": "Github API 호출이슈가 있습니다. 잠시 후에 시도하시기 바랍니다.",
+    "ImportGithubTokenError": "Github 저장소를 접근할 수 없습니다. Github Token 값 및 권한을 확인해보시기 바랍니다",
     "ImportGitlabRepo": "Gitlab 저장소 가져오기",
     "GitlabRepoWillBeFolder": "가져온 Gitlab 저장소는 폴더로 변환되며, 세션을 시작할 때 마운트할 수 있습니다.",
     "GitlabURL": "Gitlab 주소",
-    "GitlabDefaultBranch": "Gitlab 브랜치 이름"
+    "GitlabDefaultBranch": "Gitlab 브랜치 이름",
+    "GithubBadRequest": "Github Bad Request",
+    "GithubBadCredentials": "GithubBadCredentials",
+    "GitlabBadRequest": "GitlabBadRequest",
+    "GitlabBadCredentials": "GitlabBadCredentials",
+    "GitlabAPILimitError": "GitlabAPILimitError",
+    "GitlabAPIEtcError": "GitlabAPIEtcError",
+    "GitlabInternalError": "Gitlab 내부 오류"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "이번달 통계",
