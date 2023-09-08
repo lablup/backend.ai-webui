@@ -310,7 +310,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             {endpoint?.open_to_public ? <CheckOutlined /> : <CloseOutlined />}
           </Descriptions.Item>
           <Descriptions.Item label={t('modelService.resources')} span={2}>
-            <Flex direction="row" gap={'sm'}>
+            <Flex direction="row" wrap="wrap" gap={'md'}>
               <Tooltip title={t('session.ResourceGroup')}>
                 <Tag>{endpoint?.resource_group}</Tag>
               </Tooltip>
