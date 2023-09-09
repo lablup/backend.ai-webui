@@ -53,7 +53,22 @@
       "Experiments": "実験",
       "Menu": "メニュー",
       "Run": "実行",
-      "UserName": "ユーザー名"
+      "UserName": "ユーザー名",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
+      "YouMushChangeYourPassword": "__NOT_TRANSLATED__",
+      "NewPasswordCannotBeSame": "__NOT_TRANSLATED__",
+      "SetupTotp": "__NOT_TRANSLATED__",
+      "TotpActivated": "__NOT_TRANSLATED__",
+      "PleaseConfirmYourPassword": "__NOT_TRANSLATED__",
+      "AIAccelerator": "__NOT_TRANSLATED__",
+      "AgentSummary": "__NOT_TRANSLATED__",
+      "PipelineJob": "__NOT_TRANSLATED__",
+      "Serving": "__NOT_TRANSLATED__",
+      "PasswordChangePlace": "__NOT_TRANSLATED__",
+      "Notifications": "__NOT_TRANSLATED__",
+      "Tasks": "__NOT_TRANSLATED__",
+      "CurrentPassword": "現在のパスワード",
+      "InputNewPassword": "新しいパスワードを入力してください。"
     },
     "LOGINREQUIRED": "ログインが必要です",
     "YouAreOffline": "あなたは今オフラインです",
@@ -104,7 +119,11 @@
     "NoInvitations": "表示する招待状はありません。",
     "AcceptSharedVFolder": "これで、フォルダにアクセスできます。",
     "DeclineSharedVFolder": "フォルダの招待状が削除されます：",
-    "connectingToCluster": "Backend.AIクラスターに接続しています..."
+    "connectingToCluster": "Backend.AIクラスターに接続しています...",
+    "IPUEnabled": "__NOT_TRANSLATED__",
+    "ATOMEnabled": "__NOT_TRANSLATED__",
+    "WarboyEnabled": "__NOT_TRANSLATED__",
+    "DownloadWebUIApp": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -206,7 +225,50 @@
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "スロット",
       "NotePreOpenPort": "これらのポートはコンテナ内部のポートである。",
-      "CPUcorePerOpenMPthread": "OpenMPスレッドあたりのCPUコア"
+      "CPUcorePerOpenMPthread": "OpenMPスレッドあたりのCPUコア",
+      "Architecture": "__NOT_TRANSLATED__",
+      "ModelStorageToMount": "__NOT_TRANSLATED__",
+      "MinMemory": "__NOT_TRANSLATED__",
+      "AIAccelerator": "__NOT_TRANSLATED__",
+      "FailedToConnectCoordinator": "__NOT_TRANSLATED__",
+      "PreOpenPortTitle": "__NOT_TRANSLATED__",
+      "ImageDoesNotProvideModelPath": "__NOT_TRANSLATED__",
+      "ConfirmAndLaunch": "__NOT_TRANSLATED__",
+      "SessionAlreadyExists": "__NOT_TRANSLATED__",
+      "FolderAlias": "__NOT_TRANSLATED__",
+      "DescFolderAlias": "__NOT_TRANSLATED__",
+      "FolderAliasOverlapping": "__NOT_TRANSLATED__",
+      "DescAIAccelerator": "__NOT_TRANSLATED__",
+      "OpenMPOptimization": "__NOT_TRANSLATED__",
+      "DescOpenMPOptimization": "__NOT_TRANSLATED__",
+      "DescSetPreOpenPort": "__NOT_TRANSLATED__",
+      "PreOpenPortRange": "__NOT_TRANSLATED__",
+      "PreOpenPortConfigurationDone": "__NOT_TRANSLATED__",
+      "InfiniteTime": "__NOT_TRANSLATED__",
+      "ResetStartTime": "__NOT_TRANSLATED__",
+      "SessionStartTime": "__NOT_TRANSLATED__",
+      "SessionType": "__NOT_TRANSLATED__",
+      "InferenceMode": "__NOT_TRANSLATED__",
+      "BatchMode": "__NOT_TRANSLATED__",
+      "InteractiveMode": "__NOT_TRANSLATED__",
+      "BatchModeConfig": "__NOT_TRANSLATED__",
+      "StartUpCommand": "__NOT_TRANSLATED__",
+      "ScheduleTime": "__NOT_TRANSLATED__",
+      "NoEnvConfigured": "__NOT_TRANSLATED__",
+      "SetPreopenPorts": "__NOT_TRANSLATED__",
+      "NoPreOpenPortsConfigured": "__NOT_TRANSLATED__",
+      "NoAvailableFolderToMount": "__NOT_TRANSLATED__",
+      "MountedFolders": "__NOT_TRANSLATED__",
+      "HPCOptimization": "__NOT_TRANSLATED__",
+      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__",
+      "NumOpenMPthreads": "__NOT_TRANSLATED__",
+      "NumOpenBLASthreads": "__NOT_TRANSLATED__",
+      "EnvironmentVariablePaneTitle": "__NOT_TRANSLATED__",
+      "PreOpenPortPanelTitle": "__NOT_TRANSLATED__",
+      "PortsTitleWithRange": "__NOT_TRANSLATED__",
+      "PrePortConfigWillDisappear": "__NOT_TRANSLATED__",
+      "StartModelServing": "__NOT_TRANSLATED__",
+      "(Automatic)": "(自動設定)"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -242,7 +304,10 @@
       "AppMustBeRun": "アプリがすでに実行されている場合にのみ開始します",
       "AppMustBeRunDialog": "このアプリは、すでに端末から実行されている場合にのみアクセスして使用できます。そうでない場合は、アプリが実行されていないときに発生するエラーページに移動します。",
       "ConfirmAndRun": "確認して始めます",
-      "Prepared": "準備"
+      "Prepared": "準備",
+      "NoExistingConnectionExample": "__NOT_TRANSLATED__",
+      "SSHConnectionExampleClipboardCopy": "__NOT_TRANSLATED__",
+      "App": "__NOT_TRANSLATED__"
     },
     "TensorboardPath": "TensorBoardのログディレクトリ",
     "InputTensorboardPath": "TensorBoardが参照するログディレクトリを入力してください。ログディレクトリは自動的に作成されないことに注意してください。",
@@ -260,7 +325,77 @@
     "XRDPconnection": "RDP接続",
     "UseYourFavoriteMSTSCApp": "お気に入りのMSリモートデスクトップアプリを使用する",
     "ReadMore": "続きを読む...",
-    "UtilizationIdleChecks": "稼働率アイドルチェック"
+    "UtilizationIdleChecks": "稼働率アイドルチェック",
+    "Architecture": "__NOT_TRANSLATED__",
+    "SessionType": "__NOT_TRANSLATED__",
+    "Validation": {
+      "EnterValidSessionName": "__NOT_TRANSLATED__",
+      "SessionNameRequired": "__NOT_TRANSLATED__",
+      "SluggedStrings": "__NOT_TRANSLATED__",
+      "SessionNameAlreadyExist": "__NOT_TRANSLATED__"
+    },
+    "Interactive": "__NOT_TRANSLATED__",
+    "Batch": "__NOT_TRANSLATED__",
+    "Inference": "__NOT_TRANSLATED__",
+    "Readmore": "__NOT_TRANSLATED__",
+    "Readless": "__NOT_TRANSLATED__",
+    "AllowedClientIps": "__NOT_TRANSLATED__",
+    "CommaSeparated": "__NOT_TRANSLATED__",
+    "UseSubdomain": "__NOT_TRANSLATED__",
+    "ConnectionNotice": "__NOT_TRANSLATED__",
+    "SFTPExtraNotification": "__NOT_TRANSLATED__",
+    "ConnectionExample": "__NOT_TRANSLATED__",
+    "VSCodeRemoteConnection": "__NOT_TRANSLATED__",
+    "VSCodeRemoteDescription": "__NOT_TRANSLATED__",
+    "VSCodeRemotePasswordTitle": "__NOT_TRANSLATED__",
+    "VSCodeRemoteNoticeSSHConfig": "__NOT_TRANSLATED__",
+    "EnvironmentInfo": "__NOT_TRANSLATED__",
+    "DownloadingSessionLogs": "__NOT_TRANSLATED__",
+    "CommitOnGoing": "__NOT_TRANSLATED__",
+    "CommitFinished": "__NOT_TRANSLATED__",
+    "CommitFailed": "__NOT_TRANSLATED__",
+    "CommitSession": "__NOT_TRANSLATED__",
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__",
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__",
+    "StatusDetail": "__NOT_TRANSLATED__",
+    "Message": "__NOT_TRANSLATED__",
+    "TotalRetries": "__NOT_TRANSLATED__",
+    "LastTry": "__NOT_TRANSLATED__",
+    "SessionRenamed": "__NOT_TRANSLATED__",
+    "TimeoutExceeded": "__NOT_TRANSLATED__",
+    "IdleChecks": "__NOT_TRANSLATED__",
+    "IdleChecksDesc": "__NOT_TRANSLATED__",
+    "MaxSessionLifetime": "__NOT_TRANSLATED__",
+    "MaxSessionLifetimeDesc": "__NOT_TRANSLATED__",
+    "NetworkIdleTimeout": "__NOT_TRANSLATED__",
+    "NetworkIdleTimeoutDesc": "__NOT_TRANSLATED__",
+    "UtilizationIdleTimeout": "__NOT_TRANSLATED__",
+    "UtilizationIdleTimeoutDesc": "__NOT_TRANSLATED__",
+    "GracePeriod": "__NOT_TRANSLATED__",
+    "GracePeriodDesc": "__NOT_TRANSLATED__",
+    "UtilizationThreshold": "__NOT_TRANSLATED__",
+    "UtilizationThresholdDesc": "__NOT_TRANSLATED__",
+    "Utilization": "__NOT_TRANSLATED__",
+    "Threshold": "__NOT_TRANSLATED__",
+    "SeeAppDialog": "__NOT_TRANSLATED__",
+    "ExecuteTerminalApp": "__NOT_TRANSLATED__",
+    "TerminateSession": "__NOT_TRANSLATED__",
+    "SeeContainerLogs": "__NOT_TRANSLATED__",
+    "NoLogMsgAvailable": "__NOT_TRANSLATED__",
+    "RequestContainerCommit": "__NOT_TRANSLATED__",
+    "ElapsedTime": "__NOT_TRANSLATED__",
+    "DescCommitSession": "__NOT_TRANSLATED__",
+    "NoSessionToDisplay": "__NOT_TRANSLATED__",
+    "StatusInfo": "__NOT_TRANSLATED__",
+    "System": "__NOT_TRANSLATED__",
+    "App": "アプリ",
+    "BypassAuthentication": "認証バイパス",
+    "EnterValidSessionName": "正しいセッション名を入力してください",
+    "ExpiresAfter": "残り時間",
+    "SessionLifetime": "セッション寿命",
+    "SessionNameAlreadyExist": "同じ名前のセッションが既にあります",
+    "SessionNameRequired": "セッション名を入力してください",
+    "Timeout": "タイムアウト"
   },
   "button": {
     "Cancel": "キャンセル",
@@ -290,7 +425,14 @@
     "Generate": "生む",
     "Continue": "継続する",
     "GoBackToSummaryPage": "概要ページに戻る",
-    "ForceTerminate": "強制終了"
+    "ForceTerminate": "強制終了",
+    "Reset": "__NOT_TRANSLATED__",
+    "Unset": "__NOT_TRANSLATED__",
+    "OK": "__NOT_TRANSLATED__",
+    "Commit": "__NOT_TRANSLATED__",
+    "EnterManually": "__NOT_TRANSLATED__",
+    "Activate": "アクティベーション",
+    "OptOut": "無効化"
   },
   "agent": {
     "Endpoint": "終点",
@@ -305,7 +447,17 @@
     "Running": "ランニング",
     "BackendType": "バックエンドタイプ",
     "Capabilities": "機能",
-    "NoNetworkSignal": "ネットワーク信号はありません。"
+    "NoNetworkSignal": "ネットワーク信号はありません。",
+    "NoAvailableLiveStat": "__NOT_TRANSLATED__",
+    "AgentSettingUpdated": "__NOT_TRANSLATED__",
+    "NoChanges": "__NOT_TRANSLATED__",
+    "AgentSetting": "__NOT_TRANSLATED__",
+    "Schedulable": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "Allocation": "__NOT_TRANSLATED__",
+    "Utilization": "__NOT_TRANSLATED__",
+    "DiskPerc": "__NOT_TRANSLATED__",
+    "NoAgentToDisplay": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "コア",
@@ -384,7 +536,8 @@
       "PleaseSelectOption": "オプションを1つ選択してください",
       "LetterNumber-_dot": "文字、数字、および-_を許可します。",
       "NameAlreadyExists": "ポリシー名はすでに存在します！",
-      "ValidationFailed": "検証に失敗しました"
+      "ValidationFailed": "検証に失敗しました",
+      "PleaseSelectOptions": "__NOT_TRANSLATED__"
     },
     "ProjectAndGroup": "プロジェクトとグループ",
     "ModifyKeypairResourcePolicy": "キーペアリソースポリシーを変更する",
@@ -397,7 +550,19 @@
     "UserAccountCreatedError": "このアカウントはすでに登録されています。",
     "KeypairCreated": "キーペアが正常に作成されました。",
     "UserNotFound": "次のユーザーIDが見つからなかったため、資格情報の作成に失敗しました。",
-    "UserIDRequired": "ユーザーIDが必要です。"
+    "UserIDRequired": "ユーザーIDが必要です。",
+    "ModifyUserDetail": "__NOT_TRANSLATED__",
+    "UserStatus": "__NOT_TRANSLATED__",
+    "AdminCanOnlyRemoveTotp": "__NOT_TRANSLATED__",
+    "KeySeccessfullyDeleted": "__NOT_TRANSLATED__",
+    "RateLimitInputRequired": "__NOT_TRANSLATED__",
+    "InvalidRateLimitValue": "__NOT_TRANSLATED__",
+    "WarningLessRateLimit": "__NOT_TRANSLATED__",
+    "NoCredentialToDisplay": "__NOT_TRANSLATED__",
+    "KeypairDetail": "__NOT_TRANSLATED__",
+    "SignoutSeccessfullyFinished": "__NOT_TRANSLATED__",
+    "Status": "__NOT_TRANSLATED__",
+    "NoUserToDisplay": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "フォルダー",
@@ -468,7 +633,20 @@
       "Edit": "編集",
       "EditDelete": "編集+削除",
       "KickOut": "ユーザーを追い出す",
-      "CannotDeleteFolder": "1つ以上のセッションでマウントされたフォルダを削除できません。最初にセッションを終了してください。"
+      "CannotDeleteFolder": "1つ以上のセッションでマウントされたフォルダを削除できません。最初にセッションを終了してください。",
+      "Status": "__NOT_TRANSLATED__",
+      "FolderQuota": "__NOT_TRANSLATED__",
+      "NoFolderToDisplay": "__NOT_TRANSLATED__",
+      "MaxFolderQuota": "__NOT_TRANSLATED__",
+      "FolderUsage": "__NOT_TRANSLATED__",
+      "FolderUsing": "__NOT_TRANSLATED__",
+      "OpenAFolder": "__NOT_TRANSLATED__",
+      "Serve": "__NOT_TRANSLATED__",
+      "FolderInfo": "__NOT_TRANSLATED__",
+      "CloneFolder": "__NOT_TRANSLATED__",
+      "ShareFolder": "__NOT_TRANSLATED__",
+      "ModifyPermissions": "__NOT_TRANSLATED__",
+      "LeaveFolder": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "削除...",
@@ -512,7 +690,26 @@
       "FileBrowserSessionRunningAlready": "filebrowserをサポートするセッションはすでに実行されています。そのセッションを使用してフォルダをアップロードしてください。",
       "NotEnoughResourceForFileBrowserSession": "ファイルブラウザのセッションを作成するのに十分なリソース（CPU：1コア、メモリ：0.5GB）がありません。利用可能なリソースを確認してください。",
       "NoImagesSupportingFileBrowser": "filebrowserをサポートする画像はまだありません。フォルダをアップロードするには、ファイルブラウザをサポートする少なくとも1つ以上の画像が必要です。",
-      "ClickFilebrowserButton": "フォルダをアップロードするには、[ファイルブラウザの実行]ボタンをクリックしてください。"
+      "ClickFilebrowserButton": "フォルダをアップロードするには、[ファイルブラウザの実行]ボタンをクリックしてください。",
+      "RunSSH/SFTPserver": "__NOT_TRANSLATED__",
+      "UploadFolder": "__NOT_TRANSLATED__",
+      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__",
+      "FolderAlreadyExists": "__NOT_TRANSLATED__",
+      "EmptyFilesAndFoldersAreNotUploaded": "__NOT_TRANSLATED__",
+      "NoImagesSupportingSystemSession": "__NOT_TRANSLATED__",
+      "SFTPSessionNotAvailable": "__NOT_TRANSLATED__",
+      "StartingSSH/SFTPSession": "__NOT_TRANSLATED__",
+      "NumberOfSFTPSessionsExceededTitle": "__NOT_TRANSLATED__",
+      "NumberOfSFTPSessionsExceededBody": "__NOT_TRANSLATED__",
+      "CloneFolder": "フォルダクローン",
+      "ExecuteSSH/SFTP": "SSH / SFTP実行",
+      "ExecutingSSH/SFTPSession": "SSH / SFTPセッションを実行します...",
+      "FolderInfo": "フォルダ情報",
+      "FolderOptionUpdate": "フォルダオプションの変更",
+      "LeaveFolder": "招待されたフォルダを出る",
+      "Rename": "名前変更",
+      "Serve": "モデルサービング",
+      "SftpScalingGroupsDoNotExist": "Sftpリソースグループがありません。"
     },
     "invitation": {
       "EnterEmail": "メールアドレスを入力してください",
@@ -522,7 +719,8 @@
       "InvitationError": "招待に失敗しました。ユーザーはすでに招待されている可能性があります。",
       "Shared": "グループフォルダを正常に共有しました",
       "NoOneWasShared": "グループフォルダの共有に失敗しました",
-      "SharingError": "共有に失敗しました。ユーザーはすでに共有されているか、適切なプロジェクトに属していない可能性があります。"
+      "SharingError": "共有に失敗しました。ユーザーはすでに共有されているか、適切なプロジェクトに属していない可能性があります。",
+      "FolderSharingNotAvailableToUser": "__NOT_TRANSLATED__"
     },
     "permission": {
       "NoChanges": "変更はありません",
@@ -530,20 +728,40 @@
     },
     "NoStorageDescriptionFound": "説明はありません。",
     "usage": {
-      "adequate": "十分"
-    }
+      "adequate": "十分",
+      "Adequate": "__NOT_TRANSLATED__",
+      "Caution": "__NOT_TRANSLATED__",
+      "Insufficient": "__NOT_TRANSLATED__",
+      "StatusOfSelectedHost": "__NOT_TRANSLATED__",
+      "Status": "__NOT_TRANSLATED__",
+      "used": "__NOT_TRANSLATED__"
+    },
+    "SelectStorageHost": "__NOT_TRANSLATED__",
+    "NumberOfFolders": "__NOT_TRANSLATED__",
+    "Limit": "__NOT_TRANSLATED__",
+    "ProjectFolder": "__NOT_TRANSLATED__",
+    "QuotaPerStorageVolume": "__NOT_TRANSLATED__",
+    "HostDetails": "__NOT_TRANSLATED__",
+    "Used": "__NOT_TRANSLATED__",
+    "Pipeline": "__NOT_TRANSLATED__",
+    "DialogDataFolder": "__NOT_TRANSLATED__",
+    "DialogModelFolder": "__NOT_TRANSLATED__",
+    "HostUsage": "ホスト使用量",
+    "Shared": "シェアする"
   },
   "dialog": {
     "warning": {
       "CannotBeUndone": "警告：これは元に戻せません！",
       "LogDeletion": "すべてのログメッセージを削除してもよろしいですか？",
-      "WillBeAppliedToNewSessions": "このアップデートは、新しいセッションに適用されます。"
+      "WillBeAppliedToNewSessions": "このアップデートは、新しいセッションに適用されます。",
+      "Required": "__NOT_TRANSLATED__"
     },
     "ask": {
       "DoYouWantToProceed": "続行しますか？"
     },
     "title": {
-      "LetsDouble-Check": "再確認しましょう"
+      "LetsDouble-Check": "再確認しましょう",
+      "Notice": "__NOT_TRANSLATED__"
     },
     "ErrorOccurred": "エラーが発生しました",
     "error": {
@@ -596,7 +814,10 @@
     "AppInfoDeleted": "アプリ情報が正常に削除されました。",
     "SuccessfullyModified": "正常に変更されました",
     "ProblemOccurred": "問題が発生しました",
-    "PasswordsDoNotMatch": "パスワードと確認が一致しません。"
+    "PasswordsDoNotMatch": "パスワードと確認が一致しません。",
+    "NoChangeMade": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoImageToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "リソースプリセット",
@@ -616,7 +837,9 @@
     "MinimumMemUnit": "メモリは1GBから始まります",
     "MinimumShmemUnit": "共有メモリの最小単位は0.01GBです。",
     "RAM": "RAM（GB）",
-    "SharedMemory": "共有メモリ（GB）"
+    "SharedMemory": "共有メモリ（GB）",
+    "NoResourcePresetToDisplay": "__NOT_TRANSLATED__",
+    "Deleted": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "一般",
@@ -668,7 +891,12 @@
     "Edit_ShellScriptTitle_1": "編集",
     "Edit_ShellScriptTitle_2": " シェルスクリプト",
     "AutoLogout": "自動ログアウト",
-    "DescAutoLogout": "アプリのセッション開始ページ（jupyterノートブック、Webターミナルなど）を除き、ログインしたすべてのページが閉じている場合は、自動的にログアウトします。"
+    "DescAutoLogout": "アプリのセッション開始ページ（jupyterノートブック、Webターミナルなど）を除き、ログインしたすべてのページが閉じている場合は、自動的にログアウトします。",
+    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__",
+    "BootstrapScriptDescription": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManually": "__NOT_TRANSLATED__",
+    "NoExistingVSCodePassword": "コピーするVS Codeパスワードがありません。",
+    "VSCodePasswordClipboardCopy": "VS Codeのパスワードがクリップボードにコピーされました。"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高度なWeb端末の使用法：端末の内容をコピーする",
@@ -689,7 +917,8 @@
     "RequestUrl": "URLをリクエスト",
     "Parameters": "パラメーター",
     "ErrorType": "エラータイプ",
-    "LogMessageRemoved": "ログメッセージは削除されました。"
+    "LogMessageRemoved": "ログメッセージは削除されました。",
+    "NoLogToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "Resources": "リソース",
@@ -714,7 +943,9 @@
     "SuccessfullyUpdated": "リソースポリシーが正常に更新されました。",
     "SuccessfullyDeleted": "リソースポリシーが正常に削除されました。",
     "PolicyNameEmpty": "ポリシー名は空にしないでください。",
-    "AboutToDeleteResourcePolicy": "このリソースポリシーを削除しようとしています。"
+    "AboutToDeleteResourcePolicy": "このリソースポリシーを削除しようとしています。",
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__",
+    "NoResourcePolicyToDisplay": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "ホスト名",
@@ -746,7 +977,11 @@
     "RegistryUpdateFailed": "レジストリの更新に失敗しました。",
     "RescanImages": "画像の再スキャン...",
     "RescanFailed": "再スキャンに失敗しました。",
-    "PleaseSelectOption": "オプションを1つ選択してください。"
+    "PleaseSelectOption": "オプションを1つ選択してください。",
+    "RegistrySuccessfullyModified": "__NOT_TRANSLATED__",
+    "NoRegistryToDisplay": "__NOT_TRANSLATED__",
+    "ModifyRegistry": "__NOT_TRANSLATED__",
+    "ModifyRegistryConfigurations": "レジストリ環境設定の修正"
   },
   "resourceGroup": {
     "ResourceGroups": "リソースグループ",
@@ -774,7 +1009,14 @@
     "ResourceGroupAlreadyExist": "同じ名前のリソースグループがすでに存在します。",
     "SetSchedulerOptions": "スケジューラオプションの設定",
     "TimeoutSeconds": "秒",
-    "ResourceGroupDetail": "リソースグループの詳細"
+    "ResourceGroupDetail": "リソースグループの詳細",
+    "Domain": "__NOT_TRANSLATED__",
+    "PublicStatus": "__NOT_TRANSLATED__",
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "AllowedSessionTypes": "__NOT_TRANSLATED__",
+    "Public": "__NOT_TRANSLATED__",
+    "RetriesToSkip": "__NOT_TRANSLATED__",
+    "NoGroupToDisplay": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "一般",
@@ -840,14 +1082,27 @@
     "Usage": "使用法",
     "SelectPeriod": "期間を選択",
     "1Day": "1日",
-    "1Week": "1週間"
+    "1Week": "1週間",
+    "UsageHistory": "__NOT_TRANSLATED__",
+    "UsageHistoryNote": "__NOT_TRANSLATED__",
+    "UsageHistoryDesc": "__NOT_TRANSLATED__",
+    "SessionsDesc": "__NOT_TRANSLATED__",
+    "CPUDesc": "__NOT_TRANSLATED__",
+    "MemoryDesc": "__NOT_TRANSLATED__",
+    "GPUDesc": "__NOT_TRANSLATED__",
+    "IOReadDesc": "__NOT_TRANSLATED__",
+    "IOWriteDesc": "__NOT_TRANSLATED__"
   },
   "language": {
     "Browser": "ブラウザ",
     "English": "英語",
     "Korean": "韓国語",
     "Language": "言語",
-    "OSDefault": "OSのデフォルト"
+    "OSDefault": "OSのデフォルト",
+    "Russian": "__NOT_TRANSLATED__",
+    "French": "__NOT_TRANSLATED__",
+    "Mongolian": "__NOT_TRANSLATED__",
+    "Indonesian": "__NOT_TRANSLATED__"
   },
   "settings": {
     "General": "一般",
@@ -903,7 +1158,22 @@
       "digest": "ダイジェスト",
       "tag": "鬼ごっこ",
       "none": "無し"
-    }
+    },
+    "OverlayNetwork": "__NOT_TRANSLATED__",
+    "OverlayNetworkConfiguration": "__NOT_TRANSLATED__",
+    "IPUsupport": "__NOT_TRANSLATED__",
+    "DescIPUsupport": "__NOT_TRANSLATED__",
+    "RequireIPUPlugin": "__NOT_TRANSLATED__",
+    "ATOMsupport": "__NOT_TRANSLATED__",
+    "DescATOMsupport": "__NOT_TRANSLATED__",
+    "RequireATOMPlugin": "__NOT_TRANSLATED__",
+    "Warboysupport": "__NOT_TRANSLATED__",
+    "DescWarboysupport": "__NOT_TRANSLATED__",
+    "RequireWarboyPlugin": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettings": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettingsDescription": "__NOT_TRANSLATED__",
+    "MTUDescription": "__NOT_TRANSLATED__",
+    "OutOfRange": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "正常に更新されました",
@@ -982,7 +1252,13 @@
     "InvalidChangePasswordToken": "無効なトークン",
     "InvalidChangePasswordTokenMessage": "パスワードを変更するために発行されたトークンにエラーがあります。パスワードを変更するために別のメールを送信して、再試行してください。",
     "PleaseInputLoginInfo": "ログイン用のIDとパスワードを入力してください。",
-    "TooManyAttempt": "ログインの試行回数が多すぎました。ログインの試行はしばらくの間ブロックされています。"
+    "TooManyAttempt": "ログインの試行回数が多すぎました。ログインの試行はしばらくの間ブロックされています。",
+    "EndpointInfo": "__NOT_TRANSLATED__",
+    "DescEndpoint": "__NOT_TRANSLATED__",
+    "EndpointStartWith": "__NOT_TRANSLATED__",
+    "SingleSignOn": {
+      "LoginWithSAML": "__NOT_TRANSLATED__"
+    }
   },
   "signup": {
     "SignupBETA": "サインアップ（ベータ版の招待のみ）",
@@ -1101,7 +1377,8 @@
     "CreatingComputeSession": "計算セッションの作成..。",
     "SessionStillPreparing": "セッションはまだ準備中です。しばらくしてからリロードしてください",
     "ComputeSessionPrepared": "計算セッションの準備",
-    "sessionStatusIs": "セッションステータスは"
+    "sessionStatusIs": "セッションステータスは",
+    "EmptyProject": "__NOT_TRANSLATED__"
   },
   "error": {
     "UpdateError": "更新エラー",
@@ -1124,7 +1401,10 @@
     "LoginSucceededManagerNotResponding": "ログインは成功しましたが、マネージャーが応答していません。",
     "UserNameAlreadyExist": "ユーザー名は既に存在します。複製することはできません。",
     "ResourcePolicyStillReferenced": "このリソースポリシーを参照するキーペアが存在します。",
-    "InvalidSignupToken": "無効なサインアップトークン"
+    "InvalidSignupToken": "無効なサインアップトークン",
+    "CannotChangeVirtualFolderOption": "フォルダの所有者でない場合、フォルダのオプションを変更することはできません。",
+    "CannotSharePrivateAutomountFolder": "ポリシーにより、自動マウントされたフォルダは共有できません。",
+    "FolderSharingNotAvailableToUser": "要求したユーザーはフォルダの共有ができない状態です。"
   },
   "maxLength": {
     "20chars": "（最大20文字）",
@@ -1152,6 +1432,127 @@
     "InputTooShort": "InputTooShort"
   },
   "modelService": {
-    "ValidTimeInfo": "有効な時間情報"
+    "ValidTimeInfo": "有効な時間情報",
+    "TokenGenerated": "__NOT_TRANSLATED__",
+    "TokenExpiredDateError": "__NOT_TRANSLATED__",
+    "TokenGenerationFailed": "__NOT_TRANSLATED__",
+    "Generate": "__NOT_TRANSLATED__",
+    "GenerateNewToken": "__NOT_TRANSLATED__",
+    "TokenExpiredDateHelp": "__NOT_TRANSLATED__",
+    "ExpiredDate": "__NOT_TRANSLATED__",
+    "PleaseSelectTime": "__NOT_TRANSLATED__",
+    "CurrentTime": "__NOT_TRANSLATED__",
+    "EditModelService": "__NOT_TRANSLATED__",
+    "DesiredSessionCount": "__NOT_TRANSLATED__",
+    "OnlyAllowsNonNegativeIntegers": "__NOT_TRANSLATED__",
+    "FailedToStartService": "__NOT_TRANSLATED__",
+    "FormValidationFailed": "__NOT_TRANSLATED__",
+    "StartNewServing": "__NOT_TRANSLATED__",
+    "ServiceName": "__NOT_TRANSLATED__",
+    "ServiceNameRule": "__NOT_TRANSLATED__",
+    "OpenToPublic": "__NOT_TRANSLATED__",
+    "DesiredRoutingCount": "__NOT_TRANSLATED__",
+    "ServingRouteErrorModalTitle": "__NOT_TRANSLATED__",
+    "SessionId": "__NOT_TRANSLATED__",
+    "Services": "__NOT_TRANSLATED__",
+    "RoutingInfo": "__NOT_TRANSLATED__",
+    "ClearErrors": "__NOT_TRANSLATED__",
+    "ServiceInfo": "__NOT_TRANSLATED__",
+    "EndpointName": "__NOT_TRANSLATED__",
+    "Status": "__NOT_TRANSLATED__",
+    "EndpointId": "__NOT_TRANSLATED__",
+    "SessionOwner": "__NOT_TRANSLATED__",
+    "ServiceEndpoint": "__NOT_TRANSLATED__",
+    "NoServiceEndpoint": "__NOT_TRANSLATED__",
+    "resources": "__NOT_TRANSLATED__",
+    "GeneratedTokens": "__NOT_TRANSLATED__",
+    "GenerateToken": "__NOT_TRANSLATED__",
+    "RoutesInfo": "__NOT_TRANSLATED__",
+    "RouteId": "__NOT_TRANSLATED__",
+    "TrafficRatio": "__NOT_TRANSLATED__",
+    "StartService": "__NOT_TRANSLATED__",
+    "Controls": "__NOT_TRANSLATED__",
+    "CreatedAt": "__NOT_TRANSLATED__",
+    "RoutingsCount": "__NOT_TRANSLATED__",
+    "Active/Total": "__NOT_TRANSLATED__",
+    "Public": "__NOT_TRANSLATED__",
+    "YouAreAboutToTerminate": "__NOT_TRANSLATED__",
+    "ExpiredTime": "期限切れ予定時刻",
+    "Finished": "終了",
+    "Others": "その他",
+    "Running": "実行中"
+  },
+  "ErrorBoundary": {
+    "title": "__NOT_TRANSLATED__",
+    "reloadPage": "__NOT_TRANSLATED__",
+    "resetErrorBoundary": "__NOT_TRANSLATED__",
+    "displayOnlyDevEnv": "__NOT_TRANSLATED__"
+  },
+  "storageHost": {
+    "quotaSettings": {
+      "SelectDomain": "__NOT_TRANSLATED__",
+      "AllowNumberAndDot": "__NOT_TRANSLATED__",
+      "SelectProject": "__NOT_TRANSLATED__",
+      "SelectFirst": "__NOT_TRANSLATED__",
+      "ClickSettingButton": "__NOT_TRANSLATED__",
+      "AddQuotaConfigs": "__NOT_TRANSLATED__",
+      "QuotaScopeId": "__NOT_TRANSLATED__",
+      "UnsetCustomSettings": "__NOT_TRANSLATED__",
+      "ConfirmUnsetCustomQuota": "__NOT_TRANSLATED__",
+      "QuotaScopeSuccessfullyUpdated": "__NOT_TRANSLATED__",
+      "QuotaSettings": "__NOT_TRANSLATED__",
+      "SelectUser": "__NOT_TRANSLATED__",
+      "Host": "ホスト",
+      "LessThanResourcePolicy": "Hard limitはリソースポリシーより小さくなければなりません。",
+      "Type": "タイプ"
+    },
+    "ResourcePolicySuccessfullyUpdated": "__NOT_TRANSLATED__",
+    "ResourcePolicySuccessfullyCreated": "__NOT_TRANSLATED__",
+    "ResourcePolicySettings": "__NOT_TRANSLATED__",
+    "BeCarefulToSetProjectResourcePolicy": "__NOT_TRANSLATED__",
+    "MaxFolderSize": "__NOT_TRANSLATED__",
+    "HardLimit": "__NOT_TRANSLATED__",
+    "Usage": "__NOT_TRANSLATED__",
+    "UnsetResourcePolicy": "__NOT_TRANSLATED__",
+    "DoYouWantToUseDefaultValue": "__NOT_TRANSLATED__",
+    "SelectProjectOrUserFirst": "__NOT_TRANSLATED__",
+    "ResourcePolicy": "__NOT_TRANSLATED__",
+    "Used": "__NOT_TRANSLATED__",
+    "Total": "__NOT_TRANSLATED__",
+    "QuotaSettings": "__NOT_TRANSLATED__",
+    "ForUser": "__NOT_TRANSLATED__",
+    "ForProject": "__NOT_TRANSLATED__",
+    "QuotaDoesNotSupported": "__NOT_TRANSLATED__",
+    "BeCarefulToSetUserResourcePolicy": "__NOT_TRANSLATED__",
+    "AreYouSureYouWantToDelete": "本当に消しますか？",
+    "CannotRead": "読めません。",
+    "Control": "制御",
+    "DeleteResourcePolicy": "リソースポリシーの削除",
+    "Detail": "詳細情報",
+    "Name": "名前",
+    "NoConfigs": "設定されていません。",
+    "PolicyName": "リソースポリシー名",
+    "Resource": "リソース",
+    "ResourcePolicySuccessfullyDeleted": "リソースポリシーが正常に削除されました。",
+    "Search": "検索",
+    "SoftLimit": "ソフトリミット",
+    "VendorOptions": "ベンダーオプション"
+  },
+  "totp": {
+    "TotpSetupCompleted": "__NOT_TRANSLATED__",
+    "InvalidTotpCode": "__NOT_TRANSLATED__",
+    "TotpSetupNotAvailable": "__NOT_TRANSLATED__",
+    "TypeInAuthKey": "__NOT_TRANSLATED__",
+    "ScanQRToEnable": "__NOT_TRANSLATED__",
+    "TurnOffTotp": "__NOT_TRANSLATED__",
+    "ConfirmTotpRemovalBody": "__NOT_TRANSLATED__",
+    "RemoveTotpSetupCompleted": "__NOT_TRANSLATED__",
+    "OTP": "__NOT_TRANSLATED__",
+    "EnterConfirmationCode": "確認のため、認証機に表示されている6桁の数字を入力してください。",
+    "TotpRemoved": "二要素認証が無効になりました。"
+  },
+  "OpenVSCodeRemote": "__NOT_TRANSLATED__",
+  "inputLimit": {
+    "4to64chars": "__NOT_TRANSLATED__"
   }
 }
