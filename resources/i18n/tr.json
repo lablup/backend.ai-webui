@@ -260,7 +260,10 @@
     "XRDPconnection": "RDP Bağlantısı",
     "UseYourFavoriteMSTSCApp": "En sevdiğiniz MS Remote Desktop uygulamasını kullanın",
     "ReadMore": "Daha Fazlasını Oku...",
-    "UtilizationIdleChecks": "Kullanım Rölanti Kontrolleri"
+    "UtilizationIdleChecks": "Kullanım Rölanti Kontrolleri",
+    "SessionLifetime": "Oturum Ömrü",
+    "SessionNameRequired": "Lütfen bir oturum adı girin",
+    "SessionNameAlreadyExist": "Aynı ada sahip bir oturum zaten mevcut"
   },
   "button": {
     "Cancel": "İptal etmek",
@@ -290,7 +293,8 @@
     "Generate": "üret",
     "Continue": "Devam et",
     "GoBackToSummaryPage": "Özet sayfasına geri dön",
-    "ForceTerminate": "Sonlandırmaya Zorla"
+    "ForceTerminate": "Sonlandırmaya Zorla",
+    "Activate": "Etkinleştir"
   },
   "agent": {
     "Endpoint": "uç nokta",
@@ -512,7 +516,8 @@
       "FileBrowserSessionRunningAlready": "Dosya tarayıcıyı destekleyen oturum zaten çalışıyor. Lütfen bu oturumu kullanarak klasörleri yükleyin.",
       "NotEnoughResourceForFileBrowserSession": "Dosya tarayıcısı için oturum oluşturmak için yeterli kaynak (işlemci: 1 Çekirdek, mem: 0,5 GB) yok. lütfen mevcut kaynakları kontrol edin.",
       "NoImagesSupportingFileBrowser": "Henüz filebrowser'ı destekleyen bir resim yok. Klasörleri yüklemek için dosya tarayıcıyı destekleyen en az bir veya daha fazla resim gereklidir.",
-      "ClickFilebrowserButton": "Klasör(ler)i yüklemek için lütfen Dosya tarayıcıyı çalıştır düğmesini tıklayın."
+      "ClickFilebrowserButton": "Klasör(ler)i yüklemek için lütfen Dosya tarayıcıyı çalıştır düğmesini tıklayın.",
+      "CloneFolder": "Bu klasörü klonlayın"
     },
     "invitation": {
       "EnterEmail": "Email adresini gir",

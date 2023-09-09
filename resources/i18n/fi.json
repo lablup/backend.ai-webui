@@ -260,7 +260,10 @@
     "XRDPconnection": "RDP-yhteys",
     "UseYourFavoriteMSTSCApp": "Käytä suosikkisi MS Remote Desktop -sovellusta",
     "ReadMore": "Lue lisää...",
-    "UtilizationIdleChecks": "Käyttötarkastus joutokäyntitarkastukset"
+    "UtilizationIdleChecks": "Käyttötarkastus joutokäyntitarkastukset",
+    "SessionLifetime": "Istunnon käyttöikä",
+    "SessionNameRequired": "Anna istunnon nimi",
+    "SessionNameAlreadyExist": "Samanniminen istunto on jo olemassa"
   },
   "button": {
     "Cancel": "Peruuttaa",
@@ -290,7 +293,8 @@
     "Generate": "Tuottaa",
     "Continue": "Jatkaa",
     "GoBackToSummaryPage": "Palaa yhteenvetosivulle",
-    "ForceTerminate": "Pakota lopettamaan"
+    "ForceTerminate": "Pakota lopettamaan",
+    "Activate": "Aktivoi"
   },
   "agent": {
     "Endpoint": "Päätepiste",
@@ -512,7 +516,8 @@
       "FileBrowserSessionRunningAlready": "Tiedostoselainta tukeva istunto on jo käynnissä. Lataa kansio (t) kyseisen istunnon avulla.",
       "NotEnoughResourceForFileBrowserSession": "Ei riittävästi resursseja (prosessori: 1 ydin, muisti: 0,5 Gt) istunnon luomiseen selainta varten. tarkista käytettävissä olevat resurssit.",
       "NoImagesSupportingFileBrowser": "Tiedostoselainta tukevia kuvia ei ole vielä. Kansioiden lähettämiseen vaaditaan vähintään yksi tai useampi kuva, joka tukee selainta.",
-      "ClickFilebrowserButton": "Lataa kansio (t) napsauttamalla Suorita tiedostoselain -painiketta."
+      "ClickFilebrowserButton": "Lataa kansio (t) napsauttamalla Suorita tiedostoselain -painiketta.",
+      "CloneFolder": "Kloonaa tämä kansio"
     },
     "invitation": {
       "EnterEmail": "Anna sähköpostiosoite",

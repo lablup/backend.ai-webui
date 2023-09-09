@@ -260,7 +260,10 @@
     "XRDPconnection": "RDP-Verbindung",
     "UseYourFavoriteMSTSCApp": "Verwenden Sie Ihre bevorzugte MS Remote Desktop-App",
     "ReadMore": "Mehr lesen...",
-    "UtilizationIdleChecks": "Auslastung Leerlaufkontrollen"
+    "UtilizationIdleChecks": "Auslastung Leerlaufkontrollen",
+    "SessionLifetime": "Lebensdauer der Sitzung",
+    "SessionNameRequired": "Bitte geben Sie einen Sitzungsnamen ein",
+    "SessionNameAlreadyExist": "Es existiert bereits eine Sitzung mit demselben Namen"
   },
   "button": {
     "Cancel": "Stornieren",
@@ -290,7 +293,8 @@
     "Generate": "Generieren",
     "Continue": "Fortsetzen",
     "GoBackToSummaryPage": "Zurück zur Übersichtsseite",
-    "ForceTerminate": "Beenden erzwingen"
+    "ForceTerminate": "Beenden erzwingen",
+    "Activate": "Aktivieren Sie"
   },
   "agent": {
     "Endpoint": "Endpunkt",
@@ -512,7 +516,8 @@
       "FileBrowserSessionRunningAlready": "Der sitzungsunterstützende Dateibrowser wird bereits ausgeführt. Bitte laden Sie Ordner mit dieser Sitzung hoch.",
       "NotEnoughResourceForFileBrowserSession": "Nicht genügend Ressourcen (CPU: 1 Core, Speicher: 0,5 GB), um die Sitzung für den Dateibrowser zu erstellen. Bitte überprüfen Sie die verfügbaren Ressourcen.",
       "NoImagesSupportingFileBrowser": "Es gibt noch keine Bilder, die den Dateibrowser unterstützen. Zum Hochladen von Ordnern ist mindestens ein Bild erforderlich, das den Dateibrowser unterstützt.",
-      "ClickFilebrowserButton": "Um Ordner hochzuladen, klicken Sie bitte auf die Schaltfläche Dateibrowser ausführen."
+      "ClickFilebrowserButton": "Um Ordner hochzuladen, klicken Sie bitte auf die Schaltfläche Dateibrowser ausführen.",
+      "CloneFolder": "Klonen Sie diesen Ordner"
     },
     "invitation": {
       "EnterEmail": "E-Mail Adresse eingeben",

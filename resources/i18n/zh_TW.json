@@ -53,7 +53,20 @@
       "Experiments": "實驗",
       "Menu": "菜單",
       "Run": "跑步",
-      "UserName": "用戶名"
+      "UserName": "用戶名",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
+      "YouMushChangeYourPassword": "__NOT_TRANSLATED__",
+      "NewPasswordCannotBeSame": "__NOT_TRANSLATED__",
+      "SetupTotp": "__NOT_TRANSLATED__",
+      "TotpActivated": "__NOT_TRANSLATED__",
+      "PleaseConfirmYourPassword": "__NOT_TRANSLATED__",
+      "AIAccelerator": "__NOT_TRANSLATED__",
+      "AgentSummary": "__NOT_TRANSLATED__",
+      "PipelineJob": "__NOT_TRANSLATED__",
+      "Serving": "__NOT_TRANSLATED__",
+      "PasswordChangePlace": "__NOT_TRANSLATED__",
+      "Notifications": "__NOT_TRANSLATED__",
+      "Tasks": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "需要登錄",
     "YouAreOffline": "您現在離線",
@@ -104,7 +117,11 @@
     "NoInvitations": "沒有邀請顯示。",
     "AcceptSharedVFolder": "您現在可以訪問文件夾：",
     "DeclineSharedVFolder": "文件夾邀請被刪除：",
-    "connectingToCluster": "連接到後端.AI 集群..."
+    "connectingToCluster": "連接到後端.AI 集群...",
+    "IPUEnabled": "__NOT_TRANSLATED__",
+    "ATOMEnabled": "__NOT_TRANSLATED__",
+    "WarboyEnabled": "__NOT_TRANSLATED__",
+    "DownloadWebUIApp": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -204,7 +221,49 @@
       "EnvironmentVariableConfigurationDone": "環境變量配置成功。",
       "EnvConfigWillDisappear": "任何未保存的環境變量和值都將消失。",
       "SharedMemoryAbbr": "機械製造商",
-      "GPUSlot": "投幣口"
+      "GPUSlot": "投幣口",
+      "Architecture": "__NOT_TRANSLATED__",
+      "ModelStorageToMount": "__NOT_TRANSLATED__",
+      "MinMemory": "__NOT_TRANSLATED__",
+      "AIAccelerator": "__NOT_TRANSLATED__",
+      "FailedToConnectCoordinator": "__NOT_TRANSLATED__",
+      "PreOpenPortTitle": "__NOT_TRANSLATED__",
+      "ImageDoesNotProvideModelPath": "__NOT_TRANSLATED__",
+      "ConfirmAndLaunch": "__NOT_TRANSLATED__",
+      "SessionAlreadyExists": "__NOT_TRANSLATED__",
+      "FolderAlias": "__NOT_TRANSLATED__",
+      "DescFolderAlias": "__NOT_TRANSLATED__",
+      "FolderAliasOverlapping": "__NOT_TRANSLATED__",
+      "DescAIAccelerator": "__NOT_TRANSLATED__",
+      "OpenMPOptimization": "__NOT_TRANSLATED__",
+      "DescOpenMPOptimization": "__NOT_TRANSLATED__",
+      "DescSetPreOpenPort": "__NOT_TRANSLATED__",
+      "PreOpenPortRange": "__NOT_TRANSLATED__",
+      "PreOpenPortConfigurationDone": "__NOT_TRANSLATED__",
+      "InfiniteTime": "__NOT_TRANSLATED__",
+      "ResetStartTime": "__NOT_TRANSLATED__",
+      "SessionStartTime": "__NOT_TRANSLATED__",
+      "SessionType": "__NOT_TRANSLATED__",
+      "InferenceMode": "__NOT_TRANSLATED__",
+      "BatchMode": "__NOT_TRANSLATED__",
+      "InteractiveMode": "__NOT_TRANSLATED__",
+      "BatchModeConfig": "__NOT_TRANSLATED__",
+      "StartUpCommand": "__NOT_TRANSLATED__",
+      "ScheduleTime": "__NOT_TRANSLATED__",
+      "NoEnvConfigured": "__NOT_TRANSLATED__",
+      "SetPreopenPorts": "__NOT_TRANSLATED__",
+      "NoPreOpenPortsConfigured": "__NOT_TRANSLATED__",
+      "NoAvailableFolderToMount": "__NOT_TRANSLATED__",
+      "MountedFolders": "__NOT_TRANSLATED__",
+      "HPCOptimization": "__NOT_TRANSLATED__",
+      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__",
+      "NumOpenMPthreads": "__NOT_TRANSLATED__",
+      "NumOpenBLASthreads": "__NOT_TRANSLATED__",
+      "EnvironmentVariablePaneTitle": "__NOT_TRANSLATED__",
+      "PreOpenPortPanelTitle": "__NOT_TRANSLATED__",
+      "PortsTitleWithRange": "__NOT_TRANSLATED__",
+      "PrePortConfigWillDisappear": "__NOT_TRANSLATED__",
+      "StartModelServing": "__NOT_TRANSLATED__"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",
@@ -240,7 +299,10 @@
       "AppMustBeRun": "僅在應用程序已運行時啟動",
       "AppMustBeRunDialog": "此應用程序只有在已通過終端運行時才能訪問和使用。如果沒有，您將被定向到應用未運行時出現的錯誤頁面。",
       "ConfirmAndRun": "我檢查過，我會開始",
-      "Prepared": "準備好了"
+      "Prepared": "準備好了",
+      "NoExistingConnectionExample": "__NOT_TRANSLATED__",
+      "SSHConnectionExampleClipboardCopy": "__NOT_TRANSLATED__",
+      "App": "__NOT_TRANSLATED__"
     },
     "TensorboardPath": "TensorBoard 的日誌目錄",
     "InputTensorboardPath": "請輸入 TensorBoard 將引用的日誌目錄。請注意，日誌目錄不會自動創建..",
@@ -256,7 +318,69 @@
     "UseThisArguments": "使用這個參數",
     "UseYourFavoriteVNCApp": "使用您最喜歡的 VNC 應用程序",
     "XRDPconnection": "RDP 連接",
-    "UseYourFavoriteMSTSCApp": "使用您最喜歡的 MS 遠程桌面應用程序"
+    "UseYourFavoriteMSTSCApp": "使用您最喜歡的 MS 遠程桌面應用程序",
+    "Architecture": "__NOT_TRANSLATED__",
+    "SessionType": "__NOT_TRANSLATED__",
+    "Validation": {
+      "EnterValidSessionName": "__NOT_TRANSLATED__",
+      "SessionNameRequired": "__NOT_TRANSLATED__",
+      "SluggedStrings": "__NOT_TRANSLATED__",
+      "SessionNameAlreadyExist": "__NOT_TRANSLATED__"
+    },
+    "Interactive": "__NOT_TRANSLATED__",
+    "Batch": "__NOT_TRANSLATED__",
+    "Inference": "__NOT_TRANSLATED__",
+    "Readmore": "__NOT_TRANSLATED__",
+    "Readless": "__NOT_TRANSLATED__",
+    "AllowedClientIps": "__NOT_TRANSLATED__",
+    "CommaSeparated": "__NOT_TRANSLATED__",
+    "UseSubdomain": "__NOT_TRANSLATED__",
+    "ConnectionNotice": "__NOT_TRANSLATED__",
+    "SFTPExtraNotification": "__NOT_TRANSLATED__",
+    "ConnectionExample": "__NOT_TRANSLATED__",
+    "VSCodeRemoteConnection": "__NOT_TRANSLATED__",
+    "VSCodeRemoteDescription": "__NOT_TRANSLATED__",
+    "VSCodeRemotePasswordTitle": "__NOT_TRANSLATED__",
+    "VSCodeRemoteNoticeSSHConfig": "__NOT_TRANSLATED__",
+    "EnvironmentInfo": "__NOT_TRANSLATED__",
+    "DownloadingSessionLogs": "__NOT_TRANSLATED__",
+    "CommitOnGoing": "__NOT_TRANSLATED__",
+    "CommitFinished": "__NOT_TRANSLATED__",
+    "CommitFailed": "__NOT_TRANSLATED__",
+    "CommitSession": "__NOT_TRANSLATED__",
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__",
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__",
+    "StatusDetail": "__NOT_TRANSLATED__",
+    "Message": "__NOT_TRANSLATED__",
+    "TotalRetries": "__NOT_TRANSLATED__",
+    "LastTry": "__NOT_TRANSLATED__",
+    "SessionRenamed": "__NOT_TRANSLATED__",
+    "TimeoutExceeded": "__NOT_TRANSLATED__",
+    "IdleChecks": "__NOT_TRANSLATED__",
+    "IdleChecksDesc": "__NOT_TRANSLATED__",
+    "MaxSessionLifetime": "__NOT_TRANSLATED__",
+    "MaxSessionLifetimeDesc": "__NOT_TRANSLATED__",
+    "NetworkIdleTimeout": "__NOT_TRANSLATED__",
+    "NetworkIdleTimeoutDesc": "__NOT_TRANSLATED__",
+    "UtilizationIdleTimeout": "__NOT_TRANSLATED__",
+    "UtilizationIdleTimeoutDesc": "__NOT_TRANSLATED__",
+    "GracePeriod": "__NOT_TRANSLATED__",
+    "GracePeriodDesc": "__NOT_TRANSLATED__",
+    "UtilizationThreshold": "__NOT_TRANSLATED__",
+    "UtilizationThresholdDesc": "__NOT_TRANSLATED__",
+    "Utilization": "__NOT_TRANSLATED__",
+    "Threshold": "__NOT_TRANSLATED__",
+    "SeeAppDialog": "__NOT_TRANSLATED__",
+    "ExecuteTerminalApp": "__NOT_TRANSLATED__",
+    "TerminateSession": "__NOT_TRANSLATED__",
+    "SeeContainerLogs": "__NOT_TRANSLATED__",
+    "NoLogMsgAvailable": "__NOT_TRANSLATED__",
+    "RequestContainerCommit": "__NOT_TRANSLATED__",
+    "ElapsedTime": "__NOT_TRANSLATED__",
+    "DescCommitSession": "__NOT_TRANSLATED__",
+    "NoSessionToDisplay": "__NOT_TRANSLATED__",
+    "StatusInfo": "__NOT_TRANSLATED__",
+    "System": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "取消",
@@ -286,7 +410,13 @@
     "Generate": "產生",
     "Continue": "繼續",
     "GoBackToSummaryPage": "返回摘要頁面",
-    "ForceTerminate": "強制終止"
+    "ForceTerminate": "強制終止",
+    "Reset": "__NOT_TRANSLATED__",
+    "Unset": "__NOT_TRANSLATED__",
+    "OK": "__NOT_TRANSLATED__",
+    "Commit": "__NOT_TRANSLATED__",
+    "EnterManually": "__NOT_TRANSLATED__",
+    "Activate": "激活"
   },
   "agent": {
     "Endpoint": "端點",
@@ -301,7 +431,17 @@
     "Running": "跑步",
     "BackendType": "後端類型",
     "Capabilities": "能力",
-    "NoNetworkSignal": "沒有網絡信號。"
+    "NoNetworkSignal": "沒有網絡信號。",
+    "NoAvailableLiveStat": "__NOT_TRANSLATED__",
+    "AgentSettingUpdated": "__NOT_TRANSLATED__",
+    "NoChanges": "__NOT_TRANSLATED__",
+    "AgentSetting": "__NOT_TRANSLATED__",
+    "Schedulable": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "Allocation": "__NOT_TRANSLATED__",
+    "Utilization": "__NOT_TRANSLATED__",
+    "DiskPerc": "__NOT_TRANSLATED__",
+    "NoAgentToDisplay": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "核心",
@@ -380,7 +520,8 @@
       "PleaseSelectOption": "請選擇一個選項",
       "LetterNumber-_dot": "允許字母、數字和 -_。",
       "NameAlreadyExists": "策略名稱已存在！",
-      "ValidationFailed": "驗證失敗"
+      "ValidationFailed": "驗證失敗",
+      "PleaseSelectOptions": "__NOT_TRANSLATED__"
     },
     "ProjectAndGroup": "項目和團體",
     "ModifyKeypairResourcePolicy": "修改密鑰對資源策略",
@@ -393,7 +534,19 @@
     "UserAccountCreatedError": "此帳戶已被註冊。",
     "KeypairCreated": "成功創建密鑰對。",
     "UserNotFound": "憑據創建失敗，因為找不到以下用戶 ID：",
-    "UserIDRequired": "用戶 ID 是必需的。"
+    "UserIDRequired": "用戶 ID 是必需的。",
+    "ModifyUserDetail": "__NOT_TRANSLATED__",
+    "UserStatus": "__NOT_TRANSLATED__",
+    "AdminCanOnlyRemoveTotp": "__NOT_TRANSLATED__",
+    "KeySeccessfullyDeleted": "__NOT_TRANSLATED__",
+    "RateLimitInputRequired": "__NOT_TRANSLATED__",
+    "InvalidRateLimitValue": "__NOT_TRANSLATED__",
+    "WarningLessRateLimit": "__NOT_TRANSLATED__",
+    "NoCredentialToDisplay": "__NOT_TRANSLATED__",
+    "KeypairDetail": "__NOT_TRANSLATED__",
+    "SignoutSeccessfullyFinished": "__NOT_TRANSLATED__",
+    "Status": "__NOT_TRANSLATED__",
+    "NoUserToDisplay": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "文件夾",
@@ -464,7 +617,20 @@
       "Edit": "編輯",
       "EditDelete": "編輯+刪除",
       "KickOut": "踢出用戶",
-      "CannotDeleteFolder": "無法刪除安裝在一個或多個會話中的文件夾。請先終止會話。"
+      "CannotDeleteFolder": "無法刪除安裝在一個或多個會話中的文件夾。請先終止會話。",
+      "Status": "__NOT_TRANSLATED__",
+      "FolderQuota": "__NOT_TRANSLATED__",
+      "NoFolderToDisplay": "__NOT_TRANSLATED__",
+      "MaxFolderQuota": "__NOT_TRANSLATED__",
+      "FolderUsage": "__NOT_TRANSLATED__",
+      "FolderUsing": "__NOT_TRANSLATED__",
+      "OpenAFolder": "__NOT_TRANSLATED__",
+      "Serve": "__NOT_TRANSLATED__",
+      "FolderInfo": "__NOT_TRANSLATED__",
+      "CloneFolder": "__NOT_TRANSLATED__",
+      "ShareFolder": "__NOT_TRANSLATED__",
+      "ModifyPermissions": "__NOT_TRANSLATED__",
+      "LeaveFolder": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "刪除...",
@@ -508,7 +674,17 @@
       "FileBrowserSessionRunningAlready": "支持文件瀏覽器的會話已經在運行。請使用該會話上傳文件夾。",
       "NotEnoughResourceForFileBrowserSession": "沒有足夠的資源（cpu: 1 Core, mem: 0.5GB）來為文件瀏覽器創建會話。請檢查可用資源。",
       "NoImagesSupportingFileBrowser": "尚無支持文件瀏覽器的圖像。上傳文件夾至少需要一張或多張支持文件瀏覽器的圖片。",
-      "ClickFilebrowserButton": "要上傳文件夾，請單擊執行文件瀏覽器按鈕。"
+      "ClickFilebrowserButton": "要上傳文件夾，請單擊執行文件瀏覽器按鈕。",
+      "RunSSH/SFTPserver": "__NOT_TRANSLATED__",
+      "UploadFolder": "__NOT_TRANSLATED__",
+      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__",
+      "FolderAlreadyExists": "__NOT_TRANSLATED__",
+      "EmptyFilesAndFoldersAreNotUploaded": "__NOT_TRANSLATED__",
+      "NoImagesSupportingSystemSession": "__NOT_TRANSLATED__",
+      "SFTPSessionNotAvailable": "__NOT_TRANSLATED__",
+      "StartingSSH/SFTPSession": "__NOT_TRANSLATED__",
+      "NumberOfSFTPSessionsExceededTitle": "__NOT_TRANSLATED__",
+      "NumberOfSFTPSessionsExceededBody": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "請輸入電郵地址",
@@ -518,25 +694,46 @@
       "InvitationError": "邀請失敗。用戶可能已被邀請。",
       "Shared": "已成功共享群組文件夾",
       "NoOneWasShared": "無法共享群組文件夾",
-      "SharingError": "分享失敗。用戶可能已被共享或不屬於適當的項目。"
+      "SharingError": "分享失敗。用戶可能已被共享或不屬於適當的項目。",
+      "FolderSharingNotAvailableToUser": "__NOT_TRANSLATED__"
     },
     "permission": {
       "NoChanges": "未做任何更改",
       "PermissionModified": "權限已更新"
     },
-    "NoStorageDescriptionFound": "沒有說明。"
+    "NoStorageDescriptionFound": "沒有說明。",
+    "SelectStorageHost": "__NOT_TRANSLATED__",
+    "NumberOfFolders": "__NOT_TRANSLATED__",
+    "Limit": "__NOT_TRANSLATED__",
+    "ProjectFolder": "__NOT_TRANSLATED__",
+    "QuotaPerStorageVolume": "__NOT_TRANSLATED__",
+    "HostDetails": "__NOT_TRANSLATED__",
+    "Used": "__NOT_TRANSLATED__",
+    "usage": {
+      "Adequate": "__NOT_TRANSLATED__",
+      "Caution": "__NOT_TRANSLATED__",
+      "Insufficient": "__NOT_TRANSLATED__",
+      "StatusOfSelectedHost": "__NOT_TRANSLATED__",
+      "Status": "__NOT_TRANSLATED__",
+      "used": "__NOT_TRANSLATED__"
+    },
+    "Pipeline": "__NOT_TRANSLATED__",
+    "DialogDataFolder": "__NOT_TRANSLATED__",
+    "DialogModelFolder": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {
       "CannotBeUndone": "警告：這無法撤消！",
       "LogDeletion": "您確定要刪除所有日誌消息嗎？",
-      "WillBeAppliedToNewSessions": "此更新將應用於新會話。"
+      "WillBeAppliedToNewSessions": "此更新將應用於新會話。",
+      "Required": "__NOT_TRANSLATED__"
     },
     "ask": {
       "DoYouWantToProceed": "您要繼續嗎？"
     },
     "title": {
-      "LetsDouble-Check": "讓我們仔細檢查"
+      "LetsDouble-Check": "讓我們仔細檢查",
+      "Notice": "__NOT_TRANSLATED__"
     },
     "ErrorOccurred": "錯誤發生",
     "error": {
@@ -589,7 +786,10 @@
     "AppInfoDeleted": "應用信息刪除成功。",
     "SuccessfullyModified": "修改成功",
     "ProblemOccurred": "出現問題",
-    "PasswordsDoNotMatch": "密碼和確認不匹配。"
+    "PasswordsDoNotMatch": "密碼和確認不匹配。",
+    "NoChangeMade": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoImageToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "資源預設",
@@ -609,7 +809,9 @@
     "MinimumMemUnit": "內存從 1 GB 開始",
     "MinimumShmemUnit": "共享內存的最小單位為 0.01 GB。",
     "RAM": "內存 (GB)",
-    "SharedMemory": "共享內存 (GB)"
+    "SharedMemory": "共享內存 (GB)",
+    "NoResourcePresetToDisplay": "__NOT_TRANSLATED__",
+    "Deleted": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "一般的",
@@ -661,7 +863,10 @@
     "Edit_ShellScriptTitle_1": "編輯",
     "Edit_ShellScriptTitle_2": " 外殼腳本",
     "AutoLogout": "自動退出",
-    "DescAutoLogout": "如果所有登錄頁面都關閉，除了應用程序的會話發起頁面（例如 jupyter 筆記本、網絡終端等），則自動註銷"
+    "DescAutoLogout": "如果所有登錄頁面都關閉，除了應用程序的會話發起頁面（例如 jupyter 筆記本、網絡終端等），則自動註銷",
+    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__",
+    "BootstrapScriptDescription": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManually": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高級 Web 終端使用：複製終端內容",
@@ -682,7 +887,8 @@
     "RequestUrl": "請求網址",
     "Parameters": "參數",
     "ErrorType": "錯誤類型",
-    "LogMessageRemoved": "日誌消息已被刪除。"
+    "LogMessageRemoved": "日誌消息已被刪除。",
+    "NoLogToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "Resources": "資源",
@@ -707,7 +913,9 @@
     "SuccessfullyUpdated": "資源策略已成功更新。",
     "SuccessfullyDeleted": "已成功刪除資源策略。",
     "PolicyNameEmpty": "策略名稱不應為空。",
-    "AboutToDeleteResourcePolicy": "您即將刪除此資源策略："
+    "AboutToDeleteResourcePolicy": "您即將刪除此資源策略：",
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__",
+    "NoResourcePolicyToDisplay": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "主機名",
@@ -739,7 +947,10 @@
     "RegistryUpdateFailed": "註冊表更新失敗。",
     "RescanImages": "正在重新掃描圖像...",
     "RescanFailed": "重新掃描失敗。",
-    "PleaseSelectOption": "請選擇一個選項。"
+    "PleaseSelectOption": "請選擇一個選項。",
+    "RegistrySuccessfullyModified": "__NOT_TRANSLATED__",
+    "NoRegistryToDisplay": "__NOT_TRANSLATED__",
+    "ModifyRegistry": "__NOT_TRANSLATED__"
   },
   "resourceGroup": {
     "ResourceGroups": "資源組",
@@ -767,7 +978,14 @@
     "ResourceGroupAlreadyExist": "已存在同名的資源組。",
     "SetSchedulerOptions": "設置調度程序選項",
     "TimeoutSeconds": "秒",
-    "ResourceGroupDetail": "資源組詳細信息"
+    "ResourceGroupDetail": "資源組詳細信息",
+    "Domain": "__NOT_TRANSLATED__",
+    "PublicStatus": "__NOT_TRANSLATED__",
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "AllowedSessionTypes": "__NOT_TRANSLATED__",
+    "Public": "__NOT_TRANSLATED__",
+    "RetriesToSkip": "__NOT_TRANSLATED__",
+    "NoGroupToDisplay": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "一般的",
@@ -833,14 +1051,27 @@
     "Usage": "用法",
     "SelectPeriod": "選擇期間",
     "1Day": "1天",
-    "1Week": "1週"
+    "1Week": "1週",
+    "UsageHistory": "__NOT_TRANSLATED__",
+    "UsageHistoryNote": "__NOT_TRANSLATED__",
+    "UsageHistoryDesc": "__NOT_TRANSLATED__",
+    "SessionsDesc": "__NOT_TRANSLATED__",
+    "CPUDesc": "__NOT_TRANSLATED__",
+    "MemoryDesc": "__NOT_TRANSLATED__",
+    "GPUDesc": "__NOT_TRANSLATED__",
+    "IOReadDesc": "__NOT_TRANSLATED__",
+    "IOWriteDesc": "__NOT_TRANSLATED__"
   },
   "language": {
     "Browser": "瀏覽器",
     "English": "英語",
     "Korean": "韓國人",
     "Language": "語",
-    "OSDefault": "操作系統默認值"
+    "OSDefault": "操作系統默認值",
+    "Russian": "__NOT_TRANSLATED__",
+    "French": "__NOT_TRANSLATED__",
+    "Mongolian": "__NOT_TRANSLATED__",
+    "Indonesian": "__NOT_TRANSLATED__"
   },
   "settings": {
     "General": "一般的",
@@ -896,7 +1127,22 @@
       "digest": "消化",
       "tag": "標籤",
       "none": "沒有任何"
-    }
+    },
+    "OverlayNetwork": "__NOT_TRANSLATED__",
+    "OverlayNetworkConfiguration": "__NOT_TRANSLATED__",
+    "IPUsupport": "__NOT_TRANSLATED__",
+    "DescIPUsupport": "__NOT_TRANSLATED__",
+    "RequireIPUPlugin": "__NOT_TRANSLATED__",
+    "ATOMsupport": "__NOT_TRANSLATED__",
+    "DescATOMsupport": "__NOT_TRANSLATED__",
+    "RequireATOMPlugin": "__NOT_TRANSLATED__",
+    "Warboysupport": "__NOT_TRANSLATED__",
+    "DescWarboysupport": "__NOT_TRANSLATED__",
+    "RequireWarboyPlugin": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettings": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettingsDescription": "__NOT_TRANSLATED__",
+    "MTUDescription": "__NOT_TRANSLATED__",
+    "OutOfRange": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "成功更新",
@@ -975,7 +1221,13 @@
     "InvalidChangePasswordToken": "令牌無效",
     "InvalidChangePasswordTokenMessage": "發出的用於更改密碼的令牌有錯誤。請發送另一封更改密碼的電子郵件，然後重試。",
     "PleaseInputLoginInfo": "請輸入用戶名和密碼進行登錄。",
-    "TooManyAttempt": "登錄嘗試次數過多。登錄嘗試已被阻止一段時間。"
+    "TooManyAttempt": "登錄嘗試次數過多。登錄嘗試已被阻止一段時間。",
+    "EndpointInfo": "__NOT_TRANSLATED__",
+    "DescEndpoint": "__NOT_TRANSLATED__",
+    "EndpointStartWith": "__NOT_TRANSLATED__",
+    "SingleSignOn": {
+      "LoginWithSAML": "__NOT_TRANSLATED__"
+    }
   },
   "signup": {
     "SignupBETA": "註冊（僅限 Beta 版邀請）",
@@ -1094,7 +1346,8 @@
     "CreatingComputeSession": "正在創建計算會話...",
     "SessionStillPreparing": "會議還在準備中。一段時間後重新加載",
     "ComputeSessionPrepared": "計算會話已準備好",
-    "sessionStatusIs": "會話狀態為"
+    "sessionStatusIs": "會話狀態為",
+    "EmptyProject": "__NOT_TRANSLATED__"
   },
   "error": {
     "UpdateError": "更新錯誤",
@@ -1143,5 +1396,106 @@
   "explorer": {
     "ValueRequired": "需要值",
     "InputTooShort": "輸入太短"
+  },
+  "ErrorBoundary": {
+    "title": "__NOT_TRANSLATED__",
+    "reloadPage": "__NOT_TRANSLATED__",
+    "resetErrorBoundary": "__NOT_TRANSLATED__",
+    "displayOnlyDevEnv": "__NOT_TRANSLATED__"
+  },
+  "storageHost": {
+    "quotaSettings": {
+      "SelectDomain": "__NOT_TRANSLATED__",
+      "AllowNumberAndDot": "__NOT_TRANSLATED__",
+      "SelectProject": "__NOT_TRANSLATED__",
+      "SelectFirst": "__NOT_TRANSLATED__",
+      "ClickSettingButton": "__NOT_TRANSLATED__",
+      "AddQuotaConfigs": "__NOT_TRANSLATED__",
+      "QuotaScopeId": "__NOT_TRANSLATED__",
+      "UnsetCustomSettings": "__NOT_TRANSLATED__",
+      "ConfirmUnsetCustomQuota": "__NOT_TRANSLATED__",
+      "QuotaScopeSuccessfullyUpdated": "__NOT_TRANSLATED__",
+      "QuotaSettings": "__NOT_TRANSLATED__",
+      "SelectUser": "__NOT_TRANSLATED__"
+    },
+    "ResourcePolicySuccessfullyUpdated": "__NOT_TRANSLATED__",
+    "ResourcePolicySuccessfullyCreated": "__NOT_TRANSLATED__",
+    "ResourcePolicySettings": "__NOT_TRANSLATED__",
+    "BeCarefulToSetProjectResourcePolicy": "__NOT_TRANSLATED__",
+    "MaxFolderSize": "__NOT_TRANSLATED__",
+    "HardLimit": "__NOT_TRANSLATED__",
+    "Usage": "__NOT_TRANSLATED__",
+    "UnsetResourcePolicy": "__NOT_TRANSLATED__",
+    "DoYouWantToUseDefaultValue": "__NOT_TRANSLATED__",
+    "SelectProjectOrUserFirst": "__NOT_TRANSLATED__",
+    "ResourcePolicy": "__NOT_TRANSLATED__",
+    "Used": "__NOT_TRANSLATED__",
+    "Total": "__NOT_TRANSLATED__",
+    "QuotaSettings": "__NOT_TRANSLATED__",
+    "ForUser": "__NOT_TRANSLATED__",
+    "ForProject": "__NOT_TRANSLATED__",
+    "QuotaDoesNotSupported": "__NOT_TRANSLATED__",
+    "BeCarefulToSetUserResourcePolicy": "__NOT_TRANSLATED__"
+  },
+  "modelService": {
+    "TokenGenerated": "__NOT_TRANSLATED__",
+    "TokenExpiredDateError": "__NOT_TRANSLATED__",
+    "TokenGenerationFailed": "__NOT_TRANSLATED__",
+    "Generate": "__NOT_TRANSLATED__",
+    "GenerateNewToken": "__NOT_TRANSLATED__",
+    "TokenExpiredDateHelp": "__NOT_TRANSLATED__",
+    "ExpiredDate": "__NOT_TRANSLATED__",
+    "PleaseSelectTime": "__NOT_TRANSLATED__",
+    "CurrentTime": "__NOT_TRANSLATED__",
+    "EditModelService": "__NOT_TRANSLATED__",
+    "DesiredSessionCount": "__NOT_TRANSLATED__",
+    "OnlyAllowsNonNegativeIntegers": "__NOT_TRANSLATED__",
+    "FailedToStartService": "__NOT_TRANSLATED__",
+    "FormValidationFailed": "__NOT_TRANSLATED__",
+    "StartNewServing": "__NOT_TRANSLATED__",
+    "ServiceName": "__NOT_TRANSLATED__",
+    "ServiceNameRule": "__NOT_TRANSLATED__",
+    "OpenToPublic": "__NOT_TRANSLATED__",
+    "DesiredRoutingCount": "__NOT_TRANSLATED__",
+    "ServingRouteErrorModalTitle": "__NOT_TRANSLATED__",
+    "SessionId": "__NOT_TRANSLATED__",
+    "Services": "__NOT_TRANSLATED__",
+    "RoutingInfo": "__NOT_TRANSLATED__",
+    "ClearErrors": "__NOT_TRANSLATED__",
+    "ServiceInfo": "__NOT_TRANSLATED__",
+    "EndpointName": "__NOT_TRANSLATED__",
+    "Status": "__NOT_TRANSLATED__",
+    "EndpointId": "__NOT_TRANSLATED__",
+    "SessionOwner": "__NOT_TRANSLATED__",
+    "ServiceEndpoint": "__NOT_TRANSLATED__",
+    "NoServiceEndpoint": "__NOT_TRANSLATED__",
+    "resources": "__NOT_TRANSLATED__",
+    "GeneratedTokens": "__NOT_TRANSLATED__",
+    "GenerateToken": "__NOT_TRANSLATED__",
+    "RoutesInfo": "__NOT_TRANSLATED__",
+    "RouteId": "__NOT_TRANSLATED__",
+    "TrafficRatio": "__NOT_TRANSLATED__",
+    "StartService": "__NOT_TRANSLATED__",
+    "Controls": "__NOT_TRANSLATED__",
+    "CreatedAt": "__NOT_TRANSLATED__",
+    "RoutingsCount": "__NOT_TRANSLATED__",
+    "Active/Total": "__NOT_TRANSLATED__",
+    "Public": "__NOT_TRANSLATED__",
+    "YouAreAboutToTerminate": "__NOT_TRANSLATED__"
+  },
+  "totp": {
+    "TotpSetupCompleted": "__NOT_TRANSLATED__",
+    "InvalidTotpCode": "__NOT_TRANSLATED__",
+    "TotpSetupNotAvailable": "__NOT_TRANSLATED__",
+    "TypeInAuthKey": "__NOT_TRANSLATED__",
+    "ScanQRToEnable": "__NOT_TRANSLATED__",
+    "TurnOffTotp": "__NOT_TRANSLATED__",
+    "ConfirmTotpRemovalBody": "__NOT_TRANSLATED__",
+    "RemoveTotpSetupCompleted": "__NOT_TRANSLATED__",
+    "OTP": "__NOT_TRANSLATED__"
+  },
+  "OpenVSCodeRemote": "__NOT_TRANSLATED__",
+  "inputLimit": {
+    "4to64chars": "__NOT_TRANSLATED__"
   }
 }

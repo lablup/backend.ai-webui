@@ -260,7 +260,10 @@
     "XRDPconnection": "Conexión RDP",
     "UseYourFavoriteMSTSCApp": "Utilice su aplicación MS Remote Desktop favorita",
     "ReadMore": "Leer más...",
-    "UtilizationIdleChecks": "Utilización Controles de inactividad"
+    "UtilizationIdleChecks": "Utilización Controles de inactividad",
+    "SessionLifetime": "Duración de la sesión",
+    "SessionNameRequired": "Introduzca un nombre de sesión",
+    "SessionNameAlreadyExist": "Ya existe una sesión con el mismo nombre"
   },
   "button": {
     "Cancel": "Cancelar",
@@ -290,7 +293,8 @@
     "Generate": "Generar",
     "Continue": "Continuar",
     "GoBackToSummaryPage": "Volver a la página Resumen",
-    "ForceTerminate": "Forzar terminación"
+    "ForceTerminate": "Forzar terminación",
+    "Activate": "Activar"
   },
   "agent": {
     "Endpoint": "Punto final",
@@ -512,7 +516,8 @@
       "FileBrowserSessionRunningAlready": "La sesión que admite el explorador de archivos ya se está ejecutando. Cargue la (s) carpeta (s) usando esa sesión.",
       "NotEnoughResourceForFileBrowserSession": "No hay suficientes recursos (cpu: 1 Core, mem: 0.5GB) para crear la sesión para el navegador de archivos. consulte los recursos disponibles.",
       "NoImagesSupportingFileBrowser": "Todavía no hay imágenes compatibles con el navegador de archivos. Se requiere al menos una o más imágenes que sean compatibles con el explorador de archivos para cargar carpetas.",
-      "ClickFilebrowserButton": "Para cargar carpetas, haga clic en el botón Ejecutar explorador de archivos."
+      "ClickFilebrowserButton": "Para cargar carpetas, haga clic en el botón Ejecutar explorador de archivos.",
+      "CloneFolder": "Clone esta carpeta"
     },
     "invitation": {
       "EnterEmail": "Introduzca la dirección de correo electrónico",

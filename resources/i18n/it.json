@@ -260,7 +260,10 @@
     "XRDPconnection": "Connessione RDP",
     "UseYourFavoriteMSTSCApp": "Usa la tua app MS Remote Desktop preferita",
     "ReadMore": "Per saperne di più...",
-    "UtilizationIdleChecks": "Controlli dell'utilizzo inattivo"
+    "UtilizationIdleChecks": "Controlli dell'utilizzo inattivo",
+    "SessionLifetime": "Durata della sessione",
+    "SessionNameRequired": "Inserire il nome della sessione",
+    "SessionNameAlreadyExist": "Esiste già una sessione con lo stesso nome"
   },
   "button": {
     "Cancel": "Annulla",
@@ -290,7 +293,8 @@
     "Generate": "creare",
     "Continue": "Continua",
     "GoBackToSummaryPage": "Torna alla pagina Riepilogo",
-    "ForceTerminate": "Termina forzata"
+    "ForceTerminate": "Termina forzata",
+    "Activate": "Attivare"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -512,7 +516,8 @@
       "FileBrowserSessionRunningAlready": "Il browser di file di supporto della sessione è già in esecuzione. Carica le cartelle utilizzando quella sessione.",
       "NotEnoughResourceForFileBrowserSession": "Risorse insufficienti (cpu: 1 Core, mem: 0,5 GB) per creare la sessione per filebrowser. si prega di controllare le risorse disponibili.",
       "NoImagesSupportingFileBrowser": "Non ci sono ancora immagini che supportano filebrowser. Per caricare le cartelle è necessaria almeno una o più immagini che supportino il browser di file.",
-      "ClickFilebrowserButton": "Per caricare le cartelle, fare clic sul pulsante Esegui filebrowser."
+      "ClickFilebrowserButton": "Per caricare le cartelle, fare clic sul pulsante Esegui filebrowser.",
+      "CloneFolder": "Clonare questa cartella"
     },
     "invitation": {
       "EnterEmail": "Inserisci l'indirizzo email",

@@ -260,7 +260,10 @@
     "XRDPconnection": "Połączenie RDP",
     "UseYourFavoriteMSTSCApp": "Użyj swojej ulubionej aplikacji MS Remote Desktop",
     "ReadMore": "Czytaj więcej...",
-    "UtilizationIdleChecks": "Kontrole wykorzystania na biegu jałowym"
+    "UtilizationIdleChecks": "Kontrole wykorzystania na biegu jałowym",
+    "SessionLifetime": "Czas trwania sesji",
+    "SessionNameRequired": "Wprowadź nazwę sesji",
+    "SessionNameAlreadyExist": "Sesja o tej samej nazwie już istnieje"
   },
   "button": {
     "Cancel": "Anuluj",
@@ -290,7 +293,8 @@
     "Generate": "Generować",
     "Continue": "Kontyntynuj",
     "GoBackToSummaryPage": "Wróć do strony Podsumowanie",
-    "ForceTerminate": "Wymuś zakończenie"
+    "ForceTerminate": "Wymuś zakończenie",
+    "Activate": "Aktywuj"
   },
   "agent": {
     "Endpoint": "Punkt końcowy",
@@ -512,7 +516,8 @@
       "FileBrowserSessionRunningAlready": "Sesja obsługująca przeglądarkę plików jest już uruchomiona. Prześlij folder(y) przy użyciu tej sesji.",
       "NotEnoughResourceForFileBrowserSession": "Brak wystarczających zasobów (cpu: 1 rdzeń, mem: 0,5 GB), aby utworzyć sesję dla przeglądarki plików. sprawdź dostępne zasoby.",
       "NoImagesSupportingFileBrowser": "Nie ma jeszcze obrazów obsługujących przeglądarkę plików. Do przesłania folderów wymagany jest co najmniej jeden obraz obsługujący przeglądarkę plików.",
-      "ClickFilebrowserButton": "Aby przesłać folder(y), kliknij przycisk Uruchom przeglądarkę plików."
+      "ClickFilebrowserButton": "Aby przesłać folder(y), kliknij przycisk Uruchom przeglądarkę plików.",
+      "CloneFolder": "Sklonuj ten folder"
     },
     "invitation": {
       "EnterEmail": "Wprowadź adres e-mail",

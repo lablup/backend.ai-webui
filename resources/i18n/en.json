@@ -405,7 +405,10 @@
     "System": "Upload Sessions",
     "SessionType": "SessionType",
     "ReadMore": "Read More...",
-    "UtilizationIdleChecks": "Utilization Idle Checks"
+    "UtilizationIdleChecks": "Utilization Idle Checks",
+    "SessionLifetime": "Session Lifetime",
+    "SessionNameRequired": "Please enter a session name",
+    "SessionNameAlreadyExist": "A session with the same name already exists"
   },
   "modelService": {
     "Running": "Running",
