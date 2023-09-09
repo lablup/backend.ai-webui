@@ -266,7 +266,9 @@
       "PreOpenPortConfigurationDone": "사전 개방 포트값이 설정되었습니다.",
       "PreOpenPortPanelTitle": "추가될 사전 개방 포트값 (옵션)",
       "PreOpenPortRange": "사전 개방 포트는 1024 ~ 65535 사이만 설정할 수 있습니다.",
-      "MinMemory": "재 선택한 실행환경의 최소 메모리 용량은 {{size}}iB입니다."
+      "MinMemory": "재 선택한 실행환경의 최소 메모리 용량은 {{size}}iB입니다.",
+      "NotePreOpenPort": "이 포트는 컨테이너 내부 포트입니다.",
+      "CPUcorePerOpenMPthread": "OpenMP 스레드당 CPU 코어"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -391,7 +393,9 @@
     "ConnectionNotice": "주의",
     "Readmore": "더 알아보기...",
     "Readless": "내용 접기",
-    "SessionType": "세션 타입"
+    "SessionType": "세션 타입",
+    "ReadMore": "자세히 보기...",
+    "UtilizationIdleChecks": "사용률 유휴 상태 확인"
   },
   "modelService": {
     "Running": "실행중",
@@ -441,7 +445,8 @@
     "TokenExpiredDateError": "토큰 만료 시간은 현재 시간 이후여야 합니다.",
     "ServiceNameRule": "4~64자의 영문, 숫자, 밑줄(_), 하이픈(-), 마침표(.)만 허용하며, 영문으로 영문이나 숫자로 끝나야합니다.",
     "FormValidationFailed": "양식 유효성 검사 실패",
-    "resources": "자원"
+    "resources": "자원",
+    "ValidTimeInfo": "유효한 시간 정보"
   },
   "button": {
     "Cancel": "취소",
@@ -687,7 +692,8 @@
       "used": "사용중",
       "Adequate": "여유",
       "Caution": "주의",
-      "Insufficient": "부족"
+      "Insufficient": "부족",
+      "adequate": "적절함"
     },
     "Foldername": "폴더 이름",
     "FolderToUpdate": "갱신할 폴더 이름",
@@ -1185,7 +1191,8 @@
     "GPUDesc": "연산 세션이 생성되면서 할당한 GPU 단위의 수입니다. Fractional GPU 기능이 작동하고 있을 경우, 물리 GPU 와 일치하지 않을 수 있습니다.",
     "IOReadDesc": "연산 세션에서 읽어들인(read) 데이터의 크기입니다. 단, 데이터 폴더 등 외부에서 마운트 된 장치에서 읽어들인 데이터 양은 포함되지 않습니다.",
     "IOWriteDesc": "연산 세션에서 기록한(write) 데이터의 크기입니다. 단, 데이터 폴더 등 외부에서 마운트 된 장치에서 생성한 데이터의 양은 포함되지 않습니다.",
-    "UsageHistoryNote": "여기에 나타나는 통계는 종료된 연산 세션을 기준으로 합니다. 또한, 가입 일주일 미만의 사용자에게는 주간 사용 기록 조회 메뉴가 출력되지 않을 수 있습니다."
+    "UsageHistoryNote": "여기에 나타나는 통계는 종료된 연산 세션을 기준으로 합니다. 또한, 가입 일주일 미만의 사용자에게는 주간 사용 기록 조회 메뉴가 출력되지 않을 수 있습니다.",
+    "Usage": "사용법"
   },
   "language": {
     "Browser": "브라우저 기본",
@@ -1266,7 +1273,8 @@
     "RequireATOMPlugin": "Backend.AI ATOM 플러그인이 필요합니다.",
     "Warboysupport": "Warboy 지원",
     "DescWarboysupport": "Backend.AI Warboy 플러그인이 필요합니다.",
-    "RequireWarboyPlugin": "Backend.AI Warboy 플러그인이 필요합니다."
+    "RequireWarboyPlugin": "Backend.AI Warboy 플러그인이 필요합니다.",
+    "InputRange0to1000": "0~1000 사이의 값을 입력하세요."
   },
   "notification": {
     "SuccessfullyUpdated": "성공적으로 수정되었습니다.",

@@ -204,7 +204,9 @@
       "EnvironmentVariableConfigurationDone": "Variabile d'ambiente configurata correttamente.",
       "EnvConfigWillDisappear": "Qualsiasi variabile d'ambiente e valore non salvati scompariranno.",
       "SharedMemoryAbbr": "SHMEM",
-      "GPUSlot": "Fessura"
+      "GPUSlot": "Fessura",
+      "NotePreOpenPort": "Queste porte sono le porte interne del contenitore.",
+      "CPUcorePerOpenMPthread": "Core della CPU per thread OpenMP"
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",
@@ -256,7 +258,9 @@
     "UseThisArguments": "Usa questi argomenti",
     "UseYourFavoriteVNCApp": "Usa la tua app VNC preferita",
     "XRDPconnection": "Connessione RDP",
-    "UseYourFavoriteMSTSCApp": "Usa la tua app MS Remote Desktop preferita"
+    "UseYourFavoriteMSTSCApp": "Usa la tua app MS Remote Desktop preferita",
+    "ReadMore": "Per saperne di più...",
+    "UtilizationIdleChecks": "Controlli dell'utilizzo inattivo"
   },
   "button": {
     "Cancel": "Annulla",
@@ -524,7 +528,10 @@
       "NoChanges": "Nessuna modifica effettuata",
       "PermissionModified": "Autorizzazione aggiornata"
     },
-    "NoStorageDescriptionFound": "Nessuna descrizione."
+    "NoStorageDescriptionFound": "Nessuna descrizione.",
+    "usage": {
+      "adequate": "Adeguato"
+    }
   },
   "dialog": {
     "warning": {
@@ -1143,5 +1150,8 @@
   "explorer": {
     "ValueRequired": "ValoreRichiesto",
     "InputTooShort": "Inputtroppo corto"
+  },
+  "modelService": {
+    "ValidTimeInfo": "Informazioni sull'ora valida"
   }
 }

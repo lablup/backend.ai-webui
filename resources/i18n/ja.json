@@ -204,7 +204,9 @@
       "EnvironmentVariableConfigurationDone": "環境変数が正常に構成されました。",
       "EnvConfigWillDisappear": "保存されていない環境変数と値はすべて表示されなくなります。",
       "SharedMemoryAbbr": "SHMEM",
-      "GPUSlot": "スロット"
+      "GPUSlot": "スロット",
+      "NotePreOpenPort": "これらのポートはコンテナ内部のポートである。",
+      "CPUcorePerOpenMPthread": "OpenMPスレッドあたりのCPUコア"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -256,7 +258,9 @@
     "UseThisArguments": "この引数を使用する",
     "UseYourFavoriteVNCApp": "お気に入りのVNCアプリを使用する",
     "XRDPconnection": "RDP接続",
-    "UseYourFavoriteMSTSCApp": "お気に入りのMSリモートデスクトップアプリを使用する"
+    "UseYourFavoriteMSTSCApp": "お気に入りのMSリモートデスクトップアプリを使用する",
+    "ReadMore": "続きを読む...",
+    "UtilizationIdleChecks": "稼働率アイドルチェック"
   },
   "button": {
     "Cancel": "キャンセル",
@@ -524,7 +528,10 @@
       "NoChanges": "変更はありません",
       "PermissionModified": "許可が更新されました"
     },
-    "NoStorageDescriptionFound": "説明はありません。"
+    "NoStorageDescriptionFound": "説明はありません。",
+    "usage": {
+      "adequate": "十分"
+    }
   },
   "dialog": {
     "warning": {
@@ -1143,5 +1150,8 @@
   "explorer": {
     "ValueRequired": "ValueRequired",
     "InputTooShort": "InputTooShort"
+  },
+  "modelService": {
+    "ValidTimeInfo": "有効な時間情報"
   }
 }

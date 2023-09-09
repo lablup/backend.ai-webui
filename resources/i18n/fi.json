@@ -204,7 +204,9 @@
       "EnvironmentVariableConfigurationDone": "Ympäristömuuttujan konfigurointi onnistui.",
       "EnvConfigWillDisappear": "Kaikki tallentamattomat ympäristömuuttujat ja arvot katoavat.",
       "SharedMemoryAbbr": "SHMEM",
-      "GPUSlot": "Aukko"
+      "GPUSlot": "Aukko",
+      "NotePreOpenPort": "Nämä portit ovat kontin sisäisiä portteja.",
+      "CPUcorePerOpenMPthread": "Suoritinydin per OpenMP-säie"
     },
     "Preparing": "Valmistellaan ...",
     "PreparingSession": "Valmistellaan istuntoa ...",
@@ -256,7 +258,9 @@
     "UseThisArguments": "Käytä näitä argumentteja",
     "UseYourFavoriteVNCApp": "Käytä suosikki VNC-sovellustasi",
     "XRDPconnection": "RDP-yhteys",
-    "UseYourFavoriteMSTSCApp": "Käytä suosikkisi MS Remote Desktop -sovellusta"
+    "UseYourFavoriteMSTSCApp": "Käytä suosikkisi MS Remote Desktop -sovellusta",
+    "ReadMore": "Lue lisää...",
+    "UtilizationIdleChecks": "Käyttötarkastus joutokäyntitarkastukset"
   },
   "button": {
     "Cancel": "Peruuttaa",
@@ -524,7 +528,10 @@
       "NoChanges": "Ei muutoksia tehty",
       "PermissionModified": "Lupa päivitetty"
     },
-    "NoStorageDescriptionFound": "Ei kuvausta."
+    "NoStorageDescriptionFound": "Ei kuvausta.",
+    "usage": {
+      "adequate": "Riittävästi"
+    }
   },
   "dialog": {
     "warning": {
@@ -1143,5 +1150,8 @@
   "explorer": {
     "ValueRequired": "Arvo vaaditaan",
     "InputTooShort": "InputTooShort"
+  },
+  "modelService": {
+    "ValidTimeInfo": "Voimassaoleva aikatieto"
   }
 }

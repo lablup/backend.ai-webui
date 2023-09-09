@@ -256,7 +256,8 @@
     "UseThisArguments": "Use estes argumentos",
     "UseYourFavoriteVNCApp": "Use seu aplicativo VNC favorito",
     "XRDPconnection": "Conexão RDP",
-    "UseYourFavoriteMSTSCApp": "Use seu aplicativo MS Remote Desktop favorito"
+    "UseYourFavoriteMSTSCApp": "Use seu aplicativo MS Remote Desktop favorito",
+    "UtilizationIdleChecks": "Utilização Controlos de inatividade"
   },
   "button": {
     "Cancel": "Cancelar",

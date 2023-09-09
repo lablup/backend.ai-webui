@@ -15,11 +15,11 @@ View [changelog](https://github.com/lablup/backend.ai-webui/blob/main/CHANGELOG.
 
 Backend.AI Web UI focuses to
 
- * Serve as desktop app (windows, macOS and Linux) and web service
+ * Both desktop app (Windows, macOS and Linux) and web service
  * Provide both basic administration and user mode
     * Use CLI for detailed administration features such as domain administation
- * Versatile devices ready such as mobile, tablet and desktop.
- * Built-in websocket proxy feature for apps
+ * Versatile devices ready such as mobile, tablet and desktop
+ * Built-in websocket proxy feature for desktop app
 
 ## User Features
  * Session management
@@ -28,6 +28,9 @@ Backend.AI Web UI focuses to
     * Choose and run environment-supported apps
     * Web-based Terminal for each session
     * Fully-featured Visual Studio Code editor and environments
+ * Inference service management
+    * Set / reserve endpoint URL for inference
+    * Autoscaling setup
  * Pipeline
     * Experiments (with SACRED / Microsoft NNI / Apache MLFlow)
     * AutoML (with Microsoft NNI / Apache MLFlow)

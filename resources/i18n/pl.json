@@ -204,7 +204,9 @@
       "EnvironmentVariableConfigurationDone": "Zmienna środowiskowa skonfigurowana pomyślnie.",
       "EnvConfigWillDisappear": "Wszelkie niezapisane zmienne środowiskowe i wartości znikną.",
       "SharedMemoryAbbr": "SHMEM",
-      "GPUSlot": "Otwór"
+      "GPUSlot": "Otwór",
+      "NotePreOpenPort": "Porty te są portami wewnętrznymi kontenera.",
+      "CPUcorePerOpenMPthread": "Rdzeń procesora na wątek OpenMP"
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",
@@ -256,7 +258,9 @@
     "UseThisArguments": "Użyj tych argumentów",
     "UseYourFavoriteVNCApp": "Użyj swojej ulubionej aplikacji VNC",
     "XRDPconnection": "Połączenie RDP",
-    "UseYourFavoriteMSTSCApp": "Użyj swojej ulubionej aplikacji MS Remote Desktop"
+    "UseYourFavoriteMSTSCApp": "Użyj swojej ulubionej aplikacji MS Remote Desktop",
+    "ReadMore": "Czytaj więcej...",
+    "UtilizationIdleChecks": "Kontrole wykorzystania na biegu jałowym"
   },
   "button": {
     "Cancel": "Anuluj",
@@ -524,7 +528,10 @@
       "NoChanges": "Nie wprowadzono żadnych zmian",
       "PermissionModified": "Zaktualizowano uprawnienia"
     },
-    "NoStorageDescriptionFound": "Bez opisu."
+    "NoStorageDescriptionFound": "Bez opisu.",
+    "usage": {
+      "adequate": "Odpowiedni"
+    }
   },
   "dialog": {
     "warning": {
@@ -1143,5 +1150,8 @@
   "explorer": {
     "ValueRequired": "Wymagana wartość",
     "InputTooShort": "Wejście zbyt krótkie"
+  },
+  "modelService": {
+    "ValidTimeInfo": "Ważne informacje o czasie"
   }
 }

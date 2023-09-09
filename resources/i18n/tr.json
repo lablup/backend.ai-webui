@@ -204,7 +204,9 @@
       "EnvironmentVariableConfigurationDone": "Ortam değişkeni başarıyla yapılandırıldı.",
       "EnvConfigWillDisappear": "Kaydedilmemiş tüm Ortam değişkenleri ve değerleri kaybolacaktır.",
       "SharedMemoryAbbr": "SHMEM",
-      "GPUSlot": "yuva"
+      "GPUSlot": "yuva",
+      "NotePreOpenPort": "Bu portlar konteyner iç portlarıdır.",
+      "CPUcorePerOpenMPthread": "OpenMP iş parçacığı başına CPU çekirdeği"
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -256,7 +258,9 @@
     "UseThisArguments": "Bu argümanları kullan",
     "UseYourFavoriteVNCApp": "Favori VNC uygulamanızı kullanın",
     "XRDPconnection": "RDP Bağlantısı",
-    "UseYourFavoriteMSTSCApp": "En sevdiğiniz MS Remote Desktop uygulamasını kullanın"
+    "UseYourFavoriteMSTSCApp": "En sevdiğiniz MS Remote Desktop uygulamasını kullanın",
+    "ReadMore": "Daha Fazlasını Oku...",
+    "UtilizationIdleChecks": "Kullanım Rölanti Kontrolleri"
   },
   "button": {
     "Cancel": "İptal etmek",
@@ -524,7 +528,10 @@
       "NoChanges": "Değişiklik yapılmadı",
       "PermissionModified": "İzin güncellendi"
     },
-    "NoStorageDescriptionFound": "Açıklama yok."
+    "NoStorageDescriptionFound": "Açıklama yok.",
+    "usage": {
+      "adequate": "Yeterli"
+    }
   },
   "dialog": {
     "warning": {
@@ -1143,5 +1150,8 @@
   "explorer": {
     "ValueRequired": "DeğerGerekli",
     "InputTooShort": "GirişÇok Kısa"
+  },
+  "modelService": {
+    "ValidTimeInfo": "Geçerli zaman bilgisi"
   }
 }

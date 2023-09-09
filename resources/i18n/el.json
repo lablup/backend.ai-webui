@@ -204,7 +204,9 @@
       "EnvironmentVariableConfigurationDone": "Η μεταβλητή περιβάλλοντος διαμορφώθηκε με επιτυχία.",
       "EnvConfigWillDisappear": "Τυχόν μη αποθηκευμένη μεταβλητή περιβάλλοντος και τιμή θα εξαφανιστούν.",
       "SharedMemoryAbbr": "ΣΜΕΜ",
-      "GPUSlot": "Θυρίδα"
+      "GPUSlot": "Θυρίδα",
+      "NotePreOpenPort": "Αυτές οι θύρες είναι οι εσωτερικές θύρες του εμπορευματοκιβωτίου.",
+      "CPUcorePerOpenMPthread": "Πυρήνας CPU ανά νήμα OpenMP"
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",
@@ -256,7 +258,9 @@
     "UseThisArguments": "Χρησιμοποιήστε αυτά τα επιχειρήματα",
     "UseYourFavoriteVNCApp": "Χρησιμοποιήστε την αγαπημένη σας εφαρμογή VNC",
     "XRDPconnection": "Σύνδεση RDP",
-    "UseYourFavoriteMSTSCApp": "Χρησιμοποιήστε την αγαπημένη σας εφαρμογή απομακρυσμένης επιφάνειας εργασίας MS"
+    "UseYourFavoriteMSTSCApp": "Χρησιμοποιήστε την αγαπημένη σας εφαρμογή απομακρυσμένης επιφάνειας εργασίας MS",
+    "ReadMore": "Διαβάστε Περισσότερα...",
+    "UtilizationIdleChecks": "Χρήση Έλεγχοι αδράνειας"
   },
   "button": {
     "Cancel": "Ματαίωση",
@@ -524,7 +528,10 @@
       "NoChanges": "Δεν έγιναν αλλαγές",
       "PermissionModified": "Η άδεια ενημερώθηκε"
     },
-    "NoStorageDescriptionFound": "Χωρίς περιγραφή."
+    "NoStorageDescriptionFound": "Χωρίς περιγραφή.",
+    "usage": {
+      "adequate": "Επαρκής"
+    }
   },
   "dialog": {
     "warning": {
@@ -1143,5 +1150,8 @@
   "explorer": {
     "ValueRequired": "Απαιτούμενη τιμή",
     "InputTooShort": "InputTooShort"
+  },
+  "modelService": {
+    "ValidTimeInfo": "Πληροφορίες έγκυρης ώρας"
   }
 }

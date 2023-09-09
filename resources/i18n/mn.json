@@ -234,7 +234,7 @@
       "OpenMPOptimization": "__NOT_TRANSLATED__",
       "DescOpenMPOptimization": "__NOT_TRANSLATED__",
       "HPCOptimization": "__NOT_TRANSLATED__",
-      "CPUcorePerOpenMPthread": "__NOT_TRANSLATED__",
+      "CPUcorePerOpenMPthread": "",
       "(Automatic)": "__NOT_TRANSLATED__",
       "NumOpenMPthreads": "__NOT_TRANSLATED__",
       "NumOpenBLASthreads": "__NOT_TRANSLATED__",
@@ -727,7 +727,7 @@
     "NoStorageDescriptionFound": "Тайлбар алга.",
     "DialogModelFolder": "__NOT_TRANSLATED__",
     "usage": {
-      "adequate": "__NOT_TRANSLATED__",
+      "adequate": "",
       "Adequate": "__NOT_TRANSLATED__",
       "Caution": "__NOT_TRANSLATED__",
       "Insufficient": "__NOT_TRANSLATED__",

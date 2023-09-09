@@ -280,7 +280,8 @@
       "PreOpenPortConfigurationDone": "Preopen ports configured successfully.",
       "PreOpenPortPanelTitle": "Preopen ports to set (optional)",
       "PreOpenPortRange": "Preopen ports are only available from 1024 to 65535.",
-      "MinMemory": "The minimum memory capacity for the currently selected runtime environment is {{size}}iB."
+      "MinMemory": "The minimum memory capacity for the currently selected runtime environment is {{size}}iB.",
+      "CPUcorePerOpenMPthread": "CPU core per OpenMP thread"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -402,7 +403,9 @@
     "ConnectionExample": "Connection Example",
     "ConnectionNotice": "Notice",
     "System": "Upload Sessions",
-    "SessionType": "SessionType"
+    "SessionType": "SessionType",
+    "ReadMore": "Read More...",
+    "UtilizationIdleChecks": "Utilization Idle Checks"
   },
   "modelService": {
     "Running": "Running",
@@ -699,7 +702,8 @@
       "Insufficient": "Insufficient",
       "StatusOfSelectedHost": "Status Of Selected Host",
       "Status": "Status",
-      "used": "used"
+      "used": "used",
+      "adequate": "Adequate"
     },
     "Foldername": "Folder name",
     "FolderToUpdate": "Folder to update",
@@ -1197,7 +1201,8 @@
     "GPUDesc": "The number of GPU units allocated to the compute sessions. If the Fractional GPU feature is enabled, it may not match the physics GPU.",
     "IOReadDesc": "This amount of the data read from the compute session. (The amount of data read from externally mounted devices such as data folders is not included.)",
     "IOWriteDesc": "The amount of the data write from the compute session. (The amount of data write from externally mounted devices such as data folders is not included.)",
-    "UsageHistoryNote": "The usage history shown here are based on terminated compute sessions. Also, one week usage history may not be shown for the users whose account is created no longer than a week."
+    "UsageHistoryNote": "The usage history shown here are based on terminated compute sessions. Also, one week usage history may not be shown for the users whose account is created no longer than a week.",
+    "Usage": "Usage"
   },
   "language": {
     "Browser": "Browser",
@@ -1278,7 +1283,8 @@
     "RequireATOMPlugin": "Requires Backend.AI ATOM Plugin.",
     "Warboysupport": "Warboy",
     "DescWarboysupport": "Use Furiosa Warboy support",
-    "RequireWarboyPlugin": "Requires Backend.AI Warboy Plugin."
+    "RequireWarboyPlugin": "Requires Backend.AI Warboy Plugin.",
+    "InputRange0to1000": "Enter a value between 0 and 1000."
   },
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",

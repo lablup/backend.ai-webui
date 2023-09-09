@@ -234,7 +234,7 @@
       "OpenMPOptimization": "__NOT_TRANSLATED__",
       "DescOpenMPOptimization": "__NOT_TRANSLATED__",
       "HPCOptimization": "__NOT_TRANSLATED__",
-      "CPUcorePerOpenMPthread": "__NOT_TRANSLATED__",
+      "CPUcorePerOpenMPthread": "Inti CPU per utas OpenMP",
       "(Automatic)": "__NOT_TRANSLATED__",
       "NumOpenMPthreads": "__NOT_TRANSLATED__",
       "NumOpenBLASthreads": "__NOT_TRANSLATED__",
@@ -266,7 +266,8 @@
       "PrePortConfigWillDisappear": "__NOT_TRANSLATED__",
       "PreOpenPortPanelTitle": "__NOT_TRANSLATED__",
       "PreOpenPortRange": "__NOT_TRANSLATED__",
-      "MinMemory": "__NOT_TRANSLATED__"
+      "MinMemory": "__NOT_TRANSLATED__",
+      "NotePreOpenPort": "Port ini adalah port internal kontainer."
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -727,7 +728,7 @@
     "NoStorageDescriptionFound": "Tidak ada deskripsi.",
     "DialogModelFolder": "__NOT_TRANSLATED__",
     "usage": {
-      "adequate": "__NOT_TRANSLATED__",
+      "adequate": "Memadai",
       "Adequate": "__NOT_TRANSLATED__",
       "Caution": "__NOT_TRANSLATED__",
       "Insufficient": "__NOT_TRANSLATED__",
@@ -1085,7 +1086,8 @@
     "GPUDesc": "__NOT_TRANSLATED__",
     "IOReadDesc": "__NOT_TRANSLATED__",
     "IOWriteDesc": "__NOT_TRANSLATED__",
-    "UsageHistoryNote": "__NOT_TRANSLATED__"
+    "UsageHistoryNote": "__NOT_TRANSLATED__",
+    "Usage": "Penggunaan"
   },
   "language": {
     "Browser": "Peramban web",
@@ -1518,7 +1520,8 @@
     "TokenExpiredDateError": "__NOT_TRANSLATED__",
     "FormValidationFailed": "__NOT_TRANSLATED__",
     "ServiceNameRule": "__NOT_TRANSLATED__",
-    "resources": "__NOT_TRANSLATED__"
+    "resources": "__NOT_TRANSLATED__",
+    "ValidTimeInfo": "Info waktu yang valid"
   },
   "ErrorBoundary": {
     "title": "__NOT_TRANSLATED__",
