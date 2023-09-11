@@ -125,6 +125,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             retries
             resource_group
             resource_slots
+            resource_opts
             routings {
               routing_id
               session
@@ -202,6 +203,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     return color;
   };
 
+  const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
   return (
     <Flex
       direction="column"
@@ -318,7 +320,12 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
                 JSON.parse(endpoint?.resource_slots || '{}'),
                 (value: string, type: ResourceTypeKey) => {
                   return (
-                    <ResourceNumber key={type} type={type} value={value} />
+                    <ResourceNumber
+                      key={type}
+                      type={type}
+                      value={value}
+                      opts={resource_opts}
+                    />
                   );
                 },
               )}

@@ -1,6 +1,6 @@
 import { iSizeToSize } from '../helper';
 import Flex from './Flex';
-import { Tooltip, Typography } from 'antd';
+import { Tooltip, Typography, theme } from 'antd';
 import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -14,17 +14,28 @@ export type ResourceTypeKey =
   | 'ipu.device'
   | 'atom.device'
   | 'warboy.device';
+
+export type ResourceOpts = {
+  shmem: number;
+};
 interface Props {
   type: ResourceTypeKey;
   extra?: ReactElement;
+  opts?: ResourceOpts;
   value: string;
 }
 
 type ResourceTypeInfo<V> = {
   [key in ResourceTypeKey]: V;
 };
-const ResourceNumber: React.FC<Props> = ({ type, value: amount, extra }) => {
+const ResourceNumber: React.FC<Props> = ({
+  type,
+  value: amount,
+  extra,
+  opts,
+}) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const units: ResourceTypeInfo<string> = {
     cpu: t('session.core'),
     mem: 'GiB',
@@ -48,6 +59,14 @@ const ResourceNumber: React.FC<Props> = ({ type, value: amount, extra }) => {
           : amount}
       </Typography.Text>
       <Typography.Text type="secondary">{units[type]}</Typography.Text>
+      {type === 'mem' && opts?.shmem && (
+        <Typography.Text
+          type="secondary"
+          style={{ fontSize: token.fontSizeSM }}
+        >
+          (SHM: {iSizeToSize(opts.shmem + 'b', 'g', 2).numberFixed}GiB)
+        </Typography.Text>
+      )}
       {extra}
     </Flex>
   );
