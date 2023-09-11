@@ -123,7 +123,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       }
       if (values.shmem && values.shmem > 0) {
         body['config'].resource_opts = {
-          shmem: values.shmem,
+          shmem: values.shmem + 'G',
         };
       }
       return baiSignedRequestWithPromise({
