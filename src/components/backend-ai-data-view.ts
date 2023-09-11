@@ -980,12 +980,14 @@ export default class BackendAIData extends BackendAIPage {
 
   async _getAutoSelectedVhostIncludedList() {
     const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
-    vhostInfo.allowed.unshift(
-      `auto (${this._getAutoSelectedVhostName(vhostInfo)})`,
-    );
-    vhostInfo.volume_info[
-      `auto (${this._getAutoSelectedVhostName(vhostInfo)})`
-    ] = this._getAutoSelectedVhostInfo(vhostInfo);
+    if (vhostInfo.allowed.length > 1) {
+      vhostInfo.allowed.unshift(
+        `auto (${this._getAutoSelectedVhostName(vhostInfo)})`,
+      );
+      vhostInfo.volume_info[
+        `auto (${this._getAutoSelectedVhostName(vhostInfo)})`
+      ] = this._getAutoSelectedVhostInfo(vhostInfo);
+    }
     return vhostInfo;
   }
 
@@ -996,8 +998,13 @@ export default class BackendAIData extends BackendAIPage {
     const vhostInfo = await this._getAutoSelectedVhostIncludedList();
     this.addFolderNameInput.value = ''; // reset folder name
     this.vhosts = vhostInfo.allowed;
-    this.vhost = `auto (${this._getAutoSelectedVhostName(vhostInfo)})`;
-    this.selectedVhost = `auto (${this._getAutoSelectedVhostName(vhostInfo)})`;
+    if (this.vhosts.length > 1) {
+      this.vhost = this.selectedVhost = `auto (${this._getAutoSelectedVhostName(
+        vhostInfo,
+      )})`;
+    } else {
+      this.vhost = this.selectedVhost = vhostInfo.default;
+    }
     if (this.allowed_folder_type.includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
@@ -1015,8 +1022,13 @@ export default class BackendAIData extends BackendAIPage {
     const vhostInfo = await this._getAutoSelectedVhostIncludedList();
     this.addFolderNameInput.value = ''; // reset folder name
     this.vhosts = vhostInfo.allowed;
-    this.vhost = `auto (${this._getAutoSelectedVhostName(vhostInfo)})`;
-    this.selectedVhost = `auto (${this._getAutoSelectedVhostName(vhostInfo)})`;
+    if (this.vhosts.length > 1) {
+      this.vhost = this.selectedVhost = `auto (${this._getAutoSelectedVhostName(
+        vhostInfo,
+      )})`;
+    } else {
+      this.vhost = this.selectedVhost = vhostInfo.default;
+    }
     if (this.allowed_folder_type.includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
