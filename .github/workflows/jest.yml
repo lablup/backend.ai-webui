@@ -1,0 +1,21 @@
+name: Run test and report code coverage 
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - react/src/**
+      - react/package.json
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: jwalton/gh-find-current-pr@v1
+      id: findPr
+    - uses: ArtiomTr/jest-coverage-report-action@v2
+      with:
+        working-directory: ./react
+        package-manager: npm
+        prnumber: ${{ steps.findPr.outputs.number }}
