@@ -17,7 +17,7 @@ export type ResourceTypeKey =
 interface Props {
   type: ResourceTypeKey;
   extra?: ReactElement;
-  value: number;
+  value: string;
 }
 
 type ResourceTypeInfo<V> = {
@@ -43,6 +43,8 @@ const ResourceNumber: React.FC<Props> = ({ type, value: amount, extra }) => {
       <Typography.Text>
         {units[type] === 'GiB'
           ? iSizeToSize(amount + 'b', 'g', 2).numberFixed
+          : units[type] === 'FGPU'
+          ? parseFloat(amount).toFixed(2)
           : amount}
       </Typography.Text>
       <Typography.Text type="secondary">{units[type]}</Typography.Text>

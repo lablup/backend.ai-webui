@@ -316,7 +316,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               </Tooltip>
               {_.map(
                 JSON.parse(endpoint?.resource_slots || '{}'),
-                (value: number, type: ResourceTypeKey) => {
+                (value: string, type: ResourceTypeKey) => {
                   return (
                     <ResourceNumber key={type} type={type} value={value} />
                   );
