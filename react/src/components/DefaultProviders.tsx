@@ -90,6 +90,7 @@ const useCurrentLanguage = () => {
   return [lang] as const;
 };
 
+const x = 3;
 const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   children,
   value,
