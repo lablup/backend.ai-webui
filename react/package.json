@@ -35,7 +35,8 @@
     "build:copy": "npm run build && cp -r ./build/* ../build/rollup/",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "relay": "relay-compiler"
+    "relay": "relay-compiler",
+    "postinstall": "npm run relay"
   },
   "eslintConfig": {
     "extends": [
