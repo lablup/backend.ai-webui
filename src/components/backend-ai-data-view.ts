@@ -980,8 +980,12 @@ export default class BackendAIData extends BackendAIPage {
 
   async _getAutoSelectedVhostIncludedList() {
     const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
-    vhostInfo.allowed.unshift('auto');
-    vhostInfo.volume_info.auto = this._getAutoSelectedVhostInfo(vhostInfo);
+    vhostInfo.allowed.unshift(
+      `auto (${this._getAutoSelectedVhostName(vhostInfo)})`,
+    );
+    vhostInfo.volume_info[
+      `auto (${this._getAutoSelectedVhostName(vhostInfo)})`
+    ] = this._getAutoSelectedVhostInfo(vhostInfo);
     return vhostInfo;
   }
 
@@ -992,8 +996,8 @@ export default class BackendAIData extends BackendAIPage {
     const vhostInfo = await this._getAutoSelectedVhostIncludedList();
     this.addFolderNameInput.value = ''; // reset folder name
     this.vhosts = vhostInfo.allowed;
-    this.vhost = 'auto';
-    this.selectedVhost = 'auto';
+    this.vhost = `auto (${this._getAutoSelectedVhostName(vhostInfo)})`;
+    this.selectedVhost = `auto (${this._getAutoSelectedVhostName(vhostInfo)})`;
     if (this.allowed_folder_type.includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
@@ -1011,8 +1015,8 @@ export default class BackendAIData extends BackendAIPage {
     const vhostInfo = await this._getAutoSelectedVhostIncludedList();
     this.addFolderNameInput.value = ''; // reset folder name
     this.vhosts = vhostInfo.allowed;
-    this.vhost = 'auto';
-    this.selectedVhost = 'auto';
+    this.vhost = `auto (${this._getAutoSelectedVhostName(vhostInfo)})`;
+    this.selectedVhost = `auto (${this._getAutoSelectedVhostName(vhostInfo)})`;
     if (this.allowed_folder_type.includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
@@ -1065,13 +1069,15 @@ export default class BackendAIData extends BackendAIPage {
   /**
    * Add folder with name, host, type, usage mode and permission.
    */
-  async _addFolder() {
+  _addFolder() {
     const name = this.addFolderNameInput.value;
     let host = (this.shadowRoot?.querySelector('#add-folder-host') as Select)
       .value;
-    if (host === 'auto') {
-      const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
-      host = this._getAutoSelectedVhostName(vhostInfo);
+    // Auto volume
+    const pattern = /^auto \((.+)\)$/;
+    const match = host.match(pattern);
+    if (match) {
+      host = match[1];
     }
     let ownershipType = (
       this.shadowRoot?.querySelector('#add-folder-type') as Select
@@ -1161,9 +1167,11 @@ export default class BackendAIData extends BackendAIPage {
     );
     let host = (this.shadowRoot?.querySelector('#clone-folder-host') as Select)
       .value;
-    if (host === 'auto') {
-      const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
-      host = this._getAutoSelectedVhostName(vhostInfo);
+    // Auto volume
+    const pattern = /^auto \((.+)\)$/;
+    const match = host.match(pattern);
+    if (match) {
+      host = match[1];
     }
     let ownershipType = (
       this.shadowRoot?.querySelector('#clone-folder-type') as Select
