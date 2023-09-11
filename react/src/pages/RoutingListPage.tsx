@@ -4,7 +4,7 @@ import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationM
 import Flex from '../components/Flex';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
-import ResourceNumber from '../components/ResourceNumber';
+import ResourceNumber, { ResourceTypeKey } from '../components/ResourceNumber';
 import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
 import { baiSignedRequestWithPromise } from '../helper';
@@ -316,7 +316,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               </Tooltip>
               {_.map(
                 JSON.parse(endpoint?.resource_slots || '{}'),
-                (value, type) => {
+                (value: number, type: ResourceTypeKey) => {
                   return (
                     <ResourceNumber key={type} type={type} value={value} />
                   );

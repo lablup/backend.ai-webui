@@ -4,36 +4,37 @@ import { Tooltip, Typography } from 'antd';
 import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type ResourceTypeKey =
+export type ResourceTypeKey =
   | 'cpu'
   | 'mem'
   | 'cuda.device'
   | 'cuda.shares'
   | 'rocm.device'
-  | 'tpu.slot'
-  | 'ipu.slot'
-  | 'atom.slot'
-  | 'warboy.slot'
-  | string;
+  | 'tpu.device'
+  | 'ipu.device'
+  | 'atom.device'
+  | 'warboy.device';
 interface Props {
-  type: ResourceTypeKey | string;
+  type: ResourceTypeKey;
   extra?: ReactElement;
   value: number;
 }
+
+type ResourceTypeInfo<V> = {
+  [key in ResourceTypeKey]: V;
+};
 const ResourceNumber: React.FC<Props> = ({ type, value: amount, extra }) => {
   const { t } = useTranslation();
-  const units: {
-    [key: ResourceTypeKey]: string;
-  } = {
+  const units: ResourceTypeInfo<string> = {
     cpu: t('session.core'),
     mem: 'GiB',
     'cuda.device': 'GPU',
     'cuda.shares': 'FGPU',
     'rocm.device': 'GPU',
-    'tpu.slot': 'TPU',
-    'ipu.slot': 'IPU',
-    'atom.slot': 'ATOM',
-    'warboy.slot': 'Warboy',
+    'tpu.device': 'TPU',
+    'ipu.device': 'IPU',
+    'atom.device': 'ATOM',
+    'warboy.device': 'Warboy',
   };
 
   return (
@@ -86,9 +87,9 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const resourceTypeIconSrcMap: {
-    [key: ResourceTypeKey]: [string | ReactElement | null, string];
-  } = {
+  const resourceTypeIconSrcMap: ResourceTypeInfo<
+    [ReactElement | string, string]
+  > = {
     cpu: [
       <MWCIconWrap size={size}>developer_board</MWCIconWrap>,
       t('session.core'),
@@ -97,10 +98,10 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     'cuda.device': ['/resources/icons/file_type_cuda.svg', 'GPU'],
     'cuda.shares': ['/resources/icons/file_type_cuda.svg', 'FGPU'],
     'rocm.device': ['/resources/icons/ROCm.png', 'GPU'],
-    'tpu.slot': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'TPU'],
-    'ipu.slot': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'IPU'],
-    'atom.slot': ['/resources/icons/rebel.svg', 'ATOM'],
-    'warboy.slot': ['/resources/icons/furiosa.svg', 'Warboy'],
+    'tpu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'TPU'],
+    'ipu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'IPU'],
+    'atom.device': ['/resources/icons/rebel.svg', 'ATOM'],
+    'warboy.device': ['/resources/icons/furiosa.svg', 'Warboy'],
   };
 
   return (
