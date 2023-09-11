@@ -23,9 +23,13 @@ jobs:
         node-version-file: '.nvmrc'
     - name: Install dependencies
       run: npm install
+    - run: npm run relay
     - name: Run ESLint on React
       run: npx eslint ./src --ignore-pattern '*.test.*' --max-warnings=0
-    - uses: ArtiomTr/jest-coverage-report-action@v2
+    - name: run relay-compiler
+      run: npm run relay
+    - name: Jest report
+      uses: ArtiomTr/jest-coverage-report-action@v2
       with:
         skip-step: install
         working-directory: ./react
