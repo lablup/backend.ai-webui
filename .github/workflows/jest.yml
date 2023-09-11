@@ -18,4 +18,5 @@ jobs:
       with:
         working-directory: ./react
         package-manager: npm
+        test-script: npm test
         prnumber: ${{ steps.findPr.outputs.number }}
