@@ -331,7 +331,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               )}
             </Flex>
           </Descriptions.Item>
-          <Descriptions.Item label="Image">
+          <Descriptions.Item label={t('modelService.Image')}>
             {endpoint?.image && (
               <Flex direction="row" gap={'xs'}>
                 <ImageMetaIcon image={endpoint.image} />

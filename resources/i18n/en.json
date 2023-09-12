@@ -280,7 +280,8 @@
       "PreOpenPortConfigurationDone": "Preopen ports configured successfully.",
       "PreOpenPortPanelTitle": "Preopen ports to set (optional)",
       "PreOpenPortRange": "Preopen ports are only available from 1024 to 65535.",
-      "MinMemory": "The minimum memory capacity for the currently selected runtime environment is {{size}}iB."
+      "MinMemory": "The minimum memory capacity for the currently selected runtime environment is {{size}}iB.",
+      "ModelStorage": "ModelStorage"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -453,7 +454,8 @@
     "TokenExpiredDateError": "The token expiration time must be after the current time",
     "ServiceNameRule": "Only allow 4 to 64 characters of alphanumeric, underscore(_), hyphen(-), and period(.) and it must end with an alphanumeric character.",
     "FormValidationFailed": "Form validation failed",
-    "resources": "Resources"
+    "resources": "Resources",
+    "Image": "Image"
   },
   "button": {
     "Cancel": "Cancel",
