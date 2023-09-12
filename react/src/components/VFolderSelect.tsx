@@ -5,7 +5,7 @@ import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
 import React, { startTransition, useEffect } from 'react';
 
-type VFolder = {
+export type VFolder = {
   name: string;
   id: string;
   quota_scope_id: string;
