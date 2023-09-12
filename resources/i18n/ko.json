@@ -257,6 +257,7 @@
       "InferenceMode": "Inference",
       "ImageDoesNotProvideModelPath": "모델 경로를 지정하지 않은 컨테이너 이미지입니다. 수정이 필요합니다.",
       "ModelStorageToMount": "마운트할 모델 스토리지 폴더",
+      "ModelStorage": "모델 스토리지 폴더",
       "AIAccelerator": "AI 가속기",
       "DescAIAccelerator": "<p>AI 가속기 (GPU 및 NPU)는 기계 학습과 관련된 행렬 / 벡터 계산에 적합합니다. AI 가속기는 훈련 및 인퍼런스 알고리즘을 몇 배나 가속화하여 기계 학습 워크로드의 실행 시간을 몇 주에서 며칠로 줄입니다.</p>",
       "PreOpenPortTitle": "사전 개방 포트",
@@ -441,7 +442,8 @@
     "TokenExpiredDateError": "토큰 만료 시간은 현재 시간 이후여야 합니다.",
     "ServiceNameRule": "4~64자의 영문, 숫자, 밑줄(_), 하이픈(-), 마침표(.)만 허용하며, 영문으로 영문이나 숫자로 끝나야합니다.",
     "FormValidationFailed": "양식 유효성 검사 실패",
-    "resources": "자원"
+    "resources": "자원",
+    "Image": "이미지"
   },
   "button": {
     "Cancel": "취소",

@@ -266,7 +266,8 @@
       "PrePortConfigWillDisappear": "__NOT_TRANSLATED__",
       "PreOpenPortPanelTitle": "__NOT_TRANSLATED__",
       "PreOpenPortRange": "__NOT_TRANSLATED__",
-      "MinMemory": "__NOT_TRANSLATED__"
+      "MinMemory": "__NOT_TRANSLATED__",
+      "ModelStorage": "__NOT_TRANSLATED__"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -1519,7 +1520,8 @@
     "TokenExpiredDateError": "__NOT_TRANSLATED__",
     "FormValidationFailed": "__NOT_TRANSLATED__",
     "ServiceNameRule": "__NOT_TRANSLATED__",
-    "resources": "__NOT_TRANSLATED__"
+    "resources": "__NOT_TRANSLATED__",
+    "Image": "__NOT_TRANSLATED__"
   },
   "ErrorBoundary": {
     "title": "__NOT_TRANSLATED__",

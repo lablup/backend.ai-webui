@@ -6,6 +6,7 @@ import ImageMetaIcon from '../components/ImageMetaIcon';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
 import ResourceNumber, { ResourceTypeKey } from '../components/ResourceNumber';
 import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
+import VFolderLazyView from '../components/VFolderLazyView';
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
 import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
@@ -17,6 +18,7 @@ import {
 import {
   CheckOutlined,
   CloseOutlined,
+  LoadingOutlined,
   PlusOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
@@ -29,6 +31,7 @@ import {
   Card,
   Descriptions,
   Popover,
+  Spin,
   Table,
   Tag,
   Tooltip,
@@ -38,7 +41,7 @@ import {
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
-import React, { useState, useTransition } from 'react';
+import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -123,6 +126,8 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               ...ServingRouteErrorModalFragment
             }
             retries
+            model
+            model_mount_destiation
             resource_group
             resource_slots
             resource_opts
@@ -159,7 +164,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         tokenListOffset:
           (paginationState.current - 1) * paginationState.pageSize,
         tokenListLimit: paginationState.pageSize,
-        endpointId: serviceId,
+        endpointId: serviceId || '',
       },
       {
         fetchPolicy:
@@ -167,7 +172,6 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         fetchKey,
       },
     );
-
   const mutationToClearError = useTanMutation(() => {
     if (!endpoint) return;
     return baiSignedRequestWithPromise({
@@ -331,7 +335,14 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               )}
             </Flex>
           </Descriptions.Item>
-          <Descriptions.Item label="Image">
+          <Descriptions.Item label={t('session.launcher.ModelStorage')}>
+            <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
+              {endpoint?.model && (
+                <VFolderLazyView uuid={endpoint?.model} clickable={false} />
+              )}
+            </Suspense>
+          </Descriptions.Item>
+          <Descriptions.Item label={t('modelService.Image')} span={2}>
             {endpoint?.image && (
               <Flex direction="row" gap={'xs'}>
                 <ImageMetaIcon image={endpoint.image} />
@@ -357,7 +368,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       >
         <Table
           scroll={{ x: 'max-content' }}
-          rowKey={'endpoint_id'}
+          rowKey={'token'}
           columns={[
             {
               title: '#',
@@ -456,7 +467,9 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
                           type="text"
                           icon={<QuestionCircleOutlined />}
                           style={{ color: token.colorTextSecondary }}
-                          onClick={() => openSessionErrorModal(session)}
+                          onClick={() =>
+                            session && openSessionErrorModal(session)
+                          }
                         />
                       </Popover>
                     )}
