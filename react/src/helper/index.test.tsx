@@ -26,27 +26,27 @@ describe('iSizeToSize', () => {
     });
   });
 
-  it('should convert iSize to Size with targetSizeUnit of "k"', () => {
-    const sizeWithUnit = '1M';
+  it('should convert iSize to Size with targetSizeUnit of "k"(lower case)', () => {
+    const sizeWithUnit = '1m';
     const targetSizeUnit = 'k';
     const result = iSizeToSize(sizeWithUnit, targetSizeUnit);
     expect(result).toEqual({
       number: 1024,
       numberFixed: '1024.00',
-      unit: 'k',
-      numberUnit: '1024.00k',
+      unit: 'K',
+      numberUnit: '1024.00K',
     });
   });
 
   it('should convert iSize to Size with targetSizeUnit of "t"', () => {
     const sizeWithUnit = '1P';
-    const targetSizeUnit = 't';
+    const targetSizeUnit = 'T';
     const result = iSizeToSize(sizeWithUnit, targetSizeUnit);
     expect(result).toEqual({
-      number: 0.0009765625,
-      numberFixed: '0.00',
-      unit: 't',
-      numberUnit: '0.00t',
+      number: 1024,
+      numberFixed: '1024.00',
+      unit: 'T',
+      numberUnit: '1024.00T',
     });
   });
 
