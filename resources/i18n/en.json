@@ -281,7 +281,7 @@
       "PreOpenPortPanelTitle": "Preopen ports to set (optional)",
       "PreOpenPortRange": "Preopen ports are only available from 1024 to 65535.",
       "MinMemory": "The minimum memory capacity for the currently selected runtime environment is {{size}}iB.",
-      "ModelStorage": "ModelStorage"
+      "ModelStorage": "Model Storage"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
