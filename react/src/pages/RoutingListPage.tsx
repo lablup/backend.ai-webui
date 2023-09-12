@@ -340,7 +340,6 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               {endpoint?.model && (
                 <VFolderLazyView uuid={endpoint?.model} clickable={false} />
               )}
-              ㄱ
             </Suspense>
           </Descriptions.Item>
           <Descriptions.Item label={t('modelService.Image')} span={2}>
