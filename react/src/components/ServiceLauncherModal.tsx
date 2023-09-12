@@ -123,7 +123,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       }
       if (values.shmem && values.shmem > 0) {
         body['config'].resource_opts = {
-          shmem: values.shmem,
+          shmem: values.shmem + 'G',
         };
       }
       return baiSignedRequestWithPromise({
@@ -314,12 +314,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                           (i) => i?.key === 'cpu',
                         )?.min || '0',
                       )}
-                      max={parseInt(
-                        _.find(
-                          currentImage?.resource_limits,
-                          (i) => i?.key === 'cpu',
-                        )?.max || '100',
-                      )}
+                      max={baiClient._config.maxCPUCoresPerContainer || 128}
                       inputNumberProps={{
                         addonAfter: t('session.launcher.Core'),
                       }}
@@ -336,7 +331,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       tooltip={
                         <Trans i18nKey={'session.launcher.DescMemory'} />
                       }
-                      max={64}
+                      max={baiClient._config.maxMemoryPerContainer || 1536}
                       min={0}
                       inputNumberProps={{
                         addonAfter: 'GiB',
@@ -377,7 +372,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       tooltip={
                         <Trans i18nKey={'session.launcher.DescSharedMemory'} />
                       }
-                      max={64}
+                      max={baiClient._config.maxShmPerContainer || 8}
                       min={0}
                       step={0.25}
                       inputNumberProps={{
@@ -390,31 +385,35 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         },
                       ]}
                     />
-                    {resourceSlots?.['cuda.device'] ||
-                      (resourceSlots?.['cuda.shares'] && (
-                        <SliderInputItem
-                          style={{ marginBottom: 0 }}
-                          name={'gpu'}
-                          label={t('session.launcher.AIAccelerator')}
-                          tooltip={
-                            <Trans
-                              i18nKey={'session.launcher.DescAIAccelerator'}
-                            />
-                          }
-                          max={30}
-                          step={resourceSlots['cuda.shares'] ? 0.1 : 1}
-                          inputNumberProps={{
-                            //TODO: change unit based on resource limit
-                            addonAfter: 'GPU',
-                          }}
-                          required
-                          rules={[
-                            {
-                              required: true,
-                            },
-                          ]}
-                        />
-                      ))}
+                    {(resourceSlots?.['cuda.device'] ||
+                      resourceSlots?.['cuda.shares']) && (
+                      <SliderInputItem
+                        style={{ marginBottom: 0 }}
+                        name={'gpu'}
+                        label={t('session.launcher.AIAccelerator')}
+                        tooltip={
+                          <Trans
+                            i18nKey={'session.launcher.DescAIAccelerator'}
+                          />
+                        }
+                        max={
+                          resourceSlots['cuda.shares']
+                            ? baiClient._config.maxCUDASharesPerContainer
+                            : baiClient._config.maxCUDADevicesPerContainer
+                        }
+                        step={resourceSlots['cuda.shares'] ? 0.1 : 1}
+                        inputNumberProps={{
+                          //TODO: change unit based on resource limit
+                          addonAfter: 'GPU',
+                        }}
+                        required
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
+                      />
+                    )}
                   </>
                 );
               }}

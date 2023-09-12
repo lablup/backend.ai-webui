@@ -4,7 +4,7 @@ import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationM
 import Flex from '../components/Flex';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
-import ResourcesNumbers from '../components/ResourcesNumbers';
+import ResourceNumber, { ResourceTypeKey } from '../components/ResourceNumber';
 import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
 import { baiSignedRequestWithPromise } from '../helper';
@@ -37,6 +37,7 @@ import {
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
+import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
@@ -124,6 +125,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             retries
             resource_group
             resource_slots
+            resource_opts
             routings {
               routing_id
               session
@@ -201,6 +203,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     return color;
   };
 
+  const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
   return (
     <Flex
       direction="column"
@@ -309,11 +312,23 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             {endpoint?.open_to_public ? <CheckOutlined /> : <CloseOutlined />}
           </Descriptions.Item>
           <Descriptions.Item label={t('modelService.resources')} span={2}>
-            <Flex direction="row" gap={'sm'}>
-              {endpoint?.resource_group}
-              <ResourcesNumbers
-                {...JSON.parse(endpoint?.resource_slots || '{}')}
-              />
+            <Flex direction="row" wrap="wrap" gap={'md'}>
+              <Tooltip title={t('session.ResourceGroup')}>
+                <Tag>{endpoint?.resource_group}</Tag>
+              </Tooltip>
+              {_.map(
+                JSON.parse(endpoint?.resource_slots || '{}'),
+                (value: string, type: ResourceTypeKey) => {
+                  return (
+                    <ResourceNumber
+                      key={type}
+                      type={type}
+                      value={value}
+                      opts={resource_opts}
+                    />
+                  );
+                },
+              )}
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item label="Image">
