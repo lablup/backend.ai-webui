@@ -337,20 +337,20 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               )}
             </Flex>
           </Descriptions.Item>
-          <Descriptions.Item label={t('modelService.Image')}>
+          <Descriptions.Item label={t('session.launcher.ModelStorage')}>
+            <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
+              {endpoint?.model && (
+                <VFolderLazyView uuid={endpoint?.model} clickable={false} />
+              )}
+            </Suspense>
+          </Descriptions.Item>
+          <Descriptions.Item label={t('modelService.Image')} span={2}>
             {endpoint?.image && (
               <Flex direction="row" gap={'xs'}>
                 <ImageMetaIcon image={endpoint.image} />
                 <CopyableCodeText>{endpoint.image}</CopyableCodeText>
               </Flex>
             )}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('session.launcher.ModelStorage')}>
-            <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
-              {endpoint?.model && (
-                <VFolderLazyView uuid={endpoint?.model} clickable />
-              )}
-            </Suspense>
           </Descriptions.Item>
         </Descriptions>
       </Card>
