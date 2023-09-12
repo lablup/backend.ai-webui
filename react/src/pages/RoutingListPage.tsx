@@ -357,7 +357,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       >
         <Table
           scroll={{ x: 'max-content' }}
-          rowKey={'endpoint_id'}
+          rowKey={'token'}
           columns={[
             {
               title: '#',
