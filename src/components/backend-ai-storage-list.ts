@@ -3836,7 +3836,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     // add current folder
     imageResource['mounts'] = [this.explorer.id];
     imageResource['cpu'] = 1;
-    imageResource['mem'] = '256m';
+    imageResource['mem'] = '1g';
     imageResource['domain'] = globalThis.backendaiclient._config.domainName;
     imageResource['scaling_group'] =
       this.volumeInfo[this.vhost]?.sftp_scaling_groups[0];
