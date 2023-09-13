@@ -3811,14 +3811,14 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
-   * Launch system role filebrowser image and open the dialog that includes the ssh link.
+   * Launch system role sftp-uploader image and open the dialog that includes the ssh link.
    */
   async _launchSystemRoleSSHSession() {
     const imageResource: Record<string, unknown> = {};
     const configSSHImage = globalThis.backendaiclient._config.systemSSHImage;
     const images = this.systemRoleSupportedImages.filter(
       (image: any) =>
-        image['name'].toLowerCase().includes('filebrowser') &&
+        image['name'].toLowerCase().includes('sftp-upload') &&
         image['installed'],
     );
     // TODO: use lablup/openssh-server image
