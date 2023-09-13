@@ -7,6 +7,14 @@ import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { ConfigProvider } from 'antd';
 import en_US from 'antd/locale/en_US';
 import ko_KR from 'antd/locale/ko_KR';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
+import localeData from 'dayjs/plugin/localeData';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import weekday from 'dayjs/plugin/weekday';
 import i18n from 'i18next';
 import Backend from 'i18next-http-backend';
 import React, {
@@ -20,6 +28,13 @@ import { useTranslation, initReactI18next } from 'react-i18next';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { BrowserRouter, useNavigate } from 'react-router-dom';
+
+dayjs.extend(weekday);
+dayjs.extend(localeData);
+dayjs.extend(localizedFormat);
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 interface WebComponentContextType {
   value?: ReactWebComponentProps['value'];
@@ -77,6 +92,8 @@ const useCurrentLanguage = () => {
   useEffect(() => {
     // TODO: remove this hack to initialize i18next
     setTimeout(() => i18n?.changeLanguage(lang), 0);
+    // For changing locale globally, use dayjs.locale instead of dayjs().locale
+    dayjs.locale(lang);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -87,6 +104,8 @@ const useCurrentLanguage = () => {
       //@ts-ignore
       const lang: string = e?.detail?.lang || 'en';
       i18n?.changeLanguage(lang);
+      // For changing locale globally, use dayjs.locale instead of dayjs().locale
+      dayjs.locale(lang);
     };
     window.addEventListener('langChanged', handler);
     return () => window.removeEventListener('langChanged', handler);
