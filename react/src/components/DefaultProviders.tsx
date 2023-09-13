@@ -149,7 +149,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                   <ConfigProvider
                     // @ts-ignore
                     getPopupContainer={(triggerNode) => {
-                      return shadowRoot;
+                      return triggerNode?.parentNode || shadowRoot;
                     }}
                     //TODO: apply other supported locales
                     locale={'ko' === lang ? ko_KR : en_US}
