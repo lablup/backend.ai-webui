@@ -1,5 +1,5 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '.';
-import { maskString, useBaiSignedRequestWithPromise } from '../helper';
+import { maskString } from '../helper';
 import { useTanMutation, useTanQuery } from './reactQueryAlias';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
@@ -17,14 +17,17 @@ export interface QuotaScope {
 
 export const useResourceSlots = () => {
   const [key, checkUpdate] = useUpdatableState('first');
-  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
-  const { data: resourceSlots } = useTanQuery({
+  // const baiRequestWithPromise = useBaiSignedRequestWithPromise();
+  const baiClient = useSuspendedBackendaiClient();
+  const { data: resourceSlots } = useTanQuery<{
+    cpu?: string;
+    mem?: string;
+    'cuda.shares'?: string;
+    'cuda.device'?: string;
+  }>({
     queryKey: ['useResourceSlots', key],
     queryFn: () => {
-      return baiRequestWithPromise({
-        method: 'GET',
-        url: `/config/resource-slots`,
-      }) as Promise<any>;
+      return baiClient.get_resource_slots();
     },
     staleTime: 0,
   });

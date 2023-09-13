@@ -1,11 +1,14 @@
 import CopyableCodeText from '../components/CopyableCodeText';
 import EndpointStatusTag from '../components/EndpointStatusTag';
+import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
 import Flex from '../components/Flex';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
+import ResourceNumber, { ResourceTypeKey } from '../components/ResourceNumber';
 import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
+import VFolderLazyView from '../components/VFolderLazyView';
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
-import { baiSignedRequestWithPromise } from '../helper';
+import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
@@ -15,6 +18,8 @@ import {
 import {
   CheckOutlined,
   CloseOutlined,
+  LoadingOutlined,
+  PlusOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
   SettingOutlined,
@@ -26,6 +31,7 @@ import {
   Card,
   Descriptions,
   Popover,
+  Spin,
   Table,
   Tag,
   Tooltip,
@@ -33,7 +39,9 @@ import {
   theme,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import React, { useState, useTransition } from 'react';
+import { default as dayjs } from 'dayjs';
+import _ from 'lodash';
+import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -60,6 +68,12 @@ interface RoutingListPageProps {}
 type EndPoint = NonNullable<RoutingListPageQuery$data['endpoint']>;
 type Routing = NonNullable<NonNullable<EndPoint['routings']>[0]>;
 
+const dayDiff = (a: any, b: any) => {
+  const date1 = dayjs(a.created_at);
+  const date2 = dayjs(b.created_at);
+  return date1.diff(date2);
+};
+
 const RoutingListPage: React.FC<RoutingListPageProps> = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -76,43 +90,82 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     useState<ServingRouteErrorModalFragment$key | null>(null);
   const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] =
     useState(false);
-
-  const { endpoint } = useLazyLoadQuery<RoutingListPageQuery>(
-    graphql`
-      query RoutingListPageQuery($endpointId: UUID!) {
-        endpoint(endpoint_id: $endpointId) {
-          name
-          endpoint_id
-          image
-          desired_session_count
-          url
-          open_to_public
-          errors {
-            session_id
-            ...ServingRouteErrorModalFragment
+  const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
+    useState(false);
+  // const curProject = useCurrentProjectValue();
+  const [paginationState] = useState<{
+    current: number;
+    pageSize: number;
+  }>({
+    current: 1,
+    pageSize: 100,
+  });
+  const { endpoint, endpoint_token_list } =
+    useLazyLoadQuery<RoutingListPageQuery>(
+      graphql`
+        query RoutingListPageQuery(
+          $endpointId: UUID!
+          $tokenListOffset: Int!
+          $tokenListLimit: Int!
+        ) {
+          endpoint(endpoint_id: $endpointId) {
+            name
+            endpoint_id
+            image
+            desired_session_count
+            url
+            open_to_public
+            errors {
+              session_id
+              ...ServingRouteErrorModalFragment
+            }
+            retries
+            model
+            model_mount_destiation
+            resource_group
+            resource_slots
+            resource_opts
+            routings {
+              routing_id
+              session
+              traffic_ratio
+              endpoint
+              status
+            }
+            ...EndpointStatusTagFragment
+            ...ModelServiceSettingModal_endpoint
           }
-          retries
-          routings {
-            routing_id
-            session
-            traffic_ratio
-            endpoint
-            status
+          endpoint_token_list(
+            offset: $tokenListOffset
+            limit: $tokenListLimit
+            endpoint_id: $endpointId
+          ) {
+            total_count
+            items {
+              id
+              token
+              endpoint_id
+              domain
+              project
+              session_owner
+              created_at
+              valid_until
+            }
           }
-          ...EndpointStatusTagFragment
-          ...ModelServiceSettingModal_endpoint
         }
-      }
-    `,
-    {
-      endpointId: serviceId,
-    },
-    {
-      fetchPolicy:
-        fetchKey === 'initial-fetch' ? 'store-and-network' : 'network-only',
-      fetchKey,
-    },
-  );
+      `,
+      {
+        tokenListOffset:
+          (paginationState.current - 1) * paginationState.pageSize,
+        tokenListLimit: paginationState.pageSize,
+        endpointId: serviceId || '',
+      },
+      {
+        fetchPolicy:
+          fetchKey === 'initial-fetch' ? 'store-and-network' : 'network-only',
+        fetchKey,
+      },
+    );
   const mutationToClearError = useTanMutation(() => {
     if (!endpoint) return;
     return baiSignedRequestWithPromise({
@@ -148,6 +201,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     return color;
   };
 
+  const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
   return (
     <Flex
       direction="column"
@@ -195,17 +249,22 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           ) : (
             <></>
           )}
-          <Tooltip title={t('button.Refresh')}>
-            <Button
-              loading={isPendingRefetch}
-              icon={<ReloadOutlined />}
-              onClick={() => {
-                startRefetchTransition(() => {
-                  updateFetchKey();
-                });
-              }}
-            />
-          </Tooltip>
+          <Button
+            loading={isPendingRefetch}
+            icon={<ReloadOutlined />}
+            onClick={() => {
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            }}
+          >
+            {t('button.Refresh')}
+          </Button>
+        </Flex>
+      </Flex>
+      <Card
+        title={t('modelService.ServiceInfo')}
+        extra={
           <Button
             type="primary"
             icon={<SettingOutlined />}
@@ -216,12 +275,11 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           >
             {t('button.Edit')}
           </Button>
-        </Flex>
-      </Flex>
-      <Card title={t('modelService.ServiceInfo')}>
+        }
+      >
         <Descriptions
           bordered
-          column={{ xxl: 3, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}
+          column={{ xxl: 3, xl: 3, lg: 2, md: 1, sm: 1, xs: 1 }}
           style={{
             backgroundColor: token.colorBgBase,
           }}
@@ -243,7 +301,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           </Descriptions.Item>
           <Descriptions.Item label={t('modelService.ServiceEndpoint')}>
             {endpoint?.url ? (
-              endpoint?.url
+              <Typography.Text copyable>{endpoint?.url}</Typography.Text>
             ) : (
               <Tag>{t('modelService.NoServiceEndpoint')}</Tag>
             )}
@@ -251,7 +309,34 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           <Descriptions.Item label={t('modelService.OpenToPublic')}>
             {endpoint?.open_to_public ? <CheckOutlined /> : <CloseOutlined />}
           </Descriptions.Item>
-          <Descriptions.Item label="Image">
+          <Descriptions.Item label={t('modelService.resources')} span={2}>
+            <Flex direction="row" wrap="wrap" gap={'md'}>
+              <Tooltip title={t('session.ResourceGroup')}>
+                <Tag>{endpoint?.resource_group}</Tag>
+              </Tooltip>
+              {_.map(
+                JSON.parse(endpoint?.resource_slots || '{}'),
+                (value: string, type: ResourceTypeKey) => {
+                  return (
+                    <ResourceNumber
+                      key={type}
+                      type={type}
+                      value={value}
+                      opts={resource_opts}
+                    />
+                  );
+                },
+              )}
+            </Flex>
+          </Descriptions.Item>
+          <Descriptions.Item label={t('session.launcher.ModelStorage')}>
+            <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
+              {endpoint?.model && (
+                <VFolderLazyView uuid={endpoint?.model} clickable={false} />
+              )}
+            </Suspense>
+          </Descriptions.Item>
+          <Descriptions.Item label={t('modelService.Image')} span={2}>
             {endpoint?.image && (
               <Flex direction="row" gap={'xs'}>
                 <ImageMetaIcon image={endpoint.image} />
@@ -261,55 +346,139 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           </Descriptions.Item>
         </Descriptions>
       </Card>
-      <Typography.Title level={4} style={{ margin: 0 }}>
-        {t('modelService.RoutesInfo')}
-      </Typography.Title>
-      <Table
-        scroll={{ x: 'max-content' }}
-        columns={[
-          {
-            title: t('modelService.RouteId'),
-            dataIndex: 'routing_id',
-            fixed: 'left',
-          },
-          {
-            title: t('modelService.SessionId'),
-            dataIndex: 'session',
-          },
-          {
-            title: t('modelService.Status'),
-            render: (_, { session, status }) =>
-              status && (
-                <>
-                  <Tag
-                    color={applyStatusColor(status)}
-                    key={status}
-                    style={{ marginRight: 0 }}
-                  >
-                    {status.toUpperCase()}
-                  </Tag>
-                  {status === 'FAILED_TO_START' && (
-                    <Popover>
-                      <Button
-                        size="small"
-                        type="text"
-                        icon={<QuestionCircleOutlined />}
-                        style={{ color: token.colorTextSecondary }}
-                        onClick={() => openSessionErrorModal(session)}
-                      />
-                    </Popover>
-                  )}
-                </>
+      <Card
+        title={t('modelService.GeneratedTokens')}
+        extra={
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              setIsOpenTokenGenerationModal(true);
+            }}
+          >
+            {t('modelService.GenerateToken')}
+          </Button>
+        }
+      >
+        <Table
+          scroll={{ x: 'max-content' }}
+          rowKey={'token'}
+          columns={[
+            {
+              title: '#',
+              fixed: 'left',
+              render: (id, record, index) => {
+                ++index;
+                return index;
+              },
+              showSorterTooltip: false,
+            },
+            {
+              title: 'Token',
+              dataIndex: 'token',
+              fixed: 'left',
+              render: (text, row) => (
+                <Typography.Text ellipsis copyable style={{ width: 150 }}>
+                  {row.token}
+                </Typography.Text>
               ),
-          },
-          {
-            title: t('modelService.TrafficRatio'),
-            dataIndex: 'traffic_ratio',
-          },
-        ]}
-        pagination={false}
-        dataSource={endpoint?.routings as Routing[]}
-      />
+            },
+            {
+              title: 'Status',
+              render: (text, row) => {
+                const isExpired = dayjs.utc(row.valid_until).isBefore();
+                return (
+                  <Tag color={isExpired ? 'red' : 'green'}>
+                    {isExpired ? 'Expired' : 'Valid'}
+                  </Tag>
+                );
+              },
+            },
+            {
+              title: 'Valid Until',
+              dataIndex: 'valid_until',
+              render: (text, row) => (
+                <span>
+                  {
+                    // FIXME: temporally parse UTC and change to timezone (timezone need to be added in server side)
+                    row.valid_until
+                      ? dayjs.utc(row.valid_until).tz().format('ll LTS')
+                      : '-'
+                  }
+                </span>
+              ),
+              defaultSortOrder: 'descend',
+              sortDirections: ['descend', 'ascend', 'descend'],
+              sorter: dayDiff,
+            },
+            {
+              title: 'Created at',
+              dataIndex: 'created_at',
+              render: (text, row) => (
+                <span>{dayjs(row.created_at).format('ll LT')}</span>
+              ),
+              defaultSortOrder: 'descend',
+              sortDirections: ['descend', 'ascend', 'descend'],
+              sorter: dayDiff,
+            },
+          ]}
+          pagination={false}
+          dataSource={filterNonNullItems(endpoint_token_list?.items)}
+          bordered
+        ></Table>
+      </Card>
+      <Card title={t('modelService.RoutesInfo')}>
+        <Table
+          scroll={{ x: 'max-content' }}
+          columns={[
+            {
+              title: t('modelService.RouteId'),
+              dataIndex: 'routing_id',
+              fixed: 'left',
+            },
+            {
+              title: t('modelService.SessionId'),
+              dataIndex: 'session',
+            },
+            {
+              title: t('modelService.Status'),
+              render: (_, { session, status }) =>
+                status && (
+                  <>
+                    <Tag
+                      color={applyStatusColor(status)}
+                      key={status}
+                      style={{ marginRight: 0 }}
+                    >
+                      {status.toUpperCase()}
+                    </Tag>
+                    {status === 'FAILED_TO_START' && (
+                      <Popover>
+                        <Button
+                          size="small"
+                          type="text"
+                          icon={<QuestionCircleOutlined />}
+                          style={{ color: token.colorTextSecondary }}
+                          onClick={() =>
+                            session && openSessionErrorModal(session)
+                          }
+                        />
+                      </Popover>
+                    )}
+                  </>
+                ),
+            },
+            {
+              title: t('modelService.TrafficRatio'),
+              dataIndex: 'traffic_ratio',
+            },
+          ]}
+          pagination={false}
+          dataSource={endpoint?.routings as Routing[]}
+          rowKey={'routing_id'}
+          bordered
+        />
+      </Card>
       <ServingRouteErrorModal
         open={!!selectedSessionErrorForModal}
         inferenceSessionErrorFrgmt={selectedSessionErrorForModal}
@@ -327,6 +496,18 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         }}
         endpointFrgmt={endpoint}
       />
+      <EndpointTokenGenerationModal
+        open={isOpenTokenGenerationModal}
+        onRequestClose={(success) => {
+          setIsOpenTokenGenerationModal(false);
+          if (success) {
+            startRefetchTransition(() => {
+              updateFetchKey();
+            });
+          }
+        }}
+        endpoint_id={endpoint?.endpoint_id || ''}
+      ></EndpointTokenGenerationModal>
     </Flex>
   );
 };

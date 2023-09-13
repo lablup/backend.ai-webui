@@ -1,4 +1,4 @@
-import { baiSignedRequestWithPromise } from '../helper';
+import { baiSignedRequestWithPromise, iSizeToSize } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentDomainValue } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
@@ -85,8 +85,14 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const [form] = Form.useForm<ServiceLauncherFormInput>();
   const [resourceSlots] = useResourceSlots();
 
-  const mutationToCreateService = useTanMutation({
-    mutationFn: (values: ServiceLauncherFormInput) => {
+  const mutationToCreateService = useTanMutation<
+    unknown,
+    {
+      message?: string;
+    },
+    ServiceLauncherFormInput
+  >({
+    mutationFn: (values) => {
       const image: string = `${values.environments.image?.registry}/${values.environments.image?.name}:${values.environments.image?.tag}`;
       const body: ServiceCreateType = {
         name: values.serviceName,
@@ -109,15 +115,15 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           },
         },
       };
-      if (resourceSlots?.cuda === 'shares') {
+      if (resourceSlots?.['cuda.shares']) {
         body['config'].resources['cuda.shares'] = values.gpu;
       }
-      if (resourceSlots?.cuda === 'device') {
+      if (resourceSlots?.['cuda.device']) {
         body['config'].resources['cuda.device'] = values.gpu;
       }
       if (values.shmem && values.shmem > 0) {
         body['config'].resource_opts = {
-          shmem: values.shmem,
+          shmem: values.shmem + 'G',
         };
       }
       return baiSignedRequestWithPromise({
@@ -145,19 +151,33 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     // setTimeout(() => {
     //   setConfirmLoading(false);
     // }, 2000);
-    form.validateFields().then((values) => {
-      mutationToCreateService.mutate(values, {
-        onSuccess: () => {
-          onRequestClose(true);
-        },
-        onError: (error) => {
-          message.error(t('modelService.FailedToStartService'));
-        },
+    form
+      .validateFields()
+      .then((values) => {
+        mutationToCreateService.mutate(values, {
+          onSuccess: () => {
+            onRequestClose(true);
+          },
+          onError: (error) => {
+            if (error?.message) {
+              message.error(
+                _.truncate(error?.message, {
+                  length: 200,
+                }),
+              );
+            } else {
+              message.error(t('modelService.FailedToStartService'));
+            }
+          },
+        });
+      })
+      .catch((err) => {
+        if (err.errorFields?.[0].errors?.[0]) {
+          message.error(err.errorFields?.[0].errors?.[0]);
+        } else {
+          message.error(t('modelService.FormValidationFailed'));
+        }
       });
-      new Promise((resolve, reject) => {}).then(() => {
-        onRequestClose(true);
-      });
-    });
   };
 
   // Apply any operation after clicking Cancel button
@@ -198,7 +218,11 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             name="serviceName"
             rules={[
               {
-                max: 20,
+                pattern: /^(?=.{4,64}$)\w[\w.-]*\w$/,
+                message: t('modelService.ServiceNameRule'),
+              },
+              {
+                required: true,
               },
             ]}
           >
@@ -290,12 +314,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                           (i) => i?.key === 'cpu',
                         )?.min || '0',
                       )}
-                      max={parseInt(
-                        _.find(
-                          currentImage?.resource_limits,
-                          (i) => i?.key === 'cpu',
-                        )?.max || '100',
-                      )}
+                      max={baiClient._config.maxCPUCoresPerContainer || 128}
                       inputNumberProps={{
                         addonAfter: t('session.launcher.Core'),
                       }}
@@ -312,16 +331,39 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       tooltip={
                         <Trans i18nKey={'session.launcher.DescMemory'} />
                       }
-                      max={30}
+                      max={baiClient._config.maxMemoryPerContainer || 1536}
+                      min={0}
                       inputNumberProps={{
-                        addonAfter: 'GB',
+                        addonAfter: 'GiB',
                       }}
-                      step={0.05}
+                      step={0.25}
                       required
                       rules={[
                         {
                           required: true,
                         },
+                        ({ getFieldValue }) => ({
+                          validator(_form, value) {
+                            const sizeGInfo = iSizeToSize(
+                              _.find(
+                                currentImage?.resource_limits,
+                                (i) => i?.key === 'mem',
+                              )?.min || '0B',
+                              'G',
+                            );
+
+                            if (sizeGInfo.number > value) {
+                              return Promise.reject(
+                                new Error(
+                                  t('session.launcher.MinMemory', {
+                                    size: sizeGInfo.numberUnit,
+                                  }),
+                                ),
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        }),
                       ]}
                     />
                     <SliderInputItem
@@ -330,10 +372,11 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       tooltip={
                         <Trans i18nKey={'session.launcher.DescSharedMemory'} />
                       }
-                      max={30}
-                      step={0.1}
+                      max={baiClient._config.maxShmPerContainer || 8}
+                      min={0}
+                      step={0.25}
                       inputNumberProps={{
-                        addonAfter: 'GB',
+                        addonAfter: 'GiB',
                       }}
                       required
                       rules={[
@@ -342,7 +385,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         },
                       ]}
                     />
-                    {resourceSlots.cuda !== undefined ? (
+                    {(resourceSlots?.['cuda.device'] ||
+                      resourceSlots?.['cuda.shares']) && (
                       <SliderInputItem
                         style={{ marginBottom: 0 }}
                         name={'gpu'}
@@ -352,8 +396,12 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                             i18nKey={'session.launcher.DescAIAccelerator'}
                           />
                         }
-                        max={30}
-                        step={0.1}
+                        max={
+                          resourceSlots['cuda.shares']
+                            ? baiClient._config.maxCUDASharesPerContainer
+                            : baiClient._config.maxCUDADevicesPerContainer
+                        }
+                        step={resourceSlots['cuda.shares'] ? 0.1 : 1}
                         inputNumberProps={{
                           //TODO: change unit based on resource limit
                           addonAfter: 'GPU',
@@ -365,8 +413,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                           },
                         ]}
                       />
-                    ) : (
-                      <></>
                     )}
                   </>
                 );

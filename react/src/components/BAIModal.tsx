@@ -3,7 +3,9 @@ import rawBAIModalCss from './BAIModal.css?raw';
 import { Modal, ModalProps } from 'antd';
 import React from 'react';
 
-export interface BAIModalProps extends ModalProps {}
+export interface BAIModalProps extends ModalProps {
+  okText?: string; // customize text of ok button with adequate content
+}
 const BAIModal: React.FC<BAIModalProps> = ({ ...modalProps }) => {
   return (
     <>

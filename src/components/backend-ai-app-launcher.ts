@@ -9,6 +9,7 @@ import {
 import BackendAIDialog from './backend-ai-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
 import './lablup-expansion';
 import '@material/mwc-button';
 import { Checkbox } from '@material/mwc-checkbox';
@@ -483,9 +484,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     this.preOpenedPortList = [];
     const preOpenAppNameList = servicePorts
-      .filter((item) => item.protocol === 'preopen')
+      ?.filter((item) => item.protocol === 'preopen')
       .map((item) => item.name);
-    preOpenAppNameList.forEach((elm) => {
+    preOpenAppNameList?.forEach((elm) => {
       this.preOpenedPortList.push({
         name: elm,
         title: elm,
@@ -493,11 +494,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         src: '/resources/icons/default_app.svg',
       });
     });
-    const filteredAppServices = appServices.filter(
-      (item) => !preOpenAppNameList.includes(item),
-    );
+    const filteredAppServices =
+      appServices?.filter((item) => !preOpenAppNameList?.includes(item)) ??
+      appServices;
     this.appSupportList = [];
-    if (!filteredAppServices.includes('ttyd')) {
+    if (!filteredAppServices?.includes('ttyd')) {
       this.appSupportList.push({
         // Force push terminal
         name: 'ttyd',
@@ -791,7 +792,18 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       app: app,
       uri: uri,
     };
-    return await this.sendRequest(rqst_proxy);
+    return this.sendRequest(rqst_proxy).catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+      } else {
+        this.notification.text = PainKiller.relieve(
+          _text('session.launcher.FailedToConnectCoordinator'),
+        );
+      }
+      this.notification.show(true, err);
+      throw err;
+    });
   }
 
   /**

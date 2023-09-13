@@ -1,13 +1,9 @@
 import DomainSelector from './DomainSelector';
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
-import {
-  MockEnvironment,
-  createMockEnvironment,
-  MockPayloadGenerator,
-} from 'relay-test-utils';
+import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 
 jest.mock('react-i18next', () => ({
   // this mock makes sure any components using the translate hook can use it without a warning being shown
@@ -28,15 +24,19 @@ jest.mock('react-i18next', () => ({
 describe('DomainSelect', () => {
   test('default render', async () => {
     const environment = createMockEnvironment();
-    const { getByText, asFragment } = render(
+    const { asFragment } = render(
       <RelayEnvironmentProvider environment={environment}>
         <Suspense fallback="loading...">
-          <DomainSelector title="hello" placeholder="Please select domain" />
+          <DomainSelector
+            title="hello"
+            placeholder="Please select domain"
+            autoFocus={false}
+          />
         </Suspense>
       </RelayEnvironmentProvider>,
     );
 
-    expect(getByText('loading...')).toBeInTheDocument();
+    expect(screen.getByText('loading...')).toBeInTheDocument();
 
     act(() => {
       environment.mock.resolveMostRecentOperation((operation) =>

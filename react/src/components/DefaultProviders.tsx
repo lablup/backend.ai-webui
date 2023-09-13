@@ -7,6 +7,14 @@ import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { ConfigProvider } from 'antd';
 import en_US from 'antd/locale/en_US';
 import ko_KR from 'antd/locale/ko_KR';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
+import localeData from 'dayjs/plugin/localeData';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import weekday from 'dayjs/plugin/weekday';
 import i18n from 'i18next';
 import Backend from 'i18next-http-backend';
 import React, {
@@ -21,10 +29,22 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { BrowserRouter, useNavigate } from 'react-router-dom';
 
+dayjs.extend(weekday);
+dayjs.extend(localeData);
+dayjs.extend(localizedFormat);
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 interface WebComponentContextType {
   value?: ReactWebComponentProps['value'];
   dispatchEvent: ReactWebComponentProps['dispatchEvent'];
-  moveTo: (path: string) => void;
+  moveTo: (
+    path: string,
+    params?: {
+      [key in string]?: boolean | string | number;
+    },
+  ) => void;
 }
 
 const WebComponentContext = React.createContext<WebComponentContextType>(null!);
@@ -72,6 +92,8 @@ const useCurrentLanguage = () => {
   useEffect(() => {
     // TODO: remove this hack to initialize i18next
     setTimeout(() => i18n?.changeLanguage(lang), 0);
+    // For changing locale globally, use dayjs.locale instead of dayjs().locale
+    dayjs.locale(lang);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -82,6 +104,8 @@ const useCurrentLanguage = () => {
       //@ts-ignore
       const lang: string = e?.detail?.lang || 'en';
       i18n?.changeLanguage(lang);
+      // For changing locale globally, use dayjs.locale instead of dayjs().locale
+      dayjs.locale(lang);
     };
     window.addEventListener('langChanged', handler);
     return () => window.removeEventListener('langChanged', handler);
@@ -105,10 +129,10 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
     return {
       value,
       dispatchEvent,
-      moveTo: (path: string) => {
-        dispatchEvent('moveTo', { path });
+      moveTo: (path, params) => {
+        dispatchEvent('moveTo', { path, params: params });
       },
-    };
+    } as WebComponentContextType;
   }, [value, dispatchEvent]);
   return (
     <>
@@ -125,7 +149,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                   <ConfigProvider
                     // @ts-ignore
                     getPopupContainer={(triggerNode) => {
-                      return shadowRoot;
+                      return triggerNode?.parentNode || shadowRoot;
                     }}
                     //TODO: apply other supported locales
                     locale={'ko' === lang ? ko_KR : en_US}

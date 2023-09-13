@@ -137,6 +137,10 @@ export const BackendAIWebUIStyles = [
       padding-top: 5px;
     }
 
+    mwc-list.sidebar > mwc-list-item[disabled] > i {
+      color: rgb(70, 70, 70);
+    }
+
     mwc-list.sidebar mwc-list-item[selected] {
       color: var(--general-sidebar-selected-color, #949494);
       background: var(--general-sidebar-selected-background-color, #23252b);
@@ -484,11 +488,12 @@ export const BackendAIWebUIStyles = [
     #main-toolbar {
       background-color: var(--general-menu-background-color);
       color: var(--general-menu-color);
-      z-index: 1;
+      z-index: 5;
       overflow: visible;
       --mdc-theme-on-primary: black;
       --mdc-theme-primary: rgba(247, 246, 246, 1);
       border-bottom: 1px solid #dbdbdb;
+      position: sticky;
     }
 
     #main-toolbar > p {
