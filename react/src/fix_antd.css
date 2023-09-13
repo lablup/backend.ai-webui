@@ -52,7 +52,13 @@
   }
 }
 
+/* fix: fixed column shadow display outside of a table wrapper */
 .ant-table-wrapper {
   border-radius: 8px 8px 0 0;
   overflow: hidden;
+}
+
+/* fix: the tooltip does not appear in the `<Form.Item tooltip={'something'}` when the popup container is a parent node of the trigger node. */
+.ant-form-item-label {
+  overflow: unset !important;
 }
