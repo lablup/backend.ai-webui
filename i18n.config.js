@@ -10,6 +10,7 @@ module.exports = {
   output: './',
   options: {
     debug: true,
+    removeUnusedKeys: true,
     func: {
       list: ['_t', '_tr', '_text', 't'], // _t for normal text, _tr for HTML text, t for react
       extensions: ['.ts', '.js', '.jsx', '.tsx']
