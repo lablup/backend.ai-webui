@@ -50,9 +50,7 @@ const EndpointTokenGenerationModal: React.FC<
   // Apply any operation after clicking OK button
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
     form.validateFields().then((values) => {
-      const validUntil = Math.floor(
-        dayjs(values.datetime.format('YYYY-MM-DD HH:mm:ss')).valueOf() / 1000,
-      );
+      const validUntil = values.datetime.unix();
       mutationToGenerateToken.mutate(
         {
           valid_until: validUntil,

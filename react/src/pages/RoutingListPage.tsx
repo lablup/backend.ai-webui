@@ -4,10 +4,11 @@ import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationM
 import Flex from '../components/Flex';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
-import ResourcesNumbers from '../components/ResourcesNumbers';
+import ResourceNumber, { ResourceTypeKey } from '../components/ResourceNumber';
 import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
+import VFolderLazyView from '../components/VFolderLazyView';
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
-import { baiSignedRequestWithPromise } from '../helper';
+import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
@@ -17,6 +18,7 @@ import {
 import {
   CheckOutlined,
   CloseOutlined,
+  LoadingOutlined,
   PlusOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
@@ -29,6 +31,7 @@ import {
   Card,
   Descriptions,
   Popover,
+  Spin,
   Table,
   Tag,
   Tooltip,
@@ -37,7 +40,8 @@ import {
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
-import React, { useState, useTransition } from 'react';
+import _ from 'lodash';
+import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -68,12 +72,6 @@ const dayDiff = (a: any, b: any) => {
   const date1 = dayjs(a.created_at);
   const date2 = dayjs(b.created_at);
   return date1.diff(date2);
-};
-
-const isExpired = (date: any) => {
-  const timeFromNow = dayjs();
-  const expiredDate = dayjs(date);
-  return timeFromNow.diff(expiredDate) > 0;
 };
 
 const RoutingListPage: React.FC<RoutingListPageProps> = () => {
@@ -122,8 +120,11 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               ...ServingRouteErrorModalFragment
             }
             retries
+            model
+            model_mount_destiation
             resource_group
             resource_slots
+            resource_opts
             routings {
               routing_id
               session
@@ -157,7 +158,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         tokenListOffset:
           (paginationState.current - 1) * paginationState.pageSize,
         tokenListLimit: paginationState.pageSize,
-        endpointId: serviceId,
+        endpointId: serviceId || '',
       },
       {
         fetchPolicy:
@@ -165,7 +166,6 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         fetchKey,
       },
     );
-
   const mutationToClearError = useTanMutation(() => {
     if (!endpoint) return;
     return baiSignedRequestWithPromise({
@@ -201,6 +201,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     return color;
   };
 
+  const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
   return (
     <Flex
       direction="column"
@@ -309,14 +310,33 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             {endpoint?.open_to_public ? <CheckOutlined /> : <CloseOutlined />}
           </Descriptions.Item>
           <Descriptions.Item label={t('modelService.resources')} span={2}>
-            <Flex direction="row" gap={'sm'}>
-              {endpoint?.resource_group}
-              <ResourcesNumbers
-                {...JSON.parse(endpoint?.resource_slots || '{}')}
-              />
+            <Flex direction="row" wrap="wrap" gap={'md'}>
+              <Tooltip title={t('session.ResourceGroup')}>
+                <Tag>{endpoint?.resource_group}</Tag>
+              </Tooltip>
+              {_.map(
+                JSON.parse(endpoint?.resource_slots || '{}'),
+                (value: string, type: ResourceTypeKey) => {
+                  return (
+                    <ResourceNumber
+                      key={type}
+                      type={type}
+                      value={value}
+                      opts={resource_opts}
+                    />
+                  );
+                },
+              )}
             </Flex>
           </Descriptions.Item>
-          <Descriptions.Item label="Image">
+          <Descriptions.Item label={t('session.launcher.ModelStorage')}>
+            <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
+              {endpoint?.model && (
+                <VFolderLazyView uuid={endpoint?.model} clickable={false} />
+              )}
+            </Suspense>
+          </Descriptions.Item>
+          <Descriptions.Item label={t('modelService.Image')} span={2}>
             {endpoint?.image && (
               <Flex direction="row" gap={'xs'}>
                 <ImageMetaIcon image={endpoint.image} />
@@ -342,7 +362,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       >
         <Table
           scroll={{ x: 'max-content' }}
-          rowKey={'endpoint_id'}
+          rowKey={'token'}
           columns={[
             {
               title: '#',
@@ -365,11 +385,14 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             },
             {
               title: 'Status',
-              render: (text, row) => (
-                <Tag color={isExpired(row.valid_until) ? 'red' : 'green'}>
-                  {isExpired(row.valid_until) ? 'Expired' : 'Valid'}
-                </Tag>
-              ),
+              render: (text, row) => {
+                const isExpired = dayjs.utc(row.valid_until).isBefore();
+                return (
+                  <Tag color={isExpired ? 'red' : 'green'}>
+                    {isExpired ? 'Expired' : 'Valid'}
+                  </Tag>
+                );
+              },
             },
             {
               title: 'Valid Until',
@@ -377,12 +400,9 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               render: (text, row) => (
                 <span>
                   {
-                    // FIXME: temporally add GMT (timezone need to be added in serverside)
+                    // FIXME: temporally parse UTC and change to timezone (timezone need to be added in server side)
                     row.valid_until
-                      ? dayjs(
-                          (row.valid_until as string) +
-                            (row.created_at as string).split(/(?=\+)/g)[1],
-                        ).format('YYYY/MM/DD ddd HH:mm:ss')
+                      ? dayjs.utc(row.valid_until).tz().format('ll LTS')
                       : '-'
                   }
                 </span>
@@ -395,9 +415,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               title: 'Created at',
               dataIndex: 'created_at',
               render: (text, row) => (
-                <span>
-                  {dayjs(row.created_at).format('YYYY/MM/DD ddd HH:mm:ss')}
-                </span>
+                <span>{dayjs(row.created_at).format('ll LT')}</span>
               ),
               defaultSortOrder: 'descend',
               sortDirections: ['descend', 'ascend', 'descend'],
@@ -405,7 +423,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             },
           ]}
           pagination={false}
-          dataSource={endpoint_token_list?.items}
+          dataSource={filterNonNullItems(endpoint_token_list?.items)}
           bordered
         ></Table>
       </Card>
@@ -441,7 +459,9 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
                           type="text"
                           icon={<QuestionCircleOutlined />}
                           style={{ color: token.colorTextSecondary }}
-                          onClick={() => openSessionErrorModal(session)}
+                          onClick={() =>
+                            session && openSessionErrorModal(session)
+                          }
                         />
                       </Popover>
                     )}

@@ -267,7 +267,8 @@
       "PreOpenPortPanelTitle": "__NOT_TRANSLATED__",
       "PreOpenPortRange": "__NOT_TRANSLATED__",
       "MinMemory": "__NOT_TRANSLATED__",
-      "NotePreOpenPort": "Ces ports sont les ports internes du conteneur."
+      "NotePreOpenPort": "Ces ports sont les ports internes du conteneur.",
+      "ModelStorage": "__NOT_TRANSLATED__"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -1250,6 +1251,7 @@
     "PleaseInputLoginInfo": "Veuillez saisir l'identifiant et le mot de passe pour vous connecter.",
     "TooManyAttempt": "Il y a eu trop de tentatives de connexion. Les tentatives de connexion sont bloquées depuis un certain temps.",
     "SingleSignOn": {
+      "LoginWithRealm": "__NOT_TRANSLATED__",
       "LoginWithSAML": "__NOT_TRANSLATED__"
     },
     "EndpointInfo": "__NOT_TRANSLATED__",
@@ -1521,7 +1523,8 @@
     "FormValidationFailed": "__NOT_TRANSLATED__",
     "ServiceNameRule": "__NOT_TRANSLATED__",
     "resources": "__NOT_TRANSLATED__",
-    "ValidTimeInfo": "Informations sur l'heure de validité"
+    "ValidTimeInfo": "Informations sur l'heure de validité",
+    "Image": "__NOT_TRANSLATED__"
   },
   "ErrorBoundary": {
     "title": "__NOT_TRANSLATED__",

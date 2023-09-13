@@ -267,7 +267,8 @@
       "PreOpenPortPanelTitle": "__NOT_TRANSLATED__",
       "PreOpenPortRange": "__NOT_TRANSLATED__",
       "MinMemory": "__NOT_TRANSLATED__",
-      "NotePreOpenPort": "Port ini adalah port internal kontainer."
+      "NotePreOpenPort": "Port ini adalah port internal kontainer.",
+      "ModelStorage": "__NOT_TRANSLATED__"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -1250,6 +1251,7 @@
     "PleaseInputLoginInfo": "Silakan masukkan ID dan password untuk login.",
     "TooManyAttempt": "Ada terlalu banyak upaya login. Upaya login telah diblokir untuk sementara waktu.",
     "SingleSignOn": {
+      "LoginWithRealm": "__NOT_TRANSLATED__",
       "LoginWithSAML": "__NOT_TRANSLATED__"
     },
     "EndpointInfo": "__NOT_TRANSLATED__",
@@ -1521,7 +1523,8 @@
     "FormValidationFailed": "__NOT_TRANSLATED__",
     "ServiceNameRule": "__NOT_TRANSLATED__",
     "resources": "__NOT_TRANSLATED__",
-    "ValidTimeInfo": "Info waktu yang valid"
+    "ValidTimeInfo": "Info waktu yang valid",
+    "Image": "__NOT_TRANSLATED__"
   },
   "ErrorBoundary": {
     "title": "__NOT_TRANSLATED__",

@@ -267,7 +267,8 @@
       "PreOpenPortPanelTitle": "__NOT_TRANSLATED__",
       "PreOpenPortRange": "__NOT_TRANSLATED__",
       "MinMemory": "__NOT_TRANSLATED__",
-      "NotePreOpenPort": "Эти порты являются внутренними портами контейнера."
+      "NotePreOpenPort": "Эти порты являются внутренними портами контейнера.",
+      "ModelStorage": "__NOT_TRANSLATED__"
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -1250,6 +1251,7 @@
     "PleaseInputLoginInfo": "Пожалуйста, введите ID и пароль для входа.",
     "TooManyAttempt": "Слишком много попыток входа в систему. Попытки входа в систему на время заблокированы.",
     "SingleSignOn": {
+      "LoginWithRealm": "__NOT_TRANSLATED__",
       "LoginWithSAML": "__NOT_TRANSLATED__"
     },
     "EndpointInfo": "__NOT_TRANSLATED__",
@@ -1521,7 +1523,8 @@
     "FormValidationFailed": "__NOT_TRANSLATED__",
     "ServiceNameRule": "__NOT_TRANSLATED__",
     "resources": "__NOT_TRANSLATED__",
-    "ValidTimeInfo": "Информация о действительном времени"
+    "ValidTimeInfo": "Информация о действительном времени",
+    "Image": "__NOT_TRANSLATED__"
   },
   "ErrorBoundary": {
     "title": "__NOT_TRANSLATED__",

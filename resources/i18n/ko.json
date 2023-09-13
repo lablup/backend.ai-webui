@@ -257,6 +257,7 @@
       "InferenceMode": "Inference",
       "ImageDoesNotProvideModelPath": "모델 경로를 지정하지 않은 컨테이너 이미지입니다. 수정이 필요합니다.",
       "ModelStorageToMount": "마운트할 모델 스토리지 폴더",
+      "ModelStorage": "모델 스토리지 폴더",
       "AIAccelerator": "AI 가속기",
       "DescAIAccelerator": "<p>AI 가속기 (GPU 및 NPU)는 기계 학습과 관련된 행렬 / 벡터 계산에 적합합니다. AI 가속기는 훈련 및 인퍼런스 알고리즘을 몇 배나 가속화하여 기계 학습 워크로드의 실행 시간을 몇 주에서 며칠로 줄입니다.</p>",
       "PreOpenPortTitle": "사전 개방 포트",
@@ -268,7 +269,8 @@
       "PreOpenPortRange": "사전 개방 포트는 1024 ~ 65535 사이만 설정할 수 있습니다.",
       "MinMemory": "재 선택한 실행환경의 최소 메모리 용량은 {{size}}iB입니다.",
       "NotePreOpenPort": "이 포트는 컨테이너 내부 포트입니다.",
-      "CPUcorePerOpenMPthread": "OpenMP 스레드당 CPU 코어"
+      "CPUcorePerOpenMPthread": "OpenMP 스레드당 CPU 코어",
+      "MinMemory": "현재 선택한 실행환경의 최소 메모리 용량은 {{size}}iB입니다."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -446,7 +448,8 @@
     "ServiceNameRule": "4~64자의 영문, 숫자, 밑줄(_), 하이픈(-), 마침표(.)만 허용하며, 영문으로 영문이나 숫자로 끝나야합니다.",
     "FormValidationFailed": "양식 유효성 검사 실패",
     "resources": "자원",
-    "ValidTimeInfo": "유효한 시간 정보"
+    "ValidTimeInfo": "유효한 시간 정보",
+    "Image": "이미지"
   },
   "button": {
     "Cancel": "취소",
@@ -1357,7 +1360,8 @@
     "PleaseInputLoginInfo": "로그인을 위한 ID 와 PW를 입력해주세요.",
     "TooManyAttempt": "너무 많은 로그인 시도가 있었습니다. 잠시동안 로그인 시도가 차단되었습니다.",
     "SingleSignOn": {
-      "LoginWithSAML": "SAML 로그인"
+      "LoginWithSAML": "SAML 로그인",
+      "LoginWithRealm": "{{ realmName }} 로그인"
     },
     "EndpointStartWith": "http:// 혹은 https:// 로 시작해야 합니다."
   },
