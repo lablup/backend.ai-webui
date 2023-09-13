@@ -2,6 +2,7 @@ import EnvVarFormList from '../components/EnvVarFormList';
 import Flex from '../components/Flex';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems from '../components/ImageEnvironmentSelectFormItems';
+import PortSelectFormItem from '../components/PortSelectFormItem';
 import ResourceAllocationFormItems from '../components/ResourceAllocationFormItems';
 import ResourceGroupSelect from '../components/ResourceGroupSelect';
 import { BlockOutlined, PlayCircleOutlined } from '@ant-design/icons';
@@ -88,6 +89,9 @@ const SessionLauncherPage = () => {
         <Typography.Title level={2} style={{ marginTop: 0 }}>
           Start session
         </Typography.Title>
+        <Button type="link" icon={<BlockOutlined />}>
+          Start using a template
+        </Button>
       </Flex>
       <Flex direction="row" gap="md" align="start">
         {screens.md && (
@@ -120,11 +124,6 @@ const SessionLauncherPage = () => {
                 {/* Step 0 fields */}
                 {currentStep === 0 && (
                   <>
-                    <Flex justify="end">
-                      <Button type="link" icon={<BlockOutlined />}>
-                        Start using a template
-                      </Button>
-                    </Flex>
                     <Card title="Session type">
                       <Form.Item name="sessionType">
                         <Segmented
@@ -198,7 +197,9 @@ const SessionLauncherPage = () => {
                               name={['batch', 'enabled']}
                               valuePropName="checked"
                             >
-                              <Checkbox>{t('button.Activate')}</Checkbox>
+                              <Checkbox>
+                                {t('session.launcher.Enable')}
+                              </Checkbox>
                             </Form.Item>
                             <Form.Item
                               noStyle
@@ -222,7 +223,6 @@ const SessionLauncherPage = () => {
                                       <DatePicker
                                         disabled={disabled}
                                         showTime
-                                        placeholder="Select time"
                                       />
                                     </Form.Item>
                                     {/* <Form.Item
@@ -299,53 +299,7 @@ const SessionLauncherPage = () => {
                 {currentStepKey === 'network' && (
                   <>
                     <Card title="Network">
-                      <Form.Item
-                        label={t('session.launcher.PreOpenPortTitle')}
-                        help={t('session.launcher.PreOpenPortRange')}
-                        rules={
-                          [
-                            // {
-                            //   pattern:
-                            //     /^(102[4-9]|10[3-9][0-9]|1[1-9][0-9]{2}|[2-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$/,
-                            //   message: t('session.launcher.PreOpenPortRange'),
-                            // },
-                            // TODO: find a way to validate each item
-                            // ({ getFieldValue }) => ({
-                            //   validator(rule, values) {
-                            //     console.log('sadfasdfasdf');
-                            //     if (
-                            //       _.every(values, (v) =>
-                            //         /^(102[4-9]|10[3-9][0-9]|1[1-9][0-9]{2}|[2-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$/.test(
-                            //           v,
-                            //         ),
-                            //       )
-                            //     ) {
-                            //       return Promise.resolve();
-                            //     }
-                            //     return Promise.reject(
-                            //       new Error(
-                            //         'The new password that you entered do not match!',
-                            //       ),
-                            //     );
-                            //   },
-                            // }),
-                          ]
-                        }
-                      >
-                        <Select
-                          mode="tags"
-                          style={{ width: '100%' }}
-                          // placeholder={t('session.launcher.preopen')}
-                          onChange={(value) => {
-                            console.log(value);
-                          }}
-                          // TODO: find a way to allow only options event if tokenSeparators is set
-                          options={[]}
-                          suffixIcon={null}
-                          open={false}
-                          tokenSeparators={[',', ' ']}
-                        />
-                      </Form.Item>
+                      <PortSelectFormItem />
                     </Card>
                   </>
                 )}
