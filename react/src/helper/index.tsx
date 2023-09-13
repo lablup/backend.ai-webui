@@ -133,8 +133,22 @@ export const bytesToGB = (
 };
 
 export function iSizeToSize(
-  size: string,
-  targetSizeUnit?: string,
+  sizeWithUnit: string,
+  targetSizeUnit?:
+    | 'B'
+    | 'K'
+    | 'M'
+    | 'G'
+    | 'T'
+    | 'P'
+    | 'E'
+    | 'b'
+    | 'k'
+    | 'm'
+    | 'g'
+    | 't'
+    | 'p'
+    | 'e',
   fixed: number = 2,
 ): {
   number: number;
@@ -143,8 +157,8 @@ export function iSizeToSize(
   numberUnit: string;
 } {
   const sizes = ['B', 'K', 'M', 'G', 'T', 'P', 'E'];
-  const sizeUnit = size.slice(-1).toUpperCase();
-  const sizeValue = parseFloat(size.slice(0, -1));
+  const sizeUnit = sizeWithUnit.slice(-1).toUpperCase();
+  const sizeValue = parseFloat(sizeWithUnit.slice(0, -1));
   const sizeIndex = sizes.indexOf(sizeUnit);
   if (sizeIndex === -1 || isNaN(sizeValue)) {
     throw new Error('Invalid size format');

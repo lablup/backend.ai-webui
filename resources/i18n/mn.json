@@ -209,6 +209,7 @@
       "ProxyConfiguratorNotResponding": "Прокси тохируулагч хариу өгөхгүй байна.",
       "SettingUpProxyForApp": "Апп-д прокси тохируулж байна ...",
       "AddingKernelToSocketQueue": "Цөмийг сокет дараалалд нэмж оруулах ...",
+      "FailedToConnectCoordinator": "Өргөдлийн аппликейшнтай холбогдох амжилтгүй боллоо. Сүлжээний холболт болон цахилгаан хорогдлын тохиргоог шалгана уу.",
       "ManualImageName": "Image нэр (гар арга)",
       "NotEnoughResource": "Нөөц хангалттай биш байна",
       "ResourceAllocationTemplate": "Нөөцийг хуваарилах загвар",
@@ -265,7 +266,8 @@
       "PrePortConfigWillDisappear": "__NOT_TRANSLATED__",
       "PreOpenPortPanelTitle": "__NOT_TRANSLATED__",
       "PreOpenPortRange": "__NOT_TRANSLATED__",
-      "MinMemory": "__NOT_TRANSLATED__"
+      "MinMemory": "__NOT_TRANSLATED__",
+      "ModelStorage": "__NOT_TRANSLATED__"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -1247,6 +1249,7 @@
     "PleaseInputLoginInfo": "Нэвтрэхийн тулд ID болон нууц үгээ оруулна уу.",
     "TooManyAttempt": "Хэт олон нэвтрэх оролдлого хийсэн. Нэвтрэх оролдлогыг хэсэг хугацаанд хаасан байна.",
     "SingleSignOn": {
+      "LoginWithRealm": "__NOT_TRANSLATED__",
       "LoginWithSAML": "__NOT_TRANSLATED__"
     },
     "EndpointInfo": "__NOT_TRANSLATED__",
@@ -1517,7 +1520,8 @@
     "TokenExpiredDateError": "__NOT_TRANSLATED__",
     "FormValidationFailed": "__NOT_TRANSLATED__",
     "ServiceNameRule": "__NOT_TRANSLATED__",
-    "resources": "__NOT_TRANSLATED__"
+    "resources": "__NOT_TRANSLATED__",
+    "Image": "__NOT_TRANSLATED__"
   },
   "ErrorBoundary": {
     "title": "__NOT_TRANSLATED__",

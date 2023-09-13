@@ -39,7 +39,12 @@ dayjs.extend(timezone);
 interface WebComponentContextType {
   value?: ReactWebComponentProps['value'];
   dispatchEvent: ReactWebComponentProps['dispatchEvent'];
-  moveTo: (path: string) => void;
+  moveTo: (
+    path: string,
+    params?: {
+      [key in string]?: boolean | string | number;
+    },
+  ) => void;
 }
 
 const WebComponentContext = React.createContext<WebComponentContextType>(null!);
@@ -124,10 +129,10 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
     return {
       value,
       dispatchEvent,
-      moveTo: (path: string) => {
-        dispatchEvent('moveTo', { path });
+      moveTo: (path, params) => {
+        dispatchEvent('moveTo', { path, params: params });
       },
-    };
+    } as WebComponentContextType;
   }, [value, dispatchEvent]);
   return (
     <>

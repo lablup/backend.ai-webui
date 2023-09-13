@@ -30,5 +30,6 @@ module.exports = {
     // Be careful, the value of this setting is a typescript type. It is not a `String`.
     // https://www.typescriptlang.org/docs/handbook/declaration-files/do-s-and-don-ts.html#number-string-boolean-symbol-and-object
     DateTime: 'string',
+    UUID: 'string',
   },
 };

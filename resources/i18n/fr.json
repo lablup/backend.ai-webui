@@ -209,6 +209,7 @@
       "ProxyConfiguratorNotResponding": "Le configurateur de proxy ne répond pas.",
       "SettingUpProxyForApp": "Configuration du proxy pour l'application...",
       "AddingKernelToSocketQueue": "Ajout du noyau à la file d'attente des sockets...",
+      "FailedToConnectCoordinator": "Gagal terhubung ke administrasi aplikasi. Harap periksa koneksi jaringan dan pengaturan firewall Anda.",
       "ManualImageName": "Nom de l'image (manuel)",
       "NotEnoughResource": "Pas assez de ressources",
       "ResourceAllocationTemplate": "Modèle d'allocation de ressources",
@@ -265,7 +266,8 @@
       "PrePortConfigWillDisappear": "__NOT_TRANSLATED__",
       "PreOpenPortPanelTitle": "__NOT_TRANSLATED__",
       "PreOpenPortRange": "__NOT_TRANSLATED__",
-      "MinMemory": "__NOT_TRANSLATED__"
+      "MinMemory": "__NOT_TRANSLATED__",
+      "ModelStorage": "__NOT_TRANSLATED__"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -1247,6 +1249,7 @@
     "PleaseInputLoginInfo": "Veuillez saisir l'identifiant et le mot de passe pour vous connecter.",
     "TooManyAttempt": "Il y a eu trop de tentatives de connexion. Les tentatives de connexion sont bloquées depuis un certain temps.",
     "SingleSignOn": {
+      "LoginWithRealm": "__NOT_TRANSLATED__",
       "LoginWithSAML": "__NOT_TRANSLATED__"
     },
     "EndpointInfo": "__NOT_TRANSLATED__",
@@ -1517,7 +1520,8 @@
     "TokenExpiredDateError": "__NOT_TRANSLATED__",
     "FormValidationFailed": "__NOT_TRANSLATED__",
     "ServiceNameRule": "__NOT_TRANSLATED__",
-    "resources": "__NOT_TRANSLATED__"
+    "resources": "__NOT_TRANSLATED__",
+    "Image": "__NOT_TRANSLATED__"
   },
   "ErrorBoundary": {
     "title": "__NOT_TRANSLATED__",
