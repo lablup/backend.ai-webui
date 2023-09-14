@@ -8,9 +8,6 @@ import ResourceAllocationFormItems from '../components/ResourceAllocationFormIte
 import ResourceGroupSelect from '../components/ResourceGroupSelect';
 import {
   BlockOutlined,
-  CaretRightFilled,
-  CaretRightOutlined,
-  CiCircleOutlined,
   LeftOutlined,
   PlayCircleOutlined,
   PlayCircleTwoTone,
