@@ -104,7 +104,8 @@
     "NoInvitations": "Ei kutsuja näytettäväksi.",
     "AcceptSharedVFolder": "Voit nyt käyttää kansiota:",
     "DeclineSharedVFolder": "Kansion kutsu on poistettu:",
-    "connectingToCluster": "Yhdistetään Backend.AI-klusteriin ..."
+    "connectingToCluster": "Yhdistetään Backend.AI-klusteriin ...",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {

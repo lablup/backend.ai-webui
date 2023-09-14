@@ -104,7 +104,8 @@
     "NoInvitations": "Es gibt keine Einladungen zum Anzeigen.",
     "AcceptSharedVFolder": "Sie können jetzt auf den Ordner zugreifen:",
     "DeclineSharedVFolder": "Ordnereinladung wird gelöscht:",
-    "connectingToCluster": "Verbindung zum Backend.AI-Cluster..."
+    "connectingToCluster": "Verbindung zum Backend.AI-Cluster...",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {

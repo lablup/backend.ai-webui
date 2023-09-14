@@ -104,7 +104,8 @@
     "NoInvitations": "Görüntülenecek davetiye yok.",
     "AcceptSharedVFolder": "Artık klasöre erişebilirsiniz:",
     "DeclineSharedVFolder": "Klasör daveti silindi:",
-    "connectingToCluster": "Backend.AI Cluster'a bağlanılıyor..."
+    "connectingToCluster": "Backend.AI Cluster'a bağlanılıyor...",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {

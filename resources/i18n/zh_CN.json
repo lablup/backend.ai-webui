@@ -104,7 +104,8 @@
     "NoInvitations": "没有邀请显示。",
     "AcceptSharedVFolder": "您现在可以访问文件夹：",
     "DeclineSharedVFolder": "文件夹邀请被删除：",
-    "connectingToCluster": "连接到 Backend.AI 集群..."
+    "connectingToCluster": "连接到 Backend.AI 集群...",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {

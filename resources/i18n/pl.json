@@ -104,7 +104,8 @@
     "NoInvitations": "Brak zaproszeń do wyświetlenia.",
     "AcceptSharedVFolder": "Możesz teraz uzyskać dostęp do folderu:",
     "DeclineSharedVFolder": "Zaproszenie do folderu zostało usunięte:",
-    "connectingToCluster": "Łączenie z klastrem Backend.AI..."
+    "connectingToCluster": "Łączenie z klastrem Backend.AI...",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {

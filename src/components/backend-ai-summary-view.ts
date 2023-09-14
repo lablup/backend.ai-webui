@@ -87,6 +87,7 @@ export default class BackendAISummary extends BackendAIPage {
   @property({ type: Object }) appDownloadMap;
   @property({ type: String }) appDownloadUrl;
   @property({ type: String }) downloadAppOS = '';
+  @property({ type: String }) fasttrackEndpoint = '';
   @query('#resource-monitor') resourceMonitor!: BackendAIResourceMonitor;
 
   constructor() {
@@ -389,6 +390,8 @@ export default class BackendAISummary extends BackendAIPage {
           this.webui_version = globalThis.packageVersion;
           this.appDownloadUrl =
             globalThis.backendaiclient._config.appDownloadUrl;
+          this.fasttrackEndpoint =
+            globalThis.backendaiclient._config.fasttrack_endpoint;
 
           if (this.activeConnected) {
             this._refreshConsoleUpdateInformation();
@@ -404,6 +407,8 @@ export default class BackendAISummary extends BackendAIPage {
       this.manager_version = globalThis.backendaiclient.managerVersion;
       this.webui_version = globalThis.packageVersion;
       this.appDownloadUrl = globalThis.backendaiclient._config.appDownloadUrl;
+      this.fasttrackEndpoint =
+        globalThis.backendaiclient._config.fasttrack_endpoint;
       this._refreshConsoleUpdateInformation();
       this._refreshInvitations();
       // let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
@@ -545,6 +550,10 @@ export default class BackendAISummary extends BackendAIPage {
     const extension = this.appDownloadMap[this.downloadAppOS]['extension'];
     downloadLink = `${this.appDownloadUrl}/v${pkgVersion}/backend.ai-desktop-${pkgVersion}-${os}-${architecture}.${extension}`;
     window.open(downloadLink, '_blank');
+  }
+
+  isFooterMenu() {
+    return this.is_admin || this.fasttrackEndpoint !== '';
   }
 
   render() {
@@ -768,82 +777,14 @@ export default class BackendAISummary extends BackendAIPage {
             : html``}
         </div>
         <div class="vertical layout">
-          ${this.is_admin
+          ${this.isFooterMenu()
             ? html`
               <div class="horizontal layout wrap">
                 <div class="vertical layout">
                   <div class="line"></div>
                   <div class="horizontal layout flex wrap center-justified">
-                    <lablup-activity-panel class="footer-menu" noheader autowidth style="display: none;">
-                      <div slot="message" class="vertical layout center start-justified flex upper-lower-space">
-                        <h3 style="margin-top:0px;">${_t(
-                          'summary.CurrentVersion',
-                        )}</h3>
-                        ${
-                          this.is_superadmin
-                            ? html`
-                                <div
-                                  class="layout vertical center center-justified flex"
-                                  style="margin-bottom:5px;"
-                                >
-                                  <lablup-shields
-                                    app="Manager version"
-                                    color="darkgreen"
-                                    description="${this.manager_version}"
-                                    ui="flat"
-                                  ></lablup-shields>
-                                  <div
-                                    class="layout horizontal center flex"
-                                    style="margin-top:4px;"
-                                  >
-                                    <lablup-shields
-                                      app="Console version"
-                                      color="${this.update_checker.updateNeeded
-                                        ? 'red'
-                                        : 'darkgreen'}"
-                                      description="${this.webui_version}"
-                                      ui="flat"
-                                    ></lablup-shields>
-                                    ${this.update_checker.updateNeeded
-                                      ? html`
-                                          <mwc-icon-button
-                                            class="update-button"
-                                            icon="new_releases"
-                                            @click="${() => {
-                                              window.open(
-                                                this.update_checker.updateURL,
-                                                '_blank',
-                                              );
-                                            }}"
-                                          ></mwc-icon-button>
-                                        `
-                                      : html`
-                                          <mwc-icon class="update-icon">
-                                            done
-                                          </mwc-icon>
-                                        `}
-                                  </div>
-                                </div>
-                              `
-                            : html``
-                        }
-                      </div>
-                    </lablup-activity-panel>
-                    <lablup-activity-panel class="footer-menu" noheader autowidth>
-                      <div slot="message" class="layout horizontal center center-justified flex upper-lower-space">
-                          <a href="/environment">
-                            <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
-                              <i class="fas fa-sync-alt larger left-end-icon"></i>
-                              <span>${_t(
-                                'summary.UpdateEnvironmentImages',
-                              )}</span>
-                              <i class="fas fa-chevron-right right-end-icon"></i>
-                            </div>
-                          </a>
-                      </div>
-                    </lablup-activity-panel>
                     ${
-                      this.is_superadmin
+                      this.fasttrackEndpoint !== ''
                         ? html`
                             <lablup-activity-panel
                               class="footer-menu"
@@ -854,20 +795,95 @@ export default class BackendAISummary extends BackendAIPage {
                                 slot="message"
                                 class="layout horizontal center center-justified flex upper-lower-space"
                               >
-                                <a href="/agent">
+                                <a
+                                  href="${this.fasttrackEndpoint}"
+                                  target="_blank"
+                                >
                                   <div
                                     class="layout horizontal center center-justified flex"
                                     style="font-size:14px;"
                                   >
-                                    <i
-                                      class="fas fa-box larger left-end-icon"
-                                    ></i>
-                                    <span>${_t('summary.CheckResources')}</span>
+                                    <mwc-icon
+                                      class="larger left-end-icon"
+                                      style="height:19.2px;"
+                                    >
+                                      device_hub
+                                    </mwc-icon>
+                                    <span>${_t('summary.FastTrack')}</span>
                                     <i
                                       class="fas fa-chevron-right right-end-icon"
                                     ></i>
                                   </div>
                                 </a>
+                              </div>
+                            </lablup-activity-panel>
+                          `
+                        : html``
+                    }
+                    ${
+                      this.is_admin
+                        ? html`
+                            <lablup-activity-panel
+                              class="footer-menu"
+                              noheader
+                              autowidth
+                              style="display: none;"
+                            >
+                              <div
+                                slot="message"
+                                class="vertical layout center start-justified flex upper-lower-space"
+                              >
+                                <h3 style="margin-top:0px;">
+                                  ${_t('summary.CurrentVersion')}
+                                </h3>
+                                ${this.is_superadmin
+                                  ? html`
+                                      <div
+                                        class="layout vertical center center-justified flex"
+                                        style="margin-bottom:5px;"
+                                      >
+                                        <lablup-shields
+                                          app="Manager version"
+                                          color="darkgreen"
+                                          description="${this.manager_version}"
+                                          ui="flat"
+                                        ></lablup-shields>
+                                        <div
+                                          class="layout horizontal center flex"
+                                          style="margin-top:4px;"
+                                        >
+                                          <lablup-shields
+                                            app="Console version"
+                                            color="${this.update_checker
+                                              .updateNeeded
+                                              ? 'red'
+                                              : 'darkgreen'}"
+                                            description="${this.webui_version}"
+                                            ui="flat"
+                                          ></lablup-shields>
+                                          ${this.update_checker.updateNeeded
+                                            ? html`
+                                                <mwc-icon-button
+                                                  class="update-button"
+                                                  icon="new_releases"
+                                                  @click="${() => {
+                                                    window.open(
+                                                      this.update_checker
+                                                        .updateURL,
+                                                      '_blank',
+                                                    );
+                                                  }}"
+                                                ></mwc-icon-button>
+                                              `
+                                            : html`
+                                                <mwc-icon class="update-icon">
+                                                  done
+                                                </mwc-icon>
+                                              `}
+                                        </div>
+                                      </div>
+                                    `
+                                  : html``}
                               </div>
                             </lablup-activity-panel>
                             <lablup-activity-panel
@@ -879,16 +895,102 @@ export default class BackendAISummary extends BackendAIPage {
                                 slot="message"
                                 class="layout horizontal center center-justified flex upper-lower-space"
                               >
-                                <a href="/settings">
+                                <a href="/environment">
                                   <div
                                     class="layout horizontal center center-justified flex"
                                     style="font-size:14px;"
                                   >
                                     <i
-                                      class="fas fa-desktop larger left-end-icon"
+                                      class="fas fa-sync-alt larger left-end-icon"
                                     ></i>
                                     <span>
-                                      ${_t('summary.ChangeSystemSetting')}
+                                      ${_t('summary.UpdateEnvironmentImages')}
+                                    </span>
+                                    <i
+                                      class="fas fa-chevron-right right-end-icon"
+                                    ></i>
+                                  </div>
+                                </a>
+                              </div>
+                            </lablup-activity-panel>
+                            ${this.is_superadmin
+                              ? html`
+                                  <lablup-activity-panel
+                                    class="footer-menu"
+                                    noheader
+                                    autowidth
+                                  >
+                                    <div
+                                      slot="message"
+                                      class="layout horizontal center center-justified flex upper-lower-space"
+                                    >
+                                      <a href="/agent">
+                                        <div
+                                          class="layout horizontal center center-justified flex"
+                                          style="font-size:14px;"
+                                        >
+                                          <i
+                                            class="fas fa-box larger left-end-icon"
+                                          ></i>
+                                          <span>
+                                            ${_t('summary.CheckResources')}
+                                          </span>
+                                          <i
+                                            class="fas fa-chevron-right right-end-icon"
+                                          ></i>
+                                        </div>
+                                      </a>
+                                    </div>
+                                  </lablup-activity-panel>
+                                  <lablup-activity-panel
+                                    class="footer-menu"
+                                    noheader
+                                    autowidth
+                                  >
+                                    <div
+                                      slot="message"
+                                      class="layout horizontal center center-justified flex upper-lower-space"
+                                    >
+                                      <a href="/settings">
+                                        <div
+                                          class="layout horizontal center center-justified flex"
+                                          style="font-size:14px;"
+                                        >
+                                          <i
+                                            class="fas fa-desktop larger left-end-icon"
+                                          ></i>
+                                          <span>
+                                            ${_t('summary.ChangeSystemSetting')}
+                                          </span>
+                                          <i
+                                            class="fas fa-chevron-right right-end-icon"
+                                          ></i>
+                                        </div>
+                                      </a>
+                                    </div>
+                                  </lablup-activity-panel>
+                                `
+                              : html``}
+
+                            <lablup-activity-panel
+                              class="footer-menu"
+                              noheader
+                              autowidth
+                            >
+                              <div
+                                slot="message"
+                                class="layout horizontal center center-justified flex upper-lower-space"
+                              >
+                                <a href="/maintenance">
+                                  <div
+                                    class="layout horizontal center center-justified flex"
+                                    style="font-size:14px;"
+                                  >
+                                    <i
+                                      class="fas fa-tools larger left-end-icon"
+                                    ></i>
+                                    <span>
+                                      ${_t('summary.SystemMaintenance')}
                                     </span>
                                     <i
                                       class="fas fa-chevron-right right-end-icon"
@@ -900,18 +1002,6 @@ export default class BackendAISummary extends BackendAIPage {
                           `
                         : html``
                     }
-
-                    <lablup-activity-panel class="footer-menu" noheader autowidth>
-                      <div slot="message" class="layout horizontal center center-justified flex upper-lower-space">
-                          <a href="/maintenance">
-                            <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
-                              <i class="fas fa-tools larger left-end-icon"></i>
-                              <span>${_t('summary.SystemMaintenance')}</span>
-                              <i class="fas fa-chevron-right right-end-icon"></i>
-                            </div>
-                          </a>
-                      </div>
-                    </lablup-activity-panel>
                   </div>
                 </div>
               </div>

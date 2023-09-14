@@ -122,7 +122,8 @@
     "DownloadWebUIApp": "__NOT_TRANSLATED__",
     "IPUEnabled": "__NOT_TRANSLATED__",
     "ATOMEnabled": "__NOT_TRANSLATED__",
-    "WarboyEnabled": "__NOT_TRANSLATED__"
+    "WarboyEnabled": "__NOT_TRANSLATED__",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {

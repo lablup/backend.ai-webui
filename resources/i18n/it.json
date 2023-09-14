@@ -104,7 +104,8 @@
     "NoInvitations": "Non ci sono inviti da visualizzare.",
     "AcceptSharedVFolder": "Ora puoi accedere alla cartella:",
     "DeclineSharedVFolder": "L'invito alla cartella è stato eliminato:",
-    "connectingToCluster": "Connessione al cluster Backend.AI in corso..."
+    "connectingToCluster": "Connessione al cluster Backend.AI in corso...",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {

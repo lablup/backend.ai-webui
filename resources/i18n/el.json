@@ -104,7 +104,8 @@
     "NoInvitations": "Δεν υπάρχουν προσκλήσεις για προβολή.",
     "AcceptSharedVFolder": "Τώρα μπορείτε να αποκτήσετε πρόσβαση σε φάκελο:",
     "DeclineSharedVFolder": "Η πρόσκληση φακέλου διαγράφεται:",
-    "connectingToCluster": "Σύνδεση στο σύμπλεγμα Backend.AI ..."
+    "connectingToCluster": "Σύνδεση στο σύμπλεγμα Backend.AI ...",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {

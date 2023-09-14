@@ -104,7 +104,8 @@
     "NoInvitations": "No hay invitaciones para mostrar.",
     "AcceptSharedVFolder": "Ahora puede acceder a la carpeta:",
     "DeclineSharedVFolder": "Se elimina la invitación a la carpeta:",
-    "connectingToCluster": "Conectando al clúster Backend.AI ..."
+    "connectingToCluster": "Conectando al clúster Backend.AI ...",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {

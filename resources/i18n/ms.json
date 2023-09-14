@@ -104,7 +104,8 @@
     "NoInvitations": "Tidak ada jemputan untuk dipaparkan.",
     "AcceptSharedVFolder": "Anda kini boleh mengakses folder:",
     "DeclineSharedVFolder": "Jemputan folder dipadamkan:",
-    "connectingToCluster": "Menyambung ke Kluster Backend.AI ..."
+    "connectingToCluster": "Menyambung ke Kluster Backend.AI ...",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {

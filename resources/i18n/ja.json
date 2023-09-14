@@ -104,7 +104,8 @@
     "NoInvitations": "表示する招待状はありません。",
     "AcceptSharedVFolder": "これで、フォルダにアクセスできます。",
     "DeclineSharedVFolder": "フォルダの招待状が削除されます：",
-    "connectingToCluster": "Backend.AIクラスターに接続しています..."
+    "connectingToCluster": "Backend.AIクラスターに接続しています...",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {

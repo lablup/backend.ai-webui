@@ -104,7 +104,8 @@
     "NoInvitations": "Không có lời mời nào để hiển thị.",
     "AcceptSharedVFolder": "Bây giờ bạn có thể truy cập thư mục:",
     "DeclineSharedVFolder": "Thư mời thư mục đã bị xóa:",
-    "connectingToCluster": "Đang kết nối với Backend.AI Cluster ..."
+    "connectingToCluster": "Đang kết nối với Backend.AI Cluster ...",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {

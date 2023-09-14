@@ -123,7 +123,8 @@
     "DownloadWebUIApp": "Backend.AI Web UI 앱 다운로드",
     "IPUEnabled": "IPU NPU 사용중",
     "ATOMEnabled": "ATOM NPU 사용중",
-    "WarboyEnabled": "Warboy NPU 사용중"
+    "WarboyEnabled": "Warboy NPU 사용중",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {
