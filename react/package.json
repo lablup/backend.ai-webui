@@ -11,6 +11,7 @@
     "@types/node": "^20.5.9",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
+    "@types/react-syntax-highlighter": "^15.5.7",
     "ahooks": "^3.7.8",
     "antd": "^5.8.6",
     "dayjs": "^1.11.9",
@@ -25,6 +26,7 @@
     "react-relay": "^15.0.0",
     "react-router-dom": "^6.15.0",
     "react-scripts": "5.0.1",
+    "react-syntax-highlighter": "^15.5.0",
     "typescript": "^5.2.2",
     "use-query-params": "^2.2.1",
     "web-vitals": "^3.4.0"

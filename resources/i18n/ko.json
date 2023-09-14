@@ -230,9 +230,10 @@
       "PreOpenPortConfigurationDone": "사전 개방 포트값이 설정되었습니다.",
       "PreOpenPortPanelTitle": "추가될 사전 개방 포트값 (옵션)",
       "PreOpenPortRange": "사전 개방 포트는 1024 ~ 65535 사이만 설정할 수 있습니다.",
-      "PreOpenPortRangeGuide": "콤마(,) 또는 스페이스로 구분하여 북수를 입력할 수 있습니다.",
+      "PreOpenPortRangeGuide": "여러 값을 콤마(,) 또는 스페이스로 구분하여 입력할 수 있습니다.",
       "MinMemory": "현재 선택한 실행환경의 최소 메모리 용량은 {{size}}iB입니다.",
-      "Enable": "활성화"
+      "Enable": "활성화",
+      "Network": "네트워크"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

@@ -1,4 +1,6 @@
+import Flex from './Flex';
 import SliderInputItem from './SliderInputFormItem';
+import { EditOutlined } from '@ant-design/icons';
 import { Card, Form, Select, theme } from 'antd';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -17,7 +19,11 @@ const ResourceAllocationFormItems = () => {
           options={[
             {
               value: 'custom',
-              label: 'Custom',
+              label: (
+                <Flex gap={'xs'}>
+                  <EditOutlined /> Custom
+                </Flex>
+              ),
               // label: (
               //   <Flex direction="row" gap="xs">
               //     <Typography.Text strong>Custom</Typography.Text>

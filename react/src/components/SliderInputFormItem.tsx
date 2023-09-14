@@ -44,6 +44,9 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
               max={max}
               min={min}
               step={step}
+              onStep={(value, info) => {
+                console.log(value, info);
+              }}
               {...inputNumberProps}
             />
           </Form.Item>
