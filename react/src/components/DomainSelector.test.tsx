@@ -30,7 +30,7 @@ describe('DomainSelect', () => {
           <DomainSelector
             title="hello"
             placeholder="Please select domain"
-            autoFocus={false}
+            autoFocus={true}
           />
         </Suspense>
       </RelayEnvironmentProvider>,

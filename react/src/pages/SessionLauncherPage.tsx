@@ -10,7 +10,6 @@ import ResourceGroupSelect from '../components/ResourceGroupSelect';
 import VFolderTableFromItem from '../components/VFolderTableFromItem';
 import {
   BlockOutlined,
-  ExclamationCircleTwoTone,
   LeftOutlined,
   PlayCircleFilled,
   PlayCircleOutlined,
@@ -29,7 +28,6 @@ import {
   Select,
   StepProps,
   Steps,
-  Tag,
   Typography,
   theme,
 } from 'antd';

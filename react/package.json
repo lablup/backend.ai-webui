@@ -8,14 +8,13 @@
     "@testing-library/react": "^14.0.0",
     "@types/jest": "^29.5.4",
     "@types/lodash": "^4.14.198",
-    "@types/node": "^20.5.9",
+    "@types/node": "^20.6.0",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
-    "@types/react-syntax-highlighter": "^15.5.7",
     "ahooks": "^3.7.8",
-    "antd": "^5.9.0",
+    "antd": "^5.9.1",
     "dayjs": "^1.11.9",
-    "i18next": "^23.4.9",
+    "i18next": "^23.5.1",
     "i18next-http-backend": "^2.2.2",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
@@ -24,7 +23,7 @@
     "react-i18next": "^13.2.2",
     "react-query": "^3.39.3",
     "react-relay": "^15.0.0",
-    "react-router-dom": "^6.15.0",
+    "react-router-dom": "^6.16.0",
     "react-scripts": "5.0.1",
     "react-syntax-highlighter": "^15.5.0",
     "typescript": "^5.2.2",
@@ -37,7 +36,8 @@
     "build:copy": "npm run build && cp -r ./build/* ../build/rollup/",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "relay": "relay-compiler"
+    "relay": "relay-compiler",
+    "lint": "npx eslint ./src --ignore-pattern '*.test.*' --max-warnings=0"
   },
   "eslintConfig": {
     "extends": [
@@ -59,8 +59,9 @@
   },
   "devDependencies": {
     "@craco/craco": "^7.1.0",
-    "@testing-library/user-event": "^14.4.3",
+    "@testing-library/user-event": "^14.5.0",
     "@types/react-relay": "^14.1.5",
+    "@types/react-syntax-highlighter": "^15.5.7",
     "@types/react-test-renderer": "^18.0.1",
     "@types/relay-runtime": "^14.1.13",
     "@types/relay-test-utils": "^14.1.0",
