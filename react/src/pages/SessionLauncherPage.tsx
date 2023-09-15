@@ -6,11 +6,13 @@ import ImageMetaIcon from '../components/ImageMetaIcon';
 import PortSelectFormItem from '../components/PortSelectFormItem';
 import ResourceAllocationFormItems from '../components/ResourceAllocationFormItems';
 import ResourceGroupSelect from '../components/ResourceGroupSelect';
+import VFolderTableFromItem from '../components/VFolderTableFromItem';
 import {
   BlockOutlined,
+  ExclamationCircleTwoTone,
   LeftOutlined,
+  PlayCircleFilled,
   PlayCircleOutlined,
-  PlayCircleTwoTone,
   RightOutlined,
 } from '@ant-design/icons';
 import {
@@ -59,6 +61,7 @@ const SessionLauncherPage = () => {
       {
         title: t('session.launcher.SessionType'),
         key: 'sessionType',
+        // status: form.getFieldError('name').length > 0 ? 'error' : undefined,
       },
       {
         title: `${t('session.launcher.Environments')} & ${t(
@@ -77,7 +80,7 @@ const SessionLauncherPage = () => {
       {
         title: t('session.launcher.ConfirmAndLaunch'),
         icon: (
-          <PlayCircleTwoTone twoToneColor={token.colorPrimary} />
+          <PlayCircleFilled />
           // <Flex
           //   align="center"
           //   justify="center"
@@ -110,6 +113,12 @@ const SessionLauncherPage = () => {
 
   console.log(form.getFieldsValue());
   console.log('envs', form.getFieldValue('envvars'));
+  console.log(form.getFieldsError());
+  console.log(form.getFieldError('name'));
+  const hasError = _.some(
+    form.getFieldsError(),
+    (item) => item.errors.length > 0,
+  );
   return (
     <Flex
       direction="column"
@@ -118,7 +127,7 @@ const SessionLauncherPage = () => {
     >
       <Flex direction="row" justify="between">
         <Typography.Title level={2} style={{ marginTop: 0 }}>
-          Start session
+          {t('session.launcher.StartNewSession')}
         </Typography.Title>
         <Button type="link" icon={<BlockOutlined />}>
           Start using a template
@@ -217,7 +226,7 @@ const SessionLauncherPage = () => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input allowClear />
                   </Form.Item>
                 </Card>
 
@@ -340,7 +349,8 @@ const SessionLauncherPage = () => {
                 {currentStepKey === 'storage' && (
                   <>
                     <Card title={t('webui.menu.Data&Storage')}>
-                      vFolder & alias
+                      <VFolderTableFromItem name="mounts" />
+                      {/* <VFolderTable /> */}
                     </Card>
                   </>
                 )}
@@ -359,6 +369,12 @@ const SessionLauncherPage = () => {
                     <Card
                       title={t('session.launcher.SessionType')}
                       size="small"
+                      style={{
+                        borderColor:
+                          form.getFieldError('name').length > 0
+                            ? token.colorError
+                            : undefined,
+                      }}
                       extra={
                         <Button
                           type="link"
@@ -368,6 +384,13 @@ const SessionLauncherPage = () => {
                               steps.findIndex((v) => v.key === 'sessionType'),
                             );
                           }}
+                          icon={
+                            form.getFieldError('name').length > 0 && (
+                              <ExclamationCircleTwoTone
+                                twoToneColor={token.colorError}
+                              />
+                            )
+                          }
                         >
                           {t('button.Edit')}
                         </Button>
@@ -377,7 +400,7 @@ const SessionLauncherPage = () => {
                         <Descriptions.Item label="Session Type" span={24}>
                           {form.getFieldValue('sessionType')}
                         </Descriptions.Item>
-                        <Descriptions.Item label="Session name" span={24}>
+                        <Descriptions.Item label={'Session name'} span={24}>
                           {form.getFieldValue('name')}
                         </Descriptions.Item>
                       </Descriptions>
@@ -471,7 +494,9 @@ const SessionLauncherPage = () => {
                           {t('button.Edit')}
                         </Button>
                       }
-                    ></Card>
+                    >
+                      {JSON.stringify(form.getFieldValue('mounts'), null, 2)}
+                    </Card>
                     <Card
                       title="Network"
                       size="small"
@@ -524,8 +549,12 @@ const SessionLauncherPage = () => {
                     </Button>
                   )}
                   {currentStep === steps.length - 1 ? (
-                    <Button type="primary" icon={<PlayCircleOutlined />}>
-                      Start
+                    <Button
+                      type="primary"
+                      icon={<PlayCircleOutlined />}
+                      disabled={hasError}
+                    >
+                      {t('session.launcher.Launch')}
                     </Button>
                   ) : (
                     <Button

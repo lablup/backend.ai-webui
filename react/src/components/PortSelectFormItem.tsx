@@ -1,6 +1,6 @@
-import { Form, FormItemProps, Input, Select, Tag } from 'antd';
+import { Form, FormItemProps, Select, Tag } from 'antd';
 import _ from 'lodash';
-import React, { useState } from 'react';
+import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 interface Props extends FormItemProps {}
@@ -10,15 +10,12 @@ const portPattern =
 
 const PortSelectFormItem: React.FC<Props> = ({ ...formItemProps }) => {
   const { t } = useTranslation();
-  const [help, setHelp] = useState<string | null>(
-    t('session.launcher.PreOpenPortRangeGuide'),
-  );
   return (
     <Form.Item
       label={t('session.launcher.PreOpenPortTitle')}
       name="ports"
       tooltip={<Trans i18nKey="session.launcher.DescSetPreOpenPort" />}
-      help={help}
+      extra={t('session.launcher.PreOpenPortRangeGuide')}
       rules={[
         // {
         //   max: 2,
@@ -27,10 +24,8 @@ const PortSelectFormItem: React.FC<Props> = ({ ...formItemProps }) => {
         ({ getFieldValue }) => ({
           validator(rule, values) {
             if (_.every(values, (v) => portPattern.test(v))) {
-              setHelp(t('session.launcher.PreOpenPortRangeGuide'));
               return Promise.resolve();
             }
-            setHelp(null);
             return Promise.reject(
               new Error(t('session.launcher.PreOpenPortRange')),
             );
@@ -71,40 +66,40 @@ const PortSelectFormItem: React.FC<Props> = ({ ...formItemProps }) => {
   );
 };
 
-const portGuides = {
-  '5432': 'PostgreSQL',
-  '3306': 'MySQL',
-  '1521': 'Oracle',
-  '27017': 'MongoDB',
-  '6379': 'Redis',
-  '11211': 'Memcached',
-  '9200': 'Elasticsearch',
-  '5601': 'Kibana',
-  '9600': 'Logstash',
-  '9042': 'Cassandra',
-  '2181': 'Zookeeper',
-  '9092': 'Kafka',
-  '80': 'HTTP',
-  '443': 'HTTPS',
-  '22': 'SSH',
-  '21': 'FTP',
-  '25': 'SMTP',
-  '110': 'POP3',
-  '143': 'IMAP',
-  '53': 'DNS',
-  '389': 'LDAP',
-  '636': 'LDAPS',
-  '8080': 'HTTP Alt',
-  '8443': 'HTTP Alt SSL',
-  '465': 'SMTP SSL',
-  '587': 'SMTP TLS',
-  '993': 'IMAP SSL',
-  '995': 'POP3 SSL',
-  '7001': 'WebLogic',
-  '7002': 'WebLogic SSL',
-  '4848': 'GlassFish',
-  '8181': 'GlassFish SSL',
-  '8081': 'Nginx',
-};
+// const portGuides = {
+//   '5432': 'PostgreSQL',
+//   '3306': 'MySQL',
+//   '1521': 'Oracle',
+//   '27017': 'MongoDB',
+//   '6379': 'Redis',
+//   '11211': 'Memcached',
+//   '9200': 'Elasticsearch',
+//   '5601': 'Kibana',
+//   '9600': 'Logstash',
+//   '9042': 'Cassandra',
+//   '2181': 'Zookeeper',
+//   '9092': 'Kafka',
+//   '80': 'HTTP',
+//   '443': 'HTTPS',
+//   '22': 'SSH',
+//   '21': 'FTP',
+//   '25': 'SMTP',
+//   '110': 'POP3',
+//   '143': 'IMAP',
+//   '53': 'DNS',
+//   '389': 'LDAP',
+//   '636': 'LDAPS',
+//   '8080': 'HTTP Alt',
+//   '8443': 'HTTP Alt SSL',
+//   '465': 'SMTP SSL',
+//   '587': 'SMTP TLS',
+//   '993': 'IMAP SSL',
+//   '995': 'POP3 SSL',
+//   '7001': 'WebLogic',
+//   '7002': 'WebLogic SSL',
+//   '4848': 'GlassFish',
+//   '8181': 'GlassFish SSL',
+//   '8081': 'Nginx',
+// };
 
 export default PortSelectFormItem;

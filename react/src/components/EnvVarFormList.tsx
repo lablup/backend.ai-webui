@@ -1,28 +1,20 @@
 import Flex from './Flex';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, InputRef } from 'antd';
 import { FormListProps } from 'antd/lib/form';
 import _ from 'lodash';
-import React from 'react';
+import React, { useRef } from 'react';
 
 interface EnvVarFormListProps extends Omit<FormListProps, 'children'> {}
 const EnvVarFormList: React.FC<EnvVarFormListProps> = ({ ...props }) => {
+  const inputRef = useRef<InputRef>(null);
+
   return (
     <Form.List {...props}>
       {(fields, { add, remove }) => {
         return (
           <Flex direction="column" gap="xs" align="stretch">
-            <Form.Item noStyle>
-              <Button
-                type="dashed"
-                onClick={() => add()}
-                icon={<PlusOutlined />}
-                block
-              >
-                Add variable
-              </Button>
-            </Form.Item>
-            {fields.map(({ key, name, ...restField }) => (
+            {fields.map(({ key, name, ...restField }, index) => (
               <Flex key={key} direction="row" align="baseline" gap="xs">
                 <Form.Item
                   {...restField}
@@ -54,7 +46,10 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({ ...props }) => {
                     }),
                   ]}
                 >
-                  <Input placeholder="Variable" />
+                  <Input
+                    ref={index === fields.length - 1 ? inputRef : null}
+                    placeholder="Variable"
+                  />
                 </Form.Item>
                 <Form.Item
                   {...restField}
@@ -67,6 +62,23 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({ ...props }) => {
                 <MinusCircleOutlined onClick={() => remove(name)} />
               </Flex>
             ))}
+            <Form.Item noStyle>
+              <Button
+                type="dashed"
+                onClick={() => {
+                  add();
+                  setTimeout(() => {
+                    if (inputRef.current) {
+                      inputRef.current.focus();
+                    }
+                  }, 0);
+                }}
+                icon={<PlusOutlined />}
+                block
+              >
+                Add variable
+              </Button>
+            </Form.Item>
           </Flex>
         );
       }}
