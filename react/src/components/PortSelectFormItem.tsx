@@ -1,13 +1,13 @@
 import { Form, FormItemProps, Select, Tag } from 'antd';
+import { TagProps } from 'antd/lib';
 import _ from 'lodash';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 interface Props extends FormItemProps {}
 
-const portPattern =
-  /^(102[4-9]|10[3-9][0-9]|1[1-9][0-9]{2}|[2-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$/;
-
+const MIN_PORT = 1024;
+const MAX_PORT = 65535;
 const PortSelectFormItem: React.FC<Props> = ({ ...formItemProps }) => {
   const { t } = useTranslation();
   return (
@@ -23,7 +23,12 @@ const PortSelectFormItem: React.FC<Props> = ({ ...formItemProps }) => {
         // },
         ({ getFieldValue }) => ({
           validator(rule, values) {
-            if (_.every(values, (v) => portPattern.test(v))) {
+            if (
+              _.every(values, (v) => {
+                const port = parseInt(v);
+                return port >= MIN_PORT && port <= MAX_PORT;
+              })
+            ) {
               return Promise.resolve();
             }
             return Promise.reject(
@@ -37,19 +42,18 @@ const PortSelectFormItem: React.FC<Props> = ({ ...formItemProps }) => {
       <Select
         mode="tags"
         tagRender={(props) => {
-          const isValid = portPattern.test(props.value);
           return (
-            <Tag
+            <PortTag
               closable={props.closable}
               onClose={props.onClose}
               onMouseDown={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
               }}
-              color={isValid ? undefined : 'red'}
+              value={props.value}
             >
               {props.label}
-            </Tag>
+            </PortTag>
           );
         }}
         style={{ width: '100%' }}
@@ -64,6 +68,15 @@ const PortSelectFormItem: React.FC<Props> = ({ ...formItemProps }) => {
       />
     </Form.Item>
   );
+};
+
+interface PortTagProps extends TagProps {
+  value: string;
+}
+export const PortTag: React.FC<PortTagProps> = ({ value, ...tagProps }) => {
+  const port = parseInt(value);
+  const isValid = port >= MIN_PORT && port <= MAX_PORT;
+  return <Tag color={isValid ? undefined : 'red'} {...tagProps} />;
 };
 
 // const portGuides = {
