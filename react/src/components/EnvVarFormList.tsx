@@ -23,8 +23,9 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({ ...props }) => {
                   rules={[
                     { required: true, message: 'Enter Variable name' },
                     {
-                      pattern: /^\S+(?: \S+)*$/,
-                      message: 'Variable name can not start or end with space',
+                      pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/,
+                      message:
+                        'Variable name must start with a letter or underscore, and can only contain letters, numbers, and underscores.',
                     },
                     ({ getFieldValue }) => ({
                       validator(rule, variableName) {

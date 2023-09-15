@@ -7,9 +7,10 @@ import { VFolder } from './VFolderSelect';
 import { ReloadOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Table, TableProps, Typography } from 'antd';
 import { GetRowKey } from 'antd/es/table/interface';
+import { InputProps } from 'antd/lib';
 import { ColumnsType } from 'antd/lib/table';
 import _ from 'lodash';
-import React, { Key, useState, useTransition } from 'react';
+import React, { Key, useEffect, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface VFolderFile {
@@ -37,7 +38,8 @@ interface Props extends TableProps<VFolder> {
   selectedRowKeys?: React.Key[];
   showAliasInput?: boolean;
   onChangeSelectedRowKeys?: (selectedKeys: React.Key[]) => void;
-  onChangeAlias?: (aliasMap: AliasMap) => void;
+  aliasMap?: AliasMap;
+  onChangeAliasMap?: (aliasMap: AliasMap) => void;
   filter?: (vFolder: VFolder) => boolean;
 }
 
@@ -46,7 +48,8 @@ const VFolderTable: React.FC<Props> = ({
   showAliasInput = false,
   selectedRowKeys = [],
   onChangeSelectedRowKeys,
-  onChangeAlias,
+  aliasMap,
+  onChangeAliasMap: onChangeAlias,
   rowKey = 'name',
   ...tableProps
 }) => {
@@ -61,6 +64,12 @@ const VFolderTable: React.FC<Props> = ({
   }, [rowKey]);
 
   const [internalForm] = Form.useForm<AliasMap>();
+  // useEffect(() => {
+  // TODO: check setFieldsValue performance
+  if (aliasMap) {
+    internalForm.setFieldsValue(aliasMap);
+  }
+  // }, [aliasMap, internalForm]);
 
   const { t } = useTranslation();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
@@ -96,7 +105,8 @@ const VFolderTable: React.FC<Props> = ({
   //   setSelectedRowKeys(defaultSelectedKeys || []);
   // }, [defaultSelectedKeys]);
 
-  const handleAliasUpdate = () => {
+  const handleAliasUpdate = (e: any) => {
+    e.preventDefault();
     internalForm.validateFields().then((values) => {
       onChangeAlias && onChangeAlias(values);
     });
@@ -136,7 +146,7 @@ const VFolderTable: React.FC<Props> = ({
                   }}
                   placeholder={`/home/work/${record.name}/}`}
                   onPressEnter={handleAliasUpdate}
-                  // onBlur={handleAliasSave}
+                  onBlur={handleAliasUpdate}
                 ></Input>
               </Form.Item>
             )}

@@ -28,6 +28,7 @@ import {
   Select,
   StepProps,
   Steps,
+  Table,
   Typography,
   theme,
 } from 'antd';
@@ -490,7 +491,7 @@ const SessionLauncherPage = () => {
                       }
                     ></Card>
                     <Card
-                      title="Storage"
+                      title={t('webui.menu.Data&Storage')}
                       size="small"
                       extra={
                         <Button
@@ -506,7 +507,42 @@ const SessionLauncherPage = () => {
                         </Button>
                       }
                     >
-                      {JSON.stringify(form.getFieldValue('mounts'), null, 2)}
+                      <Table
+                        rowKey="name"
+                        bordered
+                        size="small"
+                        pagination={false}
+                        columns={[
+                          {
+                            dataIndex: 'name',
+                            title: t('data.folders.Name'),
+                          },
+                          {
+                            dataIndex: 'alias',
+                            title: t('session.launcher.FolderAlias'),
+                            render: (value) => {
+                              return (
+                                value || (
+                                  <Typography.Text
+                                    type="secondary"
+                                    style={{
+                                      opacity: 0.7,
+                                    }}
+                                  >
+                                    {`/home/work/${value}/`}
+                                  </Typography.Text>
+                                )
+                              );
+                            },
+                          },
+                        ]}
+                        dataSource={_.map(form.getFieldValue('mounts'), (v) => {
+                          return {
+                            name: v,
+                            alias: form.getFieldValue('vfoldersAliasMap')[v],
+                          };
+                        })}
+                      ></Table>
                     </Card>
                     <BAICard
                       title="Network"
