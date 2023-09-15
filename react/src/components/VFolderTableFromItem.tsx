@@ -20,6 +20,8 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
     >
       <VFolderTable
         rowKey="name"
+        showAliasInput
+        onChangeAlias={(aliasMap) => {}}
         // onChangeSelectedRowKeys={(values) => {
         //   console.log(values);
         // }}

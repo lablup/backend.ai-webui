@@ -1,9 +1,10 @@
+import BAICard from '../BAICard';
 import EnvVarFormList from '../components/EnvVarFormList';
 import Flex from '../components/Flex';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems from '../components/ImageEnvironmentSelectFormItems';
 import ImageMetaIcon from '../components/ImageMetaIcon';
-import PortSelectFormItem from '../components/PortSelectFormItem';
+import PortSelectFormItem, { PortTag } from '../components/PortSelectFormItem';
 import ResourceAllocationFormItems from '../components/ResourceAllocationFormItems';
 import ResourceGroupSelect from '../components/ResourceGroupSelect';
 import VFolderTableFromItem from '../components/VFolderTableFromItem';
@@ -355,46 +356,53 @@ const SessionLauncherPage = () => {
                   </>
                 )}
                 {/* Step Start*/}
-                {currentStepKey === 'network' && (
-                  <>
-                    <Card title={t('session.launcher.Network')}>
-                      <PortSelectFormItem />
-                    </Card>
-                  </>
-                )}
+                <Card
+                  title={t('session.launcher.Network')}
+                  style={{
+                    display: currentStepKey === 'network' ? 'block' : 'none',
+                  }}
+                >
+                  <PortSelectFormItem />
+                </Card>
 
                 {/* Step Start*/}
                 {currentStepKey === 'review' && (
                   <>
-                    <Card
+                    <BAICard
                       title={t('session.launcher.SessionType')}
                       size="small"
-                      style={{
-                        borderColor:
-                          form.getFieldError('name').length > 0
-                            ? token.colorError
-                            : undefined,
-                      }}
-                      extra={
-                        <Button
-                          type="link"
-                          onClick={() => {
-                            setCurrentStep(
-                              // @ts-ignore
-                              steps.findIndex((v) => v.key === 'sessionType'),
-                            );
-                          }}
-                          icon={
-                            form.getFieldError('name').length > 0 && (
-                              <ExclamationCircleTwoTone
-                                twoToneColor={token.colorError}
-                              />
-                            )
-                          }
-                        >
-                          {t('button.Edit')}
-                        </Button>
+                      status={
+                        form.getFieldError('name').length > 0
+                          ? 'error'
+                          : undefined
                       }
+                      extraButtonTitle={t('button.Edit')}
+                      onClickExtraButton={() => {
+                        setCurrentStep(
+                          // @ts-ignore
+                          steps.findIndex((v) => v.key === 'sessionType'),
+                        );
+                      }}
+                      // extra={
+                      //   <Button
+                      //     type="link"
+                      //     onClick={() => {
+                      //       setCurrentStep(
+                      //         // @ts-ignore
+                      //         steps.findIndex((v) => v.key === 'sessionType'),
+                      //       );
+                      //     }}
+                      //     icon={
+                      //       form.getFieldError('name').length > 0 && (
+                      //         <ExclamationCircleTwoTone
+                      //           twoToneColor={token.colorError}
+                      //         />
+                      //       )
+                      //     }
+                      //   >
+                      //     {t('button.Edit')}
+                      //   </Button>
+                      // }
                     >
                       <Descriptions size="small">
                         <Descriptions.Item label="Session Type" span={24}>
@@ -404,7 +412,7 @@ const SessionLauncherPage = () => {
                           {form.getFieldValue('name')}
                         </Descriptions.Item>
                       </Descriptions>
-                    </Card>
+                    </BAICard>
                     <Card
                       title={t('session.launcher.Environments')}
                       size="small"
@@ -445,8 +453,13 @@ const SessionLauncherPage = () => {
                               style={darcula}
                               codeTagProps={{
                                 style: {
-                                  fontFamily: 'monospace',
+                                  // fontFamily: 'monospace',
                                 },
+                              }}
+                              // showLineNumbers
+                              customStyle={{
+                                margin: 0,
+                                width: '100%',
                               }}
                             >
                               {_.map(
@@ -497,32 +510,38 @@ const SessionLauncherPage = () => {
                     >
                       {JSON.stringify(form.getFieldValue('mounts'), null, 2)}
                     </Card>
-                    <Card
+                    <BAICard
                       title="Network"
                       size="small"
-                      extra={
-                        <Button
-                          type="link"
-                          onClick={() => {
-                            setCurrentStep(
-                              // @ts-ignore
-                              steps.findIndex((v) => v.key === 'network'),
-                            );
-                          }}
-                        >
-                          {t('button.Edit')}
-                        </Button>
+                      status={
+                        form.getFieldError('ports').length > 0
+                          ? 'error'
+                          : undefined
                       }
+                      extraButtonTitle={t('button.Edit')}
+                      onClickExtraButton={() => {
+                        setCurrentStep(
+                          // @ts-ignore
+                          steps.findIndex((v) => v.key === 'network'),
+                        );
+                      }}
                     >
                       <Descriptions size="small">
-                        <Descriptions.Item label="Preopend port">
+                        <Descriptions.Item
+                          label={t('session.launcher.PreOpenPortTitle')}
+                        >
                           {/* {form.getFieldValue('environments').image} */}
-                          {_.sortBy(form.getFieldValue('ports')).map((v) => (
-                            <Tag>{v}</Tag>
+                          {_.sortBy(form.getFieldValue('ports'), (v) =>
+                            parseInt(v),
+                          ).map((v) => (
+                            <PortTag value={v}>{v}</PortTag>
                           ))}
+                          {form.getFieldValue('ports')?.length !== 0
+                            ? undefined
+                            : '-'}
                         </Descriptions.Item>
                       </Descriptions>
-                    </Card>
+                    </BAICard>
                   </>
                 )}
 
