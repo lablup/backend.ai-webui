@@ -4,9 +4,9 @@
     "ClassDeclaration": true,
   }
 }]*/
-import '@vaadin/vaadin-grid/vaadin-grid-filter';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter';
-import { GridColumn } from '@vaadin/vaadin-grid/vaadin-grid-column';
+import { GridColumn } from '@vaadin/grid/vaadin-grid-column';
+import '@vaadin/grid/vaadin-grid-filter';
+import '@vaadin/grid/vaadin-grid-sorter';
 
 /**
  * Codemirror component.
@@ -60,7 +60,10 @@ class LablupGridSortFilterColumn extends GridColumn {
 
       // Create sorter header
       sorter = document.createElement('vaadin-grid-sorter');
-      sorter.addEventListener('direction-changed', this.__boundOnDirectionChanged);
+      sorter.addEventListener(
+        'direction-changed',
+        this.__boundOnDirectionChanged,
+      );
       header.appendChild(sorter);
 
       // Create filter header
@@ -70,7 +73,10 @@ class LablupGridSortFilterColumn extends GridColumn {
       textField.setAttribute('theme', 'small');
       textField.setAttribute('style', 'max-width: 100%;');
       textField.setAttribute('focus-target', '');
-      textField.addEventListener('value-changed', this.__boundOnFilterValueChanged);
+      textField.addEventListener(
+        'value-changed',
+        this.__boundOnFilterValueChanged,
+      );
       filter.appendChild(textField);
       header.appendChild(filter);
 
@@ -121,6 +127,9 @@ class LablupGridSortFilterColumn extends GridColumn {
   }
 }
 
-customElements.define('lablup-grid-sort-filter-column', LablupGridSortFilterColumn);
+customElements.define(
+  'lablup-grid-sort-filter-column',
+  LablupGridSortFilterColumn,
+);
 
 export { LablupGridSortFilterColumn };

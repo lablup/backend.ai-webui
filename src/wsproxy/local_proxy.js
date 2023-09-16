@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const DEBUG = (process.env.DEBUG === 'true');
+const DEBUG = process.env.DEBUG === 'true';
 const proxyListenIP = process.env.PROXYLISTENIP || '127.0.0.1';
 const proxyBaseHost = process.env.PROXYBASEHOST || 'localhost';
 const proxyBasePort = parseInt(process.env.PROXYBASEPORT || 5050);
@@ -9,9 +9,9 @@ const logger = require('./lib/logger')(__filename);
 
 (async () => {
   let manager = new ProxyManager(proxyListenIP, proxyBaseHost, proxyBasePort);
-  manager.once("ready", () => {
-    let url = 'http://' + proxyBaseHost + ':' + manager.port + "/";
-    logger.info("Proxy is ready: " + url);
+  manager.once('ready', () => {
+    let url = 'http://' + proxyBaseHost + ':' + manager.port + '/';
+    logger.info('Proxy is ready: ' + url);
   });
   manager.start();
 })();

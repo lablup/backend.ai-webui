@@ -1,37 +1,51 @@
 /*
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 //import Chart from '../lib/Chart.min';
 import Chart from 'chart.js/auto';
-import {css, html, LitElement, property, TemplateResult} from 'lit-element';
+import { css, html, LitElement, property, TemplateResult } from 'lit-element';
 
 export default class ChartJs extends LitElement {
-  public shadowRoot: any; // ShadowRoot
-  @property({type: Object}) data = {};
-  @property({type: Object}) options = {};
-  @property({type: Object}) chart;
-  @property({type: String}) type = 'line';
-  @property({type: Number}) height = 0;
-  @property({type: Number}) width = 0;
+  @property({ type: Object }) data = {};
+  @property({ type: Object }) options = {};
+  @property({ type: Object }) chart;
+  @property({ type: String }) type = 'line';
+  @property({ type: Number }) height = 0;
+  @property({ type: Number }) width = 0;
+
+  constructor() {
+    super();
+  }
 
   updated(prop) {
     super.update(prop);
     if (this.chart) {
       this.chart.data = this.data;
-      if(!this.options) {
+      if (!this.options) {
         this.options = {
           responsive: true,
-          maintainAspectRatio: true
-        }
+          maintainAspectRatio: true,
+        };
       }
       this.chart.options = this.options;
-      if (typeof this.data !== 'undefined' && typeof this.options !== 'undefined' && this.type !== '' && Object.keys(this.data).length !== 0 && Object.keys(this.options).length !== 0) {
+      if (
+        typeof this.data !== 'undefined' &&
+        typeof this.options !== 'undefined' &&
+        this.type !== '' &&
+        Object.keys(this.data).length !== 0 &&
+        Object.keys(this.options).length !== 0
+      ) {
         this.updateChart();
       }
-
     } else {
-      if (typeof this.data !== 'undefined' && typeof this.options !== 'undefined' && this.type !== '' && Object.keys(this.data).length !== 0 && Object.keys(this.options).length !== 0) {
+      if (
+        typeof this.data !== 'undefined' &&
+        typeof this.options !== 'undefined' &&
+        this.type !== '' &&
+        Object.keys(this.data).length !== 0 &&
+        Object.keys(this.options).length !== 0
+      ) {
         this._initializeChart();
       }
     }
@@ -44,7 +58,7 @@ export default class ChartJs extends LitElement {
     this.chart = new Chart(ctx, {
       type: this.type as any,
       data: this.data as any,
-      options: this.options
+      options: this.options,
     });
   }
 
@@ -71,17 +85,31 @@ export default class ChartJs extends LitElement {
             max-width: 55vw;
           }
         }
-      `
+      `,
     ];
   }
 
   public firstUpdated(): void {
-    if (this.type != '' && typeof this.data !== 'undefined' && typeof this.options !== 'undefined' && Object.keys(this.data).length !== 0 && Object.keys(this.options).length !== 0) {
+    if (
+      this.type != '' &&
+      typeof this.data !== 'undefined' &&
+      typeof this.options !== 'undefined' &&
+      Object.keys(this.data).length !== 0 &&
+      Object.keys(this.options).length !== 0
+    ) {
       this._initializeChart();
     }
     if (this.height && this.width) {
-      this.shadowRoot.querySelector('.chart-top-container .chart-sub-container').style.height = this.height + 'px';
-      this.shadowRoot.querySelector('.chart-top-container .chart-sub-container').style.width = this.width + 'px';
+      (
+        this.shadowRoot?.querySelector(
+          '.chart-top-container .chart-sub-container',
+        ) as HTMLElement
+      ).style.height = this.height + 'px';
+      (
+        this.shadowRoot?.querySelector(
+          '.chart-top-container .chart-sub-container',
+        ) as HTMLElement
+      ).style.width = this.width + 'px';
     }
   }
 
@@ -92,14 +120,14 @@ export default class ChartJs extends LitElement {
           <canvas></canvas>
         </div>
       </div>
-  `;
+    `;
   }
 
   public updateChart = (): void => {
     if (this.chart) {
       this.chart.update();
     }
-  }
+  };
 }
 if (!customElements.get('chart-js')) {
   customElements.define('chart-js', ChartJs);

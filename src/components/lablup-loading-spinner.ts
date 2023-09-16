@@ -1,12 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-
-import 'weightless/progress-spinner';
+import '@material/mwc-circular-progress';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Lablup Loading Spinner
@@ -17,36 +15,35 @@ import 'weightless/progress-spinner';
 
  <lablup-loading-spinner></lablup-loading-spinner>
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element lablup-loading-spinner
  */
 
 @customElement('lablup-loading-spinner')
 export default class LablupLoadingSpinner extends LitElement {
-  @property({type: Object}) spinner;
-  @property({type: Boolean}) active = false;
+  @property({ type: Object }) spinner;
+  @property({ type: Boolean, reflect: true }) active = false;
 
   static get styles(): CSSResultGroup | undefined {
     return [
       // language=CSS
       css`
-        wl-progress-spinner {
-          --progress-spinner-size: 48px;
-          --progress-spinner-stroke-width: 12px;
+        mwc-circular-progress {
           width: 48px;
           height: 48px;
           position: fixed;
-          bottom: 60px;
-          right: 60px;
+          --mdc-theme-primary: #e91e63;
+          top: calc(50vh - 24px);
         }
-      `];
+      `,
+    ];
   }
 
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css">
-      <wl-progress-spinner id="spinner"></wl-progress-spinner>
+      <link rel="stylesheet" href="resources/custom.css" />
+      <mwc-circular-progress id="spinner" indeterminate></mwc-circular-progress>
     `;
   }
 

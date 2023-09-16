@@ -3,9 +3,13 @@
 
 @group Backend.AI Web UI
  */
-import {get as _text, LanguageIdentifier, registerTranslateConfig} from 'lit-translate';
-import {LitElement} from 'lit';
-import {property} from 'lit/decorators.js';
+import { LitElement } from 'lit';
+import {
+  get as _text,
+  LanguageIdentifier,
+  registerTranslateConfig,
+} from 'lit-translate';
+import { property } from 'lit/decorators.js';
 
 /**
  Backend AI Page
@@ -19,14 +23,16 @@ registerTranslateConfig({
     return fetch(`/resources/i18n/${lang}.json`).then((res: Response) => {
       return res.json();
     });
-  }
+  },
 });
 
 export class BackendAIPage extends LitElement {
   public notification: any; // Global notification
   public tasker: any; // Global Background tasker
-  @property({type: Boolean}) active = false;
-  @property({type: Boolean}) hasLoadedStrings = false;
+  @property({ type: Boolean, reflect: true }) active = false;
+  @property({ type: Boolean }) hasLoadedStrings = false;
+  @property({ type: String }) permission; // Reserved for plugin pages
+  @property({ type: String }) menuitem; // Reserved for plugin pages
 
   constructor() {
     super();
@@ -35,24 +41,36 @@ export class BackendAIPage extends LitElement {
   }
 
   get activeConnected() {
-    return this.active && typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null && globalThis.backendaiclient.ready === true;
+    return (
+      this.active &&
+      typeof globalThis.backendaiclient != 'undefined' &&
+      globalThis.backendaiclient !== null &&
+      globalThis.backendaiclient.ready === true
+    );
   }
 
   get connected() {
-    return typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null && globalThis.backendaiclient.ready === true;
+    return (
+      typeof globalThis.backendaiclient != 'undefined' &&
+      globalThis.backendaiclient !== null &&
+      globalThis.backendaiclient.ready === true
+    );
   }
 
   public _viewStateChanged(param: boolean): void;
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  public _viewStateChanged(param) {
-  }
+  public _viewStateChanged(param) {}
 
   shouldUpdate(): boolean {
     return this.active;
   }
 
-  attributeChangedCallback(name: string, oldval: string|null, newval: string|null): void {
+  attributeChangedCallback(
+    name: string,
+    oldval: string | null,
+    newval: string | null,
+  ): void {
     if (name == 'active' && newval !== null) {
       this.active = true;
       this._viewStateChanged(true);
@@ -81,9 +99,11 @@ export class BackendAIPage extends LitElement {
     }
     let validationMessage: string;
     if (obj.validityTransform === null) {
-      if (obj.getAttribute('error-message')) { // Support paper-component style attribute
+      if (obj.getAttribute('error-message')) {
+        // Support paper-component style attribute
         validationMessage = obj.getAttribute('error-message');
-      } else if (obj.getAttribute('validationMessage')) { // Support standard attribute
+      } else if (obj.getAttribute('validationMessage')) {
+        // Support standard attribute
         validationMessage = obj.getAttribute('validationMessage');
       } else {
         validationMessage = _text('credential.validation.ValidationFailed');
@@ -94,19 +114,19 @@ export class BackendAIPage extends LitElement {
             obj.validationMessage = validationMessage;
             return {
               valid: nativeValidity.valid,
-              patternMismatch: !nativeValidity.valid
+              patternMismatch: !nativeValidity.valid,
             };
           } else if (nativeValidity.valueMissing) {
             obj.validationMessage = _text('explorer.ValueRequired');
             return {
               valid: nativeValidity.valid,
-              valueMissing: !nativeValidity.valid
+              valueMissing: !nativeValidity.valid,
             };
           } else if (nativeValidity.tooShort) {
             obj.validationMessage = _text('explorer.InputTooShort');
             return {
               valid: nativeValidity.valid,
-              valueMissing: !nativeValidity.valid
+              valueMissing: !nativeValidity.valid,
             };
           } else {
             obj.validationMessage = validationMessage;
@@ -117,7 +137,7 @@ export class BackendAIPage extends LitElement {
           }
         } else {
           return {
-            valid: nativeValidity.valid
+            valid: nativeValidity.valid,
           };
         }
       };

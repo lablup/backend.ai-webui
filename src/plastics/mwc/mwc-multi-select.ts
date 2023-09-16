@@ -14,10 +14,10 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {css} from 'lit';
-import {customElement} from 'lit/decorators.js';
-import {SelectBase} from '@material/mwc-select/mwc-select-base';
-import {styles} from '@material/mwc-select/mwc-select.css';
+import { SelectBase } from '@material/mwc-select/mwc-select-base';
+import { styles } from '@material/mwc-select/mwc-select.css';
+import { css } from 'lit';
+import { customElement } from 'lit/decorators.js';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -28,7 +28,8 @@ declare global {
 @customElement('mwc-multi-select')
 export class Select extends SelectBase {
   static get styles() {
-    return [styles,
+    return [
+      styles,
       css`
         .mdc-select__anchor {
           min-width: var(--mdc-select-min-width, 200px);
@@ -36,6 +37,7 @@ export class Select extends SelectBase {
         .mdc-select--filled {
           min-width: var(--mdc-select-min-width, 200px);
         }
-      `];
+      `,
+    ];
   }
 }

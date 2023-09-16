@@ -1,14 +1,16 @@
-import {css} from 'lit';
-import {PaperColor} from './paper-color';
+import { PaperColor } from './paper-color';
+import { css } from 'lit';
 
 export const BackendAiStyles = [
   PaperColor,
   // language=CSS
   css`
-    :host > *, html {
+    :host > *,
+    html {
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
       box-sizing: border-box;
+      --general-text-color: #222222;
       --general-menu-background-color: transparent;
       --general-menu-background-color-less: rgba(255, 255, 255, 0.6);
       --general-menu-background-border: rgba(23, 23, 23, 1);
@@ -32,53 +34,70 @@ export const BackendAiStyles = [
       --general-sidebar-h3-color: #cccccc;
       --general-sidebar-h3-border-color: 1px solid #444444;
       --general-sidebar-topbar-background-color-3: #383e48;
-      --general-sidebar-topbar-background-color-2: rgba(103, 172, 91, 1.00);
+      --general-sidebar-topbar-background-color-2: rgba(103, 172, 91, 1);
       --general-sidebar-topbar-background-color-4: var(--paper-grey-200);
       --general-sidebar-topbar-color-4: #222222;
       --general-sidebar-topbar-background-color: rgba(24, 24, 24, 1);
       --general-sidebar-topbar-color: #efefef;
-      --general-sidebar-selected-color: #72EB51; /*var(--paper-green-400);*/
+      --general-sidebar-selected-color: #72eb51; /*var(--paper-green-400);*/
       --general-sidebar-selected-background-color: transparent;
       --general-sidebar-selected-background-gradient-color: transparent;
-      --general-sidebar-selected-border-left: 3px solid var(--general-sidebar-selected-color);
+      --general-sidebar-selected-border-left: 3px solid
+        var(--general-sidebar-selected-color);
       --general-sidebar-footer-color: #777777;
       --general-sidebar-navbar-footer-color: #222222;
       --general-sidebar-item-even-background-color: transparent;
       --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
       --general-sidepanel-color: #dddddd;
       --general-sidepanel-background-color: #ffffff; /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
-      --general-tabbar-background-color: var(--general-sidebar-background-color);
+      --general-tabbar-background-color: var(
+        --general-sidebar-background-color
+      );
       --general-tabbar-tab-disabled-color: var(--general-sidebar-color);
-      --general-tabbar-button-color: var(--general-sidebar-selected-color);
-      --general-textfield-selected-color: #27824F;
-      --general-textfield-idle-color: #27824F;
+      --general-tabbar-button-color: rgba(103, 172, 91, 1);
+      --general-sub-tabbar-background-color: #ffffff;
+      --general-textfield-selected-color: #27824f;
+      --general-textfield-idle-color: #27824f;
       --general-dropdown-color: var(--general-sidebar-color);
       --general-checkbox-color: var(--general-textfield-selected-color);
       --general-textarea-color: var(--general-textfield-selected-color);
       --general-textarea-idle-color: var(--general-textfield-selected-color);
       --general-select-color: var(--general-textfield-selected-color);
       --general-select-idle-color: var(--general-textfield-selected-color);
-      --general-button-background-color: #27824F;
+      --general-button-background-color: #27824f;
       --general-button-color: #ffffff;
-      --general-switch-off-color: #AAA;
-      --general-switch-on-color: #27824F;
-      --general-switch-on-background-color: #E3E7D8; 
+      --general-button-disabled-background-color: #27824f;
+      --general-button-disabled-color: #ffffff;
+      --general-switch-off-color: #aaa;
+      --general-switch-on-color: #27824f;
+      --general-switch-on-background-color: #e3e7d8;
       --general-slider-color: var(--general-textfield-selected-color);
       --general-dialog-background-color: #ffffff;
-      --general-font-family: 'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-      --general-monospace-font-family: 'Ubuntu Mono', Menlo, Courier, "Courier New", RobotoMono, sans-serif;
+      --general-font-family: 'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont,
+        'Segoe UI', Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', AppleSDGothic, 'Apple SD Gothic Neo', NanumGothic,
+        'NanumGothicOTF', 'Nanum Gothic', 'Malgun Gothic', sans-serif;
+      --general-monospace-font-family: 'Ubuntu Mono', Menlo, Courier,
+        'Courier New', RobotoMono, sans-serif;
       --general-progress-bar-bg: #e8e8e8;
-      --general-progress-bar-reserved: linear-gradient(to left, #722cd7, #5c7cfa);
+      --general-progress-bar-reserved: linear-gradient(
+        to left,
+        #722cd7,
+        #5c7cfa
+      );
       --general-progress-bar-using: linear-gradient(to left, #18aa7c, #60bb43),
-                                       linear-gradient(to left, #722cd7, #5c7cfa);
+        linear-gradient(to left, #722cd7, #5c7cfa);
+      --lumo-font-family: var(--general-font-family);
+      --general-warning-text: var(--paper-red-400);
     }
 
     body {
       background-color: var(--general-background-color, #fafafa);
       font-family: var(--general-font-family);
+      --lumo-font-family: var(--general-font-family);
       font-weight: 400;
       font-size: 14px;
-      color: #222222;
+      color: var(--general-text-color);
       margin: 0;
       overflow-x: hidden;
       word-break: keep-all;
@@ -90,14 +109,31 @@ export const BackendAiStyles = [
       background-color: var(--general-background-color, #fafafa);
     }
 
-    span,
-    wl-icon {
+    span {
       pointer-events: none;
     }
 
     body,
     .fonts-loaded body {
-      font-family: 'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Sans KR", "Noto Sans", AppleSDGothic, NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      font-family:
+        'Ubuntu',
+        Roboto,
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        Helvetica,
+        Arial,
+        'Apple Color Emoji',
+        'Segoe UI Emoji',
+        'Segoe UI Symbol',
+        'Noto Sans KR',
+        'Noto Sans',
+        AppleSDGothic,
+        NanumGothic,
+        'NanumGothicOTF',
+        'Nanum Gothic',
+        'Malgun Gothic',
+        sans-serif;
     }
 
     section {
@@ -134,7 +170,7 @@ export const BackendAiStyles = [
     }
 
     .clearfix:after {
-      content: ".";
+      content: '.';
       visibility: hidden;
       display: block;
       height: 0;
@@ -154,14 +190,6 @@ export const BackendAiStyles = [
       opacity: 1;
       transform: scale(1);
       transition: all 400ms;
-    }
-
-    .wl-card-title {
-      font-weight: 200;
-    }
-
-    wl-select {
-      --input-font-family: var(--general-font-family);
     }
 
     ::-webkit-scrollbar {
@@ -204,9 +232,10 @@ export const BackendAiStyles = [
       /* override for mwc-list */
       --select-primary-theme: var(--general-sidebar-color);
       --select-secondary-theme: var(--general-checkbox-color);
-      --select-background-color: var(#E7EBEE, #efefef);
+      --select-background-color: var(#e7ebee, #efefef);
       --select-background-border-radius: 5px;
-      --select-box-shadow: 0 1px 3px -1px rgba(0,0,0,60%), 0 3px 12px -1px rgb(200,200,200,80%);
+      --select-box-shadow: 0 1px 3px -1px rgba(0, 0, 0, 60%),
+        0 3px 12px -1px rgb(200, 200, 200, 80%);
 
       /* override for selected-area */
       --select-title-font-size: 10px;
@@ -218,22 +247,16 @@ export const BackendAiStyles = [
 
       /* override for selected-item */
       --selected-item-font-family: var(--general-font-family);
-      --selected-item-theme-color: #C8CED7;
+      --selected-item-theme-color: #c8ced7;
       --selected-item-theme-font-color: #182739;
-      --selected-item-unelevated-theme-color: #C8CED7;
-      --selected-item-unelevated-theme-color: #C8CED7;
+      --selected-item-unelevated-theme-color: #c8ced7;
+      --selected-item-unelevated-theme-color: #c8ced7;
       --selected-item-outlined-theme-font-color: black;
       --selected-item-unelevated-theme-font-color: black;
       --selected-item-font-size: 14px;
       --selected-item-text-transform: none;
     }
 
-
-    wl-icon.tiny {
-      --icon-size: 12px;
-    }
-
-    wl-card,
     div.card {
       display: block;
       background: white;
@@ -246,26 +269,24 @@ export const BackendAiStyles = [
       color: #000000;
     }
 
-    #content > wl-card,
     #content > div.card {
       max-width: var(--general-content-container-width, 980px);
     }
 
     @media screen and (max-width: 399px) {
-      wl-card, div.card {
+      div.card {
         margin-left: 0;
         margin-right: 0;
       }
     }
 
     @media screen and (max-width: 449px) {
-      #content > wl-card, #content > div.card {
+      #content > div.card {
         width: 100%;
       }
     }
 
     @media screen and (min-width: 450px) {
-      #content > wl-card,
       #content > div,
       #content > div.card {
         width: 100%;
@@ -273,7 +294,6 @@ export const BackendAiStyles = [
         --card-padding: 0;
       }
 
-      #content > wl-card,
       #content > div.card {
         margin: 0 !important;
       }
@@ -287,11 +307,6 @@ export const BackendAiStyles = [
       }
     }
 
-    wl-button.primary-action[raised] {
-      background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
-      height: 20px;
-    }
-
     mwc-multi-select {
       --mdc-select-min-width: 100px; /* Fallback to apply width */
     }
@@ -302,10 +317,24 @@ export const BackendAiStyles = [
     mwc-button.primary-action[unelevated] {
       border-radius: 5px;
       background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
-      --mdc-theme-primary: transparent; /* gradient-color doesn't work in mwc-button styling */
+      --mdc-theme-primary: var(
+        --general-button-color
+      ); /* gradient-color doesn't work in mwc-button styling */
       --mdc-theme-on-primary: var(--general-button-color);
     }
 
+    mwc-button.primary-action[disabled] {
+      border-radius: 5px;
+      background-image: linear-gradient(
+        to bottom,
+        rgba(105, 224, 224, 0.08) 0%,
+        rgba(56, 189, 115, 0.2) 100%
+      );
+      --mdc-theme-primary: var(
+        --general-button-color
+      ); /* gradient-color doesn't work in mwc-button styling */
+      --mdc-theme-on-primary: var(--general-button-color);
+    }
 
     mwc-button.operation {
       margin: 0px 5px;
@@ -331,49 +360,74 @@ export const BackendAiStyles = [
 
     mwc-switch {
       --mdc-switch-unselected-handle-color: var(--general-switch-off-color);
-      --mdc-switch-unselected-track-color: var(--general-switch-on-background-color) !important;
-      --mdc-switch-unselected-hover-handle-color: var(--general-switch-off-color);
-      --mdc-switch-unselected-hover-track-color: var(--general-switch-on-background-color);
-      --mdc-switch-unselected-focus-handle-color: var(--general-switch-off-color);
-      --mdc-switch-unselected-focus-track-color: var(--general-switch-on-background-color);
-      --mdc-switch-unselected-pressed-handle-color: var(--general-switch-off-color);
-      --mdc-switch-unselected-pressed-track-color: var(--general-switch-on-background-color);
+      --mdc-switch-unselected-track-color: var(
+        --general-switch-on-background-color
+      ) !important;
+      --mdc-switch-unselected-hover-handle-color: var(
+        --general-switch-off-color
+      );
+      --mdc-switch-unselected-hover-track-color: var(
+        --general-switch-on-background-color
+      );
+      --mdc-switch-unselected-focus-handle-color: var(
+        --general-switch-off-color
+      );
+      --mdc-switch-unselected-focus-track-color: var(
+        --general-switch-on-background-color
+      );
+      --mdc-switch-unselected-pressed-handle-color: var(
+        --general-switch-off-color
+      );
+      --mdc-switch-unselected-pressed-track-color: var(
+        --general-switch-on-background-color
+      );
       --mdc-switch-selected-handle-color: var(--general-switch-on-color);
-      --mdc-switch-selected-track-color: var(--general-switch-on-background-color) !important;
+      --mdc-switch-selected-track-color: var(
+        --general-switch-on-background-color
+      ) !important;
       --mdc-switch-selected-hover-handle-color: var(--general-switch-on-color);
-      --mdc-switch-selected-hover-track-color: var(--general-switch-on-background-color);
-      --mdc-switch-selected-hover-state-layer-color: var(--general-switch-on-color);
+      --mdc-switch-selected-hover-track-color: var(
+        --general-switch-on-background-color
+      );
+      --mdc-switch-selected-hover-state-layer-color: var(
+        --general-switch-on-color
+      );
       --mdc-switch-selected-focus-handle-color: var(--general-switch-on-color);
-      --mdc-switch-selected-focus-track-color: var(--general-switch-on-background-color);
-      --mdc-switch-selected-focus-state-layer-color: var(--general-switch-on-color);
-      --mdc-switch-selected-pressed-handle-color: var(--general-switch-on-color);
-      --mdc-switch-selected-pressed-track-color: var(--general-switch-on-background-color);
-      --mdc-switch-selected-pressed-state-layer-color: var(--general-switch-on-color);
+      --mdc-switch-selected-focus-track-color: var(
+        --general-switch-on-background-color
+      );
+      --mdc-switch-selected-focus-state-layer-color: var(
+        --general-switch-on-color
+      );
+      --mdc-switch-selected-pressed-handle-color: var(
+        --general-switch-on-color
+      );
+      --mdc-switch-selected-pressed-track-color: var(
+        --general-switch-on-background-color
+      );
+      --mdc-switch-selected-pressed-state-layer-color: var(
+        --general-switch-on-color
+      );
     }
 
-    wl-card p,
     div.card p {
       padding: 10px;
     }
 
-    wl-card > .entry > p,
     div.card > .entry > p {
       padding: 5px;
     }
 
-    wl-card .commands,
     div.card .commands {
       margin: 0;
       border-top: 1px solid #dddddd;
       text-align: left;
     }
 
-    wl-card.item div.items,
     div.card.item div.items {
       padding-bottom: 10px;
     }
 
-    wl-card .commands.float,
     div.card .commands.float {
       border-top: none;
       position: fixed;
@@ -382,7 +436,6 @@ export const BackendAiStyles = [
       left: 0;
     }
 
-    .panels wl-card,
     .panels div.card,
     .panels div {
       width: var(--general-panel-width);
@@ -392,7 +445,6 @@ export const BackendAiStyles = [
       margin: 0 0 10px 0;
     }
 
-    .wide-panels wl-card,
     .wide-panels div.card {
       width: 100%;
       margin: 0 0 16px 0;
@@ -430,7 +482,6 @@ export const BackendAiStyles = [
       margin-bottom: 10px;
     }
 
-    wl-card > h3,
     div.card > h3 {
       font-size: 20px;
       font-weight: 400;
@@ -440,7 +491,6 @@ export const BackendAiStyles = [
       border-bottom: 1px solid #dddddd;
     }
 
-    wl-card > h3 > .date,
     div.card > h3 > .date {
       font-size: 12px;
       text-align: right;
@@ -448,58 +498,41 @@ export const BackendAiStyles = [
       margin-left: 20px;
     }
 
-    wl-card > h3.blue,
-    wl-card > h4.blue,
     div.card > h3.blue,
     div.card > h4.blue {
       border-left: 3px solid var(--paper-light-blue-400);
     }
 
-    wl-card > h3.red,
-    wl-card > h4.red,
     div.card > h3.red,
     div.card > h4.red {
       border-left: 3px solid var(--paper-red-400);
     }
 
-    wl-card > h3.green,
-    wl-card > h4.green,
     div.card > h3.green,
     div.card > h4.green {
       border-left: 3px solid var(--paper-green-400);
     }
 
-    wl-card > h3.orange,
-    wl-card > h4.orange,
     div.card > h3.orange,
     div.card > h4.orange {
-
       border-left: 3px solid var(--paper-orange-400);
     }
 
-    wl-card > h3.cyan,
-    wl-card > h4.cyan,
     div.card > h3.cyan,
     div.card > h4.cyan {
-
       border-left: 3px solid var(--paper-cyan-400);
     }
 
-    wl-card > h3.lime,
-    wl-card > h4.lime,
     div.card > h3.lime,
     div.card > h4.lime {
       border-left: 3px solid var(--paper-lime-400);
     }
 
-    wl-card > h3.pink,
-    wl-card > h4.pink,
     div.card > h3.pink,
     div.card > h4.pink {
       border-left: 3px solid var(--paper-pink-400);
     }
 
-    wl-card > h4,
     div.card > h4 {
       font-size: 14px;
       padding: 5px 15px 5px 20px;
@@ -511,26 +544,16 @@ export const BackendAiStyles = [
       justify-content: space-between;
     }
 
-    wl-card .flex
     div.card .flex {
       display: flex;
     }
 
-    wl-card.entries > div,
     div.card.entries > div {
       margin: 20px;
     }
 
-    wl-backdrop {
-      --backdrop-bg: rgba(255, 0, 0, 0.3);
-      background: rgba(255, 0, 0, 0.3) !important;
-    }
-
-    paper-toolbar {
-      --paper-toolbar-sm-height: 45px;
-    }
-
-    mwc-button, mwc-button[unelevated] {
+    mwc-button,
+    mwc-button[unelevated] {
       background-image: none;
       --mdc-theme-primary: var(--general-button-background-color);
       --mdc-theme-on-primary: var(--general-button-color);
@@ -543,7 +566,6 @@ export const BackendAiStyles = [
       --mdc-text-field-hover-line-color: transparent;
       --mdc-text-field-idle-line-color: var(--general-textfield-idle-color);
       --mdc-text-field-fill-color: rgb(250, 250, 250);
-      font-family: var(--general-font-family);
       --mdc-typography-font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-size: 14px;
@@ -555,7 +577,9 @@ export const BackendAiStyles = [
     mwc-textarea {
       --mdc-text-field-fill-color: transparent;
       --mdc-theme-primary: var(--general-textarea-color);
-      --mdc-text-area-outlined-idle-border-color: var(--general-textarea-idle-color);
+      --mdc-text-area-outlined-idle-border-color: var(
+        --general-textarea-idle-color
+      );
       font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-size: 14px;
@@ -580,7 +604,7 @@ export const BackendAiStyles = [
       --mdc-select-fill-color: transparent;
       --mdc-select-ink-color: black;
       --mdc-select-label-ink-color: black;
-      --mdc-select-focused-label-color: rgba(24, 24, 24, 1.0);
+      --mdc-select-focused-label-color: rgba(24, 24, 24, 1);
       --mdc-select-dropdown-icon-color: #747474;
       --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
     }
@@ -644,57 +668,57 @@ export const BackendAiStyles = [
 
     .fg.grey {
       color: var(--paper-grey-600) !important;
-      --mdc-theme-on-primary: var(--paper-grey-600) !important;
+      --mdc-theme-primary: var(--paper-grey-600) !important;
     }
 
     .fg.blue {
       color: var(--paper-light-blue-400) !important;
-      --mdc-theme-on-primary: var(--paper-light-blue-400) !important;
+      --mdc-theme-primary: var(--paper-light-blue-400) !important;
     }
 
     .fg.red {
       color: var(--paper-red-400) !important;
-      --mdc-theme-on-primary: var(--paper-red-400) !important;
+      --mdc-theme-primary: var(--paper-red-400) !important;
     }
 
     .fg.yellow {
       color: var(--paper-yellow-400) !important;
-      --mdc-theme-on-primary: var(--paper-yellow-400) !important;
+      --mdc-theme-primary: var(--paper-yellow-400) !important;
     }
 
     .fg.orange {
       color: var(--paper-amber-400) !important;
-      --mdc-theme-on-primary: var(--paper-amber-400) !important;
+      --mdc-theme-primary: var(--paper-amber-400) !important;
     }
 
     .fg.green {
       color: var(--paper-green-400) !important;
-      --mdc-theme-on-primary: var(--paper-green-400) !important;
+      --mdc-theme-primary: var(--paper-green-400) !important;
     }
 
     .fg.teal {
       color: var(--paper-teal-400) !important;
-      --mdc-theme-on-primary: var(--paper-teal-400) !important;
+      --mdc-theme-primary: var(--paper-teal-400) !important;
     }
 
     .fg.cyan {
       color: var(--paper-cyan-400) !important;
-      --mdc-theme-on-primary: var(--paper-cyan-400) !important;
+      --mdc-theme-primary: var(--paper-cyan-400) !important;
     }
 
     .fg.lime {
       color: var(--paper-lime-400) !important;
-      --mdc-theme-on-primary: var(--paper-lime-400) !important;
+      --mdc-theme-primary: var(--paper-lime-400) !important;
     }
 
     .fg.pink {
       color: var(--paper-pink-a200) !important;
-      --mdc-theme-on-primary: var(--paper-pink-a200) !important;
+      --mdc-theme-primary: var(--paper-pink-a200) !important;
     }
 
     .fg.purple {
       color: var(--paper-purple-400) !important;
-      --mdc-theme-on-primary: var(--paper-purple-400) !important;
+      --mdc-theme-primary: var(--paper-purple-400) !important;
     }
 
     /* Layout */
@@ -716,7 +740,6 @@ export const BackendAiStyles = [
       margin: 15px;
     }
 
-    wl-card > h4,
     div.card > h4 {
       font-weight: 200;
     }
@@ -732,7 +755,6 @@ export const BackendAiStyles = [
     }
 
     /* Tab on head */
-    wl-card h3.tab,
     div.card h3.tab {
       padding-top: 0;
       padding-bottom: 0;
@@ -740,27 +762,19 @@ export const BackendAiStyles = [
     }
 
     /* Button */
-    wl-button {
-      --button-padding: 8px;
-      --button-font-size: 14px;
+    mwc-button {
+      --mdc-typography-button-font-size: 14px;
     }
 
-    wl-button.full-size,
-    wl-button.full {
+    mwc-button.full-size,
+    mwc-button.full {
       width: 100%;
-    }
-
-    wl-button,
-    wl-expansion,
-    wl-textfield {
-      --font-family-serif: var(--general-font-family);
-      --font-family-sans-serif: var(--general-font-family);
     }
 
     lablup-progress-bar {
       --progress-bar-width: 186px;
       --progress-bar-height: 17px;
-      --progres-bar-font-family: var(--general-font-family);
+      --progress-bar-font-family: var(--general-font-family);
       --progress-bar-border-radius: 3px;
       --progress-bar-font-color-inverse: white;
       --progress-bar-font-color: black;
@@ -807,15 +821,20 @@ export const BackendAiStyles = [
     }
 
     span.start-bar {
-      margin-bottom: 5px;
-      margin-left: 5px;
       padding-bottom: 5px;
+      width: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     span.end-bar {
       margin-top: 5px;
-      margin-left: 5px;
       padding-bottom: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 30px;
     }
 
     span.helper-text {
@@ -841,7 +860,7 @@ export const BackendAiStyles = [
     }
 
     .resource-legend-icon {
-      width:10px;
+      width: 10px;
       height: 10px;
       margin-top: 2px;
       margin-left: 10px;
@@ -858,7 +877,7 @@ export const BackendAiStyles = [
     }
 
     .resource-legend-icon.total {
-      background-color: #E0E0E0;
+      background-color: #e0e0e0;
     }
 
     .vertical-card {
@@ -866,14 +885,24 @@ export const BackendAiStyles = [
     }
 
     vaadin-grid {
+      --lumo-font-family: var(--general-font-family);
       font-family: var(--general-font-family);
     }
 
     backend-ai-session-launcher#session-launcher {
       --component-color: #ffffff;
       --component-bg: rgb(104, 185, 155);
-      --component-bg: linear-gradient(rgba(56,189,115, 0.5), rgba(56,189,115, 0.5)), linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
-      --component-bg-hover: linear-gradient(180deg, rgba(98, 180, 131, 1) 0%, rgba(104, 185, 155, 1) 50%, rgba(93, 178, 113, 1) 100%);
+      --component-bg: linear-gradient(
+          rgba(56, 189, 115, 0.5),
+          rgba(56, 189, 115, 0.5)
+        ),
+        linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
+      --component-bg-hover: linear-gradient(
+        180deg,
+        rgba(98, 180, 131, 1) 0%,
+        rgba(104, 185, 155, 1) 50%,
+        rgba(93, 178, 113, 1) 100%
+      );
       --component-bg-active: rgb(104, 185, 155);
       --component-shadow-color: #37c995;
     }
@@ -908,4 +937,29 @@ export const BackendAiStyles = [
       display: block;
       color: #999999;
     }
-  `];
+
+    div.note-container {
+      background-color: var(--paper-green-100);
+    }
+
+    div.note-title {
+      background-color: var(--paper-green-400);
+      padding: 5px 10px;
+      color: #ffffff;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      -ms-flex-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+
+    div.note-title mwc-icon {
+      margin-right: 6px;
+    }
+
+    div.note-contents {
+      padding: 20px;
+    }
+  `,
+];

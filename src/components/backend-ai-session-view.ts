@@ -1,44 +1,40 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property, query, queryAll} from 'lit/decorators.js';
-
-import './backend-ai-resource-monitor';
-import './backend-ai-session-list';
-import 'weightless/card';
-import 'weightless/checkbox';
-import 'weightless/icon';
-import {Textfield} from 'weightless/textfield';
-
-import {TextField} from '@material/mwc-textfield';
-import '@material/mwc-list';
-import '@material/mwc-button';
-import '@material/mwc-icon-button';
-import {Menu} from '@material/mwc-menu';
-import '@material/mwc-tab-bar';
-import '@material/mwc-tab';
-
-import './lablup-activity-panel';
-import './backend-ai-session-launcher';
 import JsonToCsv from '../lib/json_to_csv';
-import {BackendAIPage} from './backend-ai-page';
-import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import './backend-ai-resource-monitor';
+import './backend-ai-session-launcher';
+import './backend-ai-session-list';
+import './lablup-activity-panel';
+import '@material/mwc-button';
+import '@material/mwc-checkbox';
+import '@material/mwc-formfield';
+import '@material/mwc-icon-button';
+import '@material/mwc-list';
+import { Menu } from '@material/mwc-menu';
+import '@material/mwc-tab';
+import '@material/mwc-tab-bar';
+import '@material/mwc-textfield';
+import { TextField } from '@material/mwc-textfield';
+import { css, CSSResultGroup, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query, queryAll } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type BackendAISessionList = HTMLElementTagNameMap['backend-ai-session-list'];
-type BackendAIResourceMonitor = HTMLElementTagNameMap['backend-ai-resource-monitor']
+type BackendAIResourceMonitor =
+  HTMLElementTagNameMap['backend-ai-resource-monitor'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
@@ -50,24 +46,27 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
  ...
  </backend-ai-settings-view>
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element backend-ai-storage-list
  */
 
 @customElement('backend-ai-session-view')
-export default class BackendAiSessionView extends BackendAIPage {
-  @property({type: String}) _status = 'inactive';
-  @property({type: Boolean}) active = true;
-  @property({type: Boolean}) is_admin = false;
-  @property({type: String}) filterAccessKey = '';
-  @property({type: String}) _connectionMode = 'API';
-  @property({type: Object}) _defaultFileName = '';
-  @queryAll('backend-ai-session-list') sessionList!: NodeListOf<BackendAISessionList>;
+export default class BackendAISessionView extends BackendAIPage {
+  @property({ type: String }) _status = 'inactive';
+  @property({ type: Boolean, reflect: true }) active = false;
+  @property({ type: Boolean }) is_admin = false;
+  @property({ type: Boolean }) enableInferenceWorkload = false;
+  @property({ type: Boolean }) enableSFTPSession = false;
+  @property({ type: String }) filterAccessKey = '';
+  @property({ type: String }) _connectionMode = 'API';
+  @property({ type: Object }) _defaultFileName = '';
+  @queryAll('backend-ai-session-list')
+  sessionList!: NodeListOf<BackendAISessionList>;
   @query('#running-jobs') runningJobs!: BackendAISessionList;
   @query('#resource-monitor') resourceMonitor!: BackendAIResourceMonitor;
   @query('#export-file-name') exportFileNameInput!: TextField;
-  @query('#date-from') dateFromInput!: Textfield;
-  @query('#date-to') dateToInput!: Textfield;
+  @query('#date-from') dateFromInput!: TextField;
+  @query('#date-to') dateToInput!: TextField;
   @query('#dropdown-menu') dropdownMenu!: Menu;
   @query('#export-to-csv') exportToCsvDialog!: BackendAIDialog;
 
@@ -97,43 +96,9 @@ export default class BackendAiSessionView extends BackendAIPage {
           --mdc-tab-text-label-color-default: var(--general-sidebar-color);
         }
 
-        wl-button {
-          --button-bg:  var(--paper-light-green-50);
-          --button-bg-hover:  var(--paper-green-100);
-          --button-bg-active:  var(--paper-green-600);
-        }
-
-        wl-label.unlimited {
-          margin: 12px 0;
-        }
-
-        wl-label.warning {
-          font-size: 10px;
-          --label-color: var(--paper-red-600);
-        }
-
-        wl-checkbox#export-csv-checkbox {
-          margin-right: 5px;
-          --checkbox-size: 10px;
-          --checkbox-border-radius: 2px;
-          --checkbox-bg-checked: var(--paper-green-800);
-          --checkbox-checkmark-stroke-color: var(--paper-lime-100);
-          --checkbox-color-checked: var(--paper-green-800);
-        }
-
-        backend-ai-dialog wl-textfield {
-          padding: 10px 0;
-          --input-font-family: var(--general-font-family);
-          --input-font-size: 12px;
-          --input-color-disabled: #bbbbbb;
-          --input-label-color-disabled: #222222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #cccccc;
-        }
-
         mwc-menu {
           --mdc-theme-surface: #f1f1f1;
-          --mdc-menu-item-height : auto;
+          --mdc-menu-item-height: auto;
         }
 
         mwc-menu#dropdown-menu {
@@ -143,7 +108,7 @@ export default class BackendAiSessionView extends BackendAIPage {
         }
 
         mwc-list-item {
-          font-size : 14px;
+          font-size: 14px;
         }
 
         mwc-icon-button {
@@ -178,7 +143,8 @@ export default class BackendAiSessionView extends BackendAIPage {
             --mdc-typography-button-font-size: 10px;
           }
         }
-      `];
+      `,
+    ];
   }
 
   firstUpdated() {
@@ -186,11 +152,20 @@ export default class BackendAiSessionView extends BackendAIPage {
     document.addEventListener('backend-ai-session-list-refreshed', () => {
       this.runningJobs.refreshList(true, false);
     });
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this.is_admin = globalThis.backendaiclient.is_admin;
-        this._connectionMode = globalThis.backendaiclient._config._connectionMode;
-      }, true);
+    if (
+      typeof globalThis.backendaiclient === 'undefined' ||
+      globalThis.backendaiclient === null ||
+      globalThis.backendaiclient.ready === false
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        () => {
+          this.is_admin = globalThis.backendaiclient.is_admin;
+          this._connectionMode =
+            globalThis.backendaiclient._config._connectionMode;
+        },
+        true,
+      );
     } else {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this._connectionMode = globalThis.backendaiclient._config._connectionMode;
@@ -207,9 +182,31 @@ export default class BackendAiSessionView extends BackendAIPage {
       }
       return;
     }
-    this.resourceMonitor.setAttribute('active', 'true');
-    this.runningJobs.setAttribute('active', 'true');
-    this._status = 'active';
+
+    const _init = () => {
+      this.enableInferenceWorkload =
+        globalThis.backendaiclient.supports('inference-workload');
+      this.enableSFTPSession =
+        globalThis.backendaiclient.supports('sftp-scaling-group');
+      this.resourceMonitor.setAttribute('active', 'true');
+      this.runningJobs.setAttribute('active', 'true');
+      this._status = 'active';
+    };
+    if (
+      typeof globalThis.backendaiclient === 'undefined' ||
+      globalThis.backendaiclient === null ||
+      globalThis.backendaiclient.ready === false
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        () => {
+          _init();
+        },
+        true,
+      );
+    } else {
+      _init();
+    }
   }
 
   /**
@@ -232,16 +229,22 @@ export default class BackendAiSessionView extends BackendAIPage {
   }
 
   _showTab(tab) {
-    const els = this.shadowRoot?.querySelectorAll('.tab-content') as NodeListOf<HTMLDivElement>;
+    const els = this.shadowRoot?.querySelectorAll(
+      '.tab-content',
+    ) as NodeListOf<HTMLDivElement>;
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    (this.shadowRoot?.querySelector('#' + tab.title + '-lists') as HTMLElement).style.display = 'block';
+    (
+      this.shadowRoot?.querySelector('#' + tab.title + '-lists') as HTMLElement
+    ).style.display = 'block';
     for (let x = 0; x < this.sessionList.length; x++) {
       this.sessionList[x].removeAttribute('active');
     }
     this._triggerClearTimeout();
-    (this.shadowRoot?.querySelector('#' + tab.title + '-jobs') as HTMLElement).setAttribute('active', 'true');
+    (
+      this.shadowRoot?.querySelector('#' + tab.title + '-jobs') as HTMLElement
+    ).setAttribute('active', 'true');
   }
 
   /**
@@ -270,7 +273,9 @@ export default class BackendAiSessionView extends BackendAIPage {
 
   _getFirstDateOfMonth() {
     const date = new Date();
-    return new Date(date.getFullYear(), date.getMonth(), 2).toISOString().substring(0, 10);
+    return new Date(date.getFullYear(), date.getMonth(), 2)
+      .toISOString()
+      .substring(0, 10);
   }
 
   _getDefaultCSVFileName() {
@@ -301,10 +306,11 @@ export default class BackendAiSessionView extends BackendAIPage {
    * @param {number} value - time to want to scale
    * @return {Record<string, unknown>} result - data containing the scaled time
    * */
-  _automaticScaledTime(value: number) { // number: msec.
+  _automaticScaledTime(value: number) {
+    // number: msec.
     let result = Object();
     const unitText = ['D', 'H', 'M', 'S'];
-    const unitLength = [(1000 * 60 * 60 * 24), (1000 * 60 * 60), (1000 * 60), 1000];
+    const unitLength = [1000 * 60 * 60 * 24, 1000 * 60 * 60, 1000 * 60, 1000];
 
     for (let i = 0; i < unitLength.length; i++) {
       if (Math.floor(value / unitLength[i]) > 0) {
@@ -312,22 +318,27 @@ export default class BackendAiSessionView extends BackendAIPage {
         value = value % unitLength[i];
       }
     }
-    if (Object.keys(result).length === 0) { // only prints msec. when time is shorter than 1sec.
+    if (Object.keys(result).length === 0) {
+      // only prints msec. when time is shorter than 1sec.
       if (value > 0) {
-        result = {'MS': value};
-      } else { // No data.
-        result = {'NODATA': 1};
+        result = { MS: value };
+      } else {
+        // No data.
+        result = { NODATA: 1 };
       }
     }
     return result;
   }
 
-  _msecToSec(value) {
-    return Number(value / 1000).toFixed(0);
-  }
-
-  _bytesToMB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
+  /**
+   * Convert the value bytes to MiB with decimal point to 1 as a default
+   *
+   * @param {number} value
+   * @param {number} decimalPoint decimal point to show
+   * @return {string} converted value from Bytes to MiB
+   */
+  static bytesToMiB(value, decimalPoint = 1) {
+    return Number(value / 2 ** 20).toFixed(1);
   }
 
   _exportToCSV() {
@@ -341,95 +352,154 @@ export default class BackendAiSessionView extends BackendAIPage {
     // Parameters
     let status: any;
     if (globalThis.backendaiclient.supports('avoid-hol-blocking')) {
-      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING', 'TERMINATED', 'CANCELLED', 'ERROR'];
+      status = [
+        'RUNNING',
+        'RESTARTING',
+        'TERMINATING',
+        'PENDING',
+        'SCHEDULED',
+        'PREPARING',
+        'PULLING',
+        'TERMINATED',
+        'CANCELLED',
+        'ERROR',
+      ];
     } else {
-      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'PREPARING', 'PULLING', 'TERMINATED', 'CANCELLED', 'ERROR'];
+      status = [
+        'RUNNING',
+        'RESTARTING',
+        'TERMINATING',
+        'PENDING',
+        'PREPARING',
+        'PULLING',
+        'TERMINATED',
+        'CANCELLED',
+        'ERROR',
+      ];
     }
     if (globalThis.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
     }
-    const fields = ['id', 'name', 'image', 'created_at', 'terminated_at', 'status', 'status_info', 'access_key'];
+    const fields = [
+      'id',
+      'name',
+      'image',
+      'created_at',
+      'terminated_at',
+      'status',
+      'status_info',
+      'access_key',
+    ];
     if (this._connectionMode === 'SESSION') {
       fields.push('user_email');
     }
     if (globalThis.backendaiclient.is_superadmin) {
-      fields.push('containers {container_id agent occupied_slots live_stat last_stat}');
+      fields.push(
+        'containers {container_id agent occupied_slots live_stat last_stat}',
+      );
     } else {
-      fields.push('containers {container_id occupied_slots live_stat last_stat}');
+      fields.push(
+        'containers {container_id occupied_slots live_stat last_stat}',
+      );
     }
     const groupId = globalThis.backendaiclient.current_group_id();
     const limit = 100;
 
     // Get session list and export to csv file
-    globalThis.backendaiclient.computeSession.listAll(fields, status, this.filterAccessKey, limit, 0, groupId).then((response) => {
-      const sessions = response;
-      if (sessions.length === 0) {
-        this.notification.text = _text('session.NoSession');
+    globalThis.backendaiclient.computeSession
+      .listAll(fields, status, this.filterAccessKey, limit, 0, groupId)
+      .then((response) => {
+        const sessions = response;
+        if (sessions.length === 0) {
+          this.notification.text = _text('session.NoSession');
+          this.notification.show();
+          this.exportToCsvDialog.hide();
+          return;
+        }
+        sessions.forEach((session) => {
+          const exportListItem: any = {};
+          exportListItem.id = session.id;
+          exportListItem.name = session.name;
+          exportListItem.image =
+            session.image.split('/')[2] || session.image.split('/')[1];
+          exportListItem.status = session.status;
+          exportListItem.status_info = session.status_info;
+          exportListItem.access_key = session.access_key;
+          exportListItem.created_at = session.created_at;
+          exportListItem.terminated_at = session.terminated_at;
+          if (session.containers && session.containers.length > 0) {
+            // Assume a session has only one container (no consideration on multi-container bundling)
+            const container = session.containers[0];
+            exportListItem.container_id = container.container_id;
+            const occupiedSlots = container.occupied_slots
+              ? JSON.parse(container.occupied_slots)
+              : null;
+            if (occupiedSlots) {
+              exportListItem.cpu_slot = parseInt(occupiedSlots.cpu);
+              exportListItem.mem_slot = parseFloat(
+                globalThis.backendaiclient.utils.changeBinaryUnit(
+                  occupiedSlots.mem,
+                  'g',
+                ),
+              ).toFixed(2);
+              if (occupiedSlots['cuda.shares']) {
+                exportListItem.cuda_shares = occupiedSlots['cuda.shares'];
+              }
+              if (occupiedSlots['cuda.device']) {
+                exportListItem.cuda_device = occupiedSlots['cuda.device'];
+              }
+              if (occupiedSlots['tpu.device']) {
+                exportListItem.tpu_device = occupiedSlots['tpu.device'];
+              }
+              if (occupiedSlots['rocm.device']) {
+                exportListItem.rocm_device = occupiedSlots['rocm.device'];
+              }
+              if (occupiedSlots['ipu.device']) {
+                exportListItem.ipu_device = occupiedSlots['ipu.device'];
+              }
+              if (occupiedSlots['atom.device']) {
+                exportListItem.atom_device = occupiedSlots['atom.device'];
+              }
+              if (occupiedSlots['warboy.device']) {
+                exportListItem.warboy_device = occupiedSlots['warboy.device'];
+              }
+            }
+            const liveStat = container.live_stat
+              ? JSON.parse(container.live_stat)
+              : null;
+            if (liveStat) {
+              if (liveStat.cpu_used && liveStat.cpu_used.current) {
+                exportListItem.cpu_used_time = this._automaticScaledTime(
+                  liveStat.cpu_used.current,
+                );
+              } else {
+                exportListItem.cpu_used_time = 0;
+              }
+              if (liveStat.io_read) {
+                exportListItem.io_read_bytes_mb =
+                  BackendAISessionView.bytesToMiB(liveStat.io_read.current);
+              } else {
+                exportListItem.io_read_bytes_mb = 0;
+              }
+              if (liveStat.io_write) {
+                exportListItem.io_write_bytes_mb =
+                  BackendAISessionView.bytesToMiB(liveStat.io_write.current);
+              } else {
+                exportListItem.io_write_bytes_mb = 0;
+              }
+            }
+            if (container.agent) {
+              exportListItem.agent = container.agent;
+            }
+          }
+          exportList.push(exportListItem);
+        });
+
+        JsonToCsv.exportToCsv(fileNameEl.value, exportList);
+        this.notification.text = _text('session.DownloadingCSVFile');
         this.notification.show();
         this.exportToCsvDialog.hide();
-        return;
-      }
-      sessions.forEach((session) => {
-        const exportListItem: any = {};
-        exportListItem.id = session.id;
-        exportListItem.name = session.name;
-        exportListItem.image = session.image.split('/')[2] || session.image.split('/')[1];
-        exportListItem.status = session.status;
-        exportListItem.status_info = session.status_info;
-        exportListItem.access_key = session.access_key;
-        exportListItem.created_at = session.created_at;
-        exportListItem.terminated_at = session.terminated_at;
-        if (session.containers && session.containers.length > 0) {
-          // Assume a session has only one container (no consideration on multi-container bundling)
-          const container = session.containers[0];
-          exportListItem.container_id = container.container_id;
-          const occupiedSlots = container.occupied_slots ? JSON.parse(container.occupied_slots) : null;
-          if (occupiedSlots) {
-            exportListItem.cpu_slot = parseInt(occupiedSlots.cpu);
-            exportListItem.mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupiedSlots.mem, 'g')).toFixed(2);
-            if (occupiedSlots['cuda.shares']) {
-              exportListItem.cuda_shares = occupiedSlots['cuda.shares'];
-            }
-            if (occupiedSlots['cuda.device']) {
-              exportListItem.cuda_device = occupiedSlots['cuda.device'];
-            }
-            if (occupiedSlots['tpu.device']) {
-              exportListItem.tpu_device = occupiedSlots['tpu.device'];
-            }
-            if (occupiedSlots['rocm.device']) {
-              exportListItem.rocm_device = occupiedSlots['rocm.device'];
-            }
-          }
-          const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
-          if (liveStat) {
-            if (liveStat.cpu_used && liveStat.cpu_used.current) {
-              exportListItem.cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.current);
-            } else {
-              exportListItem.cpu_used_time = 0;
-            }
-            if (liveStat.io_read) {
-              exportListItem.io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
-            } else {
-              exportListItem.io_read_bytes_mb = 0;
-            }
-            if (liveStat.io_write) {
-              exportListItem.io_write_bytes_mb = this._bytesToMB(liveStat.io_write.current);
-            } else {
-              exportListItem.io_write_bytes_mb = 0;
-            }
-          }
-          if (container.agent) {
-            exportListItem.agent = container.agent;
-          }
-        }
-        exportList.push(exportListItem);
       });
-
-      JsonToCsv.exportToCsv(fileNameEl.value, exportList);
-      this.notification.text = _text('session.DownloadingCSVFile');
-      this.notification.show();
-      this.exportToCsvDialog.hide();
-    });
 
     // let isUnlimited = this.shadowRoot.querySelector('#export-csv-checkbox').checked;
     // if (isUnlimited) {
@@ -453,93 +523,222 @@ export default class BackendAiSessionView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css">
-      <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" autowidth>
+      <link rel="stylesheet" href="resources/custom.css" />
+      <lablup-activity-panel
+        title="${_t('summary.ResourceStatistics')}"
+        elevation="1"
+        autowidth
+      >
         <div slot="message">
-          <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}"></backend-ai-resource-monitor>
+          <backend-ai-resource-monitor
+            location="session"
+            id="resource-monitor"
+            ?active="${this.active === true}"
+          ></backend-ai-resource-monitor>
         </div>
       </lablup-activity-panel>
-      <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1" horizontalsize="2x" style="display:none;">
-      </lablup-activity-panel>
+      <lablup-activity-panel
+        title="${_t('summary.Announcement')}"
+        elevation="1"
+        horizontalsize="2x"
+        style="display:none;"
+      ></lablup-activity-panel>
       <lablup-activity-panel elevation="1" autowidth narrow noheader>
         <div slot="message">
-          <h3 class="tab horizontal center layout" style="margin-top:0;margin-bottom:0;">
+          <h3
+            class="tab horizontal center layout"
+            style="margin-top:0;margin-bottom:0;"
+          >
             <div class="scroll hide-scrollbar">
-              <div class="horizontal layout flex start-justified" style="width:70%;">
+              <div
+                class="horizontal layout flex start-justified"
+                style="width:70%;"
+              >
                 <mwc-tab-bar>
-                  <mwc-tab title="running" label="${_t('session.Running')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-                  <mwc-tab title="interactive" label="${_t('session.Interactive')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-                  <mwc-tab title="batch" label="${_t('session.Batch')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-                  <mwc-tab title="finished" label="${_t('session.Finished')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-                  <mwc-tab title="others" label="${_t('session.Others')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                  <mwc-tab
+                    title="running"
+                    label="${_t('session.Running')}"
+                    @click="${(e) => this._showTab(e.target)}"
+                  ></mwc-tab>
+                  <mwc-tab
+                    title="interactive"
+                    label="${_t('session.Interactive')}"
+                    @click="${(e) => this._showTab(e.target)}"
+                  ></mwc-tab>
+                  <mwc-tab
+                    title="batch"
+                    label="${_t('session.Batch')}"
+                    @click="${(e) => this._showTab(e.target)}"
+                  ></mwc-tab>
+                  ${this.enableInferenceWorkload
+                    ? html`
+                        <mwc-tab
+                          title="inference"
+                          label="${_t('session.Inference')}"
+                          @click="${(e) => this._showTab(e.target)}"
+                        ></mwc-tab>
+                      `
+                    : html``}
+                  ${this.enableSFTPSession
+                    ? html`
+                        <mwc-tab
+                          title="system"
+                          label="${_t('session.System')}"
+                          @click="${(e) => this._showTab(e.target)}"
+                        ></mwc-tab>
+                      `
+                    : html``}
+                  <mwc-tab
+                    title="finished"
+                    label="${_t('session.Finished')}"
+                    @click="${(e) => this._showTab(e.target)}"
+                  ></mwc-tab>
                 </mwc-tab-bar>
               </div>
             </div>
-            ${this.is_admin ? html`
-              <div style="position: relative;">
-                <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
-                                  @click="${(e) => this._toggleDropdown(e)}"></mwc-icon-button>
-                  <mwc-menu id="dropdown-menu">
-                    <mwc-list-item>
-                      <a class="horizontal layout start center" @click="${() => this._openExportToCsvDialog()}">
-                        <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
-                        ${_t('session.exportCSV')}
-                      </a>
-                    </mwc-list-item>
-                  </mwc-menu>
-                </div>
-              ` : html``}
-            <div class="horizontal layout flex end-justified" style="margin-right:20px;">
-              <backend-ai-session-launcher location="session" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
+            ${this.is_admin
+              ? html`
+                  <div style="position: relative;">
+                    <mwc-icon-button
+                      id="dropdown-menu-button"
+                      icon="more_horiz"
+                      raised
+                      @click="${(e) => this._toggleDropdown(e)}"
+                    ></mwc-icon-button>
+                    <mwc-menu id="dropdown-menu">
+                      <mwc-list-item>
+                        <a
+                          class="horizontal layout start center"
+                          @click="${() => this._openExportToCsvDialog()}"
+                        >
+                          <mwc-icon style="color:#242424;padding-right:10px;">
+                            get_app
+                          </mwc-icon>
+                          ${_t('session.exportCSV')}
+                        </a>
+                      </mwc-list-item>
+                    </mwc-menu>
+                  </div>
+                `
+              : html``}
+            <div
+              class="horizontal layout flex end-justified"
+              style="margin-right:20px;"
+            >
+              <backend-ai-session-launcher
+                location="session"
+                id="session-launcher"
+                ?active="${this.active === true}"
+              ></backend-ai-session-launcher>
             </div>
           </h3>
           <div id="running-lists" class="tab-content">
-            <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>
+            <backend-ai-session-list
+              id="running-jobs"
+              condition="running"
+            ></backend-ai-session-list>
           </div>
           <div id="interactive-lists" class="tab-content" style="display:none;">
-            <backend-ai-session-list id="interactive-jobs" condition="interactive"></backend-ai-session-list>
+            <backend-ai-session-list
+              id="interactive-jobs"
+              condition="interactive"
+            ></backend-ai-session-list>
           </div>
           <div id="batch-lists" class="tab-content" style="display:none;">
-            <backend-ai-session-list id="batch-jobs" condition="batch"></backend-ai-session-list>
+            <backend-ai-session-list
+              id="batch-jobs"
+              condition="batch"
+            ></backend-ai-session-list>
           </div>
+          ${this.enableInferenceWorkload
+            ? html`
+                <div
+                  id="inference-lists"
+                  class="tab-content"
+                  style="display:none;"
+                >
+                  <backend-ai-session-list
+                    id="inference-jobs"
+                    condition="inference"
+                  ></backend-ai-session-list>
+                </div>
+              `
+            : html``}
+          ${this.enableSFTPSession
+            ? html`
+                <div
+                  id="system-lists"
+                  class="tab-content"
+                  style="display:none;"
+                >
+                  <backend-ai-session-list
+                    id="system-jobs"
+                    condition="system"
+                  ></backend-ai-session-list>
+                </div>
+              `
+            : html``}
           <div id="finished-lists" class="tab-content" style="display:none;">
-            <backend-ai-session-list id="finished-jobs" condition="finished"></backend-ai-session-list>
+            <backend-ai-session-list
+              id="finished-jobs"
+              condition="finished"
+            ></backend-ai-session-list>
           </div>
           <div id="others-lists" class="tab-content" style="display:none;">
-            <backend-ai-session-list id="others-jobs" condition="others"></backend-ai-session-list>
+            <backend-ai-session-list
+              id="others-jobs"
+              condition="others"
+            ></backend-ai-session-list>
           </div>
         </div>
       </lablup-activity-panel>
       <backend-ai-dialog id="export-to-csv" fixed backdrop>
         <span slot="title">${_t('session.ExportSessionListToCSVFile')}</span>
         <div slot="content">
-          <mwc-textfield id="export-file-name" label="File name"
-                          validationMessage="${_t('data.explorer.ValueRequired')}"
-                          value="${'session_' + this._defaultFileName}" required
-                          style="margin-bottom:10px;"></mwc-textfield>
+          <mwc-textfield
+            id="export-file-name"
+            label="File name"
+            validationMessage="${_t('data.explorer.ValueRequired')}"
+            value="${'session_' + this._defaultFileName}"
+            required
+            style="margin-bottom:10px;"
+          ></mwc-textfield>
           <div class="horizontal center layout" style="display:none;">
-            <wl-textfield id="date-from" label="From" type="date" style="margin-right:10px;"
-                          value="${this._getFirstDateOfMonth()}" required
-                          @change="${this._validateDateRange}">
-              <wl-icon slot="before">date_range</wl-icon>
-            </wl-textfield>
-            <wl-textfield id="date-to" label="To" type="date"
-                          value="${new Date().toISOString().substring(0, 10)}" required
-                          @change="${this._validateDateRange}">
-              <wl-icon slot="before">date_range</wl-icon>
-            </wl-textfield>
+            <mwc-textfield
+              id="date-from"
+              label="From"
+              type="date"
+              style="margin-right:10px;"
+              value="${this._getFirstDateOfMonth()}"
+              required
+              @change="${this._validateDateRange}"
+            ></mwc-textfield>
+            <mwc-textfield
+              id="date-to"
+              label="To"
+              type="date"
+              value="${new Date().toISOString().substring(0, 10)}"
+              required
+              @change="${this._validateDateRange}"
+            ></mwc-textfield>
           </div>
-          <div class="horizontal center layout" style="display:none;">
-            <wl-checkbox id="export-csv-checkbox" @change="${(e) => this._toggleDialogCheckbox(e)}"></wl-checkbox>
-            <wl-label class="unlimited" for="export-csv-checkbox">Export All-time data</wl-label>
+          <div class="horizontal center layout">
+            <mwc-formfield label="Export All-time data">
+              <mwc-checkbox
+                id="export-csv-checkbox"
+                @change="${(e) => this._toggleDialogCheckbox(e)}"
+              ></mwc-checkbox>
+            </mwc-formfield>
           </div>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button unelevated
-                      fullwidth
-                      icon="get_app"
-                      label="${_t('session.ExportCSVFile')}"
-                      @click="${this._exportToCSV}"></mwc-button>
+        <div slot="footer" class="horizontal flex layout">
+          <mwc-button
+            unelevated
+            fullwidth
+            icon="get_app"
+            label="${_t('session.ExportCSVFile')}"
+            @click="${this._exportToCSV}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
     `;
@@ -548,6 +747,6 @@ export default class BackendAiSessionView extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-session-view': BackendAiSessionView;
+    'backend-ai-session-view': BackendAISessionView;
   }
 }

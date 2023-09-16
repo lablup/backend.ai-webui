@@ -1,11 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-
-import {BackendAIPage} from './backend-ai-page';
+import { BackendAIPage } from './backend-ai-page';
+import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Backend.AI Common Utils
@@ -15,8 +14,7 @@ import {BackendAIPage} from './backend-ai-page';
  */
 @customElement('backend-ai-common-utils')
 export default class BackendAiCommonUtils extends BackendAIPage {
-  @property({type: Object}) options = Object();
-
+  @property({ type: Object }) options = Object();
 
   constructor() {
     super();
@@ -40,10 +38,19 @@ export default class BackendAiCommonUtils extends BackendAIPage {
    * @return {string} Current selected group
    */
   _readRecentProjectGroup() {
-    const endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
-    const value: string | null = globalThis.backendaioptions.get('projectGroup.' + endpointId);
-    if (value) { // Check if saved group has gone between logins / sessions
-      if (globalThis.backendaiclient.groups.length > 0 && globalThis.backendaiclient.groups.includes(value)) {
+    const endpointId = globalThis.backendaiclient._config.endpointHost.replace(
+      /\./g,
+      '_',
+    ); // dot is used for namespace divider
+    const value: string | null = globalThis.backendaioptions.get(
+      'projectGroup.' + endpointId,
+    );
+    if (value) {
+      // Check if saved group has gone between logins / sessions
+      if (
+        globalThis.backendaiclient.groups.length > 0 &&
+        globalThis.backendaiclient.groups.includes(value)
+      ) {
         return value; // value is included. So it is ok.
       } else {
         this._deleteRecentProjectGroupInfo();
@@ -59,26 +66,46 @@ export default class BackendAiCommonUtils extends BackendAIPage {
    * @param {string} value
    */
   _writeRecentProjectGroup(value: string) {
-    const endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
-    globalThis.backendaioptions.set('projectGroup.' + endpointId, value ? value : globalThis.backendaiclient.current_group);
+    const endpointId = globalThis.backendaiclient._config.endpointHost.replace(
+      /\./g,
+      '_',
+    ); // dot is used for namespace divider
+    globalThis.backendaioptions.set(
+      'projectGroup.' + endpointId,
+      value ? value : globalThis.backendaiclient.current_group,
+    );
   }
 
   /**
    * Delete the recent project group information.
    */
   _deleteRecentProjectGroupInfo() {
-    const endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
+    const endpointId = globalThis.backendaiclient._config.endpointHost.replace(
+      /\./g,
+      '_',
+    ); // dot is used for namespace divider
     globalThis.backendaioptions.delete('projectGroup.' + endpointId);
   }
 
-  _humanReadableFileSize(bytes, decimals = 2) {
+  /**
+   * Convert file size with binary unit to human readable unit and value
+   *
+   * @param {number} bytes
+   * @param {number} decimalPoint decimal point set to 2 as a default
+   * @return {string} converted file size to human readable value
+   */
+  _humanReadableFileSize(bytes = 0, decimalPoint = 2) {
     if (bytes === 0) return '0 Bytes';
-    const k = Math.pow(2, 10);
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
+    const k = Math.pow(10, 3);
+    decimalPoint = decimalPoint < 0 ? 0 : decimalPoint;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
     let i = Math.floor(Math.log(Math.round(bytes)) / Math.log(k));
     i = i < 0 ? 0 : i; // avoid negative value
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    return (
+      parseFloat((bytes / Math.pow(k, i)).toFixed(decimalPoint)) +
+      ' ' +
+      sizes[i]
+    );
   }
 
   /**
@@ -92,8 +119,13 @@ export default class BackendAiCommonUtils extends BackendAIPage {
    */
   _maskString(value = '', maskChar = '*', startFrom = 0, maskLength = 0) {
     // clamp mask length
-    maskLength = (startFrom + maskLength > value.length) ? value.length : maskLength;
-    return value.substring(0, startFrom) + maskChar.repeat(maskLength) + value.substring(startFrom+maskLength, value.length);
+    maskLength =
+      startFrom + maskLength > value.length ? value.length : maskLength;
+    return (
+      value.substring(0, startFrom) +
+      maskChar.repeat(maskLength) +
+      value.substring(startFrom + maskLength, value.length)
+    );
   }
 
   /**
@@ -103,7 +135,7 @@ export default class BackendAiCommonUtils extends BackendAIPage {
    * @param {String} nestedKey - nested key to delete with arbitrary depths (ex: 'key.subkey')
    * @param {String} sep - separator of the `nestedKey`
    * @return {Object} - Object without nested key
-  */
+   */
   deleteNestedKeyFromObject(obj: Object, nestedKey: string, sep = '.') {
     if (!obj || obj.constructor !== Object || !nestedKey) {
       return obj;
@@ -119,19 +151,20 @@ export default class BackendAiCommonUtils extends BackendAIPage {
   /**
    * Merge two nested objects into one.
    *
-   * @param {Object} obj1 - source object
-   * @param {Object} obj2 - the objects that will override obj1
-   * @return {Object} - Merged object
+   * @param {object} obj1 - source object
+   * @param {object} obj2 - the objects that will override obj1
+   * @return {object} - Merged object
    */
-  mergeNestedObjects(obj1: Object, obj2: Object) {
+  mergeNestedObjects(obj1: object, obj2: object) {
     if (!obj1 || !obj2) {
       return obj1 || obj2 || {};
     }
     function _merge(a, b) {
       return Object.entries(b).reduce((o, [k, v]) => {
-        o[k] = v && (v as any).constructor === Object ?
-          _merge(o[k] = o[k] || (Array.isArray(v) ? [] : {}), v) :
-          v;
+        o[k] =
+          v && (v as object).constructor === Object
+            ? _merge((o[k] = o[k] || (Array.isArray(v) ? [] : {})), v)
+            : v;
         return o;
       }, a);
     }
@@ -148,7 +181,7 @@ export default class BackendAiCommonUtils extends BackendAIPage {
     if (!str || str.length === 0) {
       return;
     }
-    const blob = new Blob([str], {type: 'text/plain;charset=utf-8'});
+    const blob = new Blob([str], { type: 'text/plain;charset=utf-8' });
     const link = document.createElement('a');
     if (link.download !== undefined) {
       // Browsers that support HTML5 download attribute
@@ -162,10 +195,18 @@ export default class BackendAiCommonUtils extends BackendAIPage {
     }
   }
 
+  isEmpty(str) {
+    return (
+      str === '' ||
+      str === null ||
+      str === undefined ||
+      typeof str === 'undefined'
+    );
+  }
+
   render() {
     // language=HTML
-    return html`
-    `;
+    return html``;
   }
 }
 

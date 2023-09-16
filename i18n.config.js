@@ -4,17 +4,19 @@ const chalk = require('chalk');
 module.exports = {
   input: [
     './src/**/*.ts',
+    './react/src/**/*.tsx',
     // Use ! to filter out files or directories
   ],
   output: './',
   options: {
     debug: true,
+    removeUnusedKeys: false,
     func: {
-      list: ['_t', '_tr', '_text'], // _t for normal text, _tr for HTML text
-      extensions: ['.ts', '.js', '.jsx']
+      list: ['_t', '_tr', '_text', 't'], // _t for normal text, _tr for HTML text, t for react
+      extensions: ['.ts', '.js', '.jsx', '.tsx']
     },
     trans: false,
-    lngs: ['en', 'ko', 'ru', 'fr', 'mn', 'id'],
+    lngs: ['en', 'ko', 'de', 'el', 'es', 'fi', 'fr', 'id', 'it', 'ja', 'mn', 'ms', 'pl', 'pt', 'pt-BR', 'ru', 'tr', 'vi', 'zh-CN', 'zh-TW'], // supported languages
     defaultLng: 'en',
     defaultNs: 'resource',
     defaultValue: function(lng, ns, key) {
@@ -44,7 +46,7 @@ module.exports = {
     const content = fs.readFileSync(file.path, enc);
     let count = 0;
 
-    parser.parseFuncFromString(content, {list: ['_t']}, (key, options) => {
+    parser.parseFuncFromString(content, {list: ['_t', 't']}, (key, options) => {
       parser.set(key, Object.assign({}, options, {
         nsSeparator: false,
         keySeparator: '.'
@@ -52,8 +54,10 @@ module.exports = {
       ++count;
     });
 
+    let colored = file.path.includes('/react/src') ? chalk.magenta : chalk.yellow;
+
     if (count > 0) {
-      console.log(`i18next-scanner: count=${chalk.cyan(count)}, file=${chalk.yellow(JSON.stringify(file.relative))}`);
+      console.log(`i18next-scanner: count=${chalk.cyan(count)}, file=${colored(JSON.stringify(file.relative))}`);
     }
 
     done();

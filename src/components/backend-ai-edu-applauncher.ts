@@ -1,24 +1,21 @@
 /**
 @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {get as _text} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
-import {BackendAIPage} from './backend-ai-page';
-
-import {BackendAiStyles} from './backend-ai-general-styles';
+import { Client, ClientConfig } from '../lib/backend.ai-client-esm';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-
-import {default as PainKiller} from './backend-ai-painkiller';
 import './backend-ai-app-launcher';
-
-import {Client, ClientConfig} from '../lib/backend.ai-client-esm';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import { css, CSSResultGroup, html } from 'lit';
+import { get as _text } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -44,10 +41,11 @@ type BackendAIAppLauncher = HTMLElementTagNameMap['backend-ai-app-launcher'];
 
 @customElement('backend-ai-edu-applauncher')
 export default class BackendAiEduApplauncher extends BackendAIPage {
-  @property({type: Object}) webUIShell = Object();
-  @property({type: Object}) clientConfig = Object();
-  @property({type: Object}) client = Object();
-  @property({type: Object}) notification = Object();
+  @property({ type: Object }) webUIShell = Object();
+  @property({ type: Object }) clientConfig = Object();
+  @property({ type: Object }) client = Object();
+  @property({ type: Object }) notification = Object();
+  @property({ type: String }) resources = Object();
   @query('#app-launcher') appLauncher!: BackendAIAppLauncher;
 
   static get styles(): CSSResultGroup | undefined {
@@ -58,8 +56,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       IronFlexFactors,
       IronPositioning,
       // language=CSS
-      css`
-      `
+      css``,
     ];
   }
 
@@ -67,20 +64,12 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
   }
 
-  async launch(apiEndpoint: string) {
-    await this._initClient(apiEndpoint);
-    const loginSuccess = await this._token_login();
-    if (loginSuccess) {
-      await this._createEduSession();
-    }
-  }
-
   detectIE() {
     try {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      const isIE = /* @cc_on!@*/false || !!document.documentMode;
-      if (! isIE) {
+      const isIE = /* @cc_on!@*/ false || !!document.documentMode;
+      if (!isIE) {
         // Fallback to UserAgent detection for IE
         if (
           navigator.userAgent.indexOf('MSIE') > 0 ||
@@ -100,6 +89,64 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     }
   }
 
+  async prepareProjectInformation() {
+    const fields = ['email', 'groups {name, id}'];
+    const query = `query { user{ ${fields.join(' ')} } }`;
+    const response = await globalThis.backendaiclient.query(query, {});
+
+    globalThis.backendaiclient.groups = response.user.groups
+      .map((item) => item.name)
+      .sort();
+    globalThis.backendaiclient.groupIds = response.user.groups.reduce(
+      (acc, group) => {
+        acc[group.name] = group.id;
+        return acc;
+      },
+      {},
+    );
+    const currentProject = globalThis.backendaiutils._readRecentProjectGroup();
+    globalThis.backendaiclient.current_group = currentProject
+      ? currentProject
+      : globalThis.backendaiclient.groups[0];
+    globalThis.backendaiclient.current_group_id = () => {
+      return globalThis.backendaiclient.groupIds[
+        globalThis.backendaiclient.current_group
+      ];
+    };
+
+    console.log('current project:', currentProject);
+  }
+
+  async launch(apiEndpoint: string) {
+    await this._initClient(apiEndpoint);
+    const queryParams = new URLSearchParams(window.location.search);
+    this.resources = {
+      cpu: queryParams.get('cpu'),
+      mem: queryParams.get('mem'),
+      'cuda.shares': queryParams.get('cuda-shares'),
+      'cuda.device': queryParams.get('cuda-device'),
+    };
+    const loginSuccess = await this._token_login();
+    if (loginSuccess) {
+      // Launching app requires to get the AppProxy mode, which requires to fill
+      // the project information.
+      // TODO: Better way to handle this?
+      await this.prepareProjectInformation();
+
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const sessionId = urlParams.get('session_id') || null;
+      if (sessionId) {
+        // Launch app with the sepcified session ID.
+        const requestedApp = urlParams.get('app') || 'jupyter';
+        this._openServiceApp(sessionId, requestedApp);
+      } else {
+        // Try to create a new session and launch app.
+        await this._createEduSession();
+      }
+    }
+  }
+
   /**
    * Initialize the client.
    *
@@ -110,7 +157,9 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     const webUIShell: any = document.querySelector('#webui-shell');
     // webUIShell.appBody.style.visibility = 'visible';
     if (apiEndpoint === '') {
-      const api_endpoint: any = localStorage.getItem('backendaiwebui.api_endpoint');
+      const api_endpoint: any = localStorage.getItem(
+        'backendaiwebui.api_endpoint',
+      );
       if (api_endpoint != null) {
         apiEndpoint = api_endpoint.replace(/^"+|"+$/g, '');
       }
@@ -119,11 +168,12 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     this.clientConfig = new ClientConfig('', '', apiEndpoint, 'SESSION');
     globalThis.backendaiclient = new Client(
       this.clientConfig,
-      'Backend.AI Web UI.'
+      'Backend.AI Web UI.',
     );
     const configPath = '../../config.toml';
     await webUIShell._parseConfig(configPath);
-    globalThis.backendaiclient._config._proxyURL = webUIShell.config.wsproxy.proxyURL;
+    globalThis.backendaiclient._config._proxyURL =
+      webUIShell.config.wsproxy.proxyURL;
     await globalThis.backendaiclient.get_manager_version();
     globalThis.backendaiclient.ready = true;
   }
@@ -132,18 +182,29 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     // If token is delivered as a querystring, just save it as cookie.
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const sToken = urlParams.get('sToken') || null;
+    const sToken = urlParams.get('sToken') || urlParams.get('stoken') || null;
     if (sToken !== null) {
       document.cookie = `sToken=${sToken}; expires=Session; path=/`;
+    }
+    const extraParams = {};
+    for (const [key, value] of urlParams.entries()) {
+      if (key !== 'sToken' && key !== 'stoken') {
+        extraParams[key] = value;
+      }
     }
 
     try {
       const alreadyLoggedIn = await globalThis.backendaiclient.check_login();
       if (!alreadyLoggedIn) {
         console.log('logging with (cookie) token...');
-        const loginSuccess = await globalThis.backendaiclient.token_login();
+        const loginSuccess = await globalThis.backendaiclient.token_login(
+          sToken,
+          extraParams,
+        );
         if (!loginSuccess) {
-          this.notification.text = _text('eduapi.CannotAuthorizeSessionByToken');
+          this.notification.text = _text(
+            'eduapi.CannotAuthorizeSessionByToken',
+          );
           this.notification.show(true);
           return false;
         }
@@ -165,7 +226,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
    * */
   generateSessionId() {
     let text = '';
-    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const possible =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (let i = 0; i < 8; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
@@ -177,13 +239,34 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
     // Query current user's compute session in the current group.
     const fields = [
-      'session_id', 'name', 'access_key', 'status', 'status_info', 'service_ports', 'mounts',
+      'session_id',
+      'name',
+      'access_key',
+      'status',
+      'status_info',
+      'service_ports',
+      'mounts',
     ];
     let statuses: string;
     if (globalThis.backendaiclient.supports('avoid-hol-blocking')) {
-      statuses = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'].join(',');
+      statuses = [
+        'RUNNING',
+        'RESTARTING',
+        'TERMINATING',
+        'PENDING',
+        'SCHEDULED',
+        'PREPARING',
+        'PULLING',
+      ].join(',');
     } else {
-      statuses = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'PREPARING', 'PULLING'].join(',');
+      statuses = [
+        'RUNNING',
+        'RESTARTING',
+        'TERMINATING',
+        'PENDING',
+        'PREPARING',
+        'PULLING',
+      ].join(',');
     }
 
     const accessKey = globalThis.backendaiclient._config.accessKey;
@@ -191,8 +274,17 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     //       This API should be used when there is only one group, 'default'.
     let sessions;
     try {
-      this.appLauncher.indicator.set(20, _text('eduapi.QueryingExisitingComputeSession'));
-      sessions = await globalThis.backendaiclient.computeSession.list(fields, statuses, accessKey, 30, 0);
+      this.appLauncher.indicator.set(
+        20,
+        _text('eduapi.QueryingExisitingComputeSession'),
+      );
+      sessions = await globalThis.backendaiclient.computeSession.list(
+        fields,
+        statuses,
+        accessKey,
+        30,
+        0,
+      );
     } catch (err) {
       console.error(err);
       if (err && err.message) {
@@ -223,7 +315,10 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       console.log('Reusing an existing session ...');
       const sessionStatus = sessions.compute_session_list.items[0].status;
       if (sessionStatus !== 'RUNNING') {
-        this.notification.text = _text('eduapi.sessionStatusIs') + ` ${sessionStatus}. ` + _text('eduapi.PleaseReload');
+        this.notification.text =
+          _text('eduapi.sessionStatusIs') +
+          ` ${sessionStatus}. ` +
+          _text('eduapi.PleaseReload');
         this.notification.show(true);
         return;
       }
@@ -244,7 +339,10 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         } else {
           sessionId = null;
         }
-        this.appLauncher.indicator.set(50, _text('eduapi.FoundExistingComputeSession'));
+        this.appLauncher.indicator.set(
+          50,
+          _text('eduapi.FoundExistingComputeSession'),
+        );
       } else {
         // this.notification.text = `You have existing session can launch ${requestedApp}`;
         // this.notification.show(true);
@@ -256,15 +354,21 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       } else {
         sessionId = null;
       }
-    } else { // no existing compute session. create one.
+    } else {
+      // no existing compute session. create one.
     }
 
-    if (launchNewSession) { // no existing compute session. create one.
+    if (launchNewSession) {
+      // no existing compute session. create one.
       console.log('Creating a new session ...');
-      this.appLauncher.indicator.set(40, _text('eduapi.FindingSessionTemplate'));
+      this.appLauncher.indicator.set(
+        40,
+        _text('eduapi.FindingSessionTemplate'),
+      );
       let sessionTemplates;
       try {
-        sessionTemplates = await globalThis.backendaiclient.sessionTemplate.list(false);
+        sessionTemplates =
+          await globalThis.backendaiclient.sessionTemplate.list(false);
       } catch (err) {
         console.error(err);
         if (err && err.message) {
@@ -282,7 +386,9 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         return;
       }
       // Assume that session templates' name match requsetedApp name.
-      sessionTemplates = sessionTemplates.filter((t) => t.name === requestedApp);
+      sessionTemplates = sessionTemplates.filter(
+        (t) => t.name === requestedApp,
+      );
       if (sessionTemplates.length < 1) {
         this.notification.text = _text('eduapi.NoSessionTemplate');
         this.notification.show(true);
@@ -290,12 +396,31 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       }
       const templateId = sessionTemplates[0].id; // NOTE: use the first template. will it be okay?
       try {
-        const mounts = await globalThis.backendaiclient.eduApp.get_mount_folders();
-        const resources = mounts ? {mounts} : {};
+        const mounts =
+          await globalThis.backendaiclient.eduApp.get_mount_folders();
+        const projects =
+          await globalThis.backendaiclient.eduApp.get_user_projects();
+        if (!projects) {
+          this.notification.text = _text('eduapi.EmptyProject');
+          this.notification.show();
+          return;
+        }
+        const resources = mounts
+          ? { mounts, ...this.resources, group_name: projects[0]['name'] }
+          : { ...this.resources, group_name: projects[0]['name'] };
         let response;
         try {
-          this.appLauncher.indicator.set(60, _text('eduapi.CreatingComputeSession'));
-          response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, null, resources, 20000);
+          this.appLauncher.indicator.set(
+            60,
+            _text('eduapi.CreatingComputeSession'),
+          );
+          response = await globalThis.backendaiclient.createSessionFromTemplate(
+            templateId,
+            null,
+            null,
+            resources,
+            20000,
+          );
         } catch (err) {
           console.error(err);
           if (err && err.message) {
@@ -347,13 +472,20 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   async _openServiceApp(sessionId, appName) {
     this.appLauncher.indicator = await globalThis.lablupIndicator.start();
     console.log(`launching ${appName} from session ${sessionId} ...`);
-    this.appLauncher._open_wsproxy(sessionId, appName, null, null)
+    this.appLauncher
+      ._open_wsproxy(sessionId, appName, null, null)
       .then(async (resp) => {
         if (resp.url) {
-          await this.appLauncher._connectToProxyWorker(resp.url, '');
-          this.appLauncher.indicator.set(100, _text('session.applauncher.Prepared'));
+          const appConnectUrl = await this.appLauncher._connectToProxyWorker(
+            resp.url,
+            '',
+          );
+          this.appLauncher.indicator.set(
+            100,
+            _text('session.applauncher.Prepared'),
+          );
           setTimeout(() => {
-            globalThis.open(resp.url, '_self');
+            globalThis.open(appConnectUrl || resp.url, '_self');
             // globalThis.open(resp.url);
           });
         } else {

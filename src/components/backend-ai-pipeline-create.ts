@@ -2,26 +2,21 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
-import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
-
-import '@material/mwc-list';
-import {Select} from '@material/mwc-select';
-import {TextField} from '@material/mwc-textfield';
-
-import 'weightless/card';
-import {BackendAiStyles} from './backend-ai-general-styles';
-
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import {default as PainKiller} from './backend-ai-painkiller';
-import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { default as PainKiller } from './backend-ai-painkiller';
+import { BackendAIPipelineCommon } from './backend-ai-pipeline-common';
+import '@material/mwc-list';
+import { Select } from '@material/mwc-select';
+import { TextField } from '@material/mwc-textfield';
+import { css, CSSResultGroup, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -39,25 +34,25 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
  */
 @customElement('backend-ai-pipeline-create')
 export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
-  @property({type: Object}) notification = Object();
+  @property({ type: Object }) notification = Object();
   // Environments
-  @property({type: Object}) tags = Object();
-  @property({type: Array}) languages;
-  @property({type: String}) defaultLanguage = '';
-  @property({type: Array}) versions = [];
-  @property({type: String}) scalingGroup = '';
-  @property({type: Array}) scalingGroups = [];
-  @property({type: String}) vhost = '';
-  @property({type: Array}) vhosts = [];
-  @property({type: Object}) images = Object();
-  @property({type: Object}) imageInfo = Object();
-  @property({type: Object}) imageNames = Object();
-  @property({type: Object}) resourceLimits = Object();
-  @property({type: Object}) supports = Object();
-  @property({type: Object}) aliases = Object();
+  @property({ type: Object }) tags = Object();
+  @property({ type: Array }) languages;
+  @property({ type: String }) defaultLanguage = '';
+  @property({ type: Array }) versions = [];
+  @property({ type: String }) scalingGroup = '';
+  @property({ type: Array }) scalingGroups = [];
+  @property({ type: String }) vhost = '';
+  @property({ type: Array }) vhosts = [];
+  @property({ type: Object }) images = Object();
+  @property({ type: Object }) imageInfo = Object();
+  @property({ type: Object }) imageNames = Object();
+  @property({ type: Object }) resourceLimits = Object();
+  @property({ type: Object }) supports = Object();
+  @property({ type: Object }) aliases = Object();
   // Configs
-  @property({type: String}) pipelineCreateMode = 'create';
-  @property({type: String}) pipelineFolderName = '';
+  @property({ type: String }) pipelineCreateMode = 'create';
+  @property({ type: String }) pipelineFolderName = '';
   // Pipeline prpoerties
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#pipeline-environment') pipelineEnvSelect!: Select;
@@ -66,18 +61,20 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
   @query('#pipeline-title') pipelineTitleInput!: TextField;
   @query('#pipeline-description') pipelineDescriptionInput!: TextField;
   @query('#pipeline-scaling-group') pipelineScalingGroup!: Select;
-  @query('#pipeline-create-dialog', true) pipelineCreateDialog!: BackendAIDialog;
-  @query('#pipeline-delete-dialog', true) pipelineDeleteDialog!: BackendAIDialog;
+  @query('#pipeline-create-dialog', true)
+  pipelineCreateDialog!: BackendAIDialog;
+  @query('#pipeline-delete-dialog', true)
+  pipelineDeleteDialog!: BackendAIDialog;
 
   constructor() {
     super();
     this.aliases = {
-      'TensorFlow': 'python-tensorflow',
+      TensorFlow: 'python-tensorflow',
       'NGC-TensorFlow': 'ngc-tensorflow',
-      'PyTorch': 'python-pytorch',
+      PyTorch: 'python-pytorch',
       'NGC-PyTorch': 'ngc-pytorch',
       'Lablup Research Env.': 'python-ff',
-      'Python': 'python',
+      Python: 'python',
     };
     this.languages = [];
   }
@@ -86,9 +83,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
     this.notification = globalThis.lablupNotification;
 
     fetch('resources/image_metadata.json')
-      .then(
-        (resp) => resp.json()
-      )
+      .then((resp) => resp.json())
       .then((json) => {
         this.imageInfo = json.imageInfo;
         for (const key in this.imageInfo) {
@@ -109,7 +104,9 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
         }
       });
     this.pipelineEnvSelect.addEventListener(
-      'selected', this.updateLanguage.bind(this));
+      'selected',
+      this.updateLanguage.bind(this),
+    );
     this._refreshImageList();
   }
 
@@ -145,41 +142,50 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
 
   _refreshImageList() {
     const fields = [
-      'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
-      'resource_limits { key min max }'
+      'name',
+      'humanized_name',
+      'tag',
+      'registry',
+      'digest',
+      'installed',
+      'resource_limits { key min max }',
     ];
-    window.backendaiclient.image.list(fields, true).then((response) => {
-      const images: Array<Record<string, unknown>> = [];
-      Object.keys(response.images).map((objectKey, index) => {
-        const item = response.images[objectKey];
-        if (item.installed === true) {
-          images.push(item);
+    window.backendaiclient.image
+      .list(fields, true)
+      .then((response) => {
+        const images: Array<Record<string, unknown>> = [];
+        Object.keys(response.images).map((objectKey, index) => {
+          const item = response.images[objectKey];
+          if (item.installed === true) {
+            images.push(item);
+          }
+        });
+        if (images.length === 0) {
+          return;
+        }
+        this.images = images;
+        this.supports = {};
+        Object.keys(this.images).map((objectKey, index) => {
+          const item = this.images[objectKey];
+          const supportsKey = `${item.registry}/${item.name}`;
+          if (!(supportsKey in this.supports)) {
+            this.supports[supportsKey] = [];
+          }
+          this.supports[supportsKey].push(item.tag);
+          this.resourceLimits[`${supportsKey}:${item.tag}`] =
+            item.resource_limits;
+        });
+        this._updateEnvironment();
+      })
+      .catch((err) => {
+        // this.metadata_updating = false;
+        console.error(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true);
         }
       });
-      if (images.length === 0) {
-        return;
-      }
-      this.images = images;
-      this.supports = {};
-      Object.keys(this.images).map((objectKey, index) => {
-        const item = this.images[objectKey];
-        const supportsKey = `${item.registry}/${item.name}`;
-        if (!(supportsKey in this.supports)) {
-          this.supports[supportsKey] = [];
-        }
-        this.supports[supportsKey].push(item.tag);
-        this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
-      });
-      this._updateEnvironment();
-    }).catch((err) => {
-      // this.metadata_updating = false;
-      console.error(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true);
-      }
-    });
   }
 
   _updateEnvironment() {
@@ -190,7 +196,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
     langs.sort();
     this.languages = [];
     langs.forEach((item, index) => {
-      if (!(Object.keys(this.aliases).includes(item))) {
+      if (!Object.keys(this.aliases).includes(item)) {
         const humanizedName = this._guessHumanizedNames(item);
         if (humanizedName !== null) {
           this.aliases[item] = humanizedName;
@@ -200,7 +206,8 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
       }
       const specs = item.split('/');
       const registry = specs[0];
-      let prefix; let kernelName;
+      let prefix;
+      let kernelName;
       if (specs.length == 2) {
         prefix = '';
         kernelName = specs[1];
@@ -229,27 +236,39 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
         kernelname: kernelName,
         alias: alias,
         basename: basename,
-        tags: tags
+        tags: tags,
       });
     });
     this._initAliases();
   }
 
   selectDefaultLanguage() {
-    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._selectDefaultLanguage();
-      }, true);
+    if (
+      typeof window.backendaiclient === 'undefined' ||
+      window.backendaiclient === null ||
+      window.backendaiclient.ready === false
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        () => {
+          this._selectDefaultLanguage();
+        },
+        true,
+      );
     } else {
       this._selectDefaultLanguage();
     }
   }
 
   _selectDefaultLanguage() {
-    if (window.backendaiclient._config.default_session_environment !== undefined &&
+    if (
+      window.backendaiclient._config.default_session_environment !==
+        undefined &&
       'default_session_environment' in window.backendaiclient._config &&
-      window.backendaiclient._config.default_session_environment !== '') {
-      this.defaultLanguage = window.backendaiclient._config.default_session_environment;
+      window.backendaiclient._config.default_session_environment !== ''
+    ) {
+      this.defaultLanguage =
+        window.backendaiclient._config.default_session_environment;
     } else if (this.languages.length !== 0) {
       this.defaultLanguage = this.languages[0].name;
     } else {
@@ -273,7 +292,11 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
       if (imageName === item) {
         humanizedName = candidate[item];
         matchedString = item;
-      } else if (imageName === '' && kernelName.endsWith(item) && item.length < matchedString.length) {
+      } else if (
+        imageName === '' &&
+        kernelName.endsWith(item) &&
+        item.length < matchedString.length
+      ) {
         humanizedName = candidate[item];
         matchedString = item;
       }
@@ -297,7 +320,8 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
     this._fetchResourceGroup();
     this._fillPipelineCreateDialogFields(null);
     this.pipelineCreateMode = 'create';
-    window.backendaiclient.vfolder.list_hosts()
+    window.backendaiclient.vfolder
+      .list_hosts()
       .then((resp) => {
         const folderHostEl = this.pipelineFolderHostSelect;
         this.vhosts = resp.allowed.slice();
@@ -330,7 +354,8 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
     this._fetchResourceGroup();
     const config = await this._downloadPipelineConfig(this.pipelineFolderName);
     this.pipelineCreateMode = 'update';
-    window.backendaiclient.vfolder.list_hosts()
+    window.backendaiclient.vfolder
+      .list_hosts()
       .then((resp) => {
         const folderHostEl = this.pipelineFolderHostSelect;
         this.vhosts = resp.allowed.slice();
@@ -410,23 +435,40 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
     const version = this.pipelineEnvTagSelect.value;
     const scaling_group = this.pipelineScalingGroup.value;
     const folder_host = this.pipelineFolderHostSelect.value;
-    const sluggedTitle = `pipeline-${window.backendaiclient.slugify(title)}-${window.backendaiclient.generateSessionId(8, true)}`;
+    const sluggedTitle = `pipeline-${window.backendaiclient.slugify(
+      title,
+    )}-${window.backendaiclient.generateSessionId(8, true)}`;
     if (!title || !environment || !version || !scaling_group || !folder_host) {
-      this.notification.text = _text('pipeline.PipelineDialog.FillAllInputFields');
+      this.notification.text = _text(
+        'pipeline.PipelineDialog.FillAllInputFields',
+      );
       this.notification.show();
       return;
     }
     const configObj = {
-      title, description, environment, version, scaling_group, folder_host
+      title,
+      description,
+      environment,
+      version,
+      scaling_group,
+      folder_host,
     };
     this.spinner.show();
     if (this.pipelineCreateMode === 'create') {
       try {
         await window.backendaiclient.vfolder.create(sluggedTitle, folder_host);
-        const uploadPipelineTask = this._uploadPipelineConfig(sluggedTitle, configObj);
-        const uploadComponentsTask = this._uploadPipelineComponents(sluggedTitle, {});
+        const uploadPipelineTask = this._uploadPipelineConfig(
+          sluggedTitle,
+          configObj,
+        );
+        const uploadComponentsTask = this._uploadPipelineComponents(
+          sluggedTitle,
+          {},
+        );
         await Promise.all([uploadPipelineTask, uploadComponentsTask]);
-        const event = new CustomEvent('backend-ai-pipeline-created', {'detail': sluggedTitle});
+        const event = new CustomEvent('backend-ai-pipeline-created', {
+          detail: sluggedTitle,
+        });
         this.dispatchEvent(event);
         this._hidePipelineCreateDialog();
         this.spinner.hide();
@@ -444,7 +486,9 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
     } else {
       try {
         await this._uploadPipelineConfig(this.pipelineFolderName, configObj);
-        const event = new CustomEvent('backend-ai-pipeline-updated', {'detail': this.pipelineFolderName});
+        const event = new CustomEvent('backend-ai-pipeline-updated', {
+          detail: this.pipelineFolderName,
+        });
         this.dispatchEvent(event);
         this._hidePipelineCreateDialog();
         this.spinner.hide();
@@ -461,21 +505,27 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
   }
 
   _deletePipeline() {
-    const job = globalThis.backendaiclient.vfolder.delete(this.pipelineFolderName);
-    job.then((value) => {
-      const event = new CustomEvent('backend-ai-pipeline-deleted', {'detail': this.pipelineFolderName});
-      this.dispatchEvent(event);
-      this._hidePipelineDeleteDialog();
-      this.notification.text = _text('pipeline.PipelineDeleted');
-      this.notification.show();
-    }).catch((err) => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+    const job = globalThis.backendaiclient.vfolder.delete(
+      this.pipelineFolderName,
+    );
+    job
+      .then((value) => {
+        const event = new CustomEvent('backend-ai-pipeline-deleted', {
+          detail: this.pipelineFolderName,
+        });
+        this.dispatchEvent(event);
+        this._hidePipelineDeleteDialog();
+        this.notification.text = _text('pipeline.PipelineDeleted');
+        this.notification.show();
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
   }
 
   /**
@@ -485,7 +535,9 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
    * @param {Object} configObj - pipeline config object.
    * */
   async _uploadPipelineConfig(folderName, configObj) {
-    const blob = new Blob([JSON.stringify(configObj, null, 2)], {type: 'application/json'});
+    const blob = new Blob([JSON.stringify(configObj, null, 2)], {
+      type: 'application/json',
+    });
     await this._uploadFile(this.pipelineConfigPath, blob, folderName);
   }
 
@@ -497,7 +549,9 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
    * */
   async _uploadPipelineComponents(folderName, cinfo) {
     const vfpath = this.pipelineComponentDetailPath;
-    const blob = new Blob([JSON.stringify(cinfo, null, 2)], {type: 'application/json'});
+    const blob = new Blob([JSON.stringify(cinfo, null, 2)], {
+      type: 'application/json',
+    });
     try {
       this.spinner.show();
       await this._uploadFile(vfpath, blob, folderName);
@@ -523,68 +577,122 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
         .warning {
           color: red;
         }
-      `
+      `,
     ];
   }
 
   render() {
     // language=HTML
     return html`
-      <div class="card" elevation="0">
-      </div>
+      <div class="card" elevation="0"></div>
 
       <backend-ai-dialog id="pipeline-create-dialog" fixed backdrop>
         <span slot="title">
-          ${this.pipelineCreateMode === 'create' ? _t('pipeline.PipelineDialog.CreateTitle') : _t('pipeline.PipelineDialog.UpdateTitle')}
+          ${this.pipelineCreateMode === 'create'
+            ? _t('pipeline.PipelineDialog.CreateTitle')
+            : _t('pipeline.PipelineDialog.UpdateTitle')}
         </span>
         <div slot="content" class="layout vertical" style="width:450px">
-          <mwc-textfield id="pipeline-title" type="text" autofocus
-              label="${_t('pipeline.PipelineDialog.Name')}" maxLength="30">
-          </mwc-textfield>
-          <mwc-textfield id="pipeline-description" type="text"
-              label="${_t('pipeline.PipelineDialog.Description')}" maxLength="200">
-          </mwc-textfield>
-          <mwc-select id="pipeline-environment" label="${_t('pipeline.PipelineDialog.Environment')}">
-            <mwc-list-item style="display:none;" value="None">${_t('session.launcher.ChooseEnvironment')}</mwc-list-item>
-            ${this.languages.map((item) => html`
-              <mwc-list-item id="${item.name}" value="${item.name}"
-                  ?selected="${item.name === this.defaultLanguage}">
-                <div class="layout horizontal">
-                  ${item.basename}
-                  ${item.tags ? item.tags.map((item) => html`
-                    <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
-                  `) : ''}
-                </div>
-              </mwc-list-item>
-            `)}
+          <mwc-textfield
+            id="pipeline-title"
+            type="text"
+            autofocus
+            label="${_t('pipeline.PipelineDialog.Name')}"
+            maxLength="30"
+          ></mwc-textfield>
+          <mwc-textfield
+            id="pipeline-description"
+            type="text"
+            label="${_t('pipeline.PipelineDialog.Description')}"
+            maxLength="200"
+          ></mwc-textfield>
+          <mwc-select
+            id="pipeline-environment"
+            label="${_t('pipeline.PipelineDialog.Environment')}"
+          >
+            <mwc-list-item style="display:none;" value="None">
+              ${_t('session.launcher.ChooseEnvironment')}
+            </mwc-list-item>
+            ${this.languages.map(
+              (item) => html`
+                <mwc-list-item
+                  id="${item.name}"
+                  value="${item.name}"
+                  ?selected="${item.name === this.defaultLanguage}"
+                >
+                  <div class="layout horizontal">
+                    ${item.basename}
+                    ${item.tags
+                      ? item.tags.map(
+                          (item) => html`
+                            <lablup-shields
+                              style="margin-left:5px;"
+                              description="${item}"
+                            ></lablup-shields>
+                          `,
+                        )
+                      : ''}
+                  </div>
+                </mwc-list-item>
+              `,
+            )}
           </mwc-select>
-          <mwc-select id="pipeline-environment-tag" label="${_t('pipeline.PipelineDialog.Version')}">
+          <mwc-select
+            id="pipeline-environment-tag"
+            label="${_t('pipeline.PipelineDialog.Version')}"
+          >
             <mwc-list-item style="display:none"></mwc-list-item>
-            ${this.versions.map((item, idx) => html`
-              <mwc-list-item id="${item}" value="${item}"
-                  ?selected="${idx === 0}">${item}</mwc-list-item>
-            `)}
+            ${this.versions.map(
+              (item, idx) => html`
+                <mwc-list-item
+                  id="${item}"
+                  value="${item}"
+                  ?selected="${idx === 0}"
+                >
+                  ${item}
+                </mwc-list-item>
+              `,
+            )}
           </mwc-select>
-          <mwc-select id="pipeline-scaling-group" label="${_t('session.launcher.OwnerResourceGroup')}">
-            ${this.scalingGroups.map((item: Record<string, unknown>) => html`
-              <mwc-list-item id="${item.name}" value="${item.name}"
-                  ?selected="${item.name === this.scalingGroup}">
-                ${item.name}
-              </mwc-list-item>
-            `)}
+          <mwc-select
+            id="pipeline-scaling-group"
+            label="${_t('session.launcher.OwnerResourceGroup')}"
+          >
+            ${this.scalingGroups.map(
+              (item: Record<string, unknown>) => html`
+                <mwc-list-item
+                  id="${item.name}"
+                  value="${item.name}"
+                  ?selected="${item.name === this.scalingGroup}"
+                >
+                  ${item.name}
+                </mwc-list-item>
+              `,
+            )}
           </mwc-select>
           <mwc-select id="pipeline-folder-host" label="${_t('data.Host')}">
-            ${this.vhosts.map((item, idx) => html`
-              <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
-            `)}
+            ${this.vhosts.map(
+              (item, idx) => html`
+                <mwc-list-item value="${item}" ?selected="${idx === 0}">
+                  ${item}
+                </mwc-list-item>
+              `,
+            )}
           </mwc-select>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <div class="flex"></div>
-          <mwc-button label="${_t('button.Cancel')}" @click="${this._hideDialog}"></mwc-button>
-          <mwc-button unelevated
-              label="${this.pipelineCreateMode === 'create' ? _t('button.Create') : _t('button.Update')}"
-              @click="${this._createPipeline}"></mwc-button>
+          <mwc-button
+            label="${_t('button.Cancel')}"
+            @click="${this._hideDialog}"
+          ></mwc-button>
+          <mwc-button
+            unelevated
+            label="${this.pipelineCreateMode === 'create'
+              ? _t('button.Create')
+              : _t('button.Update')}"
+            @click="${this._createPipeline}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
 
@@ -592,11 +700,17 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
         <span slot="title">${_t('pipeline.PipelineDialog.DeleteTitle')}</span>
         <div slot="content" style="width:100%;">
           <p class="warning">${_t('dialog.warning.CannotBeUndone')}</p>
-          <div>${_t('pipeline.PipelineDialog.TargetFolder')}: ${this.pipelineFolderName}</div>
+          <div>
+            ${_t('pipeline.PipelineDialog.TargetFolder')}:
+            ${this.pipelineFolderName}
+          </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <div class="flex"></div>
-          <mwc-button label="${_t('button.Cancel')}" @click="${this._hideDialog}"></mwc-button>
+          <mwc-button
+            label="${_t('button.Cancel')}"
+            @click="${this._hideDialog}"
+          ></mwc-button>
           <mwc-button unelevated @click="${this._deletePipeline}">
             ${_t('button.Delete')}
           </mwc-button>
