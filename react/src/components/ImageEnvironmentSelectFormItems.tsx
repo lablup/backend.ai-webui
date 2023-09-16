@@ -275,17 +275,20 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         extraFilterValues.join('\t')
                       }
                       label={
-                        <Flex direction="row">
-                          <Flex direction="row" align="center" gap="xs">
-                            <ImageMetaIcon
-                              image={getImageFullName(firstImage) || ''}
-                              style={{
-                                width: 15,
-                                height: 15,
-                              }}
-                            />
-                            {environmentGroup.displayName}
-                          </Flex>
+                        <Flex
+                          direction="row"
+                          align="center"
+                          gap="xs"
+                          style={{ display: 'inline-flex' }}
+                        >
+                          <ImageMetaIcon
+                            image={getImageFullName(firstImage) || ''}
+                            style={{
+                              width: 15,
+                              height: 15,
+                            }}
+                          />
+                          {environmentGroup.displayName}
                         </Flex>
                       }
                     >
