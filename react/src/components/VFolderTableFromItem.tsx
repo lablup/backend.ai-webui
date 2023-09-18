@@ -1,6 +1,6 @@
 import VFolderTable from './VFolderTable';
-import { Form, FormItemProps, Input } from 'antd';
-import React, { useState } from 'react';
+import { Form, FormItemProps } from 'antd';
+import React from 'react';
 
 interface VFolderTableFromItemProps extends FormItemProps {}
 

@@ -5,14 +5,13 @@ import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
 import { VFolder } from './VFolderSelect';
-import { GroupOutlined, ReloadOutlined, UserOutlined } from '@ant-design/icons';
+import { ReloadOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Table, TableProps, Typography } from 'antd';
 import { GetRowKey } from 'antd/es/table/interface';
-import { InputProps } from 'antd/lib';
 import { ColumnsType } from 'antd/lib/table';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { Key, useEffect, useState, useTransition } from 'react';
+import React, { Key, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface VFolderFile {
@@ -240,6 +239,7 @@ const VFolderTable: React.FC<Props> = ({
                 color,
               };
             }
+            return undefined;
           })
           .compact()
           .value();

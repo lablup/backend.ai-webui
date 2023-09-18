@@ -1,12 +1,9 @@
 import { iSizeToSize } from '../helper';
 import { useResourceSlots } from '../hooks/backendai';
-import Flex from './Flex';
 import ResourcePresetSelect from './ResourcePresetSelect';
 import SliderInputItem from './SliderInputFormItem';
-import { EditOutlined } from '@ant-design/icons';
-import { Card, Form, Select, theme } from 'antd';
+import { Card, Form, theme } from 'antd';
 import _ from 'lodash';
-import { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 const ResourceAllocationFormItems = () => {

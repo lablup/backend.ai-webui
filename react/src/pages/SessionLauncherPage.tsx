@@ -10,7 +10,6 @@ import ResourceGroupSelect from '../components/ResourceGroupSelect';
 import ResourceNumber from '../components/ResourceNumber';
 import VFolderTableFromItem from '../components/VFolderTableFromItem';
 import { iSizeToSize } from '../helper';
-import { useResourceSlots } from '../hooks/backendai';
 import {
   BlockOutlined,
   LeftOutlined,
@@ -45,7 +44,7 @@ import { darcula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 const SessionLauncherPage = () => {
   const { token } = theme.useToken();
 
-  const [resourceSlots] = useResourceSlots();
+  // const [resourceSlots] = useResourceSlots();
   const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const screens = Grid.useBreakpoint();
