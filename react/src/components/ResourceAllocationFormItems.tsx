@@ -5,6 +5,7 @@ import ResourcePresetSelect from './ResourcePresetSelect';
 import SliderInputItem from './SliderInputFormItem';
 import { EditOutlined } from '@ant-design/icons';
 import { Card, Form, Select, theme } from 'antd';
+import _ from 'lodash';
 import { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -27,7 +28,10 @@ const ResourceAllocationFormItems = () => {
         <ResourcePresetSelect
           onChange={(value, options) => {
             form.setFieldValue('selectedPreset', options?.preset);
-            const slots = JSON.parse(options?.preset?.resource_slots || '{}');
+            const slots = _.pick(
+              JSON.parse(options?.preset?.resource_slots || '{}'),
+              _.keys(resourceSlots),
+            );
             form.setFieldValue('resource', {
               ...slots,
               mem: iSizeToSize((slots?.mem || 0) + 'b', 'g', 2).number,
