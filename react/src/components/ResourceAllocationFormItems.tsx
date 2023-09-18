@@ -1,56 +1,48 @@
 import Flex from './Flex';
+import ResourcePresetSelect from './ResourcePresetSelect';
 import SliderInputItem from './SliderInputFormItem';
 import { EditOutlined } from '@ant-design/icons';
-import { Card, Form, Select, theme } from 'antd';
+import { Card, Checkbox, Form, Segmented, Select, theme } from 'antd';
 import { Trans, useTranslation } from 'react-i18next';
 
 const ResourceAllocationFormItems = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+
+  const form = Form.useFormInstance();
+  Form.useWatch('customResourceAllocationType', form);
   return (
     <>
       <Form.Item
-        label="Allocation Preset"
+        labelCol={{ span: 24 }}
+        label={
+          <Flex
+            direction="row"
+            justify="between"
+            gap={'xs'}
+            style={{ width: '100%' }}
+          >
+            {t('session.launcher.ResourceAllocation')}
+            <Form.Item
+              name="customResourceAllocationType"
+              noStyle
+              valuePropName="checked"
+            >
+              <Checkbox>Custom</Checkbox>
+            </Form.Item>
+          </Flex>
+        }
         name="allocationPreset"
         required
         style={{ marginBottom: token.marginXS }}
       >
-        <Select
-          options={[
-            {
-              value: 'custom',
-              label: (
-                <Flex gap={'xs'}>
-                  <EditOutlined /> Custom
-                </Flex>
-              ),
-              // label: (
-              //   <Flex direction="row" gap="xs">
-              //     <Typography.Text strong>Custom</Typography.Text>
-              //     <Typography.Text type="secondary">
-              //       Customize allocation amount
-              //     </Typography.Text>
-              //   </Flex>
-              // ),
-            },
-            {
-              // value: 'preset1',
-              label: 'Preset',
-              options: [
-                {
-                  value: 'preset1',
-                  label: 'Large',
-                },
-              ],
-            },
-          ]}
-          showSearch
-        ></Select>
+        <ResourcePresetSelect />
       </Form.Item>
       <Card
         style={{
           marginBottom: token.margin,
         }}
+        hidden={!form.getFieldValue('customResourceAllocationType')}
       >
         <Form.Item
           shouldUpdate={(prev, cur) =>
