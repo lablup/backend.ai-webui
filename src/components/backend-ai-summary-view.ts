@@ -391,7 +391,7 @@ export default class BackendAISummary extends BackendAIPage {
           this.appDownloadUrl =
             globalThis.backendaiclient._config.appDownloadUrl;
           this.fasttrackEndpoint =
-            globalThis.backendaiclient._config.fasttrack_endpoint;
+            globalThis.backendaiclient._config.fasttrackEndpoint;
 
           if (this.activeConnected) {
             this._refreshConsoleUpdateInformation();
@@ -408,7 +408,7 @@ export default class BackendAISummary extends BackendAIPage {
       this.webui_version = globalThis.packageVersion;
       this.appDownloadUrl = globalThis.backendaiclient._config.appDownloadUrl;
       this.fasttrackEndpoint =
-        globalThis.backendaiclient._config.fasttrack_endpoint;
+        globalThis.backendaiclient._config.fasttrackEndpoint;
       this._refreshConsoleUpdateInformation();
       this._refreshInvitations();
       // let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});

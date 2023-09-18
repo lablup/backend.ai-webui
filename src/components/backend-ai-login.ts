@@ -85,7 +85,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: String }) appDownloadUrl;
   @property({ type: String }) connection_mode = 'SESSION' as ConnectionMode;
   @property({ type: String }) systemSSHImage = '';
-  @property({ type: String }) fasttrack_endpoint = '';
+  @property({ type: String }) fasttrackEndpoint = '';
   @property({ type: Number }) login_attempt_limit = 500;
   @property({ type: Number }) login_block_time = 180;
   @property({ type: String }) user;
@@ -945,7 +945,7 @@ export default class BackendAILogin extends BackendAIPage {
    */
   private _initPipelineConfigWithKeys(pipelineConfig) {
     // FastTrack endpoint
-    this.fasttrack_endpoint = this._getConfigValueByExists(pipelineConfig, {
+    this.fasttrackEndpoint = this._getConfigValueByExists(pipelineConfig, {
       valueType: 'string',
       defaultValue: '',
       value: pipelineConfig?.endpoint,
@@ -1738,8 +1738,8 @@ export default class BackendAILogin extends BackendAIPage {
           this._enableContainerCommit;
         globalThis.backendaiclient._config.appDownloadUrl = this.appDownloadUrl;
         globalThis.backendaiclient._config.systemSSHImage = this.systemSSHImage;
-        globalThis.backendaiclient._config.fasttrack_endpoint =
-          this.fasttrack_endpoint;
+        globalThis.backendaiclient._config.fasttrackEndpoint =
+          this.fasttrackEndpoint;
         globalThis.backendaiclient._config.hideAgents = this.hideAgents;
         globalThis.backendaiclient._config.enable2FA = this.enable2FA;
         globalThis.backendaiclient._config.force2FA = this.force2FA;
