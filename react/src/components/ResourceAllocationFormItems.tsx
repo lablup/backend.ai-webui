@@ -1,48 +1,50 @@
+import { iSizeToSize } from '../helper';
+import { useResourceSlots } from '../hooks/backendai';
 import Flex from './Flex';
 import ResourcePresetSelect from './ResourcePresetSelect';
 import SliderInputItem from './SliderInputFormItem';
 import { EditOutlined } from '@ant-design/icons';
-import { Card, Checkbox, Form, Segmented, Select, theme } from 'antd';
+import { Card, Form, Select, theme } from 'antd';
+import { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 const ResourceAllocationFormItems = () => {
+  const form = Form.useFormInstance();
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const [resourceSlots] = useResourceSlots();
 
-  const form = Form.useFormInstance();
-  Form.useWatch('customResourceAllocationType', form);
+  // TODO: auto select preset
+
   return (
     <>
       <Form.Item
-        labelCol={{ span: 24 }}
-        label={
-          <Flex
-            direction="row"
-            justify="between"
-            gap={'xs'}
-            style={{ width: '100%' }}
-          >
-            {t('session.launcher.ResourceAllocation')}
-            <Form.Item
-              name="customResourceAllocationType"
-              noStyle
-              valuePropName="checked"
-            >
-              <Checkbox>Custom</Checkbox>
-            </Form.Item>
-          </Flex>
-        }
+        label={t('resourcePreset.ResourcePresets')}
         name="allocationPreset"
         required
         style={{ marginBottom: token.marginXS }}
       >
-        <ResourcePresetSelect />
+        <ResourcePresetSelect
+          onChange={(value, options) => {
+            form.setFieldValue('selectedPreset', options?.preset);
+            const slots = JSON.parse(options?.preset?.resource_slots || '{}');
+            form.setFieldValue('resource', {
+              ...slots,
+              mem: iSizeToSize((slots?.mem || 0) + 'b', 'g', 2).number,
+              shmem: iSizeToSize(
+                (options?.preset?.shared_memory || 0) + 'b',
+                'g',
+                2,
+              ).number,
+            });
+          }}
+        />
       </Form.Item>
+      <Form.Item noStyle name="selectedPreset"></Form.Item>
       <Card
         style={{
           marginBottom: token.margin,
         }}
-        hidden={!form.getFieldValue('customResourceAllocationType')}
       >
         <Form.Item
           shouldUpdate={(prev, cur) =>
@@ -55,7 +57,8 @@ const ResourceAllocationFormItems = () => {
               // getFieldValue('allocationPreset') === 'custom' && (
               <>
                 <SliderInputItem
-                  name={'cpu'}
+                  name={['resource', 'cpu']}
+                  initialValue={0}
                   label={t('session.launcher.CPU')}
                   tooltip={<Trans i18nKey={'session.launcher.DescCPU'} />}
                   // min={parseInt(
@@ -81,7 +84,8 @@ const ResourceAllocationFormItems = () => {
                   ]}
                 />
                 <SliderInputItem
-                  name={'mem'}
+                  name={['resource', 'mem']}
+                  initialValue={0}
                   label={t('session.launcher.Memory')}
                   tooltip={<Trans i18nKey={'session.launcher.DescMemory'} />}
                   max={30}
@@ -97,7 +101,8 @@ const ResourceAllocationFormItems = () => {
                   ]}
                 />
                 <SliderInputItem
-                  name={'shmem'}
+                  name={['resource', 'shmem']}
+                  initialValue={0}
                   label={t('session.launcher.SharedMemory')}
                   tooltip={
                     <Trans i18nKey={'session.launcher.DescSharedMemory'} />

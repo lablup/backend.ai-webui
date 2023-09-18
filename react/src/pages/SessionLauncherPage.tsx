@@ -7,7 +7,10 @@ import ImageMetaIcon from '../components/ImageMetaIcon';
 import PortSelectFormItem, { PortTag } from '../components/PortSelectFormItem';
 import ResourceAllocationFormItems from '../components/ResourceAllocationFormItems';
 import ResourceGroupSelect from '../components/ResourceGroupSelect';
+import ResourceNumber from '../components/ResourceNumber';
 import VFolderTableFromItem from '../components/VFolderTableFromItem';
+import { iSizeToSize } from '../helper';
+import { useResourceSlots } from '../hooks/backendai';
 import {
   BlockOutlined,
   LeftOutlined,
@@ -29,6 +32,7 @@ import {
   StepProps,
   Steps,
   Table,
+  Tag,
   Typography,
   theme,
 } from 'antd';
@@ -41,6 +45,7 @@ import { darcula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 const SessionLauncherPage = () => {
   const { token } = theme.useToken();
 
+  const [resourceSlots] = useResourceSlots();
   const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const screens = Grid.useBreakpoint();
@@ -119,6 +124,8 @@ const SessionLauncherPage = () => {
     form.getFieldsError(),
     (item) => item.errors.length > 0,
   );
+
+  console.log(form.getFieldValue('resource'));
   return (
     <Flex
       direction="column"
@@ -160,6 +167,7 @@ const SessionLauncherPage = () => {
               requiredMark="optional"
               initialValues={{
                 sessionType: 'interactive',
+                allocationPreset: 'custom',
               }}
             >
               <Flex
@@ -489,7 +497,81 @@ const SessionLauncherPage = () => {
                           {t('button.Edit')}
                         </Button>
                       }
-                    ></Card>
+                    >
+                      <Descriptions>
+                        <Descriptions.Item
+                          span={24}
+                          label={t('environment.ResourcePresets')}
+                        >
+                          <Flex direction="column" align="start" gap={'xxs'}>
+                            {form.getFieldValue('allocationPreset') ===
+                            'custom' ? (
+                              t('session.launcher.CustomAllocation')
+                            ) : (
+                              <Tag>
+                                {form.getFieldValue('allocationPreset')}
+                              </Tag>
+                            )}
+
+                            {_.map(
+                              _.omit(form.getFieldValue('resource'), 'shmem'),
+                              (value, type) => {
+                                return (
+                                  <ResourceNumber
+                                    key={type}
+                                    // @ts-ignore
+                                    type={type}
+                                    value={
+                                      type === 'mem'
+                                        ? iSizeToSize(value + 'g', 'b').number +
+                                          ''
+                                        : value
+                                    }
+                                    opts={{
+                                      shmem: iSizeToSize(
+                                        form.getFieldValue('resource').shmem +
+                                          'g',
+                                        'b',
+                                      ).number,
+                                    }}
+                                  />
+                                );
+                              },
+                            )}
+                            {/* {_.chain(
+                              form.getFieldValue('allocationPreset') ===
+                                'custom'
+                                ? form.getFieldValue('resource')
+                                : JSON.parse(
+                                    form.getFieldValue('selectedPreset')
+                                      ?.resource_slots || '{}',
+                                  ),
+                            )
+                              .map((value, type) => {
+                                // @ts-ignore
+                                if (resourceSlots[type] === undefined)
+                                  return undefined;
+                                const resource_opts = {
+                                  shmem:
+                                    form.getFieldValue('selectedPreset')
+                                      .shared_memory,
+                                };
+                                return (
+                                  <ResourceNumber
+                                    key={type}
+                                    // @ts-ignore
+                                    type={type}
+                                    value={value}
+                                    opts={resource_opts}
+                                  />
+                                );
+                              })
+                              .compact()
+                              .value()} */}
+                          </Flex>
+                        </Descriptions.Item>
+                      </Descriptions>
+                    </Card>
                     <Card
                       title={t('webui.menu.Data&Storage')}
                       size="small"
@@ -507,42 +589,50 @@ const SessionLauncherPage = () => {
                         </Button>
                       }
                     >
-                      <Table
-                        rowKey="name"
-                        bordered
-                        size="small"
-                        pagination={false}
-                        columns={[
-                          {
-                            dataIndex: 'name',
-                            title: t('data.folders.Name'),
-                          },
-                          {
-                            dataIndex: 'alias',
-                            title: t('session.launcher.FolderAlias'),
-                            render: (value, record) => {
-                              return _.isEmpty(value) ? (
-                                <Typography.Text
-                                  type="secondary"
-                                  style={{
-                                    opacity: 0.7,
-                                  }}
-                                >
-                                  {`/home/work/${record.name}/`}
-                                </Typography.Text>
-                              ) : (
-                                value
-                              );
+                      {form.getFieldValue('mounts')?.length > 0 ? (
+                        <Table
+                          rowKey="name"
+                          bordered
+                          size="small"
+                          pagination={false}
+                          columns={[
+                            {
+                              dataIndex: 'name',
+                              title: t('data.folders.Name'),
                             },
-                          },
-                        ]}
-                        dataSource={_.map(form.getFieldValue('mounts'), (v) => {
-                          return {
-                            name: v,
-                            alias: form.getFieldValue('vfoldersAliasMap')[v],
-                          };
-                        })}
-                      ></Table>
+                            {
+                              dataIndex: 'alias',
+                              title: t('session.launcher.FolderAlias'),
+                              render: (value, record) => {
+                                return _.isEmpty(value) ? (
+                                  <Typography.Text
+                                    type="secondary"
+                                    style={{
+                                      opacity: 0.7,
+                                    }}
+                                  >
+                                    {`/home/work/${record.name}/`}
+                                  </Typography.Text>
+                                ) : (
+                                  value
+                                );
+                              },
+                            },
+                          ]}
+                          dataSource={_.map(
+                            form.getFieldValue('mounts'),
+                            (v) => {
+                              return {
+                                name: v,
+                                alias:
+                                  form.getFieldValue('vfoldersAliasMap')?.[v],
+                              };
+                            },
+                          )}
+                        ></Table>
+                      ) : (
+                        '-'
+                      )}
                     </Card>
                     <BAICard
                       title="Network"

@@ -16,7 +16,7 @@ export type ResourceTypeKey =
   | 'warboy.device';
 
 export type ResourceOpts = {
-  shmem: number;
+  shmem?: number;
 };
 interface Props {
   type: ResourceTypeKey;
@@ -64,7 +64,8 @@ const ResourceNumber: React.FC<Props> = ({
           type="secondary"
           style={{ fontSize: token.fontSizeSM }}
         >
-          (SHM: {iSizeToSize(opts.shmem + 'b', 'g', 2).numberFixed}GiB)
+          (SHM: {iSizeToSize(opts.shmem + 'b', 'g', 2).numberFixed}
+          GiB)
         </Typography.Text>
       )}
       {extra}

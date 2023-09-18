@@ -10,8 +10,6 @@ import _ from 'lodash';
 import React, { useTransition } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
 
-interface ResourcePresetSelectProps extends SelectProps {}
-
 // const myFunc= ()=>{
 //   const param: any = { group: globalThis.backendaiclient.current_group };
 //       if (
@@ -43,6 +41,19 @@ interface ResourcePresetSelectProps extends SelectProps {}
 //       const resourcePresetInfo =
 //         await globalThis.backendaiclient.resourcePreset.check(param);
 // }
+
+type Y = ArrayElement<NonNullable<SelectProps['options']>>;
+interface PresetOptionType extends Y {
+  options?: PresetOptionType[];
+  preset?: {
+    name: string;
+    resource_slots: string;
+    shared_memory: string;
+  };
+}
+interface ResourcePresetSelectProps extends Omit<SelectProps, 'onChange'> {
+  onChange?: (value: string, options: PresetOptionType) => void;
+}
 const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   ...selectProps
 }) => {
@@ -64,6 +75,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
         resource_presets {
           name
           resource_slots
+          shared_memory
         }
       }
     `,
@@ -77,40 +89,42 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   return (
     <Select
       loading={isPendingUpdate}
-      options={_.map(resource_presets, (preset) => {
-        return {
-          value: preset?.name,
-          label: preset?.name,
-        };
-      })}
-      // options={[
-      //   {
-      //     value: 'custom',
-      //     label: (
-      //       <Flex gap={'xs'} style={{ display: 'inline-flex' }}>
-      //         <EditOutlined /> Custom
-      //       </Flex>
-      //     ),
-      //     // label: (
-      //     //   <Flex direction="row" gap="xs">
-      //     //     <Typography.Text strong>Custom</Typography.Text>
-      //     //     <Typography.Text type="secondary">
-      //     //       Customize allocation amount
-      //     //     </Typography.Text>
-      //     //   </Flex>
-      //     // ),
-      //   },
-      //   {
-      //     // value: 'preset1',
-      //     label: 'Preset',
-      //     options: _.map(resource_presets, (preset) => {
-      //       return {
-      //         value: preset?.name,
-      //         label: preset?.name,
-      //       };
-      //     }),
-      //   },
-      // ]}
+      // options={_.map(resource_presets, (preset) => {
+      //   return {
+      //     value: preset?.name,
+      //     label: preset?.name,
+      //   };
+      // })}
+      options={[
+        {
+          value: 'custom',
+          label: (
+            <Flex gap={'xs'} style={{ display: 'inline-flex' }}>
+              <EditOutlined /> Custom
+            </Flex>
+          ),
+          // label: (
+          //   <Flex direction="row" gap="xs">
+          //     <Typography.Text strong>Custom</Typography.Text>
+          //     <Typography.Text type="secondary">
+          //       Customize allocation amount
+          //     </Typography.Text>
+          //   </Flex>
+          // ),
+        },
+        {
+          // value: 'preset1',
+          label: 'Preset',
+          // @ts-ignore
+          options: _.map(resource_presets, (preset) => {
+            return {
+              value: preset?.name,
+              label: preset?.name,
+              preset,
+            };
+          }),
+        },
+      ]}
       showSearch
       {...selectProps}
       onDropdownVisibleChange={(open) => {
