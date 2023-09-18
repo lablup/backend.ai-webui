@@ -520,18 +520,18 @@ const SessionLauncherPage = () => {
                           {
                             dataIndex: 'alias',
                             title: t('session.launcher.FolderAlias'),
-                            render: (value) => {
-                              return (
-                                value || (
-                                  <Typography.Text
-                                    type="secondary"
-                                    style={{
-                                      opacity: 0.7,
-                                    }}
-                                  >
-                                    {`/home/work/${value}/`}
-                                  </Typography.Text>
-                                )
+                            render: (value, record) => {
+                              return _.isEmpty(value) ? (
+                                <Typography.Text
+                                  type="secondary"
+                                  style={{
+                                    opacity: 0.7,
+                                  }}
+                                >
+                                  {`/home/work/${record.name}/`}
+                                </Typography.Text>
+                              ) : (
+                                value
                               );
                             },
                           },

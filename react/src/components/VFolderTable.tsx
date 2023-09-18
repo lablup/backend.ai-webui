@@ -1,14 +1,16 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useCurrentProjectValue, useUpdatableState } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
 import { VFolder } from './VFolderSelect';
-import { ReloadOutlined } from '@ant-design/icons';
+import { GroupOutlined, ReloadOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Table, TableProps, Typography } from 'antd';
 import { GetRowKey } from 'antd/es/table/interface';
 import { InputProps } from 'antd/lib';
 import { ColumnsType } from 'antd/lib/table';
+import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { Key, useEffect, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -111,6 +113,17 @@ const VFolderTable: React.FC<Props> = ({
       onChangeAlias && onChangeAlias(values);
     });
   };
+
+  const hasPermission = (vFolder: VFolder, perm: string) => {
+    if (vFolder.permission.includes(perm)) {
+      return true;
+    }
+    if (vFolder.permission.includes('w') && perm === 'r') {
+      return true;
+    }
+    return false;
+  };
+
   const columns: ColumnsType<VFolder> = [
     {
       title: (
@@ -162,9 +175,35 @@ const VFolderTable: React.FC<Props> = ({
       sorter: (a, b) => a.usage_mode.localeCompare(b.usage_mode),
     },
     {
+      title: 'Host',
+      dataIndex: 'host',
+    },
+    {
       title: 'Type',
       dataIndex: 'type',
       sorter: (a, b) => a.type.localeCompare(b.type),
+      render: (value, record) => {
+        return (
+          <Flex direction="column">
+            {record.type === 'user' ? (
+              <UserOutlined title="User" />
+            ) : (
+              <div>Group</div>
+            )}
+            {record.type === 'group' && `(${record.group_name})`}
+          </Flex>
+        );
+      },
+      // render: (value) =>
+      //   value === 'group' ? (
+      //     <GroupOutlined />
+      //   ) : value === 'user' ? (
+      //     <UserOutlined />
+      //   ) : value ? (
+      //     value
+      //   ) : (
+      //     '-'
+      //   ),
       // filters: [
       //   {
       //     text: 'user',
@@ -177,17 +216,56 @@ const VFolderTable: React.FC<Props> = ({
       // ],
       // onFilter: (value, record) => record.type.indexOf(value + '') === 0,
     },
-    {
-      title: 'Group',
-      dataIndex: 'group_name',
-      sorter: (a, b) => (a.group || '').localeCompare(b.group || ''),
-      render: (value) => value || '-',
-    },
+    // {
+    //   title: 'Group',
+    //   dataIndex: 'group_name',
+    //   sorter: (a, b) => (a.group || '').localeCompare(b.group || ''),
+    //   render: (value) => value || '-',
+    // },
     {
       title: 'Permission',
       dataIndex: 'permission',
       sorter: (a, b) => a.permission.localeCompare(b.permission),
+      render: (value, row) => {
+        // console.log(value);
+        const tagValues: DoubleTagObjectValue[] = _.chain({
+          r: 'green',
+          w: 'blue',
+          d: 'red',
+        })
+          .map((color, perm) => {
+            if (hasPermission(row, perm)) {
+              return {
+                label: perm.toUpperCase(),
+                color,
+              };
+            }
+          })
+          .compact()
+          .value();
+
+        return <DoubleTag values={tagValues} />;
+      },
     },
+    {
+      title: 'Created',
+      dataIndex: 'created_at',
+      sorter: (a, b) => a.created_at.localeCompare(b.created_at),
+      render: (value, record) => dayjs(value).format('L'),
+    },
+    // {
+    //   title: 'Modified',
+    //   dataIndex: 'modified',
+    //   sorter: (a, b) => a.modified.localeCompare(b.modified),
+    //   render: (value) => value || '-',
+    // },
+    // {
+    //   title: 'Size',
+    //   dataIndex: 'size',
+    //   sorter: (a, b) => a.size - b.size,
+    //   render: (value) => value || '-',
+    // },
+    // }
     // {
     //   title: 'Max Size',
     //   dataIndex: 'max_size',
