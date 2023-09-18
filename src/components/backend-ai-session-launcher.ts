@@ -5353,7 +5353,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                             style="width:100%;"
                           >
                             <p style="width:300px;margin-left:21px;">
-                              ${_t('session.launcher.' + item)}
+                              ${item === 'single-node'
+                                ? _t('session.launcher.SingleNode')
+                                : _t('session.launcher.MultiNode')}
                             </p>
                             <mwc-icon-button
                               icon="info"
