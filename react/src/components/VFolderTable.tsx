@@ -5,13 +5,25 @@ import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
 import { VFolder } from './VFolderSelect';
-import { ReloadOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Table, TableProps, Typography } from 'antd';
+import {
+  QuestionCircleOutlined,
+  ReloadOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import {
+  Button,
+  Form,
+  Input,
+  Table,
+  TableProps,
+  Tooltip,
+  Typography,
+} from 'antd';
 import { GetRowKey } from 'antd/es/table/interface';
 import { ColumnsType } from 'antd/lib/table';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { Key, useState, useTransition } from 'react';
+import React, { Key, useEffect, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface VFolderFile {
@@ -40,6 +52,7 @@ interface Props extends TableProps<VFolder> {
   showAliasInput?: boolean;
   onChangeSelectedRowKeys?: (selectedKeys: React.Key[]) => void;
   aliasMap?: AliasMap;
+  aliasBasePath?: string;
   onChangeAliasMap?: (aliasMap: AliasMap) => void;
   filter?: (vFolder: VFolder) => boolean;
 }
@@ -50,10 +63,12 @@ const VFolderTable: React.FC<Props> = ({
   selectedRowKeys = [],
   onChangeSelectedRowKeys,
   aliasMap,
-  onChangeAliasMap: onChangeAlias,
+  aliasBasePath = '/home/work/',
+  onChangeAliasMap,
   rowKey = 'name',
   ...tableProps
 }) => {
+  console.log('##render');
   const getRowKey = React.useMemo<GetRowKey<VFolder>>(() => {
     if (typeof rowKey === 'function') {
       return rowKey;
@@ -65,12 +80,20 @@ const VFolderTable: React.FC<Props> = ({
   }, [rowKey]);
 
   const [internalForm] = Form.useForm<AliasMap>();
-  // useEffect(() => {
-  // TODO: check setFieldsValue performance
-  if (aliasMap) {
-    internalForm.setFieldsValue(aliasMap);
-  }
-  // }, [aliasMap, internalForm]);
+  useEffect(() => {
+    // TODO: check setFieldsValue performance
+    if (aliasMap) {
+      internalForm.setFieldsValue(
+        _.mapValues(aliasMap, (v) => {
+          if (v.startsWith(aliasBasePath)) {
+            return v.slice(aliasBasePath.length);
+          }
+          return v;
+        }),
+      );
+      internalForm.validateFields();
+    }
+  }, [aliasMap, internalForm, aliasBasePath]);
 
   const { t } = useTranslation();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
@@ -106,11 +129,21 @@ const VFolderTable: React.FC<Props> = ({
   //   setSelectedRowKeys(defaultSelectedKeys || []);
   // }, [defaultSelectedKeys]);
 
-  const handleAliasUpdate = (e: any) => {
-    e.preventDefault();
-    internalForm.validateFields().then((values) => {
-      onChangeAlias && onChangeAlias(values);
-    });
+  const handleAliasUpdate = (e?: any) => {
+    e?.preventDefault();
+    internalForm
+      .validateFields()
+      .then((values) => {})
+      .catch(() => {})
+      .finally(() => {
+        onChangeAliasMap &&
+          onChangeAliasMap(
+            _.mapValues(
+              _.pickBy(internalForm.getFieldsValue(), (v) => !!v), //remove empty
+              (v, k) => mapAliasToPath(k, v), // add alias base path
+            ),
+          );
+      });
   };
 
   const hasPermission = (vFolder: VFolder, perm: string) => {
@@ -123,43 +156,120 @@ const VFolderTable: React.FC<Props> = ({
     return false;
   };
 
+  const mapAliasToPath = (name: string | number, input?: string) => {
+    if (_.isEmpty(input)) {
+      return `${aliasBasePath}${name}`;
+    } else if (input?.startsWith('/')) {
+      return input;
+    } else {
+      return `${aliasBasePath}${input}`;
+    }
+  };
+
   const columns: ColumnsType<VFolder> = [
     {
       title: (
-        <>
+        <Flex direction="row" gap="xxs">
           <Typography.Text>{t('data.folders.Name')}</Typography.Text>
           {showAliasInput && (
-            <Typography.Text type="secondary">
-              {' '}
-              ({t('session.launcher.FolderAlias')})
-            </Typography.Text>
+            <>
+              <Typography.Text type="secondary">
+                ({t('session.launcher.FolderAlias')})
+              </Typography.Text>
+              <Tooltip title={t('session.launcher.FolderAliasTooltip')}>
+                <QuestionCircleOutlined />
+              </Tooltip>
+            </>
           )}
-        </>
+        </Flex>
       ),
       dataIndex: 'name',
       sorter: (a, b) => a.name.localeCompare(b.name),
       render: (value, record) => {
+        const isCurrentRowSelected = selectedRowKeys.includes(
+          getRowKey(record),
+        );
+
         return (
-          <Flex direction="column" align="stretch" gap={'xxs'}>
+          <Flex
+            direction="column"
+            align="stretch"
+            gap={'xxs'}
+            style={
+              showAliasInput && isCurrentRowSelected
+                ? { display: 'inline-flex', height: 70, width: '100%' }
+                : undefined
+            }
+          >
             <TextHighlighter keyword={searchKey}>{value}</TextHighlighter>
-            {showAliasInput && selectedRowKeys.includes(getRowKey(record)) && (
+            {showAliasInput && isCurrentRowSelected && (
               <Form.Item
-                name={getRowKey(record)}
-                // rules={[
-                //   {
-                //     required: true,
-                //   },
-                // ]}
                 noStyle
+                // rerender when
+                shouldUpdate={(prev, cur) =>
+                  prev[getRowKey(record)] !== cur[getRowKey(record)]
+                }
               >
-                <Input
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                  placeholder={`/home/work/${record.name}/}`}
-                  onPressEnter={handleAliasUpdate}
-                  onBlur={handleAliasUpdate}
-                ></Input>
+                {() => {
+                  const allAliasPathMap = _(selectedRowKeys).reduce(
+                    (result, name) => {
+                      result[name] =
+                        aliasMap?.[name] || mapAliasToPath(name, undefined);
+
+                      return result;
+                    },
+                    {} as AliasMap,
+                  );
+
+                  return (
+                    <Form.Item
+                      name={getRowKey(record)}
+                      rules={[
+                        {
+                          // required: true,
+                          type: 'string',
+                          pattern: /^[a-zA-Z0-9_/-]*$/,
+                          message: 'Invalid alias',
+                        },
+                        {
+                          type: 'string',
+                          validator: async (rule, value) => {
+                            if (
+                              value &&
+                              _.some(
+                                allAliasPathMap,
+                                (path, k) =>
+                                  k !== getRowKey(record) && // not current row
+                                  path ===
+                                    mapAliasToPath(getRowKey(record), value),
+                              )
+                            ) {
+                              return Promise.reject(
+                                t('session.launcher.FolderAliasOverlapping'),
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        },
+                      ]}
+                      // dependencies={[getRowKey(record)]}
+                      extra={mapAliasToPath(
+                        record.name,
+                        internalForm.getFieldValue(getRowKey(record)),
+                      )}
+                    >
+                      <Input
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        placeholder={t('session.launcher.FolderAlias')}
+                        // onPressEnter={handleAliasUpdate}
+                        // onBlur={handleAliasUpdate}
+                        onChange={handleAliasUpdate}
+                      ></Input>
+                    </Form.Item>
+                  );
+                }}
               </Form.Item>
             )}
           </Flex>
@@ -303,6 +413,7 @@ const VFolderTable: React.FC<Props> = ({
               // setSelectedRowKeys(selectedRowKeys);
               console.log(selectedRowKeys);
               onChangeSelectedRowKeys?.(selectedRowKeys);
+              handleAliasUpdate();
             },
           }}
           showSorterTooltip={false}

@@ -129,36 +129,26 @@ const SessionLauncherPage = () => {
     <Flex
       direction="column"
       align="stretch"
-      style={{ padding: token.paddingSM, width: '100%' }}
+      style={{
+        padding: token.paddingSM,
+        width: '100%',
+        justifyContent: 'revert',
+      }}
     >
-      <Flex direction="row" justify="between">
-        <Typography.Title level={2} style={{ marginTop: 0 }}>
-          {t('session.launcher.StartNewSession')}
-        </Typography.Title>
-        <Button type="link" icon={<BlockOutlined />}>
-          Start using a template
-        </Button>
-      </Flex>
       <Flex direction="row" gap="md" align="start">
-        {screens.md && (
-          <Flex direction="column">
-            <Steps
-              size="small"
-              direction="vertical"
-              current={currentStep}
-              onChange={(nextCurrent) => {
-                setCurrentStep(nextCurrent);
-              }}
-              items={steps}
-            />
-          </Flex>
-        )}
-
         <Flex
           direction="column"
           align="stretch"
           style={{ flex: 1, maxWidth: 700 }}
         >
+          <Flex direction="row" justify="between">
+            <Typography.Title level={2} style={{ marginTop: 0 }}>
+              {t('session.launcher.StartNewSession')}
+            </Typography.Title>
+            <Button type="link" icon={<BlockOutlined />}>
+              Templates
+            </Button>
+          </Flex>
           <Suspense fallback={<FlexActivityIndicator />}>
             <Form
               form={form}
@@ -436,22 +426,21 @@ const SessionLauncherPage = () => {
                         </Button>
                       }
                     >
-                      <Descriptions size="small" layout="vertical">
-                        <Descriptions.Item label="Image" span={24}>
-                          <Flex direction="row" gap="xs">
+                      <Descriptions size="small" layout="vertical" column={1}>
+                        <Descriptions.Item label="Image">
+                          <Flex direction="row" gap="xs" style={{ flex: 1 }}>
                             <ImageMetaIcon
                               image={
                                 form.getFieldValue('environments')?.version
                               }
                             />
                             {/* {form.getFieldValue('environments').image} */}
-                            <Typography.Text code copyable>
+                            <Typography.Text copyable code>
                               {form.getFieldValue('environments')?.version}
                             </Typography.Text>
                           </Flex>
                         </Descriptions.Item>
                         <Descriptions.Item
-                          span={24}
                           label={t('session.launcher.EnvironmentVariable')}
                         >
                           {form.getFieldValue('envvars')?.length ? (
@@ -610,7 +599,7 @@ const SessionLauncherPage = () => {
                                       opacity: 0.7,
                                     }}
                                   >
-                                    {`/home/work/${record.name}/`}
+                                    {`/home/work/${record.name}`}
                                   </Typography.Text>
                                 ) : (
                                   value
@@ -716,6 +705,19 @@ const SessionLauncherPage = () => {
             </Form>
           </Suspense>
         </Flex>
+        {screens.md && (
+          <Flex direction="column" style={{ marginTop: 53 }}>
+            <Steps
+              size="small"
+              direction="vertical"
+              current={currentStep}
+              onChange={(nextCurrent) => {
+                setCurrentStep(nextCurrent);
+              }}
+              items={steps}
+            />
+          </Flex>
+        )}
       </Flex>
     </Flex>
   );

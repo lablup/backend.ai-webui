@@ -1,26 +1,27 @@
-import VFolderTable from './VFolderTable';
+import VFolderTable, { AliasMap } from './VFolderTable';
 import { Form, FormItemProps } from 'antd';
 import React from 'react';
 
 interface VFolderTableFromItemProps extends FormItemProps {}
 
+export interface VFolderTableFormValues {
+  vfolders: string[];
+  vfoldersAliasMap: AliasMap;
+}
+
 const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
   ...formItemProps
 }) => {
   const form = Form.useFormInstance();
-  // const [aliasMap, setAliasMap] = useState({});
+  Form.useWatch('vfoldersAliasMap', form);
   return (
     <>
+      <Form.Item noStyle name="vfoldersAliasMap"></Form.Item>
       <Form.Item
         name={'vfolders'}
         {...formItemProps}
         valuePropName="selectedRowKeys"
         trigger="onChangeSelectedRowKeys"
-        // getValueFromEvent={(selectedRowKeys) => {
-        //   console.log('xxxxxx');
-        //   return selectedRowKeys;
-        // }}
-        dependencies={['vfoldersAliasMap']}
       >
         <VFolderTable
           rowKey="name"
@@ -29,12 +30,8 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
           onChangeAliasMap={(aliasMap) => {
             form.setFieldValue('vfoldersAliasMap', aliasMap);
           }}
-          // onChangeSelectedRowKeys={(values) => {
-          //   console.log(values);
-          // }}
         />
       </Form.Item>
-      <Form.Item noStyle name="vfoldersAliasMap"></Form.Item>
     </>
   );
 };
