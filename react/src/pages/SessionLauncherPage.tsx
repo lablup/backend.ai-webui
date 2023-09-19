@@ -346,7 +346,7 @@ const SessionLauncherPage = () => {
                 {currentStepKey === 'storage' && (
                   <>
                     <Card title={t('webui.menu.Data&Storage')}>
-                      <VFolderTableFromItem name="mounts" />
+                      <VFolderTableFromItem />
                       {/* <VFolderTable /> */}
                     </Card>
                   </>
@@ -560,9 +560,14 @@ const SessionLauncherPage = () => {
                         </Descriptions.Item>
                       </Descriptions>
                     </Card>
-                    <Card
+                    <BAICard
                       title={t('webui.menu.Data&Storage')}
                       size="small"
+                      status={
+                        form.getFieldError('vfoldersAliasMap').length > 0
+                          ? 'error'
+                          : undefined
+                      }
                       extra={
                         <Button
                           type="link"
@@ -621,7 +626,7 @@ const SessionLauncherPage = () => {
                       ) : (
                         '-'
                       )}
-                    </Card>
+                    </BAICard>
                     <BAICard
                       title="Network"
                       size="small"
@@ -661,7 +666,7 @@ const SessionLauncherPage = () => {
                   {currentStep !== steps.length - 1 && (
                     <Button
                       onClick={() => {
-                        setCurrentStep(4);
+                        setCurrentStep(steps.length - 1);
                       }}
                     >
                       Skip to Review
