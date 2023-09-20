@@ -5016,7 +5016,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 icon="storage"
                 required
                 fixedMenuPosition
-                @selected="${(e) => this.updateScalingGroup(false, e)}"
+                @selected="${(e) => this.updateScalingGroup(true, e)}"
               >
                 ${this.scaling_groups.map(
                   (item) => html`
