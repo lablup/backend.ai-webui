@@ -1,7 +1,7 @@
 import BAICard from '../BAICard';
+import DatePickerISO from '../components/DatePickerISO';
 import EnvVarFormList from '../components/EnvVarFormList';
 import Flex from '../components/Flex';
-import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems from '../components/ImageEnvironmentSelectFormItems';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import PortSelectFormItem, { PortTag } from '../components/PortSelectFormItem';
@@ -24,7 +24,6 @@ import {
   Button,
   Card,
   Checkbox,
-  DatePicker,
   Descriptions,
   Form,
   Grid,
@@ -40,7 +39,8 @@ import {
   theme,
 } from 'antd';
 import _ from 'lodash';
-import React, { Suspense, useState } from 'react';
+import React, { useEffect } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { darcula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
@@ -51,11 +51,13 @@ import {
   withDefault,
 } from 'use-query-params';
 
-const stepParam = withDefault(NumberParam, 0);
-const formValuesParam = withDefault(JsonParam, {
+const INITIAL_FORM_VALUES = {
   sessionType: 'interactive',
   allocationPreset: 'custom',
-});
+};
+const stepParam = withDefault(NumberParam, 0);
+const formValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
+
 const SessionLauncherPage = () => {
   const [{ step: currentStep, formValues }, setQuery] = useQueryParams({
     step: stepParam,
@@ -68,9 +70,8 @@ const SessionLauncherPage = () => {
     trailing: true,
   });
 
-  console.log('FV', formValues);
   const setCurrentStep = (nextStep: number) => {
-    setQueryWithDebounce(
+    setQuery(
       {
         step: nextStep,
       },
@@ -91,9 +92,18 @@ const SessionLauncherPage = () => {
     };
   }>();
 
+  useEffect(() => {
+    if (JSON.stringify(INITIAL_FORM_VALUES) !== JSON.stringify(formValues)) {
+      form.validateFields().catch((e) => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // use getFieldValue to get value from form even if item is not mounted
   const sessionType =
-    Form.useWatch('sessionType', form) || form.getFieldValue('sessionType');
+    Form.useWatch('sessionType', form) ||
+    form.getFieldValue('sessionType') ||
+    formValues.sessionType;
 
   const steps = _.filter(
     [
@@ -150,16 +160,11 @@ const SessionLauncherPage = () => {
     // @ts-ignore
     | 'review' = steps[currentStep]?.key;
 
-  console.log(form.getFieldsValue());
-  console.log('envs', form.getFieldValue('envvars'));
-  console.log(form.getFieldsError());
-  console.log(form.getFieldError('name'));
   const hasError = _.some(
     form.getFieldsError(),
     (item) => item.errors.length > 0,
   );
 
-  console.log(form.getFieldValue('resource'));
   return (
     <Flex
       direction="column"
@@ -186,402 +191,408 @@ const SessionLauncherPage = () => {
               Templates
             </Button>
           </Flex>
-          <Suspense fallback={<FlexActivityIndicator />}>
-            <Form
-              form={form}
-              layout="vertical"
-              requiredMark="optional"
-              initialValues={formValues}
-              onValuesChange={(changedValues, allValues) => {
-                console.log('CHANGES', allValues);
-                setQueryWithDebounce(
-                  {
-                    formValues: allValues,
-                  },
-                  'replaceIn',
-                );
-              }}
+          {/* <Suspense fallback={<FlexActivityIndicator />}> */}
+          <Form
+            form={form}
+            layout="vertical"
+            requiredMark="optional"
+            initialValues={formValues}
+            onValuesChange={(changedValues, allValues) => {
+              console.log('###CHANGE', allValues);
+              setQueryWithDebounce(
+                {
+                  formValues: allValues,
+                },
+                'replaceIn',
+              );
+            }}
+          >
+            <Flex
+              direction="column"
+              align="stretch"
+              gap="md"
+              // style={{  }}
             >
-              <Flex
-                direction="column"
-                align="stretch"
-                gap="md"
-                // style={{  }}
+              {/* Step 0 fields */}
+              <Card
+                title={t('session.launcher.SessionType')}
+                style={{
+                  display: currentStepKey === 'sessionType' ? 'block' : 'none',
+                }}
               >
-                {/* Step 0 fields */}
+                <Form.Item name="sessionType">
+                  <Segmented
+                    options={[
+                      {
+                        label: (
+                          <SessionTypeItem
+                            title="🏃‍♀️ Make, test and run"
+                            description="Interactive mode allows you to create, test and run code interactively via jupyter notebook, visual studio code, etc."
+                          />
+                        ),
+                        value: 'interactive',
+                      },
+                      {
+                        label: (
+                          <SessionTypeItem
+                            title="⌚️ Start an long-running task"
+                            description="Batch mode runs your code with multiple node & clusters to scale your idea"
+                          />
+                        ),
+                        value: 'batch',
+                      },
+                      // {
+                      //   label: (
+                      //     <SessionTypeItem
+                      //       title="🤖 Run a inference service"
+                      //       description="Inference allow you dynamically scale your mode service"
+                      //     />
+                      //   ),
+                      //   value: 'inference',
+                      // },
+                    ]}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Session name"
+                  name="name"
+                  rules={[
+                    {
+                      max: 64,
+                      message: t('session.Validation.SessionNameTooLong64'),
+                    },
+                    {
+                      pattern:
+                        /^(?:[a-zA-Z0-9][a-zA-Z0-9._-]{2,}[a-zA-Z0-9])?$/,
+                      message: t(
+                        'session.Validation.PleaseFollowSessionNameRule',
+                      ).toString(),
+                    },
+                  ]}
+                >
+                  <Input allowClear />
+                </Form.Item>
+              </Card>
+
+              {sessionType === 'batch' && (
                 <Card
-                  title={t('session.launcher.SessionType')}
+                  title="Batch Mode Configuration"
                   style={{
                     display:
                       currentStepKey === 'sessionType' ? 'block' : 'none',
                   }}
                 >
-                  <Form.Item name="sessionType">
-                    <Segmented
-                      options={[
-                        {
-                          label: (
-                            <SessionTypeItem
-                              title="🏃‍♀️ Make, test and run"
-                              description="Interactive mode allows you to create, test and run code interactively via jupyter notebook, visual studio code, etc."
-                            />
-                          ),
-                          value: 'interactive',
-                        },
-                        {
-                          label: (
-                            <SessionTypeItem
-                              title="⌚️ Start an long-running task"
-                              description="Batch mode runs your code with multiple node & clusters to scale your idea"
-                            />
-                          ),
-                          value: 'batch',
-                        },
-                        // {
-                        //   label: (
-                        //     <SessionTypeItem
-                        //       title="🤖 Run a inference service"
-                        //       description="Inference allow you dynamically scale your mode service"
-                        //     />
-                        //   ),
-                        //   value: 'inference',
-                        // },
-                      ]}
-                    />
-                  </Form.Item>
                   <Form.Item
-                    label="Session name"
-                    name="name"
-                    rules={[
-                      {
-                        max: 64,
-                        message: t('session.Validation.SessionNameTooLong64'),
-                      },
-                      {
-                        pattern:
-                          /^(?:[a-zA-Z0-9][a-zA-Z0-9._-]{2,}[a-zA-Z0-9])?$/,
-                        message: t(
-                          'session.Validation.PleaseFollowSessionNameRule',
-                        ).toString(),
-                      },
-                    ]}
-                  >
-                    <Input allowClear />
-                  </Form.Item>
-                </Card>
-
-                {sessionType === 'batch' && (
-                  <Card
-                    title="Batch Mode Configuration"
-                    style={{
-                      display:
-                        currentStepKey === 'sessionType' ? 'block' : 'none',
-                    }}
-                  >
-                    <Form.Item
-                      label={t('session.launcher.StartUpCommand')}
-                      required
-                      name={['batch', 'command']}
-                    >
-                      <Input.TextArea />
-                    </Form.Item>
-                    <Form.Item label="Schedule time">
-                      <Flex direction="row" gap={'xs'}>
-                        <Form.Item
-                          noStyle
-                          name={['batch', 'enabled']}
-                          valuePropName="checked"
-                        >
-                          <Checkbox>{t('session.launcher.Enable')}</Checkbox>
-                        </Form.Item>
-                        <Form.Item
-                          noStyle
-                          // dependencies={[['batch', 'enabled']]}
-                          shouldUpdate={(prev, next) => {
-                            return (
-                              // @ts-ignore
-                              prev.batch?.enabled !== next.batch?.enabled
-                            );
-                          }}
-                        >
-                          {() => {
-                            const disabled =
-                              form.getFieldValue('batch')?.enabled !== true;
-                            return (
-                              <>
-                                <Form.Item
-                                  name={['batch', 'scheduleDate']}
-                                  noStyle
-                                >
-                                  <DatePicker disabled={disabled} showTime />
-                                </Form.Item>
-                                {/* <Form.Item
-                                      noStyle
-                                      name={['batch', 'scheduleTime']}
-                                    >
-                                      <TimePicker disabled={disabled} />
-                                    </Form.Item> */}
-                              </>
-                            );
-                          }}
-                        </Form.Item>
-                      </Flex>
-                    </Form.Item>
-                  </Card>
-                )}
-
-                {sessionType === 'inference' && (
-                  <Card title="Inference Mode Configuration">
-                    <Form.Item
-                      name={['inference', 'vFolderName']}
-                      label={t('session.launcher.ModelStorageToMount')}
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
-                      <Select />
-                      {/* <VFolderSelect
-                          filter={(vf) => vf.usage_mode === 'model'}
-                          autoSelectDefault
-                          /> */}
-                    </Form.Item>
-                  </Card>
-                )}
-
-                {/* Step Start*/}
-                <Card
-                  title={t('session.launcher.Environments')}
-                  style={{
-                    display:
-                      currentStepKey === 'environment' ? 'block' : 'none',
-                  }}
-                >
-                  <ImageEnvironmentSelectFormItems />
-
-                  <Form.Item label="Environment Variables">
-                    <EnvVarFormList name={'envvars'} />
-                  </Form.Item>
-                </Card>
-                <Card
-                  title={t('session.launcher.ResourceAllocation')}
-                  style={{
-                    display:
-                      currentStepKey === 'environment' ? 'block' : 'none',
-                  }}
-                >
-                  <Form.Item
-                    name="resourceGroup"
-                    label={t('session.ResourceGroup')}
+                    label={t('session.launcher.StartUpCommand')}
+                    name={['batch', 'command']}
                     rules={[
                       {
                         required: true,
                       },
                     ]}
                   >
-                    <ResourceGroupSelect autoSelectDefault />
+                    <Input.TextArea />
                   </Form.Item>
-                  <ResourceAllocationFormItems />
+                  <Form.Item label="Schedule time">
+                    <Flex direction="row" gap={'xs'}>
+                      <Form.Item
+                        noStyle
+                        name={['batch', 'enabled']}
+                        valuePropName="checked"
+                      >
+                        <Checkbox>{t('session.launcher.Enable')}</Checkbox>
+                      </Form.Item>
+                      <Form.Item
+                        noStyle
+                        // dependencies={[['batch', 'enabled']]}
+                        shouldUpdate={(prev, next) => {
+                          return (
+                            // @ts-ignore
+                            prev.batch?.enabled !== next.batch?.enabled
+                          );
+                        }}
+                      >
+                        {() => {
+                          const disabled =
+                            form.getFieldValue('batch')?.enabled !== true;
+                          return (
+                            <>
+                              <Form.Item
+                                name={['batch', 'scheduleDate']}
+                                noStyle
+                              >
+                                <DatePickerISO
+                                  disabled={disabled}
+                                  showTime
+                                  // format={'YYYY-MM-DD HH:mm:ss'}
+                                />
+                              </Form.Item>
+                              {/* <Form.Item
+                                      noStyle
+                                      name={['batch', 'scheduleTime']}
+                                    >
+                                      <TimePicker disabled={disabled} />
+                                    </Form.Item> */}
+                            </>
+                          );
+                        }}
+                      </Form.Item>
+                    </Flex>
+                  </Form.Item>
                 </Card>
+              )}
 
-                {/* Step Start*/}
-                <Card
-                  title={t('webui.menu.Data&Storage')}
-                  style={{
-                    display: currentStepKey === 'storage' ? 'block' : 'none',
+              {sessionType === 'inference' && (
+                <Card title="Inference Mode Configuration">
+                  <Form.Item
+                    name={['inference', 'vFolderName']}
+                    label={t('session.launcher.ModelStorageToMount')}
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  >
+                    <Select />
+                    {/* <VFolderSelect
+                          filter={(vf) => vf.usage_mode === 'model'}
+                          autoSelectDefault
+                          /> */}
+                  </Form.Item>
+                </Card>
+              )}
+
+              {/* Step Start*/}
+              <Card
+                title={t('session.launcher.Environments')}
+                style={{
+                  display: currentStepKey === 'environment' ? 'block' : 'none',
+                }}
+              >
+                <ErrorBoundary
+                  fallbackRender={(e) => {
+                    console.log(e);
+                    return null;
                   }}
                 >
-                  <VFolderTableFromItem />
-                  {/* <VFolderTable /> */}
-                </Card>
-
-                {/* Step Start*/}
-                <Card
-                  title={t('session.launcher.Network')}
-                  style={{
-                    display: currentStepKey === 'network' ? 'block' : 'none',
-                  }}
+                  <ImageEnvironmentSelectFormItems />
+                </ErrorBoundary>
+                <Form.Item label="Environment Variables">
+                  <EnvVarFormList name={'envvars'} />
+                </Form.Item>
+              </Card>
+              <Card
+                title={t('session.launcher.ResourceAllocation')}
+                style={{
+                  display: currentStepKey === 'environment' ? 'block' : 'none',
+                }}
+              >
+                <Form.Item
+                  name="resourceGroup"
+                  label={t('session.ResourceGroup')}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
                 >
-                  <PortSelectFormItem />
-                </Card>
+                  <ResourceGroupSelect autoSelectDefault />
+                </Form.Item>
+                <ResourceAllocationFormItems />
+              </Card>
 
-                {/* Step Start*/}
-                {currentStepKey === 'review' && (
-                  <>
-                    <BAICard
-                      title={t('session.launcher.SessionType')}
-                      size="small"
-                      status={
-                        form.getFieldError('name').length > 0
-                          ? 'error'
-                          : undefined
-                      }
-                      extraButtonTitle={t('button.Edit')}
-                      onClickExtraButton={() => {
-                        setCurrentStep(
-                          // @ts-ignore
-                          steps.findIndex((v) => v.key === 'sessionType'),
-                        );
-                      }}
-                      // extra={
-                      //   <Button
-                      //     type="link"
-                      //     onClick={() => {
-                      //       setCurrentStep(
-                      //         // @ts-ignore
-                      //         steps.findIndex((v) => v.key === 'sessionType'),
-                      //       );
-                      //     }}
-                      //     icon={
-                      //       form.getFieldError('name').length > 0 && (
-                      //         <ExclamationCircleTwoTone
-                      //           twoToneColor={token.colorError}
-                      //         />
-                      //       )
-                      //     }
-                      //   >
-                      //     {t('button.Edit')}
-                      //   </Button>
-                      // }
-                    >
-                      <Descriptions size="small">
-                        <Descriptions.Item label="Session Type" span={24}>
-                          {form.getFieldValue('sessionType')}
-                        </Descriptions.Item>
-                        <Descriptions.Item label={'Session name'} span={24}>
-                          {form.getFieldValue('name')}
-                        </Descriptions.Item>
-                      </Descriptions>
-                    </BAICard>
-                    <Card
-                      title={t('session.launcher.Environments')}
-                      size="small"
-                      extra={
-                        <Button
-                          type="link"
-                          onClick={() => {
-                            setCurrentStep(
-                              // @ts-ignore
-                              steps.findIndex((v) => v.key === 'environment'),
-                            );
-                          }}
-                        >
-                          {t('button.Edit')}
-                        </Button>
-                      }
-                    >
-                      <Descriptions size="small" layout="vertical" column={1}>
-                        <Descriptions.Item label="Image">
-                          <Flex direction="row" gap="xs" style={{ flex: 1 }}>
-                            <ImageMetaIcon
-                              image={
-                                form.getFieldValue('environments')?.version
-                              }
-                            />
-                            {/* {form.getFieldValue('environments').image} */}
-                            <Typography.Text copyable code>
-                              {form.getFieldValue('environments')?.version}
-                            </Typography.Text>
-                          </Flex>
-                        </Descriptions.Item>
-                        <Descriptions.Item
-                          label={t('session.launcher.EnvironmentVariable')}
-                        >
-                          {form.getFieldValue('envvars')?.length ? (
-                            <SyntaxHighlighter
-                              style={darcula}
-                              codeTagProps={{
-                                style: {
-                                  // fontFamily: 'monospace',
-                                },
-                              }}
-                              // showLineNumbers
-                              customStyle={{
-                                margin: 0,
-                                width: '100%',
-                              }}
-                            >
-                              {_.map(
-                                form.getFieldValue('envvars'),
-                                (v: { variable: string; value: string }) =>
-                                  `${v.variable}="${v.value}"`,
-                              ).join('\n')}
-                            </SyntaxHighlighter>
-                          ) : (
-                            '-'
-                          )}
-                        </Descriptions.Item>
-                      </Descriptions>
-                    </Card>
-                    <Card
-                      title={t('session.launcher.ResourceAllocation')}
-                      size="small"
-                      extra={
-                        <Button
-                          type="link"
-                          onClick={() => {
-                            setCurrentStep(
-                              // @ts-ignore
-                              steps.findIndex((v) => v.key === 'environment'),
-                            );
-                          }}
-                        >
-                          {t('button.Edit')}
-                        </Button>
-                      }
-                    >
-                      <Descriptions>
-                        <Descriptions.Item
-                          span={24}
-                          label={t('environment.ResourcePresets')}
-                        >
-                          <Flex
-                            direction="row"
-                            align="start"
-                            gap={'xs'}
-                            wrap="wrap"
-                            style={{ flex: 1 }}
-                          >
-                            {form.getFieldValue('allocationPreset') ===
-                            'custom' ? (
-                              // t('session.launcher.CustomAllocation')
-                              ''
-                            ) : (
-                              <Tag>
-                                {form.getFieldValue('allocationPreset')}
-                              </Tag>
-                            )}
+              {/* Step Start*/}
+              <Card
+                title={t('webui.menu.Data&Storage')}
+                style={{
+                  display: currentStepKey === 'storage' ? 'block' : 'none',
+                }}
+              >
+                <VFolderTableFromItem />
+                {/* <VFolderTable /> */}
+              </Card>
 
-                            {_.map(
-                              _.omit(form.getFieldValue('resource'), 'shmem'),
-                              (value, type) => {
-                                return (
-                                  <ResourceNumber
-                                    key={type}
-                                    // @ts-ignore
-                                    type={type}
-                                    value={
-                                      type === 'mem'
-                                        ? iSizeToSize(value + 'g', 'b').number +
-                                          ''
-                                        : value
-                                    }
-                                    opts={{
-                                      shmem: form.getFieldValue('resource')
-                                        .shmem
-                                        ? iSizeToSize(
-                                            form.getFieldValue('resource')
-                                              .shmem + 'g',
-                                            'b',
-                                          ).number
-                                        : undefined,
-                                    }}
-                                  />
-                                );
+              {/* Step Start*/}
+              <Card
+                title={t('session.launcher.Network')}
+                style={{
+                  display: currentStepKey === 'network' ? 'block' : 'none',
+                }}
+              >
+                <PortSelectFormItem />
+              </Card>
+
+              {/* Step Start*/}
+              {currentStepKey === 'review' && (
+                <>
+                  <BAICard
+                    title={t('session.launcher.SessionType')}
+                    size="small"
+                    status={
+                      form.getFieldError('name').length > 0
+                        ? 'error'
+                        : undefined
+                    }
+                    extraButtonTitle={t('button.Edit')}
+                    onClickExtraButton={() => {
+                      setCurrentStep(
+                        // @ts-ignore
+                        steps.findIndex((v) => v.key === 'sessionType'),
+                      );
+                    }}
+                    // extra={
+                    //   <Button
+                    //     type="link"
+                    //     onClick={() => {
+                    //       setCurrentStep(
+                    //         // @ts-ignore
+                    //         steps.findIndex((v) => v.key === 'sessionType'),
+                    //       );
+                    //     }}
+                    //     icon={
+                    //       form.getFieldError('name').length > 0 && (
+                    //         <ExclamationCircleTwoTone
+                    //           twoToneColor={token.colorError}
+                    //         />
+                    //       )
+                    //     }
+                    //   >
+                    //     {t('button.Edit')}
+                    //   </Button>
+                    // }
+                  >
+                    <Descriptions size="small">
+                      <Descriptions.Item label="Session Type" span={24}>
+                        {form.getFieldValue('sessionType')}
+                      </Descriptions.Item>
+                      <Descriptions.Item label={'Session name'} span={24}>
+                        {form.getFieldValue('name')}
+                      </Descriptions.Item>
+                    </Descriptions>
+                  </BAICard>
+                  <Card
+                    title={t('session.launcher.Environments')}
+                    size="small"
+                    extra={
+                      <Button
+                        type="link"
+                        onClick={() => {
+                          setCurrentStep(
+                            // @ts-ignore
+                            steps.findIndex((v) => v.key === 'environment'),
+                          );
+                        }}
+                      >
+                        {t('button.Edit')}
+                      </Button>
+                    }
+                  >
+                    <Descriptions size="small" layout="vertical" column={1}>
+                      <Descriptions.Item label="Image">
+                        <Flex direction="row" gap="xs" style={{ flex: 1 }}>
+                          <ImageMetaIcon
+                            image={form.getFieldValue('environments')?.version}
+                          />
+                          {/* {form.getFieldValue('environments').image} */}
+                          <Typography.Text copyable code>
+                            {form.getFieldValue('environments')?.version}
+                          </Typography.Text>
+                        </Flex>
+                      </Descriptions.Item>
+                      <Descriptions.Item
+                        label={t('session.launcher.EnvironmentVariable')}
+                      >
+                        {form.getFieldValue('envvars')?.length ? (
+                          <SyntaxHighlighter
+                            style={darcula}
+                            codeTagProps={{
+                              style: {
+                                // fontFamily: 'monospace',
                               },
-                            )}
-                            {/* {_.chain(
+                            }}
+                            // showLineNumbers
+                            customStyle={{
+                              margin: 0,
+                              width: '100%',
+                            }}
+                          >
+                            {_.map(
+                              form.getFieldValue('envvars'),
+                              (v: { variable: string; value: string }) =>
+                                `${v.variable}="${v.value}"`,
+                            ).join('\n')}
+                          </SyntaxHighlighter>
+                        ) : (
+                          '-'
+                        )}
+                      </Descriptions.Item>
+                    </Descriptions>
+                  </Card>
+                  <Card
+                    title={t('session.launcher.ResourceAllocation')}
+                    size="small"
+                    extra={
+                      <Button
+                        type="link"
+                        onClick={() => {
+                          setCurrentStep(
+                            // @ts-ignore
+                            steps.findIndex((v) => v.key === 'environment'),
+                          );
+                        }}
+                      >
+                        {t('button.Edit')}
+                      </Button>
+                    }
+                  >
+                    <Descriptions>
+                      <Descriptions.Item
+                        span={24}
+                        label={t('environment.ResourcePresets')}
+                      >
+                        <Flex
+                          direction="row"
+                          align="start"
+                          gap={'xs'}
+                          wrap="wrap"
+                          style={{ flex: 1 }}
+                        >
+                          {form.getFieldValue('allocationPreset') ===
+                          'custom' ? (
+                            // t('session.launcher.CustomAllocation')
+                            ''
+                          ) : (
+                            <Tag>{form.getFieldValue('allocationPreset')}</Tag>
+                          )}
+
+                          {_.map(
+                            _.omit(form.getFieldValue('resource'), 'shmem'),
+                            (value, type) => {
+                              return (
+                                <ResourceNumber
+                                  key={type}
+                                  // @ts-ignore
+                                  type={type}
+                                  value={
+                                    type === 'mem'
+                                      ? iSizeToSize(value + 'g', 'b').number +
+                                        ''
+                                      : value
+                                  }
+                                  opts={{
+                                    shmem: form.getFieldValue('resource').shmem
+                                      ? iSizeToSize(
+                                          form.getFieldValue('resource').shmem +
+                                            'g',
+                                          'b',
+                                        ).number
+                                      : undefined,
+                                  }}
+                                />
+                              );
+                            },
+                          )}
+                          {/* {_.chain(
                               form.getFieldValue('allocationPreset') ===
                                 'custom'
                                 ? form.getFieldValue('resource')
@@ -611,171 +622,167 @@ const SessionLauncherPage = () => {
                               })
                               .compact()
                               .value()} */}
-                          </Flex>
-                        </Descriptions.Item>
-                      </Descriptions>
-                    </Card>
-                    <BAICard
-                      title={t('webui.menu.Data&Storage')}
-                      size="small"
-                      status={
-                        form.getFieldError('vfoldersAliasMap').length > 0
-                          ? 'error'
-                          : undefined
-                      }
-                      extraButtonTitle={t('button.Edit')}
-                      onClickExtraButton={() => {
-                        setCurrentStep(
-                          // @ts-ignore
-                          steps.findIndex((v) => v.key === 'storage'),
-                        );
-                      }}
-                    >
-                      {form.getFieldValue('mounts')?.length > 0 ? (
-                        <Table
-                          rowKey="name"
-                          bordered
-                          size="small"
-                          pagination={false}
-                          columns={[
-                            {
-                              dataIndex: 'name',
-                              title: t('data.folders.Name'),
+                        </Flex>
+                      </Descriptions.Item>
+                    </Descriptions>
+                  </Card>
+                  <BAICard
+                    title={t('webui.menu.Data&Storage')}
+                    size="small"
+                    status={
+                      form.getFieldError('vfoldersAliasMap').length > 0
+                        ? 'error'
+                        : undefined
+                    }
+                    extraButtonTitle={t('button.Edit')}
+                    onClickExtraButton={() => {
+                      setCurrentStep(
+                        // @ts-ignore
+                        steps.findIndex((v) => v.key === 'storage'),
+                      );
+                    }}
+                  >
+                    {form.getFieldValue('mounts')?.length > 0 ? (
+                      <Table
+                        rowKey="name"
+                        bordered
+                        size="small"
+                        pagination={false}
+                        columns={[
+                          {
+                            dataIndex: 'name',
+                            title: t('data.folders.Name'),
+                          },
+                          {
+                            dataIndex: 'alias',
+                            title: t('session.launcher.FolderAlias'),
+                            render: (value, record) => {
+                              return _.isEmpty(value) ? (
+                                <Typography.Text
+                                  type="secondary"
+                                  style={{
+                                    opacity: 0.7,
+                                  }}
+                                >
+                                  {`/home/work/${record.name}`}
+                                </Typography.Text>
+                              ) : (
+                                value
+                              );
                             },
-                            {
-                              dataIndex: 'alias',
-                              title: t('session.launcher.FolderAlias'),
-                              render: (value, record) => {
-                                return _.isEmpty(value) ? (
-                                  <Typography.Text
-                                    type="secondary"
-                                    style={{
-                                      opacity: 0.7,
-                                    }}
-                                  >
-                                    {`/home/work/${record.name}`}
-                                  </Typography.Text>
-                                ) : (
-                                  value
-                                );
-                              },
-                            },
-                          ]}
-                          dataSource={_.map(
-                            form.getFieldValue('mounts'),
-                            (v) => {
-                              return {
-                                name: v,
-                                alias:
-                                  form.getFieldValue('vfoldersAliasMap')?.[v],
-                              };
-                            },
-                          )}
-                        ></Table>
-                      ) : (
-                        '-'
-                      )}
-                    </BAICard>
-                    <BAICard
-                      title="Network"
-                      size="small"
-                      status={
-                        form.getFieldError('ports').length > 0
-                          ? 'error'
-                          : undefined
-                      }
-                      extraButtonTitle={t('button.Edit')}
-                      onClickExtraButton={() => {
-                        setCurrentStep(
-                          // @ts-ignore
-                          steps.findIndex((v) => v.key === 'network'),
-                        );
-                      }}
-                    >
-                      <Descriptions size="small">
-                        <Descriptions.Item
-                          label={t('session.launcher.PreOpenPortTitle')}
-                        >
-                          {/* {form.getFieldValue('environments').image} */}
-                          {_.sortBy(form.getFieldValue('ports'), (v) =>
-                            parseInt(v),
-                          ).map((v) => (
-                            <PortTag value={v}>{v}</PortTag>
-                          ))}
-                          {form.getFieldValue('ports')?.length !== 0
-                            ? undefined
-                            : '-'}
-                        </Descriptions.Item>
-                      </Descriptions>
-                    </BAICard>
-                  </>
-                )}
-
-                <Flex direction="row" justify="between">
-                  <Flex>
-                    {currentStep === steps.length - 1 && (
-                      <Button
-                        icon={<SaveOutlined />}
-                        onClick={() => {
-                          message.info(
-                            'Not implemented yet: Template edit modal',
-                          );
-                        }}
-                      >
-                        Save as a template
-                      </Button>
-                    )}
-                  </Flex>
-                  <Flex direction="row" gap="sm">
-                    {currentStep !== steps.length - 1 && (
-                      <Button
-                        onClick={() => {
-                          setCurrentStep(steps.length - 1);
-                        }}
-                      >
-                        Skip to Review
-                      </Button>
-                    )}
-                    {currentStep > 0 && (
-                      <Button
-                        onClick={() => {
-                          setCurrentStep(currentStep - 1);
-                        }}
-                        icon={<LeftOutlined />}
-                      >
-                        Previous
-                      </Button>
-                    )}
-                    {currentStep === steps.length - 1 ? (
-                      <Button
-                        type="primary"
-                        icon={<PlayCircleOutlined />}
-                        disabled={hasError}
-                      >
-                        {t('session.launcher.Launch')}
-                      </Button>
+                          },
+                        ]}
+                        dataSource={_.map(form.getFieldValue('mounts'), (v) => {
+                          return {
+                            name: v,
+                            alias: form.getFieldValue('vfoldersAliasMap')?.[v],
+                          };
+                        })}
+                      ></Table>
                     ) : (
-                      <Button
-                        type="primary"
-                        ghost
-                        onClick={() => {
-                          setCurrentStep(currentStep + 1);
-                        }}
-                      >
-                        Next <RightOutlined />
-                      </Button>
+                      '-'
                     )}
-                  </Flex>
+                  </BAICard>
+                  <BAICard
+                    title="Network"
+                    size="small"
+                    status={
+                      form.getFieldError('ports').length > 0
+                        ? 'error'
+                        : undefined
+                    }
+                    extraButtonTitle={t('button.Edit')}
+                    onClickExtraButton={() => {
+                      setCurrentStep(
+                        // @ts-ignore
+                        steps.findIndex((v) => v.key === 'network'),
+                      );
+                    }}
+                  >
+                    <Descriptions size="small">
+                      <Descriptions.Item
+                        label={t('session.launcher.PreOpenPortTitle')}
+                      >
+                        {/* {form.getFieldValue('environments').image} */}
+                        {_.sortBy(form.getFieldValue('ports'), (v) =>
+                          parseInt(v),
+                        ).map((v) => (
+                          <PortTag value={v}>{v}</PortTag>
+                        ))}
+                        {form.getFieldValue('ports')?.length !== 0
+                          ? undefined
+                          : '-'}
+                      </Descriptions.Item>
+                    </Descriptions>
+                  </BAICard>
+                </>
+              )}
+
+              <Flex direction="row" justify="between">
+                <Flex>
+                  {currentStep === steps.length - 1 && (
+                    <Button
+                      icon={<SaveOutlined />}
+                      onClick={() => {
+                        message.info(
+                          'Not implemented yet: Template edit modal',
+                        );
+                      }}
+                    >
+                      Save as a template
+                    </Button>
+                  )}
+                </Flex>
+                <Flex direction="row" gap="sm">
+                  {currentStep !== steps.length - 1 && (
+                    <Button
+                      onClick={() => {
+                        setCurrentStep(steps.length - 1);
+                      }}
+                    >
+                      Skip to Review
+                    </Button>
+                  )}
+                  {currentStep > 0 && (
+                    <Button
+                      onClick={() => {
+                        setCurrentStep(currentStep - 1);
+                      }}
+                      icon={<LeftOutlined />}
+                    >
+                      Previous
+                    </Button>
+                  )}
+                  {currentStep === steps.length - 1 ? (
+                    <Button
+                      type="primary"
+                      icon={<PlayCircleOutlined />}
+                      disabled={hasError}
+                    >
+                      {t('session.launcher.Launch')}
+                    </Button>
+                  ) : (
+                    <Button
+                      type="primary"
+                      ghost
+                      onClick={() => {
+                        setCurrentStep(currentStep + 1);
+                      }}
+                    >
+                      Next <RightOutlined />
+                    </Button>
+                  )}
                 </Flex>
               </Flex>
-            </Form>
-          </Suspense>
+            </Flex>
+          </Form>
+          {/* </Suspense> */}
         </Flex>
         {screens.md && (
           <Affix
             offsetTop={150}
             // direction="column"
-            // style={{ marginTop: 53 }}
+            style={{ zIndex: 2 }}
           >
             <Steps
               size="small"

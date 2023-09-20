@@ -1,4 +1,7 @@
-import { useBackendaiImageMetaData } from '../hooks';
+import {
+  useBackendaiImageMetaData,
+  useSuspendedBackendaiClient,
+} from '../hooks';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import ImageMetaIcon from './ImageMetaIcon';
@@ -66,6 +69,9 @@ function compareVersions(version1: string, version2: string): number {
 const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
 > = ({ filter }) => {
+  // TODO: fix below without useSuspendedBackendaiClient
+  // Before fetching on relay environment, BAI client should be ready
+  useSuspendedBackendaiClient();
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
   const currentEnvironmentsFormData = Form.useWatch('environments', form);
 

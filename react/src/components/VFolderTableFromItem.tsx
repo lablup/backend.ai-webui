@@ -1,4 +1,3 @@
-import Flex from './Flex';
 import VFolderTable, { AliasMap } from './VFolderTable';
 import { Form, FormItemProps, Input } from 'antd';
 import _ from 'lodash';
