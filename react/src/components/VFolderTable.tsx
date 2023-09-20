@@ -1,6 +1,7 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useCurrentProjectValue, useUpdatableState } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useShadowRoot } from './DefaultProviders';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
@@ -24,7 +25,7 @@ import { ColumnsType } from 'antd/lib/table';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { Key, useEffect, useState, useTransition } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 export interface VFolderFile {
   name: string;
@@ -166,6 +167,8 @@ const VFolderTable: React.FC<Props> = ({
     }
   };
 
+  const shadowRoot = useShadowRoot();
+
   const columns: ColumnsType<VFolder> = [
     {
       title: (
@@ -173,12 +176,23 @@ const VFolderTable: React.FC<Props> = ({
           <Typography.Text>{t('data.folders.Name')}</Typography.Text>
           {showAliasInput && (
             <>
-              <Typography.Text type="secondary">
-                ({t('session.launcher.FolderAlias')})
+              <Typography.Text
+                type="secondary"
+                style={{ fontWeight: 'normal' }}
+              >
+                ({t('session.launcher.FolderAlias')}{' '}
+                <Tooltip
+                  title={<Trans i18nKey={'session.launcher.DescFolderAlias'} />}
+                  style={{
+                    zIndex: 10000,
+                  }}
+                  // @ts-ignore
+                  getPopupContainer={() => shadowRoot}
+                >
+                  <QuestionCircleOutlined />
+                </Tooltip>
+                )
               </Typography.Text>
-              <Tooltip title={t('session.launcher.FolderAliasTooltip')}>
-                <QuestionCircleOutlined />
-              </Tooltip>
             </>
           )}
         </Flex>

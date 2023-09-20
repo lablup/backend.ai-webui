@@ -16,8 +16,11 @@ import {
   PlayCircleFilled,
   PlayCircleOutlined,
   RightOutlined,
+  SaveOutlined,
 } from '@ant-design/icons';
+import { useDebounceFn } from 'ahooks';
 import {
+  Affix,
   Button,
   Card,
   Checkbox,
@@ -33,6 +36,7 @@ import {
   Table,
   Tag,
   Typography,
+  message,
   theme,
 } from 'antd';
 import _ from 'lodash';
@@ -40,13 +44,44 @@ import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { darcula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import {
+  JsonParam,
+  NumberParam,
+  useQueryParams,
+  withDefault,
+} from 'use-query-params';
 
+const stepParam = withDefault(NumberParam, 0);
+const formValuesParam = withDefault(JsonParam, {
+  sessionType: 'interactive',
+  allocationPreset: 'custom',
+});
 const SessionLauncherPage = () => {
+  const [{ step: currentStep, formValues }, setQuery] = useQueryParams({
+    step: stepParam,
+    formValues: formValuesParam,
+  });
+
+  const { run: setQueryWithDebounce } = useDebounceFn(setQuery, {
+    leading: false,
+    wait: 500,
+    trailing: true,
+  });
+
+  console.log('FV', formValues);
+  const setCurrentStep = (nextStep: number) => {
+    setQueryWithDebounce(
+      {
+        step: nextStep,
+      },
+      'pushIn',
+    );
+  };
   const { token } = theme.useToken();
 
   // const [resourceSlots] = useResourceSlots();
   const { t } = useTranslation();
-  const [currentStep, setCurrentStep] = useState(0);
+
   const screens = Grid.useBreakpoint();
 
   const [form] = Form.useForm<{
@@ -133,6 +168,8 @@ const SessionLauncherPage = () => {
         padding: token.paddingSM,
         width: '100%',
         justifyContent: 'revert',
+        // height: 500,
+        // overflow: 'scroll',
       }}
     >
       <Flex direction="row" gap="md" align="start">
@@ -142,7 +179,7 @@ const SessionLauncherPage = () => {
           style={{ flex: 1, maxWidth: 700 }}
         >
           <Flex direction="row" justify="between">
-            <Typography.Title level={2} style={{ marginTop: 0 }}>
+            <Typography.Title level={3} style={{ marginTop: 0 }}>
               {t('session.launcher.StartNewSession')}
             </Typography.Title>
             <Button type="link" icon={<BlockOutlined />}>
@@ -154,9 +191,15 @@ const SessionLauncherPage = () => {
               form={form}
               layout="vertical"
               requiredMark="optional"
-              initialValues={{
-                sessionType: 'interactive',
-                allocationPreset: 'custom',
+              initialValues={formValues}
+              onValuesChange={(changedValues, allValues) => {
+                console.log('CHANGES', allValues);
+                setQueryWithDebounce(
+                  {
+                    formValues: allValues,
+                  },
+                  'replaceIn',
+                );
               }}
             >
               <Flex
@@ -343,14 +386,16 @@ const SessionLauncherPage = () => {
                 </Card>
 
                 {/* Step Start*/}
-                {currentStepKey === 'storage' && (
-                  <>
-                    <Card title={t('webui.menu.Data&Storage')}>
-                      <VFolderTableFromItem />
-                      {/* <VFolderTable /> */}
-                    </Card>
-                  </>
-                )}
+                <Card
+                  title={t('webui.menu.Data&Storage')}
+                  style={{
+                    display: currentStepKey === 'storage' ? 'block' : 'none',
+                  }}
+                >
+                  <VFolderTableFromItem />
+                  {/* <VFolderTable /> */}
+                </Card>
+
                 {/* Step Start*/}
                 <Card
                   title={t('session.launcher.Network')}
@@ -491,10 +536,17 @@ const SessionLauncherPage = () => {
                           span={24}
                           label={t('environment.ResourcePresets')}
                         >
-                          <Flex direction="column" align="start" gap={'xxs'}>
+                          <Flex
+                            direction="row"
+                            align="start"
+                            gap={'xs'}
+                            wrap="wrap"
+                            style={{ flex: 1 }}
+                          >
                             {form.getFieldValue('allocationPreset') ===
                             'custom' ? (
-                              t('session.launcher.CustomAllocation')
+                              // t('session.launcher.CustomAllocation')
+                              ''
                             ) : (
                               <Tag>
                                 {form.getFieldValue('allocationPreset')}
@@ -516,11 +568,14 @@ const SessionLauncherPage = () => {
                                         : value
                                     }
                                     opts={{
-                                      shmem: iSizeToSize(
-                                        form.getFieldValue('resource').shmem +
-                                          'g',
-                                        'b',
-                                      ).number,
+                                      shmem: form.getFieldValue('resource')
+                                        .shmem
+                                        ? iSizeToSize(
+                                            form.getFieldValue('resource')
+                                              .shmem + 'g',
+                                            'b',
+                                          ).number
+                                        : undefined,
                                     }}
                                   />
                                 );
@@ -568,19 +623,13 @@ const SessionLauncherPage = () => {
                           ? 'error'
                           : undefined
                       }
-                      extra={
-                        <Button
-                          type="link"
-                          onClick={() => {
-                            setCurrentStep(
-                              // @ts-ignore
-                              steps.findIndex((v) => v.key === 'storage'),
-                            );
-                          }}
-                        >
-                          {t('button.Edit')}
-                        </Button>
-                      }
+                      extraButtonTitle={t('button.Edit')}
+                      onClickExtraButton={() => {
+                        setCurrentStep(
+                          // @ts-ignore
+                          steps.findIndex((v) => v.key === 'storage'),
+                        );
+                      }}
                     >
                       {form.getFieldValue('mounts')?.length > 0 ? (
                         <Table
@@ -662,56 +711,72 @@ const SessionLauncherPage = () => {
                   </>
                 )}
 
-                <Flex direction="row" justify="end" gap="sm">
-                  {currentStep !== steps.length - 1 && (
-                    <Button
-                      onClick={() => {
-                        setCurrentStep(steps.length - 1);
-                      }}
-                    >
-                      Skip to Review
-                    </Button>
-                  )}
-                  {currentStep > 0 && (
-                    <Button
-                      onClick={() => {
-                        setCurrentStep((prev) => {
-                          return prev - 1;
-                        });
-                      }}
-                      icon={<LeftOutlined />}
-                    >
-                      Previous
-                    </Button>
-                  )}
-                  {currentStep === steps.length - 1 ? (
-                    <Button
-                      type="primary"
-                      icon={<PlayCircleOutlined />}
-                      disabled={hasError}
-                    >
-                      {t('session.launcher.Launch')}
-                    </Button>
-                  ) : (
-                    <Button
-                      type="primary"
-                      ghost
-                      onClick={() => {
-                        setCurrentStep((prev) => {
-                          return prev + 1;
-                        });
-                      }}
-                    >
-                      Next <RightOutlined />
-                    </Button>
-                  )}
+                <Flex direction="row" justify="between">
+                  <Flex>
+                    {currentStep === steps.length - 1 && (
+                      <Button
+                        icon={<SaveOutlined />}
+                        onClick={() => {
+                          message.info(
+                            'Not implemented yet: Template edit modal',
+                          );
+                        }}
+                      >
+                        Save as a template
+                      </Button>
+                    )}
+                  </Flex>
+                  <Flex direction="row" gap="sm">
+                    {currentStep !== steps.length - 1 && (
+                      <Button
+                        onClick={() => {
+                          setCurrentStep(steps.length - 1);
+                        }}
+                      >
+                        Skip to Review
+                      </Button>
+                    )}
+                    {currentStep > 0 && (
+                      <Button
+                        onClick={() => {
+                          setCurrentStep(currentStep - 1);
+                        }}
+                        icon={<LeftOutlined />}
+                      >
+                        Previous
+                      </Button>
+                    )}
+                    {currentStep === steps.length - 1 ? (
+                      <Button
+                        type="primary"
+                        icon={<PlayCircleOutlined />}
+                        disabled={hasError}
+                      >
+                        {t('session.launcher.Launch')}
+                      </Button>
+                    ) : (
+                      <Button
+                        type="primary"
+                        ghost
+                        onClick={() => {
+                          setCurrentStep(currentStep + 1);
+                        }}
+                      >
+                        Next <RightOutlined />
+                      </Button>
+                    )}
+                  </Flex>
                 </Flex>
               </Flex>
             </Form>
           </Suspense>
         </Flex>
         {screens.md && (
-          <Flex direction="column" style={{ marginTop: 53 }}>
+          <Affix
+            offsetTop={150}
+            // direction="column"
+            // style={{ marginTop: 53 }}
+          >
             <Steps
               size="small"
               direction="vertical"
@@ -721,7 +786,7 @@ const SessionLauncherPage = () => {
               }}
               items={steps}
             />
-          </Flex>
+          </Affix>
         )}
       </Flex>
     </Flex>

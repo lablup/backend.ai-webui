@@ -1,5 +1,6 @@
+import Flex from './Flex';
 import VFolderTable, { AliasMap } from './VFolderTable';
-import { Form, FormItemProps } from 'antd';
+import { Form, FormItemProps, Input } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +21,8 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
   return (
     <>
       <Form.Item
-        noStyle
+        // noStyle
+        hidden
         name="vfoldersAliasMap"
         rules={[
           {
@@ -41,7 +43,10 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
             },
           },
         ]}
-      ></Form.Item>
+      >
+        <Input />
+        {/* <Flex>{form.getFieldValue('vfoldersAliasMap')}</Flex> */}
+      </Form.Item>
       <Form.Item
         name={'mounts'}
         {...formItemProps}
@@ -53,6 +58,7 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
           showAliasInput
           aliasMap={form.getFieldValue('vfoldersAliasMap')}
           onChangeAliasMap={(aliasMap) => {
+            console.log('xxxx');
             form.setFieldValue('vfoldersAliasMap', aliasMap);
             form.validateFields(['vfoldersAliasMap']);
           }}

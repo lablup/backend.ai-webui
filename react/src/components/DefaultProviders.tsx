@@ -28,6 +28,8 @@ import { useTranslation, initReactI18next } from 'react-i18next';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { BrowserRouter, useNavigate } from 'react-router-dom';
+import { QueryParamProvider } from 'use-query-params';
+import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -158,8 +160,18 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                     <StyleProvider container={shadowRoot} cache={cache}>
                       <Suspense fallback="">
                         <BrowserRouter>
-                          <RoutingEventHandler />
-                          {children}
+                          <QueryParamProvider
+                            adapter={ReactRouter6Adapter}
+                            options={
+                              {
+                                // searchStringToObject: queryString.parse,
+                                // objectToSearchString: queryString.stringify,
+                              }
+                            }
+                          >
+                            <RoutingEventHandler />
+                            {children}
+                          </QueryParamProvider>
                         </BrowserRouter>
                       </Suspense>
                     </StyleProvider>
