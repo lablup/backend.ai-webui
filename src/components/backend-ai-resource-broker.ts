@@ -369,29 +369,45 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       return globalThis.backendaiclient
         .get_resource_slots()
         .then((response) => {
+          let maxValue = Number.MIN_VALUE;
+          let maxItem;
           const results = response;
-          [
-            'cuda.device',
-            'cuda.shares',
-            'rocm.device',
-            'tpu.device',
-            'ipu.device',
-            'atom.device',
-            'warboy.device',
-          ].forEach((item) => {
+          const deviceList = {
+            'cuda.device': 'cuda_device',
+            'cuda.shares': 'cuda_shares',
+            'rocm.device': 'rocm_device',
+            'tpu.device': 'tpu_device',
+            'ipu.device': 'ipu_device',
+            'atom.device': 'atom_device',
+            'warboy.device': 'warboy_device',
+          };
+          for (const [k, v] of Object.entries(deviceList)) {
+            // Set gpu_modes
             if (
-              item in results &&
-              !(this.gpu_modes as Array<string>).includes(item)
+              k in results &&
+              !(this.gpu_modes as Array<string>).includes(k)
             ) {
-              this.gpu_mode = item;
-              (this.gpu_modes as Array<string>).push(item);
-              if (item === 'cuda.shares') {
-                this.gpu_step = 0.1;
-              } else {
-                this.gpu_step = 1;
-              }
+              (this.gpu_modes as Array<string>).push(k);
             }
-          });
+
+            // Set gpu device as largest among available slots
+            if (
+              k in results &&
+              this.available_slot.hasOwnProperty(v) &&
+              Number(this.available_slot[v]) > maxValue
+            ) {
+              maxValue = Number(this.available_slot[v]);
+              maxItem = k;
+            }
+          }
+          this.gpu_mode = maxItem;
+
+          // Set gpu_step
+          if (maxItem === 'cuda.shares') {
+            this.gpu_step = 0.1;
+          } else {
+            this.gpu_step = 1;
+          }
           if (typeof this.gpu_mode == 'undefined') {
             this.gpu_mode = 'none';
           }
