@@ -3514,6 +3514,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     (this.resourceTemplatesSelect as any).selectedText = _text(
       'session.launcher.CustomResourceApplied',
     );
+
+    this._updateResourceIndicator(
+      this.cpu_request,
+      this.mem_request,
+      this.gpu_mode,
+      this.gpu_request,
+    );
   }
 
   /**
