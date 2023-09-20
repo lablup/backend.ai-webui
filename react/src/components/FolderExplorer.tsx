@@ -55,7 +55,7 @@ const FolderExplorer: React.FC<Props> = ({
     },
   };
 
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   // const fileList = useRecoilValue(
   //   filesState({
   //     path: encodeURIComponent(path.join("/")),
@@ -83,7 +83,7 @@ const FolderExplorer: React.FC<Props> = ({
     },
   });
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>(
+  const [, setSelectedRowKeys] = useState<React.Key[]>(
     defaultSelectedKeys || [],
   );
 
@@ -106,7 +106,7 @@ const FolderExplorer: React.FC<Props> = ({
       <Flex>
         <Breadcrumb separator=">">
           {_.map(path, (p, i) => {
-            return i == 0 ? (
+            return i === 0 ? (
               <Breadcrumb.Item
                 key={i}
                 onClick={(e) => {
@@ -158,7 +158,7 @@ const FolderExplorer: React.FC<Props> = ({
             render: (text, record) => {
               return (
                 <Flex direction="row">
-                  {record.type == 'DIRECTORY' ? (
+                  {record.type === 'DIRECTORY' ? (
                     <Button
                       type="link"
                       style={{ padding: 2 }}
