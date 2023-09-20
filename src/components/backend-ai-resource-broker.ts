@@ -390,7 +390,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
               (this.gpu_modes as Array<string>).push(k);
             }
 
-            // Set gpu device as largest among available slots
+            // Set gpu device as the largest one among available slots
             if (
               k in results &&
               this.available_slot.hasOwnProperty(v) &&
