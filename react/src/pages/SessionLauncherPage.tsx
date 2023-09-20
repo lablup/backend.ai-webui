@@ -64,6 +64,10 @@ const SessionLauncherPage = () => {
     formValues: formValuesParam,
   });
 
+  // const [selectedFolderName, setSelectedFolderName] = useState<
+  //   string | undefined
+  // >('hello');
+
   const { run: setQueryWithDebounce } = useDebounceFn(setQuery, {
     leading: false,
     wait: 500,
@@ -165,6 +169,8 @@ const SessionLauncherPage = () => {
     (item) => item.errors.length > 0,
   );
 
+  console.log('###', formValues);
+
   return (
     <Flex
       direction="column"
@@ -201,7 +207,8 @@ const SessionLauncherPage = () => {
               console.log('###CHANGE', allValues);
               setQueryWithDebounce(
                 {
-                  formValues: allValues,
+                  // remove Image, because it's too big and can be restored automatically
+                  formValues: _.omit(allValues, ['environments.image']),
                 },
                 'replaceIn',
               );
@@ -470,22 +477,28 @@ const SessionLauncherPage = () => {
                       </Descriptions.Item>
                     </Descriptions>
                   </BAICard>
-                  <Card
+                  <BAICard
                     title={t('session.launcher.Environments')}
                     size="small"
-                    extra={
-                      <Button
-                        type="link"
-                        onClick={() => {
-                          setCurrentStep(
-                            // @ts-ignore
-                            steps.findIndex((v) => v.key === 'environment'),
-                          );
-                        }}
-                      >
-                        {t('button.Edit')}
-                      </Button>
+                    status={
+                      _.some(form.getFieldValue('envvars'), (v, idx) => {
+                        return (
+                          form.getFieldError(['envvars', idx, 'variable'])
+                            .length > 0 ||
+                          form.getFieldError(['envvars', idx, 'value']).length >
+                            0
+                        );
+                      })
+                        ? 'error'
+                        : undefined
                     }
+                    extraButtonTitle={t('button.Edit')}
+                    onClickExtraButton={() => {
+                      setCurrentStep(
+                        // @ts-ignore
+                        steps.findIndex((v) => v.key === 'environment'),
+                      );
+                    }}
                   >
                     <Descriptions size="small" layout="vertical" column={1}>
                       <Descriptions.Item label="Image">
@@ -519,7 +532,7 @@ const SessionLauncherPage = () => {
                             {_.map(
                               form.getFieldValue('envvars'),
                               (v: { variable: string; value: string }) =>
-                                `${v.variable}="${v.value}"`,
+                                `${v?.variable || ''}="${v?.value || ''}"`,
                             ).join('\n')}
                           </SyntaxHighlighter>
                         ) : (
@@ -527,7 +540,7 @@ const SessionLauncherPage = () => {
                         )}
                       </Descriptions.Item>
                     </Descriptions>
-                  </Card>
+                  </BAICard>
                   <Card
                     title={t('session.launcher.ResourceAllocation')}
                     size="small"
@@ -796,6 +809,13 @@ const SessionLauncherPage = () => {
           </Affix>
         )}
       </Flex>
+      {/* <FolderExplorer
+        folderName={selectedFolderName}
+        open={!!selectedFolderName}
+        onRequestClose={() => {
+          setSelectedFolderName(undefined);
+        }}
+      /> */}
     </Flex>
   );
 };

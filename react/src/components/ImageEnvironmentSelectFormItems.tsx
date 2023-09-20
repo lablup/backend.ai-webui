@@ -114,12 +114,14 @@ const ImageEnvironmentSelectFormItems: React.FC<
     },
   );
 
+  console.log('nextEnvironmentName form', form.getFieldValue('environments'));
+  console.log('nextEnvironmentName form', currentEnvironmentsFormData);
   // If not initial value, select first value
   // auto select when relative field is changed
   useEffect(() => {
     // if not initial value, select first value
     const nextEnvironmentName =
-      currentEnvironmentsFormData?.environment ||
+      form.getFieldValue('environments')?.environment ||
       imageGroups[0]?.environmentGroups[0]?.environmentName;
 
     let nextEnvironmentGroup: ImageGroup['environmentGroups'][0] | undefined;
@@ -139,7 +141,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
       !_.find(
         nextEnvironmentGroup?.images,
         (image) =>
-          currentEnvironmentsFormData?.version === getImageFullName(image),
+          form.getFieldValue('environments')?.version ===
+          getImageFullName(image),
       )
     ) {
       const nextNewImage = nextEnvironmentGroup?.images[0];
@@ -154,7 +157,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentEnvironmentsFormData?.environment]);
+  }, [form.getFieldValue('environments')?.environment]);
 
   const imageGroups: ImageGroup[] = useMemo(
     () =>
