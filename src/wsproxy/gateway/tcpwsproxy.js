@@ -1,6 +1,6 @@
-const Server = require("../lib/backend.ai-ws-appproxy.js");
+const Server = require('../lib/backend.ai-ws-appproxy.js');
 
-module.exports = (proxy = class Proxy {
+module.exports = proxy = class Proxy {
   constructor(env) {
     this.env = env;
   }
@@ -14,6 +14,6 @@ module.exports = (proxy = class Proxy {
     this.c = undefined;
   }
   getPort() {
-    return this.c.port
+    return this.c.port;
   }
-});
+};

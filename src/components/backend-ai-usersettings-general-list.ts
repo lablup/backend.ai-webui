@@ -2,36 +2,31 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t, translateUnsafeHTML as _tr, use as setLanguage} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
-
-import {BackendAIPage} from './backend-ai-page';
-
-import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-
-import 'weightless/switch';
-import 'weightless/select';
-import 'weightless/icon';
-import 'weightless/button';
-import 'weightless/label';
-
-import {Button} from '@material/mwc-button';
-import {IconButton} from '@material/mwc-icon-button';
-import '@material/mwc-switch';
-import {Select} from '@material/mwc-select';
-import {TextArea} from '@material/mwc-textarea';
-
-import {default as PainKiller} from './backend-ai-painkiller';
-import './lablup-loading-spinner';
-import './lablup-codemirror';
 import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import './lablup-codemirror';
+import './lablup-loading-spinner';
+import { Button } from '@material/mwc-button';
+import { IconButton } from '@material/mwc-icon-button';
+import { Select } from '@material/mwc-select';
+import '@material/mwc-switch';
+import { TextArea } from '@material/mwc-textarea';
+import { css, CSSResultGroup, html } from 'lit';
+import {
+  get as _text,
+  translate as _t,
+  translateUnsafeHTML as _tr,
+  use as setLanguage,
+} from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -57,23 +52,23 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   public lastSavedBootstrapScript = '';
 
-  @property({type: Object}) notification;
-  @property({type: Array}) supportLanguages = [
-    {name: _t('language.OSDefault'), code: 'default'},
-    {name: _t('language.English'), code: 'en'},
-    {name: _t('language.Korean'), code: 'ko'},
-    {name: _t('language.Russian'), code: 'ru'},
-    {name: _t('language.French'), code: 'fr'},
-    {name: _t('language.Mongolian'), code: 'mn'},
-    {name: _t('language.Indonesian'), code: 'id'}
+  @property({ type: Object }) notification;
+  @property({ type: Array }) supportLanguages = [
+    { name: _t('language.OSDefault'), code: 'default' },
+    { name: _t('language.English'), code: 'en' },
+    { name: _t('language.Korean'), code: 'ko' },
+    { name: _t('language.Russian'), code: 'ru' },
+    { name: _t('language.French'), code: 'fr' },
+    { name: _t('language.Mongolian'), code: 'mn' },
+    { name: _t('language.Indonesian'), code: 'id' },
   ];
-  @property({type: Boolean}) beta_feature_panel = false;
-  @property({type: Boolean}) shell_script_edit = false;
-  @property({type: Array}) rcfiles;
-  @property({type: String}) rcfile = '';
-  @property({type: String}) prevRcfile = '';
-  @property({type: String}) preferredSSHPort = '';
-  @property({type: String}) publicSSHkey = '';
+  @property({ type: Boolean }) beta_feature_panel = false;
+  @property({ type: Boolean }) shell_script_edit = false;
+  @property({ type: Array }) rcfiles;
+  @property({ type: String }) rcfile = '';
+  @property({ type: String }) prevRcfile = '';
+  @property({ type: String }) preferredSSHPort = '';
+  @property({ type: String }) publicSSHkey = '';
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#bootstrap-editor') bootstrapEditor!: LablupCodemirror;
   @query('#usersetting-editor') userSettingEditor!: LablupCodemirror;
@@ -81,17 +76,21 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @query('#ssh-public-key') sshPublicKeyInput!: TextArea;
   @query('#ssh-private-key') sshPrivateKeyInput!: TextArea;
   @query('#current-ssh-public-key') currentSSHPublicKeyInput!: TextArea;
-  @query('#copy-current-ssh-public-key-button') copyCurrentSSHPublicKeyButton!: IconButton;
+  @query('#copy-current-ssh-public-key-button')
+  copyCurrentSSHPublicKeyButton!: IconButton;
   @query('#bootstrap-dialog') bootstrapDialog!: BackendAIDialog;
-  @query('#change-current-editor-dialog') changeCurrentEditorDialog!: BackendAIDialog;
+  @query('#change-current-editor-dialog')
+  changeCurrentEditorDialog!: BackendAIDialog;
   @query('#userconfig-dialog') userconfigDialog!: BackendAIDialog;
-  @query('#ssh-keypair-management-dialog') sshKeypairManagementDialog!: BackendAIDialog;
+  @query('#ssh-keypair-management-dialog')
+  sshKeypairManagementDialog!: BackendAIDialog;
   @query('#clear-ssh-keypair-dialog') clearSSHKeypairDialog!: BackendAIDialog;
-  @query('#generate-ssh-keypair-dialog') generateSSHKeypairDialog!: BackendAIDialog;
+  @query('#generate-ssh-keypair-dialog')
+  generateSSHKeypairDialog!: BackendAIDialog;
   @query('#ssh-keypair-form-dialog') sshKeypairFormDialog!: BackendAIDialog;
   @query('#entered-ssh-public-key') enteredSSHPublicKeyInput!: TextArea;
   @query('#entered-ssh-private-key') enteredSSHPrivateKeyInput!: TextArea;
-  
+
   @query('#ui-language') languageSelect!: Select;
   @query('#delete-rcfile') deleteRcfileButton!: Button;
 
@@ -115,7 +114,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           margin-right: 5px;
         }
 
-        span[slot="title"] {
+        span[slot='title'] {
           font-weight: bold;
           margin-top: 15px !important;
           margin-bottom: 15px;
@@ -175,11 +174,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           scrollbar-width: none; /* firefox */
         }
 
-        #bootstrap-dialog wl-button {
-          margin-left: 5px;
-        }
-
-        #bootstrap-dialog, #userconfig-dialog {
+        #bootstrap-dialog,
+        #userconfig-dialog {
           --component-width: calc(100vw - 200px);
           --component-height: calc(100vh - 100px);
           --component-min-width: calc(100vw - 200px);
@@ -189,7 +185,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
 
         .terminal-area {
-          height:calc(100vh - 300px);
+          height: calc(100vh - 300px);
         }
 
         mwc-select {
@@ -200,12 +196,18 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           --mdc-theme-primary: var(--general-sidebar-color);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-focused-dropdown-icon-color: var(--general-sidebar-color);
-          --mdc-select-disabled-dropdown-icon-color: var(--general-sidebar-color);
+          --mdc-select-focused-dropdown-icon-color: var(
+            --general-sidebar-color
+          );
+          --mdc-select-disabled-dropdown-icon-color: var(
+            --general-sidebar-color
+          );
           --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
           --mdc-select-hover-line-color: var(--general-sidebar-color);
           --mdc-select-outlined-idle-border-color: var(--general-sidebar-color);
-          --mdc-select-outlined-hover-border-color: var(--general-sidebar-color);
+          --mdc-select-outlined-hover-border-color: var(
+            --general-sidebar-color
+          );
           --mdc-theme-surface: white;
           --mdc-list-vertical-padding: 5px;
           --mdc-list-side-padding: 25px;
@@ -225,14 +227,18 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
 
         mwc-icon-button {
-          color: #27824F;
+          color: #27824f;
         }
 
         mwc-button[outlined] {
           background-image: none;
           --mdc-button-outline-width: 2px;
-          --mdc-button-disabled-outline-color: var(--general-button-background-color);
-          --mdc-button-disabled-ink-color: var(--general-button-background-color);
+          --mdc-button-disabled-outline-color: var(
+            --general-button-background-color
+          );
+          --mdc-button-disabled-ink-color: var(
+            --general-button-background-color
+          );
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-theme-on-primary: var(--general-button-color);
         }
@@ -254,44 +260,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           width: 260px;
         }
 
-        wl-icon.warning {
-          --icon-size: 16px;
-          padding: 0;
-          color: red;
-        }
-
-        wl-label.warning {
-          font-family: var(--general-font-family);
-          font-size: 12px;
-          --label-color: var(--paper-red-600);
-        }
-
-        wl-button.ssh-keypair {
-          display: inline-block;
-          margin: 10px;
-        }
-
-        wl-button.copy {
-          --button-font-size: 10px;
-          display: inline-block;
-          max-width: 15px !important;
-          max-height: 15px !important;
-        }
-
-        wl-button#ssh-keypair-details {
-          --button-bg: none;
-        }
-
-        wl-icon#ssh-keypair-icon {
-          color: var(--paper-indigo-700);
-        }
-
         ::-webkit-scrollbar {
           display: none; /* Chrome and Safari */
         }
 
         @media screen and (max-width: 500px) {
-          #bootstrap-dialog, #userconfig-dialog {
+          #bootstrap-dialog,
+          #userconfig-dialog {
             --component-min-width: 300px;
           }
 
@@ -311,7 +286,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             width: 160px;
           }
         }
-      `];
+      `,
+    ];
   }
 
   firstUpdated() {
@@ -330,24 +306,37 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       return;
     }
     // If disconnected
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (
+      typeof globalThis.backendaiclient === 'undefined' ||
+      globalThis.backendaiclient === null ||
+      globalThis.backendaiclient.ready === false
+    ) {
       document.addEventListener('backend-ai-connected', () => {
-        this.preferredSSHPort = globalThis.backendaioptions.get('custom_ssh_port');
-        if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
+        this.preferredSSHPort =
+          globalThis.backendaioptions.get('custom_ssh_port');
+        if (
+          globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')
+        ) {
           this.shell_script_edit = true;
           this.rcfile = '.bashrc';
         }
       });
-    } else { // already connected
-      this.preferredSSHPort = globalThis.backendaioptions.get('custom_ssh_port');
-      if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
+    } else {
+      // already connected
+      this.preferredSSHPort =
+        globalThis.backendaioptions.get('custom_ssh_port');
+      if (
+        globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')
+      ) {
         this.shell_script_edit = true;
         this.rcfile = '.bashrc';
       }
     }
     this.userconfigDialog.addEventListener('dialog-closing-confirm', () => {
       const script = this.userSettingEditor.getValue();
-      const idx = this.rcfiles.findIndex((item: any) => item.path === this.rcfile);
+      const idx = this.rcfiles.findIndex(
+        (item: any) => item.path === this.rcfile,
+      );
       if (this.rcfiles[idx]['data'] !== script) {
         this.prevRcfile = this.rcfile; // update prevRcfile to current file
         this._launchChangeCurrentEditorDialog();
@@ -407,11 +396,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   toggleAutoLogout(e) {
     if (e.target.selected === false) {
       globalThis.backendaioptions.set('auto_logout', false);
-      const event = new CustomEvent('backend-ai-auto-logout', {detail: false});
+      const event = new CustomEvent('backend-ai-auto-logout', {
+        detail: false,
+      });
       document.dispatchEvent(event);
     } else {
       globalThis.backendaioptions.set('auto_logout', true);
-      const event = new CustomEvent('backend-ai-auto-logout', {detail: true});
+      const event = new CustomEvent('backend-ai-auto-logout', { detail: true });
       document.dispatchEvent(event);
     }
   }
@@ -436,7 +427,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * @param {Event} e - select the ui-language item
    * */
   setUserLanguage(e) {
-    if (e.target.selected.value !== globalThis.backendaioptions.get('language')) {
+    if (
+      e.target.selected.value !== globalThis.backendaioptions.get('language')
+    ) {
       let lang = e.target.selected.value;
       if (lang === 'default') {
         lang = globalThis.navigator.language.split('-')[0];
@@ -445,7 +438,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       globalThis.backendaioptions.set('current_language', lang);
       setLanguage(lang);
       setTimeout(() => {
-        (this.languageSelect as any).selectedText = this.languageSelect.selected?.textContent?.trim();
+        // Force match mwc-select's selectedText to avoid mwc-select's bug
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        this.languageSelect.selectedText =
+          this.languageSelect.selected?.textContent?.trim();
       }, 100);
     }
   }
@@ -487,18 +484,21 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   _fetchBootstrapScript() {
     // Fetch user's bootstrap code.
-    return globalThis.backendaiclient.userConfig.get_bootstrap_script().then((resp) => {
-      const script = resp || '';
-      this.lastSavedBootstrapScript = script;
-      return script;
-    }).catch((err) => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+    return globalThis.backendaiclient.userConfig
+      .get_bootstrap_script()
+      .then((resp) => {
+        const script = resp || '';
+        this.lastSavedBootstrapScript = script;
+        return script;
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
   }
 
   async _saveBootstrapScript() {
@@ -509,7 +509,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       return;
     }
     this.spinner.show();
-    globalThis.backendaiclient.userConfig.update_bootstrap_script(script)
+    globalThis.backendaiclient.userConfig
+      .update_bootstrap_script(script)
       .then((res) => {
         this.notification.text = _text('usersettings.BootstrapScriptUpdated');
         this.notification.show();
@@ -538,11 +539,17 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * */
   async _editUserConfigScript() {
     this.rcfiles = await this._fetchUserConfigScript();
-    const rcfileNames = ['.bashrc', '.zshrc', '.tmux.conf.local', '.vimrc', '.Renviron'];
+    const rcfileNames = [
+      '.bashrc',
+      '.zshrc',
+      '.tmux.conf.local',
+      '.vimrc',
+      '.Renviron',
+    ];
     rcfileNames.map((filename) => {
       const idx = this.rcfiles.findIndex((item: any) => item.path === filename);
-      if (idx === -1 ) {
-        this.rcfiles.push({path: filename, data: ''});
+      if (idx === -1) {
+        this.rcfiles.push({ path: filename, data: '' });
         this.userSettingEditor.setValue('');
       } else {
         const code = this.rcfiles[idx]['data'];
@@ -561,7 +568,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       }
     });
 
-    const idx = this.rcfiles.findIndex((item: any) => item.path === this.rcfile);
+    const idx = this.rcfiles.findIndex(
+      (item: any) => item.path === this.rcfile,
+    );
     if (idx != -1) {
       const code = this.rcfiles[idx]['data'];
       this.userSettingEditor.setValue(code);
@@ -575,40 +584,48 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   _fetchUserConfigScript() {
     // Fetch user's .zshrc or .bashrc code
-    return globalThis.backendaiclient.userConfig.get().then((resp) => {
-      const script = resp || '';
-      return script;
-    }).catch((err) => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+    return globalThis.backendaiclient.userConfig
+      .get()
+      .then((resp) => {
+        const script = resp || '';
+        return script;
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
   }
 
   async _saveUserConfigScript(fileName: string = this.rcfile) {
     const script = this.userSettingEditor.getValue();
     const idx = this.rcfiles.findIndex((item: any) => item.path === fileName);
     if (this.rcFileTypeSelect.items.length > 0) {
-      const selectedFile = this.rcFileTypeSelect.items.find((item) => item.value === fileName);
+      const selectedFile = this.rcFileTypeSelect.items.find(
+        (item) => item.value === fileName,
+      );
       if (selectedFile) {
         const idx = this.rcFileTypeSelect.items.indexOf(selectedFile);
         this.rcFileTypeSelect.select(idx);
       }
     }
-    if (idx != -1) { // if recent modified file is in rcfiles
-      if (this.rcfiles[idx]['data'] === '') { // if new rcfile
+    if (idx != -1) {
+      // if recent modified file is in rcfiles
+      if (this.rcfiles[idx]['data'] === '') {
+        // if new rcfile
         if (script !== '') {
           // create and save with data and path
-          globalThis.backendaiclient.userConfig.create(
-            script, this.rcfiles[idx]['path'])
+          globalThis.backendaiclient.userConfig
+            .create(script, this.rcfiles[idx]['path'])
             .then((res) => {
               this.spinner.hide();
               this.notification.text = _text('usersettings.DescScriptCreated');
               this.notification.show();
-            }).catch((err) => {
+            })
+            .catch((err) => {
               this.spinner.hide();
               console.log(err);
               if (err && err.message) {
@@ -619,26 +636,33 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             });
         } else {
           this.spinner.hide();
-          this.notification.text = _text('usersettings.DescNewUserConfigFileCreated');
+          this.notification.text = _text(
+            'usersettings.DescNewUserConfigFileCreated',
+          );
           this.notification.show();
           return;
         }
-      } else { // if rcfile already exists
+      } else {
+        // if rcfile already exists
         if (this.rcfiles[idx]['data'] === script) {
           this.notification.text = _text('resourceGroup.NochangesMade');
           this.notification.show();
           return;
         } else if (script === '') {
-          this.notification.text = _text('usersettings.DescLetUserUpdateScriptWithNonEmptyValue');
+          this.notification.text = _text(
+            'usersettings.DescLetUserUpdateScriptWithNonEmptyValue',
+          );
           this.notification.show();
           return;
         } else {
-          await globalThis.backendaiclient.userConfig.update(script, fileName)
+          await globalThis.backendaiclient.userConfig
+            .update(script, fileName)
             .then((res) => {
               this.notification.text = _text('usersettings.DescScriptUpdated');
               this.notification.show();
               this.spinner.hide();
-            }).catch((err) => {
+            })
+            .catch((err) => {
               this.spinner.hide();
               console.log(err);
               if (err && err.message) {
@@ -671,7 +695,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   _updateSelectedRcFileName(fileName: string) {
     if (this.rcFileTypeSelect.items.length > 0) {
-      const selectedFile = this.rcFileTypeSelect.items.find((item) => item.value === fileName);
+      const selectedFile = this.rcFileTypeSelect.items.find(
+        (item) => item.value === fileName,
+      );
       if (selectedFile) {
         const idx = this.rcFileTypeSelect.items.indexOf(selectedFile);
         const code = this.rcfiles[idx]['data'];
@@ -685,7 +711,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * Change current editor code according to select-rcfile-type.
    * */
   _changeCurrentEditorData() {
-    const idx = this.rcfiles.findIndex((item: any) => item.path === this.rcFileTypeSelect.value);
+    const idx = this.rcfiles.findIndex(
+      (item: any) => item.path === this.rcFileTypeSelect.value,
+    );
     const code = this.rcfiles[idx]['data'];
     this.userSettingEditor.setValue(code);
   }
@@ -696,7 +724,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   _toggleRcFileName() {
     this.prevRcfile = this.rcfile;
     this.rcfile = this.rcFileTypeSelect.value;
-    let idx = this.rcfiles.findIndex((item: any) => item.path === this.prevRcfile);
+    let idx = this.rcfiles.findIndex(
+      (item: any) => item.path === this.prevRcfile,
+    );
     let code = idx > -1 ? this.rcfiles[idx]['data'] : '';
     const editorCode = this.userSettingEditor.getValue();
     this.rcFileTypeSelect.layout();
@@ -714,9 +744,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * Toggle delete button disabled when rcfile exists
    */
   _toggleDeleteButton() {
-    const idx = this.rcfiles.findIndex((item: any) => item.path === this.rcfile);
+    const idx = this.rcfiles.findIndex(
+      (item: any) => item.path === this.rcfile,
+    );
     if (idx > -1) {
-      this.deleteRcfileButton.disabled = !(this.rcfiles[idx]?.data && this.rcfiles[idx]?.permission);
+      this.deleteRcfileButton.disabled = !(
+        this.rcfiles[idx]?.data && this.rcfiles[idx]?.permission
+      );
     }
   }
 
@@ -730,20 +764,23 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       path = this.rcfile;
     }
     if (path) {
-      globalThis.backendaiclient.userConfig.delete(path).then((res) => {
-        const message = _text('usersettings.DescScriptDeleted') + path;
-        this.notification.text = message;
-        this.notification.show();
-        this.spinner.hide();
-        this._hideUserConfigScriptDialog();
-      }).catch((err) => {
-        console.log(err);
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        }
-      });
+      globalThis.backendaiclient.userConfig
+        .delete(path)
+        .then((res) => {
+          const message = _text('usersettings.DescScriptDeleted') + path;
+          this.notification.text = message;
+          this.notification.show();
+          this.spinner.hide();
+          this._hideUserConfigScriptDialog();
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err && err.message) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+          }
+        });
     }
     await setTimeout(() => {
       this._editUserConfigScript();
@@ -754,24 +791,28 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * Delete all of created user's config script.
    */
   async _deleteRcFileAll() {
-    const createdRcfiles = this.rcfiles.filter((item: any) => item.permission !== '' && item.data !== '');
+    const createdRcfiles = this.rcfiles.filter(
+      (item: any) => item.permission !== '' && item.data !== '',
+    );
     const rcfileDeletionQueue = createdRcfiles.map((item: any) => {
       const path = item.path;
       return globalThis.backendaiclient.userConfig.delete(path);
     });
-    Promise.all(rcfileDeletionQueue).then( (response) => {
-      const message = _text('usersettings.DescScriptAllDeleted');
-      this.notification.text = message;
-      this.notification.show();
-      this.spinner.hide();
-    }).catch((err) => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+    Promise.all(rcfileDeletionQueue)
+      .then((response) => {
+        const message = _text('usersettings.DescScriptAllDeleted');
+        this.notification.text = message;
+        this.notification.show();
+        this.spinner.hide();
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
     await setTimeout(() => {
       this._editUserConfigScript();
     }, 200);
@@ -802,14 +843,20 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * */
   async _openSSHKeypairRefreshDialog() {
     globalThis.backendaiclient.fetchSSHKeypair().then((resp) => {
-      this.currentSSHPublicKeyInput.value = resp.ssh_public_key ? resp.ssh_public_key : '';
+      this.currentSSHPublicKeyInput.value = resp.ssh_public_key
+        ? resp.ssh_public_key
+        : '';
 
       // disable textarea and copy button when the user has never generated SSH Keypair.
-      this.currentSSHPublicKeyInput.disabled = this.currentSSHPublicKeyInput.value === '' ? true : false;
-      this.copyCurrentSSHPublicKeyButton.disabled = this.currentSSHPublicKeyInput.disabled;
+      this.currentSSHPublicKeyInput.disabled =
+        this.currentSSHPublicKeyInput.value === '' ? true : false;
+      this.copyCurrentSSHPublicKeyButton.disabled =
+        this.currentSSHPublicKeyInput.disabled;
 
       // show information text for SSH generation if the user has never generated SSH Keypair.
-      this.publicSSHkey = this.currentSSHPublicKeyInput.value ? this.currentSSHPublicKeyInput.value : _text('usersettings.NoExistingSSHKeypair');
+      this.publicSSHkey = this.currentSSHPublicKeyInput.value
+        ? this.currentSSHPublicKeyInput.value
+        : _text('usersettings.NoExistingSSHKeypair');
 
       this.sshKeypairManagementDialog.show();
     });
@@ -877,10 +924,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     const sshPrivateKey = this.enteredSSHPrivateKeyInput.value;
     const p = globalThis.backendaiclient.postSSHKeypair({
       pubkey: sshPublicKey,
-      privkey: sshPrivateKey
+      privkey: sshPrivateKey,
     });
     p.then((resp) => {
-      this.notification.text = _text('usersettings.SSHKeypairEnterManuallyFinished');
+      this.notification.text = _text(
+        'usersettings.SSHKeypairEnterManuallyFinished',
+      );
       this.notification.show();
       this._hideSSHKeypairFormDialog();
       this._openSSHKeypairRefreshDialog();
@@ -923,19 +972,27 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * */
   _copySSHKey(keyName: string) {
     if (keyName !== '') {
-      const copyText = (this.shadowRoot?.querySelector(keyName) as any).value;
+      const copyText = (this.shadowRoot?.querySelector(keyName) as TextArea)
+        .value;
       if (copyText.length == 0) {
         this.notification.text = _text('usersettings.NoExistingSSHKeypair');
         this.notification.show();
       } else {
-        if (navigator.clipboard !== undefined) { // for Chrome, Safari
-          navigator.clipboard.writeText(copyText).then( () => {
-            this.notification.text = _text('usersettings.SSHKeyClipboardCopy');
-            this.notification.show();
-          }, (err) => {
-            console.error('Could not copy text: ', err);
-          });
-        } else { // other browsers
+        if (navigator.clipboard !== undefined) {
+          // for Chrome, Safari
+          navigator.clipboard.writeText(copyText).then(
+            () => {
+              this.notification.text = _text(
+                'usersettings.SSHKeyClipboardCopy',
+              );
+              this.notification.show();
+            },
+            (err) => {
+              console.error('Could not copy text: ', err);
+            },
+          );
+        } else {
+          // other browsers
           const tmpInputElement = document.createElement('input');
           tmpInputElement.type = 'text';
           tmpInputElement.value = copyText;
@@ -961,306 +1018,515 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         <div class="horizontal layout wrap setting-item">
           <div class="vertical start start-justified layout setting-desc">
             <div class="title">${_t('usersettings.DesktopNotification')}</div>
-            <div class="description">${_tr('usersettings.DescDesktopNotification')}
+            <div class="description">
+              ${_tr('usersettings.DescDesktopNotification')}
             </div>
           </div>
           <div class="vertical center-justified layout setting-button flex end">
-            <mwc-switch id="desktop-notification-switch" @click="${(e) => this.toggleDesktopNotification(e)}" ?selected="${globalThis.backendaioptions.get('desktop_notification')}"></mwc-switch>
+            <mwc-switch
+              id="desktop-notification-switch"
+              @click="${(e) => this.toggleDesktopNotification(e)}"
+              ?selected="${globalThis.backendaioptions.get(
+                'desktop_notification',
+              )}"
+            ></mwc-switch>
           </div>
         </div>
         <div class="horizontal layout wrap setting-item">
           <div class="vertical start start-justified layout setting-desc">
             <div class="title">${_t('usersettings.UseCompactSidebar')}</div>
-            <div class="description">${_tr('usersettings.DescUseCompactSidebar')}</div>
+            <div class="description">
+              ${_tr('usersettings.DescUseCompactSidebar')}
+            </div>
           </div>
           <div class="vertical center-justified layout setting-button flex end">
-            <mwc-switch id="compact-sidebar-switch" @click="${(e) => this.toggleCompactSidebar(e)}" ?selected="${globalThis.backendaioptions.get('compact_sidebar')}"></mwc-switch>
+            <mwc-switch
+              id="compact-sidebar-switch"
+              @click="${(e) => this.toggleCompactSidebar(e)}"
+              ?selected="${globalThis.backendaioptions.get('compact_sidebar')}"
+            ></mwc-switch>
           </div>
         </div>
         <div class="horizontal layout wrap setting-item">
-          <div class="vertical start start-justified layout setting-select-desc" id="language-setting">
+          <div
+            class="vertical start start-justified layout setting-select-desc"
+            id="language-setting"
+          >
             <div class="title">${_t('usersettings.Language')}</div>
-            <div class="description">${_tr('usersettings.DescLanguage')}
-            </div>
+            <div class="description">${_tr('usersettings.DescLanguage')}</div>
           </div>
           <div class="vertical center-justified layout setting-select flex end">
-            <mwc-select id="ui-language"
-                        required
-                        outlined
-                        @selected="${(e) => this.setUserLanguage(e)}">
-            ${this.supportLanguages.map((item) => html`
-              <mwc-list-item value="${item.code}" ?selected=${globalThis.backendaioptions.get('language') === item.code}>
-                ${item.name}
-              </mwc-list-item>`)}
+            <mwc-select
+              id="ui-language"
+              required
+              outlined
+              @selected="${(e) => this.setUserLanguage(e)}"
+            >
+              ${this.supportLanguages.map(
+                (item) => html`
+                  <mwc-list-item
+                    value="${item.code}"
+                    ?selected=${globalThis.backendaioptions.get('language') ===
+                    item.code}
+                  >
+                    ${item.name}
+                  </mwc-list-item>
+                `,
+              )}
             </mwc-select>
           </div>
         </div>
-        ${globalThis.isElectron ? html`
-        <div class="horizontal layout wrap setting-item">
-          <div class="vertical start start-justified layout setting-desc">
-            <div class="title">${_t('usersettings.KeepLoginSessionInformation')}</div>
-            <div class="description">${_tr('usersettings.DescKeepLoginSessionInformation')}</div>
-          </div>
-          <div class="vertical center-justified layout setting-button flex end">
-            <mwc-switch id="preserve-login-switch" @click="${(e) => this.togglePreserveLogin(e)}" ?selected="${globalThis.backendaioptions.get('preserve_login')}"></mwc-switch>
-          </div>
-        </div>
-        <div class="horizontal layout wrap setting-item">
-          <div class="vertical start start-justified layout setting-text-desc">
-            <div class="title">${_t('usersettings.PreferredSSHPort')}</div>
-            <div class="description">${_tr('usersettings.DescPreferredSSHPort')}</div>
-          </div>
-          <div class="vertical center-justified layout setting-text">
-            <mwc-textfield pattern="[0-9]*" @change="${(e) => this.changePreferredSSHPort(e)}"
-                value="${this.preferredSSHPort}" validationMessage="${_t('credential.validation.NumbersOnly')}" auto-validate maxLength="5"></mwc-textfield>
-          </div>
-        </div>
-        ` : html``}
+        ${globalThis.isElectron
+          ? html`
+              <div class="horizontal layout wrap setting-item">
+                <div class="vertical start start-justified layout setting-desc">
+                  <div class="title">
+                    ${_t('usersettings.KeepLoginSessionInformation')}
+                  </div>
+                  <div class="description">
+                    ${_tr('usersettings.DescKeepLoginSessionInformation')}
+                  </div>
+                </div>
+                <div
+                  class="vertical center-justified layout setting-button flex end"
+                >
+                  <mwc-switch
+                    id="preserve-login-switch"
+                    @click="${(e) => this.togglePreserveLogin(e)}"
+                    ?selected="${globalThis.backendaioptions.get(
+                      'preserve_login',
+                    )}"
+                  ></mwc-switch>
+                </div>
+              </div>
+              <div class="horizontal layout wrap setting-item">
+                <div
+                  class="vertical start start-justified layout setting-text-desc"
+                >
+                  <div class="title">
+                    ${_t('usersettings.PreferredSSHPort')}
+                  </div>
+                  <div class="description">
+                    ${_tr('usersettings.DescPreferredSSHPort')}
+                  </div>
+                </div>
+                <div class="vertical center-justified layout setting-text">
+                  <mwc-textfield
+                    pattern="[0-9]*"
+                    @change="${(e) => this.changePreferredSSHPort(e)}"
+                    value="${this.preferredSSHPort}"
+                    validationMessage="${_t(
+                      'credential.validation.NumbersOnly',
+                    )}"
+                    auto-validate
+                    maxLength="5"
+                  ></mwc-textfield>
+                </div>
+              </div>
+            `
+          : html``}
         <div class="horizontal layout wrap setting-item">
           <div class="vertical start start-justified layout setting-desc">
             <div class="title">${_t('usersettings.SSHKeypairManagement')}</div>
-            <div class="description">${_tr('usersettings.DescSSHKeypairManagement')}</div>
+            <div class="description">
+              ${_tr('usersettings.DescSSHKeypairManagement')}
+            </div>
           </div>
           <div class="vertical center-justified layout flex end">
             <mwc-icon-button
-                id="ssh-keypair-details"
-                icon="more"
-                @click="${this._openSSHKeypairRefreshDialog}">
-            </mwc-icon-button>
+              id="ssh-keypair-details"
+              icon="more"
+              @click="${this._openSSHKeypairRefreshDialog}"
+            ></mwc-icon-button>
           </div>
         </div>
         <div class="horizontal layout wrap setting-item">
           <div class="vertical start start-justified layout setting-desc">
             <div class="title">${_t('usersettings.AutomaticUpdateCheck')}</div>
-            <div class="description">${_tr('usersettings.DescAutomaticUpdateCheck')}</div>
+            <div class="description">
+              ${_tr('usersettings.DescAutomaticUpdateCheck')}
+            </div>
           </div>
           <div class="vertical center-justified layout setting-button flex end">
-            <mwc-switch id="automatic-update-check-switch" @click="${(e) => this.toggleAutomaticUploadCheck(e)}" ?selected="${globalThis.backendaioptions.get('automatic_update_check')}"></mwc-switch>
+            <mwc-switch
+              id="automatic-update-check-switch"
+              @click="${(e) => this.toggleAutomaticUploadCheck(e)}"
+              ?selected="${globalThis.backendaioptions.get(
+                'automatic_update_check',
+              )}"
+            ></mwc-switch>
           </div>
         </div>
         <div class="horizontal layout wrap setting-item" style="display:none;">
           <div class="vertical start start-justified layout setting-desc">
             <div class="title">${_t('usersettings.BetaFeatures')}</div>
-            <div class="description">${_tr('usersettings.DescBetaFeatures')}</div>
+            <div class="description">
+              ${_tr('usersettings.DescBetaFeatures')}
+            </div>
           </div>
           <div class="vertical center-justified layout setting-button flex end">
-            <mwc-switch id="beta-feature-switch" @click="${(e) => this.toggleBetaFeature(e)}" ?selected="${globalThis.backendaioptions.get('beta_feature')}"></mwc-switch>
+            <mwc-switch
+              id="beta-feature-switch"
+              @click="${(e) => this.toggleBetaFeature(e)}"
+              ?selected="${globalThis.backendaioptions.get('beta_feature')}"
+            ></mwc-switch>
           </div>
         </div>
         <div class="horizontal layout wrap setting-item">
           <div class="vertical start start-justified layout setting-desc">
             <div class="title">${_t('usersettings.AutoLogout')}</div>
-            <div class="description">${_tr('usersettings.DescAutoLogout')}
-            </div>
+            <div class="description">${_tr('usersettings.DescAutoLogout')}</div>
           </div>
           <div class="vertical center-justified layout setting-button flex end">
-            <mwc-switch id="auto-logout-switch" @click="${(e) => this.toggleAutoLogout(e)}"
-                        ?selected="${globalThis.backendaioptions.get('auto_logout', false)}"></mwc-switch>
+            <mwc-switch
+              id="auto-logout-switch"
+              @click="${(e) => this.toggleAutoLogout(e)}"
+              ?selected="${globalThis.backendaioptions.get(
+                'auto_logout',
+                false,
+              )}"
+            ></mwc-switch>
           </div>
         </div>
-        ${this.beta_feature_panel ? html`
-          <h3 class="horizontal center layout">
-            <span>${_t('usersettings.BetaFeatures')}</span>
-            <span class="flex"></span>
-          </h3>
-          <div class="description">
-            ${_t('usersettings.DescNoBetaFeatures')}
-          </div>
-      ` : html``}
+        ${this.beta_feature_panel
+          ? html`
+              <h3 class="horizontal center layout">
+                <span>${_t('usersettings.BetaFeatures')}</span>
+                <span class="flex"></span>
+              </h3>
+              <div class="description">
+                ${_t('usersettings.DescNoBetaFeatures')}
+              </div>
+            `
+          : html``}
       </div>
-      ${this.shell_script_edit ? html`
-        <h3 class="horizontal center layout">
-          <span>${_t('usersettings.ShellEnvironments')}</span>
-          <span class="flex"></span>
-        </h3>
-        <div class="horizontal wrap layout">
-          <mwc-button
-            class="shell-button"
-            icon="edit"
-            outlined
-            label="${_t('usersettings.EditBootstrapScript')}"
-            @click="${() => this._launchBootstrapScriptDialog()}"></mwc-button>
-          <mwc-button
-            class="shell-button"
-            icon="edit"
-            outlined
-            label="${_t('usersettings.EditUserConfigScript')}"
-            @click="${() => this._launchUserConfigDialog()}"></mwc-button>
-        </div>
-      <h3 class="horizontal center layout" style="display:none;">
-        <span>${_t('usersettings.PackageInstallation')}</span>
-        <span class="flex"></span>
-      </h3>
-      <div class="horizontal wrap layout" style="display:none;">
-        <div class="horizontal layout wrap setting-item">
-          <div class="vertical center-justified layout setting-desc">
-            <div>TEST1</div>
-            <div class="description">This is description.
+      ${this.shell_script_edit
+        ? html`
+            <h3 class="horizontal center layout">
+              <span>${_t('usersettings.ShellEnvironments')}</span>
+              <span class="flex"></span>
+            </h3>
+            <div class="horizontal wrap layout">
+              <mwc-button
+                class="shell-button"
+                icon="edit"
+                outlined
+                label="${_t('usersettings.EditBootstrapScript')}"
+                @click="${() => this._launchBootstrapScriptDialog()}"
+              ></mwc-button>
+              <mwc-button
+                class="shell-button"
+                icon="edit"
+                outlined
+                label="${_t('usersettings.EditUserConfigScript')}"
+                @click="${() => this._launchUserConfigDialog()}"
+              ></mwc-button>
             </div>
-          </div>
-          <div class="vertical center-justified layout setting-button flex end">
-            <mwc-switch id="register-new-image-switch" disabled></mwc-switch>
-          </div>
-        </div>
-      </div>` : html``}
-      <backend-ai-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
+            <h3 class="horizontal center layout" style="display:none;">
+              <span>${_t('usersettings.PackageInstallation')}</span>
+              <span class="flex"></span>
+            </h3>
+            <div class="horizontal wrap layout" style="display:none;">
+              <div class="horizontal layout wrap setting-item">
+                <div class="vertical center-justified layout setting-desc">
+                  <div>TEST1</div>
+                  <div class="description">This is description.</div>
+                </div>
+                <div
+                  class="vertical center-justified layout setting-button flex end"
+                >
+                  <mwc-switch
+                    id="register-new-image-switch"
+                    disabled
+                  ></mwc-switch>
+                </div>
+              </div>
+            </div>
+          `
+        : html``}
+      <backend-ai-dialog
+        id="bootstrap-dialog"
+        fixed
+        backdrop
+        scrollable
+        blockScrolling
+        persistent
+      >
         <span slot="title">${_t('usersettings.EditBootstrapScript')}</span>
         <div slot="content" class="vertical layout terminal-area">
-          <div style="margin-bottom:1em">${_t('usersettings.BootstrapScriptDescription')}</div>
+          <div style="margin-bottom:1em">
+            ${_t('usersettings.BootstrapScriptDescription')}
+          </div>
           <div style="background-color:#272823;height:100%;">
-            <lablup-codemirror id="bootstrap-editor" mode="shell"></lablup-codemirror>
+            <lablup-codemirror
+              id="bootstrap-editor"
+              mode="shell"
+            ></lablup-codemirror>
           </div>
         </div>
         <div slot="footer" class="end-justified layout flex horizontal">
-          <mwc-button id="discard-code" label="${_t('button.Cancel')}" @click="${() => this._hideBootstrapScriptDialog()}"></mwc-button>
-          <mwc-button unelevated id="save-code" label="${_t('button.Save')}" @click="${() => this._saveBootstrapScript()}"></mwc-button>
-          <mwc-button unelevated id="save-code-and-close" label="${_t('button.SaveAndClose')}" @click="${() => this._saveBootstrapScriptAndCloseDialog()}"></mwc-button>
+          <mwc-button
+            id="discard-code"
+            label="${_t('button.Cancel')}"
+            @click="${() => this._hideBootstrapScriptDialog()}"
+          ></mwc-button>
+          <mwc-button
+            unelevated
+            id="save-code"
+            label="${_t('button.Save')}"
+            @click="${() => this._saveBootstrapScript()}"
+          ></mwc-button>
+          <mwc-button
+            unelevated
+            id="save-code-and-close"
+            label="${_t('button.SaveAndClose')}"
+            @click="${() => this._saveBootstrapScriptAndCloseDialog()}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent closeWithConfirmation>
-        <span slot="title">${_t('usersettings.Edit_ShellScriptTitle_1')} ${this.rcfile} ${_t('usersettings.Edit_ShellScriptTitle_2')}</span>
+      <backend-ai-dialog
+        id="userconfig-dialog"
+        fixed
+        backdrop
+        scrollable
+        blockScrolling
+        persistent
+        closeWithConfirmation
+      >
+        <span slot="title">
+          ${_t('usersettings.Edit_ShellScriptTitle_1')} ${this.rcfile}
+          ${_t('usersettings.Edit_ShellScriptTitle_2')}
+        </span>
         <div slot="content" class="vertical layout terminal-area">
-          <mwc-select id="select-rcfile-type"
-                  label="${_t('usersettings.ConfigFilename')}"
-                  required
-                  outlined
-                  fixedMenuPosition
-                  validationMessage="${_t('credential.validation.PleaseSelectOption')}"
-                  @selected="${() => this._toggleRcFileName()}"
-                  helper=${_t('dialog.warning.WillBeAppliedToNewSessions')}>
-            ${this.rcfiles.map((item: any) => html`
-              <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
-                ${item.path}
-              </mwc-list-item>`
-  )}
+          <mwc-select
+            id="select-rcfile-type"
+            label="${_t('usersettings.ConfigFilename')}"
+            required
+            outlined
+            fixedMenuPosition
+            validationMessage="${_t(
+              'credential.validation.PleaseSelectOption',
+            )}"
+            @selected="${() => this._toggleRcFileName()}"
+            helper=${_t('dialog.warning.WillBeAppliedToNewSessions')}
+          >
+            ${this.rcfiles.map(
+              (item: any) => html`
+                <mwc-list-item
+                  id="${item.path}"
+                  value="${item.path}"
+                  ?selected=${this.rcfile === item.path}
+                >
+                  ${item.path}
+                </mwc-list-item>
+              `,
+            )}
           </mwc-select>
           <div style="background-color:#272823;height:100%;">
-            <lablup-codemirror id="usersetting-editor" mode="shell"></lablup-codemirror>
+            <lablup-codemirror
+              id="usersetting-editor"
+              mode="shell"
+            ></lablup-codemirror>
           </div>
         </div>
         <div slot="footer" class="end-justified layout flex horizontal">
-          <mwc-button id="discard-code" label="${_t('button.Cancel')}" @click="${() => this._hideUserConfigScriptDialog()}"></mwc-button>
-          <mwc-button id="delete-rcfile" label="${_t('button.Delete')}" @click="${() => this._deleteRcFile()}"></mwc-button>
-          <mwc-button unelevated id="save-code" label="${_t('button.Save')}" @click="${() => this._saveUserConfigScript()}"></mwc-button>
-          <mwc-button unelevated id="save-code-and-close" label="${_t('button.SaveAndClose')}" @click="${() => this._saveUserConfigScriptAndCloseDialog()}"></mwc-button>
+          <mwc-button
+            id="discard-code"
+            label="${_t('button.Cancel')}"
+            @click="${() => this._hideUserConfigScriptDialog()}"
+          ></mwc-button>
+          <mwc-button
+            id="delete-rcfile"
+            label="${_t('button.Delete')}"
+            @click="${() => this._deleteRcFile()}"
+          ></mwc-button>
+          <mwc-button
+            unelevated
+            id="save-code"
+            label="${_t('button.Save')}"
+            @click="${() => this._saveUserConfigScript()}"
+          ></mwc-button>
+          <mwc-button
+            unelevated
+            id="save-code-and-close"
+            label="${_t('button.SaveAndClose')}"
+            @click="${() => this._saveUserConfigScriptAndCloseDialog()}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="change-current-editor-dialog" noclosebutton fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
+      <backend-ai-dialog
+        id="change-current-editor-dialog"
+        noclosebutton
+        fixed
+        backdrop
+        scrollable
+        blockScrolling
+        persistent
+        style="border-bottom:none;"
+      >
         <div slot="title">
-          ${_t('usersettings.DialogDiscardOrSave', {File: () => this.prevRcfile})}
+          ${_t('usersettings.DialogDiscardOrSave', {
+            File: () => this.prevRcfile,
+          })}
         </div>
-        <div slot="content">
-          ${_t('usersettings.DialogNoSaveNoPreserve')}
-        </div>
-        <div slot="footer" style="border-top:none;" class="end-justified layout flex horizontal">
+        <div slot="content">${_t('usersettings.DialogNoSaveNoPreserve')}</div>
+        <div
+          slot="footer"
+          style="border-top:none;"
+          class="end-justified layout flex horizontal"
+        >
           <mwc-button
-              id="cancel-editor"
-              label="${_t('button.Discard')}"
-              @click="${() => this._discardCurrentEditorChange()}"></mwc-button>
+            id="cancel-editor"
+            label="${_t('button.Discard')}"
+            @click="${() => this._discardCurrentEditorChange()}"
+          ></mwc-button>
           <mwc-button
-              unelevated
-              id="save-editor-data"
-              label="${_t('button.Save')}"
-              @click="${() => this._saveCurrentEditorChange()}"></mwc-button>
+            unelevated
+            id="save-editor-data"
+            label="${_t('button.Save')}"
+            @click="${() => this._saveCurrentEditorChange()}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="ssh-keypair-management-dialog" fixed backdrop persistent>
+      <backend-ai-dialog
+        id="ssh-keypair-management-dialog"
+        fixed
+        backdrop
+        persistent
+      >
         <span slot="title">${_t('usersettings.SSHKeypairManagement')}</span>
         <div slot="content" style="max-width:500px">
-          <span slot="title"> ${_t('usersettings.CurrentSSHPublicKey')}</span>
+          <span slot="title">${_t('usersettings.CurrentSSHPublicKey')}</span>
           <mwc-textarea
-              outlined
-              readonly
-              class="ssh-keypair"
-              id="current-ssh-public-key"
-              style="width:430px; height:270px;"
-              value="${this.publicSSHkey}"></mwc-textarea>
+            outlined
+            readonly
+            class="ssh-keypair"
+            id="current-ssh-public-key"
+            style="width:430px; height:270px;"
+            value="${this.publicSSHkey}"
+          ></mwc-textarea>
           <mwc-icon-button
-              id="copy-current-ssh-public-key-button"
-              icon="content_copy"
-              @click="${() => this._copySSHKey('#current-ssh-public-key')}"></mwc-icon-button>
+            id="copy-current-ssh-public-key-button"
+            icon="content_copy"
+            @click="${() => this._copySSHKey('#current-ssh-public-key')}"
+          ></mwc-icon-button>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
-              label="${_t('button.Close')}"
-              @click="${this._hideSSHKeypairDialog}"></mwc-button>
+            label="${_t('button.Close')}"
+            @click="${this._hideSSHKeypairDialog}"
+          ></mwc-button>
           <mwc-button
-              unelevated
-              label="${_t('button.Generate')}"
-              @click="${this._refreshSSHKeypair}"></mwc-button>
+            unelevated
+            label="${_t('button.Generate')}"
+            @click="${this._refreshSSHKeypair}"
+          ></mwc-button>
           <mwc-button
-              unelevated
-              label="${_t('button.EnterManually')}"
-              @click="${() => {
-                this._initManualSSHKeypairFormDialog();
-                this._openSSHKeypairFormDialog();
-              }}"></mwc-button>
+            unelevated
+            label="${_t('button.EnterManually')}"
+            @click="${() => {
+              this._initManualSSHKeypairFormDialog();
+              this._openSSHKeypairFormDialog();
+            }}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="generate-ssh-keypair-dialog" fixed persistent noclosebutton>
+      <backend-ai-dialog
+        id="generate-ssh-keypair-dialog"
+        fixed
+        persistent
+        noclosebutton
+      >
         <span slot="title">${_t('usersettings.SSHKeypairGeneration')}</span>
         <div slot="content" style="max-width:500px;">
           <div class="vertical layout" style="display:inline-block;">
             <span slot="title">${_t('usersettings.PublicKey')}</span>
             <div class="horizontal layout flex">
-              <mwc-textarea class="ssh-keypair" id="ssh-public-key" outlined readonly></mwc-textarea>
+              <mwc-textarea
+                class="ssh-keypair"
+                id="ssh-public-key"
+                outlined
+                readonly
+              ></mwc-textarea>
               <mwc-icon-button
-              icon="content_copy"
-              @click="${() => this._copySSHKey('#ssh-public-key')}"></mwc-icon-button>
+                icon="content_copy"
+                @click="${() => this._copySSHKey('#ssh-public-key')}"
+              ></mwc-icon-button>
             </div>
             <span slot="title">${_t('usersettings.PrivateKey')}</span>
             <div class="horizontal layout flex">
-              <mwc-textarea class="ssh-keypair" id="ssh-private-key" outlined readonly></mwc-textarea>
+              <mwc-textarea
+                class="ssh-keypair"
+                id="ssh-private-key"
+                outlined
+                readonly
+              ></mwc-textarea>
               <mwc-icon-button
-                  icon="content_copy"
-                  @click="${() => this._copySSHKey('#ssh-private-key')}"></mwc-icon-button>
+                icon="content_copy"
+                @click="${() => this._copySSHKey('#ssh-private-key')}"
+              ></mwc-icon-button>
             </div>
-            <div style="color:crimson">${_t('usersettings.SSHKeypairGenerationWarning')}</div>
+            <div style="color:crimson">
+              ${_t('usersettings.SSHKeypairGenerationWarning')}
+            </div>
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
-             unelevated
-             label="${_t('button.Close')}"
-             @click="${this._openSSHKeypairClearDialog}"></mwc-button>
+            unelevated
+            label="${_t('button.Close')}"
+            @click="${this._openSSHKeypairClearDialog}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="clear-ssh-keypair-dialog" fixed persistent>
         <span slot="title">${_t('usersettings.ClearSSHKeypairInput')}</span>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
-              outlined
-              label="${_t('button.No')}"
-              @click="${this._hideSSHKeypairClearDialog}"></mwc-button>
+            outlined
+            label="${_t('button.No')}"
+            @click="${this._hideSSHKeypairClearDialog}"
+          ></mwc-button>
           <mwc-button
-              unelevated
-              label="${_t('button.Yes')}"
-              @click="${this._clearCurrentSSHKeypair}"></mwc-button>
+            unelevated
+            label="${_t('button.Yes')}"
+            @click="${this._clearCurrentSSHKeypair}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="ssh-keypair-form-dialog" fixed persistent>
-      <span slot="title">${_t('usersettings.SSHKeypairEnterManually')}</span>
+        <span slot="title">${_t('usersettings.SSHKeypairEnterManually')}</span>
         <div slot="content" style="max-width:500px;">
           <div class="vertical layout" style="display:inline-block;">
             <span slot="title">${_t('usersettings.PublicKey')}</span>
             <div class="horizontal layout flex">
-              <mwc-textarea class="ssh-keypair" id="entered-ssh-public-key" outlined></mwc-textarea>
+              <mwc-textarea
+                class="ssh-keypair"
+                id="entered-ssh-public-key"
+                outlined
+              ></mwc-textarea>
             </div>
             <span slot="title">${_t('usersettings.PrivateKey')}</span>
             <div class="horizontal layout flex">
-              <mwc-textarea class="ssh-keypair" id="entered-ssh-private-key" outlined></mwc-textarea>
+              <mwc-textarea
+                class="ssh-keypair"
+                id="entered-ssh-private-key"
+                outlined
+              ></mwc-textarea>
             </div>
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
-              outlined
-              label="${_t('button.Cancel')}"
-              @click="${this._hideSSHKeypairFormDialog}"></mwc-button>
+            outlined
+            label="${_t('button.Cancel')}"
+            @click="${this._hideSSHKeypairFormDialog}"
+          ></mwc-button>
           <mwc-button
-             unelevated
-             label="${_t('button.Save')}"
-             @click="${this._saveSSHKeypairFormDialog}"></mwc-button>
+            unelevated
+            label="${_t('button.Save')}"
+            @click="${this._saveSSHKeypairFormDialog}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

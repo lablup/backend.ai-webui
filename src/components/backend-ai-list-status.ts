@@ -2,16 +2,15 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-
-import {BackendAIPage} from './backend-ai-page';
-
-import {BackendAiStyles} from './backend-ai-general-styles';
-import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-
+import {
+  IronFlex,
+  IronFlexAlignment,
+} from '../plastics/layout/iron-flex-layout-classes';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
 import './lablup-loading-dots';
+import { css, CSSResultGroup, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Backend AI List Status
@@ -27,19 +26,19 @@ import './lablup-loading-dots';
  */
 
 /**
-* Status of the list component
-* - loading: loading status before completing data fetch. show `lablup-loading-dots`
-* - no-data: in case the result of fetch is an empty value. show message.
-*/
+ * Status of the list component
+ * - loading: loading status before completing data fetch. show `lablup-loading-dots`
+ * - no-data: in case the result of fetch is an empty value. show message.
+ */
 type StatusCondition = 'loading' | 'no-data';
 
 @customElement('backend-ai-list-status')
 export default class BackendAIListStatus extends BackendAIPage {
-  @property({type: Object}) listStatus = Object();
-  @property({type: String}) message = 'There is nothing to display';
-  @property({type: String}) statusCondition: StatusCondition = 'loading';
-  @property({type: Object}) dots = Object();
-  @property({type: Boolean, reflect: true}) active = false;
+  @property({ type: Object }) listStatus = Object();
+  @property({ type: String }) message = 'There is nothing to display';
+  @property({ type: String }) statusCondition: StatusCondition = 'loading';
+  @property({ type: Object }) dots = Object();
+  @property({ type: Boolean, reflect: true }) active = false;
 
   constructor() {
     super();
@@ -58,20 +57,25 @@ export default class BackendAIListStatus extends BackendAIPage {
           left: 50%;
           transform: translate(-50%, -50%);
         }
-      `];
+      `,
+    ];
   }
 
   render() {
     // language=HTML
     return html`
       <div class="vertical layout center flex" id="status">
-        ${this.statusCondition === 'loading' ? html`
-          <lablup-loading-dots id="loading-dots"></lablup-loading-dots>
-        ` : html`
-          ${this.statusCondition === 'no-data' ? html`
-            <span class="list-message">${this.message}</span>
-          ` : html``}
-        `}
+        ${this.statusCondition === 'loading'
+          ? html`
+              <lablup-loading-dots id="loading-dots"></lablup-loading-dots>
+            `
+          : html`
+              ${this.statusCondition === 'no-data'
+                ? html`
+                    <span class="list-message">${this.message}</span>
+                  `
+                : html``}
+            `}
       </div>
     `;
   }
@@ -119,4 +123,4 @@ declare global {
   }
 }
 
-export {StatusCondition};
+export { StatusCondition };

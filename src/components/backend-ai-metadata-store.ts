@@ -2,11 +2,9 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-
-import {BackendAIPage} from './backend-ai-page';
-
+import { BackendAIPage } from './backend-ai-page';
+import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Backend.AI Metadata Reader / Storage
@@ -16,17 +14,17 @@ import {BackendAIPage} from './backend-ai-page';
  */
 @customElement('backend-ai-metadata-store')
 export default class BackendAIMetadataStore extends BackendAIPage {
-  @property({type: Object}) options = Object();
-  @property({type: Object}) imageInfo = Object();
-  @property({type: Object}) imageNames = Object();
-  @property({type: Object}) imageTagAlias = Object();
-  @property({type: Object}) imageTagReplace = Object();
-  @property({type: Object}) kernel_labels = Object();
-  @property({type: Object}) aliases = Object();
-  @property({type: Object}) tags = Object();
-  @property({type: Object}) icons = Object();
-  @property({type: Object}) deviceInfo = Object();
-  @property({type: Array}) deviceNames: string[] = [];
+  @property({ type: Object }) options = Object();
+  @property({ type: Object }) imageInfo = Object();
+  @property({ type: Object }) imageNames = Object();
+  @property({ type: Object }) imageTagAlias = Object();
+  @property({ type: Object }) imageTagReplace = Object();
+  @property({ type: Object }) kernel_labels = Object();
+  @property({ type: Object }) aliases = Object();
+  @property({ type: Object }) tags = Object();
+  @property({ type: Object }) icons = Object();
+  @property({ type: Object }) deviceInfo = Object();
+  @property({ type: Array }) deviceNames: string[] = [];
 
   constructor() {
     super();
@@ -34,14 +32,12 @@ export default class BackendAIMetadataStore extends BackendAIPage {
     this.readDeviceMetadata();
   }
 
-  firstUpdated() {
-  }
+  firstUpdated() {}
 
   async readImageMetadata() {
-    return fetch('resources/image_metadata.json').then(
-      (response) => response.json()
-    ).then(
-      (json) => {
+    return fetch('resources/image_metadata.json')
+      .then((response) => response.json())
+      .then((json) => {
         this.imageInfo = json.imageInfo;
         for (const key in this.imageInfo) {
           if ({}.hasOwnProperty.call(this.imageInfo, key)) {
@@ -71,33 +67,34 @@ export default class BackendAIMetadataStore extends BackendAIPage {
         }
         this.imageTagAlias = json.tagAlias;
         this.imageTagReplace = json.tagReplace;
-      }
-    ).then(
-      () => {
-        const event: CustomEvent = new CustomEvent('backend-ai-metadata-image-loaded', {'detail': ''});
+      })
+      .then(() => {
+        const event: CustomEvent = new CustomEvent(
+          'backend-ai-metadata-image-loaded',
+          { detail: '' },
+        );
         document.dispatchEvent(event);
-      }
-    );
+      });
   }
 
   readDeviceMetadata() {
-    fetch('resources/device_metadata.json').then(
-      (response) => response.json()
-    ).then(
-      (json) => {
+    fetch('resources/device_metadata.json')
+      .then((response) => response.json())
+      .then((json) => {
         this.deviceInfo = json.deviceInfo;
         for (const key in this.deviceInfo) {
           if ({}.hasOwnProperty.call(this.deviceInfo, key)) {
             this.deviceNames.push(key);
           }
         }
-      }
-    ).then(
-      () => {
-        const event: CustomEvent = new CustomEvent('backend-ai-metadata-device-loaded', {'detail': ''});
+      })
+      .then(() => {
+        const event: CustomEvent = new CustomEvent(
+          'backend-ai-metadata-device-loaded',
+          { detail: '' },
+        );
         document.dispatchEvent(event);
-      }
-    );
+      });
   }
 
   isJson(str) {
@@ -111,8 +108,7 @@ export default class BackendAIMetadataStore extends BackendAIPage {
 
   render() {
     // language=HTML
-    return html`
-    `;
+    return html``;
   }
 }
 

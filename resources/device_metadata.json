@@ -58,8 +58,8 @@
     "tpu.device": {
       "slot_name": "tpu.device",
       "human_readable_name": "TPU",
-      "description": "Google TPU enabled",
-      "display_unit": "TPU",
+      "description": "TPU device",
+      "display_unit": "GPU",
       "number_format": {
         "binary": false,
         "round_length": 0
@@ -69,7 +69,7 @@
     "ipu.device": {
       "slot_name": "ipu.device",
       "human_readable_name": "IPU",
-      "description": "GraphCore IPU",
+      "description": "IPU device",
       "display_unit": "IPU",
       "number_format": {
         "binary": false,
@@ -77,10 +77,10 @@
       },
       "display_icon": "ipu"
     },
-    "atom.device": {
+    "atom": {
       "slot_name": "atom.device",
-      "description": "Rebellions ATOM enabled",
-      "human_readable_name": "ATOM",
+      "description": "ATOM",
+      "human_readable_name": "ATOM Device",
       "display_unit": "ATOM",
       "number_format": {
         "binary": false,
@@ -88,27 +88,16 @@
       },
       "display_icon": "rebel"
     },
-    "warboy.device": {
+    "warboy": {
       "slot_name": "warboy.device",
-      "description": "Furiosa Warboy enabled",
-      "human_readable_name": "Warboy",
-      "display_unit": "WARBOY",
+      "description": "Furiosa Warboy",
+      "human_readable_name": "Warboy Device",
+      "display_unit": "Warboy",
       "number_format": {
         "binary": false,
         "round_length": 0
       },
-      "display_icon": "ipu"
-    },
-    "sapeon.device": {
-      "slot_name": "sapeon.device",
-      "description": "Sapeon",
-      "human_readable_name": "Sapeon",
-      "display_unit": "SAPEON",
-      "number_format": {
-        "binary": false,
-        "round_length": 0
-      },
-      "display_icon": "ipu"
+      "display_icon": "furiosa"
     }
   }
 }

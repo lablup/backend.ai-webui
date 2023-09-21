@@ -37,7 +37,7 @@ dep:
 	if [ ! -f "./config.toml" ]; then \
 		cp config.toml.sample config.toml; \
 	fi
-	if [ ! -d "./build/rollup/" ];then \
+	if [ ! -d "./build/rollup/" ] || ! grep -q 'es6://static/js/main' react/build/index.html; then \
 		make compile; \
 		make compile_wsproxy; \
 	fi
@@ -48,13 +48,17 @@ dep:
 	cp -Rp build/rollup build/electron-app/app
 	cp -Rp build/rollup/resources build/electron-app
 	cp -Rp build/rollup/manifest build/electron-app
-	sed -i -E 's/\.\/dist\/components\/backend-ai-webui.js/es6:\/\dist\/components\/backend-ai-webui.js/g' build/electron-app/app/index.html
+	BUILD_TARGET=electron npm run build:react-only
+	cp -Rp react/build/* build/electron-app/app/
+	sed -i -E 's/\.\/dist\/components\/backend-ai-webui.js/es6:\/\/dist\/components\/backend-ai-webui.js/g' build/electron-app/app/index.html
 	mkdir -p ./build/electron-app/app/wsproxy
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
 	mkdir -p ./build/electron-app/node_modules/markty
 	mkdir -p ./build/electron-app/node_modules/markty-toml
+	mkdir -p ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme
 	cp -Rp ./node_modules/markty ./build/electron-app/node_modules
 	cp -Rp ./node_modules/markty-toml ./build/electron-app/node_modules
+	cp -Rp ./node_modules/@vanillawc/wc-codemirror/theme/monokai.css ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme/monokai.css
 	cp ./preload.js ./build/electron-app/preload.js
 web:
 	if [ ! -d "./build/rollup/" ];then \
@@ -81,7 +85,7 @@ endif  # BAI_APP_SIGN_KEYCHAIN_PASSWORD
 	security list-keychain -d user -s login.keychain
 	security list-keychain -d user -s "${KEYCHAIN_NAME}"
 	security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" "${KEYCHAIN_NAME}"
-	$(eval BAI_APP_SIGN_KEYCHAIN := ${KEYCHAIN_NAME}) 
+	$(eval BAI_APP_SIGN_KEYCHAIN := ${KEYCHAIN_NAME})
 	echo Keychain ${KEYCHAIN_NAME} created for build
 endif  # BAI_APP_SIGN_KEYCHAIN_B64
 endif  # BAI_APP_SIGN_KEYCHAIN

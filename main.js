@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
+const {app, Menu, shell, BrowserWindow, protocol, session, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
 function isDev() {
   return process.argv[2] == '--dev';
@@ -35,6 +35,7 @@ if (process.env.serveMode == 'dev') {
   electronPath = npjoin(__dirname);
   mainIndex = 'app/index.html';
 }
+
 const windowWidth = 1280;
 const windowHeight = 970;
 
@@ -85,7 +86,7 @@ app.once('ready', function() {
                 protocol: 'file',
                 slashes: true
               }));
-              mainContent.executeJavaScript(`window.__local_proxy = '${proxyUrl}'`);
+              mainContent.executeJavaScript(`window.__local_proxy = {}; window.__local_proxy.url = '${proxyUrl}';`);
               console.log('Re-connected to proxy: ' + proxyUrl);
             }
           },
@@ -100,7 +101,7 @@ app.once('ready', function() {
             type: 'separator'
           },
           {
-            label: 'Hide Backend.AI Console',
+            label: 'Hide Backend.AI Desktop',
             accelerator: 'Command+H',
             selector: 'hide:'
           },
@@ -320,7 +321,7 @@ app.once('ready', function() {
 function createWindow() {
   // Create the browser window.
   devtools = null;
-
+  setSameSitePolicy();
   mainWindow = new BrowserWindow({
     width: windowWidth,
     height: windowHeight,
@@ -333,12 +334,13 @@ function createWindow() {
       preload: path.join(electronPath, 'preload.js'),
       devTools: (debugMode === true),
       worldSafeExecuteJavaScript: false,
-      contextIsolation: false
+      contextIsolation: true
     }
   });
   // and load the index.html of the app.
   if (process.env.liveDebugMode === true) {
     // Load HTML into new Window (dynamic serving for develop)
+    console.log("Running on live debug mode...");
     mainWindow.loadURL(url.format({
       pathname: '127.0.0.1:9081',
       protocol: 'http',
@@ -347,6 +349,7 @@ function createWindow() {
   } else {
     // Load HTML into new Window (file-based serving)
     nfs.readFile(path.join(es6Path, 'config.toml'), 'utf-8', (err, data) => {
+      console.log("Running on build-resource debug mode...");
       if (err) {
         console.log('No configuration file found.');
         return;
@@ -410,45 +413,63 @@ function createWindow() {
     devtools = null;
   });
 
-  mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, mainWindow);
+  mainWindow.webContents.setWindowOpenHandler((details) => {
+    return newPopupWindow(details);
   });
+
 }
 
-function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures) {
-  event.preventDefault();
-  Object.assign(options, {
+function newPopupWindow(details) {
+  // let disposition = details.disposition;
+  let options = {
     frame: true,
     show: false,
     backgroundColor: '#EFEFEF',
     // parent: win,
-    titleBarStyle: '',
+    titleBarStyle: 'default',
     width: windowWidth,
     height: windowHeight,
-    closable: true
-  });
+    closable: true,
+    webPreferences: {}
+  };
   Object.assign(options.webPreferences, {
-    preload: '',
-    isBrowserView: false,
     javascript: true
   });
-  if (frameName === 'modal') {
+  if (details.frameName === 'modal') {
     options.modal = true;
   }
-  event.newGuest = new BrowserWindow(options);
-  event.newGuest.once('ready-to-show', () => {
-    event.newGuest.show();
+  newGuest = new BrowserWindow(options);
+  newGuest.once('ready-to-show', () => {
+    newGuest.show();
   });
-  event.newGuest.loadURL(url);
-  event.newGuest.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures);
+  newGuest.loadURL(details.url);
+  if (debugMode === true) {
+    devtools = new BrowserWindow();
+    newGuest.webContents.setDevToolsWebContents(devtools.webContents);
+    newGuest.webContents.openDevTools({mode: 'detach'});
+  }
+  newGuest.webContents.setWindowOpenHandler((details) => {
+    return newPopupWindow(details);
   });
-  event.newGuest.on('close', (e) => {
+  newGuest.on('close', (e) => {
     const c = BrowserWindow.getFocusedWindow();
     if (c !== null) {
       c.destroy();
     }
   });
+  return { action: 'deny'};
+}
+
+function setSameSitePolicy(){
+	const filter = { urls: ["http://*/*", "https://*/*"] };
+	session.defaultSession.webRequest.onHeadersReceived(filter, (details, callback) => {
+		const cookies = (details.responseHeaders['Set-Cookie'] || []);
+    cookies.map(cookie => cookie.replace('SameSite=Lax', 'SameSite=None')); // Override SameSite Lax option to None for App mode cookie.
+		if(cookies.length > 0 && !cookies.includes('SameSite')) { // Add SameSite policy if not present.
+      details.responseHeaders['Set-Cookie'] = cookies + '; SameSite=None; Secure';
+    }
+    callback({ cancel: false, responseHeaders: details.responseHeaders });
+	});
 }
 
 app.on('ready', () => {

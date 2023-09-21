@@ -21,14 +21,14 @@ interface Window {
 }
 
 type requestInfo = {
-  method: string,
-  headers: Headers,
-  mode?: RequestMode | undefined,
-  body?: any | undefined,
-  cache?: RequestCache | undefined,
-  uri: string,
-  credentials?: RequestCredentials | undefined,
-  signal?:AbortController["signal"] | undefined,
+  method: string;
+  headers: Headers;
+  mode?: RequestMode | undefined;
+  body?: any | undefined;
+  cache?: RequestCache | undefined;
+  uri: string;
+  credentials?: RequestCredentials | undefined;
+  signal?: AbortController['signal'] | undefined;
 };
 
 class ClientConfig {
@@ -53,7 +53,12 @@ class ClientConfig {
    * @param {string} endpoint  - endpoint of Backend.AI manager
    * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires webserver.
    */
-   constructor(accessKey: string, secretKey: string, endpoint: string, connectionMode: string = 'API') {
+  constructor(
+    accessKey: string,
+    secretKey: string,
+    endpoint: string,
+    connectionMode: string = 'API',
+  ) {
     // default configs.
     this._apiVersionMajor = '4';
     this._apiVersion = 'v4.20190615'; // For compatibility with 19.03 / 1.4
@@ -62,7 +67,8 @@ class ClientConfig {
       endpoint = 'https://api.backend.ai';
     this._endpoint = endpoint;
     this._endpointHost = endpoint.replace(/^[^:]+:\/\//, '');
-    if (connectionMode === 'API') { // API mode
+    if (connectionMode === 'API') {
+      // API mode
       // dynamic configs
       if (accessKey === undefined || accessKey === null)
         throw 'You must set accessKey! (either as argument or environment variable)';
@@ -72,7 +78,8 @@ class ClientConfig {
       this._secretKey = secretKey;
       this._userId = '';
       this._password = '';
-    } else { // Session mode
+    } else {
+      // Session mode
       // dynamic configs
       if (accessKey === undefined || accessKey === null)
         throw 'You must set user id! (either as argument or environment variable)';
@@ -142,7 +149,7 @@ class ClientConfig {
     return new this(
       process.env.BACKEND_ACCESS_KEY,
       process.env.BACKEND_SECRET_KEY,
-      process.env.BACKEND_ENDPOINT
+      process.env.BACKEND_ENDPOINT,
     );
   }
 }
@@ -280,7 +287,14 @@ class Client {
    * @param {number} retry - an integer to retry this request
    * @param {Object} opts - Options
    */
-  async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout: number = 0, retry: number = 0, opts ={}) {
+  async _wrapWithPromise(
+    rqst,
+    rawFile = false,
+    signal = null,
+    timeout: number = 0,
+    retry: number = 0,
+    opts = {},
+  ) {
     let errorType = Client.ERR_REQUEST;
     let errorTitle = '';
     let errorMsg;
@@ -290,33 +304,40 @@ class Client {
       if (rqst.method == 'GET') {
         rqst.body = undefined;
       }
-      if (this._config.connectionMode === 'SESSION') { // Force request to use Public when session mode is enabled
+      if (this._config.connectionMode === 'SESSION') {
+        // Force request to use Public when session mode is enabled
         rqst.credentials = 'include';
         rqst.mode = 'cors';
       }
       if (signal !== null) {
         rqst.signal = signal;
-      } else { // Use client-wide fetch timeout.
+      } else {
+        // Use client-wide fetch timeout.
         let controller = new AbortController();
         rqst.signal = controller.signal;
-        requestTimer = setTimeout(() => {
-          errorType = Client.ERR_TIMEOUT;
-          controller.abort();
-        }, (timeout === 0 ? this.requestTimeout : timeout));
+        requestTimer = setTimeout(
+          () => {
+            errorType = Client.ERR_TIMEOUT;
+            controller.abort();
+          },
+          timeout === 0 ? this.requestTimeout : timeout,
+        );
       }
       resp = await fetch(rqst.uri, rqst);
-      if (typeof requestTimer !== "undefined") {
+      if (typeof requestTimer !== 'undefined') {
         clearTimeout(requestTimer);
       }
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
       if (rawFile === false && contentType === null) {
         if (resp.blob === undefined)
-          body = await resp.buffer();  // for node-fetch
-        else
-          body = await resp.blob();
-      } else if (rawFile === false && (contentType.startsWith('application/json') ||
-          contentType.startsWith('application/problem+json'))) {
+          body = await resp.buffer(); // for node-fetch
+        else body = await resp.blob();
+      } else if (
+        rawFile === false &&
+        (contentType.startsWith('application/json') ||
+          contentType.startsWith('application/problem+json'))
+      ) {
         body = await resp.json(); // Formatted error message from manager
         errorType = body.type;
         errorTitle = body.title;
@@ -324,7 +345,7 @@ class Client {
         body = await resp.text();
       } else {
         if (resp.blob === undefined) {
-          body = await resp.buffer();  // for node-fetch
+          body = await resp.buffer(); // for node-fetch
         } else {
           body = await resp.blob();
         }
@@ -335,16 +356,27 @@ class Client {
       }
     } catch (err) {
       if (retry > 0) {
-        await new Promise(r => setTimeout(r, 2000)); // Retry after 2 seconds.
-        return this._wrapWithPromise(rqst, rawFile, signal, timeout, retry - 1, opts);
+        await new Promise((r) => setTimeout(r, 2000)); // Retry after 2 seconds.
+        return this._wrapWithPromise(
+          rqst,
+          rawFile,
+          signal,
+          timeout,
+          retry - 1,
+          opts,
+        );
       }
       let error_message;
-      if (typeof err == 'object' && err.constructor === Object && 'title' in err) {
+      if (
+        typeof err == 'object' &&
+        err.constructor === Object &&
+        'title' in err
+      ) {
         error_message = err.title; // formatted message
       } else {
         error_message = err;
       }
-      if (typeof (resp) === 'undefined') {
+      if (typeof resp === 'undefined') {
         resp = {};
       }
       switch (errorType) {
@@ -355,7 +387,7 @@ class Client {
             errorMsg = `sending request has failed: ${error_message}`;
             errorDesc = error_message;
           } else {
-            errorTitle = "Network disconnected.";
+            errorTitle = 'Network disconnected.';
             errorMsg = `sending request has failed: Network disconnected`;
             errorDesc = 'Network disconnected';
           }
@@ -371,10 +403,12 @@ class Client {
           errorTitle = `${resp.status} ${resp.statusText} - ${body.title}`;
           errorMsg = 'server responded failure: ';
           if (body.msg) {
-            errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.msg}`;
+            errorMsg =
+              errorMsg + `${resp.status} ${resp.statusText} - ${body.msg}`;
             errorDesc = body.msg;
           } else {
-            errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.title}`;
+            errorMsg =
+              errorMsg + `${resp.status} ${resp.statusText} - ${body.title}`;
             errorDesc = body.title;
           }
           break;
@@ -384,7 +418,7 @@ class Client {
           errorMsg = 'Request aborted by user';
           errorDesc = errorMsg;
           resp.status = 408;
-          resp.statusText = 'Request aborted by user'
+          resp.statusText = 'Request aborted by user';
           break;
         case Client.ERR_TIMEOUT:
           errorType = 'https://api.backend.ai/probs/request-timeout-error';
@@ -397,7 +431,7 @@ class Client {
         default:
           if (typeof resp.status === 'undefined') {
             resp.status = 500;
-            resp.statusText =  'Server error';
+            resp.statusText = 'Server error';
           }
           if (errorType === '') {
             errorType = Client.ERR_UNKNOWN;
@@ -405,8 +439,9 @@ class Client {
           if (errorTitle === '') {
             errorTitle = body.title;
           }
-          errorMsg = 'server responded failure: '
-            + `${resp.status} ${resp.statusText} - ${body.title}`;
+          errorMsg =
+            'server responded failure: ' +
+            `${resp.status} ${resp.statusText} - ${body.title}`;
           if (body.title !== '') {
             errorDesc = body.title;
           }
@@ -422,41 +457,43 @@ class Client {
         statusText: resp.statusText,
         title: errorTitle,
         message: errorMsg,
-        description: errorDesc
+        description: errorDesc,
       };
     }
 
-    let previous_log = JSON.parse(localStorage.getItem('backendaiwebui.logs') as any);
+    let previous_log = JSON.parse(
+      localStorage.getItem('backendaiwebui.logs') as any,
+    );
     if (previous_log) {
       if (previous_log.length > 3000) {
         previous_log = previous_log.slice(1, 3000);
       }
     }
     let log_stack = Array();
-    if (typeof (resp) === 'undefined') {
+    if (typeof resp === 'undefined') {
       resp = {
         status: 'No status',
-        statusText: 'No response given.'
-      }
+        statusText: 'No response given.',
+      };
     }
     let current_log = {
-      "isError": false,
-      "timestamp": new Date().toUTCString(),
-      "type": "",
-      "requestUrl": rqst.uri,
-      "requestMethod": rqst.method,
-      "requestParameters": rqst.body,
-      "statusCode": resp.status,
-      "statusText": resp.statusText,
-      "title": body.title,
-      "message" : ""
+      isError: false,
+      timestamp: new Date().toUTCString(),
+      type: '',
+      requestUrl: rqst.uri,
+      requestMethod: rqst.method,
+      requestParameters: rqst.body,
+      statusCode: resp.status,
+      statusText: resp.statusText,
+      title: body.title,
+      message: '',
     };
     if ('log' in opts) {
       current_log.requestParameters = opts['log'];
     }
     log_stack.push(current_log);
 
-    if(previous_log) {
+    if (previous_log) {
       log_stack = log_stack.concat(previous_log);
     }
     try {
@@ -464,14 +501,16 @@ class Client {
     } catch (e) {
       console.warn('Local storage is full. Clearing part of the logs.');
       // localStorage is full, we will keep the recent 2/3 of the logs.
-      let webuiLogs = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]');
-      webuiLogs = webuiLogs.slice(0, Math.round(webuiLogs.length * 2 / 3));
+      let webuiLogs = JSON.parse(
+        localStorage.getItem('backendaiwebui.logs') || '[]',
+      );
+      webuiLogs = webuiLogs.slice(0, Math.round((webuiLogs.length * 2) / 3));
       localStorage.setItem('backendaiwebui.logs', JSON.stringify(webuiLogs));
       // Deprecated backendaiconsole.* should also be cleared here.
       Object.entries(localStorage)
-          .map((x) => x[0])                                // get key
-          .filter((x) => x.startsWith('backendaiconsole')) // filter keys start with backendaiconsole
-          .map((x) => localStorage.removeItem(x));         // remove filtered keys
+        .map((x) => x[0]) // get key
+        .filter((x) => x.startsWith('backendaiconsole')) // filter keys start with backendaiconsole
+        .map((x) => localStorage.removeItem(x)); // remove filtered keys
 
       // Will not throw exception here since the request should be proceeded
       // even if it is not possible to write log to localStorage.
@@ -542,10 +581,11 @@ class Client {
 
   _updateFieldCompatibilityByAPIVersion(fields) {
     const v4_replacements = {
-      'session_name': 'sess_id'
+      session_name: 'sess_id',
     };
-    if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
-      Object.keys(v4_replacements).forEach(key => {
+    if (this._apiVersionMajor < 5) {
+      // For V3/V4 API compatibility
+      Object.keys(v4_replacements).forEach((key) => {
         let index = fields.indexOf(key);
         if (index !== -1) {
           fields[index] = v4_replacements[key];
@@ -589,8 +629,14 @@ class Client {
    */
   isManagerVersionCompatibleWith(version) {
     let managerVersion = this._managerVersion;
-    managerVersion = managerVersion.split('.').map(s => s.padStart(10)).join('.');
-    version = version.split('.').map(s => s.padStart(10)).join('.');
+    managerVersion = managerVersion
+      .split('.')
+      .map((s) => s.padStart(10))
+      .join('.');
+    version = version
+      .split('.')
+      .map((s) => s.padStart(10))
+      .join('.');
     return version <= managerVersion;
   }
 
@@ -600,8 +646,14 @@ class Client {
   isAPIVersionCompatibleWith(version) {
     let apiVersion = this._apiVersion;
     if (apiVersion !== null && version !== null) {
-      apiVersion = apiVersion.split('.').map(s => s.padStart(10)).join('.');
-      version = version.split('.').map(s => s.padStart(10)).join('.');
+      apiVersion = apiVersion
+        .split('.')
+        .map((s) => s.padStart(10))
+        .join('.');
+      version = version
+        .split('.')
+        .map((s) => s.padStart(10))
+        .join('.');
     }
     return version <= apiVersion;
   }
@@ -635,41 +687,48 @@ class Client {
    */
   async login(otp?: string) {
     let body = {
-      'username': this._config.userId,
-      'password': this._config.password,
+      username: this._config.userId,
+      password: this._config.password,
     };
-    if (otp) body['otp'] = otp
+    if (otp) body['otp'] = otp;
     let rqst = this.newSignedRequest('POST', `/server/login`, body);
     let result;
     try {
-      result = await this._wrapWithPromise(rqst, false, null, 0, 0, {'log': JSON.stringify({
-        'username': this._config.userId,
-        'password': '********'
-      })});
+      result = await this._wrapWithPromise(rqst, false, null, 0, 0, {
+        log: JSON.stringify({
+          username: this._config.userId,
+          password: '********',
+        }),
+      });
       if (result.authenticated === true) {
         if (result.data.role === 'monitor') {
           this.logout();
-          return Promise.resolve({fail_reason: 'Monitor user does not allow to login.'});
+          return Promise.resolve({
+            fail_reason: 'Monitor user does not allow to login.',
+          });
         }
         await this.get_manager_version();
         return this.check_login();
-      } else if (result.authenticated === false) { // Authentication failed.
+      } else if (result.authenticated === false) {
+        // Authentication failed.
         if (result.data && result.data.details) {
-          return Promise.resolve({fail_reason: result.data.details});
+          return Promise.resolve({ fail_reason: result.data.details });
         } else {
           return Promise.resolve(false);
         }
       }
-    } catch (err) { // Manager / webserver down.
+    } catch (err) {
+      // Manager / webserver down.
       if ('statusCode' in err && err.statusCode === 429) {
         throw {
-          "title": err.description,
-          "message": "Too many failed login attempts."
+          title: err.description,
+          message: 'Too many failed login attempts.',
         };
       } else {
         throw {
-          "title": "No manager found at API Endpoint.",
-          "message": "Authentication failed. Check information and manager status."
+          title: 'No manager found at API Endpoint.',
+          message:
+            'Authentication failed. Check information and manager status.',
         };
       }
       //console.log(err);
@@ -687,7 +746,7 @@ class Client {
     // clean up log msg for security reason
     const currentLogs = localStorage.getItem('backendaiwebui.logs');
     if (currentLogs) {
-       localStorage.removeItem('backendaiwebui.logs');
+      localStorage.removeItem('backendaiwebui.logs');
     }
     return this._wrapWithPromise(rqst);
   }
@@ -704,23 +763,26 @@ class Client {
       if (result.authenticated === true) {
         await this.get_manager_version();
         return this.check_login();
-      } else if (result.authenticated === false) { // Authentication failed.
+      } else if (result.authenticated === false) {
+        // Authentication failed.
         if (result.data && result.data.details) {
-          return Promise.resolve({fail_reason: result.data.details});
+          return Promise.resolve({ fail_reason: result.data.details });
         } else {
           return Promise.resolve(false);
         }
       }
-    } catch (err) { // Manager / webserver down.
+    } catch (err) {
+      // Manager / webserver down.
       if ('statusCode' in err && err.statusCode === 429) {
         throw {
-          "title": err.description,
-          "message": "Too many failed login attempts."
+          title: err.description,
+          message: 'Too many failed login attempts.',
         };
       } else {
         throw {
-          "title": "No manager found at API Endpoint.",
-          "message": "Authentication failed. Check information and manager status."
+          title: 'No manager found at API Endpoint.',
+          message:
+            'Authentication failed. Check information and manager status.',
         };
       }
       //console.log(err);
@@ -734,8 +796,8 @@ class Client {
    */
   async signout(userid, password) {
     let body = {
-      'username': userid,
-      'password': password
+      username: userid,
+      password: password,
     };
     let rqst = this.newSignedRequest('POST', `/auth/signout`, body);
     return this._wrapWithPromise(rqst);
@@ -746,8 +808,8 @@ class Client {
    */
   async update_full_name(email, fullName) {
     let body = {
-      'email': email,
-      'full_name': fullName
+      email: email,
+      full_name: fullName,
     };
     let rqst = this.newSignedRequest('POST', `/auth/update-full-name`, body);
     return this._wrapWithPromise(rqst);
@@ -759,9 +821,9 @@ class Client {
    */
   async update_password(oldPassword, newPassword, newPassword2) {
     let body = {
-      'old_password': oldPassword,
-      'new_password': newPassword,
-      'new_password2': newPassword2
+      old_password: oldPassword,
+      new_password: newPassword,
+      new_password2: newPassword2,
     };
     let rqst = this.newSignedRequest('POST', `/auth/update-password`, body);
     return this._wrapWithPromise(rqst);
@@ -771,9 +833,9 @@ class Client {
     let rqst = this.newSignedRequest('POST', '/totp', {});
     return this._wrapWithPromise(rqst);
   }
-  
+
   async activate_totp(otp) {
-    let rqst = this.newSignedRequest('POST', '/totp/verify', {otp});
+    let rqst = this.newSignedRequest('POST', '/totp/verify', { otp });
     return this._wrapWithPromise(rqst);
   }
 
@@ -805,13 +867,19 @@ class Client {
    * @param {object} resources - Per-session resource
    * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
    */
-  async createIfNotExists(kernelType, sessionId, resources = {}, timeout: number = 0, architecture = '') {
+  async createIfNotExists(
+    kernelType,
+    sessionId,
+    resources = {},
+    timeout: number = 0,
+    architecture = '',
+  ) {
     if (typeof sessionId === 'undefined' || sessionId === null)
       sessionId = this.generateSessionId();
     let params = {
-      "lang": kernelType,
-      "clientSessionToken": sessionId,
-      "architecture": architecture,
+      lang: kernelType,
+      clientSessionToken: sessionId,
+      architecture: architecture,
     };
     if (resources != {}) {
       let config = {};
@@ -821,18 +889,22 @@ class Client {
       if (resources['mem']) {
         config['mem'] = resources['mem'];
       }
-      if (resources['gpu']) { // Legacy support (till 19.09)
+      if (resources['gpu']) {
+        // Legacy support (till 19.09)
         config['cuda.device'] = parseInt(resources['gpu']);
       }
-      if (resources['cuda.device']) { // Generalized device information from 20.03
+      if (resources['cuda.device']) {
+        // Generalized device information from 20.03
         config['cuda.device'] = parseInt(resources['cuda.device']);
       }
-      if (resources['vgpu']) { // Legacy support (till 19.09)
+      if (resources['vgpu']) {
+        // Legacy support (till 19.09)
         config['cuda.shares'] = parseFloat(resources['vgpu']).toFixed(2); // under 19.03
       } else if (resources['fgpu']) {
         config['cuda.shares'] = parseFloat(resources['fgpu']).toFixed(2); // 19.09 and above
       }
-      if (resources['cuda.shares']) { // Generalized device information from 20.03
+      if (resources['cuda.shares']) {
+        // Generalized device information from 20.03
         config['cuda.shares'] = parseFloat(resources['cuda.shares']).toFixed(2);
       }
       if (resources['rocm']) {
@@ -880,7 +952,7 @@ class Client {
       if (resources['owner_access_key']) {
         params['owner_access_key'] = resources['owner_access_key'];
       }
-      params['config'] = {resources: config};
+      params['config'] = { resources: config };
       if (resources['mounts']) {
         params['config'].mounts = resources['mounts'];
       }
@@ -899,8 +971,13 @@ class Client {
       }
     }
     let rqst;
-    if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
-      rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params);
+    if (this._apiVersionMajor < 5) {
+      // For V3/V4 API compatibility
+      rqst = this.newSignedRequest(
+        'POST',
+        `${this.kernelPrefix}/create`,
+        params,
+      );
     } else {
       rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params);
     }
@@ -913,10 +990,16 @@ class Client {
    *
    * @param {string} sessionId - the sessionId given when created
    */
-  async createSessionFromTemplate(templateId, image = null, sessionName: undefined | string | null = null, resources = {}, timeout: number = 0) {
+  async createSessionFromTemplate(
+    templateId,
+    image = null,
+    sessionName: undefined | string | null = null,
+    resources = {},
+    timeout: number = 0,
+  ) {
     if (typeof sessionName === 'undefined' || sessionName === null)
       sessionName = this.generateSessionId();
-    const params = {template_id: templateId};
+    const params = { template_id: templateId };
     if (image) {
       params['image'] = image;
     }
@@ -983,7 +1066,7 @@ class Client {
         params['owner_access_key'] = resources['owner_access_key'];
       }
       // params['config'] = {};
-      params['config'] = {resources: config};
+      params['config'] = { resources: config };
       if (resources['mounts']) {
         params['config'].mounts = resources['mounts'];
       }
@@ -998,7 +1081,11 @@ class Client {
         params['config'].environ = resources['env'];
       }
     }
-    const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params);
+    const rqst = this.newSignedRequest(
+      'POST',
+      `${this.kernelPrefix}/_/create-from-template`,
+      params,
+    );
     return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
@@ -1050,10 +1137,12 @@ class Client {
    * @param {string|null} ownerKey - owner key when terminating other users' session
    * @param {boolean} forced - force destroy session. Requires admin privilege.
    */
-  async destroy(sessionId, ownerKey = null, forced:boolean = false) {
+  async destroy(sessionId, ownerKey = null, forced: boolean = false) {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey !== null) {
-      queryString = `${queryString}?owner_access_key=${ownerKey}${forced ? '&forced=true' : ''}`;
+      queryString = `${queryString}?owner_access_key=${ownerKey}${
+        forced ? '&forced=true' : ''
+      }`;
     } else {
       queryString = `${queryString}${forced ? '?forced=true' : ''}`;
     }
@@ -1089,18 +1178,28 @@ class Client {
    */
   async execute(sessionId, runId, mode, code, opts, timeout = 0) {
     let params = {
-      "mode": mode,
-      "code": code,
-      "runId": runId,
-      "options": opts,
+      mode: mode,
+      code: code,
+      runId: runId,
+      options: opts,
     };
-    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}`, params);
-	return this._wrapWithPromise(rqst, false, null, timeout);
+    let rqst = this.newSignedRequest(
+      'POST',
+      `${this.kernelPrefix}/${sessionId}`,
+      params,
+    );
+    return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
   // legacy aliases (DO NOT USE for new codes)
   createKernel(kernelType, sessionId = undefined, resources = {}, timeout = 0) {
-    return this.createIfNotExists(kernelType, sessionId, resources, timeout, 'x86_64');
+    return this.createIfNotExists(
+      kernelType,
+      sessionId,
+      resources,
+      timeout,
+      'x86_64',
+    );
   }
 
   // legacy aliases (DO NOT USE for new codes)
@@ -1120,18 +1219,26 @@ class Client {
 
   async rename(sessionId, newId) {
     let params = {
-      'name': newId
-    }
-    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/rename`, params);
+      name: newId,
+    };
+    let rqst = this.newSignedRequest(
+      'POST',
+      `${this.kernelPrefix}/${sessionId}/rename`,
+      params,
+    );
     return this._wrapWithPromise(rqst);
   }
 
   async shutdown_service(sessionId, service_name) {
     let params = {
-      'service_name': service_name
+      service_name: service_name,
     };
     const q = querystring.stringify(params);
-    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/shutdown-service?${q}`, null);
+    let rqst = this.newSignedRequest(
+      'POST',
+      `${this.kernelPrefix}/${sessionId}/shutdown-service?${q}`,
+      null,
+    );
     return this._wrapWithPromise(rqst, true);
   }
 
@@ -1139,31 +1246,44 @@ class Client {
     const formData = new FormData();
     //formData.append('src', fs, {filepath: path});
     formData.append('src', fs, path);
-    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/upload`, formData);
+    let rqst = this.newSignedRequest(
+      'POST',
+      `${this.kernelPrefix}/${sessionId}/upload`,
+      formData,
+    );
     return this._wrapWithPromise(rqst);
   }
 
   async download(sessionId, files) {
     let params = {
-      'files': files
+      files: files,
     };
     const q = querystring.stringify(params);
-    let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download?${q}`, null);
+    let rqst = this.newSignedRequest(
+      'GET',
+      `${this.kernelPrefix}/${sessionId}/download?${q}`,
+      null,
+    );
     return this._wrapWithPromise(rqst, true);
   }
 
   async download_single(sessionId, file) {
     let params = {
-      'file': file
+      file: file,
     };
     const q = querystring.stringify(params);
-    let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download_single?${q}`, null);
+    let rqst = this.newSignedRequest(
+      'GET',
+      `${this.kernelPrefix}/${sessionId}/download_single?${q}`,
+      null,
+    );
     return this._wrapWithPromise(rqst, true);
   }
 
   mangleUserAgentSignature() {
-    let uaSig = this.clientVersion
-      + (this.agentSignature ? ('; ' + this.agentSignature) : '');
+    let uaSig =
+      this.clientVersion +
+      (this.agentSignature ? '; ' + this.agentSignature : '');
     return uaSig;
   }
 
@@ -1177,8 +1297,8 @@ class Client {
    */
   async query(q, v, signal = null, timeout: number = 0, retry: number = 0) {
     let query = {
-      'query': q,
-      'variables': v
+      query: q,
+      variables: v,
     };
     let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
     return this._wrapWithPromise(rqst, false, signal, timeout, retry);
@@ -1192,19 +1312,22 @@ class Client {
    * @param {string} queryString - the URI path and GET parameters
    * @param {any} body - an object that will be encoded as JSON in the request body
    */
-  newSignedRequest(method: string, queryString, body: any, serviceName='') {
-    let content_type = "application/json";
+  newSignedRequest(method: string, queryString, body: any, serviceName = '') {
+    let content_type = 'application/json';
     let requestBody;
     let authBody;
     let d = new Date();
     if (body === null || body === undefined) {
       requestBody = '';
       authBody = requestBody;
-    } else if (typeof body.getBoundary === 'function' || body instanceof FormData) {
+    } else if (
+      typeof body.getBoundary === 'function' ||
+      body instanceof FormData
+    ) {
       // detect form data input from form-data module
       requestBody = body;
       authBody = '';
-      content_type = "multipart/form-data";
+      content_type = 'multipart/form-data';
     } else {
       requestBody = JSON.stringify(body);
       authBody = requestBody;
@@ -1213,30 +1336,45 @@ class Client {
     let aStr;
     let hdrs;
     let uri = '';
-    if (this._config.connectionMode === 'SESSION') { // Force request to use Public when session mode is enabled
+    if (this._config.connectionMode === 'SESSION') {
+      // Force request to use Public when session mode is enabled
       hdrs = new Headers({
-        "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
-        "X-BackendAI-Version": this._config.apiVersion,
-        "X-BackendAI-Date": d.toISOString(),
+        'User-Agent': `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
+        'X-BackendAI-Version': this._config.apiVersion,
+        'X-BackendAI-Date': d.toISOString(),
       });
-      if (queryString.startsWith('/server') === true) { // Force request to use Public when session mode is enabled
+      if (queryString.startsWith('/server') === true) {
+        // Force request to use Public when session mode is enabled
         uri = this._config.endpoint + queryString;
-      } else { // Force request to use Public when session mode is enabled
+      } else {
+        // Force request to use Public when session mode is enabled
         uri = this._config.endpoint + '/func' + queryString;
       }
     } else {
       if (this._config._apiVersion[1] < 4) {
-        aStr = this.getAuthenticationString(method, queryString, d.toISOString(), authBody, content_type);
+        aStr = this.getAuthenticationString(
+          method,
+          queryString,
+          d.toISOString(),
+          authBody,
+          content_type,
+        );
       } else {
-        aStr = this.getAuthenticationString(method, queryString, d.toISOString(), '', content_type);
+        aStr = this.getAuthenticationString(
+          method,
+          queryString,
+          d.toISOString(),
+          '',
+          content_type,
+        );
       }
       let signKey = this.getSignKey(this._config.secretKey, d);
       let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
       hdrs = new Headers({
-        "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
-        "X-BackendAI-Version": this._config.apiVersion,
-        "X-BackendAI-Date": d.toISOString(),
-        "Authorization": `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`,
+        'User-Agent': `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
+        'X-BackendAI-Version': this._config.apiVersion,
+        'X-BackendAI-Date': d.toISOString(),
+        Authorization: `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`,
       });
       uri = this._config.endpoint + queryString;
     }
@@ -1244,15 +1382,16 @@ class Client {
     if (serviceName === 'pipeline') {
       uri = this._config.endpoint + '/flow' + queryString;
       hdrs = new Headers({
-        "Accept": content_type,
-        "Allow-Control-Allow-Origin": "*"
+        Accept: content_type,
+        'Allow-Control-Allow-Origin': '*',
       });
-      const isDeleteTokenRequest = ((method === 'DELETE') && queryString.startsWith('/auth-token'));
+      const isDeleteTokenRequest =
+        method === 'DELETE' && queryString.startsWith('/auth-token');
 
       // Append Authorization token for every API request to pipeline
       if (queryString.startsWith('/api') === true || isDeleteTokenRequest) {
         const token = this.pipeline.getPipelineToken();
-        hdrs.set("Authorization", `Token ${token}`);
+        hdrs.set('Authorization', `Token ${token}`);
       }
     }
 
@@ -1274,7 +1413,7 @@ class Client {
       headers: hdrs,
       cache: 'default',
       body: requestBody,
-      uri: uri
+      uri: uri,
     };
     return requestInfo;
   }
@@ -1288,18 +1427,23 @@ class Client {
    * @param {any} body - an object that will be encoded as JSON in the request body
    */
   newUnsignedRequest(method, queryString, body) {
-    return this.newPublicRequest(method, queryString, body, this._config.apiVersionMajor);
+    return this.newPublicRequest(
+      method,
+      queryString,
+      body,
+      this._config.apiVersionMajor,
+    );
   }
 
   newPublicRequest(method, queryString, body, urlPrefix) {
     let d = new Date();
     let hdrs = new Headers({
-      "Content-Type": "application/json",
-      "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
-      "X-BackendAI-Version": this._config.apiVersion,
-      "X-BackendAI-Date": d.toISOString(),
-      "credentials": 'include',
-      "mode": 'cors'
+      'Content-Type': 'application/json',
+      'User-Agent': `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
+      'X-BackendAI-Version': this._config.apiVersion,
+      'X-BackendAI-Date': d.toISOString(),
+      credentials: 'include',
+      mode: 'cors',
     });
     //queryString = '/' + urlPrefix + queryString;
     let requestInfo = {
@@ -1307,11 +1451,19 @@ class Client {
       headers: hdrs,
       mode: 'cors',
       cache: 'default',
-      uri: ''
+      uri: '',
     };
-    if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === true) { // Force request to use Public when session mode is enabled
+    if (
+      this._config.connectionMode === 'SESSION' &&
+      queryString.startsWith('/server') === true
+    ) {
+      // Force request to use Public when session mode is enabled
       requestInfo.uri = this._config.endpoint + queryString;
-    } else if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === false) { // Force request to use Public when session mode is enabled
+    } else if (
+      this._config.connectionMode === 'SESSION' &&
+      queryString.startsWith('/server') === false
+    ) {
+      // Force request to use Public when session mode is enabled
       requestInfo.uri = this._config.endpoint + '/func' + queryString;
     } else {
       requestInfo.uri = this._config.endpoint + queryString;
@@ -1319,20 +1471,41 @@ class Client {
     return requestInfo;
   }
 
-  getAuthenticationString(method, queryString, dateValue, bodyValue, content_type = "application/json") {
-    let bodyHash = crypto_node.createHash(this._config.hashType)
-      .update(bodyValue).digest('hex');
-    return (method + '\n' + queryString + '\n' + dateValue + '\n'
-      + 'host:' + this._config.endpointHost + '\n'
-      + 'content-type:' + content_type + '\n'
-      + 'x-backendai-version:' + this._config.apiVersion + '\n'
-      + bodyHash);
+  getAuthenticationString(
+    method,
+    queryString,
+    dateValue,
+    bodyValue,
+    content_type = 'application/json',
+  ) {
+    let bodyHash = crypto_node
+      .createHash(this._config.hashType)
+      .update(bodyValue)
+      .digest('hex');
+    return (
+      method +
+      '\n' +
+      queryString +
+      '\n' +
+      dateValue +
+      '\n' +
+      'host:' +
+      this._config.endpointHost +
+      '\n' +
+      'content-type:' +
+      content_type +
+      '\n' +
+      'x-backendai-version:' +
+      this._config.apiVersion +
+      '\n' +
+      bodyHash
+    );
   }
 
   getCurrentDate(now) {
-    let year = (`0000${now.getUTCFullYear()}`).slice(-4);
-    let month = (`0${now.getUTCMonth() + 1}`).slice(-2);
-    let day = (`0${now.getUTCDate()}`).slice(-2);
+    let year = `0000${now.getUTCFullYear()}`.slice(-4);
+    let month = `0${now.getUTCMonth() + 1}`.slice(-2);
+    let day = `0${now.getUTCDate()}`.slice(-2);
     let t = year + month + day;
     return t;
   }
@@ -1351,33 +1524,35 @@ class Client {
   }
 
   generateRandomStr(length) {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var text = '';
+    var possible =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (var i = 0; i < length; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
   }
 
-  generateSessionId(length=8, nosuffix=false) {
+  generateSessionId(length = 8, nosuffix = false) {
     var text = this.generateRandomStr(length);
-    return nosuffix ? text : text + "-jsSDK";
+    return nosuffix ? text : text + '-jsSDK';
   }
 
   slugify(text) {
-    const a = 'àáäâèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ·/_,:;'
-    const b = 'aaaaeeeeiiiioooouuuuncsyoarsnpwgnmuxzh------'
-    const p = new RegExp(a.split('').join('|'), 'g')
+    const a = 'àáäâèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ·/_,:;';
+    const b = 'aaaaeeeeiiiioooouuuuncsyoarsnpwgnmuxzh------';
+    const p = new RegExp(a.split('').join('|'), 'g');
 
-    return text.toString().toLowerCase()
-      .replace(/\s+/g, '-')           // Replace spaces with -
-      .replace(p, c =>
-          b.charAt(a.indexOf(c)))     // Replace special chars
-      .replace(/&/g, '-and-')         // Replace & with 'and'
-      .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-      .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-      .replace(/^-+/, '')             // Trim - from start of text
-      .replace(/-+$/, '')             // Trim - from end of text
+    return text
+      .toString()
+      .toLowerCase()
+      .replace(/\s+/g, '-') // Replace spaces with -
+      .replace(p, (c) => b.charAt(a.indexOf(c))) // Replace special chars
+      .replace(/&/g, '-and-') // Replace & with 'and'
+      .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+      .replace(/\-\-+/g, '-') // Replace multiple - with single -
+      .replace(/^-+/, '') // Trim - from start of text
+      .replace(/-+$/, ''); // Trim - from end of text
   }
 
   /**
@@ -1417,7 +1592,11 @@ class ResourcePreset {
    * Return the GraphQL Promise object containing resource preset list.
    */
   async list(param = null) {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/presets`, param);
+    let rqst = this.client.newSignedRequest(
+      'GET',
+      `${this.urlPrefix}/presets`,
+      param,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1425,7 +1604,11 @@ class ResourcePreset {
    * Return the GraphQL Promise object containing resource preset checking result.
    */
   async check(param = null) {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/check-presets`, param);
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/check-presets`,
+      param,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1440,14 +1623,15 @@ class ResourcePreset {
    */
   async add(name = null, input) {
     if (this.client.is_admin === true && name !== null) {
-      let q = `mutation($name: String!, $input: CreateResourcePresetInput!) {` +
+      let q =
+        `mutation($name: String!, $input: CreateResourcePresetInput!) {` +
         `  create_resource_preset(name: $name, props: $input) {` +
         `    ok msg ` +
         `  }` +
         `}`;
       let v = {
-        'name': name,
-        'input': input
+        name: name,
+        input: input,
       };
       return this.client.query(q, v);
     } else {
@@ -1466,14 +1650,15 @@ class ResourcePreset {
    */
   async mutate(name = null, input) {
     if (this.client.is_admin === true && name !== null) {
-      let q = `mutation($name: String!, $input: ModifyResourcePresetInput!) {` +
+      let q =
+        `mutation($name: String!, $input: ModifyResourcePresetInput!) {` +
         `  modify_resource_preset(name: $name, props: $input) {` +
         `    ok msg ` +
         `  }` +
         `}`;
       let v = {
-        'name': name,
-        'input': input
+        name: name,
+        input: input,
       };
       return this.client.query(q, v);
     } else {
@@ -1488,13 +1673,14 @@ class ResourcePreset {
    */
   async delete(name = null) {
     if (this.client.is_admin === true && name !== null) {
-      let q = `mutation($name: String!) {` +
+      let q =
+        `mutation($name: String!) {` +
         `  delete_resource_preset(name: $name) {` +
         `    ok msg ` +
         `  }` +
         `}`;
       let v = {
-        'name': name
+        name: name,
       };
       return this.client.query(q, v);
     } else {
@@ -1517,7 +1703,7 @@ class VFolder {
   constructor(client, name = null) {
     this.client = client;
     this.name = name;
-    this.urlPrefix = '/folders'
+    this.urlPrefix = '/folders';
   }
 
   /**
@@ -1525,7 +1711,11 @@ class VFolder {
    *
    */
   async list_allowed_types() {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/allowed_types`, null);
+    let rqst = this.client.newSignedRequest(
+      'GET',
+      `${this.urlPrefix}/_/allowed_types`,
+      null,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1539,19 +1729,26 @@ class VFolder {
    * @param {string} permission - Virtual folder's innate permission.
    * @param {boolean} cloneable - Whether Virtual folder is cloneable or not.
    */
-  async create(name, host = '', group = '', usageMode = 'general', permission = 'rw', cloneable = false) {
+  async create(
+    name,
+    host = '',
+    group = '',
+    usageMode = 'general',
+    permission = 'rw',
+    cloneable = false,
+  ) {
     let body;
     if (host !== '') {
       body = {
-        'name': name,
-        'host': host
+        name: name,
+        host: host,
       };
     }
     if (this.client.supports('group-folder') && group !== '') {
       body = {
-        'name': name,
-        'host': host,
-        'group': group
+        name: name,
+        host: host,
+        group: group,
       };
     }
     if (this.client.isAPIVersionCompatibleWith('v4.20191215')) {
@@ -1582,7 +1779,11 @@ class VFolder {
    */
 
   async clone(input, name = null) {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/clone`, input);
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/${name}/clone`,
+      input,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1595,7 +1796,11 @@ class VFolder {
    * @param name - source Vfolder name
    */
   async update_folder(input, name = null) {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/update-options`, input);
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/${name}/update-options`,
+      input,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1653,7 +1858,11 @@ class VFolder {
     if (name == null) {
       name = this.name;
     }
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}`, null);
+    let rqst = this.client.newSignedRequest(
+      'GET',
+      `${this.urlPrefix}/${name}`,
+      null,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1663,8 +1872,12 @@ class VFolder {
    * @param {string} new_name - New virtual folder name.
    */
   async rename(new_name = null) {
-    const body = {new_name};
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${this.name}/rename`, body);
+    const body = { new_name };
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/${this.name}/rename`,
+      body,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1677,7 +1890,11 @@ class VFolder {
     if (name == null) {
       name = this.name;
     }
-    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}`, null);
+    let rqst = this.client.newSignedRequest(
+      'DELETE',
+      `${this.urlPrefix}/${name}`,
+      null,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1690,7 +1907,11 @@ class VFolder {
     if (name == null) {
       name = this.name;
     }
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/leave`, null);
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/${name}/leave`,
+      null,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1707,7 +1928,11 @@ class VFolder {
     }
     let formData = new FormData();
     formData.append('src', fs, path);
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, formData);
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/${name}/upload`,
+      formData,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1718,7 +1943,11 @@ class VFolder {
    * @param {string} name - Virtual folder name.
    */
   async uploadFormData(fss, name = null) {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, fss);
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/${name}/upload`,
+      fss,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1734,8 +1963,8 @@ class VFolder {
       name = this.name;
     }
     let body = {
-      'path': path,
-      'size': fs.size
+      path: path,
+      size: fs.size,
     };
     let rqstUrl;
     if (this.client._apiVersionMajor < 6) {
@@ -1772,15 +2001,19 @@ class VFolder {
       name = this.name;
     }
     const body = {
-      'path': path
+      path: path,
     };
     if (parents) {
-      body['parents'] = parents
+      body['parents'] = parents;
     }
     if (exist_ok) {
-      body['exist_ok'] = exist_ok
+      body['exist_ok'] = exist_ok;
     }
-    const rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/mkdir`, body);
+    const rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/${name}/mkdir`,
+      body,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1798,11 +2031,15 @@ class VFolder {
     }
     let body;
     if (this.client.isAPIVersionCompatibleWith('v6.20200815')) {
-      body = {target_path, new_name, is_dir};
+      body = { target_path, new_name, is_dir };
     } else {
-      body = {target_path, new_name};
+      body = { target_path, new_name };
     }
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/rename_file`, body);
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/${name}/rename_file`,
+      body,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1814,7 +2051,6 @@ class VFolder {
    * @param {string} name - Virtual folder name that files are in.
    */
   async delete_files(files, recursive = false, name = null) {
-
     if (name == null) {
       name = this.name;
     }
@@ -1822,10 +2058,14 @@ class VFolder {
       recursive = false;
     }
     let body = {
-      'files': files,
-      'recursive': recursive,
+      files: files,
+      recursive: recursive,
     };
-    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}/delete_files`, body);
+    let rqst = this.client.newSignedRequest(
+      'DELETE',
+      `${this.urlPrefix}/${name}/delete_files`,
+      body,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1838,10 +2078,14 @@ class VFolder {
    * @param {boolean} noCache - If true, do not store the file response in any cache. New in API v6.
    */
   async download(file, name = false, archive = false, noCache = false) {
-    const params = {file, archive};
+    const params = { file, archive };
     const q = querystring.stringify(params);
     if (this.client._apiVersionMajor < 6) {
-      const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
+      const rqst = this.client.newSignedRequest(
+        'GET',
+        `${this.urlPrefix}/${name}/download_single?${q}`,
+        null,
+      );
       return this.client._wrapWithPromise(rqst, true);
     } else {
       const res = await this.request_download_token(file, name);
@@ -1860,7 +2104,7 @@ class VFolder {
   async request_download_token(file, name = false, archive = false) {
     let body = {
       file,
-      archive
+      archive,
     };
     let rqstUrl;
     if (this.client._apiVersionMajor < 6) {
@@ -1879,10 +2123,14 @@ class VFolder {
    */
   async download_with_token(token: string = '') {
     let params = {
-      'token': token
+      token: token,
     };
     let q = querystring.stringify(params);
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/download_with_token?${q}`, null);
+    let rqst = this.client.newSignedRequest(
+      'GET',
+      `${this.urlPrefix}/_/download_with_token?${q}`,
+      null,
+    );
     return this.client._wrapWithPromise(rqst, true);
   }
 
@@ -1892,7 +2140,7 @@ class VFolder {
    * @param {string} token - Temporary token to download specific file.
    */
   get_download_url_with_token(token: string = '') {
-    const params = {token};
+    const params = { token };
     let q = querystring.stringify(params);
     if (this.client._config.connectionMode === 'SESSION') {
       return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
@@ -1912,10 +2160,14 @@ class VFolder {
       name = this.name;
     }
     let params = {
-      'path': path
+      path: path,
     };
     let q = querystring.stringify(params);
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
+    let rqst = this.client.newSignedRequest(
+      'GET',
+      `${this.urlPrefix}/${name}/files?${q}`,
+      null,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1931,10 +2183,14 @@ class VFolder {
       name = this.name;
     }
     let body = {
-      'perm': perm,
-      'user_ids': emails
+      perm: perm,
+      user_ids: emails,
     };
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/invite`, body);
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/${name}/invite`,
+      body,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1942,7 +2198,11 @@ class VFolder {
    * Show invitations to current API key.
    */
   async invitations() {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/invitations/list`, null);
+    let rqst = this.client.newSignedRequest(
+      'GET',
+      `${this.urlPrefix}/invitations/list`,
+      null,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1953,9 +2213,13 @@ class VFolder {
    */
   async accept_invitation(inv_id) {
     let body = {
-      'inv_id': inv_id
+      inv_id: inv_id,
     };
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/invitations/accept`, body);
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/invitations/accept`,
+      body,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1966,9 +2230,13 @@ class VFolder {
    */
   async delete_invitation(inv_id) {
     let body = {
-      'inv_id': inv_id
+      inv_id: inv_id,
     };
-    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/invitations/delete`, body);
+    let rqst = this.client.newSignedRequest(
+      'DELETE',
+      `${this.urlPrefix}/invitations/delete`,
+      body,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1979,7 +2247,8 @@ class VFolder {
    */
   async list_invitees(vfolder_id = null) {
     let queryString = '/folders/_/shared';
-    if (vfolder_id !== null) queryString = `${queryString}?vfolder_id=${vfolder_id}`;
+    if (vfolder_id !== null)
+      queryString = `${queryString}?vfolder_id=${vfolder_id}`;
     let rqst = this.client.newSignedRequest('GET', queryString, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -2008,8 +2277,12 @@ class VFolder {
     if (!name) {
       name = this.name;
     }
-    const body = {permission, emails};
-    const rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/share`, body);
+    const body = { permission, emails };
+    const rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/${name}/share`,
+      body,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -2023,8 +2296,12 @@ class VFolder {
     if (!name) {
       name = this.name;
     }
-    const body = {emails};
-    const rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}/unshare`, body);
+    const body = { emails };
+    const rqst = this.client.newSignedRequest(
+      'DELETE',
+      `${this.urlPrefix}/${name}/unshare`,
+      body,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -2036,9 +2313,13 @@ class VFolder {
    * @param {string} vfolder_id - id of the vfolder.
    */
   async get_quota(host, vfolder_id) {
-    const params = {folder_host: host, id: vfolder_id};
+    const params = { folder_host: host, id: vfolder_id };
     let q = querystring.stringify(params);
-    const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/quota?${q}`, null);
+    const rqst = this.client.newSignedRequest(
+      'GET',
+      `${this.urlPrefix}/_/quota?${q}`,
+      null,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -2056,9 +2337,13 @@ class VFolder {
       id: vfolder_id,
       input: {
         size_bytes: quota,
-      }
+      },
     };
-    const rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/_/quota`, body);
+    const rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/_/quota`,
+      body,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 }
@@ -2082,16 +2367,30 @@ class Agent {
    * @param {array} fields - Fields to query. Queryable fields are:  'id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'.
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
-  async list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'], timeout:number = 0) {
+  async list(
+    status = 'ALIVE',
+    fields = [
+      'id',
+      'status',
+      'region',
+      'first_contact',
+      'cpu_cur_pct',
+      'mem_cur_bytes',
+      'available_slots',
+      'occupied_slots',
+    ],
+    timeout: number = 0,
+  ) {
     if (['ALIVE', 'TERMINATED'].includes(status) === false) {
       return Promise.resolve(false);
     }
-    let q = `query($status: String) {` +
+    let q =
+      `query($status: String) {` +
       `  agents(status: $status) {` +
-      `     ${fields.join(" ")}` +
+      `     ${fields.join(' ')}` +
       `  }` +
       `}`;
-    let v = {'status': status};
+    let v = { status: status };
     return this.client.query(q, v, null, timeout);
   }
 
@@ -2104,16 +2403,17 @@ class Agent {
    *   'schedulable': schedulable
    * };
    */
-   async update(id = null, input) {
+  async update(id = null, input) {
     if (this.client.is_superadmin === true && id !== null) {
-      let q = `mutation($id: String!, $input: ModifyAgentInput!) {` +
+      let q =
+        `mutation($id: String!, $input: ModifyAgentInput!) {` +
         `  modify_agent(id: $id, props: $input) {` +
         `    ok msg ` +
         `  }` +
         `}`;
       let v = {
-        'id': id,
-        'input': input
+        id: id,
+        input: input,
       };
       return this.client.query(q, v);
     } else {
@@ -2141,16 +2441,21 @@ class StorageProxy {
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
    */
-  async list(fields = ['id', 'backend', 'capabilities'], limit = 20, offset = 0) {
-    let q = `query($offset:Int!, $limit:Int!) {` +
+  async list(
+    fields = ['id', 'backend', 'capabilities'],
+    limit = 20,
+    offset = 0,
+  ) {
+    let q =
+      `query($offset:Int!, $limit:Int!) {` +
       `  storage_volume_list(limit:$limit, offset:$offset) {` +
       `     items { ${fields.join(' ')} }` +
       `     total_count` +
       `  }` +
       `}`;
     let v = {
-      'limit': limit,
-      'offset': offset
+      limit: limit,
+      offset: offset,
     };
     return this.client.query(q, v);
   }
@@ -2161,13 +2466,17 @@ class StorageProxy {
    * @param {string} host - Virtual folder host.
    * @param {array} fields - Fields to query. Queryable fields are:  'id', 'backend', 'capabilities'.
    */
-  async detail(host :string = '', fields = ['id', 'backend', 'path', 'fsprefix', 'capabilities']) {
-    let q = `query($vfolder_host: String!) {` +
+  async detail(
+    host: string = '',
+    fields = ['id', 'backend', 'path', 'fsprefix', 'capabilities'],
+  ) {
+    let q =
+      `query($vfolder_host: String!) {` +
       `  storage_volume(id: $vfolder_host) {` +
-      `     ${fields.join(" ")}` +
+      `     ${fields.join(' ')}` +
       `  }` +
       `}`;
-    let v = {'vfolder_host': host};
+    let v = { vfolder_host: host };
     return this.client.query(q, v);
   }
 }
@@ -2193,24 +2502,36 @@ class Keypair {
    * @param {array} fields - Fields to query. Queryable fields are: 'access_key', 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
    'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'.
    */
-  async info(accessKey, fields = ['access_key', 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
-    'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy']) {
+  async info(
+    accessKey,
+    fields = [
+      'access_key',
+      'secret_key',
+      'is_active',
+      'is_admin',
+      'user_id',
+      'created_at',
+      'last_used',
+      'concurrency_limit',
+      'concurrency_used',
+      'rate_limit',
+      'num_queries',
+      'resource_policy',
+    ],
+  ) {
     let q, v;
     if (this.client.is_admin) {
-      q = `query($access_key: String!) {` +
+      q =
+        `query($access_key: String!) {` +
         `  keypair(access_key: $access_key) {` +
-        `    ${fields.join(" ")}` +
+        `    ${fields.join(' ')}` +
         `  }` +
         `}`;
       v = {
-        'access_key': accessKey
+        access_key: accessKey,
       };
     } else {
-      q = `query {` +
-        `  keypair {` +
-        `    ${fields.join(" ")}` +
-        `  }` +
-        `}`;
+      q = `query {` + `  keypair {` + `    ${fields.join(' ')}` + `  }` + `}`;
       v = {};
     }
     return this.client.query(q, v);
@@ -2223,18 +2544,34 @@ class Keypair {
    * @param {array} fields - Fields to query. Queryable fields are: "access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
    'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'.
    */
-  async list(userId = null, fields = ['access_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
-    'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) {
-
+  async list(
+    userId = null,
+    fields = [
+      'access_key',
+      'is_active',
+      'is_admin',
+      'user_id',
+      'created_at',
+      'last_used',
+      'concurrency_used',
+      'rate_limit',
+      'num_queries',
+      'resource_policy',
+    ],
+    isActive = true,
+  ) {
     let q, v;
     if (this.client._apiVersionMajor < 5) {
-      q = (this.client.is_admin && userId == null) ? `
+      q =
+        this.client.is_admin && userId == null
+          ? `
         query($is_active: Boolean) {
           keypairs(is_active: $is_active) {
             ${fields.join(' ')}
           }
         }
-      ` : `
+      `
+          : `
         query($email: String!, $is_active: Boolean) {
           keypairs(email: $email, is_active: $is_active) {
             ${fields.join(' ')}
@@ -2251,14 +2588,17 @@ class Keypair {
       // we iterate pages to gather all keypairs for client-side compability.
       const limit = 100;
       const keypairs = [] as any;
-      q = (this.client.is_admin && userId == null) ? `
+      q =
+        this.client.is_admin && userId == null
+          ? `
         query($offset:Int!, $limit:Int!, $is_active: Boolean) {
           keypair_list(offset:$offset, limit:$limit, is_active: $is_active) {
             items { ${fields.join(' ')} }
             total_count
           }
         }
-      ` : `
+      `
+          : `
         query($offset:Int!, $limit:Int!, $email: String!, $is_active: Boolean) {
           keypair_list(offset:$offset, limit:$limit, email: $email, is_active: $is_active) {
             items { ${fields.join(' ')} }
@@ -2267,19 +2607,20 @@ class Keypair {
         }
       `;
       // Prevent fetching more than 1000 keypairs.
-      for (let offset = 0; offset < 10 * limit; offset+=limit) {
+      for (let offset = 0; offset < 10 * limit; offset += limit) {
         v = {
-          offset, limit,
+          offset,
+          limit,
           email: userId || this.client.email,
           is_active: isActive,
-        }
+        };
         const page = await this.client.query(q, v);
         keypairs.push(...page.keypair_list.items);
         if (offset >= page.keypair_list.total_count) {
           break;
         }
       }
-      const resp = {keypairs};
+      const resp = { keypairs };
       return Promise.resolve(resp);
     }
   }
@@ -2293,36 +2634,42 @@ class Keypair {
    * @param {string} resourcePolicy - resource policy name to assign. Default is `default`.
    * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
    */
-  async add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default',
-            rateLimit = 1000) {
+  async add(
+    userId = null,
+    isActive = true,
+    isAdmin = false,
+    resourcePolicy = 'default',
+    rateLimit = 1000,
+  ) {
     let fields = [
       'is_active',
       'is_admin',
       'resource_policy',
       'concurrency_limit',
-      'rate_limit'
+      'rate_limit',
     ];
-    let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
-    `  create_keypair(user_id: $user_id, props: $input) {` +
-    `    ok msg keypair { ${fields.join(" ")} }` +
-    `  }` +
-    `}`;
-  let v = {
-    'user_id': userId,
-    'input': {
-      'is_active': isActive,
-      'is_admin': isAdmin,
-      'resource_policy': resourcePolicy,
-      'rate_limit': rateLimit,
-    },
-  };
-  return this.client.query(q, v);
+    let q =
+      `mutation($user_id: String!, $input: KeyPairInput!) {` +
+      `  create_keypair(user_id: $user_id, props: $input) {` +
+      `    ok msg keypair { ${fields.join(' ')} }` +
+      `  }` +
+      `}`;
+    let v = {
+      user_id: userId,
+      input: {
+        is_active: isActive,
+        is_admin: isAdmin,
+        resource_policy: resourcePolicy,
+        rate_limit: rateLimit,
+      },
+    };
+    return this.client.query(q, v);
     /** accessKey is no longer used */
     /*
     if (accessKey !== null && accessKey !== '') {
       fields = fields.concat(['access_key', 'secret_key']);
     } */
-     /* if (accessKey !== null && accessKey !== '') {
+    /* if (accessKey !== null && accessKey !== '') {
       v = {
         'user_id': userId,
         'input': {
@@ -2358,14 +2705,15 @@ class Keypair {
    * }
    */
   async mutate(accessKey, input) {
-    let q = `mutation($access_key: String!, $input: ModifyKeyPairInput!) {` +
+    let q =
+      `mutation($access_key: String!, $input: ModifyKeyPairInput!) {` +
       `  modify_keypair(access_key: $access_key, props: $input) {` +
       `    ok msg` +
       `  }` +
       `}`;
     let v = {
-      'access_key': accessKey,
-      'input': input,
+      access_key: accessKey,
+      input: input,
     };
     return this.client.query(q, v);
   }
@@ -2376,18 +2724,18 @@ class Keypair {
    * @param {string} accessKey - access key to delete.
    */
   async delete(accessKey) {
-    let q = `mutation($access_key: String!) {` +
+    let q =
+      `mutation($access_key: String!) {` +
       `  delete_keypair(access_key: $access_key) {` +
       `    ok msg` +
       `  }` +
       `}`;
     let v = {
-      'access_key': accessKey,
+      access_key: accessKey,
     };
     return this.client.query(q, v);
   }
 }
-
 
 class ResourcePolicy {
   public client: any;
@@ -2407,30 +2755,35 @@ class ResourcePolicy {
    * @param {string} name - resource policy name.
    * @param {array} fields - fields to query.
    */
-  async get(name = null, fields = ['name',
-    'created_at',
-    'default_for_unspecified',
-    'total_resource_slots',
-    'max_concurrent_sessions',
-    'max_containers_per_session',
-    'max_vfolder_count',
-    'max_vfolder_size',
-    'allowed_vfolder_hosts',
-    'idle_timeout']) {
+  async get(
+    name = null,
+    fields = [
+      'name',
+      'created_at',
+      'default_for_unspecified',
+      'total_resource_slots',
+      'max_concurrent_sessions',
+      'max_containers_per_session',
+      'max_vfolder_count',
+      'max_vfolder_size',
+      'allowed_vfolder_hosts',
+      'idle_timeout',
+    ],
+  ) {
     if (this.client.supports('session-lifetime')) {
       fields.push('max_session_lifetime');
     }
     let q, v;
     if (name === null) {
-      q = `query {` +
-        `  keypair_resource_policies { ${fields.join(" ")} }` +
-        '}';
-      v = {'n': name};
+      q =
+        `query {` + `  keypair_resource_policies { ${fields.join(' ')} }` + '}';
+      v = { n: name };
     } else {
-      q = `query($n:String!) {` +
-        `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
+      q =
+        `query($n:String!) {` +
+        `  keypair_resource_policy(name: $n) { ${fields.join(' ')} }` +
         '}';
-      v = {'n': name};
+      v = { n: name };
     }
     return this.client.query(q, v);
   }
@@ -2453,7 +2806,8 @@ class ResourcePolicy {
    * };
    */
   async add(name = null, input) {
-    let fields = ['name',
+    let fields = [
+      'name',
       'created_at',
       'default_for_unspecified',
       'total_resource_slots',
@@ -2462,19 +2816,21 @@ class ResourcePolicy {
       'max_vfolder_count',
       'max_vfolder_size',
       'allowed_vfolder_hosts',
-      'idle_timeout'];
+      'idle_timeout',
+    ];
     if (this.client.supports('session-lifetime')) {
       fields.push('max_session_lifetime');
     }
     if (this.client.is_admin === true && name !== null) {
-      let q = `mutation($name: String!, $input: CreateKeyPairResourcePolicyInput!) {` +
+      let q =
+        `mutation($name: String!, $input: CreateKeyPairResourcePolicyInput!) {` +
         `  create_keypair_resource_policy(name: $name, props: $input) {` +
-        `    ok msg resource_policy { ${fields.join(" ")} }` +
+        `    ok msg resource_policy { ${fields.join(' ')} }` +
         `  }` +
         `}`;
       let v = {
-        'name': name,
-        'input': input
+        name: name,
+        input: input,
       };
       return this.client.query(q, v);
     } else {
@@ -2501,14 +2857,15 @@ class ResourcePolicy {
    */
   async mutate(name = null, input) {
     if (this.client.is_admin === true && name !== null) {
-      let q = `mutation($name: String!, $input: ModifyKeyPairResourcePolicyInput!) {` +
+      let q =
+        `mutation($name: String!, $input: ModifyKeyPairResourcePolicyInput!) {` +
         `  modify_keypair_resource_policy(name: $name, props: $input) {` +
         `    ok msg ` +
         `  }` +
         `}`;
       let v = {
-        'name': name,
-        'input': input
+        name: name,
+        input: input,
       };
       return this.client.query(q, v);
     } else {
@@ -2523,20 +2880,20 @@ class ResourcePolicy {
    */
   async delete(name = null) {
     if (this.client.is_superadmin === true && name !== null) {
-      let q =`mutation($name: String!) {` +
+      let q =
+        `mutation($name: String!) {` +
         ` delete_keypair_resource_policy(name: $name) {` +
         `   ok msg ` +
         ` }` +
         `}`;
       let v = {
-        'name': name
+        name: name,
       };
       return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
   }
-
 }
 
 class ContainerImage {
@@ -2558,24 +2915,33 @@ class ContainerImage {
    * @param {boolean} installed_only - filter images to installed / not installed. true to query installed images only.
    * @param {boolean} system_images - filter images to get system images such as web UI, SFTP server. true to query system images only.
    */
-  async list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], installed_only = false, system_images = false) {
+  async list(
+    fields = [
+      'name',
+      'tag',
+      'registry',
+      'digest',
+      'installed',
+      'labels { key value }',
+      'resource_limits { key min max }',
+    ],
+    installed_only = false,
+    system_images = false,
+  ) {
     let q, v;
     if (this.client.supports('system-images')) {
       if (installed_only === true) {
-        q = `query($installed:Boolean) {` +
-          `  images(is_installed:$installed) { ${fields.join(" ")} }` +
+        q =
+          `query($installed:Boolean) {` +
+          `  images(is_installed:$installed) { ${fields.join(' ')} }` +
           '}';
-        v = {'installed': installed_only, 'is_operation': system_images};
+        v = { installed: installed_only, is_operation: system_images };
       } else {
-        q = `query {` +
-          `  images { ${fields.join(" ")} }` +
-          '}';
-        v = {'is_operation': system_images};
+        q = `query {` + `  images { ${fields.join(' ')} }` + '}';
+        v = { is_operation: system_images };
       }
     } else {
-      q = `query {` +
-        `  images { ${fields.join(" ")} }` +
-        '}';
+      q = `query {` + `  images { ${fields.join(' ')} }` + '}';
       v = {};
     }
     return this.client.query(q, v);
@@ -2591,16 +2957,16 @@ class ContainerImage {
    */
   async modifyResource(registry, image, tag, input) {
     let promiseArray: Array<Promise<any>> = [];
-    registry = registry.replace(/:/g, "%3A");
-    image = image.replace(/\//g, "%2F");
-    Object.keys(input).forEach(slot_type => {
-      Object.keys(input[slot_type]).forEach(key => {
-        const rqst = this.client.newSignedRequest("POST", "/config/set", {
-          "key": `images/${registry}/${image}/${tag}/resource/${slot_type}/${key}`,
-          "value": input[slot_type][key]
+    registry = registry.replace(/:/g, '%3A');
+    image = image.replace(/\//g, '%2F');
+    Object.keys(input).forEach((slot_type) => {
+      Object.keys(input[slot_type]).forEach((key) => {
+        const rqst = this.client.newSignedRequest('POST', '/config/set', {
+          key: `images/${registry}/${image}/${tag}/resource/${slot_type}/${key}`,
+          value: input[slot_type][key],
         });
         promiseArray.push(this.client._wrapWithPromise(rqst));
-      })
+      });
     });
     return Promise.all(promiseArray);
   }
@@ -2615,12 +2981,12 @@ class ContainerImage {
    * @param {string} value - value for the key.
    */
   async modifyLabel(registry, image, tag, key, value) {
-    registry = registry.replace(/:/g, "%3A");
-    image = image.replace(/\//g, "%2F");
-    tag = tag.replace(/\//g, "%2F");
-    const rqst = this.client.newSignedRequest("POST", "/config/set", {
-      "key": `images/${registry}/${image}/${tag}/labels/${key}`,
-      "value": value
+    registry = registry.replace(/:/g, '%3A');
+    image = image.replace(/\//g, '%2F');
+    tag = tag.replace(/\//g, '%2F');
+    const rqst = this.client.newSignedRequest('POST', '/config/set', {
+      key: `images/${registry}/${image}/${tag}/labels/${key}`,
+      value: value,
     });
     return this.client._wrapWithPromise(rqst);
   }
@@ -2633,22 +2999,36 @@ class ContainerImage {
    * @param {object} resource - resource to use for installation.
    * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
    */
-  async install(name, architecture, resource: object = {}, registry: string = 'index.docker.io') {
+  async install(
+    name,
+    architecture,
+    resource: object = {},
+    registry: string = 'index.docker.io',
+  ) {
     if (registry != 'index.docker.io') {
       registry = registry + '/';
     } else {
       registry = '';
     }
-    registry = registry.replace(/:/g, "%3A");
+    registry = registry.replace(/:/g, '%3A');
     let sessionId = this.client.generateSessionId();
     if (Object.keys(resource).length === 0) {
-      resource = {'cpu': '1', 'mem': '512m'};
+      resource = { cpu: '1', mem: '512m' };
     }
-    return this.client.createIfNotExists(registry + name, sessionId, resource, 600000, architecture).then((response) => {
-      return this.client.destroy(sessionId);
-    }).catch(err => {
-      throw err;
-    });
+    return this.client
+      .createIfNotExists(
+        registry + name,
+        sessionId,
+        resource,
+        600000,
+        architecture,
+      )
+      .then((response) => {
+        return this.client.destroy(sessionId);
+      })
+      .catch((err) => {
+        throw err;
+      });
   }
 
   /**
@@ -2669,14 +3049,13 @@ class ContainerImage {
    * @param {string} tag - tag to get.
    */
   async get(registry, image, tag) {
-    registry = registry.replace(/:/g, "%3A");
-    const rqst = this.client.newSignedRequest("POST", "/config/get", {
-      "key": `images/${registry}/${image}/${tag}/resource/`,
-      "prefix": true
+    registry = registry.replace(/:/g, '%3A');
+    const rqst = this.client.newSignedRequest('POST', '/config/get', {
+      key: `images/${registry}/${image}/${tag}/resource/`,
+      prefix: true,
     });
     return this.client._wrapWithPromise(rqst);
   }
-
 }
 
 class ComputeSession {
@@ -2701,7 +3080,13 @@ class ComputeSession {
    * @param {number} offset - offset for item query. Useful for pagination.
    * @param {string} group - project group id to query. Default returns sessions from all groups.
    */
-  async total_count(status = 'RUNNING', accessKey = '', limit = 1, offset = 0, group = '') {
+  async total_count(
+    status = 'RUNNING',
+    accessKey = '',
+    limit = 1,
+    offset = 0,
+    group = '',
+  ) {
     let q, v;
     q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
       compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
@@ -2709,9 +3094,9 @@ class ComputeSession {
       }
     }`;
     v = {
-      'limit': limit,
-      'offset': offset,
-      'status': status
+      limit: limit,
+      offset: offset,
+      status: status,
     };
     if (accessKey != '') {
       v['ak'] = accessKey;
@@ -2734,20 +3119,38 @@ class ComputeSession {
    * @param {string} group - project group id to query. Default returns sessions from all groups.
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
-  async list(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}", "starts_at"],
-             status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '', timeout: number = 0) {
+  async list(
+    fields = [
+      'id',
+      'name',
+      'image',
+      'created_at',
+      'terminated_at',
+      'status',
+      'status_info',
+      'occupied_slots',
+      'containers {live_stat last_stat}',
+      'starts_at',
+    ],
+    status = 'RUNNING',
+    accessKey = '',
+    limit = 30,
+    offset = 0,
+    group = '',
+    timeout: number = 0,
+  ) {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
     q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
       compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
-        items { ${fields.join(" ")}}
+        items { ${fields.join(' ')}}
         total_count
       }
     }`;
     v = {
-      'limit': limit,
-      'offset': offset,
-      'status': status
+      limit: limit,
+      offset: offset,
+      status: status,
     };
     if (accessKey != '') {
       v['ak'] = accessKey;
@@ -2769,9 +3172,25 @@ class ComputeSession {
    * @param {string} group - project group id to query. Default returns sessions from all groups.
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
-  async listAll(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"],
-                status = "RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR",
-                accessKey = '', limit = 100, offset = 0, group = '', timeout:number = 0) {
+  async listAll(
+    fields = [
+      'id',
+      'name',
+      'image',
+      'created_at',
+      'terminated_at',
+      'status',
+      'status_info',
+      'occupied_slots',
+      'containers {live_stat last_stat}',
+    ],
+    status = 'RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR',
+    accessKey = '',
+    limit = 100,
+    offset = 0,
+    group = '',
+    timeout: number = 0,
+  ) {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
     if (!this.client.supports('avoid-hol-blocking')) {
       status.replace('SCHEDULED,', '');
@@ -2788,8 +3207,8 @@ class ComputeSession {
     }`;
 
     // Prevent fetching more than 1000 sessions.
-    for (let offset = 0; offset < 10 * limit; offset+=limit) {
-      v = {limit, offset, status};
+    for (let offset = 0; offset < 10 * limit; offset += limit) {
+      v = { limit, offset, status };
       if (accessKey != '') {
         v.access_key = accessKey;
       }
@@ -2799,7 +3218,7 @@ class ComputeSession {
       const session = await this.client.query(q, v, null, timeout);
       sessions.push(...session.compute_session_list.items);
       if (offset >= session.compute_session_list.total_count) {
-          break;
+        break;
       }
     }
     return Promise.resolve(sessions);
@@ -2811,16 +3230,31 @@ class ComputeSession {
    * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
    * @param {string} sessionUuid - session ID to query specific compute session.
    */
-  async get(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "scaling_group"],
-            sessionUuid = '') {
+  async get(
+    fields = [
+      'id',
+      'session_name',
+      'lang',
+      'created_at',
+      'terminated_at',
+      'status',
+      'status_info',
+      'occupied_slots',
+      'cpu_used',
+      'io_read_bytes',
+      'io_write_bytes',
+      'scaling_group',
+    ],
+    sessionUuid = '',
+  ) {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
     q = `query($session_uuid: UUID!) {
       compute_session(id:$session_uuid) {
-        ${fields.join(" ")}
+        ${fields.join(' ')}
       }
     }`;
-    v = {session_uuid: sessionUuid};
+    v = { session_uuid: sessionUuid };
     return this.client.query(q, v);
   }
 
@@ -2830,15 +3264,19 @@ class ComputeSession {
     app: string,
     port: number | null = null,
     envs: Record<string, unknown> | null = null,
-    args: Record<string, unknown> | null = null
+    args: Record<string, unknown> | null = null,
   ) {
-    let rqst = this.client.newSignedRequest('POST', `/session/${session}/start-service`, {
-      login_session_token: loginSessionToken,
-      app,
-      port: port || undefined,
-      envs: envs || undefined,
-      arguments: JSON.stringify(args) || undefined,
-    });
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `/session/${session}/start-service`,
+      {
+        login_session_token: loginSessionToken,
+        app,
+        port: port || undefined,
+        envs: envs || undefined,
+        arguments: JSON.stringify(args) || undefined,
+      },
+    );
     return this.client._wrapWithPromise(rqst);
   }
 }
@@ -2869,15 +3307,15 @@ class SessionTemplate {
    * @param {string} group - project group id to query. Default returns sessions from all groups.
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
-  async list(listall=false, groupId=null) {
+  async list(listall = false, groupId = null) {
     let reqUrl = this.urlPrefix;
     if (listall) {
-      const params = {all: listall};
+      const params = { all: listall };
       const q = querystring.stringify(params);
       reqUrl += `?${q}`;
     }
     if (groupId) {
-      const params = {group_id: groupId};
+      const params = { group_id: groupId };
       const q = querystring.stringify(params);
       reqUrl += `?${q}`;
     }
@@ -2938,85 +3376,125 @@ class Resources {
    */
   async totalResourceInformation(status = 'ALIVE') {
     if (this.client.is_admin) {
-      let fields = ['id',
+      let fields = [
+        'id',
         'addr',
         'status',
         'first_contact',
         'cpu_cur_pct',
         'mem_cur_bytes',
         'occupied_slots',
-        'available_slots'];
-      return this.client.agent.list(status, fields).then((response) => {
-        this._init_resource_values();
-        this.agents = response.agents;
-        Object.keys(this.agents).map((objectKey, index) => {
-          let value = this.agents[objectKey];
-          let occupied_slots = JSON.parse(value.occupied_slots);
-          let available_slots = JSON.parse(value.available_slots);
-          if ('cpu' in available_slots) {
-            this.resources.cpu.total = this.resources.cpu.total + Math.floor(Number(available_slots.cpu));
-          }
-          if ('cpu' in occupied_slots) {
-            this.resources.cpu.used = this.resources.cpu.used + Math.floor(Number(occupied_slots.cpu));
-          }
-          this.resources.cpu.percent = this.resources.cpu.percent + parseFloat(value.cpu_cur_pct);
+        'available_slots',
+      ];
+      return this.client.agent
+        .list(status, fields)
+        .then((response) => {
+          this._init_resource_values();
+          this.agents = response.agents;
+          Object.keys(this.agents).map((objectKey, index) => {
+            let value = this.agents[objectKey];
+            let occupied_slots = JSON.parse(value.occupied_slots);
+            let available_slots = JSON.parse(value.available_slots);
+            if ('cpu' in available_slots) {
+              this.resources.cpu.total =
+                this.resources.cpu.total +
+                Math.floor(Number(available_slots.cpu));
+            }
+            if ('cpu' in occupied_slots) {
+              this.resources.cpu.used =
+                this.resources.cpu.used +
+                Math.floor(Number(occupied_slots.cpu));
+            }
+            this.resources.cpu.percent =
+              this.resources.cpu.percent + parseFloat(value.cpu_cur_pct);
 
-          if (occupied_slots.mem === undefined) {
-            occupied_slots.mem = 0;
-          }
-          this.resources.mem.total = parseFloat(this.resources.mem.total) + parseInt(this.client.utils.changeBinaryUnit(available_slots.mem, 'b'));
-          this.resources.mem.allocated = parseInt(this.resources.mem.allocated) + parseInt(this.client.utils.changeBinaryUnit(occupied_slots.mem, 'b'));
-          this.resources.mem.used = parseInt(this.resources.mem.used) + parseInt(this.client.utils.changeBinaryUnit(value.mem_cur_bytes, 'b'));
+            if (occupied_slots.mem === undefined) {
+              occupied_slots.mem = 0;
+            }
+            this.resources.mem.total =
+              parseFloat(this.resources.mem.total) +
+              parseInt(
+                this.client.utils.changeBinaryUnit(available_slots.mem, 'b'),
+              );
+            this.resources.mem.allocated =
+              parseInt(this.resources.mem.allocated) +
+              parseInt(
+                this.client.utils.changeBinaryUnit(occupied_slots.mem, 'b'),
+              );
+            this.resources.mem.used =
+              parseInt(this.resources.mem.used) +
+              parseInt(
+                this.client.utils.changeBinaryUnit(value.mem_cur_bytes, 'b'),
+              );
 
-          if ('cuda.device' in available_slots) {
-            this.resources['cuda.device'].total = parseInt(this.resources['cuda.device'].total) + Math.floor(Number(available_slots['cuda.device']));
-          }
-          if ('cuda.device' in occupied_slots) {
-            this.resources['cuda.device'].used = parseInt(this.resources['cuda.device'].used) + Math.floor(Number(occupied_slots['cuda.device']));
-          }
-          if ('cuda.shares' in available_slots) {
-            this.resources['cuda.shares'].total = parseFloat(this.resources['cuda.shares'].total) + parseFloat(available_slots['cuda.shares']);
-          }
-          if ('cuda.shares' in occupied_slots) {
-            this.resources['cuda.shares'].used = parseFloat(this.resources['cuda.shares'].used) + parseFloat(occupied_slots['cuda.shares']);
-          }
-          if ('rocm.device' in available_slots) {
-            this.resources['rocm.device'].total = parseInt(this.resources['rocm.device'].total) + Math.floor(Number(available_slots['rocm.device']));
-          }
-          if ('rocm.device' in occupied_slots) {
-            this.resources['rocm.device'].used = parseInt(this.resources['rocm.device'].used) + Math.floor(Number(occupied_slots['rocm.device']));
-          }
-          if ('tpu.device' in available_slots) {
-            this.resources['tpu.device'].total = parseInt(this.resources['tpu.device'].total) + Math.floor(Number(available_slots['tpu.device']));
-          }
-          if ('tpu.device' in occupied_slots) {
-            this.resources['tpu.device'].used = parseInt(this.resources['tpu.device'].used) + Math.floor(Number(occupied_slots['tpu.device']));
-          }
+            if ('cuda.device' in available_slots) {
+              this.resources['cuda.device'].total =
+                parseInt(this.resources['cuda.device'].total) +
+                Math.floor(Number(available_slots['cuda.device']));
+            }
+            if ('cuda.device' in occupied_slots) {
+              this.resources['cuda.device'].used =
+                parseInt(this.resources['cuda.device'].used) +
+                Math.floor(Number(occupied_slots['cuda.device']));
+            }
+            if ('cuda.shares' in available_slots) {
+              this.resources['cuda.shares'].total =
+                parseFloat(this.resources['cuda.shares'].total) +
+                parseFloat(available_slots['cuda.shares']);
+            }
+            if ('cuda.shares' in occupied_slots) {
+              this.resources['cuda.shares'].used =
+                parseFloat(this.resources['cuda.shares'].used) +
+                parseFloat(occupied_slots['cuda.shares']);
+            }
+            if ('rocm.device' in available_slots) {
+              this.resources['rocm.device'].total =
+                parseInt(this.resources['rocm.device'].total) +
+                Math.floor(Number(available_slots['rocm.device']));
+            }
+            if ('rocm.device' in occupied_slots) {
+              this.resources['rocm.device'].used =
+                parseInt(this.resources['rocm.device'].used) +
+                Math.floor(Number(occupied_slots['rocm.device']));
+            }
+            if ('tpu.device' in available_slots) {
+              this.resources['tpu.device'].total =
+                parseInt(this.resources['tpu.device'].total) +
+                Math.floor(Number(available_slots['tpu.device']));
+            }
+            if ('tpu.device' in occupied_slots) {
+              this.resources['tpu.device'].used =
+                parseInt(this.resources['tpu.device'].used) +
+                Math.floor(Number(occupied_slots['tpu.device']));
+            }
 
-          if (isNaN(this.resources.cpu.used)) {
-            this.resources.cpu.used = 0;
-          }
-          if (isNaN(this.resources.mem.used)) {
-            this.resources.mem.used = 0;
-          }
-          if (isNaN(this.resources.gpu.used)) {
-            this.resources.gpu.used = 0;
-          }
-          if (isNaN(this.resources.fgpu.used)) {
-            this.resources.fgpu.used = 0;
-          }
+            if (isNaN(this.resources.cpu.used)) {
+              this.resources.cpu.used = 0;
+            }
+            if (isNaN(this.resources.mem.used)) {
+              this.resources.mem.used = 0;
+            }
+            if (isNaN(this.resources.gpu.used)) {
+              this.resources.gpu.used = 0;
+            }
+            if (isNaN(this.resources.fgpu.used)) {
+              this.resources.fgpu.used = 0;
+            }
+          });
+          // Legacy code
+          this.resources.gpu.total = this.resources['cuda.device'].total;
+          this.resources.gpu.used = this.resources['cuda.device'].used;
+          this.resources.fgpu.used =
+            this.resources['cuda.shares'].used.toFixed(2);
+          this.resources.fgpu.total =
+            this.resources['cuda.shares'].total.toFixed(2);
+          this.resources.agents.total = Object.keys(this.agents).length; // TODO : remove terminated agents
+          this.resources.agents.using = Object.keys(this.agents).length;
+          return Promise.resolve(this.resources);
+        })
+        .catch((err) => {
+          throw err;
         });
-        // Legacy code
-        this.resources.gpu.total = this.resources['cuda.device'].total;
-        this.resources.gpu.used = this.resources['cuda.device'].used;
-        this.resources.fgpu.used = this.resources['cuda.shares'].used.toFixed(2);
-        this.resources.fgpu.total = this.resources['cuda.shares'].total.toFixed(2);
-        this.resources.agents.total = Object.keys(this.agents).length; // TODO : remove terminated agents
-        this.resources.agents.using = Object.keys(this.agents).length;
-        return Promise.resolve(this.resources);
-      }).catch(err => {
-        throw err;
-      });
     } else {
       return Promise.resolve(false);
     }
@@ -3027,7 +3505,11 @@ class Resources {
    *
    */
   async user_stats() {
-    const rqst = this.client.newSignedRequest("GET", "/resource/stats/user/month", null);
+    const rqst = this.client.newSignedRequest(
+      'GET',
+      '/resource/stats/user/month',
+      null,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 }
@@ -3057,28 +3539,44 @@ class Group {
    *   'domain_name': String,   // Domain for group.
    * };
    */
-  async list(is_active = true, domain_name = false,
-             fields = ['id', 'name', 'description', 'is_active', 'created_at', 'modified_at', 'domain_name']) {
+  async list(
+    is_active = true,
+    domain_name = false,
+    fields = [
+      'id',
+      'name',
+      'description',
+      'is_active',
+      'created_at',
+      'modified_at',
+      'domain_name',
+    ],
+  ) {
     let q, v;
     if (this.client.is_admin === true) {
-      q = `query($is_active:Boolean) {` +
-        `  groups(is_active:$is_active) { ${fields.join(" ")} }` +
+      q =
+        `query($is_active:Boolean) {` +
+        `  groups(is_active:$is_active) { ${fields.join(' ')} }` +
         '}';
-      v = {'is_active': is_active};
+      v = { is_active: is_active };
       if (domain_name !== false) {
-        q = `query($domain_name: String, $is_active:Boolean) {` +
-          `  groups(domain_name: $domain_name, is_active:$is_active) { ${fields.join(" ")} }` +
+        q =
+          `query($domain_name: String, $is_active:Boolean) {` +
+          `  groups(domain_name: $domain_name, is_active:$is_active) { ${fields.join(
+            ' ',
+          )} }` +
           '}';
         v = {
-          'is_active': is_active,
-          'domain_name': domain_name
+          is_active: is_active,
+          domain_name: domain_name,
         };
       }
     } else {
-      q = `query($is_active:Boolean) {` +
-        `  groups(is_active:$is_active) { ${fields.join(" ")} }` +
+      q =
+        `query($is_active:Boolean) {` +
+        `  groups(is_active:$is_active) { ${fields.join(' ')} }` +
         '}';
-      v = {'is_active': is_active};
+      v = { is_active: is_active };
     }
     return this.client.query(q, v);
   }
@@ -3114,23 +3612,45 @@ class Domain {
    *   'scaling_groups': [String],   // Scaling groups
    * };
    */
-  async get(domain_name = false,
-            fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
-              'allowed_docker_registries', 'integration_id', 'scaling_groups']) {
+  async get(
+    domain_name = false,
+    fields = [
+      'name',
+      'description',
+      'is_active',
+      'created_at',
+      'modified_at',
+      'total_resource_slots',
+      'allowed_vfolder_hosts',
+      'allowed_docker_registries',
+      'integration_id',
+      'scaling_groups',
+    ],
+  ) {
     let q, v;
     if (domain_name !== false) {
-      q = `query($name: String) {` +
-        `  domain(name: $name) { ${fields.join(" ")} }` +
+      q =
+        `query($name: String) {` +
+        `  domain(name: $name) { ${fields.join(' ')} }` +
         '}';
-      v = {'name': domain_name};
+      v = { name: domain_name };
       return this.client.query(q, v);
     }
   }
 
-  async list(fields = ['name', 'description', 'is_active', 'created_at', 'total_resource_slots', 'allowed_vfolder_hosts', 'allowed_docker_registries', 'integration_id']) {
-    let q = `query {` +
-      ` domains { ${fields.join(" ")} }` +
-      `}`;
+  async list(
+    fields = [
+      'name',
+      'description',
+      'is_active',
+      'created_at',
+      'total_resource_slots',
+      'allowed_vfolder_hosts',
+      'allowed_docker_registries',
+      'integration_id',
+    ],
+  ) {
+    let q = `query {` + ` domains { ${fields.join(' ')} }` + `}`;
     let v = {};
 
     return this.client.query(q, v);
@@ -3159,14 +3679,15 @@ class Domain {
     //let fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
     //  'allowed_docker_registries', 'integration_id', 'scaling_groups'];
     if (this.client.is_superadmin === true) {
-      let q = `mutation($name: String!, $input: ModifyDomainInput!) {` +
+      let q =
+        `mutation($name: String!, $input: ModifyDomainInput!) {` +
         `  modify_domain(name: $name, props: $input) {` +
         `    ok msg` +
         `  }` +
         `}`;
       let v = {
-        'name': domain_name,
-        'input': input
+        name: domain_name,
+        input: input,
       };
       return this.client.query(q, v);
     } else {
@@ -3194,9 +3715,9 @@ class Maintenance {
    * @param {string} task_id - background task id.
    */
   attach_background_task(task_id: string) {
-    var urlStr = "/events/background-task?task_id=" + task_id;
-    let req = this.client.newSignedRequest("GET", urlStr, null);
-    return new EventSource(req.uri, {withCredentials:true});
+    var urlStr = '/events/background-task?task_id=' + task_id;
+    let req = this.client.newSignedRequest('GET', urlStr, null);
+    return new EventSource(req.uri, { withCredentials: true });
   }
 
   /**
@@ -3208,23 +3729,25 @@ class Maintenance {
       let q, v;
       if (registry !== '') {
         registry = decodeURIComponent(registry);
-        q = `mutation($registry: String) {` +
+        q =
+          `mutation($registry: String) {` +
           `  rescan_images(registry: $registry) {` +
           `    ok msg task_id ` +
           `  }` +
           `}`;
         v = {
-          'registry': registry
+          registry: registry,
         };
       } else {
-        q = `mutation {` +
+        q =
+          `mutation {` +
           `  rescan_images {` +
           `    ok msg task_id ` +
           `  }` +
           `}`;
         v = {};
       }
-      return this.client.query(q, v, null, 600 * 1000 );
+      return this.client.query(q, v, null, 600 * 1000);
     } else {
       return Promise.resolve(false);
     }
@@ -3232,7 +3755,11 @@ class Maintenance {
 
   async recalculate_usage() {
     if (this.client.is_superadmin === true) {
-      let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/recalculate-usage`, null);
+      let rqst = this.client.newSignedRequest(
+        'POST',
+        `${this.urlPrefix}/recalculate-usage`,
+        null,
+      );
       return this.client._wrapWithPromise(rqst, null, null, 60 * 1000);
     }
   }
@@ -3269,15 +3796,30 @@ class User {
    *   'groups': {id name}  // Group Ids for user. Shoule be list of UUID strings.
    * };
    */
-  async list(is_active = true,
-             fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status']) {
+  async list(
+    is_active = true,
+    fields = [
+      'username',
+      'password',
+      'need_password_change',
+      'full_name',
+      'description',
+      'is_active',
+      'domain_name',
+      'role',
+      'groups {id name}',
+      'status',
+    ],
+  ) {
     let q, v;
     if (this.client._apiVersionMajor < 5) {
-      q = this.client.is_admin ? `
+      q = this.client.is_admin
+        ? `
         query($is_active:Boolean) {
           users(is_active:$is_active) { ${fields.join(' ')} }
         }
-      ` : `
+      `
+        : `
         query {
           users { ${fields.join(' ')} }
         }
@@ -3289,14 +3831,16 @@ class User {
       // we iterate pages to gather all users for client-side compability.
       const limit = 100;
       const users = [] as any;
-      q = this.client.is_admin ? `
+      q = this.client.is_admin
+        ? `
         query($offset:Int!, $limit:Int!, $is_active:Boolean) {
           user_list(offset:$offset, limit:$limit, is_active:$is_active) {
             items { ${fields.join(' ')} }
             total_count
           }
         }
-      ` : `
+      `
+        : `
         query($offset:Int!, $limit:Int!) {
           user_list(offset:$offset, limit:$limit) {
             items { ${fields.join(' ')} }
@@ -3305,15 +3849,17 @@ class User {
         }
       `;
       // Prevent fetching more than 1000 users.
-      for (let offset = 0; offset < 10 * limit; offset+=limit) {
-        v = this.client.is_admin ? {offset, limit, is_active} : {offset, limit};
+      for (let offset = 0; offset < 10 * limit; offset += limit) {
+        v = this.client.is_admin
+          ? { offset, limit, is_active }
+          : { offset, limit };
         const page = await this.client.query(q, v);
         users.push(...page.user_list.items);
         if (offset >= page.user_list.total_count) {
           break;
         }
       }
-      const resp = {users};
+      const resp = { users };
       return Promise.resolve(resp);
     }
   }
@@ -3336,17 +3882,31 @@ class User {
    *   'groups': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
    * };
    */
-  async get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'totp_activated']) {
+  async get(
+    email,
+    fields = [
+      'email',
+      'username',
+      'password',
+      'need_password_change',
+      'full_name',
+      'description',
+      'is_active',
+      'domain_name',
+      'role',
+      'groups {id name}',
+      'totp_activated',
+    ],
+  ) {
     let q, v;
     if (this.client.is_admin === true) {
-      q = `query($email:String) {` +
-        `  user (email:$email) { ${fields.join(" ")} }` +
+      q =
+        `query($email:String) {` +
+        `  user (email:$email) { ${fields.join(' ')} }` +
         '}';
-      v = {'email': email};
+      v = { email: email };
     } else {
-      q = `query {` +
-        `  user { ${fields.join(" ")} }` +
-        '}';
+      q = `query {` + `  user { ${fields.join(' ')} }` + '}';
       v = {};
     }
     return this.client.query(q, v);
@@ -3370,16 +3930,27 @@ class User {
    * };
    */
   async create(email = null, input) {
-    let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups{id, name}'];
+    let fields = [
+      'username',
+      'password',
+      'need_password_change',
+      'full_name',
+      'description',
+      'is_active',
+      'domain_name',
+      'role',
+      'groups{id, name}',
+    ];
     if (this.client.is_admin === true) {
-      let q = `mutation($email: String!, $input: UserInput!) {` +
+      let q =
+        `mutation($email: String!, $input: UserInput!) {` +
         `  create_user(email: $email, props: $input) {` +
         `    ok msg` +
         `  }` +
         `}`;
       let v = {
-        'email': email,
-        'input': input
+        email: email,
+        input: input,
       };
       return this.client.query(q, v);
     } else {
@@ -3406,14 +3977,15 @@ class User {
    */
   async update(email = null, input) {
     if (this.client.is_superadmin === true) {
-      let q = `mutation($email: String!, $input: ModifyUserInput!) {` +
+      let q =
+        `mutation($email: String!, $input: ModifyUserInput!) {` +
         `  modify_user(email: $email, props: $input) {` +
         `    ok msg` +
         `  }` +
         `}`;
       let v = {
-        'email': email,
-        'input': input
+        email: email,
+        input: input,
       };
       return this.client.query(q, v);
     } else {
@@ -3428,13 +4000,14 @@ class User {
    */
   async delete(email) {
     if (this.client.is_superadmin === true) {
-      let q = `mutation($email: String!) {` +
+      let q =
+        `mutation($email: String!) {` +
         `  delete_user(email: $email) {` +
         `    ok msg` +
         `  }` +
         `}`;
       let v = {
-        'email': email
+        email: email,
       };
       return this.client.query(q, v);
     } else {
@@ -3442,7 +4015,6 @@ class User {
     }
   }
 }
-
 
 class ScalingGroup {
   public client: any;
@@ -3458,13 +4030,20 @@ class ScalingGroup {
 
   async list_available() {
     if (this.client.is_superadmin === true) {
-      const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts"];
+      const fields = [
+        'name',
+        'description',
+        'is_active',
+        'created_at',
+        'driver',
+        'driver_opts',
+        'scheduler',
+        'scheduler_opts',
+      ];
       if (this.client.isManagerVersionCompatibleWith('21.09.0')) {
         fields.push('wsproxy_addr');
       }
-      const q = `query {` +
-        `  scaling_groups { ${fields.join(" ")} }` +
-        `}`;
+      const q = `query {` + `  scaling_groups { ${fields.join(' ')} }` + `}`;
       const v = {};
       return this.client.query(q, v);
     } else {
@@ -3474,7 +4053,7 @@ class ScalingGroup {
 
   async list(group = 'default') {
     const queryString = `/scaling-groups?group=${group}`;
-    const rqst = this.client.newSignedRequest("GET", queryString, null);
+    const rqst = this.client.newSignedRequest('GET', queryString, null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3487,10 +4066,10 @@ class ScalingGroup {
    */
   async getWsproxyVersion(scalingGroup, groupId) {
     if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
-      return Promise.resolve({wsproxy_version: 'v1'}); // for manager<=21.03 compatibility.
+      return Promise.resolve({ wsproxy_version: 'v1' }); // for manager<=21.03 compatibility.
     }
     const url = `/scaling-groups/${scalingGroup}/wsproxy-version?group=${groupId}`;
-    const rqst = this.client.newSignedRequest("GET", url, null);
+    const rqst = this.client.newSignedRequest('GET', url, null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3509,14 +4088,15 @@ class ScalingGroup {
    * }
    */
   async create(name, input) {
-    let q = `mutation($name: String!, $input: CreateScalingGroupInput!) {` +
+    let q =
+      `mutation($name: String!, $input: CreateScalingGroupInput!) {` +
       `  create_scaling_group(name: $name, props: $input) {` +
       `    ok msg` +
       `  }` +
       `}`;
     let v = {
       name,
-      input
+      input,
     };
     return this.client.query(q, v);
   }
@@ -3528,14 +4108,15 @@ class ScalingGroup {
    * @param {string} scaling_group - scaling group name
    */
   async associate_domain(domain, scaling_group) {
-    let q = `mutation($domain: String!, $scaling_group: String!) {` +
+    let q =
+      `mutation($domain: String!, $scaling_group: String!) {` +
       `  associate_scaling_group_with_domain(domain: $domain, scaling_group: $scaling_group) {` +
       `    ok msg` +
       `  }` +
       `}`;
     let v = {
       domain,
-      scaling_group
+      scaling_group,
     };
     return this.client.query(q, v);
   }
@@ -3559,17 +4140,18 @@ class ScalingGroup {
     if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
       delete input.wsproxy_addr;
       if (Object.keys(input).length < 1) {
-        return Promise.resolve({modify_scaling_group: {ok: true}});
+        return Promise.resolve({ modify_scaling_group: { ok: true } });
       }
     }
-    let q = `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
+    let q =
+      `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
       `  modify_scaling_group(name: $name, props: $input) {` +
       `    ok msg` +
       `  }` +
       `}`;
     let v = {
       name,
-      input
+      input,
     };
 
     return this.client.query(q, v);
@@ -3581,13 +4163,14 @@ class ScalingGroup {
    * @param {string} name - name of scaling group to be deleted
    */
   async delete(name) {
-    let q = `mutation($name: String!) {` +
+    let q =
+      `mutation($name: String!) {` +
       `  delete_scaling_group(name: $name) {` +
       `    ok msg` +
       `  }` +
       `}`;
     let v = {
-      name
+      name,
     };
 
     return this.client.query(q, v);
@@ -3602,25 +4185,28 @@ class Registry {
   }
 
   async list() {
-    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": "config/docker/registry", "prefix": true});
+    const rqst = this.client.newSignedRequest('POST', '/config/get', {
+      key: 'config/docker/registry',
+      prefix: true,
+    });
     return this.client._wrapWithPromise(rqst);
   }
 
   async set(key, value) {
     key = encodeURIComponent(key);
     let regkey = `config/docker/registry/${key}`;
-    const rqst = this.client.newSignedRequest("POST", "/config/set", {
+    const rqst = this.client.newSignedRequest('POST', '/config/set', {
       key: regkey,
-      value
+      value,
     });
     return this.client._wrapWithPromise(rqst);
   }
 
   async delete(key) {
     key = encodeURIComponent(key);
-    const rqst = this.client.newSignedRequest("POST", "/config/delete", {
-      "key": `config/docker/registry/${key}`,
-      "prefix": true
+    const rqst = this.client.newSignedRequest('POST', '/config/delete', {
+      key: `config/docker/registry/${key}`,
+      prefix: true,
     });
     return this.client._wrapWithPromise(rqst);
   }
@@ -3644,9 +4230,12 @@ class Setting {
    *
    * @param {string} prefix - prefix to get. This command will return every settings starting with the prefix.
    */
-  async list(prefix = "") {
+  async list(prefix = '') {
     prefix = `config/${prefix}`;
-    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": prefix, "prefix": true});
+    const rqst = this.client.newSignedRequest('POST', '/config/get', {
+      key: prefix,
+      prefix: true,
+    });
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3657,7 +4246,10 @@ class Setting {
    */
   async get(key) {
     key = `config/${key}`;
-    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": key, "prefix": false});
+    const rqst = this.client.newSignedRequest('POST', '/config/get', {
+      key: key,
+      prefix: false,
+    });
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3669,7 +4261,10 @@ class Setting {
    */
   async set(key, value) {
     key = `config/${key}`;
-    const rqst = this.client.newSignedRequest("POST", "/config/set", {key, value});
+    const rqst = this.client.newSignedRequest('POST', '/config/set', {
+      key,
+      value,
+    });
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3681,9 +4276,9 @@ class Setting {
    */
   async delete(key, prefix = false) {
     key = `config/${key}`;
-    const rqst = this.client.newSignedRequest("POST", "/config/delete", {
-      "key": `${key}`,
-      "prefix": prefix
+    const rqst = this.client.newSignedRequest('POST', '/config/delete', {
+      key: `${key}`,
+      prefix: prefix,
     });
     return this.client._wrapWithPromise(rqst);
   }
@@ -3708,7 +4303,11 @@ class Service {
    *
    */
   async get_announcement() {
-    const rqst = this.client.newSignedRequest("GET", "/manager/announcement", null);
+    const rqst = this.client.newSignedRequest(
+      'GET',
+      '/manager/announcement',
+      null,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3719,9 +4318,9 @@ class Service {
    * @param {string} message - Announcement content. Usually in Markdown syntax.
    */
   async update_announcement(enabled = true, message) {
-    const rqst = this.client.newSignedRequest("POST", "/manager/announcement", {
-      "enabled": enabled,
-      "message": message
+    const rqst = this.client.newSignedRequest('POST', '/manager/announcement', {
+      enabled: enabled,
+      message: message,
     });
     return this.client._wrapWithPromise(rqst);
   }
@@ -3748,7 +4347,10 @@ class UserConfig {
     if (!this.client._config.accessKey) {
       throw 'Your access key is not set';
     }
-    const rqst = this.client.newSignedRequest('GET', '/user-config/bootstrap-script');
+    const rqst = this.client.newSignedRequest(
+      'GET',
+      '/user-config/bootstrap-script',
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3758,7 +4360,11 @@ class UserConfig {
    * @param {string} data - text content of bootstrap script.
    */
   async update_bootstrap_script(script: string) {
-    const rqst = this.client.newSignedRequest("POST", "/user-config/bootstrap-script", {script});
+    const rqst = this.client.newSignedRequest(
+      'POST',
+      '/user-config/bootstrap-script',
+      { script },
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3772,11 +4378,15 @@ class UserConfig {
       throw 'Your access key is not set';
     }
     let params = {
-      "path": path,
-      "data": data,
-      "permission": '644'
+      path: path,
+      data: data,
+      permission: '644',
     };
-    const rqst = this.client.newSignedRequest("POST", "/user-config/dotfiles", params);
+    const rqst = this.client.newSignedRequest(
+      'POST',
+      '/user-config/dotfiles',
+      params,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3790,7 +4400,7 @@ class UserConfig {
     // let params = {
     //   "owner_access_key" : this.client._config.accessKey
     // }
-    const rqst = this.client.newSignedRequest("GET", "/user-config/dotfiles");
+    const rqst = this.client.newSignedRequest('GET', '/user-config/dotfiles');
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3802,11 +4412,15 @@ class UserConfig {
    */
   async update(data: string, path: string) {
     let params = {
-      "data": data,
-      "path": path,
-      "permission": '644'
-    }
-    const rqst = this.client.newSignedRequest("PATCH", "/user-config/dotfiles", params);
+      data: data,
+      path: path,
+      permission: '644',
+    };
+    const rqst = this.client.newSignedRequest(
+      'PATCH',
+      '/user-config/dotfiles',
+      params,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3817,12 +4431,15 @@ class UserConfig {
    */
   async delete(path: string) {
     let params = {
-      "path": path
-    }
-    const rqst = this.client.newSignedRequest("DELETE", "/user-config/dotfiles", params);
+      path: path,
+    };
+    const rqst = this.client.newSignedRequest(
+      'DELETE',
+      '/user-config/dotfiles',
+      params,
+    );
     return this.client._wrapWithPromise(rqst);
   }
-
 }
 
 class Enterprise {
@@ -3848,7 +4465,7 @@ class Enterprise {
         const rqst = this.client.newSignedRequest('GET', '/license');
         let cert = await this.client._wrapWithPromise(rqst);
         this.certificate = cert.certificate;
-        if (cert.status === "valid") {
+        if (cert.status === 'valid') {
           this.certificate['valid'] = true;
         } else {
           this.certificate['valid'] = false;
@@ -3889,8 +4506,12 @@ class Cloud {
    * @param {string} token - JWT token which is delivered to user's email.
    */
   async verify_email(token: string) {
-    const body = {"verification_code": token};
-    const rqst = this.client.newSignedRequest("POST", "/cloud/verify-email", body);
+    const body = { verification_code: token };
+    const rqst = this.client.newSignedRequest(
+      'POST',
+      '/cloud/verify-email',
+      body,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3900,8 +4521,12 @@ class Cloud {
    * @param {string} email - user's email.
    */
   async send_verification_email(email: string) {
-    const body = {email};
-    const rqst = this.client.newSignedRequest("POST", "/cloud/send-verification-email", body);
+    const body = { email };
+    const rqst = this.client.newSignedRequest(
+      'POST',
+      '/cloud/send-verification-email',
+      body,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3911,8 +4536,12 @@ class Cloud {
    * @param {string} email - user's email.
    */
   async send_password_change_email(email: string) {
-    const body = {email};
-    const rqst = this.client.newSignedRequest("POST", "/cloud/send-password-change-email", body);
+    const body = { email };
+    const rqst = this.client.newSignedRequest(
+      'POST',
+      '/cloud/send-password-change-email',
+      body,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3924,8 +4553,12 @@ class Cloud {
    * @param {string} token - JWT token which is delivered to user's email.
    */
   async change_password(email: string, password: string, token: string) {
-    const body = {email, password, token};
-    const rqst = this.client.newSignedRequest("POST", "/cloud/change-password", body);
+    const body = { email, password, token };
+    const rqst = this.client.newSignedRequest(
+      'POST',
+      '/cloud/change-password',
+      body,
+    );
     return this.client._wrapWithPromise(rqst);
   }
 }
@@ -3957,13 +4590,20 @@ class Pipeline {
    * }
    */
   async login(input) {
-    const rqst = this.client.newSignedRequest("POST", `/auth-token/`, input, "pipeline");
+    const rqst = this.client.newSignedRequest(
+      'POST',
+      `/auth-token/`,
+      input,
+      'pipeline',
+    );
     let result;
     try {
-      result = await this.client._wrapWithPromise(rqst, false, null, 0, 0, {'log': JSON.stringify({
-        'username': input.username,
-        'password': '********'
-      })});
+      result = await this.client._wrapWithPromise(rqst, false, null, 0, 0, {
+        log: JSON.stringify({
+          username: input.username,
+          password: '********',
+        }),
+      });
       // if there's no token, then user account is invalid
       if (result.hasOwnProperty('token') === false) {
         return Promise.resolve(false);
@@ -3974,23 +4614,30 @@ class Pipeline {
     } catch (err) {
       console.log(err);
       throw {
-        "title": "No Pipeline Server found at API Endpoint.",
-        "message": "Authentication failed. Check information and pipeline server status."
-      }
+        title: 'No Pipeline Server found at API Endpoint.',
+        message:
+          'Authentication failed. Check information and pipeline server status.',
+      };
     }
   }
 
   async logout() {
-    const rqst = this.client.newSignedRequest("DELETE", `/auth-token/`, null, "pipeline");
+    const rqst = this.client.newSignedRequest(
+      'DELETE',
+      `/auth-token/`,
+      null,
+      'pipeline',
+    );
     try {
       await this.client._wrapWithPromise(rqst);
       this._removeCookieByName(this.tokenName);
     } catch (err) {
       console.log(err);
       throw {
-        "title": "Pipeline Logout Failed.",
-        "message": "Pipeline Logout failed. Check information and pipeline server status."
-      }
+        title: 'Pipeline Logout Failed.',
+        message:
+          'Pipeline Logout failed. Check information and pipeline server status.',
+      };
     } finally {
       // remove cookie anyway
       this._removeCookieByName(this.tokenName);
@@ -3998,7 +4645,12 @@ class Pipeline {
   }
 
   async check_login() {
-    let rqst = this.client.newSignedRequest('GET', `/api/users/me/`, null, "pipeline");
+    let rqst = this.client.newSignedRequest(
+      'GET',
+      `/api/users/me/`,
+      null,
+      'pipeline',
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4010,7 +4662,12 @@ class Pipeline {
    * List all pipelines
    */
   async list() {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/`, null, "pipeline");
+    let rqst = this.client.newSignedRequest(
+      'GET',
+      `${this.urlPrefix}/`,
+      null,
+      'pipeline',
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4020,7 +4677,12 @@ class Pipeline {
    * @param {string} id - pipeline id
    */
   async info(id) {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
+    let rqst = this.client.newSignedRequest(
+      'GET',
+      `${this.urlPrefix}/${id}/`,
+      null,
+      'pipeline',
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4037,7 +4699,12 @@ class Pipeline {
    * }
    */
   async create(input) {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/`, input, "pipeline");
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/`,
+      input,
+      'pipeline',
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4055,7 +4722,12 @@ class Pipeline {
    * }
    */
   async update(id, input) {
-    let rqst = this.client.newSignedRequest('PATCH', `${this.urlPrefix}/${id}/`, input, "pipeline");
+    let rqst = this.client.newSignedRequest(
+      'PATCH',
+      `${this.urlPrefix}/${id}/`,
+      input,
+      'pipeline',
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4065,7 +4737,12 @@ class Pipeline {
    * @param {string} id - pipeline id
    */
   async delete(id) {
-    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, "pipeline");
+    let rqst = this.client.newSignedRequest(
+      'DELETE',
+      `${this.urlPrefix}/${id}/`,
+      null,
+      'pipeline',
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4083,7 +4760,12 @@ class Pipeline {
    * }
    */
   async run(id, input) {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${id}/run/`, input, "pipeline");
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/${id}/run/`,
+      input,
+      'pipeline',
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4099,8 +4781,8 @@ class Pipeline {
       const cookies = document.cookie.split(';');
       for (let i = 0; i < cookies.length; i++) {
         const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length+1) === (name +'=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length+1));
+        if (cookie.substring(0, name.length + 1) === name + '=') {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
           break;
         }
       }
@@ -4115,7 +4797,8 @@ class Pipeline {
    */
   _removeCookieByName(name = '') {
     if (name !== '') {
-      document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      document.cookie =
+        name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
   }
 }
@@ -4129,16 +4812,21 @@ class PipelineJob {
    *
    * @param {Client} client - the Client API wrapper object to bind
    */
-   constructor(client: Client) {
+  constructor(client: Client) {
     this.client = client;
-    this.urlPrefix =  `/api/pipeline-jobs`;
+    this.urlPrefix = `/api/pipeline-jobs`;
   }
 
   /**
    * List all pipeline jobs
    */
   async list() {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/`, null, "pipeline");
+    let rqst = this.client.newSignedRequest(
+      'GET',
+      `${this.urlPrefix}/`,
+      null,
+      'pipeline',
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4148,7 +4836,12 @@ class PipelineJob {
    * @param {string} id - pipeline id
    */
   async info(id) {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
+    let rqst = this.client.newSignedRequest(
+      'GET',
+      `${this.urlPrefix}/${id}/`,
+      null,
+      'pipeline',
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4158,10 +4851,14 @@ class PipelineJob {
    * @param {string} id - pipeline id
    */
   async stop(id) {
-    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/stop/`, null, "pipeline");
+    let rqst = this.client.newSignedRequest(
+      'DELETE',
+      `${this.urlPrefix}/${id}/stop/`,
+      null,
+      'pipeline',
+    );
     return this.client._wrapWithPromise(rqst);
   }
-
 }
 
 class PipelineTaskInstance {
@@ -4173,7 +4870,7 @@ class PipelineTaskInstance {
    *
    * @param {Client} client - the Client API wrapper object to bind
    */
-   constructor(client: Client) {
+  constructor(client: Client) {
     this.client = client;
     this.urlPrefix = `/api/task-instances`;
   }
@@ -4186,8 +4883,13 @@ class PipelineTaskInstance {
    */
   async list(pipelineJobId = '') {
     let queryString = `${this.urlPrefix}`;
-    queryString += (pipelineJobId) ? `?pipeline_job=${pipelineJobId}` : `/`;
-    let rqst = this.client.newSignedRequest('GET', queryString, null, "pipeline");
+    queryString += pipelineJobId ? `?pipeline_job=${pipelineJobId}` : `/`;
+    let rqst = this.client.newSignedRequest(
+      'GET',
+      queryString,
+      null,
+      'pipeline',
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4197,7 +4899,12 @@ class PipelineTaskInstance {
    * @param {string} id - task instance id
    */
   async info(id) {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
+    let rqst = this.client.newSignedRequest(
+      'GET',
+      `${this.urlPrefix}/${id}/`,
+      null,
+      'pipeline',
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4207,7 +4914,12 @@ class PipelineTaskInstance {
    * @param {json} input
    */
   async create(input) {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/`, input, "pipeline");
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/`,
+      input,
+      'pipeline',
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4218,7 +4930,12 @@ class PipelineTaskInstance {
    * @param {json} input - task-instance specification and data.
    */
   async update(id, input) {
-    let rqst = this.client.newSignedRequest('PATCH', `${this.urlPrefix}/${id}/`, input, "pipeline");
+    let rqst = this.client.newSignedRequest(
+      'PATCH',
+      `${this.urlPrefix}/${id}/`,
+      input,
+      'pipeline',
+    );
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4228,7 +4945,12 @@ class PipelineTaskInstance {
    * @param {string} id - task instance id
    */
   async delete(id) {
-    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, "pipeline");
+    let rqst = this.client.newSignedRequest(
+      'DELETE',
+      `${this.urlPrefix}/${id}/`,
+      null,
+      'pipeline',
+    );
     return this.client._wrapWithPromise(rqst);
   }
 }
@@ -4262,6 +4984,14 @@ class EduApp {
     const rqst = this.client.newSignedRequest('GET', '/eduapp/mounts');
     return this.client._wrapWithPromise(rqst);
   }
+
+  /**
+   * Get projects of user.
+   */
+  async get_user_projects() {
+    const rqst = this.client.newSignedRequest('GET', '/eduapp/projects');
+    return this.client._wrapWithPromise(rqst);
+  }
 }
 
 class utils {
@@ -4278,9 +5008,10 @@ class utils {
     let sourceUnit;
     const binaryUnits = ['b', 'k', 'm', 'g', 't', 'p', 'auto'];
     const bBinaryUnits = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
-    if (!(binaryUnits.includes(targetUnit))) return false;
+    if (!binaryUnits.includes(targetUnit)) return false;
     value = value.toString();
-    if (value.indexOf(' ') >= 0) { // Has string
+    if (value.indexOf(' ') >= 0) {
+      // Has string
       let v = value.split(/(\s+)/);
       if (bBinaryUnits.includes(v[2])) {
         value = v[0] + binaryUnits[bBinaryUnits.indexOf(v[2])];
@@ -4295,9 +5026,16 @@ class utils {
       sourceUnit = defaultUnit; // Fallback
     }
     if (targetUnit == 'auto') {
-
     }
-    return value * Math.pow(1024, Math.floor(binaryUnits.indexOf(sourceUnit) - binaryUnits.indexOf(targetUnit)));
+    return (
+      value *
+      Math.pow(
+        1024,
+        Math.floor(
+          binaryUnits.indexOf(sourceUnit) - binaryUnits.indexOf(targetUnit),
+        ),
+      )
+    );
   }
 
   elapsedTime(start, end) {
@@ -4307,7 +5045,9 @@ class utils {
     } else {
       var endDate = new Date(end);
     }
-    var seconds_total = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
+    var seconds_total = Math.floor(
+      (endDate.getTime() - startDate.getTime()) / 1000,
+    );
     var seconds_cumulative = seconds_total;
     var days = Math.floor(seconds_cumulative / 86400);
     seconds_cumulative = seconds_cumulative - days * 86400;
@@ -4331,7 +5071,9 @@ class utils {
 
   _padding_zeros(n, width) {
     n = n + '';
-    return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
+    return n.length >= width
+      ? n
+      : new Array(width - n.length + 1).join('0') + n;
   }
 
   /**
@@ -4343,7 +5085,7 @@ class utils {
    */
   clamp(value: number, min: number, max: number) {
     return Math.max(min, Math.min(value, max));
-  };
+  }
 
   gqlToObject(array, key) {
     let result = {};
@@ -4360,7 +5102,6 @@ class utils {
     });
     return result;
   }
-
 }
 
 // below will become "static const" properties in ES7
@@ -4368,37 +5109,37 @@ Object.defineProperty(Client, 'ERR_SERVER', {
   value: 0,
   writable: false,
   enumerable: true,
-  configurable: false
+  configurable: false,
 });
 Object.defineProperty(Client, 'ERR_RESPONSE', {
   value: 1,
   writable: false,
   enumerable: true,
-  configurable: false
+  configurable: false,
 });
 Object.defineProperty(Client, 'ERR_REQUEST', {
   value: 2,
   writable: false,
   enumerable: true,
-  configurable: false
+  configurable: false,
 });
 Object.defineProperty(Client, 'ERR_ABORT', {
   value: 3,
   writable: false,
   enumerable: true,
-  configurable: false
+  configurable: false,
 });
 Object.defineProperty(Client, 'ERR_TIMEOUT', {
   value: 4,
   writable: false,
   enumerable: true,
-  configurable: false
+  configurable: false,
 });
 Object.defineProperty(Client, 'ERR_UNKNOWN', {
   value: 99,
   writable: false,
   enumerable: true,
-  configurable: false
+  configurable: false,
 });
 
 const backend = {

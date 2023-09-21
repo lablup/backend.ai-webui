@@ -1,0 +1,161 @@
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import SessionInfoCell from './SessionListColums/SessionInfoCell';
+import { SessionListQuery } from './__generated__/SessionListQuery.graphql';
+import { Table, TableProps } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React, { useDeferredValue } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
+
+type Session = NonNullable<
+  SessionListQuery['response']['compute_session_list']
+>['items'][0];
+interface SessionListProps extends Omit<TableProps<any>, 'dataSource'> {
+  status?: string[];
+  limit?: number;
+  currentPage?: number;
+  pageSize?: number;
+  projectId?: string;
+  filter: (item: Session) => boolean;
+  extraFetchKey?: string;
+}
+const SessionList: React.FC<SessionListProps> = ({
+  status = [],
+  limit = 50,
+  currentPage = 1,
+  pageSize = 50,
+  projectId,
+  filter,
+  extraFetchKey = '',
+  ...tableProps
+}) => {
+  const baiClient = useSuspendedBackendaiClient();
+
+  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
+  const { t } = useTranslation();
+
+  if (
+    !baiClient.supports('avoid-hol-blocking') &&
+    status.includes('SCHEDULED')
+  ) {
+    status = status.filter((e) => e !== 'SCHEDULED');
+  }
+
+  const { compute_session_list } = useLazyLoadQuery<SessionListQuery>(
+    graphql`
+      query SessionListQuery(
+        $limit: Int!
+        $offset: Int!
+        $ak: String
+        $group_id: String
+        $status: String
+        $skipClusterSize: Boolean!
+      ) {
+        compute_session_list(
+          limit: $limit
+          offset: $offset
+          access_key: $ak
+          group_id: $group_id
+          status: $status
+        ) {
+          items {
+            id
+            type
+            session_id
+            name
+            image
+            architecture
+            created_at
+            terminated_at
+            status
+            status_info
+            service_ports
+            mounts
+            occupied_slots
+            access_key
+            starts_at
+
+            cluster_size @skipOnClient(if: $skipClusterSize)
+            ...SessionInfoCellFragment
+          }
+        }
+      }
+    `,
+    {
+      limit: pageSize,
+      offset: (currentPage - 1) * pageSize,
+      status: status?.join(','),
+      group_id: projectId,
+
+      // skipOnClients
+      skipClusterSize: !baiClient.supports('multi-container'),
+    },
+    {
+      fetchKey: deferredMergedFetchKey,
+      fetchPolicy: 'network-only',
+    },
+  );
+
+  return (
+    <>
+      <Table
+        scroll={{ x: true }}
+        columns={[
+          {
+            title: t('session.SessionInfo'),
+            render(value, record, index) {
+              console.log(record);
+              return (
+                <SessionInfoCell
+                  key={record.session_id}
+                  sessionFrgmt={record}
+                  onRename={() => {
+                    updateFetchKey(
+                      record.session_id + new Date().toISOString(),
+                    );
+                  }}
+                />
+              );
+            },
+            fixed: 'left',
+          },
+          {
+            title: t('session.Status'),
+            dataIndex: 'status',
+          },
+          {
+            title: t('general.Control'),
+          },
+          {
+            title: t('session.Configuration'),
+          },
+          {
+            title: t('session.Usage'),
+          },
+          {
+            title: t('session.Reservation'),
+          },
+          {
+            title: t('session.Architecture'),
+          },
+          {
+            title: t('session.SessionType'),
+          },
+          {
+            title: t('session.Agent'),
+          },
+        ]}
+        // @ts-ignore
+        dataSource={(compute_session_list?.items || []).filter(filter)}
+        // dataSource={_.filter(compute_session_list?.items || [], () => {})}
+        // pagination={{
+
+        // }}
+        {...tableProps}
+      />
+    </>
+  );
+};
+
+export default SessionList;
