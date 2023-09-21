@@ -1212,7 +1212,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (forceUpdate === true) {
         await this._refreshResourcePolicy();
       } else {
-        this.updateResourceAllocationPane('session dialog');
+        await this.updateResourceAllocationPane('session dialog');
       }
     }
   }

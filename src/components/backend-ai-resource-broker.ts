@@ -96,7 +96,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   // Flags
   @property({ type: Boolean }) _default_language_updated = false;
   @property({ type: Boolean }) _default_version_updated = false;
-  @property({ type: Boolean }) _GPUmodeUpdated = false;
   @property({ type: Boolean }) allow_project_resource_monitor = false;
   @property({ type: Array }) disableLaunch;
   // Custom information
@@ -331,6 +330,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       return Promise.resolve(false);
     }
     this.lastResourcePolicyQueryTime = Date.now();
+    await this._aggregateCurrentResource('refresh resource policy');
     return globalThis.backendaiclient.keypair
       .info(globalThis.backendaiclient._config.accessKey, [
         'resource_policy',
@@ -364,57 +364,47 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   }
 
   _updateGPUMode() {
-    if (!this._GPUmodeUpdated) {
-      this._GPUmodeUpdated = true;
-      return globalThis.backendaiclient
-        .get_resource_slots()
-        .then((response) => {
-          let maxValue = Number.MIN_VALUE;
-          let maxItem;
-          const results = response;
-          const deviceList = {
-            'cuda.device': 'cuda_device',
-            'cuda.shares': 'cuda_shares',
-            'rocm.device': 'rocm_device',
-            'tpu.device': 'tpu_device',
-            'ipu.device': 'ipu_device',
-            'atom.device': 'atom_device',
-            'warboy.device': 'warboy_device',
-          };
-          for (const [k, v] of Object.entries(deviceList)) {
-            // Set gpu_modes
-            if (
-              k in results &&
-              !(this.gpu_modes as Array<string>).includes(k)
-            ) {
-              (this.gpu_modes as Array<string>).push(k);
-            }
+    return globalThis.backendaiclient.get_resource_slots().then((response) => {
+      let maxValue = Number.MIN_VALUE;
+      let maxItem;
+      const results = response;
+      const deviceList = {
+        'cuda.device': 'cuda_device',
+        'cuda.shares': 'cuda_shares',
+        'rocm.device': 'rocm_device',
+        'tpu.device': 'tpu_device',
+        'ipu.device': 'ipu_device',
+        'atom.device': 'atom_device',
+        'warboy.device': 'warboy_device',
+      };
+      for (const [k, v] of Object.entries(deviceList)) {
+        // Set gpu_modes
+        if (k in results && !(this.gpu_modes as Array<string>).includes(k)) {
+          (this.gpu_modes as Array<string>).push(k);
+        }
 
-            // Set gpu device as the largest one among available slots
-            if (
-              k in results &&
-              this.available_slot.hasOwnProperty(v) &&
-              Number(this.available_slot[v]) > maxValue
-            ) {
-              maxValue = Number(this.available_slot[v]);
-              maxItem = k;
-            }
-          }
-          this.gpu_mode = maxItem;
+        // Set gpu device as the largest one among available slots
+        if (
+          k in results &&
+          this.available_slot.hasOwnProperty(v) &&
+          Number(this.available_slot[v]) > maxValue
+        ) {
+          maxValue = Number(this.available_slot[v]);
+          maxItem = k;
+        }
+      }
+      this.gpu_mode = maxItem;
 
-          // Set gpu_step
-          if (maxItem === 'cuda.shares') {
-            this.gpu_step = 0.1;
-          } else {
-            this.gpu_step = 1;
-          }
-          if (typeof this.gpu_mode == 'undefined') {
-            this.gpu_mode = 'none';
-          }
-        });
-    } else {
-      return Promise.resolve(true);
-    }
+      // Set gpu_step
+      if (maxItem === 'cuda.shares') {
+        this.gpu_step = 0.1;
+      } else {
+        this.gpu_step = 1;
+      }
+      if (typeof this.gpu_mode == 'undefined') {
+        this.gpu_mode = 'none';
+      }
+    });
   }
 
   generateSessionId() {
