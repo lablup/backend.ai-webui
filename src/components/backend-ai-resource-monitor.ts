@@ -972,9 +972,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     >
                       <span class="gauge-name">IPU</span>
                     </div>
-                    <div
-                      class="layout vertical center-justified wrap short-indicator"
-                    >
+                    <div class="layout vertical center-justified wrap">
                       <lablup-progress-bar
                         id="ipu-usage-bar"
                         class="start"
