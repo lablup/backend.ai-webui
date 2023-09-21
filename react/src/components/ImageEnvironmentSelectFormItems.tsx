@@ -10,10 +10,27 @@ import {
   ImageEnvironmentSelectFormItemsQuery,
   ImageEnvironmentSelectFormItemsQuery$data,
 } from './__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
-import { Divider, Form, Input, RefSelectProps, Select, Tag, theme } from 'antd';
+import {
+  Button,
+  Divider,
+  Empty,
+  Form,
+  Input,
+  RefSelectProps,
+  Select,
+  Tag,
+  Typography,
+  theme,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -207,6 +224,60 @@ const ImageEnvironmentSelectFormItems: React.FC<
     [images, metadata, filter],
   );
 
+  const notFoundWithSearch = useMemo(() => {
+    let foundImage: Image | undefined;
+    if (environmentSearch.length) {
+      const envGroup = _.chain(
+        imageGroups
+          .flatMap((group) => group.environmentGroups)
+          .find((envGroup) => {
+            foundImage = _.find(envGroup.images, (image) => {
+              return getImageFullName(image) === environmentSearch;
+            });
+            return !!foundImage;
+          }),
+      ).value();
+    }
+    const imageFullName = foundImage ? getImageFullName(foundImage) : null;
+    return foundImage && imageFullName ? (
+      <Empty
+        image={
+          <ImageMetaIcon
+            style={{
+              height: 30,
+              width: 30,
+            }}
+            image={imageFullName || null}
+          />
+        }
+        imageStyle={{ height: 30 }}
+        style={{
+          padding: token.paddingMD,
+        }}
+        description={
+          <Flex direction="column">
+            Are you looking for this image?
+            <Typography.Text code>{imageFullName}</Typography.Text>
+          </Flex>
+        }
+      >
+        <Button
+          type="primary"
+          onClick={() => {
+            form.setFieldsValue({
+              environments: {
+                environment: foundImage?.name || '',
+                version: imageFullName,
+                image: foundImage,
+              },
+            });
+          }}
+        >
+          Yes
+        </Button>
+      </Empty>
+    ) : undefined;
+  }, [environmentSearch]);
   return (
     <>
       <Form.Item
@@ -229,6 +300,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
           onSelect={() => {
             // versionSelectRef.current?.focus();
           }}
+          notFoundContent={notFoundWithSearch}
         >
           {_.map(imageGroups, (group) => {
             return (

@@ -18,7 +18,7 @@ import {
   RightOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-import { useDebounceFn } from 'ahooks';
+import { useDebounceEffect, useDebounceFn } from 'ahooks';
 import {
   Affix,
   Button,
@@ -59,20 +59,29 @@ const stepParam = withDefault(NumberParam, 0);
 const formValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
 
 const SessionLauncherPage = () => {
-  const [{ step: currentStep, formValues }, setQuery] = useQueryParams({
-    step: stepParam,
-    formValues: formValuesParam,
-  });
+  const [{ step: currentStep, formValues: initialFormValues }, setQuery] =
+    useQueryParams({
+      step: stepParam,
+      formValues: formValuesParam,
+    });
 
-  // const [selectedFolderName, setSelectedFolderName] = useState<
-  //   string | undefined
-  // >('hello');
-
-  const { run: setQueryWithDebounce } = useDebounceFn(setQuery, {
-    leading: false,
-    wait: 500,
-    trailing: true,
-  });
+  const { run: syncFormToURLWithDebounce } = useDebounceFn(
+    () => {
+      // To sync the latest form values to URL,
+      // 'trailing' is set to true, and get the form values here."
+      setQuery(
+        {
+          formValues: form.getFieldsValue(),
+        },
+        'replaceIn',
+      );
+    },
+    {
+      leading: false,
+      wait: 500,
+      trailing: true,
+    },
+  );
 
   const setCurrentStep = (nextStep: number) => {
     setQuery(
@@ -84,7 +93,6 @@ const SessionLauncherPage = () => {
   };
   const { token } = theme.useToken();
 
-  // const [resourceSlots] = useResourceSlots();
   const { t } = useTranslation();
 
   const screens = Grid.useBreakpoint();
@@ -97,17 +105,31 @@ const SessionLauncherPage = () => {
   }>();
 
   useEffect(() => {
-    if (JSON.stringify(INITIAL_FORM_VALUES) !== JSON.stringify(formValues)) {
+    if (
+      // if form is changed, validate it to show error on the first render
+      JSON.stringify(INITIAL_FORM_VALUES) !== JSON.stringify(initialFormValues)
+    ) {
       form.validateFields().catch((e) => {});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // use getFieldValue to get value from form even if item is not mounted
+  useDebounceEffect(
+    () => {
+      console.log('###', form.getFieldsValue());
+    },
+    [JSON.stringify(form.getFieldsValue())],
+    {
+      wait: 500,
+    },
+  );
+  console.log('###RENDER');
+
+  // before initialFormValues is set, use getFieldValue and useWatch will return undefined
   const sessionType =
     Form.useWatch('sessionType', form) ||
     form.getFieldValue('sessionType') ||
-    formValues.sessionType;
+    initialFormValues.sessionType;
 
   const steps = _.filter(
     [
@@ -169,8 +191,6 @@ const SessionLauncherPage = () => {
     (item) => item.errors.length > 0,
   );
 
-  console.log('###', formValues);
-
   return (
     <Flex
       direction="column"
@@ -202,16 +222,10 @@ const SessionLauncherPage = () => {
             form={form}
             layout="vertical"
             requiredMark="optional"
-            initialValues={formValues}
+            initialValues={initialFormValues}
             onValuesChange={(changedValues, allValues) => {
               console.log('###CHANGE', allValues);
-              setQueryWithDebounce(
-                {
-                  // remove Image, because it's too big and can be restored automatically
-                  formValues: _.omit(allValues, ['environments.image']),
-                },
-                'replaceIn',
-              );
+              syncFormToURLWithDebounce();
             }}
           >
             <Flex
@@ -385,7 +399,12 @@ const SessionLauncherPage = () => {
                   <ImageEnvironmentSelectFormItems />
                 </ErrorBoundary>
                 <Form.Item label="Environment Variables">
-                  <EnvVarFormList name={'envvars'} />
+                  <EnvVarFormList
+                    name={'envvars'}
+                    formItemProps={{
+                      validateTrigger: ['onChange', 'onBlur'],
+                    }}
+                  />
                 </Form.Item>
               </Card>
               <Card

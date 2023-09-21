@@ -1,12 +1,17 @@
 import Flex from './Flex';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input, InputRef } from 'antd';
+import { Button, Form, FormItemProps, Input, InputRef } from 'antd';
 import { FormListProps } from 'antd/lib/form';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 
-interface EnvVarFormListProps extends Omit<FormListProps, 'children'> {}
-const EnvVarFormList: React.FC<EnvVarFormListProps> = ({ ...props }) => {
+interface EnvVarFormListProps extends Omit<FormListProps, 'children'> {
+  formItemProps?: FormItemProps;
+}
+const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
+  formItemProps,
+  ...props
+}) => {
   const inputRef = useRef<InputRef>(null);
 
   return (
@@ -46,6 +51,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({ ...props }) => {
                       },
                     }),
                   ]}
+                  {...formItemProps}
                 >
                   <Input
                     ref={index === fields.length - 1 ? inputRef : null}

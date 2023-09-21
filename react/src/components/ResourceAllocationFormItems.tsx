@@ -13,7 +13,6 @@ const ResourceAllocationFormItems = () => {
   const [resourceSlots] = useResourceSlots();
 
   // TODO: auto select preset
-
   return (
     <>
       <Form.Item
@@ -24,24 +23,25 @@ const ResourceAllocationFormItems = () => {
       >
         <ResourcePresetSelect
           onChange={(value, options) => {
-            form.setFieldValue('selectedPreset', options?.preset);
             const slots = _.pick(
               JSON.parse(options?.preset?.resource_slots || '{}'),
               _.keys(resourceSlots),
             );
-            form.setFieldValue('resource', {
-              ...slots,
-              mem: iSizeToSize((slots?.mem || 0) + 'b', 'g', 2).number,
-              shmem: iSizeToSize(
-                (options?.preset?.shared_memory || 0) + 'b',
-                'g',
-                2,
-              ).number,
+            form.setFieldsValue({
+              resource: {
+                ...slots,
+                // transform to GB based on preset values
+                mem: iSizeToSize((slots?.mem || 0) + 'b', 'g', 2).number,
+                shmem: iSizeToSize(
+                  (options?.preset?.shared_memory || 0) + 'b',
+                  'g',
+                  2,
+                ).number,
+              },
             });
           }}
         />
       </Form.Item>
-      <Form.Item noStyle name="selectedPreset"></Form.Item>
       <Card
         style={{
           marginBottom: token.margin,
