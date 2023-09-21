@@ -1,5 +1,6 @@
 import BAICard from '../BAICard';
 import DatePickerISO from '../components/DatePickerISO';
+import { useWebComponentInfo } from '../components/DefaultProviders';
 import EnvVarFormList from '../components/EnvVarFormList';
 import Flex from '../components/Flex';
 import ImageEnvironmentSelectFormItems from '../components/ImageEnvironmentSelectFormItems';
@@ -18,9 +19,10 @@ import {
   RightOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-import { useDebounceEffect, useDebounceFn } from 'ahooks';
+import { useDebounceFn } from 'ahooks';
 import {
   Affix,
+  Breadcrumb,
   Button,
   Card,
   Checkbox,
@@ -47,6 +49,7 @@ import { darcula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import {
   JsonParam,
   NumberParam,
+  StringParam,
   useQueryParams,
   withDefault,
 } from 'use-query-params';
@@ -59,11 +62,16 @@ const stepParam = withDefault(NumberParam, 0);
 const formValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
 
 const SessionLauncherPage = () => {
-  const [{ step: currentStep, formValues: initialFormValues }, setQuery] =
-    useQueryParams({
-      step: stepParam,
-      formValues: formValuesParam,
-    });
+  const [
+    { step: currentStep, formValues: initialFormValues, redirectTo },
+    setQuery,
+  ] = useQueryParams({
+    step: stepParam,
+    formValues: formValuesParam,
+    redirectTo: StringParam,
+  });
+
+  const { moveTo } = useWebComponentInfo();
 
   const { run: syncFormToURLWithDebounce } = useDebounceFn(
     () => {
@@ -114,16 +122,9 @@ const SessionLauncherPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useDebounceEffect(
-    () => {
-      console.log('###', form.getFieldsValue());
-    },
-    [JSON.stringify(form.getFieldsValue())],
-    {
-      wait: 500,
-    },
-  );
-  console.log('###RENDER');
+  useEffect(() => {
+    // TODO: scroll to top
+  }, [currentStep]);
 
   // before initialFormValues is set, use getFieldValue and useWatch will return undefined
   const sessionType =
@@ -203,6 +204,23 @@ const SessionLauncherPage = () => {
         // overflow: 'scroll',
       }}
     >
+      {redirectTo && (
+        <Breadcrumb
+          items={[
+            {
+              title: t('webui.menu.Sessions'),
+              onClick: (e) => {
+                e.preventDefault();
+                moveTo(redirectTo);
+              },
+              href: redirectTo,
+            },
+            {
+              title: t('session.launcher.StartNewSession'),
+            },
+          ]}
+        />
+      )}
       <Flex direction="row" gap="md" align="start">
         <Flex
           direction="column"
@@ -242,7 +260,51 @@ const SessionLauncherPage = () => {
                 }}
               >
                 <Form.Item name="sessionType">
+                  {/* <Radio.Group
+                    options={[
+                      {
+                        label: (
+                          <Flex
+                            direction="column"
+                            align="start"
+                            style={{ marginBottom: token.marginXS }}
+                          >
+                            <Typography.Text strong>
+                              🏃‍♀️ Make, test and run
+                            </Typography.Text>
+                            <Typography.Text type="secondary">
+                              <Typography.Text strong>
+                                Interactive mode
+                              </Typography.Text>{' '}
+                              allows you to create, test and run code
+                              interactively via jupyter notebook, visual studio
+                              code, etc.
+                            </Typography.Text>
+                          </Flex>
+                        ),
+                        value: 'interactive',
+                      },
+                      {
+                        label: (
+                          <Flex direction="column" align="start">
+                            <Typography.Text strong>
+                              ⌚️ Start an long-running task
+                            </Typography.Text>
+                            <Typography.Text type="secondary">
+                              <Typography.Text strong>
+                                Batch mode
+                              </Typography.Text>{' '}
+                              runs your code with multiple node & clusters to
+                              scale your idea
+                            </Typography.Text>
+                          </Flex>
+                        ),
+                        value: 'batch',
+                      },
+                    ]}
+                  /> */}
                   <Segmented
+                    width={100}
                     options={[
                       {
                         label: (
@@ -751,7 +813,25 @@ const SessionLauncherPage = () => {
               )}
 
               <Flex direction="row" justify="between">
-                <Flex>
+                <Flex gap={'sm'}>
+                  {/* <Popconfirm
+                    title={t('session.CheckAgainDialog')}
+                    placement="topLeft"
+                    okButtonProps={{
+                      danger: true,
+                    }}
+                    okText={t('button.Reset')}
+                    onConfirm={() => {
+                      // @ts-ignore
+                      form.resetFields({
+
+                      });
+                    }}
+                  >
+                    <Button ghost danger>
+                      {t('button.Reset')}
+                    </Button>
+                  </Popconfirm> */}
                   {currentStep === steps.length - 1 && (
                     <Button
                       icon={<SaveOutlined />}
@@ -823,7 +903,10 @@ const SessionLauncherPage = () => {
               onChange={(nextCurrent) => {
                 setCurrentStep(nextCurrent);
               }}
-              items={steps}
+              items={_.map(steps, (s, idx) => ({
+                ...s,
+                status: idx === currentStep ? 'process' : 'wait',
+              }))}
             />
           </Affix>
         )}

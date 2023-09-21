@@ -1,8 +1,9 @@
 import { iSizeToSize } from '../helper';
 import { useResourceSlots } from '../hooks/backendai';
+import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import ResourcePresetSelect from './ResourcePresetSelect';
 import SliderInputItem from './SliderInputFormItem';
-import { Card, Form, theme } from 'antd';
+import { Card, Form, Select, theme } from 'antd';
 import _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -11,7 +12,6 @@ const ResourceAllocationFormItems = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [resourceSlots] = useResourceSlots();
-
   // TODO: auto select preset
   return (
     <>
@@ -57,69 +57,121 @@ const ResourceAllocationFormItems = () => {
             return (
               // getFieldValue('allocationPreset') === 'custom' && (
               <>
-                <SliderInputItem
-                  name={['resource', 'cpu']}
-                  initialValue={0}
-                  label={t('session.launcher.CPU')}
-                  tooltip={<Trans i18nKey={'session.launcher.DescCPU'} />}
-                  // min={parseInt(
-                  //   _.find(
-                  //     currentImage?.resource_limits,
-                  //     (i) => i?.key === 'cpu',
-                  //   )?.min || '0',
-                  // )}
-                  // max={parseInt(
-                  //   _.find(
-                  //     currentImage?.resource_limits,
-                  //     (i) => i?.key === 'cpu',
-                  //   )?.max || '100',
-                  // )}
-                  inputNumberProps={{
-                    addonAfter: t('session.launcher.Core'),
-                  }}
-                  required
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                />
-                <SliderInputItem
-                  name={['resource', 'mem']}
-                  initialValue={0}
-                  label={t('session.launcher.Memory')}
-                  tooltip={<Trans i18nKey={'session.launcher.DescMemory'} />}
-                  max={30}
-                  inputNumberProps={{
-                    addonAfter: 'GB',
-                  }}
-                  step={0.05}
-                  required
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                />
-                <SliderInputItem
-                  name={['resource', 'shmem']}
-                  initialValue={0}
-                  label={t('session.launcher.SharedMemory')}
-                  tooltip={
-                    <Trans i18nKey={'session.launcher.DescSharedMemory'} />
-                  }
-                  max={30}
-                  step={0.1}
-                  inputNumberProps={{
-                    addonAfter: 'GB',
-                  }}
-                  required
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                />
+                {resourceSlots?.cpu && (
+                  <SliderInputItem
+                    name={['resource', 'cpu']}
+                    initialValue={0}
+                    label={t('session.launcher.CPU')}
+                    tooltip={<Trans i18nKey={'session.launcher.DescCPU'} />}
+                    // min={parseInt(
+                    //   _.find(
+                    //     currentImage?.resource_limits,
+                    //     (i) => i?.key === 'cpu',
+                    //   )?.min || '0',
+                    // )}
+                    // max={parseInt(
+                    //   _.find(
+                    //     currentImage?.resource_limits,
+                    //     (i) => i?.key === 'cpu',
+                    //   )?.max || '100',
+                    // )}
+                    inputNumberProps={{
+                      addonAfter: t('session.launcher.Core'),
+                    }}
+                    required
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  />
+                )}
+                {resourceSlots?.mem && (
+                  <SliderInputItem
+                    name={['resource', 'mem']}
+                    initialValue={0}
+                    label={t('session.launcher.Memory')}
+                    tooltip={<Trans i18nKey={'session.launcher.DescMemory'} />}
+                    max={30}
+                    inputNumberProps={{
+                      addonAfter: 'GB',
+                    }}
+                    step={0.05}
+                    required
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  />
+                )}
+                {resourceSlots?.mem && (
+                  <SliderInputItem
+                    name={['resource', 'shmem']}
+                    initialValue={0}
+                    label={t('session.launcher.SharedMemory')}
+                    tooltip={
+                      <Trans i18nKey={'session.launcher.DescSharedMemory'} />
+                    }
+                    max={30}
+                    step={0.1}
+                    inputNumberProps={{
+                      addonAfter: 'GB',
+                    }}
+                    required
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  />
+                )}
+                {_.chain(resourceSlots)
+                  .omit(['cpu', 'mem', 'shmem'])
+                  .map((unit, name, accelerators) => {
+                    return (
+                      <SliderInputItem
+                        name={['resource', name]}
+                        initialValue={0}
+                        label={t(`session.launcher.AIAccelerator`)}
+                        // tooltip={
+                        //   <Trans i18nKey={'session.launcher.DescSharedMemory'} />
+                        // }
+                        max={30}
+                        step={name.endsWith('shares') ? 0.1 : 1}
+                        inputNumberProps={{
+                          addonAfter: (
+                            <Form.Item
+                              noStyle
+                              name={'acceleratorType'}
+                              initialValue={_.keys(accelerators)[0]}
+                            >
+                              <Select
+                                suffixIcon={
+                                  _.size(accelerators) > 1 ? undefined : null
+                                }
+                              >
+                                {_.map(accelerators, (value, name) => {
+                                  return (
+                                    <Select.Option value={name}>
+                                      {ACCELERATOR_UNIT_MAP[name] || 'UNIT'}
+                                    </Select.Option>
+                                  );
+                                })}
+                              </Select>
+                            </Form.Item>
+                          ),
+                        }}
+                        required
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
+                      />
+                    );
+                  })
+                  .value()}
               </>
             );
           }}
