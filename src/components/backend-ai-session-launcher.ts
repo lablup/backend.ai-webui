@@ -3171,8 +3171,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     let gpu_type;
     let gpu_value;
     if (
-      typeof cuda_device !== 'undefined' ||
-      typeof cuda_shares !== 'undefined'
+      (typeof cuda_device !== 'undefined' && Number(cuda_device) > 0) ||
+      (typeof cuda_shares !== 'undefined' && Number(cuda_shares) > 0)
     ) {
       if (typeof cuda_device === 'undefined') {
         // FGPU
@@ -3182,19 +3182,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         gpu_type = 'cuda.device';
         gpu_value = cuda_device;
       }
-    } else if (typeof rocm_device !== 'undefined') {
+    } else if (typeof rocm_device !== 'undefined' && Number(rocm_device) > 0) {
       gpu_type = 'rocm.device';
       gpu_value = rocm_device;
-    } else if (typeof tpu_device !== 'undefined') {
+    } else if (typeof tpu_device !== 'undefined' && Number(tpu_device) > 0) {
       gpu_type = 'tpu.device';
       gpu_value = tpu_device;
-    } else if (typeof ipu_device !== 'undefined') {
+    } else if (typeof ipu_device !== 'undefined' && Number(ipu_device) > 0) {
       gpu_type = 'ipu.device';
       gpu_value = ipu_device;
-    } else if (typeof atom_device !== 'undefined') {
+    } else if (typeof atom_device !== 'undefined' && Number(atom_device) > 0) {
       gpu_type = 'atom.device';
       gpu_value = atom_device;
-    } else if (typeof warboy_device !== 'undefined') {
+    } else if (
+      typeof warboy_device !== 'undefined' &&
+      Number(warboy_device) > 0
+    ) {
       gpu_type = 'warboy.device';
       gpu_value = warboy_device;
     } else {
