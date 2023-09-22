@@ -194,6 +194,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         .resource-line {
           margin-left: 85px;
         }
+
+        #resource-legend {
+          margin: 0px 20px 0px 20px;
+        }
       `,
     ];
   }

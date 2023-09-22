@@ -190,6 +190,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           background-color: transparent;
         }
 
+        #resource-legend {
+          margin: 0px 20px 0px 20px;
+        }
+
         mwc-icon {
           --icon-size: 24px;
         }
@@ -1134,9 +1138,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         </div>
       </div>
       </div>
-      <div class="vertical start-justified layout ${
-        this.direction
-      }-card" id="resource-legend">
+      <div class="vertical start-justified layout" id="resource-legend">
         <div class="layout horizontal center ${
           this.direction === 'vertical' ? 'start-justified' : 'end-justified'
         }
