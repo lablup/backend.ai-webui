@@ -924,9 +924,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     >
                       <span class="gauge-name">TPU</span>
                     </div>
-                    <div
-                      class="layout vertical center-justified wrap short-indicator"
-                    >
+                    <div class="layout vertical center-justified wrap">
                       <lablup-progress-bar
                         id="tpu-usage-bar"
                         class="start"
@@ -1018,9 +1016,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     >
                       <span class="gauge-name">ATOM</span>
                     </div>
-                    <div
-                      class="layout vertical center-justified wrap short-indicator"
-                    >
+                    <div class="layout vertical center-justified wrap">
                       <lablup-progress-bar
                         id="atom-usage-bar"
                         class="start"
@@ -1066,9 +1062,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     >
                       <span class="gauge-name">Warboy</span>
                     </div>
-                    <div
-                      class="layout vertical center-justified wrap short-indicator"
-                    >
+                    <div class="layout vertical center-justified wrap">
                       <lablup-progress-bar
                         id="warboy-usage-bar"
                         class="start"
