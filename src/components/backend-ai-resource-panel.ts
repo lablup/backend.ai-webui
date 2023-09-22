@@ -26,7 +26,7 @@ import {
   translate as _t,
   translateUnsafeHTML as _tr,
 } from 'lit-translate';
-import { customElement, property, query } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
