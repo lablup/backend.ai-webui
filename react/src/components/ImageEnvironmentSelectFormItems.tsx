@@ -38,6 +38,7 @@ export type ImageEnvironmentFormInput = {
 
 interface ImageEnvironmentSelectFormItemsProps {
   filter?: (image: Image) => boolean;
+  showPrivate?: boolean;
 }
 
 const getImageFullName = (image: Image) => {
@@ -65,7 +66,7 @@ function compareVersions(version1: string, version2: string): number {
 }
 const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
-> = ({ filter }) => {
+> = ({ filter, showPrivate }) => {
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
   const currentEnvironmentsFormData = Form.useWatch('environments', form);
 
@@ -150,10 +151,23 @@ const ImageEnvironmentSelectFormItems: React.FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentEnvironmentsFormData?.environment]);
 
+  const isPrivateImage = (image: Image) => {
+    return _.some(image?.labels, (label) => {
+      return (
+        label?.key === 'ai.backend.features' &&
+        label?.value?.split(' ').includes('private')
+      );
+    });
+  };
   const imageGroups: ImageGroup[] = useMemo(
     () =>
       _.chain(images)
-        .filter(filter ? filter : () => true)
+        .filter((image) => {
+          return (
+            (showPrivate ? true : !isPrivateImage(image)) &&
+            (filter ? filter(image) : true)
+          );
+        })
         .groupBy((image) => {
           // group by using `group` property of image info
           return (
@@ -195,7 +209,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         .sortBy((item) => item.groupName)
         .value(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [images, metadata, filter],
+    [images, metadata, filter, showPrivate],
   );
 
   return (
