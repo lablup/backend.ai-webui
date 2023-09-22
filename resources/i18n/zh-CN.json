@@ -60,7 +60,8 @@
       "Serving": "服务",
       "PasswordChangePlace": "点击顶部栏上的个人图标，进入 \"我的账户 \"菜单。",
       "Notifications": "通知",
-      "Tasks": "任务"
+      "Tasks": "任务",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "您现在离线",
     "YouAreOnline": "您现在在线",
@@ -105,7 +106,6 @@
     "AcceptSharedVFolder": "您现在可以访问文件夹：",
     "DeclineSharedVFolder": "文件夹邀请被删除：",
     "connectingToCluster": "连接到 Backend.AI 集群...",
-    "FastTrack": "FastTrack",
     "IPUEnabled": "启用 IPU NPU",
     "ATOMEnabled": "已启用 ATOM NPU",
     "WarboyEnabled": "启用 Warboy NPU",

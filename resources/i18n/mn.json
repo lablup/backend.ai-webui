@@ -60,7 +60,8 @@
       "Tasks": "Даалгаврууд",
       "YouMushChangeYourPassword": "Аюулгүй байдлын үүднээс нууц үгээ үе үе өөрчлөхийг зөвлөж байна. \nТа нууц үгээ хамгийн сүүлд сольсноос хойш тодорхой хугацаа өнгөрсөн тул үйлчилгээгээ үргэлжлүүлэн ашиглахын тулд үүнийг өөрчлөх шаардлагатай.",
       "NewPasswordCannotBeSame": "Таны одоогийн нууц үгээс өөр нууц үг оруулна уу.",
-      "PleaseConfirmYourPassword": "Нууц үгээ баталгаажуулна уу"
+      "PleaseConfirmYourPassword": "Нууц үгээ баталгаажуулна уу",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "Та одоо офлайн байна",
     "YouAreOnline": "Та одоо онлайн байна",
@@ -108,8 +109,7 @@
     "DownloadWebUIApp": "Backend.AI Web UI програмыг татаж аваарай",
     "IPUEnabled": "IPU NPU идэвхжүүлсэн",
     "ATOMEnabled": "ATOM NPU-г идэвхжүүлсэн",
-    "WarboyEnabled": "Warboy NPU идэвхжүүлсэн",
-    "FastTrack": "FastTrack"
+    "WarboyEnabled": "Warboy NPU идэвхжүүлсэн"
   },
   "session": {
     "launcher": {

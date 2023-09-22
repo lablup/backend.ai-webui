@@ -60,7 +60,8 @@
       "Serving": "Obsługa",
       "PasswordChangePlace": "Kliknij ikonę osoby na górnym pasku i przejdź do menu \"Moje konto\".",
       "Notifications": "Powiadomienia",
-      "Tasks": "Zadania"
+      "Tasks": "Zadania",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "Jesteś teraz offline",
     "YouAreOnline": "Jesteś teraz online",
@@ -105,7 +106,6 @@
     "AcceptSharedVFolder": "Możesz teraz uzyskać dostęp do folderu:",
     "DeclineSharedVFolder": "Zaproszenie do folderu zostało usunięte:",
     "connectingToCluster": "Łączenie z klastrem Backend.AI...",
-    "FastTrack": "FastTrack",
     "IPUEnabled": "IPU NPU Enabled",
     "ATOMEnabled": "ATOM NPU Enabled",
     "WarboyEnabled": "Warboy NPU Enabled",

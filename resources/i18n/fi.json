@@ -60,7 +60,8 @@
       "Serving": "Palvelevat",
       "PasswordChangePlace": "Napsauta yläpalkin henkilö-kuvaketta ja siirry \"Oma tili\" -valikkoon.",
       "Notifications": "Ilmoitukset",
-      "Tasks": "Tehtävät"
+      "Tasks": "Tehtävät",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "Olet nyt offline-tilassa",
     "YouAreOnline": "Olet nyt verkossa",
@@ -105,7 +106,6 @@
     "AcceptSharedVFolder": "Voit nyt käyttää kansiota:",
     "DeclineSharedVFolder": "Kansion kutsu on poistettu:",
     "connectingToCluster": "Yhdistetään Backend.AI-klusteriin ...",
-    "FastTrack": "FastTrack",
     "IPUEnabled": "IPU NPU käytössä",
     "ATOMEnabled": "ATOM NPU käytössä",
     "WarboyEnabled": "Warboy NPU käytössä",

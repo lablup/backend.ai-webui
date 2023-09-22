@@ -102,6 +102,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: String }) validUntil = '';
   @property({ type: Array }) groups = [];
   @property({ type: Object }) plugins = Object();
+  @property({ type: String }) fasttrackEndpoint = '';
   @property({ type: String }) _page = '';
   @property({ type: String }) _lazyPage = '';
   @property({ type: Object }) _pageParams = {};
@@ -477,6 +478,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.allow_signout = false;
     } else {
       this.allow_signout = true;
+    }
+    if (
+      typeof config.pipeline !== 'undefined' &&
+      'endpoint' in config.pipeline
+    ) {
+      this.fasttrackEndpoint = config.pipeline.endpoint;
     }
     if (typeof config.plugin !== 'undefined') {
       // Store plugin informations
@@ -1229,6 +1236,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         _text('webui.menu.AgentSummary'),
       );
     }
+    if (this.fasttrackEndpoint !== '') {
+      this._createPopover('fasttrack-menu-icon', _text('webui.menu.FastTrack'));
+    }
   }
 
   /**
@@ -1519,6 +1529,24 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Statistics')}</span>
             </mwc-list-item>
+            ${
+              this.fasttrackEndpoint !== ''
+                ? html`
+                    <a href="${this.fasttrackEndpoint}" target="_blank">
+                      <mwc-list-item graphic="icon">
+                        <i
+                          class="fas fa-external-link-alt"
+                          slot="graphic"
+                          id="fasttrack-menu-icon"
+                        ></i>
+                        <span class="full-menu">
+                          ${_t('webui.menu.FastTrack')}
+                        </span>
+                      </mwc-list-item>
+                    </a>
+                  `
+                : html``
+            }
             ${
               'page' in this.plugins
                 ? this.plugins['page']

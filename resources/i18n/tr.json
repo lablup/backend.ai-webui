@@ -60,7 +60,8 @@
       "Serving": "Servis",
       "PasswordChangePlace": "Üst çubuktaki kişi simgesine tıklayın ve \"Hesabım\" menüsüne gidin.",
       "Notifications": "Bildirimler",
-      "Tasks": "Görevler"
+      "Tasks": "Görevler",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "Şu anda çevrimdışısın",
     "YouAreOnline": "artık çevrimiçisin",
@@ -105,7 +106,6 @@
     "AcceptSharedVFolder": "Artık klasöre erişebilirsiniz:",
     "DeclineSharedVFolder": "Klasör daveti silindi:",
     "connectingToCluster": "Backend.AI Cluster'a bağlanılıyor...",
-    "FastTrack": "FastTrack",
     "IPUEnabled": "IPU NPU Etkin",
     "ATOMEnabled": "ATOM NPU Etkin",
     "WarboyEnabled": "Warboy NPU Etkinleştirildi",

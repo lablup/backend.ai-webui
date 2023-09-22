@@ -60,7 +60,8 @@
       "Serving": "モデルサービング",
       "PasswordChangePlace": "トップバーの人物アイコンをクリックして「ユーザー情報の変更」メニューに移動してください。",
       "Notifications": "お知らせ",
-      "Tasks": "作業"
+      "Tasks": "作業",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "あなたは今オフラインです",
     "YouAreOnline": "あなたは今オンラインです",
@@ -105,7 +106,6 @@
     "AcceptSharedVFolder": "これで、フォルダにアクセスできます。",
     "DeclineSharedVFolder": "フォルダの招待状が削除されます：",
     "connectingToCluster": "Backend.AIクラスターに接続しています...",
-    "FastTrack": "FastTrack",
     "IPUEnabled": "IPU NPU使用中",
     "ATOMEnabled": "ATOM NPU使用中",
     "WarboyEnabled": "Warboy NPU使用中",

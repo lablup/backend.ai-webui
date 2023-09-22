@@ -60,7 +60,8 @@
       "Serving": "Melayan",
       "PasswordChangePlace": "Klik ikon orang pada bar atas dan pergi ke menu \"Akaun Saya\".",
       "Notifications": "Pemberitahuan",
-      "Tasks": "Tugasan"
+      "Tasks": "Tugasan",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "Anda kini berada di luar talian",
     "YouAreOnline": "Anda kini dalam talian",
@@ -105,7 +106,6 @@
     "AcceptSharedVFolder": "Anda kini boleh mengakses folder:",
     "DeclineSharedVFolder": "Jemputan folder dipadamkan:",
     "connectingToCluster": "Menyambung ke Kluster Backend.AI ...",
-    "FastTrack": "FastTrack",
     "IPUEnabled": "IPU NPU Didayakan",
     "ATOMEnabled": "ATOM NPU Didayakan",
     "WarboyEnabled": "Warboy NPU Didayakan",

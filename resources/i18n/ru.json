@@ -60,7 +60,8 @@
       "Tasks": "Задачи",
       "YouMushChangeYourPassword": "В целях безопасности рекомендуется периодически менять пароль. Поскольку с момента последней смены пароля прошло определенное время, для продолжения использования сервиса необходимо его сменить.",
       "NewPasswordCannotBeSame": "Пожалуйста, введите пароль, отличный от Вашего текущего пароля.",
-      "PleaseConfirmYourPassword": "Пожалуйста, подтвердите свой пароль"
+      "PleaseConfirmYourPassword": "Пожалуйста, подтвердите свой пароль",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "Вы сейчас не в сети",
     "YouAreOnline": "Вы сейчас в сети",
@@ -108,8 +109,7 @@
     "DownloadWebUIApp": "Скачать приложение Backend.AI Web UI",
     "IPUEnabled": "IPU NPU Включено",
     "ATOMEnabled": "ATOM NPU Включено",
-    "WarboyEnabled": "Warboy NPU Enabled",
-    "FastTrack": "FastTrack"
+    "WarboyEnabled": "Warboy NPU Enabled"
   },
   "session": {
     "launcher": {

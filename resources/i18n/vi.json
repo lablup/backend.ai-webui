@@ -60,7 +60,8 @@
       "Serving": "Phục vụ",
       "PasswordChangePlace": "Nhấp vào biểu tượng hình người ở thanh trên cùng và chuyển đến menu \"Tài khoản của tôi\".",
       "Notifications": "Thông báo",
-      "Tasks": "Nhiệm vụ"
+      "Tasks": "Nhiệm vụ",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "Bạn hiện đang ngoại tuyến",
     "YouAreOnline": "Bạn hiện đang trực tuyến",
@@ -105,7 +106,6 @@
     "AcceptSharedVFolder": "Bây giờ bạn có thể truy cập thư mục:",
     "DeclineSharedVFolder": "Thư mời thư mục đã bị xóa:",
     "connectingToCluster": "Đang kết nối với Backend.AI Cluster ...",
-    "FastTrack": "FastTrack",
     "IPUEnabled": "Đã bật NPU IPU",
     "ATOMEnabled": "Đã bật NPU ATOM",
     "WarboyEnabled": "NPU Warboy đã được kích hoạt",

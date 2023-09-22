@@ -60,7 +60,8 @@
       "Serving": "Bedienung von",
       "PasswordChangePlace": "Klicken Sie auf das Personensymbol in der oberen Leiste und rufen Sie das Menü \"Mein Konto\" auf.",
       "Notifications": "Benachrichtigungen",
-      "Tasks": "Aufgaben"
+      "Tasks": "Aufgaben",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "Du bist jetzt offline",
     "YouAreOnline": "Sie sind jetzt online",
@@ -105,7 +106,6 @@
     "AcceptSharedVFolder": "Sie können jetzt auf den Ordner zugreifen:",
     "DeclineSharedVFolder": "Ordnereinladung wird gelöscht:",
     "connectingToCluster": "Verbindung zum Backend.AI-Cluster...",
-    "FastTrack": "FastTrack",
     "IPUEnabled": "IPU NPU Aktiviert",
     "ATOMEnabled": "ATOM NPU Aktiviert",
     "WarboyEnabled": "Warboy NPU Aktiviert",
