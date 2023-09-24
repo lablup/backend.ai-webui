@@ -66,11 +66,7 @@ switch (args[1]) {
     process.exit(1);
 }
 
-if (selectedOptions.doSign === true) {
-  if (args[0] !== 'mas' && args[0] !== 'darwin') {
-    console.log(clc.red('[ERROR]') + '--sign option is only available when packaging macOS application.');
-    process.exit(-1);
-  }
+if (selectedOptions.doSign === true && (args[0] === 'mas' || args[0] === 'darwin')) {
   if (!selectedOptions.signAppleId || !selectedOptions.signAppleIdPassword || !selectedOptions.signIdentity) {
     console.log(clc.red('[ERROR]') + '--sign-apple-id, --sign-apple-id-password, --sign-identity parameter is required when code signing macOS application.');
     process.exit(-1);
