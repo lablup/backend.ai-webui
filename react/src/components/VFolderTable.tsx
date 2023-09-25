@@ -243,7 +243,7 @@ const VFolderTable: React.FC<Props> = ({
                           // required: true,
                           type: 'string',
                           pattern: /^[a-zA-Z0-9_/-]*$/,
-                          message: 'Invalid alias',
+                          message: t('session.launcher.FolderAliasInvalid'),
                         },
                         {
                           type: 'string',

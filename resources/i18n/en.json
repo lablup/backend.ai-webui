@@ -245,7 +245,8 @@
       "Enable": "Enable",
       "Network": "Network",
       "PreOpenPortRangeGuide": "PreOpenPortRangeGuide",
-      "preopen": "preopen"
+      "preopen": "preopen",
+      "FolderAliasInvalid": "Only alphanumeric characters, underscore (_), slash (/), and dash (-) are allowed."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
