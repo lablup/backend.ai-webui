@@ -9,7 +9,7 @@ import PortSelectFormItem, { PortTag } from '../components/PortSelectFormItem';
 import ResourceAllocationFormItems from '../components/ResourceAllocationFormItems';
 import ResourceGroupSelect from '../components/ResourceGroupSelect';
 import ResourceNumber from '../components/ResourceNumber';
-import VFolderTableFromItem from '../components/VFolderTableFromItem';
+import VFolderTableFromItem from '../components/VFolderTableFormItem';
 import { iSizeToSize } from '../helper';
 import {
   BlockOutlined,
