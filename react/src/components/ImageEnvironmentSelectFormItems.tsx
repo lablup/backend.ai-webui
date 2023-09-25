@@ -115,8 +115,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
     },
   );
 
-  console.log('nextEnvironmentName form', form.getFieldValue('environments'));
-  console.log('nextEnvironmentName form', currentEnvironmentsFormData);
+  // console.log('nextEnvironmentName form', form.getFieldValue('environments'));
+  // console.log('nextEnvironmentName form', currentEnvironmentsFormData);
   // If not initial value, select first value
   // auto select when relative field is changed
   useEffect(() => {
