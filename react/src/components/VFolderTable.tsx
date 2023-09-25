@@ -280,6 +280,7 @@ const VFolderTable: React.FC<Props> = ({
                         // onPressEnter={handleAliasUpdate}
                         // onBlur={handleAliasUpdate}
                         onChange={handleAliasUpdate}
+                        allowClear
                       ></Input>
                     </Form.Item>
                   );
