@@ -1,7 +1,6 @@
 import BAIErrorBoundary from './components/BAIErrorBoundary';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
-import SessionLauncherPage from './pages/SessionLauncherPage';
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
@@ -45,6 +44,10 @@ const UserDropdownMenu = React.lazy(
 );
 const UserProfileSettingModal = React.lazy(
   () => import('./components/UserProfileSettingModal'),
+);
+
+const SessionLauncherPage = React.lazy(
+  () => import('./pages/SessionLauncherPage'),
 );
 
 customElements.define(
