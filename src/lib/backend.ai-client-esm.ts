@@ -562,7 +562,7 @@ class Client {
       this._managerVersion = v.manager;
       this._apiVersion = v.version;
       this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
-      this._apiVersionMajor = v.version.substring(1, 3);
+      this._apiVersionMajor = v.version?.substring(1, 3);
       this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
       if (this._apiVersionMajor > 4) {
         this.kernelPrefix = '/session';

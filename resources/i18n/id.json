@@ -60,7 +60,8 @@
       "Tasks": "Tugas",
       "YouMushChangeYourPassword": "Disarankan untuk mengubah kata sandi Anda secara berkala untuk alasan keamanan. Karena sejumlah waktu telah berlalu sejak terakhir kali Anda mengubah kata sandi, Anda harus mengubahnya agar dapat terus menggunakan layanan ini.",
       "NewPasswordCannotBeSame": "Masukkan kata sandi yang berbeda dari kata sandi Anda saat ini.",
-      "PleaseConfirmYourPassword": "Harap konfirmasi kata sandi Anda"
+      "PleaseConfirmYourPassword": "Harap konfirmasi kata sandi Anda",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "Anda sekarang offline",
     "YouAreOnline": "Anda sekarang online",

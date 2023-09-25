@@ -60,7 +60,8 @@
       "Serving": "Servir",
       "PasswordChangePlace": "Clique no ícone da pessoa na barra superior e aceda ao menu \"A minha conta\".",
       "Notifications": "Notificações",
-      "Tasks": "Tarefas"
+      "Tasks": "Tarefas",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "Agora você está offline",
     "YouAreOnline": "Agora você está online",
@@ -108,7 +109,8 @@
     "IPUEnabled": "IPU NPU Activada",
     "ATOMEnabled": "ATOM NPU Ativado",
     "WarboyEnabled": "NPU do Warboy activada",
-    "DownloadWebUIApp": "Descarregar a aplicação Backend.AI Web UI"
+    "DownloadWebUIApp": "Descarregar a aplicação Backend.AI Web UI",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {

@@ -60,7 +60,8 @@
       "Serving": "モデルサービング",
       "PasswordChangePlace": "トップバーの人物アイコンをクリックして「ユーザー情報の変更」メニューに移動してください。",
       "Notifications": "お知らせ",
-      "Tasks": "作業"
+      "Tasks": "作業",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "あなたは今オフラインです",
     "YouAreOnline": "あなたは今オンラインです",

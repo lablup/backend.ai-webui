@@ -60,7 +60,8 @@
       "YouMushChangeYourPassword": "It is recommended to periodically change your password for security reasons. Since a certain amount of time has passed since you last changed your password, you must change it in order to continue using the service.",
       "NewPasswordCannotBeSame": "Please enter a password that is different from your current password.",
       "Notifications": "Notifications",
-      "Tasks": "Tasks"
+      "Tasks": "Tasks",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "You are now offline",
     "YouAreOnline": "You are now online",

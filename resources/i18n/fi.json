@@ -60,7 +60,8 @@
       "Serving": "Palvelevat",
       "PasswordChangePlace": "Napsauta yläpalkin henkilö-kuvaketta ja siirry \"Oma tili\" -valikkoon.",
       "Notifications": "Ilmoitukset",
-      "Tasks": "Tehtävät"
+      "Tasks": "Tehtävät",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "Olet nyt offline-tilassa",
     "YouAreOnline": "Olet nyt verkossa",
