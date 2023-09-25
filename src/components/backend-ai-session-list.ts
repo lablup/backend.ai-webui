@@ -3074,7 +3074,7 @@ ${rowData.item[this.sessionNameField]}</pre
               ${rowData.item.ipu_slot
                 ? html`
                     <mwc-icon class="fg green indicator">view_module</mwc-icon>
-                    <span>${rowData.item.tpu_slot}</span>
+                    <span>${rowData.item.ipu_slot}</span>
                     <span class="indicator">IPU</span>
                   `
                 : html``}
