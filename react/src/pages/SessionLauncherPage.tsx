@@ -797,15 +797,24 @@ const SessionLauncherPage = () => {
                       <Descriptions.Item
                         label={t('session.launcher.PreOpenPortTitle')}
                       >
-                        {/* {form.getFieldValue('environments').image} */}
-                        {_.sortBy(form.getFieldValue('ports'), (v) =>
-                          parseInt(v),
-                        ).map((v) => (
-                          <PortTag value={v}>{v}</PortTag>
-                        ))}
-                        {form.getFieldValue('ports')?.length !== 0
-                          ? undefined
-                          : '-'}
+                        <Flex
+                          direction="row"
+                          gap="xs"
+                          style={{ flex: 1 }}
+                          wrap="wrap"
+                        >
+                          {/* {form.getFieldValue('environments').image} */}
+                          {_.sortBy(form.getFieldValue('ports'), (v) =>
+                            parseInt(v),
+                          ).map((v) => (
+                            <PortTag value={v} style={{ margin: 0 }}>
+                              {v}
+                            </PortTag>
+                          ))}
+                          {form.getFieldValue('ports')?.length !== 0
+                            ? undefined
+                            : '-'}
+                        </Flex>
                       </Descriptions.Item>
                     </Descriptions>
                   </BAICard>
