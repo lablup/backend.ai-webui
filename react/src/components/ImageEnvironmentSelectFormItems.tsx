@@ -73,7 +73,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   // Before fetching on relay environment, BAI client should be ready
   useSuspendedBackendaiClient();
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
-  const currentEnvironmentsFormData = Form.useWatch('environments', form);
+  Form.useWatch('environments', form);
 
   const [environmentSearch, setEnvironmentSearch] = useState('');
   const [versionSearch, setVersionSearch] = useState('');
