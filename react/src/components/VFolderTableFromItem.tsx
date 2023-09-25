@@ -61,6 +61,8 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
             form.setFieldValue('vfoldersAliasMap', aliasMap);
             form.validateFields(['vfoldersAliasMap']);
           }}
+          // TODO: implement pagination
+          pagination={false}
         />
       </Form.Item>
     </>

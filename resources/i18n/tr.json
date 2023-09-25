@@ -230,7 +230,11 @@
       "PreOpenPortPanelTitle": "Ayarlanacak ön açık bağlantı noktaları (isteğe bağlı)",
       "PortsTitleWithRange": "Port değeri (1024 ~ 65535 arasında)",
       "PrePortConfigWillDisappear": "Kaydedilmemiş tüm önceden açık portlar kaybolacaktır.",
-      "StartModelServing": "Model Servisini Başlat"
+      "StartModelServing": "Model Servisini Başlat",
+      "PreOpenPortRangeGuide": "__NOT_TRANSLATED__",
+      "preopen": "__NOT_TRANSLATED__",
+      "Network": "__NOT_TRANSLATED__",
+      "Enable": "__NOT_TRANSLATED__"
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -286,7 +290,9 @@
       "EnterValidSessionName": "Geçerli oturum adını girin",
       "SessionNameRequired": "Oturum adı gereklidir",
       "SluggedStrings": "Kesikli dizeler (>3 karakter)",
-      "SessionNameAlreadyExist": "Oturum adı zaten mevcut"
+      "SessionNameAlreadyExist": "Oturum adı zaten mevcut",
+      "SessionNameTooLong64": "__NOT_TRANSLATED__",
+      "PleaseFollowSessionNameRule": "__NOT_TRANSLATED__"
     },
     "Interactive": "İnteraktif",
     "Batch": "Toplu İş",
@@ -657,7 +663,8 @@
     "Used": "Kullanılmış",
     "Pipeline": "Boru Hattı Klasörleri",
     "DialogDataFolder": "FastTrack'te boru hatları oluşturulurken otomatik olarak oluşturulan boru hattına özel klasörler.",
-    "DialogModelFolder": "Modellere hizmet verebilir ve yönetebilirsiniz."
+    "DialogModelFolder": "Modellere hizmet verebilir ve yönetebilirsiniz.",
+    "SearchByName": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

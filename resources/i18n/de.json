@@ -230,7 +230,11 @@
       "PreOpenPortPanelTitle": "Vorgeöffnete Ports einstellen (optional)",
       "PortsTitleWithRange": "Port-Wert (zwischen 1024 ~ 65535)",
       "PrePortConfigWillDisappear": "Alle nicht gespeicherten, bereits geöffneten Ports werden gelöscht.",
-      "StartModelServing": "Start Model Serving"
+      "StartModelServing": "Start Model Serving",
+      "PreOpenPortRangeGuide": "__NOT_TRANSLATED__",
+      "preopen": "__NOT_TRANSLATED__",
+      "Network": "__NOT_TRANSLATED__",
+      "Enable": "__NOT_TRANSLATED__"
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",
@@ -286,7 +290,9 @@
       "EnterValidSessionName": "Gültigen Sitzungsnamen eingeben",
       "SessionNameRequired": "Sitzungsname ist erforderlich",
       "SluggedStrings": "Geschliffene Zeichenfolgen (>3 Zeichen)",
-      "SessionNameAlreadyExist": "Sitzungsname existiert bereits"
+      "SessionNameAlreadyExist": "Sitzungsname existiert bereits",
+      "SessionNameTooLong64": "__NOT_TRANSLATED__",
+      "PleaseFollowSessionNameRule": "__NOT_TRANSLATED__"
     },
     "Interactive": "Interaktiv",
     "Batch": "Stapel",
@@ -657,7 +663,8 @@
     "Used": "Gebraucht",
     "Pipeline": "Pipeline-Ordner",
     "DialogDataFolder": "Pipeline-spezifische Ordner, die bei der Erstellung von Pipelines in FastTrack automatisch erstellt werden.",
-    "DialogModelFolder": "Sie können Modelle bedienen und verwalten."
+    "DialogModelFolder": "Sie können Modelle bedienen und verwalten.",
+    "SearchByName": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

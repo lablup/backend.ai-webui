@@ -233,7 +233,8 @@
       "PreOpenPortRangeGuide": "여러 값을 콤마(,) 또는 스페이스로 구분하여 입력할 수 있습니다.",
       "MinMemory": "현재 선택한 실행환경의 최소 메모리 용량은 {{size}}iB입니다.",
       "Enable": "활성화",
-      "Network": "네트워크"
+      "Network": "네트워크",
+      "preopen": "__NOT_TRANSLATED__"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -615,6 +616,7 @@
     "StorageStatus": "저장소 상태",
     "Created": "생성됨",
     "Invited": "초대 받음",
+    "SearchByName": "이름으로 검색",
     "folders": {
       "Location": "위치",
       "Status": "상태",

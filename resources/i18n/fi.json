@@ -230,7 +230,11 @@
       "PreOpenPortPanelTitle": "Asetettavat esiavattavat portit (valinnainen)",
       "PortsTitleWithRange": "Portin arvo (välillä 1024 ~ 65535)",
       "PrePortConfigWillDisappear": "Kaikki tallentamattomat esiavatut portit häviävät.",
-      "StartModelServing": "Aloita mallin tarjoilu"
+      "StartModelServing": "Aloita mallin tarjoilu",
+      "PreOpenPortRangeGuide": "__NOT_TRANSLATED__",
+      "preopen": "__NOT_TRANSLATED__",
+      "Network": "__NOT_TRANSLATED__",
+      "Enable": "__NOT_TRANSLATED__"
     },
     "Preparing": "Valmistellaan ...",
     "PreparingSession": "Valmistellaan istuntoa ...",
@@ -286,7 +290,9 @@
       "EnterValidSessionName": "Syötä kelvollinen istunnon nimi",
       "SessionNameRequired": "Istunnon nimi vaaditaan",
       "SluggedStrings": "Slugged-merkkijonot (>3 merkkiä)",
-      "SessionNameAlreadyExist": "Istunnon nimi on jo olemassa"
+      "SessionNameAlreadyExist": "Istunnon nimi on jo olemassa",
+      "SessionNameTooLong64": "__NOT_TRANSLATED__",
+      "PleaseFollowSessionNameRule": "__NOT_TRANSLATED__"
     },
     "Interactive": "Interaktiivinen",
     "Batch": "Erä",
@@ -657,7 +663,8 @@
     "Used": "Käytetty",
     "Pipeline": "Putkiston kansiot",
     "DialogDataFolder": "Putkistolle omistetut kansiot, jotka luodaan automaattisesti, kun luodaan putkia FastTrackissa.",
-    "DialogModelFolder": "Voit palvella ja hallita malleja."
+    "DialogModelFolder": "Voit palvella ja hallita malleja.",
+    "SearchByName": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

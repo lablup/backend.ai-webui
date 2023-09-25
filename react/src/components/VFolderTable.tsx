@@ -294,16 +294,16 @@ const VFolderTable: React.FC<Props> = ({
       // ...getColumnSearchProps('name'),
     },
     {
-      title: 'Usage Mode',
+      title: t('data.UsageMode'),
       dataIndex: 'usage_mode',
       sorter: (a, b) => a.usage_mode.localeCompare(b.usage_mode),
     },
     {
-      title: 'Host',
+      title: t('data.Host'),
       dataIndex: 'host',
     },
     {
-      title: 'Type',
+      title: t('data.Type'),
       dataIndex: 'type',
       sorter: (a, b) => a.type.localeCompare(b.type),
       render: (value, record) => {
@@ -347,7 +347,7 @@ const VFolderTable: React.FC<Props> = ({
     //   render: (value) => value || '-',
     // },
     {
-      title: 'Permission',
+      title: t('data.Permission'),
       dataIndex: 'permission',
       sorter: (a, b) => a.permission.localeCompare(b.permission),
       render: (value, row) => {
@@ -373,7 +373,7 @@ const VFolderTable: React.FC<Props> = ({
       },
     },
     {
-      title: 'Created',
+      title: t('data.Created'),
       dataIndex: 'created_at',
       sorter: (a, b) => a.created_at.localeCompare(b.created_at),
       render: (value, record) => dayjs(value).format('L'),
@@ -405,7 +405,7 @@ const VFolderTable: React.FC<Props> = ({
           value={searchKey}
           onChange={(e) => setSearchKey(e.target.value)}
           allowClear
-          placeholder="Search by name"
+          placeholder={t('data.SearchByName')}
         />
         <Button
           loading={isPendingRefetch}

@@ -230,7 +230,11 @@
       "PreOpenPortPanelTitle": "Puertos preabiertos para configurar (opcional)",
       "PortsTitleWithRange": "Valor del puerto (entre 1024 ~ 65535)",
       "PrePortConfigWillDisappear": "Los puertos preabiertos que no se hayan guardado desaparecerán.",
-      "StartModelServing": "Empezar a servir modelos"
+      "StartModelServing": "Empezar a servir modelos",
+      "PreOpenPortRangeGuide": "__NOT_TRANSLATED__",
+      "preopen": "__NOT_TRANSLATED__",
+      "Network": "__NOT_TRANSLATED__",
+      "Enable": "__NOT_TRANSLATED__"
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sesión ...",
@@ -286,7 +290,9 @@
       "EnterValidSessionName": "Introduzca un nombre de sesión válido",
       "SessionNameRequired": "El nombre de la sesión es obligatorio",
       "SluggedStrings": "Cadenas babosas (>3 caracteres)",
-      "SessionNameAlreadyExist": "El nombre de la sesión ya existe"
+      "SessionNameAlreadyExist": "El nombre de la sesión ya existe",
+      "SessionNameTooLong64": "__NOT_TRANSLATED__",
+      "PleaseFollowSessionNameRule": "__NOT_TRANSLATED__"
     },
     "Interactive": "Interactivo",
     "Batch": "Lote",
@@ -657,7 +663,8 @@
     "Used": "Usado",
     "Pipeline": "Carpetas de tuberías",
     "DialogDataFolder": "Carpetas dedicadas a las canalizaciones que se crean automáticamente al crear canalizaciones en FastTrack.",
-    "DialogModelFolder": "Puedes servir y gestionar modelos."
+    "DialogModelFolder": "Puedes servir y gestionar modelos.",
+    "SearchByName": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

@@ -243,7 +243,9 @@
       "MinMemory": "The minimum memory capacity for the currently selected runtime environment is {{size}}iB.",
       "ModelStorage": "Model Storage",
       "Enable": "Enable",
-      "Network": "Network"
+      "Network": "Network",
+      "PreOpenPortRangeGuide": "PreOpenPortRangeGuide",
+      "preopen": "preopen"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -753,7 +755,8 @@
     "HostDetails": "Displays quota information for the selected storage host.",
     "ProjectFolder": "Project Folder",
     "Pipeline": "Pipeline Folders",
-    "DialogDataFolder": "Pipeline dedicated folders that are automatically created when creating pipelines in FastTrack."
+    "DialogDataFolder": "Pipeline dedicated folders that are automatically created when creating pipelines in FastTrack.",
+    "SearchByName": "Search by name"
   },
   "dialog": {
     "warning": {
