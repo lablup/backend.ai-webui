@@ -1258,7 +1258,27 @@
   "error": {
     "UpdateError": "Erro de ATUALIZAÇÃO",
     "APIEndpointIsEmpty": "O endpoint da API está vazio. Especifique o endpoint da API Backend.AI para se inscrever.",
-    "LoginSucceededManagerNotResponding": "Login bem-sucedido, mas o gerente não está respondendo."
+    "LoginSucceededManagerNotResponding": "Login bem-sucedido, mas o gerente não está respondendo.",
+    "NetworkConnectionFailed": "A ligação de rede falhou. Verificar o estado da rede.",
+    "LoginFailed": "O início de sessão falhou. Verificar as informações de início de sessão.",
+    "AuthenticationFailed": "A autenticação falhou. Verificar as informações e o estado do gestor.",
+    "VirtualFolderAlreadyExist": "Já existe uma pasta virtual com o mesmo nome. Elimine a sua própria pasta ou recuse o convite.",
+    "TooManyLoginFailures": "Ocorreram demasiadas falhas de início de sessão num curto espaço de tempo. O início de sessão está bloqueado durante algum tempo.",
+    "MaximumVfolderCreation": "Não é possível criar mais vfolders devido à política de recursos",
+    "CannotChangeVirtualFolderOption": "Não é possível alterar as opções de uma pasta v que não seja propriedade minha.",
+    "CannotSharePrivateAutomountFolder": "Não é possível partilhar vfolders de montagem automática em conformidade com a política.",
+    "FolderSharingNotAvailableToUser": "A partilha de pastas não está disponível para o(s) utilizador(es) solicitado(s).",
+    "ReachedResourceLimit": "Atingiu o seu limite de recursos. Verificar recursos e sessões.",
+    "UserHasNoGroup": "O utilizador não tem grupo. Contacte o administrador para resolver o problema.",
+    "InvalidSignupToken": "Token de registo inválido",
+    "LoginInformationMismatch": "Incompatibilidade de informações de início de sessão. Verifique as suas informações",
+    "ResourcePolicyAlreadyExist": "Já existe uma política de recursos com o mesmo nome.",
+    "ScalingGroupAlreadyExist": "Já existe um grupo de recursos com o mesmo nome.",
+    "UserNameAlreadyExist": "O nome de utilizador já existe. Não pode ser duplicado.",
+    "ResourceLimitExceed": "Limite de recursos excedido. Verifique os seus recursos gratuitos.",
+    "ResourcePolicyStillReferenced": "Existem pares de chaves que fazem referência a esta política de recursos.",
+    "SmallerResourceThenImageRequires": "O seu pedido de recursos é mais pequeno do que o mínimo exigido pela imagem. Tente mais recursos.",
+    "APINotSupported": "API não suportada. Requer a versão mais recente do gestor Backend.AI."
   },
   "maxLength": {
     "64chars": "(máximo de 64 caracteres)",

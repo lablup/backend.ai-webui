@@ -1258,7 +1258,27 @@
   "error": {
     "UpdateError": "Erreur de mise à jour",
     "APIEndpointIsEmpty": "Le point de terminaison de l'API est vide. Veuillez spécifier le point de terminaison de l'API Backend.AI pour vous inscrire.",
-    "LoginSucceededManagerNotResponding": "La connexion a réussi mais le gestionnaire ne répond pas."
+    "LoginSucceededManagerNotResponding": "La connexion a réussi mais le gestionnaire ne répond pas.",
+    "NetworkConnectionFailed": "La connexion réseau a échoué. Vérifier l'état du réseau.",
+    "LoginFailed": "La connexion a échoué. Vérifier les informations de connexion.",
+    "AuthenticationFailed": "L'authentification a échoué. Vérifier les informations et le statut du gestionnaire.",
+    "VirtualFolderAlreadyExist": "Un dossier virtuel portant le même nom existe déjà. Supprimez votre propre dossier ou déclinez l'invitation.",
+    "TooManyLoginFailures": "Il y a eu trop d'échecs de connexion en peu de temps. La connexion est bloquée pendant un certain temps.",
+    "MaximumVfolderCreation": "Vous ne pouvez pas créer d'autres dossiers virtuels en raison de la politique de ressources.",
+    "CannotChangeVirtualFolderOption": "Vous ne pouvez pas modifier les options d'un dossier v qui ne m'appartient pas.",
+    "CannotSharePrivateAutomountFolder": "Impossible de partager les dossiers virtuels d'automount conformément à la politique.",
+    "FolderSharingNotAvailableToUser": "Le partage de dossiers n'est pas disponible pour le(s) utilisateur(s) demandé(s).",
+    "ReachedResourceLimit": "Vous avez atteint votre limite de ressources. Vérifiez les ressources et les sessions.",
+    "UserHasNoGroup": "L'utilisateur n'a pas de groupe. Veuillez contacter l'administrateur pour résoudre ce problème.",
+    "InvalidSignupToken": "Jeton d'inscription invalide",
+    "LoginInformationMismatch": "Les informations de connexion ne correspondent pas. Vérifiez vos informations",
+    "ResourcePolicyAlreadyExist": "Une politique de ressources portant le même nom existe déjà.",
+    "ScalingGroupAlreadyExist": "Un groupe de ressources portant le même nom existe déjà.",
+    "UserNameAlreadyExist": "Le nom d'utilisateur existe déjà. Il ne peut pas être dupliqué.",
+    "ResourceLimitExceed": "Limite de ressources dépassée. Vérifiez vos ressources libres.",
+    "ResourcePolicyStillReferenced": "Il existe des paires de clés qui font référence à cette politique de ressources.",
+    "SmallerResourceThenImageRequires": "Votre demande de ressources est inférieure au minimum requis par l'image. Essayez d'autres ressources.",
+    "APINotSupported": "L'API n'est pas prise en charge. Nécessite la dernière version du gestionnaire Backend.AI."
   },
   "maxLength": {
     "64chars": "(maximum 64 caractères)",
