@@ -109,7 +109,8 @@
     "IPUEnabled": "IPU NPU Ενεργοποιημένη",
     "ATOMEnabled": "ATOM NPU Ενεργοποιημένη",
     "WarboyEnabled": "Ενεργοποιημένη NPU Warboy",
-    "DownloadWebUIApp": "Κατεβάστε την εφαρμογή Backend.AI Web UI App"
+    "DownloadWebUIApp": "Κατεβάστε την εφαρμογή Backend.AI Web UI App",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {
@@ -1278,7 +1279,8 @@
     "ResourceLimitExceed": "Υπέρβαση του ορίου πόρων. Ελέγξτε τους ελεύθερους πόρους σας.",
     "ResourcePolicyStillReferenced": "Υπάρχουν ζεύγη κλειδιών που παραπέμπουν σε αυτή την πολιτική πόρων.",
     "SmallerResourceThenImageRequires": "Το αίτημα πόρων είναι μικρότερο από το ελάχιστο απαιτούμενο από την εικόνα. Δοκιμάστε περισσότερους πόρους.",
-    "APINotSupported": "Το API δεν υποστηρίζεται. Απαιτείται η τελευταία έκδοση του διαχειριστή Backend.AI."
+    "APINotSupported": "Το API δεν υποστηρίζεται. Απαιτείται η τελευταία έκδοση του διαχειριστή Backend.AI.",
+    "WrongAPIServerAddress": "Λάθος διεύθυνση διακομιστή API."
   },
   "maxLength": {
     "64chars": "(έως 64 χαρακτήρες)",

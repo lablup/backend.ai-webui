@@ -109,7 +109,8 @@
     "DownloadWebUIApp": "Скачать приложение Backend.AI Web UI",
     "IPUEnabled": "IPU NPU Включено",
     "ATOMEnabled": "ATOM NPU Включено",
-    "WarboyEnabled": "Warboy NPU Enabled"
+    "WarboyEnabled": "Warboy NPU Enabled",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {
@@ -1278,7 +1279,8 @@
     "ResourceLimitExceed": "Превышен лимит ресурсов. Проверьте свободные ресурсы.",
     "ResourcePolicyStillReferenced": "Существуют пары ключей, которые ссылаются на данную ресурсную политику.",
     "SmallerResourceThenImageRequires": "Ваш запрос ресурсов меньше, чем минимально требуется для изображения. Попробуйте использовать больше ресурсов.",
-    "APINotSupported": "API не поддерживается. Требуется последняя версия менеджера Backend.AI."
+    "APINotSupported": "API не поддерживается. Требуется последняя версия менеджера Backend.AI.",
+    "WrongAPIServerAddress": "Неверный адрес сервера API."
   },
   "maxLength": {
     "64chars": "(максимум 64 символа)",

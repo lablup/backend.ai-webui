@@ -109,7 +109,8 @@
     "IPUEnabled": "IPU NPU使用中",
     "ATOMEnabled": "ATOM NPU使用中",
     "WarboyEnabled": "Warboy NPU使用中",
-    "DownloadWebUIApp": "Backend.AI Web UIアプリのダウンロード"
+    "DownloadWebUIApp": "Backend.AI Web UIアプリのダウンロード",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {
@@ -1278,7 +1279,8 @@
     "ResourceLimitExceed": "リソースの上限を超えました。空きリソースを確認してください。",
     "ResourcePolicyStillReferenced": "このリソース・ポリシーを参照するキー・ペアが存在する。",
     "SmallerResourceThenImageRequires": "リソース要求が画像に必要な最小値より小さい。より多くのリソースを試してください。",
-    "APINotSupported": "APIはサポートされていません。最新バージョンのBackend.AIマネージャが必要です。"
+    "APINotSupported": "APIはサポートされていません。最新バージョンのBackend.AIマネージャが必要です。",
+    "WrongAPIServerAddress": "APIサーバーのアドレスが間違っています。"
   },
   "maxLength": {
     "64chars": "（最大64文字）",
