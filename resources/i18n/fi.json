@@ -1257,7 +1257,27 @@
   "error": {
     "UpdateError": "Päivitysvirhe",
     "APIEndpointIsEmpty": "API-päätepiste on tyhjä. Määritä Backend.AI-sovellusliittymän päätepiste rekisteröintiä varten.",
-    "LoginSucceededManagerNotResponding": "Sisäänkirjautuminen onnistui, mutta johtaja ei vastaa."
+    "LoginSucceededManagerNotResponding": "Sisäänkirjautuminen onnistui, mutta johtaja ei vastaa.",
+    "NetworkConnectionFailed": "Verkkoyhteys epäonnistui. Tarkista verkon tila.",
+    "LoginFailed": "Kirjautuminen epäonnistui. Tarkista kirjautumistiedot.",
+    "AuthenticationFailed": "Tunnistautuminen epäonnistui. Tarkista tiedot ja managerin tila.",
+    "VirtualFolderAlreadyExist": "Samanniminen virtuaalikansio on jo olemassa. Poista oma kansiosi tai hylkää kutsu.",
+    "TooManyLoginFailures": "Kirjautumishäiriöitä on ollut liian monta lyhyessä ajassa. Sisäänkirjautuminen on estetty jonkin aikaa.",
+    "MaximumVfolderCreation": "Et voi luoda lisää v-kansioita resurssikäytännön vuoksi.",
+    "CannotChangeVirtualFolderOption": "Et voi muuttaa sellaisen v-kansion asetuksia, joka ei ole minun omistuksessani.",
+    "CannotSharePrivateAutomountFolder": "Automaattisesti kiinnitettyjä v-kansioita ei voida jakaa käytäntöjen mukaisesti.",
+    "FolderSharingNotAvailableToUser": "Kansioiden jakaminen ei ole käytettävissä pyydetyille käyttäjille.",
+    "ReachedResourceLimit": "Resurssiraja saavutettu. Tarkista resurssit ja istunnot.",
+    "UserHasNoGroup": "Käyttäjällä ei ole ryhmää. Ota yhteyttä ylläpitäjään sen korjaamiseksi.",
+    "InvalidSignupToken": "Virheellinen kirjautumistunniste",
+    "LoginInformationMismatch": "Kirjautumistietojen epäsuhta. Tarkista tietosi",
+    "ResourcePolicyAlreadyExist": "Samanniminen resurssikäytäntö on jo olemassa.",
+    "ScalingGroupAlreadyExist": "Samanniminen resurssiryhmä on jo olemassa.",
+    "UserNameAlreadyExist": "Käyttäjätunnus on jo olemassa. Sitä ei voi kopioida.",
+    "ResourceLimitExceed": "Resurssiraja ylitetty. Tarkista vapaat resurssit.",
+    "ResourcePolicyStillReferenced": "On olemassa avainpareja, jotka viittaavat tähän resurssikäytäntöön.",
+    "SmallerResourceThenImageRequires": "Resurssipyyntösi on pienempi kuin kuvan edellyttämä minimi. Kokeile lisää resursseja.",
+    "APINotSupported": "API ei tuettu. Vaatii Backend.AI managerin uusimman version."
   },
   "maxLength": {
     "64chars": "(enintään 64 merkkiä)",

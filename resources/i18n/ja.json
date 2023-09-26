@@ -1257,7 +1257,27 @@
   "error": {
     "UpdateError": "更新エラー",
     "APIEndpointIsEmpty": "APIエンドポイントが空です。サインアップするには、Backend.AIAPIエンドポイントを指定してください。",
-    "LoginSucceededManagerNotResponding": "ログインは成功しましたが、マネージャーが応答していません。"
+    "LoginSucceededManagerNotResponding": "ログインは成功しましたが、マネージャーが応答していません。",
+    "NetworkConnectionFailed": "ネットワーク接続に失敗しました。ネットワークの状態を確認してください。",
+    "LoginFailed": "ログインに失敗しました。ログイン情報を確認してください。",
+    "AuthenticationFailed": "認証に失敗しました。情報とマネージャーのステータスを確認してください。",
+    "VirtualFolderAlreadyExist": "同じ名前の仮想フォルダがすでに存在します。自分のフォルダを削除するか、招待を断ってください。",
+    "TooManyLoginFailures": "短時間にログイン失敗が多すぎます。しばらくログインがブロックされます。",
+    "MaximumVfolderCreation": "リソースポリシーのため、Vフォルダーをさらに作成することはできません。",
+    "CannotChangeVirtualFolderOption": "自分が所有していないvfolderのオプションを変更することはできません。",
+    "CannotSharePrivateAutomountFolder": "ポリシーに従って自動マウントVフォルダーを共有できない。",
+    "FolderSharingNotAvailableToUser": "要求されたユーザーのフォルダ共有は利用できません。",
+    "ReachedResourceLimit": "リソースの上限に達しました。リソースとセッションを確認してください。",
+    "UserHasNoGroup": "ユーザーにグループがありません。管理者に連絡して修正してください。",
+    "InvalidSignupToken": "無効なサインアップトークン",
+    "LoginInformationMismatch": "ログイン情報が一致しません。情報を確認する",
+    "ResourcePolicyAlreadyExist": "同じ名前のリソースポリシーがすでに存在する。",
+    "ScalingGroupAlreadyExist": "同じ名前のリソースグループがすでに存在する。",
+    "UserNameAlreadyExist": "ユーザー名はすでに存在します。複製することはできません。",
+    "ResourceLimitExceed": "リソースの上限を超えました。空きリソースを確認してください。",
+    "ResourcePolicyStillReferenced": "このリソース・ポリシーを参照するキー・ペアが存在する。",
+    "SmallerResourceThenImageRequires": "リソース要求が画像に必要な最小値より小さい。より多くのリソースを試してください。",
+    "APINotSupported": "APIはサポートされていません。最新バージョンのBackend.AIマネージャが必要です。"
   },
   "maxLength": {
     "64chars": "（最大64文字）",

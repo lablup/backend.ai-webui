@@ -1257,7 +1257,27 @@
   "error": {
     "UpdateError": "Galat pembaruan",
     "APIEndpointIsEmpty": "Titik Akhir API kosong. Harap tentukan titik akhir API Backend.AI untuk mendaftar.",
-    "LoginSucceededManagerNotResponding": "Login berhasil tetapi pengelola tidak merespons."
+    "LoginSucceededManagerNotResponding": "Login berhasil tetapi pengelola tidak merespons.",
+    "NetworkConnectionFailed": "Koneksi jaringan gagal. Periksa status jaringan.",
+    "LoginFailed": "Login gagal. Periksa informasi login.",
+    "AuthenticationFailed": "Otentikasi gagal. Memeriksa informasi dan status manajer.",
+    "VirtualFolderAlreadyExist": "Folder virtual dengan nama yang sama sudah ada. Hapus folder Anda sendiri atau tolak undangan.",
+    "TooManyLoginFailures": "Terlalu banyak kegagalan login dalam waktu singkat. Login diblokir untuk sementara waktu.",
+    "MaximumVfolderCreation": "Anda tidak dapat membuat lebih banyak vfolder karena kebijakan sumber daya",
+    "CannotChangeVirtualFolderOption": "Anda tidak dapat mengubah opsi vfolder yang bukan milik saya sendiri.",
+    "CannotSharePrivateAutomountFolder": "Tidak dapat berbagi vfolder otomatis sesuai dengan kebijakan.",
+    "FolderSharingNotAvailableToUser": "Berbagi folder tidak tersedia untuk pengguna yang diminta.",
+    "ReachedResourceLimit": "Mencapai batas sumber daya Anda. Memeriksa sumber daya dan sesi.",
+    "UserHasNoGroup": "Pengguna tidak memiliki grup. Silakan hubungi administrator untuk memperbaikinya.",
+    "InvalidSignupToken": "Token pendaftaran tidak valid",
+    "LoginInformationMismatch": "Ketidakcocokan informasi login. Periksa informasi Anda",
+    "ResourcePolicyAlreadyExist": "Kebijakan sumber daya dengan nama yang sama sudah ada.",
+    "ScalingGroupAlreadyExist": "Grup sumber daya dengan nama yang sama sudah ada.",
+    "UserNameAlreadyExist": "Nama pengguna sudah ada. Nama pengguna tidak dapat diduplikasi.",
+    "ResourceLimitExceed": "Batas sumber daya terlampaui. Periksa sumber daya gratis Anda.",
+    "ResourcePolicyStillReferenced": "Ada pasangan kunci yang merujuk pada kebijakan sumber daya ini.",
+    "SmallerResourceThenImageRequires": "Permintaan sumber daya Anda lebih kecil dari jumlah minimum yang dibutuhkan oleh gambar. Coba lebih banyak sumber daya.",
+    "APINotSupported": "API tidak didukung. Memerlukan versi terbaru dari manajer Backend.AI."
   },
   "maxLength": {
     "64chars": "(maksimum 64 karakter)",

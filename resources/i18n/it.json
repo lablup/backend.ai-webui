@@ -1257,7 +1257,27 @@
   "error": {
     "UpdateError": "Errore di aggiornamento",
     "APIEndpointIsEmpty": "L'endpoint API è vuoto. Specifica l'endpoint dell'API Backend.AI per la registrazione.",
-    "LoginSucceededManagerNotResponding": "Accesso riuscito ma il gestore non risponde."
+    "LoginSucceededManagerNotResponding": "Accesso riuscito ma il gestore non risponde.",
+    "NetworkConnectionFailed": "Connessione di rete fallita. Controllare lo stato della rete.",
+    "LoginFailed": "Accesso non riuscito. Controllare le informazioni di accesso.",
+    "AuthenticationFailed": "Autenticazione fallita. Controllare le informazioni e lo stato del manager.",
+    "VirtualFolderAlreadyExist": "Esiste già una cartella virtuale con lo stesso nome. Eliminare la propria cartella o declinare l'invito.",
+    "TooManyLoginFailures": "Si sono verificati troppi errori di accesso in poco tempo. L'accesso è bloccato per un po'.",
+    "MaximumVfolderCreation": "Non è possibile creare altre vfolders a causa del criterio delle risorse.",
+    "CannotChangeVirtualFolderOption": "Non è possibile modificare le opzioni di una cartella v che non è di mia proprietà.",
+    "CannotSharePrivateAutomountFolder": "Impossibile condividere le vfolders automount in linea con il criterio.",
+    "FolderSharingNotAvailableToUser": "La condivisione delle cartelle non è disponibile per gli utenti richiesti.",
+    "ReachedResourceLimit": "È stato raggiunto il limite di risorse. Controllare le risorse e le sessioni.",
+    "UserHasNoGroup": "L'utente non ha un gruppo. Contattare l'amministratore per risolvere il problema.",
+    "InvalidSignupToken": "Token di iscrizione non valido",
+    "LoginInformationMismatch": "Le informazioni di accesso non corrispondono. Controllare le informazioni",
+    "ResourcePolicyAlreadyExist": "Esiste già un criterio di risorse con lo stesso nome.",
+    "ScalingGroupAlreadyExist": "Esiste già un gruppo di risorse con lo stesso nome.",
+    "UserNameAlreadyExist": "Il nome utente esiste già. Non può essere duplicato.",
+    "ResourceLimitExceed": "Il limite delle risorse è stato superato. Controllare le risorse libere.",
+    "ResourcePolicyStillReferenced": "Esistono coppie di chiavi che fanno riferimento a questa politica delle risorse.",
+    "SmallerResourceThenImageRequires": "La richiesta di risorse è inferiore al minimo richiesto dall'immagine. Provare con altre risorse.",
+    "APINotSupported": "API non supportata. Richiede l'ultima versione del gestore Backend.AI."
   },
   "maxLength": {
     "64chars": "(massimo 64 caratteri)",
