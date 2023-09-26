@@ -120,7 +120,8 @@
     "DownloadWebUIApp": "Download Backend.AI Web UI App",
     "IPUEnabled": "IPU NPU Enabled",
     "ATOMEnabled": "ATOM NPU Enabled",
-    "WarboyEnabled": "Warboy NPU Enabled"
+    "WarboyEnabled": "Warboy NPU Enabled",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {
@@ -1367,7 +1368,6 @@
     "ScalingGroupAlreadyExist": "A resource group with the same name already exists.",
     "ResourceLimitExceed": "Resource limit exceed. Check your free resources.",
     "SmallerResourceThenImageRequires": "Your resource request is smaller than the minimum required by the image. Try more resources.",
-    "LoginSucceededManagerNotResponding": "Login succeed but manager is not responding.",
     "UserNameAlreadyExist": "Username already exists. It cannot be duplicated.",
     "ResourcePolicyStillReferenced": "There exist keypairs which reference this resource policy.",
     "InvalidSignupToken": "Invalid signup token",
