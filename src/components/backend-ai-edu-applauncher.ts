@@ -406,10 +406,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
           return;
         }
         const sToken = urlParams.get('sToken') || urlParams.get('stoken');
-        const credential_script = (await globalThis.backendaiclient.eduApp.get_user_credential(sToken))['name'];
-        const resources = mounts
-          ? { mounts, ...this.resources, group_name: projects[0]['name'] }
-          : { ...this.resources, group_name: projects[0]['name'] };
+        const credentialScript = (await globalThis.backendaiclient.eduApp.get_user_credential(sToken))['script'];
+        const resources = { mounts, ...this.resources, group_name: projects[0]['name'], bootstrap_script: credentialScript };
         let response;
         try {
           this.appLauncher.indicator.set(
@@ -422,7 +420,6 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
             null,
             resources,
             20000,
-            credential_script,
           );
         } catch (err) {
           console.error(err);
