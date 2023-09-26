@@ -109,7 +109,8 @@
     "IPUEnabled": "IPU NPU Etkin",
     "ATOMEnabled": "ATOM NPU Etkin",
     "WarboyEnabled": "Warboy NPU Etkinleştirildi",
-    "DownloadWebUIApp": "Backend.AI Web UI Uygulamasını İndirin"
+    "DownloadWebUIApp": "Backend.AI Web UI Uygulamasını İndirin",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {
@@ -1278,7 +1279,8 @@
     "ResourceLimitExceed": "Kaynak sınırı aşıldı. Ücretsiz kaynaklarınızı kontrol edin.",
     "ResourcePolicyStillReferenced": "Bu kaynak ilkesine referans veren anahtar çiftleri vardır.",
     "SmallerResourceThenImageRequires": "Kaynak isteğiniz görüntünün gerektirdiği minimum değerden daha küçük. Daha fazla kaynak deneyin.",
-    "APINotSupported": "API desteklenmiyor. Backend.AI yöneticisinin en son sürümünü gerektirir."
+    "APINotSupported": "API desteklenmiyor. Backend.AI yöneticisinin en son sürümünü gerektirir.",
+    "WrongAPIServerAddress": "Yanlış API sunucu adresi."
   },
   "maxLength": {
     "64chars": "(maksimum 64 karakter)",

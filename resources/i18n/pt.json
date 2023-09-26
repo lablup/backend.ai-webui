@@ -1279,7 +1279,8 @@
     "ResourceLimitExceed": "Limite de recursos excedido. Verifique os seus recursos gratuitos.",
     "ResourcePolicyStillReferenced": "Existem pares de chaves que fazem referência a esta política de recursos.",
     "SmallerResourceThenImageRequires": "O seu pedido de recursos é mais pequeno do que o mínimo exigido pela imagem. Tente mais recursos.",
-    "APINotSupported": "API não suportada. Requer a versão mais recente do gestor Backend.AI."
+    "APINotSupported": "API não suportada. Requer a versão mais recente do gestor Backend.AI.",
+    "WrongAPIServerAddress": "Endereço do servidor API incorreto."
   },
   "maxLength": {
     "64chars": "(máximo de 64 caracteres)",

@@ -109,7 +109,8 @@
     "IPUEnabled": "IPU NPU abilitata",
     "ATOMEnabled": "NPU ATOM abilitata",
     "WarboyEnabled": "NPU Warboy abilitata",
-    "DownloadWebUIApp": "Scarica l'applicazione Backend.AI Web UI"
+    "DownloadWebUIApp": "Scarica l'applicazione Backend.AI Web UI",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {
@@ -1278,7 +1279,8 @@
     "ResourceLimitExceed": "Il limite delle risorse è stato superato. Controllare le risorse libere.",
     "ResourcePolicyStillReferenced": "Esistono coppie di chiavi che fanno riferimento a questa politica delle risorse.",
     "SmallerResourceThenImageRequires": "La richiesta di risorse è inferiore al minimo richiesto dall'immagine. Provare con altre risorse.",
-    "APINotSupported": "API non supportata. Richiede l'ultima versione del gestore Backend.AI."
+    "APINotSupported": "API non supportata. Richiede l'ultima versione del gestore Backend.AI.",
+    "WrongAPIServerAddress": "Indirizzo del server API errato."
   },
   "maxLength": {
     "64chars": "(massimo 64 caratteri)",
