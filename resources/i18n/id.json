@@ -343,7 +343,12 @@
     "ConnectionNotice": "Pemberitahuan",
     "Readless": "Baca lebih sedikit",
     "Readmore": "Baca Selengkapnya...",
-    "SessionType": "Jenis Sesi"
+    "SessionType": "Jenis Sesi",
+    "ExpiresAfter": "Sisa waktu",
+    "CPU": "CPU",
+    "MEM": "Memori",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (memori)"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -1000,7 +1005,20 @@
     "Russian": "Bahasa Rusia",
     "French": "Bahasa Perancis",
     "Mongolian": "Bahasa Mongolia",
-    "Indonesian": "Bahasa Indonesia"
+    "Indonesian": "Bahasa Indonesia",
+    "Brazilian": "Brasil",
+    "Chinese": "Cina",
+    "Chinese (Simplified)": "Bahasa Mandarin (Sederhana)",
+    "Finnish": "Finlandia",
+    "German": "Bahasa Jerman",
+    "Greek": "Bahasa Yunani",
+    "Italian": "Bahasa Italia",
+    "Japanese": "Bahasa Jepang",
+    "Polish": "Polandia",
+    "Portuguese": "Bahasa Portugis",
+    "Spanish": "Bahasa Spanyol",
+    "Turkish": "Bahasa Turki",
+    "Vietnamese": "Vietnam"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Daftarkan image baru dari repositori",

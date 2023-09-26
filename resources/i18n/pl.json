@@ -343,7 +343,12 @@
     "DescCommitSession": "Za chwilę zatwierdzisz kontener odpowiadający poniższej sesji:",
     "NoSessionToDisplay": "Brak sesji do wyświetlenia",
     "StatusInfo": "Informacje o stanie",
-    "System": "Sesje przesyłania"
+    "System": "Sesje przesyłania",
+    "ExpiresAfter": "Pozostały czas",
+    "CPU": "CPU",
+    "MEM": "Pamięć",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (pamięć)"
   },
   "button": {
     "Cancel": "Anuluj",
@@ -1000,7 +1005,20 @@
     "Russian": "Rosyjski",
     "French": "Francuski",
     "Mongolian": "Mongolski",
-    "Indonesian": "Indonezyjski"
+    "Indonesian": "Indonezyjski",
+    "Brazilian": "Brazylijski",
+    "Chinese": "Chiński",
+    "Chinese (Simplified)": "Chiński (uproszczony)",
+    "Finnish": "Fiński",
+    "German": "Niemiecki",
+    "Greek": "Grecki",
+    "Italian": "Włoski",
+    "Japanese": "Japoński",
+    "Polish": "Polski",
+    "Portuguese": "Portugalski",
+    "Spanish": "Hiszpański",
+    "Turkish": "Turecki",
+    "Vietnamese": "Wietnamski"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Zarejestruj nowe obrazy z repozytorium",

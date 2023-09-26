@@ -557,7 +557,20 @@
     "Language": "Idioma",
     "Mongolian": "Mongolia",
     "OSDefault": "Sistema operativo por defecto",
-    "Russian": "Ruso"
+    "Russian": "Ruso",
+    "Brazilian": "Brasileño",
+    "Chinese": "Chino",
+    "Chinese (Simplified)": "Chino (simplificado)",
+    "Finnish": "En finés",
+    "German": "Alemán",
+    "Greek": "Griego",
+    "Italian": "Italiano",
+    "Japanese": "Japonés",
+    "Polish": "Polaco",
+    "Portuguese": "Portugués",
+    "Spanish": "Español",
+    "Turkish": "Turco",
+    "Vietnamese": "Vietnamita"
   },
   "license": {
     "OpenSource": "Código abierto",
@@ -1085,7 +1098,12 @@
       "UserResourceLimit": "Límite de recursos de usuario",
       "Version": "Versión",
       "sessionStillPreparing": "La sesión aún está en preparación. Una vez iniciada la sesión, pulse el icono de la aplicación para iniciarla."
-    }
+    },
+    "ExpiresAfter": "Tiempo restante",
+    "CPU": "CPU",
+    "MEM": "Memoria",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (memoria)"
   },
   "settings": {
     "ATOMsupport": "ATOM",

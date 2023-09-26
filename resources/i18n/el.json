@@ -343,7 +343,12 @@
     "DescCommitSession": "Πρόκειται να δεσμεύσετε το δοχείο που αντιστοιχεί στην παρακάτω συνεδρία:",
     "NoSessionToDisplay": "Δεν υπάρχουν συνεδρίες για εμφάνιση",
     "StatusInfo": "Πληροφορίες κατάστασης",
-    "System": "Upload συνεδριών"
+    "System": "Upload συνεδριών",
+    "ExpiresAfter": "Υπολειπόμενος χρόνος",
+    "CPU": "CPU",
+    "MEM": "Μνήμη",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (μνήμη)"
   },
   "button": {
     "Cancel": "Ματαίωση",
@@ -1000,7 +1005,20 @@
     "Russian": "Ρωσική",
     "French": "Γαλλικά",
     "Mongolian": "Μογγολικά",
-    "Indonesian": "Ινδονησιακή"
+    "Indonesian": "Ινδονησιακή",
+    "Brazilian": "Βραζιλιάνικο",
+    "Chinese": "Κινέζικα",
+    "Chinese (Simplified)": "Κινέζικα (απλοποιημένα)",
+    "Finnish": "Φινλανδική",
+    "German": "Γερμανικά",
+    "Greek": "Ελληνική",
+    "Italian": "Ιταλικά",
+    "Japanese": "Ιαπωνικά",
+    "Polish": "Πολωνικά",
+    "Portuguese": "Πορτογαλικά",
+    "Spanish": "Ισπανικά",
+    "Turkish": "Τουρκικά",
+    "Vietnamese": "Βιετναμέζικα"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Καταχωρήστε νέες εικόνες από το αποθετήριο",

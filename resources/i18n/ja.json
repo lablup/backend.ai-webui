@@ -343,7 +343,12 @@
     "DescCommitSession": "次のセッションに対応するコンテナをコミットします：",
     "NoSessionToDisplay": "セッション情報がありません。",
     "StatusInfo": "ステータス情報",
-    "System": "アップロードセッション"
+    "System": "アップロードセッション",
+    "ExpiresAfter": "残り時間",
+    "CPU": "CPU",
+    "MEM": "メモリ",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU(メモリ)"
   },
   "button": {
     "Cancel": "キャンセル",
@@ -1000,7 +1005,20 @@
     "Russian": "ロシア語",
     "French": "フランス語",
     "Mongolian": "モンゴル語",
-    "Indonesian": "インドネシア語"
+    "Indonesian": "インドネシア語",
+    "Brazilian": "ブラジル語",
+    "Chinese": "中国語",
+    "Chinese (Simplified)": "中国語（簡体字）",
+    "Finnish": "フィンランド語",
+    "German": "ドイツ語",
+    "Greek": "ギリシャ語",
+    "Italian": "イタリア語",
+    "Japanese": "日本語",
+    "Polish": "ポーランド語",
+    "Portuguese": "ポルトガル語",
+    "Spanish": "スペイン語",
+    "Turkish": "トルコ語",
+    "Vietnamese": "ベトナム語"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "リポジトリから新しい画像を登録する",

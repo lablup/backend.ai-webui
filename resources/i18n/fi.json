@@ -557,7 +557,20 @@
     "Language": "Kieli",
     "Mongolian": "Mongolian",
     "OSDefault": "Käyttöjärjestelmän oletusarvo",
-    "Russian": "Venäläinen"
+    "Russian": "Venäläinen",
+    "Brazilian": "Brasilialainen",
+    "Chinese": "Kiinalainen",
+    "Chinese (Simplified)": "Kiinan kieli (yksinkertaistettu)",
+    "Finnish": "Suomalainen",
+    "German": "Saksan",
+    "Greek": "Kreikkalainen",
+    "Italian": "Italian",
+    "Japanese": "Japanilainen",
+    "Polish": "Puolan",
+    "Portuguese": "Portugalin",
+    "Spanish": "Espanjan",
+    "Turkish": "Turkkilainen",
+    "Vietnamese": "Vietnamilainen"
   },
   "license": {
     "OpenSource": "Avoin lähdekoodi",
@@ -1085,7 +1098,12 @@
       "UserResourceLimit": "Käyttäjän resurssirajoitus",
       "Version": "Versio",
       "sessionStillPreparing": "Istuntoa valmistellaan edelleen. Kun istunto on alkanut, käynnistä sovellus napauttamalla sovelluskuvaketta."
-    }
+    },
+    "ExpiresAfter": "Jäljellä oleva aika",
+    "CPU": "CPU",
+    "MEM": "Muisti",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (muisti)"
   },
   "settings": {
     "ATOMsupport": "ATOM",

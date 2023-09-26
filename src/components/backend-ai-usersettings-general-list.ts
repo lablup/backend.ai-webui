@@ -71,7 +71,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     { name: _t('language.Polish'), code: 'pl' },
     { name: _t('language.Portuguese'), code: 'pt' },
     { name: _t('language.Russian'), code: 'ru' },
-    { name: _t('language.Spannish'), code: 'es' },
+    { name: _t('language.Spanish'), code: 'es' },
     { name: _t('language.Turkish'), code: 'tr' },
     { name: _t('language.Vietnamese'), code: 'vi' },
   ];

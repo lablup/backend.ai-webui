@@ -343,7 +343,12 @@
     "ConnectionNotice": "Анхаар",
     "Readless": "Бага унш",
     "Readmore": "Цааш унших...",
-    "SessionType": "SessionType"
+    "SessionType": "SessionType",
+    "ExpiresAfter": "Үлдсэн хугацаа",
+    "CPU": "CPU",
+    "MEM": "Санах ой",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (санах ой)"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -1000,7 +1005,20 @@
     "Russian": "Орос",
     "French": "Франц",
     "Mongolian": "Монгол",
-    "Indonesian": "Индонез"
+    "Indonesian": "Индонез",
+    "Brazilian": "бразил",
+    "Chinese": "хятад",
+    "Chinese (Simplified)": "Хятад (Хялбаршуулсан)",
+    "Finnish": "Финланд",
+    "German": "Герман",
+    "Greek": "Грек",
+    "Italian": "итали",
+    "Japanese": "Япон",
+    "Polish": "өнгөлөх",
+    "Portuguese": "португал",
+    "Spanish": "Испани",
+    "Turkish": "турк",
+    "Vietnamese": "вьетнам"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Агуулахаас шинэ зургуудыг бүртгүүлэх",
@@ -1279,7 +1297,8 @@
     "UserHasNoGroup": "Хэрэглэгч бүлэггүй байна. \nҮүнийг засахын тулд админтай холбогдоно уу.",
     "UserNameAlreadyExist": "Хэрэглэгчийн нэр аль хэдийн байна. \nҮүнийг хуулбарлах боломжгүй.",
     "VirtualFolderAlreadyExist": "Ижил нэртэй виртуал хавтас аль хэдийн байна. \nӨөрийн фолдерыг устгах эсвэл урилгаас татгалзаарай.",
-    "WrongAPIServerAddress": "API серверийн хаяг буруу байна."
+    "WrongAPIServerAddress": "API серверийн хаяг буруу байна.",
+    "ResourceLimitExceed": "Нөөцийн хязгаар хэтэрсэн. \nБоломжтой нөөцийн хэмжээг шалгана уу."
   },
   "maxLength": {
     "64chars": "(хамгийн ихдээ 64 тэмдэгт)",
