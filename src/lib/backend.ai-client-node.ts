@@ -996,6 +996,7 @@ class Client {
     sessionName: undefined | string | null = null,
     resources = {},
     timeout: number = 0,
+    bootstrapScript: undefined | string | null = null,
   ) {
     if (typeof sessionName === 'undefined' || sessionName === null)
       sessionName = this.generateSessionId();
@@ -1080,6 +1081,9 @@ class Client {
       if (resources['env']) {
         params['config'].environ = resources['env'];
       }
+    }
+    if (bootstrapScript) {
+      params['bootstrap_script'] = bootstrapScript
     }
     const rqst = this.newSignedRequest(
       'POST',
@@ -4990,6 +4994,14 @@ class EduApp {
    */
   async get_user_projects() {
     const rqst = this.client.newSignedRequest('GET', '/eduapp/projects');
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Get credential of user.
+   */
+  async get_user_credential(stoken: string) {
+    const rqst = this.client.newSignedRequest('GET', '/eduapp/credential', {sToken: stoken});
     return this.client._wrapWithPromise(rqst);
   }
 }

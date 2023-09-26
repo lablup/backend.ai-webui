@@ -405,6 +405,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
           this.notification.show();
           return;
         }
+        const sToken = urlParams.get('sToken') || urlParams.get('stoken');
+        const credential_script = (await globalThis.backendaiclient.eduApp.get_user_credential(sToken))['name'];
         const resources = mounts
           ? { mounts, ...this.resources, group_name: projects[0]['name'] }
           : { ...this.resources, group_name: projects[0]['name'] };
@@ -420,6 +422,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
             null,
             resources,
             20000,
+            credential_script,
           );
         } catch (err) {
           console.error(err);
