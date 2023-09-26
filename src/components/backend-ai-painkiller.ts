@@ -84,7 +84,6 @@ export default class BackendAIPainKiller {
    * @return {string} msg - Matched message. If not, return the original one.
    * */
   static relieve(msg) {
-    alert(msg);
     if (typeof msg === 'undefined') {
       if (
         globalThis.backendaiclient === undefined ||
