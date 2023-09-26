@@ -739,7 +739,6 @@ const SessionLauncherPage = () => {
                     {form.getFieldValue('mounts')?.length > 0 ? (
                       <Table
                         rowKey="name"
-                        bordered
                         size="small"
                         pagination={false}
                         columns={[
