@@ -417,10 +417,18 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
           ...this.resources,
           group_name: projects[0]['name'],
         };
-        if (mounts) {
+        if (
+          mounts !== undefined &&
+          mounts !== null &&
+          Object.keys(mounts).length > 0
+        ) {
           Object.assign(resources, mounts);
         }
-        if (credentialScript) {
+        if (
+          credentialScript !== undefined &&
+          credentialScript !== null &&
+          Object.keys(credentialScript).length > 0
+        ) {
           resources['bootstrap_script'] = credentialScript;
         }
         let response;
