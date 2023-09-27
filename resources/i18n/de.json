@@ -60,7 +60,8 @@
       "Serving": "Bedienung von",
       "PasswordChangePlace": "Klicken Sie auf das Personensymbol in der oberen Leiste und rufen Sie das Menü \"Mein Konto\" auf.",
       "Notifications": "Benachrichtigungen",
-      "Tasks": "Aufgaben"
+      "Tasks": "Aufgaben",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "Du bist jetzt offline",
     "YouAreOnline": "Sie sind jetzt online",
@@ -108,7 +109,8 @@
     "IPUEnabled": "IPU NPU Aktiviert",
     "ATOMEnabled": "ATOM NPU Aktiviert",
     "WarboyEnabled": "Warboy NPU Aktiviert",
-    "DownloadWebUIApp": "Backend.AI Web UI App herunterladen"
+    "DownloadWebUIApp": "Backend.AI Web UI App herunterladen",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {
@@ -347,7 +349,12 @@
     "DescCommitSession": "Sie sind im Begriff, einen Container zu übertragen, der der folgenden Sitzung entspricht:",
     "NoSessionToDisplay": "Keine Sitzungen zum Anzeigen",
     "StatusInfo": "Status-Infos",
-    "System": "Upload-Sitzungen"
+    "System": "Upload-Sitzungen",
+    "ExpiresAfter": "Verbleibende Zeit",
+    "CPU": "CPU",
+    "MEM": "Speicher",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (Speicher)"
   },
   "button": {
     "Cancel": "Stornieren",
@@ -1005,7 +1012,20 @@
     "Russian": "Russisch",
     "French": "Französisch",
     "Mongolian": "Mongolei",
-    "Indonesian": "Indonesisch"
+    "Indonesian": "Indonesisch",
+    "Brazilian": "Brasilianisch",
+    "Chinese": "Chinesisch",
+    "Chinese (Simplified)": "Chinesisch (vereinfacht)",
+    "Finnish": "Finnisch",
+    "German": "Deutsch",
+    "Greek": "Griechisch",
+    "Italian": "Italienisch",
+    "Japanese": "Japanisch",
+    "Polish": "Polnisch",
+    "Portuguese": "Portugiesisch",
+    "Spanish": "Spanisch",
+    "Turkish": "Türkisch",
+    "Vietnamese": "Vietnamesisch"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Neue Bilder aus dem Repository registrieren",
@@ -1264,7 +1284,28 @@
   "error": {
     "UpdateError": "Aktualisierungsfehler",
     "APIEndpointIsEmpty": "API-Endpunkt ist leer. Bitte geben Sie den Backend.AI API-Endpunkt für die Anmeldung an.",
-    "LoginSucceededManagerNotResponding": "Anmeldung erfolgreich, aber Manager antwortet nicht."
+    "LoginSucceededManagerNotResponding": "Anmeldung erfolgreich, aber Manager antwortet nicht.",
+    "NetworkConnectionFailed": "Netzwerkverbindung fehlgeschlagen. Überprüfen Sie den Netzwerkstatus.",
+    "LoginFailed": "Anmeldung fehlgeschlagen. Überprüfen Sie die Anmeldeinformationen.",
+    "AuthenticationFailed": "Authentifizierung fehlgeschlagen. Prüfen Sie die Informationen und den Status des Managers.",
+    "VirtualFolderAlreadyExist": "Es existiert bereits ein virtueller Ordner mit demselben Namen. Löschen Sie Ihren eigenen Ordner oder lehnen Sie die Einladung ab.",
+    "TooManyLoginFailures": "Es gab zu viele Login-Fehler in kurzer Zeit. Die Anmeldung ist eine Zeit lang blockiert.",
+    "MaximumVfolderCreation": "Sie können aufgrund von Ressourcenrichtlinien keine weiteren vOrdner erstellen",
+    "CannotChangeVirtualFolderOption": "Sie können die Optionen eines vOrdners, der mir nicht gehört, nicht ändern.",
+    "CannotSharePrivateAutomountFolder": "Die Freigabe von automatisch eingehängten vOrdnern gemäß der Richtlinie ist nicht möglich.",
+    "FolderSharingNotAvailableToUser": "Die gemeinsame Nutzung von Ordnern ist für den/die gewünschten Benutzer nicht verfügbar.",
+    "ReachedResourceLimit": "Sie haben Ihr Ressourcenlimit erreicht. Überprüfen Sie Ressourcen und Sitzungen.",
+    "UserHasNoGroup": "Der Benutzer hat keine Gruppe. Bitte kontaktieren Sie den Administrator, um das Problem zu beheben.",
+    "InvalidSignupToken": "Ungültiges Anmelde-Token",
+    "LoginInformationMismatch": "Die Anmeldeinformationen stimmen nicht überein. Prüfen Sie Ihre Informationen",
+    "ResourcePolicyAlreadyExist": "Es existiert bereits eine Ressourcenrichtlinie mit demselben Namen.",
+    "ScalingGroupAlreadyExist": "Eine Ressourcengruppe mit demselben Namen existiert bereits.",
+    "UserNameAlreadyExist": "Der Benutzername existiert bereits. Er kann nicht dupliziert werden.",
+    "ResourceLimitExceed": "Ressourcenlimit überschritten. Überprüfen Sie Ihre freien Ressourcen.",
+    "ResourcePolicyStillReferenced": "Es gibt Schlüsselpaare, die auf diese Ressourcenpolitik verweisen.",
+    "SmallerResourceThenImageRequires": "Ihre Ressourcenanforderung ist kleiner als das für das Bild erforderliche Minimum. Versuchen Sie es mit mehr Ressourcen.",
+    "APINotSupported": "API wird nicht unterstützt. Erfordert die neueste Version des Backend.AI-Managers.",
+    "WrongAPIServerAddress": "Falsche API-Serveradresse."
   },
   "maxLength": {
     "64chars": "(maximal 64 Zeichen)",

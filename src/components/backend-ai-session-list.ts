@@ -172,14 +172,23 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({ type: Proxy }) idleChecksTable = new Proxy(
     {
       network_timeout: 'NetworkIdleTimeout',
+      // _t('session.NetworkIdleTimeout'),
       session_lifetime: 'MaxSessionLifetime',
+      // _t('session.MaxSessionLifetime'),
       utilization: 'UtilizationIdleTimeout',
+      // _t('session.UtilizationIdleTimeout'),
       expire_after: 'ExpiresAfter',
+      // _t('session.ExpiresAfter'),
       grace_period: 'GracePeriod',
+      // _t('session.GracePeriod'),
       cpu_util: 'CPU',
+      // _t('session.CPU'),
       mem: 'MEM',
+      // _t('session.MEM'),
       cuda_util: 'GPU',
+      // _t('session.GPU'),
       cuda_mem: 'GPU(MEM)',
+      // _t('session.GPU(MEM)'),
     },
     {
       get: (obj, prop) => {

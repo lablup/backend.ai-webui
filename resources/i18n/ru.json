@@ -60,7 +60,8 @@
       "Tasks": "Задачи",
       "YouMushChangeYourPassword": "В целях безопасности рекомендуется периодически менять пароль. Поскольку с момента последней смены пароля прошло определенное время, для продолжения использования сервиса необходимо его сменить.",
       "NewPasswordCannotBeSame": "Пожалуйста, введите пароль, отличный от Вашего текущего пароля.",
-      "PleaseConfirmYourPassword": "Пожалуйста, подтвердите свой пароль"
+      "PleaseConfirmYourPassword": "Пожалуйста, подтвердите свой пароль",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "Вы сейчас не в сети",
     "YouAreOnline": "Вы сейчас в сети",
@@ -108,7 +109,8 @@
     "DownloadWebUIApp": "Скачать приложение Backend.AI Web UI",
     "IPUEnabled": "IPU NPU Включено",
     "ATOMEnabled": "ATOM NPU Включено",
-    "WarboyEnabled": "Warboy NPU Enabled"
+    "WarboyEnabled": "Warboy NPU Enabled",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {
@@ -347,7 +349,12 @@
     "ConnectionNotice": "Уведомление",
     "Readless": "Читать далее",
     "Readmore": "Читать далее...",
-    "SessionType": "SessionType"
+    "SessionType": "SessionType",
+    "ExpiresAfter": "Оставшееся время",
+    "CPU": "CPU",
+    "MEM": "Память",
+    "GPU": "GPU",
+    "GPU(MEM)": "Графический процессор (память)"
   },
   "button": {
     "Cancel": "Отмена",
@@ -1005,7 +1012,20 @@
     "Russian": "русский",
     "French": "Французский",
     "Mongolian": "Монголия",
-    "Indonesian": "Индонезия"
+    "Indonesian": "Индонезия",
+    "Brazilian": "Бразилия",
+    "Chinese": "Китайский",
+    "Chinese (Simplified)": "Китайский (упрощенный)",
+    "Finnish": "Финский",
+    "German": "Немецкий язык",
+    "Greek": "Греция",
+    "Italian": "Итальянский",
+    "Japanese": "Япония",
+    "Polish": "Польша",
+    "Portuguese": "Португальский язык",
+    "Spanish": "Испанский язык",
+    "Turkish": "Турецкая",
+    "Vietnamese": "Вьетнамский"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Зарегистрируйте новые образы из репозитория",
@@ -1264,7 +1284,28 @@
   "error": {
     "UpdateError": "Ошибка обновления",
     "APIEndpointIsEmpty": "Конечная точка API пуста. Для регистрации укажите конечную точку API Backend.AI.",
-    "LoginSucceededManagerNotResponding": "Вход выполнен успешно, но менеджер не отвечает."
+    "LoginSucceededManagerNotResponding": "Вход выполнен успешно, но менеджер не отвечает.",
+    "NetworkConnectionFailed": "Не удалось установить сетевое соединение. Проверьте состояние сети.",
+    "LoginFailed": "Не удалось войти в систему. Проверьте информацию для входа в систему.",
+    "AuthenticationFailed": "Не удалось выполнить аутентификацию. Проверьте информацию и состояние менеджера.",
+    "VirtualFolderAlreadyExist": "Виртуальная папка с таким же именем уже существует. Удалите собственную папку или отклоните приглашение.",
+    "TooManyLoginFailures": "За короткое время произошло слишком много сбоев при входе в систему. Вход в систему на некоторое время заблокирован.",
+    "MaximumVfolderCreation": "Создание дополнительных vfolders невозможно из-за политики ресурсов",
+    "CannotChangeVirtualFolderOption": "Нельзя изменить параметры папки vfolder, которая не принадлежит мне.",
+    "CannotSharePrivateAutomountFolder": "Невозможно предоставить общий доступ к automount vfolders в соответствии с политикой.",
+    "FolderSharingNotAvailableToUser": "Общий доступ к папкам недоступен для запрашиваемого пользователя (пользователей).",
+    "ReachedResourceLimit": "Достигнут лимит ресурсов. Проверьте ресурсы и сеансы.",
+    "UserHasNoGroup": "У пользователя нет группы. Обратитесь к администратору для устранения проблемы.",
+    "InvalidSignupToken": "Неверный токен регистрации",
+    "LoginInformationMismatch": "Несоответствие информации о входе в систему. Проверьте свои данные",
+    "ResourcePolicyAlreadyExist": "Политика ресурса с таким же именем уже существует.",
+    "ScalingGroupAlreadyExist": "Группа ресурсов с таким же именем уже существует.",
+    "UserNameAlreadyExist": "Имя пользователя уже существует. Оно не может быть продублировано.",
+    "ResourceLimitExceed": "Превышен лимит ресурсов. Проверьте свободные ресурсы.",
+    "ResourcePolicyStillReferenced": "Существуют пары ключей, которые ссылаются на данную ресурсную политику.",
+    "SmallerResourceThenImageRequires": "Ваш запрос ресурсов меньше, чем минимально требуется для изображения. Попробуйте использовать больше ресурсов.",
+    "APINotSupported": "API не поддерживается. Требуется последняя версия менеджера Backend.AI.",
+    "WrongAPIServerAddress": "Неверный адрес сервера API."
   },
   "maxLength": {
     "64chars": "(максимум 64 символа)",

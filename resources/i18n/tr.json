@@ -60,7 +60,8 @@
       "Serving": "Servis",
       "PasswordChangePlace": "Üst çubuktaki kişi simgesine tıklayın ve \"Hesabım\" menüsüne gidin.",
       "Notifications": "Bildirimler",
-      "Tasks": "Görevler"
+      "Tasks": "Görevler",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "Şu anda çevrimdışısın",
     "YouAreOnline": "artık çevrimiçisin",
@@ -108,7 +109,8 @@
     "IPUEnabled": "IPU NPU Etkin",
     "ATOMEnabled": "ATOM NPU Etkin",
     "WarboyEnabled": "Warboy NPU Etkinleştirildi",
-    "DownloadWebUIApp": "Backend.AI Web UI Uygulamasını İndirin"
+    "DownloadWebUIApp": "Backend.AI Web UI Uygulamasını İndirin",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {
@@ -347,7 +349,12 @@
     "DescCommitSession": "Aşağıdaki oturuma karşılık gelen konteyneri işlemek üzeresiniz:",
     "NoSessionToDisplay": "Görüntülenecek oturum yok",
     "StatusInfo": "Durum Bilgisi",
-    "System": "Oturumları Yükle"
+    "System": "Oturumları Yükle",
+    "ExpiresAfter": "Kalan süre",
+    "CPU": "CPU",
+    "MEM": "Hafıza",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (bellek)"
   },
   "button": {
     "Cancel": "İptal etmek",
@@ -1005,7 +1012,20 @@
     "Russian": "Rusça",
     "French": "Fransızca",
     "Mongolian": "Moğolca",
-    "Indonesian": "Endonezce"
+    "Indonesian": "Endonezce",
+    "Brazilian": "Brezilya",
+    "Chinese": "Çince",
+    "Chinese (Simplified)": "Çince (Basitleştirilmiş)",
+    "Finnish": "Fince",
+    "German": "Alman",
+    "Greek": "Yunan",
+    "Italian": "İtalyan",
+    "Japanese": "Japonca",
+    "Polish": "Lehçe",
+    "Portuguese": "Portekizce",
+    "Spanish": "İspanyolca",
+    "Turkish": "Türkçe",
+    "Vietnamese": "Vietnamca"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Depodan yeni görüntüler kaydet",
@@ -1264,7 +1284,28 @@
   "error": {
     "UpdateError": "Güncelleme hatası",
     "APIEndpointIsEmpty": "API Uç Noktası boş. Lütfen kaydolmak için Backend.AI API uç noktasını belirtin.",
-    "LoginSucceededManagerNotResponding": "Giriş başarılı ancak yönetici yanıt vermiyor."
+    "LoginSucceededManagerNotResponding": "Giriş başarılı ancak yönetici yanıt vermiyor.",
+    "NetworkConnectionFailed": "Ağ bağlantısı başarısız oldu. Ağ durumunu kontrol edin.",
+    "LoginFailed": "Giriş başarısız oldu. Giriş bilgilerini kontrol edin.",
+    "AuthenticationFailed": "Kimlik doğrulama başarısız oldu. Bilgileri ve yönetici durumunu kontrol edin.",
+    "VirtualFolderAlreadyExist": "Aynı ada sahip bir sanal klasör zaten mevcut. Kendi klasörünüzü silin veya daveti reddedin.",
+    "TooManyLoginFailures": "Kısa süre içinde çok fazla oturum açma hatası oldu. Giriş bir süreliğine engellendi.",
+    "MaximumVfolderCreation": "Kaynak ilkesi nedeniyle daha fazla vfolder oluşturamazsınız",
+    "CannotChangeVirtualFolderOption": "Bana ait olmayan bir vfolder'ın seçeneklerini değiştiremezsiniz.",
+    "CannotSharePrivateAutomountFolder": "İlkeye uygun olarak automount vfolders paylaşılamıyor.",
+    "FolderSharingNotAvailableToUser": "Klasör paylaşımı istenen kullanıcı(lar) için mevcut değil.",
+    "ReachedResourceLimit": "Kaynak sınırınıza ulaştınız. Kaynakları ve oturumları kontrol edin.",
+    "UserHasNoGroup": "Kullanıcının grubu yok. Düzeltmek için lütfen yöneticiyle iletişime geçin.",
+    "InvalidSignupToken": "Geçersiz kayıt belirteci",
+    "LoginInformationMismatch": "Giriş bilgileri uyuşmazlığı. Bilgilerinizi kontrol edin",
+    "ResourcePolicyAlreadyExist": "Aynı ada sahip bir kaynak ilkesi zaten mevcut.",
+    "ScalingGroupAlreadyExist": "Aynı ada sahip bir kaynak grubu zaten mevcut.",
+    "UserNameAlreadyExist": "Kullanıcı adı zaten mevcut. Çoğaltılamaz.",
+    "ResourceLimitExceed": "Kaynak sınırı aşıldı. Ücretsiz kaynaklarınızı kontrol edin.",
+    "ResourcePolicyStillReferenced": "Bu kaynak ilkesine referans veren anahtar çiftleri vardır.",
+    "SmallerResourceThenImageRequires": "Kaynak isteğiniz görüntünün gerektirdiği minimum değerden daha küçük. Daha fazla kaynak deneyin.",
+    "APINotSupported": "API desteklenmiyor. Backend.AI yöneticisinin en son sürümünü gerektirir.",
+    "WrongAPIServerAddress": "Yanlış API sunucu adresi."
   },
   "maxLength": {
     "64chars": "(maksimum 64 karakter)",

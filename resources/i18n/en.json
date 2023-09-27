@@ -60,7 +60,8 @@
       "YouMushChangeYourPassword": "It is recommended to periodically change your password for security reasons. Since a certain amount of time has passed since you last changed your password, you must change it in order to continue using the service.",
       "NewPasswordCannotBeSame": "Please enter a password that is different from your current password.",
       "Notifications": "Notifications",
-      "Tasks": "Tasks"
+      "Tasks": "Tasks",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "You are now offline",
     "YouAreOnline": "You are now online",
@@ -119,7 +120,8 @@
     "DownloadWebUIApp": "Download Backend.AI Web UI App",
     "IPUEnabled": "IPU NPU Enabled",
     "ATOMEnabled": "ATOM NPU Enabled",
-    "WarboyEnabled": "Warboy NPU Enabled"
+    "WarboyEnabled": "Warboy NPU Enabled",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {
@@ -359,7 +361,12 @@
     "ConnectionExample": "Connection Example",
     "ConnectionNotice": "Notice",
     "System": "Upload Sessions",
-    "SessionType": "SessionType"
+    "SessionType": "SessionType",
+    "ExpiresAfter": "ExpiresAfter",
+    "CPU": "CPU",
+    "MEM": "MEM",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU(Memory)"
   },
   "modelService": {
     "Services": "Services",
@@ -1098,7 +1105,20 @@
     "Russian": "Russian",
     "French": "French",
     "Mongolian": "Mongolian",
-    "Indonesian": "Indonesian"
+    "Indonesian": "Indonesian",
+    "Brazilian": "Brazilian",
+    "Chinese": "Chinese",
+    "Chinese (Simplified)": "Chinese (Simplified)",
+    "Finnish": "Finnish",
+    "German": "German",
+    "Greek": "Greek",
+    "Italian": "Italian",
+    "Japanese": "Japanese",
+    "Polish": "Polish",
+    "Portuguese": "Portuguese",
+    "Spanish": "Spanish",
+    "Turkish": "Turkish",
+    "Vietnamese": "Vietnamese"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Register new images from repository",
@@ -1358,7 +1378,28 @@
   "error": {
     "UpdateError": "Update error",
     "APIEndpointIsEmpty": "API Endpoint is empty. Please specify Backend.AI API endpoint to signup.",
-    "LoginSucceededManagerNotResponding": "Login succeed but manager is not responding."
+    "LoginSucceededManagerNotResponding": "Login succeed but manager is not responding.",
+    "UserHasNoGroup": "User has no group. Please contact administrator to fix it.",
+    "WrongAPIServerAddress": "Wrong API server address.",
+    "LoginFailed": "Login failed. Check login information.",
+    "VirtualFolderAlreadyExist": "A virtual folder with the same name already exists. Delete your own folder or decline the invitation.",
+    "CannotChangeVirtualFolderOption": "You cannot change the options of a vfolder that is not owned by myself.",
+    "MaximumVfolderCreation": "You cannot create more vfolders due to resource policy",
+    "LoginInformationMismatch": "Login information mismatch. Check your information",
+    "ReachedResourceLimit": "Reached your resource limit. Check resources and sessions.",
+    "AuthenticationFailed": "Authentication failed. Check information and manager status.",
+    "NetworkConnectionFailed": "Network connection failed. Check network status.",
+    "TooManyLoginFailures": "There have been too many login failures in a short time. Login is blocked for a while.",
+    "ResourcePolicyAlreadyExist": "A resource policy with the same name already exists.",
+    "ScalingGroupAlreadyExist": "A resource group with the same name already exists.",
+    "ResourceLimitExceed": "Resource limit exceed. Check your free resources.",
+    "SmallerResourceThenImageRequires": "Your resource request is smaller than the minimum required by the image. Try more resources.",
+    "UserNameAlreadyExist": "Username already exists. It cannot be duplicated.",
+    "ResourcePolicyStillReferenced": "There exist keypairs which reference this resource policy.",
+    "InvalidSignupToken": "Invalid signup token",
+    "CannotSharePrivateAutomountFolder": "Cannot share automount vfolders in line with the policy.",
+    "FolderSharingNotAvailableToUser": "Folder sharing is not available for requested user(s).",
+    "APINotSupported": "API not supported. Requires latest version of Backend.AI manager."
   },
   "maxLength": {
     "64chars": "(maximum 64 chars)",

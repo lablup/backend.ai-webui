@@ -60,7 +60,8 @@
       "Tasks": "Даалгаврууд",
       "YouMushChangeYourPassword": "Аюулгүй байдлын үүднээс нууц үгээ үе үе өөрчлөхийг зөвлөж байна. \nТа нууц үгээ хамгийн сүүлд сольсноос хойш тодорхой хугацаа өнгөрсөн тул үйлчилгээгээ үргэлжлүүлэн ашиглахын тулд үүнийг өөрчлөх шаардлагатай.",
       "NewPasswordCannotBeSame": "Таны одоогийн нууц үгээс өөр нууц үг оруулна уу.",
-      "PleaseConfirmYourPassword": "Нууц үгээ баталгаажуулна уу"
+      "PleaseConfirmYourPassword": "Нууц үгээ баталгаажуулна уу",
+      "FastTrack": "FastTrack"
     },
     "YouAreOffline": "Та одоо офлайн байна",
     "YouAreOnline": "Та одоо онлайн байна",
@@ -108,7 +109,8 @@
     "DownloadWebUIApp": "Backend.AI Web UI програмыг татаж аваарай",
     "IPUEnabled": "IPU NPU идэвхжүүлсэн",
     "ATOMEnabled": "ATOM NPU-г идэвхжүүлсэн",
-    "WarboyEnabled": "Warboy NPU идэвхжүүлсэн"
+    "WarboyEnabled": "Warboy NPU идэвхжүүлсэн",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {
@@ -347,7 +349,12 @@
     "ConnectionNotice": "Анхаар",
     "Readless": "Бага унш",
     "Readmore": "Цааш унших...",
-    "SessionType": "SessionType"
+    "SessionType": "SessionType",
+    "ExpiresAfter": "Үлдсэн хугацаа",
+    "CPU": "CPU",
+    "MEM": "Санах ой",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (санах ой)"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -1005,7 +1012,20 @@
     "Russian": "Орос",
     "French": "Франц",
     "Mongolian": "Монгол",
-    "Indonesian": "Индонез"
+    "Indonesian": "Индонез",
+    "Brazilian": "бразил",
+    "Chinese": "хятад",
+    "Chinese (Simplified)": "Хятад (Хялбаршуулсан)",
+    "Finnish": "Финланд",
+    "German": "Герман",
+    "Greek": "Грек",
+    "Italian": "итали",
+    "Japanese": "Япон",
+    "Polish": "өнгөлөх",
+    "Portuguese": "португал",
+    "Spanish": "Испани",
+    "Turkish": "турк",
+    "Vietnamese": "вьетнам"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Агуулахаас шинэ зургуудыг бүртгүүлэх",
@@ -1264,7 +1284,28 @@
   "error": {
     "UpdateError": "Шинэчлэлтийн алдаа",
     "APIEndpointIsEmpty": "API Төгсгөлийн цэг (endpoint) хоосон байна. Бүртгүүлэхдээ Backend.AI API төгсгөлийн цэгийг зааж өгнө үү.",
-    "LoginSucceededManagerNotResponding": "Нэвтрэлт амжилттай болсон боловч менежер хариу өгөхгүй байна."
+    "LoginSucceededManagerNotResponding": "Нэвтрэлт амжилттай болсон боловч менежер хариу өгөхгүй байна.",
+    "APINotSupported": "API дэмждэггүй. \nBackend.AI менежерийн хамгийн сүүлийн хувилбарыг шаарддаг.",
+    "AuthenticationFailed": "Баталгаажуулалт амжилтгүй боллоо. \nМэдээлэл болон менежерийн статусыг шалгана уу.",
+    "CannotChangeVirtualFolderOption": "Та миний эзэмшдэггүй vfolder-ийн сонголтыг өөрчлөх боломжгүй.",
+    "CannotSharePrivateAutomountFolder": "Бодлогын дагуу автоматаар холбох vfolders хуваалцах боломжгүй.",
+    "FolderSharingNotAvailableToUser": "Хүссэн хэрэглэгчдэд хавтас хуваалцах боломжгүй.",
+    "InvalidSignupToken": "Буруу бүртгүүлэх токен",
+    "LoginFailed": "Нэвтэрч чадсангүй. \nНэвтрэх мэдээллийг шалгана уу.",
+    "LoginInformationMismatch": "Нэвтрэх мэдээлэл таарахгүй байна. \nМэдээллээ шалгана уу",
+    "MaximumVfolderCreation": "Нөөцийн бодлогын улмаас та илүү олон v хавтас үүсгэх боломжгүй",
+    "NetworkConnectionFailed": "Сүлжээний холболт амжилтгүй боллоо. \nСүлжээний статусыг шалгана уу.",
+    "ReachedResourceLimit": "Таны нөөцийн хязгаарт хүрсэн. \nНөөц болон сессүүдийг шалгана уу.",
+    "ResourcePolicyAlreadyExist": "Ижил нэртэй нөөцийн бодлого аль хэдийн байна.",
+    "ResourcePolicyStillReferenced": "Энэ нөөцийн бодлогыг лавлах түлхүүр хосууд байдаг.",
+    "ScalingGroupAlreadyExist": "Ижил нэртэй нөөцийн бүлэг аль хэдийн байна.",
+    "SmallerResourceThenImageRequires": "Таны нөөцийн хүсэлт зурагт шаардагдах доод хэмжээнээс бага байна. \nИлүү их нөөцийг туршиж үзээрэй.",
+    "TooManyLoginFailures": "Богино хугацаанд нэвтэрч ороход маш олон алдаа гарсан. \nНэвтрэхийг хэсэг хугацаанд хаасан.",
+    "UserHasNoGroup": "Хэрэглэгч бүлэггүй байна. \nҮүнийг засахын тулд админтай холбогдоно уу.",
+    "UserNameAlreadyExist": "Хэрэглэгчийн нэр аль хэдийн байна. \nҮүнийг хуулбарлах боломжгүй.",
+    "VirtualFolderAlreadyExist": "Ижил нэртэй виртуал хавтас аль хэдийн байна. \nӨөрийн фолдерыг устгах эсвэл урилгаас татгалзаарай.",
+    "WrongAPIServerAddress": "API серверийн хаяг буруу байна.",
+    "ResourceLimitExceed": "Нөөцийн хязгаар хэтэрсэн. \nБоломжтой нөөцийн хэмжээг шалгана уу."
   },
   "maxLength": {
     "64chars": "(хамгийн ихдээ 64 тэмдэгт)",
