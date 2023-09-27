@@ -98,7 +98,7 @@ ifdef BAI_APP_SIGN_KEYCHAIN
 endif
 	rm -rf ./app/backend.ai-desktop-macos-intel
 	cd app; mv "backend.ai-desktop-darwin-x64" backend.ai-desktop-macos-intel;
-	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos-intel/Backend.AI Desktop.app' ./app/backend.ai-desktop-intel-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
+	npx electron-installer-dmg './app/backend.ai-desktop-macos-intel/Backend.AI Desktop.app' ./app/backend.ai-desktop-intel-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-intel-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-macos-intel.dmg
 else
@@ -112,7 +112,7 @@ ifdef BAI_APP_SIGN_KEYCHAIN
 endif
 	rm -rf ./app/backend.ai-desktop-macos-apple
 	cd app; mv "backend.ai-desktop-darwin-arm64" backend.ai-desktop-macos-apple;
-	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos-apple/Backend.AI Desktop.app' ./app/backend.ai-desktop-apple-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
+	npx electron-installer-dmg './app/backend.ai-desktop-macos-apple/Backend.AI Desktop.app' ./app/backend.ai-desktop-apple-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-apple-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-macos-apple.dmg
 else
@@ -150,7 +150,7 @@ endif
 linux_arm64: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	node ./app-packager.js linux arm64
-	npx electron-installer-debian --src "./app/backend.ai-desktop-linux-arm64" --dest app --arch arm64
+	# npx electron-installer-debian --src "./app/backend.ai-desktop-linux-arm64" --dest app --arch arm64
 	cd app; zip -r -9 ./backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip "./backend.ai-desktop-linux-arm64"
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-linux-arm64.zip
