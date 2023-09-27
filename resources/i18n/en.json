@@ -26,7 +26,7 @@
       "MyAccount": "My Account",
       "FullName": "Full Name",
       "FullNameInvalid": "Full name should not exceed 64 characters",
-      "ChangePassword": "Change Password",
+      "ChangePassword": "Change",
       "Preferences": "Preferences",
       "LogsErrors": "Logs / Errors",
       "LogOut": "Log Out",
