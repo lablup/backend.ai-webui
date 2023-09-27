@@ -1,6 +1,7 @@
 {
   "name": "backend.ai-webui",
   "productName": "Backend.AI Desktop",
+  "descripion": "Backend.AI Desktop Application to manage your AI resources",
   "version": "23.09.0",
   "repository": "https://github.com/lablup/backend.ai-webui.git",
   "author": "Lablup Inc. <contact@lablup.com>",
@@ -120,6 +121,7 @@
     "electron": "^26.2.2",
     "electron-installer-debian": "^3.2.0",
     "electron-installer-dmg": "^4.0.0",
+    "electron-installer-snap": "^5.2.0",
     "electron-packager": "^17.1.2",
     "eslint": "^8.50.0",
     "eslint-config-google": "^0.14.0",

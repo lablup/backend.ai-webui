@@ -1,4 +1,5 @@
 const packager = require('electron-packager');
+const installer_debian = require('electron-installer-debian');
 const clc = require("cli-color");
 const { program, Option } = require('commander');
 
@@ -13,7 +14,8 @@ program.addOption((new Option('--sign-identity <Apple Distribution: Example Inc.
 program.addOption((new Option('--sign-keychain <Name of keychain>')).env('BAI_APP_SIGN_KEYCHAIN'))
 
 let baseOptions = {
-  name: 'Backend.AI Desktop',
+  name: 'backend.ai-desktop',
+  executableName: 'Backend.AI Desktop',
   dir: './build/electron-app',
   out: 'app',
   asar: true,
@@ -86,6 +88,7 @@ if (selectedOptions.doSign === true && (args[0] === 'mas' || args[0] === 'darwin
   }
 
   options.osxNotarize = {
+    tool: 'notarytool',
     appleId: selectedOptions.signAppleId,
     appleIdPassword: selectedOptions.signAppleIdPassword,
   }
@@ -100,6 +103,26 @@ const run = async () => {
   console.log(clc.blue('\n[BUILD]') + ' Now packaging for ' + clc.yellow(options.platform) + ' with ' + clc.yellow(options.arch) + ' architecture.\n');
   await packager(options);
   console.log(clc.blue('\n[BUILD]') + ' Done.\n');
+  /* if (args[0] === 'linux') {
+    console.log(clc.blue('\n[PACKAGING]') + ' Now creating Debian package.\n');
+    await installer_debian({
+      src: `./app/${options.name}-linux-${options.arch}`,
+      dest: './app',
+      arch: options.arch,
+      compression: 'gzip',
+      options: {
+        name: options.name,
+        productName: options.name,
+        bin: options.name,
+        categories: ['Utility'],
+        icon: 'manifest/backend-ai.png',
+        homepage: 'https://www.backend.ai',
+        descripion: 'Backend.AI Desktop',
+        productDescripion: 'Backend.AI Desktop Application to manage your AI resources',
+      }
+    });
+    console.log(clc.blue('\n[PACKAGING]') + ' Done.\n');
+  }*/
 }
 
 
