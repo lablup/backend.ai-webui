@@ -37,12 +37,15 @@
     "test": "craco test",
     "eject": "react-scripts eject",
     "relay": "relay-compiler",
-    "lint": "npx eslint ./src --ignore-pattern '*.test.*' --max-warnings=0"
+    "lint": "npx eslint ./src --ignore-pattern '*.test.*' --max-warnings=0",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "plugin:storybook/recommended"
     ]
   },
   "browserslist": {
@@ -59,16 +62,30 @@
   },
   "devDependencies": {
     "@craco/craco": "^7.1.0",
+    "@storybook/addon-essentials": "^7.4.5",
+    "@storybook/addon-interactions": "^7.4.5",
+    "@storybook/addon-links": "^7.4.5",
+    "@storybook/addon-onboarding": "^1.0.8",
+    "@storybook/blocks": "^7.4.5",
+    "@storybook/preset-create-react-app": "^7.4.5",
+    "@storybook/react": "^7.4.5",
+    "@storybook/react-webpack5": "^7.4.5",
+    "@storybook/testing-library": "^0.2.1",
     "@testing-library/user-event": "^14.5.0",
     "@types/react-relay": "^14.1.5",
     "@types/react-syntax-highlighter": "^15.5.7",
     "@types/react-test-renderer": "^18.0.1",
     "@types/relay-runtime": "^14.1.13",
     "@types/relay-test-utils": "^14.1.0",
+    "babel-plugin-named-exports-order": "^0.0.2",
     "babel-plugin-relay": "^15.0.0",
+    "eslint-plugin-storybook": "^0.6.14",
+    "prop-types": "^15.8.1",
     "react-test-renderer": "^18.2.0",
     "relay-compiler": "^15.0.0",
-    "relay-test-utils": "^15.0.0"
+    "relay-test-utils": "^15.0.0",
+    "storybook": "^7.4.5",
+    "webpack": "^5.88.2"
   },
   "overrides": {
     "typescript": "^5.2.2"
