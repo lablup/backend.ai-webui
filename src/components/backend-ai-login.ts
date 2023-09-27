@@ -286,6 +286,7 @@ export default class BackendAILogin extends BackendAIPage {
 
         #endpoint-button {
           background-color: #ffffff;
+          margin-top: 4px;
         }
 
         #help-description {
@@ -2095,6 +2096,7 @@ export default class BackendAILogin extends BackendAIPage {
                   <mwc-icon-button
                     icon="info"
                     class="fg grey info"
+                    style="margin-top:4px;"
                     @click="${(e) => this._showEndpointDescription(e)}"
                   ></mwc-icon-button>
                 </div>
