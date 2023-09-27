@@ -1,6 +1,7 @@
 {
   "name": "backend.ai-webui",
   "productName": "Backend.AI Desktop",
+  "descripion": "Backend.AI Desktop Application to manage your AI resources",
   "version": "23.09.0",
   "repository": "https://github.com/lablup/backend.ai-webui.git",
   "author": "Lablup Inc. <contact@lablup.com>",
