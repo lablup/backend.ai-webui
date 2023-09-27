@@ -173,22 +173,33 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         fieldset input {
-          width: 100%;
           border: 0;
-          margin: 15px 0 0 0;
           font: inherit;
           font-size: 16px;
           outline: none;
         }
 
         mwc-textfield {
+          width: -webkit-fill-available;
           font-family: var(--general-font-family);
           --mdc-theme-primary: black;
-          --mdc-text-field-fill-color: rgb(250, 250, 250);
-          width: 100%;
+          --mdc-text-field-fill-color: #ffffff;
         }
 
-        .endpoint-text {
+        .login-input-without-trailing-icon {
+          margin-right: 48px;
+        }
+
+        .align-self-center {
+          align-self: center;
+        }
+
+        .login-input {
+          padding-left: 15px;
+          padding-right: 15px;
+        }
+
+        .login-input mwc-textfield {
           --mdc-text-field-idle-line-color: rgba(0, 0, 0, 0);
           --mdc-text-field-hover-line-color: rgba(0, 0, 0, 0);
           --mdc-text-field-disabled-line-color: rgba(0, 0, 0, 0);
@@ -197,7 +208,6 @@ export default class BackendAILogin extends BackendAIPage {
         mwc-icon-button {
           /*color: rgba(0, 0, 0, 0.54); Matched color with above icons*/
           color: var(--paper-blue-600);
-          background-color: #fafafa;
           --mdc-icon-size: 24px;
         }
 
@@ -275,8 +285,7 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         #endpoint-button {
-          padding-left: 3px;
-          background-color: rgb(250, 250, 250);
+          background-color: #ffffff;
         }
 
         #help-description {
@@ -285,25 +294,6 @@ export default class BackendAILogin extends BackendAIPage {
 
         #help-description p {
           padding: 5px !important;
-        }
-
-        .login-input {
-          background-color: #fafafa;
-          border-bottom: 1px solid #ccc;
-          height: 50px;
-        }
-
-        .login-input mwc-icon {
-          margin: 5px 15px 5px 15px;
-          color: #737373;
-        }
-
-        .login-input input {
-          width: 100%;
-          background-color: #fafafa;
-          margin-bottom: 5px;
-          font-size: 18px;
-          margin-top: 5px;
         }
 
         #login-title-area {
@@ -1952,24 +1942,36 @@ export default class BackendAILogin extends BackendAIPage {
               id="session-login-form"
               class="${this.connection_mode === 'SESSION' ? 'block' : 'none'}"
             >
-              <fieldset>
-                <mwc-textfield
-                  type="email"
-                  id="id_user_id"
-                  maxlength="64"
-                  autocomplete="username"
-                  label="${_t('login.E-mail')}"
-                  icon="email"
-                  value="${this.user_id}"
-                  @keyup="${this._submitIfEnter}"
-                ></mwc-textfield>
+              <fieldset class="login-input">
+                <div
+                  class="horizontal flex layout login-input-without-trailing-icon"
+                >
+                  <mwc-icon-button
+                    icon="email"
+                    class="fg grey layout align-self-center"
+                    disabled
+                  ></mwc-icon-button>
+                  <mwc-textfield
+                    type="email"
+                    id="id_user_id"
+                    maxlength="64"
+                    autocomplete="username"
+                    label="${_t('login.E-mail')}"
+                    value="${this.user_id}"
+                    @keyup="${this._submitIfEnter}"
+                  ></mwc-textfield>
+                </div>
                 <div class="horizontal flex layout">
+                  <mwc-icon-button
+                    icon="vpn_key"
+                    class="fg grey layout align-self-center"
+                    disabled
+                  ></mwc-icon-button>
                   <mwc-textfield
                     type="password"
                     id="id_password"
                     autocomplete="current-password"
                     label="${_t('login.Password')}"
-                    icon="vpn_key"
                     value="${this.password}"
                     @keyup="${this._submitIfEnter}"
                   ></mwc-textfield>
@@ -1977,7 +1979,7 @@ export default class BackendAILogin extends BackendAIPage {
                     off
                     onIcon="visibility"
                     offIcon="visibility_off"
-                    style="position: absolute; right: 0;"
+                    style="align-self:center;"
                     @click="${(e) => this._togglePasswordVisibility(e.target)}"
                   ></mwc-icon-button-toggle>
                 </div>
@@ -1996,29 +1998,45 @@ export default class BackendAILogin extends BackendAIPage {
               id="api-login-form"
               class="${this.connection_mode === 'SESSION' ? 'none' : 'block'}"
             >
-              <fieldset>
-                <mwc-textfield
-                  type="text"
-                  id="id_api_key"
-                  maxLength="20"
-                  label="${_t('login.APIKey')}"
-                  icon="lock"
-                  value="${this.api_key}"
-                  @keyup="${this._submitIfEnter}"
-                ></mwc-textfield>
-                <mwc-textfield
-                  type="password"
-                  id="id_secret_key"
-                  maxLength="40"
-                  label="${_t('login.SecretKey')}"
-                  icon="vpn_key"
-                  value="${this.secret_key}"
-                  @keyup="${this._submitIfEnter}"
-                ></mwc-textfield>
+              <fieldset class="login-input">
+                <div
+                  class="horizontal flex layout login-input-without-trailing-icon"
+                >
+                  <mwc-icon-button
+                    icon="lock"
+                    class="fg grey layout align-self-center"
+                    disabled
+                  ></mwc-icon-button>
+                  <mwc-textfield
+                    type="text"
+                    id="id_api_key"
+                    maxLength="20"
+                    label="${_t('login.APIKey')}"
+                    value="${this.api_key}"
+                    @keyup="${this._submitIfEnter}"
+                  ></mwc-textfield>
+                </div>
+                <div
+                  class="horizontal flex layout login-input-without-trailing-icon"
+                >
+                  <mwc-icon-button
+                    icon="vpn_key"
+                    class="fg grey layout align-self-center"
+                    disabled
+                  ></mwc-icon-button>
+                  <mwc-textfield
+                    type="password"
+                    id="id_secret_key"
+                    maxLength="40"
+                    label="${_t('login.SecretKey')}"
+                    value="${this.secret_key}"
+                    @keyup="${this._submitIfEnter}"
+                  ></mwc-textfield>
+                </div>
               </fieldset>
             </form>
             <form>
-              <fieldset>
+              <fieldset class="login-input">
                 <div
                   class="horizontal layout"
                   id="id_api_endpoint_container"
@@ -2066,7 +2084,6 @@ export default class BackendAILogin extends BackendAIPage {
                     class="endpoint-text"
                     type="text"
                     id="id_api_endpoint"
-                    style="background-color: #fafafa;"
                     maxLength="2048"
                     label="${_t('login.Endpoint')}"
                     pattern="^https?://(.*)"
