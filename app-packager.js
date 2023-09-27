@@ -88,6 +88,7 @@ if (selectedOptions.doSign === true && (args[0] === 'mas' || args[0] === 'darwin
   }
 
   options.osxNotarize = {
+    tool: 'notarytool',
     appleId: selectedOptions.signAppleId,
     appleIdPassword: selectedOptions.signAppleIdPassword,
   }
