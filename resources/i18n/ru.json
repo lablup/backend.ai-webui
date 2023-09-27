@@ -343,7 +343,12 @@
     "ConnectionNotice": "Уведомление",
     "Readless": "Читать далее",
     "Readmore": "Читать далее...",
-    "SessionType": "SessionType"
+    "SessionType": "SessionType",
+    "ExpiresAfter": "Оставшееся время",
+    "CPU": "CPU",
+    "MEM": "Память",
+    "GPU": "GPU",
+    "GPU(MEM)": "Графический процессор (память)"
   },
   "button": {
     "Cancel": "Отмена",
@@ -1000,7 +1005,20 @@
     "Russian": "русский",
     "French": "Французский",
     "Mongolian": "Монголия",
-    "Indonesian": "Индонезия"
+    "Indonesian": "Индонезия",
+    "Brazilian": "Бразилия",
+    "Chinese": "Китайский",
+    "Chinese (Simplified)": "Китайский (упрощенный)",
+    "Finnish": "Финский",
+    "German": "Немецкий язык",
+    "Greek": "Греция",
+    "Italian": "Итальянский",
+    "Japanese": "Япония",
+    "Polish": "Польша",
+    "Portuguese": "Португальский язык",
+    "Spanish": "Испанский язык",
+    "Turkish": "Турецкая",
+    "Vietnamese": "Вьетнамский"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Зарегистрируйте новые образы из репозитория",

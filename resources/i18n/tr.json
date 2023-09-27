@@ -343,7 +343,12 @@
     "DescCommitSession": "Aşağıdaki oturuma karşılık gelen konteyneri işlemek üzeresiniz:",
     "NoSessionToDisplay": "Görüntülenecek oturum yok",
     "StatusInfo": "Durum Bilgisi",
-    "System": "Oturumları Yükle"
+    "System": "Oturumları Yükle",
+    "ExpiresAfter": "Kalan süre",
+    "CPU": "CPU",
+    "MEM": "Hafıza",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (bellek)"
   },
   "button": {
     "Cancel": "İptal etmek",
@@ -1000,7 +1005,20 @@
     "Russian": "Rusça",
     "French": "Fransızca",
     "Mongolian": "Moğolca",
-    "Indonesian": "Endonezce"
+    "Indonesian": "Endonezce",
+    "Brazilian": "Brezilya",
+    "Chinese": "Çince",
+    "Chinese (Simplified)": "Çince (Basitleştirilmiş)",
+    "Finnish": "Fince",
+    "German": "Alman",
+    "Greek": "Yunan",
+    "Italian": "İtalyan",
+    "Japanese": "Japonca",
+    "Polish": "Lehçe",
+    "Portuguese": "Portekizce",
+    "Spanish": "İspanyolca",
+    "Turkish": "Türkçe",
+    "Vietnamese": "Vietnamca"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Depodan yeni görüntüler kaydet",

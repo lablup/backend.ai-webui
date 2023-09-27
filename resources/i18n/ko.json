@@ -343,7 +343,12 @@
     "ConnectionNotice": "주의",
     "Readmore": "더 알아보기...",
     "Readless": "내용 접기",
-    "SessionType": "세션 타입"
+    "SessionType": "세션 타입",
+    "ExpiresAfter": "남은 시간",
+    "CPU": "CPU",
+    "MEM": "메모리",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU(메모리)"
   },
   "modelService": {
     "Services": "모델 서비스",
@@ -1081,7 +1086,20 @@
     "Russian": "러시아어",
     "French": "프랑스어",
     "Mongolian": "몽골어",
-    "Indonesian": "인도네시아어"
+    "Indonesian": "인도네시아어",
+    "Brazilian": "브라질어",
+    "Chinese": "중국어",
+    "Chinese (Simplified)": "중국어(간체)",
+    "Finnish": "핀란드어",
+    "German": "독일어",
+    "Greek": "그리스어",
+    "Italian": "이탈리아어",
+    "Japanese": "일본어",
+    "Polish": "폴란드어",
+    "Portuguese": "포르투갈어",
+    "Spanish": "스페인어",
+    "Turkish": "터키어",
+    "Vietnamese": "베트남어"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "새 계산환경 이미지를 저장소로부터 등록",

@@ -343,7 +343,12 @@
     "DescCommitSession": "Bạn sắp cam kết vùng chứa tương ứng với phiên bên dưới:",
     "NoSessionToDisplay": "Không có phiên nào để hiển thị",
     "StatusInfo": "Thông tin trạng thái",
-    "System": "Tải phiên lên"
+    "System": "Tải phiên lên",
+    "ExpiresAfter": "Thời gian còn lại",
+    "CPU": "CPU",
+    "MEM": "Ký ức",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (bộ nhớ)"
   },
   "button": {
     "Cancel": "Huỷ bỏ",
@@ -1000,7 +1005,20 @@
     "Russian": "tiếng Nga",
     "French": "người Pháp",
     "Mongolian": "tiếng Mông Cổ",
-    "Indonesian": "tiếng Indonesia"
+    "Indonesian": "tiếng Indonesia",
+    "Brazilian": "người nước Brazil",
+    "Chinese": "người Trung Quốc",
+    "Chinese (Simplified)": "Tiếng Trung (Giản thể)",
+    "Finnish": "tiếng Phần Lan",
+    "German": "tiếng Đức",
+    "Greek": "người Hy Lạp",
+    "Italian": "người Ý",
+    "Japanese": "tiếng Nhật",
+    "Polish": "đánh bóng",
+    "Portuguese": "tiếng Bồ Đào Nha",
+    "Spanish": "người Tây Ban Nha",
+    "Turkish": "tiếng Thổ Nhĩ Kỳ",
+    "Vietnamese": "Tiếng Việt"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Đăng ký hình ảnh mới từ kho",

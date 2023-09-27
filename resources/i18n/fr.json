@@ -343,7 +343,12 @@
     "ConnectionNotice": "Avis",
     "Readless": "Lire moins",
     "Readmore": "Lire la suite...",
-    "SessionType": "Type de session"
+    "SessionType": "Type de session",
+    "ExpiresAfter": "Temps restant",
+    "CPU": "UNITÉ CENTRALE",
+    "MEM": "Mémoire",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (mémoire)"
   },
   "button": {
     "Cancel": "Annuler",
@@ -1000,7 +1005,20 @@
     "Russian": "Russe",
     "French": "Français",
     "Mongolian": "Mongol",
-    "Indonesian": "Indonésien"
+    "Indonesian": "Indonésien",
+    "Brazilian": "Brésilien",
+    "Chinese": "Chinois",
+    "Chinese (Simplified)": "Chinois (simplifié)",
+    "Finnish": "Finlandais",
+    "German": "Allemand",
+    "Greek": "Grecque",
+    "Italian": "Italien",
+    "Japanese": "Japonais",
+    "Polish": "Polonais",
+    "Portuguese": "Portugais",
+    "Spanish": "Espagnol",
+    "Turkish": "Turc",
+    "Vietnamese": "Vietnamien"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Enregistrer de nouvelles images à partir du référentiel",

@@ -354,7 +354,12 @@
     "ConnectionExample": "Connection Example",
     "ConnectionNotice": "Notice",
     "System": "Upload Sessions",
-    "SessionType": "SessionType"
+    "SessionType": "SessionType",
+    "ExpiresAfter": "ExpiresAfter",
+    "CPU": "CPU",
+    "MEM": "MEM",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU(Memory)"
   },
   "modelService": {
     "Services": "Services",
@@ -1092,7 +1097,20 @@
     "Russian": "Russian",
     "French": "French",
     "Mongolian": "Mongolian",
-    "Indonesian": "Indonesian"
+    "Indonesian": "Indonesian",
+    "Brazilian": "Brazilian",
+    "Chinese": "Chinese",
+    "Chinese (Simplified)": "Chinese (Simplified)",
+    "Finnish": "Finnish",
+    "German": "German",
+    "Greek": "Greek",
+    "Italian": "Italian",
+    "Japanese": "Japanese",
+    "Polish": "Polish",
+    "Portuguese": "Portuguese",
+    "Spanish": "Spanish",
+    "Turkish": "Turkish",
+    "Vietnamese": "Vietnamese"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Register new images from repository",

@@ -343,7 +343,12 @@
     "DescCommitSession": "Está prestes a submeter o contentor correspondente à sessão abaixo:",
     "NoSessionToDisplay": "Não há sessões a apresentar",
     "StatusInfo": "Informações sobre o estado",
-    "System": "Carregar sessões"
+    "System": "Carregar sessões",
+    "ExpiresAfter": "Tempo restante",
+    "CPU": "CPU",
+    "MEM": "Memória",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (memória)"
   },
   "button": {
     "Cancel": "Cancelar",
@@ -1000,7 +1005,20 @@
     "Russian": "russo",
     "French": "francês",
     "Mongolian": "mongol",
-    "Indonesian": "indonésio"
+    "Indonesian": "indonésio",
+    "Brazilian": "brasileiro",
+    "Chinese": "Chinês",
+    "Chinese (Simplified)": "Chinês (simplificado)",
+    "Finnish": "finlandês",
+    "German": "alemão",
+    "Greek": "grego",
+    "Italian": "italiano",
+    "Japanese": "Japonês",
+    "Polish": "Polaco",
+    "Portuguese": "Português",
+    "Spanish": "espanhol",
+    "Turkish": "Turco",
+    "Vietnamese": "vietnamita"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Registre novas imagens do repositório",

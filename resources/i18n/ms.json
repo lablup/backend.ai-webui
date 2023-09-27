@@ -343,7 +343,12 @@
     "DescCommitSession": "Anda akan melakukan kontena yang sepadan dengan sesi di bawah:",
     "NoSessionToDisplay": "Tiada sesi untuk dipaparkan",
     "StatusInfo": "Maklumat Status",
-    "System": "Muat Naik Sesi"
+    "System": "Muat Naik Sesi",
+    "ExpiresAfter": "Masa yang tinggal",
+    "CPU": "CPU",
+    "MEM": "Ingatan",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (memori)"
   },
   "button": {
     "Cancel": "Batal",
@@ -1000,7 +1005,20 @@
     "Russian": "bahasa Rusia",
     "French": "Perancis",
     "Mongolian": "Mongolia",
-    "Indonesian": "Indonesia"
+    "Indonesian": "Indonesia",
+    "Brazilian": "brazil",
+    "Chinese": "cina",
+    "Chinese (Simplified)": "Cina (Mudah)",
+    "Finnish": "bahasa Finland",
+    "German": "Jerman",
+    "Greek": "bahasa Yunani",
+    "Italian": "Itali",
+    "Japanese": "Jepun",
+    "Polish": "menggilap",
+    "Portuguese": "Portugis",
+    "Spanish": "bahasa Sepanyol",
+    "Turkish": "bahasa Turki",
+    "Vietnamese": "bahasa Vietnam"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Daftarkan gambar baru dari repositori",

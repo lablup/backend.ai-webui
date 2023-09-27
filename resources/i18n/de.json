@@ -343,7 +343,12 @@
     "DescCommitSession": "Sie sind im Begriff, einen Container zu übertragen, der der folgenden Sitzung entspricht:",
     "NoSessionToDisplay": "Keine Sitzungen zum Anzeigen",
     "StatusInfo": "Status-Infos",
-    "System": "Upload-Sitzungen"
+    "System": "Upload-Sitzungen",
+    "ExpiresAfter": "Verbleibende Zeit",
+    "CPU": "CPU",
+    "MEM": "Speicher",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (Speicher)"
   },
   "button": {
     "Cancel": "Stornieren",
@@ -1000,7 +1005,20 @@
     "Russian": "Russisch",
     "French": "Französisch",
     "Mongolian": "Mongolei",
-    "Indonesian": "Indonesisch"
+    "Indonesian": "Indonesisch",
+    "Brazilian": "Brasilianisch",
+    "Chinese": "Chinesisch",
+    "Chinese (Simplified)": "Chinesisch (vereinfacht)",
+    "Finnish": "Finnisch",
+    "German": "Deutsch",
+    "Greek": "Griechisch",
+    "Italian": "Italienisch",
+    "Japanese": "Japanisch",
+    "Polish": "Polnisch",
+    "Portuguese": "Portugiesisch",
+    "Spanish": "Spanisch",
+    "Turkish": "Türkisch",
+    "Vietnamese": "Vietnamesisch"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Neue Bilder aus dem Repository registrieren",

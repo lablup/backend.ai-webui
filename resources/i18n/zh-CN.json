@@ -343,7 +343,12 @@
     "DescCommitSession": "您即将提交与下面会话相对应的容器：",
     "NoSessionToDisplay": "没有会话显示",
     "StatusInfo": "状态信息",
-    "System": "上传会话"
+    "System": "上传会话",
+    "ExpiresAfter": "剩余时间",
+    "CPU": "中央处理器",
+    "MEM": "内存",
+    "GPU": "GPU",
+    "GPU(MEM)": "图形处理器（内存）"
   },
   "button": {
     "Cancel": "取消",
@@ -1000,7 +1005,20 @@
     "Russian": "俄罗斯",
     "French": "法语",
     "Mongolian": "蒙古语",
-    "Indonesian": "印尼语"
+    "Indonesian": "印尼语",
+    "Brazilian": "巴西",
+    "Chinese": "中文",
+    "Chinese (Simplified)": "简体中文",
+    "Finnish": "芬兰语",
+    "German": "德国",
+    "Greek": "希腊文",
+    "Italian": "意大利语",
+    "Japanese": "日语",
+    "Polish": "波兰语",
+    "Portuguese": "葡萄牙语",
+    "Spanish": "西班牙语",
+    "Turkish": "土耳其语",
+    "Vietnamese": "越南语"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "从存储库注册新图像",
