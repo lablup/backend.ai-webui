@@ -1984,15 +1984,23 @@ export default class BackendAILogin extends BackendAIPage {
                     @click="${(e) => this._togglePasswordVisibility(e.target)}"
                   ></mwc-icon-button-toggle>
                 </div>
-                <mwc-textfield
-                  type="number"
-                  id="otp"
-                  style="display: ${this.otpRequired ? 'block' : 'none'};"
-                  label="${_t('totp.OTP')}"
-                  icon="pin"
-                  value="${this.otp}"
-                  @keyup="${this._submitIfEnter}"
-                ></mwc-textfield>
+                <div
+                  class="horizontal flex layout login-input-without-trailing-icon"
+                  style="display: ${this.otpRequired ? 'flex' : 'none'};"
+                >
+                  <mwc-icon-button
+                    icon="pin"
+                    class="fg grey layout align-self-center"
+                    disabled
+                  ></mwc-icon-button>
+                  <mwc-textfield
+                    type="number"
+                    id="otp"
+                    label="${_t('totp.OTP')}"
+                    value="${this.otp}"
+                    @keyup="${this._submitIfEnter}"
+                  ></mwc-textfield>
+                </div>
               </fieldset>
             </form>
             <form
