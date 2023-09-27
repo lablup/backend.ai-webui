@@ -1,8 +1,8 @@
 import { InputNumber, InputNumberProps, Select, Typography } from 'antd';
 import _ from 'lodash';
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 
-interface DynamicUnitInputNumberProps
+export interface DynamicUnitInputNumberProps
   extends Omit<
     InputNumberProps,
     'step' | 'max' | 'min' | 'value' | 'onChange'
