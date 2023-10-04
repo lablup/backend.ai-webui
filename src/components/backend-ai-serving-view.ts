@@ -19,16 +19,16 @@ Backend.AI Serving List View
 
 Example:
 
-<backend-ai-serving-list class="page" name="serving" ?active="${0}">
+<backend-ai-serving-view class="page" name="serving" ?active="${0}">
 ... content ...
-</backend-ai-serving-list>
+</backend-ai-serving-view>
 
 @group Backend.AI Web UI
-@element backend-ai-serving-list
+@element backend-ai-serving-view
 */
 
-@customElement('backend-ai-serving-list')
-export default class BackendAIServingList extends BackendAIPage {
+@customElement('backend-ai-serving-view')
+export default class BackendAIServingView extends BackendAIPage {
   static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
@@ -67,6 +67,6 @@ export default class BackendAIServingList extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-serving-list': BackendAIServingList;
+    'backend-ai-serving-view': BackendAIServingView;
   }
 }
