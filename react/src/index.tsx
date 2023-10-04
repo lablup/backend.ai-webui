@@ -46,6 +46,10 @@ const UserProfileSettingModal = React.lazy(
   () => import('./components/UserProfileSettingModal'),
 );
 
+const SessionLauncherPage = React.lazy(
+  () => import('./pages/SessionLauncherPage'),
+);
+
 customElements.define(
   'backend-ai-react-information',
   reactToWebComponent((props) => {
@@ -64,7 +68,10 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <SessionList>{props.children}</SessionList>
+        <Routes>
+          <Route path="/session" element={<SessionList />} />
+          <Route path="/session/start" element={<SessionLauncherPage />} />
+        </Routes>
       </DefaultProviders>
     );
   }),

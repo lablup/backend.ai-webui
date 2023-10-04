@@ -56,7 +56,11 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
     : undefined;
 
   useEffect(() => {
-    if (autoSelectDefault && autoSelectedOption) {
+    if (
+      autoSelectDefault &&
+      autoSelectedOption &&
+      autoSelectedOption.value !== selectProps.value
+    ) {
       selectProps.onChange?.(autoSelectedOption.value, autoSelectedOption);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

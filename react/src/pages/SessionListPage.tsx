@@ -1,10 +1,11 @@
 import Flex from '../components/Flex';
 import SessionList from '../components/SessionList';
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
-import { ThunderboltTwoTone } from '@ant-design/icons';
-import { Alert, Segmented, Tabs, Typography, theme } from 'antd';
+import { PoweroffOutlined, ThunderboltTwoTone } from '@ant-design/icons';
+import { Alert, Button, Segmented, Tabs, Typography, theme } from 'antd';
 import React, { PropsWithChildren, Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const RUNNINGS = [
   'RUNNING',
@@ -38,6 +39,7 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
   const curProject = useCurrentProjectValue();
+  const navigate = useNavigate();
 
   const [selectedTab, setSelectedTab] = useState<TabKey>('running');
   const [selectedGeneration, setSelectedGeneration] = useState<
@@ -156,11 +158,15 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
                         <Button icon={<DownloadOutlined />} type="text" />
                       </Tooltip> */}
                       {/* @ts-ignore */}
-                      <backend-ai-session-launcher
-                        location="session"
-                        id="session-launcher"
-                        active
-                      />
+                      <Button
+                        type="primary"
+                        icon={<PoweroffOutlined />}
+                        onClick={() => {
+                          navigate('/session/start');
+                        }}
+                      >
+                        START
+                      </Button>
                     </Flex>
                   ),
                 }}

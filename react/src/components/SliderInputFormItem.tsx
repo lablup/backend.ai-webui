@@ -28,22 +28,31 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
   required,
   inputNumberProps,
   sliderProps,
+  initialValue,
   ...formItemProps
 }) => {
   return (
     <Form.Item required={required} {...formItemProps}>
       <Flex direction="row" gap={'md'}>
         <Flex direction="column" align="stretch" style={{ flex: 3 }}>
-          <Form.Item name={name} noStyle rules={rules}>
+          <Form.Item
+            name={name}
+            noStyle
+            rules={rules}
+            initialValue={initialValue}
+          >
             <Slider max={max} min={min} step={step} {...sliderProps} />
           </Form.Item>
         </Flex>
         <Flex style={{ flex: 2 }}>
-          <Form.Item name={name} noStyle>
+          <Form.Item name={name} noStyle initialValue={initialValue}>
             <InputNumber
               max={max}
               min={min}
               step={step}
+              onStep={(value, info) => {
+                console.log(value, info);
+              }}
               {...inputNumberProps}
             />
           </Form.Item>

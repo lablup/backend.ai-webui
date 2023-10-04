@@ -111,7 +111,14 @@ export const useSuspendedBackendaiClient = () => {
     suspense: true,
   });
 
-  return client;
+  return client as {
+    vfolder: {
+      list: (path: string) => Promise<any>;
+      list_hosts: () => Promise<any>;
+      list_files: (path: string, id: string) => Promise<any>;
+    };
+    [key: string]: any;
+  };
 };
 
 interface ImageMetadata {

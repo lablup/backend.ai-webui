@@ -1,4 +1,7 @@
-import { useBackendaiImageMetaData } from '../hooks';
+import {
+  useBackendaiImageMetaData,
+  useSuspendedBackendaiClient,
+} from '../hooks';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import ImageMetaIcon from './ImageMetaIcon';
@@ -67,8 +70,12 @@ function compareVersions(version1: string, version2: string): number {
 const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
 > = ({ filter, showPrivate }) => {
+  // TODO: fix below without useSuspendedBackendaiClient
+  // Before fetching on relay environment, BAI client should be ready
+  useSuspendedBackendaiClient();
+
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
-  const currentEnvironmentsFormData = Form.useWatch('environments', form);
+  Form.useWatch('environments', form);
 
   const [environmentSearch, setEnvironmentSearch] = useState('');
   const [versionSearch, setVersionSearch] = useState('');
@@ -76,6 +83,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const [metadata, { getImageMeta }] = useBackendaiImageMetaData();
   const { token } = theme.useToken();
 
+  const envSelectRef = useRef<RefSelectProps>(null);
   const versionSelectRef = useRef<RefSelectProps>(null);
 
   const { images } = useLazyLoadQuery<ImageEnvironmentSelectFormItemsQuery>(
@@ -109,12 +117,14 @@ const ImageEnvironmentSelectFormItems: React.FC<
     },
   );
 
+  // console.log('nextEnvironmentName form', form.getFieldValue('environments'));
+  // console.log('nextEnvironmentName form', currentEnvironmentsFormData);
   // If not initial value, select first value
   // auto select when relative field is changed
   useEffect(() => {
     // if not initial value, select first value
     const nextEnvironmentName =
-      currentEnvironmentsFormData?.environment ||
+      form.getFieldValue('environments')?.environment ||
       imageGroups[0]?.environmentGroups[0]?.environmentName;
 
     let nextEnvironmentGroup: ImageGroup['environmentGroups'][0] | undefined;
@@ -134,7 +144,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
       !_.find(
         nextEnvironmentGroup?.images,
         (image) =>
-          currentEnvironmentsFormData?.version === getImageFullName(image),
+          form.getFieldValue('environments')?.version ===
+          getImageFullName(image),
       )
     ) {
       const nextNewImage = nextEnvironmentGroup?.images[0];
@@ -149,7 +160,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentEnvironmentsFormData?.environment]);
+  }, [form.getFieldValue('environments')?.environment]);
 
   const isPrivateImage = (image: Image) => {
     return _.some(image?.labels, (label) => {
@@ -212,6 +223,31 @@ const ImageEnvironmentSelectFormItems: React.FC<
     [images, metadata, filter, showPrivate],
   );
 
+  // support search image by full name
+  const { fullNameMatchedImage } = useMemo(() => {
+    let fullNameMatchedImage: Image | undefined;
+    let fullNameMatchedImageGroup:
+      | ImageGroup['environmentGroups'][0]
+      | undefined;
+    if (environmentSearch.length) {
+      _.chain(
+        imageGroups
+          .flatMap((group) => group.environmentGroups)
+          .find((envGroup) => {
+            fullNameMatchedImageGroup = envGroup;
+            fullNameMatchedImage = _.find(envGroup.images, (image) => {
+              return getImageFullName(image) === environmentSearch;
+            });
+            return !!fullNameMatchedImage;
+          }),
+      ).value();
+    }
+    return {
+      fullNameMatchedImage,
+      fullNameMatchedImageGroup,
+    };
+  }, [environmentSearch, imageGroups]);
+
   return (
     <>
       <Form.Item
@@ -223,6 +259,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         style={{ marginBottom: 10 }}
       >
         <Select
+          ref={envSelectRef}
           showSearch
           // autoClearSearchValue
           labelInValue={false}
@@ -231,103 +268,134 @@ const ImageEnvironmentSelectFormItems: React.FC<
           defaultActiveFirstOption={true}
           optionLabelProp="label"
           optionFilterProp="filterValue"
-          onSelect={() => {
-            // versionSelectRef.current?.focus();
+          onChange={(value) => {
+            if (fullNameMatchedImage) {
+              form.setFieldsValue({
+                environments: {
+                  environment: fullNameMatchedImage?.name || '',
+                  version: getImageFullName(fullNameMatchedImage),
+                  image: fullNameMatchedImage,
+                },
+              });
+            }
           }}
         >
-          {_.map(imageGroups, (group) => {
-            return (
-              <Select.OptGroup key={group.groupName} label={group.groupName}>
-                {_.map(group.environmentGroups, (environmentGroup) => {
-                  const firstImage = environmentGroup.images[0];
-                  const currentMetaImageInfo =
-                    metadata?.imageInfo[
-                      environmentGroup.environmentName.split('/')?.[1]
-                    ];
+          {fullNameMatchedImage ? (
+            <Select.Option
+              value={fullNameMatchedImage?.name}
+              filterValue={getImageFullName(fullNameMatchedImage)}
+            >
+              <Flex
+                direction="row"
+                align="center"
+                gap="xs"
+                style={{ display: 'inline-flex' }}
+              >
+                <ImageMetaIcon
+                  image={getImageFullName(fullNameMatchedImage) || ''}
+                  style={{
+                    width: 15,
+                    height: 15,
+                  }}
+                />
+                {getImageFullName(fullNameMatchedImage)}
+              </Flex>
+            </Select.Option>
+          ) : (
+            _.map(imageGroups, (group) => {
+              return (
+                <Select.OptGroup key={group.groupName} label={group.groupName}>
+                  {_.map(group.environmentGroups, (environmentGroup) => {
+                    const firstImage = environmentGroup.images[0];
+                    const currentMetaImageInfo =
+                      metadata?.imageInfo[
+                        environmentGroup.environmentName.split('/')?.[1]
+                      ];
 
-                  const extraFilterValues: string[] = [];
-                  let environmentPrefixTag = null;
-                  if (
-                    environmentGroup.prefix &&
-                    !['lablup', 'cloud', 'stable'].includes(
-                      environmentGroup.prefix,
-                    )
-                  ) {
-                    extraFilterValues.push(environmentGroup.prefix);
-                    environmentPrefixTag = (
-                      <Tag color="purple">{environmentGroup.prefix}</Tag>
+                    const extraFilterValues: string[] = [];
+                    let environmentPrefixTag = null;
+                    if (
+                      environmentGroup.prefix &&
+                      !['lablup', 'cloud', 'stable'].includes(
+                        environmentGroup.prefix,
+                      )
+                    ) {
+                      extraFilterValues.push(environmentGroup.prefix);
+                      environmentPrefixTag = (
+                        <Tag color="purple">{environmentGroup.prefix}</Tag>
+                      );
+                    }
+
+                    const tagsFromMetaImageInfoLabel = _.map(
+                      currentMetaImageInfo?.label,
+                      (label) => {
+                        if (
+                          _.isUndefined(label.category) &&
+                          label.tag &&
+                          label.color
+                        ) {
+                          extraFilterValues.push(label.tag);
+                          return (
+                            <Tag color={label.color}>
+                              <TextHighlighter keyword={environmentSearch}>
+                                {label.tag}
+                              </TextHighlighter>
+                            </Tag>
+                          );
+                        }
+                        return null;
+                      },
                     );
-                  }
-
-                  const tagsFromMetaImageInfoLabel = _.map(
-                    currentMetaImageInfo?.label,
-                    (label) => {
-                      if (
-                        _.isUndefined(label.category) &&
-                        label.tag &&
-                        label.color
-                      ) {
-                        extraFilterValues.push(label.tag);
-                        return (
-                          <Tag color={label.color}>
-                            <TextHighlighter keyword={environmentSearch}>
-                              {label.tag}
-                            </TextHighlighter>
-                          </Tag>
-                        );
-                      }
-                      return null;
-                    },
-                  );
-                  return (
-                    <Select.Option
-                      key={environmentGroup.environmentName}
-                      value={environmentGroup.environmentName}
-                      filterValue={
-                        environmentGroup.displayName +
-                        '\t' +
-                        extraFilterValues.join('\t')
-                      }
-                      label={
-                        <Flex
-                          direction="row"
-                          align="center"
-                          gap="xs"
-                          style={{ display: 'inline-flex' }}
-                        >
-                          <ImageMetaIcon
-                            image={getImageFullName(firstImage) || ''}
-                            style={{
-                              width: 15,
-                              height: 15,
-                            }}
-                          />
-                          {environmentGroup.displayName}
-                        </Flex>
-                      }
-                    >
-                      <Flex direction="row" justify="between">
-                        <Flex direction="row" align="center" gap="xs">
-                          <ImageMetaIcon
-                            image={getImageFullName(firstImage) || ''}
-                            style={{
-                              width: 15,
-                              height: 15,
-                            }}
-                          />
-                          <TextHighlighter keyword={environmentSearch}>
+                    return (
+                      <Select.Option
+                        key={environmentGroup.environmentName}
+                        value={environmentGroup.environmentName}
+                        filterValue={
+                          environmentGroup.displayName +
+                          '\t' +
+                          extraFilterValues.join('\t')
+                        }
+                        label={
+                          <Flex
+                            direction="row"
+                            align="center"
+                            gap="xs"
+                            style={{ display: 'inline-flex' }}
+                          >
+                            <ImageMetaIcon
+                              image={getImageFullName(firstImage) || ''}
+                              style={{
+                                width: 15,
+                                height: 15,
+                              }}
+                            />
                             {environmentGroup.displayName}
-                          </TextHighlighter>
+                          </Flex>
+                        }
+                      >
+                        <Flex direction="row" justify="between">
+                          <Flex direction="row" align="center" gap="xs">
+                            <ImageMetaIcon
+                              image={getImageFullName(firstImage) || ''}
+                              style={{
+                                width: 15,
+                                height: 15,
+                              }}
+                            />
+                            <TextHighlighter keyword={environmentSearch}>
+                              {environmentGroup.displayName}
+                            </TextHighlighter>
+                          </Flex>
+                          {environmentPrefixTag}
+                          {tagsFromMetaImageInfoLabel}
                         </Flex>
-                        {environmentPrefixTag}
-                        {tagsFromMetaImageInfoLabel}
-                      </Flex>
-                    </Select.Option>
-                  );
-                })}
-              </Select.OptGroup>
-            );
-          })}
+                      </Select.Option>
+                    );
+                  })}
+                </Select.OptGroup>
+              );
+            })
+          )}
         </Select>
       </Form.Item>
       <Form.Item

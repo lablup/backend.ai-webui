@@ -25,6 +25,7 @@
     "react-relay": "^15.0.0",
     "react-router-dom": "^6.16.0",
     "react-scripts": "5.0.1",
+    "react-syntax-highlighter": "^15.5.0",
     "typescript": "^5.2.2",
     "use-query-params": "^2.2.1",
     "web-vitals": "^3.4.0"
@@ -35,7 +36,8 @@
     "build:copy": "npm run build && cp -r ./build/* ../build/rollup/",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "relay": "relay-compiler"
+    "relay": "relay-compiler",
+    "lint": "npx eslint ./src --ignore-pattern '*.test.*' --max-warnings=0"
   },
   "eslintConfig": {
     "extends": [
@@ -57,8 +59,14 @@
   },
   "devDependencies": {
     "@craco/craco": "^7.1.0",
+    "@testing-library/user-event": "^14.5.0",
+    "@types/react-relay": "^14.1.5",
+    "@types/react-test-renderer": "^18.0.1",
+    "@types/relay-runtime": "^14.1.13",
+    "@types/relay-test-utils": "^14.1.0",
     "@testing-library/user-event": "^14.5.1",
     "@types/react-relay": "^14.1.6",
+    "@types/react-syntax-highlighter": "^15.5.7",
     "@types/react-test-renderer": "^18.0.3",
     "@types/relay-runtime": "^14.1.14",
     "@types/relay-test-utils": "^14.1.1",

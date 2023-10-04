@@ -15,8 +15,20 @@ export type ResourceTypeKey =
   | 'atom.device'
   | 'warboy.device';
 
+export const ACCELERATOR_UNIT_MAP: {
+  [key: string]: string;
+} = {
+  'cuda.device': 'GPU',
+  'cuda.shares': 'FGPU',
+  'rocm.device': 'GPU',
+  'tpu.device': 'TPU',
+  'ipu.device': 'IPU',
+  'atom.device': 'ATOM',
+  'warboy.device': 'Warboy',
+};
+
 export type ResourceOpts = {
-  shmem: number;
+  shmem?: number;
 };
 interface Props {
   type: ResourceTypeKey;
@@ -26,7 +38,7 @@ interface Props {
 }
 
 type ResourceTypeInfo<V> = {
-  [key in ResourceTypeKey]: V;
+  [key in string]: V;
 };
 const ResourceNumber: React.FC<Props> = ({
   type,
@@ -39,13 +51,7 @@ const ResourceNumber: React.FC<Props> = ({
   const units: ResourceTypeInfo<string> = {
     cpu: t('session.core'),
     mem: 'GiB',
-    'cuda.device': 'GPU',
-    'cuda.shares': 'FGPU',
-    'rocm.device': 'GPU',
-    'tpu.device': 'TPU',
-    'ipu.device': 'IPU',
-    'atom.device': 'ATOM',
-    'warboy.device': 'Warboy',
+    ...ACCELERATOR_UNIT_MAP,
   };
 
   return (
@@ -64,7 +70,8 @@ const ResourceNumber: React.FC<Props> = ({
           type="secondary"
           style={{ fontSize: token.fontSizeSM }}
         >
-          (SHM: {iSizeToSize(opts.shmem + 'b', 'g', 2).numberFixed}GiB)
+          (SHM: {iSizeToSize(opts.shmem + 'b', 'g', 2).numberFixed}
+          GiB)
         </Typography.Text>
       )}
       {extra}
@@ -144,7 +151,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
         />
       ) : (
         <div style={{ width: 16, height: 16 }}>
-          {resourceTypeIconSrcMap[type]?.[0]}
+          {resourceTypeIconSrcMap[type]?.[0] || type}
         </div>
       )}
     </Tooltip>

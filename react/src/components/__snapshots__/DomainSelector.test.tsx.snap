@@ -3,7 +3,7 @@
 exports[`DomainSelect default render 1`] = `
 <DocumentFragment>
   <div
-    class="ant-select css-dev-only-do-not-override-i0102m ant-select-focused ant-select-single ant-select-show-arrow ant-select-open"
+    class="ant-select css-dev-only-do-not-override-1ck3jst ant-select-focused ant-select-single ant-select-show-arrow ant-select-open"
     title="hello"
   >
     <div
