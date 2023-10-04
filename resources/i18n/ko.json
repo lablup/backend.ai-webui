@@ -237,7 +237,7 @@
       "MinMemory": "현재 선택한 실행환경의 최소 메모리 용량은 {{size}}iB입니다.",
       "Enable": "활성화",
       "Network": "네트워크",
-      "preopen": "__NOT_TRANSLATED__"
+      "preopen": "사전 개방 포트"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
