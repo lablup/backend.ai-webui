@@ -11,6 +11,7 @@ import {
   ReloadOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+import { useControllableValue } from 'ahooks';
 import {
   Button,
   Form,
@@ -20,11 +21,10 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { GetRowKey } from 'antd/es/table/interface';
 import { ColumnsType } from 'antd/lib/table';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { Key, useEffect, useState, useTransition } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 export interface VFolderFile {
@@ -35,6 +35,7 @@ export interface VFolderFile {
   created: string;
   modified: string;
 }
+type VFolderKey = string | number;
 
 export interface VFolderSelectValue {
   alias?: string;
@@ -47,38 +48,56 @@ export interface AliasMap {
 
 type DataIndex = keyof VFolder;
 
-interface Props extends TableProps<VFolder> {
-  // defaultSelectedKeys?: React.Key[];
-  selectedRowKeys?: React.Key[];
+interface Props extends Omit<TableProps<VFolder>, 'rowKey'> {
   showAliasInput?: boolean;
-  onChangeSelectedRowKeys?: (selectedKeys: React.Key[]) => void;
-  aliasMap?: AliasMap;
+  selectedRowKeys?: VFolderKey[];
+  onChangeSelectedRowKeys?: (selectedKeys: VFolderKey[]) => void;
   aliasBasePath?: string;
+  aliasMap?: AliasMap;
   onChangeAliasMap?: (aliasMap: AliasMap) => void;
   filter?: (vFolder: VFolder) => boolean;
+  rowKey: string | number;
 }
 
 const VFolderTable: React.FC<Props> = ({
   filter,
   showAliasInput = false,
-  selectedRowKeys = [],
+  selectedRowKeys: controlledSelectedRowKeys = [],
   onChangeSelectedRowKeys,
-  aliasMap,
   aliasBasePath = '/home/work/',
+  aliasMap: controlledAliasMap,
   onChangeAliasMap,
   rowKey = 'name',
   ...tableProps
 }) => {
-  console.log('##render');
-  const getRowKey = React.useMemo<GetRowKey<VFolder>>(() => {
-    if (typeof rowKey === 'function') {
-      return rowKey;
-    }
+  const getRowKey = React.useMemo(() => {
     return (record: VFolder) => {
       const key = record && record[rowKey as DataIndex];
-      return key as Key;
+      return key as VFolderKey;
     };
   }, [rowKey]);
+
+  const [selectedRowKeys, setSelectedRowKeys] = useControllableValue<
+    VFolderKey[]
+  >(
+    {
+      value: controlledSelectedRowKeys,
+      onChange: onChangeSelectedRowKeys,
+    },
+    {
+      defaultValue: [],
+    },
+  );
+
+  const [aliasMap, setAliasMap] = useControllableValue<AliasMap>(
+    {
+      value: controlledAliasMap,
+      onChange: onChangeAliasMap,
+    },
+    {
+      defaultValue: {},
+    },
+  );
 
   const [internalForm] = Form.useForm<AliasMap>();
   useEffect(() => {
@@ -137,13 +156,12 @@ const VFolderTable: React.FC<Props> = ({
       .then((values) => {})
       .catch(() => {})
       .finally(() => {
-        onChangeAliasMap &&
-          onChangeAliasMap(
-            _.mapValues(
-              _.pickBy(internalForm.getFieldsValue(), (v) => !!v), //remove empty
-              (v, k) => mapAliasToPath(k, v), // add alias base path
-            ),
-          );
+        setAliasMap(
+          _.mapValues(
+            _.pickBy(internalForm.getFieldsValue(), (v) => !!v), //remove empty
+            (v, k) => mapAliasToPath(k, v), // add alias base path
+          ),
+        );
       });
   };
 
@@ -157,7 +175,7 @@ const VFolderTable: React.FC<Props> = ({
     return false;
   };
 
-  const mapAliasToPath = (name: string | number, input?: string) => {
+  const mapAliasToPath = (name: VFolderKey, input?: string) => {
     if (_.isEmpty(input)) {
       return `${aliasBasePath}${name}`;
     } else if (input?.startsWith('/')) {
@@ -351,7 +369,6 @@ const VFolderTable: React.FC<Props> = ({
       dataIndex: 'permission',
       sorter: (a, b) => a.permission.localeCompare(b.permission),
       render: (value, row) => {
-        // console.log(value);
         const tagValues: DoubleTagObjectValue[] = _.chain({
           r: 'green',
           w: 'blue',
@@ -425,9 +442,7 @@ const VFolderTable: React.FC<Props> = ({
           rowSelection={{
             selectedRowKeys,
             onChange: (selectedRowKeys) => {
-              // setSelectedRowKeys(selectedRowKeys);
-              console.log(selectedRowKeys);
-              onChangeSelectedRowKeys?.(selectedRowKeys);
+              setSelectedRowKeys(selectedRowKeys as VFolderKey[]);
               handleAliasUpdate();
             },
           }}
@@ -442,10 +457,10 @@ const VFolderTable: React.FC<Props> = ({
                 if (target?.classList?.contains('ant-table-selection-column')) {
                   event.stopPropagation();
                   selectedRowKeys.includes(getRowKey(record))
-                    ? onChangeSelectedRowKeys?.(
+                    ? setSelectedRowKeys(
                         selectedRowKeys.filter((k) => k !== getRowKey(record)),
                       )
-                    : onChangeSelectedRowKeys?.([
+                    : setSelectedRowKeys([
                         ...selectedRowKeys,
                         getRowKey(record),
                       ]);
