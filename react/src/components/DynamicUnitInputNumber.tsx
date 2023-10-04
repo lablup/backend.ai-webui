@@ -72,6 +72,11 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
               </Typography.Text>
             ),
           }))}
+          suffixIcon={units.length > 1 ? undefined : null}
+          open={units.length > 1 ? undefined : false}
+          style={{
+            cursor: units.length > 1 ? undefined : 'default',
+          }}
         />
       }
       step={0} // this step applies when onStep doesn't setValue
