@@ -246,7 +246,7 @@
       "ModelStorage": "Model Storage",
       "Enable": "Enable",
       "Network": "Network",
-      "PreOpenPortRangeGuide": "PreOpenPortRangeGuide",
+      "PreOpenPortRangeGuide": "Enter multiple values separated by either a comma (,) or a space.",
       "preopen": "preopen",
       "FolderAliasInvalid": "Only alphanumeric characters, underscore (_), slash (/), and dash (-) are allowed."
     },
