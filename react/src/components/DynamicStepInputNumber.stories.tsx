@@ -18,7 +18,6 @@ type Story = StoryObj<typeof DynamicStepInputNumber>;
 export const MinMax: Story = {
   name: 'min 0, max 1028',
   args: {
-    value: 235,
     min: 0,
     max: 1028,
   },

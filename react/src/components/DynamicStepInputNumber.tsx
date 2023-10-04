@@ -1,3 +1,4 @@
+import { useControllableValue } from 'ahooks';
 import { InputNumber, InputNumberProps } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -16,33 +17,27 @@ const DynamicInputNumber: React.FC<DynamicInputNumberProps> = ({
     1024, 2048, 4096, 8192, 16384, 32768, 65536,
   ],
   // value,
-  onChange,
+  // onChange,
   ...inputNumberProps
 }) => {
-  const [internalValue, setInternalValue] = useState<number>(dynamicSteps[0]);
+  const [value, setValue] = useControllableValue<number>(inputNumberProps, {
+    defaultValue: dynamicSteps[0],
+  });
 
-  useEffect(() => {
-    if (_.isNumber(inputNumberProps.value)) {
-      setInternalValue(inputNumberProps.value);
-    }
-  }, [inputNumberProps.value]);
-  // const units = ['M', 'G', 'T'];
   return (
     <InputNumber
       {...inputNumberProps}
-      value={internalValue}
+      value={value}
       onChange={(newValue) => {
         // @ts-ignore
-        setInternalValue(newValue);
-        // @ts-ignore
-        onChange && onChange(newValue);
+        setValue(newValue);
       }}
       step={0}
       onStep={(afterStepValue, info) => {
-        const index = _.sortedIndex(_.sortBy(dynamicSteps), internalValue);
+        const index = _.sortedIndex(_.sortBy(dynamicSteps), value);
         let nextIndex: number;
         if (info.type === 'up') {
-          if (internalValue === dynamicSteps[index]) {
+          if (value === dynamicSteps[index]) {
             nextIndex = index + 1;
           } else {
             nextIndex = index;
@@ -63,7 +58,7 @@ const DynamicInputNumber: React.FC<DynamicInputNumberProps> = ({
           ) {
             nextValue = inputNumberProps.max;
           }
-          setInternalValue(nextValue);
+          setValue(nextValue);
         }
       }}
     />

@@ -27,7 +27,6 @@ const renderWithFormItem = ({
       initialValues={{
         mem: value,
       }}
-      onValuesChange={(values) => alert(values)}
     >
       <Form.Item name="mem">
         <DynamicUnitInputNumber {...args} />
@@ -37,9 +36,21 @@ const renderWithFormItem = ({
 };
 
 export const WithFormItem: Story = {
-  name: 'With Form.Item',
+  name: 'Controlled by Form.Item',
   render: renderWithFormItem,
   args: {
     value: '1.3g',
+  },
+};
+
+export const Default: Story = {
+  name: 'Uncontrolled',
+};
+
+export const WithMin: Story = {
+  name: 'With min/max',
+  args: {
+    min: '100m',
+    max: '45g',
   },
 };
