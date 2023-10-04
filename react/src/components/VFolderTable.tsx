@@ -11,6 +11,7 @@ import {
   ReloadOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+import { useControllableValue } from 'ahooks';
 import {
   Button,
   Form,
@@ -48,11 +49,11 @@ export interface AliasMap {
 type DataIndex = keyof VFolder;
 
 interface Props extends Omit<TableProps<VFolder>, 'rowKey'> {
-  selectedRowKeys?: VFolderKey[];
   showAliasInput?: boolean;
+  selectedRowKeys?: VFolderKey[];
   onChangeSelectedRowKeys?: (selectedKeys: VFolderKey[]) => void;
-  aliasMap?: AliasMap;
   aliasBasePath?: string;
+  aliasMap?: AliasMap;
   onChangeAliasMap?: (aliasMap: AliasMap) => void;
   filter?: (vFolder: VFolder) => boolean;
   rowKey: string | number;
@@ -61,21 +62,42 @@ interface Props extends Omit<TableProps<VFolder>, 'rowKey'> {
 const VFolderTable: React.FC<Props> = ({
   filter,
   showAliasInput = false,
-  selectedRowKeys = [],
+  selectedRowKeys: controlledSelectedRowKeys = [],
   onChangeSelectedRowKeys,
-  aliasMap,
   aliasBasePath = '/home/work/',
+  aliasMap: controlledAliasMap,
   onChangeAliasMap,
   rowKey = 'name',
   ...tableProps
 }) => {
-  console.log('##render');
   const getRowKey = React.useMemo(() => {
     return (record: VFolder) => {
       const key = record && record[rowKey as DataIndex];
       return key as VFolderKey;
     };
   }, [rowKey]);
+
+  const [selectedRowKeys, setSelectedRowKeys] = useControllableValue<
+    VFolderKey[]
+  >(
+    {
+      value: controlledSelectedRowKeys,
+      onChange: onChangeSelectedRowKeys,
+    },
+    {
+      defaultValue: [],
+    },
+  );
+
+  const [aliasMap, setAliasMap] = useControllableValue<AliasMap>(
+    {
+      value: controlledAliasMap,
+      onChange: onChangeAliasMap,
+    },
+    {
+      defaultValue: {},
+    },
+  );
 
   const [internalForm] = Form.useForm<AliasMap>();
   useEffect(() => {
@@ -134,13 +156,12 @@ const VFolderTable: React.FC<Props> = ({
       .then((values) => {})
       .catch(() => {})
       .finally(() => {
-        onChangeAliasMap &&
-          onChangeAliasMap(
-            _.mapValues(
-              _.pickBy(internalForm.getFieldsValue(), (v) => !!v), //remove empty
-              (v, k) => mapAliasToPath(k, v), // add alias base path
-            ),
-          );
+        setAliasMap(
+          _.mapValues(
+            _.pickBy(internalForm.getFieldsValue(), (v) => !!v), //remove empty
+            (v, k) => mapAliasToPath(k, v), // add alias base path
+          ),
+        );
       });
   };
 
@@ -348,7 +369,6 @@ const VFolderTable: React.FC<Props> = ({
       dataIndex: 'permission',
       sorter: (a, b) => a.permission.localeCompare(b.permission),
       render: (value, row) => {
-        // console.log(value);
         const tagValues: DoubleTagObjectValue[] = _.chain({
           r: 'green',
           w: 'blue',
@@ -422,7 +442,7 @@ const VFolderTable: React.FC<Props> = ({
           rowSelection={{
             selectedRowKeys,
             onChange: (selectedRowKeys) => {
-              onChangeSelectedRowKeys?.(selectedRowKeys as (string | number)[]);
+              setSelectedRowKeys(selectedRowKeys as VFolderKey[]);
               handleAliasUpdate();
             },
           }}
@@ -437,10 +457,10 @@ const VFolderTable: React.FC<Props> = ({
                 if (target?.classList?.contains('ant-table-selection-column')) {
                   event.stopPropagation();
                   selectedRowKeys.includes(getRowKey(record))
-                    ? onChangeSelectedRowKeys?.(
+                    ? setSelectedRowKeys(
                         selectedRowKeys.filter((k) => k !== getRowKey(record)),
                       )
-                    : onChangeSelectedRowKeys?.([
+                    : setSelectedRowKeys([
                         ...selectedRowKeys,
                         getRowKey(record),
                       ]);

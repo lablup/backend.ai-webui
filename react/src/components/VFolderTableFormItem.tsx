@@ -57,7 +57,6 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
           showAliasInput
           aliasMap={form.getFieldValue('vfoldersAliasMap')}
           onChangeAliasMap={(aliasMap) => {
-            console.log('xxxx');
             form.setFieldValue('vfoldersAliasMap', aliasMap);
             form.validateFields(['vfoldersAliasMap']);
           }}
