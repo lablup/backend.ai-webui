@@ -20,11 +20,10 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { GetRowKey } from 'antd/es/table/interface';
 import { ColumnsType } from 'antd/lib/table';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { Key, useEffect, useState, useTransition } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 export interface VFolderFile {
@@ -35,6 +34,7 @@ export interface VFolderFile {
   created: string;
   modified: string;
 }
+type VFolderKey = string | number;
 
 export interface VFolderSelectValue {
   alias?: string;
@@ -47,15 +47,15 @@ export interface AliasMap {
 
 type DataIndex = keyof VFolder;
 
-interface Props extends TableProps<VFolder> {
-  // defaultSelectedKeys?: React.Key[];
-  selectedRowKeys?: React.Key[];
+interface Props extends Omit<TableProps<VFolder>, 'rowKey'> {
+  selectedRowKeys?: VFolderKey[];
   showAliasInput?: boolean;
-  onChangeSelectedRowKeys?: (selectedKeys: React.Key[]) => void;
+  onChangeSelectedRowKeys?: (selectedKeys: VFolderKey[]) => void;
   aliasMap?: AliasMap;
   aliasBasePath?: string;
   onChangeAliasMap?: (aliasMap: AliasMap) => void;
   filter?: (vFolder: VFolder) => boolean;
+  rowKey: string | number;
 }
 
 const VFolderTable: React.FC<Props> = ({
@@ -70,13 +70,10 @@ const VFolderTable: React.FC<Props> = ({
   ...tableProps
 }) => {
   console.log('##render');
-  const getRowKey = React.useMemo<GetRowKey<VFolder>>(() => {
-    if (typeof rowKey === 'function') {
-      return rowKey;
-    }
+  const getRowKey = React.useMemo(() => {
     return (record: VFolder) => {
       const key = record && record[rowKey as DataIndex];
-      return key as Key;
+      return key as VFolderKey;
     };
   }, [rowKey]);
 
@@ -157,7 +154,7 @@ const VFolderTable: React.FC<Props> = ({
     return false;
   };
 
-  const mapAliasToPath = (name: string | number, input?: string) => {
+  const mapAliasToPath = (name: VFolderKey, input?: string) => {
     if (_.isEmpty(input)) {
       return `${aliasBasePath}${name}`;
     } else if (input?.startsWith('/')) {
@@ -425,9 +422,7 @@ const VFolderTable: React.FC<Props> = ({
           rowSelection={{
             selectedRowKeys,
             onChange: (selectedRowKeys) => {
-              // setSelectedRowKeys(selectedRowKeys);
-              console.log(selectedRowKeys);
-              onChangeSelectedRowKeys?.(selectedRowKeys);
+              onChangeSelectedRowKeys?.(selectedRowKeys as (string | number)[]);
               handleAliasUpdate();
             },
           }}
