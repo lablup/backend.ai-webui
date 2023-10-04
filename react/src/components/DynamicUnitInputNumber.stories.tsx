@@ -54,3 +54,20 @@ export const WithMin: Story = {
     max: '45g',
   },
 };
+
+export const AllowOlnyMiBandGiB: Story = {
+  name: 'unit: MiB, GiB',
+  args: {
+    min: '100m',
+    max: '45g',
+    units: ['m', 'g'],
+  },
+};
+export const AllowOlnyGiB: Story = {
+  name: 'unit: GiB',
+  args: {
+    min: '100m',
+    max: '45g',
+    units: ['g'],
+  },
+};

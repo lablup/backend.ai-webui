@@ -1,3 +1,4 @@
+import { iSizeToSize } from '../helper';
 import { useControllableValue } from 'ahooks';
 import { InputNumber, InputNumberProps, Select, Typography } from 'antd';
 import _, { set } from 'lodash';
@@ -13,14 +14,16 @@ export interface DynamicUnitInputNumberProps
   max?: string;
   min?: string;
   value?: string;
+  units?: string[];
   onChange?: (value: string) => void;
 }
 
 const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
   dynamicSteps = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
+  units = ['m', 'g', 't', 'p'],
   disableAutoUnit = false,
-  min,
-  max,
+  min = '0m',
+  max = '300p',
   // value,
   // onChange,
   ...inputNumberProps
@@ -29,10 +32,8 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
     defaultValue: '0g',
   });
   const [numValue, unit] = parseUnit(value || '0g');
-  const [minNumValue, minUnit] = parseUnit(min || '0m');
-  const [maxNumValue, maxUnit] = parseUnit(max || '300p');
-
-  const units = ['m', 'g', 't', 'p'];
+  const [minNumValue, minUnit] = parseUnit(min);
+  const [maxNumValue, maxUnit] = parseUnit(max);
 
   return (
     <InputNumber
@@ -43,8 +44,14 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
       }}
       //TODO: When min and max have different units, they should be calculated and put in.
       // 입력의 초소단위 확인 0.4g 가 되는지 확인
-      max={maxUnit === unit ? maxNumValue : undefined}
-      min={minUnit === unit ? minNumValue : undefined}
+      // @ts-ignore
+      max={maxUnit === unit ? maxNumValue : iSizeToSize(max, unit).number}
+      min={
+        minUnit === unit
+          ? minNumValue
+          : // @ts-ignore
+            iSizeToSize(min, unit).number
+      }
       addonAfter={
         <Select
           value={unit}
@@ -83,7 +90,9 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
 
         const currentUnitIndex = units.indexOf(unit);
         if (!disableAutoUnit && nextIndex < 0) {
+          // WHEN MOVING TO MORE Smaller Unit: change unit and number
           if (currentUnitIndex === 0) {
+            // if already at min unit, set to 0
             setValue(`0${unit}`);
           } else {
             const nextValue = dynamicSteps[dynamicSteps.length - 1];
@@ -91,14 +100,17 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
             setValue(`${nextValue}${nextUnit}`);
           }
         } else if (!disableAutoUnit && nextIndex > dynamicSteps.length - 1) {
+          // WHEN MOVING TO MORE Bigger Unit: change unit and number
+          //  if already at max unit, step up/down by 1
           if (currentUnitIndex === units.length - 1) {
-            //  already at max unit
+            setValue(`${numValue + (info.type === 'up' ? 1 : -1)}${maxUnit}`);
           } else {
             const nextValue = dynamicSteps[0];
             const nextUnit = units[currentUnitIndex + 1];
             setValue(`${nextValue}${nextUnit}`);
           }
         } else {
+          // WHEN, DON'T NEED TO CHANGE UNIT
           if (nextIndex >= 0 && nextIndex < dynamicSteps.length) {
             let nextNumValue = dynamicSteps[nextIndex];
             if (minUnit === unit && nextNumValue < minNumValue) {
