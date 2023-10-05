@@ -228,5 +228,5 @@ export function parseUnit(str: string): [number, string] {
   }
   const num = parseFloat(match[1]);
   const unit = match[2];
-  return [num, unit];
+  return [num, unit.toLowerCase()];
 }
