@@ -4,7 +4,7 @@ import DynamicUnitInputNumber, {
 } from './DynamicUnitInputNumber';
 import Flex from './Flex';
 import { useControllableValue } from 'ahooks';
-import { Slider } from 'antd';
+import { Slider, theme } from 'antd';
 import React, { useMemo } from 'react';
 
 export interface DynamicUnitInputNumberWithSliderProps
@@ -15,7 +15,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   const [value, setValue] = useControllableValue<string>(otherProps, {
     defaultValue: '0g',
   });
-  // const { token } = theme.useToken();
+  const { token } = theme.useToken();
   const minGiB = useMemo(() => iSizeToSize(min, 'g', 2), [min]);
   const maxGiB = useMemo(() => iSizeToSize(max, 'g', 2), [max]);
   const valueGiB = useMemo(() => iSizeToSize(value, 'g', 2), [value]);
@@ -50,8 +50,18 @@ const DynamicUnitInputNumberWithSlider: React.FC<
             //   },
             //   label: 0,
             // },
-            [minGiB.number]: minGiB.number + 'g',
-            [maxGiB.number]: maxGiB.number + 'g',
+            [minGiB.number]: {
+              style: {
+                color: token.colorTextSecondary,
+              },
+              label: minGiB.number + (minGiB.number ? 'g' : ''),
+            },
+            [maxGiB.number]: {
+              style: {
+                color: token.colorTextSecondary,
+              },
+              label: maxGiB.number + 'g',
+            },
           }}
         />
       </Flex>
