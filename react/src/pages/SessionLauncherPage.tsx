@@ -243,7 +243,12 @@ const SessionLauncherPage = () => {
               syncFormToURLWithDebounce();
             }}
           >
-            <Form form={form} layout="vertical" requiredMark="optional">
+            <Form
+              form={form}
+              layout="vertical"
+              requiredMark="optional"
+              initialValues={initialFormValues}
+            >
               <Flex
                 direction="column"
                 align="stretch"
@@ -674,8 +679,7 @@ const SessionLauncherPage = () => {
                                     type={type}
                                     value={
                                       type === 'mem'
-                                        ? iSizeToSize(value + 'g', 'b').number +
-                                          ''
+                                        ? iSizeToSize(value, 'b').number + ''
                                         : value
                                     }
                                     opts={{
