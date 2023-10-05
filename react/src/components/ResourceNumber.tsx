@@ -59,7 +59,7 @@ const ResourceNumber: React.FC<Props> = ({
       <ResourceTypeIcon type={type} />
       <Typography.Text>
         {units[type] === 'GiB'
-          ? iSizeToSize(amount + 'b', 'g', 2).numberFixed
+          ? Number(iSizeToSize(amount + 'b', 'g', 3).numberFixed).toString()
           : units[type] === 'FGPU'
           ? parseFloat(amount).toFixed(2)
           : amount}
