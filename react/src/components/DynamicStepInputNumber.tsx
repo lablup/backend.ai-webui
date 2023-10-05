@@ -1,7 +1,7 @@
 import { useControllableValue } from 'ahooks';
 import { InputNumber, InputNumberProps } from 'antd';
 import _ from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 export interface DynamicInputNumberProps
   extends Omit<InputNumberProps, 'step' | 'value' | 'onChange'> {

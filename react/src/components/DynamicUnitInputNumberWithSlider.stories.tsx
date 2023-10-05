@@ -1,5 +1,4 @@
 // Button.stories.ts|tsx
-import { parseUnit } from '../helper';
 import DynamicUnitInputNumberWithSlider, {
   DynamicUnitInputNumberWithSliderProps,
 } from './DynamicUnitInputNumberWithSlider';
