@@ -1,13 +1,14 @@
 // Button.stories.ts|tsx
-import DynamicUnitInputNumber, {
-  DynamicUnitInputNumberProps,
-} from './DynamicUnitInputNumber';
+import { parseUnit } from '../helper';
+import DynamicUnitInputNumberWithSlider, {
+  DynamicUnitInputNumberWithSliderProps,
+} from './DynamicUnitInputNumberWithSlider';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Form } from 'antd';
 
-const meta: Meta<typeof DynamicUnitInputNumber> = {
-  title: 'Input/DynamicUnitInputNumber',
-  component: DynamicUnitInputNumber,
+const meta: Meta<typeof DynamicUnitInputNumberWithSlider> = {
+  title: 'Input/DynamicUnitInputNumberWithSlider',
+  component: DynamicUnitInputNumberWithSlider,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/react/configure/story-layout
     layout: 'centered',
@@ -16,12 +17,12 @@ const meta: Meta<typeof DynamicUnitInputNumber> = {
 
 export default meta;
 
-type Story = StoryObj<typeof DynamicUnitInputNumber>;
+type Story = StoryObj<typeof DynamicUnitInputNumberWithSlider>;
 
 const renderWithFormItem = ({
   value,
   ...args
-}: DynamicUnitInputNumberProps) => {
+}: DynamicUnitInputNumberWithSliderProps) => {
   return (
     <Form
       initialValues={{
@@ -29,7 +30,7 @@ const renderWithFormItem = ({
       }}
     >
       <Form.Item name="mem">
-        <DynamicUnitInputNumber {...args} />
+        <DynamicUnitInputNumberWithSlider {...args} />
       </Form.Item>
     </Form>
   );
@@ -50,7 +51,7 @@ export const Default: Story = {
 export const WithMin: Story = {
   name: 'With min/max',
   args: {
-    min: '256m',
+    min: '100m',
     max: '45g',
   },
 };
@@ -58,7 +59,7 @@ export const WithMin: Story = {
 export const AllowOlnyMiBandGiB: Story = {
   name: 'unit: MiB, GiB',
   args: {
-    min: '256m',
+    min: '2g',
     max: '45g',
     units: ['m', 'g'],
   },
@@ -66,8 +67,8 @@ export const AllowOlnyMiBandGiB: Story = {
 export const AllowOlnyGiB: Story = {
   name: 'unit: GiB',
   args: {
-    min: '100m',
+    min: '0.5g',
     max: '45g',
-    units: ['g'],
+    units: ['m', 'g'],
   },
 };

@@ -3,7 +3,7 @@ import { InputNumber, InputNumberProps } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 
-interface DynamicInputNumberProps
+export interface DynamicInputNumberProps
   extends Omit<InputNumberProps, 'step' | 'value' | 'onChange'> {
   dynamicSteps?: number[];
   value: number;

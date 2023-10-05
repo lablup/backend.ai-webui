@@ -1,7 +1,7 @@
-import { iSizeToSize } from '../helper';
+import { iSizeToSize, parseUnit } from '../helper';
 import { useControllableValue } from 'ahooks';
 import { InputNumber, InputNumberProps, Select, Typography } from 'antd';
-import _, { set } from 'lodash';
+import _ from 'lodash';
 import React from 'react';
 
 export interface DynamicUnitInputNumberProps
@@ -130,15 +130,5 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
     />
   );
 };
-
-function parseUnit(str: string): [number, string] {
-  const match = str.match(/^(\d+(?:\.\d+)?)([a-zA-Z]*)$/);
-  if (!match) {
-    throw new Error(`Invalid input: ${str}`);
-  }
-  const num = parseFloat(match[1]);
-  const unit = match[2];
-  return [num, unit];
-}
 
 export default DynamicUnitInputNumber;

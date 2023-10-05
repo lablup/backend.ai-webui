@@ -1,5 +1,6 @@
 import { iSizeToSize } from '../helper';
 import { useResourceSlots } from '../hooks/backendai';
+import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import ResourcePresetSelect from './ResourcePresetSelect';
 import SliderInputItem from './SliderInputFormItem';
@@ -87,44 +88,72 @@ const ResourceAllocationFormItems = () => {
                   />
                 )}
                 {resourceSlots?.mem && (
-                  <SliderInputItem
+                  <Form.Item
                     name={['resource', 'mem']}
-                    initialValue={0}
+                    initialValue={'0g'}
                     label={t('session.launcher.Memory')}
                     tooltip={<Trans i18nKey={'session.launcher.DescMemory'} />}
-                    max={30}
-                    inputNumberProps={{
-                      addonAfter: 'GB',
-                    }}
-                    step={0.05}
-                    required
                     rules={[
                       {
                         required: true,
                       },
                     ]}
-                  />
+                  >
+                    <DynamicUnitInputNumberWithSlider />
+                  </Form.Item>
+                  // <SliderInputItem
+                  //   name={['resource', 'mem']}
+                  //   initialValue={'0g'}
+                  //   label={t('session.launcher.Memory')}
+                  //   tooltip={<Trans i18nKey={'session.launcher.DescMemory'} />}
+                  //   max={30}
+                  //   inputNumberProps={{
+                  //     addonAfter: 'GB',
+                  //   }}
+                  //   step={0.05}
+                  //   required
+                  //   rules={[
+                  //     {
+                  //       required: true,
+                  //     },
+                  //   ]}
+                  // />
                 )}
                 {resourceSlots?.mem && (
-                  <SliderInputItem
+                  <Form.Item
                     name={['resource', 'shmem']}
-                    initialValue={0}
+                    initialValue={'0g'}
                     label={t('session.launcher.SharedMemory')}
                     tooltip={
                       <Trans i18nKey={'session.launcher.DescSharedMemory'} />
                     }
-                    max={30}
-                    step={0.1}
-                    inputNumberProps={{
-                      addonAfter: 'GB',
-                    }}
-                    required
                     rules={[
                       {
                         required: true,
                       },
                     ]}
-                  />
+                  >
+                    <DynamicUnitInputNumberWithSlider />
+                  </Form.Item>
+                  // <SliderInputItem
+                  //   name={['resource', 'shmem']}
+                  //   initialValue={0}
+                  //   label={t('session.launcher.SharedMemory')}
+                  //   tooltip={
+                  //     <Trans i18nKey={'session.launcher.DescSharedMemory'} />
+                  //   }
+                  //   max={30}
+                  //   step={0.1}
+                  //   inputNumberProps={{
+                  //     addonAfter: 'GB',
+                  //   }}
+                  //   required
+                  //   rules={[
+                  //     {
+                  //       required: true,
+                  //     },
+                  //   ]}
+                  // />
                 )}
                 {_.chain(resourceSlots)
                   .omit(['cpu', 'mem', 'shmem'])

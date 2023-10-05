@@ -135,7 +135,8 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
   return (
     <Tooltip
       title={
-        showTooltip ? `${type} (${resourceTypeIconSrcMap[type][1]})` : undefined
+        // showTooltip ? `${type} (${resourceTypeIconSrcMap[type][1]})` : undefined
+        showTooltip ? `${type}` : undefined
       }
     >
       {typeof resourceTypeIconSrcMap[type]?.[0] === 'string' ? (
