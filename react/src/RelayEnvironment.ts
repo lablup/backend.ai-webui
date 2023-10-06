@@ -36,15 +36,12 @@ const fetchFn: FetchFunction = async (
     reqBody,
   );
 
-  console.log('##############');
-  console.log(reqBody);
   const result =
     //@ts-ignore
     (await globalThis.backendaiclient
       ?._wrapWithPromise(reqInfo, false, null, 10000, 0)
       .catch((err: any) => {
-        console.log('######@@@@@@@@@@@@@');
-        console.log(err);
+        // console.log(err);
       })) || {};
 
   return result;
