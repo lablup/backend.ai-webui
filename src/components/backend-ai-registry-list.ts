@@ -795,7 +795,9 @@ class BackendAIRegistryList extends BackendAIPage {
             resizable
           ></vaadin-grid-column>
           <vaadin-grid-column
-            flex-grow="1"
+            frozen-to-end
+            width="150px"
+            resizable
             header="${_t('general.Control')}"
             .renderer=${this._boundControlsRenderer}
           ></vaadin-grid-column>
