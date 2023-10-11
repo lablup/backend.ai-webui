@@ -1,10 +1,10 @@
-import { useBaiSignedRequestWithPromise } from '../helper';
-// import { ResourceGroupSelectorQuery } from "./__generated__/ResourceGroupSelectorQuery.graphql";
 import { useCurrentProjectValue, useUpdatableState } from '../hooks';
-import { useTanQuery } from '../hooks/reactQueryAlias';
+import { ResourceGroupSelectorQuery } from './__generated__/ResourceGroupSelectorQuery.graphql';
 import { Select, SelectProps } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { startTransition, useEffect } from 'react';
+import { useLazyLoadQuery } from 'react-relay';
 
 interface ResourceGroupSelectorProps extends SelectProps {
   projectId?: string;
@@ -18,42 +18,30 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
   filter,
   ...selectProps
 }) => {
-  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
-  // const { group: project } = useLazyLoadQuery<ResourceGroupSelectorQuery>(
-  //   graphql`
-  //     query ResourceGroupSelectorQuery($projectId: UUID!) {
-  //       group(id: $projectId) {
-  //         id
-  //         scaling_groups
-  //       }
-  //     }
-  //   `,
-  //   {
-  //     projectId: projectId || currentProject.id,
-  //   }
-  // );
+  const { scaling_groups_for_user_group: resourceGroups } =
+    useLazyLoadQuery<ResourceGroupSelectorQuery>(
+      graphql`
+        query ResourceGroupSelectorQuery($user_group: String!) {
+          scaling_groups_for_user_group(user_group: $user_group) {
+            name
+          }
+        }
+      `,
+      {
+        user_group: currentProject?.id,
+      },
+    );
 
   const [key, checkUpdate] = useUpdatableState('first');
 
-  const { data } = useTanQuery({
-    queryKey: ['ResourceGroupSelectorQuery', key],
-    queryFn: () => {
-      return baiRequestWithPromise({
-        method: 'GET',
-        url: `/scaling-groups?group=${currentProject.name}`,
-      }) as Promise<{ scaling_groups: { name: string }[] }>;
-    },
-    staleTime: 0,
-  });
-  const resourceGroups = data?.scaling_groups || [];
-
-  const autoSelectedOption = resourceGroups[0]
-    ? {
-        label: resourceGroups[0].name,
-        value: resourceGroups[0].name,
-      }
-    : undefined;
+  const autoSelectedOption =
+    resourceGroups && resourceGroups[0]
+      ? {
+          label: resourceGroups[0].name,
+          value: resourceGroups[0].name,
+        }
+      : undefined;
 
   useEffect(() => {
     if (
@@ -80,8 +68,8 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
     >
       {_.map(resourceGroups, (resourceGroup, idx) => {
         return (
-          <Select.Option key={resourceGroup.name} value={resourceGroup.name}>
-            {resourceGroup.name}
+          <Select.Option key={resourceGroup?.name} value={resourceGroup?.name}>
+            {resourceGroup?.name}
           </Select.Option>
         );
       })}
