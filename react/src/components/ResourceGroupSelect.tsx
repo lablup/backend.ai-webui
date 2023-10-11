@@ -1,4 +1,6 @@
+import { useBaiSignedRequestWithPromise } from '../helper';
 import { useCurrentProjectValue, useUpdatableState } from '../hooks';
+import { useTanQuery } from '../hooks/reactQueryAlias';
 import { ResourceGroupSelectorQuery } from './__generated__/ResourceGroupSelectorQuery.graphql';
 import { Select, SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
@@ -18,8 +20,9 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
   filter,
   ...selectProps
 }) => {
+  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
-  const { scaling_groups_for_user_group: resourceGroups } =
+  let { scaling_groups_for_user_group: resourceGroups } =
     useLazyLoadQuery<ResourceGroupSelectorQuery>(
       graphql`
         query ResourceGroupSelectorQuery($user_group: String!) {
@@ -34,6 +37,38 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
     );
 
   const [key, checkUpdate] = useUpdatableState('first');
+
+  // TODO: Delete these codes after backend.ai support scaling groups filtering.
+  // ================================ START ====================================
+  const { data } = useTanQuery({
+    queryKey: ['FolderHostsQuery', key],
+    queryFn: () => {
+      return baiRequestWithPromise({
+        method: 'GET',
+        url: `/folders/_/hosts`,
+      }) as Promise<{
+        allowed: string[];
+        default: string;
+        volume_info: object;
+      }>;
+    },
+    staleTime: 0,
+  });
+
+  const sftpResourceGroups =
+    (data &&
+      Object.values(data.volume_info).map(
+        (item: any) => item?.sftp_scaling_groups.join(', '),
+      )) ||
+    [];
+
+  resourceGroups = _.filter(resourceGroups, (resourceGroup) => {
+    if (resourceGroup && resourceGroup.name) {
+      return !sftpResourceGroups.includes(resourceGroup.name);
+    }
+    return false;
+  }) as { name: string }[];
+  // ================================ END ======================================
 
   const autoSelectedOption =
     resourceGroups && resourceGroups[0]
