@@ -2,10 +2,8 @@ import { useBaiSignedRequestWithPromise } from '../helper';
 import { useCurrentProjectValue, useUpdatableState } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { Select, SelectProps } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { startTransition, useEffect } from 'react';
-import { useLazyLoadQuery } from 'react-relay';
+import React, { useEffect, useTransition } from 'react';
 
 interface ResourceGroupSelectorProps extends SelectProps {
   projectId?: string;
@@ -23,10 +21,8 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
   const currentProject = useCurrentProjectValue();
   const [key, checkUpdate] = useUpdatableState('first');
 
-  const {
-    data: resourceGroupSelectorQueryResult,
-    isLoading: resourceGroupLoading,
-  } = useTanQuery<
+  const [isPendingLoading, startLoadingTransition] = useTransition();
+  const { data: resourceGroupSelectorQueryResult } = useTanQuery<
     [
       {
         scaling_groups: {
@@ -109,11 +105,12 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
       defaultValue={autoSelectDefault ? autoSelectedOption : undefined}
       onDropdownVisibleChange={(open) => {
         if (open) {
-          startTransition(() => {
+          startLoadingTransition(() => {
             checkUpdate();
           });
         }
       }}
+      loading={isPendingLoading}
       {...selectProps}
     >
       {_.map(resourceGroups, (resourceGroup, idx) => {
