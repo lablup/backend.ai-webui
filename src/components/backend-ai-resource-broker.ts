@@ -994,7 +994,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       // clamp to roundUpNumber if the number of decimal place exceeds
       if (
         !Number.isInteger(Number(resourceValue)) &&
-        resourceValue.split('.')[1].length > roundUpNumber
+        resourceValue.split('.')[1]?.length > roundUpNumber
       ) {
         resourceValue = (Math.round(Number(resourceValue) * 100) / 100).toFixed(
           2,
