@@ -1,7 +1,6 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useCurrentProjectValue, useUpdatableState } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { ResourceGroupSelectorQuery } from './__generated__/ResourceGroupSelectorQuery.graphql';
 import { Select, SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -22,61 +21,77 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
 }) => {
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
-  let { scaling_groups_for_user_group: resourceGroups } =
-    useLazyLoadQuery<ResourceGroupSelectorQuery>(
-      graphql`
-        query ResourceGroupSelectorQuery($user_group: String!) {
-          scaling_groups_for_user_group(user_group: $user_group) {
-            name
-          }
-        }
-      `,
-      {
-        user_group: currentProject?.id,
-      },
-    );
-
   const [key, checkUpdate] = useUpdatableState('first');
 
-  // TODO: Delete these codes after backend.ai support scaling groups filtering.
-  // ================================ START ====================================
-  const { data } = useTanQuery({
-    queryKey: ['FolderHostsQuery', key],
-    queryFn: () => {
-      return baiRequestWithPromise({
-        method: 'GET',
-        url: `/folders/_/hosts`,
-      }) as Promise<{
+  const {
+    data: resourceGroupSelectorQueryResult,
+    isLoading: resourceGroupLoading,
+  } = useTanQuery<
+    [
+      {
+        scaling_groups: {
+          name: string;
+        }[];
+      },
+      {
         allowed: string[];
         default: string;
-        volume_info: object;
-      }>;
+        volume_info: {
+          [key: string]: {
+            backend: string;
+            capabilities: string[];
+            usage: {
+              percentage: number;
+            };
+            sftp_scaling_groups?: string[];
+          };
+        };
+      },
+    ]
+  >({
+    queryKey: ['ResourceGroupSelectorQuery', key, currentProject.name],
+    queryFn: () => {
+      return Promise.all([
+        baiRequestWithPromise({
+          method: 'GET',
+          url: `/scaling-groups?group=${currentProject.name}`,
+        }),
+        baiRequestWithPromise({
+          method: 'GET',
+          url: `/folders/_/hosts`,
+        }),
+      ]);
     },
     staleTime: 0,
   });
 
-  const sftpResourceGroups =
-    (data &&
-      Object.values(data.volume_info).map(
-        (item: any) => item?.sftp_scaling_groups.join(', '),
-      )) ||
-    [];
+  const sftpResourceGroups = _.flatMap(
+    resourceGroupSelectorQueryResult?.[1].volume_info,
+    (item) => item?.sftp_scaling_groups ?? [],
+  );
 
-  resourceGroups = _.filter(resourceGroups, (resourceGroup) => {
-    if (resourceGroup && resourceGroup.name) {
-      return !sftpResourceGroups.includes(resourceGroup.name);
-    }
-    return false;
-  }) as { name: string }[];
-  // ================================ END ======================================
+  const resourceGroups = _.filter(
+    resourceGroupSelectorQueryResult?.[0].scaling_groups,
+    (item) => {
+      if (_.includes(sftpResourceGroups, item.name)) {
+        return false;
+      }
+      if (filter) {
+        return filter(item.name);
+      }
+      return true;
+    },
+  );
 
-  const autoSelectedOption =
-    resourceGroups && resourceGroups[0]
-      ? {
-          label: resourceGroups[0].name,
-          value: resourceGroups[0].name,
-        }
-      : undefined;
+  const autoSelectedResourceGroup =
+    _.find(resourceGroups, (item) => item.name === 'default') ||
+    resourceGroups[0];
+  const autoSelectedOption = autoSelectedResourceGroup
+    ? {
+        label: autoSelectedResourceGroup.name,
+        value: autoSelectedResourceGroup.name,
+      }
+    : undefined;
 
   useEffect(() => {
     if (
