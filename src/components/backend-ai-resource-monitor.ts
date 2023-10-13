@@ -63,7 +63,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({ type: Boolean }) project_resource_monitor = false;
   @property({ type: Object }) resourceBroker;
   @query('#resource-gauges') resourceGauge!: HTMLDivElement;
-  @query('#scaling-group-select-box') scalingGroupSelectBox!: HTMLDivElement;
 
   constructor() {
     super();
@@ -442,13 +441,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   async updateScalingGroup(forceUpdate = false, e) {
     await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
     if (this.active) {
-      if (this.direction === 'vertical') {
-        if (this.scalingGroupSelectBox.firstChild) {
-          // TODO clarify element type
-          (this.scalingGroupSelectBox.firstChild as Select).value =
-            this.resourceBroker.scaling_group;
-        }
-      }
       if (forceUpdate === true) {
         await this._refreshResourcePolicy();
         this.aggregateResource('update-scaling-group');
@@ -487,9 +479,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (this.active && this.metadata_updating === false) {
       this.metadata_updating = true;
       await this.resourceBroker._updatePageVariables(isChanged);
-      setTimeout(() => {
-        this._updateScalingGroupSelector();
-      }, 1000);
       this.sessions_list = this.resourceBroker.sessions_list;
       await this._refreshResourcePolicy();
       this.aggregateResource('update-page-variable');
@@ -528,51 +517,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         legend.style.display = 'none';
       }
     }
-  }
-
-  _updateScalingGroupSelector() {
-    // Detached from template to support live-update after creating new group (will need it)
-    if (
-      this.scalingGroupSelectBox.hasChildNodes() &&
-      this.scalingGroupSelectBox.firstChild
-    ) {
-      this.scalingGroupSelectBox.removeChild(
-        this.scalingGroupSelectBox.firstChild,
-      );
-    }
-    const scaling_select = document.createElement('mwc-select');
-    scaling_select.label = _text('session.launcher.ResourceGroup');
-    scaling_select.id = 'scaling-group-select';
-    scaling_select.value = this.scaling_group;
-    scaling_select.setAttribute('fullwidth', 'true');
-    scaling_select.style.margin = '1px solid #ccc';
-    // scaling_select.setAttribute('outlined', 'true');
-    scaling_select.addEventListener(
-      'selected',
-      this.updateScalingGroup.bind(this, true),
-    );
-    let opt = document.createElement('mwc-list-item');
-    opt.setAttribute('disabled', 'true');
-    opt.innerHTML = _text('session.launcher.SelectResourceGroup');
-    opt.style.borderBottom = '1px solid #ccc';
-    scaling_select.appendChild(opt);
-    const currentSelectedResourceGroup = scaling_select.value
-      ? scaling_select.value
-      : this.resourceBroker.scaling_group;
-    this.resourceBroker.scaling_groups.map((group) => {
-      opt = document.createElement('mwc-list-item');
-      opt.value = group.name;
-      opt.setAttribute('graphic', 'icon');
-      if (currentSelectedResourceGroup === group.name) {
-        opt.selected = true;
-      } else {
-        opt.selected = false;
-      }
-      opt.innerHTML = group.name;
-      scaling_select.appendChild(opt);
-    });
-    // scaling_select.updateOptions();
-    this.scalingGroupSelectBox.appendChild(scaling_select);
   }
 
   /**
@@ -707,7 +651,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       <div class="layout ${this.direction} justified flex wrap">
       <div id="scaling-group-select-box" class="layout horizontal center-justified ${
         this.direction
-      }"></div>
+      }">
+      <backend-ai-react-resource-group-select @change=${({ detail: value }) => {
+        this.updateScalingGroup(true, {
+          target: {
+            value,
+          },
+        });
+      }}/>
+      </div>
       <div class="layout ${this.direction}-card flex wrap">
         <div id="resource-gauges" class="layout ${this.direction} ${
           this.direction

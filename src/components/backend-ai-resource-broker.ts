@@ -257,6 +257,15 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     }
   }
 
+  async _sftpScalingGroups() {
+    const hosts = await globalThis.backendaiclient?.vfolder?.list_hosts(
+      globalThis.backendaiclient?.current_group_id(),
+    );
+    return Object.values(hosts.volume_info).map(
+      (item: any) => item?.sftp_scaling_groups.join(', '),
+    );
+  }
+
   /**
    * Update all variables on the broker.
    *
@@ -273,12 +282,24 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           this.current_user_group = globalThis.backendaiclient.current_group;
         }
         // const currentGroup = globalThis.backendaiclient.current_group || null;
-        const sgs = await globalThis.backendaiclient.scalingGroup.list(
+        let sgs = await globalThis.backendaiclient.scalingGroup.list(
           this.current_user_group,
         );
+        // TODO: Delete these codes after backend.ai support scaling groups filtering.
+        // ================================ START ====================================
+        const sftpResourceGroups = await this._sftpScalingGroups();
+        if (sgs.scaling_groups.length > 0) {
+          sgs = sgs.scaling_groups.filter(
+            (item) => !sftpResourceGroups?.includes(item.name),
+          );
+        }
+
+        this.scaling_groups = sgs ?? [{ name: '' }];
+        // ================================ END ======================================
+
         // Make empty scaling group item if there is no scaling groups.
-        this.scaling_groups =
-          sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{ name: '' }];
+        // this.scaling_groups =
+        //   sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{ name: '' }];
         this.scaling_group = this.scaling_groups[0].name;
       }
 
@@ -973,7 +994,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       // clamp to roundUpNumber if the number of decimal place exceeds
       if (
         !Number.isInteger(Number(resourceValue)) &&
-        resourceValue.split('.')[1].length > roundUpNumber
+        resourceValue.split('.')[1]?.length > roundUpNumber
       ) {
         resourceValue = (Math.round(Number(resourceValue) * 100) / 100).toFixed(
           2,
