@@ -5,13 +5,13 @@ import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useTransition } from 'react';
 
-interface ResourceGroupSelectorProps extends SelectProps {
+interface ResourceGroupSelectProps extends SelectProps {
   projectId?: string;
   autoSelectDefault?: boolean;
   filter?: (projectName: string) => boolean;
 }
 
-const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
+const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   projectId,
   autoSelectDefault,
   filter,
@@ -22,7 +22,7 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
   const [key, checkUpdate] = useUpdatableState('first');
 
   const [isPendingLoading, startLoadingTransition] = useTransition();
-  const { data: resourceGroupSelectorQueryResult } = useTanQuery<
+  const { data: resourceGroupSelectQueryResult } = useTanQuery<
     [
       {
         scaling_groups: {
@@ -45,7 +45,7 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
       },
     ]
   >({
-    queryKey: ['ResourceGroupSelectorQuery', key, currentProject.name],
+    queryKey: ['ResourceGroupSelectQuery', key, currentProject.name],
     queryFn: () => {
       return Promise.all([
         baiRequestWithPromise({
@@ -62,12 +62,12 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
   });
 
   const sftpResourceGroups = _.flatMap(
-    resourceGroupSelectorQueryResult?.[1].volume_info,
+    resourceGroupSelectQueryResult?.[1].volume_info,
     (item) => item?.sftp_scaling_groups ?? [],
   );
 
   const resourceGroups = _.filter(
-    resourceGroupSelectorQueryResult?.[0].scaling_groups,
+    resourceGroupSelectQueryResult?.[0].scaling_groups,
     (item) => {
       if (_.includes(sftpResourceGroups, item.name)) {
         return false;
@@ -124,4 +124,4 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
   );
 };
 
-export default ResourceGroupSelector;
+export default ResourceGroupSelect;

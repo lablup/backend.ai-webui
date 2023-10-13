@@ -1,6 +1,6 @@
 import BAIErrorBoundary from './components/BAIErrorBoundary';
 import Flex from './components/Flex';
-import ResourceGroupSelector from './components/ResourceGroupSelect';
+import ResourceGroupSelect from './components/ResourceGroupSelect';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
 import { Form } from 'antd';
@@ -216,7 +216,7 @@ customElements.define(
               label={t('session.launcher.ResourceGroup')}
               style={{ margin: 0 }}
             >
-              <ResourceGroupSelector
+              <ResourceGroupSelect
                 autoSelectDefault
                 size="large"
                 onChange={(value) => {
