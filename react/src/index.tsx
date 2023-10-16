@@ -1,6 +1,10 @@
 import BAIErrorBoundary from './components/BAIErrorBoundary';
+import Flex from './components/Flex';
+import ResourceGroupSelect from './components/ResourceGroupSelect';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
+import { Form } from 'antd';
+import { t } from 'i18next';
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
@@ -196,6 +200,32 @@ customElements.define(
             props.dispatchEvent('close', null);
           }}
         />
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-resource-group-select',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <Flex direction="column" align="stretch" style={{ minWidth: 200 }}>
+          <Form layout="vertical">
+            <Form.Item
+              label={t('session.launcher.ResourceGroup')}
+              style={{ margin: 0 }}
+            >
+              <ResourceGroupSelect
+                autoSelectDefault
+                size="large"
+                onChange={(value) => {
+                  props.dispatchEvent('change', value);
+                }}
+              />
+            </Form.Item>
+          </Form>
+        </Flex>
       </DefaultProviders>
     );
   }),
