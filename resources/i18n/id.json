@@ -236,7 +236,8 @@
       "PreOpenPortRangeGuide": "__NOT_TRANSLATED__",
       "preopen": "__NOT_TRANSLATED__",
       "Network": "__NOT_TRANSLATED__",
-      "Enable": "__NOT_TRANSLATED__"
+      "Enable": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit": "Anda dapat mengatur hingga {{count}} port yang telah dibuka sebelumnya."
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -761,7 +762,8 @@
     "RAM": "RAM (GB)",
     "SharedMemory": "Memori bersama (GB)",
     "Deleted": "Preset sumber daya berhasil dihapus.",
-    "NoResourcePresetToDisplay": "Tidak ada Preset Sumber Daya yang akan ditampilkan"
+    "NoResourcePresetToDisplay": "Tidak ada Preset Sumber Daya yang akan ditampilkan",
+    "SHMEMShouldBeSmallerThanMemory": "Memori bersama harus lebih kecil dari memori"
   },
   "usersettings": {
     "General": "Umum",

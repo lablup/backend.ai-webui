@@ -864,7 +864,8 @@
     "ResourcePresets": "Resurssien esiasetukset",
     "Resources": "Resurssit",
     "SharedMemory": "Jaettu muisti (GB)",
-    "Updated": "Resurssien esiasetus päivitetty"
+    "Updated": "Resurssien esiasetus päivitetty",
+    "SHMEMShouldBeSmallerThanMemory": "Jaetun muistin on oltava pienempi kuin muistin"
   },
   "session": {
     "Agent": "Agentti",
@@ -1096,7 +1097,8 @@
       "TotalAllocation": "Kokonaismääräraha",
       "UserResourceLimit": "Käyttäjän resurssirajoitus",
       "Version": "Versio",
-      "sessionStillPreparing": "Istuntoa valmistellaan edelleen. Kun istunto on alkanut, käynnistä sovellus napauttamalla sovelluskuvaketta."
+      "sessionStillPreparing": "Istuntoa valmistellaan edelleen. Kun istunto on alkanut, käynnistä sovellus napauttamalla sovelluskuvaketta.",
+      "PreOpenPortMaxCountLimit": "Voit määrittää enintään {{count}} ennalta avattuja portteja."
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

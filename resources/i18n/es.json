@@ -864,7 +864,8 @@
     "ResourcePresets": "Recursos preestablecidos",
     "Resources": "Recursos",
     "SharedMemory": "Memoria compartida (GB)",
-    "Updated": "Preajuste de recursos actualizado"
+    "Updated": "Preajuste de recursos actualizado",
+    "SHMEMShouldBeSmallerThanMemory": "La memoria compartida debe ser menor que la memoria"
   },
   "session": {
     "Agent": "Agente",
@@ -1096,7 +1097,8 @@
       "TotalAllocation": "Asignación total",
       "UserResourceLimit": "Límite de recursos de usuario",
       "Version": "Versión",
-      "sessionStillPreparing": "La sesión aún está en preparación. Una vez iniciada la sesión, pulse el icono de la aplicación para iniciarla."
+      "sessionStillPreparing": "La sesión aún está en preparación. Una vez iniciada la sesión, pulse el icono de la aplicación para iniciarla.",
+      "PreOpenPortMaxCountLimit": "Puede configurar hasta {{count}} puertos preabiertos."
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

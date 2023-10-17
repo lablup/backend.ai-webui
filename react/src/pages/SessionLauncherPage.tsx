@@ -22,6 +22,7 @@ import {
 import { useDebounceFn } from 'ahooks';
 import {
   Affix,
+  Alert,
   Breadcrumb,
   Button,
   Card,
@@ -40,6 +41,7 @@ import {
   message,
   theme,
 } from 'antd';
+import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -75,11 +77,17 @@ const SessionLauncherPage = () => {
 
   const { run: syncFormToURLWithDebounce } = useDebounceFn(
     () => {
+      console.log(
+        'syncFormToURLWithDebounce',
+        form.getFieldValue(['batch', 'scheduleDate']),
+        form.getFieldsValue(),
+      );
       // To sync the latest form values to URL,
       // 'trailing' is set to true, and get the form values here."
       setQuery(
         {
-          formValues: form.getFieldsValue(),
+          // formValues: form.getFieldsValue(),
+          formValues: _.omit(form.getFieldsValue(), ['environments.image']),
         },
         'replaceIn',
       );
@@ -192,6 +200,9 @@ const SessionLauncherPage = () => {
     (item) => item.errors.length > 0,
   );
 
+  console.log(form.getFieldError(['resource', 'shmem']));
+  console.log(form.getFieldValue(['resource']));
+
   return (
     <Flex
       direction="column"
@@ -238,6 +249,7 @@ const SessionLauncherPage = () => {
           {/* <Suspense fallback={<FlexActivityIndicator />}> */}
           <Form.Provider
             onFormChange={(name, info) => {
+              console.log('###', name, info);
               // use OnFormChange instead of Form's onValuesChange,
               // because onValuesChange will not be triggered when form is changed programmatically
               syncFormToURLWithDebounce();
@@ -387,7 +399,26 @@ const SessionLauncherPage = () => {
                           name={['batch', 'enabled']}
                           valuePropName="checked"
                         >
-                          <Checkbox>{t('session.launcher.Enable')}</Checkbox>
+                          <Checkbox
+                            onChange={(e) => {
+                              alert(
+                                form.getFieldValue(['batch', 'scheduleDate']),
+                              );
+                              if (
+                                e.target.checked &&
+                                _.isEmpty(
+                                  form.getFieldValue(['batch', 'scheduleDate']),
+                                )
+                              ) {
+                                form.setFieldValue(
+                                  ['batch', 'scheduleDate'],
+                                  dayjs().add(2, 'minutes').toISOString(),
+                                );
+                              }
+                            }}
+                          >
+                            {t('session.launcher.Enable')}
+                          </Checkbox>
                         </Form.Item>
                         <Form.Item
                           noStyle
@@ -481,17 +512,6 @@ const SessionLauncherPage = () => {
                       currentStepKey === 'environment' ? 'block' : 'none',
                   }}
                 >
-                  <Form.Item
-                    name="resourceGroup"
-                    label={t('session.ResourceGroup')}
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  >
-                    <ResourceGroupSelect autoSelectDefault />
-                  </Form.Item>
                   <ResourceAllocationFormItems />
                 </Card>
 
@@ -625,78 +645,111 @@ const SessionLauncherPage = () => {
                               ).join('\n')}
                             </SyntaxHighlighter>
                           ) : (
-                            '-'
+                            <Typography.Text type="secondary">
+                              -
+                            </Typography.Text>
                           )}
                         </Descriptions.Item>
                       </Descriptions>
                     </BAICard>
-                    <Card
+                    <BAICard
                       title={t('session.launcher.ResourceAllocation')}
-                      size="small"
-                      extra={
-                        <Button
-                          type="link"
-                          onClick={() => {
-                            setCurrentStep(
-                              // @ts-ignore
-                              steps.findIndex((v) => v.key === 'environment'),
-                            );
-                          }}
-                        >
-                          {t('button.Edit')}
-                        </Button>
+                      status={
+                        _.some(form.getFieldValue('resource'), (v, key) => {
+                          //                         console.log(form.getFieldError(['resource', 'shmem']));
+                          // console.log(form.getFieldValue(['resource']));
+                          return (
+                            form.getFieldError(['resource', key]).length > 0
+                          );
+                        })
+                          ? 'error'
+                          : // : _.some(form.getFieldValue('resource'), (v, key) => {
+                            //     //                         console.log(form.getFieldError(['resource', 'shmem']));
+                            //     // console.log(form.getFieldValue(['resource']));
+                            //     return (
+                            //       form.getFieldWarning(['resource', key]).length >
+                            //       0
+                            //     );
+                            //   })
+                            // ? 'warning'
+                            undefined
                       }
+                      size="small"
+                      extraButtonTitle={t('button.Edit')}
+                      onClickExtraButton={() => {
+                        setCurrentStep(
+                          // @ts-ignore
+                          steps.findIndex((v) => v.key === 'environment'),
+                        );
+                      }}
                     >
-                      <Descriptions>
-                        <Descriptions.Item
-                          span={24}
-                          label={t('environment.ResourcePresets')}
-                        >
-                          <Flex
-                            direction="row"
-                            align="start"
-                            gap={'xs'}
-                            wrap="wrap"
-                            style={{ flex: 1 }}
-                          >
-                            {form.getFieldValue('allocationPreset') ===
-                            'custom' ? (
-                              // t('session.launcher.CustomAllocation')
-                              ''
-                            ) : (
-                              <Tag>
-                                {form.getFieldValue('allocationPreset')}
-                              </Tag>
+                      <Flex direction="column" gap={'xs'} align="stretch">
+                        {_.some(form.getFieldValue('resource'), (v, key) => {
+                          //                         console.log(form.getFieldError(['resource', 'shmem']));
+                          // console.log(form.getFieldValue(['resource']));
+                          return (
+                            form.getFieldWarning(['resource', key]).length > 0
+                          );
+                        }) && (
+                          <Alert
+                            type="warning"
+                            showIcon
+                            message={t(
+                              'session.launcher.EnqueueComputeSessionWarning',
                             )}
+                          />
+                        )}
 
-                            {_.map(
-                              _.omit(form.getFieldValue('resource'), 'shmem'),
-                              (value, type) => {
-                                return (
-                                  <ResourceNumber
-                                    key={type}
-                                    // @ts-ignore
-                                    type={type}
-                                    value={
-                                      type === 'mem'
-                                        ? iSizeToSize(value, 'b').number + ''
-                                        : value
-                                    }
-                                    opts={{
-                                      shmem: form.getFieldValue('resource')
-                                        .shmem
-                                        ? iSizeToSize(
-                                            form.getFieldValue('resource')
-                                              .shmem + 'g',
-                                            'b',
-                                          ).number
-                                        : undefined,
-                                    }}
-                                  />
-                                );
-                              },
-                            )}
-                            {/* {_.chain(
+                        <Descriptions>
+                          <Descriptions.Item
+                            span={24}
+                            label={t('environment.ResourcePresets')}
+                          >
+                            <Flex
+                              direction="row"
+                              align="start"
+                              gap={'xs'}
+                              wrap="wrap"
+                              style={{ flex: 1 }}
+                            >
+                              {form.getFieldValue('allocationPreset') ===
+                              'custom' ? (
+                                // t('session.launcher.CustomAllocation')
+                                ''
+                              ) : (
+                                <Tag>
+                                  {form.getFieldValue('allocationPreset')}
+                                </Tag>
+                              )}
+
+                              {_.map(
+                                _.omit(form.getFieldValue('resource'), 'shmem'),
+                                (value, type) => {
+                                  return (
+                                    <ResourceNumber
+                                      key={type}
+                                      // @ts-ignore
+                                      type={type}
+                                      value={
+                                        type === 'mem'
+                                          ? iSizeToSize(value, 'b')?.number + ''
+                                          : value
+                                      }
+                                      opts={{
+                                        shmem: form.getFieldValue('resource')
+                                          .shmem
+                                          ? iSizeToSize(
+                                              form.getFieldValue('resource')
+                                                .shmem,
+                                              'b',
+                                            )?.number
+                                          : undefined,
+                                      }}
+                                    />
+                                  );
+                                },
+                              )}
+                              {/* {_.chain(
                               form.getFieldValue('allocationPreset') ===
                                 'custom'
                                 ? form.getFieldValue('resource')
@@ -726,10 +779,11 @@ const SessionLauncherPage = () => {
                               })
                               .compact()
                               .value()} */}
-                          </Flex>
-                        </Descriptions.Item>
-                      </Descriptions>
-                    </Card>
+                            </Flex>
+                          </Descriptions.Item>
+                        </Descriptions>
+                      </Flex>
+                    </BAICard>
                     <BAICard
                       title={t('webui.menu.Data&Storage')}
                       size="small"
@@ -787,7 +841,7 @@ const SessionLauncherPage = () => {
                           )}
                         ></Table>
                       ) : (
-                        '-'
+                        <Typography.Text type="secondary">-</Typography.Text>
                       )}
                     </BAICard>
                     <BAICard
@@ -824,9 +878,12 @@ const SessionLauncherPage = () => {
                                 {v}
                               </PortTag>
                             ))}
-                            {form.getFieldValue('ports')?.length !== 0
-                              ? undefined
-                              : '-'}
+                            {form.getFieldValue('ports')?.length !==
+                            0 ? undefined : (
+                              <Typography.Text type="secondary">
+                                -
+                              </Typography.Text>
+                            )}
                           </Flex>
                         </Descriptions.Item>
                       </Descriptions>

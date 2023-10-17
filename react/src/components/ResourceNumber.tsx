@@ -35,6 +35,7 @@ interface Props {
   extra?: ReactElement;
   opts?: ResourceOpts;
   value: string;
+  hideTooltip?: boolean;
 }
 
 type ResourceTypeInfo<V> = {
@@ -45,6 +46,7 @@ const ResourceNumber: React.FC<Props> = ({
   value: amount,
   extra,
   opts,
+  hideTooltip = false,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -56,10 +58,10 @@ const ResourceNumber: React.FC<Props> = ({
 
   return (
     <Flex direction="row" gap="xxs">
-      <ResourceTypeIcon type={type} />
+      <ResourceTypeIcon type={type} showTooltip={!hideTooltip} />
       <Typography.Text>
         {units[type] === 'GiB'
-          ? Number(iSizeToSize(amount + 'b', 'g', 3).numberFixed).toString()
+          ? Number(iSizeToSize(amount + 'b', 'g', 3)?.numberFixed).toString()
           : units[type] === 'FGPU'
           ? parseFloat(amount).toFixed(2)
           : amount}
@@ -70,7 +72,7 @@ const ResourceNumber: React.FC<Props> = ({
           type="secondary"
           style={{ fontSize: token.fontSizeSM }}
         >
-          (SHM: {iSizeToSize(opts.shmem + 'b', 'g', 2).numberFixed}
+          (SHM: {iSizeToSize(opts.shmem + 'b', 'g', 2)?.numberFixed}
           GiB)
         </Typography.Text>
       )}

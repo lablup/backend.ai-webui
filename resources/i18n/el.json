@@ -236,7 +236,8 @@
       "PreOpenPortRangeGuide": "__NOT_TRANSLATED__",
       "preopen": "__NOT_TRANSLATED__",
       "Network": "__NOT_TRANSLATED__",
-      "Enable": "__NOT_TRANSLATED__"
+      "Enable": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit": "Μπορείτε να ορίσετε έως και {{count}} προ-ανοικτές θύρες."
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",
@@ -761,7 +762,8 @@
     "RAM": "RAM (GB)",
     "SharedMemory": "Κοινή μνήμη (GB)",
     "NoResourcePresetToDisplay": "Δεν εμφανίζονται Προεπιλογές πόρων",
-    "Deleted": "Η προεπιλογή πόρων διαγράφηκε επιτυχώς."
+    "Deleted": "Η προεπιλογή πόρων διαγράφηκε επιτυχώς.",
+    "SHMEMShouldBeSmallerThanMemory": "Η κοινόχρηστη μνήμη πρέπει να είναι μικρότερη από τη μνήμη"
   },
   "usersettings": {
     "General": "Γενικός",

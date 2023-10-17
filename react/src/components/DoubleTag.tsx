@@ -1,5 +1,5 @@
 import Flex from './Flex';
-import { Tag } from 'antd';
+import { Space, Tag } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 
@@ -38,7 +38,7 @@ const DoubleTag: React.FC<{
             style={
               _.last(objectValues) === objValue
                 ? undefined
-                : { margin: 0, marginRight: -1, zIndex: 1 }
+                : { margin: 0, marginRight: -1 }
             }
             color={objValue.color}
           >

@@ -1,3 +1,4 @@
+import { useSuspendedBackendaiClient } from '../hooks';
 import { Form, FormItemProps, Select, Tag } from 'antd';
 import { TagProps } from 'antd/lib';
 import _ from 'lodash';
@@ -10,6 +11,7 @@ const MIN_PORT = 1024;
 const MAX_PORT = 65535;
 const PortSelectFormItem: React.FC<Props> = ({ ...formItemProps }) => {
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
   return (
     <Form.Item
       label={t('session.launcher.PreOpenPortTitle')}
@@ -17,10 +19,13 @@ const PortSelectFormItem: React.FC<Props> = ({ ...formItemProps }) => {
       tooltip={<Trans i18nKey="session.launcher.DescSetPreOpenPort" />}
       extra={t('session.launcher.PreOpenPortRangeGuide')}
       rules={[
-        // {
-        //   max: 2,
-        //   type: 'array',
-        // },
+        {
+          max: baiClient._config.maxCountForPreopenPorts,
+          type: 'array',
+          message: t('session.launcher.PreOpenPortMaxCountLimit', {
+            count: baiClient._config.maxCountForPreopenPorts,
+          }),
+        },
         ({ getFieldValue }) => ({
           validator(rule, values) {
             if (

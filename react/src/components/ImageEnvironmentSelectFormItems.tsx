@@ -268,7 +268,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
           defaultActiveFirstOption={true}
           optionLabelProp="label"
           optionFilterProp="filterValue"
-          onChange={(value) => {
+          onSelect={(value) => {
             if (fullNameMatchedImage) {
               form.setFieldsValue({
                 environments: {
@@ -428,7 +428,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
             >
               <Select
                 ref={versionSelectRef}
-                onChange={() => {}}
+                // onChange={() => {}}
+                onSelect={(value) => {
+                  // alert(value);
+                }}
                 showSearch
                 searchValue={versionSearch}
                 onSearch={setVersionSearch}

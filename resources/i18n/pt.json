@@ -236,7 +236,8 @@
       "PreOpenPortRangeGuide": "__NOT_TRANSLATED__",
       "preopen": "__NOT_TRANSLATED__",
       "Network": "__NOT_TRANSLATED__",
-      "Enable": "__NOT_TRANSLATED__"
+      "Enable": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit": "Pode definir até {{count}} portas pré-abertas."
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",
@@ -761,7 +762,8 @@
     "RAM": "RAM (GB)",
     "SharedMemory": "Memória compartilhada (GB)",
     "NoResourcePresetToDisplay": "Não há predefinições de recursos a apresentar",
-    "Deleted": "A predefinição de recurso foi eliminada com êxito."
+    "Deleted": "A predefinição de recurso foi eliminada com êxito.",
+    "SHMEMShouldBeSmallerThanMemory": "A memória partilhada deve ser mais pequena do que a memória"
   },
   "usersettings": {
     "General": "Em geral",

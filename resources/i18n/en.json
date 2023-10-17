@@ -248,7 +248,9 @@
       "Network": "Network",
       "PreOpenPortRangeGuide": "Enter multiple values separated by either a comma (,) or a space.",
       "preopen": "preopen",
-      "FolderAliasInvalid": "Only alphanumeric characters, underscore (_), slash (/), and dash (-) are allowed."
+      "FolderAliasInvalid": "Only alphanumeric characters, underscore (_), slash (/), and dash (-) are allowed.",
+      "PreOpenPortMaxCountLimit": "You can set up to {{count}} pre-open ports.",
+      "EnqueueComputeSessionWarning": "If you set it larger than the currently available resources, the session creation will be delayed in the queue until it becomes available."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -854,7 +856,8 @@
     "MinimumMemUnit": "Memory starts with 1 GB",
     "MinimumShmemUnit": "The minimum unit for shared memory is 0.01 GB.",
     "RAM": "RAM (GB)",
-    "SharedMemory": "Shared memory (GB)"
+    "SharedMemory": "Shared memory (GB)",
+    "SHMEMShouldBeSmallerThanMemory": "Shared memory must be smaller than memory"
   },
   "usersettings": {
     "General": "General",

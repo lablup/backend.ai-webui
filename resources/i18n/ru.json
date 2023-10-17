@@ -236,7 +236,8 @@
       "PreOpenPortRangeGuide": "__NOT_TRANSLATED__",
       "preopen": "__NOT_TRANSLATED__",
       "Network": "__NOT_TRANSLATED__",
-      "Enable": "__NOT_TRANSLATED__"
+      "Enable": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit": "Можно задать до {{count}} предварительно открытых портов."
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -761,7 +762,8 @@
     "RAM": "RAM (ГБ)",
     "SharedMemory": "Общая память (ГБ)",
     "Deleted": "Предварительная настройка ресурса успешно удалена.",
-    "NoResourcePresetToDisplay": "Отсутствие отображения предустановок ресурсов"
+    "NoResourcePresetToDisplay": "Отсутствие отображения предустановок ресурсов",
+    "SHMEMShouldBeSmallerThanMemory": "Общая память должна быть меньше памяти"
   },
   "usersettings": {
     "General": "Общий",

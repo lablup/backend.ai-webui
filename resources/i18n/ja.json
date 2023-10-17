@@ -236,7 +236,8 @@
       "PreOpenPortRangeGuide": "__NOT_TRANSLATED__",
       "preopen": "__NOT_TRANSLATED__",
       "Network": "__NOT_TRANSLATED__",
-      "Enable": "__NOT_TRANSLATED__"
+      "Enable": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit": "count}}までプレオープンポートを設定できる。"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -761,7 +762,8 @@
     "RAM": "RAM（GB）",
     "SharedMemory": "共有メモリ（GB）",
     "NoResourcePresetToDisplay": "リソースプリセット情報がありません。",
-    "Deleted": "リソースプリセットの削除に成功しました"
+    "Deleted": "リソースプリセットの削除に成功しました",
+    "SHMEMShouldBeSmallerThanMemory": "共有メモリはメモリより小さくなければならない"
   },
   "usersettings": {
     "General": "一般",

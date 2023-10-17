@@ -236,7 +236,8 @@
       "PreOpenPortRangeGuide": "__NOT_TRANSLATED__",
       "preopen": "__NOT_TRANSLATED__",
       "Network": "__NOT_TRANSLATED__",
-      "Enable": "__NOT_TRANSLATED__"
+      "Enable": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit": "Vous pouvez définir jusqu'à {{count}} ports pré-ouverts."
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -761,7 +762,8 @@
     "RAM": "RAM (Go)",
     "SharedMemory": "Mémoire partagée (Go)",
     "Deleted": "Le préréglage des ressources a été supprimé avec succès.",
-    "NoResourcePresetToDisplay": "Pas de préréglages de ressources à afficher"
+    "NoResourcePresetToDisplay": "Pas de préréglages de ressources à afficher",
+    "SHMEMShouldBeSmallerThanMemory": "La mémoire partagée doit être plus petite que la mémoire"
   },
   "usersettings": {
     "General": "Général",

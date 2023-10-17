@@ -234,10 +234,12 @@
       "PreOpenPortPanelTitle": "추가될 사전 개방 포트값 (옵션)",
       "PreOpenPortRange": "사전 개방 포트는 1024 ~ 65535 사이만 설정할 수 있습니다.",
       "PreOpenPortRangeGuide": "여러 값을 콤마(,) 또는 스페이스로 구분하여 입력할 수 있습니다.",
+      "PreOpenPortMaxCountLimit": "사전 개방 포트는 최대 {{count}}개까지 설정할 수 있습니다.",
       "MinMemory": "현재 선택한 실행환경의 최소 메모리 용량은 {{size}}iB입니다.",
       "Enable": "활성화",
       "Network": "네트워크",
-      "preopen": "사전 개방 포트"
+      "preopen": "사전 개방 포트",
+      "EnqueueComputeSessionWarning": "현재 사용 가능한 자원보다 크게 설정하면 세션 생성이 가능해질 때까지 큐에서 실행 지연됩니다."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -836,6 +838,7 @@
     "NoPresetName": "자원 프리셋의 이름을 입력하십시오",
     "NoResourcePresetToDisplay": "자원 프리셋 정보가 없습니다.",
     "MemoryShouldBeLargerThanSHMEM": "메모리는 공유메모리보다 커야 합니다",
+    "SHMEMShouldBeSmallerThanMemory": "공유메모리는 메모리보다 작아야 합니다",
     "Created": "자원 프리셋이 생성되었습니다",
     "Updated": "자원 프리셋에 수정되었습니다",
     "MinimumCPUUnit": "CPU 최소 단위: 1 코어",
