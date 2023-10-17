@@ -56,7 +56,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
       fragment ResourcePolicyCard_project_resource_policy on ProjectResourcePolicy {
         id
         name
-        max_vfolder_size
+        max_quota_scope_size
         ...ProjectResourcePolicySettingModalFragment
       }
     `,
@@ -67,7 +67,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
       fragment ResourcePolicyCard_user_resource_policy on UserResourcePolicy {
         id
         name
-        max_vfolder_size
+        max_quota_scope_size
         ...UserResourcePolicySettingModalFragment
       }
     `,
@@ -116,7 +116,8 @@ const ResourcePolicyCard: React.FC<Props> = ({
             variables: {
               name: project_resource_policy.name,
               props: {
-                max_vfolder_size: -1,
+                max_vfolder_count: 0,
+                max_quota_scope_size: -1,
               },
             },
             onCompleted(response) {
@@ -138,7 +139,8 @@ const ResourcePolicyCard: React.FC<Props> = ({
             variables: {
               name: user_resource_policy.name,
               props: {
-                max_vfolder_size: -1,
+                max_vfolder_count: 0,
+                max_quota_scope_size: -1,
               },
             },
             onCompleted(response) {
@@ -200,15 +202,15 @@ const ResourcePolicyCard: React.FC<Props> = ({
             <Descriptions.Item label={t('storageHost.MaxFolderSize')}>
               {project_resource_policy
                 ? project_resource_policy &&
-                  project_resource_policy?.max_vfolder_size !== -1
+                  project_resource_policy?.max_quota_scope_size !== -1
                   ? humanReadableDecimalSize(
-                      project_resource_policy?.max_vfolder_size,
+                      project_resource_policy?.max_quota_scope_size,
                     )
                   : '-'
                 : user_resource_policy &&
-                  user_resource_policy?.max_vfolder_size !== -1
+                  user_resource_policy?.max_quota_scope_size !== -1
                 ? humanReadableDecimalSize(
-                    user_resource_policy?.max_vfolder_size,
+                    user_resource_policy?.max_quota_scope_size,
                   )
                 : '-'}
             </Descriptions.Item>

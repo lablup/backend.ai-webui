@@ -3164,8 +3164,6 @@ class ResourcePolicy {
       'total_resource_slots',
       'max_concurrent_sessions',
       'max_containers_per_session',
-      'max_vfolder_count',
-      'max_vfolder_size',
       'allowed_vfolder_hosts',
       'idle_timeout',
     ],
@@ -3199,8 +3197,6 @@ class ResourcePolicy {
    *   'max_concurrent_sessions': concurrency_limit,
    *   'max_containers_per_session': containers_per_session_limit,
    *   'idle_timeout': idle_timeout,
-   *   'max_vfolder_count': vfolder_count_limit,
-   *   'max_vfolder_size': vfolder_capacity_limit,
    *   'allowed_vfolder_hosts': vfolder_hosts,
    *   'max_session_lifetime': max_session_lifetime
    * };
@@ -3213,8 +3209,6 @@ class ResourcePolicy {
       'total_resource_slots',
       'max_concurrent_sessions',
       'max_containers_per_session',
-      'max_vfolder_count',
-      'max_vfolder_size',
       'allowed_vfolder_hosts',
       'idle_timeout',
     ];
@@ -3249,8 +3243,6 @@ class ResourcePolicy {
    *   {int} 'max_concurrent_sessions': concurrency_limit,
    *   {int} 'max_containers_per_session': containers_per_session_limit,
    *   {bigint} 'idle_timeout': idle_timeout,
-   *   {int} 'max_vfolder_count': vfolder_count_limit,
-   *   {bigint} 'max_vfolder_size': vfolder_capacity_limit,
    *   {[string]} 'allowed_vfolder_hosts': vfolder_hosts,
    *   {int} 'max_session_lifetime': max_session_lifetime
    * };
