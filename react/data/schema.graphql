@@ -22,6 +22,7 @@ type Agent implements Item {
   hardware_metadata: JSONString
   auto_terminate_abusing_kernel: Boolean
   local_config: JSONString
+  container_count: Int
   mem_slots: Int
   cpu_slots: Float
   gpu_slots: Float
@@ -235,8 +236,6 @@ input CreateKeyPairResourcePolicyInput {
   max_concurrent_sessions: Int!
   max_containers_per_session: Int!
   idle_timeout: BigInt!
-  max_vfolder_count: Int!
-  max_vfolder_size: BigInt!
   allowed_vfolder_hosts: JSONString
 }
 
@@ -247,7 +246,8 @@ type CreateProjectResourcePolicy {
 }
 
 input CreateProjectResourcePolicyInput {
-  max_vfolder_size: BigInt!
+  max_vfolder_count: BigInt!
+  max_quota_scope_size: BigInt!
 }
 
 type CreateResourcePreset {
@@ -293,7 +293,8 @@ type CreateUserResourcePolicy {
 }
 
 input CreateUserResourcePolicyInput {
-  max_vfolder_size: BigInt!
+  max_vfolder_count: BigInt!
+  max_quota_scope_size: BigInt!
 }
 
 scalar DateTime
@@ -503,7 +504,7 @@ type Image {
 }
 
 type InferenceSessionError {
-  session_id: UUID!
+  session_id: UUID
   errors: [InferenceSessionErrorInfo!]!
 }
 
@@ -574,8 +575,6 @@ type KeyPairResourcePolicy {
   max_concurrent_sessions: Int
   max_containers_per_session: Int
   idle_timeout: BigInt
-  max_vfolder_count: Int
-  max_vfolder_size: BigInt
   allowed_vfolder_hosts: JSONString
 }
 
@@ -739,8 +738,6 @@ input ModifyKeyPairResourcePolicyInput {
   max_concurrent_sessions: Int
   max_containers_per_session: Int
   idle_timeout: BigInt
-  max_vfolder_count: Int
-  max_vfolder_size: BigInt
   allowed_vfolder_hosts: JSONString
 }
 
@@ -750,7 +747,8 @@ type ModifyProjectResourcePolicy {
 }
 
 input ModifyProjectResourcePolicyInput {
-  max_vfolder_size: BigInt!
+  max_vfolder_count: BigInt!
+  max_quota_scope_size: BigInt!
 }
 
 type ModifyResourcePreset {
@@ -801,6 +799,7 @@ input ModifyUserInput {
   allowed_client_ip: [String]
   totp_activated: Boolean
   resource_policy: String
+  sudo_session_enabled: Boolean
 }
 
 type ModifyUserResourcePolicy {
@@ -809,7 +808,8 @@ type ModifyUserResourcePolicy {
 }
 
 input ModifyUserResourcePolicyInput {
-  max_vfolder_size: BigInt!
+  max_vfolder_count: BigInt!
+  max_quota_scope_size: BigInt!
 }
 
 type Mutations {
@@ -890,7 +890,9 @@ type ProjectResourcePolicy {
   id: ID!
   name: String!
   created_at: DateTime!
+  max_vfolder_count: BigInt
   max_vfolder_size: BigInt
+  max_quota_scope_size: BigInt
 }
 
 type PurgeDomain {
@@ -948,6 +950,7 @@ type Queries {
   scaling_groups_for_keypair(access_key: String!, is_active: Boolean): [ScalingGroup]
   storage_volume(id: String): StorageVolume
   storage_volume_list(limit: Int!, offset: Int!, filter: String, order: String): StorageVolumeList
+  vfolder(id: String): VirtualFolder
   vfolder_list(limit: Int!, offset: Int!, filter: String, order: String, domain_name: String, group_id: UUID, access_key: String): VirtualFolderList
   vfolder_permission_list(limit: Int!, offset: Int!, filter: String, order: String): VirtualFolderPermissionList
   vfolder_own_list(limit: Int!, offset: Int!, filter: String, order: String, domain_name: String, access_key: String): VirtualFolderList
@@ -1021,6 +1024,7 @@ type Routing implements Item {
   status: String
   traffic_ratio: Float
   created_at: DateTime
+  error_data: JSONString
 }
 
 type RoutingList implements PaginatedList {
@@ -1094,6 +1098,7 @@ type User implements Item {
   allowed_client_ip: [String]
   totp_activated: Boolean
   totp_activated_at: DateTime
+  sudo_session_enabled: Boolean
   groups: [UserGroup]
 }
 
@@ -1121,6 +1126,7 @@ input UserInput {
   allowed_client_ip: [String]
   totp_activated: Boolean
   resource_policy: String
+  sudo_session_enabled: Boolean
 }
 
 type UserList implements PaginatedList {
@@ -1132,7 +1138,9 @@ type UserResourcePolicy {
   id: ID!
   name: String!
   created_at: DateTime!
+  max_vfolder_count: BigInt
   max_vfolder_size: BigInt
+  max_quota_scope_size: BigInt
 }
 
 type VirtualFolder implements Item {
