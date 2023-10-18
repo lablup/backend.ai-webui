@@ -1,4 +1,5 @@
 import BAIErrorBoundary from './components/BAIErrorBoundary';
+import ContainerRegistryList from './components/ContainerRegistryList';
 import Flex from './components/Flex';
 import ResourceGroupSelect from './components/ResourceGroupSelect';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
@@ -226,6 +227,17 @@ customElements.define(
             </Form.Item>
           </Form>
         </Flex>
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-container-registry-list',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <ContainerRegistryList />
       </DefaultProviders>
     );
   }),

@@ -181,6 +181,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
             ?active="${this._activeTab === 'resource-template-lists'}"
           ></backend-ai-resource-preset-list>
           <div id="registry-lists" class="tab-content">
+            <backend-ai-react-container-registry-list></backend-ai-react-container-registry-list>
             <backend-ai-registry-list
               ?active="${this._activeTab === 'registry-lists'}"
             ></backend-ai-registry-list>

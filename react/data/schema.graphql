@@ -176,6 +176,34 @@ type ComputeSessionList implements PaginatedList {
   total_count: Int!
 }
 
+type ContainerRegistry implements Node {
+  id: ID!
+  hostname: String
+  config: ContainerRegistryConfig
+}
+
+type ContainerRegistryConfig {
+  url: String!
+  type: String!
+  project: [String]
+  username: String
+  password: String
+  ssl_verify: Boolean
+}
+
+type CreateContainerRegistry {
+  container_registry: ContainerRegistry
+}
+
+input CreateContainerRegistryInput {
+  url: String!
+  type: String!
+  project: String
+  username: String
+  password: String
+  ssl_verify: Boolean
+}
+
 type CreateDomain {
   ok: Boolean
   msg: String
@@ -273,6 +301,10 @@ scalar DateTime
 type DealiasImage {
   ok: Boolean
   msg: String
+}
+
+type DeleteContainerRegistry {
+  container_registry: ContainerRegistry
 }
 
 type DeleteDomain {
@@ -392,10 +424,11 @@ type Endpoint implements Item {
   cluster_size: Int
   open_to_public: Boolean
   created_at: DateTime!
-  terminated_at: DateTime
+  destroyed_at: DateTime
   routings: [Routing]
   retries: Int
   status: String
+  lifecycle_stage: String
   errors: [InferenceSessionError!]!
 }
 
@@ -613,6 +646,19 @@ input ModifyAgentInput {
   scaling_group: String
 }
 
+type ModifyContainerRegistry {
+  container_registry: ContainerRegistry
+}
+
+input ModifyContainerRegistryInput {
+  url: String!
+  type: String!
+  project: String
+  username: String
+  password: String
+  ssl_verify: Boolean
+}
+
 type ModifyDomain {
   ok: Boolean
   msg: String
@@ -816,6 +862,13 @@ type Mutations {
   disassociate_all_scaling_groups_with_group(user_group: UUID!): DisassociateAllScalingGroupsWithGroup
   set_quota_scope(props: QuotaScopeInput!, quota_scope_id: String!, storage_host_name: String!): SetQuotaScope
   unset_quota_scope(quota_scope_id: String!, storage_host_name: String!): UnsetQuotaScope
+  create_container_registry(hostname: String!, props: CreateContainerRegistryInput!): CreateContainerRegistry
+  modify_container_registry(hostname: String!, props: ModifyContainerRegistryInput!): ModifyContainerRegistry
+  delete_container_registry(hostname: String!): DeleteContainerRegistry
+}
+
+interface Node {
+  id: ID!
 }
 
 interface PaginatedList {
@@ -860,6 +913,7 @@ input PurgeUserInput {
 }
 
 type Queries {
+  node(id: ID!): Node
   agent(agent_id: String!): Agent
   agent_list(limit: Int!, offset: Int!, filter: String, order: String, scaling_group: String, status: String): AgentList
   agents(scaling_group: String, status: String): [Agent]
@@ -914,6 +968,8 @@ type Queries {
   endpoint_token(token: String!): EndpointToken
   endpoint_token_list(limit: Int!, offset: Int!, filter: String, order: String, endpoint_id: UUID): EndpointTokenList
   quota_scope(storage_host_name: String!, quota_scope_id: String!): QuotaScope
+  container_registry(hostname: String!): ContainerRegistry
+  container_registries: [ContainerRegistry]
 }
 
 type QuotaDetails {
@@ -1121,3 +1177,4 @@ type VirtualFolderPermissionList implements PaginatedList {
   items: [VirtualFolderPermission]!
   total_count: Int!
 }
+
