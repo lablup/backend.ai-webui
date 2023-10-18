@@ -11,8 +11,12 @@ import {
 } from './__generated__/ContainerRegistryListQuery.graphql';
 import {
   DeleteOutlined,
+  ExclamationCircleOutlined,
+  ExclamationCircleTwoTone,
+  FileSearchOutlined,
   PlusOutlined,
   ReloadOutlined,
+  ScanOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import {
@@ -22,6 +26,7 @@ import {
   Switch,
   Table,
   Tag,
+  Tooltip,
   Typography,
   message,
   theme,
@@ -190,15 +195,17 @@ const ContainerRegistryList = () => {
         >
           {t('registry.AddRegistry')}
         </Button>
-        <Button
-          loading={isPendingReload}
-          icon={<ReloadOutlined />}
-          onClick={() => {
-            startReloadTransition(() => {
-              updateFetchKey();
-            });
-          }}
-        />
+        <Tooltip title={t('button.Refresh')}>
+          <Button
+            loading={isPendingReload}
+            icon={<ReloadOutlined />}
+            onClick={() => {
+              startReloadTransition(() => {
+                updateFetchKey();
+              });
+            }}
+          />
+        </Tooltip>
       </Flex>
       <Table
         scroll={{ x: 'max-content' }}
@@ -299,37 +306,43 @@ const ContainerRegistryList = () => {
             render(value, record, index) {
               return (
                 <Flex>
-                  <Button
-                    size="large"
-                    style={{
-                      color: token.colorInfo,
-                    }}
-                    type="text"
-                    icon={<SettingOutlined />}
-                    onClick={() => {
-                      setEditingRegistry(record);
-                    }}
-                  />
-                  <Button
-                    size="large"
-                    danger
-                    type="text"
-                    icon={<DeleteOutlined />}
-                    onClick={() => {
-                      setDeletingRegistry(record);
-                    }}
-                  />
-                  <Button
-                    size="large"
-                    type="text"
-                    icon={
-                      <ReloadOutlined
-                        onClick={() => {
-                          record.hostname && rescanImage(record.hostname);
-                        }}
-                      />
-                    }
-                  />
+                  <Tooltip title={t('button.Edit')}>
+                    <Button
+                      size="large"
+                      style={{
+                        color: token.colorInfo,
+                      }}
+                      type="text"
+                      icon={<SettingOutlined />}
+                      onClick={() => {
+                        setEditingRegistry(record);
+                      }}
+                    />
+                  </Tooltip>
+                  <Tooltip title={t('button.Delete')}>
+                    <Button
+                      size="large"
+                      danger
+                      type="text"
+                      icon={<DeleteOutlined />}
+                      onClick={() => {
+                        setDeletingRegistry(record);
+                      }}
+                    />
+                  </Tooltip>
+                  <Tooltip title={t('maintenance.RescanImages')}>
+                    <Button
+                      size="large"
+                      type="text"
+                      icon={
+                        <FileSearchOutlined
+                          onClick={() => {
+                            record.hostname && rescanImage(record.hostname);
+                          }}
+                        />
+                      }
+                    />
+                  </Tooltip>
                 </Flex>
               );
             },
@@ -354,7 +367,16 @@ const ContainerRegistryList = () => {
         centered={false}
       />
       <BAIModal
-        title={t('dialog.warning.CannotBeUndone')}
+        title={
+          <>
+            <ExclamationCircleOutlined
+              style={{
+                color: token.colorWarning,
+              }}
+            />{' '}
+            {t('dialog.warning.CannotBeUndone')}
+          </>
+        }
         okText={t('button.Delete')}
         okButtonProps={{
           danger: true,
@@ -402,45 +424,49 @@ const ContainerRegistryList = () => {
         destroyOnClose
         open={!!deletingRegistry}
       >
-        <Form>
-          <Form.Item
-            name={'confirmText'}
-            extra={
-              <>
-                <Typography.Text code>
-                  {deletingRegistry?.hostname}
-                </Typography.Text>{' '}
-                {t('registry.TypeRegistryNameToDelete')}
-              </>
-            }
-            // help="asdf"
-            // validateStatus={
-            //   deletingConfirmText &&
-            //   deletingConfirmText !== deletingRegistry?.hostname
-            //     ? 'error'
-            //     : undefined
-            // }
-            rules={[
-              {
-                required: true,
-                message: t('registry.HostnameDoesNotMatch'),
-                validator: async () => {
-                  console.log('###value', deletingConfirmText);
-                  if (deletingConfirmText === deletingRegistry?.hostname) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject();
+        <Flex
+          direction="column"
+          align="stretch"
+          gap="sm"
+          style={{
+            marginTop: token.marginMD,
+          }}
+        >
+          <Typography.Text>
+            <Typography.Text code>{deletingRegistry?.hostname}</Typography.Text>{' '}
+            {t('registry.TypeRegistryNameToDelete')}
+          </Typography.Text>
+          <Form>
+            <Form.Item
+              name={'confirmText'}
+              // help="asdf"
+              // validateStatus={
+              //   deletingConfirmText &&
+              //   deletingConfirmText !== deletingRegistry?.hostname
+              //     ? 'error'
+              //     : undefined
+              // }
+              rules={[
+                {
+                  required: true,
+                  message: t('registry.HostnameDoesNotMatch'),
+                  validator: async () => {
+                    if (deletingConfirmText === deletingRegistry?.hostname) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject();
+                  },
                 },
-              },
-            ]}
-          >
-            <Input
-              autoComplete="off"
-              value={deletingConfirmText}
-              onChange={(e) => setDeletingConfirmText(e.target.value)}
-            />
-          </Form.Item>
-        </Form>
+              ]}
+            >
+              <Input
+                autoComplete="off"
+                value={deletingConfirmText}
+                onChange={(e) => setDeletingConfirmText(e.target.value)}
+              />
+            </Form.Item>
+          </Form>
+        </Flex>
       </BAIModal>
     </Flex>
   );

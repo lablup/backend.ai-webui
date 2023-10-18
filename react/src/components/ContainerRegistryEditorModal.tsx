@@ -77,7 +77,6 @@ const ContainerRegistryEditorModal: React.FC<
         }
       }
     `);
-  console.log(containerRegistry);
   return (
     <BAIModal
       title={
