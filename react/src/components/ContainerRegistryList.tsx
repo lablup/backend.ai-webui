@@ -179,7 +179,7 @@ const ContainerRegistryList = () => {
   };
 
   return (
-    <Flex direction="column" align="stretch" gap={'sm'}>
+    <Flex direction="column" align="stretch">
       <Flex
         direction="row"
         justify="end"
