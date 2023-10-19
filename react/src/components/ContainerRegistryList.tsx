@@ -13,16 +13,13 @@ import {
 import {
   DeleteOutlined,
   ExclamationCircleOutlined,
-  ExclamationCircleTwoTone,
   FileSearchOutlined,
   PlusOutlined,
   ReloadOutlined,
-  ScanOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import {
   Button,
-  ConfigProvider,
   Form,
   Input,
   Switch,
