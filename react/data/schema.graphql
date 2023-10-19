@@ -199,7 +199,7 @@ type CreateContainerRegistry {
 input CreateContainerRegistryInput {
   url: String!
   type: String!
-  project: String
+  project: [String]
   username: String
   password: String
   ssl_verify: Boolean
@@ -652,7 +652,7 @@ type ModifyContainerRegistry {
 input ModifyContainerRegistryInput {
   url: String!
   type: String!
-  project: String
+  project: [String]
   username: String
   password: String
   ssl_verify: Boolean

@@ -98,7 +98,7 @@ const ContainerRegistryEditorModal: React.FC<
                 project:
                   values.config.project === 'docker'
                     ? undefined
-                    : values.config.project.join(','),
+                    : values.config.project,
                 username: values.config.username,
                 password: values.config.password,
               },
@@ -131,11 +131,19 @@ const ContainerRegistryEditorModal: React.FC<
         layout="vertical"
         requiredMark="optional"
         initialValues={
-          containerRegistry || {
-            config: {
-              type: 'docker',
-            },
-          }
+          containerRegistry
+            ? {
+                ...containerRegistry,
+                config: {
+                  ...containerRegistry.config,
+                  project: containerRegistry.config?.project || undefined,
+                },
+              }
+            : {
+                config: {
+                  type: 'docker',
+                },
+              }
         }
         preserve={false}
       >
