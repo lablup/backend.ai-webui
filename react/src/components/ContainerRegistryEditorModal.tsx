@@ -2,7 +2,7 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import { ContainerRegistryEditorModalCreateMutation } from './__generated__/ContainerRegistryEditorModalCreateMutation.graphql';
 import { ContainerRegistryEditorModalFragment$key } from './__generated__/ContainerRegistryEditorModalFragment.graphql';
 import { ContainerRegistryEditorModalModifyMutation } from './__generated__/ContainerRegistryEditorModalModifyMutation.graphql';
-import { Form, Input, Select } from 'antd';
+import { Form, Input, Select, message } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,12 +10,18 @@ import { useFragment, useMutation } from 'react-relay';
 
 interface ContainerRegistryEditorModalProps
   extends Omit<BAIModalProps, 'onOk'> {
+  existingHostnames?: string[];
   onOk: (type: 'create' | 'modify') => void;
   containerRegistryFrgmt?: ContainerRegistryEditorModalFragment$key | null;
 }
 const ContainerRegistryEditorModal: React.FC<
   ContainerRegistryEditorModalProps
-> = ({ containerRegistryFrgmt = null, onOk, ...modalProps }) => {
+> = ({
+  existingHostnames,
+  containerRegistryFrgmt = null,
+  onOk,
+  ...modalProps
+}) => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
 
@@ -104,19 +110,31 @@ const ContainerRegistryEditorModal: React.FC<
               },
             };
             if (containerRegistry) {
-              console.log(values);
               commitModifyRegistry({
                 variables: mutationVariables,
-                onCompleted: (res) => {
-                  onOk && onOk('modify');
+                onCompleted: (res, error) => {
+                  if (error) {
+                    message.error(t('dialog.ErrorOccurred'));
+                  } else {
+                    onOk && onOk('modify');
+                  }
+                },
+                onError: (error) => {
+                  message.error(t('dialog.ErrorOccurred'));
                 },
               });
             } else {
-              console.log(values);
               commitCreateRegistry({
                 variables: mutationVariables,
-                onCompleted: (res) => {
-                  onOk && onOk('create');
+                onCompleted: (res, error) => {
+                  if (error) {
+                    message.error(t('dialog.ErrorOccurred'));
+                  } else {
+                    onOk && onOk('create');
+                  }
+                },
+                onError(error) {
+                  message.error(t('dialog.ErrorOccurred'));
                 },
               });
             }
@@ -156,6 +174,16 @@ const ContainerRegistryEditorModal: React.FC<
               required: true,
               message: t('registry.DescHostnameIsEmpty'),
               pattern: new RegExp('^.+$'),
+            },
+            {
+              validator: (_, value) => {
+                if (!containerRegistry && existingHostnames?.includes(value)) {
+                  return Promise.reject(
+                    t('registry.RegistryHostnameAlreadyExists'),
+                  );
+                }
+                return Promise.resolve();
+              },
             },
           ]}
         >

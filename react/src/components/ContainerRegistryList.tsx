@@ -1,5 +1,6 @@
 import { filterNonNullItems } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal from './BAIModal';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import Flex from './Flex';
@@ -21,6 +22,7 @@ import {
 } from '@ant-design/icons';
 import {
   Button,
+  ConfigProvider,
   Form,
   Input,
   Switch,
@@ -47,6 +49,7 @@ const ContainerRegistryList = () => {
   const baiClient = useSuspendedBackendaiClient();
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
   const [isPendingReload, startReloadTransition] = useTransition();
+  const painKiller = usePainKiller();
   const { container_registries, domain } =
     useLazyLoadQuery<ContainerRegistryListQuery>(
       graphql`
@@ -161,25 +164,41 @@ const ContainerRegistryList = () => {
           indicator.set(50, t('registry.RegistryUpdateFailed'));
           indicator.end(1000);
 
-          // globalThis.notification.text = PainKiller.relieve(rescan_images.msg);
-          // globalThis.notification.detail = rescan_images.msg;
-          // globalThis.notification.show();
+          // TODO: handle notification in react side
+          // @ts-ignore
+          globalThis.lablupNotification.text = painKiller.relieve(
+            rescan_images.msg,
+          );
+          // @ts-ignore
+          globalThis.lablupNotification.detail = rescan_images.msg;
+          // @ts-ignore
+          globalThis.lablupNotification.show();
         }
       })
       .catch((err: any) => {
         console.log(err);
         indicator.set(50, t('registry.RescanFailed'));
         indicator.end(1000);
-        // if (err && err.message) {
-        //   globalThis.notification.text = PainKiller.relieve(err.title);
-        //   globalThis.notification.detail = err.message;
-        //   globalThis.notification.show(true, err);
-        // }
+        if (err && err.message) {
+          // @ts-ignore
+          globalThis.lablupNotification.text = painKiller.relieve(err.title);
+          // @ts-ignore
+          globalThis.lablupNotification.detail = err.message;
+          // @ts-ignore
+          globalThis.lablupNotification.show(true, err);
+        }
       });
   };
 
   return (
-    <Flex direction="column" align="stretch">
+    <Flex
+      direction="column"
+      align="stretch"
+      style={{
+        flex: 1,
+        // height: 'calc(100vh - 183px)',
+      }}
+    >
       <Flex
         direction="row"
         justify="end"
@@ -352,10 +371,17 @@ const ContainerRegistryList = () => {
       />
       <ContainerRegistryEditorModal
         containerRegistryFrgmt={editingRegistry}
+        existingHostnames={_.map(
+          container_registries,
+          (r) => r?.hostname || '',
+        )}
         open={!!editingRegistry || isNewModalOpen}
         onOk={(type) => {
           if (type === 'create') {
             updateFetchKey();
+            message.info(t('registry.RegistrySuccessfullyAdded'));
+          } else if (type === 'modify') {
+            message.info(t('registry.RegistrySuccessfullyModified'));
           }
           setEditingRegistry(null);
           setIsNewModalOpen(false);
