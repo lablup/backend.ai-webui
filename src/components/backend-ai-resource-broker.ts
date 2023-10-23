@@ -293,8 +293,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             (item) => !sftpResourceGroups?.includes(item.name),
           );
         }
-
-        this.scaling_groups = sgs ?? [{ name: '' }];
+        sgs = sgs ?? [];
+        if (Array.isArray(sgs) && sgs.length === 0) {
+          this.scaling_groups = [{ name: '' }];
+        }
         // ================================ END ======================================
 
         // Make empty scaling group item if there is no scaling groups.
