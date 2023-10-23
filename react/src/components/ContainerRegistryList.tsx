@@ -126,6 +126,19 @@ const ContainerRegistryList = () => {
     const indicator: any =
       // @ts-ignore
       await globalThis.lablupIndicator.start('indeterminate');
+    const handleReScanError = (err: any) => {
+      console.log(err);
+      indicator.set(50, t('registry.RescanFailed'));
+      indicator.end(1000);
+      if (err && err.message) {
+        // @ts-ignore
+        globalThis.lablupNotification.text = painKiller.relieve(err.title);
+        // @ts-ignore
+        globalThis.lablupNotification.detail = err.message;
+        // @ts-ignore
+        globalThis.lablupNotification.show(true, err);
+      }
+    };
     indicator.set(10, t('registry.UpdatingRegistryInfo'));
     baiClient.maintenance
       .rescan_images(hostname)
@@ -149,12 +162,14 @@ const ContainerRegistryList = () => {
           sse.addEventListener('bgtask_failed', (e) => {
             console.log('bgtask_failed', e['data']);
             sse.close();
-            throw new Error('Background Image scanning task has failed');
+            handleReScanError(
+              new Error('Background Image scanning task has failed'),
+            );
           });
           sse.addEventListener('bgtask_cancelled', () => {
             sse.close();
-            throw new Error(
-              'Background Image scanning task has been cancelled',
+            handleReScanError(
+              new Error('Background Image scanning task has been cancelled'),
             );
           });
         } else {
@@ -172,19 +187,7 @@ const ContainerRegistryList = () => {
           globalThis.lablupNotification.show();
         }
       })
-      .catch((err: any) => {
-        console.log(err);
-        indicator.set(50, t('registry.RescanFailed'));
-        indicator.end(1000);
-        if (err && err.message) {
-          // @ts-ignore
-          globalThis.lablupNotification.text = painKiller.relieve(err.title);
-          // @ts-ignore
-          globalThis.lablupNotification.detail = err.message;
-          // @ts-ignore
-          globalThis.lablupNotification.show(true, err);
-        }
-      });
+      .catch(handleReScanError);
   };
 
   return (
