@@ -13,10 +13,10 @@ import {
 import {
   DeleteOutlined,
   ExclamationCircleOutlined,
-  FileSearchOutlined,
   PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
+  SyncOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -351,7 +351,7 @@ const ContainerRegistryList = () => {
                       size="large"
                       type="text"
                       icon={
-                        <FileSearchOutlined
+                        <SyncOutlined
                           onClick={() => {
                             record.hostname && rescanImage(record.hostname);
                           }}
