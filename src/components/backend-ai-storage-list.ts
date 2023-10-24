@@ -2892,23 +2892,19 @@ export default class BackendAiStorageList extends BackendAIPage {
       'resource_policy',
     ]);
     const policyName = res.keypair.resource_policy;
-    const resource_policy = await globalThis.backendaiclient.resourcePolicy.get(
-      policyName,
-      ['max_vfolder_count', 'max_vfolder_size'],
-    );
-    const max_vfolder_size =
-      resource_policy.keypair_resource_policy.max_vfolder_size;
+    const resource_policy =
+      await globalThis.backendaiclient.resourcePolicy.get(policyName);
     // default unit starts with MB.
-    [this.maxSize.value, this.maxSize.unit] = globalThis.backendaiutils
-      ._humanReadableFileSize(max_vfolder_size)
-      .split(' ');
-    if (['Bytes', 'KB', 'MB'].includes(this.maxSize.unit)) {
-      this.maxSize.value =
-        this.maxSize.value < 1 ? 1 : Math.round(this.maxSize.value);
-      this.maxSize.unit = 'MB';
-    } else {
-      this.maxSize.value = Math.round(this.maxSize.value * 10) / 10;
-    }
+    // [this.maxSize.value, this.maxSize.unit] = globalThis.backendaiutils
+    //   ._humanReadableFileSize(max_vfolder_size)
+    //   .split(' ');
+    // if (['Bytes', 'KB', 'MB'].includes(this.maxSize.unit)) {
+    //   this.maxSize.value =
+    //     this.maxSize.value < 1 ? 1 : Math.round(this.maxSize.value);
+    //   this.maxSize.unit = 'MB';
+    // } else {
+    //   this.maxSize.value = Math.round(this.maxSize.value * 10) / 10;
+    // }
   }
 
   /**

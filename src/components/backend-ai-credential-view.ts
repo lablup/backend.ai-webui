@@ -63,8 +63,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({ type: Object }) concurrency_limit = {};
   @property({ type: Object }) idle_timeout = {};
   @property({ type: Object }) session_lifetime = {};
-  @property({ type: Object }) vfolder_capacity = {};
-  @property({ type: Object }) vfolder_max_limit = {};
   @property({ type: Object }) container_per_session_limit = {};
   @property({ type: Array }) rate_metric = [
     1000, 2000, 3000, 4000, 5000, 10000, 50000,
@@ -313,11 +311,9 @@ export default class BackendAICredentialView extends BackendAIPage {
     this._updateInputStatus(this.concurrency_limit);
     this._updateInputStatus(this.idle_timeout);
     this._updateInputStatus(this.container_per_session_limit);
-    this._updateInputStatus(this.vfolder_capacity);
     if (this.enableSessionLifetime) {
       this._updateInputStatus(this.session_lifetime);
     }
-    this.vfolder_max_limit['value'] = 10;
     this._defaultFileName = this._getDefaultCSVFileName();
     await this._runAction();
   }
@@ -572,8 +568,6 @@ export default class BackendAICredentialView extends BackendAIPage {
     this._validateUserInput(this.concurrency_limit);
     this._validateUserInput(this.idle_timeout);
     this._validateUserInput(this.container_per_session_limit);
-    this._validateUserInput(this.vfolder_capacity);
-    this._validateUserInput(this.vfolder_max_limit);
 
     total_resource_slots['cpu'] = this.cpu_resource['value'];
     total_resource_slots['mem'] = this.ram_resource['value'] + 'g';
@@ -594,14 +588,6 @@ export default class BackendAICredentialView extends BackendAIPage {
       this.container_per_session_limit['value'] === ''
         ? 0
         : parseInt(this.container_per_session_limit['value']);
-    this.vfolder_capacity['value'] =
-      this.vfolder_capacity['value'] === ''
-        ? 0
-        : parseFloat(this.vfolder_capacity['value']);
-    this.vfolder_max_limit['value'] =
-      this.vfolder_max_limit['value'] === ''
-        ? 0
-        : parseInt(this.vfolder_max_limit['value']);
 
     Object.keys(total_resource_slots).map((resource) => {
       if (isNaN(parseFloat(total_resource_slots[resource]))) {
@@ -614,10 +600,6 @@ export default class BackendAICredentialView extends BackendAIPage {
       max_concurrent_sessions: this.concurrency_limit['value'],
       max_containers_per_session: this.container_per_session_limit['value'],
       idle_timeout: this.idle_timeout['value'],
-      max_vfolder_count: this.vfolder_max_limit['value'],
-      max_vfolder_size: BackendAICredentialView.gBToBytes(
-        this.vfolder_capacity['value'],
-      ),
       allowed_vfolder_hosts: vfolder_hosts,
     };
     if (this.enableSessionLifetime) {
@@ -1035,12 +1017,6 @@ export default class BackendAICredentialView extends BackendAIPage {
     ) as TextField;
     this.container_per_session_limit = this.shadowRoot?.querySelector(
       '#container-per-session-limit',
-    ) as TextField;
-    this.vfolder_capacity = this.shadowRoot?.querySelector(
-      '#vfolder-capacity-limit',
-    ) as TextField;
-    this.vfolder_max_limit = this.shadowRoot?.querySelector(
-      '#vfolder-count-limit',
     ) as TextField;
     if (this.enableSessionLifetime) {
       this.session_lifetime = this.shadowRoot?.querySelector(
@@ -1486,28 +1462,6 @@ export default class BackendAICredentialView extends BackendAIPage {
             <backend-ai-multi-select open-up id="allowed-vfolder-hosts" label="${_t(
               'resourcePolicy.AllowedHosts',
             )}" style="width:100%;"></backend-ai-multi-select>
-            <div class="horizontal layout justified" style="width:100%;">
-              <div class="vertical layout flex popup-right-margin">
-                <mwc-textfield label="${_t(
-                  'resourcePolicy.Capacity',
-                )}(GB)" id="vfolder-capacity-limit" type="number" min="0" max="1024" step="0.1"
-                    @change="${(e) =>
-                      this._validateResourceInput(e)}"></mwc-textfield>
-                <mwc-formfield label="${_t(
-                  'resourcePolicy.Unlimited',
-                )}" class="unlimited">
-                    <mwc-checkbox @change="${(e) =>
-                      this._toggleCheckbox(e)}"></mwc-checkbox>
-                </mwc-formfield>
-              </div>
-              <div class="vertical layout flex popup-left-margin">
-                <mwc-textfield label="${_t(
-                  'credential.Max#',
-                )}" class="discrete" id="vfolder-count-limit" type="number" min="0" max="50"
-                    @change="${(e) =>
-                      this._validateResourceInput(e)}"></mwc-textfield>
-              </div>
-            </div>
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
