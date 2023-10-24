@@ -148,20 +148,23 @@ const ContainerRegistryEditorModal: React.FC<
       okText={containerRegistry ? t('button.Save') : t('button.Add')}
       confirmLoading={isInflightCreateRegistry || isInflightModifyRegistry}
       onOk={() => {
-        form.validateFields().then((values) => {
-          if (_.includes(values.config?.type, 'harbor')) {
-            // messageAPI.error('asfasfdasf');
-            modal.confirm({
-              title: t('button.Confirm'),
-              content: t('registry.ConfirmNoUserName'),
-              onOk: () => {
-                handleSave();
-              },
-            });
-          } else {
-            handleSave();
-          }
-        });
+        form
+          .validateFields()
+          .then((values) => {
+            if (_.includes(values.config?.type, 'harbor')) {
+              // messageAPI.error('asfasfdasf');
+              modal.confirm({
+                title: t('button.Confirm'),
+                content: t('registry.ConfirmNoUserName'),
+                onOk: () => {
+                  handleSave();
+                },
+              });
+            } else {
+              handleSave();
+            }
+          })
+          .catch(() => {});
       }}
       {...modalProps}
       destroyOnClose
