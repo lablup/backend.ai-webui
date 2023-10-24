@@ -2887,13 +2887,13 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    */
   async _getMaxSize() {
-    const accessKey = globalThis.backendaiclient._config.accessKey;
-    const res = await globalThis.backendaiclient.keypair.info(accessKey, [
-      'resource_policy',
-    ]);
-    const policyName = res.keypair.resource_policy;
-    const resource_policy =
-      await globalThis.backendaiclient.resourcePolicy.get(policyName);
+    // const accessKey = globalThis.backendaiclient._config.accessKey;
+    // const res = await globalThis.backendaiclient.keypair.info(accessKey, [
+    //  'resource_policy',
+    // ]);
+    // const policyName = res.keypair.resource_policy;
+    // const resource_policy =
+    //  await globalThis.backendaiclient.resourcePolicy.get(policyName);
     // default unit starts with MB.
     // [this.maxSize.value, this.maxSize.unit] = globalThis.backendaiutils
     //   ._humanReadableFileSize(max_vfolder_size)

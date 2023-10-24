@@ -19,7 +19,6 @@ import '@material/mwc-icon-button';
 import '@material/mwc-linear-progress';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select';
-import { Select } from '@material/mwc-select';
 import '@material/mwc-switch';
 import '@material/mwc-textfield/mwc-textfield';
 import { css, CSSResultGroup, html } from 'lit';
