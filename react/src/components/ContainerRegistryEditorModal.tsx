@@ -4,6 +4,7 @@ import { ContainerRegistryEditorModalFragment$key } from './__generated__/Contai
 import { ContainerRegistryEditorModalModifyMutation } from './__generated__/ContainerRegistryEditorModalModifyMutation.graphql';
 import { App, Form, Input, Select } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
+import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
@@ -222,9 +223,33 @@ const ContainerRegistryEditorModal: React.FC<
         >
           <Input />
         </Form.Item>
-        <Form.Item name={['config', 'username']} label={t('registry.Username')}>
-          <Input />
+        <Form.Item
+          noStyle
+          shouldUpdate={(prev, next) =>
+            _.isEmpty(prev.config?.password) !==
+            _.isEmpty(next.config?.password)
+          }
+        >
+          {() => {
+            form.validateFields([['config', 'username']]);
+            return (
+              <Form.Item
+                name={['config', 'username']}
+                label={t('registry.Username')}
+                rules={[
+                  {
+                    required: !_.isEmpty(
+                      form.getFieldValue(['config', 'password']),
+                    ),
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            );
+          }}
         </Form.Item>
+
         <Form.Item name={['config', 'password']} label={t('registry.Password')}>
           <Input.Password />
         </Form.Item>
