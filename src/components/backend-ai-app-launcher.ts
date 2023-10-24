@@ -1752,7 +1752,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               <div id="current-ssh-connection-example">
                 sftp -i ./id_container -P ${this.sshPort} work@${
                   this.sshHost
-                }<br/>
+                } -o StringHostKeyChecking=no -o UserKnownHostsFile=/dev/null<br/>
                 scp -i ./id_container -P ${
                   this.sshPort
                 } -rp /path/to/source work@${this.sshHost}:~/<vfolder-name><br/>
