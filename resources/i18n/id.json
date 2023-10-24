@@ -897,7 +897,8 @@
     "PleaseSelectOption": "Silakan pilih salah satu opsi.",
     "RegistrySuccessfullyModified": "Registry berhasil dimodifikasi.",
     "ModifyRegistry": "Memodifikasi Registri",
-    "NoRegistryToDisplay": "Tidak ada Pendaftaran untuk ditampilkan"
+    "NoRegistryToDisplay": "Tidak ada Pendaftaran untuk ditampilkan",
+    "ConfirmNoUserName": "Pengguna dan kata sandi tidak ditentukan, apakah Anda ingin menyimpan?"
   },
   "resourceGroup": {
     "ResourceGroups": "Grup Sumber Daya",

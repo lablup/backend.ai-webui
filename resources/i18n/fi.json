@@ -782,7 +782,8 @@
     "TypeRegistryNameToDelete": "Kirjoita rekisterin isäntänimi, jonka haluat poistaa",
     "UpdatingRegistryInfo": "Rekisteritietojen päivittäminen...",
     "Username": "Käyttäjätunnus",
-    "UsernameOptional": "Käyttäjätunnus (valinnainen)"
+    "UsernameOptional": "Käyttäjätunnus (valinnainen)",
+    "ConfirmNoUserName": "Käyttäjää ja salasanaa ei ole määritetty, haluatko tallentaa?"
   },
   "resourceGroup": {
     "Active": "Aktiivinen",

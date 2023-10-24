@@ -782,7 +782,8 @@
     "TypeRegistryNameToDelete": "Escriba el nombre de host del registro que desea eliminar",
     "UpdatingRegistryInfo": "Actualización de la información del registro...",
     "Username": "Nombre de usuario",
-    "UsernameOptional": "Nombre de usuario (opcional)"
+    "UsernameOptional": "Nombre de usuario (opcional)",
+    "ConfirmNoUserName": "Usuario y contraseña no especificados, ¿desea guardar?"
   },
   "resourceGroup": {
     "Active": "Activo",

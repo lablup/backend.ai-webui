@@ -897,7 +897,8 @@
     "PleaseSelectOption": "オプションを1つ選択してください。",
     "RegistrySuccessfullyModified": "レジストリが正常に修正されました。",
     "NoRegistryToDisplay": "レジストリ情報がありません。",
-    "ModifyRegistry": "レジストリの修正"
+    "ModifyRegistry": "レジストリの修正",
+    "ConfirmNoUserName": "ユーザーとパスワードが指定されていません。"
   },
   "resourceGroup": {
     "ResourceGroups": "リソースグループ",

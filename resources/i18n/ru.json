@@ -897,7 +897,8 @@
     "PleaseSelectOption": "Пожалуйста, выберите один вариант.",
     "RegistrySuccessfullyModified": "Реестр успешно модифицирован.",
     "ModifyRegistry": "Изменение реестра",
-    "NoRegistryToDisplay": "Отсутствие отображаемых реестров"
+    "NoRegistryToDisplay": "Отсутствие отображаемых реестров",
+    "ConfirmNoUserName": "Пользователь и пароль не указаны, хотите сохранить?"
   },
   "resourceGroup": {
     "ResourceGroups": "Группы ресурсов",

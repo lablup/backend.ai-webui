@@ -990,7 +990,8 @@
     "RescanFailed": "Rescan Failed.",
     "NoRegistryToDisplay": "No Registries to display",
     "RegistrySuccessfullyModified": "Registry successfully modified.",
-    "PleaseSelectOption": "Please Select Option"
+    "PleaseSelectOption": "Please Select Option",
+    "ConfirmNoUserName": "User and password not specified, would you like to save?"
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",

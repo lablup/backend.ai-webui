@@ -19,7 +19,6 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import {
-  App,
   Button,
   Form,
   Input,
@@ -29,6 +28,7 @@ import {
   Tooltip,
   Typography,
   theme,
+  message,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -47,7 +47,7 @@ const ContainerRegistryList = () => {
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
   const [isPendingReload, startReloadTransition] = useTransition();
   const painKiller = usePainKiller();
-  const { message } = App.useApp();
+  const [messageAPI, contextHolder] = message.useMessage();
   const { container_registries, domain } =
     useLazyLoadQuery<ContainerRegistryListQuery>(
       graphql`
@@ -200,6 +200,7 @@ const ContainerRegistryList = () => {
         // height: 'calc(100vh - 183px)',
       }}
     >
+      {contextHolder}
       <Flex
         direction="row"
         justify="end"
@@ -304,7 +305,7 @@ const ContainerRegistryList = () => {
                           updateFetchKey();
                         });
 
-                        message.info({
+                        messageAPI.info({
                           key: 'registry-enabled',
                           content: isOn
                             ? t('registry.RegistryTurnedOn')
@@ -380,9 +381,9 @@ const ContainerRegistryList = () => {
         onOk={(type) => {
           if (type === 'create') {
             updateFetchKey();
-            message.info(t('registry.RegistrySuccessfullyAdded'));
+            messageAPI.info(t('registry.RegistrySuccessfullyAdded'));
           } else if (type === 'modify') {
-            message.info(t('registry.RegistrySuccessfullyModified'));
+            messageAPI.info(t('registry.RegistrySuccessfullyModified'));
           }
           setEditingRegistry(null);
           setIsNewModalOpen(false);
@@ -418,7 +419,7 @@ const ContainerRegistryList = () => {
               onCompleted: (response, error) => {
                 if (error) {
                   setDeletingRegistry(null);
-                  message.error({
+                  messageAPI.error({
                     key: 'registry-deletion-failed',
                     content: t('dialog.ErrorOccurred'),
                   });
@@ -426,7 +427,7 @@ const ContainerRegistryList = () => {
                   startReloadTransition(() => {
                     updateFetchKey();
                   });
-                  message.info({
+                  messageAPI.info({
                     key: 'registry-deleted',
                     content: t('registry.RegistrySuccessfullyDeleted'),
                   });
@@ -434,7 +435,7 @@ const ContainerRegistryList = () => {
                 }
               },
               onError: (error) => {
-                message.error({
+                messageAPI.error({
                   key: 'registry-deletion-failed',
                   content: t('dialog.ErrorOccurred'),
                 });

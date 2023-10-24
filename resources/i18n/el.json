@@ -897,7 +897,8 @@
     "PleaseSelectOption": "Επιλέξτε μία από τις επιλογές.",
     "RegistrySuccessfullyModified": "Το μητρώο τροποποιήθηκε επιτυχώς.",
     "NoRegistryToDisplay": "Δεν εμφανίζονται μητρώα",
-    "ModifyRegistry": "Τροποποίηση μητρώου"
+    "ModifyRegistry": "Τροποποίηση μητρώου",
+    "ConfirmNoUserName": "Ο χρήστης και ο κωδικός πρόσβασης δεν έχουν καθοριστεί, θέλετε να αποθηκεύσετε;"
   },
   "resourceGroup": {
     "ResourceGroups": "Ομάδες πόρων",

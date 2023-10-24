@@ -897,7 +897,8 @@
     "PleaseSelectOption": "Proszę wybrać jedną opcję.",
     "RegistrySuccessfullyModified": "Rejestr został pomyślnie zmodyfikowany.",
     "NoRegistryToDisplay": "Brak rejestrów do wyświetlenia",
-    "ModifyRegistry": "Modyfikacja rejestru"
+    "ModifyRegistry": "Modyfikacja rejestru",
+    "ConfirmNoUserName": "Użytkownik i hasło nie zostały określone, czy chcesz zapisać?"
   },
   "resourceGroup": {
     "ResourceGroups": "Grupy zasobów",

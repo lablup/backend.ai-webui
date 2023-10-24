@@ -897,7 +897,8 @@
     "PleaseSelectOption": "Lütfen bir seçeneği seçin.",
     "RegistrySuccessfullyModified": "Kayıt defteri başarıyla değiştirildi.",
     "NoRegistryToDisplay": "Görüntülenecek Kayıt Yok",
-    "ModifyRegistry": "Kayıt Defterini Değiştir"
+    "ModifyRegistry": "Kayıt Defterini Değiştir",
+    "ConfirmNoUserName": "Kullanıcı ve şifre belirtilmemiş, kaydetmek ister misiniz?"
   },
   "resourceGroup": {
     "ResourceGroups": "Kaynak Grupları",

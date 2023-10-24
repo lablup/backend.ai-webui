@@ -2,7 +2,7 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import { ContainerRegistryEditorModalCreateMutation } from './__generated__/ContainerRegistryEditorModalCreateMutation.graphql';
 import { ContainerRegistryEditorModalFragment$key } from './__generated__/ContainerRegistryEditorModalFragment.graphql';
 import { ContainerRegistryEditorModalModifyMutation } from './__generated__/ContainerRegistryEditorModalModifyMutation.graphql';
-import { App, Form, Input, Select } from 'antd';
+import { message, Form, Input, Select, Modal } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
@@ -26,7 +26,8 @@ const ContainerRegistryEditorModal: React.FC<
   const { t } = useTranslation();
   const [form] = Form.useForm();
 
-  const { message } = App.useApp();
+  const [messageAPI, contextHolder] = message.useMessage();
+  const [modal, modalContextHolder] = Modal.useModal();
 
   const containerRegistry = useFragment(
     graphql`
@@ -65,6 +66,7 @@ const ContainerRegistryEditorModal: React.FC<
         }
       }
     `);
+
   const [commitModifyRegistry, isInflightModifyRegistry] =
     useMutation<ContainerRegistryEditorModalModifyMutation>(graphql`
       mutation ContainerRegistryEditorModalModifyMutation(
@@ -86,6 +88,56 @@ const ContainerRegistryEditorModal: React.FC<
         }
       }
     `);
+
+  const handleSave = async () => {
+    return form
+      .validateFields()
+      .then((values) => {
+        const mutationVariables = {
+          hostname: values.hostname,
+          props: {
+            url: values.config.url,
+            type: values.config.type,
+            project:
+              values.config.project === 'docker'
+                ? undefined
+                : values.config.project,
+            username: values.config.username,
+            password: values.config.password,
+          },
+        };
+        if (containerRegistry) {
+          commitModifyRegistry({
+            variables: mutationVariables,
+            onCompleted: (res, error) => {
+              if (error) {
+                messageAPI.error(t('dialog.ErrorOccurred'));
+              } else {
+                onOk && onOk('modify');
+              }
+            },
+            onError: (error) => {
+              messageAPI.error(t('dialog.ErrorOccurred'));
+            },
+          });
+        } else {
+          commitCreateRegistry({
+            variables: mutationVariables,
+            onCompleted: (res, error) => {
+              if (error) {
+                messageAPI.error(t('dialog.ErrorOccurred'));
+              } else {
+                onOk && onOk('create');
+              }
+            },
+            onError(error) {
+              messageAPI.error(t('dialog.ErrorOccurred'));
+            },
+          });
+        }
+      })
+      .catch((error) => {});
+  };
   return (
     <BAIModal
       title={
@@ -96,57 +148,26 @@ const ContainerRegistryEditorModal: React.FC<
       okText={containerRegistry ? t('button.Save') : t('button.Add')}
       confirmLoading={isInflightCreateRegistry || isInflightModifyRegistry}
       onOk={() => {
-        form
-          .validateFields()
-          .then((values) => {
-            const mutationVariables = {
-              hostname: values.hostname,
-              props: {
-                url: values.config.url,
-                type: values.config.type,
-                project:
-                  values.config.project === 'docker'
-                    ? undefined
-                    : values.config.project,
-                username: values.config.username,
-                password: values.config.password,
+        form.validateFields().then((values) => {
+          if (_.includes(values.config?.type, 'harbor')) {
+            // messageAPI.error('asfasfdasf');
+            modal.confirm({
+              title: t('button.Confirm'),
+              content: t('registry.ConfirmNoUserName'),
+              onOk: () => {
+                handleSave();
               },
-            };
-            if (containerRegistry) {
-              commitModifyRegistry({
-                variables: mutationVariables,
-                onCompleted: (res, error) => {
-                  if (error) {
-                    message.error(t('dialog.ErrorOccurred'));
-                  } else {
-                    onOk && onOk('modify');
-                  }
-                },
-                onError: (error) => {
-                  message.error(t('dialog.ErrorOccurred'));
-                },
-              });
-            } else {
-              commitCreateRegistry({
-                variables: mutationVariables,
-                onCompleted: (res, error) => {
-                  if (error) {
-                    message.error(t('dialog.ErrorOccurred'));
-                  } else {
-                    onOk && onOk('create');
-                  }
-                },
-                onError(error) {
-                  message.error(t('dialog.ErrorOccurred'));
-                },
-              });
-            }
-          })
-          .catch((error) => {});
+            });
+          } else {
+            handleSave();
+          }
+        });
       }}
       {...modalProps}
       destroyOnClose
     >
+      {contextHolder}
+      {modalContextHolder}
       <Form
         form={form}
         layout="vertical"
