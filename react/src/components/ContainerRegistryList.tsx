@@ -19,6 +19,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import {
+  App,
   Button,
   Form,
   Input,
@@ -27,7 +28,6 @@ import {
   Tag,
   Tooltip,
   Typography,
-  message,
   theme,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
@@ -47,6 +47,7 @@ const ContainerRegistryList = () => {
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
   const [isPendingReload, startReloadTransition] = useTransition();
   const painKiller = usePainKiller();
+  const { message } = App.useApp();
   const { container_registries, domain } =
     useLazyLoadQuery<ContainerRegistryListQuery>(
       graphql`

@@ -2,7 +2,7 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import { ContainerRegistryEditorModalCreateMutation } from './__generated__/ContainerRegistryEditorModalCreateMutation.graphql';
 import { ContainerRegistryEditorModalFragment$key } from './__generated__/ContainerRegistryEditorModalFragment.graphql';
 import { ContainerRegistryEditorModalModifyMutation } from './__generated__/ContainerRegistryEditorModalModifyMutation.graphql';
-import { Form, Input, Select, message } from 'antd';
+import { App, Form, Input, Select } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +24,8 @@ const ContainerRegistryEditorModal: React.FC<
 }) => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
+
+  const { message } = App.useApp();
 
   const containerRegistry = useFragment(
     graphql`
