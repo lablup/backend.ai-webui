@@ -246,8 +246,8 @@ type CreateProjectResourcePolicy {
 }
 
 input CreateProjectResourcePolicyInput {
-  max_vfolder_count: BigInt!
-  max_quota_scope_size: BigInt!
+  max_vfolder_count: Int
+  max_quota_scope_size: BigInt
 }
 
 type CreateResourcePreset {
@@ -293,8 +293,8 @@ type CreateUserResourcePolicy {
 }
 
 input CreateUserResourcePolicyInput {
-  max_vfolder_count: BigInt!
-  max_quota_scope_size: BigInt!
+  max_vfolder_count: Int
+  max_quota_scope_size: BigInt
 }
 
 scalar DateTime
@@ -747,8 +747,8 @@ type ModifyProjectResourcePolicy {
 }
 
 input ModifyProjectResourcePolicyInput {
-  max_vfolder_count: BigInt!
-  max_quota_scope_size: BigInt!
+  max_vfolder_count: Int
+  max_quota_scope_size: BigInt
 }
 
 type ModifyResourcePreset {
@@ -808,8 +808,8 @@ type ModifyUserResourcePolicy {
 }
 
 input ModifyUserResourcePolicyInput {
-  max_vfolder_count: BigInt!
-  max_quota_scope_size: BigInt!
+  max_vfolder_count: Int
+  max_quota_scope_size: BigInt
 }
 
 type Mutations {
@@ -890,8 +890,8 @@ type ProjectResourcePolicy {
   id: ID!
   name: String!
   created_at: DateTime!
-  max_vfolder_count: BigInt
-  max_vfolder_size: BigInt
+  max_vfolder_count: Int
+  max_vfolder_size: BigInt @deprecated(reason: "Deprecated since 23.09.1")
   max_quota_scope_size: BigInt
 }
 
@@ -1138,8 +1138,8 @@ type UserResourcePolicy {
   id: ID!
   name: String!
   created_at: DateTime!
-  max_vfolder_count: BigInt
-  max_vfolder_size: BigInt
+  max_vfolder_count: Int
+  max_vfolder_size: BigInt @deprecated(reason: "Deprecated since 23.09.1")
   max_quota_scope_size: BigInt
 }
 
