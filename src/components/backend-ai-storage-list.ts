@@ -3876,6 +3876,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             sessionUuid: sessionResponse.sessionId,
             host: host,
             port: port,
+            mounted: this.explorer.id,
           },
         });
         document.dispatchEvent(event);

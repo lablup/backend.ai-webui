@@ -2413,13 +2413,21 @@ ${item.traceback}</pre
     this.helpDescriptionDialog.show();
   }
 
-  async _openSFTPSessionConnectionInfoDialog(sessionId: string) {
+  async _openSFTPSessionConnectionInfoDialog(
+    sessionId: string,
+    mountedFolder: string,
+  ) {
     const directAccessInfo =
       await globalThis.backendaiclient.get_direct_access_info(sessionId);
     const host = directAccessInfo.public_host.replace(/^https?:\/\//, '');
     const port = directAccessInfo.sshd_ports;
     const event = new CustomEvent('read-ssh-key-and-launch-ssh-dialog', {
-      detail: { sessionUuid: sessionId, host: host, port: port },
+      detail: {
+        sessionUuid: sessionId,
+        host: host,
+        port: port,
+        mounted: mountedFolder,
+      },
     });
     document.dispatchEvent(event);
   }
@@ -2874,7 +2882,15 @@ ${rowData.item[this.sessionNameField]}</pre
                   class="fg green controls-running"
                   id="${rowData.index + '-sftp-connection-info'}"
                   @click="${() =>
-                    this._openSFTPSessionConnectionInfoDialog(rowData.item.id)}"
+                    this._openSFTPSessionConnectionInfoDialog(
+                      rowData.item.id,
+                      // send empty string when there's no explicitly mounted vfolder in sftp session (should not be happened)
+                      rowData.item.mounts.length > 0
+                        ? rowData.item.mounts.filter(
+                            (vfolder: string) => !vfolder.startsWith('.'),
+                          )[0]
+                        : '',
+                    )}"
                 >
                   <img src="/resources/icons/sftp.png" />
                 </mwc-icon-button>
