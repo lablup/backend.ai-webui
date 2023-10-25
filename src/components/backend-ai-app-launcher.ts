@@ -1765,7 +1765,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 </div>
                 <div class="horizontal layout flex monospace ssh-connection-example">
                 <span id="scp-string">
-                  scp -i ./id_container -o StrictHostKeyChecking=no -P ${
+                  scp -i ./id_container -o StrictHostKeyChecking=no UserKnownHostsFile=/dev/null -P ${
                     this.sshPort
                   } -rp /path/to/source work@${this.sshHost}:~/${
                     this.mountedVfolderName
@@ -1779,7 +1779,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 </div>
                 <div class="horizontal layout flex monospace ssh-connection-example">
                 <span id="rsync-string">
-                  rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no" /path/to/source/ work@${
+                  rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no UserKnownHostsFile=/dev/null" /path/to/source/ work@${
                     this.sshHost
                   }:~/${this.mountedVfolderName}/<br/>
                 </span>
