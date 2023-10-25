@@ -116,7 +116,7 @@
     "cli-color": "^2.0.3",
     "concurrently": "^8.2.1",
     "cors": "^2.8.5",
-    "crypto-es": "^2.0.4",
+    "crypto-es": "^2.1.0",
     "electron": "^26.2.2",
     "electron-installer-debian": "^3.2.0",
     "electron-installer-dmg": "^4.0.0",
