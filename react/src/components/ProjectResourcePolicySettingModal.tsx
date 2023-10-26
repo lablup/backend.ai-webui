@@ -78,7 +78,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
           variables: {
             name: projectResourcePolicyInfo?.name,
             props: {
-              max_vfolder_count: values?.max_vfolder_count,
+              // max_vfolder_count: values?.max_vfolder_count,
               max_quota_scope_size: GBToBytes(values?.max_quota_scope_size),
             },
           },

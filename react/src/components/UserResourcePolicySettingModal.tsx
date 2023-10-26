@@ -30,7 +30,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
         id
         name
         created_at
-        max_vfolder_count
+        # max_vfolder_count
         max_quota_scope_size
       }
     `,
@@ -78,7 +78,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
           variables: {
             name: userResourcePolicyInfo?.name,
             props: {
-              max_vfolder_count: values?.max_vfolder_count,
+              // max_vfolder_count: values?.max_vfolder_count,
               max_quota_scope_size: GBToBytes(values?.max_quota_scope_size),
             },
           },

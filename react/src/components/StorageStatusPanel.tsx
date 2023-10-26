@@ -68,12 +68,17 @@ const StorageStatusPanel: React.FC<{
   ).length;
 
   // TODO: Add resolver to enable subquery and modify to call useLazyLoadQuery only once.
-  const { user } = useLazyLoadQuery<StorageStatusPanelKeypairQuery>(
+  // const { user } = useLazyLoadQuery<StorageStatusPanelKeypairQuery>(
+  const { keypair, user } = useLazyLoadQuery<StorageStatusPanelKeypairQuery>(
     graphql`
       query StorageStatusPanelKeypairQuery(
         $domain_name: String
         $email: String
+        $access_key: String
       ) {
+        keypair(domain_name: $domain_name, access_key: $access_key) {
+          resource_policy
+        }
         user(domain_name: $domain_name, email: $email) {
           id
         }
@@ -82,20 +87,26 @@ const StorageStatusPanel: React.FC<{
     {
       domain_name: useCurrentDomainValue(),
       email: baiClient?.email,
+      access_key: baiClient?._config.accessKey,
     },
   );
 
-  const { user_resource_policy, project_quota_scope, user_quota_scope } =
+  // const { user_resource_policy, project_quota_scope, user_quota_scope } =
+  const { keypair_resource_policy, project_quota_scope, user_quota_scope } =
     useLazyLoadQuery<StorageStatusPanelQuery>(
       graphql`
         query StorageStatusPanelQuery(
-          $name: String
+          # $name: String
+          $keypair_resource_policy_name: String
           $project_quota_scope_id: String!
           $user_quota_scope_id: String!
           $storage_host_name: String!
           $skipQuotaScope: Boolean!
         ) {
-          user_resource_policy(name: $name) {
+          # user_resource_policy(name: $name) {
+          #   max_vfolder_count
+          # }
+          keypair_resource_policy(name: $keypair_resource_policy_name) {
             max_vfolder_count
           }
           project_quota_scope: quota_scope(
@@ -113,6 +124,7 @@ const StorageStatusPanel: React.FC<{
         }
       `,
       {
+        keypair_resource_policy_name: keypair?.resource_policy,
         project_quota_scope_id: addQuotaScopeTypePrefix(
           'project',
           currentProject?.id,
@@ -126,7 +138,8 @@ const StorageStatusPanel: React.FC<{
       },
     );
 
-  const maxVfolderCount = user_resource_policy?.max_vfolder_count || 0;
+  const maxVfolderCount = keypair_resource_policy?.max_vfolder_count || 0;
+  // const maxVfolderCount = user_resource_policy?.max_vfolder_count || 0;
   const numberOfFolderPercent = (
     maxVfolderCount > 0
       ? ((createdCount / maxVfolderCount) * 100)?.toFixed(2)
