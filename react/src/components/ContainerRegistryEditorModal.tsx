@@ -285,7 +285,7 @@ const ContainerRegistryEditorModal: React.FC<
           <Form.Item
             noStyle
             shouldUpdate={(prev, next) =>
-              prev.isChangedPassword != next.isChangedPassword
+              prev.isChangedPassword !== next.isChangedPassword
             }
           >
             {() => (
