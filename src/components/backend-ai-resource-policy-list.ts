@@ -63,6 +63,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({ type: Object }) _boundStorageNodesRenderer =
     this.storageNodesRenderer.bind(this);
   @query('#dropdown-area') dropdownArea!: HTMLDivElement;
+  @query('#vfolder-count-limit') vfolderCountLimitInput!: TextField;
   @query('#cpu-resource') cpuResource!: TextField;
   @query('#ram-resource') ramResource!: TextField;
   @query('#gpu-resource') gpuResource!: TextField;
@@ -444,6 +445,17 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               label="${_t('resourcePolicy.AllowedHosts')}"
               style="width:100%;"
             ></backend-ai-multi-select>
+            <div class="horizontal layout justified" style="width:100%;">
+              <mwc-textfield
+                label="${_t('credential.Max#')}"
+                class="discrete"
+                id="vfolder-count-limit"
+                type="number"
+                min="0"
+                max="50"
+                @change="${(e) => this._validateResourceInput(e)}"
+              ></mwc-textfield>
+            </div>
           </div>
         </div>
         <div
@@ -522,6 +534,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     switch (resourceName) {
       case 'cpu':
       case 'cuda_device':
+      case 'max_vfolder_count':
         decimalPoint = 0;
         break;
       case 'mem':
@@ -599,6 +612,19 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                 </div>
               `
             : html``}
+        </div>
+        <div class="layout horizontal wrap center">
+          <div class="layout horizontal configuration">
+            <mwc-icon class="fg green indicator">folder</mwc-icon>
+            <span>
+              ${this._displayResourcesByResourceUnit(
+                rowData.item.max_vfolder_count,
+                false,
+                'max_vfolder_count',
+              )}
+            </span>
+            <span class="indicator">Folders</span>
+          </div>
         </div>
       `,
       root,
@@ -872,6 +898,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this._updateInputStatus(this.idleTimeout);
     this._updateInputStatus(this.containerPerSessionLimit);
 
+    this.vfolderCountLimitInput.value = resourcePolicy.max_vfolder_count;
+
     this.allowed_vfolder_hosts = allowedStorageHosts;
   }
 
@@ -1018,6 +1046,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this._validateUserInput(this.concurrencyLimit);
     this._validateUserInput(this.idleTimeout);
     this._validateUserInput(this.containerPerSessionLimit);
+    this._validateUserInput(this.vfolderCountLimitInput);
 
     total_resource_slots['cpu'] = this.cpuResource.value;
     total_resource_slots['mem'] = this.ramResource.value + 'g';
@@ -1034,6 +1063,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       ? BigNumber.getValue().toString()
       : this.containerPerSessionLimit.value;
 
+    this.vfolderCountLimitInput.value =
+      this.vfolderCountLimitInput.value === ''
+        ? '0'
+        : this.vfolderCountLimitInput.value;
     Object.keys(total_resource_slots).map((resource) => {
       if (isNaN(parseFloat(total_resource_slots[resource]))) {
         delete total_resource_slots[resource];
@@ -1046,6 +1079,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       max_concurrent_sessions: this.concurrencyLimit.value,
       max_containers_per_session: this.containerPerSessionLimit.value,
       idle_timeout: this.idleTimeout.value,
+      max_vfolder_count: this.vfolderCountLimitInput.value,
       allowed_vfolder_hosts: vfolder_hosts,
     };
 
