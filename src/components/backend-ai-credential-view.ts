@@ -597,7 +597,6 @@ export default class BackendAICredentialView extends BackendAIPage {
         delete total_resource_slots[resource];
       }
     });
-    parseFloat(this.vfolder_capacity['value']);
     this.vfolder_max_limit['value'] =
       this.vfolder_max_limit['value'] === ''
         ? 0
