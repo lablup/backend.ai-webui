@@ -660,6 +660,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.03.11')) {
       this._features['model-serving'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('23.09.2')) {
+      this._features['container-registry-gql'] = true;
+    }
   }
 
   /**

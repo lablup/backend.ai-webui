@@ -898,7 +898,8 @@
     "PleaseSelectOption": "Bitte wählen Sie eine Option.",
     "RegistrySuccessfullyModified": "Registry erfolgreich geändert.",
     "NoRegistryToDisplay": "Keine Registrierungen anzeigen",
-    "ModifyRegistry": "Registry ändern"
+    "ModifyRegistry": "Registry ändern",
+    "ConfirmNoUserName": "Benutzer und Passwort nicht angegeben, möchten Sie speichern?"
   },
   "resourceGroup": {
     "ResourceGroups": "Ressourcengruppen",

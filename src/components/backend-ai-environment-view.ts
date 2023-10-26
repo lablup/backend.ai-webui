@@ -181,9 +181,18 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
             ?active="${this._activeTab === 'resource-template-lists'}"
           ></backend-ai-resource-preset-list>
           <div id="registry-lists" class="tab-content">
-            <backend-ai-registry-list
-              ?active="${this._activeTab === 'registry-lists'}"
-            ></backend-ai-registry-list>
+            ${globalThis.backendaiclient.supports('container-registry-gql') &&
+            this._activeTab === 'registry-lists'
+              ? html`
+                  <div class="flex" style="height:calc(100vh - 183px);">
+                    <backend-ai-react-container-registry-list></backend-ai-react-container-registry-list>
+                  </div>
+                `
+              : html`
+                  <backend-ai-registry-list
+                    ?active="${this._activeTab === 'registry-lists'}"
+                  ></backend-ai-registry-list>
+                `}
           </div>
         </div>
       </lablup-activity-panel>

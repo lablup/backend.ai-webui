@@ -898,7 +898,8 @@
     "PleaseSelectOption": "Veuillez sélectionner une option.",
     "RegistrySuccessfullyModified": "Registre modifié avec succès.",
     "ModifyRegistry": "Modifier le registre",
-    "NoRegistryToDisplay": "Aucun registre à afficher"
+    "NoRegistryToDisplay": "Aucun registre à afficher",
+    "ConfirmNoUserName": "L'utilisateur et le mot de passe ne sont pas spécifiés, voulez-vous sauvegarder ?"
   },
   "resourceGroup": {
     "ResourceGroups": "Groupes de ressources",
