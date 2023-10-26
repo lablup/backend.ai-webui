@@ -3167,6 +3167,7 @@ class ResourcePolicy {
       'total_resource_slots',
       'max_concurrent_sessions',
       'max_containers_per_session',
+      'max_vfolder_count',
       'allowed_vfolder_hosts',
       'idle_timeout',
     ],

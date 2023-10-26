@@ -116,7 +116,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
             variables: {
               name: project_resource_policy.name,
               props: {
-                max_vfolder_count: 0,
+                // max_vfolder_count: 0,
                 max_quota_scope_size: -1,
               },
             },
@@ -139,7 +139,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
             variables: {
               name: user_resource_policy.name,
               props: {
-                max_vfolder_count: 0,
+                // max_vfolder_count: 0,
                 max_quota_scope_size: -1,
               },
             },
