@@ -236,6 +236,8 @@ input CreateKeyPairResourcePolicyInput {
   max_concurrent_sessions: Int!
   max_containers_per_session: Int!
   idle_timeout: BigInt!
+  max_vfolder_count: Int!
+  max_vfolder_size: BigInt!
   allowed_vfolder_hosts: JSONString
 }
 
@@ -246,7 +248,6 @@ type CreateProjectResourcePolicy {
 }
 
 input CreateProjectResourcePolicyInput {
-  max_vfolder_count: Int
   max_quota_scope_size: BigInt
 }
 
@@ -293,7 +294,6 @@ type CreateUserResourcePolicy {
 }
 
 input CreateUserResourcePolicyInput {
-  max_vfolder_count: Int
   max_quota_scope_size: BigInt
 }
 
@@ -575,6 +575,8 @@ type KeyPairResourcePolicy {
   max_concurrent_sessions: Int
   max_containers_per_session: Int
   idle_timeout: BigInt
+  max_vfolder_count: Int
+  max_vfolder_size: BigInt
   allowed_vfolder_hosts: JSONString
 }
 
@@ -738,6 +740,8 @@ input ModifyKeyPairResourcePolicyInput {
   max_concurrent_sessions: Int
   max_containers_per_session: Int
   idle_timeout: BigInt
+  max_vfolder_count: Int
+  max_vfolder_size: BigInt
   allowed_vfolder_hosts: JSONString
 }
 
@@ -747,7 +751,6 @@ type ModifyProjectResourcePolicy {
 }
 
 input ModifyProjectResourcePolicyInput {
-  max_vfolder_count: Int
   max_quota_scope_size: BigInt
 }
 
@@ -808,7 +811,6 @@ type ModifyUserResourcePolicy {
 }
 
 input ModifyUserResourcePolicyInput {
-  max_vfolder_count: Int
   max_quota_scope_size: BigInt
 }
 
@@ -890,7 +892,6 @@ type ProjectResourcePolicy {
   id: ID!
   name: String!
   created_at: DateTime!
-  max_vfolder_count: Int
   max_vfolder_size: BigInt @deprecated(reason: "Deprecated since 23.09.1")
   max_quota_scope_size: BigInt
 }
@@ -1138,7 +1139,6 @@ type UserResourcePolicy {
   id: ID!
   name: String!
   created_at: DateTime!
-  max_vfolder_count: Int
   max_vfolder_size: BigInt @deprecated(reason: "Deprecated since 23.09.1")
   max_quota_scope_size: BigInt
 }
