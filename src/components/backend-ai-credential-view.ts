@@ -608,6 +608,8 @@ export default class BackendAICredentialView extends BackendAIPage {
       max_containers_per_session: this.container_per_session_limit['value'],
       idle_timeout: this.idle_timeout['value'],
       max_vfolder_count: this.vfolder_max_limit['value'],
+      // TODO: remove this after fix graphql schema
+      max_vfolder_size: -1,
       allowed_vfolder_hosts: vfolder_hosts,
     };
     if (this.enableSessionLifetime) {
