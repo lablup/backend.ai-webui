@@ -2,7 +2,7 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import { ContainerRegistryEditorModalCreateMutation } from './__generated__/ContainerRegistryEditorModalCreateMutation.graphql';
 import { ContainerRegistryEditorModalFragment$key } from './__generated__/ContainerRegistryEditorModalFragment.graphql';
 import { ContainerRegistryEditorModalModifyMutation } from './__generated__/ContainerRegistryEditorModalModifyMutation.graphql';
-import { message, Form, Input, Select, Modal } from 'antd';
+import { message, Form, Input, Select, Modal, Checkbox } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
@@ -102,11 +102,18 @@ const ContainerRegistryEditorModal: React.FC<
               values.config.project === 'docker'
                 ? undefined
                 : values.config.project,
-            username: values.config.username,
-            password: values.config.password,
+            username: _.isEmpty(values.config.username)
+              ? null
+              : values.config.username,
+            password: _.isEmpty(values.config.password)
+              ? null
+              : values.config.password,
           },
         };
         if (containerRegistry) {
+          if (!values.isChangedPassword) {
+            delete mutationVariables.props.password;
+          }
           commitModifyRegistry({
             variables: mutationVariables,
             onCompleted: (res, error) => {
@@ -152,7 +159,6 @@ const ContainerRegistryEditorModal: React.FC<
           .validateFields()
           .then((values) => {
             if (_.includes(values.config?.type, 'harbor')) {
-              // messageAPI.error('asfasfdasf');
               modal.confirm({
                 title: t('button.Confirm'),
                 content: t('registry.ConfirmNoUserName'),
@@ -247,6 +253,7 @@ const ContainerRegistryEditorModal: React.FC<
         >
           <Input />
         </Form.Item>
+
         <Form.Item
           noStyle
           shouldUpdate={(prev, next) =>
@@ -274,8 +281,37 @@ const ContainerRegistryEditorModal: React.FC<
           }}
         </Form.Item>
 
-        <Form.Item name={['config', 'password']} label={t('registry.Password')}>
-          <Input.Password />
+        <Form.Item label={t('registry.Password')}>
+          <Form.Item
+            noStyle
+            shouldUpdate={(prev, next) =>
+              prev.isChangedPassword != next.isChangedPassword
+            }
+          >
+            {() => (
+              <Form.Item noStyle name={['config', 'password']}>
+                <Input.Password
+                  disabled={
+                    !_.isEmpty(containerRegistry) &&
+                    !form.getFieldValue('isChangedPassword')
+                  }
+                />
+              </Form.Item>
+            )}
+          </Form.Item>
+          {!_.isEmpty(containerRegistry) && (
+            <Form.Item noStyle name="isChangedPassword" valuePropName="checked">
+              <Checkbox
+                onChange={(e) => {
+                  if (!e.target.checked) {
+                    form.setFieldValue(['config', 'password'], '');
+                  }
+                }}
+              >
+                {t('webui.menu.ChangePassword')}
+              </Checkbox>
+            </Form.Item>
+          )}
         </Form.Item>
         <Form.Item
           name={['config', 'type']}
