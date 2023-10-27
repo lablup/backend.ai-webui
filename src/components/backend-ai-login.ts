@@ -129,6 +129,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) needToResetPassword = false;
   @property({ type: Boolean }) directoryBasedUsage = false;
   @property({ type: Number }) maxCountForPreopenPorts = 10;
+  @property({ type: Boolean }) allowCustomResourceAllocation = true;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel')
@@ -823,6 +824,15 @@ export default class BackendAILogin extends BackendAIPage {
       defaultValue: this.maxCountForPreopenPorts, // default value has been already assigned in property declaration
       value: parseInt(generalConfig?.maxCountForPreopenPorts),
     } as ConfigValueObject) as number;
+
+    this.allowCustomResourceAllocation = this._getConfigValueByExists(
+      generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: true,
+        value: generalConfig?.allowCustomResourceAllocation,
+      } as ConfigValueObject,
+    ) as boolean;
   }
 
   /**
@@ -1738,6 +1748,8 @@ export default class BackendAILogin extends BackendAIPage {
           this.directoryBasedUsage;
         globalThis.backendaiclient._config.maxCountForPreopenPorts =
           this.maxCountForPreopenPorts;
+        globalThis.backendaiclient._config.allowCustomResourceAllocation =
+          this.allowCustomResourceAllocation;
         globalThis.backendaiclient.ready = true;
         if (
           this.endpoints.indexOf(
