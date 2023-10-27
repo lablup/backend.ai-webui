@@ -86,7 +86,7 @@ export default class BackendAISummary extends BackendAIPage {
   @property({ type: Object }) invitations = Object();
   @property({ type: Object }) appDownloadMap;
   @property({ type: String }) appDownloadUrl;
-  @property({ type: Boolean }) allowAppDownloadUrl = true;
+  @property({ type: Boolean }) allowAppDownloadPanel = true;
   @property({ type: String }) downloadAppOS = '';
   @query('#resource-monitor') resourceMonitor!: BackendAIResourceMonitor;
 
@@ -390,8 +390,8 @@ export default class BackendAISummary extends BackendAIPage {
           this.webui_version = globalThis.packageVersion;
           this.appDownloadUrl =
             globalThis.backendaiclient._config.appDownloadUrl;
-          this.allowAppDownloadUrl =
-            globalThis.backendaiclient._config.allowAppDownloadUrl;
+          this.allowAppDownloadPanel =
+            globalThis.backendaiclient._config.allowAppDownloadPanel;
 
           if (this.activeConnected) {
             this._refreshConsoleUpdateInformation();
@@ -407,8 +407,8 @@ export default class BackendAISummary extends BackendAIPage {
       this.manager_version = globalThis.backendaiclient.managerVersion;
       this.webui_version = globalThis.packageVersion;
       this.appDownloadUrl = globalThis.backendaiclient._config.appDownloadUrl;
-      this.allowAppDownloadUrl =
-        globalThis.backendaiclient._config.allowAppDownloadUrl;
+      this.allowAppDownloadPanel =
+        globalThis.backendaiclient._config.allowAppDownloadPanel;
       this._refreshConsoleUpdateInformation();
       this._refreshInvitations();
       // let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
@@ -722,7 +722,7 @@ export default class BackendAISummary extends BackendAIPage {
               </div>
             </lablup-activity-panel>
           </div>
-          ${!globalThis.isElectron && this.allowAppDownloadUrl
+          ${!globalThis.isElectron && this.allowAppDownloadPanel
             ? html`
                 <lablup-activity-panel
                   title="${_t('summary.DownloadWebUIApp')}"
