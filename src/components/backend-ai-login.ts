@@ -83,6 +83,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: String }) blockType = '';
   @property({ type: String }) blockMessage = '';
   @property({ type: String }) appDownloadUrl;
+  @property({ type: Boolean }) allowAppDownloadUrl = true;
   @property({ type: String }) connection_mode = 'SESSION' as ConnectionMode;
   @property({ type: String }) systemSSHImage = '';
   @property({ type: String }) fasttrackEndpoint = '';
@@ -752,6 +753,13 @@ export default class BackendAILogin extends BackendAIPage {
         'https://github.com/lablup/backend.ai-webui/releases/download',
       value: generalConfig?.appDownloadUrl,
     } as ConfigValueObject) as string;
+
+    // Enable allowAppDownloadUrl flag
+    this.allowAppDownloadUrl = this._getConfigValueByExists(generalConfig, {
+      valueType: 'boolean',
+      defaultValue: true,
+      value: generalConfig?.allowAppDownloadUrl,
+    } as ConfigValueObject) as boolean;
 
     // System role ssh image
     this.systemSSHImage = this._getConfigValueByExists(generalConfig, {
@@ -1728,6 +1736,8 @@ export default class BackendAILogin extends BackendAIPage {
         globalThis.backendaiclient._config.enableContainerCommit =
           this._enableContainerCommit;
         globalThis.backendaiclient._config.appDownloadUrl = this.appDownloadUrl;
+        globalThis.backendaiclient._config.allowAppDownloadUrl =
+          this.allowAppDownloadUrl;
         globalThis.backendaiclient._config.systemSSHImage = this.systemSSHImage;
         globalThis.backendaiclient._config.fasttrackEndpoint =
           this.fasttrackEndpoint;
