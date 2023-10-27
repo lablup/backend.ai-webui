@@ -1,1 +1,4 @@
 directive @skipOnClient(if: Boolean) on FIELD
+
+directive @since(version: String!) on FIELD
+directive @deprecated_since(version: String!) on FIELD

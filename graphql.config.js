@@ -5,4 +5,9 @@ module.exports = {
     // "./react/data/relay-and-local-directives-for-graphql-config.graphql"
   ],
   documents: ["./react/src/**/*.{graphql,ts,tsx}"],
+  extensions: {
+    languageService: {
+      cacheSchemaFileForLookup: true
+    }
+  }
 };

@@ -1,5 +1,9 @@
+import { filter } from 'lodash';
+
 function parseDirectives(str: string) {
-  const pattern = /(\w+)\s@\s*(\w+)\s*\(\s*(\w+)\s*:\s*(\$?\w+)\s*\)/g;
+  const pattern =
+    /(\w+)\s@\s*(\w+)\s*\(\s*(\w+)\s*:\s*(\"[\d\.]+\"|\$?\w+)\s*\)/g;
+
   const directives = [];
 
   let result;
@@ -26,30 +30,23 @@ export function removeSkipOnClientDirective(
 ) {
   const filteredVariables = { ...variables };
   const directives = parseDirectives(query);
-  directives.forEach((directive) => {
-    if (
-      directive.directive === 'skipOnClient' &&
-      directive.argumentName === 'if'
-    ) {
-      if (
-        directive.argumentValue &&
-        (variables[directive.argumentValue.substring(1)] === true ||
-          directive.argumentValue === 'true')
-      ) {
-        // remove all lines of query that contains directive
-        query = query.replace(directive.originFieldStr, '');
-      } else {
-        // remove directive only
-        query = query.replace(
-          directive.originFieldStr,
-          directive.originFieldStr.replace(
-            /@\s*(skipOnClient)\s*\(\s*(\w+)\s*:\s*(\$?\w+)\s*\)/,
-            '',
-          ),
-        );
-      }
 
-      // if argumentValue is variable and it is not used in query, remove it from variables and argument definition
+  directives.forEach((directive) => {
+    const removeAllLinesOfQuery = () => {
+      query = query.replace(directive.originFieldStr, '');
+    };
+
+    const removeDirectiveOnly = () => {
+      query = query.replace(
+        directive.originFieldStr,
+        directive.originFieldStr.replace(
+          /@\s*(skipOnClient|since|deprecated_since)\s*\(\s*(\w+)\s*:\s*(\"[\d\.]+\"|\$?\w+)\s*\)/,
+          '',
+        ),
+      );
+    };
+
+    const removeVariableForDirective = () => {
       if (
         directive.argumentValue.startsWith('$') &&
         query.split(directive.argumentValue).length === 2
@@ -59,7 +56,58 @@ export function removeSkipOnClientDirective(
         query = query.replace(pattern, '');
         delete filteredVariables[directive.argumentValue.substring(1)];
       }
-    } else {
+    };
+
+    if (
+      directive.directive === 'skipOnClient' &&
+      directive.argumentName === 'if'
+    ) {
+      if (
+        directive.argumentValue &&
+        // remove @ from argumentValue and check if it is true
+        (variables[directive.argumentValue.substring(1)] === true ||
+          directive.argumentValue === 'true')
+      ) {
+        removeAllLinesOfQuery();
+      } else {
+        removeDirectiveOnly();
+      }
+      removeVariableForDirective();
+    } else if (
+      directive.directive === 'since' &&
+      directive.argumentName === 'version'
+    ) {
+      const version =
+        variables[directive.argumentValue.substring(1)] ||
+        directive.argumentValue.replace(/"/g, '');
+      console.log('###', version);
+      if (
+        directive.argumentValue &&
+        // @ts-ignore
+        !globalThis.backendaiclient?.isManagerVersionCompatibleWith(version)
+      ) {
+        removeAllLinesOfQuery();
+      } else {
+        removeDirectiveOnly();
+      }
+      removeVariableForDirective();
+    } else if (
+      directive.directive === 'deprecated_since' &&
+      directive.argumentName === 'version'
+    ) {
+      const version =
+        variables[directive.argumentValue.substring(1)] ||
+        directive.argumentValue.replace(/"/g, '');
+      if (
+        directive.argumentValue &&
+        // @ts-ignore
+        globalThis.backendaiclient?.isManagerVersionCompatibleWith(version)
+      ) {
+        removeAllLinesOfQuery();
+      } else {
+        removeDirectiveOnly();
+      }
+      removeVariableForDirective();
     }
   });
   return {

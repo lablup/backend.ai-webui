@@ -18,17 +18,6 @@ const fetchFn: FetchFunction = async (
   // cacheConfig,
   // uploadables
 ) => {
-  // @skipOnClient directive modifies GraphQL queries according to the availability of a supported field.
-  const transformedData = removeSkipOnClientDirective(
-    request.text || '',
-    variables,
-  );
-
-  const reqBody = {
-    query: transformedData.query,
-    variables: transformedData.variables,
-  };
-
   //@ts-ignore
   if (globalThis.backendaiclient === undefined) {
     // If globalThis.backendaiclient is not defined, wait for the backend-ai-connected event.
@@ -44,6 +33,17 @@ const fetchFn: FetchFunction = async (
       document.addEventListener('backend-ai-connected', onBackendAIConnected);
     });
   }
+
+  // @skipOnClient directive modifies GraphQL queries according to the availability of a supported field.
+  const transformedData = removeSkipOnClientDirective(
+    request.text || '',
+    variables,
+  );
+
+  const reqBody = {
+    query: transformedData.query,
+    variables: transformedData.variables,
+  };
 
   //@ts-ignore
   const reqInfo = globalThis.backendaiclient?.newSignedRequest(
