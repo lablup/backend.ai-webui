@@ -473,8 +473,13 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
     // Launch app.
     if (sessionId) {
-      if (requestedApp.startsWith('jupyter') && !this.detectIE()) {
-        requestedApp = 'jupyterlab';
+      if (!this.detectIE()) {
+        if (requestedApp.startsWith('bokff')) {
+          requestedApp = requestedApp.split('-')[1];
+        }
+        if (requestedApp.startsWith('jupyter')) {
+          requestedApp = 'jupyterlab';
+        }
       }
       this._openServiceApp(sessionId, requestedApp);
     }
