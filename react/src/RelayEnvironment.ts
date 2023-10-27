@@ -30,6 +30,22 @@ const fetchFn: FetchFunction = async (
   };
 
   //@ts-ignore
+  if (globalThis.backendaiclient === undefined) {
+    // If globalThis.backendaiclient is not defined, wait for the backend-ai-connected event.
+    await new Promise((resolve) => {
+      const onBackendAIConnected = () => {
+        // When the backend-ai-connected event occurs, remove the event listener and execute the function.
+        document.removeEventListener(
+          'backend-ai-connected',
+          onBackendAIConnected,
+        );
+        resolve(undefined);
+      };
+      document.addEventListener('backend-ai-connected', onBackendAIConnected);
+    });
+  }
+
+  //@ts-ignore
   const reqInfo = globalThis.backendaiclient?.newSignedRequest(
     'POST',
     '/admin/gql',
