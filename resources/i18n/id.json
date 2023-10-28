@@ -1412,7 +1412,7 @@
     "TokenExpiredDateHelp": "Waktu kedaluwarsa token default adalah 24 jam kemudian.",
     "TokenExpiredDateError": "Waktu kedaluwarsa token harus setelah waktu saat ini",
     "FormValidationFailed": "Validasi formulir gagal",
-    "ServiceNameRule": "Hanya mengizinkan 4 hingga 64 karakter alfanumerik, garis bawah (_), tanda hubung (-), dan titik (.) dan harus diakhiri dengan karakter alfanumerik.",
+    "ServiceNameRule": "Hanya mengizinkan 4 hingga 24 karakter alfanumerik, garis bawah (_), tanda hubung (-), dan titik (.) dan harus diakhiri dengan karakter alfanumerik.",
     "resources": "Sumber daya",
     "Image": "Gambar"
   },

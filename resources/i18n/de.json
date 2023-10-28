@@ -1337,7 +1337,7 @@
     "FormValidationFailed": "Formularüberprüfung fehlgeschlagen",
     "StartNewServing": "Neue Portion starten",
     "ServiceName": "Dienst Name",
-    "ServiceNameRule": "Erlaubt sind nur 4 bis 64 alphanumerische Zeichen, Unterstrich(_), Bindestrich(-) und Punkt(.) und er muss mit einem alphanumerischen Zeichen enden.",
+    "ServiceNameRule": "Erlaubt sind nur 4 bis 24 alphanumerische Zeichen, Unterstrich(_), Bindestrich(-) und Punkt(.) und er muss mit einem alphanumerischen Zeichen enden.",
     "OpenToPublic": "Offen für die Öffentlichkeit",
     "DesiredRoutingCount": "Gewünschte Routinganzahl",
     "ServingRouteErrorModalTitle": "Serving Route Fehler",
