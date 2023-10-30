@@ -48,7 +48,6 @@ describe('graphql-transformer', () => {
         return 100 <= parseInt(version);
       },
     );
-    console.log(result);
     expect(result).toBe(`query MyQuery {
   testQuery(props: {name: "asdf", age: 32}) {
     filed11
