@@ -505,7 +505,8 @@
     "KeypairDetail": "配对密钥详情",
     "SignoutSeccessfullyFinished": "签出已顺利完成",
     "Status": "现状",
-    "NoUserToDisplay": "无用户显示"
+    "NoUserToDisplay": "无用户显示",
+    "EnableSudoSession": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "文件夾",

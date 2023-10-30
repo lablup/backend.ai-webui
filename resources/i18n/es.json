@@ -204,7 +204,8 @@
       "PleaseSelectOptions": "Por favor, seleccione al menos una opción o más.",
       "PolicyName": "Nombre de la póliza Obligatorio.",
       "ValidationFailed": "Validación fallida"
-    }
+    },
+    "EnableSudoSession": "__NOT_TRANSLATED__"
   },
   "data": {
     "Allowslettersnumbersand-_": "Permite letras, números y -_",

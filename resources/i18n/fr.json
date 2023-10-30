@@ -505,7 +505,8 @@
     "AdminCanOnlyRemoveTotp": "Seule la désactivation du 2FA des autres utilisateurs est possible.",
     "KeySeccessfullyDeleted": "La paire de clés est supprimée successivement.",
     "SignoutSeccessfullyFinished": "La signature est terminée en toute sécurité",
-    "ModifyUserDetail": "Modifier les détails de l'utilisateur"
+    "ModifyUserDetail": "Modifier les détails de l'utilisateur",
+    "EnableSudoSession": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Dossiers",

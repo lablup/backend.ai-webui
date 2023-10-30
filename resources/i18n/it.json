@@ -505,7 +505,8 @@
     "KeypairDetail": "Dettaglio coppia di chiavi",
     "SignoutSeccessfullyFinished": "Il signout è terminato in modo sicuro",
     "Status": "Stato",
-    "NoUserToDisplay": "Nessun utente da visualizzare"
+    "NoUserToDisplay": "Nessun utente da visualizzare",
+    "EnableSudoSession": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "cartelle",
