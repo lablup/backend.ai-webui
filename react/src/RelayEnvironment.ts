@@ -1,5 +1,5 @@
 // import { createClient } from "graphql-ws";
-import { removeSkipOnClientDirective } from './helper/graphql-transformer';
+import { manipulateGraphQLQueryWithClientDirectives } from './helper/graphql-transformer';
 import {
   Environment,
   Network,
@@ -34,15 +34,16 @@ const fetchFn: FetchFunction = async (
     });
   }
 
-  // @skipOnClient directive modifies GraphQL queries according to the availability of a supported field.
-  const transformedData = removeSkipOnClientDirective(
+  const transformedQuery = manipulateGraphQLQueryWithClientDirectives(
     request.text || '',
     variables,
+    // @ts-ignore
+    globalThis.backendaiclient?.isManagerVersionCompatibleWith,
   );
 
   const reqBody = {
-    query: transformedData.query,
-    variables: transformedData.variables,
+    query: transformedQuery,
+    variables: variables,
   };
 
   //@ts-ignore
