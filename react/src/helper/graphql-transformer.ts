@@ -51,6 +51,7 @@ export function manipulateGraphQLQueryWithClientDirectives(
                 return true;
               }
             }
+            return false;
           })
         ) {
           return null;
