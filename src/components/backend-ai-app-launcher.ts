@@ -487,14 +487,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     this.preOpenedPortList = [];
     const preOpenAppNameList = servicePorts
-      ?.filter(
-        (item) => item.protocol === 'preopen' && item.is_inference === false,
-      )
+      ?.filter((item) => item.protocol === 'preopen')
       .map((item) => item.name);
-    const inferenceAppNameList = servicePorts
-      ?.filter((item) => item.is_inference === true)
-      .map((item) => item.name);
-
     preOpenAppNameList?.forEach((elm) => {
       this.preOpenedPortList.push({
         name: elm,
@@ -504,11 +498,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       });
     });
     const filteredAppServices =
-      appServices?.filter(
-        (item) =>
-          !preOpenAppNameList?.includes(item) &&
-          !inferenceAppNameList?.includes(item),
-      ) ?? appServices;
+      appServices?.filter((item) => !preOpenAppNameList?.includes(item)) ??
+      appServices;
     this.appSupportList = [];
     if (!filteredAppServices?.includes('ttyd')) {
       this.appSupportList.push({
