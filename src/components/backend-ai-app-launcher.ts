@@ -1753,9 +1753,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <h4>${_t('session.ConnectionExample')}</h4>
                 <div class="horizontal layout flex monospace ssh-connection-example">
                 <span id="sftp-string">
-                  sftp -i ./id_container -P ${this.sshPort} work@${
+                  sftp -i ./id_container -P ${
+                    this.sshPort
+                  } -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${
                     this.sshHost
-                  } -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null<br/>
+                  }<br/>
                 </span>
                 <mwc-icon-button
                 class="sftp-session-connection-copy"
