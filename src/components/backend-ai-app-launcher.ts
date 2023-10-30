@@ -274,11 +274,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           padding: 10px;
           border-radius: 5px;
           margin-bottom: 5px;
-          max-width: 95%;
         }
 
         .ssh-connection-example > span {
-          max-width: 95%;
           word-break: break-word;
         }
 
@@ -1773,7 +1771,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 </div>
                 <div class="horizontal layout flex monospace ssh-connection-example">
                 <span id="scp-string">
-                  scp -i ./id_container -o StrictHostKeyChecking=no UserKnownHostsFile=/dev/null -P ${
+                  scp -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${
                     this.sshPort
                   } -rp /path/to/source work@${this.sshHost}:~/${
                     this.mountedVfolderName
@@ -1787,9 +1785,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 </div>
                 <div class="horizontal layout flex monospace ssh-connection-example">
                 <span id="rsync-string">
-                  rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no UserKnownHostsFile=/dev/null" /path/to/source/ work@${
-                    this.sshHost
-                  }:~/${this.mountedVfolderName}/<br/>
+                  rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${
+                    this.sshPort
+                  }" /path/to/source/ work@${this.sshHost}:~/${
+                    this.mountedVfolderName
+                  }/<br/>
                 </span>
                 <mwc-icon-button
                 class="sftp-session-connection-copy"
