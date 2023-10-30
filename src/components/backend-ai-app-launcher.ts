@@ -274,6 +274,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           padding: 10px;
           border-radius: 5px;
           margin-bottom: 5px;
+          max-width: 95%;
+        }
+
+        .ssh-connection-example > span {
+          max-width: 95%;
+          word-break: break-word;
         }
 
         @media screen and (max-width: 810px) {
