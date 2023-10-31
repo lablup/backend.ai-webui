@@ -37,8 +37,12 @@ const fetchFn: FetchFunction = async (
   const transformedQuery = manipulateGraphQLQueryWithClientDirectives(
     request.text || '',
     variables,
-    // @ts-ignore
-    globalThis.backendaiclient?.isManagerVersionCompatibleWith,
+    (version) => {
+      // @ts-ignore
+      return !globalThis.backendaiclient?.isManagerVersionCompatibleWith(
+        version,
+      );
+    },
   );
 
   const reqBody = {
