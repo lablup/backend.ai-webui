@@ -68,7 +68,6 @@ const StorageStatusPanel: React.FC<{
   ).length;
 
   // TODO: Add resolver to enable subquery and modify to call useLazyLoadQuery only once.
-  // const { user } = useLazyLoadQuery<StorageStatusPanelKeypairQuery>(
   const { keypair, user } = useLazyLoadQuery<StorageStatusPanelKeypairQuery>(
     graphql`
       query StorageStatusPanelKeypairQuery(
@@ -81,6 +80,8 @@ const StorageStatusPanel: React.FC<{
         }
         user(domain_name: $domain_name, email: $email) {
           id
+          # TODO: check version and add @since
+          resource_policy
         }
       }
     `,
@@ -91,55 +92,62 @@ const StorageStatusPanel: React.FC<{
     },
   );
 
-  // const { user_resource_policy, project_quota_scope, user_quota_scope } =
-  const { keypair_resource_policy, project_quota_scope, user_quota_scope } =
-    useLazyLoadQuery<StorageStatusPanelQuery>(
-      graphql`
-        query StorageStatusPanelQuery(
-          # $name: String
-          $keypair_resource_policy_name: String
-          $project_quota_scope_id: String!
-          $user_quota_scope_id: String!
-          $storage_host_name: String!
-          $skipQuotaScope: Boolean!
-        ) {
-          # user_resource_policy(name: $name) {
-          #   max_vfolder_count
-          # }
-          keypair_resource_policy(name: $keypair_resource_policy_name) {
-            max_vfolder_count
-          }
-          project_quota_scope: quota_scope(
-            quota_scope_id: $project_quota_scope_id
-            storage_host_name: $storage_host_name
-          ) @skip(if: $skipQuotaScope) {
-            ...UsageProgressFragment_usageFrgmt
-          }
-          user_quota_scope: quota_scope(
-            quota_scope_id: $user_quota_scope_id
-            storage_host_name: $storage_host_name
-          ) @skip(if: $skipQuotaScope) {
-            ...UsageProgressFragment_usageFrgmt
-          }
+  const {
+    user_resource_policy,
+    keypair_resource_policy,
+    project_quota_scope,
+    user_quota_scope,
+  } = useLazyLoadQuery<StorageStatusPanelQuery>(
+    graphql`
+      query StorageStatusPanelQuery(
+        $name: String
+        $keypair_resource_policy_name: String
+        $project_quota_scope_id: String!
+        $user_quota_scope_id: String!
+        $storage_host_name: String!
+        $skipQuotaScope: Boolean!
+      ) {
+        user_resource_policy(name: $name) @since(version: "24.03.0") {
+          max_vfolder_count
         }
-      `,
-      {
-        keypair_resource_policy_name: keypair?.resource_policy,
-        project_quota_scope_id: addQuotaScopeTypePrefix(
-          'project',
-          currentProject?.id,
-        ),
-        user_quota_scope_id: addQuotaScopeTypePrefix('user', user?.id || ''),
-        storage_host_name: deferredSelectedVolumeInfo?.id || '',
-        skipQuotaScope:
-          currentProject?.id === undefined ||
-          user?.id === undefined ||
-          !deferredSelectedVolumeInfo?.id,
-      },
-    );
+        keypair_resource_policy(name: $keypair_resource_policy_name)
+          @deprecatedSince(version: "24.03.0") {
+          max_vfolder_count
+        }
+        project_quota_scope: quota_scope(
+          quota_scope_id: $project_quota_scope_id
+          storage_host_name: $storage_host_name
+        ) @skip(if: $skipQuotaScope) {
+          ...UsageProgressFragment_usageFrgmt
+        }
+        user_quota_scope: quota_scope(
+          quota_scope_id: $user_quota_scope_id
+          storage_host_name: $storage_host_name
+        ) @skip(if: $skipQuotaScope) {
+          ...UsageProgressFragment_usageFrgmt
+        }
+      }
+    `,
+    {
+      name: user?.resource_policy,
+      keypair_resource_policy_name: keypair?.resource_policy,
+      project_quota_scope_id: addQuotaScopeTypePrefix(
+        'project',
+        currentProject?.id,
+      ),
+      user_quota_scope_id: addQuotaScopeTypePrefix('user', user?.id || ''),
+      storage_host_name: deferredSelectedVolumeInfo?.id || '',
+      skipQuotaScope:
+        currentProject?.id === undefined ||
+        user?.id === undefined ||
+        !deferredSelectedVolumeInfo?.id,
+    },
+  );
 
-  const maxVfolderCount = keypair_resource_policy?.max_vfolder_count || 0;
-  // const maxVfolderCount = user_resource_policy?.max_vfolder_count || 0;
+  const maxVfolderCount =
+    user_resource_policy?.max_vfolder_count ||
+    keypair_resource_policy?.max_vfolder_count ||
+    0;
   const numberOfFolderPercent = (
     maxVfolderCount > 0
       ? ((createdCount / maxVfolderCount) * 100)?.toFixed(2)
