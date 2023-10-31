@@ -37,6 +37,9 @@ describe('graphql-transformer', () => {
         }
         
       }
+      oldQuery (name:"test") @deprecatedSince(version: "99") {
+        my vlalue
+      }
     }
   `,
       {
