@@ -212,8 +212,8 @@ export const offset_to_cursor = (offset: number): string => {
   return window.btoa(`arrayconnection:${offset}`);
 };
 
-export function filterNonNullItems<T extends { [key: string]: any }>(
-  arr: ReadonlyArray<T | null> | null | undefined,
+export function filterNonNullItems<T>(
+  arr: ReadonlyArray<T | null | undefined> | null | undefined,
 ): T[] {
   if (arr === null || arr === undefined) {
     return [];

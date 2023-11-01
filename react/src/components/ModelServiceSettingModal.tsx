@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
 interface Props extends BAIModalProps {
-  endpointFrgmt: ModelServiceSettingModal_endpoint$key | null;
+  endpointFrgmt?: ModelServiceSettingModal_endpoint$key | null;
   onRequestClose: (success?: boolean) => void;
 }
 
