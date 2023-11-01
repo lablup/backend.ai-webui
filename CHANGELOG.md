@@ -1,5 +1,17 @@
 # Changelog
 
+## v23.09.3 (01/11/2023)
+## What's Changed
+* fix: remove image naming checking when selecting sftp image by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2007
+* fix: touchup sftp connection example text by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2004
+* fix: limit number of characters of model service name by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/2003
+* build(deps): bump actions/setup-node from 3 to 4 by @dependabot in https://github.com/lablup/backend.ai-webui/pull/2001
+* feat: add config option that can hide custom resource allocation by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/1998
+* fix: hide inference app from app launcher by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/2002
+* feat: add passwordless sudo user management UI by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2005
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.2...v23.09.3
+
 ## v23.09.2 (26/10/2023)
 ## What's Changed
 * update: i18n resources by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1989
