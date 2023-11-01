@@ -68,20 +68,29 @@ const StorageStatusPanel: React.FC<{
   ).length;
 
   // TODO: Add resolver to enable subquery and modify to call useLazyLoadQuery only once.
-  const { keypair, user } = useLazyLoadQuery<StorageStatusPanelKeypairQuery>(
+  const {
+    keypair,
+    user,
+    // currentProjectDetail
+  } = useLazyLoadQuery<StorageStatusPanelKeypairQuery>(
     graphql`
       query StorageStatusPanelKeypairQuery(
         $domain_name: String
+        # $project_id: UUID!
         $email: String
         $access_key: String
       ) {
         keypair(domain_name: $domain_name, access_key: $access_key) {
           resource_policy
         }
+        # currentProjectDetail: group(domain_name: $domain_name, id: $project_id){
+        #   id
+        #   resource_policy @since(version: "23.09.0")
+        # }
         user(domain_name: $domain_name, email: $email) {
           id
           # TODO: check version and add @since
-          resource_policy
+          resource_policy @since(version: "23.09.0")
         }
       }
     `,
@@ -89,6 +98,7 @@ const StorageStatusPanel: React.FC<{
       domain_name: useCurrentDomainValue(),
       email: baiClient?.email,
       access_key: baiClient?._config.accessKey,
+      // project_id: currentProject.id,
     },
   );
 
@@ -100,16 +110,20 @@ const StorageStatusPanel: React.FC<{
   } = useLazyLoadQuery<StorageStatusPanelQuery>(
     graphql`
       query StorageStatusPanelQuery(
-        $name: String
+        $user_RP_name: String
+        # $project_RP_name: String!
         $keypair_resource_policy_name: String
         $project_quota_scope_id: String!
         $user_quota_scope_id: String!
         $storage_host_name: String!
         $skipQuotaScope: Boolean!
       ) {
-        user_resource_policy(name: $name) @since(version: "24.03.0") {
+        user_resource_policy(name: $user_RP_name) @since(version: "24.03.0") {
           max_vfolder_count
         }
+        # project_resource_policy(name: $project_RP_name) @since(version: "24.03.0") {
+        #   max_vfolder_count
+        # }
         keypair_resource_policy(name: $keypair_resource_policy_name)
           @deprecatedSince(version: "24.03.0") {
           max_vfolder_count
@@ -129,7 +143,8 @@ const StorageStatusPanel: React.FC<{
       }
     `,
     {
-      name: user?.resource_policy,
+      user_RP_name: user?.resource_policy,
+      // project_RP_name: currentProjectDetail?.resource_policy || "",
       keypair_resource_policy_name: keypair?.resource_policy,
       project_quota_scope_id: addQuotaScopeTypePrefix(
         'project',
