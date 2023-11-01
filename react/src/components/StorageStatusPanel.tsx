@@ -89,8 +89,9 @@ const StorageStatusPanel: React.FC<{
         # }
         user(domain_name: $domain_name, email: $email) {
           id
-          # TODO: check version and add @since
-          resource_policy @since(version: "23.09.0")
+          # 23.03.7 https://github.com/lablup/backend.ai/releases/tag/23.03.7
+          # https://github.com/lablup/backend.ai/pull/1354
+          resource_policy @since(version: "23.03.7")
         }
       }
     `,
@@ -118,14 +119,15 @@ const StorageStatusPanel: React.FC<{
         $storage_host_name: String!
         $skipQuotaScope: Boolean!
       ) {
-        user_resource_policy(name: $user_RP_name) @since(version: "24.03.0") {
+        user_resource_policy(name: $user_RP_name) @since(version: "24.03.1") {
           max_vfolder_count
         }
         # project_resource_policy(name: $project_RP_name) @since(version: "24.03.0") {
         #   max_vfolder_count
         # }
         keypair_resource_policy(name: $keypair_resource_policy_name)
-          @deprecatedSince(version: "24.03.0") {
+          # use max_vfolder_count in keypair_resource_policy before adding max_vfolder_count in user_resource_policy
+          @deprecatedSince(version: "24.03.1") {
           max_vfolder_count
         }
         project_quota_scope: quota_scope(
