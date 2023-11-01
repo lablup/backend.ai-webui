@@ -1,4 +1,16 @@
 # Changelog
+
+## v23.09.2 (26/10/2023)
+## What's Changed
+* update: i18n resources by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1989
+* update: PULL_REQUEST_TEMPLATE.md by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1990
+* feature: split copy to clipboard in sftp session connection dialog by @lizable in https://github.com/lablup/backend.ai-webui/pull/1986
+* feature: Registry management UI using GraphQL by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1975
+* fix: revert max_vfolder_count removing by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1995
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.1...v23.09.2
+
+
 ## v23.09.1 (24/10/2023)
 ## What's Changed
 * update: change label on terms of service dialog's close button by @rapsealk in https://github.com/lablup/backend.ai-webui/pull/1957
