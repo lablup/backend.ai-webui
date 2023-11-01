@@ -229,6 +229,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   );
   @property({ type: Boolean }) isExceedMaxCountForPreopenPorts = false;
   @property({ type: Number }) maxCountForPreopenPorts = 10;
+  @property({ type: Boolean }) allowCustomResourceAllocation = true;
 
   @query('#image-name') manualImageName;
   @query('#version') version_selector!: Select;
@@ -1006,6 +1007,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           }
           this.maxCountForPreopenPorts =
             globalThis.backendaiclient._config.maxCountForPreopenPorts;
+          this.allowCustomResourceAllocation =
+            globalThis.backendaiclient._config.allowCustomResourceAllocation;
           this.is_connected = true;
           this._debug = globalThis.backendaiwebui.debug;
           this._enableLaunchButton();
@@ -1051,6 +1054,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
       this.maxCountForPreopenPorts =
         globalThis.backendaiclient._config.maxCountForPreopenPorts;
+      this.allowCustomResourceAllocation =
+        globalThis.backendaiclient._config.allowCustomResourceAllocation;
       this.is_connected = true;
       this._debug = globalThis.backendaiwebui.debug;
       this._enableLaunchButton();
@@ -5182,7 +5187,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   : html``}
               </mwc-select>
             </div>
-            <lablup-expansion name="resource-group">
+            <lablup-expansion
+              name="resource-group"
+              style="display:${this.allowCustomResourceAllocation
+                ? 'block'
+                : 'none'}"
+            >
               <span slot="title">
                 ${_t('session.launcher.CustomAllocation')}
               </span>
