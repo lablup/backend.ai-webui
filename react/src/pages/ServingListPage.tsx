@@ -114,7 +114,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               resource_slots
               url
               open_to_public
-              created_at
+              created_at @since(version: "23.09.0")
               created_user
               desired_session_count @required(action: NONE)
               routings {
