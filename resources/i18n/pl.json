@@ -505,7 +505,8 @@
     "KeypairDetail": "Szczegóły pary kluczy",
     "SignoutSeccessfullyFinished": "Wylogowanie zostało pomyślnie zakończone",
     "Status": "Status",
-    "NoUserToDisplay": "Brak użytkowników do wyświetlenia"
+    "NoUserToDisplay": "Brak użytkowników do wyświetlenia",
+    "EnableSudoSession": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Lornetka składana",

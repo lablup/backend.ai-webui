@@ -505,7 +505,8 @@
     "KeypairDetail": "Butiran pasangan kekunci",
     "SignoutSeccessfullyFinished": "Log keluar telah selesai dengan selamat",
     "Status": "Status",
-    "NoUserToDisplay": "Tiada Pengguna untuk dipaparkan"
+    "NoUserToDisplay": "Tiada Pengguna untuk dipaparkan",
+    "EnableSudoSession": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Folder",
@@ -898,7 +899,8 @@
     "PleaseSelectOption": "Sila pilih satu pilihan.",
     "RegistrySuccessfullyModified": "Pendaftaran berjaya diubah suai.",
     "NoRegistryToDisplay": "Tiada Pendaftaran untuk dipaparkan",
-    "ModifyRegistry": "Ubah suai Pendaftaran"
+    "ModifyRegistry": "Ubah suai Pendaftaran",
+    "ConfirmNoUserName": "__NOT_TRANSLATED__"
   },
   "resourceGroup": {
     "ResourceGroups": "Kumpulan Sumber",

@@ -597,7 +597,8 @@
     "KeypairDetail": "Keypair Detail",
     "AdminCanOnlyRemoveTotp": "Only disabling 2FA of other users is possible.",
     "KeySeccessfullyDeleted": "KeyPair is seccessfully deleted.",
-    "SignoutSeccessfullyFinished": "Signout is seccessfully finished"
+    "SignoutSeccessfullyFinished": "Signout is seccessfully finished",
+    "EnableSudoSession": "Enable sudo session"
   },
   "data": {
     "Folders": "Folders",
