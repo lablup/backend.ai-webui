@@ -4,7 +4,8 @@
  */
 //import Chart from '../lib/Chart.min';
 import Chart from 'chart.js/auto';
-import { css, html, LitElement, property, TemplateResult } from 'lit-element';
+import { css, html, LitElement, TemplateResult } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 
 export default class ChartJs extends LitElement {
   @property({ type: Object }) data = {};
