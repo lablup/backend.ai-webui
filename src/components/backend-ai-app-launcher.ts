@@ -276,6 +276,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           margin-bottom: 5px;
         }
 
+        .ssh-connection-example > span {
+          word-break: break-word;
+        }
+
         @media screen and (max-width: 810px) {
           #terminal-guide {
             --component-width: calc(100% - 50px);
@@ -487,8 +491,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     this.preOpenedPortList = [];
     const preOpenAppNameList = servicePorts
-      ?.filter((item) => item.protocol === 'preopen')
+      ?.filter(
+        (item) => item.protocol === 'preopen' && item.is_inference === false,
+      )
       .map((item) => item.name);
+    const inferenceAppNameList = servicePorts
+      ?.filter((item) => item.is_inference === true)
+      .map((item) => item.name);
+
     preOpenAppNameList?.forEach((elm) => {
       this.preOpenedPortList.push({
         name: elm,
@@ -498,8 +508,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       });
     });
     const filteredAppServices =
-      appServices?.filter((item) => !preOpenAppNameList?.includes(item)) ??
-      appServices;
+      appServices?.filter(
+        (item) =>
+          !preOpenAppNameList?.includes(item) &&
+          !inferenceAppNameList?.includes(item),
+      ) ?? appServices;
     this.appSupportList = [];
     if (!filteredAppServices?.includes('ttyd')) {
       this.appSupportList.push({
@@ -1753,9 +1766,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <h4>${_t('session.ConnectionExample')}</h4>
                 <div class="horizontal layout flex monospace ssh-connection-example">
                 <span id="sftp-string">
-                  sftp -i ./id_container -P ${this.sshPort} work@${
+                  sftp -i ./id_container -P ${
+                    this.sshPort
+                  } -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${
                     this.sshHost
-                  } -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null<br/>
+                  }<br/>
                 </span>
                 <mwc-icon-button
                 class="sftp-session-connection-copy"
@@ -1765,7 +1780,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 </div>
                 <div class="horizontal layout flex monospace ssh-connection-example">
                 <span id="scp-string">
-                  scp -i ./id_container -o StrictHostKeyChecking=no UserKnownHostsFile=/dev/null -P ${
+                  scp -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${
                     this.sshPort
                   } -rp /path/to/source work@${this.sshHost}:~/${
                     this.mountedVfolderName
@@ -1779,9 +1794,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 </div>
                 <div class="horizontal layout flex monospace ssh-connection-example">
                 <span id="rsync-string">
-                  rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no UserKnownHostsFile=/dev/null" /path/to/source/ work@${
-                    this.sshHost
-                  }:~/${this.mountedVfolderName}/<br/>
+                  rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${
+                    this.sshPort
+                  }" /path/to/source/ work@${this.sshHost}:~/${
+                    this.mountedVfolderName
+                  }/<br/>
                 </span>
                 <mwc-icon-button
                 class="sftp-session-connection-copy"

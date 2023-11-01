@@ -3813,9 +3813,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const imageResource: Record<string, unknown> = {};
     const configSSHImage = globalThis.backendaiclient._config.systemSSHImage;
     const images = this.systemRoleSupportedImages.filter(
-      (image: any) =>
-        image['name'].toLowerCase().includes('sftp-upload') &&
-        image['installed'],
+      (image: any) => image['installed'],
     );
     // TODO: use lablup/openssh-server image
     // select one image to launch system role supported session
