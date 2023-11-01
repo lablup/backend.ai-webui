@@ -1337,7 +1337,7 @@
     "FormValidationFailed": "Convalida del modulo non riuscita",
     "StartNewServing": "Iniziare un nuovo servizio",
     "ServiceName": "Nome del servizio",
-    "ServiceNameRule": "Sono consentiti solo da 4 a 64 caratteri alfanumerici, underscore(_), trattino(-) e punto(.) e devono terminare con un carattere alfanumerico.",
+    "ServiceNameRule": "Sono consentiti solo da 4 a 24 caratteri alfanumerici, underscore(_), trattino(-) e punto(.) e devono terminare con un carattere alfanumerico.",
     "OpenToPublic": "Aperto al pubblico",
     "DesiredRoutingCount": "Conteggio dell'instradamento desiderato",
     "ServingRouteErrorModalTitle": "Errore del percorso di servizio",

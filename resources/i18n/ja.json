@@ -1337,7 +1337,7 @@
     "FormValidationFailed": "フォーム検証の失敗",
     "StartNewServing": "新サービス開始",
     "ServiceName": "サービス名",
-    "ServiceNameRule": "4～64文字の英字、数字、アンダーライン(_)、ハイフン(-)、ピリオド(.)のみを許可し、英文で英字または数字で終わる必要があります。",
+    "ServiceNameRule": "4～24文字の英字、数字、アンダーライン(_)、ハイフン(-)、ピリオド(.)のみを許可し、英文で英字または数字で終わる必要があります。",
     "OpenToPublic": "アプリを外部に公開",
     "DesiredRoutingCount": "希望のルーティング数",
     "ServingRouteErrorModalTitle": "サービングルートエラー",
