@@ -1,7 +1,7 @@
 import { parse, print, visit } from 'graphql';
 
-// node 삭제는 enter에서
-// 불필요한 arguments나 directive 삭제는 leave에서
+// Delete nodes in enter
+// Remove unnecessary arguments or directives in leave
 export function manipulateGraphQLQueryWithClientDirectives(
   query: string,
   variables: any = {},
