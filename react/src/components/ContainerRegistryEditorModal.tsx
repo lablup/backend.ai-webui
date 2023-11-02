@@ -60,6 +60,7 @@ const ContainerRegistryEditorModal: React.FC<
               type
               project
               username
+              password
               ssl_verify
             }
           }
@@ -82,6 +83,7 @@ const ContainerRegistryEditorModal: React.FC<
               type
               project
               username
+              password
               ssl_verify
             }
           }
@@ -105,9 +107,11 @@ const ContainerRegistryEditorModal: React.FC<
             username: _.isEmpty(values.config.username)
               ? null
               : values.config.username,
-            password: _.isEmpty(values.config.password)
-              ? null
-              : values.config.password,
+            password: values.isChangedPassword
+              ? _.isEmpty(values.config.password)
+                ? null // unset
+                : values.config.password
+              : undefined, // no change
           },
         };
         if (containerRegistry) {
