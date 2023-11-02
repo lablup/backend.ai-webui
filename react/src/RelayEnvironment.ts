@@ -1,5 +1,5 @@
 // import { createClient } from "graphql-ws";
-import { removeSkipOnClientDirective } from './helper/graphql-transformer';
+import { manipulateGraphQLQueryWithClientDirectives } from './helper/graphql-transformer';
 import {
   Environment,
   Network,
@@ -18,15 +18,36 @@ const fetchFn: FetchFunction = async (
   // cacheConfig,
   // uploadables
 ) => {
-  // @skipOnClient directive modifies GraphQL queries according to the availability of a supported field.
-  const transformedData = removeSkipOnClientDirective(
+  //@ts-ignore
+  if (globalThis.backendaiclient === undefined) {
+    // If globalThis.backendaiclient is not defined, wait for the backend-ai-connected event.
+    await new Promise((resolve) => {
+      const onBackendAIConnected = () => {
+        // When the backend-ai-connected event occurs, remove the event listener and execute the function.
+        document.removeEventListener(
+          'backend-ai-connected',
+          onBackendAIConnected,
+        );
+        resolve(undefined);
+      };
+      document.addEventListener('backend-ai-connected', onBackendAIConnected);
+    });
+  }
+
+  const transformedQuery = manipulateGraphQLQueryWithClientDirectives(
     request.text || '',
     variables,
+    (version) => {
+      // @ts-ignore
+      return !globalThis.backendaiclient?.isManagerVersionCompatibleWith(
+        version,
+      );
+    },
   );
 
   const reqBody = {
-    query: transformedData.query,
-    variables: transformedData.variables,
+    query: transformedQuery,
+    variables: variables,
   };
 
   //@ts-ignore

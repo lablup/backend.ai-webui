@@ -1,69 +1,107 @@
-function parseDirectives(str: string) {
-  const pattern = /(\w+)\s@\s*(\w+)\s*\(\s*(\w+)\s*:\s*(\$?\w+)\s*\)/g;
-  const directives = [];
+import { parse, print, visit } from 'graphql';
 
-  let result;
-  while ((result = pattern.exec(str)) !== null) {
-    const [originFieldStr, fieldName, directive, argumentName, argumentValue] =
-      result;
-    directives.push({
-      fieldName,
-      directive,
-      argumentName,
-      argumentValue,
-      originFieldStr,
-    });
-  }
-
-  return directives;
-}
-
-export function removeSkipOnClientDirective(
+// Delete nodes in enter
+// Remove unnecessary arguments or directives in leave
+export function manipulateGraphQLQueryWithClientDirectives(
   query: string,
-  variables: {
-    [key: string]: any;
-  },
+  variables: any = {},
+  isCompatibleWith: (version: string) => boolean,
 ) {
-  const filteredVariables = { ...variables };
-  const directives = parseDirectives(query);
-  directives.forEach((directive) => {
-    if (
-      directive.directive === 'skipOnClient' &&
-      directive.argumentName === 'if'
-    ) {
-      if (
-        directive.argumentValue &&
-        (variables[directive.argumentValue.substring(1)] === true ||
-          directive.argumentValue === 'true')
-      ) {
-        // remove all lines of query that contains directive
-        query = query.replace(directive.originFieldStr, '');
-      } else {
-        // remove directive only
-        query = query.replace(
-          directive.originFieldStr,
-          directive.originFieldStr.replace(
-            /@\s*(skipOnClient)\s*\(\s*(\w+)\s*:\s*(\$?\w+)\s*\)/,
-            '',
-          ),
-        );
-      }
+  const ast = parse(query);
+  let newAst = visit(ast, {
+    Field: {
+      enter(node) {
+        if (
+          node?.directives?.find((directive) => {
+            const directiveName = directive.name.value;
+            const firstArgName = directive.arguments?.[0].name.value;
+            // @ts-ignore
+            const firstArgValue = directive.arguments?.[0].value?.value;
+            const arg = directive.arguments?.[0];
 
-      // if argumentValue is variable and it is not used in query, remove it from variables and argument definition
-      if (
-        directive.argumentValue.startsWith('$') &&
-        query.split(directive.argumentValue).length === 2
-      ) {
-        const argumentNameWithoutDollar = directive.argumentValue.substring(1);
-        const pattern = new RegExp(`.*${argumentNameWithoutDollar}.*\n`, 'g');
-        query = query.replace(pattern, '');
-        delete filteredVariables[directive.argumentValue.substring(1)];
-      }
-    } else {
-    }
+            if (directiveName === 'since' && firstArgName === 'version') {
+              if (isCompatibleWith(firstArgValue)) {
+                return true;
+              }
+            } else if (
+              directiveName === 'deprecatedSince' &&
+              firstArgName === 'version'
+            ) {
+              const version =
+                arg?.value.kind === 'StringValue'
+                  ? arg?.value.value
+                  : // @ts-ignore
+                    variables[arg?.value.name.value];
+
+              if (!isCompatibleWith(version)) {
+                return true;
+              }
+            } else if (
+              directiveName === 'skipOnClient' &&
+              firstArgName === 'if'
+            ) {
+              if (arg?.value.kind === 'BooleanValue' && arg.value.value) {
+                return true;
+              }
+
+              if (
+                arg?.value.kind === 'Variable' &&
+                variables[arg.value.name.value]
+              ) {
+                return true;
+              }
+            }
+            return false;
+          })
+        ) {
+          return null;
+        }
+      },
+      leave(node) {
+        // when field has a empty selectionSet, delete it
+        if (
+          node.selectionSet &&
+          node.selectionSet.kind === 'SelectionSet' &&
+          node.selectionSet.selections?.length === 0
+        ) {
+          return null;
+        }
+      },
+    },
+    Directive: {
+      // delete all onClient directives
+      leave(directive) {
+        const directiveName = directive.name.value;
+        if (
+          ['since', 'deprecatedSince', 'skipOnClient'].includes(directiveName)
+        ) {
+          return null;
+        }
+      },
+    },
   });
-  return {
-    query: query,
-    variables: filteredVariables,
-  };
+
+  // count used variables
+  const usedVariables: {
+    [key: string]: number;
+  } = {};
+  visit(newAst, {
+    Variable(node) {
+      usedVariables[node.name.value] =
+        (usedVariables[node.name.value] || 0) + 1;
+    },
+  });
+
+  // delete unused variables
+  newAst = visit(newAst, {
+    VariableDefinition: {
+      enter(variableDefinition) {
+        if (usedVariables[variableDefinition.variable.name.value] <= 1) {
+          return null;
+        }
+      },
+    },
+  });
+
+  return print(newAst);
 }
