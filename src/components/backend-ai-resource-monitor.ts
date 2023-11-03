@@ -496,12 +496,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     ) as Switch;
     if (document.body.clientWidth > 750 && this.direction == 'horizontal') {
       legend.style.display = 'flex';
+      legend.style.marginTop = '0';
       Array.from(this.resourceGauge.children).forEach((elem) => {
         (elem as HTMLElement).style.display = 'flex';
       });
     } else {
       if (toggleButton.selected) {
         legend.style.display = 'flex';
+        legend.style.marginTop = '0';
         if (document.body.clientWidth < 750) {
           this.resourceGauge.style.left = '20px';
           this.resourceGauge.style.right = '20px';
