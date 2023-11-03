@@ -666,6 +666,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.09.2')) {
       this._features['container-registry-gql'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('24.03.0')) {
+      this._features['max-vfolder-count-in-user-resource-policy'] = true;
+    }
   }
 
   /**
