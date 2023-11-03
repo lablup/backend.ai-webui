@@ -1489,12 +1489,12 @@ class Client {
     };
     let rqst = this.newSignedRequest(
       'POST',
-      `/admin/graphql`,
+      `/admin/gql`,
       query,
       null,
       secure,
     );
-    return this._wrapWithPromise(rqst, false, signal, timeout, retry);
+    return this._wrapWithPromise(rqst, false, signal, timeout, retry).then(r => r.data);
   }
 
   /**
