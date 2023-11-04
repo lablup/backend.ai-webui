@@ -532,7 +532,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     return this.resourceBroker
       ._refreshResourcePolicy()
-      .then(() => {
+      .then((resolvedValue) => {
+        if (resolvedValue === false) {
+          setTimeout(() => {
+            // Retry to get the concurrency_max after a while if resource broker
+            // is not ready. When the timeout is 2000, it delays the display of
+            // other resource's allocation status. I don't know why, but I just
+            // set it to 2500.
+            this._refreshResourcePolicy();
+          }, 2500);
+        }
         this.concurrency_used = this.resourceBroker.concurrency_used;
         // this.userResourceLimit = this.resourceBroker.userResourceLimit;
         this.concurrency_max =

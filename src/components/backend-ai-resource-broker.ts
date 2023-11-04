@@ -349,6 +349,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    *
    */
   async _refreshResourcePolicy() {
+    if (!globalThis.backendaiclient) {
+      // To prevent a silent failure when the client is not ready in aggregating resources.
+      return Promise.resolve(false);
+    }
     if (Date.now() - this.lastResourcePolicyQueryTime < 2000) {
       return Promise.resolve(false);
     }
@@ -482,7 +486,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    * @param {string} from - set the value for debugging purpose.
    */
   async _aggregateCurrentResource(from = '') {
-    if (this.aggregate_updating) {
+    if (!globalThis.backendaiclient || this.aggregate_updating) {
       return Promise.resolve(false);
     }
     if (Date.now() - this.lastQueryTime < 1000) {
