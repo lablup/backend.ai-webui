@@ -515,7 +515,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     */
 
     const resource_policy = this.resourcePolicy.value;
-    const rate_limit = this.rateLimit.value;
+    const rate_limit = parseInt(this.rateLimit.value);
     // Read resources
     globalThis.backendaiclient.keypair
       .add(user_id, is_active, is_admin, resource_policy, rate_limit)

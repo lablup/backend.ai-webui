@@ -233,7 +233,6 @@ const UserSettingModal: React.FC<Props> = ({
       confirmLoading={isInFlightCommitModifyUserSetting}
       {...baiModalProps}
     >
-      <div>{sudoSessionEnabledSupported ? 'true' : 'false'}</div>
       <Form
         preserve={false}
         form={form}
