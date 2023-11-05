@@ -1,5 +1,16 @@
 # Changelog
 
+## v23.09.4 (04/11/2023)
+## What's Changed
+* feat: new GraphQL directive on Client, `@since(version:)` and `@deprecatedSince(version:)` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1999
+* fix: UI with multiple types of accelerators by @adrysn in https://github.com/lablup/backend.ai-webui/pull/2012
+* feat: add `allowAppDownloadPanel` that can hide app download panel by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/1996
+* feature: set password to `undefined` when no change is desired. by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2010
+* bugfix: GraphQL variable type error by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2011
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.3...v23.09.4
+
+
 ## v23.09.3 (01/11/2023)
 ## What's Changed
 * fix: remove image naming checking when selecting sftp image by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2007
