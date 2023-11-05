@@ -61,6 +61,7 @@ const ContainerRegistryList = () => {
               type
               project
               username
+              password
               ssl_verify
             }
           }
@@ -261,9 +262,10 @@ const ContainerRegistryList = () => {
             title: t('registry.Username'),
             dataIndex: ['config', 'username'],
           },
-          // {
-          // title: t('registry.Password')
-          // },
+          {
+            title: t('registry.Password'),
+            dataIndex: ['config', 'password'],
+          },
           {
             title: t('general.Enabled'),
             render: (value, record) => {
