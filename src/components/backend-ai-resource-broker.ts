@@ -517,6 +517,15 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         const sgs = await globalThis.backendaiclient.scalingGroup.list(
           this.current_user_group,
         );
+        // TODO: Delete these codes after backend.ai support scaling groups filtering.
+        // ================================ START ====================================
+        if (sgs && sgs.scaling_groups && sgs.scaling_groups.length > 0) {
+          const sftpResourceGroups = await this._sftpScalingGroups();
+          sgs.scaling_groups = sgs.scaling_groups.filter(
+            (item) => !sftpResourceGroups?.includes(item.name),
+          );
+        }
+        // ================================ END ====================================
         // Make empty scaling group item if there is no scaling groups.
         this.scaling_groups =
           sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{ name: '' }];
