@@ -34,7 +34,7 @@ proxy:
 run_tests:
 	@npx testcafe chrome tests
 versiontag:
-	@printf "$(GREEN)Tagging version number / index...$(NC)\n"
+	@printf "$(GREEN)Tagging version number / index...$(NC)"
 	@echo '{ "package": "${BUILD_VERSION}", "build": "${BUILD_DATE}.${BUILD_TIME}", "revision": "${REVISION_INDEX}" }' > version.json
 	@sed -i -E 's/globalThis.packageVersion = "\([^"]*\)"/globalThis.packageVersion = "${BUILD_VERSION}"/g' index.html
 	@sed -i -E 's/"version": "\([^"]*\)"/"version": "${BUILD_VERSION}"/g' manifest.json
@@ -57,6 +57,7 @@ all: dep
 	@make linux_x64
 	@make linux_arm64
 dep:
+	@printf "$(GREEN)Building dependencies...$(NC)\n"
 	@if [ ! -f "./config.toml" ]; then \
 		cp config.toml.sample config.toml; \
 	fi
@@ -113,6 +114,7 @@ endif  # BAI_APP_SIGN_KEYCHAIN_PASSWORD
 endif  # BAI_APP_SIGN_KEYCHAIN_B64
 endif  # BAI_APP_SIGN_KEYCHAIN
 compile_localproxy:
+	@printf "$(GREEN)Compiling local proxy package...$(NC)"
 	@rm -rf ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix)
 	@npx pkg ./src/wsproxy/local_proxy.js --targets node18-$(os)-$(arch) --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) --compress Brotli
 	@rm -rf ./app/backend.ai-local-proxy$(local_proxy_postfix); cp ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) ./app/backend.ai-local-proxy$(local_proxy_postfix)
@@ -145,7 +147,9 @@ else
 	@mv ./app/backend.ai-desktop-$(arch)-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-$(site)-$(os)-$(arch).dmg
 endif
 	@printf "$(YELLOW)Finished$(NC)\n"
-mac: mac_x64 mac_arm64
+mac:
+	make mac_x64
+	make mac_arm64
 mac_x64: os := macos
 mac_x64: arch := x64
 mac_x64: local_proxy_postfix :=
@@ -156,7 +160,9 @@ mac_arm64: arch := arm64
 mac_arm64: local_proxy_postfix :=
 mac_arm64: dep mac_load_keychain compile_localproxy package_dmg
 	@printf "$(GREEN)Build finished$(NC): macOS arm64\n"
-win: win_x64 win_arm64
+win:
+	make win_x64
+	make win_arm64
 win_x64: os := win
 win_x64: os_api := win32
 win_x64: arch := x64
@@ -169,7 +175,9 @@ win_arm64: arch := arm64
 win_arm64: local_proxy_postfix := .exe
 win_arm64: dep compile_localproxy package_zip
 	@printf "$(GREEN)Build finished$(NC): Windows arm64\n"
-linux: linux_x64 linux_arm64
+linux:
+	make linux_x64
+	make linux_arm64
 linux_x64: os := linux
 linux_x64: os_api := linux
 linux_x64: arch := x64
