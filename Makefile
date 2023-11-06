@@ -96,9 +96,11 @@ mac_intel: dep mac_load_keychain
 ifdef BAI_APP_SIGN_KEYCHAIN
 	security default-keychain -s login.keychain
 endif
+	rm -rf ./app/backend.ai-local-proxy-$(BUILD_VERSION)-macos-x64
+	npx pkg ./src/wsproxy/local_proxy.js --targets node18-macos-x64 --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-macos-intel --compress Brotli
 	rm -rf ./app/backend.ai-desktop-macos-intel
 	cd app; mv "Backend.AI Desktop-darwin-x64" backend.ai-desktop-macos-intel;
-	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos-intel/Backend.AI Desktop.app' ./app/backend.ai-desktop-intel-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
+	npx electron-installer-dmg './app/backend.ai-desktop-macos-intel/Backend.AI Desktop.app' ./app/backend.ai-desktop-intel-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-intel-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-macos-intel.dmg
 else
@@ -110,9 +112,11 @@ mac_apple: dep mac_load_keychain
 ifdef BAI_APP_SIGN_KEYCHAIN
 	security default-keychain -s login.keychain
 endif
+	rm -rf ./app/backend.ai-local-proxy-$(BUILD_VERSION)-macos-apple
+	npx pkg ./src/wsproxy/local_proxy.js --targets node18-macos-arm64 --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-macos-apple --compress Brotli
 	rm -rf ./app/backend.ai-desktop-macos-apple
 	cd app; mv "Backend.AI Desktop-darwin-arm64" backend.ai-desktop-macos-apple;
-	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos-apple/Backend.AI Desktop.app' ./app/backend.ai-desktop-apple-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
+	npx electron-installer-dmg './app/backend.ai-desktop-macos-apple/Backend.AI Desktop.app' ./app/backend.ai-desktop-apple-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-apple-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-macos-apple.dmg
 else
@@ -122,6 +126,8 @@ win: win_intel win_arm64
 win_intel: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	node ./app-packager.js win x64
+	rm -rf ./app/backend.ai-local-proxy-$(BUILD_VERSION)-win-x64
+	npx pkg ./src/wsproxy/local_proxy.js --targets node18-win-x64 --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-win32-x64 --compress Brotli
 	cd app; zip ./backend.ai-desktop-win32-x64-$(BUILD_DATE).zip -r "./Backend.AI Desktop-win32-x64"
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-win32-x64.zip
@@ -131,6 +137,8 @@ endif
 win_arm64: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	node ./app-packager.js win arm64
+	rm -rf ./app/backend.ai-local-proxy-$(BUILD_VERSION)-win-arm64
+	npx pkg ./src/wsproxy/local_proxy.js --targets node18-win-arm64 --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-win32-arm64 --compress Brotli
 	cd app; zip ./backend.ai-desktop-win32-arm64-$(BUILD_DATE).zip -r "./Backend.AI Desktop-win32-arm64"
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-win32-arm64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-win32-arm64.zip
@@ -141,6 +149,8 @@ linux: linux_intel linux_arm64
 linux_intel: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	node ./app-packager.js linux x64
+	rm -rf ./app/backend.ai-local-proxy-$(BUILD_VERSION)-linux-x64
+	npx pkg ./src/wsproxy/local_proxy.js --targets node18-linux-x64 --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-linux-x64 --compress Brotli
 	cd app; zip -r -9 ./backend.ai-desktop-linux-x64-$(BUILD_DATE).zip "./Backend.AI Desktop-linux-x64"
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-linux-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-linux-x64.zip
@@ -150,6 +160,8 @@ endif
 linux_arm64: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	node ./app-packager.js linux arm64
+	rm -rf ./app/backend.ai-local-proxy-$(BUILD_VERSION)-linux-arm64
+	npx pkg ./src/wsproxy/local_proxy.js --targets node18-linux-arm64 --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-linux-arm64 --compress Brotli
 	cd app; zip -r -9 ./backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip "./Backend.AI Desktop-linux-arm64"
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-linux-arm64.zip
