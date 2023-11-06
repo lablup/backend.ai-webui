@@ -33,7 +33,13 @@ compile: versiontag
 compile_wsproxy:
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
 	#cd ./src/wsproxy; rollup -c rollup.config.ts
-all: dep mac win linux
+all: dep
+	make mac_x64
+	make mac_arm64
+	make win_x64
+	make win_arm64
+	make linux_x64
+	make linux_arm64
 dep:
 	if [ ! -f "./config.toml" ]; then \
 		cp config.toml.sample config.toml; \
@@ -41,26 +47,26 @@ dep:
 	if [ ! -d "./build/rollup/" ] || ! grep -q 'es6://static/js/main' react/build/index.html; then \
 		make compile; \
 		make compile_wsproxy; \
+		rm -rf build/electron-app; \
+		mkdir -p build/electron-app; \
+		cp ./package.json ./build/electron-app/package.json; \
+		cp ./main.js ./build/electron-app/main.js; \
+		cp -Rp build/rollup build/electron-app/app; \
+		cp -Rp build/rollup/resources build/electron-app; \
+		cp -Rp build/rollup/manifest build/electron-app; \
+		BUILD_TARGET=electron npm run build:react-only; \
+		cp -Rp react/build/* build/electron-app/app/; \
+		sed -i -E 's/\.\/dist\/components\/backend-ai-webui.js/es6:\/\/dist\/components\/backend-ai-webui.js/g' build/electron-app/app/index.html; \
+		mkdir -p ./build/electron-app/app/wsproxy; \
+		cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js; \
+		mkdir -p ./build/electron-app/node_modules/markty; \
+		mkdir -p ./build/electron-app/node_modules/markty-toml; \
+		mkdir -p ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme; \
+		cp -Rp ./node_modules/markty ./build/electron-app/node_modules; \
+		cp -Rp ./node_modules/markty-toml ./build/electron-app/node_modules; \
+		cp -Rp ./node_modules/@vanillawc/wc-codemirror/theme/monokai.css ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme/monokai.css; \
+		cp ./preload.js ./build/electron-app/preload.js; \
 	fi
-	rm -rf build/electron-app
-	mkdir -p build/electron-app
-	cp ./package.json ./build/electron-app/package.json
-	cp ./main.js ./build/electron-app/main.js
-	cp -Rp build/rollup build/electron-app/app
-	cp -Rp build/rollup/resources build/electron-app
-	cp -Rp build/rollup/manifest build/electron-app
-	BUILD_TARGET=electron npm run build:react-only
-	cp -Rp react/build/* build/electron-app/app/
-	sed -i -E 's/\.\/dist\/components\/backend-ai-webui.js/es6:\/\/dist\/components\/backend-ai-webui.js/g' build/electron-app/app/index.html
-	mkdir -p ./build/electron-app/app/wsproxy
-	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
-	mkdir -p ./build/electron-app/node_modules/markty
-	mkdir -p ./build/electron-app/node_modules/markty-toml
-	mkdir -p ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme
-	cp -Rp ./node_modules/markty ./build/electron-app/node_modules
-	cp -Rp ./node_modules/markty-toml ./build/electron-app/node_modules
-	cp -Rp ./node_modules/@vanillawc/wc-codemirror/theme/monokai.css ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme/monokai.css
-	cp ./preload.js ./build/electron-app/preload.js
 web:
 	if [ ! -d "./build/rollup/" ];then \
 		make compile; \
@@ -90,9 +96,7 @@ endif  # BAI_APP_SIGN_KEYCHAIN_PASSWORD
 	echo Keychain ${KEYCHAIN_NAME} created for build
 endif  # BAI_APP_SIGN_KEYCHAIN_B64
 endif  # BAI_APP_SIGN_KEYCHAIN
-compile_localproxy: local_proxy_postfix := $(if $(filter $(os),win),.exe,)
 compile_localproxy:
-	@echo ${local_proxy_postfix}
 	rm -rf ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix)
 	npx pkg ./src/wsproxy/local_proxy.js --targets node18-$(os)-$(arch) --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) --compress Brotli
 	rm -rf ./app/backend.ai-local-proxy$(local_proxy_postfix); cp ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) ./app/backend.ai-local-proxy$(local_proxy_postfix)
@@ -101,7 +105,7 @@ compile_localproxy:
 package_zip:
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	node ./app-packager.js $(os) $(arch)
-	cd app; zip -r -9 ./backend.ai-desktop-$(os)-$(arch)-$(BUILD_DATE).zip "./Backend.AI Desktop-$(os)-$(arch)"
+	cd app; zip -r -9 ./backend.ai-desktop-$(os)-$(arch)-$(BUILD_DATE).zip "./Backend.AI Desktop-$(os_api)-$(arch)"
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-$(os)-$(arch)-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-$(os)-$(arch).zip
 else
@@ -124,24 +128,40 @@ endif
 mac: mac_x64 mac_arm64
 mac_x64: os := macos
 mac_x64: arch := x64
+mac_x64: local_proxy_postfix :=
 mac_x64: dep mac_load_keychain compile_localproxy package_dmg
+	@echo "Building for macOS x64"
 mac_arm64: os := macos
 mac_arm64: arch := arm64
+mac_arm64: local_proxy_postfix :=
 mac_arm64: dep mac_load_keychain compile_localproxy package_dmg
+	@echo "Building for macOS arm64"
 win: win_x64 win_arm64
 win_x64: os := win
+win_x64: os_api := win32
 win_x64: arch := x64
+win_x64: local_proxy_postfix := .exe
 win_x64: dep compile_localproxy package_zip
+	@echo "Building for Windows x64"
 win_arm64: os := win
+win_arm64: os_api := win32
 win_arm64: arch := arm64
+win_arm64: local_proxy_postfix := .exe
 win_arm64: dep compile_localproxy package_zip
+	@echo "Building for Windows arm64"
 linux: linux_x64 linux_arm64
 linux_x64: os := linux
+linux_x64: os_api := linux
 linux_x64: arch := x64
+linux_x64: local_proxy_postfix :=
 linux_x64: dep compile_localproxy package_zip
+	@echo "Building for Linux x64"
 linux_arm64: os := linux
+linux_arm64: os_api := linux
 linux_arm64: arch := arm64
+linux_arm64: local_proxy_postfix :=
 linux_arm64: dep compile_localproxy package_zip
+	@echo "Building for Linux arm64"
 build_docker: compile
 	docker build -t backend.ai-webui:$(BUILD_DATE) .
 i18n:
