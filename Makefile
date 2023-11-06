@@ -130,38 +130,38 @@ mac_x64: os := macos
 mac_x64: arch := x64
 mac_x64: local_proxy_postfix :=
 mac_x64: dep mac_load_keychain compile_localproxy package_dmg
-	@echo "Building for macOS x64"
+	@echo "Build finished: macOS x64"
 mac_arm64: os := macos
 mac_arm64: arch := arm64
 mac_arm64: local_proxy_postfix :=
 mac_arm64: dep mac_load_keychain compile_localproxy package_dmg
-	@echo "Building for macOS arm64"
+	@echo "Build finished: macOS arm64"
 win: win_x64 win_arm64
 win_x64: os := win
 win_x64: os_api := win32
 win_x64: arch := x64
 win_x64: local_proxy_postfix := .exe
 win_x64: dep compile_localproxy package_zip
-	@echo "Building for Windows x64"
+	@echo "Build finished: Windows x64"
 win_arm64: os := win
 win_arm64: os_api := win32
 win_arm64: arch := arm64
 win_arm64: local_proxy_postfix := .exe
 win_arm64: dep compile_localproxy package_zip
-	@echo "Building for Windows arm64"
+	@echo "Build finished: Windows arm64"
 linux: linux_x64 linux_arm64
 linux_x64: os := linux
 linux_x64: os_api := linux
 linux_x64: arch := x64
 linux_x64: local_proxy_postfix :=
 linux_x64: dep compile_localproxy package_zip
-	@echo "Building for Linux x64"
+	@echo "Build finished: Linux x64"
 linux_arm64: os := linux
 linux_arm64: os_api := linux
 linux_arm64: arch := arm64
 linux_arm64: local_proxy_postfix :=
 linux_arm64: dep compile_localproxy package_zip
-	@echo "Building for Linux arm64"
+	@echo "Build finished: Linux arm64"
 build_docker: compile
 	docker build -t backend.ai-webui:$(BUILD_DATE) .
 i18n:
