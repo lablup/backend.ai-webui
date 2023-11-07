@@ -145,7 +145,9 @@ else
 	@mv ./app/backend.ai-desktop-$(arch)-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-$(site)-$(os)-$(arch).dmg
 endif
 	@printf "$(YELLOW)Finished$(NC)\n"
-mac: mac_x64 mac_arm64
+mac:
+    make mac_x64
+    make mac_arm64
 mac_x64: os := macos
 mac_x64: arch := x64
 mac_x64: local_proxy_postfix :=
@@ -156,7 +158,9 @@ mac_arm64: arch := arm64
 mac_arm64: local_proxy_postfix :=
 mac_arm64: dep mac_load_keychain compile_localproxy package_dmg
 	@printf "$(GREEN)Build finished$(NC): macOS arm64\n"
-win: win_x64 win_arm64
+win:
+    make win_x64
+    make win_arm64
 win_x64: os := win
 win_x64: os_api := win32
 win_x64: arch := x64
@@ -169,7 +173,9 @@ win_arm64: arch := arm64
 win_arm64: local_proxy_postfix := .exe
 win_arm64: dep compile_localproxy package_zip
 	@printf "$(GREEN)Build finished$(NC): Windows arm64\n"
-linux: linux_x64 linux_arm64
+linux:
+    make linux_x64
+    make linux_arm64
 linux_x64: os := linux
 linux_x64: os_api := linux
 linux_x64: arch := x64
