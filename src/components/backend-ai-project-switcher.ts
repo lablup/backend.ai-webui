@@ -108,6 +108,7 @@ export default class BackendAIProjectSwitcher extends LitElement {
           <div class="horizontal center center-justified layout">
             <vaadin-combo-box
               id="project-select"
+              auto-open-disabled
               value="${this.currentProject}"
               .items="${this.projects}"
               @change="${(e) => this.changeGroup(e)}"

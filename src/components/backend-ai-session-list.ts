@@ -3889,7 +3889,9 @@ ${rowData.item[this.sessionNameField]}</pre
           }
           <lablup-grid-sort-filter-column frozen path="${
             this.sessionNameField
-          }" auto-width header="${_t('session.SessionInfo')}" resizable
+          }" auto-width width="400px" header="${_t(
+            'session.SessionInfo',
+          )}" resizable
                                      .renderer="${
                                        this._boundSessionInfoRenderer
                                      }">
