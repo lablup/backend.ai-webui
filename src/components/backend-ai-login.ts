@@ -83,6 +83,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: String }) blockType = '';
   @property({ type: String }) blockMessage = '';
   @property({ type: String }) appDownloadUrl;
+  @property({ type: Boolean }) allowAppDownloadPanel = true;
   @property({ type: String }) connection_mode = 'SESSION' as ConnectionMode;
   @property({ type: String }) systemSSHImage = '';
   @property({ type: String }) fasttrackEndpoint = '';
@@ -110,6 +111,11 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) maxMemoryPerContainer = 16;
   @property({ type: Number }) maxCUDADevicesPerContainer = 16;
   @property({ type: Number }) maxCUDASharesPerContainer = 16;
+  @property({ type: Number }) maxROCMDevicesPerContainer = 10;
+  @property({ type: Number }) maxTPUDevicesPerContainer = 8;
+  @property({ type: Number }) maxIPUDevicesPerContainer = 8;
+  @property({ type: Number }) maxATOMDevicesPerContainer = 8;
+  @property({ type: Number }) maxWarboyDevicesPerContainer = 8;
   @property({ type: Boolean }) maxShmPerContainer = 2;
   @property({ type: Boolean }) maxFileUploadSize = -1;
   @property({ type: Boolean }) maskUserInfo = false;
@@ -129,6 +135,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) needToResetPassword = false;
   @property({ type: Boolean }) directoryBasedUsage = false;
   @property({ type: Number }) maxCountForPreopenPorts = 10;
+  @property({ type: Boolean }) allowCustomResourceAllocation = true;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel')
@@ -753,6 +760,13 @@ export default class BackendAILogin extends BackendAIPage {
       value: generalConfig?.appDownloadUrl,
     } as ConfigValueObject) as string;
 
+    // Enable allowAppDownloadPanel flag
+    this.allowAppDownloadPanel = this._getConfigValueByExists(generalConfig, {
+      valueType: 'boolean',
+      defaultValue: true,
+      value: generalConfig?.allowAppDownloadPanel,
+    } as ConfigValueObject) as boolean;
+
     // System role ssh image
     this.systemSSHImage = this._getConfigValueByExists(generalConfig, {
       valueType: 'string',
@@ -823,6 +837,15 @@ export default class BackendAILogin extends BackendAIPage {
       defaultValue: this.maxCountForPreopenPorts, // default value has been already assigned in property declaration
       value: parseInt(generalConfig?.maxCountForPreopenPorts),
     } as ConfigValueObject) as number;
+
+    this.allowCustomResourceAllocation = this._getConfigValueByExists(
+      generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: true,
+        value: generalConfig?.allowCustomResourceAllocation,
+      } as ConfigValueObject,
+    ) as boolean;
   }
 
   /**
@@ -896,7 +919,57 @@ export default class BackendAILogin extends BackendAIPage {
       } as ConfigValueObject,
     ) as number;
 
-    // Max CUDA shares per container number
+    // Max ROCm devices per container number
+    this.maxROCMDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 10,
+        value: parseInt(resourcesConfig?.maxROCMDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max TPU devices per container number
+    this.maxTPUDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxTPUDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max IPU devices per container number
+    this.maxIPUDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxIPUDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max ATOM devices per container number
+    this.maxATOMDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxATOMDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max Warboy devices per container number
+    this.maxWarboyDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxWarboyDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max shared memory per container number
     this.maxShmPerContainer = this._getConfigValueByExists(resourcesConfig, {
       valueType: 'number',
       defaultValue: 2,
@@ -1728,6 +1801,8 @@ export default class BackendAILogin extends BackendAIPage {
         globalThis.backendaiclient._config.enableContainerCommit =
           this._enableContainerCommit;
         globalThis.backendaiclient._config.appDownloadUrl = this.appDownloadUrl;
+        globalThis.backendaiclient._config.allowAppDownloadPanel =
+          this.allowAppDownloadPanel;
         globalThis.backendaiclient._config.systemSSHImage = this.systemSSHImage;
         globalThis.backendaiclient._config.fasttrackEndpoint =
           this.fasttrackEndpoint;
@@ -1738,6 +1813,8 @@ export default class BackendAILogin extends BackendAIPage {
           this.directoryBasedUsage;
         globalThis.backendaiclient._config.maxCountForPreopenPorts =
           this.maxCountForPreopenPorts;
+        globalThis.backendaiclient._config.allowCustomResourceAllocation =
+          this.allowCustomResourceAllocation;
         globalThis.backendaiclient.ready = true;
         if (
           this.endpoints.indexOf(

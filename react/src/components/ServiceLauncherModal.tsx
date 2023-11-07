@@ -218,7 +218,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             name="serviceName"
             rules={[
               {
-                pattern: /^(?=.{4,64}$)\w[\w.-]*\w$/,
+                pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
                 message: t('modelService.ServiceNameRule'),
               },
               {

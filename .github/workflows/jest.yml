@@ -18,7 +18,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: jwalton/gh-find-current-pr@v1
       id: findPr
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
     - name: Install dependencies

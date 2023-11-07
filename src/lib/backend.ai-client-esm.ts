@@ -660,8 +660,14 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.03.11')) {
       this._features['model-serving'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('23.09.0')) {
+      this._features['sudo-session-enabled'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('23.09.2')) {
       this._features['container-registry-gql'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('24.03.0')) {
+      this._features['max-vfolder-count-in-user-resource-policy'] = true;
     }
   }
 
@@ -1486,12 +1492,12 @@ class Client {
     };
     let rqst = this.newSignedRequest(
       'POST',
-      `/admin/graphql`,
+      `/admin/gql`,
       query,
       null,
       secure,
     );
-    return this._wrapWithPromise(rqst, false, signal, timeout, retry);
+    return this._wrapWithPromise(rqst, false, signal, timeout, retry).then(r => r.data);
   }
 
   /**
