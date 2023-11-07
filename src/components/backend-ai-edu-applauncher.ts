@@ -327,7 +327,11 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         const _sess = sessions.compute_session_list.items[i];
         const servicePorts = JSON.parse(_sess.service_ports || '{}');
         const services = servicePorts.map((s) => s.name);
-        if (services.includes(requestedApp)) {
+        let requestedService = requestedApp;
+        if (requestedApp.startsWith('bokff')) {
+          requestedService = requestedApp.split('-')[1];
+        }
+        if (services.includes(requestedService)) {
           sess = _sess;
           break;
         }
@@ -488,6 +492,9 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   async _openServiceApp(sessionId, appName) {
     this.appLauncher.indicator = await globalThis.lablupIndicator.start();
     console.log(`launching ${appName} from session ${sessionId} ...`);
+    if (appName == 'rstudio') {
+      await this.appLauncher._sleep(5000);
+    }
     this.appLauncher
       ._open_wsproxy(sessionId, appName, null, null)
       .then(async (resp) => {
