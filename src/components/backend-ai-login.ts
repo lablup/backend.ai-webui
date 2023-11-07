@@ -111,6 +111,11 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) maxMemoryPerContainer = 16;
   @property({ type: Number }) maxCUDADevicesPerContainer = 16;
   @property({ type: Number }) maxCUDASharesPerContainer = 16;
+  @property({ type: Number }) maxROCMDevicesPerContainer = 10;
+  @property({ type: Number }) maxTPUDevicesPerContainer = 8;
+  @property({ type: Number }) maxIPUDevicesPerContainer = 8;
+  @property({ type: Number }) maxATOMDevicesPerContainer = 8;
+  @property({ type: Number }) maxWarboyDevicesPerContainer = 8;
   @property({ type: Boolean }) maxShmPerContainer = 2;
   @property({ type: Boolean }) maxFileUploadSize = -1;
   @property({ type: Boolean }) maskUserInfo = false;
@@ -914,7 +919,57 @@ export default class BackendAILogin extends BackendAIPage {
       } as ConfigValueObject,
     ) as number;
 
-    // Max CUDA shares per container number
+    // Max ROCm devices per container number
+    this.maxROCMDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 10,
+        value: parseInt(resourcesConfig?.maxROCMDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max TPU devices per container number
+    this.maxTPUDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxTPUDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max IPU devices per container number
+    this.maxIPUDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxIPUDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max ATOM devices per container number
+    this.maxATOMDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxATOMDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max Warboy devices per container number
+    this.maxWarboyDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxWarboyDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max shared memory per container number
     this.maxShmPerContainer = this._getConfigValueByExists(resourcesConfig, {
       valueType: 'number',
       defaultValue: 2,
