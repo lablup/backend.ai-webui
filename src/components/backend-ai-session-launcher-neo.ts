@@ -981,10 +981,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.max_ipu_device_per_container =
             globalThis.backendaiclient._config.maxIPUDevicesPerContainer || 8;
           this.max_atom_device_per_container =
-            globalThis.backendaiclient._config.maxATOMDevicesPerContainer || 4;
+            globalThis.backendaiclient._config.maxATOMDevicesPerContainer || 8;
           this.max_warboy_device_per_container =
             globalThis.backendaiclient._config.maxWarboyDevicesPerContainer ||
-            4;
+            8;
           this.max_shm_per_container =
             globalThis.backendaiclient._config.maxShmPerContainer || 8;
           if (
@@ -1027,9 +1027,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.max_ipu_device_per_container =
         globalThis.backendaiclient._config.maxIPUDevicesPerContainer || 8;
       this.max_atom_device_per_container =
-        globalThis.backendaiclient._config.maxATOMDevicesPerContainer || 4;
+        globalThis.backendaiclient._config.maxATOMDevicesPerContainer || 8;
       this.max_warboy_device_per_container =
-        globalThis.backendaiclient._config.maxWarboyDevicesPerContainer || 4;
+        globalThis.backendaiclient._config.maxWarboyDevicesPerContainer || 8;
       this.max_shm_per_container =
         globalThis.backendaiclient._config.maxShmPerContainer || 8;
       if (
