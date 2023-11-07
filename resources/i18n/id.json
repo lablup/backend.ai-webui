@@ -505,7 +505,8 @@
     "AdminCanOnlyRemoveTotp": "Hanya menonaktifkan 2FA pengguna lain yang dapat dilakukan.",
     "KeySeccessfullyDeleted": "KeyPair dihapus dengan aman.",
     "SignoutSeccessfullyFinished": "Keluar dengan aman selesai",
-    "ModifyUserDetail": "Ubah Detail Pengguna"
+    "ModifyUserDetail": "Ubah Detail Pengguna",
+    "EnableSudoSession": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Folder",

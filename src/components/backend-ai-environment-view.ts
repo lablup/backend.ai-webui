@@ -37,6 +37,7 @@ import { customElement, property } from 'lit/decorators.js';
 export default class BackendAIEnvironmentView extends BackendAIPage {
   @property({ type: String }) images = Object();
   @property({ type: Boolean }) is_superadmin = false;
+  @property({ type: Boolean }) isSupportContainerRegistryGraphQL = false;
   @property({ type: String }) _activeTab = 'image-lists';
 
   static get styles(): CSSResultGroup {
@@ -111,12 +112,16 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
         'backend-ai-connected',
         () => {
           this.is_superadmin = globalThis.backendaiclient.is_superadmin;
+          this.isSupportContainerRegistryGraphQL =
+            globalThis.backendaiclient.supports('container-registry-gql');
         },
         true,
       );
     } else {
       // already connected
       this.is_superadmin = globalThis.backendaiclient.is_superadmin;
+      this.isSupportContainerRegistryGraphQL =
+        globalThis.backendaiclient.supports('container-registry-gql');
     }
     return false;
   }
@@ -181,7 +186,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
             ?active="${this._activeTab === 'resource-template-lists'}"
           ></backend-ai-resource-preset-list>
           <div id="registry-lists" class="tab-content">
-            ${globalThis.backendaiclient.supports('container-registry-gql') &&
+            ${this.isSupportContainerRegistryGraphQL &&
             this._activeTab === 'registry-lists'
               ? html`
                   <div class="flex" style="height:calc(100vh - 183px);">

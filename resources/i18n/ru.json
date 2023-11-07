@@ -505,7 +505,8 @@
     "AdminCanOnlyRemoveTotp": "Возможно только отключение 2FA для других пользователей.",
     "KeySeccessfullyDeleted": "Пара ключей удалена без последствий.",
     "SignoutSeccessfullyFinished": "Выход из системы завершен",
-    "ModifyUserDetail": "Изменение сведений о пользователе"
+    "ModifyUserDetail": "Изменение сведений о пользователе",
+    "EnableSudoSession": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Папки",

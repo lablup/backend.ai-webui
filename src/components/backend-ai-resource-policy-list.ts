@@ -445,7 +445,14 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               label="${_t('resourcePolicy.AllowedHosts')}"
               style="width:100%;"
             ></backend-ai-multi-select>
-            <div class="horizontal layout justified" style="width:100%;">
+            <div
+              class="horizontal layout justified"
+              style=${globalThis.backendaiclient.supports(
+                'max-vfolder-count-in-user-resource-policy',
+              )
+                ? 'display:none;'
+                : 'width:100%;'}
+            >
               <mwc-textfield
                 label="${_t('credential.Max#')}"
                 class="discrete"
@@ -613,19 +620,25 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               `
             : html``}
         </div>
-        <div class="layout horizontal wrap center">
-          <div class="layout horizontal configuration">
-            <mwc-icon class="fg green indicator">folder</mwc-icon>
-            <span>
-              ${this._displayResourcesByResourceUnit(
-                rowData.item.max_vfolder_count,
-                false,
-                'max_vfolder_count',
-              )}
-            </span>
-            <span class="indicator">Folders</span>
-          </div>
-        </div>
+        ${globalThis.backendaiclient.supports(
+          'max-vfolder-count-in-user-resource-policy',
+        )
+          ? html``
+          : html`
+              <div class="layout horizontal wrap center">
+                <div class="layout horizontal configuration">
+                  <mwc-icon class="fg green indicator">folder</mwc-icon>
+                  <span>
+                    ${this._displayResourcesByResourceUnit(
+                      rowData.item.max_vfolder_count,
+                      false,
+                      'max_vfolder_count',
+                    )}
+                  </span>
+                  <span class="indicator">Folders</span>
+                </div>
+              </div>
+            `}
       `,
       root,
     );
@@ -1076,18 +1089,26 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const input = {
       default_for_unspecified: 'UNLIMITED',
       total_resource_slots: JSON.stringify(total_resource_slots),
-      max_concurrent_sessions: this.concurrencyLimit.value,
-      max_containers_per_session: this.containerPerSessionLimit.value,
+      max_concurrent_sessions: parseInt(this.concurrencyLimit.value),
+      max_containers_per_session: parseInt(this.containerPerSessionLimit.value),
       idle_timeout: this.idleTimeout.value,
-      max_vfolder_count: this.vfolderCountLimitInput.value,
+
       allowed_vfolder_hosts: vfolder_hosts,
     };
+
+    if (
+      !globalThis.backendaiclient.supports(
+        'max-vfolder-count-in-user-resource-policy',
+      )
+    ) {
+      input.max_vfolder_count = this.vfolderCountLimitInput.value;
+    }
 
     if (this.enableSessionLifetime) {
       this._validateUserInput(this.sessionLifetime);
       this.sessionLifetime.value =
         this.sessionLifetime.value === '' ? '0' : this.sessionLifetime.value;
-      input['max_session_lifetime'] = this.sessionLifetime.value;
+      input['max_session_lifetime'] = parseInt(this.sessionLifetime.value);
     }
 
     return input;

@@ -505,7 +505,8 @@
     "KeypairDetail": "Detalhe do par de chaves",
     "SignoutSeccessfullyFinished": "O registo foi concluído com êxito",
     "Status": "Estado",
-    "NoUserToDisplay": "Nenhum utilizador a apresentar"
+    "NoUserToDisplay": "Nenhum utilizador a apresentar",
+    "EnableSudoSession": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Pastas",

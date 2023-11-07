@@ -204,7 +204,8 @@
       "PleaseSelectOptions": "Valitse vähintään yksi tai useampi vaihtoehto.",
       "PolicyName": "Vakuutuksen nimi Pakollinen.",
       "ValidationFailed": "Validointi epäonnistui"
-    }
+    },
+    "EnableSudoSession": "__NOT_TRANSLATED__"
   },
   "data": {
     "Allowslettersnumbersand-_": "Sallii kirjaimet, numerot ja -_",

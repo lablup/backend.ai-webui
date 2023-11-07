@@ -186,7 +186,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         .resource {
           margin-bottom: 10px;
           margin-left: 5px;
-          height: 46px;
         }
 
         .resource-line {
@@ -631,245 +630,277 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                           >
                             <div class="gauge-name">GPU/NPU</div>
                           </div>
-                          ${this.cuda_gpu_total
-                            ? html`
-                                <div
-                                  class="layout vertical start-justified wrap"
-                                >
-                                  <lablup-progress-bar
-                                    id="gpu-usage-bar"
-                                    class="start"
-                                    progress="${this.cuda_gpu_used /
-                                    this.cuda_gpu_total}"
-                                    description="${this.cuda_gpu_used} / ${this
-                                      .cuda_gpu_total} CUDA GPUs ${_t(
-                                      'summary.reserved',
-                                    )}."
-                                  ></lablup-progress-bar>
-                                  <lablup-progress-bar
-                                    id="gpu-usage-bar-2"
-                                    class="end"
-                                    progress="0"
-                                    description="${_t(
-                                      'summary.FractionalGPUScalingEnabled',
-                                    )}."
-                                  ></lablup-progress-bar>
-                                </div>
-                                <div
-                                  class="layout vertical center center-justified"
-                                >
-                                  <span class="percentage start-bar">
-                                    ${this.cuda_gpu_used !== 0
-                                      ? (
-                                          (this.cuda_gpu_used /
-                                            this.cuda_gpu_total) *
-                                          100
-                                        ).toFixed(1)
-                                      : 0}%
-                                  </span>
-                                  <span class="percentage end-bar">&nbsp;</span>
-                                </div>
-                              `
-                            : html``}
-                          ${this.cuda_fgpu_total
-                            ? html`
-                                <div
-                                  class="layout vertical start-justified wrap"
-                                >
-                                  <lablup-progress-bar
-                                    id="fgpu-usage-bar"
-                                    class="start"
-                                    progress="${this.cuda_fgpu_used /
-                                    this.cuda_fgpu_total}"
-                                    description="${this.cuda_fgpu_used} / ${this
-                                      .cuda_fgpu_total} CUDA FGPUs ${_t(
-                                      'summary.reserved',
-                                    )}."
-                                  ></lablup-progress-bar>
-                                  <lablup-progress-bar
-                                    id="fgpu-usage-bar-2"
-                                    class="end"
-                                    progress="0"
-                                    description="${_t(
-                                      'summary.FractionalGPUScalingEnabled',
-                                    )}."
-                                  ></lablup-progress-bar>
-                                </div>
-                                <div
-                                  class="layout vertical center center-justified"
-                                >
-                                  <span class="percentage start-bar">
-                                    ${this.cuda_fgpu_used !== 0
-                                      ? (
-                                          (this.cuda_fgpu_used /
-                                            this.cuda_fgpu_total) *
-                                          100
-                                        ).toFixed(1)
-                                      : 0}%
-                                  </span>
-                                  <span class="percentage end-bar">&nbsp;</span>
-                                </div>
-                              `
-                            : html``}
-                          ${this.rocm_gpu_total
-                            ? html`
-                                <div
-                                  class="layout vertical start-justified wrap"
-                                >
-                                  <lablup-progress-bar
-                                    id="rocm-gpu-usage-bar"
-                                    class="start"
-                                    progress="${this.rocm_gpu_used / 100.0}"
-                                    description="${this.rocm_gpu_used} / ${this
-                                      .rocm_gpu_total} ROCm GPUs ${_t(
-                                      'summary.reserved',
-                                    )}."
-                                  ></lablup-progress-bar>
-                                  <lablup-progress-bar
-                                    id="rocm-gpu-usage-bar-2"
-                                    class="end"
-                                    progress="0"
-                                    description="${_t(
-                                      'summary.ROCMGPUEnabled',
-                                    )}."
-                                  ></lablup-progress-bar>
-                                </div>
-                                <div
-                                  class="layout vertical center center-justified"
-                                >
-                                  <span class="percentage start-bar">
-                                    ${this.rocm_gpu_used.toFixed(1) + '%'}
-                                  </span>
-                                  <span class="percentage end-bar">&nbsp;</span>
-                                </div>
-                              `
-                            : html``}
-                          ${this.tpu_total
-                            ? html`
-                                <div
-                                  class="layout vertical start-justified wrap"
-                                >
-                                  <lablup-progress-bar
-                                    id="tpu-usage-bar"
-                                    class="start"
-                                    progress="${this.tpu_used / 100.0}"
-                                    description="${this.tpu_used} / ${this
-                                      .tpu_total} TPUs ${_t(
-                                      'summary.reserved',
-                                    )}."
-                                  ></lablup-progress-bar>
-                                  <lablup-progress-bar
-                                    id="tpu-usage-bar-2"
-                                    class="end"
-                                    progress="0"
-                                    description="${_t('summary.TPUEnabled')}."
-                                  ></lablup-progress-bar>
-                                </div>
-                                <div
-                                  class="layout vertical center center-justified"
-                                >
-                                  <span class="percentage start-bar">
-                                    ${this.tpu_used.toFixed(1) + '%'}
-                                  </span>
-                                  <span class="percentage end-bar"></span>
-                                </div>
-                              `
-                            : html``}
-                          ${this.ipu_total
-                            ? html`
-                                <div
-                                  class="layout vertical start-justified wrap"
-                                >
-                                  <lablup-progress-bar
-                                    id="ipu-usage-bar"
-                                    class="start"
-                                    progress="${this.ipu_used / 100.0}"
-                                    description="${this.ipu_used} / ${this
-                                      .ipu_total} IPUs ${_t(
-                                      'summary.reserved',
-                                    )}."
-                                  ></lablup-progress-bar>
-                                  <lablup-progress-bar
-                                    id="ipu-usage-bar-2"
-                                    class="end"
-                                    progress="0"
-                                    description="${_t('summary.IPUEnabled')}."
-                                  ></lablup-progress-bar>
-                                </div>
-                                <div
-                                  class="layout vertical center center-justified"
-                                >
-                                  <span class="percentage start-bar">
-                                    ${this.ipu_used.toFixed(1) + '%'}
-                                  </span>
-                                  <span class="percentage end-bar"></span>
-                                </div>
-                              `
-                            : html``}
-                          ${this.atom_total
-                            ? html`
-                                <div
-                                  class="layout vertical start-justified wrap"
-                                >
-                                  <lablup-progress-bar
-                                    id="atom-usage-bar"
-                                    class="start"
-                                    progress="${this.atom_used / 100.0}"
-                                    description="${this.atom_used} / ${this
-                                      .atom_total} ATOMs ${_t(
-                                      'summary.reserved',
-                                    )}."
-                                  ></lablup-progress-bar>
-                                  <lablup-progress-bar
-                                    id="atom-usage-bar-2"
-                                    class="end"
-                                    progress="0"
-                                    description="${_t('summary.ATOMEnabled')}."
-                                  ></lablup-progress-bar>
-                                </div>
-                                <div
-                                  class="layout vertical center center-justified"
-                                >
-                                  <span class="percentage start-bar">
-                                    ${this.atom_used.toFixed(1) + '%'}
-                                  </span>
-                                  <span class="percentage end-bar"></span>
-                                </div>
-                              `
-                            : html``}
-                          ${this.warboy_total
-                            ? html`
-                                <div
-                                  class="layout vertical start-justified wrap"
-                                >
-                                  <lablup-progress-bar
-                                    id="warboy-usage-bar"
-                                    class="start"
-                                    progress="${this.warboy_used / 100.0}"
-                                    description="${this.warboy_used} / ${this
-                                      .warboy_total} Warboys ${_t(
-                                      'summary.reserved',
-                                    )}."
-                                  ></lablup-progress-bar>
-                                  <lablup-progress-bar
-                                    id="warboy-usage-bar-2"
-                                    class="end"
-                                    progress="0"
-                                    description="${_t(
-                                      'summary.WarboyEnabled',
-                                    )}."
-                                  ></lablup-progress-bar>
-                                </div>
-                                <div
-                                  class="layout vertical center center-justified"
-                                >
-                                  <span class="percentage start-bar">
-                                    ${this.warboy_used.toFixed(1) + '%'}
-                                  </span>
-                                  <span class="percentage end-bar"></span>
-                                </div>
-                              `
-                            : html``}
+                          <div class="layout vertical">
+                            ${this.cuda_gpu_total
+                              ? html`
+                                  <div class="layout horizontal">
+                                    <div
+                                      class="layout vertical start-justified wrap"
+                                    >
+                                      <lablup-progress-bar
+                                        id="gpu-usage-bar"
+                                        class="start"
+                                        progress="${this.cuda_gpu_used /
+                                        this.cuda_gpu_total}"
+                                        description="${this
+                                          .cuda_gpu_used} / ${this
+                                          .cuda_gpu_total} CUDA GPUs ${_t(
+                                          'summary.reserved',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                      <lablup-progress-bar
+                                        id="gpu-usage-bar-2"
+                                        class="end"
+                                        progress="0"
+                                        description="${_t(
+                                          'summary.FractionalGPUScalingEnabled',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                    </div>
+                                    <div
+                                      class="layout vertical center center-justified"
+                                    >
+                                      <span class="percentage start-bar">
+                                        ${this.cuda_gpu_used !== 0
+                                          ? (
+                                              (this.cuda_gpu_used /
+                                                this.cuda_gpu_total) *
+                                              100
+                                            ).toFixed(1)
+                                          : 0}%
+                                      </span>
+                                      <span class="percentage end-bar">
+                                        &nbsp;
+                                      </span>
+                                    </div>
+                                  </div>
+                                `
+                              : html``}
+                            ${this.cuda_fgpu_total
+                              ? html`
+                                  <div class="layout horizontal">
+                                    <div
+                                      class="layout vertical start-justified wrap"
+                                    >
+                                      <lablup-progress-bar
+                                        id="fgpu-usage-bar"
+                                        class="start"
+                                        progress="${this.cuda_fgpu_used /
+                                        this.cuda_fgpu_total}"
+                                        description="${this
+                                          .cuda_fgpu_used} / ${this
+                                          .cuda_fgpu_total} CUDA FGPUs ${_t(
+                                          'summary.reserved',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                      <lablup-progress-bar
+                                        id="fgpu-usage-bar-2"
+                                        class="end"
+                                        progress="0"
+                                        description="${_t(
+                                          'summary.FractionalGPUScalingEnabled',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                    </div>
+                                    <div
+                                      class="layout vertical center center-justified"
+                                    >
+                                      <span class="percentage start-bar">
+                                        ${this.cuda_fgpu_used !== 0
+                                          ? (
+                                              (this.cuda_fgpu_used /
+                                                this.cuda_fgpu_total) *
+                                              100
+                                            ).toFixed(1)
+                                          : 0}%
+                                      </span>
+                                      <span class="percentage end-bar">
+                                        &nbsp;
+                                      </span>
+                                    </div>
+                                  </div>
+                                `
+                              : html``}
+                            ${this.rocm_gpu_total
+                              ? html`
+                                  <div class="layout horizontal">
+                                    <div
+                                      class="layout vertical start-justified wrap"
+                                    >
+                                      <lablup-progress-bar
+                                        id="rocm-gpu-usage-bar"
+                                        class="start"
+                                        progress="${this.rocm_gpu_used / 100.0}"
+                                        description="${this
+                                          .rocm_gpu_used} / ${this
+                                          .rocm_gpu_total} ROCm GPUs ${_t(
+                                          'summary.reserved',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                      <lablup-progress-bar
+                                        id="rocm-gpu-usage-bar-2"
+                                        class="end"
+                                        progress="0"
+                                        description="${_t(
+                                          'summary.ROCMGPUEnabled',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                    </div>
+                                    <div
+                                      class="layout vertical center center-justified"
+                                    >
+                                      <span class="percentage start-bar">
+                                        ${this.rocm_gpu_used.toFixed(1) + '%'}
+                                      </span>
+                                      <span class="percentage end-bar">
+                                        &nbsp;
+                                      </span>
+                                    </div>
+                                  </div>
+                                `
+                              : html``}
+                            ${this.tpu_total
+                              ? html`
+                                  <div class="layout horizontal">
+                                    <div
+                                      class="layout vertical start-justified wrap"
+                                    >
+                                      <lablup-progress-bar
+                                        id="tpu-usage-bar"
+                                        class="start"
+                                        progress="${this.tpu_used / 100.0}"
+                                        description="${this.tpu_used} / ${this
+                                          .tpu_total} TPUs ${_t(
+                                          'summary.reserved',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                      <lablup-progress-bar
+                                        id="tpu-usage-bar-2"
+                                        class="end"
+                                        progress="0"
+                                        description="${_t(
+                                          'summary.TPUEnabled',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                    </div>
+                                    <div
+                                      class="layout vertical center center-justified"
+                                    >
+                                      <span class="percentage start-bar">
+                                        ${this.tpu_used.toFixed(1) + '%'}
+                                      </span>
+                                      <span class="percentage end-bar"></span>
+                                    </div>
+                                  </div>
+                                `
+                              : html``}
+                            ${this.ipu_total
+                              ? html`
+                                  <div class="layout horizontal">
+                                    <div
+                                      class="layout vertical start-justified wrap"
+                                    >
+                                      <lablup-progress-bar
+                                        id="ipu-usage-bar"
+                                        class="start"
+                                        progress="${this.ipu_used / 100.0}"
+                                        description="${this.ipu_used} / ${this
+                                          .ipu_total} IPUs ${_t(
+                                          'summary.reserved',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                      <lablup-progress-bar
+                                        id="ipu-usage-bar-2"
+                                        class="end"
+                                        progress="0"
+                                        description="${_t(
+                                          'summary.IPUEnabled',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                    </div>
+                                    <div
+                                      class="layout vertical center center-justified"
+                                    >
+                                      <span class="percentage start-bar">
+                                        ${this.ipu_used.toFixed(1) + '%'}
+                                      </span>
+                                      <span class="percentage end-bar"></span>
+                                    </div>
+                                  </div>
+                                `
+                              : html``}
+                            ${this.atom_total
+                              ? html`
+                                  <div class="layout horizontal">
+                                    <div
+                                      class="layout vertical start-justified wrap"
+                                    >
+                                      <lablup-progress-bar
+                                        id="atom-usage-bar"
+                                        class="start"
+                                        progress="${this.atom_used / 100.0}"
+                                        description="${this.atom_used} / ${this
+                                          .atom_total} ATOMs ${_t(
+                                          'summary.reserved',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                      <lablup-progress-bar
+                                        id="atom-usage-bar-2"
+                                        class="end"
+                                        progress="0"
+                                        description="${_t(
+                                          'summary.ATOMEnabled',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                    </div>
+                                    <div
+                                      class="layout vertical center center-justified"
+                                    >
+                                      <span class="percentage start-bar">
+                                        ${this.atom_used.toFixed(1) + '%'}
+                                      </span>
+                                      <span class="percentage end-bar"></span>
+                                    </div>
+                                  </div>
+                                `
+                              : html``}
+                            ${this.warboy_total
+                              ? html`
+                                  <div class="layout horizontal">
+                                    <div
+                                      class="layout vertical start-justified wrap"
+                                    >
+                                      <lablup-progress-bar
+                                        id="warboy-usage-bar"
+                                        class="start"
+                                        progress="${this.warboy_used / 100.0}"
+                                        description="${this
+                                          .warboy_used} / ${this
+                                          .warboy_total} Warboys ${_t(
+                                          'summary.reserved',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                      <lablup-progress-bar
+                                        id="warboy-usage-bar-2"
+                                        class="end"
+                                        progress="0"
+                                        description="${_t(
+                                          'summary.WarboyEnabled',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                    </div>
+                                    <div
+                                      class="layout vertical center center-justified"
+                                    >
+                                      <span class="percentage start-bar">
+                                        ${this.warboy_used.toFixed(1) + '%'}
+                                      </span>
+                                      <span class="percentage end-bar"></span>
+                                    </div>
+                                  </div>
+                                `
+                              : html``}
+                          </div>
                         </div>
                       `
                     : html``}
