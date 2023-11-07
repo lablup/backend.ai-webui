@@ -10,9 +10,10 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import ResourceGroupSelect from './ResourceGroupSelect';
+import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import SliderInputItem from './SliderInputFormItem';
 import VFolderSelect from './VFolderSelect';
-import { Card, Form, Input, theme, Switch, message } from 'antd';
+import { Card, Form, Input, theme, Select, Switch, message } from 'antd';
 import _ from 'lodash';
 import React, { Suspense } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -84,6 +85,18 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const currentDomain = useCurrentDomainValue();
   const [form] = Form.useForm<ServiceLauncherFormInput>();
   const [resourceSlots] = useResourceSlots();
+  const currentImage: Image = form.getFieldValue(['environments', 'image']);
+  const currentImageAcceleratorLimits = _.filter(
+    currentImage?.resource_limits,
+    (limit) =>
+      limit ? !_.includes(['cpu', 'mem', 'shmem'], limit.key) : false,
+  );
+  const currentIamgeAcceleratorTypeName = currentImageAcceleratorLimits[0]?.key;
+  const currentAcceleratorType = form.getFieldValue([
+    'resource',
+    'acceleratorType',
+  ]);
+  const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
 
   const mutationToCreateService = useTanMutation<
     unknown,
@@ -385,7 +398,70 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         },
                       ]}
                     />
-                    {(resourceSlots?.['cuda.device'] ||
+                    <SliderInputItem
+                      name={['resource', 'accelerator']}
+                      initialValue={0}
+                      label={t(`session.launcher.AIAccelerator`)}
+                      tooltip={
+                        <Trans i18nKey={'session.launcher.DescAIAccelerator'} />
+                      }
+                      sliderProps={{
+                        marks: {
+                          0: 0,
+                        },
+                      }}
+                      max={30}
+                      step={
+                        _.endsWith(currentAcceleratorType, 'shares') ? 0.1 : 1
+                      }
+                      disabled={currentImageAcceleratorLimits.length <= 0}
+                      inputNumberProps={{
+                        addonAfter: (
+                          <Form.Item
+                            noStyle
+                            name={['resource', 'acceleratorType']}
+                            initialValue={_.keys(acceleratorSlots)[0]}
+                          >
+                            <Select
+                              disabled={
+                                currentImageAcceleratorLimits.length <= 0
+                              }
+                              suffixIcon={
+                                _.size(acceleratorSlots) > 1 ? undefined : null
+                              }
+                              open={
+                                _.size(acceleratorSlots) > 1 ? undefined : false
+                              }
+                              popupMatchSelectWidth={false}
+                              options={_.map(
+                                acceleratorSlots,
+                                (value, name) => {
+                                  return {
+                                    value: name,
+                                    label: ACCELERATOR_UNIT_MAP[name] || 'UNIT',
+                                    disabled:
+                                      currentImageAcceleratorLimits.length >
+                                        0 &&
+                                      !_.find(
+                                        currentImageAcceleratorLimits,
+                                        (limit) => limit?.key === name,
+                                      ),
+                                  };
+                                },
+                              )}
+                            />
+                          </Form.Item>
+                        ),
+                      }}
+                      required
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    />
+                    {/* FIXME: temporally comment out for partial ResourceAllocationFormItems component
+                      {(resourceSlots?.['cuda.device'] ||
                       resourceSlots?.['cuda.shares']) && (
                       <SliderInputItem
                         style={{ marginBottom: 0 }}
@@ -413,7 +489,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                           },
                         ]}
                       />
-                    )}
+                    )} */}
                   </>
                 );
               }}
