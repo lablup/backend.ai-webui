@@ -1092,8 +1092,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       max_concurrent_sessions: parseInt(this.concurrencyLimit.value),
       max_containers_per_session: parseInt(this.containerPerSessionLimit.value),
       idle_timeout: this.idleTimeout.value,
-
       allowed_vfolder_hosts: vfolder_hosts,
+      max_vfolder_count: 0,
     };
 
     if (
@@ -1101,7 +1101,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         'max-vfolder-count-in-user-resource-policy',
       )
     ) {
-      input.max_vfolder_count = this.vfolderCountLimitInput.value;
+      input.max_vfolder_count = parseInt(this.vfolderCountLimitInput.value);
     }
 
     if (this.enableSessionLifetime) {
