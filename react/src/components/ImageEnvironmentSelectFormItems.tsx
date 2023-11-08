@@ -401,7 +401,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
       <Form.Item
         noStyle
         shouldUpdate={(prev, cur) =>
-          prev.environments?.environments !== cur.environments?.environment
+          prev.environments?.environment !== cur.environments?.environment
         }
       >
         {({ getFieldValue }) => {
