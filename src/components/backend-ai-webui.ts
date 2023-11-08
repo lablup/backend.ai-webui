@@ -103,6 +103,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Array }) groups = [];
   @property({ type: Object }) plugins = Object();
   @property({ type: String }) fasttrackEndpoint = '';
+  @property({ type: Boolean }) isHideSideMenuFastTrackButton = false;
   @property({ type: String }) _page = '';
   @property({ type: String }) _lazyPage = '';
   @property({ type: Object }) _pageParams = {};
@@ -481,9 +482,15 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     }
     if (
       typeof config.pipeline !== 'undefined' &&
-      'endpoint' in config.pipeline
+      'frontendEndpoint' in config.pipeline
     ) {
-      this.fasttrackEndpoint = config.pipeline.endpoint;
+      this.fasttrackEndpoint = config.pipeline.frontendEndpoint;
+    }
+    if (
+      typeof config.pipeline !== 'undefined' &&
+      'hideSideMenuButton' in config.pipeline
+    ) {
+      this.isHideSideMenuFastTrackButton = config.pipeline.hideSideMenuButton;
     }
     if (typeof config.plugin !== 'undefined') {
       // Store plugin informations
@@ -1236,7 +1243,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         _text('webui.menu.AgentSummary'),
       );
     }
-    if (this.fasttrackEndpoint !== '') {
+    if (!this.isHideSideMenuFastTrackButton && this.fasttrackEndpoint !== '') {
       this._createPopover('fasttrack-menu-icon', _text('webui.menu.FastTrack'));
     }
   }
@@ -1530,6 +1537,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <span class="full-menu">${_t('webui.menu.Statistics')}</span>
             </mwc-list-item>
             ${
+              !this.isHideSideMenuFastTrackButton &&
               this.fasttrackEndpoint !== ''
                 ? html`
                     <a href="${this.fasttrackEndpoint}" target="_blank">
