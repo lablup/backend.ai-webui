@@ -131,6 +131,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       value: currentImageAcceleratorTypeName,
       label: ACCELERATOR_UNIT_MAP[currentImageAcceleratorTypeName] || 'UNIT',
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImage]);
 
   const getLimitByAccelerator = (acceleratorName: string) => {
@@ -168,7 +169,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       _.filter(
         currentImageAcceleratorLimits,
         (supportedAcceleratorInfo) =>
-          supportedAcceleratorInfo?.key == currentImageAcceleratorTypeName,
+          supportedAcceleratorInfo?.key === currentImageAcceleratorTypeName,
       )[0]?.min as string,
     );
     return {
