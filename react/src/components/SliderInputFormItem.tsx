@@ -18,6 +18,7 @@ interface SliderInputProps extends Omit<FormItemProps, 'name'> {
   name: NamePath;
   inputNumberProps?: InputNumberProps;
   sliderProps?: SliderSingleProps | SliderRangeProps;
+  disabled?: boolean;
 }
 const SliderInputItem: React.FC<SliderInputProps> = ({
   name,
@@ -29,6 +30,7 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
   inputNumberProps,
   sliderProps,
   initialValue,
+  disabled,
   ...formItemProps
 }) => {
   return (
@@ -41,7 +43,13 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
             rules={rules}
             initialValue={initialValue}
           >
-            <Slider max={max} min={min} step={step} {...sliderProps} />
+            <Slider
+              max={max}
+              min={min}
+              step={step}
+              disabled={disabled}
+              {...sliderProps}
+            />
           </Form.Item>
         </Flex>
         <Flex style={{ flex: 2 }}>
@@ -53,6 +61,7 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
               onStep={(value, info) => {
                 console.log(value, info);
               }}
+              disabled={disabled}
               {...inputNumberProps}
             />
           </Form.Item>
