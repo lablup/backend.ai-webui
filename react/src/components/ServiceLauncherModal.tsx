@@ -113,6 +113,49 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     });
   }, [currentImage]);
 
+  const getLimitByAccelerator = (acceleratorName: string) => {
+    // FIXME: temporally add hard-coded number when config is undefined
+    const defaultAIAcceleratorMaxLimit = 8;
+    switch (acceleratorName) {
+      case 'cuda.device':
+      default:
+        return (
+          baiClient._config.maxCUDADevicesPerContainer ||
+          defaultAIAcceleratorMaxLimit
+        );
+      case 'cuda.shares':
+        return (
+          baiClient._config.maxCUDASharesPerContainer ||
+          defaultAIAcceleratorMaxLimit
+        );
+      case 'rocm.device':
+        return (
+          baiClient._config.maxROCMDevicesPerContainer ||
+          defaultAIAcceleratorMaxLimit
+        );
+      case 'tpu.device':
+        return (
+          baiClient._config.maxTPUDevicesPerContainer ||
+          defaultAIAcceleratorMaxLimit
+        );
+      case 'ipu.device':
+        return (
+          baiClient._config.maxIPUDevicesPerContainer ||
+          defaultAIAcceleratorMaxLimit
+        );
+      case 'atom.device':
+        return (
+          baiClient._config.maxATOMDevicesPerContainer ||
+          defaultAIAcceleratorMaxLimit
+        );
+      case 'warboy.device':
+        return (
+          baiClient._config.maxWarboyDevicesPerContainer ||
+          defaultAIAcceleratorMaxLimit
+        );
+    }
+  };
+
   const mutationToCreateService = useTanMutation<
     unknown,
     {
@@ -420,8 +463,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             <Form.Item
               noStyle
               shouldUpdate={(prev, cur) =>
-                prev.environments?.environments !==
-                cur.environments?.environment
+                prev.environments?.environment !== cur.environments?.environment
               }
             >
               {() => {
@@ -438,7 +480,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         0: 0,
                       },
                     }}
-                    max={30}
+                    max={getLimitByAccelerator(currentImageAcceleratorTypeName)}
                     step={
                       _.endsWith(currentAcceleratorType, 'shares') ? 0.1 : 1
                     }
