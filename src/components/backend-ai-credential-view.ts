@@ -106,6 +106,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   @state() private all_vfolder_hosts;
   @state() private default_vfolder_host = '';
   @state() private vfolderPermissions;
+  @state() private isSupportMaxVfolderCountInUserResourcePolicy = false;
 
   constructor() {
     super();
@@ -348,6 +349,10 @@ export default class BackendAICredentialView extends BackendAIPage {
           globalThis.backendaiclient.supports(
             'fine-grained-storage-permissions',
           );
+        this.isSupportMaxVfolderCountInUserResourcePolicy =
+          globalThis.backendaiclient.supports(
+            'max-vfolder-count-in-user-resource-policy',
+          );
         this._preparePage();
         if (this.enableParsingStoragePermissions) {
           this._getVfolderPermissions();
@@ -359,6 +364,10 @@ export default class BackendAICredentialView extends BackendAIPage {
         globalThis.backendaiclient.supports('session-lifetime');
       this.enableParsingStoragePermissions =
         globalThis.backendaiclient.supports('fine-grained-storage-permissions');
+      this.isSupportMaxVfolderCountInUserResourcePolicy =
+        globalThis.backendaiclient.supports(
+          'max-vfolder-count-in-user-resource-policy',
+        );
       this._preparePage();
       if (this.enableParsingStoragePermissions) {
         this._getVfolderPermissions();
@@ -1478,9 +1487,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             <div
               class="horizontal layout justified"
               style=${
-                globalThis.backendaiclient.supports(
-                  'max-vfolder-count-in-user-resource-policy',
-                )
+                this.isSupportMaxVfolderCountInUserResourcePolicy
                   ? 'display:none;'
                   : 'width:100%;'
               }
