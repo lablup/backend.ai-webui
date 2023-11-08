@@ -123,6 +123,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
   // change selected accelerator type according to currentImageAcceleratorTypeName
   useEffect(() => {
+    form.setFieldValue(
+      ['resource', 'accelerator'],
+      getLimitByAccelerator(currentImageAcceleratorTypeName).min || 0,
+    );
     form.setFieldValue(['resource', 'acceleratorType'], {
       value: currentImageAcceleratorTypeName,
       label: ACCELERATOR_UNIT_MAP[currentImageAcceleratorTypeName] || 'UNIT',
@@ -131,45 +135,46 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
   const getLimitByAccelerator = (acceleratorName: string) => {
     // FIXME: temporally add hard-coded number when config is undefined
-    const defaultAIAcceleratorMaxLimit = 8;
+    let maxLimit = 8;
+    let minLimit = 0;
+
+    // get max
     switch (acceleratorName) {
       case 'cuda.device':
       default:
-        return (
-          baiClient._config.maxCUDADevicesPerContainer ||
-          defaultAIAcceleratorMaxLimit
-        );
+        maxLimit = baiClient._config.maxCUDADevicesPerContainer || maxLimit;
+        break;
       case 'cuda.shares':
-        return (
-          baiClient._config.maxCUDASharesPerContainer ||
-          defaultAIAcceleratorMaxLimit
-        );
+        maxLimit = baiClient._config.maxCUDASharesPerContainer || maxLimit;
+        break;
       case 'rocm.device':
-        return (
-          baiClient._config.maxROCMDevicesPerContainer ||
-          defaultAIAcceleratorMaxLimit
-        );
+        maxLimit = baiClient._config.maxROCMDevicesPerContainer || maxLimit;
+        break;
       case 'tpu.device':
-        return (
-          baiClient._config.maxTPUDevicesPerContainer ||
-          defaultAIAcceleratorMaxLimit
-        );
+        maxLimit = baiClient._config.maxTPUDevicesPerContainer || maxLimit;
+        break;
       case 'ipu.device':
-        return (
-          baiClient._config.maxIPUDevicesPerContainer ||
-          defaultAIAcceleratorMaxLimit
-        );
+        maxLimit = baiClient._config.maxIPUDevicesPerContainer || maxLimit;
+        break;
       case 'atom.device':
-        return (
-          baiClient._config.maxATOMDevicesPerContainer ||
-          defaultAIAcceleratorMaxLimit
-        );
+        maxLimit = baiClient._config.maxATOMDevicesPerContainer || maxLimit;
+        break;
       case 'warboy.device':
-        return (
-          baiClient._config.maxWarboyDevicesPerContainer ||
-          defaultAIAcceleratorMaxLimit
-        );
+        maxLimit = baiClient._config.maxWarboyDevicesPerContainer || maxLimit;
+        break;
     }
+    // get min
+    minLimit = parseInt(
+      _.filter(
+        currentImageAcceleratorLimits,
+        (supportedAcceleratorInfo) =>
+          supportedAcceleratorInfo?.key == currentImageAcceleratorTypeName,
+      )[0]?.min as string,
+    );
+    return {
+      min: minLimit,
+      max: maxLimit,
+    };
   };
 
   const mutationToCreateService = useTanMutation<
@@ -202,11 +207,38 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           },
         },
       };
-      if (resourceSlots?.['cuda.shares']) {
-        body['config'].resources['cuda.shares'] = values.gpu;
-      }
-      if (resourceSlots?.['cuda.device']) {
-        body['config'].resources['cuda.device'] = values.gpu;
+      // Set AI accelerator value if set
+      // Currently, we only support one AI accelerator per session
+      if (values.resource.acceleratorType) {
+        const acceleratorTypeName: string =
+          values.resource.acceleratorType?.value;
+        // FIXME: temporally add switch-case
+        switch (acceleratorTypeName) {
+          case 'cuda.shares':
+            body['config'].resources['cuda.shares'] =
+              values.resource.accelerator;
+            break;
+          case 'cuda.device':
+            body['config'].resources['cuda.device'] =
+              values.resource.accelerator;
+            break;
+          case 'rocm.device':
+            body['config'].resources['rocm.device'] =
+              values.resource.accelerator;
+            break;
+          case 'tpu.device':
+            body['config'].resources['tpu.device'] =
+              values.resource.accelerator;
+            break;
+          case 'ipu.device':
+            body['config'].resources['ipu.device'] =
+              values.resource.accelerator;
+            break;
+          case 'warboy.device':
+            body['config'].resources['warboy.device'] =
+              values.resource.accelerator;
+            break;
+        }
       }
       if (values.shmem && values.shmem > 0) {
         body['config'].resource_opts = {
@@ -499,7 +531,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         0: 0,
                       },
                     }}
-                    max={getLimitByAccelerator(currentImageAcceleratorTypeName)}
+                    min={0}
+                    max={
+                      getLimitByAccelerator(currentImageAcceleratorTypeName).max
+                    }
                     step={
                       _.endsWith(currentAcceleratorType, 'shares') ? 0.1 : 1
                     }
