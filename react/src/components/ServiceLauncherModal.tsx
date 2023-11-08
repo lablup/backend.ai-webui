@@ -15,7 +15,7 @@ import SliderInputItem from './SliderInputFormItem';
 import VFolderSelect from './VFolderSelect';
 import { Card, Form, Input, theme, Select, Switch, message } from 'antd';
 import _ from 'lodash';
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 type ClusterMode = 'single-node' | 'multi-node';
@@ -85,18 +85,33 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const currentDomain = useCurrentDomainValue();
   const [form] = Form.useForm<ServiceLauncherFormInput>();
   const [resourceSlots] = useResourceSlots();
-  const currentImage: Image = form.getFieldValue(['environments', 'image']);
+  const currentImage = Form.useWatch(['environments', 'image'], form); //TODO: type // form.getFieldValue(['environments', 'image']);
+  const currentAcceleratorType = form.getFieldValue([
+    'resource',
+    'acceleratorType',
+  ]);
   const currentImageAcceleratorLimits = _.filter(
     currentImage?.resource_limits,
     (limit) =>
       limit ? !_.includes(['cpu', 'mem', 'shmem'], limit.key) : false,
   );
-  const currentIamgeAcceleratorTypeName = currentImageAcceleratorLimits[0]?.key;
-  const currentAcceleratorType = form.getFieldValue([
-    'resource',
-    'acceleratorType',
-  ]);
+  const currentImageAcceleratorTypeName: string =
+    // NOTE:
+    // filter from resourceSlots since resourceSlots and supported image could be non-identical.
+    // resourceSlots returns "all resources enable to allocate(including AI accelerator)"
+    // imageAcceleratorLimit returns "all resources that is supported in the selected image"
+    _.filter(currentImageAcceleratorLimits, (acceleratorInfo: any) =>
+      _.keys(resourceSlots).includes(acceleratorInfo?.key),
+    )[0]?.key || '';
   const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
+
+  // change selected accelerator type according to currentImageAcceleratorTypeName
+  useEffect(() => {
+    form.setFieldValue(['resource', 'acceleratorType'], {
+      value: currentImageAcceleratorTypeName,
+      label: ACCELERATOR_UNIT_MAP[currentImageAcceleratorTypeName] || 'UNIT',
+    });
+  }, [currentImage]);
 
   const mutationToCreateService = useTanMutation<
     unknown,
@@ -398,99 +413,77 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         },
                       ]}
                     />
-                    <SliderInputItem
-                      name={['resource', 'accelerator']}
-                      initialValue={0}
-                      label={t(`session.launcher.AIAccelerator`)}
-                      tooltip={
-                        <Trans i18nKey={'session.launcher.DescAIAccelerator'} />
-                      }
-                      sliderProps={{
-                        marks: {
-                          0: 0,
-                        },
-                      }}
-                      max={30}
-                      step={
-                        _.endsWith(currentAcceleratorType, 'shares') ? 0.1 : 1
-                      }
-                      disabled={currentImageAcceleratorLimits.length <= 0}
-                      inputNumberProps={{
-                        addonAfter: (
-                          <Form.Item
-                            noStyle
-                            name={['resource', 'acceleratorType']}
-                            initialValue={_.keys(acceleratorSlots)[0]}
-                          >
-                            <Select
-                              disabled={
-                                currentImageAcceleratorLimits.length <= 0
-                              }
-                              suffixIcon={
-                                _.size(acceleratorSlots) > 1 ? undefined : null
-                              }
-                              open={
-                                _.size(acceleratorSlots) > 1 ? undefined : false
-                              }
-                              popupMatchSelectWidth={false}
-                              options={_.map(
-                                acceleratorSlots,
-                                (value, name) => {
-                                  return {
-                                    value: name,
-                                    label: ACCELERATOR_UNIT_MAP[name] || 'UNIT',
-                                    disabled:
-                                      currentImageAcceleratorLimits.length >
-                                        0 &&
-                                      !_.find(
-                                        currentImageAcceleratorLimits,
-                                        (limit) => limit?.key === name,
-                                      ),
-                                  };
-                                },
-                              )}
-                            />
-                          </Form.Item>
-                        ),
-                      }}
-                      required
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    />
-                    {/* FIXME: temporally comment out for partial ResourceAllocationFormItems component
-                      {(resourceSlots?.['cuda.device'] ||
-                      resourceSlots?.['cuda.shares']) && (
-                      <SliderInputItem
-                        style={{ marginBottom: 0 }}
-                        name={'gpu'}
-                        label={t('session.launcher.AIAccelerator')}
-                        tooltip={
-                          <Trans
-                            i18nKey={'session.launcher.DescAIAccelerator'}
-                          />
-                        }
-                        max={
-                          resourceSlots['cuda.shares']
-                            ? baiClient._config.maxCUDASharesPerContainer
-                            : baiClient._config.maxCUDADevicesPerContainer
-                        }
-                        step={resourceSlots['cuda.shares'] ? 0.1 : 1}
-                        inputNumberProps={{
-                          //TODO: change unit based on resource limit
-                          addonAfter: 'GPU',
-                        }}
-                        required
-                        rules={[
-                          {
-                            required: true,
-                          },
-                        ]}
-                      />
-                    )} */}
                   </>
+                );
+              }}
+            </Form.Item>
+            <Form.Item
+              noStyle
+              shouldUpdate={(prev, cur) =>
+                prev.environments?.environments !==
+                cur.environments?.environment
+              }
+            >
+              {() => {
+                return (
+                  <SliderInputItem
+                    name={['resource', 'accelerator']}
+                    initialValue={0}
+                    label={t(`session.launcher.AIAccelerator`)}
+                    tooltip={
+                      <Trans i18nKey={'session.launcher.DescAIAccelerator'} />
+                    }
+                    sliderProps={{
+                      marks: {
+                        0: 0,
+                      },
+                    }}
+                    max={30}
+                    step={
+                      _.endsWith(currentAcceleratorType, 'shares') ? 0.1 : 1
+                    }
+                    disabled={currentImageAcceleratorLimits.length <= 0}
+                    inputNumberProps={{
+                      addonAfter: (
+                        <Form.Item
+                          noStyle
+                          name={['resource', 'acceleratorType']}
+                          initialValue={currentImageAcceleratorTypeName}
+                        >
+                          <Select
+                            disabled={currentImageAcceleratorLimits.length <= 0}
+                            suffixIcon={
+                              _.size(acceleratorSlots) > 1 ? undefined : null
+                            }
+                            open={
+                              _.size(acceleratorSlots) > 1 ? undefined : false
+                            }
+                            popupMatchSelectWidth={false}
+                            options={_.map(acceleratorSlots, (value, name) => {
+                              return {
+                                value: name,
+                                label: ACCELERATOR_UNIT_MAP[name] || 'UNIT',
+                                disabled:
+                                  currentImageAcceleratorLimits.length > 0 &&
+                                  !_.find(
+                                    currentImageAcceleratorLimits,
+                                    (limit) => {
+                                      return limit?.key === name;
+                                    },
+                                  ),
+                              };
+                            })}
+                          />
+                        </Form.Item>
+                      ),
+                    }}
+                    required
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  />
                 );
               }}
             </Form.Item>
