@@ -322,7 +322,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     ) {
                       extraFilterValues.push(environmentGroup.prefix);
                       environmentPrefixTag = (
-                        <Tag color="purple">{environmentGroup.prefix}</Tag>
+                        <Tag color="purple" key={environmentGroup.prefix}>
+                          {environmentGroup.prefix}
+                        </Tag>
                       );
                     }
 
@@ -336,8 +338,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         ) {
                           extraFilterValues.push(label.tag);
                           return (
-                            <Tag color={label.color}>
-                              <TextHighlighter keyword={environmentSearch}>
+                            <Tag color={label.color} key={label.tag}>
+                              <TextHighlighter
+                                keyword={environmentSearch}
+                                key={label.tag}
+                              >
                                 {label.tag}
                               </TextHighlighter>
                             </Tag>
@@ -499,7 +504,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
                                   .map((str) => {
                                     extraFilterValues.push(str);
                                     return (
-                                      <TextHighlighter keyword={versionSearch}>
+                                      <TextHighlighter
+                                        keyword={versionSearch}
+                                        key={str}
+                                      >
                                         {str}
                                       </TextHighlighter>
                                     );

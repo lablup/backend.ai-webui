@@ -522,7 +522,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                 return (
                   <SliderInputItem
                     name={['resource', 'accelerator']}
-                    initialValue={0}
                     label={t(`session.launcher.AIAccelerator`)}
                     tooltip={
                       <Trans i18nKey={'session.launcher.DescAIAccelerator'} />
