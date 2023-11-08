@@ -19,7 +19,6 @@ import '@material/mwc-icon-button';
 import '@material/mwc-linear-progress';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select';
-import { Select } from '@material/mwc-select';
 import '@material/mwc-switch';
 import '@material/mwc-textfield/mwc-textfield';
 import { css, CSSResultGroup, html } from 'lit';
@@ -497,12 +496,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     ) as Switch;
     if (document.body.clientWidth > 750 && this.direction == 'horizontal') {
       legend.style.display = 'flex';
+      legend.style.marginTop = '0';
       Array.from(this.resourceGauge.children).forEach((elem) => {
         (elem as HTMLElement).style.display = 'flex';
       });
     } else {
       if (toggleButton.selected) {
         legend.style.display = 'flex';
+        legend.style.marginTop = '0';
         if (document.body.clientWidth < 750) {
           this.resourceGauge.style.left = '20px';
           this.resourceGauge.style.right = '20px';
@@ -531,7 +532,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     return this.resourceBroker
       ._refreshResourcePolicy()
-      .then(() => {
+      .then((resolvedValue) => {
+        if (resolvedValue === false) {
+          setTimeout(() => {
+            // Retry to get the concurrency_max after a while if resource broker
+            // is not ready. When the timeout is 2000, it delays the display of
+            // other resource's allocation status. I don't know why, but I just
+            // set it to 2500.
+            this._refreshResourcePolicy();
+          }, 2500);
+        }
         this.concurrency_used = this.resourceBroker.concurrency_used;
         // this.userResourceLimit = this.resourceBroker.userResourceLimit;
         this.concurrency_max =

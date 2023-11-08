@@ -4,7 +4,7 @@ import rawFixAntCss from '../fix_antd.css?raw';
 import { useCustomThemeConfig } from '../helper/customThemeConfig';
 import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
-import { ConfigProvider } from 'antd';
+import { App, ConfigProvider } from 'antd';
 import en_US from 'antd/locale/en_US';
 import ko_KR from 'antd/locale/ko_KR';
 import dayjs from 'dayjs';
@@ -161,24 +161,26 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                     locale={'ko' === lang ? ko_KR : en_US}
                     theme={themeConfig}
                   >
-                    <StyleProvider container={shadowRoot} cache={cache}>
-                      <Suspense fallback="">
-                        <BrowserRouter>
-                          <QueryParamProvider
-                            adapter={ReactRouter6Adapter}
-                            options={
-                              {
-                                // searchStringToObject: queryString.parse,
-                                // objectToSearchString: queryString.stringify,
+                    <App>
+                      <StyleProvider container={shadowRoot} cache={cache}>
+                        <Suspense fallback="">
+                          <BrowserRouter>
+                            <QueryParamProvider
+                              adapter={ReactRouter6Adapter}
+                              options={
+                                {
+                                  // searchStringToObject: queryString.parse,
+                                  // objectToSearchString: queryString.stringify,
+                                }
                               }
-                            }
-                          >
-                            <RoutingEventHandler />
-                            {children}
-                          </QueryParamProvider>
-                        </BrowserRouter>
-                      </Suspense>
-                    </StyleProvider>
+                            >
+                              <RoutingEventHandler />
+                              {children}
+                            </QueryParamProvider>
+                          </BrowserRouter>
+                        </Suspense>
+                      </StyleProvider>
+                    </App>
                   </ConfigProvider>
                 </WebComponentContext.Provider>
               </ShadowRootContext.Provider>

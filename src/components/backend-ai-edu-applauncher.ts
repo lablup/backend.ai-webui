@@ -405,9 +405,20 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
           this.notification.show();
           return;
         }
-        const resources = mounts
-          ? { mounts, ...this.resources, group_name: projects[0]['name'] }
-          : { ...this.resources, group_name: projects[0]['name'] };
+        const sToken = urlParams.get('sToken') || urlParams.get('stoken');
+        const credentialScript = sToken
+          ? (
+              await globalThis.backendaiclient.eduApp.get_user_credential(
+                sToken,
+              )
+            )['script']
+          : undefined;
+        const resources = {
+          ...this.resources,
+          group_name: projects[0]['name'],
+          ...(mounts && Object.keys(mounts).length > 0 ? { mounts } : {}),
+          ...(credentialScript ? { bootstrap_script: credentialScript } : {}),
+        };
         let response;
         try {
           this.appLauncher.indicator.set(

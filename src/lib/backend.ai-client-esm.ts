@@ -660,6 +660,15 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.03.11')) {
       this._features['model-serving'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('23.09.0')) {
+      this._features['sudo-session-enabled'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.2')) {
+      this._features['container-registry-gql'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('24.03.0')) {
+      this._features['max-vfolder-count-in-user-resource-policy'] = true;
+    }
   }
 
   /**
@@ -1483,12 +1492,12 @@ class Client {
     };
     let rqst = this.newSignedRequest(
       'POST',
-      `/admin/graphql`,
+      `/admin/gql`,
       query,
       null,
       secure,
     );
-    return this._wrapWithPromise(rqst, false, signal, timeout, retry);
+    return this._wrapWithPromise(rqst, false, signal, timeout, retry).then(r => r.data);
   }
 
   /**
@@ -3165,7 +3174,6 @@ class ResourcePolicy {
       'max_concurrent_sessions',
       'max_containers_per_session',
       'max_vfolder_count',
-      'max_vfolder_size',
       'allowed_vfolder_hosts',
       'idle_timeout',
     ],
@@ -3199,8 +3207,6 @@ class ResourcePolicy {
    *   'max_concurrent_sessions': concurrency_limit,
    *   'max_containers_per_session': containers_per_session_limit,
    *   'idle_timeout': idle_timeout,
-   *   'max_vfolder_count': vfolder_count_limit,
-   *   'max_vfolder_size': vfolder_capacity_limit,
    *   'allowed_vfolder_hosts': vfolder_hosts,
    *   'max_session_lifetime': max_session_lifetime
    * };
@@ -3214,7 +3220,6 @@ class ResourcePolicy {
       'max_concurrent_sessions',
       'max_containers_per_session',
       'max_vfolder_count',
-      'max_vfolder_size',
       'allowed_vfolder_hosts',
       'idle_timeout',
     ];
@@ -3249,8 +3254,7 @@ class ResourcePolicy {
    *   {int} 'max_concurrent_sessions': concurrency_limit,
    *   {int} 'max_containers_per_session': containers_per_session_limit,
    *   {bigint} 'idle_timeout': idle_timeout,
-   *   {int} 'max_vfolder_count': vfolder_count_limit,
-   *   {bigint} 'max_vfolder_size': vfolder_capacity_limit,
+  *     {int} 'max_vfolder_count': vfolder_count_limit,
    *   {[string]} 'allowed_vfolder_hosts': vfolder_hosts,
    *   {int} 'max_session_lifetime': max_session_lifetime
    * };

@@ -1,4 +1,18 @@
 # Changelog
+## v23.09.1 (24/10/2023)
+## What's Changed
+* update: change label on terms of service dialog's close button by @rapsealk in https://github.com/lablup/backend.ai-webui/pull/1957
+* feat: Neo session launcher (Step 3&4) by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1896
+* fix: remove warnings/errors and unused logs in the browser console by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1961
+* style: widen control column to show rescan icon by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/1963
+* feature: hide sftp resource group by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/1966
+* feature: Enable create session with bootstrap script by @fregataa in https://github.com/lablup/backend.ai-webui/pull/1944
+* fix: remove `max_vfolder_count` from keypair resource policy by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/1972
+* fix: empty filtered scaling groups generates error by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1982
+* add: disable hostkey checking option for sftp session by @lizable in https://github.com/lablup/backend.ai-webui/pull/1984
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.0...v23.09.1
+
 
 ## v23.09.0 (27/09/2023)
 ## What's Changed

@@ -2887,28 +2887,24 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    */
   async _getMaxSize() {
-    const accessKey = globalThis.backendaiclient._config.accessKey;
-    const res = await globalThis.backendaiclient.keypair.info(accessKey, [
-      'resource_policy',
-    ]);
-    const policyName = res.keypair.resource_policy;
-    const resource_policy = await globalThis.backendaiclient.resourcePolicy.get(
-      policyName,
-      ['max_vfolder_count', 'max_vfolder_size'],
-    );
-    const max_vfolder_size =
-      resource_policy.keypair_resource_policy.max_vfolder_size;
+    // const accessKey = globalThis.backendaiclient._config.accessKey;
+    // const res = await globalThis.backendaiclient.keypair.info(accessKey, [
+    //  'resource_policy',
+    // ]);
+    // const policyName = res.keypair.resource_policy;
+    // const resource_policy =
+    //  await globalThis.backendaiclient.resourcePolicy.get(policyName);
     // default unit starts with MB.
-    [this.maxSize.value, this.maxSize.unit] = globalThis.backendaiutils
-      ._humanReadableFileSize(max_vfolder_size)
-      .split(' ');
-    if (['Bytes', 'KB', 'MB'].includes(this.maxSize.unit)) {
-      this.maxSize.value =
-        this.maxSize.value < 1 ? 1 : Math.round(this.maxSize.value);
-      this.maxSize.unit = 'MB';
-    } else {
-      this.maxSize.value = Math.round(this.maxSize.value * 10) / 10;
-    }
+    // [this.maxSize.value, this.maxSize.unit] = globalThis.backendaiutils
+    //   ._humanReadableFileSize(max_vfolder_size)
+    //   .split(' ');
+    // if (['Bytes', 'KB', 'MB'].includes(this.maxSize.unit)) {
+    //   this.maxSize.value =
+    //     this.maxSize.value < 1 ? 1 : Math.round(this.maxSize.value);
+    //   this.maxSize.unit = 'MB';
+    // } else {
+    //   this.maxSize.value = Math.round(this.maxSize.value * 10) / 10;
+    // }
   }
 
   /**
@@ -3817,9 +3813,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const imageResource: Record<string, unknown> = {};
     const configSSHImage = globalThis.backendaiclient._config.systemSSHImage;
     const images = this.systemRoleSupportedImages.filter(
-      (image: any) =>
-        image['name'].toLowerCase().includes('sftp-upload') &&
-        image['installed'],
+      (image: any) => image['installed'],
     );
     // TODO: use lablup/openssh-server image
     // select one image to launch system role supported session
@@ -3880,6 +3874,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             sessionUuid: sessionResponse.sessionId,
             host: host,
             port: port,
+            mounted: this.explorer.id,
           },
         });
         document.dispatchEvent(event);

@@ -847,11 +847,11 @@ export default class BackendAICredentialList extends BackendAIPage {
             <span>${rowData.item.max_vfolder_size}</span>
             <span class="indicator">GB</span>
           </div>
-          <div class="layout horizontal configuration">
-            <mwc-icon class="fg green">folder</mwc-icon>
-            <span>${rowData.item.max_vfolder_count}</span>
-            <span class="indicator">${_t('general.Folders')}</span>
-          </div>
+        </div>
+        <div class="layout horizontal configuration">
+          <mwc-icon class="fg green">folder</mwc-icon>
+          <span>${rowData.item.max_vfolder_count}</span>
+          <span class="indicator">${_t('general.Folders')}</span>
         </div>
       `,
       root,

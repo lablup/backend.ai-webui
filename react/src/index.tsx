@@ -1,5 +1,6 @@
 import BAIErrorBoundary from './components/BAIErrorBoundary';
 import Flex from './components/Flex';
+import FlexActivityIndicator from './components/FlexActivityIndicator';
 import ResourceGroupSelect from './components/ResourceGroupSelect';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
@@ -39,7 +40,6 @@ const UserInfoModal = React.lazy(() => import('./components/UserInfoModal'));
 const UserSettingsModal = React.lazy(
   () => import('./components/UserSettingModal'),
 );
-
 const ManageAppsModal = React.lazy(
   () => import('./components/ManageAppsModal'),
 );
@@ -49,9 +49,11 @@ const UserDropdownMenu = React.lazy(
 const UserProfileSettingModal = React.lazy(
   () => import('./components/UserProfileSettingModal'),
 );
-
 const SessionLauncherPage = React.lazy(
   () => import('./pages/SessionLauncherPage'),
+);
+const ContainerRegistryList = React.lazy(
+  () => import('./components/ContainerRegistryList'),
 );
 
 customElements.define(
@@ -226,6 +228,19 @@ customElements.define(
             </Form.Item>
           </Form>
         </Flex>
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-container-registry-list',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <Suspense fallback={<FlexActivityIndicator />}>
+          <ContainerRegistryList />
+        </Suspense>
       </DefaultProviders>
     );
   }),
