@@ -526,11 +526,14 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     tooltip={
                       <Trans i18nKey={'session.launcher.DescAIAccelerator'} />
                     }
-                    sliderProps={{
-                      marks: {
-                        0: 0,
-                      },
-                    }}
+                    sliderProps={
+                      {
+                        // FIXME: temporally comment out min value
+                        // marks: {
+                        //   0: 0,
+                        // },
+                      }
+                    }
                     min={0}
                     max={
                       getLimitByAccelerator(currentImageAcceleratorTypeName).max
