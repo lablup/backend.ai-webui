@@ -28,6 +28,11 @@ interface ServiceCreateConfigResourceType {
   mem: string;
   'cuda.device'?: number | string;
   'cuda.shares'?: number | string;
+  'rocm.device'?: number | string;
+  'tpu.device'?: number | string;
+  'ipu.device'?: number | string;
+  'atom.device'?: number | string;
+  'warboy.device'?: number | string;
 }
 
 interface ServiceCreateConfigType {
@@ -63,7 +68,8 @@ interface ServiceLauncherProps
 }
 interface ServiceLauncherFormInput extends ImageEnvironmentFormInput {
   serviceName: string;
-  gpu: number;
+  // gpu: number;
+  resource: AIAccelerator;
   cpu: number;
   mem: number;
   shmem: number;
@@ -71,6 +77,16 @@ interface ServiceLauncherFormInput extends ImageEnvironmentFormInput {
   vFolderName: string;
   desiredRoutingCount: number;
   openToPublic: boolean;
+}
+
+interface AIAccelerator {
+  accelerator: number;
+  acceleratorType: SelectUIType;
+}
+
+interface SelectUIType {
+  value: string;
+  label: string;
 }
 
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
@@ -277,7 +293,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           initialValues={
             {
               cpu: 1,
-              gpu: 0,
+              // gpu: 0,
+              resource: {
+                accelerator: 0,
+              },
               mem: 0.25,
               shmem: 0,
               desiredRoutingCount: 1,
