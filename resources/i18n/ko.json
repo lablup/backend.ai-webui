@@ -239,7 +239,8 @@
       "Enable": "활성화",
       "Network": "네트워크",
       "preopen": "사전 개방 포트",
-      "EnqueueComputeSessionWarning": "현재 사용 가능한 자원보다 크게 설정하면 세션 생성이 가능해질 때까지 큐에서 실행 지연됩니다."
+      "EnqueueComputeSessionWarning": "현재 사용 가능한 자원보다 크게 설정하면 세션 생성이 가능해질 때까지 큐에서 실행 지연됩니다.",
+      "Template": "세션 템플릿"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

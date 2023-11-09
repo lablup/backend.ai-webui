@@ -87,13 +87,13 @@ const SessionLauncherPage = () => {
       );
       // To sync the latest form values to URL,
       // 'trailing' is set to true, and get the form values here."
-      setQuery(
-        {
-          // formValues: form.getFieldsValue(),
-          formValues: _.omit(form.getFieldsValue(), ['environments.image']),
-        },
-        'replaceIn',
-      );
+      // setQuery(
+      //   {
+      //     // formValues: form.getFieldsValue(),
+      //     formValues: _.omit(form.getFieldsValue(), ['environments.image']),
+      //   },
+      //   'replaceIn',
+      // );
     },
     {
       leading: false,
@@ -245,8 +245,8 @@ const SessionLauncherPage = () => {
             <Typography.Title level={3} style={{ marginTop: 0 }}>
               {t('session.launcher.StartNewSession')}
             </Typography.Title>
-            <Button type="link" icon={<BlockOutlined />}>
-              Templates
+            <Button type="link" icon={<BlockOutlined />} disabled>
+              {t('session.launcher.Template')}
             </Button>
           </Flex>
           {/* <Suspense fallback={<FlexActivityIndicator />}> */}
@@ -404,9 +404,6 @@ const SessionLauncherPage = () => {
                         >
                           <Checkbox
                             onChange={(e) => {
-                              alert(
-                                form.getFieldValue(['batch', 'scheduleDate']),
-                              );
                               if (
                                 e.target.checked &&
                                 _.isEmpty(

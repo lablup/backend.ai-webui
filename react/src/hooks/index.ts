@@ -253,4 +253,5 @@ type BackendAIConfig = {
   force2FA: boolean;
   directoryBasedUsage: boolean;
   maxCountForPreopenPorts: number;
+  [key: string]: any;
 };

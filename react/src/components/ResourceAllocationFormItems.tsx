@@ -13,7 +13,7 @@ import ResourcePresetSelect from './ResourcePresetSelect';
 import SliderInputItem from './SliderInputFormItem';
 import { Card, Form, Select, theme } from 'antd';
 import _ from 'lodash';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES = {
@@ -78,7 +78,20 @@ const ResourceAllocationFormItems = () => {
     staleTime: 0,
   });
 
-  const sliderMinMax = {
+  const sliderMinMax: {
+    mem?: {
+      min: any;
+      max: string;
+    };
+    shmem?: {
+      min: any;
+    };
+    cpu?: {
+      min: number | undefined;
+      max: number | undefined;
+    };
+    [key: string]: any;
+  } = {
     ...(resourceSlots?.cpu
       ? {
           cpu: {
@@ -99,9 +112,11 @@ const ResourceAllocationFormItems = () => {
     ...(resourceSlots?.mem
       ? {
           mem: {
-            min: _.max([
-              _.find(form.getFieldValue('image')?.resource_limits, 'mem')?.min,
-            ]),
+            min:
+              _.max([
+                _.find(currentImage?.resource_limits, (i) => i?.key === 'mem')
+                  ?.min,
+              ]) || '0g',
             max:
               _.min([
                 baiClient._config.maxMemoryPerContainer,
@@ -118,14 +133,50 @@ const ResourceAllocationFormItems = () => {
               ]) + 'g',
           },
           shmem: {
-            min: _.max([
-              _.find(form.getFieldValue('image')?.resource_limits, 'shmem')
-                ?.min,
-            ]),
+            min:
+              _.max([
+                _.find(currentImage?.resource_limits, (i) => i?.key === 'shmem')
+                  ?.min,
+              ]) || '0g',
             // shmem max is mem max
           },
         }
       : {}),
+    ..._.reduce(
+      acceleratorSlots,
+      (result, value, key) => {
+        const configName =
+          {
+            'cuda.device': 'maxCUDADevicesPerContainer',
+            'cuda.shares': 'maxCUDASharesPerContainer',
+            'rocm.device': 'maxROCMDevicesPerContainer',
+            'tpu.device': 'maxTPUDevicesPerContainer',
+            'ipu.device': 'maxIPUDevicesPerContainer',
+            'atom.device': 'maxATOMDevicesPerContainer',
+            'warboy.device': 'maxWarboyDevicesPerContainer',
+          }[key] || 'cuda.device'; // FIXME: temporally `cuda.device` config, when undefined
+        result[key] = {
+          min:
+            parseInt(
+              _.filter(
+                currentImageAcceleratorLimits,
+                (supportedAcceleratorInfo) => {
+                  return supportedAcceleratorInfo?.key === key;
+                },
+              )[0]?.min as string,
+            ) || 0,
+          //
+          max: baiClient._config[configName] || 8,
+        };
+        return result;
+      },
+      {} as {
+        [key: string]: {
+          min: number;
+          max: number;
+        };
+      },
+    ),
     // ...(acceleratorSlots)
     // ..._.map(['cuda.device'], (key) => {
     //   return {
@@ -147,6 +198,58 @@ const ResourceAllocationFormItems = () => {
     // }),
   };
 
+  useEffect(() => {
+    // when image changed, set value of resources to min value
+    form.setFieldsValue({
+      resource: {
+        cpu: sliderMinMax.cpu?.min,
+        mem: sliderMinMax.mem?.min,
+        shmem: sliderMinMax.shmem?.min,
+      },
+    });
+
+    if (currentImageAcceleratorLimits.length > 0) {
+      if (
+        _.find(
+          currentImageAcceleratorLimits,
+          (limit) =>
+            limit?.key === form.getFieldValue(['resource', 'acceleratorType']),
+        )
+      ) {
+        // if current selected accelerator type is supported in the selected image,
+        form.setFieldValue(
+          ['resource', 'accelerator'],
+          sliderMinMax[form.getFieldValue(['resource', 'acceleratorType'])].min,
+        );
+      } else {
+        // if current selected accelerator type is not supported in the selected image,
+        // change accelerator type to the first supported accelerator type.
+        const nextImageSelectorType: string | undefined | null = // NOTE:
+          // filter from resourceSlots since resourceSlots and supported image could be non-identical.
+          // resourceSlots returns "all resources enable to allocate(including AI accelerator)"
+          // imageAcceleratorLimit returns "all resources that is supported in the selected image"
+          _.filter(currentImageAcceleratorLimits, (acceleratorInfo: any) =>
+            _.keys(resourceSlots).includes(acceleratorInfo?.key),
+          )[0]?.key;
+
+        if (nextImageSelectorType) {
+          form.setFieldValue(
+            ['resource', 'accelerator'],
+            sliderMinMax[nextImageSelectorType].min,
+          );
+          form.setFieldValue(
+            ['resource', 'acceleratorType'],
+            nextImageSelectorType,
+          );
+        }
+      }
+    }
+
+    form.validateFields().catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentImage]);
+
+  console.log('##12', currentImage?.resource_limits, sliderMinMax);
   return (
     <>
       <Form.Item
@@ -239,11 +342,16 @@ const ResourceAllocationFormItems = () => {
                         },
                       },
                     }}
+                    min={0}
                     max={baiClient._config.maxCPUCoresPerContainer}
                     required
                     rules={[
                       {
                         required: true,
+                      },
+                      {
+                        type: 'number',
+                        min: sliderMinMax.cpu?.min,
                       },
                     ]}
                   />
@@ -280,7 +388,8 @@ const ResourceAllocationFormItems = () => {
                   >
                     <DynamicUnitInputNumberWithSlider
                       max={sliderMinMax.mem?.max}
-                      min="256m"
+                      // min="256m"
+                      min={'0g'}
                       // warn={
                       //   checkPresetInfo?.scaling_group_remaining.mem ===
                       //   undefined
@@ -389,7 +498,8 @@ const ResourceAllocationFormItems = () => {
                             0: 0,
                           },
                         }}
-                        max={30}
+                        min={0}
+                        max={sliderMinMax[currentAcceleratorType]?.max}
                         step={
                           _.endsWith(currentAcceleratorType, 'shares') ? 0.1 : 1
                         }
@@ -437,6 +547,10 @@ const ResourceAllocationFormItems = () => {
                         rules={[
                           {
                             required: true,
+                          },
+                          {
+                            type: 'number',
+                            min: sliderMinMax[currentAcceleratorType]?.min || 0,
                           },
                         ]}
                       />

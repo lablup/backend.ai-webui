@@ -19,15 +19,15 @@ export const useResourceSlots = () => {
   const [key, checkUpdate] = useUpdatableState('first');
   const baiClient = useSuspendedBackendaiClient();
   const { data: resourceSlots } = useTanQuery<{
-    cpu: string;
-    mem: string;
-    'cuda.shares': string;
-    'cuda.device': string;
-    'rocm.device': string;
-    'ipu.device': string;
-    'atom.device': string;
-    'warboy.device': string;
-    [key: string]: string;
+    cpu?: string;
+    mem?: string;
+    'cuda.shares'?: string;
+    'cuda.device'?: string;
+    'rocm.device'?: string;
+    'tpu.device'?: string;
+    'ipu.device'?: string;
+    'atom.device'?: string;
+    'warboy.device'?: string;
   }>({
     queryKey: ['useResourceSlots', key],
     queryFn: () => {
