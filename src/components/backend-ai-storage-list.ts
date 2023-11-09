@@ -115,6 +115,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) _boundOwnerRenderer = Object();
   @property({type: Object}) _boundFileNameRenderer = Object();
   @property({type: Object}) _boundCreatedTimeRenderer = Object();
+  @property({type: Object}) _boundSizeRenderer = Object();
   @property({type: Object}) _boundPermissionRenderer = Object();
   @property({type: Object}) _boundCloneableRenderer = Object();
   @property({type: Object}) _boundQuotaRenderer = Object();
@@ -199,6 +200,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundOwnerRenderer = this.OwnerRenderer.bind(this);
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
+    this._boundSizeRenderer = this.sizeRenderer.bind(this);
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
     this._boundFolderListRenderer = this.folderListRenderer.bind(this);
     this._boundQuotaRenderer = this.quotaRenderer.bind(this);
@@ -920,7 +922,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             </vaadin-grid-sort-column>
             <vaadin-grid-sort-column flex-grow="2" resizable header="${_t('data.explorer.Created')}" path="ctime" .renderer="${this._boundCreatedTimeRenderer}">
             </vaadin-grid-sort-column>
-            <vaadin-grid-sort-column path="size" auto-width resizable header="${_t('data.explorer.Size')}">
+            <vaadin-grid-sort-column auto-width resizable header="${_t('data.explorer.Size')}" path="size" .renderer="${this._boundSizeRenderer}">
             </vaadin-grid-sort-column>
             <vaadin-grid-column resizable auto-width header="${_t('data.explorer.Actions')}" .renderer="${this._boundControlFileListRenderer}">
             </vaadin-grid-column>
@@ -1572,6 +1574,29 @@ export default class BackendAiStorageList extends BackendAIPage {
         </div>
       `, root
     );
+  }
+
+/**
+ * Render size by condition 
+ * 
+ * @param {Element} root - the row details content DOM element
+ * @param {Element} column - the column element that controls the state of the host element
+ * @param {Object} rowData - the object with the properties related with the rendered item
+ * */
+  sizeRenderer(root, column?, rowData?) {
+    console.log(rowData.item)
+    render(
+      // language=HTML
+      html `
+        <div class="layout horizontal">
+        ${((rowData.item.type as string).toUpperCase() === "DIRECTORY" && !this._isDirectorySizeVisible) ? 
+          html`
+            <span class="monospace">-</span>` : 
+          html`
+            <span>${rowData.item.size}</span>`}
+        </div>
+      `
+      , root);
   }
 
   /**
