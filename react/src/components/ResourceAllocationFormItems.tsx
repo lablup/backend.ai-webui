@@ -11,7 +11,7 @@ import ResourceGroupSelect from './ResourceGroupSelect';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import ResourcePresetSelect from './ResourcePresetSelect';
 import SliderInputItem from './SliderInputFormItem';
-import { Card, Form, Select, theme } from 'antd';
+import { Card, Form, FormRule, Select, theme } from 'antd';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -78,20 +78,29 @@ const ResourceAllocationFormItems = () => {
     staleTime: 0,
   });
 
-  const sliderMinMax: {
-    mem?: {
-      min: any;
-      max: string;
-    };
-    shmem?: {
-      min: any;
-    };
-    cpu?: {
-      min: number | undefined;
-      max: number | undefined;
-    };
-    [key: string]: any;
-  } = {
+  // interface ResourceLimit {
+  //   min: number | string;
+  //   max: number | string;
+  //   remaining?: number | string;
+  // }
+
+  // interface AcceleratorLimit {
+  //   min: number;
+  //   max: number;
+  //   remaining: number;
+  // }
+
+  // type ResourceSlots = {
+  //   cpu?: ResourceLimit;
+  //   mem?: ResourceLimit;
+  //   shmem?: {
+  //     min: string | undefined;
+  //   };
+  // } & {
+  //   [key in string]?: AcceleratorLimit | undefined;
+  // };
+
+  const sliderMinMax: any = {
     ...(resourceSlots?.cpu
       ? {
           cpu: {
@@ -106,6 +115,12 @@ const ResourceAllocationFormItems = () => {
               limitParser(checkPresetInfo?.keypair_limits.cpu),
               limitParser(checkPresetInfo?.group_limits.cpu),
             ]),
+            remaining:
+              _.min([
+                checkPresetInfo?.keypair_remaining.cpu,
+                checkPresetInfo?.group_remaining.cpu,
+                checkPresetInfo?.scaling_group_remaining.cpu,
+              ]) ?? Number.MAX_SAFE_INTEGER,
           },
         }
       : {}),
@@ -131,6 +146,12 @@ const ResourceAllocationFormItems = () => {
                     'g',
                   )?.number,
               ]) + 'g',
+            remaining:
+              _.min([
+                checkPresetInfo?.keypair_remaining.mem,
+                checkPresetInfo?.group_remaining.mem,
+                checkPresetInfo?.scaling_group_remaining.mem,
+              ]) ?? Number.MAX_SAFE_INTEGER,
           },
           shmem: {
             min:
@@ -167,6 +188,15 @@ const ResourceAllocationFormItems = () => {
             ) || 0,
           //
           max: baiClient._config[configName] || 8,
+          remaining:
+            _.min([
+              // @ts-ignore
+              _.toNumber(checkPresetInfo?.keypair_remaining[key]),
+              // @ts-ignore
+              _.toNumber(checkPresetInfo?.group_remaining[key]),
+              // @ts-ignore
+              _.toNumber(checkPresetInfo?.scaling_group_remaining[key]),
+            ]) ?? Number.MAX_SAFE_INTEGER,
         };
         return result;
       },
@@ -174,6 +204,7 @@ const ResourceAllocationFormItems = () => {
         [key: string]: {
           min: number;
           max: number;
+          remaining: number;
         };
       },
     ),
@@ -249,7 +280,69 @@ const ResourceAllocationFormItems = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImage]);
 
-  console.log('##12', currentImage?.resource_limits, sliderMinMax);
+  // console.log('###12', checkPresetInfo?.keypair_remaining);
+
+  const remainingValidationRules: {
+    [key: string]: FormRule;
+  } = {
+    cpu: {
+      warningOnly: true,
+      validator: async (rule, value: string) => {
+        if (sliderMinMax.cpu && value > sliderMinMax.cpu.remaining) {
+          return Promise.reject(
+            t('session.launcher.EnqueueComputeSessionWarning'),
+          );
+        } else {
+          return Promise.resolve();
+        }
+      },
+    },
+    mem: {
+      warningOnly: true,
+      validator: async (rule, value: string) => {
+        if (
+          sliderMinMax.mem &&
+          compareNumberWithUnits(value, sliderMinMax.mem.remaining) > 0
+        ) {
+          return Promise.reject(
+            t('session.launcher.EnqueueComputeSessionWarning'),
+          );
+        } else {
+          return Promise.resolve();
+        }
+      },
+    },
+    ..._.reduce(
+      acceleratorSlots,
+      (result, slot, slotKey) => {
+        return {
+          ...result,
+          [slotKey]: {
+            warningOnly: true,
+            validator: async (rule: any, value: string) => {
+              if (
+                sliderMinMax[slotKey] &&
+                value > sliderMinMax[slotKey].remaining
+              ) {
+                return Promise.reject(
+                  t('session.launcher.EnqueueComputeSessionWarning'),
+                );
+              } else {
+                return Promise.resolve();
+              }
+            },
+          },
+        };
+      },
+      {},
+    ),
+  };
+  console.log(
+    '##12',
+    currentImage?.resource_limits,
+    sliderMinMax,
+    remainingValidationRules,
+  );
   return (
     <>
       <Form.Item
@@ -334,16 +427,20 @@ const ResourceAllocationFormItems = () => {
                           },
                           label: 0,
                         },
-                        [baiClient._config.maxCPUCoresPerContainer]: {
-                          style: {
-                            color: token.colorTextSecondary,
-                          },
-                          label: baiClient._config.maxCPUCoresPerContainer,
-                        },
+                        ...(sliderMinMax.cpu?.max
+                          ? {
+                              [sliderMinMax.cpu?.max]: {
+                                style: {
+                                  color: token.colorTextSecondary,
+                                },
+                                label: sliderMinMax.cpu?.max,
+                              },
+                            }
+                          : {}),
                       },
                     }}
                     min={0}
-                    max={baiClient._config.maxCPUCoresPerContainer}
+                    max={sliderMinMax.cpu?.max}
                     required
                     rules={[
                       {
@@ -352,7 +449,9 @@ const ResourceAllocationFormItems = () => {
                       {
                         type: 'number',
                         min: sliderMinMax.cpu?.min,
+                        // TODO: set message
                       },
+                      remainingValidationRules.cpu,
                     ]}
                   />
                 )}
@@ -366,24 +465,25 @@ const ResourceAllocationFormItems = () => {
                       {
                         required: true,
                       },
-                      {
-                        warningOnly: true,
-                        validator: async (rule, value: string) => {
-                          if (
-                            compareNumberWithUnits(
-                              value || '0b',
-                              checkPresetInfo?.keypair_remaining.mem + 'b',
-                            ) > 0
-                          ) {
-                            return Promise.reject(
-                              t(
-                                'session.launcher.EnqueueComputeSessionWarning',
-                              ),
-                            );
-                          }
-                          return Promise.resolve();
-                        },
-                      },
+                      remainingValidationRules.mem,
+                      // {
+                      //   warningOnly: true,
+                      //   validator: async (rule, value: string) => {
+                      //     if (
+                      //       compareNumberWithUnits(
+                      //         value || '0b',
+                      //         checkPresetInfo?.keypair_remaining.mem + 'b',
+                      //       ) > 0
+                      //     ) {
+                      //       return Promise.reject(
+                      //         t(
+                      //           'session.launcher.EnqueueComputeSessionWarning',
+                      //         ),
+                      //       );
+                      //     }
+                      //     return Promise.resolve();
+                      //   },
+                      // },
                     ]}
                   >
                     <DynamicUnitInputNumberWithSlider
@@ -552,6 +652,7 @@ const ResourceAllocationFormItems = () => {
                             type: 'number',
                             min: sliderMinMax[currentAcceleratorType]?.min || 0,
                           },
+                          remainingValidationRules[currentAcceleratorType],
                         ]}
                       />
                     );
