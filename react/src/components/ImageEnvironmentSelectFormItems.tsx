@@ -75,7 +75,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   useSuspendedBackendaiClient();
 
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
-  Form.useWatch('environments', form);
+  Form.useWatch('environments', { form, preserve: true });
 
   const [environmentSearch, setEnvironmentSearch] = useState('');
   const [versionSearch, setVersionSearch] = useState('');
@@ -322,7 +322,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     ) {
                       extraFilterValues.push(environmentGroup.prefix);
                       environmentPrefixTag = (
-                        <Tag color="purple">{environmentGroup.prefix}</Tag>
+                        <Tag color="purple">
+                          <TextHighlighter keyword={environmentSearch}>
+                            {environmentGroup.prefix}
+                          </TextHighlighter>
+                        </Tag>
                       );
                     }
 

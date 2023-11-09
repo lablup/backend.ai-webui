@@ -6,7 +6,9 @@ import Flex from '../components/Flex';
 import ImageEnvironmentSelectFormItems from '../components/ImageEnvironmentSelectFormItems';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import PortSelectFormItem, { PortTag } from '../components/PortSelectFormItem';
-import ResourceAllocationFormItems from '../components/ResourceAllocationFormItems';
+import ResourceAllocationFormItems, {
+  RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+} from '../components/ResourceAllocationFormItems';
 import ResourceGroupSelect from '../components/ResourceGroupSelect';
 import ResourceNumber from '../components/ResourceNumber';
 import VFolderTableFromItem from '../components/VFolderTableFormItem';
@@ -59,6 +61,7 @@ import {
 const INITIAL_FORM_VALUES = {
   sessionType: 'interactive',
   allocationPreset: 'custom',
+  ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
 };
 const stepParam = withDefault(NumberParam, 0);
 const formValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
@@ -136,7 +139,7 @@ const SessionLauncherPage = () => {
 
   // before initialFormValues is set, use getFieldValue and useWatch will return undefined
   const sessionType =
-    Form.useWatch('sessionType', form) ||
+    Form.useWatch('sessionType', { form, preserve: true }) ||
     form.getFieldValue('sessionType') ||
     initialFormValues.sessionType;
 

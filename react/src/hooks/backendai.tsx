@@ -60,10 +60,14 @@ export const useResourceSlotsByResourceGroup = (name?: string) => {
     queryKey: ['useResourceSlots', name, key],
     queryFn: () => {
       // return baiClient.get_resource_slots();
-      return baiRequestWithPromise({
-        method: 'GET',
-        url: `/config/resource-slots/details?sgroup=${name}`,
-      });
+      if (_.isEmpty(name)) {
+        return;
+      } else {
+        return baiRequestWithPromise({
+          method: 'GET',
+          url: `/config/resource-slots/details?sgroup=${name}`,
+        });
+      }
     },
     staleTime: 0,
   });

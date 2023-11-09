@@ -16,75 +16,68 @@ import _ from 'lodash';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES = {
+  resource: {
+    cpu: 0,
+    mem: '0g',
+    shmem: '0g',
+    accelerator: 0,
+  },
+};
+
+const limitParser = (limit: string | undefined) => {
+  if (limit === undefined) {
+    return undefined;
+  } else if (limit === 'Infinity') {
+    return undefined;
+  } else if (limit === 'NaN') {
+    return undefined;
+  } else {
+    return _.toNumber(limit);
+  }
+};
+
 const ResourceAllocationFormItems = () => {
   const form = Form.useFormInstance();
-  // const [form] = Form.useForm();
   const { t } = useTranslation();
   const { token } = theme.useToken();
+
+  const baiClient = useSuspendedBackendaiClient();
   const [resourceSlots] = useResourceSlots();
   const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
 
-  const baiClient = useSuspendedBackendaiClient();
-
   const currentProject = useCurrentProjectValue();
-  const currentResourceGroup = form.getFieldValue('resourceGroup');
-  // const currentResourceGroup = Form.useWatch('resourceGroup', form);
-  const resourceSlotsInGroup =
-    useResourceSlotsByResourceGroup(currentResourceGroup);
-  const currentImage: Image = form.getFieldValue(['environments', 'image']);
-  // const currentImage: Image = Form.useWatch(['environments', 'image'], form);
 
-  const currentAcceleratorType = form.getFieldValue([
-    'resource',
-    'acceleratorType',
-  ]);
-  // const currentAcceleratorType = Form.useWatch(
-  //   ['resource', 'acceleratorType'],
-  //   form,
-  // );
-  console.log('##VALUES', form.getFieldsValue());
+  // Form watch
+  const currentResourceGroup = Form.useWatch('resourceGroup', {
+    form,
+    preserve: true,
+  });
+  const currentImage: Image = Form.useWatch(['environments', 'image'], {
+    form,
+    preserve: true,
+  });
   const currentImageAcceleratorLimits = _.filter(
     currentImage?.resource_limits,
     (limit) =>
       limit ? !_.includes(['cpu', 'mem', 'shmem'], limit.key) : false,
   );
-  console.log(
-    '### currentImageAcceleratorLimits',
-    currentImageAcceleratorLimits,
-  );
 
   const { data: checkPresetInfo } = useTanQuery<ResourceAllocation>({
     queryKey: ['check-resets', currentProject.name, currentResourceGroup],
     queryFn: () => {
-      return baiClient.resourcePreset.check({
-        group: currentProject.name,
-        scaling_group: currentResourceGroup,
-      });
+      if (currentResourceGroup) {
+        return baiClient.resourcePreset.check({
+          group: currentProject.name,
+          scaling_group: currentResourceGroup,
+        });
+      } else {
+        return;
+      }
     },
     staleTime: 0,
   });
 
-  console.log(resourceSlots);
-  console.log('##resourceSlotsInGroup', resourceSlotsInGroup);
-  console.log(checkPresetInfo);
-
-  // TODO: auto select preset
-  // console.log('### IMAGE', form.getFieldsValue().environments?.image);
-  console.log('### IMAGE', currentImage);
-  // slider min max
-
-  const limitParser = (limit: string | undefined) => {
-    if (limit === undefined) {
-      return undefined;
-    } else if (limit === 'Infinity') {
-      return undefined;
-    } else if (limit === 'NaN') {
-      return undefined;
-    } else {
-      return _.toNumber(limit);
-    }
-  };
-  limitParser(checkPresetInfo?.group_limits.cpu);
   const sliderMinMax = {
     ...(resourceSlots?.cpu
       ? {
@@ -212,7 +205,7 @@ const ResourceAllocationFormItems = () => {
                 {resourceSlots?.cpu && (
                   <SliderInputItem
                     name={['resource', 'cpu']}
-                    initialValue={0}
+                    // initialValue={0}
                     label={t('session.launcher.CPU')}
                     tooltip={<Trans i18nKey={'session.launcher.DescCPU'} />}
                     // min={parseInt(
@@ -258,7 +251,7 @@ const ResourceAllocationFormItems = () => {
                 {resourceSlots?.mem && (
                   <Form.Item
                     name={['resource', 'mem']}
-                    initialValue={'0g'}
+                    // initialValue={'0g'}
                     label={t('session.launcher.Memory')}
                     tooltip={<Trans i18nKey={'session.launcher.DescMemory'} />}
                     rules={[
@@ -331,7 +324,7 @@ const ResourceAllocationFormItems = () => {
                 {resourceSlots?.mem && (
                   <Form.Item
                     name={['resource', 'shmem']}
-                    initialValue={'0g'}
+                    // initialValue={'0g'}
                     label={t('session.launcher.SharedMemory')}
                     tooltip={
                       <Trans i18nKey={'session.launcher.DescSharedMemory'} />
@@ -369,58 +362,87 @@ const ResourceAllocationFormItems = () => {
                     />
                   </Form.Item>
                 )}
-                <SliderInputItem
-                  name={['resource', 'accelerator']}
-                  initialValue={0}
-                  label={t(`session.launcher.AIAccelerator`)}
-                  // tooltip={
-                  //   <Trans i18nKey={'session.launcher.DescSharedMemory'} />
-                  // }
-                  sliderProps={{
-                    marks: {
-                      0: 0,
-                    },
+                <Form.Item
+                  noStyle
+                  shouldUpdate={(prev, next) => {
+                    return (
+                      prev.resource?.acceleratorType !==
+                      next.resource?.acceleratorType
+                    );
                   }}
-                  max={30}
-                  step={_.endsWith(currentAcceleratorType, 'shares') ? 0.1 : 1}
-                  inputNumberProps={{
-                    addonAfter: (
-                      <Form.Item
-                        noStyle
-                        name={['resource', 'acceleratorType']}
-                        initialValue={_.keys(acceleratorSlots)[0]}
-                      >
-                        <Select
-                          suffixIcon={
-                            _.size(acceleratorSlots) > 1 ? undefined : null
-                          }
-                          open={
-                            _.size(acceleratorSlots) > 1 ? undefined : false
-                          }
-                          popupMatchSelectWidth={false}
-                          options={_.map(acceleratorSlots, (value, name) => {
-                            return {
-                              value: name,
-                              label: ACCELERATOR_UNIT_MAP[name] || 'UNIT',
-                              disabled:
-                                currentImageAcceleratorLimits.length > 0 &&
-                                !_.find(
-                                  currentImageAcceleratorLimits,
-                                  (limit) => limit?.key === name,
-                                ),
-                            };
-                          })}
-                        />
-                      </Form.Item>
-                    ),
+                >
+                  {({ getFieldValue }) => {
+                    const currentAcceleratorType = getFieldValue([
+                      'resource',
+                      'acceleratorType',
+                    ]);
+                    return (
+                      <SliderInputItem
+                        name={['resource', 'accelerator']}
+                        // initialValue={0}
+                        label={t(`session.launcher.AIAccelerator`)}
+                        // tooltip={
+                        //   <Trans i18nKey={'session.launcher.DescSharedMemory'} />
+                        // }
+                        sliderProps={{
+                          marks: {
+                            0: 0,
+                          },
+                        }}
+                        max={30}
+                        step={
+                          _.endsWith(currentAcceleratorType, 'shares') ? 0.1 : 1
+                        }
+                        inputNumberProps={{
+                          addonAfter: (
+                            <Form.Item
+                              noStyle
+                              name={['resource', 'acceleratorType']}
+                              initialValue={_.keys(acceleratorSlots)[0]}
+                            >
+                              <Select
+                                suffixIcon={
+                                  _.size(acceleratorSlots) > 1
+                                    ? undefined
+                                    : null
+                                }
+                                open={
+                                  _.size(acceleratorSlots) > 1
+                                    ? undefined
+                                    : false
+                                }
+                                popupMatchSelectWidth={false}
+                                options={_.map(
+                                  acceleratorSlots,
+                                  (value, name) => {
+                                    return {
+                                      value: name,
+                                      label:
+                                        ACCELERATOR_UNIT_MAP[name] || 'UNIT',
+                                      disabled:
+                                        currentImageAcceleratorLimits.length >
+                                          0 &&
+                                        !_.find(
+                                          currentImageAcceleratorLimits,
+                                          (limit) => limit?.key === name,
+                                        ),
+                                    };
+                                  },
+                                )}
+                              />
+                            </Form.Item>
+                          ),
+                        }}
+                        required
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
+                      />
+                    );
                   }}
-                  required
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                />
+                </Form.Item>
               </>
             );
           }}
