@@ -130,6 +130,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) otp;
   @property({type: Boolean}) needToResetPassword = false;
   @property({type: Boolean}) directoryBasedUsage = false;
+  @property({type: Boolean}) isDirectorySizeVisible = true;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel') loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
@@ -779,6 +780,14 @@ export default class BackendAILogin extends BackendAIPage {
         valueType: 'boolean',
         defaultValue: false,
         value: (generalConfig?.directoryBasedUsage),
+      } as ConfigValueObject) as boolean;
+
+    // Enable hide directory size
+    this.isDirectorySizeVisible = this._getConfigValueByExists(generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: (generalConfig?.isDirectorySizeVisible),
       } as ConfigValueObject) as boolean;
   }
 
@@ -1501,6 +1510,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.enable2FA = this.enable2FA;
       globalThis.backendaiclient._config.force2FA = this.force2FA;
       globalThis.backendaiclient._config.directoryBasedUsage = this.directoryBasedUsage;
+      globalThis.backendaiclient._config.isDirectorySizeVisible = this.isDirectorySizeVisible;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);

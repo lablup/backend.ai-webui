@@ -137,6 +137,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: String}) oldFileExtension = '';
   @property({type: String}) newFileExtension = '';
   @property({type: Boolean}) is_dir = false;
+  @property({type: Boolean}) _isDirectorySizeVisible = true;
   @property({type: Number}) minimumResource = {
     cpu: 1,
     mem: 0.5
@@ -1748,6 +1749,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
         this.directoryBasedUsage = globalThis.backendaiclient._config.directoryBasedUsage;
+        this._isDirectorySizeVisible = globalThis.backendaiclient._config.isDirectorySizeVisible;
         this._getAllowedVFolderHostsByCurrentUserInfo();
         this._checkImageSupported();
         this._getVolumeInformation();
@@ -1762,6 +1764,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
       this.directoryBasedUsage = globalThis.backendaiclient._config.directoryBasedUsage;
+      this._isDirectorySizeVisible = globalThis.backendaiclient._config.isDirectorySizeVisible;
       this._getAllowedVFolderHostsByCurrentUserInfo();
       this._checkImageSupported();
       this._getVolumeInformation();
