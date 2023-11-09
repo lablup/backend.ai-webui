@@ -123,6 +123,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     this.resources = {
       cpu: queryParams.get('cpu'),
       mem: queryParams.get('mem'),
+      shmem: queryParams.get('shmem'),
       'cuda.shares': queryParams.get('cuda-shares'),
       'cuda.device': queryParams.get('cuda-device'),
     };
@@ -477,28 +478,29 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
     // Launch app.
     if (sessionId) {
-      if (!this.detectIE()) {
-        if (requestedApp.startsWith('bokff')) {
-          requestedApp = requestedApp.split('-')[1];
-        }
-        if (requestedApp.startsWith('jupyter')) {
-          requestedApp = 'jupyterlab';
-        }
-      }
       this._openServiceApp(sessionId, requestedApp);
     }
   }
 
   async _openServiceApp(sessionId, appName) {
     this.appLauncher.indicator = await globalThis.lablupIndicator.start();
-    console.log(`launching ${appName} from session ${sessionId} ...`);
-    if (appName == 'rstudio') {
-      await this.appLauncher._sleep(5000);
+    let requestedApp = appName;
+    if (!this.detectIE()) {
+      if (appName.startsWith('bokff')) {
+        requestedApp = appName.split('-')[1];
+      }
+      if (appName.startsWith('jupyter')) {
+        requestedApp = 'jupyterlab';
+      }
     }
+    console.log(`launching ${requestedApp} from session ${sessionId} ...`);
     this.appLauncher
-      ._open_wsproxy(sessionId, appName, null, null)
+      ._open_wsproxy(sessionId, requestedApp, null, null)
       .then(async (resp) => {
         if (resp.url) {
+          if (appName.endsWith('rstudio')) {
+            await this.appLauncher._sleep(10000);
+          }
           const appConnectUrl = await this.appLauncher._connectToProxyWorker(
             resp.url,
             '',
