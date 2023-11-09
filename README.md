@@ -15,11 +15,11 @@ View [changelog](https://github.com/lablup/backend.ai-webui/blob/main/CHANGELOG.
 
 Backend.AI Web UI focuses to
 
- * Serve as desktop app (windows, macOS and Linux) and web service
+ * Both desktop app (Windows, macOS and Linux) and web service
  * Provide both basic administration and user mode
-    * Use CLI for detailed administration features such as domain administation
- * Versatile devices ready such as mobile, tablet and desktop.
- * Built-in websocket proxy feature for apps
+    * Use CLI for detailed administration features such as domain administration
+ * Versatile devices ready such as mobile, tablet and desktop
+ * Built-in websocket proxy feature for desktop app
 
 ## User Features
  * Session management
@@ -28,6 +28,9 @@ Backend.AI Web UI focuses to
     * Choose and run environment-supported apps
     * Web-based Terminal for each session
     * Fully-featured Visual Studio Code editor and environments
+ * Inference service management
+    * Set / reserve endpoint URL for inference
+    * Autoscaling setup
  * Pipeline
     * Experiments (with SACRED / Microsoft NNI / Apache MLFlow)
     * AutoML (with Microsoft NNI / Apache MLFlow)
@@ -131,9 +134,11 @@ You can debug the app.
 
 Backend.AI Web UI is built with
  * `lit-element` as webcomponent framework
+ * `react` as library for web UI
  * `npm` as package manager
  * `rollup` as bundler
  * `electron` as app shell
+ * `watchman` as file change watcher for development
 
 ### Code of conduct
 
@@ -157,7 +162,7 @@ You must perform first-time compilation for testing. Some additional mandatory p
 $ make compile_wsproxy
 ```
 
-Some necessary libraries will be copied to `src/lib`. Now you are ready to test.
+To run `relay-compiler` with the watch option(`npm run relay -- --watch`) on a React project, you need to install `watchman`. If you use Homebrew on Linux, it's a great way to get a recent Watchman build. Please refer to [the official installation guide](https://facebook.github.io/watchman/docs/install).
 
 ### Developing / testing without bundling
 
@@ -173,6 +178,13 @@ On yet another terminal:
 ```console
 $ npm run wsproxy  # To run websocket proxy
 ```
+
+If you want to change port for your development environment, Add your configuration to `/react/.env.development` file in the project:
+
+```
+PORT=YOURPORT
+```
+Defaultly, `PORT` is `9081`
 
 ### Lint Checking
 ```console

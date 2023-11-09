@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "react-query";
+import { useEffect, useMemo, useState } from 'react';
+import { useQuery } from 'react-query';
 
 export const useBackendAIConnectedState = () => {
   const [time, setTime] = useState<string>();
@@ -8,9 +8,9 @@ export const useBackendAIConnectedState = () => {
     const listener = () => {
       setTime(new Date().toISOString());
     };
-    document.addEventListener("backend-ai-connected", listener);
+    document.addEventListener('backend-ai-connected', listener);
     return () => {
-      document.removeEventListener("backend-ai-connected", listener);
+      document.removeEventListener('backend-ai-connected', listener);
     };
   }, []);
 
@@ -26,7 +26,9 @@ export const useDateISOState = (initialValue?: string) => {
   return [value, update] as const;
 };
 
-export const useUpdatableState = useDateISOState;
+export const useUpdatableState = (initialValue: string) => {
+  return useDateISOState(initialValue);
+};
 
 export const useCurrentDomainValue = () => {
   const baiClient = useSuspendedBackendaiClient();
@@ -51,9 +53,9 @@ export const useCurrentProjectValue = () => {
         id: baiClient.groupIds[newProjectName],
       });
     };
-    document.addEventListener("backend-ai-group-changed", listener);
+    document.addEventListener('backend-ai-group-changed', listener);
     return () => {
-      document.removeEventListener("backend-ai-group-changed", listener);
+      document.removeEventListener('backend-ai-group-changed', listener);
     };
   });
 
@@ -68,13 +70,13 @@ export const useAnonymousBackendaiClient = ({
   const client = useMemo(() => {
     //@ts-ignore
     const clientConfig = new globalThis.BackendAIClientConfig(
-      "",
-      "",
+      '',
+      '',
       api_endpoint,
-      "SESSION"
+      'SESSION',
     );
     //@ts-ignore
-    return new globalThis.BackendAIClient(clientConfig, "Backend.AI Console.");
+    return new globalThis.BackendAIClient(clientConfig, 'Backend.AI Console.');
   }, [api_endpoint]);
 
   return client;
@@ -82,12 +84,12 @@ export const useAnonymousBackendaiClient = ({
 
 export const useSuspendedBackendaiClient = () => {
   const { data: client } = useQuery<any>({
-    queryKey: "backendai-client-for-suspense",
+    queryKey: 'backendai-client-for-suspense',
     queryFn: () =>
       new Promise((resolve) => {
         if (
           //@ts-ignore
-          typeof globalThis.backendaiclient === "undefined" ||
+          typeof globalThis.backendaiclient === 'undefined' ||
           //@ts-ignore
           globalThis.backendaiclient === null ||
           //@ts-ignore
@@ -96,9 +98,9 @@ export const useSuspendedBackendaiClient = () => {
           const listener = () => {
             // @ts-ignore
             resolve(globalThis.backendaiclient);
-            document.removeEventListener("backend-ai-connected", listener);
+            document.removeEventListener('backend-ai-connected', listener);
           };
-          document.addEventListener("backend-ai-connected", listener);
+          document.addEventListener('backend-ai-connected', listener);
         } else {
           //@ts-ignore
           return resolve(globalThis.backendaiclient);
@@ -109,7 +111,14 @@ export const useSuspendedBackendaiClient = () => {
     suspense: true,
   });
 
-  return client;
+  return client as {
+    vfolder: {
+      list: (path: string) => Promise<any>;
+      list_hosts: () => Promise<any>;
+      list_files: (path: string, id: string) => Promise<any>;
+    };
+    [key: string]: any;
+  };
 };
 
 interface ImageMetadata {
@@ -127,9 +136,9 @@ interface ImageMetadata {
 
 export const useBackendaiImageMetaData = () => {
   const { data: metadata } = useQuery({
-    queryKey: "backendai-metadata-for-suspense",
+    queryKey: 'backendai-metadata-for-suspense',
     queryFn: () => {
-      return fetch("resources/image_metadata.json")
+      return fetch('resources/image_metadata.json')
         .then((response) => response.json())
         .then(
           (json: {
@@ -144,7 +153,7 @@ export const useBackendaiImageMetaData = () => {
             };
           }) => {
             return json;
-          }
+          },
         );
     },
     suspense: true,
@@ -154,11 +163,16 @@ export const useBackendaiImageMetaData = () => {
   const getImageMeta = (imageName: string) => {
     // cr.backend.ai/multiarch/python:3.9-ubuntu20.04
     // key = python, tags = [3.9, ubuntu20.04]
-    console.log(imageName);
-    const specs = imageName.split("/");
+    if (!imageName) {
+      return {
+        key: '',
+        tags: [],
+      };
+    }
+    const specs = imageName.split('/');
 
-    const [key, tag] = (specs[2] || specs[1]).split(":");
-    const tags = tag.split("-");
+    const [key, tag] = (specs[2] || specs[1]).split(':');
+    const tags = tag.split('-');
 
     return { key, tags };
   };
@@ -170,14 +184,14 @@ export const useBackendaiImageMetaData = () => {
         const { key } = getImageMeta(imageName);
         return metadata?.imageInfo[key].name || key;
       },
-      getImageIcon: (imageName?: string | null, path = "resources/icons/") => {
-        if (!imageName) return "default.png";
+      getImageIcon: (imageName?: string | null, path = 'resources/icons/') => {
+        if (!imageName) return 'default.png';
         const { key } = getImageMeta(imageName);
         return (
           path +
-          (metadata?.imageInfo[key].icon !== undefined
-            ? metadata?.imageInfo[key].icon
-            : "default.png")
+          (metadata?.imageInfo[key]?.icon !== undefined
+            ? metadata?.imageInfo[key]?.icon
+            : 'default.png')
         );
       },
       getImageTags: (imageName: string) => {
@@ -185,13 +199,13 @@ export const useBackendaiImageMetaData = () => {
       },
       getBaseVersion: (imageName: string) => {
         const { tags } = getImageMeta(imageName);
-
         return tags[0];
       },
       getBaseImage: (imageName: string) => {
         const { tags } = getImageMeta(imageName);
         return tags[1];
       },
+      getImageMeta,
     },
   ] as const;
 };

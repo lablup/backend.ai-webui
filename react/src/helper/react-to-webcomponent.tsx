@@ -1,5 +1,5 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 
 export interface ReactWebComponentProps {
   value?: string;
@@ -12,21 +12,27 @@ export interface ReactWebComponentProps {
 export default function reactToWebComponent(
   ReactComponent:
     | React.FC<ReactWebComponentProps>
-    | React.ComponentClass<ReactWebComponentProps>
+    | React.ComponentClass<ReactWebComponentProps>,
 ) {
   class ReactWebComponent extends HTMLElement {
     static get observedAttributes() {
-      return ["value", "styles"];
+      return ['value', 'styles'];
     }
 
     constructor() {
       super();
       // Hierarchy:
       // this > shadowRoot > mountPoint(span) > reactRoot
-      this.mountPoint = document.createElement("span");
+      this.mountPoint = document.createElement('span');
       this.reactRoot = ReactDOM.createRoot(this.mountPoint);
-      this.attachShadow({ mode: "open" });
+      this.attachShadow({ mode: 'open' });
       this.shadowRoot?.appendChild(this.mountPoint);
+
+      // Add custom css
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'resources/custom.css';
+      this.shadowRoot?.appendChild(link);
     }
 
     mountPoint: HTMLSpanElement;
@@ -44,7 +50,7 @@ export default function reactToWebComponent(
                 new CustomEvent(name, {
                   bubbles,
                   detail: detail,
-                })
+                }),
               );
             }}
           >
@@ -55,8 +61,8 @@ export default function reactToWebComponent(
     }
 
     connectedCallback() {
-      const value = this.getAttribute("value") || "";
-      const styles = this.getAttribute("styles") || "";
+      const value = this.getAttribute('value') || '';
+      const styles = this.getAttribute('styles') || '';
       this.reactRoot.render(this.createReactElement(value, styles));
     }
 
@@ -66,13 +72,13 @@ export default function reactToWebComponent(
 
     attributeChangedCallback(name: any, oldValue: any, newValue: any) {
       //re-render react component when attribute changes
-      if (name === "value") {
+      if (name === 'value') {
         this.reactRoot.render(
-          this.createReactElement(newValue, this.getAttribute("styles") || "")
+          this.createReactElement(newValue, this.getAttribute('styles') || ''),
         );
-      } else if (name === "styles") {
+      } else if (name === 'styles') {
         this.reactRoot.render(
-          this.createReactElement(this.getAttribute("value") || "", newValue)
+          this.createReactElement(this.getAttribute('value') || '', newValue),
         );
       }
     }

@@ -1,6 +1,6 @@
 let footer = '';
 const template = function (title, contents, comment, options = {}) {
-  let result = "";
+  let result = '';
   result += `<!DOCTYPE html>
 <html>
 <head>
@@ -12,10 +12,13 @@ const template = function (title, contents, comment, options = {}) {
   result += `<div class="cover">`;
   result += `<h1>Backend.AI</h1>`;
   result += `<h2>${title}</h1>`;
-  if (typeof contents === "string") {
+  if (typeof contents === 'string') {
     result += `<p>${contents}</p>`;
-  } else if (typeof contents !== "undefined" && Array.isArray(contents) === true) {
-    contents.forEach(item => {
+  } else if (
+    typeof contents !== 'undefined' &&
+    Array.isArray(contents) === true
+  ) {
+    contents.forEach((item) => {
       result += `<ul>`;
       result += `${item}`;
       result += `</ul>`;

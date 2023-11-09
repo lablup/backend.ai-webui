@@ -5,7 +5,7 @@
 # file with configuration.  For more information, see:
 # https://github.com/actions/labeler/blob/master/README.md
 
-name: Build macOS Desktop Application
+name: Build Desktop Applications
 on:
   release:
     types: [published]
@@ -16,15 +16,15 @@ jobs:
     environment: app-packaging
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Node.js and NPM
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
       - name: Install Dependencies
         run: npm install
       - name: Package Applications
-        run: make mac
+        run: make all
         env:
           BAI_APP_SIGN: 1
           BAI_APP_SIGN_APPLE_ID: ${{ secrets.BAI_APP_SIGN_APPLE_ID }}

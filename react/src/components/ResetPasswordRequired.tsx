@@ -1,12 +1,12 @@
-import { Button, Form, Modal, Typography, Input, theme } from "antd";
-import { useWebComponentInfo } from "./DefaultProviders";
-import Flex from "./Flex";
-import { useTranslation } from "react-i18next";
-import { WarningTwoTone } from "@ant-design/icons";
-import { useMutation as useTanMutation } from "react-query";
-import { useAnonymousBackendaiClient } from "../hooks";
-import { baiSignedRequestWithPromise } from "../helper";
-import { useEffect } from "react";
+import { baiSignedRequestWithPromise } from '../helper';
+import { useAnonymousBackendaiClient } from '../hooks';
+import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useWebComponentInfo } from './DefaultProviders';
+import Flex from './Flex';
+import { WarningTwoTone } from '@ant-design/icons';
+import { Button, Form, Modal, Typography, Input, theme } from 'antd';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // src/components/backend-ai-common-utils.ts
 export const passwordPattern = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[_\W]).{8,}$/;
@@ -20,13 +20,13 @@ const ResetPasswordRequired = () => {
     api_endpoint: string;
   };
   try {
-    parsedValue = JSON.parse(value || "");
+    parsedValue = JSON.parse(value || '');
   } catch (error) {
     parsedValue = {
       open: false,
-      currentPassword: "",
-      username: "",
-      api_endpoint: "",
+      currentPassword: '',
+      username: '',
+      api_endpoint: '',
     };
   }
   const { open, currentPassword, username, api_endpoint } = parsedValue;
@@ -53,8 +53,8 @@ const ResetPasswordRequired = () => {
       new_password: string;
     }) => {
       return baiSignedRequestWithPromise({
-        method: "POST",
-        url: "/server/update-password-no-auth",
+        method: 'POST',
+        url: '/server/update-password-no-auth',
         body,
         client: anonymousBaiClient,
       });
@@ -71,10 +71,10 @@ const ResetPasswordRequired = () => {
         },
         {
           onSuccess(data, variables, context) {
-            dispatchEvent("ok", null);
+            dispatchEvent('ok', null);
           },
           onError(error, variables, context) {},
-        }
+        },
       );
     });
   };
@@ -85,7 +85,7 @@ const ResetPasswordRequired = () => {
       centered
       mask={false}
       onCancel={() => {
-        dispatchEvent("cancel", null);
+        dispatchEvent('cancel', null);
       }}
       keyboard={false}
       maskClosable={false}
@@ -98,18 +98,18 @@ const ResetPasswordRequired = () => {
         direction="column"
         justify="start"
         align="stretch"
-        gap={"md"}
+        gap={'md'}
         style={{
-          alignSelf: "stretch",
+          alignSelf: 'stretch',
           paddingTop: token.paddingMD,
           paddingBottom: token.paddingMD,
         }}
       >
         <Typography.Title level={3} style={{ margin: 0 }}>
-          <WarningTwoTone twoToneColor={token.colorWarning} />{" "}
-          {t("webui.menu.PleaseChangeYourPassword")}
+          <WarningTwoTone twoToneColor={token.colorWarning} />{' '}
+          {t('webui.menu.PleaseChangeYourPassword')}
         </Typography.Title>
-        {t("webui.menu.YouMushChangeYourPassword")}
+        {t('webui.menu.YouMushChangeYourPassword')}
         <Form
           form={form}
           layout="vertical"
@@ -120,22 +120,22 @@ const ResetPasswordRequired = () => {
         >
           <Form.Item
             name="newPassword"
-            label={t("webui.menu.NewPassword")}
+            label={t('webui.menu.NewPassword')}
             rules={[
               {
                 required: true,
               },
               {
                 pattern: passwordPattern,
-                message: t("webui.menu.InvalidPasswordMessage").toString(),
+                message: t('webui.menu.InvalidPasswordMessage').toString(),
               },
               () => ({
                 validator(_, value) {
                   if (currentPassword === value) {
                     return Promise.reject(
                       new Error(
-                        t("webui.menu.NewPasswordCannotBeSame").toString()
-                      )
+                        t('webui.menu.NewPasswordCannotBeSame').toString(),
+                      ),
                     );
                   }
                   return Promise.resolve();
@@ -149,8 +149,8 @@ const ResetPasswordRequired = () => {
 
           <Form.Item
             name="confirm"
-            label={t("webui.menu.NewPasswordAgain")}
-            dependencies={["newPassword"]}
+            label={t('webui.menu.NewPasswordAgain')}
+            dependencies={['newPassword']}
             hasFeedback
             rules={[
               {
@@ -158,11 +158,11 @@ const ResetPasswordRequired = () => {
               },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!value || getFieldValue("newPassword") === value) {
+                  if (!value || getFieldValue('newPassword') === value) {
                     return Promise.resolve();
                   }
                   return Promise.reject(
-                    new Error(t("environment.PasswordsDoNotMatch").toString())
+                    new Error(t('environment.PasswordsDoNotMatch').toString()),
                   );
                 },
               }),
@@ -172,7 +172,7 @@ const ResetPasswordRequired = () => {
           </Form.Item>
         </Form>
         <Button type="primary" onClick={onSubmit} loading={mutation.isLoading}>
-          {t("webui.menu.Update")}
+          {t('webui.menu.Update')}
         </Button>
       </Flex>
     </Modal>

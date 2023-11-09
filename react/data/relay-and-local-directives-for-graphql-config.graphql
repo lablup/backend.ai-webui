@@ -1,0 +1,67 @@
+directive @relay_test_operation on QUERY | MUTATION | SUBSCRIPTION
+directive @inline on FRAGMENT_DEFINITION
+directive @no_inline(raw_response_type: Boolean) on FRAGMENT_DEFINITION
+directive @raw_response_type on QUERY | MUTATION | SUBSCRIPTION
+directive @DEPRECATED__relay_ignore_unused_variables_error on QUERY | MUTATION | SUBSCRIPTION
+directive @refetchable(
+  queryName: String!
+  directives: [String!]
+) on FRAGMENT_DEFINITION
+directive @preloadable(hackPreloader: Boolean = false @static) on QUERY
+directive @relay(
+  mask: Boolean
+  plural: Boolean
+) on FRAGMENT_DEFINITION | FRAGMENT_SPREAD
+directive @__clientField(
+  filters: [String!]
+  handle: String!
+  key: String
+) repeatable on FIELD
+directive @match(key: String @static) on FIELD
+directive @module(name: String!) on FRAGMENT_SPREAD
+directive @connection(
+  key: String!
+  filters: [String]
+  handler: String
+  dynamicKey_UNSTABLE: String
+) on FIELD
+directive @stream_connection(
+  key: String!
+  filters: [String]
+  handler: String
+  label: String
+  initial_count: Int!
+  if: Boolean = true
+  use_customized_batch: Boolean = false
+  dynamicKey_UNSTABLE: String
+) on FIELD
+enum RequiredFieldAction {
+  NONE
+  LOG
+  THROW
+}
+directive @required(action: RequiredFieldAction! @static) on FIELD
+directive @deleteRecord on FIELD
+directive @deleteEdge(connections: [ID!]!) on FIELD
+directive @appendEdge(connections: [ID!]!) on FIELD
+
+directive @prependEdge(connections: [ID!]!) on FIELD
+
+directive @appendNode(connections: [ID!]!, edgeTypeName: String!) on FIELD
+
+directive @prependNode(connections: [ID!]!, edgeTypeName: String!) on FIELD
+
+directive @relay_client_component on FRAGMENT_SPREAD
+
+directive @relay_resolver(
+  fragment_name: String!
+  import_path: String!
+  live: Boolean
+) on FIELD_DEFINITION
+directive @waterfall on FIELD
+scalar RelayResolverValue
+directive @RelayOutputType on OBJECT
+directive @updatable on QUERY | FRAGMENT_DEFINITION
+directive @assignable on FRAGMENT_DEFINITION
+directive @alias(as: String) on FRAGMENT_SPREAD | INLINE_FRAGMENT
+directive @static on ARGUMENT_DEFINITION

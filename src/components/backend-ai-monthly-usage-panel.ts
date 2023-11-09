@@ -2,20 +2,15 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
-import {css, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-
-import {translate as _t} from 'lit-translate';
-
-import 'weightless/title';
-
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { css, html, LitElement } from 'lit';
+import { translate as _t } from 'lit-translate';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Backend.AI Monthly Usage Panel
@@ -26,12 +21,12 @@ import {
 
 @customElement('backend-ai-monthly-usage-panel')
 export default class BackendAIMonthlyUsagePanel extends LitElement {
-  @property({type: Number}) num_sessions = 0;
-  @property({type: String}) used_time = '0:00:00.00';
-  @property({type: String}) cpu_used_time = '0:00:00.00';
-  @property({type: String}) gpu_used_time = '0:00:00.00';
-  @property({type: Number}) disk_used = 0;
-  @property({type: Number}) traffic_used = 0;
+  @property({ type: Number }) num_sessions = 0;
+  @property({ type: String }) used_time = '0:00:00.00';
+  @property({ type: String }) cpu_used_time = '0:00:00.00';
+  @property({ type: String }) gpu_used_time = '0:00:00.00';
+  @property({ type: Number }) disk_used = 0;
+  @property({ type: Number }) traffic_used = 0;
 
   constructor() {
     super();
@@ -45,10 +40,6 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-        wl-card {
-          padding: 20px;
-        }
-
         .value {
           padding: 15px;
           font-size: 25px;
@@ -58,7 +49,7 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
         .desc {
           padding: 0px 15px 20px 15px;
         }
-      `
+      `,
     ];
   }
 
@@ -71,8 +62,8 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
     this.cpu_used_time = this.usedTimeFormatting(this.cpu_used_time);
     this.gpu_used_time = this.usedTimeFormatting(this.gpu_used_time);
 
-    this.disk_used = Math.floor(this.disk_used / (10 ** 9)); // bytes to GB
-    this.traffic_used = Math.floor(this.traffic_used / (2 ** 20)); // bytes to MiB
+    this.disk_used = Math.floor(this.disk_used / 10 ** 9); // bytes to GB
+    this.traffic_used = Math.floor(this.traffic_used / 2 ** 20); // bytes to MiB
   }
 
   /**
@@ -83,8 +74,13 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
    * */
   usedTimeFormatting(time) {
     const days = parseInt(time.substring(0, time.indexOf(':')));
-    let hours = parseInt(time.substring(time.indexOf(':') + 1, time.lastIndexOf(':')));
-    const minutes = time.substring(time.lastIndexOf(':') + 1, time.indexOf('.'));
+    let hours = parseInt(
+      time.substring(time.indexOf(':') + 1, time.lastIndexOf(':')),
+    );
+    const minutes = time.substring(
+      time.lastIndexOf(':') + 1,
+      time.indexOf('.'),
+    );
     hours = days * 24 + hours;
     return hours + 'h ' + minutes + 'm';
   }
@@ -92,8 +88,8 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-card>
-        <wl-title level="3">${_t('usagepanel.StatisticsForThisMonth')}</wl-title>
+      <div class="card">
+        <h3>${_t('usagepanel.StatisticsForThisMonth')}</h3>
         <div class="horizontal layout">
           <div class="vertical center layout">
             <span class="value">${this.num_sessions}</span>
@@ -120,7 +116,7 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
             <span class="desc">${_t('usagepanel.TrafficUsed')}</span>
           </div>
         </div>
-      </wl-card>
+      </div>
     `;
   }
 }

@@ -2,25 +2,20 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
-import {translate as _t} from 'lit-translate';
-import {css, html} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
-
-import '@material/mwc-list';
-import {Select} from '@material/mwc-select';
-
-import 'weightless/card';
-import {BackendAiStyles} from './backend-ai-general-styles';
-
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import {default as PainKiller} from './backend-ai-painkiller';
-import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { default as PainKiller } from './backend-ai-painkiller';
+import { BackendAIPipelineCommon } from './backend-ai-pipeline-common';
+import '@material/mwc-list';
+import { Select } from '@material/mwc-select';
+import { css, html } from 'lit';
+import { translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -38,9 +33,9 @@ type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
 @customElement('backend-ai-pipeline-list')
 export default class BackendAIPipelineList extends BackendAIPipelineCommon {
   // Pipeline prpoerties
-  @property({type: Array}) pipelineFolders = Object();
-  @property({type: String}) pipelineSelectedName;
-  @property({type: Object}) pipelineSelectedConfig;
+  @property({ type: Array }) pipelineFolders = Object();
+  @property({ type: String }) pipelineSelectedName;
+  @property({ type: Object }) pipelineSelectedConfig;
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('pipeline-selector') pipelineSelect!: Select;
 
@@ -48,8 +43,11 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     super();
 
     try {
-      this.pipelineSelectedName = localStorage.getItem('backendaiwebui.pipeline.selectedName') || '';
-      this.pipelineSelectedConfig = JSON.parse(localStorage.getItem('backendaiwebui.pipeline.selectedConfig') || '{}');
+      this.pipelineSelectedName =
+        localStorage.getItem('backendaiwebui.pipeline.selectedName') || '';
+      this.pipelineSelectedConfig = JSON.parse(
+        localStorage.getItem('backendaiwebui.pipeline.selectedConfig') || '{}',
+      );
     } catch (e) {
       console.log(e);
       localStorage.removeItem('backendaiwebui.pipeline.selectedName');
@@ -62,10 +60,18 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     if (active === false) {
       return;
     }
-    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', async () => {
-        this._fetchPipelineFolders();
-      }, true);
+    if (
+      typeof window.backendaiclient === 'undefined' ||
+      window.backendaiclient === null ||
+      window.backendaiclient.ready === false
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        async () => {
+          this._fetchPipelineFolders();
+        },
+        true,
+      );
     } else {
       this._fetchPipelineFolders();
     }
@@ -81,9 +87,16 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     this.pipelineSelectedName = folderName;
     this.pipelineSelectedConfig = this.pipelineFolders[folderName].config;
     // TODO remove protected property assignment
-    (this.pipelineSelect as any).selectedText = this.pipelineSelectedConfig.title;
-    localStorage.setItem('backendaiwebui.pipeline.selectedName', this.pipelineSelectedName);
-    localStorage.setItem('backendaiwebui.pipeline.selectedConfig', JSON.stringify(this.pipelineSelectedConfig));
+    (this.pipelineSelect as any).selectedText =
+      this.pipelineSelectedConfig.title;
+    localStorage.setItem(
+      'backendaiwebui.pipeline.selectedName',
+      this.pipelineSelectedName,
+    );
+    localStorage.setItem(
+      'backendaiwebui.pipeline.selectedConfig',
+      JSON.stringify(this.pipelineSelectedConfig),
+    );
   }
 
   /**
@@ -110,17 +123,21 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     }
     this.pipelineSelectedName = folderName;
     this.pipelineSelectedConfig = this.pipelineFolders[folderName].config;
-    localStorage.setItem('backendaiwebui.pipeline.selectedName', this.pipelineSelectedName);
-    localStorage.setItem('backendaiwebui.pipeline.selectedConfig', JSON.stringify(this.pipelineSelectedConfig));
-
-    const event = new CustomEvent(
-      'backend-ai-pipeline-changed', {
-        'detail': {
-          pipelineSelectedName: this.pipelineSelectedName,
-          pipelineSelectedConfig: this.pipelineSelectedConfig,
-        },
-      },
+    localStorage.setItem(
+      'backendaiwebui.pipeline.selectedName',
+      this.pipelineSelectedName,
     );
+    localStorage.setItem(
+      'backendaiwebui.pipeline.selectedConfig',
+      JSON.stringify(this.pipelineSelectedConfig),
+    );
+
+    const event = new CustomEvent('backend-ai-pipeline-changed', {
+      detail: {
+        pipelineSelectedName: this.pipelineSelectedName,
+        pipelineSelectedConfig: this.pipelineSelectedConfig,
+      },
+    });
     this.dispatchEvent(event);
   }
 
@@ -135,11 +152,10 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
       const downloadJobs: Array<Promise<any>> = [];
       folders.forEach((folder) => {
         if (folder.name.startsWith('pipeline-')) {
-          const job = this._downloadPipelineConfig(folder.name)
-            .then((resp) => {
-              folder.config = resp;
-              pipelines[folder.name] = folder;
-            });
+          const job = this._downloadPipelineConfig(folder.name).then((resp) => {
+            folder.config = resp;
+            pipelines[folder.name] = folder;
+          });
           downloadJobs.push(job);
         }
       });
@@ -183,7 +199,7 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
         .indicator {
           font-size: smaller;
         }
-      `
+      `,
     ];
   }
 
@@ -192,24 +208,43 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     return html`
       <div class="card" elevation="0">
         <h3 class="horizontal center layout wrap">
-          <mwc-select id="pipeline-selector" outlined label="${_t('pipeline.SelectPipeline')}"
-              @change="${this._pipelineChanged}">
-            ${Object.keys(this.pipelineFolders).map((name) => html`
-              <mwc-list-item class="pipeline-item" value="${name}"
+          <mwc-select
+            id="pipeline-selector"
+            outlined
+            label="${_t('pipeline.SelectPipeline')}"
+            @change="${this._pipelineChanged}"
+          >
+            ${Object.keys(this.pipelineFolders).map(
+              (name) => html`
+                <mwc-list-item
+                  class="pipeline-item"
+                  value="${name}"
                   ?selected="${name === this.pipelineSelectedName}"
                   folder-id="${this.pipelineFolders[name].id}"
-                  folder-host="${this.pipelineFolders[name].host}">
-                <span>${this.pipelineFolders[name].config.title}</span>
-              </mwc-list-item>
-            `)}
+                  folder-host="${this.pipelineFolders[name].host}"
+                >
+                  <span>${this.pipelineFolders[name].config.title}</span>
+                </mwc-list-item>
+              `,
+            )}
           </mwc-select>
           <div id="pipeline-description" class="layout vertical">
-            ${this.pipelineSelectedConfig && this.pipelineSelectedConfig.description ? html`
-              <span>${this.pipelineSelectedConfig.description}</span>
-            ` : html``}
-            ${this.pipelineSelectedConfig && this.pipelineSelectedConfig.environment ? html`
-              <span class="indicator monospace">${this.pipelineSelectedConfig.environment + ':' + this.pipelineSelectedConfig.version}</span>
-            ` : html``}
+            ${this.pipelineSelectedConfig &&
+            this.pipelineSelectedConfig.description
+              ? html`
+                  <span>${this.pipelineSelectedConfig.description}</span>
+                `
+              : html``}
+            ${this.pipelineSelectedConfig &&
+            this.pipelineSelectedConfig.environment
+              ? html`
+                  <span class="indicator monospace">
+                    ${this.pipelineSelectedConfig.environment +
+                    ':' +
+                    this.pipelineSelectedConfig.version}
+                  </span>
+                `
+              : html``}
           </div>
         </h3>
       </div>

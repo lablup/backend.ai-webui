@@ -2,28 +2,23 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
-import {get as _text, translate as _t} from 'lit-translate';
-import {css, html} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
-
-import '@material/mwc-button/mwc-button';
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-menu/mwc-menu';
-import '@material/mwc-select/mwc-select';
-import {TextField} from '@material/mwc-textfield/mwc-textfield';
-
-import 'weightless/card';
-import {BackendAiStyles} from './backend-ai-general-styles';
-
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import {default as PainKiller} from './backend-ai-painkiller';
-import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { default as PainKiller } from './backend-ai-painkiller';
+import { BackendAIPipelineCommon } from './backend-ai-pipeline-common';
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-menu/mwc-menu';
+import '@material/mwc-select/mwc-select';
+import { TextField } from '@material/mwc-textfield';
+import { css, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -41,13 +36,13 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
  */
 @customElement('backend-ai-pipeline-component-create')
 export default class BackendAIPipelineComponentCreate extends BackendAIPipelineCommon {
-  @property({type: Object}) notification = Object();
+  @property({ type: Object }) notification = Object();
   // Pipeline components prpoerties
-  @property({type: String}) pipelineSelectedName = '';
-  @property({type: String}) componentCreateMode = 'create';
-  @property({type: Array}) componentNodes;
-  @property({type: Array}) componentEdges;
-  @property({type: Array}) selectedNodes; // List of IDs of components
+  @property({ type: String }) pipelineSelectedName = '';
+  @property({ type: String }) componentCreateMode = 'create';
+  @property({ type: Array }) componentNodes;
+  @property({ type: Array }) componentEdges;
+  @property({ type: Array }) selectedNodes; // List of IDs of components
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#component-add-dialog') addComponentDialog!: BackendAIDialog;
   @query('#component-delete-dialog') deleteComponentDialog!: BackendAIDialog;
@@ -74,10 +69,18 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     if (active === false) {
       return;
     }
-    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', async () => {
-        return;
-      }, true);
+    if (
+      typeof window.backendaiclient === 'undefined' ||
+      window.backendaiclient === null ||
+      window.backendaiclient.ready === false
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        async () => {
+          return;
+        },
+        true,
+      );
     } else {
     }
   }
@@ -184,24 +187,28 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     const nid0 = selectedNodes[0];
     const nid1 = selectedNodes[1];
     for (let i = 0; i < edges.length; i++) {
-      if ((edges[i].from === nid0 && edges[i].to === nid1) ||
-          (edges[i].from === nid1 && edges[i].to === nid0)) {
+      if (
+        (edges[i].from === nid0 && edges[i].to === nid1) ||
+        (edges[i].from === nid1 && edges[i].to === nid0)
+      ) {
         index = i;
         break;
       }
     }
-    if (index > 0) { // already connected. let's disconnect
+    if (index > 0) {
+      // already connected. let's disconnect
       edges.splice(index, 1);
-    } else { // make new connection
-      edges.push({from: nid0, to: nid1});
+    } else {
+      // make new connection
+      edges.push({ from: nid0, to: nid1 });
     }
-    const graph = {nodes: nodes, edges: edges};
+    const graph = { nodes: nodes, edges: edges };
     this.spinner.show();
     await this._uploadPipelineComponents(pipelineName, graph);
     this.spinner.hide();
     const event = new CustomEvent(
       'backend-ai-pipeline-component-connection-updated',
-      {'detail': {nodes: graph.nodes, edges: graph.edges}},
+      { detail: { nodes: graph.nodes, edges: graph.edges } },
     );
     this.dispatchEvent(event);
   }
@@ -223,7 +230,9 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     const description = this.componentDescriptionInput.value;
     const path = this.componentPathInput.value;
     if (!title || !path) {
-      this.notification.text = _text('pipeline.ComponentDialog.NamePathRequired');
+      this.notification.text = _text(
+        'pipeline.ComponentDialog.NamePathRequired',
+      );
       this.notification.show();
       return;
     }
@@ -237,7 +246,9 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
       return;
     }
     if (mem < 0.1) {
-      this.notification.text = _text('pipeline.ComponentDialog.MemoryNotEnough');
+      this.notification.text = _text(
+        'pipeline.ComponentDialog.MemoryNotEnough',
+      );
       this.notification.show();
       return;
     }
@@ -247,19 +258,26 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
 
     const cinfo = {
       id: '',
-      title, label: title, description,
+      title,
+      label: title,
+      description,
       path: sluggedPath,
-      cpu, mem, gpu,
+      cpu,
+      mem,
+      gpu,
       executed: false,
     };
     if (this.componentCreateMode === 'create') {
-      const cid = `component-${window.backendaiclient.generateSessionId(8, true)}`;
+      const cid = `component-${window.backendaiclient.generateSessionId(
+        8,
+        true,
+      )}`;
       cinfo.id = cid;
       // Create a component and an edge if there is a selected component (parent).
       this.componentNodes.push(cinfo);
       if (this.selectedNodes && this.selectedNodes.length > 0) {
         this.selectedNodes.forEach((nid) => {
-          this.componentEdges.push({from: nid, to: cinfo.id});
+          this.componentEdges.push({ from: nid, to: cinfo.id });
         });
       }
     } else {
@@ -273,15 +291,18 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     }
 
     this.spinner.show();
-    const graph = {nodes: this.componentNodes, edges: this.componentEdges};
+    const graph = { nodes: this.componentNodes, edges: this.componentEdges };
     await this._uploadPipelineComponents(this.pipelineSelectedName, graph);
     this._hideComponentAddDialog();
     this._fillComponentAddDialogFields(null);
     this.spinner.hide();
-    const eventName = this.componentCreateMode === 'create' ? 'backend-ai-pipeline-component-created' : 'backend-ai-pipeline-component-updated';
-    const event = new CustomEvent(
-      eventName, {'detail': {nodes: graph.nodes, edges: graph.edges}},
-    );
+    const eventName =
+      this.componentCreateMode === 'create'
+        ? 'backend-ai-pipeline-component-created'
+        : 'backend-ai-pipeline-component-updated';
+    const event = new CustomEvent(eventName, {
+      detail: { nodes: graph.nodes, edges: graph.edges },
+    });
     this.dispatchEvent(event);
   }
 
@@ -295,7 +316,10 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
       }
       const indexes: number[] = [];
       for (let i = 0; i < this.componentEdges.length; i++) {
-        if (nid === this.componentEdges[i].from || nid == this.componentEdges[i].to) {
+        if (
+          nid === this.componentEdges[i].from ||
+          nid == this.componentEdges[i].to
+        ) {
           indexes.push(i);
         }
       }
@@ -305,22 +329,27 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
         }
       }
     });
-    const graph = {nodes: this.componentNodes, edges: this.componentEdges};
+    const graph = { nodes: this.componentNodes, edges: this.componentEdges };
     this.spinner.show();
     await this._uploadPipelineComponents(this.pipelineSelectedName, graph);
     this._hideComponentDeleteDialog();
     this.spinner.hide();
-    const event = new CustomEvent(
-      'backend-ai-pipeline-component-deleted',
-      {'detail': {nodes: graph.nodes, edges: graph.edges}},
-    );
+    const event = new CustomEvent('backend-ai-pipeline-component-deleted', {
+      detail: { nodes: graph.nodes, edges: graph.edges },
+    });
     this.dispatchEvent(event);
   }
 
   async _uploadPipelineComponents(folderName, graph) {
-    const blob = new Blob([JSON.stringify(graph, null, 2)], {type: 'application/json'});
+    const blob = new Blob([JSON.stringify(graph, null, 2)], {
+      type: 'application/json',
+    });
     try {
-      await this._uploadFile(this.pipelineComponentDetailPath, blob, folderName);
+      await this._uploadFile(
+        this.pipelineComponentDetailPath,
+        blob,
+        folderName,
+      );
     } catch (err) {
       console.error(err);
       this.spinner.hide();
@@ -346,7 +375,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--paper-blue-600);
         }
-      `
+      `,
     ];
   }
 
@@ -355,44 +384,96 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     return html`
       <backend-ai-dialog id="component-add-dialog" fixed backdrop>
         <span slot="title">
-          ${this.componentCreateMode === 'create' ? _t('pipeline.ComponentDialog.CreateTitle') : _t('pipeline.ComponentDialog.UpdateTitle')}
+          ${this.componentCreateMode === 'create'
+            ? _t('pipeline.ComponentDialog.CreateTitle')
+            : _t('pipeline.ComponentDialog.UpdateTitle')}
         </span>
         <div slot="content" class="layout verticlal" style="width:450px">
-          <mwc-textfield id="component-name" type="text" autofocus
-              label="${_t('pipeline.ComponentDialog.Name')}" maxLength="30"></mwc-textfield>
-          <mwc-textfield id="component-description" type="text"
-              label="${_t('pipeline.ComponentDialog.Description')}" maxLength="200"></mwc-textfield>
-          <mwc-textfield id="component-path" type="text"
-              label="${_t('pipeline.ComponentDialog.PathInFolder')}" maxLength="300"></mwc-textfield>
+          <mwc-textfield
+            id="component-name"
+            type="text"
+            autofocus
+            label="${_t('pipeline.ComponentDialog.Name')}"
+            maxLength="30"
+          ></mwc-textfield>
+          <mwc-textfield
+            id="component-description"
+            type="text"
+            label="${_t('pipeline.ComponentDialog.Description')}"
+            maxLength="200"
+          ></mwc-textfield>
+          <mwc-textfield
+            id="component-path"
+            type="text"
+            label="${_t('pipeline.ComponentDialog.PathInFolder')}"
+            maxLength="300"
+          ></mwc-textfield>
           <div class="layout horizontal">
-            <mwc-textfield id="component-cpu" label="CPU" type="number" value="1" min="1"></mwc-textfield>
-            <mwc-textfield id="component-mem" label="Memory (GiB)" type="number" value="1" min="0"></mwc-textfield>
-            <mwc-textfield id="component-gpu" label="GPU" type="number" value="0" min="0"></mwc-textfield>
+            <mwc-textfield
+              id="component-cpu"
+              label="CPU"
+              type="number"
+              value="1"
+              min="1"
+            ></mwc-textfield>
+            <mwc-textfield
+              id="component-mem"
+              label="Memory (GiB)"
+              type="number"
+              value="1"
+              min="0"
+            ></mwc-textfield>
+            <mwc-textfield
+              id="component-gpu"
+              label="GPU"
+              type="number"
+              value="0"
+              min="0"
+            ></mwc-textfield>
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <div class="flex"></div>
-          <mwc-button label="${_t('button.Cancel')}"
-              @click="${this._hideComponentAddDialog}"></mwc-button>
-          <mwc-button unelevated
-              label="${this.componentCreateMode === 'create' ? _t('button.Add') : _t('button.Update')}"
-              @click="${this._addComponent}"></mwc-button>
+          <mwc-button
+            label="${_t('button.Cancel')}"
+            @click="${this._hideComponentAddDialog}"
+          ></mwc-button>
+          <mwc-button
+            unelevated
+            label="${this.componentCreateMode === 'create'
+              ? _t('button.Add')
+              : _t('button.Update')}"
+            @click="${this._addComponent}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
 
-      <backend-ai-dialog id="component-delete-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog
+        id="component-delete-dialog"
+        fixed
+        backdrop
+        blockscrolling
+      >
         <span slot="title">${_t('pipeline.ComponentDialog.DeleteTitle')}</span>
         <div slot="content" class="layout vertical">
           <p>${_t('session.CheckAgainDialog')}</p>
-          <span>${this.selectedNodes && this.selectedNodes.length > 0 ? this.selectedNodes.join(' | ') : ''}</span>
+          <span>
+            ${this.selectedNodes && this.selectedNodes.length > 0
+              ? this.selectedNodes.join(' | ')
+              : ''}
+          </span>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <div class="flex"></div>
-          <mwc-button label="${_t('button.Cancel')}"
-              @click="${this._hideComponentDeleteDialog}"></mwc-button>
-          <mwc-button unelevated
-              label="${_t('button.Delete')}"
-              @click="${this._deleteComponent}"></mwc-button>
+          <mwc-button
+            label="${_t('button.Cancel')}"
+            @click="${this._hideComponentDeleteDialog}"
+          ></mwc-button>
+          <mwc-button
+            unelevated
+            label="${_t('button.Delete')}"
+            @click="${this._deleteComponent}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
 
