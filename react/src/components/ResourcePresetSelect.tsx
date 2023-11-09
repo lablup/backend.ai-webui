@@ -144,8 +144,13 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                       ),
                       (slot, key) => {
                         return (
-                          // @ts-ignore
-                          <ResourceNumber type={key} value={slot} hideTooltip />
+                          <ResourceNumber
+                            key={key}
+                            // @ts-ignore
+                            type={key}
+                            value={slot}
+                            hideTooltip
+                          />
                         );
                       },
                     )}
