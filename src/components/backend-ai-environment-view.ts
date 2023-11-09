@@ -113,7 +113,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
         () => {
           this.is_superadmin = globalThis.backendaiclient.is_superadmin;
           this.isSupportContainerRegistryGraphQL =
-            globalThis.backendaiclient.supports('container-registry-gql');
+            globalThis.backendaiclient?.supports('container-registry-gql');
         },
         true,
       );
@@ -121,7 +121,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
       // already connected
       this.is_superadmin = globalThis.backendaiclient.is_superadmin;
       this.isSupportContainerRegistryGraphQL =
-        globalThis.backendaiclient.supports('container-registry-gql');
+        globalThis.backendaiclient?.supports('container-registry-gql');
     }
     return false;
   }

@@ -106,6 +106,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   @state() private all_vfolder_hosts;
   @state() private default_vfolder_host = '';
   @state() private vfolderPermissions;
+  @state() private isSupportMaxVfolderCountInUserResourcePolicy = false;
 
   constructor() {
     super();
@@ -348,6 +349,10 @@ export default class BackendAICredentialView extends BackendAIPage {
           globalThis.backendaiclient.supports(
             'fine-grained-storage-permissions',
           );
+        this.isSupportMaxVfolderCountInUserResourcePolicy =
+          globalThis.backendaiclient.supports(
+            'max-vfolder-count-in-user-resource-policy',
+          );
         this._preparePage();
         if (this.enableParsingStoragePermissions) {
           this._getVfolderPermissions();
@@ -359,6 +364,10 @@ export default class BackendAICredentialView extends BackendAIPage {
         globalThis.backendaiclient.supports('session-lifetime');
       this.enableParsingStoragePermissions =
         globalThis.backendaiclient.supports('fine-grained-storage-permissions');
+      this.isSupportMaxVfolderCountInUserResourcePolicy =
+        globalThis.backendaiclient.supports(
+          'max-vfolder-count-in-user-resource-policy',
+        );
       this._preparePage();
       if (this.enableParsingStoragePermissions) {
         this._getVfolderPermissions();
@@ -1475,14 +1484,23 @@ export default class BackendAICredentialView extends BackendAIPage {
             <backend-ai-multi-select open-up id="allowed-vfolder-hosts" label="${_t(
               'resourcePolicy.AllowedHosts',
             )}" style="width:100%;"></backend-ai-multi-select>
-            <div class="horizontal layout justified" style="width:100%;">
-              <div class="vertical layout flex">
-                <mwc-textfield label="${_t(
-                  'credential.Max#',
-                )}" class="discrete" id="vfolder-count-limit" type="number" min="0" max="50"
-                    @change="${(e) =>
-                      this._validateResourceInput(e)}"></mwc-textfield>
-              </div>
+            <div
+              class="horizontal layout justified"
+              style=${
+                this.isSupportMaxVfolderCountInUserResourcePolicy
+                  ? 'display:none;'
+                  : 'width:100%;'
+              }
+            >
+              <mwc-textfield
+                label="${_t('credential.Max#')}"
+                class="discrete"
+                id="vfolder-count-limit"
+                type="number"
+                min="0"
+                max="50"
+                @change="${(e) => this._validateResourceInput(e)}"
+              ></mwc-textfield>
             </div>
           </div>
         </div>
