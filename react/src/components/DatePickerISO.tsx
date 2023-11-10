@@ -8,10 +8,12 @@ interface DatePickerISOProps
   extends Omit<PickerDateProps<Dayjs>, 'value' | 'onChange'> {
   value?: string | undefined | null;
   onChange?: (value: string | undefined) => void;
+  localFormat?: boolean;
 }
 const DatePickerISO: React.FC<DatePickerISOProps> = ({
   value,
   onChange,
+  localFormat,
   ...pickerProps
 }) => {
   const [controllableValue, setControllableValue] = useControllableValue({
@@ -23,7 +25,11 @@ const DatePickerISO: React.FC<DatePickerISOProps> = ({
     <DatePicker
       value={value ? dayjs(value) : undefined}
       onChange={(value) => {
-        setControllableValue(value?.toISOString());
+        const newValue = localFormat
+          ? value?.format()
+          : value?.tz()?.toISOString();
+        // "2023-11-10T18:09:56+08:00"
+        setControllableValue(newValue);
       }}
       {...pickerProps}
     />

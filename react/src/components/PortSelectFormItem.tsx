@@ -7,6 +7,10 @@ import { Trans, useTranslation } from 'react-i18next';
 
 interface Props extends FormItemProps {}
 
+export interface PortSelectFormValues {
+  ports: string[];
+}
+
 const MIN_PORT = 1024;
 const MAX_PORT = 65535;
 const PortSelectFormItem: React.FC<Props> = ({ ...formItemProps }) => {

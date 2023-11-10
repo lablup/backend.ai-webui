@@ -429,7 +429,8 @@
     "Control": "Ελεγχος",
     "NewPassword": "νέος κωδικός πρόσβασης",
     "Enabled": "Ενεργοποιήθηκε",
-    "StorageProxies": "Αποθήκες"
+    "StorageProxies": "Αποθήκες",
+    "None": "Κανένα"
   },
   "credential": {
     "Permission": "Αδεια",

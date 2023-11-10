@@ -429,7 +429,8 @@
     "Control": "Ao controle",
     "NewPassword": "Nova Senha",
     "Enabled": "Habilitado",
-    "StorageProxies": "Armazéns"
+    "StorageProxies": "Armazéns",
+    "None": "Nenhum"
   },
   "credential": {
     "Permission": "Permissão",

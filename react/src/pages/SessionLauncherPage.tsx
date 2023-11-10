@@ -1,19 +1,31 @@
 import BAICard from '../BAICard';
 import DatePickerISO from '../components/DatePickerISO';
 import { useWebComponentInfo } from '../components/DefaultProviders';
-import EnvVarFormList from '../components/EnvVarFormList';
+import EnvVarFormList, {
+  EnvVarFormListValue,
+} from '../components/EnvVarFormList';
 import Flex from '../components/Flex';
-import ImageEnvironmentSelectFormItems from '../components/ImageEnvironmentSelectFormItems';
+import ImageEnvironmentSelectFormItems, {
+  ImageEnvironmentFormInput,
+} from '../components/ImageEnvironmentSelectFormItems';
 import ImageMetaIcon from '../components/ImageMetaIcon';
-import PortSelectFormItem, { PortTag } from '../components/PortSelectFormItem';
+import PortSelectFormItem, {
+  PortSelectFormValues,
+  PortTag,
+} from '../components/PortSelectFormItem';
 import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+  ResourceAllocationFormValue,
 } from '../components/ResourceAllocationFormItems';
-import ResourceGroupSelect from '../components/ResourceGroupSelect';
 import ResourceNumber from '../components/ResourceNumber';
-import SessionNameFormItem from '../components/SessionNameFormItem';
-import VFolderTableFromItem from '../components/VFolderTableFormItem';
+import SessionNameFormItem, {
+  SessionNameFormItemValue,
+} from '../components/SessionNameFormItem';
+import VFolderTableFromItem, {
+  VFolderTableFormValues,
+} from '../components/VFolderTableFormItem';
 import { iSizeToSize } from '../helper';
+import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
 import {
   BlockOutlined,
   LeftOutlined,
@@ -47,7 +59,7 @@ import {
   theme,
 } from 'antd';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import _, { values } from 'lodash';
 import React, { useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
@@ -70,6 +82,53 @@ const INITIAL_FORM_VALUES = {
 const stepParam = withDefault(NumberParam, 0);
 const formValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
 
+interface SessionConfig {
+  group_name: string;
+  domain: string;
+  scaling_group: string;
+  type: string;
+  cluster_mode: string;
+  cluster_size: number;
+  maxWaitSeconds: number;
+  cpu: number;
+  mem: string;
+  shmem: string;
+  mounts: string[];
+  mount_map: {
+    [key: string]: string;
+  };
+  env: {
+    [key: string]: string;
+  };
+  preopen_ports: number[];
+  startsAt?: string;
+  startupCommand?: string;
+}
+
+interface CreateSessionInfo {
+  kernelName: string;
+  sessionName: string;
+  architecture: string;
+  config: SessionConfig;
+}
+
+interface SessionLauncherValue {
+  sessionType: 'interactive' | 'batch' | 'inference';
+  batch: {
+    enabled: boolean;
+    scheduleDate?: string;
+    command?: string;
+  };
+  envvars: EnvVarFormListValue[];
+}
+
+type SessionLauncherFormValue = SessionLauncherValue &
+  SessionNameFormItemValue &
+  ImageEnvironmentFormInput &
+  ResourceAllocationFormValue &
+  VFolderTableFormValues &
+  PortSelectFormValues;
+
 const SessionLauncherPage = () => {
   const [
     { step: currentStep, formValues: initialFormValues, redirectTo },
@@ -82,14 +141,16 @@ const SessionLauncherPage = () => {
 
   const navigate = useNavigate();
   const { moveTo } = useWebComponentInfo();
+  const baiClient = useSuspendedBackendaiClient();
+  const currentProject = useCurrentProjectValue();
 
   const { run: syncFormToURLWithDebounce } = useDebounceFn(
     () => {
-      console.log(
-        'syncFormToURLWithDebounce',
-        form.getFieldValue(['batch', 'scheduleDate']),
-        form.getFieldsValue(),
-      );
+      // console.log(
+      //   'syncFormToURLWithDebounce',
+      //   form.getFieldValue(['batch', 'scheduleDate']),
+      //   form.getFieldsValue(),
+      // );
       // To sync the latest form values to URL,
       // 'trailing' is set to true, and get the form values here."
       setQuery(
@@ -121,12 +182,7 @@ const SessionLauncherPage = () => {
 
   const screens = Grid.useBreakpoint();
 
-  const [form] = Form.useForm<{
-    sessionType: 'interactive' | 'batch' | 'inference';
-    batch: {
-      enabled: boolean;
-    };
-  }>();
+  const [form] = Form.useForm<SessionLauncherFormValue>();
 
   useEffect(() => {
     if (
@@ -208,8 +264,8 @@ const SessionLauncherPage = () => {
     (item) => item.errors.length > 0,
   );
 
-  console.log(form.getFieldError(['resource', 'shmem']));
-  console.log(form.getFieldValue(['resource']));
+  // console.log(form.getFieldError(['resource', 'shmem']));
+  // console.log(form.getFieldValue(['resource']));
 
   const moveToPreview = () => {
     // TODO: if handling more async validations, required fetch, use `useTransition`
@@ -221,6 +277,65 @@ const SessionLauncherPage = () => {
       });
   };
 
+  const startSession = () => {
+    // moveTo('/job');
+
+    // TODO: support inference mode
+    // TODO: support import mode
+
+    form
+      .validateFields()
+      .then((values) => {
+        console.log(values.batch.scheduleDate);
+        const [kernelName, architecture] =
+          values.environments.version.split('@');
+        const sessionInfo: CreateSessionInfo = {
+          // TODO: allow_manual_image_name_for_session
+          kernelName,
+          architecture,
+          sessionName: _.isEmpty(values.name)
+            ? generateSessionId()
+            : values.name,
+          config: {
+            type: values.sessionType,
+
+            ...(values.sessionType === 'batch'
+              ? {
+                  startsAt: values.batch.enabled
+                    ? values.batch.scheduleDate
+                    : undefined,
+                  startupCommand: values.batch.command,
+                }
+              : {}),
+
+            // TODO: support change owner
+            group_name: currentProject.name,
+            domain: baiClient._config.domainName,
+            scaling_group: values.resourceGroup,
+            ///////////////////////////
+
+            // TODO: support multi-node
+            cluster_mode: 'single-node',
+            cluster_size: 1,
+            ///////////////////////////
+
+            maxWaitSeconds: 15,
+            cpu: values.resource.cpu,
+            mem: values.resource.mem,
+            // TODO:??? Automatically increase shared memory to 1GiB
+            shmem: values.resource.shmem,
+            mounts: values.vfolders,
+            mount_map: values.vfoldersAliasMap,
+
+            // TODO: support "OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS"
+            env: _.fromPairs(values.envvars.map((v) => [v.variable, v.value])),
+            preopen_ports: _.map(values.ports, (v) => parseInt(v)),
+          },
+        };
+        console.log(sessionInfo);
+      })
+      .catch((e) => {});
+  };
   return (
     <Flex
       direction="column"
@@ -296,7 +411,7 @@ const SessionLauncherPage = () => {
           {/* <Suspense fallback={<FlexActivityIndicator />}> */}
           <Form.Provider
             onFormChange={(name, info) => {
-              console.log('###', name, info);
+              // console.log('###', name, info);
               // use OnFormChange instead of Form's onValuesChange,
               // because onValuesChange will not be triggered when form is changed programmatically
               syncFormToURLWithDebounce();
@@ -474,7 +589,7 @@ const SessionLauncherPage = () => {
                                   <DatePickerISO
                                     disabled={disabled}
                                     showTime
-                                    // format={'YYYY-MM-DD HH:mm:ss'}
+                                    localFormat
                                   />
                                 </Form.Item>
                                 {/* <Form.Item
@@ -957,12 +1072,13 @@ const SessionLauncherPage = () => {
                                 {v}
                               </PortTag>
                             ))}
-                            {form.getFieldValue('ports')?.length !==
-                            0 ? undefined : (
+
+                            {!_.isArray(form.getFieldValue('ports')) ||
+                            form.getFieldValue('ports')?.length === 0 ? (
                               <Typography.Text type="secondary">
-                                -
+                                {t('general.None')}
                               </Typography.Text>
-                            )}
+                            ) : null}
                           </Flex>
                         </Descriptions.Item>
                       </Descriptions>
@@ -1023,6 +1139,7 @@ const SessionLauncherPage = () => {
                         type="primary"
                         icon={<PlayCircleOutlined />}
                         disabled={hasError}
+                        onClick={startSession}
                       >
                         {t('session.launcher.Launch')}
                       </Button>
@@ -1112,5 +1229,15 @@ const SessionTypeItem: React.FC<{
 
 //   </Flex>
 // }
+
+const generateSessionId = () => {
+  let text = '';
+  const possible =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  for (let i = 0; i < 8; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text + '-session';
+};
 
 export default SessionLauncherPage;

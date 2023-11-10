@@ -429,7 +429,8 @@
     "Control": "控制",
     "NewPassword": "新密碼",
     "Enabled": "啟用",
-    "StorageProxies": "存儲"
+    "StorageProxies": "存儲",
+    "None": "无"
   },
   "credential": {
     "Permission": "允許",

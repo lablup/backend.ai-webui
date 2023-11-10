@@ -6,7 +6,10 @@ import {
 } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
-import { Image } from './ImageEnvironmentSelectFormItems';
+import {
+  Image,
+  ImageEnvironmentFormInput,
+} from './ImageEnvironmentSelectFormItems';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import ResourcePresetSelect from './ResourcePresetSelect';
@@ -25,6 +28,19 @@ export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES = {
   },
 };
 
+export interface ResourceAllocationFormValue {
+  resource: {
+    cpu: number;
+    mem: string;
+    shmem: string;
+    accelerator: number;
+    acceleratorType: string;
+  };
+  resourceGroup: string;
+}
+
+type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
+  ImageEnvironmentFormInput;
 const limitParser = (limit: string | undefined) => {
   if (limit === undefined) {
     return undefined;
@@ -38,7 +54,7 @@ const limitParser = (limit: string | undefined) => {
 };
 
 const ResourceAllocationFormItems = () => {
-  const form = Form.useFormInstance();
+  const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
@@ -59,7 +75,7 @@ const ResourceAllocationFormItems = () => {
     form.getFieldValue('resourceGroup'),
   );
   const [isPendingCheckResets, startCheckRestsTransition] = useTransition();
-  const currentImage: Image = Form.useWatch(['environments', 'image'], {
+  const currentImage = Form.useWatch(['environments', 'image'], {
     form,
     preserve: true,
   });
@@ -354,8 +370,6 @@ const ResourceAllocationFormItems = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImage]);
 
-  // console.log('###12', checkPresetInfo?.keypair_remaining);
-
   const remainingValidationRules: {
     [key: string]: FormRule;
   } = {
@@ -412,13 +426,6 @@ const ResourceAllocationFormItems = () => {
       {},
     ),
   };
-  console.log(
-    '##123',
-    checkPresetInfo,
-    currentImage?.resource_limits,
-    sliderMinMax,
-    remainingValidationRules,
-  );
   return (
     <>
       <Form.Item

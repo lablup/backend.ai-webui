@@ -429,7 +429,8 @@
     "Control": "Controllo",
     "NewPassword": "nuova password",
     "Enabled": "Abilitato",
-    "StorageProxies": "Depositi"
+    "StorageProxies": "Depositi",
+    "None": "Nessuno"
   },
   "credential": {
     "Permission": "Autorizzazione",

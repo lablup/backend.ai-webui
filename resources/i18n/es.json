@@ -474,7 +474,8 @@
     "SecretKey": "Clave secreta",
     "StorageProxies": "Almacenes",
     "Username": "Nombre de usuario",
-    "cores": "núcleos"
+    "cores": "núcleos",
+    "None": "Ninguno"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",

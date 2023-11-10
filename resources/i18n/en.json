@@ -523,7 +523,8 @@
     "Control": "Control",
     "NewPassword": "New Password",
     "Enabled": "Enabled",
-    "StorageProxies": "Storages"
+    "StorageProxies": "Storages",
+    "None": "None"
   },
   "credential": {
     "Permission": "Permission",

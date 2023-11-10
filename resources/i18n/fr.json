@@ -429,7 +429,8 @@
     "Control": "Contrôler",
     "NewPassword": "nouveau mot de passe",
     "Enabled": "Activée",
-    "StorageProxies": "Stockages"
+    "StorageProxies": "Stockages",
+    "None": "Aucun"
   },
   "credential": {
     "Permission": "Autorisation",

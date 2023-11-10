@@ -429,7 +429,8 @@
     "Control": "Контроль",
     "NewPassword": "Новый пароль",
     "Enabled": "Включено",
-    "StorageProxies": "Хранилища данных"
+    "StorageProxies": "Хранилища данных",
+    "None": "Нет"
   },
   "credential": {
     "Permission": "Разрешение",

@@ -4,6 +4,9 @@ import { useTranslation } from 'react-i18next';
 
 interface SessionNameFormItemProps extends FormItemProps {}
 
+export interface SessionNameFormItemValue {
+  name: string;
+}
 const SessionNameFormItem: React.FC<SessionNameFormItemProps> = ({
   ...formItemProps
 }) => {

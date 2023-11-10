@@ -516,7 +516,8 @@
     "Control": "제어",
     "NewPassword": "새 비밀번호",
     "Enabled": "활성화됨",
-    "StorageProxies": "스토리지"
+    "StorageProxies": "스토리지",
+    "None": "없음"
   },
   "credential": {
     "Permission": "권한",

@@ -428,7 +428,8 @@
     "Control": "Điều khiển",
     "NewPassword": "mật khẩu mới",
     "Enabled": "Đã bật",
-    "StorageProxies": "Kho lưu trữ"
+    "StorageProxies": "Kho lưu trữ",
+    "None": "Không có"
   },
   "credential": {
     "Permission": "Sự cho phép",

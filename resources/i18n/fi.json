@@ -474,7 +474,8 @@
     "SecretKey": "Salainen avain",
     "StorageProxies": "Varastot",
     "Username": "Käyttäjätunnus",
-    "cores": "ytimet"
+    "cores": "ytimet",
+    "None": "Ei ole"
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",

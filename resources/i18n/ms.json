@@ -428,7 +428,8 @@
     "Control": "Kawal",
     "NewPassword": "Kata laluan baharu",
     "Enabled": "Diaktifkan",
-    "StorageProxies": "Stor"
+    "StorageProxies": "Stor",
+    "None": "tiada"
   },
   "credential": {
     "Permission": "Kebenaran",

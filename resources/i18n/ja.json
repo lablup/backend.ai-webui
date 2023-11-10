@@ -429,7 +429,8 @@
     "Control": "コントロール",
     "NewPassword": "新しいパスワード",
     "Enabled": "有効",
-    "StorageProxies": "ストレージ"
+    "StorageProxies": "ストレージ",
+    "None": "なし"
   },
   "credential": {
     "Permission": "許可",

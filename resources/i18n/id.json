@@ -429,7 +429,8 @@
     "Control": "Kontrol",
     "NewPassword": "Kata Sandi Baru",
     "Enabled": "Diaktifkan",
-    "StorageProxies": "Penyimpanan"
+    "StorageProxies": "Penyimpanan",
+    "None": "Tidak ada"
   },
   "credential": {
     "Permission": "Izin",

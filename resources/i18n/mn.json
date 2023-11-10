@@ -428,7 +428,8 @@
     "Control": "Хяналт",
     "NewPassword": "Шинэ нууц үг",
     "Enabled": "Идэвхжсэн",
-    "StorageProxies": "Хадгалах сан"
+    "StorageProxies": "Хадгалах сан",
+    "None": "Байхгүй"
   },
   "credential": {
     "Permission": "Зөвшөөрөл",
