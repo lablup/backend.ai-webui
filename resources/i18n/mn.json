@@ -305,7 +305,7 @@
       "SessionNameAlreadyExist": "Сешн нэр аль хэдийн байна",
       "SluggedStrings": "Залгисан мөрүүд (>3 тэмдэгт)",
       "SessionNameTooLong64": "64 ба түүнээс бага тэмдэгт оруулна уу.",
-      "PleaseFollowSessionNameRule": "Дор хаяж 3 үсэг, тоо, '.', '_', '-' гэсэн хослолыг оруулна уу."
+      "PleaseFollowSessionNameRule": "Дор хаяж 4 үсэг, тоо, '.', '_', '-' гэсэн хослолыг оруулна уу."
     },
     "AlreadyTerminatingSession": "Сессийг аль хэдийн дуусгаж байна.",
     "NoSessionToDisplay": "Харуулах сесс алга",

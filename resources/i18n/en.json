@@ -329,7 +329,7 @@
       "EnterValidSessionName": "Enter valid session name",
       "SessionNameAlreadyExist": "Session name already exists",
       "SessionNameTooLong64": "Please enter 64 characters or less.",
-      "PleaseFollowSessionNameRule": "Please enter a combination of at least 3 letters, numbers, '.', '_', and '-'."
+      "PleaseFollowSessionNameRule": "Please enter a combination of at least 4 letters, numbers, '.', '_', and '-'."
     },
     "EnvironmentInfo": "Environment Info",
     "DownloadingSessionLogs": "Downloading session logs.",

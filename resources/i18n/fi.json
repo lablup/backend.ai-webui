@@ -969,7 +969,7 @@
       "SessionNameRequired": "Istunnon nimi vaaditaan",
       "SluggedStrings": "Slugged-merkkijonot (>3 merkkiä)",
       "SessionNameTooLong64": "Anna enintään 64 merkkiä.",
-      "PleaseFollowSessionNameRule": "Anna vähintään kolmen kirjaimen, numeron, '.', '_' ja '-' yhdistelmä."
+      "PleaseFollowSessionNameRule": "Kirjoita vähintään 4 kirjaimen, numeroiden, '.', '_' ja '-' yhdistelmä."
     },
     "XRDPconnection": "RDP-yhteys",
     "applauncher": {

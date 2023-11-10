@@ -306,7 +306,7 @@
       "SessionNameAlreadyExist": "Имя сессии уже существует",
       "SluggedStrings": "Строки с засечками (>3 символов)",
       "SessionNameTooLong64": "Введите не более 64 символов.",
-      "PleaseFollowSessionNameRule": "Введите комбинацию как минимум из 3 букв, цифр, «.», «_» и «-»."
+      "PleaseFollowSessionNameRule": "Введите комбинацию как минимум из 4 букв, цифр, «.», «_» и «-»."
     },
     "AlreadyTerminatingSession": "Уже завершаю сессию.",
     "NoSessionToDisplay": "Нет сеансов для отображения",

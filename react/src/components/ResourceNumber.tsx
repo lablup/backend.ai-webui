@@ -67,7 +67,7 @@ const ResourceNumber: React.FC<Props> = ({
           : amount}
       </Typography.Text>
       <Typography.Text type="secondary">{units[type]}</Typography.Text>
-      {type === 'mem' && opts?.shmem && (
+      {type === 'mem' && opts?.shmem && opts?.shmem > 0 ? (
         <Typography.Text
           type="secondary"
           style={{ fontSize: token.fontSizeSM }}
@@ -75,7 +75,7 @@ const ResourceNumber: React.FC<Props> = ({
           (SHM: {iSizeToSize(opts.shmem + 'b', 'g', 2)?.numberFixed}
           GiB)
         </Typography.Text>
-      )}
+      ) : null}
       {extra}
     </Flex>
   );

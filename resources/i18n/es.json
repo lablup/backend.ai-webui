@@ -969,7 +969,7 @@
       "SessionNameRequired": "El nombre de la sesión es obligatorio",
       "SluggedStrings": "Cadenas babosas (>3 caracteres)",
       "SessionNameTooLong64": "Introduzca 64 caracteres o menos.",
-      "PleaseFollowSessionNameRule": "Ingrese una combinación de al menos 3 letras, números, '.', '_' y '-'."
+      "PleaseFollowSessionNameRule": "Ingrese una combinación de al menos 4 letras, números, '.', '_' y '-'."
     },
     "XRDPconnection": "Conexión RDP",
     "applauncher": {

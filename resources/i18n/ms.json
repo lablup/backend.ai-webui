@@ -295,7 +295,7 @@
       "SluggedStrings": "Rentetan slugged (>3 aksara)",
       "SessionNameAlreadyExist": "Nama sesi sudah wujud",
       "SessionNameTooLong64": "Sila masukkan 64 aksara atau kurang.",
-      "PleaseFollowSessionNameRule": "Sila masukkan gabungan sekurang-kurangnya 3 huruf, nombor, '.', '_' dan '-'."
+      "PleaseFollowSessionNameRule": "Sila masukkan gabungan sekurang-kurangnya 4 huruf, nombor, '.', '_' dan '-'."
     },
     "Interactive": "Interaktif",
     "Batch": "Kumpulan",

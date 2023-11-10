@@ -296,7 +296,7 @@
       "SluggedStrings": "多字符串（>3 字符）",
       "SessionNameAlreadyExist": "会话名称已存在",
       "SessionNameTooLong64": "请输入不超过 64 个字符。",
-      "PleaseFollowSessionNameRule": "请输入至少 3 个字母、数字、“.”、“_”和“-”的组合字符。"
+      "PleaseFollowSessionNameRule": "请输入至少 4 个字母、数字、“.”、“_”和“-”的组合字符。"
     },
     "Interactive": "交互式",
     "Batch": "批次",

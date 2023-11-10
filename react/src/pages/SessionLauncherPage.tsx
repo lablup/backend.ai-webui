@@ -11,6 +11,7 @@ import ResourceAllocationFormItems, {
 } from '../components/ResourceAllocationFormItems';
 import ResourceGroupSelect from '../components/ResourceGroupSelect';
 import ResourceNumber from '../components/ResourceNumber';
+import SessionNameFormItem from '../components/SessionNameFormItem';
 import VFolderTableFromItem from '../components/VFolderTableFormItem';
 import { iSizeToSize } from '../helper';
 import {
@@ -206,6 +207,16 @@ const SessionLauncherPage = () => {
   console.log(form.getFieldError(['resource', 'shmem']));
   console.log(form.getFieldValue(['resource']));
 
+  const moveToPreview = () => {
+    // TODO: if handling more async validations, required fetch, use `useTransition`
+    form
+      .validateFields()
+      .catch((e) => {})
+      .finally(() => {
+        setCurrentStep(steps.length - 1);
+      });
+  };
+
   return (
     <Flex
       direction="column"
@@ -355,30 +366,12 @@ const SessionLauncherPage = () => {
                       ]}
                     />
                   </Form.Item>
-                  <Form.Item
-                    label="Session name"
-                    name="name"
-                    rules={[
-                      {
-                        max: 64,
-                        message: t('session.Validation.SessionNameTooLong64'),
-                      },
-                      {
-                        pattern:
-                          /^(?:[a-zA-Z0-9][a-zA-Z0-9._-]{2,}[a-zA-Z0-9])?$/,
-                        message: t(
-                          'session.Validation.PleaseFollowSessionNameRule',
-                        ).toString(),
-                      },
-                    ]}
-                  >
-                    <Input allowClear />
-                  </Form.Item>
+                  <SessionNameFormItem />
                 </Card>
 
                 {sessionType === 'batch' && (
                   <Card
-                    title="Batch Mode Configuration"
+                    title={t('session.launcher.BatchModeConfig')}
                     style={{
                       display:
                         currentStepKey === 'sessionType' ? 'block' : 'none',
@@ -390,12 +383,13 @@ const SessionLauncherPage = () => {
                       rules={[
                         {
                           required: true,
+                          type: 'string',
                         },
                       ]}
                     >
-                      <Input.TextArea />
+                      <Input.TextArea autoSize />
                     </Form.Item>
-                    <Form.Item label="Schedule time">
+                    <Form.Item label={t('session.launcher.SessionStartTime')}>
                       <Flex direction="row" gap={'xs'}>
                         <Form.Item
                           noStyle
@@ -413,6 +407,11 @@ const SessionLauncherPage = () => {
                                 form.setFieldValue(
                                   ['batch', 'scheduleDate'],
                                   dayjs().add(2, 'minutes').toISOString(),
+                                );
+                              } else if (e.target.checked === false) {
+                                form.setFieldValue(
+                                  ['batch', 'scheduleDate'],
+                                  undefined,
                                 );
                               }
                             }}
@@ -543,7 +542,8 @@ const SessionLauncherPage = () => {
                       title={t('session.launcher.SessionType')}
                       size="small"
                       status={
-                        form.getFieldError('name').length > 0
+                        form.getFieldError('name').length > 0 ||
+                        form.getFieldError(['batch', 'command']).length > 0
                           ? 'error'
                           : undefined
                       }
@@ -576,12 +576,32 @@ const SessionLauncherPage = () => {
                       // }
                     >
                       <Descriptions size="small">
-                        <Descriptions.Item label="Session Type" span={24}>
+                        <Descriptions.Item
+                          label={t('session.SessionType')}
+                          span={24}
+                        >
                           {form.getFieldValue('sessionType')}
                         </Descriptions.Item>
-                        <Descriptions.Item label={'Session name'} span={24}>
-                          {form.getFieldValue('name')}
-                        </Descriptions.Item>
+                        {!_.isEmpty(form.getFieldValue('name')) && (
+                          <Descriptions.Item
+                            label={t('session.launcher.SessionName')}
+                            span={24}
+                          >
+                            {form.getFieldValue('name')}
+                          </Descriptions.Item>
+                        )}
+                        {sessionType === 'batch' && (
+                          <Descriptions.Item
+                            label={t('session.launcher.StartUpCommand')}
+                          >
+                            <Input.TextArea
+                              readOnly
+                              bordered={false}
+                              autoSize
+                              value={form.getFieldValue(['batch', 'command'])}
+                            ></Input.TextArea>
+                          </Descriptions.Item>
+                        )}
                       </Descriptions>
                     </BAICard>
                     <BAICard
@@ -621,35 +641,37 @@ const SessionLauncherPage = () => {
                             </Typography.Text>
                           </Flex>
                         </Descriptions.Item>
-                        <Descriptions.Item
-                          label={t('session.launcher.EnvironmentVariable')}
-                        >
-                          {form.getFieldValue('envvars')?.length ? (
-                            <SyntaxHighlighter
-                              style={darcula}
-                              codeTagProps={{
-                                style: {
-                                  // fontFamily: 'monospace',
-                                },
-                              }}
-                              // showLineNumbers
-                              customStyle={{
-                                margin: 0,
-                                width: '100%',
-                              }}
-                            >
-                              {_.map(
-                                form.getFieldValue('envvars'),
-                                (v: { variable: string; value: string }) =>
-                                  `${v?.variable || ''}="${v?.value || ''}"`,
-                              ).join('\n')}
-                            </SyntaxHighlighter>
-                          ) : (
-                            <Typography.Text type="secondary">
-                              -
-                            </Typography.Text>
-                          )}
-                        </Descriptions.Item>
+                        {form.getFieldValue('envvars')?.length > 0 && (
+                          <Descriptions.Item
+                            label={t('session.launcher.EnvironmentVariable')}
+                          >
+                            {form.getFieldValue('envvars')?.length ? (
+                              <SyntaxHighlighter
+                                style={darcula}
+                                codeTagProps={{
+                                  style: {
+                                    // fontFamily: 'monospace',
+                                  },
+                                }}
+                                // showLineNumbers
+                                customStyle={{
+                                  margin: 0,
+                                  width: '100%',
+                                }}
+                              >
+                                {_.map(
+                                  form.getFieldValue('envvars'),
+                                  (v: { variable: string; value: string }) =>
+                                    `${v?.variable || ''}="${v?.value || ''}"`,
+                                ).join('\n')}
+                              </SyntaxHighlighter>
+                            ) : (
+                              <Typography.Text type="secondary">
+                                -
+                              </Typography.Text>
+                            )}
+                          </Descriptions.Item>
+                        )}
                       </Descriptions>
                     </BAICard>
                     <BAICard
@@ -708,7 +730,7 @@ const SessionLauncherPage = () => {
                             <Flex
                               direction="row"
                               align="start"
-                              gap={'xs'}
+                              gap={'sm'}
                               wrap="wrap"
                               style={{ flex: 1 }}
                             >
@@ -723,7 +745,12 @@ const SessionLauncherPage = () => {
                               )}
 
                               {_.map(
-                                _.omit(form.getFieldValue('resource'), 'shmem'),
+                                _.omit(
+                                  form.getFieldValue('resource'),
+                                  'shmem',
+                                  'accelerator',
+                                  'acceleratorType',
+                                ),
                                 (value, type) => {
                                   return (
                                     <ResourceNumber
@@ -748,6 +775,21 @@ const SessionLauncherPage = () => {
                                     />
                                   );
                                 },
+                              )}
+                              {_.isNumber(
+                                form.getFieldValue(['resource', 'accelerator']),
+                              ) && (
+                                <ResourceNumber
+                                  // @ts-ignore
+                                  type={form.getFieldValue([
+                                    'resource',
+                                    'acceleratorType',
+                                  ])}
+                                  value={form.getFieldValue([
+                                    'resource',
+                                    'accelerator',
+                                  ])}
+                                />
                               )}
                               {/* {_.chain(
                               form.getFieldValue('allocationPreset') ===
@@ -841,7 +883,11 @@ const SessionLauncherPage = () => {
                           )}
                         ></Table>
                       ) : (
-                        <Typography.Text type="secondary">-</Typography.Text>
+                        <Alert
+                          type="warning"
+                          showIcon
+                          message={t('session.launcher.NoFolderMounted')}
+                        />
                       )}
                     </BAICard>
                     <BAICard
@@ -926,13 +972,7 @@ const SessionLauncherPage = () => {
                   </Flex>
                   <Flex direction="row" gap="sm">
                     {currentStep !== steps.length - 1 && (
-                      <Button
-                        onClick={() => {
-                          setCurrentStep(steps.length - 1);
-                        }}
-                      >
-                        Skip to Review
-                      </Button>
+                      <Button onClick={moveToPreview}>Skip to Review</Button>
                     )}
                     {currentStep > 0 && (
                       <Button
@@ -981,7 +1021,12 @@ const SessionLauncherPage = () => {
               direction="vertical"
               current={currentStep}
               onChange={(nextCurrent) => {
-                setCurrentStep(nextCurrent);
+                // handle "skip to review" step specifically, because validation
+                if (nextCurrent === steps.length - 1) {
+                  moveToPreview();
+                } else {
+                  setCurrentStep(nextCurrent);
+                }
               }}
               items={_.map(steps, (s, idx) => ({
                 ...s,

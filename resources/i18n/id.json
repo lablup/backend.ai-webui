@@ -306,7 +306,7 @@
       "SessionNameAlreadyExist": "Nama sesi sudah ada",
       "SluggedStrings": "String yang disumbat (>3 karakter)",
       "SessionNameTooLong64": "Silakan masukkan 64 karakter atau kurang.",
-      "PleaseFollowSessionNameRule": "Silakan masukkan kombinasi minimal 3 huruf, angka, '.', '_', dan '-'."
+      "PleaseFollowSessionNameRule": "Silakan masukkan kombinasi minimal 4 huruf, angka, '.', '_', dan '-'."
     },
     "AlreadyTerminatingSession": "Sudah mengakhiri sesi.",
     "NoSessionToDisplay": "Tidak ada sesi yang ditampilkan",

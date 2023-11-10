@@ -13,7 +13,7 @@ import ResourcePresetSelect from './ResourcePresetSelect';
 import SliderInputItem from './SliderInputFormItem';
 import { Card, Form, FormRule, Select, theme } from 'antd';
 import _ from 'lodash';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES = {
@@ -49,10 +49,16 @@ const ResourceAllocationFormItems = () => {
   const currentProject = useCurrentProjectValue();
 
   // Form watch
-  const currentResourceGroup = Form.useWatch('resourceGroup', {
-    form,
-    preserve: true,
-  });
+  // const currentResourceGroup = Form.useWatch('resourceGroup', {
+  //   form,
+  //   preserve: true,
+  // });
+
+  // use `useState` instead of `Form.useWatch` for handling `resourcePreset.check` pending state
+  const [currentResourceGroup, setCurrentResourceGroup] = useState(
+    form.getFieldValue('resourceGroup'),
+  );
+  const [isPendingCheckResets, startCheckRestsTransition] = useTransition();
   const currentImage: Image = Form.useWatch(['environments', 'image'], {
     form,
     preserve: true,
@@ -76,6 +82,7 @@ const ResourceAllocationFormItems = () => {
       }
     },
     staleTime: 0,
+    suspense: !_.isEmpty(currentResourceGroup), //prevent flicking
   });
 
   // interface ResourceLimit {
@@ -114,6 +121,24 @@ const ResourceAllocationFormItems = () => {
               baiClient._config.maxCPUCoresPerContainer,
               limitParser(checkPresetInfo?.keypair_limits.cpu),
               limitParser(checkPresetInfo?.group_limits.cpu),
+              // scaling group all cpu (using + remaining), string type
+              !_.isEmpty(
+                checkPresetInfo?.scaling_groups[currentResourceGroup]?.using
+                  ?.cpu,
+              ) &&
+              !_.isEmpty(
+                checkPresetInfo?.scaling_groups[currentResourceGroup]?.remaining
+                  ?.cpu,
+              )
+                ? _.toNumber(
+                    checkPresetInfo?.scaling_groups[currentResourceGroup]?.using
+                      .cpu,
+                  ) +
+                  _.toNumber(
+                    checkPresetInfo?.scaling_groups[currentResourceGroup]
+                      ?.remaining.cpu,
+                  )
+                : undefined,
             ]),
             remaining:
               _.min([
@@ -145,6 +170,29 @@ const ResourceAllocationFormItems = () => {
                     limitParser(checkPresetInfo?.group_limits.mem) + '',
                     'g',
                   )?.number,
+                // scaling group all mem (using + remaining), string type
+                !_.isEmpty(
+                  checkPresetInfo?.scaling_groups[currentResourceGroup]?.using
+                    ?.mem,
+                ) &&
+                !_.isEmpty(
+                  checkPresetInfo?.scaling_groups[currentResourceGroup]?.using
+                    ?.mem,
+                )
+                  ? iSizeToSize(
+                      _.toNumber(
+                        checkPresetInfo?.scaling_groups[currentResourceGroup]
+                          ?.using.mem,
+                      ) +
+                        _.toNumber(
+                          checkPresetInfo?.scaling_groups[currentResourceGroup]
+                            ?.remaining.mem,
+                        ) +
+                        'b',
+                      'g',
+                      2,
+                    )?.numberFixed
+                  : undefined,
               ]) + 'g',
             remaining:
               _.min([
@@ -187,7 +235,33 @@ const ResourceAllocationFormItems = () => {
               )[0]?.min as string,
             ) || 0,
           //
-          max: baiClient._config[configName] || 8,
+          max: _.min([
+            baiClient._config[configName] || 8,
+            // scaling group all cpu (using + remaining), string type
+            !_.isEmpty(
+              // @ts-ignore
+              checkPresetInfo?.scaling_groups[currentResourceGroup]?.using?.[
+                key
+              ],
+            ) &&
+            !_.isEmpty(
+              // @ts-ignore
+              checkPresetInfo?.scaling_groups[currentResourceGroup]
+                ?.remaining?.[key],
+            )
+              ? _.toNumber(
+                  // @ts-ignore
+                  checkPresetInfo?.scaling_groups[currentResourceGroup]?.using[
+                    key
+                  ],
+                ) +
+                _.toNumber(
+                  // @ts-ignore
+                  checkPresetInfo?.scaling_groups[currentResourceGroup]
+                    ?.remaining[key],
+                )
+              : undefined,
+          ]),
           remaining:
             _.min([
               // @ts-ignore
@@ -301,8 +375,9 @@ const ResourceAllocationFormItems = () => {
       warningOnly: true,
       validator: async (rule, value: string) => {
         if (
+          !_.isElement(value) &&
           sliderMinMax.mem &&
-          compareNumberWithUnits(value, sliderMinMax.mem.remaining) > 0
+          compareNumberWithUnits(value, sliderMinMax.mem.remaining + 'b') > 0
         ) {
           return Promise.reject(
             t('session.launcher.EnqueueComputeSessionWarning'),
@@ -338,7 +413,8 @@ const ResourceAllocationFormItems = () => {
     ),
   };
   console.log(
-    '##12',
+    '##123',
+    checkPresetInfo,
     currentImage?.resource_limits,
     sliderMinMax,
     remainingValidationRules,
@@ -354,7 +430,15 @@ const ResourceAllocationFormItems = () => {
           },
         ]}
       >
-        <ResourceGroupSelect autoSelectDefault />
+        <ResourceGroupSelect
+          autoSelectDefault
+          loading={isPendingCheckResets}
+          onChange={(v) => {
+            startCheckRestsTransition(() => {
+              setCurrentResourceGroup(v);
+            });
+          }}
+        />
       </Form.Item>
       <Form.Item
         label={t('resourcePreset.ResourcePresets')}
@@ -458,12 +542,28 @@ const ResourceAllocationFormItems = () => {
                 {resourceSlots?.mem && (
                   <Form.Item
                     name={['resource', 'mem']}
-                    // initialValue={'0g'}
                     label={t('session.launcher.Memory')}
                     tooltip={<Trans i18nKey={'session.launcher.DescMemory'} />}
                     rules={[
                       {
                         required: true,
+                      },
+                      {
+                        validator: async (rule, value: string) => {
+                          if (
+                            compareNumberWithUnits(
+                              value || '0b',
+                              sliderMinMax.mem?.min,
+                            ) < 0
+                          ) {
+                            return Promise.reject(
+                              t('session.launcher.MinMemory', {
+                                size: _.toUpper(sliderMinMax.mem?.min),
+                              }),
+                            );
+                          }
+                          return Promise.resolve();
+                        },
                       },
                       remainingValidationRules.mem,
                       // {
@@ -512,23 +612,6 @@ const ResourceAllocationFormItems = () => {
                       }
                     />
                   </Form.Item>
-                  // <SliderInputItem
-                  //   name={['resource', 'mem']}
-                  //   initialValue={'0g'}
-                  //   label={t('session.launcher.Memory')}
-                  //   tooltip={<Trans i18nKey={'session.launcher.DescMemory'} />}
-                  //   max={30}
-                  //   inputNumberProps={{
-                  //     addonAfter: 'GB',
-                  //   }}
-                  //   step={0.05}
-                  //   required
-                  //   rules={[
-                  //     {
-                  //       required: true,
-                  //     },
-                  //   ]}
-                  // />
                 )}
                 {resourceSlots?.mem && (
                   <Form.Item
@@ -679,6 +762,7 @@ type ResourceSlots = {
   cpu: string;
   mem: string;
   'cuda.device': string;
+  [key: string]: string;
 };
 
 type Preset = {

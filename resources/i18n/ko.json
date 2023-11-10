@@ -126,6 +126,7 @@
       "InteractiveMode": "Interactive",
       "BatchModeConfig": "Batch 모드 설정",
       "ScheduleTime": "시작 시간 설정 (옵션)",
+      "ScheduleTimeSimple": "시작 시간 설정",
       "StartUpCommand": "세션 시작시 실행할 명령",
       "SessionStartTime": "세션 시작 시간: ",
       "SetEnvironmentVariable": "환경 변수 설정 (옵션)",
@@ -137,6 +138,7 @@
       "Base": "기본환경",
       "Requirements": "요구사항",
       "SessionNameOptional": "세션 이름 (옵션)",
+      "SessionName":"세션 이름",
       "Environments": "실행 환경",
       "Start": "시작",
       "FolderToMount": "마운트할 폴더",
@@ -310,7 +312,7 @@
       "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
       "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다",
       "SessionNameTooLong64": "64자 이하로 입력해주세요.",
-      "PleaseFollowSessionNameRule": "최소 3자 이상의 문자, 숫자, '.', '_', '-' 조합으로 입력해주세요."
+      "PleaseFollowSessionNameRule": "최소 4자 이상의 문자, 숫자, '.', '_', '-' 조합으로 입력해주세요."
     },
     "AlreadyTerminatingSession": "이미 종료중인 세션입니다",
     "CommitSession": "세션을 이미지로 커밋하기",

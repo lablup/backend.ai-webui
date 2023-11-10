@@ -295,7 +295,7 @@
       "SluggedStrings": "Chuỗi bị trượt (>3 ký tự)",
       "SessionNameAlreadyExist": "Tên phiên đã tồn tại",
       "SessionNameTooLong64": "Vui lòng nhập 64 ký tự trở xuống.",
-      "PleaseFollowSessionNameRule": "Vui lòng nhập kết hợp ít nhất 3 chữ cái, số, '.', '_' và '-'."
+      "PleaseFollowSessionNameRule": "Vui lòng nhập kết hợp ít nhất 4 chữ cái, số, '.', '_' và '-'."
     },
     "Interactive": "Tương tác",
     "Batch": "Lô hàng",

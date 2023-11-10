@@ -296,7 +296,7 @@
       "SluggedStrings": "Ucięte ciągi znaków (>3 znaki)",
       "SessionNameAlreadyExist": "Nazwa sesji już istnieje",
       "SessionNameTooLong64": "Wprowadź maksymalnie 64 znaki.",
-      "PleaseFollowSessionNameRule": "Wprowadź kombinację co najmniej 3 liter, cyfr, „.”, „_” i „-”."
+      "PleaseFollowSessionNameRule": "Wprowadź kombinację co najmniej 4 liter, cyfr, „.”, „_” i „-”."
     },
     "Interactive": "Interaktywny",
     "Batch": "Partia",

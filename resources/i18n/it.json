@@ -296,7 +296,7 @@
       "SluggedStrings": "Stringhe con slugged (>3 caratteri)",
       "SessionNameAlreadyExist": "Il nome della sessione esiste già",
       "SessionNameTooLong64": "Inserisci 64 caratteri o meno.",
-      "PleaseFollowSessionNameRule": "Inserisci una combinazione di almeno 3 lettere, numeri, \".\", \"_\" e \"-\"."
+      "PleaseFollowSessionNameRule": "Inserisci una combinazione di almeno 4 lettere, numeri, \".\", \"_\" e \"-\"."
     },
     "Interactive": "Interattivo",
     "Batch": "Lotto",

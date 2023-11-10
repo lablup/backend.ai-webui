@@ -296,7 +296,7 @@
       "SluggedStrings": "Kesikli dizeler (>3 karakter)",
       "SessionNameAlreadyExist": "Oturum adı zaten mevcut",
       "SessionNameTooLong64": "Lütfen 64 veya daha az karakter girin.",
-      "PleaseFollowSessionNameRule": "Lütfen en az 3 harf, rakam, '.', '_' ve '-' kombinasyonunu girin."
+      "PleaseFollowSessionNameRule": "Lütfen en az 4 harf, rakam, '.', '_' ve '-' kombinasyonunu girin."
     },
     "Interactive": "İnteraktif",
     "Batch": "Toplu İş",

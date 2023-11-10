@@ -306,7 +306,7 @@
       "SessionNameAlreadyExist": "Le nom de la session existe déjà",
       "SluggedStrings": "Chaînes de caractères tronquées (>3 chars)",
       "SessionNameTooLong64": "Veuillez saisir 64 caractères ou moins.",
-      "PleaseFollowSessionNameRule": "Veuillez saisir une combinaison d'au moins 3 lettres, chiffres, '.', '_' et '-'."
+      "PleaseFollowSessionNameRule": "Veuillez saisir une combinaison d'au moins 4 lettres, chiffres, '.', '_' et '-'."
     },
     "AlreadyTerminatingSession": "La session est déjà terminée.",
     "NoSessionToDisplay": "Aucune session à afficher",
