@@ -250,7 +250,8 @@
       "preopen": "preopen",
       "FolderAliasInvalid": "Only alphanumeric characters, underscore (_), slash (/), and dash (-) are allowed.",
       "PreOpenPortMaxCountLimit": "You can set up to {{count}} pre-open ports.",
-      "EnqueueComputeSessionWarning": "If you set it larger than the currently available resources, the session creation will be delayed in the queue until it becomes available."
+      "EnqueueComputeSessionWarning": "If you set it larger than the currently available resources, the session creation will be delayed in the queue until it becomes available.",
+      "TemplateAndHistory": "Templates & history"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

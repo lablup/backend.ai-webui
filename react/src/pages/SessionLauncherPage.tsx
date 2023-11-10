@@ -19,6 +19,7 @@ import {
   LeftOutlined,
   PlayCircleFilled,
   PlayCircleOutlined,
+  QuestionCircleOutlined,
   RightOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
@@ -261,9 +262,17 @@ const SessionLauncherPage = () => {
             </Typography.Title>
             <Flex direction="row" gap={'sm'}>
               <Popconfirm
-                title={t('session.launcher.ResetFormConfirm')}
+                title={t('button.Reset')}
+                description={t('session.launcher.ResetFormConfirm')}
                 onConfirm={() => {
                   navigate('/session/start');
+                }}
+                icon={
+                  <QuestionCircleOutlined style={{ color: token.colorError }} />
+                }
+                okText={t('button.Reset')}
+                okButtonProps={{
+                  danger: true,
                 }}
               >
                 <Button
@@ -280,7 +289,7 @@ const SessionLauncherPage = () => {
                 disabled
                 style={{ paddingRight: 0, paddingLeft: 0 }}
               >
-                {t('session.launcher.Template')}
+                {t('session.launcher.TemplateAndHistory')}
               </Button>
             </Flex>
           </Flex>
