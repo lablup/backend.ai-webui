@@ -34,6 +34,7 @@ import {
   Form,
   Grid,
   Input,
+  Popconfirm,
   Segmented,
   Select,
   StepProps,
@@ -49,6 +50,7 @@ import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
+import { Link, useNavigate } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { darcula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import {
@@ -77,6 +79,7 @@ const SessionLauncherPage = () => {
     redirectTo: StringParam,
   });
 
+  const navigate = useNavigate();
   const { moveTo } = useWebComponentInfo();
 
   const { run: syncFormToURLWithDebounce } = useDebounceFn(
@@ -88,13 +91,13 @@ const SessionLauncherPage = () => {
       );
       // To sync the latest form values to URL,
       // 'trailing' is set to true, and get the form values here."
-      // setQuery(
-      //   {
-      //     // formValues: form.getFieldsValue(),
-      //     formValues: _.omit(form.getFieldsValue(), ['environments.image']),
-      //   },
-      //   'replaceIn',
-      // );
+      setQuery(
+        {
+          // formValues: form.getFieldsValue(),
+          formValues: _.omit(form.getFieldsValue(), ['environments.image']),
+        },
+        'replaceIn',
+      );
     },
     {
       leading: false,
@@ -256,9 +259,30 @@ const SessionLauncherPage = () => {
             <Typography.Title level={3} style={{ marginTop: 0 }}>
               {t('session.launcher.StartNewSession')}
             </Typography.Title>
-            <Button type="link" icon={<BlockOutlined />} disabled>
-              {t('session.launcher.Template')}
-            </Button>
+            <Flex direction="row" gap={'sm'}>
+              <Popconfirm
+                title={t('session.launcher.ResetFormConfirm')}
+                onConfirm={() => {
+                  navigate('/session/start');
+                }}
+              >
+                <Button
+                  danger
+                  type="link"
+                  style={{ paddingRight: 0, paddingLeft: 0 }}
+                >
+                  {t('button.Reset')}
+                </Button>
+              </Popconfirm>
+              <Button
+                type="link"
+                icon={<BlockOutlined />}
+                disabled
+                style={{ paddingRight: 0, paddingLeft: 0 }}
+              >
+                {t('session.launcher.Template')}
+              </Button>
+            </Flex>
           </Flex>
           {/* <Suspense fallback={<FlexActivityIndicator />}> */}
           <Form.Provider
@@ -960,6 +984,7 @@ const SessionLauncherPage = () => {
                     {currentStep === steps.length - 1 && (
                       <Button
                         icon={<SaveOutlined />}
+                        disabled
                         onClick={() => {
                           message.info(
                             'Not implemented yet: Template edit modal',
