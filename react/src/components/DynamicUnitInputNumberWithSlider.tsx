@@ -147,7 +147,11 @@ const DynamicUnitInputNumberWithSlider: React.FC<
           />
         </Flex>
       </Flex>
-      <Flex style={{ flex: 2 }}>
+      <Flex
+        style={{ flex: 2, minWidth: 130 }}
+        direction="column"
+        align="stretch"
+      >
         <DynamicUnitInputNumber
           {...otherProps}
           min={min}

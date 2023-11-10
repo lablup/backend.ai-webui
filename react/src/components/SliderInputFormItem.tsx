@@ -53,7 +53,11 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
             />
           </Form.Item>
         </Flex>
-        <Flex style={{ flex: 2 }}>
+        <Flex
+          style={{ flex: 2, minWidth: 130 }}
+          align="stretch"
+          direction="column"
+        >
           <Form.Item
             name={name}
             noStyle
