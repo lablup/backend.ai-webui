@@ -6,6 +6,7 @@ import {
 } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
+import Flex from './Flex';
 import {
   Image,
   ImageEnvironmentFormInput,
@@ -14,7 +15,17 @@ import ResourceGroupSelect from './ResourceGroupSelect';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import ResourcePresetSelect from './ResourcePresetSelect';
 import SliderInputItem from './SliderInputFormItem';
-import { Card, Form, FormRule, Select, theme } from 'antd';
+import {
+  Card,
+  Col,
+  Divider,
+  Form,
+  FormRule,
+  Radio,
+  Row,
+  Select,
+  theme,
+} from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -26,6 +37,8 @@ export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES = {
     shmem: '0g',
     accelerator: 0,
   },
+  cluster_mode: 'single-node',
+  cluster_size: 1,
 };
 
 export interface ResourceAllocationFormValue {
@@ -37,6 +50,8 @@ export interface ResourceAllocationFormValue {
     acceleratorType: string;
   };
   resourceGroup: string;
+  cluster_mode: 'single-node' | 'multi-node';
+  cluster_size: number;
 }
 
 type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
@@ -753,6 +768,74 @@ const ResourceAllocationFormItems = () => {
           }}
         </Form.Item>
       </Card>
+      {baiClient.supports('multi-container') && (
+        <Form.Item
+          label={t('session.launcher.ClusterMode')}
+          tooltip={
+            <Flex direction="column" align="start">
+              {t('session.launcher.SingleNode')}
+              <Trans i18nKey={'session.launcher.DescSingleNode'} />
+              <Divider style={{ backgroundColor: token.colorBorder }} />
+              {t('session.launcher.MultiNode')}
+              <Trans i18nKey={'session.launcher.DescMultiNode'} />
+            </Flex>
+          }
+          required
+        >
+          <Card
+            style={{
+              marginBottom: token.margin,
+            }}
+          >
+            <Row gutter={token.marginMD}>
+              <Col xs={24}>
+                {/* <Col xs={24} lg={12}> */}
+                <Form.Item name={'cluster_mode'} required>
+                  <Radio.Group
+                    onChange={(e) => {
+                      e.target.value === 'single-node' &&
+                        form.setFieldValue('cluster_size', 1);
+                    }}
+                  >
+                    <Radio.Button value="single-node">
+                      {t('session.launcher.SingleNode')}
+                    </Radio.Button>
+                    <Radio.Button value="multi-node">
+                      {t('session.launcher.MultiNode')}
+                    </Radio.Button>
+                  </Radio.Group>
+                </Form.Item>
+              </Col>
+              <Col xs={24}>
+                {/* <Col xs={24} lg={12}> */}
+                <Form.Item
+                  noStyle
+                  shouldUpdate={(prev, next) =>
+                    prev.cluster_mode !== next.cluster_mode
+                  }
+                >
+                  {() => (
+                    <SliderInputItem
+                      disabled={
+                        form.getFieldValue('cluster_mode') === 'single-node'
+                      }
+                      name={'cluster_size'}
+                      label={t('session.launcher.ClusterSize')}
+                      required
+                      inputNumberProps={{
+                        addonAfter: '#',
+                      }}
+                      min={1}
+                      // TODO: max cluster size
+                      max={_.min([sliderMinMax.cpu?.max])}
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>
+          </Card>
+        </Form.Item>
+      )}
     </>
   );
 };

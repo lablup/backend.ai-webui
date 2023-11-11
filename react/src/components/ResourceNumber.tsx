@@ -134,30 +134,30 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     'warboy.device': ['/resources/icons/furiosa.svg', 'Warboy'],
   };
 
-  return (
-    <Tooltip
-      title={
-        // showTooltip ? `${type} (${resourceTypeIconSrcMap[type][1]})` : undefined
-        showTooltip ? `${type}` : undefined
-      }
-    >
-      {typeof resourceTypeIconSrcMap[type]?.[0] === 'string' ? (
-        <img
-          {...props}
-          style={{
-            height: size,
-            ...(props.style || {}),
-          }}
-          // @ts-ignore
-          src={resourceTypeIconSrcMap[type]?.[0] || ''}
-          alt={type}
-        />
-      ) : (
-        <div style={{ width: 16, height: 16 }}>
-          {resourceTypeIconSrcMap[type]?.[0] || type}
-        </div>
-      )}
-    </Tooltip>
+  const content =
+    typeof resourceTypeIconSrcMap[type]?.[0] === 'string' ? (
+      <img
+        {...props}
+        style={{
+          height: size,
+          alignSelf: 'center',
+          ...(props.style || {}),
+        }}
+        // @ts-ignore
+        src={resourceTypeIconSrcMap[type]?.[0] || ''}
+        alt={type}
+      />
+    ) : (
+      <Flex style={{ width: 16, height: 16 }}>
+        {resourceTypeIconSrcMap[type]?.[0] || type}
+      </Flex>
+    );
+
+  return showTooltip ? (
+    // <Tooltip title={showTooltip ? `${type} (${resourceTypeIconSrcMap[type][1]})` : undefined}>
+    <Tooltip title={type}>{content}</Tooltip>
+  ) : (
+    <Flex style={{ pointerEvents: 'none' }}>{content}</Flex>
   );
 };
 
