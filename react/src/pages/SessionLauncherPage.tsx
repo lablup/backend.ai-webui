@@ -701,6 +701,7 @@ const SessionLauncherPage = () => {
                     label={t('session.launcher.SwitchOpenMPoptimization')}
                     name={['hpcOptimization', 'autoEnabled']}
                     valuePropName="checked"
+                    required
                   >
                     <Switch
                       onChange={(checked) => {
@@ -712,58 +713,83 @@ const SessionLauncherPage = () => {
                       }}
                     />
                   </Form.Item>
-                  <Row gutter={token.marginMD}>
-                    <Col xs={24} sm={12}>
-                      <Form.Item
-                        style={{ flex: 1 }}
-                        label={t('session.launcher.NumOpenMPthreads')}
-                        name={['hpcOptimization', 'OMP_NUM_THREADS']}
-                        tooltip={
-                          <>
-                            {t('session.launcher.OpenMPOptimization')}
-                            <Trans
-                              i18nKey={
-                                'session.launcher.DescOpenMPOptimization'
+                  <Form.Item
+                    noStyle
+                    shouldUpdate={(prev, next) => {
+                      return (
+                        prev.hpcOptimization?.autoEnabled !==
+                        next.hpcOptimization?.autoEnabled
+                      );
+                    }}
+                  >
+                    {() => {
+                      const enabled = form.getFieldValue([
+                        'hpcOptimization',
+                        'autoEnabled',
+                      ]);
+                      return (
+                        <Row
+                          gutter={token.marginMD}
+                          style={{
+                            display: enabled ? 'none' : undefined,
+                          }}
+                        >
+                          <Col xs={24} sm={12}>
+                            <Form.Item
+                              style={{ flex: 1 }}
+                              label={t('session.launcher.NumOpenMPthreads')}
+                              name={['hpcOptimization', 'OMP_NUM_THREADS']}
+                              tooltip={
+                                <>
+                                  {t('session.launcher.OpenMPOptimization')}
+                                  <Trans
+                                    i18nKey={
+                                      'session.launcher.DescOpenMPOptimization'
+                                    }
+                                  />
+                                </>
                               }
-                            />
-                          </>
-                        }
-                      >
-                        <InputNumber
-                          min={0}
-                          max={1000}
-                          step={1}
-                          stringMode
-                          style={{ width: '100%' }}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={12}>
-                      <Form.Item
-                        style={{ flex: 1 }}
-                        label={t('session.launcher.NumOpenBLASthreads')}
-                        name={['hpcOptimization', 'OPENBLAS_NUM_THREADS']}
-                        tooltip={
-                          <>
-                            {t('session.launcher.OpenMPOptimization')}
-                            <Trans
-                              i18nKey={
-                                'session.launcher.DescOpenMPOptimization'
+                              required
+                            >
+                              <InputNumber
+                                min={0}
+                                max={1000}
+                                step={1}
+                                stringMode
+                                style={{ width: '100%' }}
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col xs={24} sm={12}>
+                            <Form.Item
+                              style={{ flex: 1 }}
+                              label={t('session.launcher.NumOpenBLASthreads')}
+                              name={['hpcOptimization', 'OPENBLAS_NUM_THREADS']}
+                              tooltip={
+                                <>
+                                  {t('session.launcher.OpenMPOptimization')}
+                                  <Trans
+                                    i18nKey={
+                                      'session.launcher.DescOpenMPOptimization'
+                                    }
+                                  />
+                                </>
                               }
-                            />
-                          </>
-                        }
-                      >
-                        <InputNumber
-                          min={0}
-                          max={1000}
-                          step={1}
-                          stringMode
-                          style={{ width: '100%' }}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
+                              required
+                            >
+                              <InputNumber
+                                min={0}
+                                max={1000}
+                                step={1}
+                                stringMode
+                                style={{ width: '100%' }}
+                              />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      );
+                    }}
+                  </Form.Item>
                 </Card>
 
                 {/* Step Start*/}
