@@ -9,6 +9,7 @@
     "cuda",
     "Frgmt",
     "Lablup",
+    "OPENBLAS",
     "Popconfirm",
     "preopen",
     "shmem",

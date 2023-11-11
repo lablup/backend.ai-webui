@@ -24,7 +24,7 @@ import SessionNameFormItem, {
 import VFolderTableFromItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
-import { iSizeToSize } from '../helper';
+import { compareNumberWithUnits, iSizeToSize } from '../helper';
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
 import {
   BlockOutlined,
@@ -43,15 +43,19 @@ import {
   Button,
   Card,
   Checkbox,
+  Col,
   Descriptions,
   Form,
   Grid,
   Input,
+  InputNumber,
   Popconfirm,
+  Row,
   Segmented,
   Select,
   StepProps,
   Steps,
+  Switch,
   Table,
   Tag,
   Typography,
@@ -62,7 +66,7 @@ import dayjs from 'dayjs';
 import _, { values } from 'lodash';
 import React, { useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { darcula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
@@ -74,9 +78,20 @@ import {
   withDefault,
 } from 'use-query-params';
 
-const INITIAL_FORM_VALUES = {
+const INITIAL_FORM_VALUES: SessionLauncherValue = {
   sessionType: 'interactive',
   allocationPreset: 'custom',
+  hpcOptimization: {
+    autoEnabled: true,
+    OMP_NUM_THREADS: '1',
+    OPENBLAS_NUM_THREADS: '1',
+  },
+  batch: {
+    enabled: false,
+    command: undefined,
+    scheduleDate: undefined,
+  },
+  envvars: [],
   ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
 };
 const stepParam = withDefault(NumberParam, 0);
@@ -119,7 +134,13 @@ interface SessionLauncherValue {
     scheduleDate?: string;
     command?: string;
   };
+  allocationPreset: string;
   envvars: EnvVarFormListValue[];
+  hpcOptimization: {
+    autoEnabled: boolean;
+    OMP_NUM_THREADS: string;
+    OPENBLAS_NUM_THREADS: string;
+  };
 }
 
 type SessionLauncherFormValue = SessionLauncherValue &
@@ -131,7 +152,7 @@ type SessionLauncherFormValue = SessionLauncherValue &
 
 const SessionLauncherPage = () => {
   const [
-    { step: currentStep, formValues: initialFormValues, redirectTo },
+    { step: currentStep, formValues: formValuesFromQueryParams, redirectTo },
     setQuery,
   ] = useQueryParams({
     step: stepParam,
@@ -146,11 +167,7 @@ const SessionLauncherPage = () => {
 
   const { run: syncFormToURLWithDebounce } = useDebounceFn(
     () => {
-      // console.log(
-      //   'syncFormToURLWithDebounce',
-      //   form.getFieldValue(['batch', 'scheduleDate']),
-      //   form.getFieldsValue(),
-      // );
+      console.log('syncFormToURLWithDebounce', form.getFieldsValue());
       // To sync the latest form values to URL,
       // 'trailing' is set to true, and get the form values here."
       setQuery(
@@ -184,11 +201,14 @@ const SessionLauncherPage = () => {
 
   const [form] = Form.useForm<SessionLauncherFormValue>();
 
+  // After first render, set fields value using query params if it is NOT same as initial values
   useEffect(() => {
     if (
       // if form is changed, validate it to show error on the first render
-      JSON.stringify(INITIAL_FORM_VALUES) !== JSON.stringify(initialFormValues)
+      JSON.stringify(INITIAL_FORM_VALUES) !==
+      JSON.stringify(formValuesFromQueryParams)
     ) {
+      form.setFieldsValue(formValuesFromQueryParams);
       form.validateFields().catch((e) => {});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -202,7 +222,7 @@ const SessionLauncherPage = () => {
   const sessionType =
     Form.useWatch('sessionType', { form, preserve: true }) ||
     form.getFieldValue('sessionType') ||
-    initialFormValues.sessionType;
+    formValuesFromQueryParams.sessionType;
 
   const steps = _.filter(
     [
@@ -322,13 +342,20 @@ const SessionLauncherPage = () => {
             maxWaitSeconds: 15,
             cpu: values.resource.cpu,
             mem: values.resource.mem,
-            // TODO:??? Automatically increase shared memory to 1GiB
-            shmem: values.resource.shmem,
+            // TODO: CHECK: Convert to rule??? Automatically increase shared memory to 1GiB
+            shmem:
+              compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
+              compareNumberWithUnits(values.resource.shmem, '1g') < 0
+                ? '1g'
+                : values.resource.shmem,
             mounts: values.vfolders,
             mount_map: values.vfoldersAliasMap,
 
-            // TODO: support "OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS"
-            env: _.fromPairs(values.envvars.map((v) => [v.variable, v.value])),
+            env: {
+              ..._.fromPairs(values.envvars.map((v) => [v.variable, v.value])),
+              // set hpcOptimization options: "OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS"
+              ..._.omit(values.hpcOptimization, 'autoEnabled'),
+            },
             preopen_ports: _.map(values.ports, (v) => parseInt(v)),
           },
         };
@@ -380,6 +407,8 @@ const SessionLauncherPage = () => {
                 title={t('button.Reset')}
                 description={t('session.launcher.ResetFormConfirm')}
                 onConfirm={() => {
+                  form.resetFields();
+
                   navigate('/session/start');
                 }}
                 icon={
@@ -421,7 +450,7 @@ const SessionLauncherPage = () => {
               form={form}
               layout="vertical"
               requiredMark="optional"
-              initialValues={initialFormValues}
+              initialValues={INITIAL_FORM_VALUES}
             >
               <Flex
                 direction="column"
@@ -660,6 +689,81 @@ const SessionLauncherPage = () => {
                   }}
                 >
                   <ResourceAllocationFormItems />
+                </Card>
+                <Card
+                  title={t('session.launcher.HPCOptimization')}
+                  style={{
+                    display:
+                      currentStepKey === 'environment' ? 'block' : 'none',
+                  }}
+                >
+                  <Form.Item
+                    label={t('session.launcher.SwitchOpenMPoptimization')}
+                    name={['hpcOptimization', 'autoEnabled']}
+                    valuePropName="checked"
+                  >
+                    <Switch
+                      onChange={(checked) => {
+                        if (checked) {
+                          form.setFieldsValue(
+                            _.pick(INITIAL_FORM_VALUES, ['hpcOptimization']),
+                          );
+                        }
+                      }}
+                    />
+                  </Form.Item>
+                  <Row gutter={token.marginMD}>
+                    <Col xs={24} sm={12}>
+                      <Form.Item
+                        style={{ flex: 1 }}
+                        label={t('session.launcher.NumOpenMPthreads')}
+                        name={['hpcOptimization', 'OMP_NUM_THREADS']}
+                        tooltip={
+                          <>
+                            {t('session.launcher.OpenMPOptimization')}
+                            <Trans
+                              i18nKey={
+                                'session.launcher.DescOpenMPOptimization'
+                              }
+                            />
+                          </>
+                        }
+                      >
+                        <InputNumber
+                          min={0}
+                          max={1000}
+                          step={1}
+                          stringMode
+                          style={{ width: '100%' }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                      <Form.Item
+                        style={{ flex: 1 }}
+                        label={t('session.launcher.NumOpenBLASthreads')}
+                        name={['hpcOptimization', 'OPENBLAS_NUM_THREADS']}
+                        tooltip={
+                          <>
+                            {t('session.launcher.OpenMPOptimization')}
+                            <Trans
+                              i18nKey={
+                                'session.launcher.DescOpenMPOptimization'
+                              }
+                            />
+                          </>
+                        }
+                      >
+                        <InputNumber
+                          min={0}
+                          max={1000}
+                          step={1}
+                          stringMode
+                          style={{ width: '100%' }}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
                 </Card>
 
                 {/* Step Start*/}

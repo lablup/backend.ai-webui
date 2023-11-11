@@ -706,11 +706,11 @@ const ResourceAllocationFormItems = () => {
                                     ? undefined
                                     : null
                                 }
-                                open={
-                                  _.size(acceleratorSlots) > 1
-                                    ? undefined
-                                    : false
-                                }
+                                // open={
+                                //   _.size(acceleratorSlots) > 1
+                                //     ? undefined
+                                //     : false
+                                // }
                                 popupMatchSelectWidth={false}
                                 options={_.map(
                                   acceleratorSlots,
