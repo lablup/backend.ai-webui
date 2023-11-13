@@ -31,12 +31,12 @@ const ResourceAllocationFormItems = () => {
               resource: {
                 ...slots,
                 // transform to GB based on preset values
-                mem: iSizeToSize((slots?.mem || 0) + 'b', 'g', 2).number,
+                mem: iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.number,
                 shmem: iSizeToSize(
                   (options?.preset?.shared_memory || 0) + 'b',
                   'g',
                   2,
-                ).number,
+                )?.number,
               },
             });
           }}

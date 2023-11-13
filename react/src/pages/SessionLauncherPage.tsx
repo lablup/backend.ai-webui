@@ -674,8 +674,8 @@ const SessionLauncherPage = () => {
                                     type={type}
                                     value={
                                       type === 'mem'
-                                        ? iSizeToSize(value + 'g', 'b').number +
-                                          ''
+                                        ? iSizeToSize(value + 'g', 'b')
+                                            ?.number + ''
                                         : value
                                     }
                                     opts={{
@@ -685,7 +685,7 @@ const SessionLauncherPage = () => {
                                             form.getFieldValue('resource')
                                               .shmem + 'g',
                                             'b',
-                                          ).number
+                                          )?.number
                                         : undefined,
                                     }}
                                   />
