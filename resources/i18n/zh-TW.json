@@ -239,7 +239,13 @@
       "Enable": "啟用",
       "FolderAliasInvalid": "只能輸入大小寫字母、數字、底線 (_)、斜線 (/) 和破折號 (-)。",
       "PreOpenPortMaxCountLimit": "您最多可以设置 {{count}} 个预开放端口。",
-      "StartTimeMustBeInTheFuture": "开始时间必须在当前时间之后。"
+      "StartTimeMustBeInTheFuture": "开始时间必须在当前时间之后。",
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
+      "SessionName": "__NOT_TRANSLATED__",
+      "ResetFormConfirm": "__NOT_TRANSLATED__",
+      "TemplateAndHistory": "__NOT_TRANSLATED__",
+      "ScheduleTimeSimple": "__NOT_TRANSLATED__"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",
@@ -431,7 +437,8 @@
     "NewPassword": "新密碼",
     "Enabled": "啟用",
     "StorageProxies": "存儲",
-    "None": "无"
+    "None": "无",
+    "Image": "__NOT_TRANSLATED__"
   },
   "credential": {
     "Permission": "允許",

@@ -239,7 +239,13 @@
       "Enable": "活性化",
       "FolderAliasInvalid": "英語の大文字と小文字、数字、アンダースコア（_）、スラッシュ（/）、ダッシュ（-）のみを入力できます。",
       "PreOpenPortMaxCountLimit": "count}}までプレオープンポートを設定できる。",
-      "StartTimeMustBeInTheFuture": "開始時刻は現在時刻より後でなければならない。"
+      "StartTimeMustBeInTheFuture": "開始時刻は現在時刻より後でなければならない。",
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
+      "SessionName": "__NOT_TRANSLATED__",
+      "ResetFormConfirm": "__NOT_TRANSLATED__",
+      "TemplateAndHistory": "__NOT_TRANSLATED__",
+      "ScheduleTimeSimple": "__NOT_TRANSLATED__"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -431,7 +437,8 @@
     "NewPassword": "新しいパスワード",
     "Enabled": "有効",
     "StorageProxies": "ストレージ",
-    "None": "なし"
+    "None": "なし",
+    "Image": "__NOT_TRANSLATED__"
   },
   "credential": {
     "Permission": "許可",

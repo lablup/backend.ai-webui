@@ -239,7 +239,13 @@
       "Enable": "Olanak vermek",
       "FolderAliasInvalid": "Yalnızca alfasayısal karakterlere, alt çizgiye (_), eğik çizgiye (/) ve kısa çizgiye (-) izin verilir.",
       "PreOpenPortMaxCountLimit": "En fazla {{sayı}} ön açık bağlantı noktası ayarlayabilirsiniz.",
-      "StartTimeMustBeInTheFuture": "Başlangıç zamanı geçerli saatten sonra olmalıdır."
+      "StartTimeMustBeInTheFuture": "Başlangıç zamanı geçerli saatten sonra olmalıdır.",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
+      "SessionName": "__NOT_TRANSLATED__",
+      "ResetFormConfirm": "__NOT_TRANSLATED__",
+      "TemplateAndHistory": "__NOT_TRANSLATED__",
+      "ScheduleTimeSimple": "__NOT_TRANSLATED__"
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -431,7 +437,8 @@
     "NewPassword": "Yeni Şifre",
     "Enabled": "Etkin",
     "StorageProxies": "Depolar",
-    "None": "Hiçbiri"
+    "None": "Hiçbiri",
+    "Image": "__NOT_TRANSLATED__"
   },
   "credential": {
     "Permission": "izin",

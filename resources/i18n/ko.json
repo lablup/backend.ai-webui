@@ -245,7 +245,8 @@
       "Template": "세션 템플릿",
       "TemplateAndHistory": "템플릿 및 최근기록",
       "ResetFormConfirm": "입력한 사항을 모두 초기화하시겠습니까?",
-      "StartTimeMustBeInTheFuture": "시작 시간은 현재 시간 이후여야 합니다."
+      "StartTimeMustBeInTheFuture": "시작 시간은 현재 시간 이후여야 합니다.",
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

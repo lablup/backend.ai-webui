@@ -239,7 +239,13 @@
       "Enable": "Memungkinkan",
       "FolderAliasInvalid": "Hanya karakter alfanumerik, garis bawah (_), garis miring (/), dan tanda hubung (-) yang diperbolehkan.",
       "PreOpenPortMaxCountLimit": "Anda dapat mengatur hingga {{count}} port yang telah dibuka sebelumnya.",
-      "StartTimeMustBeInTheFuture": "Waktu mulai harus setelah waktu saat ini."
+      "StartTimeMustBeInTheFuture": "Waktu mulai harus setelah waktu saat ini.",
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
+      "SessionName": "__NOT_TRANSLATED__",
+      "ResetFormConfirm": "__NOT_TRANSLATED__",
+      "TemplateAndHistory": "__NOT_TRANSLATED__",
+      "ScheduleTimeSimple": "__NOT_TRANSLATED__"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -431,7 +437,8 @@
     "NewPassword": "Kata Sandi Baru",
     "Enabled": "Diaktifkan",
     "StorageProxies": "Penyimpanan",
-    "None": "Tidak ada"
+    "None": "Tidak ada",
+    "Image": "__NOT_TRANSLATED__"
   },
   "credential": {
     "Permission": "Izin",

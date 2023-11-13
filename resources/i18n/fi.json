@@ -475,7 +475,8 @@
     "StorageProxies": "Varastot",
     "Username": "Käyttäjätunnus",
     "cores": "ytimet",
-    "None": "Ei ole"
+    "None": "Ei ole",
+    "Image": "__NOT_TRANSLATED__"
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",
@@ -1110,7 +1111,13 @@
       "FolderAliasInvalid": "Vain aakkosnumeeriset merkit, alaviiva (_), kauttaviiva (/) ja viiva (-) ovat sallittuja.",
       "Network": "Verkko",
       "Enable": "ota käyttöön",
-      "StartTimeMustBeInTheFuture": "Alkamisajan on oltava nykyisen kellonajan jälkeen."
+      "StartTimeMustBeInTheFuture": "Alkamisajan on oltava nykyisen kellonajan jälkeen.",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
+      "SessionName": "__NOT_TRANSLATED__",
+      "ResetFormConfirm": "__NOT_TRANSLATED__",
+      "TemplateAndHistory": "__NOT_TRANSLATED__",
+      "ScheduleTimeSimple": "__NOT_TRANSLATED__"
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

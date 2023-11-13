@@ -239,7 +239,15 @@
       "Enable": "Давать возможность",
       "FolderAliasInvalid": "Разрешены только буквенно-цифровые символы, подчеркивание (_), косая черта (/) и тире (-).",
       "PreOpenPortMaxCountLimit": "Можно задать до {{count}} предварительно открытых портов.",
-      "StartTimeMustBeInTheFuture": "Время начала должно быть после текущего времени."
+      "StartTimeMustBeInTheFuture": "Время начала должно быть после текущего времени.",
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",
+      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
+      "SessionName": "__NOT_TRANSLATED__",
+      "ResetFormConfirm": "__NOT_TRANSLATED__",
+      "TemplateAndHistory": "__NOT_TRANSLATED__",
+      "ScheduleTimeSimple": "__NOT_TRANSLATED__"
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -431,7 +439,8 @@
     "NewPassword": "Новый пароль",
     "Enabled": "Включено",
     "StorageProxies": "Хранилища данных",
-    "None": "Нет"
+    "None": "Нет",
+    "Image": "__NOT_TRANSLATED__"
   },
   "credential": {
     "Permission": "Разрешение",

@@ -475,7 +475,8 @@
     "StorageProxies": "Almacenes",
     "Username": "Nombre de usuario",
     "cores": "núcleos",
-    "None": "Ninguno"
+    "None": "Ninguno",
+    "Image": "__NOT_TRANSLATED__"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",
@@ -1110,7 +1111,13 @@
       "FolderAliasInvalid": "Sólo se permiten caracteres alfanuméricos, guión bajo (_), barra (/) y guión (-).",
       "Network": "Red",
       "Enable": "Permitir",
-      "StartTimeMustBeInTheFuture": "La hora de inicio debe ser posterior a la hora actual."
+      "StartTimeMustBeInTheFuture": "La hora de inicio debe ser posterior a la hora actual.",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
+      "SessionName": "__NOT_TRANSLATED__",
+      "ResetFormConfirm": "__NOT_TRANSLATED__",
+      "TemplateAndHistory": "__NOT_TRANSLATED__",
+      "ScheduleTimeSimple": "__NOT_TRANSLATED__"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

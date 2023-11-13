@@ -239,7 +239,13 @@
       "Enable": "Habilitar",
       "FolderAliasInvalid": "Somente caracteres alfanuméricos, sublinhado (_), barra (/) e traço (-) são permitidos.",
       "PreOpenPortMaxCountLimit": "Pode definir até {{count}} portas pré-abertas.",
-      "StartTimeMustBeInTheFuture": "A hora de início deve ser posterior à hora atual."
+      "StartTimeMustBeInTheFuture": "A hora de início deve ser posterior à hora atual.",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
+      "SessionName": "__NOT_TRANSLATED__",
+      "ResetFormConfirm": "__NOT_TRANSLATED__",
+      "TemplateAndHistory": "__NOT_TRANSLATED__",
+      "ScheduleTimeSimple": "__NOT_TRANSLATED__"
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",
@@ -431,7 +437,8 @@
     "NewPassword": "Nova Senha",
     "Enabled": "Habilitado",
     "StorageProxies": "Armazéns",
-    "None": "Nenhum"
+    "None": "Nenhum",
+    "Image": "__NOT_TRANSLATED__"
   },
   "credential": {
     "Permission": "Permissão",
