@@ -61,6 +61,7 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
           <Form.Item
             name={name}
             noStyle
+            rules={rules}
             initialValue={initialValue}
             label={formItemProps.label}
           >
