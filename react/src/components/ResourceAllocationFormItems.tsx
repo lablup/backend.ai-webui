@@ -785,63 +785,68 @@ const ResourceAllocationFormItems: React.FC<
                 </Form.Item>
                 {/* TODO:  */}
                 {enableNumOfSessions ? (
-                  <SliderInputItem
-                    name={['num_of_sessions']}
-                    // initialValue={0}
-                    label={t('webui.menu.Sessions')}
-                    tooltip={<Trans i18nKey={'session.launcher.DescSession'} />}
-                    // min={parseInt(
-                    //   _.find(
-                    //     currentImage?.resource_limits,
-                    //     (i) => i?.key === 'cpu',
-                    //   )?.min || '0',
-                    // )}
-                    // max={parseInt(
-                    //   _.find(
-                    //     currentImage?.resource_limits,
-                    //     (i) => i?.key === 'cpu',
-                    //   )?.max || '100',
-                    // )}
-                    inputNumberProps={{
-                      addonAfter: '#',
-                    }}
-                    sliderProps={
-                      {
-                        // marks: {
-                        //   0: {
-                        //     style: {
-                        //       color: token.colorTextSecondary,
-                        //     },
-                        //     label: 0,
-                        //   },
-                        //   ...(sliderMinMax.cpu?.max
-                        //     ? {
-                        //         [sliderMinMax.cpu?.max]: {
-                        //           style: {
-                        //             color: token.colorTextSecondary,
-                        //           },
-                        //           label: sliderMinMax.cpu?.max,
-                        //         },
-                        //       }
-                        //     : {}),
-                        // },
+                  <>
+                    <Divider> x </Divider>
+                    <SliderInputItem
+                      name={['num_of_sessions']}
+                      // initialValue={0}
+                      label={t('webui.menu.Sessions')}
+                      tooltip={
+                        <Trans i18nKey={'session.launcher.DescSession'} />
                       }
-                    }
-                    min={sliderMinMax.session?.min}
-                    max={sliderMinMax.session?.max}
-                    required
-                    rules={[
-                      {
-                        required: true,
-                      },
-                      // {
-                      //   type: 'number',
-                      //   min: sliderMinMax.cpu?.min,
-                      //   // TODO: set message
-                      // },
-                      // remainingValidationRules.cpu,
-                    ]}
-                  />
+                      // min={parseInt(
+                      //   _.find(
+                      //     currentImage?.resource_limits,
+                      //     (i) => i?.key === 'cpu',
+                      //   )?.min || '0',
+                      // )}
+                      // max={parseInt(
+                      //   _.find(
+                      //     currentImage?.resource_limits,
+                      //     (i) => i?.key === 'cpu',
+                      //   )?.max || '100',
+                      // )}
+                      inputNumberProps={{
+                        addonAfter: '#',
+                      }}
+                      sliderProps={
+                        {
+                          // marks: {
+                          //   0: {
+                          //     style: {
+                          //       color: token.colorTextSecondary,
+                          //     },
+                          //     label: 0,
+                          //   },
+                          //   ...(sliderMinMax.cpu?.max
+                          //     ? {
+                          //         [sliderMinMax.cpu?.max]: {
+                          //           style: {
+                          //             color: token.colorTextSecondary,
+                          //           },
+                          //           label: sliderMinMax.cpu?.max,
+                          //         },
+                          //       }
+                          //     : {}),
+                          // },
+                        }
+                      }
+                      min={sliderMinMax.session?.min}
+                      max={sliderMinMax.session?.max}
+                      required
+                      rules={[
+                        {
+                          required: true,
+                        },
+                        // {
+                        //   type: 'number',
+                        //   min: sliderMinMax.cpu?.min,
+                        //   // TODO: set message
+                        // },
+                        // remainingValidationRules.cpu,
+                      ]}
+                    />
+                  </>
                 ) : null}
               </>
             );
