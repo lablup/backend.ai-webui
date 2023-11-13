@@ -133,7 +133,7 @@ export const bytesToGB = (
 };
 
 export function iSizeToSize(
-  sizeWithUnit: string,
+  sizeWithUnit: string | undefined,
   targetSizeUnit?:
     | 'B'
     | 'K'
@@ -150,18 +150,22 @@ export function iSizeToSize(
     | 'p'
     | 'e',
   fixed: number = 2,
-): {
-  number: number;
-  numberFixed: string;
-  unit: string;
-  numberUnit: string;
-} {
+):
+  | {
+      number: number;
+      numberFixed: string;
+      unit: string;
+      numberUnit: string;
+    }
+  | undefined {
+  if (sizeWithUnit === undefined) {
+    return undefined;
+  }
   const sizes = ['B', 'K', 'M', 'G', 'T', 'P', 'E'];
-  const sizeUnit = sizeWithUnit.slice(-1).toUpperCase();
-  const sizeValue = parseFloat(sizeWithUnit.slice(0, -1));
-  const sizeIndex = sizes.indexOf(sizeUnit);
+  const [sizeValue, sizeUnit] = parseUnit(sizeWithUnit);
+  const sizeIndex = sizes.indexOf(sizeUnit.toUpperCase());
   if (sizeIndex === -1 || isNaN(sizeValue)) {
-    throw new Error('Invalid size format');
+    throw new Error('Invalid size format,' + sizeWithUnit);
   }
   const bytes = sizeValue * Math.pow(1024, sizeIndex);
   const targetIndex = targetSizeUnit
@@ -175,6 +179,21 @@ export function iSizeToSize(
     unit: sizes[targetIndex],
     numberUnit: `${numberFixed}${sizes[targetIndex]}`,
   };
+}
+
+export function compareNumberWithUnits(size1: string, size2: string) {
+  const [number1, unit1] = parseUnit(size1);
+  const [number2, unit2] = parseUnit(size2);
+  // console.log(size1, size2);
+  // console.log(number1, unit1, number2, unit2);
+  if (unit1 === unit2) {
+    return number1 - number2;
+  }
+  if (number1 === 0 && number2 === 0) {
+    return 0;
+  }
+  // @ts-ignore
+  return iSizeToSize(size1, 'g')?.number - iSizeToSize(size2, 'g')?.number;
 }
 
 export type QuotaScopeType = 'project' | 'user';
@@ -219,4 +238,15 @@ export function filterNonNullItems<T extends { [key: string]: any }>(
     return [];
   }
   return arr.filter((item): item is T => item !== null) as T[];
+}
+
+export function parseUnit(str: string): [number, string] {
+  const match = str?.match(/^(\d+(?:\.\d+)?)([a-zA-Z]*)$/);
+  if (!match) {
+    // If the input doesn't match the pattern, assume it's in bytes
+    return [parseFloat(str), 'b'];
+  }
+  const num = parseFloat(match[1]);
+  const unit = match[2];
+  return [num, unit.toLowerCase() || 'b'];
 }

@@ -67,6 +67,16 @@ function compareVersions(version1: string, version2: string): number {
 
   return 0;
 }
+
+const isPrivateImage = (image: Image) => {
+  return _.some(image?.labels, (label) => {
+    return (
+      label?.key === 'ai.backend.features' &&
+      label?.value?.split(' ').includes('private')
+    );
+  });
+};
+
 const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
 > = ({ filter, showPrivate }) => {
@@ -75,7 +85,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   useSuspendedBackendaiClient();
 
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
-  Form.useWatch('environments', form);
+  Form.useWatch('environments', { form, preserve: true });
 
   const [environmentSearch, setEnvironmentSearch] = useState('');
   const [versionSearch, setVersionSearch] = useState('');
@@ -162,14 +172,6 @@ const ImageEnvironmentSelectFormItems: React.FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.getFieldValue('environments')?.environment]);
 
-  const isPrivateImage = (image: Image) => {
-    return _.some(image?.labels, (label) => {
-      return (
-        label?.key === 'ai.backend.features' &&
-        label?.value?.split(' ').includes('private')
-      );
-    });
-  };
   const imageGroups: ImageGroup[] = useMemo(
     () =>
       _.chain(images)
@@ -322,8 +324,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     ) {
                       extraFilterValues.push(environmentGroup.prefix);
                       environmentPrefixTag = (
-                        <Tag color="purple" key={environmentGroup.prefix}>
-                          {environmentGroup.prefix}
+                        <Tag color="purple">
+                          <TextHighlighter keyword={environmentSearch}>
+                            {environmentGroup.prefix}
+                          </TextHighlighter>
                         </Tag>
                       );
                     }
@@ -433,7 +437,12 @@ const ImageEnvironmentSelectFormItems: React.FC<
             >
               <Select
                 ref={versionSelectRef}
-                onChange={() => {}}
+                onChange={(value) => {
+                  const selectedImage = _.find(images, (image) => {
+                    return getImageFullName(image) === value;
+                  });
+                  form.setFieldValue(['environments', 'image'], selectedImage);
+                }}
                 showSearch
                 searchValue={versionSearch}
                 onSearch={setVersionSearch}

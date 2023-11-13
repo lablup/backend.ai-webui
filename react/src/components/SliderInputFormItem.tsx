@@ -42,6 +42,7 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
             noStyle
             rules={rules}
             initialValue={initialValue}
+            label={formItemProps.label}
           >
             <Slider
               max={max}
@@ -52,8 +53,18 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
             />
           </Form.Item>
         </Flex>
-        <Flex style={{ flex: 2 }}>
-          <Form.Item name={name} noStyle initialValue={initialValue}>
+        <Flex
+          style={{ flex: 2, minWidth: 130 }}
+          align="stretch"
+          direction="column"
+        >
+          <Form.Item
+            name={name}
+            noStyle
+            rules={rules}
+            initialValue={initialValue}
+            label={formItemProps.label}
+          >
             <InputNumber
               max={max}
               min={min}
