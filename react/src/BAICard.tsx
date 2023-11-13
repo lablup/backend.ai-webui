@@ -1,9 +1,4 @@
-import {
-  CloseCircleOutlined,
-  CloseCircleTwoTone,
-  ExclamationCircleTwoTone,
-  WarningTwoTone,
-} from '@ant-design/icons';
+import { CloseCircleTwoTone, WarningTwoTone } from '@ant-design/icons';
 import { Button, Card, CardProps, theme } from 'antd';
 import _ from 'lodash';
 import React, { ReactNode } from 'react';

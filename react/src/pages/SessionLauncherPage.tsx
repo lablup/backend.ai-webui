@@ -21,7 +21,6 @@ import ResourceNumber from '../components/ResourceNumber';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
-import SliderInputItem from '../components/SliderInputFormItem';
 import VFolderTableFromItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
@@ -48,7 +47,6 @@ import {
   Checkbox,
   Col,
   Descriptions,
-  Divider,
   Form,
   Grid,
   Input,
@@ -56,7 +54,6 @@ import {
   Popconfirm,
   Radio,
   Row,
-  Segmented,
   Select,
   StepProps,
   Steps,
@@ -67,12 +64,12 @@ import {
   message,
   theme,
 } from 'antd';
-import dayjs, { Dayjs } from 'dayjs';
-import _, { values } from 'lodash';
+import dayjs from 'dayjs';
+import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { darcula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import {
@@ -1363,28 +1360,28 @@ const SessionLauncherPage = () => {
   );
 };
 
-const SessionTypeItem: React.FC<{
-  title: string;
-  description?: string;
-}> = ({ title, description }) => {
-  const { token } = theme.useToken();
-  return (
-    <Flex
-      direction="column"
-      style={{ padding: token.paddingXS }}
-      align="stretch"
-    >
-      <Typography.Title level={5}>{title}</Typography.Title>
-      <Typography.Text
-        type="secondary"
-        // @ts-ignore
-        style={{ textWrap: 'wrap' }}
-      >
-        {description}
-      </Typography.Text>
-    </Flex>
-  );
-};
+// const SessionTypeItem: React.FC<{
+//   title: string;
+//   description?: string;
+// }> = ({ title, description }) => {
+//   const { token } = theme.useToken();
+//   return (
+//     <Flex
+//       direction="column"
+//       style={{ padding: token.paddingXS }}
+//       align="stretch"
+//     >
+//       <Typography.Title level={5}>{title}</Typography.Title>
+//       <Typography.Text
+//         type="secondary"
+//         // @ts-ignore
+//         style={{ textWrap: 'wrap' }}
+//       >
+//         {description}
+//       </Typography.Text>
+//     </Flex>
+//   );
+// };
 
 // interface StepContentProps extends FlexProps{
 

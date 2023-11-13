@@ -1,16 +1,10 @@
 import { compareNumberWithUnits, iSizeToSize } from '../helper';
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
-import {
-  useResourceSlots,
-  useResourceSlotsByResourceGroup,
-} from '../hooks/backendai';
+import { useResourceSlots } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import Flex from './Flex';
-import {
-  Image,
-  ImageEnvironmentFormInput,
-} from './ImageEnvironmentSelectFormItems';
+import { ImageEnvironmentFormInput } from './ImageEnvironmentSelectFormItems';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import ResourcePresetSelect from './ResourcePresetSelect';

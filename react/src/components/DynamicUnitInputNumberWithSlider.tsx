@@ -35,11 +35,11 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   const maxGiB = useMemo(() => iSizeToSize(max, 'g', 2), [max]);
   const valueGiB = useMemo(() => iSizeToSize(value || '0g', 'g', 2), [value]);
 
-  const warnPercent = useMemo(() => {
-    return warn
-      ? ((iSizeToSize(warn, 'g', 2)?.number || 0) / (maxGiB?.number || 1)) * 100
-      : undefined;
-  }, [warn, maxGiB?.number]);
+  // const warnPercent = useMemo(() => {
+  //   return warn
+  //     ? ((iSizeToSize(warn, 'g', 2)?.number || 0) / (maxGiB?.number || 1)) * 100
+  //     : undefined;
+  // }, [warn, maxGiB?.number]);
   // console.log('##marks', marks);
   return (
     <Flex direction="row" gap={'md'}>

@@ -1,4 +1,3 @@
-import { iSizeToSize } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
 import Flex from './Flex';
@@ -6,7 +5,7 @@ import ResourceNumber from './ResourceNumber';
 import { ResourcePresetSelectQuery } from './__generated__/ResourcePresetSelectQuery.graphql';
 import { EditOutlined } from '@ant-design/icons';
 import { useThrottleFn } from 'ahooks';
-import { Select, Typography } from 'antd';
+import { Select } from 'antd';
 import { SelectProps } from 'antd/lib';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

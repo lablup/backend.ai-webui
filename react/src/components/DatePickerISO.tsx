@@ -16,7 +16,7 @@ const DatePickerISO: React.FC<DatePickerISOProps> = ({
   localFormat,
   ...pickerProps
 }) => {
-  const [controllableValue, setControllableValue] = useControllableValue({
+  const [, setControllableValue] = useControllableValue({
     value,
     onChange,
   });

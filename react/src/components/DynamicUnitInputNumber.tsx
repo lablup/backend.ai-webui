@@ -1,7 +1,7 @@
 import { iSizeToSize, parseUnit } from '../helper';
 import { useControllableValue, usePrevious } from 'ahooks';
 import { InputNumber, InputNumberProps, Select, Typography } from 'antd';
-import _, { set } from 'lodash';
+import _ from 'lodash';
 import React from 'react';
 
 export interface DynamicUnitInputNumberProps
