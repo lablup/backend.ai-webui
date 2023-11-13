@@ -2,7 +2,7 @@ import { iSizeToSize, parseUnit } from '../helper';
 import { useControllableValue, usePrevious } from 'ahooks';
 import { InputNumber, InputNumberProps, Select, Typography } from 'antd';
 import _ from 'lodash';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export interface DynamicUnitInputNumberProps
   extends Omit<
@@ -42,8 +42,32 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
   const [minNumValue, minUnit] = parseUnit(min);
   const [maxNumValue, maxUnit] = parseUnit(max);
 
+  const ref = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (ref.current) {
+      const onInput = (e: Event) => {
+        // @ts-ignore
+        const value = e?.target?.value;
+        if (/^\d+(g|m)$/.test(value)) {
+          // const [newNumber, newUnit] = parseUnit(value);
+          // if (newNumber === numValue && newUnit === unit) {
+          //   e.target.value = numValue;
+          // } else {
+          setValue(value);
+          // }
+        }
+      };
+      const target = ref.current;
+      target?.addEventListener('input', onInput);
+      return () => {
+        target?.removeEventListener('input', onInput);
+      };
+    }
+  }, [ref, numValue, _unitFromValue, setValue]);
+
   return (
     <InputNumber
+      ref={ref}
       {...inputNumberProps}
       value={numValue}
       onChange={(newValue) => {
