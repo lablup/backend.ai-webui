@@ -137,6 +137,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) directoryBasedUsage = false;
   @property({ type: Number }) maxCountForPreopenPorts = 10;
   @property({ type: Boolean }) allowCustomResourceAllocation = true;
+  @property({ type: Boolean }) isDirectorySizeVisible = true;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel')
@@ -839,6 +840,7 @@ export default class BackendAILogin extends BackendAIPage {
       value: parseInt(generalConfig?.maxCountForPreopenPorts),
     } as ConfigValueObject) as number;
 
+    // Enable allow custom resource allocation
     this.allowCustomResourceAllocation = this._getConfigValueByExists(
       generalConfig,
       {
@@ -847,6 +849,13 @@ export default class BackendAILogin extends BackendAIPage {
         value: generalConfig?.allowCustomResourceAllocation,
       } as ConfigValueObject,
     ) as boolean;
+
+    // Enable hide directory size
+    this.isDirectorySizeVisible = this._getConfigValueByExists(generalConfig, {
+      valueType: 'boolean',
+      defaultValue: false,
+      value: generalConfig?.isDirectorySizeVisible,
+    } as ConfigValueObject) as boolean;
   }
 
   /**
@@ -1828,6 +1837,8 @@ export default class BackendAILogin extends BackendAIPage {
           this.maxCountForPreopenPorts;
         globalThis.backendaiclient._config.allowCustomResourceAllocation =
           this.allowCustomResourceAllocation;
+        globalThis.backendaiclient._config.isDirectorySizeVisible =
+          this.isDirectorySizeVisible;
         globalThis.backendaiclient.ready = true;
         if (
           this.endpoints.indexOf(
