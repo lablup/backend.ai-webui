@@ -38,7 +38,7 @@ const DoubleTag: React.FC<{
             style={
               _.last(objectValues) === objValue
                 ? undefined
-                : { margin: 0, marginRight: -1, zIndex: 1 }
+                : { margin: 0, marginRight: -1 }
             }
             color={objValue.color}
           >
