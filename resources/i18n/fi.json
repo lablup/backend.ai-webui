@@ -1109,7 +1109,8 @@
       "preopen": "avataan etukäteen",
       "FolderAliasInvalid": "Vain aakkosnumeeriset merkit, alaviiva (_), kauttaviiva (/) ja viiva (-) ovat sallittuja.",
       "Network": "Verkko",
-      "Enable": "ota käyttöön"
+      "Enable": "ota käyttöön",
+      "StartTimeMustBeInTheFuture": "Alkamisajan on oltava nykyisen kellonajan jälkeen."
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

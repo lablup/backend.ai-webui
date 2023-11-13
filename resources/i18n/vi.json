@@ -237,7 +237,8 @@
       "preopen": "mở trước",
       "Network": "Mạng",
       "Enable": "Cho phép",
-      "FolderAliasInvalid": "Chỉ cho phép các ký tự chữ và số, dấu gạch dưới (_), dấu gạch chéo (/) và dấu gạch ngang (-)."
+      "FolderAliasInvalid": "Chỉ cho phép các ký tự chữ và số, dấu gạch dưới (_), dấu gạch chéo (/) và dấu gạch ngang (-).",
+      "StartTimeMustBeInTheFuture": "Thời gian bắt đầu phải sau thời gian hiện tại."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",

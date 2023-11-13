@@ -238,7 +238,8 @@
       "Network": "Sieć",
       "Enable": "Włączać",
       "FolderAliasInvalid": "Dozwolone są tylko znaki alfanumeryczne, podkreślenie (_), ukośnik (/) i myślnik (-).",
-      "PreOpenPortMaxCountLimit": "Można ustawić do {{count}} wstępnie otwartych portów."
+      "PreOpenPortMaxCountLimit": "Można ustawić do {{count}} wstępnie otwartych portów.",
+      "StartTimeMustBeInTheFuture": "Czas rozpoczęcia musi być po czasie bieżącym."
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",

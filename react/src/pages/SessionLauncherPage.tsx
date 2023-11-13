@@ -21,11 +21,14 @@ import ResourceNumber from '../components/ResourceNumber';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
+import SliderInputItem from '../components/SliderInputFormItem';
 import VFolderTableFromItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
 import { compareNumberWithUnits, iSizeToSize } from '../helper';
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
+// @ts-ignore
+import customCSS from './SessionLauncherPage.css?raw';
 import {
   BlockOutlined,
   LeftOutlined,
@@ -45,11 +48,13 @@ import {
   Checkbox,
   Col,
   Descriptions,
+  Divider,
   Form,
   Grid,
   Input,
   InputNumber,
   Popconfirm,
+  Radio,
   Row,
   Segmented,
   Select,
@@ -62,7 +67,7 @@ import {
   message,
   theme,
 } from 'antd';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import _, { values } from 'lodash';
 import React, { useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -335,7 +340,7 @@ const SessionLauncherPage = () => {
             ///////////////////////////
 
             // TODO: support multi-node
-            cluster_mode: 'single-node',
+            cluster_mode: values.cluster_mode,
             cluster_size: 1,
             ///////////////////////////
 
@@ -375,6 +380,7 @@ const SessionLauncherPage = () => {
         // overflow: 'scroll',
       }}
     >
+      <style>{customCSS}</style>
       {redirectTo && (
         <Breadcrumb
           items={[
@@ -467,50 +473,51 @@ const SessionLauncherPage = () => {
                   }}
                 >
                   <Form.Item name="sessionType">
-                    {/* <Radio.Group
-                    options={[
-                      {
-                        label: (
-                          <Flex
-                            direction="column"
-                            align="start"
-                            style={{ marginBottom: token.marginXS }}
-                          >
-                            <Typography.Text strong>
-                              🏃‍♀️ Make, test and run
-                            </Typography.Text>
-                            <Typography.Text type="secondary">
+                    <Radio.Group
+                      className="session-type-radio-group"
+                      options={[
+                        {
+                          label: (
+                            <Flex
+                              direction="column"
+                              align="start"
+                              style={{ marginBottom: token.marginXS }}
+                            >
                               <Typography.Text strong>
-                                Interactive mode
-                              </Typography.Text>{' '}
-                              allows you to create, test and run code
-                              interactively via jupyter notebook, visual studio
-                              code, etc.
-                            </Typography.Text>
-                          </Flex>
-                        ),
-                        value: 'interactive',
-                      },
-                      {
-                        label: (
-                          <Flex direction="column" align="start">
-                            <Typography.Text strong>
-                              ⌚️ Start an long-running task
-                            </Typography.Text>
-                            <Typography.Text type="secondary">
+                                🏃‍♀️ Make, test and run
+                              </Typography.Text>
+                              <Typography.Text type="secondary">
+                                <Typography.Text code>
+                                  Interactive mode
+                                </Typography.Text>{' '}
+                                allows you to create, test and run code
+                                interactively via jupyter notebook, visual
+                                studio code, etc.
+                              </Typography.Text>
+                            </Flex>
+                          ),
+                          value: 'interactive',
+                        },
+                        {
+                          label: (
+                            <Flex direction="column" align="start">
                               <Typography.Text strong>
-                                Batch mode
-                              </Typography.Text>{' '}
-                              runs your code with multiple node & clusters to
-                              scale your idea
-                            </Typography.Text>
-                          </Flex>
-                        ),
-                        value: 'batch',
-                      },
-                    ]}
-                  /> */}
-                    <Segmented
+                                ⌚️ Start an long-running task
+                              </Typography.Text>
+                              <Typography.Text type="secondary">
+                                <Typography.Text code>
+                                  Batch mode
+                                </Typography.Text>{' '}
+                                runs your code with multiple node & clusters to
+                                scale your idea
+                              </Typography.Text>
+                            </Flex>
+                          ),
+                          value: 'batch',
+                        },
+                      ]}
+                    />
+                    {/* <Segmented
                       width={100}
                       options={[
                         {
@@ -541,7 +548,7 @@ const SessionLauncherPage = () => {
                         //   value: 'inference',
                         // },
                       ]}
-                    />
+                    /> */}
                   </Form.Item>
                   <SessionNameFormItem />
                 </Card>
@@ -614,11 +621,31 @@ const SessionLauncherPage = () => {
                                 <Form.Item
                                   name={['batch', 'scheduleDate']}
                                   noStyle
+                                  rules={[
+                                    {
+                                      // required: true,
+                                      validator: async (rule, value) => {
+                                        if (dayjs(value).isBefore(dayjs())) {
+                                          return Promise.reject(
+                                            t(
+                                              'session.launcher.StartTimeMustBeInTheFuture',
+                                            ),
+                                          );
+                                        }
+                                        return Promise.resolve();
+                                      },
+                                    },
+                                  ]}
                                 >
                                   <DatePickerISO
                                     disabled={disabled}
                                     showTime
                                     localFormat
+                                    disabledDate={(value) => {
+                                      return value.isBefore(
+                                        dayjs().startOf('day'),
+                                      );
+                                    }}
                                   />
                                 </Form.Item>
                                 {/* <Form.Item
@@ -905,8 +932,16 @@ const SessionLauncherPage = () => {
                         );
                       }}
                     >
-                      <Descriptions size="small" layout="vertical" column={1}>
-                        <Descriptions.Item label="Image">
+                      <Descriptions size="small" column={2}>
+                        <Descriptions.Item
+                          label={t('session.launcher.Project')}
+                        >
+                          {currentProject.name}
+                        </Descriptions.Item>
+                        <Descriptions.Item label={t('general.ResourceGroup')}>
+                          {form.getFieldValue('resourceGroup')}
+                        </Descriptions.Item>
+                        <Descriptions.Item label={t('general.Image')} span={2}>
                           <Flex direction="row" gap="xs" style={{ flex: 1 }}>
                             <ImageMetaIcon
                               image={

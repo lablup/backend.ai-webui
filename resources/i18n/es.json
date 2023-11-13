@@ -1109,7 +1109,8 @@
       "preopen": "preabierto",
       "FolderAliasInvalid": "Sólo se permiten caracteres alfanuméricos, guión bajo (_), barra (/) y guión (-).",
       "Network": "Red",
-      "Enable": "Permitir"
+      "Enable": "Permitir",
+      "StartTimeMustBeInTheFuture": "La hora de inicio debe ser posterior a la hora actual."
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

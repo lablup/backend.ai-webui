@@ -238,7 +238,8 @@
       "Network": "網路",
       "Enable": "啟用",
       "FolderAliasInvalid": "只能輸入大小寫字母、數字、底線 (_)、斜線 (/) 和破折號 (-)。",
-      "PreOpenPortMaxCountLimit": "您最多可以设置 {{count}} 个预开放端口。"
+      "PreOpenPortMaxCountLimit": "您最多可以设置 {{count}} 个预开放端口。",
+      "StartTimeMustBeInTheFuture": "开始时间必须在当前时间之后。"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",

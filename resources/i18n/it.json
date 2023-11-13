@@ -238,7 +238,8 @@
       "Network": "Rete",
       "Enable": "Abilitare",
       "FolderAliasInvalid": "Sono consentiti solo caratteri alfanumerici, carattere di sottolineatura (_), barra (/) e trattino (-).",
-      "PreOpenPortMaxCountLimit": "È possibile impostare fino a {{count}} porte pre-aperte."
+      "PreOpenPortMaxCountLimit": "È possibile impostare fino a {{count}} porte pre-aperte.",
+      "StartTimeMustBeInTheFuture": "L'ora di inizio deve essere successiva all'ora corrente."
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",
