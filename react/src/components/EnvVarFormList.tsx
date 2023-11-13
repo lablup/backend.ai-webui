@@ -8,6 +8,12 @@ import React, { useRef } from 'react';
 interface EnvVarFormListProps extends Omit<FormListProps, 'children'> {
   formItemProps?: FormItemProps;
 }
+
+export interface EnvVarFormListValue {
+  variable: string;
+  value: string;
+}
+// TODO: validation rule for duplicate variable name
 const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
   formItemProps,
   ...props

@@ -1,15 +1,17 @@
 {
   "words": [
     "Antd",
-    "cssinjs",
     "backend.ai-webserver",
     "Backendai",
     "backendaiclient",
     "backendaioptions",
+    "cssinjs",
     "cuda",
     "Frgmt",
     "Lablup",
+    "OPENBLAS",
     "Popconfirm",
+    "preopen",
     "shmem",
     "vfolders",
     "webcomponent",

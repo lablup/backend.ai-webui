@@ -1,5 +1,7 @@
 import { useUpdatableState } from '../hooks';
+import { useResourceSlots } from '../hooks/backendai';
 import Flex from './Flex';
+import ResourceNumber from './ResourceNumber';
 import { ResourcePresetSelectQuery } from './__generated__/ResourcePresetSelectQuery.graphql';
 import { EditOutlined } from '@ant-design/icons';
 import { useThrottleFn } from 'ahooks';
@@ -63,6 +65,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     trailing: false,
     leading: true,
   });
+  const [resourceSlots] = useResourceSlots();
   const [isPendingUpdate, _startTransition] = useTransition();
   const updateFetchKeyUnderTransition = () => {
     _startTransition(() => {
@@ -116,11 +119,45 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           // value: 'preset1',
           label: 'Preset',
           // @ts-ignore
-          options: _.map(resource_presets, (preset) => {
+          options: _.map(resource_presets, (preset, index) => {
+            const slotsInfo: {
+              [key in string]: string;
+            } = JSON.parse(preset?.resource_slots);
             return {
               value: preset?.name,
-              label: preset?.name,
+              label: (
+                <Flex direction="row" justify="between" gap={'xs'}>
+                  {preset?.name}
+                  <Flex
+                    direction="row"
+                    gap={'xxs'}
+                    style={{
+                      color: 'black',
+                      opacity: index === 1 ? 0.5 : 1,
+                    }}
+                  >
+                    {_.map(
+                      _.omitBy(slotsInfo, (slot, key) =>
+                        // @ts-ignore
+                        _.isEmpty(resourceSlots[key]),
+                      ),
+                      (slot, key) => {
+                        return (
+                          <ResourceNumber
+                            key={key}
+                            // @ts-ignore
+                            type={key}
+                            value={slot}
+                            hideTooltip
+                          />
+                        );
+                      },
+                    )}
+                  </Flex>
+                </Flex>
+              ),
               preset,
+              // disabled: index === 1,
             };
           }),
         },
