@@ -721,21 +721,31 @@ const SessionLauncherPage = () => {
                       currentStepKey === 'environment' ? 'block' : 'none',
                   }}
                 >
-                  <Form.Item
-                    label={t('session.launcher.SwitchOpenMPoptimization')}
-                    name={['hpcOptimization', 'autoEnabled']}
-                    valuePropName="checked"
-                    required
-                  >
-                    <Switch
-                      onChange={(checked) => {
-                        if (checked) {
-                          form.setFieldsValue(
-                            _.pick(INITIAL_FORM_VALUES, ['hpcOptimization']),
-                          );
-                        }
-                      }}
-                    />
+                  <Form.Item noStyle>
+                    <Flex direction="row" gap={'sm'}>
+                      <Typography.Text>
+                        {t('session.launcher.SwitchOpenMPoptimization')}
+                      </Typography.Text>
+                      <Form.Item
+                        label={t('session.launcher.SwitchOpenMPoptimization')}
+                        name={['hpcOptimization', 'autoEnabled']}
+                        valuePropName="checked"
+                        required
+                        noStyle
+                      >
+                        <Switch
+                          onChange={(checked) => {
+                            if (checked) {
+                              form.setFieldsValue(
+                                _.pick(INITIAL_FORM_VALUES, [
+                                  'hpcOptimization',
+                                ]),
+                              );
+                            }
+                          }}
+                        />
+                      </Form.Item>
+                    </Flex>
                   </Form.Item>
                   <Form.Item
                     noStyle
@@ -756,6 +766,7 @@ const SessionLauncherPage = () => {
                           gutter={token.marginMD}
                           style={{
                             display: enabled ? 'none' : undefined,
+                            marginTop: token.marginMD,
                           }}
                         >
                           <Col xs={24} sm={12}>
