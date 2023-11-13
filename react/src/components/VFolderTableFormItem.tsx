@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 interface VFolderTableFromItemProps extends Omit<FormItemProps, 'name'> {}
 
 export interface VFolderTableFormValues {
-  vfolders: string[];
+  mounts: string[];
   vfoldersAliasMap: AliasMap;
 }
 
