@@ -66,7 +66,7 @@ import {
 } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -152,7 +152,11 @@ type SessionLauncherFormValue = SessionLauncherValue &
   VFolderTableFormValues &
   PortSelectFormValues;
 
+type SessionMode = 'normal' | 'inference' | 'import';
 const SessionLauncherPage = () => {
+  let sessionMode: SessionMode = 'normal';
+
+  const [isStartingSession, setIsStartingSession] = useState(false);
   const [
     { step: currentStep, formValues: formValuesFromQueryParams, redirectTo },
     setQuery,
@@ -300,15 +304,14 @@ const SessionLauncherPage = () => {
   };
 
   const startSession = () => {
-    // moveTo('/job');
-
     // TODO: support inference mode
     // TODO: support import mode
+    // TODO: session number
 
+    setIsStartingSession(true);
     form
       .validateFields()
-      .then((values) => {
-        console.log(values.batch.scheduleDate);
+      .then(async (values) => {
         const [kernelName, architecture] =
           values.environments.version.split('@');
         const sessionInfo: CreateSessionInfo = {
@@ -336,11 +339,8 @@ const SessionLauncherPage = () => {
             scaling_group: values.resourceGroup,
             ///////////////////////////
 
-            // TODO: support multi-node
             cluster_mode: values.cluster_mode,
-            cluster_size: 1,
-            ///////////////////////////
-
+            cluster_size: values.cluster_size,
             maxWaitSeconds: 15,
             cpu: values.resource.cpu,
             mem: values.resource.mem,
@@ -350,7 +350,7 @@ const SessionLauncherPage = () => {
               compareNumberWithUnits(values.resource.shmem, '1g') < 0
                 ? '1g'
                 : values.resource.shmem,
-            mounts: values.vfolders,
+            mounts: values.mounts,
             mount_map: values.vfoldersAliasMap,
 
             env: {
@@ -361,9 +361,153 @@ const SessionLauncherPage = () => {
             preopen_ports: _.map(values.ports, (v) => parseInt(v)),
           },
         };
-        console.log(sessionInfo);
+
+        const sessionPromises = _.map(
+          _.range(values.num_of_sessions || 1),
+          (i) => {
+            const formattedSessionName =
+              (values.num_of_sessions || 1) > 1
+                ? `${sessionInfo.sessionName}-${generateRandomString()}-${i}`
+                : sessionInfo.sessionName;
+            return baiClient
+              .createIfNotExists(
+                sessionInfo.kernelName,
+                formattedSessionName,
+                sessionInfo.config,
+                20000,
+                sessionInfo.architecture,
+              )
+              .then((res: { created: boolean }) => {
+                // // When session is already created with the same name, the status code
+                // // is 200, but the response body has 'created' field as false. For better
+                // // user experience, we show the notification message.
+                if (!res?.created) {
+                  message.warning(t('session.launcher.SessionAlreadyExists'));
+                  // this.notification.text = _text(
+                  //   'session.launcher.SessionAlreadyExists',
+                  // );
+                  // this.notification.show();
+                }
+                return res;
+              })
+              .catch((err: any) => {
+                console.log(err);
+                throw err;
+                // console.log(err);
+                // if (err && err.message) {
+                //   if ('statusCode' in err && err.statusCode === 408) {
+                //     this.notification.text = _text(
+                //       'session.launcher.sessionStillPreparing',
+                //     );
+                //   } else {
+                //     if (err.description) {
+                //       this.notification.text = PainKiller.relieve(err.description);
+                //     } else {
+                //       this.notification.text = PainKiller.relieve(err.message);
+                //     }
+                //   }
+                //   this.notification.detail = err.message;
+                //   this.notification.show(true, err);
+                // } else if (err && err.title) {
+                //   this.notification.text = PainKiller.relieve(err.title);
+                //   this.notification.show(true, err);
+                // }
+              });
+          },
+        );
+        // console.log('##', values.mounts);
+        // console.log(sessionInfo);
+
+        await Promise.all(sessionPromises)
+          .then(([firstSession]) => {
+            // console.log('##sessionPromises', firstSession);
+            if (
+              values.num_of_sessions === 1 &&
+              values.sessionType !== 'batch'
+            ) {
+              const res = firstSession;
+              let appOptions: {
+                [key in string]: any;
+              };
+              if ('kernelId' in res) {
+                // API v4
+                appOptions = {
+                  'session-name': res.kernelId,
+                  'access-key': '',
+                  mode: sessionMode,
+                  // mode: this.mode,
+                };
+              } else {
+                // API >= v5
+                appOptions = {
+                  'session-uuid': res.sessionId,
+                  'session-name': res.sessionName,
+                  'access-key': '',
+                  mode: sessionMode,
+                  // mode: this.mode,
+                };
+              }
+              const service_info = res.servicePorts;
+              if (Array.isArray(service_info) === true) {
+                appOptions['app-services'] = service_info.map(
+                  (a: { name: string }) => a.name,
+                );
+              } else {
+                appOptions['app-services'] = [];
+              }
+              // TODO: support import and inference
+              // if (sessionMode === 'import') {
+              //   appOptions['runtime'] = 'jupyter';
+              //   appOptions['filename'] = this.importFilename;
+              // }
+              // if (sessionMode === 'inference') {
+              //   appOptions['runtime'] = appOptions['app-services'].find(
+              //     (element: any) => !['ttyd', 'sshd'].includes(element),
+              //   );
+              // }
+
+              // only launch app when it has valid service ports
+              if (service_info.length > 0) {
+                // @ts-ignore
+                globalThis.appLauncher.showLauncher(appOptions);
+              }
+            }
+            navigate('/job', {
+              // replace: true,
+            });
+            moveTo('/job');
+          })
+          .catch(() => {
+            // this.metadata_updating = false;
+            // console.log(err);
+            // if (err && err.message) {
+            //   this.notification.text = PainKiller.relieve(err.message);
+            //   if (err.description) {
+            //     this.notification.text = PainKiller.relieve(err.description);
+            //   } else {
+            //     this.notification.detail = err.message;
+            //   }
+            //   this.notification.show(true, err);
+            // } else if (err && err.title) {
+            //   this.notification.text = PainKiller.relieve(err.title);
+            //   this.notification.show(true, err);
+            // }
+            // const event = new CustomEvent('backend-ai-session-list-refreshed', {
+            //   detail: 'running',
+            // });
+            // document.dispatchEvent(event);
+            // this.launchButton.disabled = false;
+            // this.launchButtonMessageTextContent = _text(
+            //   'session.launcher.ConfirmAndLaunch',
+            // );
+          });
       })
-      .catch((e) => {});
+      .catch((e) => {
+        console.log('validation errors', e);
+      })
+      .finally(() => {
+        setIsStartingSession(false);
+      });
   };
   return (
     <Flex
@@ -622,7 +766,10 @@ const SessionLauncherPage = () => {
                                     {
                                       // required: true,
                                       validator: async (rule, value) => {
-                                        if (dayjs(value).isBefore(dayjs())) {
+                                        if (
+                                          value &&
+                                          dayjs(value).isBefore(dayjs())
+                                        ) {
                                           return Promise.reject(
                                             t(
                                               'session.launcher.StartTimeMustBeInTheFuture',
@@ -712,7 +859,7 @@ const SessionLauncherPage = () => {
                       currentStepKey === 'environment' ? 'block' : 'none',
                   }}
                 >
-                  <ResourceAllocationFormItems />
+                  <ResourceAllocationFormItems enableNumOfSessions />
                 </Card>
                 <Card
                   title={t('session.launcher.HPCOptimization')}
@@ -856,7 +1003,8 @@ const SessionLauncherPage = () => {
                       size="small"
                       status={
                         form.getFieldError('name').length > 0 ||
-                        form.getFieldError(['batch', 'command']).length > 0
+                        form.getFieldError(['batch', 'command']).length > 0 ||
+                        form.getFieldError(['batch', 'scheduleDate']).length > 0
                           ? 'error'
                           : undefined
                       }
@@ -904,16 +1052,26 @@ const SessionLauncherPage = () => {
                           </Descriptions.Item>
                         )}
                         {sessionType === 'batch' && (
-                          <Descriptions.Item
-                            label={t('session.launcher.StartUpCommand')}
-                          >
-                            <Input.TextArea
-                              readOnly
-                              bordered={false}
-                              autoSize
-                              value={form.getFieldValue(['batch', 'command'])}
-                            ></Input.TextArea>
-                          </Descriptions.Item>
+                          <>
+                            <Descriptions.Item
+                              label={t('session.launcher.StartUpCommand')}
+                              span={24}
+                            >
+                              <Input.TextArea
+                                readOnly
+                                autoSize
+                                value={form.getFieldValue(['batch', 'command'])}
+                              ></Input.TextArea>
+                            </Descriptions.Item>
+                            <Descriptions.Item
+                              label={t('session.launcher.ScheduleTimeSimple')}
+                              span={24}
+                            >
+                              {dayjs(
+                                form.getFieldValue(['batch', 'scheduleDate']),
+                              ).format('LLLT')}
+                            </Descriptions.Item>
+                          </>
                         )}
                       </Descriptions>
                     </BAICard>
@@ -1303,6 +1461,7 @@ const SessionLauncherPage = () => {
                           setCurrentStep(currentStep - 1);
                         }}
                         icon={<LeftOutlined />}
+                        disabled={isStartingSession}
                       >
                         Previous
                       </Button>
@@ -1313,6 +1472,7 @@ const SessionLauncherPage = () => {
                         icon={<PlayCircleOutlined />}
                         disabled={hasError}
                         onClick={startSession}
+                        loading={isStartingSession}
                       >
                         {t('session.launcher.Launch')}
                       </Button>
@@ -1411,6 +1571,24 @@ const generateSessionId = () => {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
   return text + '-session';
+};
+
+const generateRandomString = () => {
+  let randNum = Math.floor(Math.random() * 52 * 52 * 52);
+
+  const parseNum = (num: number) => {
+    if (num < 26) return String.fromCharCode(65 + num);
+    else return String.fromCharCode(97 + num - 26);
+  };
+
+  let randStr = '';
+
+  for (let i = 0; i < 3; i++) {
+    randStr += parseNum(randNum % 52);
+    randNum = Math.floor(randNum / 52);
+  }
+
+  return randStr;
 };
 
 export default SessionLauncherPage;

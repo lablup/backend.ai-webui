@@ -31,6 +31,7 @@ export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES = {
     shmem: '0g',
     accelerator: 0,
   },
+  num_of_sessions: 1,
   cluster_mode: 'single-node',
   cluster_size: 1,
 };
@@ -44,6 +45,7 @@ export interface ResourceAllocationFormValue {
     acceleratorType: string;
   };
   resourceGroup: string;
+  num_of_sessions?: number;
   cluster_mode: 'single-node' | 'multi-node';
   cluster_size: number;
 }
@@ -62,7 +64,13 @@ const limitParser = (limit: string | undefined) => {
   }
 };
 
-const ResourceAllocationFormItems = () => {
+interface ResourceAllocationFormItemsProps {
+  enableNumOfSessions?: boolean;
+}
+
+const ResourceAllocationFormItems: React.FC<
+  ResourceAllocationFormItemsProps
+> = ({ enableNumOfSessions }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -231,7 +239,7 @@ const ResourceAllocationFormItems = () => {
               _.max([
                 _.find(currentImage?.resource_limits, (i) => i?.key === 'shmem')
                   ?.min,
-              ]) || '0g',
+              ]) || '64m',
             // shmem max is mem max
           },
         }
@@ -307,6 +315,15 @@ const ResourceAllocationFormItems = () => {
         };
       },
     ),
+
+    session: {
+      min: 1,
+      // TODO: calculate max session count using remaining numbers
+      max: _.min([
+        // remaining_slot['concurrency'],
+        3, //BackendAiResourceBroker.DEFAULT_CONCURRENT_SESSION_COUNT
+      ]),
+    },
     // ...(acceleratorSlots)
     // ..._.map(['cuda.device'], (key) => {
     //   return {
@@ -330,11 +347,20 @@ const ResourceAllocationFormItems = () => {
 
   useEffect(() => {
     // when image changed, set value of resources to min value
+
+    // const miniumShmem = '64m';
     form.setFieldsValue({
       resource: {
         cpu: sliderMinMax.cpu?.min,
-        mem: sliderMinMax.mem?.min,
+        mem:
+          iSizeToSize(
+            (iSizeToSize(sliderMinMax.shmem?.min, 'm')?.number || 0) +
+              (iSizeToSize(sliderMinMax.mem?.min, 'm')?.number || 0) +
+              'm',
+            'g',
+          )?.number + 'g', //to prevent loosing precision
         shmem: sliderMinMax.shmem?.min,
+        // shmem: sliderMinMax.shmem?.min,
       },
     });
 
@@ -757,12 +783,74 @@ const ResourceAllocationFormItems = () => {
                     );
                   }}
                 </Form.Item>
+                {/* TODO:  */}
+                {enableNumOfSessions ? (
+                  <SliderInputItem
+                    name={['num_of_sessions']}
+                    // initialValue={0}
+                    label={t('webui.menu.Sessions')}
+                    tooltip={<Trans i18nKey={'session.launcher.DescSession'} />}
+                    // min={parseInt(
+                    //   _.find(
+                    //     currentImage?.resource_limits,
+                    //     (i) => i?.key === 'cpu',
+                    //   )?.min || '0',
+                    // )}
+                    // max={parseInt(
+                    //   _.find(
+                    //     currentImage?.resource_limits,
+                    //     (i) => i?.key === 'cpu',
+                    //   )?.max || '100',
+                    // )}
+                    inputNumberProps={{
+                      addonAfter: '#',
+                    }}
+                    sliderProps={
+                      {
+                        // marks: {
+                        //   0: {
+                        //     style: {
+                        //       color: token.colorTextSecondary,
+                        //     },
+                        //     label: 0,
+                        //   },
+                        //   ...(sliderMinMax.cpu?.max
+                        //     ? {
+                        //         [sliderMinMax.cpu?.max]: {
+                        //           style: {
+                        //             color: token.colorTextSecondary,
+                        //           },
+                        //           label: sliderMinMax.cpu?.max,
+                        //         },
+                        //       }
+                        //     : {}),
+                        // },
+                      }
+                    }
+                    min={sliderMinMax.session?.min}
+                    max={sliderMinMax.session?.max}
+                    required
+                    rules={[
+                      {
+                        required: true,
+                      },
+                      // {
+                      //   type: 'number',
+                      //   min: sliderMinMax.cpu?.min,
+                      //   // TODO: set message
+                      // },
+                      // remainingValidationRules.cpu,
+                    ]}
+                  />
+                ) : null}
               </>
             );
           }}
         </Form.Item>
       </Card>
-      {baiClient.supports('multi-container') && (
+      {/* TODO: Support cluster mode */}
+      {/* {baiClient.supports('multi-container') && ( */}
+      {false && (
         <Form.Item
           label={t('session.launcher.ClusterMode')}
           tooltip={
