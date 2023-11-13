@@ -2541,6 +2541,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         globalThis.backendaiclient._config.maxFileUploadSize;
       this.directoryBasedUsage =
         globalThis.backendaiclient._config.directoryBasedUsage;
+      this._isDirectorySizeVisible =
+        globalThis.backendaiclient._config.isDirectorySizeVisible;
       this._getAllowedVFolderHostsByCurrentUserInfo();
       this._checkImageSupported();
       this._getVolumeInformation();
