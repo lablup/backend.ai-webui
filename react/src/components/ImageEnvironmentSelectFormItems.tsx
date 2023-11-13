@@ -270,7 +270,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
           defaultActiveFirstOption={true}
           optionLabelProp="label"
           optionFilterProp="filterValue"
-          onSelect={(value) => {
+          onChange={(value) => {
             if (fullNameMatchedImage) {
               form.setFieldsValue({
                 environments: {
