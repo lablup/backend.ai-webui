@@ -133,7 +133,7 @@ export const bytesToGB = (
 };
 
 export function iSizeToSize(
-  sizeWithUnit: string,
+  sizeWithUnit: string | undefined,
   targetSizeUnit?:
     | 'B'
     | 'K'
@@ -150,12 +150,17 @@ export function iSizeToSize(
     | 'p'
     | 'e',
   fixed: number = 2,
-): {
-  number: number;
-  numberFixed: string;
-  unit: string;
-  numberUnit: string;
-} {
+):
+  | {
+      number: number;
+      numberFixed: string;
+      unit: string;
+      numberUnit: string;
+    }
+  | undefined {
+  if (sizeWithUnit === undefined) {
+    return undefined;
+  }
   const sizes = ['B', 'K', 'M', 'G', 'T', 'P', 'E'];
   const sizeUnit = sizeWithUnit.slice(-1).toUpperCase();
   const sizeValue = parseFloat(sizeWithUnit.slice(0, -1));
