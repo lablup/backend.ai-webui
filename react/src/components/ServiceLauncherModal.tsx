@@ -475,11 +475,14 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                               'G',
                             );
 
-                            if (sizeGInfo.number > value) {
+                            if (
+                              sizeGInfo?.number &&
+                              sizeGInfo?.number > value
+                            ) {
                               return Promise.reject(
                                 new Error(
                                   t('session.launcher.MinMemory', {
-                                    size: sizeGInfo.numberUnit,
+                                    size: sizeGInfo?.numberUnit,
                                   }),
                                 ),
                               );
