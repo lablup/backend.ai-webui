@@ -1,4 +1,4 @@
-import { iSizeToSize } from './index';
+import { compareNumberWithUnits, iSizeToSize } from './index';
 
 describe('iSizeToSize', () => {
   it('should convert iSize to Size with default fixed value', () => {
@@ -64,5 +64,11 @@ describe('iSizeToSize', () => {
       unit: 'K',
       numberUnit: '1.00K',
     });
+  });
+});
+
+describe('compareNumberWithUnits', () => {
+  it('should compare two numbers with units', () => {
+    expect(compareNumberWithUnits('256m', '9007199254740991')).toBeLessThan(0);
   });
 });
