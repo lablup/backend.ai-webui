@@ -324,25 +324,6 @@ const ResourceAllocationFormItems: React.FC<
         3, //BackendAiResourceBroker.DEFAULT_CONCURRENT_SESSION_COUNT
       ]),
     },
-    // ...(acceleratorSlots)
-    // ..._.map(['cuda.device'], (key) => {
-    //   return {
-    //     [key]: {
-    //       min: _.max([
-    //         _.find(form.getFieldValue('image')?.resource_limits, key)?.min,
-    //       ]),
-    //       max: _.min([
-    //         baiClient._config.max,
-    //         _.toNumber(
-    //           _.find(
-    //             currentImage?.resource_limits,
-    //             (i) => i?.key === 'cuda.device',
-    //           )?.max || '0',
-    //         ),
-    //       ]),
-    //     },
-    //   };
-    // }),
   };
 
   useEffect(() => {
@@ -794,43 +775,9 @@ const ResourceAllocationFormItems: React.FC<
                       tooltip={
                         <Trans i18nKey={'session.launcher.DescSession'} />
                       }
-                      // min={parseInt(
-                      //   _.find(
-                      //     currentImage?.resource_limits,
-                      //     (i) => i?.key === 'cpu',
-                      //   )?.min || '0',
-                      // )}
-                      // max={parseInt(
-                      //   _.find(
-                      //     currentImage?.resource_limits,
-                      //     (i) => i?.key === 'cpu',
-                      //   )?.max || '100',
-                      // )}
                       inputNumberProps={{
                         addonAfter: '#',
                       }}
-                      sliderProps={
-                        {
-                          // marks: {
-                          //   0: {
-                          //     style: {
-                          //       color: token.colorTextSecondary,
-                          //     },
-                          //     label: 0,
-                          //   },
-                          //   ...(sliderMinMax.cpu?.max
-                          //     ? {
-                          //         [sliderMinMax.cpu?.max]: {
-                          //           style: {
-                          //             color: token.colorTextSecondary,
-                          //           },
-                          //           label: sliderMinMax.cpu?.max,
-                          //         },
-                          //       }
-                          //     : {}),
-                          // },
-                        }
-                      }
                       min={sliderMinMax.session?.min}
                       max={sliderMinMax.session?.max}
                       required
