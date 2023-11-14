@@ -2,7 +2,6 @@ import { useBaiSignedRequestWithPromise } from '../helper';
 import { useCurrentProjectValue, useUpdatableState } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useShadowRoot } from './DefaultProviders';
-import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
 import VFolderPermissionTag from './VFolderPermissionTag';
