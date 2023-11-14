@@ -957,6 +957,11 @@ const ResourceAllocationFormItems: React.FC<
                           inputNumberProps={{
                             addonAfter: clusterUnit,
                           }}
+                          onChange={(value) => {
+                            if (value > 1) {
+                              form.setFieldValue('num_of_sessions', 1);
+                            }
+                          }}
                         />
                       </Form.Item>
                     );
