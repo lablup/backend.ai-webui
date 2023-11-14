@@ -1,12 +1,14 @@
 import { compareNumberWithUnits, iSizeToSize } from '../helper';
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
+import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import Flex from './Flex';
 import { ImageEnvironmentFormInput } from './ImageEnvironmentSelectFormItems';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
+import ResourcePolicyCard from './ResourcePolicyCard';
 import ResourcePresetSelect from './ResourcePresetSelect';
 import SliderInputItem from './SliderInputFormItem';
 import {
@@ -79,6 +81,9 @@ const ResourceAllocationFormItems: React.FC<
   const [resourceSlots] = useResourceSlots();
   const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
 
+  const [{ keypair, keypairResourcePolicy }] =
+    useCurrentKeyPairResourcePolicyLazyLoadQuery();
+
   const currentProject = useCurrentProjectValue();
 
   // Form watch
@@ -140,7 +145,7 @@ const ResourceAllocationFormItems: React.FC<
   //   [key in string]?: AcceleratorLimit | undefined;
   // };
 
-  const sliderMinMax: any = {
+  const sliderMinMaxLimit: any = {
     ...(resourceSlots?.cpu
       ? {
           cpu: {
@@ -318,11 +323,13 @@ const ResourceAllocationFormItems: React.FC<
 
     session: {
       min: 1,
-      // TODO: calculate max session count using remaining numbers
       max: _.min([
-        // remaining_slot['concurrency'],
+        keypairResourcePolicy.max_concurrent_sessions,
         3, //BackendAiResourceBroker.DEFAULT_CONCURRENT_SESSION_COUNT
       ]),
+      remaining:
+        (keypairResourcePolicy.max_concurrent_sessions || 3) -
+        (keypair.concurrency_used || 0),
     },
   };
 
@@ -332,15 +339,15 @@ const ResourceAllocationFormItems: React.FC<
     // const miniumShmem = '64m';
     form.setFieldsValue({
       resource: {
-        cpu: sliderMinMax.cpu?.min,
+        cpu: sliderMinMaxLimit.cpu?.min,
         mem:
           iSizeToSize(
-            (iSizeToSize(sliderMinMax.shmem?.min, 'm')?.number || 0) +
-              (iSizeToSize(sliderMinMax.mem?.min, 'm')?.number || 0) +
+            (iSizeToSize(sliderMinMaxLimit.shmem?.min, 'm')?.number || 0) +
+              (iSizeToSize(sliderMinMaxLimit.mem?.min, 'm')?.number || 0) +
               'm',
             'g',
           )?.number + 'g', //to prevent loosing precision
-        shmem: sliderMinMax.shmem?.min,
+        shmem: sliderMinMaxLimit.shmem?.min,
         // shmem: sliderMinMax.shmem?.min,
       },
     });
@@ -356,7 +363,8 @@ const ResourceAllocationFormItems: React.FC<
         // if current selected accelerator type is supported in the selected image,
         form.setFieldValue(
           ['resource', 'accelerator'],
-          sliderMinMax[form.getFieldValue(['resource', 'acceleratorType'])].min,
+          sliderMinMaxLimit[form.getFieldValue(['resource', 'acceleratorType'])]
+            .min,
         );
       } else {
         // if current selected accelerator type is not supported in the selected image,
@@ -372,7 +380,7 @@ const ResourceAllocationFormItems: React.FC<
         if (nextImageSelectorType) {
           form.setFieldValue(
             ['resource', 'accelerator'],
-            sliderMinMax[nextImageSelectorType].min,
+            sliderMinMaxLimit[nextImageSelectorType].min,
           );
           form.setFieldValue(
             ['resource', 'acceleratorType'],
@@ -392,7 +400,7 @@ const ResourceAllocationFormItems: React.FC<
     cpu: {
       warningOnly: true,
       validator: async (rule, value: string) => {
-        if (sliderMinMax.cpu && value > sliderMinMax.cpu.remaining) {
+        if (sliderMinMaxLimit.cpu && value > sliderMinMaxLimit.cpu.remaining) {
           return Promise.reject(
             t('session.launcher.EnqueueComputeSessionWarning'),
           );
@@ -406,8 +414,9 @@ const ResourceAllocationFormItems: React.FC<
       validator: async (rule, value: string) => {
         if (
           !_.isElement(value) &&
-          sliderMinMax.mem &&
-          compareNumberWithUnits(value, sliderMinMax.mem.remaining + 'b') > 0
+          sliderMinMaxLimit.mem &&
+          compareNumberWithUnits(value, sliderMinMaxLimit.mem.remaining + 'b') >
+            0
         ) {
           return Promise.reject(
             t('session.launcher.EnqueueComputeSessionWarning'),
@@ -426,8 +435,8 @@ const ResourceAllocationFormItems: React.FC<
             warningOnly: true,
             validator: async (rule: any, value: string) => {
               if (
-                sliderMinMax[slotKey] &&
-                value > sliderMinMax[slotKey].remaining
+                sliderMinMaxLimit[slotKey] &&
+                value > sliderMinMaxLimit[slotKey].remaining
               ) {
                 return Promise.reject(
                   t('session.launcher.EnqueueComputeSessionWarning'),
@@ -441,7 +450,23 @@ const ResourceAllocationFormItems: React.FC<
       },
       {},
     ),
+    session: {
+      warningOnly: true,
+      validator: async (rule, value: string) => {
+        if (
+          sliderMinMaxLimit.session &&
+          value > sliderMinMaxLimit.session.remaining
+        ) {
+          return Promise.reject(
+            t('session.launcher.EnqueueComputeSessionWarning'),
+          );
+        } else {
+          return Promise.resolve();
+        }
+      },
+    },
   };
+
   return (
     <>
       <Form.Item
@@ -534,20 +559,20 @@ const ResourceAllocationFormItems: React.FC<
                           },
                           label: 0,
                         },
-                        ...(sliderMinMax.cpu?.max
+                        ...(sliderMinMaxLimit.cpu?.max
                           ? {
-                              [sliderMinMax.cpu?.max]: {
+                              [sliderMinMaxLimit.cpu?.max]: {
                                 style: {
                                   color: token.colorTextSecondary,
                                 },
-                                label: sliderMinMax.cpu?.max,
+                                label: sliderMinMaxLimit.cpu?.max,
                               },
                             }
                           : {}),
                       },
                     }}
                     min={0}
-                    max={sliderMinMax.cpu?.max}
+                    max={sliderMinMaxLimit.cpu?.max}
                     required
                     rules={[
                       {
@@ -555,7 +580,7 @@ const ResourceAllocationFormItems: React.FC<
                       },
                       {
                         type: 'number',
-                        min: sliderMinMax.cpu?.min,
+                        min: sliderMinMaxLimit.cpu?.min,
                         // TODO: set message
                       },
                       remainingValidationRules.cpu,
@@ -576,12 +601,12 @@ const ResourceAllocationFormItems: React.FC<
                           if (
                             compareNumberWithUnits(
                               value || '0b',
-                              sliderMinMax.mem?.min,
+                              sliderMinMaxLimit.mem?.min,
                             ) < 0
                           ) {
                             return Promise.reject(
                               t('session.launcher.MinMemory', {
-                                size: _.toUpper(sliderMinMax.mem?.min),
+                                size: _.toUpper(sliderMinMaxLimit.mem?.min),
                               }),
                             );
                           }
@@ -610,7 +635,7 @@ const ResourceAllocationFormItems: React.FC<
                     ]}
                   >
                     <DynamicUnitInputNumberWithSlider
-                      max={sliderMinMax.mem?.max}
+                      max={sliderMinMaxLimit.mem?.max}
                       // min="256m"
                       min={'0g'}
                       // warn={
@@ -673,7 +698,7 @@ const ResourceAllocationFormItems: React.FC<
                     <DynamicUnitInputNumberWithSlider
                       // shmem max is mem max
                       min="0g"
-                      max={sliderMinMax.mem?.max}
+                      max={sliderMinMaxLimit.mem?.max}
                     />
                   </Form.Item>
                 )}
@@ -702,8 +727,8 @@ const ResourceAllocationFormItems: React.FC<
                         sliderProps={{
                           marks: {
                             0: 0,
-                            [sliderMinMax[currentAcceleratorType]?.max]:
-                              sliderMinMax[currentAcceleratorType]?.max,
+                            [sliderMinMaxLimit[currentAcceleratorType]?.max]:
+                              sliderMinMaxLimit[currentAcceleratorType]?.max,
                           },
                           tooltip: {
                             formatter: (value = 0) => {
@@ -712,7 +737,7 @@ const ResourceAllocationFormItems: React.FC<
                           },
                         }}
                         min={0}
-                        max={sliderMinMax[currentAcceleratorType]?.max}
+                        max={sliderMinMaxLimit[currentAcceleratorType]?.max}
                         step={
                           _.endsWith(currentAcceleratorType, 'shares') ? 0.1 : 1
                         }
@@ -763,7 +788,9 @@ const ResourceAllocationFormItems: React.FC<
                           },
                           {
                             type: 'number',
-                            min: sliderMinMax[currentAcceleratorType]?.min || 0,
+                            min:
+                              sliderMinMaxLimit[currentAcceleratorType]?.min ||
+                              0,
                           },
                           remainingValidationRules[currentAcceleratorType],
                         ]}
@@ -787,25 +814,20 @@ const ResourceAllocationFormItems: React.FC<
                       }}
                       sliderProps={{
                         marks: {
-                          [sliderMinMax.session?.min]:
-                            sliderMinMax.session?.min,
-                          [sliderMinMax.session?.max]:
-                            sliderMinMax.session?.max,
+                          [sliderMinMaxLimit.session?.min]:
+                            sliderMinMaxLimit.session?.min,
+                          [sliderMinMaxLimit.session?.max]:
+                            sliderMinMaxLimit.session?.max,
                         },
                       }}
-                      min={sliderMinMax.session?.min}
-                      max={sliderMinMax.session?.max}
+                      min={sliderMinMaxLimit.session?.min}
+                      max={sliderMinMaxLimit.session?.max}
                       required
                       rules={[
                         {
                           required: true,
                         },
-                        // {
-                        //   type: 'number',
-                        //   min: sliderMinMax.cpu?.min,
-                        //   // TODO: set message
-                        // },
-                        // remainingValidationRules.cpu,
+                        remainingValidationRules.session,
                       ]}
                     />
                   </>
