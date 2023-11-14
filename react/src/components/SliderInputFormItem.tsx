@@ -36,11 +36,11 @@ const SliderInputFormItem: React.FC<SliderInputFormItemProps> = ({
   const form = Form.useFormInstance();
   useEffect(() => {
     // when step is 1, make sure the value is integer
-    if (step === 1 && form.getFieldValue(name) % 1 != 0) {
+    if (step === 1 && form.getFieldValue(name) % 1 !== 0) {
       // do not use form.setFieldsValue, because name can be array
       form.setFieldValue(name, Math.round(form.getFieldValue(name)));
     }
-  }, [step]);
+  }, [step, form, name]);
   return (
     <Form.Item required={required} {...formItemProps}>
       <Flex direction="row" gap={'md'}>

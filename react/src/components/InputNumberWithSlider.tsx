@@ -1,12 +1,6 @@
 import Flex from './Flex';
 import { useControllableValue } from 'ahooks';
-import {
-  InputNumber,
-  Slider,
-  Form,
-  InputNumberProps,
-  SliderSingleProps,
-} from 'antd';
+import { InputNumber, Slider, InputNumberProps, SliderSingleProps } from 'antd';
 import { SliderRangeProps } from 'antd/es/slider';
 import React, { useEffect } from 'react';
 
@@ -36,9 +30,10 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   const [value, setValue] = useControllableValue(otherProps);
   useEffect(() => {
     // when step is 1, make sure the value is integer
-    if (step === 1 && value % 1 != 0) {
+    if (step === 1 && value % 1 !== 0) {
       setValue(Math.round(value));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
   return (
     <Flex direction="row" gap={'md'}>

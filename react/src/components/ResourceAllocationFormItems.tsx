@@ -9,7 +9,6 @@ import { ImageEnvironmentFormInput } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
-import ResourcePolicyCard from './ResourcePolicyCard';
 import ResourcePresetSelect from './ResourcePresetSelect';
 import {
   Card,
