@@ -888,7 +888,10 @@ const ResourceAllocationFormItems: React.FC<
                   {() => {
                     const maxBasedOnClusterMode =
                       form.getFieldValue('cluster_mode') === 'single-node'
-                        ? _.min([sliderMinMax.cpu?.max])
+                        ? _.min([
+                            sliderMinMaxLimit.cpu?.max,
+                            keypairResourcePolicy.max_containers_per_session,
+                          ])
                         : 1;
                     const clusterUnit =
                       form.getFieldValue('cluster_mode') === 'single-node'
@@ -902,6 +905,7 @@ const ResourceAllocationFormItems: React.FC<
                         inputNumberProps={{
                           addonAfter: clusterUnit,
                         }}
+                        disabled={maxBasedOnClusterMode === 1}
                         min={1}
                         // TODO: max cluster size
                         max={maxBasedOnClusterMode}
