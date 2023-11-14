@@ -702,6 +702,13 @@ const ResourceAllocationFormItems: React.FC<
                         sliderProps={{
                           marks: {
                             0: 0,
+                            [sliderMinMax[currentAcceleratorType]?.max]:
+                              sliderMinMax[currentAcceleratorType]?.max,
+                          },
+                          tooltip: {
+                            formatter: (value = 0) => {
+                              return `${value} ${ACCELERATOR_UNIT_MAP[currentAcceleratorType]}`;
+                            },
                           },
                         }}
                         min={0}
@@ -778,6 +785,14 @@ const ResourceAllocationFormItems: React.FC<
                       inputNumberProps={{
                         addonAfter: '#',
                       }}
+                      sliderProps={{
+                        marks: {
+                          [sliderMinMax.session?.min]:
+                            sliderMinMax.session?.min,
+                          [sliderMinMax.session?.max]:
+                            sliderMinMax.session?.max,
+                        },
+                      }}
                       min={sliderMinMax.session?.min}
                       max={sliderMinMax.session?.max}
                       required
@@ -801,8 +816,8 @@ const ResourceAllocationFormItems: React.FC<
         </Form.Item>
       </Card>
       {/* TODO: Support cluster mode */}
-      {/* {baiClient.supports('multi-container') && ( */}
-      {false && (
+      {baiClient.supports('multi-container') && (
+        // {false && (
         <Form.Item
           label={t('session.launcher.ClusterMode')}
           tooltip={
@@ -848,22 +863,40 @@ const ResourceAllocationFormItems: React.FC<
                     prev.cluster_mode !== next.cluster_mode
                   }
                 >
-                  {() => (
-                    <SliderInputItem
-                      disabled={
-                        form.getFieldValue('cluster_mode') === 'single-node'
-                      }
-                      name={'cluster_size'}
-                      label={t('session.launcher.ClusterSize')}
-                      required
-                      inputNumberProps={{
-                        addonAfter: '#',
-                      }}
-                      min={1}
-                      // TODO: max cluster size
-                      max={_.min([sliderMinMax.cpu?.max])}
-                    />
-                  )}
+                  {() => {
+                    const maxBasedOnClusterMode =
+                      form.getFieldValue('cluster_mode') === 'single-node'
+                        ? _.min([sliderMinMax.cpu?.max])
+                        : 1;
+                    const clusterUnit =
+                      form.getFieldValue('cluster_mode') === 'single-node'
+                        ? t('session.launcher.Container')
+                        : t('session.launcher.Node');
+                    return (
+                      <SliderInputItem
+                        name={'cluster_size'}
+                        label={t('session.launcher.ClusterSize')}
+                        required
+                        inputNumberProps={{
+                          addonAfter: clusterUnit,
+                        }}
+                        min={1}
+                        // TODO: max cluster size
+                        max={maxBasedOnClusterMode}
+                        sliderProps={{
+                          marks: {
+                            1: '1',
+                            [maxBasedOnClusterMode]: maxBasedOnClusterMode,
+                          },
+                          tooltip: {
+                            formatter: (value = 0) => {
+                              return `${value} ${clusterUnit}`;
+                            },
+                          },
+                        }}
+                      />
+                    );
+                  }}
                 </Form.Item>
               </Col>
             </Row>
