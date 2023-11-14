@@ -10,7 +10,7 @@ import ResourceGroupSelect from './ResourceGroupSelect';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import ResourcePolicyCard from './ResourcePolicyCard';
 import ResourcePresetSelect from './ResourcePresetSelect';
-import SliderInputItem from './SliderInputFormItem';
+import SliderInputFormItem from './SliderInputFormItem';
 import {
   Card,
   Col,
@@ -531,7 +531,7 @@ const ResourceAllocationFormItems: React.FC<
               // getFieldValue('allocationPreset') === 'custom' && (
               <>
                 {resourceSlots?.cpu && (
-                  <SliderInputItem
+                  <SliderInputFormItem
                     name={['resource', 'cpu']}
                     // initialValue={0}
                     label={t('session.launcher.CPU')}
@@ -717,7 +717,7 @@ const ResourceAllocationFormItems: React.FC<
                       'acceleratorType',
                     ]);
                     return (
-                      <SliderInputItem
+                      <SliderInputFormItem
                         name={['resource', 'accelerator']}
                         // initialValue={0}
                         label={t(`session.launcher.AIAccelerator`)}

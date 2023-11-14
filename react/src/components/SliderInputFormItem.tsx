@@ -9,9 +9,9 @@ import {
 import { NamePath } from 'antd/es/form/interface';
 import { SliderRangeProps } from 'antd/es/slider';
 import { FormItemProps } from 'antd/lib/form/FormItem';
-import React from 'react';
+import React, { useEffect } from 'react';
 
-interface SliderInputProps extends Omit<FormItemProps, 'name'> {
+interface SliderInputFormItemProps extends Omit<FormItemProps, 'name'> {
   min?: number;
   max?: number;
   step?: number;
@@ -20,7 +20,7 @@ interface SliderInputProps extends Omit<FormItemProps, 'name'> {
   sliderProps?: SliderSingleProps | SliderRangeProps;
   disabled?: boolean;
 }
-const SliderInputItem: React.FC<SliderInputProps> = ({
+const SliderInputFormItem: React.FC<SliderInputFormItemProps> = ({
   name,
   min,
   max,
@@ -33,6 +33,14 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
   disabled,
   ...formItemProps
 }) => {
+  const form = Form.useFormInstance();
+  useEffect(() => {
+    // when step is 1, make sure the value is integer
+    if (step === 1 && form.getFieldValue(name) % 1 != 0) {
+      // do not use form.setFieldsValue, because name can be array
+      form.setFieldValue(name, Math.round(form.getFieldValue(name)));
+    }
+  }, [step]);
   return (
     <Form.Item required={required} {...formItemProps}>
       <Flex direction="row" gap={'md'}>
@@ -110,4 +118,4 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
   );
 };
 
-export default SliderInputItem;
+export default SliderInputFormItem;
