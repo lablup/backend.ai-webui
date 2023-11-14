@@ -5,6 +5,7 @@ import { useShadowRoot } from './DefaultProviders';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
+import VFolderPermissionTag from './VFolderPermissionTag';
 import { VFolder } from './VFolderSelect';
 import {
   QuestionCircleOutlined,
@@ -163,16 +164,6 @@ const VFolderTable: React.FC<Props> = ({
           ),
         );
       });
-  };
-
-  const hasPermission = (vFolder: VFolder, perm: string) => {
-    if (vFolder.permission.includes(perm)) {
-      return true;
-    }
-    if (vFolder.permission.includes('w') && perm === 'r') {
-      return true;
-    }
-    return false;
   };
 
   const mapAliasToPath = (name: VFolderKey, input?: string) => {
@@ -369,24 +360,7 @@ const VFolderTable: React.FC<Props> = ({
       dataIndex: 'permission',
       sorter: (a, b) => a.permission.localeCompare(b.permission),
       render: (value, row) => {
-        const tagValues: DoubleTagObjectValue[] = _.chain({
-          r: 'green',
-          w: 'blue',
-          d: 'red',
-        })
-          .map((color, perm) => {
-            if (hasPermission(row, perm)) {
-              return {
-                label: perm.toUpperCase(),
-                color,
-              };
-            }
-            return undefined;
-          })
-          .compact()
-          .value();
-
-        return <DoubleTag values={tagValues} />;
+        return <VFolderPermissionTag permission={row.permission} />;
       },
     },
     {
