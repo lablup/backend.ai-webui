@@ -920,13 +920,10 @@ const ResourceAllocationFormItems: React.FC<
                   }
                 >
                   {() => {
-                    const maxBasedOnClusterMode =
-                      form.getFieldValue('cluster_mode') === 'single-node'
-                        ? _.min([
-                            sliderMinMaxLimit.cpu?.max,
-                            keypairResourcePolicy.max_containers_per_session,
-                          ])
-                        : 1;
+                    const derivedClusterSizeMaxLimit = _.min([
+                      sliderMinMaxLimit.cpu?.max,
+                      keypairResourcePolicy.max_containers_per_session,
+                    ]);
                     const clusterUnit =
                       form.getFieldValue('cluster_mode') === 'single-node'
                         ? t('session.launcher.Container')
@@ -941,12 +938,13 @@ const ResourceAllocationFormItems: React.FC<
                         <InputNumberWithSlider
                           min={1}
                           // TODO: max cluster size
-                          max={maxBasedOnClusterMode}
-                          disabled={maxBasedOnClusterMode === 1}
+                          max={derivedClusterSizeMaxLimit}
+                          disabled={derivedClusterSizeMaxLimit === 1}
                           sliderProps={{
                             marks: {
                               1: '1',
-                              [maxBasedOnClusterMode]: maxBasedOnClusterMode,
+                              [derivedClusterSizeMaxLimit]:
+                                derivedClusterSizeMaxLimit,
                             },
                             tooltip: {
                               formatter: (value = 0) => {
