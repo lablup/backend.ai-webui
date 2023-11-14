@@ -1069,7 +1069,7 @@ const SessionLauncherPage = () => {
                             >
                               {dayjs(
                                 form.getFieldValue(['batch', 'scheduleDate']),
-                              ).format('LLLT')}
+                              ).format('LLL (Z)')}
                             </Descriptions.Item>
                           </>
                         )}
