@@ -1,14 +1,15 @@
 import { compareNumberWithUnits, iSizeToSize } from '../helper';
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
+import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import Flex from './Flex';
 import { ImageEnvironmentFormInput } from './ImageEnvironmentSelectFormItems';
+import InputNumberWithSlider from './InputNumberWithSlider';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import ResourcePresetSelect from './ResourcePresetSelect';
-import SliderInputItem from './SliderInputFormItem';
 import {
   Card,
   Col,
@@ -79,6 +80,9 @@ const ResourceAllocationFormItems: React.FC<
   const [resourceSlots] = useResourceSlots();
   const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
 
+  const [{ keypair, keypairResourcePolicy }] =
+    useCurrentKeyPairResourcePolicyLazyLoadQuery();
+
   const currentProject = useCurrentProjectValue();
 
   // Form watch
@@ -140,7 +144,7 @@ const ResourceAllocationFormItems: React.FC<
   //   [key in string]?: AcceleratorLimit | undefined;
   // };
 
-  const sliderMinMax: any = {
+  const sliderMinMaxLimit: any = {
     ...(resourceSlots?.cpu
       ? {
           cpu: {
@@ -318,31 +322,14 @@ const ResourceAllocationFormItems: React.FC<
 
     session: {
       min: 1,
-      // TODO: calculate max session count using remaining numbers
       max: _.min([
-        // remaining_slot['concurrency'],
+        keypairResourcePolicy.max_concurrent_sessions,
         3, //BackendAiResourceBroker.DEFAULT_CONCURRENT_SESSION_COUNT
       ]),
+      remaining:
+        (keypairResourcePolicy.max_concurrent_sessions || 3) -
+        (keypair.concurrency_used || 0),
     },
-    // ...(acceleratorSlots)
-    // ..._.map(['cuda.device'], (key) => {
-    //   return {
-    //     [key]: {
-    //       min: _.max([
-    //         _.find(form.getFieldValue('image')?.resource_limits, key)?.min,
-    //       ]),
-    //       max: _.min([
-    //         baiClient._config.max,
-    //         _.toNumber(
-    //           _.find(
-    //             currentImage?.resource_limits,
-    //             (i) => i?.key === 'cuda.device',
-    //           )?.max || '0',
-    //         ),
-    //       ]),
-    //     },
-    //   };
-    // }),
   };
 
   useEffect(() => {
@@ -351,15 +338,15 @@ const ResourceAllocationFormItems: React.FC<
     // const miniumShmem = '64m';
     form.setFieldsValue({
       resource: {
-        cpu: sliderMinMax.cpu?.min,
+        cpu: sliderMinMaxLimit.cpu?.min,
         mem:
           iSizeToSize(
-            (iSizeToSize(sliderMinMax.shmem?.min, 'm')?.number || 0) +
-              (iSizeToSize(sliderMinMax.mem?.min, 'm')?.number || 0) +
+            (iSizeToSize(sliderMinMaxLimit.shmem?.min, 'm')?.number || 0) +
+              (iSizeToSize(sliderMinMaxLimit.mem?.min, 'm')?.number || 0) +
               'm',
             'g',
           )?.number + 'g', //to prevent loosing precision
-        shmem: sliderMinMax.shmem?.min,
+        shmem: sliderMinMaxLimit.shmem?.min,
         // shmem: sliderMinMax.shmem?.min,
       },
     });
@@ -375,7 +362,8 @@ const ResourceAllocationFormItems: React.FC<
         // if current selected accelerator type is supported in the selected image,
         form.setFieldValue(
           ['resource', 'accelerator'],
-          sliderMinMax[form.getFieldValue(['resource', 'acceleratorType'])].min,
+          sliderMinMaxLimit[form.getFieldValue(['resource', 'acceleratorType'])]
+            .min,
         );
       } else {
         // if current selected accelerator type is not supported in the selected image,
@@ -391,7 +379,7 @@ const ResourceAllocationFormItems: React.FC<
         if (nextImageSelectorType) {
           form.setFieldValue(
             ['resource', 'accelerator'],
-            sliderMinMax[nextImageSelectorType].min,
+            sliderMinMaxLimit[nextImageSelectorType].min,
           );
           form.setFieldValue(
             ['resource', 'acceleratorType'],
@@ -411,7 +399,7 @@ const ResourceAllocationFormItems: React.FC<
     cpu: {
       warningOnly: true,
       validator: async (rule, value: string) => {
-        if (sliderMinMax.cpu && value > sliderMinMax.cpu.remaining) {
+        if (sliderMinMaxLimit.cpu && value > sliderMinMaxLimit.cpu.remaining) {
           return Promise.reject(
             t('session.launcher.EnqueueComputeSessionWarning'),
           );
@@ -425,8 +413,9 @@ const ResourceAllocationFormItems: React.FC<
       validator: async (rule, value: string) => {
         if (
           !_.isElement(value) &&
-          sliderMinMax.mem &&
-          compareNumberWithUnits(value, sliderMinMax.mem.remaining + 'b') > 0
+          sliderMinMaxLimit.mem &&
+          compareNumberWithUnits(value, sliderMinMaxLimit.mem.remaining + 'b') >
+            0
         ) {
           return Promise.reject(
             t('session.launcher.EnqueueComputeSessionWarning'),
@@ -443,10 +432,10 @@ const ResourceAllocationFormItems: React.FC<
           ...result,
           [slotKey]: {
             warningOnly: true,
-            validator: async (rule: any, value: string) => {
+            validator: async (rule: any, value: number) => {
               if (
-                sliderMinMax[slotKey] &&
-                value > sliderMinMax[slotKey].remaining
+                sliderMinMaxLimit[slotKey] &&
+                value > sliderMinMaxLimit[slotKey].remaining
               ) {
                 return Promise.reject(
                   t('session.launcher.EnqueueComputeSessionWarning'),
@@ -460,7 +449,41 @@ const ResourceAllocationFormItems: React.FC<
       },
       {},
     ),
+    session: {
+      warningOnly: true,
+      validator: async (rule, value: number) => {
+        if (
+          sliderMinMaxLimit.session &&
+          value > sliderMinMaxLimit.session.remaining
+        ) {
+          return Promise.reject(
+            t('session.launcher.EnqueueComputeSessionWarning'),
+          );
+        } else {
+          return Promise.resolve();
+        }
+      },
+    },
+    clusterSize: {
+      warningOnly: true,
+      validator: async (rule, value: number) => {
+        if (
+          value >
+          _.min([
+            sliderMinMaxLimit.cpu?.remaining,
+            keypairResourcePolicy.max_containers_per_session,
+          ])
+        ) {
+          return Promise.reject(
+            t('session.launcher.EnqueueComputeSessionWarning'),
+          );
+        } else {
+          return Promise.resolve();
+        }
+      },
+    },
   };
+
   return (
     <>
       <Form.Item
@@ -526,48 +549,11 @@ const ResourceAllocationFormItems: React.FC<
               // getFieldValue('allocationPreset') === 'custom' && (
               <>
                 {resourceSlots?.cpu && (
-                  <SliderInputItem
+                  <Form.Item
                     name={['resource', 'cpu']}
                     // initialValue={0}
                     label={t('session.launcher.CPU')}
                     tooltip={<Trans i18nKey={'session.launcher.DescCPU'} />}
-                    // min={parseInt(
-                    //   _.find(
-                    //     currentImage?.resource_limits,
-                    //     (i) => i?.key === 'cpu',
-                    //   )?.min || '0',
-                    // )}
-                    // max={parseInt(
-                    //   _.find(
-                    //     currentImage?.resource_limits,
-                    //     (i) => i?.key === 'cpu',
-                    //   )?.max || '100',
-                    // )}
-                    inputNumberProps={{
-                      addonAfter: t('session.launcher.Core'),
-                    }}
-                    sliderProps={{
-                      marks: {
-                        0: {
-                          style: {
-                            color: token.colorTextSecondary,
-                          },
-                          label: 0,
-                        },
-                        ...(sliderMinMax.cpu?.max
-                          ? {
-                              [sliderMinMax.cpu?.max]: {
-                                style: {
-                                  color: token.colorTextSecondary,
-                                },
-                                label: sliderMinMax.cpu?.max,
-                              },
-                            }
-                          : {}),
-                      },
-                    }}
-                    min={0}
-                    max={sliderMinMax.cpu?.max}
                     required
                     rules={[
                       {
@@ -575,12 +561,40 @@ const ResourceAllocationFormItems: React.FC<
                       },
                       {
                         type: 'number',
-                        min: sliderMinMax.cpu?.min,
+                        min: sliderMinMaxLimit.cpu?.min,
                         // TODO: set message
                       },
                       remainingValidationRules.cpu,
                     ]}
-                  />
+                  >
+                    <InputNumberWithSlider
+                      inputNumberProps={{
+                        addonAfter: t('session.launcher.Core'),
+                      }}
+                      sliderProps={{
+                        marks: {
+                          0: {
+                            style: {
+                              color: token.colorTextSecondary,
+                            },
+                            label: 0,
+                          },
+                          ...(sliderMinMaxLimit.cpu?.max
+                            ? {
+                                [sliderMinMaxLimit.cpu?.max]: {
+                                  style: {
+                                    color: token.colorTextSecondary,
+                                  },
+                                  label: sliderMinMaxLimit.cpu?.max,
+                                },
+                              }
+                            : {}),
+                        },
+                      }}
+                      min={0}
+                      max={sliderMinMaxLimit.cpu?.max}
+                    />
+                  </Form.Item>
                 )}
                 {resourceSlots?.mem && (
                   <Form.Item
@@ -596,12 +610,12 @@ const ResourceAllocationFormItems: React.FC<
                           if (
                             compareNumberWithUnits(
                               value || '0b',
-                              sliderMinMax.mem?.min,
+                              sliderMinMaxLimit.mem?.min,
                             ) < 0
                           ) {
                             return Promise.reject(
                               t('session.launcher.MinMemory', {
-                                size: _.toUpper(sliderMinMax.mem?.min),
+                                size: _.toUpper(sliderMinMaxLimit.mem?.min),
                               }),
                             );
                           }
@@ -630,7 +644,7 @@ const ResourceAllocationFormItems: React.FC<
                     ]}
                   >
                     <DynamicUnitInputNumberWithSlider
-                      max={sliderMinMax.mem?.max}
+                      max={sliderMinMaxLimit.mem?.max}
                       // min="256m"
                       min={'0g'}
                       // warn={
@@ -693,7 +707,7 @@ const ResourceAllocationFormItems: React.FC<
                     <DynamicUnitInputNumberWithSlider
                       // shmem max is mem max
                       min="0g"
-                      max={sliderMinMax.mem?.max}
+                      max={sliderMinMaxLimit.mem?.max}
                     />
                   </Form.Item>
                 )}
@@ -702,7 +716,10 @@ const ResourceAllocationFormItems: React.FC<
                   shouldUpdate={(prev, next) => {
                     return (
                       prev.resource?.acceleratorType !==
-                      next.resource?.acceleratorType
+                        next.resource?.acceleratorType ||
+                      // ref: https://github.com/lablup/backend.ai-webui/issues/868
+                      // change gpu step to 1 when cluster_size > 1
+                      prev.cluster_size !== next.cluster_size
                     );
                   }}
                 >
@@ -712,61 +729,15 @@ const ResourceAllocationFormItems: React.FC<
                       'acceleratorType',
                     ]);
                     return (
-                      <SliderInputItem
+                      <Form.Item
                         name={['resource', 'accelerator']}
-                        // initialValue={0}
                         label={t(`session.launcher.AIAccelerator`)}
-                        // tooltip={
-                        //   <Trans i18nKey={'session.launcher.DescSharedMemory'} />
-                        // }
-                        sliderProps={{
-                          marks: {
-                            0: 0,
-                          },
-                        }}
-                        min={0}
-                        max={sliderMinMax[currentAcceleratorType]?.max}
-                        step={
-                          _.endsWith(currentAcceleratorType, 'shares') ? 0.1 : 1
-                        }
-                        inputNumberProps={{
-                          addonAfter: (
-                            <Form.Item
-                              noStyle
-                              name={['resource', 'acceleratorType']}
-                              initialValue={_.keys(acceleratorSlots)[0]}
-                            >
-                              <Select
-                                suffixIcon={
-                                  _.size(acceleratorSlots) > 1
-                                    ? undefined
-                                    : null
-                                }
-                                // open={
-                                //   _.size(acceleratorSlots) > 1
-                                //     ? undefined
-                                //     : false
-                                // }
-                                popupMatchSelectWidth={false}
-                                options={_.map(
-                                  acceleratorSlots,
-                                  (value, name) => {
-                                    return {
-                                      value: name,
-                                      label:
-                                        ACCELERATOR_UNIT_MAP[name] || 'UNIT',
-                                      disabled:
-                                        currentImageAcceleratorLimits.length >
-                                          0 &&
-                                        !_.find(
-                                          currentImageAcceleratorLimits,
-                                          (limit) => limit?.key === name,
-                                        ),
-                                    };
-                                  },
-                                )}
-                              />
-                            </Form.Item>
+                        tooltip={{
+                          placement: 'right',
+                          title: (
+                            <Trans
+                              i18nKey={'session.launcher.DescAIAccelerator'}
+                            />
                           ),
                         }}
                         required
@@ -776,11 +747,76 @@ const ResourceAllocationFormItems: React.FC<
                           },
                           {
                             type: 'number',
-                            min: sliderMinMax[currentAcceleratorType]?.min || 0,
+                            min:
+                              sliderMinMaxLimit[currentAcceleratorType]?.min ||
+                              0,
                           },
                           remainingValidationRules[currentAcceleratorType],
                         ]}
-                      />
+                      >
+                        <InputNumberWithSlider
+                          sliderProps={{
+                            marks: {
+                              0: 0,
+                              [sliderMinMaxLimit[currentAcceleratorType]?.max]:
+                                sliderMinMaxLimit[currentAcceleratorType]?.max,
+                            },
+                            tooltip: {
+                              formatter: (value = 0) => {
+                                return `${value} ${ACCELERATOR_UNIT_MAP[currentAcceleratorType]}`;
+                              },
+                            },
+                          }}
+                          min={0}
+                          max={sliderMinMaxLimit[currentAcceleratorType]?.max}
+                          step={
+                            _.endsWith(currentAcceleratorType, 'shares') &&
+                            form.getFieldValue('cluster_size') < 2
+                              ? 0.1
+                              : 1
+                          }
+                          inputNumberProps={{
+                            addonAfter: (
+                              <Form.Item
+                                noStyle
+                                name={['resource', 'acceleratorType']}
+                                initialValue={_.keys(acceleratorSlots)[0]}
+                              >
+                                <Select
+                                  suffixIcon={
+                                    _.size(acceleratorSlots) > 1
+                                      ? undefined
+                                      : null
+                                  }
+                                  // open={
+                                  //   _.size(acceleratorSlots) > 1
+                                  //     ? undefined
+                                  //     : false
+                                  // }
+                                  popupMatchSelectWidth={false}
+                                  options={_.map(
+                                    acceleratorSlots,
+                                    (value, name) => {
+                                      return {
+                                        value: name,
+                                        label:
+                                          ACCELERATOR_UNIT_MAP[name] || 'UNIT',
+                                        disabled:
+                                          currentImageAcceleratorLimits.length >
+                                            0 &&
+                                          !_.find(
+                                            currentImageAcceleratorLimits,
+                                            (limit) => limit?.key === name,
+                                          ),
+                                      };
+                                    },
+                                  )}
+                                />
+                              </Form.Item>
+                            ),
+                          }}
+                        />
+                      </Form.Item>
                     );
                   }}
                 </Form.Item>
@@ -788,65 +824,48 @@ const ResourceAllocationFormItems: React.FC<
                 {enableNumOfSessions ? (
                   <>
                     <Divider> x </Divider>
-                    <SliderInputItem
-                      name={['num_of_sessions']}
-                      // initialValue={0}
-                      label={t('webui.menu.Sessions')}
-                      tooltip={
-                        <Trans i18nKey={'session.launcher.DescSession'} />
+                    <Form.Item
+                      noStyle
+                      shouldUpdate={(prev, next) =>
+                        prev.cluster_size !== next.cluster_size
                       }
-                      // min={parseInt(
-                      //   _.find(
-                      //     currentImage?.resource_limits,
-                      //     (i) => i?.key === 'cpu',
-                      //   )?.min || '0',
-                      // )}
-                      // max={parseInt(
-                      //   _.find(
-                      //     currentImage?.resource_limits,
-                      //     (i) => i?.key === 'cpu',
-                      //   )?.max || '100',
-                      // )}
-                      inputNumberProps={{
-                        addonAfter: '#',
+                    >
+                      {() => {
+                        return (
+                          <Form.Item
+                            name={['num_of_sessions']}
+                            label={t('webui.menu.Sessions')}
+                            tooltip={
+                              <Trans i18nKey={'session.launcher.DescSession'} />
+                            }
+                            required
+                            rules={[
+                              {
+                                required: true,
+                              },
+                              remainingValidationRules.session,
+                            ]}
+                          >
+                            <InputNumberWithSlider
+                              inputNumberProps={{
+                                addonAfter: '#',
+                              }}
+                              disabled={form.getFieldValue('cluster_size') > 1}
+                              sliderProps={{
+                                marks: {
+                                  [sliderMinMaxLimit.session?.min]:
+                                    sliderMinMaxLimit.session?.min,
+                                  [sliderMinMaxLimit.session?.max]:
+                                    sliderMinMaxLimit.session?.max,
+                                },
+                              }}
+                              min={sliderMinMaxLimit.session?.min}
+                              max={sliderMinMaxLimit.session?.max}
+                            />
+                          </Form.Item>
+                        );
                       }}
-                      sliderProps={
-                        {
-                          // marks: {
-                          //   0: {
-                          //     style: {
-                          //       color: token.colorTextSecondary,
-                          //     },
-                          //     label: 0,
-                          //   },
-                          //   ...(sliderMinMax.cpu?.max
-                          //     ? {
-                          //         [sliderMinMax.cpu?.max]: {
-                          //           style: {
-                          //             color: token.colorTextSecondary,
-                          //           },
-                          //           label: sliderMinMax.cpu?.max,
-                          //         },
-                          //       }
-                          //     : {}),
-                          // },
-                        }
-                      }
-                      min={sliderMinMax.session?.min}
-                      max={sliderMinMax.session?.max}
-                      required
-                      rules={[
-                        {
-                          required: true,
-                        },
-                        // {
-                        //   type: 'number',
-                        //   min: sliderMinMax.cpu?.min,
-                        //   // TODO: set message
-                        // },
-                        // remainingValidationRules.cpu,
-                      ]}
-                    />
+                    </Form.Item>
                   </>
                 ) : null}
               </>
@@ -855,8 +874,8 @@ const ResourceAllocationFormItems: React.FC<
         </Form.Item>
       </Card>
       {/* TODO: Support cluster mode */}
-      {/* {baiClient.supports('multi-container') && ( */}
-      {false && (
+      {baiClient.supports('multi-container') && (
+        // {false && (
         <Form.Item
           label={t('session.launcher.ClusterMode')}
           tooltip={
@@ -881,8 +900,7 @@ const ResourceAllocationFormItems: React.FC<
                 <Form.Item name={'cluster_mode'} required>
                   <Radio.Group
                     onChange={(e) => {
-                      e.target.value === 'single-node' &&
-                        form.setFieldValue('cluster_size', 1);
+                      form.validateFields().catch(() => {});
                     }}
                   >
                     <Radio.Button value="single-node">
@@ -895,29 +913,57 @@ const ResourceAllocationFormItems: React.FC<
                 </Form.Item>
               </Col>
               <Col xs={24}>
-                {/* <Col xs={24} lg={12}> */}
                 <Form.Item
                   noStyle
                   shouldUpdate={(prev, next) =>
                     prev.cluster_mode !== next.cluster_mode
                   }
                 >
-                  {() => (
-                    <SliderInputItem
-                      disabled={
-                        form.getFieldValue('cluster_mode') === 'single-node'
-                      }
-                      name={'cluster_size'}
-                      label={t('session.launcher.ClusterSize')}
-                      required
-                      inputNumberProps={{
-                        addonAfter: '#',
-                      }}
-                      min={1}
-                      // TODO: max cluster size
-                      max={_.min([sliderMinMax.cpu?.max])}
-                    />
-                  )}
+                  {() => {
+                    const derivedClusterSizeMaxLimit = _.min([
+                      sliderMinMaxLimit.cpu?.max,
+                      keypairResourcePolicy.max_containers_per_session,
+                    ]);
+                    const clusterUnit =
+                      form.getFieldValue('cluster_mode') === 'single-node'
+                        ? t('session.launcher.Container')
+                        : t('session.launcher.Node');
+                    return (
+                      <Form.Item
+                        name={'cluster_size'}
+                        label={t('session.launcher.ClusterSize')}
+                        required
+                        rules={[remainingValidationRules.clusterSize]}
+                      >
+                        <InputNumberWithSlider
+                          min={1}
+                          // TODO: max cluster size
+                          max={derivedClusterSizeMaxLimit}
+                          disabled={derivedClusterSizeMaxLimit === 1}
+                          sliderProps={{
+                            marks: {
+                              1: '1',
+                              [derivedClusterSizeMaxLimit]:
+                                derivedClusterSizeMaxLimit,
+                            },
+                            tooltip: {
+                              formatter: (value = 0) => {
+                                return `${value} ${clusterUnit}`;
+                              },
+                            },
+                          }}
+                          inputNumberProps={{
+                            addonAfter: clusterUnit,
+                          }}
+                          onChange={(value) => {
+                            if (value > 1) {
+                              form.setFieldValue('num_of_sessions', 1);
+                            }
+                          }}
+                        />
+                      </Form.Item>
+                    );
+                  }}
                 </Form.Item>
               </Col>
             </Row>

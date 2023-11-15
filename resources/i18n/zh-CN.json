@@ -245,7 +245,9 @@
       "SessionName": "__NOT_TRANSLATED__",
       "ResetFormConfirm": "__NOT_TRANSLATED__",
       "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__"
+      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "ResourceAllocationPerContainer": "每个集装箱的资源分配",
+      "NumberOfContainer": "集装箱数量"
     },
     "Preparing": "正在准备...",
     "PreparingSession": "正在准备会议...",

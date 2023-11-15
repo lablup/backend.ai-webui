@@ -256,7 +256,9 @@
       "PreOpenPortMaxCountLimit_plural": "PreOpenPortMaxCountLimit",
       "SessionName": "SessionName",
       "ResetFormConfirm": "ResetFormConfirm",
-      "ScheduleTimeSimple": "ScheduleTimeSimple"
+      "ScheduleTimeSimple": "ScheduleTimeSimple",
+      "ResourceAllocationPerContainer": "Resource Allocation Per Container",
+      "NumberOfContainer": "Number of container"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

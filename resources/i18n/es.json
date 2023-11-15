@@ -1117,7 +1117,9 @@
       "SessionName": "__NOT_TRANSLATED__",
       "ResetFormConfirm": "__NOT_TRANSLATED__",
       "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__"
+      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "ResourceAllocationPerContainer": "Asignación de recursos por contenedor",
+      "NumberOfContainer": "Número de contenedor"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

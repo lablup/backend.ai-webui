@@ -11,7 +11,7 @@ import ImageEnvironmentSelectFormItems, {
 } from './ImageEnvironmentSelectFormItems';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
-import SliderInputItem from './SliderInputFormItem';
+import SliderInputFormItem from './SliderInputFormItem';
 import VFolderSelect from './VFolderSelect';
 import { Card, Form, Input, theme, Select, Switch, message } from 'antd';
 import _ from 'lodash';
@@ -383,7 +383,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               autoSelectDefault
             />
           </Form.Item>
-          <SliderInputItem
+          <SliderInputFormItem
             label={t('modelService.DesiredRoutingCount')}
             name="desiredRoutingCount"
             rules={[
@@ -427,7 +427,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
                 return (
                   <>
-                    <SliderInputItem
+                    <SliderInputFormItem
                       name={'cpu'}
                       label={t('session.launcher.CPU')}
                       tooltip={<Trans i18nKey={'session.launcher.DescCPU'} />}
@@ -448,7 +448,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         },
                       ]}
                     />
-                    <SliderInputItem
+                    <SliderInputFormItem
                       name={'mem'}
                       label={t('session.launcher.Memory')}
                       tooltip={
@@ -492,7 +492,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         }),
                       ]}
                     />
-                    <SliderInputItem
+                    <SliderInputFormItem
                       name={'shmem'}
                       label={t('session.launcher.SharedMemory')}
                       tooltip={
@@ -523,7 +523,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             >
               {() => {
                 return (
-                  <SliderInputItem
+                  <SliderInputFormItem
                     name={['resource', 'accelerator']}
                     label={t(`session.launcher.AIAccelerator`)}
                     tooltip={
