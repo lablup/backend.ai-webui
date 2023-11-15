@@ -248,7 +248,10 @@
       "ResetFormConfirm": "입력한 사항을 모두 초기화하시겠습니까?",
       "StartTimeMustBeInTheFuture": "시작 시간은 현재 시간 이후여야 합니다.",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "NumberOfContainer": "컨테이너 개수"
+      "NumberOfContainer": "컨테이너 개수",
+      "EnterEnvironmentVariable": "변수 이름 입력해주세요.",
+      "EnvironmentVariableNamePatternError": "변수 이름은 문자 또는 밑줄로 시작해야 하며 문자, 숫자, 밑줄만 포함할 수 있습니다.",
+      "EnvironmentVariableDuplicateName": "이미 존재하는 변수명입니다."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

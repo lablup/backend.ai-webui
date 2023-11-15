@@ -246,7 +246,10 @@
       "TemplateAndHistory": "__NOT_TRANSLATED__",
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Peruntukan Sumber Setiap Bekas",
-      "NumberOfContainer": "Bilangan bekas"
+      "NumberOfContainer": "Bilangan bekas",
+      "EnterEnvironmentVariable": "Masukkan nama Pembolehubah",
+      "EnvironmentVariableNamePatternError": "Nama pembolehubah mesti bermula dengan huruf atau garis bawah, dan hanya boleh mengandungi huruf, nombor dan garis bawah.",
+      "EnvironmentVariableDuplicateName": "Nama pembolehubah ini sudah wujud."
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",
