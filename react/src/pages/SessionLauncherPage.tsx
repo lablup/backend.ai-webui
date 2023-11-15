@@ -881,6 +881,8 @@ const SessionLauncherPage = () => {
                         noStyle
                       >
                         <Switch
+                          checkedChildren={'ON'}
+                          unCheckedChildren={'OFF'}
                           onChange={(checked) => {
                             if (checked) {
                               form.setFieldsValue(
