@@ -474,6 +474,7 @@ const ResourceAllocationFormItems: React.FC<
       >
         <ResourceGroupSelect
           autoSelectDefault
+          showSearch
           loading={isPendingCheckResets}
           onChange={(v) => {
             startCheckRestsTransition(() => {
