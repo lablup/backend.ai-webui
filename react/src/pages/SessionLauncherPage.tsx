@@ -48,6 +48,7 @@ import {
   Col,
   Descriptions,
   Form,
+  FormInstance,
   Grid,
   Input,
   InputNumber,
@@ -1186,7 +1187,7 @@ const SessionLauncherPage = () => {
                         );
                       }}
                     >
-                      <Flex direction="column" gap={'xs'} align="stretch">
+                      <Flex direction="column" align="stretch">
                         {_.some(form.getFieldValue('resource'), (v, key) => {
                           //                         console.log(form.getFieldError(['resource', 'shmem']));
                           // console.log(form.getFieldValue(['resource']));
@@ -1203,10 +1204,12 @@ const SessionLauncherPage = () => {
                           />
                         )}
 
-                        <Descriptions>
+                        <Descriptions column={2}>
                           <Descriptions.Item
-                            span={24}
-                            label={t('environment.ResourcePresets')}
+                            label={t(
+                              'session.launcher.ResourceAllocationPerContainer',
+                            )}
+                            span={2}
                           >
                             <Flex
                               direction="row"
@@ -1225,53 +1228,7 @@ const SessionLauncherPage = () => {
                                 </Tag>
                               )}
 
-                              {_.map(
-                                _.omit(
-                                  form.getFieldValue('resource'),
-                                  'shmem',
-                                  'accelerator',
-                                  'acceleratorType',
-                                ),
-                                (value, type) => {
-                                  return (
-                                    <ResourceNumber
-                                      key={type}
-                                      // @ts-ignore
-                                      type={type}
-                                      value={
-                                        type === 'mem'
-                                          ? iSizeToSize(value, 'b')?.number + ''
-                                          : value
-                                      }
-                                      opts={{
-                                        shmem: form.getFieldValue('resource')
-                                          .shmem
-                                          ? iSizeToSize(
-                                              form.getFieldValue('resource')
-                                                .shmem,
-                                              'b',
-                                            )?.number
-                                          : undefined,
-                                      }}
-                                    />
-                                  );
-                                },
-                              )}
-                              {_.isNumber(
-                                form.getFieldValue(['resource', 'accelerator']),
-                              ) && (
-                                <ResourceNumber
-                                  // @ts-ignore
-                                  type={form.getFieldValue([
-                                    'resource',
-                                    'acceleratorType',
-                                  ])}
-                                  value={form.getFieldValue([
-                                    'resource',
-                                    'accelerator',
-                                  ])}
-                                />
-                              )}
+                              <FormResourceNumbers form={form} />
                               {/* {_.chain(
                               form.getFieldValue('allocationPreset') ===
                                 'custom'
@@ -1304,7 +1261,38 @@ const SessionLauncherPage = () => {
                               .value()} */}
                             </Flex>
                           </Descriptions.Item>
+                          <Descriptions.Item
+                            label={t('session.launcher.NumberOfContainer')}
+                          >
+                            {form.getFieldValue('cluster_size') === 1
+                              ? form.getFieldValue('num_of_sessions')
+                              : form.getFieldValue('cluster_size')}
+                          </Descriptions.Item>
+                          <Descriptions.Item
+                            label={t('session.launcher.ClusterMode')}
+                          >
+                            {form.getFieldValue('cluster_mode') ===
+                            'single-node'
+                              ? t('session.launcher.SingleNode')
+                              : t('session.launcher.MultiNode')}
+                          </Descriptions.Item>
                         </Descriptions>
+                        <Card
+                          size="small"
+                          type="inner"
+                          title={t('session.launcher.TotalAllocation')}
+                        >
+                          <Flex direction="row" gap="xxs">
+                            <FormResourceNumbers
+                              form={form}
+                              containerCount={
+                                form.getFieldValue('cluster_size') === 1
+                                  ? form.getFieldValue('num_of_sessions')
+                                  : form.getFieldValue('cluster_size')
+                              }
+                            />
+                          </Flex>
+                        </Card>
                       </Flex>
                     </BAICard>
                     <BAICard
@@ -1533,6 +1521,52 @@ const SessionLauncherPage = () => {
   );
 };
 
+const FormResourceNumbers: React.FC<{
+  form: FormInstance;
+  containerCount?: number;
+}> = ({ form, containerCount = 1 }) => {
+  return (
+    <>
+      {_.map(
+        _.omit(
+          form.getFieldValue('resource'),
+          'shmem',
+          'accelerator',
+          'acceleratorType',
+        ),
+        (value, type) => {
+          return (
+            <ResourceNumber
+              key={type}
+              // @ts-ignore
+              type={type}
+              value={
+                type === 'mem'
+                  ? (iSizeToSize(value, 'b')?.number || 0) * containerCount + ''
+                  : _.toNumber(value) * containerCount + ''
+              }
+              opts={{
+                shmem: form.getFieldValue('resource').shmem
+                  ? (iSizeToSize(form.getFieldValue('resource').shmem, 'b')
+                      ?.number || 0) * containerCount
+                  : undefined,
+              }}
+            />
+          );
+        },
+      )}
+      {_.isNumber(form.getFieldValue(['resource', 'accelerator'])) && (
+        <ResourceNumber
+          // @ts-ignore
+          type={form.getFieldValue(['resource', 'acceleratorType'])}
+          value={_.toString(
+            form.getFieldValue(['resource', 'accelerator']) * containerCount,
+          )}
+        />
+      )}
+    </>
+  );
+};
 // const SessionTypeItem: React.FC<{
 //   title: string;
 //   description?: string;

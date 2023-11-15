@@ -245,7 +245,9 @@
       "SessionName": "__NOT_TRANSLATED__",
       "ResetFormConfirm": "__NOT_TRANSLATED__",
       "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__"
+      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "ResourceAllocationPerContainer": "Atribuição de recursos por contentor",
+      "NumberOfContainer": "Número de contentores"
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",
