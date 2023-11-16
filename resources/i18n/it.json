@@ -247,7 +247,8 @@
       "TemplateAndHistory": "__NOT_TRANSLATED__",
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Allocazione delle risorse per contenitore",
-      "NumberOfContainer": "Numero di contenitori"
+      "NumberOfContainer": "Numero di contenitori",
+      "ErrorCanNotExceedRemaining": "Non può essere impostato su un valore superiore alle risorse rimanenti ({{amount}})."
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",

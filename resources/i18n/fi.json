@@ -1119,7 +1119,8 @@
       "TemplateAndHistory": "__NOT_TRANSLATED__",
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Resurssien jakaminen konttia kohti",
-      "NumberOfContainer": "Säiliön numero"
+      "NumberOfContainer": "Säiliön numero",
+      "ErrorCanNotExceedRemaining": "Ei voi olla suurempi kuin jäljellä olevat resurssit ({{amount}})."
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

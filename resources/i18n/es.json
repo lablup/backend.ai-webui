@@ -1119,7 +1119,8 @@
       "TemplateAndHistory": "__NOT_TRANSLATED__",
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Asignación de recursos por contenedor",
-      "NumberOfContainer": "Número de contenedor"
+      "NumberOfContainer": "Número de contenedor",
+      "ErrorCanNotExceedRemaining": "No puede ser mayor que los recursos restantes ({{amount}})."
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

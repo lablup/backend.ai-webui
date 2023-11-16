@@ -246,7 +246,8 @@
       "TemplateAndHistory": "__NOT_TRANSLATED__",
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Phân bổ tài nguyên trên mỗi vùng chứa",
-      "NumberOfContainer": "Số lượng thùng chứa"
+      "NumberOfContainer": "Số lượng thùng chứa",
+      "ErrorCanNotExceedRemaining": "Không thể đặt thành lớn hơn các tài nguyên còn lại ({{amount}})."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",

@@ -246,7 +246,8 @@
       "TemplateAndHistory": "__NOT_TRANSLATED__",
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Peruntukan Sumber Setiap Bekas",
-      "NumberOfContainer": "Bilangan bekas"
+      "NumberOfContainer": "Bilangan bekas",
+      "ErrorCanNotExceedRemaining": "Tidak boleh ditetapkan kepada lebih besar daripada sumber yang selebihnya ({{amount}})."
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",

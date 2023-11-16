@@ -247,7 +247,8 @@
       "TemplateAndHistory": "__NOT_TRANSLATED__",
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Κατανομή πόρων ανά εμπορευματοκιβώτιο",
-      "NumberOfContainer": "Αριθμός εμπορευματοκιβωτίων"
+      "NumberOfContainer": "Αριθμός εμπορευματοκιβωτίων",
+      "ErrorCanNotExceedRemaining": "Δεν μπορεί να οριστεί σε τιμή μεγαλύτερη από τους υπόλοιπους πόρους ({{amount}})."
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",

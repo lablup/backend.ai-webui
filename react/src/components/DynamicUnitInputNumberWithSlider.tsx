@@ -139,6 +139,8 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                         : minGiB.number * 1024 + 'm',
                   },
                 }),
+              // extra: remaining mark code should be located before max mark code to prevent overlapping when it is same value
+              ...extraMarks,
               ...(maxGiB?.number && {
                 [maxGiB.number]: {
                   style: {
@@ -152,7 +154,6 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                       : maxGiB.number * 1024 + 'm',
                 },
               }),
-              ...extraMarks,
             }}
           />
         </Flex>

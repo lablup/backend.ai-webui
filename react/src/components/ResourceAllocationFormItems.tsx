@@ -399,97 +399,6 @@ const ResourceAllocationFormItems: React.FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImage]);
 
-  const remainingValidationRules: {
-    [key: string]: FormRule;
-  } = {
-    cpu: {
-      warningOnly: true,
-      validator: async (rule, value: string) => {
-        if (sliderMinMaxLimit.cpu && value > sliderMinMaxLimit.cpu.remaining) {
-          return Promise.reject(
-            t('session.launcher.EnqueueComputeSessionWarning'),
-          );
-        } else {
-          return Promise.resolve();
-        }
-      },
-    },
-    mem: {
-      warningOnly: true,
-      validator: async (rule, value: string) => {
-        if (
-          !_.isElement(value) &&
-          sliderMinMaxLimit.mem &&
-          compareNumberWithUnits(value, sliderMinMaxLimit.mem.remaining + 'b') >
-            0
-        ) {
-          return Promise.reject(
-            t('session.launcher.EnqueueComputeSessionWarning'),
-          );
-        } else {
-          return Promise.resolve();
-        }
-      },
-    },
-    ..._.reduce(
-      acceleratorSlots,
-      (result, slot, slotKey) => {
-        return {
-          ...result,
-          [slotKey]: {
-            warningOnly: true,
-            validator: async (rule: any, value: number) => {
-              if (
-                sliderMinMaxLimit[slotKey] &&
-                value > sliderMinMaxLimit[slotKey].remaining
-              ) {
-                return Promise.reject(
-                  t('session.launcher.EnqueueComputeSessionWarning'),
-                );
-              } else {
-                return Promise.resolve();
-              }
-            },
-          },
-        };
-      },
-      {},
-    ),
-    session: {
-      warningOnly: true,
-      validator: async (rule, value: number) => {
-        if (
-          sliderMinMaxLimit.session &&
-          value > sliderMinMaxLimit.session.remaining
-        ) {
-          return Promise.reject(
-            t('session.launcher.EnqueueComputeSessionWarning'),
-          );
-        } else {
-          return Promise.resolve();
-        }
-      },
-    },
-    clusterSize: {
-      warningOnly: true,
-      validator: async (rule, value: number) => {
-        if (
-          value >
-          _.min([
-            sliderMinMaxLimit.cpu?.remaining,
-            keypairResourcePolicy.max_containers_per_session,
-          ])
-        ) {
-          return Promise.reject(
-            t('session.launcher.EnqueueComputeSessionWarning'),
-          );
-        } else {
-          return Promise.resolve();
-        }
-      },
-    },
-  };
-
   return (
     <>
       <Form.Item
@@ -570,7 +479,31 @@ const ResourceAllocationFormItems: React.FC<
                         min: sliderMinMaxLimit.cpu?.min,
                         // TODO: set message
                       },
-                      remainingValidationRules.cpu,
+                      {
+                        warningOnly:
+                          baiClient._config?.always_enqueue_compute_session,
+                        validator: async (rule, value: string) => {
+                          if (
+                            sliderMinMaxLimit.cpu &&
+                            value > sliderMinMaxLimit.cpu.remaining
+                          ) {
+                            return Promise.reject(
+                              baiClient._config?.always_enqueue_compute_session
+                                ? t(
+                                    'session.launcher.EnqueueComputeSessionWarning',
+                                  )
+                                : t(
+                                    'session.launcher.ErrorCanNotExceedRemaining',
+                                    {
+                                      amount: sliderMinMaxLimit.cpu.remaining,
+                                    },
+                                  ),
+                            );
+                          } else {
+                            return Promise.resolve();
+                          }
+                        },
+                      },
                     ]}
                   >
                     <InputNumberWithSlider
@@ -581,6 +514,7 @@ const ResourceAllocationFormItems: React.FC<
                         marks: {
                           [sliderMinMaxLimit.cpu?.min]:
                             sliderMinMaxLimit.cpu?.min,
+                          // remaining mark code should be located before max mark code to prevent overlapping when it is same value
                           ...(sliderMinMaxLimit.cpu?.remaining
                             ? {
                                 [sliderMinMaxLimit.cpu?.remaining]: {
@@ -613,6 +547,7 @@ const ResourceAllocationFormItems: React.FC<
                     }
                   >
                     {() => {
+                      console.log('####', sliderMinMaxLimit.mem?.remaining);
                       return (
                         <Form.Item
                           name={['resource', 'mem']}
@@ -624,42 +559,43 @@ const ResourceAllocationFormItems: React.FC<
                             {
                               required: true,
                             },
-                            // {
-                            //   validator: async (rule, value: string) => {
-                            //     if (
-                            //       compareNumberWithUnits(
-                            //         value || '0b',
-                            //         sliderMinMaxLimit.mem?.min,
-                            //       ) < 0
-                            //     ) {
-                            //       return Promise.reject(
-                            //         t('session.launcher.MinMemory', {
-                            //           size: _.toUpper(sliderMinMaxLimit.mem?.min),
-                            //         }),
-                            //       );
-                            //     }
-                            //     return Promise.resolve();
-                            //   },
-                            // },
-                            remainingValidationRules.mem,
-                            // {
-                            //   warningOnly: true,
-                            //   validator: async (rule, value: string) => {
-                            //     if (
-                            //       compareNumberWithUnits(
-                            //         value || '0b',
-                            //         checkPresetInfo?.keypair_remaining.mem + 'b',
-                            //       ) > 0
-                            //     ) {
-                            //       return Promise.reject(
-                            //         t(
-                            //           'session.launcher.EnqueueComputeSessionWarning',
-                            //         ),
-                            //       );
-                            //     }
-                            //     return Promise.resolve();
-                            //   },
-                            // },
+                            {
+                              warningOnly:
+                                baiClient._config
+                                  ?.always_enqueue_compute_session,
+                              validator: async (rule, value: string) => {
+                                console.log(sliderMinMaxLimit.mem.remaining);
+                                if (
+                                  !_.isElement(value) &&
+                                  sliderMinMaxLimit.mem &&
+                                  compareNumberWithUnits(
+                                    value,
+                                    sliderMinMaxLimit.mem.remaining + 'b',
+                                  ) > 0
+                                ) {
+                                  return Promise.reject(
+                                    baiClient._config
+                                      ?.always_enqueue_compute_session
+                                      ? t(
+                                          'session.launcher.EnqueueComputeSessionWarning',
+                                        )
+                                      : t(
+                                          'session.launcher.ErrorCanNotExceedRemaining',
+                                          {
+                                            amount: iSizeToSize(
+                                              sliderMinMaxLimit.mem.remaining +
+                                                'b',
+                                              'g',
+                                              3,
+                                            )?.numberUnit,
+                                          },
+                                        ),
+                                  );
+                                } else {
+                                  return Promise.resolve();
+                                }
+                              },
+                            },
                           ]}
                         >
                           <DynamicUnitInputNumberWithSlider
@@ -696,6 +632,7 @@ const ResourceAllocationFormItems: React.FC<
                                     [iSizeToSize(
                                       sliderMinMaxLimit.mem?.remaining + 'b',
                                       'g',
+                                      3,
                                     )?.numberFixed]: {
                                       label: <RemainingMark />,
                                     },
@@ -805,14 +742,44 @@ const ResourceAllocationFormItems: React.FC<
                               sliderMinMaxLimit[currentAcceleratorType]?.min ||
                               0,
                           },
-                          remainingValidationRules[currentAcceleratorType],
+                          {
+                            warningOnly:
+                              baiClient._config?.always_enqueue_compute_session,
+                            validator: async (rule: any, value: number) => {
+                              if (
+                                sliderMinMaxLimit[currentAcceleratorType] &&
+                                value >
+                                  sliderMinMaxLimit[currentAcceleratorType]
+                                    .remaining
+                              ) {
+                                return Promise.reject(
+                                  baiClient._config
+                                    ?.always_enqueue_compute_session
+                                    ? t(
+                                        'session.launcher.EnqueueComputeSessionWarning',
+                                      )
+                                    : t(
+                                        'session.launcher.ErrorCanNotExceedRemaining',
+                                        {
+                                          amount:
+                                            sliderMinMaxLimit[
+                                              currentAcceleratorType
+                                            ].remaining,
+                                        },
+                                      ),
+                                );
+                              } else {
+                                return Promise.resolve();
+                              }
+                            },
+                          },
                         ]}
                       >
                         <InputNumberWithSlider
                           sliderProps={{
                             marks: {
                               0: 0,
-
+                              // remaining mark code should be located before max mark code to prevent overlapping when it is same value
                               ...(sliderMinMaxLimit[currentAcceleratorType]
                                 ?.remaining
                                 ? {
@@ -907,7 +874,35 @@ const ResourceAllocationFormItems: React.FC<
                               {
                                 required: true,
                               },
-                              remainingValidationRules.session,
+                              {
+                                warningOnly:
+                                  baiClient._config
+                                    ?.always_enqueue_compute_session,
+                                validator: async (rule, value: number) => {
+                                  if (
+                                    sliderMinMaxLimit.session &&
+                                    value > sliderMinMaxLimit.session.remaining
+                                  ) {
+                                    return Promise.reject(
+                                      baiClient._config
+                                        ?.always_enqueue_compute_session
+                                        ? t(
+                                            'session.launcher.EnqueueComputeSessionWarning',
+                                          )
+                                        : t(
+                                            'session.launcher.ErrorCanNotExceedRemaining',
+                                            {
+                                              amount:
+                                                sliderMinMaxLimit.session
+                                                  .remaining,
+                                            },
+                                          ),
+                                    );
+                                  } else {
+                                    return Promise.resolve();
+                                  }
+                                },
+                              },
                             ]}
                           >
                             <InputNumberWithSlider
@@ -919,6 +914,15 @@ const ResourceAllocationFormItems: React.FC<
                                 marks: {
                                   [sliderMinMaxLimit.session?.min]:
                                     sliderMinMaxLimit.session?.min,
+                                  // remaining mark code should be located before max mark code to prevent overlapping when it is same value
+                                  ...(sliderMinMaxLimit.session?.remaining
+                                    ? {
+                                        [sliderMinMaxLimit.session?.remaining]:
+                                          {
+                                            label: <RemainingMark />,
+                                          },
+                                      }
+                                    : {}),
                                   [sliderMinMaxLimit.session?.max]:
                                     sliderMinMaxLimit.session?.max,
                                 },
@@ -997,7 +1001,29 @@ const ResourceAllocationFormItems: React.FC<
                         name={'cluster_size'}
                         label={t('session.launcher.ClusterSize')}
                         required
-                        rules={[remainingValidationRules.clusterSize]}
+                        rules={[
+                          {
+                            warningOnly:
+                              baiClient._config?.always_enqueue_compute_session,
+                            validator: async (rule, value: number) => {
+                              if (
+                                value >
+                                _.min([
+                                  sliderMinMaxLimit.cpu?.remaining,
+                                  keypairResourcePolicy.max_containers_per_session,
+                                ])
+                              ) {
+                                return Promise.reject(
+                                  t(
+                                    'session.launcher.EnqueueComputeSessionWarning',
+                                  ),
+                                );
+                              } else {
+                                return Promise.resolve();
+                              }
+                            },
+                          },
+                        ]}
                       >
                         <InputNumberWithSlider
                           min={1}
@@ -1007,6 +1033,15 @@ const ResourceAllocationFormItems: React.FC<
                           sliderProps={{
                             marks: {
                               1: '1',
+                              // remaining mark code should be located before max mark code to prevent overlapping when it is same value
+                              ...(derivedClusterSizeMaxLimit.cpu?.remaining
+                                ? {
+                                    [derivedClusterSizeMaxLimit.cpu?.remaining]:
+                                      {
+                                        label: <RemainingMark />,
+                                      },
+                                  }
+                                : {}),
                               [derivedClusterSizeMaxLimit]:
                                 derivedClusterSizeMaxLimit,
                             },

@@ -247,7 +247,8 @@
       "TemplateAndHistory": "__NOT_TRANSLATED__",
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Alokasi Sumber Daya Per Kontainer",
-      "NumberOfContainer": "Jumlah kontainer"
+      "NumberOfContainer": "Jumlah kontainer",
+      "ErrorCanNotExceedRemaining": "Tidak dapat diatur lebih besar dari sumber daya yang tersisa ({{jumlah}})."
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",

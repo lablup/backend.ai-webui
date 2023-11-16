@@ -249,7 +249,8 @@
       "TemplateAndHistory": "__NOT_TRANSLATED__",
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Alokacja zasobów na kontener",
-      "NumberOfContainer": "Liczba pojemników"
+      "NumberOfContainer": "Liczba pojemników",
+      "ErrorCanNotExceedRemaining": "Nie można ustawić wartości większej niż pozostałe zasoby ({{amount}})."
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",

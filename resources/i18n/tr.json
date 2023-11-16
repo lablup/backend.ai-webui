@@ -247,7 +247,8 @@
       "TemplateAndHistory": "__NOT_TRANSLATED__",
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Konteyner Başına Kaynak Tahsisi",
-      "NumberOfContainer": "Konteyner sayısı"
+      "NumberOfContainer": "Konteyner sayısı",
+      "ErrorCanNotExceedRemaining": "Kalan kaynaklardan ({{amount}}) daha büyük bir değere ayarlanamaz."
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",

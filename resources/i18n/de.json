@@ -247,7 +247,8 @@
       "TemplateAndHistory": "__NOT_TRANSLATED__",
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Ressourcenzuweisung pro Container",
-      "NumberOfContainer": "Nummer des Behälters"
+      "NumberOfContainer": "Nummer des Behälters",
+      "ErrorCanNotExceedRemaining": "Kann nicht auf einen Wert gesetzt werden, der größer ist als die verbleibenden Ressourcen ({{Betrag}})."
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",

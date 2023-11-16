@@ -249,7 +249,8 @@
       "TemplateAndHistory": "__NOT_TRANSLATED__",
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Распределение ресурсов на контейнер",
-      "NumberOfContainer": "Количество контейнеров"
+      "NumberOfContainer": "Количество контейнеров",
+      "ErrorCanNotExceedRemaining": "Не может быть установлено значение, превышающее остаток ресурсов ({{amount}})."
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",

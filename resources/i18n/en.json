@@ -258,7 +258,8 @@
       "ResetFormConfirm": "ResetFormConfirm",
       "ScheduleTimeSimple": "ScheduleTimeSimple",
       "ResourceAllocationPerContainer": "Resource Allocation Per Container",
-      "NumberOfContainer": "Number of container"
+      "NumberOfContainer": "Number of container",
+      "ErrorCanNotExceedRemaining": "Cannot be set to greater than the remaining resources ({{amount}})."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

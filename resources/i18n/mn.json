@@ -247,7 +247,8 @@
       "TemplateAndHistory": "__NOT_TRANSLATED__",
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Нэг контейнерт нөөцийн хуваарилалт",
-      "NumberOfContainer": "Савны тоо"
+      "NumberOfContainer": "Савны тоо",
+      "ErrorCanNotExceedRemaining": "Үлдсэн нөөцөөс ({{amount}}) ихийг тохируулах боломжгүй."
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
