@@ -560,11 +560,34 @@ const ResourceAllocationFormItems: React.FC<
                               required: true,
                             },
                             {
+                              // TODO: min of mem should be shmem + image's mem limit??
+                              validator: async (rule, value: string) => {
+                                if (
+                                  !_.isElement(value) &&
+                                  sliderMinMaxLimit.mem?.min &&
+                                  compareNumberWithUnits(
+                                    value,
+                                    addNumberWithUnits(
+                                      sliderMinMaxLimit.mem?.min,
+                                      form.getFieldValue(['resource', 'shmem']),
+                                    ) || '0b',
+                                  ) < 0
+                                ) {
+                                  return Promise.reject(
+                                    t('session.launcher.MinMemory', {
+                                      size: '',
+                                    }),
+                                  );
+                                } else {
+                                  return Promise.resolve();
+                                }
+                              },
+                            },
+                            {
                               warningOnly:
                                 baiClient._config
                                   ?.always_enqueue_compute_session,
                               validator: async (rule, value: string) => {
-                                console.log(sliderMinMaxLimit.mem.remaining);
                                 if (
                                   !_.isElement(value) &&
                                   sliderMinMaxLimit.mem &&
@@ -602,10 +625,11 @@ const ResourceAllocationFormItems: React.FC<
                             max={sliderMinMaxLimit.mem?.max}
                             // min="256m"
                             // min={'0g'}
-                            min={addNumberWithUnits(
-                              sliderMinMaxLimit.mem?.min,
-                              form.getFieldValue(['resource', 'shmem']) || '0g',
-                            )}
+                            // min={addNumberWithUnits(
+                            //   sliderMinMaxLimit.mem?.min,
+                            //   form.getFieldValue(['resource', 'shmem']) || '0g',
+                            // )}
+                            min={sliderMinMaxLimit.mem?.min}
                             // warn={
                             //   checkPresetInfo?.scaling_group_remaining.mem ===
                             //   undefined
@@ -693,6 +717,7 @@ const ResourceAllocationFormItems: React.FC<
                             // shmem max is mem max
                             // min={sliderMinMaxLimit.shmem?.min}
                             min={sliderMinMaxLimit.shmem?.min}
+                            // max={sliderMinMaxLimit.mem?.max || '0g'}
                             max={
                               form.getFieldValue(['resource', 'mem']) || '0g'
                             }
