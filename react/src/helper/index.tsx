@@ -174,13 +174,19 @@ export function iSizeToSize(
     ? sizes.indexOf(targetSizeUnit.toUpperCase())
     : sizeIndex;
   const targetBytes = bytes / Math.pow(1024, targetIndex);
-  const numberFixed = targetBytes.toFixed(fixed);
+  // const numberFixed = targetBytes.toFixed(fixed);
+  const numberFixed = toFixedFloor(targetBytes, fixed);
   return {
     number: targetBytes,
     numberFixed,
     unit: sizes[targetIndex],
     numberUnit: `${numberFixed}${sizes[targetIndex]}`,
   };
+}
+
+function toFixedFloor(num: number, fixed: number) {
+  var re = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?');
+  return num.toString().match(re)?.[0] || '0';
 }
 
 export function compareNumberWithUnits(size1: string, size2: string) {
