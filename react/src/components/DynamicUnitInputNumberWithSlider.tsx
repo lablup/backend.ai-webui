@@ -96,7 +96,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                 // fill: 'red',
               }
             }
-            step={0.05}
+            step={0.125}
             // min={minGiB.number}  // DO NOT use min, because slider left should be 0
             value={valueGiB?.number}
             tooltip={{
@@ -131,7 +131,12 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                       color: token.colorTextSecondary,
                     },
                     // if 0, without unit
-                    label: minGiB.number + (minGiB.number ? 'g' : ''),
+                    label:
+                      minGiB.number === 0
+                        ? minGiB.number
+                        : minGiB.number >= 1
+                        ? minGiB.number + 'g'
+                        : minGiB.number * 1024 + 'm',
                   },
                 }),
               ...(maxGiB?.number && {
@@ -139,10 +144,15 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                   style: {
                     color: token.colorTextSecondary,
                   },
-                  label: maxGiB.number + 'g',
+                  label:
+                    maxGiB.number === 0
+                      ? maxGiB.number
+                      : maxGiB.number >= 1
+                      ? maxGiB.number + 'g'
+                      : maxGiB.number * 1024 + 'm',
                 },
               }),
-              // ...extraMarks,
+              ...extraMarks,
             }}
           />
         </Flex>

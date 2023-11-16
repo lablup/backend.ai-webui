@@ -1,4 +1,8 @@
-import { compareNumberWithUnits, iSizeToSize } from '../helper';
+import {
+  addNumberWithUnits,
+  compareNumberWithUnits,
+  iSizeToSize,
+} from '../helper';
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
@@ -10,6 +14,7 @@ import InputNumberWithSlider from './InputNumberWithSlider';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import ResourcePresetSelect from './ResourcePresetSelect';
+import { CaretDownOutlined } from '@ant-design/icons';
 import {
   Card,
   Col,
@@ -239,11 +244,12 @@ const ResourceAllocationFormItems: React.FC<
               ]) ?? Number.MAX_SAFE_INTEGER,
           },
           shmem: {
-            min:
-              _.max([
-                _.find(currentImage?.resource_limits, (i) => i?.key === 'shmem')
-                  ?.min,
-              ]) || '64m',
+            min: _.max([
+              _.find(currentImage?.resource_limits, (i) => i?.key === 'shmem')
+                ?.min,
+              ,
+              '64m',
+            ]),
             // shmem max is mem max
           },
         }
@@ -573,12 +579,15 @@ const ResourceAllocationFormItems: React.FC<
                       }}
                       sliderProps={{
                         marks: {
-                          0: {
-                            style: {
-                              color: token.colorTextSecondary,
-                            },
-                            label: 0,
-                          },
+                          [sliderMinMaxLimit.cpu?.min]:
+                            sliderMinMaxLimit.cpu?.min,
+                          ...(sliderMinMaxLimit.cpu?.remaining
+                            ? {
+                                [sliderMinMaxLimit.cpu?.remaining]: {
+                                  label: <RemainingMark />,
+                                },
+                              }
+                            : {}),
                           ...(sliderMinMaxLimit.cpu?.max
                             ? {
                                 [sliderMinMaxLimit.cpu?.max]: {
@@ -591,124 +600,169 @@ const ResourceAllocationFormItems: React.FC<
                             : {}),
                         },
                       }}
-                      min={0}
+                      min={sliderMinMaxLimit.cpu?.min}
                       max={sliderMinMaxLimit.cpu?.max}
                     />
                   </Form.Item>
                 )}
                 {resourceSlots?.mem && (
                   <Form.Item
-                    name={['resource', 'mem']}
-                    label={t('session.launcher.Memory')}
-                    tooltip={<Trans i18nKey={'session.launcher.DescMemory'} />}
-                    rules={[
-                      {
-                        required: true,
-                      },
-                      {
-                        validator: async (rule, value: string) => {
-                          if (
-                            compareNumberWithUnits(
-                              value || '0b',
-                              sliderMinMaxLimit.mem?.min,
-                            ) < 0
-                          ) {
-                            return Promise.reject(
-                              t('session.launcher.MinMemory', {
-                                size: _.toUpper(sliderMinMaxLimit.mem?.min),
-                              }),
-                            );
-                          }
-                          return Promise.resolve();
-                        },
-                      },
-                      remainingValidationRules.mem,
-                      // {
-                      //   warningOnly: true,
-                      //   validator: async (rule, value: string) => {
-                      //     if (
-                      //       compareNumberWithUnits(
-                      //         value || '0b',
-                      //         checkPresetInfo?.keypair_remaining.mem + 'b',
-                      //       ) > 0
-                      //     ) {
-                      //       return Promise.reject(
-                      //         t(
-                      //           'session.launcher.EnqueueComputeSessionWarning',
-                      //         ),
-                      //       );
-                      //     }
-                      //     return Promise.resolve();
-                      //   },
-                      // },
-                    ]}
+                    noStyle
+                    shouldUpdate={(prev, next) =>
+                      prev.resource.shmem !== next.resource.shmem
+                    }
                   >
-                    <DynamicUnitInputNumberWithSlider
-                      max={sliderMinMaxLimit.mem?.max}
-                      // min="256m"
-                      min={'0g'}
-                      // warn={
-                      //   checkPresetInfo?.scaling_group_remaining.mem ===
-                      //   undefined
-                      //     ? undefined
-                      //     : checkPresetInfo?.scaling_group_remaining.mem + 'g'
-                      // }
-                      extraMarks={
-                        checkPresetInfo?.scaling_group_remaining.mem
-                          ? {
-                              // @ts-ignore
-                              [iSizeToSize(
-                                checkPresetInfo?.scaling_group_remaining.mem,
-                                'g',
-                                3,
-                              ).numberFixed]: {
-                                label: '-',
-                              },
-                            }
-                          : undefined
-                      }
-                    />
+                    {() => {
+                      return (
+                        <Form.Item
+                          name={['resource', 'mem']}
+                          label={t('session.launcher.Memory')}
+                          tooltip={
+                            <Trans i18nKey={'session.launcher.DescMemory'} />
+                          }
+                          rules={[
+                            {
+                              required: true,
+                            },
+                            // {
+                            //   validator: async (rule, value: string) => {
+                            //     if (
+                            //       compareNumberWithUnits(
+                            //         value || '0b',
+                            //         sliderMinMaxLimit.mem?.min,
+                            //       ) < 0
+                            //     ) {
+                            //       return Promise.reject(
+                            //         t('session.launcher.MinMemory', {
+                            //           size: _.toUpper(sliderMinMaxLimit.mem?.min),
+                            //         }),
+                            //       );
+                            //     }
+                            //     return Promise.resolve();
+                            //   },
+                            // },
+                            remainingValidationRules.mem,
+                            // {
+                            //   warningOnly: true,
+                            //   validator: async (rule, value: string) => {
+                            //     if (
+                            //       compareNumberWithUnits(
+                            //         value || '0b',
+                            //         checkPresetInfo?.keypair_remaining.mem + 'b',
+                            //       ) > 0
+                            //     ) {
+                            //       return Promise.reject(
+                            //         t(
+                            //           'session.launcher.EnqueueComputeSessionWarning',
+                            //         ),
+                            //       );
+                            //     }
+                            //     return Promise.resolve();
+                            //   },
+                            // },
+                          ]}
+                        >
+                          <DynamicUnitInputNumberWithSlider
+                            max={sliderMinMaxLimit.mem?.max}
+                            // min="256m"
+                            // min={'0g'}
+                            min={addNumberWithUnits(
+                              sliderMinMaxLimit.mem?.min,
+                              form.getFieldValue(['resource', 'shmem']) || '0g',
+                            )}
+                            // warn={
+                            //   checkPresetInfo?.scaling_group_remaining.mem ===
+                            //   undefined
+                            //     ? undefined
+                            //     : checkPresetInfo?.scaling_group_remaining.mem + 'g'
+                            // }
+                            extraMarks={{
+                              // ...(checkPresetInfo?.scaling_group_remaining.mem
+                              //   ? {
+                              //       // @ts-ignore
+                              //       [iSizeToSize(
+                              //         checkPresetInfo?.scaling_group_remaining
+                              //           .mem,
+                              //         'g',
+                              //         3,
+                              //       ).numberFixed]: {
+                              //         label: '-',
+                              //       },
+                              //     }
+                              //   : {}),
+                              ...(sliderMinMaxLimit.mem?.remaining
+                                ? {
+                                    //@ts-ignore
+                                    [iSizeToSize(
+                                      sliderMinMaxLimit.mem?.remaining + 'b',
+                                      'g',
+                                    )?.numberFixed]: {
+                                      label: <RemainingMark />,
+                                    },
+                                  }
+                                : {}),
+                            }}
+                          />
+                        </Form.Item>
+                      );
+                    }}
                   </Form.Item>
                 )}
                 {resourceSlots?.mem && (
                   <Form.Item
-                    name={['resource', 'shmem']}
-                    // initialValue={'0g'}
-                    label={t('session.launcher.SharedMemory')}
-                    tooltip={
-                      <Trans i18nKey={'session.launcher.DescSharedMemory'} />
+                    noStyle
+                    shouldUpdate={(prev, next) =>
+                      prev.resource.mem !== next.resource.mem
                     }
-                    dependencies={[['resource', 'mem']]}
-                    rules={[
-                      {
-                        required: true,
-                      },
-                      {},
-                      {
-                        validator: async (rule, value: string) => {
-                          if (
-                            _.isEmpty(getFieldValue('resource')?.mem) ||
-                            _.isEmpty(value) ||
-                            compareNumberWithUnits(
-                              getFieldValue('resource')?.mem,
-                              value,
-                            ) >= 0
-                          ) {
-                            return Promise.resolve();
-                          } else {
-                            throw t(
-                              'resourcePreset.SHMEMShouldBeSmallerThanMemory',
-                            );
-                          }
-                        },
-                      },
-                    ]}
                   >
-                    <DynamicUnitInputNumberWithSlider
-                      // shmem max is mem max
-                      min="0g"
-                      max={sliderMinMaxLimit.mem?.max}
-                    />
+                    {() => {
+                      return (
+                        <Form.Item
+                          name={['resource', 'shmem']}
+                          // initialValue={'0g'}
+                          label={t('session.launcher.SharedMemory')}
+                          tooltip={
+                            <Trans
+                              i18nKey={'session.launcher.DescSharedMemory'}
+                            />
+                          }
+                          dependencies={[['resource', 'mem']]}
+                          rules={[
+                            {
+                              required: true,
+                            },
+                            {},
+                            {
+                              validator: async (rule, value: string) => {
+                                if (
+                                  _.isEmpty(getFieldValue('resource')?.mem) ||
+                                  _.isEmpty(value) ||
+                                  compareNumberWithUnits(
+                                    getFieldValue('resource')?.mem,
+                                    value,
+                                  ) >= 0
+                                ) {
+                                  return Promise.resolve();
+                                } else {
+                                  throw t(
+                                    'resourcePreset.SHMEMShouldBeSmallerThanMemory',
+                                  );
+                                }
+                              },
+                            },
+                          ]}
+                        >
+                          <DynamicUnitInputNumberWithSlider
+                            // shmem max is mem max
+                            // min={sliderMinMaxLimit.shmem?.min}
+                            min={sliderMinMaxLimit.shmem?.min}
+                            max={
+                              form.getFieldValue(['resource', 'mem']) || '0g'
+                            }
+                          />
+                        </Form.Item>
+                      );
+                    }}
                   </Form.Item>
                 )}
                 <Form.Item
@@ -758,6 +812,16 @@ const ResourceAllocationFormItems: React.FC<
                           sliderProps={{
                             marks: {
                               0: 0,
+
+                              ...(sliderMinMaxLimit[currentAcceleratorType]
+                                ?.remaining
+                                ? {
+                                    [sliderMinMaxLimit[currentAcceleratorType]
+                                      .remaining]: {
+                                      label: <RemainingMark />,
+                                    },
+                                  }
+                                : {}),
                               [sliderMinMaxLimit[currentAcceleratorType]?.max]:
                                 sliderMinMaxLimit[currentAcceleratorType]?.max,
                             },
@@ -974,6 +1038,22 @@ const ResourceAllocationFormItems: React.FC<
   );
 };
 
+const RemainingMark: React.FC<{ title?: string }> = () => {
+  const { token } = theme.useToken();
+  return (
+    <Flex
+      style={{
+        position: 'absolute',
+        top: -24,
+        transform: 'translateX(-50%)',
+        color: token.colorSuccess,
+        opacity: 0.5,
+      }}
+    >
+      <CaretDownOutlined />
+    </Flex>
+  );
+};
 type ResourceLimits = {
   cpu: string | 'Infinity' | 'NaN';
   mem: string | 'Infinity' | 'NaN';

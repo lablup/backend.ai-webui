@@ -1,4 +1,8 @@
-import { compareNumberWithUnits, iSizeToSize } from './index';
+import {
+  addNumberWithUnits,
+  compareNumberWithUnits,
+  iSizeToSize,
+} from './index';
 
 describe('iSizeToSize', () => {
   it('should convert iSize to Size with default fixed value', () => {
@@ -100,5 +104,26 @@ describe('compareNumberWithUnits', () => {
     expect(compareNumberWithUnits('1m', '1g')).toBeLessThan(0);
     expect(compareNumberWithUnits('1g', '1t')).toBeLessThan(0);
     expect(compareNumberWithUnits('1t', '1p')).toBeLessThan(0);
+  });
+});
+
+describe('addNumberWithUnits', () => {
+  it('should add two sizes with the same unit', () => {
+    expect(addNumberWithUnits('1K', '2K', 'K')).toBe('3.00K');
+    expect(addNumberWithUnits('1M', '2M', 'M')).toBe('3.00M');
+    expect(addNumberWithUnits('1G', '2G', 'G')).toBe('3.00G');
+    expect(addNumberWithUnits('1T', '2T', 'T')).toBe('3.00T');
+  });
+
+  it('should add two sizes with the same unit (targetUnit is `m` default Unit)', () => {
+    expect(addNumberWithUnits('1G', '2G')).toBe('3072.00M');
+    expect(addNumberWithUnits('1T', '2T')).toBe('3145728.00M');
+  });
+
+  it('should add two sizes with different units', () => {
+    expect(addNumberWithUnits('1K', '1M', 'K')).toBe('1025.00K');
+    expect(addNumberWithUnits('1M', '1G', 'M')).toBe('1025.00M');
+    expect(addNumberWithUnits('1G', '1T', 'G')).toBe('1025.00G');
+    expect(addNumberWithUnits('1T', '1P', 'T')).toBe('1025.00T');
   });
 });
