@@ -247,7 +247,10 @@
       "TemplateAndHistory": "__NOT_TRANSLATED__",
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "コンテナあたりのリソース割り当て",
-      "NumberOfContainer": "コンテナ数"
+      "NumberOfContainer": "コンテナ数",
+      "EnterEnvironmentVariable": "変数名の入力",
+      "EnvironmentVariableNamePatternError": "変数名は文字またはアンダースコアで始まり、文字、数字、アンダースコアのみを含むことができます。",
+      "EnvironmentVariableDuplicateName": "既に存在する変数名です。"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
