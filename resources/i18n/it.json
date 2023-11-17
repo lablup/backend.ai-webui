@@ -248,7 +248,10 @@
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Allocazione delle risorse per contenitore",
       "NumberOfContainer": "Numero di contenitori",
-      "ErrorCanNotExceedRemaining": "Non può essere impostato su un valore superiore alle risorse rimanenti ({{amount}})."
+      "ErrorCanNotExceedRemaining": "Non può essere impostato su un valore superiore alle risorse rimanenti ({{amount}}).",
+      "EnterEnvironmentVariable": "Inserire il nome della variabile",
+      "EnvironmentVariableNamePatternError": "Il nome della variabile deve iniziare con una lettera o un trattino basso e può contenere solo lettere, numeri e trattini bassi.",
+      "EnvironmentVariableDuplicateName": "Un nome di variabile già esistente."
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",

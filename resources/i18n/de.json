@@ -248,7 +248,10 @@
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Ressourcenzuweisung pro Container",
       "NumberOfContainer": "Nummer des Behälters",
-      "ErrorCanNotExceedRemaining": "Kann nicht auf einen Wert gesetzt werden, der größer ist als die verbleibenden Ressourcen ({{Betrag}})."
+      "ErrorCanNotExceedRemaining": "Kann nicht auf einen Wert gesetzt werden, der größer ist als die verbleibenden Ressourcen ({{Betrag}}).",
+      "EnterEnvironmentVariable": "Variablenname eingeben",
+      "EnvironmentVariableNamePatternError": "Der Variablenname muss mit einem Buchstaben oder Unterstrich beginnen und darf nur Buchstaben, Zahlen und Unterstriche enthalten.",
+      "EnvironmentVariableDuplicateName": "Ein Variablenname, der bereits existiert."
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",

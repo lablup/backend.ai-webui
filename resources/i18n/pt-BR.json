@@ -248,7 +248,10 @@
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Atribuição de recursos por contentor",
       "NumberOfContainer": "Número de contentores",
-      "ErrorCanNotExceedRemaining": "Não pode ser definido como superior aos recursos restantes ({{amount}})."
+      "ErrorCanNotExceedRemaining": "Não pode ser definido como superior aos recursos restantes ({{amount}}).",
+      "EnterEnvironmentVariable": "Introduzir o nome da variável",
+      "EnvironmentVariableNamePatternError": "O nome da variável deve começar com uma letra ou um sublinhado e só pode conter letras, números e sublinhados.",
+      "EnvironmentVariableDuplicateName": "Um nome de variável que já existe."
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",

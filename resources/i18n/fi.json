@@ -1120,7 +1120,10 @@
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Resurssien jakaminen konttia kohti",
       "NumberOfContainer": "Säiliön numero",
-      "ErrorCanNotExceedRemaining": "Ei voi olla suurempi kuin jäljellä olevat resurssit ({{amount}})."
+      "ErrorCanNotExceedRemaining": "Ei voi olla suurempi kuin jäljellä olevat resurssit ({{amount}}).",
+      "EnterEnvironmentVariable": "Syötä muuttujan nimi",
+      "EnvironmentVariableNamePatternError": "Muuttujan nimen on alettava kirjaimella tai alleviivauksella, ja se voi sisältää vain kirjaimia, numeroita ja alleviivauksia.",
+      "EnvironmentVariableDuplicateName": "Muuttujan nimi, joka on jo olemassa."
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

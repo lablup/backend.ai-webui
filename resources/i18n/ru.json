@@ -250,7 +250,10 @@
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Распределение ресурсов на контейнер",
       "NumberOfContainer": "Количество контейнеров",
-      "ErrorCanNotExceedRemaining": "Не может быть установлено значение, превышающее остаток ресурсов ({{amount}})."
+      "ErrorCanNotExceedRemaining": "Не может быть установлено значение, превышающее остаток ресурсов ({{amount}}).",
+      "EnterEnvironmentVariable": "Введите имя переменной",
+      "EnvironmentVariableNamePatternError": "Имя переменной должно начинаться с буквы или символа подчеркивания и может содержать только буквы, цифры и символы подчеркивания.",
+      "EnvironmentVariableDuplicateName": "Имя переменной, которая уже существует."
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",

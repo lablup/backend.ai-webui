@@ -247,7 +247,10 @@
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Peruntukan Sumber Setiap Bekas",
       "NumberOfContainer": "Bilangan bekas",
-      "ErrorCanNotExceedRemaining": "Tidak boleh ditetapkan kepada lebih besar daripada sumber yang selebihnya ({{amount}})."
+      "ErrorCanNotExceedRemaining": "Tidak boleh ditetapkan kepada lebih besar daripada sumber yang selebihnya ({{amount}}).",
+      "EnterEnvironmentVariable": "Masukkan nama Pembolehubah",
+      "EnvironmentVariableNamePatternError": "Nama pembolehubah mesti bermula dengan huruf atau garis bawah, dan hanya boleh mengandungi huruf, nombor dan garis bawah.",
+      "EnvironmentVariableDuplicateName": "Nama pembolehubah ini sudah wujud."
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",

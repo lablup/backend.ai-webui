@@ -248,7 +248,10 @@
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Нэг контейнерт нөөцийн хуваарилалт",
       "NumberOfContainer": "Савны тоо",
-      "ErrorCanNotExceedRemaining": "Үлдсэн нөөцөөс ({{amount}}) ихийг тохируулах боломжгүй."
+      "ErrorCanNotExceedRemaining": "Үлдсэн нөөцөөс ({{amount}}) ихийг тохируулах боломжгүй.",
+      "EnterEnvironmentVariable": "Хувьсагчийн нэрийг оруулна уу",
+      "EnvironmentVariableNamePatternError": "Хувьсагчийн нэр үсэг эсвэл доогуур зураасаар эхлэх ёстой бөгөөд зөвхөн үсэг, тоо, доогуур зураас агуулсан байж болно.",
+      "EnvironmentVariableDuplicateName": "Энэ хувьсагчийн нэр аль хэдийн байна."
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",

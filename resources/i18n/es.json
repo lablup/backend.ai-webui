@@ -1120,7 +1120,10 @@
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Asignación de recursos por contenedor",
       "NumberOfContainer": "Número de contenedor",
-      "ErrorCanNotExceedRemaining": "No puede ser mayor que los recursos restantes ({{amount}})."
+      "ErrorCanNotExceedRemaining": "No puede ser mayor que los recursos restantes ({{amount}}).",
+      "EnterEnvironmentVariable": "Introduzca el nombre de la variable",
+      "EnvironmentVariableNamePatternError": "El nombre de la variable debe empezar por una letra o un guión bajo, y sólo puede contener letras, números y guiones bajos.",
+      "EnvironmentVariableDuplicateName": "Un nombre de variable que ya existe."
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

@@ -248,7 +248,10 @@
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Κατανομή πόρων ανά εμπορευματοκιβώτιο",
       "NumberOfContainer": "Αριθμός εμπορευματοκιβωτίων",
-      "ErrorCanNotExceedRemaining": "Δεν μπορεί να οριστεί σε τιμή μεγαλύτερη από τους υπόλοιπους πόρους ({{amount}})."
+      "ErrorCanNotExceedRemaining": "Δεν μπορεί να οριστεί σε τιμή μεγαλύτερη από τους υπόλοιπους πόρους ({{amount}}).",
+      "EnterEnvironmentVariable": "Εισάγετε το όνομα της μεταβλητής",
+      "EnvironmentVariableNamePatternError": "Το όνομα της μεταβλητής πρέπει να αρχίζει με γράμμα ή υπογράμμιση και μπορεί να περιέχει μόνο γράμματα, αριθμούς και υπογράμμιση.",
+      "EnvironmentVariableDuplicateName": "Ένα όνομα μεταβλητής που υπάρχει ήδη."
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",

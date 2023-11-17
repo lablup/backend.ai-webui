@@ -248,7 +248,10 @@
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Alokasi Sumber Daya Per Kontainer",
       "NumberOfContainer": "Jumlah kontainer",
-      "ErrorCanNotExceedRemaining": "Tidak dapat diatur lebih besar dari sumber daya yang tersisa ({{jumlah}})."
+      "ErrorCanNotExceedRemaining": "Tidak dapat diatur lebih besar dari sumber daya yang tersisa ({{jumlah}}).",
+      "EnterEnvironmentVariable": "Masukkan nama variabel",
+      "EnvironmentVariableNamePatternError": "Nama variabel harus dimulai dengan huruf atau garis bawah, dan hanya boleh terdiri dari huruf, angka, dan garis bawah.",
+      "EnvironmentVariableDuplicateName": "Nama variabel yang sudah ada."
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",

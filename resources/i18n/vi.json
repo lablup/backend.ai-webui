@@ -247,7 +247,10 @@
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "Phân bổ tài nguyên trên mỗi vùng chứa",
       "NumberOfContainer": "Số lượng thùng chứa",
-      "ErrorCanNotExceedRemaining": "Không thể đặt thành lớn hơn các tài nguyên còn lại ({{amount}})."
+      "ErrorCanNotExceedRemaining": "Không thể đặt thành lớn hơn các tài nguyên còn lại ({{amount}}).",
+      "EnterEnvironmentVariable": "Nhập tên biến",
+      "EnvironmentVariableNamePatternError": "Tên biến phải bắt đầu bằng một chữ cái hoặc dấu gạch dưới và chỉ có thể chứa các chữ cái, số và dấu gạch dưới.",
+      "EnvironmentVariableDuplicateName": "Tên biến này đã tồn tại."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",

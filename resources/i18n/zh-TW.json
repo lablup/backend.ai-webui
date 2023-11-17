@@ -248,7 +248,10 @@
       "ScheduleTimeSimple": "__NOT_TRANSLATED__",
       "ResourceAllocationPerContainer": "每个集装箱的资源分配",
       "NumberOfContainer": "集装箱数量",
-      "ErrorCanNotExceedRemaining": "不能设置为大于剩余资源（{{amount}}）。"
+      "ErrorCanNotExceedRemaining": "不能设置为大于剩余资源（{{amount}}）。",
+      "EnterEnvironmentVariable": "输入变量名称",
+      "EnvironmentVariableNamePatternError": "变量名必须以字母或下划线开头，且只能包含字母、数字和下划线。",
+      "EnvironmentVariableDuplicateName": "已经存在的变量名。"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",
