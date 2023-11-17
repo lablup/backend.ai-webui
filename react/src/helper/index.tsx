@@ -174,7 +174,7 @@ export function iSizeToSize(
     : sizeIndex;
   const targetBytes = bytes / Math.pow(1024, targetIndex);
   // const numberFixed = targetBytes.toFixed(fixed);
-  const numberFixed = toFixedFloor(targetBytes, fixed);
+  const numberFixed = toFixedFloorWithoutTrailingZeros(targetBytes, fixed);
   return {
     number: targetBytes,
     numberFixed,
@@ -183,7 +183,8 @@ export function iSizeToSize(
   };
 }
 
-function toFixedFloor(num: number, fixed: number) {
+//
+function toFixedFloorWithoutTrailingZeros(num: number, fixed: number) {
   var re = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?');
   return num.toString().match(re)?.[0] || '0';
 }

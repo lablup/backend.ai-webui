@@ -11,9 +11,9 @@ describe('iSizeToSize', () => {
     const result = iSizeToSize(sizeWithUnit, targetSizeUnit);
     expect(result).toEqual({
       number: 1024,
-      numberFixed: '1024.00',
+      numberFixed: '1024',
       unit: 'B',
-      numberUnit: '1024.00B',
+      numberUnit: '1024B',
     });
   });
 
@@ -36,9 +36,9 @@ describe('iSizeToSize', () => {
     const result = iSizeToSize(sizeWithUnit, targetSizeUnit);
     expect(result).toEqual({
       number: 1024,
-      numberFixed: '1024.00',
+      numberFixed: '1024',
       unit: 'K',
-      numberUnit: '1024.00K',
+      numberUnit: '1024K',
     });
   });
 
@@ -48,9 +48,9 @@ describe('iSizeToSize', () => {
     const result = iSizeToSize(sizeWithUnit, targetSizeUnit);
     expect(result).toEqual({
       number: 1024,
-      numberFixed: '1024.00',
+      numberFixed: '1024',
       unit: 'T',
-      numberUnit: '1024.00T',
+      numberUnit: '1024T',
     });
   });
 
@@ -64,9 +64,9 @@ describe('iSizeToSize', () => {
     const result = iSizeToSize(sizeWithUnit);
     expect(result).toEqual({
       number: 1,
-      numberFixed: '1.00',
+      numberFixed: '1',
       unit: 'K',
-      numberUnit: '1.00K',
+      numberUnit: '1K',
     });
   });
 
@@ -109,21 +109,21 @@ describe('compareNumberWithUnits', () => {
 
 describe('addNumberWithUnits', () => {
   it('should add two sizes with the same unit', () => {
-    expect(addNumberWithUnits('1K', '2K', 'K')).toBe('3.00K');
-    expect(addNumberWithUnits('1M', '2M', 'M')).toBe('3.00M');
-    expect(addNumberWithUnits('1G', '2G', 'G')).toBe('3.00G');
-    expect(addNumberWithUnits('1T', '2T', 'T')).toBe('3.00T');
+    expect(addNumberWithUnits('1K', '2K', 'K')).toBe('3K');
+    expect(addNumberWithUnits('1M', '2M', 'M')).toBe('3M');
+    expect(addNumberWithUnits('1G', '2G', 'G')).toBe('3G');
+    expect(addNumberWithUnits('1T', '2T', 'T')).toBe('3T');
   });
 
   it('should add two sizes with the same unit (targetUnit is `m` default Unit)', () => {
-    expect(addNumberWithUnits('1G', '2G')).toBe('3072.00M');
-    expect(addNumberWithUnits('1T', '2T')).toBe('3145728.00M');
+    expect(addNumberWithUnits('1G', '2G')).toBe('3072M');
+    expect(addNumberWithUnits('1T', '2T')).toBe('3145728M');
   });
 
   it('should add two sizes with different units', () => {
-    expect(addNumberWithUnits('1K', '1M', 'K')).toBe('1025.00K');
-    expect(addNumberWithUnits('1M', '1G', 'M')).toBe('1025.00M');
-    expect(addNumberWithUnits('1G', '1T', 'G')).toBe('1025.00G');
-    expect(addNumberWithUnits('1T', '1P', 'T')).toBe('1025.00T');
+    expect(addNumberWithUnits('1K', '1M', 'K')).toBe('1025K');
+    expect(addNumberWithUnits('1M', '1G', 'M')).toBe('1025M');
+    expect(addNumberWithUnits('1G', '1T', 'G')).toBe('1025G');
+    expect(addNumberWithUnits('1T', '1P', 'T')).toBe('1025T');
   });
 });
