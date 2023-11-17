@@ -37,6 +37,21 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   }, [step]);
   return (
     <Flex direction="row" gap={'md'}>
+      <Flex
+        style={{ flex: 2, minWidth: 190 }}
+        align="stretch"
+        direction="column"
+      >
+        <InputNumber
+          max={max}
+          min={min}
+          step={step}
+          disabled={disabled}
+          value={value}
+          onChange={setValue}
+          {...inputNumberProps}
+        />
+      </Flex>
       <Flex direction="column" align="stretch" style={{ flex: 3 }}>
         <Slider
           max={max}
@@ -52,21 +67,6 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
             }
           }}
           {...sliderProps}
-        />
-      </Flex>
-      <Flex
-        style={{ flex: 2, minWidth: 130 }}
-        align="stretch"
-        direction="column"
-      >
-        <InputNumber
-          max={max}
-          min={min}
-          step={step}
-          disabled={disabled}
-          value={value}
-          onChange={setValue}
-          {...inputNumberProps}
         />
       </Flex>
     </Flex>

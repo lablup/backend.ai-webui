@@ -89,6 +89,7 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
       }
       addonAfter={
         <Select
+          tabIndex={-1}
           value={unit}
           onChange={(newUnit) => {
             setValue(`${numValue}${newUnit}`);

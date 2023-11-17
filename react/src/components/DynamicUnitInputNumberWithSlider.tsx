@@ -12,6 +12,7 @@ import React, { useMemo } from 'react';
 export interface DynamicUnitInputNumberWithSliderProps
   extends DynamicUnitInputNumberProps {
   extraMarks?: SliderMarks;
+  hideSlider?: boolean;
   warn?: string;
 }
 const DynamicUnitInputNumberWithSlider: React.FC<
@@ -22,6 +23,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   warn,
   units = ['m', 'g'],
   extraMarks,
+  hideSlider,
   ...otherProps
 }) => {
   const [value, setValue] = useControllableValue<string | undefined | null>(
@@ -43,7 +45,36 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   // console.log('##marks', marks);
   return (
     <Flex direction="row" gap={'md'}>
-      <Flex direction="column" align="stretch" style={{ flex: 3 }}>
+      <Flex
+        style={{ flex: 2, minWidth: 190 }}
+        direction="column"
+        align="stretch"
+      >
+        <DynamicUnitInputNumber
+          {...otherProps}
+          min={min}
+          max={max}
+          units={units}
+          value={value}
+          onChange={(nextValue) => {
+            setValue(nextValue);
+          }}
+          style={{
+            minWidth: 130,
+          }}
+        />
+      </Flex>
+      <Flex
+        direction="column"
+        align="stretch"
+        style={{
+          flex: 3,
+          ...(hideSlider && {
+            visibility: 'hidden',
+            height: 0,
+          }),
+        }}
+      >
         <Flex direction="column" align="stretch">
           {/* {warn && (
             <Flex
@@ -157,25 +188,6 @@ const DynamicUnitInputNumberWithSlider: React.FC<
             }}
           />
         </Flex>
-      </Flex>
-      <Flex
-        style={{ flex: 2, minWidth: 130 }}
-        direction="column"
-        align="stretch"
-      >
-        <DynamicUnitInputNumber
-          {...otherProps}
-          min={min}
-          max={max}
-          units={units}
-          value={value}
-          onChange={(nextValue) => {
-            setValue(nextValue);
-          }}
-          style={{
-            minWidth: 130,
-          }}
-        />
       </Flex>
     </Flex>
   );
