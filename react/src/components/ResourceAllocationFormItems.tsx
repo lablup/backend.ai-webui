@@ -15,17 +15,7 @@ import ResourceGroupSelect from './ResourceGroupSelect';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import ResourcePresetSelect from './ResourcePresetSelect';
 import { CaretDownOutlined } from '@ant-design/icons';
-import {
-  Card,
-  Col,
-  Divider,
-  Form,
-  FormRule,
-  Radio,
-  Row,
-  Select,
-  theme,
-} from 'antd';
+import { Card, Col, Divider, Form, Radio, Row, Select, theme } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -247,7 +237,6 @@ const ResourceAllocationFormItems: React.FC<
             min: _.max([
               _.find(currentImage?.resource_limits, (i) => i?.key === 'shmem')
                 ?.min,
-              ,
               '64m',
             ]),
             // shmem max is mem max

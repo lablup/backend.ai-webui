@@ -1,5 +1,4 @@
 import { useSuspendedBackendaiClient } from '../hooks';
-import _ from 'lodash';
 
 export const newLineToBrElement = (
   text: string,
