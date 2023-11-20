@@ -69,6 +69,16 @@ interface fileData {
   complete: boolean;
 }
 
+type VFolderOperationStatus =
+  | 'ready'
+  | 'performing'
+  | 'cloning'
+  | 'mounted'
+  | 'error'
+  | 'delete-ongoing'
+  | 'deleted-complete'
+  | 'purge-ongoing';
+
 /**
  Backend AI Storage List
 
@@ -1619,8 +1629,10 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
-  _checkProcessingStatus(status) {
-    return ['performing', 'cloning', 'deleting', 'mounted'].includes(status);
+  _checkProcessingStatus(status: VFolderOperationStatus) {
+    return ['performing', 'cloning', 'delete-ongoing', 'mounted'].includes(
+      status,
+    );
   }
 
   /**
@@ -1799,7 +1811,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       case 'mounted':
         color = 'blue';
         break;
-      case 'deleting':
+      case 'delete-ongoing':
         color = 'yellow';
         break;
       default:
