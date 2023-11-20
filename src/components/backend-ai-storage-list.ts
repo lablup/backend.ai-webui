@@ -124,6 +124,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({ type: Object }) _boundOwnerRenderer = Object();
   @property({ type: Object }) _boundFileNameRenderer = Object();
   @property({ type: Object }) _boundCreatedTimeRenderer = Object();
+  @property({ type: Object }) _boundSizeRenderer = Object();
   @property({ type: Object }) _boundPermissionRenderer = Object();
   @property({ type: Object }) _boundCloneableRenderer = Object();
   @property({ type: Object }) _boundQuotaRenderer = Object();
@@ -146,6 +147,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({ type: String }) oldFileExtension = '';
   @property({ type: String }) newFileExtension = '';
   @property({ type: Boolean }) is_dir = false;
+  @property({ type: Boolean }) _isDirectorySizeVisible = true;
   @property({ type: Number }) minimumResource = {
     cpu: 1,
     mem: 0.5,
@@ -215,6 +217,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundOwnerRenderer = this.OwnerRenderer.bind(this);
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
+    this._boundSizeRenderer = this.sizeRenderer.bind(this);
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
     this._boundFolderListRenderer = this.folderListRenderer.bind(this);
     this._boundQuotaRenderer = this.quotaRenderer.bind(this);
@@ -651,19 +654,21 @@ export default class BackendAiStorageList extends BackendAIPage {
             .renderer="${this._boundStatusRenderer}"
             header="${_t('data.folders.Status')}"
           ></lablup-grid-sort-filter-column>
-          ${this.directoryBasedUsage
-            ? html`
-                <vaadin-grid-sort-column
-                  id="folder-quota-column"
-                  path="max_size"
-                  width="95px"
-                  flex-grow="0"
-                  resizable
-                  header="${_t('data.folders.FolderQuota')}"
-                  .renderer="${this._boundQuotaRenderer}"
-                ></vaadin-grid-sort-column>
-              `
-            : html``}
+          ${
+            this.directoryBasedUsage
+              ? html`
+                  <vaadin-grid-sort-column
+                    id="folder-quota-column"
+                    path="max_size"
+                    width="95px"
+                    flex-grow="0"
+                    resizable
+                    header="${_t('data.folders.FolderQuota')}"
+                    .renderer="${this._boundQuotaRenderer}"
+                  ></vaadin-grid-sort-column>
+                `
+              : html``
+          }
           <lablup-grid-sort-filter-column
             path="ownership_type"
             width="70px"
@@ -686,8 +691,9 @@ export default class BackendAiStorageList extends BackendAIPage {
             header="${_t('data.folders.Owner')}"
             .renderer="${this._boundOwnerRenderer}"
           ></vaadin-grid-column>
-          ${this.enableStorageProxy
-            ? html`
+          ${
+            this.enableStorageProxy
+              ? html`
             <!--<vaadin-grid-column
                 auto-width flex-grow="0" resizable header="${_t(
                   'data.folders.Cloneable',
@@ -695,7 +701,8 @@ export default class BackendAiStorageList extends BackendAIPage {
                 .renderer="${
                   this._boundCloneableRenderer
                 }"></vaadin-grid-column>`
-            : html``}
+              : html``
+          }
           <vaadin-grid-column
             auto-width
             resizable
@@ -716,10 +723,12 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div
             class="vertical layout"
             id="modify-quota-controls"
-            style="display:${this.directoryBasedUsage &&
-            this._checkFolderSupportSizeQuota(this.folderInfo.host)
-              ? 'flex'
-              : 'none'}"
+            style="display:${
+              this.directoryBasedUsage &&
+              this._checkFolderSupportSizeQuota(this.folderInfo.host)
+                ? 'flex'
+                : 'none'
+            }"
           >
             <div class="horizontal layout center justified">
               <mwc-textfield
@@ -769,17 +778,19 @@ export default class BackendAiStorageList extends BackendAIPage {
               `,
             )}
           </mwc-select>
-          ${this.enableStorageProxy
-            ? html`
-                <!--<div class="horizontal layout flex wrap center justified">
+          ${
+            this.enableStorageProxy
+              ? html`
+                  <!--<div class="horizontal layout flex wrap center justified">
             <p style="color:rgba(0, 0, 0, 0.6);">
               ${_t('data.folders.Cloneable')}
             </p>
             <mwc-switch id="update-folder-cloneable" style="margin-right:10px;">
             </mwc-switch>
           </div>-->
-              `
-            : html``}
+                `
+              : html``
+          }
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
@@ -896,18 +907,20 @@ export default class BackendAiStorageList extends BackendAIPage {
               <div class="big indicator">${this.folderInfo.host}</div>
               <span>${_t('data.folders.Location')}</span>
             </div>
-            ${this.directoryBasedUsage
-              ? html`
-                  <div class="vertical layout center info-indicator">
-                    <div class="big indicator">
-                      ${this.folderInfo.numFiles < 0
-                        ? 'many'
-                        : this.folderInfo.numFiles}
+            ${
+              this.directoryBasedUsage
+                ? html`
+                    <div class="vertical layout center info-indicator">
+                      <div class="big indicator">
+                        ${this.folderInfo.numFiles < 0
+                          ? 'many'
+                          : this.folderInfo.numFiles}
+                      </div>
+                      <span>${_t('data.folders.NumberOfFiles')}</span>
                     </div>
-                    <span>${_t('data.folders.NumberOfFiles')}</span>
-                  </div>
-                `
-              : html``}
+                  `
+                : html``
+            }
           </div>
           <mwc-list>
             <mwc-list-item twoline>
@@ -916,123 +929,135 @@ export default class BackendAiStorageList extends BackendAIPage {
                 ${this.folderInfo.id}
               </span>
             </mwc-list-item>
-            ${this.folderInfo.is_owner
-              ? html`
-                  <mwc-list-item twoline>
-                    <span>
-                      <strong>${_t('data.folders.Ownership')}</strong>
-                    </span>
-                    <span slot="secondary">
-                      ${_t('data.folders.DescYouAreFolderOwner')}
-                    </span>
-                  </mwc-list-item>
-                `
-              : html``}
-            ${this.folderInfo.usage_mode !== 'undefined'
-              ? html`
-                  <mwc-list-item twoline>
-                    <span><strong>${_t('data.UsageMode')}</strong></span>
-                    <span slot="secondary">${this.folderInfo.usage_mode}</span>
-                  </mwc-list-item>
-                `
-              : html``}
-            ${this.folderInfo.permission
-              ? html`
-                  <mwc-list-item twoline>
-                    <span>
-                      <strong>${_t('data.folders.Permission')}</strong>
-                    </span>
-                    <div slot="secondary" class="horizontal layout">
-                      ${this._hasPermission(this.folderInfo, 'r')
-                        ? html`
-                            <lablup-shields
-                              app=""
-                              color="green"
-                              description="R"
-                              ui="flat"
-                            ></lablup-shields>
-                          `
-                        : html``}
-                      ${this._hasPermission(this.folderInfo, 'w')
-                        ? html`
-                            <lablup-shields
-                              app=""
-                              color="blue"
-                              description="W"
-                              ui="flat"
-                            ></lablup-shields>
-                          `
-                        : html``}
-                      ${this._hasPermission(this.folderInfo, 'd')
-                        ? html`
-                            <lablup-shields
-                              app=""
-                              color="red"
-                              description="D"
-                              ui="flat"
-                            ></lablup-shields>
-                          `
-                        : html``}
-                    </div>
-                  </mwc-list-item>
-                `
-              : html``}
-            ${this.enableStorageProxy
-              ? html`
-                  <mwc-list-item twoline>
-                    <span>
-                      <strong>${_t('data.folders.Cloneable')}</strong>
-                    </span>
-                    <span class="monospace" slot="secondary">
-                      ${this.folderInfo.cloneable
-                        ? html`
-                            <mwc-icon class="cloneable" style="color:green;">
-                              check_circle
-                            </mwc-icon>
-                          `
-                        : html`
-                            <mwc-icon class="cloneable" style="color:red;">
-                              block
-                            </mwc-icon>
-                          `}
-                    </span>
-                  </mwc-list-item>
-                `
-              : html``}
-            ${this.directoryBasedUsage &&
-            this._checkFolderSupportSizeQuota(this.folderInfo.host)
-              ? html`
-                  <mwc-list-item twoline>
-                    <span>
-                      <strong>${_t('data.folders.FolderUsage')}</strong>
-                    </span>
-                    <span class="monospace" slot="secondary">
-                      ${_t('data.folders.FolderUsing')}:
-                      ${this.folderInfo.used_bytes >= 0
-                        ? globalThis.backendaiutils._humanReadableFileSize(
-                            this.folderInfo.used_bytes,
-                          )
-                        : 'Undefined'}
-                      / ${_t('data.folders.FolderQuota')}:
-                      ${this.folderInfo.max_size >= 0
-                        ? globalThis.backendaiutils._humanReadableFileSize(
-                            this.folderInfo.max_size * this.quotaUnit.MiB,
-                          )
-                        : 'Undefined'}
-                      ${this.folderInfo.used_bytes >= 0 &&
-                      this.folderInfo.max_size >= 0
-                        ? html`
-                            <vaadin-progress-bar
-                              value="${this.folderInfo.used_bytes /
-                              this.folderInfo.max_size /
-                              2 ** 20}"
-                            ></vaadin-progress-bar>
-                          `
-                        : html``}
-                    </span>
-                  </mwc-list-item>
-                `
-              : html``}
+            ${
+              this.folderInfo.is_owner
+                ? html`
+                    <mwc-list-item twoline>
+                      <span>
+                        <strong>${_t('data.folders.Ownership')}</strong>
+                      </span>
+                      <span slot="secondary">
+                        ${_t('data.folders.DescYouAreFolderOwner')}
+                      </span>
+                    </mwc-list-item>
+                  `
+                : html``
+            }
+            ${
+              this.folderInfo.usage_mode !== 'undefined'
+                ? html`
+                    <mwc-list-item twoline>
+                      <span><strong>${_t('data.UsageMode')}</strong></span>
+                      <span slot="secondary">
+                        ${this.folderInfo.usage_mode}
+                      </span>
+                    </mwc-list-item>
+                  `
+                : html``
+            }
+            ${
+              this.folderInfo.permission
+                ? html`
+                    <mwc-list-item twoline>
+                      <span>
+                        <strong>${_t('data.folders.Permission')}</strong>
+                      </span>
+                      <div slot="secondary" class="horizontal layout">
+                        ${this._hasPermission(this.folderInfo, 'r')
+                          ? html`
+                              <lablup-shields
+                                app=""
+                                color="green"
+                                description="R"
+                                ui="flat"
+                              ></lablup-shields>
+                            `
+                          : html``}
+                        ${this._hasPermission(this.folderInfo, 'w')
+                          ? html`
+                              <lablup-shields
+                                app=""
+                                color="blue"
+                                description="W"
+                                ui="flat"
+                              ></lablup-shields>
+                            `
+                          : html``}
+                        ${this._hasPermission(this.folderInfo, 'd')
+                          ? html`
+                              <lablup-shields
+                                app=""
+                                color="red"
+                                description="D"
+                                ui="flat"
+                              ></lablup-shields>
+                            `
+                          : html``}
+                      </div>
+                    </mwc-list-item>
+                  `
+                : html``
+            }
+            ${
+              this.enableStorageProxy
+                ? html`
+                    <mwc-list-item twoline>
+                      <span>
+                        <strong>${_t('data.folders.Cloneable')}</strong>
+                      </span>
+                      <span class="monospace" slot="secondary">
+                        ${this.folderInfo.cloneable
+                          ? html`
+                              <mwc-icon class="cloneable" style="color:green;">
+                                check_circle
+                              </mwc-icon>
+                            `
+                          : html`
+                              <mwc-icon class="cloneable" style="color:red;">
+                                block
+                              </mwc-icon>
+                            `}
+                      </span>
+                    </mwc-list-item>
+                  `
+                : html``
+            }
+            ${
+              this.directoryBasedUsage &&
+              this._checkFolderSupportSizeQuota(this.folderInfo.host)
+                ? html`
+                    <mwc-list-item twoline>
+                      <span>
+                        <strong>${_t('data.folders.FolderUsage')}</strong>
+                      </span>
+                      <span class="monospace" slot="secondary">
+                        ${_t('data.folders.FolderUsing')}:
+                        ${this.folderInfo.used_bytes >= 0
+                          ? globalThis.backendaiutils._humanReadableFileSize(
+                              this.folderInfo.used_bytes,
+                            )
+                          : 'Undefined'}
+                        / ${_t('data.folders.FolderQuota')}:
+                        ${this.folderInfo.max_size >= 0
+                          ? globalThis.backendaiutils._humanReadableFileSize(
+                              this.folderInfo.max_size * this.quotaUnit.MiB,
+                            )
+                          : 'Undefined'}
+                        ${this.folderInfo.used_bytes >= 0 &&
+                        this.folderInfo.max_size >= 0
+                          ? html`
+                              <vaadin-progress-bar
+                                value="${this.folderInfo.used_bytes /
+                                this.folderInfo.max_size /
+                                2 ** 20}"
+                              ></vaadin-progress-bar>
+                            `
+                          : html``}
+                      </span>
+                    </mwc-list-item>
+                  `
+                : html``
+            }
           </mwc-list>
         </div>
       </backend-ai-dialog>
@@ -1048,54 +1073,56 @@ export default class BackendAiStorageList extends BackendAIPage {
           class="horizontal layout space-between folder-action-buttons center"
         >
           <div class="flex"></div>
-          ${this.isWritable
-            ? html`
-                <mwc-button
-                  outlined
-                  class="multiple-action-buttons fg red"
-                  icon="delete"
-                  @click="${() => this._openDeleteMultipleFileDialog()}"
-                  style="display:none;"
-                >
-                  <span>${_t('data.explorer.Delete')}</span>
-                </mwc-button>
-                <div id="add-btn-cover">
+          ${
+            this.isWritable
+              ? html`
                   <mwc-button
-                    id="add-btn"
-                    icon="upload_file"
-                    ?disabled=${!this.isWritable}
-                    @click="${(e) => this._uploadBtnClick(e)}"
+                    outlined
+                    class="multiple-action-buttons fg red"
+                    icon="delete"
+                    @click="${() => this._openDeleteMultipleFileDialog()}"
+                    style="display:none;"
                   >
-                    <span>${_t('data.explorer.UploadFiles')}</span>
+                    <span>${_t('data.explorer.Delete')}</span>
                   </mwc-button>
-                </div>
-                <div>
-                  <mwc-button
-                    id="add-folder-btn"
-                    icon="drive_folder_upload"
-                    ?disabled=${!this.isWritable}
-                    @click="${(e) => this._uploadBtnClick(e)}"
-                  >
-                    <span>${_t('data.explorer.UploadFolder')}</span>
+                  <div id="add-btn-cover">
+                    <mwc-button
+                      id="add-btn"
+                      icon="upload_file"
+                      ?disabled=${!this.isWritable}
+                      @click="${(e) => this._uploadBtnClick(e)}"
+                    >
+                      <span>${_t('data.explorer.UploadFiles')}</span>
+                    </mwc-button>
+                  </div>
+                  <div>
+                    <mwc-button
+                      id="add-folder-btn"
+                      icon="drive_folder_upload"
+                      ?disabled=${!this.isWritable}
+                      @click="${(e) => this._uploadBtnClick(e)}"
+                    >
+                      <span>${_t('data.explorer.UploadFolder')}</span>
+                    </mwc-button>
+                  </div>
+                  <div id="mkdir-cover">
+                    <mwc-button
+                      id="mkdir"
+                      class="tooltip"
+                      icon="create_new_folder"
+                      ?disabled=${!this.isWritable}
+                      @click="${() => this._mkdirDialog()}"
+                    >
+                      <span>${_t('data.explorer.NewFolder')}</span>
+                    </mwc-button>
+                  </div>
+                `
+              : html`
+                  <mwc-button id="readonly-btn" disabled>
+                    <span>${_t('data.explorer.ReadonlyFolder')}</span>
                   </mwc-button>
-                </div>
-                <div id="mkdir-cover">
-                  <mwc-button
-                    id="mkdir"
-                    class="tooltip"
-                    icon="create_new_folder"
-                    ?disabled=${!this.isWritable}
-                    @click="${() => this._mkdirDialog()}"
-                  >
-                    <span>${_t('data.explorer.NewFolder')}</span>
-                  </mwc-button>
-                </div>
-              `
-            : html`
-                <mwc-button id="readonly-btn" disabled>
-                  <span>${_t('data.explorer.ReadonlyFolder')}</span>
-                </mwc-button>
-              `}
+                `
+          }
           <div id="filebrowser-btn-cover">
             <mwc-button
               id="filebrowser-btn"
@@ -1126,37 +1153,39 @@ export default class BackendAiStorageList extends BackendAIPage {
         </div>
         <div slot="content">
           <div class="breadcrumb">
-            ${this.explorer.breadcrumb
-              ? html`
-                  <ul>
-                    ${this.explorer.breadcrumb.map(
-                      (item) => html`
-                        <li>
-                          ${item === '.'
-                            ? html`
-                                <mwc-icon-button
-                                  icon="folder_open"
-                                  dest="${item}"
-                                  @click="${(e) => this._gotoFolder(e)}"
-                                ></mwc-icon-button>
-                              `
-                            : html`
-                                <a
-                                  outlined
-                                  class="goto"
-                                  path="item"
-                                  @click="${(e) => this._gotoFolder(e)}"
-                                  dest="${item}"
-                                >
-                                  ${item}
-                                </a>
-                              `}
-                        </li>
-                      `,
-                    )}
-                  </ul>
-                `
-              : html``}
+            ${
+              this.explorer.breadcrumb
+                ? html`
+                    <ul>
+                      ${this.explorer.breadcrumb.map(
+                        (item) => html`
+                          <li>
+                            ${item === '.'
+                              ? html`
+                                  <mwc-icon-button
+                                    icon="folder_open"
+                                    dest="${item}"
+                                    @click="${(e) => this._gotoFolder(e)}"
+                                  ></mwc-icon-button>
+                                `
+                              : html`
+                                  <a
+                                    outlined
+                                    class="goto"
+                                    path="item"
+                                    @click="${(e) => this._gotoFolder(e)}"
+                                    dest="${item}"
+                                  >
+                                    ${item}
+                                  </a>
+                                `}
+                          </li>
+                        `,
+                      )}
+                    </ul>
+                  `
+                : html``
+            }
           </div>
           <div id="dropzone"><p>drag</p></div>
           <input
@@ -1176,43 +1205,45 @@ export default class BackendAiStorageList extends BackendAIPage {
             directory
             multiple
           />
-          ${this.uploadFilesExist
-            ? html`
-                <div class="horizontal layout start-justified">
-                  <mwc-button
-                    icon="cancel"
-                    id="cancel_upload"
-                    @click="${() => this._cancelUpload()}"
-                  >
-                    ${_t('data.explorer.StopUploading')}
-                  </mwc-button>
-                </div>
-                <div class="horizontal layout center progress-item flex">
-                  ${this.currentUploadFile?.complete
-                    ? html`
-                        <mwc-icon>check</mwc-icon>
-                      `
-                    : html``}
-                  <div
-                    class="vertical layout progress-item"
-                    style="width:100%;"
-                  >
-                    <span>${this.currentUploadFile?.name}</span>
-                    <vaadin-progress-bar
-                      value="${this.currentUploadFile?.progress}"
-                    ></vaadin-progress-bar>
-                    <span>${this.currentUploadFile?.caption}</span>
+          ${
+            this.uploadFilesExist
+              ? html`
+                  <div class="horizontal layout start-justified">
+                    <mwc-button
+                      icon="cancel"
+                      id="cancel_upload"
+                      @click="${() => this._cancelUpload()}"
+                    >
+                      ${_t('data.explorer.StopUploading')}
+                    </mwc-button>
                   </div>
-                </div>
-                <!-- <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this
-                  .uploadFiles}" height-by-rows>
+                  <div class="horizontal layout center progress-item flex">
+                    ${this.currentUploadFile?.complete
+                      ? html`
+                          <mwc-icon>check</mwc-icon>
+                        `
+                      : html``}
+                    <div
+                      class="vertical layout progress-item"
+                      style="width:100%;"
+                    >
+                      <span>${this.currentUploadFile?.name}</span>
+                      <vaadin-progress-bar
+                        value="${this.currentUploadFile?.progress}"
+                      ></vaadin-progress-bar>
+                      <span>${this.currentUploadFile?.caption}</span>
+                    </div>
+                  </div>
+                  <!-- <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this
+                    .uploadFiles}" height-by-rows>
             <vaadin-grid-column width="100px" flex-grow="0" .renderer="${this
-                  ._boundUploadListRenderer}"></vaadin-grid-column>
+                    ._boundUploadListRenderer}"></vaadin-grid-column>
             <vaadin-grid-column .renderer="${this
-                  ._boundUploadProgressRenderer}"></vaadin-grid-column>
+                    ._boundUploadProgressRenderer}"></vaadin-grid-column>
           </vaadin-grid> -->
-              `
-            : html``}
+                `
+              : html``
+          }
           <vaadin-grid
             id="file-list-grid"
             class="explorer"
@@ -1244,12 +1275,9 @@ export default class BackendAiStorageList extends BackendAIPage {
               path="ctime"
               .renderer="${this._boundCreatedTimeRenderer}"
             ></vaadin-grid-sort-column>
-            <vaadin-grid-sort-column
-              path="size"
-              auto-width
-              resizable
-              header="${_t('data.explorer.Size')}"
-            ></vaadin-grid-sort-column>
+            <vaadin-grid-sort-column auto-width resizable header="${_t(
+              'data.explorer.Size',
+            )}" path="size" .renderer="${this._boundSizeRenderer}">
             <vaadin-grid-column
               resizable
               auto-width
@@ -1462,30 +1490,34 @@ export default class BackendAiStorageList extends BackendAIPage {
             fullwidth
             @click="${(e) => this._keepFileExtension()}"
           >
-            ${globalThis.backendaioptions.get('language') !== 'ko'
-              ? html`
-                  ${_text('data.explorer.KeepFileExtension') +
-                  this.oldFileExtension}
-                `
-              : html`
-                  ${this.oldFileExtension +
-                  _text('data.explorer.KeepFileExtension')}
-                `}
+            ${
+              globalThis.backendaioptions.get('language') !== 'ko'
+                ? html`
+                    ${_text('data.explorer.KeepFileExtension') +
+                    this.oldFileExtension}
+                  `
+                : html`
+                    ${this.oldFileExtension +
+                    _text('data.explorer.KeepFileExtension')}
+                  `
+            }
           </mwc-button>
           <mwc-button unelevated fullwidth @click="${() => this._renameFile()}">
-            ${globalThis.backendaioptions.get('language') !== 'ko'
-              ? html`
-                  ${this.newFileExtension
-                    ? _text('data.explorer.UseNewFileExtension') +
-                      this.newFileExtension
-                    : _text('data.explorer.RemoveFileExtension')}
-                `
-              : html`
-                  ${this.newFileExtension
-                    ? this.newFileExtension +
-                      _text('data.explorer.UseNewFileExtension')
-                    : _text('data.explorer.RemoveFileExtension')}
-                `}
+            ${
+              globalThis.backendaioptions.get('language') !== 'ko'
+                ? html`
+                    ${this.newFileExtension
+                      ? _text('data.explorer.UseNewFileExtension') +
+                        this.newFileExtension
+                      : _text('data.explorer.RemoveFileExtension')}
+                  `
+                : html`
+                    ${this.newFileExtension
+                      ? this.newFileExtension +
+                        _text('data.explorer.UseNewFileExtension')
+                      : _text('data.explorer.RemoveFileExtension')}
+                  `
+            }
           </mwc-button>
         </div>
       </backend-ai-dialog>
@@ -2215,6 +2247,33 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
+   * Render size by condition
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
+  sizeRenderer(root, column?, rowData?) {
+    console.log(rowData.item);
+    render(
+      // language=HTML
+      html`
+        <div class="layout horizontal">
+          ${(rowData.item.type as string).toUpperCase() === 'DIRECTORY' &&
+          !this._isDirectorySizeVisible
+            ? html`
+                <span class="monospace">-</span>
+              `
+            : html`
+                <span>${rowData.item.size}</span>
+              `}
+        </div>
+      `,
+      root,
+    );
+  }
+
+  /**
    * Render type of user - person, group.
    *
    * @param {Element} root - the row details content DOM element
@@ -2460,6 +2519,8 @@ export default class BackendAiStorageList extends BackendAIPage {
             globalThis.backendaiclient._config.maxFileUploadSize;
           this.directoryBasedUsage =
             globalThis.backendaiclient._config.directoryBasedUsage;
+          this._isDirectorySizeVisible =
+            globalThis.backendaiclient._config.isDirectorySizeVisible;
           this._getAllowedVFolderHostsByCurrentUserInfo();
           this._checkImageSupported();
           this._getVolumeInformation();
@@ -2480,6 +2541,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         globalThis.backendaiclient._config.maxFileUploadSize;
       this.directoryBasedUsage =
         globalThis.backendaiclient._config.directoryBasedUsage;
+      this._isDirectorySizeVisible =
+        globalThis.backendaiclient._config.isDirectorySizeVisible;
       this._getAllowedVFolderHostsByCurrentUserInfo();
       this._checkImageSupported();
       this._getVolumeInformation();
@@ -3507,9 +3570,8 @@ export default class BackendAiStorageList extends BackendAIPage {
             this.uploadFiles[this.uploadFiles.indexOf(fileObj)];
           if (!this._uploadFlag) {
             upload.abort();
-            this.uploadFiles[
-              this.uploadFiles.indexOf(fileObj)
-            ].caption = `Canceling...`;
+            this.uploadFiles[this.uploadFiles.indexOf(fileObj)].caption =
+              `Canceling...`;
             this.uploadFiles = this.uploadFiles.slice();
             setTimeout(() => {
               this.uploadFiles = [];
@@ -3542,9 +3604,8 @@ export default class BackendAiStorageList extends BackendAIPage {
           const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(1);
           this.uploadFiles[this.uploadFiles.indexOf(fileObj)].progress =
             bytesUploaded / bytesTotal;
-          this.uploadFiles[
-            this.uploadFiles.indexOf(fileObj)
-          ].caption = `${percentage}% / Time left : ${estimated_time_left} / Speed : ${speed}`;
+          this.uploadFiles[this.uploadFiles.indexOf(fileObj)].caption =
+            `${percentage}% / Time left : ${estimated_time_left} / Speed : ${speed}`;
           this.uploadFiles = this.uploadFiles.slice();
         },
         onSuccess: () => {

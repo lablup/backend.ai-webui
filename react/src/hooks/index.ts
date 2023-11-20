@@ -118,6 +118,7 @@ export const useSuspendedBackendaiClient = () => {
       list_files: (path: string, id: string) => Promise<any>;
     };
     [key: string]: any;
+    _config: BackendAIConfig;
   };
 };
 
@@ -208,4 +209,49 @@ export const useBackendaiImageMetaData = () => {
       getImageMeta,
     },
   ] as const;
+};
+
+type BackendAIConfig = {
+  _apiVersionMajor: string;
+  _apiVersion: string;
+  _hashType: string;
+  _endpoint: string;
+  endpoint: string;
+  _endpointHost: string;
+  accessKey: string;
+  _secretKey: string;
+  _userId: string;
+  _password: string;
+  _proxyURL: string;
+  _proxyToken: string;
+  _connectionMode: string;
+  _session_id: string;
+  domainName: string;
+  default_session_environment: string;
+  default_import_environment: string;
+  allow_project_resource_monitor: boolean;
+  allow_manual_image_name_for_session: boolean;
+  always_enqueue_compute_session: boolean;
+  openPortToPublic: boolean;
+  allowPreferredPort: boolean;
+  maxCPUCoresPerContainer: number;
+  maxMemoryPerContainer: number;
+  maxCUDADevicesPerContainer: number;
+  maxCUDASharesPerContainer: number;
+  maxShmPerContainer: number;
+  maxFileUploadSize: number;
+  allow_image_list: string[];
+  maskUserInfo: boolean;
+  singleSignOnVendors: string[];
+  ssoRealmName: string;
+  enableContainerCommit: boolean;
+  appDownloadUrl: string;
+  systemSSHImage: string;
+  fasttrackEndpoint: string;
+  hideAgents: boolean;
+  enable2FA: boolean;
+  force2FA: boolean;
+  directoryBasedUsage: boolean;
+  maxCountForPreopenPorts: number;
+  [key: string]: any;
 };

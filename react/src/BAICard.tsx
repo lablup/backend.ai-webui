@@ -1,4 +1,4 @@
-import { ExclamationCircleTwoTone } from '@ant-design/icons';
+import { CloseCircleTwoTone, WarningTwoTone } from '@ant-design/icons';
 import { Button, Card, CardProps, theme } from 'antd';
 import _ from 'lodash';
 import React, { ReactNode } from 'react';
@@ -25,7 +25,9 @@ const BAICard: React.FC<BAICardProps> = ({
         type="link"
         icon={
           status === 'error' ? (
-            <ExclamationCircleTwoTone twoToneColor={token.colorError} />
+            <CloseCircleTwoTone twoToneColor={token.colorError} />
+          ) : status === 'warning' ? (
+            <WarningTwoTone twoToneColor={token.colorWarning} />
           ) : undefined
         }
         onClick={onClickExtraButton}
@@ -41,10 +43,10 @@ const BAICard: React.FC<BAICardProps> = ({
           status === 'error'
             ? token.colorError
             : status === 'warning'
-            ? token.colorWarning
-            : status === 'success'
-            ? token.colorSuccess
-            : style?.borderColor, // default
+              ? token.colorWarning
+              : status === 'success'
+                ? token.colorSuccess
+                : style?.borderColor, // default
       })}
       extra={_extra}
       {...cardProps}

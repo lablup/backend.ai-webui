@@ -9,17 +9,18 @@ import {
 import { NamePath } from 'antd/es/form/interface';
 import { SliderRangeProps } from 'antd/es/slider';
 import { FormItemProps } from 'antd/lib/form/FormItem';
-import React from 'react';
+import React, { useEffect } from 'react';
 
-interface SliderInputProps extends Omit<FormItemProps, 'name'> {
+interface SliderInputFormItemProps extends Omit<FormItemProps, 'name'> {
   min?: number;
   max?: number;
   step?: number;
   name: NamePath;
   inputNumberProps?: InputNumberProps;
   sliderProps?: SliderSingleProps | SliderRangeProps;
+  disabled?: boolean;
 }
-const SliderInputItem: React.FC<SliderInputProps> = ({
+const SliderInputFormItem: React.FC<SliderInputFormItemProps> = ({
   name,
   min,
   max,
@@ -29,8 +30,17 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
   inputNumberProps,
   sliderProps,
   initialValue,
+  disabled,
   ...formItemProps
 }) => {
+  const form = Form.useFormInstance();
+  useEffect(() => {
+    // when step is 1, make sure the value is integer
+    if (step === 1 && form.getFieldValue(name) % 1 !== 0) {
+      // do not use form.setFieldsValue, because name can be array
+      form.setFieldValue(name, Math.round(form.getFieldValue(name)));
+    }
+  }, [step, form, name]);
   return (
     <Form.Item required={required} {...formItemProps}>
       <Flex direction="row" gap={'md'}>
@@ -40,12 +50,29 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
             noStyle
             rules={rules}
             initialValue={initialValue}
+            label={formItemProps.label}
           >
-            <Slider max={max} min={min} step={step} {...sliderProps} />
+            <Slider
+              max={max}
+              min={min}
+              step={step}
+              disabled={disabled}
+              {...sliderProps}
+            />
           </Form.Item>
         </Flex>
-        <Flex style={{ flex: 2 }}>
-          <Form.Item name={name} noStyle initialValue={initialValue}>
+        <Flex
+          style={{ flex: 2, minWidth: 130 }}
+          align="stretch"
+          direction="column"
+        >
+          <Form.Item
+            name={name}
+            noStyle
+            rules={rules}
+            initialValue={initialValue}
+            label={formItemProps.label}
+          >
             <InputNumber
               max={max}
               min={min}
@@ -53,6 +80,7 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
               onStep={(value, info) => {
                 console.log(value, info);
               }}
+              disabled={disabled}
               {...inputNumberProps}
             />
           </Form.Item>
@@ -90,4 +118,4 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
   );
 };
 
-export default SliderInputItem;
+export default SliderInputFormItem;

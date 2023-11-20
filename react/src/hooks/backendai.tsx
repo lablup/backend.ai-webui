@@ -1,5 +1,5 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '.';
-import { maskString } from '../helper';
+import { maskString, useBaiSignedRequestWithPromise } from '../helper';
 import { useTanMutation, useTanQuery } from './reactQueryAlias';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
@@ -17,17 +17,57 @@ export interface QuotaScope {
 
 export const useResourceSlots = () => {
   const [key, checkUpdate] = useUpdatableState('first');
-  // const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const baiClient = useSuspendedBackendaiClient();
   const { data: resourceSlots } = useTanQuery<{
     cpu?: string;
     mem?: string;
     'cuda.shares'?: string;
     'cuda.device'?: string;
+    'rocm.device'?: string;
+    'tpu.device'?: string;
+    'ipu.device'?: string;
+    'atom.device'?: string;
+    'warboy.device'?: string;
   }>({
     queryKey: ['useResourceSlots', key],
     queryFn: () => {
       return baiClient.get_resource_slots();
+    },
+    staleTime: 0,
+  });
+  return [
+    resourceSlots,
+    {
+      refresh: () => checkUpdate(),
+    },
+  ] as const;
+};
+
+export const useResourceSlotsByResourceGroup = (name?: string) => {
+  const [key, checkUpdate] = useUpdatableState('first');
+  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
+  const { data: resourceSlots } = useTanQuery<{
+    cpu: string;
+    mem: string;
+    'cuda.shares': string;
+    'cuda.device': string;
+    'rocm.device': string;
+    'ipu.device': string;
+    'atom.device': string;
+    'warboy.device': string;
+    [key: string]: string;
+  }>({
+    queryKey: ['useResourceSlots', name, key],
+    queryFn: () => {
+      // return baiClient.get_resource_slots();
+      if (_.isEmpty(name)) {
+        return;
+      } else {
+        return baiRequestWithPromise({
+          method: 'GET',
+          url: `/config/resource-slots/details?sgroup=${name}`,
+        });
+      }
     },
     staleTime: 0,
   });

@@ -4,6 +4,8 @@ import {
 } from '../hooks';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
+// @ts-ignore
+import cssRaw from './ImageEnvironmentSelectFormItems.css?raw';
 import ImageMetaIcon from './ImageMetaIcon';
 import TextHighlighter from './TextHighlighter';
 import {
@@ -67,6 +69,16 @@ function compareVersions(version1: string, version2: string): number {
 
   return 0;
 }
+
+const isPrivateImage = (image: Image) => {
+  return _.some(image?.labels, (label) => {
+    return (
+      label?.key === 'ai.backend.features' &&
+      label?.value?.split(' ').includes('private')
+    );
+  });
+};
+
 const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
 > = ({ filter, showPrivate }) => {
@@ -75,7 +87,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   useSuspendedBackendaiClient();
 
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
-  Form.useWatch('environments', form);
+  Form.useWatch('environments', { form, preserve: true });
 
   const [environmentSearch, setEnvironmentSearch] = useState('');
   const [versionSearch, setVersionSearch] = useState('');
@@ -162,14 +174,6 @@ const ImageEnvironmentSelectFormItems: React.FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.getFieldValue('environments')?.environment]);
 
-  const isPrivateImage = (image: Image) => {
-    return _.some(image?.labels, (label) => {
-      return (
-        label?.key === 'ai.backend.features' &&
-        label?.value?.split(' ').includes('private')
-      );
-    });
-  };
   const imageGroups: ImageGroup[] = useMemo(
     () =>
       _.chain(images)
@@ -250,7 +254,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
 
   return (
     <>
+      <style>{cssRaw}</style>
       <Form.Item
+        className="image-environment-select-form-item"
         name={['environments', 'environment']}
         label={`${t('session.launcher.Environments')} / ${t(
           'session.launcher.Version',
@@ -261,12 +267,12 @@ const ImageEnvironmentSelectFormItems: React.FC<
         <Select
           ref={envSelectRef}
           showSearch
+          className="image-environment-select"
+          // open={true}
           // autoClearSearchValue
-          labelInValue={false}
           searchValue={environmentSearch}
           onSearch={setEnvironmentSearch}
           defaultActiveFirstOption={true}
-          optionLabelProp="label"
           optionFilterProp="filterValue"
           onChange={(value) => {
             if (fullNameMatchedImage) {
@@ -322,7 +328,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     ) {
                       extraFilterValues.push(environmentGroup.prefix);
                       environmentPrefixTag = (
-                        <Tag color="purple">{environmentGroup.prefix}</Tag>
+                        <Tag color="purple">
+                          <TextHighlighter keyword={environmentSearch}>
+                            {environmentGroup.prefix}
+                          </TextHighlighter>
+                        </Tag>
                       );
                     }
 
@@ -336,8 +346,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         ) {
                           extraFilterValues.push(label.tag);
                           return (
-                            <Tag color={label.color}>
-                              <TextHighlighter keyword={environmentSearch}>
+                            <Tag color={label.color} key={label.tag}>
+                              <TextHighlighter
+                                keyword={environmentSearch}
+                                key={label.tag}
+                              >
                                 {label.tag}
                               </TextHighlighter>
                             </Tag>
@@ -355,23 +368,6 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           '\t' +
                           extraFilterValues.join('\t')
                         }
-                        label={
-                          <Flex
-                            direction="row"
-                            align="center"
-                            gap="xs"
-                            style={{ display: 'inline-flex' }}
-                          >
-                            <ImageMetaIcon
-                              image={getImageFullName(firstImage) || ''}
-                              style={{
-                                width: 15,
-                                height: 15,
-                              }}
-                            />
-                            {environmentGroup.displayName}
-                          </Flex>
-                        }
                       >
                         <Flex direction="row" justify="between">
                           <Flex direction="row" align="center" gap="xs">
@@ -386,8 +382,19 @@ const ImageEnvironmentSelectFormItems: React.FC<
                               {environmentGroup.displayName}
                             </TextHighlighter>
                           </Flex>
-                          {environmentPrefixTag}
-                          {tagsFromMetaImageInfoLabel}
+                          <Flex
+                            direction="row"
+                            // set specific class name to handle flex wrap using css
+                            className="tag-wrap"
+                            // style={{ flex: 1 }}
+                            style={{
+                              marginLeft: token.marginXS,
+                              flexShrink: 1,
+                            }}
+                          >
+                            {environmentPrefixTag}
+                            {tagsFromMetaImageInfoLabel}
+                          </Flex>
                         </Flex>
                       </Select.Option>
                     );
@@ -401,7 +408,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
       <Form.Item
         noStyle
         shouldUpdate={(prev, cur) =>
-          prev.environments?.environments !== cur.environments?.environment
+          prev.environments?.environment !== cur.environments?.environment
         }
       >
         {({ getFieldValue }) => {
@@ -423,18 +430,24 @@ const ImageEnvironmentSelectFormItems: React.FC<
           });
           return (
             <Form.Item
+              className="image-environment-select-form-item"
               name={['environments', 'version']}
               rules={[{ required: true }]}
             >
               <Select
                 ref={versionSelectRef}
-                onChange={() => {}}
+                onChange={(value) => {
+                  const selectedImage = _.find(images, (image) => {
+                    return getImageFullName(image) === value;
+                  });
+                  form.setFieldValue(['environments', 'image'], selectedImage);
+                }}
                 showSearch
                 searchValue={versionSearch}
                 onSearch={setVersionSearch}
                 // autoClearSearchValue
                 optionFilterProp="filterValue"
-                optionLabelProp="label"
+                // optionLabelProp="label"
                 dropdownRender={(menu) => (
                   <>
                     <Flex
@@ -481,16 +494,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
 
                     const extraFilterValues: string[] = [];
                     const requirementTags =
-                      requirements.length > 0 ? (
-                        <Flex
-                          direction="row"
-                          wrap="wrap"
-                          style={{
-                            flex: 1,
-                          }}
-                          gap={'xxs'}
-                        >
-                          {_.map(requirements, (requirement, idx) => (
+                      requirements.length > 0
+                        ? _.map(requirements, (requirement, idx) => (
                             <DoubleTag
                               key={idx}
                               values={
@@ -499,18 +504,18 @@ const ImageEnvironmentSelectFormItems: React.FC<
                                   .map((str) => {
                                     extraFilterValues.push(str);
                                     return (
-                                      <TextHighlighter keyword={versionSearch}>
+                                      <TextHighlighter
+                                        keyword={versionSearch}
+                                        key={str}
+                                      >
                                         {str}
                                       </TextHighlighter>
                                     );
                                   }) || requirements
                               }
                             />
-                          ))}
-                        </Flex>
-                      ) : (
-                        '-'
-                      );
+                          ))
+                        : '-';
                     return (
                       <Select.Option
                         key={image?.digest}
@@ -521,29 +526,32 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           image?.architecture,
                           ...extraFilterValues,
                         ].join('\t')}
-                        label={[
-                          version,
-                          tagAlias,
-                          image?.architecture,
-                          requirements.length > 0
-                            ? requirements.join(', ')
-                            : '-',
-                        ].join(' | ')}
                       >
-                        <Flex direction="row">
-                          <TextHighlighter keyword={versionSearch}>
-                            {version}
-                          </TextHighlighter>
-                          <Divider type="vertical" />
-                          <TextHighlighter keyword={versionSearch}>
-                            {tagAlias}
-                          </TextHighlighter>
-                          <Divider type="vertical" />
-                          <TextHighlighter keyword={versionSearch}>
-                            {image?.architecture}
-                          </TextHighlighter>
-                          <Divider type="vertical" />
-                          {requirementTags}
+                        <Flex direction="row" justify="between">
+                          <Flex direction="row">
+                            <TextHighlighter keyword={versionSearch}>
+                              {version}
+                            </TextHighlighter>
+                            <Divider type="vertical" />
+                            <TextHighlighter keyword={versionSearch}>
+                              {tagAlias}
+                            </TextHighlighter>
+                            <Divider type="vertical" />
+                            <TextHighlighter keyword={versionSearch}>
+                              {image?.architecture}
+                            </TextHighlighter>
+                          </Flex>
+                          <Flex
+                            direction="row"
+                            // set specific class name to handle flex wrap using css
+                            className="tag-wrap"
+                            style={{
+                              marginLeft: token.marginXS,
+                              flexShrink: 1,
+                            }}
+                          >
+                            {requirementTags}
+                          </Flex>
                         </Flex>
                       </Select.Option>
                     );

@@ -4,16 +4,23 @@ import { Button, Form, FormItemProps, Input, InputRef } from 'antd';
 import { FormListProps } from 'antd/lib/form';
 import _ from 'lodash';
 import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface EnvVarFormListProps extends Omit<FormListProps, 'children'> {
   formItemProps?: FormItemProps;
 }
+
+export interface EnvVarFormListValue {
+  variable: string;
+  value: string;
+}
+// TODO: validation rule for duplicate variable name
 const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
   formItemProps,
   ...props
 }) => {
   const inputRef = useRef<InputRef>(null);
-
+  const { t } = useTranslation();
   return (
     <Form.List {...props}>
       {(fields, { add, remove }) => {
@@ -26,16 +33,20 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                   style={{ marginBottom: 0, flex: 1 }}
                   name={[name, 'variable']}
                   rules={[
-                    { required: true, message: 'Enter Variable name' },
+                    {
+                      required: true,
+                      message: t('session.launcher.EnterEnvironmentVariable'),
+                    },
                     {
                       pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/,
-                      message:
-                        'Variable name must start with a letter or underscore, and can only contain letters, numbers, and underscores.',
+                      message: t(
+                        'session.launcher.EnvironmentVariableNamePatternError',
+                      ),
                     },
                     ({ getFieldValue }) => ({
                       validator(rule, variableName) {
                         const variableNames = _.map(
-                          getFieldValue('envList'),
+                          getFieldValue(props.name),
                           (i) => i?.variable,
                         );
 
@@ -44,7 +55,12 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                           _.filter(variableNames, (i) => i === variableName)
                             .length > 1
                         ) {
-                          return Promise.reject('Variable name already exists');
+                          return Promise.reject(
+                            t(
+                              'session.launcher.EnvironmentVariableDuplicateName',
+                            ),
+                            // EnvironmentVariableDuplicateName
+                          );
                         } else {
                           return Promise.resolve();
                         }

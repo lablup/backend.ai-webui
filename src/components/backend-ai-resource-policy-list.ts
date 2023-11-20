@@ -81,6 +81,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @state() private allowed_vfolder_hosts;
   @state() private is_super_admin = false;
   @state() private vfolderPermissions;
+  @state() private isSupportMaxVfolderCountInUserResourcePolicy = false;
 
   constructor() {
     super();
@@ -447,9 +448,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             ></backend-ai-multi-select>
             <div
               class="horizontal layout justified"
-              style=${globalThis.backendaiclient.supports(
-                'max-vfolder-count-in-user-resource-policy',
-              )
+              style=${this.isSupportMaxVfolderCountInUserResourcePolicy
                 ? 'display:none;'
                 : 'width:100%;'}
             >
@@ -620,9 +619,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               `
             : html``}
         </div>
-        ${globalThis.backendaiclient.supports(
-          'max-vfolder-count-in-user-resource-policy',
-        )
+        ${this.isSupportMaxVfolderCountInUserResourcePolicy
           ? html``
           : html`
               <div class="layout horizontal wrap center">
@@ -801,6 +798,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             globalThis.backendaiclient.supports(
               'fine-grained-storage-permissions',
             );
+          this.isSupportMaxVfolderCountInUserResourcePolicy =
+            globalThis.backendaiclient.supports(
+              'max-vfolder-count-in-user-resource-policy',
+            );
           this.is_super_admin = globalThis.backendaiclient.is_superadmin;
           this._refreshPolicyData();
           if (this.enableParsingStoragePermissions) {
@@ -815,6 +816,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         globalThis.backendaiclient.supports('session-lifetime');
       this.enableParsingStoragePermissions =
         globalThis.backendaiclient.supports('fine-grained-storage-permissions');
+      this.isSupportMaxVfolderCountInUserResourcePolicy =
+        globalThis.backendaiclient.supports(
+          'max-vfolder-count-in-user-resource-policy',
+        );
       this.is_super_admin = globalThis.backendaiclient.is_superadmin;
       this._refreshPolicyData();
       if (this.enableParsingStoragePermissions) {
@@ -1092,15 +1097,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       max_concurrent_sessions: parseInt(this.concurrencyLimit.value),
       max_containers_per_session: parseInt(this.containerPerSessionLimit.value),
       idle_timeout: this.idleTimeout.value,
+      max_vfolder_count: 0,
       allowed_vfolder_hosts: vfolder_hosts,
       max_vfolder_count: 0,
     };
 
-    if (
-      !globalThis.backendaiclient.supports(
-        'max-vfolder-count-in-user-resource-policy',
-      )
-    ) {
+    if (!this.isSupportMaxVfolderCountInUserResourcePolicy) {
       input.max_vfolder_count = parseInt(this.vfolderCountLimitInput.value);
     }
 
