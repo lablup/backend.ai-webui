@@ -56,6 +56,7 @@ all: dep
 	@make win_arm64
 	@make linux_x64
 	@make linux_arm64
+	@make bundle
 dep:
 	@if [ ! -f "./config.toml" ]; then \
 		cp config.toml.sample config.toml; \
@@ -144,6 +145,11 @@ ifeq ($(site),main)
 else
 	@mv ./app/backend.ai-desktop-$(arch)-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-$(site)-$(os)-$(arch).dmg
 endif
+	@printf "$(YELLOW)Finished$(NC)\n"
+bundle: dep
+	@printf "$(GREEN)Bundling...$(NC)"
+	@cd build/rollup; zip -r -9 ../../app/backend.ai-webui-bundle-$(BUILD_DATE).zip . > /dev/null
+	@mv ./app/backend.ai-webui-bundle-$(BUILD_DATE).zip ./app/backend.ai-webui-bundle-$(BUILD_VERSION).zip
 	@printf "$(YELLOW)Finished$(NC)\n"
 mac: dep
 	@make mac_x64
