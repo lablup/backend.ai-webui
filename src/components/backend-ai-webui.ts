@@ -103,7 +103,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Array }) groups = [];
   @property({ type: Object }) plugins = Object();
   @property({ type: String }) fasttrackEndpoint = '';
-  @property({ type: Boolean }) isHideSideMenuFastTrackButton = false;
   @property({ type: String }) _page = '';
   @property({ type: String }) _lazyPage = '';
   @property({ type: Object }) _pageParams = {};
@@ -484,12 +483,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       'frontendEndpoint' in config.pipeline
     ) {
       this.fasttrackEndpoint = config.pipeline.frontendEndpoint;
-    }
-    if (
-      typeof config.pipeline !== 'undefined' &&
-      'hideSideMenuButton' in config.pipeline
-    ) {
-      this.isHideSideMenuFastTrackButton = config.pipeline.hideSideMenuButton;
     }
     if (typeof config.plugin !== 'undefined') {
       // Store plugin informations
@@ -1239,7 +1232,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         _text('webui.menu.AgentSummary'),
       );
     }
-    if (!this.isHideSideMenuFastTrackButton && this.fasttrackEndpoint !== '') {
+    if (!this.blockedMenuItem.includes('pipeline') && this.fasttrackEndpoint !== '') {
       this._createPopover('fasttrack-menu-icon', _text('webui.menu.FastTrack'));
     }
   }
@@ -1493,8 +1486,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <span class="full-menu">${_t('webui.menu.Statistics')}</span>
             </mwc-list-item>
             ${
-              /** TODO */
-              !this.isHideSideMenuFastTrackButton &&
+              !this.blockedMenuItem.includes('pipeline') &&
               this.fasttrackEndpoint !== ''
                 ? html`
                     <a href="${this.fasttrackEndpoint}" target="_blank">
