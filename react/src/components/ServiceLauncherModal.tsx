@@ -10,11 +10,12 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import ResourceGroupSelect from './ResourceGroupSelect';
-import SliderInputItem from './SliderInputFormItem';
+import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
+import SliderInputFormItem from './SliderInputFormItem';
 import VFolderSelect from './VFolderSelect';
-import { Card, Form, Input, theme, Switch, message } from 'antd';
+import { Card, Form, Input, theme, Select, Switch, message } from 'antd';
 import _ from 'lodash';
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 type ClusterMode = 'single-node' | 'multi-node';
@@ -27,6 +28,11 @@ interface ServiceCreateConfigResourceType {
   mem: string;
   'cuda.device'?: number | string;
   'cuda.shares'?: number | string;
+  'rocm.device'?: number | string;
+  'tpu.device'?: number | string;
+  'ipu.device'?: number | string;
+  'atom.device'?: number | string;
+  'warboy.device'?: number | string;
 }
 
 interface ServiceCreateConfigType {
@@ -62,7 +68,8 @@ interface ServiceLauncherProps
 }
 interface ServiceLauncherFormInput extends ImageEnvironmentFormInput {
   serviceName: string;
-  gpu: number;
+  // gpu: number;
+  resource: AIAccelerator;
   cpu: number;
   mem: number;
   shmem: number;
@@ -70,6 +77,16 @@ interface ServiceLauncherFormInput extends ImageEnvironmentFormInput {
   vFolderName: string;
   desiredRoutingCount: number;
   openToPublic: boolean;
+}
+
+interface AIAccelerator {
+  accelerator: number;
+  acceleratorType: SelectUIType;
+}
+
+interface SelectUIType {
+  value: string;
+  label: string;
 }
 
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
@@ -84,6 +101,82 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const currentDomain = useCurrentDomainValue();
   const [form] = Form.useForm<ServiceLauncherFormInput>();
   const [resourceSlots] = useResourceSlots();
+  const currentImage = Form.useWatch(['environments', 'image'], form); //TODO: type // form.getFieldValue(['environments', 'image']);
+  const currentAcceleratorType = form.getFieldValue([
+    'resource',
+    'acceleratorType',
+  ]);
+  const currentImageAcceleratorLimits = _.filter(
+    currentImage?.resource_limits,
+    (limit) =>
+      limit ? !_.includes(['cpu', 'mem', 'shmem'], limit.key) : false,
+  );
+  const currentImageAcceleratorTypeName: string =
+    // NOTE:
+    // filter from resourceSlots since resourceSlots and supported image could be non-identical.
+    // resourceSlots returns "all resources enable to allocate(including AI accelerator)"
+    // imageAcceleratorLimit returns "all resources that is supported in the selected image"
+    _.filter(currentImageAcceleratorLimits, (acceleratorInfo: any) =>
+      _.keys(resourceSlots).includes(acceleratorInfo?.key),
+    )[0]?.key || '';
+  const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
+
+  // change selected accelerator type according to currentImageAcceleratorTypeName
+  useEffect(() => {
+    form.setFieldValue(
+      ['resource', 'accelerator'],
+      getLimitByAccelerator(currentImageAcceleratorTypeName).min || 0,
+    );
+    form.setFieldValue(['resource', 'acceleratorType'], {
+      value: currentImageAcceleratorTypeName,
+      label: ACCELERATOR_UNIT_MAP[currentImageAcceleratorTypeName] || 'UNIT',
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentImage]);
+
+  const getLimitByAccelerator = (acceleratorName: string) => {
+    // FIXME: temporally add hard-coded number when config is undefined
+    let maxLimit = 8;
+    let minLimit = 0;
+
+    // get max
+    switch (acceleratorName) {
+      case 'cuda.device':
+      default:
+        maxLimit = baiClient._config.maxCUDADevicesPerContainer || maxLimit;
+        break;
+      case 'cuda.shares':
+        maxLimit = baiClient._config.maxCUDASharesPerContainer || maxLimit;
+        break;
+      case 'rocm.device':
+        maxLimit = baiClient._config.maxROCMDevicesPerContainer || maxLimit;
+        break;
+      case 'tpu.device':
+        maxLimit = baiClient._config.maxTPUDevicesPerContainer || maxLimit;
+        break;
+      case 'ipu.device':
+        maxLimit = baiClient._config.maxIPUDevicesPerContainer || maxLimit;
+        break;
+      case 'atom.device':
+        maxLimit = baiClient._config.maxATOMDevicesPerContainer || maxLimit;
+        break;
+      case 'warboy.device':
+        maxLimit = baiClient._config.maxWarboyDevicesPerContainer || maxLimit;
+        break;
+    }
+    // get min
+    minLimit = parseInt(
+      _.filter(
+        currentImageAcceleratorLimits,
+        (supportedAcceleratorInfo) =>
+          supportedAcceleratorInfo?.key === currentImageAcceleratorTypeName,
+      )[0]?.min as string,
+    );
+    return {
+      min: minLimit,
+      max: maxLimit,
+    };
+  };
 
   const mutationToCreateService = useTanMutation<
     unknown,
@@ -115,11 +208,38 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           },
         },
       };
-      if (resourceSlots?.['cuda.shares']) {
-        body['config'].resources['cuda.shares'] = values.gpu;
-      }
-      if (resourceSlots?.['cuda.device']) {
-        body['config'].resources['cuda.device'] = values.gpu;
+      // Set AI accelerator value if set
+      // Currently, we only support one AI accelerator per session
+      if (values.resource.acceleratorType) {
+        const acceleratorTypeName: string =
+          values.resource.acceleratorType?.value;
+        // FIXME: temporally add switch-case
+        switch (acceleratorTypeName) {
+          case 'cuda.shares':
+            body['config'].resources['cuda.shares'] =
+              values.resource.accelerator;
+            break;
+          case 'cuda.device':
+            body['config'].resources['cuda.device'] =
+              values.resource.accelerator;
+            break;
+          case 'rocm.device':
+            body['config'].resources['rocm.device'] =
+              values.resource.accelerator;
+            break;
+          case 'tpu.device':
+            body['config'].resources['tpu.device'] =
+              values.resource.accelerator;
+            break;
+          case 'ipu.device':
+            body['config'].resources['ipu.device'] =
+              values.resource.accelerator;
+            break;
+          case 'warboy.device':
+            body['config'].resources['warboy.device'] =
+              values.resource.accelerator;
+            break;
+        }
       }
       if (values.shmem && values.shmem > 0) {
         body['config'].resource_opts = {
@@ -206,7 +326,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           initialValues={
             {
               cpu: 1,
-              gpu: 0,
+              // gpu: 0,
+              resource: {
+                accelerator: 0,
+              },
               mem: 0.25,
               shmem: 0,
               desiredRoutingCount: 1,
@@ -260,7 +383,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               autoSelectDefault
             />
           </Form.Item>
-          <SliderInputItem
+          <SliderInputFormItem
             label={t('modelService.DesiredRoutingCount')}
             name="desiredRoutingCount"
             rules={[
@@ -304,7 +427,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
                 return (
                   <>
-                    <SliderInputItem
+                    <SliderInputFormItem
                       name={'cpu'}
                       label={t('session.launcher.CPU')}
                       tooltip={<Trans i18nKey={'session.launcher.DescCPU'} />}
@@ -325,7 +448,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         },
                       ]}
                     />
-                    <SliderInputItem
+                    <SliderInputFormItem
                       name={'mem'}
                       label={t('session.launcher.Memory')}
                       tooltip={
@@ -352,11 +475,14 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                               'G',
                             );
 
-                            if (sizeGInfo.number > value) {
+                            if (
+                              sizeGInfo?.number &&
+                              sizeGInfo?.number > value
+                            ) {
                               return Promise.reject(
                                 new Error(
                                   t('session.launcher.MinMemory', {
-                                    size: sizeGInfo.numberUnit,
+                                    size: sizeGInfo?.numberUnit,
                                   }),
                                 ),
                               );
@@ -366,7 +492,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         }),
                       ]}
                     />
-                    <SliderInputItem
+                    <SliderInputFormItem
                       name={'shmem'}
                       label={t('session.launcher.SharedMemory')}
                       tooltip={
@@ -385,36 +511,81 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         },
                       ]}
                     />
-                    {(resourceSlots?.['cuda.device'] ||
-                      resourceSlots?.['cuda.shares']) && (
-                      <SliderInputItem
-                        style={{ marginBottom: 0 }}
-                        name={'gpu'}
-                        label={t('session.launcher.AIAccelerator')}
-                        tooltip={
-                          <Trans
-                            i18nKey={'session.launcher.DescAIAccelerator'}
-                          />
-                        }
-                        max={
-                          resourceSlots['cuda.shares']
-                            ? baiClient._config.maxCUDASharesPerContainer
-                            : baiClient._config.maxCUDADevicesPerContainer
-                        }
-                        step={resourceSlots['cuda.shares'] ? 0.1 : 1}
-                        inputNumberProps={{
-                          //TODO: change unit based on resource limit
-                          addonAfter: 'GPU',
-                        }}
-                        required
-                        rules={[
-                          {
-                            required: true,
-                          },
-                        ]}
-                      />
-                    )}
                   </>
+                );
+              }}
+            </Form.Item>
+            <Form.Item
+              noStyle
+              shouldUpdate={(prev, cur) =>
+                prev.environments?.environment !== cur.environments?.environment
+              }
+            >
+              {() => {
+                return (
+                  <SliderInputFormItem
+                    name={['resource', 'accelerator']}
+                    label={t(`session.launcher.AIAccelerator`)}
+                    tooltip={
+                      <Trans i18nKey={'session.launcher.DescAIAccelerator'} />
+                    }
+                    sliderProps={
+                      {
+                        // FIXME: temporally comment out min value
+                        // marks: {
+                        //   0: 0,
+                        // },
+                      }
+                    }
+                    min={0}
+                    max={
+                      getLimitByAccelerator(currentImageAcceleratorTypeName).max
+                    }
+                    step={
+                      _.endsWith(currentAcceleratorType, 'shares') ? 0.1 : 1
+                    }
+                    disabled={currentImageAcceleratorLimits.length <= 0}
+                    inputNumberProps={{
+                      addonAfter: (
+                        <Form.Item
+                          noStyle
+                          name={['resource', 'acceleratorType']}
+                          initialValue={currentImageAcceleratorTypeName}
+                        >
+                          <Select
+                            disabled={currentImageAcceleratorLimits.length <= 0}
+                            suffixIcon={
+                              _.size(acceleratorSlots) > 1 ? undefined : null
+                            }
+                            open={
+                              _.size(acceleratorSlots) > 1 ? undefined : false
+                            }
+                            popupMatchSelectWidth={false}
+                            options={_.map(acceleratorSlots, (value, name) => {
+                              return {
+                                value: name,
+                                label: ACCELERATOR_UNIT_MAP[name] || 'UNIT',
+                                disabled:
+                                  currentImageAcceleratorLimits.length > 0 &&
+                                  !_.find(
+                                    currentImageAcceleratorLimits,
+                                    (limit) => {
+                                      return limit?.key === name;
+                                    },
+                                  ),
+                              };
+                            })}
+                          />
+                        </Form.Item>
+                      ),
+                    }}
+                    required
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  />
                 );
               }}
             </Form.Item>
