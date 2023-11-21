@@ -177,7 +177,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Array }) optionalPages;
   @property({ type: Number }) timeoutSec = 5;
   private _useExperiment = false;
-  private _usePipeline = false; // temporally block pipeline menu
   @property({ type: Object }) loggedAccount = Object();
   @property({ type: Object }) roleInfo = Object();
   @property({ type: Object }) keyPairInfo = Object();
@@ -1040,9 +1039,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     ) {
       this.notification.text = _text('webui.CleanUpNow');
       this.notification.show();
-      // if (globalThis.backendaiclient._config.connectionMode === 'SESSION' && this._usePipeline) {
-      //   await Promise.all([globalThis.backendaiclient.pipeline.logout(), globalThis.backendaiclient.logout()]);
-      // }
       if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
         await globalThis.backendaiclient.logout();
       }
@@ -1465,46 +1461,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <span class="full-menu">${_t('webui.menu.Data&Storage')}</span>
             </mwc-list-item>
             ${
-              this._usePipeline
-                ? html`
-                    <mwc-list-item
-                      graphic="icon"
-                      ?selected="${this._page === 'pipeline'}"
-                      @click="${() => this._moveTo('/pipeline')}"
-                      ?disabled="${this.blockedMenuItem.includes('pipeline')}"
-                      style="display:none;"
-                    >
-                      <i
-                        class="fas fa-stream"
-                        slot="graphic"
-                        id="pipeline-menu-icon"
-                      ></i>
-                      <span class="full-menu">
-                        ${_t('webui.menu.Pipeline')}
-                      </span>
-                    </mwc-list-item>
-                    <mwc-list-item
-                      graphic="icon"
-                      ?selected="${this._page === 'pipeline-job'}"
-                      @click="${() => this._moveTo('/pipeline-job')}"
-                      ?disabled="${this.blockedMenuItem.includes(
-                        'pipeline-job',
-                      )}"
-                      style="display:none;"
-                    >
-                      <i
-                        class="fas fa-sitemap"
-                        slot="graphic"
-                        id="pipeline-job-menu-icon"
-                      ></i>
-                      <span class="full-menu">
-                        ${_t('webui.menu.PipelineJob')}
-                      </span>
-                    </mwc-list-item>
-                  `
-                : html``
-            }
-            ${
               this.isHideAgents
                 ? html``
                 : html`
@@ -1537,6 +1493,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <span class="full-menu">${_t('webui.menu.Statistics')}</span>
             </mwc-list-item>
             ${
+              /** TODO */
               !this.isHideSideMenuFastTrackButton &&
               this.fasttrackEndpoint !== ''
                 ? html`
