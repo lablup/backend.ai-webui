@@ -24,8 +24,8 @@ module.exports = {
         // Return key as the default value for English language
         return key;
       }
-      // Return the string '__NOT_TRANSLATED__' for other languages
-      return '__NOT_TRANSLATED__';
+      // Return the string '' for other languages
+      return '';
     },
     resource: {
       loadPath: 'resources/i18n/{{lng}}.json',
