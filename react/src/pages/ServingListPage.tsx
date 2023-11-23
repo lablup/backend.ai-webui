@@ -147,7 +147,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
 
   const sortedEndpointList = _.sortBy(modelServiceList?.items, 'name');
 
-  console.log(baiClient);
   // FIXME: struggling with sending data when active tab changes!
   // const runningModelServiceList = modelServiceList?.filter(
   //   (item: any) => item.desired_session_count >= 0
