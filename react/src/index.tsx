@@ -216,6 +216,7 @@ customElements.define(
       if (props.value !== value) {
         setValue(props.value || '');
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.value]);
 
     return (
