@@ -1708,9 +1708,13 @@ export default class BackendAiStorageList extends BackendAIPage {
               `
             : html``}
           <div
-            @click="${(e) => this._folderExplorer(rowData)}"
+            @click="${(e) =>
+              !this._isUncontrollableStatus(rowData.item.status) &&
+              this._folderExplorer(rowData)}"
             .folder-id="${rowData.item.name}"
-            style="cursor:pointer;"
+            style="cursor:${this._isUncontrollableStatus(rowData.item.status)
+              ? 'default'
+              : 'pointer'};"
           >
             ${rowData.item.name}
           </div>
