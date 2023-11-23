@@ -2056,8 +2056,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   async _updateVirtualFolderList() {
+    // Set to a list of vfolders that can only be mounted if the status is 'ready'
     return this.resourceBroker.updateVirtualFolderList().then(() => {
-      this.vfolders = this.resourceBroker.vfolders;
+      this.vfolders = this.resourceBroker.vfolders.filter(
+        (vf) => vf.status === 'ready',
+      );
     });
   }
 
