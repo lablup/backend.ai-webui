@@ -1422,7 +1422,8 @@
     "RoutingsCount": "Contagem de rotas",
     "Active/Total": "Ativo/Total",
     "Public": "Público",
-    "YouAreAboutToTerminate": "Está prestes a terminar"
+    "YouAreAboutToTerminate": "Está prestes a terminar",
+    "CreatedUser": "__NOT_TRANSLATED__"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

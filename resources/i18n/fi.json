@@ -709,7 +709,8 @@
     "TokenGenerationFailed": "Tokenin luominen epäonnistui. yritä uudelleen.",
     "TrafficRatio": "Liikennesuhde",
     "YouAreAboutToTerminate": "Olet lopettamassa",
-    "resources": "Resurssit"
+    "resources": "Resurssit",
+    "CreatedUser": "__NOT_TRANSLATED__"
   },
   "notification": {
     "Initializing": "Aloitetaan...",

@@ -402,6 +402,7 @@
     "ServingRouteErrorModalTitle": "서빙 라우트 에러",
     "FailedToStartService": "서비스를 생성하지 못했습니다.",
     "CreatedAt": "생성 시각",
+    "CreatedUser": "생성자",
     "GeneratedTokens": "생성된 토큰 목록",
     "CurrentTime": "현재 시각",
     "GenerateNewToken": "새 토큰 생성하기",

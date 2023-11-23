@@ -1382,7 +1382,8 @@
     "RoutingsCount": "Conteggio delle rotte",
     "Active/Total": "Attivo/Totale",
     "Public": "Pubblico",
-    "YouAreAboutToTerminate": "State per terminare"
+    "YouAreAboutToTerminate": "State per terminare",
+    "CreatedUser": "__NOT_TRANSLATED__"
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",

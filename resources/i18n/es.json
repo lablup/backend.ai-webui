@@ -709,7 +709,8 @@
     "TokenGenerationFailed": "Generación de token fallida. Por favor, inténtelo de nuevo.",
     "TrafficRatio": "Ratio de tráfico",
     "YouAreAboutToTerminate": "Está a punto de terminar",
-    "resources": "Recursos"
+    "resources": "Recursos",
+    "CreatedUser": "__NOT_TRANSLATED__"
   },
   "notification": {
     "Initializing": "Inicializando...",
