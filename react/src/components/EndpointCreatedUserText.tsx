@@ -14,8 +14,7 @@ const EndpointCreatedUserText: React.FC<EndpointCreatedUserProps> = ({
       graphql`
         query EndpointCreatedUserTextQuery($userId: ID) {
           user_from_uuid(user_id: $userId) {
-            id
-            username
+            email
           }
         }
       `,
@@ -23,7 +22,7 @@ const EndpointCreatedUserText: React.FC<EndpointCreatedUserProps> = ({
         userId: userId,
       },
     );
-  return <div>{user?.username}</div>;
+  return user?.email;
 };
 
 export default EndpointCreatedUserText;
