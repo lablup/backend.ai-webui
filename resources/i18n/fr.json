@@ -1432,7 +1432,7 @@
     "ServiceNameRule": "Seuls 4 à 24 caractères alphanumériques, le trait de soulignement (_), le trait d'union (-) et le point (.) sont autorisés et le texte doit se terminer par un caractère alphanumérique.",
     "resources": "Ressources",
     "Image": "Image",
-    "CreatedUser": "Utilisateur créé"
+    "Owner": "Propriétaire"
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",

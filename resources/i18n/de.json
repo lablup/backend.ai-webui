@@ -1383,7 +1383,7 @@
     "Active/Total": "Aktiv/Gesamt",
     "Public": "Öffentlich",
     "YouAreAboutToTerminate": "Sie stehen kurz vor der Beendigung",
-    "CreatedUser": "Erstellter Benutzer"
+    "Owner": "Eigentümer"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

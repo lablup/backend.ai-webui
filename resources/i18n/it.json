@@ -1383,7 +1383,7 @@
     "Active/Total": "Attivo/Totale",
     "Public": "Pubblico",
     "YouAreAboutToTerminate": "State per terminare",
-    "CreatedUser": "Utente creato"
+    "Owner": "Proprietario"
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",

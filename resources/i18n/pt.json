@@ -1423,7 +1423,7 @@
     "Public": "Público",
     "YouAreAboutToTerminate": "Está prestes a terminar",
     "Image": "Imagem",
-    "CreatedUser": "Usuário criado"
+    "Owner": "Proprietário"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

@@ -427,7 +427,7 @@
     "FormValidationFailed": "Form validation failed",
     "resources": "Resources",
     "Image": "Image",
-    "CreatedUser": "Created User"
+    "Owner": "Owner"
   },
   "button": {
     "Cancel": "Cancel",

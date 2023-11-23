@@ -1383,7 +1383,7 @@
     "Active/Total": "Ενεργό/Σύνολο",
     "Public": "Δημόσιο",
     "YouAreAboutToTerminate": "Πρόκειται να τερματίσετε",
-    "CreatedUser": "Δημιουργήθηκε χρήστης"
+    "Owner": "Ιδιοκτήτης"
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",

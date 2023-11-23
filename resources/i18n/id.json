@@ -1432,7 +1432,7 @@
     "ServiceNameRule": "Hanya mengizinkan 4 hingga 24 karakter alfanumerik, garis bawah (_), tanda hubung (-), dan titik (.) dan harus diakhiri dengan karakter alfanumerik.",
     "resources": "Sumber daya",
     "Image": "Gambar",
-    "CreatedUser": "Pengguna yang Dibuat"
+    "Owner": "Pemilik"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

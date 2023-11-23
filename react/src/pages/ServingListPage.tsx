@@ -358,7 +358,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 ...(baiClient.is_admin
                   ? [
                       {
-                        title: t('modelService.CreatedUser'),
+                        title: t('modelService.Owner'),
                         dataIndex: 'created_user',
                         render: (created_user: string) => created_user,
                       },

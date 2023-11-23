@@ -402,7 +402,6 @@
     "ServingRouteErrorModalTitle": "서빙 라우트 에러",
     "FailedToStartService": "서비스를 생성하지 못했습니다.",
     "CreatedAt": "생성 시각",
-    "CreatedUser": "생성자",
     "GeneratedTokens": "생성된 토큰 목록",
     "CurrentTime": "현재 시각",
     "GenerateNewToken": "새 토큰 생성하기",
@@ -417,7 +416,8 @@
     "ServiceNameRule": "4~24자의 영문, 숫자, 밑줄(_), 하이픈(-), 마침표(.)만 허용하며, 영문으로 영문이나 숫자로 끝나야합니다.",
     "FormValidationFailed": "양식 유효성 검사 실패",
     "resources": "자원",
-    "Image": "이미지"
+    "Image": "이미지",
+    "Owner": "소유자"
   },
   "button": {
     "Cancel": "취소",

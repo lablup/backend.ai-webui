@@ -1423,7 +1423,7 @@
     "Public": "公众",
     "YouAreAboutToTerminate": "您即将终止",
     "Image": "图片",
-    "CreatedUser": "已建立用戶"
+    "Owner": ""
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

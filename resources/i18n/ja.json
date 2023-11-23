@@ -1383,7 +1383,7 @@
     "Public": "公開",
     "YouAreAboutToTerminate": "以下のサービスを削除しようとします：",
     "Image": "イメージ",
-    "CreatedUser": "作成されたユーザー"
+    "Owner": "所有者"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

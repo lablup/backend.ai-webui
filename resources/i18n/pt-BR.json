@@ -1423,7 +1423,7 @@
     "Active/Total": "Ativo/Total",
     "Public": "Público",
     "YouAreAboutToTerminate": "Está prestes a terminar",
-    "CreatedUser": "Usuário criado"
+    "Owner": "Proprietário"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

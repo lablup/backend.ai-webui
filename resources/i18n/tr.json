@@ -1383,7 +1383,7 @@
     "Active/Total": "Aktif/Toplam",
     "Public": "Kamu",
     "YouAreAboutToTerminate": "Sonlandırmak üzeresiniz",
-    "CreatedUser": "Kullanıcı Oluşturuldu"
+    "Owner": "Mal sahibi"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

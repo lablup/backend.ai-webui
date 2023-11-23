@@ -1422,7 +1422,7 @@
     "Active/Total": "Aktif/Jumlah",
     "Public": "Awam",
     "YouAreAboutToTerminate": "Anda akan menamatkan perkhidmatan",
-    "CreatedUser": "Pengguna Dicipta"
+    "Owner": "Pemilik"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",
