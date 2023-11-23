@@ -219,8 +219,8 @@ customElements.define(
               style={{ margin: 0 }}
             >
               <ResourceGroupSelect
-                autoSelectDefault
                 size="large"
+                value={props.value}
                 onChange={(value) => {
                   props.dispatchEvent('change', value);
                 }}
