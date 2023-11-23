@@ -132,6 +132,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'id',
   ];
   @property({ type: Array }) blockedMenuItem;
+  @property({ type: Array }) inactiveMenuItem;
   @property({ type: Number }) minibarWidth = 88;
   @property({ type: Number }) sidebarWidth = 250;
   @property({ type: Number }) sidepanelWidth = 250;
@@ -198,6 +199,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   constructor() {
     super();
     this.blockedMenuItem = [];
+    this.inactiveMenuItem = [];
   }
 
   static get styles(): CSSResultGroup {
@@ -446,7 +448,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.edition = config.license.edition;
     }
     if (typeof config.menu !== 'undefined' && 'blocklist' in config.menu) {
-      this.blockedMenuItem = config.menu.blocklist.split(',');
+      this.blockedMenuItem = config.menu.blocklist
+        .split(',')
+        .map((x: string) => x.trim());
+    }
+    if (typeof config.menu !== 'undefined' && 'inactivelist' in config.menu) {
+      this.inactiveMenuItem = config.menu.inactivelist
+        .split(',')
+        .map((x: string) => x.trim());
     }
     if (
       typeof config.general !== 'undefined' &&
@@ -622,7 +631,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         .filter((item) => !item.available)
         .map((item) => item.page)
         .includes(this._page) ||
-      this.blockedMenuItem.includes(this._page)
+      this.blockedMenuItem.includes(this._page) ||
+      this.inactiveMenuItem.includes(this._page)
     ) {
       this._page = 'error';
       globalThis.history.pushState({}, '', '/error');
@@ -1319,311 +1329,459 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   protected render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
-      <link rel="stylesheet" href="resources/custom.css">
+      <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css" />
+      <link rel="stylesheet" href="resources/custom.css" />
       <div id="loading-curtain" class="loading-background">
         <div id="loading-drag-area" class="loading-background-drag-area"></div>
       </div>
-      <mwc-drawer id="app-body" class="${
-        this.mini_ui ? 'mini-ui' : ''
-      }" style="visibility:hidden;">
+      <mwc-drawer
+        id="app-body"
+        class="${this.mini_ui ? 'mini-ui' : ''}"
+        style="visibility:hidden;"
+      >
         <div class="drawer-menu" style="height:100vh;">
           <div id="portrait-bar" class="draggable">
-            <div class="horizontal center layout flex bar draggable" style="cursor:pointer;" @click="${() =>
-              this._moveTo('/summary')}">
+            <div
+              class="horizontal center layout flex bar draggable"
+              style="cursor:pointer;"
+              @click="${() => this._moveTo('/summary')}"
+            >
               <div class="portrait-canvas"></div>
-              <div class="vertical start-justified layout full-menu" style="margin-left:10px;margin-right:10px;">
-                <div class="site-name"><span class="bold">Backend</span>.AI</div>
-                ${
-                  this.siteDescription
-                    ? html`
-                        <div
-                          class="site-name"
-                          style="font-size:13px;text-align:left;"
-                        >
-                          ${this.siteDescription}
-                        </div>
-                      `
-                    : html``
-                }
+              <div
+                class="vertical start-justified layout full-menu"
+                style="margin-left:10px;margin-right:10px;"
+              >
+                <div class="site-name">
+                  <span class="bold">Backend</span>
+                  .AI
+                </div>
+                ${this.siteDescription
+                  ? html`
+                      <div
+                        class="site-name"
+                        style="font-size:13px;text-align:left;"
+                      >
+                        ${this.siteDescription}
+                      </div>
+                    `
+                  : html``}
               </div>
               <span class="flex"></span>
             </div>
           </div>
-          <div class="${
-            this.mini_ui ? 'vertical' : 'horizontal'
-          } center-justified center layout flex">
-            <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;" icon="menu" slot="navigationIcon" @click="${() =>
-              this.toggleSidebarUI()}"></mwc-icon-button>
-            <mwc-icon-button disabled class="temporarily-hide full-menu side-menu fg ${
-              this.contentBody &&
+          <div
+            class="${this.mini_ui
+              ? 'vertical'
+              : 'horizontal'} center-justified center layout flex"
+          >
+            <mwc-icon-button
+              id="mini-ui-toggle-button"
+              style="color:#fff;"
+              icon="menu"
+              slot="navigationIcon"
+              @click="${() => this.toggleSidebarUI()}"
+            ></mwc-icon-button>
+            <mwc-icon-button
+              disabled
+              class="temporarily-hide full-menu side-menu fg ${this
+                .contentBody &&
               this.contentBody.open === true &&
               this._sidepanel === 'feedback'
                 ? 'yellow'
-                : 'white'
-            }" id="feedback-icon" icon="question_answer"></mwc-icon-button>
-            <mwc-icon-button class="side-menu fg ${
-              this.contentBody &&
+                : 'white'}"
+              id="feedback-icon"
+              icon="question_answer"
+            ></mwc-icon-button>
+            <mwc-icon-button
+              class="side-menu fg ${this.contentBody &&
               this.contentBody.open === true &&
               this._sidepanel === 'notification'
                 ? 'yellow'
-                : 'white'
-            }" id="notification-icon" icon="notification_important" @click="${() =>
-              this._openSidePanel('notification')}"></mwc-icon-button>
-            <mwc-icon-button class="side-menu fg ${
-              this.contentBody &&
+                : 'white'}"
+              id="notification-icon"
+              icon="notification_important"
+              @click="${() => this._openSidePanel('notification')}"
+            ></mwc-icon-button>
+            <mwc-icon-button
+              class="side-menu fg ${this.contentBody &&
               this.contentBody.open === true &&
               this._sidepanel === 'task'
                 ? 'yellow'
-                : 'white'
-            }" id="task-icon" icon="ballot" @click="${() =>
-              this._openSidePanel('task')}"></mwc-icon-button>
+                : 'white'}"
+              id="task-icon"
+              icon="ballot"
+              @click="${() => this._openSidePanel('task')}"
+            ></mwc-icon-button>
           </div>
-          <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) =>
-            this._menuSelected(e)}">
-            <mwc-list-item graphic="icon" ?selected="${
-              this._page === 'summary'
-            }" @click="${() =>
-              this._moveTo(
-                '/summary',
-              )}" ?disabled="${this.blockedMenuItem.includes('summary')}">
-              <i class="fas fa-th-large" slot="graphic" id="summary-menu-icon"></i>
-              <span class="full-menu">${_t('webui.menu.Summary')}</span>
-            </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${
-              this._page === 'job'
-            }" @click="${() =>
-              this._moveTo('/job')}" ?disabled="${this.blockedMenuItem.includes(
-              'job',
-            )}">
-              <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
-              <span class="full-menu">${_t('webui.menu.Sessions')}</span>
-            </mwc-list-item>
-            <!-- <mwc-list-item graphic="icon" ?selected="${
-              this._page === 'session'
-            }" @click="${() =>
-              this._moveTo(
-                '/session',
-              )}" ?disabled="${this.blockedMenuItem.includes('session')}">
-              <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
-              <span class="full-menu">${_t(
-                'webui.menu.Sessions',
-              )} new</span> -->
-            </mwc-list-item>
-            ${
-              this.supportServing
-                ? html`
-                    <mwc-list-item
-                      graphic="icon"
-                      ?selected="${this._page === 'serving'}"
-                      @click="${() => this._moveTo('/serving')}"
-                      ?disabled="${this.blockedMenuItem.includes('serving')}"
-                    >
+          <mwc-list
+            id="sidebar-menu"
+            class="sidebar list"
+            @selected="${(e) => this._menuSelected(e)}"
+          >
+            ${!this.blockedMenuItem.includes('summary')
+              ? html`
+                  <mwc-list-item
+                    graphic="icon"
+                    ?selected="${this._page === 'summary'}"
+                    @click="${() => this._moveTo('/summary')}"
+                    ?disabled="${this.inactiveMenuItem.includes('summary')}"
+                  >
+                    <i
+                      class="fas fa-th-large"
+                      slot="graphic"
+                      id="summary-menu-icon"
+                    ></i>
+                    <span class="full-menu">${_t('webui.menu.Summary')}</span>
+                  </mwc-list-item>
+                `
+              : html``}
+            ${!this.blockedMenuItem.includes('job')
+              ? html`
+                  <mwc-list-item
+                    graphic="icon"
+                    ?selected="${this._page === 'job'}"
+                    @click="${() => this._moveTo('/job')}"
+                    ?disabled="${this.inactiveMenuItem.includes('job')}"
+                  >
+                    <i
+                      class="fas fa-list-alt"
+                      slot="graphic"
+                      id="sessions-menu-icon"
+                    ></i>
+                    <span class="full-menu">${_t('webui.menu.Sessions')}</span>
+                  </mwc-list-item>
+                `
+              : html``}
+            ${!this.blockedMenuItem.includes('session')
+              ? html`
+                  <!-- <mwc-list-item graphic="icon" ?selected="${this._page ===
+                  'session'}" @click="${() =>
+                    this._moveTo(
+                      '/session',
+                    )}" ?disabled="${this.inactiveMenuItem.includes(
+                    'session',
+                  )}">
+                    <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
+                    <span class="full-menu">${_t(
+                    'webui.menu.Sessions',
+                  )} new</span>
+                  </mwc-list-item> -->
+                `
+              : html``}
+            ${this.supportServing && !this.blockedMenuItem.includes('serving')
+              ? html`
+                  <mwc-list-item
+                    graphic="icon"
+                    ?selected="${this._page === 'serving'}"
+                    @click="${() => this._moveTo('/serving')}"
+                    ?disabled="${this.inactiveMenuItem.includes('serving')}"
+                  >
+                    <i
+                      class="fa fa-rocket"
+                      slot="graphic"
+                      id="serving-menu-icon"
+                    ></i>
+                    <span class="full-menu">${_t('webui.menu.Serving')}</span>
+                  </mwc-list-item>
+                `
+              : html``}
+            ${this._useExperiment &&
+            !this.blockedMenuItem.includes('experiment')
+              ? html`
+                  <mwc-list-item
+                    graphic="icon"
+                    ?selected="${this._page === 'experiment'}"
+                    @click="${() => this._moveTo('/experiment')}"
+                    ?disabled="${this.inactiveMenuItem.includes('experiment')}"
+                  >
+                    <i class="fas fa-flask" slot="graphic"></i>
+                    <span class="full-menu">
+                      ${_t('webui.menu.Experiments')}
+                    </span>
+                  </mwc-list-item>
+                `
+              : html``}
+            ${!this.blockedMenuItem.includes('import')
+              ? html`
+                  <mwc-list-item
+                    graphic="icon"
+                    ?selected="${this._page === 'github' ||
+                    this._page === 'import'}"
+                    @click="${() => this._moveTo('/import')}"
+                    ?disabled="${this.inactiveMenuItem.includes('import')}"
+                  >
+                    <i
+                      class="fas fa-play"
+                      slot="graphic"
+                      id="import-menu-icon"
+                    ></i>
+                    <span class="full-menu">
+                      ${_t('webui.menu.Import&Run')}
+                    </span>
+                  </mwc-list-item>
+                `
+              : html``}
+            ${!this.blockedMenuItem.includes('data')
+              ? html`
+                  <mwc-list-item
+                    graphic="icon"
+                    ?selected="${this._page === 'data'}"
+                    @click="${() => this._moveTo('/data')}"
+                    ?disabled="${this.inactiveMenuItem.includes('data')}"
+                  >
+                    <i
+                      class="fas fa-cloud-upload-alt"
+                      slot="graphic"
+                      id="data-menu-icon"
+                    ></i>
+                    <span class="full-menu">
+                      ${_t('webui.menu.Data&Storage')}
+                    </span>
+                  </mwc-list-item>
+                `
+              : html``}
+            ${this._usePipeline
+              ? html`
+                  <mwc-list-item
+                    graphic="icon"
+                    ?selected="${this._page === 'pipeline'}"
+                    @click="${() => this._moveTo('/pipeline')}"
+                    ?disabled="${this.inactiveMenuItem.includes('pipeline')}"
+                    style="display:none;"
+                  >
+                    <i
+                      class="fas fa-stream"
+                      slot="graphic"
+                      id="pipeline-menu-icon"
+                    ></i>
+                    <span class="full-menu">${_t('webui.menu.Pipeline')}</span>
+                  </mwc-list-item>
+                  <mwc-list-item
+                    graphic="icon"
+                    ?selected="${this._page === 'pipeline-job'}"
+                    @click="${() => this._moveTo('/pipeline-job')}"
+                    ?disabled="${this.inactiveMenuItem.includes(
+                      'pipeline-job',
+                    )}"
+                    style="display:none;"
+                  >
+                    <i
+                      class="fas fa-sitemap"
+                      slot="graphic"
+                      id="pipeline-job-menu-icon"
+                    ></i>
+                    <span class="full-menu">
+                      ${_t('webui.menu.PipelineJob')}
+                    </span>
+                  </mwc-list-item>
+                `
+              : html``}
+            ${this.isHideAgents
+              ? html``
+              : html`
+                  <mwc-list-item
+                    graphic="icon"
+                    ?selected="${this._page === 'agent-summary'}"
+                    @click="${() => this._moveTo('/agent-summary')}"
+                    ?disabled="${this.inactiveMenuItem.includes(
+                      'agent-summary',
+                    )}"
+                  >
+                    <i
+                      class="fas fa-server"
+                      slot="graphic"
+                      id="agent-summary-menu-icon"
+                    ></i>
+                    <span class="full-menu">
+                      ${_t('webui.menu.AgentSummary')}
+                    </span>
+                  </mwc-list-item>
+                `}
+            ${!this.blockedMenuItem.includes('statistics')
+              ? html`
+                  <mwc-list-item
+                    graphic="icon"
+                    ?selected="${this._page === 'statistics'}"
+                    @click="${() => this._moveTo('/statistics')}"
+                    ?disabled="${this.inactiveMenuItem.includes('statistics')}"
+                  >
+                    <i
+                      class="fas fa-chart-bar"
+                      slot="graphic"
+                      id="statistics-menu-icon"
+                    ></i>
+                    <span class="full-menu">
+                      ${_t('webui.menu.Statistics')}
+                    </span>
+                  </mwc-list-item>
+                `
+              : html``}
+            ${!this.isHideSideMenuFastTrackButton &&
+            this.fasttrackEndpoint !== ''
+              ? html`
+                  <a href="${this.fasttrackEndpoint}" target="_blank">
+                    <mwc-list-item graphic="icon">
                       <i
-                        class="fa fa-rocket"
+                        class="fas fa-external-link-alt"
                         slot="graphic"
-                        id="serving-menu-icon"
+                        id="fasttrack-menu-icon"
                       ></i>
-                      <span class="full-menu">${_t('webui.menu.Serving')}</span>
-                    </mwc-list-item>
-                  `
-                : html``
-            }
-            ${
-              this._useExperiment
-                ? html`
-                    <mwc-list-item
-                      graphic="icon"
-                      ?selected="${this._page === 'experiment'}"
-                      @click="${() => this._moveTo('/experiment')}"
-                      ?disabled="${this.blockedMenuItem.includes('experiment')}"
-                    >
-                      <i class="fas fa-flask" slot="graphic"></i>
                       <span class="full-menu">
-                        ${_t('webui.menu.Experiments')}
+                        ${_t('webui.menu.FastTrack')}
                       </span>
                     </mwc-list-item>
-                  `
-                : html``
-            }
-              <mwc-list-item graphic="icon" ?selected="${
-                this._page === 'github' || this._page === 'import'
-              }" @click="${() =>
-                this._moveTo(
-                  '/import',
-                )}" ?disabled="${this.blockedMenuItem.includes('import')}">
-                <i class="fas fa-play" slot="graphic" id="import-menu-icon"></i>
-                <span class="full-menu">${_t('webui.menu.Import&Run')}</span>
-              </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${
-              this._page === 'data'
-            }" @click="${() =>
-              this._moveTo(
-                '/data',
-              )}" ?disabled="${this.blockedMenuItem.includes('data')}">
-              <i class="fas fa-cloud-upload-alt" slot="graphic" id="data-menu-icon"></i>
-              <span class="full-menu">${_t('webui.menu.Data&Storage')}</span>
-            </mwc-list-item>
-            ${
-              this._usePipeline
-                ? html`
-                    <mwc-list-item
-                      graphic="icon"
-                      ?selected="${this._page === 'pipeline'}"
-                      @click="${() => this._moveTo('/pipeline')}"
-                      ?disabled="${this.blockedMenuItem.includes('pipeline')}"
-                      style="display:none;"
-                    >
-                      <i
-                        class="fas fa-stream"
-                        slot="graphic"
-                        id="pipeline-menu-icon"
-                      ></i>
-                      <span class="full-menu">
-                        ${_t('webui.menu.Pipeline')}
-                      </span>
-                    </mwc-list-item>
-                    <mwc-list-item
-                      graphic="icon"
-                      ?selected="${this._page === 'pipeline-job'}"
-                      @click="${() => this._moveTo('/pipeline-job')}"
-                      ?disabled="${this.blockedMenuItem.includes(
-                        'pipeline-job',
-                      )}"
-                      style="display:none;"
-                    >
-                      <i
-                        class="fas fa-sitemap"
-                        slot="graphic"
-                        id="pipeline-job-menu-icon"
-                      ></i>
-                      <span class="full-menu">
-                        ${_t('webui.menu.PipelineJob')}
-                      </span>
-                    </mwc-list-item>
-                  `
-                : html``
-            }
-            ${
-              this.isHideAgents
-                ? html``
-                : html`
-                    <mwc-list-item
-                      graphic="icon"
-                      ?selected="${this._page === 'agent-summary'}"
-                      @click="${() => this._moveTo('/agent-summary')}"
-                      ?disabled="${this.blockedMenuItem.includes(
-                        'agent-summary',
-                      )}"
-                    >
-                      <i
-                        class="fas fa-server"
-                        slot="graphic"
-                        id="agent-summary-menu-icon"
-                      ></i>
-                      <span class="full-menu">
-                        ${_t('webui.menu.AgentSummary')}
-                      </span>
-                    </mwc-list-item>
-                  `
-            }
-            <mwc-list-item graphic="icon" ?selected="${
-              this._page === 'statistics'
-            }" @click="${() =>
-              this._moveTo(
-                '/statistics',
-              )}" ?disabled="${this.blockedMenuItem.includes('statistics')}">
-              <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
-              <span class="full-menu">${_t('webui.menu.Statistics')}</span>
-            </mwc-list-item>
-            ${
-              !this.isHideSideMenuFastTrackButton &&
-              this.fasttrackEndpoint !== ''
-                ? html`
-                    <a href="${this.fasttrackEndpoint}" target="_blank">
-                      <mwc-list-item graphic="icon">
+                  </a>
+                `
+              : html``}
+            ${'page' in this.plugins
+              ? this.plugins['page']
+                  .filter(
+                    (item) =>
+                      this.plugins['menuitem-user'].includes(item.url) &&
+                      item.menuitem !== '',
+                  )
+                  .map(
+                    (item) => html`
+                      <mwc-list-item
+                        graphic="icon"
+                        ?selected="${this._page === item.url}"
+                        @click="${() => this._moveTo('/' + item.url)}"
+                        ?disabled="${!this.is_admin}"
+                      >
                         <i
-                          class="fas fa-external-link-alt"
+                          class="fas fa-puzzle-piece"
                           slot="graphic"
-                          id="fasttrack-menu-icon"
+                          id="${item}-menu-icon"
                         ></i>
-                        <span class="full-menu">
-                          ${_t('webui.menu.FastTrack')}
-                        </span>
+                        <span class="full-menu">${item.menuitem}</span>
                       </mwc-list-item>
-                    </a>
-                  `
-                : html``
-            }
-            ${
-              'page' in this.plugins
-                ? this.plugins['page']
-                    .filter(
-                      (item) =>
-                        this.plugins['menuitem-user'].includes(item.url) &&
-                        item.menuitem !== '',
-                    )
-                    .map(
-                      (item) => html`
-                        <mwc-list-item
-                          graphic="icon"
-                          ?selected="${this._page === item.url}"
-                          @click="${() => this._moveTo('/' + item.url)}"
-                          ?disabled="${!this.is_admin}"
-                        >
-                          <i
-                            class="fas fa-puzzle-piece"
-                            slot="graphic"
-                            id="${item}-menu-icon"
-                          ></i>
-                          <span class="full-menu">${item.menuitem}</span>
-                        </mwc-list-item>
-                      `,
-                    )
-                : html``
-            }
-            ${
-              this.is_admin
-                ? html`
-                    <h3 class="full-menu">
-                      ${_t('webui.menu.Administration')}
-                    </h3>
-                    <mwc-list-item
-                      graphic="icon"
-                      ?selected="${this._page === 'credential'}"
-                      @click="${() => this._moveTo('/credential')}"
-                      ?disabled="${!this.is_admin}"
-                    >
-                      <i
-                        class="fas fa-address-card"
-                        slot="graphic"
-                        id="user-menu-icon"
-                      ></i>
-                      <span class="full-menu">${_t('webui.menu.Users')}</span>
-                    </mwc-list-item>
-                    <mwc-list-item
-                      graphic="icon"
-                      ?selected="${this._page === 'environment'}"
-                      @click="${() => this._moveTo('/environment')}"
-                      ?disabled="${!this.is_admin}"
-                    >
-                      <i
-                        class="fas fa-microchip"
-                        slot="graphic"
-                        id="environments-menu-icon"
-                      ></i>
-                      <span class="full-menu">
-                        ${_t('webui.menu.Environments')}
-                      </span>
-                    </mwc-list-item>
-                  `
-                : html``
-            }
-                ${
-                  'page' in this.plugins
+                    `,
+                  )
+              : html``}
+            ${this.is_admin
+              ? html`
+                  <h3 class="full-menu">${_t('webui.menu.Administration')}</h3>
+                  <mwc-list-item
+                    graphic="icon"
+                    ?selected="${this._page === 'credential'}"
+                    @click="${() => this._moveTo('/credential')}"
+                    ?disabled="${!this.is_admin}"
+                  >
+                    <i
+                      class="fas fa-address-card"
+                      slot="graphic"
+                      id="user-menu-icon"
+                    ></i>
+                    <span class="full-menu">${_t('webui.menu.Users')}</span>
+                  </mwc-list-item>
+                  <mwc-list-item
+                    graphic="icon"
+                    ?selected="${this._page === 'environment'}"
+                    @click="${() => this._moveTo('/environment')}"
+                    ?disabled="${!this.is_admin}"
+                  >
+                    <i
+                      class="fas fa-microchip"
+                      slot="graphic"
+                      id="environments-menu-icon"
+                    ></i>
+                    <span class="full-menu">
+                      ${_t('webui.menu.Environments')}
+                    </span>
+                  </mwc-list-item>
+                `
+              : html``}
+            ${'page' in this.plugins
+              ? this.plugins['page']
+                  .filter((item) =>
+                    this.plugins['menuitem-admin'].includes(item.url),
+                  )
+                  .map(
+                    (item) => html`
+                      <mwc-list-item
+                        graphic="icon"
+                        ?selected="${this._page === item.url}"
+                        @click="${() => this._moveTo('/' + item.url)}"
+                        ?disabled="${!this.is_admin}"
+                      >
+                        <i
+                          class="fas fa-puzzle-piece"
+                          slot="graphic"
+                          id="${item}-menu-icon"
+                        ></i>
+                        <span class="full-menu">${item.menuitem}</span>
+                      </mwc-list-item>
+                    `,
+                  )
+              : html``}
+            ${this.is_superadmin
+              ? html`
+                  <mwc-list-item
+                    graphic="icon"
+                    ?selected="${this._page === 'agent' ||
+                    this._page === 'storage-settings'}"
+                    @click="${() => this._moveTo('/agent')}"
+                    ?disabled="${!this.is_superadmin}"
+                  >
+                    <i
+                      class="fas fa-server"
+                      slot="graphic"
+                      id="resources-menu-icon"
+                    ></i>
+                    <span class="full-menu">${_t('webui.menu.Resources')}</span>
+                  </mwc-list-item>
+                  <mwc-list-item
+                    graphic="icon"
+                    ?selected="${this._page === 'settings'}"
+                    @click="${() => this._moveTo('/settings')}"
+                    ?disabled="${!this.is_superadmin}"
+                  >
+                    <i
+                      class="fas fa-cog"
+                      slot="graphic"
+                      id="configurations-menu-icon"
+                    ></i>
+                    <span class="full-menu">
+                      ${_t('webui.menu.Configurations')}
+                    </span>
+                  </mwc-list-item>
+                  <mwc-list-item
+                    graphic="icon"
+                    ?selected="${this._page === 'maintenance'}"
+                    @click="${() => this._moveTo('/maintenance')}"
+                    ?disabled="${!this.is_superadmin}"
+                  >
+                    <i
+                      class="fas fa-wrench"
+                      slot="graphic"
+                      id="maintenance-menu-icon"
+                    ></i>
+                    <span class="full-menu">
+                      ${_t('webui.menu.Maintenance')}
+                    </span>
+                  </mwc-list-item>
+                  <mwc-list-item
+                    graphic="icon"
+                    ?selected="${this._page === 'information'}"
+                    @click="${() => this._moveTo('/information')}"
+                    ?disabled="${!this.is_superadmin}"
+                  >
+                    <i
+                      class="fas fa-info-circle"
+                      slot="graphic"
+                      id="information-menu-icon"
+                    ></i>
+                    <span class="full-menu">
+                      ${_t('webui.menu.Information')}
+                    </span>
+                  </mwc-list-item>
+                  ${'page' in this.plugins
                     ? this.plugins['page']
-                        .filter((item) =>
-                          this.plugins['menuitem-admin'].includes(item.url),
+                        .filter(
+                          (item) =>
+                            this.plugins['menuitem-superadmin'].includes(
+                              item.url,
+                            ) && item.menuitem !== '',
                         )
                         .map(
                           (item) => html`
@@ -1642,326 +1800,421 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                             </mwc-list-item>
                           `,
                         )
-                    : html``
-                }
-            ${
-              this.is_superadmin
-                ? html`
-                    <mwc-list-item
-                      graphic="icon"
-                      ?selected="${this._page === 'agent' ||
-                      this._page === 'storage-settings'}"
-                      @click="${() => this._moveTo('/agent')}"
-                      ?disabled="${!this.is_superadmin}"
-                    >
-                      <i
-                        class="fas fa-server"
-                        slot="graphic"
-                        id="resources-menu-icon"
-                      ></i>
-                      <span class="full-menu">
-                        ${_t('webui.menu.Resources')}
-                      </span>
-                    </mwc-list-item>
-                    <mwc-list-item
-                      graphic="icon"
-                      ?selected="${this._page === 'settings'}"
-                      @click="${() => this._moveTo('/settings')}"
-                      ?disabled="${!this.is_superadmin}"
-                    >
-                      <i
-                        class="fas fa-cog"
-                        slot="graphic"
-                        id="configurations-menu-icon"
-                      ></i>
-                      <span class="full-menu">
-                        ${_t('webui.menu.Configurations')}
-                      </span>
-                    </mwc-list-item>
-                    <mwc-list-item
-                      graphic="icon"
-                      ?selected="${this._page === 'maintenance'}"
-                      @click="${() => this._moveTo('/maintenance')}"
-                      ?disabled="${!this.is_superadmin}"
-                    >
-                      <i
-                        class="fas fa-wrench"
-                        slot="graphic"
-                        id="maintenance-menu-icon"
-                      ></i>
-                      <span class="full-menu">
-                        ${_t('webui.menu.Maintenance')}
-                      </span>
-                    </mwc-list-item>
-                    <mwc-list-item
-                      graphic="icon"
-                      ?selected="${this._page === 'information'}"
-                      @click="${() => this._moveTo('/information')}"
-                      ?disabled="${!this.is_superadmin}"
-                    >
-                      <i
-                        class="fas fa-info-circle"
-                        slot="graphic"
-                        id="information-menu-icon"
-                      ></i>
-                      <span class="full-menu">
-                        ${_t('webui.menu.Information')}
-                      </span>
-                    </mwc-list-item>
-                    ${'page' in this.plugins
-                      ? this.plugins['page']
-                          .filter(
-                            (item) =>
-                              this.plugins['menuitem-superadmin'].includes(
-                                item.url,
-                              ) && item.menuitem !== '',
-                          )
-                          .map(
-                            (item) => html`
-                              <mwc-list-item
-                                graphic="icon"
-                                ?selected="${this._page === item.url}"
-                                @click="${() => this._moveTo('/' + item.url)}"
-                                ?disabled="${!this.is_admin}"
-                              >
-                                <i
-                                  class="fas fa-puzzle-piece"
-                                  slot="graphic"
-                                  id="${item}-menu-icon"
-                                ></i>
-                                <span class="full-menu">${item.menuitem}</span>
-                              </mwc-list-item>
-                            `,
-                          )
-                      : html``}
-                  `
-                : html``
-            }
+                    : html``}
+                `
+              : html``}
             <footer id="short-height">
               <div class="terms-of-use full-menu">
                 <small style="font-size:11px;">
-                  <a @click="${() => this.showTOSAgreement()}">${_t(
-                    'webui.menu.TermsOfService',
-                  )}</a>
+                  <a @click="${() => this.showTOSAgreement()}">
+                    ${_t('webui.menu.TermsOfService')}
+                  </a>
                   ·
-                  <a style="color:forestgreen;" @click="${() =>
-                    this.showPPAgreement()}">${_t(
-                    'webui.menu.PrivacyPolicy',
-                  )}</a>
+                  <a
+                    style="color:forestgreen;"
+                    @click="${() => this.showPPAgreement()}"
+                  >
+                    ${_t('webui.menu.PrivacyPolicy')}
+                  </a>
                   ·
-                  <a @click="${this._showSplash}">${_t(
-                    'webui.menu.AboutBackendAI',
-                  )}</a>
-                  ${
-                    this.allow_signout === true
-                      ? html`
-                          ·
-                          <a @click="${() => this.loginPanel.signout()}">
-                            ${_t('webui.menu.LeaveService')}
-                          </a>
-                        `
-                      : html``
-                  }
-                </small>
-              </div>
-              <address class="full-menu">
-                <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">24.03.0-alpha.3.231120</small>
-              </address>
-              <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
-                <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
-                <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${
-                  this._page === 'usersettings' ? 'yellow' : 'white'
-                }" style="margin-left:4px;" @click="${() =>
-                  this._moveTo('/usersettings')}"></mwc-icon-button>
-              </div>
-            </footer>
-          </mwc-list>
-          <footer>
-            <div class="terms-of-use full-menu">
-              <small style="font-size:11px;">
-                <a @click="${() => this.showTOSAgreement()}">${_t(
-                  'webui.menu.TermsOfService',
-                )}</a>
-                ·
-                <a style="color:forestgreen;" @click="${() =>
-                  this.showPPAgreement()}">${_t('webui.menu.PrivacyPolicy')}</a>
-                ·
-                <a @click="${this._showSplash}">${_t(
-                  'webui.menu.AboutBackendAI',
-                )}</a>
-                ${
-                  this.allow_signout === true
+                  <a @click="${this._showSplash}">
+                    ${_t('webui.menu.AboutBackendAI')}
+                  </a>
+                  ${this.allow_signout === true
                     ? html`
                         ·
                         <a @click="${() => this.loginPanel.signout()}">
                           ${_t('webui.menu.LeaveService')}
                         </a>
                       `
-                    : html``
-                }
+                    : html``}
+                </small>
+              </div>
+              <address class="full-menu">
+                <small class="sidebar-footer">Lablup Inc.</small>
+                <small class="sidebar-footer" style="font-size:9px;">
+                  24.03.0-alpha.3.231120
+                </small>
+              </address>
+              <div
+                id="sidebar-navbar-footer"
+                class="vertical start end-justified layout"
+                style="margin-left:16px;"
+              >
+                <backend-ai-help-button
+                  active
+                  style="margin-left:4px;"
+                ></backend-ai-help-button>
+                <mwc-icon-button
+                  id="usersettings-menu-icon"
+                  icon="settings"
+                  slot="graphic"
+                  class="fg ${this._page === 'usersettings'
+                    ? 'yellow'
+                    : 'white'}"
+                  style="margin-left:4px;"
+                  @click="${() => this._moveTo('/usersettings')}"
+                ></mwc-icon-button>
+              </div>
+            </footer>
+          </mwc-list>
+          <footer>
+            <div class="terms-of-use full-menu">
+              <small style="font-size:11px;">
+                <a @click="${() => this.showTOSAgreement()}">
+                  ${_t('webui.menu.TermsOfService')}
+                </a>
+                ·
+                <a
+                  style="color:forestgreen;"
+                  @click="${() => this.showPPAgreement()}"
+                >
+                  ${_t('webui.menu.PrivacyPolicy')}
+                </a>
+                ·
+                <a @click="${this._showSplash}">
+                  ${_t('webui.menu.AboutBackendAI')}
+                </a>
+                ${this.allow_signout === true
+                  ? html`
+                      ·
+                      <a @click="${() => this.loginPanel.signout()}">
+                        ${_t('webui.menu.LeaveService')}
+                      </a>
+                    `
+                  : html``}
               </small>
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">24.03.0-alpha.3.231120</small>
+              <small class="sidebar-footer" style="font-size:9px;">
+                24.03.0-alpha.3.231120
+              </small>
             </address>
-            <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
-              <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
-              <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${
-                this._page === 'usersettings' ? 'yellow' : 'white'
-              }" style="margin-left:4px;" @click="${() =>
-                this._moveTo('/usersettings')}"></mwc-icon-button>
+            <div
+              id="sidebar-navbar-footer"
+              class="vertical start end-justified layout"
+              style="margin-left:16px;"
+            >
+              <backend-ai-help-button
+                active
+                style="margin-left:4px;"
+              ></backend-ai-help-button>
+              <mwc-icon-button
+                id="usersettings-menu-icon"
+                icon="settings"
+                slot="graphic"
+                class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}"
+                style="margin-left:4px;"
+                @click="${() => this._moveTo('/usersettings')}"
+              ></mwc-icon-button>
             </div>
           </footer>
         </div>
         <div id="app-content" slot="appContent">
           <mwc-drawer id="content-body">
             <div class="sidepanel-drawer">
-              <backend-ai-sidepanel-notification class="sidepanel" ?active="${
-                this._sidepanel === 'notification'
-              }"></backend-ai-sidepanel-notification>
-              <backend-ai-sidepanel-task class="sidepanel" ?active="${
-                this._sidepanel === 'task'
-              }"></backend-ai-sidepanel-task>
+              <backend-ai-sidepanel-notification
+                class="sidepanel"
+                ?active="${this._sidepanel === 'notification'}"
+              ></backend-ai-sidepanel-notification>
+              <backend-ai-sidepanel-task
+                class="sidepanel"
+                ?active="${this._sidepanel === 'task'}"
+              ></backend-ai-sidepanel-task>
             </div>
             <div slot="appContent">
               <mwc-top-app-bar-fixed id="main-toolbar">
-                <div class="horizontal layout center" id="drawer-toggle-button" slot="navigationIcon" style="margin:auto 20px;" @click="${() =>
-                  this.toggleDrawer()}">
+                <div
+                  class="horizontal layout center"
+                  id="drawer-toggle-button"
+                  slot="navigationIcon"
+                  style="margin:auto 20px;"
+                  @click="${() => this.toggleDrawer()}"
+                >
                   <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
                 </div>
-                <div slot="navigationIcon" class="vertical-line" style="height:20px;margin:0;"></div>
-                <div class="horizontal center layout" slot="title" id="welcome-message" style="font-size:12px;margin-left:10px;" class="draggable">
+                <div
+                  slot="navigationIcon"
+                  class="vertical-line"
+                  style="height:20px;margin:0;"
+                ></div>
+                <div
+                  class="horizontal center layout"
+                  slot="title"
+                  id="welcome-message"
+                  style="font-size:12px;margin-left:10px;"
+                  class="draggable"
+                >
                   <p>${_t('webui.menu.WelcomeMessage')}</p>
                   <p class="user-name">${this._getUsername()}</p>
                   <p>${_t('webui.menu.WelcomeMessage_2')}</p>
                 </div>
-                  <backend-ai-project-switcher slot="actionItems" style="margin-right:10px;"></backend-ai-project-switcher>
-                  <backend-ai-react-user-dropdown-menu
+                <backend-ai-project-switcher
                   slot="actionItems"
-                        @moveTo="${(e: CustomEvent) => {
-                          const currentPage = globalThis.location
-                            .toString()
-                            .split(/[/]+/)
-                            .pop();
-                          const path = e.detail.path;
-                          if (path === '#userprofile') {
-                            this.isOpenUserProfileDialog = true;
-                            return;
-                          }
-                          const params = e.detail.params;
-                          globalThis.history.pushState({}, '', path);
-                          store.dispatch(
-                            navigate(decodeURIComponent(path), params),
-                          );
-                          if (currentPage && currentPage === 'usersettings') {
-                            const event = new CustomEvent(
-                              'backend-ai-usersettings',
-                              {},
-                            );
-                            document.dispatchEvent(event);
-                          }
-                        }}"
-                      ></backend-ai-react-user-dropdown-menu>
-                    <backend-ai-react-user-profile-setting-dialog value="${
-                      this.isOpenUserProfileDialog ? 'true' : 'false'
-                    }" @close="${() => {
-                      this.isOpenUserProfileDialog = false;
-                    }}"></backend-ai-react-user-profile-setting-dialog>
-                <div id="password-change-request" class="horizontal layout center end-justified" style="display:${
-                  this.needPasswordChange ? 'flex' : 'none'
-                };">
-                  <span>${_t('webui.menu.PleaseChangeYourPassword')} (${_t(
-                    'webui.menu.PasswordChangePlace',
-                  )})</span>
-                  <mwc-icon-button @click="${() =>
-                    this._hidePasswordChangeRequest()}">
+                  style="margin-right:10px;"
+                ></backend-ai-project-switcher>
+                <backend-ai-react-user-dropdown-menu
+                  slot="actionItems"
+                  @moveTo="${(e: CustomEvent) => {
+                    const currentPage = globalThis.location
+                      .toString()
+                      .split(/[/]+/)
+                      .pop();
+                    const path = e.detail.path;
+                    if (path === '#userprofile') {
+                      this.isOpenUserProfileDialog = true;
+                      return;
+                    }
+                    const params = e.detail.params;
+                    globalThis.history.pushState({}, '', path);
+                    store.dispatch(navigate(decodeURIComponent(path), params));
+                    if (currentPage && currentPage === 'usersettings') {
+                      const event = new CustomEvent(
+                        'backend-ai-usersettings',
+                        {},
+                      );
+                      document.dispatchEvent(event);
+                    }
+                  }}"
+                ></backend-ai-react-user-dropdown-menu>
+                <backend-ai-react-user-profile-setting-dialog
+                  value="${this.isOpenUserProfileDialog ? 'true' : 'false'}"
+                  @close="${() => {
+                    this.isOpenUserProfileDialog = false;
+                  }}"
+                ></backend-ai-react-user-profile-setting-dialog>
+                <div
+                  id="password-change-request"
+                  class="horizontal layout center end-justified"
+                  style="display:${this.needPasswordChange ? 'flex' : 'none'};"
+                >
+                  <span>
+                    ${_t('webui.menu.PleaseChangeYourPassword')}
+                    (${_t('webui.menu.PasswordChangePlace')})
+                  </span>
+                  <mwc-icon-button
+                    @click="${() => this._hidePasswordChangeRequest()}"
+                  >
                     <i class="fa fa-times"></i>
                   </mwc-icon-button>
                 </div>
               </mwc-top-app-bar-fixed>
 
               <div class="content" style="box-sizing:border-box; padding:14px;">
-                <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
-                <section role="main" id="content" class="container layout vertical center">
+                <div
+                  id="navbar-top"
+                  class="navbar-top horizontal flex layout wrap"
+                ></div>
+                <section
+                  role="main"
+                  id="content"
+                  class="container layout vertical center"
+                >
                   <div id="app-page">
-                    <backend-ai-summary-view class="page" name="summary" ?active="${
-                      this._page === 'summary'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
-                    <backend-ai-import-view class="page" name="import" ?active="${
-                      this._page === 'github' || this._page === 'import'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
-                    <backend-ai-session-view class="page" name="job" ?active="${
-                      this._page === 'job'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
-                    <backend-ai-session-view-next class="page" name="session" ?active="${
-                      this._page === 'session'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view-next>
-                    <backend-ai-serving-view class="page" name="serving" ?active="${
-                      this._page === 'serving'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-serving-view>
-                    <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${
-                      this._page === 'experiment'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
-                    <backend-ai-usersettings-view class="page" name="usersettings" ?active="${
-                      this._page === 'usersettings'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view>
-                    <backend-ai-credential-view class="page" name="credential" ?active="${
-                      this._page === 'credential'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
-                    <backend-ai-agent-view class="page" name="agent" ?active="${
-                      this._page === 'agent'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-view>
-                    <backend-ai-agent-summary-view class="page" name="agent-summary" ?active="${
-                      this._page === 'agent-summary'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-summary-view>
-                    <backend-ai-storage-host-settings-view class="page" name="storage-settings" ?active="${
-                      this._page === 'storage-settings'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-storage-host-settings-view>
-                    <backend-ai-data-view class="page" name="data" ?active="${
-                      this._page === 'data'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-data-view>
-                    <!--<pipeline-view class="page" name="pipeline" ?active="${
-                      this._page === 'pipeline'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-view>-->
-                    <!--<pipeline-job-view class="page" name="pipeline-job" ?active="${
-                      this._page === 'pipeline-job'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-job-view>-->
-                    <!--<backend-ai-pipeline-view class="page" name="pipeline" ?active="${
-                      this._page === 'pipeline'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-pipeline-view>-->
-                    <backend-ai-environment-view class="page" name="environment" ?active="${
-                      this._page === 'environment'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-environment-view>
-                    <backend-ai-settings-view class="page" name="settings" ?active="${
-                      this._page === 'settings'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-settings-view>
-                    <backend-ai-maintenance-view class="page" name="maintenance" ?active="${
-                      this._page === 'maintenance'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-maintenance-view>
-                    <backend-ai-information-view class="page" name="information" ?active="${
-                      this._page === 'information'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-information-view>
-                    <backend-ai-statistics-view class="page" name="statistics" ?active="${
-                      this._page === 'statistics'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-statistics-view>
-                    <backend-ai-email-verification-view class="page" name="email-verification" ?active="${
-                      this._page === 'verify-email'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-email-verification-view>
-                    <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${
-                      this._page === 'change-password'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-change-forgot-password-view>
-                    <backend-ai-edu-applauncher class="page" name="edu-applauncher" ?active="${
-                      this._page === 'edu-applauncher' ||
-                      this._page === 'applauncher'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-edu-applauncher>
-                    <backend-ai-error-view class="page" name="error" ?active="${
-                      this._page === 'error'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-error-view>
-                    <backend-ai-permission-denied-view class="page" name="unauthorized" ?active="${
-                      this._page === 'unauthorized'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-permission-denied-view>
+                    <backend-ai-summary-view
+                      class="page"
+                      name="summary"
+                      ?active="${this._page === 'summary'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-summary-view>
+                    <backend-ai-import-view
+                      class="page"
+                      name="import"
+                      ?active="${this._page === 'github' ||
+                      this._page === 'import'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-import-view>
+                    <backend-ai-session-view
+                      class="page"
+                      name="job"
+                      ?active="${this._page === 'job'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-session-view>
+                    <backend-ai-session-view-next
+                      class="page"
+                      name="session"
+                      ?active="${this._page === 'session'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-session-view-next>
+                    <backend-ai-serving-view
+                      class="page"
+                      name="serving"
+                      ?active="${this._page === 'serving'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-serving-view>
+                    <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${this
+                      ._page ===
+                    'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
+                    <backend-ai-usersettings-view
+                      class="page"
+                      name="usersettings"
+                      ?active="${this._page === 'usersettings'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-usersettings-view>
+                    <backend-ai-credential-view
+                      class="page"
+                      name="credential"
+                      ?active="${this._page === 'credential'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-credential-view>
+                    <backend-ai-agent-view
+                      class="page"
+                      name="agent"
+                      ?active="${this._page === 'agent'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-agent-view>
+                    <backend-ai-agent-summary-view
+                      class="page"
+                      name="agent-summary"
+                      ?active="${this._page === 'agent-summary'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-agent-summary-view>
+                    <backend-ai-storage-host-settings-view
+                      class="page"
+                      name="storage-settings"
+                      ?active="${this._page === 'storage-settings'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-storage-host-settings-view>
+                    <backend-ai-data-view
+                      class="page"
+                      name="data"
+                      ?active="${this._page === 'data'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-data-view>
+                    <!--<pipeline-view class="page" name="pipeline" ?active="${this
+                      ._page ===
+                    'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-view>-->
+                    <!--<pipeline-job-view class="page" name="pipeline-job" ?active="${this
+                      ._page ===
+                    'pipeline-job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-job-view>-->
+                    <!--<backend-ai-pipeline-view class="page" name="pipeline" ?active="${this
+                      ._page ===
+                    'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-pipeline-view>-->
+                    <backend-ai-environment-view
+                      class="page"
+                      name="environment"
+                      ?active="${this._page === 'environment'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-environment-view>
+                    <backend-ai-settings-view
+                      class="page"
+                      name="settings"
+                      ?active="${this._page === 'settings'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-settings-view>
+                    <backend-ai-maintenance-view
+                      class="page"
+                      name="maintenance"
+                      ?active="${this._page === 'maintenance'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-maintenance-view>
+                    <backend-ai-information-view
+                      class="page"
+                      name="information"
+                      ?active="${this._page === 'information'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-information-view>
+                    <backend-ai-statistics-view
+                      class="page"
+                      name="statistics"
+                      ?active="${this._page === 'statistics'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-statistics-view>
+                    <backend-ai-email-verification-view
+                      class="page"
+                      name="email-verification"
+                      ?active="${this._page === 'verify-email'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-email-verification-view>
+                    <backend-ai-change-forgot-password-view
+                      class="page"
+                      name="change-forgot-password"
+                      ?active="${this._page === 'change-password'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-change-forgot-password-view>
+                    <backend-ai-edu-applauncher
+                      class="page"
+                      name="edu-applauncher"
+                      ?active="${this._page === 'edu-applauncher' ||
+                      this._page === 'applauncher'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-edu-applauncher>
+                    <backend-ai-error-view
+                      class="page"
+                      name="error"
+                      ?active="${this._page === 'error'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-error-view>
+                    <backend-ai-permission-denied-view
+                      class="page"
+                      name="unauthorized"
+                      ?active="${this._page === 'unauthorized'}"
+                    >
+                      <mwc-circular-progress
+                        indeterminate
+                      ></mwc-circular-progress>
+                    </backend-ai-permission-denied-view>
                   </div>
                 </section>
               </div>
@@ -1969,15 +2222,20 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           </mwc-drawer>
         </div>
       </mwc-drawer>
-      <div id="mini-tooltips" style="display:${
-        this.mini_ui ? 'block' : 'none'
-      };">
-        <vaadin-tooltip for="notification-icon" position="end" text="${_t(
-          'webui.menu.Notifications',
-        )}"></vaadin-tooltip>
-        <vaadin-tooltip for="task-icon" position="end" text="${_t(
-          'webui.menu.Tasks',
-        )}"></vaadin-tooltip>
+      <div
+        id="mini-tooltips"
+        style="display:${this.mini_ui ? 'block' : 'none'};"
+      >
+        <vaadin-tooltip
+          for="notification-icon"
+          position="end"
+          text="${_t('webui.menu.Notifications')}"
+        ></vaadin-tooltip>
+        <vaadin-tooltip
+          for="task-icon"
+          position="end"
+          text="${_t('webui.menu.Tasks')}"
+        ></vaadin-tooltip>
       </div>
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         ${this._offline ? _t('webui.YouAreOffline') : _t('webui.YouAreOnline')}.
@@ -1986,11 +2244,15 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       <backend-ai-splash id="about-backendai-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
-      <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
+      <lablup-terms-of-service
+        id="terms-of-service"
+        block
+      ></lablup-terms-of-service>
       <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
-      <backend-ai-resource-broker id="resource-broker" ?active="${
-        this.is_connected
-      }"></backend-ai-resource-broker>
+      <backend-ai-resource-broker
+        id="resource-broker"
+        ?active="${this.is_connected}"
+      ></backend-ai-resource-broker>
     `;
   }
 }
