@@ -1,4 +1,5 @@
 import BAIModal from '../components/BAIModal';
+import EndpointCreatedUserText from '../components/EndpointCreatedUserText';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
@@ -146,6 +147,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
 
   const sortedEndpointList = _.sortBy(modelServiceList?.items, 'name');
 
+  console.log(baiClient);
   // FIXME: struggling with sending data when active tab changes!
   // const runningModelServiceList = modelServiceList?.filter(
   //   (item: any) => item.desired_session_count >= 0
@@ -355,6 +357,15 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                     <EndpointStatusTag endpointFrgmt={row} />
                   ),
                 },
+                baiClient.is_admin
+                  ? {
+                      title: t('modelService.CreatedUser'),
+                      dataIndex: 'created_user',
+                      render: (created_user) => (
+                        <EndpointCreatedUserText userId={created_user} />
+                      ),
+                    }
+                  : {},
                 {
                   title: t('modelService.CreatedAt'),
                   dataIndex: 'created_at',
