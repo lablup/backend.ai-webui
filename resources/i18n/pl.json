@@ -1385,7 +1385,7 @@
     "Active/Total": "Aktywny/Ogółem",
     "Public": "Publiczny",
     "YouAreAboutToTerminate": "Zamierzasz zakończyć",
-    "CreatedUser": "__NOT_TRANSLATED__"
+    "CreatedUser": "Utworzony użytkownik"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",

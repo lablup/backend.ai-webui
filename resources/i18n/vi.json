@@ -1422,7 +1422,7 @@
     "Active/Total": "Đang hoạt động/Tổng cộng",
     "Public": "Công cộng",
     "YouAreAboutToTerminate": "Bạn sắp chấm dứt",
-    "CreatedUser": "__NOT_TRANSLATED__"
+    "CreatedUser": "Người dùng đã tạo"
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",

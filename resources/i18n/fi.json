@@ -710,7 +710,7 @@
     "TrafficRatio": "Liikennesuhde",
     "YouAreAboutToTerminate": "Olet lopettamassa",
     "resources": "Resurssit",
-    "CreatedUser": "__NOT_TRANSLATED__"
+    "CreatedUser": "Luotu käyttäjä"
   },
   "notification": {
     "Initializing": "Aloitetaan...",

@@ -710,7 +710,7 @@
     "TrafficRatio": "Ratio de tráfico",
     "YouAreAboutToTerminate": "Está a punto de terminar",
     "resources": "Recursos",
-    "CreatedUser": "__NOT_TRANSLATED__"
+    "CreatedUser": "Usuario creado"
   },
   "notification": {
     "Initializing": "Inicializando...",

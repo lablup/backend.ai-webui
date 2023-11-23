@@ -1383,7 +1383,7 @@
     "Active/Total": "Aktif/Toplam",
     "Public": "Kamu",
     "YouAreAboutToTerminate": "Sonlandırmak üzeresiniz",
-    "CreatedUser": "__NOT_TRANSLATED__"
+    "CreatedUser": "Kullanıcı Oluşturuldu"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",
