@@ -631,6 +631,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         .filter((item) => !item.available)
         .map((item) => item.page)
         .includes(this._page) ||
+      this.blockedMenuItem.includes(this._page) ||
       this.inactiveMenuItem.includes(this._page)
     ) {
       this._page = 'error';
