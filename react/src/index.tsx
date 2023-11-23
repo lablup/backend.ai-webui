@@ -210,6 +210,14 @@ customElements.define(
 customElements.define(
   'backend-ai-react-resource-group-select',
   reactToWebComponent((props) => {
+    const [value, setValue] = React.useState(props.value || '');
+
+    React.useEffect(() => {
+      if (props.value !== value) {
+        setValue(props.value || '');
+      }
+    }, [props.value]);
+
     return (
       <DefaultProviders {...props}>
         <Flex direction="column" align="stretch" style={{ minWidth: 200 }}>
@@ -220,8 +228,10 @@ customElements.define(
             >
               <ResourceGroupSelect
                 size="large"
-                value={props.value}
+                value={value}
+                loading={value !== props.value || value === ''}
                 onChange={(value) => {
+                  setValue(value);
                   props.dispatchEvent('change', value);
                 }}
               />
