@@ -15,6 +15,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   projectId,
   autoSelectDefault,
   filter,
+  loading,
   ...selectProps
 }) => {
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
@@ -110,7 +111,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
           });
         }
       }}
-      loading={isPendingLoading}
+      loading={isPendingLoading || loading}
       {...selectProps}
     >
       {_.map(resourceGroups, (resourceGroup, idx) => {
