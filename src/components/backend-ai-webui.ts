@@ -103,7 +103,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Array }) groups = [];
   @property({ type: Object }) plugins = Object();
   @property({ type: String }) fasttrackEndpoint = '';
-  @property({ type: Boolean }) isHideSideMenuFastTrackButton = false;
   @property({ type: String }) _page = '';
   @property({ type: String }) _lazyPage = '';
   @property({ type: Object }) _pageParams = {};
@@ -178,7 +177,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Array }) optionalPages;
   @property({ type: Number }) timeoutSec = 5;
   private _useExperiment = false;
-  private _usePipeline = false; // temporally block pipeline menu
   @property({ type: Object }) loggedAccount = Object();
   @property({ type: Object }) roleInfo = Object();
   @property({ type: Object }) keyPairInfo = Object();
@@ -451,6 +449,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.blockedMenuItem = config.menu.blocklist
         .split(',')
         .map((x: string) => x.trim());
+      // Remove summary from accidentally added in config.menu.blocklist
+      this.blockedMenuItem.filter((menuTitle) => menuTitle !== 'summary');
     }
     if (typeof config.menu !== 'undefined' && 'inactivelist' in config.menu) {
       this.inactiveMenuItem = config.menu.inactivelist
@@ -494,12 +494,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       'frontendEndpoint' in config.pipeline
     ) {
       this.fasttrackEndpoint = config.pipeline.frontendEndpoint;
-    }
-    if (
-      typeof config.pipeline !== 'undefined' &&
-      'hideSideMenuButton' in config.pipeline
-    ) {
-      this.isHideSideMenuFastTrackButton = config.pipeline.hideSideMenuButton;
     }
     if (typeof config.plugin !== 'undefined') {
       // Store plugin informations
@@ -1050,9 +1044,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     ) {
       this.notification.text = _text('webui.CleanUpNow');
       this.notification.show();
-      // if (globalThis.backendaiclient._config.connectionMode === 'SESSION' && this._usePipeline) {
-      //   await Promise.all([globalThis.backendaiclient.pipeline.logout(), globalThis.backendaiclient.logout()]);
-      // }
       if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
         await globalThis.backendaiclient.logout();
       }
@@ -1218,7 +1209,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this._createPopover('data-menu-icon', _text('webui.menu.Data&Storage'));
     this._createPopover('import-menu-icon', _text('webui.menu.Import&Run'));
 
-    // temporally blcok pipeline menu
+    // temporally block pipeline menu
     // this._createPopover('#pipeline-menu-icon', _text('webui.menu.Pipeline'));
     // this._createPopover('#pipeline-job-menu-icon', _text('webui.menu.PipelineJob'));
     this._createPopover('statistics-menu-icon', _text('webui.menu.Statistics'));
@@ -1245,7 +1236,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         'information-menu-icon',
         _text('webui.menu.Information'),
       );
-      // this._createPopover("#admin-menu-icon", _text("webui.menu.Administration"));
     }
     if (!this.isHideAgents) {
       this._createPopover(
@@ -1253,7 +1243,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         _text('webui.menu.AgentSummary'),
       );
     }
-    if (!this.isHideSideMenuFastTrackButton && this.fasttrackEndpoint !== '') {
+    if (
+      !this.blockedMenuItem.includes('pipeline') &&
+      this.fasttrackEndpoint !== ''
+    ) {
       this._createPopover('fasttrack-menu-icon', _text('webui.menu.FastTrack'));
     }
   }
@@ -1418,23 +1411,18 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             class="sidebar list"
             @selected="${(e) => this._menuSelected(e)}"
           >
-            ${!this.blockedMenuItem.includes('summary')
-              ? html`
-                  <mwc-list-item
-                    graphic="icon"
-                    ?selected="${this._page === 'summary'}"
-                    @click="${() => this._moveTo('/summary')}"
-                    ?disabled="${this.inactiveMenuItem.includes('summary')}"
-                  >
-                    <i
-                      class="fas fa-th-large"
-                      slot="graphic"
-                      id="summary-menu-icon"
-                    ></i>
-                    <span class="full-menu">${_t('webui.menu.Summary')}</span>
-                  </mwc-list-item>
-                `
-              : html``}
+            <mwc-list-item
+              graphic="icon"
+              ?selected="${this._page === 'summary'}"
+              @click="${() => this._moveTo('/summary')}"
+            >
+              <i
+                class="fas fa-th-large"
+                slot="graphic"
+                id="summary-menu-icon"
+              ></i>
+              <span class="full-menu">${_t('webui.menu.Summary')}</span>
+            </mwc-list-item>
             ${!this.blockedMenuItem.includes('job')
               ? html`
                   <mwc-list-item
@@ -1452,24 +1440,17 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   </mwc-list-item>
                 `
               : html``}
-            ${!this.blockedMenuItem.includes('session')
-              ? html`
-                  <!-- <mwc-list-item graphic="icon" ?selected="${this._page ===
-                  'session'}" @click="${() =>
-                    this._moveTo(
-                      '/session',
-                    )}" ?disabled="${this.inactiveMenuItem.includes(
-                    'session',
-                  )}">
-                    <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
-                    <span class="full-menu">${_t(
-                    'webui.menu.Sessions',
-                  )} new</span>
-                  </mwc-list-item> -->
-                `
-              : html``}
-            ${this.supportServing && !this.blockedMenuItem.includes('serving')
-              ? html`
+            <!--<mwc-list-item graphic="icon" ?selected="${this._page ===
+            'session'}" @click="${() =>
+              this._moveTo(
+                '/session',
+              )}" ?disabled="${this.inactiveMenuItem.includes('session')}">
+              <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
+              <span class="full-menu">${_t('webui.menu.Sessions')} new</span>
+            </mwc-list-item>-->
+            ${!this.supportServing || this.blockedMenuItem.includes('serving')
+              ? html``
+              : html`
                   <mwc-list-item
                     graphic="icon"
                     ?selected="${this._page === 'serving'}"
@@ -1483,10 +1464,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     ></i>
                     <span class="full-menu">${_t('webui.menu.Serving')}</span>
                   </mwc-list-item>
-                `
-              : html``}
-            ${this._useExperiment &&
-            !this.blockedMenuItem.includes('experiment')
+                `}
+            ${this._useExperiment
               ? html`
                   <mwc-list-item
                     graphic="icon"
@@ -1540,42 +1519,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   </mwc-list-item>
                 `
               : html``}
-            ${this._usePipeline
-              ? html`
-                  <mwc-list-item
-                    graphic="icon"
-                    ?selected="${this._page === 'pipeline'}"
-                    @click="${() => this._moveTo('/pipeline')}"
-                    ?disabled="${this.inactiveMenuItem.includes('pipeline')}"
-                    style="display:none;"
-                  >
-                    <i
-                      class="fas fa-stream"
-                      slot="graphic"
-                      id="pipeline-menu-icon"
-                    ></i>
-                    <span class="full-menu">${_t('webui.menu.Pipeline')}</span>
-                  </mwc-list-item>
-                  <mwc-list-item
-                    graphic="icon"
-                    ?selected="${this._page === 'pipeline-job'}"
-                    @click="${() => this._moveTo('/pipeline-job')}"
-                    ?disabled="${this.inactiveMenuItem.includes(
-                      'pipeline-job',
-                    )}"
-                    style="display:none;"
-                  >
-                    <i
-                      class="fas fa-sitemap"
-                      slot="graphic"
-                      id="pipeline-job-menu-icon"
-                    ></i>
-                    <span class="full-menu">
-                      ${_t('webui.menu.PipelineJob')}
-                    </span>
-                  </mwc-list-item>
-                `
-              : html``}
             ${this.isHideAgents
               ? html``
               : html`
@@ -1616,7 +1559,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   </mwc-list-item>
                 `
               : html``}
-            ${!this.isHideSideMenuFastTrackButton &&
+            ${!this.blockedMenuItem.includes('pipeline') &&
             this.fasttrackEndpoint !== ''
               ? html`
                   <a href="${this.fasttrackEndpoint}" target="_blank">
