@@ -2927,6 +2927,7 @@ ${rowData.item[this.sessionNameField]}</pre
                 <mwc-icon-button
                   class="fg blue controls-running"
                   id="${rowData.index + '-assignment'}"
+                  ?disabled="${rowData.item.status == 'CANCELLED'}"
                   icon="assignment"
                   @click="${(e) => this._showLogs(e)}"
                 ></mwc-icon-button>
