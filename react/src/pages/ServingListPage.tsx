@@ -22,7 +22,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useRafInterval } from 'ahooks';
-import { Button, Table, Tabs, Typography, theme } from 'antd';
+import { Button, Table, Tabs, Typography, theme, Tag } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
@@ -287,6 +287,16 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   render: (endpoint_id) => (
                     <Typography.Text code>{endpoint_id}</Typography.Text>
                   ),
+                },
+                {
+                  title: t('modelService.ServiceEndpoint'),
+                  dataIndex: 'endpoint_id',
+                  render: (endpoint_id, row) =>
+                    row.url ? (
+                      <Typography.Text copyable>{row.url}</Typography.Text>
+                    ) : (
+                      <Tag>{t('modelService.NoServiceEndpoint')}</Tag>
+                    ),
                 },
                 {
                   title: t('modelService.Controls'),
