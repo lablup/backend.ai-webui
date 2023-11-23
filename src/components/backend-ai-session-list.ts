@@ -2928,6 +2928,7 @@ ${rowData.item[this.sessionNameField]}</pre
                   class="fg blue controls-running"
                   id="${rowData.index + '-assignment'}"
                   icon="assignment"
+                  ?disabled="${rowData.item.status == 'CANCELLED'}"
                   @click="${(e) => this._showLogs(e)}"
                 ></mwc-icon-button>
                 <vaadin-tooltip
