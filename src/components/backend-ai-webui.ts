@@ -449,6 +449,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.blockedMenuItem = config.menu.blocklist
         .split(',')
         .map((x: string) => x.trim());
+      // Remove summary from accidentally added in config.menu.blocklist
+      this.blockedMenuItem.filter((menuTitle) => menuTitle !== 'summary');
     }
     if (typeof config.menu !== 'undefined' && 'inactivelist' in config.menu) {
       this.inactiveMenuItem = config.menu.inactivelist
