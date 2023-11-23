@@ -1209,7 +1209,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this._createPopover('data-menu-icon', _text('webui.menu.Data&Storage'));
     this._createPopover('import-menu-icon', _text('webui.menu.Import&Run'));
 
-    // temporally blcok pipeline menu
+    // temporally block pipeline menu
     // this._createPopover('#pipeline-menu-icon', _text('webui.menu.Pipeline'));
     // this._createPopover('#pipeline-job-menu-icon', _text('webui.menu.PipelineJob'));
     this._createPopover('statistics-menu-icon', _text('webui.menu.Statistics'));
@@ -1236,7 +1236,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         'information-menu-icon',
         _text('webui.menu.Information'),
       );
-      // this._createPopover("#admin-menu-icon", _text("webui.menu.Administration"));
     }
     if (!this.isHideAgents) {
       this._createPopover(
