@@ -1,5 +1,4 @@
 import BAIModal from '../components/BAIModal';
-import EndpointCreatedUserText from '../components/EndpointCreatedUserText';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
@@ -360,9 +359,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   ? {
                       title: t('modelService.CreatedUser'),
                       dataIndex: 'created_user',
-                      render: (created_user) => (
-                        <EndpointCreatedUserText userId={created_user} />
-                      ),
+                      render: (created_user) => created_user,
                     }
                   : {},
                 {
