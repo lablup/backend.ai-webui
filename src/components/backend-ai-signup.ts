@@ -247,6 +247,7 @@ export default class BackendAiSignup extends BackendAIPage {
     this._toggleInputField(true);
     let inputFields = [
       this.userEmailInput,
+      this.userNameInput,
       this.tokenInput,
       this.passwordInput,
       this.passwordConfirmInput,
