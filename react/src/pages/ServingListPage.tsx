@@ -355,6 +355,15 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                     <EndpointStatusTag endpointFrgmt={row} />
                   ),
                 },
+                ...(baiClient.is_admin
+                  ? [
+                      {
+                        title: t('modelService.Owner'),
+                        dataIndex: 'created_user',
+                        render: (created_user: string) => created_user,
+                      },
+                    ]
+                  : []),
                 {
                   title: t('modelService.CreatedAt'),
                   dataIndex: 'created_at',
