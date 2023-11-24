@@ -55,12 +55,15 @@ export default class BackendAiSignup extends BackendAIPage {
   @property({ type: String }) TOSlanguage = 'en';
   @property({ type: String }) preloadedToken;
   @property({ type: Boolean }) allowSignupWithoutConfirmation;
+  @property({ type: HTMLSpanElement }) signupButtonMessage = html`
+    <span id="signup-button-message">${_text('signup.Signup')}</span>
+  `;
+  @query('#signup-button') signupButton!: Button;
   @query('#id_user_email') userEmailInput!: TextField;
   @query('#id_user_name') userNameInput!: TextField;
   @query('#id_token') tokenInput!: TextField;
   @query('#id_password1') passwordInput!: TextField;
   @query('#id_password2') passwordConfirmInput!: TextField;
-  @query('#signup-button') signupButton!: Button;
   @query('#signup-panel') signupPanel!: BackendAIDialog;
   @query('#block-panel') blockPanel!: BackendAIDialog;
   @query('#email-sent-dialog') emailSentDialog!: BackendAIDialog;
@@ -257,11 +260,9 @@ export default class BackendAiSignup extends BackendAIPage {
     if (this.preloadedToken !== undefined) {
       this.tokenInput.value = this.preloadedToken;
     }
-    (
-      this.shadowRoot?.querySelector(
-        '#signup-button-message',
-      ) as HTMLSpanElement
-    ).innerHTML = _text('signup.Signup');
+    this.signupButtonMessage = html`
+      <span id="signup-button-message">${_text('signup.Signup')}</span>
+    `;
   }
 
   _toggleInputField(isActive: boolean) {
@@ -339,11 +340,11 @@ export default class BackendAiSignup extends BackendAIPage {
       ._wrapWithPromise(rqst)
       .then((response) => {
         this._toggleInputField(false);
-        (
-          this.shadowRoot?.querySelector(
-            '#signup-button-message',
-          ) as HTMLSpanElement
-        ).innerHTML = _text('signup.SignupSucceeded');
+        this.signupButtonMessage = html`
+          <span id="signup-button-message">
+            ${_text('signup.SignupSucceeded')}
+          </span>
+        `;
         this.notification.text = _text('signup.SignupSucceeded');
         this.notification.show();
         setTimeout(() => {
@@ -623,7 +624,7 @@ export default class BackendAiSignup extends BackendAIPage {
             icon="check"
             @click="${() => this._signup()}"
           >
-            <span id="signup-button-message">${_text('signup.Signup')}</span>
+            ${this.signupButtonMessage}
           </mwc-button>
         </div>
       </backend-ai-dialog>
