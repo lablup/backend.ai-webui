@@ -46,7 +46,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   @property({ type: Object }) client = Object();
   @property({ type: Object }) notification = Object();
   @property({ type: String }) resources = Object();
-  @property({ type: String }) _eduAppnamePrefix = '';
+  @property({ type: String }) _eduAppNamePrefix = '';
   @query('#app-launcher') appLauncher!: BackendAIAppLauncher;
 
   static get styles(): CSSResultGroup | undefined {
@@ -238,8 +238,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
   async _createEduSession() {
     this.appLauncher.indicator = await globalThis.lablupIndicator.start();
-    this._eduAppnamePrefix =
-      globalThis.backendaiclient._config.eduAppnamePrefix;
+    this._eduAppNamePrefix =
+      globalThis.backendaiclient._config.eduAppNamePrefix;
 
     // Query current user's compute session in the current group.
     const fields = [
@@ -333,8 +333,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         const services = servicePorts.map((s) => s.name);
         let requestedService = requestedApp;
         if (
-          this._eduAppnamePrefix !== '' &&
-          requestedApp.startsWith(this._eduAppnamePrefix)
+          this._eduAppNamePrefix !== '' &&
+          requestedApp.startsWith(this._eduAppNamePrefix)
         ) {
           requestedService = requestedApp.split('-')[1];
         }
@@ -493,8 +493,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     let requestedApp = appName;
     if (!this.detectIE()) {
       if (
-        this._eduAppnamePrefix !== '' &&
-        appName.startsWith(this._eduAppnamePrefix)
+        this._eduAppNamePrefix !== '' &&
+        appName.startsWith(this._eduAppNamePrefix)
       ) {
         requestedApp = appName.split('-')[1];
       }

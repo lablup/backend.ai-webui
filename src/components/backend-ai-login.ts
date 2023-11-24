@@ -137,7 +137,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Number }) maxCountForPreopenPorts = 10;
   @property({ type: Boolean }) allowCustomResourceAllocation = true;
   @property({ type: Boolean }) isDirectorySizeVisible = true;
-  @property({ type: String }) eduAppnamePrefix;
+  @property({ type: String }) eduAppNamePrefix;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel')
@@ -857,10 +857,10 @@ export default class BackendAILogin extends BackendAIPage {
       value: generalConfig?.isDirectorySizeVisible,
     } as ConfigValueObject) as boolean;
 
-    this.eduAppnamePrefix = this._getConfigValueByExists(generalConfig, {
+    this.eduAppNamePrefix = this._getConfigValueByExists(generalConfig, {
       valueType: 'string',
       defaultValue: '',
-      value: generalConfig?.eduAppnamePrefix,
+      value: generalConfig?.eduAppNamePrefix,
     } as ConfigValueObject) as string;
   }
 
