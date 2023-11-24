@@ -265,7 +265,14 @@ export default class BackendAiSignup extends BackendAIPage {
   }
 
   _toggleInputField(isActive: boolean) {
-    let inputFields = [this.userNameInput, this.tokenInput, this.signupButton];
+    let inputFields = [
+      this.userEmailInput,
+      this.userNameInput,
+      this.tokenInput,
+      this.passwordInput,
+      this.passwordConfirmInput,
+      this.signupButton,
+    ];
     if (this.allowSignupWithoutConfirmation) {
       inputFields = inputFields.filter((el) => el !== this.tokenInput);
     }
