@@ -155,13 +155,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
           },
         });
       })
-      .catch((e) => {
-        console.log(e);
-        messageApi.open({
-          type: 'error',
-          content: e.errorFields[0].errors,
-        });
-      });
+      .catch(() => {});
   };
 
   return (
