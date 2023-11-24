@@ -166,7 +166,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
           onRequestClose();
         }}
         confirmLoading={userInfo.isPendingMutation}
-        onOk={() => onSubmit()}
+        onOk={form.submit}
         centered
         destroyOnClose
         title={t('webui.menu.MyAccountInformation')}
@@ -175,6 +175,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
           layout="horizontal"
           labelCol={{ span: 8 }}
           form={form}
+          onFinish={onSubmit}
           initialValues={{
             full_name: userInfo.full_name,
             totp_activated: user?.totp_activated || false,
