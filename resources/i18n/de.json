@@ -1382,7 +1382,8 @@
     "RoutingsCount": "Routings zählen",
     "Active/Total": "Aktiv/Gesamt",
     "Public": "Öffentlich",
-    "YouAreAboutToTerminate": "Sie stehen kurz vor der Beendigung"
+    "YouAreAboutToTerminate": "Sie stehen kurz vor der Beendigung",
+    "Owner": "Eigentümer"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",
