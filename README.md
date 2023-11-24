@@ -233,6 +233,13 @@ $ make compile
 
 Then bundled resource will be prepared in `build/rollup`. Basically, both app and web serving is based on static serving sources in the directory. However, to work as single page application, URL request fallback is needed.
 
+If you want to create the bundle zip file, 
+
+```console
+$ make bundle
+```
+will generate compiled static web bundle at `./app` directory. Then you can serve the web bundle via webservers.
+
 ### Serving with nginx
 
 If you need to serve with nginx, please install and setup `backend.ai-wsproxy` package for websocket proxy. Bundled websocket proxy is simplified version for single-user app.

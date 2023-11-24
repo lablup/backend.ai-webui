@@ -1,49 +1,76 @@
 import BAICard from '../BAICard';
 import DatePickerISO from '../components/DatePickerISO';
 import { useWebComponentInfo } from '../components/DefaultProviders';
-import EnvVarFormList from '../components/EnvVarFormList';
+import EnvVarFormList, {
+  EnvVarFormListValue,
+} from '../components/EnvVarFormList';
 import Flex from '../components/Flex';
-import ImageEnvironmentSelectFormItems from '../components/ImageEnvironmentSelectFormItems';
+import ImageEnvironmentSelectFormItems, {
+  ImageEnvironmentFormInput,
+} from '../components/ImageEnvironmentSelectFormItems';
 import ImageMetaIcon from '../components/ImageMetaIcon';
-import PortSelectFormItem, { PortTag } from '../components/PortSelectFormItem';
-import ResourceAllocationFormItems from '../components/ResourceAllocationFormItems';
-import ResourceGroupSelect from '../components/ResourceGroupSelect';
+import PortSelectFormItem, {
+  PortSelectFormValues,
+  PortTag,
+} from '../components/PortSelectFormItem';
+import ResourceAllocationFormItems, {
+  RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+  ResourceAllocationFormValue,
+} from '../components/ResourceAllocationFormItems';
 import ResourceNumber from '../components/ResourceNumber';
-import VFolderTableFromItem from '../components/VFolderTableFormItem';
-import { iSizeToSize } from '../helper';
+import SessionNameFormItem, {
+  SessionNameFormItemValue,
+} from '../components/SessionNameFormItem';
+import VFolderTableFromItem, {
+  VFolderTableFormValues,
+} from '../components/VFolderTableFormItem';
+import { compareNumberWithUnits, iSizeToSize } from '../helper';
+import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
+// @ts-ignore
+import customCSS from './SessionLauncherPage.css?raw';
 import {
   BlockOutlined,
   LeftOutlined,
   PlayCircleFilled,
   PlayCircleOutlined,
+  QuestionCircleOutlined,
   RightOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
 import {
   Affix,
+  Alert,
   Breadcrumb,
   Button,
   Card,
   Checkbox,
+  Col,
   Descriptions,
   Form,
+  FormInstance,
   Grid,
   Input,
-  Segmented,
+  InputNumber,
+  Popconfirm,
+  Radio,
+  Row,
   Select,
   StepProps,
   Steps,
+  Switch,
   Table,
   Tag,
   Typography,
   message,
   theme,
 } from 'antd';
+import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { darcula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import {
@@ -54,16 +81,85 @@ import {
   withDefault,
 } from 'use-query-params';
 
-const INITIAL_FORM_VALUES = {
+const INITIAL_FORM_VALUES: SessionLauncherValue = {
   sessionType: 'interactive',
   allocationPreset: 'custom',
+  hpcOptimization: {
+    autoEnabled: true,
+    OMP_NUM_THREADS: '1',
+    OPENBLAS_NUM_THREADS: '1',
+  },
+  batch: {
+    enabled: false,
+    command: undefined,
+    scheduleDate: undefined,
+  },
+  envvars: [],
+  ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
 };
 const stepParam = withDefault(NumberParam, 0);
 const formValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
 
+interface SessionConfig {
+  group_name: string;
+  domain: string;
+  scaling_group: string;
+  type: string;
+  cluster_mode: string;
+  cluster_size: number;
+  maxWaitSeconds: number;
+  cpu: number;
+  mem: string;
+  shmem: string;
+  mounts: string[];
+  mount_map: {
+    [key: string]: string;
+  };
+  env: {
+    [key: string]: string;
+  };
+  preopen_ports: number[];
+  startsAt?: string;
+  startupCommand?: string;
+}
+
+interface CreateSessionInfo {
+  kernelName: string;
+  sessionName: string;
+  architecture: string;
+  config: SessionConfig;
+}
+
+interface SessionLauncherValue {
+  sessionType: 'interactive' | 'batch' | 'inference';
+  batch: {
+    enabled: boolean;
+    scheduleDate?: string;
+    command?: string;
+  };
+  allocationPreset: string;
+  envvars: EnvVarFormListValue[];
+  hpcOptimization: {
+    autoEnabled: boolean;
+    OMP_NUM_THREADS: string;
+    OPENBLAS_NUM_THREADS: string;
+  };
+}
+
+type SessionLauncherFormValue = SessionLauncherValue &
+  SessionNameFormItemValue &
+  ImageEnvironmentFormInput &
+  ResourceAllocationFormValue &
+  VFolderTableFormValues &
+  PortSelectFormValues;
+
+type SessionMode = 'normal' | 'inference' | 'import';
 const SessionLauncherPage = () => {
+  let sessionMode: SessionMode = 'normal';
+
+  const [isStartingSession, setIsStartingSession] = useState(false);
   const [
-    { step: currentStep, formValues: initialFormValues, redirectTo },
+    { step: currentStep, formValues: formValuesFromQueryParams, redirectTo },
     setQuery,
   ] = useQueryParams({
     step: stepParam,
@@ -71,15 +167,20 @@ const SessionLauncherPage = () => {
     redirectTo: StringParam,
   });
 
+  const navigate = useNavigate();
   const { moveTo } = useWebComponentInfo();
+  const baiClient = useSuspendedBackendaiClient();
+  const currentProject = useCurrentProjectValue();
 
   const { run: syncFormToURLWithDebounce } = useDebounceFn(
     () => {
+      console.log('syncFormToURLWithDebounce', form.getFieldsValue());
       // To sync the latest form values to URL,
       // 'trailing' is set to true, and get the form values here."
       setQuery(
         {
-          formValues: form.getFieldsValue(),
+          // formValues: form.getFieldsValue(),
+          formValues: _.omit(form.getFieldsValue(), ['environments.image']),
         },
         'replaceIn',
       );
@@ -105,18 +206,16 @@ const SessionLauncherPage = () => {
 
   const screens = Grid.useBreakpoint();
 
-  const [form] = Form.useForm<{
-    sessionType: 'interactive' | 'batch' | 'inference';
-    batch: {
-      enabled: boolean;
-    };
-  }>();
+  const [form] = Form.useForm<SessionLauncherFormValue>();
 
+  // After first render, set fields value using query params if it is NOT same as initial values
   useEffect(() => {
     if (
       // if form is changed, validate it to show error on the first render
-      JSON.stringify(INITIAL_FORM_VALUES) !== JSON.stringify(initialFormValues)
+      JSON.stringify(INITIAL_FORM_VALUES) !==
+      JSON.stringify(formValuesFromQueryParams)
     ) {
+      form.setFieldsValue(formValuesFromQueryParams);
       form.validateFields().catch((e) => {});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -128,9 +227,9 @@ const SessionLauncherPage = () => {
 
   // before initialFormValues is set, use getFieldValue and useWatch will return undefined
   const sessionType =
-    Form.useWatch('sessionType', form) ||
+    Form.useWatch('sessionType', { form, preserve: true }) ||
     form.getFieldValue('sessionType') ||
-    initialFormValues.sessionType;
+    formValuesFromQueryParams.sessionType;
 
   const steps = _.filter(
     [
@@ -192,6 +291,225 @@ const SessionLauncherPage = () => {
     (item) => item.errors.length > 0,
   );
 
+  // console.log(form.getFieldError(['resource', 'shmem']));
+  // console.log(form.getFieldValue(['resource']));
+
+  const moveToPreview = () => {
+    // TODO: if handling more async validations, required fetch, use `useTransition`
+    form
+      .validateFields()
+      .catch((e) => {})
+      .finally(() => {
+        setCurrentStep(steps.length - 1);
+      });
+  };
+
+  const startSession = () => {
+    // TODO: support inference mode
+    // TODO: support import mode
+    // TODO: session number
+
+    setIsStartingSession(true);
+    form
+      .validateFields()
+      .then(async (values) => {
+        const [kernelName, architecture] =
+          values.environments.version.split('@');
+        const sessionInfo: CreateSessionInfo = {
+          // TODO: allow_manual_image_name_for_session
+          kernelName,
+          architecture,
+          sessionName: _.isEmpty(values.name)
+            ? generateSessionId()
+            : values.name,
+          config: {
+            type: values.sessionType,
+
+            ...(values.sessionType === 'batch'
+              ? {
+                  startsAt: values.batch.enabled
+                    ? values.batch.scheduleDate
+                    : undefined,
+                  startupCommand: values.batch.command,
+                }
+              : {}),
+
+            // TODO: support change owner
+            group_name: currentProject.name,
+            domain: baiClient._config.domainName,
+            scaling_group: values.resourceGroup,
+            ///////////////////////////
+
+            cluster_mode: values.cluster_mode,
+            cluster_size: values.cluster_size,
+            maxWaitSeconds: 15,
+            cpu: values.resource.cpu,
+            mem: values.resource.mem,
+            // TODO: CHECK: Convert to rule??? Automatically increase shared memory to 1GiB
+            shmem:
+              compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
+              compareNumberWithUnits(values.resource.shmem, '1g') < 0
+                ? '1g'
+                : values.resource.shmem,
+            mounts: values.mounts,
+            mount_map: values.vfoldersAliasMap,
+
+            env: {
+              ..._.fromPairs(values.envvars.map((v) => [v.variable, v.value])),
+              // set hpcOptimization options: "OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS"
+              ..._.omit(values.hpcOptimization, 'autoEnabled'),
+            },
+            preopen_ports: _.map(values.ports, (v) => parseInt(v)),
+          },
+        };
+
+        const sessionPromises = _.map(
+          _.range(values.num_of_sessions || 1),
+          (i) => {
+            const formattedSessionName =
+              (values.num_of_sessions || 1) > 1
+                ? `${sessionInfo.sessionName}-${generateRandomString()}-${i}`
+                : sessionInfo.sessionName;
+            return baiClient
+              .createIfNotExists(
+                sessionInfo.kernelName,
+                formattedSessionName,
+                sessionInfo.config,
+                20000,
+                sessionInfo.architecture,
+              )
+              .then((res: { created: boolean }) => {
+                // // When session is already created with the same name, the status code
+                // // is 200, but the response body has 'created' field as false. For better
+                // // user experience, we show the notification message.
+                if (!res?.created) {
+                  message.warning(t('session.launcher.SessionAlreadyExists'));
+                  // this.notification.text = _text(
+                  //   'session.launcher.SessionAlreadyExists',
+                  // );
+                  // this.notification.show();
+                }
+                return res;
+              })
+              .catch((err: any) => {
+                console.log(err);
+                throw err;
+                // console.log(err);
+                // if (err && err.message) {
+                //   if ('statusCode' in err && err.statusCode === 408) {
+                //     this.notification.text = _text(
+                //       'session.launcher.sessionStillPreparing',
+                //     );
+                //   } else {
+                //     if (err.description) {
+                //       this.notification.text = PainKiller.relieve(err.description);
+                //     } else {
+                //       this.notification.text = PainKiller.relieve(err.message);
+                //     }
+                //   }
+                //   this.notification.detail = err.message;
+                //   this.notification.show(true, err);
+                // } else if (err && err.title) {
+                //   this.notification.text = PainKiller.relieve(err.title);
+                //   this.notification.show(true, err);
+                // }
+              });
+          },
+        );
+        // console.log('##', values.mounts);
+        // console.log(sessionInfo);
+
+        await Promise.all(sessionPromises)
+          .then(([firstSession]) => {
+            // console.log('##sessionPromises', firstSession);
+            if (
+              values.num_of_sessions === 1 &&
+              values.sessionType !== 'batch'
+            ) {
+              const res = firstSession;
+              let appOptions: {
+                [key in string]: any;
+              };
+              if ('kernelId' in res) {
+                // API v4
+                appOptions = {
+                  'session-name': res.kernelId,
+                  'access-key': '',
+                  mode: sessionMode,
+                  // mode: this.mode,
+                };
+              } else {
+                // API >= v5
+                appOptions = {
+                  'session-uuid': res.sessionId,
+                  'session-name': res.sessionName,
+                  'access-key': '',
+                  mode: sessionMode,
+                  // mode: this.mode,
+                };
+              }
+              const service_info = res.servicePorts;
+              if (Array.isArray(service_info) === true) {
+                appOptions['app-services'] = service_info.map(
+                  (a: { name: string }) => a.name,
+                );
+              } else {
+                appOptions['app-services'] = [];
+              }
+              // TODO: support import and inference
+              // if (sessionMode === 'import') {
+              //   appOptions['runtime'] = 'jupyter';
+              //   appOptions['filename'] = this.importFilename;
+              // }
+              // if (sessionMode === 'inference') {
+              //   appOptions['runtime'] = appOptions['app-services'].find(
+              //     (element: any) => !['ttyd', 'sshd'].includes(element),
+              //   );
+              // }
+
+              // only launch app when it has valid service ports
+              if (service_info.length > 0) {
+                // @ts-ignore
+                globalThis.appLauncher.showLauncher(appOptions);
+              }
+            }
+            navigate('/job', {
+              // replace: true,
+            });
+            moveTo('/job');
+          })
+          .catch(() => {
+            // this.metadata_updating = false;
+            // console.log(err);
+            // if (err && err.message) {
+            //   this.notification.text = PainKiller.relieve(err.message);
+            //   if (err.description) {
+            //     this.notification.text = PainKiller.relieve(err.description);
+            //   } else {
+            //     this.notification.detail = err.message;
+            //   }
+            //   this.notification.show(true, err);
+            // } else if (err && err.title) {
+            //   this.notification.text = PainKiller.relieve(err.title);
+            //   this.notification.show(true, err);
+            // }
+            // const event = new CustomEvent('backend-ai-session-list-refreshed', {
+            //   detail: 'running',
+            // });
+            // document.dispatchEvent(event);
+            // this.launchButton.disabled = false;
+            // this.launchButtonMessageTextContent = _text(
+            //   'session.launcher.ConfirmAndLaunch',
+            // );
+          });
+      })
+      .catch((e) => {
+        console.log('validation errors', e);
+      })
+      .finally(() => {
+        setIsStartingSession(false);
+      });
+  };
   return (
     <Flex
       direction="column"
@@ -204,6 +522,7 @@ const SessionLauncherPage = () => {
         // overflow: 'scroll',
       }}
     >
+      <style>{customCSS}</style>
       {redirectTo && (
         <Breadcrumb
           items={[
@@ -231,19 +550,56 @@ const SessionLauncherPage = () => {
             <Typography.Title level={3} style={{ marginTop: 0 }}>
               {t('session.launcher.StartNewSession')}
             </Typography.Title>
-            <Button type="link" icon={<BlockOutlined />}>
-              Templates
-            </Button>
+            <Flex direction="row" gap={'sm'}>
+              <Popconfirm
+                title={t('button.Reset')}
+                description={t('session.launcher.ResetFormConfirm')}
+                onConfirm={() => {
+                  form.resetFields();
+
+                  navigate('/session/start');
+                }}
+                icon={
+                  <QuestionCircleOutlined style={{ color: token.colorError }} />
+                }
+                okText={t('button.Reset')}
+                okButtonProps={{
+                  danger: true,
+                }}
+              >
+                <Button
+                  danger
+                  type="link"
+                  style={{ paddingRight: 0, paddingLeft: 0 }}
+                >
+                  {t('button.Reset')}
+                </Button>
+              </Popconfirm>
+              <Button
+                type="link"
+                icon={<BlockOutlined />}
+                disabled
+                style={{ paddingRight: 0, paddingLeft: 0 }}
+              >
+                {t('session.launcher.TemplateAndHistory')}
+              </Button>
+            </Flex>
           </Flex>
           {/* <Suspense fallback={<FlexActivityIndicator />}> */}
           <Form.Provider
             onFormChange={(name, info) => {
+              // console.log('###', name, info);
               // use OnFormChange instead of Form's onValuesChange,
               // because onValuesChange will not be triggered when form is changed programmatically
               syncFormToURLWithDebounce();
             }}
           >
-            <Form form={form} layout="vertical" requiredMark="optional">
+            <Form
+              form={form}
+              layout="vertical"
+              requiredMark="optional"
+              initialValues={INITIAL_FORM_VALUES}
+            >
               <Flex
                 direction="column"
                 align="stretch"
@@ -259,50 +615,51 @@ const SessionLauncherPage = () => {
                   }}
                 >
                   <Form.Item name="sessionType">
-                    {/* <Radio.Group
-                    options={[
-                      {
-                        label: (
-                          <Flex
-                            direction="column"
-                            align="start"
-                            style={{ marginBottom: token.marginXS }}
-                          >
-                            <Typography.Text strong>
-                              🏃‍♀️ Make, test and run
-                            </Typography.Text>
-                            <Typography.Text type="secondary">
+                    <Radio.Group
+                      className="session-type-radio-group"
+                      options={[
+                        {
+                          label: (
+                            <Flex
+                              direction="column"
+                              align="start"
+                              style={{ marginBottom: token.marginXS }}
+                            >
                               <Typography.Text strong>
-                                Interactive mode
-                              </Typography.Text>{' '}
-                              allows you to create, test and run code
-                              interactively via jupyter notebook, visual studio
-                              code, etc.
-                            </Typography.Text>
-                          </Flex>
-                        ),
-                        value: 'interactive',
-                      },
-                      {
-                        label: (
-                          <Flex direction="column" align="start">
-                            <Typography.Text strong>
-                              ⌚️ Start an long-running task
-                            </Typography.Text>
-                            <Typography.Text type="secondary">
+                                🏃‍♀️ Make, test and run
+                              </Typography.Text>
+                              <Typography.Text type="secondary">
+                                <Typography.Text code>
+                                  Interactive mode
+                                </Typography.Text>{' '}
+                                allows you to create, test and run code
+                                interactively via jupyter notebook, visual
+                                studio code, etc.
+                              </Typography.Text>
+                            </Flex>
+                          ),
+                          value: 'interactive',
+                        },
+                        {
+                          label: (
+                            <Flex direction="column" align="start">
                               <Typography.Text strong>
-                                Batch mode
-                              </Typography.Text>{' '}
-                              runs your code with multiple node & clusters to
-                              scale your idea
-                            </Typography.Text>
-                          </Flex>
-                        ),
-                        value: 'batch',
-                      },
-                    ]}
-                  /> */}
-                    <Segmented
+                                ⌚️ Start an long-running task
+                              </Typography.Text>
+                              <Typography.Text type="secondary">
+                                <Typography.Text code>
+                                  Batch mode
+                                </Typography.Text>{' '}
+                                runs your code with multiple node & clusters to
+                                scale your idea
+                              </Typography.Text>
+                            </Flex>
+                          ),
+                          value: 'batch',
+                        },
+                      ]}
+                    />
+                    {/* <Segmented
                       width={100}
                       options={[
                         {
@@ -333,32 +690,14 @@ const SessionLauncherPage = () => {
                         //   value: 'inference',
                         // },
                       ]}
-                    />
+                    /> */}
                   </Form.Item>
-                  <Form.Item
-                    label="Session name"
-                    name="name"
-                    rules={[
-                      {
-                        max: 64,
-                        message: t('session.Validation.SessionNameTooLong64'),
-                      },
-                      {
-                        pattern:
-                          /^(?:[a-zA-Z0-9][a-zA-Z0-9._-]{2,}[a-zA-Z0-9])?$/,
-                        message: t(
-                          'session.Validation.PleaseFollowSessionNameRule',
-                        ).toString(),
-                      },
-                    ]}
-                  >
-                    <Input allowClear />
-                  </Form.Item>
+                  <SessionNameFormItem />
                 </Card>
 
                 {sessionType === 'batch' && (
                   <Card
-                    title="Batch Mode Configuration"
+                    title={t('session.launcher.BatchModeConfig')}
                     style={{
                       display:
                         currentStepKey === 'sessionType' ? 'block' : 'none',
@@ -370,19 +709,41 @@ const SessionLauncherPage = () => {
                       rules={[
                         {
                           required: true,
+                          type: 'string',
                         },
                       ]}
                     >
-                      <Input.TextArea />
+                      <Input.TextArea autoSize />
                     </Form.Item>
-                    <Form.Item label="Schedule time">
+                    <Form.Item label={t('session.launcher.SessionStartTime')}>
                       <Flex direction="row" gap={'xs'}>
                         <Form.Item
                           noStyle
                           name={['batch', 'enabled']}
                           valuePropName="checked"
                         >
-                          <Checkbox>{t('session.launcher.Enable')}</Checkbox>
+                          <Checkbox
+                            onChange={(e) => {
+                              if (
+                                e.target.checked &&
+                                _.isEmpty(
+                                  form.getFieldValue(['batch', 'scheduleDate']),
+                                )
+                              ) {
+                                form.setFieldValue(
+                                  ['batch', 'scheduleDate'],
+                                  dayjs().add(2, 'minutes').toISOString(),
+                                );
+                              } else if (e.target.checked === false) {
+                                form.setFieldValue(
+                                  ['batch', 'scheduleDate'],
+                                  undefined,
+                                );
+                              }
+                            }}
+                          >
+                            {t('session.launcher.Enable')}
+                          </Checkbox>
                         </Form.Item>
                         <Form.Item
                           noStyle
@@ -402,11 +763,34 @@ const SessionLauncherPage = () => {
                                 <Form.Item
                                   name={['batch', 'scheduleDate']}
                                   noStyle
+                                  rules={[
+                                    {
+                                      // required: true,
+                                      validator: async (rule, value) => {
+                                        if (
+                                          value &&
+                                          dayjs(value).isBefore(dayjs())
+                                        ) {
+                                          return Promise.reject(
+                                            t(
+                                              'session.launcher.StartTimeMustBeInTheFuture',
+                                            ),
+                                          );
+                                        }
+                                        return Promise.resolve();
+                                      },
+                                    },
+                                  ]}
                                 >
                                   <DatePickerISO
                                     disabled={disabled}
                                     showTime
-                                    // format={'YYYY-MM-DD HH:mm:ss'}
+                                    localFormat
+                                    disabledDate={(value) => {
+                                      return value.isBefore(
+                                        dayjs().startOf('day'),
+                                      );
+                                    }}
                                   />
                                 </Form.Item>
                                 {/* <Form.Item
@@ -476,18 +860,121 @@ const SessionLauncherPage = () => {
                       currentStepKey === 'environment' ? 'block' : 'none',
                   }}
                 >
-                  <Form.Item
-                    name="resourceGroup"
-                    label={t('session.ResourceGroup')}
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  >
-                    <ResourceGroupSelect autoSelectDefault />
+                  <ResourceAllocationFormItems enableNumOfSessions />
+                </Card>
+                <Card
+                  title={t('session.launcher.HPCOptimization')}
+                  style={{
+                    display:
+                      currentStepKey === 'environment' ? 'block' : 'none',
+                  }}
+                >
+                  <Form.Item noStyle>
+                    <Flex direction="row" gap={'sm'}>
+                      <Typography.Text>
+                        {t('session.launcher.SwitchOpenMPoptimization')}
+                      </Typography.Text>
+                      <Form.Item
+                        label={t('session.launcher.SwitchOpenMPoptimization')}
+                        name={['hpcOptimization', 'autoEnabled']}
+                        valuePropName="checked"
+                        required
+                        noStyle
+                      >
+                        <Switch
+                          checkedChildren={'ON'}
+                          unCheckedChildren={'OFF'}
+                          onChange={(checked) => {
+                            if (checked) {
+                              form.setFieldsValue(
+                                _.pick(INITIAL_FORM_VALUES, [
+                                  'hpcOptimization',
+                                ]),
+                              );
+                            }
+                          }}
+                        />
+                      </Form.Item>
+                    </Flex>
                   </Form.Item>
-                  <ResourceAllocationFormItems />
+                  <Form.Item
+                    noStyle
+                    shouldUpdate={(prev, next) => {
+                      return (
+                        prev.hpcOptimization?.autoEnabled !==
+                        next.hpcOptimization?.autoEnabled
+                      );
+                    }}
+                  >
+                    {() => {
+                      const enabled = form.getFieldValue([
+                        'hpcOptimization',
+                        'autoEnabled',
+                      ]);
+                      return (
+                        <Row
+                          gutter={token.marginMD}
+                          style={{
+                            display: enabled ? 'none' : undefined,
+                            marginTop: token.marginMD,
+                          }}
+                        >
+                          <Col xs={24} sm={12}>
+                            <Form.Item
+                              style={{ flex: 1 }}
+                              label={t('session.launcher.NumOpenMPthreads')}
+                              name={['hpcOptimization', 'OMP_NUM_THREADS']}
+                              tooltip={
+                                <>
+                                  {t('session.launcher.OpenMPOptimization')}
+                                  <Trans
+                                    i18nKey={
+                                      'session.launcher.DescOpenMPOptimization'
+                                    }
+                                  />
+                                </>
+                              }
+                              required
+                            >
+                              <InputNumber
+                                min={0}
+                                max={1000}
+                                step={1}
+                                stringMode
+                                style={{ width: '100%' }}
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col xs={24} sm={12}>
+                            <Form.Item
+                              style={{ flex: 1 }}
+                              label={t('session.launcher.NumOpenBLASthreads')}
+                              name={['hpcOptimization', 'OPENBLAS_NUM_THREADS']}
+                              tooltip={
+                                <>
+                                  {t('session.launcher.OpenMPOptimization')}
+                                  <Trans
+                                    i18nKey={
+                                      'session.launcher.DescOpenMPOptimization'
+                                    }
+                                  />
+                                </>
+                              }
+                              required
+                            >
+                              <InputNumber
+                                min={0}
+                                max={1000}
+                                step={1}
+                                stringMode
+                                style={{ width: '100%' }}
+                              />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      );
+                    }}
+                  </Form.Item>
                 </Card>
 
                 {/* Step Start*/}
@@ -518,7 +1005,9 @@ const SessionLauncherPage = () => {
                       title={t('session.launcher.SessionType')}
                       size="small"
                       status={
-                        form.getFieldError('name').length > 0
+                        form.getFieldError('name').length > 0 ||
+                        form.getFieldError(['batch', 'command']).length > 0 ||
+                        form.getFieldError(['batch', 'scheduleDate']).length > 0
                           ? 'error'
                           : undefined
                       }
@@ -551,12 +1040,42 @@ const SessionLauncherPage = () => {
                       // }
                     >
                       <Descriptions size="small">
-                        <Descriptions.Item label="Session Type" span={24}>
+                        <Descriptions.Item
+                          label={t('session.SessionType')}
+                          span={24}
+                        >
                           {form.getFieldValue('sessionType')}
                         </Descriptions.Item>
-                        <Descriptions.Item label={'Session name'} span={24}>
-                          {form.getFieldValue('name')}
-                        </Descriptions.Item>
+                        {!_.isEmpty(form.getFieldValue('name')) && (
+                          <Descriptions.Item
+                            label={t('session.launcher.SessionName')}
+                            span={24}
+                          >
+                            {form.getFieldValue('name')}
+                          </Descriptions.Item>
+                        )}
+                        {sessionType === 'batch' && (
+                          <>
+                            <Descriptions.Item
+                              label={t('session.launcher.StartUpCommand')}
+                              span={24}
+                            >
+                              <Input.TextArea
+                                readOnly
+                                autoSize
+                                value={form.getFieldValue(['batch', 'command'])}
+                              ></Input.TextArea>
+                            </Descriptions.Item>
+                            <Descriptions.Item
+                              label={t('session.launcher.ScheduleTimeSimple')}
+                              span={24}
+                            >
+                              {dayjs(
+                                form.getFieldValue(['batch', 'scheduleDate']),
+                              ).format('LLL (Z)')}
+                            </Descriptions.Item>
+                          </>
+                        )}
                       </Descriptions>
                     </BAICard>
                     <BAICard
@@ -582,8 +1101,16 @@ const SessionLauncherPage = () => {
                         );
                       }}
                     >
-                      <Descriptions size="small" layout="vertical" column={1}>
-                        <Descriptions.Item label="Image">
+                      <Descriptions size="small" column={2}>
+                        <Descriptions.Item
+                          label={t('session.launcher.Project')}
+                        >
+                          {currentProject.name}
+                        </Descriptions.Item>
+                        <Descriptions.Item label={t('general.ResourceGroup')}>
+                          {form.getFieldValue('resourceGroup')}
+                        </Descriptions.Item>
+                        <Descriptions.Item label={t('general.Image')} span={2}>
                           <Flex direction="row" gap="xs" style={{ flex: 1 }}>
                             <ImageMetaIcon
                               image={
@@ -596,103 +1123,113 @@ const SessionLauncherPage = () => {
                             </Typography.Text>
                           </Flex>
                         </Descriptions.Item>
-                        <Descriptions.Item
-                          label={t('session.launcher.EnvironmentVariable')}
-                        >
-                          {form.getFieldValue('envvars')?.length ? (
-                            <SyntaxHighlighter
-                              style={darcula}
-                              codeTagProps={{
-                                style: {
-                                  // fontFamily: 'monospace',
-                                },
-                              }}
-                              // showLineNumbers
-                              customStyle={{
-                                margin: 0,
-                                width: '100%',
-                              }}
-                            >
-                              {_.map(
-                                form.getFieldValue('envvars'),
-                                (v: { variable: string; value: string }) =>
-                                  `${v?.variable || ''}="${v?.value || ''}"`,
-                              ).join('\n')}
-                            </SyntaxHighlighter>
-                          ) : (
-                            '-'
-                          )}
-                        </Descriptions.Item>
+                        {form.getFieldValue('envvars')?.length > 0 && (
+                          <Descriptions.Item
+                            label={t('session.launcher.EnvironmentVariable')}
+                          >
+                            {form.getFieldValue('envvars')?.length ? (
+                              <SyntaxHighlighter
+                                style={darcula}
+                                codeTagProps={{
+                                  style: {
+                                    // fontFamily: 'monospace',
+                                  },
+                                }}
+                                // showLineNumbers
+                                customStyle={{
+                                  margin: 0,
+                                  width: '100%',
+                                }}
+                              >
+                                {_.map(
+                                  form.getFieldValue('envvars'),
+                                  (v: { variable: string; value: string }) =>
+                                    `${v?.variable || ''}="${v?.value || ''}"`,
+                                ).join('\n')}
+                              </SyntaxHighlighter>
+                            ) : (
+                              <Typography.Text type="secondary">
+                                -
+                              </Typography.Text>
+                            )}
+                          </Descriptions.Item>
+                        )}
                       </Descriptions>
                     </BAICard>
-                    <Card
+                    <BAICard
                       title={t('session.launcher.ResourceAllocation')}
-                      size="small"
-                      extra={
-                        <Button
-                          type="link"
-                          onClick={() => {
-                            setCurrentStep(
-                              // @ts-ignore
-                              steps.findIndex((v) => v.key === 'environment'),
-                            );
-                          }}
-                        >
-                          {t('button.Edit')}
-                        </Button>
+                      status={
+                        _.some(form.getFieldValue('resource'), (v, key) => {
+                          //                         console.log(form.getFieldError(['resource', 'shmem']));
+                          // console.log(form.getFieldValue(['resource']));
+                          return (
+                            form.getFieldError(['resource', key]).length > 0
+                          );
+                        })
+                          ? 'error'
+                          : // : _.some(form.getFieldValue('resource'), (v, key) => {
+                            //     //                         console.log(form.getFieldError(['resource', 'shmem']));
+                            //     // console.log(form.getFieldValue(['resource']));
+                            //     return (
+                            //       form.getFieldWarning(['resource', key]).length >
+                            //       0
+                            //     );
+                            //   })
+                            // ? 'warning'
+                            undefined
                       }
+                      size="small"
+                      extraButtonTitle={t('button.Edit')}
+                      onClickExtraButton={() => {
+                        setCurrentStep(
+                          // @ts-ignore
+                          steps.findIndex((v) => v.key === 'environment'),
+                        );
+                      }}
                     >
-                      <Descriptions>
-                        <Descriptions.Item
-                          span={24}
-                          label={t('environment.ResourcePresets')}
-                        >
-                          <Flex
-                            direction="row"
-                            align="start"
-                            gap={'xs'}
-                            wrap="wrap"
-                            style={{ flex: 1 }}
-                          >
-                            {form.getFieldValue('allocationPreset') ===
-                            'custom' ? (
-                              // t('session.launcher.CustomAllocation')
-                              ''
-                            ) : (
-                              <Tag>
-                                {form.getFieldValue('allocationPreset')}
-                              </Tag>
+                      <Flex direction="column" align="stretch">
+                        {_.some(form.getFieldValue('resource'), (v, key) => {
+                          //                         console.log(form.getFieldError(['resource', 'shmem']));
+                          // console.log(form.getFieldValue(['resource']));
+                          return (
+                            form.getFieldWarning(['resource', key]).length > 0
+                          );
+                        }) && (
+                          <Alert
+                            type="warning"
+                            showIcon
+                            message={t(
+                              'session.launcher.EnqueueComputeSessionWarning',
                             )}
+                          />
+                        )}
 
-                            {_.map(
-                              _.omit(form.getFieldValue('resource'), 'shmem'),
-                              (value, type) => {
-                                return (
-                                  <ResourceNumber
-                                    key={type}
-                                    // @ts-ignore
-                                    type={type}
-                                    value={
-                                      type === 'mem'
-                                        ? iSizeToSize(value + 'g', 'b').number +
-                                          ''
-                                        : value
-                                    }
-                                    opts={{
-                                      shmem: form.getFieldValue('resource')
-                                        .shmem
-                                        ? iSizeToSize(
-                                            form.getFieldValue('resource')
-                                              .shmem + 'g',
-                                            'b',
-                                          ).number
-                                        : undefined,
-                                    }}
-                                  />
-                                );
-                              },
+                        <Descriptions column={2}>
+                          <Descriptions.Item
+                            label={t(
+                              'session.launcher.ResourceAllocationPerContainer',
                             )}
-                            {/* {_.chain(
+                            span={2}
+                          >
+                            <Flex
+                              direction="row"
+                              align="start"
+                              gap={'sm'}
+                              wrap="wrap"
+                              style={{ flex: 1 }}
+                            >
+                              {form.getFieldValue('allocationPreset') ===
+                              'custom' ? (
+                                // t('session.launcher.CustomAllocation')
+                                ''
+                              ) : (
+                                <Tag>
+                                  {form.getFieldValue('allocationPreset')}
+                                </Tag>
+                              )}
+
+                              <FormResourceNumbers form={form} />
+                              {/* {_.chain(
                               form.getFieldValue('allocationPreset') ===
                                 'custom'
                                 ? form.getFieldValue('resource')
@@ -722,10 +1259,42 @@ const SessionLauncherPage = () => {
                               })
                               .compact()
                               .value()} */}
+                            </Flex>
+                          </Descriptions.Item>
+                          <Descriptions.Item
+                            label={t('session.launcher.NumberOfContainer')}
+                          >
+                            {form.getFieldValue('cluster_size') === 1
+                              ? form.getFieldValue('num_of_sessions')
+                              : form.getFieldValue('cluster_size')}
+                          </Descriptions.Item>
+                          <Descriptions.Item
+                            label={t('session.launcher.ClusterMode')}
+                          >
+                            {form.getFieldValue('cluster_mode') ===
+                            'single-node'
+                              ? t('session.launcher.SingleNode')
+                              : t('session.launcher.MultiNode')}
+                          </Descriptions.Item>
+                        </Descriptions>
+                        <Card
+                          size="small"
+                          type="inner"
+                          title={t('session.launcher.TotalAllocation')}
+                        >
+                          <Flex direction="row" gap="xxs">
+                            <FormResourceNumbers
+                              form={form}
+                              containerCount={
+                                form.getFieldValue('cluster_size') === 1
+                                  ? form.getFieldValue('num_of_sessions')
+                                  : form.getFieldValue('cluster_size')
+                              }
+                            />
                           </Flex>
-                        </Descriptions.Item>
-                      </Descriptions>
-                    </Card>
+                        </Card>
+                      </Flex>
+                    </BAICard>
                     <BAICard
                       title={t('webui.menu.Data&Storage')}
                       size="small"
@@ -783,7 +1352,11 @@ const SessionLauncherPage = () => {
                           )}
                         ></Table>
                       ) : (
-                        '-'
+                        <Alert
+                          type="warning"
+                          showIcon
+                          message={t('session.launcher.NoFolderMounted')}
+                        />
                       )}
                     </BAICard>
                     <BAICard
@@ -820,9 +1393,13 @@ const SessionLauncherPage = () => {
                                 {v}
                               </PortTag>
                             ))}
-                            {form.getFieldValue('ports')?.length !== 0
-                              ? undefined
-                              : '-'}
+
+                            {!_.isArray(form.getFieldValue('ports')) ||
+                            form.getFieldValue('ports')?.length === 0 ? (
+                              <Typography.Text type="secondary">
+                                {t('general.None')}
+                              </Typography.Text>
+                            ) : null}
                           </Flex>
                         </Descriptions.Item>
                       </Descriptions>
@@ -853,6 +1430,7 @@ const SessionLauncherPage = () => {
                     {currentStep === steps.length - 1 && (
                       <Button
                         icon={<SaveOutlined />}
+                        disabled
                         onClick={() => {
                           message.info(
                             'Not implemented yet: Template edit modal',
@@ -865,13 +1443,7 @@ const SessionLauncherPage = () => {
                   </Flex>
                   <Flex direction="row" gap="sm">
                     {currentStep !== steps.length - 1 && (
-                      <Button
-                        onClick={() => {
-                          setCurrentStep(steps.length - 1);
-                        }}
-                      >
-                        Skip to Review
-                      </Button>
+                      <Button onClick={moveToPreview}>Skip to Review</Button>
                     )}
                     {currentStep > 0 && (
                       <Button
@@ -879,6 +1451,7 @@ const SessionLauncherPage = () => {
                           setCurrentStep(currentStep - 1);
                         }}
                         icon={<LeftOutlined />}
+                        disabled={isStartingSession}
                       >
                         Previous
                       </Button>
@@ -888,6 +1461,8 @@ const SessionLauncherPage = () => {
                         type="primary"
                         icon={<PlayCircleOutlined />}
                         disabled={hasError}
+                        onClick={startSession}
+                        loading={isStartingSession}
                       >
                         {t('session.launcher.Launch')}
                       </Button>
@@ -920,7 +1495,12 @@ const SessionLauncherPage = () => {
               direction="vertical"
               current={currentStep}
               onChange={(nextCurrent) => {
-                setCurrentStep(nextCurrent);
+                // handle "skip to review" step specifically, because validation
+                if (nextCurrent === steps.length - 1) {
+                  moveToPreview();
+                } else {
+                  setCurrentStep(nextCurrent);
+                }
               }}
               items={_.map(steps, (s, idx) => ({
                 ...s,
@@ -941,28 +1521,74 @@ const SessionLauncherPage = () => {
   );
 };
 
-const SessionTypeItem: React.FC<{
-  title: string;
-  description?: string;
-}> = ({ title, description }) => {
-  const { token } = theme.useToken();
+const FormResourceNumbers: React.FC<{
+  form: FormInstance;
+  containerCount?: number;
+}> = ({ form, containerCount = 1 }) => {
   return (
-    <Flex
-      direction="column"
-      style={{ padding: token.paddingXS }}
-      align="stretch"
-    >
-      <Typography.Title level={5}>{title}</Typography.Title>
-      <Typography.Text
-        type="secondary"
-        // @ts-ignore
-        style={{ textWrap: 'wrap' }}
-      >
-        {description}
-      </Typography.Text>
-    </Flex>
+    <>
+      {_.map(
+        _.omit(
+          form.getFieldValue('resource'),
+          'shmem',
+          'accelerator',
+          'acceleratorType',
+        ),
+        (value, type) => {
+          return (
+            <ResourceNumber
+              key={type}
+              // @ts-ignore
+              type={type}
+              value={
+                type === 'mem'
+                  ? (iSizeToSize(value, 'b')?.number || 0) * containerCount + ''
+                  : _.toNumber(value) * containerCount + ''
+              }
+              opts={{
+                shmem: form.getFieldValue('resource').shmem
+                  ? (iSizeToSize(form.getFieldValue('resource').shmem, 'b')
+                      ?.number || 0) * containerCount
+                  : undefined,
+              }}
+            />
+          );
+        },
+      )}
+      {_.isNumber(form.getFieldValue(['resource', 'accelerator'])) && (
+        <ResourceNumber
+          // @ts-ignore
+          type={form.getFieldValue(['resource', 'acceleratorType'])}
+          value={_.toString(
+            form.getFieldValue(['resource', 'accelerator']) * containerCount,
+          )}
+        />
+      )}
+    </>
   );
 };
+// const SessionTypeItem: React.FC<{
+//   title: string;
+//   description?: string;
+// }> = ({ title, description }) => {
+//   const { token } = theme.useToken();
+//   return (
+//     <Flex
+//       direction="column"
+//       style={{ padding: token.paddingXS }}
+//       align="stretch"
+//     >
+//       <Typography.Title level={5}>{title}</Typography.Title>
+//       <Typography.Text
+//         type="secondary"
+//         // @ts-ignore
+//         style={{ textWrap: 'wrap' }}
+//       >
+//         {description}
+//       </Typography.Text>
+//     </Flex>
+//   );
+// };
 
 // interface StepContentProps extends FlexProps{
 
@@ -972,5 +1598,33 @@ const SessionTypeItem: React.FC<{
 
 //   </Flex>
 // }
+
+const generateSessionId = () => {
+  let text = '';
+  const possible =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  for (let i = 0; i < 8; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text + '-session';
+};
+
+const generateRandomString = () => {
+  let randNum = Math.floor(Math.random() * 52 * 52 * 52);
+
+  const parseNum = (num: number) => {
+    if (num < 26) return String.fromCharCode(65 + num);
+    else return String.fromCharCode(97 + num - 26);
+  };
+
+  let randStr = '';
+
+  for (let i = 0; i < 3; i++) {
+    randStr += parseNum(randNum % 52);
+    randNum = Math.floor(randNum / 52);
+  }
+
+  return randStr;
+};
 
 export default SessionLauncherPage;

@@ -87,7 +87,6 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: String }) connection_mode = 'SESSION' as ConnectionMode;
   @property({ type: String }) systemSSHImage = '';
   @property({ type: String }) fasttrackEndpoint = '';
-  @property({ type: Boolean }) hideSideMenuFastTrackButton = false;
   @property({ type: Number }) login_attempt_limit = 500;
   @property({ type: Number }) login_block_time = 180;
   @property({ type: String }) user;
@@ -137,6 +136,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) directoryBasedUsage = false;
   @property({ type: Number }) maxCountForPreopenPorts = 10;
   @property({ type: Boolean }) allowCustomResourceAllocation = true;
+  @property({ type: Boolean }) isDirectorySizeVisible = true;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel')
@@ -839,6 +839,7 @@ export default class BackendAILogin extends BackendAIPage {
       value: parseInt(generalConfig?.maxCountForPreopenPorts),
     } as ConfigValueObject) as number;
 
+    // Enable allow custom resource allocation
     this.allowCustomResourceAllocation = this._getConfigValueByExists(
       generalConfig,
       {
@@ -847,6 +848,13 @@ export default class BackendAILogin extends BackendAIPage {
         value: generalConfig?.allowCustomResourceAllocation,
       } as ConfigValueObject,
     ) as boolean;
+
+    // Enable hide directory size
+    this.isDirectorySizeVisible = this._getConfigValueByExists(generalConfig, {
+      valueType: 'boolean',
+      defaultValue: false,
+      value: generalConfig?.isDirectorySizeVisible,
+    } as ConfigValueObject) as boolean;
   }
 
   /**
@@ -1015,16 +1023,6 @@ export default class BackendAILogin extends BackendAIPage {
       defaultValue: '',
       value: pipelineConfig?.frontendEndpoint,
     } as ConfigValueObject) as string;
-
-    // Enable hide button flag
-    this.hideSideMenuFastTrackButton = this._getConfigValueByExists(
-      pipelineConfig,
-      {
-        valueType: 'boolean',
-        defaultValue: false,
-        value: pipelineConfig?.hideSideMenuButton,
-      } as ConfigValueObject,
-    ) as boolean;
   }
 
   /**
@@ -1817,8 +1815,6 @@ export default class BackendAILogin extends BackendAIPage {
         globalThis.backendaiclient._config.systemSSHImage = this.systemSSHImage;
         globalThis.backendaiclient._config.fasttrackEndpoint =
           this.fasttrackEndpoint;
-        globalThis.backendaiclient._config.hideSideMenuFastTrackButton =
-          this.hideSideMenuFastTrackButton;
         globalThis.backendaiclient._config.hideAgents = this.hideAgents;
         globalThis.backendaiclient._config.enable2FA = this.enable2FA;
         globalThis.backendaiclient._config.force2FA = this.force2FA;
@@ -1828,6 +1824,8 @@ export default class BackendAILogin extends BackendAIPage {
           this.maxCountForPreopenPorts;
         globalThis.backendaiclient._config.allowCustomResourceAllocation =
           this.allowCustomResourceAllocation;
+        globalThis.backendaiclient._config.isDirectorySizeVisible =
+          this.isDirectorySizeVisible;
         globalThis.backendaiclient.ready = true;
         if (
           this.endpoints.indexOf(

@@ -662,13 +662,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       <div id="scaling-group-select-box" class="layout horizontal center-justified ${
         this.direction
       }">
-      <backend-ai-react-resource-group-select @change=${({ detail: value }) => {
-        this.updateScalingGroup(true, {
-          target: {
-            value,
-          },
-        });
-      }}/>
+      <backend-ai-react-resource-group-select 
+        value=${this.scaling_group}
+        @change=${({ detail: value }) => {
+          this.updateScalingGroup(true, {
+            target: {
+              value,
+            },
+          });
+        }}/>
       </div>
       <div class="layout ${this.direction}-card flex wrap">
         <div id="resource-gauges" class="layout ${this.direction} ${

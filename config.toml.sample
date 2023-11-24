@@ -27,6 +27,7 @@ appDownloadUrl = ""                     # URL to download the electron app. If b
 allowAppDownloadPanel = true              # If true, display the download WebUI app panel on the summary page.
 systemSSHImage = ""                     # This image is used to launch ssh session from the filebrowser dialog to support fast uploading.
 directoryBasedUsage = false             # If true, display the amount of usage per directory such as folder capacity, and number of files and directories.
+isDirectorySizeVisible = true           # If false, directory size in folder explorer will show `-`. default value is set to true.
 maxCountForPreopenPorts = 10            # The maximum allowed number of preopen ports. If you set this option to 0, the feature of preopen ports is disabled.
 allowCustomResourceAllocation = true    # If true, display the custom allocation on the session launcher.
 
@@ -37,7 +38,8 @@ proxyListenIP = "[Websocket proxy configuration IP.]"
 #disableCertCheck = false                # If true, It will disable certification check
 
 [menu]
-#blocklist = "summary,import,statistics" # Disable menus on the list which are separated by comma.
+#blocklist = "" # Hide menus on the list which are separated by comma. please note that summary menu cannot be added to blocklist
+#inactivelist = "summary,import,statistics" # Disable menus on the list which are separated by comma.
 
 [resources]
 openPortToPublic = false            # Show option to open app proxy port to anyone.
