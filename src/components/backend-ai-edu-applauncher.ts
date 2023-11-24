@@ -46,6 +46,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   @property({ type: Object }) client = Object();
   @property({ type: Object }) notification = Object();
   @property({ type: String }) resources = Object();
+  @property({ type: String }) _eduAppnamePrefix = '';
   @query('#app-launcher') appLauncher!: BackendAIAppLauncher;
 
   static get styles(): CSSResultGroup | undefined {
@@ -237,6 +238,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
   async _createEduSession() {
     this.appLauncher.indicator = await globalThis.lablupIndicator.start();
+    this._eduAppnamePrefix =
+      globalThis.backendaiclient._config.eduAppnamePrefix;
 
     // Query current user's compute session in the current group.
     const fields = [
@@ -329,7 +332,10 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         const servicePorts = JSON.parse(_sess.service_ports || '{}');
         const services = servicePorts.map((s) => s.name);
         let requestedService = requestedApp;
-        if (requestedApp.startsWith('bokff')) {
+        if (
+          this._eduAppnamePrefix !== '' &&
+          requestedApp.startsWith(this._eduAppnamePrefix)
+        ) {
           requestedService = requestedApp.split('-')[1];
         }
         if (services.includes(requestedService)) {
@@ -486,7 +492,10 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     this.appLauncher.indicator = await globalThis.lablupIndicator.start();
     let requestedApp = appName;
     if (!this.detectIE()) {
-      if (appName.startsWith('bokff')) {
+      if (
+        this._eduAppnamePrefix !== '' &&
+        appName.startsWith(this._eduAppnamePrefix)
+      ) {
         requestedApp = appName.split('-')[1];
       }
       if (appName.startsWith('jupyter')) {
