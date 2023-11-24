@@ -450,8 +450,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.blockedMenuItem = config.menu.blocklist
         .split(',')
         .map((x: string) => x.trim());
-      // Remove summary from accidentally added in config.menu.blocklist
-      this.blockedMenuItem.filter((menuTitle) => menuTitle !== 'summary');
     }
     if (typeof config.menu !== 'undefined' && 'inactivelist' in config.menu) {
       this.inactiveMenuItem = config.menu.inactivelist
@@ -1391,11 +1389,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             }" @click="${() =>
               this._moveTo(
                 '/summary',
-              )}" ?disabled="${this.inactiveMenuItem.includes(
-              'summary',
-            )}" class="${
-              this.blockedMenuItem.includes('summary') ? 'hidden' : ''
-            }">
+              )}" ?disabled="${this.inactiveMenuItem.includes('summary')}">
               <i class="fas fa-th-large" slot="graphic" id="summary-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Summary')}</span>
             </mwc-list-item>
