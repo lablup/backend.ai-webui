@@ -30,6 +30,7 @@ directoryBasedUsage = false             # If true, display the amount of usage p
 isDirectorySizeVisible = true           # If false, directory size in folder explorer will show `-`. default value is set to true.
 maxCountForPreopenPorts = 10            # The maximum allowed number of preopen ports. If you set this option to 0, the feature of preopen ports is disabled.
 allowCustomResourceAllocation = true    # If true, display the custom allocation on the session launcher.
+eduAppNamePrefix = ""              # The prefix of edu applauncher's app name. If the app name starts with this prefix, split it by '-' and use the tail as the name of image.
 
 [wsproxy]
 proxyURL = "[Proxy URL]"
