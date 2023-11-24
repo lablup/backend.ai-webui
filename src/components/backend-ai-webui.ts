@@ -1568,7 +1568,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               class="${
                 this.blockedMenuItem.includes('statistics') ? 'hidden' : ''
               }">
-            >
               <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Statistics')}</span>
             </mwc-list-item>
