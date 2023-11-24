@@ -1,6 +1,28 @@
 # Changelog
 
-## v23.09.4 (04/11/2023)
+## v23.09.5 (21/11/2023)
+## What's Changed
+* update: stand-alone local proxy packaging by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2013
+* docs: Update documentation link by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1994
+* update: change NPU device limit per node to 8 by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2014
+* add: read NPU limit per node configuration from config.toml by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2015
+* fix: add optional chaining to call support by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2019
+* feat: Link FastTrack button to frontend server by @rapsealk in https://github.com/lablup/backend.ai-webui/pull/2020
+* add: a draft for updated sliderInputItem with selectable AI accelerator by @lizable in https://github.com/lablup/backend.ai-webui/pull/2017
+* Fix: hide `max_vfolder_count` setting according to the api version by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2016
+* feature: hide size of directory by option by @lizable in https://github.com/lablup/backend.ai-webui/pull/2021
+* feature: update existing components for neo session launcher by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2023
+* feat: Neo session launcher - alpha by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1953
+* feat: VFolderPermissionTag component by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2024
+* feature: Response style for `ImageEnvironmentSelectFormItems` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2028
+* feat: cluster mode in Neo Session launcher  by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2026
+* fix: variable name validation rule of `EnvVarFormList` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2029
+* add: bundle option to Makefile with auto-release bundle by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2034
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.4...v23.09.5
+
+
+## v23.09.4 (05/11/2023)
 ## What's Changed
 * feat: new GraphQL directive on Client, `@since(version:)` and `@deprecatedSince(version:)` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1999
 * fix: UI with multiple types of accelerators by @adrysn in https://github.com/lablup/backend.ai-webui/pull/2012
@@ -22,6 +44,7 @@
 * feat: add passwordless sudo user management UI by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2005
 
 **Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.2...v23.09.3
+
 
 ## v23.09.2 (26/10/2023)
 ## What's Changed
