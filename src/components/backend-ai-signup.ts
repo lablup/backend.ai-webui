@@ -308,7 +308,10 @@ export default class BackendAiSignup extends BackendAIPage {
     if (inputFieldsValidity.includes(false)) {
       return;
     }
-    const token = this.tokenInput.value;
+    let token;
+    if (!this.allowSignupWithoutConfirmation) {
+      token = this.tokenInput.value;
+    }
     const user_email = this.userEmailInput.value;
     const user_name = this.userNameInput.value;
     const password = this.passwordInput.value;
