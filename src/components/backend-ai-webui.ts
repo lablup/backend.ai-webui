@@ -1482,7 +1482,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               this._moveTo(
                 '/data',
               )}" ?disabled="${this.inactiveMenuItem.includes('data')}"
-              class="${this.blockedMenuItem.includes('data') ? 'hidden' : ''}
+              class="${this.blockedMenuItem.includes('data') ? 'hidden' : ''}"
             >
               <i class="fas fa-cloud-upload-alt" slot="graphic" id="data-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Data&Storage')}</span>
