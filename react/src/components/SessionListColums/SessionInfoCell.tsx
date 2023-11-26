@@ -105,7 +105,7 @@ const SessionInfoCell: React.FC<{
                   max: 64,
                 },
                 {
-                  pattern: /^(?:[a-zA-Z0-9][a-zA-Z0-9._\-]{2,}[a-zA-Z0-9])?$/,
+                  pattern: /^(?:[a-zA-Z0-9][-a-zA-Z0-9._]{2,}[a-zA-Z0-9])?$/,
                   message: t(
                     'session.Validation.EnterValidSessionName',
                   ).toString(),
