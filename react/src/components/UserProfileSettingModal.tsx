@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ */
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
@@ -104,55 +108,58 @@ const UserProfileSettingModal: React.FC<Props> = ({
   });
 
   const onSubmit = () => {
-    form.validateFields().then((values) => {
-      userMutations.updateFullName(values.full_name, {
-        onSuccess: (newFullName) => {
-          if (newFullName !== userInfo.full_name) {
-            messageApi.open({
-              type: 'success',
-              content: t('webui.menu.FullnameUpdated'),
-            });
-          }
+    form
+      .validateFields()
+      .then((values) => {
+        userMutations.updateFullName(values.full_name, {
+          onSuccess: (newFullName) => {
+            if (newFullName !== userInfo.full_name) {
+              messageApi.open({
+                type: 'success',
+                content: t('webui.menu.FullnameUpdated'),
+              });
+            }
 
-          if (
-            values.newPassword &&
-            values.newPasswordConfirm &&
-            values.originalPassword
-          ) {
-            userMutations.updatePassword(
-              {
-                new_password: values.newPassword,
-                new_password2: values.newPasswordConfirm,
-                old_password: values.originalPassword,
-              },
-              {
-                onSuccess: () => {
-                  messageApi.open({
-                    type: 'success',
-                    content: t('webui.menu.PasswordUpdated'),
-                  });
-                  onRequestClose(true);
+            if (
+              values.newPassword &&
+              values.newPasswordConfirm &&
+              values.originalPassword
+            ) {
+              userMutations.updatePassword(
+                {
+                  new_password: values.newPassword,
+                  new_password2: values.newPasswordConfirm,
+                  old_password: values.originalPassword,
                 },
-                onError: (e) => {
-                  messageApi.open({
-                    type: 'error',
-                    content: e.message,
-                  });
+                {
+                  onSuccess: () => {
+                    messageApi.open({
+                      type: 'success',
+                      content: t('webui.menu.PasswordUpdated'),
+                    });
+                    onRequestClose(true);
+                  },
+                  onError: (e) => {
+                    messageApi.open({
+                      type: 'error',
+                      content: e.message,
+                    });
+                  },
                 },
-              },
-            );
-          } else {
-            onRequestClose(true);
-          }
-        },
-        onError: (e) => {
-          messageApi.open({
-            type: 'error',
-            content: e.message,
-          });
-        },
-      });
-    });
+              );
+            } else {
+              onRequestClose(true);
+            }
+          },
+          onError: (e) => {
+            messageApi.open({
+              type: 'error',
+              content: e.message,
+            });
+          },
+        });
+      })
+      .catch(() => {});
   };
 
   return (
