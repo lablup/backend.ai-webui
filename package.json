@@ -29,7 +29,8 @@
     "update": "npx tsc",
     "postinstall": "npx concurrently -c \"auto\" --names \"react-dependencies\" \"cd react && npm install\"",
     "patch:lit-translate": "unzip -o ./scripts/lit-translate.zip -d ./node_modules/lit-translate && cp -f ./scripts/lit-translate-index.js ./node_modules/lit-translate/index.js",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test:cypress": "cypress open"
   },
   "dependencies": {
     "@material/mwc-button": "^0.27.0",
@@ -69,6 +70,7 @@
     "chart.js": "~4.4.0",
     "chartjs-adapter-date-fns": "^3.0.0",
     "commander": "^11.0.0",
+    "cypress": "^13.6.0",
     "date-fns": "^2.30.0",
     "dotenv": "^16.3.1",
     "drawflow": "^0.0.59",
