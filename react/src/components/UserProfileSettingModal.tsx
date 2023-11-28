@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ */
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
