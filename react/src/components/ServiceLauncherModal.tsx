@@ -13,7 +13,16 @@ import ResourceGroupSelect from './ResourceGroupSelect';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import SliderInputFormItem from './SliderInputFormItem';
 import VFolderSelect from './VFolderSelect';
-import { Card, Form, Input, theme, Select, Switch, message } from 'antd';
+import {
+  Button,
+  Card,
+  Form,
+  Input,
+  theme,
+  Select,
+  Switch,
+  message,
+} from 'antd';
 import _ from 'lodash';
 import React, { Suspense, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -275,7 +284,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       .validateFields()
       .then((values) => {
         mutationToCreateService.mutate(values, {
-          onSuccess: () => {
+          onSuccess: (resp) => {
+            console.log(resp);
             onRequestClose(true);
           },
           onError: (error) => {
@@ -314,6 +324,22 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       destroyOnClose={true}
       maskClosable={false}
       confirmLoading={mutationToCreateService.isLoading}
+      footer={[
+        <Button key="cancel" onClick={handleCancel}>
+          Cancel
+        </Button>,
+        <Button
+          key="validate"
+          onClick={() => {
+            // TODO: add open validation modal
+          }}
+        >
+          Validate
+        </Button>,
+        <Button key="ok" type="primary" onClick={handleOk}>
+          Start Service
+        </Button>,
+      ]}
       {...modalProps}
     >
       <Suspense fallback={<FlexActivityIndicator />}>
