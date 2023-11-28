@@ -101,7 +101,7 @@
     "@rollup/plugin-replace": "^5.0.2",
     "@rollup/plugin-terser": "^0.4.3",
     "@rollup/plugin-typescript": "^11.1.4",
-    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.2.1",
     "@types/drawflow": "^0.0.6",
     "@types/estree": "1.0.2",
     "@types/hammerjs": "^2.0.42",
