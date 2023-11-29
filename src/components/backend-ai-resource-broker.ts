@@ -528,7 +528,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         // ================================ END ====================================
         // Make empty scaling group item if there is no scaling groups.
         this.scaling_groups =
-          sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{ name: '' }];
+          sgs.scaling_groups.length > 0
+            ? sgs.scaling_groups
+            : [{ name: 'default' }];
       }
       if (this.scaling_groups.length > 0) {
         const scaling_groups: any = [];
