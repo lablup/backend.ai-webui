@@ -1431,7 +1431,10 @@
     "FormValidationFailed": "Validasi formulir gagal",
     "ServiceNameRule": "Hanya mengizinkan 4 hingga 24 karakter alfanumerik, garis bawah (_), tanda hubung (-), dan titik (.) dan harus diakhiri dengan karakter alfanumerik.",
     "resources": "Sumber daya",
-    "Image": "Gambar"
+    "Image": "Gambar",
+    "Validate": "Mengesahkan",
+    "Cancel": "Membatalkan",
+    "ValidationInfo": "Info Validasi"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

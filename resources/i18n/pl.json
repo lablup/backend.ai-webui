@@ -1384,7 +1384,10 @@
     "RoutingsCount": "Liczba tras",
     "Active/Total": "Aktywny/Ogółem",
     "Public": "Publiczny",
-    "YouAreAboutToTerminate": "Zamierzasz zakończyć"
+    "YouAreAboutToTerminate": "Zamierzasz zakończyć",
+    "Validate": "Uprawomocnić",
+    "Cancel": "Anulować",
+    "ValidationInfo": "Informacje o weryfikacji"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",

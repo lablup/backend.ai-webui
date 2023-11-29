@@ -1431,7 +1431,10 @@
     "FormValidationFailed": "La validation du formulaire a échoué",
     "ServiceNameRule": "Seuls 4 à 24 caractères alphanumériques, le trait de soulignement (_), le trait d'union (-) et le point (.) sont autorisés et le texte doit se terminer par un caractère alphanumérique.",
     "resources": "Ressources",
-    "Image": "Image"
+    "Image": "Image",
+    "Validate": "Valider",
+    "Cancel": "Annuler",
+    "ValidationInfo": "Informations de validation"
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",

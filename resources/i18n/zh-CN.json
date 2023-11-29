@@ -1422,7 +1422,10 @@
     "Active/Total": "活动/总数",
     "Public": "公众",
     "YouAreAboutToTerminate": "您即将终止",
-    "Image": "图片"
+    "Image": "图片",
+    "Validate": "证实",
+    "Cancel": "取消",
+    "ValidationInfo": "验证信息"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

@@ -1382,7 +1382,10 @@
     "Active/Total": "アクティブ/全体",
     "Public": "公開",
     "YouAreAboutToTerminate": "以下のサービスを削除しようとします：",
-    "Image": "イメージ"
+    "Image": "イメージ",
+    "Validate": "検証",
+    "Cancel": "キャンセル",
+    "ValidationInfo": "検証情報"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

@@ -709,7 +709,10 @@
     "TokenGenerationFailed": "Tokenin luominen epäonnistui. yritä uudelleen.",
     "TrafficRatio": "Liikennesuhde",
     "YouAreAboutToTerminate": "Olet lopettamassa",
-    "resources": "Resurssit"
+    "resources": "Resurssit",
+    "Validate": "Vahvista",
+    "Cancel": "Peruuttaa",
+    "ValidationInfo": "Vahvistustiedot"
   },
   "notification": {
     "Initializing": "Aloitetaan...",

@@ -1382,7 +1382,10 @@
     "RoutingsCount": "Conteggio delle rotte",
     "Active/Total": "Attivo/Totale",
     "Public": "Pubblico",
-    "YouAreAboutToTerminate": "State per terminare"
+    "YouAreAboutToTerminate": "State per terminare",
+    "Validate": "Convalidare",
+    "Cancel": "Annulla",
+    "ValidationInfo": "Informazioni sulla convalida"
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",
