@@ -3,6 +3,7 @@ import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
+import TableColumnsSetting from '../components/TableColumnsSetting';
 import { baiSignedRequestWithPromise } from '../helper';
 import {
   useCurrentProjectValue,
@@ -22,7 +23,10 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useRafInterval } from 'ahooks';
+import { useLocalStorageState } from 'ahooks';
 import { Button, Table, Tabs, Typography, theme } from 'antd';
+import { CheckboxValueType } from 'antd/es/checkbox/Group';
+import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
@@ -40,7 +44,7 @@ import { Link } from 'react-router-dom';
 // FIXME: need to apply filtering type of service later
 type TabKey = 'services'; //  "running" | "finished" | "others";
 
-type Endpoint = NonNullable<
+export type Endpoint = NonNullable<
   NonNullable<
     NonNullable<
       NonNullable<ServingListPageQuery$data>['endpoint_list']
@@ -79,6 +83,145 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   // const [selectedGeneration, setSelectedGeneration] = useState<
   //   "current" | "next"
   // >("next");
+
+  const columns: ColumnsType<Endpoint> = [
+    {
+      title: t('modelService.EndpointName'),
+      dataIndex: 'endpoint_id',
+      key: 'endpointName',
+      fixed: 'left',
+      render: (endpoint_id, row) => (
+        <Link to={'/serving/' + endpoint_id}>{row.name}</Link>
+      ),
+    },
+    {
+      title: t('modelService.EndpointId'),
+      dataIndex: 'endpoint_id',
+      key: 'endpointId',
+      width: 310,
+      render: (endpoint_id) => (
+        <Typography.Text code>{endpoint_id}</Typography.Text>
+      ),
+    },
+    {
+      title: t('modelService.Controls'),
+      dataIndex: 'controls',
+      key: 'controls',
+      render: (text, row) => (
+        <Flex direction="row" align="stretch">
+          <Button
+            type="text"
+            icon={<SettingOutlined />}
+            style={
+              row.desired_session_count < 0 ||
+              row.status?.toLowerCase() === 'destroying'
+                ? undefined
+                : {
+                    color: '#29b6f6',
+                  }
+            }
+            disabled={
+              row.desired_session_count < 0 ||
+              row.status?.toLowerCase() === 'destroying'
+            }
+            onClick={() => {
+              setIsOpenModelServiceSettingModal(true);
+              setSelectedModelService(row);
+            }}
+          />
+          <Button
+            type="text"
+            icon={
+              <DeleteOutlined
+                style={
+                  row.desired_session_count < 0 ||
+                  row.status?.toLowerCase() === 'destroying'
+                    ? undefined
+                    : {
+                        color: token.colorError,
+                      }
+                }
+              />
+            }
+            disabled={
+              row.desired_session_count < 0 ||
+              row.status?.toLowerCase() === 'destroying'
+            }
+            onClick={() => {
+              setIsOpenModelServiceTerminatingModal(true);
+              setSelectedModelService(row);
+            }}
+          />
+        </Flex>
+      ),
+    },
+    {
+      title: t('modelService.Status'),
+      key: 'status',
+      render: (text, row) => <EndpointStatusTag endpointFrgmt={row} />,
+    },
+    {
+      title: t('modelService.CreatedAt'),
+      dataIndex: 'created_at',
+      key: 'createdAt',
+      render: (created_at) => {
+        return dayjs(created_at).format('ll LT');
+      },
+      defaultSortOrder: 'descend',
+      sortDirections: ['descend', 'ascend', 'descend'],
+      sorter: (a, b) => {
+        const date1 = dayjs(a.created_at);
+        const date2 = dayjs(b.created_at);
+        return date1.diff(date2);
+      },
+    },
+    {
+      title: t('modelService.DesiredSessionCount'),
+      dataIndex: 'desired_session_count',
+      key: 'desiredSessionCount',
+      render: (desired_session_count) => {
+        return desired_session_count < 0 ? '-' : desired_session_count;
+      },
+    },
+    {
+      title: (
+        <Flex direction="column" align="start">
+          {t('modelService.RoutingsCount')}
+          <br />
+          <Typography.Text type="secondary" style={{ fontWeight: 'normal' }}>
+            ({t('modelService.Active/Total')})
+          </Typography.Text>
+        </Flex>
+      ),
+      // dataIndex: "active_route_count",
+      key: 'routingCount',
+      render: (text, row) => {
+        return (
+          _.filter(row.routings, (r) => r?.status === 'HEALTHY').length +
+          ' / ' +
+          row.routings?.length
+        );
+        // [r for r in endpoint.routings if r.status == RouteStatus.HEALTHY]
+      },
+    },
+    {
+      title: t('modelService.Public'),
+      key: 'public',
+      render: (text, row) =>
+        row.open_to_public ? (
+          <CheckOutlined style={{ color: token.colorSuccess }} />
+        ) : (
+          <CloseOutlined style={{ color: token.colorTextSecondary }} />
+        ),
+    },
+  ];
+  const [selectedKeys, setSelectedKeys] = useLocalStorageState<
+    CheckboxValueType[]
+  >('modelServingTableSelectedKeys', {
+    defaultValue: columns.map((column) => {
+      return String(column.key);
+    }),
+  });
 
   useRafInterval(() => {
     startTransitionWithoutPendingState(() => {
@@ -271,139 +414,9 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               scroll={{ x: 'max-content' }}
               rowKey={'endpoint_id'}
               dataSource={(sortedEndpointList || []) as Endpoint[]}
-              columns={[
-                {
-                  title: t('modelService.EndpointName'),
-                  dataIndex: 'endpoint_id',
-                  fixed: 'left',
-                  render: (endpoint_id, row) => (
-                    <Link to={'/serving/' + endpoint_id}>{row.name}</Link>
-                  ),
-                },
-                {
-                  title: t('modelService.EndpointId'),
-                  dataIndex: 'endpoint_id',
-                  width: 310,
-                  render: (endpoint_id) => (
-                    <Typography.Text code>{endpoint_id}</Typography.Text>
-                  ),
-                },
-                {
-                  title: t('modelService.Controls'),
-                  dataIndex: 'controls',
-                  render: (text, row) => (
-                    <Flex direction="row" align="stretch">
-                      <Button
-                        type="text"
-                        icon={<SettingOutlined />}
-                        style={
-                          row.desired_session_count < 0 ||
-                          row.status?.toLowerCase() === 'destroying'
-                            ? undefined
-                            : {
-                                color: '#29b6f6',
-                              }
-                        }
-                        disabled={
-                          row.desired_session_count < 0 ||
-                          row.status?.toLowerCase() === 'destroying'
-                        }
-                        onClick={() => {
-                          setIsOpenModelServiceSettingModal(true);
-                          setSelectedModelService(row);
-                        }}
-                      />
-                      <Button
-                        type="text"
-                        icon={
-                          <DeleteOutlined
-                            style={
-                              row.desired_session_count < 0 ||
-                              row.status?.toLowerCase() === 'destroying'
-                                ? undefined
-                                : {
-                                    color: token.colorError,
-                                  }
-                            }
-                          />
-                        }
-                        disabled={
-                          row.desired_session_count < 0 ||
-                          row.status?.toLowerCase() === 'destroying'
-                        }
-                        onClick={() => {
-                          setIsOpenModelServiceTerminatingModal(true);
-                          setSelectedModelService(row);
-                        }}
-                      />
-                    </Flex>
-                  ),
-                },
-                {
-                  title: t('modelService.Status'),
-                  render: (text, row) => (
-                    <EndpointStatusTag endpointFrgmt={row} />
-                  ),
-                },
-                {
-                  title: t('modelService.CreatedAt'),
-                  dataIndex: 'created_at',
-                  render: (created_at) => {
-                    return dayjs(created_at).format('ll LT');
-                  },
-                  defaultSortOrder: 'descend',
-                  sortDirections: ['descend', 'ascend', 'descend'],
-                  sorter: (a, b) => {
-                    const date1 = dayjs(a.created_at);
-                    const date2 = dayjs(b.created_at);
-                    return date1.diff(date2);
-                  },
-                },
-                {
-                  title: t('modelService.DesiredSessionCount'),
-                  dataIndex: 'desired_session_count',
-                  render: (desired_session_count) => {
-                    return desired_session_count < 0
-                      ? '-'
-                      : desired_session_count;
-                  },
-                },
-                {
-                  title: (
-                    <Flex direction="column" align="start">
-                      {t('modelService.RoutingsCount')}
-                      <br />
-                      <Typography.Text
-                        type="secondary"
-                        style={{ fontWeight: 'normal' }}
-                      >
-                        ({t('modelService.Active/Total')})
-                      </Typography.Text>
-                    </Flex>
-                  ),
-                  // dataIndex: "active_route_count",
-                  render: (text, row) => {
-                    return (
-                      _.filter(row.routings, (r) => r?.status === 'HEALTHY')
-                        .length +
-                      ' / ' +
-                      row.routings?.length
-                    );
-                    // [r for r in endpoint.routings if r.status == RouteStatus.HEALTHY]
-                  },
-                },
-                {
-                  title: t('modelService.Public'),
-                  render: (text, row) =>
-                    row.open_to_public ? (
-                      <CheckOutlined style={{ color: token.colorSuccess }} />
-                    ) : (
-                      <CloseOutlined
-                        style={{ color: token.colorTextSecondary }}
-                      />
-                    ),
-                },
-              ]}
+              columns={columns.filter(
+                (column) => selectedKeys?.includes(String(column.key)),
+              )}
               pagination={false}
               // pagination={{
               //   pageSize: paginationState.pageSize,
@@ -425,6 +438,13 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             />
           </Suspense>
         </Flex>
+        <TableColumnsSetting
+          columns={columns}
+          selectKeys={selectedKeys ? selectedKeys : []}
+          onChange={(selectedKeys: CheckboxValueType[]) => {
+            setSelectedKeys(selectedKeys);
+          }}
+        />
       </Flex>
       <BAIModal
         open={isOpenModelServiceTerminatingModal}
