@@ -61,7 +61,8 @@
       "NewPasswordCannotBeSame": "Please enter a password that is different from your current password.",
       "Notifications": "Notifications",
       "Tasks": "Tasks",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": "Data & Model"
     },
     "YouAreOffline": "You are now offline",
     "YouAreOnline": "You are now online",
@@ -261,7 +262,8 @@
       "NumberOfContainer": "Number of container",
       "EnterEnvironmentVariable": "Enter Variable name",
       "EnvironmentVariableNamePatternError": "Variable name must start with a letter or underscore, and can only contain letters, numbers, and underscores.",
-      "EnvironmentVariableDuplicateName": "A variable name that already exists."
+      "EnvironmentVariableDuplicateName": "A variable name that already exists.",
+      "Template": "Session Template"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

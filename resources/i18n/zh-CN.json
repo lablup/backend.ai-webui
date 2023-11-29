@@ -61,7 +61,8 @@
       "PasswordChangePlace": "点击顶部栏上的个人图标，进入 \"我的账户 \"菜单。",
       "Notifications": "通知",
       "Tasks": "任务",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": "__NOT_TRANSLATED__"
     },
     "YouAreOffline": "您现在离线",
     "YouAreOnline": "您现在在线",
@@ -687,7 +688,8 @@
     "Pipeline": "管道文件夹",
     "DialogDataFolder": "在 FastTrack 中创建管道时自动创建的管道专用文件夹。",
     "DialogModelFolder": "您可以服务和管理模型。",
-    "SearchByName": "按名称搜索"
+    "SearchByName": "按名称搜索",
+    "ModelStore": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

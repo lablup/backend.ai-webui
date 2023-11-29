@@ -61,7 +61,8 @@
       "NewPasswordCannotBeSame": "기존 비밀번호와 다른 새 비밀번호를 입력해주세요.",
       "Notifications": "알림",
       "Tasks": "작업",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": "데이터 & 모델"
     },
     "YouAreOffline": "오프라인 상태가 되었습니다",
     "YouAreOnline": "온라인 상태가 되었습니다",
@@ -769,7 +770,8 @@
     "HostDetails": "선택한 스토리지 호스트의 가용량 정보를 보여줍니다.",
     "ProjectFolder": "프로젝트 폴더",
     "Pipeline": "파이프라인 폴더",
-    "DialogDataFolder": "FastTrack에서 파이프라인 생성 시 자동으로 생성되는 파이프라인 전용 폴더."
+    "DialogDataFolder": "FastTrack에서 파이프라인 생성 시 자동으로 생성되는 파이프라인 전용 폴더.",
+    "ModelStore": "모델 스토어"
   },
   "dialog": {
     "warning": {

@@ -61,7 +61,8 @@
       "YouMushChangeYourPassword": "В целях безопасности рекомендуется периодически менять пароль. Поскольку с момента последней смены пароля прошло определенное время, для продолжения использования сервиса необходимо его сменить.",
       "NewPasswordCannotBeSame": "Пожалуйста, введите пароль, отличный от Вашего текущего пароля.",
       "PleaseConfirmYourPassword": "Пожалуйста, подтвердите свой пароль",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": "__NOT_TRANSLATED__"
     },
     "YouAreOffline": "Вы сейчас не в сети",
     "YouAreOnline": "Вы сейчас в сети",
@@ -689,7 +690,8 @@
     "Used": "Используется",
     "Pipeline": "Трубопроводные папки",
     "DialogDataFolder": "Специальные папки для трубопроводов, которые автоматически создаются при создании трубопроводов в FastTrack.",
-    "SearchByName": "Поиск по имени"
+    "SearchByName": "Поиск по имени",
+    "ModelStore": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

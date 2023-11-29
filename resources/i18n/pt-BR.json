@@ -61,7 +61,8 @@
       "PasswordChangePlace": "Clique no ícone da pessoa na barra superior e aceda ao menu \"A minha conta\".",
       "Notifications": "Notificações",
       "Tasks": "Tarefas",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": "__NOT_TRANSLATED__"
     },
     "YouAreOffline": "Agora você está offline",
     "YouAreOnline": "Agora você está online",
@@ -687,7 +688,8 @@
     "Pipeline": "Pastas de pipelines",
     "DialogDataFolder": "Pastas dedicadas ao pipeline que são criadas automaticamente ao criar pipelines no FastTrack.",
     "DialogModelFolder": "Pode servir e gerir modelos.",
-    "SearchByName": "Procura por nome"
+    "SearchByName": "Procura por nome",
+    "ModelStore": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

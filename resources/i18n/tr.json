@@ -61,7 +61,8 @@
       "PasswordChangePlace": "Üst çubuktaki kişi simgesine tıklayın ve \"Hesabım\" menüsüne gidin.",
       "Notifications": "Bildirimler",
       "Tasks": "Görevler",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": "__NOT_TRANSLATED__"
     },
     "YouAreOffline": "Şu anda çevrimdışısın",
     "YouAreOnline": "artık çevrimiçisin",
@@ -687,7 +688,8 @@
     "Pipeline": "Boru Hattı Klasörleri",
     "DialogDataFolder": "FastTrack'te boru hatları oluşturulurken otomatik olarak oluşturulan boru hattına özel klasörler.",
     "DialogModelFolder": "Modellere hizmet verebilir ve yönetebilirsiniz.",
-    "SearchByName": "Ada göre ara"
+    "SearchByName": "Ada göre ara",
+    "ModelStore": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

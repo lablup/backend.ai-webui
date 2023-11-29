@@ -61,7 +61,8 @@
       "YouMushChangeYourPassword": "Disarankan untuk mengubah kata sandi Anda secara berkala untuk alasan keamanan. Karena sejumlah waktu telah berlalu sejak terakhir kali Anda mengubah kata sandi, Anda harus mengubahnya agar dapat terus menggunakan layanan ini.",
       "NewPasswordCannotBeSame": "Masukkan kata sandi yang berbeda dari kata sandi Anda saat ini.",
       "PleaseConfirmYourPassword": "Harap konfirmasi kata sandi Anda",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": "__NOT_TRANSLATED__"
     },
     "YouAreOffline": "Anda sekarang offline",
     "YouAreOnline": "Anda sekarang online",
@@ -687,7 +688,8 @@
     "Used": "Digunakan",
     "Pipeline": "Folder Pipa",
     "DialogDataFolder": "Folder khusus pipeline yang secara otomatis dibuat saat membuat pipeline di FastTrack.",
-    "SearchByName": "Cari berdasarkan nama"
+    "SearchByName": "Cari berdasarkan nama",
+    "ModelStore": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

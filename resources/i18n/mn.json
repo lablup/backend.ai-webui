@@ -61,7 +61,8 @@
       "YouMushChangeYourPassword": "Аюулгүй байдлын үүднээс нууц үгээ үе үе өөрчлөхийг зөвлөж байна. \nТа нууц үгээ хамгийн сүүлд сольсноос хойш тодорхой хугацаа өнгөрсөн тул үйлчилгээгээ үргэлжлүүлэн ашиглахын тулд үүнийг өөрчлөх шаардлагатай.",
       "NewPasswordCannotBeSame": "Таны одоогийн нууц үгээс өөр нууц үг оруулна уу.",
       "PleaseConfirmYourPassword": "Нууц үгээ баталгаажуулна уу",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": "__NOT_TRANSLATED__"
     },
     "YouAreOffline": "Та одоо офлайн байна",
     "YouAreOnline": "Та одоо онлайн байна",
@@ -687,7 +688,8 @@
     "Used": "Ашигласан",
     "Pipeline": "Дамжуулах хоолойн хавтас",
     "DialogDataFolder": "FastTrack-д дамжуулах шугам үүсгэх үед автоматаар үүсгэгддэг дамжуулах хоолойд зориулагдсан фолдерууд.",
-    "SearchByName": "Нэрээр нь хайх"
+    "SearchByName": "Нэрээр нь хайх",
+    "ModelStore": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

@@ -61,7 +61,8 @@
       "PasswordChangePlace": "Klik ikon orang pada bar atas dan pergi ke menu \"Akaun Saya\".",
       "Notifications": "Pemberitahuan",
       "Tasks": "Tugasan",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": "__NOT_TRANSLATED__"
     },
     "YouAreOffline": "Anda kini berada di luar talian",
     "YouAreOnline": "Anda kini dalam talian",
@@ -686,7 +687,8 @@
     "Pipeline": "Folder Saluran Paip",
     "DialogDataFolder": "Folder khusus saluran paip yang dibuat secara automatik apabila membuat saluran paip dalam FastTrack.",
     "DialogModelFolder": "Anda boleh berkhidmat dan mengurus model.",
-    "SearchByName": "Cari mengikut nama"
+    "SearchByName": "Cari mengikut nama",
+    "ModelStore": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

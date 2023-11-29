@@ -371,7 +371,8 @@
       "StatusOfSelectedHost": "Estado del host seleccionado",
       "used": "usado"
     },
-    "SearchByName": "Buscar por nombre"
+    "SearchByName": "Buscar por nombre",
+    "ModelStore": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "ErrorOccurred": "Se ha producido un error",
@@ -1436,7 +1437,8 @@
       "Users": "Usuarios",
       "WelcomeMessage": "Bienvenido,",
       "WelcomeMessage_2": " .",
-      "YouMushChangeYourPassword": "Se recomienda cambiar periódicamente la contraseña por razones de seguridad. Dado que ha transcurrido cierto tiempo desde la última vez que cambió su contraseña, deberá cambiarla para poder seguir utilizando el servicio."
+      "YouMushChangeYourPassword": "Se recomienda cambiar periódicamente la contraseña por razones de seguridad. Dado que ha transcurrido cierto tiempo desde la última vez que cambió su contraseña, deberá cambiarla para poder seguir utilizando el servicio.",
+      "Data&Model": "__NOT_TRANSLATED__"
     }
   }
 }

@@ -61,7 +61,8 @@
       "PasswordChangePlace": "Κάντε κλικ στο εικονίδιο προσώπου στην επάνω μπάρα και μεταβείτε στο μενού \"Ο λογαριασμός μου\".",
       "Notifications": "Ειδοποιήσεις",
       "Tasks": "Εργασίες",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": "__NOT_TRANSLATED__"
     },
     "YouAreOffline": "Είστε πλέον εκτός σύνδεσης",
     "YouAreOnline": "Είστε πλέον συνδεδεμένοι",
@@ -687,7 +688,8 @@
     "Pipeline": "Φάκελοι αγωγών",
     "DialogDataFolder": "Ειδικοί φάκελοι αγωγών που δημιουργούνται αυτόματα κατά τη δημιουργία αγωγών στο FastTrack.",
     "DialogModelFolder": "Μπορείτε να εξυπηρετείτε και να διαχειρίζεστε μοντέλα.",
-    "SearchByName": "Αναζήτηση με όνομα"
+    "SearchByName": "Αναζήτηση με όνομα",
+    "ModelStore": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

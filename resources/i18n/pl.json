@@ -61,7 +61,8 @@
       "PasswordChangePlace": "Kliknij ikonę osoby na górnym pasku i przejdź do menu \"Moje konto\".",
       "Notifications": "Powiadomienia",
       "Tasks": "Zadania",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": "__NOT_TRANSLATED__"
     },
     "YouAreOffline": "Jesteś teraz offline",
     "YouAreOnline": "Jesteś teraz online",
@@ -689,7 +690,8 @@
     "Pipeline": "Foldery rurociągów",
     "DialogDataFolder": "Dedykowane potokom foldery, które są automatycznie tworzone podczas tworzenia potoków w FastTrack.",
     "DialogModelFolder": "Możesz obsługiwać modele i zarządzać nimi.",
-    "SearchByName": "Szukaj według nazwy"
+    "SearchByName": "Szukaj według nazwy",
+    "ModelStore": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

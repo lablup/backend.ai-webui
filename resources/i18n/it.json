@@ -61,7 +61,8 @@
       "PasswordChangePlace": "Fare clic sull'icona della persona nella barra superiore e accedere al menu \"Il mio account\".",
       "Notifications": "Notifiche",
       "Tasks": "Compiti",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": "__NOT_TRANSLATED__"
     },
     "YouAreOffline": "Ora sei offline",
     "YouAreOnline": "Ora sei online",
@@ -687,7 +688,8 @@
     "Pipeline": "Cartelle della pipeline",
     "DialogDataFolder": "Cartelle dedicate alle pipeline che vengono create automaticamente quando si creano le pipeline in FastTrack.",
     "DialogModelFolder": "È possibile servire e gestire i modelli.",
-    "SearchByName": "Ricerca per nome"
+    "SearchByName": "Ricerca per nome",
+    "ModelStore": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

@@ -61,7 +61,8 @@
       "YouMushChangeYourPassword": "Il est recommandé de modifier périodiquement votre mot de passe pour des raisons de sécurité. Étant donné qu'un certain temps s'est écoulé depuis la dernière modification de votre mot de passe, vous devez le modifier pour pouvoir continuer à utiliser le service.",
       "NewPasswordCannotBeSame": "Veuillez saisir un mot de passe différent de votre mot de passe actuel.",
       "PleaseConfirmYourPassword": "Veuillez confirmer votre mot de passe",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": "__NOT_TRANSLATED__"
     },
     "YouAreOffline": "Vous êtes maintenant hors ligne",
     "YouAreOnline": "Vous êtes maintenant en ligne",
@@ -687,7 +688,8 @@
     "Used": "Utilisé",
     "Pipeline": "Dossiers du pipeline",
     "DialogDataFolder": "Dossiers dédiés aux pipelines qui sont automatiquement créés lors de la création de pipelines dans FastTrack.",
-    "SearchByName": "Rechercher par nom"
+    "SearchByName": "Rechercher par nom",
+    "ModelStore": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {
