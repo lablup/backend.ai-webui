@@ -4,6 +4,7 @@ import { useCurrentDomainValue } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
+import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems, {
   Image,
@@ -13,15 +14,19 @@ import ResourceGroupSelect from './ResourceGroupSelect';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import SliderInputFormItem from './SliderInputFormItem';
 import VFolderSelect from './VFolderSelect';
+import ValidationStatusTag from './ValidationStatusTag';
 import {
   Button,
   Card,
+  Collapse,
+  Descriptions,
   Form,
   Input,
   theme,
   Select,
   Switch,
   message,
+  Tag,
 } from 'antd';
 import _ from 'lodash';
 import React, { Suspense, useEffect } from 'react';
@@ -97,6 +102,8 @@ interface SelectUIType {
   value: string;
   label: string;
 }
+
+const { Panel } = Collapse;
 
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   extraP,
@@ -326,297 +333,349 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       confirmLoading={mutationToCreateService.isLoading}
       footer={[
         <Button key="cancel" onClick={handleCancel}>
-          Cancel
-        </Button>,
-        <Button
-          key="validate"
-          onClick={() => {
-            // TODO: add open validation modal
-          }}
-        >
-          Validate
+          {t('modelService.Cancel')}
         </Button>,
         <Button key="ok" type="primary" onClick={handleOk}>
-          Start Service
+          {t('modelService.StartService')}
         </Button>,
       ]}
       {...modalProps}
     >
       <Suspense fallback={<FlexActivityIndicator />}>
-        <Form
-          disabled={mutationToCreateService.isLoading}
-          form={form}
-          preserve={false}
-          layout="vertical"
-          labelCol={{ span: 12 }}
-          initialValues={
-            {
-              cpu: 1,
-              // gpu: 0,
-              resource: {
-                accelerator: 0,
-              },
-              mem: 0.25,
-              shmem: 0,
-              desiredRoutingCount: 1,
-            } as ServiceLauncherFormInput
-          }
-        >
-          <Form.Item
-            label={t('modelService.ServiceName')}
-            name="serviceName"
-            rules={[
-              {
-                pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
-                message: t('modelService.ServiceNameRule'),
-              },
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="resourceGroup"
-            label={t('session.ResourceGroup')}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <ResourceGroupSelect autoSelectDefault />
-          </Form.Item>
-          <Form.Item
-            name="openToPublic"
-            label={t('modelService.OpenToPublic')}
-            valuePropName="checked"
-          >
-            <Switch></Switch>
-          </Form.Item>
-          <Form.Item
-            name={'vFolderName'}
-            label={t('session.launcher.ModelStorageToMount')}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <VFolderSelect
-              filter={(vf) => vf.usage_mode === 'model'}
-              autoSelectDefault
-            />
-          </Form.Item>
-          <SliderInputFormItem
-            label={t('modelService.DesiredRoutingCount')}
-            name="desiredRoutingCount"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-            inputNumberProps={{
-              //TODO: change unit based on resource limit
-              addonAfter: '#',
-            }}
-            required
-          />
-          <Card
-            style={{
-              marginBottom: token.margin,
-            }}
-          >
-            <ImageEnvironmentSelectFormItems
-            // //TODO: test with real inference images
-            // filter={(image) => {
-            //   return !!_.find(image?.labels, (label) => {
-            //     return (
-            //       label?.key === "ai.backend.role" &&
-            //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
-            //     );
-            //   });
-            // }}
-            />
-            <Form.Item
-              noStyle
-              shouldUpdate={(prev, cur) =>
-                prev.environments?.image?.digest !==
-                cur.environments?.image?.digest
+        <Collapse defaultActiveKey={['1']}>
+          <Panel header={t('modelService.ServiceInfo')} key="1">
+            <Form
+              disabled={mutationToCreateService.isLoading}
+              form={form}
+              preserve={false}
+              layout="vertical"
+              labelCol={{ span: 12 }}
+              initialValues={
+                {
+                  cpu: 1,
+                  // gpu: 0,
+                  resource: {
+                    accelerator: 0,
+                  },
+                  mem: 0.25,
+                  shmem: 0,
+                  desiredRoutingCount: 1,
+                } as ServiceLauncherFormInput
               }
             >
-              {({ getFieldValue }) => {
-                // TODO: change min/max based on selected images resource limit and current user limit
-                const currentImage: Image =
-                  getFieldValue('environments')?.image;
+              <Form.Item
+                label={t('modelService.ServiceName')}
+                name="serviceName"
+                rules={[
+                  {
+                    pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
+                    message: t('modelService.ServiceNameRule'),
+                  },
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="resourceGroup"
+                label={t('session.ResourceGroup')}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <ResourceGroupSelect autoSelectDefault />
+              </Form.Item>
+              <Form.Item
+                name="openToPublic"
+                label={t('modelService.OpenToPublic')}
+                valuePropName="checked"
+              >
+                <Switch></Switch>
+              </Form.Item>
+              <Form.Item
+                name={'vFolderName'}
+                label={t('session.launcher.ModelStorageToMount')}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <VFolderSelect
+                  filter={(vf) => vf.usage_mode === 'model'}
+                  autoSelectDefault
+                />
+              </Form.Item>
+              <SliderInputFormItem
+                label={t('modelService.DesiredRoutingCount')}
+                name="desiredRoutingCount"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+                inputNumberProps={{
+                  //TODO: change unit based on resource limit
+                  addonAfter: '#',
+                }}
+                required
+              />
+              <Card
+                style={{
+                  marginBottom: token.margin,
+                }}
+              >
+                <ImageEnvironmentSelectFormItems
+                // //TODO: test with real inference images
+                // filter={(image) => {
+                //   return !!_.find(image?.labels, (label) => {
+                //     return (
+                //       label?.key === "ai.backend.role" &&
+                //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
+                //     );
+                //   });
+                // }}
+                />
+                <Form.Item
+                  noStyle
+                  shouldUpdate={(prev, cur) =>
+                    prev.environments?.image?.digest !==
+                    cur.environments?.image?.digest
+                  }
+                >
+                  {({ getFieldValue }) => {
+                    // TODO: change min/max based on selected images resource limit and current user limit
+                    const currentImage: Image =
+                      getFieldValue('environments')?.image;
 
-                return (
-                  <>
-                    <SliderInputFormItem
-                      name={'cpu'}
-                      label={t('session.launcher.CPU')}
-                      tooltip={<Trans i18nKey={'session.launcher.DescCPU'} />}
-                      min={parseInt(
-                        _.find(
-                          currentImage?.resource_limits,
-                          (i) => i?.key === 'cpu',
-                        )?.min || '0',
-                      )}
-                      max={baiClient._config.maxCPUCoresPerContainer || 128}
-                      inputNumberProps={{
-                        addonAfter: t('session.launcher.Core'),
-                      }}
-                      required
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    />
-                    <SliderInputFormItem
-                      name={'mem'}
-                      label={t('session.launcher.Memory')}
-                      tooltip={
-                        <Trans i18nKey={'session.launcher.DescMemory'} />
-                      }
-                      max={baiClient._config.maxMemoryPerContainer || 1536}
-                      min={0}
-                      inputNumberProps={{
-                        addonAfter: 'GiB',
-                      }}
-                      step={0.25}
-                      required
-                      rules={[
-                        {
-                          required: true,
-                        },
-                        ({ getFieldValue }) => ({
-                          validator(_form, value) {
-                            const sizeGInfo = iSizeToSize(
-                              _.find(
-                                currentImage?.resource_limits,
-                                (i) => i?.key === 'mem',
-                              )?.min || '0B',
-                              'G',
-                            );
+                    return (
+                      <>
+                        <SliderInputFormItem
+                          name={'cpu'}
+                          label={t('session.launcher.CPU')}
+                          tooltip={
+                            <Trans i18nKey={'session.launcher.DescCPU'} />
+                          }
+                          min={parseInt(
+                            _.find(
+                              currentImage?.resource_limits,
+                              (i) => i?.key === 'cpu',
+                            )?.min || '0',
+                          )}
+                          max={baiClient._config.maxCPUCoresPerContainer || 128}
+                          inputNumberProps={{
+                            addonAfter: t('session.launcher.Core'),
+                          }}
+                          required
+                          rules={[
+                            {
+                              required: true,
+                            },
+                          ]}
+                        />
+                        <SliderInputFormItem
+                          name={'mem'}
+                          label={t('session.launcher.Memory')}
+                          tooltip={
+                            <Trans i18nKey={'session.launcher.DescMemory'} />
+                          }
+                          max={baiClient._config.maxMemoryPerContainer || 1536}
+                          min={0}
+                          inputNumberProps={{
+                            addonAfter: 'GiB',
+                          }}
+                          step={0.25}
+                          required
+                          rules={[
+                            {
+                              required: true,
+                            },
+                            ({ getFieldValue }) => ({
+                              validator(_form, value) {
+                                const sizeGInfo = iSizeToSize(
+                                  _.find(
+                                    currentImage?.resource_limits,
+                                    (i) => i?.key === 'mem',
+                                  )?.min || '0B',
+                                  'G',
+                                );
 
-                            if (
-                              sizeGInfo?.number &&
-                              sizeGInfo?.number > value
-                            ) {
-                              return Promise.reject(
-                                new Error(
-                                  t('session.launcher.MinMemory', {
-                                    size: sizeGInfo?.numberUnit,
-                                  }),
-                                ),
-                              );
-                            }
-                            return Promise.resolve();
-                          },
-                        }),
-                      ]}
-                    />
-                    <SliderInputFormItem
-                      name={'shmem'}
-                      label={t('session.launcher.SharedMemory')}
-                      tooltip={
-                        <Trans i18nKey={'session.launcher.DescSharedMemory'} />
-                      }
-                      max={baiClient._config.maxShmPerContainer || 8}
-                      min={0}
-                      step={0.25}
-                      inputNumberProps={{
-                        addonAfter: 'GiB',
-                      }}
-                      required
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    />
-                  </>
-                );
-              }}
-            </Form.Item>
-            <Form.Item
-              noStyle
-              shouldUpdate={(prev, cur) =>
-                prev.environments?.environment !== cur.environments?.environment
-              }
-            >
-              {() => {
-                return (
-                  <SliderInputFormItem
-                    name={['resource', 'accelerator']}
-                    label={t(`session.launcher.AIAccelerator`)}
-                    tooltip={
-                      <Trans i18nKey={'session.launcher.DescAIAccelerator'} />
-                    }
-                    sliderProps={
-                      {
-                        // FIXME: temporally comment out min value
-                        // marks: {
-                        //   0: 0,
-                        // },
-                      }
-                    }
-                    min={0}
-                    max={
-                      getLimitByAccelerator(currentImageAcceleratorTypeName).max
-                    }
-                    step={
-                      _.endsWith(currentAcceleratorType, 'shares') ? 0.1 : 1
-                    }
-                    disabled={currentImageAcceleratorLimits.length <= 0}
-                    inputNumberProps={{
-                      addonAfter: (
-                        <Form.Item
-                          noStyle
-                          name={['resource', 'acceleratorType']}
-                          initialValue={currentImageAcceleratorTypeName}
-                        >
-                          <Select
-                            disabled={currentImageAcceleratorLimits.length <= 0}
-                            suffixIcon={
-                              _.size(acceleratorSlots) > 1 ? undefined : null
-                            }
-                            open={
-                              _.size(acceleratorSlots) > 1 ? undefined : false
-                            }
-                            popupMatchSelectWidth={false}
-                            options={_.map(acceleratorSlots, (value, name) => {
-                              return {
-                                value: name,
-                                label: ACCELERATOR_UNIT_MAP[name] || 'UNIT',
-                                disabled:
-                                  currentImageAcceleratorLimits.length > 0 &&
-                                  !_.find(
-                                    currentImageAcceleratorLimits,
-                                    (limit) => {
-                                      return limit?.key === name;
-                                    },
-                                  ),
-                              };
-                            })}
+                                if (
+                                  sizeGInfo?.number &&
+                                  sizeGInfo?.number > value
+                                ) {
+                                  return Promise.reject(
+                                    new Error(
+                                      t('session.launcher.MinMemory', {
+                                        size: sizeGInfo?.numberUnit,
+                                      }),
+                                    ),
+                                  );
+                                }
+                                return Promise.resolve();
+                              },
+                            }),
+                          ]}
+                        />
+                        <SliderInputFormItem
+                          name={'shmem'}
+                          label={t('session.launcher.SharedMemory')}
+                          tooltip={
+                            <Trans
+                              i18nKey={'session.launcher.DescSharedMemory'}
+                            />
+                          }
+                          max={baiClient._config.maxShmPerContainer || 8}
+                          min={0}
+                          step={0.25}
+                          inputNumberProps={{
+                            addonAfter: 'GiB',
+                          }}
+                          required
+                          rules={[
+                            {
+                              required: true,
+                            },
+                          ]}
+                        />
+                      </>
+                    );
+                  }}
+                </Form.Item>
+                <Form.Item
+                  noStyle
+                  shouldUpdate={(prev, cur) =>
+                    prev.environments?.environment !==
+                    cur.environments?.environment
+                  }
+                >
+                  {() => {
+                    return (
+                      <SliderInputFormItem
+                        name={['resource', 'accelerator']}
+                        label={t('session.launcher.AIAccelerator')}
+                        tooltip={
+                          <Trans
+                            i18nKey={'session.launcher.DescAIAccelerator'}
                           />
-                        </Form.Item>
-                      ),
-                    }}
-                    required
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  />
-                );
-              }}
-            </Form.Item>
-          </Card>
-        </Form>
+                        }
+                        sliderProps={
+                          {
+                            // FIXME: temporally comment out min value
+                            // marks: {
+                            //   0: 0,
+                            // },
+                          }
+                        }
+                        min={0}
+                        max={
+                          getLimitByAccelerator(currentImageAcceleratorTypeName)
+                            .max
+                        }
+                        step={
+                          _.endsWith(currentAcceleratorType, 'shares') ? 0.1 : 1
+                        }
+                        disabled={currentImageAcceleratorLimits.length <= 0}
+                        inputNumberProps={{
+                          addonAfter: (
+                            <Form.Item
+                              noStyle
+                              name={['resource', 'acceleratorType']}
+                              initialValue={currentImageAcceleratorTypeName}
+                            >
+                              <Select
+                                disabled={
+                                  currentImageAcceleratorLimits.length <= 0
+                                }
+                                suffixIcon={
+                                  _.size(acceleratorSlots) > 1
+                                    ? undefined
+                                    : null
+                                }
+                                open={
+                                  _.size(acceleratorSlots) > 1
+                                    ? undefined
+                                    : false
+                                }
+                                popupMatchSelectWidth={false}
+                                options={_.map(
+                                  acceleratorSlots,
+                                  (value, name) => {
+                                    return {
+                                      value: name,
+                                      label:
+                                        ACCELERATOR_UNIT_MAP[name] || 'UNIT',
+                                      disabled:
+                                        currentImageAcceleratorLimits.length >
+                                          0 &&
+                                        !_.find(
+                                          currentImageAcceleratorLimits,
+                                          (limit) => {
+                                            return limit?.key === name;
+                                          },
+                                        ),
+                                    };
+                                  },
+                                )}
+                              />
+                            </Form.Item>
+                          ),
+                        }}
+                        required
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
+                      />
+                    );
+                  }}
+                </Form.Item>
+              </Card>
+            </Form>
+          </Panel>
+          <Panel
+            header={
+              <Flex direction="row" justify="between" align="stretch">
+                {t('modelService.ValidationInfo')}
+                <Button
+                  key="validate"
+                  type="primary"
+                  onClick={() => {
+                    // TODO: add open validation modal
+                  }}
+                >
+                  {t('modelService.Validate')}
+                </Button>
+              </Flex>
+            }
+            key="2"
+          >
+            {
+              <Descriptions
+                bordered
+                style={{
+                  backgroundColor: token.colorBgBase,
+                }}
+                items={[
+                  {
+                    label: 'Result',
+                    children: <ValidationStatusTag></ValidationStatusTag>,
+                    span: 4,
+                  },
+                  {
+                    label: 'See Container Log',
+                    children: 'lorem ipsum...',
+                  },
+                ]}
+              ></Descriptions>
+            }
+          </Panel>
+        </Collapse>
       </Suspense>
     </BAIModal>
   );
