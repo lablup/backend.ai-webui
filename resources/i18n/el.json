@@ -1440,5 +1440,25 @@
   "OpenVSCodeRemote": "Ανοίξτε τον τοπικό κώδικα του Visual Studio",
   "inputLimit": {
     "4to64chars": "(4~64 χαρακτήρες)"
+  },
+  "modelStore": {
+    "Description": "Περιγραφή",
+    "Model": "Μοντέλο",
+    "FilterByName": "Φιλτράρισμα κατά όνομα",
+    "ServiceDetails": "Στοιχεία υπηρεσίας",
+    "Metadata": "Μεταδεδομένα",
+    "ModelPath": "Μοντέλο Μονοπάτι",
+    "SearchModels": "Αναζήτηση μοντέλων",
+    "MinResource": "Ελάχιστος πόρος",
+    "LastModified": "Τελευταία τροποποίηση",
+    "Created": "Δημιουργήθηκε",
+    "Version": "Εκδοχή",
+    "Author": "Συγγραφέας",
+    "MaxRetries": "Μέγιστες επαναλήψεις",
+    "Path": "Μονοπάτι",
+    "HealthCheck": "Ελεγχος υγείας",
+    "Port": "Λιμάνι",
+    "StartCommand": "Εκκίνηση Εντολή",
+    "PreStartActions": "Ενέργειες πριν από την έναρξη"
   }
 }

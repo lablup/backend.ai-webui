@@ -1440,5 +1440,25 @@
       "YouMushChangeYourPassword": "On suositeltavaa vaihtaa salasana säännöllisesti turvallisuussyistä. Koska salasanasi viimeisimmästä vaihtamisesta on kulunut tietty aika, sinun on vaihdettava se, jotta voit jatkaa palvelun käyttöä.",
       "Data&Model": "__NOT_TRANSLATED__"
     }
+  },
+  "modelStore": {
+    "Description": "Kuvaus",
+    "Model": "Malli",
+    "FilterByName": "Suodata nimen mukaan",
+    "ServiceDetails": "Palvelun tiedot",
+    "Metadata": "Metatiedot",
+    "ModelPath": "Mallin polku",
+    "SearchModels": "Hae malleja",
+    "MinResource": "Vähimmäisresurssi",
+    "LastModified": "Viimeksi muokattu",
+    "Created": "Luotu",
+    "Version": "Versio",
+    "Author": "Tekijä",
+    "MaxRetries": "Max Uudelleenyritykset",
+    "Path": "Polku",
+    "HealthCheck": "Terveystarkastus",
+    "Port": "Portti",
+    "StartCommand": "Käynnistä komento",
+    "PreStartActions": "Aloitustoiminnot"
   }
 }

@@ -1441,5 +1441,25 @@
     "reloadPage": "페이지 새로고침",
     "resetErrorBoundary": "ErrorBoundary 초기화",
     "displayOnlyDevEnv": "이 에러 블록은 WebUI 개발 환경에서만 표시됩니다."
+  },
+  "modelStore": {
+    "Description": "설명",
+    "Model": "모델",
+    "FilterByName": "이름으로 필터링",
+    "ServiceDetails": "서비스 내용",
+    "Metadata": "메타데이터",
+    "ModelPath": "모델 경로",
+    "SearchModels": "모델 검색",
+    "MinResource": "최소 리소스",
+    "LastModified": "마지막 수정",
+    "Created": "만들어진",
+    "Version": "버전",
+    "Author": "작가",
+    "MaxRetries": "최대 재시도 횟수",
+    "Path": "길",
+    "HealthCheck": "건강 체크",
+    "Port": "포트",
+    "StartCommand": "시작 명령",
+    "PreStartActions": "시작 전 작업"
   }
 }

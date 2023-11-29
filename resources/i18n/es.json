@@ -1440,5 +1440,25 @@
       "YouMushChangeYourPassword": "Se recomienda cambiar periódicamente la contraseña por razones de seguridad. Dado que ha transcurrido cierto tiempo desde la última vez que cambió su contraseña, deberá cambiarla para poder seguir utilizando el servicio.",
       "Data&Model": "__NOT_TRANSLATED__"
     }
+  },
+  "modelStore": {
+    "Description": "Descripción",
+    "Model": "Modelo",
+    "FilterByName": "Filtrar por nombre",
+    "ServiceDetails": "Detalles del servicio",
+    "Metadata": "Metadatos",
+    "ModelPath": "Ruta del modelo",
+    "SearchModels": "Buscar modelos",
+    "MinResource": "Recurso mínimo",
+    "LastModified": "Última modificación",
+    "Created": "Creado",
+    "Version": "Versión",
+    "Author": "Autor",
+    "MaxRetries": "Reintentos máximos",
+    "Path": "Camino",
+    "HealthCheck": "Chequeo de salud",
+    "Port": "Puerto",
+    "StartCommand": "Comando de inicio",
+    "PreStartActions": "Acciones previas al inicio"
   }
 }

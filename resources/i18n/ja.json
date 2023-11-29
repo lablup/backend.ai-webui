@@ -1440,5 +1440,25 @@
   "OpenVSCodeRemote": "ローカルVisual Studio Codeを開く",
   "inputLimit": {
     "4to64chars": "(4～64文字)"
+  },
+  "modelStore": {
+    "Description": "説明",
+    "Model": "モデル",
+    "FilterByName": "名前でフィルタリングする",
+    "ServiceDetails": "サービス内容",
+    "Metadata": "メタデータ",
+    "ModelPath": "モデルパス",
+    "SearchModels": "モデルの検索",
+    "MinResource": "最小リソース",
+    "LastModified": "最終更新日",
+    "Created": "作成した",
+    "Version": "バージョン",
+    "Author": "著者",
+    "MaxRetries": "最大再試行回数",
+    "Path": "パス",
+    "HealthCheck": "健康診断",
+    "Port": "ポート",
+    "StartCommand": "開始コマンド",
+    "PreStartActions": "開始前のアクション"
   }
 }

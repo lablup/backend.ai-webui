@@ -1440,5 +1440,25 @@
   "OpenVSCodeRemote": "Lokalen Visual Studio Code öffnen",
   "inputLimit": {
     "4to64chars": "(4~64 Zeichen)"
+  },
+  "modelStore": {
+    "Description": "Beschreibung",
+    "Model": "Modell",
+    "FilterByName": "Nach Namen filtern",
+    "ServiceDetails": "Servicedetails",
+    "Metadata": "Metadaten",
+    "ModelPath": "Modellpfad",
+    "SearchModels": "Modelle suchen",
+    "MinResource": "Min. Ressource",
+    "LastModified": "Zuletzt bearbeitet",
+    "Created": "Erstellt",
+    "Version": "Ausführung",
+    "Author": "Autor",
+    "MaxRetries": "Max. Wiederholungsversuche",
+    "Path": "Weg",
+    "HealthCheck": "Gesundheitskontrolle",
+    "Port": "Hafen",
+    "StartCommand": "Befehl starten",
+    "PreStartActions": "Aktionen vor dem Start"
   }
 }

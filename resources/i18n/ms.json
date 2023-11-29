@@ -1439,5 +1439,25 @@
   "OpenVSCodeRemote": "Buka Kod Visual Studio tempatan",
   "inputLimit": {
     "4to64chars": "(4~64 aksara)"
+  },
+  "modelStore": {
+    "Description": "Penerangan",
+    "Model": "Model",
+    "FilterByName": "Tapis Mengikut Nama",
+    "ServiceDetails": "Butiran Perkhidmatan",
+    "Metadata": "Metadata",
+    "ModelPath": "Laluan Model",
+    "SearchModels": "Cari Model",
+    "MinResource": "Sumber Min",
+    "LastModified": "Terakhir Diubah Suai",
+    "Created": "Dicipta",
+    "Version": "Versi",
+    "Author": "Pengarang",
+    "MaxRetries": "Max Cuba Semula",
+    "Path": "Laluan",
+    "HealthCheck": "Pemeriksaan kesihatan",
+    "Port": "Pelabuhan",
+    "StartCommand": "Mulakan Perintah",
+    "PreStartActions": "Tindakan Pra Mula"
   }
 }

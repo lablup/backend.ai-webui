@@ -1442,5 +1442,25 @@
   "OpenVSCodeRemote": "Otwórz lokalny kod Visual Studio",
   "inputLimit": {
     "4to64chars": "(4~64 znaki)"
+  },
+  "modelStore": {
+    "Description": "Opis",
+    "Model": "Model",
+    "FilterByName": "Filtruj według nazwy",
+    "ServiceDetails": "Szczegóły usługi",
+    "Metadata": "Metadane",
+    "ModelPath": "Ścieżka modelu",
+    "SearchModels": "Wyszukaj modele",
+    "MinResource": "Minimalny zasób",
+    "LastModified": "Ostatnio zmodyfikowany",
+    "Created": "Utworzony",
+    "Version": "Wersja",
+    "Author": "Autor",
+    "MaxRetries": "Maksymalna liczba ponownych prób",
+    "Path": "Ścieżka",
+    "HealthCheck": "Kontrola zdrowia",
+    "Port": "Port",
+    "StartCommand": "Uruchom polecenie",
+    "PreStartActions": "Działania przed rozpoczęciem"
   }
 }

@@ -1440,5 +1440,25 @@
     "reloadPage": "Recharger la page",
     "resetErrorBoundary": "Réinitialisation de la limite d'erreur",
     "displayOnlyDevEnv": "Ce bloc d'erreur n'est affiché que dans l'environnement de développement WebUI."
+  },
+  "modelStore": {
+    "Description": "Description",
+    "Model": "Modèle",
+    "FilterByName": "Filtrer par nom",
+    "ServiceDetails": "Détails des services",
+    "Metadata": "Métadonnées",
+    "ModelPath": "Chemin du modèle",
+    "SearchModels": "Rechercher des modèles",
+    "MinResource": "Ressource minimale",
+    "LastModified": "Dernière modification",
+    "Created": "Créé",
+    "Version": "Version",
+    "Author": "Auteur",
+    "MaxRetries": "Nombre maximal de tentatives",
+    "Path": "Chemin",
+    "HealthCheck": "Bilan de santé",
+    "Port": "Port",
+    "StartCommand": "Démarrer la commande",
+    "PreStartActions": "Actions préalables au démarrage"
   }
 }

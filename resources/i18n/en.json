@@ -1441,5 +1441,25 @@
     "reloadPage": "Reload the page",
     "resetErrorBoundary": "Reset ErrorBoundary",
     "displayOnlyDevEnv": "This error block is displayed only in WebUI development environment."
+  },
+  "modelStore": {
+    "FilterByName": "Filter By Name",
+    "Model": "Model",
+    "Description": "Description",
+    "ServiceDetails": "Service Details",
+    "ModelPath": "Model Path",
+    "PreStartActions": "Pre Start Actions",
+    "Metadata": "Metadata",
+    "Author": "Author",
+    "Version": "Version",
+    "Created": "Created",
+    "LastModified": "Last Modified",
+    "MinResource": "Min Resource",
+    "HealthCheck": "Health Check",
+    "Path": "Path",
+    "MaxRetries": "Max Retries",
+    "Port": "Port",
+    "StartCommand": "Start Command",
+    "SearchModels": "Search Models"
   }
 }

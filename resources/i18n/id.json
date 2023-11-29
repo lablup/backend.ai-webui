@@ -1440,5 +1440,25 @@
     "reloadPage": "Muat ulang halaman",
     "resetErrorBoundary": "Setel Ulang Batas Kesalahan",
     "displayOnlyDevEnv": "Blok kesalahan ini hanya ditampilkan di lingkungan pengembangan WebUI."
+  },
+  "modelStore": {
+    "Description": "Keterangan",
+    "Model": "Model",
+    "FilterByName": "Filter Berdasarkan Nama",
+    "ServiceDetails": "Detail Layanan",
+    "Metadata": "Metadata",
+    "ModelPath": "Jalur Model",
+    "SearchModels": "Model Pencarian",
+    "MinResource": "Sumber Daya Minimal",
+    "LastModified": "Terakhir diubah",
+    "Created": "Dibuat",
+    "Version": "Versi: kapan",
+    "Author": "Pengarang",
+    "MaxRetries": "Percobaan Ulang Maks",
+    "Path": "Jalur",
+    "HealthCheck": "Cek kesehatan",
+    "Port": "Pelabuhan",
+    "StartCommand": "Mulai Perintah",
+    "PreStartActions": "Tindakan Pra Mulai"
   }
 }

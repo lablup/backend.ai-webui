@@ -1440,5 +1440,25 @@
   "OpenVSCodeRemote": "打开本地 Visual Studio 代码",
   "inputLimit": {
     "4to64chars": "（4 至 64 个字符）"
+  },
+  "modelStore": {
+    "Description": "描述",
+    "Model": "模型",
+    "FilterByName": "按名称过滤",
+    "ServiceDetails": "服务详情",
+    "Metadata": "元数据",
+    "ModelPath": "模型路径",
+    "SearchModels": "搜索型号",
+    "MinResource": "最小资源",
+    "LastModified": "上一次更改",
+    "Created": "已创建",
+    "Version": "版本",
+    "Author": "作者",
+    "MaxRetries": "最大重试次数",
+    "Path": "小路",
+    "HealthCheck": "健康检查",
+    "Port": "港口",
+    "StartCommand": "启动命令",
+    "PreStartActions": "开始前的行动"
   }
 }

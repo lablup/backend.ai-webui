@@ -1440,5 +1440,25 @@
     "reloadPage": "Хуудсыг дахин ачаална уу",
     "resetErrorBoundary": "Алдааны хил хязгаарыг дахин тохируулах",
     "displayOnlyDevEnv": "Энэ алдааны блок нь зөвхөн WebUI хөгжүүлэлтийн орчинд харагдана."
+  },
+  "modelStore": {
+    "Description": "Тодорхойлолт",
+    "Model": "Загвар",
+    "FilterByName": "Нэрээр нь шүүх",
+    "ServiceDetails": "Үйлчилгээний дэлгэрэнгүй мэдээлэл",
+    "Metadata": "Мета өгөгдөл",
+    "ModelPath": "Загварын зам",
+    "SearchModels": "Загвар хайх",
+    "MinResource": "Хамгийн бага нөөц",
+    "LastModified": "Сүүлд өөрчилсөн",
+    "Created": "Үүсгэсэн",
+    "Version": "Хувилбар",
+    "Author": "Зохиогч",
+    "MaxRetries": "Макс дахин оролдоно",
+    "Path": "Зам",
+    "HealthCheck": "Эрүүл мэндийн үзлэг",
+    "Port": "Порт",
+    "StartCommand": "Эхлэх тушаал",
+    "PreStartActions": "Эхлэхийн өмнөх үйлдлүүд"
   }
 }

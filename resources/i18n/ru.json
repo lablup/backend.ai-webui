@@ -1442,5 +1442,25 @@
     "reloadPage": "Перезагрузить страницу",
     "resetErrorBoundary": "Сброс границы ошибки",
     "displayOnlyDevEnv": "Данный блок ошибок отображается только в среде разработки WebUI."
+  },
+  "modelStore": {
+    "Description": "Описание",
+    "Model": "Модель",
+    "FilterByName": "Фильтровать по имени",
+    "ServiceDetails": "Детали услуги",
+    "Metadata": "Метаданные",
+    "ModelPath": "Путь модели",
+    "SearchModels": "Поиск моделей",
+    "MinResource": "Минимальный ресурс",
+    "LastModified": "Последнее изменение",
+    "Created": "Созданный",
+    "Version": "Версия",
+    "Author": "Автор",
+    "MaxRetries": "Макс. повторов",
+    "Path": "Путь",
+    "HealthCheck": "Проверка здоровья",
+    "Port": "Порт",
+    "StartCommand": "Запустить команду",
+    "PreStartActions": "Предстартовые действия"
   }
 }

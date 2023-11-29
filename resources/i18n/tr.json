@@ -1440,5 +1440,25 @@
   "OpenVSCodeRemote": "Yerel Visual Studio Kodunu açın",
   "inputLimit": {
     "4to64chars": "(4~64 karakter)"
+  },
+  "modelStore": {
+    "Description": "Tanım",
+    "Model": "Modeli",
+    "FilterByName": "Ada Göre Filtrele",
+    "ServiceDetails": "Hizmet Detayları",
+    "Metadata": "Meta veriler",
+    "ModelPath": "Model Yolu",
+    "SearchModels": "Modelleri Ara",
+    "MinResource": "Minimum Kaynak",
+    "LastModified": "Son düzenleme",
+    "Created": "Oluşturuldu",
+    "Version": "Sürüm",
+    "Author": "Yazar",
+    "MaxRetries": "Maksimum Yeniden Deneme Sayısı",
+    "Path": "Yol",
+    "HealthCheck": "Sağlık kontrolü",
+    "Port": "Liman",
+    "StartCommand": "Komutu Başlat",
+    "PreStartActions": "Başlangıç ​​Öncesi Eylemler"
   }
 }

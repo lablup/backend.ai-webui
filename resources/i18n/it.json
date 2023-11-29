@@ -1440,5 +1440,25 @@
   "OpenVSCodeRemote": "Aprire il codice locale di Visual Studio",
   "inputLimit": {
     "4to64chars": "(4~64 caratteri)"
+  },
+  "modelStore": {
+    "Description": "Descrizione",
+    "Model": "Modello",
+    "FilterByName": "Filtra per nome",
+    "ServiceDetails": "Dettagli del servizio",
+    "Metadata": "Metadati",
+    "ModelPath": "Percorso del modello",
+    "SearchModels": "Cerca modelli",
+    "MinResource": "Risorsa minima",
+    "LastModified": "Ultima modifica",
+    "Created": "Creato",
+    "Version": "Versione",
+    "Author": "Autore",
+    "MaxRetries": "Numero massimo di tentativi",
+    "Path": "Sentiero",
+    "HealthCheck": "Controllo della salute",
+    "Port": "Porta",
+    "StartCommand": "Avvia comando",
+    "PreStartActions": "Azioni pre-avvio"
   }
 }

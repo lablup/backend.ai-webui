@@ -1439,5 +1439,25 @@
   "OpenVSCodeRemote": "Mở mã Visual Studio cục bộ",
   "inputLimit": {
     "4to64chars": "(4~64 ký tự)"
+  },
+  "modelStore": {
+    "Description": "Sự miêu tả",
+    "Model": "Người mẫu",
+    "FilterByName": "Lọc theo tên",
+    "ServiceDetails": "Chi tiết dịch vụ",
+    "Metadata": "metadata",
+    "ModelPath": "Đường dẫn mẫu",
+    "SearchModels": "Tìm kiếm mô hình",
+    "MinResource": "Tài nguyên tối thiểu",
+    "LastModified": "Sửa đổi lần cuối",
+    "Created": "Tạo",
+    "Version": "Phiên bản",
+    "Author": "Tác giả",
+    "MaxRetries": "Số lần thử lại tối đa",
+    "Path": "Con đường",
+    "HealthCheck": "Kiểm tra sức khỏe",
+    "Port": "Hải cảng",
+    "StartCommand": "Bắt đầu lệnh",
+    "PreStartActions": "Hành động trước khi bắt đầu"
   }
 }
