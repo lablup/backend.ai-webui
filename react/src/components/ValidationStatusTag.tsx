@@ -1,6 +1,7 @@
-import { Tag } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin, Tag } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import React from 'react';
+import React, { Suspense } from 'react';
 
 interface ValidationStatusTagProps {}
 
@@ -8,12 +9,14 @@ const ValidationStatusTag: React.FC<ValidationStatusTagProps> = ({}) => {
   let color = 'default';
 
   return (
-    <Tag color={color}>
-      Processing...
-      {
-        //  TODO: graphql fetching via server-side event
-      }
-    </Tag>
+    <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
+      <Tag color={color}>
+        Processing...
+        {
+          //  TODO: graphql fetching via server-side event
+        }
+      </Tag>
+    </Suspense>
   );
 };
 
