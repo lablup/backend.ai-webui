@@ -779,7 +779,8 @@
     "ProjectFolder": "Project Folder",
     "Pipeline": "Pipeline Folders",
     "DialogDataFolder": "Pipeline dedicated folders that are automatically created when creating pipelines in FastTrack.",
-    "SearchByName": "Search by name"
+    "SearchByName": "Search by name",
+    "ModelStore": "Model Store"
   },
   "dialog": {
     "warning": {

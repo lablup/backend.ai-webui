@@ -323,6 +323,11 @@ export default class BackendAIData extends BackendAIPage {
                       ></mwc-tab>
                     `
                   : html``}
+                <mwc-tab
+                  title="model-store"
+                  label="${_t('data.ModelStore')}"
+                  @click="${(e) => this._showTab(e.target)}"
+                ></mwc-tab>
               </mwc-tab-bar>
               <span class="flex"></span>
               <mwc-button
@@ -392,6 +397,11 @@ export default class BackendAIData extends BackendAIPage {
                   </div>
                 `
               : html``}
+            <backend-ai-react-model-store-list
+              id="model-store-folder-lists"
+              ?active="${this.active === true &&
+              this._activeTab === 'modelStore'}"
+            ></backend-ai-react-model-store-list>
           </div>
         </lablup-activity-panel>
       </div>
