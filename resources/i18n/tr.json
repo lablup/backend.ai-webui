@@ -401,7 +401,9 @@
     "Unset": "Ayarlanmamış",
     "OK": "TAMAM.",
     "Commit": "Taahhüt",
-    "EnterManually": "Manuel Olarak Girin"
+    "EnterManually": "Manuel Olarak Girin",
+    "Download": "__NOT_TRANSLATED__",
+    "Clone": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "uç nokta",

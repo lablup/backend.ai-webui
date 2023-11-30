@@ -401,7 +401,9 @@
     "Unset": "Μη ρυθμισμένο",
     "OK": "OK",
     "Commit": "Δέσμευση",
-    "EnterManually": "Εισάγετε χειροκίνητα"
+    "EnterManually": "Εισάγετε χειροκίνητα",
+    "Download": "__NOT_TRANSLATED__",
+    "Clone": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Τελικό σημείο",

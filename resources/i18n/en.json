@@ -459,7 +459,9 @@
     "Commit": "Commit",
     "Reset": "Reset",
     "EnterManually": "Enter Manually",
-    "Unset": "Unset"
+    "Unset": "Unset",
+    "Download": "Download",
+    "Clone": "Clone"
   },
   "agent": {
     "Endpoint": "Endpoint",

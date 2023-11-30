@@ -400,7 +400,9 @@
     "Unset": "Bỏ đặt",
     "OK": "ĐƯỢC RỒI",
     "Commit": "Làm",
-    "EnterManually": "Nhập thủ công"
+    "EnterManually": "Nhập thủ công",
+    "Download": "__NOT_TRANSLATED__",
+    "Clone": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Điểm cuối",

@@ -401,7 +401,9 @@
     "Unset": "初期化",
     "OK": "確認",
     "Commit": "コミットする",
-    "EnterManually": "直接入力する"
+    "EnterManually": "直接入力する",
+    "Download": "__NOT_TRANSLATED__",
+    "Clone": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "終点",

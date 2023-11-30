@@ -127,7 +127,9 @@
     "Share": "Jaa",
     "Unset": "Unset",
     "Update": "Päivitys",
-    "Yes": "Kyllä"
+    "Yes": "Kyllä",
+    "Download": "__NOT_TRANSLATED__",
+    "Clone": "__NOT_TRANSLATED__"
   },
   "credential": {
     "AccessKeyOptional": "Pääsyavain (valinnainen)",

@@ -127,7 +127,9 @@
     "Share": "Compartir",
     "Unset": "Sin configurar",
     "Update": "Actualización",
-    "Yes": "Sí"
+    "Yes": "Sí",
+    "Download": "__NOT_TRANSLATED__",
+    "Clone": "__NOT_TRANSLATED__"
   },
   "credential": {
     "AccessKeyOptional": "Clave de acceso (opcional)",

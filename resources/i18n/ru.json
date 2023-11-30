@@ -403,7 +403,9 @@
     "Reset": "Перезагрузить",
     "EnterManually": "Ввести вручную",
     "Unset": "Unset",
-    "OK": "OK"
+    "OK": "OK",
+    "Download": "__NOT_TRANSLATED__",
+    "Clone": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Конечная точка",

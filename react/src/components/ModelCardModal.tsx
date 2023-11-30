@@ -67,7 +67,9 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       title={model_info?.title || model_info?.name}
       centered
       onCancel={onRequestClose}
-      footer={
+      footer={[
+        <Button disabled>{t('button.Download')}</Button>,
+        <Button disabled>{t('button.Clone')}</Button>,
         <Button
           type="primary"
           onClick={() => {
@@ -75,8 +77,8 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           }}
         >
           {t('button.Close')}
-        </Button>
-      }
+        </Button>,
+      ]}
     >
       <Flex justify="start" align="start">
         <Tag bordered={false}>{model_info?.category}</Tag>
