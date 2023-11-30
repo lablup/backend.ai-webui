@@ -62,7 +62,7 @@
       "Notifications": "お知らせ",
       "Tasks": "作業",
       "FastTrack": "FastTrack",
-      "Data&Model": "__NOT_TRANSLATED__"
+      "Data&Model": ""
     },
     "YouAreOffline": "あなたは今オフラインです",
     "YouAreOnline": "あなたは今オンラインです",
@@ -241,17 +241,18 @@
       "FolderAliasInvalid": "英語の大文字と小文字、数字、アンダースコア（_）、スラッシュ（/）、ダッシュ（-）のみを入力できます。",
       "PreOpenPortMaxCountLimit": "count}}までプレオープンポートを設定できる。",
       "StartTimeMustBeInTheFuture": "開始時刻は現在時刻より後でなければならない。",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
-      "SessionName": "__NOT_TRANSLATED__",
-      "ResetFormConfirm": "__NOT_TRANSLATED__",
-      "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_0": "",
+      "EnqueueComputeSessionWarning": "",
+      "SessionName": "",
+      "ResetFormConfirm": "",
+      "TemplateAndHistory": "",
+      "ScheduleTimeSimple": "",
       "ResourceAllocationPerContainer": "コンテナあたりのリソース割り当て",
       "NumberOfContainer": "コンテナ数",
       "EnterEnvironmentVariable": "変数名の入力",
       "EnvironmentVariableNamePatternError": "変数名は文字またはアンダースコアで始まり、文字、数字、アンダースコアのみを含むことができます。",
-      "EnvironmentVariableDuplicateName": "既に存在する変数名です。"
+      "EnvironmentVariableDuplicateName": "既に存在する変数名です。",
+      "Template": "セッションテンプレート"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -444,7 +445,7 @@
     "Enabled": "有効",
     "StorageProxies": "ストレージ",
     "None": "なし",
-    "Image": "__NOT_TRANSLATED__"
+    "Image": ""
   },
   "credential": {
     "Permission": "許可",
@@ -522,7 +523,7 @@
     "SignoutSeccessfullyFinished": "ユーザーアカウントが正常に削除されました。",
     "Status": "状態",
     "NoUserToDisplay": "ユーザー情報がありません。",
-    "EnableSudoSession": "__NOT_TRANSLATED__"
+    "EnableSudoSession": ""
   },
   "data": {
     "Folders": "フォルダー",
@@ -689,7 +690,7 @@
     "DialogDataFolder": "FastTrackでパイプライン作成時に自動的に生成されるパイプライン専用フォルダ。",
     "DialogModelFolder": "モデルを選択して実行したり、モデルを管理することができます。",
     "SearchByName": "名前で検索",
-    "ModelStore": "__NOT_TRANSLATED__"
+    "ModelStore": ""
   },
   "dialog": {
     "warning": {

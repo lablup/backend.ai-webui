@@ -205,7 +205,7 @@
       "PolicyName": "Nombre de la póliza Obligatorio.",
       "ValidationFailed": "Validación fallida"
     },
-    "EnableSudoSession": "__NOT_TRANSLATED__"
+    "EnableSudoSession": ""
   },
   "data": {
     "Allowslettersnumbersand-_": "Permite letras, números y -_",
@@ -372,7 +372,7 @@
       "used": "usado"
     },
     "SearchByName": "Buscar por nombre",
-    "ModelStore": "__NOT_TRANSLATED__"
+    "ModelStore": ""
   },
   "dialog": {
     "ErrorOccurred": "Se ha producido un error",
@@ -477,7 +477,7 @@
     "Username": "Nombre de usuario",
     "cores": "núcleos",
     "None": "Ninguno",
-    "Image": "__NOT_TRANSLATED__"
+    "Image": ""
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",
@@ -1113,17 +1113,18 @@
       "Network": "Red",
       "Enable": "Permitir",
       "StartTimeMustBeInTheFuture": "La hora de inicio debe ser posterior a la hora actual.",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
-      "SessionName": "__NOT_TRANSLATED__",
-      "ResetFormConfirm": "__NOT_TRANSLATED__",
-      "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_plural": "",
+      "EnqueueComputeSessionWarning": "",
+      "SessionName": "",
+      "ResetFormConfirm": "",
+      "TemplateAndHistory": "",
+      "ScheduleTimeSimple": "",
       "ResourceAllocationPerContainer": "Asignación de recursos por contenedor",
       "NumberOfContainer": "Número de contenedor",
       "EnterEnvironmentVariable": "Introduzca el nombre de la variable",
       "EnvironmentVariableNamePatternError": "El nombre de la variable debe empezar por una letra o un guión bajo, y sólo puede contener letras, números y guiones bajos.",
-      "EnvironmentVariableDuplicateName": "Un nombre de variable que ya existe."
+      "EnvironmentVariableDuplicateName": "Un nombre de variable que ya existe.",
+      "Template": "Plantilla de sesión"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",
@@ -1438,7 +1439,7 @@
       "WelcomeMessage": "Bienvenido,",
       "WelcomeMessage_2": " .",
       "YouMushChangeYourPassword": "Se recomienda cambiar periódicamente la contraseña por razones de seguridad. Dado que ha transcurrido cierto tiempo desde la última vez que cambió su contraseña, deberá cambiarla para poder seguir utilizando el servicio.",
-      "Data&Model": "__NOT_TRANSLATED__"
+      "Data&Model": ""
     }
   },
   "modelStore": {
