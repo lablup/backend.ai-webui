@@ -6,13 +6,17 @@ import {
   BankOutlined,
   CopyOutlined,
   DownloadOutlined,
+  FileOutlined,
 } from '@ant-design/icons';
 import {
   Button,
   Card,
+  Col,
   Descriptions,
+  Grid,
   Modal,
   ModalProps,
+  Row,
   Tag,
   Typography,
   theme,
@@ -39,6 +43,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
+  const screen = Grid.useBreakpoint();
   const [metadata] = useBackendaiImageMetaData();
   const model_info = useFragment(
     graphql`
@@ -71,6 +76,8 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       title={model_info?.title || model_info?.name}
       centered
       onCancel={onRequestClose}
+      destroyOnClose
+      width={screen.xxl ? '75%' : '90%'}
       footer={[
         <Button
           onClick={() => {
@@ -80,14 +87,38 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           {t('button.Close')}
         </Button>,
       ]}
+      styles={{
+        body: {
+          // maxHeight: 'calc(100vh - 150px)',
+        },
+      }}
     >
-      <Flex direction="column" align="stretch" gap={'xs'}>
-        <Flex justify="start" align="start">
-          <Tag bordered={false}>{model_info?.category}</Tag>
-          <Tag bordered={false} color="success">
+      <Flex
+        direction="row"
+        align="stretch"
+        style={{ marginBottom: token.marginSM }}
+        gap={'xs'}
+        wrap="wrap"
+      >
+        <Flex
+          justify="start"
+          align="start"
+          gap={'xs'}
+          style={{ flex: 1 }}
+          wrap="wrap"
+        >
+          <Tag bordered={false} style={{ marginRight: 0 }}>
+            {model_info?.category}
+          </Tag>
+          <Tag bordered={false} color="success" style={{ marginRight: 0 }}>
             {model_info?.task}
           </Tag>
-          <Tag icon={<BankOutlined />} bordered={false} color="geekblue">
+          <Tag
+            icon={<BankOutlined />}
+            bordered={false}
+            color="geekblue"
+            style={{ marginRight: 0 }}
+          >
             {model_info?.license}
           </Tag>
         </Flex>
@@ -111,105 +142,193 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             {t('button.Clone')}
           </Button>
         </Flex>
-        <Title level={5}>{t('modelStore.Description')}</Title>
-        <Paragraph style={{ whiteSpace: 'pre-wrap' }}>
-          {model_info?.description}
-        </Paragraph>
-        <Title level={5}>README.md</Title>
-        <Card size="small">
-          <Markdown>{`
+      </Flex>
+      <Row gutter={[token.marginLG, token.marginLG]}>
+        <Col xs={{ span: 24 }} lg={{ span: 12 }}>
+          <Flex direction="column" align="stretch" gap={'xs'}>
+            <Title level={5}>{t('modelStore.Description')}</Title>
+            <Card
+              size="small"
+              style={{
+                whiteSpace: 'pre-wrap',
+                minHeight: screen.lg ? 100 : undefined,
+                height: screen.lg ? 'calc(100vh - 594px)' : undefined,
+                maxHeight: 'calc(100vh - 594px)',
+                overflow: 'auto',
+              }}
+            >
+              <Paragraph>{model_info?.description}</Paragraph>
+            </Card>
+            <Descriptions
+              style={{ marginTop: token.marginMD }}
+              title={t('modelStore.Metadata')}
+              column={1}
+              size="small"
+              bordered
+              items={[
+                {
+                  key: 'author',
+                  label: t('modelStore.Author'),
+                  children: model_info?.author,
+                },
+                {
+                  key: 'version',
+                  label: t('modelStore.Version'),
+                  children: model_info?.version,
+                },
+                {
+                  key: 'architecture',
+                  label: t('environment.Architecture'),
+                  children: model_info?.architecture,
+                },
+                {
+                  key: 'frameworks',
+                  label: t('modelStore.Framework'),
+                  children: (
+                    <Flex direction="row" gap={'xs'}>
+                      {_.map(
+                        _.castArray(model_info?.framework),
+                        (framework) => {
+                          const targetImageKey = framework?.replace(
+                            /\s*\d+\s*$/,
+                            '',
+                          );
+                          const imageInfo = _.find(
+                            metadata?.imageInfo,
+                            (imageInfo) => imageInfo.name === targetImageKey,
+                          );
+                          return imageInfo?.icon ? (
+                            <Flex gap={'xxs'}>
+                              <img
+                                style={{
+                                  width: '1em',
+                                  height: '1em',
+                                }}
+                                src={'resources/icons/' + imageInfo?.icon}
+                                alt={framework || ''}
+                              />
+                              {framework}
+                            </Flex>
+                          ) : (
+                            <Typography.Text>{framework}</Typography.Text>
+                          );
+                        },
+                      )}
+                    </Flex>
+                  ),
+                },
+                {
+                  key: 'created',
+                  label: t('modelStore.Created'),
+                  children: dayjs(model_info?.created_at).format('lll'),
+                },
+                {
+                  key: 'last_modified',
+                  label: t('modelStore.LastModified'),
+                  children: dayjs(model_info?.modified_at).format('lll'),
+                },
+                {
+                  key: 'min_resource',
+                  label: t('modelStore.MinResource'),
+                  children: (
+                    <Flex gap="xs">
+                      {model_info?.min_resource &&
+                        _.map(
+                          JSON.parse(model_info?.min_resource),
+                          (value, type) => {
+                            return (
+                              <ResourceNumber
+                                key={type}
+                                // @ts-ignore
+                                type={type}
+                                value={_.toString(value)}
+                              />
+                            );
+                          },
+                        )}
+                    </Flex>
+                  ),
+                },
+              ]}
+            />
+          </Flex>
+        </Col>
+        <Col xs={{ span: 24 }} lg={{ span: 12 }}>
+          <Card
+            size="small"
+            title={
+              <Flex direction="row" gap={'xs'}>
+                <FileOutlined />
+                README.md
+              </Flex>
+            }
+            bodyStyle={{
+              padding: token.paddingLG,
+              overflow: 'auto',
+              height: screen.lg ? 'calc(100vh - 220px)' : undefined,
+              minHeight: 200,
+              // maxHeight: 650
+            }}
+          >
+            <Markdown>{`
+## Hello
+- item1
+- item2
+## Hello
+- item1
+- item2
+## Hello
+- item1
+- item2
+## Hello
+- item1
+- item2
+## Hello
+- item1
+- item2
+## Hello
+- item1
+- item2
+## Hello
+- item1
+- item2
+## Hello
+- item1
+- item2
+## Hello
+- item1
+- item2
+## Hello
+- item1
+- item2
+## Hello
+- item1
+- item2
+## Hello
+- item1
+- item2
+## Hello
+- item1
+- item2
+## Hello
+- item1
+- item2
+## Hello
+- item1
+- item2
+## Hello
+- item1
+- item2
+## Hello
+- item1
+- item2
 ## Hello
 - item1
 - item2
           `}</Markdown>
-        </Card>
-        <Descriptions
-          style={{ marginTop: token.marginMD }}
-          title={t('modelStore.Metadata')}
-          column={1}
-          size="small"
-          bordered
-          items={[
-            {
-              key: 'author',
-              label: t('modelStore.Author'),
-              children: model_info?.author,
-            },
-            {
-              key: 'version',
-              label: t('modelStore.Version'),
-              children: model_info?.version,
-            },
-            {
-              key: 'architecture',
-              label: t('environment.Architecture'),
-              children: model_info?.architecture,
-            },
-            {
-              key: 'frameworks',
-              label: t('modelStore.Framework'),
-              children: (
-                <Flex direction="row" gap={'xs'}>
-                  {_.map(_.castArray(model_info?.framework), (framework) => {
-                    const targetImageKey = framework?.replace(/\s*\d+\s*$/, '');
-                    const imageInfo = _.find(
-                      metadata?.imageInfo,
-                      (imageInfo) => imageInfo.name === targetImageKey,
-                    );
-                    return imageInfo?.icon ? (
-                      <Flex gap={'xxs'}>
-                        <img
-                          style={{
-                            width: '1em',
-                            height: '1em',
-                          }}
-                          src={'resources/icons/' + imageInfo?.icon}
-                          alt={framework || ''}
-                        />
-                        {framework}
-                      </Flex>
-                    ) : (
-                      <Typography.Text>{framework}</Typography.Text>
-                    );
-                  })}
-                </Flex>
-              ),
-            },
-            {
-              key: 'created',
-              label: t('modelStore.Created'),
-              children: dayjs(model_info?.created_at).format('lll'),
-            },
-            {
-              key: 'last_modified',
-              label: t('modelStore.LastModified'),
-              children: dayjs(model_info?.modified_at).format('lll'),
-            },
-            {
-              key: 'min_resource',
-              label: t('modelStore.MinResource'),
-              children: (
-                <Flex gap="xs">
-                  {model_info?.min_resource &&
-                    _.map(
-                      JSON.parse(model_info?.min_resource),
-                      (value, type) => {
-                        return (
-                          <ResourceNumber
-                            key={type}
-                            // @ts-ignore
-                            type={type}
-                            value={_.toString(value)}
-                          />
-                        );
-                      },
-                    )}
-                </Flex>
-              ),
-            },
-          ]}
-        />
-      </Flex>
+          </Card>
+        </Col>
+      </Row>
     </Modal>
   );
 };
