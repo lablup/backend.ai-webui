@@ -63,6 +63,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
         framework
         label
         license
+        readme
         min_resource
         architecture
         framework
@@ -70,7 +71,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
     `,
     modelCardModalFrgmt,
   );
-
   return (
     <BAIModal
       {...props}
@@ -273,62 +273,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
               // maxHeight: 650
             }}
           >
-            <Markdown>{`
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-## Hello
-- item1
-- item2
-          `}</Markdown>
+            <Markdown>{``}</Markdown>
           </Card>
         </Col>
       </Row>

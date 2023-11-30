@@ -1106,6 +1106,12 @@ type ModelInfo implements AsyncNode {
   label: [String]
   license: String
   min_resource: JSONString
+  readme: String
+
+  """
+  Type (mostly extension of the filename) of the README file. e.g. md, rst, txt, ...
+  """
+  readme_filetype: String
 }
 
 type ModelInfoConnection {
