@@ -1,5 +1,6 @@
 import Flex from '../components/Flex';
 import ModelCardModal from '../components/ModelCardModal';
+import TextHighlighter from '../components/TextHighlighter';
 import { ModelCardModalFragment$key } from '../components/__generated__/ModelCardModalFragment.graphql';
 import { ModelStoreListPageQuery } from './__generated__/ModelStoreListPageQuery.graphql';
 import { useToggle } from 'ahooks';
@@ -23,12 +24,12 @@ const ModelStoreListPage: React.FC = () => {
   const [currentModelInfo, setCurrentModelInfo] =
     useState<ModelCardModalFragment$key | null>();
 
-  const queryVariables = useMemo(
-    () => ({
-      filter: search,
-    }),
-    [search],
-  );
+  // const queryVariables = useMemo(
+  //   () => ({
+  //     filter: search,
+  //   }),
+  //   [search],
+  // );
 
   const [isOpenModelCard, { toggle: toggleIsOpenModelCard }] = useToggle();
 
@@ -60,7 +61,9 @@ const ModelStoreListPage: React.FC = () => {
         }
       }
     `,
-    queryVariables,
+    {
+      filter: undefined,
+    },
     {
       fetchPolicy: 'network-only',
     },
@@ -79,30 +82,59 @@ const ModelStoreListPage: React.FC = () => {
           <Input.Search
             placeholder={t('modelStore.SearchModels')}
             allowClear
-            onSearch={(value) => {
-              setSearch(value);
+            onChange={(e) => {
+              setSearch(e.target.value);
             }}
+            autoComplete="off"
           />
         </Form.Item>
       </Form>
       <List
         grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 3, xl: 4, xxl: 5 }}
-        dataSource={model_infos?.edges?.map((edge) => edge?.node)}
+        dataSource={model_infos?.edges
+          ?.map((edge) => edge?.node)
+          .filter((info) => {
+            if (search) {
+              const searchLower = search.toLowerCase();
+              return (
+                info?.title?.toLowerCase().includes(searchLower) ||
+                info?.task?.toLowerCase().includes(searchLower) ||
+                info?.category?.toLowerCase().includes(searchLower) ||
+                info?.label?.some(
+                  (label) => label?.toLowerCase().includes(searchLower),
+                )
+              );
+            }
+            return true;
+          })}
         renderItem={(item) => (
           <List.Item
             onClick={() => {
               setCurrentModelInfo(item);
             }}
           >
-            <Card title={item?.title} size="small">
+            <Card
+              title={
+                <TextHighlighter keyword={search}>
+                  {item?.title}
+                </TextHighlighter>
+              }
+              size="small"
+            >
               <Flex direction="row" wrap="wrap" gap={'xs'}>
-                <Tag bordered={false}>{item?.category}</Tag>
+                <Tag bordered={false}>
+                  <TextHighlighter keyword={search}>
+                    {item?.category}
+                  </TextHighlighter>
+                </Tag>
                 <Tag bordered={false} color="success">
-                  {item?.task}
+                  <TextHighlighter keyword={search}>
+                    {item?.task}
+                  </TextHighlighter>
                 </Tag>
                 {_.map(item?.label, (label) => (
-                  <Tag key={label} bordered={false} color="gold">
-                    {label}
+                  <Tag key={label} bordered={false} color="blue">
+                    <TextHighlighter keyword={search}>{label}</TextHighlighter>
                   </Tag>
                 ))}
               </Flex>
