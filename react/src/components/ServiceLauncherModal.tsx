@@ -194,6 +194,25 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     };
   };
 
+  const mutationsToValidateService = useTanMutation<
+    unknown,
+    {
+      message?: string;
+    },
+    ServiceLauncherFormInput
+  >({
+    mutationFn: (values) => {
+      const image: string = `${values.environments.image?.registry}/${values.environments.image?.name}:${values.environments.image?.tag}`;
+      const body = null;
+      return baiSignedRequestWithPromise({
+        method: 'POST',
+        url: '/services',
+        body,
+        client: baiClient,
+      });
+    },
+  });
+
   const mutationToCreateService = useTanMutation<
     unknown,
     {
@@ -321,6 +340,21 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const handleCancel = () => {
     // console.log("Clicked cancel button");
     onRequestClose();
+  };
+
+  // Apply any operation after clicking Validate button
+  const handleValidate = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        mutationsToValidateService.mutate(values, {
+          onSuccess: (resp) => {
+            // TODO: listen sse service here
+          },
+          onError: (error) => {},
+        });
+      })
+      .catch((err) => {});
   };
 
   return (
@@ -642,13 +676,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             header={
               <Flex direction="row" justify="between" align="stretch">
                 {t('modelService.ValidationInfo')}
-                <Button
-                  key="validate"
-                  type="primary"
-                  onClick={() => {
-                    // TODO: add open validation modal
-                  }}
-                >
+                <Button key="validate" type="primary" onClick={handleValidate}>
                   {t('modelService.Validate')}
                 </Button>
               </Flex>
