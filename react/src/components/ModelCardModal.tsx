@@ -147,7 +147,9 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       <Row gutter={[token.marginLG, token.marginLG]}>
         <Col xs={{ span: 24 }} lg={{ span: 12 }}>
           <Flex direction="column" align="stretch" gap={'xs'}>
-            <Title level={5}>{t('modelStore.Description')}</Title>
+            <Title level={5} style={{ marginTop: 0 }}>
+              {t('modelStore.Description')}
+            </Title>
             <Card
               size="small"
               style={{
