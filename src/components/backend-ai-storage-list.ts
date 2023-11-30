@@ -26,8 +26,10 @@ import '@material/mwc-formfield';
 import '@material/mwc-icon-button';
 import '@material/mwc-list';
 import '@material/mwc-radio';
+// need to import explicitly
 import { Radio } from '@material/mwc-radio';
 import { Select } from '@material/mwc-select';
+import '@material/mwc-switch';
 import { Switch } from '@material/mwc-switch';
 import '@material/mwc-textfield';
 import { TextField } from '@material/mwc-textfield';
