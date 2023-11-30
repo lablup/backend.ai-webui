@@ -190,17 +190,15 @@ const ModelStoreListPage: React.FC = () => {
                 )
               );
             }
-            if (selectedCategories.length) {
-              return _.includes(selectedCategories, info?.category);
-            }
-            if (selectedLabels.length) {
-              return _.intersection(selectedLabels, info?.label).length > 0;
-            }
-            if (selectedTasks.length) {
-              return _.includes(selectedTasks, info?.task);
-            }
 
-            return true;
+            return (
+              (_.isEmpty(selectedCategories) ||
+                _.includes(selectedCategories, info?.category)) &&
+              (_.isEmpty(selectedLabels) ||
+                _.intersection(selectedLabels, info?.label).length > 0) &&
+              (_.isEmpty(selectedTasks) ||
+                _.includes(selectedTasks, info?.task))
+            );
           })}
         renderItem={(item) => (
           <List.Item
