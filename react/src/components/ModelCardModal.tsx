@@ -115,31 +115,28 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             label: t('modelStore.Framework'),
             children: (
               <Flex direction="row" gap={'xs'}>
-                {_.map(
-                  _.castArray(model_info?.framework),
-                  (framework: string) => {
-                    const targetImageKey = framework.replace(/\s*\d+\s*$/, '');
-                    const imageInfo = _.find(
-                      metadata?.imageInfo,
-                      (imageInfo) => imageInfo.name === targetImageKey,
-                    );
-                    return imageInfo?.icon ? (
-                      <Flex gap={'xxs'}>
-                        <img
-                          style={{
-                            width: '1em',
-                            height: '1em',
-                          }}
-                          src={'resources/icons/' + imageInfo?.icon}
-                          alt={framework}
-                        />
-                        {framework}
-                      </Flex>
-                    ) : (
-                      <Typography.Text>{framework}</Typography.Text>
-                    );
-                  },
-                )}
+                {_.map(_.castArray(model_info?.framework), (framework) => {
+                  const targetImageKey = framework?.replace(/\s*\d+\s*$/, '');
+                  const imageInfo = _.find(
+                    metadata?.imageInfo,
+                    (imageInfo) => imageInfo.name === targetImageKey,
+                  );
+                  return imageInfo?.icon ? (
+                    <Flex gap={'xxs'}>
+                      <img
+                        style={{
+                          width: '1em',
+                          height: '1em',
+                        }}
+                        src={'resources/icons/' + imageInfo?.icon}
+                        alt={framework}
+                      />
+                      {framework}
+                    </Flex>
+                  ) : (
+                    <Typography.Text>{framework}</Typography.Text>
+                  );
+                })}
               </Flex>
             ),
           },
