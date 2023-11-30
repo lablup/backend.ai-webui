@@ -86,6 +86,7 @@ const ModelStoreListPage: React.FC = () => {
         </Form.Item>
       </Form>
       <List
+        grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 3, xl: 4, xxl: 5 }}
         dataSource={model_infos?.edges?.map((edge) => edge?.node)}
         renderItem={(item) => (
           <List.Item
@@ -94,15 +95,17 @@ const ModelStoreListPage: React.FC = () => {
             }}
           >
             <Card title={item?.title} size="small">
-              <Tag bordered={false}>{item?.category}</Tag>
-              <Tag bordered={false} color="success">
-                {item?.task}
-              </Tag>
-              {_.map(item?.label, (label) => (
-                <Tag key={label} bordered={false} color="gold">
-                  {label}
+              <Flex direction="row" wrap="wrap" gap={'xs'}>
+                <Tag bordered={false}>{item?.category}</Tag>
+                <Tag bordered={false} color="success">
+                  {item?.task}
                 </Tag>
-              ))}
+                {_.map(item?.label, (label) => (
+                  <Tag key={label} bordered={false} color="gold">
+                    {label}
+                  </Tag>
+                ))}
+              </Flex>
             </Card>
           </List.Item>
         )}
