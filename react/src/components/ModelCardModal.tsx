@@ -273,7 +273,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
               // maxHeight: 650
             }}
           >
-            <Markdown>{``}</Markdown>
+            <Markdown>{model_info?.readme || ''}</Markdown>
           </Card>
         </Col>
       </Row>
