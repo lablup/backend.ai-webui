@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 import {
   Button,
+  Card,
   Descriptions,
   Divider,
   Form,
@@ -21,6 +22,7 @@ import {
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
+import Markdown from 'markdown-to-jsx';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
@@ -115,8 +117,16 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
         <Paragraph style={{ whiteSpace: 'pre-wrap' }}>
           {model_info?.description}
         </Paragraph>
-        <Divider />
+        <Title level={5}>README.md</Title>
+        <Card>
+          <Markdown>{`
+## Hello
+- item1
+- item2
+          `}</Markdown>
+        </Card>
         <Descriptions
+          style={{ marginTop: token.marginMD }}
           title={t('modelStore.Metadata')}
           column={1}
           size="small"
