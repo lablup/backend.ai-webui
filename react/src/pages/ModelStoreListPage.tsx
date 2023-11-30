@@ -43,9 +43,6 @@ const ModelStoreListPage: React.FC = () => {
               name
               author
               title
-              version
-              created_at
-              modified_at
               description
               task
               category

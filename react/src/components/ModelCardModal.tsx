@@ -47,6 +47,8 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
         description
         task
         category
+        architecture
+        framework
         label
         license
         min_resource
