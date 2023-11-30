@@ -129,7 +129,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                           height: '1em',
                         }}
                         src={'resources/icons/' + imageInfo?.icon}
-                        alt={framework}
+                        alt={framework || ''}
                       />
                       {framework}
                     </Flex>
