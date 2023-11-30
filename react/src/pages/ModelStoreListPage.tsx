@@ -2,17 +2,20 @@ import Flex from '../components/Flex';
 import ModelCardModal from '../components/ModelCardModal';
 import TextHighlighter from '../components/TextHighlighter';
 import { ModelCardModalFragment$key } from '../components/__generated__/ModelCardModalFragment.graphql';
+import { useUpdatableState } from '../hooks';
 import { ModelStoreListPageQuery } from './__generated__/ModelStoreListPageQuery.graphql';
+import { ReloadOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button, Card, Form, Input, List, Table, Tag, theme } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
 const ModelStoreListPage: React.FC = () => {
+  const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
@@ -24,6 +27,7 @@ const ModelStoreListPage: React.FC = () => {
   const [currentModelInfo, setCurrentModelInfo] =
     useState<ModelCardModalFragment$key | null>();
 
+  const [isPendingRefetching, startRefetchingTransition] = useTransition();
   // const queryVariables = useMemo(
   //   () => ({
   //     filter: search,
@@ -66,6 +70,7 @@ const ModelStoreListPage: React.FC = () => {
     },
     {
       fetchPolicy: 'network-only',
+      fetchKey,
     },
   );
 
@@ -77,18 +82,29 @@ const ModelStoreListPage: React.FC = () => {
       gap="lg"
       style={{ padding: token.paddingLG }}
     >
-      <Form form={searchForm}>
-        <Form.Item name="search" noStyle>
-          <Input.Search
-            placeholder={t('modelStore.SearchModels')}
-            allowClear
-            onChange={(e) => {
-              setSearch(e.target.value);
-            }}
-            autoComplete="off"
-          />
-        </Form.Item>
-      </Form>
+      <Flex direction="row" gap={'md'}>
+        <Form form={searchForm} style={{ flex: 1 }}>
+          <Form.Item name="search" noStyle>
+            <Input.Search
+              placeholder={t('modelStore.SearchModels')}
+              allowClear
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
+              autoComplete="off"
+            />
+          </Form.Item>
+        </Form>
+        <Button
+          icon={<ReloadOutlined />}
+          onClick={() => {
+            startRefetchingTransition(() => {
+              updateFetchKey();
+            });
+          }}
+          loading={isPendingRefetching}
+        />
+      </Flex>
       <List
         grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 3, xl: 4, xxl: 5 }}
         dataSource={model_infos?.edges
