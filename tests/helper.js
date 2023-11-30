@@ -6,9 +6,11 @@ export const ShadowSelector = Selector(
       const segments = selector.split(separator).map((s) => s.trim());
       for (const [idx, segment] of segments.entries()) {
         element = element.querySelector(segment);
-        if (!element) return null;
-        if (idx + 1 === segments.length) break;
-        if (!!element.shadowRoot) element = element.shadowRoot;
+        if (!element) {
+          return null
+        } else {
+          element = element.shadowRoot
+        };
       }
       return element;
     });
