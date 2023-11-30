@@ -4070,6 +4070,7 @@ class Group {
       'created_at',
       'modified_at',
       'domain_name',
+      'type',
     ],
   ): Promise<any> {
     let q, v;

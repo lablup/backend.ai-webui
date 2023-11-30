@@ -39,6 +39,7 @@ interface GroupData {
   created_at: string;
   modified_at: string;
   domain_name: string;
+  type?: string;
 }
 /**
  Backend.AI Data View
