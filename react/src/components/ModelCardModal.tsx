@@ -87,7 +87,9 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
         </Tag>
       </Flex>
       <Title level={5}>{t('modelStore.Description')}</Title>
-      <Paragraph>{model_info?.description}</Paragraph>
+      <Paragraph style={{ whiteSpace: 'pre-wrap' }}>
+        {model_info?.description}
+      </Paragraph>
       <Divider />
       <Descriptions
         title={t('modelStore.Metadata')}
