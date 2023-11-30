@@ -101,6 +101,18 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             children: model_info?.version,
           },
           {
+            key: 'architecture',
+            label: t('modelStore.Architecture'),
+            children: null,
+            // children: model_info?.architecture,
+          },
+          {
+            key: 'frameworks',
+            label: t('modelStore.Frameworks'),
+            children: null,
+            // children: model_info?.architecture,
+          },
+          {
             key: 'created',
             label: t('modelStore.Created'),
             children: dayjs(model_info?.created_at).format('lll'),
@@ -115,16 +127,17 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             label: t('modelStore.MinResource'),
             children: (
               <Flex gap="xs">
-                {/* <ResourceNumber
-                  key="cpu"
-                  type="cpu"
-                  value={model_info?.min_resource?.cpu.toString()}
-                /> */}
-                {/* <ResourceNumber
-                  key="mem"
-                  type="mem"
-                  value={(model_info?.min_resource?.memory).toString()}
-                /> */}
+                {model_info?.min_resource &&
+                  _.map(JSON.parse(model_info?.min_resource), (value, type) => {
+                    return (
+                      <ResourceNumber
+                        key={type}
+                        // @ts-ignore
+                        type={type}
+                        value={_.toString(value)}
+                      />
+                    );
+                  })}
               </Flex>
             ),
           },
