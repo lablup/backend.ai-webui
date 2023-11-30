@@ -1,4 +1,3 @@
-import { cy } from 'date-fns/locale';
 import {findShadowRoot} from '../helper/FindShadowRoot.cy';
 
 Cypress.Commands.add('userProfileChange', (userName, originalPassword, newPassword) => {
