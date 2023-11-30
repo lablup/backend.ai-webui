@@ -105,7 +105,7 @@ export default class BackendAISummary extends BackendAIPage {
         extension: 'dmg',
       },
       Windows: {
-        os: 'win32',
+        os: 'win',
         architecture: ['arm64', 'x64'],
         extension: 'zip',
       },
