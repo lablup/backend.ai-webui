@@ -1,5 +1,4 @@
 import { theme } from 'antd';
-import _ from 'lodash';
 import React from 'react';
 
 interface TextHighlighterProps {

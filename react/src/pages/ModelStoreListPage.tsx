@@ -5,7 +5,6 @@ import { ModelCardModalFragment$key } from '../components/__generated__/ModelCar
 import { useUpdatableState } from '../hooks';
 import { ModelStoreListPageQuery } from './__generated__/ModelStoreListPageQuery.graphql';
 import { ReloadOutlined } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
 import { Button, Card, Input, List, Select, Tag, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';

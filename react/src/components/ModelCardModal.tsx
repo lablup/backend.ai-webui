@@ -11,8 +11,6 @@ import {
   Button,
   Card,
   Descriptions,
-  Divider,
-  Form,
   Modal,
   ModalProps,
   Tag,
@@ -27,7 +25,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Paragraph } = Typography;
 
 interface ModelCardModalProps extends ModalProps {
   modelCardModalFrgmt?: ModelCardModalFragment$key | null;
