@@ -1,4 +1,5 @@
 import { useBackendaiImageMetaData } from '../hooks';
+import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
 import { ModelCardModalFragment$key } from './__generated__/ModelCardModalFragment.graphql';
@@ -31,7 +32,7 @@ import { useFragment } from 'react-relay';
 
 const { Title, Paragraph } = Typography;
 
-interface ModelCardModalProps extends ModalProps {
+interface ModelCardModalProps extends BAIModalProps {
   modelCardModalFrgmt?: ModelCardModalFragment$key | null;
   onRequestClose: () => void;
 }
@@ -71,7 +72,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
   );
 
   return (
-    <Modal
+    <BAIModal
       {...props}
       title={model_info?.title || model_info?.name}
       centered
@@ -95,7 +96,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
     >
       <Flex
         direction="row"
-        align="stretch"
+        align="center"
         style={{ marginBottom: token.marginSM }}
         gap={'xs'}
         wrap="wrap"
@@ -329,7 +330,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           </Card>
         </Col>
       </Row>
-    </Modal>
+    </BAIModal>
   );
 };
 
