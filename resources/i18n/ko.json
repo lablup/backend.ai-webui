@@ -448,7 +448,9 @@
     "Commit": "커밋하기",
     "Reset": "초기화",
     "Unset": "초기화",
-    "OK": "확인"
+    "OK": "확인",
+    "Download": "__NOT_TRANSLATED__",
+    "Clone": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "엔드포인트",

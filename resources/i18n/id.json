@@ -401,7 +401,9 @@
     "Reset": "Atur Ulang",
     "EnterManually": "Masukkan Secara Manual",
     "Unset": "Tidak diatur",
-    "OK": "BAIKLAH."
+    "OK": "BAIKLAH.",
+    "Download": "__NOT_TRANSLATED__",
+    "Clone": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Titik akhir",
