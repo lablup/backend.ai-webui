@@ -1460,6 +1460,7 @@
     "HealthCheck": "健康检查",
     "Port": "港口",
     "StartCommand": "启动命令",
-    "PreStartActions": "开始前的行动"
+    "PreStartActions": "开始前的行动",
+    "Framework": "框架"
   }
 }

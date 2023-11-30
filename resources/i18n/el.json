@@ -1460,6 +1460,7 @@
     "HealthCheck": "Ελεγχος υγείας",
     "Port": "Λιμάνι",
     "StartCommand": "Εκκίνηση Εντολή",
-    "PreStartActions": "Ενέργειες πριν από την έναρξη"
+    "PreStartActions": "Ενέργειες πριν από την έναρξη",
+    "Framework": "Πλαίσιο"
   }
 }

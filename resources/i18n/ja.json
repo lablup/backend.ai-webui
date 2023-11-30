@@ -1460,6 +1460,7 @@
     "HealthCheck": "健康診断",
     "Port": "ポート",
     "StartCommand": "開始コマンド",
-    "PreStartActions": "開始前のアクション"
+    "PreStartActions": "開始前のアクション",
+    "Framework": "フレームワーク"
   }
 }

@@ -1462,6 +1462,7 @@
     "HealthCheck": "Kontrola zdrowia",
     "Port": "Port",
     "StartCommand": "Uruchom polecenie",
-    "PreStartActions": "Działania przed rozpoczęciem"
+    "PreStartActions": "Działania przed rozpoczęciem",
+    "Framework": "Ramy"
   }
 }

@@ -1460,6 +1460,7 @@
     "HealthCheck": "Cek kesehatan",
     "Port": "Pelabuhan",
     "StartCommand": "Mulai Perintah",
-    "PreStartActions": "Tindakan Pra Mulai"
+    "PreStartActions": "Tindakan Pra Mulai",
+    "Framework": "Kerangka kerja"
   }
 }

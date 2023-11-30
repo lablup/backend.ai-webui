@@ -1460,6 +1460,7 @@
     "HealthCheck": "Gesundheitskontrolle",
     "Port": "Hafen",
     "StartCommand": "Befehl starten",
-    "PreStartActions": "Aktionen vor dem Start"
+    "PreStartActions": "Aktionen vor dem Start",
+    "Framework": "Rahmenwerk"
   }
 }

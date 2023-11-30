@@ -1462,6 +1462,7 @@
     "HealthCheck": "Проверка здоровья",
     "Port": "Порт",
     "StartCommand": "Запустить команду",
-    "PreStartActions": "Предстартовые действия"
+    "PreStartActions": "Предстартовые действия",
+    "Framework": "Рамка"
   }
 }

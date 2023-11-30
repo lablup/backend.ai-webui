@@ -1459,6 +1459,7 @@
     "HealthCheck": "Kiểm tra sức khỏe",
     "Port": "Hải cảng",
     "StartCommand": "Bắt đầu lệnh",
-    "PreStartActions": "Hành động trước khi bắt đầu"
+    "PreStartActions": "Hành động trước khi bắt đầu",
+    "Framework": "Khung"
   }
 }

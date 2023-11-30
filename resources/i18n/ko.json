@@ -1460,6 +1460,7 @@
     "HealthCheck": "건강 체크",
     "Port": "포트",
     "StartCommand": "시작 명령",
-    "PreStartActions": "시작 전 작업"
+    "PreStartActions": "시작 전 작업",
+    "Framework": "프레임워크"
   }
 }

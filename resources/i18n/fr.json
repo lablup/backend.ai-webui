@@ -1460,6 +1460,7 @@
     "HealthCheck": "Bilan de santé",
     "Port": "Port",
     "StartCommand": "Démarrer la commande",
-    "PreStartActions": "Actions préalables au démarrage"
+    "PreStartActions": "Actions préalables au démarrage",
+    "Framework": "Le cadre"
   }
 }

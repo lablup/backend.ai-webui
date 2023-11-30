@@ -1101,6 +1101,8 @@ type ModelInfo implements AsyncNode {
   description: String
   task: String
   category: String
+  architecture: String
+  framework: [String]
   label: [String]
   license: String
   min_resource: JSONString

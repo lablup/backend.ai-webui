@@ -1460,6 +1460,7 @@
     "MaxRetries": "Max Retries",
     "Port": "Port",
     "StartCommand": "Start Command",
-    "SearchModels": "Search Models"
+    "SearchModels": "Search Models",
+    "Framework": "Framework"
   }
 }

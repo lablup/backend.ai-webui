@@ -1460,6 +1460,7 @@
     "HealthCheck": "Terveystarkastus",
     "Port": "Portti",
     "StartCommand": "Käynnistä komento",
-    "PreStartActions": "Aloitustoiminnot"
+    "PreStartActions": "Aloitustoiminnot",
+    "Framework": "Puitteet"
   }
 }

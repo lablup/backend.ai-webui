@@ -1460,6 +1460,7 @@
     "HealthCheck": "Эрүүл мэндийн үзлэг",
     "Port": "Порт",
     "StartCommand": "Эхлэх тушаал",
-    "PreStartActions": "Эхлэхийн өмнөх үйлдлүүд"
+    "PreStartActions": "Эхлэхийн өмнөх үйлдлүүд",
+    "Framework": "Хүрээ"
   }
 }

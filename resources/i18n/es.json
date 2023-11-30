@@ -1460,6 +1460,7 @@
     "HealthCheck": "Chequeo de salud",
     "Port": "Puerto",
     "StartCommand": "Comando de inicio",
-    "PreStartActions": "Acciones previas al inicio"
+    "PreStartActions": "Acciones previas al inicio",
+    "Framework": "Marco"
   }
 }

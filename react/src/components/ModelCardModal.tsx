@@ -1,3 +1,4 @@
+import { useBackendaiImageMetaData } from '../hooks';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
 import { ModelCardModalFragment$key } from './__generated__/ModelCardModalFragment.graphql';
@@ -34,6 +35,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
+  const [metadata] = useBackendaiImageMetaData();
   const model_info = useFragment(
     graphql`
       fragment ModelCardModalFragment on ModelInfo {
@@ -52,6 +54,8 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
         label
         license
         min_resource
+        architecture
+        framework
       }
     `,
     modelCardModalFrgmt,
@@ -89,6 +93,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
         title={t('modelStore.Metadata')}
         column={1}
         size="small"
+        bordered
         items={[
           {
             key: 'author',
@@ -102,15 +107,41 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           },
           {
             key: 'architecture',
-            label: t('modelStore.Architecture'),
-            children: null,
-            // children: model_info?.architecture,
+            label: t('environment.Architecture'),
+            children: model_info?.architecture,
           },
           {
             key: 'frameworks',
-            label: t('modelStore.Frameworks'),
-            children: null,
-            // children: model_info?.architecture,
+            label: t('modelStore.Framework'),
+            children: (
+              <Flex direction="row" gap={'xs'}>
+                {_.map(
+                  _.castArray(model_info?.framework),
+                  (framework: string) => {
+                    const targetImageKey = framework.replace(/\s*\d+\s*$/, '');
+                    const imageInfo = _.find(
+                      metadata?.imageInfo,
+                      (imageInfo) => imageInfo.name === targetImageKey,
+                    );
+                    return imageInfo?.icon ? (
+                      <Flex gap={'xxs'}>
+                        <img
+                          style={{
+                            width: '1em',
+                            height: '1em',
+                          }}
+                          src={'resources/icons/' + imageInfo?.icon}
+                          alt={framework}
+                        />
+                        {framework}
+                      </Flex>
+                    ) : (
+                      <Typography.Text>{framework}</Typography.Text>
+                    );
+                  },
+                )}
+              </Flex>
+            ),
           },
           {
             key: 'created',

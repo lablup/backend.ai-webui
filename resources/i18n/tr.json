@@ -1460,6 +1460,7 @@
     "HealthCheck": "Sağlık kontrolü",
     "Port": "Liman",
     "StartCommand": "Komutu Başlat",
-    "PreStartActions": "Başlangıç ​​Öncesi Eylemler"
+    "PreStartActions": "Başlangıç ​​Öncesi Eylemler",
+    "Framework": "Çerçeve"
   }
 }
