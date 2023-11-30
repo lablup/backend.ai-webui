@@ -111,6 +111,7 @@ const ModelStoreListPage: React.FC = () => {
         )}
       />
       <ModelCardModal
+        modelCardModalFrgmt={currentModelInfo}
         open={!!currentModelInfo}
         onRequestClose={() => {
           setCurrentModelInfo(null);

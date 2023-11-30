@@ -59,8 +59,14 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
     <Modal
       {...props}
       title={model_info?.title || model_info?.name}
+      onCancel={onRequestClose}
       footer={
-        <Button type="primary" onClick={onRequestClose}>
+        <Button
+          type="primary"
+          onClick={() => {
+            onRequestClose();
+          }}
+        >
           {t('button.Close')}
         </Button>
       }
@@ -107,11 +113,11 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             label: t('modelStore.MinResource'),
             children: (
               <Flex gap="xs">
-                <ResourceNumber
+                {/* <ResourceNumber
                   key="cpu"
                   type="cpu"
                   value={model_info?.min_resource?.cpu.toString()}
-                />
+                /> */}
                 {/* <ResourceNumber
                   key="mem"
                   type="mem"
