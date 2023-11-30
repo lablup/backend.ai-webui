@@ -691,12 +691,13 @@ export default class BackendAiStorageList extends BackendAIPage {
           ></vaadin-grid-column>
           ${this.enableStorageProxy
             ? html`
-                <!--<vaadin-grid-column
-                auto-width flex-grow="0" resizable header="${_t(
-                  'data.folders.Cloneable',
-                )}"
-                .renderer="${this
-                  ._boundCloneableRenderer}"></vaadin-grid-column>-->
+                <vaadin-grid-column
+                  auto-width
+                  flex-grow="0"
+                  resizable
+                  header="${_t('data.folders.Cloneable')}"
+                  .renderer="${this._boundCloneableRenderer}"
+                ></vaadin-grid-column>
               `
             : html``}
           <vaadin-grid-column
@@ -773,13 +774,15 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-select>
           ${this.enableStorageProxy
             ? html`
-                <!--<div class="horizontal layout flex wrap center justified">
-            <p style="color:rgba(0, 0, 0, 0.6);">
-              ${_t('data.folders.Cloneable')}
-            </p>
-            <mwc-switch id="update-folder-cloneable" style="margin-right:10px;">
-            </mwc-switch>
-          </div>-->
+                <div class="horizontal layout flex wrap center justified">
+                  <p style="color:rgba(0, 0, 0, 0.6);">
+                    ${_t('data.folders.Cloneable')}
+                  </p>
+                  <mwc-switch
+                    id="update-folder-cloneable"
+                    style="margin-right:10px;"
+                  ></mwc-switch>
+                </div>
               `
             : html``}
         </div>
@@ -1878,13 +1881,12 @@ export default class BackendAiStorageList extends BackendAIPage {
             text="${_t('data.folders.FolderInfo')}"
             position="top-start"
           ></vaadin-tooltip>
-          <!--${this._hasPermission(rowData.item, 'r') &&
-          this.enableStorageProxy
+          ${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy
             ? html`
                 <mwc-icon-button
                   class="fg blue controls-running"
                   icon="content_copy"
-                  disabled
+                  ?disabled=${!rowData.item.cloneable}
                   @click="${() => {
                     this._requestCloneFolder(rowData.item);
                   }}"
@@ -1896,7 +1898,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                   position="top-start"
                 ></vaadin-tooltip>
               `
-            : html``}-->
+            : html``}
           ${rowData.item.is_owner
             ? html`
                 <mwc-icon-button
@@ -2860,9 +2862,10 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {HTMLElement} selectedItem - selected Vfolder to clone
    */
   _requestCloneFolder(selectedItem) {
-    // temporary diable cloning folder until the logic of cloning large size of virtual folder is optimized
-    /* const event = new CustomEvent('backend-ai-vfolder-cloning', {'detail': selectedItem});
-    document.dispatchEvent(event); */
+    const event = new CustomEvent('backend-ai-vfolder-cloning', {
+      detail: selectedItem,
+    });
+    document.dispatchEvent(event);
   }
 
   /**

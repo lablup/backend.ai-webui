@@ -549,13 +549,15 @@ export default class BackendAIData extends BackendAIPage {
             : html``}
           ${this.enableStorageProxy
             ? html`
-                <!--<div class="horizontal layout flex wrap center justified">
-              <p style="color:rgba(0, 0, 0, 0.6);">
-                ${_t('data.folders.Cloneable')}
-              </p>
-              <mwc-switch id="add-folder-cloneable" style="margin-right:10px;">
-              </mwc-switch>
-            </div>-->
+                <div class="horizontal layout flex wrap center justified">
+                  <p style="color:rgba(0, 0, 0, 0.6);">
+                    ${_t('data.folders.Cloneable')}
+                  </p>
+                  <mwc-switch
+                    id="add-folder-cloneable"
+                    style="margin-right:10px;"
+                  ></mwc-switch>
+                </div>
               `
             : html``}
           <div style="font-size:11px;">
