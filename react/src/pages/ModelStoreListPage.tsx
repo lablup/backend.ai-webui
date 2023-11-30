@@ -59,7 +59,7 @@ const ModelStoreListPage: React.FC = () => {
             hasNextPage
             hasPreviousPage
           }
-          ...UserResourcePolicySettingModalFragment
+          ...ModelCardModalFragment
         }
       }
     `,
