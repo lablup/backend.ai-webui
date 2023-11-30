@@ -52,6 +52,7 @@ const ModelStoreListPage: React.FC = () => {
               label
               license
               min_resource
+              ...ModelCardModalFragment
             }
           }
           count
@@ -59,7 +60,6 @@ const ModelStoreListPage: React.FC = () => {
             hasNextPage
             hasPreviousPage
           }
-          ...ModelCardModalFragment
         }
       }
     `,
@@ -91,7 +91,11 @@ const ModelStoreListPage: React.FC = () => {
       <List
         dataSource={model_infos?.edges?.map((edge) => edge?.node)}
         renderItem={(item) => (
-          <List.Item>
+          <List.Item
+            onClick={() => {
+              setCurrentModelInfo(item);
+            }}
+          >
             <Card title={item?.title} size="small">
               <Tag bordered={false}>{item?.category}</Tag>
               <Tag bordered={false} color="success">
@@ -106,15 +110,12 @@ const ModelStoreListPage: React.FC = () => {
           </List.Item>
         )}
       />
-
-      {/* TODO: DELETE THESE CODES. THESE ARE FOR TESTING ONLY. */}
-      <Button onClick={toggleIsOpenModelCard}>Model Card</Button>
       <ModelCardModal
-        open={isOpenModelCard}
-        onCancel={toggleIsOpenModelCard}
-        onOk={toggleIsOpenModelCard}
+        open={!!currentModelInfo}
+        onRequestClose={() => {
+          setCurrentModelInfo(null);
+        }}
       />
-      {/* END OF TODO */}
     </Flex>
   );
 };

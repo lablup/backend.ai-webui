@@ -3,6 +3,7 @@ import ResourceNumber from './ResourceNumber';
 import { ModelCardModalFragment$key } from './__generated__/ModelCardModalFragment.graphql';
 import { BankOutlined } from '@ant-design/icons';
 import {
+  Button,
   Descriptions,
   Divider,
   Form,
@@ -23,11 +24,11 @@ const { Title, Paragraph, Text } = Typography;
 
 interface ModelCardModalProps extends ModalProps {
   modelCardModalFrgmt?: ModelCardModalFragment$key | null;
-  onOk?: (result: any) => void;
+  onRequestClose: () => void;
 }
 const ModelCardModal: React.FC<ModelCardModalProps> = ({
   modelCardModalFrgmt = null,
-  onOk,
+  onRequestClose,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -36,6 +37,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
   const model_info = useFragment(
     graphql`
       fragment ModelCardModalFragment on ModelInfo {
+        id
         name
         author
         title
@@ -54,7 +56,15 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
   );
 
   return (
-    <Modal {...props} title={model_info?.title || model_info?.name}>
+    <Modal
+      {...props}
+      title={model_info?.title || model_info?.name}
+      footer={
+        <Button type="primary" onClick={onRequestClose}>
+          {t('button.Close')}
+        </Button>
+      }
+    >
       <Flex justify="start" align="start">
         <Tag bordered={false}>{model_info?.category}</Tag>
         <Tag bordered={false} color="success">
