@@ -128,8 +128,8 @@
     "Unset": "Sin configurar",
     "Update": "Actualización",
     "Yes": "Sí",
-    "Download": "__NOT_TRANSLATED__",
-    "Clone": "__NOT_TRANSLATED__"
+    "Download": "Descargar",
+    "Clone": "Clon"
   },
   "credential": {
     "AccessKeyOptional": "Clave de acceso (opcional)",

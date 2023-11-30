@@ -401,8 +401,8 @@
     "OK": "okey",
     "Commit": "komited",
     "EnterManually": "Masukkan Secara Manual",
-    "Download": "__NOT_TRANSLATED__",
-    "Clone": "__NOT_TRANSLATED__"
+    "Download": "Muat turun",
+    "Clone": "Klon"
   },
   "agent": {
     "Endpoint": "Titik Akhir",

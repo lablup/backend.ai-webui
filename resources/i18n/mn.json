@@ -402,8 +402,8 @@
     "EnterManually": "Гараар оруулна уу",
     "Unset": "Тохируулаагүй",
     "OK": "БОЛЖ БАЙНА УУ",
-    "Download": "__NOT_TRANSLATED__",
-    "Clone": "__NOT_TRANSLATED__"
+    "Download": "Татаж авах",
+    "Clone": "Клон"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",

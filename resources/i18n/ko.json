@@ -449,8 +449,8 @@
     "Reset": "초기화",
     "Unset": "초기화",
     "OK": "확인",
-    "Download": "__NOT_TRANSLATED__",
-    "Clone": "__NOT_TRANSLATED__"
+    "Download": "다운로드",
+    "Clone": "복사"
   },
   "agent": {
     "Endpoint": "엔드포인트",

@@ -404,8 +404,8 @@
     "EnterManually": "Ввести вручную",
     "Unset": "Unset",
     "OK": "OK",
-    "Download": "__NOT_TRANSLATED__",
-    "Clone": "__NOT_TRANSLATED__"
+    "Download": "Скачать",
+    "Clone": "Клон"
   },
   "agent": {
     "Endpoint": "Конечная точка",

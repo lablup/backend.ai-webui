@@ -402,8 +402,8 @@
     "OK": "OK",
     "Commit": "Compromisso",
     "EnterManually": "Introduzir manualmente",
-    "Download": "__NOT_TRANSLATED__",
-    "Clone": "__NOT_TRANSLATED__"
+    "Download": "Descarregar",
+    "Clone": "Clone"
   },
   "agent": {
     "Endpoint": "Endpoint",

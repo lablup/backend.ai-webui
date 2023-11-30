@@ -401,8 +401,8 @@
     "OK": "ĐƯỢC RỒI",
     "Commit": "Làm",
     "EnterManually": "Nhập thủ công",
-    "Download": "__NOT_TRANSLATED__",
-    "Clone": "__NOT_TRANSLATED__"
+    "Download": "Tải xuống",
+    "Clone": "Dòng vô tính"
   },
   "agent": {
     "Endpoint": "Điểm cuối",

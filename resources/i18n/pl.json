@@ -404,8 +404,8 @@
     "OK": "OK",
     "Commit": "Zobowiązanie",
     "EnterManually": "Wprowadź ręcznie",
-    "Download": "__NOT_TRANSLATED__",
-    "Clone": "__NOT_TRANSLATED__"
+    "Download": "Pobierz",
+    "Clone": "Klon"
   },
   "agent": {
     "Endpoint": "Punkt końcowy",

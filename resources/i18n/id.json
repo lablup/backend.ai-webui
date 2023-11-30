@@ -402,8 +402,8 @@
     "EnterManually": "Masukkan Secara Manual",
     "Unset": "Tidak diatur",
     "OK": "BAIKLAH.",
-    "Download": "__NOT_TRANSLATED__",
-    "Clone": "__NOT_TRANSLATED__"
+    "Download": "Unduh",
+    "Clone": "Clone"
   },
   "agent": {
     "Endpoint": "Titik akhir",

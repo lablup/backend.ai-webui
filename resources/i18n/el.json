@@ -402,8 +402,8 @@
     "OK": "OK",
     "Commit": "Δέσμευση",
     "EnterManually": "Εισάγετε χειροκίνητα",
-    "Download": "__NOT_TRANSLATED__",
-    "Clone": "__NOT_TRANSLATED__"
+    "Download": "Λήψη",
+    "Clone": "Κλώνος"
   },
   "agent": {
     "Endpoint": "Τελικό σημείο",

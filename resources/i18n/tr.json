@@ -402,8 +402,8 @@
     "OK": "TAMAM.",
     "Commit": "Taahhüt",
     "EnterManually": "Manuel Olarak Girin",
-    "Download": "__NOT_TRANSLATED__",
-    "Clone": "__NOT_TRANSLATED__"
+    "Download": "İndir",
+    "Clone": "Klon"
   },
   "agent": {
     "Endpoint": "uç nokta",

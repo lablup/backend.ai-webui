@@ -402,8 +402,8 @@
     "EnterManually": "Saisie manuelle",
     "Unset": "Non défini",
     "OK": "OK",
-    "Download": "__NOT_TRANSLATED__",
-    "Clone": "__NOT_TRANSLATED__"
+    "Download": "Télécharger",
+    "Clone": "Clone"
   },
   "agent": {
     "Endpoint": "Point de terminaison",
