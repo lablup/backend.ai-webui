@@ -101,7 +101,7 @@ export default class BackendAISummary extends BackendAIPage {
       },
       MacOS: {
         os: 'macos',
-        architecture: ['intel', 'apple'],
+        architecture: ['arm64', 'x64'],
         extension: 'dmg',
       },
       Windows: {
