@@ -1468,6 +1468,7 @@
     "Framework": "Rahmenwerk",
     "Category": "Kategorien",
     "Label": "Etikett",
-    "Task": "Aufgabe"
+    "Task": "Aufgabe",
+    "CloneAsFolder": "als Ordner klonen"
   }
 }

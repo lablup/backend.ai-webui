@@ -642,7 +642,8 @@
     "SearchModels": "__NOT_TRANSLATED__",
     "Category": "__NOT_TRANSLATED__",
     "Task": "__NOT_TRANSLATED__",
-    "Label": "__NOT_TRANSLATED__"
+    "Label": "__NOT_TRANSLATED__",
+    "CloneAsFolder": "kloonata kansioksi"
   },
   "resourcePreset": {
     "ResourcePresets": "__NOT_TRANSLATED__",

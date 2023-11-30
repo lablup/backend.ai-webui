@@ -1468,6 +1468,7 @@
     "Framework": "Çerçeve",
     "Category": "Kategori",
     "Label": "Etiket",
-    "Task": "Görev"
+    "Task": "Görev",
+    "CloneAsFolder": "Klasör olarak klonla"
   }
 }

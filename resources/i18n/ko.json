@@ -1469,6 +1469,7 @@
     "category": "카테고리",
     "Category": "카테고리",
     "Label": "레이블",
-    "Task": "작업"
+    "Task": "작업",
+    "CloneAsFolder": "새 폴더로 복사"
   }
 }

@@ -1468,6 +1468,7 @@
     "Framework": "フレームワーク",
     "Category": "カテゴリー",
     "Label": "ラベル",
-    "Task": "タスク"
+    "Task": "タスク",
+    "CloneAsFolder": "フォルダとしてクローン"
   }
 }

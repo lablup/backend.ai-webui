@@ -1468,6 +1468,7 @@
     "Framework": "Πλαίσιο",
     "Category": "Κατηγορίες",
     "Label": "Ετικέτα",
-    "Task": "Εργασία"
+    "Task": "Εργασία",
+    "CloneAsFolder": "clone as Folder"
   }
 }

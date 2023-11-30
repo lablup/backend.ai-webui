@@ -1468,6 +1468,7 @@
     "Framework": "Struttura",
     "Category": "Categorie",
     "Label": "Etichetta",
-    "Task": "Compito"
+    "Task": "Compito",
+    "CloneAsFolder": "clonare come cartella"
   }
 }

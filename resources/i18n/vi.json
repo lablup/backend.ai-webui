@@ -1467,6 +1467,7 @@
     "Framework": "Khung",
     "Category": "Loại",
     "Label": "Nhãn",
-    "Task": "Nhiệm vụ"
+    "Task": "Nhiệm vụ",
+    "CloneAsFolder": "sao chép dưới dạng Thư mục"
   }
 }

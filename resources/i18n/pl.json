@@ -1470,6 +1470,7 @@
     "Framework": "Ramy",
     "Category": "Kategoria",
     "Label": "Etykieta",
-    "Task": "Zadanie"
+    "Task": "Zadanie",
+    "CloneAsFolder": "sklonuj jako Folder"
   }
 }

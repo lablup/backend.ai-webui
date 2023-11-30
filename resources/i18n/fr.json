@@ -1468,6 +1468,7 @@
     "Framework": "Le cadre",
     "Category": "Catégories",
     "Label": "Étiquette",
-    "Task": "Tâche"
+    "Task": "Tâche",
+    "CloneAsFolder": "cloner en tant que dossier"
   }
 }

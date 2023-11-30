@@ -1468,6 +1468,7 @@
     "Framework": "Marco",
     "Category": "Categorías",
     "Label": "Etiqueta",
-    "Task": "Tarea"
+    "Task": "Tarea",
+    "CloneAsFolder": "clonar como carpeta"
   }
 }

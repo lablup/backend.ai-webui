@@ -1,6 +1,7 @@
 import { useBackendaiImageMetaData } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
+import ModelCloneModal from './ModelCloneModal';
 import ResourceNumber from './ResourceNumber';
 import { ModelCardModalFragment$key } from './__generated__/ModelCardModalFragment.graphql';
 import {
@@ -26,7 +27,7 @@ import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import Markdown from 'markdown-to-jsx';
-import React from 'react';
+import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
@@ -43,6 +44,8 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+
+  const [visibleCloneModal, setVisibleCloneModal] = useState(false);
 
   const screen = Grid.useBreakpoint();
   const [metadata] = useBackendaiImageMetaData();
@@ -138,7 +141,17 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             ghost
             icon={<CopyOutlined />}
             size="small"
-            disabled
+            onClick={() => {
+              // const event = new CustomEvent('backend-ai-vfolder-cloning', {
+              //   detail: {
+              //     // TODO: change this to vfolder name
+              //     name: model_info?.name,
+              //   },
+              // });
+              // onRequestClose();
+              // document.dispatchEvent(event);
+              setVisibleCloneModal(true);
+            }}
           >
             {t('button.Clone')}
           </Button>
@@ -277,6 +290,18 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           </Card>
         </Col>
       </Row>
+      <Suspense>
+        <ModelCloneModal
+          title={t('modelStore.CloneAsFolder')}
+          open={visibleCloneModal}
+          onOk={() => {
+            setVisibleCloneModal(false);
+          }}
+          onCancel={() => {
+            setVisibleCloneModal(false);
+          }}
+        />
+      </Suspense>
     </BAIModal>
   );
 };

@@ -1468,6 +1468,7 @@
     "Framework": "Enquadramento",
     "Category": "Categoria",
     "Label": "Etiqueta",
-    "Task": "Tarefa"
+    "Task": "Tarefa",
+    "CloneAsFolder": "clonar como Pasta"
   }
 }

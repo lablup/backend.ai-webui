@@ -1468,6 +1468,7 @@
     "Framework": "Framework",
     "Category": "Category",
     "Label": "Label",
-    "Task": "Task"
+    "Task": "Task",
+    "CloneAsFolder": "clone as Folder"
   }
 }

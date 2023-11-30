@@ -16,7 +16,7 @@ export type VolumeInfo = {
 };
 interface Props extends Omit<SelectProps, 'value' | 'onChange'> {
   value?: string | VolumeInfo;
-  onChange: (hostName: string, volumeInfo: VolumeInfo) => void;
+  onChange?: (hostName: string, volumeInfo: VolumeInfo) => void;
   autoSelectDefault?: boolean;
 }
 const StorageSelector: React.FC<Props> = ({

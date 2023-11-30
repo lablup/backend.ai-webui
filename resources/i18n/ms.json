@@ -1467,6 +1467,7 @@
     "Framework": "Rangka kerja",
     "Category": "kategori",
     "Label": "Label",
-    "Task": "Tugasan"
+    "Task": "Tugasan",
+    "CloneAsFolder": "klon sebagai Folder"
   }
 }

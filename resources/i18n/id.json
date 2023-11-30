@@ -1468,6 +1468,7 @@
     "Framework": "Kerangka kerja",
     "Category": "Kategori",
     "Label": "Label",
-    "Task": "Tugas"
+    "Task": "Tugas",
+    "CloneAsFolder": "mengkloning sebagai Folder"
   }
 }
