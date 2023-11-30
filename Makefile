@@ -79,8 +79,13 @@ dep:
 		mkdir -p ./build/electron-app/node_modules/markty; \
 		mkdir -p ./build/electron-app/node_modules/markty-toml; \
 		mkdir -p ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme; \
+		mkdir -p ./build/electron-app/node_modules/mime-types; \
+		mkdir -p ./build/electron-app/node_modules/mime-db; \
+		mkdir -p ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme; \
 		cp -Rp ./node_modules/markty ./build/electron-app/node_modules; \
 		cp -Rp ./node_modules/markty-toml ./build/electron-app/node_modules; \
+		cp -Rp ./node_modules/mime-types ./build/electron-app/node_modules; \
+		cp -Rp ./node_modules/mime-db ./build/electron-app/node_modules; \
 		cp -Rp ./node_modules/@vanillawc/wc-codemirror/theme/monokai.css ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme/monokai.css; \
 		cp ./preload.js ./build/electron-app/preload.js; \
 	fi
