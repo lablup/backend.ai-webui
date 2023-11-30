@@ -692,7 +692,9 @@
     "DialogDataFolder": "Pipeline-spezifische Ordner, die bei der Erstellung von Pipelines in FastTrack automatisch erstellt werden.",
     "DialogModelFolder": "Sie können Modelle bedienen und verwalten.",
     "SearchByName": "Suche mit Name",
-    "ModelStore": ""
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

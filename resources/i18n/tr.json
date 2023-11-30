@@ -692,7 +692,9 @@
     "DialogDataFolder": "FastTrack'te boru hatları oluşturulurken otomatik olarak oluşturulan boru hattına özel klasörler.",
     "DialogModelFolder": "Modellere hizmet verebilir ve yönetebilirsiniz.",
     "SearchByName": "Ada göre ara",
-    "ModelStore": ""
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

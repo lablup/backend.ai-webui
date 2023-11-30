@@ -374,7 +374,9 @@
       "used": "usado"
     },
     "SearchByName": "Buscar por nombre",
-    "ModelStore": ""
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "ErrorOccurred": "Se ha producido un error",

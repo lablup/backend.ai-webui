@@ -692,7 +692,9 @@
     "DialogDataFolder": "Ειδικοί φάκελοι αγωγών που δημιουργούνται αυτόματα κατά τη δημιουργία αγωγών στο FastTrack.",
     "DialogModelFolder": "Μπορείτε να εξυπηρετείτε και να διαχειρίζεστε μοντέλα.",
     "SearchByName": "Αναζήτηση με όνομα",
-    "ModelStore": ""
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

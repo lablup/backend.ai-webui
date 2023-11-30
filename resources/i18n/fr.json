@@ -692,7 +692,9 @@
     "Pipeline": "Dossiers du pipeline",
     "DialogDataFolder": "Dossiers dédiés aux pipelines qui sont automatiquement créés lors de la création de pipelines dans FastTrack.",
     "SearchByName": "Rechercher par nom",
-    "ModelStore": ""
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

@@ -691,7 +691,9 @@
     "DialogDataFolder": "Folder khusus saluran paip yang dibuat secara automatik apabila membuat saluran paip dalam FastTrack.",
     "DialogModelFolder": "Anda boleh berkhidmat dan mengurus model.",
     "SearchByName": "Cari mengikut nama",
-    "ModelStore": ""
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

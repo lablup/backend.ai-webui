@@ -692,7 +692,9 @@
     "DialogDataFolder": "FastTrackでパイプライン作成時に自動的に生成されるパイプライン専用フォルダ。",
     "DialogModelFolder": "モデルを選択して実行したり、モデルを管理することができます。",
     "SearchByName": "名前で検索",
-    "ModelStore": ""
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

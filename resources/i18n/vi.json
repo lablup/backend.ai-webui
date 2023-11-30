@@ -691,7 +691,9 @@
     "DialogDataFolder": "Các thư mục dành riêng cho đường dẫn được tạo tự động khi tạo đường dẫn trong FastTrack.",
     "DialogModelFolder": "Bạn có thể phục vụ và quản lý các mô hình.",
     "SearchByName": "Tìm kiếm theo tên",
-    "ModelStore": ""
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

@@ -338,7 +338,7 @@ export default class BackendAIData extends BackendAIPage {
                 @click="${() => this._addFolderDialog()}"
                 style="margin-right:15px;"
               >
-                <span>${_t('data.NewFolder')}</span>
+                <span>${_t('data.Add')}</span>
               </mwc-button>
             </h3>
             <div id="general-folder-lists" class="tab-content">
