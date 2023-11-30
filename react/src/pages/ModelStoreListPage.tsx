@@ -178,17 +178,17 @@ const ModelStoreListPage: React.FC = () => {
         dataSource={model_infos?.edges
           ?.map((edge) => edge?.node)
           .filter((info) => {
+            let inSearchResult = true;
             if (search) {
               const searchLower = search.toLowerCase();
-              console.log(selectedTasks);
-              return (
+              inSearchResult =
                 info?.title?.toLowerCase().includes(searchLower) ||
                 info?.task?.toLowerCase().includes(searchLower) ||
                 info?.category?.toLowerCase().includes(searchLower) ||
                 info?.label?.some(
                   (label) => label?.toLowerCase().includes(searchLower),
-                )
-              );
+                ) ||
+                false;
             }
 
             return (
@@ -197,7 +197,8 @@ const ModelStoreListPage: React.FC = () => {
               (_.isEmpty(selectedLabels) ||
                 _.intersection(selectedLabels, info?.label).length > 0) &&
               (_.isEmpty(selectedTasks) ||
-                _.includes(selectedTasks, info?.task))
+                _.includes(selectedTasks, info?.task)) &&
+              inSearchResult
             );
           })}
         renderItem={(item) => (
