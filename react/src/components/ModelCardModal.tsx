@@ -65,6 +65,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
     <Modal
       {...props}
       title={model_info?.title || model_info?.name}
+      centered
       onCancel={onRequestClose}
       footer={
         <Button
