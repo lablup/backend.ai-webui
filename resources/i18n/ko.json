@@ -1463,6 +1463,10 @@
     "Port": "포트",
     "StartCommand": "시작 명령",
     "PreStartActions": "시작 전 작업",
-    "Framework": "프레임워크"
+    "Framework": "프레임워크",
+    "category": "카테고리",
+    "Category": "카테고리",
+    "Label": "레이블",
+    "Task": "작업"
   }
 }

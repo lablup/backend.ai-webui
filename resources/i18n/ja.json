@@ -1463,6 +1463,9 @@
     "Port": "ポート",
     "StartCommand": "開始コマンド",
     "PreStartActions": "開始前のアクション",
-    "Framework": "フレームワーク"
+    "Framework": "フレームワーク",
+    "Category": "カテゴリー",
+    "Label": "ラベル",
+    "Task": "タスク"
   }
 }

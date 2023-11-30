@@ -6,8 +6,7 @@ import { useUpdatableState } from '../hooks';
 import { ModelStoreListPageQuery } from './__generated__/ModelStoreListPageQuery.graphql';
 import { ReloadOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Button, Card, Form, Input, List, Table, Tag, theme } from 'antd';
-import { useForm } from 'antd/es/form/Form';
+import { Button, Card, Input, List, Select, Tag, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useMemo, useState, useTransition } from 'react';
@@ -20,22 +19,14 @@ const ModelStoreListPage: React.FC = () => {
   const { token } = theme.useToken();
 
   const [search, setSearch] = useState<string>();
-  const [searchForm] = useForm<{
-    search: string;
-  }>();
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
+  const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
 
   const [currentModelInfo, setCurrentModelInfo] =
     useState<ModelCardModalFragment$key | null>();
 
   const [isPendingRefetching, startRefetchingTransition] = useTransition();
-  // const queryVariables = useMemo(
-  //   () => ({
-  //     filter: search,
-  //   }),
-  //   [search],
-  // );
-
-  const [isOpenModelCard, { toggle: toggleIsOpenModelCard }] = useToggle();
 
   const { model_infos } = useLazyLoadQuery<ModelStoreListPageQuery>(
     graphql`
@@ -74,6 +65,33 @@ const ModelStoreListPage: React.FC = () => {
     },
   );
 
+  // const filterInfo = _.map
+
+  const fieldsValues = useMemo(() => {
+    const result: {
+      task: string[];
+      category: string[];
+      label: string[];
+    } = { task: [], category: [], label: [] };
+    const fields = ['task', 'category', 'label'] as const;
+    // Initialize result object with empty arrays for each field
+    fields.forEach((field) => (result[field] = []));
+
+    // Traverse the JSON object
+    model_infos?.edges.forEach((edge) => {
+      fields.forEach((field) => {
+        // Check if the field exists in the node
+        if (edge?.node?.[field]) {
+          _.map(_.castArray(edge.node[field]), (newValue) => {
+            if (_.isString(newValue) && !result[field].includes(newValue)) {
+              result[field].push(newValue);
+            }
+          });
+        }
+      });
+    });
+    return result;
+  }, [model_infos?.edges]);
   return (
     <Flex
       direction="column"
@@ -82,28 +100,79 @@ const ModelStoreListPage: React.FC = () => {
       gap="lg"
       style={{ padding: token.paddingLG }}
     >
-      <Flex direction="row" gap={'md'}>
-        <Form form={searchForm} style={{ flex: 1 }}>
-          <Form.Item name="search" noStyle>
-            <Input.Search
-              placeholder={t('modelStore.SearchModels')}
-              allowClear
-              onChange={(e) => {
-                setSearch(e.target.value);
-              }}
-              autoComplete="off"
-            />
-          </Form.Item>
-        </Form>
-        <Button
-          icon={<ReloadOutlined />}
-          onClick={() => {
-            startRefetchingTransition(() => {
-              updateFetchKey();
-            });
-          }}
-          loading={isPendingRefetching}
-        />
+      <Flex
+        direction="column"
+        align="stretch"
+        className="filterWrap"
+        gap={'xs'}
+      >
+        <Flex direction="row" gap={'md'}>
+          <Input.Search
+            placeholder={t('modelStore.SearchModels')}
+            allowClear
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+            autoComplete="off"
+          />
+          <Button
+            icon={<ReloadOutlined />}
+            onClick={() => {
+              startRefetchingTransition(() => {
+                updateFetchKey();
+              });
+            }}
+            loading={isPendingRefetching}
+          />
+        </Flex>
+        <Flex direction="row" gap={'md'} wrap="wrap">
+          <Select
+            style={{ minWidth: 150 }}
+            placeholder={t('modelStore.Category')}
+            options={_.map(fieldsValues.category, (t) => ({
+              label: t,
+              value: t,
+            }))}
+            mode={'multiple'}
+            popupMatchSelectWidth={false}
+            value={selectedCategories}
+            onChange={(value) => {
+              setSelectedCategories(value as string[]);
+            }}
+            allowClear
+          />
+          <Select
+            style={{ minWidth: 150 }}
+            placeholder={t('modelStore.Task')}
+            options={_.map(fieldsValues.task, (t) => ({
+              label: t,
+              value: t,
+            }))}
+            mode={'multiple'}
+            popupMatchSelectWidth={false}
+            value={selectedTasks}
+            onChange={(value) => {
+              console.log(value);
+              setSelectedTasks(value as string[]);
+            }}
+            allowClear
+          />
+          <Select
+            style={{ minWidth: 150 }}
+            placeholder={t('modelStore.Label')}
+            options={_.map(fieldsValues.label, (t) => ({
+              label: t,
+              value: t,
+            }))}
+            mode={'multiple'}
+            popupMatchSelectWidth={false}
+            value={selectedLabels}
+            onChange={(value) => {
+              setSelectedLabels(value as string[]);
+            }}
+            allowClear
+          />
+        </Flex>
       </Flex>
       <List
         grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 3, xl: 4, xxl: 5 }}
@@ -112,6 +181,7 @@ const ModelStoreListPage: React.FC = () => {
           .filter((info) => {
             if (search) {
               const searchLower = search.toLowerCase();
+              console.log(selectedTasks);
               return (
                 info?.title?.toLowerCase().includes(searchLower) ||
                 info?.task?.toLowerCase().includes(searchLower) ||
@@ -121,6 +191,16 @@ const ModelStoreListPage: React.FC = () => {
                 )
               );
             }
+            if (selectedCategories.length) {
+              return _.includes(selectedCategories, info?.category);
+            }
+            if (selectedLabels.length) {
+              return _.intersection(selectedLabels, info?.label).length > 0;
+            }
+            if (selectedTasks.length) {
+              return _.includes(selectedTasks, info?.task);
+            }
+
             return true;
           })}
         renderItem={(item) => (
@@ -130,6 +210,7 @@ const ModelStoreListPage: React.FC = () => {
             }}
           >
             <Card
+              hoverable
               title={
                 <TextHighlighter keyword={search}>
                   {item?.title}

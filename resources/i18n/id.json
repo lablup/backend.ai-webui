@@ -1463,6 +1463,9 @@
     "Port": "Pelabuhan",
     "StartCommand": "Mulai Perintah",
     "PreStartActions": "Tindakan Pra Mulai",
-    "Framework": "Kerangka kerja"
+    "Framework": "Kerangka kerja",
+    "Category": "Kategori",
+    "Label": "Label",
+    "Task": "Tugas"
   }
 }

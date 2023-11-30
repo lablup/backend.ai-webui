@@ -1463,6 +1463,9 @@
     "Port": "Port",
     "StartCommand": "Démarrer la commande",
     "PreStartActions": "Actions préalables au démarrage",
-    "Framework": "Le cadre"
+    "Framework": "Le cadre",
+    "Category": "Catégories",
+    "Label": "Étiquette",
+    "Task": "Tâche"
   }
 }

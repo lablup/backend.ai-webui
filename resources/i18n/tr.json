@@ -1463,6 +1463,9 @@
     "Port": "Liman",
     "StartCommand": "Komutu Başlat",
     "PreStartActions": "Başlangıç ​​Öncesi Eylemler",
-    "Framework": "Çerçeve"
+    "Framework": "Çerçeve",
+    "Category": "Kategori",
+    "Label": "Etiket",
+    "Task": "Görev"
   }
 }

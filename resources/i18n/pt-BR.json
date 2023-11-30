@@ -1463,6 +1463,9 @@
     "Port": "Porta",
     "StartCommand": "Comando Iniciar",
     "PreStartActions": "Ações pré-início",
-    "Framework": "Enquadramento"
+    "Framework": "Enquadramento",
+    "Category": "Categoria",
+    "Label": "Etiqueta",
+    "Task": "Tarefa"
   }
 }

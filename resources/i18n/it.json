@@ -1463,6 +1463,9 @@
     "Port": "Porta",
     "StartCommand": "Avvia comando",
     "PreStartActions": "Azioni pre-avvio",
-    "Framework": "Struttura"
+    "Framework": "Struttura",
+    "Category": "Categorie",
+    "Label": "Etichetta",
+    "Task": "Compito"
   }
 }

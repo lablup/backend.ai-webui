@@ -1463,6 +1463,9 @@
     "Port": "Port",
     "StartCommand": "Start Command",
     "SearchModels": "Search Models",
-    "Framework": "Framework"
+    "Framework": "Framework",
+    "Category": "Category",
+    "Label": "Label",
+    "Task": "Task"
   }
 }

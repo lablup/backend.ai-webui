@@ -1463,6 +1463,9 @@
     "Port": "Hafen",
     "StartCommand": "Befehl starten",
     "PreStartActions": "Aktionen vor dem Start",
-    "Framework": "Rahmenwerk"
+    "Framework": "Rahmenwerk",
+    "Category": "Kategorien",
+    "Label": "Etikett",
+    "Task": "Aufgabe"
   }
 }

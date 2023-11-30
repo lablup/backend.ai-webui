@@ -1463,6 +1463,9 @@
     "Port": "Порт",
     "StartCommand": "Эхлэх тушаал",
     "PreStartActions": "Эхлэхийн өмнөх үйлдлүүд",
-    "Framework": "Хүрээ"
+    "Framework": "Хүрээ",
+    "Category": "ангилал",
+    "Label": "Шошго",
+    "Task": "Даалгавар"
   }
 }

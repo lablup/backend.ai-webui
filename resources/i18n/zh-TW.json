@@ -1463,6 +1463,9 @@
     "Port": "港口",
     "StartCommand": "啟動命令",
     "PreStartActions": "開始前的行動",
-    "Framework": "框架"
+    "Framework": "框架",
+    "Category": "类别",
+    "Label": "标签",
+    "Task": "任务"
   }
 }

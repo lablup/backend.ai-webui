@@ -1465,6 +1465,9 @@
     "Port": "Порт",
     "StartCommand": "Запустить команду",
     "PreStartActions": "Предстартовые действия",
-    "Framework": "Рамка"
+    "Framework": "Рамка",
+    "Category": "Категория",
+    "Label": "Этикетка",
+    "Task": "Задание"
   }
 }

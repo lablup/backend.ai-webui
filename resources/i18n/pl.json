@@ -1465,6 +1465,9 @@
     "Port": "Port",
     "StartCommand": "Uruchom polecenie",
     "PreStartActions": "Działania przed rozpoczęciem",
-    "Framework": "Ramy"
+    "Framework": "Ramy",
+    "Category": "Kategoria",
+    "Label": "Etykieta",
+    "Task": "Zadanie"
   }
 }

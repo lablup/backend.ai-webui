@@ -1462,6 +1462,9 @@
     "Port": "Hải cảng",
     "StartCommand": "Bắt đầu lệnh",
     "PreStartActions": "Hành động trước khi bắt đầu",
-    "Framework": "Khung"
+    "Framework": "Khung",
+    "Category": "Loại",
+    "Label": "Nhãn",
+    "Task": "Nhiệm vụ"
   }
 }

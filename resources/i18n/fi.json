@@ -1463,6 +1463,9 @@
     "Port": "Portti",
     "StartCommand": "Käynnistä komento",
     "PreStartActions": "Aloitustoiminnot",
-    "Framework": "Puitteet"
+    "Framework": "Puitteet",
+    "Category": "Kategoriat",
+    "Label": "Tarra",
+    "Task": "Tehtävä"
   }
 }
