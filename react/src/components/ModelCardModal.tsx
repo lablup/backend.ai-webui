@@ -116,7 +116,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           {model_info?.description}
         </Paragraph>
         <Title level={5}>README.md</Title>
-        <Card>
+        <Card size="small">
           <Markdown>{`
 ## Hello
 - item1
