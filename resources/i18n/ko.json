@@ -1470,6 +1470,8 @@
     "Category": "카테고리",
     "Label": "레이블",
     "Task": "작업",
-    "CloneAsFolder": "새 폴더로 복사"
+    "CloneAsFolder": "새 폴더로 복사",
+    "CloneSuccess": "복사 요청이 성공적으로 보내졌습니다.",
+    "CloneInfo": "사용자 폴더로 복제됩니다."
   }
 }

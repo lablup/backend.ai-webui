@@ -1469,6 +1469,8 @@
     "Category": "Categorías",
     "Label": "Etiqueta",
     "Task": "Tarea",
-    "CloneAsFolder": "clonar como carpeta"
+    "CloneAsFolder": "clonar como carpeta",
+    "CloneSuccess": "La solicitud de clonación se ha enviado correctamente.",
+    "CloneInfo": "Se clonará en su carpeta de tipo de usuario."
   }
 }

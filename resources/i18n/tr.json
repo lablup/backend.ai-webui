@@ -1469,6 +1469,8 @@
     "Category": "Kategori",
     "Label": "Etiket",
     "Task": "Görev",
-    "CloneAsFolder": "Klasör olarak klonla"
+    "CloneAsFolder": "Klasör olarak klonla",
+    "CloneSuccess": "Klonlama isteği başarıyla gönderildi.",
+    "CloneInfo": "Kullanıcı tipi klasörünüze klonlanacaktır."
   }
 }

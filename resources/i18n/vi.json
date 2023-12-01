@@ -1468,6 +1468,8 @@
     "Category": "Loại",
     "Label": "Nhãn",
     "Task": "Nhiệm vụ",
-    "CloneAsFolder": "sao chép dưới dạng Thư mục"
+    "CloneAsFolder": "sao chép dưới dạng Thư mục",
+    "CloneSuccess": "Yêu cầu nhân bản đã được gửi thành công.",
+    "CloneInfo": "Nó sẽ được sao chép vào thư mục loại người dùng của bạn."
   }
 }

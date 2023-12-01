@@ -1469,6 +1469,8 @@
     "Category": "Category",
     "Label": "Label",
     "Task": "Task",
-    "CloneAsFolder": "clone as Folder"
+    "CloneAsFolder": "clone as Folder",
+    "CloneSuccess": "The clone request has been sent successfully.",
+    "CloneInfo": "It will be cloned into your user type folder."
   }
 }

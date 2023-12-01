@@ -1471,6 +1471,8 @@
     "Category": "Kategoria",
     "Label": "Etykieta",
     "Task": "Zadanie",
-    "CloneAsFolder": "sklonuj jako Folder"
+    "CloneAsFolder": "sklonuj jako Folder",
+    "CloneSuccess": "Żądanie klonowania zostało wysłane pomyślnie.",
+    "CloneInfo": "Zostanie on sklonowany do folderu typu użytkownika."
   }
 }

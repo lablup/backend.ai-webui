@@ -1469,6 +1469,8 @@
     "Category": "Kategorien",
     "Label": "Etikett",
     "Task": "Aufgabe",
-    "CloneAsFolder": "als Ordner klonen"
+    "CloneAsFolder": "als Ordner klonen",
+    "CloneSuccess": "Die Klonanfrage wurde erfolgreich gesendet.",
+    "CloneInfo": "Sie wird in Ihren Benutzertyp-Ordner geklont."
   }
 }

@@ -1469,6 +1469,8 @@
     "Category": "Κατηγορίες",
     "Label": "Ετικέτα",
     "Task": "Εργασία",
-    "CloneAsFolder": "clone as Folder"
+    "CloneAsFolder": "clone as Folder",
+    "CloneSuccess": "Η αίτηση κλωνοποίησης έχει σταλεί με επιτυχία.",
+    "CloneInfo": "Θα κλωνοποιηθεί στο φάκελο τύπου χρήστη σας."
   }
 }

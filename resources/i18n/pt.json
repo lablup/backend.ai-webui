@@ -1469,6 +1469,8 @@
     "Category": "Categoria",
     "Label": "Etiqueta",
     "Task": "Tarefa",
-    "CloneAsFolder": "clonar como Pasta"
+    "CloneAsFolder": "clonar como Pasta",
+    "CloneSuccess": "O pedido de clone foi enviado com sucesso.",
+    "CloneInfo": "Será clonado na sua pasta de tipo de utilizador."
   }
 }

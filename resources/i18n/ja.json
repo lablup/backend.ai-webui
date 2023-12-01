@@ -1469,6 +1469,8 @@
     "Category": "カテゴリー",
     "Label": "ラベル",
     "Task": "タスク",
-    "CloneAsFolder": "フォルダとしてクローン"
+    "CloneAsFolder": "フォルダとしてクローン",
+    "CloneSuccess": "クローン要求は正常に送信された。",
+    "CloneInfo": "ユーザータイプのフォルダにクローンされます。"
   }
 }
