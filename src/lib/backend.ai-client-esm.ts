@@ -668,6 +668,7 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('24.03.0')) {
       this._features['max-vfolder-count-in-user-resource-policy'] = true;
+      this._features['model-store'] = true;
     }
   }
 
@@ -4075,7 +4076,7 @@ class Group {
     ],
   ): Promise<any> {
     let q, v;
-    if (this.client.is_admin === true) {
+    if (this.client.supports('model-store')) {
       q =
         `query($is_active:Boolean, $type:[String!]) {` +
         `  groups(is_active:$is_active, type:$type) { ${fields.join(' ')} }` +
@@ -4095,11 +4096,25 @@ class Group {
         };
       }
     } else {
+      // remove 'type' from fields
+      fields = fields.filter((item) => item !== 'type');
       q =
         `query($is_active:Boolean) {` +
-        `  groups(is_active:$is_active, $type: [String!]) { ${fields.join(' ')} }` +
+        `  groups(is_active:$is_active) { ${fields.join(' ')} }` +
         '}';
-      v = { is_active: is_active, type: type };
+      v = { is_active: is_active };
+      if (domain_name) {
+        q =
+          `query($domain_name: String, $is_active:Boolean) {` +
+          `  groups(domain_name: $domain_name, is_active:$is_active) { ${fields.join(
+            ' ',
+          )} }` +
+          '}';
+        v = {
+          is_active: is_active,
+          domain_name: domain_name,
+        };
+      }
     }
     return this.client.query(q, v);
   }
