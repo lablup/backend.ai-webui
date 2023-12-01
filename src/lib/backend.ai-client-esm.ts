@@ -668,6 +668,7 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('24.03.0')) {
       this._features['max-vfolder-count-in-user-resource-policy'] = true;
+      this._features['model-store'] = true;
     }
   }
 
