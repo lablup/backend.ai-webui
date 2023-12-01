@@ -112,6 +112,16 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           <Tag bordered={false} color="success" style={{ marginRight: 0 }}>
             {model_info?.task}
           </Tag>
+          {_.map(model_info?.label, (label) => (
+            <Tag
+              key={label}
+              bordered={false}
+              color="blue"
+              style={{ marginRight: 0 }}
+            >
+              {label}
+            </Tag>
+          ))}
           <Tag
             icon={<BankOutlined />}
             bordered={false}
