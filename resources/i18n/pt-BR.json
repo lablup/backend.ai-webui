@@ -1422,7 +1422,8 @@
     "RoutingsCount": "Contagem de rotas",
     "Active/Total": "Ativo/Total",
     "Public": "Público",
-    "YouAreAboutToTerminate": "Está prestes a terminar"
+    "YouAreAboutToTerminate": "Está prestes a terminar",
+    "TableColumnSetting": "Configuração de coluna de tabela"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

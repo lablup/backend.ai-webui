@@ -1382,7 +1382,8 @@
     "RoutingsCount": "Güzergah Sayısı",
     "Active/Total": "Aktif/Toplam",
     "Public": "Kamu",
-    "YouAreAboutToTerminate": "Sonlandırmak üzeresiniz"
+    "YouAreAboutToTerminate": "Sonlandırmak üzeresiniz",
+    "TableColumnSetting": "Tablo Sütunu Ayarı"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

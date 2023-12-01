@@ -1421,7 +1421,8 @@
     "RoutingsCount": "Kiraan Laluan",
     "Active/Total": "Aktif/Jumlah",
     "Public": "Awam",
-    "YouAreAboutToTerminate": "Anda akan menamatkan perkhidmatan"
+    "YouAreAboutToTerminate": "Anda akan menamatkan perkhidmatan",
+    "TableColumnSetting": "Tetapan Lajur Jadual"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

@@ -1384,7 +1384,8 @@
     "RoutingsCount": "Liczba tras",
     "Active/Total": "Aktywny/Ogółem",
     "Public": "Publiczny",
-    "YouAreAboutToTerminate": "Zamierzasz zakończyć"
+    "YouAreAboutToTerminate": "Zamierzasz zakończyć",
+    "TableColumnSetting": "Ustawienie kolumny tabeli"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",

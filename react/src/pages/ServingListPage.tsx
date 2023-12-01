@@ -3,9 +3,9 @@ import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
-import TableColumnsSetting, {
+import TableColumnsSettingModal, {
   ColumnsSettingKeyType,
-} from '../components/TableColumnsSetting';
+} from '../components/TableColumnsSettingModal';
 import { baiSignedRequestWithPromise } from '../helper';
 import {
   useCurrentProjectValue,
@@ -27,7 +27,6 @@ import {
 import { useRafInterval } from 'ahooks';
 import { useLocalStorageState } from 'ahooks';
 import { Button, Table, Tabs, Typography, theme } from 'antd';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
@@ -60,6 +59,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { token } = theme.useToken();
   const curProject = useCurrentProjectValue();
   const [isOpenServiceLauncher, setIsOpenServiceLauncher] = useState(false);
+  const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const [selectedModelService, setSelectedModelService] = useState<Endpoint>();
   const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] =
     useState(false);
@@ -440,13 +440,16 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             />
           </Suspense>
         </Flex>
-        <TableColumnsSetting
-          columns={columns}
-          selectKeys={selectedKeys ? selectedKeys : []}
-          onChange={(selectedKeys: ColumnsSettingKeyType[]) => {
-            setSelectedKeys(selectedKeys);
-          }}
-        />
+        <Flex justify="end">
+          <Button
+            type="primary"
+            onClick={() => {
+              setIsOpenColumnsSetting(true);
+            }}
+          >
+            {t('modelService.TableColumnSetting')}
+          </Button>
+        </Flex>
       </Flex>
       <BAIModal
         open={isOpenModelServiceTerminatingModal}
@@ -502,6 +505,15 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               updateServicesFetchKey();
             });
           }
+        }}
+      />
+      <TableColumnsSettingModal
+        open={isOpenColumnsSetting}
+        onRequestClose={() => setIsOpenColumnsSetting(false)}
+        columns={columns}
+        selectKeys={selectedKeys ? selectedKeys : []}
+        onChangeSelectedKeys={(selectedKeys: ColumnsSettingKeyType[]) => {
+          setSelectedKeys(selectedKeys);
         }}
       />
     </>

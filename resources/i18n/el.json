@@ -1382,7 +1382,8 @@
     "RoutingsCount": "Αριθμός δρομολογίων",
     "Active/Total": "Ενεργό/Σύνολο",
     "Public": "Δημόσιο",
-    "YouAreAboutToTerminate": "Πρόκειται να τερματίσετε"
+    "YouAreAboutToTerminate": "Πρόκειται να τερματίσετε",
+    "TableColumnSetting": "Ρύθμιση στήλης πίνακα"
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",
