@@ -4060,6 +4060,7 @@ class Group {
    * };
    */
   async list(
+    type = ["GENERAL", "MODEL_STORE"],
     is_active = true,
     domain_name = false,
     fields = [
@@ -4076,28 +4077,29 @@ class Group {
     let q, v;
     if (this.client.is_admin === true) {
       q =
-        `query($is_active:Boolean) {` +
-        `  groups(is_active:$is_active) { ${fields.join(' ')} }` +
+        `query($is_active:Boolean, $type:[String!]) {` +
+        `  groups(is_active:$is_active, type:$type) { ${fields.join(' ')} }` +
         '}';
-      v = { is_active: is_active };
+      v = { is_active: is_active, type: type };
       if (domain_name) {
         q =
-          `query($domain_name: String, $is_active:Boolean) {` +
-          `  groups(domain_name: $domain_name, is_active:$is_active) { ${fields.join(
+          `query($domain_name: String, $is_active:Boolean, $type:[String!]) {` +
+          `  groups(domain_name: $domain_name, is_active:$is_active, type:$type) { ${fields.join(
             ' ',
           )} }` +
           '}';
         v = {
           is_active: is_active,
           domain_name: domain_name,
+          type: type,
         };
       }
     } else {
       q =
         `query($is_active:Boolean) {` +
-        `  groups(is_active:$is_active) { ${fields.join(' ')} }` +
+        `  groups(is_active:$is_active, $type: [String!]) { ${fields.join(' ')} }` +
         '}';
-      v = { is_active: is_active };
+      v = { is_active: is_active, type: type };
     }
     return this.client.query(q, v);
   }
