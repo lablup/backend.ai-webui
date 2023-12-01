@@ -29,10 +29,13 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
     return Object({ label: column.title, value: column.key });
   });
   const handleOk = () => {
-    form.validateFields().then((values) => {
-      onChangeSelectedKeys(values.columnsSetting);
-      onRequestClose();
-    });
+    form
+      .validateFields()
+      .then((values) => {
+        onChangeSelectedKeys(values.columnsSetting);
+        onRequestClose();
+      })
+      .catch(() => {});
   };
 
   return (
@@ -54,7 +57,7 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
         >
           <Checkbox.Group
             options={optionsList}
-            style={{ alignItems: 'center', display: 'block' }}
+            style={{ flexDirection: 'column' }}
           />
         </Form.Item>
       </Form>
