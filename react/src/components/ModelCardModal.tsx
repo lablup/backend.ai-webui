@@ -91,11 +91,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           {t('button.Close')}
         </Button>,
       ]}
-      styles={{
-        body: {
-          // maxHeight: 'calc(100vh - 150px)',
-        },
-      }}
     >
       <Flex
         direction="row"
@@ -168,8 +163,8 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
               style={{
                 whiteSpace: 'pre-wrap',
                 minHeight: screen.lg ? 100 : undefined,
-                height: screen.lg ? 'calc(100vh - 594px)' : undefined,
-                maxHeight: 'calc(100vh - 594px)',
+                height: screen.lg ? 'calc(100vh - 590px)' : undefined,
+                maxHeight: 'calc(100vh - 590px)',
                 overflow: 'auto',
               }}
             >
@@ -281,7 +276,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             bodyStyle={{
               padding: token.paddingLG,
               overflow: 'auto',
-              height: screen.lg ? 'calc(100vh - 220px)' : undefined,
+              height: screen.lg ? 'calc(100vh - 243px)' : undefined,
               minHeight: 200,
               // maxHeight: 650
             }}
