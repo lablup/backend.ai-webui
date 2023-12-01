@@ -699,12 +699,12 @@ export default class BackendAiStorageList extends BackendAIPage {
                   ._boundCloneableRenderer}"></vaadin-grid-column>-->
               `
             : html``}
-          <!--<vaadin-grid-column
+          <vaadin-grid-column
             auto-width
             resizable
             header="${_t('data.folders.Control')}"
             .renderer="${this._boundControlFolderListRenderer}"
-          ></vaadin-grid-column>-->
+          ></vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status
           id="list-status"
