@@ -4061,7 +4061,6 @@ class Group {
    * };
    */
   async list(
-    type = ["GENERAL", "MODEL_STORE"],
     is_active = true,
     domain_name = false,
     fields = [
@@ -4074,6 +4073,7 @@ class Group {
       'domain_name',
       'type',
     ],
+    type = ["GENERAL"],
   ): Promise<any> {
     let q, v;
     if (this.client.supports('model-store')) {

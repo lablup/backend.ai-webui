@@ -472,6 +472,10 @@ export default class BackendAIData extends BackendAIPage {
             <mwc-select
               id="add-folder-type"
               label="${_t('data.Type')}"
+              style="width:${!this.is_admin ||
+              !this.allowed_folder_type.includes('group')
+                ? '100%'
+                : '50%'}"
               @change=${() => {
                 this._toggleFolderTypeInput();
                 this._toggleGroupSelect();
@@ -496,20 +500,28 @@ export default class BackendAIData extends BackendAIPage {
                   `
                 : html``}
             </mwc-select>
-            <mwc-select
-              class="fixed-position"
-              id="add-folder-group"
-              label="${_t('data.Project')}"
-              FixedMenuPosition
-            >
-              ${this.groupListByUsage.map(
-                (item, idx) => html`
-                  <mwc-list-item value="${item.name}" ?selected="${idx === 0}">
-                    ${item.name}
-                  </mwc-list-item>
-                `,
-              )}
-            </mwc-select>
+            ${this.is_admin && this.allowed_folder_type.includes('group')
+              ? html`
+                  <mwc-select
+                    class="fixed-position"
+                    id="add-folder-group"
+                    ?disabled=${this.folderType === 'user'}
+                    label="${_t('data.Project')}"
+                    FixedMenuPosition
+                  >
+                    ${this.groupListByUsage.map(
+                      (item, idx) => html`
+                        <mwc-list-item
+                          value="${item.name}"
+                          ?selected="${idx === 0}"
+                        >
+                          ${item.name}
+                        </mwc-list-item>
+                      `,
+                    )}
+                  </mwc-select>
+                `
+              : html``}
           </div>
           ${this._vfolderInnatePermissionSupport
             ? html`
@@ -1028,16 +1040,25 @@ export default class BackendAIData extends BackendAIPage {
     } else {
       this.vhost = this.selectedVhost = vhostInfo.default;
     }
-    const group_info = await globalThis.backendaiclient.group.list();
-    [this.allowedModelTypeGroups, this.allowedGroups] =
-      group_info.groups.reduce(
-        (result, element) => {
-          result[element.type === 'MODEL_STORE' ? 0 : 1].push(element);
-          return result;
-        },
-        [[], []],
+    if (this.allowed_folder_type.includes('group')) {
+      const group_info = await globalThis.backendaiclient.group.list(
+        undefined,
+        undefined,
+        undefined,
+        ['GENERAL', 'MODEL_STORE'],
       );
-    this._toggleGroupSelect();
+      this.allowedModelTypeGroups = [];
+      this.allowedGroups = [];
+
+      group_info?.groups?.forEach((element) => {
+        if (element.type === 'MODEL_STORE') {
+          this.allowedModelTypeGroups.push(element);
+        } else {
+          this.allowedGroups.push(element);
+        }
+      });
+      this._toggleGroupSelect();
+    }
     this.openDialog('add-folder-dialog');
   }
 
@@ -1088,25 +1109,23 @@ export default class BackendAIData extends BackendAIPage {
    * - only disable when (folderType is not 'user') and folderUsageMode is not 'Model'
    */
   _toggleGroupSelect() {
-    this.addFolderGroupSelect.disabled =
-      this.addFolderTypeSelect?.value === 'user' &&
-      this.addFolderUsageModeSelect?.value !== 'Model';
     this.groupListByUsage =
       this.addFolderUsageModeSelect?.value !== 'Model'
         ? this.allowedGroups
-        : this.allowedModelTypeGroups;
-    this.addFolderGroupSelect.layout(true).then(() => {
-      if (this.groupListByUsage.length > 0) {
-        // select the first item as a default
-        this.addFolderGroupSelect.select(0);
-        // FIXME: manually set selected text to follow updated list-item
-        (this.addFolderGroupSelect as any)
-          .createAdapter()
-          .setSelectedText(this.groupListByUsage[0]['name']);
-      } else {
-        this.addFolderGroupSelect.disabled = true;
-      }
-    });
+        : [...this.allowedGroups, ...this.allowedModelTypeGroups];
+    this.addFolderGroupSelect &&
+      this.addFolderGroupSelect.layout(true).then(() => {
+        if (this.groupListByUsage.length > 0) {
+          // select the first item as a default
+          this.addFolderGroupSelect.select(0);
+          // FIXME: manually set selected text to follow updated list-item
+          (this.addFolderGroupSelect as any)
+            .createAdapter()
+            .setSelectedText(this.groupListByUsage[0]['name']);
+        } else {
+          this.addFolderGroupSelect.disabled = true;
+        }
+      });
   }
 
   /**

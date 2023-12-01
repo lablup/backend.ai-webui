@@ -1740,12 +1740,12 @@ export default class BackendAILogin extends BackendAIPage {
         if (['superadmin'].includes(role)) {
           globalThis.backendaiclient.is_superadmin = true;
         }
-        return globalThis.backendaiclient.group.list(
-          ['GENERAL', 'MODEL_STORE'],
-          true,
-          false,
-          ['id', 'name', 'description', 'is_active'],
-        );
+        return globalThis.backendaiclient.group.list(true, false, [
+          'id',
+          'name',
+          'description',
+          'is_active',
+        ]);
       })
       .then(async (response) => {
         const groups = response.groups;
