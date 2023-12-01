@@ -1,15 +1,10 @@
-import {
-  useCurrentDomainValue,
-  useCurrentProjectValue,
-  useSuspendedBackendaiClient,
-} from '../hooks';
-import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useTanMutation } from '../hooks/reactQueryAlias';
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import StorageSelector from './StorageSelector';
 import { Alert, Form, Input, Select, Switch, message } from 'antd';
-import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 interface ModelCloneModalProps extends BAIModalProps {
@@ -24,12 +19,12 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
   const [form] = Form.useForm();
   const painKiller = usePainKiller();
 
-  const { data: allowed_vfolder_types } = useTanQuery({
-    queryKey: ['modelCloneModal', 'vfolder_allowed_types'],
-    queryFn: () => {
-      return baiClient.vfolder.list_allowed_types();
-    },
-  });
+  // const { data: allowed_vfolder_types } = useTanQuery({
+  //   queryKey: ['modelCloneModal', 'vfolder_allowed_types'],
+  //   queryFn: () => {
+  //     return baiClient.vfolder.list_allowed_types();
+  //   },
+  // });
 
   const mutationToClone = useTanMutation({
     // @ts-ignore

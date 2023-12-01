@@ -16,8 +16,6 @@ import {
   Col,
   Descriptions,
   Grid,
-  Modal,
-  ModalProps,
   Row,
   Tag,
   Typography,
