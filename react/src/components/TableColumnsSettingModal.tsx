@@ -1,8 +1,9 @@
 import { Endpoint } from '../pages/ServingListPage';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import { Checkbox, Form } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { Checkbox, Input, theme, Form } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type ColumnsSettingKeyType = string;
@@ -23,19 +24,19 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
   onChangeSelectedKeys,
   ...modalProps
 }) => {
-  const { t } = useTranslation();
   const [form] = Form.useForm();
-  const optionsList = columns.map((column) => {
-    return Object({ label: column.title, value: column.key });
-  });
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const [searchColumn, setSearchColumn] = useState('');
+
+  const filteredColumns = columns.filter((column) =>
+    RegExp(searchColumn).test(String(column.title)),
+  );
+
   const handleOk = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        onChangeSelectedKeys(values.columnsSetting);
-        onRequestClose();
-      })
-      .catch(() => {});
+    form.validateFields().then((values) => {
+      console.log(values.selectedKeys);
+    });
   };
 
   return (
@@ -46,17 +47,24 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
       onCancel={onRequestClose}
       {...modalProps}
     >
+      <Input
+        prefix={<SearchOutlined />}
+        style={{ marginBottom: token.marginSM }}
+        onChange={(e) => {
+          setSearchColumn(e.target.value);
+        }}
+      />
       <Form
         form={form}
-        initialValues={{ columnsSetting: selectKeys }}
-        layout="vertical"
+        initialValues={{
+          selectedKeys: columns
+            .filter((column) => selectKeys.includes(String(column.key)))
+            .map((column) => String(column.title)),
+        }}
       >
-        <Form.Item
-          name="columnsSetting"
-          label={t('modelService.TableColumnSetting')}
-        >
+        <Form.Item name="selectedKeys">
           <Checkbox.Group
-            options={optionsList}
+            options={filteredColumns.map((column) => String(column.title))}
             style={{ flexDirection: 'column' }}
           />
         </Form.Item>
