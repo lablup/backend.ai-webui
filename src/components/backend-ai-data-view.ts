@@ -18,6 +18,7 @@ import '@material/mwc-button';
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
 import { Select } from '@material/mwc-select';
+import '@material/mwc-switch';
 import { Switch } from '@material/mwc-switch';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
@@ -562,13 +563,15 @@ export default class BackendAIData extends BackendAIPage {
             : html``}
           ${this.enableStorageProxy
             ? html`
-                <!--<div class="horizontal layout flex wrap center justified">
-              <p style="color:rgba(0, 0, 0, 0.6);">
-                ${_t('data.folders.Cloneable')}
-              </p>
-              <mwc-switch id="add-folder-cloneable" style="margin-right:10px;">
-              </mwc-switch>
-            </div>-->
+                <div class="horizontal layout flex wrap center justified">
+                  <p style="color:rgba(0, 0, 0, 0.6);">
+                    ${_t('data.folders.Cloneable')}
+                  </p>
+                  <mwc-switch
+                    id="add-folder-cloneable"
+                    style="margin-right:10px;"
+                  ></mwc-switch>
+                </div>
               `
             : html``}
           <div style="font-size:11px;">
