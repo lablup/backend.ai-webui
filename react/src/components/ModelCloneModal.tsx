@@ -8,7 +8,7 @@ import { Alert, Form, Input, Select, Switch, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 interface ModelCloneModalProps extends BAIModalProps {
-  sourceFolderName?: string;
+  sourceFolderName: string;
 }
 const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
   sourceFolderName,
@@ -46,9 +46,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
             mutationToClone.mutate(
               {
                 input: values,
-                // TODO: 'testmodel' is a temporary name, please use the folder name of selected model info.
-                name: 'testmodel',
-                // name: sourceFolderName,
+                name: sourceFolderName,
               },
               {
                 onSuccess(data) {
@@ -81,8 +79,12 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
             // project: currentProject.id,
             // type: 'user',
             usage_mode: 'model',
+            target_name: sourceFolderName + '_1',
           }}
         >
+          <Form.Item label={t('data.ExistingFolderName')} required>
+            <Input value={sourceFolderName} disabled />
+          </Form.Item>
           <Form.Item
             name="target_name"
             label={t('data.Foldername')}
@@ -183,7 +185,15 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
             /> */}
             </Form.Item>
           )}
-          <Form.Item label={t('data.Permission')} name={'permission'}>
+          <Form.Item
+            label={t('data.Permission')}
+            name={'permission'}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
             <Select
               options={[
                 {

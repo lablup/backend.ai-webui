@@ -775,7 +775,7 @@
     "DialogDataFolder": "FastTrack에서 파이프라인 생성 시 자동으로 생성되는 파이프라인 전용 폴더.",
     "ModelStore": "모델 스토어",
     "New": "__NOT_TRANSLATED__",
-    "Add": "__NOT_TRANSLATED__"
+    "Add": "추가"
   },
   "dialog": {
     "warning": {

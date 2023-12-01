@@ -895,7 +895,7 @@
       "InvitationError": "__NOT_TRANSLATED__",
       "SharingError": "__NOT_TRANSLATED__"
     },
-    "Add": "__NOT_TRANSLATED__"
+    "Add": "Lisää"
   },
   "totp": {
     "TotpSetupCompleted": "__NOT_TRANSLATED__",

@@ -68,6 +68,10 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
         min_resource
         architecture
         framework
+        vfolder {
+          name
+          cloneable
+        }
       }
     `,
     modelCardModalFrgmt,
@@ -144,6 +148,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             ghost
             icon={<CopyOutlined />}
             size="small"
+            disabled={!model_info?.vfolder?.cloneable}
             onClick={() => {
               // const event = new CustomEvent('backend-ai-vfolder-cloning', {
               //   detail: {
@@ -295,6 +300,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       </Row>
       <Suspense>
         <ModelCloneModal
+          sourceFolderName={model_info?.vfolder?.name || ''}
           title={t('modelStore.CloneAsFolder')}
           open={visibleCloneModal}
           onOk={() => {
