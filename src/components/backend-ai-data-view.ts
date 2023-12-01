@@ -72,6 +72,9 @@ export default class BackendAIData extends BackendAIPage {
     'Delete',
   ];
   @property({ type: Array }) allowedGroups: GroupData[] = [];
+  @property({ type: Array }) allowedModelTypeGroups: GroupData[] = [];
+  @property({ type: Array }) groupListByUsage: GroupData[] = [];
+  @property({ type: Array }) generalTypeGroups: GroupData[] = [];
   @property({ type: Array }) allowed_folder_type: string[] = [];
   @property({ type: Object }) notification = Object();
   @property({ type: Object }) folderLists = Object();
@@ -96,6 +99,9 @@ export default class BackendAIData extends BackendAIPage {
   @property({ type: String }) folderType = 'user';
   @query('#add-folder-name') addFolderNameInput!: TextField;
   @query('#clone-folder-name') cloneFolderNameInput!: TextField;
+  @query('#add-folder-usage-mode') addFolderUsageModeSelect!: Select;
+  @query('#add-folder-group') addFolderGroupSelect!: Select;
+  @query('#add-folder-type') addFolderTypeSelect!: Select;
 
   static get styles(): CSSResultGroup {
     return [
@@ -466,11 +472,10 @@ export default class BackendAIData extends BackendAIPage {
             <mwc-select
               id="add-folder-type"
               label="${_t('data.Type')}"
-              style="width:${!this.is_admin ||
-              !this.allowed_folder_type.includes('group')
-                ? '100%'
-                : '50%'}"
-              @change=${this._toggleFolderTypeInput}
+              @change=${() => {
+                this._toggleFolderTypeInput();
+                this._toggleGroupSelect();
+              }}
               required
             >
               ${this.allowed_folder_type.includes('user')
@@ -491,28 +496,20 @@ export default class BackendAIData extends BackendAIPage {
                   `
                 : html``}
             </mwc-select>
-            ${this.is_admin && this.allowed_folder_type.includes('group')
-              ? html`
-                  <mwc-select
-                    class="fixed-position"
-                    id="add-folder-group"
-                    ?disabled=${this.folderType === 'user'}
-                    label="${_t('data.Project')}"
-                    FixedMenuPosition
-                  >
-                    ${this.allowedGroups.map(
-                      (item, idx) => html`
-                        <mwc-list-item
-                          value="${item.name}"
-                          ?selected="${idx === 0}"
-                        >
-                          ${item.name}
-                        </mwc-list-item>
-                      `,
-                    )}
-                  </mwc-select>
-                `
-              : html``}
+            <mwc-select
+              class="fixed-position"
+              id="add-folder-group"
+              label="${_t('data.Project')}"
+              FixedMenuPosition
+            >
+              ${this.groupListByUsage.map(
+                (item, idx) => html`
+                  <mwc-list-item value="${item.name}" ?selected="${idx === 0}">
+                    ${item.name}
+                  </mwc-list-item>
+                `,
+              )}
+            </mwc-select>
           </div>
           ${this._vfolderInnatePermissionSupport
             ? html`
@@ -522,6 +519,9 @@ export default class BackendAIData extends BackendAIPage {
                     id="add-folder-usage-mode"
                     label="${_t('data.UsageMode')}"
                     fixedMenuPosition
+                    @change=${() => {
+                      this._toggleGroupSelect();
+                    }}
                   >
                     ${this.usageModes.map(
                       (item, idx) => html`
@@ -913,9 +913,7 @@ export default class BackendAIData extends BackendAIPage {
   }
 */
   _toggleFolderTypeInput() {
-    this.folderType = (
-      this.shadowRoot?.querySelector('#add-folder-type') as Select
-    ).value;
+    this.folderType = this.addFolderTypeSelect.value;
   }
 
   /**
@@ -1030,10 +1028,16 @@ export default class BackendAIData extends BackendAIPage {
     } else {
       this.vhost = this.selectedVhost = vhostInfo.default;
     }
-    if (this.allowed_folder_type.includes('group')) {
-      const group_info = await globalThis.backendaiclient.group.list();
-      this.allowedGroups = group_info.groups;
-    }
+    const group_info = await globalThis.backendaiclient.group.list();
+    [this.allowedModelTypeGroups, this.allowedGroups] =
+      group_info.groups.reduce(
+        (result, element) => {
+          result[element.type === 'MODEL_STORE' ? 0 : 1].push(element);
+          return result;
+        },
+        [[], []],
+      );
+    this._toggleGroupSelect();
     this.openDialog('add-folder-dialog');
   }
 
@@ -1080,6 +1084,32 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   /**
+   * toggle visibility of group select
+   * - only disable when (folderType is not 'user') and folderUsageMode is not 'Model'
+   */
+  _toggleGroupSelect() {
+    this.addFolderGroupSelect.disabled =
+      this.addFolderTypeSelect?.value === 'user' &&
+      this.addFolderUsageModeSelect?.value !== 'Model';
+    this.groupListByUsage =
+      this.addFolderUsageModeSelect?.value !== 'Model'
+        ? this.allowedGroups
+        : this.allowedModelTypeGroups;
+    this.addFolderGroupSelect.layout(true).then(() => {
+      if (this.groupListByUsage.length > 0) {
+        // select the first item as a default
+        this.addFolderGroupSelect.select(0);
+        // FIXME: manually set selected text to follow updated list-item
+        (this.addFolderGroupSelect as any)
+          .createAdapter()
+          .setSelectedText(this.groupListByUsage[0]['name']);
+      } else {
+        this.addFolderGroupSelect.disabled = true;
+      }
+    });
+  }
+
+  /**
    * Add folder with name, host, type, usage mode and permission.
    */
   _addFolder() {
@@ -1092,13 +1122,9 @@ export default class BackendAIData extends BackendAIPage {
     if (match) {
       host = match[1];
     }
-    let ownershipType = (
-      this.shadowRoot?.querySelector('#add-folder-type') as Select
-    ).value;
+    let ownershipType = this.addFolderTypeSelect.value;
     let group;
-    const usageModeEl = this.shadowRoot?.querySelector(
-      '#add-folder-usage-mode',
-    ) as Select;
+    const usageModeEl = this.addFolderUsageModeSelect;
     const permissionEl = this.shadowRoot?.querySelector(
       '#add-folder-permission',
     ) as Select;
@@ -1115,7 +1141,7 @@ export default class BackendAIData extends BackendAIPage {
       group = '';
     } else {
       group = this.is_admin
-        ? (this.shadowRoot?.querySelector('#add-folder-group') as Select).value
+        ? this.addFolderGroupSelect.value
         : globalThis.backendaiclient.current_group;
     }
     if (usageModeEl) {
@@ -1171,7 +1197,7 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   /**
-   *
+   * Clone VFolder
    */
   async _cloneFolder() {
     const name = await this._checkFolderNameAlreadyExists(
