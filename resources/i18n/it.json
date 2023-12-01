@@ -1471,6 +1471,6 @@
     "Task": "Compito",
     "CloneAsFolder": "clonare come cartella",
     "CloneSuccess": "La richiesta di clonazione è stata inviata con successo.",
-    "CloneInfo": "Verrà clonata nella cartella del tipo di utente."
+    "CloneInfo": "Verrà clonata come cartella del tipo di utente."
   }
 }

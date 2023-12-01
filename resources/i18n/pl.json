@@ -1473,6 +1473,6 @@
     "Task": "Zadanie",
     "CloneAsFolder": "sklonuj jako Folder",
     "CloneSuccess": "Żądanie klonowania zostało wysłane pomyślnie.",
-    "CloneInfo": "Zostanie on sklonowany do folderu typu użytkownika."
+    "CloneInfo": "Zostanie on sklonowany jako folder typu użytkownika."
   }
 }

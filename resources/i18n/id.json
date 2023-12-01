@@ -1471,6 +1471,6 @@
     "Task": "Tugas",
     "CloneAsFolder": "mengkloning sebagai Folder",
     "CloneSuccess": "Permintaan kloning telah berhasil dikirim.",
-    "CloneInfo": "Ini akan dikloning ke dalam folder tipe pengguna Anda."
+    "CloneInfo": "Ini akan dikloning sebagai folder tipe pengguna Anda."
   }
 }

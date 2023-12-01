@@ -1471,6 +1471,6 @@
     "Task": "Task",
     "CloneAsFolder": "clone as Folder",
     "CloneSuccess": "The clone request has been sent successfully.",
-    "CloneInfo": "It will be cloned into your user type folder."
+    "CloneInfo": "It will be cloned as your user type folder."
   }
 }

@@ -1471,6 +1471,6 @@
     "Task": "Aufgabe",
     "CloneAsFolder": "als Ordner klonen",
     "CloneSuccess": "Die Klonanfrage wurde erfolgreich gesendet.",
-    "CloneInfo": "Sie wird in Ihren Benutzertyp-Ordner geklont."
+    "CloneInfo": "Er wird als Ihr Benutzertyp-Ordner geklont."
   }
 }

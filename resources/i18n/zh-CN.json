@@ -1471,6 +1471,6 @@
     "Task": "任务",
     "CloneAsFolder": "克隆为文件夹",
     "CloneSuccess": "克隆请求已成功发送。",
-    "CloneInfo": "它将被克隆到用户类型文件夹中。"
+    "CloneInfo": "它将被克隆为用户类型文件夹。"
   }
 }
