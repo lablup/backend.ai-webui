@@ -773,13 +773,15 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-select>
           ${this.enableStorageProxy
             ? html`
-                <!--<div class="horizontal layout flex wrap center justified">
-            <p style="color:rgba(0, 0, 0, 0.6);">
-              ${_t('data.folders.Cloneable')}
-            </p>
-            <mwc-switch id="update-folder-cloneable" style="margin-right:10px;">
-            </mwc-switch>
-          </div>-->
+                <div class="horizontal layout flex wrap center justified">
+                  <p style="color:rgba(0, 0, 0, 0.6);">
+                    ${_t('data.folders.Cloneable')}
+                  </p>
+                  <mwc-switch
+                    id="update-folder-cloneable"
+                    style="margin-right:10px;"
+                  ></mwc-switch>
+                </div>
               `
             : html``}
         </div>
