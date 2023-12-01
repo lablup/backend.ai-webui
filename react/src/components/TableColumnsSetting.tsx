@@ -1,13 +1,14 @@
 import { Endpoint } from '../pages/ServingListPage';
 import { Checkbox } from 'antd';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { ColumnsType } from 'antd/es/table';
 import React from 'react';
 
+export type ColumnsSettingKeyType = string;
+
 interface TableColumnsSettingProps {
   columns: ColumnsType<Endpoint>;
-  selectKeys: CheckboxValueType[];
-  onChange: (selectedKeys: CheckboxValueType[]) => void;
+  selectKeys: ColumnsSettingKeyType[];
+  onChange: (selectedKeys: ColumnsSettingKeyType[]) => void;
 }
 
 const TableColumnsSetting: React.FC<TableColumnsSettingProps> = ({
@@ -23,7 +24,12 @@ const TableColumnsSetting: React.FC<TableColumnsSettingProps> = ({
     <Checkbox.Group
       options={optionsList}
       defaultValue={selectKeys}
-      onChange={(selectedKeys) => onChange(selectedKeys)}
+      onChange={(selectedKeys) => {
+        const stringSelectedKeys = selectedKeys.map((selectKey) =>
+          String(selectKey),
+        );
+        onChange(stringSelectedKeys);
+      }}
       style={{ alignItems: 'center' }}
     />
   );

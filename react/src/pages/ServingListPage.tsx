@@ -3,7 +3,9 @@ import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
-import TableColumnsSetting from '../components/TableColumnsSetting';
+import TableColumnsSetting, {
+  ColumnsSettingKeyType,
+} from '../components/TableColumnsSetting';
 import { baiSignedRequestWithPromise } from '../helper';
 import {
   useCurrentProjectValue,
@@ -216,7 +218,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     },
   ];
   const [selectedKeys, setSelectedKeys] = useLocalStorageState<
-    CheckboxValueType[]
+    ColumnsSettingKeyType[]
   >('modelServingTableSelectedKeys', {
     defaultValue: columns.map((column) => {
       return String(column.key);
@@ -441,7 +443,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         <TableColumnsSetting
           columns={columns}
           selectKeys={selectedKeys ? selectedKeys : []}
-          onChange={(selectedKeys: CheckboxValueType[]) => {
+          onChange={(selectedKeys: ColumnsSettingKeyType[]) => {
             setSelectedKeys(selectedKeys);
           }}
         />
