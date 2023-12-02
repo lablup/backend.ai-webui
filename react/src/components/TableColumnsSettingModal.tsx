@@ -1,7 +1,8 @@
 import { Endpoint } from '../pages/ServingListPage';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { SearchOutlined } from '@ant-design/icons';
-import { Checkbox, Input, theme, Form } from 'antd';
+import { Checkbox, Input, theme } from 'antd';
+import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { ColumnsType } from 'antd/es/table';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,19 +25,39 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
   onChangeSelectedKeys,
   ...modalProps
 }) => {
-  const [form] = Form.useForm();
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [searchColumn, setSearchColumn] = useState('');
-
-  const filteredColumns = columns.filter((column) =>
-    RegExp(searchColumn).test(String(column.title)),
+  const [selectedTitles, setSelectedTitles] = useState(
+    columns
+      .filter((column) => selectKeys.includes(String(column.key)))
+      .map((selectedColumn) => String(selectedColumn.title)),
+  );
+  const [searchColumnsResult, setSearchColumnsResult] = useState(
+    columns
+      .filter((column) => RegExp('').test(String(column.title)))
+      .map((searchColumn) => String(searchColumn.title)),
   );
 
+  const onChangeSearchColumnsResult = (searchColumn: string) => {
+    const searchResult = columns
+      .filter((column) =>
+        RegExp(searchColumn).test(String(column.title).toLowerCase()),
+      )
+      .map((searchColumn) => String(searchColumn.title));
+    setSearchColumnsResult(searchResult);
+  };
+
+  const onChangeCheckbox = (checkedValue: CheckboxValueType[]) => {
+    const checkedTitle = checkedValue.map((title) => String(title));
+    setSelectedTitles(checkedTitle);
+  };
+
   const handleOk = () => {
-    form.validateFields().then((values) => {
-      console.log(values.selectedKeys);
-    });
+    const selectedKeys = columns
+      .filter((column) => selectedTitles.includes(String(column.title)))
+      .map((selectedColumn) => String(selectedColumn.key));
+    onChangeSelectedKeys(selectedKeys);
+    onRequestClose();
   };
 
   return (
@@ -50,25 +71,16 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
       <Input
         prefix={<SearchOutlined />}
         style={{ marginBottom: token.marginSM }}
-        onChange={(e) => {
-          setSearchColumn(e.target.value);
-        }}
+        onChange={(e) =>
+          onChangeSearchColumnsResult(e.target.value.toLowerCase())
+        }
       />
-      <Form
-        form={form}
-        initialValues={{
-          selectedKeys: columns
-            .filter((column) => selectKeys.includes(String(column.key)))
-            .map((column) => String(column.title)),
-        }}
-      >
-        <Form.Item name="selectedKeys">
-          <Checkbox.Group
-            options={filteredColumns.map((column) => String(column.title))}
-            style={{ flexDirection: 'column' }}
-          />
-        </Form.Item>
-      </Form>
+      <Checkbox.Group
+        options={searchColumnsResult}
+        style={{ flexDirection: 'column' }}
+        defaultValue={selectedTitles}
+        onChange={onChangeCheckbox}
+      />
     </BAIModal>
   );
 };
