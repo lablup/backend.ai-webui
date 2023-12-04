@@ -217,21 +217,28 @@ const ModelStoreListPage: React.FC = () => {
               size="small"
             >
               <Flex direction="row" wrap="wrap" gap={'xs'}>
-                <Tag bordered={false}>
-                  <TextHighlighter keyword={search}>
-                    {item?.category}
-                  </TextHighlighter>
-                </Tag>
-                <Tag bordered={false} color="success">
-                  <TextHighlighter keyword={search}>
-                    {item?.task}
-                  </TextHighlighter>
-                </Tag>
-                {_.map(item?.label, (label) => (
-                  <Tag key={label} bordered={false} color="blue">
-                    <TextHighlighter keyword={search}>{label}</TextHighlighter>
+                {item?.category && (
+                  <Tag bordered={false}>
+                    <TextHighlighter keyword={search}>
+                      {item?.category}
+                    </TextHighlighter>
                   </Tag>
-                ))}
+                )}
+                {item?.task && (
+                  <Tag bordered={false} color="success">
+                    <TextHighlighter keyword={search}>
+                      {item?.task}
+                    </TextHighlighter>
+                  </Tag>
+                )}
+                {item?.label &&
+                  _.map(item?.label, (label) => (
+                    <Tag key={label} bordered={false} color="blue">
+                      <TextHighlighter keyword={search}>
+                        {label}
+                      </TextHighlighter>
+                    </Tag>
+                  ))}
               </Flex>
             </Card>
           </List.Item>

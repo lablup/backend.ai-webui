@@ -109,30 +109,37 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           style={{ flex: 1 }}
           wrap="wrap"
         >
-          <Tag bordered={false} style={{ marginRight: 0 }}>
-            {model_info?.category}
-          </Tag>
-          <Tag bordered={false} color="success" style={{ marginRight: 0 }}>
-            {model_info?.task}
-          </Tag>
-          {_.map(model_info?.label, (label) => (
+          {model_info?.category && (
+            <Tag bordered={false} style={{ marginRight: 0 }}>
+              {model_info?.category}
+            </Tag>
+          )}
+          {model_info?.task && (
+            <Tag bordered={false} color="success" style={{ marginRight: 0 }}>
+              {model_info?.task}
+            </Tag>
+          )}
+          {model_info?.label &&
+            _.map(model_info?.label, (label) => (
+              <Tag
+                key={label}
+                bordered={false}
+                color="blue"
+                style={{ marginRight: 0 }}
+              >
+                {label}
+              </Tag>
+            ))}
+          {model_info?.license && (
             <Tag
-              key={label}
+              icon={<BankOutlined />}
               bordered={false}
-              color="blue"
+              color="geekblue"
               style={{ marginRight: 0 }}
             >
-              {label}
+              {model_info?.license}
             </Tag>
-          ))}
-          <Tag
-            icon={<BankOutlined />}
-            bordered={false}
-            color="geekblue"
-            style={{ marginRight: 0 }}
-          >
-            {model_info?.license}
-          </Tag>
+          )}
         </Flex>
         <Flex direction="row" justify="end" gap={'sm'}>
           <Button
