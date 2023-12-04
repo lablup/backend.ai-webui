@@ -4071,10 +4071,33 @@ class Group {
       'created_at',
       'modified_at',
       'domain_name',
+      'type',
     ],
+    type = ["GENERAL"],
   ): Promise<any> {
     let q, v;
-    if (this.client.is_admin === true) {
+    if (this.client.supports('model-store')) {
+      q =
+        `query($is_active:Boolean, $type:[String!]) {` +
+        `  groups(is_active:$is_active, type:$type) { ${fields.join(' ')} }` +
+        '}';
+      v = { is_active: is_active, type: type };
+      if (domain_name) {
+        q =
+          `query($domain_name: String, $is_active:Boolean, $type:[String!]) {` +
+          `  groups(domain_name: $domain_name, is_active:$is_active, type:$type) { ${fields.join(
+            ' ',
+          )} }` +
+          '}';
+        v = {
+          is_active: is_active,
+          domain_name: domain_name,
+          type: type,
+        };
+      }
+    } else {
+      // remove 'type' from fields
+      fields = fields.filter((item) => item !== 'type');
       q =
         `query($is_active:Boolean) {` +
         `  groups(is_active:$is_active) { ${fields.join(' ')} }` +
@@ -4092,12 +4115,6 @@ class Group {
           domain_name: domain_name,
         };
       }
-    } else {
-      q =
-        `query($is_active:Boolean) {` +
-        `  groups(is_active:$is_active) { ${fields.join(' ')} }` +
-        '}';
-      v = { is_active: is_active };
     }
     return this.client.query(q, v);
   }
