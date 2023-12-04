@@ -2302,13 +2302,13 @@ export default class BackendAiStorageList extends BackendAIPage {
       );
 
     const allowedPermissionForDomainsByVolume = JSON.parse(
-      mergedData.domain.allowed_vfolder_hosts,
+      mergedData?.domain?.allowed_vfolder_hosts || '{}',
     );
     const allowedPermissionForGroupsByVolume = JSON.parse(
-      mergedData.group.allowed_vfolder_hosts,
+      mergedData?.group?.allowed_vfolder_hosts || '{}',
     );
     const allowedPermissionForResourcePolicyByVolume = JSON.parse(
-      mergedData.keypair_resource_policy.allowed_vfolder_hosts,
+      mergedData?.keypair_resource_policy.allowed_vfolder_hosts || '{}',
     );
 
     const _mergeDedupe = (arr) => [...new Set([].concat(...arr))];
