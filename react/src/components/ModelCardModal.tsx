@@ -71,6 +71,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
         vfolder {
           name
           cloneable
+          host
         }
       }
     `,
@@ -301,6 +302,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       <Suspense>
         <ModelCloneModal
           sourceFolderName={model_info?.vfolder?.name || ''}
+          sourceFolderHost={model_info?.vfolder?.host || ''}
           title={t('modelStore.CloneAsFolder')}
           open={visibleCloneModal}
           onOk={() => {

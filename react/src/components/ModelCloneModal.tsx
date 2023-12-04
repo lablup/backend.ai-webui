@@ -9,9 +9,11 @@ import { useTranslation } from 'react-i18next';
 
 interface ModelCloneModalProps extends BAIModalProps {
   sourceFolderName: string;
+  sourceFolderHost: string;
 }
 const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
   sourceFolderName,
+  sourceFolderHost,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -80,6 +82,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
             // type: 'user',
             usage_mode: 'model',
             target_name: sourceFolderName + '_1',
+            target_host: sourceFolderHost,
           }}
         >
           <Form.Item label={t('data.ExistingFolderName')} required>
@@ -110,7 +113,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
               },
             ]}
           >
-            <StorageSelector autoSelectDefault disabled />
+            <StorageSelector value={sourceFolderHost} disabled />
           </Form.Item>
           {/* <Form.Item
           name="type"
