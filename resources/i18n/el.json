@@ -61,7 +61,8 @@
       "PasswordChangePlace": "Κάντε κλικ στο εικονίδιο προσώπου στην επάνω μπάρα και μεταβείτε στο μενού \"Ο λογαριασμός μου\".",
       "Notifications": "Ειδοποιήσεις",
       "Tasks": "Εργασίες",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": ""
     },
     "YouAreOffline": "Είστε πλέον εκτός σύνδεσης",
     "YouAreOnline": "Είστε πλέον συνδεδεμένοι",
@@ -240,17 +241,18 @@
       "FolderAliasInvalid": "Επιτρέπονται μόνο αλφαριθμητικοί χαρακτήρες, κάτω παύλα (_), κάθετος (/) και παύλα (-).",
       "PreOpenPortMaxCountLimit": "Μπορείτε να ορίσετε έως και {{count}} προ-ανοικτές θύρες.",
       "StartTimeMustBeInTheFuture": "Η ώρα έναρξης πρέπει να είναι μετά την τρέχουσα ώρα.",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
-      "SessionName": "__NOT_TRANSLATED__",
-      "ResetFormConfirm": "__NOT_TRANSLATED__",
-      "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_plural": "",
+      "EnqueueComputeSessionWarning": "",
+      "SessionName": "",
+      "ResetFormConfirm": "",
+      "TemplateAndHistory": "",
+      "ScheduleTimeSimple": "",
       "ResourceAllocationPerContainer": "Κατανομή πόρων ανά εμπορευματοκιβώτιο",
       "NumberOfContainer": "Αριθμός εμπορευματοκιβωτίων",
       "EnterEnvironmentVariable": "Εισάγετε το όνομα της μεταβλητής",
       "EnvironmentVariableNamePatternError": "Το όνομα της μεταβλητής πρέπει να αρχίζει με γράμμα ή υπογράμμιση και μπορεί να περιέχει μόνο γράμματα, αριθμούς και υπογράμμιση.",
-      "EnvironmentVariableDuplicateName": "Ένα όνομα μεταβλητής που υπάρχει ήδη."
+      "EnvironmentVariableDuplicateName": "Ένα όνομα μεταβλητής που υπάρχει ήδη.",
+      "Template": "Πρότυπο συνεδρίας"
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",
@@ -399,7 +401,9 @@
     "Unset": "Μη ρυθμισμένο",
     "OK": "OK",
     "Commit": "Δέσμευση",
-    "EnterManually": "Εισάγετε χειροκίνητα"
+    "EnterManually": "Εισάγετε χειροκίνητα",
+    "Download": "Λήψη",
+    "Clone": "Κλώνος"
   },
   "agent": {
     "Endpoint": "Τελικό σημείο",
@@ -443,7 +447,7 @@
     "Enabled": "Ενεργοποιήθηκε",
     "StorageProxies": "Αποθήκες",
     "None": "Κανένα",
-    "Image": "__NOT_TRANSLATED__"
+    "Image": ""
   },
   "credential": {
     "Permission": "Αδεια",
@@ -521,7 +525,7 @@
     "SignoutSeccessfullyFinished": "Η αποσύνδεση ολοκληρώθηκε επιτυχώς",
     "Status": "Κατάσταση",
     "NoUserToDisplay": "Δεν υπάρχουν χρήστες για εμφάνιση",
-    "EnableSudoSession": "__NOT_TRANSLATED__"
+    "EnableSudoSession": ""
   },
   "data": {
     "Folders": "Φάκελοι",
@@ -687,7 +691,11 @@
     "Pipeline": "Φάκελοι αγωγών",
     "DialogDataFolder": "Ειδικοί φάκελοι αγωγών που δημιουργούνται αυτόματα κατά τη δημιουργία αγωγών στο FastTrack.",
     "DialogModelFolder": "Μπορείτε να εξυπηρετείτε και να διαχειρίζεστε μοντέλα.",
-    "SearchByName": "Αναζήτηση με όνομα"
+    "SearchByName": "Αναζήτηση με όνομα",
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "Προσθέστε",
+    "CloningIsOnlyPossibleSameHost": "Προς το παρόν, η κλωνοποίηση είναι δυνατή μόνο στον ίδιο κεντρικό υπολογιστή."
   },
   "dialog": {
     "warning": {
@@ -1438,5 +1446,32 @@
   "OpenVSCodeRemote": "Ανοίξτε τον τοπικό κώδικα του Visual Studio",
   "inputLimit": {
     "4to64chars": "(4~64 χαρακτήρες)"
+  },
+  "modelStore": {
+    "Description": "Περιγραφή",
+    "Model": "Μοντέλο",
+    "FilterByName": "Φιλτράρισμα κατά όνομα",
+    "ServiceDetails": "Στοιχεία υπηρεσίας",
+    "Metadata": "Μεταδεδομένα",
+    "ModelPath": "Μοντέλο Μονοπάτι",
+    "SearchModels": "Αναζήτηση μοντέλων",
+    "MinResource": "Ελάχιστος πόρος",
+    "LastModified": "Τελευταία τροποποίηση",
+    "Created": "Δημιουργήθηκε",
+    "Version": "Εκδοχή",
+    "Author": "Συγγραφέας",
+    "MaxRetries": "Μέγιστες επαναλήψεις",
+    "Path": "Μονοπάτι",
+    "HealthCheck": "Ελεγχος υγείας",
+    "Port": "Λιμάνι",
+    "StartCommand": "Εκκίνηση Εντολή",
+    "PreStartActions": "Ενέργειες πριν από την έναρξη",
+    "Framework": "Πλαίσιο",
+    "Category": "Κατηγορίες",
+    "Label": "Ετικέτα",
+    "Task": "Εργασία",
+    "CloneAsFolder": "Clone as Folder",
+    "CloneSuccess": "Η αίτηση κλωνοποίησης έχει σταλεί με επιτυχία.",
+    "CloneInfo": "Θα κλωνοποιηθεί ως φάκελος τύπου χρήστη."
   }
 }

@@ -1,4 +1,4 @@
-# PR #1688 79ef241dff642618d97e8d087c2a4d36e19fb27b
+#PR 1749
 
 schema {
   query: Queries
@@ -14,7 +14,7 @@ type Queries {
     The ID of the object
     """
     id: ID!
-  ): Node
+  ): AsyncNode
   agent(agent_id: String!): Agent
   agent_list(
     limit: Int!
@@ -36,9 +36,35 @@ type Queries {
   ): AgentSummaryList
   domain(name: String): Domain
   domains(is_active: Boolean): [Domain]
+
+  """
+  Added in 24.03.0.
+  """
+  group_node(id: String!): GroupNode
+
+  """
+  Added in 24.03.0.
+  """
+  group_nodes(
+    filter: String
+    order: String
+    offset: Int
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): GroupConnection
   group(id: UUID!, domain_name: String): Group
   groups_by_name(name: String!, domain_name: String): [Group]
-  groups(domain_name: String, is_active: Boolean): [Group]
+  groups(
+    domain_name: String
+    is_active: Boolean
+
+    """
+    Added since 24.03.0. Available values: GENERAL, MODEL_STORE
+    """
+    type: [String] = ["GENERAL"]
+  ): [Group]
   image(reference: String!, architecture: String = "aarch64"): Image
   images(is_installed: Boolean, is_operation: Boolean): [Image]
   user(domain_name: String, email: String): User
@@ -59,6 +85,24 @@ type Queries {
     is_active: Boolean
     status: String
   ): UserList
+
+  """
+  Added in 24.03.0.
+  """
+  user_node(id: String!): UserNode
+
+  """
+  Added in 24.03.0.
+  """
+  user_nodes(
+    filter: String
+    order: String
+    offset: Int
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): UserConnection
   keypair(domain_name: String, access_key: String): KeyPair
   keypairs(domain_name: String, email: String, is_active: Boolean): [KeyPair]
   keypair_list(
@@ -207,12 +251,31 @@ type Queries {
   quota_scope(storage_host_name: String!, quota_scope_id: String!): QuotaScope
   container_registry(hostname: String!): ContainerRegistry
   container_registries: [ContainerRegistry]
+
+  """
+  Added in 24.03.0.
+  """
+  model_info(id: String!): ModelInfo
+
+  """
+  Added in 24.03.0.
+  """
+  model_infos(
+    filter: String
+    order: String
+    offset: Int
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): ModelInfoConnection
 }
 
 """
-An object with an ID
+This GraphQL Relay Node extension is for running asynchronous resolvers and fine-grained handling of global id.
+Refer to: https://github.com/graphql-python/graphene/blob/master/graphene/relay/node.py
 """
-interface Node {
+interface AsyncNode {
   """
   The ID of the object
   """
@@ -350,6 +413,169 @@ type Domain {
   scaling_groups: [String]
 }
 
+type GroupNode implements AsyncNode {
+  """
+  The ID of the object
+  """
+  id: ID!
+  name: String
+  description: String
+  is_active: Boolean
+  created_at: DateTime
+  modified_at: DateTime
+  domain_name: String
+  total_resource_slots: JSONString
+  allowed_vfolder_hosts: JSONString
+  integration_id: String
+  resource_policy: String
+  scaling_groups: [String]
+  user_nodes(
+    filter: String
+    order: String
+    offset: Int
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): UserConnection
+}
+
+type UserConnection {
+  """
+  Pagination data for this connection.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Contains the nodes in this connection.
+  """
+  edges: [UserEdge]!
+
+  """
+  Total count of the GQL nodes of the query.
+  """
+  count: Int
+}
+
+"""
+The Relay compliant `PageInfo` type, containing data necessary to paginate this connection.
+"""
+type PageInfo {
+  """
+  When paginating forwards, are there more items?
+  """
+  hasNextPage: Boolean!
+
+  """
+  When paginating backwards, are there more items?
+  """
+  hasPreviousPage: Boolean!
+
+  """
+  When paginating backwards, the cursor to continue.
+  """
+  startCursor: String
+
+  """
+  When paginating forwards, the cursor to continue.
+  """
+  endCursor: String
+}
+
+"""
+A Relay edge containing a `User` and its cursor.
+"""
+type UserEdge {
+  """
+  The item at the end of the edge
+  """
+  node: UserNode
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
+}
+
+type UserNode implements AsyncNode {
+  """
+  The ID of the object
+  """
+  id: ID!
+
+  """
+  Unique username of the user.
+  """
+  username: String
+
+  """
+  Unique email of the user.
+  """
+  email: String
+  need_password_change: Boolean
+  full_name: String
+  description: String
+  is_active: Boolean
+    @deprecated(
+      reason: "Deprecated since 24.03.0. Recommend to use `status` field."
+    )
+
+  """
+  The status is one of `active`, `inactive`, `deleted` or `before-verification`.
+  """
+  status: String
+
+  """
+  Additional information of user status.
+  """
+  status_info: String
+  created_at: DateTime
+  modified_at: DateTime
+  domain_name: String
+
+  """
+  The role is one of `user`, `admin`, `superadmin` or `monitor`.
+  """
+  role: String
+  resource_policy: String
+  allowed_client_ip: [String]
+  totp_activated: Boolean
+  totp_activated_at: DateTime
+  sudo_session_enabled: Boolean
+}
+
+type GroupConnection {
+  """
+  Pagination data for this connection.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Contains the nodes in this connection.
+  """
+  edges: [GroupEdge]!
+
+  """
+  Total count of the GQL nodes of the query.
+  """
+  count: Int
+}
+
+"""
+A Relay edge containing a `Group` and its cursor.
+"""
+type GroupEdge {
+  """
+  The item at the end of the edge
+  """
+  node: GroupNode
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
+}
+
 type Group {
   id: UUID
   name: String
@@ -362,6 +588,11 @@ type Group {
   allowed_vfolder_hosts: JSONString
   integration_id: String
   resource_policy: String
+
+  """
+  Added since 24.03.0.
+  """
+  type: String
   scaling_groups: [String]
 }
 
@@ -625,6 +856,16 @@ type StorageVolume implements Item {
   hardware_metadata: JSONString
   performance_metric: JSONString
   usage: JSONString
+
+  """
+  Added since 24.03.0. Name of the proxy which this volume belongs to.
+  """
+  proxy: String
+
+  """
+  Added since 24.03.0. Name of the storage.
+  """
+  name: String
 }
 
 type StorageVolumeList implements PaginatedList {
@@ -828,6 +1069,16 @@ type ContainerRegistry implements Node {
   config: ContainerRegistryConfig
 }
 
+"""
+An object with an ID
+"""
+interface Node {
+  """
+  The ID of the object
+  """
+  id: ID!
+}
+
 type ContainerRegistryConfig {
   url: String!
   type: String!
@@ -835,6 +1086,78 @@ type ContainerRegistryConfig {
   username: String
   password: String
   ssl_verify: Boolean
+}
+
+type ModelInfo implements AsyncNode {
+  """
+  The ID of the object
+  """
+  id: ID!
+  name: String
+  vfolder: VirtualFolder
+  author: String
+
+  """
+  Human readable name of the model.
+  """
+  title: String
+  version: String
+
+  """
+  The time the model was created.
+  """
+  created_at: DateTime
+
+  """
+  The last time the model was modified.
+  """
+  modified_at: DateTime
+  description: String
+  task: String
+  category: String
+  architecture: String
+  framework: [String]
+  label: [String]
+  license: String
+  min_resource: JSONString
+  readme: String
+
+  """
+  Type (mostly extension of the filename) of the README file. e.g. md, rst, txt, ...
+  """
+  readme_filetype: String
+}
+
+type ModelInfoConnection {
+  """
+  Pagination data for this connection.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Contains the nodes in this connection.
+  """
+  edges: [ModelInfoEdge]!
+
+  """
+  Total count of the GQL nodes of the query.
+  """
+  count: Int
+}
+
+"""
+A Relay edge containing a `ModelInfo` and its cursor.
+"""
+type ModelInfoEdge {
+  """
+  The item at the end of the edge
+  """
+  node: ModelInfo
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
 
 """
@@ -1032,12 +1355,12 @@ type CreateDomain {
 }
 
 input DomainInput {
-  description: String
-  is_active: Boolean
-  total_resource_slots: JSONString
-  allowed_vfolder_hosts: JSONString
-  allowed_docker_registries: [String]
-  integration_id: String
+  description: String = ""
+  is_active: Boolean = true
+  total_resource_slots: JSONString = "{}"
+  allowed_vfolder_hosts: JSONString = "{}"
+  allowed_docker_registries: [String] = []
+  integration_id: String = null
 }
 
 type ModifyDomain {
@@ -1082,13 +1405,17 @@ type CreateGroup {
 }
 
 input GroupInput {
-  description: String
-  is_active: Boolean
+  """
+  Added since 24.03.0. Available values: GENERAL, MODEL_STORE
+  """
+  type: String = "GENERAL"
+  description: String = ""
+  is_active: Boolean = true
   domain_name: String!
-  total_resource_slots: JSONString
-  allowed_vfolder_hosts: JSONString
-  integration_id: String
-  resource_policy: String
+  total_resource_slots: JSONString = "{}"
+  allowed_vfolder_hosts: JSONString = "{}"
+  integration_id: String = ""
+  resource_policy: String = "default"
 }
 
 type ModifyGroup {
@@ -1140,17 +1467,17 @@ input UserInput {
   username: String!
   password: String!
   need_password_change: Boolean!
-  full_name: String
-  description: String
-  is_active: Boolean
-  status: String
-  domain_name: String!
-  role: String
+  full_name: String = ""
+  description: String = ""
+  is_active: Boolean = true
+  status: String = "active"
+  domain_name: String! = "default"
+  role: String = "user"
   group_ids: [String]
-  allowed_client_ip: [String]
-  totp_activated: Boolean
-  resource_policy: String
-  sudo_session_enabled: Boolean
+  allowed_client_ip: [String] = null
+  totp_activated: Boolean = false
+  resource_policy: String = "default"
+  sudo_session_enabled: Boolean = false
 }
 
 type ModifyUser {
@@ -1216,8 +1543,8 @@ type CreateKeyPair {
 }
 
 input KeyPairInput {
-  is_active: Boolean
-  is_admin: Boolean
+  is_active: Boolean = true
+  is_admin: Boolean = false
   resource_policy: String!
   concurrency_limit: Int
   rate_limit: Int!
@@ -1467,16 +1794,16 @@ type CreateScalingGroup {
 }
 
 input CreateScalingGroupInput {
-  description: String
-  is_active: Boolean
-  is_public: Boolean
-  wsproxy_addr: String
-  wsproxy_api_token: String
+  description: String = ""
+  is_active: Boolean = true
+  is_public: Boolean = true
+  wsproxy_addr: String = null
+  wsproxy_api_token: String = null
   driver: String!
-  driver_opts: JSONString
+  driver_opts: JSONString = "{}"
   scheduler: String!
-  scheduler_opts: JSONString
-  use_host_network: Boolean
+  scheduler_opts: JSONString = "{}"
+  use_host_network: Boolean = false
 }
 
 type ModifyScalingGroup {

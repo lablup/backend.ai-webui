@@ -60,6 +60,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({ type: Boolean }) is_admin = false;
   @property({ type: Boolean }) enableStorageProxy = false;
   @property({ type: Boolean }) enableInferenceWorkload = false;
+  @property({ type: Boolean }) supportModelStore = false;
   @property({ type: Boolean }) authenticated = false;
   @property({ type: String }) vhost = '';
   @property({ type: String }) selectedVhost = '';
@@ -323,6 +324,15 @@ export default class BackendAIData extends BackendAIPage {
                       ></mwc-tab>
                     `
                   : html``}
+                ${this.supportModelStore
+                  ? html`
+                      <mwc-tab
+                        title="model-store"
+                        label="${_t('data.ModelStore')}"
+                        @click="${(e) => this._showTab(e.target)}"
+                      ></mwc-tab>
+                    `
+                  : html``}
               </mwc-tab-bar>
               <span class="flex"></span>
               <mwc-button
@@ -333,7 +343,7 @@ export default class BackendAIData extends BackendAIPage {
                 @click="${() => this._addFolderDialog()}"
                 style="margin-right:15px;"
               >
-                <span>${_t('data.NewFolder')}</span>
+                <span>${_t('data.Add')}</span>
               </mwc-button>
             </h3>
             <div id="general-folder-lists" class="tab-content">
@@ -392,6 +402,13 @@ export default class BackendAIData extends BackendAIPage {
                   </div>
                 `
               : html``}
+            <backend-ai-react-model-store-list
+              id="model-store-folder-lists"
+              class="tab-content"
+              style="display:none;"
+              ?active="${this.active === true &&
+              this._activeTab === 'modelStore'}"
+            ></backend-ai-react-model-store-list>
           </div>
         </lablup-activity-panel>
       </div>
@@ -871,6 +888,9 @@ export default class BackendAIData extends BackendAIPage {
         globalThis.backendaiclient.supports('storage-proxy');
       this.enableInferenceWorkload =
         globalThis.backendaiclient.supports('inference-workload');
+      this.supportModelStore =
+        globalThis.backendaiclient.supports('model-store') &&
+        globalThis.backendaiclient._config.supportModelStore;
       if (this.enableInferenceWorkload && !this.usageModes.includes('Model')) {
         this.usageModes.push('Model');
       }
