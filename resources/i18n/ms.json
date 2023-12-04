@@ -693,7 +693,8 @@
     "SearchByName": "Cari mengikut nama",
     "ModelStore": "",
     "New": "__NOT_TRANSLATED__",
-    "Add": "Tambah"
+    "Add": "Tambah",
+    "CloningIsOnlyPossibleSameHost": "Pada masa ini, pengklonan hanya boleh dilakukan pada hos yang sama."
   },
   "dialog": {
     "warning": {
@@ -1468,7 +1469,7 @@
     "Category": "kategori",
     "Label": "Label",
     "Task": "Tugasan",
-    "CloneAsFolder": "klon sebagai Folder",
+    "CloneAsFolder": "Klon sebagai Folder",
     "CloneSuccess": "Permintaan klon telah berjaya dihantar.",
     "CloneInfo": "Ia akan diklonkan sebagai folder jenis pengguna anda."
   }

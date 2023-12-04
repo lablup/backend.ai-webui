@@ -694,7 +694,8 @@
     "SearchByName": "Ada göre ara",
     "ModelStore": "",
     "New": "__NOT_TRANSLATED__",
-    "Add": "Ekle"
+    "Add": "Ekle",
+    "CloningIsOnlyPossibleSameHost": "Şu anda klonlama yalnızca aynı ana bilgisayarda mümkündür."
   },
   "dialog": {
     "warning": {

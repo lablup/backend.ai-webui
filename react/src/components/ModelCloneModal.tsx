@@ -103,13 +103,14 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
           <Form.Item
             name="target_host"
             label={t('data.Host')}
+            tooltip={t('data.CloningIsOnlyPossibleSameHost')}
             rules={[
               {
                 required: true,
               },
             ]}
           >
-            <StorageSelector autoSelectDefault />
+            <StorageSelector autoSelectDefault disabled />
           </Form.Item>
           {/* <Form.Item
           name="type"

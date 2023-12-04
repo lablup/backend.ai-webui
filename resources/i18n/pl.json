@@ -696,7 +696,8 @@
     "SearchByName": "Szukaj według nazwy",
     "ModelStore": "",
     "New": "__NOT_TRANSLATED__",
-    "Add": "Dodaj"
+    "Add": "Dodaj",
+    "CloningIsOnlyPossibleSameHost": "Obecnie klonowanie jest możliwe tylko na tym samym hoście."
   },
   "dialog": {
     "warning": {
@@ -1471,7 +1472,7 @@
     "Category": "Kategoria",
     "Label": "Etykieta",
     "Task": "Zadanie",
-    "CloneAsFolder": "sklonuj jako Folder",
+    "CloneAsFolder": "Sklonuj jako Folder",
     "CloneSuccess": "Żądanie klonowania zostało wysłane pomyślnie.",
     "CloneInfo": "Zostanie on sklonowany jako folder typu użytkownika."
   }

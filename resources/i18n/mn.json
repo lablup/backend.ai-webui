@@ -694,7 +694,8 @@
     "SearchByName": "Нэрээр нь хайх",
     "ModelStore": "",
     "New": "__NOT_TRANSLATED__",
-    "Add": "Нэмэх"
+    "Add": "Нэмэх",
+    "CloningIsOnlyPossibleSameHost": "Одоогоор зөвхөн нэг хост дээр клон хийх боломжтой."
   },
   "dialog": {
     "warning": {
@@ -1469,7 +1470,7 @@
     "Category": "ангилал",
     "Label": "Шошго",
     "Task": "Даалгавар",
-    "CloneAsFolder": "хавтас болгон хуваах",
+    "CloneAsFolder": "Хавтас болгон хуваах",
     "CloneSuccess": "Хувилах хүсэлтийг амжилттай илгээлээ.",
     "CloneInfo": "Үүнийг таны хэрэглэгчийн төрлийн хавтас болгон хувилах болно."
   }

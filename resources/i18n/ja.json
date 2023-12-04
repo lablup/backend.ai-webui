@@ -694,7 +694,8 @@
     "SearchByName": "名前で検索",
     "ModelStore": "",
     "New": "__NOT_TRANSLATED__",
-    "Add": "追加"
+    "Add": "追加",
+    "CloningIsOnlyPossibleSameHost": "現在、クローン作成は同じホスト上でのみ可能です。"
   },
   "dialog": {
     "warning": {

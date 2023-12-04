@@ -643,7 +643,7 @@
     "Category": "__NOT_TRANSLATED__",
     "Task": "__NOT_TRANSLATED__",
     "Label": "__NOT_TRANSLATED__",
-    "CloneAsFolder": "kloonata kansioksi",
+    "CloneAsFolder": "Kloonata kansioksi",
     "CloneSuccess": "Kloonauspyyntö on lähetetty onnistuneesti.",
     "CloneInfo": "Se kloonataan käyttäjätyypin kansioksi."
   },
@@ -895,7 +895,8 @@
       "InvitationError": "__NOT_TRANSLATED__",
       "SharingError": "__NOT_TRANSLATED__"
     },
-    "Add": "Lisää"
+    "Add": "Lisää",
+    "CloningIsOnlyPossibleSameHost": "Tällä hetkellä kloonaus on mahdollista vain samassa isännässä."
   },
   "totp": {
     "TotpSetupCompleted": "__NOT_TRANSLATED__",

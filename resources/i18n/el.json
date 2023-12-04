@@ -694,7 +694,8 @@
     "SearchByName": "Αναζήτηση με όνομα",
     "ModelStore": "",
     "New": "__NOT_TRANSLATED__",
-    "Add": "Προσθέστε"
+    "Add": "Προσθέστε",
+    "CloningIsOnlyPossibleSameHost": "Προς το παρόν, η κλωνοποίηση είναι δυνατή μόνο στον ίδιο κεντρικό υπολογιστή."
   },
   "dialog": {
     "warning": {
@@ -1469,7 +1470,7 @@
     "Category": "Κατηγορίες",
     "Label": "Ετικέτα",
     "Task": "Εργασία",
-    "CloneAsFolder": "clone as Folder",
+    "CloneAsFolder": "Clone as Folder",
     "CloneSuccess": "Η αίτηση κλωνοποίησης έχει σταλεί με επιτυχία.",
     "CloneInfo": "Θα κλωνοποιηθεί ως φάκελος τύπου χρήστη."
   }

@@ -693,7 +693,8 @@
     "SearchByName": "Tìm kiếm theo tên",
     "ModelStore": "",
     "New": "__NOT_TRANSLATED__",
-    "Add": "Thêm vào"
+    "Add": "Thêm vào",
+    "CloningIsOnlyPossibleSameHost": "Hiện tại, việc nhân bản chỉ có thể thực hiện được trên cùng một máy chủ."
   },
   "dialog": {
     "warning": {
@@ -1468,7 +1469,7 @@
     "Category": "Loại",
     "Label": "Nhãn",
     "Task": "Nhiệm vụ",
-    "CloneAsFolder": "sao chép dưới dạng Thư mục",
+    "CloneAsFolder": "Sao chép dưới dạng Thư mục",
     "CloneSuccess": "Yêu cầu nhân bản đã được gửi thành công.",
     "CloneInfo": "Nó sẽ được sao chép thành thư mục loại người dùng của bạn."
   }

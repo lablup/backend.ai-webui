@@ -694,7 +694,8 @@
     "SearchByName": "Cari berdasarkan nama",
     "ModelStore": "",
     "New": "__NOT_TRANSLATED__",
-    "Add": "Menambahkan"
+    "Add": "Menambahkan",
+    "CloningIsOnlyPossibleSameHost": "Saat ini, kloning hanya dapat dilakukan pada host yang sama."
   },
   "dialog": {
     "warning": {
@@ -1469,7 +1470,7 @@
     "Category": "Kategori",
     "Label": "Label",
     "Task": "Tugas",
-    "CloneAsFolder": "mengkloning sebagai Folder",
+    "CloneAsFolder": "Mengkloning sebagai Folder",
     "CloneSuccess": "Permintaan kloning telah berhasil dikirim.",
     "CloneInfo": "Ini akan dikloning sebagai folder tipe pengguna Anda."
   }

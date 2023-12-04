@@ -694,7 +694,8 @@
     "SearchByName": "按名称搜索",
     "ModelStore": "",
     "New": "__NOT_TRANSLATED__",
-    "Add": "添加"
+    "Add": "添加",
+    "CloningIsOnlyPossibleSameHost": "目前，克隆只能在同一主机上进行。"
   },
   "dialog": {
     "warning": {

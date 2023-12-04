@@ -786,7 +786,8 @@
     "SearchByName": "Search by name",
     "ModelStore": "Model Store",
     "New": "New",
-    "Add": "Add"
+    "Add": "Add",
+    "CloningIsOnlyPossibleSameHost": "Currently, cloning is only possible on the same host."
   },
   "dialog": {
     "warning": {
@@ -1469,7 +1470,7 @@
     "Category": "Category",
     "Label": "Label",
     "Task": "Task",
-    "CloneAsFolder": "clone as Folder",
+    "CloneAsFolder": "Clone as Folder",
     "CloneSuccess": "The clone request has been sent successfully.",
     "CloneInfo": "It will be cloned as your user type folder."
   }

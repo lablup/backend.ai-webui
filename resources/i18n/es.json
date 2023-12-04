@@ -376,7 +376,8 @@
     "SearchByName": "Buscar por nombre",
     "ModelStore": "",
     "New": "__NOT_TRANSLATED__",
-    "Add": "Añadir"
+    "Add": "Añadir",
+    "CloningIsOnlyPossibleSameHost": "Actualmente, la clonación sólo es posible en el mismo host."
   },
   "dialog": {
     "ErrorOccurred": "Se ha producido un error",
@@ -1469,7 +1470,7 @@
     "Category": "Categorías",
     "Label": "Etiqueta",
     "Task": "Tarea",
-    "CloneAsFolder": "clonar como carpeta",
+    "CloneAsFolder": "Clonar como carpeta",
     "CloneSuccess": "La solicitud de clonación se ha enviado correctamente.",
     "CloneInfo": "Se clonará como su carpeta de tipo de usuario."
   }

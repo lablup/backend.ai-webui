@@ -694,7 +694,8 @@
     "SearchByName": "Ricerca per nome",
     "ModelStore": "",
     "New": "__NOT_TRANSLATED__",
-    "Add": "Aggiungi"
+    "Add": "Aggiungi",
+    "CloningIsOnlyPossibleSameHost": "Attualmente la clonazione è possibile solo sullo stesso host."
   },
   "dialog": {
     "warning": {
@@ -1469,7 +1470,7 @@
     "Category": "Categorie",
     "Label": "Etichetta",
     "Task": "Compito",
-    "CloneAsFolder": "clonare come cartella",
+    "CloneAsFolder": "Clonare come cartella",
     "CloneSuccess": "La richiesta di clonazione è stata inviata con successo.",
     "CloneInfo": "Verrà clonata come cartella del tipo di utente."
   }

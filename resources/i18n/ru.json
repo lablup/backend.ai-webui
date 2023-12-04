@@ -696,7 +696,8 @@
     "SearchByName": "Поиск по имени",
     "ModelStore": "",
     "New": "__NOT_TRANSLATED__",
-    "Add": "Добавить"
+    "Add": "Добавить",
+    "CloningIsOnlyPossibleSameHost": "В настоящее время клонирование возможно только на том же хосте."
   },
   "dialog": {
     "warning": {
