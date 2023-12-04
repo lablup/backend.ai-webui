@@ -691,12 +691,13 @@ export default class BackendAiStorageList extends BackendAIPage {
           ></vaadin-grid-column>
           ${this.enableStorageProxy
             ? html`
-                <!--<vaadin-grid-column
-                auto-width flex-grow="0" resizable header="${_t(
-                  'data.folders.Cloneable',
-                )}"
-                .renderer="${this
-                  ._boundCloneableRenderer}"></vaadin-grid-column>-->
+                <vaadin-grid-column
+                  auto-width
+                  flex-grow="0"
+                  resizable
+                  header="${_t('data.folders.Cloneable')}"
+                  .renderer="${this._boundCloneableRenderer}"
+                ></vaadin-grid-column>
               `
             : html``}
           <vaadin-grid-column
@@ -1886,7 +1887,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <mwc-icon-button
                   class="fg blue controls-running"
                   icon="content_copy"
-                  disabled
+                  ?disabled=${!rowData.item.cloneable}
                   @click="${() => {
                     this._requestCloneFolder(rowData.item);
                   }}"
@@ -2190,7 +2191,10 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         ${rowData.item.cloneable
           ? html`
-              <div class="horizontal center-justified center layout">
+              <div
+                class="horizontal center-justified center layout"
+                style="pointer-events: none;"
+              >
                 <mwc-icon-button class="fg green" icon="done"></mwc-icon-button>
               </div>
             `
