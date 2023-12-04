@@ -113,7 +113,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
               },
             ]}
           >
-            <StorageSelector value={sourceFolderHost} disabled />
+            <StorageSelector disabled />
           </Form.Item>
           {/* <Form.Item
           name="type"
