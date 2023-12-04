@@ -1145,10 +1145,12 @@ export default class BackendAIData extends BackendAIPage {
    * - only visible when only admin selected Model usage mode.
    */
   _toggleCloneableSwitch() {
-    if (this.addFolderUsageModeSelect?.value === 'Model' && this.is_admin) {
-      this.cloneableContainer.style.display = 'flex';
-    } else {
-      this.cloneableContainer.style.display = 'none';
+    if (this.cloneableContainer) {
+      if (this.addFolderUsageModeSelect?.value === 'Model' && this.is_admin) {
+        this.cloneableContainer.style.display = 'flex';
+      } else {
+        this.cloneableContainer.style.display = 'none';
+      }
     }
   }
 
