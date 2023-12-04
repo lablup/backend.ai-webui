@@ -8,11 +8,11 @@ describe('Initial cypress E2E test', () => {
   });
 
   it('user profile change test', () => {
-    cy.login("test@lablup.com", "test123!").then(() => {
+    cy.login("test2@lablup.com", "test123!").then(() => {
       cy.wait(4000);
-      cy.userProfileChange("test", "test123!", "test123@").then(() =>{
+      cy.userProfileChange("test2222", "test123!", "test123@").then(() =>{
         cy.logout().then(() => {
-          cy.login("test@lablup.com", "test123@");
+          cy.login("test2@lablup.com", "test123@");
         });
       })
     });
