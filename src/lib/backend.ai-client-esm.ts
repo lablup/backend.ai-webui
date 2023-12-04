@@ -477,8 +477,8 @@ class Client {
       localStorage.getItem('backendaiwebui.logs') as any,
     );
     if (previous_log) {
-      if (previous_log.length > 3000) {
-        previous_log = previous_log.slice(1, 3000);
+      if (previous_log.length > 2000) {
+        previous_log = previous_log.slice(1, 2000);
       }
     }
     let log_stack: Record<string, unknown>[] = [];
@@ -4588,6 +4588,10 @@ class ScalingGroup {
   async list(group = 'default'): Promise<any> {
     const queryString = `/scaling-groups?group=${group}`;
     const rqst = this.client.newSignedRequest('GET', queryString, null, null);
+    //const result = await this.client._wrapWithPromise(rqst);
+    //console.log("test");
+    //console.log(result);
+    //return result;
     return this.client._wrapWithPromise(rqst);
   }
 

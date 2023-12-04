@@ -238,7 +238,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       css`
         vaadin-grid {
           border: 0 !important;
-          height: calc(100vh - 229px);
+          height: calc(100vh - 460px);
         }
 
         vaadin-grid.folderlist {
@@ -1547,14 +1547,14 @@ export default class BackendAiStorageList extends BackendAIPage {
     for (const textfield of Array.from(textfields)) {
       this._addInputValidator(textfield);
     }
-    if (['automount', 'model'].includes(this.storageType)) {
+    if (['data', 'automount', 'model'].includes(this.storageType)) {
       (
         this.shadowRoot?.querySelector('vaadin-grid.folderlist') as HTMLElement
-      ).style.height = 'calc(100vh - 230px)';
+      ).style.height = 'calc(100vh - 464px)';
     } else {
       (
         this.shadowRoot?.querySelector('vaadin-grid.folderlist') as HTMLElement
-      ).style.height = 'calc(100vh - 185px)';
+      ).style.height = 'calc(100vh - 420px)';
     }
     document.addEventListener('backend-ai-group-changed', (e) =>
       this._refreshFolderList(true, 'group-changed'),

@@ -61,7 +61,8 @@
       "NewPasswordCannotBeSame": "기존 비밀번호와 다른 새 비밀번호를 입력해주세요.",
       "Notifications": "알림",
       "Tasks": "작업",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": "데이터 & 모델"
     },
     "YouAreOffline": "오프라인 상태가 되었습니다",
     "YouAreOnline": "온라인 상태가 되었습니다",
@@ -247,7 +248,7 @@
       "TemplateAndHistory": "템플릿 및 최근기록",
       "ResetFormConfirm": "입력한 사항을 모두 초기화하시겠습니까?",
       "StartTimeMustBeInTheFuture": "시작 시간은 현재 시간 이후여야 합니다.",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_0": "",
       "NumberOfContainer": "컨테이너 개수",
       "EnterEnvironmentVariable": "변수 이름 입력해주세요.",
       "EnvironmentVariableNamePatternError": "변수 이름은 문자 또는 밑줄로 시작해야 하며 문자, 숫자, 밑줄만 포함할 수 있습니다.",
@@ -447,7 +448,9 @@
     "Commit": "커밋하기",
     "Reset": "초기화",
     "Unset": "초기화",
-    "OK": "확인"
+    "OK": "확인",
+    "Download": "다운로드",
+    "Clone": "복사"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -769,7 +772,11 @@
     "HostDetails": "선택한 스토리지 호스트의 가용량 정보를 보여줍니다.",
     "ProjectFolder": "프로젝트 폴더",
     "Pipeline": "파이프라인 폴더",
-    "DialogDataFolder": "FastTrack에서 파이프라인 생성 시 자동으로 생성되는 파이프라인 전용 폴더."
+    "DialogDataFolder": "FastTrack에서 파이프라인 생성 시 자동으로 생성되는 파이프라인 전용 폴더.",
+    "ModelStore": "모델 스토어",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "추가",
+    "CloningIsOnlyPossibleSameHost": "현재 폴더 복사는 동일한 호스트간에만 가능합니다."
   },
   "dialog": {
     "warning": {
@@ -1439,5 +1446,33 @@
     "reloadPage": "페이지 새로고침",
     "resetErrorBoundary": "ErrorBoundary 초기화",
     "displayOnlyDevEnv": "이 에러 블록은 WebUI 개발 환경에서만 표시됩니다."
+  },
+  "modelStore": {
+    "Description": "설명",
+    "Model": "모델",
+    "FilterByName": "이름으로 필터링",
+    "ServiceDetails": "서비스 내용",
+    "Metadata": "메타데이터",
+    "ModelPath": "모델 경로",
+    "SearchModels": "모델 검색",
+    "MinResource": "최소 리소스",
+    "LastModified": "마지막 수정",
+    "Created": "생성",
+    "Version": "버전",
+    "Author": "작가",
+    "MaxRetries": "최대 재시도 횟수",
+    "Path": "길",
+    "HealthCheck": "건강 체크",
+    "Port": "포트",
+    "StartCommand": "시작 명령",
+    "PreStartActions": "시작 전 작업",
+    "Framework": "프레임워크",
+    "category": "카테고리",
+    "Category": "카테고리",
+    "Label": "레이블",
+    "Task": "작업",
+    "CloneAsFolder": "새 폴더로 복사",
+    "CloneSuccess": "복사 요청이 성공적으로 보내졌습니다.",
+    "CloneInfo": "새로운 사용자 폴더로 복사됩니다."
   }
 }

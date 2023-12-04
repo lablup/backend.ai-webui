@@ -61,7 +61,8 @@
       "PasswordChangePlace": "点击顶部栏上的个人图标，进入 \"我的账户 \"菜单。",
       "Notifications": "通知",
       "Tasks": "任务",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": ""
     },
     "YouAreOffline": "您現在離線",
     "YouAreOnline": "您現在在線",
@@ -240,17 +241,18 @@
       "FolderAliasInvalid": "只能輸入大小寫字母、數字、底線 (_)、斜線 (/) 和破折號 (-)。",
       "PreOpenPortMaxCountLimit": "您最多可以设置 {{count}} 个预开放端口。",
       "StartTimeMustBeInTheFuture": "开始时间必须在当前时间之后。",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
-      "SessionName": "__NOT_TRANSLATED__",
-      "ResetFormConfirm": "__NOT_TRANSLATED__",
-      "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_0": "",
+      "EnqueueComputeSessionWarning": "",
+      "SessionName": "",
+      "ResetFormConfirm": "",
+      "TemplateAndHistory": "",
+      "ScheduleTimeSimple": "",
       "ResourceAllocationPerContainer": "每个集装箱的资源分配",
       "NumberOfContainer": "集装箱数量",
       "EnterEnvironmentVariable": "输入变量名称",
       "EnvironmentVariableNamePatternError": "变量名必须以字母或下划线开头，且只能包含字母、数字和下划线。",
-      "EnvironmentVariableDuplicateName": "已经存在的变量名。"
+      "EnvironmentVariableDuplicateName": "已经存在的变量名。",
+      "Template": "会议模板"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",
@@ -399,7 +401,9 @@
     "Unset": "未设置",
     "OK": "好的",
     "Commit": "承诺",
-    "EnterManually": "手动输入"
+    "EnterManually": "手动输入",
+    "Download": "下载",
+    "Clone": "克隆"
   },
   "agent": {
     "Endpoint": "端點",
@@ -443,7 +447,7 @@
     "Enabled": "啟用",
     "StorageProxies": "存儲",
     "None": "无",
-    "Image": "__NOT_TRANSLATED__"
+    "Image": ""
   },
   "credential": {
     "Permission": "允許",
@@ -521,7 +525,7 @@
     "SignoutSeccessfullyFinished": "签出已顺利完成",
     "Status": "现状",
     "NoUserToDisplay": "无用户显示",
-    "EnableSudoSession": "__NOT_TRANSLATED__"
+    "EnableSudoSession": ""
   },
   "data": {
     "Folders": "文件夾",
@@ -687,7 +691,11 @@
     "Pipeline": "管道文件夹",
     "DialogDataFolder": "在 FastTrack 中创建管道时自动创建的管道专用文件夹。",
     "DialogModelFolder": "您可以服务和管理模型。",
-    "SearchByName": "按名稱搜尋"
+    "SearchByName": "按名稱搜尋",
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "添加",
+    "CloningIsOnlyPossibleSameHost": "目前，克隆只能在同一主機上進行。"
   },
   "dialog": {
     "warning": {
@@ -1438,5 +1446,32 @@
   "OpenVSCodeRemote": "打开本地 Visual Studio 代码",
   "inputLimit": {
     "4to64chars": "（4 至 64 个字符）"
+  },
+  "modelStore": {
+    "Description": "描述",
+    "Model": "模型",
+    "FilterByName": "按名稱過濾",
+    "ServiceDetails": "服務詳情",
+    "Metadata": "元數據",
+    "ModelPath": "模型路徑",
+    "SearchModels": "搜尋型號",
+    "MinResource": "最小資源",
+    "LastModified": "上一次更改",
+    "Created": "已創建",
+    "Version": "版本",
+    "Author": "作者",
+    "MaxRetries": "最大重試次數",
+    "Path": "小路",
+    "HealthCheck": "健康檢查",
+    "Port": "港口",
+    "StartCommand": "啟動命令",
+    "PreStartActions": "開始前的行動",
+    "Framework": "框架",
+    "Category": "类别",
+    "Label": "标签",
+    "Task": "任务",
+    "CloneAsFolder": "克隆为文件夹",
+    "CloneSuccess": "克隆请求已成功发送。",
+    "CloneInfo": "它将被克隆为用户类型文件夹。"
   }
 }
