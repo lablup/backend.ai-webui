@@ -689,7 +689,9 @@ export default class BackendAiStorageList extends BackendAIPage {
             header="${_t('data.folders.Owner')}"
             .renderer="${this._boundOwnerRenderer}"
           ></vaadin-grid-column>
-          ${this.enableStorageProxy
+          ${this.enableStorageProxy &&
+          this.storageType === 'model' &&
+          this.is_admin
             ? html`
                 <vaadin-grid-column
                   auto-width
@@ -772,10 +774,15 @@ export default class BackendAiStorageList extends BackendAIPage {
               `,
             )}
           </mwc-select>
-          ${this.enableStorageProxy
+          ${this.enableStorageProxy &&
+          this.storageType === 'model' &&
+          this.is_admin
             ? html`
-                <div class="horizontal layout flex wrap center justified">
-                  <p style="color:rgba(0, 0, 0, 0.6);">
+                <div
+                  id="update-folder-cloneable-container"
+                  class="horizontal layout flex wrap center justified"
+                >
+                  <p style="color:rgba(0, 0, 0, 0.6);margin-left:10px;">
                     ${_t('data.folders.Cloneable')}
                   </p>
                   <mwc-switch

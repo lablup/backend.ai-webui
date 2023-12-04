@@ -103,6 +103,7 @@ export default class BackendAIData extends BackendAIPage {
   @query('#add-folder-usage-mode') addFolderUsageModeSelect!: Select;
   @query('#add-folder-group') addFolderGroupSelect!: Select;
   @query('#add-folder-type') addFolderTypeSelect!: Select;
+  @query('#cloneable-container') cloneableContainer!: HTMLDivElement;
 
   static get styles(): CSSResultGroup {
     return [
@@ -563,8 +564,12 @@ export default class BackendAIData extends BackendAIPage {
             : html``}
           ${this.enableStorageProxy
             ? html`
-                <div class="horizontal layout flex wrap center justified">
-                  <p style="color:rgba(0, 0, 0, 0.6);">
+                <div
+                  id="cloneable-container"
+                  class="horizontal layout flex wrap center justified"
+                  style="display:none;"
+                >
+                  <p style="color:rgba(0, 0, 0, 0.6);margin-left:10px;">
                     ${_t('data.folders.Cloneable')}
                   </p>
                   <mwc-switch
@@ -1132,6 +1137,19 @@ export default class BackendAIData extends BackendAIPage {
           this.addFolderGroupSelect.disabled = true;
         }
       });
+    this._toggleCloneableSwitch();
+  }
+
+  /**
+   * toggle visibility of cloneable switch
+   * - only visible when only admin selected Model usage mode.
+   */
+  _toggleCloneableSwitch() {
+    if (this.addFolderUsageModeSelect?.value === 'Model' && this.is_admin) {
+      this.cloneableContainer.style.display = 'flex';
+    } else {
+      this.cloneableContainer.style.display = 'none';
+    }
   }
 
   /**
