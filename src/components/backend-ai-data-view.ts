@@ -666,7 +666,8 @@ export default class BackendAIData extends BackendAIPage {
                       (item, idx) => html`
                         <mwc-list-item
                           value="${item.name}"
-                          ?selected="${idx === 0}"
+                          ?selected="${item.name ===
+                          globalThis.backendaiclient.current_group}"
                         >
                           ${item.name}
                         </mwc-list-item>
@@ -1119,12 +1120,14 @@ export default class BackendAIData extends BackendAIPage {
     this.addFolderGroupSelect &&
       this.addFolderGroupSelect.layout(true).then(() => {
         if (this.groupListByUsage.length > 0) {
-          // select the first item as a default
-          this.addFolderGroupSelect.select(0);
+          let idx = this.addFolderGroupSelect.items.findIndex(
+            (item) => item.value === globalThis.backendaiclient.current_group,
+          );
+          idx = idx < 0 ? 0 : idx;
           // FIXME: manually set selected text to follow updated list-item
           (this.addFolderGroupSelect as any)
             .createAdapter()
-            .setSelectedText(this.groupListByUsage[0]['name']);
+            .setSelectedText(this.groupListByUsage[idx]['name']);
         } else {
           this.addFolderGroupSelect.disabled = true;
         }
