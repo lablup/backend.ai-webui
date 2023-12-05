@@ -46,6 +46,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   @property({ type: Object }) client = Object();
   @property({ type: Object }) notification = Object();
   @property({ type: String }) resources = Object();
+  @property({ type: String }) _eduAppNamePrefix = '';
   @query('#app-launcher') appLauncher!: BackendAIAppLauncher;
 
   static get styles(): CSSResultGroup | undefined {
@@ -123,6 +124,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     this.resources = {
       cpu: queryParams.get('cpu'),
       mem: queryParams.get('mem'),
+      shmem: queryParams.get('shmem'),
       'cuda.shares': queryParams.get('cuda-shares'),
       'cuda.device': queryParams.get('cuda-device'),
     };
@@ -236,6 +238,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
   async _createEduSession() {
     this.appLauncher.indicator = await globalThis.lablupIndicator.start();
+    this._eduAppNamePrefix =
+      globalThis.backendaiclient._config.eduAppNamePrefix;
 
     // Query current user's compute session in the current group.
     const fields = [
@@ -327,7 +331,14 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         const _sess = sessions.compute_session_list.items[i];
         const servicePorts = JSON.parse(_sess.service_ports || '{}');
         const services = servicePorts.map((s) => s.name);
-        if (services.includes(requestedApp)) {
+        let requestedService = requestedApp;
+        if (
+          this._eduAppNamePrefix !== '' &&
+          requestedApp.startsWith(this._eduAppNamePrefix)
+        ) {
+          requestedService = requestedApp.split('-')[1];
+        }
+        if (services.includes(requestedService)) {
           sess = _sess;
           break;
         }
@@ -473,20 +484,32 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
     // Launch app.
     if (sessionId) {
-      if (requestedApp.startsWith('jupyter') && !this.detectIE()) {
-        requestedApp = 'jupyterlab';
-      }
       this._openServiceApp(sessionId, requestedApp);
     }
   }
 
   async _openServiceApp(sessionId, appName) {
     this.appLauncher.indicator = await globalThis.lablupIndicator.start();
-    console.log(`launching ${appName} from session ${sessionId} ...`);
+    let requestedApp = appName;
+    if (!this.detectIE()) {
+      if (
+        this._eduAppNamePrefix !== '' &&
+        appName.startsWith(this._eduAppNamePrefix)
+      ) {
+        requestedApp = appName.split('-')[1];
+      }
+      if (appName.startsWith('jupyter')) {
+        requestedApp = 'jupyterlab';
+      }
+    }
+    console.log(`launching ${requestedApp} from session ${sessionId} ...`);
     this.appLauncher
-      ._open_wsproxy(sessionId, appName, null, null)
+      ._open_wsproxy(sessionId, requestedApp, null, null)
       .then(async (resp) => {
         if (resp.url) {
+          if (appName.endsWith('rstudio')) {
+            await this.appLauncher._sleep(10000);
+          }
           const appConnectUrl = await this.appLauncher._connectToProxyWorker(
             resp.url,
             '',

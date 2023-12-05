@@ -61,7 +61,8 @@
       "NewPasswordCannotBeSame": "Please enter a password that is different from your current password.",
       "Notifications": "Notifications",
       "Tasks": "Tasks",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": "Data & Model"
     },
     "YouAreOffline": "You are now offline",
     "YouAreOnline": "You are now online",
@@ -262,7 +263,8 @@
       "ErrorCanNotExceedRemaining": "Cannot be set to greater than the remaining resources ({{amount}}).",
       "EnterEnvironmentVariable": "Enter Variable name",
       "EnvironmentVariableNamePatternError": "Variable name must start with a letter or underscore, and can only contain letters, numbers, and underscores.",
-      "EnvironmentVariableDuplicateName": "A variable name that already exists."
+      "EnvironmentVariableDuplicateName": "A variable name that already exists.",
+      "Template": "Session Template"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -458,7 +460,9 @@
     "Commit": "Commit",
     "Reset": "Reset",
     "EnterManually": "Enter Manually",
-    "Unset": "Unset"
+    "Unset": "Unset",
+    "Download": "Download",
+    "Clone": "Clone"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -780,7 +784,11 @@
     "ProjectFolder": "Project Folder",
     "Pipeline": "Pipeline Folders",
     "DialogDataFolder": "Pipeline dedicated folders that are automatically created when creating pipelines in FastTrack.",
-    "SearchByName": "Search by name"
+    "SearchByName": "Search by name",
+    "ModelStore": "Model Store",
+    "New": "New",
+    "Add": "Add",
+    "CloningIsOnlyPossibleSameHost": "Currently, cloning is only possible on the same host."
   },
   "dialog": {
     "warning": {
@@ -1439,5 +1447,32 @@
     "reloadPage": "Reload the page",
     "resetErrorBoundary": "Reset ErrorBoundary",
     "displayOnlyDevEnv": "This error block is displayed only in WebUI development environment."
+  },
+  "modelStore": {
+    "FilterByName": "Filter By Name",
+    "Model": "Model",
+    "Description": "Description",
+    "ServiceDetails": "Service Details",
+    "ModelPath": "Model Path",
+    "PreStartActions": "Pre Start Actions",
+    "Metadata": "Metadata",
+    "Author": "Author",
+    "Version": "Version",
+    "Created": "Created",
+    "LastModified": "Last Modified",
+    "MinResource": "Min Resource",
+    "HealthCheck": "Health Check",
+    "Path": "Path",
+    "MaxRetries": "Max Retries",
+    "Port": "Port",
+    "StartCommand": "Start Command",
+    "SearchModels": "Search Models",
+    "Framework": "Framework",
+    "Category": "Category",
+    "Label": "Label",
+    "Task": "Task",
+    "CloneAsFolder": "Clone as Folder",
+    "CloneSuccess": "The clone request has been sent successfully.",
+    "CloneInfo": "It will be cloned as your user type folder."
   }
 }

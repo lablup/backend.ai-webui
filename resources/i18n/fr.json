@@ -61,7 +61,8 @@
       "YouMushChangeYourPassword": "Il est recommandé de modifier périodiquement votre mot de passe pour des raisons de sécurité. Étant donné qu'un certain temps s'est écoulé depuis la dernière modification de votre mot de passe, vous devez le modifier pour pouvoir continuer à utiliser le service.",
       "NewPasswordCannotBeSame": "Veuillez saisir un mot de passe différent de votre mot de passe actuel.",
       "PleaseConfirmYourPassword": "Veuillez confirmer votre mot de passe",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": ""
     },
     "YouAreOffline": "Vous êtes maintenant hors ligne",
     "YouAreOnline": "Vous êtes maintenant en ligne",
@@ -240,18 +241,19 @@
       "FolderAliasInvalid": "Seuls les caractères alphanumériques, le trait de soulignement (_), la barre oblique (/) et le tiret (-) sont autorisés.",
       "PreOpenPortMaxCountLimit": "Vous pouvez définir jusqu'à {{count}} ports pré-ouverts.",
       "StartTimeMustBeInTheFuture": "L'heure de début doit être postérieure à l'heure actuelle.",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
-      "SessionName": "__NOT_TRANSLATED__",
-      "ResetFormConfirm": "__NOT_TRANSLATED__",
-      "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_plural": "",
+      "EnqueueComputeSessionWarning": "",
+      "SessionName": "",
+      "ResetFormConfirm": "",
+      "TemplateAndHistory": "",
+      "ScheduleTimeSimple": "",
       "ResourceAllocationPerContainer": "Allocation de ressources par conteneur",
       "NumberOfContainer": "Nombre de conteneurs",
       "ErrorCanNotExceedRemaining": "Ne peut être supérieur aux ressources restantes ({{montant}}).",
       "EnterEnvironmentVariable": "Saisir le nom de la variable",
       "EnvironmentVariableNamePatternError": "Le nom de la variable doit commencer par une lettre ou un trait de soulignement et ne peut contenir que des lettres, des chiffres et des traits de soulignement.",
-      "EnvironmentVariableDuplicateName": "Un nom de variable qui existe déjà."
+      "EnvironmentVariableDuplicateName": "Un nom de variable qui existe déjà.",
+      "Template": "Modèle de session"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -400,7 +402,9 @@
     "Reset": "Réinitialisation",
     "EnterManually": "Saisie manuelle",
     "Unset": "Non défini",
-    "OK": "OK"
+    "OK": "OK",
+    "Download": "Télécharger",
+    "Clone": "Clone"
   },
   "agent": {
     "Endpoint": "Point de terminaison",
@@ -444,7 +448,7 @@
     "Enabled": "Activée",
     "StorageProxies": "Stockages",
     "None": "Aucun",
-    "Image": "__NOT_TRANSLATED__"
+    "Image": ""
   },
   "credential": {
     "Permission": "Autorisation",
@@ -522,7 +526,7 @@
     "KeySeccessfullyDeleted": "La paire de clés est supprimée successivement.",
     "SignoutSeccessfullyFinished": "La signature est terminée en toute sécurité",
     "ModifyUserDetail": "Modifier les détails de l'utilisateur",
-    "EnableSudoSession": "__NOT_TRANSLATED__"
+    "EnableSudoSession": ""
   },
   "data": {
     "Folders": "Dossiers",
@@ -688,7 +692,11 @@
     "Used": "Utilisé",
     "Pipeline": "Dossiers du pipeline",
     "DialogDataFolder": "Dossiers dédiés aux pipelines qui sont automatiquement créés lors de la création de pipelines dans FastTrack.",
-    "SearchByName": "Rechercher par nom"
+    "SearchByName": "Rechercher par nom",
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "Ajouter",
+    "CloningIsOnlyPossibleSameHost": "Actuellement, le clonage n'est possible que sur le même hôte."
   },
   "dialog": {
     "warning": {
@@ -1439,5 +1447,32 @@
     "reloadPage": "Recharger la page",
     "resetErrorBoundary": "Réinitialisation de la limite d'erreur",
     "displayOnlyDevEnv": "Ce bloc d'erreur n'est affiché que dans l'environnement de développement WebUI."
+  },
+  "modelStore": {
+    "Description": "Description",
+    "Model": "Modèle",
+    "FilterByName": "Filtrer par nom",
+    "ServiceDetails": "Détails des services",
+    "Metadata": "Métadonnées",
+    "ModelPath": "Chemin du modèle",
+    "SearchModels": "Rechercher des modèles",
+    "MinResource": "Ressource minimale",
+    "LastModified": "Dernière modification",
+    "Created": "Créé",
+    "Version": "Version",
+    "Author": "Auteur",
+    "MaxRetries": "Nombre maximal de tentatives",
+    "Path": "Chemin",
+    "HealthCheck": "Bilan de santé",
+    "Port": "Port",
+    "StartCommand": "Démarrer la commande",
+    "PreStartActions": "Actions préalables au démarrage",
+    "Framework": "Le cadre",
+    "Category": "Catégories",
+    "Label": "Étiquette",
+    "Task": "Tâche",
+    "CloneAsFolder": "Cloner en tant que dossier",
+    "CloneSuccess": "La demande de clone a été envoyée avec succès.",
+    "CloneInfo": "Il sera cloné en tant que dossier de votre type d'utilisateur."
   }
 }

@@ -4,6 +4,7 @@ import FlexActivityIndicator from './components/FlexActivityIndicator';
 import ResourceGroupSelect from './components/ResourceGroupSelect';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
+import ModelStoreListPage from './pages/ModelStoreListPage';
 import { Form } from 'antd';
 import { t } from 'i18next';
 import React, { Suspense } from 'react';
@@ -210,6 +211,15 @@ customElements.define(
 customElements.define(
   'backend-ai-react-resource-group-select',
   reactToWebComponent((props) => {
+    const [value, setValue] = React.useState(props.value || '');
+
+    React.useEffect(() => {
+      if (props.value !== value) {
+        setValue(props.value || '');
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.value]);
+
     return (
       <DefaultProviders {...props}>
         <Flex direction="column" align="stretch" style={{ minWidth: 200 }}>
@@ -219,9 +229,11 @@ customElements.define(
               style={{ margin: 0 }}
             >
               <ResourceGroupSelect
-                autoSelectDefault
                 size="large"
+                value={value}
+                loading={value !== props.value || value === ''}
                 onChange={(value) => {
+                  setValue(value);
                   props.dispatchEvent('change', value);
                 }}
               />
@@ -240,6 +252,19 @@ customElements.define(
       <DefaultProviders {...props}>
         <Suspense fallback={<FlexActivityIndicator />}>
           <ContainerRegistryList />
+        </Suspense>
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-model-store-list',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <Suspense fallback={<FlexActivityIndicator />}>
+          <ModelStoreListPage />
         </Suspense>
       </DefaultProviders>
     );

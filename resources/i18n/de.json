@@ -61,7 +61,8 @@
       "PasswordChangePlace": "Klicken Sie auf das Personensymbol in der oberen Leiste und rufen Sie das Menü \"Mein Konto\" auf.",
       "Notifications": "Benachrichtigungen",
       "Tasks": "Aufgaben",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": ""
     },
     "YouAreOffline": "Du bist jetzt offline",
     "YouAreOnline": "Sie sind jetzt online",
@@ -240,18 +241,19 @@
       "FolderAliasInvalid": "Es sind nur alphanumerische Zeichen, Unterstrich (_), Schrägstrich (/) und Bindestrich (-) zulässig.",
       "PreOpenPortMaxCountLimit": "Sie können bis zu {{count}} vorgeöffnete Ports einstellen.",
       "StartTimeMustBeInTheFuture": "Die Startzeit muss nach der aktuellen Uhrzeit liegen.",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
-      "SessionName": "__NOT_TRANSLATED__",
-      "ResetFormConfirm": "__NOT_TRANSLATED__",
-      "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_plural": "",
+      "EnqueueComputeSessionWarning": "",
+      "SessionName": "",
+      "ResetFormConfirm": "",
+      "TemplateAndHistory": "",
+      "ScheduleTimeSimple": "",
       "ResourceAllocationPerContainer": "Ressourcenzuweisung pro Container",
       "NumberOfContainer": "Nummer des Behälters",
       "ErrorCanNotExceedRemaining": "Kann nicht auf einen Wert gesetzt werden, der größer ist als die verbleibenden Ressourcen ({{Betrag}}).",
       "EnterEnvironmentVariable": "Variablenname eingeben",
       "EnvironmentVariableNamePatternError": "Der Variablenname muss mit einem Buchstaben oder Unterstrich beginnen und darf nur Buchstaben, Zahlen und Unterstriche enthalten.",
-      "EnvironmentVariableDuplicateName": "Ein Variablenname, der bereits existiert."
+      "EnvironmentVariableDuplicateName": "Ein Variablenname, der bereits existiert.",
+      "Template": "Sitzungsvorlage"
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",
@@ -400,7 +402,9 @@
     "Unset": "Nicht eingestellt",
     "OK": "OK",
     "Commit": "Commit",
-    "EnterManually": "Manuell eingeben"
+    "EnterManually": "Manuell eingeben",
+    "Download": "Herunterladen",
+    "Clone": "Klonen"
   },
   "agent": {
     "Endpoint": "Endpunkt",
@@ -444,7 +448,7 @@
     "Enabled": "aktiviert",
     "StorageProxies": "Speicher",
     "None": "Keine",
-    "Image": "__NOT_TRANSLATED__"
+    "Image": ""
   },
   "credential": {
     "Permission": "Genehmigung",
@@ -522,7 +526,7 @@
     "SignoutSeccessfullyFinished": "Die Abmeldung ist erfolgreich abgeschlossen",
     "Status": "Status",
     "NoUserToDisplay": "Keine Benutzer zum Anzeigen",
-    "EnableSudoSession": "__NOT_TRANSLATED__"
+    "EnableSudoSession": ""
   },
   "data": {
     "Folders": "Ordner",
@@ -688,7 +692,11 @@
     "Pipeline": "Pipeline-Ordner",
     "DialogDataFolder": "Pipeline-spezifische Ordner, die bei der Erstellung von Pipelines in FastTrack automatisch erstellt werden.",
     "DialogModelFolder": "Sie können Modelle bedienen und verwalten.",
-    "SearchByName": "Suche mit Name"
+    "SearchByName": "Suche mit Name",
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "hinzufügen",
+    "CloningIsOnlyPossibleSameHost": "Derzeit ist das Klonen nur auf demselben Host möglich."
   },
   "dialog": {
     "warning": {
@@ -1439,5 +1447,32 @@
   "OpenVSCodeRemote": "Lokalen Visual Studio Code öffnen",
   "inputLimit": {
     "4to64chars": "(4~64 Zeichen)"
+  },
+  "modelStore": {
+    "Description": "Beschreibung",
+    "Model": "Modell",
+    "FilterByName": "Nach Namen filtern",
+    "ServiceDetails": "Servicedetails",
+    "Metadata": "Metadaten",
+    "ModelPath": "Modellpfad",
+    "SearchModels": "Modelle suchen",
+    "MinResource": "Min. Ressource",
+    "LastModified": "Zuletzt bearbeitet",
+    "Created": "Erstellt",
+    "Version": "Ausführung",
+    "Author": "Autor",
+    "MaxRetries": "Max. Wiederholungsversuche",
+    "Path": "Weg",
+    "HealthCheck": "Gesundheitskontrolle",
+    "Port": "Hafen",
+    "StartCommand": "Befehl starten",
+    "PreStartActions": "Aktionen vor dem Start",
+    "Framework": "Rahmenwerk",
+    "Category": "Kategorien",
+    "Label": "Etikett",
+    "Task": "Aufgabe",
+    "CloneAsFolder": "Als Ordner klonen",
+    "CloneSuccess": "Die Klonanfrage wurde erfolgreich gesendet.",
+    "CloneInfo": "Er wird als Ihr Benutzertyp-Ordner geklont."
   }
 }
