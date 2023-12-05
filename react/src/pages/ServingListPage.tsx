@@ -414,7 +414,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               rowKey={'endpoint_id'}
               dataSource={(sortedEndpointList || []) as Endpoint[]}
               columns={columns.filter(
-                (column) => selectedColumnKeys?.includes(String(column.key)),
+                (column) =>
+                  selectedColumnKeys?.includes(_.toString(column.key)),
               )}
               pagination={false}
               // pagination={{

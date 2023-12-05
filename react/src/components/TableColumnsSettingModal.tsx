@@ -71,7 +71,6 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
           shouldUpdate={(prev, cur) => prev.searchInput !== cur.searchInput}
         >
           {({ getFieldValue }) => {
-            console.log(getFieldValue('selectedColumnKeys'));
             const searchKeyword = getFieldValue('searchInput')
               ? _.toLower(getFieldValue('searchInput'))
               : undefined;
