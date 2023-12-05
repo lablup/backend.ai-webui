@@ -28,10 +28,10 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
   const [form] = Form.useForm();
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [selectedKeys, setSelectedKeys] = useState(selectKeys);
+  const [checkedKeys, setCheckedKeys] = useState(selectKeys);
 
   const handleOk = () => {
-    onChangeSelectedKeys(selectedKeys);
+    onChangeSelectedKeys(checkedKeys);
     onRequestClose();
   };
 
@@ -66,19 +66,22 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
                   value: String(searchColumn.key),
                 }),
               );
-            const unSearchdeColumnsKey = columns
+            const unSearchedColumnsKey = columns
               .filter(
                 (column) => !RegExp(searchColumn).test(String(column.title)),
               )
-              .map((unSearchedColumn) => String(unSearchedColumn.key));
+              .map((searchColumn) => String(searchColumn.key));
+            const unSearchedCheckedColumnsKey = unSearchedColumnsKey.filter(
+              (unSearchedColumnKey) => selectKeys.includes(unSearchedColumnKey),
+            );
             const onChangeCheckbox = (
               checkedColumnsKey: CheckboxValueType[],
             ) => {
               const stringCheckedColumnsKey = checkedColumnsKey.map(
                 (columnsKey) => String(columnsKey),
               );
-              setSelectedKeys(
-                unSearchdeColumnsKey.concat(stringCheckedColumnsKey),
+              setCheckedKeys(
+                unSearchedCheckedColumnsKey.concat(stringCheckedColumnsKey),
               );
             };
             return (
@@ -86,7 +89,7 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
                 options={searchColumnsResult}
                 style={{ flexDirection: 'column' }}
                 onChange={onChangeCheckbox}
-                value={selectedKeys}
+                value={checkedKeys}
               />
             );
           }}
