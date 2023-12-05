@@ -49,7 +49,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
   const [metadata] = useBackendaiImageMetaData();
   const model_info = useFragment(
     graphql`
-      fragment ModelCardModalFragment on ModelInfo {
+      fragment ModelCardModalFragment on ModelMetadata {
         id
         name
         author
