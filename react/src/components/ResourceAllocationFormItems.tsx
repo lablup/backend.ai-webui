@@ -572,23 +572,22 @@ const ResourceAllocationFormItems: React.FC<
                               {
                                 // TODO: min of mem should be shmem + image's mem limit??
                                 validator: async (rule, value: string) => {
+                                  const memMinPlusShmem =
+                                    addNumberWithUnits(
+                                      sliderMinMaxLimit.mem?.min,
+                                      form.getFieldValue(['resource', 'shmem']),
+                                    ) || '0b';
                                   if (
                                     !_.isElement(value) &&
                                     sliderMinMaxLimit.mem?.min &&
                                     compareNumberWithUnits(
                                       value,
-                                      addNumberWithUnits(
-                                        sliderMinMaxLimit.mem?.min,
-                                        form.getFieldValue([
-                                          'resource',
-                                          'shmem',
-                                        ]),
-                                      ) || '0b',
+                                      memMinPlusShmem,
                                     ) < 0
                                   ) {
                                     return Promise.reject(
                                       t('session.launcher.MinMemory', {
-                                        size: '',
+                                        size: _.toUpper(memMinPlusShmem),
                                       }),
                                     );
                                   } else {
