@@ -61,7 +61,8 @@
       "PasswordChangePlace": "Kliknij ikonę osoby na górnym pasku i przejdź do menu \"Moje konto\".",
       "Notifications": "Powiadomienia",
       "Tasks": "Zadania",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": ""
     },
     "YouAreOffline": "Jesteś teraz offline",
     "YouAreOnline": "Jesteś teraz online",
@@ -240,20 +241,21 @@
       "FolderAliasInvalid": "Dozwolone są tylko znaki alfanumeryczne, podkreślenie (_), ukośnik (/) i myślnik (-).",
       "PreOpenPortMaxCountLimit": "Można ustawić do {{count}} wstępnie otwartych portów.",
       "StartTimeMustBeInTheFuture": "Czas rozpoczęcia musi być po czasie bieżącym.",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",
-      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
-      "SessionName": "__NOT_TRANSLATED__",
-      "ResetFormConfirm": "__NOT_TRANSLATED__",
-      "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_0": "",
+      "PreOpenPortMaxCountLimit_1": "",
+      "PreOpenPortMaxCountLimit_2": "",
+      "EnqueueComputeSessionWarning": "",
+      "SessionName": "",
+      "ResetFormConfirm": "",
+      "TemplateAndHistory": "",
+      "ScheduleTimeSimple": "",
       "ResourceAllocationPerContainer": "Alokacja zasobów na kontener",
       "NumberOfContainer": "Liczba pojemników",
       "ErrorCanNotExceedRemaining": "Nie można ustawić wartości większej niż pozostałe zasoby ({{amount}}).",
       "EnterEnvironmentVariable": "Wprowadź nazwę zmiennej",
       "EnvironmentVariableNamePatternError": "Nazwa zmiennej musi zaczynać się od litery lub podkreślenia i może zawierać tylko litery, cyfry i podkreślenia.",
-      "EnvironmentVariableDuplicateName": "Nazwa zmiennej, która już istnieje."
+      "EnvironmentVariableDuplicateName": "Nazwa zmiennej, która już istnieje.",
+      "Template": "Szablon sesji"
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",
@@ -402,7 +404,9 @@
     "Unset": "Nieustawiony",
     "OK": "OK",
     "Commit": "Zobowiązanie",
-    "EnterManually": "Wprowadź ręcznie"
+    "EnterManually": "Wprowadź ręcznie",
+    "Download": "Pobierz",
+    "Clone": "Klon"
   },
   "agent": {
     "Endpoint": "Punkt końcowy",
@@ -446,7 +450,7 @@
     "Enabled": "Włączone",
     "StorageProxies": "Magazyny",
     "None": "Brak",
-    "Image": "__NOT_TRANSLATED__"
+    "Image": ""
   },
   "credential": {
     "Permission": "Pozwolenie",
@@ -524,7 +528,7 @@
     "SignoutSeccessfullyFinished": "Wylogowanie zostało pomyślnie zakończone",
     "Status": "Status",
     "NoUserToDisplay": "Brak użytkowników do wyświetlenia",
-    "EnableSudoSession": "__NOT_TRANSLATED__"
+    "EnableSudoSession": ""
   },
   "data": {
     "Folders": "Lornetka składana",
@@ -690,7 +694,11 @@
     "Pipeline": "Foldery rurociągów",
     "DialogDataFolder": "Dedykowane potokom foldery, które są automatycznie tworzone podczas tworzenia potoków w FastTrack.",
     "DialogModelFolder": "Możesz obsługiwać modele i zarządzać nimi.",
-    "SearchByName": "Szukaj według nazwy"
+    "SearchByName": "Szukaj według nazwy",
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "Dodaj",
+    "CloningIsOnlyPossibleSameHost": "Obecnie klonowanie jest możliwe tylko na tym samym hoście."
   },
   "dialog": {
     "warning": {
@@ -1441,5 +1449,32 @@
   "OpenVSCodeRemote": "Otwórz lokalny kod Visual Studio",
   "inputLimit": {
     "4to64chars": "(4~64 znaki)"
+  },
+  "modelStore": {
+    "Description": "Opis",
+    "Model": "Model",
+    "FilterByName": "Filtruj według nazwy",
+    "ServiceDetails": "Szczegóły usługi",
+    "Metadata": "Metadane",
+    "ModelPath": "Ścieżka modelu",
+    "SearchModels": "Wyszukaj modele",
+    "MinResource": "Minimalny zasób",
+    "LastModified": "Ostatnio zmodyfikowany",
+    "Created": "Utworzony",
+    "Version": "Wersja",
+    "Author": "Autor",
+    "MaxRetries": "Maksymalna liczba ponownych prób",
+    "Path": "Ścieżka",
+    "HealthCheck": "Kontrola zdrowia",
+    "Port": "Port",
+    "StartCommand": "Uruchom polecenie",
+    "PreStartActions": "Działania przed rozpoczęciem",
+    "Framework": "Ramy",
+    "Category": "Kategoria",
+    "Label": "Etykieta",
+    "Task": "Zadanie",
+    "CloneAsFolder": "Sklonuj jako Folder",
+    "CloneSuccess": "Żądanie klonowania zostało wysłane pomyślnie.",
+    "CloneInfo": "Zostanie on sklonowany jako folder typu użytkownika."
   }
 }

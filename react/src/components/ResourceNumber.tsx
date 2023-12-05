@@ -4,16 +4,19 @@ import { Tooltip, Typography, theme } from 'antd';
 import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export type ResourceTypeKey =
-  | 'cpu'
-  | 'mem'
-  | 'cuda.device'
-  | 'cuda.shares'
-  | 'rocm.device'
-  | 'tpu.device'
-  | 'ipu.device'
-  | 'atom.device'
-  | 'warboy.device';
+const resourceTypes = [
+  'cpu',
+  'mem',
+  'cuda.device',
+  'cuda.shares',
+  'rocm.device',
+  'tpu.device',
+  'ipu.device',
+  'atom.device',
+  'warboy.device',
+] as const;
+
+export type ResourceTypeKey = (typeof resourceTypes)[number];
 
 export const ACCELERATOR_UNIT_MAP: {
   [key: string]: string;
@@ -58,10 +61,15 @@ const ResourceNumber: React.FC<Props> = ({
 
   return (
     <Flex direction="row" gap="xxs">
-      <ResourceTypeIcon type={type} showTooltip={!hideTooltip} />
+      {resourceTypes.includes(type) ? (
+        <ResourceTypeIcon type={type} showTooltip={!hideTooltip} />
+      ) : (
+        type
+      )}
+
       <Typography.Text>
         {units[type] === 'GiB'
-          ? Number(iSizeToSize(amount + 'b', 'g', 3)?.numberFixed).toString()
+          ? Number(iSizeToSize(amount, 'g', 3)?.numberFixed).toString()
           : units[type] === 'FGPU'
           ? parseFloat(amount).toFixed(2)
           : amount}
