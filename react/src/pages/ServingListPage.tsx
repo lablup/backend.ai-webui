@@ -3,9 +3,7 @@ import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
-import TableColumnsSettingModal, {
-  ColumnsSettingKeyType,
-} from '../components/TableColumnsSettingModal';
+import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import { baiSignedRequestWithPromise } from '../helper';
 import {
   useCurrentProjectValue,
@@ -217,13 +215,12 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         ),
     },
   ];
-  const [selectedKeys, setSelectedKeys] = useLocalStorageState<
-    ColumnsSettingKeyType[]
-  >('modelServingTableSelectedKeys', {
-    defaultValue: columns.map((column) => {
-      return String(column.key);
-    }),
-  });
+  const [selectedColumnKeys, setSelectedColumnKeys] = useLocalStorageState(
+    'modelServingTableSelectedKeys',
+    {
+      defaultValue: columns.map((column) => _.toString(column.key)),
+    },
+  );
 
   useRafInterval(() => {
     startTransitionWithoutPendingState(() => {
@@ -417,7 +414,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               rowKey={'endpoint_id'}
               dataSource={(sortedEndpointList || []) as Endpoint[]}
               columns={columns.filter(
-                (column) => selectedKeys?.includes(String(column.key)),
+                (column) => selectedColumnKeys?.includes(String(column.key)),
               )}
               pagination={false}
               // pagination={{
@@ -509,12 +506,13 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       />
       <TableColumnsSettingModal
         open={isOpenColumnsSetting}
-        onRequestClose={() => setIsOpenColumnsSetting(false)}
-        columns={columns}
-        selectKeys={selectedKeys ? selectedKeys : []}
-        onChangeSelectedKeys={(selectedKeys: ColumnsSettingKeyType[]) => {
-          setSelectedKeys(selectedKeys);
+        onRequestClose={(values) => {
+          values?.selectedColumnKeys &&
+            setSelectedColumnKeys(values?.selectedColumnKeys);
+          setIsOpenColumnsSetting(false);
         }}
+        columns={columns}
+        selectKeys={selectedColumnKeys ? selectedColumnKeys : []}
       />
     </>
   );

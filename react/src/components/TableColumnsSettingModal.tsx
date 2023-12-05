@@ -1,20 +1,21 @@
-import { Endpoint } from '../pages/ServingListPage';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { SearchOutlined } from '@ant-design/icons';
 import { Checkbox, Input, theme, Form } from 'antd';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { ColumnsType } from 'antd/es/table';
-import React, { useState } from 'react';
+import _ from 'lodash';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-export type ColumnsSettingKeyType = string;
+interface FormValues {
+  searchInput?: string;
+  selectedColumnKeys?: string[];
+}
 
 interface TableColumnsSettingProps extends BAIModalProps {
   open: boolean;
-  onRequestClose: () => void;
-  columns: ColumnsType<Endpoint>;
-  selectKeys: ColumnsSettingKeyType[];
-  onChangeSelectedKeys: (selectedKeys: ColumnsSettingKeyType[]) => void;
+  onRequestClose: (formValues?: FormValues) => void;
+  columns: ColumnsType<any>;
+  selectKeys: string[];
 }
 
 const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
@@ -22,28 +23,43 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
   onRequestClose,
   columns,
   selectKeys,
-  onChangeSelectedKeys,
   ...modalProps
 }) => {
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<FormValues>();
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [checkedKeys, setCheckedKeys] = useState(selectKeys);
 
-  const handleOk = () => {
-    onChangeSelectedKeys(checkedKeys);
-    onRequestClose();
-  };
+  const columnOptions = columns.map((column) => ({
+    label: _.toString(column.title),
+    value: _.toString(column.key),
+  }));
 
   return (
     <BAIModal
       title={t('modelService.TableColumnSetting')}
       open={open}
-      onOk={handleOk}
-      onCancel={onRequestClose}
+      onOk={() => {
+        form
+          .validateFields()
+          .then((values) => {
+            onRequestClose(values);
+          })
+          .catch(() => {});
+      }}
+      onCancel={() => {
+        onRequestClose();
+      }}
       {...modalProps}
     >
-      <Form form={form}>
+      <Form
+        form={form}
+        preserve={false}
+        initialValues={{
+          selectedColumnKeys:
+            selectKeys ||
+            columnOptions.map((columnOption) => columnOption.value),
+        }}
+      >
         <Form.Item name="searchInput">
           <Input
             prefix={<SearchOutlined />}
@@ -55,42 +71,30 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
           shouldUpdate={(prev, cur) => prev.searchInput !== cur.searchInput}
         >
           {({ getFieldValue }) => {
-            const searchColumn = getFieldValue('searchInput');
-            const searchColumnsResult = columns
-              .filter((column) =>
-                RegExp(searchColumn).test(String(column.title)),
+            console.log(getFieldValue('selectedColumnKeys'));
+            const searchKeyword = getFieldValue('searchInput')
+              ? _.toLower(getFieldValue('searchInput'))
+              : undefined;
+
+            const filteredColumns = columnOptions.map((columnOption) =>
+              _.toLower(_.toString(columnOption.label)).includes(
+                searchKeyword || '',
               )
-              .map((searchColumn) =>
-                Object({
-                  label: String(searchColumn.title),
-                  value: String(searchColumn.key),
-                }),
-              );
-            const unSearchedColumnsKey = columns
-              .filter(
-                (column) => !RegExp(searchColumn).test(String(column.title)),
-              )
-              .map((searchColumn) => String(searchColumn.key));
-            const unSearchedCheckedColumnsKey = unSearchedColumnsKey.filter(
-              (unSearchedColumnKey) => selectKeys.includes(unSearchedColumnKey),
+                ? columnOption
+                : {
+                    ...columnOption,
+                    style: {
+                      display: 'none',
+                    },
+                  },
             );
-            const onChangeCheckbox = (
-              checkedColumnsKey: CheckboxValueType[],
-            ) => {
-              const stringCheckedColumnsKey = checkedColumnsKey.map(
-                (columnsKey) => String(columnsKey),
-              );
-              setCheckedKeys(
-                unSearchedCheckedColumnsKey.concat(stringCheckedColumnsKey),
-              );
-            };
             return (
-              <Checkbox.Group
-                options={searchColumnsResult}
-                style={{ flexDirection: 'column' }}
-                onChange={onChangeCheckbox}
-                value={checkedKeys}
-              />
+              <Form.Item name="selectedColumnKeys">
+                <Checkbox.Group
+                  options={filteredColumns}
+                  style={{ flexDirection: 'column' }}
+                />
+              </Form.Item>
             );
           }}
         </Form.Item>
