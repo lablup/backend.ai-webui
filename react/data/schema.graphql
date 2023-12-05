@@ -88,10 +88,10 @@ type Queries {
   container_registries: [ContainerRegistry]
 
   """Added in 24.03.0."""
-  model_metadata(id: String!): ModelMetadata
+  model_card(id: String!): ModelCard
 
   """Added in 24.03.0."""
-  model_metadatas(filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): ModelMetadataConnection
+  model_cards(filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): ModelCardConnection
 }
 
 """
@@ -827,7 +827,7 @@ type ContainerRegistryConfig {
   ssl_verify: Boolean
 }
 
-type ModelMetadata implements AsyncNode {
+type ModelCard implements AsyncNode {
   """The ID of the object"""
   id: ID!
   name: String
@@ -859,21 +859,21 @@ type ModelMetadata implements AsyncNode {
   readme_filetype: String
 }
 
-type ModelMetadataConnection {
+type ModelCardConnection {
   """Pagination data for this connection."""
   pageInfo: PageInfo!
 
   """Contains the nodes in this connection."""
-  edges: [ModelMetadataEdge]!
+  edges: [ModelCardEdge]!
 
   """Total count of the GQL nodes of the query."""
   count: Int
 }
 
-"""A Relay edge containing a `ModelMetadata` and its cursor."""
-type ModelMetadataEdge {
+"""A Relay edge containing a `ModelCard` and its cursor."""
+type ModelCardEdge {
   """The item at the end of the edge"""
-  node: ModelMetadata
+  node: ModelCard
 
   """A cursor for use in pagination"""
   cursor: String!
