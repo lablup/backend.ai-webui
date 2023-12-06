@@ -15,7 +15,7 @@ interface TableColumnsSettingProps extends BAIModalProps {
   open: boolean;
   onRequestClose: (formValues?: FormValues) => void;
   columns: ColumnsType<any>;
-  selectKeys: string[];
+  selectKeys?: string[];
 }
 
 const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
