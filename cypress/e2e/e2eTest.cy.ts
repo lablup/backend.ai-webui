@@ -1,5 +1,6 @@
 import '../commands/LoginPage.cy';
 import '../commands/UserDropdown.cy';
+import '../commands/DataPage.cy';
 
 describe('Initial cypress E2E test', () => {
   beforeEach(() => {
@@ -7,14 +8,9 @@ describe('Initial cypress E2E test', () => {
     cy.visit('http://localhost:9081'); //방문할 페이지
   });
 
-  it('user profile change test', () => {
-    cy.login("test2@lablup.com", "test123!").then(() => {
-      cy.wait(4000);
-      cy.userProfileChange("test2222", "test123!", "test123@").then(() =>{
-        cy.logout().then(() => {
-          cy.login("test2@lablup.com", "test123@");
-        });
-      })
-    });
+  it('localhost E2E test', () => {
+    cy.login('test2@lablup.com', 'test123!', 'http://127.0.0.1:8090');
+    cy.wait(400);
+    cy.createVfolder('test-e2eTest');
   });
 });

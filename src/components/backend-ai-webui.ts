@@ -1476,7 +1476,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 <i class="fas fa-play" slot="graphic" id="import-menu-icon"></i>
                 <span class="full-menu">${_t('webui.menu.Import&Run')}</span>
               </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${
+            <mwc-list-item id="data" graphic="icon" ?selected="${
               this._page === 'data'
             }" @click="${() =>
               this._moveTo(
