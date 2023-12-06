@@ -86,6 +86,8 @@ export default class BackendAICredentialList extends BackendAIPage {
   @property({ type: Boolean }) isUserInfoMaskEnabled = false;
   @property({ type: String }) deleteKeyPairUserName = '';
   @property({ type: String }) deleteKeyPairAccessKey = '';
+  @property({ type: Boolean }) supportMainAccessKey = false;
+  @property({ type: Array }) _mainAccessKeyList: string[] = [];
   @query('#keypair-info-dialog') keypairInfoDialog!: BackendAIDialog;
   @query('#keypair-modify-dialog') keypairModifyDialog!: BackendAIDialog;
   @query('#delete-keypair-dialog') deleteKeyPairDialog!: BackendAIDialog;
@@ -209,6 +211,8 @@ export default class BackendAICredentialList extends BackendAIPage {
         () => {
           this._refreshKeyData();
           this.isAdmin = globalThis.backendaiclient.is_admin;
+          this.supportMainAccessKey =
+            globalThis.backendaiclient.supports('main-access-key');
           this.isUserInfoMaskEnabled =
             globalThis.backendaiclient._config.maskUserInfo;
           this.keypairGrid = this.shadowRoot?.querySelector('#keypair-grid');
@@ -219,6 +223,8 @@ export default class BackendAICredentialList extends BackendAIPage {
       // already connected
       this._refreshKeyData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
+      this.supportMainAccessKey =
+        globalThis.backendaiclient.supports('main-access-key');
       this.isUserInfoMaskEnabled =
         globalThis.backendaiclient._config.maskUserInfo;
       this.keypairGrid = this.shadowRoot?.querySelector('#keypair-grid');
@@ -226,7 +232,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   /**
-   * Refresh key datas when user id is null.
+   * Refresh key data when user id is null.
    *
    * @param {string} user_id
    * @return {void}
