@@ -238,7 +238,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       css`
         vaadin-grid {
           border: 0 !important;
-          height: calc(100vh - 229px);
+          height: calc(100vh - 460px);
         }
 
         vaadin-grid.folderlist {
@@ -689,14 +689,17 @@ export default class BackendAiStorageList extends BackendAIPage {
             header="${_t('data.folders.Owner')}"
             .renderer="${this._boundOwnerRenderer}"
           ></vaadin-grid-column>
-          ${this.enableStorageProxy
+          ${this.enableStorageProxy &&
+          this.storageType === 'model' &&
+          this.is_admin
             ? html`
-                <!--<vaadin-grid-column
-                auto-width flex-grow="0" resizable header="${_t(
-                  'data.folders.Cloneable',
-                )}"
-                .renderer="${this
-                  ._boundCloneableRenderer}"></vaadin-grid-column>-->
+                <vaadin-grid-column
+                  auto-width
+                  flex-grow="0"
+                  resizable
+                  header="${_t('data.folders.Cloneable')}"
+                  .renderer="${this._boundCloneableRenderer}"
+                ></vaadin-grid-column>
               `
             : html``}
           <vaadin-grid-column
@@ -771,15 +774,22 @@ export default class BackendAiStorageList extends BackendAIPage {
               `,
             )}
           </mwc-select>
-          ${this.enableStorageProxy
+          ${this.enableStorageProxy &&
+          this.storageType === 'model' &&
+          this.is_admin
             ? html`
-                <!--<div class="horizontal layout flex wrap center justified">
-            <p style="color:rgba(0, 0, 0, 0.6);">
-              ${_t('data.folders.Cloneable')}
-            </p>
-            <mwc-switch id="update-folder-cloneable" style="margin-right:10px;">
-            </mwc-switch>
-          </div>-->
+                <div
+                  id="update-folder-cloneable-container"
+                  class="horizontal layout flex wrap center justified"
+                >
+                  <p style="color:rgba(0, 0, 0, 0.6);margin-left:10px;">
+                    ${_t('data.folders.Cloneable')}
+                  </p>
+                  <mwc-switch
+                    id="update-folder-cloneable"
+                    style="margin-right:10px;"
+                  ></mwc-switch>
+                </div>
               `
             : html``}
         </div>
@@ -1292,7 +1302,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="share-folder-dialog" fixed backdrop persistent>
+      <backend-ai-dialog id="share-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.explorer.ShareFolder')}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;">
           <div style="margin: 10px 0px">${_t('data.explorer.People')}</div>
@@ -1537,14 +1547,14 @@ export default class BackendAiStorageList extends BackendAIPage {
     for (const textfield of Array.from(textfields)) {
       this._addInputValidator(textfield);
     }
-    if (['automount', 'model'].includes(this.storageType)) {
+    if (['data', 'automount', 'model'].includes(this.storageType)) {
       (
         this.shadowRoot?.querySelector('vaadin-grid.folderlist') as HTMLElement
-      ).style.height = 'calc(100vh - 230px)';
+      ).style.height = 'calc(100vh - 464px)';
     } else {
       (
         this.shadowRoot?.querySelector('vaadin-grid.folderlist') as HTMLElement
-      ).style.height = 'calc(100vh - 185px)';
+      ).style.height = 'calc(100vh - 420px)';
     }
     document.addEventListener('backend-ai-group-changed', (e) =>
       this._refreshFolderList(true, 'group-changed'),
@@ -1884,7 +1894,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <mwc-icon-button
                   class="fg blue controls-running"
                   icon="content_copy"
-                  disabled
+                  ?disabled=${!rowData.item.cloneable}
                   @click="${() => {
                     this._requestCloneFolder(rowData.item);
                   }}"
@@ -2188,7 +2198,10 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         ${rowData.item.cloneable
           ? html`
-              <div class="horizontal center-justified center layout">
+              <div
+                class="horizontal center-justified center layout"
+                style="pointer-events: none;"
+              >
                 <mwc-icon-button class="fg green" icon="done"></mwc-icon-button>
               </div>
             `
@@ -2296,13 +2309,13 @@ export default class BackendAiStorageList extends BackendAIPage {
       );
 
     const allowedPermissionForDomainsByVolume = JSON.parse(
-      mergedData.domain.allowed_vfolder_hosts,
+      mergedData?.domain?.allowed_vfolder_hosts || '{}',
     );
     const allowedPermissionForGroupsByVolume = JSON.parse(
-      mergedData.group.allowed_vfolder_hosts,
+      mergedData?.group?.allowed_vfolder_hosts || '{}',
     );
     const allowedPermissionForResourcePolicyByVolume = JSON.parse(
-      mergedData.keypair_resource_policy.allowed_vfolder_hosts,
+      mergedData?.keypair_resource_policy.allowed_vfolder_hosts || '{}',
     );
 
     const _mergeDedupe = (arr) => [...new Set([].concat(...arr))];
@@ -3418,8 +3431,9 @@ export default class BackendAiStorageList extends BackendAIPage {
       let text = '';
       const possible =
         'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      for (let i = 0; i < 5; i++)
+      for (let i = 0; i < 5; i++) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
       /* File upload size limits to configuration */
       if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
         this.notification.text =
