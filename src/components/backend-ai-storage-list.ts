@@ -1792,6 +1792,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         <lablup-shields
           app=""
           color="${color}"
+          folder-name="${rowData.item.name}"
           description="${rowData.item.status}"
           ui="flat"
         ></lablup-shields>

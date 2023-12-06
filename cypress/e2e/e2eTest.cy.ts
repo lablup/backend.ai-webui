@@ -12,5 +12,6 @@ describe('Initial cypress E2E test', () => {
     cy.login('test2@lablup.com', 'test123!', 'http://127.0.0.1:8090');
     cy.wait(400);
     cy.createVfolder('test-e2eTest');
+    cy.deleteVfolder('test-e2eTest');
   });
 });
