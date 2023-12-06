@@ -1064,7 +1064,6 @@
     "Scaling": "缩放",
     "AllowAgentSideRegistration": "允许代理端注册",
     "DescAllowAgentSideRegistration": "允许代理将自己注册到经理。 <br/> 仅当 Backend.AI 集群在安全位置管理时使用。",
-    "Plugins": "插件",
     "CUDAGPUsupport": "CUDA GPU 支持",
     "DescCUDAGPUsupport": "NVIDIA CUDA GPU 支持。 <br/> 需要 Backend.AI CUDA 插件。",
     "CUDAGPUdisabledByFGPUsupport": "已禁用，因为系统使用分数 GPU 插件",
@@ -1115,7 +1114,8 @@
     "OverlayNetworkSettings": "覆盖网络设置",
     "OverlayNetworkSettingsDescription": "覆盖网络是在另一个网络之上分层的计算机网络。覆盖网络在 Backend.AI 管理器的多个 Docker 守护进程主机之间创建了一个分布式网络。",
     "MTUDescription": "最大传输单位，网络协议可传输的最大数据包的大小。",
-    "OutOfRange": "超出范围。"
+    "OutOfRange": "超出范围。",
+    "OpenSourcePlugins": "开源功能插件"
   },
   "notification": {
     "SuccessfullyUpdated": "成功更新",

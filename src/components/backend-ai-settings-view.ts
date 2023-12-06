@@ -357,7 +357,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
         </lablup-activity-panel>
         <lablup-activity-panel
-          title="${_t('settings.Scaling')} & ${_t('settings.Plugins')}"
+          title="${_t('settings.Scaling')} & ${_t(
+            'settings.OpenSourcePlugins',
+          )}"
           narrow
           autowidth
         >
@@ -425,7 +427,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                 </div>
               </div>
               <h3 class="horizontal center layout">
-                <span>${_t('settings.Plugins')}</span>
+                <span>${_t('settings.OpenSourcePlugins')}</span>
                 <span class="flex"></span>
               </h3>
               <div class="vertical layout wrap">

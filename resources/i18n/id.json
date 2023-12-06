@@ -1064,7 +1064,6 @@
     "Scaling": "Penskalaan",
     "AllowAgentSideRegistration": "Izinkan pendaftaran sisi agen",
     "DescAllowAgentSideRegistration": "Izinkan agen untuk mendaftarkan dirinya ke manajer. <br/>Gunakan hanya jika klaster Backend.AI dikelola di lokasi yang aman.",
-    "Plugins": "Plugin",
     "CUDAGPUsupport": "Dukungan GPU CUDA",
     "DescCUDAGPUsupport": "Dukungan GPU NVIDIA CUDA. <br/>Membutuhkan Plugin CUDA Backend.AI.",
     "CUDAGPUdisabledByFGPUsupport": "Dinonaktifkan karena sistem menggunakan plugin GPU Pecahan",
@@ -1115,7 +1114,8 @@
     "RequireATOMPlugin": "Membutuhkan Plugin Backend.AI ATOM.",
     "Warboysupport": "Warboy",
     "DescWarboysupport": "Gunakan dukungan Furiosa Warboy",
-    "RequireWarboyPlugin": "Membutuhkan Plugin Backend.AI Warboy."
+    "RequireWarboyPlugin": "Membutuhkan Plugin Backend.AI Warboy.",
+    "OpenSourcePlugins": "Plugin Fungsi OpenSource"
   },
   "notification": {
     "SuccessfullyUpdated": "Berhasil Diperbarui",

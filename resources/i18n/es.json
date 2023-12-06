@@ -1174,7 +1174,6 @@
     "OverlayNetworkConfiguration": "Configuración a utilizar al crear redes superpuestas.",
     "OverlayNetworkSettings": "Configuración de la red de superposición",
     "OverlayNetworkSettingsDescription": "Una red superpuesta es una red informática que se superpone a otra red. La red superpuesta crea una red distribuida entre varios hosts demonio Docker del gestor Backend.AI.",
-    "Plugins": "Plugins",
     "ROCMGPUsupport": "Soporte para GPU ROCm",
     "RegisterNewImagesFromRepo": "Registrar nuevas imágenes desde el repositorio",
     "Require2003orAbove": "Requiere Backend.AI 20.03 o superior.",
@@ -1199,7 +1198,8 @@
       "digest": "Digerir",
       "none": "Ninguno",
       "tag": "Etiqueta"
-    }
+    },
+    "OpenSourcePlugins": "Complementos de funciones de código abierto"
   },
   "sidepanel": {
     "BackgroundTasks": "Tareas en curso",

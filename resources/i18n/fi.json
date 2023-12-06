@@ -1307,7 +1307,6 @@
     "UseGUIonWeb": "__NOT_TRANSLATED__",
     "DescUseGUIonWeb": "__NOT_TRANSLATED__",
     "Scaling": "__NOT_TRANSLATED__",
-    "Plugins": "__NOT_TRANSLATED__",
     "NoteAboutFixedSetup": "__NOT_TRANSLATED__",
     "AllowAgentSideRegistration": "__NOT_TRANSLATED__",
     "DescAllowAgentSideRegistration": "__NOT_TRANSLATED__",
@@ -1350,7 +1349,8 @@
     "FifoOnly": "__NOT_TRANSLATED__",
     "OverlayNetworkSettingsDescription": "__NOT_TRANSLATED__",
     "MTUDescription": "__NOT_TRANSLATED__",
-    "OutOfRange": "__NOT_TRANSLATED__"
+    "OutOfRange": "__NOT_TRANSLATED__",
+    "OpenSourcePlugins": "OpenSource-funktiolaajennukset"
   },
   "inputLimit": {
     "4to64chars": "__NOT_TRANSLATED__"

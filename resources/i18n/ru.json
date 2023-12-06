@@ -1066,7 +1066,6 @@
     "Scaling": "Масштабирование",
     "AllowAgentSideRegistration": "Разрешить регистрацию на стороне агента",
     "DescAllowAgentSideRegistration": "Разрешить агенту зарегистрироваться в качестве менеджера. <br/> Используйте, только если кластер Backend.AI управляется в безопасном месте.",
-    "Plugins": "Плагины",
     "CUDAGPUsupport": "Поддержка CUDA GPU",
     "DescCUDAGPUsupport": "Поддержка графического процессора NVIDIA CUDA. <br/> Требуется подключаемый модуль Backend.AI CUDA.",
     "CUDAGPUdisabledByFGPUsupport": "Отключено, поскольку в системе используется плагин Fractional GPU.",
@@ -1117,7 +1116,8 @@
     "RequireATOMPlugin": "Требуется наличие плагина Backend.AI ATOM Plugin.",
     "Warboysupport": "Warboy",
     "DescWarboysupport": "Используйте поддержку Furiosa Warboy",
-    "RequireWarboyPlugin": "Требуется плагин Backend.AI Warboy Plugin."
+    "RequireWarboyPlugin": "Требуется плагин Backend.AI Warboy Plugin.",
+    "OpenSourcePlugins": "Плагины функций OpenSource"
   },
   "notification": {
     "SuccessfullyUpdated": "Успешно обновлено",

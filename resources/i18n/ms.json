@@ -1063,7 +1063,6 @@
     "Scaling": "Penskalaan",
     "AllowAgentSideRegistration": "Benarkan pendaftaran pihak ejen",
     "DescAllowAgentSideRegistration": "Benarkan ejen mendaftarkan dirinya kepada pengurus. <br/> Gunakan hanya jika kluster Backend.AI diuruskan di lokasi yang selamat.",
-    "Plugins": "Pemalam",
     "CUDAGPUsupport": "Sokongan GPU CUDA",
     "DescCUDAGPUsupport": "Sokongan GPU NVIDIA CUDA. <br/> Memerlukan Backend.AI CUDA Plugin.",
     "CUDAGPUdisabledByFGPUsupport": "Dinyahdayakan kerana sistem menggunakan pemalam GPU pecahan",
@@ -1114,7 +1113,8 @@
     "OverlayNetworkSettings": "Tetapan Rangkaian Tindanan",
     "OverlayNetworkSettingsDescription": "Rangkaian tindanan ialah rangkaian komputer yang berlapis di atas rangkaian lain. \nRangkaian tindanan mencipta rangkaian teragih di kalangan berbilang hos daemon Docker pengurus Backend.AI.",
     "MTUDescription": "Unit penghantaran maksimum, saiz paket terbesar yang boleh dihantar oleh protokol rangkaian.",
-    "OutOfRange": "Luar kawasan."
+    "OutOfRange": "Luar kawasan.",
+    "OpenSourcePlugins": "Pemalam Fungsi OpenSource"
   },
   "notification": {
     "SuccessfullyUpdated": "Berjaya Dikemas kini",
