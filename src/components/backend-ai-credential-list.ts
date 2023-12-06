@@ -277,7 +277,32 @@ export default class BackendAICredentialList extends BackendAIPage {
           is_active,
         );
       })
-      .then((response) => {
+      .then(async (response) => {
+        if (this.supportMainAccessKey) {
+          try {
+            // since accesskey and user account status doesn't match all the time,
+            // therefore we need to query from both active and inactive user
+            const activeUserMainAccessKeyList =
+              await globalThis.backendaiclient.user.list(true, [
+                'main_access_key',
+              ]);
+            const inactiveUserMainAccessKeyList =
+              await globalThis.backendaiclient.user.list(false, [
+                'main_access_key',
+              ]);
+            if (
+              activeUserMainAccessKeyList.users &&
+              inactiveUserMainAccessKeyList.users
+            ) {
+              this._mainAccessKeyList = [
+                ...activeUserMainAccessKeyList.users,
+                ...inactiveUserMainAccessKeyList.users,
+              ].map((userInfo) => userInfo.main_access_key);
+            }
+          } catch (err) {
+            throw err;
+          }
+        }
         const keypairs = response.keypairs;
         Object.keys(keypairs).map((objectKey, index) => {
           const keypair = keypairs[objectKey];
@@ -731,6 +756,9 @@ export default class BackendAICredentialList extends BackendAIPage {
                   class="fg red"
                   icon="delete_forever"
                   fab
+                  ?disabled=${this._mainAccessKeyList.includes(
+                    rowData.item?.access_key,
+                  )}
                   flat
                   inverted
                   @click="${(e) => this._deleteKeyPairDialog(e)}"
@@ -766,7 +794,19 @@ export default class BackendAICredentialList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div class="monospace">${rowData.item.access_key}</div>
+        <div class="vertical layout flex">
+          <div class="monospace">${rowData.item.access_key}</div>
+          ${this._mainAccessKeyList.includes(rowData.item?.access_key)
+            ? html`
+                <lablup-shields
+                  app=""
+                  color="red"
+                  description="${_t('credential.MainAccessKey')}"
+                  ui="flat"
+                ></lablup-shields>
+              `
+            : html``}
+        </div>
       `,
       root,
     );
