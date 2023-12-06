@@ -61,7 +61,8 @@
       "YouMushChangeYourPassword": "Аюулгүй байдлын үүднээс нууц үгээ үе үе өөрчлөхийг зөвлөж байна. \nТа нууц үгээ хамгийн сүүлд сольсноос хойш тодорхой хугацаа өнгөрсөн тул үйлчилгээгээ үргэлжлүүлэн ашиглахын тулд үүнийг өөрчлөх шаардлагатай.",
       "NewPasswordCannotBeSame": "Таны одоогийн нууц үгээс өөр нууц үг оруулна уу.",
       "PleaseConfirmYourPassword": "Нууц үгээ баталгаажуулна уу",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": ""
     },
     "YouAreOffline": "Та одоо офлайн байна",
     "YouAreOnline": "Та одоо онлайн байна",
@@ -239,18 +240,19 @@
       "Enable": "Идэвхжүүлэх",
       "FolderAliasInvalid": "Зөвхөн үсэг, тоон тэмдэгт, доогуур зураас (_), ташуу зураас (/), зураас (-) ашиглахыг зөвшөөрнө.",
       "StartTimeMustBeInTheFuture": "Эхлэх цаг нь одоогийн цагаас хойш байх ёстой.",
-      "PreOpenPortMaxCountLimit": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
-      "SessionName": "__NOT_TRANSLATED__",
-      "ResetFormConfirm": "__NOT_TRANSLATED__",
-      "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit": "",
+      "PreOpenPortMaxCountLimit_plural": "",
+      "EnqueueComputeSessionWarning": "",
+      "SessionName": "",
+      "ResetFormConfirm": "",
+      "TemplateAndHistory": "",
+      "ScheduleTimeSimple": "",
       "ResourceAllocationPerContainer": "Нэг контейнерт нөөцийн хуваарилалт",
       "NumberOfContainer": "Савны тоо",
       "EnterEnvironmentVariable": "Хувьсагчийн нэрийг оруулна уу",
       "EnvironmentVariableNamePatternError": "Хувьсагчийн нэр үсэг эсвэл доогуур зураасаар эхлэх ёстой бөгөөд зөвхөн үсэг, тоо, доогуур зураас агуулсан байж болно.",
-      "EnvironmentVariableDuplicateName": "Энэ хувьсагчийн нэр аль хэдийн байна."
+      "EnvironmentVariableDuplicateName": "Энэ хувьсагчийн нэр аль хэдийн байна.",
+      "Template": "Сеанс загвар"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -399,7 +401,9 @@
     "Reset": "Дахин тохируулах",
     "EnterManually": "Гараар оруулна уу",
     "Unset": "Тохируулаагүй",
-    "OK": "БОЛЖ БАЙНА УУ"
+    "OK": "БОЛЖ БАЙНА УУ",
+    "Download": "Татаж авах",
+    "Clone": "Клон"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -443,7 +447,7 @@
     "Enabled": "Идэвхжсэн",
     "StorageProxies": "Хадгалах сан",
     "None": "Байхгүй",
-    "Image": "__NOT_TRANSLATED__"
+    "Image": ""
   },
   "credential": {
     "Permission": "Зөвшөөрөл",
@@ -521,7 +525,7 @@
     "KeySeccessfullyDeleted": "KeyPair амжилттай устгагдсан.",
     "SignoutSeccessfullyFinished": "Гарах ажиллагаа амжилттай дууслаа",
     "ModifyUserDetail": "Хэрэглэгчийн мэдээллийг өөрчлөх",
-    "EnableSudoSession": "__NOT_TRANSLATED__"
+    "EnableSudoSession": ""
   },
   "data": {
     "Folders": "Фолдерууд",
@@ -687,7 +691,11 @@
     "Used": "Ашигласан",
     "Pipeline": "Дамжуулах хоолойн хавтас",
     "DialogDataFolder": "FastTrack-д дамжуулах шугам үүсгэх үед автоматаар үүсгэгддэг дамжуулах хоолойд зориулагдсан фолдерууд.",
-    "SearchByName": "Нэрээр нь хайх"
+    "SearchByName": "Нэрээр нь хайх",
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "Нэмэх",
+    "CloningIsOnlyPossibleSameHost": "Одоогоор зөвхөн нэг хост дээр клон хийх боломжтой."
   },
   "dialog": {
     "warning": {
@@ -779,7 +787,7 @@
     "SharedMemory": "Хуваалцсан санах ой (GB)",
     "Deleted": "Нөөцийн урьдчилсан тохируулгыг амжилттай устгалаа.",
     "NoResourcePresetToDisplay": "Харуулах нөөцийн урьдчилсан тохиргоо байхгүй",
-    "SHMEMShouldBeSmallerThanMemory": "__NOT_TRANSLATED__"
+    "SHMEMShouldBeSmallerThanMemory": ""
   },
   "usersettings": {
     "General": "Ерөнхий",
@@ -916,7 +924,7 @@
     "RegistrySuccessfullyModified": "Бүртгэл амжилттай өөрчлөгдсөн.",
     "ModifyRegistry": "Бүртгэлийг өөрчлөх",
     "NoRegistryToDisplay": "Харуулах бүртгэл байхгүй",
-    "ConfirmNoUserName": "__NOT_TRANSLATED__"
+    "ConfirmNoUserName": ""
   },
   "resourceGroup": {
     "ResourceGroups": "Нөөцийн бүлгүүд",
@@ -1438,5 +1446,32 @@
     "reloadPage": "Хуудсыг дахин ачаална уу",
     "resetErrorBoundary": "Алдааны хил хязгаарыг дахин тохируулах",
     "displayOnlyDevEnv": "Энэ алдааны блок нь зөвхөн WebUI хөгжүүлэлтийн орчинд харагдана."
+  },
+  "modelStore": {
+    "Description": "Тодорхойлолт",
+    "Model": "Загвар",
+    "FilterByName": "Нэрээр нь шүүх",
+    "ServiceDetails": "Үйлчилгээний дэлгэрэнгүй мэдээлэл",
+    "Metadata": "Мета өгөгдөл",
+    "ModelPath": "Загварын зам",
+    "SearchModels": "Загвар хайх",
+    "MinResource": "Хамгийн бага нөөц",
+    "LastModified": "Сүүлд өөрчилсөн",
+    "Created": "Үүсгэсэн",
+    "Version": "Хувилбар",
+    "Author": "Зохиогч",
+    "MaxRetries": "Макс дахин оролдоно",
+    "Path": "Зам",
+    "HealthCheck": "Эрүүл мэндийн үзлэг",
+    "Port": "Порт",
+    "StartCommand": "Эхлэх тушаал",
+    "PreStartActions": "Эхлэхийн өмнөх үйлдлүүд",
+    "Framework": "Хүрээ",
+    "Category": "ангилал",
+    "Label": "Шошго",
+    "Task": "Даалгавар",
+    "CloneAsFolder": "Хавтас болгон хуваах",
+    "CloneSuccess": "Хувилах хүсэлтийг амжилттай илгээлээ.",
+    "CloneInfo": "Үүнийг таны хэрэглэгчийн төрлийн хавтас болгон хувилах болно."
   }
 }

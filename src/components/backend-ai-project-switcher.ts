@@ -96,6 +96,16 @@ export default class BackendAIProjectSwitcher extends LitElement {
     this.currentProject = globalThis.backendaiutils._readRecentProjectGroup();
     globalThis.backendaiclient.current_group = this.currentProject;
     this.projects = globalThis.backendaiclient.groups;
+    if (
+      globalThis.backendaiclient.supports('model-store') &&
+      globalThis.backendaiclient.is_admin
+    ) {
+      globalThis.backendaiclient.group
+        .list(undefined, undefined, undefined, ['GENERAL', 'MODEL_STORE'])
+        .then((res) => {
+          this.projects = res.groups.map((group) => group.name);
+        });
+    }
     this.projectSelect.selectedItem = this.currentProject;
   }
 

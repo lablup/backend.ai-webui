@@ -61,7 +61,8 @@
       "PasswordChangePlace": "トップバーの人物アイコンをクリックして「ユーザー情報の変更」メニューに移動してください。",
       "Notifications": "お知らせ",
       "Tasks": "作業",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": ""
     },
     "YouAreOffline": "あなたは今オフラインです",
     "YouAreOnline": "あなたは今オンラインです",
@@ -240,17 +241,18 @@
       "FolderAliasInvalid": "英語の大文字と小文字、数字、アンダースコア（_）、スラッシュ（/）、ダッシュ（-）のみを入力できます。",
       "PreOpenPortMaxCountLimit": "count}}までプレオープンポートを設定できる。",
       "StartTimeMustBeInTheFuture": "開始時刻は現在時刻より後でなければならない。",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
-      "SessionName": "__NOT_TRANSLATED__",
-      "ResetFormConfirm": "__NOT_TRANSLATED__",
-      "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_0": "",
+      "EnqueueComputeSessionWarning": "",
+      "SessionName": "",
+      "ResetFormConfirm": "",
+      "TemplateAndHistory": "",
+      "ScheduleTimeSimple": "",
       "ResourceAllocationPerContainer": "コンテナあたりのリソース割り当て",
       "NumberOfContainer": "コンテナ数",
       "EnterEnvironmentVariable": "変数名の入力",
       "EnvironmentVariableNamePatternError": "変数名は文字またはアンダースコアで始まり、文字、数字、アンダースコアのみを含むことができます。",
-      "EnvironmentVariableDuplicateName": "既に存在する変数名です。"
+      "EnvironmentVariableDuplicateName": "既に存在する変数名です。",
+      "Template": "セッションテンプレート"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -399,7 +401,9 @@
     "Unset": "初期化",
     "OK": "確認",
     "Commit": "コミットする",
-    "EnterManually": "直接入力する"
+    "EnterManually": "直接入力する",
+    "Download": "ダウンロード",
+    "Clone": "クローン"
   },
   "agent": {
     "Endpoint": "終点",
@@ -443,7 +447,7 @@
     "Enabled": "有効",
     "StorageProxies": "ストレージ",
     "None": "なし",
-    "Image": "__NOT_TRANSLATED__"
+    "Image": ""
   },
   "credential": {
     "Permission": "許可",
@@ -521,7 +525,7 @@
     "SignoutSeccessfullyFinished": "ユーザーアカウントが正常に削除されました。",
     "Status": "状態",
     "NoUserToDisplay": "ユーザー情報がありません。",
-    "EnableSudoSession": "__NOT_TRANSLATED__"
+    "EnableSudoSession": ""
   },
   "data": {
     "Folders": "フォルダー",
@@ -687,7 +691,11 @@
     "Pipeline": "パイプラインフォルダ",
     "DialogDataFolder": "FastTrackでパイプライン作成時に自動的に生成されるパイプライン専用フォルダ。",
     "DialogModelFolder": "モデルを選択して実行したり、モデルを管理することができます。",
-    "SearchByName": "名前で検索"
+    "SearchByName": "名前で検索",
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "追加",
+    "CloningIsOnlyPossibleSameHost": "現在、クローン作成は同じホスト上でのみ可能です。"
   },
   "dialog": {
     "warning": {
@@ -1438,5 +1446,32 @@
   "OpenVSCodeRemote": "ローカルVisual Studio Codeを開く",
   "inputLimit": {
     "4to64chars": "(4～64文字)"
+  },
+  "modelStore": {
+    "Description": "説明",
+    "Model": "モデル",
+    "FilterByName": "名前でフィルタリングする",
+    "ServiceDetails": "サービス内容",
+    "Metadata": "メタデータ",
+    "ModelPath": "モデルパス",
+    "SearchModels": "モデルの検索",
+    "MinResource": "最小リソース",
+    "LastModified": "最終更新日",
+    "Created": "作成した",
+    "Version": "バージョン",
+    "Author": "著者",
+    "MaxRetries": "最大再試行回数",
+    "Path": "パス",
+    "HealthCheck": "健康診断",
+    "Port": "ポート",
+    "StartCommand": "開始コマンド",
+    "PreStartActions": "開始前のアクション",
+    "Framework": "フレームワーク",
+    "Category": "カテゴリー",
+    "Label": "ラベル",
+    "Task": "タスク",
+    "CloneAsFolder": "フォルダとしてクローン",
+    "CloneSuccess": "クローン要求は正常に送信された。",
+    "CloneInfo": "ユーザータイプのフォルダとしてクローンされます。"
   }
 }

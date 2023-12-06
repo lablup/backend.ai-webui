@@ -1,6 +1,7 @@
 BUILD_DATE := $(shell date +%y%m%d)
 BUILD_TIME := $(shell date +%H%m%S)
 BUILD_VERSION := $(shell grep version package.json | head -1 | cut -c 15- | rev | cut -c 3- | rev)
+BUILD_NUMBER := $(shell git rev-list --count $(shell git rev-parse --abbrev-ref HEAD))
 REVISION_INDEX := $(shell git --no-pager log --pretty=format:%h -n 1)
 site := $(or $(site),main)
 
@@ -35,12 +36,12 @@ run_tests:
 	@npx testcafe chrome tests
 versiontag:
 	@printf "$(GREEN)Tagging version number / index...$(NC)\n"
-	@echo '{ "package": "${BUILD_VERSION}", "build": "${BUILD_DATE}.${BUILD_TIME}", "revision": "${REVISION_INDEX}" }' > version.json
+	@echo '{ "package": "${BUILD_VERSION}", "buildNumber": "${BUILD_NUMBER}", "buildDate": "${BUILD_DATE}.${BUILD_TIME}", "revision": "${REVISION_INDEX}" }' > version.json
 	@sed -i -E 's/globalThis.packageVersion = "\([^"]*\)"/globalThis.packageVersion = "${BUILD_VERSION}"/g' index.html
 	@sed -i -E 's/"version": "\([^"]*\)"/"version": "${BUILD_VERSION}"/g' manifest.json
 	@sed -i -E 's/"version": "\([^"]*\)"/"version": "${BUILD_VERSION}"/g' react/package.json
-	@sed -i -E 's/globalThis.buildVersion = "\([^"]*\)"/globalThis.buildVersion = "${BUILD_DATE}\.${BUILD_TIME}"/g' index.html
-	@sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\([^"]*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_DATE}\<\/small\>/g' ./src/components/backend-ai-webui.ts
+	@sed -i -E 's/globalThis.buildNumber = "\([^"]*\)"/globalThis.buildNumber = "${BUILD_NUMBER}"/g' index.html
+	@sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\([^"]*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_NUMBER}\<\/small\>/g' ./src/components/backend-ai-webui.ts
 	@printf "$(YELLOW)Finished$(NC)\n"
 compile_keepversion:
 	@npm run build
@@ -56,6 +57,7 @@ all: dep
 	@make win_arm64
 	@make linux_x64
 	@make linux_arm64
+	@make bundle
 dep:
 	@if [ ! -f "./config.toml" ]; then \
 		cp config.toml.sample config.toml; \
@@ -144,6 +146,11 @@ ifeq ($(site),main)
 else
 	@mv ./app/backend.ai-desktop-$(arch)-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-$(site)-$(os)-$(arch).dmg
 endif
+	@printf "$(YELLOW)Finished$(NC)\n"
+bundle: dep
+	@printf "$(GREEN)Bundling...$(NC)"
+	@cd build/rollup; zip -r -9 ../../app/backend.ai-webui-bundle-$(BUILD_DATE).zip . > /dev/null
+	@mv ./app/backend.ai-webui-bundle-$(BUILD_DATE).zip ./app/backend.ai-webui-bundle-$(BUILD_VERSION).zip
 	@printf "$(YELLOW)Finished$(NC)\n"
 mac: dep
 	@make mac_x64

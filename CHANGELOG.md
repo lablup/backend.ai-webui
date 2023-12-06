@@ -1,4 +1,62 @@
 # Changelog
+
+## v23.09.5 (21/11/2023)
+## What's Changed
+* update: stand-alone local proxy packaging by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2013
+* docs: Update documentation link by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1994
+* update: change NPU device limit per node to 8 by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2014
+* add: read NPU limit per node configuration from config.toml by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2015
+* fix: add optional chaining to call support by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2019
+* feat: Link FastTrack button to frontend server by @rapsealk in https://github.com/lablup/backend.ai-webui/pull/2020
+* add: a draft for updated sliderInputItem with selectable AI accelerator by @lizable in https://github.com/lablup/backend.ai-webui/pull/2017
+* Fix: hide `max_vfolder_count` setting according to the api version by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2016
+* feature: hide size of directory by option by @lizable in https://github.com/lablup/backend.ai-webui/pull/2021
+* feature: update existing components for neo session launcher by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2023
+* feat: Neo session launcher - alpha by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1953
+* feat: VFolderPermissionTag component by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2024
+* feature: Response style for `ImageEnvironmentSelectFormItems` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2028
+* feat: cluster mode in Neo Session launcher  by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2026
+* fix: variable name validation rule of `EnvVarFormList` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2029
+* add: bundle option to Makefile with auto-release bundle by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2034
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.4...v23.09.5
+
+
+## v23.09.4 (05/11/2023)
+## What's Changed
+* feat: new GraphQL directive on Client, `@since(version:)` and `@deprecatedSince(version:)` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1999
+* fix: UI with multiple types of accelerators by @adrysn in https://github.com/lablup/backend.ai-webui/pull/2012
+* feat: add `allowAppDownloadPanel` that can hide app download panel by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/1996
+* feature: set password to `undefined` when no change is desired. by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2010
+* bugfix: GraphQL variable type error by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2011
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.3...v23.09.4
+
+
+## v23.09.3 (01/11/2023)
+## What's Changed
+* fix: remove image naming checking when selecting sftp image by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2007
+* fix: touchup sftp connection example text by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2004
+* fix: limit number of characters of model service name by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/2003
+* build(deps): bump actions/setup-node from 3 to 4 by @dependabot in https://github.com/lablup/backend.ai-webui/pull/2001
+* feat: add config option that can hide custom resource allocation by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/1998
+* fix: hide inference app from app launcher by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/2002
+* feat: add passwordless sudo user management UI by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2005
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.2...v23.09.3
+
+
+## v23.09.2 (26/10/2023)
+## What's Changed
+* update: i18n resources by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1989
+* update: PULL_REQUEST_TEMPLATE.md by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1990
+* feature: split copy to clipboard in sftp session connection dialog by @lizable in https://github.com/lablup/backend.ai-webui/pull/1986
+* feature: Registry management UI using GraphQL by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1975
+* fix: revert max_vfolder_count removing by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1995
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.1...v23.09.2
+
+
 ## v23.09.1 (24/10/2023)
 ## What's Changed
 * update: change label on terms of service dialog's close button by @rapsealk in https://github.com/lablup/backend.ai-webui/pull/1957

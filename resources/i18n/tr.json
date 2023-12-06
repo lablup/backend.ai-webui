@@ -61,7 +61,8 @@
       "PasswordChangePlace": "Üst çubuktaki kişi simgesine tıklayın ve \"Hesabım\" menüsüne gidin.",
       "Notifications": "Bildirimler",
       "Tasks": "Görevler",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": ""
     },
     "YouAreOffline": "Şu anda çevrimdışısın",
     "YouAreOnline": "artık çevrimiçisin",
@@ -240,17 +241,18 @@
       "FolderAliasInvalid": "Yalnızca alfasayısal karakterlere, alt çizgiye (_), eğik çizgiye (/) ve kısa çizgiye (-) izin verilir.",
       "PreOpenPortMaxCountLimit": "En fazla {{sayı}} ön açık bağlantı noktası ayarlayabilirsiniz.",
       "StartTimeMustBeInTheFuture": "Başlangıç zamanı geçerli saatten sonra olmalıdır.",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
-      "SessionName": "__NOT_TRANSLATED__",
-      "ResetFormConfirm": "__NOT_TRANSLATED__",
-      "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_plural": "",
+      "EnqueueComputeSessionWarning": "",
+      "SessionName": "",
+      "ResetFormConfirm": "",
+      "TemplateAndHistory": "",
+      "ScheduleTimeSimple": "",
       "ResourceAllocationPerContainer": "Konteyner Başına Kaynak Tahsisi",
       "NumberOfContainer": "Konteyner sayısı",
       "EnterEnvironmentVariable": "Değişken adını girin",
       "EnvironmentVariableNamePatternError": "Değişken adı bir harf veya alt çizgi ile başlamalıdır ve yalnızca harfler, sayılar ve alt çizgiler içerebilir.",
-      "EnvironmentVariableDuplicateName": "Zaten var olan bir değişken adı."
+      "EnvironmentVariableDuplicateName": "Zaten var olan bir değişken adı.",
+      "Template": "Oturum Şablonu"
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -399,7 +401,9 @@
     "Unset": "Ayarlanmamış",
     "OK": "TAMAM.",
     "Commit": "Taahhüt",
-    "EnterManually": "Manuel Olarak Girin"
+    "EnterManually": "Manuel Olarak Girin",
+    "Download": "İndir",
+    "Clone": "Klon"
   },
   "agent": {
     "Endpoint": "uç nokta",
@@ -443,7 +447,7 @@
     "Enabled": "Etkin",
     "StorageProxies": "Depolar",
     "None": "Hiçbiri",
-    "Image": "__NOT_TRANSLATED__"
+    "Image": ""
   },
   "credential": {
     "Permission": "izin",
@@ -521,7 +525,7 @@
     "SignoutSeccessfullyFinished": "Çıkış işlemi başarıyla tamamlandı",
     "Status": "Durum",
     "NoUserToDisplay": "Görüntülenecek Kullanıcı Yok",
-    "EnableSudoSession": "__NOT_TRANSLATED__"
+    "EnableSudoSession": ""
   },
   "data": {
     "Folders": "klasörler",
@@ -687,7 +691,11 @@
     "Pipeline": "Boru Hattı Klasörleri",
     "DialogDataFolder": "FastTrack'te boru hatları oluşturulurken otomatik olarak oluşturulan boru hattına özel klasörler.",
     "DialogModelFolder": "Modellere hizmet verebilir ve yönetebilirsiniz.",
-    "SearchByName": "Ada göre ara"
+    "SearchByName": "Ada göre ara",
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "Ekle",
+    "CloningIsOnlyPossibleSameHost": "Şu anda klonlama yalnızca aynı ana bilgisayarda mümkündür."
   },
   "dialog": {
     "warning": {
@@ -1438,5 +1446,32 @@
   "OpenVSCodeRemote": "Yerel Visual Studio Kodunu açın",
   "inputLimit": {
     "4to64chars": "(4~64 karakter)"
+  },
+  "modelStore": {
+    "Description": "Tanım",
+    "Model": "Modeli",
+    "FilterByName": "Ada Göre Filtrele",
+    "ServiceDetails": "Hizmet Detayları",
+    "Metadata": "Meta veriler",
+    "ModelPath": "Model Yolu",
+    "SearchModels": "Modelleri Ara",
+    "MinResource": "Minimum Kaynak",
+    "LastModified": "Son düzenleme",
+    "Created": "Oluşturuldu",
+    "Version": "Sürüm",
+    "Author": "Yazar",
+    "MaxRetries": "Maksimum Yeniden Deneme Sayısı",
+    "Path": "Yol",
+    "HealthCheck": "Sağlık kontrolü",
+    "Port": "Liman",
+    "StartCommand": "Komutu Başlat",
+    "PreStartActions": "Başlangıç ​​Öncesi Eylemler",
+    "Framework": "Çerçeve",
+    "Category": "Kategori",
+    "Label": "Etiket",
+    "Task": "Görev",
+    "CloneAsFolder": "Klasör olarak klonla",
+    "CloneSuccess": "Klonlama isteği başarıyla gönderildi.",
+    "CloneInfo": "Kullanıcı tipi klasörünüz olarak klonlanacaktır."
   }
 }
