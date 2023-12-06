@@ -1114,7 +1114,7 @@
     "OverlayNetworkSettingsDescription": "Mạng lớp phủ là mạng máy tính được xếp chồng lên trên một mạng khác. \nMạng lớp phủ tạo ra một mạng phân tán giữa nhiều máy chủ daemon Docker của trình quản lý Backend.AI.",
     "MTUDescription": "Đơn vị truyền tối đa, kích thước của gói lớn nhất mà giao thức mạng có thể truyền.",
     "OutOfRange": "Ngoài phạm vi.",
-    "OpenSourcePlugins": "Plugin chức năng OpenSource"
+    "OpenSourcePlugins": "Plugin tính năng nguồn mở"
   },
   "notification": {
     "SuccessfullyUpdated": "Cập nhật thành công",

@@ -1115,7 +1115,7 @@
     "OverlayNetworkSettingsDescription": "Una rete overlay è una rete di computer che si sovrappone a un'altra rete. La rete overlay crea una rete distribuita tra più host di demoni Docker del gestore Backend.AI.",
     "MTUDescription": "Unità di trasmissione massima, la dimensione del pacchetto più grande che un protocollo di rete può trasmettere.",
     "OutOfRange": "Fuori portata.",
-    "OpenSourcePlugins": "Plugin di funzioni OpenSource"
+    "OpenSourcePlugins": "Plugin di funzionalità open source"
   },
   "notification": {
     "SuccessfullyUpdated": "Aggiornato con successo",

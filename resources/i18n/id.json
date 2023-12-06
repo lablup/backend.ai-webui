@@ -1115,7 +1115,7 @@
     "Warboysupport": "Warboy",
     "DescWarboysupport": "Gunakan dukungan Furiosa Warboy",
     "RequireWarboyPlugin": "Membutuhkan Plugin Backend.AI Warboy.",
-    "OpenSourcePlugins": "Plugin Fungsi OpenSource"
+    "OpenSourcePlugins": "Plugin Fitur Sumber Terbuka"
   },
   "notification": {
     "SuccessfullyUpdated": "Berhasil Diperbarui",

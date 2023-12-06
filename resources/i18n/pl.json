@@ -1117,7 +1117,7 @@
     "OverlayNetworkSettingsDescription": "Sieć nakładkowa to sieć komputerowa, która jest nakładana na inną sieć. Sieć nakładkowa tworzy sieć rozproszoną między wieloma hostami demonów Docker menedżera Backend.AI.",
     "MTUDescription": "Maksymalna jednostka transmisji, rozmiar największego pakietu, jaki może przesłać protokół sieciowy.",
     "OutOfRange": "Poza zasięgiem.",
-    "OpenSourcePlugins": "Wtyczki funkcyjne OpenSource"
+    "OpenSourcePlugins": "Wtyczki funkcji Open Source"
   },
   "notification": {
     "SuccessfullyUpdated": "Pomyślnie zaktualizowano",

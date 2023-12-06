@@ -1114,7 +1114,7 @@
     "OverlayNetworkSettingsDescription": "Rangkaian tindanan ialah rangkaian komputer yang berlapis di atas rangkaian lain. \nRangkaian tindanan mencipta rangkaian teragih di kalangan berbilang hos daemon Docker pengurus Backend.AI.",
     "MTUDescription": "Unit penghantaran maksimum, saiz paket terbesar yang boleh dihantar oleh protokol rangkaian.",
     "OutOfRange": "Luar kawasan.",
-    "OpenSourcePlugins": "Pemalam Fungsi OpenSource"
+    "OpenSourcePlugins": "Pemalam Ciri Sumber Terbuka"
   },
   "notification": {
     "SuccessfullyUpdated": "Berjaya Dikemas kini",

@@ -1207,7 +1207,7 @@
     "Warboysupport": "Warboy",
     "DescWarboysupport": "Use Furiosa Warboy support",
     "RequireWarboyPlugin": "Requires Backend.AI Warboy Plugin.",
-    "OpenSourcePlugins": "OpenSource Function Plugins"
+    "OpenSourcePlugins": "Open Source Feature Plugins"
   },
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",

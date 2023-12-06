@@ -1117,7 +1117,7 @@
     "Warboysupport": "Warboy",
     "DescWarboysupport": "Используйте поддержку Furiosa Warboy",
     "RequireWarboyPlugin": "Требуется плагин Backend.AI Warboy Plugin.",
-    "OpenSourcePlugins": "Плагины функций OpenSource"
+    "OpenSourcePlugins": "Плагины функций с открытым исходным кодом"
   },
   "notification": {
     "SuccessfullyUpdated": "Успешно обновлено",

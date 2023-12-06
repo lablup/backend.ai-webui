@@ -1115,7 +1115,7 @@
     "OverlayNetworkSettingsDescription": "Ein Overlay-Netzwerk ist ein Computernetzwerk, das auf ein anderes Netzwerk aufgesetzt wird. Das Overlay-Netzwerk schafft ein verteiltes Netzwerk zwischen mehreren Docker-Daemon-Hosts des Backend.AI-Managers.",
     "MTUDescription": "Maximale Übertragungseinheit, die Größe des größten Pakets, das ein Netzprotokoll übertragen kann.",
     "OutOfRange": "Außerhalb der Reichweite.",
-    "OpenSourcePlugins": "OpenSource-Funktions-Plugins"
+    "OpenSourcePlugins": "Open-Source-Funktions-Plugins"
   },
   "notification": {
     "SuccessfullyUpdated": "Erfolgreich aktualisiert",

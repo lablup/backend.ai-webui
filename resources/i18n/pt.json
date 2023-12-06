@@ -1115,7 +1115,7 @@
     "OverlayNetworkSettingsDescription": "Uma rede de sobreposição é uma rede de computadores que é colocada em camadas sobre outra rede. A rede de sobreposição cria uma rede distribuída entre vários hosts daemon do Docker do gerenciador Backend.AI.",
     "MTUDescription": "Unidade máxima de transmissão, o tamanho do maior pacote que um protocolo de rede pode transmitir.",
     "OutOfRange": "Fora de alcance.",
-    "OpenSourcePlugins": "Plug-ins de função OpenSource"
+    "OpenSourcePlugins": "Plug-ins de recursos de código aberto"
   },
   "notification": {
     "SuccessfullyUpdated": "Atualizado com sucesso",
