@@ -12,18 +12,8 @@ import TOTPActivateModal from './TOTPActivateModal';
 import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  Modal,
-  ModalProps,
-  Input,
-  Form,
-  Select,
-  message,
-  Switch,
-  Divider,
-} from 'antd';
+import { Modal, ModalProps, Input, Form, message, Switch } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import _ from 'lodash';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';

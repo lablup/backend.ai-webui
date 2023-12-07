@@ -23,7 +23,6 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const [userInfo] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
 
