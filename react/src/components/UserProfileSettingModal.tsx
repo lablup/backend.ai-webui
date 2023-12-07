@@ -9,11 +9,19 @@ import BAIModal from './BAIModal';
 import { passwordPattern } from './ResetPasswordRequired';
 import TOTPActivateModal from './TOTPActivateModal';
 // @ts-ignore
-import customCSS from './UserProfileSettingModal.css?raw';
 import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Modal, ModalProps, Input, Form, Select, message, Switch } from 'antd';
+import {
+  Modal,
+  ModalProps,
+  Input,
+  Form,
+  Select,
+  message,
+  Switch,
+  Divider,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useDeferredValue } from 'react';
@@ -29,8 +37,6 @@ type UserProfileFormValues = {
   originalPassword?: string;
   newPasswordConfirm?: string;
   newPassword?: string;
-  access_key?: string;
-  secret_key?: string;
   totp_activated: boolean;
 };
 
@@ -81,23 +87,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
     {
       fetchPolicy: 'network-only',
       fetchKey: deferredMergedFetchKey,
-    },
-  );
-
-  const { data: keyPairs } = useTanQuery<
-    {
-      secret_key: string;
-      access_key: string;
-    }[]
-  >(
-    'baiClient.keypair.list',
-    () => {
-      return baiClient.keypair
-        .list(userInfo.email, ['access_key', 'secret_key'], true)
-        .then((res: any) => res.keypairs);
-    },
-    {
-      suspense: true,
     },
   );
 
@@ -164,7 +153,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
 
   return (
     <>
-      <style>{customCSS}</style>
       <BAIModal
         {...baiModalProps}
         okText={t('webui.menu.Update')}
@@ -185,7 +173,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
           initialValues={{
             full_name: userInfo.full_name,
             totp_activated: user?.totp_activated || false,
-            access_key: keyPairs?.[0].access_key,
           }}
           preserve={false}
         >
@@ -206,29 +193,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
             ]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item name="access_key" label={t('general.AccessKey')}>
-            <Select
-              options={_.map(keyPairs, (keyPair) => ({
-                value: keyPair.access_key,
-              }))}
-              // onSelect={onSelectAccessKey}
-            ></Select>
-          </Form.Item>
-          <Form.Item
-            label={t('general.SecretKey')}
-            shouldUpdate={(prev, next) => prev.access_key !== next.access_key}
-          >
-            {({ getFieldValue }) => (
-              <Input.Password
-                value={
-                  _.find(keyPairs, ['access_key', getFieldValue('access_key')])
-                    ?.secret_key
-                }
-                className="disabled_style_readonly"
-                readOnly
-              />
-            )}
           </Form.Item>
           <Form.Item
             name="originalPassword"
