@@ -33,15 +33,20 @@ Cypress.Commands.add(
     versionSelect.click();
     cy.wait(500);
     selectedVersion.click();
+    cy.wait(500);
     sessionNameInput.clear().type(sessionName);
+    cy.wait(500);
     nextButton.click();
+    cy.wait(500);
     const mountVfolder = findShadowRoot(
       'backend-ai-webui > backend-ai-session-view > backend-ai-session-launcher',
     )
       .find('#non-auto-mounted-folder-grid')
       .find(`div:contains(${mountVfolderName})`);
     mountVfolder.click();
+    cy.wait(500);
     nextButton.click();
+    cy.wait(500);
     const resourceGroupExtension = findShadowRoot(
       'backend-ai-webui > backend-ai-session-view > backend-ai-session-launcher',
     ).find('lablup-expansion[name="resource-group"]');
@@ -51,6 +56,7 @@ Cypress.Commands.add(
     resourceGroupExtension.click();
     ramResourceInput.clear().type(2);
     nextButton.click();
+    cy.wait(500);
     launchButton.click();
     cy.wait(10000);
     const appDialog = findShadowRoot(

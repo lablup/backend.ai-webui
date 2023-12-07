@@ -1,5 +1,4 @@
 import '../commands/LoginPage.cy';
-import '../commands/UserDropdown.cy';
 import '../commands/DataStoragePage.cy';
 import '../commands/SessionPage.cy';
 

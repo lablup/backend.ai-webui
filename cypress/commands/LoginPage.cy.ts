@@ -13,8 +13,8 @@ Cypress.Commands.add(
       'backend-ai-webui > backend-ai-login > #id_api_endpoint',
     ).find('input');
     const loginButton = findShadowRoot(
-      'backend-ai-webui > backend-ai-login > #login-button',
-    ).find('button');
+      'backend-ai-webui > backend-ai-login',
+    ).find('#login-button');
     emailInput.type(email);
     passwordInput.type(password);
     endpointInput.clear().type(endpoint);
