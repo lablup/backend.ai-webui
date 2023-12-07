@@ -4372,7 +4372,7 @@ class User {
       const limit = 100;
       const users = [] as any;
       if (!this.client.supports('main-access-key')) {
-        fields.splice(fields.indexOf('main_access_key'), 1);
+        fields = fields.filter(field => field !== 'main_access_key');
       }
       q = this.client.is_admin
         ? `
