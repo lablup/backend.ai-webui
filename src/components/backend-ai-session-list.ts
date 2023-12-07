@@ -889,73 +889,138 @@ export default class BackendAISessionList extends BackendAIPage {
               sessions[objectKey].containers &&
               sessions[objectKey].containers.length > 0
             ) {
-              const container = sessions[objectKey].containers[0];
-              const liveStat = container.live_stat
-                ? JSON.parse(container.live_stat)
+              const liveStat = {
+                cpu_util: { capacity: 0, current: 0, ratio: 0, slots: '0' },
+                mem: { capacity: 0, current: 0, ratio: 0 },
+                io_read: { current: 0 },
+                io_write: { current: 0 },
+              };
+              sessions[objectKey].containers.forEach((container) => {
+                const parsedLiveStat = JSON.parse(container.live_stat);
+                liveStat.cpu_util.current += parseFloat(
+                  parsedLiveStat?.cpu_util?.current,
+                );
+                liveStat.cpu_util.capacity += parseFloat(
+                  parsedLiveStat?.cpu_util?.capacity,
+                );
+
+                liveStat.mem.current += parseInt(parsedLiveStat?.mem?.current);
+                // mem.capacity does not report total amount of memory allocated to
+                // the container, so, we just replace with the value of occupied slot.
+                // NOTE: this assumes every containers in a session have the same
+                // amount of memory.
+                liveStat.mem.capacity = occupiedSlots.mem;
+
+                liveStat.io_read.current += parseFloat(
+                  BackendAISessionList.bytesToMB(
+                    parsedLiveStat?.io_read?.current,
+                  ),
+                );
+                liveStat.io_write.current += parseFloat(
+                  BackendAISessionList.bytesToMB(
+                    parsedLiveStat?.io_write?.current,
+                  ),
+                );
+
+                if (parsedLiveStat) {
+                  Object.keys(parsedLiveStat).forEach((statKey) => {
+                    if (
+                      statKey === 'cpu_util' ||
+                      statKey === 'cpu_used' ||
+                      statKey === 'mem' ||
+                      statKey === 'io_read' ||
+                      statKey === 'io_write' ||
+                      statKey === 'io_scratch_size' ||
+                      statKey === 'net_rx' ||
+                      statKey === 'net_tx'
+                    )
+                      return;
+                    if (statKey.includes('_util')) {
+                      // core utilization
+                      if (!liveStat[statKey])
+                        liveStat[statKey] = {
+                          capacity: 0,
+                          current: 0,
+                          ratio: 0,
+                        };
+                      liveStat[statKey].current += parseFloat(
+                        parsedLiveStat[statKey].current,
+                      );
+                      liveStat[statKey].capacity += parseFloat(
+                        parsedLiveStat[statKey].capacity,
+                      );
+                    } else if (statKey.includes('_mem')) {
+                      // memory utilization
+                      // Currently, the addition logic of memory utilization is the same as that of core utilization.
+                      // But, we may want to change this in the future.
+                      if (!liveStat[statKey])
+                        liveStat[statKey] = {
+                          capacity: 0,
+                          current: 0,
+                          ratio: 0,
+                        };
+                      liveStat[statKey].current += parseFloat(
+                        parsedLiveStat[statKey].current,
+                      );
+                      liveStat[statKey].capacity += parseFloat(
+                        parsedLiveStat[statKey].capacity,
+                      );
+                    }
+                  });
+                  // Calculate utilization ratio (total utilization ratio - can be exceeding 1).
+                  // CPU's capacity is fixed (e.g. 1000) regardless of the number of allocated cores.
+                  // For example,
+                  //   - {capacity: 1000, current: 6952.082, slots: 16}
+                  //     -> ratio: 6.95 | pct: 695% | progressbar: 0.43 (== ratio / 16)
+                  liveStat.cpu_util.ratio =
+                    liveStat.cpu_util.current / liveStat.cpu_util.capacity || 0;
+                  liveStat.cpu_util.slots = occupiedSlots.cpu;
+                  // Memory is simple. It's just a ratio of current memory utilization.
+                  liveStat.mem.ratio =
+                    liveStat.mem.current / liveStat.mem.capacity || 0;
+                  Object.keys(liveStat).forEach((statKey) => {
+                    if (statKey === 'cpu_util' || statKey === 'mem') return;
+                    if (
+                      statKey.indexOf('_util') !== -1 &&
+                      liveStat[statKey].capacity > 0
+                    ) {
+                      // Accelerator's capacity will be changed depending on the number of allocated accelerators.
+                      // So, we need to calculate the ratio by dividing 100 plainly.
+                      // For example,
+                      //   - {capacity: 400, current: 304}
+                      //     -> ratio: 3.04 (== 304/100) | pct: 304% | slots: 4 (400/100) | progressbar: 0.76 (== ratio / slots)
+                      // liveStat[statKey].ratio = (liveStat[statKey].current / liveStat[statKey].capacity) || 0;
+                      liveStat[statKey].ratio =
+                        liveStat[statKey].current / 100 || 0;
+                    }
+                    if (
+                      statKey.indexOf('_mem') !== -1 &&
+                      liveStat[statKey].capacity > 0
+                    ) {
+                      // Accelerator's memory is simple. It's just a ratio of current memory utilization.
+                      liveStat[statKey].ratio =
+                        liveStat[statKey].current /
+                          liveStat[statKey].capacity || 0;
+                    }
+                  });
+                  sessions[objectKey].live_stat = liveStat;
+                }
+              });
+              const firstContainer = sessions[objectKey].containers[0];
+              const firstContainerLiveStat = firstContainer.live_stat
+                ? JSON.parse(firstContainer.live_stat)
                 : null;
-              sessions[objectKey].agent = container.agent;
-              if (liveStat && liveStat.cpu_used) {
+              sessions[objectKey].agent = firstContainer.agent;
+              if (firstContainerLiveStat && firstContainerLiveStat.cpu_used) {
                 sessions[objectKey].cpu_used_time = this._automaticScaledTime(
-                  liveStat.cpu_used.current,
+                  firstContainerLiveStat.cpu_used.current,
                 );
               } else {
                 sessions[objectKey].cpu_used_time =
                   this._automaticScaledTime(0);
               }
-              if (liveStat && liveStat.cpu_util) {
-                sessions[objectKey].cpu_util = liveStat.cpu_util.current;
-              } else {
-                sessions[objectKey].cpu_util = 0;
-              }
-              if (liveStat && liveStat.mem) {
-                sessions[objectKey].mem_current = liveStat.mem.current;
-              } else {
-                sessions[objectKey].mem_current = 0;
-              }
-              if (liveStat && liveStat.io_read) {
-                sessions[objectKey].io_read_bytes_mb =
-                  BackendAISessionList.bytesToMB(liveStat.io_read.current);
-              } else {
-                sessions[objectKey].io_read_bytes_mb = 0;
-              }
-              if (liveStat && liveStat.io_write) {
-                sessions[objectKey].io_write_bytes_mb =
-                  BackendAISessionList.bytesToMB(liveStat.io_write.current);
-              } else {
-                sessions[objectKey].io_write_bytes_mb = 0;
-              }
-              if (liveStat && liveStat.cuda_util) {
-                sessions[objectKey].cuda_util = liveStat.cuda_util.current;
-              } else {
-                sessions[objectKey].cuda_util = 0;
-              }
-              if (liveStat && liveStat.rocm_util) {
-                sessions[objectKey].rocm_util = liveStat.rocm_util;
-              } else {
-                sessions[objectKey].rocm_util = 0;
-              }
-              if (liveStat && liveStat.tpu_util) {
-                sessions[objectKey].tpu_util = liveStat.tpu_util;
-              } else {
-                sessions[objectKey].tpu_util = 0;
-              }
-              if (liveStat && liveStat.ipu_util) {
-                sessions[objectKey].ipu_util = liveStat.ipu_util;
-              } else {
-                sessions[objectKey].ipu_util = 0;
-              }
-              if (liveStat && liveStat.atom_util) {
-                sessions[objectKey].atom_util = liveStat.atom_util;
-              } else {
-                sessions[objectKey].atom_util = 0;
-              }
-              if (liveStat && liveStat.cuda_mem) {
-                sessions[objectKey].cuda_mem_ratio =
-                  liveStat.cuda_mem.current / liveStat.cuda_mem.capacity || 0;
-              } else {
-                sessions[objectKey].cuda_mem_ratio = null;
-              }
             }
+
             const service_info = JSON.parse(sessions[objectKey].service_ports);
             sessions[objectKey].service_ports = service_info;
             if (Array.isArray(service_info) === true) {
@@ -1508,7 +1573,6 @@ export default class BackendAISessionList extends BackendAIPage {
       globalThis.backendaiclient.computeSession
         .getCommitSessionStatus(sessionName)
         .then((res) => {
-          // console.log(res);
           isOnProgress = res;
         })
         .catch((err) => {
@@ -3146,7 +3210,7 @@ ${rowData.item[this.sessionNameField]}</pre
   }
 
   /**
-   * Render usages - cpu_used_time, io_read_bytes_mb, and io_write_bytes_mb
+   * Render usages - cpu_used_time, io_read (bytes to mb), and io_write (bytes to mb)
    *
    * @param {Element} root - the row details content DOM element
    * @param {Element} column - the column element that controls the state of the host element
@@ -3165,8 +3229,8 @@ ${rowData.item[this.sessionNameField]}</pre
               <div class="horizontal start-justified center layout">
                 <lablup-progress-bar
                   class="usage"
-                  progress="${rowData.item.cpu_util /
-                  (rowData.item.cpu_slot * 100)}"
+                  progress="${rowData.item.live_stat?.cpu_util?.ratio /
+                    rowData.item.live_stat?.cpu_util?.slots || 0}"
                   description=""
                 ></lablup-progress-bar>
               </div>
@@ -3176,8 +3240,7 @@ ${rowData.item[this.sessionNameField]}</pre
               <div class="horizontal start-justified center layout">
                 <lablup-progress-bar
                   class="usage"
-                  progress="${rowData.item.mem_current /
-                  (rowData.item.mem_slot * 1000000000)}"
+                  progress="${rowData.item.live_stat?.mem?.ratio}"
                   description=""
                 ></lablup-progress-bar>
               </div>
@@ -3190,8 +3253,8 @@ ${rowData.item[this.sessionNameField]}</pre
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
-                        progress="${rowData.item.cuda_util /
-                        (rowData.item.cuda_gpu_slot * 100)}"
+                        progress="${rowData.item.live_stat?.cuda_util?.current /
+                          rowData.item.live_stat?.cuda_util?.capacity || 0}"
                         description=""
                       ></lablup-progress-bar>
                     </div>
@@ -3206,8 +3269,8 @@ ${rowData.item[this.sessionNameField]}</pre
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
-                        progress="${rowData.item.cuda_util /
-                        (rowData.item.cuda_fgpu_slot * 100)}"
+                        progress="${rowData.item.live_stat?.cuda_util?.ratio /
+                          rowData.item.live_stat?.cuda_util?.capacity || 0}"
                         description=""
                       ></lablup-progress-bar>
                     </div>
@@ -3222,8 +3285,8 @@ ${rowData.item[this.sessionNameField]}</pre
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
-                        progress="${rowData.item.rocm_util /
-                        (rowData.item.rocm_gpu_slot * 100)}"
+                        progress="${rowData.item.live_stat?.rocm_util?.ratio /
+                          rowData.item.live_stat?.rocm_util?.capacity || 0}"
                         description=""
                       ></lablup-progress-bar>
                     </div>
@@ -3237,7 +3300,7 @@ ${rowData.item[this.sessionNameField]}</pre
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
-                        progress="${rowData.item.cuda_mem_ratio}"
+                        progress="${rowData.item.live_stat?.cuda_mem?.ratio}"
                         description=""
                       ></lablup-progress-bar>
                     </div>
@@ -3251,8 +3314,8 @@ ${rowData.item[this.sessionNameField]}</pre
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
-                        progress="${rowData.item.tpu_util /
-                        (rowData.item.tpu_slot * 100)}"
+                        progress="${rowData.item.live_stat?.tpu_util?.current /
+                          rowData.item.live_stat?.tpu_util?.capacity || 0}"
                         description=""
                       ></lablup-progress-bar>
                     </div>
@@ -3266,8 +3329,8 @@ ${rowData.item[this.sessionNameField]}</pre
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
-                        progress="${rowData.item.ipu_util /
-                        (rowData.item.ipu_slot * 100)}"
+                        progress="${rowData.item?.live_stat?.ipu_util?.current /
+                          rowData.item?.live_stat?.ipu_util?.capacity || 0}"
                         description=""
                       ></lablup-progress-bar>
                     </div>
@@ -3281,8 +3344,9 @@ ${rowData.item[this.sessionNameField]}</pre
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
-                        progress="${rowData.item.atom_util /
-                        (rowData.item.atom_slot * 100)}"
+                        progress="${rowData.item?.live_stat?.atom_util
+                          ?.current /
+                          rowData.item?.live_stat?.atom_util?.capacity || 0}"
                         description=""
                       ></lablup-progress-bar>
                     </div>
@@ -3295,8 +3359,8 @@ ${rowData.item[this.sessionNameField]}</pre
                 style="font-size:8px;"
                 class="horizontal start-justified center layout"
               >
-                R: ${rowData.item.io_read_bytes_mb} MB / W:
-                ${rowData.item.io_write_bytes_mb} MB
+                R: ${rowData.item?.live_stat?.io_read?.current} MB / W:
+                ${rowData.item?.live_stat?.io_write?.current} MB
               </div>
             </div>
           </div>
@@ -3375,14 +3439,14 @@ ${rowData.item[this.sessionNameField]}</pre
             </mwc-icon>
             <div class="vertical start layout">
               <span style="font-size:9px">
-                ${rowData.item.io_read_bytes_mb}
+                ${rowData.item.live_stat?.io_read?.current}
                 <span class="indicator">MB</span>
               </span>
               <span class="indicator">READ</span>
             </div>
             <div class="vertical start layout">
               <span style="font-size:8px">
-                ${rowData.item.io_write_bytes_mb}
+                ${rowData.item.live_stat?.io_write?.current}
                 <span class="indicator">MB</span>
               </span>
               <span class="indicator">WRITE</span>
