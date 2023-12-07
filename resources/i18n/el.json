@@ -1440,6 +1440,7 @@
     "4to64chars": "(4~64 χαρακτήρες)"
   },
   "table": {
-    "ManageTable": "Διαχείριση πίνακα"
+    "ManageTable": "Διαχείριση πίνακα",
+    "SearchColumnToDisplay": "Αναζήτηση στηλών για εμφάνιση"
   }
 }

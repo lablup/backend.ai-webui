@@ -1440,6 +1440,7 @@
     "4to64chars": "(4～64文字)"
   },
   "table": {
-    "ManageTable": "テーブルの管理"
+    "ManageTable": "テーブルの管理",
+    "SearchColumnToDisplay": "表示する列を検索します"
   }
 }

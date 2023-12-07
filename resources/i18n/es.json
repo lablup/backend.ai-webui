@@ -1440,6 +1440,7 @@
     }
   },
   "table": {
-    "ManageTable": "Administrar tabla"
+    "ManageTable": "Administrar tabla",
+    "SearchColumnToDisplay": "Buscar columnas para mostrar"
   }
 }

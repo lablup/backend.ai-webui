@@ -1440,6 +1440,7 @@
     }
   },
   "table": {
-    "ManageTable": "Hallitse taulukkoa"
+    "ManageTable": "Hallitse taulukkoa",
+    "SearchColumnToDisplay": "Etsi näytettäviä sarakkeita"
   }
 }

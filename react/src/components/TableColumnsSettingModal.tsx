@@ -61,7 +61,11 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
         }}
         layout="vertical"
       >
-        <Form.Item name="searchInput">
+        <Form.Item
+          name="searchInput"
+          label={t('table.SearchColumnToDisplay')}
+          style={{ marginBottom: 0 }}
+        >
           <Input
             prefix={<SearchOutlined />}
             style={{ marginBottom: token.marginSM }}

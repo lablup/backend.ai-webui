@@ -1439,6 +1439,7 @@
     "4to64chars": "(4~64 aksara)"
   },
   "table": {
-    "ManageTable": "Urus Jadual"
+    "ManageTable": "Urus Jadual",
+    "SearchColumnToDisplay": "Cari lajur untuk dipaparkan"
   }
 }

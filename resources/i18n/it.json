@@ -1440,6 +1440,7 @@
     "4to64chars": "(4~64 caratteri)"
   },
   "table": {
-    "ManageTable": "Gestisci tabella"
+    "ManageTable": "Gestisci tabella",
+    "SearchColumnToDisplay": "Cerca le colonne da visualizzare"
   }
 }

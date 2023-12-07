@@ -1440,6 +1440,7 @@
     "displayOnlyDevEnv": "Blok kesalahan ini hanya ditampilkan di lingkungan pengembangan WebUI."
   },
   "table": {
-    "ManageTable": "Kelola Tabel"
+    "ManageTable": "Kelola Tabel",
+    "SearchColumnToDisplay": "Cari kolom untuk ditampilkan"
   }
 }
