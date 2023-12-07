@@ -1302,7 +1302,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="share-folder-dialog" fixed backdrop persistent>
+      <backend-ai-dialog id="share-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.explorer.ShareFolder')}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;">
           <div style="margin: 10px 0px">${_t('data.explorer.People')}</div>
@@ -3431,8 +3431,9 @@ export default class BackendAiStorageList extends BackendAIPage {
       let text = '';
       const possible =
         'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      for (let i = 0; i < 5; i++)
+      for (let i = 0; i < 5; i++) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
       /* File upload size limits to configuration */
       if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
         this.notification.text =

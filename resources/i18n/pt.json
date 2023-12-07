@@ -525,7 +525,8 @@
     "SignoutSeccessfullyFinished": "O registo foi concluído com êxito",
     "Status": "Estado",
     "NoUserToDisplay": "Nenhum utilizador a apresentar",
-    "EnableSudoSession": ""
+    "EnableSudoSession": "",
+    "MainAccessKey": "Chave de acesso principal"
   },
   "data": {
     "Folders": "Pastas",

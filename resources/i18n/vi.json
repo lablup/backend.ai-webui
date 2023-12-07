@@ -524,7 +524,8 @@
     "SignoutSeccessfullyFinished": "Đăng xuất đã hoàn tất thành công",
     "Status": "Trạng thái",
     "NoUserToDisplay": "Không có người dùng để hiển thị",
-    "EnableSudoSession": ""
+    "EnableSudoSession": "",
+    "MainAccessKey": "Khóa truy cập chính"
   },
   "data": {
     "Folders": "Thư mục",

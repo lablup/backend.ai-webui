@@ -525,7 +525,8 @@
     "KeySeccessfullyDeleted": "La paire de clés est supprimée successivement.",
     "SignoutSeccessfullyFinished": "La signature est terminée en toute sécurité",
     "ModifyUserDetail": "Modifier les détails de l'utilisateur",
-    "EnableSudoSession": ""
+    "EnableSudoSession": "",
+    "MainAccessKey": "Clé d'accès principale"
   },
   "data": {
     "Folders": "Dossiers",

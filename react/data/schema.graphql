@@ -1,5 +1,4 @@
 # PR 1749
-
 schema {
   query: Queries
   mutation: Mutations
@@ -414,6 +413,11 @@ type User implements Item {
   totp_activated: Boolean
   totp_activated_at: DateTime
   sudo_session_enabled: Boolean
+
+  """
+  Added in 24.03.0. Work as default access key of the user. User's main_access_key is changable but not deletable.
+  """
+  main_access_key: String 
   groups: [UserGroup]
 }
 
@@ -1132,6 +1136,7 @@ input ModifyUserInput {
   totp_activated: Boolean
   resource_policy: String
   sudo_session_enabled: Boolean
+  main_access_key: String
 }
 
 """

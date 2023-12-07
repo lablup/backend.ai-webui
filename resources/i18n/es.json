@@ -207,7 +207,8 @@
       "PolicyName": "Nombre de la póliza Obligatorio.",
       "ValidationFailed": "Validación fallida"
     },
-    "EnableSudoSession": ""
+    "EnableSudoSession": "",
+    "MainAccessKey": "Clave de acceso principal"
   },
   "data": {
     "Allowslettersnumbersand-_": "Permite letras, números y -_",
