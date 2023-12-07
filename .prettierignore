@@ -2,5 +2,6 @@
 src/lib/
 !/src
 !/react
+!/cypress
 **/__generated__/*.graphql.ts
 *.graphql

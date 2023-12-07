@@ -4,7 +4,7 @@ import '../commands/DataPage.cy';
 
 describe('Initial cypress E2E test', () => {
   beforeEach(() => {
-    cy.viewport(1280,800);
+    cy.viewport(1280, 800);
     cy.visit('http://localhost:9081'); //방문할 페이지
   });
 
