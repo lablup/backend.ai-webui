@@ -1099,6 +1099,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       idle_timeout: this.idleTimeout.value,
       max_vfolder_count: 0,
       allowed_vfolder_hosts: vfolder_hosts,
+      max_vfolder_count: 0,
     };
 
     if (!this.isSupportMaxVfolderCountInUserResourcePolicy) {
