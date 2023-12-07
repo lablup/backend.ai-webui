@@ -6,7 +6,7 @@ Cypress.Commands.add(
     environmnet: string,
     architecture: string,
     sessionName: string,
-    vfolderName: string,
+    mountVfolderName: string,
   ) => {
     findShadowRoot('backend-ai-webui').find('#session').click();
     cy.wait(400);
@@ -39,7 +39,7 @@ Cypress.Commands.add(
       'backend-ai-webui > backend-ai-session-view > backend-ai-session-launcher',
     )
       .find('#non-auto-mounted-folder-grid')
-      .find(`div:contains(${vfolderName})`);
+      .find(`div:contains(${mountVfolderName})`);
     mountVfolder.click();
     nextButton.click();
     const resourceGroupExtension = findShadowRoot(
