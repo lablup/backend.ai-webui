@@ -1650,7 +1650,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         <div
-          id="controls"
+          id="vfolder"
           class="layout flex horizontal start-justified center wrap"
           folder-id="${rowData.item.id}"
           folder-name="${rowData.item.name}"

@@ -2906,7 +2906,7 @@ ${rowData.item[this.sessionNameField]}</pre
             ? html`
                 <mwc-icon-button
                   class="fg red controls-running"
-                  id="${rowData.index + '-power'}"
+                  id="${rowData.item.name + '-power'}"
                   ?disabled=${!this._isPending(rowData.item.status) &&
                   (rowData.item?.commit_status as CommitSessionStatus) ===
                     'ongoing'}

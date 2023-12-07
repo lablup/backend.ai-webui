@@ -2,7 +2,7 @@ import { findShadowRoot } from '../helper/FindShadowRoot.cy';
 
 Cypress.Commands.add('createVfolder', (vfolderName: string) => {
   findShadowRoot('backend-ai-webui').find('#data').click();
-  cy.wait(400);
+  cy.wait(1000);
   const createDialogOpenButton = findShadowRoot(
     'backend-ai-webui > backend-ai-data-view',
   ).find('#add-folder');
@@ -13,7 +13,9 @@ Cypress.Commands.add('createVfolder', (vfolderName: string) => {
     'backend-ai-webui > backend-ai-data-view',
   ).find('#add-button');
   createDialogOpenButton.click();
+  cy.wait(500);
   vfolderNameInput.type(vfolderName);
+  cy.wait(500);
   createButton.click();
   cy.wait(5000);
   findShadowRoot(

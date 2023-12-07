@@ -5,8 +5,8 @@ Cypress.Commands.add(
   (
     environmnet: string,
     architecture: string,
-    sessionName: string,
     mountVfolderName: string,
+    sessionName: string,
   ) => {
     findShadowRoot('backend-ai-webui').find('#session').click();
     cy.wait(400);
@@ -67,4 +67,25 @@ Cypress.Commands.add(
 Cypress.Commands.add('deleteSession', (sessionName: string) => {
   findShadowRoot('backend-ai-webui').find('#session').click();
   cy.wait(400);
+  const terminateDialogOpenButton = findShadowRoot(
+    'backend-ai-webui > backend-ai-session-view > backend-ai-session-list',
+  ).find(`#${sessionName}-power`);
+  const deleteButton = findShadowRoot(
+    'backend-ai-webui > backend-ai-session-view > backend-ai-session-list',
+  )
+    .find('#terminate-session-dialog')
+    .find('mwc-button[class="ok"]');
+  const finishedTab = findShadowRoot(
+    'backend-ai-webui > backend-ai-session-view',
+  ).find('mwc-tab[title="finished"]');
+  terminateDialogOpenButton.click();
+  deleteButton.click();
+  cy.wait(5000);
+  finishedTab.click();
+  cy.wait(5000);
+  findShadowRoot(
+    'backend-ai-webui > backend-ai-session-view > backend-ai-session-list',
+  )
+    .find(`#${sessionName}-status`)
+    .contains('TERMINATED');
 });
