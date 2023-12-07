@@ -3635,7 +3635,9 @@ ${rowData.item[this.sessionNameField]}</pre
     render(
       html`
         <div class="horizontal layout center">
-          <span style="font-size: 12px;">${rowData.item.status}</span>
+          <span style="font-size: 12px;" id="${rowData.item.name}-status">
+            ${rowData.item.status}
+          </span>
           ${!rowData.item.status_data || rowData.item.status_data === '{}'
             ? html``
             : html`

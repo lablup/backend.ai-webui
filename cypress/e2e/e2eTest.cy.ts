@@ -1,6 +1,7 @@
 import '../commands/LoginPage.cy';
 import '../commands/UserDropdown.cy';
-import '../commands/DataPage.cy';
+import '../commands/DataStoragePage.cy';
+import '../commands/SessionPage.cy';
 
 describe('Initial cypress E2E test', () => {
   beforeEach(() => {
@@ -11,7 +12,8 @@ describe('Initial cypress E2E test', () => {
   it('localhost E2E test', () => {
     cy.login('test2@lablup.com', 'test123!', 'http://127.0.0.1:8090');
     cy.wait(400);
-    cy.createVfolder('test-e2eTest');
-    cy.deleteVfolder('test-e2eTest');
+    //cy.createVfolder('test-e2eTest');
+    //cy.deleteVfolder('test-e2eTest');
+    cy.launchSession('3\\.9-ubuntu20\\.04', 'aarch64', 'test', 'tttt');
   });
 });
