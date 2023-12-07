@@ -525,7 +525,8 @@
     "SignoutSeccessfullyFinished": "Il signout è terminato in modo sicuro",
     "Status": "Stato",
     "NoUserToDisplay": "Nessun utente da visualizzare",
-    "EnableSudoSession": ""
+    "EnableSudoSession": "",
+    "MainAccessKey": "Chiave di accesso principale"
   },
   "data": {
     "Folders": "cartelle",

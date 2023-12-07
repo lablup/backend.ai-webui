@@ -525,7 +525,8 @@
     "KeySeccessfullyDeleted": "KeyPair амжилттай устгагдсан.",
     "SignoutSeccessfullyFinished": "Гарах ажиллагаа амжилттай дууслаа",
     "ModifyUserDetail": "Хэрэглэгчийн мэдээллийг өөрчлөх",
-    "EnableSudoSession": ""
+    "EnableSudoSession": "",
+    "MainAccessKey": "Үндсэн хандалтын түлхүүр"
   },
   "data": {
     "Folders": "Фолдерууд",

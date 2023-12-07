@@ -524,7 +524,8 @@
     "SignoutSeccessfullyFinished": "Log keluar telah selesai dengan selamat",
     "Status": "Status",
     "NoUserToDisplay": "Tiada Pengguna untuk dipaparkan",
-    "EnableSudoSession": ""
+    "EnableSudoSession": "",
+    "MainAccessKey": "Kunci Akses Utama"
   },
   "data": {
     "Folders": "Folder",
