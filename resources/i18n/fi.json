@@ -709,8 +709,7 @@
     "TokenGenerationFailed": "Tokenin luominen epäonnistui. yritä uudelleen.",
     "TrafficRatio": "Liikennesuhde",
     "YouAreAboutToTerminate": "Olet lopettamassa",
-    "resources": "Resurssit",
-    "TableColumnSetting": "Taulukon sarakeasetus"
+    "resources": "Resurssit"
   },
   "notification": {
     "Initializing": "Aloitetaan...",
@@ -1439,5 +1438,8 @@
       "WelcomeMessage_2": " .",
       "YouMushChangeYourPassword": "On suositeltavaa vaihtaa salasana säännöllisesti turvallisuussyistä. Koska salasanasi viimeisimmästä vaihtamisesta on kulunut tietty aika, sinun on vaihdettava se, jotta voit jatkaa palvelun käyttöä."
     }
+  },
+  "table": {
+    "ManageTable": "Hallitse taulukkoa"
   }
 }

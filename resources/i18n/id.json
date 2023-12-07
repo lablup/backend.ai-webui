@@ -1431,13 +1431,15 @@
     "FormValidationFailed": "Validasi formulir gagal",
     "ServiceNameRule": "Hanya mengizinkan 4 hingga 24 karakter alfanumerik, garis bawah (_), tanda hubung (-), dan titik (.) dan harus diakhiri dengan karakter alfanumerik.",
     "resources": "Sumber daya",
-    "Image": "Gambar",
-    "TableColumnSetting": "Pengaturan Kolom Tabel"
+    "Image": "Gambar"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",
     "reloadPage": "Muat ulang halaman",
     "resetErrorBoundary": "Setel Ulang Batas Kesalahan",
     "displayOnlyDevEnv": "Blok kesalahan ini hanya ditampilkan di lingkungan pengembangan WebUI."
+  },
+  "table": {
+    "ManageTable": "Kelola Tabel"
   }
 }

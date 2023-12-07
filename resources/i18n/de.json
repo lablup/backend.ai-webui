@@ -1382,8 +1382,7 @@
     "RoutingsCount": "Routings zählen",
     "Active/Total": "Aktiv/Gesamt",
     "Public": "Öffentlich",
-    "YouAreAboutToTerminate": "Sie stehen kurz vor der Beendigung",
-    "TableColumnSetting": "Tabellenspalteneinstellung"
+    "YouAreAboutToTerminate": "Sie stehen kurz vor der Beendigung"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",
@@ -1439,5 +1438,8 @@
   "OpenVSCodeRemote": "Lokalen Visual Studio Code öffnen",
   "inputLimit": {
     "4to64chars": "(4~64 Zeichen)"
+  },
+  "table": {
+    "ManageTable": "Tabelle verwalten"
   }
 }

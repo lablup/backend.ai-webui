@@ -1382,8 +1382,7 @@
     "RoutingsCount": "Güzergah Sayısı",
     "Active/Total": "Aktif/Toplam",
     "Public": "Kamu",
-    "YouAreAboutToTerminate": "Sonlandırmak üzeresiniz",
-    "TableColumnSetting": "Tablo Sütunu Ayarı"
+    "YouAreAboutToTerminate": "Sonlandırmak üzeresiniz"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",
@@ -1439,5 +1438,8 @@
   "OpenVSCodeRemote": "Yerel Visual Studio Kodunu açın",
   "inputLimit": {
     "4to64chars": "(4~64 karakter)"
+  },
+  "table": {
+    "ManageTable": "Tabloyu Yönet"
   }
 }

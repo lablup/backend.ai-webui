@@ -416,8 +416,7 @@
     "ServiceNameRule": "4~24자의 영문, 숫자, 밑줄(_), 하이픈(-), 마침표(.)만 허용하며, 영문으로 영문이나 숫자로 끝나야합니다.",
     "FormValidationFailed": "양식 유효성 검사 실패",
     "resources": "자원",
-    "Image": "이미지",
-    "TableColumnSetting": "표 열 변경"
+    "Image": "이미지"
   },
   "button": {
     "Cancel": "취소",
@@ -1440,5 +1439,8 @@
     "reloadPage": "페이지 새로고침",
     "resetErrorBoundary": "ErrorBoundary 초기화",
     "displayOnlyDevEnv": "이 에러 블록은 WebUI 개발 환경에서만 표시됩니다."
+  },
+  "table": {
+    "ManageTable": "테이블 관리"
   }
 }

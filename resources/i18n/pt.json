@@ -1422,8 +1422,7 @@
     "Active/Total": "Ativo/Total",
     "Public": "Público",
     "YouAreAboutToTerminate": "Está prestes a terminar",
-    "Image": "Imagem",
-    "TableColumnSetting": "Configuração de coluna de tabela"
+    "Image": "Imagem"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",
@@ -1439,5 +1438,8 @@
   "OpenVSCodeRemote": "Abrir o código local do Visual Studio",
   "inputLimit": {
     "4to64chars": "(4~64 caracteres)"
+  },
+  "table": {
+    "ManageTable": "Gerenciar tabela"
   }
 }

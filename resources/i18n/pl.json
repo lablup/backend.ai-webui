@@ -1384,8 +1384,7 @@
     "RoutingsCount": "Liczba tras",
     "Active/Total": "Aktywny/Ogółem",
     "Public": "Publiczny",
-    "YouAreAboutToTerminate": "Zamierzasz zakończyć",
-    "TableColumnSetting": "Ustawienie kolumny tabeli"
+    "YouAreAboutToTerminate": "Zamierzasz zakończyć"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",
@@ -1441,5 +1440,8 @@
   "OpenVSCodeRemote": "Otwórz lokalny kod Visual Studio",
   "inputLimit": {
     "4to64chars": "(4~64 znaki)"
+  },
+  "table": {
+    "ManageTable": "Zarządzaj tabelą"
   }
 }

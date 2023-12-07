@@ -1422,8 +1422,7 @@
     "Active/Total": "活动/总数",
     "Public": "公众",
     "YouAreAboutToTerminate": "您即将终止",
-    "Image": "图片",
-    "TableColumnSetting": "表列設定"
+    "Image": "图片"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",
@@ -1439,5 +1438,8 @@
   "OpenVSCodeRemote": "打开本地 Visual Studio 代码",
   "inputLimit": {
     "4to64chars": "（4 至 64 个字符）"
+  },
+  "table": {
+    "ManageTable": "管理表"
   }
 }

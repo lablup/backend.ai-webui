@@ -1382,8 +1382,7 @@
     "RoutingsCount": "Conteggio delle rotte",
     "Active/Total": "Attivo/Totale",
     "Public": "Pubblico",
-    "YouAreAboutToTerminate": "State per terminare",
-    "TableColumnSetting": "Impostazione della colonna della tabella"
+    "YouAreAboutToTerminate": "State per terminare"
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",
@@ -1439,5 +1438,8 @@
   "OpenVSCodeRemote": "Aprire il codice locale di Visual Studio",
   "inputLimit": {
     "4to64chars": "(4~64 caratteri)"
+  },
+  "table": {
+    "ManageTable": "Gestisci tabella"
   }
 }

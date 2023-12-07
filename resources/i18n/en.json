@@ -426,8 +426,7 @@
     "ServiceNameRule": "Only allow 4 to 24 characters of alphanumeric, underscore(_), hyphen(-), and period(.) and it must end with an alphanumeric character.",
     "FormValidationFailed": "Form validation failed",
     "resources": "Resources",
-    "Image": "Image",
-    "TableColumnSetting": "Table Column Setting"
+    "Image": "Image"
   },
   "button": {
     "Cancel": "Cancel",
@@ -1433,6 +1432,9 @@
   "explorer": {
     "ValueRequired": "ValueRequired",
     "InputTooShort": "InputTooShort"
+  },
+  "table": {
+    "ManageTable": "Manage Table"
   },
   "ErrorBoundary": {
     "title": "An error has occurred.",

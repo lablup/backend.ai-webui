@@ -36,7 +36,7 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
 
   return (
     <BAIModal
-      title={t('modelService.TableColumnSetting')}
+      title={t('table.ManageTable')}
       open={open}
       onOk={() => {
         form
@@ -59,6 +59,7 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
             selectKeys ||
             columnOptions.map((columnOption) => columnOption.value),
         }}
+        layout="vertical"
       >
         <Form.Item name="searchInput">
           <Input

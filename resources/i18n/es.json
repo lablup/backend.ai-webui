@@ -709,8 +709,7 @@
     "TokenGenerationFailed": "Generación de token fallida. Por favor, inténtelo de nuevo.",
     "TrafficRatio": "Ratio de tráfico",
     "YouAreAboutToTerminate": "Está a punto de terminar",
-    "resources": "Recursos",
-    "TableColumnSetting": "Configuración de columnas de tabla"
+    "resources": "Recursos"
   },
   "notification": {
     "Initializing": "Inicializando...",
@@ -1439,5 +1438,8 @@
       "WelcomeMessage_2": " .",
       "YouMushChangeYourPassword": "Se recomienda cambiar periódicamente la contraseña por razones de seguridad. Dado que ha transcurrido cierto tiempo desde la última vez que cambió su contraseña, deberá cambiarla para poder seguir utilizando el servicio."
     }
+  },
+  "table": {
+    "ManageTable": "Administrar tabla"
   }
 }

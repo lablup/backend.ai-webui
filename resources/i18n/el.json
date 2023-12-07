@@ -1382,8 +1382,7 @@
     "RoutingsCount": "Αριθμός δρομολογίων",
     "Active/Total": "Ενεργό/Σύνολο",
     "Public": "Δημόσιο",
-    "YouAreAboutToTerminate": "Πρόκειται να τερματίσετε",
-    "TableColumnSetting": "Ρύθμιση στήλης πίνακα"
+    "YouAreAboutToTerminate": "Πρόκειται να τερματίσετε"
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",
@@ -1439,5 +1438,8 @@
   "OpenVSCodeRemote": "Ανοίξτε τον τοπικό κώδικα του Visual Studio",
   "inputLimit": {
     "4to64chars": "(4~64 χαρακτήρες)"
+  },
+  "table": {
+    "ManageTable": "Διαχείριση πίνακα"
   }
 }

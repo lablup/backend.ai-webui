@@ -1431,13 +1431,15 @@
     "FormValidationFailed": "La validation du formulaire a échoué",
     "ServiceNameRule": "Seuls 4 à 24 caractères alphanumériques, le trait de soulignement (_), le trait d'union (-) et le point (.) sont autorisés et le texte doit se terminer par un caractère alphanumérique.",
     "resources": "Ressources",
-    "Image": "Image",
-    "TableColumnSetting": "Paramètre de colonne de tableau"
+    "Image": "Image"
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",
     "reloadPage": "Recharger la page",
     "resetErrorBoundary": "Réinitialisation de la limite d'erreur",
     "displayOnlyDevEnv": "Ce bloc d'erreur n'est affiché que dans l'environnement de développement WebUI."
+  },
+  "table": {
+    "ManageTable": "Gérer le tableau"
   }
 }

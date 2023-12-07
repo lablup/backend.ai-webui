@@ -1382,8 +1382,7 @@
     "Active/Total": "アクティブ/全体",
     "Public": "公開",
     "YouAreAboutToTerminate": "以下のサービスを削除しようとします：",
-    "Image": "イメージ",
-    "TableColumnSetting": "テーブル列の設定"
+    "Image": "イメージ"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",
@@ -1439,5 +1438,8 @@
   "OpenVSCodeRemote": "ローカルVisual Studio Codeを開く",
   "inputLimit": {
     "4to64chars": "(4～64文字)"
+  },
+  "table": {
+    "ManageTable": "テーブルの管理"
   }
 }
