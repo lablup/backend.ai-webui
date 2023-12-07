@@ -840,7 +840,9 @@
     "DescAutoLogout": "Melden Sie sich automatisch ab, wenn alle angemeldeten Seiten geschlossen sind, mit Ausnahme von sitzungsbasierten Seiten für Apps (z. B. Jupyter Notebook, Webterminal usw.)",
     "SSHKeypairEnterManuallyFinished": "SSH-Keypair wurde erfolgreich registriert.",
     "BootstrapScriptDescription": "Das Bootstrap-Skript wird nur einmal nach der Erstellung der Sitzung ausgeführt",
-    "SSHKeypairEnterManually": "SSH-Schlüsselpaar"
+    "SSHKeypairEnterManually": "SSH-Schlüsselpaar",
+    "MyKeypairInfo": "Meine Schlüsselpaarinformationen",
+    "DescMyKeypairInfo": "Siehe meine Schlüsselpaarinformationen"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Erweiterte Web-Terminal-Nutzung: Terminal-Inhalte kopieren",

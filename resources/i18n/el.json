@@ -840,7 +840,9 @@
     "DescAutoLogout": "Αποσυνδεθείτε αυτόματα εάν όλες οι συνδεδεμένες σελίδες είναι κλειστές εκτός από τις σελίδες που προέρχονται από περίοδο σύνδεσης για εφαρμογές (π.χ. jupyter notebook, web terminal κ.λπ.)",
     "SSHKeypairEnterManuallyFinished": "Το ζεύγος κλειδιών SSH καταχωρήθηκε με επιτυχία.",
     "BootstrapScriptDescription": "Το σενάριο Bootstrap θα εκτελεστεί μόνο μία φορά μετά τη δημιουργία συνεδρίας",
-    "SSHKeypairEnterManually": "Ζεύγος κλειδιών SSH"
+    "SSHKeypairEnterManually": "Ζεύγος κλειδιών SSH",
+    "MyKeypairInfo": "Πληροφορίες για το ζεύγος κλειδιών μου",
+    "DescMyKeypairInfo": "Δείτε τις πληροφορίες του ζεύγους κλειδιών μου"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Σύνθετη χρήση τερματικού Web: Αντιγραφή περιεχομένου τερματικού",

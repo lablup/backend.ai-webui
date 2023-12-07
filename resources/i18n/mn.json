@@ -840,7 +840,9 @@
     "DescAutoLogout": "Аппликешнд зориулж суулгасан хуудсуудаас бусад нэвтэрсэн бүх хуудсыг хаасан тохиолдолд автоматаар гарах болно (ж.нь. Jupyter Notebook, вэб терминал гэх мэт).",
     "BootstrapScriptDescription": "Ачаалагч скрипт нь сесс үүсгэсний дараа зөвхөн нэг удаа хийгдэх болно",
     "SSHKeypairEnterManually": "SSH товчлуурын хослол",
-    "SSHKeypairEnterManuallyFinished": "SSH Keypair амжилттай бүртгэгдлээ."
+    "SSHKeypairEnterManuallyFinished": "SSH Keypair амжилттай бүртгэгдлээ.",
+    "MyKeypairInfo": "Миний товчлуурын мэдээлэл",
+    "DescMyKeypairInfo": "Миний товчлуурын мэдээллийг харна уу"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Дэвшилтэт вэб терминалын хэрэглээ: Терминалын агуулгыг хуулах",

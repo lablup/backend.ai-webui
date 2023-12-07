@@ -896,6 +896,8 @@
     "BetaFeatures": "Beta Features",
     "DescBetaFeatures": "Use beta features for Web UI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature.",
     "DescNoBetaFeatures": "No beta feature available now. :)",
+    "MyKeypairInfo": "My Keypair Information",
+    "DescMyKeypairInfo": "See my keypair information",
     "BootstrapScriptDescription": "Bootstrap script will be executed only once after session creation",
     "EditBootstrapScript": "Edit Bootstrap Script",
     "EditUserConfigScript": "Edit User Config Script",

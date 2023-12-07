@@ -842,7 +842,9 @@
     "DescAutoLogout": "Автоматический выход из системы, если все зарегистрированные страницы закрыты, кроме страниц, созданных в сеансе для приложений (например, блокнот jupyter, веб-терминал и т. Д.)",
     "BootstrapScriptDescription": "Bootstrap-скрипт будет выполняться только один раз после создания сессии",
     "SSHKeypairEnterManually": "Пара ключей SSH",
-    "SSHKeypairEnterManuallyFinished": "Пара ключей SSH успешно зарегистрирована."
+    "SSHKeypairEnterManuallyFinished": "Пара ключей SSH успешно зарегистрирована.",
+    "MyKeypairInfo": "Информация о моей паре ключей",
+    "DescMyKeypairInfo": "Посмотреть информацию о моей паре ключей"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Расширенное использование веб-терминала: копирование содержимого терминала",
