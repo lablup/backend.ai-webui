@@ -6,10 +6,13 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import { Button, theme, Table, Typography } from 'antd';
-import _ from 'lodash';
+import Flex from './Flex';
+import { KeypairInfoModalQuery } from './__generated__/KeypairInfoModalQuery.graphql';
+import { Button, theme, Table, Typography, Tag } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
 
 interface KeypairInfoModalProps extends BAIModalProps {
   onRequestClose: () => void;
@@ -38,6 +41,21 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
     },
     {
       suspense: true,
+    },
+  );
+  const supportMainAccessKey = baiClient?.supports('main-access-key');
+
+  const { user } = useLazyLoadQuery<KeypairInfoModalQuery>(
+    graphql`
+      query KeypairInfoModalQuery($email: String) {
+        user(email: $email) {
+          email
+          main_access_key @since(version: "24.03.0")
+        }
+      }
+    `,
+    {
+      email: userInfo.email,
     },
   );
 
@@ -77,9 +95,14 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
             dataIndex: 'access_key',
             fixed: 'left',
             render: (value) => (
-              <Typography.Text ellipsis copyable style={{ width: 150 }}>
-                {value}
-              </Typography.Text>
+              <Flex direction="column" align="start">
+                <Typography.Text ellipsis copyable style={{ width: 150 }}>
+                  {value}
+                </Typography.Text>
+                {supportMainAccessKey && value === user?.main_access_key ? (
+                  <Tag color="red">{t('credential.MainAccessKey')}</Tag>
+                ) : null}
+              </Flex>
             ),
           },
           {
