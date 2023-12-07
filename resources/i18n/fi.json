@@ -1563,7 +1563,8 @@
     "SignoutSeccessfullyFinished": "__NOT_TRANSLATED__",
     "Name": "__NOT_TRANSLATED__",
     "Status": "__NOT_TRANSLATED__",
-    "NoUserToDisplay": "__NOT_TRANSLATED__"
+    "NoUserToDisplay": "__NOT_TRANSLATED__",
+    "MainAccessKey": "Pääkäyttöavain"
   },
   "maxLength": {
     "64chars": "__NOT_TRANSLATED__",

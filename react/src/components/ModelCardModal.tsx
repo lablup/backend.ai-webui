@@ -47,9 +47,9 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
 
   const screen = Grid.useBreakpoint();
   const [metadata] = useBackendaiImageMetaData();
-  const model_info = useFragment(
+  const model_card = useFragment(
     graphql`
-      fragment ModelCardModalFragment on ModelInfo {
+      fragment ModelCardModalFragment on ModelCard {
         id
         name
         author
@@ -80,7 +80,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
   return (
     <BAIModal
       {...props}
-      title={model_info?.title || model_info?.name}
+      title={model_card?.title || model_card?.name}
       centered
       onCancel={onRequestClose}
       destroyOnClose
@@ -109,18 +109,18 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           style={{ flex: 1 }}
           wrap="wrap"
         >
-          {model_info?.category && (
+          {model_card?.category && (
             <Tag bordered={false} style={{ marginRight: 0 }}>
-              {model_info?.category}
+              {model_card?.category}
             </Tag>
           )}
-          {model_info?.task && (
+          {model_card?.task && (
             <Tag bordered={false} color="success" style={{ marginRight: 0 }}>
-              {model_info?.task}
+              {model_card?.task}
             </Tag>
           )}
-          {model_info?.label &&
-            _.map(model_info?.label, (label) => (
+          {model_card?.label &&
+            _.map(model_card?.label, (label) => (
               <Tag
                 key={label}
                 bordered={false}
@@ -130,14 +130,14 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                 {label}
               </Tag>
             ))}
-          {model_info?.license && (
+          {model_card?.license && (
             <Tag
               icon={<BankOutlined />}
               bordered={false}
               color="geekblue"
               style={{ marginRight: 0 }}
             >
-              {model_info?.license}
+              {model_card?.license}
             </Tag>
           )}
         </Flex>
@@ -156,12 +156,12 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             ghost
             icon={<CopyOutlined />}
             size="small"
-            disabled={!model_info?.vfolder?.cloneable}
+            disabled={!model_card?.vfolder?.cloneable}
             onClick={() => {
               // const event = new CustomEvent('backend-ai-vfolder-cloning', {
               //   detail: {
               //     // TODO: change this to vfolder name
-              //     name: model_info?.name,
+              //     name: mode_card?.name,
               //   },
               // });
               // onRequestClose();
@@ -189,7 +189,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                 overflow: 'auto',
               }}
             >
-              <Paragraph>{model_info?.description}</Paragraph>
+              <Paragraph>{model_card?.description}</Paragraph>
             </Card>
             <Descriptions
               style={{ marginTop: token.marginMD }}
@@ -201,17 +201,17 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                 {
                   key: 'author',
                   label: t('modelStore.Author'),
-                  children: model_info?.author,
+                  children: model_card?.author,
                 },
                 {
                   key: 'version',
                   label: t('modelStore.Version'),
-                  children: model_info?.version,
+                  children: model_card?.version,
                 },
                 {
                   key: 'architecture',
                   label: t('environment.Architecture'),
-                  children: model_info?.architecture,
+                  children: model_card?.architecture,
                 },
                 {
                   key: 'frameworks',
@@ -219,7 +219,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                   children: (
                     <Flex direction="row" gap={'xs'}>
                       {_.map(
-                        _.castArray(model_info?.framework),
+                        _.castArray(model_card?.framework),
                         (framework) => {
                           const targetImageKey = framework?.replace(
                             /\s*\d+\s*$/,
@@ -252,21 +252,21 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                 {
                   key: 'created',
                   label: t('modelStore.Created'),
-                  children: dayjs(model_info?.created_at).format('lll'),
+                  children: dayjs(model_card?.created_at).format('lll'),
                 },
                 {
                   key: 'last_modified',
                   label: t('modelStore.LastModified'),
-                  children: dayjs(model_info?.modified_at).format('lll'),
+                  children: dayjs(model_card?.modified_at).format('lll'),
                 },
                 {
                   key: 'min_resource',
                   label: t('modelStore.MinResource'),
                   children: (
                     <Flex gap="xs">
-                      {model_info?.min_resource &&
+                      {model_card?.min_resource &&
                         _.map(
-                          JSON.parse(model_info?.min_resource),
+                          JSON.parse(model_card?.min_resource),
                           (value, type) => {
                             return (
                               <ResourceNumber
@@ -302,14 +302,14 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
               // maxHeight: 650
             }}
           >
-            <Markdown>{model_info?.readme || ''}</Markdown>
+            <Markdown>{model_card?.readme || ''}</Markdown>
           </Card>
         </Col>
       </Row>
       <Suspense>
         <ModelCloneModal
-          sourceFolderName={model_info?.vfolder?.name || ''}
-          sourceFolderHost={model_info?.vfolder?.host || ''}
+          sourceFolderName={model_card?.vfolder?.name || ''}
+          sourceFolderHost={model_card?.vfolder?.host || ''}
           title={t('modelStore.CloneAsFolder')}
           open={visibleCloneModal}
           onOk={() => {

@@ -27,10 +27,10 @@ const ModelStoreListPage: React.FC = () => {
 
   const [isPendingRefetching, startRefetchingTransition] = useTransition();
 
-  const { model_infos } = useLazyLoadQuery<ModelStoreListPageQuery>(
+  const { model_cards } = useLazyLoadQuery<ModelStoreListPageQuery>(
     graphql`
       query ModelStoreListPageQuery($filter: String) {
-        model_infos(filter: $filter) {
+        model_cards(filter: $filter) {
           edges {
             cursor
             node {
@@ -77,7 +77,7 @@ const ModelStoreListPage: React.FC = () => {
     fields.forEach((field) => (result[field] = []));
 
     // Traverse the JSON object
-    model_infos?.edges.forEach((edge) => {
+    model_cards?.edges.forEach((edge) => {
       fields.forEach((field) => {
         // Check if the field exists in the node
         if (edge?.node?.[field]) {
@@ -90,7 +90,7 @@ const ModelStoreListPage: React.FC = () => {
       });
     });
     return result;
-  }, [model_infos?.edges]);
+  }, [model_cards?.edges]);
   return (
     <Flex
       direction="column"
@@ -175,7 +175,7 @@ const ModelStoreListPage: React.FC = () => {
       </Flex>
       <List
         grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 3, xl: 4, xxl: 5 }}
-        dataSource={model_infos?.edges
+        dataSource={model_cards?.edges
           ?.map((edge) => edge?.node)
           .filter((info) => {
             let passSearchFilter = true;

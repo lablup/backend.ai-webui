@@ -1,5 +1,4 @@
 # PR 1749
-
 schema {
   query: Queries
   mutation: Mutations
@@ -88,10 +87,10 @@ type Queries {
   container_registries: [ContainerRegistry]
 
   """Added in 24.03.0."""
-  model_info(id: String!): ModelInfo
+  model_card(id: String!): ModelCard
 
   """Added in 24.03.0."""
-  model_infos(filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): ModelInfoConnection
+  model_cards(filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): ModelCardConnection
 }
 
 """
@@ -414,6 +413,11 @@ type User implements Item {
   totp_activated: Boolean
   totp_activated_at: DateTime
   sudo_session_enabled: Boolean
+
+  """
+  Added in 24.03.0. Work as default access key of the user. User's main_access_key is changable but not deletable.
+  """
+  main_access_key: String 
   groups: [UserGroup]
 }
 
@@ -827,7 +831,7 @@ type ContainerRegistryConfig {
   ssl_verify: Boolean
 }
 
-type ModelInfo implements AsyncNode {
+type ModelCard implements AsyncNode {
   """The ID of the object"""
   id: ID!
   name: String
@@ -859,21 +863,21 @@ type ModelInfo implements AsyncNode {
   readme_filetype: String
 }
 
-type ModelInfoConnection {
+type ModelCardConnection {
   """Pagination data for this connection."""
   pageInfo: PageInfo!
 
   """Contains the nodes in this connection."""
-  edges: [ModelInfoEdge]!
+  edges: [ModelCardEdge]!
 
   """Total count of the GQL nodes of the query."""
   count: Int
 }
 
-"""A Relay edge containing a `ModelInfo` and its cursor."""
-type ModelInfoEdge {
+"""A Relay edge containing a `ModelCard` and its cursor."""
+type ModelCardEdge {
   """The item at the end of the edge"""
-  node: ModelInfo
+  node: ModelCard
 
   """A cursor for use in pagination"""
   cursor: String!
@@ -1132,6 +1136,7 @@ input ModifyUserInput {
   totp_activated: Boolean
   resource_policy: String
   sudo_session_enabled: Boolean
+  main_access_key: String
 }
 
 """

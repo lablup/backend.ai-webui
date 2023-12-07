@@ -526,7 +526,8 @@
     "SignoutSeccessfullyFinished": "签出已顺利完成",
     "Status": "现状",
     "NoUserToDisplay": "无用户显示",
-    "EnableSudoSession": ""
+    "EnableSudoSession": "",
+    "MainAccessKey": "主访问密钥"
   },
   "data": {
     "Folders": "文件夹",

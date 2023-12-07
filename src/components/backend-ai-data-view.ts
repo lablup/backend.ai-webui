@@ -411,13 +411,17 @@ export default class BackendAIData extends BackendAIPage {
                   </div>
                 `
               : html``}
-            <backend-ai-react-model-store-list
-              id="model-store-folder-lists"
-              class="tab-content"
-              style="display:none;"
-              ?active="${this.active === true &&
-              this._activeTab === 'modelStore'}"
-            ></backend-ai-react-model-store-list>
+            ${this.supportModelStore
+              ? html`
+                  <backend-ai-react-model-store-list
+                    id="model-store-folder-lists"
+                    class="tab-content"
+                    style="display:none;"
+                    ?active="${this.active === true &&
+                    this._activeTab === 'modelStore'}"
+                  ></backend-ai-react-model-store-list>
+                `
+              : html``}
           </div>
         </lablup-activity-panel>
       </div>
