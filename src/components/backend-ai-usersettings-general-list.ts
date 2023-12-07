@@ -103,7 +103,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @query('#ssh-keypair-form-dialog') sshKeypairFormDialog!: BackendAIDialog;
   @query('#entered-ssh-public-key') enteredSSHPublicKeyInput!: TextArea;
   @query('#entered-ssh-private-key') enteredSSHPrivateKeyInput!: TextArea;
-
+  @property({ type: Boolean }) isOpenMyKeypairInfoDialog = false;
   @query('#ui-language') languageSelect!: Select;
   @query('#delete-rcfile') deleteRcfileButton!: Button;
 
@@ -960,6 +960,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this._hideSSHKeypairGenerationDialog();
   }
 
+  _openMyKeypairDialog() {
+    this.isOpenMyKeypairInfoDialog = true;
+  }
+
   _discardCurrentEditorChange() {
     this._updateSelectedRcFileName(this.rcfile);
     this._hideCurrentEditorChangeDialog();
@@ -1199,6 +1203,21 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                 false,
               )}"
             ></mwc-switch>
+          </div>
+        </div>
+        <div class="horizontal layout wrap setting-item">
+          <div class="vertical start start-justified layout setting-desc">
+            <div class="title">${_t('usersettings.MyKeypairInfo')}</div>
+            <div class="description">
+              ${_tr('usersettings.DescMyKeypairInfo')}
+            </div>
+          </div>
+          <div class="vertical center-justified layout flex end">
+            <mwc-icon-button
+              id="ssh-keypair-details"
+              icon="more"
+              @click="${this._openMyKeypairDialog}"
+            ></mwc-icon-button>
           </div>
         </div>
         ${this.beta_feature_panel
@@ -1542,6 +1561,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           ></mwc-button>
         </div>
       </backend-ai-dialog>
+      <backend-ai-react-keypair-info-modal
+        value="${this.isOpenMyKeypairInfoDialog ? 'true' : 'false'}"
+        @close="${() => {
+          this.isOpenMyKeypairInfoDialog = false;
+        }}"
+      ></backend-ai-react-keypair-info-modal>
     `;
   }
 }
