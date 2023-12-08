@@ -61,7 +61,8 @@
       "PasswordChangePlace": "Nhấp vào biểu tượng hình người ở thanh trên cùng và chuyển đến menu \"Tài khoản của tôi\".",
       "Notifications": "Thông báo",
       "Tasks": "Nhiệm vụ",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": ""
     },
     "YouAreOffline": "Bạn hiện đang ngoại tuyến",
     "YouAreOnline": "Bạn hiện đang trực tuyến",
@@ -239,17 +240,18 @@
       "Enable": "Cho phép",
       "FolderAliasInvalid": "Chỉ cho phép các ký tự chữ và số, dấu gạch dưới (_), dấu gạch chéo (/) và dấu gạch ngang (-).",
       "StartTimeMustBeInTheFuture": "Thời gian bắt đầu phải sau thời gian hiện tại.",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
-      "SessionName": "__NOT_TRANSLATED__",
-      "ResetFormConfirm": "__NOT_TRANSLATED__",
-      "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_0": "",
+      "EnqueueComputeSessionWarning": "",
+      "SessionName": "",
+      "ResetFormConfirm": "",
+      "TemplateAndHistory": "",
+      "ScheduleTimeSimple": "",
       "ResourceAllocationPerContainer": "Phân bổ tài nguyên trên mỗi vùng chứa",
       "NumberOfContainer": "Số lượng thùng chứa",
       "EnterEnvironmentVariable": "Nhập tên biến",
       "EnvironmentVariableNamePatternError": "Tên biến phải bắt đầu bằng một chữ cái hoặc dấu gạch dưới và chỉ có thể chứa các chữ cái, số và dấu gạch dưới.",
-      "EnvironmentVariableDuplicateName": "Tên biến này đã tồn tại."
+      "EnvironmentVariableDuplicateName": "Tên biến này đã tồn tại.",
+      "Template": "Mẫu phiên"
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",
@@ -398,7 +400,9 @@
     "Unset": "Bỏ đặt",
     "OK": "ĐƯỢC RỒI",
     "Commit": "Làm",
-    "EnterManually": "Nhập thủ công"
+    "EnterManually": "Nhập thủ công",
+    "Download": "Tải xuống",
+    "Clone": "Dòng vô tính"
   },
   "agent": {
     "Endpoint": "Điểm cuối",
@@ -442,7 +446,7 @@
     "Enabled": "Đã bật",
     "StorageProxies": "Kho lưu trữ",
     "None": "Không có",
-    "Image": "__NOT_TRANSLATED__"
+    "Image": ""
   },
   "credential": {
     "Permission": "Sự cho phép",
@@ -520,7 +524,8 @@
     "SignoutSeccessfullyFinished": "Đăng xuất đã hoàn tất thành công",
     "Status": "Trạng thái",
     "NoUserToDisplay": "Không có người dùng để hiển thị",
-    "EnableSudoSession": "__NOT_TRANSLATED__"
+    "EnableSudoSession": "",
+    "MainAccessKey": "Khóa truy cập chính"
   },
   "data": {
     "Folders": "Thư mục",
@@ -686,7 +691,11 @@
     "Pipeline": "Thư mục đường ống",
     "DialogDataFolder": "Các thư mục dành riêng cho đường dẫn được tạo tự động khi tạo đường dẫn trong FastTrack.",
     "DialogModelFolder": "Bạn có thể phục vụ và quản lý các mô hình.",
-    "SearchByName": "Tìm kiếm theo tên"
+    "SearchByName": "Tìm kiếm theo tên",
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "Thêm vào",
+    "CloningIsOnlyPossibleSameHost": "Hiện tại, việc nhân bản chỉ có thể thực hiện được trên cùng một máy chủ."
   },
   "dialog": {
     "warning": {
@@ -778,7 +787,7 @@
     "SharedMemory": "Bộ nhớ dùng chung (GB)",
     "NoResourcePresetToDisplay": "Không có cài đặt trước tài nguyên nào để hiển thị",
     "Deleted": "Cài đặt trước tài nguyên đã được xóa thành công.",
-    "SHMEMShouldBeSmallerThanMemory": "__NOT_TRANSLATED__"
+    "SHMEMShouldBeSmallerThanMemory": ""
   },
   "usersettings": {
     "General": "Chung",
@@ -915,7 +924,7 @@
     "RegistrySuccessfullyModified": "Đã sửa đổi sổ đăng ký thành công.",
     "NoRegistryToDisplay": "Không có đăng ký để hiển thị",
     "ModifyRegistry": "Sửa đổi sổ đăng ký",
-    "ConfirmNoUserName": "__NOT_TRANSLATED__"
+    "ConfirmNoUserName": ""
   },
   "resourceGroup": {
     "ResourceGroups": "Nhóm tài nguyên",
@@ -1437,6 +1446,33 @@
   "OpenVSCodeRemote": "Mở mã Visual Studio cục bộ",
   "inputLimit": {
     "4to64chars": "(4~64 ký tự)"
+  },
+  "modelStore": {
+    "Description": "Sự miêu tả",
+    "Model": "Người mẫu",
+    "FilterByName": "Lọc theo tên",
+    "ServiceDetails": "Chi tiết dịch vụ",
+    "Metadata": "metadata",
+    "ModelPath": "Đường dẫn mẫu",
+    "SearchModels": "Tìm kiếm mô hình",
+    "MinResource": "Tài nguyên tối thiểu",
+    "LastModified": "Sửa đổi lần cuối",
+    "Created": "Tạo",
+    "Version": "Phiên bản",
+    "Author": "Tác giả",
+    "MaxRetries": "Số lần thử lại tối đa",
+    "Path": "Con đường",
+    "HealthCheck": "Kiểm tra sức khỏe",
+    "Port": "Hải cảng",
+    "StartCommand": "Bắt đầu lệnh",
+    "PreStartActions": "Hành động trước khi bắt đầu",
+    "Framework": "Khung",
+    "Category": "Loại",
+    "Label": "Nhãn",
+    "Task": "Nhiệm vụ",
+    "CloneAsFolder": "Sao chép dưới dạng Thư mục",
+    "CloneSuccess": "Yêu cầu nhân bản đã được gửi thành công.",
+    "CloneInfo": "Nó sẽ được sao chép thành thư mục loại người dùng của bạn."
   },
   "table": {
     "SearchColumnToDisplay": "Tìm kiếm cột để hiển thị",

@@ -61,7 +61,8 @@
       "PasswordChangePlace": "Klik ikon orang pada bar atas dan pergi ke menu \"Akaun Saya\".",
       "Notifications": "Pemberitahuan",
       "Tasks": "Tugasan",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": ""
     },
     "YouAreOffline": "Anda kini berada di luar talian",
     "YouAreOnline": "Anda kini dalam talian",
@@ -239,17 +240,18 @@
       "Enable": "Dayakan",
       "FolderAliasInvalid": "Hanya aksara abjad angka, garis bawah (_), garis miring (/), dan sempang (-) dibenarkan.",
       "StartTimeMustBeInTheFuture": "Masa mula mestilah selepas masa semasa.",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
-      "SessionName": "__NOT_TRANSLATED__",
-      "ResetFormConfirm": "__NOT_TRANSLATED__",
-      "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_0": "",
+      "EnqueueComputeSessionWarning": "",
+      "SessionName": "",
+      "ResetFormConfirm": "",
+      "TemplateAndHistory": "",
+      "ScheduleTimeSimple": "",
       "ResourceAllocationPerContainer": "Peruntukan Sumber Setiap Bekas",
       "NumberOfContainer": "Bilangan bekas",
       "EnterEnvironmentVariable": "Masukkan nama Pembolehubah",
       "EnvironmentVariableNamePatternError": "Nama pembolehubah mesti bermula dengan huruf atau garis bawah, dan hanya boleh mengandungi huruf, nombor dan garis bawah.",
-      "EnvironmentVariableDuplicateName": "Nama pembolehubah ini sudah wujud."
+      "EnvironmentVariableDuplicateName": "Nama pembolehubah ini sudah wujud.",
+      "Template": "Templat Sesi"
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",
@@ -398,7 +400,9 @@
     "Unset": "Tidak ditetapkan",
     "OK": "okey",
     "Commit": "komited",
-    "EnterManually": "Masukkan Secara Manual"
+    "EnterManually": "Masukkan Secara Manual",
+    "Download": "Muat turun",
+    "Clone": "Klon"
   },
   "agent": {
     "Endpoint": "Titik Akhir",
@@ -442,7 +446,7 @@
     "Enabled": "Diaktifkan",
     "StorageProxies": "Stor",
     "None": "tiada",
-    "Image": "__NOT_TRANSLATED__"
+    "Image": ""
   },
   "credential": {
     "Permission": "Kebenaran",
@@ -520,7 +524,8 @@
     "SignoutSeccessfullyFinished": "Log keluar telah selesai dengan selamat",
     "Status": "Status",
     "NoUserToDisplay": "Tiada Pengguna untuk dipaparkan",
-    "EnableSudoSession": "__NOT_TRANSLATED__"
+    "EnableSudoSession": "",
+    "MainAccessKey": "Kunci Akses Utama"
   },
   "data": {
     "Folders": "Folder",
@@ -686,7 +691,11 @@
     "Pipeline": "Folder Saluran Paip",
     "DialogDataFolder": "Folder khusus saluran paip yang dibuat secara automatik apabila membuat saluran paip dalam FastTrack.",
     "DialogModelFolder": "Anda boleh berkhidmat dan mengurus model.",
-    "SearchByName": "Cari mengikut nama"
+    "SearchByName": "Cari mengikut nama",
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "Tambah",
+    "CloningIsOnlyPossibleSameHost": "Pada masa ini, pengklonan hanya boleh dilakukan pada hos yang sama."
   },
   "dialog": {
     "warning": {
@@ -778,7 +787,7 @@
     "SharedMemory": "Memori bersama (GB)",
     "NoResourcePresetToDisplay": "Tiada Pratetap Sumber untuk dipaparkan",
     "Deleted": "Pratetap sumber berjaya dipadamkan.",
-    "SHMEMShouldBeSmallerThanMemory": "__NOT_TRANSLATED__"
+    "SHMEMShouldBeSmallerThanMemory": ""
   },
   "usersettings": {
     "General": "Am",
@@ -915,7 +924,7 @@
     "RegistrySuccessfullyModified": "Pendaftaran berjaya diubah suai.",
     "NoRegistryToDisplay": "Tiada Pendaftaran untuk dipaparkan",
     "ModifyRegistry": "Ubah suai Pendaftaran",
-    "ConfirmNoUserName": "__NOT_TRANSLATED__"
+    "ConfirmNoUserName": ""
   },
   "resourceGroup": {
     "ResourceGroups": "Kumpulan Sumber",
@@ -1437,6 +1446,33 @@
   "OpenVSCodeRemote": "Buka Kod Visual Studio tempatan",
   "inputLimit": {
     "4to64chars": "(4~64 aksara)"
+  },
+  "modelStore": {
+    "Description": "Penerangan",
+    "Model": "Model",
+    "FilterByName": "Tapis Mengikut Nama",
+    "ServiceDetails": "Butiran Perkhidmatan",
+    "Metadata": "Metadata",
+    "ModelPath": "Laluan Model",
+    "SearchModels": "Cari Model",
+    "MinResource": "Sumber Min",
+    "LastModified": "Terakhir Diubah Suai",
+    "Created": "Dicipta",
+    "Version": "Versi",
+    "Author": "Pengarang",
+    "MaxRetries": "Max Cuba Semula",
+    "Path": "Laluan",
+    "HealthCheck": "Pemeriksaan kesihatan",
+    "Port": "Pelabuhan",
+    "StartCommand": "Mulakan Perintah",
+    "PreStartActions": "Tindakan Pra Mula",
+    "Framework": "Rangka kerja",
+    "Category": "kategori",
+    "Label": "Label",
+    "Task": "Tugasan",
+    "CloneAsFolder": "Klon sebagai Folder",
+    "CloneSuccess": "Permintaan klon telah berjaya dihantar.",
+    "CloneInfo": "Ia akan diklonkan sebagai folder jenis pengguna anda."
   },
   "table": {
     "SearchColumnToDisplay": "Cari lajur untuk dipaparkan",

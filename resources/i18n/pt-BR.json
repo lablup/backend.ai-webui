@@ -61,7 +61,8 @@
       "PasswordChangePlace": "Clique no ícone da pessoa na barra superior e aceda ao menu \"A minha conta\".",
       "Notifications": "Notificações",
       "Tasks": "Tarefas",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": ""
     },
     "YouAreOffline": "Agora você está offline",
     "YouAreOnline": "Agora você está online",
@@ -240,17 +241,18 @@
       "FolderAliasInvalid": "Somente caracteres alfanuméricos, sublinhado (_), barra (/) e traço (-) são permitidos.",
       "PreOpenPortMaxCountLimit": "Pode definir até {{count}} portas pré-abertas.",
       "StartTimeMustBeInTheFuture": "A hora de início deve ser posterior à hora atual.",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
-      "SessionName": "__NOT_TRANSLATED__",
-      "ResetFormConfirm": "__NOT_TRANSLATED__",
-      "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_plural": "",
+      "EnqueueComputeSessionWarning": "",
+      "SessionName": "",
+      "ResetFormConfirm": "",
+      "TemplateAndHistory": "",
+      "ScheduleTimeSimple": "",
       "ResourceAllocationPerContainer": "Atribuição de recursos por contentor",
       "NumberOfContainer": "Número de contentores",
       "EnterEnvironmentVariable": "Introduzir o nome da variável",
       "EnvironmentVariableNamePatternError": "O nome da variável deve começar com uma letra ou um sublinhado e só pode conter letras, números e sublinhados.",
-      "EnvironmentVariableDuplicateName": "Um nome de variável que já existe."
+      "EnvironmentVariableDuplicateName": "Um nome de variável que já existe.",
+      "Template": "Modelo de sessão"
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",
@@ -399,7 +401,9 @@
     "Unset": "Não definido",
     "OK": "OK",
     "Commit": "Compromisso",
-    "EnterManually": "Introduzir manualmente"
+    "EnterManually": "Introduzir manualmente",
+    "Download": "Descarregar",
+    "Clone": "Clone"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -443,7 +447,7 @@
     "Enabled": "Habilitado",
     "StorageProxies": "Armazéns",
     "None": "Nenhum",
-    "Image": "__NOT_TRANSLATED__"
+    "Image": ""
   },
   "credential": {
     "Permission": "Permissão",
@@ -521,7 +525,8 @@
     "SignoutSeccessfullyFinished": "O registo foi concluído com êxito",
     "Status": "Estado",
     "NoUserToDisplay": "Nenhum utilizador a apresentar",
-    "EnableSudoSession": "__NOT_TRANSLATED__"
+    "EnableSudoSession": "",
+    "MainAccessKey": "Chave de acesso principal"
   },
   "data": {
     "Folders": "Pastas",
@@ -687,7 +692,11 @@
     "Pipeline": "Pastas de pipelines",
     "DialogDataFolder": "Pastas dedicadas ao pipeline que são criadas automaticamente ao criar pipelines no FastTrack.",
     "DialogModelFolder": "Pode servir e gerir modelos.",
-    "SearchByName": "Procura por nome"
+    "SearchByName": "Procura por nome",
+    "ModelStore": "",
+    "New": "__NOT_TRANSLATED__",
+    "Add": "Adicionar",
+    "CloningIsOnlyPossibleSameHost": "Atualmente, a clonagem só é possível no mesmo host."
   },
   "dialog": {
     "warning": {
@@ -1438,6 +1447,33 @@
   "OpenVSCodeRemote": "Abrir o código local do Visual Studio",
   "inputLimit": {
     "4to64chars": "(4~64 caracteres)"
+  },
+  "modelStore": {
+    "Description": "Descrição",
+    "Model": "Modelo",
+    "FilterByName": "Filtrar por nome",
+    "ServiceDetails": "Detalhes do serviço",
+    "Metadata": "Metadados",
+    "ModelPath": "Caminho do modelo",
+    "SearchModels": "Pesquisar modelos",
+    "MinResource": "Recurso mínimo",
+    "LastModified": "Última modificação",
+    "Created": "Criada",
+    "Version": "Versão",
+    "Author": "Autor",
+    "MaxRetries": "Máximo de tentativas",
+    "Path": "Caminho",
+    "HealthCheck": "Exame de saúde",
+    "Port": "Porta",
+    "StartCommand": "Comando Iniciar",
+    "PreStartActions": "Ações pré-início",
+    "Framework": "Enquadramento",
+    "Category": "Categoria",
+    "Label": "Etiqueta",
+    "Task": "Tarefa",
+    "CloneAsFolder": "Clonar como Pasta",
+    "CloneSuccess": "O pedido de clone foi enviado com sucesso.",
+    "CloneInfo": "Será clonada como a pasta do seu tipo de utilizador."
   },
   "table": {
     "SearchColumnToDisplay": "Procure colunas para exibir",
