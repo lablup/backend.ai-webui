@@ -207,7 +207,7 @@
       "PolicyName": "Nombre de la póliza Obligatorio.",
       "ValidationFailed": "Validación fallida"
     },
-    "EnableSudoSession": "",
+    "EnableSudoSession": "Habilitar sesión sudo",
     "MainAccessKey": "Clave de acceso principal"
   },
   "data": {
@@ -375,8 +375,8 @@
       "used": "usado"
     },
     "SearchByName": "Buscar por nombre",
-    "ModelStore": "",
-    "New": "__NOT_TRANSLATED__",
+    "ModelStore": "Tienda de modelos",
+    "New": "Nuevo",
     "Add": "Añadir",
     "CloningIsOnlyPossibleSameHost": "Actualmente, la clonación sólo es posible en el mismo host."
   },
@@ -483,7 +483,7 @@
     "Username": "Nombre de usuario",
     "cores": "núcleos",
     "None": "Ninguno",
-    "Image": ""
+    "Image": "Imagen"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",
@@ -1119,12 +1119,11 @@
       "Network": "Red",
       "Enable": "Permitir",
       "StartTimeMustBeInTheFuture": "La hora de inicio debe ser posterior a la hora actual.",
-      "PreOpenPortMaxCountLimit_plural": "",
-      "EnqueueComputeSessionWarning": "",
-      "SessionName": "",
-      "ResetFormConfirm": "",
-      "TemplateAndHistory": "",
-      "ScheduleTimeSimple": "",
+      "EnqueueComputeSessionWarning": "Si lo configura en un valor mayor que los recursos disponibles actualmente, la creación de la sesión se retrasará en la cola hasta que esté disponible.",
+      "SessionName": "Nombre de la sesión",
+      "ResetFormConfirm": "¿Quieres restablecer todas tus entradas?",
+      "TemplateAndHistory": "Plantillas",
+      "ScheduleTimeSimple": "Establecer hora de inicio",
       "ResourceAllocationPerContainer": "Asignación de recursos por contenedor",
       "NumberOfContainer": "Número de contenedor",
       "ErrorCanNotExceedRemaining": "No puede ser mayor que los recursos restantes ({{amount}}).",
@@ -1449,7 +1448,7 @@
       "WelcomeMessage": "Bienvenido,",
       "WelcomeMessage_2": " .",
       "YouMushChangeYourPassword": "Se recomienda cambiar periódicamente la contraseña por razones de seguridad. Dado que ha transcurrido cierto tiempo desde la última vez que cambió su contraseña, deberá cambiarla para poder seguir utilizando el servicio.",
-      "Data&Model": ""
+      "Data&Model": "Datos"
     }
   },
   "modelStore": {
@@ -1477,6 +1476,7 @@
     "Task": "Tarea",
     "CloneAsFolder": "Clonar como carpeta",
     "CloneSuccess": "La solicitud de clonación se ha enviado correctamente.",
-    "CloneInfo": "Se clonará como su carpeta de tipo de usuario."
+    "CloneInfo": "Se clonará como su carpeta de tipo de usuario.",
+    "category": "Categoría"
   }
 }

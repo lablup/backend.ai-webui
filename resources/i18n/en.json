@@ -254,10 +254,9 @@
       "EnqueueComputeSessionWarning": "If you set it larger than the currently available resources, the session creation will be delayed in the queue until it becomes available.",
       "TemplateAndHistory": "Templates & history",
       "StartTimeMustBeInTheFuture": "The start time must be after the current time.",
-      "PreOpenPortMaxCountLimit_plural": "PreOpenPortMaxCountLimit",
-      "SessionName": "SessionName",
-      "ResetFormConfirm": "ResetFormConfirm",
-      "ScheduleTimeSimple": "ScheduleTimeSimple",
+      "SessionName": "Session name",
+      "ResetFormConfirm": "Do you want to reset all your entries?",
+      "ScheduleTimeSimple": "Set start time",
       "ResourceAllocationPerContainer": "Resource Allocation Per Container",
       "NumberOfContainer": "Number of container",
       "ErrorCanNotExceedRemaining": "Cannot be set to greater than the remaining resources ({{amount}}).",
@@ -1477,6 +1476,7 @@
     "Task": "Task",
     "CloneAsFolder": "Clone as Folder",
     "CloneSuccess": "The clone request has been sent successfully.",
-    "CloneInfo": "It will be cloned as your user type folder."
+    "CloneInfo": "It will be cloned as your user type folder.",
+    "category": "Category"
   }
 }

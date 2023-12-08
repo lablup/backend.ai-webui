@@ -62,7 +62,7 @@
       "Notifications": "Thông báo",
       "Tasks": "Nhiệm vụ",
       "FastTrack": "FastTrack",
-      "Data&Model": ""
+      "Data&Model": "Dữ liệu"
     },
     "YouAreOffline": "Bạn hiện đang ngoại tuyến",
     "YouAreOnline": "Bạn hiện đang trực tuyến",
@@ -240,12 +240,11 @@
       "Enable": "Cho phép",
       "FolderAliasInvalid": "Chỉ cho phép các ký tự chữ và số, dấu gạch dưới (_), dấu gạch chéo (/) và dấu gạch ngang (-).",
       "StartTimeMustBeInTheFuture": "Thời gian bắt đầu phải sau thời gian hiện tại.",
-      "PreOpenPortMaxCountLimit_0": "",
-      "EnqueueComputeSessionWarning": "",
-      "SessionName": "",
-      "ResetFormConfirm": "",
-      "TemplateAndHistory": "",
-      "ScheduleTimeSimple": "",
+      "EnqueueComputeSessionWarning": "Nếu bạn đặt nó lớn hơn tài nguyên hiện có, việc tạo phiên sẽ bị trì hoãn trong hàng đợi cho đến khi tài nguyên đó có sẵn.",
+      "SessionName": "Tên phiên",
+      "ResetFormConfirm": "Bạn có muốn đặt lại tất cả các mục nhập của mình không?",
+      "TemplateAndHistory": "Mẫu",
+      "ScheduleTimeSimple": "Đặt thời gian bắt đầu",
       "ResourceAllocationPerContainer": "Phân bổ tài nguyên trên mỗi vùng chứa",
       "NumberOfContainer": "Số lượng thùng chứa",
       "ErrorCanNotExceedRemaining": "Không thể đặt thành lớn hơn các tài nguyên còn lại ({{amount}}).",
@@ -253,7 +252,8 @@
       "EnvironmentVariableNamePatternError": "Tên biến phải bắt đầu bằng một chữ cái hoặc dấu gạch dưới và chỉ có thể chứa các chữ cái, số và dấu gạch dưới.",
       "EnvironmentVariableDuplicateName": "Tên biến này đã tồn tại.",
       "Template": "Mẫu phiên",
-      "EnableAutomaticShmem": "Bộ nhớ chia sẻ tự động"
+      "EnableAutomaticShmem": "Bộ nhớ chia sẻ tự động",
+      "PreOpenPortMaxCountLimit": "Bạn có thể thiết lập tối đa {{count}} cổng mở trước."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",
@@ -448,7 +448,7 @@
     "Enabled": "Đã bật",
     "StorageProxies": "Kho lưu trữ",
     "None": "Không có",
-    "Image": ""
+    "Image": "Hình ảnh"
   },
   "credential": {
     "Permission": "Sự cho phép",
@@ -526,7 +526,7 @@
     "SignoutSeccessfullyFinished": "Đăng xuất đã hoàn tất thành công",
     "Status": "Trạng thái",
     "NoUserToDisplay": "Không có người dùng để hiển thị",
-    "EnableSudoSession": "",
+    "EnableSudoSession": "Kích hoạt phiên sudo",
     "MainAccessKey": "Khóa truy cập chính"
   },
   "data": {
@@ -694,8 +694,8 @@
     "DialogDataFolder": "Các thư mục dành riêng cho đường dẫn được tạo tự động khi tạo đường dẫn trong FastTrack.",
     "DialogModelFolder": "Bạn có thể phục vụ và quản lý các mô hình.",
     "SearchByName": "Tìm kiếm theo tên",
-    "ModelStore": "",
-    "New": "__NOT_TRANSLATED__",
+    "ModelStore": "Cửa hàng mô hình",
+    "New": "Mới",
     "Add": "Thêm vào",
     "CloningIsOnlyPossibleSameHost": "Hiện tại, việc nhân bản chỉ có thể thực hiện được trên cùng một máy chủ."
   },
@@ -789,7 +789,7 @@
     "SharedMemory": "Bộ nhớ dùng chung (GB)",
     "NoResourcePresetToDisplay": "Không có cài đặt trước tài nguyên nào để hiển thị",
     "Deleted": "Cài đặt trước tài nguyên đã được xóa thành công.",
-    "SHMEMShouldBeSmallerThanMemory": ""
+    "SHMEMShouldBeSmallerThanMemory": "Bộ nhớ dùng chung phải nhỏ hơn bộ nhớ"
   },
   "usersettings": {
     "General": "Chung",
@@ -928,7 +928,7 @@
     "RegistrySuccessfullyModified": "Đã sửa đổi sổ đăng ký thành công.",
     "NoRegistryToDisplay": "Không có đăng ký để hiển thị",
     "ModifyRegistry": "Sửa đổi sổ đăng ký",
-    "ConfirmNoUserName": ""
+    "ConfirmNoUserName": "Người dùng và mật khẩu không được chỉ định, bạn có muốn lưu không?"
   },
   "resourceGroup": {
     "ResourceGroups": "Nhóm tài nguyên",
@@ -1476,6 +1476,7 @@
     "Task": "Nhiệm vụ",
     "CloneAsFolder": "Sao chép dưới dạng Thư mục",
     "CloneSuccess": "Yêu cầu nhân bản đã được gửi thành công.",
-    "CloneInfo": "Nó sẽ được sao chép thành thư mục loại người dùng của bạn."
+    "CloneInfo": "Nó sẽ được sao chép thành thư mục loại người dùng của bạn.",
+    "category": "Loại"
   }
 }

@@ -62,7 +62,7 @@
       "Notifications": "Notifiche",
       "Tasks": "Compiti",
       "FastTrack": "FastTrack",
-      "Data&Model": ""
+      "Data&Model": "Dati"
     },
     "YouAreOffline": "Ora sei offline",
     "YouAreOnline": "Ora sei online",
@@ -241,12 +241,11 @@
       "FolderAliasInvalid": "Sono consentiti solo caratteri alfanumerici, carattere di sottolineatura (_), barra (/) e trattino (-).",
       "PreOpenPortMaxCountLimit": "È possibile impostare fino a {{count}} porte pre-aperte.",
       "StartTimeMustBeInTheFuture": "L'ora di inizio deve essere successiva all'ora corrente.",
-      "PreOpenPortMaxCountLimit_plural": "",
-      "EnqueueComputeSessionWarning": "",
-      "SessionName": "",
-      "ResetFormConfirm": "",
-      "TemplateAndHistory": "",
-      "ScheduleTimeSimple": "",
+      "EnqueueComputeSessionWarning": "Se lo imposti su un valore maggiore rispetto alle risorse attualmente disponibili, la creazione della sessione verrà ritardata nella coda finché non diventerà disponibile.",
+      "SessionName": "Nome della sessione",
+      "ResetFormConfirm": "Vuoi reimpostare tutte le tue voci?",
+      "TemplateAndHistory": "Modelli",
+      "ScheduleTimeSimple": "Imposta l'ora di inizio",
       "ResourceAllocationPerContainer": "Allocazione delle risorse per contenitore",
       "NumberOfContainer": "Numero di contenitori",
       "ErrorCanNotExceedRemaining": "Non può essere impostato su un valore superiore alle risorse rimanenti ({{amount}}).",
@@ -449,7 +448,7 @@
     "Enabled": "Abilitato",
     "StorageProxies": "Depositi",
     "None": "Nessuno",
-    "Image": ""
+    "Image": "Immagine"
   },
   "credential": {
     "Permission": "Autorizzazione",
@@ -527,7 +526,7 @@
     "SignoutSeccessfullyFinished": "Il signout è terminato in modo sicuro",
     "Status": "Stato",
     "NoUserToDisplay": "Nessun utente da visualizzare",
-    "EnableSudoSession": "",
+    "EnableSudoSession": "Abilita la sessione sudo",
     "MainAccessKey": "Chiave di accesso principale"
   },
   "data": {
@@ -695,8 +694,8 @@
     "DialogDataFolder": "Cartelle dedicate alle pipeline che vengono create automaticamente quando si creano le pipeline in FastTrack.",
     "DialogModelFolder": "È possibile servire e gestire i modelli.",
     "SearchByName": "Ricerca per nome",
-    "ModelStore": "",
-    "New": "__NOT_TRANSLATED__",
+    "ModelStore": "Negozio di modelli",
+    "New": "Nuovo",
     "Add": "Aggiungi",
     "CloningIsOnlyPossibleSameHost": "Attualmente la clonazione è possibile solo sullo stesso host."
   },
@@ -1477,6 +1476,7 @@
     "Task": "Compito",
     "CloneAsFolder": "Clonare come cartella",
     "CloneSuccess": "La richiesta di clonazione è stata inviata con successo.",
-    "CloneInfo": "Verrà clonata come cartella del tipo di utente."
+    "CloneInfo": "Verrà clonata come cartella del tipo di utente.",
+    "category": "Categoria"
   }
 }

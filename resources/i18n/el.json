@@ -62,7 +62,7 @@
       "Notifications": "Ειδοποιήσεις",
       "Tasks": "Εργασίες",
       "FastTrack": "FastTrack",
-      "Data&Model": ""
+      "Data&Model": "Δεδομένα"
     },
     "YouAreOffline": "Είστε πλέον εκτός σύνδεσης",
     "YouAreOnline": "Είστε πλέον συνδεδεμένοι",
@@ -241,12 +241,11 @@
       "FolderAliasInvalid": "Επιτρέπονται μόνο αλφαριθμητικοί χαρακτήρες, κάτω παύλα (_), κάθετος (/) και παύλα (-).",
       "PreOpenPortMaxCountLimit": "Μπορείτε να ορίσετε έως και {{count}} προ-ανοικτές θύρες.",
       "StartTimeMustBeInTheFuture": "Η ώρα έναρξης πρέπει να είναι μετά την τρέχουσα ώρα.",
-      "PreOpenPortMaxCountLimit_plural": "",
-      "EnqueueComputeSessionWarning": "",
-      "SessionName": "",
-      "ResetFormConfirm": "",
-      "TemplateAndHistory": "",
-      "ScheduleTimeSimple": "",
+      "EnqueueComputeSessionWarning": "Εάν το ορίσετε μεγαλύτερο από τους διαθέσιμους πόρους, η δημιουργία συνεδρίας θα καθυστερήσει στην ουρά μέχρι να γίνει διαθέσιμη.",
+      "SessionName": "Όνομα συνεδρίας",
+      "ResetFormConfirm": "Θέλετε να επαναφέρετε όλες τις καταχωρήσεις σας;",
+      "TemplateAndHistory": "Πρότυπα",
+      "ScheduleTimeSimple": "Ρύθμιση ώρας έναρξης",
       "ResourceAllocationPerContainer": "Κατανομή πόρων ανά εμπορευματοκιβώτιο",
       "NumberOfContainer": "Αριθμός εμπορευματοκιβωτίων",
       "ErrorCanNotExceedRemaining": "Δεν μπορεί να οριστεί σε τιμή μεγαλύτερη από τους υπόλοιπους πόρους ({{amount}}).",
@@ -449,7 +448,7 @@
     "Enabled": "Ενεργοποιήθηκε",
     "StorageProxies": "Αποθήκες",
     "None": "Κανένα",
-    "Image": ""
+    "Image": "Εικόνα"
   },
   "credential": {
     "Permission": "Αδεια",
@@ -527,7 +526,7 @@
     "SignoutSeccessfullyFinished": "Η αποσύνδεση ολοκληρώθηκε επιτυχώς",
     "Status": "Κατάσταση",
     "NoUserToDisplay": "Δεν υπάρχουν χρήστες για εμφάνιση",
-    "EnableSudoSession": "",
+    "EnableSudoSession": "Ενεργοποίηση συνεδρίας sudo",
     "MainAccessKey": "Κύριο κλειδί πρόσβασης"
   },
   "data": {
@@ -695,8 +694,8 @@
     "DialogDataFolder": "Ειδικοί φάκελοι αγωγών που δημιουργούνται αυτόματα κατά τη δημιουργία αγωγών στο FastTrack.",
     "DialogModelFolder": "Μπορείτε να εξυπηρετείτε και να διαχειρίζεστε μοντέλα.",
     "SearchByName": "Αναζήτηση με όνομα",
-    "ModelStore": "",
-    "New": "__NOT_TRANSLATED__",
+    "ModelStore": "Κατάστημα μοντέλων",
+    "New": "Νέος",
     "Add": "Προσθέστε",
     "CloningIsOnlyPossibleSameHost": "Προς το παρόν, η κλωνοποίηση είναι δυνατή μόνο στον ίδιο κεντρικό υπολογιστή."
   },
@@ -1477,6 +1476,7 @@
     "Task": "Εργασία",
     "CloneAsFolder": "Clone as Folder",
     "CloneSuccess": "Η αίτηση κλωνοποίησης έχει σταλεί με επιτυχία.",
-    "CloneInfo": "Θα κλωνοποιηθεί ως φάκελος τύπου χρήστη."
+    "CloneInfo": "Θα κλωνοποιηθεί ως φάκελος τύπου χρήστη.",
+    "category": "Κατηγορία"
   }
 }

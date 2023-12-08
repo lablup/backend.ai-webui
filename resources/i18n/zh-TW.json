@@ -62,7 +62,7 @@
       "Notifications": "通知",
       "Tasks": "任务",
       "FastTrack": "FastTrack",
-      "Data&Model": ""
+      "Data&Model": "數據"
     },
     "YouAreOffline": "您現在離線",
     "YouAreOnline": "您現在在線",
@@ -241,12 +241,11 @@
       "FolderAliasInvalid": "只能輸入大小寫字母、數字、底線 (_)、斜線 (/) 和破折號 (-)。",
       "PreOpenPortMaxCountLimit": "您最多可以设置 {{count}} 个预开放端口。",
       "StartTimeMustBeInTheFuture": "开始时间必须在当前时间之后。",
-      "PreOpenPortMaxCountLimit_0": "",
-      "EnqueueComputeSessionWarning": "",
-      "SessionName": "",
-      "ResetFormConfirm": "",
-      "TemplateAndHistory": "",
-      "ScheduleTimeSimple": "",
+      "EnqueueComputeSessionWarning": "如果將其設定為大於目前可用資源，則會話建立將在佇列中延遲，直到可用。",
+      "SessionName": "會話名稱",
+      "ResetFormConfirm": "您想重置所有條目嗎？",
+      "TemplateAndHistory": "範本",
+      "ScheduleTimeSimple": "設定開始時間",
       "ResourceAllocationPerContainer": "每个集装箱的资源分配",
       "NumberOfContainer": "集装箱数量",
       "ErrorCanNotExceedRemaining": "不能设置为大于剩余资源（{{amount}}）。",
@@ -449,7 +448,7 @@
     "Enabled": "啟用",
     "StorageProxies": "存儲",
     "None": "无",
-    "Image": ""
+    "Image": "影像"
   },
   "credential": {
     "Permission": "允許",
@@ -527,7 +526,7 @@
     "SignoutSeccessfullyFinished": "签出已顺利完成",
     "Status": "现状",
     "NoUserToDisplay": "无用户显示",
-    "EnableSudoSession": "",
+    "EnableSudoSession": "啟用 sudo 會話",
     "MainAccessKey": "主存取密鑰"
   },
   "data": {
@@ -695,8 +694,8 @@
     "DialogDataFolder": "在 FastTrack 中创建管道时自动创建的管道专用文件夹。",
     "DialogModelFolder": "您可以服务和管理模型。",
     "SearchByName": "按名稱搜尋",
-    "ModelStore": "",
-    "New": "__NOT_TRANSLATED__",
+    "ModelStore": "模型店",
+    "New": "新的",
     "Add": "添加",
     "CloningIsOnlyPossibleSameHost": "目前，克隆只能在同一主機上進行。"
   },
@@ -1477,6 +1476,7 @@
     "Task": "任务",
     "CloneAsFolder": "克隆为文件夹",
     "CloneSuccess": "克隆请求已成功发送。",
-    "CloneInfo": "它将被克隆为用户类型文件夹。"
+    "CloneInfo": "它将被克隆为用户类型文件夹。",
+    "category": "類別"
   }
 }
