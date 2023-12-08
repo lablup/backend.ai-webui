@@ -173,8 +173,7 @@ export const useBackendaiImageMetaData = () => {
       };
     }
     const specs = imageName.split('/');
-
-    const [key, tag] = (specs[2] || specs[1]).split(':');
+    const [key, tag] = (specs[2] || specs[1] || ':').split(':');
     const tags = tag.split('-');
 
     return { key, tags };
