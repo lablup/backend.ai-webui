@@ -369,25 +369,14 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               ]}
               tabBarExtraContent={{
                 right: (
-                  <Flex gap="xs">
-                    <Button
-                      type="primary"
-                      icon={<SettingOutlined />}
-                      onClick={() => {
-                        setIsOpenColumnsSetting(true);
-                      }}
-                    >
-                      {t('table.SettingTable')}
-                    </Button>
-                    <Button
-                      type="primary"
-                      onClick={() => {
-                        setIsOpenServiceLauncher(true);
-                      }}
-                    >
-                      {t('modelService.StartService')}
-                    </Button>
-                  </Flex>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      setIsOpenServiceLauncher(true);
+                    }}
+                  >
+                    {t('modelService.StartService')}
+                  </Button>
                 ),
               }}
             />
@@ -448,6 +437,17 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               // }}
             />
           </Suspense>
+        </Flex>
+        <Flex justify="end">
+          <Button
+            type="primary"
+            icon={<SettingOutlined />}
+            onClick={() => {
+              setIsOpenColumnsSetting(true);
+            }}
+          >
+            {t('table.SettingTable')}
+          </Button>
         </Flex>
       </Flex>
       <BAIModal
