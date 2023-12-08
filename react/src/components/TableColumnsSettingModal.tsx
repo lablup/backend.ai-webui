@@ -29,10 +29,35 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  const columnOptions = columns.map((column) => ({
-    label: _.toString(column.title),
-    value: _.toString(column.key),
-  }));
+  const onChangeTitleToString: any = (element: any) => {
+    const text = React.Children.map(element.props.children, (child) => {
+      if (typeof child === 'string') {
+        return child;
+      } else if ('props' in child) {
+        return onChangeTitleToString(child);
+      }
+    });
+    return text;
+  };
+
+  const columnOptions = columns.map((column) => {
+    if (typeof column.title === 'string') {
+      return {
+        label: column.title,
+        value: _.toString(column.key),
+      };
+    } else if (typeof column.title === 'object' && 'props' in column.title!) {
+      return {
+        label: onChangeTitleToString(column.title),
+        value: _.toString(column.key),
+      };
+    } else {
+      return {
+        label: undefined,
+        value: _.toString(column.key),
+      };
+    }
+  });
 
   return (
     <BAIModal
