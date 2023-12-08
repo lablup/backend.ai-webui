@@ -843,7 +843,9 @@
     "DescAutoLogout": "Αποσυνδεθείτε αυτόματα εάν όλες οι συνδεδεμένες σελίδες είναι κλειστές εκτός από τις σελίδες που προέρχονται από περίοδο σύνδεσης για εφαρμογές (π.χ. jupyter notebook, web terminal κ.λπ.)",
     "SSHKeypairEnterManuallyFinished": "Το ζεύγος κλειδιών SSH καταχωρήθηκε με επιτυχία.",
     "BootstrapScriptDescription": "Το σενάριο Bootstrap θα εκτελεστεί μόνο μία φορά μετά τη δημιουργία συνεδρίας",
-    "SSHKeypairEnterManually": "Ζεύγος κλειδιών SSH"
+    "SSHKeypairEnterManually": "Ζεύγος κλειδιών SSH",
+    "MyKeypairInfo": "Πληροφορίες για το ζεύγος κλειδιών μου",
+    "DescMyKeypairInfo": "Δείτε τις πληροφορίες του ζεύγους κλειδιών μου"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Σύνθετη χρήση τερματικού Web: Αντιγραφή περιεχομένου τερματικού",
@@ -1067,8 +1069,6 @@
     "Scaling": "Απολέπιση",
     "AllowAgentSideRegistration": "Να επιτρέπεται η εγγραφή από τον αντιπρόσωπο",
     "DescAllowAgentSideRegistration": "Επιτρέψτε στον πράκτορα να εγγραφεί στον διαχειριστή. <br/> Χρησιμοποιήστε μόνο εάν το σύμπλεγμα Backend.AI διαχειρίζεται σε ασφαλή τοποθεσία.",
-    "Plugins": "Πρόσθετα",
-    "CUDAGPUsupport": "Υποστήριξη CUDA GPU",
     "DescCUDAGPUsupport": "Υποστήριξη NVIDIA CUDA GPU. <br/> Απαιτείται πρόσθετο Backend.AI CUDA.",
     "CUDAGPUdisabledByFGPUsupport": "Απενεργοποιήθηκε επειδή το σύστημα χρησιμοποιεί Fractional GPU plugin",
     "ROCMGPUsupport": "Υποστήριξη ROCm GPU",
@@ -1118,7 +1118,9 @@
     "OverlayNetworkSettings": "Ρυθμίσεις δικτύου επικάλυψης",
     "OverlayNetworkSettingsDescription": "Ένα δίκτυο επικάλυψης είναι ένα δίκτυο υπολογιστών που τοποθετείται πάνω σε ένα άλλο δίκτυο. Το δίκτυο επικάλυψης δημιουργεί ένα κατανεμημένο δίκτυο μεταξύ πολλαπλών υποδοχέων Docker daemon του διαχειριστή Backend.AI.",
     "MTUDescription": "Μέγιστη μονάδα μετάδοσης, το μέγεθος του μεγαλύτερου πακέτου που μπορεί να μεταδώσει ένα πρωτόκολλο δικτύου.",
-    "OutOfRange": "Εκτός εμβέλειας."
+    "OutOfRange": "Εκτός εμβέλειας.",
+    "Plugins": "Πρόσθετα",
+    "OpenSourceCUDAGPUsupport": "Υποστήριξη ανοιχτού κώδικα CUDA GPU"
   },
   "notification": {
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",

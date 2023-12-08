@@ -843,7 +843,9 @@
     "DescAutoLogout": "Saia automaticamente se todas as páginas logadas forem fechadas, exceto as páginas originadas da sessão para aplicativos (por exemplo, notebook jupyter, terminal da web, etc.)",
     "SSHKeypairEnterManuallyFinished": "O par de chaves SSH foi registado com sucesso.",
     "BootstrapScriptDescription": "O script bootstrap será executado apenas uma vez após a criação da sessão",
-    "SSHKeypairEnterManually": "Par de chaves SSH"
+    "SSHKeypairEnterManually": "Par de chaves SSH",
+    "MyKeypairInfo": "Minhas informações de par de chaves",
+    "DescMyKeypairInfo": "Ver as informações do meu par de chaves"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avançado do terminal da Web: Copiar o conteúdo do terminal",
@@ -1067,8 +1069,6 @@
     "Scaling": "Dimensionamento",
     "AllowAgentSideRegistration": "Permitir registro do lado do agente",
     "DescAllowAgentSideRegistration": "Permitir que o agente se registre no gerente. <br/> Use apenas se o cluster Backend.AI for gerenciado em local seguro.",
-    "Plugins": "Plugins",
-    "CUDAGPUsupport": "Suporte para GPU CUDA",
     "DescCUDAGPUsupport": "Suporte para GPU NVIDIA CUDA. <br/> Requer Backend.AI CUDA Plugin.",
     "CUDAGPUdisabledByFGPUsupport": "Desativado porque o sistema usa o plugin de GPU fracionário",
     "ROCMGPUsupport": "Suporte para GPU ROCm",
@@ -1118,7 +1118,9 @@
     "OverlayNetworkSettings": "Definições de rede de sobreposição",
     "OverlayNetworkSettingsDescription": "Uma rede de sobreposição é uma rede de computadores que é colocada em camadas sobre outra rede. A rede de sobreposição cria uma rede distribuída entre vários hosts daemon do Docker do gerenciador Backend.AI.",
     "MTUDescription": "Unidade máxima de transmissão, o tamanho do maior pacote que um protocolo de rede pode transmitir.",
-    "OutOfRange": "Fora de alcance."
+    "OutOfRange": "Fora de alcance.",
+    "Plugins": "Plug-ins",
+    "OpenSourceCUDAGPUsupport": "Suporte para GPU CUDA de código aberto"
   },
   "notification": {
     "SuccessfullyUpdated": "Atualizado com sucesso",
