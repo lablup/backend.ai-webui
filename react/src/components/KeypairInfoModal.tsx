@@ -60,6 +60,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
       centered
       onCancel={onRequestClose}
       destroyOnClose
+      width={'auto'}
       footer={[
         <Button
           onClick={() => {
@@ -83,6 +84,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
               return index;
             },
             showSorterTooltip: false,
+            rowScope: 'row',
           },
           {
             title: t('general.AccessKey'),
@@ -90,12 +92,12 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
             fixed: 'left',
             render: (value) => (
               <Flex direction="column" align="start">
-                <Typography.Text ellipsis copyable style={{ width: 150 }}>
+                <Typography.Text ellipsis copyable>
                   {value}
                 </Typography.Text>
-                {supportMainAccessKey && value === user?.main_access_key ? (
+                {supportMainAccessKey && value === user?.main_access_key && (
                   <Tag color="red">{t('credential.MainAccessKey')}</Tag>
-                ) : null}
+                )}
               </Flex>
             ),
           },
@@ -104,7 +106,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
             dataIndex: 'secret_key',
             fixed: 'left',
             render: (value) => (
-              <Typography.Text ellipsis copyable style={{ width: 150 }}>
+              <Typography.Text ellipsis copyable>
                 {value}
               </Typography.Text>
             ),
