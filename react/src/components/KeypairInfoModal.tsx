@@ -25,23 +25,18 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
   const { t } = useTranslation();
   const [userInfo] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
-
-  const { data: keypairs } = useTanQuery<
-    {
-      secret_key: string;
-      access_key: string;
-    }[]
-  >(
-    'baiClient.keypair.list',
-    () => {
+  const { data: keypairs } = useTanQuery({
+    queryKey: ['baiClient.keypair.list', baiModalProps.open], // refetch on open state
+    queryFn: () => {
       return baiClient.keypair
         .list(userInfo.email, ['access_key', 'secret_key', 'is_active'], true)
         .then((res: any) => res.keypairs);
     },
-    {
-      suspense: true,
-    },
-  );
+    suspense: true,
+    staleTime: 0,
+    cacheTime: 0,
+  });
+
   const supportMainAccessKey = baiClient?.supports('main-access-key');
 
   const { user } = useLazyLoadQuery<KeypairInfoModalQuery>(
