@@ -1442,6 +1442,6 @@
   },
   "table": {
     "SearchColumnToDisplay": "표시할 열 검색",
-    "SettingTable": "테이블 관리"
+    "SettingTable": "테이블 설정"
   }
 }
