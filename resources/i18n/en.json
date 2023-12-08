@@ -1434,8 +1434,8 @@
     "InputTooShort": "InputTooShort"
   },
   "table": {
-    "ManageTable": "Manage Table",
-    "SearchColumnToDisplay": "Search for columns to display" 
+    "SearchColumnToDisplay": "Search for columns to display",
+    "SettingTable": "Table Setting"
   },
   "ErrorBoundary": {
     "title": "An error has occurred.",

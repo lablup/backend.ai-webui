@@ -1442,7 +1442,7 @@
     "4to64chars": "(4~64 znaki)"
   },
   "table": {
-    "ManageTable": "Zarządzaj tabelą",
-    "SearchColumnToDisplay": "Wyszukaj kolumny do wyświetlenia"
+    "SearchColumnToDisplay": "Wyszukaj kolumny do wyświetlenia",
+    "SettingTable": "Nakrycie stołu"
   }
 }

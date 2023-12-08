@@ -1440,7 +1440,7 @@
     "4to64chars": "(4~64 karakter)"
   },
   "table": {
-    "ManageTable": "Tabloyu Yönet",
-    "SearchColumnToDisplay": "Görüntülenecek sütunları arayın"
+    "SearchColumnToDisplay": "Görüntülenecek sütunları arayın",
+    "SettingTable": "Tablo Ayarı"
   }
 }

@@ -61,7 +61,7 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
 
   return (
     <BAIModal
-      title={t('table.ManageTable')}
+      title={t('table.SettingTable')}
       open={open}
       onOk={() => {
         form

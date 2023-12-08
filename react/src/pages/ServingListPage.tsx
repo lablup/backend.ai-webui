@@ -377,7 +377,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                         setIsOpenColumnsSetting(true);
                       }}
                     >
-                      {t('table.ManageTable')}
+                      {t('table.SettingTable')}
                     </Button>
                     <Button
                       type="primary"

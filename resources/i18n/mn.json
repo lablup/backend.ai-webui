@@ -1440,7 +1440,7 @@
     "displayOnlyDevEnv": "Энэ алдааны блок нь зөвхөн WebUI хөгжүүлэлтийн орчинд харагдана."
   },
   "table": {
-    "ManageTable": "Хүснэгтийг удирдах",
-    "SearchColumnToDisplay": "Харуулах багануудыг хайх"
+    "SearchColumnToDisplay": "Харуулах багануудыг хайх",
+    "SettingTable": "Хүснэгтийн тохиргоо"
   }
 }

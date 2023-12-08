@@ -1440,7 +1440,7 @@
     "displayOnlyDevEnv": "Ce bloc d'erreur n'est affiché que dans l'environnement de développement WebUI."
   },
   "table": {
-    "ManageTable": "Gérer le tableau",
-    "SearchColumnToDisplay": "Rechercher les colonnes à afficher"
+    "SearchColumnToDisplay": "Rechercher les colonnes à afficher",
+    "SettingTable": "Paramètre de table"
   }
 }

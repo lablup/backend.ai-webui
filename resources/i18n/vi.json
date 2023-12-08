@@ -1439,7 +1439,7 @@
     "4to64chars": "(4~64 ký tự)"
   },
   "table": {
-    "ManageTable": "Quản lý bảng",
-    "SearchColumnToDisplay": "Tìm kiếm cột để hiển thị"
+    "SearchColumnToDisplay": "Tìm kiếm cột để hiển thị",
+    "SettingTable": "Cài đặt bảng"
   }
 }

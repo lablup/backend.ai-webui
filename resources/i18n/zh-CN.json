@@ -1440,7 +1440,7 @@
     "4to64chars": "（4 至 64 个字符）"
   },
   "table": {
-    "ManageTable": "管理表",
-    "SearchColumnToDisplay": "搜索要显示的列"
+    "SearchColumnToDisplay": "搜索要显示的列",
+    "SettingTable": "桌面设置"
   }
 }

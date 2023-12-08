@@ -1442,7 +1442,7 @@
     "displayOnlyDevEnv": "Данный блок ошибок отображается только в среде разработки WebUI."
   },
   "table": {
-    "ManageTable": "Управление таблицей",
-    "SearchColumnToDisplay": "Поиск столбцов для отображения"
+    "SearchColumnToDisplay": "Поиск столбцов для отображения",
+    "SettingTable": "Сервировка стола"
   }
 }
