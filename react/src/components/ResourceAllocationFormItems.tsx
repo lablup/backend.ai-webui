@@ -30,7 +30,7 @@ import _ from 'lodash';
 import React, { useEffect, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
-const MIN_SHMEM = '64m';
+const AUTOMATIC_DEFAULT_SHMEM = '64m';
 export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES = {
   resource: {
     cpu: 0,
@@ -199,15 +199,15 @@ const ResourceAllocationFormItems: React.FC<
     ...(resourceSlots?.mem
       ? {
           mem: {
-            // M to max of [ image's mem min, MIN_SHMEM]
-            // mem(M+S) should be larger than _.max([ image's mem min, MIN_SHMEM ]) + MIN_SHMEM (rule: S can not be larger than M)
+            // M to max of [ image's mem min, AUTOMATIC_DEFAULT_SHMEM]
+            // mem(M+S) should be larger than _.max([ image's mem min, AUTOMATIC_DEFAULT_SHMEM ]) + AUTOMATIC_DEFAULT_SHMEM (rule: S can not be larger than M)
             min:
               addNumberWithUnits(
                 (_.max([
                   iSizeToSize(currentImageMinM, 'b')?.number,
-                  iSizeToSize(MIN_SHMEM, 'b')?.number || 0,
+                  iSizeToSize(AUTOMATIC_DEFAULT_SHMEM, 'b')?.number || 0,
                 ]) || 0) + 'b',
-                MIN_SHMEM,
+                AUTOMATIC_DEFAULT_SHMEM,
               ) || '0b',
             max:
               _.min([
@@ -411,15 +411,19 @@ const ResourceAllocationFormItems: React.FC<
   const runShmemAutomationRule = (M_plus_S: string) => {
     // if M+S > 4G, S can be 1G regard to current image's minimum mem(M)
     if (
+      // M+S > 4G
       compareNumberWithUnits(M_plus_S, '4g') >= 0 &&
+      // M+S > M+1G
       compareNumberWithUnits(
         M_plus_S,
         addNumberWithUnits(currentImageMinM, '1g') || '0b',
-      ) >= 0
+      ) >= 0 &&
+      // if 1G < AUTOMATIC_DEFAULT_SHMEM, no need to apply 1G rule
+      compareNumberWithUnits('1g', AUTOMATIC_DEFAULT_SHMEM) > 0
     ) {
       form.setFieldValue(['resource', 'shmem'], '1g');
     } else {
-      form.setFieldValue(['resource', 'shmem'], MIN_SHMEM);
+      form.setFieldValue(['resource', 'shmem'], AUTOMATIC_DEFAULT_SHMEM);
     }
   };
 
