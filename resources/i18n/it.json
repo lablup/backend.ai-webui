@@ -1064,7 +1064,6 @@
     "Scaling": "Ridimensionamento",
     "AllowAgentSideRegistration": "Consenti registrazione lato agente",
     "DescAllowAgentSideRegistration": "Consenti all'agente di registrarsi al gestore. <br/> Utilizzare solo se il cluster Backend.AI è gestito in una posizione sicura.",
-    "CUDAGPUsupport": "Supporto GPU CUDA",
     "DescCUDAGPUsupport": "Supporto per GPU NVIDIA CUDA. <br/> Richiede il plug-in CUDA di backend.AI.",
     "CUDAGPUdisabledByFGPUsupport": "Disabilitato perché il sistema utilizza il plug-in Fractional GPU",
     "ROCMGPUsupport": "Supporto GPU ROCm",
@@ -1115,7 +1114,8 @@
     "OverlayNetworkSettingsDescription": "Una rete overlay è una rete di computer che si sovrappone a un'altra rete. La rete overlay crea una rete distribuita tra più host di demoni Docker del gestore Backend.AI.",
     "MTUDescription": "Unità di trasmissione massima, la dimensione del pacchetto più grande che un protocollo di rete può trasmettere.",
     "OutOfRange": "Fuori portata.",
-    "OpenSourcePlugins": "Plugin di funzionalità open source"
+    "Plugins": "Plugin",
+    "OpenSourceCUDAGPUsupport": "Supporto GPU CUDA open source"
   },
   "notification": {
     "SuccessfullyUpdated": "Aggiornato con successo",

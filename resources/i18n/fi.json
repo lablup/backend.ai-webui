@@ -1313,7 +1313,6 @@
     "OverlayNetwork": "__NOT_TRANSLATED__",
     "OverlayNetworkConfiguration": "__NOT_TRANSLATED__",
     "Config": "__NOT_TRANSLATED__",
-    "CUDAGPUsupport": "__NOT_TRANSLATED__",
     "DescCUDAGPUsupport": "__NOT_TRANSLATED__",
     "CUDAGPUdisabledByFGPUsupport": "__NOT_TRANSLATED__",
     "ROCMGPUsupport": "__NOT_TRANSLATED__",
@@ -1350,7 +1349,8 @@
     "OverlayNetworkSettingsDescription": "__NOT_TRANSLATED__",
     "MTUDescription": "__NOT_TRANSLATED__",
     "OutOfRange": "__NOT_TRANSLATED__",
-    "OpenSourcePlugins": "Avoimen lähdekoodin ominaisuuslaajennukset"
+    "Plugins": "Plugins",
+    "OpenSourceCUDAGPUsupport": "Avoimen lähdekoodin CUDA GPU-tuki"
   },
   "inputLimit": {
     "4to64chars": "__NOT_TRANSLATED__"

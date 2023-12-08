@@ -1064,7 +1064,6 @@
     "Scaling": "Skalierung",
     "AllowAgentSideRegistration": "Agentseitige Registrierung zulassen",
     "DescAllowAgentSideRegistration": "Erlauben Sie dem Agenten, sich beim Manager zu registrieren. <br/> Nur verwenden, wenn der Backend.AI-Cluster an einem sicheren Ort verwaltet wird.",
-    "CUDAGPUsupport": "CUDA-GPU-Unterstützung",
     "DescCUDAGPUsupport": "NVIDIA CUDA-GPU-Unterstützung. <br/> Erfordert Backend.AI CUDA-Plugin.",
     "CUDAGPUdisabledByFGPUsupport": "Deaktiviert, weil das System das Fractional GPU-Plugin verwendet",
     "ROCMGPUsupport": "ROCm-GPU-Unterstützung",
@@ -1115,7 +1114,8 @@
     "OverlayNetworkSettingsDescription": "Ein Overlay-Netzwerk ist ein Computernetzwerk, das auf ein anderes Netzwerk aufgesetzt wird. Das Overlay-Netzwerk schafft ein verteiltes Netzwerk zwischen mehreren Docker-Daemon-Hosts des Backend.AI-Managers.",
     "MTUDescription": "Maximale Übertragungseinheit, die Größe des größten Pakets, das ein Netzprotokoll übertragen kann.",
     "OutOfRange": "Außerhalb der Reichweite.",
-    "OpenSourcePlugins": "Open-Source-Funktions-Plugins"
+    "Plugins": "Plugins",
+    "OpenSourceCUDAGPUsupport": "Open-Source-CUDA-GPU-Unterstützung"
   },
   "notification": {
     "SuccessfullyUpdated": "Erfolgreich aktualisiert",

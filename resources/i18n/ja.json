@@ -1064,7 +1064,6 @@
     "Scaling": "スケーリング",
     "AllowAgentSideRegistration": "エージェント側の登録を許可する",
     "DescAllowAgentSideRegistration": "エージェントが自分自身をマネージャーに登録できるようにします。 <br/>Backend.AIクラスターが安全な場所で管理されている場合にのみ使用します。",
-    "CUDAGPUsupport": "CUDAGPUサポート",
     "DescCUDAGPUsupport": "NVIDIA CUDAGPUのサポート。 <br/> Backend.AICUDAプラグインが必要です。",
     "CUDAGPUdisabledByFGPUsupport": "システムがフラクショナルGPUプラグインを使用しているため無効になっています",
     "ROCMGPUsupport": "ROCmGPUサポート",
@@ -1115,7 +1114,8 @@
     "OverlayNetworkSettingsDescription": "オーバーレイネットワークは、物理ネットワークの上に構築される仮想的なコンピュータネットワークです。オーバーレイネットワークは、Backend.AIマネージャーの複数のDockerデーモンホスト間で分散ネットワークを作成します。",
     "MTUDescription": "最大送信単位 - 当該レイヤーが送信できる最大プロトコルデータ単位のサイズです。",
     "OutOfRange": "入力範囲外です。",
-    "OpenSourcePlugins": "オープンソース機能プラグイン"
+    "Plugins": "プラグイン",
+    "OpenSourceCUDAGPUsupport": "オープンソースのCUDA GPUのサポート"
   },
   "notification": {
     "SuccessfullyUpdated": "正常に更新されました",

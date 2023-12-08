@@ -357,9 +357,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
         </lablup-activity-panel>
         <lablup-activity-panel
-          title="${_t('settings.Scaling')} & ${_t(
-            'settings.OpenSourcePlugins',
-          )}"
+          title="${_t('settings.Scaling')} & ${_t('settings.Plugins')}"
           narrow
           autowidth
         >
@@ -427,7 +425,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                 </div>
               </div>
               <h3 class="horizontal center layout">
-                <span>${_t('settings.OpenSourcePlugins')}</span>
+                <span>${_t('settings.Plugins')}</span>
                 <span class="flex"></span>
               </h3>
               <div class="vertical layout wrap">
@@ -436,7 +434,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     <div
                       class="vertical center-justified layout setting-desc-shrink"
                     >
-                      <div class="title">${_t('settings.CUDAGPUsupport')}</div>
+                      <div class="title">
+                        ${_t('settings.OpenSourceCUDAGPUsupport')}
+                      </div>
                       <div class="description-shrink">
                         ${_tr('settings.DescCUDAGPUsupport')}
                         ${this.options['cuda_fgpu']

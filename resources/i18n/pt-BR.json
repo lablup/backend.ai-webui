@@ -1064,7 +1064,6 @@
     "Scaling": "Dimensionamento",
     "AllowAgentSideRegistration": "Permitir registro do lado do agente",
     "DescAllowAgentSideRegistration": "Permitir que o agente se registre no gerente. <br/> Use apenas se o cluster Backend.AI for gerenciado em local seguro.",
-    "CUDAGPUsupport": "Suporte para GPU CUDA",
     "DescCUDAGPUsupport": "Suporte para GPU NVIDIA CUDA. <br/> Requer Backend.AI CUDA Plugin.",
     "CUDAGPUdisabledByFGPUsupport": "Desativado porque o sistema usa o plugin de GPU fracionário",
     "ROCMGPUsupport": "Suporte para GPU ROCm",
@@ -1115,7 +1114,8 @@
     "OverlayNetworkSettingsDescription": "Uma rede de sobreposição é uma rede de computadores que é colocada em camadas sobre outra rede. A rede de sobreposição cria uma rede distribuída entre vários hosts daemon do Docker do gerenciador Backend.AI.",
     "MTUDescription": "Unidade máxima de transmissão, o tamanho do maior pacote que um protocolo de rede pode transmitir.",
     "OutOfRange": "Fora de alcance.",
-    "OpenSourcePlugins": "Plug-ins de recursos de código aberto"
+    "Plugins": "Plug-ins",
+    "OpenSourceCUDAGPUsupport": "Suporte para GPU CUDA de código aberto"
   },
   "notification": {
     "SuccessfullyUpdated": "Atualizado com sucesso",

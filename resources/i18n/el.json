@@ -1064,7 +1064,6 @@
     "Scaling": "Απολέπιση",
     "AllowAgentSideRegistration": "Να επιτρέπεται η εγγραφή από τον αντιπρόσωπο",
     "DescAllowAgentSideRegistration": "Επιτρέψτε στον πράκτορα να εγγραφεί στον διαχειριστή. <br/> Χρησιμοποιήστε μόνο εάν το σύμπλεγμα Backend.AI διαχειρίζεται σε ασφαλή τοποθεσία.",
-    "CUDAGPUsupport": "Υποστήριξη CUDA GPU",
     "DescCUDAGPUsupport": "Υποστήριξη NVIDIA CUDA GPU. <br/> Απαιτείται πρόσθετο Backend.AI CUDA.",
     "CUDAGPUdisabledByFGPUsupport": "Απενεργοποιήθηκε επειδή το σύστημα χρησιμοποιεί Fractional GPU plugin",
     "ROCMGPUsupport": "Υποστήριξη ROCm GPU",
@@ -1115,7 +1114,8 @@
     "OverlayNetworkSettingsDescription": "Ένα δίκτυο επικάλυψης είναι ένα δίκτυο υπολογιστών που τοποθετείται πάνω σε ένα άλλο δίκτυο. Το δίκτυο επικάλυψης δημιουργεί ένα κατανεμημένο δίκτυο μεταξύ πολλαπλών υποδοχέων Docker daemon του διαχειριστή Backend.AI.",
     "MTUDescription": "Μέγιστη μονάδα μετάδοσης, το μέγεθος του μεγαλύτερου πακέτου που μπορεί να μεταδώσει ένα πρωτόκολλο δικτύου.",
     "OutOfRange": "Εκτός εμβέλειας.",
-    "OpenSourcePlugins": "Πρόσθετα δυνατοτήτων ανοιχτού κώδικα"
+    "Plugins": "Πρόσθετα",
+    "OpenSourceCUDAGPUsupport": "Υποστήριξη ανοιχτού κώδικα CUDA GPU"
   },
   "notification": {
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",

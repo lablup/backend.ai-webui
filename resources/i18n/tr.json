@@ -1064,7 +1064,6 @@
     "Scaling": "ölçekleme",
     "AllowAgentSideRegistration": "Aracı tarafı kaydına izin ver",
     "DescAllowAgentSideRegistration": "Aracının kendisini yöneticiye kaydetmesine izin verin. <br/> Yalnızca Backend.AI kümesi güvenli konumda yönetiliyorsa kullanın.",
-    "CUDAGPUsupport": "CUDA GPU desteği",
     "DescCUDAGPUsupport": "NVIDIA CUDA GPU desteği. <br/> Backend.AI CUDA Eklentisi gerektirir.",
     "CUDAGPUdisabledByFGPUsupport": "Sistem Kesirli GPU eklentisi kullandığı için devre dışı bırakıldı",
     "ROCMGPUsupport": "ROCm GPU desteği",
@@ -1115,7 +1114,8 @@
     "OverlayNetworkSettingsDescription": "Kaplama ağı, başka bir ağın üzerine katmanlanmış bir bilgisayar ağıdır. Kaplama ağı, Backend.AI yöneticisinin birden fazla Docker daemon ana bilgisayarı arasında dağıtılmış bir ağ oluşturur.",
     "MTUDescription": "Maksimum iletim birimi, bir ağ protokolünün iletebileceği en büyük paketin boyutu.",
     "OutOfRange": "Menzil dışında.",
-    "OpenSourcePlugins": "Açık Kaynak Özellik Eklentileri"
+    "Plugins": "Eklentiler",
+    "OpenSourceCUDAGPUsupport": "Açık Kaynak CUDA GPU desteği"
   },
   "notification": {
     "SuccessfullyUpdated": "Başarıyla güncellendi",

@@ -1141,7 +1141,6 @@
     "ATOMsupport": "ATOM",
     "AllowAgentSideRegistration": "Permitir el registro del agente",
     "CUDAGPUdisabledByFGPUsupport": "Desactivado porque el sistema utiliza el complemento GPU fraccional",
-    "CUDAGPUsupport": "Soporte para GPU CUDA",
     "Config": "Configurar",
     "ConfigPerJobSchduler": "Configuración del programador",
     "ConfigPerJobSchdulerDescription": "Los valores de la configuración del planificador son los valores predeterminados que se utilizarán cuando no exista una configuración del planificador en cada grupo de recursos. Si existe una configuración específica para cada grupo de recursos, este valor se ignorará.",
@@ -1199,7 +1198,8 @@
       "none": "Ninguno",
       "tag": "Etiqueta"
     },
-    "OpenSourcePlugins": "Complementos de funciones de código abierto"
+    "Plugins": "Complementos",
+    "OpenSourceCUDAGPUsupport": "Compatibilidad con GPU CUDA de código abierto"
   },
   "sidepanel": {
     "BackgroundTasks": "Tareas en curso",

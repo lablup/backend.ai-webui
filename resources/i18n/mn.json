@@ -1064,7 +1064,6 @@
     "Scaling": "Хэмжээ",
     "AllowAgentSideRegistration": "Агент талын бүртгэлийг зөвшөөрөх",
     "DescAllowAgentSideRegistration": "Агентэд өөрийгөө менежерт бүртгүүлэхийг зөвшөөрөх. <br/> Зөвхөн Backend.AI кластерийг аюулгүй байршилд удирдаж байгаа тохиолдолд л ашиглана уу.",
-    "CUDAGPUsupport": "CUDA GPU дэмжлэг",
     "DescCUDAGPUsupport": "NVIDIA CUDA GPU дэмжлэг. <br/> Backend.AI CUDA залгаас шаарддаг.",
     "CUDAGPUdisabledByFGPUsupport": "Систем нь бутархай GPU залгаас ашигладаг тул идэвхгүй болгосон",
     "ROCMGPUsupport": "ROCm GPU дэмжлэг",
@@ -1115,7 +1114,8 @@
     "Warboysupport": "Дайчин",
     "DescWarboysupport": "Furiosa Warboy дэмжлэгийг ашигла",
     "RequireWarboyPlugin": "Backend.AI Warboy Plugin шаардлагатай.",
-    "OpenSourcePlugins": "Нээлттэй эхийн онцлог залгаасууд"
+    "Plugins": "Plugins",
+    "OpenSourceCUDAGPUsupport": "Нээлттэй эхийн CUDA GPU дэмжлэг"
   },
   "notification": {
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
