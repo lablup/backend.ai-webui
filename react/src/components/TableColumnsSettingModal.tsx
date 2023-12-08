@@ -1,6 +1,6 @@
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { SearchOutlined } from '@ant-design/icons';
-import { Checkbox, Input, theme, Form } from 'antd';
+import { Checkbox, Input, theme, Form, Card } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import _ from 'lodash';
 import React from 'react';
@@ -118,12 +118,14 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
                   },
             );
             return (
-              <Form.Item name="selectedColumnKeys">
-                <Checkbox.Group
-                  options={filteredColumns}
-                  style={{ flexDirection: 'column' }}
-                />
-              </Form.Item>
+              <Card>
+                <Form.Item name="selectedColumnKeys">
+                  <Checkbox.Group
+                    options={filteredColumns}
+                    style={{ flexDirection: 'column' }}
+                  />
+                </Form.Item>
+              </Card>
             );
           }}
         </Form.Item>
