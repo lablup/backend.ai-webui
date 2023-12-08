@@ -1478,7 +1478,7 @@
     "CloneInfo": "Zostanie on sklonowany jako folder typu użytkownika."
   },
   "table": {
-    "SearchColumnToDisplay": "Wyszukaj kolumny do wyświetlenia",
-    "SettingTable": "Nakrycie stołu"
+    "SettingTable": "Nakrycie stołu",
+    "SelectColumnToDisplay": "Wybierz, które kolumny mają być wyświetlane"
   }
 }

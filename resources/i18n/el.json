@@ -1476,7 +1476,7 @@
     "CloneInfo": "Θα κλωνοποιηθεί ως φάκελος τύπου χρήστη."
   },
   "table": {
-    "SearchColumnToDisplay": "Αναζήτηση στηλών για εμφάνιση",
-    "SettingTable": "Ρύθμιση πίνακα"
+    "SettingTable": "Ρύθμιση πίνακα",
+    "SelectColumnToDisplay": "Επιλέξτε για εμφάνιση στηλών"
   }
 }

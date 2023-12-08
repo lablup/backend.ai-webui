@@ -1477,7 +1477,7 @@
     "CloneInfo": "새로운 사용자 폴더로 복사됩니다."
   },
   "table": {
-    "SearchColumnToDisplay": "표시할 열 검색",
-    "SettingTable": "테이블 설정"
+    "SettingTable": "테이블 설정",
+    "SelectColumnToDisplay": "표시할 열 선택"
   }
 }

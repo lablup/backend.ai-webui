@@ -1443,8 +1443,8 @@
     "InputTooShort": "InputTooShort"
   },
   "table": {
-    "SearchColumnToDisplay": "Search for columns to display",
-    "SettingTable": "Table Setting"
+    "SettingTable": "Table Setting",
+    "SelectColumnToDisplay": "Select for columns to display"
   },
   "ErrorBoundary": {
     "title": "An error has occurred.",

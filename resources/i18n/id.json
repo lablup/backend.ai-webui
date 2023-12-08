@@ -1476,7 +1476,7 @@
     "CloneInfo": "Ini akan dikloning sebagai folder tipe pengguna Anda."
   },
   "table": {
-    "SearchColumnToDisplay": "Cari kolom untuk ditampilkan",
-    "SettingTable": "Penataan meja"
+    "SettingTable": "Penataan meja",
+    "SelectColumnToDisplay": "Pilih kolom yang akan ditampilkan"
   }
 }

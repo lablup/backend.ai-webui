@@ -1477,6 +1477,6 @@
   },
   "table": {
     "SettingTable": "Ajuste de la tabla",
-    "SearchColumnToDisplay": "Buscar columnas para mostrar"
+    "SelectColumnToDisplay": "Seleccionar columnas para mostrar"
   }
 }

@@ -88,7 +88,7 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
       >
         <Form.Item
           name="searchInput"
-          label={t('table.SearchColumnToDisplay')}
+          label={t('table.SelectColumnToDisplay')}
           style={{ marginBottom: 0 }}
         >
           <Input

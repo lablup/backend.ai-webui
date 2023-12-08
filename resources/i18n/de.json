@@ -1476,7 +1476,7 @@
     "CloneInfo": "Er wird als Ihr Benutzertyp-Ordner geklont."
   },
   "table": {
-    "SearchColumnToDisplay": "Suchen Sie nach anzuzeigenden Spalten",
-    "SettingTable": "Sitzordnung bei Tisch"
+    "SettingTable": "Sitzordnung bei Tisch",
+    "SelectColumnToDisplay": "Wählen Sie die anzuzeigenden Spalten aus"
   }
 }

@@ -1476,7 +1476,7 @@
     "CloneInfo": "Será clonada como a pasta do seu tipo de utilizador."
   },
   "table": {
-    "SearchColumnToDisplay": "Procure colunas para exibir",
-    "SettingTable": "Configuração de mesa"
+    "SettingTable": "Configuração de mesa",
+    "SelectColumnToDisplay": "Selecione as colunas a serem exibidas"
   }
 }

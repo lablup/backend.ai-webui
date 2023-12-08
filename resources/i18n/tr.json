@@ -1476,7 +1476,7 @@
     "CloneInfo": "Kullanıcı tipi klasörünüz olarak klonlanacaktır."
   },
   "table": {
-    "SearchColumnToDisplay": "Görüntülenecek sütunları arayın",
-    "SettingTable": "Tablo Ayarı"
+    "SettingTable": "Tablo Ayarı",
+    "SelectColumnToDisplay": "Görüntülenecek sütunları seçin"
   }
 }

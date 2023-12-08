@@ -1476,7 +1476,7 @@
     "CloneInfo": "它将被克隆为用户类型文件夹。"
   },
   "table": {
-    "SearchColumnToDisplay": "搜尋要顯示的列",
-    "SettingTable": "桌面設定"
+    "SettingTable": "桌面設定",
+    "SelectColumnToDisplay": "選擇要顯示的列"
   }
 }

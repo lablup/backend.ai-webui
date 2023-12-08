@@ -1476,7 +1476,7 @@
     "CloneInfo": "Il sera cloné en tant que dossier de votre type d'utilisateur."
   },
   "table": {
-    "SearchColumnToDisplay": "Rechercher les colonnes à afficher",
-    "SettingTable": "Paramètre de table"
+    "SettingTable": "Paramètre de table",
+    "SelectColumnToDisplay": "Sélectionnez les colonnes à afficher"
   }
 }

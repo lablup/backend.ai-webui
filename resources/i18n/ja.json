@@ -1476,7 +1476,7 @@
     "CloneInfo": "ユーザータイプのフォルダとしてクローンされます。"
   },
   "table": {
-    "SearchColumnToDisplay": "表示する列を検索します",
-    "SettingTable": "テーブルセッティング"
+    "SettingTable": "テーブルセッティング",
+    "SelectColumnToDisplay": "表示する列を選択します"
   }
 }
