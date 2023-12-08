@@ -252,7 +252,8 @@
       "EnterEnvironmentVariable": "Nhập tên biến",
       "EnvironmentVariableNamePatternError": "Tên biến phải bắt đầu bằng một chữ cái hoặc dấu gạch dưới và chỉ có thể chứa các chữ cái, số và dấu gạch dưới.",
       "EnvironmentVariableDuplicateName": "Tên biến này đã tồn tại.",
-      "Template": "Mẫu phiên"
+      "Template": "Mẫu phiên",
+      "EnableAutomaticShmem": "Bộ nhớ chia sẻ tự động"
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",

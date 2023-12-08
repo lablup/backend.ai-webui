@@ -253,7 +253,8 @@
       "EnterEnvironmentVariable": "Variablenname eingeben",
       "EnvironmentVariableNamePatternError": "Der Variablenname muss mit einem Buchstaben oder Unterstrich beginnen und darf nur Buchstaben, Zahlen und Unterstriche enthalten.",
       "EnvironmentVariableDuplicateName": "Ein Variablenname, der bereits existiert.",
-      "Template": "Sitzungsvorlage"
+      "Template": "Sitzungsvorlage",
+      "EnableAutomaticShmem": "Automatischer gemeinsamer Speicher"
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",

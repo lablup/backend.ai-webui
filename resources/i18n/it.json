@@ -253,7 +253,8 @@
       "EnterEnvironmentVariable": "Inserire il nome della variabile",
       "EnvironmentVariableNamePatternError": "Il nome della variabile deve iniziare con una lettera o un trattino basso e può contenere solo lettere, numeri e trattini bassi.",
       "EnvironmentVariableDuplicateName": "Un nome di variabile già esistente.",
-      "Template": "Modello di sessione"
+      "Template": "Modello di sessione",
+      "EnableAutomaticShmem": "Memoria condivisa automatica"
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",

@@ -253,7 +253,8 @@
       "EnterEnvironmentVariable": "Εισάγετε το όνομα της μεταβλητής",
       "EnvironmentVariableNamePatternError": "Το όνομα της μεταβλητής πρέπει να αρχίζει με γράμμα ή υπογράμμιση και μπορεί να περιέχει μόνο γράμματα, αριθμούς και υπογράμμιση.",
       "EnvironmentVariableDuplicateName": "Ένα όνομα μεταβλητής που υπάρχει ήδη.",
-      "Template": "Πρότυπο συνεδρίας"
+      "Template": "Πρότυπο συνεδρίας",
+      "EnableAutomaticShmem": "Αυτόματη κοινή μνήμη"
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",

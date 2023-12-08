@@ -253,7 +253,8 @@
       "EnterEnvironmentVariable": "変数名の入力",
       "EnvironmentVariableNamePatternError": "変数名は文字またはアンダースコアで始まり、文字、数字、アンダースコアのみを含むことができます。",
       "EnvironmentVariableDuplicateName": "既に存在する変数名です。",
-      "Template": "セッションテンプレート"
+      "Template": "セッションテンプレート",
+      "EnableAutomaticShmem": "自動共有メモリー"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",

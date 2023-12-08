@@ -1131,7 +1131,8 @@
       "EnterEnvironmentVariable": "Introduzca el nombre de la variable",
       "EnvironmentVariableNamePatternError": "El nombre de la variable debe empezar por una letra o un guión bajo, y sólo puede contener letras, números y guiones bajos.",
       "EnvironmentVariableDuplicateName": "Un nombre de variable que ya existe.",
-      "Template": "Plantilla de sesión"
+      "Template": "Plantilla de sesión",
+      "EnableAutomaticShmem": "Memoria compartida automática"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

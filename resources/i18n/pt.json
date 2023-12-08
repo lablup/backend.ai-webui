@@ -253,7 +253,8 @@
       "EnterEnvironmentVariable": "Introduzir o nome da variável",
       "EnvironmentVariableNamePatternError": "O nome da variável deve começar com uma letra ou um sublinhado e só pode conter letras, números e sublinhados.",
       "EnvironmentVariableDuplicateName": "Um nome de variável que já existe.",
-      "Template": "Modelo de sessão"
+      "Template": "Modelo de sessão",
+      "EnableAutomaticShmem": "Memória partilhada automática"
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",

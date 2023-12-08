@@ -252,7 +252,8 @@
       "EnterEnvironmentVariable": "Masukkan nama Pembolehubah",
       "EnvironmentVariableNamePatternError": "Nama pembolehubah mesti bermula dengan huruf atau garis bawah, dan hanya boleh mengandungi huruf, nombor dan garis bawah.",
       "EnvironmentVariableDuplicateName": "Nama pembolehubah ini sudah wujud.",
-      "Template": "Templat Sesi"
+      "Template": "Templat Sesi",
+      "EnableAutomaticShmem": "Memori dikongsi automatik"
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",

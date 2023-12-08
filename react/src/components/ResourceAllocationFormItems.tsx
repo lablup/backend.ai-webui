@@ -15,11 +15,22 @@ import ResourceGroupSelect from './ResourceGroupSelect';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import ResourcePresetSelect from './ResourcePresetSelect';
 import { CaretDownOutlined } from '@ant-design/icons';
-import { Card, Col, Divider, Form, Radio, Row, Select, theme } from 'antd';
+import {
+  Card,
+  Col,
+  Divider,
+  Form,
+  Radio,
+  Row,
+  Select,
+  Switch,
+  theme,
+} from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+const MIN_SHMEM = '64m';
 export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES = {
   resource: {
     cpu: 0,
@@ -30,6 +41,7 @@ export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES = {
   num_of_sessions: 1,
   cluster_mode: 'single-node',
   cluster_size: 1,
+  enabledAutomaticShmem: true,
 };
 
 export interface ResourceAllocationFormValue {
@@ -44,6 +56,7 @@ export interface ResourceAllocationFormValue {
   num_of_sessions?: number;
   cluster_mode: 'single-node' | 'multi-node';
   cluster_size: number;
+  enabledAutomaticShmem: boolean;
 }
 
 type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
@@ -100,6 +113,8 @@ const ResourceAllocationFormItems: React.FC<
     (limit) =>
       limit ? !_.includes(['cpu', 'mem', 'shmem'], limit.key) : false,
   );
+  const currentImageMinM =
+    _.find(currentImage?.resource_limits, (i) => i?.key === 'mem')?.min || '0g';
 
   const { data: checkPresetInfo } = useTanQuery<ResourceAllocation>({
     queryKey: ['check-resets', currentProject.name, currentResourceGroup],
@@ -184,11 +199,16 @@ const ResourceAllocationFormItems: React.FC<
     ...(resourceSlots?.mem
       ? {
           mem: {
+            // M to max of [ image's mem min, MIN_SHMEM]
+            // mem(M+S) should be larger than _.max([ image's mem min, MIN_SHMEM ]) + MIN_SHMEM (rule: S can not be larger than M)
             min:
-              _.max([
-                _.find(currentImage?.resource_limits, (i) => i?.key === 'mem')
-                  ?.min,
-              ]) || '0g',
+              addNumberWithUnits(
+                (_.max([
+                  iSizeToSize(currentImageMinM, 'b')?.number,
+                  iSizeToSize(MIN_SHMEM, 'b')?.number || 0,
+                ]) || 0) + 'b',
+                MIN_SHMEM,
+              ) || '0b',
             max:
               _.min([
                 baiClient._config.maxMemoryPerContainer,
@@ -388,6 +408,21 @@ const ResourceAllocationFormItems: React.FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImage]);
 
+  const runShmemAutomationRule = (M_plus_S: string) => {
+    // if M+S > 4G, S can be 1G regard to current image's minimum mem(M)
+    if (
+      compareNumberWithUnits(M_plus_S, '4g') >= 0 &&
+      compareNumberWithUnits(
+        M_plus_S,
+        addNumberWithUnits(currentImageMinM, '1g') || '0b',
+      ) >= 0
+    ) {
+      form.setFieldValue(['resource', 'shmem'], '1g');
+    } else {
+      form.setFieldValue(['resource', 'shmem'], MIN_SHMEM);
+    }
+  };
+
   return (
     <>
       <Form.Item
@@ -504,8 +539,6 @@ const ResourceAllocationFormItems: React.FC<
                       }}
                       sliderProps={{
                         marks: {
-                          [sliderMinMaxLimit.cpu?.min]:
-                            sliderMinMaxLimit.cpu?.min,
                           // remaining mark code should be located before max mark code to prevent overlapping when it is same value
                           ...(sliderMinMaxLimit.cpu?.remaining
                             ? {
@@ -514,6 +547,8 @@ const ResourceAllocationFormItems: React.FC<
                                 },
                               }
                             : {}),
+                          [sliderMinMaxLimit.cpu?.min]:
+                            sliderMinMaxLimit.cpu?.min,
                           ...(sliderMinMaxLimit.cpu?.max
                             ? {
                                 [sliderMinMaxLimit.cpu?.max]: {
@@ -536,19 +571,25 @@ const ResourceAllocationFormItems: React.FC<
                     label={t('session.launcher.Memory')}
                     tooltip={{
                       placement: 'right',
-
+                      props: {
+                        onClick: (e: any) => e.preventDefault(),
+                      },
                       title: (
-                        <Flex direction="column">
+                        <Flex
+                          direction="column"
+                          onClick={(e) => e.preventDefault()}
+                        >
                           <Trans i18nKey={'session.launcher.DescMemory'} />
-                          <Divider
+                          {/* <Divider
                             style={{
                               margin: 0,
                               backgroundColor: token.colorBorderSecondary,
                             }}
                           />
+                         
                           <Trans
                             i18nKey={'session.launcher.DescSharedMemory'}
-                          />
+                          /> */}
                         </Flex>
                       ),
                     }}
@@ -572,22 +613,25 @@ const ResourceAllocationFormItems: React.FC<
                               {
                                 // TODO: min of mem should be shmem + image's mem limit??
                                 validator: async (rule, value: string) => {
-                                  const memMinPlusShmem =
-                                    addNumberWithUnits(
-                                      sliderMinMaxLimit.mem?.min,
-                                      form.getFieldValue(['resource', 'shmem']),
-                                    ) || '0b';
+                                  // const memMinPlusShmem =
+                                  //   addNumberWithUnits(
+                                  //     sliderMinMaxLimit.mem?.min,
+                                  //     form.getFieldValue(['resource', 'shmem']),
+                                  //   ) || '0b';
+
                                   if (
                                     !_.isElement(value) &&
                                     sliderMinMaxLimit.mem?.min &&
                                     compareNumberWithUnits(
                                       value,
-                                      memMinPlusShmem,
+                                      sliderMinMaxLimit.mem?.min || '0g',
                                     ) < 0
                                   ) {
                                     return Promise.reject(
                                       t('session.launcher.MinMemory', {
-                                        size: _.toUpper(memMinPlusShmem),
+                                        size: _.toUpper(
+                                          sliderMinMaxLimit.mem?.min || '0g',
+                                        ),
                                       }),
                                     );
                                   } else {
@@ -617,12 +661,13 @@ const ResourceAllocationFormItems: React.FC<
                                         : t(
                                             'session.launcher.ErrorCanNotExceedRemaining',
                                             {
-                                              amount: iSizeToSize(
-                                                sliderMinMaxLimit.mem
-                                                  .remaining + 'b',
-                                                'g',
-                                                3,
-                                              )?.numberUnit,
+                                              amount:
+                                                iSizeToSize(
+                                                  sliderMinMaxLimit.mem
+                                                    .remaining + 'b',
+                                                  'g',
+                                                  3,
+                                                )?.numberUnit + 'iB',
                                             },
                                           ),
                                     );
@@ -663,31 +708,31 @@ const ResourceAllocationFormItems: React.FC<
                                 //       },
                                 //     }
                                 //   : {}),
-                                ...(form.getFieldValue(['resource', 'shmem'])
-                                  ? {
-                                      [iSizeToSize(
-                                        form.getFieldValue([
-                                          'resource',
-                                          'shmem',
-                                        ]),
-                                        'g',
-                                      )?.number || 0]: (
-                                        <Flex
-                                          style={{
-                                            height: 8,
-                                            width: 8,
-                                            borderRadius: 4,
-                                            backgroundColor: token.colorInfo,
-                                            position: 'absolute',
-                                            top: -10,
-                                            transform: 'translateX(-50%)',
-                                            opacity: 0.5,
-                                            pointerEvents: 'none',
-                                          }}
-                                        ></Flex>
-                                      ),
-                                    }
-                                  : undefined),
+                                // ...(form.getFieldValue(['resource', 'shmem'])
+                                //   ? {
+                                //       [iSizeToSize(
+                                //         form.getFieldValue([
+                                //           'resource',
+                                //           'shmem',
+                                //         ]),
+                                //         'g',
+                                //       )?.number || 0]: (
+                                //         <Flex
+                                //           style={{
+                                //             height: 8,
+                                //             width: 8,
+                                //             borderRadius: 4,
+                                //             backgroundColor: token.colorInfo,
+                                //             position: 'absolute',
+                                //             top: -10,
+                                //             transform: 'translateX(-50%)',
+                                //             opacity: 0.5,
+                                //             pointerEvents: 'none',
+                                //           }}
+                                //         ></Flex>
+                                //       ),
+                                //     }
+                                //   : undefined),
                                 ...(sliderMinMaxLimit.mem?.remaining
                                   ? {
                                       //@ts-ignore
@@ -701,70 +746,108 @@ const ResourceAllocationFormItems: React.FC<
                                     }
                                   : {}),
                               }}
+                              onChange={(M_plus_S) => {
+                                if (
+                                  !M_plus_S ||
+                                  !form.getFieldValue('enabledAutomaticShmem')
+                                )
+                                  return;
+                                runShmemAutomationRule(M_plus_S);
+                              }}
                             />
                           </Form.Item>
                         );
                       }}
                     </Form.Item>
-                    <Form.Item
-                      noStyle
-                      shouldUpdate={(prev, next) =>
-                        prev.resource.mem !== next.resource.mem
-                      }
-                    >
-                      {() => {
-                        return (
-                          <Form.Item
-                            noStyle
-                            name={['resource', 'shmem']}
-                            // initialValue={'0g'}
-                            // label={t('session.launcher.SharedMemory')}
-                            tooltip={
-                              <Trans
-                                i18nKey={'session.launcher.DescSharedMemory'}
-                              />
-                            }
-                            dependencies={[['resource', 'mem']]}
-                            rules={[
-                              {
-                                required: true,
-                              },
-                              {},
-                              {
-                                validator: async (rule, value: string) => {
-                                  if (
-                                    _.isEmpty(getFieldValue('resource')?.mem) ||
-                                    _.isEmpty(value) ||
-                                    compareNumberWithUnits(
-                                      getFieldValue('resource')?.mem,
-                                      value,
-                                    ) >= 0
-                                  ) {
-                                    return Promise.resolve();
-                                  } else {
-                                    throw t(
-                                      'resourcePreset.SHMEMShouldBeSmallerThanMemory',
-                                    );
-                                  }
-                                },
-                              },
-                            ]}
-                          >
-                            <DynamicUnitInputNumberWithSlider
-                              // shmem max is mem max
-                              // min={sliderMinMaxLimit.shmem?.min}
-                              min={sliderMinMaxLimit.shmem?.min}
-                              // max={sliderMinMaxLimit.mem?.max || '0g'}
-                              addonBefore={'SHM'}
-                              max={
-                                form.getFieldValue(['resource', 'mem']) || '0g'
+
+                    <Flex direction="column" gap={'xxs'} align="start">
+                      <Flex direction="row" gap={'xs'}>
+                        {t('session.launcher.EnableAutomaticShmem')}{' '}
+                        <Form.Item
+                          noStyle
+                          name={'enabledAutomaticShmem'}
+                          valuePropName="checked"
+                        >
+                          <Switch
+                            size="small"
+                            onChange={(checked) => {
+                              if (checked)
+                                runShmemAutomationRule(
+                                  form.getFieldValue(['resource', 'mem']) ||
+                                    '0g',
+                                );
+                            }}
+                          />
+                        </Form.Item>
+                      </Flex>
+                      <Form.Item
+                        noStyle
+                        shouldUpdate={(prev, next) =>
+                          prev.resource.mem !== next.resource.mem ||
+                          prev.enabledAutomaticShmem !==
+                            next.enabledAutomaticShmem
+                        }
+                      >
+                        {() => {
+                          return (
+                            <Form.Item
+                              noStyle
+                              name={['resource', 'shmem']}
+                              // initialValue={'0g'}
+                              // label={t('session.launcher.SharedMemory')}
+                              hidden={form.getFieldValue(
+                                'enabledAutomaticShmem',
+                              )}
+                              tooltip={
+                                <Trans
+                                  i18nKey={'session.launcher.DescSharedMemory'}
+                                />
                               }
-                              hideSlider
-                            />
-                          </Form.Item>
-                        );
-                      }}
-                    </Form.Item>
+                              dependencies={[['resource', 'mem']]}
+                              rules={[
+                                {
+                                  required: true,
+                                },
+                                {},
+                                {
+                                  validator: async (rule, value: string) => {
+                                    if (
+                                      _.isEmpty(
+                                        getFieldValue('resource')?.mem,
+                                      ) ||
+                                      _.isEmpty(value) ||
+                                      compareNumberWithUnits(
+                                        getFieldValue('resource')?.mem,
+                                        value,
+                                      ) >= 0
+                                    ) {
+                                      return Promise.resolve();
+                                    } else {
+                                      throw t(
+                                        'resourcePreset.SHMEMShouldBeSmallerThanMemory',
+                                      );
+                                    }
+                                  },
+                                },
+                              ]}
+                            >
+                              <DynamicUnitInputNumberWithSlider
+                                // shmem max is mem max
+                                // min={sliderMinMaxLimit.shmem?.min}
+                                min={sliderMinMaxLimit.shmem?.min}
+                                // max={sliderMinMaxLimit.mem?.max || '0g'}
+                                addonBefore={'SHM'}
+                                max={
+                                  form.getFieldValue(['resource', 'mem']) ||
+                                  '0g'
+                                }
+                                hideSlider
+                              />
+                            </Form.Item>
+                          );
+                        }}
+                      </Form.Item>
+                    </Flex>
                   </Form.Item>
                 )}
                 <Form.Item
