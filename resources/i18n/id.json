@@ -253,7 +253,8 @@
       "EnterEnvironmentVariable": "Masukkan nama variabel",
       "EnvironmentVariableNamePatternError": "Nama variabel harus dimulai dengan huruf atau garis bawah, dan hanya boleh terdiri dari huruf, angka, dan garis bawah.",
       "EnvironmentVariableDuplicateName": "Nama variabel yang sudah ada.",
-      "Template": "Templat Sesi"
+      "Template": "Templat Sesi",
+      "EnableAutomaticShmem": "Memori bersama otomatis"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -526,7 +527,8 @@
     "KeySeccessfullyDeleted": "KeyPair dihapus dengan aman.",
     "SignoutSeccessfullyFinished": "Keluar dengan aman selesai",
     "ModifyUserDetail": "Ubah Detail Pengguna",
-    "EnableSudoSession": ""
+    "EnableSudoSession": "",
+    "MainAccessKey": "Kunci Akses Utama"
   },
   "data": {
     "Folders": "Folder",

@@ -1490,7 +1490,7 @@ const SessionLauncherPage = () => {
           </Form.Provider>
           {/* </Suspense> */}
         </Flex>
-        {screens.md && (
+        {screens.lg && (
           <Affix
             offsetTop={150}
             // direction="column"

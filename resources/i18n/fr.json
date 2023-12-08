@@ -253,7 +253,8 @@
       "EnterEnvironmentVariable": "Saisir le nom de la variable",
       "EnvironmentVariableNamePatternError": "Le nom de la variable doit commencer par une lettre ou un trait de soulignement et ne peut contenir que des lettres, des chiffres et des traits de soulignement.",
       "EnvironmentVariableDuplicateName": "Un nom de variable qui existe déjà.",
-      "Template": "Modèle de session"
+      "Template": "Modèle de session",
+      "EnableAutomaticShmem": "Mémoire partagée automatique"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -526,7 +527,8 @@
     "KeySeccessfullyDeleted": "La paire de clés est supprimée successivement.",
     "SignoutSeccessfullyFinished": "La signature est terminée en toute sécurité",
     "ModifyUserDetail": "Modifier les détails de l'utilisateur",
-    "EnableSudoSession": ""
+    "EnableSudoSession": "",
+    "MainAccessKey": "Clé d'accès principale"
   },
   "data": {
     "Folders": "Dossiers",

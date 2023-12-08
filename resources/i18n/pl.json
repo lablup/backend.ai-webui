@@ -255,7 +255,8 @@
       "EnterEnvironmentVariable": "Wprowadź nazwę zmiennej",
       "EnvironmentVariableNamePatternError": "Nazwa zmiennej musi zaczynać się od litery lub podkreślenia i może zawierać tylko litery, cyfry i podkreślenia.",
       "EnvironmentVariableDuplicateName": "Nazwa zmiennej, która już istnieje.",
-      "Template": "Szablon sesji"
+      "Template": "Szablon sesji",
+      "EnableAutomaticShmem": "Automatyczna pamięć współdzielona"
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",
@@ -528,7 +529,8 @@
     "SignoutSeccessfullyFinished": "Wylogowanie zostało pomyślnie zakończone",
     "Status": "Status",
     "NoUserToDisplay": "Brak użytkowników do wyświetlenia",
-    "EnableSudoSession": ""
+    "EnableSudoSession": "",
+    "MainAccessKey": "Główny klucz dostępu"
   },
   "data": {
     "Folders": "Lornetka składana",

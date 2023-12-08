@@ -84,6 +84,7 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({ type: Boolean }) isUserInfoMaskEnabled = false;
   @property({ type: Boolean }) totpSupported = false;
   @property({ type: Boolean }) totpActivated = false;
+  @property({ type: Boolean }) supportMainAccessKey = false;
   @property({ type: Object }) userStatus = {
     active: 'Active',
     inactive: 'Inactive',
@@ -227,6 +228,8 @@ export default class BackendAIUserList extends BackendAIPage {
           this.totpSupported =
             globalThis.backendaiclient?.supports('2FA') &&
             (await globalThis.backendaiclient?.isManagerSupportingTOTP());
+          this.supportMainAccessKey =
+            globalThis.backendaiclient?.supports('main-access-key');
           this._refreshUserData();
           this.isAdmin = globalThis.backendaiclient.is_admin;
           this.isUserInfoMaskEnabled =
@@ -239,6 +242,8 @@ export default class BackendAIUserList extends BackendAIPage {
       this.totpSupported =
         globalThis.backendaiclient?.supports('2FA') &&
         (await globalThis.backendaiclient?.isManagerSupportingTOTP());
+      this.supportMainAccessKey =
+        globalThis.backendaiclient?.supports('main-access-key');
       this._refreshUserData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
       this.isUserInfoMaskEnabled =
@@ -268,6 +273,7 @@ export default class BackendAIUserList extends BackendAIPage {
       'role',
       'groups {id name}',
       'status',
+      'main_access_key',
     ];
     if (this.totpSupported) {
       fields.push('totp_activated');
@@ -355,6 +361,7 @@ export default class BackendAIUserList extends BackendAIPage {
       'domain_name',
       'role',
       'groups {id name}',
+      'main_access_key',
     ];
     if (this.totpSupported) {
       fields.push('totp_activated');
@@ -659,6 +666,16 @@ export default class BackendAIUserList extends BackendAIPage {
                   resizable
                   .renderer="${this._userStatusRenderer}"
                 ></lablup-grid-sort-filter-column>
+              `
+            : html``}
+          ${this.supportMainAccessKey
+            ? html`
+                <vaadin-grid-filter-column
+                  auto-width
+                  path="main_access_key"
+                  resizable
+                  header="${_t('credential.MainAccessKey')}"
+                ></vaadin-grid-filter-column>
               `
             : html``}
           <vaadin-grid-column

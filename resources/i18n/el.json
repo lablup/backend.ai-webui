@@ -253,7 +253,8 @@
       "EnterEnvironmentVariable": "Εισάγετε το όνομα της μεταβλητής",
       "EnvironmentVariableNamePatternError": "Το όνομα της μεταβλητής πρέπει να αρχίζει με γράμμα ή υπογράμμιση και μπορεί να περιέχει μόνο γράμματα, αριθμούς και υπογράμμιση.",
       "EnvironmentVariableDuplicateName": "Ένα όνομα μεταβλητής που υπάρχει ήδη.",
-      "Template": "Πρότυπο συνεδρίας"
+      "Template": "Πρότυπο συνεδρίας",
+      "EnableAutomaticShmem": "Αυτόματη κοινή μνήμη"
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",
@@ -526,7 +527,8 @@
     "SignoutSeccessfullyFinished": "Η αποσύνδεση ολοκληρώθηκε επιτυχώς",
     "Status": "Κατάσταση",
     "NoUserToDisplay": "Δεν υπάρχουν χρήστες για εμφάνιση",
-    "EnableSudoSession": ""
+    "EnableSudoSession": "",
+    "MainAccessKey": "Κύριο κλειδί πρόσβασης"
   },
   "data": {
     "Folders": "Φάκελοι",

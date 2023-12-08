@@ -255,7 +255,8 @@
       "EnterEnvironmentVariable": "Введите имя переменной",
       "EnvironmentVariableNamePatternError": "Имя переменной должно начинаться с буквы или символа подчеркивания и может содержать только буквы, цифры и символы подчеркивания.",
       "EnvironmentVariableDuplicateName": "Имя переменной, которая уже существует.",
-      "Template": "Шаблон сессии"
+      "Template": "Шаблон сессии",
+      "EnableAutomaticShmem": "Автоматическая разделяемая память"
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -528,7 +529,8 @@
     "KeySeccessfullyDeleted": "Пара ключей удалена без последствий.",
     "SignoutSeccessfullyFinished": "Выход из системы завершен",
     "ModifyUserDetail": "Изменение сведений о пользователе",
-    "EnableSudoSession": ""
+    "EnableSudoSession": "",
+    "MainAccessKey": "Главный ключ доступа"
   },
   "data": {
     "Folders": "Папки",

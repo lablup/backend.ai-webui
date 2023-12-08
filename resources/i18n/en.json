@@ -264,7 +264,8 @@
       "EnterEnvironmentVariable": "Enter Variable name",
       "EnvironmentVariableNamePatternError": "Variable name must start with a letter or underscore, and can only contain letters, numbers, and underscores.",
       "EnvironmentVariableDuplicateName": "A variable name that already exists.",
-      "Template": "Session Template"
+      "Template": "Session Template",
+      "EnableAutomaticShmem": "Automatic shared memory"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -618,7 +619,8 @@
     "AdminCanOnlyRemoveTotp": "Only disabling 2FA of other users is possible.",
     "KeySeccessfullyDeleted": "KeyPair is seccessfully deleted.",
     "SignoutSeccessfullyFinished": "Signout is seccessfully finished",
-    "EnableSudoSession": "Enable sudo session"
+    "EnableSudoSession": "Enable sudo session",
+    "MainAccessKey": "Main Access Key"
   },
   "data": {
     "Folders": "Folders",
