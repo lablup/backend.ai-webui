@@ -842,7 +842,9 @@
     "DescAutoLogout": "Tự động đăng xuất nếu tất cả các trang đã đăng nhập đều bị đóng ngoại trừ các trang gốc phiên cho ứng dụng (ví dụ: sổ ghi chép jupyter, thiết bị đầu cuối web, v.v.)",
     "SSHKeypairEnterManuallyFinished": "Cặp khóa SSH đã được đăng ký thành công.",
     "BootstrapScriptDescription": "Tập lệnh Bootstrap sẽ chỉ được thực thi một lần sau khi tạo phiên",
-    "SSHKeypairEnterManually": "Cặp khóa SSH"
+    "SSHKeypairEnterManually": "Cặp khóa SSH",
+    "MyKeypairInfo": "Thông tin về cặp khóa của tôi",
+    "DescMyKeypairInfo": "Xem thông tin cặp khóa của tôi"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Sử dụng đầu cuối web nâng cao: Sao chép nội dung đầu cuối",
@@ -1066,8 +1068,6 @@
     "Scaling": "Mở rộng quy mô",
     "AllowAgentSideRegistration": "Cho phép đăng ký phía đại lý",
     "DescAllowAgentSideRegistration": "Cho phép đại lý tự đăng ký với người quản lý. <br/> Chỉ sử dụng nếu cụm Backend.AI được quản lý trên vị trí an toàn.",
-    "Plugins": "bổ sung",
-    "CUDAGPUsupport": "Hỗ trợ GPU CUDA",
     "DescCUDAGPUsupport": "Hỗ trợ GPU NVIDIA CUDA. <br/> Yêu cầu Plugin Backend.AI CUDA.",
     "CUDAGPUdisabledByFGPUsupport": "Bị vô hiệu hóa do hệ thống sử dụng plugin GPU Fractional",
     "ROCMGPUsupport": "Hỗ trợ GPU ROCm",
@@ -1117,7 +1117,9 @@
     "OverlayNetworkSettings": "Cài đặt mạng lớp phủ",
     "OverlayNetworkSettingsDescription": "Mạng lớp phủ là mạng máy tính được xếp chồng lên trên một mạng khác. \nMạng lớp phủ tạo ra một mạng phân tán giữa nhiều máy chủ daemon Docker của trình quản lý Backend.AI.",
     "MTUDescription": "Đơn vị truyền tối đa, kích thước của gói lớn nhất mà giao thức mạng có thể truyền.",
-    "OutOfRange": "Ngoài phạm vi."
+    "OutOfRange": "Ngoài phạm vi.",
+    "Plugins": "bổ sung",
+    "OpenSourceCUDAGPUsupport": "Hỗ trợ GPU CUDA mã nguồn mở"
   },
   "notification": {
     "SuccessfullyUpdated": "Cập nhật thành công",
