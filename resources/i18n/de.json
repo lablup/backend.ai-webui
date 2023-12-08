@@ -62,7 +62,7 @@
       "Notifications": "Benachrichtigungen",
       "Tasks": "Aufgaben",
       "FastTrack": "FastTrack",
-      "Data&Model": ""
+      "Data&Model": "Daten"
     },
     "YouAreOffline": "Du bist jetzt offline",
     "YouAreOnline": "Sie sind jetzt online",
@@ -241,18 +241,19 @@
       "FolderAliasInvalid": "Es sind nur alphanumerische Zeichen, Unterstrich (_), Schrägstrich (/) und Bindestrich (-) zulässig.",
       "PreOpenPortMaxCountLimit": "Sie können bis zu {{count}} vorgeöffnete Ports einstellen.",
       "StartTimeMustBeInTheFuture": "Die Startzeit muss nach der aktuellen Uhrzeit liegen.",
-      "PreOpenPortMaxCountLimit_plural": "",
-      "EnqueueComputeSessionWarning": "",
-      "SessionName": "",
-      "ResetFormConfirm": "",
-      "TemplateAndHistory": "",
-      "ScheduleTimeSimple": "",
+      "EnqueueComputeSessionWarning": "Wenn Sie einen größeren Wert als die derzeit verfügbaren Ressourcen festlegen, wird die Sitzungserstellung in der Warteschlange verzögert, bis sie verfügbar wird.",
+      "SessionName": "Sitzungsname",
+      "ResetFormConfirm": "Möchten Sie alle Ihre Einträge zurücksetzen?",
+      "TemplateAndHistory": "Vorlagen",
+      "ScheduleTimeSimple": "Startzeit einstellen",
       "ResourceAllocationPerContainer": "Ressourcenzuweisung pro Container",
       "NumberOfContainer": "Nummer des Behälters",
+      "ErrorCanNotExceedRemaining": "Kann nicht auf einen Wert gesetzt werden, der größer ist als die verbleibenden Ressourcen ({{Betrag}}).",
       "EnterEnvironmentVariable": "Variablenname eingeben",
       "EnvironmentVariableNamePatternError": "Der Variablenname muss mit einem Buchstaben oder Unterstrich beginnen und darf nur Buchstaben, Zahlen und Unterstriche enthalten.",
       "EnvironmentVariableDuplicateName": "Ein Variablenname, der bereits existiert.",
-      "Template": "Sitzungsvorlage"
+      "Template": "Sitzungsvorlage",
+      "EnableAutomaticShmem": "Automatischer gemeinsamer Speicher"
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",
@@ -447,7 +448,7 @@
     "Enabled": "aktiviert",
     "StorageProxies": "Speicher",
     "None": "Keine",
-    "Image": ""
+    "Image": "Bild"
   },
   "credential": {
     "Permission": "Genehmigung",
@@ -525,7 +526,7 @@
     "SignoutSeccessfullyFinished": "Die Abmeldung ist erfolgreich abgeschlossen",
     "Status": "Status",
     "NoUserToDisplay": "Keine Benutzer zum Anzeigen",
-    "EnableSudoSession": "",
+    "EnableSudoSession": "Sudo-Sitzung aktivieren",
     "MainAccessKey": "Hauptzugangsschlüssel"
   },
   "data": {
@@ -693,8 +694,8 @@
     "DialogDataFolder": "Pipeline-spezifische Ordner, die bei der Erstellung von Pipelines in FastTrack automatisch erstellt werden.",
     "DialogModelFolder": "Sie können Modelle bedienen und verwalten.",
     "SearchByName": "Suche mit Name",
-    "ModelStore": "",
-    "New": "__NOT_TRANSLATED__",
+    "ModelStore": "Modellladen",
+    "New": "Neu",
     "Add": "hinzufügen",
     "CloningIsOnlyPossibleSameHost": "Derzeit ist das Klonen nur auf demselben Host möglich."
   },
@@ -1475,6 +1476,7 @@
     "Task": "Aufgabe",
     "CloneAsFolder": "Als Ordner klonen",
     "CloneSuccess": "Die Klonanfrage wurde erfolgreich gesendet.",
-    "CloneInfo": "Er wird als Ihr Benutzertyp-Ordner geklont."
+    "CloneInfo": "Er wird als Ihr Benutzertyp-Ordner geklont.",
+    "category": "Kategorie"
   }
 }

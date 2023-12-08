@@ -62,7 +62,7 @@
       "NewPasswordCannotBeSame": "Veuillez saisir un mot de passe différent de votre mot de passe actuel.",
       "PleaseConfirmYourPassword": "Veuillez confirmer votre mot de passe",
       "FastTrack": "FastTrack",
-      "Data&Model": ""
+      "Data&Model": "Données"
     },
     "YouAreOffline": "Vous êtes maintenant hors ligne",
     "YouAreOnline": "Vous êtes maintenant en ligne",
@@ -241,18 +241,19 @@
       "FolderAliasInvalid": "Seuls les caractères alphanumériques, le trait de soulignement (_), la barre oblique (/) et le tiret (-) sont autorisés.",
       "PreOpenPortMaxCountLimit": "Vous pouvez définir jusqu'à {{count}} ports pré-ouverts.",
       "StartTimeMustBeInTheFuture": "L'heure de début doit être postérieure à l'heure actuelle.",
-      "PreOpenPortMaxCountLimit_plural": "",
-      "EnqueueComputeSessionWarning": "",
-      "SessionName": "",
-      "ResetFormConfirm": "",
-      "TemplateAndHistory": "",
-      "ScheduleTimeSimple": "",
+      "EnqueueComputeSessionWarning": "Si vous la définissez sur une taille supérieure aux ressources actuellement disponibles, la création de la session sera retardée dans la file d'attente jusqu'à ce qu'elle devienne disponible.",
+      "SessionName": "Nom de la séance",
+      "ResetFormConfirm": "Voulez-vous réinitialiser toutes vos entrées ?",
+      "TemplateAndHistory": "Modèles",
+      "ScheduleTimeSimple": "Définir l'heure de début",
       "ResourceAllocationPerContainer": "Allocation de ressources par conteneur",
       "NumberOfContainer": "Nombre de conteneurs",
+      "ErrorCanNotExceedRemaining": "Ne peut être supérieur aux ressources restantes ({{montant}}).",
       "EnterEnvironmentVariable": "Saisir le nom de la variable",
       "EnvironmentVariableNamePatternError": "Le nom de la variable doit commencer par une lettre ou un trait de soulignement et ne peut contenir que des lettres, des chiffres et des traits de soulignement.",
       "EnvironmentVariableDuplicateName": "Un nom de variable qui existe déjà.",
-      "Template": "Modèle de session"
+      "Template": "Modèle de session",
+      "EnableAutomaticShmem": "Mémoire partagée automatique"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -447,7 +448,7 @@
     "Enabled": "Activée",
     "StorageProxies": "Stockages",
     "None": "Aucun",
-    "Image": ""
+    "Image": "Image"
   },
   "credential": {
     "Permission": "Autorisation",
@@ -525,7 +526,7 @@
     "KeySeccessfullyDeleted": "La paire de clés est supprimée successivement.",
     "SignoutSeccessfullyFinished": "La signature est terminée en toute sécurité",
     "ModifyUserDetail": "Modifier les détails de l'utilisateur",
-    "EnableSudoSession": "",
+    "EnableSudoSession": "Activer la session sudo",
     "MainAccessKey": "Clé d'accès principale"
   },
   "data": {
@@ -693,8 +694,8 @@
     "Pipeline": "Dossiers du pipeline",
     "DialogDataFolder": "Dossiers dédiés aux pipelines qui sont automatiquement créés lors de la création de pipelines dans FastTrack.",
     "SearchByName": "Rechercher par nom",
-    "ModelStore": "",
-    "New": "__NOT_TRANSLATED__",
+    "ModelStore": "Magasin de modèles",
+    "New": "Nouveau",
     "Add": "Ajouter",
     "CloningIsOnlyPossibleSameHost": "Actuellement, le clonage n'est possible que sur le même hôte."
   },
@@ -1475,6 +1476,7 @@
     "Task": "Tâche",
     "CloneAsFolder": "Cloner en tant que dossier",
     "CloneSuccess": "La demande de clone a été envoyée avec succès.",
-    "CloneInfo": "Il sera cloné en tant que dossier de votre type d'utilisateur."
+    "CloneInfo": "Il sera cloné en tant que dossier de votre type d'utilisateur.",
+    "category": "Catégorie"
   }
 }

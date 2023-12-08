@@ -62,7 +62,7 @@
       "Notifications": "Bildirimler",
       "Tasks": "Görevler",
       "FastTrack": "FastTrack",
-      "Data&Model": ""
+      "Data&Model": "Veri"
     },
     "YouAreOffline": "Şu anda çevrimdışısın",
     "YouAreOnline": "artık çevrimiçisin",
@@ -241,18 +241,19 @@
       "FolderAliasInvalid": "Yalnızca alfasayısal karakterlere, alt çizgiye (_), eğik çizgiye (/) ve kısa çizgiye (-) izin verilir.",
       "PreOpenPortMaxCountLimit": "En fazla {{sayı}} ön açık bağlantı noktası ayarlayabilirsiniz.",
       "StartTimeMustBeInTheFuture": "Başlangıç zamanı geçerli saatten sonra olmalıdır.",
-      "PreOpenPortMaxCountLimit_plural": "",
-      "EnqueueComputeSessionWarning": "",
-      "SessionName": "",
-      "ResetFormConfirm": "",
-      "TemplateAndHistory": "",
-      "ScheduleTimeSimple": "",
+      "EnqueueComputeSessionWarning": "Mevcut mevcut kaynaklardan daha büyük bir değere ayarlarsanız, oturumun oluşturulması, kullanılabilir hale gelene kadar kuyrukta ertelenecektir.",
+      "SessionName": "Oturum adı",
+      "ResetFormConfirm": "Tüm girişlerinizi sıfırlamak istiyor musunuz?",
+      "TemplateAndHistory": "Şablonlar",
+      "ScheduleTimeSimple": "Başlangıç ​​zamanını ayarla",
       "ResourceAllocationPerContainer": "Konteyner Başına Kaynak Tahsisi",
       "NumberOfContainer": "Konteyner sayısı",
+      "ErrorCanNotExceedRemaining": "Kalan kaynaklardan ({{amount}}) daha büyük bir değere ayarlanamaz.",
       "EnterEnvironmentVariable": "Değişken adını girin",
       "EnvironmentVariableNamePatternError": "Değişken adı bir harf veya alt çizgi ile başlamalıdır ve yalnızca harfler, sayılar ve alt çizgiler içerebilir.",
       "EnvironmentVariableDuplicateName": "Zaten var olan bir değişken adı.",
-      "Template": "Oturum Şablonu"
+      "Template": "Oturum Şablonu",
+      "EnableAutomaticShmem": "Otomatik paylaşılan bellek"
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -447,7 +448,7 @@
     "Enabled": "Etkin",
     "StorageProxies": "Depolar",
     "None": "Hiçbiri",
-    "Image": ""
+    "Image": "Resim"
   },
   "credential": {
     "Permission": "izin",
@@ -525,7 +526,7 @@
     "SignoutSeccessfullyFinished": "Çıkış işlemi başarıyla tamamlandı",
     "Status": "Durum",
     "NoUserToDisplay": "Görüntülenecek Kullanıcı Yok",
-    "EnableSudoSession": "",
+    "EnableSudoSession": "Sudo oturumunu etkinleştir",
     "MainAccessKey": "Ana Erişim Anahtarı"
   },
   "data": {
@@ -693,8 +694,8 @@
     "DialogDataFolder": "FastTrack'te boru hatları oluşturulurken otomatik olarak oluşturulan boru hattına özel klasörler.",
     "DialogModelFolder": "Modellere hizmet verebilir ve yönetebilirsiniz.",
     "SearchByName": "Ada göre ara",
-    "ModelStore": "",
-    "New": "__NOT_TRANSLATED__",
+    "ModelStore": "Model Mağazası",
+    "New": "Yeni",
     "Add": "Ekle",
     "CloningIsOnlyPossibleSameHost": "Şu anda klonlama yalnızca aynı ana bilgisayarda mümkündür."
   },
@@ -1475,6 +1476,7 @@
     "Task": "Görev",
     "CloneAsFolder": "Klasör olarak klonla",
     "CloneSuccess": "Klonlama isteği başarıyla gönderildi.",
-    "CloneInfo": "Kullanıcı tipi klasörünüz olarak klonlanacaktır."
+    "CloneInfo": "Kullanıcı tipi klasörünüz olarak klonlanacaktır.",
+    "category": "Kategori"
   }
 }
