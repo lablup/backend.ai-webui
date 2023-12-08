@@ -841,7 +841,9 @@
     "DescAutoLogout": "Déconnectez-vous automatiquement si toutes les pages connectées sont fermées, à l'exception des pages d'origine de session pour les applications (par exemple, bloc-notes jupyter, terminal Web, etc.)",
     "BootstrapScriptDescription": "Le script Bootstrap ne sera exécuté qu'une seule fois après la création de la session.",
     "SSHKeypairEnterManually": "Couple de clés SSH",
-    "SSHKeypairEnterManuallyFinished": "La paire de clés SSH a été enregistrée avec succès."
+    "SSHKeypairEnterManuallyFinished": "La paire de clés SSH a été enregistrée avec succès.",
+    "MyKeypairInfo": "Informations sur ma paire de clés",
+    "DescMyKeypairInfo": "Voir les informations de ma paire de clés"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilisation avancée du terminal Web : copier le contenu du terminal",

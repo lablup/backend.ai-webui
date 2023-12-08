@@ -1364,7 +1364,9 @@
     "SSHKeypairManagement": "Gestión de pares de claves SSH",
     "SessionTerminationDialog": "La finalización de la sesión no se puede deshacer. ¿Desea finalizar la sesión?",
     "ShellEnvironments": "Entornos de conchas",
-    "UseCompactSidebar": "Utilizar la barra lateral compacta por defecto"
+    "UseCompactSidebar": "Utilizar la barra lateral compacta por defecto",
+    "MyKeypairInfo": "Información de mi par de claves",
+    "DescMyKeypairInfo": "Ver la información de mi par de claves"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avanzado del terminal web: Copiar el contenido del terminal",

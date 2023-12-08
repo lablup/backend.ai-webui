@@ -840,7 +840,9 @@
     "DescAutoLogout": "Tự động đăng xuất nếu tất cả các trang đã đăng nhập đều bị đóng ngoại trừ các trang gốc phiên cho ứng dụng (ví dụ: sổ ghi chép jupyter, thiết bị đầu cuối web, v.v.)",
     "SSHKeypairEnterManuallyFinished": "Cặp khóa SSH đã được đăng ký thành công.",
     "BootstrapScriptDescription": "Tập lệnh Bootstrap sẽ chỉ được thực thi một lần sau khi tạo phiên",
-    "SSHKeypairEnterManually": "Cặp khóa SSH"
+    "SSHKeypairEnterManually": "Cặp khóa SSH",
+    "MyKeypairInfo": "Thông tin về cặp khóa của tôi",
+    "DescMyKeypairInfo": "Xem thông tin cặp khóa của tôi"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Sử dụng đầu cuối web nâng cao: Sao chép nội dung đầu cuối",

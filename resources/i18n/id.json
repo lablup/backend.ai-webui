@@ -841,7 +841,9 @@
     "DescAutoLogout": "Keluar secara otomatis jika semua halaman yang masuk ditutup kecuali halaman yang berasal dari sesi untuk aplikasi (mis. Jupyter notebook, terminal web, dll.)",
     "BootstrapScriptDescription": "Skrip bootstrap akan dieksekusi hanya sekali setelah pembuatan sesi",
     "SSHKeypairEnterManually": "SSH Keypair",
-    "SSHKeypairEnterManuallyFinished": "SSH Keypair telah berhasil didaftarkan."
+    "SSHKeypairEnterManuallyFinished": "SSH Keypair telah berhasil didaftarkan.",
+    "MyKeypairInfo": "Informasi Pasangan Kunci Saya",
+    "DescMyKeypairInfo": "Lihat informasi keypair saya"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Tingkat Lanjut: Salin konten terminal",

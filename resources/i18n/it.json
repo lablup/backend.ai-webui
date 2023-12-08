@@ -841,7 +841,9 @@
     "DescAutoLogout": "Disconnettersi automaticamente se tutte le pagine di accesso vengono chiuse eccetto le pagine originate dalla sessione per le app (ad es.",
     "SSHKeypairEnterManuallyFinished": "La coppia di chiavi SSH è stata registrata con successo.",
     "BootstrapScriptDescription": "Lo script Bootstrap verrà eseguito solo una volta dopo la creazione della sessione.",
-    "SSHKeypairEnterManually": "Coppia di chiavi SSH"
+    "SSHKeypairEnterManually": "Coppia di chiavi SSH",
+    "MyKeypairInfo": "Informazioni sulla mia coppia di chiavi",
+    "DescMyKeypairInfo": "Vedi le informazioni sulla mia coppia di chiavi"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilizzo avanzato del terminale Web: copia il contenuto del terminale",

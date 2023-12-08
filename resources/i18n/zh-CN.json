@@ -841,7 +841,9 @@
     "DescAutoLogout": "如果所有登录页面都关闭，除了应用程序的会话发起页面（例如 jupyter 笔记本、网络终端等），则自动注销",
     "SSHKeypairEnterManuallyFinished": "SSH 密钥对已成功注册。",
     "BootstrapScriptDescription": "Bootstrap 脚本只会在会话创建后执行一次",
-    "SSHKeypairEnterManually": "SSH 密钥对"
+    "SSHKeypairEnterManually": "SSH 密钥对",
+    "MyKeypairInfo": "我的密钥对信息",
+    "DescMyKeypairInfo": "查看我的密钥对信息"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高级 Web 终端使用：复制终端内容",
