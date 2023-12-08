@@ -8,7 +8,7 @@ import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { KeypairInfoModalQuery } from './__generated__/KeypairInfoModalQuery.graphql';
-import { Button, theme, Table, Typography, Tag } from 'antd';
+import { Button, Table, Typography, Tag } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
