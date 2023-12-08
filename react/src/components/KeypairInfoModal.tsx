@@ -44,7 +44,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
       query KeypairInfoModalQuery($email: String) {
         user(email: $email) {
           email
-          main_access_key @since(version: "24.03.0")
+          main_access_key @since(version: "23.09.7")
         }
       }
     `,
