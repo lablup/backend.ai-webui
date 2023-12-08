@@ -1069,8 +1069,6 @@
     "Scaling": "skalowanie",
     "AllowAgentSideRegistration": "Zezwalaj na rejestrację po stronie agenta",
     "DescAllowAgentSideRegistration": "Zezwól agentowi na zarejestrowanie się w menedżerze. <br/> Używaj tylko wtedy, gdy klaster Backend.AI jest zarządzany w bezpiecznej lokalizacji.",
-    "Plugins": "Wtyczki",
-    "CUDAGPUsupport": "Obsługa procesorów graficznych CUDA",
     "DescCUDAGPUsupport": "Obsługa procesorów graficznych NVIDIA CUDA. <br/> Wymaga wtyczki Backend.AI CUDA.",
     "CUDAGPUdisabledByFGPUsupport": "Wyłączone, ponieważ system używa ułamkowej wtyczki GPU",
     "ROCMGPUsupport": "Obsługa ROCm GPU",
@@ -1120,7 +1118,9 @@
     "OverlayNetworkSettings": "Ustawienia sieci nakładkowej",
     "OverlayNetworkSettingsDescription": "Sieć nakładkowa to sieć komputerowa, która jest nakładana na inną sieć. Sieć nakładkowa tworzy sieć rozproszoną między wieloma hostami demonów Docker menedżera Backend.AI.",
     "MTUDescription": "Maksymalna jednostka transmisji, rozmiar największego pakietu, jaki może przesłać protokół sieciowy.",
-    "OutOfRange": "Poza zasięgiem."
+    "OutOfRange": "Poza zasięgiem.",
+    "Plugins": "Wtyczki",
+    "OpenSourceCUDAGPUsupport": "Obsługa procesorów graficznych Open Source CUDA"
   },
   "notification": {
     "SuccessfullyUpdated": "Pomyślnie zaktualizowano",

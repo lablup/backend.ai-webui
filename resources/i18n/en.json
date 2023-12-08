@@ -1159,8 +1159,6 @@
     "Scaling": "Scaling",
     "AllowAgentSideRegistration": "Allow agent-side registration",
     "DescAllowAgentSideRegistration": "Allow agent to register itself to manager.<br/>Use only if Backend.AI cluster is managed on secure location.",
-    "Plugins": "Plugins",
-    "CUDAGPUsupport": "CUDA GPU support",
     "DescCUDAGPUsupport": "NVIDIA CUDA GPU support. <br/>Requires Backend.AI CUDA Plugin.",
     "CUDAGPUdisabledByFGPUsupport": "Disabled because system uses Fractional GPU plugin",
     "ROCMGPUsupport": "ROCm GPU support",
@@ -1210,7 +1208,9 @@
     "RequireATOMPlugin": "Requires Backend.AI ATOM Plugin.",
     "Warboysupport": "Warboy",
     "DescWarboysupport": "Use Furiosa Warboy support",
-    "RequireWarboyPlugin": "Requires Backend.AI Warboy Plugin."
+    "RequireWarboyPlugin": "Requires Backend.AI Warboy Plugin.",
+    "Plugins": "Plugins",
+    "OpenSourceCUDAGPUsupport": "Open Source CUDA GPU support"
   },
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",

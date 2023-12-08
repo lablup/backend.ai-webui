@@ -1142,7 +1142,6 @@
     "ATOMsupport": "ATOM",
     "AllowAgentSideRegistration": "Permitir el registro del agente",
     "CUDAGPUdisabledByFGPUsupport": "Desactivado porque el sistema utiliza el complemento GPU fraccional",
-    "CUDAGPUsupport": "Soporte para GPU CUDA",
     "Config": "Configurar",
     "ConfigPerJobSchduler": "Configuración del programador",
     "ConfigPerJobSchdulerDescription": "Los valores de la configuración del planificador son los valores predeterminados que se utilizarán cuando no exista una configuración del planificador en cada grupo de recursos. Si existe una configuración específica para cada grupo de recursos, este valor se ignorará.",
@@ -1175,7 +1174,6 @@
     "OverlayNetworkConfiguration": "Configuración a utilizar al crear redes superpuestas.",
     "OverlayNetworkSettings": "Configuración de la red de superposición",
     "OverlayNetworkSettingsDescription": "Una red superpuesta es una red informática que se superpone a otra red. La red superpuesta crea una red distribuida entre varios hosts demonio Docker del gestor Backend.AI.",
-    "Plugins": "Plugins",
     "ROCMGPUsupport": "Soporte para GPU ROCm",
     "RegisterNewImagesFromRepo": "Registrar nuevas imágenes desde el repositorio",
     "Require2003orAbove": "Requiere Backend.AI 20.03 o superior.",
@@ -1200,7 +1198,9 @@
       "digest": "Digerir",
       "none": "Ninguno",
       "tag": "Etiqueta"
-    }
+    },
+    "Plugins": "Complementos",
+    "OpenSourceCUDAGPUsupport": "Compatibilidad con GPU CUDA de código abierto"
   },
   "sidepanel": {
     "BackgroundTasks": "Tareas en curso",

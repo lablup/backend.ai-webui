@@ -1067,8 +1067,6 @@
     "Scaling": "Mise à l'échelle",
     "AllowAgentSideRegistration": "Autoriser l'enregistrement côté agent",
     "DescAllowAgentSideRegistration": "Autoriser l'agent à s'inscrire auprès du gestionnaire. <br/> À utiliser uniquement si le cluster Backend.AI est géré sur un emplacement sécurisé.",
-    "Plugins": "Plugins",
-    "CUDAGPUsupport": "Prise en charge du processeur graphique CUDA",
     "DescCUDAGPUsupport": "Prise en charge du GPU NVIDIA CUDA. <br/> Nécessite le plugin Backend.AI CUDA.",
     "CUDAGPUdisabledByFGPUsupport": "Désactivé car le système utilise le plug-in Fractional GPU",
     "ROCMGPUsupport": "Prise en charge du GPU ROCm",
@@ -1118,7 +1116,9 @@
     "RequireATOMPlugin": "Nécessite le plugin ATOM Backend.AI.",
     "Warboysupport": "Warboy",
     "DescWarboysupport": "Utiliser le support Furiosa Warboy",
-    "RequireWarboyPlugin": "Requiert le plugin Backend.AI Warboy."
+    "RequireWarboyPlugin": "Requiert le plugin Backend.AI Warboy.",
+    "Plugins": "Plugins",
+    "OpenSourceCUDAGPUsupport": "Prise en charge des GPU CUDA Open Source"
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",
