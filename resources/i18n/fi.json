@@ -1478,5 +1478,12 @@
     "StartCommand": "Käynnistä komento",
     "Task": "Tehtävä",
     "Version": "Versio"
+  },
+  "signout": {
+    "LeaveService": "Poistu palvelusta",
+    "Signout": "Kirjaudu ulos",
+    "DescConfirmLeave": "Vahvista kirjoittamalla sähköpostiosoitteesi ja salasanasi uudelleen.",
+    "E-mail": "Sähköposti",
+    "Password": "Salasana"
   }
 }

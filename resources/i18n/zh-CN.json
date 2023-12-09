@@ -1478,5 +1478,12 @@
     "CloneSuccess": "克隆请求已成功发送。",
     "CloneInfo": "它将被克隆为用户类型文件夹。",
     "category": "类别"
+  },
+  "signout": {
+    "LeaveService": "休假服务",
+    "Signout": "登出",
+    "DescConfirmLeave": "如需确认，请再次输入您的电子邮件和密码。",
+    "E-mail": "电子邮件",
+    "Password": "密码"
   }
 }

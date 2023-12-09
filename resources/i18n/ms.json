@@ -1478,5 +1478,12 @@
     "CloneSuccess": "Permintaan klon telah berjaya dihantar.",
     "CloneInfo": "Ia akan diklonkan sebagai folder jenis pengguna anda.",
     "category": "kategori"
+  },
+  "signout": {
+    "LeaveService": "Perkhidmatan Cuti",
+    "Signout": "Log keluar",
+    "DescConfirmLeave": "Untuk mengesahkan, sila taip E-mel dan kata laluan anda sekali lagi.",
+    "E-mail": "E-mel",
+    "Password": "Kata laluan"
   }
 }

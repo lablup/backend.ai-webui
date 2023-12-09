@@ -1478,5 +1478,12 @@
     "CloneSuccess": "クローン要求は正常に送信された。",
     "CloneInfo": "ユーザータイプのフォルダとしてクローンされます。",
     "category": "カテゴリー"
+  },
+  "signout": {
+    "LeaveService": "休暇サービス",
+    "Signout": "サインアウト",
+    "DescConfirmLeave": "確認のため、電子メールアドレスとパスワードをもう一度入力してください。",
+    "E-mail": "Eメール",
+    "Password": "パスワード"
   }
 }

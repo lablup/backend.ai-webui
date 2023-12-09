@@ -1478,5 +1478,12 @@
     "CloneSuccess": "Permintaan kloning telah berhasil dikirim.",
     "CloneInfo": "Ini akan dikloning sebagai folder tipe pengguna Anda.",
     "category": "Kategori"
+  },
+  "signout": {
+    "LeaveService": "Tinggalkan Layanan",
+    "Signout": "Keluar",
+    "DescConfirmLeave": "Untuk mengonfirmasi, silakan ketikkan kembali E-mail dan kata sandi Anda.",
+    "E-mail": "Surel",
+    "Password": "Kata sandi"
   }
 }

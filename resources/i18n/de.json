@@ -1478,5 +1478,12 @@
     "CloneSuccess": "Die Klonanfrage wurde erfolgreich gesendet.",
     "CloneInfo": "Er wird als Ihr Benutzertyp-Ordner geklont.",
     "category": "Kategorie"
+  },
+  "signout": {
+    "LeaveService": "Dienst verlassen",
+    "Signout": "Abmelden",
+    "DescConfirmLeave": "Zur Bestätigung geben Sie bitte Ihre E-Mail-Adresse und Ihr Passwort erneut ein.",
+    "E-mail": "Email",
+    "Password": "Passwort"
   }
 }

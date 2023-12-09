@@ -1,7 +1,7 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import { Form, Input, message } from 'antd';
+import { Form, Input, message, Alert } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -52,21 +52,25 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
   return (
     <>
       <BAIModal
-        title={t('login.LeaveService')}
+        title={t('signout.LeaveService')}
         centered
         width={450}
         open={open}
         onOk={handleOk}
+        okText={t('signout.Signout')}
         onCancel={() => {
           onRequestClose();
         }}
         {...modalProps}
       >
         <Form form={form} labelCol={{ span: 6 }}>
-          <Form.Item name="email" label={t('login.E-mail')}>
+          <Form.Item name="alert">
+            <Alert message={t('signout.DescConfirmLeave')} type="warning" />
+          </Form.Item>
+          <Form.Item name="email" label={t('signout.E-mail')}>
             <Input />
           </Form.Item>
-          <Form.Item name="password" label={t('login.Password')}>
+          <Form.Item name="password" label={t('signout.Password')}>
             <Input.Password />
           </Form.Item>
         </Form>

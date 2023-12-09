@@ -1478,5 +1478,12 @@
     "CloneSuccess": "Yêu cầu nhân bản đã được gửi thành công.",
     "CloneInfo": "Nó sẽ được sao chép thành thư mục loại người dùng của bạn.",
     "category": "Loại"
+  },
+  "signout": {
+    "LeaveService": "Rời khỏi dịch vụ",
+    "Signout": "Đăng xuất",
+    "DescConfirmLeave": "Để xác nhận, vui lòng nhập lại E-mail và mật khẩu của bạn.",
+    "E-mail": "E-mail",
+    "Password": "Mật khẩu"
   }
 }

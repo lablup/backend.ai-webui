@@ -1478,5 +1478,12 @@
     "CloneSuccess": "The clone request has been sent successfully.",
     "CloneInfo": "It will be cloned as your user type folder.",
     "category": "Category"
+  },
+  "signout": {
+    "LeaveService": "Leave Service",
+    "Signout": "Signout",
+    "DescConfirmLeave": "To confirm, please type your E-mail and password again.",
+    "E-mail": "E-mail",
+    "Password": "Password"
   }
 }

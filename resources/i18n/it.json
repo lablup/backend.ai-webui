@@ -1478,5 +1478,12 @@
     "CloneSuccess": "La richiesta di clonazione è stata inviata con successo.",
     "CloneInfo": "Verrà clonata come cartella del tipo di utente.",
     "category": "Categoria"
+  },
+  "signout": {
+    "LeaveService": "Lascia il servizio",
+    "Signout": "Disconnessione",
+    "DescConfirmLeave": "Per confermare, digita nuovamente la tua e-mail e la password.",
+    "E-mail": "E-mail",
+    "Password": "Parola d'ordine"
   }
 }
