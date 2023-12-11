@@ -457,8 +457,8 @@ export default class BackendAISessionList extends BackendAIPage {
 
         lablup-progress-bar.usage {
           --progress-bar-height: 5px;
-          --progress-bar-width: 60px;
-          margin-bottom: 0;
+          --progress-bar-width: 120px;
+          margin: 2px 0 5px 0;
         }
 
         div.filters #access-key-filter {
@@ -499,8 +499,7 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         div.usage-items {
-          font-size: 8px;
-          width: 55px;
+          font-size: 10px;
         }
       `,
     ];
@@ -3224,8 +3223,11 @@ ${rowData.item[this.sessionNameField]}</pre
         // language=HTML
         html`
           <div class="vertical start start-justified layout">
-            <div class="horizontal start-justified center layout">
-              <div class="usage-items">CPU</div>
+            <div class="vertical start-justified layout">
+              <div class="usage-items">
+                CPU
+                ${(rowData.item.live_stat?.cpu_util?.ratio * 100).toFixed(1)} %
+              </div>
               <div class="horizontal start-justified center layout">
                 <lablup-progress-bar
                   class="usage"
@@ -3235,8 +3237,18 @@ ${rowData.item[this.sessionNameField]}</pre
                 ></lablup-progress-bar>
               </div>
             </div>
-            <div class="horizontal start-justified center layout">
-              <div class="usage-items">RAM</div>
+            <div class="vertical start-justified layout">
+              <div class="usage-items">
+                RAM
+                ${BackendAISessionList.bytesToGiB(
+                  rowData.item.live_stat?.mem?.current,
+                  1,
+                )}/${BackendAISessionList.bytesToGiB(
+                  rowData.item.live_stat?.mem?.capacity,
+                  1,
+                )}
+                GiB
+              </div>
               <div class="horizontal start-justified center layout">
                 <lablup-progress-bar
                   class="usage"
@@ -3248,8 +3260,14 @@ ${rowData.item[this.sessionNameField]}</pre
             ${rowData.item.cuda_gpu_slot &&
             parseInt(rowData.item.cuda_gpu_slot) > 0
               ? html`
-                  <div class="horizontal start-justified center layout">
-                    <div class="usage-items">GPU(util)</div>
+                  <div class="vertical start-justified center layout">
+                    <div class="usage-items">
+                      GPU(util)
+                      ${(
+                        rowData.item.live_stat?.cuda_util?.ratio * 100
+                      ).toFixed(1)}
+                      %
+                    </div>
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
@@ -3264,8 +3282,14 @@ ${rowData.item[this.sessionNameField]}</pre
             ${rowData.item.cuda_fgpu_slot &&
             parseFloat(rowData.item.cuda_fgpu_slot) > 0
               ? html`
-                  <div class="horizontal start-justified center layout">
-                    <div class="usage-items">GPU(util)</div>
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      GPU(util)
+                      ${(
+                        rowData.item.live_stat?.cuda_util?.ratio * 100
+                      ).toFixed(1)}
+                      %
+                    </div>
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
@@ -3280,8 +3304,14 @@ ${rowData.item[this.sessionNameField]}</pre
             ${rowData.item.rocm_gpu_slot &&
             parseFloat(rowData.item.cuda_rocm_gpu_slot) > 0
               ? html`
-                  <div class="horizontal start-justified center layout">
-                    <div class="usage-items">GPU(util)</div>
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      GPU(util)
+                      ${(
+                        rowData.item.live_stat?.rocm_util?.ratio * 100
+                      ).toFixed(1)}
+                      %
+                    </div>
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
@@ -3295,8 +3325,18 @@ ${rowData.item[this.sessionNameField]}</pre
               : html``}
             ${rowData.item.cuda_fgpu_slot || rowData.item.rocm_gpu_slot
               ? html`
-                  <div class="horizontal start-justified center layout">
-                    <div class="usage-items">GPU(mem)</div>
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      GPU(mem)
+                      ${BackendAISessionList.bytesToGiB(
+                        rowData.item.live_stat?.cuda_mem?.current,
+                        1,
+                      )}/${BackendAISessionList.bytesToGiB(
+                        rowData.item.live_stat?.cuda_mem?.capacity,
+                        1,
+                      )}
+                      GiB
+                    </div>
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
@@ -3309,8 +3349,14 @@ ${rowData.item[this.sessionNameField]}</pre
               : html``}
             ${rowData.item.tpu_slot && parseFloat(rowData.item.tpu_slot) > 0
               ? html`
-                  <div class="horizontal start-justified center layout">
-                    <div class="usage-items">TPU(util)</div>
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      TPU(util)
+                      ${(rowData.item.live_stat?.tpu_util?.ratio * 100).toFixed(
+                        1,
+                      )}
+                      %
+                    </div>
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
@@ -3324,8 +3370,14 @@ ${rowData.item[this.sessionNameField]}</pre
               : html``}
             ${rowData.item.ipu_slot && parseFloat(rowData.item.ipu_slot) > 0
               ? html`
-                  <div class="horizontal start-justified center layout">
-                    <div class="usage-items">IPU(util)</div>
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      IPU(util)
+                      ${(rowData.item.live_stat?.ipu_util?.ratio * 100).toFixed(
+                        1,
+                      )}
+                      %
+                    </div>
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
@@ -3339,8 +3391,14 @@ ${rowData.item[this.sessionNameField]}</pre
               : html``}
             ${rowData.item.atom_slot && parseFloat(rowData.item.atom_slot) > 0
               ? html`
-                  <div class="horizontal start-justified center layout">
-                    <div class="usage-items">ATOM(util)</div>
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      ATOM(util)
+                      ${(
+                        rowData.item.live_stat?.atom_util?.ratio * 100
+                      ).toFixed(1)}
+                      %
+                    </div>
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
@@ -3356,7 +3414,7 @@ ${rowData.item[this.sessionNameField]}</pre
             <div class="horizontal start-justified center layout">
               <div class="usage-items">I/O</div>
               <div
-                style="font-size:8px;"
+                style="font-size:10px;margin-left:5px;"
                 class="horizontal start-justified center layout"
               >
                 R: ${rowData.item?.live_stat?.io_read?.current} MB / W:
