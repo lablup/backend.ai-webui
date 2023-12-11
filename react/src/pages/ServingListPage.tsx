@@ -293,9 +293,11 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   dataIndex: 'endpoint_id',
                   render: (endpoint_id, row) =>
                     row.url ? (
-                      <Typography.Text copyable>{row.url}</Typography.Text>
+                      <Typography.Link copyable href={row.url} target="_blank">
+                        {row.url}
+                      </Typography.Link>
                     ) : (
-                      <Tag>{t('modelService.NoServiceEndpoint')}</Tag>
+                      '-'
                     ),
                 },
                 {
