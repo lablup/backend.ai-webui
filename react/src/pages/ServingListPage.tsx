@@ -22,7 +22,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useRafInterval } from 'ahooks';
-import { Button, Table, Tabs, Typography, theme, Tag } from 'antd';
+import { Button, Table, Tabs, Typography, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
