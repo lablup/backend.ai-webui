@@ -1484,6 +1484,8 @@
     "Signout": "Đăng xuất",
     "DescConfirmLeave": "Để xác nhận, vui lòng nhập lại E-mail và mật khẩu của bạn.",
     "E-mail": "E-mail",
-    "Password": "Mật khẩu"
+    "Password": "Mật khẩu",
+    "InvalidBlankPassword": "Nhập mật khẩu của bạn",
+    "InvalidBlankEmail": "Nhập email của bạn"
   }
 }

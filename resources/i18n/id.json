@@ -1484,6 +1484,8 @@
     "Signout": "Keluar",
     "DescConfirmLeave": "Untuk mengonfirmasi, silakan ketikkan kembali E-mail dan kata sandi Anda.",
     "E-mail": "Surel",
-    "Password": "Kata sandi"
+    "Password": "Kata sandi",
+    "InvalidBlankPassword": "Masukkan kata sandi Anda",
+    "InvalidBlankEmail": "Masukkan email Anda"
   }
 }

@@ -1324,7 +1324,9 @@
     "E-mail": "E-mail",
     "Password": "비밀번호",
     "LeaveService": "서비스 탈퇴",
-    "DescConfirmLeave": "확인을 위해 E-mail 및 비밀번호를 다시 입력해주세요."
+    "DescConfirmLeave": "확인을 위해 E-mail 및 비밀번호를 다시 입력해주세요.",
+    "InvalidBlankEmail": "E-mail을 입력하세요.",
+    "InvalidBlankPassword": "패스워드를 입력하세요."
   },
   "update": {
     "NewWebUIVersionAvailable": "새 버전이 출시되었습니다:"

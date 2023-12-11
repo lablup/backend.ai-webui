@@ -1484,6 +1484,8 @@
     "Signout": "登出",
     "DescConfirmLeave": "如需确认，请再次输入您的电子邮件和密码。",
     "E-mail": "电子邮件",
-    "Password": "密码"
+    "Password": "密码",
+    "InvalidBlankPassword": "输入您的密码",
+    "InvalidBlankEmail": "输入你的电子邮箱"
   }
 }

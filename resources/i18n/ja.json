@@ -1484,6 +1484,8 @@
     "Signout": "サインアウト",
     "DescConfirmLeave": "確認のため、電子メールアドレスとパスワードをもう一度入力してください。",
     "E-mail": "Eメール",
-    "Password": "パスワード"
+    "Password": "パスワード",
+    "InvalidBlankPassword": "パスワードを入力してください",
+    "InvalidBlankEmail": "メールアドレスを入力"
   }
 }

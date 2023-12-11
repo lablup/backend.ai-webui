@@ -1484,6 +1484,8 @@
     "Signout": "Sair",
     "DescConfirmLeave": "Para confirmar, digite novamente seu e-mail e senha.",
     "E-mail": "E-mail",
-    "Password": "Senha"
+    "Password": "Senha",
+    "InvalidBlankPassword": "Coloque sua senha",
+    "InvalidBlankEmail": "Digite seu e-mail"
   }
 }

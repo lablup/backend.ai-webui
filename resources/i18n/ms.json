@@ -1484,6 +1484,8 @@
     "Signout": "Log keluar",
     "DescConfirmLeave": "Untuk mengesahkan, sila taip E-mel dan kata laluan anda sekali lagi.",
     "E-mail": "E-mel",
-    "Password": "Kata laluan"
+    "Password": "Kata laluan",
+    "InvalidBlankPassword": "Masukkan kata laluan anda",
+    "InvalidBlankEmail": "Masukkan emel anda"
   }
 }

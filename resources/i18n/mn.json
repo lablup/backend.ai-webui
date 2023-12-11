@@ -1484,6 +1484,8 @@
     "Signout": "Гарах",
     "DescConfirmLeave": "Баталгаажуулахын тулд имэйл болон нууц үгээ дахин оруулна уу.",
     "E-mail": "И-мэйл",
-    "Password": "Нууц үг"
+    "Password": "Нууц үг",
+    "InvalidBlankPassword": "Нууц үгээ оруулна уу",
+    "InvalidBlankEmail": "Имэйлээ оруулна уу"
   }
 }

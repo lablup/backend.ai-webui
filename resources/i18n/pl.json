@@ -1484,6 +1484,8 @@
     "Signout": "Wyloguj się",
     "DescConfirmLeave": "Aby potwierdzić, wpisz ponownie swój adres e-mail i hasło.",
     "E-mail": "E-mail",
-    "Password": "Hasło"
+    "Password": "Hasło",
+    "InvalidBlankPassword": "Wprowadź hasło",
+    "InvalidBlankEmail": "Wprowadź swój email"
   }
 }

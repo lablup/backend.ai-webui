@@ -67,10 +67,42 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
           <Form.Item name="alert">
             <Alert message={t('signout.DescConfirmLeave')} type="warning" />
           </Form.Item>
-          <Form.Item name="email" label={t('signout.E-mail')}>
+          <Form.Item
+            name="email"
+            label={t('signout.E-mail')}
+            required
+            rules={[
+              () => ({
+                validator(_, value) {
+                  if (!value) {
+                    return Promise.reject(
+                      new Error(t('signout.InvalidBlankEmail')),
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              }),
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="password" label={t('signout.Password')}>
+          <Form.Item
+            name="password"
+            label={t('signout.Password')}
+            required
+            rules={[
+              () => ({
+                validator(_, value) {
+                  if (!value) {
+                    return Promise.reject(
+                      new Error(t('signout.InvalidBlankPassword')),
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              }),
+            ]}
+          >
             <Input.Password />
           </Form.Item>
         </Form>

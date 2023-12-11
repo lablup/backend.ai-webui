@@ -1484,6 +1484,8 @@
     "Signout": "Kirjaudu ulos",
     "DescConfirmLeave": "Vahvista kirjoittamalla sähköpostiosoitteesi ja salasanasi uudelleen.",
     "E-mail": "Sähköposti",
-    "Password": "Salasana"
+    "Password": "Salasana",
+    "InvalidBlankPassword": "Syötä salasanasi",
+    "InvalidBlankEmail": "Syötä sähköpostiosoitteesi"
   }
 }

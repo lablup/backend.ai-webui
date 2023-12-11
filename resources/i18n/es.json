@@ -1484,6 +1484,8 @@
     "Signout": "Desconectar",
     "DescConfirmLeave": "Para confirmar, escriba nuevamente su correo electrónico y contraseña.",
     "E-mail": "Correo electrónico",
-    "Password": "Contraseña"
+    "Password": "Contraseña",
+    "InvalidBlankPassword": "Ingresa tu contraseña",
+    "InvalidBlankEmail": "Introduce tu correo electrónico"
   }
 }

@@ -1484,6 +1484,8 @@
     "Signout": "Oturumu Kapat",
     "DescConfirmLeave": "Onaylamak için lütfen E-posta adresinizi ve şifrenizi tekrar yazın.",
     "E-mail": "E-posta",
-    "Password": "Şifre"
+    "Password": "Şifre",
+    "InvalidBlankPassword": "Şifrenizi girin",
+    "InvalidBlankEmail": "E-postanızı giriniz"
   }
 }
