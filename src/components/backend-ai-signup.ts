@@ -317,10 +317,6 @@ export default class BackendAiSignup extends BackendAIPage {
     if (inputFieldsValidity.includes(false)) {
       return;
     }
-    let token;
-    if (!this.allowSignupWithoutConfirmation) {
-      token = this.tokenInput.value;
-    }
     const user_email = this.userEmailInput.value;
     const user_name = this.userNameInput.value;
     const password = this.passwordInput.value;
@@ -330,10 +326,9 @@ export default class BackendAiSignup extends BackendAIPage {
       email: user_email,
       user_name: user_name,
       password: password,
-      token: token,
     };
     if (this.allowSignupWithoutConfirmation) {
-      delete body[token];
+      body['token'] = this.tokenInput.value;
     }
     this.init_client();
     const rqst = this.client.newSignedRequest('POST', `/auth/signup`, body);
