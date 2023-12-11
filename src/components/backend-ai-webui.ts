@@ -1766,45 +1766,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   `
                 : html``
             }
-            <footer id="short-height">
-              <div class="terms-of-use full-menu">
-                <small style="font-size:11px;">
-                  <a @click="${() => this.showTOSAgreement()}">${_t(
-                    'webui.menu.TermsOfService',
-                  )}</a>
-                  ·
-                  <a style="color:forestgreen;" @click="${() =>
-                    this.showPPAgreement()}">${_t(
-                    'webui.menu.PrivacyPolicy',
-                  )}</a>
-                  ·
-                  <a @click="${this._showSplash}">${_t(
-                    'webui.menu.AboutBackendAI',
-                  )}</a>
-                  ${
-                    this.allow_signout === true
-                      ? html`
-                          ·
-                          <a @click="${() => this.loginPanel.signout()}">
-                            ${_t('webui.menu.LeaveService')}
-                          </a>
-                        `
-                      : html``
-                  }
-                </small>
-              </div>
-              <address class="full-menu">
-                <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">24.03.0-alpha.3.5815</small>
-              </address>
-              <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
-                <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
-                <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${
-                  this._page === 'usersettings' ? 'yellow' : 'white'
-                }" style="margin-left:4px;" @click="${() =>
-                  this._moveTo('/usersettings')}"></mwc-icon-button>
-              </div>
-            </footer>
           </mwc-list>
           <footer>
             <div class="terms-of-use full-menu">
