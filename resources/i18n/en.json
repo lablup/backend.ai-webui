@@ -254,16 +254,17 @@
       "EnqueueComputeSessionWarning": "If you set it larger than the currently available resources, the session creation will be delayed in the queue until it becomes available.",
       "TemplateAndHistory": "Templates & history",
       "StartTimeMustBeInTheFuture": "The start time must be after the current time.",
-      "PreOpenPortMaxCountLimit_plural": "PreOpenPortMaxCountLimit",
-      "SessionName": "SessionName",
-      "ResetFormConfirm": "ResetFormConfirm",
-      "ScheduleTimeSimple": "ScheduleTimeSimple",
+      "SessionName": "Session name",
+      "ResetFormConfirm": "Do you want to reset all your entries?",
+      "ScheduleTimeSimple": "Set start time",
       "ResourceAllocationPerContainer": "Resource Allocation Per Container",
       "NumberOfContainer": "Number of container",
+      "ErrorCanNotExceedRemaining": "Cannot be set to greater than the remaining resources ({{amount}}).",
       "EnterEnvironmentVariable": "Enter Variable name",
       "EnvironmentVariableNamePatternError": "Variable name must start with a letter or underscore, and can only contain letters, numbers, and underscores.",
       "EnvironmentVariableDuplicateName": "A variable name that already exists.",
-      "Template": "Session Template"
+      "Template": "Session Template",
+      "EnableAutomaticShmem": "Automatic shared memory"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -897,6 +898,8 @@
     "BetaFeatures": "Beta Features",
     "DescBetaFeatures": "Use beta features for Web UI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature.",
     "DescNoBetaFeatures": "No beta feature available now. :)",
+    "MyKeypairInfo": "My Keypair Information",
+    "DescMyKeypairInfo": "See my keypair information",
     "BootstrapScriptDescription": "Bootstrap script will be executed only once after session creation",
     "EditBootstrapScript": "Edit Bootstrap Script",
     "EditUserConfigScript": "Edit User Config Script",
@@ -1157,8 +1160,6 @@
     "Scaling": "Scaling",
     "AllowAgentSideRegistration": "Allow agent-side registration",
     "DescAllowAgentSideRegistration": "Allow agent to register itself to manager.<br/>Use only if Backend.AI cluster is managed on secure location.",
-    "Plugins": "Plugins",
-    "CUDAGPUsupport": "CUDA GPU support",
     "DescCUDAGPUsupport": "NVIDIA CUDA GPU support. <br/>Requires Backend.AI CUDA Plugin.",
     "CUDAGPUdisabledByFGPUsupport": "Disabled because system uses Fractional GPU plugin",
     "ROCMGPUsupport": "ROCm GPU support",
@@ -1208,7 +1209,9 @@
     "RequireATOMPlugin": "Requires Backend.AI ATOM Plugin.",
     "Warboysupport": "Warboy",
     "DescWarboysupport": "Use Furiosa Warboy support",
-    "RequireWarboyPlugin": "Requires Backend.AI Warboy Plugin."
+    "RequireWarboyPlugin": "Requires Backend.AI Warboy Plugin.",
+    "Plugins": "Plugins",
+    "OpenSourceCUDAGPUsupport": "Open Source CUDA GPU support"
   },
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",
@@ -1477,6 +1480,7 @@
     "Task": "Task",
     "CloneAsFolder": "Clone as Folder",
     "CloneSuccess": "The clone request has been sent successfully.",
-    "CloneInfo": "It will be cloned as your user type folder."
+    "CloneInfo": "It will be cloned as your user type folder.",
+    "category": "Category"
   }
 }

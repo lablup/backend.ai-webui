@@ -56,6 +56,9 @@ const SessionLauncherPage = React.lazy(
 const ContainerRegistryList = React.lazy(
   () => import('./components/ContainerRegistryList'),
 );
+const KeypairInfoModal = React.lazy(
+  () => import('./components/KeypairInfoModal'),
+);
 
 customElements.define(
   'backend-ai-react-information',
@@ -266,6 +269,22 @@ customElements.define(
         <Suspense fallback={<FlexActivityIndicator />}>
           <ModelStoreListPage />
         </Suspense>
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-keypair-info-modal',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <KeypairInfoModal
+          open={props.value === 'true'}
+          onRequestClose={() => {
+            props.dispatchEvent('close', null);
+          }}
+        />
       </DefaultProviders>
     );
   }),

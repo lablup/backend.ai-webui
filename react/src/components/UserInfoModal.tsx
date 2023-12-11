@@ -76,7 +76,7 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
           sudo_session_enabled
             @skipOnClient(if: $isNotSupportSudoSessionEnabled)
           totp_activated @include(if: $isTOTPSupported)
-          main_access_key @since(version: "24.03.0")
+          main_access_key @since(version: "23.09.7")
         }
       }
     `,
