@@ -1394,7 +1394,8 @@
     "Active/Total": "アクティブ/全体",
     "Public": "公開",
     "YouAreAboutToTerminate": "以下のサービスを削除しようとします：",
-    "Image": "イメージ"
+    "Image": "イメージ",
+    "Owner": "所有者"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

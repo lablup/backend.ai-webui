@@ -1394,7 +1394,8 @@
     "RoutingsCount": "Liczba tras",
     "Active/Total": "Aktywny/Ogółem",
     "Public": "Publiczny",
-    "YouAreAboutToTerminate": "Zamierzasz zakończyć"
+    "YouAreAboutToTerminate": "Zamierzasz zakończyć",
+    "Owner": "Właściciel"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",

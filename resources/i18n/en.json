@@ -429,7 +429,8 @@
     "ServiceNameRule": "Only allow 4 to 24 characters of alphanumeric, underscore(_), hyphen(-), and period(.) and it must end with an alphanumeric character.",
     "FormValidationFailed": "Form validation failed",
     "resources": "Resources",
-    "Image": "Image"
+    "Image": "Image",
+    "Owner": "Owner"
   },
   "button": {
     "Cancel": "Cancel",

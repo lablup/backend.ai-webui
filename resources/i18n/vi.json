@@ -1434,7 +1434,8 @@
     "RoutingsCount": "Số lượng định tuyến",
     "Active/Total": "Đang hoạt động/Tổng cộng",
     "Public": "Công cộng",
-    "YouAreAboutToTerminate": "Bạn sắp chấm dứt"
+    "YouAreAboutToTerminate": "Bạn sắp chấm dứt",
+    "Owner": "Người sở hữu"
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",

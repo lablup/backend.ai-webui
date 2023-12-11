@@ -289,6 +289,18 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   ),
                 },
                 {
+                  title: t('modelService.ServiceEndpoint'),
+                  dataIndex: 'endpoint_id',
+                  render: (endpoint_id, row) =>
+                    row.url ? (
+                      <Typography.Link copyable href={row.url} target="_blank">
+                        {row.url}
+                      </Typography.Link>
+                    ) : (
+                      '-'
+                    ),
+                },
+                {
                   title: t('modelService.Controls'),
                   dataIndex: 'controls',
                   render: (text, row) => (
@@ -345,6 +357,15 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                     <EndpointStatusTag endpointFrgmt={row} />
                   ),
                 },
+                ...(baiClient.is_admin
+                  ? [
+                      {
+                        title: t('modelService.Owner'),
+                        dataIndex: 'created_user',
+                        render: (created_user: string) => created_user,
+                      },
+                    ]
+                  : []),
                 {
                   title: t('modelService.CreatedAt'),
                   dataIndex: 'created_at',

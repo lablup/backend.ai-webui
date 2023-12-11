@@ -1394,7 +1394,8 @@
     "RoutingsCount": "Αριθμός δρομολογίων",
     "Active/Total": "Ενεργό/Σύνολο",
     "Public": "Δημόσιο",
-    "YouAreAboutToTerminate": "Πρόκειται να τερματίσετε"
+    "YouAreAboutToTerminate": "Πρόκειται να τερματίσετε",
+    "Owner": "Ιδιοκτήτης"
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",
