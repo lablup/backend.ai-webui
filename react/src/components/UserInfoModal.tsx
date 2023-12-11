@@ -76,6 +76,7 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
           sudo_session_enabled
             @skipOnClient(if: $isNotSupportSudoSessionEnabled)
           totp_activated @include(if: $isTOTPSupported)
+          main_access_key @since(version: "23.09.7")
         }
       }
     `,
@@ -131,6 +132,9 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
         </Descriptions.Item>
         <Descriptions.Item label={t('credential.FullName')}>
           {user?.full_name}
+        </Descriptions.Item>
+        <Descriptions.Item label={t('credential.MainAccessKey')}>
+          {user?.main_access_key}
         </Descriptions.Item>
         <Descriptions.Item label={t('credential.DescActiveUser')}>
           {user?.status === 'active' ? t('button.Yes') : t('button.No')}

@@ -116,6 +116,8 @@ export const useSuspendedBackendaiClient = () => {
       list: (path: string) => Promise<any>;
       list_hosts: () => Promise<any>;
       list_files: (path: string, id: string) => Promise<any>;
+      list_allowed_types: () => Promise<string[]>;
+      clone: (input: any, name: string) => Promise<any>;
     };
     [key: string]: any;
     _config: BackendAIConfig;
