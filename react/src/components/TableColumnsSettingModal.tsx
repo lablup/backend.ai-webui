@@ -33,8 +33,6 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
     const text = React.Children.map(element.props.children, (child) => {
       if (typeof child === 'string') {
         return child;
-      } else if ('props' in child) {
-        return onChangeTitleToString(child);
       }
     });
     return text;
