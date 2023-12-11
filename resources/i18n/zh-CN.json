@@ -62,7 +62,9 @@
       "Notifications": "通知",
       "Tasks": "任务",
       "FastTrack": "FastTrack",
-      "Data&Model": "数据"
+      "Data&Model": "数据",
+      "InvalidBlankPassword": "输入您的密码",
+      "InvalidBlankEmail": "输入你的电子邮箱"
     },
     "YouAreOffline": "您现在离线",
     "YouAreOnline": "您现在在线",
@@ -1478,14 +1480,5 @@
     "CloneSuccess": "克隆请求已成功发送。",
     "CloneInfo": "它将被克隆为用户类型文件夹。",
     "category": "类别"
-  },
-  "signout": {
-    "LeaveService": "休假服务",
-    "Signout": "登出",
-    "DescConfirmLeave": "如需确认，请再次输入您的电子邮件和密码。",
-    "E-mail": "电子邮件",
-    "Password": "密码",
-    "InvalidBlankPassword": "输入您的密码",
-    "InvalidBlankEmail": "输入你的电子邮箱"
   }
 }

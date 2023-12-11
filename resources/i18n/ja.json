@@ -62,7 +62,9 @@
       "Notifications": "お知らせ",
       "Tasks": "作業",
       "FastTrack": "FastTrack",
-      "Data&Model": "データ"
+      "Data&Model": "データ",
+      "InvalidBlankPassword": "パスワードを入力してください",
+      "InvalidBlankEmail": "メールアドレスを入力"
     },
     "YouAreOffline": "あなたは今オフラインです",
     "YouAreOnline": "あなたは今オンラインです",
@@ -1478,14 +1480,5 @@
     "CloneSuccess": "クローン要求は正常に送信された。",
     "CloneInfo": "ユーザータイプのフォルダとしてクローンされます。",
     "category": "カテゴリー"
-  },
-  "signout": {
-    "LeaveService": "休暇サービス",
-    "Signout": "サインアウト",
-    "DescConfirmLeave": "確認のため、電子メールアドレスとパスワードをもう一度入力してください。",
-    "E-mail": "Eメール",
-    "Password": "パスワード",
-    "InvalidBlankPassword": "パスワードを入力してください",
-    "InvalidBlankEmail": "メールアドレスを入力"
   }
 }

@@ -62,7 +62,9 @@
       "Notifications": "Ειδοποιήσεις",
       "Tasks": "Εργασίες",
       "FastTrack": "FastTrack",
-      "Data&Model": "Δεδομένα"
+      "Data&Model": "Δεδομένα",
+      "InvalidBlankPassword": "Εισάγετε τον κωδικό σας",
+      "InvalidBlankEmail": "Συμπληρώστε το email σας"
     },
     "YouAreOffline": "Είστε πλέον εκτός σύνδεσης",
     "YouAreOnline": "Είστε πλέον συνδεδεμένοι",
@@ -1478,14 +1480,5 @@
     "CloneSuccess": "Η αίτηση κλωνοποίησης έχει σταλεί με επιτυχία.",
     "CloneInfo": "Θα κλωνοποιηθεί ως φάκελος τύπου χρήστη.",
     "category": "Κατηγορία"
-  },
-  "signout": {
-    "LeaveService": "Αποχώρηση από την υπηρεσία",
-    "Signout": "Αποσύνδεση",
-    "DescConfirmLeave": "Για επιβεβαίωση, πληκτρολογήστε ξανά το E-mail και τον κωδικό πρόσβασής σας.",
-    "E-mail": "ΗΛΕΚΤΡΟΝΙΚΗ ΔΙΕΥΘΥΝΣΗ",
-    "Password": "Κωδικός πρόσβασης",
-    "InvalidBlankPassword": "Εισάγετε τον κωδικό σας",
-    "InvalidBlankEmail": "Συμπληρώστε το email σας"
   }
 }

@@ -62,7 +62,9 @@
       "Notifications": "Pemberitahuan",
       "Tasks": "Tugasan",
       "FastTrack": "FastTrack",
-      "Data&Model": "Data"
+      "Data&Model": "Data",
+      "InvalidBlankPassword": "Masukkan kata laluan anda",
+      "InvalidBlankEmail": "Masukkan emel anda"
     },
     "YouAreOffline": "Anda kini berada di luar talian",
     "YouAreOnline": "Anda kini dalam talian",
@@ -1478,14 +1480,5 @@
     "CloneSuccess": "Permintaan klon telah berjaya dihantar.",
     "CloneInfo": "Ia akan diklonkan sebagai folder jenis pengguna anda.",
     "category": "kategori"
-  },
-  "signout": {
-    "LeaveService": "Perkhidmatan Cuti",
-    "Signout": "Log keluar",
-    "DescConfirmLeave": "Untuk mengesahkan, sila taip E-mel dan kata laluan anda sekali lagi.",
-    "E-mail": "E-mel",
-    "Password": "Kata laluan",
-    "InvalidBlankPassword": "Masukkan kata laluan anda",
-    "InvalidBlankEmail": "Masukkan emel anda"
   }
 }

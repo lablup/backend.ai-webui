@@ -1448,7 +1448,9 @@
       "WelcomeMessage": "Tervetuloa,",
       "WelcomeMessage_2": " .",
       "YouMushChangeYourPassword": "On suositeltavaa vaihtaa salasana säännöllisesti turvallisuussyistä. Koska salasanasi viimeisimmästä vaihtamisesta on kulunut tietty aika, sinun on vaihdettava se, jotta voit jatkaa palvelun käyttöä.",
-      "Data&Model": "Data"
+      "Data&Model": "Data",
+      "InvalidBlankPassword": "Syötä salasanasi",
+      "InvalidBlankEmail": "Syötä sähköpostiosoitteesi"
     }
   },
   "modelStore": {
@@ -1478,14 +1480,5 @@
     "StartCommand": "Käynnistä komento",
     "Task": "Tehtävä",
     "Version": "Versio"
-  },
-  "signout": {
-    "LeaveService": "Poistu palvelusta",
-    "Signout": "Kirjaudu ulos",
-    "DescConfirmLeave": "Vahvista kirjoittamalla sähköpostiosoitteesi ja salasanasi uudelleen.",
-    "E-mail": "Sähköposti",
-    "Password": "Salasana",
-    "InvalidBlankPassword": "Syötä salasanasi",
-    "InvalidBlankEmail": "Syötä sähköpostiosoitteesi"
   }
 }

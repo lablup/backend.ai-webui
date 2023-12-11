@@ -62,7 +62,9 @@
       "NewPasswordCannotBeSame": "Masukkan kata sandi yang berbeda dari kata sandi Anda saat ini.",
       "PleaseConfirmYourPassword": "Harap konfirmasi kata sandi Anda",
       "FastTrack": "FastTrack",
-      "Data&Model": "Data"
+      "Data&Model": "Data",
+      "InvalidBlankPassword": "Masukkan kata sandi Anda",
+      "InvalidBlankEmail": "Masukkan email Anda"
     },
     "YouAreOffline": "Anda sekarang offline",
     "YouAreOnline": "Anda sekarang online",
@@ -1478,14 +1480,5 @@
     "CloneSuccess": "Permintaan kloning telah berhasil dikirim.",
     "CloneInfo": "Ini akan dikloning sebagai folder tipe pengguna Anda.",
     "category": "Kategori"
-  },
-  "signout": {
-    "LeaveService": "Tinggalkan Layanan",
-    "Signout": "Keluar",
-    "DescConfirmLeave": "Untuk mengonfirmasi, silakan ketikkan kembali E-mail dan kata sandi Anda.",
-    "E-mail": "Surel",
-    "Password": "Kata sandi",
-    "InvalidBlankPassword": "Masukkan kata sandi Anda",
-    "InvalidBlankEmail": "Masukkan email Anda"
   }
 }

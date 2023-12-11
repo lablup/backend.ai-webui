@@ -62,7 +62,9 @@
       "Notifications": "Powiadomienia",
       "Tasks": "Zadania",
       "FastTrack": "FastTrack",
-      "Data&Model": "Dane"
+      "Data&Model": "Dane",
+      "InvalidBlankPassword": "Wprowadź hasło",
+      "InvalidBlankEmail": "Wprowadź swój email"
     },
     "YouAreOffline": "Jesteś teraz offline",
     "YouAreOnline": "Jesteś teraz online",
@@ -1478,14 +1480,5 @@
     "CloneSuccess": "Żądanie klonowania zostało wysłane pomyślnie.",
     "CloneInfo": "Zostanie on sklonowany jako folder typu użytkownika.",
     "category": "Kategoria"
-  },
-  "signout": {
-    "LeaveService": "Opuść usługę",
-    "Signout": "Wyloguj się",
-    "DescConfirmLeave": "Aby potwierdzić, wpisz ponownie swój adres e-mail i hasło.",
-    "E-mail": "E-mail",
-    "Password": "Hasło",
-    "InvalidBlankPassword": "Wprowadź hasło",
-    "InvalidBlankEmail": "Wprowadź swój email"
   }
 }

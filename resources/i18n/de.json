@@ -62,7 +62,9 @@
       "Notifications": "Benachrichtigungen",
       "Tasks": "Aufgaben",
       "FastTrack": "FastTrack",
-      "Data&Model": "Daten"
+      "Data&Model": "Daten",
+      "InvalidBlankPassword": "Geben Sie Ihr Passwort ein",
+      "InvalidBlankEmail": "Geben sie ihre E-Mail Adresse ein"
     },
     "YouAreOffline": "Du bist jetzt offline",
     "YouAreOnline": "Sie sind jetzt online",
@@ -1478,14 +1480,5 @@
     "CloneSuccess": "Die Klonanfrage wurde erfolgreich gesendet.",
     "CloneInfo": "Er wird als Ihr Benutzertyp-Ordner geklont.",
     "category": "Kategorie"
-  },
-  "signout": {
-    "LeaveService": "Dienst verlassen",
-    "Signout": "Abmelden",
-    "DescConfirmLeave": "Zur Bestätigung geben Sie bitte Ihre E-Mail-Adresse und Ihr Passwort erneut ein.",
-    "E-mail": "Email",
-    "Password": "Passwort",
-    "InvalidBlankPassword": "Geben Sie Ihr Passwort ein",
-    "InvalidBlankEmail": "Geben sie ihre E-Mail Adresse ein"
   }
 }

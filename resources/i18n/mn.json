@@ -62,7 +62,9 @@
       "NewPasswordCannotBeSame": "Таны одоогийн нууц үгээс өөр нууц үг оруулна уу.",
       "PleaseConfirmYourPassword": "Нууц үгээ баталгаажуулна уу",
       "FastTrack": "FastTrack",
-      "Data&Model": "Өгөгдөл"
+      "Data&Model": "Өгөгдөл",
+      "InvalidBlankPassword": "Нууц үгээ оруулна уу",
+      "InvalidBlankEmail": "Имэйлээ оруулна уу"
     },
     "YouAreOffline": "Та одоо офлайн байна",
     "YouAreOnline": "Та одоо онлайн байна",
@@ -1478,14 +1480,5 @@
     "CloneSuccess": "Хувилах хүсэлтийг амжилттай илгээлээ.",
     "CloneInfo": "Үүнийг таны хэрэглэгчийн төрлийн хавтас болгон хувилах болно.",
     "category": "Ангилал"
-  },
-  "signout": {
-    "LeaveService": "Үйлчилгээг орхи",
-    "Signout": "Гарах",
-    "DescConfirmLeave": "Баталгаажуулахын тулд имэйл болон нууц үгээ дахин оруулна уу.",
-    "E-mail": "И-мэйл",
-    "Password": "Нууц үг",
-    "InvalidBlankPassword": "Нууц үгээ оруулна уу",
-    "InvalidBlankEmail": "Имэйлээ оруулна уу"
   }
 }

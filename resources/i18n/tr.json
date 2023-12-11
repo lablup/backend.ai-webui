@@ -62,7 +62,9 @@
       "Notifications": "Bildirimler",
       "Tasks": "Görevler",
       "FastTrack": "FastTrack",
-      "Data&Model": "Veri"
+      "Data&Model": "Veri",
+      "InvalidBlankPassword": "Şifrenizi girin",
+      "InvalidBlankEmail": "E-postanızı giriniz"
     },
     "YouAreOffline": "Şu anda çevrimdışısın",
     "YouAreOnline": "artık çevrimiçisin",
@@ -1478,14 +1480,5 @@
     "CloneSuccess": "Klonlama isteği başarıyla gönderildi.",
     "CloneInfo": "Kullanıcı tipi klasörünüz olarak klonlanacaktır.",
     "category": "Kategori"
-  },
-  "signout": {
-    "LeaveService": "Hizmetten Ayrıl",
-    "Signout": "Oturumu Kapat",
-    "DescConfirmLeave": "Onaylamak için lütfen E-posta adresinizi ve şifrenizi tekrar yazın.",
-    "E-mail": "E-posta",
-    "Password": "Şifre",
-    "InvalidBlankPassword": "Şifrenizi girin",
-    "InvalidBlankEmail": "E-postanızı giriniz"
   }
 }

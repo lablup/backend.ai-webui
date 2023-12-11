@@ -62,7 +62,9 @@
       "NewPasswordCannotBeSame": "Пожалуйста, введите пароль, отличный от Вашего текущего пароля.",
       "PleaseConfirmYourPassword": "Пожалуйста, подтвердите свой пароль",
       "FastTrack": "FastTrack",
-      "Data&Model": "Данные"
+      "Data&Model": "Данные",
+      "InvalidBlankPassword": "Введите ваш пароль",
+      "InvalidBlankEmail": "Введите адрес электронной почты"
     },
     "YouAreOffline": "Вы сейчас не в сети",
     "YouAreOnline": "Вы сейчас в сети",
@@ -1478,14 +1480,5 @@
     "CloneSuccess": "Запрос на клонирование успешно отправлен.",
     "CloneInfo": "Она будет клонирована как папка вашего типа пользователя.",
     "category": "Категория"
-  },
-  "signout": {
-    "LeaveService": "Покинуть службу",
-    "Signout": "Выход",
-    "DescConfirmLeave": "Для подтверждения введите свой адрес электронной почты и пароль еще раз.",
-    "E-mail": "Электронная почта",
-    "Password": "Пароль",
-    "InvalidBlankPassword": "Введите ваш пароль",
-    "InvalidBlankEmail": "Введите адрес электронной почты"
   }
 }

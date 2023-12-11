@@ -52,12 +52,12 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
   return (
     <>
       <BAIModal
-        title={t('signout.LeaveService')}
+        title={t('webui.menu.LeaveService')}
         centered
         width={450}
         open={open}
         onOk={handleOk}
-        okText={t('signout.Signout')}
+        okText={t('webui.menu.LeaveService')}
         onCancel={() => {
           onRequestClose();
         }}
@@ -65,18 +65,18 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
       >
         <Form form={form} labelCol={{ span: 6 }}>
           <Form.Item name="alert">
-            <Alert message={t('signout.DescConfirmLeave')} type="warning" />
+            <Alert message={t('login.DescConfirmLeave')} type="warning" />
           </Form.Item>
           <Form.Item
             name="email"
-            label={t('signout.E-mail')}
+            label={t('general.E-Mail')}
             required
             rules={[
               () => ({
                 validator(_, value) {
                   if (!value) {
                     return Promise.reject(
-                      new Error(t('signout.InvalidBlankEmail')),
+                      new Error(t('webui.menu.InvalidBlankEmail')),
                     );
                   }
                   return Promise.resolve();
@@ -88,14 +88,14 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
           </Form.Item>
           <Form.Item
             name="password"
-            label={t('signout.Password')}
+            label={t('general.Password')}
             required
             rules={[
               () => ({
                 validator(_, value) {
                   if (!value) {
                     return Promise.reject(
-                      new Error(t('signout.InvalidBlankPassword')),
+                      new Error(t('webui.menu.InvalidBlankPassword')),
                     );
                   }
                   return Promise.resolve();
