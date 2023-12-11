@@ -327,7 +327,7 @@ export default class BackendAiSignup extends BackendAIPage {
       user_name: user_name,
       password: password,
     };
-    if (this.allowSignupWithoutConfirmation) {
+    if (!this.allowSignupWithoutConfirmation) {
       body['token'] = this.tokenInput.value;
     }
     this.init_client();
