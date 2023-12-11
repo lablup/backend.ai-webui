@@ -1,6 +1,7 @@
 BUILD_DATE := $(shell date +%y%m%d)
 BUILD_TIME := $(shell date +%H%m%S)
 BUILD_VERSION := $(shell grep version package.json | head -1 | cut -c 15- | rev | cut -c 3- | rev)
+BUILD_NUMBER := $(shell git rev-list --count $(shell git rev-parse --abbrev-ref HEAD))
 REVISION_INDEX := $(shell git --no-pager log --pretty=format:%h -n 1)
 site := $(or $(site),main)
 
@@ -35,12 +36,12 @@ run_tests:
 	@npx testcafe chrome tests
 versiontag:
 	@printf "$(GREEN)Tagging version number / index...$(NC)\n"
-	@echo '{ "package": "${BUILD_VERSION}", "build": "${BUILD_DATE}.${BUILD_TIME}", "revision": "${REVISION_INDEX}" }' > version.json
+	@echo '{ "package": "${BUILD_VERSION}", "buildNumber": "${BUILD_NUMBER}", "buildDate": "${BUILD_DATE}.${BUILD_TIME}", "revision": "${REVISION_INDEX}" }' > version.json
 	@sed -i -E 's/globalThis.packageVersion = "\([^"]*\)"/globalThis.packageVersion = "${BUILD_VERSION}"/g' index.html
 	@sed -i -E 's/"version": "\([^"]*\)"/"version": "${BUILD_VERSION}"/g' manifest.json
 	@sed -i -E 's/"version": "\([^"]*\)"/"version": "${BUILD_VERSION}"/g' react/package.json
-	@sed -i -E 's/globalThis.buildVersion = "\([^"]*\)"/globalThis.buildVersion = "${BUILD_DATE}\.${BUILD_TIME}"/g' index.html
-	@sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\([^"]*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_DATE}\<\/small\>/g' ./src/components/backend-ai-webui.ts
+	@sed -i -E 's/globalThis.buildNumber = "\([^"]*\)"/globalThis.buildNumber = "${BUILD_NUMBER}"/g' index.html
+	@sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\([^"]*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_NUMBER}\<\/small\>/g' ./src/components/backend-ai-webui.ts
 	@printf "$(YELLOW)Finished$(NC)\n"
 compile_keepversion:
 	@npm run build
@@ -79,8 +80,13 @@ dep:
 		mkdir -p ./build/electron-app/node_modules/markty; \
 		mkdir -p ./build/electron-app/node_modules/markty-toml; \
 		mkdir -p ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme; \
+		mkdir -p ./build/electron-app/node_modules/mime-types; \
+		mkdir -p ./build/electron-app/node_modules/mime-db; \
+		mkdir -p ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme; \
 		cp -Rp ./node_modules/markty ./build/electron-app/node_modules; \
 		cp -Rp ./node_modules/markty-toml ./build/electron-app/node_modules; \
+		cp -Rp ./node_modules/mime-types ./build/electron-app/node_modules; \
+		cp -Rp ./node_modules/mime-db ./build/electron-app/node_modules; \
 		cp -Rp ./node_modules/@vanillawc/wc-codemirror/theme/monokai.css ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme/monokai.css; \
 		cp ./preload.js ./build/electron-app/preload.js; \
 	fi

@@ -137,6 +137,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Number }) maxCountForPreopenPorts = 10;
   @property({ type: Boolean }) allowCustomResourceAllocation = true;
   @property({ type: Boolean }) isDirectorySizeVisible = true;
+  @property({ type: Boolean }) supportModelStore = false;
+  @property({ type: String }) eduAppNamePrefix;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel')
@@ -854,6 +856,19 @@ export default class BackendAILogin extends BackendAIPage {
       valueType: 'boolean',
       defaultValue: false,
       value: generalConfig?.isDirectorySizeVisible,
+    } as ConfigValueObject) as boolean;
+
+    this.eduAppNamePrefix = this._getConfigValueByExists(generalConfig, {
+      valueType: 'string',
+      defaultValue: '',
+      value: generalConfig?.eduAppNamePrefix,
+    } as ConfigValueObject) as string;
+
+    // Enable model store support
+    this.supportModelStore = this._getConfigValueByExists(generalConfig, {
+      valueType: 'boolean',
+      defaultValue: false,
+      value: generalConfig?.supportModelStore,
     } as ConfigValueObject) as boolean;
   }
 
@@ -1826,6 +1841,8 @@ export default class BackendAILogin extends BackendAIPage {
           this.allowCustomResourceAllocation;
         globalThis.backendaiclient._config.isDirectorySizeVisible =
           this.isDirectorySizeVisible;
+        globalThis.backendaiclient._config.supportModelStore =
+          this.supportModelStore;
         globalThis.backendaiclient.ready = true;
         if (
           this.endpoints.indexOf(

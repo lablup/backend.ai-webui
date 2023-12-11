@@ -4,6 +4,7 @@ import FlexActivityIndicator from './components/FlexActivityIndicator';
 import ResourceGroupSelect from './components/ResourceGroupSelect';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
+import ModelStoreListPage from './pages/ModelStoreListPage';
 import { Form } from 'antd';
 import { t } from 'i18next';
 import React, { Suspense } from 'react';
@@ -54,6 +55,9 @@ const SessionLauncherPage = React.lazy(
 );
 const ContainerRegistryList = React.lazy(
   () => import('./components/ContainerRegistryList'),
+);
+const KeypairInfoModal = React.lazy(
+  () => import('./components/KeypairInfoModal'),
 );
 
 customElements.define(
@@ -252,6 +256,35 @@ customElements.define(
         <Suspense fallback={<FlexActivityIndicator />}>
           <ContainerRegistryList />
         </Suspense>
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-model-store-list',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <Suspense fallback={<FlexActivityIndicator />}>
+          <ModelStoreListPage />
+        </Suspense>
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-keypair-info-modal',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <KeypairInfoModal
+          open={props.value === 'true'}
+          onRequestClose={() => {
+            props.dispatchEvent('close', null);
+          }}
+        />
       </DefaultProviders>
     );
   }),

@@ -5794,10 +5794,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                         </h4>
                         ${this.environ.map(
                           (item) => html`
-                            <nwc-textfield
+                            <mwc-textfield
                               disabled
                               value="${item.value}"
-                            ></nwc-textfield>
+                            ></mwc-textfield>
                           `,
                         )}
                       </div>
