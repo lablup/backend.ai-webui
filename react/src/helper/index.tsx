@@ -132,23 +132,24 @@ export const bytesToGB = (
   return (bytes / 10 ** 9).toFixed(decimalPoint);
 };
 
+type SizeUnit =
+  | 'B'
+  | 'K'
+  | 'M'
+  | 'G'
+  | 'T'
+  | 'P'
+  | 'E'
+  | 'b'
+  | 'k'
+  | 'm'
+  | 'g'
+  | 't'
+  | 'p'
+  | 'e';
 export function iSizeToSize(
   sizeWithUnit: string | undefined,
-  targetSizeUnit?:
-    | 'B'
-    | 'K'
-    | 'M'
-    | 'G'
-    | 'T'
-    | 'P'
-    | 'E'
-    | 'b'
-    | 'k'
-    | 'm'
-    | 'g'
-    | 't'
-    | 'p'
-    | 'e',
+  targetSizeUnit?: SizeUnit,
   fixed: number = 2,
 ):
   | {
@@ -172,13 +173,20 @@ export function iSizeToSize(
     ? sizes.indexOf(targetSizeUnit.toUpperCase())
     : sizeIndex;
   const targetBytes = bytes / Math.pow(1024, targetIndex);
-  const numberFixed = targetBytes.toFixed(fixed);
+  // const numberFixed = targetBytes.toFixed(fixed);
+  const numberFixed = toFixedFloorWithoutTrailingZeros(targetBytes, fixed);
   return {
     number: targetBytes,
     numberFixed,
     unit: sizes[targetIndex],
     numberUnit: `${numberFixed}${sizes[targetIndex]}`,
   };
+}
+
+//
+function toFixedFloorWithoutTrailingZeros(num: number, fixed: number) {
+  var re = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?');
+  return num.toString().match(re)?.[0] || '0';
 }
 
 export function compareNumberWithUnits(size1: string, size2: string) {
@@ -194,6 +202,19 @@ export function compareNumberWithUnits(size1: string, size2: string) {
   }
   // @ts-ignore
   return iSizeToSize(size1, 'g')?.number - iSizeToSize(size2, 'g')?.number;
+}
+
+export function addNumberWithUnits(
+  size1: string,
+  size2: string,
+  targetUnit: SizeUnit = 'm',
+) {
+  return iSizeToSize(
+    (iSizeToSize(size1, 'b')?.number || 0) +
+      (iSizeToSize(size2, 'b')?.number || 0) +
+      'b',
+    targetUnit,
+  )?.numberUnit;
 }
 
 export type QuotaScopeType = 'project' | 'user';

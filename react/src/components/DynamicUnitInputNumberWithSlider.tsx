@@ -12,6 +12,7 @@ import React, { useMemo } from 'react';
 export interface DynamicUnitInputNumberWithSliderProps
   extends DynamicUnitInputNumberProps {
   extraMarks?: SliderMarks;
+  hideSlider?: boolean;
   warn?: string;
 }
 const DynamicUnitInputNumberWithSlider: React.FC<
@@ -22,6 +23,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   warn,
   units = ['m', 'g'],
   extraMarks,
+  hideSlider,
   ...otherProps
 }) => {
   const [value, setValue] = useControllableValue<string | undefined | null>(
@@ -43,7 +45,36 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   // console.log('##marks', marks);
   return (
     <Flex direction="row" gap={'md'}>
-      <Flex direction="column" align="stretch" style={{ flex: 3 }}>
+      <Flex
+        style={{ flex: 2, minWidth: 190 }}
+        direction="column"
+        align="stretch"
+      >
+        <DynamicUnitInputNumber
+          {...otherProps}
+          min={min}
+          max={max}
+          units={units}
+          value={value}
+          onChange={(nextValue) => {
+            setValue(nextValue);
+          }}
+          style={{
+            minWidth: 130,
+          }}
+        />
+      </Flex>
+      <Flex
+        direction="column"
+        align="stretch"
+        style={{
+          flex: 3,
+          ...(hideSlider && {
+            visibility: 'hidden',
+            height: 0,
+          }),
+        }}
+      >
         <Flex direction="column" align="stretch">
           {/* {warn && (
             <Flex
@@ -96,7 +127,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                 // fill: 'red',
               }
             }
-            step={0.05}
+            step={0.125}
             // min={minGiB.number}  // DO NOT use min, because slider left should be 0
             value={valueGiB?.number}
             tooltip={{
@@ -131,40 +162,32 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                       color: token.colorTextSecondary,
                     },
                     // if 0, without unit
-                    label: minGiB.number + (minGiB.number ? 'g' : ''),
+                    label:
+                      minGiB.number === 0
+                        ? minGiB.number
+                        : minGiB.number >= 1
+                        ? minGiB.number + 'g'
+                        : minGiB.number * 1024 + 'm',
                   },
                 }),
+              // extra: remaining mark code should be located before max mark code to prevent overlapping when it is same value
+              ...extraMarks,
               ...(maxGiB?.number && {
                 [maxGiB.number]: {
                   style: {
                     color: token.colorTextSecondary,
                   },
-                  label: maxGiB.number + 'g',
+                  label:
+                    maxGiB.number === 0
+                      ? maxGiB.number
+                      : maxGiB.number >= 1
+                      ? maxGiB.number + 'g'
+                      : maxGiB.number * 1024 + 'm',
                 },
               }),
-              // ...extraMarks,
             }}
           />
         </Flex>
-      </Flex>
-      <Flex
-        style={{ flex: 2, minWidth: 130 }}
-        direction="column"
-        align="stretch"
-      >
-        <DynamicUnitInputNumber
-          {...otherProps}
-          min={min}
-          max={max}
-          units={units}
-          value={value}
-          onChange={(nextValue) => {
-            setValue(nextValue);
-          }}
-          style={{
-            minWidth: 130,
-          }}
-        />
       </Flex>
     </Flex>
   );

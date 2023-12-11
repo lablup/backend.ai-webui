@@ -62,7 +62,7 @@
       "NewPasswordCannotBeSame": "Masukkan kata sandi yang berbeda dari kata sandi Anda saat ini.",
       "PleaseConfirmYourPassword": "Harap konfirmasi kata sandi Anda",
       "FastTrack": "FastTrack",
-      "Data&Model": ""
+      "Data&Model": "Data"
     },
     "YouAreOffline": "Anda sekarang offline",
     "YouAreOnline": "Anda sekarang online",
@@ -241,18 +241,19 @@
       "FolderAliasInvalid": "Hanya karakter alfanumerik, garis bawah (_), garis miring (/), dan tanda hubung (-) yang diperbolehkan.",
       "PreOpenPortMaxCountLimit": "Anda dapat mengatur hingga {{count}} port yang telah dibuka sebelumnya.",
       "StartTimeMustBeInTheFuture": "Waktu mulai harus setelah waktu saat ini.",
-      "PreOpenPortMaxCountLimit_0": "",
-      "EnqueueComputeSessionWarning": "",
-      "SessionName": "",
-      "ResetFormConfirm": "",
-      "TemplateAndHistory": "",
-      "ScheduleTimeSimple": "",
+      "EnqueueComputeSessionWarning": "Jika Anda mengaturnya lebih besar dari sumber daya yang tersedia saat ini, pembuatan sesi akan tertunda dalam antrean hingga tersedia.",
+      "SessionName": "Nama sesi",
+      "ResetFormConfirm": "Apakah Anda ingin mengatur ulang semua entri Anda?",
+      "TemplateAndHistory": "Templat",
+      "ScheduleTimeSimple": "Tetapkan waktu mulai",
       "ResourceAllocationPerContainer": "Alokasi Sumber Daya Per Kontainer",
       "NumberOfContainer": "Jumlah kontainer",
+      "ErrorCanNotExceedRemaining": "Tidak dapat diatur lebih besar dari sumber daya yang tersisa ({{jumlah}}).",
       "EnterEnvironmentVariable": "Masukkan nama variabel",
       "EnvironmentVariableNamePatternError": "Nama variabel harus dimulai dengan huruf atau garis bawah, dan hanya boleh terdiri dari huruf, angka, dan garis bawah.",
       "EnvironmentVariableDuplicateName": "Nama variabel yang sudah ada.",
-      "Template": "Templat Sesi"
+      "Template": "Templat Sesi",
+      "EnableAutomaticShmem": "Memori bersama otomatis"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -447,7 +448,7 @@
     "Enabled": "Diaktifkan",
     "StorageProxies": "Penyimpanan",
     "None": "Tidak ada",
-    "Image": ""
+    "Image": "Gambar"
   },
   "credential": {
     "Permission": "Izin",
@@ -525,7 +526,8 @@
     "KeySeccessfullyDeleted": "KeyPair dihapus dengan aman.",
     "SignoutSeccessfullyFinished": "Keluar dengan aman selesai",
     "ModifyUserDetail": "Ubah Detail Pengguna",
-    "EnableSudoSession": ""
+    "EnableSudoSession": "Aktifkan sesi sudo",
+    "MainAccessKey": "Kunci Akses Utama"
   },
   "data": {
     "Folders": "Folder",
@@ -692,8 +694,8 @@
     "Pipeline": "Folder Pipa",
     "DialogDataFolder": "Folder khusus pipeline yang secara otomatis dibuat saat membuat pipeline di FastTrack.",
     "SearchByName": "Cari berdasarkan nama",
-    "ModelStore": "",
-    "New": "__NOT_TRANSLATED__",
+    "ModelStore": "Toko Model",
+    "New": "Baru",
     "Add": "Menambahkan",
     "CloningIsOnlyPossibleSameHost": "Saat ini, kloning hanya dapat dilakukan pada host yang sama."
   },
@@ -840,7 +842,9 @@
     "DescAutoLogout": "Keluar secara otomatis jika semua halaman yang masuk ditutup kecuali halaman yang berasal dari sesi untuk aplikasi (mis. Jupyter notebook, terminal web, dll.)",
     "BootstrapScriptDescription": "Skrip bootstrap akan dieksekusi hanya sekali setelah pembuatan sesi",
     "SSHKeypairEnterManually": "SSH Keypair",
-    "SSHKeypairEnterManuallyFinished": "SSH Keypair telah berhasil didaftarkan."
+    "SSHKeypairEnterManuallyFinished": "SSH Keypair telah berhasil didaftarkan.",
+    "MyKeypairInfo": "Informasi Pasangan Kunci Saya",
+    "DescMyKeypairInfo": "Lihat informasi keypair saya"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Tingkat Lanjut: Salin konten terminal",
@@ -1064,8 +1068,6 @@
     "Scaling": "Penskalaan",
     "AllowAgentSideRegistration": "Izinkan pendaftaran sisi agen",
     "DescAllowAgentSideRegistration": "Izinkan agen untuk mendaftarkan dirinya ke manajer. <br/>Gunakan hanya jika klaster Backend.AI dikelola di lokasi yang aman.",
-    "Plugins": "Plugin",
-    "CUDAGPUsupport": "Dukungan GPU CUDA",
     "DescCUDAGPUsupport": "Dukungan GPU NVIDIA CUDA. <br/>Membutuhkan Plugin CUDA Backend.AI.",
     "CUDAGPUdisabledByFGPUsupport": "Dinonaktifkan karena sistem menggunakan plugin GPU Pecahan",
     "ROCMGPUsupport": "Dukungan GPU ROCm",
@@ -1115,7 +1117,9 @@
     "RequireATOMPlugin": "Membutuhkan Plugin Backend.AI ATOM.",
     "Warboysupport": "Warboy",
     "DescWarboysupport": "Gunakan dukungan Furiosa Warboy",
-    "RequireWarboyPlugin": "Membutuhkan Plugin Backend.AI Warboy."
+    "RequireWarboyPlugin": "Membutuhkan Plugin Backend.AI Warboy.",
+    "Plugins": "Plugin",
+    "OpenSourceCUDAGPUsupport": "Dukungan GPU CUDA Sumber Terbuka"
   },
   "notification": {
     "SuccessfullyUpdated": "Berhasil Diperbarui",
@@ -1472,6 +1476,7 @@
     "Task": "Tugas",
     "CloneAsFolder": "Mengkloning sebagai Folder",
     "CloneSuccess": "Permintaan kloning telah berhasil dikirim.",
-    "CloneInfo": "Ini akan dikloning sebagai folder tipe pengguna Anda."
+    "CloneInfo": "Ini akan dikloning sebagai folder tipe pengguna Anda.",
+    "category": "Kategori"
   }
 }

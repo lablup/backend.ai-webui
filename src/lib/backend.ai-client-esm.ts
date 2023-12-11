@@ -666,6 +666,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.09.2')) {
       this._features['container-registry-gql'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('23.09.7')) {
+      this._features['main-access-key'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('24.03.0')) {
       this._features['max-vfolder-count-in-user-resource-policy'] = true;
       this._features['model-store'] = true;
@@ -4347,6 +4350,7 @@ class User {
       'role',
       'groups {id name}',
       'status',
+      'main_access_key',
     ],
   ): Promise<any> {
     let q, v;
@@ -4369,6 +4373,9 @@ class User {
       // we iterate pages to gather all users for client-side compability.
       const limit = 100;
       const users = [] as any;
+      if (!this.client.supports('main-access-key')) {
+        fields = fields.filter(field => field !== 'main_access_key');
+      }
       q = this.client.is_admin
         ? `
         query($offset:Int!, $limit:Int!, $is_active:Boolean) {
