@@ -58,12 +58,13 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
         open={open}
         onOk={handleOk}
         okText={t('webui.menu.LeaveService')}
+        okButtonProps={{ danger: true }}
         onCancel={() => {
           onRequestClose();
         }}
         {...modalProps}
       >
-        <Form form={form} labelCol={{ span: 6 }}>
+        <Form form={form} layout="vertical" labelCol={{ span: 6 }}>
           <Form.Item name="alert">
             <Alert message={t('login.DescConfirmLeave')} type="warning" />
           </Form.Item>
