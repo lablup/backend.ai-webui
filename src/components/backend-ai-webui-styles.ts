@@ -178,8 +178,7 @@ export const BackendAIWebUIStyles = [
       display: none;
     }
 
-    .drawer-menu footer,
-    footer#short-height {
+    .drawer-menu footer {
       bottom: 0;
       color: var(--general-sidebar-footer-color, #aaaaaa);
       background-color: var(--general-sidebar-background-color);
@@ -189,8 +188,7 @@ export const BackendAIWebUIStyles = [
       font-size: 10px;
     }
 
-    .drawer-menu footer a,
-    footer#short-height a {
+    .drawer-menu footer a {
       color: var(--general-sidebar-footer-color, #aaaaaa) !important;
     }
 
@@ -299,8 +297,7 @@ export const BackendAIWebUIStyles = [
       -webkit-app-region: drag !important;
     }
 
-    .drawer-menu footer,
-    footer#short-height {
+    .drawer-menu footer {
       width: 250px;
     }
 
@@ -472,10 +469,6 @@ export const BackendAIWebUIStyles = [
       margin-bottom: 10px;
     }
 
-    footer#short-height {
-      display: none;
-    }
-
     #portrait-bar {
       height: 64px;
       padding-top: 15px;
@@ -590,12 +583,8 @@ export const BackendAIWebUIStyles = [
     }
 
     @media screen and (max-height: 953px) {
-      footer#short-height {
-        display: block;
-      }
-
-      footer {
-        display: none;
+      .drawer-menu footer {
+        margin-top: 50px;
       }
     }
 
