@@ -122,6 +122,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             retries
             model
             model_mount_destiation
+            session_owner
             resource_group
             resource_slots
             resource_opts
@@ -300,7 +301,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             },
             {
               label: t('modelService.SessionOwner'),
-              children: baiClient.email || '',
+              children: endpoint?.session_owner,
             },
             {
               label: t('modelService.DesiredSessionCount'),
