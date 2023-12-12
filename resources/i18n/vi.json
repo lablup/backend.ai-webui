@@ -1,7 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Chào mừng,",
+      "WelcomeMessage": "Chào mừng, {{ userName }}",
       "WelcomeMessage_2": " .",
       "Summary": "Tóm lược",
       "Sessions": "Phiên",

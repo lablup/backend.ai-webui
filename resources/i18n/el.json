@@ -1,7 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Καλως ΗΡΘΑΤΕ,",
+      "WelcomeMessage": "Καλώς ορίσατε, {{ username }}",
       "WelcomeMessage_2": " .",
       "Summary": "Περίληψη",
       "Sessions": "Συνεδρίες",

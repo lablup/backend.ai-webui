@@ -1,7 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "欢迎，",
+      "WelcomeMessage": "欢迎，{{ userName }}",
       "WelcomeMessage_2": " .",
       "Summary": "概括",
       "Sessions": "会话",

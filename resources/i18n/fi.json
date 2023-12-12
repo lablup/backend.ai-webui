@@ -1445,7 +1445,7 @@
       "Update": "Päivitys",
       "UserCredentials&Policies": "Käyttäjien valtakirjat ja käytännöt",
       "Users": "Käyttäjät",
-      "WelcomeMessage": "Tervetuloa,",
+      "WelcomeMessage": "Tervetuloa, {{ userName }}",
       "WelcomeMessage_2": " .",
       "YouMushChangeYourPassword": "On suositeltavaa vaihtaa salasana säännöllisesti turvallisuussyistä. Koska salasanasi viimeisimmästä vaihtamisesta on kulunut tietty aika, sinun on vaihdettava se, jotta voit jatkaa palvelun käyttöä.",
       "Data&Model": "Data"
