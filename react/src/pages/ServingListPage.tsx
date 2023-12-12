@@ -115,7 +115,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               url
               open_to_public
               created_at @since(version: "23.09.0")
-              created_user
+              session_owner
               desired_session_count @required(action: NONE)
               routings {
                 routing_id
@@ -361,8 +361,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   ? [
                       {
                         title: t('modelService.Owner'),
-                        dataIndex: 'created_user',
-                        render: (created_user: string) => created_user,
+                        dataIndex: 'session_owner',
+                        render: (session_owner: string) => session_owner,
                       },
                     ]
                   : []),
