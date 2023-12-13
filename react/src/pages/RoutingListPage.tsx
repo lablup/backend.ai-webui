@@ -311,7 +311,9 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               children: endpoint?.url ? (
                 <Typography.Text copyable>{endpoint?.url}</Typography.Text>
               ) : (
-                <Tag>{t('modelService.NoServiceEndpoint')}</Tag>
+                <Typography.Text type="secondary">
+                  {t('modelService.NoServiceEndpoint')}
+                </Typography.Text>
               ),
             },
             {
