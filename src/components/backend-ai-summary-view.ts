@@ -426,9 +426,7 @@ export default class BackendAISummary extends BackendAIPage {
       .get_announcement()
       .then((res) => {
         if ('message' in res) {
-          this.announcement = marked(
-            '<a href="https://www.lablup.com">Lablup</a>',
-          );
+          this.announcement = marked(res.message);
         }
       })
       .catch((err) => {
