@@ -169,12 +169,12 @@ export default class BackendAISummary extends BackendAIPage {
 
         .notice-ticker {
           margin-left: 15px;
-          margin-top: 10px;
           font-size: 13px;
           font-weight: 400;
           max-height: 55px;
           max-width: 1000px;
           overflow-y: scroll;
+          align-items: center;
         }
 
         .notice-ticker > span {
@@ -353,10 +353,12 @@ export default class BackendAISummary extends BackendAIPage {
   _getUserOS() {
     this.downloadAppOS = 'MacOS';
     if (navigator.userAgent.indexOf('Mac') != -1) this.downloadAppOS = 'MacOS';
-    if (navigator.userAgent.indexOf('Win') != -1)
+    if (navigator.userAgent.indexOf('Win') != -1) {
       this.downloadAppOS = 'Windows';
-    if (navigator.userAgent.indexOf('Linux') != -1)
+    }
+    if (navigator.userAgent.indexOf('Linux') != -1) {
       this.downloadAppOS = 'Linux';
+    }
   }
 
   _refreshConsoleUpdateInformation() {
@@ -424,7 +426,9 @@ export default class BackendAISummary extends BackendAIPage {
       .get_announcement()
       .then((res) => {
         if ('message' in res) {
-          this.announcement = marked(res.message);
+          this.announcement = marked(
+            '<a href="https://www.lablup.com">Lablup</a>',
+          );
         }
       })
       .catch((err) => {
@@ -560,14 +564,17 @@ export default class BackendAISummary extends BackendAIPage {
       <div class="item" elevation="1" class="vertical layout center wrap flex">
         ${this.announcement != ''
           ? html`
-              <div class="notice-ticker horizontal layout wrap flex">
+              <div
+                class="notice-ticker horizontal layout wrap flex"
+                style="overflow:auto"
+              >
                 <lablup-shields
                   app=""
                   color="red"
                   description="Notice"
                   ui="round"
                 ></lablup-shields>
-                <span>${this._stripHTMLTags(this.announcement)}</span>
+                <div slot="message">${unsafeHTML(this.announcement)}</div>
               </div>
             `
           : html``}
