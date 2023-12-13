@@ -1479,5 +1479,10 @@
     "CloneAsFolder": "새 폴더로 복사",
     "CloneSuccess": "복사 요청이 성공적으로 보내졌습니다.",
     "CloneInfo": "새로운 사용자 폴더로 복사됩니다."
+  },
+  "table": {
+    "SettingTable": "테이블 설정",
+    "SearchTableColumn": "테이블 열 검색",
+    "SelectColumnToDisplay": "표시할 열 선택"
   }
 }

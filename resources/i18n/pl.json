@@ -1479,5 +1479,10 @@
     "CloneSuccess": "Żądanie klonowania zostało wysłane pomyślnie.",
     "CloneInfo": "Zostanie on sklonowany jako folder typu użytkownika.",
     "category": "Kategoria"
+  },
+  "table": {
+    "SettingTable": "Nakrycie stołu",
+    "SelectColumnToDisplay": "Wybierz, które kolumny mają być wyświetlane",
+    "SearchTableColumn": "Przeszukaj kolumny tabeli"
   }
 }

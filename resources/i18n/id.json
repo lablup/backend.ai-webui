@@ -1479,5 +1479,10 @@
     "CloneSuccess": "Permintaan kloning telah berhasil dikirim.",
     "CloneInfo": "Ini akan dikloning sebagai folder tipe pengguna Anda.",
     "category": "Kategori"
+  },
+  "table": {
+    "SettingTable": "Penataan meja",
+    "SelectColumnToDisplay": "Pilih kolom yang akan ditampilkan",
+    "SearchTableColumn": "Cari kolom tabel"
   }
 }

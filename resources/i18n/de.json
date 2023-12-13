@@ -1479,5 +1479,10 @@
     "CloneSuccess": "Die Klonanfrage wurde erfolgreich gesendet.",
     "CloneInfo": "Er wird als Ihr Benutzertyp-Ordner geklont.",
     "category": "Kategorie"
+  },
+  "table": {
+    "SettingTable": "Sitzordnung bei Tisch",
+    "SelectColumnToDisplay": "Wählen Sie die anzuzeigenden Spalten aus",
+    "SearchTableColumn": "Tabellenspalten durchsuchen"
   }
 }

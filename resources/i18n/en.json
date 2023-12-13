@@ -1446,6 +1446,11 @@
     "ValueRequired": "ValueRequired",
     "InputTooShort": "InputTooShort"
   },
+  "table": {
+    "SettingTable": "Table Setting",
+    "SelectColumnToDisplay": "Select for columns to display",
+    "SearchTableColumn": "Search table columns"
+  },
   "ErrorBoundary": {
     "title": "An error has occurred.",
     "reloadPage": "Reload the page",

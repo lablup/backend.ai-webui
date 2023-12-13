@@ -1479,5 +1479,10 @@
     "CloneSuccess": "クローン要求は正常に送信された。",
     "CloneInfo": "ユーザータイプのフォルダとしてクローンされます。",
     "category": "カテゴリー"
+  },
+  "table": {
+    "SettingTable": "テーブルセッティング",
+    "SelectColumnToDisplay": "表示する列を選択します",
+    "SearchTableColumn": "テーブルの列を検索する"
   }
 }

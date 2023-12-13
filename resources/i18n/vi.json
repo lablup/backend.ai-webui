@@ -1479,5 +1479,10 @@
     "CloneSuccess": "Yêu cầu nhân bản đã được gửi thành công.",
     "CloneInfo": "Nó sẽ được sao chép thành thư mục loại người dùng của bạn.",
     "category": "Loại"
+  },
+  "table": {
+    "SettingTable": "Cài đặt bảng",
+    "SelectColumnToDisplay": "Chọn các cột để hiển thị",
+    "SearchTableColumn": "Tìm kiếm các cột trong bảng"
   }
 }

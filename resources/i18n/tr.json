@@ -1479,5 +1479,10 @@
     "CloneSuccess": "Klonlama isteği başarıyla gönderildi.",
     "CloneInfo": "Kullanıcı tipi klasörünüz olarak klonlanacaktır.",
     "category": "Kategori"
+  },
+  "table": {
+    "SettingTable": "Tablo Ayarı",
+    "SelectColumnToDisplay": "Görüntülenecek sütunları seçin",
+    "SearchTableColumn": "Tablo sütunlarında arama yapın"
   }
 }

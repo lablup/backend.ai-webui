@@ -1479,5 +1479,10 @@
     "CloneSuccess": "La solicitud de clonación se ha enviado correctamente.",
     "CloneInfo": "Se clonará como su carpeta de tipo de usuario.",
     "category": "Categoría"
+  },
+  "table": {
+    "SettingTable": "Ajuste de la tabla",
+    "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
+    "SearchTableColumn": "Buscar columnas de la tabla"
   }
 }

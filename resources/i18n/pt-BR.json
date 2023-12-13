@@ -1479,5 +1479,10 @@
     "CloneSuccess": "O pedido de clone foi enviado com sucesso.",
     "CloneInfo": "Será clonada como a pasta do seu tipo de utilizador.",
     "category": "Categoria"
+  },
+  "table": {
+    "SettingTable": "Configuração de mesa",
+    "SelectColumnToDisplay": "Selecione as colunas a serem exibidas",
+    "SearchTableColumn": "Pesquisar colunas da tabela"
   }
 }
