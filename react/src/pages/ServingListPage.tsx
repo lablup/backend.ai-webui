@@ -228,8 +228,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         ),
     },
   ];
-  const [selectedColumnKeys, setSelectedColumnKeys] = useLocalStorageState(
-    'modelServingTableSelectedKeys',
+  const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
+    'backendaiwebui.ServingListPage.displayedColumnKeys',
     {
       defaultValue: columns.map((column) => _.toString(column.key)),
     },
@@ -429,7 +429,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               dataSource={(sortedEndpointList || []) as Endpoint[]}
               columns={columns.filter(
                 (column) =>
-                  selectedColumnKeys?.includes(_.toString(column.key)),
+                  displayedColumnKeys?.includes(_.toString(column.key)),
               )}
               pagination={false}
               // pagination={{
@@ -522,11 +522,11 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         open={isOpenColumnsSetting}
         onRequestClose={(values) => {
           values?.selectedColumnKeys &&
-            setSelectedColumnKeys(values?.selectedColumnKeys);
+            setDisplayedColumnKeys(values?.selectedColumnKeys);
           setIsOpenColumnsSetting(false);
         }}
         columns={columns}
-        selectKeys={selectedColumnKeys ? selectedColumnKeys : []}
+        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
       />
     </>
   );

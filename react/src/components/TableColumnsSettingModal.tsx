@@ -15,14 +15,14 @@ interface TableColumnsSettingProps extends BAIModalProps {
   open: boolean;
   onRequestClose: (formValues?: FormValues) => void;
   columns: ColumnsType<any>;
-  selectKeys?: string[];
+  displayedColumnKeys?: string[];
 }
 
 const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
   open,
   onRequestClose,
   columns,
-  selectKeys,
+  displayedColumnKeys,
   ...modalProps
 }) => {
   const [form] = Form.useForm<FormValues>();
@@ -81,7 +81,7 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
         preserve={false}
         initialValues={{
           selectedColumnKeys:
-            selectKeys ||
+            displayedColumnKeys ||
             columnOptions.map((columnOption) => columnOption.value),
         }}
         layout="vertical"
