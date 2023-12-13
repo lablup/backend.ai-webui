@@ -122,7 +122,7 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
               <Form.Item
                 name="selectedColumnKeys"
                 style={{
-                  height: 180,
+                  height: 220,
                   overflowY: 'auto',
                 }}
               >
