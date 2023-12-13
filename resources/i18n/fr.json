@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Bienvenue, {{ userName }}",
-      "WelcomeMessage_2": " .",
+      "WelcomeMessage": "Bienvenue, {{ userName }}.",
       "Summary": "Résumé",
       "Sessions": "Sessions",
       "Import&Run": "Importer et exécuter",

@@ -1865,7 +1865,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   <p>${_t('webui.menu.WelcomeMessage', {
                     userName: this._getUsername(),
                   })}</p>
-                  <p>${_t('webui.menu.WelcomeMessage_2')}</p>
                 </div>
                   <backend-ai-project-switcher slot="actionItems" style="margin-right:10px;"></backend-ai-project-switcher>
                   <backend-ai-react-user-dropdown-menu

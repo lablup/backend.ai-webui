@@ -1445,8 +1445,7 @@
       "Update": "Actualización",
       "UserCredentials&Policies": "Credenciales de usuario y políticas",
       "Users": "Usuarios",
-      "WelcomeMessage": "Bienvenido, {{ userName }}",
-      "WelcomeMessage_2": " .",
+      "WelcomeMessage": "Bienvenido, {{ userName }}.",
       "YouMushChangeYourPassword": "Se recomienda cambiar periódicamente la contraseña por razones de seguridad. Dado que ha transcurrido cierto tiempo desde la última vez que cambió su contraseña, deberá cambiarla para poder seguir utilizando el servicio.",
       "Data&Model": "Datos"
     }
