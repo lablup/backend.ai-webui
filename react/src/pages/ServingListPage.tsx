@@ -331,7 +331,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       <Flex
         direction="column"
         align="stretch"
-        style={{ padding: token.padding, gap: token.margin }}
+        style={{ padding: token.padding }}
+        gap={'xs'}
       >
         {/* <Card bordered title={t("summary.ResourceStatistics")}>
           <p>SessionList</p>
@@ -441,7 +442,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         <Flex justify="end">
           <Button
             type="text"
-            size="large"
             icon={<SettingOutlined />}
             onClick={() => {
               setIsOpenColumnsSetting(true);
