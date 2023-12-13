@@ -3293,7 +3293,7 @@ ${rowData.item[this.sessionNameField]}</pre
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
-                        progress="${rowData.item.live_stat?.cuda_util?.ratio /
+                        progress="${rowData.item.live_stat?.cuda_util?.current /
                           rowData.item.live_stat?.cuda_util?.capacity || 0}"
                         description=""
                       ></lablup-progress-bar>
@@ -3315,7 +3315,7 @@ ${rowData.item[this.sessionNameField]}</pre
                     <div class="horizontal start-justified center layout">
                       <lablup-progress-bar
                         class="usage"
-                        progress="${rowData.item.live_stat?.rocm_util?.ratio /
+                        progress="${rowData.item.live_stat?.rocm_util?.current /
                           rowData.item.live_stat?.rocm_util?.capacity || 0}"
                         description=""
                       ></lablup-progress-bar>
