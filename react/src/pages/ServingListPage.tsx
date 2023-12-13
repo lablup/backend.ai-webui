@@ -443,7 +443,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             type="text"
             size="large"
             icon={<SettingOutlined />}
-            style={{ color: '#29b6f6' }}
             onClick={() => {
               setIsOpenColumnsSetting(true);
             }}
