@@ -1434,7 +1434,8 @@
     "Active/Total": "Ativo/Total",
     "Public": "Público",
     "YouAreAboutToTerminate": "Está prestes a terminar",
-    "Image": "Imagem"
+    "Image": "Imagem",
+    "Owner": "Proprietário"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

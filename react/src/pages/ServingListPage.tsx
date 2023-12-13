@@ -88,7 +88,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     {
       title: t('modelService.EndpointName'),
       dataIndex: 'endpoint_id',
-      key: 'endpointName',
       fixed: 'left',
       render: (endpoint_id, row) => (
         <Link to={'/serving/' + endpoint_id}>{row.name}</Link>
@@ -97,16 +96,26 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     {
       title: t('modelService.EndpointId'),
       dataIndex: 'endpoint_id',
-      key: 'endpointId',
       width: 310,
       render: (endpoint_id) => (
         <Typography.Text code>{endpoint_id}</Typography.Text>
       ),
     },
     {
+      title: t('modelService.ServiceEndpoint'),
+      dataIndex: 'endpoint_id',
+      render: (endpoint_id, row) =>
+        row.url ? (
+          <Typography.Link copyable href={row.url} target="_blank">
+            {row.url}
+          </Typography.Link>
+        ) : (
+          '-'
+        ),
+    },
+    {
       title: t('modelService.Controls'),
       dataIndex: 'controls',
-      key: 'controls',
       render: (text, row) => (
         <Flex direction="row" align="stretch">
           <Button
@@ -157,13 +166,20 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     },
     {
       title: t('modelService.Status'),
-      key: 'status',
       render: (text, row) => <EndpointStatusTag endpointFrgmt={row} />,
     },
+    ...(baiClient.is_admin
+      ? [
+          {
+            title: t('modelService.Owner'),
+            dataIndex: 'created_user',
+            render: (created_user: string) => created_user,
+          },
+        ]
+      : []),
     {
       title: t('modelService.CreatedAt'),
       dataIndex: 'created_at',
-      key: 'createdAt',
       render: (created_at) => {
         return dayjs(created_at).format('ll LT');
       },
@@ -178,7 +194,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     {
       title: t('modelService.DesiredSessionCount'),
       dataIndex: 'desired_session_count',
-      key: 'desiredSessionCount',
       render: (desired_session_count) => {
         return desired_session_count < 0 ? '-' : desired_session_count;
       },
@@ -194,7 +209,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         </Flex>
       ),
       // dataIndex: "active_route_count",
-      key: 'routingCount',
       render: (text, row) => {
         return (
           _.filter(row.routings, (r) => r?.status === 'HEALTHY').length +
@@ -206,7 +220,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     },
     {
       title: t('modelService.Public'),
-      key: 'public',
       render: (text, row) =>
         row.open_to_public ? (
           <CheckOutlined style={{ color: token.colorSuccess }} />
