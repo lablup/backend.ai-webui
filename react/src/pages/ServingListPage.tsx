@@ -440,14 +440,13 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         </Flex>
         <Flex justify="end">
           <Button
-            type="primary"
+            type="text"
+            size="large"
             icon={<SettingOutlined />}
             onClick={() => {
               setIsOpenColumnsSetting(true);
             }}
-          >
-            {t('table.SettingTable')}
-          </Button>
+          />
         </Flex>
       </Flex>
       <BAIModal
