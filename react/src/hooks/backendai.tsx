@@ -43,19 +43,25 @@ export const useResourceSlots = () => {
   ] as const;
 };
 
+interface NumberFormat {
+  binary: boolean;
+  round_length: number;
+}
+
+interface Slot {
+  slot_name: string;
+  description: string;
+  human_readable_name: string;
+  display_unit: string;
+  number_format: NumberFormat;
+  display_icon: string;
+}
+
 export const useResourceSlotsByResourceGroup = (name?: string) => {
   const [key, checkUpdate] = useUpdatableState('first');
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const { data: resourceSlots } = useTanQuery<{
-    cpu: string;
-    mem: string;
-    'cuda.shares': string;
-    'cuda.device': string;
-    'rocm.device': string;
-    'ipu.device': string;
-    'atom.device': string;
-    'warboy.device': string;
-    [key: string]: string;
+    [key: string]: Slot;
   }>({
     queryKey: ['useResourceSlots', name, key],
     queryFn: () => {
