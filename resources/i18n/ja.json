@@ -1481,6 +1481,7 @@
   },
   "table": {
     "SettingTable": "テーブルセッティング",
-    "SelectColumnToDisplay": "表示する列を選択します"
+    "SelectColumnToDisplay": "表示する列を選択します",
+    "SearchTableColumn": "テーブルの列を検索する"
   }
 }

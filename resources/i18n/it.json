@@ -1481,6 +1481,7 @@
   },
   "table": {
     "SettingTable": "Impostazione della tabella",
-    "SelectColumnToDisplay": "Seleziona le colonne da visualizzare"
+    "SelectColumnToDisplay": "Seleziona le colonne da visualizzare",
+    "SearchTableColumn": "Cerca colonne della tabella"
   }
 }

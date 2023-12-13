@@ -1481,6 +1481,7 @@
   },
   "table": {
     "SettingTable": "Tablo Ayarı",
-    "SelectColumnToDisplay": "Görüntülenecek sütunları seçin"
+    "SelectColumnToDisplay": "Görüntülenecek sütunları seçin",
+    "SearchTableColumn": "Tablo sütunlarında arama yapın"
   }
 }

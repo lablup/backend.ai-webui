@@ -1481,6 +1481,7 @@
   },
   "table": {
     "SettingTable": "Ρύθμιση πίνακα",
-    "SelectColumnToDisplay": "Επιλέξτε για εμφάνιση στηλών"
+    "SelectColumnToDisplay": "Επιλέξτε για εμφάνιση στηλών",
+    "SearchTableColumn": "Αναζήτηση στηλών πίνακα"
   }
 }

@@ -1481,6 +1481,7 @@
   },
   "table": {
     "SettingTable": "Sitzordnung bei Tisch",
-    "SelectColumnToDisplay": "Wählen Sie die anzuzeigenden Spalten aus"
+    "SelectColumnToDisplay": "Wählen Sie die anzuzeigenden Spalten aus",
+    "SearchTableColumn": "Tabellenspalten durchsuchen"
   }
 }

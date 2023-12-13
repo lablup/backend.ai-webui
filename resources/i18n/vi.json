@@ -1481,6 +1481,7 @@
   },
   "table": {
     "SettingTable": "Cài đặt bảng",
-    "SelectColumnToDisplay": "Chọn các cột để hiển thị"
+    "SelectColumnToDisplay": "Chọn các cột để hiển thị",
+    "SearchTableColumn": "Tìm kiếm các cột trong bảng"
   }
 }

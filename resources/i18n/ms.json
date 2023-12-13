@@ -1481,6 +1481,7 @@
   },
   "table": {
     "SelectColumnToDisplay": "Pilih untuk lajur untuk dipaparkan",
-    "SettingTable": "Tetapan Meja"
+    "SettingTable": "Tetapan Meja",
+    "SearchTableColumn": "Cari lajur jadual"
   }
 }

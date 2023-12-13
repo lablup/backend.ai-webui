@@ -1481,6 +1481,7 @@
   },
   "table": {
     "SettingTable": "Penataan meja",
-    "SelectColumnToDisplay": "Pilih kolom yang akan ditampilkan"
+    "SelectColumnToDisplay": "Pilih kolom yang akan ditampilkan",
+    "SearchTableColumn": "Cari kolom tabel"
   }
 }

@@ -1481,6 +1481,7 @@
   },
   "table": {
     "SettingTable": "테이블 설정",
+    "SearchTableColumn": "테이블 열 검색",
     "SelectColumnToDisplay": "표시할 열 선택"
   }
 }

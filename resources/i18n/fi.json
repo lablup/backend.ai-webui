@@ -1481,6 +1481,7 @@
   },
   "table": {
     "SettingTable": "Kattaus",
-    "SelectColumnToDisplay": "Valitse näytettävät sarakkeet"
+    "SelectColumnToDisplay": "Valitse näytettävät sarakkeet",
+    "SearchTableColumn": "Hae taulukon sarakkeita"
   }
 }

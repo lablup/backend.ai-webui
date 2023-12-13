@@ -1481,6 +1481,7 @@
   },
   "table": {
     "SettingTable": "Сервировка стола",
-    "SelectColumnToDisplay": "Выберите столбцы для отображения"
+    "SelectColumnToDisplay": "Выберите столбцы для отображения",
+    "SearchTableColumn": "Поиск по столбцам таблицы"
   }
 }
