@@ -122,9 +122,9 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
               <Form.Item
                 name="selectedColumnKeys"
                 style={{
-                  maxHeight: '120px',
-                  minHeight: '120px',
-                  overflow: 'scroll',
+                  maxHeight: '180px',
+                  minHeight: '180px',
+                  overflowY: 'auto',
                 }}
               >
                 <Checkbox.Group
