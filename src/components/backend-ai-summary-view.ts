@@ -173,14 +173,8 @@ export default class BackendAISummary extends BackendAIPage {
           font-weight: 400;
           max-height: 55px;
           max-width: 1000px;
-          overflow-y: scroll;
           align-items: center;
-        }
-
-        .notice-ticker > span {
-          display: inline-block;
-          white-space: pre-line;
-          font-size: 1rem;
+          overflow: auto;
         }
 
         .notice-ticker lablup-shields {
@@ -311,11 +305,6 @@ export default class BackendAISummary extends BackendAIPage {
           .notice-ticker {
             margin-left: 0px;
             width: auto;
-          }
-
-          .notice-ticker > span {
-            max-width: 250px;
-            line-height: 1em;
           }
         }
 
@@ -562,10 +551,7 @@ export default class BackendAISummary extends BackendAIPage {
       <div class="item" elevation="1" class="vertical layout center wrap flex">
         ${this.announcement != ''
           ? html`
-              <div
-                class="notice-ticker horizontal layout wrap flex"
-                style="overflow:auto"
-              >
+              <div class="notice-ticker horizontal layout wrap flex">
                 <lablup-shields
                   app=""
                   color="red"
