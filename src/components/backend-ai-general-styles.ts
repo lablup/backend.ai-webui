@@ -410,6 +410,15 @@ export const BackendAiStyles = [
       );
     }
 
+    mwc-switch[disabled] {
+      --mdc-switch-disabled-selected-handle-color: var(
+        --general-switch-on-color
+      );
+      --mdc-switch-disabled-selected-track-color: var(
+        --general-switch-on-color
+      ) !important;
+    }
+
     div.card p {
       padding: 10px;
     }

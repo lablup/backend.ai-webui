@@ -62,7 +62,7 @@
       "Notifications": "Benachrichtigungen",
       "Tasks": "Aufgaben",
       "FastTrack": "FastTrack",
-      "Data&Model": ""
+      "Data&Model": "Daten"
     },
     "YouAreOffline": "Du bist jetzt offline",
     "YouAreOnline": "Sie sind jetzt online",
@@ -241,18 +241,19 @@
       "FolderAliasInvalid": "Es sind nur alphanumerische Zeichen, Unterstrich (_), Schrägstrich (/) und Bindestrich (-) zulässig.",
       "PreOpenPortMaxCountLimit": "Sie können bis zu {{count}} vorgeöffnete Ports einstellen.",
       "StartTimeMustBeInTheFuture": "Die Startzeit muss nach der aktuellen Uhrzeit liegen.",
-      "PreOpenPortMaxCountLimit_plural": "",
-      "EnqueueComputeSessionWarning": "",
-      "SessionName": "",
-      "ResetFormConfirm": "",
-      "TemplateAndHistory": "",
-      "ScheduleTimeSimple": "",
+      "EnqueueComputeSessionWarning": "Wenn Sie einen größeren Wert als die derzeit verfügbaren Ressourcen festlegen, wird die Sitzungserstellung in der Warteschlange verzögert, bis sie verfügbar wird.",
+      "SessionName": "Sitzungsname",
+      "ResetFormConfirm": "Möchten Sie alle Ihre Einträge zurücksetzen?",
+      "TemplateAndHistory": "Vorlagen",
+      "ScheduleTimeSimple": "Startzeit einstellen",
       "ResourceAllocationPerContainer": "Ressourcenzuweisung pro Container",
       "NumberOfContainer": "Nummer des Behälters",
+      "ErrorCanNotExceedRemaining": "Kann nicht auf einen Wert gesetzt werden, der größer ist als die verbleibenden Ressourcen ({{Betrag}}).",
       "EnterEnvironmentVariable": "Variablenname eingeben",
       "EnvironmentVariableNamePatternError": "Der Variablenname muss mit einem Buchstaben oder Unterstrich beginnen und darf nur Buchstaben, Zahlen und Unterstriche enthalten.",
       "EnvironmentVariableDuplicateName": "Ein Variablenname, der bereits existiert.",
-      "Template": "Sitzungsvorlage"
+      "Template": "Sitzungsvorlage",
+      "EnableAutomaticShmem": "Automatischer gemeinsamer Speicher"
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",
@@ -447,7 +448,7 @@
     "Enabled": "aktiviert",
     "StorageProxies": "Speicher",
     "None": "Keine",
-    "Image": ""
+    "Image": "Bild"
   },
   "credential": {
     "Permission": "Genehmigung",
@@ -525,7 +526,8 @@
     "SignoutSeccessfullyFinished": "Die Abmeldung ist erfolgreich abgeschlossen",
     "Status": "Status",
     "NoUserToDisplay": "Keine Benutzer zum Anzeigen",
-    "EnableSudoSession": ""
+    "EnableSudoSession": "Sudo-Sitzung aktivieren",
+    "MainAccessKey": "Hauptzugangsschlüssel"
   },
   "data": {
     "Folders": "Ordner",
@@ -692,8 +694,8 @@
     "DialogDataFolder": "Pipeline-spezifische Ordner, die bei der Erstellung von Pipelines in FastTrack automatisch erstellt werden.",
     "DialogModelFolder": "Sie können Modelle bedienen und verwalten.",
     "SearchByName": "Suche mit Name",
-    "ModelStore": "",
-    "New": "__NOT_TRANSLATED__",
+    "ModelStore": "Modellladen",
+    "New": "Neu",
     "Add": "hinzufügen",
     "CloningIsOnlyPossibleSameHost": "Derzeit ist das Klonen nur auf demselben Host möglich."
   },
@@ -840,7 +842,9 @@
     "DescAutoLogout": "Melden Sie sich automatisch ab, wenn alle angemeldeten Seiten geschlossen sind, mit Ausnahme von sitzungsbasierten Seiten für Apps (z. B. Jupyter Notebook, Webterminal usw.)",
     "SSHKeypairEnterManuallyFinished": "SSH-Keypair wurde erfolgreich registriert.",
     "BootstrapScriptDescription": "Das Bootstrap-Skript wird nur einmal nach der Erstellung der Sitzung ausgeführt",
-    "SSHKeypairEnterManually": "SSH-Schlüsselpaar"
+    "SSHKeypairEnterManually": "SSH-Schlüsselpaar",
+    "MyKeypairInfo": "Meine Schlüsselpaarinformationen",
+    "DescMyKeypairInfo": "Siehe meine Schlüsselpaarinformationen"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Erweiterte Web-Terminal-Nutzung: Terminal-Inhalte kopieren",
@@ -1064,8 +1068,6 @@
     "Scaling": "Skalierung",
     "AllowAgentSideRegistration": "Agentseitige Registrierung zulassen",
     "DescAllowAgentSideRegistration": "Erlauben Sie dem Agenten, sich beim Manager zu registrieren. <br/> Nur verwenden, wenn der Backend.AI-Cluster an einem sicheren Ort verwaltet wird.",
-    "Plugins": "Plugins",
-    "CUDAGPUsupport": "CUDA-GPU-Unterstützung",
     "DescCUDAGPUsupport": "NVIDIA CUDA-GPU-Unterstützung. <br/> Erfordert Backend.AI CUDA-Plugin.",
     "CUDAGPUdisabledByFGPUsupport": "Deaktiviert, weil das System das Fractional GPU-Plugin verwendet",
     "ROCMGPUsupport": "ROCm-GPU-Unterstützung",
@@ -1115,7 +1117,9 @@
     "OverlayNetworkSettings": "Overlay-Netzwerkeinstellungen",
     "OverlayNetworkSettingsDescription": "Ein Overlay-Netzwerk ist ein Computernetzwerk, das auf ein anderes Netzwerk aufgesetzt wird. Das Overlay-Netzwerk schafft ein verteiltes Netzwerk zwischen mehreren Docker-Daemon-Hosts des Backend.AI-Managers.",
     "MTUDescription": "Maximale Übertragungseinheit, die Größe des größten Pakets, das ein Netzprotokoll übertragen kann.",
-    "OutOfRange": "Außerhalb der Reichweite."
+    "OutOfRange": "Außerhalb der Reichweite.",
+    "Plugins": "Plugins",
+    "OpenSourceCUDAGPUsupport": "Open Source CUDA GPU Unterstützung"
   },
   "notification": {
     "SuccessfullyUpdated": "Erfolgreich aktualisiert",
@@ -1390,7 +1394,8 @@
     "RoutingsCount": "Routings zählen",
     "Active/Total": "Aktiv/Gesamt",
     "Public": "Öffentlich",
-    "YouAreAboutToTerminate": "Sie stehen kurz vor der Beendigung"
+    "YouAreAboutToTerminate": "Sie stehen kurz vor der Beendigung",
+    "Owner": "Eigentümer"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",
@@ -1472,6 +1477,12 @@
     "Task": "Aufgabe",
     "CloneAsFolder": "Als Ordner klonen",
     "CloneSuccess": "Die Klonanfrage wurde erfolgreich gesendet.",
-    "CloneInfo": "Er wird als Ihr Benutzertyp-Ordner geklont."
+    "CloneInfo": "Er wird als Ihr Benutzertyp-Ordner geklont.",
+    "category": "Kategorie"
+  },
+  "table": {
+    "SettingTable": "Sitzordnung bei Tisch",
+    "SelectColumnToDisplay": "Wählen Sie die anzuzeigenden Spalten aus",
+    "SearchTableColumn": "Tabellenspalten durchsuchen"
   }
 }
