@@ -33,7 +33,7 @@ describe('Initial cypress E2E test', () => {
     );
     cy.deleteSession(sessionName);
     cy.deleteVfolder(vfolderName);
-    cy.addUser('test6@lablup.com', 'test6', 'test123!', 'test123!');
+    cy.addUser('test6@lablup.com', 'test6', 'test123!');
     cy.deleteUser('test6\\@lablup\\.com');
   });
 });
