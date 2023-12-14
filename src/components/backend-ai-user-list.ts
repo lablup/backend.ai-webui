@@ -77,7 +77,6 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({ type: Object }) _totpActivatedRenderer =
     this.totpActivatedRenderer.bind(this);
   @property({ type: Object }) keypairs;
-  @property({ type: String }) signoutUserName = '';
   @property({ type: Object }) notification = Object();
   @property({ type: String }) listCondition: StatusCondition = 'loading';
   @property({ type: Number }) _totalUserCount = 0;
@@ -305,28 +304,24 @@ export default class BackendAIUserList extends BackendAIPage {
       });
   }
 
-  async _openUserSettingModal(e) {
-    const controls = e.target.closest('#controls');
-    this.userEmail = controls['user-id'];
+  async _openUserSettingModal(userEmail) {
+    this.userEmail = userEmail;
     this.openUserSettingModal = true;
   }
 
-  async _openUserInfoModal(e) {
-    const controls = e.target.closest('#controls');
-    this.userEmail = controls['user-id'];
+  async _openUserInfoModal(userEmail) {
+    this.userEmail = userEmail;
     this.openUserInfoModal = true;
   }
 
-  _signoutUserDialog(e) {
-    const controls = e.target.closest('#controls');
-    const user_id = controls['user-id'];
-    this.signoutUserName = user_id;
+  _signoutUserDialog(userEmail) {
+    this.userEmail = userEmail;
     this.signoutUserDialog.show();
   }
 
   _signoutUser() {
     globalThis.backendaiclient.user
-      .delete(this.signoutUserName)
+      .delete(this.userEmail)
       .then((response) => {
         this.notification.text = _text(
           'credential.SignoutSeccessfullyFinished',
@@ -499,24 +494,24 @@ export default class BackendAIUserList extends BackendAIPage {
         <div
           id="controls"
           class="layout horizontal flex center"
-          .user-id="${rowData.item.email}"
+          user-id="${rowData.item.email}"
         >
           <mwc-icon-button
             class="fg green"
             icon="assignment"
-            @click="${(e) => this._openUserInfoModal(e)}"
+            @click="${() => this._openUserInfoModal(rowData.item.email)}"
           ></mwc-icon-button>
           <mwc-icon-button
             class="fg blue"
             icon="settings"
-            @click="${(e) => this._openUserSettingModal(e)}"
+            @click="${() => this._openUserSettingModal(rowData.item.email)}"
           ></mwc-icon-button>
           ${globalThis.backendaiclient.is_superadmin && this._isActive()
             ? html`
                 <mwc-icon-button
                   class="fg red controls-running"
                   icon="delete_forever"
-                  @click="${(e) => this._signoutUserDialog(e)}"
+                  @click="${() => this._signoutUserDialog(rowData.item.email)}"
                 ></mwc-icon-button>
               `
             : html``}
@@ -697,7 +692,7 @@ export default class BackendAIUserList extends BackendAIPage {
         <div slot="content">
           <p>
             You are inactivating the user
-            <span style="color:red">${this.signoutUserName}</span>
+            <span style="color:red">${this.userEmail}</span>
             .
           </p>
           <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
@@ -708,6 +703,7 @@ export default class BackendAIUserList extends BackendAIPage {
             @click="${(e) => this._hideDialog(e)}"
           ></mwc-button>
           <mwc-button
+            id="deleteOk"
             unelevated
             label="${_t('button.Okay')}"
             @click="${() => this._signoutUser()}"

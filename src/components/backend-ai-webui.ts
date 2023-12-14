@@ -1618,6 +1618,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                       ${_t('webui.menu.Administration')}
                     </h3>
                     <mwc-list-item
+                      id="credential"
                       graphic="icon"
                       ?selected="${this._page === 'credential'}"
                       @click="${() => this._moveTo('/credential')}"

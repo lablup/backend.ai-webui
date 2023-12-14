@@ -1,6 +1,7 @@
 import '../commands/LoginPage.cy';
 import '../commands/DataStoragePage.cy';
 import '../commands/SessionPage.cy';
+import '../commands/CredentialPage.cy';
 
 const generateRandomString = (
   length = 6,
@@ -19,7 +20,7 @@ describe('Initial cypress E2E test', () => {
   });
 
   it('localhost E2E test', () => {
-    cy.login('test@lablup.com', 'test123!', 'http://127.0.0.1:8090');
+    cy.login('admin@lablup.com', 'wJalrXUt', 'http://127.0.0.1:8090');
     cy.wait(400);
     const vfolderName = generateRandomString();
     const sessionName = generateRandomString();
@@ -32,5 +33,7 @@ describe('Initial cypress E2E test', () => {
     );
     cy.deleteSession(sessionName);
     cy.deleteVfolder(vfolderName);
+    cy.addUser('test6@lablup.com', 'test6', 'test123!', 'test123!');
+    cy.deleteUser('test6\\@lablup\\.com');
   });
 });
