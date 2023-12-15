@@ -162,6 +162,12 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                     //TODO: apply other supported locales
                     locale={'ko' === lang ? ko_KR : en_US}
                     theme={{
+                      token: {
+                        colorBorderSecondary: isDarkMode
+                          ? undefined
+                          : '#E1E1E2',
+                        ...themeConfig.token,
+                      },
                       ...themeConfig,
                       algorithm: isDarkMode
                         ? theme.darkAlgorithm
