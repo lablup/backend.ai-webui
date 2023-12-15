@@ -74,7 +74,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                   <Input
                     ref={index === fields.length - 1 ? inputRef : null}
                     placeholder="Variable"
-                    onBlur={() => {
+                    onChange={() => {
                       const fieldNames = fields.map((field, index) => [
                         props.name,
                         index,
