@@ -131,7 +131,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   const cache = useMemo(() => createCache(), []);
   const [lang] = useCurrentLanguage();
   const themeConfig = useCustomThemeConfig();
-  const { isDarkMode } = useDarkMode();
+  const [isDarkMode] = useDarkMode();
 
   const componentValues = useMemo(() => {
     return {

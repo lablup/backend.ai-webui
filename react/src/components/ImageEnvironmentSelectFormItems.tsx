@@ -95,8 +95,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const { t } = useTranslation();
   const [metadata, { getImageMeta }] = useBackendaiImageMetaData();
   const { token } = theme.useToken();
-  const { isDarkMode } = useDarkMode();
-  console.log(isDarkMode);
+  const [isDarkMode] = useDarkMode();
 
   const envSelectRef = useRef<RefSelectProps>(null);
   const versionSelectRef = useRef<RefSelectProps>(null);

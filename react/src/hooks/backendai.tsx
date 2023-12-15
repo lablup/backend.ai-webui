@@ -1,6 +1,7 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '.';
 import { maskString, useBaiSignedRequestWithPromise } from '../helper';
 import { useTanMutation, useTanQuery } from './reactQueryAlias';
+import { useLocalStorageState } from 'ahooks';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 
@@ -210,7 +211,12 @@ export const useCurrentUserInfo = () => {
 };
 
 export const useDarkMode = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useLocalStorageState(
+    'backendaiwebui.darkMode',
+    {
+      defaultValue: false,
+    },
+  );
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -220,7 +226,7 @@ export const useDarkMode = () => {
     mediaQuery.addEventListener('change', handler);
 
     return () => mediaQuery.removeEventListener('change', handler);
-  }, []);
+  }, [setIsDarkMode]);
 
-  return { isDarkMode } as const;
+  return [isDarkMode, setIsDarkMode] as const;
 };
