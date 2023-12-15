@@ -3,8 +3,9 @@ import { RelayEnvironment } from '../RelayEnvironment';
 import rawFixAntCss from '../fix_antd.css?raw';
 import { useCustomThemeConfig } from '../helper/customThemeConfig';
 import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
+import { useDarkMode } from '../hooks/backendai';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
-import { App, ConfigProvider } from 'antd';
+import { App, ConfigProvider, theme } from 'antd';
 import en_US from 'antd/locale/en_US';
 import ko_KR from 'antd/locale/ko_KR';
 import dayjs from 'dayjs';
@@ -130,6 +131,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   const cache = useMemo(() => createCache(), []);
   const [lang] = useCurrentLanguage();
   const themeConfig = useCustomThemeConfig();
+  const { isDarkMode } = useDarkMode();
 
   const componentValues = useMemo(() => {
     return {
@@ -159,7 +161,12 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                     }}
                     //TODO: apply other supported locales
                     locale={'ko' === lang ? ko_KR : en_US}
-                    theme={themeConfig}
+                    theme={{
+                      ...themeConfig,
+                      algorithm: isDarkMode
+                        ? theme.darkAlgorithm
+                        : theme.defaultAlgorithm,
+                    }}
                   >
                     <App>
                       <StyleProvider container={shadowRoot} cache={cache}>
