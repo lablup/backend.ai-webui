@@ -1798,7 +1798,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                     this.sshPort
                   }" /path/to/source/ work@${this.sshHost}:~/${
                     this.mountedVfolderName
-                  }
+                  }/
                 </span>
                 <mwc-icon-button
                 class="sftp-session-connection-copy"
