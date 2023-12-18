@@ -128,3 +128,7 @@ src/plugins/*
 
 #
 !.vscode/i18n-ally-*
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
