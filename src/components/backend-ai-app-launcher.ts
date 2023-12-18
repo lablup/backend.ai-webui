@@ -1765,13 +1765,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <div><span>Port:</span> ${this.sshPort}</div>
             <h4>${_t('session.ConnectionExample')}</h4>
                 <div class="horizontal layout flex monospace ssh-connection-example">
-                <span id="sftp-string">
-                  sftp -i ./id_container -P ${
-                    this.sshPort
-                  } -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${
-                    this.sshHost
-                  }<br/>
-                </span>
+                <span id="sftp-string">${`sftp -i ./id_container -P ${this.sshPort} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${this.sshHost}`}</span>
                 <mwc-icon-button
                 class="sftp-session-connection-copy"
                 icon="content_copy" @click="${() =>
@@ -1779,13 +1773,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 </mwc-icon-button>
                 </div>
                 <div class="horizontal layout flex monospace ssh-connection-example">
-                <span id="scp-string">
-                  scp -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${
-                    this.sshPort
-                  } -rp /path/to/source work@${this.sshHost}:~/${
-                    this.mountedVfolderName
-                  }<br/>
-                </span>
+                <span id="scp-string">${`scp -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${this.sshPort} -rp /path/to/source work@${this.sshHost}:~/${this.mountedVfolderName}`}</span>
                 <mwc-icon-button
                 class="sftp-session-connection-copy"
                 icon="content_copy" @click="${() =>
@@ -1793,13 +1781,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 </mwc-icon-button>
                 </div>
                 <div class="horizontal layout flex monospace ssh-connection-example">
-                <span id="rsync-string">
-                  rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${
-                    this.sshPort
-                  }" /path/to/source/ work@${this.sshHost}:~/${
-                    this.mountedVfolderName
-                  }/<br/>
-                </span>
+                <span id="rsync-string">${`rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${this.sshPort}" /path/to/source/ work@${this.sshHost}:~/${this.mountedVfolderName}`}</span>
                 <mwc-icon-button
                 class="sftp-session-connection-copy"
                 icon="content_copy" @click="${() =>
