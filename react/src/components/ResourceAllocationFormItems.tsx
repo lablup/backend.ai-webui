@@ -75,11 +75,12 @@ const limitParser = (limit: string | undefined) => {
 
 interface ResourceAllocationFormItemsProps {
   enableNumOfSessions?: boolean;
+  enableResourcePresets?: boolean;
 }
 
 const ResourceAllocationFormItems: React.FC<
   ResourceAllocationFormItemsProps
-> = ({ enableNumOfSessions }) => {
+> = ({ enableNumOfSessions, enableResourcePresets }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -449,33 +450,35 @@ const ResourceAllocationFormItems: React.FC<
           }}
         />
       </Form.Item>
-      <Form.Item
-        label={t('resourcePreset.ResourcePresets')}
-        name="allocationPreset"
-        required
-        style={{ marginBottom: token.marginXS }}
-      >
-        <ResourcePresetSelect
-          onChange={(value, options) => {
-            const slots = _.pick(
-              JSON.parse(options?.preset?.resource_slots || '{}'),
-              _.keys(resourceSlots),
-            );
-            form.setFieldsValue({
-              resource: {
-                ...slots,
-                // transform to GB based on preset values
-                mem: iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.numberUnit,
-                shmem: iSizeToSize(
-                  (options?.preset?.shared_memory || 0) + 'b',
-                  'g',
-                  2,
-                )?.numberUnit,
-              },
-            });
-          }}
-        />
-      </Form.Item>
+      {enableResourcePresets ? (
+        <Form.Item
+          label={t('resourcePreset.ResourcePresets')}
+          name="allocationPreset"
+          required
+          style={{ marginBottom: token.marginXS }}
+        >
+          <ResourcePresetSelect
+            onChange={(value, options) => {
+              const slots = _.pick(
+                JSON.parse(options?.preset?.resource_slots || '{}'),
+                _.keys(resourceSlots),
+              );
+              form.setFieldsValue({
+                resource: {
+                  ...slots,
+                  // transform to GB based on preset values
+                  mem: iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.numberUnit,
+                  shmem: iSizeToSize(
+                    (options?.preset?.shared_memory || 0) + 'b',
+                    'g',
+                    2,
+                  )?.numberUnit,
+                },
+              });
+            }}
+          />
+        </Form.Item>
+      ) : null}
       <Card
         style={{
           marginBottom: token.margin,
@@ -958,6 +961,7 @@ const ResourceAllocationFormItems: React.FC<
                               ? 0.1
                               : 1
                           }
+                          disabled={currentImageAcceleratorLimits.length <= 0}
                           inputNumberProps={{
                             addonAfter: (
                               <Form.Item
