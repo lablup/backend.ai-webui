@@ -22,3 +22,13 @@ export async function createSession(
     await page.waitForTimeout(2000);
     await expect(page.getByText(sessionName)).toBeVisible();
 }
+
+export async function deleteSession(page: Page, email: string, sessionName: string,) {
+  await page.locator('#session').click();
+  await page.locator('#testSession-power').getByLabel('power_settings_new').click();
+  await page.getByRole('button', { name: 'Okay' }).click();
+  await page.waitForTimeout(5000);
+  await expect(page.getByText(sessionName)).toBeHidden();
+  await page.getByRole('tab', { name: 'Finished' }).click();
+  await expect(page.getByRole('row', { name: `1 ${email} ${sessionName}` }).locator('#vaadin-grid-cell-36')).toBeVisible();
+}
