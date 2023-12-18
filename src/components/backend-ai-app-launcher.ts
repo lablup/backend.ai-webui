@@ -1504,7 +1504,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   _copySSHConnectionExample(divSelector) {
     const divElement = this.shadowRoot?.querySelector(divSelector);
     if (divElement) {
-      const textToCopy = divElement.textContent;
+      const textToCopy = divElement.textContent.trim();
 
       if (textToCopy.length === 0) {
         this.notification.text = _text(
@@ -1770,7 +1770,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                     this.sshPort
                   } -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${
                     this.sshHost
-                  }<br/>
+                  }
                 </span>
                 <mwc-icon-button
                 class="sftp-session-connection-copy"
@@ -1784,7 +1784,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                     this.sshPort
                   } -rp /path/to/source work@${this.sshHost}:~/${
                     this.mountedVfolderName
-                  }<br/>
+                  }
                 </span>
                 <mwc-icon-button
                 class="sftp-session-connection-copy"
@@ -1798,7 +1798,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                     this.sshPort
                   }" /path/to/source/ work@${this.sshHost}:~/${
                     this.mountedVfolderName
-                  }/<br/>
+                  }/
                 </span>
                 <mwc-icon-button
                 class="sftp-session-connection-copy"
