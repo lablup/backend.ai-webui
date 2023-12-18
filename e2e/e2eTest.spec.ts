@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { login } from '../tests-examples/login.spec'
-import { createVfolder } from '../tests-examples/DataStoragePage.spec';
+import { createVfolder, deleteVfolder } from '../tests-examples/DataStoragePage.spec';
 import { createSession, deleteSession } from '../tests-examples/SessionStoragePage.spec';
 
 test('E2E test', async ({ page }) => {
@@ -9,4 +9,5 @@ test('E2E test', async ({ page }) => {
   await createVfolder(page, 'testvfolder')
   await createSession(page, 'Ubuntu 20.04 aarch64', 'testvfolder', 'testSession');
   await deleteSession(page, 'test@lablup.com', 'testSession')
+  await deleteVfolder(page, 'testvfolder')
 });
