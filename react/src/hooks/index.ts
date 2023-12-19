@@ -182,6 +182,7 @@ export const useBackendaiImageMetaData = () => {
         ''
       ).split(':');
 
+      // remove architecture string and split by '-'
       const tags = tag.split('@')[0].split('-');
       return { key, tags };
     } catch (error) {
