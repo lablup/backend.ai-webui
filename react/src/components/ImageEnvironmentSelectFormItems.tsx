@@ -1,7 +1,4 @@
-import {
-  useBackendaiImageMetaData,
-  useSuspendedBackendaiClient,
-} from '../hooks';
+import { useBackendaiImageMetaData } from '../hooks';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 // @ts-ignore
