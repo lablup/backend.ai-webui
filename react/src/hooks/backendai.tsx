@@ -214,14 +214,12 @@ export const useDarkMode = () => {
   const [isDarkMode, setIsDarkMode] = useLocalStorageState(
     'backendaiwebui.darkMode',
     {
-      defaultValue: false,
+      defaultValue: window.matchMedia('(prefers-color-scheme: dark)').matches,
     },
   );
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    setIsDarkMode(mediaQuery.matches);
-
     const handler = (event: any) => setIsDarkMode(event.matches);
     mediaQuery.addEventListener('change', handler);
 
