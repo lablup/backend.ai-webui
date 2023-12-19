@@ -217,14 +217,44 @@ export const useThemeMode = () => {
       defaultValue: 'system',
     },
   );
+  const [systemThemeMode, setSystemThemeMode] = useState(
+    themeMode === 'system' ? true : false,
+  );
 
   useEffect(() => {
     const handler = (event: any) => {
-      setThemeMode(event.detail);
+      if (event.detail === 'system') {
+        if (!window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          setThemeMode('light');
+        } else {
+          setThemeMode('dark');
+        }
+        setSystemThemeMode(true);
+      } else {
+        setThemeMode(event.detail);
+        setSystemThemeMode(false);
+      }
     };
     document.addEventListener('changeThemeMode', handler);
     return () => document.removeEventListener('changeThemeMode', handler);
   }, [themeMode, setThemeMode]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const systemHandler = (event: any) => {
+      if (event.detail === 'light' || event.detail === 'dark') {
+        setSystemThemeMode(false);
+      } else if (!event.matches) {
+        setThemeMode('light');
+      } else {
+        setThemeMode('dark');
+      }
+    };
+    if (systemThemeMode) {
+      mediaQuery.addEventListener('change', systemHandler);
+      return () => mediaQuery.removeEventListener('change', systemHandler);
+    }
+  }, [systemThemeMode, setThemeMode]);
 
   return [themeMode] as const;
 };
