@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { login } from '../tests-examples/login.spec'
+import { login } from '../tests-examples/login.spec';
 import { createVfolder, deleteVfolder } from '../tests-examples/DataStoragePage.spec';
 import { createSession, deleteSession } from '../tests-examples/SessionStoragePage.spec';
-import { createUser, deleteUser } from '../tests-examples/CredentialPage.spec'
+import { createUser, deleteUser } from '../tests-examples/CredentialPage.spec';
 
 test('E2E test', async ({ page }) => {
   await page.goto('http://localhost:9081/');

@@ -1,7 +1,6 @@
 import { expect } from '@playwright/test';
 
 export async function createUser(page: Page, email:string, userName: string, password: string) {
-  
   await page.locator('#credential').click();
   await page.waitForURL('**/credential');
   await page.getByRole('tab', { name: 'Users' }).click();
