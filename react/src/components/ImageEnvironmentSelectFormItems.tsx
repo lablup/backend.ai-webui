@@ -82,10 +82,6 @@ const isPrivateImage = (image: Image) => {
 const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
 > = ({ filter, showPrivate }) => {
-  // TODO: fix below without useSuspendedBackendaiClient
-  // Before fetching on relay environment, BAI client should be ready
-  useSuspendedBackendaiClient();
-
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
   Form.useWatch('environments', { form, preserve: true });
 
