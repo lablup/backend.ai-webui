@@ -3,7 +3,7 @@ import { RelayEnvironment } from '../RelayEnvironment';
 import rawFixAntCss from '../fix_antd.css?raw';
 import { useCustomThemeConfig } from '../helper/customThemeConfig';
 import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
-import { useDarkMode } from '../hooks/backendai';
+import { useThemeMode } from '../hooks/backendai';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { App, ConfigProvider, theme } from 'antd';
 import en_US from 'antd/locale/en_US';
@@ -131,7 +131,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   const cache = useMemo(() => createCache(), []);
   const [lang] = useCurrentLanguage();
   const themeConfig = useCustomThemeConfig();
-  const [isDarkMode] = useDarkMode();
+  const [themeMode] = useThemeMode();
 
   const componentValues = useMemo(() => {
     return {
@@ -163,15 +163,15 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                     locale={'ko' === lang ? ko_KR : en_US}
                     theme={{
                       token: {
-                        colorBorderSecondary: isDarkMode
-                          ? undefined
-                          : '#E1E1E2',
+                        colorBorderSecondary:
+                          themeMode === 'dark' ? undefined : '#E1E1E2',
                         ...themeConfig.token,
                       },
                       ...themeConfig,
-                      algorithm: isDarkMode
-                        ? theme.darkAlgorithm
-                        : theme.defaultAlgorithm,
+                      algorithm:
+                        themeMode === 'dark'
+                          ? theme.darkAlgorithm
+                          : theme.defaultAlgorithm,
                     }}
                   >
                     <App>

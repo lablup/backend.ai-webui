@@ -2,7 +2,7 @@ import {
   useBackendaiImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
-import { useDarkMode } from '../hooks/backendai';
+import { useThemeMode } from '../hooks/backendai';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 // @ts-ignore
@@ -95,7 +95,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const { t } = useTranslation();
   const [metadata, { getImageMeta }] = useBackendaiImageMetaData();
   const { token } = theme.useToken();
-  const [isDarkMode] = useDarkMode();
+  const [themeMode] = useThemeMode();
 
   const envSelectRef = useRef<RefSelectProps>(null);
   const versionSelectRef = useRef<RefSelectProps>(null);
@@ -388,7 +388,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             direction="row"
                             // set specific class name to handle flex wrap using css
                             className={
-                              isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
+                              themeMode === 'dark'
+                                ? 'tag-wrap-dark'
+                                : 'tag-wrap-light'
                             }
                             // style={{ flex: 1 }}
                             style={{
@@ -549,7 +551,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             direction="row"
                             // set specific class name to handle flex wrap using css
                             className={
-                              isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
+                              themeMode === 'dark'
+                                ? 'tag-wrap-dark'
+                                : 'tag-wrap-light'
                             }
                             style={{
                               marginLeft: token.marginXS,

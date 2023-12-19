@@ -210,21 +210,21 @@ export const useCurrentUserInfo = () => {
   ] as const;
 };
 
-export const useDarkMode = () => {
-  const [isDarkMode, setIsDarkMode] = useLocalStorageState(
-    'backendaiwebui.darkMode',
+export const useThemeMode = () => {
+  const [themeMode, setThemeMode] = useLocalStorageState(
+    'backendaiwebui.theme',
     {
-      defaultValue: window.matchMedia('(prefers-color-scheme: dark)').matches,
+      defaultValue: 'system',
     },
   );
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handler = (event: any) => setIsDarkMode(event.matches);
-    mediaQuery.addEventListener('change', handler);
+    const handler = (event: any) => {
+      setThemeMode(event.detail);
+    };
+    document.addEventListener('changeThemeMode', handler);
+    return () => document.removeEventListener('changeThemeMode', handler);
+  }, [themeMode, setThemeMode]);
 
-    return () => mediaQuery.removeEventListener('change', handler);
-  }, [setIsDarkMode]);
-
-  return [isDarkMode, setIsDarkMode] as const;
+  return [themeMode, setThemeMode] as const;
 };
