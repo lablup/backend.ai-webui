@@ -226,5 +226,5 @@ export const useThemeMode = () => {
     return () => document.removeEventListener('changeThemeMode', handler);
   }, [themeMode, setThemeMode]);
 
-  return [themeMode, setThemeMode] as const;
+  return [themeMode] as const;
 };
