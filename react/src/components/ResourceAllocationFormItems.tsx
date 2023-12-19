@@ -737,6 +737,7 @@ const ResourceAllocationFormItems: React.FC<
                               },
                             },
                           }}
+                          disabled={currentImageAcceleratorLimits.length === 0}
                           min={0}
                           max={
                             resourceLimits.accelerators[currentAcceleratorType]
