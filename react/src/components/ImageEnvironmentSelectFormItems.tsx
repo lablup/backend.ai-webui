@@ -199,20 +199,31 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   image?.name
                 );
               })
-              .map((images, environmentName) => ({
-                environmentName,
-                displayName:
-                  metadata?.imageInfo[environmentName.split('/')?.[1]]?.name ||
+              .map((images, environmentName) => {
+                const imageKey = environmentName.split('/')?.[1];
+                const displayName =
+                  imageKey && metadata?.imageInfo[imageKey]?.name;
+
+                return {
                   environmentName,
-                prefix: environmentName.split('/')?.[0],
-                images: images.sort((a, b) =>
-                  compareVersions(
-                    // latest version comes first
-                    b?.tag?.split('-')?.[0] ?? '',
-                    a?.tag?.split('-')?.[0] ?? '',
+                  displayName:
+                    displayName ||
+                    (_.last(environmentName.split('/')) as string),
+                  prefix: _.chain(environmentName)
+                    .split('/')
+                    .dropRight(1)
+                    .join('/')
+                    .value(),
+                  images: images.sort((a, b) =>
+                    compareVersions(
+                      // latest version comes first
+                      b?.tag?.split('-')?.[0] ?? '',
+                      a?.tag?.split('-')?.[0] ?? '',
+                    ),
                   ),
-                ),
-              }))
+                };
+              })
+
               .sortBy((item) => item.displayName)
               .value(),
           };
@@ -494,21 +505,20 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         ? _.map(requirements, (requirement, idx) => (
                             <DoubleTag
                               key={idx}
-                              values={
-                                metadata?.tagAlias[requirement]
-                                  ?.split(':')
-                                  .map((str) => {
-                                    extraFilterValues.push(str);
-                                    return (
-                                      <TextHighlighter
-                                        keyword={versionSearch}
-                                        key={str}
-                                      >
-                                        {str}
-                                      </TextHighlighter>
-                                    );
-                                  }) || requirements
-                              }
+                              values={_.split(
+                                metadata?.tagAlias[requirement] || requirement,
+                                ':',
+                              ).map((str) => {
+                                extraFilterValues.push(str);
+                                return (
+                                  <TextHighlighter
+                                    keyword={versionSearch}
+                                    key={str}
+                                  >
+                                    {str}
+                                  </TextHighlighter>
+                                );
+                              })}
                             />
                           ))
                         : '-';
