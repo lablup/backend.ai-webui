@@ -108,49 +108,4 @@ Cypress.Commands.add('deleteUser', (email: string) => {
     .find('vaadin-grid-cell-content')
     .filter(`:contains(${email})`)
     .should('exist');
-  /*
-  const userEmailInput = findShadowRoot(
-    'backend-ai-webui > backend-ai-credential-view > #id_user_email',
-  ).find('input');
-  const userNameInput = findShadowRoot(
-    'backend-ai-webui > backend-ai-credential-view > #id_user_name',
-  ).find('input');
-  const passwordInput = findShadowRoot(
-    'backend-ai-webui > backend-ai-credential-view > #id_user_password',
-  ).find('input');
-  const confirmPasswordInput = findShadowRoot(
-    'backend-ai-webui > backend-ai-credential-view > #id_user_confirm',
-  ).find('input');
-  const createUserButton = findShadowRoot(
-    'backend-ai-webui > backend-ai-credential-view',
-  ).find('#create-user-button');
-  addUserButton.click();
-  cy.wait(500);
-  userEmailInput.type(email);
-  cy.wait(500);
-  userNameInput.type(userName);
-  cy.wait(500);
-  passwordInput.type(password);
-  cy.wait(500);
-  confirmPasswordInput.type(password);
-  cy.wait(500);
-  createUserButton.click();
-  cy.wait(2000);
-  findShadowRoot(
-    'backend-ai-webui > backend-ai-credential-view > #active-user-list',
-  )
-    .find('vaadin-grid-cell-content')
-    .filter(`:contains(${email})`)
-    .should('exist');
-  findShadowRoot('backend-ai-webui > backend-ai-credential-view')
-    .find('#mdc-tab-2')
-    .click();
-  cy.wait(500);
-  findShadowRoot(
-    'backend-ai-webui > backend-ai-credential-view > backend-ai-credential-list',
-  )
-    .find('vaadin-grid-cell-content')
-    .filter(`:contains(${email})`)
-    .should('exist');
-    */
 });

@@ -6,17 +6,18 @@ export async function createSession(
   mountVfolderName: string,
   sessionName: string,) {
     await page.locator('#session').click();
-    await page.getByRole('heading', { name: 'more_horiz power_settings_new' }).getByLabel('power_settings_new').click();
-    await page.getByRole('combobox', { name: 'Version*' }).click();
-    await page.getByRole('option', { name: environmnet }).click();
-    await page.getByRole('textbox', { name: 'label' }).click();
-    await page.locator('backend-ai-session-view label').filter({ hasText: 'label' }).click();
-    await page.getByRole('textbox', { name: 'label' }).fill(sessionName);
-    await page.getByRole('button', { name: 'arrow_forward' }).click();
-    await page.locator('backend-ai-session-view').getByText(mountVfolderName).click();
-    await page.getByRole('button', { name: 'arrow_forward' }).click();
-    await page.getByRole('button', { name: 'arrow_forward' }).click();
-    await page.getByRole('button', { name: 'rowing' }).click();
+    await page.waitForURL('**/job');
+    await page.getByRole('tab', { name: 'Running' }).click();
+    await page.locator('backend-ai-session-view').locator('#launch-session').click();
+    await page.locator('backend-ai-session-view').locator('#version').click();
+    await page.locator('backend-ai-session-view').getByRole('option', { name: environmnet }).click();
+    await page.locator('backend-ai-session-view').locator('#session-name').click();
+    await page.locator('backend-ai-session-view').locator('#session-name label').fill(sessionName);
+    await page.locator('backend-ai-session-view').locator('#next-button').click();
+    await page.getByText(`${mountVfolderName} local:volume1`).click();
+    await page.locator('backend-ai-session-view').locator('#next-button').click();
+    await page.locator('backend-ai-session-view').locator('#next-button').click();
+    await page.locator('backend-ai-session-view').locator('#launch-button').click();
     await page.waitForTimeout(5000);
     await page.getByRole('button', { name: 'close' }).click();
     await page.waitForTimeout(2000);
@@ -25,8 +26,10 @@ export async function createSession(
 
 export async function deleteSession(page: Page, email: string, sessionName: string,) {
   await page.locator('#session').click();
-  await page.locator('#testSession-power').getByLabel('power_settings_new').click();
-  await page.getByRole('button', { name: 'Okay' }).click();
+  await page.waitForURL('**/job');
+  await page.getByRole('tab', { name: 'Running' }).click();
+  await page.locator(`#${sessionName}-power`).getByLabel('power_settings_new').click();
+  await page.locator(`#terminate-session-dialog`).locator('mwc-button[class="ok"]').click();
   await page.waitForTimeout(5000);
   await expect(page.getByText(sessionName)).toBeHidden();
   await page.getByRole('tab', { name: 'Finished' }).click();
