@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 
@@ -137,7 +138,7 @@ interface ImageMetadata {
   }[];
 }
 
-export const useBackendaiImageMetaData = () => {
+export const useBackendAIImageMetaData = () => {
   const { data: metadata } = useQuery({
     queryKey: 'backendai-metadata-for-suspense',
     queryFn: () => {
@@ -166,7 +167,7 @@ export const useBackendaiImageMetaData = () => {
   const getImageMeta = (imageName: string) => {
     // cr.backend.ai/multiarch/python:3.9-ubuntu20.04
     // key = python, tags = [3.9, ubuntu20.04]
-    if (!imageName) {
+    if (_.isEmpty(imageName)) {
       return {
         key: '',
         tags: [],
@@ -174,10 +175,22 @@ export const useBackendaiImageMetaData = () => {
     }
     const specs = imageName.split('/');
 
-    const [key, tag] = (specs[2] || specs[1]).split(':');
-    const tags = tag.split('-');
+    try {
+      const [key, tag] = (
+        specs[specs.length - 1] ||
+        specs[specs.length - 2] ||
+        ''
+      ).split(':');
 
-    return { key, tags };
+      // remove architecture string and split by '-'
+      const tags = tag.split('@')[0].split('-');
+      return { key, tags };
+    } catch (error) {
+      return {
+        key: '',
+        tags: [],
+      };
+    }
   };
 
   return [
