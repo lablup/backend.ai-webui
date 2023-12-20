@@ -347,8 +347,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           >
             <Switch></Switch>
           </Form.Item>
-          <VFolderTableFromItem />
-          {/* <Form.Item
+          {/* <VFolderTableFromItem /> */}
+          <Form.Item
             name={'vFolderName'}
             label={t('session.launcher.ModelStorageToMount')}
             rules={[
@@ -361,7 +361,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               filter={(vf) => vf.usage_mode === 'model'}
               autoSelectDefault
             />
-          </Form.Item> */}
+          </Form.Item>
           <SliderInputFormItem
             label={t('modelService.DesiredRoutingCount')}
             name="desiredRoutingCount"
