@@ -1,36 +1,25 @@
 import ResourceAllocationFormItems, {
-  RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   ResourceAllocationFormValue,
 } from '../components/ResourceAllocationFormItems';
-import VFolderTableFromItem, {
-  VFolderTableFormValues,
-} from '../components/VFolderTableFormItem';
-import {
-  baiSignedRequestWithPromise,
-  iSizeToSize,
-  compareNumberWithUnits,
-} from '../helper';
+import { baiSignedRequestWithPromise, compareNumberWithUnits } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentDomainValue } from '../hooks';
-import { useResourceSlots } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems, {
-  Image,
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import ResourceGroupSelect from './ResourceGroupSelect';
-import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import SliderInputFormItem from './SliderInputFormItem';
 import VFolderSelect from './VFolderSelect';
-import { Card, Form, Input, theme, Select, Switch, message } from 'antd';
+import { Card, Form, Input, theme, Switch, message } from 'antd';
 import _ from 'lodash';
-import React, { Suspense, useEffect } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import React, { Suspense } from 'react';
+import { useTranslation } from 'react-i18next';
 
+// TODO: set initial form values for later use
 // const INITIAL_FORM_VALUES: ServiceLauncherFormValue = {
-
 // }
 
 type ClusterMode = 'single-node' | 'multi-node';
@@ -110,72 +99,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
-  // const [modalText, setModalText] = useState("Content of the modal");
   const currentDomain = useCurrentDomainValue();
   const [form] = Form.useForm<ServiceLauncherFormValue>();
-  const [resourceSlots] = useResourceSlots();
-  const currentImage = Form.useWatch(['environments', 'image'], form); //TODO: type // form.getFieldValue(['environments', 'image']);
-  const currentAcceleratorType = form.getFieldValue([
-    'resource',
-    'acceleratorType',
-  ]);
-  const currentImageAcceleratorLimits = _.filter(
-    currentImage?.resource_limits,
-    (limit) =>
-      limit ? !_.includes(['cpu', 'mem', 'shmem'], limit.key) : false,
-  );
-  const currentImageAcceleratorTypeName: string =
-    // NOTE:
-    // filter from resourceSlots since resourceSlots and supported image could be non-identical.
-    // resourceSlots returns "all resources enable to allocate(including AI accelerator)"
-    // imageAcceleratorLimit returns "all resources that is supported in the selected image"
-    _.filter(currentImageAcceleratorLimits, (acceleratorInfo: any) =>
-      _.keys(resourceSlots).includes(acceleratorInfo?.key),
-    )[0]?.key || '';
-
-  const getLimitByAccelerator = (acceleratorName: string) => {
-    // FIXME: temporally add hard-coded number when config is undefined
-    let maxLimit = 8;
-    let minLimit = 0;
-
-    // get max
-    switch (acceleratorName) {
-      case 'cuda.device':
-      default:
-        maxLimit = baiClient._config.maxCUDADevicesPerContainer || maxLimit;
-        break;
-      case 'cuda.shares':
-        maxLimit = baiClient._config.maxCUDASharesPerContainer || maxLimit;
-        break;
-      case 'rocm.device':
-        maxLimit = baiClient._config.maxROCMDevicesPerContainer || maxLimit;
-        break;
-      case 'tpu.device':
-        maxLimit = baiClient._config.maxTPUDevicesPerContainer || maxLimit;
-        break;
-      case 'ipu.device':
-        maxLimit = baiClient._config.maxIPUDevicesPerContainer || maxLimit;
-        break;
-      case 'atom.device':
-        maxLimit = baiClient._config.maxATOMDevicesPerContainer || maxLimit;
-        break;
-      case 'warboy.device':
-        maxLimit = baiClient._config.maxWarboyDevicesPerContainer || maxLimit;
-        break;
-    }
-    // get min
-    minLimit = parseInt(
-      _.filter(
-        currentImageAcceleratorLimits,
-        (supportedAcceleratorInfo) =>
-          supportedAcceleratorInfo?.key === currentImageAcceleratorTypeName,
-      )[0]?.min as string,
-    );
-    return {
-      min: minLimit,
-      max: maxLimit,
-    };
-  };
 
   const mutationToCreateService = useTanMutation<
     unknown,
@@ -229,23 +154,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       });
     },
   });
-  // const scalingGroupList = use;
-  // modelStorageList: Record<string, any>[];
-  // environmentList: Record<string, any>[];
-  // name?: string;
-  // cpu: number | string;
-  // mem: number | string;
-  // npu?: number | string;
-  // shmem?: number | string;
 
   // Apply any operation after clicking OK button
   const handleOk = () => {
-    // setModalText("Lorem Ipsum");
-    // setConfirmLoading(true);
-    // // TODO: send request to start service to manager server
-    // setTimeout(() => {
-    //   setConfirmLoading(false);
-    // }, 2000);
     form
       .validateFields()
       .then((values) => {
@@ -277,7 +188,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
   // Apply any operation after clicking Cancel button
   const handleCancel = () => {
-    // console.log("Clicked cancel button");
     onRequestClose();
   };
 
@@ -298,7 +208,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           preserve={false}
           layout="vertical"
           labelCol={{ span: 12 }}
-          // initialValues={I}
+          // initialValues={} // TODO: set initial form values for later use
         >
           <Form.Item
             label={t('modelService.ServiceName')}
