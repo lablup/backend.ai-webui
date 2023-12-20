@@ -1396,7 +1396,8 @@
     "RoutingsCount": "Αριθμός δρομολογίων",
     "Active/Total": "Ενεργό/Σύνολο",
     "Public": "Δημόσιο",
-    "YouAreAboutToTerminate": "Πρόκειται να τερματίσετε"
+    "YouAreAboutToTerminate": "Πρόκειται να τερματίσετε",
+    "Owner": "Ιδιοκτήτης"
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",
@@ -1480,5 +1481,10 @@
     "CloneSuccess": "Η αίτηση κλωνοποίησης έχει σταλεί με επιτυχία.",
     "CloneInfo": "Θα κλωνοποιηθεί ως φάκελος τύπου χρήστη.",
     "category": "Κατηγορία"
+  },
+  "table": {
+    "SettingTable": "Ρύθμιση πίνακα",
+    "SelectColumnToDisplay": "Επιλέξτε για εμφάνιση στηλών",
+    "SearchTableColumn": "Αναζήτηση στηλών πίνακα"
   }
 }

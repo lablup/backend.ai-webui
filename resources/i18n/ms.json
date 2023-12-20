@@ -1436,7 +1436,8 @@
     "RoutingsCount": "Kiraan Laluan",
     "Active/Total": "Aktif/Jumlah",
     "Public": "Awam",
-    "YouAreAboutToTerminate": "Anda akan menamatkan perkhidmatan"
+    "YouAreAboutToTerminate": "Anda akan menamatkan perkhidmatan",
+    "Owner": "Pemilik"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",
@@ -1480,5 +1481,10 @@
     "CloneSuccess": "Permintaan klon telah berjaya dihantar.",
     "CloneInfo": "Ia akan diklonkan sebagai folder jenis pengguna anda.",
     "category": "kategori"
+  },
+  "table": {
+    "SelectColumnToDisplay": "Pilih untuk lajur untuk dipaparkan",
+    "SettingTable": "Tetapan Meja",
+    "SearchTableColumn": "Cari lajur jadual"
   }
 }

@@ -716,7 +716,8 @@
     "TokenGenerationFailed": "Tokenin luominen epäonnistui. yritä uudelleen.",
     "TrafficRatio": "Liikennesuhde",
     "YouAreAboutToTerminate": "Olet lopettamassa",
-    "resources": "Resurssit"
+    "resources": "Resurssit",
+    "Owner": "Omistaja"
   },
   "notification": {
     "Initializing": "Aloitetaan...",
@@ -1480,5 +1481,10 @@
     "StartCommand": "Käynnistä komento",
     "Task": "Tehtävä",
     "Version": "Versio"
+  },
+  "table": {
+    "SettingTable": "Kattaus",
+    "SelectColumnToDisplay": "Valitse näytettävät sarakkeet",
+    "SearchTableColumn": "Hae taulukon sarakkeita"
   }
 }

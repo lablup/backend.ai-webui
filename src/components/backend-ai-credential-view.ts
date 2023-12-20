@@ -81,6 +81,8 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({ type: Number }) selectAreaHeight;
   @property({ type: Boolean }) enableSessionLifetime = false;
   @property({ type: Boolean }) enableParsingStoragePermissions = false;
+  @property({ type: String }) activeUserInnerTab = 'active';
+  @property({ type: String }) activeCredentialInnerTab = 'active';
   @query('#active-credential-list')
   activeCredentialList!: BackendAICredentialList;
   @query('#inactive-credential-list')
@@ -761,15 +763,23 @@ export default class BackendAICredentialView extends BackendAIPage {
     (
       this.shadowRoot?.querySelector('#' + tab.title) as HTMLElement
     ).style.display = 'block';
-    let tabKeyword;
+    const tabKeyword = this._activeTab.substring(0, this._activeTab.length - 1); // to remove '-s'.
     let innerTab;
     // show inner tab(active) after selecting outer tab
     switch (this._activeTab) {
       case 'user-lists':
-      case 'credential-lists':
-        tabKeyword = this._activeTab.substring(0, this._activeTab.length - 1); // to remove '-s'.
         innerTab = this.shadowRoot?.querySelector(
-          'mwc-tab[title=active-' + tabKeyword + ']',
+          'mwc-tab[title=' + this.activeUserInnerTab + '-' + tabKeyword + ']',
+        );
+        this._showList(innerTab);
+        break;
+      case 'credential-lists':
+        innerTab = this.shadowRoot?.querySelector(
+          'mwc-tab[title=' +
+            this.activeCredentialInnerTab +
+            '-' +
+            tabKeyword +
+            ']',
         );
         this._showList(innerTab);
         break;
@@ -793,6 +803,12 @@ export default class BackendAICredentialView extends BackendAIPage {
     (
       this.shadowRoot?.querySelector('#' + list.title) as HTMLElement
     ).style.display = 'block';
+    const splitTitle = list.title.split('-');
+    if (splitTitle[1] == 'user') {
+      this.activeUserInnerTab = splitTitle[0];
+    } else {
+      this.activeCredentialInnerTab = splitTitle[0];
+    }
     const event = new CustomEvent('user-list-updated', {});
     this.shadowRoot?.querySelector('#' + list.title)?.dispatchEvent(event);
   }

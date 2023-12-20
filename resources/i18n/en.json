@@ -431,7 +431,8 @@
     "ServiceNameRule": "Only allow 4 to 24 characters of alphanumeric, underscore(_), hyphen(-), and period(.) and it must end with an alphanumeric character.",
     "FormValidationFailed": "Form validation failed",
     "resources": "Resources",
-    "Image": "Image"
+    "Image": "Image",
+    "Owner": "Owner"
   },
   "button": {
     "Cancel": "Cancel",
@@ -1446,6 +1447,11 @@
   "explorer": {
     "ValueRequired": "ValueRequired",
     "InputTooShort": "InputTooShort"
+  },
+  "table": {
+    "SettingTable": "Table Setting",
+    "SelectColumnToDisplay": "Select for columns to display",
+    "SearchTableColumn": "Search table columns"
   },
   "ErrorBoundary": {
     "title": "An error has occurred.",

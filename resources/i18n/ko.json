@@ -420,7 +420,8 @@
     "ServiceNameRule": "4~24자의 영문, 숫자, 밑줄(_), 하이픈(-), 마침표(.)만 허용하며, 영문으로 영문이나 숫자로 끝나야합니다.",
     "FormValidationFailed": "양식 유효성 검사 실패",
     "resources": "자원",
-    "Image": "이미지"
+    "Image": "이미지",
+    "Owner": "소유자"
   },
   "button": {
     "Cancel": "취소",
@@ -1480,5 +1481,10 @@
     "CloneAsFolder": "새 폴더로 복사",
     "CloneSuccess": "복사 요청이 성공적으로 보내졌습니다.",
     "CloneInfo": "새로운 사용자 폴더로 복사됩니다."
+  },
+  "table": {
+    "SettingTable": "테이블 설정",
+    "SearchTableColumn": "테이블 열 검색",
+    "SelectColumnToDisplay": "표시할 열 선택"
   }
 }

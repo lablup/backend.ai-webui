@@ -1396,7 +1396,8 @@
     "RoutingsCount": "Güzergah Sayısı",
     "Active/Total": "Aktif/Toplam",
     "Public": "Kamu",
-    "YouAreAboutToTerminate": "Sonlandırmak üzeresiniz"
+    "YouAreAboutToTerminate": "Sonlandırmak üzeresiniz",
+    "Owner": "Mal sahibi"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",
@@ -1480,5 +1481,10 @@
     "CloneSuccess": "Klonlama isteği başarıyla gönderildi.",
     "CloneInfo": "Kullanıcı tipi klasörünüz olarak klonlanacaktır.",
     "category": "Kategori"
+  },
+  "table": {
+    "SettingTable": "Tablo Ayarı",
+    "SelectColumnToDisplay": "Görüntülenecek sütunları seçin",
+    "SearchTableColumn": "Tablo sütunlarında arama yapın"
   }
 }

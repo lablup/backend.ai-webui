@@ -1396,7 +1396,8 @@
     "Active/Total": "アクティブ/全体",
     "Public": "公開",
     "YouAreAboutToTerminate": "以下のサービスを削除しようとします：",
-    "Image": "イメージ"
+    "Image": "イメージ",
+    "Owner": "所有者"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",
@@ -1480,5 +1481,10 @@
     "CloneSuccess": "クローン要求は正常に送信された。",
     "CloneInfo": "ユーザータイプのフォルダとしてクローンされます。",
     "category": "カテゴリー"
+  },
+  "table": {
+    "SettingTable": "テーブルセッティング",
+    "SelectColumnToDisplay": "表示する列を選択します",
+    "SearchTableColumn": "テーブルの列を検索する"
   }
 }

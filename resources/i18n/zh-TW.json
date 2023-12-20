@@ -1436,7 +1436,8 @@
     "Active/Total": "活动/总数",
     "Public": "公众",
     "YouAreAboutToTerminate": "您即将终止",
-    "Image": "图片"
+    "Image": "图片",
+    "Owner": "擁有者"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",
@@ -1480,5 +1481,10 @@
     "CloneSuccess": "克隆请求已成功发送。",
     "CloneInfo": "它将被克隆为用户类型文件夹。",
     "category": "類別"
+  },
+  "table": {
+    "SettingTable": "桌面設定",
+    "SelectColumnToDisplay": "選擇要顯示的列",
+    "SearchTableColumn": "搜尋表格列"
   }
 }

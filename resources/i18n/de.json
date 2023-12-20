@@ -1396,7 +1396,8 @@
     "RoutingsCount": "Routings zählen",
     "Active/Total": "Aktiv/Gesamt",
     "Public": "Öffentlich",
-    "YouAreAboutToTerminate": "Sie stehen kurz vor der Beendigung"
+    "YouAreAboutToTerminate": "Sie stehen kurz vor der Beendigung",
+    "Owner": "Eigentümer"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",
@@ -1480,5 +1481,10 @@
     "CloneSuccess": "Die Klonanfrage wurde erfolgreich gesendet.",
     "CloneInfo": "Er wird als Ihr Benutzertyp-Ordner geklont.",
     "category": "Kategorie"
+  },
+  "table": {
+    "SettingTable": "Sitzordnung bei Tisch",
+    "SelectColumnToDisplay": "Wählen Sie die anzuzeigenden Spalten aus",
+    "SearchTableColumn": "Tabellenspalten durchsuchen"
   }
 }

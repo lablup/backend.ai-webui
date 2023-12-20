@@ -1396,7 +1396,8 @@
     "RoutingsCount": "Conteggio delle rotte",
     "Active/Total": "Attivo/Totale",
     "Public": "Pubblico",
-    "YouAreAboutToTerminate": "State per terminare"
+    "YouAreAboutToTerminate": "State per terminare",
+    "Owner": "Proprietario"
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",
@@ -1480,5 +1481,10 @@
     "CloneSuccess": "La richiesta di clonazione è stata inviata con successo.",
     "CloneInfo": "Verrà clonata come cartella del tipo di utente.",
     "category": "Categoria"
+  },
+  "table": {
+    "SettingTable": "Impostazione della tabella",
+    "SelectColumnToDisplay": "Seleziona le colonne da visualizzare",
+    "SearchTableColumn": "Cerca colonne della tabella"
   }
 }
