@@ -367,43 +367,23 @@ const ResourceAllocationFormItems: React.FC<
       },
     });
 
-    if (currentImageAcceleratorLimits.length > 0) {
-      if (
-        _.find(
-          currentImageAcceleratorLimits,
-          (limit) =>
-            limit?.key === form.getFieldValue(['resource', 'acceleratorType']),
-        )
-      ) {
-        // if current selected accelerator type is supported in the selected image,
-        form.setFieldValue(
-          ['resource', 'accelerator'],
-          sliderMinMaxLimit[form.getFieldValue(['resource', 'acceleratorType'])]
-            .min,
-        );
-      } else {
-        // if current selected accelerator type is not supported in the selected image,
-        // change accelerator type to the first supported accelerator type.
-        const nextImageSelectorType: string | undefined | null = // NOTE:
-          // filter from resourceSlots since resourceSlots and supported image could be non-identical.
-          // resourceSlots returns "all resources enable to allocate(including AI accelerator)"
-          // imageAcceleratorLimit returns "all resources that is supported in the selected image"
-          _.filter(currentImageAcceleratorLimits, (acceleratorInfo: any) =>
-            _.keys(resourceSlots).includes(acceleratorInfo?.key),
-          )[0]?.key;
+    // change accelerator type to the first supported accelerator type.
+    const nextImageSelectorType: string = // NOTE:
+      // filter from resourceSlots since resourceSlots and supported image could be non-identical.
+      // resourceSlots returns "all resources enable to allocate(including AI accelerator)"
+      // imageAcceleratorLimit returns "all resources that is supported in the selected image"
+      _.filter(currentImageAcceleratorLimits, (acceleratorInfo: any) =>
+        _.keys(resourceSlots).includes(acceleratorInfo?.key),
+      )[0]?.key || '';
 
-        if (nextImageSelectorType) {
-          form.setFieldValue(
-            ['resource', 'accelerator'],
-            sliderMinMaxLimit[nextImageSelectorType].min,
-          );
-          form.setFieldValue(
-            ['resource', 'acceleratorType'],
-            nextImageSelectorType,
-          );
-        }
-      }
-    }
+    form.setFieldValue(
+      ['resource', 'accelerator'],
+      sliderMinMaxLimit[nextImageSelectorType]?.min || 0,
+    );
+    form.setFieldValue(['resource', 'acceleratorType'], {
+      value: nextImageSelectorType,
+      label: ACCELERATOR_UNIT_MAP[nextImageSelectorType] || 'UNIT',
+    });
 
     form.validateFields().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
