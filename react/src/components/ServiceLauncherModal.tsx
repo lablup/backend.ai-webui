@@ -132,20 +132,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     _.filter(currentImageAcceleratorLimits, (acceleratorInfo: any) =>
       _.keys(resourceSlots).includes(acceleratorInfo?.key),
     )[0]?.key || '';
-  const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
-
-  // change selected accelerator type according to currentImageAcceleratorTypeName
-  useEffect(() => {
-    form.setFieldValue(
-      ['resource', 'accelerator'],
-      getLimitByAccelerator(currentImageAcceleratorTypeName).min || 0,
-    );
-    form.setFieldValue(['resource', 'acceleratorType'], {
-      value: currentImageAcceleratorTypeName,
-      label: ACCELERATOR_UNIT_MAP[currentImageAcceleratorTypeName] || 'UNIT',
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentImage]);
 
   const getLimitByAccelerator = (acceleratorName: string) => {
     // FIXME: temporally add hard-coded number when config is undefined
