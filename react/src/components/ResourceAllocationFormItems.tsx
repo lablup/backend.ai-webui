@@ -886,10 +886,9 @@ const ResourceAllocationFormItems: React.FC<
                             />
                           ),
                         }}
-                        required
                         rules={[
                           {
-                            required: true,
+                            required: currentImageAcceleratorLimits.length > 0,
                           },
                           {
                             type: 'number',
