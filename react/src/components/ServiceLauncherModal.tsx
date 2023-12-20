@@ -100,8 +100,7 @@ interface SelectUIType {
 
 type ServiceLauncherFormValue = ServiceLauncherInput &
   ImageEnvironmentFormInput &
-  ResourceAllocationFormValue &
-  VFolderTableFormValues;
+  ResourceAllocationFormValue;
 
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   extraP,
@@ -208,8 +207,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         arch: values.environments.image?.architecture as string,
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
-        cluster_size: 1, // FIXME: hardcoded. change it with option later
-        cluster_mode: 'single-node', // FIXME: hardcoded. change it with option later
+        cluster_size: values.cluster_size,
+        cluster_mode: values.cluster_mode,
         open_to_public: values.openToPublic,
         config: {
           model: values.vFolderName,
@@ -217,9 +216,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           environ: {}, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {
-            cpu: values.resource.cpu,
-            mem: values.resource.mem + 'G',
-            // TODO: CHECK: Convert to rule??? Automatically increase shared memory to 1GiB
+            // FIXME: manually convert to string since server-side only allows [str,str] tuple
+            cpu: values.resource.cpu.toString(),
+            mem: values.resource.mem,
             ...(values.resource.accelerator > 0
               ? {
                   [values.resource.acceleratorType]:
@@ -394,182 +393,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             // }}
             />
             <ResourceAllocationFormItems />
-            {/* <Form.Item
-              noStyle
-              shouldUpdate={(prev, cur) =>
-                prev.environments?.image?.digest !==
-                cur.environments?.image?.digest
-              }
-            >
-              {({ getFieldValue }) => {
-                // TODO: change min/max based on selected images resource limit and current user limit
-                const currentImage: Image =
-                  getFieldValue('environments')?.image;
-
-                return (
-                  <>
-                    <SliderInputFormItem
-                      name={'cpu'}
-                      label={t('session.launcher.CPU')}
-                      tooltip={<Trans i18nKey={'session.launcher.DescCPU'} />}
-                      min={parseInt(
-                        _.find(
-                          currentImage?.resource_limits,
-                          (i) => i?.key === 'cpu',
-                        )?.min || '0',
-                      )}
-                      max={baiClient._config.maxCPUCoresPerContainer || 128}
-                      inputNumberProps={{
-                        addonAfter: t('session.launcher.Core'),
-                      }}
-                      required
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    />
-                    <SliderInputFormItem
-                      name={'mem'}
-                      label={t('session.launcher.Memory')}
-                      tooltip={
-                        <Trans i18nKey={'session.launcher.DescMemory'} />
-                      }
-                      max={baiClient._config.maxMemoryPerContainer || 1536}
-                      min={0}
-                      inputNumberProps={{
-                        addonAfter: 'GiB',
-                      }}
-                      step={0.25}
-                      required
-                      rules={[
-                        {
-                          required: true,
-                        },
-                        ({ getFieldValue }) => ({
-                          validator(_form, value) {
-                            const sizeGInfo = iSizeToSize(
-                              _.find(
-                                currentImage?.resource_limits,
-                                (i) => i?.key === 'mem',
-                              )?.min || '0B',
-                              'G',
-                            );
-
-                            if (
-                              sizeGInfo?.number &&
-                              sizeGInfo?.number > value
-                            ) {
-                              return Promise.reject(
-                                new Error(
-                                  t('session.launcher.MinMemory', {
-                                    size: sizeGInfo?.numberUnit,
-                                  }),
-                                ),
-                              );
-                            }
-                            return Promise.resolve();
-                          },
-                        }),
-                      ]}
-                    />
-                    <SliderInputFormItem
-                      name={'shmem'}
-                      label={t('session.launcher.SharedMemory')}
-                      tooltip={
-                        <Trans i18nKey={'session.launcher.DescSharedMemory'} />
-                      }
-                      max={baiClient._config.maxShmPerContainer || 8}
-                      min={0}
-                      step={0.25}
-                      inputNumberProps={{
-                        addonAfter: 'GiB',
-                      }}
-                      required
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    />
-                  </>
-                );
-              }}
-            </Form.Item>
-            <Form.Item
-              noStyle
-              shouldUpdate={(prev, cur) =>
-                prev.environments?.environment !== cur.environments?.environment
-              }
-            >
-              {() => {
-                return (
-                  <SliderInputFormItem
-                    name={['resource', 'accelerator']}
-                    label={t(`session.launcher.AIAccelerator`)}
-                    tooltip={
-                      <Trans i18nKey={'session.launcher.DescAIAccelerator'} />
-                    }
-                    sliderProps={
-                      {
-                        // FIXME: temporally comment out min value
-                        // marks: {
-                        //   0: 0,
-                        // },
-                      }
-                    }
-                    min={0}
-                    max={
-                      getLimitByAccelerator(currentImageAcceleratorTypeName).max
-                    }
-                    step={
-                      _.endsWith(currentAcceleratorType, 'shares') ? 0.1 : 1
-                    }
-                    disabled={currentImageAcceleratorLimits.length <= 0}
-                    inputNumberProps={{
-                      addonAfter: (
-                        <Form.Item
-                          noStyle
-                          name={['resource', 'acceleratorType']}
-                          initialValue={currentImageAcceleratorTypeName}
-                        >
-                          <Select
-                            disabled={currentImageAcceleratorLimits.length <= 0}
-                            suffixIcon={
-                              _.size(acceleratorSlots) > 1 ? undefined : null
-                            }
-                            open={
-                              _.size(acceleratorSlots) > 1 ? undefined : false
-                            }
-                            popupMatchSelectWidth={false}
-                            options={_.map(acceleratorSlots, (value, name) => {
-                              return {
-                                value: name,
-                                label: ACCELERATOR_UNIT_MAP[name] || 'UNIT',
-                                disabled:
-                                  currentImageAcceleratorLimits.length > 0 &&
-                                  !_.find(
-                                    currentImageAcceleratorLimits,
-                                    (limit) => {
-                                      return limit?.key === name;
-                                    },
-                                  ),
-                              };
-                            })}
-                          />
-                        </Form.Item>
-                      ),
-                    }}
-                    required
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  />
-                );
-              }}
-            </Form.Item> */}
           </Card>
         </Form>
       </Suspense>
