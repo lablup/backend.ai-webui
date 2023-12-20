@@ -240,6 +240,11 @@ type BackendAIConfig = {
   maxMemoryPerContainer: number;
   maxCUDADevicesPerContainer: number;
   maxCUDASharesPerContainer: number;
+  maxROCMDevicesPerContainer: number;
+  maxTPUDevicesPerContainer: number;
+  maxIPUDevicesPerContainer: number;
+  maxATOMDevicesPerContainer: number;
+  maxWarboyDevicesPerContainer: number;
   maxShmPerContainer: number;
   maxFileUploadSize: number;
   allow_image_list: string[];
