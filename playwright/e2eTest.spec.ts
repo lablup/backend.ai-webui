@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import { login } from './pages/LoginPage.spec';
 import { createVfolder, deleteVfolder } from './pages/DataStoragePage.spec';
-import { createSession, deleteSession } from './pages/SessionStoragePage.spec';
+import { createSession, deleteSession } from './pages/SessionPage.spec';
 import { createUser, deleteUser } from './pages/CredentialPage.spec';
 
 test('E2E test', async ({ page }) => {
