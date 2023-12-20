@@ -1,4 +1,4 @@
-import { useBackendaiImageMetaData } from '../hooks';
+import { useBackendAIImageMetaData } from '../hooks';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 // @ts-ignore
@@ -85,7 +85,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const [environmentSearch, setEnvironmentSearch] = useState('');
   const [versionSearch, setVersionSearch] = useState('');
   const { t } = useTranslation();
-  const [metadata, { getImageMeta }] = useBackendaiImageMetaData();
+  const [metadata, { getImageMeta }] = useBackendAIImageMetaData();
   const { token } = theme.useToken();
 
   const envSelectRef = useRef<RefSelectProps>(null);

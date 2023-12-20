@@ -138,7 +138,7 @@ interface ImageMetadata {
   }[];
 }
 
-export const useBackendaiImageMetaData = () => {
+export const useBackendAIImageMetaData = () => {
   const { data: metadata } = useQuery({
     queryKey: 'backendai-metadata-for-suspense',
     queryFn: () => {
