@@ -1,5 +1,6 @@
 import ResourceAllocationFormItems, {
   ResourceAllocationFormValue,
+  RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
 } from '../components/ResourceAllocationFormItems';
 import { baiSignedRequestWithPromise, compareNumberWithUnits } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -208,7 +209,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           preserve={false}
           layout="vertical"
           labelCol={{ span: 12 }}
-          // initialValues={} // TODO: set initial form values for later use
+          initialValues={{
+            ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+          }}
         >
           <Form.Item
             label={t('modelService.ServiceName')}
