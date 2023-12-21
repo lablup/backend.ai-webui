@@ -403,6 +403,8 @@ const ResourceAllocationFormItems: React.FC<
           );
         }
       }
+    } else {
+      form.setFieldValue(['resource', 'accelerator'], 0);
     }
 
     form.validateFields().catch(() => {});
@@ -953,6 +955,10 @@ const ResourceAllocationFormItems: React.FC<
                               formatter: (value = 0) => {
                                 return `${value} ${ACCELERATOR_UNIT_MAP[currentAcceleratorType]}`;
                               },
+                              open:
+                                currentImageAcceleratorLimits.length <= 0
+                                  ? false
+                                  : undefined,
                             },
                           }}
                           min={0}
@@ -973,6 +979,9 @@ const ResourceAllocationFormItems: React.FC<
                               >
                                 <Select
                                   tabIndex={-1}
+                                  disabled={
+                                    currentImageAcceleratorLimits.length <= 0
+                                  }
                                   suffixIcon={
                                     _.size(acceleratorSlots) > 1
                                       ? undefined
