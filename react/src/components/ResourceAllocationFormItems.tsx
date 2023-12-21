@@ -767,7 +767,6 @@ const ResourceAllocationFormItems: React.FC<
                               ? 0.1
                               : 1
                           }
-                          disabled={currentImageAcceleratorLimits.length <= 0}
                           inputNumberProps={{
                             addonAfter: (
                               <Form.Item
