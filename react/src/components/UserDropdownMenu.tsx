@@ -48,7 +48,7 @@ const UserDropdownMenu: React.FC = () => {
 
   const items: MenuProps['items'] = [
     {
-      label: userInfo.username,
+      label: <Typography.Text ellipsis>{userInfo.username}</Typography.Text>,
       key: 'userFullName',
       icon: <UserOutlined />,
       disabled: true,
@@ -58,7 +58,6 @@ const UserDropdownMenu: React.FC = () => {
         maxWidth: '15vw',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
-        textOverflow: 'ellipsis',
       },
     },
     {
@@ -150,11 +149,11 @@ const UserDropdownMenu: React.FC = () => {
           {screens.md && (
             <Typography.Text
               strong
+              ellipsis
               style={{
                 maxWidth: '15vw',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
-                textOverflow: 'ellipsis',
               }}
             >
               {userInfo.username}
