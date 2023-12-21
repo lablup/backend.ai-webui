@@ -407,7 +407,15 @@ const ResourceAllocationFormItems: React.FC<
       form.setFieldValue(['resource', 'accelerator'], 0);
     }
 
-    form.validateFields().catch(() => {});
+    form
+      .validateFields([
+        ['resource', 'cpu'],
+        ['resource', 'mem'],
+        ['resource', 'shmem'],
+        ['resource', 'accelerator'],
+        ['resource', 'acceleratorType'],
+      ])
+      .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImage]);
 
