@@ -1866,7 +1866,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   <p style="display:flex;align-items:center;white-space:pre-wrap;">${_tr(
                     'webui.menu.WelcomeMessage',
                     {
-                      userName: `<p class="user-name">fdsfmsdklfnsklfnlksnfkslnflkknllnnkl</p>`,
+                      userName: `<p class="user-name">${this._getUsername()}</p>`,
                     },
                   )}</p>
                 </div>
