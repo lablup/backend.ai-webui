@@ -367,23 +367,43 @@ const ResourceAllocationFormItems: React.FC<
       },
     });
 
-    // change accelerator type to the first supported accelerator type.
-    const nextImageSelectorType: string = // NOTE:
-      // filter from resourceSlots since resourceSlots and supported image could be non-identical.
-      // resourceSlots returns "all resources enable to allocate(including AI accelerator)"
-      // imageAcceleratorLimit returns "all resources that is supported in the selected image"
-      _.filter(currentImageAcceleratorLimits, (acceleratorInfo: any) =>
-        _.keys(resourceSlots).includes(acceleratorInfo?.key),
-      )[0]?.key || '';
+    if (currentImageAcceleratorLimits.length > 0) {
+      if (
+        _.find(
+          currentImageAcceleratorLimits,
+          (limit) =>
+            limit?.key === form.getFieldValue(['resource', 'acceleratorType']),
+        )
+      ) {
+        // if current selected accelerator type is supported in the selected image,
+        form.setFieldValue(
+          ['resource', 'accelerator'],
+          sliderMinMaxLimit[form.getFieldValue(['resource', 'acceleratorType'])]
+            .min,
+        );
+      } else {
+        // if current selected accelerator type is not supported in the selected image,
+        // change accelerator type to the first supported accelerator type.
+        const nextImageSelectorType: string | undefined | null = // NOTE:
+          // filter from resourceSlots since resourceSlots and supported image could be non-identical.
+          // resourceSlots returns "all resources enable to allocate(including AI accelerator)"
+          // imageAcceleratorLimit returns "all resources that is supported in the selected image"
+          _.filter(currentImageAcceleratorLimits, (acceleratorInfo: any) =>
+            _.keys(resourceSlots).includes(acceleratorInfo?.key),
+          )[0]?.key;
 
-    form.setFieldValue(
-      ['resource', 'accelerator'],
-      sliderMinMaxLimit[nextImageSelectorType]?.min || 0,
-    );
-    form.setFieldValue(['resource', 'acceleratorType'], {
-      value: nextImageSelectorType,
-      label: ACCELERATOR_UNIT_MAP[nextImageSelectorType] || 'UNIT',
-    });
+        if (nextImageSelectorType) {
+          form.setFieldValue(
+            ['resource', 'accelerator'],
+            sliderMinMaxLimit[nextImageSelectorType].min,
+          );
+          form.setFieldValue(
+            ['resource', 'acceleratorType'],
+            nextImageSelectorType,
+          );
+        }
+      }
+    }
 
     form.validateFields().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -876,17 +896,17 @@ const ResourceAllocationFormItems: React.FC<
                           {
                             type: 'number',
                             min:
-                              sliderMinMaxLimit[currentAcceleratorTypeName]
-                                ?.min || 0,
+                              sliderMinMaxLimit[currentAcceleratorType]?.min ||
+                              0,
                           },
                           {
                             warningOnly:
                               baiClient._config?.always_enqueue_compute_session,
                             validator: async (rule: any, value: number) => {
                               if (
-                                sliderMinMaxLimit[currentAcceleratorTypeName] &&
+                                sliderMinMaxLimit[currentAcceleratorType] &&
                                 value >
-                                  sliderMinMaxLimit[currentAcceleratorTypeName]
+                                  sliderMinMaxLimit[currentAcceleratorType]
                                     .remaining
                               ) {
                                 return Promise.reject(
@@ -900,7 +920,7 @@ const ResourceAllocationFormItems: React.FC<
                                         {
                                           amount:
                                             sliderMinMaxLimit[
-                                              currentAcceleratorTypeName
+                                              currentAcceleratorType
                                             ].remaining,
                                         },
                                       ),
@@ -917,34 +937,28 @@ const ResourceAllocationFormItems: React.FC<
                             marks: {
                               0: 0,
                               // remaining mark code should be located before max mark code to prevent overlapping when it is same value
-                              ...(sliderMinMaxLimit[currentAcceleratorTypeName]
+                              ...(sliderMinMaxLimit[currentAcceleratorType]
                                 ?.remaining
                                 ? {
-                                    [sliderMinMaxLimit[
-                                      currentAcceleratorTypeName
-                                    ].remaining]: {
+                                    [sliderMinMaxLimit[currentAcceleratorType]
+                                      .remaining]: {
                                       label: <RemainingMark />,
                                     },
                                   }
                                 : {}),
-                              [sliderMinMaxLimit[currentAcceleratorTypeName]
-                                ?.max]:
-                                sliderMinMaxLimit[currentAcceleratorTypeName]
-                                  ?.max,
+                              [sliderMinMaxLimit[currentAcceleratorType]?.max]:
+                                sliderMinMaxLimit[currentAcceleratorType]?.max,
                             },
                             tooltip: {
                               formatter: (value = 0) => {
-                                return `${value} ${ACCELERATOR_UNIT_MAP[currentAcceleratorTypeName]}`;
+                                return `${value} ${ACCELERATOR_UNIT_MAP[currentAcceleratorType]}`;
                               },
                             },
                           }}
                           min={0}
-                          max={
-                            sliderMinMaxLimit[currentAcceleratorTypeName]
-                              ?.max || 8
-                          }
+                          max={sliderMinMaxLimit[currentAcceleratorType]?.max}
                           step={
-                            _.endsWith(currentAcceleratorTypeName, 'shares') &&
+                            _.endsWith(currentAcceleratorType, 'shares') &&
                             form.getFieldValue('cluster_size') < 2
                               ? 0.1
                               : 1
