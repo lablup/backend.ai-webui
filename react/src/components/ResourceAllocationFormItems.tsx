@@ -906,7 +906,10 @@ const ResourceAllocationFormItems: React.FC<
                               baiClient._config?.always_enqueue_compute_session,
                             validator: async (rule: any, value: number) => {
                               if (
-                                sliderMinMaxLimit[currentAcceleratorType] &&
+                                _.isNumber(
+                                  sliderMinMaxLimit[currentAcceleratorType]
+                                    ?.remaining,
+                                ) &&
                                 value >
                                   sliderMinMaxLimit[currentAcceleratorType]
                                     .remaining
