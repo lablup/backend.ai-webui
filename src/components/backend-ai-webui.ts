@@ -51,7 +51,6 @@ import {
   registerTranslateConfig,
   translate as _t,
   use as setLanguage,
-  translateUnsafeHTML as _tr,
 } from 'lit-translate';
 import { customElement, property, query } from 'lit/decorators.js';
 import toml from 'markty-toml';
@@ -1863,10 +1862,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 </div>
                 <div slot="navigationIcon" class="vertical-line" style="height:20px;margin:0;"></div>
                 <div class="horizontal center layout" slot="title" id="welcome-message" style="font-size:12px;margin-left:10px;" class="draggable">
-                  <p style="display:flex;align-items:center;white-space:pre-wrap;">${_tr(
+                  <p class="user-name" style="display:flex;align-items:center;white-space:pre-wrap;">${_t(
                     'webui.menu.WelcomeMessage',
                     {
-                      userName: `<p class="user-name">${this._getUsername()}</p>`,
+                      userName: this._getUsername(),
                     },
                   )}</p>
                 </div>
