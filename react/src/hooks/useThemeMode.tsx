@@ -1,6 +1,7 @@
 import { useLocalStorageState } from 'ahooks';
 
 export const useThemeMode = () => {
+  /*todo: Implement useLocalStorage() custom hook*/
   const [themeMode, setThemeMode] = useLocalStorageState(
     'backendaiwebui.theme',
     {
@@ -9,9 +10,7 @@ export const useThemeMode = () => {
   );
 
   return {
-    themeMode,
-    onChangeThemeMode: (value: string) => {
-      setThemeMode(value);
-    },
+    themeMode: 'light',
+    setThemeMode,
   };
 };
