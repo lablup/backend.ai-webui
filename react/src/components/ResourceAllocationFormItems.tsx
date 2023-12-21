@@ -98,7 +98,7 @@ const ResourceAllocationFormItems: React.FC<
     form,
     preserve: true,
   });
-  const { currentImageMinM, remaining, resourceLimits } =
+  const [{ currentImageMinM, remaining, resourceLimits }] =
     useResourceLimitAndRemaining({
       currentProjectName: currentProject.name,
       currentResourceGroup: currentResourceGroup,

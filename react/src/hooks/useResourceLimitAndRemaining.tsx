@@ -93,7 +93,11 @@ export const useResourceLimitAndRemaining = ({
   const [resourceSlots] = useResourceSlots();
   const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
 
-  const { data: checkPresetInfo } = useTanQuery<ResourceAllocation>({
+  const {
+    data: checkPresetInfo,
+    refetch,
+    isRefetching,
+  } = useTanQuery<ResourceAllocation>({
     queryKey: ['check-resets', currentProjectName, currentResourceGroup],
     queryFn: () => {
       if (currentResourceGroup) {
@@ -315,12 +319,18 @@ export const useResourceLimitAndRemaining = ({
       ]) ?? Number.MAX_SAFE_INTEGER,
   };
 
-  return {
-    resourceGroupResourceSize,
-    resourceLimits,
-    remaining,
-    currentImageMinM,
-  };
+  return [
+    {
+      resourceGroupResourceSize,
+      resourceLimits,
+      remaining,
+      currentImageMinM,
+      isRefetching,
+    },
+    {
+      refetch,
+    },
+  ] as const;
 };
 
 const limitParser = (limit: string | undefined) => {
