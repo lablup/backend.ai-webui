@@ -1,4 +1,4 @@
-import { useBackendaiImageMetaData } from '../hooks';
+import { useBackendAIImageMetaData } from '../hooks';
 import React from 'react';
 
 const SessionKernelTag: React.FC<{
@@ -8,7 +8,7 @@ const SessionKernelTag: React.FC<{
 }> = ({ image, style = {} }, bordered) => {
   image = image || '';
   const [, { getImageAliasName, getBaseVersion, getBaseImage }] =
-    useBackendaiImageMetaData();
+    useBackendAIImageMetaData();
 
   // const sessionTags = useMemo(() => {
   //   const tags = [];
