@@ -64,7 +64,8 @@
       "FastTrack": "FastTrack",
       "Data&Model": "Data",
       "InvalidBlankPassword": "Masukkan kata sandi Anda",
-      "InvalidBlankEmail": "Masukkan email Anda"
+      "InvalidBlankEmail": "Masukkan email Anda",
+      "DisMatchUserEmail": "Email Pengguna tidak cocok"
     },
     "YouAreOffline": "Anda sekarang offline",
     "YouAreOnline": "Anda sekarang online",

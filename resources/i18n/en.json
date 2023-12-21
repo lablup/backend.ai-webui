@@ -64,7 +64,8 @@
       "FastTrack": "FastTrack",
       "Data&Model": "Data & Model",
       "InvalidBlankPassword": "Enter your password",
-      "InvalidBlankEmail": "Enter your e-mail"
+      "InvalidBlankEmail": "Enter your e-mail",
+      "DisMatchUserEmail": "User E-mail does not match"
     },
     "YouAreOffline": "You are now offline",
     "YouAreOnline": "You are now online",

@@ -64,7 +64,8 @@
       "FastTrack": "FastTrack",
       "Data&Model": "数据",
       "InvalidBlankPassword": "输入您的密码",
-      "InvalidBlankEmail": "输入你的电子邮箱"
+      "InvalidBlankEmail": "输入你的电子邮箱",
+      "DisMatchUserEmail": "用户电子邮件不匹配"
     },
     "YouAreOffline": "您现在离线",
     "YouAreOnline": "您现在在线",

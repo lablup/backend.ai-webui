@@ -64,7 +64,8 @@
       "FastTrack": "FastTrack",
       "Data&Model": "Данные",
       "InvalidBlankPassword": "Введите ваш пароль",
-      "InvalidBlankEmail": "Введите адрес электронной почты"
+      "InvalidBlankEmail": "Введите адрес электронной почты",
+      "DisMatchUserEmail": "Электронная почта пользователя не совпадает"
     },
     "YouAreOffline": "Вы сейчас не в сети",
     "YouAreOnline": "Вы сейчас в сети",

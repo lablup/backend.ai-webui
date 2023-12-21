@@ -64,7 +64,8 @@
       "FastTrack": "FastTrack",
       "Data&Model": "Data",
       "InvalidBlankPassword": "Masukkan kata laluan anda",
-      "InvalidBlankEmail": "Masukkan emel anda"
+      "InvalidBlankEmail": "Masukkan emel anda",
+      "DisMatchUserEmail": "E-mel Pengguna tidak sepadan"
     },
     "YouAreOffline": "Anda kini berada di luar talian",
     "YouAreOnline": "Anda kini dalam talian",

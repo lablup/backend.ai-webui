@@ -64,7 +64,8 @@
       "FastTrack": "FastTrack",
       "Data&Model": "Veri",
       "InvalidBlankPassword": "Şifrenizi girin",
-      "InvalidBlankEmail": "E-postanızı giriniz"
+      "InvalidBlankEmail": "E-postanızı giriniz",
+      "DisMatchUserEmail": "Kullanıcı E-postası eşleşmiyor"
     },
     "YouAreOffline": "Şu anda çevrimdışısın",
     "YouAreOnline": "artık çevrimiçisin",
