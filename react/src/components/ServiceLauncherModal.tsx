@@ -78,16 +78,6 @@ interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   openToPublic: boolean;
 }
 
-interface AIAccelerator {
-  accelerator: number;
-  acceleratorType: SelectUIType;
-}
-
-interface SelectUIType {
-  value: string;
-  label: string;
-}
-
 type ServiceLauncherFormValue = ServiceLauncherInput &
   ImageEnvironmentFormInput &
   ResourceAllocationFormValue;

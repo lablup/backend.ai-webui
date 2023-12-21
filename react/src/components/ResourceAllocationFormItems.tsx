@@ -884,9 +884,6 @@ const ResourceAllocationFormItems: React.FC<
                       'resource',
                       'acceleratorType',
                     ]);
-                    // FIXME: currentAcceleratorType is object {value: number, label: string}, not string
-                    const currentAcceleratorTypeName =
-                      currentAcceleratorType?.value || 'cuda.device';
                     return (
                       <Form.Item
                         name={['resource', 'accelerator']}
