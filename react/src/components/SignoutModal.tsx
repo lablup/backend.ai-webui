@@ -59,12 +59,18 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
         onOk={handleOk}
         okText={t('login.LeaveService')}
         okButtonProps={{ danger: true }}
+        confirmLoading={mutationToSignout.isLoading}
         onCancel={() => {
           onRequestClose();
         }}
         {...modalProps}
       >
-        <Form form={form} layout="vertical" labelCol={{ span: 6 }}>
+        <Form
+          form={form}
+          layout="vertical"
+          labelCol={{ span: 6 }}
+          disabled={mutationToSignout.isLoading}
+        >
           <Form.Item name="alert">
             <Alert message={t('login.DescConfirmLeave')} type="warning" />
           </Form.Item>
