@@ -195,7 +195,7 @@ export const BackendAIWebUIStyles = [
     }
 
     .user-name {
-      max-width: 10vw;
+      max-width: 15vw;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
