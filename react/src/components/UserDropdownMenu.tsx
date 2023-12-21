@@ -49,16 +49,13 @@ const UserDropdownMenu: React.FC = () => {
 
   const items: MenuProps['items'] = [
     {
-      label: <Typography.Text ellipsis>{userInfo.username}</Typography.Text>,
+      label: userInfo.username,
       key: 'userFullName',
       icon: <UserOutlined />,
       disabled: true,
       style: {
         color: token.colorText,
         cursor: 'default',
-        maxWidth: '15vw',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
       },
     },
     {
@@ -145,23 +142,23 @@ const UserDropdownMenu: React.FC = () => {
         trigger={['click']}
         open={debouncedOpenToFixDropdownMenu}
         onOpenChange={(v) => setOpen(v)}
+        overlayStyle={{
+          maxWidth: 300,
+        }}
       >
-        <Flex direction="row" gap="sm" style={{ cursor: 'pointer' }}>
+        <Flex
+          direction="row"
+          gap="sm"
+          style={{ cursor: 'pointer', maxWidth: '15vw' }}
+        >
           {screens.md && (
-            <span style={{ maxWidth: '15vw' }}>
-              <Typography.Text
-                strong
-                ellipsis
-                style={{
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                }}
-              >
-                {userInfo.username}
-              </Typography.Text>
-            </span>
+            <Typography.Text strong ellipsis>
+              {userInfo.username}
+            </Typography.Text>
           )}
-          <Avatar icon={<UserOutlined />} />
+          <Flex>
+            <Avatar size={'default'} icon={<UserOutlined />} />
+          </Flex>
         </Flex>
       </Dropdown>
     </>
