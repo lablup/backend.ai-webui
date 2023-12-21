@@ -1,7 +1,7 @@
 import { ThemeConfig } from 'antd';
 import { useEffect, useState } from 'react';
 
-let _customTheme: ThemeConfig;
+let _customTheme: { light: ThemeConfig; dark: ThemeConfig };
 
 export const loadCustomThemeConfig = () => {
   fetch('resources/theme.json')
