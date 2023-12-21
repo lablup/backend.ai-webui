@@ -14,12 +14,13 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons';
 import { useDebounce } from 'ahooks';
-import { Avatar, Dropdown, Grid, MenuProps, Typography } from 'antd';
+import { Avatar, Dropdown, Grid, MenuProps, Typography, theme } from 'antd';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const UserDropdownMenu: React.FC = () => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { dispatchEvent } = useWebComponentInfo();
   const baiClient = useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
@@ -53,7 +54,7 @@ const UserDropdownMenu: React.FC = () => {
       icon: <UserOutlined />,
       disabled: true,
       style: {
-        color: '#1f1f1f',
+        color: token.colorText,
         cursor: 'default',
         maxWidth: '15vw',
         whiteSpace: 'nowrap',
