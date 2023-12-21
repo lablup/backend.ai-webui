@@ -2,7 +2,6 @@
 src/lib/
 !/src
 !/react
-!/cypress
 !/playwright
 **/__generated__/*.graphql.ts
 *.graphql
