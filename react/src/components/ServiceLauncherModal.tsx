@@ -200,6 +200,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           layout="vertical"
           labelCol={{ span: 12 }}
           initialValues={{
+            desiredRoutingCount: 1,
             ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
           }}
         >
