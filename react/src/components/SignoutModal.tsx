@@ -52,12 +52,12 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
   return (
     <>
       <BAIModal
-        title={t('webui.menu.LeaveService')}
+        title={t('login.LeaveService')}
         centered
         width={450}
         open={open}
         onOk={handleOk}
-        okText={t('webui.menu.LeaveService')}
+        okText={t('login.LeaveService')}
         okButtonProps={{ danger: true }}
         onCancel={() => {
           onRequestClose();
