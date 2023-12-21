@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "ようこそ、",
-      "WelcomeMessage_2": ".",
+      "WelcomeMessage": "ようこそ、{{ userName }}.",
       "Summary": "要約",
       "Sessions": "セッション",
       "Import&Run": "インポートして実行",

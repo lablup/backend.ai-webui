@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Hoşgeldiniz,",
-      "WelcomeMessage_2": " .",
+      "WelcomeMessage": "Hoş geldiniz, {{ userName }}.",
       "Summary": "Özet",
       "Sessions": "Oturumlar",
       "Import&Run": "İçe Aktar ve Çalıştır",

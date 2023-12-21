@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "환영합니다. ",
-      "WelcomeMessage_2": "님",
+      "WelcomeMessage": "환영합니다. {{ userName }}님",
       "Summary": "요약",
       "Sessions": "세션",
       "Serving": "모델 서빙",

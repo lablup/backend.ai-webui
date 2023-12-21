@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Тавтай морилно уу,",
-      "WelcomeMessage_2": " .",
+      "WelcomeMessage": "Тавтай морилно уу, {{ userName }}.",
       "Summary": "Хураангуй",
       "Sessions": "Session-үүд",
       "Import&Run": "Импортлох & ажиллуулах",
