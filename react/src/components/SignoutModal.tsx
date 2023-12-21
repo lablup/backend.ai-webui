@@ -79,6 +79,10 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
                     return Promise.reject(
                       new Error(t('webui.menu.InvalidBlankEmail')),
                     );
+                  } else if (value !== baiClient.email) {
+                    return Promise.reject(
+                      new Error(t('webui.menu.DisMatchUserEmail')),
+                    );
                   }
                   return Promise.resolve();
                 },
