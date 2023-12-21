@@ -1812,6 +1812,16 @@ export default class BackendAILogin extends BackendAIPage {
           this.maxCUDADevicesPerContainer;
         globalThis.backendaiclient._config.maxCUDASharesPerContainer =
           this.maxCUDASharesPerContainer;
+        globalThis.backendaiclient._config.maxROCMDevicesPerContainer =
+          this.maxROCMDevicesPerContainer;
+        globalThis.backendaiclient._config.maxTPUDevicesPerContainer =
+          this.maxTPUDevicesPerContainer;
+        globalThis.backendaiclient._config.maxIPUDevicesPerContainer =
+          this.maxIPUDevicesPerContainer;
+        globalThis.backendaiclient._config.maxATOMDevicesPerContainer =
+          this.maxATOMDevicesPerContainer;
+        globalThis.backendaiclient._config.maxWarboyDevicesPerContainer =
+          this.maxWarboyDevicesPerContainer;
         globalThis.backendaiclient._config.maxShmPerContainer =
           this.maxShmPerContainer;
         globalThis.backendaiclient._config.maxFileUploadSize =

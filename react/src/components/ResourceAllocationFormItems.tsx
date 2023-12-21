@@ -75,11 +75,12 @@ const limitParser = (limit: string | undefined) => {
 
 interface ResourceAllocationFormItemsProps {
   enableNumOfSessions?: boolean;
+  enableResourcePresets?: boolean;
 }
 
 const ResourceAllocationFormItems: React.FC<
   ResourceAllocationFormItemsProps
-> = ({ enableNumOfSessions }) => {
+> = ({ enableNumOfSessions, enableResourcePresets }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -402,9 +403,19 @@ const ResourceAllocationFormItems: React.FC<
           );
         }
       }
+    } else {
+      form.setFieldValue(['resource', 'accelerator'], 0);
     }
 
-    form.validateFields().catch(() => {});
+    form
+      .validateFields([
+        ['resource', 'cpu'],
+        ['resource', 'mem'],
+        ['resource', 'shmem'],
+        ['resource', 'accelerator'],
+        ['resource', 'acceleratorType'],
+      ])
+      .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImage]);
 
@@ -449,33 +460,35 @@ const ResourceAllocationFormItems: React.FC<
           }}
         />
       </Form.Item>
-      <Form.Item
-        label={t('resourcePreset.ResourcePresets')}
-        name="allocationPreset"
-        required
-        style={{ marginBottom: token.marginXS }}
-      >
-        <ResourcePresetSelect
-          onChange={(value, options) => {
-            const slots = _.pick(
-              JSON.parse(options?.preset?.resource_slots || '{}'),
-              _.keys(resourceSlots),
-            );
-            form.setFieldsValue({
-              resource: {
-                ...slots,
-                // transform to GB based on preset values
-                mem: iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.numberUnit,
-                shmem: iSizeToSize(
-                  (options?.preset?.shared_memory || 0) + 'b',
-                  'g',
-                  2,
-                )?.numberUnit,
-              },
-            });
-          }}
-        />
-      </Form.Item>
+      {enableResourcePresets ? (
+        <Form.Item
+          label={t('resourcePreset.ResourcePresets')}
+          name="allocationPreset"
+          required
+          style={{ marginBottom: token.marginXS }}
+        >
+          <ResourcePresetSelect
+            onChange={(value, options) => {
+              const slots = _.pick(
+                JSON.parse(options?.preset?.resource_slots || '{}'),
+                _.keys(resourceSlots),
+              );
+              form.setFieldsValue({
+                resource: {
+                  ...slots,
+                  // transform to GB based on preset values
+                  mem: iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.numberUnit,
+                  shmem: iSizeToSize(
+                    (options?.preset?.shared_memory || 0) + 'b',
+                    'g',
+                    2,
+                  )?.numberUnit,
+                },
+              });
+            }}
+          />
+        </Form.Item>
+      ) : null}
       <Card
         style={{
           marginBottom: token.margin,
@@ -883,10 +896,9 @@ const ResourceAllocationFormItems: React.FC<
                             />
                           ),
                         }}
-                        required
                         rules={[
                           {
-                            required: true,
+                            required: currentImageAcceleratorLimits.length > 0,
                           },
                           {
                             type: 'number',
@@ -899,7 +911,10 @@ const ResourceAllocationFormItems: React.FC<
                               baiClient._config?.always_enqueue_compute_session,
                             validator: async (rule: any, value: number) => {
                               if (
-                                sliderMinMaxLimit[currentAcceleratorType] &&
+                                _.isNumber(
+                                  sliderMinMaxLimit[currentAcceleratorType]
+                                    ?.remaining,
+                                ) &&
                                 value >
                                   sliderMinMaxLimit[currentAcceleratorType]
                                     .remaining
@@ -948,6 +963,10 @@ const ResourceAllocationFormItems: React.FC<
                               formatter: (value = 0) => {
                                 return `${value} ${ACCELERATOR_UNIT_MAP[currentAcceleratorType]}`;
                               },
+                              open:
+                                currentImageAcceleratorLimits.length <= 0
+                                  ? false
+                                  : undefined,
                             },
                           }}
                           min={0}
@@ -958,6 +977,7 @@ const ResourceAllocationFormItems: React.FC<
                               ? 0.1
                               : 1
                           }
+                          disabled={currentImageAcceleratorLimits.length <= 0}
                           inputNumberProps={{
                             addonAfter: (
                               <Form.Item
@@ -967,6 +987,9 @@ const ResourceAllocationFormItems: React.FC<
                               >
                                 <Select
                                   tabIndex={-1}
+                                  disabled={
+                                    currentImageAcceleratorLimits.length <= 0
+                                  }
                                   suffixIcon={
                                     _.size(acceleratorSlots) > 1
                                       ? undefined
