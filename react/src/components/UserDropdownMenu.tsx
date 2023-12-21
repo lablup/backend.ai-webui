@@ -148,17 +148,18 @@ const UserDropdownMenu: React.FC = () => {
       >
         <Flex direction="row" gap="sm" style={{ cursor: 'pointer' }}>
           {screens.md && (
-            <Typography.Text
-              strong
-              ellipsis
-              style={{
-                maxWidth: '15vw',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-              }}
-            >
-              {userInfo.username}
-            </Typography.Text>
+            <span style={{ maxWidth: '15vw' }}>
+              <Typography.Text
+                strong
+                ellipsis
+                style={{
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                }}
+              >
+                {userInfo.username}
+              </Typography.Text>
+            </span>
           )}
           <Avatar icon={<UserOutlined />} />
         </Flex>
