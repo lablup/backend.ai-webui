@@ -7,7 +7,11 @@ export const loadCustomThemeConfig = () => {
   fetch('resources/theme.json')
     .then((response) => response.json())
     .then((theme) => {
-      _customTheme = theme;
+      if (!theme.light) {
+        _customTheme = { light: theme, dark: theme };
+      } else {
+        _customTheme = theme;
+      }
       document.dispatchEvent(new CustomEvent('custom-theme-loaded'));
     });
 };
