@@ -49,14 +49,13 @@ const UserDropdownMenu: React.FC = () => {
 
   const items: MenuProps['items'] = [
     {
-      label: userInfo.username,
+      label: <Typography.Text>{userInfo.username}</Typography.Text>,
       key: 'userFullName',
       icon: <UserOutlined />,
       disabled: true,
       style: {
         color: token.colorText,
         cursor: 'default',
-        overflow: 'hidden',
       },
     },
     {
