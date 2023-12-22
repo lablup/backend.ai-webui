@@ -24,8 +24,6 @@ import '@material/mwc-select';
 import { css, CSSResultGroup, html } from 'lit';
 import { get as _text, translate as _t } from 'lit-translate';
 import { customElement, property, query } from 'lit/decorators.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { marked } from 'marked';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -82,7 +80,6 @@ export default class BackendAISummary extends BackendAIPage {
   @property({ type: Number }) atom_used = 0;
   @property({ type: Object }) notification = Object();
   @property({ type: Object }) resourcePolicy;
-  @property({ type: String }) announcement = '';
   @property({ type: Object }) invitations = Object();
   @property({ type: Object }) appDownloadMap;
   @property({ type: String }) appDownloadUrl;
@@ -165,20 +162,6 @@ export default class BackendAISummary extends BackendAIPage {
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-theme-on-primary: var(--general-button-color);
           --mdc-typography-font-family: var(--general-font-family);
-        }
-
-        .notice-ticker {
-          margin-left: 15px;
-          font-size: 13px;
-          font-weight: 400;
-          max-height: 55px;
-          max-width: 1000px;
-          align-items: center;
-          overflow: auto;
-        }
-
-        .notice-ticker lablup-shields {
-          margin-right: 15px;
         }
 
         #session-launcher {
@@ -295,19 +278,6 @@ export default class BackendAISummary extends BackendAIPage {
           --card-background-color: var(--general-sidepanel-color);
         }
 
-        @media screen and (max-width: 899px) {
-          .notice-ticker {
-            justify-content: left !important;
-          }
-        }
-
-        @media screen and (max-width: 850px) {
-          .notice-ticker {
-            margin-left: 0px;
-            width: auto;
-          }
-        }
-
         @media screen and (max-width: 750px) {
           lablup-activity-panel.footer-menu > div > a > div > span {
             text-align: left;
@@ -322,21 +292,6 @@ export default class BackendAISummary extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
     this.update_checker = this.shadowRoot?.querySelector('#update-checker');
     this._getUserOS();
-    if (
-      typeof globalThis.backendaiclient === 'undefined' ||
-      globalThis.backendaiclient === null ||
-      globalThis.backendaiclient.ready === false
-    ) {
-      document.addEventListener(
-        'backend-ai-connected',
-        () => {
-          this._readAnnouncement();
-        },
-        true,
-      );
-    } else {
-      this._readAnnouncement();
-    }
   }
 
   _getUserOS() {
@@ -405,22 +360,6 @@ export default class BackendAISummary extends BackendAIPage {
       // let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
       // document.dispatchEvent(event);
     }
-  }
-
-  _readAnnouncement() {
-    if (!this.activeConnected) {
-      return;
-    }
-    globalThis.backendaiclient.service
-      .get_announcement()
-      .then((res) => {
-        if ('message' in res) {
-          this.announcement = marked(res.message);
-        }
-      })
-      .catch((err) => {
-        return;
-      });
   }
 
   _toInt(value: number) {
@@ -549,19 +488,6 @@ export default class BackendAISummary extends BackendAIPage {
       <link rel="stylesheet" href="/resources/fonts/font-awesome-all.min.css" />
       <link rel="stylesheet" href="resources/custom.css" />
       <div class="item" elevation="1" class="vertical layout center wrap flex">
-        ${this.announcement != ''
-          ? html`
-              <div class="notice-ticker horizontal layout wrap flex">
-                <lablup-shields
-                  app=""
-                  color="red"
-                  description="Notice"
-                  ui="round"
-                ></lablup-shields>
-                <div slot="message">${unsafeHTML(this.announcement)}</div>
-              </div>
-            `
-          : html``}
         <backend-ai-react-announcement-alert></backend-ai-react-announcement-alert>
         <div class="horizontal wrap layout">
           <lablup-activity-panel
@@ -632,18 +558,6 @@ export default class BackendAISummary extends BackendAIPage {
             height="500"
           ></backend-ai-resource-panel>
           <div class="horizontal wrap layout">
-            <lablup-activity-panel
-              title="${_t('summary.Announcement')}"
-              elevation="1"
-              horizontalsize="2x"
-              height="245"
-            >
-              <div slot="message" style="max-height:150px; overflow:scroll">
-                ${this.announcement !== ''
-                  ? unsafeHTML(this.announcement)
-                  : _t('summary.NoAnnouncement')}
-              </div>
-            </lablup-activity-panel>
             <lablup-activity-panel
               title="${_t('summary.Invitation')}"
               elevation="1"
