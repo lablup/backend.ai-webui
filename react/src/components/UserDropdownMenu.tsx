@@ -56,6 +56,7 @@ const UserDropdownMenu: React.FC = () => {
       style: {
         color: token.colorText,
         cursor: 'default',
+        overflow: 'hidden',
       },
     },
     {
