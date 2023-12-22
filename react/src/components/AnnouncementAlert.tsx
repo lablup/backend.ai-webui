@@ -9,7 +9,7 @@ const AnnouncementAlert: React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
   const { data: announcement } = useTanQuery({
-    queryKey: 'announcement',
+    queryKey: ['baiClient', 'service', 'get_announcement'],
     queryFn: () => {
       return baiClient.service.get_announcement();
     },
