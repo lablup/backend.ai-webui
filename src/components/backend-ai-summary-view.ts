@@ -487,8 +487,10 @@ export default class BackendAISummary extends BackendAIPage {
     return html`
       <link rel="stylesheet" href="/resources/fonts/font-awesome-all.min.css" />
       <link rel="stylesheet" href="resources/custom.css" />
-      <div class="item" elevation="1" class="vertical layout center wrap flex">
+      <div style="margin:-14px;margin-bottom:0px;">
         <backend-ai-react-announcement-alert></backend-ai-react-announcement-alert>
+      </div>
+      <div class="item" elevation="1" class="vertical layout center wrap flex">
         <div class="horizontal wrap layout">
           <lablup-activity-panel
             title="${_t('summary.StartMenu')}"

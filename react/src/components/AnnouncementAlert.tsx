@@ -1,7 +1,7 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { Alert, Tag, theme } from 'antd';
-import { marked } from 'marked';
+import Markdown from 'markdown-to-jsx';
 import React from 'react';
 
 const AnnouncementAlert: React.FC = () => {
@@ -30,11 +30,7 @@ const AnnouncementAlert: React.FC = () => {
           </Tag>
         </>
       }
-      message={
-        <span
-          dangerouslySetInnerHTML={{ __html: marked(announcement.message) }}
-        />
-      }
+      message={<Markdown>{announcement.message}</Markdown>}
     />
   ) : (
     ''
