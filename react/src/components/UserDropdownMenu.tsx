@@ -142,12 +142,23 @@ const UserDropdownMenu: React.FC = () => {
         trigger={['click']}
         open={debouncedOpenToFixDropdownMenu}
         onOpenChange={(v) => setOpen(v)}
+        overlayStyle={{
+          maxWidth: 300,
+        }}
       >
-        <Flex direction="row" gap="sm" style={{ cursor: 'pointer' }}>
+        <Flex
+          direction="row"
+          gap="sm"
+          style={{ cursor: 'pointer', maxWidth: '15vw' }}
+        >
           {screens.md && (
-            <Typography.Text strong>{userInfo.username}</Typography.Text>
+            <Typography.Text strong ellipsis>
+              {userInfo.username}
+            </Typography.Text>
           )}
-          <Avatar icon={<UserOutlined />} />
+          <Flex>
+            <Avatar size={'default'} icon={<UserOutlined />} />
+          </Flex>
         </Flex>
       </Dropdown>
     </>

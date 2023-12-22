@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Welcome, ",
-      "WelcomeMessage_2": " .",
+      "WelcomeMessage": "Welcome, {{ userName }}.",
       "Summary": "Summary",
       "Sessions": "Sessions",
       "Serving": "Serving",
@@ -1354,7 +1353,7 @@
     "CouldNotCopyText": "Could not copy text: ",
     "NotebookBadgeURL": "Notebook URL",
     "GetAndRunNotebook": "Import & Run",
-    "ImportGithubRepo": "Import Github Repository",
+    "ImportGithubRepo": "Import GitHub Repository",
     "GitHubURL": "GitHub URL",
     "GetToFolder": "Get To Folder",
     "RepoWillBeFolder": "Imported GitHub repositories are converted to folders and can be mounted when session starts.",
@@ -1368,9 +1367,9 @@
     "FolderName": "Imported folder name: ",
     "NotebookBadgeCodeHTML": "Notebook Badge Code (HTML)",
     "NotebookBadgeCodeMarkdown": "Notebook Badge Code (Markdown)",
-    "GithubInternalError": "Github Internal Error.",
-    "GithubAPILimitError": "Github API Limitation Error.",
-    "GithubAPIEtcError": "Github Server Issue.",
+    "GithubInternalError": "GitHub Internal Error.",
+    "GithubAPILimitError": "GitHub API Limitation Error.",
+    "GithubAPIEtcError": "GitHub Server Issue.",
     "ImportGitlabRepo": "Import Gitlab Repository",
     "GitlabRepoWillBeFolder": "Imported Gitlab repositories are converted to folders and can be mounted when session starts.",
     "GitlabURL": "Gitlab URL",

@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Добро пожаловать,",
-      "WelcomeMessage_2": " .",
+      "WelcomeMessage": "Добро пожаловать, {{ userName }}.",
       "Summary": "Обзор",
       "Sessions": "Сессии",
       "Import&Run": "Импорт и запуск",
@@ -1261,7 +1260,7 @@
     "CouldNotCopyText": "Не удалось скопировать текст:",
     "NotebookBadgeURL": "URL блокнота",
     "GetAndRunNotebook": "Импорт и запуск",
-    "ImportGithubRepo": "Импортировать репозиторий Github",
+    "ImportGithubRepo": "Импортировать репозиторий GitHub",
     "GitHubURL": "GitHub URL",
     "GetToFolder": "Перейти в папку",
     "RepoWillBeFolder": "Импортированные репозитории GitHub преобразуются в папки и могут быть подключены при запуске сеанса.",
@@ -1275,9 +1274,9 @@
     "FolderName": "Имя импортированной папки:",
     "NotebookBadgeCodeHTML": "Код значка блокнота (HTML)",
     "NotebookBadgeCodeMarkdown": "Код значка блокнота (маркдаун)",
-    "GithubInternalError": "Внутренняя ошибка Github.",
-    "GithubAPILimitError": "Ошибка ограничения API Github.",
-    "GithubAPIEtcError": "Проблема с сервером Github.",
+    "GithubInternalError": "Внутренняя ошибка GitHub.",
+    "GithubAPILimitError": "Ошибка ограничения API GitHub.",
+    "GithubAPIEtcError": "Проблема с сервером GitHub.",
     "ImportGitlabRepo": "Импорт репозитория Gitlab",
     "GitlabRepoWillBeFolder": "Импортированные репозитории Gitlab преобразуются в папки и могут быть смонтированы при запуске сессии.",
     "GitlabURL": "URL-адрес Gitlab",
