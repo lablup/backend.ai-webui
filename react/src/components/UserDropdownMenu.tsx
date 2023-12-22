@@ -49,7 +49,7 @@ const UserDropdownMenu: React.FC = () => {
 
   const items: MenuProps['items'] = [
     {
-      label: <Typography.Text>{userInfo.username}</Typography.Text>,
+      label: <Typography.Text>{userInfo.username}</Typography.Text>, //To display properly when the user name is too long.
       key: 'userFullName',
       icon: <UserOutlined />,
       disabled: true,
