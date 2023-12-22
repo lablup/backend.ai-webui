@@ -17,18 +17,22 @@ const AnnouncementAlert: React.FC = () => {
   return announcement.message ? (
     <Alert
       banner
-      closable
-      showIcon={false}
-      style={{ marginLeft: 14 }}
-      message={
-        <Tag color="error" style={{ fontSize: token.fontSize }}>
-          Notice
-        </Tag>
+      style={{
+        alignItems: 'flex-start',
+        overflow: 'auto',
+        whiteSpace: 'pre-wrap',
+      }}
+      icon={
+        //use <> because tag border is not displayed normally when Tag component is used only
+        <>
+          <Tag color="error" style={{ fontSize: token.fontSize }}>
+            Notice
+          </Tag>
+        </>
       }
-      description={
+      message={
         <span
           dangerouslySetInnerHTML={{ __html: marked(announcement.message) }}
-          style={{ overflow: 'auto', whiteSpace: 'pre-wrap' }}
         />
       }
     />
