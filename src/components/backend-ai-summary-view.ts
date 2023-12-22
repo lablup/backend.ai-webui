@@ -562,6 +562,7 @@ export default class BackendAISummary extends BackendAIPage {
               </div>
             `
           : html``}
+        <backend-ai-react-announcement-alert></backend-ai-react-announcement-alert>
         <div class="horizontal wrap layout">
           <lablup-activity-panel
             title="${_t('summary.StartMenu')}"
