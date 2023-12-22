@@ -1,6 +1,7 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { Alert, Tag, theme } from 'antd';
+import _ from 'lodash';
 import Markdown from 'markdown-to-jsx';
 import React from 'react';
 
@@ -14,7 +15,7 @@ const AnnouncementAlert: React.FC = () => {
     },
   });
 
-  return announcement.message ? (
+  return !_.isEmpty(announcement.message) ? (
     <Alert
       banner
       style={{
