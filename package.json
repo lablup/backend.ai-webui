@@ -28,7 +28,8 @@
     "docs": "npx jsdoc -c ./jsdoc.json",
     "update": "npx tsc",
     "postinstall": "npx concurrently -c \"auto\" --names \"react-dependencies\" \"cd react && npm install\"",
-    "patch:lit-translate": "unzip -o ./scripts/lit-translate.zip -d ./node_modules/lit-translate && cp -f ./scripts/lit-translate-index.js ./node_modules/lit-translate/index.js"
+    "patch:lit-translate": "unzip -o ./scripts/lit-translate.zip -d ./node_modules/lit-translate && cp -f ./scripts/lit-translate-index.js ./node_modules/lit-translate/index.js",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@material/mwc-button": "^0.27.0",
