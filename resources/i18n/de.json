@@ -61,7 +61,10 @@
       "Notifications": "Benachrichtigungen",
       "Tasks": "Aufgaben",
       "FastTrack": "FastTrack",
-      "Data&Model": "Daten"
+      "Data&Model": "Daten",
+      "InvalidBlankPassword": "Geben Sie Ihr Passwort ein",
+      "InvalidBlankEmail": "Geben sie ihre E-Mail Adresse ein",
+      "DisMatchUserEmail": "Die E-Mail-Adresse des Benutzers stimmt nicht überein"
     },
     "YouAreOffline": "Du bist jetzt offline",
     "YouAreOnline": "Sie sind jetzt online",

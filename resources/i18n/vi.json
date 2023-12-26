@@ -61,7 +61,10 @@
       "Notifications": "Thông báo",
       "Tasks": "Nhiệm vụ",
       "FastTrack": "FastTrack",
-      "Data&Model": "Dữ liệu"
+      "Data&Model": "Dữ liệu",
+      "InvalidBlankPassword": "Nhập mật khẩu của bạn",
+      "InvalidBlankEmail": "Nhập email của bạn",
+      "DisMatchUserEmail": "E-mail của người dùng không khớp"
     },
     "YouAreOffline": "Bạn hiện đang ngoại tuyến",
     "YouAreOnline": "Bạn hiện đang trực tuyến",

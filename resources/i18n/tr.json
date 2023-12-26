@@ -61,7 +61,10 @@
       "Notifications": "Bildirimler",
       "Tasks": "Görevler",
       "FastTrack": "FastTrack",
-      "Data&Model": "Veri"
+      "Data&Model": "Veri",
+      "InvalidBlankPassword": "Şifrenizi girin",
+      "InvalidBlankEmail": "E-postanızı giriniz",
+      "DisMatchUserEmail": "Kullanıcı E-postası eşleşmiyor"
     },
     "YouAreOffline": "Şu anda çevrimdışısın",
     "YouAreOnline": "artık çevrimiçisin",

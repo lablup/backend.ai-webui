@@ -1448,7 +1448,10 @@
       "Users": "Käyttäjät",
       "WelcomeMessage": "Tervetuloa, {{ userName }}.",
       "YouMushChangeYourPassword": "On suositeltavaa vaihtaa salasana säännöllisesti turvallisuussyistä. Koska salasanasi viimeisimmästä vaihtamisesta on kulunut tietty aika, sinun on vaihdettava se, jotta voit jatkaa palvelun käyttöä.",
-      "Data&Model": "Data"
+      "Data&Model": "Data",
+      "InvalidBlankPassword": "Syötä salasanasi",
+      "InvalidBlankEmail": "Syötä sähköpostiosoitteesi",
+      "DisMatchUserEmail": "Käyttäjän sähköpostiosoite ei täsmää"
     }
   },
   "modelStore": {

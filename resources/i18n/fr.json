@@ -61,7 +61,10 @@
       "NewPasswordCannotBeSame": "Veuillez saisir un mot de passe différent de votre mot de passe actuel.",
       "PleaseConfirmYourPassword": "Veuillez confirmer votre mot de passe",
       "FastTrack": "FastTrack",
-      "Data&Model": "Données"
+      "Data&Model": "Données",
+      "InvalidBlankPassword": "Tapez votre mot de passe",
+      "InvalidBlankEmail": "Entrer votre Email",
+      "DisMatchUserEmail": "L'e-mail de l'utilisateur ne correspond pas"
     },
     "YouAreOffline": "Vous êtes maintenant hors ligne",
     "YouAreOnline": "Vous êtes maintenant en ligne",

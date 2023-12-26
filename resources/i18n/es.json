@@ -1448,7 +1448,10 @@
       "Users": "Usuarios",
       "WelcomeMessage": "Bienvenido, {{ userName }}.",
       "YouMushChangeYourPassword": "Se recomienda cambiar periódicamente la contraseña por razones de seguridad. Dado que ha transcurrido cierto tiempo desde la última vez que cambió su contraseña, deberá cambiarla para poder seguir utilizando el servicio.",
-      "Data&Model": "Datos"
+      "Data&Model": "Datos",
+      "InvalidBlankPassword": "Ingresa tu contraseña",
+      "InvalidBlankEmail": "Introduce tu correo electrónico",
+      "DisMatchUserEmail": "El correo electrónico del usuario no coincide"
     }
   },
   "modelStore": {

@@ -59,6 +59,9 @@ const ContainerRegistryList = React.lazy(
 const KeypairInfoModal = React.lazy(
   () => import('./components/KeypairInfoModal'),
 );
+
+const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
+
 const AnnouncementAlert = React.lazy(
   () => import('./components/AnnouncementAlert'),
 );
@@ -283,6 +286,22 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <KeypairInfoModal
+          open={props.value === 'true'}
+          onRequestClose={() => {
+            props.dispatchEvent('close', null);
+          }}
+        />
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-signout-modal',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <SignoutModal
           open={props.value === 'true'}
           onRequestClose={() => {
             props.dispatchEvent('close', null);

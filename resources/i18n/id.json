@@ -61,7 +61,10 @@
       "NewPasswordCannotBeSame": "Masukkan kata sandi yang berbeda dari kata sandi Anda saat ini.",
       "PleaseConfirmYourPassword": "Harap konfirmasi kata sandi Anda",
       "FastTrack": "FastTrack",
-      "Data&Model": "Data"
+      "Data&Model": "Data",
+      "InvalidBlankPassword": "Masukkan kata sandi Anda",
+      "InvalidBlankEmail": "Masukkan email Anda",
+      "DisMatchUserEmail": "Email Pengguna tidak cocok"
     },
     "YouAreOffline": "Anda sekarang offline",
     "YouAreOnline": "Anda sekarang online",

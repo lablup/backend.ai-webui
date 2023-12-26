@@ -61,7 +61,10 @@
       "Notifications": "お知らせ",
       "Tasks": "作業",
       "FastTrack": "FastTrack",
-      "Data&Model": "データ"
+      "Data&Model": "データ",
+      "InvalidBlankPassword": "パスワードを入力してください",
+      "InvalidBlankEmail": "メールアドレスを入力",
+      "DisMatchUserEmail": "ユーザーの電子メールが一致しません"
     },
     "YouAreOffline": "あなたは今オフラインです",
     "YouAreOnline": "あなたは今オンラインです",
