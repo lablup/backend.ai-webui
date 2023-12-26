@@ -19,7 +19,7 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
   const { t } = useTranslation();
   const [messageApi, contextHolder] = message.useMessage();
   const baiClient = useSuspendedBackendaiClient();
-  const mutationToSignout = useTanMutation({
+  const signoutMutation = useTanMutation({
     mutationFn: (values: { email: string; password: string }) => {
       return baiClient.signout(values.email, values.password);
     },
@@ -28,7 +28,7 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
     form
       .validateFields()
       .then((values) => {
-        mutationToSignout.mutate(
+        signoutMutation.mutate(
           {
             email: values.email,
             password: values.password,
@@ -59,7 +59,7 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
         onOk={handleOk}
         okText={t('login.LeaveService')}
         okButtonProps={{ danger: true }}
-        confirmLoading={mutationToSignout.isLoading}
+        confirmLoading={signoutMutation.isLoading}
         onCancel={() => {
           onRequestClose();
         }}
@@ -69,7 +69,7 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
           form={form}
           layout="vertical"
           labelCol={{ span: 6 }}
-          disabled={mutationToSignout.isLoading}
+          disabled={signoutMutation.isLoading}
         >
           <Form.Item name="alert">
             <Alert message={t('login.DescConfirmLeave')} type="warning" />
