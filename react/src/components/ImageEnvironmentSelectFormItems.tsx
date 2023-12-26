@@ -88,7 +88,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const { t } = useTranslation();
   const [metadata, { getImageMeta }] = useBackendAIImageMetaData();
   const { token } = theme.useToken();
-  const { themeMode } = useThemeMode();
+  const { isDarkMode } = useThemeMode();
 
   const envSelectRef = useRef<RefSelectProps>(null);
   const versionSelectRef = useRef<RefSelectProps>(null);
@@ -392,9 +392,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             direction="row"
                             // set specific class name to handle flex wrap using css
                             className={
-                              themeMode === 'dark'
-                                ? 'tag-wrap-dark'
-                                : 'tag-wrap-light'
+                              isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
                             }
                             // style={{ flex: 1 }}
                             style={{
@@ -554,9 +552,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             direction="row"
                             // set specific class name to handle flex wrap using css
                             className={
-                              themeMode === 'dark'
-                                ? 'tag-wrap-dark'
-                                : 'tag-wrap-light'
+                              isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
                             }
                             style={{
                               marginLeft: token.marginXS,

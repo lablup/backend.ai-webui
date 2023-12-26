@@ -131,7 +131,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   const cache = useMemo(() => createCache(), []);
   const [lang] = useCurrentLanguage();
   const themeConfig = useCustomThemeConfig();
-  const { themeMode } = useThemeMode();
+  const { isDarkMode } = useThemeMode();
 
   const componentValues = useMemo(() => {
     return {
@@ -162,13 +162,12 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                     //TODO: apply other supported locales
                     locale={'ko' === lang ? ko_KR : en_US}
                     theme={{
-                      ...(themeMode === 'dark'
+                      ...(isDarkMode
                         ? { ...themeConfig.dark }
                         : { ...themeConfig.light }),
-                      algorithm:
-                        themeMode === 'dark'
-                          ? theme.darkAlgorithm
-                          : theme.defaultAlgorithm,
+                      algorithm: isDarkMode
+                        ? theme.darkAlgorithm
+                        : theme.defaultAlgorithm,
                     }}
                   >
                     <App>
