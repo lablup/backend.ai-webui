@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Selamat datang,",
-      "WelcomeMessage_2": " .",
+      "WelcomeMessage": "Selamat datang, {{ userName }}.",
       "Summary": "Ringkasan",
       "Sessions": "Sesi",
       "Import&Run": "Impor & Jalankan",
@@ -1264,7 +1263,7 @@
     "CouldNotCopyText": "Tidak dapat menyalin teks: ",
     "NotebookBadgeURL": "URL Buku Catatan",
     "GetAndRunNotebook": "Impor & Jalankan",
-    "ImportGithubRepo": "Impor Repositori Github",
+    "ImportGithubRepo": "Impor Repositori GitHub",
     "GitHubURL": "URL GitHub",
     "GetToFolder": "Masuk ke Folder",
     "RepoWillBeFolder": "Repositori GitHub yang diimpor dikonversi ke folder dan dapat dipasang saat sesi dimulai.",
@@ -1278,9 +1277,9 @@
     "FolderName": "Nama folder yang diimpor:",
     "NotebookBadgeCodeHTML": "Kode Lencana Notebook (HTML)",
     "NotebookBadgeCodeMarkdown": "Kode Lencana Notebook (Markdown)",
-    "GithubInternalError": "Kesalahan Internal Github.",
-    "GithubAPILimitError": "Kesalahan Batasan API Github.",
-    "GithubAPIEtcError": "Masalah Server Github.",
+    "GithubInternalError": "Kesalahan Internal GitHub.",
+    "GithubAPILimitError": "Kesalahan Batasan API GitHub.",
+    "GithubAPIEtcError": "Masalah Server GitHub.",
     "ImportGitlabRepo": "Impor Repositori Gitlab",
     "GitlabRepoWillBeFolder": "Repositori Gitlab yang diimpor akan dikonversi menjadi folder dan dapat dipasang saat sesi dimulai.",
     "GitlabURL": "URL Gitlab",

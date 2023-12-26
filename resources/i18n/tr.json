@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Hoşgeldiniz,",
-      "WelcomeMessage_2": " .",
+      "WelcomeMessage": "Hoş geldiniz, {{ userName }}.",
       "Summary": "Özet",
       "Sessions": "Oturumlar",
       "Import&Run": "İçe Aktar ve Çalıştır",
@@ -1264,7 +1263,7 @@
     "CouldNotCopyText": "Metin kopyalanamadı:",
     "NotebookBadgeURL": "Not Defteri URL'si",
     "GetAndRunNotebook": "İçe Aktar ve Çalıştır",
-    "ImportGithubRepo": "Github Deposunu İçe Aktar",
+    "ImportGithubRepo": "GitHub Deposunu İçe Aktar",
     "GitHubURL": "GitHub URL'si",
     "GetToFolder": "Klasöre Git",
     "RepoWillBeFolder": "İçe aktarılan GitHub depoları klasörlere dönüştürülür ve oturum başladığında eklenebilir.",
@@ -1278,9 +1277,9 @@
     "FolderName": "İçe aktarılan klasör adı:",
     "NotebookBadgeCodeHTML": "Defter Rozeti Kodu (HTML)",
     "NotebookBadgeCodeMarkdown": "Defter Rozeti Kodu (Markdown)",
-    "GithubInternalError": "Github Dahili Hatası.",
-    "GithubAPILimitError": "Github API Sınırlama Hatası.",
-    "GithubAPIEtcError": "Github Sunucu Sorunu.",
+    "GithubInternalError": "GitHub Dahili Hatası.",
+    "GithubAPILimitError": "GitHub API Sınırlama Hatası.",
+    "GithubAPIEtcError": "GitHub Sunucu Sorunu.",
     "ImportGitlabRepo": "Gitlab Deposunu İçe Aktarma",
     "GitlabRepoWillBeFolder": "İçe aktarılan Gitlab depoları klasörlere dönüştürülür ve oturum başladığında bağlanabilir.",
     "GitlabURL": "Gitlab URL'si",

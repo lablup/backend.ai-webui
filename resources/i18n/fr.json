@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Bienvenue,",
-      "WelcomeMessage_2": " .",
+      "WelcomeMessage": "Bienvenue, {{ userName }}.",
       "Summary": "Résumé",
       "Sessions": "Sessions",
       "Import&Run": "Importer et exécuter",
@@ -1264,7 +1263,7 @@
     "CouldNotCopyText": "Impossible de copier le texte :",
     "NotebookBadgeURL": "URL du bloc-notes",
     "GetAndRunNotebook": "Importer et exécuter",
-    "ImportGithubRepo": "Importer le dépôt Github",
+    "ImportGithubRepo": "Importer le dépôt GitHub",
     "GitHubURL": "URL GitHub",
     "GetToFolder": "Accéder au dossier",
     "RepoWillBeFolder": "Les dépôts GitHub importés sont convertis en dossiers et peuvent être montés au démarrage de la session.",
@@ -1278,9 +1277,9 @@
     "FolderName": "Nom du dossier importé :",
     "NotebookBadgeCodeHTML": "Code de badge de bloc-notes (HTML)",
     "NotebookBadgeCodeMarkdown": "Code de badge de bloc-notes (Markdown)",
-    "GithubInternalError": "Erreur interne de Github.",
-    "GithubAPILimitError": "Erreur de limitation de l'API Github.",
-    "GithubAPIEtcError": "Problème de serveur Github.",
+    "GithubInternalError": "Erreur interne de GitHub.",
+    "GithubAPILimitError": "Erreur de limitation de l'API GitHub.",
+    "GithubAPIEtcError": "Problème de serveur GitHub.",
     "ImportGitlabRepo": "Importer le dépôt Gitlab",
     "GitlabRepoWillBeFolder": "Les dépôts Gitlab importés sont convertis en dossiers et peuvent être montés au démarrage de la session.",
     "GitlabURL": "URL Gitlab",

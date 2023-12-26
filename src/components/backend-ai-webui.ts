@@ -1871,9 +1871,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 </div>
                 <div slot="navigationIcon" class="vertical-line" style="height:20px;margin:0;"></div>
                 <div class="horizontal center layout" slot="title" id="welcome-message" style="font-size:12px;margin-left:10px;" class="draggable">
-                  <p>${_t('webui.menu.WelcomeMessage')}</p>
-                  <p class="user-name">${this._getUsername()}</p>
-                  <p>${_t('webui.menu.WelcomeMessage_2')}</p>
+                  <p class="user-name">${_t('webui.menu.WelcomeMessage', {
+                    userName: this._getUsername(),
+                  })}
+                  </p>
                 </div>
                   <backend-ai-project-switcher slot="actionItems" style="margin-right:10px;"></backend-ai-project-switcher>
                   <backend-ai-react-user-dropdown-menu

@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Тавтай морилно уу,",
-      "WelcomeMessage_2": " .",
+      "WelcomeMessage": "Тавтай морилно уу, {{ userName }}.",
       "Summary": "Хураангуй",
       "Sessions": "Session-үүд",
       "Import&Run": "Импортлох & ажиллуулах",
@@ -1264,7 +1263,7 @@
     "CouldNotCopyText": "Текстийг хуулж чадсангүй:",
     "NotebookBadgeURL": "Jupyter Notebook-ийн тэмдэгийн URL",
     "GetAndRunNotebook": "Импортлох & ажиллуулах",
-    "ImportGithubRepo": "Github репозиторыг импортлох",
+    "ImportGithubRepo": "GitHub репозиторыг импортлох",
     "GitHubURL": "GitHub URL",
     "GetToFolder": "Фолдер руу орох",
     "RepoWillBeFolder": "Импортоор оруулсан GitHub репозиторыг фолдер болгон хөрвүүлдэг бөгөөд Session эхлэхэд холбож болдог.",
@@ -1278,9 +1277,9 @@
     "FolderName": "Импортын фолдерын нэр:",
     "NotebookBadgeCodeHTML": "Jupyter Notebook-ийн код (HTML)",
     "NotebookBadgeCodeMarkdown": "Jupyter Notebook-ийн код (Markdown)",
-    "GithubInternalError": "Github дотоод алдаа.",
-    "GithubAPILimitError": "Github API хязгаарлалтын алдаа.",
-    "GithubAPIEtcError": "Github серверийн асуудал.",
+    "GithubInternalError": "GitHub дотоод алдаа.",
+    "GithubAPILimitError": "GitHub API хязгаарлалтын алдаа.",
+    "GithubAPIEtcError": "GitHub серверийн асуудал.",
     "ImportGitlabRepo": "Gitlab репозиторыг импортлох",
     "GitlabRepoWillBeFolder": "Импортын Gitlab репозиторуудыг хавтас болгон хөрвүүлдэг бөгөөд сесс эхлэхэд холбож болно.",
     "GitlabURL": "Gitlab URL",

@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Herzlich willkommen,",
-      "WelcomeMessage_2": " .",
+      "WelcomeMessage": "Willkommen, {{ userName }}.",
       "Summary": "Zusammenfassung",
       "Sessions": "Sitzungen",
       "Import&Run": "Importieren und ausführen",
@@ -1264,7 +1263,7 @@
     "CouldNotCopyText": "Text konnte nicht kopiert werden:",
     "NotebookBadgeURL": "Notizbuch-URL",
     "GetAndRunNotebook": "Importieren und ausführen",
-    "ImportGithubRepo": "Github-Repository importieren",
+    "ImportGithubRepo": "GitHub-Repository importieren",
     "GitHubURL": "GitHub-URL",
     "GetToFolder": "Ordner aufrufen",
     "RepoWillBeFolder": "Importierte GitHub-Repositorys werden in Ordner konvertiert und können beim Sitzungsstart gemountet werden.",
@@ -1278,9 +1277,9 @@
     "FolderName": "Name des importierten Ordners:",
     "NotebookBadgeCodeHTML": "Notebook-Badge-Code (HTML)",
     "NotebookBadgeCodeMarkdown": "Notebook-Badge-Code (Abschlag)",
-    "GithubInternalError": "Github Interner Fehler.",
-    "GithubAPILimitError": "Github API-Beschränkungsfehler.",
-    "GithubAPIEtcError": "Github Server Problem.",
+    "GithubInternalError": "GitHub Interner Fehler.",
+    "GithubAPILimitError": "GitHub API-Beschränkungsfehler.",
+    "GithubAPIEtcError": "GitHub Server Problem.",
     "ImportGitlabRepo": "Gitlab-Repository importieren",
     "GitlabRepoWillBeFolder": "Importierte Gitlab-Repositories werden in Ordner umgewandelt und können beim Start der Sitzung gemountet werden.",
     "GitlabURL": "Gitlab-URL",

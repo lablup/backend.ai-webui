@@ -59,7 +59,12 @@ const ContainerRegistryList = React.lazy(
 const KeypairInfoModal = React.lazy(
   () => import('./components/KeypairInfoModal'),
 );
+
 const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
+
+const AnnouncementAlert = React.lazy(
+  () => import('./components/AnnouncementAlert'),
+);
 
 customElements.define(
   'backend-ai-react-information',
@@ -302,6 +307,17 @@ customElements.define(
             props.dispatchEvent('close', null);
           }}
         />
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-announcement-alert',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <AnnouncementAlert />
       </DefaultProviders>
     );
   }),
