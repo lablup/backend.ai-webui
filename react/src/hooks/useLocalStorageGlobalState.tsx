@@ -15,14 +15,18 @@ export const useLocalStorageGlobalState = <T extends {}>(
       setStorageValue(event.detail);
     };
     document.addEventListener(key, handler);
-    return () => document.removeEventListener(key, handler);
+    return () =>
+      document.removeEventListener(
+        'useLocalStorageGlobalState:' + key,
+        handler,
+      );
   }, [key, setStorageValue]);
 
   return [
     storageValue,
     (value) => {
       document.dispatchEvent(
-        new CustomEvent(key, {
+        new CustomEvent('useLocalStorageGlobalState:' + key, {
           detail: value,
         }),
       );
