@@ -1,8 +1,8 @@
-import { test } from '@playwright/test';
-import { login } from './pages/LoginPage.spec';
-import { createVfolder, deleteVfolder } from './pages/DataStoragePage.spec';
-import { createSession, deleteSession } from './pages/SessionPage.spec';
 import { createUser, deleteUser } from './pages/CredentialPage.spec';
+import { createVfolder, deleteVfolder } from './pages/DataStoragePage.spec';
+import { login } from './pages/LoginPage.spec';
+import { createSession, deleteSession } from './pages/SessionPage.spec';
+import { test } from '@playwright/test';
 
 test('E2E test', async ({ page }) => {
   await page.goto('http://localhost:9081/');
