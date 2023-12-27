@@ -3,11 +3,11 @@ import { useEffect } from 'react';
 
 export const useThemeMode = () => {
   const [themeMode, setThemeMode] = useLocalStorageGlobalState(
-    'backendaiwebui.settings.theme',
+    'backendaiwebui.settings.themeMode',
     'system',
   );
   const [isDarkMode, setIsDarkMode] = useLocalStorageGlobalState(
-    'backendaiwebui.settings.themeColor',
+    'backendaiwebui.settings.isDarkMode',
     window.matchMedia('(prefers-color-scheme: dark)').matches,
   );
 
