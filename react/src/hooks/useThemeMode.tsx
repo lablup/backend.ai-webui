@@ -1,12 +1,12 @@
-import { useGlobalLocalStorageState } from './useGlobalLocalStorageState';
+import { useLocalStorageGlobalState } from './useLocalStorageGlobalState';
 import { useEffect } from 'react';
 
 export const useThemeMode = () => {
-  const [themeMode, setThemeMode] = useGlobalLocalStorageState(
+  const [themeMode, setThemeMode] = useLocalStorageGlobalState(
     'backendaiwebui.settings.theme',
     'system',
   );
-  const [isDarkMode, setIsDarkMode] = useGlobalLocalStorageState(
+  const [isDarkMode, setIsDarkMode] = useLocalStorageGlobalState(
     'backendaiwebui.settings.themeColor',
     window.matchMedia('(prefers-color-scheme: dark)').matches,
   );
