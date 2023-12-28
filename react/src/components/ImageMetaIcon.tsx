@@ -1,4 +1,4 @@
-import { useBackendaiImageMetaData } from '../hooks';
+import { useBackendAIImageMetaData } from '../hooks';
 import React from 'react';
 
 const ImageMetaIcon: React.FC<{
@@ -7,7 +7,7 @@ const ImageMetaIcon: React.FC<{
   border?: boolean;
   alt?: string | null;
 }> = ({ image, style = {} }, bordered, alt = '') => {
-  const [, { getImageIcon }] = useBackendaiImageMetaData();
+  const [, { getImageIcon }] = useBackendAIImageMetaData();
 
   return (
     <img

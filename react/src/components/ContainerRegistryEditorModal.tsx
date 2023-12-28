@@ -162,7 +162,14 @@ const ContainerRegistryEditorModal: React.FC<
         form
           .validateFields()
           .then((values) => {
-            if (_.includes(values.config?.type, 'harbor')) {
+            if (
+              _.includes(values.config?.type, 'harbor') &&
+              (_.isEmpty(values.config.username) ||
+                (containerRegistry
+                  ? values.isChangedPassword &&
+                    _.isEmpty(values.config.password)
+                  : _.isEmpty(values.config.password)))
+            ) {
               modal.confirm({
                 title: t('button.Confirm'),
                 content: t('registry.ConfirmNoUserName'),

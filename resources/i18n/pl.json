@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Witamy,",
-      "WelcomeMessage_2": " .",
+      "WelcomeMessage": "Witamy, {{nazwa użytkownika }}.",
       "Summary": "streszczenie",
       "Sessions": "Sesje",
       "Import&Run": "Importuj i uruchom",
@@ -62,7 +61,10 @@
       "Notifications": "Powiadomienia",
       "Tasks": "Zadania",
       "FastTrack": "FastTrack",
-      "Data&Model": "Dane"
+      "Data&Model": "Dane",
+      "InvalidBlankPassword": "Wprowadź hasło",
+      "InvalidBlankEmail": "Wprowadź swój email",
+      "DisMatchUserEmail": "Adres e-mail użytkownika nie jest zgodny"
     },
     "YouAreOffline": "Jesteś teraz offline",
     "YouAreOnline": "Jesteś teraz online",
@@ -1261,7 +1263,7 @@
     "CouldNotCopyText": "Nie udało się skopiować tekstu:",
     "NotebookBadgeURL": "URL notatnika",
     "GetAndRunNotebook": "Importuj i uruchom",
-    "ImportGithubRepo": "Importuj repozytorium Github",
+    "ImportGithubRepo": "Importuj repozytorium GitHub",
     "GitHubURL": "Adres URL GitHuba",
     "GetToFolder": "Przejdź do folderu",
     "RepoWillBeFolder": "Zaimportowane repozytoria GitHub są konwertowane na foldery i można je zamontować po rozpoczęciu sesji.",
@@ -1275,9 +1277,9 @@
     "FolderName": "Nazwa importowanego folderu:",
     "NotebookBadgeCodeHTML": "Kod plakietki notatnika (HTML)",
     "NotebookBadgeCodeMarkdown": "Kod plakietki notebooka (przecena)",
-    "GithubInternalError": "Błąd wewnętrzny Github.",
-    "GithubAPILimitError": "Błąd ograniczenia API Github.",
-    "GithubAPIEtcError": "Problem z serwerem Github.",
+    "GithubInternalError": "Błąd wewnętrzny GitHub.",
+    "GithubAPILimitError": "Błąd ograniczenia API GitHub.",
+    "GithubAPIEtcError": "Problem z serwerem GitHub.",
     "ImportGitlabRepo": "Importowanie repozytorium Gitlab",
     "GitlabRepoWillBeFolder": "Zaimportowane repozytoria Gitlab są konwertowane do folderów i mogą być montowane podczas uruchamiania sesji.",
     "GitlabURL": "Adres URL Gitlab",

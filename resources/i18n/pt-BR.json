@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Receber,",
-      "WelcomeMessage_2": " .",
+      "WelcomeMessage": "Bem vindo, {{userName }}.",
       "Summary": "Resumo",
       "Sessions": "Sessões",
       "Import&Run": "Importar e executar",
@@ -62,7 +61,10 @@
       "Notifications": "Notificações",
       "Tasks": "Tarefas",
       "FastTrack": "FastTrack",
-      "Data&Model": "Dados"
+      "Data&Model": "Dados",
+      "InvalidBlankPassword": "Coloque sua senha",
+      "InvalidBlankEmail": "Digite seu e-mail",
+      "DisMatchUserEmail": "E-mail do usuário não corresponde"
     },
     "YouAreOffline": "Agora você está offline",
     "YouAreOnline": "Agora você está online",
@@ -1261,7 +1263,7 @@
     "CouldNotCopyText": "Não foi possível copiar o texto:",
     "NotebookBadgeURL": "URL do notebook",
     "GetAndRunNotebook": "Importar e executar",
-    "ImportGithubRepo": "Importar Repositório Github",
+    "ImportGithubRepo": "Importar Repositório GitHub",
     "GitHubURL": "URL do GitHub",
     "GetToFolder": "Obter para a pasta",
     "RepoWillBeFolder": "Os repositórios GitHub importados são convertidos em pastas e podem ser montados quando a sessão é iniciada.",
@@ -1275,9 +1277,9 @@
     "FolderName": "Nome da pasta importada:",
     "NotebookBadgeCodeHTML": "Código do emblema do notebook (HTML)",
     "NotebookBadgeCodeMarkdown": "Código do emblema do notebook (Markdown)",
-    "GithubInternalError": "Erro interno do Github.",
-    "GithubAPILimitError": "Erro de limitação da API do Github.",
-    "GithubAPIEtcError": "Problema no servidor do Github.",
+    "GithubInternalError": "Erro interno do GitHub.",
+    "GithubAPILimitError": "Erro de limitação da API do GitHub.",
+    "GithubAPIEtcError": "Problema no servidor do GitHub.",
     "ImportGitlabRepo": "Importar o repositório Gitlab",
     "GitlabRepoWillBeFolder": "Os repositórios Gitlab importados são convertidos em pastas e podem ser montados quando a sessão é iniciada.",
     "GitlabURL": "URL do Gitlab",
