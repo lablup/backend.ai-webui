@@ -8,6 +8,8 @@ export const useThemeMode = () => {
     'backendaiwebui.settings.themeMode',
     'system',
   );
+  // TODO: remove this when all components are ready
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isDarkMode, setIsDarkMode] = useLocalStorageGlobalState<boolean>(
     'backendaiwebui.settings.isDarkMode',
     window.matchMedia('(prefers-color-scheme: dark)').matches,
@@ -33,7 +35,7 @@ export const useThemeMode = () => {
 
   return {
     themeMode,
-    isDarkMode,
+    isDarkMode: false, //TODO: use isDarkMode when all components are ready
     setThemeMode: (value: themeModeValue) => {
       setThemeMode(value);
     },
