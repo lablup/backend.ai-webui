@@ -1,3 +1,4 @@
+import App from './App';
 import BAIErrorBoundary from './components/BAIErrorBoundary';
 import Flex from './components/Flex';
 import FlexActivityIndicator from './components/FlexActivityIndicator';
@@ -8,6 +9,7 @@ import ModelStoreListPage from './pages/ModelStoreListPage';
 import { Form } from 'antd';
 import { t } from 'i18next';
 import React, { Suspense } from 'react';
+import ReactDOM from 'react-dom/client';
 import { Route, Routes } from 'react-router-dom';
 
 // Load custom theme config once in react/index.tsx
@@ -321,4 +323,13 @@ customElements.define(
       </DefaultProviders>
     );
   }),
+);
+
+const root = ReactDOM.createRoot(
+  document.getElementById('react-root') as HTMLElement,
+);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
 );
