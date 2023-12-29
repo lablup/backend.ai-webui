@@ -83,6 +83,31 @@ interface Props {
   currentResourceGroup: string;
 }
 
+export const useCheckPresetResult = ({
+  resourceGroupName,
+  projectName,
+}: {
+  resourceGroupName: string;
+  projectName: string;
+}) => {
+  const baiClient = useSuspendedBackendaiClient();
+  return useTanQuery<ResourceAllocation>({
+    queryKey: ['check-resets', projectName, resourceGroupName],
+    queryFn: () => {
+      if (resourceGroupName) {
+        return baiClient.resourcePreset.check({
+          group: projectName,
+          scaling_group: resourceGroupName,
+        });
+      } else {
+        return;
+      }
+    },
+    staleTime: 0,
+    suspense: !_.isEmpty(resourceGroupName), //prevent flicking
+  });
+};
+
 // determine resource limits and remaining for current resource group and current image in current project
 export const useResourceLimitAndRemaining = ({
   currentImage,
@@ -97,20 +122,9 @@ export const useResourceLimitAndRemaining = ({
     data: checkPresetInfo,
     refetch,
     isRefetching,
-  } = useTanQuery<ResourceAllocation>({
-    queryKey: ['check-resets', currentProjectName, currentResourceGroup],
-    queryFn: () => {
-      if (currentResourceGroup) {
-        return baiClient.resourcePreset.check({
-          group: currentProjectName,
-          scaling_group: currentResourceGroup,
-        });
-      } else {
-        return;
-      }
-    },
-    staleTime: 0,
-    suspense: !_.isEmpty(currentResourceGroup), //prevent flicking
+  } = useCheckPresetResult({
+    resourceGroupName: currentResourceGroup,
+    projectName: currentProjectName,
   });
 
   const currentImageMinM =
@@ -325,6 +339,7 @@ export const useResourceLimitAndRemaining = ({
       resourceLimits,
       remaining,
       currentImageMinM,
+      checkPresetInfo,
       isRefetching,
     },
     {

@@ -1,10 +1,12 @@
-import { useUpdatableState } from '../hooks';
+import { useCurrentProjectValue, useUpdatableState } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
+import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useCheckPresetResult } from '../hooks/useResourceLimitAndRemaining';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
 import { ResourcePresetSelectQuery } from './__generated__/ResourcePresetSelectQuery.graphql';
 import { EditOutlined } from '@ant-design/icons';
-import { useThrottleFn } from 'ahooks';
+import { useControllableValue, useThrottleFn } from 'ahooks';
 import { Select } from 'antd';
 import { SelectProps } from 'antd/lib';
 import graphql from 'babel-plugin-relay/macro';
@@ -55,8 +57,11 @@ interface PresetOptionType extends Y {
 }
 interface ResourcePresetSelectProps extends Omit<SelectProps, 'onChange'> {
   onChange?: (value: string, options: PresetOptionType) => void;
+  autoSelect?: boolean;
+  allocatableNames?: string[];
 }
 const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
+  allocatableNames,
   ...selectProps
 }) => {
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
@@ -65,6 +70,11 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     trailing: false,
     leading: true,
   });
+  const [value, setValue] = useControllableValue({
+    value: selectProps.value,
+    defaultValue: selectProps.defaultValue,
+    onChange: selectProps.onChange,
+  });
   const [resourceSlots] = useResourceSlots();
   const [isPendingUpdate, _startTransition] = useTransition();
   const updateFetchKeyUnderTransition = () => {
@@ -72,6 +82,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
       updateFetchKeyThrottled();
     });
   };
+
   const { resource_presets } = useLazyLoadQuery<ResourcePresetSelectQuery>(
     graphql`
       query ResourcePresetSelectQuery {
@@ -92,12 +103,10 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   return (
     <Select
       loading={isPendingUpdate}
-      // options={_.map(resource_presets, (preset) => {
-      //   return {
-      //     value: preset?.name,
-      //     label: preset?.name,
-      //   };
-      // })}
+      value={value}
+      onChange={(value, option) => {
+        setValue(value, option);
+      }}
       options={[
         {
           value: 'custom',
@@ -133,7 +142,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                     gap={'xxs'}
                     style={{
                       color: 'black',
-                      opacity: index === 1 ? 0.5 : 1,
+                      // opacity: index === 1 ? 0.5 : 1,
                     }}
                   >
                     {_.map(
@@ -157,13 +166,17 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                 </Flex>
               ),
               preset,
-              // disabled: index === 1,
+              disabled:
+                _.isArray(allocatableNames) &&
+                !_.includes(allocatableNames, preset?.name)
+                  ? true
+                  : false,
             };
           }),
         },
       ]}
       showSearch
-      {...selectProps}
+      {..._.omit(selectProps, 'onChange', 'value', 'defaultValue')}
       onDropdownVisibleChange={(open) => {
         if (open) {
           console.log(open);

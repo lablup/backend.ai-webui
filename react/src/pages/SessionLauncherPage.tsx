@@ -866,7 +866,10 @@ const SessionLauncherPage = () => {
                       currentStepKey === 'environment' ? 'block' : 'none',
                   }}
                 >
-                  <ResourceAllocationFormItems enableNumOfSessions />
+                  <ResourceAllocationFormItems
+                    enableNumOfSessions
+                    enableResourcePresets
+                  />
                 </Card>
                 <Card
                   title={t('session.launcher.HPCOptimization')}
@@ -1434,7 +1437,8 @@ const SessionLauncherPage = () => {
                     </Button>
                   </Popconfirm> */}
                     {currentStep === steps.length - 1 && (
-                      <Button
+                      <>
+                        {/* <Button
                         icon={<SaveOutlined />}
                         disabled
                         onClick={() => {
@@ -1444,7 +1448,8 @@ const SessionLauncherPage = () => {
                         }}
                       >
                         Save as a template
-                      </Button>
+                      </Button> */}
+                      </>
                     )}
                   </Flex>
                   <Flex direction="row" gap="sm">

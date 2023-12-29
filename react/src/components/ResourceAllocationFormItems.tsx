@@ -98,7 +98,7 @@ const ResourceAllocationFormItems: React.FC<
     form,
     preserve: true,
   });
-  const [{ currentImageMinM, remaining, resourceLimits }] =
+  const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
     useResourceLimitAndRemaining({
       currentProjectName: currentProject.name,
       currentResourceGroup: currentResourceGroup,
@@ -250,21 +250,35 @@ const ResourceAllocationFormItems: React.FC<
                   ...slots,
                   // transform to GB based on preset values
                   mem: iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.numberUnit,
-                  shmem: iSizeToSize(
-                    (options?.preset?.shared_memory || 0) + 'b',
-                    'g',
-                    2,
-                  )?.numberUnit,
+                  shmem: !_.isEmpty(options?.preset?.shared_memory)
+                    ? iSizeToSize(options?.preset?.shared_memory + 'b', 'g', 2)
+                        ?.numberUnit
+                    : form.getFieldValue(['resource', 'shmem']),
                 },
               });
+              if (
+                _.isEmpty(options?.preset?.shared_memory) &&
+                form.getFieldValue('enabledAutomaticShmem')
+              ) {
+                runShmemAutomationRule(
+                  form.getFieldValue(['resource', 'mem']) || '0g',
+                );
+              }
             }}
+            allocatableNames={_.filter(
+              checkPresetInfo?.presets,
+              (preset) => preset.allocatable,
+            ).map((preset) => preset.name)}
           />
         </Form.Item>
       ) : null}
-      <Card
-        style={{
-          marginBottom: token.margin,
-        }}
+
+      <Flex
+        className="customWrap"
+        direction="column"
+        align="stretch"
+        gap={'xs'}
+        style={{ marginBottom: token.marginMD }}
       >
         <Form.Item
           shouldUpdate={(prev, cur) =>
@@ -275,7 +289,14 @@ const ResourceAllocationFormItems: React.FC<
           {({ getFieldValue }) => {
             return (
               // getFieldValue('allocationPreset') === 'custom' && (
-              <>
+              <Card
+              // style={{
+              //   display:
+              //     getFieldValue('allocationPreset') === 'custom'
+              //       ? 'block'
+              //       : 'none',
+              // }}
+              >
                 {resourceSlots?.cpu && (
                   <Form.Item
                     name={['resource', 'cpu']}
@@ -816,92 +837,96 @@ const ResourceAllocationFormItems: React.FC<
                     );
                   }}
                 </Form.Item>
-              </>
+              </Card>
             );
           }}
         </Form.Item>
-      </Card>
-      {enableNumOfSessions ? (
-        <Card
-          style={{
-            marginBottom: token.margin,
-          }}
-        >
+        {enableNumOfSessions ? (
           <Form.Item
             noStyle
             shouldUpdate={(prev, next) =>
-              prev.cluster_size !== next.cluster_size
+              prev.cluster_size !== next.cluster_size ||
+              prev.allocationPreset !== next.allocationPreset
             }
           >
-            {() => {
+            {({ getFieldValue }) => {
               return (
-                <Form.Item
-                  name={['num_of_sessions']}
-                  label={t('webui.menu.Sessions')}
-                  tooltip={<Trans i18nKey={'session.launcher.DescSession'} />}
-                  required
-                  rules={[
-                    {
-                      required: true,
-                    },
-                    {
-                      warningOnly:
-                        baiClient._config?.always_enqueue_compute_session,
-                      validator: async (rule, value: number) => {
-                        if (
-                          sessionSliderLimitAndRemaining &&
-                          value > sessionSliderLimitAndRemaining.remaining
-                        ) {
-                          return Promise.reject(
-                            baiClient._config?.always_enqueue_compute_session
-                              ? t(
-                                  'session.launcher.EnqueueComputeSessionWarning',
-                                )
-                              : t(
-                                  'session.launcher.ErrorCanNotExceedRemaining',
-                                  {
-                                    amount:
-                                      sessionSliderLimitAndRemaining.remaining,
-                                  },
-                                ),
-                          );
-                        } else {
-                          return Promise.resolve();
-                        }
-                      },
-                    },
-                  ]}
+                <Card
+                  style={{
+                    display:
+                      getFieldValue('allocationPreset') === 'custom'
+                        ? 'block'
+                        : 'none',
+                  }}
                 >
-                  <InputNumberWithSlider
-                    inputNumberProps={{
-                      addonAfter: '#',
-                    }}
-                    disabled={form.getFieldValue('cluster_size') > 1}
-                    sliderProps={{
-                      marks: {
-                        [sessionSliderLimitAndRemaining?.min]:
-                          sessionSliderLimitAndRemaining?.min,
-                        // remaining mark code should be located before max mark code to prevent overlapping when it is same value
-                        ...(sessionSliderLimitAndRemaining?.remaining
-                          ? {
-                              [sessionSliderLimitAndRemaining?.remaining]: {
-                                label: <RemainingMark />,
-                              },
-                            }
-                          : {}),
-                        [sessionSliderLimitAndRemaining?.max]:
-                          sessionSliderLimitAndRemaining?.max,
+                  <Form.Item
+                    name={['num_of_sessions']}
+                    label={t('webui.menu.Sessions')}
+                    tooltip={<Trans i18nKey={'session.launcher.DescSession'} />}
+                    required
+                    rules={[
+                      {
+                        required: true,
                       },
-                    }}
-                    min={sessionSliderLimitAndRemaining?.min}
-                    max={sessionSliderLimitAndRemaining?.max}
-                  />
-                </Form.Item>
+                      {
+                        warningOnly:
+                          baiClient._config?.always_enqueue_compute_session,
+                        validator: async (rule, value: number) => {
+                          if (
+                            sessionSliderLimitAndRemaining &&
+                            value > sessionSliderLimitAndRemaining.remaining
+                          ) {
+                            return Promise.reject(
+                              baiClient._config?.always_enqueue_compute_session
+                                ? t(
+                                    'session.launcher.EnqueueComputeSessionWarning',
+                                  )
+                                : t(
+                                    'session.launcher.ErrorCanNotExceedRemaining',
+                                    {
+                                      amount:
+                                        sessionSliderLimitAndRemaining.remaining,
+                                    },
+                                  ),
+                            );
+                          } else {
+                            return Promise.resolve();
+                          }
+                        },
+                      },
+                    ]}
+                  >
+                    <InputNumberWithSlider
+                      inputNumberProps={{
+                        addonAfter: '#',
+                      }}
+                      disabled={form.getFieldValue('cluster_size') > 1}
+                      sliderProps={{
+                        marks: {
+                          [sessionSliderLimitAndRemaining?.min]:
+                            sessionSliderLimitAndRemaining?.min,
+                          // remaining mark code should be located before max mark code to prevent overlapping when it is same value
+                          ...(sessionSliderLimitAndRemaining?.remaining
+                            ? {
+                                [sessionSliderLimitAndRemaining?.remaining]: {
+                                  label: <RemainingMark />,
+                                },
+                              }
+                            : {}),
+                          [sessionSliderLimitAndRemaining?.max]:
+                            sessionSliderLimitAndRemaining?.max,
+                        },
+                      }}
+                      min={sessionSliderLimitAndRemaining?.min}
+                      max={sessionSliderLimitAndRemaining?.max}
+                    />
+                  </Form.Item>
+                </Card>
               );
             }}
           </Form.Item>
-        </Card>
-      ) : null}
+        ) : null}
+      </Flex>
       {/* TODO: Support cluster mode */}
       {baiClient.supports('multi-container') && (
         // {false && (
