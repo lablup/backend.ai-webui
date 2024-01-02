@@ -21,7 +21,6 @@ const AnnouncementAlert: React.FC = () => {
       style={{
         alignItems: 'flex-start',
         overflow: 'auto',
-        whiteSpace: 'pre-wrap',
       }}
       icon={
         //use <> because tag border is not displayed normally when Tag component is used only
