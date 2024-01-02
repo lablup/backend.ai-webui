@@ -21,6 +21,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
 }) => {
   const inputRef = useRef<InputRef>(null);
   const { t } = useTranslation();
+  const form = Form.useFormInstance();
   return (
     <Form.List {...props}>
       {(fields, { add, remove }) => {
@@ -51,6 +52,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                         );
 
                         if (
+                          !_.isEmpty(variableName) &&
                           variableNames.length > 0 &&
                           _.filter(variableNames, (i) => i === variableName)
                             .length > 1
@@ -72,6 +74,14 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                   <Input
                     ref={index === fields.length - 1 ? inputRef : null}
                     placeholder="Variable"
+                    onChange={() => {
+                      const fieldNames = fields.map((field, index) => [
+                        props.name,
+                        index,
+                        'variable',
+                      ]);
+                      form.validateFields(fieldNames);
+                    }}
                   />
                 </Form.Item>
                 <Form.Item
