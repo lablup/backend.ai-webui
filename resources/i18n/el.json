@@ -1280,10 +1280,10 @@
     "GithubInternalError": "Εσωτερικό σφάλμα GitHub.",
     "GithubAPILimitError": "Σφάλμα περιορισμού API GitHub.",
     "GithubAPIEtcError": "Θέμα διακομιστή GitHub.",
-    "ImportGitlabRepo": "Εισαγωγή αποθετηρίου Gitlab",
-    "GitlabRepoWillBeFolder": "Τα εισαγόμενα αποθετήρια Gitlab μετατρέπονται σε φακέλους και μπορούν να προσαρτηθούν κατά την έναρξη της συνεδρίας.",
-    "GitlabURL": "URL του Gitlab",
-    "GitlabDefaultBranch": "Όνομα υποκαταστήματος Gitlab"
+    "ImportGitlabRepo": "Εισαγωγή αποθετηρίου GitLab",
+    "GitlabRepoWillBeFolder": "Τα εισαγόμενα αποθετήρια GitLab μετατρέπονται σε φακέλους και μπορούν να προσαρτηθούν κατά την έναρξη της συνεδρίας.",
+    "GitlabURL": "URL του GitLab",
+    "GitlabDefaultBranch": "Όνομα υποκαταστήματος GitLab"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Στατιστικά για αυτόν τον μήνα",
