@@ -59,6 +59,8 @@
 }
 
 /* fix: the tooltip does not appear in the `<Form.Item tooltip={'something'}` when the popup container is a parent node of the trigger node. */
-.ant-form-item-label {
+.ant-form-item-label,
+.ant-layout-sider {
   overflow: unset !important;
+  z-index: 100;
 }

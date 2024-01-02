@@ -1,4 +1,5 @@
 import BAIErrorBoundary from './components/BAIErrorBoundary';
+import BAIWebUISider from './components/BAIWebUISider';
 import Flex from './components/Flex';
 import FlexActivityIndicator from './components/FlexActivityIndicator';
 import ResourceGroupSelect from './components/ResourceGroupSelect';
@@ -318,6 +319,17 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <AnnouncementAlert />
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-webui-sider',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <BAIWebUISider />
       </DefaultProviders>
     );
   }),
