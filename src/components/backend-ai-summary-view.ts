@@ -24,8 +24,6 @@ import '@material/mwc-select';
 import { css, CSSResultGroup, html } from 'lit';
 import { get as _text, translate as _t } from 'lit-translate';
 import { customElement, property, query } from 'lit/decorators.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { marked } from 'marked';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -82,7 +80,6 @@ export default class BackendAISummary extends BackendAIPage {
   @property({ type: Number }) atom_used = 0;
   @property({ type: Object }) notification = Object();
   @property({ type: Object }) resourcePolicy;
-  @property({ type: String }) announcement = '';
   @property({ type: Object }) invitations = Object();
   @property({ type: Object }) appDownloadMap;
   @property({ type: String }) appDownloadUrl;
@@ -101,11 +98,11 @@ export default class BackendAISummary extends BackendAIPage {
       },
       MacOS: {
         os: 'macos',
-        architecture: ['intel', 'apple'],
+        architecture: ['arm64', 'x64'],
         extension: 'dmg',
       },
       Windows: {
-        os: 'win32',
+        os: 'win',
         architecture: ['arm64', 'x64'],
         extension: 'zip',
       },
@@ -165,26 +162,6 @@ export default class BackendAISummary extends BackendAIPage {
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-theme-on-primary: var(--general-button-color);
           --mdc-typography-font-family: var(--general-font-family);
-        }
-
-        .notice-ticker {
-          margin-left: 15px;
-          margin-top: 10px;
-          font-size: 13px;
-          font-weight: 400;
-          max-height: 55px;
-          max-width: 1000px;
-          overflow-y: scroll;
-        }
-
-        .notice-ticker > span {
-          display: inline-block;
-          white-space: pre-line;
-          font-size: 1rem;
-        }
-
-        .notice-ticker lablup-shields {
-          margin-right: 15px;
         }
 
         #session-launcher {
@@ -301,24 +278,6 @@ export default class BackendAISummary extends BackendAIPage {
           --card-background-color: var(--general-sidepanel-color);
         }
 
-        @media screen and (max-width: 899px) {
-          .notice-ticker {
-            justify-content: left !important;
-          }
-        }
-
-        @media screen and (max-width: 850px) {
-          .notice-ticker {
-            margin-left: 0px;
-            width: auto;
-          }
-
-          .notice-ticker > span {
-            max-width: 250px;
-            line-height: 1em;
-          }
-        }
-
         @media screen and (max-width: 750px) {
           lablup-activity-panel.footer-menu > div > a > div > span {
             text-align: left;
@@ -333,30 +292,17 @@ export default class BackendAISummary extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
     this.update_checker = this.shadowRoot?.querySelector('#update-checker');
     this._getUserOS();
-    if (
-      typeof globalThis.backendaiclient === 'undefined' ||
-      globalThis.backendaiclient === null ||
-      globalThis.backendaiclient.ready === false
-    ) {
-      document.addEventListener(
-        'backend-ai-connected',
-        () => {
-          this._readAnnouncement();
-        },
-        true,
-      );
-    } else {
-      this._readAnnouncement();
-    }
   }
 
   _getUserOS() {
     this.downloadAppOS = 'MacOS';
     if (navigator.userAgent.indexOf('Mac') != -1) this.downloadAppOS = 'MacOS';
-    if (navigator.userAgent.indexOf('Win') != -1)
+    if (navigator.userAgent.indexOf('Win') != -1) {
       this.downloadAppOS = 'Windows';
-    if (navigator.userAgent.indexOf('Linux') != -1)
+    }
+    if (navigator.userAgent.indexOf('Linux') != -1) {
       this.downloadAppOS = 'Linux';
+    }
   }
 
   _refreshConsoleUpdateInformation() {
@@ -414,22 +360,6 @@ export default class BackendAISummary extends BackendAIPage {
       // let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
       // document.dispatchEvent(event);
     }
-  }
-
-  _readAnnouncement() {
-    if (!this.activeConnected) {
-      return;
-    }
-    globalThis.backendaiclient.service
-      .get_announcement()
-      .then((res) => {
-        if ('message' in res) {
-          this.announcement = marked(res.message);
-        }
-      })
-      .catch((err) => {
-        return;
-      });
   }
 
   _toInt(value: number) {
@@ -557,20 +487,10 @@ export default class BackendAISummary extends BackendAIPage {
     return html`
       <link rel="stylesheet" href="/resources/fonts/font-awesome-all.min.css" />
       <link rel="stylesheet" href="resources/custom.css" />
+      <div style="margin:-14px;margin-bottom:0px;">
+        <backend-ai-react-announcement-alert></backend-ai-react-announcement-alert>
+      </div>
       <div class="item" elevation="1" class="vertical layout center wrap flex">
-        ${this.announcement != ''
-          ? html`
-              <div class="notice-ticker horizontal layout wrap flex">
-                <lablup-shields
-                  app=""
-                  color="red"
-                  description="Notice"
-                  ui="round"
-                ></lablup-shields>
-                <span>${this._stripHTMLTags(this.announcement)}</span>
-              </div>
-            `
-          : html``}
         <div class="horizontal wrap layout">
           <lablup-activity-panel
             title="${_t('summary.StartMenu')}"
@@ -640,18 +560,6 @@ export default class BackendAISummary extends BackendAIPage {
             height="500"
           ></backend-ai-resource-panel>
           <div class="horizontal wrap layout">
-            <lablup-activity-panel
-              title="${_t('summary.Announcement')}"
-              elevation="1"
-              horizontalsize="2x"
-              height="245"
-            >
-              <div slot="message" style="max-height:150px; overflow:scroll">
-                ${this.announcement !== ''
-                  ? unsafeHTML(this.announcement)
-                  : _t('summary.NoAnnouncement')}
-              </div>
-            </lablup-activity-panel>
             <lablup-activity-panel
               title="${_t('summary.Invitation')}"
               elevation="1"

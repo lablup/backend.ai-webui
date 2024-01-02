@@ -29,9 +29,9 @@ import { get as _text, translate as _t } from 'lit-translate';
 import { customElement, property, query } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
-//@ts-ignore for react-based component
+// @ts-ignore for react-based component
 globalThis.BackendAIClient = ai.backend.Client;
-//@ts-ignore for react-based component
+// @ts-ignore for react-based component
 globalThis.BackendAIClientConfig = ai.backend.ClientConfig;
 
 /* FIXME:
@@ -137,13 +137,12 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Number }) maxCountForPreopenPorts = 10;
   @property({ type: Boolean }) allowCustomResourceAllocation = true;
   @property({ type: Boolean }) isDirectorySizeVisible = true;
+  @property({ type: Boolean }) supportModelStore = false;
   @property({ type: String }) eduAppNamePrefix;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel')
   loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#signout-panel')
-  signoutPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
   @query('#block-panel')
   blockPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
   @query('#id_api_endpoint_container') apiEndpointContainer!: HTMLDivElement;
@@ -862,6 +861,13 @@ export default class BackendAILogin extends BackendAIPage {
       defaultValue: '',
       value: generalConfig?.eduAppNamePrefix,
     } as ConfigValueObject) as string;
+
+    // Enable model store support
+    this.supportModelStore = this._getConfigValueByExists(generalConfig, {
+      valueType: 'boolean',
+      defaultValue: false,
+      value: generalConfig?.supportModelStore,
+    } as ConfigValueObject) as boolean;
   }
 
   /**
@@ -1208,10 +1214,6 @@ export default class BackendAILogin extends BackendAIPage {
     return this.client?.logout();
   }
 
-  signout() {
-    this.signoutPanel.show();
-  }
-
   async loginWithSAML() {
     const rqst = this.client?.newUnsignedRequest('POST', '/saml/login', null);
     const form = document.createElement('form');
@@ -1306,48 +1308,6 @@ export default class BackendAILogin extends BackendAIPage {
 
   private _submitIfEnter(e) {
     if (e.keyCode === 13) this._login();
-  }
-
-  private _signoutIfEnter(e) {
-    if (e.keyCode === 13) this._signout();
-  }
-
-  private _signout() {
-    const user_id = (
-      this.shadowRoot?.querySelector('#id_signout_user_id') as TextField
-    ).value;
-    const password = (
-      this.shadowRoot?.querySelector('#id_signout_password') as TextField
-    ).value;
-    this.client
-      ?.signout(user_id, password)
-      .then((response) => {
-        this.notification.text = _text('login.SignoutFinished');
-        this.notification.show();
-        const event = new CustomEvent('backend-ai-logout', { detail: '' });
-        document.dispatchEvent(event);
-      })
-      .catch((err) => {
-        // Signout failed
-        this.free();
-        if (this.signoutPanel.open !== true) {
-          console.log(err);
-          if (typeof err.message !== 'undefined') {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-          } else {
-            this.notification.text = PainKiller.relieve(
-              'Login information mismatch. Check your information and try again.',
-            );
-          }
-          this.notification.show();
-        } else {
-          this.notification.text = PainKiller.relieve(
-            'Signout failed. Check ID/password information.',
-          );
-          this.notification.show();
-        }
-      });
   }
 
   async _token_login(sToken) {
@@ -1804,6 +1764,16 @@ export default class BackendAILogin extends BackendAIPage {
           this.maxCUDADevicesPerContainer;
         globalThis.backendaiclient._config.maxCUDASharesPerContainer =
           this.maxCUDASharesPerContainer;
+        globalThis.backendaiclient._config.maxROCMDevicesPerContainer =
+          this.maxROCMDevicesPerContainer;
+        globalThis.backendaiclient._config.maxTPUDevicesPerContainer =
+          this.maxTPUDevicesPerContainer;
+        globalThis.backendaiclient._config.maxIPUDevicesPerContainer =
+          this.maxIPUDevicesPerContainer;
+        globalThis.backendaiclient._config.maxATOMDevicesPerContainer =
+          this.maxATOMDevicesPerContainer;
+        globalThis.backendaiclient._config.maxWarboyDevicesPerContainer =
+          this.maxWarboyDevicesPerContainer;
         globalThis.backendaiclient._config.maxShmPerContainer =
           this.maxShmPerContainer;
         globalThis.backendaiclient._config.maxFileUploadSize =
@@ -1833,6 +1803,8 @@ export default class BackendAILogin extends BackendAIPage {
           this.allowCustomResourceAllocation;
         globalThis.backendaiclient._config.isDirectorySizeVisible =
           this.isDirectorySizeVisible;
+        globalThis.backendaiclient._config.supportModelStore =
+          this.supportModelStore;
         globalThis.backendaiclient.ready = true;
         if (
           this.endpoints.indexOf(
@@ -2303,49 +2275,6 @@ export default class BackendAILogin extends BackendAIPage {
               this.notification.show();
             }}"
           ></backend-ai-react-reset-password-required-modal>
-        </div>
-      </backend-ai-dialog>
-      <backend-ai-dialog
-        id="signout-panel"
-        fixed
-        backdrop
-        blockscrolling
-        persistent
-        disablefocustrap
-      >
-        <span slot="title">${_t('login.LeaveService')}</span>
-        <div slot="content">
-          <section>
-            <div class="warning">${_t('login.DescConfirmLeave')}</div>
-          </section>
-          <mwc-textfield
-            type="email"
-            name="signout_user_id"
-            id="id_signout_user_id"
-            maxLength="64"
-            label="E-mail"
-            value=""
-            @keyup="${this._signoutIfEnter}"
-          ></mwc-textfield>
-          <mwc-textfield
-            type="password"
-            name="signout_password"
-            id="id_signout_password"
-            maxLength="64"
-            label="Password"
-            value=""
-            @keyup="${this._signoutIfEnter}"
-          ></mwc-textfield>
-        </div>
-        <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button
-            outlined
-            fullwidth
-            id="signout-button"
-            icon="check"
-            label="${_t('login.LeaveService')}"
-            @click="${() => this._signout()}"
-          ></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog

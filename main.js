@@ -19,6 +19,8 @@ const url = require('url');
 const path = require('path');
 const toml = require('markty-toml');
 const nfs = require('fs');
+const fs = require('fs').promises;
+const mime = require('mime-types');
 const npjoin = require('path').join;
 const BASE_DIR = __dirname;
 let ProxyManager; let versions; let es6Path; let electronPath; let mainIndex;
@@ -40,7 +42,7 @@ const windowWidth = 1280;
 const windowHeight = 970;
 
 protocol.registerSchemesAsPrivileged([
-  {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}
+  {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true, supportFetchAPI: true}}
 ]);
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -473,22 +475,34 @@ function setSameSitePolicy(){
 }
 
 app.on('ready', () => {
-  protocol.interceptFileProtocol('file', (request, callback) => {
-    const url = request.url.substr(7); /* all urls start with 'file://' */
-    const extension = url.split('.').pop();
-    const options = {path: path.normalize(`${BASE_DIR}/${url}`)};
-    callback(options);
-  }, (err) => {
-    if (err) console.error('Failed to register protocol');
+  // Registering the 'file' protocol
+  protocol.handle('file', async (request) => {
+    const url = request.url.substr(7); // strip 'file://' from the URL
+    const normalizedPath = path.normalize(`${BASE_DIR}/${url}`);
+    try {
+      const data = await fs.readFile(normalizedPath);
+      const mimeType = mime.lookup(normalizedPath);
+      return new Response(
+        data,
+        { headers: { 'content-type': mimeType } } );
+    } catch (err) {
+      console.error('Error reading file:', err);
+      return { error: -2 }; // -2 corresponds to net::ERR_FAILED in Chromium
+    }
   });
-  // Force mime-type to javascript
-  protocol.registerBufferProtocol('es6', (req, cb) => {
-    nfs.readFile(
-        npjoin(es6Path, req.url.replace('es6://', '')),
-        (e, b) => {
-          cb({mimeType: 'text/javascript', data: b});
-        }
-    );
+  // Registering the 'es6' protocol
+  protocol.handle('es6', async (request) => {
+    const filePath = request.url.replace('es6://', '');
+    const fullPath = npjoin(es6Path, filePath);
+    try {
+      const data = await fs.readFile(fullPath);
+      return new Response(
+        data,
+        { headers: { 'content-type': 'text/javascript' } } );
+    } catch (err) {
+      console.error('Error reading file:', err);
+      return { error: -2 };
+    }
   });
   createWindow();
 });

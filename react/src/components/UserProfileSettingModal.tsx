@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ */
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
@@ -5,13 +9,11 @@ import BAIModal from './BAIModal';
 import { passwordPattern } from './ResetPasswordRequired';
 import TOTPActivateModal from './TOTPActivateModal';
 // @ts-ignore
-import customCSS from './UserProfileSettingModal.css?raw';
 import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Modal, ModalProps, Input, Form, Select, message, Switch } from 'antd';
+import { Modal, ModalProps, Input, Form, message, Switch } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import _ from 'lodash';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
@@ -25,8 +27,6 @@ type UserProfileFormValues = {
   originalPassword?: string;
   newPasswordConfirm?: string;
   newPassword?: string;
-  access_key?: string;
-  secret_key?: string;
   totp_activated: boolean;
 };
 
@@ -80,23 +80,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
     },
   );
 
-  const { data: keyPairs } = useTanQuery<
-    {
-      secret_key: string;
-      access_key: string;
-    }[]
-  >(
-    'baiClient.keypair.list',
-    () => {
-      return baiClient.keypair
-        .list(userInfo.email, ['access_key', 'secret_key'], true)
-        .then((res: any) => res.keypairs);
-    },
-    {
-      suspense: true,
-    },
-  );
-
   const mutationToRemoveTotp = useTanMutation({
     mutationFn: () => {
       return baiClient.remove_totp();
@@ -104,60 +87,62 @@ const UserProfileSettingModal: React.FC<Props> = ({
   });
 
   const onSubmit = () => {
-    form.validateFields().then((values) => {
-      userMutations.updateFullName(values.full_name, {
-        onSuccess: (newFullName) => {
-          if (newFullName !== userInfo.full_name) {
-            messageApi.open({
-              type: 'success',
-              content: t('webui.menu.FullnameUpdated'),
-            });
-          }
+    form
+      .validateFields()
+      .then((values) => {
+        userMutations.updateFullName(values.full_name, {
+          onSuccess: (newFullName) => {
+            if (newFullName !== userInfo.full_name) {
+              messageApi.open({
+                type: 'success',
+                content: t('webui.menu.FullnameUpdated'),
+              });
+            }
 
-          if (
-            values.newPassword &&
-            values.newPasswordConfirm &&
-            values.originalPassword
-          ) {
-            userMutations.updatePassword(
-              {
-                new_password: values.newPassword,
-                new_password2: values.newPasswordConfirm,
-                old_password: values.originalPassword,
-              },
-              {
-                onSuccess: () => {
-                  messageApi.open({
-                    type: 'success',
-                    content: t('webui.menu.PasswordUpdated'),
-                  });
-                  onRequestClose(true);
+            if (
+              values.newPassword &&
+              values.newPasswordConfirm &&
+              values.originalPassword
+            ) {
+              userMutations.updatePassword(
+                {
+                  new_password: values.newPassword,
+                  new_password2: values.newPasswordConfirm,
+                  old_password: values.originalPassword,
                 },
-                onError: (e) => {
-                  messageApi.open({
-                    type: 'error',
-                    content: e.message,
-                  });
+                {
+                  onSuccess: () => {
+                    messageApi.open({
+                      type: 'success',
+                      content: t('webui.menu.PasswordUpdated'),
+                    });
+                    onRequestClose(true);
+                  },
+                  onError: (e) => {
+                    messageApi.open({
+                      type: 'error',
+                      content: e.message,
+                    });
+                  },
                 },
-              },
-            );
-          } else {
-            onRequestClose(true);
-          }
-        },
-        onError: (e) => {
-          messageApi.open({
-            type: 'error',
-            content: e.message,
-          });
-        },
-      });
-    });
+              );
+            } else {
+              onRequestClose(true);
+            }
+          },
+          onError: (e) => {
+            messageApi.open({
+              type: 'error',
+              content: e.message,
+            });
+          },
+        });
+      })
+      .catch(() => {});
   };
 
   return (
     <>
-      <style>{customCSS}</style>
       <BAIModal
         {...baiModalProps}
         okText={t('webui.menu.Update')}
@@ -178,7 +163,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
           initialValues={{
             full_name: userInfo.full_name,
             totp_activated: user?.totp_activated || false,
-            access_key: keyPairs?.[0].access_key,
           }}
           preserve={false}
         >
@@ -199,29 +183,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
             ]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item name="access_key" label={t('general.AccessKey')}>
-            <Select
-              options={_.map(keyPairs, (keyPair) => ({
-                value: keyPair.access_key,
-              }))}
-              // onSelect={onSelectAccessKey}
-            ></Select>
-          </Form.Item>
-          <Form.Item
-            label={t('general.SecretKey')}
-            shouldUpdate={(prev, next) => prev.access_key !== next.access_key}
-          >
-            {({ getFieldValue }) => (
-              <Input.Password
-                value={
-                  _.find(keyPairs, ['access_key', getFieldValue('access_key')])
-                    ?.secret_key
-                }
-                className="disabled_style_readonly"
-                readOnly
-              />
-            )}
           </Form.Item>
           <Form.Item
             name="originalPassword"

@@ -434,7 +434,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     <div
                       class="vertical center-justified layout setting-desc-shrink"
                     >
-                      <div class="title">${_t('settings.CUDAGPUsupport')}</div>
+                      <div class="title">
+                        ${_t('settings.OpenSourceCUDAGPUsupport')}
+                      </div>
                       <div class="description-shrink">
                         ${_tr('settings.DescCUDAGPUsupport')}
                         ${this.options['cuda_fgpu']
