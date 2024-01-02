@@ -1,29 +1,27 @@
-import { useCurrentDomainValue } from '../hooks';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import BAIMenu from './BAIMenu';
 import BAISider from './BAISider';
 import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import ProjectSelector from './ProjectSelector';
 import {
-  AlertOutlined,
+  BarChartOutlined,
   BarsOutlined,
   BellOutlined,
+  CaretRightOutlined,
+  CloudUploadOutlined,
+  ControlOutlined,
   DashboardOutlined,
-  DownOutlined,
+  ExperimentOutlined,
+  ExportOutlined,
   FileDoneOutlined,
-  FolderOutlined,
+  HddOutlined,
   HolderOutlined,
+  InfoCircleOutlined,
   LogoutOutlined,
   MenuOutlined,
-  NodeIndexOutlined,
-  NotificationOutlined,
-  PlaySquareOutlined,
-  QuestionOutlined,
-  ReconciliationOutlined,
   RocketOutlined,
-  SettingOutlined,
-  SolutionOutlined,
-  TeamOutlined,
+  ToolOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { useLocalStorageState, useToggle } from 'ahooks';
@@ -31,7 +29,14 @@ import { Avatar, Button, Dropdown, Layout, Typography, theme } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import _ from 'lodash';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useNavigate, useLocation, Outlet, useMatches } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import {
+  useNavigate,
+  useLocation,
+  Outlet,
+  useMatches,
+  Link,
+} from 'react-router-dom';
 
 const { Text } = Typography;
 
@@ -42,6 +47,7 @@ function MainLayout() {
   const location = useLocation();
   const matches = useMatches();
   const formRef = useRef<HTMLFormElement>(null);
+  // console.log(_.last(matches));
 
   const [sideCollapsed, setSideCollapsed] = useState<boolean>(false);
   const [compactSidebarActive] = useLocalStorageState<boolean | undefined>(
@@ -52,6 +58,7 @@ function MainLayout() {
 
   // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();
+  const { t } = useTranslation();
 
   useLayoutEffect(() => {
     const handleNavigate = (e: any) => {
@@ -102,6 +109,26 @@ function MainLayout() {
         }
         logoTitle="WebUI"
         logoTitleCollapsed="WebUI"
+        bottomText={
+          <>
+            <div className="terms-of-use">
+              <Flex style={{ fontSize: token.sizeXS }}>
+                <>{t('webui.menu.TermsOfService')}</>&nbsp;·&nbsp;
+                <>{t('webui.menu.PrivacyPolicy')}</>&nbsp;·&nbsp;
+                <>{t('webui.menu.AboutBackendAI')}</>
+              </Flex>
+            </div>
+            <address>
+              <small className="sidebar-footer">Lablup Inc.</small>
+              <small
+                className="sidebar-footer"
+                style={{ fontSize: token.sizeXS }}
+              >
+                {/* {window.ManagerHub?.version} */}
+              </small>
+            </address>
+          </>
+        }
         // bottomText={<>Lablup Inc. {window.ManagerHub?.version}</>}
       >
         {/* <Flex justify="center" align="center">
@@ -116,21 +143,105 @@ function MainLayout() {
         <BAIMenu
           selectedKeys={[location.pathname.split('/')[1] || 'dashboard']}
           items={[
+            /**
+             * General menu
+             */
             {
-              label: 'Summary',
+              label: t('webui.menu.Summary'),
               icon: <DashboardOutlined />,
               key: 'summary',
             },
             {
-              label: 'Session',
+              label: t('webui.menu.Sessions'),
               icon: <BarsOutlined />,
               key: 'job',
+              title: t('webui.menu.Sessions'),
             },
             {
-              label: 'Serving',
+              label: t('webui.menu.Serving'),
               icon: <RocketOutlined />,
               key: 'serving',
             },
+            {
+              label: t('webui.menu.Experiments'),
+              icon: <ExperimentOutlined />,
+              key: 'experiment',
+            },
+            {
+              label: t('webui.menu.Import&Run'),
+              icon: <CaretRightOutlined />,
+              key: 'import',
+            },
+            {
+              label: t('webui.menu.Data&Storage'),
+              icon: <CloudUploadOutlined />,
+              key: 'data',
+            },
+            {
+              label: t('webui.menu.AgentSummary'),
+              icon: <HddOutlined />,
+              key: 'agent-summary',
+            },
+            {
+              label: t('webui.menu.Statistics'),
+              icon: <BarChartOutlined />,
+              key: 'statistics',
+            },
+            {
+              label: <Link to={'/'}>{t('webui.menu.FastTrack')}</Link>,
+              icon: <ExportOutlined />,
+              key: 'fasttrack',
+            },
+            /**
+             * Plugin menu
+             */
+            /**
+             * Admin menu
+             */
+            {
+              label: <>{t('webui.menu.Administration')}</>,
+              type: 'group',
+            },
+            { type: 'divider' },
+            {
+              label: t('webui.menu.Users'),
+              icon: <UserOutlined />,
+              key: 'credential',
+            },
+            {
+              label: t('webui.menu.Environments'),
+              icon: <FileDoneOutlined />,
+              key: 'environment',
+            },
+            /**
+             * Superadmin menu
+             */
+            {
+              label: t('webui.menu.Resources'),
+              icon: <HddOutlined />,
+              key: 'agent',
+            },
+            {
+              label: t('webui.menu.Configurations'),
+              icon: <ControlOutlined />,
+              key: 'settings',
+            },
+            {
+              label: t('webui.menu.Maintenance'),
+              icon: <ToolOutlined />,
+              key: 'maintenance',
+            },
+            {
+              label: t('webui.menu.Information'),
+              icon: <InfoCircleOutlined />,
+              key: 'information',
+            },
+            /**
+             * Admin plugin menu
+             */
+            /**
+             * Etc menu
+             */
             // {
             //   label: '404',
             //   icon: <QuestionOutlined />,
