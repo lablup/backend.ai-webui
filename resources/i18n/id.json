@@ -1280,10 +1280,10 @@
     "GithubInternalError": "Kesalahan Internal GitHub.",
     "GithubAPILimitError": "Kesalahan Batasan API GitHub.",
     "GithubAPIEtcError": "Masalah Server GitHub.",
-    "ImportGitlabRepo": "Impor Repositori Gitlab",
-    "GitlabRepoWillBeFolder": "Repositori Gitlab yang diimpor akan dikonversi menjadi folder dan dapat dipasang saat sesi dimulai.",
-    "GitlabURL": "URL Gitlab",
-    "GitlabDefaultBranch": "Nama Cabang Gitlab"
+    "ImportGitlabRepo": "Impor Repositori GitLab",
+    "GitlabRepoWillBeFolder": "Repositori GitLab yang diimpor akan dikonversi menjadi folder dan dapat dipasang saat sesi dimulai.",
+    "GitlabURL": "URL GitLab",
+    "GitlabDefaultBranch": "Nama Cabang GitLab"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistik Bulan Ini",
