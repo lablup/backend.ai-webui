@@ -380,6 +380,15 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     document.addEventListener('move-to-from-react', (e) => {
       this._moveTo(e.detail);
     });
+    document.addEventListener('show-TOS-agreement', () => {
+      this.showTOSAgreement();
+    });
+    document.addEventListener('show-PP-agreement', () => {
+      this.showPPAgreement();
+    });
+    document.addEventListener('show-about-backendai', () => {
+      this._showSplash();
+    });
   }
 
   async connectedCallback() {

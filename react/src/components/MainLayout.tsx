@@ -1,6 +1,7 @@
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import BAIMenu from './BAIMenu';
 import BAISider from './BAISider';
+import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import ProjectSelector from './ProjectSelector';
@@ -25,7 +26,15 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useLocalStorageState, useToggle } from 'ahooks';
-import { Avatar, Button, Dropdown, Layout, Typography, theme } from 'antd';
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  Layout,
+  MenuProps,
+  Typography,
+  theme,
+} from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import _ from 'lodash';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -55,6 +64,8 @@ function MainLayout() {
   );
   const [collapsedWidth, setCollapsedWidth] = useState(88);
   const [isOpenPreferences, { toggle: toggleIsOpenPreferences }] = useToggle();
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
 
   // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();
@@ -81,6 +92,94 @@ function MainLayout() {
   const logout = () => {
     formRef.current?.submit();
   };
+
+  const generalMenu: MenuProps['items'] = [
+    {
+      label: t('webui.menu.Summary'),
+      icon: <DashboardOutlined />,
+      key: 'summary',
+    },
+    {
+      label: t('webui.menu.Sessions'),
+      icon: <BarsOutlined />,
+      key: 'job',
+      title: t('webui.menu.Sessions'),
+    },
+    {
+      label: t('webui.menu.Serving'),
+      icon: <RocketOutlined />,
+      key: 'serving',
+    },
+    {
+      label: t('webui.menu.Import&Run'),
+      icon: <CaretRightOutlined />,
+      key: 'import',
+    },
+    {
+      label: t('webui.menu.Data&Storage'),
+      icon: <CloudUploadOutlined />,
+      key: 'data',
+    },
+    {
+      label: t('webui.menu.AgentSummary'),
+      icon: <HddOutlined />,
+      key: 'agent-summary',
+    },
+    {
+      label: t('webui.menu.Statistics'),
+      icon: <BarChartOutlined />,
+      key: 'statistics',
+    },
+    {
+      label: <Link to={'/'}>{t('webui.menu.FastTrack')}</Link>,
+      icon: <ExportOutlined />,
+      key: 'fasttrack',
+    },
+  ];
+
+  const adminDivider: MenuProps['items'] = [
+    {
+      label: <>{t('webui.menu.Administration')}</>,
+      type: 'group',
+    },
+    { type: 'divider' },
+  ];
+
+  const adminMenu: MenuProps['items'] = [
+    {
+      label: t('webui.menu.Users'),
+      icon: <UserOutlined />,
+      key: 'credential',
+    },
+    {
+      label: t('webui.menu.Environments'),
+      icon: <FileDoneOutlined />,
+      key: 'environment',
+    },
+  ];
+
+  const superAdminMenu: MenuProps['items'] = [
+    {
+      label: t('webui.menu.Resources'),
+      icon: <HddOutlined />,
+      key: 'agent',
+    },
+    {
+      label: t('webui.menu.Configurations'),
+      icon: <ControlOutlined />,
+      key: 'settings',
+    },
+    {
+      label: t('webui.menu.Maintenance'),
+      icon: <ToolOutlined />,
+      key: 'maintenance',
+    },
+    {
+      label: t('webui.menu.Information'),
+      icon: <InfoCircleOutlined />,
+      key: 'information',
+    },
+  ];
 
   return (
     <Layout>
@@ -113,9 +212,38 @@ function MainLayout() {
           <>
             <div className="terms-of-use">
               <Flex style={{ fontSize: token.sizeXS }}>
-                <>{t('webui.menu.TermsOfService')}</>&nbsp;·&nbsp;
-                <>{t('webui.menu.PrivacyPolicy')}</>&nbsp;·&nbsp;
-                <>{t('webui.menu.AboutBackendAI')}</>
+                <a
+                  style={{ color: token.colorTextSecondary }}
+                  onClick={() => {
+                    document.dispatchEvent(
+                      new CustomEvent('show-TOS-agreement'),
+                    );
+                  }}
+                >
+                  {t('webui.menu.TermsOfService')}
+                </a>
+                &nbsp;·&nbsp;
+                <a
+                  style={{ color: token.colorTextSecondary }}
+                  onClick={() => {
+                    document.dispatchEvent(
+                      new CustomEvent('show-PP-agreement'),
+                    );
+                  }}
+                >
+                  {t('webui.menu.PrivacyPolicy')}
+                </a>
+                &nbsp;·&nbsp;
+                <a
+                  style={{ color: token.colorTextSecondary }}
+                  onClick={() => {
+                    document.dispatchEvent(
+                      new CustomEvent('show-about-backendai'),
+                    );
+                  }}
+                >
+                  {t('webui.menu.AboutBackendAI')}
+                </a>
               </Flex>
             </div>
             <address>
@@ -142,112 +270,43 @@ function MainLayout() {
         </Flex> */}
         <BAIMenu
           selectedKeys={[location.pathname.split('/')[1] || 'dashboard']}
-          items={[
-            /**
-             * General menu
-             */
-            {
-              label: t('webui.menu.Summary'),
-              icon: <DashboardOutlined />,
-              key: 'summary',
-            },
-            {
-              label: t('webui.menu.Sessions'),
-              icon: <BarsOutlined />,
-              key: 'job',
-              title: t('webui.menu.Sessions'),
-            },
-            {
-              label: t('webui.menu.Serving'),
-              icon: <RocketOutlined />,
-              key: 'serving',
-            },
-            {
-              label: t('webui.menu.Experiments'),
-              icon: <ExperimentOutlined />,
-              key: 'experiment',
-            },
-            {
-              label: t('webui.menu.Import&Run'),
-              icon: <CaretRightOutlined />,
-              key: 'import',
-            },
-            {
-              label: t('webui.menu.Data&Storage'),
-              icon: <CloudUploadOutlined />,
-              key: 'data',
-            },
-            {
-              label: t('webui.menu.AgentSummary'),
-              icon: <HddOutlined />,
-              key: 'agent-summary',
-            },
-            {
-              label: t('webui.menu.Statistics'),
-              icon: <BarChartOutlined />,
-              key: 'statistics',
-            },
-            {
-              label: <Link to={'/'}>{t('webui.menu.FastTrack')}</Link>,
-              icon: <ExportOutlined />,
-              key: 'fasttrack',
-            },
-            /**
-             * Plugin menu
-             */
-            /**
-             * Admin menu
-             */
-            {
-              label: <>{t('webui.menu.Administration')}</>,
-              type: 'group',
-            },
-            { type: 'divider' },
-            {
-              label: t('webui.menu.Users'),
-              icon: <UserOutlined />,
-              key: 'credential',
-            },
-            {
-              label: t('webui.menu.Environments'),
-              icon: <FileDoneOutlined />,
-              key: 'environment',
-            },
-            /**
-             * Superadmin menu
-             */
-            {
-              label: t('webui.menu.Resources'),
-              icon: <HddOutlined />,
-              key: 'agent',
-            },
-            {
-              label: t('webui.menu.Configurations'),
-              icon: <ControlOutlined />,
-              key: 'settings',
-            },
-            {
-              label: t('webui.menu.Maintenance'),
-              icon: <ToolOutlined />,
-              key: 'maintenance',
-            },
-            {
-              label: t('webui.menu.Information'),
-              icon: <InfoCircleOutlined />,
-              key: 'information',
-            },
-            /**
-             * Admin plugin menu
-             */
-            /**
-             * Etc menu
-             */
-            // {
-            //   label: '404',
-            //   icon: <QuestionOutlined />,
-            //   key: '404',
-            // },
-          ]}
+          items={
+            isSuperAdmin
+              ? [
+                  ...generalMenu,
+                  ...adminDivider,
+                  ...adminMenu,
+                  ...superAdminMenu,
+                ]
+              : isAdmin
+              ? [...generalMenu, ...adminDivider, ...adminMenu]
+              : [...generalMenu]
+          }
+          // {[
+          /**
+           * General menu
+           */
+          /**
+           * Plugin menu
+           */
+          /**
+           * Admin menu
+           */
+          /**
+           * Superadmin menu
+           */
+          /**
+           * Admin plugin menu
+           */
+          /**
+           * Etc menu
+           */
+          // {
+          //   label: '404',
+          //   icon: <QuestionOutlined />,
+          //   key: '404',
+          // },
+          // ]}
           onClick={({ keyPath }) => {
             navigate(keyPath.join('/'));
             document.dispatchEvent(
