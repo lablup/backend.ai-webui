@@ -30,7 +30,23 @@ const AnnouncementAlert: React.FC = () => {
           </Tag>
         </>
       }
-      message={<Markdown>{announcement.message}</Markdown>}
+      message={
+        <Markdown
+          options={{
+            overrides: {
+              p: {
+                props: {
+                  style: {
+                    marginTop: 0,
+                  },
+                },
+              },
+            },
+          }}
+        >
+          {announcement.message}
+        </Markdown>
+      }
     />
   ) : (
     ''
