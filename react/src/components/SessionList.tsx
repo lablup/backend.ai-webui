@@ -1,8 +1,13 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import DoubleTag from './DoubleTag';
+import Flex from './Flex';
+import ResourceNumber from './ResourceNumber';
 import SessionInfoCell from './SessionListColums/SessionInfoCell';
 import { SessionListQuery } from './__generated__/SessionListQuery.graphql';
-import { Table, TableProps } from 'antd';
+import { FolderOutlined, GroupOutlined } from '@ant-design/icons';
+import { Table, TableProps, Tag, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
+import _ from 'lodash';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
@@ -34,6 +39,7 @@ const SessionList: React.FC<SessionListProps> = ({
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
   const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   if (
     !baiClient.supports('avoid-hol-blocking') &&
@@ -75,7 +81,7 @@ const SessionList: React.FC<SessionListProps> = ({
             occupied_slots
             access_key
             starts_at
-
+            scaling_group
             cluster_size @skipOnClient(if: $skipClusterSize)
             ...SessionInfoCellFragment
           }
@@ -96,6 +102,17 @@ const SessionList: React.FC<SessionListProps> = ({
       fetchPolicy: 'network-only',
     },
   );
+
+  const setSessionTypeTagColor = (value: string) => {
+    switch (value) {
+      case 'INTERACTIVE':
+        return 'green';
+      case 'BATCH':
+        return 'darkgreen';
+      case 'INFERENCE':
+        return 'blue';
+    }
+  };
 
   return (
     <>
@@ -129,18 +146,74 @@ const SessionList: React.FC<SessionListProps> = ({
           },
           {
             title: t('session.Configuration'),
+            dataIndex: 'mounts',
+            render(value, record) {
+              return (
+                <>
+                  {value.length > 0 ? (
+                    <Flex gap="xxs">
+                      <FolderOutlined />
+                      {value.join(', ')}
+                    </Flex>
+                  ) : (
+                    <Flex gap="xxs" style={{ color: token.colorTextDisabled }}>
+                      <FolderOutlined />
+                      No mount
+                    </Flex>
+                  )}
+                  <Flex gap="xxs">
+                    <GroupOutlined />
+                    {record.scaling_group}
+                  </Flex>
+                  {record.occupied_slots &&
+                    _.map(JSON.parse(record.occupied_slots), (value, type) => {
+                      return (
+                        <ResourceNumber
+                          key={type}
+                          // @ts-ignore
+                          type={type}
+                          value={_.toString(value)}
+                        />
+                      );
+                    })}
+                </>
+              );
+            },
           },
           {
             title: t('session.Usage'),
           },
           {
             title: t('session.Reservation'),
+            dataIndex: 'created_at',
+            render(value, record) {
+              const localeStringDate = new Date(value).toLocaleString();
+              const elapsedTime = baiClient.utils.elapsedTime(
+                value,
+                record.terminated_at,
+              );
+              return (
+                <Flex direction="column" gap="xs">
+                  {localeStringDate}
+                  <DoubleTag values={[t('session.ElapsedTime'), elapsedTime]} />
+                </Flex>
+              );
+            },
           },
           {
             title: t('session.Architecture'),
+            dataIndex: 'architecture',
+            render: (value) => {
+              return <Tag color="gold">{value}</Tag>;
+            },
           },
           {
             title: t('session.SessionType'),
+            dataIndex: 'type',
+            render: (value) => {
+              const sessionTypeTagColor = setSessionTypeTagColor(value);
+              return <Tag color={sessionTypeTagColor}>{value}</Tag>;
+            },
           },
           {
             title: t('session.Agent'),
