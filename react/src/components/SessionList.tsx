@@ -118,7 +118,7 @@ const SessionList: React.FC<SessionListProps> = ({
   return (
     <>
       <Table
-        scroll={{ x: true }}
+        scroll={{ x: 'max-content' }}
         columns={[
           {
             title: t('session.SessionInfo'),
