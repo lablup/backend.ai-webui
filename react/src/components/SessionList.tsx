@@ -82,6 +82,7 @@ const SessionList: React.FC<SessionListProps> = ({
             access_key
             starts_at
             scaling_group
+            agents
             cluster_size @skipOnClient(if: $skipClusterSize)
             ...SessionInfoCellFragment
           }
@@ -215,9 +216,19 @@ const SessionList: React.FC<SessionListProps> = ({
               return <Tag color={sessionTypeTagColor}>{value}</Tag>;
             },
           },
-          {
-            title: t('session.Agent'),
-          },
+          ...(baiClient.is_admin || !!baiClient._config.hideAgents
+            ? [
+                {
+                  title: t('session.Agent'),
+                  dataIndex: 'agents',
+                  render(value: string[]) {
+                    return _.map(value, (agent) => {
+                      return agent;
+                    });
+                  },
+                },
+              ]
+            : []),
         ]}
         // @ts-ignore
         dataSource={(compute_session_list?.items || []).filter(filter)}
