@@ -13,7 +13,6 @@ import {
   CloudUploadOutlined,
   ControlOutlined,
   DashboardOutlined,
-  ExperimentOutlined,
   ExportOutlined,
   FileDoneOutlined,
   HddOutlined,
@@ -60,6 +59,7 @@ function MainLayout() {
   const [isOpenPreferences, { toggle: toggleIsOpenPreferences }] = useToggle();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
+  const [title, setTitle] = useState<string>('');
 
   // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();
@@ -97,7 +97,6 @@ function MainLayout() {
       label: t('webui.menu.Sessions'),
       icon: <BarsOutlined />,
       key: 'job',
-      title: t('webui.menu.Sessions'),
     },
     {
       label: t('webui.menu.Serving'),
@@ -255,7 +254,6 @@ function MainLayout() {
             </address>
           </>
         }
-        // bottomText={<>Lablup Inc. {window.ManagerHub?.version}</>}
       >
         {/* <Flex justify="center" align="center">
           <Button
@@ -305,7 +303,17 @@ function MainLayout() {
           //   key: '404',
           // },
           // ]}
-          onClick={({ keyPath }) => {
+          onClick={({ key, keyPath }) => {
+            const menu = _.find(
+              [...generalMenu, ...adminMenu, ...superAdminMenu],
+              {
+                key: key,
+              },
+            );
+            if (menu) {
+              // @ts-ignore
+              setTitle(menu.label);
+            }
             navigate(keyPath.join('/'));
             document.dispatchEvent(
               new CustomEvent('move-to-from-react', {
@@ -325,7 +333,6 @@ function MainLayout() {
         >
           {/* <Flex direction="column"> */}
           <Header
-            title={'Serving'}
             style={{
               position: 'sticky',
               height: 64,
@@ -353,7 +360,7 @@ function MainLayout() {
               <Typography.Title level={5} style={{ margin: 0 }}>
                 {/* @ts-ignore */}
                 {/* {_.last(matches)?.handle?.title || ''} */}
-                Serving
+                {title}
               </Typography.Title>
             </Flex>
             <Flex gap={'xs'}>
