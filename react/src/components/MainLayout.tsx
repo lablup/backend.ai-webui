@@ -39,13 +39,7 @@ import { Header } from 'antd/es/layout/layout';
 import _ from 'lodash';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  useNavigate,
-  useLocation,
-  Outlet,
-  useMatches,
-  Link,
-} from 'react-router-dom';
+import { useNavigate, useLocation, Outlet, useMatches } from 'react-router-dom';
 
 const { Text } = Typography;
 
@@ -131,7 +125,7 @@ function MainLayout() {
       key: 'statistics',
     },
     {
-      label: <Link to={'/'}>{t('webui.menu.FastTrack')}</Link>,
+      label: t('webui.menu.FastTrack'),
       icon: <ExportOutlined />,
       key: 'fasttrack',
     },
@@ -211,7 +205,11 @@ function MainLayout() {
         bottomText={
           <>
             <div className="terms-of-use">
-              <Flex style={{ fontSize: token.sizeXS }}>
+              <Flex
+                wrap="wrap"
+                style={{ fontSize: token.sizeXS }}
+                justify="center"
+              >
                 <a
                   style={{ color: token.colorTextSecondary }}
                   onClick={() => {
