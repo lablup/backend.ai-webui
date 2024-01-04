@@ -3,7 +3,7 @@ import DefaultProviders, {
   DefaultProviders2,
   RoutingEventHandler,
 } from './components/DefaultProviders';
-import MainLayout from './components/MainLayout';
+import MainLayout from './components/MainLayout/MainLayout';
 import ServingListPage from './pages/ServingListPage';
 import React, { FC } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';

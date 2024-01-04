@@ -4,7 +4,7 @@ import Sider from 'antd/es/layout/Sider';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-interface BAISiderProps extends SiderProps {
+export interface BAISiderProps extends SiderProps {
   // logo?: React.ReactNode;
   logoCollapsed?: React.ReactNode;
   logo?: React.ReactNode;
