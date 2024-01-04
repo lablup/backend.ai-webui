@@ -5,14 +5,9 @@ import {
 } from '../../hooks';
 import Flex from '../Flex';
 import ProjectSelector from '../ProjectSelector';
-import {
-  BellOutlined,
-  HolderOutlined,
-  LogoutOutlined,
-  MenuOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-import { theme, Layout, Button, Typography, Avatar, Dropdown } from 'antd';
+import UserDropdownMenu from '../UserDropdownMenu';
+import { BellOutlined, MenuOutlined } from '@ant-design/icons';
+import { theme, Layout, Button, Typography } from 'antd';
 import { t } from 'i18next';
 import { Suspense } from 'react';
 
@@ -78,48 +73,7 @@ const WebUIHeader: React.FC<{
         </Suspense>
 
         <Button size="large" icon={<BellOutlined />} type="text"></Button>
-        <Dropdown
-          menu={{
-            items: [
-              {
-                label: 'Preferences',
-                icon: <HolderOutlined />,
-                key: 'preferences',
-                // onClick: () => toggleIsOpenPreferences(),
-              },
-              {
-                label: 'Log out',
-                icon: <LogoutOutlined />,
-                key: 'logout',
-                // onClick: () => logout(),
-              },
-            ],
-          }}
-          trigger={['click']}
-        >
-          {/* to fix "react-dom.development.js:86 Warning: findDOMNode is deprecated in StrictMode.", it seems like a bug of ant.d dropdown */}
-          <Flex
-            direction="row"
-            gap={token.marginXS}
-            style={{ cursor: 'pointer' }}
-          >
-            <Avatar
-              size="small"
-              icon={<UserOutlined />}
-              style={{ backgroundColor: '#BFBFBF' }}
-            />
-            <Typography.Text>
-              {/* {window?.ManagerHub?.user?.name}{' '}
-          {window?.ManagerHub?.user?.email} */}
-            </Typography.Text>
-            {/* <DownOutlined
-          style={{
-            fontSize: 12,
-            color: token.colorTextSecondary,
-          }}
-        /> */}
-          </Flex>
-        </Dropdown>
+        <UserDropdownMenu />
       </Flex>
     </Layout.Header>
   );

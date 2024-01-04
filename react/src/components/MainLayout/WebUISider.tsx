@@ -1,4 +1,4 @@
-import { useSuspendedBackendaiClient } from '../../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
 import Flex from '../Flex';
@@ -41,7 +41,8 @@ const WebUISider: React.FC<
   const { token } = theme.useToken();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  const webuiNavigate = useWebUINavigate();
   const location = useLocation();
   const baiClient = useSuspendedBackendaiClient();
   const generalMenu: MenuProps['items'] = [
@@ -255,12 +256,7 @@ const WebUISider: React.FC<
           //   // @ts-ignore
           //   setTitle(menu.label);
           // }
-          navigate(keyPath.join('/'));
-          document.dispatchEvent(
-            new CustomEvent('move-to-from-react', {
-              detail: '/' + keyPath.join('/'),
-            }),
-          );
+          webuiNavigate('/' + keyPath.join('/'));
         }}
       />
     </BAISider>

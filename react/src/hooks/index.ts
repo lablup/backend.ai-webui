@@ -1,6 +1,26 @@
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
+import {
+  NavigateFunction,
+  NavigateOptions,
+  To,
+  useNavigate,
+} from 'react-router-dom';
+
+export const useWebUINavigate = (): NavigateFunction => {
+  const _reactNavigate = useNavigate();
+  // @ts-ignore
+  return (to: To, options?: NavigateOptions) => {
+    _reactNavigate(to, options);
+    const pathName = _.isString(to) ? to : to.pathname || '';
+    document.dispatchEvent(
+      new CustomEvent('move-to-from-react', {
+        detail: pathName,
+      }),
+    );
+  };
+};
 
 export const useBackendAIConnectedState = () => {
   const [time, setTime] = useState<string>();

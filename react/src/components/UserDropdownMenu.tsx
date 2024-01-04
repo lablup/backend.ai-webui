@@ -1,4 +1,4 @@
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useWebComponentInfo } from './DefaultProviders';
@@ -21,16 +21,16 @@ import { useTranslation } from 'react-i18next';
 const UserDropdownMenu: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { dispatchEvent } = useWebComponentInfo();
   const baiClient = useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
   const [open, setOpen] = useState(false);
   const screens = Grid.useBreakpoint();
-  const debouncedOpenToFixDropdownMenu = useDebounce(open, {
-    wait: 100,
-    leading: true,
-    trailing: false,
-  });
+  const webuiNavigate = useWebUINavigate();
+  // const debouncedOpenToFixDropdownMenu = useDebounce(open, {
+  //   wait: 100,
+  //   leading: true,
+  //   trailing: false,
+  // });
 
   const { data: roleData } = useTanQuery<{
     user: {
@@ -97,9 +97,9 @@ const UserDropdownMenu: React.FC = () => {
       icon: <LockOutlined />,
       onClick: () => {
         // toggleUserProfileModal();
-        dispatchEvent('moveTo', {
-          path: '#userprofile',
-        });
+        // dispatchEvent('moveTo', {
+        //   path: '#userprofile',
+        // });
       },
     },
     {
@@ -107,10 +107,10 @@ const UserDropdownMenu: React.FC = () => {
       key: 'preferences',
       icon: <HolderOutlined />,
       onClick: () => {
-        dispatchEvent('moveTo', {
-          path: '/usersettings',
-          params: { tab: 'general' },
-        });
+        // dispatchEvent('moveTo', {
+        //   path: '/usersettings',
+        //   params: { tab: 'general' },
+        // });
       },
     },
     {
@@ -118,10 +118,10 @@ const UserDropdownMenu: React.FC = () => {
       key: 'logs',
       icon: <FileTextOutlined />,
       onClick: () => {
-        dispatchEvent('moveTo', {
-          path: '/usersettings',
-          params: { tab: 'logs' },
-        });
+        // dispatchEvent('moveTo', {
+        //   path: '/usersettings',
+        //   params: { tab: 'logs' },
+        // });
       },
     },
     {
@@ -140,7 +140,7 @@ const UserDropdownMenu: React.FC = () => {
       <Dropdown
         menu={{ items }}
         trigger={['click']}
-        open={debouncedOpenToFixDropdownMenu}
+        // open={debouncedOpenToFixDropdownMenu}
         onOpenChange={(v) => setOpen(v)}
         overlayStyle={{
           maxWidth: 300,
@@ -151,14 +151,14 @@ const UserDropdownMenu: React.FC = () => {
           gap="sm"
           style={{ cursor: 'pointer', maxWidth: '15vw' }}
         >
+          <Flex>
+            <Avatar size={'small'} icon={<UserOutlined />} />
+          </Flex>
           {screens.md && (
             <Typography.Text strong ellipsis>
               {userInfo.username}
             </Typography.Text>
           )}
-          <Flex>
-            <Avatar size={'default'} icon={<UserOutlined />} />
-          </Flex>
         </Flex>
       </Dropdown>
     </>
