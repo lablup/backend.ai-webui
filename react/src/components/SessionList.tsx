@@ -166,17 +166,26 @@ const SessionList: React.FC<SessionListProps> = ({
                     <GroupOutlined />
                     {record.scaling_group}
                   </Flex>
-                  {record.occupied_slots &&
-                    _.map(JSON.parse(record.occupied_slots), (value, type) => {
-                      return (
-                        <ResourceNumber
-                          key={type}
-                          // @ts-ignore
-                          type={type}
-                          value={_.toString(value)}
-                        />
-                      );
-                    })}
+                  <Flex
+                    direction="column"
+                    align="start"
+                    style={{ paddingLeft: 25 }}
+                  >
+                    {record.occupied_slots &&
+                      _.map(
+                        JSON.parse(record.occupied_slots),
+                        (value, type) => {
+                          return (
+                            <ResourceNumber
+                              key={type}
+                              // @ts-ignore
+                              type={type}
+                              value={_.toString(value)}
+                            />
+                          );
+                        },
+                      )}
+                  </Flex>
                 </>
               );
             },
