@@ -9,7 +9,9 @@ import UserDropdownMenu from '../UserDropdownMenu';
 import { BellOutlined, MenuOutlined } from '@ant-design/icons';
 import { theme, Layout, Button, Typography } from 'antd';
 import { t } from 'i18next';
+import _ from 'lodash';
 import { Suspense } from 'react';
+import { useMatches } from 'react-router-dom';
 
 const WebUIHeader: React.FC<{
   onClickMenuIcon?: () => void;
@@ -18,6 +20,8 @@ const WebUIHeader: React.FC<{
   const baiClient = useSuspendedBackendaiClient();
   const currentDomainName = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
+  const matches = useMatches();
+
   return (
     <Layout.Header
       style={{
@@ -46,8 +50,7 @@ const WebUIHeader: React.FC<{
         />
         <Typography.Title level={5} style={{ margin: 0 }}>
           {/* @ts-ignore */}
-          {/* {_.last(matches)?.handle?.title || ''} */}
-          {/* {title} */}
+          {t(_.last(matches)?.handle?.labelKey) || ''}
         </Typography.Title>
       </Flex>
       <Flex gap={'sm'}>

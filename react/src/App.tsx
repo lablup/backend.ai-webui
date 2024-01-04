@@ -23,17 +23,56 @@ const router = createBrowserRouter([
       {
         path: '/summary',
         element: <AnnouncementAlert />,
+        handle: { labelKey: 'webui.menu.Summary' },
       },
       {
         path: '/job',
-        element: (
-          // @ts-ignore
-          <></>
-        ),
+        handle: { labelKey: 'webui.menu.Sessions' },
       },
       {
         path: '/serving',
         element: <ServingListPage />,
+        handle: { labelKey: 'webui.menu.Serving' },
+      },
+      {
+        path: '/import',
+        handle: { labelKey: 'webui.menu.Import&Run' },
+      },
+      {
+        path: '/data',
+        handle: { labelKey: 'webui.menu.Data&Storage' },
+      },
+      {
+        path: '/agent-summary',
+        handle: { labelKey: 'webui.menu.AgentSummary' },
+      },
+      {
+        path: '/statistics',
+        handle: { labelKey: 'webui.menu.Statistics' },
+      },
+      {
+        path: '/credential',
+        handle: { labelKey: 'webui.menu.Users' },
+      },
+      {
+        path: '/environment',
+        handle: { labelKey: 'webui.menu.Environments' },
+      },
+      {
+        path: '/agent',
+        handle: { labelKey: 'webui.menu.Resources' },
+      },
+      {
+        path: '/settings',
+        handle: { labelKey: 'webui.menu.Configurations' },
+      },
+      {
+        path: '/maintenance',
+        handle: { labelKey: 'webui.menu.Maintenance' },
+      },
+      {
+        path: '/information',
+        handle: { labelKey: 'webui.menu.Information' },
       },
       {
         path: '*',
