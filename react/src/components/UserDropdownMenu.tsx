@@ -3,6 +3,7 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
+import UserProfileSettingModal from './UserProfileSettingModal';
 import {
   UserOutlined,
   MailOutlined,
@@ -13,7 +14,7 @@ import {
   FileTextOutlined,
   LogoutOutlined,
 } from '@ant-design/icons';
-import { useDebounce } from 'ahooks';
+import { useDebounce, useToggle } from 'ahooks';
 import {
   Avatar,
   Button,
@@ -31,9 +32,11 @@ const UserDropdownMenu: React.FC = () => {
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
-  const [open, setOpen] = useState(false);
   const screens = Grid.useBreakpoint();
   const webuiNavigate = useWebUINavigate();
+
+  const [isOpenUserSettingModal, { set: setIsOpenUserSettingModal }] =
+    useToggle(false);
   // const debouncedOpenToFixDropdownMenu = useDebounce(open, {
   //   wait: 100,
   //   leading: true,
@@ -104,6 +107,7 @@ const UserDropdownMenu: React.FC = () => {
       key: 'userProfileSetting',
       icon: <LockOutlined />,
       onClick: () => {
+        setIsOpenUserSettingModal(true);
         // toggleUserProfileModal();
         // dispatchEvent('moveTo', {
         //   path: '#userprofile',
@@ -149,7 +153,6 @@ const UserDropdownMenu: React.FC = () => {
         menu={{ items }}
         trigger={['click']}
         // open={debouncedOpenToFixDropdownMenu}
-        onOpenChange={(v) => setOpen(v)}
         overlayStyle={{
           maxWidth: 300,
         }}
@@ -171,6 +174,12 @@ const UserDropdownMenu: React.FC = () => {
           </Flex>
         </Button>
       </Dropdown>
+      <UserProfileSettingModal
+        open={isOpenUserSettingModal}
+        onRequestClose={() => {
+          setIsOpenUserSettingModal(false);
+        }}
+      />
     </>
   );
 };

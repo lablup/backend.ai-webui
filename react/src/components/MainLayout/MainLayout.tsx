@@ -83,7 +83,7 @@ function MainLayout() {
 
   return (
     <Layout>
-      <Suspense>
+      <Suspense fallback={<BAISider style={{ visibility: 'hidden' }} />}>
         <WebUISider
           collapsed={sideCollapsed}
           collapsedWidth={collapsedWidth}
@@ -102,7 +102,11 @@ function MainLayout() {
           }}
         >
           {/* <Flex direction="column"> */}
-          <Suspense>
+          <Suspense
+            fallback={
+              <Layout.Header style={{ visibility: 'hidden', opacity: 0 }} />
+            }
+          >
             <WebUIHeader onClickMenuIcon={() => setSideCollapsed((v) => !v)} />
           </Suspense>
           {/* TODO: Breadcrumb */}
@@ -130,7 +134,7 @@ function MainLayout() {
               })}
             />
           )} */}
-          <Suspense fallback={<FlexActivityIndicator />}>
+          <Suspense>
             <Outlet />
           </Suspense>
           {/* @ts-ignore */}

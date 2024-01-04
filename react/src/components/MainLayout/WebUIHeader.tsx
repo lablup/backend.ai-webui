@@ -3,27 +3,34 @@ import {
   useCurrentProjectValue,
   useSuspendedBackendaiClient,
 } from '../../hooks';
-import Flex from '../Flex';
+import { useScrollBreakPoint } from '../../hooks/useScrollBreackPoint';
+import Flex, { FlexProps } from '../Flex';
 import ProjectSelector from '../ProjectSelector';
 import UserDropdownMenu from '../UserDropdownMenu';
 import { BellOutlined, MenuOutlined } from '@ant-design/icons';
-import { theme, Layout, Button, Typography } from 'antd';
+import { theme, Button, Typography, Grid } from 'antd';
 import { t } from 'i18next';
 import _ from 'lodash';
 import { Suspense } from 'react';
 import { useMatches } from 'react-router-dom';
 
-const WebUIHeader: React.FC<{
+export interface WebUIHeaderProps extends FlexProps {
   onClickMenuIcon?: () => void;
-}> = ({ onClickMenuIcon }) => {
+}
+const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomainName = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   const matches = useMatches();
+  const { y: scrolled } = useScrollBreakPoint({
+    y: 1,
+  });
+
+  const { md } = Grid.useBreakpoint();
 
   return (
-    <Layout.Header
+    <Flex
       style={{
         position: 'sticky',
         height: 64,
@@ -35,8 +42,10 @@ const WebUIHeader: React.FC<{
         justifyContent: 'space-between',
         padding: token.marginMD,
         paddingRight: token.marginMD,
+        // backdropFilter: 'blur(15px)',
+        backgroundColor: scrolled ? token.colorBgContainer : 'transparent',
+        boxShadow: scrolled ? '0 5px 6px -6px rgba(0, 0, 0, 0.1)' : 'none',
         // margin: token.marginMD * -1,
-        backgroundColor: token.colorBgContainer,
         // borderBottom: `1px solid ${token.colorBorder}`,
       }}
     >
@@ -53,7 +62,7 @@ const WebUIHeader: React.FC<{
           {t(_.last(matches)?.handle?.labelKey) || ''}
         </Typography.Title>
       </Flex>
-      <Flex gap={'sm'}>
+      <Flex gap={md ? 'sm' : 'xs'}>
         <Typography.Text type="secondary">
           {t('webui.menu.Project')}
         </Typography.Text>
@@ -81,7 +90,7 @@ const WebUIHeader: React.FC<{
           <UserDropdownMenu />
         </Flex>
       </Flex>
-    </Layout.Header>
+    </Flex>
   );
 };
 

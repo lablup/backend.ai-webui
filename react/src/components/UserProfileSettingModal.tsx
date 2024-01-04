@@ -157,7 +157,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
         title={t('webui.menu.MyAccountInformation')}
       >
         <Form
-          layout="horizontal"
+          layout="vertical"
           labelCol={{ span: 8 }}
           form={form}
           initialValues={{

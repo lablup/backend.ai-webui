@@ -201,6 +201,7 @@ const WebUISider: React.FC<
           </address>
         </>
       }
+      {...props}
     >
       {/* <Flex justify="center" align="center">
     <Button
