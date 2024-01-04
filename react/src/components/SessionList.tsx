@@ -26,7 +26,6 @@ interface SessionListProps extends Omit<TableProps<any>, 'dataSource'> {
   filter: (item: Session) => boolean;
   extraFetchKey?: string;
 }
-type SessionTypeValue = 'INTERACTIVE' | 'BATCH' | 'INFERENCE';
 
 const SessionList: React.FC<SessionListProps> = ({
   status = [],
