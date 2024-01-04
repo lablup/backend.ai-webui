@@ -1,5 +1,10 @@
-import { useSuspendedBackendaiClient } from '../../hooks';
+import {
+  useCurrentDomainValue,
+  useCurrentProjectValue,
+  useSuspendedBackendaiClient,
+} from '../../hooks';
 import Flex from '../Flex';
+import ProjectSelector from '../ProjectSelector';
 import {
   BellOutlined,
   HolderOutlined,
@@ -8,12 +13,16 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { theme, Layout, Button, Typography, Avatar, Dropdown } from 'antd';
+import { t } from 'i18next';
+import { Suspense } from 'react';
 
 const WebUIHeader: React.FC<{
   onClickMenuIcon?: () => void;
 }> = ({ onClickMenuIcon }) => {
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
+  const currentDomainName = useCurrentDomainValue();
+  const currentProject = useCurrentProjectValue();
   return (
     <Layout.Header
       style={{
@@ -47,9 +56,27 @@ const WebUIHeader: React.FC<{
         </Typography.Title>
       </Flex>
       <Flex gap={'xs'}>
-        {/* <Suspense>
-      <ProjectSelector domain={currentDomainName} />
-    </Suspense> */}
+        <Typography.Text type="secondary">
+          {t('webui.menu.Project')}
+        </Typography.Text>
+        <Suspense>
+          <ProjectSelector
+            style={{ minWidth: 150 }}
+            showSearch
+            domain={currentDomainName}
+            value={currentProject?.id}
+            onChange={(value) => {
+              const event: CustomEvent = new CustomEvent(
+                'backend-ai-group-changed',
+                {
+                  detail: value,
+                },
+              );
+              document.dispatchEvent(event);
+            }}
+          />
+        </Suspense>
+
         <Button size="large" icon={<BellOutlined />} type="text"></Button>
         <Dropdown
           menu={{

@@ -61,13 +61,15 @@ const ProjectSelector: React.FC<Props> = ({
       placeholder={t('storageHost.quotaSettings.SelectProject')}
       {...selectProps}
       value={value}
+      optionFilterProp="projectName"
     >
-      {_.map(projects, (project) => {
+      {_.map(_.sortBy(projects, 'name'), (project) => {
         return (
           <Select.Option
             key={project?.id}
             projectId={project?.id}
             projectResourcePolicy={project?.resource_policy}
+            projectName={project?.name}
           >
             {project?.name}
           </Select.Option>
