@@ -50,7 +50,7 @@ const WebUIHeader: React.FC<{
           {/* {title} */}
         </Typography.Title>
       </Flex>
-      <Flex gap={'xs'}>
+      <Flex gap={'sm'}>
         <Typography.Text type="secondary">
           {t('webui.menu.Project')}
         </Typography.Text>
@@ -59,6 +59,7 @@ const WebUIHeader: React.FC<{
             style={{ minWidth: 150 }}
             showSearch
             domain={currentDomainName}
+            size="large"
             value={currentProject?.id}
             onChange={(value) => {
               const event: CustomEvent = new CustomEvent(
@@ -72,8 +73,10 @@ const WebUIHeader: React.FC<{
           />
         </Suspense>
 
-        <Button size="large" icon={<BellOutlined />} type="text"></Button>
-        <UserDropdownMenu />
+        <Flex direction="row">
+          <Button size="large" icon={<BellOutlined />} type="text"></Button>
+          <UserDropdownMenu />
+        </Flex>
       </Flex>
     </Layout.Header>
   );

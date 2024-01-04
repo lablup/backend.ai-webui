@@ -14,7 +14,15 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons';
 import { useDebounce } from 'ahooks';
-import { Avatar, Dropdown, Grid, MenuProps, Typography, theme } from 'antd';
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  Grid,
+  MenuProps,
+  Typography,
+  theme,
+} from 'antd';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -146,20 +154,22 @@ const UserDropdownMenu: React.FC = () => {
           maxWidth: 300,
         }}
       >
-        <Flex
-          direction="row"
-          gap="sm"
-          style={{ cursor: 'pointer', maxWidth: '15vw' }}
-        >
-          <Flex>
-            <Avatar size={'small'} icon={<UserOutlined />} />
+        <Button type="text" size="large">
+          <Flex
+            direction="row"
+            gap="sm"
+            style={{ cursor: 'pointer', maxWidth: '15vw' }}
+          >
+            <Flex>
+              <Avatar size={'small'} icon={<UserOutlined />} />
+            </Flex>
+            {screens.md && (
+              <Typography.Text strong ellipsis>
+                {userInfo.username}
+              </Typography.Text>
+            )}
           </Flex>
-          {screens.md && (
-            <Typography.Text strong ellipsis>
-              {userInfo.username}
-            </Typography.Text>
-          )}
-        </Flex>
+        </Button>
       </Dropdown>
     </>
   );
