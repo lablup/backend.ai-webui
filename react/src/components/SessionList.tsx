@@ -111,15 +111,34 @@ const SessionList: React.FC<SessionListProps> = ({
     },
   );
 
-  const setSessionTypeTagColor = (value: SessionTypeValue) => {
-    switch (value) {
-      case 'INTERACTIVE':
-        return 'green';
-      case 'BATCH':
-        return 'darkgreen';
-      case 'INFERENCE':
-        return 'blue';
-    }
+  const statusTagColor = {
+    //prepare
+    RESTARTING: 'blue',
+    PREPARING: 'blue',
+    PULLING: 'blue',
+    //running
+    RUNNING: 'green',
+    PENDING: 'green',
+    SCHEDULED: 'green',
+    //error
+    ERROR: 'red',
+    //finished return undefined
+  };
+
+  const statusInfoTagColor = {
+    'idle-timeout': 'green',
+    'user-requested': 'green',
+    scheduled: 'green',
+    'self-terminated': 'green',
+    'no-available-instances': 'red',
+    'failed-to-start': 'red',
+    'creation-failed': 'red',
+  };
+
+  const typeTagColor = {
+    INTERACTIVE: 'green',
+    BATCH: 'darkgreen',
+    INFERENCE: 'blue',
   };
 
   return (
@@ -147,6 +166,25 @@ const SessionList: React.FC<SessionListProps> = ({
           {
             title: t('session.Status'),
             dataIndex: 'status',
+            render(value, record) {
+              return (
+                <>
+                  {record.status_info !== '' ? (
+                    <DoubleTag
+                      values={[
+                        { label: value, color: _.get(statusTagColor, value) },
+                        {
+                          label: record.status_info,
+                          color: _.get(statusInfoTagColor, record.status_info),
+                        },
+                      ]}
+                    />
+                  ) : (
+                    <Tag color={_.get(statusTagColor, value)}>{value}</Tag>
+                  )}
+                </>
+              );
+            },
           },
           {
             title: t('general.Control'),
@@ -250,8 +288,7 @@ const SessionList: React.FC<SessionListProps> = ({
             title: t('session.SessionType'),
             dataIndex: 'type',
             render: (value) => {
-              const sessionTypeTagColor = setSessionTypeTagColor(value);
-              return <Tag color={sessionTypeTagColor}>{value}</Tag>;
+              return <Tag color={_.get(typeTagColor, value)}>{value}</Tag>;
             },
           },
           ...(baiClient.is_admin || !!baiClient._config.hideAgents
