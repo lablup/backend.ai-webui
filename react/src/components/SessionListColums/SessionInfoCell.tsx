@@ -121,8 +121,13 @@ const SessionInfoCell: React.FC<{
               />
             </Form.Item>
           ) : (
-            <>
-              <Typography.Text style={{ opacity: isPendingRename ? 0.5 : 1 }}>
+            <Flex style={{ maxWidth: 250 }}>
+              <Typography.Text
+                ellipsis={{
+                  tooltip: { overlayInnerStyle: { width: 'max-content' } },
+                }}
+                style={{ opacity: isPendingRename ? 0.5 : 1 }}
+              >
                 {optimisticName}
               </Typography.Text>
               {editable && (
@@ -139,7 +144,7 @@ const SessionInfoCell: React.FC<{
                   }}
                 ></Button>
               )}
-            </>
+            </Flex>
           )}
         </Form>
       </Flex>
