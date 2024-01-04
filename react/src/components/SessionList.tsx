@@ -4,7 +4,6 @@ import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import ImageMetaIcon from './ImageMetaIcon';
 import ResourceNumber from './ResourceNumber';
-import SessionKernelTag from './SessionKernelTag';
 import SessionInfoCell from './SessionListColums/SessionInfoCell';
 import { SessionListQuery } from './__generated__/SessionListQuery.graphql';
 import { FolderOutlined, GroupOutlined } from '@ant-design/icons';
@@ -131,7 +130,6 @@ const SessionList: React.FC<SessionListProps> = ({
           {
             title: t('session.SessionInfo'),
             render(value, record, index) {
-              console.log(record);
               return (
                 <SessionInfoCell
                   key={record.session_id}
