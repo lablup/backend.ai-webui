@@ -24,6 +24,8 @@ interface SessionListProps extends Omit<TableProps<any>, 'dataSource'> {
   filter: (item: Session) => boolean;
   extraFetchKey?: string;
 }
+type SessionTypeValue = 'INTERACTIVE' | 'BATCH' | 'INFERENCE';
+
 const SessionList: React.FC<SessionListProps> = ({
   status = [],
   limit = 50,
@@ -104,7 +106,7 @@ const SessionList: React.FC<SessionListProps> = ({
     },
   );
 
-  const setSessionTypeTagColor = (value: string) => {
+  const setSessionTypeTagColor = (value: SessionTypeValue) => {
     switch (value) {
       case 'INTERACTIVE':
         return 'green';
