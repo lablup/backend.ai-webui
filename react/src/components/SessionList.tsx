@@ -160,9 +160,21 @@ const SessionList: React.FC<SessionListProps> = ({
               return (
                 <>
                   {value.length > 0 ? (
-                    <Flex gap="xxs">
+                    <Flex gap="xxs" style={{ width: 200 }}>
                       <FolderOutlined />
-                      {value.join(', ')}
+                      <Typography.Text
+                        ellipsis={{
+                          tooltip: (
+                            <Flex direction="column" align="start">
+                              {_.map(value, (mountedFolder) => {
+                                return <div>{mountedFolder}</div>;
+                              })}
+                            </Flex>
+                          ),
+                        }}
+                      >
+                        {value.join(', ')}
+                      </Typography.Text>
                     </Flex>
                   ) : (
                     <Flex gap="xxs" style={{ color: token.colorTextDisabled }}>
@@ -174,11 +186,7 @@ const SessionList: React.FC<SessionListProps> = ({
                     <GroupOutlined />
                     {record.scaling_group}
                   </Flex>
-                  <Flex
-                    direction="column"
-                    align="start"
-                    style={{ paddingLeft: 25 }}
-                  >
+                  <Flex>
                     {record.occupied_slots &&
                       _.map(
                         JSON.parse(record.occupied_slots),
