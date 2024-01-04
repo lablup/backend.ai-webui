@@ -1449,7 +1449,10 @@
     "Owner": "Владелец",
     "Validate": "Подтвердить",
     "Cancel": "Отмена",
-    "ValidationInfo": "Информация о проверке"
+    "ValidationInfo": "Информация о проверке",
+    "Processing": "Обработка...",
+    "Success": "Успех",
+    "Error": "Ошибка"
   },
   "ErrorBoundary": {
     "title": "Произошла ошибка.",

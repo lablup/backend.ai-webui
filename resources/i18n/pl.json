@@ -1400,7 +1400,10 @@
     "Owner": "Właściciel",
     "Validate": "Uprawomocnić",
     "Cancel": "Anulować",
-    "ValidationInfo": "Informacje o weryfikacji"
+    "ValidationInfo": "Informacje o weryfikacji",
+    "Processing": "Przetwarzanie...",
+    "Success": "Powodzenie",
+    "Error": "Błąd"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",

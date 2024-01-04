@@ -1440,7 +1440,10 @@
     "Owner": "Người sở hữu",
     "Validate": "Xác thực",
     "Cancel": "Hủy bỏ",
-    "ValidationInfo": "Thông tin xác thực"
+    "ValidationInfo": "Thông tin xác thực",
+    "Processing": "Xử lý...",
+    "Success": "Thành công",
+    "Error": "Lỗi"
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",

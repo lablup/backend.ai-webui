@@ -1440,7 +1440,10 @@
     "Owner": "所有者",
     "Validate": "证实",
     "Cancel": "取消",
-    "ValidationInfo": "验证信息"
+    "ValidationInfo": "验证信息",
+    "Processing": "加工...",
+    "Success": "成功",
+    "Error": "错误"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

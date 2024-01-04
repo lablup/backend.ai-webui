@@ -1397,7 +1397,10 @@
     "Active/Total": "Attivo/Totale",
     "Public": "Pubblico",
     "YouAreAboutToTerminate": "State per terminare",
-    "Owner": "Proprietario"
+    "Owner": "Proprietario",
+    "Processing": "In lavorazione...",
+    "Success": "Successo",
+    "Error": "Errore"
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",

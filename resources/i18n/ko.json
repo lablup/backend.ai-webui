@@ -424,7 +424,10 @@
     "Owner": "소유자",
     "Validate": "유효성 검사",
     "Cancel": "취소",
-    "ValidationInfo": "유효성 검사 결과"
+    "ValidationInfo": "유효성 검사 결과",
+    "Processing": "확인 중...",
+    "Success": "성공",
+    "Error": "오류"
   },
   "button": {
     "Cancel": "취소",

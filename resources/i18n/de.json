@@ -1400,7 +1400,10 @@
     "Owner": "Eigentümer",
     "Validate": "Bestätigen",
     "Cancel": "Stornieren",
-    "ValidationInfo": "Validierungsinformationen"
+    "ValidationInfo": "Validierungsinformationen",
+    "Processing": "Wird bearbeitet...",
+    "Success": "Erfolg",
+    "Error": "Fehler"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

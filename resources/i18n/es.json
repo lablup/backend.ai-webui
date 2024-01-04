@@ -720,7 +720,10 @@
     "Owner": "Dueño",
     "Validate": "Validar",
     "Cancel": "Cancelar",
-    "ValidationInfo": "Información de validación"
+    "ValidationInfo": "Información de validación",
+    "Processing": "Procesando...",
+    "Success": "Éxito",
+    "Error": "Error"
   },
   "notification": {
     "Initializing": "Inicializando...",

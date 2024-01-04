@@ -1400,7 +1400,10 @@
     "Owner": "Mal sahibi",
     "Validate": "Doğrula",
     "Cancel": "İptal etmek",
-    "ValidationInfo": "Doğrulama Bilgisi"
+    "ValidationInfo": "Doğrulama Bilgisi",
+    "Processing": "İşleme...",
+    "Success": "Başarı",
+    "Error": "Hata"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

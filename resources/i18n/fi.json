@@ -720,7 +720,10 @@
     "Owner": "Omistaja",
     "Validate": "Vahvista",
     "Cancel": "Peruuttaa",
-    "ValidationInfo": "Vahvistustiedot"
+    "ValidationInfo": "Vahvistustiedot",
+    "Processing": "Käsitellään...",
+    "Success": "Menestys",
+    "Error": "Virhe"
   },
   "notification": {
     "Initializing": "Aloitetaan...",

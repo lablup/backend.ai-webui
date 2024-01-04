@@ -435,7 +435,10 @@
     "FormValidationFailed": "Form validation failed",
     "resources": "Resources",
     "Image": "Image",
-    "Owner": "Owner"
+    "Owner": "Owner",
+    "Processing": "Processing...",
+    "Success": "Success",
+    "Error": "Error"
   },
   "button": {
     "Cancel": "Cancel",

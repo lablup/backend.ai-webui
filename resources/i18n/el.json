@@ -1400,7 +1400,10 @@
     "Owner": "Ιδιοκτήτης",
     "Validate": "Επικυρώνω",
     "Cancel": "Ματαίωση",
-    "ValidationInfo": "Πληροφορίες επικύρωσης"
+    "ValidationInfo": "Πληροφορίες επικύρωσης",
+    "Processing": "Επεξεργασία...",
+    "Success": "Επιτυχία",
+    "Error": "Λάθος"
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",

@@ -1446,7 +1446,10 @@
     "ServiceNameRule": "Hanya mengizinkan 4 hingga 24 karakter alfanumerik, garis bawah (_), tanda hubung (-), dan titik (.) dan harus diakhiri dengan karakter alfanumerik.",
     "resources": "Sumber daya",
     "Image": "Gambar",
-    "Owner": "Pemilik"
+    "Owner": "Pemilik",
+    "Processing": "Pengolahan...",
+    "Success": "Kesuksesan",
+    "Error": "Kesalahan"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

@@ -1449,7 +1449,10 @@
     "Owner": "Propriétaire",
     "Validate": "Valider",
     "Cancel": "Annuler",
-    "ValidationInfo": "Informations de validation"
+    "ValidationInfo": "Informations de validation",
+    "Processing": "Traitement...",
+    "Success": "Succès",
+    "Error": "Erreur"
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",

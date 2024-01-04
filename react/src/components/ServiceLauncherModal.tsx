@@ -15,9 +15,20 @@ import ImageEnvironmentSelectFormItems, {
 import ResourceGroupSelect from './ResourceGroupSelect';
 import SliderInputFormItem from './SliderInputFormItem';
 import VFolderSelect from './VFolderSelect';
-import { Button, Card, Form, Input, theme, Switch, message } from 'antd';
+import ValidationStatusTag from './ValidationStatusTag';
+import {
+  Button,
+  Card,
+  Collapse,
+  Descriptions,
+  Form,
+  Input,
+  theme,
+  Switch,
+  message,
+} from 'antd';
 import _ from 'lodash';
-import React, { Suspense } from 'react';
+import React, { useState, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // TODO: set initial form values for later use
@@ -29,6 +40,7 @@ type ClusterMode = 'single-node' | 'multi-node';
 interface ServiceCreateConfigResourceOptsType {
   shmem?: number | string;
 }
+
 interface ServiceCreateConfigResourceType {
   cpu: number | string;
   mem: string;

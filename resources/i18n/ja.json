@@ -1400,7 +1400,10 @@
     "Owner": "所有者",
     "Validate": "検証",
     "Cancel": "キャンセル",
-    "ValidationInfo": "検証情報"
+    "ValidationInfo": "検証情報",
+    "Processing": "処理...",
+    "Success": "成功",
+    "Error": "エラー"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",
