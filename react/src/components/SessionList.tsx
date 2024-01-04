@@ -184,7 +184,7 @@ const SessionList: React.FC<SessionListProps> = ({
                     <GroupOutlined />
                     {record.scaling_group}
                   </Flex>
-                  <Flex>
+                  <Flex gap={'xxs'}>
                     {record.occupied_slots &&
                       _.map(
                         JSON.parse(record.occupied_slots),
