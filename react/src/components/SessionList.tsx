@@ -1,11 +1,14 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useBackendAIImageMetaData } from '../hooks';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
+import ImageMetaIcon from './ImageMetaIcon';
 import ResourceNumber from './ResourceNumber';
+import SessionKernelTag from './SessionKernelTag';
 import SessionInfoCell from './SessionListColums/SessionInfoCell';
 import { SessionListQuery } from './__generated__/SessionListQuery.graphql';
 import { FolderOutlined, GroupOutlined } from '@ant-design/icons';
-import { Table, TableProps, Tag, theme } from 'antd';
+import { Table, TableProps, Tag, Typography, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useDeferredValue } from 'react';
@@ -42,6 +45,8 @@ const SessionList: React.FC<SessionListProps> = ({
   const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const [, { getImageAliasName, getBaseVersion, getBaseImage }] =
+    useBackendAIImageMetaData();
 
   if (
     !baiClient.supports('avoid-hol-blocking') &&
@@ -85,6 +90,7 @@ const SessionList: React.FC<SessionListProps> = ({
             starts_at
             scaling_group
             agents
+            image
             cluster_size @skipOnClient(if: $skipClusterSize)
             ...SessionInfoCellFragment
           }
@@ -213,10 +219,25 @@ const SessionList: React.FC<SessionListProps> = ({
             },
           },
           {
-            title: t('session.Architecture'),
-            dataIndex: 'architecture',
-            render: (value) => {
-              return <Tag color="gold">{value}</Tag>;
+            title: t('session.EnvironmentInfo'),
+            render: (record) => {
+              return (
+                <Tag color="gold">
+                  <Flex direction="column">
+                    <Flex gap={'xxs'}>
+                      <ImageMetaIcon image={record.image} />
+                      {/*<div> to apply gap */}
+                      <div>{getImageAliasName(record.image)}</div>
+                      {getBaseVersion(record.image)}
+                    </Flex>
+                    <Flex gap={'xxs'}>
+                      {/*<div> to apply gap */}
+                      <div>{getBaseImage(record.image)}</div>
+                      {record.architecture}
+                    </Flex>
+                  </Flex>
+                </Tag>
+              );
             },
           },
           {
