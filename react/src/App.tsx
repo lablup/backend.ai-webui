@@ -19,6 +19,7 @@ const router = createBrowserRouter([
         <RoutingEventHandler />
       </>
     ),
+    handle: { labelKey: 'webui.menu.Summary' },
     children: [
       {
         path: '/summary',
