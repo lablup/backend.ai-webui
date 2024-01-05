@@ -1280,10 +1280,10 @@
     "GithubInternalError": "Lỗi nội bộ GitHub.",
     "GithubAPILimitError": "Lỗi giới hạn API GitHub.",
     "GithubAPIEtcError": "Sự cố máy chủ GitHub.",
-    "ImportGitlabRepo": "Nhập kho lưu trữ Gitlab",
-    "GitlabRepoWillBeFolder": "Các kho lưu trữ Gitlab đã nhập được chuyển đổi thành các thư mục và có thể được gắn kết khi phiên bắt đầu.",
-    "GitlabURL": "URL Gitlab",
-    "GitlabDefaultBranch": "Tên chi nhánh Gitlab"
+    "ImportGitlabRepo": "Nhập kho lưu trữ GitLab",
+    "GitlabRepoWillBeFolder": "Các kho lưu trữ GitLab đã nhập được chuyển đổi thành các thư mục và có thể được gắn kết khi phiên bắt đầu.",
+    "GitlabURL": "URL GitLab",
+    "GitlabDefaultBranch": "Tên chi nhánh GitLab"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Số liệu thống kê cho tháng này",

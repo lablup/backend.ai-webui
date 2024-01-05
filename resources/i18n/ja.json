@@ -1280,10 +1280,10 @@
     "GithubInternalError": "GitHubリポジトリがしばらく停止しました。しばらくしてからお試しください。",
     "GithubAPILimitError": "GitHub APIの呼び出し回数が多いので、しばらくお待ちください。",
     "GithubAPIEtcError": "GitHub API呼び出しの問題があります。しばらくしてから試してみてください。",
-    "ImportGitlabRepo": "Gitlabリポジトリのインポート",
-    "GitlabRepoWillBeFolder": "インポートしたGitlabリポジトリはフォルダに変換され、セッション開始時にマウントすることができます。",
-    "GitlabURL": "Gitlabアドレス",
-    "GitlabDefaultBranch": "Gitlab ブランチ名"
+    "ImportGitlabRepo": "GitLabリポジトリのインポート",
+    "GitlabRepoWillBeFolder": "インポートしたGitLabリポジトリはフォルダに変換され、セッション開始時にマウントすることができます。",
+    "GitlabURL": "GitLabアドレス",
+    "GitlabDefaultBranch": "GitLab ブランチ名"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "今月の統計",
