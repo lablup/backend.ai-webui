@@ -95,12 +95,18 @@ type ServiceLauncherFormValue = ServiceLauncherInput &
   ImageEnvironmentFormInput &
   ResourceAllocationFormValue;
 
+const { Panel } = Collapse;
+
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   extraP,
   onRequestClose,
   ...modalProps
 }) => {
   const { t } = useTranslation();
+  const [validationStatus, setValidationStatus] = useState('');
+  const [validationPanelStatus, setValidationPanelStatus] =
+    useState('disabled');
+  const [openedPanelList, setOpenedPanelList] = useState(['1']);
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
@@ -115,10 +121,44 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   >({
     mutationFn: (values) => {
       const image: string = `${values.environments.image?.registry}/${values.environments.image?.name}:${values.environments.image?.tag}`;
-      const body = null;
+      const body: ServiceCreateType = {
+        name: values.serviceName,
+        desired_session_count: values.desiredRoutingCount,
+        image: image,
+        arch: values.environments.image?.architecture as string,
+        group: baiClient.current_group, // current Project Group,
+        domain: currentDomain, // current Domain Group,
+        cluster_size: values.cluster_size,
+        cluster_mode: values.cluster_mode,
+        open_to_public: values.openToPublic,
+        config: {
+          model: values.vFolderName,
+          model_mount_destination: '/models', // FIXME: hardcoded. change it with option later
+          environ: {}, // FIXME: hardcoded. change it with option later
+          scaling_group: values.resourceGroup,
+          resources: {
+            // FIXME: manually convert to string since server-side only allows [str,str] tuple
+            cpu: values.resource.cpu.toString(),
+            mem: values.resource.mem,
+            ...(values.resource.accelerator > 0
+              ? {
+                  [values.resource.acceleratorType]:
+                    values.resource.accelerator,
+                }
+              : undefined),
+          },
+          resource_opts: {
+            shmem:
+              compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
+              compareNumberWithUnits(values.resource.shmem, '1g') < 0
+                ? '1g'
+                : values.resource.shmem,
+          },
+        },
+      };
       return baiSignedRequestWithPromise({
         method: 'POST',
-        url: '/services',
+        url: '/services/_/try',
         body,
         client: baiClient,
       });
@@ -210,8 +250,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       });
   };
 
-  // Apply any operation after clicking Cancel button
+  // Apply any operation after clicking Cancel or close button button
   const handleCancel = () => {
+    setValidationPanelStatus('disabled');
+    setOpenedPanelList(['1']); // set to default
     onRequestClose();
   };
 
@@ -221,13 +263,58 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       .validateFields()
       .then((values) => {
         mutationsToValidateService.mutate(values, {
-          onSuccess: (resp) => {
-            // TODO: listen sse service here
+          onSuccess: (data: any) => {
+            const response = JSON.parse(data);
+            const sse: EventSource =
+              baiClient.maintenance.attach_background_task(response['task_id']);
+            setOpenedPanelList(
+              openedPanelList
+                .filter((panelIdx) => panelIdx !== panelIdx)
+                .concat(['2']),
+            );
+            sse.addEventListener('bgtask_updated', (e) => {
+              const data = JSON.parse(e['data']);
+              setValidationStatus('processing');
+              setValidationPanelStatus('icon');
+            });
+            sse.addEventListener('bgtask_done', (e) => {
+              setValidationStatus('success');
+              setValidationPanelStatus('icon');
+              sse.close();
+            });
+            sse.addEventListener('bgtask_failed', (e) => {
+              setValidationStatus('error');
+              setValidationPanelStatus('icon');
+              sse.close();
+              throw new Error(e['data']);
+            });
+            sse.addEventListener('bgtask_cancelled', (e) => {
+              setValidationStatus('error');
+              console.log(validationPanelStatus);
+              setValidationPanelStatus('icon');
+              console.log(validationPanelStatus);
+
+              sse.close();
+              throw new Error(e['data']);
+            });
           },
-          onError: (error) => {},
+          onError: (error) => {
+            if (error?.message) {
+              message.error(
+                _.truncate(error?.message, {
+                  length: 200,
+                }),
+              );
+            } else {
+              message.error(t('modelService.FormValidationFailed'));
+            }
+          },
         });
       })
-      .catch((err) => {});
+      .catch((err) => {
+        console.log(err.message);
+        message.error(t('modelService.FormValidationFailed'));
+      });
   };
 
   return (
@@ -249,98 +336,143 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       {...modalProps}
     >
       <Suspense fallback={<FlexActivityIndicator />}>
-        <Form
-          disabled={mutationToCreateService.isLoading}
-          form={form}
-          preserve={false}
-          layout="vertical"
-          labelCol={{ span: 12 }}
-          initialValues={{
-            desiredRoutingCount: 1,
-            ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
-          }}
+        <Collapse
+          defaultActiveKey={['1']}
+          collapsible="icon"
+          activeKey={openedPanelList}
         >
-          <Form.Item
-            label={t('modelService.ServiceName')}
-            name="serviceName"
-            rules={[
-              {
-                pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
-                message: t('modelService.ServiceNameRule'),
-              },
-              {
-                required: true,
-              },
-            ]}
+          <Panel header={t('modelService.ServiceInfo')} key="1">
+            <Form
+              disabled={mutationToCreateService.isLoading}
+              form={form}
+              preserve={false}
+              layout="vertical"
+              labelCol={{ span: 12 }}
+              initialValues={{
+                desiredRoutingCount: 1,
+                ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+              }}
+            >
+              <Form.Item
+                label={t('modelService.ServiceName')}
+                name="serviceName"
+                rules={[
+                  {
+                    pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
+                    message: t('modelService.ServiceNameRule'),
+                  },
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="resourceGroup"
+                label={t('session.ResourceGroup')}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <ResourceGroupSelect autoSelectDefault />
+              </Form.Item>
+              <Form.Item
+                name="openToPublic"
+                label={t('modelService.OpenToPublic')}
+                valuePropName="checked"
+              >
+                <Switch></Switch>
+              </Form.Item>
+              {/* <VFolderTableFromItem /> */}
+              <Form.Item
+                name={'vFolderName'}
+                label={t('session.launcher.ModelStorageToMount')}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <VFolderSelect
+                  filter={(vf) => vf.usage_mode === 'model'}
+                  autoSelectDefault
+                />
+              </Form.Item>
+              <SliderInputFormItem
+                label={t('modelService.DesiredRoutingCount')}
+                name="desiredRoutingCount"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+                inputNumberProps={{
+                  //TODO: change unit based on resource limit
+                  addonAfter: '#',
+                }}
+                required
+              />
+              <Card
+                style={{
+                  marginBottom: token.margin,
+                }}
+              >
+                <ImageEnvironmentSelectFormItems
+                // //TODO: test with real inference images
+                // filter={(image) => {
+                //   return !!_.find(image?.labels, (label) => {
+                //     return (
+                //       label?.key === "ai.backend.role" &&
+                //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
+                //     );
+                //   });
+                // }}
+                />
+                <ResourceAllocationFormItems />
+              </Card>
+            </Form>
+          </Panel>
+          <Panel
+            header={
+              <Flex direction="row" justify="between" align="stretch">
+                {t('modelService.ValidationInfo')}
+                <Button key="validate" type="primary" onClick={handleValidate}>
+                  {t('modelService.Validate')}
+                </Button>
+              </Flex>
+            }
+            key="2"
+            // @ts-ignore
+            collapsible={validationPanelStatus}
           >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="resourceGroup"
-            label={t('session.ResourceGroup')}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <ResourceGroupSelect autoSelectDefault />
-          </Form.Item>
-          <Form.Item
-            name="openToPublic"
-            label={t('modelService.OpenToPublic')}
-            valuePropName="checked"
-          >
-            <Switch></Switch>
-          </Form.Item>
-          {/* <VFolderTableFromItem /> */}
-          <Form.Item
-            name={'vFolderName'}
-            label={t('session.launcher.ModelStorageToMount')}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <VFolderSelect
-              filter={(vf) => vf.usage_mode === 'model'}
-              autoSelectDefault
-            />
-          </Form.Item>
-          <SliderInputFormItem
-            label={t('modelService.DesiredRoutingCount')}
-            name="desiredRoutingCount"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-            inputNumberProps={{
-              //TODO: change unit based on resource limit
-              addonAfter: '#',
-            }}
-            required
-          />
-          <Card
-            style={{
-              marginBottom: token.margin,
-            }}
-          >
-            <ImageEnvironmentSelectFormItems
-            // //TODO: test with real inference images
-            // filter={(image) => {
-            //   return !!_.find(image?.labels, (label) => {
-            //     return (
-            //       label?.key === "ai.backend.role" &&
-            //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
-            //     );
-            //   });
-            // }}
-            />
-            <ResourceAllocationFormItems />
-          </Card>
-        </Form>
+            {
+              <Descriptions
+                bordered
+                style={{
+                  backgroundColor: token.colorBgBase,
+                }}
+                items={[
+                  {
+                    label: 'Result',
+                    children: (
+                      <ValidationStatusTag
+                        status={validationStatus}
+                      ></ValidationStatusTag>
+                    ),
+                    span: 4,
+                  },
+                  {
+                    label: 'See Container Log',
+                    children: 'lorem ipsum...',
+                  },
+                ]}
+              ></Descriptions>
+            }
+          </Panel>
+        </Collapse>
       </Suspense>
     </BAIModal>
   );
