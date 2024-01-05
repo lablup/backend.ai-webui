@@ -3,6 +3,7 @@ import DefaultProviders, {
   DefaultProviders2,
   RoutingEventHandler,
 } from './components/DefaultProviders';
+import Flex from './components/Flex';
 import MainLayout from './components/MainLayout/MainLayout';
 import ServingListPage from './pages/ServingListPage';
 import React, { FC } from 'react';
@@ -23,7 +24,15 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/summary',
-        element: <AnnouncementAlert />,
+        element: (
+          <AnnouncementAlert
+            showIcon
+            icon={undefined}
+            banner={false}
+            style={{ marginBottom: 16 }}
+            closable
+          />
+        ),
         handle: { labelKey: 'webui.menu.Summary' },
       },
       {

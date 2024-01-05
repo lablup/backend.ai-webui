@@ -314,17 +314,6 @@ customElements.define(
   }),
 );
 
-customElements.define(
-  'backend-ai-react-announcement-alert',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <AnnouncementAlert />
-      </DefaultProviders>
-    );
-  }),
-);
-
 const root = ReactDOM.createRoot(
   document.getElementById('react-root') as HTMLElement,
 );
