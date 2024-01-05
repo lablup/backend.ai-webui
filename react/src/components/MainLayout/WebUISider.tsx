@@ -18,7 +18,7 @@ import {
   ToolOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { theme, MenuProps } from 'antd';
+import { theme, MenuProps, Typography } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -150,26 +150,29 @@ const WebUISider: React.FC<
               style={{ fontSize: token.sizeXS }}
               justify="center"
             >
-              <a
-                style={{ color: token.colorTextSecondary }}
+              <Typography.Link
+                type="secondary"
+                style={{ fontSize: 11 }}
                 onClick={() => {
                   document.dispatchEvent(new CustomEvent('show-TOS-agreement'));
                 }}
               >
                 {t('webui.menu.TermsOfService')}
-              </a>
+              </Typography.Link>
               &nbsp;·&nbsp;
-              <a
-                style={{ color: token.colorTextSecondary }}
+              <Typography.Link
+                type="secondary"
+                style={{ fontSize: 11 }}
                 onClick={() => {
                   document.dispatchEvent(new CustomEvent('show-PP-agreement'));
                 }}
               >
                 {t('webui.menu.PrivacyPolicy')}
-              </a>
+              </Typography.Link>
               &nbsp;·&nbsp;
-              <a
-                style={{ color: token.colorTextSecondary }}
+              <Typography.Link
+                type="secondary"
+                style={{ fontSize: 11 }}
                 onClick={() => {
                   document.dispatchEvent(
                     new CustomEvent('show-about-backendai'),
@@ -177,16 +180,18 @@ const WebUISider: React.FC<
                 }}
               >
                 {t('webui.menu.AboutBackendAI')}
-              </a>
+              </Typography.Link>
             </Flex>
           </div>
           <address>
             <small className="sidebar-footer">Lablup Inc.</small>
+            &nbsp;
             <small
               className="sidebar-footer"
               style={{ fontSize: token.sizeXS }}
             >
-              {/* {window.ManagerHub?.version} */}
+              {/* @ts-ignore */}
+              {`${global.packageVersion}.${globalThis.buildNumber}`}
             </small>
           </address>
         </>
@@ -206,7 +211,24 @@ const WebUISider: React.FC<
         selectedKeys={[location.pathname.split('/')[1] || 'dashboard']}
         items={
           currentUserRole === 'superadmin'
-            ? [...generalMenu, ...adminDivider, ...adminMenu, ...superAdminMenu]
+            ? [
+                ...generalMenu,
+                {
+                  type: 'group',
+                  label: (
+                    <Flex
+                      style={{ borderBottom: `1px solid ${token.colorBorder}` }}
+                    >
+                      {!props.collapsed && (
+                        <Typography.Text type="secondary" ellipsis>
+                          {t('webui.menu.Administration')}
+                        </Typography.Text>
+                      )}
+                    </Flex>
+                  ),
+                  children: [...adminMenu, ...superAdminMenu],
+                },
+              ]
             : currentUserRole === 'admin'
             ? [...generalMenu, ...adminDivider, ...adminMenu]
             : [...generalMenu]

@@ -1,7 +1,5 @@
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
-import { useTanQuery } from '../hooks/reactQueryAlias';
-import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
 import UserProfileSettingModal from './UserProfileSettingModal';
 import {
@@ -14,7 +12,7 @@ import {
   FileTextOutlined,
   LogoutOutlined,
 } from '@ant-design/icons';
-import { useDebounce, useToggle } from 'ahooks';
+import { useToggle } from 'ahooks';
 import {
   Avatar,
   Button,
@@ -24,16 +22,14 @@ import {
   Typography,
   theme,
 } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 const UserDropdownMenu: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const baiClient = useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
   const screens = Grid.useBreakpoint();
-  const webuiNavigate = useWebUINavigate();
 
   const [isOpenUserSettingModal, { set: setIsOpenUserSettingModal }] =
     useToggle(false);
