@@ -351,12 +351,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <>
-      <Flex
-        direction="column"
-        align="stretch"
-        style={{ padding: token.padding }}
-        gap={'xs'}
-      >
+      <Flex direction="column" align="stretch" gap={'xs'}>
         {/* <Card bordered title={t("summary.ResourceStatistics")}>
           <p>SessionList</p>
         </Card> */}

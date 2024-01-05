@@ -143,58 +143,64 @@ const WebUISider: React.FC<
       logoTitle="WebUI"
       logoTitleCollapsed="WebUI"
       bottomText={
-        <>
-          <div className="terms-of-use">
-            <Flex
-              wrap="wrap"
-              style={{ fontSize: token.sizeXS }}
-              justify="center"
-            >
-              <Typography.Link
-                type="secondary"
-                style={{ fontSize: 11 }}
-                onClick={() => {
-                  document.dispatchEvent(new CustomEvent('show-TOS-agreement'));
-                }}
+        props.collapsed ? null : (
+          <>
+            <div className="terms-of-use">
+              <Flex
+                wrap="wrap"
+                style={{ fontSize: token.sizeXS }}
+                justify="center"
               >
-                {t('webui.menu.TermsOfService')}
-              </Typography.Link>
-              &nbsp;·&nbsp;
-              <Typography.Link
-                type="secondary"
-                style={{ fontSize: 11 }}
-                onClick={() => {
-                  document.dispatchEvent(new CustomEvent('show-PP-agreement'));
-                }}
+                <Typography.Link
+                  type="secondary"
+                  style={{ fontSize: 11 }}
+                  onClick={() => {
+                    document.dispatchEvent(
+                      new CustomEvent('show-TOS-agreement'),
+                    );
+                  }}
+                >
+                  {t('webui.menu.TermsOfService')}
+                </Typography.Link>
+                &nbsp;·&nbsp;
+                <Typography.Link
+                  type="secondary"
+                  style={{ fontSize: 11 }}
+                  onClick={() => {
+                    document.dispatchEvent(
+                      new CustomEvent('show-PP-agreement'),
+                    );
+                  }}
+                >
+                  {t('webui.menu.PrivacyPolicy')}
+                </Typography.Link>
+                &nbsp;·&nbsp;
+                <Typography.Link
+                  type="secondary"
+                  style={{ fontSize: 11 }}
+                  onClick={() => {
+                    document.dispatchEvent(
+                      new CustomEvent('show-about-backendai'),
+                    );
+                  }}
+                >
+                  {t('webui.menu.AboutBackendAI')}
+                </Typography.Link>
+              </Flex>
+            </div>
+            <address>
+              <small className="sidebar-footer">Lablup Inc.</small>
+              &nbsp;
+              <small
+                className="sidebar-footer"
+                style={{ fontSize: token.sizeXS }}
               >
-                {t('webui.menu.PrivacyPolicy')}
-              </Typography.Link>
-              &nbsp;·&nbsp;
-              <Typography.Link
-                type="secondary"
-                style={{ fontSize: 11 }}
-                onClick={() => {
-                  document.dispatchEvent(
-                    new CustomEvent('show-about-backendai'),
-                  );
-                }}
-              >
-                {t('webui.menu.AboutBackendAI')}
-              </Typography.Link>
-            </Flex>
-          </div>
-          <address>
-            <small className="sidebar-footer">Lablup Inc.</small>
-            &nbsp;
-            <small
-              className="sidebar-footer"
-              style={{ fontSize: token.sizeXS }}
-            >
-              {/* @ts-ignore */}
-              {`${global.packageVersion}.${globalThis.buildNumber}`}
-            </small>
-          </address>
-        </>
+                {/* @ts-ignore */}
+                {`${global.packageVersion}.${globalThis.buildNumber}`}
+              </small>
+            </address>
+          </>
+        )
       }
       {...props}
     >

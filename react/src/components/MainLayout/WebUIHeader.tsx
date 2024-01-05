@@ -26,20 +26,25 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
 
   return (
     <Flex
+      align="center"
+      justify="between"
+      direction="row"
       style={{
         position: 'sticky',
-        height: 64,
+        height: 62,
         top: 0,
         zIndex: 1,
         // width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: token.marginMD,
-        paddingRight: token.marginMD,
+        // justifyContent: 'space-between',
+        // padding: token.marginMD,
+        paddingRight: token.marginSM,
+        paddingLeft: token.marginSM,
+
         // backdropFilter: 'blur(15px)',
         backgroundColor: scrolled ? token.colorBgContainer : 'transparent',
         boxShadow: scrolled ? '0 5px 6px -6px rgba(0, 0, 0, 0.1)' : 'none',
+        transition: 'background-color 0.2s ease-in-out',
+
         // margin: token.marginMD * -1,
         // borderBottom: `1px solid ${token.colorBorder}`,
       }}

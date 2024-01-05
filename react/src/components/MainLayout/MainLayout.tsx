@@ -82,7 +82,11 @@ function MainLayout() {
   }, [compactSidebarActive]);
 
   return (
-    <Layout>
+    <Layout
+      style={{
+        backgroundColor: 'transparent',
+      }}
+    >
       <Suspense fallback={<BAISider style={{ visibility: 'hidden' }} />}>
         <WebUISider
           collapsed={sideCollapsed}
@@ -93,15 +97,20 @@ function MainLayout() {
           }}
         />
       </Suspense>
-      <Layout>
+      <Layout
+        style={{
+          backgroundColor: 'transparent',
+        }}
+      >
         <Content
-          style={{
-            // padding: token.padding,
-            paddingTop: 0,
-            backgroundColor: token.colorBgContainer,
-          }}
+          style={
+            {
+              // padding: token.padding,
+              // backgroundColor: token.colorBgBase,
+              // border: '1px solid red',
+            }
+          }
         >
-          {/* <Flex direction="column"> */}
           <Suspense
             fallback={
               <Layout.Header style={{ visibility: 'hidden', opacity: 0 }} />
@@ -109,8 +118,18 @@ function MainLayout() {
           >
             <WebUIHeader onClickMenuIcon={() => setSideCollapsed((v) => !v)} />
           </Suspense>
-          {/* TODO: Breadcrumb */}
-          {/* {location.pathname.split("/").length > 3 && (
+          <Flex
+            direction="column"
+            align="stretch"
+            style={{
+              paddingLeft: token.paddingContentHorizontal,
+              paddingRight: token.paddingContentHorizontal,
+            }}
+          >
+            {/* <Flex direction="column"> */}
+
+            {/* TODO: Breadcrumb */}
+            {/* {location.pathname.split("/").length > 3 && (
             <Breadcrumb
               items={matches.map((match, index) => {
                 return {
@@ -134,17 +153,29 @@ function MainLayout() {
               })}
             />
           )} */}
-          <Suspense>
-            <Outlet />
-          </Suspense>
-          {/* @ts-ignore */}
-          <backend-ai-webui
-            id="webui-shell"
-            // style={{
-            //   backgroundColor: '#222222',
-            // }}
-          />
-          {/* </Flex> */}
+            <Suspense>
+              <Outlet />
+            </Suspense>
+            {/* To match paddig to 16 (2+14) */}
+            {/* </Flex> */}
+            <Flex
+              direction="column"
+              align="stretch"
+              style={{
+                margin: -14,
+                paddingTop: 0,
+                paddingBottom: 0,
+              }}
+            >
+              {/* @ts-ignore */}
+              <backend-ai-webui
+                id="webui-shell"
+                // style={{
+                //   backgroundColor: '#222222',
+                // }}
+              />
+            </Flex>
+          </Flex>
         </Content>
       </Layout>
     </Layout>
