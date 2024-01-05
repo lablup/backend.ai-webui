@@ -1,8 +1,4 @@
-import {
-  useCurrentDomainValue,
-  useCurrentProjectValue,
-  useSuspendedBackendaiClient,
-} from '../../hooks';
+import { useCurrentDomainValue, useCurrentProjectValue } from '../../hooks';
 import { useScrollBreakPoint } from '../../hooks/useScrollBreackPoint';
 import Flex, { FlexProps } from '../Flex';
 import ProjectSelector from '../ProjectSelector';
@@ -19,7 +15,6 @@ export interface WebUIHeaderProps extends FlexProps {
 }
 const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const { token } = theme.useToken();
-  const baiClient = useSuspendedBackendaiClient();
   const currentDomainName = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   const matches = useMatches();

@@ -1,11 +1,11 @@
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
+import { useCurrentUserRole } from '../../hooks/backendai';
 import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
 import Flex from '../Flex';
 import {
   BarChartOutlined,
   BarsOutlined,
-  BellOutlined,
   CaretRightOutlined,
   CloudUploadOutlined,
   ControlOutlined,
@@ -13,34 +13,24 @@ import {
   ExportOutlined,
   FileDoneOutlined,
   HddOutlined,
-  HolderOutlined,
   InfoCircleOutlined,
-  LogoutOutlined,
-  MenuOutlined,
   RocketOutlined,
   ToolOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import {
-  theme,
-  Layout,
-  Button,
-  Typography,
-  Avatar,
-  Dropdown,
-  MenuProps,
-} from 'antd';
+import { theme, MenuProps } from 'antd';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const WebUISider: React.FC<
   Pick<BAISiderProps, 'collapsed' | 'collapsedWidth' | 'onBreakpoint'>
 > = (props) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
+  const currentUserRole = useCurrentUserRole();
+  // const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
+
   // const navigate = useNavigate();
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
@@ -215,9 +205,9 @@ const WebUISider: React.FC<
       <BAIMenu
         selectedKeys={[location.pathname.split('/')[1] || 'dashboard']}
         items={
-          isSuperAdmin
+          currentUserRole === 'superadmin'
             ? [...generalMenu, ...adminDivider, ...adminMenu, ...superAdminMenu]
-            : isAdmin
+            : currentUserRole === 'admin'
             ? [...generalMenu, ...adminDivider, ...adminMenu]
             : [...generalMenu]
         }

@@ -1,5 +1,5 @@
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { useCurrentUserInfo } from '../hooks/backendai';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
@@ -43,20 +43,7 @@ const UserDropdownMenu: React.FC = () => {
   //   trailing: false,
   // });
 
-  const { data: roleData } = useTanQuery<{
-    user: {
-      role: string;
-    };
-  }>(
-    'getUserRole',
-    () => {
-      return baiClient.user.get(userInfo.email, ['role']);
-    },
-    {
-      suspense: false,
-    },
-  );
-  const userRole = roleData?.user.role;
+  const userRole = useCurrentUserRole();
 
   const items: MenuProps['items'] = [
     {
