@@ -170,6 +170,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
             ></backend-ai-usersettings-general-list>
           </div>
           <div id="logs" class="item tab-content" style="display:none;">
+            <backend-ai-react-error-log-list></backend-ai-react-error-log-list>
             <h3 class="horizontal center layout outer-space">
               <span>${_t('logs.LogMessages')}</span>
               <span class="mini" style="font-size:13px;padding-left:15px;">
