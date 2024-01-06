@@ -488,7 +488,7 @@ export default class BackendAISummary extends BackendAIPage {
       <link rel="stylesheet" href="/resources/fonts/font-awesome-all.min.css" />
       <link rel="stylesheet" href="resources/custom.css" />
       <div class="item" elevation="1" class="vertical layout center wrap flex">
-        <div class="horizontal wrap layout">
+        <div class="horizontal wrap layout" style="gap:16px;">
           <lablup-activity-panel
             title="${_t('summary.StartMenu')}"
             elevation="1"
@@ -683,7 +683,7 @@ export default class BackendAISummary extends BackendAIPage {
               <div class="horizontal layout wrap">
                 <div class="vertical layout">
                   <div class="line"></div>
-                  <div class="horizontal layout flex wrap center-justified">
+                  <div class="horizontal layout flex wrap center-justified" style="gap:16px;">
                     <lablup-activity-panel class="footer-menu" noheader autowidth style="display: none;">
                       <div slot="message" class="vertical layout center start-justified flex upper-lower-space">
                         <h3 style="margin-top:0px;">${_t(

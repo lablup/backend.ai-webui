@@ -1,49 +1,12 @@
-import {
-  useCurrentDomainValue,
-  useSuspendedBackendaiClient,
-} from '../../hooks';
-import BAIMenu from '../BAIMenu';
-import { BAIModalProps } from '../BAIModal';
-import BAISider, { BAISiderProps } from '../BAISider';
-import { useWebComponentInfo } from '../DefaultProviders';
+import BAISider from '../BAISider';
 import Flex from '../Flex';
-import FlexActivityIndicator from '../FlexActivityIndicator';
-import ProjectSelector from '../ProjectSelector';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import {
-  BarChartOutlined,
-  BarsOutlined,
-  BellOutlined,
-  CaretRightOutlined,
-  CloudUploadOutlined,
-  ControlOutlined,
-  DashboardOutlined,
-  ExportOutlined,
-  FileDoneOutlined,
-  HddOutlined,
-  HolderOutlined,
-  InfoCircleOutlined,
-  LogoutOutlined,
-  MenuOutlined,
-  RocketOutlined,
-  ToolOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
 import { useLocalStorageState, useToggle } from 'ahooks';
-import {
-  Avatar,
-  Button,
-  Dropdown,
-  Layout,
-  MenuProps,
-  Typography,
-  theme,
-} from 'antd';
+import { Layout, Typography, theme } from 'antd';
 import _ from 'lodash';
-import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useLocation, Outlet, useMatches } from 'react-router-dom';
+import { Suspense, useEffect, useLayoutEffect, useState } from 'react';
+import { useNavigate, Outlet } from 'react-router-dom';
 
 const { Text } = Typography;
 
@@ -102,15 +65,7 @@ function MainLayout() {
           backgroundColor: 'transparent',
         }}
       >
-        <Content
-          style={
-            {
-              // padding: token.padding,
-              // backgroundColor: token.colorBgBase,
-              // border: '1px solid red',
-            }
-          }
-        >
+        <Content>
           <Suspense
             fallback={
               <Layout.Header style={{ visibility: 'hidden', opacity: 0 }} />
@@ -124,6 +79,7 @@ function MainLayout() {
             style={{
               paddingLeft: token.paddingContentHorizontal,
               paddingRight: token.paddingContentHorizontal,
+              paddingBottom: token.paddingContentVertical,
             }}
           >
             {/* <Flex direction="column"> */}
@@ -158,24 +114,8 @@ function MainLayout() {
             </Suspense>
             {/* To match paddig to 16 (2+14) */}
             {/* </Flex> */}
-            <Flex
-              direction="column"
-              align="stretch"
-              style={{
-                margin: -14,
-                marginBottom: 0,
-                paddingTop: 0,
-                paddingBottom: 0,
-              }}
-            >
-              {/* @ts-ignore */}
-              <backend-ai-webui
-                id="webui-shell"
-                // style={{
-                //   backgroundColor: '#222222',
-                // }}
-              />
-            </Flex>
+            {/* @ts-ignore */}
+            <backend-ai-webui id="webui-shell" />
           </Flex>
         </Content>
       </Layout>

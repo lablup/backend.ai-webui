@@ -57,7 +57,7 @@ export default class LablupActivityPanel extends LitElement {
           display: block;
           background: var(--card-background-color, #ffffff);
           box-sizing: border-box;
-          margin: 14px;
+          margin: 0 !important;
           padding: 0;
           border-radius: 5px;
           box-shadow: rgba(4, 7, 22, 0.7) 0px 0px 4px -2px;

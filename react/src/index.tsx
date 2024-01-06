@@ -18,7 +18,6 @@ loadCustomThemeConfig();
 const DefaultProviders = React.lazy(
   () => import('./components/DefaultProviders'),
 );
-const Information = React.lazy(() => import('./components/Information'));
 const SessionList = React.lazy(() => import('./pages/SessionListPage'));
 const ServingList = React.lazy(() => import('./pages/ServingListPage'));
 const RoutingList = React.lazy(() => import('./pages/RoutingListPage'));
@@ -66,19 +65,6 @@ const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
 
 const AnnouncementAlert = React.lazy(
   () => import('./components/AnnouncementAlert'),
-);
-
-customElements.define(
-  'backend-ai-react-information',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <BAIErrorBoundary>
-          <Information />
-        </BAIErrorBoundary>
-      </DefaultProviders>
-    );
-  }),
 );
 
 customElements.define(

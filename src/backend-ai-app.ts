@@ -139,9 +139,6 @@ const loadPage =
       case 'maintenance':
         import('./components/backend-ai-maintenance-view.js');
         break;
-      case 'information':
-        import('./components/backend-ai-information-view.js');
-        break;
       case 'statistics':
         import('./components/backend-ai-statistics-view.js');
         break;

@@ -301,12 +301,10 @@ export default class BackendAIData extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css" />
-      <div class="vertical layout">
-        <div style="margin:14px 14px 3px">
-          <backend-ai-react-storage-status-panel
-            .value="${this.folderListFetchKey}"
-          ></backend-ai-react-storage-status-panel>
-        </div>
+      <div class="vertical layout" style="gap:16px">
+        <backend-ai-react-storage-status-panel
+          .value="${this.folderListFetchKey}"
+        ></backend-ai-react-storage-status-panel>
         <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">
             <h3 class="horizontal center flex layout tab">

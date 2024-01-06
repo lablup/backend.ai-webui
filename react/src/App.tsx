@@ -4,6 +4,7 @@ import DefaultProviders, {
   RoutingEventHandler,
 } from './components/DefaultProviders';
 import Flex from './components/Flex';
+import Information from './components/Information';
 import MainLayout from './components/MainLayout/MainLayout';
 import ServingListPage from './pages/ServingListPage';
 import React, { FC } from 'react';
@@ -24,7 +25,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/summary',
-        element: (
+        Component: () => (
           <AnnouncementAlert
             showIcon
             icon={undefined}
@@ -41,7 +42,8 @@ const router = createBrowserRouter([
       },
       {
         path: '/serving',
-        element: <ServingListPage />,
+        // element: <ServingListPage />,
+        Component: ServingListPage,
         handle: { labelKey: 'webui.menu.Serving' },
       },
       {
@@ -83,6 +85,7 @@ const router = createBrowserRouter([
       {
         path: '/information',
         handle: { labelKey: 'webui.menu.Information' },
+        Component: Information,
       },
       {
         path: '*',

@@ -750,12 +750,12 @@ export default class BackendAIImport extends BackendAIPage {
         ?active="${this.active === true}"
         .newSessionDialogTitle="${_t('session.launcher.StartImportedNotebook')}"
       ></backend-ai-session-launcher>
-      <div class="horizontal wrap layout">
+      <div class="horizontal wrap layout" style="gap:16px">
         <lablup-activity-panel
           title="${_t('summary.ResourceStatistics')}"
           elevation="1"
-          width="350"
-          height="490"
+          width="356"
+          height="500"
           narrow
         >
           <div slot="message">
@@ -770,7 +770,8 @@ export default class BackendAIImport extends BackendAIPage {
         <lablup-activity-panel
           title="${_t('import.CreateNotebookButton')}"
           elevation="1"
-          height="490"
+          width="356"
+          height="500"
         >
           <div slot="message">
             <div class="vertical wrap layout center description">
@@ -812,8 +813,8 @@ export default class BackendAIImport extends BackendAIPage {
             </div>
           </div>
         </lablup-activity-panel>
-      </div>
-      <div class="horizontal wrap layout">
+        <!-- </div>
+      <div class="horizontal wrap layout"> -->
         <lablup-activity-panel
           title="${_t('import.ImportGithubRepo')}"
           elevation="1"

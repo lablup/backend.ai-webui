@@ -101,7 +101,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css" />
-      <div class="horizontal wrap layout">
+      <div class="horizontal wrap layout" style="gap:16px;">
         <lablup-activity-panel title="${_t('maintenance.Fix')}">
           <div slot="message" class="vertical flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
