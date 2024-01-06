@@ -50,9 +50,13 @@ const ErrorLogListPage: React.FC = () => {
           {
             title: t('logs.TimeStamp'),
             dataIndex: 'timestamp',
-            render: (value) => {
+            render: (value, record) => {
               const date = new Date(value);
-              return date.toLocaleString('en-US', { hour12: false });
+              return (
+                <Typography.Text color={record.isError ? 'red' : ''}>
+                  {date.toLocaleString('en-US', { hour12: false })}
+                </Typography.Text>
+              );
             },
             fixed: 'left',
           },
@@ -60,32 +64,65 @@ const ErrorLogListPage: React.FC = () => {
             title: t('logs.Status'),
             dataIndex: 'statusCode',
             render: (value, record) => {
-              return value + ' ' + record.statusText;
+              return (
+                <Typography.Text color={record.isError ? 'red' : ''}>
+                  {value + ' ' + record.statusText}
+                </Typography.Text>
+              );
             },
           },
           {
             title: t('logs.ErrorTitle'),
             dataIndex: 'title',
+            render: (value, record) => {
+              return (
+                <Typography.Text color={record.isError ? 'red' : ''}>
+                  {value}
+                </Typography.Text>
+              );
+            },
           },
           {
             title: t('logs.ErrorMessage'),
             dataIndex: 'message',
+            render: (value, record) => {
+              return (
+                <Typography.Text color={record.isError ? 'red' : ''}>
+                  {value}
+                </Typography.Text>
+              );
+            },
           },
           {
             title: t('logs.ErrorType'),
             dataIndex: 'type',
+            render: (value, record) => {
+              return (
+                <Typography.Text color={record.isError ? 'red' : ''}>
+                  {value}
+                </Typography.Text>
+              );
+            },
           },
           {
             title: t('logs.Method'),
             dataIndex: 'requestMethod',
+            render: (value, record) => {
+              return (
+                <Typography.Text color={record.isError ? 'red' : ''}>
+                  {value}
+                </Typography.Text>
+              );
+            },
           },
           {
             title: t('logs.RequestUrl'),
             dataIndex: 'requestUrl',
-            render: (value) => {
+            render: (value, record) => {
               return (
                 <div style={{ width: 150 }}>
                   <Typography.Text
+                    color={record.isError ? 'red' : ''}
                     ellipsis={{
                       tooltip: { overlayInnerStyle: { width: 'max-content' } },
                     }}
@@ -99,8 +136,14 @@ const ErrorLogListPage: React.FC = () => {
           {
             title: t('logs.Parameters'),
             dataIndex: 'requestParameters',
-            render: (value) => {
-              return <div style={{ width: 400 }}>{value}</div>;
+            render: (value, record) => {
+              return (
+                <div style={{ width: 400 }}>
+                  <Typography.Text color={record.isError ? 'red' : ''}>
+                    {value}
+                  </Typography.Text>
+                </div>
+              );
             },
           },
         ]}
