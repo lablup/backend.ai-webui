@@ -41,6 +41,8 @@ const UserDropdownMenu: React.FC = () => {
 
   const userRole = useCurrentUserRole();
 
+  const webuiNavigate = useWebUINavigate();
+
   const items: MenuProps['items'] = [
     {
       label: <Typography.Text>{userInfo.username}</Typography.Text>, //To display properly when the user name is too long.
@@ -102,10 +104,14 @@ const UserDropdownMenu: React.FC = () => {
       key: 'preferences',
       icon: <HolderOutlined />,
       onClick: () => {
-        // dispatchEvent('moveTo', {
-        //   path: '/usersettings',
-        //   params: { tab: 'general' },
-        // });
+        webuiNavigate('/usersettings', {
+          params: {
+            tab: 'general',
+          },
+        });
+        // dispatch event to update tab of backend-ai-usersettings
+        const event = new CustomEvent('backend-ai-usersettings', {});
+        document.dispatchEvent(event);
       },
     },
     {
@@ -113,10 +119,14 @@ const UserDropdownMenu: React.FC = () => {
       key: 'logs',
       icon: <FileTextOutlined />,
       onClick: () => {
-        // dispatchEvent('moveTo', {
-        //   path: '/usersettings',
-        //   params: { tab: 'logs' },
-        // });
+        webuiNavigate('/usersettings', {
+          params: {
+            tab: 'logs',
+          },
+        });
+        // dispatch event to update tab of backend-ai-usersettings
+        const event = new CustomEvent('backend-ai-usersettings', {});
+        document.dispatchEvent(event);
       },
     },
     {

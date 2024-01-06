@@ -10,15 +10,21 @@ import {
   useNavigate,
 } from 'react-router-dom';
 
-export const useWebUINavigate = (): NavigateFunction => {
+interface WebUINavigateOptions extends NavigateOptions {
+  params?: any;
+}
+export const useWebUINavigate = () => {
   const _reactNavigate = useNavigate();
   // @ts-ignore
-  return (to: To, options?: NavigateOptions) => {
-    _reactNavigate(to, options);
+  return (to: To, options?: WebUINavigateOptions) => {
+    _reactNavigate(to, _.omit(options, ['params']));
     const pathName = _.isString(to) ? to : to.pathname || '';
     document.dispatchEvent(
       new CustomEvent('move-to-from-react', {
-        detail: pathName,
+        detail: {
+          path: pathName,
+          params: options?.params,
+        },
       }),
     );
   };
