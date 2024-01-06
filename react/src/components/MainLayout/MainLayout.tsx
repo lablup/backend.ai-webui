@@ -163,6 +163,7 @@ function MainLayout() {
               align="stretch"
               style={{
                 margin: -14,
+                marginBottom: 0,
                 paddingTop: 0,
                 paddingBottom: 0,
               }}
