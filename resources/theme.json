@@ -12,10 +12,6 @@
   "components": {
     "Tag": {
       "borderRadiusSM": 1
-    },
-    "Tabs": {
-      "colorPrimary": "var(--general-sidebar-selected-color, #72EB51)",
-      "colorTextHeading": "var(--general-sidebar-color, #949494)"
     }
   }
 }
