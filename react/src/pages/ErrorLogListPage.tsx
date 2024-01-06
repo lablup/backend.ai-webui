@@ -82,11 +82,26 @@ const ErrorLogListPage: React.FC = () => {
           {
             title: t('logs.RequestUrl'),
             dataIndex: 'requestUrl',
+            render: (value) => {
+              return (
+                <div style={{ width: 150 }}>
+                  <Typography.Text
+                    ellipsis={{
+                      tooltip: { overlayInnerStyle: { width: 'max-content' } },
+                    }}
+                  >
+                    {value}
+                  </Typography.Text>
+                </div>
+              );
+            },
           },
           {
             title: t('logs.Parameters'),
             dataIndex: 'requestParameters',
-            width: 300,
+            render: (value) => {
+              return <div style={{ width: 400 }}>{value}</div>;
+            },
           },
         ]}
       />
