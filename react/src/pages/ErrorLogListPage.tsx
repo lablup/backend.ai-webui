@@ -1,8 +1,8 @@
 import Flex from '../components/Flex';
 import { RedoOutlined, DeleteOutlined } from '@ant-design/icons';
-import { useLocalStorageState } from 'ahooks';
+import { useRafInterval } from 'ahooks';
 import { Button, Space, Typography, Table } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type logType = NonNullable<
@@ -21,9 +21,13 @@ type logType = NonNullable<
 >;
 const ErrorLogListPage: React.FC = () => {
   const { t } = useTranslation();
-  const [logs] = useLocalStorageState<logType>('backendaiwebui.logs', {
-    defaultValue: [],
-  });
+  const [logs, setLogs] = useState<logType>(
+    JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]'),
+  );
+
+  useRafInterval(() => {
+    setLogs(JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]'));
+  }, 5000);
 
   return (
     <Flex direction="column" align="stretch">
