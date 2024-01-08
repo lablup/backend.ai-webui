@@ -3,8 +3,6 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import '../plastics/lablup-piechart/lablup-piechart';
-import '../plastics/lablup-piechart/lablup-piechart';
-import '../plastics/lablup-shields/lablup-shields';
 import '../plastics/lablup-shields/lablup-shields';
 import {
   IronFlex,
@@ -15,16 +13,10 @@ import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import { default as PainKiller } from './backend-ai-painkiller';
 import './backend-ai-release-check';
-import './backend-ai-release-check';
-import './backend-ai-resource-monitor';
 import './backend-ai-resource-monitor';
 import './backend-ai-resource-panel';
-import './backend-ai-resource-panel';
-import './backend-ai-session-launcher';
 import './backend-ai-session-launcher';
 import './backend-ai-window';
-import './backend-ai-window';
-import './lablup-activity-panel';
 import './lablup-activity-panel';
 import '@material/mwc-button';
 import '@material/mwc-icon';
