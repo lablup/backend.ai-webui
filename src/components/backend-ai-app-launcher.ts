@@ -948,6 +948,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               );
               this.indicator.set(100, _text('session.applauncher.Prepared'));
               setTimeout(() => {
+                globalThis.backendaiwindowmanager.addWindowWithURL(
+                  appConnectUrl || response.url + urlPostfix,
+                  appName + ' - ' + sessionName,
+                  sessionUuid,
+                  icon,
+                );
                 // globalThis.open(appConnectUrl || response.url + urlPostfix, '_blank');
                 // globalThis.open(
                 //  appConnectUrl || response.url + urlPostfix,

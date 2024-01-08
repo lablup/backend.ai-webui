@@ -33,7 +33,6 @@ import './backend-ai-sidepanel-notification';
 import './backend-ai-sidepanel-task';
 import './backend-ai-splash';
 import BackendAITasker from './backend-ai-tasker';
-import './backend-ai-user-dropdown-menu';
 import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
 import BackendAIWindowManager from './backend-ai-window-manager';
 import './lablup-notification';
@@ -425,6 +424,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   async connectedCallback() {
     super.connectedCallback();
     document.addEventListener('backend-ai-connected', () => this.refreshPage());
+    console.debug(globalThis.navigator.language);
     const defaultLang = globalThis.navigator.language.split('-')[0];
     if (
       globalThis.backendaioptions.get('language') === 'default' &&
