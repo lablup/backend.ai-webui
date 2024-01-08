@@ -301,7 +301,7 @@ export default class BackendAIData extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css" />
-      <div class="vertical layout" style="gap:16px">
+      <div class="vertical layout" style="gap:24px">
         <backend-ai-react-storage-status-panel
           .value="${this.folderListFetchKey}"
         ></backend-ai-react-storage-status-panel>

@@ -77,8 +77,8 @@ function MainLayout() {
             direction="column"
             align="stretch"
             style={{
-              paddingLeft: token.paddingContentHorizontal,
-              paddingRight: token.paddingContentHorizontal,
+              paddingLeft: token.paddingContentHorizontalLG,
+              paddingRight: token.paddingContentHorizontalLG,
               paddingBottom: token.paddingContentVertical,
             }}
           >

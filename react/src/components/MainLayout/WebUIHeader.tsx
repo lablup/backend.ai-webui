@@ -37,8 +37,8 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
         // width: '100%',
         // justifyContent: 'space-between',
         // padding: token.marginMD,
-        paddingRight: token.marginSM,
-        paddingLeft: token.marginSM,
+        paddingRight: token.marginMD,
+        paddingLeft: token.marginMD,
 
         // backdropFilter: 'blur(15px)',
         backgroundColor: scrolled ? token.colorBgContainer : 'transparent',
