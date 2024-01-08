@@ -243,7 +243,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       store.dispatch(navigate(decodeURIComponent(location.pathname))),
     );
     installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
-    let configPath;
+    let configPath: string;
     if (globalThis.isElectron) {
       configPath = './config.toml';
       document.addEventListener('backend-ai-logout', () => this.logout(false));
