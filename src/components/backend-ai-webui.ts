@@ -944,6 +944,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   _isPageActive(page: string) {
     //return globalThis.backendaiwindowmanager.has(page);
+    console.log('active check:', page);
     return this._activePages.includes(page);
   }
 
@@ -1615,8 +1616,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               ></i>
               <span class="full-menu">${_t('webui.menu.Sessions')}</span>
             </mwc-list-item>
-            <!-- <mwc-list-item graphic="icon" ?selected="${this._page ===
-            'session'}" ?activated="${this._isPageActive('job')}"
+            <!-- <mwc-list-item graphic="icon"
+                          ?selected="${this._isPageActive('session')}"
+                          ?activated="${this._isPageActive('session')}"
               @click="${() =>
               this._moveTo(
                 '/session',
@@ -2212,7 +2214,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-summary-view
                       class="page"
                       name="summary"
-                      ?active="${this._page === 'summary'}"
+                      ?active="${this._isPageActive('summary')}"
                     >
                       <mwc-circular-progress
                         indeterminate
@@ -2221,8 +2223,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-import-view
                       class="page"
                       name="import"
-                      ?active="${this._page === 'github' ||
-                      this._page === 'import'}"
+                      ?active="${this._isPageActive('github') ||
+                      this._isPageActive('import')}"
                     >
                       <mwc-circular-progress
                         indeterminate
@@ -2231,7 +2233,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-session-view
                       class="page"
                       name="job"
-                      ?active="${this._page === 'job'}"
+                      ?active="${this._isPageActive('job')}"
                     >
                       <mwc-circular-progress
                         indeterminate
@@ -2240,7 +2242,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-session-view-next
                       class="page"
                       name="session"
-                      ?active="${this._page === 'session'}"
+                      ?active="${this._isPageActive('session')}"
                     >
                       <mwc-circular-progress
                         indeterminate
@@ -2249,7 +2251,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-serving-view
                       class="page"
                       name="serving"
-                      ?active="${this._page === 'serving'}"
+                      ?active="${this._isPageActive('serving')}"
                     >
                       <mwc-circular-progress
                         indeterminate
