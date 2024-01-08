@@ -101,7 +101,12 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     ServiceLauncherFormValue
   >({
     mutationFn: (values) => {
-      const image: string = `${values.environments.image?.registry}/${values.environments.image?.name}:${values.environments.image?.tag}`;
+      const image: string =
+        baiClient._config.allow_manual_image_name_for_session &&
+        values.environments?.manual &&
+        !_.isEmpty(values.environments.manual)
+          ? values.environments.manual
+          : `${values.environments.image?.registry}/${values.environments.image?.name}:${values.environments.image?.tag}`;
       const body: ServiceCreateType = {
         name: values.serviceName,
         desired_session_count: values.desiredRoutingCount,
