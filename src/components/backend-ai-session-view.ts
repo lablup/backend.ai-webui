@@ -463,6 +463,9 @@ export default class BackendAISessionView extends BackendAIPage {
               if (occupiedSlots['warboy.device']) {
                 exportListItem.warboy_device = occupiedSlots['warboy.device'];
               }
+              if (occupiedSlots['lpu.device']) {
+                exportListItem.lpu_device = occupiedSlots['lpu.device'];
+              }
             }
             const liveStat = container.live_stat
               ? JSON.parse(container.live_stat)

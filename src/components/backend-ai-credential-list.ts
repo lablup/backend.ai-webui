@@ -385,7 +385,7 @@ export default class BackendAICredentialList extends BackendAIPage {
               keypair['total_resource_slots'].ipu_device = '-';
             }
             if ('atom.device' in keypair['total_resource_slots']) {
-              keypair['total_resource_slots'].tpu_device =
+              keypair['total_resource_slots'].atom_device =
                 keypair['total_resource_slots']['atom.device'];
             }
             if (
@@ -395,7 +395,7 @@ export default class BackendAICredentialList extends BackendAIPage {
               keypair['total_resource_slots'].atom_device = '-';
             }
             if ('warboy.device' in keypair['total_resource_slots']) {
-              keypair['total_resource_slots'].tpu_device =
+              keypair['total_resource_slots'].warboy_device =
                 keypair['total_resource_slots']['warboy.device'];
             }
             if (
@@ -403,6 +403,16 @@ export default class BackendAICredentialList extends BackendAIPage {
               keypair['default_for_unspecified'] === 'UNLIMITED'
             ) {
               keypair['total_resource_slots'].warboy_device = '-';
+            }
+            if ('lpu.device' in keypair['total_resource_slots']) {
+              keypair['total_resource_slots'].lpu_device =
+                keypair['total_resource_slots']['lpu.device'];
+            }
+            if (
+              'lpu_device' in keypair['total_resource_slots'] === false &&
+              keypair['default_for_unspecified'] === 'UNLIMITED'
+            ) {
+              keypair['total_resource_slots'].lpu_device = '-';
             }
 
             [
@@ -415,6 +425,7 @@ export default class BackendAICredentialList extends BackendAIPage {
               'ipu_device',
               'atom_device',
               'warboy_device',
+              'lpu_device',
             ].forEach((slot) => {
               keypair['total_resource_slots'][slot] = this._markIfUnlimited(
                 keypair['total_resource_slots'][slot],

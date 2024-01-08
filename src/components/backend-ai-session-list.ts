@@ -1095,6 +1095,11 @@ export default class BackendAISessionList extends BackendAIPage {
                 occupiedSlots['warboy.device'],
               );
             }
+            if ('lpu.device' in occupiedSlots) {
+              sessions[objectKey].lpu_slot = parseInt(
+                occupiedSlots['lpu.device'],
+              );
+            }
             if ('cuda.shares' in occupiedSlots) {
               // sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
               sessions[objectKey].cuda_fgpu_slot = parseFloat(
@@ -3187,13 +3192,24 @@ ${rowData.item[this.sessionNameField]}</pre
                     <span class="indicator">Warboy</span>
                   `
                 : html``}
+              ${rowData.item.lpu_slot
+                ? html`
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/furiosa.svg"
+                    />
+                    <span>${rowData.item.lpu_slot}</span>
+                    <span class="indicator">LPU</span>
+                  `
+                : html``}
               ${!rowData.item.cuda_gpu_slot &&
               !rowData.item.cuda_fgpu_slot &&
               !rowData.item.rocm_gpu_slot &&
               !rowData.item.tpu_slot &&
               !rowData.item.ipu_slot &&
               !rowData.item.atom_slot &&
-              !rowData.item.warboy_slot
+              !rowData.item.warboy_slot &&
+              !rowData.item.lpu_slot
                 ? html`
                     <mwc-icon class="fg green indicator">view_module</mwc-icon>
                     <span>-</span>

@@ -14,6 +14,7 @@ const resourceTypes = [
   'ipu.device',
   'atom.device',
   'warboy.device',
+  'lpu.device',
 ] as const;
 
 export type ResourceTypeKey = (typeof resourceTypes)[number];
@@ -28,6 +29,7 @@ export const ACCELERATOR_UNIT_MAP: {
   'ipu.device': 'IPU',
   'atom.device': 'ATOM',
   'warboy.device': 'Warboy',
+  'lpu.device': 'LPU',
 };
 
 export type ResourceOpts = {
@@ -140,6 +142,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     'ipu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'IPU'],
     'atom.device': ['/resources/icons/rebel.svg', 'ATOM'],
     'warboy.device': ['/resources/icons/furiosa.svg', 'Warboy'],
+    'lpu.device': ['/resources/icons/furiosa.svg', 'LPU'],
   };
 
   const content =

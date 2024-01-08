@@ -125,6 +125,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     min: '0',
     max: '0',
   };
+  @property({ type: Object }) lpu_device_metric = {
+    min: '0',
+    max: '0',
+  };
 
   @property({ type: Object }) cluster_metric = {
     min: 1,
@@ -196,6 +200,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({ type: Number }) max_ipu_device_per_container = 8;
   @property({ type: Number }) max_atom_device_per_container = 4;
   @property({ type: Number }) max_warboy_device_per_container = 4;
+  @property({ type: Number }) max_lpu_device_per_container = 4;
   @property({ type: Number }) max_shm_per_container = 8;
   @property({ type: Boolean }) allow_manual_image_name_for_session = false;
   @property({ type: Object }) resourceBroker;
@@ -985,6 +990,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.max_warboy_device_per_container =
             globalThis.backendaiclient._config.maxWarboyDevicesPerContainer ||
             8;
+          this.max_lpu_device_per_container =
+            globalThis.backendaiclient._config.maxLPUDevicesPerContainer || 8;
           this.max_shm_per_container =
             globalThis.backendaiclient._config.maxShmPerContainer || 8;
           if (
@@ -1030,6 +1037,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         globalThis.backendaiclient._config.maxATOMDevicesPerContainer || 8;
       this.max_warboy_device_per_container =
         globalThis.backendaiclient._config.maxWarboyDevicesPerContainer || 8;
+      this.max_lpu_device_per_container =
+        globalThis.backendaiclient._config.maxLPUDevicesPerContainer || 8;
       this.max_shm_per_container =
         globalThis.backendaiclient._config.maxShmPerContainer || 8;
       if (
@@ -1631,6 +1640,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         break;
       case 'warboy.device':
         config['warboy.device'] = this.gpu_request;
+        break;
+      case 'lpu.device':
+        config['lpu.device'] = this.gpu_request;
         break;
       default:
         // Fallback to current gpu mode if there is a gpu request, but without gpu type.
@@ -2287,6 +2299,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               'ipu_device',
               'atom_device',
               'warboy_device',
+              'lpu_device',
             ].forEach((slot) => {
               if (slot in this.total_resource_group_slot) {
                 available_slot[slot] = this.total_resource_group_slot[slot];
@@ -2684,6 +2697,59 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           console.log(warboy_device_metric);
           this._NPUDeviceNameOnSlider = 'Warboy';
           this.npu_device_metric = warboy_device_metric;
+        }
+        if (item.key === 'lpu.device') {
+          const lpu_device_metric = { ...item };
+          lpu_device_metric.min = parseInt(lpu_device_metric.min);
+          if ('lpu.device' in this.userResourceLimit) {
+            if (
+              parseInt(lpu_device_metric.max) !== 0 &&
+              lpu_device_metric.max !== 'Infinity' &&
+              !isNaN(lpu_device_metric.max) &&
+              lpu_device_metric.max != null
+            ) {
+              lpu_device_metric.max = Math.min(
+                parseInt(lpu_device_metric.max),
+                parseInt(this.userResourceLimit['lpu.device']),
+                available_slot['cuda_device'],
+                this.max_cuda_device_per_container,
+              );
+            } else {
+              lpu_device_metric.max = Math.min(
+                parseInt(this.userResourceLimit['lpu.device']),
+                parseInt(available_slot['cuda_device']),
+                this.max_cuda_device_per_container,
+              );
+            }
+          } else {
+            if (
+              parseInt(lpu_device_metric.max) !== 0 &&
+              lpu_device_metric.max !== 'Infinity' &&
+              !isNaN(lpu_device_metric.max) &&
+              lpu_device_metric.max != null
+            ) {
+              lpu_device_metric.max = Math.min(
+                parseInt(lpu_device_metric.max),
+                parseInt(available_slot['lpu_device']),
+                this.max_lpu_device_per_container,
+              );
+            } else {
+              lpu_device_metric.max = Math.min(
+                parseInt(this.available_slot['lpu_device']),
+                this.max_lpu_device_per_container,
+              );
+            }
+          }
+          if (lpu_device_metric.min >= lpu_device_metric.max) {
+            if (lpu_device_metric.min > lpu_device_metric.max) {
+              lpu_device_metric.min = lpu_device_metric.max;
+              disableLaunch = true;
+            }
+            this.npuResouceSlider.disabled = true;
+          }
+          console.log(lpu_device_metric);
+          this._NPUDeviceNameOnSlider = 'LPU';
+          this.npu_device_metric = lpu_device_metric;
         }
 
         if (item.key === 'mem') {
@@ -3170,6 +3236,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const ipu_device = button.ipu_device;
     const atom_device = button.atom_device;
     const warboy_device = button.warboy_device;
+    const lpu_device = button.lpu_device;
     let gpu_type;
     let gpu_value;
     if (
@@ -3199,6 +3266,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else if (typeof warboy_device !== 'undefined') {
       gpu_type = 'warboy.device';
       gpu_value = warboy_device;
+    } else if (typeof lpu_device !== 'undefined') {
+      gpu_type = 'lpu.device';
+      gpu_value = lpu_device;
     } else {
       gpu_type = 'none';
       gpu_value = 0;
@@ -4244,6 +4314,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       'ipu.device': 'IPU',
       'atom.device': 'ATOM',
       'warboy.device': 'Warboy',
+      'lpu.device': 'LPU',
     };
     if (gpu_type in accelerator_names) {
       return accelerator_names[gpu_type];
@@ -5067,6 +5138,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       .ipu_device="${item.ipu_device}"
                       .atom_device="${item.atom_device}"
                       .warboy_device="${item.warboy_device}"
+                      .lpu_device="${item.lpu_device}"
                       .shmem="${item.shmem}"
                     >
                       <div class="horizontal layout end-justified">
@@ -5128,6 +5200,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                           ${item.warboy_device && item.warboy_device > 0
                             ? html`
                                 ${item.warboy_device} Warboy
+                              `
+                            : html``}
+                          ${item.lpu_device && item.lpu_device > 0
+                            ? html`
+                                ${item.lpu_device} LPU
                               `
                             : html``}
                         </div>

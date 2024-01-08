@@ -98,6 +98,17 @@
         "round_length": 0
       },
       "display_icon": "furiosa"
+    },
+    "lpu": {
+      "slot_name": "lpu.device",
+      "description": "Hyperaccel LPU",
+      "human_readable_name": "LPU Device",
+      "display_unit": "LPU",
+      "number_format": {
+        "binary": false,
+        "round_length": 0
+      },
+      "display_icon": "furiosa"
     }
   }
 }

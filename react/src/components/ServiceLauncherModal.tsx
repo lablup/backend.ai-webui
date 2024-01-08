@@ -38,6 +38,7 @@ interface ServiceCreateConfigResourceType {
   'ipu.device'?: number | string;
   'atom.device'?: number | string;
   'warboy.device'?: number | string;
+  'lpu.device'?: number | string;
 }
 
 interface ServiceCreateConfigType {

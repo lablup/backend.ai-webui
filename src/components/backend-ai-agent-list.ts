@@ -531,6 +531,24 @@ export default class BackendAIAgentList extends BackendAIPage {
                   agents[objectKey].used_warboy_slots_ratio * 100
                 ).toFixed(2);
               }
+              if ('lpu.device' in available_slots) {
+                agents[objectKey].lpu_slots = parseInt(
+                  available_slots['lpu.device'],
+                );
+                if ('lpu.device' in occupied_slots) {
+                  agents[objectKey].used_lpu_slots = parseInt(
+                    occupied_slots['lpu.device'],
+                  );
+                } else {
+                  agents[objectKey].used_lpu_slots = 0;
+                }
+                agents[objectKey].used_lpu_slots_ratio =
+                  agents[objectKey].used_lpu_slots /
+                  agents[objectKey].lpu_slots;
+                agents[objectKey].total_lpu_percent = (
+                  agents[objectKey].used_lpu_slots_ratio * 100
+                ).toFixed(2);
+              }
 
               if ('cuda' in compute_plugins) {
                 const cuda_plugin = compute_plugins['cuda'];
@@ -1184,6 +1202,30 @@ export default class BackendAIAgentList extends BackendAIPage {
                     id="warboy-bar"
                     progress="${rowData.item.used_warboy_slots_ratio}"
                     description="${rowData.item.used_warboy_slots}"
+                  ></lablup-progress-bar>
+                </div>
+              `
+            : html``}
+          ${rowData.item.lpu_slots
+            ? html`
+                <div
+                  class="layout horizontal center-justified flex progress-bar-section"
+                >
+                  <div class="layout horizontal start resource-indicator">
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/furiosa.svg"
+                    />
+                    <span class="monospace" style="padding-left:5px;">
+                      ${rowData.item.used_lpu_slots}/${rowData.item.lpu_slots}
+                    </span>
+                    <span class="indicator">LPU</span>
+                  </div>
+                  <span class="flex"></span>
+                  <lablup-progress-bar
+                    id="lpu-bar"
+                    progress="${rowData.item.used_lpu_slots_ratio}"
+                    description="${rowData.item.used_lpu_slots}"
                   ></lablup-progress-bar>
                 </div>
               `
