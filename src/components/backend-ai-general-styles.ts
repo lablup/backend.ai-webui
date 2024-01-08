@@ -194,6 +194,7 @@ export const BackendAiStyles = [
 
     ::-webkit-scrollbar {
       max-width: 2px;
+      max-height: 2px;
       background-color: transparent;
     }
 

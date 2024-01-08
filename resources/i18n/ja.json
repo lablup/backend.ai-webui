@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "ようこそ、",
-      "WelcomeMessage_2": ".",
+      "WelcomeMessage": "ようこそ、{{ userName }}.",
       "Summary": "要約",
       "Sessions": "セッション",
       "Import&Run": "インポートして実行",
@@ -62,7 +61,10 @@
       "Notifications": "お知らせ",
       "Tasks": "作業",
       "FastTrack": "FastTrack",
-      "Data&Model": "データ"
+      "Data&Model": "データ",
+      "InvalidBlankPassword": "パスワードを入力してください",
+      "InvalidBlankEmail": "メールアドレスを入力",
+      "DisMatchUserEmail": "ユーザーの電子メールが一致しません"
     },
     "YouAreOffline": "あなたは今オフラインです",
     "YouAreOnline": "あなたは今オンラインです",
@@ -1261,7 +1263,7 @@
     "CouldNotCopyText": "テキストをコピーできませんでした：",
     "NotebookBadgeURL": "ノートブックのURL",
     "GetAndRunNotebook": "インポートして実行",
-    "ImportGithubRepo": "Githubリポジトリをインポートする",
+    "ImportGithubRepo": "GitHubリポジトリをインポートする",
     "GitHubURL": "GitHubのURL",
     "GetToFolder": "フォルダに移動",
     "RepoWillBeFolder": "インポートされたGitHubリポジトリはフォルダーに変換され、セッションの開始時にマウントできます。",
@@ -1275,13 +1277,13 @@
     "FolderName": "インポートされたフォルダ名：",
     "NotebookBadgeCodeHTML": "ノートブックバッジコード（HTML）",
     "NotebookBadgeCodeMarkdown": "ノートブックバッジコード（マークダウン）",
-    "GithubInternalError": "Githubリポジトリがしばらく停止しました。しばらくしてからお試しください。",
-    "GithubAPILimitError": "Github APIの呼び出し回数が多いので、しばらくお待ちください。",
-    "GithubAPIEtcError": "Github API呼び出しの問題があります。しばらくしてから試してみてください。",
-    "ImportGitlabRepo": "Gitlabリポジトリのインポート",
-    "GitlabRepoWillBeFolder": "インポートしたGitlabリポジトリはフォルダに変換され、セッション開始時にマウントすることができます。",
-    "GitlabURL": "Gitlabアドレス",
-    "GitlabDefaultBranch": "Gitlab ブランチ名"
+    "GithubInternalError": "GitHubリポジトリがしばらく停止しました。しばらくしてからお試しください。",
+    "GithubAPILimitError": "GitHub APIの呼び出し回数が多いので、しばらくお待ちください。",
+    "GithubAPIEtcError": "GitHub API呼び出しの問題があります。しばらくしてから試してみてください。",
+    "ImportGitlabRepo": "GitLabリポジトリのインポート",
+    "GitlabRepoWillBeFolder": "インポートしたGitLabリポジトリはフォルダに変換され、セッション開始時にマウントすることができます。",
+    "GitlabURL": "GitLabアドレス",
+    "GitlabDefaultBranch": "GitLab ブランチ名"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "今月の統計",

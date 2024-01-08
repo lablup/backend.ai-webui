@@ -182,6 +182,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Object }) roleInfo = Object();
   @property({ type: Object }) keyPairInfo = Object();
   @property({ type: Boolean }) isOpenUserProfileDialog = false;
+  @property({ type: Boolean }) isOpenSignoutDialog = false;
   @query('#app-body') appBody!: Drawer;
   @query('#app-page') appPage!: HTMLDivElement;
   @query('#content-body') contentBody!: Drawer;
@@ -1786,7 +1787,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     this.allow_signout === true
                       ? html`
                           ·
-                          <a @click="${() => this.loginPanel.signout()}">
+                          <a
+                            @click="${() => {
+                              this.isOpenSignoutDialog = true;
+                            }}"
+                          >
                             ${_t('webui.menu.LeaveService')}
                           </a>
                         `
@@ -1824,7 +1829,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   this.allow_signout === true
                     ? html`
                         ·
-                        <a @click="${() => this.loginPanel.signout()}">
+                        <a
+                          @click="${() => {
+                            this.isOpenSignoutDialog = true;
+                          }}"
+                        >
                           ${_t('webui.menu.LeaveService')}
                         </a>
                       `
@@ -1863,9 +1872,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 </div>
                 <div slot="navigationIcon" class="vertical-line" style="height:20px;margin:0;"></div>
                 <div class="horizontal center layout" slot="title" id="welcome-message" style="font-size:12px;margin-left:10px;" class="draggable">
-                  <p>${_t('webui.menu.WelcomeMessage')}</p>
-                  <p class="user-name">${this._getUsername()}</p>
-                  <p>${_t('webui.menu.WelcomeMessage_2')}</p>
+                  <p class="user-name">${_t('webui.menu.WelcomeMessage', {
+                    userName: this._getUsername(),
+                  })}
+                  </p>
                 </div>
                   <backend-ai-project-switcher slot="actionItems" style="margin-right:10px;"></backend-ai-project-switcher>
                   <backend-ai-react-user-dropdown-menu
@@ -2021,6 +2031,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       <backend-ai-resource-broker id="resource-broker" ?active="${
         this.is_connected
       }"></backend-ai-resource-broker>
+      <backend-ai-react-signout-modal value="${
+        this.isOpenSignoutDialog ? 'true' : 'false'
+      }" @close="${() => {
+        this.isOpenSignoutDialog = false;
+      }}"></backend-ai-react-signout-modal>
     `;
   }
 }

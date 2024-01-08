@@ -1,7 +1,5 @@
-import {
-  useBackendaiImageMetaData,
-  useSuspendedBackendaiClient,
-} from '../hooks';
+import { useBackendAIImageMetaData } from '../hooks';
+import { useThemeMode } from '../hooks/useThemeMode';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 // @ts-ignore
@@ -82,18 +80,15 @@ const isPrivateImage = (image: Image) => {
 const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
 > = ({ filter, showPrivate }) => {
-  // TODO: fix below without useSuspendedBackendaiClient
-  // Before fetching on relay environment, BAI client should be ready
-  useSuspendedBackendaiClient();
-
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
   Form.useWatch('environments', { form, preserve: true });
 
   const [environmentSearch, setEnvironmentSearch] = useState('');
   const [versionSearch, setVersionSearch] = useState('');
   const { t } = useTranslation();
-  const [metadata, { getImageMeta }] = useBackendaiImageMetaData();
+  const [metadata, { getImageMeta }] = useBackendAIImageMetaData();
   const { token } = theme.useToken();
+  const { isDarkMode } = useThemeMode();
 
   const envSelectRef = useRef<RefSelectProps>(null);
   const versionSelectRef = useRef<RefSelectProps>(null);
@@ -203,20 +198,31 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   image?.name
                 );
               })
-              .map((images, environmentName) => ({
-                environmentName,
-                displayName:
-                  metadata?.imageInfo[environmentName.split('/')?.[1]]?.name ||
+              .map((images, environmentName) => {
+                const imageKey = environmentName.split('/')?.[1];
+                const displayName =
+                  imageKey && metadata?.imageInfo[imageKey]?.name;
+
+                return {
                   environmentName,
-                prefix: environmentName.split('/')?.[0],
-                images: images.sort((a, b) =>
-                  compareVersions(
-                    // latest version comes first
-                    b?.tag?.split('-')?.[0] ?? '',
-                    a?.tag?.split('-')?.[0] ?? '',
+                  displayName:
+                    displayName ||
+                    (_.last(environmentName.split('/')) as string),
+                  prefix: _.chain(environmentName)
+                    .split('/')
+                    .dropRight(1)
+                    .join('/')
+                    .value(),
+                  images: images.sort((a, b) =>
+                    compareVersions(
+                      // latest version comes first
+                      b?.tag?.split('-')?.[0] ?? '',
+                      a?.tag?.split('-')?.[0] ?? '',
+                    ),
                   ),
-                ),
-              }))
+                };
+              })
+
               .sortBy((item) => item.displayName)
               .value(),
           };
@@ -385,7 +391,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           <Flex
                             direction="row"
                             // set specific class name to handle flex wrap using css
-                            className="tag-wrap"
+                            className={
+                              isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
+                            }
                             // style={{ flex: 1 }}
                             style={{
                               marginLeft: token.marginXS,
@@ -498,21 +506,20 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         ? _.map(requirements, (requirement, idx) => (
                             <DoubleTag
                               key={idx}
-                              values={
-                                metadata?.tagAlias[requirement]
-                                  ?.split(':')
-                                  .map((str) => {
-                                    extraFilterValues.push(str);
-                                    return (
-                                      <TextHighlighter
-                                        keyword={versionSearch}
-                                        key={str}
-                                      >
-                                        {str}
-                                      </TextHighlighter>
-                                    );
-                                  }) || requirements
-                              }
+                              values={_.split(
+                                metadata?.tagAlias[requirement] || requirement,
+                                ':',
+                              ).map((str) => {
+                                extraFilterValues.push(str);
+                                return (
+                                  <TextHighlighter
+                                    keyword={versionSearch}
+                                    key={str}
+                                  >
+                                    {str}
+                                  </TextHighlighter>
+                                );
+                              })}
                             />
                           ))
                         : '-';
@@ -544,7 +551,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           <Flex
                             direction="row"
                             // set specific class name to handle flex wrap using css
-                            className="tag-wrap"
+                            className={
+                              isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
+                            }
                             style={{
                               marginLeft: token.marginXS,
                               flexShrink: 1,
