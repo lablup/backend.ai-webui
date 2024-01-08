@@ -1,7 +1,6 @@
 import BAIModal from '../components/BAIModal';
 import Flex from '../components/Flex';
 import { RedoOutlined, DeleteOutlined } from '@ant-design/icons';
-import { useRafInterval } from 'ahooks';
 import { Button, Space, Typography, Table, Alert } from 'antd';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,9 +26,9 @@ const ErrorLogListPage: React.FC = () => {
   );
   const [isOpenClearLogsModal, setIsOpenClearLogsModal] = useState(false);
 
-  useRafInterval(() => {
+  const onClickRefreshLogs = () => {
     setLogs(JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]'));
-  }, 5000);
+  };
 
   const handleOk = () => {
     localStorage.removeItem('backendaiwebui.logs');
@@ -48,7 +47,11 @@ const ErrorLogListPage: React.FC = () => {
             </Space>
           </Typography.Title>
           <Space>
-            <Button type="link" icon={<RedoOutlined />}>
+            <Button
+              type="link"
+              icon={<RedoOutlined />}
+              onClick={onClickRefreshLogs}
+            >
               {t('button.Refresh')}
             </Button>
             <Button
