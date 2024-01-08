@@ -29,12 +29,13 @@ const WebUISider: React.FC<
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const currentUserRole = useCurrentUserRole();
-  // const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
 
   // const navigate = useNavigate();
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
   const baiClient = useSuspendedBackendaiClient();
+  const isHideAgents = baiClient?._config?.hideAgents ?? true;
+  const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
   const generalMenu: MenuProps['items'] = [
     {
       label: t('webui.menu.Summary'),
@@ -61,21 +62,23 @@ const WebUISider: React.FC<
       icon: <CloudUploadOutlined />,
       key: 'data',
     },
-    {
+    (!isHideAgents && {
       label: t('webui.menu.AgentSummary'),
       icon: <HddOutlined />,
       key: 'agent-summary',
-    },
+    }) ||
+      null,
     {
       label: t('webui.menu.Statistics'),
       icon: <BarChartOutlined />,
       key: 'statistics',
     },
-    {
+    (!!fasttrackEndpoint && {
       label: t('webui.menu.FastTrack'),
       icon: <ExportOutlined />,
       key: 'fasttrack',
-    },
+    }) ||
+      null,
   ];
 
   const adminDivider: MenuProps['items'] = [
@@ -216,6 +219,7 @@ const WebUISider: React.FC<
       <BAIMenu
         selectedKeys={[location.pathname.split('/')[1] || 'dashboard']}
         items={
+          // TODO: add plugin menu
           currentUserRole === 'superadmin'
             ? [
                 ...generalMenu,
