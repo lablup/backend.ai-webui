@@ -67,7 +67,7 @@ const ErrorLogListPage: React.FC = () => {
           </Space>
         </Flex>
         <Table
-          scroll={{ x: 'max-content' }}
+          scroll={{ x: 'max-content', y: '40vh' }}
           dataSource={logs as logType}
           pagination={{ showSizeChanger: false }}
           columns={[
@@ -98,6 +98,11 @@ const ErrorLogListPage: React.FC = () => {
             {
               title: t('logs.ErrorTitle'),
               dataIndex: 'title',
+              onCell: () => {
+                return {
+                  style: { minWidth: 65 },
+                };
+              },
               render: (value, record) => {
                 return (
                   <Typography.Text color={record.isError ? 'red' : ''}>
@@ -109,6 +114,11 @@ const ErrorLogListPage: React.FC = () => {
             {
               title: t('logs.ErrorMessage'),
               dataIndex: 'message',
+              onCell: () => {
+                return {
+                  style: { minWidth: 93 },
+                };
+              },
               render: (value, record) => {
                 return (
                   <Typography.Text color={record.isError ? 'red' : ''}>
@@ -120,6 +130,11 @@ const ErrorLogListPage: React.FC = () => {
             {
               title: t('logs.ErrorType'),
               dataIndex: 'type',
+              onCell: () => {
+                return {
+                  style: { minWidth: 90 },
+                };
+              },
               render: (value, record) => {
                 return (
                   <Typography.Text color={record.isError ? 'red' : ''}>
@@ -131,6 +146,11 @@ const ErrorLogListPage: React.FC = () => {
             {
               title: t('logs.Method'),
               dataIndex: 'requestMethod',
+              onCell: () => {
+                return {
+                  style: { minWidth: 90 },
+                };
+              },
               render: (value, record) => {
                 return (
                   <Typography.Text color={record.isError ? 'red' : ''}>
@@ -153,13 +173,12 @@ const ErrorLogListPage: React.FC = () => {
             {
               title: t('logs.Parameters'),
               dataIndex: 'requestParameters',
+              width: 400,
               render: (value, record) => {
                 return (
-                  <div style={{ width: 400 }}>
-                    <Typography.Text color={record.isError ? 'red' : ''}>
-                      {value}
-                    </Typography.Text>
-                  </div>
+                  <Typography.Text color={record.isError ? 'red' : ''}>
+                    {value}
+                  </Typography.Text>
                 );
               },
             },
