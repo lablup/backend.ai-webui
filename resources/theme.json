@@ -1,17 +1,29 @@
 {
-  "token": {
-    "fontFamily": "'Ubuntu', Roboto, sans-serif",
-    "colorPrimary": "#37B076",
-    "colorLink": "#37B076",
-    "colorLinkHover": "#71b98c",
-    "colorSuccess": "#37B076",
-    "colorBorder": "#DEE1E7",
-    "colorBorderSecondary": "#E1E1E2",
-    "colorWarning": "#f1a239"
+  "light" : {
+    "token": {
+      "fontFamily": "'Ubuntu', Roboto, sans-serif",
+      "colorPrimary": "#37B076",
+      "colorLink": "#37B076",
+      "colorLinkHover": "#71b98c",
+      "colorSuccess": "#37B076",
+      "colorBorder": "#DEE1E7",
+      "colorBorderSecondary": "#E1E1E2",
+      "colorWarning": "#f1a239"
+    },
+    "components": {
+      "Tag": {
+        "borderRadiusSM": 1
+      }
+    }
   },
-  "components": {
-    "Tag": {
-      "borderRadiusSM": 1
+  "dark": {
+    "token": {
+      "colorPrimary": "#37B076"
+    },
+    "components": {
+      "Tag": {
+        "borderRadiusSM": 1
+      }
     }
   }
 }

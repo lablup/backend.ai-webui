@@ -1,4 +1,5 @@
 import { useBackendAIImageMetaData } from '../hooks';
+import { useThemeMode } from '../hooks/useThemeMode';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 // @ts-ignore
@@ -87,6 +88,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const { t } = useTranslation();
   const [metadata, { getImageMeta }] = useBackendAIImageMetaData();
   const { token } = theme.useToken();
+  const { isDarkMode } = useThemeMode();
 
   const envSelectRef = useRef<RefSelectProps>(null);
   const versionSelectRef = useRef<RefSelectProps>(null);
@@ -389,7 +391,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           <Flex
                             direction="row"
                             // set specific class name to handle flex wrap using css
-                            className="tag-wrap"
+                            className={
+                              isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
+                            }
                             // style={{ flex: 1 }}
                             style={{
                               marginLeft: token.marginXS,
@@ -547,7 +551,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           <Flex
                             direction="row"
                             // set specific class name to handle flex wrap using css
-                            className="tag-wrap"
+                            className={
+                              isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
+                            }
                             style={{
                               marginLeft: token.marginXS,
                               flexShrink: 1,
