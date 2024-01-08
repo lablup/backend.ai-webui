@@ -56,6 +56,7 @@ const ErrorLogListPage: React.FC = () => {
             </Button>
             <Button
               type="primary"
+              danger
               icon={<DeleteOutlined />}
               onClick={() => {
                 setIsOpenClearLogsModal(true);
@@ -177,10 +178,10 @@ const ErrorLogListPage: React.FC = () => {
       <BAIModal
         open={isOpenClearLogsModal}
         title={t('dialog.warning.LogDeletion')}
-        okText={t('button.Yes')}
+        okText={t('button.Delete')}
         okButtonProps={{ danger: true }}
         onOk={handleOk}
-        cancelText={t('button.No')}
+        cancelText={t('button.Cancel')}
         onCancel={() => setIsOpenClearLogsModal(false)}
       >
         <Alert message={t('dialog.warning.CannotBeUndone')} type="warning" />
