@@ -1,8 +1,8 @@
-const net = require("net");
+const net = require('net');
 const logger = require('./logger')(__filename);
 const WebSocket = require('ws');
 const ai = require('../../lib/backend.ai-client-node');
-const bind = require("./bindStream");
+const bind = require('./bindStream');
 const htmldeco = require('./htmldeco');
 const HttpsProxyAgent = require('https-proxy-agent');
 /*
@@ -23,7 +23,7 @@ i18next
   });
   */
 
-module.exports = (proxy = class Proxy extends ai.backend.Client {
+module.exports = proxy = class Proxy extends ai.backend.Client {
   constructor(env) {
     super(env);
     this._running = false;
@@ -38,24 +38,30 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
   }
 
   get_header(queryString) {
-    let method = "GET";
+    let method = 'GET';
     let requestBody = '';
     let d = new Date();
     let signKey = this.getSignKey(this._config.secretKey, d);
-    let aStr = this.getAuthenticationString(method, queryString, d.toISOString(), requestBody, "application/json");
+    let aStr = this.getAuthenticationString(
+      method,
+      queryString,
+      d.toISOString(),
+      requestBody,
+      'application/json',
+    );
     let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
     let hdrs = {
-      "Content-Type": "application/json",
-      "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
-      "X-BackendAI-Version": this._config.apiVersion,
-      "X-BackendAI-Date": d.toISOString(),
-      "Authorization": `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`
+      'Content-Type': 'application/json',
+      'User-Agent': `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
+      'X-BackendAI-Version': this._config.apiVersion,
+      'X-BackendAI-Date': d.toISOString(),
+      Authorization: `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`,
     };
     return hdrs;
   }
 
   start(sessionName, app, ip, port, envs = {}, args = {}) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this._resolve = resolve;
       this._start(sessionName, app, ip, port, envs, args);
     });
@@ -69,66 +75,84 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
   }
 
   _conn(sessionName, app, envs, args) {
-    if (envs !== null && typeof envs === 'object' && Object.keys(envs).length > 0) {
-      app = app + '&envs='+ encodeURI(JSON.stringify(envs));
+    if (
+      envs !== null &&
+      typeof envs === 'object' &&
+      Object.keys(envs).length > 0
+    ) {
+      app = app + '&envs=' + encodeURI(JSON.stringify(envs));
     }
-    if (envs !== null && typeof args === 'object' && Object.keys(args).length > 0) {
-      app = app + '&arguments='+ encodeURI(JSON.stringify(args));
+    if (
+      envs !== null &&
+      typeof args === 'object' &&
+      Object.keys(args).length > 0
+    ) {
+      app = app + '&arguments=' + encodeURI(JSON.stringify(args));
     }
-    let queryString = `/stream/${this.sessionPrefix}/` + sessionName + "/httpproxy?app=" + app;
-    if (typeof params !==  "undefined") {
-      queryString = queryString + '&arguments=' + encodeURIComponent(JSON.stringify(params));
+    let queryString =
+      `/stream/${this.sessionPrefix}/` + sessionName + '/httpproxy?app=' + app;
+    if (typeof params !== 'undefined') {
+      queryString =
+        queryString +
+        '&arguments=' +
+        encodeURIComponent(JSON.stringify(params));
     }
 
     let hdrs = () => {
       return this.get_header(queryString);
     };
     let url = this._config.endpoint + queryString;
-    url = url.replace(/^http/, "ws");
+    url = url.replace(/^http/, 'ws');
 
     this.tcpServer.on('listening', () => {
       this.port = this.tcpServer.address().port;
-      logger.info(`Starting an app-proxy server with ${this.ip}:${this.port}...`);
+      logger.info(
+        `Starting an app-proxy server with ${this.ip}:${this.port}...`,
+      );
       this._running = true;
       this._connectionCount = 0;
       this._resolve(true);
       this._resolve = undefined;
     });
 
-    this.tcpServer.on('close', () =>{
+    this.tcpServer.on('close', () => {
       logger.info(`Closed:W:${process.pid} / P:${this.port}`);
     });
 
-    this.tcpServer.on("connection", (tcpConn) => {
-      logger.info(`App-Proxy server connection established: ${this.ip}:${this.port}.`);
+    this.tcpServer.on('connection', (tcpConn) => {
+      logger.info(
+        `App-Proxy server connection established: ${this.ip}:${this.port}.`,
+      );
       tcpConn.setTimeout(60000);
       tcpConn.on('timeout', () => {
         logger.debug(`Socket timeout`);
         tcpConn.destroy();
       });
-      tcpConn.on("error", function(er) {
+      tcpConn.on('error', function (er) {
         logger.debug(`TCP CONN fail: ${this.port} - ${er.toString()}`);
         tcpConn.destroy();
       });
-      tcpConn.on("close", function() {
+      tcpConn.on('close', function () {
         logger.debug(`TCPCONN CLOSED`);
       });
 
-      logger.info('destination: ' + url)
+      logger.info('destination: ' + url);
       const optionalHeaders = hdrs();
       let ws;
       if (this._env.ext_proxy_url) {
-        logger.info('- try using external http proxy: ' + this._env.ext_proxy_url);
+        logger.info(
+          '- try using external http proxy: ' + this._env.ext_proxy_url,
+        );
         const agent = new HttpsProxyAgent(this._env.ext_proxy_url);
         ws = new WebSocket(url, {
           agent: agent,
           headers: optionalHeaders,
-          perMessageDeflate: false
+          perMessageDeflate: false,
         });
       } else {
         ws = new WebSocket(url, {
           headers: optionalHeaders,
-          perMessageDeflate: false
+          perMessageDeflate: false,
         });
       }
       ws.on('open', () => {
@@ -142,37 +166,72 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
       });
       ws.on('unexpected-response', (req, res) => {
         logger.warn(`Got non-101 response: ${res.statusCode}`);
-        if(tcpConn.writable) {
-          switch(res.statusCode.toString()) {
-            case "404":
-              tcpConn.write("HTTP/1.1 503 Proxy Error\n" + "Connection: Closed\n" + "Content-Type: text/html; charset=UTF-8\n\n");
-              tcpConn.write(htmldeco("Server connection failed", "error_404"));
+        if (tcpConn.writable) {
+          switch (res.statusCode.toString()) {
+            case '404':
+              tcpConn.write(
+                'HTTP/1.1 503 Proxy Error\n' +
+                  'Connection: Closed\n' +
+                  'Content-Type: text/html; charset=UTF-8\n\n',
+              );
+              tcpConn.write(htmldeco('Server connection failed', 'error_404'));
               break;
-            case "401":
-              tcpConn.write("HTTP/1.1 503 Proxy Error\n" + "Connection: Closed\n" + "Content-Type: text/html; charset=UTF-8\n\n");
-              tcpConn.write(htmldeco("Server connection failed", "error_401"));
+            case '401':
+              tcpConn.write(
+                'HTTP/1.1 503 Proxy Error\n' +
+                  'Connection: Closed\n' +
+                  'Content-Type: text/html; charset=UTF-8\n\n',
+              );
+              tcpConn.write(htmldeco('Server connection failed', 'error_401'));
               break;
-            case "500":
+            case '500':
               if (this._connectionCount > 4) {
-                tcpConn.write("HTTP/1.1 503 Proxy Error\n" + "Connection: Closed\n" + "Content-Type: text/html; charset=UTF-8\n\n");
+                tcpConn.write(
+                  'HTTP/1.1 503 Proxy Error\n' +
+                    'Connection: Closed\n' +
+                    'Content-Type: text/html; charset=UTF-8\n\n',
+                );
                 logger.warn(`Server fail: ${res.statusCode}`);
-                tcpConn.write(htmldeco("Server connection failed", "error_500"));
+                tcpConn.write(
+                  htmldeco('Server connection failed', 'error_500'),
+                );
               } else {
-                tcpConn.write("HTTP/1.1 100 Continue\n" + "Connection: keep-alive\n" + "Content-Type: text/html; charset=UTF-8\n\n");
+                tcpConn.write(
+                  'HTTP/1.1 100 Continue\n' +
+                    'Connection: keep-alive\n' +
+                    'Content-Type: text/html; charset=UTF-8\n\n',
+                );
                 this._connectionCount = this._connectionCount + 1;
-                tcpConn.write(htmldeco("Waiting for application...", "", '', {'retry': true}));
+                tcpConn.write(
+                  htmldeco('Waiting for application...', '', '', {
+                    retry: true,
+                  }),
+                );
               }
               break;
-            case "502":
-              tcpConn.write("HTTP/1.1 503 Proxy Error\n" + "Connection: Closed\n" + "Content-Type: text/html; charset=UTF-8\n\n");
+            case '502':
+              tcpConn.write(
+                'HTTP/1.1 503 Proxy Error\n' +
+                  'Connection: Closed\n' +
+                  'Content-Type: text/html; charset=UTF-8\n\n',
+              );
               logger.warn(`Server fail: ${res.statusCode}`);
-              tcpConn.write(htmldeco("Server connection failed", "error_500"));
+              tcpConn.write(htmldeco('Server connection failed', 'error_500'));
               break;
             default:
-              tcpConn.write("HTTP/1.1 503 Proxy Error\n" + "Connection: Closed\n" + "Content-Type: text/html; charset=UTF-8\n\n");
-              tcpConn.write(htmldeco("Server connection failed", "error_default" + "Code:" + res.statusCode));
+              tcpConn.write(
+                'HTTP/1.1 503 Proxy Error\n' +
+                  'Connection: Closed\n' +
+                  'Content-Type: text/html; charset=UTF-8\n\n',
+              );
+              tcpConn.write(
+                htmldeco(
+                  'Server connection failed',
+                  'error_default' + 'Code:' + res.statusCode,
+                ),
+              );
           }
-          tcpConn.write("\n");
+          tcpConn.write('\n');
           tcpConn.end();
         } else {
           logger.debug(`TCP socket is not writeable - Ignored`);
@@ -181,10 +240,19 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
       });
       ws.on('error', (err) => {
         logger.warn(`WebSocket fail: ${this.port} - ${err.toString()}`);
-        if(tcpConn.writable) {
-          tcpConn.write("HTTP/1.1 503 Proxy Error\n"+"Connection: Closed\n"+"Content-Type: text/html; charset=UTF-8\n\n");
-          tcpConn.write(htmldeco("Server connection failed", "Restart your session or contact your administrator"));
-          tcpConn.write("\n");
+        if (tcpConn.writable) {
+          tcpConn.write(
+            'HTTP/1.1 503 Proxy Error\n' +
+              'Connection: Closed\n' +
+              'Content-Type: text/html; charset=UTF-8\n\n',
+          );
+          tcpConn.write(
+            htmldeco(
+              'Server connection failed',
+              'Restart your session or contact your administrator',
+            ),
+          );
+          tcpConn.write('\n');
           tcpConn.end();
         } else {
           logger.debug(`TCP socket is not writeable - Ignored`);
@@ -195,18 +263,17 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
     });
     this.tcpServer.on('error', (err) => {
       logger.warn(`Couldn't start the tcp-ws proxy ${err.toString()}`);
-      if(!this._running) {
+      if (!this._running) {
         logger.warn(`Proxy is not started : ${err}`);
         this._resolve(Promise.reject(new Error('PortInUse')));
       } else {
         logger.warn(`Proxy error: ${err}`);
       }
     });
-
   }
 
   stop() {
     logger.info(`Trying to close:W:${process.pid} / P:${this.port}`);
     this.tcpServer.close();
   }
-});
+};

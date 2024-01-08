@@ -1,7 +1,7 @@
-const Server = require("../lib/console-appproxy.js");
+const Server = require('../lib/console-appproxy.js');
 const logger = require('../lib/logger')(__filename);
 
-module.exports = (proxy = class Proxy {
+module.exports = proxy = class Proxy {
   constructor(env) {
     this.env = env;
   }
@@ -15,6 +15,6 @@ module.exports = (proxy = class Proxy {
     this.c = undefined;
   }
   getPort() {
-    return this.c.port
+    return this.c.port;
   }
-});
+};

@@ -2,18 +2,21 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-
-import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-
+import { CodemirrorBaseStyle } from '../lib/codemirror/base-style.css';
+import { CodemirrorThemeMonokai } from '../lib/codemirror/theme/monokai.css';
+import {
+  IronFlex,
+  IronFlexAlignment,
+} from '../plastics/layout/iron-flex-layout-classes';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import '@material/mwc-icon';
 import '@vanillawc/wc-codemirror/index';
+import { WCCodeMirror } from '@vanillawc/wc-codemirror/index';
 import '@vanillawc/wc-codemirror/mode/python/python';
 import '@vanillawc/wc-codemirror/mode/shell/shell';
 import '@vanillawc/wc-codemirror/mode/yaml/yaml';
-import {CodemirrorThemeMonokai} from '../lib/codemirror/theme/monokai.css';
-import {CodemirrorBaseStyle} from '../lib/codemirror/base-style.css';
-import {WCCodeMirror} from '@vanillawc/wc-codemirror/index';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /**
  Lablup Codemirror
@@ -28,20 +31,21 @@ import {WCCodeMirror} from '@vanillawc/wc-codemirror/index';
  @element lablup-codemirror
  */
 
-declare const window: any;
-
-
 @customElement('lablup-codemirror')
 export default class LablupCodemirror extends LitElement {
   public editor: any;
 
-  @property({type: Object}) config = Object();
-  @property({type: String}) mode = 'shell';
-  @property({type: String}) theme = 'monokai';
-  @property({type: String}) src = '';
-  @property({type: Boolean}) readonly = false;
-  @property({type: Boolean}) useLineWrapping = false;
-  @property({type: Boolean}) required = false;
+  @property({ type: Object }) config = Object();
+  @property({ type: String }) mode = 'shell';
+  @property({ type: String }) theme = 'monokai';
+  @property({ type: String }) src = '';
+  @property({ type: Boolean }) readonly = false;
+  @property({ type: Boolean }) useLineWrapping = false;
+  @property({ type: Boolean }) required = false;
+  @property({ type: String }) validationMessage = '';
+  @property({ type: String }) validationMessageIcon = 'warning';
+  @query('#validation-message') validationMessageEl!: HTMLDivElement;
+  @query('#codemirror-editor') editorEl!: WCCodeMirror;
 
   constructor() {
     super();
@@ -68,12 +72,11 @@ export default class LablupCodemirror extends LitElement {
    * Initialize codemirror editor.
    * */
   _initEditor() {
-    const cm = this.shadowRoot?.querySelector('#codemirror-editor') as WCCodeMirror;
-    if (!cm.__initialized) {
+    if (!this.editorEl.__initialized) {
       setTimeout(this._initEditor.bind(this), 100);
       return;
     }
-    this.editor = cm.editor;
+    this.editor = this.editorEl.editor;
     Object.assign(this.editor.options, this.config);
     this.editor.setOption('lineWrapping', this.useLineWrapping); // works only in here
     this.refresh();
@@ -118,14 +121,30 @@ export default class LablupCodemirror extends LitElement {
   }
 
   _validateInput() {
-    if (this.required && this.getValue() === '') {
-      return false;
+    if (this.required) {
+      if (this.getValue() === '') {
+        this.showValidationMessage();
+        this.editorEl.style.border = '2px solid red';
+        return false;
+      } else {
+        this.hideValidationMessage();
+        this.editorEl.style.border = 'none';
+      }
     }
     return true;
   }
 
+  showValidationMessage() {
+    this.validationMessageEl.style.display = 'flex';
+  }
+
+  hideValidationMessage() {
+    this.validationMessageEl.style.display = 'none';
+  }
+
   static get styles(): CSSResultGroup | undefined {
     return [
+      BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
       CodemirrorThemeMonokai,
@@ -136,6 +155,18 @@ export default class LablupCodemirror extends LitElement {
           height: auto !important;
           font-size: 15px;
         }
+
+        #validation-message {
+          font-size: var(--validation-message-font-size, 12px);
+          color: var(--validation-message-color, var(--general-warning-text));
+          width: var(--validation-message-width, 100%);
+          font-weight: var(--validation-message-font-weight, bold);
+        }
+
+        #validation-message mwc-icon {
+          font-size: var(--validation-message-font-size, 12px);
+          margin-right: 2px;
+        }
       `,
     ];
   }
@@ -143,9 +174,28 @@ export default class LablupCodemirror extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wc-codemirror id="codemirror-editor" mode="${this.mode}" theme="monokai" ?readonly="${this.readonly}" @change=${this._validateInput}>
-        <link rel="stylesheet" href="node_modules/@vanillawc/wc-codemirror/theme/monokai.css">
-      </wc-codemirror>
+      <div>
+        <wc-codemirror
+          id="codemirror-editor"
+          mode="${this.mode}"
+          theme="monokai"
+          ?readonly="${this.readonly}"
+          @input="${() => this._validateInput()}"
+        >
+          <link
+            rel="stylesheet"
+            href="node_modules/@vanillawc/wc-codemirror/theme/monokai.css"
+          />
+        </wc-codemirror>
+        <div
+          id="validation-message"
+          class="horizontal layout center"
+          style="display:none;"
+        >
+          <mwc-icon>${this.validationMessageIcon}</mwc-icon>
+          <span>${this.validationMessage}</span>
+        </div>
+      </div>
     `;
   }
 }

@@ -15,11 +15,11 @@ View [changelog](https://github.com/lablup/backend.ai-webui/blob/main/CHANGELOG.
 
 Backend.AI Web UI focuses to
 
- * Serve as desktop app (windows, macOS and Linux) and web service
+ * Both desktop app (Windows, macOS and Linux) and web service
  * Provide both basic administration and user mode
-    * Use CLI for detailed administration features such as domain administation
- * Versatile devices ready such as mobile, tablet and desktop.
- * Built-in websocket proxy feature for apps
+    * Use CLI for detailed administration features such as domain administration
+ * Versatile devices ready such as mobile, tablet and desktop
+ * Built-in websocket proxy feature for desktop app
 
 ## User Features
  * Session management
@@ -28,6 +28,9 @@ Backend.AI Web UI focuses to
     * Choose and run environment-supported apps
     * Web-based Terminal for each session
     * Fully-featured Visual Studio Code editor and environments
+ * Inference service management
+    * Set / reserve endpoint URL for inference
+    * Autoscaling setup
  * Pipeline
     * Experiments (with SACRED / Microsoft NNI / Apache MLFlow)
     * AutoML (with Microsoft NNI / Apache MLFlow)
@@ -229,6 +232,13 @@ $ make compile
 ```
 
 Then bundled resource will be prepared in `build/rollup`. Basically, both app and web serving is based on static serving sources in the directory. However, to work as single page application, URL request fallback is needed.
+
+If you want to create the bundle zip file, 
+
+```console
+$ make bundle
+```
+will generate compiled static web bundle at `./app` directory. Then you can serve the web bundle via webservers.
 
 ### Serving with nginx
 

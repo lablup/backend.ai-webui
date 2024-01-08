@@ -14,11 +14,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import {css} from 'lit';
-import {customElement} from 'lit/decorators.js';
-
-import {DialogBase} from '@material/mwc-dialog/mwc-dialog-base';
-import {styles} from '@material/mwc-dialog/mwc-dialog.css';
+import { DialogBase } from '@material/mwc-dialog/mwc-dialog-base';
+import { styles } from '@material/mwc-dialog/mwc-dialog.css';
+import { css } from 'lit';
+import { customElement } from 'lit/decorators.js';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -29,16 +28,18 @@ declare global {
 @customElement('mwc-dialog')
 export class Dialog extends DialogBase {
   static get styles() {
-    return [styles,
+    return [
+      styles,
       css`
-    .mdc-dialog .mdc-dialog__content {
-      padding: 0;
-    }
-    .mdc-dialog .mdc-dialog__container,
-    .mdc-dialog .mdc-dialog__surface {
-      height: var(--mdc-dialog-height, auto)!important;
-      width: var(--mdc-dialog-width, auto)!important;
-    }
-    `];
+        .mdc-dialog .mdc-dialog__content {
+          padding: 0;
+        }
+        .mdc-dialog .mdc-dialog__container,
+        .mdc-dialog .mdc-dialog__surface {
+          height: var(--mdc-dialog-height, auto) !important;
+          width: var(--mdc-dialog-width, auto) !important;
+        }
+      `,
+    ];
   }
 }

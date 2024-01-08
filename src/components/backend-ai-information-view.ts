@@ -2,22 +2,18 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
 */
-
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement} from 'lit/decorators.js';
-import {translate as _t} from 'lit-translate';
-
-import {BackendAIPage} from './backend-ai-page';
-
-import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
-
-import '@material/mwc-icon/mwc-icon';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-window';
 import './lablup-activity-panel';
+import '@material/mwc-icon/mwc-icon';
+import { css, CSSResultGroup, html } from 'lit';
+import { translate as _t } from 'lit-translate';
+import { customElement } from 'lit/decorators.js';
 
 /**
 Backend.AI Information View
@@ -40,8 +36,8 @@ export default class BackendAIInformationView extends BackendAIPage {
       IronFlex,
       IronFlexAlignment,
       // language=CSS
-      css`
-      `];
+      css``,
+    ];
   }
 
   async _viewStateChanged(active: boolean) {
@@ -54,9 +50,14 @@ export default class BackendAIInformationView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Information')}" defaultWidth="800px" name="information"
-      icon="resources/menu_icons/info.svg">
-        <link rel="stylesheet" href="resources/custom.css">
+      <backend-ai-window
+        ?active="${this.active}"
+        title="${_t('webui.menu.Information')}"
+        defaultWidth="800px"
+        name="information"
+        icon="resources/menu_icons/info.svg"
+      >
+        <link rel="stylesheet" href="resources/custom.css" />
         <backend-ai-react-information></backend-ai-react-information>
       </backend-ai-window>
     `;

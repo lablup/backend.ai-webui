@@ -5,7 +5,7 @@ const path = require('path')
 
 /**
  * Environment variables
- * GITHUB_TOKEN (Required): Github authentication token
+ * GITHUB_TOKEN (Required): GitHub authentication token
  * REPOSITORY: Target repository to upload release asset. defaults to lablup/backend.ai-webui
  * RELEASE_TAG: Release tag, defaults to latest tag
  */
@@ -47,23 +47,23 @@ const getUploadURL = async (releaseId) => {
 
 const main = async () => {
     if (process.argv.length !== 3) {
-        console.error('usage: node upload-release.js <folder containing DMG files>')
+        console.error('usage: node upload-release.js <folder containing DMG/ZIP files>')
         process.exit(1)
     }
     const folder = process.argv[2]
     let DMGs = []
     try {
-        DMGs = (await fs.promises.readdir(folder)).filter((s) => !s.startsWith('.') && s.endsWith('.dmg'))
+        DMGs = (await fs.promises.readdir(folder)).filter((s) => !s.startsWith('.') && (s.endsWith('.dmg') || s.endsWith('.zip')))
     } catch (e) {
         console.error(e.message)
         process.exit(1)
     }
-    
+
     console.log(`found ${DMGs.length} DMG(s): ${DMGs}`)
 
     const tag = process.env.RELEASE_TAG || (await getLatestTag())
     const releaseId = await getReleaseIdFromTag(tag)
-    
+
     for (const filename of DMGs) {
         console.log(`Uploading file ${filename} to https://github.com/${OWNER}/${REPOSITORY}/releases/${tag}`)
         const uploadUrl = await getUploadURL(releaseId)

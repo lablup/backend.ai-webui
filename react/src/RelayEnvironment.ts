@@ -1,3 +1,5 @@
+// import { createClient } from "graphql-ws";
+import { manipulateGraphQLQueryWithClientDirectives } from './helper/graphql-transformer';
 import {
   Environment,
   Network,
@@ -6,44 +8,62 @@ import {
   FetchFunction,
   SubscribeFunction,
   RelayFeatureFlags,
-} from "relay-runtime";
-// import { createClient } from "graphql-ws";
-import { removeSkipOnClientDirective } from "./helper/graphql-transformer";
+} from 'relay-runtime';
 
 RelayFeatureFlags.ENABLE_RELAY_RESOLVERS = true;
 
 const fetchFn: FetchFunction = async (
   request,
-  variables
+  variables,
   // cacheConfig,
   // uploadables
 ) => {
-  // @skipOnClient directive modifies GraphQL queries according to the availability of a supported field.
-  const transformedData = removeSkipOnClientDirective(
-    request.text || "",
-    variables
+  //@ts-ignore
+  if (globalThis.backendaiclient === undefined) {
+    // If globalThis.backendaiclient is not defined, wait for the backend-ai-connected event.
+    await new Promise((resolve) => {
+      const onBackendAIConnected = () => {
+        // When the backend-ai-connected event occurs, remove the event listener and execute the function.
+        document.removeEventListener(
+          'backend-ai-connected',
+          onBackendAIConnected,
+        );
+        resolve(undefined);
+      };
+      document.addEventListener('backend-ai-connected', onBackendAIConnected);
+    });
+  }
+
+  const transformedQuery = manipulateGraphQLQueryWithClientDirectives(
+    request.text || '',
+    variables,
+    (version) => {
+      // @ts-ignore
+      return !globalThis.backendaiclient?.isManagerVersionCompatibleWith(
+        version,
+      );
+    },
   );
 
   const reqBody = {
-    query: transformedData.query,
-    variables: transformedData.variables,
+    query: transformedQuery,
+    variables: variables,
   };
 
   //@ts-ignore
   const reqInfo = globalThis.backendaiclient?.newSignedRequest(
-    "POST",
-    "/admin/gql",
-    reqBody
+    'POST',
+    '/admin/gql',
+    reqBody,
   );
 
-  //@ts-ignore
-  const result = await globalThis.backendaiclient?._wrapWithPromise(
-    reqInfo,
-    false,
-    null,
-    10000,
-    0
-  );
+  const result =
+    //@ts-ignore
+    (await globalThis.backendaiclient
+      ?._wrapWithPromise(reqInfo, false, null, 10000, 0)
+      .catch((err: any) => {
+        // console.log(err);
+      })) || {};
 
   return result;
 };

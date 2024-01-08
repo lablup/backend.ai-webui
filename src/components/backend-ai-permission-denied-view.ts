@@ -2,18 +2,19 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import {translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-
-import {BackendAIPage} from './backend-ai-page';
-
+import { navigate } from '../backend-ai-app';
+import {
+  IronFlex,
+  IronFlexAlignment,
+  IronPositioning,
+} from '../plastics/layout/iron-flex-layout-classes';
+import { store } from '../store';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
 import '@material/mwc-button';
-import {BackendAiStyles} from './backend-ai-general-styles';
-import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
-import {store} from '../store';
-import {navigate} from '../backend-ai-app';
+import { css, CSSResultGroup, html } from 'lit';
+import { translate as _t, translateUnsafeHTML as _tr } from 'lit-translate';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  `<backend-ai-permission-denied-view>` is a blank panel of backend.ai web UI.
@@ -27,7 +28,7 @@ import {navigate} from '../backend-ai-app';
 
 @customElement('backend-ai-permission-denied-view')
 export default class BackendAIPermissionDeniedView extends BackendAIPage {
-  @property({type: Number}) error_code = 401;
+  @property({ type: Number }) error_code = 401;
 
   static get styles(): CSSResultGroup {
     return [
@@ -37,67 +38,66 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-      .title {
-        font-size: 2em;
-        font-weight: bolder;
-        color: var(--general-navbar-footer-color, #424242);
-        line-height: 1em;
-      }
-
-      .description {
-        font-size: 1em;
-        font-weight: normal;
-        color: var(--general-sidebar-color, #949494);
-      }
-
-      mwc-button {
-        width: auto;
-      }
-
-      img#unauthorized-access {
-        width: 400px;
-        margin: 20px;
-      }
-
-      div.page-layout {
-        display: flex;
-        -ms-flex-direction: row;
-        -webkit-flex-direction: row;
-        flex-direction: row;
-        align-items: center;
-        margin: 20px;
-      }
-
-      div.desc {
-        width: 100%;
-      }
-
-      @media screen and (max-width: 1015px) {
-        div.page-layout {
-          -ms-flex-direction: column;
-          -webkit-flex-direction: column;
-          flex-direction: column;
-          align-content: center;
+        .title {
+          font-size: 2em;
+          font-weight: bolder;
+          color: var(--general-navbar-footer-color, #424242);
+          line-height: 1em;
         }
 
-        div.desc {
-          align-items: center;
+        .description {
+          font-size: 1em;
+          font-weight: normal;
+          color: var(--general-sidebar-color, #949494);
         }
-      }
 
-      @media screen and (max-width: 440px) {
+        mwc-button {
+          width: auto;
+        }
+
         img#unauthorized-access {
-          width: 330px;
+          width: 400px;
           margin: 20px;
         }
 
-        div.desc > p.description {
-          max-width: 330px;
-          font-size: 13px;
+        div.page-layout {
+          display: flex;
+          -ms-flex-direction: row;
+          -webkit-flex-direction: row;
+          flex-direction: row;
+          align-items: center;
+          margin: 20px;
         }
-      }
 
-      `
+        div.desc {
+          width: 100%;
+        }
+
+        @media screen and (max-width: 1015px) {
+          div.page-layout {
+            -ms-flex-direction: column;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            align-content: center;
+          }
+
+          div.desc {
+            align-items: center;
+          }
+        }
+
+        @media screen and (max-width: 440px) {
+          img#unauthorized-access {
+            width: 330px;
+            margin: 20px;
+          }
+
+          div.desc > p.description {
+            max-width: 330px;
+            font-size: 13px;
+          }
+        }
+      `,
     ];
   }
 
@@ -121,21 +121,25 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-    <div class="page-layout">
-      <img id="unauthorized-access" src="/resources/images/401_unauthorized_access.svg" />
-      <div class="vertical layout desc">
-        <div class="title">${_tr('webui.UNAUTHORIZEDACCESS')}</div>
-        <p class="description">${_tr('webui.AdminOnlyPage')}</p>
-        <div>
-          <mwc-button
+      <div class="page-layout">
+        <img
+          id="unauthorized-access"
+          src="/resources/images/401_unauthorized_access.svg"
+        />
+        <div class="vertical layout desc">
+          <div class="title">${_tr('webui.UNAUTHORIZEDACCESS')}</div>
+          <p class="description">${_tr('webui.AdminOnlyPage')}</p>
+          <div>
+            <mwc-button
               unelevated
               fullwidth
               id="go-to-summary"
               label="${_t('button.GoBackToSummaryPage')}"
-              @click="${() => this._moveTo('summary')}"></mwc-button>
+              @click="${() => this._moveTo('summary')}"
+            ></mwc-button>
+          </div>
         </div>
       </div>
-    </div>
     `;
   }
 }

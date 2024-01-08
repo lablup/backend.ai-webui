@@ -1,11 +1,12 @@
-import {css} from 'lit';
-import {PaperColor} from './paper-color';
+import { PaperColor } from './paper-color';
+import { css } from 'lit';
 
 export const BackendAiStyles = [
   PaperColor,
   // language=CSS
   css`
-    :host > *, html {
+    :host > *,
+    html {
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
       box-sizing: border-box;
@@ -33,15 +34,16 @@ export const BackendAiStyles = [
       --general-sidebar-h3-color: #cccccc;
       --general-sidebar-h3-border-color: 1px solid #444444;
       --general-sidebar-topbar-background-color-3: #383e48;
-      --general-sidebar-topbar-background-color-2: rgba(103, 172, 91, 1.00);
+      --general-sidebar-topbar-background-color-2: rgba(103, 172, 91, 1);
       --general-sidebar-topbar-background-color-4: var(--paper-grey-200);
       --general-sidebar-topbar-color-4: #222222;
       --general-sidebar-topbar-background-color: rgba(24, 24, 24, 1);
       --general-sidebar-topbar-color: #efefef;
-      --general-sidebar-selected-color: #72EB51; /*var(--paper-green-400);*/
+      --general-sidebar-selected-color: #72eb51; /*var(--paper-green-400);*/
       --general-sidebar-selected-background-color: transparent;
       --general-sidebar-selected-background-gradient-color: transparent;
-      --general-sidebar-selected-border-left: 3px solid var(--general-sidebar-selected-color);
+      --general-sidebar-selected-border-left: 3px solid
+        var(--general-sidebar-selected-color);
       --general-sidebar-footer-color: #777777;
       --general-sidebar-navbar-footer-color: #222222;
       --general-sidebar-item-even-background-color: transparent;
@@ -49,34 +51,46 @@ export const BackendAiStyles = [
       --general-sidepanel-color: #dddddd;
       --general-sidepanel-background-color: #ffffff; /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
       --general-window-background-color: #efefef;
-      --general-tabbar-background-color: var(--general-sidebar-background-color);
+      --general-select-background-color: #e7ebee;
+      --general-tabbar-background-color: var(
+        --general-sidebar-background-color
+      );
       --general-tabbar-tab-disabled-color: var(--general-sidebar-color);
-      --general-tabbar-button-color: rgba(103, 172, 91, 1.00);
-      --general-textfield-selected-color: #27824F;
-      --general-textfield-idle-color: #27824F;
-      --general-select-background-color: #E7EBEE;
+      --general-tabbar-button-color: rgba(103, 172, 91, 1);
+      --general-sub-tabbar-background-color: #ffffff;
+      --general-textfield-selected-color: #27824f;
+      --general-textfield-idle-color: #27824f;
       --general-dropdown-color: var(--general-sidebar-color);
       --general-checkbox-color: var(--general-textfield-selected-color);
       --general-textarea-color: var(--general-textfield-selected-color);
       --general-textarea-idle-color: var(--general-textfield-selected-color);
       --general-select-color: var(--general-textfield-selected-color);
       --general-select-idle-color: var(--general-textfield-selected-color);
-      --general-button-background-color: #27824F;
+      --general-button-background-color: #27824f;
       --general-button-color: #ffffff;
-      --general-button-disabled-background-color: #27824F;
+      --general-button-disabled-background-color: #27824f;
       --general-button-disabled-color: #ffffff;
-      --general-switch-off-color: #AAA;
-      --general-switch-on-color: #27824F;
-      --general-switch-on-background-color: #E3E7D8;
+      --general-switch-off-color: #aaa;
+      --general-switch-on-color: #27824f;
+      --general-switch-on-background-color: #e3e7d8;
       --general-slider-color: var(--general-textfield-selected-color);
       --general-dialog-background-color: #ffffff;
-      --general-font-family: 'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-      --general-monospace-font-family: 'Ubuntu Mono', Menlo, Courier, "Courier New", RobotoMono, sans-serif;
+      --general-font-family: 'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont,
+        'Segoe UI', Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', AppleSDGothic, 'Apple SD Gothic Neo', NanumGothic,
+        'NanumGothicOTF', 'Nanum Gothic', 'Malgun Gothic', sans-serif;
+      --general-monospace-font-family: 'Ubuntu Mono', Menlo, Courier,
+        'Courier New', RobotoMono, sans-serif;
       --general-progress-bar-bg: #e8e8e8;
-      --general-progress-bar-reserved: linear-gradient(to left, #722cd7, #5c7cfa);
+      --general-progress-bar-reserved: linear-gradient(
+        to left,
+        #722cd7,
+        #5c7cfa
+      );
       --general-progress-bar-using: linear-gradient(to left, #18aa7c, #60bb43),
-      linear-gradient(to left, #722cd7, #5c7cfa);
+        linear-gradient(to left, #722cd7, #5c7cfa);
       --lumo-font-family: var(--general-font-family);
+      --general-warning-text: var(--paper-red-400);
     }
 
     body {
@@ -103,7 +117,25 @@ export const BackendAiStyles = [
 
     body,
     .fonts-loaded body {
-      font-family: 'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Sans KR", "Noto Sans", AppleSDGothic, NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      font-family:
+        'Ubuntu',
+        Roboto,
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        Helvetica,
+        Arial,
+        'Apple Color Emoji',
+        'Segoe UI Emoji',
+        'Segoe UI Symbol',
+        'Noto Sans KR',
+        'Noto Sans',
+        AppleSDGothic,
+        NanumGothic,
+        'NanumGothicOTF',
+        'Nanum Gothic',
+        'Malgun Gothic',
+        sans-serif;
     }
 
     section {
@@ -140,7 +172,7 @@ export const BackendAiStyles = [
     }
 
     .clearfix:after {
-      content: ".";
+      content: '.';
       visibility: hidden;
       display: block;
       height: 0;
@@ -164,6 +196,7 @@ export const BackendAiStyles = [
 
     ::-webkit-scrollbar {
       max-width: 2px;
+      max-height: 2px;
       background-color: transparent;
     }
 
@@ -179,9 +212,13 @@ export const BackendAiStyles = [
       /* override for mwc-list */
       --select-primary-theme: var(--general-sidebar-color);
       --select-secondary-theme: var(--general-checkbox-color);
-      --select-background-color: var(--general-select-background-color, #efefef);
+      --select-background-color: var(
+        --general-select-background-color,
+        #efefef
+      );
       --select-background-border-radius: 5px;
-      --select-box-shadow: 0 1px 3px -1px rgba(0, 0, 0, 60%), 0 3px 12px -1px rgb(200, 200, 200, 80%);
+      --select-box-shadow: 0 1px 3px -1px rgba(0, 0, 0, 60%),
+        0 3px 12px -1px rgb(200, 200, 200, 80%);
 
       /* override for selected-area */
       --select-title-font-size: 10px;
@@ -193,10 +230,10 @@ export const BackendAiStyles = [
 
       /* override for selected-item */
       --selected-item-font-family: var(--general-font-family);
-      --selected-item-theme-color: #C8CED7;
+      --selected-item-theme-color: #c8ced7;
       --selected-item-theme-font-color: #182739;
-      --selected-item-unelevated-theme-color: #C8CED7;
-      --selected-item-unelevated-theme-color: #C8CED7;
+      --selected-item-unelevated-theme-color: #c8ced7;
+      --selected-item-unelevated-theme-color: #c8ced7;
       --selected-item-outlined-theme-font-color: black;
       --selected-item-unelevated-theme-font-color: black;
       --selected-item-font-size: 14px;
@@ -263,14 +300,22 @@ export const BackendAiStyles = [
     mwc-button.primary-action[unelevated] {
       border-radius: 5px;
       background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
-      --mdc-theme-primary: var(--general-button-color); /* gradient-color doesn't work in mwc-button styling */
+      --mdc-theme-primary: var(
+        --general-button-color
+      ); /* gradient-color doesn't work in mwc-button styling */
       --mdc-theme-on-primary: var(--general-button-color);
     }
 
     mwc-button.primary-action[disabled] {
       border-radius: 5px;
-      background-image: linear-gradient(to bottom, rgba(105, 224, 224, 0.08) 0%, rgba(56, 189, 115, 0.2) 100%);
-      --mdc-theme-primary: var(--general-button-color); /* gradient-color doesn't work in mwc-button styling */
+      background-image: linear-gradient(
+        to bottom,
+        rgba(105, 224, 224, 0.08) 0%,
+        rgba(56, 189, 115, 0.2) 100%
+      );
+      --mdc-theme-primary: var(
+        --general-button-color
+      ); /* gradient-color doesn't work in mwc-button styling */
       --mdc-theme-on-primary: var(--general-button-color);
     }
 
@@ -298,24 +343,63 @@ export const BackendAiStyles = [
 
     mwc-switch {
       --mdc-switch-unselected-handle-color: var(--general-switch-off-color);
-      --mdc-switch-unselected-track-color: var(--general-switch-on-background-color) !important;
-      --mdc-switch-unselected-hover-handle-color: var(--general-switch-off-color);
-      --mdc-switch-unselected-hover-track-color: var(--general-switch-on-background-color);
-      --mdc-switch-unselected-focus-handle-color: var(--general-switch-off-color);
-      --mdc-switch-unselected-focus-track-color: var(--general-switch-on-background-color);
-      --mdc-switch-unselected-pressed-handle-color: var(--general-switch-off-color);
-      --mdc-switch-unselected-pressed-track-color: var(--general-switch-on-background-color);
+      --mdc-switch-unselected-track-color: var(
+        --general-switch-on-background-color
+      ) !important;
+      --mdc-switch-unselected-hover-handle-color: var(
+        --general-switch-off-color
+      );
+      --mdc-switch-unselected-hover-track-color: var(
+        --general-switch-on-background-color
+      );
+      --mdc-switch-unselected-focus-handle-color: var(
+        --general-switch-off-color
+      );
+      --mdc-switch-unselected-focus-track-color: var(
+        --general-switch-on-background-color
+      );
+      --mdc-switch-unselected-pressed-handle-color: var(
+        --general-switch-off-color
+      );
+      --mdc-switch-unselected-pressed-track-color: var(
+        --general-switch-on-background-color
+      );
       --mdc-switch-selected-handle-color: var(--general-switch-on-color);
-      --mdc-switch-selected-track-color: var(--general-switch-on-background-color) !important;
+      --mdc-switch-selected-track-color: var(
+        --general-switch-on-background-color
+      ) !important;
       --mdc-switch-selected-hover-handle-color: var(--general-switch-on-color);
-      --mdc-switch-selected-hover-track-color: var(--general-switch-on-background-color);
-      --mdc-switch-selected-hover-state-layer-color: var(--general-switch-on-color);
+      --mdc-switch-selected-hover-track-color: var(
+        --general-switch-on-background-color
+      );
+      --mdc-switch-selected-hover-state-layer-color: var(
+        --general-switch-on-color
+      );
       --mdc-switch-selected-focus-handle-color: var(--general-switch-on-color);
-      --mdc-switch-selected-focus-track-color: var(--general-switch-on-background-color);
-      --mdc-switch-selected-focus-state-layer-color: var(--general-switch-on-color);
-      --mdc-switch-selected-pressed-handle-color: var(--general-switch-on-color);
-      --mdc-switch-selected-pressed-track-color: var(--general-switch-on-background-color);
-      --mdc-switch-selected-pressed-state-layer-color: var(--general-switch-on-color);
+      --mdc-switch-selected-focus-track-color: var(
+        --general-switch-on-background-color
+      );
+      --mdc-switch-selected-focus-state-layer-color: var(
+        --general-switch-on-color
+      );
+      --mdc-switch-selected-pressed-handle-color: var(
+        --general-switch-on-color
+      );
+      --mdc-switch-selected-pressed-track-color: var(
+        --general-switch-on-background-color
+      );
+      --mdc-switch-selected-pressed-state-layer-color: var(
+        --general-switch-on-color
+      );
+    }
+
+    mwc-switch[disabled] {
+      --mdc-switch-disabled-selected-handle-color: var(
+        --general-switch-on-color
+      );
+      --mdc-switch-disabled-selected-track-color: var(
+        --general-switch-on-color
+      ) !important;
     }
 
     div.card p {
@@ -423,13 +507,11 @@ export const BackendAiStyles = [
 
     div.card > h3.orange,
     div.card > h4.orange {
-
       border-left: 3px solid var(--paper-orange-400);
     }
 
     div.card > h3.cyan,
     div.card > h4.cyan {
-
       border-left: 3px solid var(--paper-cyan-400);
     }
 
@@ -462,7 +544,8 @@ export const BackendAiStyles = [
       margin: 20px;
     }
 
-    mwc-button, mwc-button[unelevated] {
+    mwc-button,
+    mwc-button[unelevated] {
       background-image: none;
       --mdc-theme-primary: var(--general-button-background-color);
       --mdc-theme-on-primary: var(--general-button-color);
@@ -486,7 +569,9 @@ export const BackendAiStyles = [
     mwc-textarea {
       --mdc-text-field-fill-color: transparent;
       --mdc-theme-primary: var(--general-textarea-color);
-      --mdc-text-area-outlined-idle-border-color: var(--general-textarea-idle-color);
+      --mdc-text-area-outlined-idle-border-color: var(
+        --general-textarea-idle-color
+      );
       font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-size: 14px;
@@ -511,7 +596,7 @@ export const BackendAiStyles = [
       --mdc-select-fill-color: transparent;
       --mdc-select-ink-color: black;
       --mdc-select-label-ink-color: black;
-      --mdc-select-focused-label-color: rgba(24, 24, 24, 1.0);
+      --mdc-select-focused-label-color: rgba(24, 24, 24, 1);
       --mdc-select-dropdown-icon-color: #747474;
       --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
     }
@@ -728,15 +813,20 @@ export const BackendAiStyles = [
     }
 
     span.start-bar {
-      margin-bottom: 5px;
-      margin-left: 5px;
       padding-bottom: 5px;
+      width: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     span.end-bar {
       margin-top: 5px;
-      margin-left: 5px;
       padding-bottom: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 30px;
     }
 
     span.helper-text {
@@ -779,7 +869,7 @@ export const BackendAiStyles = [
     }
 
     .resource-legend-icon.total {
-      background-color: #E0E0E0;
+      background-color: #e0e0e0;
     }
 
     .vertical-card {
@@ -794,8 +884,17 @@ export const BackendAiStyles = [
     backend-ai-session-launcher#session-launcher {
       --component-color: #ffffff;
       --component-bg: rgb(104, 185, 155);
-      --component-bg: linear-gradient(rgba(56, 189, 115, 0.5), rgba(56, 189, 115, 0.5)), linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
-      --component-bg-hover: linear-gradient(180deg, rgba(98, 180, 131, 1) 0%, rgba(104, 185, 155, 1) 50%, rgba(93, 178, 113, 1) 100%);
+      --component-bg: linear-gradient(
+          rgba(56, 189, 115, 0.5),
+          rgba(56, 189, 115, 0.5)
+        ),
+        linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
+      --component-bg-hover: linear-gradient(
+        180deg,
+        rgba(98, 180, 131, 1) 0%,
+        rgba(104, 185, 155, 1) 50%,
+        rgba(93, 178, 113, 1) 100%
+      );
       --component-bg-active: rgb(104, 185, 155);
       --component-shadow-color: #37c995;
     }
@@ -854,4 +953,5 @@ export const BackendAiStyles = [
     div.note-contents {
       padding: 20px;
     }
-  `];
+  `,
+];

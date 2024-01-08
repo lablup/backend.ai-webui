@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
-import { useQuery } from "react-query";
-
-import { Select, SelectProps } from "antd";
-import { useTranslation } from "react-i18next";
-import { useSuspendedBackendaiClient } from "../hooks";
-import _ from "lodash";
+import { useSuspendedBackendaiClient } from '../hooks';
+import { Select, SelectProps } from 'antd';
+import _ from 'lodash';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
 
 export type VolumeInfo = {
   id: string;
@@ -15,9 +14,9 @@ export type VolumeInfo = {
   };
   sftp_scaling_groups: string[];
 };
-interface Props extends Omit<SelectProps, "value" | "onChange"> {
+interface Props extends Omit<SelectProps, 'value' | 'onChange'> {
   value?: string | VolumeInfo;
-  onChange: (hostName: string, volumeInfo: VolumeInfo) => void;
+  onChange?: (hostName: string, volumeInfo: VolumeInfo) => void;
   autoSelectDefault?: boolean;
 }
 const StorageSelector: React.FC<Props> = ({
@@ -34,12 +33,9 @@ const StorageSelector: React.FC<Props> = ({
     default: string;
     allowed: Array<string>;
     volume_info: any;
-  }>(
-    "vhostInfo",
-    () => {
-      return baiClient.vfolder.list_hosts();
-    }
-  );
+  }>('vhostInfo', () => {
+    return baiClient.vfolder.list_hosts();
+  });
 
   useEffect(() => {
     if (autoSelectDefault && !value && vhostInfo?.default) {
@@ -54,7 +50,7 @@ const StorageSelector: React.FC<Props> = ({
   return (
     <Select
       filterOption={false}
-      placeholder={t("data.SelectStorageHost")}
+      placeholder={t('data.SelectStorageHost')}
       loading={isLoadingVhostInfo}
       style={{ minWidth: 165 }}
       // @ts-ignore

@@ -2,20 +2,20 @@
  @license
 Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
 */
-
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement} from 'lit/decorators.js';
-
-import {BackendAIPage} from './backend-ai-page';
-
-import {BackendAiStyles} from './backend-ai-general-styles';
+import { navigate } from '../backend-ai-app';
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { store } from '../store';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-session-launcher';
 import './backend-ai-session-view';
 import '@material/mwc-circular-progress';
+import { css, CSSResultGroup, html } from 'lit';
+import { customElement } from 'lit/decorators.js';
+
 /**
 Backend.AI Maintenance View
 
@@ -37,8 +37,8 @@ export default class BackendAISessionView2 extends BackendAIPage {
       IronFlex,
       IronFlexAlignment,
       // language=CSS
-      css`
-      `];
+      css``,
+    ];
   }
 
   async _viewStateChanged(active: boolean) {
@@ -51,7 +51,13 @@ export default class BackendAISessionView2 extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-react-session-list></backend-ai-react-session-list>
+      <backend-ai-react-session-list
+        @moveTo="${(e: CustomEvent) => {
+          const path = e.detail.path;
+          globalThis.history.pushState({}, '', path);
+          store.dispatch(navigate(decodeURIComponent(path), {}));
+        }}"
+      ></backend-ai-react-session-list>
     `;
   }
 }
