@@ -9,6 +9,7 @@ import MainLayout from './components/MainLayout/MainLayout';
 import ServingListPage from './pages/ServingListPage';
 import React, { FC } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { RecoilRoot } from 'recoil';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
@@ -97,8 +98,9 @@ const router = createBrowserRouter([
 
 const App: FC = () => {
   return (
-    <DefaultProviders2>
-      {/* <QueryParamProvider
+    <RecoilRoot>
+      <DefaultProviders2>
+        {/* <QueryParamProvider
         adapter={ReactRouter6Adapter}
         options={
           {
@@ -107,9 +109,10 @@ const App: FC = () => {
           }
         }
       > */}
-      <RouterProvider router={router} />
-      {/* </QueryParamProvider> */}
-    </DefaultProviders2>
+        <RouterProvider router={router} />
+        {/* </QueryParamProvider> */}
+      </DefaultProviders2>
+    </RecoilRoot>
   );
 };
 
