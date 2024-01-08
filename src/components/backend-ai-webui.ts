@@ -1616,20 +1616,17 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               ></i>
               <span class="full-menu">${_t('webui.menu.Sessions')}</span>
             </mwc-list-item>
-            <!-- <mwc-list-item graphic="icon"
+            <!--<mwc-list-item graphic="icon"
                           ?selected="${this._isPageActive('session')}"
                           ?activated="${this._isPageActive('session')}"
-              @click="${() =>
-              this._moveTo(
-                '/session',
-              )}" ?disabled="${this.inactiveMenuItem.includes(
-              'session',
-            )}" class="${this.blockedMenuItem.includes('session')
+              @click="${() => this._moveTo('/session')}"
+              ?disabled="${this.inactiveMenuItem.includes('session')}"
+              class="${this.blockedMenuItem.includes('session')
               ? 'hidden'
               : ''}">
               <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Sessions')} new</span>
-            </mwc-list-item> -->
+            </mwc-list-item>-->
             ${this.supportServing
               ? html`
                   <mwc-list-item
@@ -2257,9 +2254,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                         indeterminate
                       ></mwc-circular-progress>
                     </backend-ai-serving-view>
-                    <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${this
-                      ._page ===
-                    'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
                     <backend-ai-usersettings-view
                       class="page"
                       name="usersettings"
