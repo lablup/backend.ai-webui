@@ -1,4 +1,5 @@
 import { ThemeConfig } from 'antd';
+import _ from 'lodash';
 import { useEffect, useState } from 'react';
 
 let _customTheme: { light: ThemeConfig; dark: ThemeConfig };
@@ -7,7 +8,7 @@ export const loadCustomThemeConfig = () => {
   fetch('resources/theme.json')
     .then((response) => response.json())
     .then((theme) => {
-      if (!theme.light) {
+      if (_.isUndefined(theme.light)) {
         _customTheme = { light: theme, dark: theme };
       } else {
         _customTheme = theme;
