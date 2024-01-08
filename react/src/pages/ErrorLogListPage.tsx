@@ -68,6 +68,7 @@ const ErrorLogListPage: React.FC = () => {
         <Table
           scroll={{ x: 'max-content' }}
           dataSource={logs as logType}
+          pagination={{ showSizeChanger: false }}
           columns={[
             {
               title: t('logs.TimeStamp'),
