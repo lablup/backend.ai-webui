@@ -9,8 +9,6 @@ import {
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
 import { store } from '../store';
-import './backend-ai-dialog';
-import './backend-ai-error-log-list';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import './backend-ai-list-status';
 import { BackendAIPage } from './backend-ai-page';
@@ -22,14 +20,13 @@ import '@material/mwc-button';
 import { Tab } from '@material/mwc-tab';
 import '@material/mwc-tab-bar';
 import { css, CSSResultGroup, html } from 'lit';
-import { get as _text, translate as _t } from 'lit-translate';
+import { translate as _t } from 'lit-translate';
 import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
-type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
  Backend AI Usersettings View
@@ -51,7 +48,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   @property({ type: Object }) _activeTab = Object();
   @property({ type: Object }) logGrid = Object();
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
-  @query('#clearlogs-dialog') clearLogsDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -171,59 +167,9 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
           </div>
           <div id="logs" class="item tab-content" style="display:none;">
             <backend-ai-react-error-log-list></backend-ai-react-error-log-list>
-            <h3 class="horizontal center layout outer-space">
-              <span>${_t('logs.LogMessages')}</span>
-              <span class="mini" style="font-size:13px;padding-left:15px;">
-                ${_t('logs.UpTo3000Logs')}
-              </span>
-              <span class="flex"></span>
-              <mwc-button
-                class="log"
-                icon="refresh"
-                @click="${() => this._refreshLogs()}"
-              >
-                <span>${_t('button.Refresh')}</span>
-              </mwc-button>
-              <mwc-button
-                class="log"
-                icon="delete"
-                raised
-                @click="${() => this._showClearLogsDialog()}"
-              >
-                <span>${_t('button.ClearLogs')}</span>
-              </mwc-button>
-            </h3>
-            <backend-ai-error-log-list
-              active="true"
-            ></backend-ai-error-log-list>
           </div>
         </div>
       </lablup-activity-panel>
-      <backend-ai-dialog
-        id="clearlogs-dialog"
-        fixed
-        backdrop
-        scrollable
-        blockScrolling
-      >
-        <span slot="title">${_t('dialog.warning.LogDeletion')}</span>
-        <div slot="content">${_t('dialog.warning.CannotBeUndone')}</div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button
-            class="operation"
-            id="discard-removal"
-            label="${_t('button.No')}"
-            @click="${() => this._hideClearLogsDialog()}"
-          ></mwc-button>
-          <mwc-button
-            unelevated
-            class="operation"
-            id="apply-removal"
-            label="${_t('button.Yes')}"
-            @click="${() => this._removeLogMessage()}"
-          ></mwc-button>
-        </div>
-      </backend-ai-dialog>
     `;
   }
 
@@ -246,10 +192,10 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
     // this._activeTab = "general";
     document.addEventListener('backend-ai-usersettings-logs', () => {
-      this._viewStateChanged(true);
+      this._viewStateChanged();
     });
     document.addEventListener('backend-ai-usersettings', () => {
-      this._viewStateChanged(true);
+      this._viewStateChanged();
     });
   }
 
@@ -258,7 +204,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
    *
    * @param {Boolean} active
    * */
-  async _viewStateChanged(active) {
+  async _viewStateChanged() {
     const params = store.getState().app.params;
     const tab = params.tab;
     if (tab && tab === 'logs') {
@@ -283,48 +229,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   }
 
   /**
-   * Hide clearLogsDialog.
-   * */
-  _hideClearLogsDialog() {
-    this.clearLogsDialog.hide();
-  }
-
-  /**
-   * Remove log message.
-   * */
-  _removeLogMessage() {
-    const currentLogs = localStorage.getItem('backendaiwebui.logs');
-    if (currentLogs) {
-      localStorage.removeItem('backendaiwebui.logs');
-    }
-    const event = new CustomEvent('log-message-clear', {});
-    document.dispatchEvent(event);
-    localStorage.getItem('backendaiwebui.logs');
-    this.clearLogsDialog.hide();
-    this.notification.text = _text('logs.LogMessageRemoved');
-    this.notification.show();
-    this.spinner.hide();
-  }
-
-  /**
-   * Show clearLogsDialog.
-   * */
-  _showClearLogsDialog() {
-    this.clearLogsDialog.show();
-  }
-
-  /**
-   * Refresh log messages.
-   * */
-  _refreshLogs() {
-    this.logGrid = JSON.parse(
-      localStorage.getItem('backendaiwebui.logs') || '{}',
-    );
-    const event = new CustomEvent('log-message-refresh', this.logGrid);
-    document.dispatchEvent(event);
-  }
-
-  /**
    * Show only one tab clicked by user.
    *
    * @param {EventTarget} tab - clicked tab
@@ -337,9 +241,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
       els[x].style.display = 'none';
     }
     this._activeTab = tab.title;
-    if (this._activeTab === 'logs') {
-      this._refreshLogs();
-    }
     (
       this.shadowRoot?.querySelector('#' + tab.title) as HTMLElement
     ).style.display = 'block';
