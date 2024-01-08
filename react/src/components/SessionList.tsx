@@ -1,15 +1,8 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import { useBackendAIImageMetaData } from '../hooks';
-import DoubleTag from './DoubleTag';
-import Flex from './Flex';
-import ImageMetaIcon from './ImageMetaIcon';
-import ResourceNumber from './ResourceNumber';
 import SessionInfoCell from './SessionListColums/SessionInfoCell';
 import { SessionListQuery } from './__generated__/SessionListQuery.graphql';
-import { FolderOutlined, GroupOutlined } from '@ant-design/icons';
-import { Table, TableProps, Tag, Typography, theme } from 'antd';
+import { Table, TableProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import _ from 'lodash';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
@@ -26,7 +19,6 @@ interface SessionListProps extends Omit<TableProps<any>, 'dataSource'> {
   filter: (item: Session) => boolean;
   extraFetchKey?: string;
 }
-
 const SessionList: React.FC<SessionListProps> = ({
   status = [],
   limit = 50,
@@ -42,9 +34,6 @@ const SessionList: React.FC<SessionListProps> = ({
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
   const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const [, { getImageAliasName, getBaseVersion, getBaseImage }] =
-    useBackendAIImageMetaData();
 
   if (
     !baiClient.supports('avoid-hol-blocking') &&
@@ -86,9 +75,7 @@ const SessionList: React.FC<SessionListProps> = ({
             occupied_slots
             access_key
             starts_at
-            scaling_group
-            agents
-            image
+
             cluster_size @skipOnClient(if: $skipClusterSize)
             ...SessionInfoCellFragment
           }
@@ -110,44 +97,15 @@ const SessionList: React.FC<SessionListProps> = ({
     },
   );
 
-  const statusTagColor = {
-    //prepare
-    RESTARTING: 'blue',
-    PREPARING: 'blue',
-    PULLING: 'blue',
-    //running
-    RUNNING: 'green',
-    PENDING: 'green',
-    SCHEDULED: 'green',
-    //error
-    ERROR: 'red',
-    //finished return undefined
-  };
-
-  const statusInfoTagColor = {
-    'idle-timeout': 'green',
-    'user-requested': 'green',
-    scheduled: 'green',
-    'self-terminated': 'green',
-    'no-available-instances': 'red',
-    'failed-to-start': 'red',
-    'creation-failed': 'red',
-  };
-
-  const typeTagColor = {
-    INTERACTIVE: 'green',
-    BATCH: 'darkgreen',
-    INFERENCE: 'blue',
-  };
-
   return (
     <>
       <Table
-        scroll={{ x: 'max-content' }}
+        scroll={{ x: true }}
         columns={[
           {
             title: t('session.SessionInfo'),
             render(value, record, index) {
+              console.log(record);
               return (
                 <SessionInfoCell
                   key={record.session_id}
@@ -165,144 +123,28 @@ const SessionList: React.FC<SessionListProps> = ({
           {
             title: t('session.Status'),
             dataIndex: 'status',
-            render(value, record) {
-              return (
-                <>
-                  {record.status_info !== '' ? (
-                    <DoubleTag
-                      values={[
-                        { label: value, color: _.get(statusTagColor, value) },
-                        {
-                          label: record.status_info,
-                          color: _.get(statusInfoTagColor, record.status_info),
-                        },
-                      ]}
-                    />
-                  ) : (
-                    <Tag color={_.get(statusTagColor, value)}>{value}</Tag>
-                  )}
-                </>
-              );
-            },
           },
           {
             title: t('general.Control'),
           },
           {
             title: t('session.Configuration'),
-            dataIndex: 'mounts',
-            render(value, record) {
-              return (
-                <>
-                  {value.length > 0 ? (
-                    <Flex gap="xxs" style={{ width: 200 }}>
-                      <FolderOutlined />
-                      <Typography.Text
-                        ellipsis={{
-                          tooltip: (
-                            <Flex direction="column" align="start">
-                              {_.map(value, (mountedFolder) => {
-                                return <div>{mountedFolder}</div>;
-                              })}
-                            </Flex>
-                          ),
-                        }}
-                      >
-                        {value.join(', ')}
-                      </Typography.Text>
-                    </Flex>
-                  ) : (
-                    <Flex gap="xxs" style={{ color: token.colorTextDisabled }}>
-                      <FolderOutlined />
-                      No mount
-                    </Flex>
-                  )}
-                  <Flex gap="xxs">
-                    <GroupOutlined />
-                    {record.scaling_group}
-                  </Flex>
-                  <Flex gap={'xxs'}>
-                    {record.occupied_slots &&
-                      _.map(
-                        JSON.parse(record.occupied_slots),
-                        (value, type) => {
-                          return (
-                            <ResourceNumber
-                              key={type}
-                              // @ts-ignore
-                              type={type}
-                              value={_.toString(value)}
-                            />
-                          );
-                        },
-                      )}
-                  </Flex>
-                </>
-              );
-            },
           },
           {
             title: t('session.Usage'),
           },
           {
             title: t('session.Reservation'),
-            dataIndex: 'created_at',
-            render(value, record) {
-              const localeStringDate = new Date(value).toLocaleString();
-              const elapsedTime = baiClient.utils.elapsedTime(
-                value,
-                record.terminated_at,
-              );
-              return (
-                <Flex direction="column" gap="xs">
-                  {localeStringDate}
-                  <DoubleTag values={[t('session.ElapsedTime'), elapsedTime]} />
-                </Flex>
-              );
-            },
           },
           {
-            title: t('session.EnvironmentInfo'),
-            render: (record) => {
-              return (
-                <Tag color="gold">
-                  <Flex direction="column">
-                    <Flex gap={'xxs'}>
-                      <ImageMetaIcon image={record.image} />
-                      {/*<div> to apply gap */}
-                      <div>{getImageAliasName(record.image)}</div>
-                      {getBaseVersion(record.image)}
-                    </Flex>
-                    <Flex gap={'xxs'}>
-                      {/*<div> to apply gap */}
-                      <div>{getBaseImage(record.image)}</div>
-                      {record.architecture}
-                    </Flex>
-                  </Flex>
-                </Tag>
-              );
-            },
+            title: t('session.Architecture'),
           },
           {
             title: t('session.SessionType'),
-            dataIndex: 'type',
-            render: (value) => {
-              return <Tag color={_.get(typeTagColor, value)}>{value}</Tag>;
-            },
           },
-          ...(baiClient.is_admin || !!baiClient._config.hideAgents
-            ? [
-                {
-                  title: t('session.Agent'),
-                  dataIndex: 'agents',
-                  render(value: string[]) {
-                    return _.map(value, (agent) => {
-                      return agent;
-                    });
-                  },
-                },
-              ]
-            : []),
+          {
+            title: t('session.Agent'),
+          },
         ]}
         // @ts-ignore
         dataSource={(compute_session_list?.items || []).filter(filter)}
