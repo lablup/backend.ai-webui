@@ -401,14 +401,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       },
       { once: true },
     );
-    document.addEventListener(
-      'backend-ai-connected',
-      () => {
-        this.supportServing =
-          globalThis.backendaiclient.supports('model-serving');
-      },
-      { once: true },
-    );
   }
 
   drop(event) {
@@ -424,7 +416,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   async connectedCallback() {
     super.connectedCallback();
     document.addEventListener('backend-ai-connected', () => this.refreshPage());
-    console.debug(globalThis.navigator.language);
     const defaultLang = globalThis.navigator.language.split('-')[0];
     if (
       globalThis.backendaioptions.get('language') === 'default' &&
