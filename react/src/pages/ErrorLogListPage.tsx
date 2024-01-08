@@ -144,18 +144,9 @@ const ErrorLogListPage: React.FC = () => {
               dataIndex: 'requestUrl',
               render: (value, record) => {
                 return (
-                  <div style={{ width: 150 }}>
-                    <Typography.Text
-                      color={record.isError ? 'red' : ''}
-                      ellipsis={{
-                        tooltip: {
-                          overlayInnerStyle: { width: 'max-content' },
-                        },
-                      }}
-                    >
-                      {value}
-                    </Typography.Text>
-                  </div>
+                  <Typography.Text color={record.isError ? 'red' : ''}>
+                    {value}
+                  </Typography.Text>
                 );
               },
             },
