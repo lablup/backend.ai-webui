@@ -1,0 +1,38 @@
+name: Run test and report code coverage on /react
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - react/src/**
+      - react/package.json
+
+defaults:
+  run:
+    working-directory: ./react
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: jwalton/gh-find-current-pr@v1
+      id: findPr
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+    - name: Install dependencies
+      run: npm install
+    - run: npm run relay
+    - name: Run ESLint on React
+      run: npx eslint ./src --ignore-pattern '*.test.*' --max-warnings=0
+    - name: run relay-compiler
+      run: npm run relay
+    - name: Jest report
+      uses: ArtiomTr/jest-coverage-report-action@v2
+      with:
+        skip-step: install
+        working-directory: ./react
+        package-manager: npm
+        test-script: npm run test
+        prnumber: ${{ steps.findPr.outputs.number }}

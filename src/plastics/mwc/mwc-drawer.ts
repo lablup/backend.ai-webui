@@ -16,11 +16,10 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {css} from 'lit';
-import {customElement} from 'lit/decorators.js';
-
-import {DrawerBase} from '@material/mwc-drawer/mwc-drawer-base';
-import {styles} from '@material/mwc-drawer/mwc-drawer.css';
+import { DrawerBase } from '@material/mwc-drawer/mwc-drawer-base';
+import { styles } from '@material/mwc-drawer/mwc-drawer.css';
+import { css } from 'lit';
+import { customElement } from 'lit/decorators.js';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -31,17 +30,27 @@ declare global {
 @customElement('mwc-drawer')
 export class Drawer extends DrawerBase {
   static get styles() {
-    return [styles,
+    return [
+      styles,
       css`
-    .mdc-drawer {
-      background-color: var(--mdc-drawer-background-color, '#ffffff');
-      width: var(--mdc-drawer-width, 256px);
-      border-left: var(--mdc-drawer-border-left, 1px solid rgba(0,0,0,0.12));
-      border-right:var(--mdc-drawer-border-right, 1px solid rgba(0,0,0,0.12));
-    }
-    .mdc-drawer.mdc-drawer--open:not(.mdc-drawer--closing) + .mdc-drawer-app-content {
-      margin-left: var(--mdc-drawer-width, 256px)!important;
-      width: calc(100% - var(--mdc-drawer-width, 256px));
-    }`];
+        .mdc-drawer {
+          background-color: var(--mdc-drawer-background-color, '#ffffff');
+          width: var(--mdc-drawer-width, 256px);
+          border-left: var(
+            --mdc-drawer-border-left,
+            1px solid rgba(0, 0, 0, 0.12)
+          );
+          border-right: var(
+            --mdc-drawer-border-right,
+            1px solid rgba(0, 0, 0, 0.12)
+          );
+        }
+        .mdc-drawer.mdc-drawer--open:not(.mdc-drawer--closing)
+          + .mdc-drawer-app-content {
+          margin-left: var(--mdc-drawer-width, 256px) !important;
+          width: calc(100% - var(--mdc-drawer-width, 256px));
+        }
+      `,
+    ];
   }
 }

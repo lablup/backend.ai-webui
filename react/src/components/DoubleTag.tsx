@@ -1,23 +1,32 @@
-import { Tag } from "antd";
-import Flex from "./Flex";
-import _ from "lodash";
+import Flex from './Flex';
+import { Tag } from 'antd';
+import _ from 'lodash';
+import React from 'react';
 
-type ObjectValue = {
-  label: string;
+export type DoubleTagObjectValue = {
+  label: ValueType;
   color?: string;
 };
+
+type ValueType = string | React.ReactNode;
 const DoubleTag: React.FC<{
-  values?: string[] | ObjectValue[];
+  values?: ValueType[] | DoubleTagObjectValue[];
 }> = ({ values = [] }) => {
   if (values.length === 0) return null;
-  let objectValues: ObjectValue[];
-  if (_.isString(values[0])) {
-    objectValues = values.map((value) => ({
-      label: value as string,
-      color: "blue",
-    }));
+  let objectValues: DoubleTagObjectValue[];
+  if (
+    values[0] &&
+    (typeof values[0] === 'string' || React.isValidElement(values[0]))
+  ) {
+    objectValues = values.map(
+      (value) =>
+        ({
+          label: value,
+          color: 'blue',
+        }) as DoubleTagObjectValue,
+    );
   } else {
-    objectValues = values as ObjectValue[];
+    objectValues = values as DoubleTagObjectValue[];
   }
 
   return (
@@ -29,8 +38,9 @@ const DoubleTag: React.FC<{
             style={
               _.last(objectValues) === objValue
                 ? undefined
-                : { margin: 0, marginRight: -1, zIndex: 1 }
+                : { margin: 0, marginRight: -1 }
             }
+            color={objValue.color}
           >
             {objValue.label}
           </Tag>

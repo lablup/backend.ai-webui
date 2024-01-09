@@ -1,17 +1,11 @@
-import { render, screen, act, waitFor } from "@testing-library/react";
-import React, { Suspense } from "react";
-import DomainSelector from "./DomainSelector";
-import userEvent from "@testing-library/user-event";
-import {
-  MockEnvironment,
-  createMockEnvironment,
-  MockPayloadGenerator,
-} from "relay-test-utils";
-import { RelayEnvironmentProvider } from "react-relay";
-import ReactTestRenderer from "react-test-renderer";
-// import App from "./App";
+import DomainSelector from './DomainSelector';
+import { render, screen, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { Suspense } from 'react';
+import { RelayEnvironmentProvider } from 'react-relay';
+import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 
-jest.mock("react-i18next", () => ({
+jest.mock('react-i18next', () => ({
   // this mock makes sure any components using the translate hook can use it without a warning being shown
   useTranslation: () => {
     return {
@@ -22,37 +16,41 @@ jest.mock("react-i18next", () => ({
     };
   },
   initReactI18next: {
-    type: "3rdParty",
+    type: '3rdParty',
     init: () => {},
   },
 }));
 
-describe("DomainSelect", () => {
-  test("default render", async () => {
+describe('DomainSelect', () => {
+  test('default render', async () => {
     const environment = createMockEnvironment();
-    const { getByText, asFragment } = render(
+    const { asFragment } = render(
       <RelayEnvironmentProvider environment={environment}>
         <Suspense fallback="loading...">
-          <DomainSelector title="hello" placeholder="Please select domain" />
+          <DomainSelector
+            title="hello"
+            placeholder="Please select domain"
+            autoFocus={true}
+          />
         </Suspense>
-      </RelayEnvironmentProvider>
+      </RelayEnvironmentProvider>,
     );
 
-    expect(getByText("loading...")).toBeInTheDocument();
+    expect(screen.getByText('loading...')).toBeInTheDocument();
 
     act(() => {
       environment.mock.resolveMostRecentOperation((operation) =>
         MockPayloadGenerator.generate(operation, {
           String() {
-            return "abcd";
+            return 'abcd';
           },
-        })
+        }),
       );
     });
 
-    expect(await screen.findByText("Please select domain")).toBeInTheDocument();
-    await userEvent.click(await screen.findByRole("combobox"));
-    expect(screen.getAllByText("abcd")[0]).toBeInTheDocument();
+    expect(await screen.findByText('Please select domain')).toBeInTheDocument();
+    await userEvent.click(await screen.findByRole('combobox'));
+    expect(screen.getAllByText('abcd')[0]).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });
 });

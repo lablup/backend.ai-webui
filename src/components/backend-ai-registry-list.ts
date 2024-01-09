@@ -2,29 +2,29 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, query} from 'lit/decorators.js';
-
-import {BackendAIPage} from './backend-ai-page';
+import '../plastics/lablup-shields/lablup-shields';
+import {
+  IronFlex,
+  IronFlexAlignment,
+} from '../plastics/layout/iron-flex-layout-classes';
+import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
 import BackendAIIndicator from './backend-ai-indicator';
 import BackendAIIndicatorPool from './backend-ai-indicator-pool';
-import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
-import './backend-ai-dialog';
-import {default as PainKiller} from './backend-ai-painkiller';
-import {BackendAiStyles} from './backend-ai-general-styles';
-import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-
-import '../plastics/lablup-shields/lablup-shields';
-
+import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
 import '@material/mwc-button/mwc-button';
-import {Select} from '@material/mwc-select/mwc-select';
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-switch/mwc-switch';
 import '@material/mwc-icon-button';
+import '@material/mwc-list/mwc-list-item';
+import { Select } from '@material/mwc-select/mwc-select';
+import '@material/mwc-switch/mwc-switch';
 import '@material/mwc-textfield';
+import { TextField } from '@material/mwc-textfield';
 import '@vaadin/grid/vaadin-grid';
-import {TextField} from '@material/mwc-textfield';
+import { css, CSSResultGroup, html, render } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, query } from 'lit/decorators.js';
 
 /**
  Backend AI Registry List
@@ -44,7 +44,11 @@ class BackendAIRegistryList extends BackendAIPage {
   private _indicator!: BackendAIIndicatorPool;
   private _registryList: Array<Record<string, unknown>>;
   private _registryType = 'docker';
-  private static _registryTypes: Array<string> = ['docker', 'harbor', 'harbor2'];
+  private static _registryTypes: Array<string> = [
+    'docker',
+    'harbor',
+    'harbor2',
+  ];
   private _selectedIndex = -1;
 
   /* Renderer function for grid table */
@@ -117,13 +121,15 @@ class BackendAIRegistryList extends BackendAIPage {
           pointer-events: none;
         }
 
-        mwc-button, mwc-button[unelevated] {
+        mwc-button,
+        mwc-button[unelevated] {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-theme-on-primary: var(--general-button-color);
           --mdc-typography-font-family: var(--general-font-family);
         }
-      `];
+      `,
+    ];
   }
 
   /**
@@ -145,17 +151,19 @@ class BackendAIRegistryList extends BackendAIPage {
    * @return {Record<string, unknown>} Parsed registry list
    * */
   _parseRegistryList(obj) {
-    const isString = (val): boolean => typeof val === 'string' || val instanceof String;
+    const isString = (val): boolean =>
+      typeof val === 'string' || val instanceof String;
     return Object.keys(obj).map((hostname) =>
-      isString(obj[hostname]) ?
-        {
-          '': obj[hostname],
-          hostname
-        } :
-        {
-          ...obj[hostname],
-          hostname
-        });
+      isString(obj[hostname])
+        ? {
+            '': obj[hostname],
+            hostname,
+          }
+        : {
+            ...obj[hostname],
+            hostname,
+          },
+    );
   }
 
   /**
@@ -164,21 +172,26 @@ class BackendAIRegistryList extends BackendAIPage {
   _refreshRegistryList() {
     this._listCondition = 'loading';
     this._listStatus?.show();
-    globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
-      this._allowed_registries = response.domain.allowed_docker_registries;
-      return globalThis.backendaiclient.registry.list();
-    }).then(({result}) => {
-      this._registryList = this._parseRegistryList(result);
-      if (this._registryList.length == 0) {
-        this._listCondition = 'no-data';
-      } else {
-        this._listStatus?.hide();
-      }
-      this._hostnames = this._registryList.map((value) => {
-        return value.hostname;
-      }) as string[];
-      this.requestUpdate();
-    });
+    globalThis.backendaiclient.domain
+      .get(globalThis.backendaiclient._config.domainName, [
+        'allowed_docker_registries',
+      ])
+      .then((response) => {
+        this._allowed_registries = response.domain.allowed_docker_registries;
+        return globalThis.backendaiclient.registry.list();
+      })
+      .then(({ result }) => {
+        this._registryList = this._parseRegistryList(result);
+        if (this._registryList.length == 0) {
+          this._listCondition = 'no-data';
+        } else {
+          this._listStatus?.hide();
+        }
+        this._hostnames = this._registryList.map((value) => {
+          return value.hostname;
+        }) as string[];
+        this.requestUpdate();
+      });
   }
 
   /**
@@ -193,11 +206,20 @@ class BackendAIRegistryList extends BackendAIPage {
     }
 
     // If disconnected
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._refreshRegistryList();
-      }, true);
-    } else { // already connected
+    if (
+      typeof globalThis.backendaiclient === 'undefined' ||
+      globalThis.backendaiclient === null ||
+      globalThis.backendaiclient.ready === false
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        () => {
+          this._refreshRegistryList();
+        },
+        true,
+      );
+    } else {
+      // already connected
       this._refreshRegistryList();
     }
   }
@@ -251,13 +273,18 @@ class BackendAIRegistryList extends BackendAIPage {
       return;
     }
 
-    globalThis.backendaiclient.registry.set(hostname, input)
-      .then(({result}) => {
+    globalThis.backendaiclient.registry
+      .set(hostname, input)
+      .then(({ result }) => {
         if (result === 'ok') {
           if (this._editMode) {
-            this.notification.text = _text('registry.RegistrySuccessfullyModified');
+            this.notification.text = _text(
+              'registry.RegistrySuccessfullyModified',
+            );
           } else {
-            this.notification.text = _text('registry.RegistrySuccessfullyAdded');
+            this.notification.text = _text(
+              'registry.RegistrySuccessfullyAdded',
+            );
             // add
             this._hostnames.push(hostname);
             this._resetRegistryField();
@@ -275,16 +302,25 @@ class BackendAIRegistryList extends BackendAIPage {
    * Delete registry from allowed registry list corresponding to the current domain by user input on delete registry dialog
    * */
   private _deleteRegistry() {
-    const deleteRegistryInputField: TextField = (this.shadowRoot?.querySelector('#delete-registry') as TextField);
+    const deleteRegistryInputField: TextField = this.shadowRoot?.querySelector(
+      '#delete-registry',
+    ) as TextField;
     const registryNameToDelete: string = deleteRegistryInputField.value;
-    if (this._registryList[this._selectedIndex].hostname === registryNameToDelete) {
-      globalThis.backendaiclient.registry.delete(deleteRegistryInputField.value)
-        .then(({result}) => {
+    if (
+      this._registryList[this._selectedIndex].hostname === registryNameToDelete
+    ) {
+      globalThis.backendaiclient.registry
+        .delete(deleteRegistryInputField.value)
+        .then(({ result }) => {
           if (result === 'ok') {
-            this.notification.text = _text('registry.RegistrySuccessfullyDeleted');
+            this.notification.text = _text(
+              'registry.RegistrySuccessfullyDeleted',
+            );
             // remove the hostname from allowed registries if it contains deleting registry.
             if (this._hostnames.includes(registryNameToDelete)) {
-              this._hostnames.splice(this._hostnames.indexOf(registryNameToDelete));
+              this._hostnames.splice(
+                this._hostnames.indexOf(registryNameToDelete),
+              );
             }
             this._refreshRegistryList();
           } else {
@@ -305,16 +341,21 @@ class BackendAIRegistryList extends BackendAIPage {
    * Rescan the images if registry has been updated.
    * */
   private async _rescanImage() {
-    const indicator: BackendAIIndicator = await this._indicator.start('indeterminate');
+    const indicator: BackendAIIndicator =
+      await this._indicator.start('indeterminate');
     indicator.set(10, _text('registry.UpdatingRegistryInfo'));
-    globalThis.backendaiclient.maintenance.rescan_images(this._registryList[this._selectedIndex]['hostname'])
-      .then(({rescan_images}) => {
+    globalThis.backendaiclient.maintenance
+      .rescan_images(this._registryList[this._selectedIndex]['hostname'])
+      .then(({ rescan_images }) => {
         if (rescan_images.ok) {
           indicator.set(0, _text('registry.RescanImages'));
-          const sse: EventSource = globalThis.backendaiclient.maintenance.attach_background_task(rescan_images.task_id);
+          const sse: EventSource =
+            globalThis.backendaiclient.maintenance.attach_background_task(
+              rescan_images.task_id,
+            );
           sse.addEventListener('bgtask_updated', (e) => {
             const data = JSON.parse(e['data']);
-            const ratio = data.current_progress/data.total_progress;
+            const ratio = data.current_progress / data.total_progress;
             indicator.set(100 * ratio, _text('registry.RescanImages'));
           });
           sse.addEventListener('bgtask_done', () => {
@@ -330,7 +371,9 @@ class BackendAIRegistryList extends BackendAIPage {
           });
           sse.addEventListener('bgtask_cancelled', () => {
             sse.close();
-            throw new Error('Background Image scanning task has been cancelled');
+            throw new Error(
+              'Background Image scanning task has been cancelled',
+            );
           });
         } else {
           indicator.set(50, _text('registry.RegistryUpdateFailed'));
@@ -339,7 +382,8 @@ class BackendAIRegistryList extends BackendAIPage {
           this.notification.detail = rescan_images.msg;
           this.notification.show();
         }
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log(err);
         indicator.set(50, _text('registry.RescanFailed'));
         indicator.end(1000);
@@ -400,7 +444,8 @@ class BackendAIRegistryList extends BackendAIPage {
       return;
     }
     this._registryList[this._selectedIndex] = registryInfo;
-    this._registryType = this._registryList[this._selectedIndex]?.type as string;
+    this._registryType = this._registryList[this._selectedIndex]
+      ?.type as string;
     this.requestUpdate(); // call for explicit update
     this._launchDialogById('#configure-registry-dialog');
   }
@@ -412,14 +457,17 @@ class BackendAIRegistryList extends BackendAIPage {
    */
   private _checkValidationMsgOnRegistryUrlInput(ev) {
     try {
-      const registryUrl = new URL(this._urlInput.value)
-        if(registryUrl.protocol === 'http:' || registryUrl.protocol === 'https:'){
-          ev.target.setCustomValidity('')
-        } else {
-          ev.target.setCustomValidity(_t('registry.DescURLStartString'))
-        }
+      const registryUrl = new URL(this._urlInput.value);
+      if (
+        registryUrl.protocol === 'http:' ||
+        registryUrl.protocol === 'https:'
+      ) {
+        ev.target.setCustomValidity('');
+      } else {
+        ev.target.setCustomValidity(_t('registry.DescURLStartString'));
+      }
     } catch (err) {
-      ev.target.setCustomValidity(_t('import.WrongURLType'))
+      ev.target.setCustomValidity(_t('import.WrongURLType'));
     }
   }
 
@@ -428,14 +476,21 @@ class BackendAIRegistryList extends BackendAIPage {
    * Hide when registry is "docker", Show and validate when registry is "harbor" or "harbor2"
    */
   private _checkValidationMsgOnProjectNameInput(value, nativeValidity) {
-    this._projectNameInput.value = this._projectNameInput.value.replace(/\s/g, '');
+    this._projectNameInput.value = this._projectNameInput.value.replace(
+      /\s/g,
+      '',
+    );
     if (['harbor', 'harbor2'].includes(this._registryType)) {
       if (!this._projectNameInput.value) {
-        this._projectNameInput.validationMessage = _text('registry.ProjectNameIsRequired');
+        this._projectNameInput.validationMessage = _text(
+          'registry.ProjectNameIsRequired',
+        );
       }
       this._projectNameInput.disabled = false;
     } else {
-      this._projectNameInput.validationMessage = _text('registry.ForHarborOnly');
+      this._projectNameInput.validationMessage = _text(
+        'registry.ForHarborOnly',
+      );
       this._projectNameInput.disabled = true;
     }
     return {};
@@ -498,9 +553,13 @@ class BackendAIRegistryList extends BackendAIPage {
       }
       this.notification.text = _text('registry.RegistryTurnedOff');
     }
-    globalThis.backendaiclient.domain.update(globalThis.backendaiclient._config.domainName, {'allowed_docker_registries': this._allowed_registries}).then((response) => {
-      this.notification.show();
-    });
+    globalThis.backendaiclient.domain
+      .update(globalThis.backendaiclient._config.domainName, {
+        allowed_docker_registries: this._allowed_registries,
+      })
+      .then((response) => {
+        this.notification.show();
+      });
   }
 
   /**
@@ -516,7 +575,7 @@ class BackendAIRegistryList extends BackendAIPage {
       html`
         <div>${idx}</div>
       `,
-      root
+      root,
     );
   }
 
@@ -530,11 +589,9 @@ class BackendAIRegistryList extends BackendAIPage {
   private _hostNameRenderer(root: HTMLElement, column: HTMLElement, rowData) {
     render(
       html`
-        <div>
-          ${decodeURIComponent(rowData.item['hostname'])}
-        </div>
+        <div>${decodeURIComponent(rowData.item['hostname'])}</div>
       `,
-      root
+      root,
     );
   }
 
@@ -548,14 +605,16 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    */
-  private _registryUrlRenderer(root: HTMLElement, column: HTMLElement, rowData) {
+  private _registryUrlRenderer(
+    root: HTMLElement,
+    column: HTMLElement,
+    rowData,
+  ) {
     render(
       html`
-        <div>
-          ${rowData.item['']}
-        </div>
+        <div>${rowData.item['']}</div>
       `,
-      root
+      root,
     );
   }
 
@@ -570,10 +629,15 @@ class BackendAIRegistryList extends BackendAIPage {
     render(
       html`
         <div>
-          <input type="password" id="registry-password" readonly value="${rowData.item['password']}"/>
+          <input
+            type="password"
+            id="registry-password"
+            readonly
+            value="${rowData.item['password']}"
+          />
         </div>
-      `
-      , root
+      `,
+      root,
     );
   }
 
@@ -589,11 +653,15 @@ class BackendAIRegistryList extends BackendAIPage {
       html`
         <div>
           <mwc-switch
-              @click="${(e) => this._toggleRegistryEnabled(e, rowData.item['hostname'])}"
-              ?selected="${this._allowed_registries.includes(rowData.item['hostname'])}"></mwc-switch>
+            @click="${(e) =>
+              this._toggleRegistryEnabled(e, rowData.item['hostname'])}"
+            ?selected="${this._allowed_registries.includes(
+              rowData.item['hostname'],
+            )}"
+          ></mwc-switch>
         </div>
       `,
-      root
+      root,
     );
   }
 
@@ -605,28 +673,41 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {object} rowData - the object with the properties related with the rendered item
    * */
   private _controlsRenderer(root: HTMLElement, column: HTMLElement, rowData) {
-    render(html`
-      <div icon="settings" id="controls" class="layout horizontal flex center">
-        <mwc-icon-button class="fg blue"
-                         icon="settings"
-                         @click=${() => {
-    this._selectedIndex = rowData.index;
-    this._openEditRegistryDialog(rowData.item.hostname);
-  }}></mwc-icon-button>
-        <mwc-icon-button class="fg red"
-                         icon="delete"
-                         @click=${() => {
-    this._selectedIndex = rowData.index;
-    this._launchDialogById('#delete-registry-dialog');
-  }}></mwc-icon-button>
-        <mwc-icon-button class="fg green"
-                         icon="refresh"
-                         @click=${() => {
-    this._selectedIndex = rowData.index;
-    this._rescanImage();
-  }}></mwc-icon-button>
-      </div>
-    `, root);
+    render(
+      html`
+        <div
+          icon="settings"
+          id="controls"
+          class="layout horizontal flex center"
+        >
+          <mwc-icon-button
+            class="fg blue"
+            icon="settings"
+            @click=${() => {
+              this._selectedIndex = rowData.index;
+              this._openEditRegistryDialog(rowData.item.hostname);
+            }}
+          ></mwc-icon-button>
+          <mwc-icon-button
+            class="fg red"
+            icon="delete"
+            @click=${() => {
+              this._selectedIndex = rowData.index;
+              this._launchDialogById('#delete-registry-dialog');
+            }}
+          ></mwc-icon-button>
+          <mwc-icon-button
+            class="fg green"
+            icon="refresh"
+            @click=${() => {
+              this._selectedIndex = rowData.index;
+              this._rescanImage();
+            }}
+          ></mwc-icon-button>
+        </div>
+      `,
+      root,
+    );
   }
 
   /**
@@ -642,33 +723,102 @@ class BackendAIRegistryList extends BackendAIPage {
       <h4 class="horizontal flex center center-justified layout">
         <span>${_t('registry.Registries')}</span>
         <span class="flex"></span>
-        <mwc-button raised id="add-registry" label="${_t('registry.AddRegistry')}" icon="add"
-            @click=${() => this._openCreateRegistryDialog()}></mwc-button>
+        <mwc-button
+          raised
+          id="add-registry"
+          label="${_t('registry.AddRegistry')}"
+          icon="add"
+          @click=${() => this._openCreateRegistryDialog()}
+        ></mwc-button>
       </h4>
       <div class="list-wrapper">
-        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Registry list" .items="${this._registryList}">
-          <vaadin-grid-column flex-grow="0" width="40px" header="#" text-align="center" .renderer=${this._indexRenderer}>
-          </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="1" auto-width header="${_t('registry.Hostname')}" .renderer=${this._hostNameRenderer} resizable>
-          </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="2" auto-width header="${_t('registry.RegistryURL')}" resizable .renderer=${this._registryUrlRenderer} resizable>
-          </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.Type')}" path="type" resizable>
-          </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.HarborProject')}" path="project" resizable>
-          </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="1" header="${_t('registry.Username')}" path="username" resizable>
-          </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="1" header="${_t('registry.Password')}" .renderer="${this._boundPasswordRenderer}" resizable>
-          </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="0" width="60px" header="${_t('general.Enabled')}" .renderer=${this._boundIsEnabledRenderer} resizable></vaadin-grid-column>
-          <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
-          </vaadin-grid-column>
+        <vaadin-grid
+          theme="row-stripes column-borders compact"
+          aria-label="Registry list"
+          .items="${this._registryList}"
+        >
+          <vaadin-grid-column
+            flex-grow="0"
+            width="40px"
+            header="#"
+            text-align="center"
+            .renderer=${this._indexRenderer}
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="1"
+            auto-width
+            header="${_t('registry.Hostname')}"
+            .renderer=${this._hostNameRenderer}
+            resizable
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="2"
+            auto-width
+            header="${_t('registry.RegistryURL')}"
+            resizable
+            .renderer=${this._registryUrlRenderer}
+            resizable
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="0"
+            auto-width
+            resizable
+            header="${_t('registry.Type')}"
+            path="type"
+            resizable
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="0"
+            auto-width
+            resizable
+            header="${_t('registry.HarborProject')}"
+            path="project"
+            resizable
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="1"
+            header="${_t('registry.Username')}"
+            path="username"
+            resizable
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="1"
+            header="${_t('registry.Password')}"
+            .renderer="${this._boundPasswordRenderer}"
+            resizable
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="0"
+            width="60px"
+            header="${_t('general.Enabled')}"
+            .renderer=${this._boundIsEnabledRenderer}
+            resizable
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            frozen-to-end
+            width="150px"
+            resizable
+            header="${_t('general.Control')}"
+            .renderer=${this._boundControlsRenderer}
+          ></vaadin-grid-column>
         </vaadin-grid>
-        <backend-ai-list-status id="list-status" statusCondition="${this._listCondition}" message="${_text('registry.NoRegistryToDisplay')}"></backend-ai-list-status>
+        <backend-ai-list-status
+          id="list-status"
+          statusCondition="${this._listCondition}"
+          message="${_text('registry.NoRegistryToDisplay')}"
+        ></backend-ai-list-status>
       </div>
-      <backend-ai-dialog id="configure-registry-dialog" fixed backdrop blockscrolling>
-        <span slot="title">${this._editMode ? _t('registry.ModifyRegistry') : _t('registry.AddRegistry')}</span>
+      <backend-ai-dialog
+        id="configure-registry-dialog"
+        fixed
+        backdrop
+        blockscrolling
+      >
+        <span slot="title">
+          ${this._editMode
+            ? _t('registry.ModifyRegistry')
+            : _t('registry.AddRegistry')}
+        </span>
         <div slot="content" class="login-panel intro centered">
           <div class="horizontal center-justified layout flex">
             <mwc-textfield
@@ -717,34 +867,50 @@ class BackendAIRegistryList extends BackendAIPage {
             @change=${this._toggleProjectNameInput}
             required
             validationMessage="${_t('registry.PleaseSelectOption')}"
-            value="${this._registryList[this._selectedIndex]?.type || this._registryType}">
-            ${BackendAIRegistryList._registryTypes.map((item) => html`
-              <mwc-list-item
-                value="${item}"
-                ?selected="${this._editMode ? item === this._registryList[this._selectedIndex]?.type : item === 'docker'}">
-                ${item}
-              </mwc-list-item>
-            `)}
+            value="${this._registryList[this._selectedIndex]?.type ||
+            this._registryType}"
+          >
+            ${BackendAIRegistryList._registryTypes.map(
+              (item) => html`
+                <mwc-list-item
+                  value="${item}"
+                  ?selected="${this._editMode
+                    ? item === this._registryList[this._selectedIndex]?.type
+                    : item === 'docker'}"
+                >
+                  ${item}
+                </mwc-list-item>
+              `,
+            )}
           </mwc-select>
-        <div class="vertical layout end-justified">
-          <mwc-textfield
-            id="configure-project-name"
-            class="helper-text"
-            type="text"
-            label="${_t('registry.ProjectName')}"
-            required
-            value="${this._registryList[this._selectedIndex]?.project || ''}"
-            ?disabled="${this._registryType === 'docker'}"
-          ></mwc-textfield>
-         </div>
+          <div class="vertical layout end-justified">
+            <mwc-textfield
+              id="configure-project-name"
+              class="helper-text"
+              type="text"
+              label="${_t('registry.ProjectName')}"
+              required
+              value="${this._registryList[this._selectedIndex]?.project || ''}"
+              ?disabled="${this._registryType === 'docker'}"
+            ></mwc-textfield>
+          </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button unelevated fullwidth icon="add"
+          <mwc-button
+            unelevated
+            fullwidth
+            icon="add"
             label=${this._editMode ? _t('button.Save') : _t('button.Add')}
-            @click=${() => this._addRegistry()}></mwc-button>
+            @click=${() => this._addRegistry()}
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="delete-registry-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog
+        id="delete-registry-dialog"
+        fixed
+        backdrop
+        blockscrolling
+      >
         <span slot="title">${_t('dialog.warning.CannotBeUndone')}</span>
         <div slot="content">
           <mwc-textfield
@@ -754,8 +920,13 @@ class BackendAIRegistryList extends BackendAIPage {
           ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button unelevated fullwidth icon="delete" label="${_t('button.Delete')}"
-              @click=${() => this._deleteRegistry()}></mwc-button>
+          <mwc-button
+            unelevated
+            fullwidth
+            icon="delete"
+            label="${_t('button.Delete')}"
+            @click=${() => this._deleteRegistry()}
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

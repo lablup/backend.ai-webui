@@ -1,22 +1,19 @@
-import React, { useState, useTransition } from "react";
-import { useTranslation } from "react-i18next";
-import { QuotaScopeType, addQuotaScopeTypePrefix } from "../helper/index";
-
-import { Card, Form, Spin } from "antd";
-
-import Flex from "./Flex";
-import ProjectSelector from "./ProjectSelector";
-import DomainSelector from "./DomainSelector";
-import UserSelector from "./UserSelector";
-import QuotaScopeCard from "./QuotaScopeCard";
-import { useFragment, useLazyLoadQuery } from "react-relay";
-
-import graphql from "babel-plugin-relay/macro";
-import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from "./__generated__/StorageHostSettingsPanel_storageVolumeFrgmt.graphql";
-import { StorageHostSettingsPanelQuery } from "./__generated__/StorageHostSettingsPanelQuery.graphql";
-import QuotaSettingModal from "./QuotaSettingModal";
-import { useToggle } from "ahooks";
-import { useCurrentDomainValue, useUpdatableState } from "../hooks";
+import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
+import { useCurrentDomainValue, useUpdatableState } from '../hooks';
+import DomainSelector from './DomainSelector';
+import Flex from './Flex';
+import ProjectSelector from './ProjectSelector';
+import QuotaScopeCard from './QuotaScopeCard';
+import QuotaSettingModal from './QuotaSettingModal';
+import UserSelector from './UserSelector';
+import { StorageHostSettingsPanelQuery } from './__generated__/StorageHostSettingsPanelQuery.graphql';
+import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from './__generated__/StorageHostSettingsPanel_storageVolumeFrgmt.graphql';
+import { useToggle } from 'ahooks';
+import { Card, Form, Spin } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React, { useState, useTransition } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useFragment, useLazyLoadQuery } from 'react-relay';
 
 interface StorageHostSettingsPanelProps {
   extraFetchKey?: string;
@@ -33,13 +30,13 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
         capabilities
       }
     `,
-    storageVolumeFrgmt
+    storageVolumeFrgmt,
   );
 
   const [isPending, startTransition] = useTransition();
   const currentDomain = useCurrentDomainValue();
   const [currentSettingType, setCurrentSettingType] =
-    useState<QuotaScopeType>("user");
+    useState<QuotaScopeType>('user');
 
   const [selectedDomainName, setSelectedDomainName] =
     useState<string>(currentDomain);
@@ -51,13 +48,13 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
 
   const quotaScopeId = addQuotaScopeTypePrefix(
     currentSettingType,
-    (currentSettingType === "project" ? selectedProjectId : selectedUserId) ||
-      ""
+    (currentSettingType === 'project' ? selectedProjectId : selectedUserId) ||
+      '',
   );
 
   const [isOpenQuotaSettingModal, { toggle: toggleQuotaSettingModal }] =
     useToggle(false);
-  const [fetchKey] = useUpdatableState("default");
+  const [fetchKey] = useUpdatableState('default');
 
   const { quota_scope } = useLazyLoadQuery<StorageHostSettingsPanelQuery>(
     graphql`
@@ -78,27 +75,27 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
     {
       // quota scope
       quota_scope_id: quotaScopeId,
-      skipQuotaScope: quotaScopeId === undefined || quotaScopeId === "",
-      storage_host_name: storageVolume?.id || "",
+      skipQuotaScope: quotaScopeId === undefined || quotaScopeId === '',
+      storage_host_name: storageVolume?.id || '',
     },
     {
-      fetchPolicy: "network-only",
+      fetchPolicy: 'network-only',
       fetchKey: fetchKey,
-    }
+    },
   );
 
   return (
     <Flex direction="column" align="stretch">
       <Card
-        title={t("storageHost.QuotaSettings")}
+        title={t('storageHost.QuotaSettings')}
         tabList={[
           {
-            key: "user",
-            tab: t("storageHost.ForUser"),
+            key: 'user',
+            tab: t('storageHost.ForUser'),
           },
           {
-            key: "project",
-            tab: t("storageHost.ForProject"),
+            key: 'project',
+            tab: t('storageHost.ForProject'),
           },
         ]}
         activeTabKey={currentSettingType}
@@ -111,12 +108,12 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
         }}
       >
         <Flex justify="between">
-          {currentSettingType === "project" ? (
+          {currentSettingType === 'project' ? (
             <Flex style={{ marginBottom: 10 }}>
               <Form layout="inline">
-                <Form.Item label={t("resourceGroup.Domain")}>
+                <Form.Item label={t('resourceGroup.Domain')}>
                   <DomainSelector
-                    style={{ width: "20vw", marginRight: 10 }}
+                    style={{ width: '20vw', marginRight: 10 }}
                     value={selectedDomainName}
                     onSelectDomain={(domain: any) => {
                       startTransition(() => {
@@ -126,12 +123,12 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
                     }}
                   />
                 </Form.Item>
-                <Form.Item label={t("webui.menu.Project")}>
+                <Form.Item label={t('webui.menu.Project')}>
                   <ProjectSelector
-                    style={{ width: "20vw" }}
+                    style={{ width: '20vw' }}
                     value={selectedProjectId}
                     disabled={!selectedDomainName}
-                    domain={selectedDomainName || ""}
+                    domain={selectedDomainName || ''}
                     onSelectProject={(project: any) => {
                       startTransition(() => {
                         setSelectedProjectId(project?.projectId);
@@ -143,9 +140,9 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
             </Flex>
           ) : (
             <Form layout="inline">
-              <Form.Item label={t("data.User")}>
+              <Form.Item label={t('data.User')}>
                 <UserSelector
-                  style={{ width: "30vw", marginBottom: 10 }}
+                  style={{ width: '30vw', marginBottom: 10 }}
                   value={selectedUserEmail}
                   onSelectUser={(user) => {
                     setSelectedUserEmail(user?.email);
@@ -165,8 +162,8 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
               toggleQuotaSettingModal();
             }}
             showAddButtonWhenEmpty={
-              (currentSettingType === "project" && !!selectedProjectId) ||
-              (currentSettingType === "user" && !!selectedUserId)
+              (currentSettingType === 'project' && !!selectedProjectId) ||
+              (currentSettingType === 'user' && !!selectedUserId)
             }
           />
         </Spin>

@@ -1,46 +1,53 @@
-import { Button, Modal, Table, Tabs, Tag, Typography, theme } from "antd";
+import BAIModal from '../components/BAIModal';
+import EndpointStatusTag from '../components/EndpointStatusTag';
+import Flex from '../components/Flex';
+import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
+import ServiceLauncherModal from '../components/ServiceLauncherModal';
+import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
+import { baiSignedRequestWithPromise } from '../helper';
+import {
+  useCurrentProjectValue,
+  useSuspendedBackendaiClient,
+  useUpdatableState,
+} from '../hooks';
+// import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
+import { useTanMutation } from '../hooks/reactQueryAlias';
+import {
+  ServingListPageQuery,
+  ServingListPageQuery$data,
+} from './__generated__/ServingListPageQuery.graphql';
+import {
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  SettingOutlined,
+} from '@ant-design/icons';
+import { useRafInterval } from 'ahooks';
+import { useLocalStorageState } from 'ahooks';
+import { Button, Table, Tabs, Typography, theme } from 'antd';
+import { ColumnsType } from 'antd/es/table';
+import graphql from 'babel-plugin-relay/macro';
+import { default as dayjs } from 'dayjs';
+import _ from 'lodash';
 import React, {
   PropsWithChildren,
   Suspense,
   useState,
   useTransition,
   startTransition as startTransitionWithoutPendingState,
-} from "react";
-import Flex from "../components/Flex";
-import { useTranslation } from "react-i18next";
-import ServiceLauncherModal from "../components/ServiceLauncherModal";
-import {
-  useCurrentProjectValue,
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-} from "../hooks";
-import { baiSignedRequestWithPromise } from "../helper";
-import { useTanMutation } from "../hooks/reactQueryAlias";
-import ModelServiceSettingModal from "../components/ModelServiceSettingModal";
-import { useRafInterval } from "ahooks";
-import graphql from "babel-plugin-relay/macro";
-import { useLazyLoadQuery } from "react-relay";
-import {
-  ServingListPageQuery,
-  ServingListPageQuery$data,
-} from "./__generated__/ServingListPageQuery.graphql";
-import {
-  CheckOutlined,
-  CloseOutlined,
-  DeleteOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
-import { Link } from "react-router-dom";
-import _ from "lodash";
+} from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
+import { Link } from 'react-router-dom';
 
 // FIXME: need to apply filtering type of service later
-type TabKey = "services"; //  "running" | "finished" | "others";
+type TabKey = 'services'; //  "running" | "finished" | "others";
 
-type Endpoint = NonNullable<
+export type Endpoint = NonNullable<
   NonNullable<
     NonNullable<
-      NonNullable<ServingListPageQuery$data>["endpoint_list"]
-    >["items"]
+      NonNullable<ServingListPageQuery$data>['endpoint_list']
+    >['items']
   >[0]
 >;
 
@@ -50,6 +57,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { token } = theme.useToken();
   const curProject = useCurrentProjectValue();
   const [isOpenServiceLauncher, setIsOpenServiceLauncher] = useState(false);
+  const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const [selectedModelService, setSelectedModelService] = useState<Endpoint>();
   const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] =
     useState(false);
@@ -69,12 +77,173 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     setIsOpenModelServiceTerminatingModal,
   ] = useState(false);
   const [servicesFetchKey, updateServicesFetchKey] =
-    useUpdatableState("initial-fetch");
+    useUpdatableState('initial-fetch');
   // FIXME: need to apply filtering type of service later
-  const [selectedTab, setSelectedTab] = useState<TabKey>("services");
+  const [selectedTab, setSelectedTab] = useState<TabKey>('services');
   // const [selectedGeneration, setSelectedGeneration] = useState<
   //   "current" | "next"
   // >("next");
+
+  const columns: ColumnsType<Endpoint> = [
+    {
+      title: t('modelService.EndpointName'),
+      dataIndex: 'endpoint_id',
+      key: 'endpointName',
+      fixed: 'left',
+      render: (endpoint_id, row) => (
+        <Link to={'/serving/' + endpoint_id}>{row.name}</Link>
+      ),
+    },
+    {
+      title: t('modelService.EndpointId'),
+      dataIndex: 'endpoint_id',
+      key: 'endpoint_id',
+      width: 310,
+      render: (endpoint_id) => (
+        <Typography.Text code>{endpoint_id}</Typography.Text>
+      ),
+    },
+    {
+      title: t('modelService.ServiceEndpoint'),
+      dataIndex: 'endpoint_id',
+      key: 'url',
+      render: (endpoint_id, row) =>
+        row.url ? (
+          <Typography.Link copyable href={row.url} target="_blank">
+            {row.url}
+          </Typography.Link>
+        ) : (
+          '-'
+        ),
+    },
+    {
+      title: t('modelService.Controls'),
+      dataIndex: 'controls',
+      key: 'controls',
+      render: (text, row) => (
+        <Flex direction="row" align="stretch">
+          <Button
+            type="text"
+            icon={<SettingOutlined />}
+            style={
+              row.desired_session_count < 0 ||
+              row.status?.toLowerCase() === 'destroying'
+                ? undefined
+                : {
+                    color: '#29b6f6',
+                  }
+            }
+            disabled={
+              row.desired_session_count < 0 ||
+              row.status?.toLowerCase() === 'destroying'
+            }
+            onClick={() => {
+              setIsOpenModelServiceSettingModal(true);
+              setSelectedModelService(row);
+            }}
+          />
+          <Button
+            type="text"
+            icon={
+              <DeleteOutlined
+                style={
+                  row.desired_session_count < 0 ||
+                  row.status?.toLowerCase() === 'destroying'
+                    ? undefined
+                    : {
+                        color: token.colorError,
+                      }
+                }
+              />
+            }
+            disabled={
+              row.desired_session_count < 0 ||
+              row.status?.toLowerCase() === 'destroying'
+            }
+            onClick={() => {
+              setIsOpenModelServiceTerminatingModal(true);
+              setSelectedModelService(row);
+            }}
+          />
+        </Flex>
+      ),
+    },
+    {
+      title: t('modelService.Status'),
+      key: 'status',
+      render: (text, row) => <EndpointStatusTag endpointFrgmt={row} />,
+    },
+    ...(baiClient.is_admin
+      ? [
+          {
+            title: t('modelService.Owner'),
+            dataIndex: 'created_user',
+            key: 'session_owner',
+            render: (created_user: string) => created_user,
+          },
+        ]
+      : []),
+    {
+      title: t('modelService.CreatedAt'),
+      dataIndex: 'created_at',
+      key: 'createdAt',
+      render: (created_at) => {
+        return dayjs(created_at).format('ll LT');
+      },
+      defaultSortOrder: 'descend',
+      sortDirections: ['descend', 'ascend', 'descend'],
+      sorter: (a, b) => {
+        const date1 = dayjs(a.created_at);
+        const date2 = dayjs(b.created_at);
+        return date1.diff(date2);
+      },
+    },
+    {
+      title: t('modelService.DesiredSessionCount'),
+      dataIndex: 'desired_session_count',
+      key: 'desiredSessionCount',
+      render: (desired_session_count) => {
+        return desired_session_count < 0 ? '-' : desired_session_count;
+      },
+    },
+    {
+      title: (
+        <Flex direction="column" align="start">
+          {t('modelService.RoutingsCount')}
+          <br />
+          <Typography.Text type="secondary" style={{ fontWeight: 'normal' }}>
+            ({t('modelService.Active/Total')})
+          </Typography.Text>
+        </Flex>
+      ),
+      // dataIndex: "active_route_count",
+      key: 'routingCount',
+      render: (text, row) => {
+        return (
+          _.filter(row.routings, (r) => r?.status === 'HEALTHY').length +
+          ' / ' +
+          row.routings?.length
+        );
+        // [r for r in endpoint.routings if r.status == RouteStatus.HEALTHY]
+      },
+    },
+    {
+      title: t('modelService.Public'),
+      key: 'public',
+      render: (text, row) =>
+        row.open_to_public ? (
+          <CheckOutlined style={{ color: token.colorSuccess }} />
+        ) : (
+          <CloseOutlined style={{ color: token.colorTextSecondary }} />
+        ),
+    },
+  ];
+  const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
+    'backendaiwebui.ServingListPage.displayedColumnKeys',
+    {
+      defaultValue: columns.map((column) => _.toString(column.key)),
+    },
+  );
 
   useRafInterval(() => {
     startTransitionWithoutPendingState(() => {
@@ -83,6 +252,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   }, 7000);
 
   const { endpoint_list: modelServiceList } =
+    // TODO: need to convert LazyLoadQuery to pagination query with option
     useLazyLoadQuery<ServingListPageQuery>(
       graphql`
         query ServingListPageQuery(
@@ -103,11 +273,14 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               image
               model
               domain
+              status
               project
               resource_group
               resource_slots
               url
               open_to_public
+              created_at @since(version: "23.09.0")
+              created_user
               desired_session_count @required(action: NONE)
               routings {
                 routing_id
@@ -117,6 +290,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 status
               }
               ...ModelServiceSettingModal_endpoint
+              ...EndpointStatusTagFragment
             }
           }
         }
@@ -128,14 +302,14 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       },
       {
         fetchPolicy:
-          servicesFetchKey === "initial-fetch"
-            ? "store-and-network"
-            : "network-only",
+          servicesFetchKey === 'initial-fetch'
+            ? 'store-and-network'
+            : 'network-only',
         fetchKey: servicesFetchKey,
-      }
+      },
     );
 
-  const sortedEndpointList = _.sortBy(modelServiceList?.items, "name");
+  const sortedEndpointList = _.sortBy(modelServiceList?.items, 'name');
 
   // FIXME: struggling with sending data when active tab changes!
   // const runningModelServiceList = modelServiceList?.filter(
@@ -149,8 +323,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const terminateModelServiceMutation = useTanMutation({
     mutationFn: () => {
       return baiSignedRequestWithPromise({
-        method: "DELETE",
-        url: "/services/" + selectedModelService?.endpoint_id,
+        method: 'DELETE',
+        url: '/services/' + selectedModelService?.endpoint_id,
         client: baiClient,
       });
     },
@@ -180,7 +354,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       <Flex
         direction="column"
         align="stretch"
-        style={{ padding: token.padding, gap: token.margin }}
+        style={{ padding: token.padding }}
+        gap={'xs'}
       >
         {/* <Card bordered title={t("summary.ResourceStatistics")}>
           <p>SessionList</p>
@@ -194,14 +369,14 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               onChange={(key) => setSelectedTab(key as TabKey)}
               tabBarStyle={{ marginBottom: 0 }}
               style={{
-                width: "100%",
+                width: '100%',
                 paddingLeft: token.paddingMD,
                 paddingRight: token.paddingMD,
                 borderTopLeftRadius: token.borderRadius,
                 borderTopRightRadius: token.borderRadius,
               }}
               items={[
-                { key: "services", label: t("modelService.Services") },
+                { key: 'services', label: t('modelService.Services') },
                 // FIXME: need to apply filtering type of service later
                 // {
                 //   key: "running",
@@ -224,12 +399,12 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                       setIsOpenServiceLauncher(true);
                     }}
                   >
-                    {t("modelService.StartService")}
+                    {t('modelService.StartService')}
                   </Button>
                 ),
               }}
             />
-            {/* <Button type="ghost" icon={<MoreOutlined />} /> */}
+            {/* <Button type="text" icon={<MoreOutlined />} /> */}
           </Flex>
           {/* <Button type="primary" icon={<PoweroffOutlined />}>
           시작
@@ -259,125 +434,13 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             /> */}
             <Table
               loading={isRefetchPending}
+              scroll={{ x: 'max-content' }}
+              rowKey={'endpoint_id'}
               dataSource={(sortedEndpointList || []) as Endpoint[]}
-              columns={[
-                {
-                  title: t("modelService.EndpointName"),
-                  dataIndex: "endpoint_id",
-                  fixed: "left",
-                  render: (endpoint_id, row) => (
-                    <Link to={"/serving/" + endpoint_id}>{row.name}</Link>
-                  ),
-                },
-                {
-                  title: t("modelService.EndpointId"),
-                  dataIndex: "endpoint_id",
-                  width: 310,
-                  render: (endpoint_id) => (
-                    <Typography.Text code>{endpoint_id}</Typography.Text>
-                  ),
-                },
-                {
-                  title: t("modelService.Controls"),
-                  dataIndex: "controls",
-                  render: (text, row) => (
-                    <Flex direction="row" align="stretch">
-                      <Button
-                        type="text"
-                        icon={<SettingOutlined />}
-                        style={
-                          row.desired_session_count > 0
-                            ? {
-                                color: "#29b6f6",
-                              }
-                            : undefined
-                        }
-                        disabled={row.desired_session_count < 0}
-                        onClick={() => {
-                          setIsOpenModelServiceSettingModal(true);
-                          setSelectedModelService(row);
-                        }}
-                      />
-                      <Button
-                        type="text"
-                        icon={
-                          <DeleteOutlined
-                            style={
-                              row.desired_session_count > 0
-                                ? {
-                                    color: token.colorError,
-                                  }
-                                : undefined
-                            }
-                          />
-                        }
-                        disabled={row.desired_session_count < 0}
-                        onClick={() => {
-                          setIsOpenModelServiceTerminatingModal(true);
-                          setSelectedModelService(row);
-                        }}
-                      />
-                    </Flex>
-                  ),
-                },
-                {
-                  title: t("modelService.Status"),
-                  dataIndex: "status",
-                  render: (text, row) => (
-                    <Tag
-                      color={applyStatusColor(
-                        row.desired_session_count > 0 ? "RUNNING" : "TERMINATED"
-                      )}
-                    >
-                      {row.desired_session_count > 0 ? "RUNNING" : "TERMINATED"}
-                    </Tag>
-                  ),
-                },
-                {
-                  title: t("modelService.DesiredSessionCount"),
-                  dataIndex: "desired_session_count",
-                  render: (desired_session_count) => {
-                    return desired_session_count < 0
-                      ? "-"
-                      : desired_session_count;
-                  },
-                },
-                {
-                  title: (
-                    <Flex direction="column" align="start">
-                      {t("modelService.RoutingsCount")}
-                      <br />
-                      <Typography.Text
-                        type="secondary"
-                        style={{ fontWeight: "normal" }}
-                      >
-                        ({t("modelService.Active/Total")})
-                      </Typography.Text>
-                    </Flex>
-                  ),
-                  // dataIndex: "active_route_count",
-                  render: (text, row) => {
-                    return (
-                      _.filter(row.routings, (r) => r?.status === "healthy")
-                        .length +
-                      " / " +
-                      row.routings?.length
-                    );
-                    // [r for r in endpoint.routings if r.status == RouteStatus.HEALTHY]
-                  },
-                },
-                {
-                  title: t("modelService.Public"),
-                  render: (text, row) =>
-                    row.open_to_public ? (
-                      <CheckOutlined style={{ color: token.colorSuccess }} />
-                    ) : (
-                      <CloseOutlined
-                        style={{ color: token.colorTextSecondary }}
-                      />
-                    ),
-                },
-              ]}
+              columns={columns.filter(
+                (column) =>
+                  displayedColumnKeys?.includes(_.toString(column.key)),
+              )}
               pagination={false}
               // pagination={{
               //   pageSize: paginationState.pageSize,
@@ -399,10 +462,19 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             />
           </Suspense>
         </Flex>
+        <Flex justify="end">
+          <Button
+            type="text"
+            icon={<SettingOutlined />}
+            onClick={() => {
+              setIsOpenColumnsSetting(true);
+            }}
+          />
+        </Flex>
       </Flex>
-      <Modal
+      <BAIModal
         open={isOpenModelServiceTerminatingModal}
-        title={t("dialog.title.LetsDouble-Check")}
+        title={t('dialog.title.LetsDouble-Check')}
         okButtonProps={{
           loading: terminateModelServiceMutation.isLoading,
         }}
@@ -416,7 +488,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               setIsOpenModelServiceTerminatingModal(false);
             },
             onError: (err) => {
-              console.log("terminateModelServiceMutation Error", err);
+              console.log('terminateModelServiceMutation Error', err);
             },
           });
         }}
@@ -426,13 +498,13 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       >
         <Flex direction="column" align="stretch" justify="center">
           <p>
-            {t("modelService.YouAreAboutToTerminate") +
-              (selectedModelService?.name || "") +
-              "."}
+            {t('modelService.YouAreAboutToTerminate') +
+              (selectedModelService?.name || '') +
+              '.'}
           </p>
-          <p>{t("dialog.ask.DoYouWantToProceed")}</p>
+          <p>{t('dialog.ask.DoYouWantToProceed')}</p>
         </Flex>
-      </Modal>
+      </BAIModal>
       <ModelServiceSettingModal
         open={isOpenModelServiceSettingModal}
         onRequestClose={(success) => {
@@ -456,21 +528,18 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
           }
         }}
       />
+      <TableColumnsSettingModal
+        open={isOpenColumnsSetting}
+        onRequestClose={(values) => {
+          values?.selectedColumnKeys &&
+            setDisplayedColumnKeys(values?.selectedColumnKeys);
+          setIsOpenColumnsSetting(false);
+        }}
+        columns={columns}
+        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
+      />
     </>
   );
-};
-
-const applyStatusColor = (status = "") => {
-  let color = "default";
-  switch (status.toUpperCase()) {
-    case "RUNNING":
-      color = "success";
-      break;
-    // case 'TERMINATED':
-    //   color = 'default';
-    //   break;
-  }
-  return color;
 };
 
 export default ServingListPage;

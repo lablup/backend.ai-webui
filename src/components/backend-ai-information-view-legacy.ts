@@ -2,23 +2,23 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-
-import {BackendAIPage} from './backend-ai-page';
-
-import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-
-import '@material/mwc-icon/mwc-icon';
-
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
 import './lablup-activity-panel';
+import '@material/mwc-icon/mwc-icon';
+import { css, CSSResultGroup, html } from 'lit';
+import {
+  get as _text,
+  translate as _t,
+  translateUnsafeHTML as _tr,
+} from 'lit-translate';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Backend.AI Information View
@@ -35,22 +35,22 @@ import './lablup-activity-panel';
 
 @customElement('backend-ai-information-view-legacy')
 export default class BackendAiInformationViewLegacy extends BackendAIPage {
-  @property({type: Object}) notification = Object();
-  @property({type: String}) manager_version = '';
-  @property({type: String}) manager_version_latest = '';
-  @property({type: String}) webui_version = '';
-  @property({type: String}) api_version = '';
-  @property({type: String}) docker_version = '';
-  @property({type: String}) pgsql_version = '';
-  @property({type: String}) redis_version = '';
-  @property({type: String}) etcd_version = '';
-  @property({type: Boolean}) license_valid = false;
-  @property({type: String}) license_type = '';
-  @property({type: String}) license_licensee = '';
-  @property({type: String}) license_key = '';
-  @property({type: String}) license_expiration = '';
-  @property({type: Boolean}) account_changed = true;
-  @property({type: Boolean}) use_ssl = true;
+  @property({ type: Object }) notification = Object();
+  @property({ type: String }) manager_version = '';
+  @property({ type: String }) manager_version_latest = '';
+  @property({ type: String }) webui_version = '';
+  @property({ type: String }) api_version = '';
+  @property({ type: String }) docker_version = '';
+  @property({ type: String }) pgsql_version = '';
+  @property({ type: String }) redis_version = '';
+  @property({ type: String }) etcd_version = '';
+  @property({ type: Boolean }) license_valid = false;
+  @property({ type: String }) license_type = '';
+  @property({ type: String }) license_licensee = '';
+  @property({ type: String }) license_key = '';
+  @property({ type: String }) license_expiration = '';
+  @property({ type: Boolean }) account_changed = true;
+  @property({ type: Boolean }) use_ssl = true;
 
   static get styles(): CSSResultGroup {
     return [
@@ -126,7 +126,8 @@ export default class BackendAiInformationViewLegacy extends BackendAIPage {
             width: 35%;
           }
         }
-      `];
+      `,
+    ];
   }
 
   render() {
@@ -135,7 +136,9 @@ export default class BackendAiInformationViewLegacy extends BackendAIPage {
       <link rel="stylesheet" href="resources/custom.css">
       <div class="horizontal layout flex wrap">
         <div class="vertical layout">
-          <lablup-activity-panel title="${_t('information.Core')}" horizontalsize="1x">
+          <lablup-activity-panel title="${_t(
+            'information.Core',
+          )}" horizontalsize="1x">
             <div slot="message">
               <div class="horizontal flex layout wrap setting-item">
                 <div class="vertical center-justified layout setting-desc-shrink" style="margin-right: 65px;">
@@ -143,8 +146,16 @@ export default class BackendAiInformationViewLegacy extends BackendAIPage {
                 </div>
                 <div class="vertical center-justified layout">
                   Backend.AI ${this.manager_version}
-                  <lablup-shields app="${_t('information.Installation')}" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
-                  <lablup-shields app="${_t('information.LatestRelease')}" color="darkgreen" description="${this.manager_version_latest}" ui="flat"></lablup-shields>
+                  <lablup-shields app="${_t(
+                    'information.Installation',
+                  )}" color="darkgreen" description="${
+                    this.manager_version
+                  }" ui="flat"></lablup-shields>
+                  <lablup-shields app="${_t(
+                    'information.LatestRelease',
+                  )}" color="darkgreen" description="${
+                    this.manager_version_latest
+                  }" ui="flat"></lablup-shields>
                 </div>
               </div>
               <div class="horizontal flex layout wrap setting-item">
@@ -161,12 +172,24 @@ export default class BackendAiInformationViewLegacy extends BackendAIPage {
             <div slot="message">
               <div class="horizontal flex layout wrap setting-item">
                 <div class="vertical center-justified layout setting-desc">
-                  <div class="title">${_t('information.DefaultAdministratorAccountChanged')}</div>
-                  <div class="description">${_t('information.DescDefaultAdministratorAccountChanged')}
+                  <div class="title">${_t(
+                    'information.DefaultAdministratorAccountChanged',
+                  )}</div>
+                  <div class="description">${_t(
+                    'information.DescDefaultAdministratorAccountChanged',
+                  )}
                   </div>
                 </div>
                 <div class="horizontal center end-justified layout" style="width:30%;">
-                ${this.account_changed ? html`<mwc-icon>done</mwc-icon>` : html`<mwc-icon>warning</mwc-icon>`}
+                ${
+                  this.account_changed
+                    ? html`
+                        <mwc-icon>done</mwc-icon>
+                      `
+                    : html`
+                        <mwc-icon>warning</mwc-icon>
+                      `
+                }
                 </div>
               </div>
               <div class="horizontal flex layout wrap setting-item">
@@ -176,7 +199,15 @@ export default class BackendAiInformationViewLegacy extends BackendAIPage {
                   </div>
                 </div>
                 <div class="horizontal center end-justified layout" style="width:30%;">
-                ${this.use_ssl ? html`<mwc-icon>done</mwc-icon>` : html`<mwc-icon class="fg red">warning</mwc-icon>`}
+                ${
+                  this.use_ssl
+                    ? html`
+                        <mwc-icon>done</mwc-icon>
+                      `
+                    : html`
+                        <mwc-icon class="fg red">warning</mwc-icon>
+                      `
+                }
                 </div>
               </div>
             </div>
@@ -197,7 +228,9 @@ export default class BackendAiInformationViewLegacy extends BackendAIPage {
             <div class="horizontal flex layout wrap setting-item-bottom-expand">
               <div class="vertical center-justified layout setting-desc">
                 <div class="title">${_t('information.PostgreSQLVersion')}</div>
-                <div class="description">${_tr('information.DescPostgreSQLVersion')}
+                <div class="description">${_tr(
+                  'information.DescPostgreSQLVersion',
+                )}
                 </div>
               </div>
               <div class="horizontal center end-justified layout setting-label">
@@ -226,7 +259,9 @@ export default class BackendAiInformationViewLegacy extends BackendAIPage {
             </div>
           </div>
         </lablup-activity-panel>
-        <lablup-activity-panel title="${_t('information.License')}" horizontalsize="2x">
+        <lablup-activity-panel title="${_t(
+          'information.License',
+        )}" horizontalsize="2x">
           <div slot="message">
             <div class="horizontal flex layout wrap setting-item">
               <div class="vertical center-justified layout setting-desc">
@@ -235,7 +270,15 @@ export default class BackendAiInformationViewLegacy extends BackendAIPage {
                 </div>
               </div>
               <div class="horizontal center end-justified layout" style="width:30%;">
-              ${this.license_valid ? html`<mwc-icon>done</mwc-icon>` : html`<mwc-icon class="fg red">warning</mwc-icon>`}
+              ${
+                this.license_valid
+                  ? html`
+                      <mwc-icon>done</mwc-icon>
+                    `
+                  : html`
+                      <mwc-icon class="fg red">warning</mwc-icon>
+                    `
+              }
               </div>
             </div>
             <div class="horizontal flex layout wrap setting-item">
@@ -246,7 +289,11 @@ export default class BackendAiInformationViewLegacy extends BackendAIPage {
               </div>
               <div class="horizontal center end-justified layout setting-label">
                 <p class="label">
-                  ${this.license_type === 'fixed' ? _t('information.FixedLicense') : _t('information.DynamicLicense')}
+                  ${
+                    this.license_type === 'fixed'
+                      ? _t('information.FixedLicense')
+                      : _t('information.DynamicLicense')
+                  }
                 </p>
               </div>
             </div>
@@ -289,11 +336,19 @@ export default class BackendAiInformationViewLegacy extends BackendAIPage {
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
 
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null) {
-      document.addEventListener('backend-ai-connected', () => {
-        this.updateInformation();
-      }, true);
-    } else { // already connected
+    if (
+      typeof globalThis.backendaiclient === 'undefined' ||
+      globalThis.backendaiclient === null
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        () => {
+          this.updateInformation();
+        },
+        true,
+      );
+    } else {
+      // already connected
       this.updateInformation();
     }
   }
@@ -306,19 +361,22 @@ export default class BackendAiInformationViewLegacy extends BackendAIPage {
   }
 
   _updateLicenseInfo() {
-    globalThis.backendaiclient.enterprise.getLicense().then((response) => {
-      this.license_valid = response.valid;
-      this.license_type = response.type;
-      this.license_licensee = response.licensee;
-      this.license_key = response.licenseKey;
-      this.license_expiration = response.expiration;
-    }).catch((err) => {
-      this.license_valid = false;
-      this.license_type = _text('information.CannotRead');
-      this.license_licensee = _text('information.CannotRead');
-      this.license_key = _text('information.CannotRead');
-      this.license_expiration = _text('information.CannotRead');
-    });
+    globalThis.backendaiclient.enterprise
+      .getLicense()
+      .then((response) => {
+        this.license_valid = response.valid;
+        this.license_type = response.type;
+        this.license_licensee = response.licensee;
+        this.license_key = response.licenseKey;
+        this.license_expiration = response.expiration;
+      })
+      .catch((err) => {
+        this.license_valid = false;
+        this.license_type = _text('information.CannotRead');
+        this.license_licensee = _text('information.CannotRead');
+        this.license_key = _text('information.CannotRead');
+        this.license_expiration = _text('information.CannotRead');
+      });
   }
 
   /**
@@ -332,11 +390,20 @@ export default class BackendAiInformationViewLegacy extends BackendAIPage {
     this.pgsql_version = _text('information.Compatible');
     this.redis_version = _text('information.Compatible');
     this.etcd_version = _text('information.Compatible');
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._updateLicenseInfo();
-      }, true);
-    } else { // already connected
+    if (
+      typeof globalThis.backendaiclient === 'undefined' ||
+      globalThis.backendaiclient === null ||
+      globalThis.backendaiclient.ready === false
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        () => {
+          this._updateLicenseInfo();
+        },
+        true,
+      );
+    } else {
+      // already connected
       this._updateLicenseInfo();
     }
 

@@ -2,19 +2,16 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import {get as _text} from 'lit-translate';
-import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-
-import '@material/mwc-button';
-
-import {navigate} from '../backend-ai-app';
-import {store} from '../store';
-import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
-import '@material/mwc-icon-button';
+import { navigate } from '../backend-ai-app';
 import '../plastics/mwc/mwc-snackbar';
-import {BackendAiStyles} from './backend-ai-general-styles';
+import { store } from '../store';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
+import '@material/mwc-button';
+import '@material/mwc-icon-button';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { get as _text } from 'lit-translate';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Lablup Notification
@@ -31,26 +28,26 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 
 @customElement('lablup-notification')
 export default class LablupNotification extends LitElement {
-  @property({type: String}) text = '';
-  @property({type: String}) detail = '';
-  @property({type: String}) url = '';
-  @property({type: String}) message = '';
-  @property({type: String}) requestUrl = '';
-  @property({type: String}) status = '';
-  @property({type: String}) timestamp = '';
-  @property({type: Object}) indicator;
-  @property({type: Array}) notifications;
-  @property({type: Array}) notificationstore;
-  @property({type: Boolean, reflect: true}) active = false;
-  @property({type: Boolean}) supportDesktopNotification = false;
-  @property({type: Number}) step = 0;
-  @property({type: Object}) newDesktopNotification = Object();
-  @property({type: Object}) options = Object();
+  @property({ type: String }) text = '';
+  @property({ type: String }) detail = '';
+  @property({ type: String }) url = '';
+  @property({ type: String }) message = '';
+  @property({ type: String }) requestUrl = '';
+  @property({ type: String }) status = '';
+  @property({ type: String }) timestamp = '';
+  @property({ type: Object }) indicator;
+  @property({ type: Array }) notifications;
+  @property({ type: Array }) notificationstore;
+  @property({ type: Boolean, reflect: true }) active = false;
+  @property({ type: Boolean }) supportDesktopNotification = false;
+  @property({ type: Number }) step = 0;
+  @property({ type: Object }) newDesktopNotification = Object();
+  @property({ type: Object }) options = Object();
 
   constructor() {
     super();
     this.options = {
-      desktop_notification: true
+      desktop_notification: true,
     };
     this.notifications = [];
   }
@@ -70,7 +67,10 @@ export default class LablupNotification extends LitElement {
           --mdc-typography-font-family: var(--general-font-family);
           --mdc-typography-body2-font-family: var(--general-font-family);
           --mdc-snackbar-label-color: yellow;
-          --mdc-snackbar-action-color: var(--general-sidebar-selected-color, #38bd73);
+          --mdc-snackbar-action-color: var(
+            --general-sidebar-selected-color,
+            #38bd73
+          );
           --mdc-typography-body2-font-family: var(--general-font-family);
           position: fixed;
           right: 20px;
@@ -78,7 +78,8 @@ export default class LablupNotification extends LitElement {
         mwc-button {
           --mdc-theme-primary: var(--general-sidebar-selected-color, #38bd73);
         }
-      `];
+      `,
+    ];
   }
 
   render() {
@@ -122,7 +123,9 @@ export default class LablupNotification extends LitElement {
    * @param {string | boolean} default_value - Default value if setting does not exist
    * */
   _readUserSetting(name, default_value = true) {
-    const value: string | null = localStorage.getItem('backendaiwebui.usersetting.' + name);
+    const value: string | null = localStorage.getItem(
+      'backendaiwebui.usersetting.' + name,
+    );
     if (value !== null && value != '' && value != '""') {
       if (value === 'false') {
         this.options[name] = false;
@@ -156,7 +159,9 @@ export default class LablupNotification extends LitElement {
     this._hideNotification(e);
     const currentPage = globalThis.location.toString().split(/[/]+/).pop();
     globalThis.history.pushState({}, '', '/usersettings');
-    store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'logs'}));
+    store.dispatch(
+      navigate(decodeURIComponent('/usersettings'), { tab: 'logs' }),
+    );
     if (currentPage && currentPage === 'usersettings') {
       const event = new CustomEvent('backend-ai-usersettings-logs', {});
       document.dispatchEvent(event);
@@ -186,7 +191,7 @@ export default class LablupNotification extends LitElement {
     if (this.text === '_DISCONNECTED') {
       return;
     }
-    const snackbar = document.querySelector('mwc-snackbar[timeoutMs=\'-1\']');
+    const snackbar = document.querySelector("mwc-snackbar[timeoutMs='-1']");
     // const snackbar = document.querySelector('wl-snackbar[persistent=\'true\']');
     if (snackbar) {
       this.notifications = []; // Reset notifications
@@ -196,7 +201,11 @@ export default class LablupNotification extends LitElement {
     const notification = document.createElement('mwc-snackbar');
     notification.labelText = this.text;
     if (this.detail != '') {
-      notification.labelText = notification.labelText + '<div style="display:none;"> : ' + this.detail + '</div>';
+      notification.labelText =
+        notification.labelText +
+        '<div style="display:none;"> : ' +
+        this.detail +
+        '</div>';
     }
     if (Object.keys(log).length !== 0) {
       console.log(log);
@@ -207,15 +216,24 @@ export default class LablupNotification extends LitElement {
       const more_button = document.createElement('mwc-button');
       // more_button.style.fontSize = 12 + 'px';
       more_button.setAttribute('slot', 'action');
-      more_button.setAttribute('style', '--mdc-theme-primary: var(--general-sidebar-selected-color, #38bd73);');
+      more_button.setAttribute(
+        'style',
+        '--mdc-theme-primary: var(--general-sidebar-selected-color, #38bd73);',
+      );
       if (this.url != '') {
         more_button.label = _text('notification.Visit');
         //more_button.innerHTML = _text('notification.Visit');
-        more_button.addEventListener('click', this._openURL.bind(this, this.url));
+        more_button.addEventListener(
+          'click',
+          this._openURL.bind(this, this.url),
+        );
       } else {
         more_button.label = _text('notification.SeeDetail');
         // more_button.textContent = _text('notification.SeeDetail');
-        more_button.addEventListener('click', this._moreNotification.bind(this));
+        more_button.addEventListener(
+          'click',
+          this._moreNotification.bind(this),
+        );
       }
       notification.appendChild(more_button);
     }
@@ -232,7 +250,10 @@ export default class LablupNotification extends LitElement {
       this._createCloseButton(notification);
     }
     // notification.setAttribute('backdrop', '');
-    notification.style.setProperty('--mdc-snackbar-bottom', (20 + 55 * this.step) + 'px');
+    notification.style.setProperty(
+      '--mdc-snackbar-bottom',
+      20 + 55 * this.step + 'px',
+    );
     //notification.style.position = 'fixed';
     //(notification.querySelector('span') as HTMLElement).style.overflowX = 'hidden';
     //(notification.querySelector('span') as HTMLElement).style.maxWidth = '70vw';
@@ -242,8 +263,11 @@ export default class LablupNotification extends LitElement {
     //notification.style.fontFamily = '\'Ubuntu\', Roboto, sans-serif';
     notification.style.zIndex = '12345678';
     // TODO : change to use --general-font-family variable.
-    notification.style.setProperty('--mdc-typography-body2-font-family','Ubuntu, Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif');
-    notification.style.setProperty('--mdc-snackbar-action-color','#64dc17');
+    notification.style.setProperty(
+      '--mdc-typography-body2-font-family',
+      'Ubuntu, Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif',
+    );
+    notification.style.setProperty('--mdc-snackbar-action-color', '#64dc17');
     const d = new Date();
     notification.setAttribute('created', d.toLocaleString());
     document.body.appendChild(notification);
@@ -268,7 +292,7 @@ export default class LablupNotification extends LitElement {
     }
     const options = {
       body: body,
-      icon: icon
+      icon: icon,
     };
     this.newDesktopNotification = new Notification(title, options);
   }
@@ -304,7 +328,9 @@ export default class LablupNotification extends LitElement {
    * */
   gc() {
     if (this.notifications.length > 0) {
-      const opened_notifications = this.notifications.filter((noti: any) => noti.open === true);
+      const opened_notifications = this.notifications.filter(
+        (noti: any) => noti.open === true,
+      );
       this.notifications = opened_notifications;
       const event = new CustomEvent('backend-ai-notification-changed', {});
       document.dispatchEvent(event);

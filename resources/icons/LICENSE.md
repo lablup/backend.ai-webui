@@ -32,7 +32,7 @@ Icons from www.flaticon.com made by https://www.flaticon.com/authors/dave-gandy 
 Icon from Cern GitLab ( https://gitlab.cern.ch/linuxsupport/ceph-for-el6 ) under Apache 2.0 License.
  * ceph.png
 
-Icon from Github purestorage repo ( https://github.com/purestorage/helm-charts ) under Apache 2.0 License.
+Icon from GitHub purestorage repo ( https://github.com/purestorage/helm-charts ) under Apache 2.0 License.
  * purestorage.png
 
 Icon from flaticon by Pixel perfect ( https://www.flaticon.com/authors/pixel-perfect )

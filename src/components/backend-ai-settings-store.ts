@@ -2,10 +2,9 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-
-import {BackendAIPage} from './backend-ai-page';
+import { BackendAIPage } from './backend-ai-page';
+import { html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Backend.AI Setting Storage
@@ -15,15 +14,16 @@ import {BackendAIPage} from './backend-ai-page';
  */
 @customElement('backend-ai-settings-store')
 export default class BackendAiSettingsStore extends BackendAIPage {
-  @property({type: Object}) options = Object();
-  @property({type: Object}) imageInfo = Object();
-  @property({type: Object}) imageNames = Object();
-  @property({type: Object}) imageTagAlias = Object();
-  @property({type: Object}) imageTagReplace = Object();
+  @property({ type: Object }) options = Object();
+  @property({ type: Object }) imageInfo = Object();
+  @property({ type: Object }) imageNames = Object();
+  @property({ type: Object }) imageTagAlias = Object();
+  @property({ type: Object }) imageTagReplace = Object();
 
   constructor() {
     super();
-    this.options = { // Default option.
+    this.options = {
+      // Default option.
       'user.desktop_notification': true,
       'user.compact_sidebar': false,
       'user.preserve_login': false,
@@ -39,17 +39,20 @@ export default class BackendAiSettingsStore extends BackendAIPage {
     this._readSettings();
   }
 
-  _readSettings() { // Read all user settings.
+  _readSettings() {
+    // Read all user settings.
     for (let i = 0, len = localStorage.length; i < len; ++i) {
       if (localStorage.key(i)!.startsWith('backendaiwebui.settings')) {
-        const key = localStorage.key(i)!.replace('backendaiwebui.settings.', '');
+        const key = localStorage
+          .key(i)!
+          .replace('backendaiwebui.settings.', '');
         this._readSetting(key);
       }
     }
   }
 
   exists(name, namespace = 'user') {
-    return (namespace + '.' + name in this.options);
+    return namespace + '.' + name in this.options;
   }
 
   get(name: string, default_value: any = null, namespace = 'user') {
@@ -69,7 +72,9 @@ export default class BackendAiSettingsStore extends BackendAIPage {
   }
 
   _readSetting(name, default_value = true, namespace = 'user') {
-    const value: string | null = localStorage.getItem('backendaiwebui.settings.' + name);
+    const value: string | null = localStorage.getItem(
+      'backendaiwebui.settings.' + name,
+    );
     if (value !== null && value != '' && value != '""') {
       if (value === 'false') {
         this.options[name] = false;
@@ -87,19 +92,33 @@ export default class BackendAiSettingsStore extends BackendAIPage {
 
   _writeUserSetting(name, value, namespace) {
     if (value === false) {
-      localStorage.setItem('backendaiwebui.settings.' + namespace + '.' + name, 'false');
+      localStorage.setItem(
+        'backendaiwebui.settings.' + namespace + '.' + name,
+        'false',
+      );
     } else if (value === true) {
-      localStorage.setItem('backendaiwebui.settings.' + namespace + '.' + name, 'true');
+      localStorage.setItem(
+        'backendaiwebui.settings.' + namespace + '.' + name,
+        'true',
+      );
     } else if (typeof value === 'object') {
-      localStorage.setItem('backendaiwebui.settings.' + namespace + '.' + name, JSON.stringify(value));
+      localStorage.setItem(
+        'backendaiwebui.settings.' + namespace + '.' + name,
+        JSON.stringify(value),
+      );
     } else {
-      localStorage.setItem('backendaiwebui.settings.' + namespace + '.' + name, value);
+      localStorage.setItem(
+        'backendaiwebui.settings.' + namespace + '.' + name,
+        value,
+      );
     }
     this.options[namespace + '.' + name] = value;
   }
 
   _deleteUserSetting(name, namespace) {
-    localStorage.removeItem('backendaiwebui.settings.' + namespace + '.' + name);
+    localStorage.removeItem(
+      'backendaiwebui.settings.' + namespace + '.' + name,
+    );
     delete this.options[namespace + '.' + name];
     return true;
   }
@@ -115,8 +134,7 @@ export default class BackendAiSettingsStore extends BackendAIPage {
 
   render() {
     // language=HTML
-    return html`
-    `;
+    return html``;
   }
 }
 

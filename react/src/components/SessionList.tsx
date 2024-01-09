@@ -1,16 +1,16 @@
-import { Table, TableProps } from "antd";
-import React, { useDeferredValue } from "react";
-import { useLazyLoadQuery } from "react-relay";
-import graphql from "babel-plugin-relay/macro";
-import { SessionListQuery } from "./__generated__/SessionListQuery.graphql";
-import { useTranslation } from "react-i18next";
-import SessionInfoCell from "./SessionListColums/SessionInfoCell";
-import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import SessionInfoCell from './SessionListColums/SessionInfoCell';
+import { SessionListQuery } from './__generated__/SessionListQuery.graphql';
+import { Table, TableProps } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React, { useDeferredValue } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
 
 type Session = NonNullable<
-  SessionListQuery["response"]["compute_session_list"]
->["items"][0];
-interface SessionListProps extends Omit<TableProps<any>, "dataSource"> {
+  SessionListQuery['response']['compute_session_list']
+>['items'][0];
+interface SessionListProps extends Omit<TableProps<any>, 'dataSource'> {
   status?: string[];
   limit?: number;
   currentPage?: number;
@@ -26,20 +26,20 @@ const SessionList: React.FC<SessionListProps> = ({
   pageSize = 50,
   projectId,
   filter,
-  extraFetchKey = "",
+  extraFetchKey = '',
   ...tableProps
 }) => {
   const baiClient = useSuspendedBackendaiClient();
 
-  const [fetchKey, updateFetchKey] = useUpdatableState("initial-fetch");
+  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
   const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
   const { t } = useTranslation();
 
   if (
-    !baiClient.supports("avoid-hol-blocking") &&
-    status.includes("SCHEDULED")
+    !baiClient.supports('avoid-hol-blocking') &&
+    status.includes('SCHEDULED')
   ) {
-    status = status.filter((e) => e !== "SCHEDULED");
+    status = status.filter((e) => e !== 'SCHEDULED');
   }
 
   const { compute_session_list } = useLazyLoadQuery<SessionListQuery>(
@@ -85,16 +85,16 @@ const SessionList: React.FC<SessionListProps> = ({
     {
       limit: pageSize,
       offset: (currentPage - 1) * pageSize,
-      status: status?.join(","),
+      status: status?.join(','),
       group_id: projectId,
 
       // skipOnClients
-      skipClusterSize: !baiClient.supports("multi-container"),
+      skipClusterSize: !baiClient.supports('multi-container'),
     },
     {
       fetchKey: deferredMergedFetchKey,
-      fetchPolicy: "network-only",
-    }
+      fetchPolicy: 'network-only',
+    },
   );
 
   return (
@@ -103,7 +103,7 @@ const SessionList: React.FC<SessionListProps> = ({
         scroll={{ x: true }}
         columns={[
           {
-            title: t("session.SessionInfo"),
+            title: t('session.SessionInfo'),
             render(value, record, index) {
               console.log(record);
               return (
@@ -112,38 +112,38 @@ const SessionList: React.FC<SessionListProps> = ({
                   sessionFrgmt={record}
                   onRename={() => {
                     updateFetchKey(
-                      record.session_id + new Date().toISOString()
+                      record.session_id + new Date().toISOString(),
                     );
                   }}
                 />
               );
             },
-            fixed: "left",
+            fixed: 'left',
           },
           {
-            title: t("session.Status"),
-            dataIndex: "status",
+            title: t('session.Status'),
+            dataIndex: 'status',
           },
           {
-            title: t("general.Control"),
+            title: t('general.Control'),
           },
           {
-            title: t("session.Configuration"),
+            title: t('session.Configuration'),
           },
           {
-            title: t("session.Usage"),
+            title: t('session.Usage'),
           },
           {
-            title: t("session.Reservation"),
+            title: t('session.Reservation'),
           },
           {
-            title: t("session.Architecture"),
+            title: t('session.Architecture'),
           },
           {
-            title: t("session.SessionType"),
+            title: t('session.SessionType'),
           },
           {
-            title: t("session.Agent"),
+            title: t('session.Agent'),
           },
         ]}
         // @ts-ignore

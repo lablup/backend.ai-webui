@@ -2,27 +2,27 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
-import {BackendAIPage} from './backend-ai-page';
+import '../plastics/lablup-shields/lablup-shields';
+import {
+  IronFlex,
+  IronFlexAlignment,
+} from '../plastics/layout/iron-flex-layout-classes';
+import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import './backend-ai-list-status';
+import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-icon';
+import '@material/mwc-icon-button';
+import '@material/mwc-textfield';
 import '@vaadin/grid/vaadin-grid';
 import '@vaadin/grid/vaadin-grid-sort-column';
 import '@vaadin/item/vaadin-item';
-
-import '@material/mwc-textfield';
-import '@material/mwc-button/mwc-button';
-import '@material/mwc-icon-button';
-import '@material/mwc-icon';
-
-import './backend-ai-dialog';
-import './backend-ai-list-status';
-import '../plastics/lablup-shields/lablup-shields';
-import {default as PainKiller} from './backend-ai-painkiller';
-import {BackendAiStyles} from './backend-ai-general-styles';
-import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
+import { css, CSSResultGroup, html, render } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -32,17 +32,19 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 @customElement('backend-ai-resource-preset-list')
 class BackendAiResourcePresetList extends BackendAIPage {
-  @property({type: Array}) resourcePolicy = {};
-  @property({type: Boolean}) is_admin = false;
-  @property({type: Boolean, reflect: true}) active = false;
-  @property({type: Boolean}) gpu_allocatable = false;
-  @property({type: String}) gpuAllocationMode = 'device';
-  @property({type: String}) condition = '';
-  @property({type: String}) presetName = '';
-  @property({type: Object}) resourcePresets;
-  @property({type: String}) listCondition: StatusCondition = 'loading';
-  @property({type: Array}) _boundResourceRenderer = this.resourceRenderer.bind(this);
-  @property({type: Array}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({ type: Array }) resourcePolicy = {};
+  @property({ type: Boolean }) is_admin = false;
+  @property({ type: Boolean, reflect: true }) active = false;
+  @property({ type: Boolean }) gpu_allocatable = false;
+  @property({ type: String }) gpuAllocationMode = 'device';
+  @property({ type: String }) condition = '';
+  @property({ type: String }) presetName = '';
+  @property({ type: Object }) resourcePresets;
+  @property({ type: String }) listCondition: StatusCondition = 'loading';
+  @property({ type: Array }) _boundResourceRenderer =
+    this.resourceRenderer.bind(this);
+  @property({ type: Array }) _boundControlRenderer =
+    this.controlRenderer.bind(this);
   @query('#create-preset-name') createPresetNameInput!: TextField;
   @query('#create-cpu-resource') createCpuResourceInput!: TextField;
   @query('#create-ram-resource') createRamResourceInput!: TextField;
@@ -57,7 +59,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
   @query('#id-preset-name') presetNameInput!: TextField;
   @query('#create-preset-dialog') createPresetDialog!: BackendAIDialog;
   @query('#modify-template-dialog') modifyTemplateDialog!: BackendAIDialog;
-  @query('#delete-resource-preset-dialog') deleteResourcePresetDialog!: BackendAIDialog;
+  @query('#delete-resource-preset-dialog')
+  deleteResourcePresetDialog!: BackendAIDialog;
   @query('#list-status') private _listStatus!: BackendAIListStatus;
 
   constructor() {
@@ -111,7 +114,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
           --mdc-theme-primary: var(--paper-yellow-600) !important;
         }
 
-        mwc-button, mwc-button[unelevated] {
+        mwc-button,
+        mwc-button[unelevated] {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-theme-on-primary: var(--general-button-color);
@@ -131,10 +135,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-          border-bottom: 1px solid #DDD;
+          border-bottom: 1px solid #ddd;
         }
-
-      `];
+      `,
+    ];
   }
 
   resourceRenderer(root, column?, rowData?) {
@@ -143,60 +147,86 @@ class BackendAiResourcePresetList extends BackendAIPage {
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
             <mwc-icon class="fg green">developer_board</mwc-icon>
-            <span>${this._markIfUnlimited(rowData.item.resource_slots.cpu)}</span>
+            <span>
+              ${this._markIfUnlimited(rowData.item.resource_slots.cpu)}
+            </span>
             <span class="indicator">${_t('general.cores')}</span>
           </div>
           <div class="layout horizontal configuration">
             <mwc-icon class="fg green">memory</mwc-icon>
-            <span>${this._markIfUnlimited(rowData.item.resource_slots.mem_gib)}</span>
+            <span>
+              ${this._markIfUnlimited(rowData.item.resource_slots.mem_gib)}
+            </span>
             <span class="indicator">GiB</span>
           </div>
         </div>
         <div class="layout horizontal wrap center">
-        ${rowData.item.resource_slots['cuda.device'] ?
-    html`
-          <div class="layout horizontal configuration">
-            <mwc-icon class="fg green">view_module</mwc-icon>
-            <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.device'])}</span>
-            <span class="indicator">GPU</span>
-          </div>
-        ` : html``}
-        ${rowData.item.resource_slots['cuda.shares'] ?
-    html`
-          <div class="layout horizontal configuration">
-            <mwc-icon class="fg green">view_module</mwc-icon>
-            <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.shares'])}</span>
-            <span class="indicator">FGPU</span>
-          </div>
-        ` : html``}
-        ${rowData.item.shared_memory ?
-    html`
-          <div class="layout horizontal configuration">
-            <mwc-icon class="fg blue">memory</mwc-icon>
-            <span>${rowData.item.shared_memory_gib}</span>
-            <span class="indicator">GiB</span>
-          </div>
-        ` : html``}
+          ${rowData.item.resource_slots['cuda.device']
+            ? html`
+                <div class="layout horizontal configuration">
+                  <mwc-icon class="fg green">view_module</mwc-icon>
+                  <span>
+                    ${this._markIfUnlimited(
+                      rowData.item.resource_slots['cuda.device'],
+                    )}
+                  </span>
+                  <span class="indicator">GPU</span>
+                </div>
+              `
+            : html``}
+          ${rowData.item.resource_slots['cuda.shares']
+            ? html`
+                <div class="layout horizontal configuration">
+                  <mwc-icon class="fg green">view_module</mwc-icon>
+                  <span>
+                    ${this._markIfUnlimited(
+                      rowData.item.resource_slots['cuda.shares'],
+                    )}
+                  </span>
+                  <span class="indicator">FGPU</span>
+                </div>
+              `
+            : html``}
+          ${rowData.item.shared_memory
+            ? html`
+                <div class="layout horizontal configuration">
+                  <mwc-icon class="fg blue">memory</mwc-icon>
+                  <span>${rowData.item.shared_memory_gib}</span>
+                  <span class="indicator">GiB</span>
+                </div>
+              `
+            : html``}
         </div>
-      `, root
+      `,
+      root,
     );
   }
 
   controlRenderer(root, column?, rowData?) {
     render(
       html`
-        <div id="controls" class="layout horizontal flex center"
-            .preset-name="${rowData.item.name}">
-          ${this.is_admin ? html`
-            <mwc-icon-button class="fg blue controls-running"
-                             icon="settings"
-              @click="${(e) => this._launchResourcePresetDialog(e)}"></mwc-icon-button>
-            <mwc-icon-button class="fg red controls-running"
-                             icon="delete"
-              @click="${(e) => this._launchDeleteResourcePresetDialog(e)}"></mwc-icon-button>
-          ` : html``}
+        <div
+          id="controls"
+          class="layout horizontal flex center"
+          .preset-name="${rowData.item.name}"
+        >
+          ${this.is_admin
+            ? html`
+                <mwc-icon-button
+                  class="fg blue controls-running"
+                  icon="settings"
+                  @click="${(e) => this._launchResourcePresetDialog(e)}"
+                ></mwc-icon-button>
+                <mwc-icon-button
+                  class="fg red controls-running"
+                  icon="delete"
+                  @click="${(e) => this._launchDeleteResourcePresetDialog(e)}"
+                ></mwc-icon-button>
+              `
+            : html``}
         </div>
-      `, root
+      `,
+      root,
     );
   }
 
@@ -206,7 +236,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       html`
         <div>${idx}</div>
       `,
-      root
+      root,
     );
   }
 
@@ -217,64 +247,147 @@ class BackendAiResourcePresetList extends BackendAIPage {
         <h4 class="horizontal flex center center-justified layout">
           <span>${_t('resourcePreset.ResourcePresets')}</span>
           <span class="flex"></span>
-          <mwc-button raised id="add-resource-preset" icon="add" label="${_t('resourcePreset.CreatePreset')}" @click="${() => this._launchPresetAddDialog()}"></mwc-button>
+          <mwc-button
+            raised
+            id="add-resource-preset"
+            icon="add"
+            label="${_t('resourcePreset.CreatePreset')}"
+            @click="${() => this._launchPresetAddDialog()}"
+          ></mwc-button>
         </h4>
         <div class="list-wrapper">
-          <vaadin-grid theme="row-stripes column-borders compact" height-by-rows aria-label="Resource Policy list"
-                      .items="${this.resourcePresets}">
-            <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
-            <vaadin-grid-sort-column resizable path="name" header="${_t('resourcePreset.Name')}">
-            </vaadin-grid-sort-column>
-            <vaadin-grid-column width="150px" resizable header="${_t('resourcePreset.Resources')}" .renderer="${this._boundResourceRenderer}">
-            </vaadin-grid-column>
-            <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
-            </vaadin-grid-column>
+          <vaadin-grid
+            theme="row-stripes column-borders compact"
+            height-by-rows
+            aria-label="Resource Policy list"
+            .items="${this.resourcePresets}"
+          >
+            <vaadin-grid-column
+              width="40px"
+              flex-grow="0"
+              header="#"
+              text-align="center"
+              .renderer="${this._indexRenderer}"
+            ></vaadin-grid-column>
+            <vaadin-grid-sort-column
+              resizable
+              path="name"
+              header="${_t('resourcePreset.Name')}"
+            ></vaadin-grid-sort-column>
+            <vaadin-grid-column
+              width="150px"
+              resizable
+              header="${_t('resourcePreset.Resources')}"
+              .renderer="${this._boundResourceRenderer}"
+            ></vaadin-grid-column>
+            <vaadin-grid-column
+              resizable
+              header="${_t('general.Control')}"
+              .renderer="${this._boundControlRenderer}"
+            ></vaadin-grid-column>
           </vaadin-grid>
-          <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('resourcePreset.NoResourcePresetToDisplay')}"></backend-ai-list-status>
+          <backend-ai-list-status
+            id="list-status"
+            statusCondition="${this.listCondition}"
+            message="${_text('resourcePreset.NoResourcePresetToDisplay')}"
+          ></backend-ai-list-status>
         </div>
       </div>
-      <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog
+        id="modify-template-dialog"
+        fixed
+        backdrop
+        blockscrolling
+      >
         <span slot="title">${_t('resourcePreset.ModifyResourcePreset')}</span>
         <div slot="content">
           <form id="login-form">
             <fieldset>
-              <mwc-textfield type="text" name="preset_name" class="modify" id="id-preset-name"
-                          label="${_t('resourcePreset.PresetName')}"
-                          auto-validate required
-                          disabled
-                          error-message="${_t('data.Allowslettersnumbersand-_dot')}"></mwc-textfield>
+              <mwc-textfield
+                type="text"
+                name="preset_name"
+                class="modify"
+                id="id-preset-name"
+                label="${_t('resourcePreset.PresetName')}"
+                auto-validate
+                required
+                disabled
+                error-message="${_t('data.Allowslettersnumbersand-_dot')}"
+              ></mwc-textfield>
               <h4>${_t('resourcePreset.ResourcePreset')}</h4>
               <div class="horizontal center layout">
-                <mwc-textfield id="cpu-resource" class="modify" type="number" label="CPU"
-                    min="1" value="1" required validationMessage="${_t('resourcePreset.MinimumCPUUnit')}"></mwc-textfield>
-                <mwc-textfield id="ram-resource" class="modify" type="number" label="${_t('resourcePreset.RAM')}"
-                    min="1" value="1" required validationMessage="${_t('resourcePreset.MinimumMemUnit')}"></mwc-textfield>
+                <mwc-textfield
+                  id="cpu-resource"
+                  class="modify"
+                  type="number"
+                  label="CPU"
+                  min="1"
+                  value="1"
+                  required
+                  validationMessage="${_t('resourcePreset.MinimumCPUUnit')}"
+                ></mwc-textfield>
+                <mwc-textfield
+                  id="ram-resource"
+                  class="modify"
+                  type="number"
+                  label="${_t('resourcePreset.RAM')}"
+                  min="1"
+                  value="1"
+                  required
+                  validationMessage="${_t('resourcePreset.MinimumMemUnit')}"
+                ></mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <mwc-textfield id="gpu-resource" class="modify" type="number" label="GPU"
-                    min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></mwc-textfield>
-                <mwc-textfield id="fgpu-resource" class="modify" type="number" label="fGPU"
-                    min="0" value="0" step="0.01" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
+                <mwc-textfield
+                  id="gpu-resource"
+                  class="modify"
+                  type="number"
+                  label="GPU"
+                  min="0"
+                  value="0"
+                  ?disabled=${this.gpuAllocationMode === 'fractional'}
+                ></mwc-textfield>
+                <mwc-textfield
+                  id="fgpu-resource"
+                  class="modify"
+                  type="number"
+                  label="fGPU"
+                  min="0"
+                  value="0"
+                  step="0.01"
+                  ?disabled=${this.gpuAllocationMode !== 'fractional'}
+                ></mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <mwc-textfield id="shmem-resource" class="modify" type="number"
-                    label="${_t('resourcePreset.SharedMemory')}" min="0" step="0.01"
-                    validationMessage="${_t('resourcePreset.MinimumShmemUnit')}"></mwc-textfield>
+                <mwc-textfield
+                  id="shmem-resource"
+                  class="modify"
+                  type="number"
+                  label="${_t('resourcePreset.SharedMemory')}"
+                  min="0"
+                  step="0.01"
+                  validationMessage="${_t('resourcePreset.MinimumShmemUnit')}"
+                ></mwc-textfield>
               </div>
             </fieldset>
           </form>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
-              unelevated
-              fullwidth
-              icon="check"
-              label="${_t('button.SaveChanges')}"
-              @click="${() => this._modifyResourceTemplate()}">
-          </mwc-button>
+            unelevated
+            fullwidth
+            icon="check"
+            label="${_t('button.SaveChanges')}"
+            @click="${() => this._modifyResourceTemplate()}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="create-preset-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog
+        id="create-preset-dialog"
+        fixed
+        backdrop
+        blockscrolling
+      >
         <span slot="title">${_t('resourcePreset.CreateResourcePreset')}</span>
         <div slot="content">
           <mwc-textfield
@@ -291,52 +404,99 @@ class BackendAiResourcePresetList extends BackendAIPage {
           ></mwc-textfield>
           <h4>${_t('resourcePreset.ResourcePreset')}</h4>
           <div class="horizontal center layout">
-            <mwc-textfield id="create-cpu-resource" class="create" type="number" label="CPU"
-                min="1" value="1" required validationMessage="${_t('resourcePreset.MinimumCPUUnit')}"></mwc-textfield>
-            <mwc-textfield id="create-ram-resource" class="create" type="number" label="${_t('resourcePreset.RAM')}"
-                min="1" value="1" required validationMessage="${_t('resourcePreset.MinimumMemUnit')}"></mwc-textfield>
+            <mwc-textfield
+              id="create-cpu-resource"
+              class="create"
+              type="number"
+              label="CPU"
+              min="1"
+              value="1"
+              required
+              validationMessage="${_t('resourcePreset.MinimumCPUUnit')}"
+            ></mwc-textfield>
+            <mwc-textfield
+              id="create-ram-resource"
+              class="create"
+              type="number"
+              label="${_t('resourcePreset.RAM')}"
+              min="1"
+              value="1"
+              required
+              validationMessage="${_t('resourcePreset.MinimumMemUnit')}"
+            ></mwc-textfield>
           </div>
           <div class="horizontal center layout">
-            <mwc-textfield id="create-gpu-resource" class="create" type="number" label="GPU"
-                min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></mwc-textfield>
-            <mwc-textfield id="create-fgpu-resource" class="create" type="number" label="fGPU"
-                min="0" value="0" step="0.01" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
+            <mwc-textfield
+              id="create-gpu-resource"
+              class="create"
+              type="number"
+              label="GPU"
+              min="0"
+              value="0"
+              ?disabled=${this.gpuAllocationMode === 'fractional'}
+            ></mwc-textfield>
+            <mwc-textfield
+              id="create-fgpu-resource"
+              class="create"
+              type="number"
+              label="fGPU"
+              min="0"
+              value="0"
+              step="0.01"
+              ?disabled=${this.gpuAllocationMode !== 'fractional'}
+            ></mwc-textfield>
           </div>
           <div class="horizontal center layout">
-            <mwc-textfield id="create-shmem-resource" class="create" type="number"
-                label="${_t('resourcePreset.SharedMemory')}" min="0" step="0.01"
-                validationMessage="${_t('resourcePreset.MinimumShmemUnit')}"></mwc-textfield>
+            <mwc-textfield
+              id="create-shmem-resource"
+              class="create"
+              type="number"
+              label="${_t('resourcePreset.SharedMemory')}"
+              min="0"
+              step="0.01"
+              validationMessage="${_t('resourcePreset.MinimumShmemUnit')}"
+            ></mwc-textfield>
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
-              unelevated
-              fullwidth
-              id="create-policy-button"
-              icon="add"
-              label="${_t('button.Add')}"
-              @click="${this._createPreset}">
-          </mwc-button>
+            unelevated
+            fullwidth
+            id="create-policy-button"
+            icon="add"
+            label="${_t('button.Add')}"
+            @click="${this._createPreset}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="delete-resource-preset-dialog" fixed backdrop blockscrolling>
-         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
-         <div slot="content">
-            <p>${_t('resourcePreset.AboutToDeletePreset')}</p>
-            <p style="text-align:center;">${this.presetName}</p>
-            <p>${_t('dialog.warning.CannotBeUndone')} ${_t('dialog.ask.DoYouWantToProceed')}</p>
-         </div>
-         <div slot="footer" class="horizontal end-justified flex layout">
-         <mwc-button
-              class="operation"
-              label="${_t('button.Cancel')}"
-              @click="${(e) => this._hideDialog(e)}"></mwc-button>
+      <backend-ai-dialog
+        id="delete-resource-preset-dialog"
+        fixed
+        backdrop
+        blockscrolling
+      >
+        <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
+        <div slot="content">
+          <p>${_t('resourcePreset.AboutToDeletePreset')}</p>
+          <p style="text-align:center;">${this.presetName}</p>
+          <p>
+            ${_t('dialog.warning.CannotBeUndone')}
+            ${_t('dialog.ask.DoYouWantToProceed')}
+          </p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
-              unelevated
-              class="operation"
-              label="${_t('button.Okay')}"
-              @click="${() => this._deleteResourcePresetWithCheck()}"></mwc-button>
-         </div>
+            class="operation"
+            label="${_t('button.Cancel')}"
+            @click="${(e) => this._hideDialog(e)}"
+          ></mwc-button>
+          <mwc-button
+            unelevated
+            class="operation"
+            label="${_t('button.Okay')}"
+            @click="${() => this._deleteResourcePresetWithCheck()}"
+          ></mwc-button>
+        </div>
       </backend-ai-dialog>
     `;
   }
@@ -354,23 +514,31 @@ class BackendAiResourcePresetList extends BackendAIPage {
     if (active === false) {
       return;
     }
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._refreshTemplateData();
-        this.is_admin = globalThis.backendaiclient.is_admin;
-      }, true);
-    } else { // already connected
+    if (
+      typeof globalThis.backendaiclient === 'undefined' ||
+      globalThis.backendaiclient === null ||
+      globalThis.backendaiclient.ready === false
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        () => {
+          this._refreshTemplateData();
+          this.is_admin = globalThis.backendaiclient.is_admin;
+        },
+        true,
+      );
+    } else {
+      // already connected
       this._refreshTemplateData();
       this.is_admin = globalThis.backendaiclient.is_admin;
-      globalThis.backendaiclient.get_resource_slots()
-        .then((res) => {
-          this.gpu_allocatable = (Object.keys(res).length !== 2);
-          if (Object.keys(res).includes('cuda.shares')) {
-            this.gpuAllocationMode = 'fractional';
-          } else {
-            this.gpuAllocationMode = 'device';
-          }
-        });
+      globalThis.backendaiclient.get_resource_slots().then((res) => {
+        this.gpu_allocatable = Object.keys(res).length !== 2;
+        if (Object.keys(res).includes('cuda.shares')) {
+          this.gpuAllocationMode = 'fractional';
+        } else {
+          this.gpuAllocationMode = 'device';
+        }
+      });
     }
   }
 
@@ -391,67 +559,104 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   _deleteResourcePresetWithCheck() {
-    globalThis.backendaiclient.resourcePreset.delete(this.presetName).then((response) => {
-      this.deleteResourcePresetDialog.hide();
-      this.notification.text = _text('resourcePreset.Deleted');
-      this.notification.show();
-      this._refreshTemplateData();
-    }).catch((err) => {
-      console.log(err);
-      if (err && err.message) {
+    globalThis.backendaiclient.resourcePreset
+      .delete(this.presetName)
+      .then((response) => {
         this.deleteResourcePresetDialog.hide();
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+        this.notification.text = _text('resourcePreset.Deleted');
+        this.notification.show();
+        this._refreshTemplateData();
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.deleteResourcePresetDialog.hide();
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
   }
 
   updateCurrentPresetToDialog(e) {
     const controls = e.target.closest('#controls');
     const preset_name = controls['preset-name'];
-    const resourcePresets = globalThis.backendaiclient.utils.gqlToObject(this.resourcePresets, 'name');
+    const resourcePresets = globalThis.backendaiclient.utils.gqlToObject(
+      this.resourcePresets,
+      'name',
+    );
     const resourcePreset = resourcePresets[preset_name];
     // resourcePolicy['total_resource_slots'] = JSON.parse(resourcePolicy['total_resource_slots']);
     this.presetNameInput.value = preset_name;
     this.cpuResourceInput.value = resourcePreset.resource_slots.cpu;
-    this.gpuResourceInput.value = 'cuda.device' in resourcePreset.resource_slots ? resourcePreset.resource_slots['cuda.device'] : '';
-    this.fgpuResourceInput.value = 'cuda.shares' in resourcePreset.resource_slots ? resourcePreset.resource_slots['cuda.shares'] : '';
-    this.ramResourceInput.value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g')).toString();
-    this.sharedMemoryResourceInput.value = resourcePreset.shared_memory ? parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.shared_memory, 'g')).toFixed(2) : '';
+    this.gpuResourceInput.value =
+      'cuda.device' in resourcePreset.resource_slots
+        ? resourcePreset.resource_slots['cuda.device']
+        : '';
+    this.fgpuResourceInput.value =
+      'cuda.shares' in resourcePreset.resource_slots
+        ? resourcePreset.resource_slots['cuda.shares']
+        : '';
+    this.ramResourceInput.value = parseFloat(
+      globalThis.backendaiclient.utils.changeBinaryUnit(
+        resourcePreset.resource_slots['mem'],
+        'g',
+      ),
+    ).toString();
+    this.sharedMemoryResourceInput.value = resourcePreset.shared_memory
+      ? parseFloat(
+          globalThis.backendaiclient.utils.changeBinaryUnit(
+            resourcePreset.shared_memory,
+            'g',
+          ),
+        ).toFixed(2)
+      : '';
   }
 
   _refreshTemplateData() {
     const param = {
-      'group': globalThis.backendaiclient.current_group
+      group: globalThis.backendaiclient.current_group,
     };
     this.listCondition = 'loading';
     this._listStatus?.show();
-    return globalThis.backendaiclient.resourcePreset.check(param).then((response) => {
-      const resourcePresets = response.presets;
-      Object.keys(resourcePresets).map((objectKey, index) => {
-        const preset = resourcePresets[objectKey];
-        preset.resource_slots.mem_gib = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(preset.resource_slots.mem, 'g'));
-        if (preset.shared_memory) {
-          preset.shared_memory_gib = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(preset.shared_memory, 'g')).toFixed(2);
+    return globalThis.backendaiclient.resourcePreset
+      .check(param)
+      .then((response) => {
+        const resourcePresets = response.presets;
+        Object.keys(resourcePresets).map((objectKey, index) => {
+          const preset = resourcePresets[objectKey];
+          preset.resource_slots.mem_gib = parseFloat(
+            globalThis.backendaiclient.utils.changeBinaryUnit(
+              preset.resource_slots.mem,
+              'g',
+            ),
+          );
+          if (preset.shared_memory) {
+            preset.shared_memory_gib = parseFloat(
+              globalThis.backendaiclient.utils.changeBinaryUnit(
+                preset.shared_memory,
+                'g',
+              ),
+            ).toFixed(2);
+          } else {
+            preset.shared_memory_gib = null;
+          }
+        });
+        this.resourcePresets = resourcePresets;
+        if (this.resourcePresets.length == 0) {
+          this.listCondition = 'no-data';
         } else {
-          preset.shared_memory_gib = null;
+          this._listStatus?.hide();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
         }
       });
-      this.resourcePresets = resourcePresets;
-      if (this.resourcePresets.length == 0) {
-        this.listCondition = 'no-data';
-      } else {
-        this._listStatus?.hide();
-      }
-    }).catch((err) => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
   }
 
   refresh() {
@@ -463,7 +668,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   _readResourcePresetInput() {
-    const wrapper = (v) => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
+    const wrapper = (v) =>
+      v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
     const cpu = wrapper(this.cpuResourceInput.value);
     const mem = wrapper(this.ramResourceInput.value + 'g');
     const gpu_resource = wrapper(this.gpuResourceInput.value);
@@ -471,17 +677,27 @@ class BackendAiResourcePresetList extends BackendAIPage {
     let sharedMemory = this.sharedMemoryResourceInput.value;
     if (sharedMemory) sharedMemory = sharedMemory + 'g';
 
-    const resource_slots = {cpu, mem};
-    if (gpu_resource !== undefined && gpu_resource !== null && gpu_resource !== '' && gpu_resource !== '0') {
+    const resource_slots = { cpu, mem };
+    if (
+      gpu_resource !== undefined &&
+      gpu_resource !== null &&
+      gpu_resource !== '' &&
+      gpu_resource !== '0'
+    ) {
       resource_slots['cuda.device'] = parseInt(gpu_resource);
     }
-    if (fgpu_resource !== undefined && fgpu_resource !== null && fgpu_resource !== '' && fgpu_resource !== '0') {
+    if (
+      fgpu_resource !== undefined &&
+      fgpu_resource !== null &&
+      fgpu_resource !== '' &&
+      fgpu_resource !== '0'
+    ) {
       resource_slots['cuda.shares'] = parseFloat(fgpu_resource);
     }
 
     const input = {
       resource_slots: JSON.stringify(resource_slots),
-      shared_memory: sharedMemory
+      shared_memory: sharedMemory,
     };
 
     return input;
@@ -493,7 +709,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
       return;
     }
     const name = this.presetNameInput.value;
-    const wrapper = (v) => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
+    const wrapper = (v) =>
+      v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
     const mem = wrapper(this.ramResourceInput.value + 'g');
     if (!name) {
       this.notification.text = _text('resourcePreset.NoPresetName');
@@ -502,43 +719,51 @@ class BackendAiResourcePresetList extends BackendAIPage {
     }
     const input = this._readResourcePresetInput();
     if (parseInt(input.shared_memory) >= parseInt(mem)) {
-      this.notification.text = _text('resourcePreset.MemoryShouldBeLargerThanSHMEM');
+      this.notification.text = _text(
+        'resourcePreset.MemoryShouldBeLargerThanSHMEM',
+      );
       this.notification.show();
       return;
     }
-    globalThis.backendaiclient.resourcePreset.mutate(name, input).then((response) => {
-      this.modifyTemplateDialog.hide();
-      this.notification.text = _text('resourcePreset.Updated');
-      this.notification.show();
-      this._refreshTemplateData();
-    }).catch((err) => {
-      console.log(err);
-      if (err && err.message) {
+    globalThis.backendaiclient.resourcePreset
+      .mutate(name, input)
+      .then((response) => {
         this.modifyTemplateDialog.hide();
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+        this.notification.text = _text('resourcePreset.Updated');
+        this.notification.show();
+        this._refreshTemplateData();
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.modifyTemplateDialog.hide();
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
   }
 
   _deleteKey(e) {
     const controls = e.target.closest('#controls');
     const accessKey = controls.accessKey;
-    globalThis.backendaiclient.keypair.delete(accessKey).then((response) => {
-      this.refresh();
-    }).catch((err) => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+    globalThis.backendaiclient.keypair
+      .delete(accessKey)
+      .then((response) => {
+        this.refresh();
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
   }
 
   _findKeyItem(element) {
-    return element.access_key = this;
+    return (element.access_key = this);
   }
 
   _elapsed(start, end) {
@@ -549,7 +774,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
     } else {
       endDate = new Date();
     }
-    const seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
+    const seconds = Math.floor(
+      (endDate.getTime() - startDate.getTime()) / 1000,
+    );
     const days = Math.floor(seconds / 86400);
     return days;
   }
@@ -580,7 +807,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
    */
   _checkFieldValidity(prefix = '') {
     const query = 'mwc-textfield[class^="'.concat(prefix).concat('"]');
-    const createDialogTextfields = this.shadowRoot?.querySelectorAll<TextField>(query) as NodeListOf<TextField>;
+    const createDialogTextfields = this.shadowRoot?.querySelectorAll<TextField>(
+      query,
+    ) as NodeListOf<TextField>;
     let isValid = true;
     for (const textfield of Array.from(createDialogTextfields)) {
       isValid = textfield.checkValidity();
@@ -598,7 +827,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
     }
     const wrapper = (v) => {
       v = v.toString();
-      return typeof (v) !== 'undefined' && v.includes('Unlimited') ? 'Infinity' : v;
+      return typeof v !== 'undefined' && v.includes('Unlimited')
+        ? 'Infinity'
+        : v;
     };
     const preset_name = wrapper(this.createPresetNameInput.value);
     const cpu = wrapper(this.createCpuResourceInput.value);
@@ -613,25 +844,38 @@ class BackendAiResourcePresetList extends BackendAIPage {
       return;
     }
     if (parseInt(sharedMemory) >= parseInt(mem)) {
-      this.notification.text = _text('resourcePreset.MemoryShouldBeLargerThanSHMEM');
+      this.notification.text = _text(
+        'resourcePreset.MemoryShouldBeLargerThanSHMEM',
+      );
       this.notification.show();
       return;
     }
 
-    const resource_slots = {cpu, mem};
-    if (gpu_resource !== undefined && gpu_resource !== null && gpu_resource !== '' && gpu_resource !== '0') {
+    const resource_slots = { cpu, mem };
+    if (
+      gpu_resource !== undefined &&
+      gpu_resource !== null &&
+      gpu_resource !== '' &&
+      gpu_resource !== '0'
+    ) {
       resource_slots['cuda.device'] = parseInt(gpu_resource);
     }
-    if (fgpu_resource !== undefined && fgpu_resource !== null && fgpu_resource !== '' && fgpu_resource !== '0') {
+    if (
+      fgpu_resource !== undefined &&
+      fgpu_resource !== null &&
+      fgpu_resource !== '' &&
+      fgpu_resource !== '0'
+    ) {
       resource_slots['cuda.shares'] = parseFloat(fgpu_resource);
     }
 
     const input = {
       resource_slots: JSON.stringify(resource_slots),
-      shared_memory: sharedMemory
+      shared_memory: sharedMemory,
     };
 
-    globalThis.backendaiclient.resourcePreset.add(preset_name, input)
+    globalThis.backendaiclient.resourcePreset
+      .add(preset_name, input)
       .then((res) => {
         this.createPresetDialog.hide();
         if (res.create_resource_preset.ok) {
@@ -646,13 +890,14 @@ class BackendAiResourcePresetList extends BackendAIPage {
           this.createFGpuResourceInput.value = '0';
           this.createSharedMemoryResourceInput.value = '';
         } else {
-          this.notification.text = PainKiller.relieve(res.create_resource_preset.msg);
+          this.notification.text = PainKiller.relieve(
+            res.create_resource_preset.msg,
+          );
         }
         this.notification.show();
       });
   }
 }
-
 
 declare global {
   interface HTMLElementTagNameMap {

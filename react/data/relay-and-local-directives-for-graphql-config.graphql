@@ -65,6 +65,3 @@ directive @updatable on QUERY | FRAGMENT_DEFINITION
 directive @assignable on FRAGMENT_DEFINITION
 directive @alias(as: String) on FRAGMENT_SPREAD | INLINE_FRAGMENT
 directive @static on ARGUMENT_DEFINITION
-
-
-directive @skipOnClient(if: Boolean) on FIELD

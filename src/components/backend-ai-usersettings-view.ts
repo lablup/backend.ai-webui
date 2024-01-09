@@ -2,34 +2,32 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
-
-import {BackendAIPage} from './backend-ai-page';
-import {store} from '../store';
-
-import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-
-import '@material/mwc-tab-bar';
-import {Tab} from '@material/mwc-tab';
-import '@material/mwc-button';
-
+import { store } from '../store';
 import './backend-ai-dialog';
+import './backend-ai-error-log-list';
+import './backend-ai-error-log-list';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import './backend-ai-list-status';
+import './backend-ai-list-status';
+import { BackendAIPage } from './backend-ai-page';
+import './backend-ai-usersettings-general-list';
+import './backend-ai-usersettings-general-list';
+import './backend-ai-window';
 import './lablup-activity-panel';
 import './lablup-codemirror';
 import './lablup-loading-spinner';
-import './backend-ai-error-log-list';
-import './backend-ai-usersettings-general-list';
-import './backend-ai-list-status';
-import './backend-ai-window';
+import '@material/mwc-button';
+import { Tab } from '@material/mwc-tab';
+import '@material/mwc-tab-bar';
+import { css, CSSResultGroup, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -52,10 +50,10 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 @customElement('backend-ai-usersettings-view')
 export default class BackendAiUserSettingsView extends BackendAIPage {
-  @property({type: Object}) images = Object();
-  @property({type: Object}) options = Object();
-  @property({type: Object}) _activeTab = Object();
-  @property({type: Object}) logGrid = Object();
+  @property({ type: Object }) images = Object();
+  @property({ type: Object }) options = Object();
+  @property({ type: Object }) _activeTab = Object();
+  @property({ type: Object }) logGrid = Object();
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#clearlogs-dialog') clearLogsDialog!: BackendAIDialog;
 
@@ -67,7 +65,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
       cuda_fgpu: false,
       rocm_gpu: false,
       tpu: false,
-      scheduler: 'fifo'
+      scheduler: 'fifo',
     };
   }
 
@@ -101,7 +99,9 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
           --mdc-theme-primary: var(--general-sidebar-selected-color);
           --mdc-text-transform: none;
           --mdc-tab-color-default: var(--general-tabbar-background-color);
-          --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
+          --mdc-tab-text-label-color-default: var(
+            --general-tabbar-tab-disabled-color
+          );
         }
 
         mwc-button {
@@ -118,8 +118,12 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         mwc-button[outlined] {
           background-image: none;
           --mdc-button-outline-width: 2px;
-          --mdc-button-disabled-outline-color: var(--general-button-background-color);
-          --mdc-button-disabled-ink-color: var(--general-button-background-color);
+          --mdc-button-disabled-outline-color: var(
+            --general-button-background-color
+          );
+          --mdc-button-disabled-ink-color: var(
+            --general-button-background-color
+          );
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-theme-on-primary: var(--general-button-color);
         }
@@ -140,79 +144,114 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
             display: none;
           }
         }
-      `];
+      `,
+    ];
   }
 
   render() {
     // language=HTML
     return html`
-      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Settings&Logs')}" name="usersettings">
-      <link rel="stylesheet" href="resources/custom.css">
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
+      <backend-ai-window
+        ?active="${this.active}"
+        title="${_t('webui.menu.Settings&Logs')}"
+        name="usersettings"
+      >
+        <link rel="stylesheet" href="resources/custom.css" />
+        <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
         <lablup-activity-panel noheader narrow autowidth attachInner>
-        <div slot="message">
-          <h3 class="tab horizontal wrap layout">
-            <mwc-tab-bar>
-              <mwc-tab title="general" label="${_t('usersettings.General')}"
-                  @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab title="logs" label="${_t('usersettings.Logs')}"
-                  @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-            </mwc-tab-bar>
-          </h3>
-          <div id="general" class="item tab-content outer-space">
-            <backend-ai-usersettings-general-list active="true"></backend-ai-usersettings-general-list>
-          </div>
-          <div id="logs" class="item tab-content" style="display:none;">
-            <h3 class="horizontal center layout outer-space">
-              <span>${_t('logs.LogMessages')}</span>
-              <span class="mini" style="font-size:13px;padding-left:15px;">${_t('logs.UpTo3000Logs')}</span>
-              <span class="flex"></span>
-              <mwc-button
+          <div slot="message">
+            <h3 class="tab horizontal wrap layout">
+              <mwc-tab-bar>
+                <mwc-tab
+                  title="general"
+                  label="${_t('usersettings.General')}"
+                  @click="${(e) => this._showTab(e.target)}"
+                ></mwc-tab>
+                <mwc-tab
+                  title="logs"
+                  label="${_t('usersettings.Logs')}"
+                  @click="${(e) => this._showTab(e.target)}"
+                ></mwc-tab>
+              </mwc-tab-bar>
+            </h3>
+            <div id="general" class="item tab-content outer-space">
+              <backend-ai-usersettings-general-list
+                active="true"
+              ></backend-ai-usersettings-general-list>
+            </div>
+            <div id="logs" class="item tab-content" style="display:none;">
+              <h3 class="horizontal center layout outer-space">
+                <span>${_t('logs.LogMessages')}</span>
+                <span class="mini" style="font-size:13px;padding-left:15px;">
+                  ${_t('logs.UpTo3000Logs')}
+                </span>
+                <span class="flex"></span>
+                <mwc-button
                   class="log"
                   icon="refresh"
-                  @click="${() => this._refreshLogs()}">
-                <span>${_t('button.Refresh')}</span>
-              </mwc-button>
-              <mwc-button
+                  @click="${() => this._refreshLogs()}"
+                >
+                  <span>${_t('button.Refresh')}</span>
+                </mwc-button>
+                <mwc-button
                   class="log"
                   icon="delete"
                   raised
-                  @click="${() => this._showClearLogsDialog()}">
-                <span>${_t('button.ClearLogs')}</span>
-              </mwc-button>
-            </h3>
-            <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
+                  @click="${() => this._showClearLogsDialog()}"
+                >
+                  <span>${_t('button.ClearLogs')}</span>
+                </mwc-button>
+              </h3>
+              <backend-ai-error-log-list
+                active="true"
+              ></backend-ai-error-log-list>
+            </div>
           </div>
-        </div>
-      </lablup-activity-panel>
-      <backend-ai-dialog id="clearlogs-dialog" fixed backdrop scrollable blockScrolling>
-        <span slot="title">${_t('dialog.warning.LogDeletion')}</span>
-        <div slot="content">${_t('dialog.warning.CannotBeUndone')}</div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button
+        </lablup-activity-panel>
+        <backend-ai-dialog
+          id="clearlogs-dialog"
+          fixed
+          backdrop
+          scrollable
+          blockScrolling
+        >
+          <span slot="title">${_t('dialog.warning.LogDeletion')}</span>
+          <div slot="content">${_t('dialog.warning.CannotBeUndone')}</div>
+          <div slot="footer" class="horizontal end-justified flex layout">
+            <mwc-button
               class="operation"
               id="discard-removal"
               label="${_t('button.No')}"
-              @click="${() => this._hideClearLogsDialog()}"></mwc-button>
-          <mwc-button
+              @click="${() => this._hideClearLogsDialog()}"
+            ></mwc-button>
+            <mwc-button
               unelevated
               class="operation"
               id="apply-removal"
               label="${_t('button.Yes')}"
-              @click="${() => this._removeLogMessage()}"></mwc-button>
-        </div>
-      </backend-ai-dialog>
-    </backend-ai-window>
+              @click="${() => this._removeLogMessage()}"
+            ></mwc-button>
+          </div>
+        </backend-ai-dialog>
+      </backend-ai-window>
     `;
   }
 
   firstUpdated() {
     super.firstUpdated();
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null) {
-      document.addEventListener('backend-ai-connected', () => {
-        this.updateSettings();
-      }, true);
-    } else { // already connected
+    if (
+      typeof globalThis.backendaiclient === 'undefined' ||
+      globalThis.backendaiclient === null
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        () => {
+          this.updateSettings();
+        },
+        true,
+      );
+    } else {
+      // already connected
       this.updateSettings();
     }
     this.notification = globalThis.lablupNotification;
@@ -235,12 +274,16 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     const tab = params.tab;
     if (tab && tab === 'logs') {
       globalThis.setTimeout(() => {
-        const tabEl = this.shadowRoot?.querySelector('mwc-tab[title="logs"]') as Tab;
+        const tabEl = this.shadowRoot?.querySelector(
+          'mwc-tab[title="logs"]',
+        ) as Tab;
         tabEl.click();
       }, 0);
     } else {
       globalThis.setTimeout(() => {
-        const tabEl = this.shadowRoot?.querySelector('mwc-tab[title="general"]') as Tab;
+        const tabEl = this.shadowRoot?.querySelector(
+          'mwc-tab[title="general"]',
+        ) as Tab;
         tabEl.click();
       }, 0);
     }
@@ -285,7 +328,9 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
    * Refresh log messages.
    * */
   _refreshLogs() {
-    this.logGrid = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '{}');
+    this.logGrid = JSON.parse(
+      localStorage.getItem('backendaiwebui.logs') || '{}',
+    );
     const event = new CustomEvent('log-message-refresh', this.logGrid);
     document.dispatchEvent(event);
   }
@@ -296,7 +341,9 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
    * @param {EventTarget} tab - clicked tab
    * */
   _showTab(tab) {
-    const els = this.shadowRoot?.querySelectorAll('.tab-content') as NodeListOf<HTMLDivElement>;
+    const els = this.shadowRoot?.querySelectorAll(
+      '.tab-content',
+    ) as NodeListOf<HTMLDivElement>;
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
@@ -304,7 +351,9 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     if (this._activeTab === 'logs') {
       this._refreshLogs();
     }
-    (this.shadowRoot?.querySelector('#' + tab.title) as HTMLElement).style.display = 'block';
+    (
+      this.shadowRoot?.querySelector('#' + tab.title) as HTMLElement
+    ).style.display = 'block';
   }
 }
 
