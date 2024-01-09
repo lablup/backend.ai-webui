@@ -1209,7 +1209,9 @@
     "SuccessfullyUpdated": "성공적으로 수정되었습니다.",
     "Visit": "방문",
     "SeeDetail": "상세보기",
-    "Initializing": "초기화 중..."
+    "Initializing": "초기화 중...",
+    "NoNotification": "알림이 없습니다.",
+    "Notifications": "알림"
   },
   "information": {
     "Core": "핵심 구성 요소",

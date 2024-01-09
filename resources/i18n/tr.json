@@ -1127,7 +1127,9 @@
     "SuccessfullyUpdated": "Başarıyla güncellendi",
     "Visit": "Ziyaret etmek",
     "SeeDetail": "Ayrıntıları gör",
-    "Initializing": "Başlatılıyor..."
+    "Initializing": "Başlatılıyor...",
+    "NoNotification": "Bildirim yok.",
+    "Notifications": "Bildirimler"
   },
   "information": {
     "Core": "çekirdek",

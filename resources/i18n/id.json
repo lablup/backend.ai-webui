@@ -1127,7 +1127,9 @@
     "SuccessfullyUpdated": "Berhasil Diperbarui",
     "Visit": "Kunjungi",
     "SeeDetail": "Lihat Detail",
-    "Initializing": "Inisialisasi..."
+    "Initializing": "Inisialisasi...",
+    "NoNotification": "Tidak Ada Pemberitahuan.",
+    "Notifications": "Pemberitahuan"
   },
   "information": {
     "Core": "Core",

@@ -1127,7 +1127,9 @@
     "SuccessfullyUpdated": "正常に更新されました",
     "Visit": "訪問",
     "SeeDetail": "詳細を見る",
-    "Initializing": "初期化中..."
+    "Initializing": "初期化中...",
+    "NoNotification": "通知はありません。",
+    "Notifications": "通知"
   },
   "information": {
     "Core": "芯",

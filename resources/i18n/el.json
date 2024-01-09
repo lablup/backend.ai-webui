@@ -1127,7 +1127,9 @@
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
     "Visit": "Επίσκεψη",
     "SeeDetail": "Δείτε Λεπτομέρεια",
-    "Initializing": "Αρχικοποίηση ..."
+    "Initializing": "Αρχικοποίηση ...",
+    "NoNotification": "Καμία ειδοποίηση.",
+    "Notifications": "Ειδοποιήσεις"
   },
   "information": {
     "Core": "Πυρήνας",

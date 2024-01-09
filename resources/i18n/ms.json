@@ -1127,7 +1127,9 @@
     "SuccessfullyUpdated": "Berjaya Dikemas kini",
     "Visit": "Lawati",
     "SeeDetail": "Lihat Perincian",
-    "Initializing": "Memulakan ..."
+    "Initializing": "Memulakan ...",
+    "NoNotification": "Tiada Pemberitahuan.",
+    "Notifications": "Pemberitahuan"
   },
   "information": {
     "Core": "Teras",

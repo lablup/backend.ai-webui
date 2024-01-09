@@ -1127,7 +1127,9 @@
     "SuccessfullyUpdated": "Erfolgreich aktualisiert",
     "Visit": "Besuch",
     "SeeDetail": "Siehe Detail",
-    "Initializing": "Initialisieren..."
+    "Initializing": "Initialisieren...",
+    "NoNotification": "Keine Benachrichtigung.",
+    "Notifications": "Benachrichtigungen"
   },
   "information": {
     "Core": "Ader",

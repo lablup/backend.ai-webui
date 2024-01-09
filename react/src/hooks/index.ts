@@ -1,5 +1,7 @@
 import { useCurrentUserInfo } from './backendai';
 import { useTanQuery } from './reactQueryAlias';
+import { App } from 'antd';
+import { NotificationPlacement } from 'antd/es/notification/interface';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
@@ -9,6 +11,7 @@ import {
   To,
   useNavigate,
 } from 'react-router-dom';
+import { RecoilState, atom, useRecoilState } from 'recoil';
 
 interface WebUINavigateOptions extends NavigateOptions {
   params?: any;
@@ -151,6 +154,44 @@ export const useSuspendedBackendaiClient = () => {
     [key: string]: any;
     _config: BackendAIConfig;
   };
+};
+
+type NotificationType = 'success' | 'info' | 'warning' | 'error';
+export interface NotificationState {
+  type?: NotificationType;
+  text?: string;
+  detail?: string;
+  url?: string;
+  placement?: NotificationPlacement;
+  duration?: number;
+  created?: string;
+}
+
+export const notificationState: RecoilState<NotificationState[]> = atom({
+  key: 'webui-notification',
+  default: [{}],
+});
+
+export const useWebUINotification = () => {
+  const [notifications, setNotifications] = useRecoilState(notificationState);
+  const { notification } = App.useApp();
+
+  const showWebUINotification = (props: NotificationState) => {
+    const newNotification = {
+      ...props,
+      created: new Date().toISOString(),
+    };
+    setNotifications([...notifications, newNotification]);
+
+    notification[props.type || 'info']({
+      message: props.text,
+      description: props.detail,
+      placement: props.placement || 'bottomRight',
+      duration: props.duration,
+    });
+  };
+
+  return [notifications, { showWebUINotification }] as const;
 };
 
 interface ImageMetadata {

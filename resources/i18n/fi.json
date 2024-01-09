@@ -723,7 +723,9 @@
     "Initializing": "Aloitetaan...",
     "SeeDetail": "Katso lisätietoja",
     "SuccessfullyUpdated": "Päivitetty onnistuneesti",
-    "Visit": "Käy osoitteessa"
+    "Visit": "Käy osoitteessa",
+    "NoNotification": "Ei ilmoitusta.",
+    "Notifications": "Ilmoitukset"
   },
   "pipeline": {
     "Component": {

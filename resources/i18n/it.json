@@ -1127,7 +1127,9 @@
     "SuccessfullyUpdated": "Aggiornato con successo",
     "Visit": "Visitare",
     "SeeDetail": "Vedi dettaglio",
-    "Initializing": "Inizializzazione in corso..."
+    "Initializing": "Inizializzazione in corso...",
+    "NoNotification": "Nessuna notifica.",
+    "Notifications": "Notifiche"
   },
   "information": {
     "Core": "Nucleo",

@@ -1,5 +1,6 @@
 import { useCurrentDomainValue, useCurrentProjectValue } from '../../hooks';
 import { useScrollBreakPoint } from '../../hooks/useScrollBreackPoint';
+import BAINotificationButton from '../BAINotificationButton';
 import Flex, { FlexProps } from '../Flex';
 import ProjectSelector from '../ProjectSelector';
 import UserDropdownMenu from '../UserDropdownMenu';
@@ -86,7 +87,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
         </Suspense>
 
         <Flex direction="row">
-          <Button size="large" icon={<BellOutlined />} type="text"></Button>
+          <BAINotificationButton />
           <UserDropdownMenu />
         </Flex>
       </Flex>

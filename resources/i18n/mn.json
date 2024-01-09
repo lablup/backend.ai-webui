@@ -1127,7 +1127,9 @@
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
     "Visit": "Айлчлах",
     "SeeDetail": "Дэлгэрэнгүйг үзнэ үү",
-    "Initializing": "Эхлүүлж байна ..."
+    "Initializing": "Эхлүүлж байна ...",
+    "NoNotification": "Мэдэгдэл байхгүй.",
+    "Notifications": "Мэдэгдэл"
   },
   "information": {
     "Core": "Гол",

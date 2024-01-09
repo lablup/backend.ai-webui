@@ -1127,7 +1127,9 @@
     "SuccessfullyUpdated": "成功更新",
     "Visit": "訪問",
     "SeeDetail": "查看詳情",
-    "Initializing": "正在初始化..."
+    "Initializing": "正在初始化...",
+    "NoNotification": "無通知。",
+    "Notifications": "通知"
   },
   "information": {
     "Core": "核",

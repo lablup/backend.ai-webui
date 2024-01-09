@@ -1127,7 +1127,9 @@
     "SuccessfullyUpdated": "Успешно обновлено",
     "Visit": "Посещение",
     "SeeDetail": "См детали",
-    "Initializing": "Инициализация ..."
+    "Initializing": "Инициализация ...",
+    "NoNotification": "Нет уведомлений.",
+    "Notifications": "Уведомления"
   },
   "information": {
     "Core": "Основной",

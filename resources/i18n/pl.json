@@ -1127,7 +1127,9 @@
     "SuccessfullyUpdated": "Pomyślnie zaktualizowano",
     "Visit": "Wizyta",
     "SeeDetail": "Zobacz detale",
-    "Initializing": "Inicjowanie..."
+    "Initializing": "Inicjowanie...",
+    "NoNotification": "Brak powiadomienia.",
+    "Notifications": "Powiadomienia"
   },
   "information": {
     "Core": "Rdzeń",

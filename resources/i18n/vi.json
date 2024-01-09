@@ -1127,7 +1127,9 @@
     "SuccessfullyUpdated": "Cập nhật thành công",
     "Visit": "Chuyến thăm",
     "SeeDetail": "Xem chi tiết",
-    "Initializing": "Đang khởi tạo ..."
+    "Initializing": "Đang khởi tạo ...",
+    "NoNotification": "Không có thông báo.",
+    "Notifications": "Thông báo"
   },
   "information": {
     "Core": "Cốt lõi",

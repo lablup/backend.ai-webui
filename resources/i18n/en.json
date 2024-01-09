@@ -1220,7 +1220,9 @@
     "SuccessfullyUpdated": "Successfully Updated",
     "Visit": "Visit",
     "SeeDetail": "See Detail",
-    "Initializing": "Initializing..."
+    "Initializing": "Initializing...",
+    "Notifications": "Notifications",
+    "NoNotification": "No Notification."
   },
   "information": {
     "Core": "Core",

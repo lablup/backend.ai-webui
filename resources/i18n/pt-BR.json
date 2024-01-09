@@ -1127,7 +1127,9 @@
     "SuccessfullyUpdated": "Atualizado com sucesso",
     "Visit": "Visita",
     "SeeDetail": "Veja detalhes",
-    "Initializing": "Inicializando ..."
+    "Initializing": "Inicializando ...",
+    "NoNotification": "Nenhuma notificação.",
+    "Notifications": "Notificações"
   },
   "information": {
     "Core": "Testemunho",
