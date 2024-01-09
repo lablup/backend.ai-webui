@@ -13,7 +13,16 @@ import {
   ImageEnvironmentSelectFormItemsQuery,
   ImageEnvironmentSelectFormItemsQuery$data,
 } from './__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
-import { Divider, Form, Input, RefSelectProps, Select, Tag, theme } from 'antd';
+import {
+  Divider,
+  Form,
+  Input,
+  RefSelectProps,
+  Select,
+  Switch,
+  Tag,
+  theme,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -134,6 +143,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
   // If not initial value, select first value
   // auto select when relative field is changed
   useEffect(() => {
+    if (!_.isEmpty(environments?.manual)) {
+      return;
+    }
     // if not initial value, select first value
     const nextEnvironmentName =
       form.getFieldValue('environments')?.environment ||
@@ -172,7 +184,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.getFieldValue('environments')?.environment]);
+  }, [environments?.environment, environments?.manual]);
 
   const imageGroups: ImageGroup[] = useMemo(
     () =>
@@ -272,7 +284,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         label={`${t('session.launcher.Environments')} / ${t(
           'session.launcher.Version',
         )}`}
-        rules={[{ required: true }]}
+        rules={[{ required: _.isEmpty(environments?.manual) }]}
         style={{ marginBottom: 10 }}
       >
         <Select
@@ -449,7 +461,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
             <Form.Item
               className="image-environment-select-form-item"
               name={['environments', 'version']}
-              rules={[{ required: true }]}
+              rules={[{ required: _.isEmpty(environments?.manual) }]}
             >
               <Select
                 ref={versionSelectRef}
@@ -593,7 +605,20 @@ const ImageEnvironmentSelectFormItems: React.FC<
             : 'none',
         }}
       >
-        <Input allowClear />
+        <Input
+          allowClear
+          onChange={(value) => {
+            if (!_.isEmpty(value)) {
+              form.setFieldsValue({
+                environments: {
+                  environment: undefined,
+                  version: undefined,
+                  image: undefined,
+                },
+              });
+            }
+          }}
+        />
       </Form.Item>
       <Form.Item noStyle hidden name={['environments', 'image']}>
         <Input />
