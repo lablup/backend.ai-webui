@@ -1280,10 +1280,10 @@
     "GithubInternalError": "Внутренняя ошибка GitHub.",
     "GithubAPILimitError": "Ошибка ограничения API GitHub.",
     "GithubAPIEtcError": "Проблема с сервером GitHub.",
-    "ImportGitlabRepo": "Импорт репозитория Gitlab",
-    "GitlabRepoWillBeFolder": "Импортированные репозитории Gitlab преобразуются в папки и могут быть смонтированы при запуске сессии.",
-    "GitlabURL": "URL-адрес Gitlab",
-    "GitlabDefaultBranch": "Имя филиала Gitlab"
+    "ImportGitlabRepo": "Импорт репозитория GitLab",
+    "GitlabRepoWillBeFolder": "Импортированные репозитории GitLab преобразуются в папки и могут быть смонтированы при запуске сессии.",
+    "GitlabURL": "URL-адрес GitLab",
+    "GitlabDefaultBranch": "Имя филиала GitLab"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Статистика за этот месяц",

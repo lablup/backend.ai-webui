@@ -14,20 +14,33 @@ div.image-environment-select-form-item
 
 div.image-environment-select-form-item
   div.ant-select-item-option-content
-  div.tag-wrap {
+  div.tag-wrap-light {
+  /* flex: 1 !important; */
+  flex-wrap: wrap !important;
+}
+
+div.image-environment-select-form-item
+  div.ant-select-item-option-content
+  div.tag-wrap-dark {
   /* flex: 1 !important; */
   flex-wrap: wrap !important;
 }
 
 div.image-environment-select-form-item
   span.ant-select-selection-item
-  div.tag-wrap {
+  div.tag-wrap-light {
   overflow: hidden;
 }
 
 div.image-environment-select-form-item
   span.ant-select-selection-item
-  div.tag-wrap::after {
+  div.tag-wrap-dark {
+  overflow: hidden;
+}
+
+div.image-environment-select-form-item
+  span.ant-select-selection-item
+  div.tag-wrap-light::after {
   content: '';
   position: absolute;
   top: 0;
@@ -38,5 +51,21 @@ div.image-environment-select-form-item
     to right,
     rgba(255, 255, 255, 0),
     rgba(255, 255, 255, 1)
+  );
+}
+
+div.image-environment-select-form-item
+  span.ant-select-selection-item
+  div.tag-wrap-dark::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 10px;
+  background: linear-gradient(
+    to right,
+    rgba(20, 20, 20, 0),
+    rgba(20, 20, 20, 1)
   );
 }

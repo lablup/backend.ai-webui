@@ -1280,10 +1280,10 @@
     "GithubInternalError": "GitHub 内部错误。",
     "GithubAPILimitError": "GitHub API 限制错误。",
     "GithubAPIEtcError": "GitHub 服务器问题。",
-    "ImportGitlabRepo": "导入 Gitlab 仓库",
-    "GitlabRepoWillBeFolder": "导入的 Gitlab 资源库会转换为文件夹，并可在会话启动时挂载。",
-    "GitlabURL": "Gitlab URL",
-    "GitlabDefaultBranch": "Gitlab 分支名称"
+    "ImportGitlabRepo": "导入 GitLab 仓库",
+    "GitlabRepoWillBeFolder": "导入的 GitLab 资源库会转换为文件夹，并可在会话启动时挂载。",
+    "GitlabURL": "GitLab URL",
+    "GitlabDefaultBranch": "GitLab 分支名称"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "本月統計",

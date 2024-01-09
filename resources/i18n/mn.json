@@ -1280,10 +1280,10 @@
     "GithubInternalError": "GitHub дотоод алдаа.",
     "GithubAPILimitError": "GitHub API хязгаарлалтын алдаа.",
     "GithubAPIEtcError": "GitHub серверийн асуудал.",
-    "ImportGitlabRepo": "Gitlab репозиторыг импортлох",
-    "GitlabRepoWillBeFolder": "Импортын Gitlab репозиторуудыг хавтас болгон хөрвүүлдэг бөгөөд сесс эхлэхэд холбож болно.",
-    "GitlabURL": "Gitlab URL",
-    "GitlabDefaultBranch": "Gitlab салбарын нэр"
+    "ImportGitlabRepo": "GitLab репозиторыг импортлох",
+    "GitlabRepoWillBeFolder": "Импортын GitLab репозиторуудыг хавтас болгон хөрвүүлдэг бөгөөд сесс эхлэхэд холбож болно.",
+    "GitlabURL": "GitLab URL",
+    "GitlabDefaultBranch": "GitLab салбарын нэр"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Энэ сарын статистик",
