@@ -1,8 +1,13 @@
 import BAIModal from '../components/BAIModal';
 import Flex from '../components/Flex';
-import { RedoOutlined, DeleteOutlined } from '@ant-design/icons';
+import TextHighlighter from '../components/TextHighlighter';
+import {
+  RedoOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
-import { Button, Space, Typography, Table, Alert, Checkbox } from 'antd';
+import { Button, Space, Typography, Table, Alert, Checkbox, Input } from 'antd';
 import _ from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -28,6 +33,7 @@ const ErrorLogListPage: React.FC = () => {
   });
   const [isOpenClearLogsModal, setIsOpenClearLogsModal] = useState(false);
   const [checkedShowOnlyError, setCheckedShowOnlyError] = useState(false);
+  const [logSearch, setLogSearch] = useState('');
 
   const onClickRefreshLogs = () => {
     setLogs(JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]'));
@@ -49,6 +55,10 @@ const ErrorLogListPage: React.FC = () => {
             </Space>
           </Typography.Title>
           <Space>
+            <Input
+              prefix={<SearchOutlined />}
+              onChange={(e) => setLogSearch(e.target.value)}
+            />
             <Checkbox
               onChange={(e) => setCheckedShowOnlyError(e.target.checked)}
             >
@@ -91,7 +101,9 @@ const ErrorLogListPage: React.FC = () => {
                 const date = new Date(value);
                 return (
                   <Typography.Text type={record.isError ? 'danger' : undefined}>
-                    {date.toLocaleString('en-US', { hour12: false })}
+                    <TextHighlighter keyword={logSearch}>
+                      {date.toLocaleString('en-US', { hour12: false })}
+                    </TextHighlighter>
                   </Typography.Text>
                 );
               },
@@ -103,7 +115,9 @@ const ErrorLogListPage: React.FC = () => {
               render: (value, record) => {
                 return (
                   <Typography.Text type={record.isError ? 'danger' : undefined}>
-                    {value + ' ' + record.statusText}
+                    <TextHighlighter keyword={logSearch}>
+                      {value + ' ' + record.statusText}
+                    </TextHighlighter>
                   </Typography.Text>
                 );
               },
@@ -118,10 +132,17 @@ const ErrorLogListPage: React.FC = () => {
               },
               render: (value, record) =>
                 _.isUndefined(value) ? (
-                  <Flex justify="center">-</Flex>
+                  <Flex
+                    justify="center"
+                    style={{ color: record.isError ? 'red' : undefined }}
+                  >
+                    -
+                  </Flex>
                 ) : (
                   <Typography.Text type={record.isError ? 'danger' : undefined}>
-                    {value}
+                    <TextHighlighter keyword={logSearch}>
+                      {value}
+                    </TextHighlighter>
                   </Typography.Text>
                 ),
             },
@@ -135,10 +156,17 @@ const ErrorLogListPage: React.FC = () => {
               },
               render: (value, record) =>
                 value === '' ? (
-                  <Flex justify="center">-</Flex>
+                  <Flex
+                    justify="center"
+                    style={{ color: record.isError ? 'red' : undefined }}
+                  >
+                    -
+                  </Flex>
                 ) : (
                   <Typography.Text type={record.isError ? 'danger' : undefined}>
-                    {value}
+                    <TextHighlighter keyword={logSearch}>
+                      {value}
+                    </TextHighlighter>
                   </Typography.Text>
                 ),
             },
@@ -152,10 +180,17 @@ const ErrorLogListPage: React.FC = () => {
               },
               render: (value, record) =>
                 value === '' ? (
-                  <Flex justify="center">-</Flex>
+                  <Flex
+                    justify="center"
+                    style={{ color: record.isError ? 'red' : undefined }}
+                  >
+                    -
+                  </Flex>
                 ) : (
                   <Typography.Text type={record.isError ? 'danger' : undefined}>
-                    {value}
+                    <TextHighlighter keyword={logSearch}>
+                      {value}
+                    </TextHighlighter>
                   </Typography.Text>
                 ),
             },
@@ -170,7 +205,9 @@ const ErrorLogListPage: React.FC = () => {
               render: (value, record) => {
                 return (
                   <Typography.Text type={record.isError ? 'danger' : undefined}>
-                    {value}
+                    <TextHighlighter keyword={logSearch}>
+                      {value}
+                    </TextHighlighter>
                   </Typography.Text>
                 );
               },
@@ -181,7 +218,9 @@ const ErrorLogListPage: React.FC = () => {
               render: (value, record) => {
                 return (
                   <Typography.Text type={record.isError ? 'danger' : undefined}>
-                    {value}
+                    <TextHighlighter keyword={logSearch}>
+                      {value}
+                    </TextHighlighter>
                   </Typography.Text>
                 );
               },
@@ -192,10 +231,17 @@ const ErrorLogListPage: React.FC = () => {
               width: 400,
               render: (value, record) =>
                 _.isUndefined(value) || value === '' ? (
-                  <Flex justify="center">-</Flex>
+                  <Flex
+                    justify="center"
+                    style={{ color: record.isError ? 'red' : undefined }}
+                  >
+                    -
+                  </Flex>
                 ) : (
                   <Typography.Text type={record.isError ? 'danger' : undefined}>
-                    {value}
+                    <TextHighlighter keyword={logSearch}>
+                      {value}
+                    </TextHighlighter>
                   </Typography.Text>
                 ),
             },
