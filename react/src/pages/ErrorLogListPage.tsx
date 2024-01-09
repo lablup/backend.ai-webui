@@ -150,6 +150,11 @@ const ErrorLogListPage: React.FC = () => {
             {
               title: t('logs.Method'),
               dataIndex: 'requestMethod',
+              onCell: () => {
+                return {
+                  style: { minWidth: 90 },
+                };
+              },
               render: (value, record) => {
                 return (
                   <Typography.Text type={record.isError ? 'danger' : undefined}>
