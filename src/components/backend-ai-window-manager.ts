@@ -5,7 +5,7 @@
 import BackendAIWindow from './backend-ai-window';
 import './backend-ai-window';
 import { LitElement } from 'lit';
-import { customElement, state, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 
 export type viewType = 'win' | 'tab' | 'spa'; // SPA: single-page application, legacy mode.
 export type windowType = 'win' | 'widget' | 'page';
@@ -64,22 +64,26 @@ export default class BackendAIWindowManager extends LitElement {
     group = '',
     icon: string | undefined,
   ) {
-    const div = document.createElement('div');
-    const winTemplate = `<backend-ai-window active=true></backend-ai-window>`;
-    div.innerHTML = winTemplate;
-    const win = div.querySelector('backend-ai-window');
+    // const div = document.createElement('div');
+    // const winTemplate = document.createElement('backend-ai-window');
+    const win: BackendAIWindow = document.createElement('backend-ai-window');
+    //const winTemplate = `<backend-ai-window active=true></backend-ai-window>`;
+    //div.innerHTML = winTemplate;
+    // const win = div.querySelector('backend-ai-window');
     if (title) {
-      win?.setAttribute('title', title);
+      win.setAttribute('title', title);
     }
     if (icon) {
-      win?.setAttribute('icon', icon);
+      win.setAttribute('icon', icon);
     }
-    win?.setAttribute('group', group);
+    win.setAttribute('group', group);
+    win.setAttribute('name', win.setName());
     const urlContent = document.createElement('IFRAME');
     urlContent.setAttribute('src', url);
     urlContent.setAttribute('width', '100%');
     urlContent.setAttribute('height', '100%');
-    win?.appendChild(urlContent);
+    win.appendChild(urlContent);
+    win.setAttribute('active', 'true');
     return win;
   }
 
@@ -93,8 +97,6 @@ export default class BackendAIWindowManager extends LitElement {
     // backend-ai-window-append event let WebUI shell to add newly created window to the DOM.
     const event = new CustomEvent('backend-ai-window-append', { detail: win });
     document.dispatchEvent(event);
-    console.log(win);
-    // this.addWindow(win);
   }
 
   addWindow(win: BackendAIWindow) {
@@ -112,7 +114,6 @@ export default class BackendAIWindowManager extends LitElement {
       this.removeOtherWindows(win);
     }
     this.reorderWindow({ detail: win.name });
-    console.log('Active windows:', this.windows);
   }
 
   removeWindow(win: BackendAIWindow) {
@@ -133,11 +134,22 @@ export default class BackendAIWindowManager extends LitElement {
       if (index > -1) {
         this.zOrder.splice(index, 1);
       }
+      this.syncZOrder();
       const event = new CustomEvent('backend-ai-window-removed', {
         detail: win.name,
       });
       document.dispatchEvent(event);
     }
+  }
+  syncZOrder() {
+    let zOrder = this.zOrder;
+    for (const [index, name] of this.zOrder.entries()) {
+      if (!(name in this.windows)) {
+        zOrder.splice(index, 1);
+      }
+    }
+    let uniqueZOrder: Set<string> = new Set(zOrder);
+    this.zOrder = Array.from(uniqueZOrder);
   }
 
   removeOtherWindows(win: BackendAIWindow) {
@@ -156,7 +168,7 @@ export default class BackendAIWindowManager extends LitElement {
       for (const [index, name] of this.zOrder.entries()) {
         if (name === win.name) {
           this.windows[name].win.style.opacity = '1';
-        } else {
+        } else if (name in this.windows) {
           this.windows[name].win.style.opacity = '0.1';
         }
       }
@@ -166,7 +178,9 @@ export default class BackendAIWindowManager extends LitElement {
   deannotateWindow() {
     // @ts-ignore
     for (const [index, name] of this.zOrder.entries()) {
-      this.windows[name].win.style.opacity = '1';
+      if (name in this.windows) {
+        this.windows[name].win.style.opacity = '1';
+      }
     }
   }
 
@@ -176,6 +190,7 @@ export default class BackendAIWindowManager extends LitElement {
     if (index > -1) {
       this.zOrder.splice(index, 1);
     }
+    this.syncZOrder();
     this.zOrder.push(name);
     for (const [index, name] of this.zOrder.entries()) {
       this.windows[name]?.setPosZ(index);

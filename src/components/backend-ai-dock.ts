@@ -103,19 +103,32 @@ export default class BackendAIDock extends LitElement {
     document.addEventListener('backend-ai-window-added', () => {
       this.updateDockWidth();
     });
-    this.updateDockWidth();
   }
   updateDockWidth() {
     let count = 0;
-    this.dockOrder = globalThis.backendaiwindowmanager.zOrder;
+    this.syncDockOrder();
     this.dockOrder.sort();
-    globalThis.backendaiwindowmanager.zOrder.forEach((name) => {
+    this.dockOrder.forEach((name) => {
       if (globalThis.backendaiwindowmanager.windows[name]?.icon) {
         count = count + 1;
       }
     });
-    this.dock.style.width = (count + 1) * 64 + (count ? 4 : 0) + 'px';
+    this.dock.style.width = (count + 1) * 64 + (count ? 16 : 0) + 'px';
     this.requestUpdate();
+  }
+
+  syncDockOrder() {
+    let zOrder = globalThis.backendaiwindowmanager.zOrder;
+    for (const [
+      index,
+      name,
+    ] of globalThis.backendaiwindowmanager.zOrder.entries()) {
+      if (!(name in globalThis.backendaiwindowmanager.windows)) {
+        zOrder.splice(index, 1);
+      }
+    }
+    let uniqueZOrder: Set<string> = new Set(zOrder);
+    this.dockOrder = Array.from(uniqueZOrder);
   }
 
   setToTop(name) {

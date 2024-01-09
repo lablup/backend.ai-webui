@@ -1633,6 +1633,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                           .app="${item.name}"
                           .app-name="${item.name}"
                           .url-postfix="${item.redirect}"
+                          .icon-src="${item.src}"
                           @click="${(e) =>
                             this._runThisAppWithConfirmationIfNeeded(e)}"
                         >

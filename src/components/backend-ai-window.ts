@@ -584,7 +584,6 @@ export default class BackendAIWindow extends LitElement {
       //this.titlebar.style.backgroundColor = this.groupColor;
       //this.titlebar.style.borderBottom = 'solid 5px ' + this.groupColor;
     }
-    console.log('------------------add: ', this.name);
     globalThis.backendaiwindowmanager.addWindow(this);
   }
 
