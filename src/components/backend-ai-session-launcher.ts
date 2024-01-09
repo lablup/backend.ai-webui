@@ -4213,7 +4213,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   validateSessionLauncherInput() {
     if (this.currentIndex === 1) {
       const isBatchModeValid =
-        this.sessionType === 'batch' && this.commandEditor._validateInput();
+        this.sessionType === 'batch'
+          ? this.commandEditor._validateInput()
+          : true;
       const isSessionNameValid = this.sessionName.checkValidity();
 
       if (!isBatchModeValid || !isSessionNameValid) {
