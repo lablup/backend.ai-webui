@@ -222,7 +222,7 @@ const SessionList: React.FC<SessionListProps> = ({
                     <GroupOutlined />
                     {record.scaling_group}
                   </Flex>
-                  <Flex gap={'xxs'}>
+                  <Flex gap="xxs">
                     {record.occupied_slots &&
                       _.map(
                         JSON.parse(record.occupied_slots),
@@ -278,13 +278,13 @@ const SessionList: React.FC<SessionListProps> = ({
               return (
                 <Tag color="gold">
                   <Flex direction="column">
-                    <Flex gap={'xxs'}>
+                    <Flex gap="xxs">
                       <ImageMetaIcon image={record.image} />
                       {/*<div> to apply gap */}
                       <div>{getImageAliasName(record.image)}</div>
                       {getBaseVersion(record.image)}
                     </Flex>
-                    <Flex gap={'xxs'}>
+                    <Flex gap="xxs">
                       {/*<div> to apply gap */}
                       <div>{getBaseImage(record.image)}</div>
                       {record.architecture}
