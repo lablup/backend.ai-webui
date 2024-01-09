@@ -153,6 +153,10 @@ const SessionList: React.FC<SessionListProps> = ({
                 <SessionInfoCell
                   key={record.session_id}
                   sessionFrgmt={record}
+                  sessionNameList={_.map(
+                    (compute_session_list?.items || []).filter(filter) || [],
+                    'name',
+                  )}
                   onRename={() => {
                     updateFetchKey(
                       record.session_id + new Date().toISOString(),

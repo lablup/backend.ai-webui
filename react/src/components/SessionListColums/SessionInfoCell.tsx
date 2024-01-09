@@ -30,8 +30,9 @@ const isPreparing = (status: string = '') => {
 
 const SessionInfoCell: React.FC<{
   sessionFrgmt: SessionInfoCellFragment$key;
+  sessionNameList: string[];
   onRename?: () => void;
-}> = ({ sessionFrgmt, onRename }) => {
+}> = ({ sessionFrgmt, sessionNameList, onRename }) => {
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
   const session = useFragment(
@@ -104,6 +105,16 @@ const SessionInfoCell: React.FC<{
               pattern: /^(?:[a-zA-Z0-9][-a-zA-Z0-9._]{2,}[a-zA-Z0-9])?$/,
               message: t('session.Validation.EnterValidSessionName'),
             },
+            () => ({
+              validator(_, value) {
+                if (sessionNameList.includes(String(value))) {
+                  return Promise.reject(
+                    new Error(t('session.Validation.SessionNameAlreadyExist')),
+                  );
+                }
+                return Promise.resolve();
+              },
+            }),
           ]}
         >
           <Input
