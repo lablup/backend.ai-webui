@@ -77,7 +77,7 @@ const ErrorLogListPage: React.FC = () => {
               render: (value, record) => {
                 const date = new Date(value);
                 return (
-                  <Typography.Text color={record.isError ? 'red' : ''}>
+                  <Typography.Text type={record.isError ? 'danger' : undefined}>
                     {date.toLocaleString('en-US', { hour12: false })}
                   </Typography.Text>
                 );
@@ -89,7 +89,7 @@ const ErrorLogListPage: React.FC = () => {
               dataIndex: 'statusCode',
               render: (value, record) => {
                 return (
-                  <Typography.Text color={record.isError ? 'red' : ''}>
+                  <Typography.Text type={record.isError ? 'danger' : undefined}>
                     {value + ' ' + record.statusText}
                   </Typography.Text>
                 );
@@ -105,7 +105,7 @@ const ErrorLogListPage: React.FC = () => {
               },
               render: (value, record) => {
                 return (
-                  <Typography.Text color={record.isError ? 'red' : ''}>
+                  <Typography.Text type={record.isError ? 'danger' : undefined}>
                     {value}
                   </Typography.Text>
                 );
@@ -121,7 +121,7 @@ const ErrorLogListPage: React.FC = () => {
               },
               render: (value, record) => {
                 return (
-                  <Typography.Text color={record.isError ? 'red' : ''}>
+                  <Typography.Text type={record.isError ? 'danger' : undefined}>
                     {value}
                   </Typography.Text>
                 );
@@ -137,7 +137,7 @@ const ErrorLogListPage: React.FC = () => {
               },
               render: (value, record) => {
                 return (
-                  <Typography.Text color={record.isError ? 'red' : ''}>
+                  <Typography.Text type={record.isError ? 'danger' : undefined}>
                     {value}
                   </Typography.Text>
                 );
@@ -153,7 +153,7 @@ const ErrorLogListPage: React.FC = () => {
               },
               render: (value, record) => {
                 return (
-                  <Typography.Text color={record.isError ? 'red' : ''}>
+                  <Typography.Text type={record.isError ? 'danger' : undefined}>
                     {value}
                   </Typography.Text>
                 );
@@ -164,7 +164,7 @@ const ErrorLogListPage: React.FC = () => {
               dataIndex: 'requestUrl',
               render: (value, record) => {
                 return (
-                  <Typography.Text color={record.isError ? 'red' : ''}>
+                  <Typography.Text type={record.isError ? 'danger' : undefined}>
                     {value}
                   </Typography.Text>
                 );
@@ -176,7 +176,7 @@ const ErrorLogListPage: React.FC = () => {
               width: 400,
               render: (value, record) => {
                 return (
-                  <Typography.Text color={record.isError ? 'red' : ''}>
+                  <Typography.Text type={record.isError ? 'danger' : undefined}>
                     {value}
                   </Typography.Text>
                 );
