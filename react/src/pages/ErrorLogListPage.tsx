@@ -3,6 +3,7 @@ import Flex from '../components/Flex';
 import { RedoOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
 import { Button, Space, Typography, Table, Alert } from 'antd';
+import _ from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -11,7 +12,7 @@ type logType = NonNullable<
     isError: boolean;
     message: string;
     requestMethod: string;
-    requestParameters: string;
+    requestParameters?: string;
     requestUrl: string;
     statusCode: number;
     statusText: string;
@@ -67,7 +68,7 @@ const ErrorLogListPage: React.FC = () => {
           </Space>
         </Flex>
         <Table
-          scroll={{ x: 'max-content', y: '40vh' }}
+          scroll={{ x: 'max-content' }}
           dataSource={logs as logType}
           pagination={{ showSizeChanger: false }}
           columns={[
@@ -98,18 +99,14 @@ const ErrorLogListPage: React.FC = () => {
             {
               title: t('logs.ErrorTitle'),
               dataIndex: 'title',
-              onCell: () => {
-                return {
-                  style: { minWidth: 65 },
-                };
-              },
-              render: (value, record) => {
-                return (
+              render: (value, record) =>
+                _.isUndefined(value) ? (
+                  <Flex justify="center">-</Flex>
+                ) : (
                   <Typography.Text type={record.isError ? 'danger' : undefined}>
                     {value}
                   </Typography.Text>
-                );
-              },
+                ),
             },
             {
               title: t('logs.ErrorMessage'),
@@ -119,38 +116,30 @@ const ErrorLogListPage: React.FC = () => {
                   style: { minWidth: 93 },
                 };
               },
-              render: (value, record) => {
-                return (
+              render: (value, record) =>
+                value === '' ? (
+                  <Flex justify="center">-</Flex>
+                ) : (
                   <Typography.Text type={record.isError ? 'danger' : undefined}>
                     {value}
                   </Typography.Text>
-                );
-              },
+                ),
             },
             {
               title: t('logs.ErrorType'),
               dataIndex: 'type',
-              onCell: () => {
-                return {
-                  style: { minWidth: 90 },
-                };
-              },
-              render: (value, record) => {
-                return (
+              render: (value, record) =>
+                value === '' ? (
+                  <Flex justify="center">-</Flex>
+                ) : (
                   <Typography.Text type={record.isError ? 'danger' : undefined}>
                     {value}
                   </Typography.Text>
-                );
-              },
+                ),
             },
             {
               title: t('logs.Method'),
               dataIndex: 'requestMethod',
-              onCell: () => {
-                return {
-                  style: { minWidth: 90 },
-                };
-              },
               render: (value, record) => {
                 return (
                   <Typography.Text type={record.isError ? 'danger' : undefined}>
@@ -174,13 +163,14 @@ const ErrorLogListPage: React.FC = () => {
               title: t('logs.Parameters'),
               dataIndex: 'requestParameters',
               width: 400,
-              render: (value, record) => {
-                return (
+              render: (value, record) =>
+                _.isUndefined(value) || value === '' ? (
+                  <Flex justify="center">-</Flex>
+                ) : (
                   <Typography.Text type={record.isError ? 'danger' : undefined}>
                     {value}
                   </Typography.Text>
-                );
-              },
+                ),
             },
           ]}
         />
