@@ -1499,8 +1499,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   protected render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css" />
-      <link rel="stylesheet" href="resources/custom.css" />
+      <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css"/>
+      <link rel="stylesheet" href="resources/custom.css"/>
       <div id="loading-curtain" class="loading-background">
         <div id="loading-drag-area" class="loading-background-drag-area"></div>
       </div>
