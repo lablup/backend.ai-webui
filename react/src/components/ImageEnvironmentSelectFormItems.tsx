@@ -13,16 +13,7 @@ import {
   ImageEnvironmentSelectFormItemsQuery,
   ImageEnvironmentSelectFormItemsQuery$data,
 } from './__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
-import {
-  Divider,
-  Form,
-  Input,
-  RefSelectProps,
-  Select,
-  Switch,
-  Tag,
-  theme,
-} from 'antd';
+import { Divider, Form, Input, RefSelectProps, Select, Tag, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
