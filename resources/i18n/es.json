@@ -641,7 +641,8 @@
     "RequestUrl": "Solicitar Url",
     "Status": "Estado",
     "TimeStamp": "Marca de tiempo",
-    "UpTo3000Logs": "(Hasta 3000 registros recientes)"
+    "UpTo3000Logs": "(Hasta 3000 registros recientes)",
+    "ShowOnlyError": "Mostrar solo error"
   },
   "maintenance": {
     "CleanupImages": "Limpieza de imágenes",

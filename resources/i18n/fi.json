@@ -641,7 +641,8 @@
     "RequestUrl": "Pyyntö Url",
     "Status": "Tila",
     "TimeStamp": "Aikaleima",
-    "UpTo3000Logs": "(Enintään 3000 viimeisintä lokia)"
+    "UpTo3000Logs": "(Enintään 3000 viimeisintä lokia)",
+    "ShowOnlyError": "Näytä vain virhe"
   },
   "maintenance": {
     "CleanupImages": "Siivous Kuvat",

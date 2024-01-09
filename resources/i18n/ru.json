@@ -868,7 +868,8 @@
     "Parameters": "Параметры",
     "ErrorType": "Тип ошибки",
     "LogMessageRemoved": "Сообщения журнала были удалены.",
-    "NoLogToDisplay": "Нет журналов для отображения"
+    "NoLogToDisplay": "Нет журналов для отображения",
+    "ShowOnlyError": "Показать только ошибку"
   },
   "resourcePolicy": {
     "Resources": "Ресурсы",

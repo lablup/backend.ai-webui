@@ -868,7 +868,8 @@
     "Parameters": "Parâmetros",
     "ErrorType": "Tipo de Erro",
     "LogMessageRemoved": "As mensagens de log foram removidas.",
-    "NoLogToDisplay": "Não há registos a apresentar"
+    "NoLogToDisplay": "Não há registos a apresentar",
+    "ShowOnlyError": "Mostrar apenas erro"
   },
   "resourcePolicy": {
     "Resources": "Recursos",

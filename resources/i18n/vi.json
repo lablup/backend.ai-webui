@@ -868,7 +868,8 @@
     "Parameters": "Thông số",
     "ErrorType": "Loại lỗi",
     "LogMessageRemoved": "Thông báo nhật ký đã bị xóa.",
-    "NoLogToDisplay": "Không có nhật ký để hiển thị"
+    "NoLogToDisplay": "Không có nhật ký để hiển thị",
+    "ShowOnlyError": "Chỉ hiển thị lỗi"
   },
   "resourcePolicy": {
     "Resources": "Tài nguyên",

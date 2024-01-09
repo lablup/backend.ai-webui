@@ -868,7 +868,8 @@
     "Parameters": "Παράμετροι",
     "ErrorType": "Τύπος σφάλματος",
     "LogMessageRemoved": "Τα μηνύματα καταγραφής έχουν καταργηθεί.",
-    "NoLogToDisplay": "Δεν εμφανίζονται αρχεία καταγραφής"
+    "NoLogToDisplay": "Δεν εμφανίζονται αρχεία καταγραφής",
+    "ShowOnlyError": "Εμφάνιση μόνο σφάλματος"
   },
   "resourcePolicy": {
     "Resources": "Πόροι",

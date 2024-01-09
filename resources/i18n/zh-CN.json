@@ -868,7 +868,8 @@
     "Parameters": "参数",
     "ErrorType": "错误类型",
     "LogMessageRemoved": "日志消息已被删除。",
-    "NoLogToDisplay": "无日志显示"
+    "NoLogToDisplay": "无日志显示",
+    "ShowOnlyError": "仅显示错误"
   },
   "resourcePolicy": {
     "Resources": "资源",

@@ -868,7 +868,8 @@
     "Parameters": "Parameter",
     "ErrorType": "Jenis Galat",
     "LogMessageRemoved": "Pesan Log telah dihapus.",
-    "NoLogToDisplay": "Tidak ada Log untuk ditampilkan"
+    "NoLogToDisplay": "Tidak ada Log untuk ditampilkan",
+    "ShowOnlyError": "Tampilkan hanya kesalahan"
   },
   "resourcePolicy": {
     "Resources": "Sumber daya",

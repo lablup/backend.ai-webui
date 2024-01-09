@@ -2,7 +2,7 @@ import BAIModal from '../components/BAIModal';
 import Flex from '../components/Flex';
 import { RedoOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
-import { Button, Space, Typography, Table, Alert } from 'antd';
+import { Button, Space, Typography, Table, Alert, Checkbox } from 'antd';
 import _ from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,6 +27,7 @@ const ErrorLogListPage: React.FC = () => {
     defaultValue: [],
   });
   const [isOpenClearLogsModal, setIsOpenClearLogsModal] = useState(false);
+  const [checkedShowOnlyError, setCheckedShowOnlyError] = useState(false);
 
   const onClickRefreshLogs = () => {
     setLogs(JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]'));
@@ -48,6 +49,11 @@ const ErrorLogListPage: React.FC = () => {
             </Space>
           </Typography.Title>
           <Space>
+            <Checkbox
+              onChange={(e) => setCheckedShowOnlyError(e.target.checked)}
+            >
+              {t('logs.ShowOnlyError')}
+            </Checkbox>
             <Button
               type="link"
               icon={<RedoOutlined />}
@@ -69,7 +75,13 @@ const ErrorLogListPage: React.FC = () => {
         </Flex>
         <Table
           scroll={{ x: 'max-content', y: '40vh' }}
-          dataSource={logs as logType}
+          dataSource={
+            checkedShowOnlyError
+              ? _.filter(logs, (log) => {
+                  return log.isError;
+                })
+              : (logs as logType)
+          }
           pagination={{ showSizeChanger: false }}
           columns={[
             {
