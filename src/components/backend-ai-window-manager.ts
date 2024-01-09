@@ -97,6 +97,7 @@ export default class BackendAIWindowManager extends LitElement {
     // backend-ai-window-append event let WebUI shell to add newly created window to the DOM.
     const event = new CustomEvent('backend-ai-window-append', { detail: win });
     document.dispatchEvent(event);
+    console.log('addWindowWithURL: ', win);
   }
 
   addWindow(win: BackendAIWindow) {
