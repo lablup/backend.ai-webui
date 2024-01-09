@@ -14,6 +14,7 @@ const BAINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
 
   const notifications = useRecoilValue(notificationState);
   const avatarMap = {
+    open: { icon: null, color: null },
     success: { icon: <CheckOutlined />, color: token.colorSuccess },
     info: { icon: <InfoOutlined />, color: token.colorInfo },
     warning: { icon: <InfoOutlined />, color: token.colorWarning },
@@ -48,16 +49,15 @@ const BAINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
                 </>
               }
               avatar={
-                <Avatar
-                  size="small"
-                  icon={_.get(avatarMap, (item.type || 'info') + '.icon')}
-                  style={{
-                    backgroundColor: _.get(
-                      avatarMap,
-                      (item.type || 'info') + '.color',
-                    ),
-                  }}
-                />
+                _.get(avatarMap, item.type + '.icon') && (
+                  <Avatar
+                    size="small"
+                    icon={_.get(avatarMap, item.type + '.icon')}
+                    style={{
+                      backgroundColor: _.get(avatarMap, item.type + '.color'),
+                    }}
+                  />
+                )
               }
             />
           </List.Item>

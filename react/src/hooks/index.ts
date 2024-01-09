@@ -176,9 +176,10 @@ export const useWebUINotification = () => {
     };
     setNotifications([...notifications, newNotification]);
 
-    notification[props.type || 'info']({
-      placement: props.placement || 'bottomRight',
+    notification[props.type || 'open']({
       ...props,
+      placement: props.placement || 'bottomRight',
+      // TODO: add url button when called by web components.
     });
   };
 

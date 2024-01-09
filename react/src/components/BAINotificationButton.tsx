@@ -15,8 +15,7 @@ const BAINotificationButton: React.FC<Props> = ({ ...props }) => {
 
   useEffect(() => {
     const handler = (e: any) => {
-      const { detail } = e;
-      showWebUINotification(detail);
+      showWebUINotification(e.detail);
     };
     document.addEventListener('show-bai-notification', handler);
     return () => {
