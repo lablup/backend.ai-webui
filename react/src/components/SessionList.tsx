@@ -84,6 +84,7 @@ const SessionList: React.FC<SessionListProps> = ({
             service_ports
             mounts
             occupied_slots
+            resource_opts
             access_key
             starts_at
             scaling_group
@@ -232,6 +233,16 @@ const SessionList: React.FC<SessionListProps> = ({
                               // @ts-ignore
                               type={type}
                               value={_.toString(value)}
+                              opts={{
+                                shmem: _.sum(
+                                  _.map(
+                                    JSON.parse(record.resource_opts),
+                                    (item) => {
+                                      return item.shmem;
+                                    },
+                                  ),
+                                ),
+                              }}
                             />
                           );
                         },
