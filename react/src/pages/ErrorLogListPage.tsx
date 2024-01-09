@@ -1,6 +1,7 @@
 import BAIModal from '../components/BAIModal';
 import Flex from '../components/Flex';
 import { RedoOutlined, DeleteOutlined } from '@ant-design/icons';
+import { useLocalStorageState } from 'ahooks';
 import { Button, Space, Typography, Table, Alert } from 'antd';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,9 +22,9 @@ type logType = NonNullable<
 >;
 const ErrorLogListPage: React.FC = () => {
   const { t } = useTranslation();
-  const [logs, setLogs] = useState<logType>(
-    JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]'),
-  );
+  const [logs, setLogs] = useLocalStorageState<logType>('backendaiwebui.logs', {
+    defaultValue: [],
+  });
   const [isOpenClearLogsModal, setIsOpenClearLogsModal] = useState(false);
 
   const onClickRefreshLogs = () => {
@@ -31,8 +32,7 @@ const ErrorLogListPage: React.FC = () => {
   };
 
   const handleOk = () => {
-    localStorage.removeItem('backendaiwebui.logs');
-    setLogs(JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]'));
+    setLogs([]);
     setIsOpenClearLogsModal(false);
   };
 
