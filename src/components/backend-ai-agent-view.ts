@@ -7,6 +7,7 @@ import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-resource-group-list';
 import './backend-ai-storage-proxy-list';
+import './backend-ai-window';
 import './lablup-activity-panel';
 import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
@@ -47,7 +48,8 @@ export default class BackendAIAgentView extends BackendAIPage {
       css`
         h3.tab {
           background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0 0;
+          /*border-radius: 5px 5px 0 0;*/
+          border-radius: 0;
           margin: 0 auto;
         }
 
@@ -70,6 +72,7 @@ export default class BackendAIAgentView extends BackendAIPage {
   }
 
   firstUpdated() {
+    super.firstUpdated();
     if (
       typeof globalThis.backendaiclient === 'undefined' ||
       globalThis.backendaiclient === null ||
@@ -142,86 +145,98 @@ export default class BackendAIAgentView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css" />
-      <lablup-activity-panel noheader narrow autowidth>
-        <div slot="message">
-          <h3 class="tab horizontal center layout">
-            <mwc-tab-bar>
-              <mwc-tab
-                title="running-lists"
-                label="${_t('agent.Connected')}"
-                @click="${(e) => this._showTab(e.target)}"
-              ></mwc-tab>
-              <mwc-tab
-                title="terminated-lists"
-                label="${_t('agent.Terminated')}"
-                @click="${(e) => this._showTab(e.target)}"
-              ></mwc-tab>
-              <!--<mwc-tab title="maintenance-lists" label="${_t(
-                'agent.Maintaining',
-              )}"
+      <backend-ai-window
+        defaultWidth="80%"
+        active="${this.active}"
+        title="${_t('webui.menu.ComputationResources')}"
+        name="agent"
+        icon="resources/menu_icons/agent.svg"
+      >
+        <link rel="stylesheet" href="resources/custom.css" />
+        <lablup-activity-panel noheader narrow autowidth attachInner>
+          <div slot="message">
+            <h3 class="tab horizontal center layout">
+              <mwc-tab-bar>
+                <mwc-tab
+                  title="running-lists"
+                  label="${_t('agent.Connected')}"
+                  @click="${(e) => this._showTab(e.target)}"
+                ></mwc-tab>
+                <mwc-tab
+                  title="terminated-lists"
+                  label="${_t('agent.Terminated')}"
+                  @click="${(e) => this._showTab(e.target)}"
+                ></mwc-tab>
+                <!--<mwc-tab title="maintenance-lists" label="${_t(
+                  'agent.Maintaining',
+                )}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>-->
-              ${this.enableStorageProxy
-                ? html`
-                    <mwc-tab
-                      title="storage-proxy-lists"
-                      label="${_t('general.StorageProxies')}"
-                      @click="${(e) => this._showTab(e.target)}"
-                    ></mwc-tab>
-                  `
-                : html``}
-              <mwc-tab
-                title="scaling-group-lists"
-                label="${_t('general.ResourceGroup')}"
-                @click="${(e) => this._showTab(e.target)}"
-              ></mwc-tab>
-            </mwc-tab-bar>
-            <div class="flex"></div>
-          </h3>
-          <div id="running-lists" class="tab-content">
-            <backend-ai-agent-list
-              id="running-agents"
-              condition="running"
-              ?active="${this._status === 'active' &&
-              this._tab === 'running-lists'}"
-            ></backend-ai-agent-list>
+                ${this.enableStorageProxy
+                  ? html`
+                      <mwc-tab
+                        title="storage-proxy-lists"
+                        label="${_t('general.StorageProxies')}"
+                        @click="${(e) => this._showTab(e.target)}"
+                      ></mwc-tab>
+                    `
+                  : html``}
+                <mwc-tab
+                  title="scaling-group-lists"
+                  label="${_t('general.ResourceGroup')}"
+                  @click="${(e) => this._showTab(e.target)}"
+                ></mwc-tab>
+              </mwc-tab-bar>
+              <div class="flex"></div>
+            </h3>
+            <div id="running-lists" class="tab-content">
+              <backend-ai-agent-list
+                id="running-agents"
+                condition="running"
+                ?active="${this._status === 'active' &&
+                this._tab === 'running-lists'}"
+              ></backend-ai-agent-list>
+            </div>
+            <div
+              id="terminated-lists"
+              class="tab-content"
+              style="display:none;"
+            >
+              <backend-ai-agent-list
+                id="terminated-agents"
+                condition="terminated"
+                ?active="${this._status === 'active' &&
+                this._tab === 'terminated-lists'}"
+              ></backend-ai-agent-list>
+            </div>
+            ${this.enableStorageProxy
+              ? html`
+                  <div
+                    id="storage-proxy-lists"
+                    class="tab-content"
+                    style="display:none;"
+                  >
+                    <backend-ai-storage-proxy-list
+                      id="storage-proxies"
+                      ?active="${this._status === 'active' &&
+                      this._tab === 'storage-proxy-lists'}"
+                    ></backend-ai-storage-proxy-list>
+                  </div>
+                `
+              : html``}
+            <div
+              id="scaling-group-lists"
+              class="tab-content"
+              style="display:none;"
+            >
+              <backend-ai-resource-group-list
+                id="scaling-groups"
+                ?active="${this._status === 'active' &&
+                this._tab === 'scaling-group-lists'}"
+              ></backend-ai-resource-group-list>
+            </div>
           </div>
-          <div id="terminated-lists" class="tab-content" style="display:none;">
-            <backend-ai-agent-list
-              id="terminated-agents"
-              condition="terminated"
-              ?active="${this._status === 'active' &&
-              this._tab === 'terminated-lists'}"
-            ></backend-ai-agent-list>
-          </div>
-          ${this.enableStorageProxy
-            ? html`
-                <div
-                  id="storage-proxy-lists"
-                  class="tab-content"
-                  style="display:none;"
-                >
-                  <backend-ai-storage-proxy-list
-                    id="storage-proxies"
-                    ?active="${this._status === 'active' &&
-                    this._tab === 'storage-proxy-lists'}"
-                  ></backend-ai-storage-proxy-list>
-                </div>
-              `
-            : html``}
-          <div
-            id="scaling-group-lists"
-            class="tab-content"
-            style="display:none;"
-          >
-            <backend-ai-resource-group-list
-              id="scaling-groups"
-              ?active="${this._status === 'active' &&
-              this._tab === 'scaling-group-lists'}"
-            ></backend-ai-resource-group-list>
-          </div>
-        </div>
-      </lablup-activity-panel>
+        </lablup-activity-panel>
+      </backend-ai-window>
     `;
   }
 }

@@ -50,6 +50,8 @@ export const BackendAiStyles = [
       --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
       --general-sidepanel-color: #dddddd;
       --general-sidepanel-background-color: #ffffff; /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
+      --general-window-background-color: #efefef;
+      --general-select-background-color: #e7ebee;
       --general-tabbar-background-color: var(
         --general-sidebar-background-color
       );
@@ -202,29 +204,6 @@ export const BackendAiStyles = [
       border-radius: 6px;
       background-color: #464646;
     }
-
-    .paper-header {
-      height: 60px;
-      font-size: 16px;
-      line-height: 60px;
-      padding: 0 10px;
-      color: white;
-      transition: height 0.2s;
-    }
-
-    .paper-header a {
-      color: white;
-    }
-
-    .paper-header.tall {
-      height: 120px;
-    }
-
-    .paper-header.medium-tall {
-      height: 100px;
-      line-height: 50px;
-    }
-
     .cover {
       margin: 60px;
     }
@@ -233,7 +212,10 @@ export const BackendAiStyles = [
       /* override for mwc-list */
       --select-primary-theme: var(--general-sidebar-color);
       --select-secondary-theme: var(--general-checkbox-color);
-      --select-background-color: var(#e7ebee, #efefef);
+      --select-background-color: var(
+        --general-select-background-color,
+        #efefef
+      );
       --select-background-border-radius: 5px;
       --select-box-shadow: 0 1px 3px -1px rgba(0, 0, 0, 60%),
         0 3px 12px -1px rgb(200, 200, 200, 80%);
@@ -345,7 +327,7 @@ export const BackendAiStyles = [
       --mdc-icon-button-size: 30px;
       --mdc-theme-text-disabled-on-light: var(--paper-grey-400);
       color: var(--general-button-background-color);
-      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
       border-radius: 5px;
     }
 

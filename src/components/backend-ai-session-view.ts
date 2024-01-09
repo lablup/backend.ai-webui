@@ -14,6 +14,7 @@ import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-resource-monitor';
 import './backend-ai-session-launcher';
 import './backend-ai-session-list';
+import './backend-ai-window';
 import './lablup-activity-panel';
 import '@material/mwc-button';
 import '@material/mwc-checkbox';
@@ -87,7 +88,8 @@ export default class BackendAISessionView extends BackendAIPage {
       css`
         h3.tab {
           background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0 0;
+          /*border-radius: 5px 5px 0 0;*/
+          border-radius: 0;
         }
         mwc-tab-bar {
           --mdc-theme-primary: var(--general-sidebar-selected-color);
@@ -148,6 +150,7 @@ export default class BackendAISessionView extends BackendAIPage {
   }
 
   firstUpdated() {
+    super.firstUpdated();
     this.notification = globalThis.lablupNotification;
     document.addEventListener('backend-ai-session-list-refreshed', () => {
       this.runningJobs.refreshList(true, false);
@@ -175,20 +178,19 @@ export default class BackendAISessionView extends BackendAIPage {
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
-      this.resourceMonitor.removeAttribute('active');
+      this.resourceMonitor?.removeAttribute('active');
       this._status = 'inactive';
       for (let x = 0; x < this.sessionList.length; x++) {
         this.sessionList[x].removeAttribute('active');
       }
       return;
     }
-
     const _init = () => {
       this.enableInferenceWorkload =
         globalThis.backendaiclient.supports('inference-workload');
       this.enableSFTPSession =
         globalThis.backendaiclient.supports('sftp-scaling-group');
-      this.resourceMonitor.setAttribute('active', 'true');
+      // this.resourceMonitor.setAttribute('active', 'true');
       this.runningJobs.setAttribute('active', 'true');
       this._status = 'active';
     };
@@ -523,224 +525,241 @@ export default class BackendAISessionView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css" />
-      <lablup-activity-panel
-        title="${_t('summary.ResourceStatistics')}"
-        elevation="1"
-        autowidth
+      <backend-ai-window
+        ?active="${this.active}"
+        title="${_t('webui.menu.Sessions')}"
+        name="job"
+        icon="resources/menu_icons/session.svg"
       >
-        <div slot="message">
-          <backend-ai-resource-monitor
-            location="session"
-            id="resource-monitor"
-            ?active="${this.active === true}"
-          ></backend-ai-resource-monitor>
-        </div>
-      </lablup-activity-panel>
-      <lablup-activity-panel
-        title="${_t('summary.Announcement')}"
-        elevation="1"
-        horizontalsize="2x"
-        style="display:none;"
-      ></lablup-activity-panel>
-      <lablup-activity-panel elevation="1" autowidth narrow noheader>
-        <div slot="message">
-          <h3
-            class="tab horizontal center layout"
-            style="margin-top:0;margin-bottom:0;"
-          >
-            <div class="scroll hide-scrollbar">
-              <div
-                class="horizontal layout flex start-justified"
-                style="width:70%;"
-              >
-                <mwc-tab-bar>
-                  <mwc-tab
-                    title="running"
-                    label="${_t('session.Running')}"
-                    @click="${(e) => this._showTab(e.target)}"
-                  ></mwc-tab>
-                  <mwc-tab
-                    title="interactive"
-                    label="${_t('session.Interactive')}"
-                    @click="${(e) => this._showTab(e.target)}"
-                  ></mwc-tab>
-                  <mwc-tab
-                    title="batch"
-                    label="${_t('session.Batch')}"
-                    @click="${(e) => this._showTab(e.target)}"
-                  ></mwc-tab>
-                  ${this.enableInferenceWorkload
-                    ? html`
-                        <mwc-tab
-                          title="inference"
-                          label="${_t('session.Inference')}"
-                          @click="${(e) => this._showTab(e.target)}"
-                        ></mwc-tab>
-                      `
-                    : html``}
-                  ${this.enableSFTPSession
-                    ? html`
-                        <mwc-tab
-                          title="system"
-                          label="${_t('session.System')}"
-                          @click="${(e) => this._showTab(e.target)}"
-                        ></mwc-tab>
-                      `
-                    : html``}
-                  <mwc-tab
-                    title="finished"
-                    label="${_t('session.Finished')}"
-                    @click="${(e) => this._showTab(e.target)}"
-                  ></mwc-tab>
-                </mwc-tab-bar>
+        <link rel="stylesheet" href="resources/custom.css" />
+        <lablup-activity-panel
+          title="${_t('summary.ResourceStatistics')}"
+          elevation="1"
+          autowidth
+        >
+          <div slot="message">
+            <backend-ai-resource-monitor
+              location="session"
+              id="resource-monitor"
+              ?active="${this.active === true}"
+            ></backend-ai-resource-monitor>
+          </div>
+        </lablup-activity-panel>
+        <lablup-activity-panel
+          title="${_t('summary.Announcement')}"
+          elevation="1"
+          horizontalsize="2x"
+          style="display:none;"
+        ></lablup-activity-panel>
+        <lablup-activity-panel
+          elevation="1"
+          autowidth
+          narrow
+          noheader
+          attachInner
+        >
+          <div slot="message">
+            <h3
+              class="tab horizontal center layout"
+              style="margin-top:0;margin-bottom:0;"
+            >
+              <div class="scroll hide-scrollbar">
+                <div
+                  class="horizontal layout flex start-justified"
+                  style="width:70%;"
+                >
+                  <mwc-tab-bar>
+                    <mwc-tab
+                      title="running"
+                      label="${_t('session.Running')}"
+                      @click="${(e) => this._showTab(e.target)}"
+                    ></mwc-tab>
+                    <mwc-tab
+                      title="interactive"
+                      label="${_t('session.Interactive')}"
+                      @click="${(e) => this._showTab(e.target)}"
+                    ></mwc-tab>
+                    <mwc-tab
+                      title="batch"
+                      label="${_t('session.Batch')}"
+                      @click="${(e) => this._showTab(e.target)}"
+                    ></mwc-tab>
+                    ${this.enableInferenceWorkload
+                      ? html`
+                          <mwc-tab
+                            title="inference"
+                            label="${_t('session.Inference')}"
+                            @click="${(e) => this._showTab(e.target)}"
+                          ></mwc-tab>
+                        `
+                      : html``}
+                    ${this.enableSFTPSession
+                      ? html`
+                          <mwc-tab
+                            title="system"
+                            label="${_t('session.System')}"
+                            @click="${(e) => this._showTab(e.target)}"
+                          ></mwc-tab>
+                        `
+                      : html``}
+                    <mwc-tab
+                      title="finished"
+                      label="${_t('session.Finished')}"
+                      @click="${(e) => this._showTab(e.target)}"
+                    ></mwc-tab>
+                  </mwc-tab-bar>
+                </div>
               </div>
+              ${this.is_admin
+                ? html`
+                    <div style="position: relative;">
+                      <mwc-icon-button
+                        id="dropdown-menu-button"
+                        icon="more_horiz"
+                        raised
+                        @click="${(e) => this._toggleDropdown(e)}"
+                      ></mwc-icon-button>
+                      <mwc-menu id="dropdown-menu">
+                        <mwc-list-item>
+                          <a
+                            class="horizontal layout start center"
+                            @click="${() => this._openExportToCsvDialog()}"
+                          >
+                            <mwc-icon style="color:#242424;padding-right:10px;">
+                              get_app
+                            </mwc-icon>
+                            ${_t('session.exportCSV')}
+                          </a>
+                        </mwc-list-item>
+                      </mwc-menu>
+                    </div>
+                  `
+                : html``}
+              <div
+                class="horizontal layout flex end-justified"
+                style="margin-right:20px;"
+              >
+                <backend-ai-session-launcher
+                  location="session"
+                  id="session-launcher"
+                  ?active="${this.active === true}"
+                ></backend-ai-session-launcher>
+              </div>
+            </h3>
+            <div id="running-lists" class="tab-content">
+              <backend-ai-session-list
+                id="running-jobs"
+                condition="running"
+              ></backend-ai-session-list>
             </div>
-            ${this.is_admin
+            <div
+              id="interactive-lists"
+              class="tab-content"
+              style="display:none;"
+            >
+              <backend-ai-session-list
+                id="interactive-jobs"
+                condition="interactive"
+              ></backend-ai-session-list>
+            </div>
+            <div id="batch-lists" class="tab-content" style="display:none;">
+              <backend-ai-session-list
+                id="batch-jobs"
+                condition="batch"
+              ></backend-ai-session-list>
+            </div>
+            ${this.enableInferenceWorkload
               ? html`
-                  <div style="position: relative;">
-                    <mwc-icon-button
-                      id="dropdown-menu-button"
-                      icon="more_horiz"
-                      raised
-                      @click="${(e) => this._toggleDropdown(e)}"
-                    ></mwc-icon-button>
-                    <mwc-menu id="dropdown-menu">
-                      <mwc-list-item>
-                        <a
-                          class="horizontal layout start center"
-                          @click="${() => this._openExportToCsvDialog()}"
-                        >
-                          <mwc-icon style="color:#242424;padding-right:10px;">
-                            get_app
-                          </mwc-icon>
-                          ${_t('session.exportCSV')}
-                        </a>
-                      </mwc-list-item>
-                    </mwc-menu>
+                  <div
+                    id="inference-lists"
+                    class="tab-content"
+                    style="display:none;"
+                  >
+                    <backend-ai-session-list
+                      id="inference-jobs"
+                      condition="inference"
+                    ></backend-ai-session-list>
                   </div>
                 `
               : html``}
-            <div
-              class="horizontal layout flex end-justified"
-              style="margin-right:20px;"
-            >
-              <backend-ai-session-launcher
-                location="session"
-                id="session-launcher"
-                ?active="${this.active === true}"
-              ></backend-ai-session-launcher>
+            ${this.enableSFTPSession
+              ? html`
+                  <div
+                    id="system-lists"
+                    class="tab-content"
+                    style="display:none;"
+                  >
+                    <backend-ai-session-list
+                      id="system-jobs"
+                      condition="system"
+                    ></backend-ai-session-list>
+                  </div>
+                `
+              : html``}
+            <div id="finished-lists" class="tab-content" style="display:none;">
+              <backend-ai-session-list
+                id="finished-jobs"
+                condition="finished"
+              ></backend-ai-session-list>
             </div>
-          </h3>
-          <div id="running-lists" class="tab-content">
-            <backend-ai-session-list
-              id="running-jobs"
-              condition="running"
-            ></backend-ai-session-list>
+            <div id="others-lists" class="tab-content" style="display:none;">
+              <backend-ai-session-list
+                id="others-jobs"
+                condition="others"
+              ></backend-ai-session-list>
+            </div>
           </div>
-          <div id="interactive-lists" class="tab-content" style="display:none;">
-            <backend-ai-session-list
-              id="interactive-jobs"
-              condition="interactive"
-            ></backend-ai-session-list>
-          </div>
-          <div id="batch-lists" class="tab-content" style="display:none;">
-            <backend-ai-session-list
-              id="batch-jobs"
-              condition="batch"
-            ></backend-ai-session-list>
-          </div>
-          ${this.enableInferenceWorkload
-            ? html`
-                <div
-                  id="inference-lists"
-                  class="tab-content"
-                  style="display:none;"
-                >
-                  <backend-ai-session-list
-                    id="inference-jobs"
-                    condition="inference"
-                  ></backend-ai-session-list>
-                </div>
-              `
-            : html``}
-          ${this.enableSFTPSession
-            ? html`
-                <div
-                  id="system-lists"
-                  class="tab-content"
-                  style="display:none;"
-                >
-                  <backend-ai-session-list
-                    id="system-jobs"
-                    condition="system"
-                  ></backend-ai-session-list>
-                </div>
-              `
-            : html``}
-          <div id="finished-lists" class="tab-content" style="display:none;">
-            <backend-ai-session-list
-              id="finished-jobs"
-              condition="finished"
-            ></backend-ai-session-list>
-          </div>
-          <div id="others-lists" class="tab-content" style="display:none;">
-            <backend-ai-session-list
-              id="others-jobs"
-              condition="others"
-            ></backend-ai-session-list>
-          </div>
-        </div>
-      </lablup-activity-panel>
-      <backend-ai-dialog id="export-to-csv" fixed backdrop>
-        <span slot="title">${_t('session.ExportSessionListToCSVFile')}</span>
-        <div slot="content">
-          <mwc-textfield
-            id="export-file-name"
-            label="File name"
-            validationMessage="${_t('data.explorer.ValueRequired')}"
-            value="${'session_' + this._defaultFileName}"
-            required
-            style="margin-bottom:10px;"
-          ></mwc-textfield>
-          <div class="horizontal center layout" style="display:none;">
+        </lablup-activity-panel>
+        <backend-ai-dialog id="export-to-csv" fixed backdrop>
+          <span slot="title">${_t('session.ExportSessionListToCSVFile')}</span>
+          <div slot="content">
             <mwc-textfield
-              id="date-from"
-              label="From"
-              type="date"
-              style="margin-right:10px;"
-              value="${this._getFirstDateOfMonth()}"
+              id="export-file-name"
+              label="File name"
+              validationMessage="${_t('data.explorer.ValueRequired')}"
+              value="${'session_' + this._defaultFileName}"
               required
-              @change="${this._validateDateRange}"
+              style="margin-bottom:10px;"
             ></mwc-textfield>
-            <mwc-textfield
-              id="date-to"
-              label="To"
-              type="date"
-              value="${new Date().toISOString().substring(0, 10)}"
-              required
-              @change="${this._validateDateRange}"
-            ></mwc-textfield>
+            <div class="horizontal center layout" style="display:none;">
+              <mwc-textfield
+                id="date-from"
+                label="From"
+                type="date"
+                style="margin-right:10px;"
+                value="${this._getFirstDateOfMonth()}"
+                required
+                @change="${this._validateDateRange}"
+              ></mwc-textfield>
+              <mwc-textfield
+                id="date-to"
+                label="To"
+                type="date"
+                value="${new Date().toISOString().substring(0, 10)}"
+                required
+                @change="${this._validateDateRange}"
+              ></mwc-textfield>
+            </div>
+            <div class="horizontal center layout">
+              <mwc-formfield label="Export All-time data">
+                <mwc-checkbox
+                  id="export-csv-checkbox"
+                  @change="${(e) => this._toggleDialogCheckbox(e)}"
+                ></mwc-checkbox>
+              </mwc-formfield>
+            </div>
           </div>
-          <div class="horizontal center layout">
-            <mwc-formfield label="Export All-time data">
-              <mwc-checkbox
-                id="export-csv-checkbox"
-                @change="${(e) => this._toggleDialogCheckbox(e)}"
-              ></mwc-checkbox>
-            </mwc-formfield>
+          <div slot="footer" class="horizontal flex layout">
+            <mwc-button
+              unelevated
+              fullwidth
+              icon="get_app"
+              label="${_t('session.ExportCSVFile')}"
+              @click="${this._exportToCSV}"
+            ></mwc-button>
           </div>
-        </div>
-        <div slot="footer" class="horizontal flex layout">
-          <mwc-button
-            unelevated
-            fullwidth
-            icon="get_app"
-            label="${_t('session.ExportCSVFile')}"
-            @click="${this._exportToCSV}"
-          ></mwc-button>
-        </div>
-      </backend-ai-dialog>
+        </backend-ai-dialog>
+      </backend-ai-window>
     `;
   }
 }

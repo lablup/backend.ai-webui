@@ -122,6 +122,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   }
 
   firstUpdated() {
+    super.firstUpdated();
     this.notification = globalThis.lablupNotification;
 
     this._initEventHandlers();

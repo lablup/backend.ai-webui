@@ -1,6 +1,6 @@
 /**
  @license
-Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
 */
 import { navigate } from '../backend-ai-app';
 import {
@@ -12,6 +12,7 @@ import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import '@material/mwc-circular-progress';
 import { css, CSSResultGroup, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
 import { customElement } from 'lit/decorators.js';
 
 /**
@@ -49,18 +50,26 @@ export default class BackendAIServingView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-react-serving-list
-        @moveTo="${(e: CustomEvent) => {
-          const path = e.detail.path;
-          const params = e.detail.params;
-          globalThis.history.pushState(
-            {},
-            '',
-            path + '?folder=' + params.folder,
-          );
-          store.dispatch(navigate(decodeURIComponent(path), params));
-        }}"
-      ></backend-ai-react-serving-list>
+      <backend-ai-window
+        ?active="${this.active}"
+        title="${_t('webui.menu.Serving')}"
+        name="job"
+        icon="resources/menu_icons/session.svg"
+      >
+        <link rel="stylesheet" href="resources/custom.css" />
+        <backend-ai-react-serving-list
+          @moveTo="${(e: CustomEvent) => {
+            const path = e.detail.path;
+            const params = e.detail.params;
+            globalThis.history.pushState(
+              {},
+              '',
+              path + '?folder=' + params.folder,
+            );
+            store.dispatch(navigate(decodeURIComponent(path), params));
+          }}"
+        ></backend-ai-react-serving-list>
+      </backend-ai-window>
     `;
   }
 }

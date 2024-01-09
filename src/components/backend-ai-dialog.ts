@@ -77,6 +77,7 @@ export default class BackendAIDialog extends LitElement {
           --mdc-typography-headline6-font-family: var(--general-font-family);
           --mdc-typography-headline6-font-color: black;
           --mdc-shape-medium: 10px;
+          --mdc-dialog-z-index: 10000;
         }
 
         mwc-dialog > div.card {

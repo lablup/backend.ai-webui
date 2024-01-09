@@ -11,6 +11,7 @@ import {
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import { default as PainKiller } from './backend-ai-painkiller';
+import './backend-ai-window';
 import './lablup-activity-panel';
 import '@material/mwc-list/mwc-list-item';
 import { Select } from '@material/mwc-select';
@@ -277,530 +278,554 @@ export default class BackendAiSettingsView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css" />
-      <div class="horizontal layout wrap">
-        <lablup-activity-panel title="${_t('settings.Image')}" autowidth>
-          <div slot="message" class="horizontal wrap layout">
-            <div class="horizontal layout setting-item">
-              <div class="vertical center-justified layout setting-desc">
-                <div class="title">
-                  ${_t('settings.RegisterNewImagesFromRepo')}
+      <backend-ai-window
+        ?active="${this.active}"
+        title="${_t('webui.menu.Configurations')}"
+        name="settings"
+        icon="resources/menu_icons/settings.svg"
+      >
+        <link rel="stylesheet" href="resources/custom.css" />
+        <div class="horizontal layout wrap">
+          <lablup-activity-panel
+            title="${_t('settings.Image')}"
+            autowidth
+            attachInner
+          >
+            <div slot="message" class="horizontal wrap layout">
+              <div class="horizontal layout setting-item">
+                <div class="vertical center-justified layout setting-desc">
+                  <div class="title">
+                    ${_t('settings.RegisterNewImagesFromRepo')}
+                  </div>
+                  <div class="description">
+                    ${_t('settings.DescRegisterNewImagesFromRepo')}
+                  </div>
                 </div>
-                <div class="description">
-                  ${_t('settings.DescRegisterNewImagesFromRepo')}
+                <div class="vertical center-justified layout setting-button">
+                  <mwc-switch
+                    id="register-new-image-switch"
+                    disabled
+                  ></mwc-switch>
                 </div>
               </div>
-              <div class="vertical center-justified layout setting-button">
-                <mwc-switch
-                  id="register-new-image-switch"
-                  disabled
-                ></mwc-switch>
-              </div>
-            </div>
-            <div class="horizontal layout setting-item">
-              <div class="vertical center-justified layout setting-desc-select">
-                <div class="title">${_t('settings.ImagePullBehavior')}</div>
-                <div class="description-extra">
-                  ${_tr('settings.DescImagePullBehavior')}
-                  <br />
-                  ${_t('settings.Require2003orAbove')}
-                </div>
-              </div>
-              <div class="vertical center-justified layout">
-                <mwc-select
-                  id="ui-image-pulling-behavior"
-                  required
-                  outlined
-                  style="width:150px;"
-                  @selected="${(e) => this.setImagePullingBehavior(e)}"
+              <div class="horizontal layout setting-item">
+                <div
+                  class="vertical center-justified layout setting-desc-select"
                 >
-                  ${this.imagePullingBehavior.map(
-                    (item) => html`
-                      <mwc-list-item
-                        value="${item.behavior}"
-                        ?selected=${this.options['image_pulling_behavior'] ===
-                        item.behavior}
+                  <div class="title">${_t('settings.ImagePullBehavior')}</div>
+                  <div class="description-extra">
+                    ${_tr('settings.DescImagePullBehavior')}
+                    <br />
+                    ${_t('settings.Require2003orAbove')}
+                  </div>
+                </div>
+                <div class="vertical center-justified layout">
+                  <mwc-select
+                    id="ui-image-pulling-behavior"
+                    required
+                    outlined
+                    style="width:150px;"
+                    @selected="${(e) => this.setImagePullingBehavior(e)}"
+                  >
+                    ${this.imagePullingBehavior.map(
+                      (item) => html`
+                        <mwc-list-item
+                          value="${item.behavior}"
+                          ?selected=${this.options['image_pulling_behavior'] ===
+                          item.behavior}
+                        >
+                          ${item.name}
+                        </mwc-list-item>
+                      `,
+                    )}
+                  </mwc-select>
+                </div>
+              </div>
+            </div>
+          </lablup-activity-panel>
+          <lablup-activity-panel title="${_t('settings.GUI')}" autowidth>
+            <div slot="message" class="horizontal wrap layout">
+              <div class="horizontal layout setting-item">
+                <div
+                  class="vertical center-justified layout setting-desc-shrink"
+                >
+                  <div class="title">${_t('settings.UseCLIonGUI')}</div>
+                  <div class="description-shrink">
+                    ${_tr('settings.DescUseCLIonGUI')}
+                  </div>
+                </div>
+                <div class="vertical center-justified layout setting-button">
+                  <mwc-switch id="use-cli-on-gui-switch" disabled></mwc-switch>
+                </div>
+              </div>
+              <div class="horizontal layout setting-item">
+                <div
+                  class="vertical center-justified layout setting-desc-shrink"
+                >
+                  <div class="title">${_t('settings.UseGUIonWeb')}</div>
+                  <div class="description-shrink">
+                    ${_tr('settings.DescUseGUIonWeb')}
+                  </div>
+                </div>
+                <div class="vertical center-justified layout setting-button">
+                  <mwc-switch id="use-gui-on-web-switch" disabled></mwc-switch>
+                </div>
+              </div>
+            </div>
+          </lablup-activity-panel>
+          <lablup-activity-panel
+            title="${_t('settings.Scaling')} & ${_t('settings.Plugins')}"
+            narrow
+            autowidth
+          >
+            <div slot="message" class="vertical wrap layout">
+              <div
+                class="horizontal wrap layout note"
+                style="background-color:#FFFBE7;width:100%;padding:10px 0px;"
+              >
+                <p style="margin:auto 10px;">
+                  ${_t('settings.NoteAboutFixedSetup')}
+                </p>
+              </div>
+              <div style="margin:auto 16px;">
+                <h3 class="horizontal center layout">
+                  <span>${_t('settings.Scaling')}</span>
+                  <span class="flex"></span>
+                </h3>
+                <div class="vertical wrap layout">
+                  <div class="horizontal layout wrap start start-justified">
+                    <div class="horizontal layout setting-item">
+                      <div
+                        class="vertical center-justified layout setting-desc-shrink"
                       >
-                        ${item.name}
-                      </mwc-list-item>
-                    `,
-                  )}
-                </mwc-select>
-              </div>
-            </div>
-          </div>
-        </lablup-activity-panel>
-        <lablup-activity-panel title="${_t('settings.GUI')}" autowidth>
-          <div slot="message" class="horizontal wrap layout">
-            <div class="horizontal layout setting-item">
-              <div class="vertical center-justified layout setting-desc-shrink">
-                <div class="title">${_t('settings.UseCLIonGUI')}</div>
-                <div class="description-shrink">
-                  ${_tr('settings.DescUseCLIonGUI')}
-                </div>
-              </div>
-              <div class="vertical center-justified layout setting-button">
-                <mwc-switch id="use-cli-on-gui-switch" disabled></mwc-switch>
-              </div>
-            </div>
-            <div class="horizontal layout setting-item">
-              <div class="vertical center-justified layout setting-desc-shrink">
-                <div class="title">${_t('settings.UseGUIonWeb')}</div>
-                <div class="description-shrink">
-                  ${_tr('settings.DescUseGUIonWeb')}
-                </div>
-              </div>
-              <div class="vertical center-justified layout setting-button">
-                <mwc-switch id="use-gui-on-web-switch" disabled></mwc-switch>
-              </div>
-            </div>
-          </div>
-        </lablup-activity-panel>
-        <lablup-activity-panel
-          title="${_t('settings.Scaling')} & ${_t('settings.Plugins')}"
-          narrow
-          autowidth
-        >
-          <div slot="message" class="vertical wrap layout">
-            <div
-              class="horizontal wrap layout note"
-              style="background-color:#FFFBE7;width:100%;padding:10px 0px;"
-            >
-              <p style="margin:auto 10px;">
-                ${_t('settings.NoteAboutFixedSetup')}
-              </p>
-            </div>
-            <div style="margin:auto 16px;">
-              <h3 class="horizontal center layout">
-                <span>${_t('settings.Scaling')}</span>
-                <span class="flex"></span>
-              </h3>
-              <div class="vertical wrap layout">
-                <div class="horizontal layout wrap start start-justified">
-                  <div class="horizontal layout setting-item">
-                    <div
-                      class="vertical center-justified layout setting-desc-shrink"
-                    >
-                      <div class="title">
-                        ${_t('settings.AllowAgentSideRegistration')}
+                        <div class="title">
+                          ${_t('settings.AllowAgentSideRegistration')}
+                        </div>
+                        <div class="description-shrink">
+                          ${_tr('settings.DescAllowAgentSideRegistration')}
+                        </div>
                       </div>
-                      <div class="description-shrink">
-                        ${_tr('settings.DescAllowAgentSideRegistration')}
+                      <div
+                        class="vertical center-justified layout setting-button"
+                      >
+                        <mwc-switch
+                          id="allow-agent-registration-switch"
+                          selected
+                          disabled
+                        ></mwc-switch>
                       </div>
                     </div>
-                    <div
-                      class="vertical center-justified layout setting-button"
-                    >
-                      <mwc-switch
-                        id="allow-agent-registration-switch"
-                        selected
-                        disabled
-                      ></mwc-switch>
-                    </div>
-                  </div>
-                  <div class="horizontal layout setting-item">
-                    <div
-                      class="vertical center-justified layout setting-desc-shrink"
-                    >
-                      <div class="title">${_t('settings.OverlayNetwork')}</div>
-                      <div class="description-shrink">
-                        ${_tr('settings.OverlayNetworkConfiguration')}
+                    <div class="horizontal layout setting-item">
+                      <div
+                        class="vertical center-justified layout setting-desc-shrink"
+                      >
+                        <div class="title">
+                          ${_t('settings.OverlayNetwork')}
+                        </div>
+                        <div class="description-shrink">
+                          ${_tr('settings.OverlayNetworkConfiguration')}
+                        </div>
                       </div>
-                    </div>
-                    <div class="vertical center-justified layout">
-                      <mwc-button
-                        unelevated
-                        icon="rule"
-                        label="${_t('settings.Config')}"
-                        style="float: right;"
-                        @click="${() => {
-                          this.updateNetworkOptionElements();
-                          this._openDialogWithConfirmation(
-                            'overlay-network-env-dialog',
-                          );
-                        }}"
-                      ></mwc-button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <h3 class="horizontal center layout">
-                <span>${_t('settings.Plugins')}</span>
-                <span class="flex"></span>
-              </h3>
-              <div class="vertical layout wrap">
-                <div class="horizontal layout wrap start start-justified">
-                  <div class="horizontal layout setting-item">
-                    <div
-                      class="vertical center-justified layout setting-desc-shrink"
-                    >
-                      <div class="title">
-                        ${_t('settings.OpenSourceCUDAGPUsupport')}
+                      <div class="vertical center-justified layout">
+                        <mwc-button
+                          unelevated
+                          icon="rule"
+                          label="${_t('settings.Config')}"
+                          style="float: right;"
+                          @click="${() => {
+                            this.updateNetworkOptionElements();
+                            this._openDialogWithConfirmation(
+                              'overlay-network-env-dialog',
+                            );
+                          }}"
+                        ></mwc-button>
                       </div>
-                      <div class="description-shrink">
-                        ${_tr('settings.DescCUDAGPUsupport')}
-                        ${this.options['cuda_fgpu']
-                          ? html`
-                              <br />
-                              ${_t('settings.CUDAGPUdisabledByFGPUsupport')}
-                            `
-                          : html``}
-                      </div>
-                    </div>
-                    <div
-                      class="vertical center-justified layout setting-button"
-                    >
-                      <mwc-switch
-                        id="cuda-gpu-support-switch"
-                        ?selected="${this.options['cuda_gpu']}"
-                        disabled
-                      ></mwc-switch>
-                    </div>
-                  </div>
-                  <div class="horizontal layout setting-item">
-                    <div
-                      class="vertical center-justified layout setting-desc-shrink"
-                    >
-                      <div class="title">${_t('settings.ROCMGPUsupport')}</div>
-                      <div class="description-shrink">
-                        ${_tr('settings.DescROCMGPUsupport')}
-                      </div>
-                    </div>
-                    <div
-                      class="vertical center-justified layout setting-button"
-                    >
-                      <mwc-switch
-                        id="rocm-gpu-support-switch"
-                        ?selected="${this.options['rocm_gpu']}"
-                        disabled
-                      ></mwc-switch>
-                    </div>
-                  </div>
-                  <div class="horizontal layout setting-item">
-                    <div
-                      class="vertical center-justified layout setting-desc-select"
-                      style="margin: 15px 0px;"
-                    >
-                      <div class="title">${_t('settings.Scheduler')}</div>
-                      <div class="description-shrink">
-                        ${_t('settings.SchedulerConfiguration')}
-                        <br />
-                        ${_t('settings.Require2009orAbove')}
-                      </div>
-                    </div>
-                    <div class="vertical center-justified layout">
-                      <mwc-button
-                        style="white-space: nowrap;"
-                        unelevated
-                        icon="rule"
-                        label="${_t('settings.Config')}"
-                        @click="${() =>
-                          this._openDialogWithConfirmation(
-                            'scheduler-env-dialog',
-                          )}"
-                      ></mwc-button>
                     </div>
                   </div>
                 </div>
                 <h3 class="horizontal center layout">
-                  <span>${_t('settings.EnterpriseFeatures')}</span>
+                  <span>${_t('settings.Plugins')}</span>
                   <span class="flex"></span>
                 </h3>
-                <div class="horizontal wrap layout">
-                  <div class="horizontal layout setting-item">
-                    <div
-                      class="vertical center-justified layout setting-desc-shrink"
-                    >
-                      <div class="title">${_t('settings.FractionalGPU')}</div>
-                      <div class="description-shrink">
-                        ${_t('settings.DescFractionalGPU')}
-                        <br />
-                        ${_t('settings.RequireFGPUPlugin')}
+                <div class="vertical layout wrap">
+                  <div class="horizontal layout wrap start start-justified">
+                    <div class="horizontal layout setting-item">
+                      <div
+                        class="vertical center-justified layout setting-desc-shrink"
+                      >
+                        <div class="title">
+                          ${_t('settings.OpenSourceCUDAGPUsupport')}
+                        </div>
+                        <div class="description-shrink">
+                          ${_tr('settings.DescCUDAGPUsupport')}
+                          ${this.options['cuda_fgpu']
+                            ? html`
+                                <br />
+                                ${_t('settings.CUDAGPUdisabledByFGPUsupport')}
+                              `
+                            : html``}
+                        </div>
+                      </div>
+                      <div
+                        class="vertical center-justified layout setting-button"
+                      >
+                        <mwc-switch
+                          id="cuda-gpu-support-switch"
+                          ?selected="${this.options['cuda_gpu']}"
+                          disabled
+                        ></mwc-switch>
                       </div>
                     </div>
-                    <div
-                      class="vertical center-justified layout setting-button"
-                    >
-                      <mwc-switch
-                        id="fractional-gpu-switch"
-                        ?selected="${this.options['cuda_fgpu']}"
-                        disabled
-                      ></mwc-switch>
+                    <div class="horizontal layout setting-item">
+                      <div
+                        class="vertical center-justified layout setting-desc-shrink"
+                      >
+                        <div class="title">
+                          ${_t('settings.ROCMGPUsupport')}
+                        </div>
+                        <div class="description-shrink">
+                          ${_tr('settings.DescROCMGPUsupport')}
+                        </div>
+                      </div>
+                      <div
+                        class="vertical center-justified layout setting-button"
+                      >
+                        <mwc-switch
+                          id="rocm-gpu-support-switch"
+                          ?selected="${this.options['rocm_gpu']}"
+                          disabled
+                        ></mwc-switch>
+                      </div>
+                    </div>
+                    <div class="horizontal layout setting-item">
+                      <div
+                        class="vertical center-justified layout setting-desc-select"
+                        style="margin: 15px 0px;"
+                      >
+                        <div class="title">${_t('settings.Scheduler')}</div>
+                        <div class="description-shrink">
+                          ${_t('settings.SchedulerConfiguration')}
+                          <br />
+                          ${_t('settings.Require2009orAbove')}
+                        </div>
+                      </div>
+                      <div class="vertical center-justified layout">
+                        <mwc-button
+                          style="white-space: nowrap;"
+                          unelevated
+                          icon="rule"
+                          label="${_t('settings.Config')}"
+                          @click="${() =>
+                            this._openDialogWithConfirmation(
+                              'scheduler-env-dialog',
+                            )}"
+                        ></mwc-button>
+                      </div>
                     </div>
                   </div>
-                  <div class="horizontal layout setting-item">
-                    <div
-                      class="vertical center-justified layout setting-desc-shrink"
-                    >
-                      <div class="title">${_t('settings.TPU')}</div>
-                      <div class="description-shrink">
-                        ${_t('settings.DescTPU')}
-                        <br />
-                        ${_t('settings.RequireTPUPlugin')}
+                  <h3 class="horizontal center layout">
+                    <span>${_t('settings.EnterpriseFeatures')}</span>
+                    <span class="flex"></span>
+                  </h3>
+                  <div class="horizontal wrap layout">
+                    <div class="horizontal layout setting-item">
+                      <div
+                        class="vertical center-justified layout setting-desc-shrink"
+                      >
+                        <div class="title">${_t('settings.FractionalGPU')}</div>
+                        <div class="description-shrink">
+                          ${_t('settings.DescFractionalGPU')}
+                          <br />
+                          ${_t('settings.RequireFGPUPlugin')}
+                        </div>
+                      </div>
+                      <div
+                        class="vertical center-justified layout setting-button"
+                      >
+                        <mwc-switch
+                          id="fractional-gpu-switch"
+                          ?selected="${this.options['cuda_fgpu']}"
+                          disabled
+                        ></mwc-switch>
                       </div>
                     </div>
-                    <div
-                      class="vertical center-justified layout setting-button"
-                    >
-                      <mwc-switch
-                        id="tpu-switch"
-                        ?selected="${this.options['tpu']}"
-                        disabled
-                      ></mwc-switch>
-                    </div>
-                  </div>
-                  <div class="horizontal layout setting-item">
-                    <div
-                      class="vertical center-justified layout setting-desc-shrink"
-                    >
-                      <div class="title">${_t('settings.IPUsupport')}</div>
-                      <div class="description-shrink">
-                        ${_tr('settings.DescIPUsupport')}
-                        <br />
-                        ${_t('settings.RequireIPUPlugin')}
+                    <div class="horizontal layout setting-item">
+                      <div
+                        class="vertical center-justified layout setting-desc-shrink"
+                      >
+                        <div class="title">${_t('settings.TPU')}</div>
+                        <div class="description-shrink">
+                          ${_t('settings.DescTPU')}
+                          <br />
+                          ${_t('settings.RequireTPUPlugin')}
+                        </div>
+                      </div>
+                      <div
+                        class="vertical center-justified layout setting-button"
+                      >
+                        <mwc-switch
+                          id="tpu-switch"
+                          ?selected="${this.options['tpu']}"
+                          disabled
+                        ></mwc-switch>
                       </div>
                     </div>
-                    <div
-                      class="vertical center-justified layout setting-button"
-                    >
-                      <mwc-switch
-                        id="ipu-support-switch"
-                        ?selected="${this.options['ipu']}"
-                        disabled
-                      ></mwc-switch>
-                    </div>
-                  </div>
-                  <div class="horizontal layout setting-item">
-                    <div
-                      class="vertical center-justified layout setting-desc-shrink"
-                    >
-                      <div class="title">${_t('settings.ATOMsupport')}</div>
-                      <div class="description-shrink">
-                        ${_tr('settings.DescATOMsupport')}
-                        <br />
-                        ${_t('settings.RequireATOMPlugin')}
+                    <div class="horizontal layout setting-item">
+                      <div
+                        class="vertical center-justified layout setting-desc-shrink"
+                      >
+                        <div class="title">${_t('settings.IPUsupport')}</div>
+                        <div class="description-shrink">
+                          ${_tr('settings.DescIPUsupport')}
+                          <br />
+                          ${_t('settings.RequireIPUPlugin')}
+                        </div>
+                      </div>
+                      <div
+                        class="vertical center-justified layout setting-button"
+                      >
+                        <mwc-switch
+                          id="ipu-support-switch"
+                          ?selected="${this.options['ipu']}"
+                          disabled
+                        ></mwc-switch>
                       </div>
                     </div>
-                    <div
-                      class="vertical center-justified layout setting-button"
-                    >
-                      <mwc-switch
-                        id="atom-support-switch"
-                        ?selected="${this.options['atom']}"
-                        disabled
-                      ></mwc-switch>
-                    </div>
-                  </div>
-                  <div class="horizontal layout setting-item">
-                    <div
-                      class="vertical center-justified layout setting-desc-shrink"
-                    >
-                      <div class="title">${_t('settings.Warboysupport')}</div>
-                      <div class="description-shrink">
-                        ${_tr('settings.DescWarboysupport')}
-                        <br />
-                        ${_t('settings.RequireWarboyPlugin')}
+                    <div class="horizontal layout setting-item">
+                      <div
+                        class="vertical center-justified layout setting-desc-shrink"
+                      >
+                        <div class="title">${_t('settings.ATOMsupport')}</div>
+                        <div class="description-shrink">
+                          ${_tr('settings.DescATOMsupport')}
+                          <br />
+                          ${_t('settings.RequireATOMPlugin')}
+                        </div>
+                      </div>
+                      <div
+                        class="vertical center-justified layout setting-button"
+                      >
+                        <mwc-switch
+                          id="atom-support-switch"
+                          ?selected="${this.options['atom']}"
+                          disabled
+                        ></mwc-switch>
                       </div>
                     </div>
-                    <div
-                      class="vertical center-justified layout setting-button"
-                    >
-                      <mwc-switch
-                        id="warboy-support-switch"
-                        ?selected="${this.options['warboy']}"
-                        disabled
-                      ></mwc-switch>
+                    <div class="horizontal layout setting-item">
+                      <div
+                        class="vertical center-justified layout setting-desc-shrink"
+                      >
+                        <div class="title">${_t('settings.Warboysupport')}</div>
+                        <div class="description-shrink">
+                          ${_tr('settings.DescWarboysupport')}
+                          <br />
+                          ${_t('settings.RequireWarboyPlugin')}
+                        </div>
+                      </div>
+                      <div
+                        class="vertical center-justified layout setting-button"
+                      >
+                        <mwc-switch
+                          id="warboy-support-switch"
+                          ?selected="${this.options['warboy']}"
+                          disabled
+                        ></mwc-switch>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </lablup-activity-panel>
-        <backend-ai-dialog
-          id="scheduler-env-dialog"
-          class="env-dialog"
-          fixed
-          backdrop
-          persistent
-          closeWithConfirmation
-        >
-          <span slot="title" class="horizontal layout center">
-            ${_tr('settings.ConfigPerJobSchduler')}
-          </span>
-          <span slot="action">
-            <mwc-icon-button
-              icon="info"
-              @click="${(e) => this._showConfigDescription(e, 'default')}"
-              style="pointer-events:auto;"
-            ></mwc-icon-button>
-          </span>
-          <div
-            slot="content"
-            id="scheduler-env-container"
-            class="vertical layout centered env-container"
-            style="width: 100%;"
+          </lablup-activity-panel>
+          <backend-ai-dialog
+            id="scheduler-env-dialog"
+            class="env-dialog"
+            fixed
+            backdrop
+            persistent
+            closeWithConfirmation
           >
-            <mwc-select
-              id="scheduler-switch"
-              required
-              label="${_t('settings.Scheduler')}"
-              style="margin-bottom: 10px;"
-              validationMessage="${_t('settings.SchedulerRequired')}"
-              @selected="${(e) => this.changeSelectedScheduleType(e)}"
-            >
-              ${this.jobschedulerType.map(
-                (item) => html`
-                  <mwc-list-item value="${item}">
-                    ${item.toUpperCase()}
-                  </mwc-list-item>
-                `,
-              )}
-            </mwc-select>
-            <h4>${_t('settings.SchedulerOptions')}</h4>
-            <div class="horizontal center layout flex row">
-              <span slot="title">${_t('settings.SessionCreationRetries')}</span>
+            <span slot="title" class="horizontal layout center">
+              ${_tr('settings.ConfigPerJobSchduler')}
+            </span>
+            <span slot="action">
               <mwc-icon-button
                 icon="info"
-                @click="${(e) => this._showConfigDescription(e, 'retries')}"
+                @click="${(e) => this._showConfigDescription(e, 'default')}"
                 style="pointer-events:auto;"
               ></mwc-icon-button>
-              <mwc-textfield
-                id="num-retries"
+            </span>
+            <div
+              slot="content"
+              id="scheduler-env-container"
+              class="vertical layout centered env-container"
+              style="width: 100%;"
+            >
+              <mwc-select
+                id="scheduler-switch"
                 required
-                autoValidate
-                validationMessage="${_t('settings.InputRequired')}"
-                type="number"
-                pattern="[0-9]+"
-                min="${this.optionRange.numRetries.min}"
-                max="${this.optionRange.numRetries.max}"
-                style="margin-top: 18px"
-                @change="${(e) => this._validateInput(e)}"
-                @input="${(e) => this._customizeValidationMessage(e)}"
-              ></mwc-textfield>
-            </div>
-          </div>
-          <div slot="footer" class="horizontal end-justified flex layout">
-            <mwc-button
-              id="config-cancel-button"
-              style="width:auto;margin-right:10px;"
-              icon="delete"
-              @click="${() => this._clearOptions('scheduler-env-container')}"
-              label="${_t('button.DeleteAll')}"
-            ></mwc-button>
-            <mwc-button
-              unelevated
-              id="config-save-button"
-              style="width:auto;"
-              icon="check"
-              @click="${() => this.saveAndCloseDialog()}"
-              label="${_t('button.Save')}"
-            ></mwc-button>
-          </div>
-        </backend-ai-dialog>
-        <backend-ai-dialog
-          id="overlay-network-env-dialog"
-          class="env-dialog"
-          fixed
-          backdrop
-          persistent
-          closeWithConfirmation
-        >
-          <span slot="title" class="horizontal layout center">
-            ${_tr('settings.OverlayNetworkSettings')}
-          </span>
-          <span slot="action">
-            <mwc-icon-button
-              icon="info"
-              @click="${(e) =>
-                this._showConfigDescription(e, 'overlayNetwork')}"
-              style="pointer-events:auto;"
-            ></mwc-icon-button>
-          </span>
-          <div
-            slot="content"
-            id="overlay-network-env-container"
-            class="vertical layout centered env-container"
-            style="width: 100%;"
-          >
-            <div class="horizontal center layout flex row justified">
-              <div class="horizontal center layout">
-                <span slot="title">MTU</span>
+                label="${_t('settings.Scheduler')}"
+                style="margin-bottom: 10px;"
+                validationMessage="${_t('settings.SchedulerRequired')}"
+                @selected="${(e) => this.changeSelectedScheduleType(e)}"
+              >
+                ${this.jobschedulerType.map(
+                  (item) => html`
+                    <mwc-list-item value="${item}">
+                      ${item.toUpperCase()}
+                    </mwc-list-item>
+                  `,
+                )}
+              </mwc-select>
+              <h4>${_t('settings.SchedulerOptions')}</h4>
+              <div class="horizontal center layout flex row">
+                <span slot="title">
+                  ${_t('settings.SessionCreationRetries')}
+                </span>
                 <mwc-icon-button
                   icon="info"
-                  @click="${(e) => this._showConfigDescription(e, 'mtu')}"
+                  @click="${(e) => this._showConfigDescription(e, 'retries')}"
                   style="pointer-events:auto;"
                 ></mwc-icon-button>
+                <mwc-textfield
+                  id="num-retries"
+                  required
+                  autoValidate
+                  validationMessage="${_t('settings.InputRequired')}"
+                  type="number"
+                  pattern="[0-9]+"
+                  min="${this.optionRange.numRetries.min}"
+                  max="${this.optionRange.numRetries.max}"
+                  style="margin-top: 18px"
+                  @change="${(e) => this._validateInput(e)}"
+                  @input="${(e) => this._customizeValidationMessage(e)}"
+                ></mwc-textfield>
               </div>
-              <mwc-textfield
-                id="mtu"
-                class="network-option"
-                value="${this.options.network.mtu}"
-                required
-                autoValidate
-                validationMessage="${_t('settings.InputRequired')}"
-                type="number"
-                pattern="[0-9]+"
-                min="${this.optionRange.mtu.min}"
-                max="${this.optionRange.mtu.max}"
-                style="margin-top:18px;min-width:240px;"
-                @change="${(e) => this._validateInput(e)}"
-                @input="${(e) => this._customizeValidationMessage(e)}"
-              ></mwc-textfield>
             </div>
-          </div>
-          <div slot="footer" class="horizontal end-justified flex layout">
-            <mwc-button
-              id="config-cancel-button"
-              style="width:auto;margin-right:10px;"
-              icon="delete"
-              @click="${() =>
-                this._clearOptions('overlay-network-env-container')}"
-              label="${_t('button.DeleteAll')}"
-            ></mwc-button>
-            <mwc-button
-              unelevated
-              id="config-save-button"
-              style="width:auto;"
-              icon="check"
-              @click="${() => this.saveAndCloseOverlayNetworkDialog()}"
-              label="${_t('button.Save')}"
-            ></mwc-button>
-          </div>
-        </backend-ai-dialog>
-        <backend-ai-dialog id="help-description" fixed backdrop>
-          <span slot="title">${this._helpDescriptionTitle}</span>
-          <div slot="content" class="horizontal layout">
-            ${this._helpDescription}
-          </div>
-        </backend-ai-dialog>
-        <backend-ai-dialog id="env-config-confirmation" warning fixed>
-          <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
-          <div slot="content">
-            <p>${_t('settings.EnvConfigWillDisappear')}</p>
-            <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
-          </div>
-          <div slot="footer" class="horizontal end-justified flex layout">
-            <mwc-button
-              id="env-config-remain-button"
-              style="width:auto;"
-              label="${_t('button.Cancel')}"
-              @click="${() => this.closeDialog('env-config-confirmation')}"
-            ></mwc-button>
-            <mwc-button
-              unelevated
-              id="env-config-reset-button"
-              style="width:auto;margin-right:10px;"
-              label="${_t('button.DismissAndProceed')}"
-              @click="${() => this.closeAndResetEnvInput()}"
-            ></mwc-button>
-          </div>
-        </backend-ai-dialog>
-      </div>
+            <div slot="footer" class="horizontal end-justified flex layout">
+              <mwc-button
+                id="config-cancel-button"
+                style="width:auto;margin-right:10px;"
+                icon="delete"
+                @click="${() => this._clearOptions('scheduler-env-container')}"
+                label="${_t('button.DeleteAll')}"
+              ></mwc-button>
+              <mwc-button
+                unelevated
+                id="config-save-button"
+                style="width:auto;"
+                icon="check"
+                @click="${() => this.saveAndCloseDialog()}"
+                label="${_t('button.Save')}"
+              ></mwc-button>
+            </div>
+          </backend-ai-dialog>
+          <backend-ai-dialog
+            id="overlay-network-env-dialog"
+            class="env-dialog"
+            fixed
+            backdrop
+            persistent
+            closeWithConfirmation
+          >
+            <span slot="title" class="horizontal layout center">
+              ${_tr('settings.OverlayNetworkSettings')}
+            </span>
+            <span slot="action">
+              <mwc-icon-button
+                icon="info"
+                @click="${(e) =>
+                  this._showConfigDescription(e, 'overlayNetwork')}"
+                style="pointer-events:auto;"
+              ></mwc-icon-button>
+            </span>
+            <div
+              slot="content"
+              id="overlay-network-env-container"
+              class="vertical layout centered env-container"
+              style="width: 100%;"
+            >
+              <div class="horizontal center layout flex row justified">
+                <div class="horizontal center layout">
+                  <span slot="title">MTU</span>
+                  <mwc-icon-button
+                    icon="info"
+                    @click="${(e) => this._showConfigDescription(e, 'mtu')}"
+                    style="pointer-events:auto;"
+                  ></mwc-icon-button>
+                </div>
+                <mwc-textfield
+                  id="mtu"
+                  class="network-option"
+                  value="${this.options.network.mtu}"
+                  required
+                  autoValidate
+                  validationMessage="${_t('settings.InputRequired')}"
+                  type="number"
+                  pattern="[0-9]+"
+                  min="${this.optionRange.mtu.min}"
+                  max="${this.optionRange.mtu.max}"
+                  style="margin-top:18px;min-width:240px;"
+                  @change="${(e) => this._validateInput(e)}"
+                  @input="${(e) => this._customizeValidationMessage(e)}"
+                ></mwc-textfield>
+              </div>
+            </div>
+            <div slot="footer" class="horizontal end-justified flex layout">
+              <mwc-button
+                id="config-cancel-button"
+                style="width:auto;margin-right:10px;"
+                icon="delete"
+                @click="${() =>
+                  this._clearOptions('overlay-network-env-container')}"
+                label="${_t('button.DeleteAll')}"
+              ></mwc-button>
+              <mwc-button
+                unelevated
+                id="config-save-button"
+                style="width:auto;"
+                icon="check"
+                @click="${() => this.saveAndCloseOverlayNetworkDialog()}"
+                label="${_t('button.Save')}"
+              ></mwc-button>
+            </div>
+          </backend-ai-dialog>
+          <backend-ai-dialog id="help-description" fixed backdrop>
+            <span slot="title">${this._helpDescriptionTitle}</span>
+            <div slot="content" class="horizontal layout">
+              ${this._helpDescription}
+            </div>
+          </backend-ai-dialog>
+          <backend-ai-dialog id="env-config-confirmation" warning fixed>
+            <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
+            <div slot="content">
+              <p>${_t('settings.EnvConfigWillDisappear')}</p>
+              <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
+            </div>
+            <div slot="footer" class="horizontal end-justified flex layout">
+              <mwc-button
+                id="env-config-remain-button"
+                style="width:auto;"
+                label="${_t('button.Cancel')}"
+                @click="${() => this.closeDialog('env-config-confirmation')}"
+              ></mwc-button>
+              <mwc-button
+                unelevated
+                id="env-config-reset-button"
+                style="width:auto;margin-right:10px;"
+                label="${_t('button.DismissAndProceed')}"
+                @click="${() => this.closeAndResetEnvInput()}"
+              ></mwc-button>
+            </div>
+          </backend-ai-dialog>
+        </div>
+      </backend-ai-window>
     `;
   }
 
   firstUpdated() {
+    super.firstUpdated();
     this.notification = globalThis.lablupNotification;
     if (
       typeof globalThis.backendaiclient === 'undefined' ||

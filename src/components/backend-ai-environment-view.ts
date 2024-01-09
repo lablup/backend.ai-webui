@@ -12,6 +12,7 @@ import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-registry-list';
 import './backend-ai-resource-preset-list';
+import './backend-ai-window';
 import './lablup-activity-panel';
 import '@material/mwc-button';
 import { Tab } from '@material/mwc-tab';
@@ -147,60 +148,67 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css" />
-      <lablup-activity-panel noheader narrow autowidth>
-        <div slot="message">
-          <h3 class="tab horizontal center layout">
-            <mwc-tab-bar>
-              <mwc-tab
-                title="image-lists"
-                label="${_t('environment.Images')}"
-                @click="${(e) => this._showTab(e.target)}"
-              ></mwc-tab>
-              <mwc-tab
-                title="resource-template-lists"
-                label="${_t('environment.ResourcePresets')}"
-                @click="${(e) => this._showTab(e.target)}"
-              ></mwc-tab>
-              ${this.is_superadmin
+      <backend-ai-window
+        ?active="${this.active}"
+        title="${_t('webui.menu.Environments')}"
+        name="environment"
+        icon="resources/menu_icons/environments.svg"
+      >
+        <link rel="stylesheet" href="resources/custom.css" />
+        <lablup-activity-panel noheader narrow autowidth attachInner>
+          <div slot="message">
+            <h3 class="tab horizontal center layout">
+              <mwc-tab-bar>
+                <mwc-tab
+                  title="image-lists"
+                  label="${_t('environment.Images')}"
+                  @click="${(e) => this._showTab(e.target)}"
+                ></mwc-tab>
+                <mwc-tab
+                  title="resource-template-lists"
+                  label="${_t('environment.ResourcePresets')}"
+                  @click="${(e) => this._showTab(e.target)}"
+                ></mwc-tab>
+                ${this.is_superadmin
+                  ? html`
+                      <mwc-tab
+                        title="registry-lists"
+                        label="${_t('environment.Registries')}"
+                        @click="${(e) => this._showTab(e.target)}"
+                      ></mwc-tab>
+                    `
+                  : html``}
+              </mwc-tab-bar>
+              <div class="flex"></div>
+            </h3>
+            <div id="image-lists" class="tab-content">
+              <backend-ai-environment-list
+                ?active="${this._activeTab === 'image-lists'}"
+              ></backend-ai-environment-list>
+            </div>
+            <backend-ai-resource-preset-list
+              id="resource-template-lists"
+              class="admin item tab-content"
+              style="display: none"
+              ?active="${this._activeTab === 'resource-template-lists'}"
+            ></backend-ai-resource-preset-list>
+            <div id="registry-lists" class="tab-content">
+              ${this.isSupportContainerRegistryGraphQL &&
+              this._activeTab === 'registry-lists'
                 ? html`
-                    <mwc-tab
-                      title="registry-lists"
-                      label="${_t('environment.Registries')}"
-                      @click="${(e) => this._showTab(e.target)}"
-                    ></mwc-tab>
+                    <div class="flex" style="height:calc(100vh - 183px);">
+                      <backend-ai-react-container-registry-list></backend-ai-react-container-registry-list>
+                    </div>
                   `
-                : html``}
-            </mwc-tab-bar>
-            <div class="flex"></div>
-          </h3>
-          <div id="image-lists" class="tab-content">
-            <backend-ai-environment-list
-              ?active="${this._activeTab === 'image-lists'}"
-            ></backend-ai-environment-list>
+                : html`
+                    <backend-ai-registry-list
+                      ?active="${this._activeTab === 'registry-lists'}"
+                    ></backend-ai-registry-list>
+                  `}
+            </div>
           </div>
-          <backend-ai-resource-preset-list
-            id="resource-template-lists"
-            class="admin item tab-content"
-            style="display: none"
-            ?active="${this._activeTab === 'resource-template-lists'}"
-          ></backend-ai-resource-preset-list>
-          <div id="registry-lists" class="tab-content">
-            ${this.isSupportContainerRegistryGraphQL &&
-            this._activeTab === 'registry-lists'
-              ? html`
-                  <div class="flex" style="height:calc(100vh - 183px);">
-                    <backend-ai-react-container-registry-list></backend-ai-react-container-registry-list>
-                  </div>
-                `
-              : html`
-                  <backend-ai-registry-list
-                    ?active="${this._activeTab === 'registry-lists'}"
-                  ></backend-ai-registry-list>
-                `}
-          </div>
-        </div>
-      </lablup-activity-panel>
+        </lablup-activity-panel>
+      </backend-ai-window>
     `;
   }
 }

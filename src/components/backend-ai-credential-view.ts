@@ -17,6 +17,7 @@ import { BackendAIPage } from './backend-ai-page';
 import { default as PainKiller } from './backend-ai-painkiller';
 import './backend-ai-resource-policy-list';
 import './backend-ai-user-list';
+import './backend-ai-window';
 import './lablup-activity-panel';
 import './lablup-expansion';
 import '@material/mwc-button';
@@ -153,7 +154,8 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         h3.tab {
           background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0 0;
+          /*border-radius: 5px 5px 0 0;*/
+          border-radius: 0;
           margin: 0 auto;
         }
 
@@ -1194,8 +1196,12 @@ export default class BackendAICredentialView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <backend-ai-window ?active="${this.active}" title="${_t(
+        'webui.menu.UserCredentials&Policies',
+      )}" name="credential"
+                             icon="resources/menu_icons/user.svg">
       <link rel="stylesheet" href="resources/custom.css">
-      <lablup-activity-panel noheader narrow autowidth>
+      <lablup-activity-panel noheader narrow autowidth attachInner>
         <div slot="message">
           <h3 class="tab horizontal wrap layout">
            <mwc-tab-bar>
@@ -1625,6 +1631,7 @@ export default class BackendAICredentialView extends BackendAIPage {
               @click="${this._exportToCSV}"></mwc-button>
         </div>
       </backend-ai-dialog>
+    </backend-ai-window>
     `;
   }
 }

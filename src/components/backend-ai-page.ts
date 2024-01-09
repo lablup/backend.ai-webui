@@ -1,8 +1,9 @@
 /**
  Backend.AI base view page for Single-page application
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  */
+import BackendAIWindow from './backend-ai-window';
 import { LitElement } from 'lit';
 import {
   get as _text,
@@ -29,7 +30,21 @@ registerTranslateConfig({
 export class BackendAIPage extends LitElement {
   public notification: any; // Global notification
   public tasker: any; // Global Background tasker
-  @property({ type: Boolean, reflect: true }) active = false;
+  @property({
+    type: Boolean,
+    reflect: true,
+    hasChanged(newVal: boolean, oldVal: boolean) {
+      if (typeof oldVal !== 'undefined' && oldVal !== newVal) {
+        console.log(`Backend.AI Page is changed to ${newVal}, from ${oldVal}`);
+      }
+      return newVal;
+    },
+  })
+  active = false;
+  // @property({type: Boolean, reflect: true}) active = false;
+  @property({ type: String }) is; // Component name
+  @property({ type: BackendAIWindow }) windowNode;
+  // @property({ type: Boolean, reflect: true }) active = false;
   @property({ type: Boolean }) hasLoadedStrings = false;
   @property({ type: String }) permission; // Reserved for plugin pages
   @property({ type: String }) menuitem; // Reserved for plugin pages
@@ -38,6 +53,29 @@ export class BackendAIPage extends LitElement {
     super();
     this.active = false;
     this.tasker = globalThis.tasker;
+  }
+
+  protected firstUpdated() {
+    // TODO: multi-window support
+    let windowNode: BackendAIWindow | null | undefined =
+      this.shadowRoot?.querySelector('backend-ai-window');
+    //console.log("found window node");
+    if (windowNode) {
+      this.windowNode = windowNode;
+      this.windowNode.addEventListener('backend-ai-active-changed', (e) =>
+        this._changeActiveState(e),
+      );
+    }
+  }
+
+  _changeActiveState(e) {
+    console.log('receive event');
+    console.log(e.detail);
+    if (e.detail === true) {
+      this.active = true;
+    } else {
+      this.active = false;
+    }
   }
 
   get activeConnected() {
@@ -72,10 +110,16 @@ export class BackendAIPage extends LitElement {
     newval: string | null,
   ): void {
     if (name == 'active' && newval !== null) {
+      //console.log("attribute changed to page");
       this.active = true;
+      // Logic to sync active state from shell view to internal backend-ai-window
+      this.windowNode?.setAttribute('active', '');
       this._viewStateChanged(true);
     } else if (name === 'active') {
+      console.log('attribute changed to page, false');
+      // Logic to sync active state from shell view to internal backend-ai-window
       this.active = false;
+      this.windowNode?.removeAttribute('active');
       this._viewStateChanged(false);
     }
     super.attributeChangedCallback(name, oldval, newval);

@@ -331,6 +331,14 @@ export default class BackendAISessionList extends BackendAIPage {
           width: 100%;
         }
 
+        mwc-checkbox {
+          --mdc-checkbox-size: 12px;
+          --mdc-checkbox-state-layer-size: 12px;
+          --mdc-checkbox-ripple-size: 16px;
+          --mdc-checkbox-touch-target-size: 16px;
+          --mdc-checkbox-state-layer-size: 16px;
+        }
+
         lablup-shields.right-below-margin {
           margin-right: 3px;
           margin-bottom: 3px;
@@ -1288,6 +1296,13 @@ export default class BackendAISessionList extends BackendAIPage {
     }
   }
 
+  _textToColor(text: string) {
+    const stringUniqueHash = [...text].reduce((acc, char) => {
+      return char.charCodeAt(0) + ((acc << 5) - acc);
+    }, 0);
+    return `hsl(${stringUniqueHash % 360}, 95%, 35%)`;
+  }
+
   /**
    * Scale the time in units of D, H, M, S, and MS.
    *
@@ -1563,7 +1578,8 @@ export default class BackendAISessionList extends BackendAIPage {
     const controller = e.target;
     const controls = controller.closest('#controls');
     const sessionUuid = controls['session-uuid'];
-    return globalThis.appLauncher.runTerminal(sessionUuid);
+    const sessionName = controls['session-name'];
+    return globalThis.appLauncher.runTerminal(sessionUuid, sessionName);
   }
 
   async _getCommitSessionStatus(sessionName = '') {
@@ -3719,7 +3735,9 @@ ${rowData.item[this.sessionNameField]}</pre
         html`
           <mwc-checkbox
             class="list-check"
-            style="display:contents;"
+            style="--mdc-checkbox-unchecked-color: ${this._textToColor(
+              rowData.item.session_id,
+            )};display:contents;"
             ?checked="${rowData.item.checked === true}"
             @click="${() => this._toggleCheckbox(rowData.item)}"
           ></mwc-checkbox>
@@ -3839,7 +3857,7 @@ ${rowData.item[this.sessionNameField]}</pre
   _renderCommitSessionConfirmationDialog(commitSessionInfo: CommitSessionInfo) {
     // language=HTML
     return html`
-      <backend-ai-dialog id="commit-session-dialog" fixed backdrop>
+      <backend-ai-dialog id="commit-session-dialog" fixed>
         <span slot="title">${_t('session.CommitSession')}</span>
         <div slot="content" class="vertical layout center flex">
           <span style="font-size:14px;margin:auto 20px;">

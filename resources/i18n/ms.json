@@ -255,7 +255,8 @@
       "EnvironmentVariableDuplicateName": "Nama pembolehubah ini sudah wujud.",
       "Template": "Templat Sesi",
       "EnableAutomaticShmem": "Memori dikongsi automatik",
-      "PreOpenPortMaxCountLimit": "Anda boleh menyediakan kepada {{count}} port pra-buka."
+      "PreOpenPortMaxCountLimit": "Anda boleh menyediakan kepada {{count}} port pra-buka.",
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",

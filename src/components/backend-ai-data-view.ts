@@ -13,6 +13,7 @@ import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import { default as PainKiller } from './backend-ai-painkiller';
 import './backend-ai-storage-list';
+import './backend-ai-window';
 import './lablup-activity-panel';
 import '@material/mwc-button';
 import '@material/mwc-icon-button';
@@ -145,7 +146,8 @@ export default class BackendAIData extends BackendAIPage {
 
         h3.tab {
           background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0px 0px;
+          /*border-radius: 5px 5px 0px 0px;*/
+          border-radius: 0;
           margin: 0px auto;
         }
 
@@ -300,526 +302,556 @@ export default class BackendAIData extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css" />
-      <div class="vertical layout">
-        <backend-ai-react-storage-status-panel
-          .value="${this.folderListFetchKey}"
-        ></backend-ai-react-storage-status-panel>
-        <lablup-activity-panel elevation="1" noheader narrow autowidth>
-          <div slot="message">
-            <h3 class="horizontal center flex layout tab">
-              <mwc-tab-bar>
-                <mwc-tab
-                  title="general"
-                  label="${_t('data.Folders')}"
-                  @click="${(e) => this._showTab(e.target)}"
-                ></mwc-tab>
-                <mwc-tab
-                  title="data"
-                  label="${_t('data.Pipeline')}"
-                  @click="${(e) => this._showTab(e.target)}"
-                ></mwc-tab>
-                <mwc-tab
-                  title="automount"
-                  label="${_t('data.AutomountFolders')}"
-                  @click="${(e) => this._showTab(e.target)}"
-                ></mwc-tab>
-                ${this.enableInferenceWorkload
-                  ? html`
-                      <mwc-tab
-                        title="model"
-                        label="${_t('data.Models')}"
-                        @click="${(e) => this._showTab(e.target)}"
-                      ></mwc-tab>
-                    `
-                  : html``}
-                ${this.supportModelStore
-                  ? html`
-                      <mwc-tab
-                        title="model-store"
-                        label="${_t('data.ModelStore')}"
-                        @click="${(e) => this._showTab(e.target)}"
-                      ></mwc-tab>
-                    `
-                  : html``}
-              </mwc-tab-bar>
-              <span class="flex"></span>
-              <mwc-button
-                dense
-                raised
-                id="add-folder"
-                icon="add"
-                @click="${() => this._addFolderDialog()}"
-                style="margin-right:15px;"
-              >
-                <span>${_t('data.Add')}</span>
-              </mwc-button>
-            </h3>
-            <div id="general-folder-lists" class="tab-content">
-              <backend-ai-storage-list
-                id="general-folder-storage"
-                storageType="general"
-                ?active="${this.active === true &&
-                this._activeTab === 'general'}"
-              ></backend-ai-storage-list>
-            </div>
-            <div
-              id="data-folder-lists"
-              class="tab-content"
-              style="display:none;"
-            >
-              <div class="horizontal layout">
-                <p>${_t('data.DialogDataFolder')}</p>
-              </div>
-              <backend-ai-storage-list
-                id="data-folder-storage"
-                storageType="data"
-                ?active="${this.active === true && this._activeTab === 'data'}"
-              ></backend-ai-storage-list>
-            </div>
-            <div
-              id="automount-folder-lists"
-              class="tab-content"
-              style="display:none;"
-            >
-              <div class="horizontal layout">
-                <p>${_t('data.DialogFolderStartingWithDotAutomount')}</p>
-              </div>
-              <backend-ai-storage-list
-                id="automount-folder-storage"
-                storageType="automount"
-                ?active="${this.active === true &&
-                this._activeTab === 'automount'}"
-              ></backend-ai-storage-list>
-            </div>
-            ${this.enableInferenceWorkload
-              ? html`
-                  <div
-                    id="model-folder-lists"
-                    class="tab-content"
-                    style="display:none;"
-                  >
-                    <div class="horizontal layout">
-                      <p>${_t('data.DialogModelFolder')}</p>
-                    </div>
-                    <backend-ai-storage-list
-                      id="model-folder-storage"
-                      storageType="model"
-                      ?active="${this.active === true &&
-                      this._activeTab === 'model'}"
-                    ></backend-ai-storage-list>
-                  </div>
-                `
-              : html``}
-            ${this.supportModelStore
-              ? html`
-                  <backend-ai-react-model-store-list
-                    id="model-store-folder-lists"
-                    class="tab-content"
-                    style="display:none;"
-                    ?active="${this.active === true &&
-                    this._activeTab === 'modelStore'}"
-                  ></backend-ai-react-model-store-list>
-                `
-              : html``}
-          </div>
-        </lablup-activity-panel>
-      </div>
-      <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
-        <span slot="title">${_t('data.CreateANewStorageFolder')}</span>
-        <div slot="content" class="vertical layout flex">
-          <mwc-textfield
-            id="add-folder-name"
-            label="${_t('data.Foldername')}"
-            @change="${() => this._validateFolderName()}"
-            pattern="^[a-zA-Z0-9._-]*$"
-            required
-            validationMessage="${_t('data.Allowslettersnumbersand-_dot')}"
-            maxLength="64"
-            placeholder="${_t('maxLength.64chars')}"
-          ></mwc-textfield>
-          <mwc-select
-            class="full-width fixed-position"
-            id="add-folder-host"
-            label="${_t('data.Host')}"
-            fixedMenuPosition
-            @selected=${(e) => (this.selectedVhost = e.target.value)}
-          >
-            ${this.vhosts.map((item) => {
-              const percentage =
-                this.storageProxyInfo[item] &&
-                this.storageProxyInfo[item]?.usage &&
-                this.storageProxyInfo[item]?.usage?.percentage;
-              return html`
-                <mwc-list-item
-                  hasMeta
-                  .value="${item}"
-                  ?selected="${item === this.vhost}"
-                >
-                  <div class="horizontal layout justified center">
-                    <span>${item}</span>
-                    ${html`
-                      &nbsp;
-                      ${typeof percentage === 'number'
-                        ? this.renderStatusIndicator(percentage, false)
-                        : ''}
-                    `}
-                  </div>
-                  <mwc-icon-button
-                    slot="meta"
-                    icon="info"
-                    @click="${(e) => this._showStorageDescription(e, item)}"
-                  ></mwc-icon-button>
-                </mwc-list-item>
-              `;
-            })}
-          </mwc-select>
-          <div
-            class="horizontal layout start"
-            style="margin-top:-5px;margin-bottom:10px;padding-left:16px;font-size:12px;"
-          >
-            ${typeof this.storageProxyInfo[this.selectedVhost]?.usage
-              ?.percentage == 'number'
-              ? html`
-                  ${_t(
-                    'data.usage.StatusOfSelectedHost',
-                  )}:&nbsp;${this.renderStatusIndicator(
-                    this.storageProxyInfo[this.selectedVhost]?.usage
-                      ?.percentage,
-                    true,
-                  )}
-                `
-              : html``}
-          </div>
-          <div class="horizontal layout">
-            <mwc-select
-              id="add-folder-type"
-              label="${_t('data.Type')}"
-              style="width:${!this.is_admin ||
-              !this.allowed_folder_type.includes('group')
-                ? '100%'
-                : '50%'}"
-              @change=${() => {
-                this._toggleFolderTypeInput();
-                this._toggleGroupSelect();
-              }}
-              required
-            >
-              ${this.allowed_folder_type.includes('user')
-                ? html`
-                    <mwc-list-item value="user" selected>
-                      ${_t('data.User')}
-                    </mwc-list-item>
-                  `
-                : html``}
-              ${this.is_admin && this.allowed_folder_type.includes('group')
-                ? html`
-                    <mwc-list-item
-                      value="group"
-                      ?selected="${!this.allowed_folder_type.includes('user')}"
-                    >
-                      ${_t('data.Project')}
-                    </mwc-list-item>
-                  `
-                : html``}
-            </mwc-select>
-            ${this.is_admin && this.allowed_folder_type.includes('group')
-              ? html`
-                  <mwc-select
-                    class="fixed-position"
-                    id="add-folder-group"
-                    ?disabled=${this.folderType === 'user'}
-                    label="${_t('data.Project')}"
-                    FixedMenuPosition
-                  >
-                    ${this.groupListByUsage.map(
-                      (item, idx) => html`
-                        <mwc-list-item
-                          value="${item.name}"
-                          ?selected="${idx === 0}"
-                        >
-                          ${item.name}
-                        </mwc-list-item>
-                      `,
-                    )}
-                  </mwc-select>
-                `
-              : html``}
-          </div>
-          ${this._vfolderInnatePermissionSupport
-            ? html`
-                <div class="horizontal layout">
-                  <mwc-select
-                    class="fixed-position"
-                    id="add-folder-usage-mode"
-                    label="${_t('data.UsageMode')}"
-                    fixedMenuPosition
-                    @change=${() => {
-                      this._toggleGroupSelect();
-                    }}
-                  >
-                    ${this.usageModes.map(
-                      (item, idx) => html`
-                        <mwc-list-item value="${item}" ?selected="${idx === 0}">
-                          ${item}
-                        </mwc-list-item>
-                      `,
-                    )}
-                  </mwc-select>
-                  <mwc-select
-                    class="fixed-position"
-                    id="add-folder-permission"
-                    label="${_t('data.Permission')}"
-                    fixedMenuPosition
-                  >
-                    ${this.permissions.map(
-                      (item, idx) => html`
-                        <mwc-list-item value="${item}" ?selected="${idx === 0}">
-                          ${item}
-                        </mwc-list-item>
-                      `,
-                    )}
-                  </mwc-select>
-                </div>
-              `
-            : html``}
-          ${this.enableStorageProxy
-            ? html`
-                <div
-                  id="cloneable-container"
-                  class="horizontal layout flex wrap center justified"
-                  style="display:none;"
-                >
-                  <p style="color:rgba(0, 0, 0, 0.6);margin-left:10px;">
-                    ${_t('data.folders.Cloneable')}
-                  </p>
-                  <mwc-switch
-                    id="add-folder-cloneable"
-                    style="margin-right:10px;"
-                  ></mwc-switch>
-                </div>
-              `
-            : html``}
-          <div style="font-size:11px;">
-            ${_t('data.DialogFolderStartingWithDotAutomount')}
-          </div>
-        </div>
-        <div slot="footer" class="horizontal center-justified flex">
-          <mwc-button
-            unelevated
-            fullwidth
-            id="add-button"
-            icon="rowing"
-            label="${_t('data.Create')}"
-            @click="${() => this._addFolder()}"
-          ></mwc-button>
-        </div>
-      </backend-ai-dialog>
-      <backend-ai-dialog id="clone-folder-dialog" fixed backdrop>
-        <span slot="title">${_t('data.folders.CloneAFolder')}</span>
-        <div slot="content" style="width:100%;">
-          <mwc-textfield
-            id="clone-folder-src"
-            label="${_t('data.FolderToCopy')}"
-            value="${this.cloneFolderName}"
-            disabled
-          ></mwc-textfield>
-          <mwc-textfield
-            id="clone-folder-name"
-            label="${_t('data.Foldername')}"
-            @change="${() => this._validateFolderName()}"
-            pattern="^[a-zA-Z0-9._-]*$"
-            required
-            validationMessage="${_t('data.Allowslettersnumbersand-_dot')}"
-            maxLength="64"
-            placeholder="${_t('maxLength.64chars')}"
-          ></mwc-textfield>
-          <mwc-select
-            class="full-width fixed-position"
-            id="clone-folder-host"
-            label="${_t('data.Host')}"
-            fixedMenuPosition
-          >
-            ${this.vhosts.map(
-              (item, idx) => html`
-                <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
-                  <span>${item}</span>
-                  <mwc-icon-button
-                    slot="meta"
-                    icon="info"
-                    @click="${(e) => this._showStorageDescription(e, item)}"
-                  ></mwc-icon-button>
-                </mwc-list-item>
-              `,
-            )}
-          </mwc-select>
-          <div class="horizontal layout">
-            <mwc-select
-              id="clone-folder-type"
-              label="${_t('data.Type')}"
-              style="width:${!this.is_admin ||
-              !this.allowed_folder_type.includes('group')
-                ? '100%'
-                : '50%'}"
-            >
-              ${this.allowed_folder_type.includes('user')
-                ? html`
-                    <mwc-list-item value="user" selected>
-                      ${_t('data.User')}
-                    </mwc-list-item>
-                  `
-                : html``}
-              ${this.is_admin && this.allowed_folder_type.includes('group')
-                ? html`
-                    <mwc-list-item
-                      value="group"
-                      ?selected="${!this.allowed_folder_type.includes('user')}"
-                    >
-                      ${_t('data.Project')}
-                    </mwc-list-item>
-                  `
-                : html``}
-            </mwc-select>
-            ${this.is_admin && this.allowed_folder_type.includes('group')
-              ? html`
-                  <mwc-select
-                    class="fixed-position"
-                    id="clone-folder-group"
-                    label="${_t('data.Project')}"
-                    FixedMenuPosition
-                  >
-                    ${this.allowedGroups.map(
-                      (item, idx) => html`
-                        <mwc-list-item
-                          value="${item.name}"
-                          ?selected="${item.name ===
-                          globalThis.backendaiclient.current_group}"
-                        >
-                          ${item.name}
-                        </mwc-list-item>
-                      `,
-                    )}
-                  </mwc-select>
-                `
-              : html``}
-          </div>
-          ${this._vfolderInnatePermissionSupport
-            ? html`
-                <div class="horizontal layout">
-                  <mwc-select
-                    class="fixed-position"
-                    id="clone-folder-usage-mode"
-                    label="${_t('data.UsageMode')}"
-                    FixedMenuPosition
-                  >
-                    ${this.usageModes.map(
-                      (item, idx) => html`
-                        <mwc-list-item value="${item}" ?selected="${idx === 0}">
-                          ${item}
-                        </mwc-list-item>
-                      `,
-                    )}
-                  </mwc-select>
-                  <mwc-select
-                    class="fixed-position"
-                    id="clone-folder-permission"
-                    label="${_t('data.Permission')}"
-                    FixedMenuPosition
-                  >
-                    ${this.permissions.map(
-                      (item, idx) => html`
-                        <mwc-list-item value="${item}" ?selected="${idx === 0}">
-                          ${item}
-                        </mwc-list-item>
-                      `,
-                    )}
-                  </mwc-select>
-                </div>
-              `
-            : html``}
-          ${this.enableStorageProxy
-            ? html`
-                <div class="horizontal layout flex wrap center justified">
-                  <p style="color:rgba(0, 0, 0, 0.6);">
-                    ${_t('data.folders.Cloneable')}
-                  </p>
-                  <mwc-switch
-                    id="clone-folder-cloneable"
-                    style="margin-right:10px;"
-                  ></mwc-switch>
-                </div>
-              `
-            : html``}
-          <div style="font-size:11px;">
-            ${_t('data.DialogFolderStartingWithDotAutomount')}
-          </div>
-        </div>
-        <div slot="footer" class="horizontal center-justified flex">
-          <mwc-button
-            unelevated
-            fullwidth
-            id="clone-button"
-            icon="file_copy"
-            label="${_t('data.Create')}"
-            @click="${() => this._cloneFolder()}"
-          ></mwc-button>
-        </div>
-      </backend-ai-dialog>
-      <backend-ai-dialog id="help-description" fixed backdrop>
-        <span slot="title">${this._helpDescriptionTitle}</span>
-        <div slot="content" class="vertical layout">
-          <div class="horizontal layout center">
-            ${this._helpDescriptionIcon == ''
-              ? html``
-              : html`
-                  <img
-                    slot="graphic"
-                    src="resources/icons/${this._helpDescriptionIcon}"
-                    style="width:64px;height:64px;margin-right:10px;"
-                  />
-                `}
-            <p style="font-size:14px;width:256px;">
-              ${unsafeHTML(this._helpDescription)}
-            </p>
-          </div>
-          ${this._helpDescriptionStorageProxyInfo?.usage?.percentage !==
-          undefined
-            ? html`
-                <div class="vertical layout" style="padding-left:8px;">
-                  <span><strong>${_t('data.usage.Status')}</strong></span>
-                  <div class="horizontal layout">
-                    ${this.renderStatusIndicator(
-                      this._helpDescriptionStorageProxyInfo?.usage?.percentage,
-                      true,
-                    )}
-                  </div>
-                  (${Math.floor(
-                    this._helpDescriptionStorageProxyInfo?.usage?.percentage,
-                  )}%
-                  ${_t('data.usage.used')}
-                  ${this._helpDescriptionStorageProxyInfo?.usage?.total &&
-                  this._helpDescriptionStorageProxyInfo?.usage?.used
+      <backend-ai-window
+        ?active="${this.active}"
+        title="${_t('webui.menu.Data&Storage')}"
+        name="data"
+        icon="resources/menu_icons/data.svg"
+      >
+        <link rel="stylesheet" href="resources/custom.css" />
+        <div class="vertical layout">
+          <backend-ai-react-storage-status-panel
+            .value="${this.folderListFetchKey}"
+          ></backend-ai-react-storage-status-panel>
+          <lablup-activity-panel elevation="1" noheader narrow autowidth>
+            <div slot="message">
+              <h3 class="horizontal center flex layout tab">
+                <mwc-tab-bar>
+                  <mwc-tab
+                    title="general"
+                    label="${_t('data.Folders')}"
+                    @click="${(e) => this._showTab(e.target)}"
+                  ></mwc-tab>
+                  <mwc-tab
+                    title="data"
+                    label="${_t('data.Pipeline')}"
+                    @click="${(e) => this._showTab(e.target)}"
+                  ></mwc-tab>
+                  <mwc-tab
+                    title="automount"
+                    label="${_t('data.AutomountFolders')}"
+                    @click="${(e) => this._showTab(e.target)}"
+                  ></mwc-tab>
+                  ${this.enableInferenceWorkload
                     ? html`
-                        ,
-                        ${globalThis.backendaiutils._humanReadableFileSize(
-                          this._helpDescriptionStorageProxyInfo?.usage?.used,
-                        )}
-                        /
-                        ${globalThis.backendaiutils._humanReadableFileSize(
-                          this._helpDescriptionStorageProxyInfo?.usage?.total,
-                        )}
+                        <mwc-tab
+                          title="model"
+                          label="${_t('data.Models')}"
+                          @click="${(e) => this._showTab(e.target)}"
+                        ></mwc-tab>
                       `
                     : html``}
-                  )
+                  ${this.supportModelStore
+                    ? html`
+                        <mwc-tab
+                          title="model-store"
+                          label="${_t('data.ModelStore')}"
+                          @click="${(e) => this._showTab(e.target)}"
+                        ></mwc-tab>
+                      `
+                    : html``}
+                </mwc-tab-bar>
+                <span class="flex"></span>
+                <mwc-button
+                  dense
+                  raised
+                  id="add-folder"
+                  icon="add"
+                  @click="${() => this._addFolderDialog()}"
+                  style="margin-right:15px;"
+                >
+                  <span>${_t('data.Add')}</span>
+                </mwc-button>
+              </h3>
+              <div id="general-folder-lists" class="tab-content">
+                <backend-ai-storage-list
+                  id="general-folder-storage"
+                  storageType="general"
+                  ?active="${this.active === true &&
+                  this._activeTab === 'general'}"
+                ></backend-ai-storage-list>
+              </div>
+              <div
+                id="data-folder-lists"
+                class="tab-content"
+                style="display:none;"
+              >
+                <div class="horizontal layout">
+                  <p>${_t('data.DialogDataFolder')}</p>
                 </div>
-              `
-            : html``}
+                <backend-ai-storage-list
+                  id="data-folder-storage"
+                  storageType="data"
+                  ?active="${this.active === true &&
+                  this._activeTab === 'data'}"
+                ></backend-ai-storage-list>
+              </div>
+              <div
+                id="automount-folder-lists"
+                class="tab-content"
+                style="display:none;"
+              >
+                <div class="horizontal layout">
+                  <p>${_t('data.DialogFolderStartingWithDotAutomount')}</p>
+                </div>
+                <backend-ai-storage-list
+                  id="automount-folder-storage"
+                  storageType="automount"
+                  ?active="${this.active === true &&
+                  this._activeTab === 'automount'}"
+                ></backend-ai-storage-list>
+              </div>
+              ${this.enableInferenceWorkload
+                ? html`
+                    <div
+                      id="model-folder-lists"
+                      class="tab-content"
+                      style="display:none;"
+                    >
+                      <div class="horizontal layout">
+                        <p>${_t('data.DialogModelFolder')}</p>
+                      </div>
+                      <backend-ai-storage-list
+                        id="model-folder-storage"
+                        storageType="model"
+                        ?active="${this.active === true &&
+                        this._activeTab === 'model'}"
+                      ></backend-ai-storage-list>
+                    </div>
+                  `
+                : html``}
+              ${this.supportModelStore
+                ? html`
+                    <backend-ai-react-model-store-list
+                      id="model-store-folder-lists"
+                      class="tab-content"
+                      style="display:none;"
+                      ?active="${this.active === true &&
+                      this._activeTab === 'modelStore'}"
+                    ></backend-ai-react-model-store-list>
+                  `
+                : html``}
+            </div>
+          </lablup-activity-panel>
         </div>
-      </backend-ai-dialog>
+        <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
+          <span slot="title">${_t('data.CreateANewStorageFolder')}</span>
+          <div slot="content" class="vertical layout flex">
+            <mwc-textfield
+              id="add-folder-name"
+              label="${_t('data.Foldername')}"
+              @change="${() => this._validateFolderName()}"
+              pattern="^[a-zA-Z0-9._-]*$"
+              required
+              validationMessage="${_t('data.Allowslettersnumbersand-_dot')}"
+              maxLength="64"
+              placeholder="${_t('maxLength.64chars')}"
+            ></mwc-textfield>
+            <mwc-select
+              class="full-width fixed-position"
+              id="add-folder-host"
+              label="${_t('data.Host')}"
+              fixedMenuPosition
+              @selected=${(e) => (this.selectedVhost = e.target.value)}
+            >
+              ${this.vhosts.map((item) => {
+                const percentage =
+                  this.storageProxyInfo[item] &&
+                  this.storageProxyInfo[item]?.usage &&
+                  this.storageProxyInfo[item]?.usage?.percentage;
+                return html`
+                  <mwc-list-item
+                    hasMeta
+                    .value="${item}"
+                    ?selected="${item === this.vhost}"
+                  >
+                    <div class="horizontal layout justified center">
+                      <span>${item}</span>
+                      ${html`
+                        &nbsp;
+                        ${typeof percentage === 'number'
+                          ? this.renderStatusIndicator(percentage, false)
+                          : ''}
+                      `}
+                    </div>
+                    <mwc-icon-button
+                      slot="meta"
+                      icon="info"
+                      @click="${(e) => this._showStorageDescription(e, item)}"
+                    ></mwc-icon-button>
+                  </mwc-list-item>
+                `;
+              })}
+            </mwc-select>
+            <div
+              class="horizontal layout start"
+              style="margin-top:-5px;margin-bottom:10px;padding-left:16px;font-size:12px;"
+            >
+              ${typeof this.storageProxyInfo[this.selectedVhost]?.usage
+                ?.percentage == 'number'
+                ? html`
+                    ${_t(
+                      'data.usage.StatusOfSelectedHost',
+                    )}:&nbsp;${this.renderStatusIndicator(
+                      this.storageProxyInfo[this.selectedVhost]?.usage
+                        ?.percentage,
+                      true,
+                    )}
+                  `
+                : html``}
+            </div>
+            <div class="horizontal layout">
+              <mwc-select
+                id="add-folder-type"
+                label="${_t('data.Type')}"
+                style="width:${!this.is_admin ||
+                !this.allowed_folder_type.includes('group')
+                  ? '100%'
+                  : '50%'}"
+                @change=${() => {
+                  this._toggleFolderTypeInput();
+                  this._toggleGroupSelect();
+                }}
+                required
+              >
+                ${this.allowed_folder_type.includes('user')
+                  ? html`
+                      <mwc-list-item value="user" selected>
+                        ${_t('data.User')}
+                      </mwc-list-item>
+                    `
+                  : html``}
+                ${this.is_admin && this.allowed_folder_type.includes('group')
+                  ? html`
+                      <mwc-list-item
+                        value="group"
+                        ?selected="${!this.allowed_folder_type.includes(
+                          'user',
+                        )}"
+                      >
+                        ${_t('data.Project')}
+                      </mwc-list-item>
+                    `
+                  : html``}
+              </mwc-select>
+              ${this.is_admin && this.allowed_folder_type.includes('group')
+                ? html`
+                    <mwc-select
+                      class="fixed-position"
+                      id="add-folder-group"
+                      ?disabled=${this.folderType === 'user'}
+                      label="${_t('data.Project')}"
+                      FixedMenuPosition
+                    >
+                      ${this.groupListByUsage.map(
+                        (item, idx) => html`
+                          <mwc-list-item
+                            value="${item.name}"
+                            ?selected="${idx === 0}"
+                          >
+                            ${item.name}
+                          </mwc-list-item>
+                        `,
+                      )}
+                    </mwc-select>
+                  `
+                : html``}
+            </div>
+            ${this._vfolderInnatePermissionSupport
+              ? html`
+                  <div class="horizontal layout">
+                    <mwc-select
+                      class="fixed-position"
+                      id="add-folder-usage-mode"
+                      label="${_t('data.UsageMode')}"
+                      fixedMenuPosition
+                      @change=${() => {
+                        this._toggleGroupSelect();
+                      }}
+                    >
+                      ${this.usageModes.map(
+                        (item, idx) => html`
+                          <mwc-list-item
+                            value="${item}"
+                            ?selected="${idx === 0}"
+                          >
+                            ${item}
+                          </mwc-list-item>
+                        `,
+                      )}
+                    </mwc-select>
+                    <mwc-select
+                      class="fixed-position"
+                      id="add-folder-permission"
+                      label="${_t('data.Permission')}"
+                      fixedMenuPosition
+                    >
+                      ${this.permissions.map(
+                        (item, idx) => html`
+                          <mwc-list-item
+                            value="${item}"
+                            ?selected="${idx === 0}"
+                          >
+                            ${item}
+                          </mwc-list-item>
+                        `,
+                      )}
+                    </mwc-select>
+                  </div>
+                `
+              : html``}
+            ${this.enableStorageProxy
+              ? html`
+                  <div
+                    id="cloneable-container"
+                    class="horizontal layout flex wrap center justified"
+                    style="display:none;"
+                  >
+                    <p style="color:rgba(0, 0, 0, 0.6);margin-left:10px;">
+                      ${_t('data.folders.Cloneable')}
+                    </p>
+                    <mwc-switch
+                      id="add-folder-cloneable"
+                      style="margin-right:10px;"
+                    ></mwc-switch>
+                  </div>
+                `
+              : html``}
+            <div style="font-size:11px;">
+              ${_t('data.DialogFolderStartingWithDotAutomount')}
+            </div>
+          </div>
+          <div slot="footer" class="horizontal center-justified flex">
+            <mwc-button
+              unelevated
+              fullwidth
+              id="add-button"
+              icon="rowing"
+              label="${_t('data.Create')}"
+              @click="${() => this._addFolder()}"
+            ></mwc-button>
+          </div>
+        </backend-ai-dialog>
+        <backend-ai-dialog id="clone-folder-dialog" fixed backdrop>
+          <span slot="title">${_t('data.folders.CloneAFolder')}</span>
+          <div slot="content" style="width:100%;">
+            <mwc-textfield
+              id="clone-folder-src"
+              label="${_t('data.FolderToCopy')}"
+              value="${this.cloneFolderName}"
+              disabled
+            ></mwc-textfield>
+            <mwc-textfield
+              id="clone-folder-name"
+              label="${_t('data.Foldername')}"
+              @change="${() => this._validateFolderName()}"
+              pattern="^[a-zA-Z0-9._-]*$"
+              required
+              validationMessage="${_t('data.Allowslettersnumbersand-_dot')}"
+              maxLength="64"
+              placeholder="${_t('maxLength.64chars')}"
+            ></mwc-textfield>
+            <mwc-select
+              class="full-width fixed-position"
+              id="clone-folder-host"
+              label="${_t('data.Host')}"
+              fixedMenuPosition
+            >
+              ${this.vhosts.map(
+                (item, idx) => html`
+                  <mwc-list-item
+                    hasMeta
+                    value="${item}"
+                    ?selected="${idx === 0}"
+                  >
+                    <span>${item}</span>
+                    <mwc-icon-button
+                      slot="meta"
+                      icon="info"
+                      @click="${(e) => this._showStorageDescription(e, item)}"
+                    ></mwc-icon-button>
+                  </mwc-list-item>
+                `,
+              )}
+            </mwc-select>
+            <div class="horizontal layout">
+              <mwc-select
+                id="clone-folder-type"
+                label="${_t('data.Type')}"
+                style="width:${!this.is_admin ||
+                !this.allowed_folder_type.includes('group')
+                  ? '100%'
+                  : '50%'}"
+              >
+                ${this.allowed_folder_type.includes('user')
+                  ? html`
+                      <mwc-list-item value="user" selected>
+                        ${_t('data.User')}
+                      </mwc-list-item>
+                    `
+                  : html``}
+                ${this.is_admin && this.allowed_folder_type.includes('group')
+                  ? html`
+                      <mwc-list-item
+                        value="group"
+                        ?selected="${!this.allowed_folder_type.includes(
+                          'user',
+                        )}"
+                      >
+                        ${_t('data.Project')}
+                      </mwc-list-item>
+                    `
+                  : html``}
+              </mwc-select>
+              ${this.is_admin && this.allowed_folder_type.includes('group')
+                ? html`
+                    <mwc-select
+                      class="fixed-position"
+                      id="clone-folder-group"
+                      label="${_t('data.Project')}"
+                      FixedMenuPosition
+                    >
+                      ${this.allowedGroups.map(
+                        (item, idx) => html`
+                          <mwc-list-item
+                            value="${item.name}"
+                            ?selected="${item.name ===
+                            globalThis.backendaiclient.current_group}"
+                          >
+                            ${item.name}
+                          </mwc-list-item>
+                        `,
+                      )}
+                    </mwc-select>
+                  `
+                : html``}
+            </div>
+            ${this._vfolderInnatePermissionSupport
+              ? html`
+                  <div class="horizontal layout">
+                    <mwc-select
+                      class="fixed-position"
+                      id="clone-folder-usage-mode"
+                      label="${_t('data.UsageMode')}"
+                      FixedMenuPosition
+                    >
+                      ${this.usageModes.map(
+                        (item, idx) => html`
+                          <mwc-list-item
+                            value="${item}"
+                            ?selected="${idx === 0}"
+                          >
+                            ${item}
+                          </mwc-list-item>
+                        `,
+                      )}
+                    </mwc-select>
+                    <mwc-select
+                      class="fixed-position"
+                      id="clone-folder-permission"
+                      label="${_t('data.Permission')}"
+                      FixedMenuPosition
+                    >
+                      ${this.permissions.map(
+                        (item, idx) => html`
+                          <mwc-list-item
+                            value="${item}"
+                            ?selected="${idx === 0}"
+                          >
+                            ${item}
+                          </mwc-list-item>
+                        `,
+                      )}
+                    </mwc-select>
+                  </div>
+                `
+              : html``}
+            ${this.enableStorageProxy
+              ? html`
+                  <div class="horizontal layout flex wrap center justified">
+                    <p style="color:rgba(0, 0, 0, 0.6);">
+                      ${_t('data.folders.Cloneable')}
+                    </p>
+                    <mwc-switch
+                      id="clone-folder-cloneable"
+                      style="margin-right:10px;"
+                    ></mwc-switch>
+                  </div>
+                `
+              : html``}
+            <div style="font-size:11px;">
+              ${_t('data.DialogFolderStartingWithDotAutomount')}
+            </div>
+          </div>
+          <div slot="footer" class="horizontal center-justified flex">
+            <mwc-button
+              unelevated
+              fullwidth
+              id="clone-button"
+              icon="file_copy"
+              label="${_t('data.Create')}"
+              @click="${() => this._cloneFolder()}"
+            ></mwc-button>
+          </div>
+        </backend-ai-dialog>
+        <backend-ai-dialog id="help-description" fixed backdrop>
+          <span slot="title">${this._helpDescriptionTitle}</span>
+          <div slot="content" class="vertical layout">
+            <div class="horizontal layout center">
+              ${this._helpDescriptionIcon == ''
+                ? html``
+                : html`
+                    <img
+                      slot="graphic"
+                      src="resources/icons/${this._helpDescriptionIcon}"
+                      style="width:64px;height:64px;margin-right:10px;"
+                    />
+                  `}
+              <p style="font-size:14px;width:256px;">
+                ${unsafeHTML(this._helpDescription)}
+              </p>
+            </div>
+            ${this._helpDescriptionStorageProxyInfo?.usage?.percentage !==
+            undefined
+              ? html`
+                  <div class="vertical layout" style="padding-left:8px;">
+                    <span><strong>${_t('data.usage.Status')}</strong></span>
+                    <div class="horizontal layout">
+                      ${this.renderStatusIndicator(
+                        this._helpDescriptionStorageProxyInfo?.usage
+                          ?.percentage,
+                        true,
+                      )}
+                    </div>
+                    (${Math.floor(
+                      this._helpDescriptionStorageProxyInfo?.usage?.percentage,
+                    )}%
+                    ${_t('data.usage.used')}
+                    ${this._helpDescriptionStorageProxyInfo?.usage?.total &&
+                    this._helpDescriptionStorageProxyInfo?.usage?.used
+                      ? html`
+                          ,
+                          ${globalThis.backendaiutils._humanReadableFileSize(
+                            this._helpDescriptionStorageProxyInfo?.usage?.used,
+                          )}
+                          /
+                          ${globalThis.backendaiutils._humanReadableFileSize(
+                            this._helpDescriptionStorageProxyInfo?.usage?.total,
+                          )}
+                        `
+                      : html``}
+                    )
+                  </div>
+                `
+              : html``}
+          </div>
+        </backend-ai-dialog>
+      </backend-ai-window>
     `;
   }
 
   firstUpdated() {
+    super.firstUpdated();
     this.notification = globalThis.lablupNotification;
     this.folderLists = this.shadowRoot?.querySelectorAll(
       'backend-ai-storage-list',

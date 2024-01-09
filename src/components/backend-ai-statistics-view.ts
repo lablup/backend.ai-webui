@@ -11,6 +11,7 @@ import {
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-usage-list.js';
+import './backend-ai-window';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
 import { css, CSSResultGroup, html } from 'lit';
@@ -113,24 +114,31 @@ export default class BackendAIStatisticsView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css" />
-      <lablup-activity-panel elevation="1" noheader narrow autowidth>
-        <div slot="message">
-          <h3 class="tab horizontal center layout">
-            <mwc-tab-bar>
-              <mwc-tab
-                title="usage"
-                label="${_t('statistics.UsageHistory')}"
-              ></mwc-tab>
-            </mwc-tab-bar>
-          </h3>
-          <div class="horizontal wrap layout">
-            <div id="usage-stat" class="tab-content">
-              <backend-ai-usage-list id="usage-list"></backend-ai-usage-list>
+      <backend-ai-window
+        ?active="${this.active}"
+        title="${_t('webui.menu.Statistics')}"
+        name="statistics"
+        icon="resources/menu_icons/statistics.svg"
+      >
+        <link rel="stylesheet" href="resources/custom.css" />
+        <lablup-activity-panel elevation="1" noheader narrow autowidth>
+          <div slot="message">
+            <h3 class="tab horizontal center layout">
+              <mwc-tab-bar>
+                <mwc-tab
+                  title="usage"
+                  label="${_t('statistics.UsageHistory')}"
+                ></mwc-tab>
+              </mwc-tab-bar>
+            </h3>
+            <div class="horizontal wrap layout">
+              <div id="usage-stat" class="tab-content">
+                <backend-ai-usage-list id="usage-list"></backend-ai-usage-list>
+              </div>
             </div>
           </div>
-        </div>
-      </lablup-activity-panel>
+        </lablup-activity-panel>
+      </backend-ai-window>
     `;
   }
 }

@@ -12,6 +12,7 @@ export const BackendAIWebUIStyles = [
       left: 0;
       width: 100%;
       height: 100%;
+      z-index: 2000;
       background-image: url('/resources/images/loading-background-large.jpg');
       background-repeat: no-repeat;
       background-attachment: fixed;
@@ -142,6 +143,16 @@ export const BackendAIWebUIStyles = [
     }
 
     mwc-list.sidebar mwc-list-item[selected] {
+      color: #949494;
+      background: var(--general-sidebar-selected-background-color, #23252b);
+      border-left: var(--general-sidebar-selected-border-left);
+      padding-left: 29px; /* 32px - 3px */
+      border-right: 0;
+      padding-right: 11px;
+      font-weight: 900;
+    }
+
+    mwc-list.sidebar mwc-list-item.top {
       color: var(--general-sidebar-selected-color, #949494);
       background: var(--general-sidebar-selected-background-color, #23252b);
       border-left: var(--general-sidebar-selected-border-left);
@@ -234,11 +245,17 @@ export const BackendAIWebUIStyles = [
       width: 100%;
     }
 
-    .page {
+    .page,
+    .page mwc-circular-progress {
+      /* display: none; Disabled for supporting window mode */
+    }
+
+    .page mwc-circular-progress {
       display: none;
     }
 
-    .page[active] {
+    .page[active],
+    .page[active] mwc-circular-progress {
       display: block;
     }
 

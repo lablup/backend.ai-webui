@@ -15,6 +15,7 @@ import BackendAiResourceMonitor from './backend-ai-resource-monitor';
 import './backend-ai-resource-monitor';
 import BackendAiSessionLauncher from './backend-ai-session-launcher';
 import './backend-ai-session-launcher';
+import './backend-ai-window';
 import './lablup-activity-panel';
 import LablupLoadingSpinner from './lablup-loading-spinner';
 
@@ -179,6 +180,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   firstUpdated() {
+    super.firstUpdated();
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
   }
@@ -707,233 +709,242 @@ export default class BackendAIImport extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css" />
-      <lablup-activity-panel
-        title="${_t('import.ImportNotebook')}"
-        elevation="1"
-        horizontalsize="2x"
+      <backend-ai-window
+        ?active="${this.active}"
+        title="${_t('webui.menu.Import&Run')}"
+        name="import"
+        icon="resources/menu_icons/import.svg"
       >
-        <div slot="message">
-          <div class="horizontal wrap layout center">
-            <mwc-textfield
-              id="notebook-url"
-              label="${_t('import.NotebookURL')}"
-              autoValidate
-              validationMessage="${_text('import.WrongURLType')}"
-              pattern="^(https?)://([\\w./-]{1,}).ipynb$"
-              maxLength="2048"
-              placeholder="${_t('maxLength.2048chars')}"
-              @change="${(e) =>
-                this.urlTextfieldChanged(
-                  e,
-                  'import-notebook-button',
-                  'importNotebookMessage',
-                )}"
-            ></mwc-textfield>
-            <mwc-button
-              id="import-notebook-button"
-              disabled
-              icon="cloud_download"
-              @click="${() => this.getNotebookFromURL()}"
-            >
-              <span>${_t('import.GetAndRunNotebook')}</span>
-            </mwc-button>
-          </div>
-          ${this.importNotebookMessage}
-        </div>
-      </lablup-activity-panel>
-      <backend-ai-session-launcher
-        mode="import"
-        location="import"
-        hideLaunchButton
-        id="session-launcher"
-        ?active="${this.active === true}"
-        .newSessionDialogTitle="${_t('session.launcher.StartImportedNotebook')}"
-      ></backend-ai-session-launcher>
-      <div class="horizontal wrap layout">
+        <link rel="stylesheet" href="resources/custom.css" />
         <lablup-activity-panel
-          title="${_t('summary.ResourceStatistics')}"
+          title="${_t('import.ImportNotebook')}"
           elevation="1"
-          width="350"
-          height="490"
-          narrow
+          horizontalsize="2x"
         >
           <div slot="message">
-            <backend-ai-resource-monitor
-              location="summary"
-              id="resource-monitor"
-              ?active="${this.active === true}"
-              direction="vertical"
-            ></backend-ai-resource-monitor>
-          </div>
-        </lablup-activity-panel>
-        <lablup-activity-panel
-          title="${_t('import.CreateNotebookButton')}"
-          elevation="1"
-          height="490"
-        >
-          <div slot="message">
-            <div class="vertical wrap layout center description">
-              ${_t('import.YouCanCreateNotebookCode')}
-              <img
-                src="/resources/badge.svg"
-                style="margin-top:5px;margin-bottom:5px;"
-              />
+            <div class="horizontal wrap layout center">
               <mwc-textfield
-                id="notebook-badge-url"
-                label="${_t('import.NotebookBadgeURL')}"
+                id="notebook-url"
+                label="${_t('import.NotebookURL')}"
                 autoValidate
                 validationMessage="${_text('import.WrongURLType')}"
                 pattern="^(https?)://([\\w./-]{1,}).ipynb$"
                 maxLength="2048"
                 placeholder="${_t('maxLength.2048chars')}"
                 @change="${(e) =>
-                  this.urlTextfieldChanged(e, 'create-notebook-button')}"
-              ></mwc-textfield>
-              <mwc-button
-                id="create-notebook-button"
-                disabled
-                fullwidth
-                @click="${() => this.createNotebookBadge()}"
-                icon="code"
-              >
-                ${_t('import.CreateButtonCode')}
-              </mwc-button>
-              <mwc-textarea
-                id="notebook-badge-code"
-                label="${_t('import.NotebookBadgeCodeHTML')}"
-                @click="${(e) => this._copyTextArea(e)}"
-              ></mwc-textarea>
-              <mwc-textarea
-                id="notebook-badge-code-markdown"
-                label="${_t('import.NotebookBadgeCodeMarkdown')}"
-                @click="${(e) => this._copyTextArea(e)}"
-              ></mwc-textarea>
-            </div>
-          </div>
-        </lablup-activity-panel>
-      </div>
-      <div class="horizontal wrap layout">
-        <lablup-activity-panel
-          title="${_t('import.ImportGithubRepo')}"
-          elevation="1"
-          horizontalsize="2x"
-        >
-          <div slot="message">
-            <div class="description">
-              <p>${_t('import.RepoWillBeFolder')}</p>
-            </div>
-            <div class="horizontal wrap layout center">
-              <mwc-textfield
-                id="github-repo-url"
-                class="repo-url"
-                label="${_t('import.GitHubURL')}"
-                autoValidate
-                validationMessage="${_text('import.WrongURLType')}"
-                pattern="^(https?)://github.com/([\\w./-]{1,})$"
-                maxLength="2048"
-                placeholder="${_t('maxLength.2048chars')}"
-                @change="${(e) =>
                   this.urlTextfieldChanged(
                     e,
-                    'import-github-repo-button',
-                    'importGithubMessage',
+                    'import-notebook-button',
+                    'importNotebookMessage',
                   )}"
               ></mwc-textfield>
-              <mwc-select
-                class="github-select"
-                id="github-add-folder-host"
-                label="${_t('data.Host')}"
-              >
-                ${this.vhosts.map(
-                  (item, idx) => html`
-                    <mwc-list-item
-                      hasMeta
-                      value="${item}"
-                      ?selected="${item === this.vhost}"
-                    >
-                      <span>${item}</span>
-                    </mwc-list-item>
-                  `,
-                )}
-              </mwc-select>
               <mwc-button
-                id="import-github-repo-button"
+                id="import-notebook-button"
                 disabled
-                class="left-align"
                 icon="cloud_download"
-                @click="${() => this.getGitHubRepoFromURL()}"
+                @click="${() => this.getNotebookFromURL()}"
               >
-                <span>${_t('import.GetToFolder')}</span>
+                <span>${_t('import.GetAndRunNotebook')}</span>
               </mwc-button>
             </div>
-            ${this.importGithubMessage}
+            ${this.importNotebookMessage}
           </div>
         </lablup-activity-panel>
-      </div>
-      <div class="horizontal wrap layout">
-        <lablup-activity-panel
-          title="${_t('import.ImportGitlabRepo')}"
-          elevation="1"
-          horizontalsize="2x"
-        >
-          <div slot="message">
-            <div class="description">
-              <p>${_t('import.GitlabRepoWillBeFolder')}</p>
+        <backend-ai-session-launcher
+          mode="import"
+          location="import"
+          hideLaunchButton
+          id="session-launcher"
+          ?active="${this.active === true}"
+          .newSessionDialogTitle="${_t(
+            'session.launcher.StartImportedNotebook',
+          )}"
+        ></backend-ai-session-launcher>
+        <div class="horizontal wrap layout">
+          <lablup-activity-panel
+            title="${_t('summary.ResourceStatistics')}"
+            elevation="1"
+            width="350"
+            height="490"
+            narrow
+          >
+            <div slot="message">
+              <backend-ai-resource-monitor
+                location="summary"
+                id="resource-monitor"
+                ?active="${this.active === true}"
+                direction="vertical"
+              ></backend-ai-resource-monitor>
             </div>
-            <div class="horizontal wrap layout center">
-              <mwc-textfield
-                id="gitlab-repo-url"
-                class="repo-url"
-                label="${_t('import.GitlabURL')}"
-                autoValidate
-                validationMessage="${_text('import.WrongURLType')}"
-                pattern="^(https?)://gitlab.com/([\\w./-]{1,})$"
-                maxLength="2048"
-                placeholder="${_t('maxLength.2048chars')}"
-                @change="${(e) =>
-                  this.urlTextfieldChanged(
-                    e,
-                    'import-gitlab-repo-button',
-                    'importGitlabMessage',
-                  )}"
-              ></mwc-textfield>
-              <mwc-textfield
-                id="gitlab-default-branch-name"
-                label="${_t('import.GitlabDefaultBranch')}"
-                maxLength="200"
-                placeholder="${_t('maxLength.200chars')}"
-              ></mwc-textfield>
-              <mwc-select
-                id="gitlab-add-folder-host"
-                label="${_t('data.Host')}"
-              >
-                ${this.vhosts.map(
-                  (item, idx) => html`
-                    <mwc-list-item
-                      hasMeta
-                      value="${item}"
-                      ?selected="${item === this.vhost}"
-                    >
-                      <span>${item}</span>
-                    </mwc-list-item>
-                  `,
-                )}
-              </mwc-select>
-              <mwc-button
-                id="import-gitlab-repo-button"
-                disabled
-                class="left-align"
-                icon="cloud_download"
-                @click="${() => this.getGitlabRepoFromURL()}"
-              >
-                <span>${_t('import.GetToFolder')}</span>
-              </mwc-button>
+          </lablup-activity-panel>
+          <lablup-activity-panel
+            title="${_t('import.CreateNotebookButton')}"
+            elevation="1"
+            height="490"
+          >
+            <div slot="message">
+              <div class="vertical wrap layout center description">
+                ${_t('import.YouCanCreateNotebookCode')}
+                <img
+                  src="/resources/badge.svg"
+                  style="margin-top:5px;margin-bottom:5px;"
+                />
+                <mwc-textfield
+                  id="notebook-badge-url"
+                  label="${_t('import.NotebookBadgeURL')}"
+                  autoValidate
+                  validationMessage="${_text('import.WrongURLType')}"
+                  pattern="^(https?)://([\\w./-]{1,}).ipynb$"
+                  maxLength="2048"
+                  placeholder="${_t('maxLength.2048chars')}"
+                  @change="${(e) =>
+                    this.urlTextfieldChanged(e, 'create-notebook-button')}"
+                ></mwc-textfield>
+                <mwc-button
+                  id="create-notebook-button"
+                  disabled
+                  fullwidth
+                  @click="${() => this.createNotebookBadge()}"
+                  icon="code"
+                >
+                  ${_t('import.CreateButtonCode')}
+                </mwc-button>
+                <mwc-textarea
+                  id="notebook-badge-code"
+                  label="${_t('import.NotebookBadgeCodeHTML')}"
+                  @click="${(e) => this._copyTextArea(e)}"
+                ></mwc-textarea>
+                <mwc-textarea
+                  id="notebook-badge-code-markdown"
+                  label="${_t('import.NotebookBadgeCodeMarkdown')}"
+                  @click="${(e) => this._copyTextArea(e)}"
+                ></mwc-textarea>
+              </div>
             </div>
-            ${this.importGitlabMessage}
-          </div>
-        </lablup-activity-panel>
-      </div>
+          </lablup-activity-panel>
+        </div>
+        <div class="horizontal wrap layout">
+          <lablup-activity-panel
+            title="${_t('import.ImportGithubRepo')}"
+            elevation="1"
+            horizontalsize="2x"
+          >
+            <div slot="message">
+              <div class="description">
+                <p>${_t('import.RepoWillBeFolder')}</p>
+              </div>
+              <div class="horizontal wrap layout center">
+                <mwc-textfield
+                  id="github-repo-url"
+                  class="repo-url"
+                  label="${_t('import.GitHubURL')}"
+                  autoValidate
+                  validationMessage="${_text('import.WrongURLType')}"
+                  pattern="^(https?)://github.com/([\\w./-]{1,})$"
+                  maxLength="2048"
+                  placeholder="${_t('maxLength.2048chars')}"
+                  @change="${(e) =>
+                    this.urlTextfieldChanged(
+                      e,
+                      'import-github-repo-button',
+                      'importGithubMessage',
+                    )}"
+                ></mwc-textfield>
+                <mwc-select
+                  class="github-select"
+                  id="github-add-folder-host"
+                  label="${_t('data.Host')}"
+                >
+                  ${this.vhosts.map(
+                    (item, idx) => html`
+                      <mwc-list-item
+                        hasMeta
+                        value="${item}"
+                        ?selected="${item === this.vhost}"
+                      >
+                        <span>${item}</span>
+                      </mwc-list-item>
+                    `,
+                  )}
+                </mwc-select>
+                <mwc-button
+                  id="import-github-repo-button"
+                  disabled
+                  class="left-align"
+                  icon="cloud_download"
+                  @click="${() => this.getGitHubRepoFromURL()}"
+                >
+                  <span>${_t('import.GetToFolder')}</span>
+                </mwc-button>
+              </div>
+              ${this.importGithubMessage}
+            </div>
+          </lablup-activity-panel>
+        </div>
+        <div class="horizontal wrap layout">
+          <lablup-activity-panel
+            title="${_t('import.ImportGitlabRepo')}"
+            elevation="1"
+            horizontalsize="2x"
+          >
+            <div slot="message">
+              <div class="description">
+                <p>${_t('import.GitlabRepoWillBeFolder')}</p>
+              </div>
+              <div class="horizontal wrap layout center">
+                <mwc-textfield
+                  id="gitlab-repo-url"
+                  class="repo-url"
+                  label="${_t('import.GitlabURL')}"
+                  autoValidate
+                  validationMessage="${_text('import.WrongURLType')}"
+                  pattern="^(https?)://gitlab.com/([\\w./-]{1,})$"
+                  maxLength="2048"
+                  placeholder="${_t('maxLength.2048chars')}"
+                  @change="${(e) =>
+                    this.urlTextfieldChanged(
+                      e,
+                      'import-gitlab-repo-button',
+                      'importGitlabMessage',
+                    )}"
+                ></mwc-textfield>
+                <mwc-textfield
+                  id="gitlab-default-branch-name"
+                  label="${_t('import.GitlabDefaultBranch')}"
+                  maxLength="200"
+                  placeholder="${_t('maxLength.200chars')}"
+                ></mwc-textfield>
+                <mwc-select
+                  id="gitlab-add-folder-host"
+                  label="${_t('data.Host')}"
+                >
+                  ${this.vhosts.map(
+                    (item, idx) => html`
+                      <mwc-list-item
+                        hasMeta
+                        value="${item}"
+                        ?selected="${item === this.vhost}"
+                      >
+                        <span>${item}</span>
+                      </mwc-list-item>
+                    `,
+                  )}
+                </mwc-select>
+                <mwc-button
+                  id="import-gitlab-repo-button"
+                  disabled
+                  class="left-align"
+                  icon="cloud_download"
+                  @click="${() => this.getGitlabRepoFromURL()}"
+                >
+                  <span>${_t('import.GetToFolder')}</span>
+                </mwc-button>
+              </div>
+              ${this.importGitlabMessage}
+            </div>
+          </lablup-activity-panel>
+        </div>
+      </backend-ai-window>
     `;
   }
 }

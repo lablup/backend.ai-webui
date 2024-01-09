@@ -97,10 +97,17 @@ export default class BackendAiHelpButton extends BackendAIPage {
    * @param {string} postfix
    */
   showOnlineHelpPage(postfix: string) {
-    window.open(
+    globalThis.backendaiwindowmanager.addWindowWithURL(
       `https://webui.docs.backend.ai/${this.lang}/latest/` + postfix,
-      '_blank',
+      'Help',
+      'help_outline',
+      'resources/menu_icons/help.svg',
     );
+    // window.open(`https://webui.docs.backend.ai/${this.lang}/latest/` + postfix, '_blank');
+    // window.open(
+    //   `https://webui.docs.backend.ai/${this.lang}/latest/` + postfix,
+    //   '_blank',
+    // );
   }
 
   render() {

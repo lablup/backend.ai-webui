@@ -100,67 +100,77 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css" />
-      <div class="horizontal wrap layout">
-        <lablup-activity-panel title="${_t('maintenance.Fix')}">
-          <div slot="message" class="vertical flex layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div class="title">${_t('maintenance.MatchDatabase')}</div>
-              <div class="description">
-                ${_tr('maintenance.DescMatchDatabase')}
-              </div>
-            </div>
-            <mwc-button
-              outlined
-              id="recalculate_usage-button-desc"
-              ?disabled="${this.recalculating}"
-              label="${_t('maintenance.RecalculateUsage')}"
-              icon="refresh"
-              @click="${() => this.recalculate_usage()}"
-            ></mwc-button>
-          </div>
-        </lablup-activity-panel>
-        <lablup-activity-panel title="${_t('maintenance.ImagesEnvironment')}">
-          <div slot="message">
-            <div class="horizontal flex layout wrap setting-item">
+      <backend-ai-window
+        ?active="${this.active}"
+        title="${_t('webui.menu.Maintenance')}"
+        defaultWidth="380px"
+        defaultHeight="570px"
+        name="maintenance"
+        icon="resources/menu_icons/maintenance.svg"
+      >
+        <link rel="stylesheet" href="resources/custom.css" />
+        <div class="horizontal wrap layout">
+          <lablup-activity-panel title="${_t('maintenance.Fix')}">
+            <div slot="message" class="vertical flex layout wrap setting-item">
               <div class="vertical center-justified layout setting-desc">
-                <div class="title">${_t('maintenance.RescanImageList')}</div>
+                <div class="title">${_t('maintenance.MatchDatabase')}</div>
                 <div class="description">
-                  ${_tr('maintenance.DescRescanImageList')}
+                  ${_tr('maintenance.DescMatchDatabase')}
                 </div>
               </div>
               <mwc-button
                 outlined
-                id="rescan-image-button-desc"
-                ?disabled="${this.scanning}"
-                label="${_t('maintenance.RescanImages')}"
+                id="recalculate_usage-button-desc"
+                ?disabled="${this.recalculating}"
+                label="${_t('maintenance.RecalculateUsage')}"
                 icon="refresh"
-                @click="${() => this.rescan_images()}"
+                @click="${() => this.recalculate_usage()}"
               ></mwc-button>
             </div>
-            <div
-              class="horizontal flex layout wrap setting-item temporarily-hide"
-            >
-              <div class="vertical center-justified layout setting-desc">
-                <div class="title">${_t('maintenance.CleanupOldImages')}</div>
-                <div class="description">
-                  ${_t('maintenance.DescCleanupOldImages')}
+          </lablup-activity-panel>
+          <lablup-activity-panel title="${_t('maintenance.ImagesEnvironment')}">
+            <div slot="message">
+              <div class="horizontal flex layout wrap setting-item">
+                <div class="vertical center-justified layout setting-desc">
+                  <div class="title">${_t('maintenance.RescanImageList')}</div>
+                  <div class="description">
+                    ${_tr('maintenance.DescRescanImageList')}
+                  </div>
                 </div>
+                <mwc-button
+                  outlined
+                  id="rescan-image-button-desc"
+                  ?disabled="${this.scanning}"
+                  label="${_t('maintenance.RescanImages')}"
+                  icon="refresh"
+                  @click="${() => this.rescan_images()}"
+                ></mwc-button>
               </div>
-              <mwc-button
-                outlined
-                disabled
-                label="${_t('maintenance.CleanupImages')}"
-                icon="delete"
-              ></mwc-button>
+              <div
+                class="horizontal flex layout wrap setting-item temporarily-hide"
+              >
+                <div class="vertical center-justified layout setting-desc">
+                  <div class="title">${_t('maintenance.CleanupOldImages')}</div>
+                  <div class="description">
+                    ${_t('maintenance.DescCleanupOldImages')}
+                  </div>
+                </div>
+                <mwc-button
+                  outlined
+                  disabled
+                  label="${_t('maintenance.CleanupImages')}"
+                  icon="delete"
+                ></mwc-button>
+              </div>
             </div>
-          </div>
-        </lablup-activity-panel>
-      </div>
+          </lablup-activity-panel>
+        </div>
+      </backend-ai-window>
     `;
   }
 
   firstUpdated() {
+    super.firstUpdated();
     this.notification = globalThis.lablupNotification;
     this.indicator = globalThis.lablupIndicator;
 

@@ -1,6 +1,6 @@
 /**
  @license
-Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
 */
 import {
   IronFlex,
@@ -8,7 +8,11 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
+import './backend-ai-window';
+import './lablup-activity-panel';
+import '@material/mwc-icon/mwc-icon';
 import { css, CSSResultGroup, html } from 'lit';
+import { translate as _t } from 'lit-translate';
 import { customElement } from 'lit/decorators.js';
 
 /**
@@ -46,7 +50,16 @@ export default class BackendAIInformationView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-react-information></backend-ai-react-information>
+      <backend-ai-window
+        ?active="${this.active}"
+        title="${_t('webui.menu.Information')}"
+        defaultWidth="800px"
+        name="information"
+        icon="resources/menu_icons/info.svg"
+      >
+        <link rel="stylesheet" href="resources/custom.css" />
+        <backend-ai-react-information></backend-ai-react-information>
+      </backend-ai-window>
     `;
   }
 }

@@ -10,6 +10,7 @@ import BackendAIDialog from './backend-ai-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import { default as PainKiller } from './backend-ai-painkiller';
+import './backend-ai-window';
 import './lablup-expansion';
 import '@material/mwc-button';
 import { Checkbox } from '@material/mwc-checkbox';
@@ -162,6 +163,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         #app-dialog {
           --component-width: 400px;
+          z-index: 10000;
         }
 
         #vscode-desktop-dialog {
@@ -466,6 +468,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   _showAppLauncher(controls) {
     this.controls = controls;
     const sessionUuid = controls['session-uuid'];
+    const sessionName = controls['session-name'];
     const accessKey = controls['access-key'];
     const appServices = controls['app-services'];
     const mode = controls['mode'];
@@ -476,10 +479,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       const param: Record<string, unknown> = {};
       param['mode'] = mode;
       param['session-uuid'] = sessionUuid;
+      param['session-name'] = sessionName;
       param['app-name'] = controls['runtime'];
       param['url-postfix'] = '';
       if ('filename' in controls) {
         param['file-name'] = controls['filename'];
+      }
+      if ('icon-src' in controls) {
+        param['icon-src'] = controls['icon-src'];
       }
       if (param['app-name'] === 'jupyter') {
         param['url-postfix'] = '&redirect=/notebooks/' + param['file-name'];
@@ -606,6 +613,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       globalThis.backendaiclient._config.allowPreferredPort;
     this._toggleChkOpenToPublic();
     this.dialog.setAttribute('session-uuid', sessionUuid);
+    this.dialog.setAttribute('session-name', sessionName);
     this.dialog.setAttribute('access-key', accessKey);
     this.dialog.show();
     return;
@@ -866,8 +874,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   async _runAppWithParameters(param) {
     const sessionUuid = param['session-uuid'];
+    const sessionName = param['session-name'];
     let urlPostfix = param['url-postfix'];
     const appName = param['app-name'];
+    let icon = param['icon-src'];
     const envs = null;
     const mode = param['mode'];
     let args = null;
@@ -881,6 +891,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     if ('args' in param) {
       args = param['args'];
+    }
+    if (icon === undefined || icon === null) {
+      icon = '';
     }
 
     if (appName === 'tensorboard') {
@@ -935,10 +948,17 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               );
               this.indicator.set(100, _text('session.applauncher.Prepared'));
               setTimeout(() => {
-                globalThis.open(
+                globalThis.backendaiwindowmanager.addWindowWithURL(
                   appConnectUrl || response.url + urlPostfix,
-                  '_blank',
+                  appName + ' - ' + sessionName,
+                  sessionUuid,
+                  icon,
                 );
+                // globalThis.open(appConnectUrl || response.url + urlPostfix, '_blank');
+                // globalThis.open(
+                //  appConnectUrl || response.url + urlPostfix,
+                //  '_blank',
+                //);
                 // console.log(appName + " proxy loaded: ");
                 // console.log(sessionUuid);
               }, 1000);
@@ -1059,6 +1079,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.appController['session-uuid'] =
         controls.getAttribute('session-uuid');
       this.appController['url-postfix'] = controller['url-postfix'];
+      this.appController['icon-src'] = controller['icon-src'];
       this._openAppLaunchConfirmationDialog(e);
     } else {
       return this._runThisApp(e);
@@ -1075,7 +1096,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     this.appController['app-name'] = controller['app-name'];
     const controls = controller.closest('#app-dialog');
     this.appController['session-uuid'] = controls.getAttribute('session-uuid');
+    this.appController['session-name'] = controls.getAttribute('session-name');
     this.appController['url-postfix'] = controller['url-postfix'];
+    this.appController['icon-src'] = controller['icon-src'];
     return this._runApp(this.appController);
   }
 
@@ -1087,7 +1110,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   async _runApp(config) {
     const appName = config['app-name'];
     const sessionUuid = config['session-uuid'];
+    const sessionName = config['session-name'];
     let urlPostfix = config['url-postfix'];
+    let icon = config['icon-src'];
     const envs = null;
     const args = null;
     const defaultPreferredPortNumber = 10250;
@@ -1178,10 +1203,17 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           } else if (response.url) {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
-              globalThis.open(
+              // console.log(response.url + urlPostfix);
+              globalThis.backendaiwindowmanager.addWindowWithURL(
                 appConnectUrl || response.url + urlPostfix,
-                '_blank',
+                appName + ' - ' + sessionName,
+                sessionUuid,
+                icon,
               );
+              // globalThis.open(
+              //  appConnectUrl || response.url + urlPostfix,
+              //  '_blank',
+              //);
               // console.log(appName + " proxy loaded: ");
               // console.log(sessionUuid);
             }, 1000);
@@ -1234,7 +1266,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    *
    * @param {string} sessionUuid
    */
-  async runTerminal(sessionUuid: string) {
+  async runTerminal(sessionUuid: string, sessionName: string | undefined) {
     const isVisible = localStorage.getItem('backendaiwebui.terminalguide');
     if (!isVisible || isVisible === 'true') {
       this._openTerminalGuideDialog();
@@ -1252,7 +1284,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         if (response.url) {
           this.indicator.set(100, _text('session.applauncher.Prepared'));
           setTimeout(() => {
-            globalThis.open(appConnectUrl || response.url, '_blank');
+            globalThis.backendaiwindowmanager.addWindowWithURL(
+              appConnectUrl || response.url,
+              'Console - ' + (sessionName ? sessionName : sessionUuid),
+              sessionUuid,
+              './resources/icons/terminal.svg',
+            );
+            // globalThis.open(appConnectUrl || response.url, '_blank');
             this.indicator.end();
             // console.log("Terminal proxy loaded: ");
             // console.log(sessionUuid);
@@ -1322,6 +1360,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       const appName = this.appController['app-name'];
       const sessionUuid = this.appController['session-uuid'];
       const urlPostfix = this.appController['url-postfix'];
+      const icon = this.appController['icon-src'];
       this.indicator = await globalThis.lablupIndicator.start();
       this.indicator.set(50, 'Shutdown TensorBoard instance if exist...');
       await globalThis.backendaiclient.shutdown_service(
@@ -1347,10 +1386,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           this._hideTensorboardDialog();
           button.removeAttribute('disabled');
           setTimeout(() => {
-            globalThis.open(
+            globalThis.backendaiwindowmanager.addWindowWithURL(
               appConnectUrl || response.url + urlPostfix,
-              '_blank',
+              appName + ' - ' + sessionUuid,
+              sessionUuid,
+              icon,
             );
+            // globalThis.open(
+            //   appConnectUrl || response.url + urlPostfix,
+            //   '_blank',
+            // );
             // console.log(appName + ' proxy loaded: ');
             // console.log(sessionUuid);
           }, 1000);
@@ -1588,6 +1633,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                           .app="${item.name}"
                           .app-name="${item.name}"
                           .url-postfix="${item.redirect}"
+                          .icon-src="${item.src}"
                           @click="${(e) =>
                             this._runThisAppWithConfirmationIfNeeded(e)}"
                         >
@@ -1729,7 +1775,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </div>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="ssh-dialog" fixed backdrop>
+      <backend-ai-dialog id="ssh-dialog" fixed>
         <span slot="title">SSH / SFTP connection</span>
         <div slot="content">
           <section class="vertical layout wrap start start-justified">
@@ -1846,7 +1892,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="vnc-dialog" fixed backdrop>
+      <backend-ai-dialog id="vnc-dialog" fixed>
         <span slot="title">${_t('session.VNCconnection')}</span>
         <div slot="content" style="padding:15px;">
           <div style="padding:15px 0;">${_t(
@@ -1861,7 +1907,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </section>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="xrdp-dialog" fixed backdrop>
+      <backend-ai-dialog id="xrdp-dialog" fixed>
         <span slot="title">${_t('session.XRDPconnection')}</span>
         <div slot="content" style="padding:15px;">
           <div style="padding:15px 0;">${_t(
@@ -1876,7 +1922,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </section>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="app-launch-confirmation-dialog" warning fixed backdrop>
+      <backend-ai-dialog id="app-launch-confirmation-dialog" warning fixed>
         <span slot="title">${_t('session.applauncher.AppMustBeRun')}</span>
         <div slot="content" class="vertical layout">
           <p>${_t('session.applauncher.AppMustBeRunDialog')}</p>
@@ -1893,7 +1939,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="terminal-guide" fixed backdrop>
+      <backend-ai-dialog id="terminal-guide" fixed>
         <span slot="title">${_t('webTerminalUsageGuide.CopyGuide')}</span>
         <div slot="content"></div>
         <div slot="footer"></div>

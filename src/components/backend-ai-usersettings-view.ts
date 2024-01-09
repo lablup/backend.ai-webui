@@ -15,6 +15,7 @@ import { BackendAiStyles } from './backend-ai-general-styles';
 import './backend-ai-list-status';
 import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-usersettings-general-list';
+import './backend-ai-window';
 import './lablup-activity-panel';
 import './lablup-codemirror';
 import './lablup-loading-spinner';
@@ -86,8 +87,9 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
 
         h3.tab {
           background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0px 0px;
-          margin: 0px auto;
+          /*border-radius: 5px 5px 0px 0px;*/
+          border-radius: 0;
+          margin: 0 auto;
         }
 
         mwc-tab-bar {
@@ -146,87 +148,94 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css" />
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <lablup-activity-panel noheader narrow autowidth>
-        <div slot="message">
-          <h3 class="tab horizontal wrap layout">
-            <mwc-tab-bar>
-              <mwc-tab
-                title="general"
-                label="${_t('usersettings.General')}"
-                @click="${(e) => this._showTab(e.target)}"
-              ></mwc-tab>
-              <mwc-tab
-                title="logs"
-                label="${_t('usersettings.Logs')}"
-                @click="${(e) => this._showTab(e.target)}"
-              ></mwc-tab>
-            </mwc-tab-bar>
-          </h3>
-          <div id="general" class="item tab-content outer-space">
-            <backend-ai-usersettings-general-list
-              active="true"
-            ></backend-ai-usersettings-general-list>
-          </div>
-          <div id="logs" class="item tab-content" style="display:none;">
-            <h3 class="horizontal center layout outer-space">
-              <span>${_t('logs.LogMessages')}</span>
-              <span class="mini" style="font-size:13px;padding-left:15px;">
-                ${_t('logs.UpTo3000Logs')}
-              </span>
-              <span class="flex"></span>
-              <mwc-button
-                class="log"
-                icon="refresh"
-                @click="${() => this._refreshLogs()}"
-              >
-                <span>${_t('button.Refresh')}</span>
-              </mwc-button>
-              <mwc-button
-                class="log"
-                icon="delete"
-                raised
-                @click="${() => this._showClearLogsDialog()}"
-              >
-                <span>${_t('button.ClearLogs')}</span>
-              </mwc-button>
-            </h3>
-            <backend-ai-error-log-list
-              active="true"
-            ></backend-ai-error-log-list>
-          </div>
-        </div>
-      </lablup-activity-panel>
-      <backend-ai-dialog
-        id="clearlogs-dialog"
-        fixed
-        backdrop
-        scrollable
-        blockScrolling
+      <backend-ai-window
+        ?active="${this.active}"
+        title="${_t('webui.menu.Settings&Logs')}"
+        name="usersettings"
       >
-        <span slot="title">${_t('dialog.warning.LogDeletion')}</span>
-        <div slot="content">${_t('dialog.warning.CannotBeUndone')}</div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button
-            class="operation"
-            id="discard-removal"
-            label="${_t('button.No')}"
-            @click="${() => this._hideClearLogsDialog()}"
-          ></mwc-button>
-          <mwc-button
-            unelevated
-            class="operation"
-            id="apply-removal"
-            label="${_t('button.Yes')}"
-            @click="${() => this._removeLogMessage()}"
-          ></mwc-button>
-        </div>
-      </backend-ai-dialog>
+        <link rel="stylesheet" href="resources/custom.css" />
+        <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
+        <lablup-activity-panel noheader narrow autowidth attachInner>
+          <div slot="message">
+            <h3 class="tab horizontal wrap layout">
+              <mwc-tab-bar>
+                <mwc-tab
+                  title="general"
+                  label="${_t('usersettings.General')}"
+                  @click="${(e) => this._showTab(e.target)}"
+                ></mwc-tab>
+                <mwc-tab
+                  title="logs"
+                  label="${_t('usersettings.Logs')}"
+                  @click="${(e) => this._showTab(e.target)}"
+                ></mwc-tab>
+              </mwc-tab-bar>
+            </h3>
+            <div id="general" class="item tab-content outer-space">
+              <backend-ai-usersettings-general-list
+                active="true"
+              ></backend-ai-usersettings-general-list>
+            </div>
+            <div id="logs" class="item tab-content" style="display:none;">
+              <h3 class="horizontal center layout outer-space">
+                <span>${_t('logs.LogMessages')}</span>
+                <span class="mini" style="font-size:13px;padding-left:15px;">
+                  ${_t('logs.UpTo3000Logs')}
+                </span>
+                <span class="flex"></span>
+                <mwc-button
+                  class="log"
+                  icon="refresh"
+                  @click="${() => this._refreshLogs()}"
+                >
+                  <span>${_t('button.Refresh')}</span>
+                </mwc-button>
+                <mwc-button
+                  class="log"
+                  icon="delete"
+                  raised
+                  @click="${() => this._showClearLogsDialog()}"
+                >
+                  <span>${_t('button.ClearLogs')}</span>
+                </mwc-button>
+              </h3>
+              <backend-ai-error-log-list
+                active="true"
+              ></backend-ai-error-log-list>
+            </div>
+          </div>
+        </lablup-activity-panel>
+        <backend-ai-dialog
+          id="clearlogs-dialog"
+          fixed
+          backdrop
+          scrollable
+          blockScrolling
+        >
+          <span slot="title">${_t('dialog.warning.LogDeletion')}</span>
+          <div slot="content">${_t('dialog.warning.CannotBeUndone')}</div>
+          <div slot="footer" class="horizontal end-justified flex layout">
+            <mwc-button
+              class="operation"
+              id="discard-removal"
+              label="${_t('button.No')}"
+              @click="${() => this._hideClearLogsDialog()}"
+            ></mwc-button>
+            <mwc-button
+              unelevated
+              class="operation"
+              id="apply-removal"
+              label="${_t('button.Yes')}"
+              @click="${() => this._removeLogMessage()}"
+            ></mwc-button>
+          </div>
+        </backend-ai-dialog>
+      </backend-ai-window>
     `;
   }
 
   firstUpdated() {
+    super.firstUpdated();
     if (
       typeof globalThis.backendaiclient === 'undefined' ||
       globalThis.backendaiclient === null
