@@ -34,7 +34,7 @@ const BAINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
             key={item.created}
             actions={[
               item.url && (
-                <a href={item.url} target="_blank">
+                <a href={item.url} target="_blank" rel="noopener noreferrer">
                   {t('notification.SeeDetail')}
                 </a>
               ),
