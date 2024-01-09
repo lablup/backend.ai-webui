@@ -137,10 +137,11 @@ describe('normalizePEP440Version', () => {
     expect(normalizePEP440Version('1.2.3_dev1')).toBe('1.2.3.dev.1');
     expect(normalizePEP440Version('1.2.3 dev1')).toBe('1.2.3.dev.1');
     expect(normalizePEP440Version('1.2.3.dev.1')).toBe('1.2.3.dev.1');
+    expect(normalizePEP440Version('1.2.3.dev.*')).toBe('1.2.3.dev.*');
   });
 });
 
-describe('comparePEP440Versions', () => {
+describe.only('comparePEP440Versions', () => {
   test('should compare versions correctly', () => {
     expect(comparePEP440Versions('1.2.3', '1.2.3')).toBe(0);
     expect(comparePEP440Versions('1.2.3', '1.2.4')).toBe(-1);
@@ -150,6 +151,9 @@ describe('comparePEP440Versions', () => {
     expect(comparePEP440Versions('1.2.3.dev.1', '1.2.3.dev.2')).toBe(-1);
     expect(comparePEP440Versions('1.2.3.dev.2', '1.2.3.dev.1')).toBe(1);
     expect(comparePEP440Versions('1.2.3.dev.2', '1.2.3.dev.1')).toBe(1);
+    expect(comparePEP440Versions('1.2.3.*', '1.2.3.dev.1')).toBe(0);
+    expect(comparePEP440Versions('1.2.3.*', '1.2.2.dev.1')).toBe(1);
+    expect(comparePEP440Versions('1.2.3.*', '1.2.4.dev.1')).toBe(-1);
   });
 
   test('comparePEP440Versions', () => {

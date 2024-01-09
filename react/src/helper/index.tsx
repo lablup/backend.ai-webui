@@ -349,7 +349,9 @@ export function comparePEP440Versions(version1: string, version2: string) {
     const part1 = parts1[i];
     const part2 = parts2[i];
 
-    if (/^\d+$/.test(part1) && /^\d+$/.test(part2)) {
+    if (part1 === '*' || part2 === '*') {
+      return 0;
+    } else if (/^\d+$/.test(part1) && /^\d+$/.test(part2)) {
       const diff = parseInt(part1, 10) - parseInt(part2, 10);
       if (diff !== 0) {
         return diff < 0 ? -1 : 1;
