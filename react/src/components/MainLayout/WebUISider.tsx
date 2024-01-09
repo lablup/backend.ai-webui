@@ -19,7 +19,6 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { theme, MenuProps, Typography } from 'antd';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 

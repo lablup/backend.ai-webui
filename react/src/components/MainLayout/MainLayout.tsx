@@ -2,13 +2,10 @@ import BAISider from '../BAISider';
 import Flex from '../Flex';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import { useLocalStorageState, useToggle } from 'ahooks';
-import { Layout, Typography, theme } from 'antd';
-import _ from 'lodash';
+import { useLocalStorageState } from 'ahooks';
+import { Layout, theme } from 'antd';
 import { Suspense, useEffect, useLayoutEffect, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
-
-const { Text } = Typography;
 
 const { Content } = Layout;
 
@@ -21,7 +18,7 @@ function MainLayout() {
     'compactSidebarActive',
   );
   const [collapsedWidth, setCollapsedWidth] = useState(88);
-  const [isOpenPreferences, { toggle: toggleIsOpenPreferences }] = useToggle();
+  // const [isOpenPreferences, { toggle: toggleIsOpenPreferences }] = useToggle();
 
   // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();

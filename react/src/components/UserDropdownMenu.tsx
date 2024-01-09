@@ -1,4 +1,4 @@
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import Flex from './Flex';
 import UserProfileSettingModal from './UserProfileSettingModal';

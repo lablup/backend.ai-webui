@@ -63,10 +63,6 @@ const KeypairInfoModal = React.lazy(
 
 const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
 
-const AnnouncementAlert = React.lazy(
-  () => import('./components/AnnouncementAlert'),
-);
-
 customElements.define(
   'backend-ai-react-session-list',
   reactToWebComponent((props) => {

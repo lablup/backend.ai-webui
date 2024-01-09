@@ -3,8 +3,7 @@ import BAINotificationDrawer from './BAINotificationDrawer';
 import { BellOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button } from 'antd';
-import type { ButtonProps } from 'antd/';
-import _ from 'lodash';
+import type { ButtonProps } from 'antd';
 import React, { useEffect } from 'react';
 
 interface Props extends ButtonProps {}

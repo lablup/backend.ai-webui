@@ -1,6 +1,6 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { Alert, Tag, theme } from 'antd';
+import { Alert, theme } from 'antd';
 import { AlertProps } from 'antd/lib';
 import _ from 'lodash';
 import Markdown from 'markdown-to-jsx';

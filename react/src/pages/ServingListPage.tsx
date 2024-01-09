@@ -24,15 +24,7 @@ import {
 } from '@ant-design/icons';
 import { useRafInterval } from 'ahooks';
 import { useLocalStorageState } from 'ahooks';
-import {
-  Button,
-  Card,
-  ConfigProvider,
-  Table,
-  Tabs,
-  Typography,
-  theme,
-} from 'antd';
+import { Button, Card, ConfigProvider, Table, Typography, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
@@ -87,7 +79,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const [servicesFetchKey, updateServicesFetchKey] =
     useUpdatableState('initial-fetch');
   // FIXME: need to apply filtering type of service later
-  const [selectedTab, setSelectedTab] = useState<TabKey>('services');
+  const [selectedTab] = useState<TabKey>('services');
   // const [selectedGeneration, setSelectedGeneration] = useState<
   //   "current" | "next"
   // >("next");

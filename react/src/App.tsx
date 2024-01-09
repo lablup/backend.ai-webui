@@ -1,17 +1,14 @@
 import AnnouncementAlert from './components/AnnouncementAlert';
-import DefaultProviders, {
+import {
   DefaultProviders2,
   RoutingEventHandler,
 } from './components/DefaultProviders';
-import Flex from './components/Flex';
 import Information from './components/Information';
 import MainLayout from './components/MainLayout/MainLayout';
 import ServingListPage from './pages/ServingListPage';
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
-import { QueryParamProvider } from 'use-query-params';
-import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
 const router = createBrowserRouter([
   {

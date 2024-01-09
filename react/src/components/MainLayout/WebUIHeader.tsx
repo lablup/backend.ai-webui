@@ -4,7 +4,7 @@ import BAINotificationButton from '../BAINotificationButton';
 import Flex, { FlexProps } from '../Flex';
 import ProjectSelector from '../ProjectSelector';
 import UserDropdownMenu from '../UserDropdownMenu';
-import { BellOutlined, MenuOutlined } from '@ant-design/icons';
+import { MenuOutlined } from '@ant-design/icons';
 import { theme, Button, Typography, Grid } from 'antd';
 import { t } from 'i18next';
 import _ from 'lodash';
