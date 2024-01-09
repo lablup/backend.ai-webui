@@ -1,7 +1,7 @@
 import { useCurrentUserInfo } from './backendai';
 import { useTanQuery } from './reactQueryAlias';
 import { App } from 'antd';
-import { NotificationPlacement } from 'antd/es/notification/interface';
+import { ArgsProps } from 'antd/lib/notification';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
@@ -155,21 +155,14 @@ export const useSuspendedBackendaiClient = () => {
     _config: BackendAIConfig;
   };
 };
-
-type NotificationType = 'success' | 'info' | 'warning' | 'error';
-export interface NotificationState {
-  type?: NotificationType;
-  text?: string;
-  detail?: string;
+export interface NotificationState extends ArgsProps {
   url?: string;
-  placement?: NotificationPlacement;
-  duration?: number;
   created?: string;
 }
 
-export const notificationState: RecoilState<NotificationState[]> = atom({
+export const notificationState = atom<NotificationState[]>({
   key: 'webui-notification',
-  default: [{}],
+  default: [],
 });
 
 export const useWebUINotification = () => {
@@ -184,10 +177,8 @@ export const useWebUINotification = () => {
     setNotifications([...notifications, newNotification]);
 
     notification[props.type || 'info']({
-      message: props.text,
-      description: props.detail,
       placement: props.placement || 'bottomRight',
-      duration: props.duration,
+      ...props,
     });
   };
 

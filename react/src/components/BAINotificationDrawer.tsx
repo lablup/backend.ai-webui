@@ -28,44 +28,40 @@ const BAINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
     >
       <List
         dataSource={notifications}
-        renderItem={(item) =>
-          notifications.length > 0 ? (
-            <List.Item
-              key={item.created}
-              actions={[
-                item.url ? (
-                  <a href={item.url} target="_blank">
-                    {t('notification.SeeDetail')}
-                  </a>
-                ) : null,
-              ]}
-            >
-              <List.Item.Meta
-                title={item.text}
-                description={
-                  <>
-                    {item.detail}
-                    <br />({dayjs(item.created).format('ll LTS')})
-                  </>
-                }
-                avatar={
-                  <Avatar
-                    size="small"
-                    icon={_.get(avatarMap, (item.type || 'info') + '.icon')}
-                    style={{
-                      backgroundColor: _.get(
-                        avatarMap,
-                        (item.type || 'info') + '.color',
-                      ),
-                    }}
-                  />
-                }
-              />
-            </List.Item>
-          ) : (
-            <>{t('notification.NoNotification')}</>
-          )
-        }
+        renderItem={(item) => (
+          <List.Item
+            key={item.created}
+            actions={[
+              item.url && (
+                <a href={item.url} target="_blank">
+                  {t('notification.SeeDetail')}
+                </a>
+              ),
+            ]}
+          >
+            <List.Item.Meta
+              title={item.message}
+              description={
+                <>
+                  {item.description}
+                  <br />({dayjs(item.created).format('ll LTS')})
+                </>
+              }
+              avatar={
+                <Avatar
+                  size="small"
+                  icon={_.get(avatarMap, (item.type || 'info') + '.icon')}
+                  style={{
+                    backgroundColor: _.get(
+                      avatarMap,
+                      (item.type || 'info') + '.color',
+                    ),
+                  }}
+                />
+              }
+            />
+          </List.Item>
+        )}
       />
     </Drawer>
   );
