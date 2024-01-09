@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {LitElement} from 'lit';
-import {customElement, state, property} from 'lit/decorators.js';
 import BackendAIWindow from './backend-ai-window';
 import './backend-ai-window';
+import { LitElement } from 'lit';
+import { customElement, state, property } from 'lit/decorators.js';
 
 export type viewType = 'win' | 'tab' | 'spa'; // SPA: single-page application, legacy mode.
 export type windowType = 'win' | 'widget' | 'page';
@@ -18,10 +18,10 @@ export type windowType = 'win' | 'widget' | 'page';
  */
 @customElement('backend-ai-window-manager')
 export default class BackendAIWindowManager extends LitElement {
-  @state() protected windows : Record<string, BackendAIWindow> = {};
-  @state() protected zOrder : string[] = [];
+  @state() protected windows: Record<string, BackendAIWindow> = {};
+  @state() protected zOrder: string[] = [];
   // @state() protected viewMode : viewType = 'win';
-  @property({type: String}) viewMode : viewType = 'win';
+  @property({ type: String }) viewMode: viewType = 'win';
 
   count() {
     return Object.keys(this.windows).length;
@@ -49,16 +49,25 @@ export default class BackendAIWindowManager extends LitElement {
     }
   }
 
-  get topWindowName(): string | null { // TODO: it lazy loads. Therefore it is not a newest value.
-    console.log("top Window: ", this.zOrder.length == 0 ? null : this.zOrder[this.zOrder.length - 1]);
+  get topWindowName(): string | null {
+    // TODO: it lazy loads. Therefore it is not a newest value.
+    console.log(
+      'top Window: ',
+      this.zOrder.length == 0 ? null : this.zOrder[this.zOrder.length - 1],
+    );
     return this.zOrder.length == 0 ? null : this.zOrder[this.zOrder.length - 1];
   }
 
-  addWindowWithURL(url: string, title: string | undefined, group = '', icon: string | undefined) {
+  createWindowWithURL(
+    url: string,
+    title: string | undefined,
+    group = '',
+    icon: string | undefined,
+  ) {
     const div = document.createElement('div');
     const winTemplate = `<backend-ai-window active=true></backend-ai-window>`;
     div.innerHTML = winTemplate;
-    const win : BackendAIWindow | null = div.querySelector('backend-ai-window');
+    const win = div.querySelector('backend-ai-window');
     if (title) {
       win?.setAttribute('title', title);
     }
@@ -71,27 +80,47 @@ export default class BackendAIWindowManager extends LitElement {
     urlContent.setAttribute('width', '100%');
     urlContent.setAttribute('height', '100%');
     win?.appendChild(urlContent);
-    const event = new CustomEvent('backend-ai-window-append', {'detail': div});
+    return win;
+  }
+
+  addWindowWithURL(
+    url: string,
+    title: string | undefined,
+    group = '',
+    icon: string | undefined,
+  ) {
+    const win = this.createWindowWithURL(url, title, group, icon);
+    // backend-ai-window-append event let WebUI shell to add newly created window to the DOM.
+    const event = new CustomEvent('backend-ai-window-append', { detail: win });
     document.dispatchEvent(event);
+    console.log(win);
+    // this.addWindow(win);
   }
 
   addWindow(win: BackendAIWindow) {
     if (!Object.keys(this.windows).includes(win.name)) {
       this.windows[win.name] = win;
       this.zOrder.push(win.name);
-      const event = new CustomEvent('backend-ai-window-added', {'detail': win.name});
+      // backend-ai-window-added event let window manager to add its own.
+      const event = new CustomEvent('backend-ai-window-added', {
+        detail: win.name,
+      });
       document.dispatchEvent(event);
     }
-    if (this.viewMode === 'spa' && Object.keys(this.windows).length > 1) { // Legacy single-page application mode closes other windows.
+    if (this.viewMode === 'spa' && Object.keys(this.windows).length > 1) {
+      // Legacy single-page application mode closes other windows.
       this.removeOtherWindows(win);
     }
-    this.reorderWindow({'detail': win.name});
+    this.reorderWindow({ detail: win.name });
     console.log('Active windows:', this.windows);
   }
 
   removeWindow(win: BackendAIWindow) {
     if (Object.keys(this.windows).includes(win.name)) {
-      if (this.windows[win.name].group !== '' && this.windows[win.name].group !== 'system') {
+      if (
+        this.windows[win.name].group !== '' &&
+        this.windows[win.name].group !== 'system'
+      ) {
         win.active = false;
         win.isTop = false;
         this.windows[win.name].remove();
@@ -104,7 +133,9 @@ export default class BackendAIWindowManager extends LitElement {
       if (index > -1) {
         this.zOrder.splice(index, 1);
       }
-      const event = new CustomEvent('backend-ai-window-removed', {'detail': win.name});
+      const event = new CustomEvent('backend-ai-window-removed', {
+        detail: win.name,
+      });
       document.dispatchEvent(event);
     }
   }
@@ -154,7 +185,7 @@ export default class BackendAIWindowManager extends LitElement {
     this.windows[name]?.setAttribute('isTop', '');
   }
 
-  setViewType(viewType : viewType = 'win') {
+  setViewType(viewType: viewType = 'win') {
     // @ts-ignore
     for (const [index, name] of this.zOrder.entries()) {
       this.windows[name]?.setViewType(viewType);

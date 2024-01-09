@@ -2,19 +2,22 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {BackendAiStyles} from './backend-ai-general-styles';
-import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-import {customElement, property, state, query} from 'lit/decorators.js';
+import {
+  IronFlex,
+  IronFlexAlignment,
+} from '../plastics/layout/iron-flex-layout-classes';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { viewType, windowType } from './backend-ai-window-manager';
 import '@material/mwc-icon-button';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { customElement, property, state, query } from 'lit/decorators.js';
 
 type windowInfo = {
-  posX: number,
-  posY: number,
-  width: number,
-  height: number
-}
-import {viewType, windowType} from './backend-ai-window-manager';
+  posX: number;
+  posY: number;
+  width: number;
+  height: number;
+};
 
 /**
  Backend AI Window Shell
@@ -28,31 +31,31 @@ import {viewType, windowType} from './backend-ai-window-manager';
 @customElement('backend-ai-window')
 export default class BackendAIWindow extends LitElement {
   // Can be set when initializing window
-  @property({type: String}) name = '';
-  @property({type: Boolean, reflect: true}) active = false;
-  @property({type: Number}) posX = 0;
-  @property({type: Number}) posY = 0;
-  @property({type: Number}) posZ = 1000;
-  @property({type: String}) defaultWidth = '80%';
-  @property({type: String}) defaultHeight = '';
-  @property({type: String}) type: windowType = 'win';
-  @property({type: String}) viewMode: viewType = 'win';
-  @property({type: String}) group = '';
-  @property({type: String}) groupColor = '';
-  @property({type: String}) title = '';
-  @property({type: String}) icon = '';
-  @property({type: String}) titleBarColor = '';
-  @property({type: Boolean}) isFullScreen = false;
-  @property({type: Boolean}) isMinimized = false;
-  @property({type: Boolean}) isChangingSizeByButton = false;
-  @property({type: Boolean}) isTop = false;
-  @property({type: URL}) url;
+  @property({ type: String }) name = '';
+  @property({ type: Boolean, reflect: true }) active = false;
+  @property({ type: Number }) posX = 0;
+  @property({ type: Number }) posY = 0;
+  @property({ type: Number }) posZ = 1000;
+  @property({ type: String }) defaultWidth = '80%';
+  @property({ type: String }) defaultHeight = '';
+  @property({ type: String }) type: windowType = 'win';
+  @property({ type: String }) viewMode: viewType = 'win';
+  @property({ type: String }) group = '';
+  @property({ type: String }) groupColor = '';
+  @property({ type: String }) title = '';
+  @property({ type: String }) icon = '';
+  @property({ type: String }) titleBarColor = '';
+  @property({ type: Boolean }) isFullScreen = false;
+  @property({ type: Boolean }) isMinimized = false;
+  @property({ type: Boolean }) isChangingSizeByButton = false;
+  @property({ type: Boolean }) isTop = false;
+  @property({ type: URL }) url;
 
   @state() protected lastWindowInfo: windowInfo = {
     posX: 0,
     posY: 0,
     width: 0,
-    height: 0
+    height: 0,
   };
   @state() protected mousePosX: number = 0;
   @state() protected mousePosY: number = 0;
@@ -87,7 +90,9 @@ export default class BackendAIWindow extends LitElement {
           /*box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;*/
           /*box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;*/
           /*box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;*/
-          box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+          box-shadow:
+            rgba(0, 0, 0, 0.25) 0px 14px 28px,
+            rgba(0, 0, 0, 0.22) 0px 10px 10px;
           position: absolute;
           resize: both;
           overflow: hidden;
@@ -97,11 +102,11 @@ export default class BackendAIWindow extends LitElement {
 
         div.fullwin {
           box-shadow: unset;
-          border-radius: 0!important;
+          border-radius: 0 !important;
         }
 
         div.fullwin > h4 {
-          border-radius: 0!important;
+          border-radius: 0 !important;
         }
 
         div.mock {
@@ -145,7 +150,7 @@ export default class BackendAIWindow extends LitElement {
           border-radius: 0;
           box-shadow: none;
           position: absolute;
-          top: 64px!important;
+          top: 64px !important;
           resize: both;
           overflow: hidden;
           animation: fadeIn 0.3s;
@@ -175,7 +180,7 @@ export default class BackendAIWindow extends LitElement {
 
         div.spa > h4,
         div.spa #resize-guide {
-          display: none!important;
+          display: none !important;
         }
 
         .button-area {
@@ -227,7 +232,7 @@ export default class BackendAIWindow extends LitElement {
         }
 
         div.tab #resize-guide {
-          display: none!important;
+          display: none !important;
         }
 
         #ribbon {
@@ -262,21 +267,30 @@ export default class BackendAIWindow extends LitElement {
             opacity: 0;
           }
         }
-      `];
-  };
+      `,
+    ];
+  }
 
   // D&D support
   dragStart(e) {
     e.stopPropagation();
     this.mousePosX = e.pageX;
     this.mousePosY = e.pageY;
-    this.distX = this.win.offsetLeft - this.mousePosX; /* Diff between mouse axis and window axis */
+    this.distX =
+      this.win.offsetLeft -
+      this.mousePosX; /* Diff between mouse axis and window axis */
     this.distY = this.win.offsetTop - this.mousePosY;
     if (!this.isMinimized) {
       this.keepLastWindowInfo();
     }
-    console.log('Window location: ' + (this.mousePosX + this.distX), this.mousePosY + this.distY);
-    console.log('Window offset location: ' + this.win.offsetLeft, this.win.offsetTop);
+    console.log(
+      'Window location: ' + (this.mousePosX + this.distX),
+      this.mousePosY + this.distY,
+    );
+    console.log(
+      'Window offset location: ' + this.win.offsetLeft,
+      this.win.offsetTop,
+    );
 
     /*
     this.win.style.border = '0'; //3px dotted #ccc";
@@ -346,11 +360,13 @@ export default class BackendAIWindow extends LitElement {
   updated(changedProperties: Map<any, any>) {
     changedProperties.forEach((oldVal, propName) => {
       if (['active'].includes(propName)) {
-        if (this.active === true) {  // Show window
+        if (this.active === true) {
+          // Show window
           this.activate_window();
           this.setToTop();
           this.show_window();
-        } else if (this.active === false) {  // Hide window
+        } else if (this.active === false) {
+          // Hide window
           //this.hide_window();
         }
       }
@@ -389,7 +405,9 @@ export default class BackendAIWindow extends LitElement {
    */
   activate_window() {
     this.active = true;
-    const event = new CustomEvent('backend-ai-active-changed', {'detail': this.active});
+    const event = new CustomEvent('backend-ai-active-changed', {
+      detail: this.active,
+    });
     this.dispatchEvent(event);
     globalThis.backendaiwindowmanager.addWindow(this);
   }
@@ -404,7 +422,9 @@ export default class BackendAIWindow extends LitElement {
    */
   deactivate_window() {
     this.active = false;
-    const event = new CustomEvent('backend-ai-active-changed', {'detail': this.active});
+    const event = new CustomEvent('backend-ai-active-changed', {
+      detail: this.active,
+    });
     this.dispatchEvent(event);
     globalThis.backendaiwindowmanager.removeWindow(this);
     this.hide_window();
@@ -417,7 +437,12 @@ export default class BackendAIWindow extends LitElement {
 
   minimize_window() {
     if (this.isMinimized) {
-      this.setWindow(this.lastWindowInfo['posX'] + 'px', this.lastWindowInfo['posY'] + 'px', this.lastWindowInfo['width'] + 'px', this.lastWindowInfo['height'] + 'px');
+      this.setWindow(
+        this.lastWindowInfo['posX'] + 'px',
+        this.lastWindowInfo['posY'] + 'px',
+        this.lastWindowInfo['width'] + 'px',
+        this.lastWindowInfo['height'] + 'px',
+      );
       this.isMinimized = false;
     } else {
       this.keepLastWindowInfo();
@@ -435,13 +460,23 @@ export default class BackendAIWindow extends LitElement {
       this.setWindow('0px', '64px', '100%', 'calc(100vh - 64px)');
       this.isFullScreen = true;
     } else {
-      this.setWindow(this.lastWindowInfo['posX'] + 'px', this.lastWindowInfo['posY'] + 'px', this.lastWindowInfo['width'] + 'px', this.lastWindowInfo['height'] + 'px');
+      this.setWindow(
+        this.lastWindowInfo['posX'] + 'px',
+        this.lastWindowInfo['posY'] + 'px',
+        this.lastWindowInfo['width'] + 'px',
+        this.lastWindowInfo['height'] + 'px',
+      );
       this.isFullScreen = false;
     }
   }
 
   // Window dimension
-  setWindow(posX: string, posY: string, width: string | undefined, height: string | undefined) {
+  setWindow(
+    posX: string,
+    posY: string,
+    width: string | undefined,
+    height: string | undefined,
+  ) {
     this.win.style.left = posX;
     this.win.style.top = posY;
     if (width) {
@@ -458,7 +493,7 @@ export default class BackendAIWindow extends LitElement {
       posX: this.win.offsetLeft,
       posY: this.win.offsetTop,
       width: this.win.offsetWidth,
-      height: this.win.offsetHeight
+      height: this.win.offsetHeight,
     };
   }
 
@@ -474,12 +509,9 @@ export default class BackendAIWindow extends LitElement {
     return true;
   }
 
-  load_window_position() {
+  load_window_position() {}
 
-  }
-
-  save_window_position() {
-  }
+  save_window_position() {}
 
   /**
    *  Callback when window is resized.
@@ -498,10 +530,12 @@ export default class BackendAIWindow extends LitElement {
       this.resizeGuide.style.display = 'block';
     }
     if (this.viewMode === 'win') {
-      this.contents.style.height = 'calc(' + this.win.offsetHeight + 'px - 38px)';
+      this.contents.style.height =
+        'calc(' + this.win.offsetHeight + 'px - 38px)';
     } else if (this.viewMode === 'tab') {
       this.contents.style.height = 'calc(100vh - 64px - 32px)';
-    } else { // SPA
+    } else {
+      // SPA
       this.contents.style.height = 'calc(100vh - 64px)';
     }
   }
@@ -524,13 +558,18 @@ export default class BackendAIWindow extends LitElement {
     if (this.posZ !== 1000) {
       this.win.style.zIndex = this.posZ.toString();
     } else {
-      this.win.style.zIndex = (globalThis.backendaiwindowmanager.count() * 10).toString();
+      this.win.style.zIndex = (
+        globalThis.backendaiwindowmanager.count() * 10
+      ).toString();
     }
 
     if (this.name === '') {
       this.name = this.setName();
     }
-    if (this.titleBarColor !== '' && this._validateHexColor(this.titleBarColor)) {
+    if (
+      this.titleBarColor !== '' &&
+      this._validateHexColor(this.titleBarColor)
+    ) {
       this.titlebar.style.backgroundColor = this.titleBarColor;
     }
     this.groupColor = this.ribbonColor;
@@ -545,6 +584,7 @@ export default class BackendAIWindow extends LitElement {
       //this.titlebar.style.backgroundColor = this.groupColor;
       //this.titlebar.style.borderBottom = 'solid 5px ' + this.groupColor;
     }
+    console.log('------------------add: ', this.name);
     globalThis.backendaiwindowmanager.addWindow(this);
   }
 
@@ -553,36 +593,42 @@ export default class BackendAIWindow extends LitElement {
       if (this.posX !== 0) {
         this.win.style.left = this.posX + 'px';
       } else {
-        this.win.style.left = 16 + globalThis.backendaiwindowmanager.count() * 30 + 'px';
+        this.win.style.left =
+          16 + globalThis.backendaiwindowmanager.count() * 30 + 'px';
       }
       if (this.posY !== 0) {
         this.win.style.top = this.posY + 'px';
       } else {
-        this.win.style.top = (64 + 16) + globalThis.backendaiwindowmanager.count() * 30 + 'px';
+        this.win.style.top =
+          64 + 16 + globalThis.backendaiwindowmanager.count() * 30 + 'px';
       }
-      this.win.style.height = 'calc(100vh - 100px - ' + this.win.offsetTop + 'px)';
+      this.win.style.height =
+        'calc(100vh - 100px - ' + this.win.offsetTop + 'px)';
       this.win.style.width = this.defaultWidth;
       if (this.defaultHeight !== '') {
         this.win.style.height = this.defaultHeight;
       } else {
-        this.contents.style.height = 'calc(' + this.win.offsetHeight + 'px - 38px)';
+        this.contents.style.height =
+          'calc(' + this.win.offsetHeight + 'px - 38px)';
       }
-    } else if (this.viewMode === 'tab') { // Tab mode
+    } else if (this.viewMode === 'tab') {
+      // Tab mode
       this.win.style.left = '0px';
       this.win.style.top = '0px';
-      this.win.style.height ='calc(100vh - 64px)';
+      this.win.style.height = 'calc(100vh - 64px)';
       this.win.style.width = 'calc(100%)';
       this.contents.style.height = 'calc(100vh - 64px - 32px)';
-    } else { // SPA mode
+    } else {
+      // SPA mode
       this.win.style.left = '0px';
       this.win.style.top = '0px';
-      this.win.style.height ='calc(100vh - 64px)';
+      this.win.style.height = 'calc(100vh - 64px)';
       this.win.style.width = 'calc(100%)';
       this.contents.style.height = 'calc(100vh - 64px)';
     }
   }
   setPosZ(value) {
-    this.posZ = 1000 + (value * 10);
+    this.posZ = 1000 + value * 10;
     this.win.style.zIndex = this.posZ.toString();
   }
 
@@ -593,7 +639,8 @@ export default class BackendAIWindow extends LitElement {
 
   setName() {
     let result: string = '';
-    const characters: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const characters: string =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength: number = characters.length;
     for (let i = 0; i < 8; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -603,40 +650,75 @@ export default class BackendAIWindow extends LitElement {
 
   setToTop() {
     if (!this.isTop) {
-      const event = new CustomEvent('backend-ai-window-reorder', {'detail': this.name});
+      const event = new CustomEvent('backend-ai-window-reorder', {
+        detail: this.name,
+      });
       document.dispatchEvent(event);
     }
   }
 
   setTabOrder(order: number = 0) {
     if (this.shadowRoot?.querySelector('div.tab > h4')) {
-      (this.shadowRoot?.querySelector('div.tab > h4') as HTMLElement).style.marginLeft = (order * 200) + 'px';
+      (
+        this.shadowRoot?.querySelector('div.tab > h4') as HTMLElement
+      ).style.marginLeft = order * 200 + 'px';
     }
   }
 
   _validateHexColor(str: string) {
-    const reg=/^#([0-9a-f]{3}){1,2}$/i;
+    const reg = /^#([0-9a-f]{3}){1,2}$/i;
     return reg.test(str);
   }
 
   render() {
     // language=HTML
     return html`
-      <div id="window" class="${this.viewMode} ${this.isFullScreen ? 'fullwin': ''}" draggable="${this.viewMode === 'spa' ? 'false' : 'true'}" @click="${() => {this.setToTop();}}">
-        <h4 id="titlebar" class="horizontal center justified layout" style="font-weight:bold;" @click="${() => {this.setToTop();}}">
-          ${this.icon ? html`
-            <img src="${this.icon}" style="width: 24px; height: 24px;"/>
-          ` : html``}
+      <div
+        id="window"
+        class="${this.viewMode} ${this.isFullScreen ? 'fullwin' : ''}"
+        draggable="${this.viewMode === 'spa' ? 'false' : 'true'}"
+        @click="${() => {
+          this.setToTop();
+        }}"
+      >
+        <h4
+          id="titlebar"
+          class="horizontal center justified layout"
+          style="font-weight:bold;"
+          @click="${() => {
+            this.setToTop();
+          }}"
+        >
+          ${this.icon
+            ? html`
+                <img src="${this.icon}" style="width: 24px; height: 24px;" />
+              `
+            : html``}
           <span id="title"><slot name="title">${this.title}</slot></span>
           <div id="titlebar-center" class="flex"></div>
           <div id="ribbon" class="ribbon"></div>
           <div class="button-area">
-            <mwc-icon-button id="minimize-button" icon="remove" @click="${() => this.minimize_window()}"></mwc-icon-button>
-            <mwc-icon-button id="maximize-button" icon="fullscreen" @click="${() => this.maximize_window()}"></mwc-icon-button>
-            <mwc-icon-button icon="close" @click="${() => this.close_window()}"></mwc-icon-button>
+            <mwc-icon-button
+              id="minimize-button"
+              icon="remove"
+              @click="${() => this.minimize_window()}"
+            ></mwc-icon-button>
+            <mwc-icon-button
+              id="maximize-button"
+              icon="fullscreen"
+              @click="${() => this.maximize_window()}"
+            ></mwc-icon-button>
+            <mwc-icon-button
+              icon="close"
+              @click="${() => this.close_window()}"
+            ></mwc-icon-button>
           </div>
         </h4>
-        <mwc-icon-button id="resize-guide" icon="south_east" disabled></mwc-icon-button>
+        <mwc-icon-button
+          id="resize-guide"
+          icon="south_east"
+          disabled
+        ></mwc-icon-button>
         <div id="content" class="content flex" draggable="false">
           <slot></slot>
         </div>

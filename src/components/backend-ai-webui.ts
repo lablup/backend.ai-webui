@@ -92,7 +92,7 @@ globalThis.backendaiwindowmanager = new BackendAIWindowManager();
 @customElement('backend-ai-webui')
 export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Array }) _activePages: string[] = [];
-  @property({ type: String }) viewMode: viewType = 'spa';
+  @property({ type: String }) viewMode: viewType = 'win'; // win, tab or spa
   @property({ type: Boolean }) hasLoadedStrings = false;
   @property({ type: String }) menuTitle = 'LOGIN REQUIRED';
   @property({ type: String }) siteDescription = '';
@@ -209,7 +209,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     super();
     this.blockedMenuItem = [];
     this.inactiveMenuItem = [];
-    globalThis.backendaiwindowmanager.setViewType('spa'); //this.viewMode;
+    globalThis.backendaiwindowmanager.setViewType('win'); //this.viewMode;
   }
 
   static get styles(): CSSResultGroup {
@@ -2287,7 +2287,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                         indeterminate
                       ></mwc-circular-progress>
                     </backend-ai-session-view-next>
-                    <backend-ai-serving-list
+                    <backend-ai-serving-view
                       class="page"
                       name="serving"
                       ?active="${this._page === 'serving'}"
@@ -2295,7 +2295,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                       <mwc-circular-progress
                         indeterminate
                       ></mwc-circular-progress>
-                    </backend-ai-serving-list>
+                    </backend-ai-serving-view>
                     <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${this
                       ._page === 'experiment'}
                       "><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
