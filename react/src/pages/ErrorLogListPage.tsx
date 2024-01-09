@@ -68,7 +68,7 @@ const ErrorLogListPage: React.FC = () => {
           </Space>
         </Flex>
         <Table
-          scroll={{ x: 'max-content' }}
+          scroll={{ x: 'max-content', y: '40vh' }}
           dataSource={logs as logType}
           pagination={{ showSizeChanger: false }}
           columns={[
@@ -99,6 +99,11 @@ const ErrorLogListPage: React.FC = () => {
             {
               title: t('logs.ErrorTitle'),
               dataIndex: 'title',
+              onCell: () => {
+                return {
+                  style: { minWidth: 65 },
+                };
+              },
               render: (value, record) =>
                 _.isUndefined(value) ? (
                   <Flex justify="center">-</Flex>
@@ -128,6 +133,11 @@ const ErrorLogListPage: React.FC = () => {
             {
               title: t('logs.ErrorType'),
               dataIndex: 'type',
+              onCell: () => {
+                return {
+                  style: { minWidth: 90 },
+                };
+              },
               render: (value, record) =>
                 value === '' ? (
                   <Flex justify="center">-</Flex>
