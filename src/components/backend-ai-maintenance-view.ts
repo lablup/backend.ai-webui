@@ -196,7 +196,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     // this.notification.show();
     const indicator = await this.indicator.start('indeterminate');
     indicator.set(0, _text('maintenance.Scanning'));
-    globalThis.tasker.add(
+    this.tasker.add(
       _text('maintenance.RescanImages'),
       globalThis.backendaiclient.maintenance
         .rescan_images()
@@ -244,6 +244,10 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
         }),
       '',
       'image',
+      '',
+      _text('maintenance.Scanning'),
+      _text('maintenance.RescanImageFinished'),
+      _text('maintenance.RescanFailed'),
     );
   }
 
@@ -282,6 +286,10 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
         }),
       '',
       'database',
+      '',
+      _text('maintenance.Recalculating'),
+      _text('maintenance.RecalculationFinished'),
+      _text('maintenance.RecalculationFailed'),
     );
   }
 }

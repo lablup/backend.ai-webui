@@ -1129,7 +1129,9 @@
     "SeeDetail": "Xem chi tiết",
     "Initializing": "Đang khởi tạo ...",
     "NoNotification": "Không có thông báo.",
-    "Notifications": "Thông báo"
+    "Notifications": "Thông báo",
+    "ClearNotifications": "Xóa thông báo",
+    "AreYouSureToClearAllNotifications": "Bạn có chắc chắn xóa tất cả thông báo không?"
   },
   "information": {
     "Core": "Cốt lõi",

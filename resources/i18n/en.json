@@ -1222,7 +1222,9 @@
     "SeeDetail": "See Detail",
     "Initializing": "Initializing...",
     "Notifications": "Notifications",
-    "NoNotification": "No Notification."
+    "NoNotification": "No Notification.",
+    "ClearNotifications": "Clear Notifications",
+    "AreYouSureToClearAllNotifications": "Are you sure to clear all notifications?"
   },
   "information": {
     "Core": "Core",

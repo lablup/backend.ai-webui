@@ -1129,7 +1129,9 @@
     "SeeDetail": "Lihat Detail",
     "Initializing": "Inisialisasi...",
     "NoNotification": "Tidak Ada Pemberitahuan.",
-    "Notifications": "Pemberitahuan"
+    "Notifications": "Pemberitahuan",
+    "ClearNotifications": "Hapus Notifikasi",
+    "AreYouSureToClearAllNotifications": "Apakah Anda yakin untuk menghapus semua notifikasi?"
   },
   "information": {
     "Core": "Core",

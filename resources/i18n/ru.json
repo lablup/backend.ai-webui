@@ -1129,7 +1129,9 @@
     "SeeDetail": "См детали",
     "Initializing": "Инициализация ...",
     "NoNotification": "Нет уведомлений.",
-    "Notifications": "Уведомления"
+    "Notifications": "Уведомления",
+    "ClearNotifications": "Очистить уведомления",
+    "AreYouSureToClearAllNotifications": "Вы уверены, что удалите все уведомления?"
   },
   "information": {
     "Core": "Основной",

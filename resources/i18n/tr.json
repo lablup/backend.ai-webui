@@ -1129,7 +1129,9 @@
     "SeeDetail": "Ayrıntıları gör",
     "Initializing": "Başlatılıyor...",
     "NoNotification": "Bildirim yok.",
-    "Notifications": "Bildirimler"
+    "Notifications": "Bildirimler",
+    "ClearNotifications": "Bildirimleri Temizle",
+    "AreYouSureToClearAllNotifications": "Tüm bildirimleri temizlediğinizden emin misiniz?"
   },
   "information": {
     "Core": "çekirdek",

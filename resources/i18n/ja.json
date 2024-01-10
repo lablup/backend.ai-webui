@@ -1129,7 +1129,9 @@
     "SeeDetail": "詳細を見る",
     "Initializing": "初期化中...",
     "NoNotification": "通知はありません。",
-    "Notifications": "通知"
+    "Notifications": "通知",
+    "ClearNotifications": "通知をクリアする",
+    "AreYouSureToClearAllNotifications": "すべての通知をクリアしてもよろしいですか?"
   },
   "information": {
     "Core": "芯",

@@ -1129,7 +1129,9 @@
     "SeeDetail": "Lihat Perincian",
     "Initializing": "Memulakan ...",
     "NoNotification": "Tiada Pemberitahuan.",
-    "Notifications": "Pemberitahuan"
+    "Notifications": "Pemberitahuan",
+    "ClearNotifications": "Kosongkan Pemberitahuan",
+    "AreYouSureToClearAllNotifications": "Adakah anda pasti mengosongkan semua pemberitahuan?"
   },
   "information": {
     "Core": "Teras",

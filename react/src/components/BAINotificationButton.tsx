@@ -9,8 +9,19 @@ import React, { useEffect } from 'react';
 interface Props extends ButtonProps {}
 
 const BAINotificationButton: React.FC<Props> = ({ ...props }) => {
-  const [, { showWebUINotification }] = useWebUINotification();
+  const [, { addNotification, showWebUINotification, updateNotification }] =
+    useWebUINotification();
   const [isOpenDrawer, { toggle: toggleDrawer }] = useToggle();
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      addNotification(e.detail);
+    };
+    document.addEventListener('add-bai-notification', handler);
+    return () => {
+      document.removeEventListener('add-bai-notification', handler);
+    };
+  }, [addNotification]);
 
   useEffect(() => {
     const handler = (e: any) => {
@@ -21,6 +32,17 @@ const BAINotificationButton: React.FC<Props> = ({ ...props }) => {
       document.removeEventListener('show-bai-notification', handler);
     };
   }, [showWebUINotification]);
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      updateNotification(e.detail);
+    };
+    document.addEventListener('update-bai-notification', handler);
+    return () => {
+      document.removeEventListener('update-bai-notification', handler);
+    };
+  }, [updateNotification]);
+
   return (
     <>
       <Button

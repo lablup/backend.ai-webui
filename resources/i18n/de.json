@@ -1129,7 +1129,9 @@
     "SeeDetail": "Siehe Detail",
     "Initializing": "Initialisieren...",
     "NoNotification": "Keine Benachrichtigung.",
-    "Notifications": "Benachrichtigungen"
+    "Notifications": "Benachrichtigungen",
+    "ClearNotifications": "Klare Benachrichtigungen",
+    "AreYouSureToClearAllNotifications": "Sind Sie sicher, dass Sie alle Benachrichtigungen gelöscht haben?"
   },
   "information": {
     "Core": "Ader",

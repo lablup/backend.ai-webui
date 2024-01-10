@@ -1,10 +1,12 @@
-import { App } from 'antd';
+import { App, Typography } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
-import _ from 'lodash';
+import _, { get } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { NavigateOptions, To, useNavigate } from 'react-router-dom';
 import { atom, useRecoilState } from 'recoil';
+import { v4 as uuidv4 } from 'uuid';
 
 interface WebUINavigateOptions extends NavigateOptions {
   params?: any;
@@ -148,9 +150,15 @@ export const useSuspendedBackendaiClient = () => {
     _config: BackendAIConfig;
   };
 };
+
+type StoreType = 'notification' | 'task';
+type ProgressStatus = 'inProgress' | 'success' | 'error';
 export interface NotificationState extends ArgsProps {
+  id?: string;
   url?: string;
   created?: string;
+  storeType?: StoreType;
+  progressStatus?: ProgressStatus;
 }
 
 export const notificationState = atom<NotificationState[]>({
@@ -161,22 +169,68 @@ export const notificationState = atom<NotificationState[]>({
 export const useWebUINotification = () => {
   const [notifications, setNotifications] = useRecoilState(notificationState);
   const { notification } = App.useApp();
+  const { t } = useTranslation();
+  const { Link } = Typography;
 
-  const showWebUINotification = (props: NotificationState) => {
+  const addNotification = (props: NotificationState) => {
     const newNotification = {
-      ...props,
+      id: props.id ?? uuidv4(),
       created: new Date().toISOString(),
+      storeType: props.storeType || 'notification',
+      ...props,
     };
     setNotifications([...notifications, newNotification]);
+  };
 
+  const showWebUINotification = (props: NotificationState) => {
+    addNotification(props);
     notification[props.type || 'open']({
-      ...props,
       placement: props.placement || 'bottomRight',
-      // TODO: add url button when called by web components.
+      btn: props.url && (
+        <Link href={props.url} target="_blank" rel="noreferrer noopener">
+          {t('notification.SeeDetail')}
+        </Link>
+      ),
+      ...props,
     });
   };
 
-  return [notifications, { showWebUINotification }] as const;
+  const getNotificationById = (id: string) => {
+    return _.find(notifications, { id });
+  };
+
+  const updateNotification = (props: NotificationState) => {
+    const n = getNotificationById(props.id || '');
+    if (!n) return;
+    const newNotification = {
+      ...n,
+      ...props,
+    };
+    setNotifications(
+      _.map(notifications, (n) => {
+        if (n.id === props.id) {
+          return newNotification;
+        }
+        return n;
+      }),
+    );
+  };
+
+  const destroyNotifications = () => {
+    setNotifications([]);
+    // notification.destroy();
+  };
+
+  return [
+    notifications,
+    {
+      addNotification,
+      showWebUINotification,
+      getNotificationById,
+      updateNotification,
+      destroyNotifications,
+    },
+  ] as const;
 };
 
 interface ImageMetadata {

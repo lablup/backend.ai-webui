@@ -1129,7 +1129,9 @@
     "SeeDetail": "Δείτε Λεπτομέρεια",
     "Initializing": "Αρχικοποίηση ...",
     "NoNotification": "Καμία ειδοποίηση.",
-    "Notifications": "Ειδοποιήσεις"
+    "Notifications": "Ειδοποιήσεις",
+    "ClearNotifications": "Εκκαθάριση ειδοποιήσεων",
+    "AreYouSureToClearAllNotifications": "Είστε βέβαιοι ότι θα διαγράψετε όλες τις ειδοποιήσεις;"
   },
   "information": {
     "Core": "Πυρήνας",

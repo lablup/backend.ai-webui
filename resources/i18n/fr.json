@@ -1129,7 +1129,9 @@
     "SeeDetail": "Voir le détail",
     "Initializing": "Initialisation...",
     "NoNotification": "Aucune notification.",
-    "Notifications": "Notifications"
+    "Notifications": "Notifications",
+    "ClearNotifications": "Effacer les notifications",
+    "AreYouSureToClearAllNotifications": "Êtes-vous sûr d'avoir effacé toutes les notifications ?"
   },
   "information": {
     "Core": "Cœur",

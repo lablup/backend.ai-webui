@@ -1663,6 +1663,7 @@ export default class BackendAISessionList extends BackendAIPage {
       commitSessionInfo.taskId ?? '',
       'commit',
       'remove-later',
+      _text('session.CommitSession') + commitSessionInfo.session.name,
     );
   }
 

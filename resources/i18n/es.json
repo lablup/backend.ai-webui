@@ -725,7 +725,9 @@
     "SuccessfullyUpdated": "Actualizado con éxito",
     "Visit": "Visite",
     "NoNotification": "Sin notificación.",
-    "Notifications": "Notificaciones"
+    "Notifications": "Notificaciones",
+    "ClearNotifications": "Borrar notificaciones",
+    "AreYouSureToClearAllNotifications": "¿Estás seguro de borrar todas las notificaciones?"
   },
   "pipeline": {
     "Component": {

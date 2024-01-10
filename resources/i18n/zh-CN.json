@@ -1129,7 +1129,9 @@
     "SeeDetail": "查看详情",
     "Initializing": "正在初始化...",
     "NoNotification": "无通知。",
-    "Notifications": "通知"
+    "Notifications": "通知",
+    "ClearNotifications": "清除通知",
+    "AreYouSureToClearAllNotifications": "您确定清除所有通知吗？"
   },
   "information": {
     "Core": "核",

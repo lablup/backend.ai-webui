@@ -1129,7 +1129,9 @@
     "SeeDetail": "Zobacz detale",
     "Initializing": "Inicjowanie...",
     "NoNotification": "Brak powiadomienia.",
-    "Notifications": "Powiadomienia"
+    "Notifications": "Powiadomienia",
+    "ClearNotifications": "Wyczyść powiadomienia",
+    "AreYouSureToClearAllNotifications": "Czy na pewno wyczyścić wszystkie powiadomienia?"
   },
   "information": {
     "Core": "Rdzeń",

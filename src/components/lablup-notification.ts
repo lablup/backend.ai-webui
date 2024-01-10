@@ -194,7 +194,7 @@ export default class LablupNotification extends LitElement {
     const event: CustomEvent = new CustomEvent('show-bai-notification', {
       detail: {
         type: Object.keys(log).length !== 0 ? 'error' : null,
-        message: this.text,
+        message: this.text ?? this.detail,
         description: this.detail,
         url: this.url,
         duration: persistent ? 0 : 4.5,
