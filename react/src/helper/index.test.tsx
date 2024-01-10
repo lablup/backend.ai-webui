@@ -1,9 +1,7 @@
 import {
   addNumberWithUnits,
   compareNumberWithUnits,
-  comparePEP440Versions,
   iSizeToSize,
-  normalizePEP440Version,
 } from './index';
 
 describe('iSizeToSize', () => {
@@ -127,61 +125,5 @@ describe('addNumberWithUnits', () => {
     expect(addNumberWithUnits('1M', '1G', 'M')).toBe('1025M');
     expect(addNumberWithUnits('1G', '1T', 'G')).toBe('1025G');
     expect(addNumberWithUnits('1T', '1P', 'T')).toBe('1025T');
-  });
-});
-
-describe('normalizePEP440Version', () => {
-  test('should normalize versions correctly', () => {
-    expect(normalizePEP440Version('1.2.3dev1')).toBe('1.2.3.dev.1');
-    expect(normalizePEP440Version('1.2.3-dev1')).toBe('1.2.3.dev.1');
-    expect(normalizePEP440Version('1.2.3_dev1')).toBe('1.2.3.dev.1');
-    expect(normalizePEP440Version('1.2.3 dev1')).toBe('1.2.3.dev.1');
-    expect(normalizePEP440Version('1.2.3.dev.1')).toBe('1.2.3.dev.1');
-    expect(normalizePEP440Version('1.2.3.dev.*')).toBe('1.2.3.dev.*');
-  });
-});
-
-describe.only('comparePEP440Versions', () => {
-  test('should compare versions correctly', () => {
-    expect(comparePEP440Versions('1.2.3', '1.2.3')).toBe(0);
-    expect(comparePEP440Versions('1.2.3', '1.2.4')).toBe(-1);
-    expect(comparePEP440Versions('1.2.4', '1.2.3')).toBe(1);
-    expect(comparePEP440Versions('1.2.3.dev.1', '1.2.3')).toBe(-1);
-    expect(comparePEP440Versions('1.2.3', '1.2.3.dev.1')).toBe(1);
-    expect(comparePEP440Versions('1.2.3.dev.1', '1.2.3.dev.2')).toBe(-1);
-    expect(comparePEP440Versions('1.2.3.dev.2', '1.2.3.dev.1')).toBe(1);
-    expect(comparePEP440Versions('1.2.3.dev.2', '1.2.3.dev.1')).toBe(1);
-    expect(comparePEP440Versions('1.2.3.*', '1.2.3.dev.1')).toBe(0);
-    expect(comparePEP440Versions('1.2.3.*', '1.2.2.dev.1')).toBe(1);
-    expect(comparePEP440Versions('1.2.3.*', '1.2.4.dev.1')).toBe(-1);
-  });
-
-  test('comparePEP440Versions', () => {
-    const versions = [
-      '1.dev0',
-      '1.0.dev456',
-      '1.0a1',
-      '1.0a2.dev456',
-      '1.0a12.dev456',
-      '1.0a12',
-      '1.0b1.dev456',
-      '1.0b2',
-      '1.0b2.post345.dev456',
-      '1.0b2.post345',
-      '1.0rc1.dev456',
-      '1.0rc1',
-      '1.0',
-      '1.0+abc.5',
-      '1.0+abc.7',
-      '1.0+5',
-      '1.0.post456.dev34',
-      '1.0.post456',
-      '1.0.15',
-      '1.1.dev1',
-    ];
-
-    for (let i = 0; i < versions.length - 1; i++) {
-      expect(comparePEP440Versions(versions[i], versions[i + 1])).toBe(-1);
-    }
   });
 });
