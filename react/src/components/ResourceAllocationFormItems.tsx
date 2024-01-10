@@ -755,7 +755,12 @@ const ResourceAllocationFormItems: React.FC<
                                   : undefined,
                             },
                           }}
-                          disabled={currentImageAcceleratorLimits.length === 0}
+                          disabled={
+                            currentImageAcceleratorLimits.length === 0 &&
+                            _.isEmpty(
+                              form.getFieldValue(['environments', 'manual']),
+                            )
+                          }
                           min={0}
                           max={
                             resourceLimits.accelerators[currentAcceleratorType]
@@ -777,7 +782,14 @@ const ResourceAllocationFormItems: React.FC<
                                 <Select
                                   tabIndex={-1}
                                   disabled={
-                                    currentImageAcceleratorLimits.length <= 0
+                                    currentImageAcceleratorLimits.length ===
+                                      0 &&
+                                    _.isEmpty(
+                                      form.getFieldValue([
+                                        'environments',
+                                        'manual',
+                                      ]),
+                                    )
                                   }
                                   suffixIcon={
                                     _.size(acceleratorSlots) > 1
