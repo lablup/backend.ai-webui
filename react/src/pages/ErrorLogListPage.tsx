@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 import { Button, Space, Typography, Table, Alert, Checkbox, Input } from 'antd';
 import _ from 'lodash';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type logType = NonNullable<
@@ -30,6 +30,7 @@ const ErrorLogListPage: React.FC = () => {
   const { t } = useTranslation();
   const [isOpenClearLogsModal, setIsOpenClearLogsModal] = useState(false);
   const [checkedShowOnlyError, setCheckedShowOnlyError] = useState(false);
+  const [filteredLogData, setFilteredLogData] = useState<logType>([]);
   const [logSearch, setLogSearch] = useState('');
   const [key, checkUpdate] = useUpdatableState('first');
 
@@ -37,6 +38,24 @@ const ErrorLogListPage: React.FC = () => {
     return JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
+
+  useEffect(() => {
+    setFilteredLogData(
+      _.filter(storageLogData, (log) => {
+        return _.map(_.keysIn(log), (key) => {
+          if (key === 'timestamp') {
+            const date = new Date(log[key]);
+            return RegExp(`\\w*${logSearch.toLowerCase()}\\w*`).test(
+              date.toLocaleString('en-US', { hour12: false }),
+            );
+          }
+          return RegExp(`\\w*${logSearch.toLowerCase()}\\w*`).test(
+            _.toString(log[key]).toLowerCase(),
+          );
+        }).includes(true);
+      }),
+    );
+  }, [logSearch, storageLogData]);
 
   const handleOk = () => {
     localStorage.removeItem('backendaiwebui.logs');
@@ -89,10 +108,10 @@ const ErrorLogListPage: React.FC = () => {
           scroll={{ x: 'max-content', y: '40vh' }}
           dataSource={
             checkedShowOnlyError
-              ? _.filter(storageLogData, (log) => {
+              ? _.filter(filteredLogData, (log) => {
                   return log.isError;
                 })
-              : (storageLogData as logType)
+              : (filteredLogData as logType)
           }
           pagination={{ showSizeChanger: false }}
           columns={[
