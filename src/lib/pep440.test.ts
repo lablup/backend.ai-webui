@@ -24,6 +24,16 @@ describe('comparePEP440Versions', () => {
     expect(comparePEP440Versions('1.2.3.*', '1.2.3.dev.1')).toBe(0);
     expect(comparePEP440Versions('1.2.3.*', '1.2.2.dev.1')).toBe(1);
     expect(comparePEP440Versions('1.2.3.*', '1.2.4.dev.1')).toBe(-1);
+
+    //backend.ai
+    expect(comparePEP440Versions('23.09.8rc2', '23.09.8.rc1')).toBe(1);
+    expect(comparePEP440Versions('23.09.8rc2', '23.09.8')).toBe(-1);
+    expect(comparePEP440Versions('23.09.8rc2', '23.09.6')).toBe(1);
+    expect(comparePEP440Versions('24.03.0a1', '24.03.0rc2')).toBe(-1);
+    expect(comparePEP440Versions('24.03.0a1', '24.03.0dev5')).toBe(1);
+    expect(comparePEP440Versions('24.03.0dev3', '24.03.0dev5')).toBe(-1);
+    expect(comparePEP440Versions('24.03.0dev3', '24.03.0dev3')).toBe(0);
+    expect(comparePEP440Versions('24.03.0a1', '24.03.0b1')).toBe(-1);
   });
 
   test('comparePEP440Versions', () => {
