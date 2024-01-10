@@ -1,15 +1,15 @@
 import BAIModal from '../components/BAIModal';
 import Flex from '../components/Flex';
 import TextHighlighter from '../components/TextHighlighter';
+import { useUpdatableState } from '../hooks';
 import {
   RedoOutlined,
   DeleteOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { useLocalStorageState } from 'ahooks';
 import { Button, Space, Typography, Table, Alert, Checkbox, Input } from 'antd';
 import _ from 'lodash';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type logType = NonNullable<
@@ -28,19 +28,19 @@ type logType = NonNullable<
 >;
 const ErrorLogListPage: React.FC = () => {
   const { t } = useTranslation();
-  const [logs, setLogs] = useLocalStorageState<logType>('backendaiwebui.logs', {
-    defaultValue: [],
-  });
   const [isOpenClearLogsModal, setIsOpenClearLogsModal] = useState(false);
   const [checkedShowOnlyError, setCheckedShowOnlyError] = useState(false);
   const [logSearch, setLogSearch] = useState('');
+  const [key, checkUpdate] = useUpdatableState('first');
 
-  const onClickRefreshLogs = () => {
-    setLogs(JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]'));
-  };
+  const storageLogData = useMemo(() => {
+    return JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
 
   const handleOk = () => {
-    setLogs([]);
+    localStorage.removeItem('backendaiwebui.logs');
+    checkUpdate();
     setIsOpenClearLogsModal(false);
   };
 
@@ -69,7 +69,7 @@ const ErrorLogListPage: React.FC = () => {
             <Button
               type="link"
               icon={<RedoOutlined />}
-              onClick={onClickRefreshLogs}
+              onClick={() => checkUpdate()}
             >
               {t('button.Refresh')}
             </Button>
@@ -89,10 +89,10 @@ const ErrorLogListPage: React.FC = () => {
           scroll={{ x: 'max-content', y: '40vh' }}
           dataSource={
             checkedShowOnlyError
-              ? _.filter(logs, (log) => {
+              ? _.filter(storageLogData, (log) => {
                   return log.isError;
                 })
-              : (logs as logType)
+              : (storageLogData as logType)
           }
           pagination={{ showSizeChanger: false }}
           columns={[
