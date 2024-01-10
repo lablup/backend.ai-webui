@@ -111,7 +111,9 @@ const ErrorLogListPage: React.FC = () => {
           </Space>
         </Flex>
         <Table
-          scroll={{ x: 'max-content', y: '40vh' }}
+          virtual
+          pagination={false}
+          scroll={{ x: window.innerWidth, y: window.innerHeight }}
           dataSource={
             checkedShowOnlyError
               ? _.filter(filteredLogData, (log) => {
@@ -119,7 +121,6 @@ const ErrorLogListPage: React.FC = () => {
                 })
               : (filteredLogData as logType)
           }
-          pagination={{ showSizeChanger: false }}
           columns={[
             {
               title: t('logs.TimeStamp'),
@@ -152,11 +153,6 @@ const ErrorLogListPage: React.FC = () => {
             {
               title: t('logs.ErrorTitle'),
               dataIndex: 'title',
-              onCell: () => {
-                return {
-                  style: { minWidth: 65 },
-                };
-              },
               render: (value, record) =>
                 _.isUndefined(value) ? (
                   <Flex
@@ -177,11 +173,6 @@ const ErrorLogListPage: React.FC = () => {
             {
               title: t('logs.ErrorMessage'),
               dataIndex: 'message',
-              onCell: () => {
-                return {
-                  style: { minWidth: 93 },
-                };
-              },
               render: (value, record) =>
                 value === '' ? (
                   <Flex
@@ -201,11 +192,6 @@ const ErrorLogListPage: React.FC = () => {
             {
               title: t('logs.ErrorType'),
               dataIndex: 'type',
-              onCell: () => {
-                return {
-                  style: { minWidth: 90 },
-                };
-              },
               render: (value, record) =>
                 value === '' ? (
                   <Flex
@@ -225,11 +211,6 @@ const ErrorLogListPage: React.FC = () => {
             {
               title: t('logs.Method'),
               dataIndex: 'requestMethod',
-              onCell: () => {
-                return {
-                  style: { minWidth: 90 },
-                };
-              },
               render: (value, record) => {
                 return (
                   <Typography.Text type={record.isError ? 'danger' : undefined}>
