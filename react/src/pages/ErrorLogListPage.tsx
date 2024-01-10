@@ -143,7 +143,8 @@ const ErrorLogListPage: React.FC = () => {
                 ) : (
                   <Typography.Text type={record.isError ? 'danger' : undefined}>
                     <TextHighlighter keyword={logSearch}>
-                      {value}
+                      {_.toString(value)}
+                      {/* set toString because sometime value is object */}
                     </TextHighlighter>
                   </Typography.Text>
                 ),
