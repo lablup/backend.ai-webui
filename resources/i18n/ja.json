@@ -869,7 +869,8 @@
     "ErrorType": "エラータイプ",
     "LogMessageRemoved": "ログメッセージは削除されました。",
     "NoLogToDisplay": "ログ情報がありません。",
-    "ShowOnlyError": "表示のみのエラー"
+    "ShowOnlyError": "表示のみのエラー",
+    "SearchLogs": "ログの検索"
   },
   "resourcePolicy": {
     "Resources": "リソース",

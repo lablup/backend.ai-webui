@@ -642,7 +642,8 @@
     "Status": "Tila",
     "TimeStamp": "Aikaleima",
     "UpTo3000Logs": "(Enintään 3000 viimeisintä lokia)",
-    "ShowOnlyError": "Vain näyttövirhe"
+    "ShowOnlyError": "Vain näyttövirhe",
+    "SearchLogs": "Hakulokit"
   },
   "maintenance": {
     "CleanupImages": "Siivous Kuvat",

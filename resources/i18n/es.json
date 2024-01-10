@@ -642,7 +642,8 @@
     "Status": "Estado",
     "TimeStamp": "Marca de tiempo",
     "UpTo3000Logs": "(Hasta 3000 registros recientes)",
-    "ShowOnlyError": "Mostrar solo error"
+    "ShowOnlyError": "Mostrar solo error",
+    "SearchLogs": "Registros de búsqueda"
   },
   "maintenance": {
     "CleanupImages": "Limpieza de imágenes",

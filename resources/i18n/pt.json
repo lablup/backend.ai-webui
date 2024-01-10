@@ -869,7 +869,8 @@
     "ErrorType": "Tipo de Erro",
     "LogMessageRemoved": "As mensagens de log foram removidas.",
     "NoLogToDisplay": "Não há registos a apresentar",
-    "ShowOnlyError": "Exibir apenas erro"
+    "ShowOnlyError": "Exibir apenas erro",
+    "SearchLogs": "Registros de pesquisa"
   },
   "resourcePolicy": {
     "Resources": "Recursos",

@@ -869,7 +869,8 @@
     "ErrorType": "Τύπος σφάλματος",
     "LogMessageRemoved": "Τα μηνύματα καταγραφής έχουν καταργηθεί.",
     "NoLogToDisplay": "Δεν εμφανίζονται αρχεία καταγραφής",
-    "ShowOnlyError": "Εμφάνιση μόνο σφάλματος"
+    "ShowOnlyError": "Εμφάνιση μόνο σφάλματος",
+    "SearchLogs": "Αναζήτηση αρχείων καταγραφής"
   },
   "resourcePolicy": {
     "Resources": "Πόροι",
