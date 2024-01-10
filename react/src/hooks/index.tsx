@@ -1,6 +1,6 @@
 import { App, Typography } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
-import _, { get } from 'lodash';
+import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
