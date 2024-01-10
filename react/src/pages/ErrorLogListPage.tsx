@@ -36,6 +36,7 @@ const ErrorLogListPage: React.FC = () => {
 
   const storageLogData = useMemo(() => {
     return JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]');
+    // Add blow comment because eslint dependency
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
@@ -44,6 +45,7 @@ const ErrorLogListPage: React.FC = () => {
       _.filter(storageLogData, (log) => {
         return _.map(_.keysIn(log), (key) => {
           if (key === 'timestamp') {
+            //timestamp need to change LocaleString
             const date = new Date(log[key]);
             return RegExp(`\\w*${logSearch.toLowerCase()}\\w*`).test(
               date.toLocaleString('en-US', { hour12: false }),
@@ -80,6 +82,10 @@ const ErrorLogListPage: React.FC = () => {
               placeholder={t('logs.SearchLogs')}
               onChange={(e) => setLogSearch(e.target.value)}
             />
+            {/*
+              Add checkbox because Table filter has an error by shadowRoot 
+              todo: remove below Checkbox and add Table's filter props
+            */}
             <Checkbox
               onChange={(e) => setCheckedShowOnlyError(e.target.checked)}
             >
