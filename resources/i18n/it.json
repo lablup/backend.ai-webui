@@ -869,7 +869,7 @@
     "ErrorType": "Tipo di errore",
     "LogMessageRemoved": "I messaggi di registro sono stati rimossi.",
     "NoLogToDisplay": "Nessun registro da visualizzare",
-    "ShowOnlyError": "Mostra solo errore"
+    "ShowOnlyError": "Visualizza solo errore"
   },
   "resourcePolicy": {
     "Resources": "risorse",

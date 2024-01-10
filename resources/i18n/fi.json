@@ -642,7 +642,7 @@
     "Status": "Tila",
     "TimeStamp": "Aikaleima",
     "UpTo3000Logs": "(Enintään 3000 viimeisintä lokia)",
-    "ShowOnlyError": "Näytä vain virhe"
+    "ShowOnlyError": "Vain näyttövirhe"
   },
   "maintenance": {
     "CleanupImages": "Siivous Kuvat",

@@ -869,7 +869,7 @@
     "ErrorType": "Тип ошибки",
     "LogMessageRemoved": "Сообщения журнала были удалены.",
     "NoLogToDisplay": "Нет журналов для отображения",
-    "ShowOnlyError": "Показать только ошибку"
+    "ShowOnlyError": "Ошибка только отображения"
   },
   "resourcePolicy": {
     "Resources": "Ресурсы",

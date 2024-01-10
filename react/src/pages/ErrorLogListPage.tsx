@@ -56,7 +56,9 @@ const ErrorLogListPage: React.FC = () => {
           </Typography.Title>
           <Space>
             <Input
+              allowClear
               prefix={<SearchOutlined />}
+              placeholder={t('logs.SearchLogs')}
               onChange={(e) => setLogSearch(e.target.value)}
             />
             <Checkbox

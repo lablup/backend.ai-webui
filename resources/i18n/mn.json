@@ -869,7 +869,7 @@
     "ErrorType": "Алдааны төрөл",
     "LogMessageRemoved": "Бүртгэлийн мессежүүдийг устгасан.",
     "NoLogToDisplay": "Харуулах бүртгэл байхгүй",
-    "ShowOnlyError": "Зөвхөн алдааг харуулах"
+    "ShowOnlyError": "Зөвхөн алдаа харуулах"
   },
   "resourcePolicy": {
     "Resources": "Нөөц",

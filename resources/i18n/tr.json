@@ -869,7 +869,7 @@
     "ErrorType": "Hata Türü",
     "LogMessageRemoved": "Günlük Mesajları kaldırıldı.",
     "NoLogToDisplay": "Görüntülenecek Günlük Yok",
-    "ShowOnlyError": "Yalnızca hatayı göster"
+    "ShowOnlyError": "Yalnızca hatayı görüntüle"
   },
   "resourcePolicy": {
     "Resources": "Kaynaklar",

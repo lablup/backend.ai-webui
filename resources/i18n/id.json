@@ -869,7 +869,7 @@
     "ErrorType": "Jenis Galat",
     "LogMessageRemoved": "Pesan Log telah dihapus.",
     "NoLogToDisplay": "Tidak ada Log untuk ditampilkan",
-    "ShowOnlyError": "Tampilkan hanya kesalahan"
+    "ShowOnlyError": "Hanya menampilkan kesalahan"
   },
   "resourcePolicy": {
     "Resources": "Sumber daya",

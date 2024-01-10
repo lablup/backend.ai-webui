@@ -951,7 +951,8 @@
     "ErrorType": "에러 종류",
     "NoLogToDisplay": "로그 정보가 없습니다.",
     "LogMessageRemoved": "로그 메시지가 삭제되었습니다.",
-    "ShowOnlyError": "에러만 보기"
+    "ShowOnlyError": "에러만 표시",
+    "SearchLogs": "로그 검색"
   },
   "resourcePolicy": {
     "Resources": "자원",

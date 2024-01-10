@@ -869,7 +869,7 @@
     "ErrorType": "Fehlertyp",
     "LogMessageRemoved": "Protokollnachrichten wurden entfernt.",
     "NoLogToDisplay": "Keine Protokolle anzeigen",
-    "ShowOnlyError": "Nur Fehler anzeigen"
+    "ShowOnlyError": "Nur Anzeigefehler"
   },
   "resourcePolicy": {
     "Resources": "Ressourcen",

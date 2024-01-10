@@ -869,7 +869,7 @@
     "ErrorType": "Typ błędu",
     "LogMessageRemoved": "Komunikaty dziennika zostały usunięte.",
     "NoLogToDisplay": "Brak dzienników do wyświetlenia",
-    "ShowOnlyError": "Pokaż tylko błąd"
+    "ShowOnlyError": "Wyświetl tylko błąd"
   },
   "resourcePolicy": {
     "Resources": "Zasoby",

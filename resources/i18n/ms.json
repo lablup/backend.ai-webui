@@ -869,7 +869,7 @@
     "ErrorType": "Jenis Ralat",
     "LogMessageRemoved": "Mesej Log telah dikeluarkan.",
     "NoLogToDisplay": "Tiada Log untuk dipaparkan",
-    "ShowOnlyError": "Tunjukkan ralat sahaja"
+    "ShowOnlyError": "Paparkan sahaja ralat"
   },
   "resourcePolicy": {
     "Resources": "Sumber",

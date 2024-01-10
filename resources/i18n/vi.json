@@ -869,7 +869,7 @@
     "ErrorType": "Loại lỗi",
     "LogMessageRemoved": "Thông báo nhật ký đã bị xóa.",
     "NoLogToDisplay": "Không có nhật ký để hiển thị",
-    "ShowOnlyError": "Chỉ hiển thị lỗi"
+    "ShowOnlyError": "Lỗi chỉ hiển thị"
   },
   "resourcePolicy": {
     "Resources": "Tài nguyên",

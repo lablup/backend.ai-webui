@@ -962,7 +962,7 @@
     "ErrorType": "Error Type",
     "NoLogToDisplay": "No Logs to display",
     "LogMessageRemoved": "Log Messages have been removed.",
-    "ShowOnlyError": "Show only error"
+    "ShowOnlyError": "Display only error"
   },
   "resourcePolicy": {
     "Resources": "Resources",
