@@ -227,7 +227,13 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           </Tooltip>
         </>
       );
-  }, [endpoint?.created_user_email, endpoint?.session_owner_email]);
+  }, [
+    endpoint?.created_user_email,
+    endpoint?.session_owner_email,
+    baiClient,
+    t,
+    token.colorTextSecondary,
+  ]);
 
   const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
   return (
