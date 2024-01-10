@@ -163,16 +163,6 @@ export default class BackendAiTasker extends LitElement {
         })
         .catch((err) => {
           this.updateNotification(taskid, 'error', errorMessage ?? err);
-        })
-        .finally(() => {
-          // No matter any error occurred or not during the session creating,
-          // Task list have to be updated.
-          if (additionalRequest === 'remove-later') {
-            // do not remove taskid from taskstore until there's an explicit request
-          } else {
-            this.finished.push(taskid);
-            this.gc();
-          }
         });
     } else {
       // For function type task (not supported yet)
