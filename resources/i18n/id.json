@@ -255,7 +255,8 @@
       "EnvironmentVariableNamePatternError": "Nama variabel harus dimulai dengan huruf atau garis bawah, dan hanya boleh terdiri dari huruf, angka, dan garis bawah.",
       "EnvironmentVariableDuplicateName": "Nama variabel yang sudah ada.",
       "Template": "Templat Sesi",
-      "EnableAutomaticShmem": "Memori bersama otomatis"
+      "EnableAutomaticShmem": "Memori bersama otomatis",
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -1446,7 +1447,8 @@
     "ServiceNameRule": "Hanya mengizinkan 4 hingga 24 karakter alfanumerik, garis bawah (_), tanda hubung (-), dan titik (.) dan harus diakhiri dengan karakter alfanumerik.",
     "resources": "Sumber daya",
     "Image": "Gambar",
-    "Owner": "Pemilik"
+    "Owner": "Pemilik",
+    "ServiceDelegatedFrom": "__NOT_TRANSLATED__"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

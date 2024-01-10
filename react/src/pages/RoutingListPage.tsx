@@ -125,6 +125,8 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             resource_group
             resource_slots
             resource_opts
+            created_user_email @since(version: "23.09.8")
+            session_owner_email @since(version: "23.09.8")
             routings {
               routing_id
               session
@@ -200,6 +202,32 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     }
     return color;
   };
+
+  const sessionOwnerElement = React.useMemo(() => {
+    if (!baiClient.supports('model-serving-endpoint-user-info'))
+      return baiClient.email || '';
+    if (endpoint?.created_user_email === endpoint?.session_owner_email)
+      return endpoint?.session_owner_email || '';
+    else
+      return (
+        <>
+          {endpoint?.session_owner_email || ''}
+          <Tooltip
+            title={t('modelService.ServiceDelegatedFrom', {
+              createdUser: endpoint?.created_user_email || '',
+              sessionOwner: endpoint?.session_owner_email || '',
+            })}
+          >
+            <Button
+              size="small"
+              type="text"
+              icon={<QuestionCircleOutlined />}
+              style={{ color: token.colorTextSecondary }}
+            />
+          </Tooltip>
+        </>
+      );
+  }, [endpoint?.created_user_email, endpoint?.session_owner_email]);
 
   const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
   return (
@@ -300,7 +328,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             },
             {
               label: t('modelService.SessionOwner'),
-              children: baiClient.email || '',
+              children: sessionOwnerElement,
             },
             {
               label: t('modelService.DesiredSessionCount'),

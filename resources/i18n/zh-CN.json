@@ -255,7 +255,8 @@
       "EnvironmentVariableNamePatternError": "变量名必须以字母或下划线开头，且只能包含字母、数字和下划线。",
       "EnvironmentVariableDuplicateName": "已经存在的变量名。",
       "Template": "会议模板",
-      "EnableAutomaticShmem": "自动共享内存"
+      "EnableAutomaticShmem": "自动共享内存",
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
     },
     "Preparing": "正在准备...",
     "PreparingSession": "正在准备会议...",
@@ -1437,7 +1438,8 @@
     "Public": "公众",
     "YouAreAboutToTerminate": "您即将终止",
     "Image": "图片",
-    "Owner": "所有者"
+    "Owner": "所有者",
+    "ServiceDelegatedFrom": "__NOT_TRANSLATED__"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",
