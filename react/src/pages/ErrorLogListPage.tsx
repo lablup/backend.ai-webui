@@ -282,9 +282,8 @@ const ErrorLogListPage: React.FC = () => {
           </Col>
         </Row>
         <Table
-          virtual
-          pagination={false}
-          scroll={{ x: window.innerWidth, y: '50vh' }}
+          pagination={{ showSizeChanger: false, position: ['bottomCenter'] }}
+          scroll={{ x: window.innerWidth, y: window.innerHeight - 500 }}
           dataSource={
             checkedShowOnlyError
               ? _.filter(filteredLogData, (log) => {
@@ -300,7 +299,6 @@ const ErrorLogListPage: React.FC = () => {
       <Flex justify="end">
         <Button
           type="text"
-          size="large"
           icon={<SettingOutlined />}
           onClick={() => {
             setIsOpenColumnsSetting(true);
