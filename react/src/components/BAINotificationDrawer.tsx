@@ -15,7 +15,6 @@ import {
   Avatar,
   Button,
   Popconfirm,
-  Typography,
 } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';

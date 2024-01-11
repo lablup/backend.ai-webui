@@ -4,6 +4,7 @@ import { ArgsProps } from 'antd/lib/notification';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { atom, useRecoilState } from 'recoil';
+import { v4 as uuidv4 } from 'uuid';
 
 type StoreType = 'notification' | 'task';
 type ProgressStatus = 'inProgress' | 'success' | 'error';
@@ -36,11 +37,8 @@ export const useWebUINotification = () => {
   };
 
   const webuiNavigate = useWebUINavigate();
-  const seeDetailHandler = (notification: NotificationState) => {
-    if (
-      notification.type === 'error' &&
-      (notification.url === '' || notification.url === '/usersettings')
-    ) {
+  const seeDetailHandler = (n: NotificationState) => {
+    if (n.type === 'error' && (n.url === '' || n.url === '/usersettings')) {
       webuiNavigate('/usersettings', {
         params: {
           tab: 'logs',
@@ -49,9 +47,10 @@ export const useWebUINotification = () => {
       // dispatch event to update tab of backend-ai-usersettings
       const event = new CustomEvent('backend-ai-usersettings', {});
       document.dispatchEvent(event);
-    } else if (notification.url !== '') {
-      webuiNavigate(notification.url || '');
+    } else if (n.url !== '') {
+      webuiNavigate(n.url || '');
     }
+    app.notification.destroy(n.key);
   };
 
   const showWebUINotification = (notification: NotificationState) => {
@@ -74,7 +73,7 @@ export const useWebUINotification = () => {
     });
   };
 
-  const getNotificationById = (key: React.Key = '') => {
+  const getNotificationById = (key: React.Key = uuidv4()) => {
     return _.find(notifications, { key: key });
   };
 
