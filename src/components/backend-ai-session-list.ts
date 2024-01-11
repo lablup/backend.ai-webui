@@ -2739,7 +2739,8 @@ ${rowData.item[this.sessionNameField]}</pre
                       id="session-rename-field"
                       required
                       autoValidate
-                      pattern="^(?:[a-zA-Z0-9][a-zA-Z0-9._-]{2,}[a-zA-Z0-9])?$"
+                      pattern="^[a-zA-Z0-9]([a-zA-Z0-9\\-_\\.]{2,})[a-zA-Z0-9]$"
+                      minLength="4"
                       maxLength="64"
                       validationMessage="${_text(
                         'session.Validation.EnterValidSessionName',
