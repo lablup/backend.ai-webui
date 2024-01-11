@@ -1448,7 +1448,7 @@
     "resources": "Sumber daya",
     "Image": "Gambar",
     "Owner": "Pemilik",
-    "ServiceDelegatedFrom": "__NOT_TRANSLATED__"
+    "ServiceDelegatedFrom": "Layanan model dibuat oleh {{ createdUser }} namun kepemilikan sesi akan didelegasikan ke {{ sessionOwner }}"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

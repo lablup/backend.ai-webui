@@ -1439,7 +1439,7 @@
     "Public": "Awam",
     "YouAreAboutToTerminate": "Anda akan menamatkan perkhidmatan",
     "Owner": "Pemilik",
-    "ServiceDelegatedFrom": "__NOT_TRANSLATED__"
+    "ServiceDelegatedFrom": "Perkhidmatan model dicipta oleh {{ createdUser }} tetapi pemilikan sesi akan diwakilkan kepada {{ sessionOwner }}"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

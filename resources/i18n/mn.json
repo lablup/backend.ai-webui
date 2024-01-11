@@ -1448,7 +1448,7 @@
     "resources": "Нөөц",
     "Image": "Зураг",
     "Owner": "Эзэмшигч",
-    "ServiceDelegatedFrom": "__NOT_TRANSLATED__"
+    "ServiceDelegatedFrom": "Загвар үйлчилгээг {{ createdUser }} үүсгэсэн боловч сессийн эрхийг {{ sessionOwner }}-д шилжүүлнэ."
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",

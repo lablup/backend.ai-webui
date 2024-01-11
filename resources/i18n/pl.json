@@ -1401,7 +1401,7 @@
     "Public": "Publiczny",
     "YouAreAboutToTerminate": "Zamierzasz zakończyć",
     "Owner": "Właściciel",
-    "ServiceDelegatedFrom": "__NOT_TRANSLATED__"
+    "ServiceDelegatedFrom": "Usługa modelu jest tworzona przez {{ createdUser }}, ale własność sesji będzie delegowana do {{ sessionOwner }}."
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",

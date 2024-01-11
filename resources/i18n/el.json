@@ -1399,7 +1399,7 @@
     "Public": "Δημόσιο",
     "YouAreAboutToTerminate": "Πρόκειται να τερματίσετε",
     "Owner": "Ιδιοκτήτης",
-    "ServiceDelegatedFrom": "__NOT_TRANSLATED__"
+    "ServiceDelegatedFrom": "Το μοντέλο υπηρεσίας δημιουργείται από τον {{ createdUser }}, αλλά η ιδιοκτησία της συνεδρίας θα ανατεθεί στον {{ sessionOwner }}"
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",

@@ -718,7 +718,7 @@
     "YouAreAboutToTerminate": "Olet lopettamassa",
     "resources": "Resurssit",
     "Owner": "Omistaja",
-    "ServiceDelegatedFrom": "__NOT_TRANSLATED__"
+    "ServiceDelegatedFrom": "Mallipalvelun luo {{ createdUser }}, mutta istunnon omistusoikeus siirretään {{ sessionOwner }}:lle."
   },
   "notification": {
     "Initializing": "Aloitetaan...",

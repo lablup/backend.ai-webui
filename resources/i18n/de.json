@@ -1399,7 +1399,7 @@
     "Public": "Öffentlich",
     "YouAreAboutToTerminate": "Sie stehen kurz vor der Beendigung",
     "Owner": "Eigentümer",
-    "ServiceDelegatedFrom": "__NOT_TRANSLATED__"
+    "ServiceDelegatedFrom": "Der Modelldienst wird von {{ createdUser }} erstellt, aber das Eigentum an der Sitzung wird an {{ sessionOwner }} delegiert."
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

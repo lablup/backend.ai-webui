@@ -1439,7 +1439,7 @@
     "YouAreAboutToTerminate": "您即将终止",
     "Image": "图片",
     "Owner": "所有者",
-    "ServiceDelegatedFrom": "__NOT_TRANSLATED__"
+    "ServiceDelegatedFrom": "模型服务由 {{ createdUser }} 创建，但会话所有权将委托给 {{ sessionOwner }}"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

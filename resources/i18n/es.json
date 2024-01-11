@@ -718,7 +718,7 @@
     "YouAreAboutToTerminate": "Está a punto de terminar",
     "resources": "Recursos",
     "Owner": "Dueño",
-    "ServiceDelegatedFrom": "__NOT_TRANSLATED__"
+    "ServiceDelegatedFrom": "El servicio modelo es creado por {{ createdUser }} pero la propiedad de la sesión será delegada a {{ sessionOwner }}"
   },
   "notification": {
     "Initializing": "Inicializando...",

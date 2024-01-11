@@ -1399,7 +1399,7 @@
     "YouAreAboutToTerminate": "以下のサービスを削除しようとします：",
     "Image": "イメージ",
     "Owner": "所有者",
-    "ServiceDelegatedFrom": "__NOT_TRANSLATED__"
+    "ServiceDelegatedFrom": "モデルサービスは{{ createdUser }}によって作成されますが、セッションの所有権は{{ sessionOwner }}に委譲されます。"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

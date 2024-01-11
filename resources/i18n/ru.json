@@ -1450,7 +1450,7 @@
     "resources": "Ресурсы",
     "Image": "Изображение",
     "Owner": "Владелец",
-    "ServiceDelegatedFrom": "__NOT_TRANSLATED__"
+    "ServiceDelegatedFrom": "Сервис модели создается {{ createdUser }}, но право владения сессией будет передано {{ sessionOwner }}."
   },
   "ErrorBoundary": {
     "title": "Произошла ошибка.",

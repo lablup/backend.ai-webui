@@ -1399,7 +1399,7 @@
     "Public": "Pubblico",
     "YouAreAboutToTerminate": "State per terminare",
     "Owner": "Proprietario",
-    "ServiceDelegatedFrom": "__NOT_TRANSLATED__"
+    "ServiceDelegatedFrom": "Il servizio modello è creato da {{ createdUser }}, ma la proprietà della sessione sarà delegata a {{ sessionOwner }}."
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",

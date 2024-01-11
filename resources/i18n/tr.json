@@ -1399,7 +1399,7 @@
     "Public": "Kamu",
     "YouAreAboutToTerminate": "Sonlandırmak üzeresiniz",
     "Owner": "Mal sahibi",
-    "ServiceDelegatedFrom": "__NOT_TRANSLATED__"
+    "ServiceDelegatedFrom": "Model hizmeti {{ createdUser }} tarafından oluşturulur ancak oturum sahipliği {{ sessionOwner }}'a devredilir."
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",
