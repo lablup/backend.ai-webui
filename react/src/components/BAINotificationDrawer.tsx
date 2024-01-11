@@ -55,7 +55,8 @@ const BAINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
             okButtonProps={{
               danger: true,
             }}
-            onConfirm={destroyNotifications}
+            okText={t('button.Delete')}
+            onConfirm={clearAllNotifications}
             icon={
               <QuestionCircleOutlined style={{ color: token.colorError }} />
             }
