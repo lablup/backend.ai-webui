@@ -95,13 +95,17 @@ export default class BackendAiTasker extends LitElement {
 
   /**
    * Dispatch 'update-bai-notification' event that handled by `BAINotificationButton` component.
+   *
+   * @param key - Task ID
+   * @param status - Progress status. One of the 'inProgress', 'success', 'error'
+   * @param message - Notification message
    */
-  updateNotification(taskId, props) {
+  updateNotification(taskId, status, message) {
     const event: CustomEvent = new CustomEvent('update-bai-notification', {
       detail: {
         key: taskId,
-        storeType: 'task',
-        ...props,
+        progressStatus: status,
+        message: message,
       },
     });
     document.dispatchEvent(event);
@@ -111,7 +115,7 @@ export default class BackendAiTasker extends LitElement {
    * Add an item whose storeType is task to the BAINotificationDrawer.
    * User can check the new item by clicking the notification button of the header.
    * The notification message and progress status icon will be updated when the task is finished.
-   * Dispatch 'show-bai-notification' event that handled by `BAINotificationButton` component.
+   * Dispatch 'add-bai-notification' event that handled by `BAINotificationButton` component.
    *
    * @param {string} title - Title of task
    * @param {Object} task - Object / Promise instance to add.
@@ -119,25 +123,28 @@ export default class BackendAiTasker extends LitElement {
    * @param {string} tasktype - Task type. Default is 'general'.
    * @param {AdditionalTaskRequest} additionalRequest - Additional task request to remove task conditionally whether it's finished or not.
    * @param {string} inProgressMessage - Message to show when task is in progress.
+   * @param {string} successMessage - Message to show when task is finished successfully.
+   * @param {string} errorMessage - Message to show when task is failed.
    * @return {boolean | Task} - False if task cannot be added. Else return task object.
    */
   add(
-    title,
+    title, // for legacy code
     task,
     taskId = '',
     tasktype = 'general', // for legacy code
     additionalRequest: AdditionalTaskRequest = 'remove-immediately', // for legacy code
     inProgressMessage = '',
+    successMessage = '',
+    errorMessage = '',
   ) {
     if (taskId === '') {
       taskId = uuidv4();
     }
     // Add notification item to the BAINotificationDrawer.
-    const event: CustomEvent = new CustomEvent('show-bai-notification', {
+    const event: CustomEvent = new CustomEvent('add-bai-notification', {
       detail: {
         key: taskId,
-        message: title,
-        description: inProgressMessage,
+        message: inProgressMessage,
         storeType: 'task',
       },
     });
@@ -148,11 +155,15 @@ export default class BackendAiTasker extends LitElement {
     ) {
       // For Promise type task
       task
-        .then((res) => {
-          this.updateNotification(taskId, res);
+        .then(() => {
+          this.updateNotification(
+            taskId,
+            'success',
+            successMessage ?? inProgressMessage,
+          );
         })
         .catch((err) => {
-          this.updateNotification(taskId, err);
+          this.updateNotification(taskId, 'error', errorMessage ?? err);
         });
     } else {
       // For function type task (not supported yet)
