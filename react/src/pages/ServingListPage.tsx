@@ -178,6 +178,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       ? [
           {
             title: t('modelService.Owner'),
+            // created_user_email is refered by EndpointOwnerInfoFragment
             dataIndex: 'created_user_email',
             key: 'session_owner',
             render: (_: string, endpoint_info: Endpoint) => (
@@ -283,8 +284,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               url
               open_to_public
               created_at @since(version: "23.09.0")
-              created_user_email
-              session_owner_email
               desired_session_count @required(action: NONE)
               routings {
                 routing_id
