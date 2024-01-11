@@ -1,8 +1,8 @@
-import BAIModal from '../components/BAIModal';
-import Flex from '../components/Flex';
-import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
-import TextHighlighter from '../components/TextHighlighter';
 import { useUpdatableState } from '../hooks';
+import BAIModal from './BAIModal';
+import Flex from './Flex';
+import TableColumnsSettingModal from './TableColumnsSettingModal';
+import TextHighlighter from './TextHighlighter';
 import {
   RedoOutlined,
   DeleteOutlined,
@@ -37,7 +37,7 @@ type logType = NonNullable<{
   type: string;
   title?: string;
 }>;
-const ErrorLogListPage: React.FC = () => {
+const ErrorLogList: React.FC = () => {
   const { t } = useTranslation();
   const [isOpenClearLogsModal, setIsOpenClearLogsModal] = useState(false);
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
@@ -180,7 +180,7 @@ const ErrorLogListPage: React.FC = () => {
   ];
 
   const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
-    'backendaiwebui.ErrorLogListPage.displayedColumnKeys',
+    'backendaiwebui.ErrorLogList.displayedColumnKeys',
     {
       defaultValue: columns.map((column) => _.toString(column.key)),
     },
@@ -330,4 +330,4 @@ const ErrorLogListPage: React.FC = () => {
   );
 };
 
-export default ErrorLogListPage;
+export default ErrorLogList;

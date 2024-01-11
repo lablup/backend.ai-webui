@@ -63,7 +63,7 @@ const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
 const AnnouncementAlert = React.lazy(
   () => import('./components/AnnouncementAlert'),
 );
-const ErrorLogList = React.lazy(() => import('./pages/ErrorLogListPage'));
+const ErrorLogList = React.lazy(() => import('./components/ErrorLogList'));
 
 customElements.define(
   'backend-ai-react-information',
