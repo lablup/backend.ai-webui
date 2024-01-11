@@ -255,7 +255,8 @@
       "EnvironmentVariableNamePatternError": "Το όνομα της μεταβλητής πρέπει να αρχίζει με γράμμα ή υπογράμμιση και μπορεί να περιέχει μόνο γράμματα, αριθμούς και υπογράμμιση.",
       "EnvironmentVariableDuplicateName": "Ένα όνομα μεταβλητής που υπάρχει ήδη.",
       "Template": "Πρότυπο συνεδρίας",
-      "EnableAutomaticShmem": "Αυτόματη κοινή μνήμη"
+      "EnableAutomaticShmem": "Αυτόματη κοινή μνήμη",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",
@@ -1401,7 +1402,8 @@
     "Active/Total": "Ενεργό/Σύνολο",
     "Public": "Δημόσιο",
     "YouAreAboutToTerminate": "Πρόκειται να τερματίσετε",
-    "Owner": "Ιδιοκτήτης"
+    "Owner": "Ιδιοκτήτης",
+    "ServiceDelegatedFrom": "Το μοντέλο υπηρεσίας δημιουργείται από τον {{ createdUser }}, αλλά η ιδιοκτησία της συνεδρίας θα ανατεθεί στον {{ sessionOwner }}"
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",

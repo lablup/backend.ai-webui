@@ -255,7 +255,8 @@
       "EnvironmentVariableNamePatternError": "Der Variablenname muss mit einem Buchstaben oder Unterstrich beginnen und darf nur Buchstaben, Zahlen und Unterstriche enthalten.",
       "EnvironmentVariableDuplicateName": "Ein Variablenname, der bereits existiert.",
       "Template": "Sitzungsvorlage",
-      "EnableAutomaticShmem": "Automatischer gemeinsamer Speicher"
+      "EnableAutomaticShmem": "Automatischer gemeinsamer Speicher",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",
@@ -1401,7 +1402,8 @@
     "Active/Total": "Aktiv/Gesamt",
     "Public": "Öffentlich",
     "YouAreAboutToTerminate": "Sie stehen kurz vor der Beendigung",
-    "Owner": "Eigentümer"
+    "Owner": "Eigentümer",
+    "ServiceDelegatedFrom": "Der Modelldienst wird von {{ createdUser }} erstellt, aber das Eigentum an der Sitzung wird an {{ sessionOwner }} delegiert."
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

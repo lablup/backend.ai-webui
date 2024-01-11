@@ -255,7 +255,10 @@
       "EnvironmentVariableNamePatternError": "Nazwa zmiennej musi zaczynać się od litery lub podkreślenia i może zawierać tylko litery, cyfry i podkreślenia.",
       "EnvironmentVariableDuplicateName": "Nazwa zmiennej, która już istnieje.",
       "Template": "Szablon sesji",
-      "EnableAutomaticShmem": "Automatyczna pamięć współdzielona"
+      "EnableAutomaticShmem": "Automatyczna pamięć współdzielona",
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
+      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__"
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",
@@ -1401,7 +1404,8 @@
     "Active/Total": "Aktywny/Ogółem",
     "Public": "Publiczny",
     "YouAreAboutToTerminate": "Zamierzasz zakończyć",
-    "Owner": "Właściciel"
+    "Owner": "Właściciel",
+    "ServiceDelegatedFrom": "Usługa modelu jest tworzona przez {{ createdUser }}, ale własność sesji będzie delegowana do {{ sessionOwner }}."
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",
