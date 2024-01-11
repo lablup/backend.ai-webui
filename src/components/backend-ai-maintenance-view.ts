@@ -198,50 +198,56 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     indicator.set(0, _text('maintenance.Scanning'));
     this.tasker.add(
       _text('maintenance.RescanImages'),
-      globalThis.backendaiclient.maintenance
-        .rescan_images()
-        .then(({ rescan_images }) => {
-          const sse: EventSource =
-            globalThis.backendaiclient.maintenance.attach_background_task(
-              rescan_images.task_id,
-            );
-          sse.addEventListener('bgtask_updated', (e) => {
-            const data = JSON.parse(e['data']);
-            const ratio = data.current_progress / data.total_progress;
-            indicator.set(100 * ratio, _text('maintenance.Scanning'));
+      new Promise((resolve, reject) => {
+        return globalThis.backendaiclient.maintenance
+          .rescan_images()
+          .then(({ rescan_images }) => {
+            const sse: EventSource =
+              globalThis.backendaiclient.maintenance.attach_background_task(
+                rescan_images.task_id,
+              );
+            sse.addEventListener('bgtask_updated', (e) => {
+              const data = JSON.parse(e['data']);
+              const ratio = data.current_progress / data.total_progress;
+              indicator.set(100 * ratio, _text('maintenance.Scanning'));
+            });
+            sse.addEventListener('bgtask_done', (e) => {
+              const event = new CustomEvent('image-rescanned');
+              document.dispatchEvent(event);
+              indicator.set(100, _text('maintenance.RescanImageFinished'));
+              sse.close();
+              resolve(undefined);
+            });
+            sse.addEventListener('bgtask_failed', (e) => {
+              console.log('task_failed', e['data']);
+              sse.close();
+              reject(e);
+              throw new Error('Background Image scanning task has failed');
+            });
+            sse.addEventListener('bgtask_cancelled', (e) => {
+              sse.close();
+              throw new Error(
+                'Background Image scanning task has been cancelled',
+              );
+              reject(e);
+            });
+            this.rescanImageButton.label = _text('maintenance.RescanImages');
+            this.scanning = false;
+          })
+          .catch((err) => {
+            this.scanning = false;
+            this.rescanImageButton.label = _text('maintenance.RescanImages');
+            console.log(err);
+            indicator.set(50, _text('maintenance.RescanFailed'));
+            indicator.end(1000);
+            if (err && err.message) {
+              this.notification.text = PainKiller.relieve(err.title);
+              this.notification.detail = err.message;
+              this.notification.show(true, err);
+            }
+            reject(err);
           });
-          sse.addEventListener('bgtask_done', (e) => {
-            const event = new CustomEvent('image-rescanned');
-            document.dispatchEvent(event);
-            indicator.set(100, _text('maintenance.RescanImageFinished'));
-            sse.close();
-          });
-          sse.addEventListener('bgtask_failed', (e) => {
-            console.log('task_failed', e['data']);
-            sse.close();
-            throw new Error('Background Image scanning task has failed');
-          });
-          sse.addEventListener('bgtask_cancelled', (e) => {
-            sse.close();
-            throw new Error(
-              'Background Image scanning task has been cancelled',
-            );
-          });
-          this.rescanImageButton.label = _text('maintenance.RescanImages');
-          this.scanning = false;
-        })
-        .catch((err) => {
-          this.scanning = false;
-          this.rescanImageButton.label = _text('maintenance.RescanImages');
-          console.log(err);
-          indicator.set(50, _text('maintenance.RescanFailed'));
-          indicator.end(1000);
-          if (err && err.message) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true, err);
-          }
-        }),
+      }),
       '',
       'image',
       '',
