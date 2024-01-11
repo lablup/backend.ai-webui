@@ -67,10 +67,11 @@ const BAINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
       {...drawerProps}
     >
       <List
+        itemLayout="vertical"
         dataSource={notifications}
         renderItem={(item) => (
           <List.Item
-            key={item.created}
+            key={item.key}
             actions={[
               (item.url || (item.type === 'error' && item.url === '')) && (
                 <Button
@@ -79,6 +80,7 @@ const BAINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
                   onClick={() => {
                     seeDetailHandler(item);
                   }}
+                  style={{ marginLeft: 240 }}
                 >
                   {t('notification.SeeDetail')}
                 </Button>
