@@ -1,4 +1,5 @@
 import CopyableCodeText from '../components/CopyableCodeText';
+import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
 import Flex from '../components/Flex';
@@ -134,6 +135,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               endpoint
               status
             }
+            ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
             ...ModelServiceSettingModal_endpoint
           }
@@ -202,38 +204,6 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     }
     return color;
   };
-
-  const sessionOwnerElement = React.useMemo(() => {
-    if (!baiClient.supports('model-serving-endpoint-user-info'))
-      return baiClient.email || '';
-    if (endpoint?.created_user_email === endpoint?.session_owner_email)
-      return endpoint?.session_owner_email || '';
-    else
-      return (
-        <>
-          {endpoint?.session_owner_email || ''}
-          <Tooltip
-            title={t('modelService.ServiceDelegatedFrom', {
-              createdUser: endpoint?.created_user_email || '',
-              sessionOwner: endpoint?.session_owner_email || '',
-            })}
-          >
-            <Button
-              size="small"
-              type="text"
-              icon={<QuestionCircleOutlined />}
-              style={{ color: token.colorTextSecondary }}
-            />
-          </Tooltip>
-        </>
-      );
-  }, [
-    endpoint?.created_user_email,
-    endpoint?.session_owner_email,
-    baiClient,
-    t,
-    token.colorTextSecondary,
-  ]);
 
   const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
   return (
@@ -334,7 +304,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             },
             {
               label: t('modelService.SessionOwner'),
-              children: sessionOwnerElement,
+              children: <EndpointOwnerInfo endpointFrgmt={endpoint} />,
             },
             {
               label: t('modelService.DesiredSessionCount'),

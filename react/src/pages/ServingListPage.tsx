@@ -1,4 +1,5 @@
 import BAIModal from '../components/BAIModal';
+import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
@@ -177,9 +178,11 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       ? [
           {
             title: t('modelService.Owner'),
-            dataIndex: 'created_user',
+            dataIndex: 'created_user_email',
             key: 'session_owner',
-            render: (created_user: string) => created_user,
+            render: (_: string, endpoint_info: Endpoint) => (
+              <EndpointOwnerInfo endpointFrgmt={endpoint_info} />
+            ),
           },
         ]
       : []),
@@ -280,7 +283,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               url
               open_to_public
               created_at @since(version: "23.09.0")
-              created_user
+              created_user_email @since(version: "23.09.8")
+              session_owner_email @since(version: "23.09.8")
               desired_session_count @required(action: NONE)
               routings {
                 routing_id
@@ -290,6 +294,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 status
               }
               ...ModelServiceSettingModal_endpoint
+              ...EndpointOwnerInfoFragment
               ...EndpointStatusTagFragment
             }
           }
