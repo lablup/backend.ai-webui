@@ -283,8 +283,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               url
               open_to_public
               created_at @since(version: "23.09.0")
-              created_user_email @since(version: "23.09.8")
-              session_owner_email @since(version: "23.09.8")
+              created_user_email
+              session_owner_email
               desired_session_count @required(action: NONE)
               routings {
                 routing_id

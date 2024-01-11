@@ -126,8 +126,8 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             resource_group
             resource_slots
             resource_opts
-            created_user_email @since(version: "23.09.8")
-            session_owner_email @since(version: "23.09.8")
+            created_user_email
+            session_owner_email
             routings {
               routing_id
               session
