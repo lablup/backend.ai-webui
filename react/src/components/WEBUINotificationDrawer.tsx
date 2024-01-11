@@ -22,7 +22,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface Props extends DrawerProps {}
-const BAINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
+const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
@@ -116,4 +116,4 @@ const BAINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
   );
 };
 
-export default BAINotificationDrawer;
+export default WEBUINotificationDrawer;

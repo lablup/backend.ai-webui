@@ -1,5 +1,5 @@
 import { useWebUINotification } from '../hooks/useNotifiction';
-import BAINotificationDrawer from './BAINotificationDrawer';
+import WEBUINotificationDrawer from './WEBUINotificationDrawer';
 import { BellOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button } from 'antd';
@@ -52,7 +52,7 @@ const BAINotificationButton: React.FC<Props> = ({ ...props }) => {
         onClick={toggleDrawer}
         {...props}
       />
-      <BAINotificationDrawer open={isOpenDrawer} onClose={toggleDrawer} />
+      <WEBUINotificationDrawer open={isOpenDrawer} onClose={toggleDrawer} />
     </>
   );
 };
