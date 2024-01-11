@@ -267,29 +267,33 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     indicator.set(10, _text('maintenance.Recalculating'));
     this.tasker.add(
       _text('maintenance.RecalculateUsage'),
-      globalThis.backendaiclient.maintenance
-        .recalculate_usage()
-        .then((response) => {
-          this.recalculateUsageButton.label = _text(
-            'maintenance.RecalculateUsage',
-          );
-          this.recalculating = false;
-          indicator.set(100, _text('maintenance.RecalculationFinished'));
-        })
-        .catch((err) => {
-          this.recalculating = false;
-          this.recalculateUsageButton.label = _text(
-            'maintenance.RecalculateUsage',
-          );
-          console.log(err);
-          indicator.set(50, _text('maintenance.RecalculationFailed'));
-          indicator.end(1000);
-          if (err && err.message) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true, err);
-          }
-        }),
+      new Promise((resolve, reject) => {
+        return globalThis.backendaiclient.maintenance
+          .recalculate_usage()
+          .then((response) => {
+            this.recalculateUsageButton.label = _text(
+              'maintenance.RecalculateUsage',
+            );
+            this.recalculating = false;
+            indicator.set(100, _text('maintenance.RecalculationFinished'));
+            resolve(undefined);
+          })
+          .catch((err) => {
+            this.recalculating = false;
+            this.recalculateUsageButton.label = _text(
+              'maintenance.RecalculateUsage',
+            );
+            console.log(err);
+            indicator.set(50, _text('maintenance.RecalculationFailed'));
+            indicator.end(1000);
+            if (err && err.message) {
+              this.notification.text = PainKiller.relieve(err.title);
+              this.notification.detail = err.message;
+              this.notification.show(true, err);
+            }
+            reject(err);
+          });
+      }),
       '',
       'database',
       '',
