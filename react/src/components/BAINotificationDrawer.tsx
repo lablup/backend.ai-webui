@@ -1,4 +1,4 @@
-import { useWebUINotification } from '../hooks';
+import { useWebUINotification } from '../hooks/useNotifiction';
 import {
   CheckOutlined,
   CloseOutlined,

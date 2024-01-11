@@ -1,4 +1,4 @@
-import { useWebUINotification } from '../hooks';
+import { useWebUINotification } from '../hooks/useNotifiction';
 import BAINotificationDrawer from './BAINotificationDrawer';
 import { BellOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
