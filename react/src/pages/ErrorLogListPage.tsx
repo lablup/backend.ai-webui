@@ -10,7 +10,16 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
-import { Button, Space, Typography, Table, Alert, Checkbox, Input } from 'antd';
+import {
+  Button,
+  Typography,
+  Table,
+  Alert,
+  Checkbox,
+  Input,
+  Row,
+  Col,
+} from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import _ from 'lodash';
 import React, { useState, useMemo, useEffect } from 'react';
@@ -211,48 +220,67 @@ const ErrorLogListPage: React.FC = () => {
   return (
     <>
       <Flex direction="column" align="stretch">
-        <Flex justify="between" style={{ padding: 20 }}>
-          <Typography.Title level={4} style={{ margin: 0 }}>
-            <Space>
-              {t('logs.LogMessages')}
-              {t('logs.UpTo3000Logs')}
-            </Space>
-          </Typography.Title>
-          <Space>
-            <Input
-              allowClear
-              prefix={<SearchOutlined />}
-              placeholder={t('logs.SearchLogs')}
-              onChange={(e) => setLogSearch(e.target.value)}
-            />
-            {/*
+        <Row
+          justify="space-between"
+          align="middle"
+          gutter={[0, 12]}
+          style={{ padding: 20 }}
+        >
+          <Col>
+            <Flex gap="sm">
+              <Typography.Title level={4} style={{ margin: 0 }}>
+                {t('logs.LogMessages')}
+              </Typography.Title>
+              <Typography.Title level={4} style={{ margin: 0 }}>
+                {t('logs.UpTo3000Logs')}
+              </Typography.Title>
+            </Flex>
+          </Col>
+          <Col>
+            <Row align="middle" gutter={[12, 12]}>
+              <Col xs={24} lg={9}>
+                <Input
+                  allowClear
+                  prefix={<SearchOutlined />}
+                  placeholder={t('logs.SearchLogs')}
+                  onChange={(e) => setLogSearch(e.target.value)}
+                />
+              </Col>
+              {/*
               Add checkbox because Table filter has an error by shadowRoot 
               todo: remove below Checkbox and add Table's filter props
             */}
-            <Checkbox
-              onChange={(e) => setCheckedShowOnlyError(e.target.checked)}
-            >
-              {t('logs.ShowOnlyError')}
-            </Checkbox>
-            <Button
-              type="link"
-              icon={<RedoOutlined />}
-              onClick={() => checkUpdate()}
-            >
-              {t('button.Refresh')}
-            </Button>
-            <Button
-              type="primary"
-              danger
-              icon={<DeleteOutlined />}
-              onClick={() => {
-                setIsOpenClearLogsModal(true);
-              }}
-            >
-              {t('button.ClearLogs')}
-            </Button>
-          </Space>
-        </Flex>
+              <Col>
+                <Checkbox
+                  onChange={(e) => setCheckedShowOnlyError(e.target.checked)}
+                >
+                  {t('logs.ShowOnlyError')}
+                </Checkbox>
+              </Col>
+              <Col>
+                <Button
+                  type="link"
+                  icon={<RedoOutlined />}
+                  onClick={() => checkUpdate()}
+                >
+                  {t('button.Refresh')}
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  type="primary"
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={() => {
+                    setIsOpenClearLogsModal(true);
+                  }}
+                >
+                  {t('button.ClearLogs')}
+                </Button>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
         <Table
           virtual
           pagination={false}
@@ -272,6 +300,7 @@ const ErrorLogListPage: React.FC = () => {
       <Flex justify="end">
         <Button
           type="text"
+          size="large"
           icon={<SettingOutlined />}
           onClick={() => {
             setIsOpenColumnsSetting(true);
