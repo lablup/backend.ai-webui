@@ -13,9 +13,6 @@
     "components": {
       "Tag": {
         "borderRadiusSM": 1
-      },
-      "Notification": {
-        "width": 320
       }
     }
   },
@@ -26,9 +23,6 @@
     "components": {
       "Tag": {
         "borderRadiusSM": 1
-      },
-      "Notification": {
-        "width": 320
       }
     }
   }
