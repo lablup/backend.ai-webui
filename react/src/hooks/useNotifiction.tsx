@@ -77,6 +77,14 @@ export const useWebUINotification = () => {
     // notification.destroy();
   };
 
+  const destroyNotification = (key: React.Key) => {
+    app.notification.destroy(key);
+  };
+
+  const destroyAllNotifications = () => {
+    app.notification.destroy();
+  };
+
   return [
     notifications,
     {
@@ -85,6 +93,8 @@ export const useWebUINotification = () => {
       getNotificationById,
       updateNotification,
       clearAllNotifications,
+      destroyNotification,
+      destroyAllNotifications,
     },
   ] as const;
 };
