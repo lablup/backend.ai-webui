@@ -255,7 +255,8 @@
       "EnvironmentVariableNamePatternError": "変数名は文字またはアンダースコアで始まり、文字、数字、アンダースコアのみを含むことができます。",
       "EnvironmentVariableDuplicateName": "既に存在する変数名です。",
       "Template": "セッションテンプレート",
-      "EnableAutomaticShmem": "自動共有メモリー"
+      "EnableAutomaticShmem": "自動共有メモリー",
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -1397,7 +1398,8 @@
     "Public": "公開",
     "YouAreAboutToTerminate": "以下のサービスを削除しようとします：",
     "Image": "イメージ",
-    "Owner": "所有者"
+    "Owner": "所有者",
+    "ServiceDelegatedFrom": "モデルサービスは{{ createdUser }}によって作成されますが、セッションの所有権は{{ sessionOwner }}に委譲されます。"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

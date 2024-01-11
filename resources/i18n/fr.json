@@ -255,7 +255,8 @@
       "EnvironmentVariableNamePatternError": "Le nom de la variable doit commencer par une lettre ou un trait de soulignement et ne peut contenir que des lettres, des chiffres et des traits de soulignement.",
       "EnvironmentVariableDuplicateName": "Un nom de variable qui existe déjà.",
       "Template": "Modèle de session",
-      "EnableAutomaticShmem": "Mémoire partagée automatique"
+      "EnableAutomaticShmem": "Mémoire partagée automatique",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -1446,7 +1447,8 @@
     "ServiceNameRule": "Seuls 4 à 24 caractères alphanumériques, le trait de soulignement (_), le trait d'union (-) et le point (.) sont autorisés et le texte doit se terminer par un caractère alphanumérique.",
     "resources": "Ressources",
     "Image": "Image",
-    "Owner": "Propriétaire"
+    "Owner": "Propriétaire",
+    "ServiceDelegatedFrom": "Le service modèle est créé par {{ createdUser }} mais la propriété de la session sera déléguée à {{ sessionOwner }}."
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",

@@ -717,7 +717,8 @@
     "TrafficRatio": "Ratio de tráfico",
     "YouAreAboutToTerminate": "Está a punto de terminar",
     "resources": "Recursos",
-    "Owner": "Dueño"
+    "Owner": "Dueño",
+    "ServiceDelegatedFrom": "El servicio modelo es creado por {{ createdUser }} pero la propiedad de la sesión será delegada a {{ sessionOwner }}"
   },
   "notification": {
     "Initializing": "Inicializando...",
@@ -1132,7 +1133,8 @@
       "EnvironmentVariableNamePatternError": "El nombre de la variable debe empezar por una letra o un guión bajo, y sólo puede contener letras, números y guiones bajos.",
       "EnvironmentVariableDuplicateName": "Un nombre de variable que ya existe.",
       "Template": "Plantilla de sesión",
-      "EnableAutomaticShmem": "Memoria compartida automática"
+      "EnableAutomaticShmem": "Memoria compartida automática",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",
