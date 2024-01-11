@@ -265,6 +265,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   launchConfirmationDialog!: BackendAIDialog;
   @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
   @query('#command-editor') commandEditor!: LablupCodemirror;
+  @query('#session-name') sessionName!: TextField;
 
   constructor() {
     super();
@@ -3776,6 +3777,45 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+   * Check validation of session name.
+   *
+   */
+  _validateSessionName() {
+    this.sessionName.validityTransform = (value, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.patternMismatch) {
+          this.sessionName.validationMessage = _text(
+            'session.launcher.SessionNameAllowCondition',
+          );
+          return {
+            valid: nativeValidity.valid,
+            patternMismatch: !nativeValidity.valid,
+          };
+        } else {
+          this.sessionName.validationMessage = _text(
+            'session.Validation.EnterValidSessionName',
+          );
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid,
+          };
+        }
+      } else {
+        const isValid = !this.resourceBroker.sessions_list.includes(value);
+        if (!isValid) {
+          this.sessionName.validationMessage = _text(
+            'session.launcher.DuplicatedSessionName',
+          );
+        }
+        return {
+          valid: isValid,
+          customError: !isValid,
+        };
+      }
+    };
+  }
+
+  /**
    * Append a row to the environment variable list.
    *
    * @param {string} name - environment variable name
@@ -4167,12 +4207,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).hide();
   }
 
+  /**
+   * Check whether the current session progress is valid or not.
+   */
   validateSessionLauncherInput() {
     if (this.currentIndex === 1) {
-      if (
-        this.sessionType === 'batch' &&
-        !this.commandEditor._validateInput()
-      ) {
+      const isBatchModeValid =
+        this.sessionType === 'batch'
+          ? this.commandEditor._validateInput()
+          : true;
+      const isSessionNameValid = this.sessionName.checkValidity();
+
+      if (!isBatchModeValid || !isSessionNameValid) {
         return false;
       }
     }
@@ -4652,13 +4698,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <mwc-textfield
               id="session-name"
               placeholder="${_text('session.launcher.SessionNameOptional')}"
-              pattern="[a-zA-Z0-9_-]{4,}"
+              pattern="^[a-zA-Z0-9]([a-zA-Z0-9\\-_\\.]{2,})[a-zA-Z0-9]$"
+              minLength="4"
               maxLength="64"
               icon="label"
               helper="${_text('inputLimit.4to64chars')}"
               validationMessage="${_text(
                 'session.launcher.SessionNameAllowCondition',
               )}"
+              autoValidate
+              @input="${() => this._validateSessionName()}"
             ></mwc-textfield>
             <div
               class="vertical layout center flex"
