@@ -3,12 +3,10 @@ import { ArgsProps } from 'antd/lib/notification';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { atom, useRecoilState } from 'recoil';
-import { v4 as uuidv4 } from 'uuid';
 
 type StoreType = 'notification' | 'task';
 type ProgressStatus = 'inProgress' | 'success' | 'error';
 export interface NotificationState extends ArgsProps {
-  id?: string;
   url?: string;
   created?: string;
   storeType?: StoreType;
@@ -29,12 +27,11 @@ export const useWebUINotification = () => {
 
   const addNotification = (notification: NotificationState) => {
     const newNotification = {
-      id: notification.id ?? uuidv4(),
       created: new Date().toISOString(),
       storeType: notification.storeType || 'notification',
       ...notification,
     };
-    setNotifications([...notifications, newNotification]);
+    setNotifications([newNotification, ...notifications]);
   };
 
   const showWebUINotification = (notification: NotificationState) => {
@@ -54,12 +51,12 @@ export const useWebUINotification = () => {
     });
   };
 
-  const getNotificationById = (id: string) => {
-    return _.find(notifications, { id });
+  const getNotificationById = (key: React.Key = '') => {
+    return _.find(notifications, { key: key });
   };
 
   const updateNotification = (notification: NotificationState) => {
-    const n = getNotificationById(notification.id || '');
+    const n = getNotificationById(notification.key);
     if (!n) return;
     const newNotification = {
       ...n,
@@ -67,7 +64,7 @@ export const useWebUINotification = () => {
     };
     setNotifications(
       _.map(notifications, (n) => {
-        if (n.id === notification.id) {
+        if (n.key === notification.key) {
           return newNotification;
         }
         return n;
