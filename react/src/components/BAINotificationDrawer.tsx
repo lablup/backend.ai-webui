@@ -26,9 +26,9 @@ interface Props extends DrawerProps {}
 const BAINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { Link } = Typography;
 
-  const [notifications, { clearAllNotifications }] = useWebUINotification();
+  const [notifications, { seeDetailHandler, clearAllNotifications }] =
+    useWebUINotification();
 
   const avatarMap = {
     success: { icon: <CheckOutlined />, color: token.colorSuccess },
@@ -73,10 +73,16 @@ const BAINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
           <List.Item
             key={item.created}
             actions={[
-              item.url && (
-                <Link href={item.url} target="_blank" rel="noopener noreferrer">
+              (item.url || (item.type === 'error' && item.url === '')) && (
+                <Button
+                  type="link"
+                  rel="noreferrer noopener"
+                  onClick={() => {
+                    seeDetailHandler(item);
+                  }}
+                >
                   {t('notification.SeeDetail')}
-                </Link>
+                </Button>
               ),
             ]}
           >

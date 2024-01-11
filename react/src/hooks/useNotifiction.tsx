@@ -1,4 +1,5 @@
-import { App, Typography } from 'antd';
+import { useWebUINavigate } from '.';
+import { App, Button } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -34,18 +35,40 @@ export const useWebUINotification = () => {
     setNotifications([newNotification, ...notifications]);
   };
 
+  const webuiNavigate = useWebUINavigate();
+  const seeDetailHandler = (notification: NotificationState) => {
+    if (
+      notification.type === 'error' &&
+      (notification.url === '' || notification.url === '/usersettings')
+    ) {
+      webuiNavigate('/usersettings', {
+        params: {
+          tab: 'logs',
+        },
+      });
+      // dispatch event to update tab of backend-ai-usersettings
+      const event = new CustomEvent('backend-ai-usersettings', {});
+      document.dispatchEvent(event);
+    } else if (notification.url !== '') {
+      webuiNavigate(notification.url || '');
+    }
+  };
+
   const showWebUINotification = (notification: NotificationState) => {
     addNotification(notification);
     app.notification[notification.type || 'open']({
       placement: notification.placement || 'bottomRight',
-      btn: notification.url && (
-        <Typography.Link
-          href={notification.url}
-          target="_blank"
+      btn: (notification.url ||
+        (notification.type === 'error' && notification.url === '')) && (
+        <Button
+          type="link"
           rel="noreferrer noopener"
+          onClick={() => {
+            seeDetailHandler(notification);
+          }}
         >
           {t('notification.SeeDetail')}
-        </Typography.Link>
+        </Button>
       ),
       ...notification,
     });
@@ -89,6 +112,7 @@ export const useWebUINotification = () => {
     notifications,
     {
       addNotification,
+      seeDetailHandler,
       showWebUINotification,
       getNotificationById,
       updateNotification,
