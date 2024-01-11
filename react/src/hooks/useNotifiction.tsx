@@ -1,5 +1,6 @@
 import { useWebUINavigate } from '.';
-import { App, Button } from 'antd';
+import { App, Button, Progress } from 'antd';
+import { ProgressProps } from 'antd/lib';
 import { ArgsProps } from 'antd/lib/notification';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -7,12 +8,11 @@ import { atom, useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
 type StoreType = 'notification' | 'task';
-type ProgressStatus = 'inProgress' | 'success' | 'error';
 export interface NotificationState extends ArgsProps {
   url?: string;
   created?: string;
   storeType?: StoreType;
-  progressStatus?: ProgressStatus;
+  progress?: ProgressProps;
 }
 
 export const notificationListState = atom<NotificationState[]>({
@@ -56,6 +56,7 @@ export const useWebUINotification = () => {
   const showWebUINotification = (notification: NotificationState) => {
     addNotification(notification);
     app.notification[notification.type || 'open']({
+      ...notification,
       placement: notification.placement || 'bottomRight',
       btn: (notification.url ||
         (notification.type === 'error' && notification.url === '')) && (
@@ -69,7 +70,17 @@ export const useWebUINotification = () => {
           {t('notification.SeeDetail')}
         </Button>
       ),
-      ...notification,
+      description: notification.storeType === 'task' && (
+        <>
+          {notification.description}
+          <Progress
+            size="small"
+            showInfo={false}
+            percent={notification.progress?.percent}
+            status={notification.progress?.status}
+          />
+        </>
+      ),
     });
   };
 
@@ -92,11 +103,38 @@ export const useWebUINotification = () => {
         return n;
       }),
     );
+    app.notification[notification.type || 'open']({
+      ...newNotification,
+      key: notification.key,
+      placement: notification.placement || 'bottomRight',
+      btn: (notification.url ||
+        (notification.type === 'error' && notification.url === '')) && (
+        <Button
+          type="link"
+          rel="noreferrer noopener"
+          onClick={() => {
+            seeDetailHandler(notification);
+          }}
+        >
+          {t('notification.SeeDetail')}
+        </Button>
+      ),
+      description: notification.storeType === 'task' && (
+        <>
+          {notification.description}
+          <Progress
+            size="small"
+            showInfo={false}
+            percent={notification.progress?.percent}
+            status={notification.progress?.status}
+          />
+        </>
+      ),
+    });
   };
 
   const clearAllNotifications = () => {
     setNotifications([]);
-    // notification.destroy();
   };
 
   const destroyNotification = (key: React.Key) => {

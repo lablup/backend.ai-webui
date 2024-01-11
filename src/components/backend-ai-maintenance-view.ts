@@ -190,12 +190,8 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
    * rescan the image
    */
   async rescan_images() {
-    this.rescanImageButton.label = _text('maintenance.RescanImageScanning');
     this.scanning = true;
-    // this.notification.text = 'Rescan image started.';
-    // this.notification.show();
-    const indicator = await this.indicator.start('indeterminate');
-    indicator.set(0, _text('maintenance.Scanning'));
+    let taskId;
     this.tasker.add(
       _text('maintenance.RescanImages'),
       new Promise((resolve, reject) => {
@@ -206,54 +202,85 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
               globalThis.backendaiclient.maintenance.attach_background_task(
                 rescan_images.task_id,
               );
+            taskId = rescan_images.task_id;
             sse.addEventListener('bgtask_updated', (e) => {
-              const data = JSON.parse(e['data']);
-              const ratio = data.current_progress / data.total_progress;
-              indicator.set(100 * ratio, _text('maintenance.Scanning'));
+              // TODO: update progress bar
+              // const data = JSON.parse(e['data']);
+              // const ratio = data.current_progress / data.total_progress;
+              // this.tasker.updateNotification(taskId, {
+              //   description: _text('maintenance.Scanning'),
+              //   progress: {
+              //     percent: 100 * ratio,
+              //     status: 'normal',
+              //   },
+              // });
             });
             sse.addEventListener('bgtask_done', (e) => {
               const event = new CustomEvent('image-rescanned');
               document.dispatchEvent(event);
-              indicator.set(100, _text('maintenance.RescanImageFinished'));
               sse.close();
-              resolve(undefined);
+              resolve({
+                description: _text('maintenance.RescanImageFinished'),
+                progress: {
+                  percent: 100,
+                  status: 'success',
+                },
+              });
             });
             sse.addEventListener('bgtask_failed', (e) => {
               console.log('task_failed', e['data']);
               sse.close();
-              reject(e);
+              const data = JSON.parse(e['data']);
+              const ratio = data.current_progress / data.total_progress;
+              reject({
+                description: _text('maintenance.RescanImageFailed'),
+                progress: {
+                  percent: ratio * 100,
+                  status: 'exception',
+                },
+              });
               throw new Error('Background Image scanning task has failed');
             });
             sse.addEventListener('bgtask_cancelled', (e) => {
               sse.close();
+              const data = JSON.parse(e['data']);
+              const ratio = data.current_progress / data.total_progress;
+              reject({
+                description: _text('maintenance.RescanImageCancelled'),
+                progress: {
+                  percent: ratio * 100,
+                  status: 'exception',
+                },
+              });
               throw new Error(
                 'Background Image scanning task has been cancelled',
               );
-              reject(e);
             });
-            this.rescanImageButton.label = _text('maintenance.RescanImages');
             this.scanning = false;
           })
           .catch((err) => {
             this.scanning = false;
-            this.rescanImageButton.label = _text('maintenance.RescanImages');
             console.log(err);
-            indicator.set(50, _text('maintenance.RescanFailed'));
-            indicator.end(1000);
+            let message = _text('maintenance.RescanFailed');
+            let description;
             if (err && err.message) {
-              this.notification.text = PainKiller.relieve(err.title);
-              this.notification.detail = err.message;
-              this.notification.show(true, err);
+              message = PainKiller.relieve(err.title);
+              description = err.message;
             }
-            reject(err);
+            reject({
+              message: message,
+              description: description,
+              progress: {
+                percent: 50,
+                status: 'exception',
+              },
+            });
           });
       }),
-      '',
+      taskId,
       'image',
       '',
       _text('maintenance.Scanning'),
-      _text('maintenance.RescanImageFinished'),
-      _text('maintenance.RescanFailed'),
     );
   }
 
@@ -263,8 +290,6 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
   async recalculate_usage() {
     this.recalculateUsageButton.label = _text('maintenance.Recalculating');
     this.recalculating = true;
-    const indicator = await this.indicator.start('indeterminate');
-    indicator.set(10, _text('maintenance.Recalculating'));
     this.tasker.add(
       _text('maintenance.RecalculateUsage'),
       new Promise((resolve, reject) => {
@@ -275,8 +300,13 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
               'maintenance.RecalculateUsage',
             );
             this.recalculating = false;
-            indicator.set(100, _text('maintenance.RecalculationFinished'));
-            resolve(undefined);
+            resolve({
+              description: _text('maintenance.RecalculationFinished'),
+              progress: {
+                percent: 100,
+                status: 'success',
+              },
+            });
           })
           .catch((err) => {
             this.recalculating = false;
@@ -284,22 +314,26 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
               'maintenance.RecalculateUsage',
             );
             console.log(err);
-            indicator.set(50, _text('maintenance.RecalculationFailed'));
-            indicator.end(1000);
+            let message = _text('maintenance.RecalculationFailed');
+            let description;
             if (err && err.message) {
-              this.notification.text = PainKiller.relieve(err.title);
-              this.notification.detail = err.message;
-              this.notification.show(true, err);
+              message = PainKiller.relieve(err.title);
+              description = err.message;
             }
-            reject(err);
+            reject({
+              message: message,
+              description: description,
+              progress: {
+                percent: 50,
+                status: 'exception',
+              },
+            });
           });
       }),
       '',
       'database',
       '',
       _text('maintenance.Recalculating'),
-      _text('maintenance.RecalculationFinished'),
-      _text('maintenance.RecalculationFailed'),
     );
   }
 }

@@ -4,7 +4,6 @@ import {
   CloseOutlined,
   DeleteOutlined,
   InfoOutlined,
-  LoadingOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 import {
@@ -15,6 +14,7 @@ import {
   Avatar,
   Button,
   Popconfirm,
+  Progress,
 } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -34,12 +34,6 @@ const BAINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
     info: { icon: <InfoOutlined />, color: token.colorInfo },
     warning: { icon: <InfoOutlined />, color: token.colorWarning },
     error: { icon: <CloseOutlined />, color: token.colorError },
-  };
-
-  const progressStatusIconMap = {
-    inProgress: <LoadingOutlined style={{ color: token.colorPrimary }} />,
-    success: <CheckOutlined style={{ color: token.colorSuccess }} />,
-    error: <CloseOutlined style={{ color: token.colorError }} />,
   };
 
   return (
@@ -92,6 +86,14 @@ const BAINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
               description={
                 <>
                   {item.description}
+                  {item.storeType === 'task' && (
+                    <Progress
+                      size="small"
+                      showInfo={false}
+                      percent={item.progress?.percent}
+                      status={item.progress?.status}
+                    />
+                  )}
                   <br />({dayjs(item.created).format('ll LTS')})
                 </>
               }
@@ -107,8 +109,6 @@ const BAINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
                 )
               }
             />
-            {item.storeType === 'task' &&
-              _.get(progressStatusIconMap, item.progressStatus || 'inProgress')}
           </List.Item>
         )}
       />
