@@ -34,7 +34,7 @@ export const useWebUINotification = () => {
       storeType: notification.storeType || 'notification',
       ...notification,
     };
-    setNotifications([...notifications, newNotification]);
+    setNotifications([newNotification, ...notifications]);
   };
 
   const showWebUINotification = (notification: NotificationState) => {
