@@ -28,7 +28,7 @@ const BAINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
   const { token } = theme.useToken();
   const { Link } = Typography;
 
-  const [notifications, { destroyNotifications }] = useWebUINotification();
+  const [notifications, { clearAllNotifications }] = useWebUINotification();
 
   const avatarMap = {
     success: { icon: <CheckOutlined />, color: token.colorSuccess },

@@ -161,37 +161,39 @@ export interface NotificationState extends ArgsProps {
   progressStatus?: ProgressStatus;
 }
 
-export const notificationState = atom<NotificationState[]>({
+export const notificationListState = atom<NotificationState[]>({
   key: 'webui-notification',
   default: [],
 });
 
 export const useWebUINotification = () => {
-  const [notifications, setNotifications] = useRecoilState(notificationState);
-  const { notification } = App.useApp();
+  const [notifications, setNotifications] = useRecoilState(
+    notificationListState,
+  );
+  const app = App.useApp();
   const { t } = useTranslation();
   const { Link } = Typography;
 
-  const addNotification = (props: NotificationState) => {
+  const addNotification = (notification: NotificationState) => {
     const newNotification = {
-      id: props.id ?? uuidv4(),
+      id: notification.id ?? uuidv4(),
       created: new Date().toISOString(),
-      storeType: props.storeType || 'notification',
-      ...props,
+      storeType: notification.storeType || 'notification',
+      ...notification,
     };
     setNotifications([...notifications, newNotification]);
   };
 
-  const showWebUINotification = (props: NotificationState) => {
-    addNotification(props);
-    notification[props.type || 'open']({
-      placement: props.placement || 'bottomRight',
-      btn: props.url && (
-        <Link href={props.url} target="_blank" rel="noreferrer noopener">
+  const showWebUINotification = (notification: NotificationState) => {
+    addNotification(notification);
+    app.notification[notification.type || 'open']({
+      placement: notification.placement || 'bottomRight',
+      btn: notification.url && (
+        <Link href={notification.url} target="_blank" rel="noreferrer noopener">
           {t('notification.SeeDetail')}
         </Link>
       ),
-      ...props,
+      ...notification,
     });
   };
 
@@ -199,16 +201,16 @@ export const useWebUINotification = () => {
     return _.find(notifications, { id });
   };
 
-  const updateNotification = (props: NotificationState) => {
-    const n = getNotificationById(props.id || '');
+  const updateNotification = (notification: NotificationState) => {
+    const n = getNotificationById(notification.id || '');
     if (!n) return;
     const newNotification = {
       ...n,
-      ...props,
+      ...notification,
     };
     setNotifications(
       _.map(notifications, (n) => {
-        if (n.id === props.id) {
+        if (n.id === notification.id) {
           return newNotification;
         }
         return n;
@@ -216,7 +218,7 @@ export const useWebUINotification = () => {
     );
   };
 
-  const destroyNotifications = () => {
+  const clearAllNotifications = () => {
     setNotifications([]);
     // notification.destroy();
   };
@@ -228,7 +230,7 @@ export const useWebUINotification = () => {
       showWebUINotification,
       getNotificationById,
       updateNotification,
-      destroyNotifications,
+      clearAllNotifications,
     },
   ] as const;
 };
