@@ -204,13 +204,11 @@ const SessionList: React.FC<SessionListProps> = ({
                       <FolderOutlined />
                       <Typography.Text
                         ellipsis={{
-                          tooltip: (
-                            <Flex direction="column" align="start">
-                              {_.map(value, (mountedFolder) => {
-                                return <div>{mountedFolder}</div>;
-                              })}
-                            </Flex>
-                          ),
+                          tooltip: {
+                            title: _.map(value, (mountedFolder) => {
+                              return <div>{mountedFolder}</div>;
+                            }),
+                          },
                         }}
                       >
                         {value.join(', ')}
