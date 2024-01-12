@@ -191,12 +191,13 @@ export default class LablupNotification extends LitElement {
       this._saveToLocalStorage('backendaiwebui.logs', log);
     }
 
-    const event: CustomEvent = new CustomEvent('show-bai-notification', {
+    const event: CustomEvent = new CustomEvent('add-bai-notification', {
       detail: {
+        open: true,
         type: Object.keys(log).length !== 0 ? 'error' : null,
         message: this.text ?? this.detail,
         description: this.detail,
-        url: this.url,
+        toUrl: this.url,
         duration: persistent ? 0 : 4.5,
         // closeIcon: persistent,
       },

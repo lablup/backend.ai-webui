@@ -1,3 +1,4 @@
+import { useWebUINavigate } from '../hooks';
 import { useWebUINotification } from '../hooks/useNotifiction';
 import {
   CheckOutlined,
@@ -26,8 +27,9 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  const [notifications, { seeDetailHandler, clearAllNotifications }] =
-    useWebUINotification();
+  const webuiNavigate = useWebUINavigate();
+
+  const [notifications, { clearAllNotifications }] = useWebUINotification();
 
   const avatarMap = {
     success: { icon: <CheckOutlined />, color: token.colorSuccess },
@@ -67,18 +69,19 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
           <List.Item
             key={item.key}
             actions={[
-              (item.url || (item.type === 'error' && item.url === '')) && (
+              item.toUrl ? (
                 <Button
                   type="link"
                   rel="noreferrer noopener"
-                  onClick={() => {
-                    seeDetailHandler(item);
+                  onClick={(e) => {
+                    item.toUrl && webuiNavigate(item.toUrl);
                   }}
-                  style={{ marginLeft: 240 }}
                 >
-                  {t('notification.SeeDetail')}
+                  {item.toTextKey
+                    ? t(item.toTextKey)
+                    : t('notification.SeeDetail')}
                 </Button>
-              ),
+              ) : null,
             ]}
           >
             <List.Item.Meta
@@ -86,12 +89,12 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
               description={
                 <>
                   {item.description}
-                  {item.storeType === 'task' && (
+                  {item.taskId && (
                     <Progress
                       size="small"
                       showInfo={false}
-                      percent={item.progress?.percent}
-                      status={item.progress?.status}
+                      percent={item.progressPercent}
+                      status={item.progressStatus}
                     />
                   )}
                   <br />({dayjs(item.created).format('ll LTS')})

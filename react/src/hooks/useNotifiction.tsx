@@ -1,18 +1,18 @@
 import { useWebUINavigate } from '.';
 import { App, Button, Progress } from 'antd';
-import { ProgressProps } from 'antd/lib';
 import { ArgsProps } from 'antd/lib/notification';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { atom, useRecoilState } from 'recoil';
-import { v4 as uuidv4 } from 'uuid';
 
-type StoreType = 'notification' | 'task';
-export interface NotificationState extends ArgsProps {
-  url?: string;
+export interface NotificationState extends Omit<ArgsProps, 'placement'> {
+  taskId?: string;
   created?: string;
-  storeType?: StoreType;
-  progress?: ProgressProps;
+  progressStatus?: 'success' | 'exception' | 'active' | 'normal';
+  progressPercent?: number;
+  toTextKey?: string;
+  toUrl?: string;
+  open?: boolean;
 }
 
 export const notificationListState = atom<NotificationState[]>({
@@ -25,110 +25,75 @@ export const useWebUINotification = () => {
     notificationListState,
   );
   const app = App.useApp();
+  const webuiNavigate = useWebUINavigate();
   const { t } = useTranslation();
 
-  const addNotification = (notification: NotificationState) => {
-    const newNotification = {
+  const addNotification = (params: Omit<NotificationState, 'created'>) => {
+    const existingIndex = params.key
+      ? _.findIndex(notifications, { key: params.key })
+      : -1;
+
+    const shouldOpen =
+      existingIndex < 0 || // new
+      (params.open === true && notifications[existingIndex].open !== false); // existing not already closed
+
+    const newNotification: NotificationState = {
+      ...notifications[existingIndex],
+      ...params,
       created: new Date().toISOString(),
-      storeType: notification.storeType || 'notification',
-      ...notification,
+      open: shouldOpen,
     };
-    setNotifications([newNotification, ...notifications]);
-  };
 
-  const webuiNavigate = useWebUINavigate();
+    if (existingIndex >= 0) {
+      setNotifications(_.set(notifications, existingIndex, newNotification));
+    } else {
+      setNotifications([newNotification, ...notifications]);
+    }
 
-  const seeDetailHandler = (n: NotificationState) => {
-    if (n.type === 'error' && (n.url === '' || n.url === '/usersettings')) {
-      webuiNavigate('/usersettings', {
-        params: {
-          tab: 'logs',
+    if (newNotification.open) {
+      //  open
+      app.notification[newNotification.type || 'open']({
+        ...newNotification,
+        placement: 'bottomRight',
+        description: (
+          <>
+            {newNotification.description}
+            {newNotification.taskId && (
+              <Progress
+                size="small"
+                showInfo={false}
+                percent={newNotification.progressPercent}
+                status={newNotification.progressStatus}
+              />
+            )}
+          </>
+        ),
+        btn: newNotification.toUrl ? (
+          <Button
+            type="link"
+            rel="noreferrer noopener"
+            onClick={(e) => {
+              newNotification.toUrl && webuiNavigate(newNotification.toUrl);
+            }}
+          >
+            {newNotification.toTextKey
+              ? t(newNotification.toTextKey)
+              : t('notification.SeeDetail')}
+          </Button>
+        ) : null,
+        onClose() {
+          const idx = _.findIndex(notifications, { key: newNotification.key });
+          if (idx >= 0) {
+            setNotifications(
+              _.set(notifications, idx, {
+                ...notifications[idx],
+                open: false,
+              }),
+            );
+          }
         },
       });
-    } else if (n.url !== '') {
-      webuiNavigate(n.url || '');
     }
-    app.notification.destroy(n.key);
-  };
-
-  const showWebUINotification = (notification: NotificationState) => {
-    addNotification(notification);
-    app.notification[notification.type || 'open']({
-      ...notification,
-      placement: notification.placement || 'bottomRight',
-      btn: (notification.url ||
-        (notification.type === 'error' && notification.url === '')) && (
-        <Button
-          type="link"
-          rel="noreferrer noopener"
-          onClick={() => {
-            seeDetailHandler(notification);
-          }}
-        >
-          {t('notification.SeeDetail')}
-        </Button>
-      ),
-      description: notification.storeType === 'task' && (
-        <>
-          {notification.description}
-          <Progress
-            size="small"
-            showInfo={false}
-            percent={notification.progress?.percent}
-            status={notification.progress?.status}
-          />
-        </>
-      ),
-    });
-  };
-
-  const getNotificationById = (key: React.Key = uuidv4()) => {
-    return _.find(notifications, { key: key });
-  };
-
-  const updateNotification = (notification: NotificationState) => {
-    const n = getNotificationById(notification.key);
-    if (!n) return;
-    const newNotification = {
-      ...n,
-      ...notification,
-    };
-    setNotifications(
-      _.map(notifications, (n) => {
-        if (n.key === notification.key) {
-          return newNotification;
-        }
-        return n;
-      }),
-    );
-    app.notification[notification.type || 'open']({
-      ...newNotification,
-      key: notification.key,
-      placement: notification.placement || 'bottomRight',
-      btn: (notification.url ||
-        (notification.type === 'error' && notification.url === '')) && (
-        <Button
-          type="link"
-          rel="noreferrer noopener"
-          onClick={() => {
-            seeDetailHandler(notification);
-          }}
-        >
-          {t('notification.SeeDetail')}
-        </Button>
-      ),
-      description: notification.storeType === 'task' && (
-        <>
-          {notification.description}
-          <Progress
-            size="small"
-            showInfo={false}
-            percent={notification.progress?.percent}
-            status={notification.progress?.status}
-          />
-        </>
-      ),
-    });
   };
 
   const clearAllNotifications = () => {
@@ -147,10 +112,6 @@ export const useWebUINotification = () => {
     notifications,
     {
       addNotification,
-      seeDetailHandler,
-      showWebUINotification,
-      getNotificationById,
-      updateNotification,
       clearAllNotifications,
       destroyNotification,
       destroyAllNotifications,
