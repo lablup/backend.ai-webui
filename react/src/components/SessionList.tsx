@@ -205,6 +205,7 @@ const SessionList: React.FC<SessionListProps> = ({
                       <Typography.Text
                         ellipsis={{
                           tooltip: {
+                            overlayInnerStyle: { width: 'max-content' },
                             title: _.map(value, (mountedFolder) => {
                               return <div>{mountedFolder}</div>;
                             }),
