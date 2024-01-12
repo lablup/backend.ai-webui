@@ -27,15 +27,15 @@ import { useTranslation } from 'react-i18next';
 
 type logType = NonNullable<{
   isError: boolean;
+  statusCode: any;
+  statusText: any;
+  title: any;
   message: string;
   requestMethod: string;
-  requestParameters?: string;
-  requestUrl: string;
-  statusCode: number;
-  statusText: string;
   timestamp: string;
   type: string;
-  title?: string;
+  requestUrl: string;
+  requestParameters?: string;
 }>;
 const ErrorLogList: React.FC = () => {
   const { t } = useTranslation();
@@ -51,14 +51,14 @@ const ErrorLogList: React.FC = () => {
       title: t('logs.TimeStamp'),
       dataIndex: 'timestamp',
       key: 'timeStamp',
-      render: (value, record) => {
+      render: (value) => {
         const date = new Date(value);
-        return (
-          <Typography.Text type={record.isError ? 'danger' : undefined}>
-            <TextHighlighter keyword={logSearch}>
-              {date.toLocaleString('en-US', { hour12: false })}
-            </TextHighlighter>
-          </Typography.Text>
+        return _.isUndefined(value) || value === '' ? (
+          <div>-</div>
+        ) : (
+          <TextHighlighter keyword={logSearch}>
+            {date.toLocaleString('en-US', { hour12: false })}
+          </TextHighlighter>
         );
       },
       fixed: 'left',
@@ -67,114 +67,83 @@ const ErrorLogList: React.FC = () => {
       title: t('logs.Status'),
       dataIndex: 'statusCode',
       key: 'status',
-      render: (value, record) => {
-        return (
-          <Typography.Text type={record.isError ? 'danger' : undefined}>
-            <TextHighlighter keyword={logSearch}>
-              {value + ' ' + record.statusText}
-            </TextHighlighter>
-          </Typography.Text>
-        );
-      },
+      render: (value, record) =>
+        _.isUndefined(value) || value === '' ? (
+          <div>-</div>
+        ) : (
+          <TextHighlighter keyword={logSearch}>
+            {value + ' ' + record.statusText}
+          </TextHighlighter>
+        ),
     },
     {
       title: t('logs.ErrorTitle'),
       dataIndex: 'title',
       key: 'errorTitle',
-      render: (value, record) =>
-        _.isUndefined(value) ? (
-          <Flex
-            justify="center"
-            style={{ color: record.isError ? 'red' : undefined }}
-          >
-            -
-          </Flex>
+      render: (value) =>
+        _.isUndefined(value) || value === '' ? (
+          <div>-</div>
         ) : (
-          <Typography.Text type={record.isError ? 'danger' : undefined}>
-            <TextHighlighter keyword={logSearch}>
-              {_.toString(value)}
-              {/* set toString because sometime value is object */}
-            </TextHighlighter>
-          </Typography.Text>
+          <TextHighlighter keyword={logSearch}>
+            {_.toString(value)}
+            {/* set toString because sometime value type is object */}
+          </TextHighlighter>
         ),
     },
     {
       title: t('logs.ErrorMessage'),
       dataIndex: 'message',
       key: 'errorMessage',
-      render: (value, record) =>
+      render: (value) =>
         value === '' ? (
-          <Flex
-            justify="center"
-            style={{ color: record.isError ? 'red' : undefined }}
-          >
-            -
-          </Flex>
+          <div>-</div>
         ) : (
-          <Typography.Text type={record.isError ? 'danger' : undefined}>
-            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-          </Typography.Text>
+          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
         ),
     },
     {
       title: t('logs.ErrorType'),
       dataIndex: 'type',
       key: 'errorType',
-      render: (value, record) =>
+      render: (value) =>
         value === '' ? (
-          <Flex
-            justify="center"
-            style={{ color: record.isError ? 'red' : undefined }}
-          >
-            -
-          </Flex>
+          <div>-</div>
         ) : (
-          <Typography.Text type={record.isError ? 'danger' : undefined}>
-            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-          </Typography.Text>
+          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
         ),
     },
     {
       title: t('logs.Method'),
       dataIndex: 'requestMethod',
       key: 'method',
-      render: (value, record) => {
-        return (
-          <Typography.Text type={record.isError ? 'danger' : undefined}>
-            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-          </Typography.Text>
-        );
-      },
+      render: (value) =>
+        value === '' ? (
+          <div>-</div>
+        ) : (
+          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+        ),
     },
     {
       title: t('logs.RequestUrl'),
       dataIndex: 'requestUrl',
       key: 'requestUrl',
-      render: (value, record) => {
-        return (
-          <Typography.Text type={record.isError ? 'danger' : undefined}>
-            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-          </Typography.Text>
-        );
-      },
+      render: (value) =>
+        value === '' ? (
+          <div>-</div>
+        ) : (
+          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+        ),
     },
     {
       title: t('logs.Parameters'),
       dataIndex: 'requestParameters',
       key: 'requestParameter',
       width: 400,
-      render: (value, record) =>
+      render: (value) =>
         _.isUndefined(value) || value === '' ? (
-          <Flex
-            justify="center"
-            style={{ color: record.isError ? 'red' : undefined }}
-          >
-            -
-          </Flex>
+          <div>-</div>
         ) : (
-          <Typography.Text type={record.isError ? 'danger' : undefined}>
-            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-          </Typography.Text>
+          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
         ),
     },
   ];
@@ -294,6 +263,11 @@ const ErrorLogList: React.FC = () => {
           columns={columns.filter(
             (column) => displayedColumnKeys?.includes(_.toString(column.key)),
           )}
+          onRow={(record) => {
+            return {
+              style: { color: record.isError ? 'red' : '' },
+            };
+          }}
         />
       </Flex>
       <Flex justify="end">
