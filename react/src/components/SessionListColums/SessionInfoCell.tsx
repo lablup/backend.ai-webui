@@ -70,18 +70,21 @@ const SessionInfoCell: React.FC<{
     baiClient.email === session.user_email;
 
   const save = () => {
-    form.validateFields().then(({ name }) => {
-      setEditing(false);
-      setOptimisticName(name);
-      mutation.mutate(name, {
-        onSuccess: (result) => {
-          onRename && onRename();
-        },
-        onError: (error) => {
-          setOptimisticName(session.name);
-        },
-      });
-    });
+    form
+      .validateFields()
+      .then(({ name }) => {
+        setEditing(false);
+        setOptimisticName(name);
+        mutation.mutate(name, {
+          onSuccess: (result) => {
+            onRename && onRename();
+          },
+          onError: (error) => {
+            setOptimisticName(session.name);
+          },
+        });
+      })
+      .catch(() => {});
   };
 
   const isPendingRename = mutation.isLoading || optimisticName !== session.name;
