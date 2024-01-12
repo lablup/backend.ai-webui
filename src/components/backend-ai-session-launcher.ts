@@ -1802,6 +1802,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         '',
         _text('eduapi.CreatingComputeSession'),
         _text('eduapi.ComputeSessionPrepared'),
+        true,
       );
     });
     Promise.all(createSessionQueue)

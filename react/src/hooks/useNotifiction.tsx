@@ -34,7 +34,7 @@ export const useWebUINotification = () => {
       : -1;
 
     const shouldOpen =
-      existingIndex < 0 || // new
+      (existingIndex < 0 && params.open) || // new
       (params.open === true && notifications[existingIndex].open !== false); // existing not already closed
 
     const newNotification: NotificationState = {
@@ -45,9 +45,16 @@ export const useWebUINotification = () => {
     };
 
     if (existingIndex >= 0) {
-      setNotifications(_.set(notifications, existingIndex, newNotification));
+      setNotifications([
+        ...notifications.slice(0, existingIndex),
+        newNotification,
+        ...notifications.slice(existingIndex + 1),
+      ]);
     } else {
       setNotifications([newNotification, ...notifications]);
+      if (newNotification.taskId) {
+        // sse and update progress
+      }
     }
 
     if (newNotification.open) {
@@ -93,6 +100,8 @@ export const useWebUINotification = () => {
           }
         },
       });
+    } else if (newNotification.open === false && newNotification.key) {
+      destroyNotification(newNotification.key);
     }
   };
 
