@@ -37,6 +37,7 @@ export const useWebUINotification = () => {
   };
 
   const webuiNavigate = useWebUINavigate();
+
   const seeDetailHandler = (n: NotificationState) => {
     if (n.type === 'error' && (n.url === '' || n.url === '/usersettings')) {
       webuiNavigate('/usersettings', {
@@ -44,9 +45,6 @@ export const useWebUINotification = () => {
           tab: 'logs',
         },
       });
-      // dispatch event to update tab of backend-ai-usersettings
-      const event = new CustomEvent('backend-ai-usersettings', {});
-      document.dispatchEvent(event);
     } else if (n.url !== '') {
       webuiNavigate(n.url || '');
     }

@@ -20,6 +20,12 @@ export const useWebUINavigate = () => {
         },
       }),
     );
+
+    // dispatch event to update tab of backend-ai-usersettings
+    if (pathName === '/usersettings') {
+      const event = new CustomEvent('backend-ai-usersettings', {});
+      document.dispatchEvent(event);
+    }
   };
 };
 
