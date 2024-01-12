@@ -123,16 +123,22 @@ export default class BackendAiTasker extends LitElement {
     //   taskId = uuidv4();
     // }
     const key = 'task:' + (taskId || uuidv4());
+    const item = new Task(title, task, key, tasktype);
     // Add notification item to the BAINotificationDrawer.
-    alert(hiddenNotification);
     const event: CustomEvent = new CustomEvent('add-bai-notification', {
       detail: {
-        open: hiddenNotification ? false : true,
         key,
-        taskId,
+        open: hiddenNotification ? false : true,
         message: title,
         description: pendingDescription,
-        progressStatus: 'active',
+        backgroundTask: {
+          // taskId,
+          status: 'pending',
+          statusDescriptions: {
+            pending: pendingDescription,
+            success: doneDescription,
+          },
+        },
         duration: 0, // infinite
       },
     });
@@ -147,10 +153,10 @@ export default class BackendAiTasker extends LitElement {
           const event: CustomEvent = new CustomEvent('add-bai-notification', {
             detail: {
               key,
-              taskId,
-              description: doneDescription,
-              progressStatus: 'success',
-              open: false,
+              backgroundTask: {
+                status: 'success',
+                percent: 100,
+              },
             },
           });
           document.dispatchEvent(event);
@@ -159,16 +165,19 @@ export default class BackendAiTasker extends LitElement {
           const event: CustomEvent = new CustomEvent('add-bai-notification', {
             detail: {
               key,
-              taskId,
-              progressStatus: 'exception',
+              backgroundTask: {
+                status: 'failed',
+              },
               // description: doneMessage,
-              open: false,
             },
           });
+          document.dispatchEvent(event);
         });
     } else {
       // For function type task (not supported yet)
     }
+
+    return item;
   }
 
   // /**

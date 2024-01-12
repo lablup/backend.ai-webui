@@ -89,12 +89,12 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
               description={
                 <>
                   {item.description}
-                  {item.taskId && (
+                  {item.backgroundTask && (
                     <Progress
                       size="small"
                       showInfo={false}
-                      percent={item.progressPercent}
-                      status={item.progressStatus}
+                      percent={item.backgroundTask.percent}
+                      // status={item.progressStatus}
                     />
                   )}
                   <br />({dayjs(item.created).format('ll LTS')})
