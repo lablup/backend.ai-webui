@@ -1,5 +1,6 @@
 import { useWebUINavigate } from '../hooks';
 import { useWebUINotification } from '../hooks/useNotifiction';
+import BAINotificationItem from './BAINotificationItem';
 import {
   CheckOutlined,
   CloseOutlined,
@@ -41,7 +42,15 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
   return (
     <Drawer
       title={t('notification.Notifications')}
-      styles={{ mask: { backgroundColor: 'transparent' } }}
+      styles={{
+        mask: { backgroundColor: 'transparent' },
+        body: {
+          padding: 0,
+          paddingLeft: token.paddingContentHorizontalSM,
+          paddingRight: token.paddingContentHorizontalSM,
+        },
+      }}
+      contentWrapperStyle={{ padding: 0 }}
       extra={
         notifications.length > 0 && (
           <Popconfirm
@@ -66,53 +75,60 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
         itemLayout="vertical"
         dataSource={notifications}
         renderItem={(item) => (
-          <List.Item
-            key={item.key}
-            actions={[
-              item.toUrl ? (
-                <Button
-                  type="link"
-                  rel="noreferrer noopener"
-                  onClick={(e) => {
-                    item.toUrl && webuiNavigate(item.toUrl);
-                  }}
-                >
-                  {item.toTextKey
-                    ? t(item.toTextKey)
-                    : t('notification.SeeDetail')}
-                </Button>
-              ) : null,
-            ]}
-          >
-            <List.Item.Meta
-              title={item.message}
-              description={
-                <>
-                  {item.description}
-                  {item.backgroundTask && (
-                    <Progress
-                      size="small"
-                      showInfo={false}
-                      percent={item.backgroundTask.percent}
-                      // status={item.progressStatus}
-                    />
-                  )}
-                  <br />({dayjs(item.created).format('ll LTS')})
-                </>
-              }
-              avatar={
-                !!item.type && (
-                  <Avatar
-                    size="small"
-                    icon={_.get(avatarMap, `${item.type}.icon`)}
-                    style={{
-                      backgroundColor: _.get(avatarMap, `${item.type}.color`),
-                    }}
-                  />
-                )
-              }
-            />
-          </List.Item>
+          <BAINotificationItem
+            notification={item}
+            onClickAction={() => {
+              item.toUrl && webuiNavigate(item.toUrl);
+            }}
+            showDate
+          />
+          // <List.Item
+          //   key={item.key}
+          //   actions={[
+          //     item.toUrl ? (
+          //       <Button
+          //         type="link"
+          //         rel="noreferrer noopener"
+          //         onClick={(e) => {
+          //           item.toUrl && webuiNavigate(item.toUrl);
+          //         }}
+          //       >
+          //         {item.toTextKey
+          //           ? t(item.toTextKey)
+          //           : t('notification.SeeDetail')}
+          //       </Button>
+          //     ) : null,
+          //   ]}
+          // >
+          //   <List.Item.Meta
+          //     title={item.message}
+          //     description={
+          //       <>
+          //         {item.description}
+          //         {item.backgroundTask && (
+          //           <Progress
+          //             size="small"
+          //             showInfo={false}
+          //             percent={item.backgroundTask.percent}
+          //             // status={item.progressStatus}
+          //           />
+          //         )}
+          //         <br />({dayjs(item.created).format('ll LTS')})
+          //       </>
+          //     }
+          //     avatar={
+          //       !!item.type && (
+          //         <Avatar
+          //           size="small"
+          //           icon={_.get(avatarMap, `${item.type}.icon`)}
+          //           style={{
+          //             backgroundColor: _.get(avatarMap, `${item.type}.color`),
+          //           }}
+          //         />
+          //       )
+          //     }
+          //   />
+          // </List.Item>
         )}
       />
     </Drawer>

@@ -202,9 +202,8 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
         description: _text('maintenance.RescanImageScanning'),
         backgroundTask: {
           percent: 0,
+          status: 'pending',
         },
-        progressPercent: 0,
-        progressStatus: 'active',
         duration: 0,
         open: true,
       },
@@ -225,11 +224,10 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
                 resolved: _text('maintenance.RescanImageFinished'),
                 rejected: _text('maintenance.RescanFailed'),
               },
+              status: 'pending',
+              percent: 0,
             },
-            progressPercent: 0,
-            progressStatus: 'active',
             duration: 0,
-            open: true,
           },
         });
         document.dispatchEvent(event);
@@ -425,6 +423,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
       'database',
       '',
       _text('maintenance.Recalculating'),
+      _text('maintenance.RecalculationFinished'),
     );
   }
 }

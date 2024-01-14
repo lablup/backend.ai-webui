@@ -136,7 +136,7 @@ export default class BackendAiTasker extends LitElement {
           status: 'pending',
           statusDescriptions: {
             pending: pendingDescription,
-            success: doneDescription,
+            resolved: doneDescription,
           },
         },
         duration: 0, // infinite
@@ -154,8 +154,7 @@ export default class BackendAiTasker extends LitElement {
             detail: {
               key,
               backgroundTask: {
-                status: 'success',
-                percent: 100,
+                status: 'resolved',
               },
             },
           });
@@ -166,9 +165,8 @@ export default class BackendAiTasker extends LitElement {
             detail: {
               key,
               backgroundTask: {
-                status: 'failed',
+                status: 'rejected',
               },
-              // description: doneMessage,
             },
           });
           document.dispatchEvent(event);

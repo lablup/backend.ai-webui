@@ -1,10 +1,12 @@
-import { useSuspendedBackendaiClient, useWebUINavigate } from '.';
-import { App, Button, Progress } from 'antd';
+import { useSuspendedBackendaiClient } from '.';
+import BAINotificationItem from '../components/BAINotificationItem';
+import { App } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
 import _ from 'lodash';
-import { useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Key, useCallback, useEffect, useRef } from 'react';
 import { atom, useRecoilState } from 'recoil';
+
+const _activeNotificationKeys: Key[] = [];
 
 export interface NotificationState extends Omit<ArgsProps, 'placement'> {
   created?: string;
@@ -34,209 +36,228 @@ export const useWebUINotification = () => {
     notificationListState,
   );
   const app = App.useApp();
-  const webuiNavigate = useWebUINavigate();
-  const { t } = useTranslation();
 
-  const runningTaskIdsRef = useRef<(string | undefined)[]>([]);
+  const listeningTaskIdsRef = useRef<(string | undefined)[]>([]);
+  // const closedNotificationKeysRef = useRef<(React.Key | undefined)[]>([]);
 
   const baiClient = useSuspendedBackendaiClient();
-  const addNotification = (params: Omit<NotificationState, 'created'>) => {
-    const existingIndex = params.key
-      ? _.findIndex(notifications, { key: params.key })
-      : -1;
-    const previousNotification =
-      existingIndex >= 0 ? notifications[existingIndex] : undefined;
 
-    const shouldOpen =
-      (existingIndex < 0 && params.open !== false) || // new
-      (params.open === true && notifications[existingIndex].open !== false); // existing not already closed
-
-    const newNotification: NotificationState = _.merge(
-      {}, // start with empty object
-      notifications[existingIndex],
-      params,
-      {
-        created: new Date().toISOString(),
-      },
-    );
-
-    // override description if background task
-    newNotification.description =
-      newNotification.backgroundTask?.status &&
-      newNotification.backgroundTask?.statusDescriptions?.[
-        newNotification.backgroundTask?.status
-      ]
-        ? newNotification.backgroundTask?.statusDescriptions?.[
-            newNotification.backgroundTask?.status
-          ]
-        : newNotification.description;
-
-    if (
-      newNotification.backgroundTask?.taskId &&
-      !_.includes(
-        runningTaskIdsRef.current,
-        newNotification.backgroundTask?.taskId,
-      )
-    ) {
-      // sse and update progress
-      runningTaskIdsRef.current.push(newNotification.backgroundTask?.taskId);
-      const sse: EventSource = baiClient.maintenance.attach_background_task(
-        newNotification.backgroundTask?.taskId,
-      );
-      sse.onerror = (e) => {
-        sse.close();
-      };
-      sse.addEventListener('bgtask_updated', (e) => {
-        const data = JSON.parse(e['data']);
-        const ratio = data.current_progress / data.total_progress;
-        addNotification({
-          ...newNotification,
-          backgroundTask: {
-            ...newNotification.backgroundTask,
-            status: 'pending',
-            percent: ratio * 100,
-          },
-        });
-      });
-      sse.addEventListener('bgtask_done', (e) => {
-        runningTaskIdsRef.current = _.without(
-          runningTaskIdsRef.current,
-          newNotification.backgroundTask?.taskId,
-        );
-        sse.close();
-        if (_.startsWith(_.toString(newNotification.key), 'image-rescan:')) {
-          const event = new CustomEvent('image-rescanned');
-          document.dispatchEvent(event);
-        }
-        addNotification({
-          ...newNotification,
-          backgroundTask: {
-            ...newNotification.backgroundTask,
-            status: 'resolved',
-            percent: 100,
-          },
-          duration: 1,
-        });
-      });
-      sse.addEventListener('bgtask_failed', (e) => {
-        runningTaskIdsRef.current = _.without(
-          runningTaskIdsRef.current,
-          newNotification.backgroundTask?.taskId,
-        );
-        sse.close();
-        const data = JSON.parse(e['data']);
-        const ratio = data.current_progress / data.total_progress;
-        addNotification({
-          ...newNotification,
-          backgroundTask: {
-            ...newNotification.backgroundTask,
-            status: 'rejected',
-            percent: ratio * 100,
-          },
-          duration: 1,
-        });
-      });
-      sse.addEventListener('bgtask_cancelled', (e) => {
-        runningTaskIdsRef.current = _.without(
-          runningTaskIdsRef.current,
-          newNotification.backgroundTask?.taskId,
-        );
-        sse.close();
-        const data = JSON.parse(e['data']);
-        const ratio = data.current_progress / data.total_progress;
-        addNotification({
-          ...newNotification,
-          backgroundTask: {
-            ...newNotification.backgroundTask,
-            status: 'rejected',
-            percent: ratio * 100,
-          },
-          duration: 1,
-        });
-      });
-    }
-
-    if (existingIndex >= 0) {
-      setNotifications([
-        ...notifications.slice(0, existingIndex),
-        newNotification,
-        ...notifications.slice(existingIndex + 1),
-      ]);
-    } else {
-      setNotifications([newNotification, ...notifications]);
-    }
-
-    if (shouldOpen) {
-      app.notification.open({
-        ...newNotification,
-        placement: 'bottomRight',
-        description: (
-          <>
-            {newNotification.description}
-            {newNotification.backgroundTask && (
-              <Progress
-                size="small"
-                showInfo={false}
-                percent={newNotification.backgroundTask.percent}
-                // status={
-                //   {
-                //     pending: 'active',
-                //     resolved: 'success',
-                //     reject: 'exception',
-                //   }[newNotification.backgroundTask.status] || 'normal'
-                // }
-              />
-            )}
-          </>
-        ),
-        btn: newNotification.toUrl ? (
-          <Button
-            type="link"
-            rel="noreferrer noopener"
-            onClick={(e) => {
-              newNotification.toUrl && webuiNavigate(newNotification.toUrl);
-            }}
-          >
-            {newNotification.toTextKey
-              ? t(newNotification.toTextKey)
-              : t('notification.SeeDetail')}
-          </Button>
-        ) : null,
-        onClose() {
-          const idx = _.findIndex(notifications, { key: newNotification.key });
-          if (idx >= 0) {
-            setNotifications((prevList) => {
-              const newList = [...prevList];
-              newList[idx] = {
-                ...newList[idx],
-                open: false,
-              };
-              return newList;
-            });
-          }
-        },
-      });
-    } else if (newNotification.open === false && newNotification.key) {
-      destroyNotification(newNotification.key);
-    }
-  };
-
-  const clearAllNotifications = () => {
+  const clearAllNotifications = useCallback(() => {
     setNotifications([]);
-  };
+  }, [setNotifications]);
 
-  const destroyNotification = (key: React.Key) => {
-    app.notification.destroy(key);
-  };
+  const destroyNotification = useCallback(
+    (key: React.Key) => {
+      app.notification.destroy(key);
+    },
+    [app.notification],
+  );
 
-  const destroyAllNotifications = () => {
+  const destroyAllNotifications = useCallback(() => {
     app.notification.destroy();
-  };
+  }, [app.notification]);
+
+  const upsertNotification = useCallback(
+    (params: Omit<NotificationState, 'created'>) => {
+      const existingIndex = params.key
+        ? _.findIndex(notifications, { key: params.key })
+        : -1;
+
+      const newNotification: NotificationState = _.merge(
+        {}, // start with empty object
+        notifications[existingIndex],
+        params,
+        {
+          created: new Date().toISOString(),
+        },
+      );
+
+      const shouldUpdateUsingAPI =
+        (_.isEmpty(params.key) && params.open) ||
+        // if it is already open, then apply change to ant.d notification
+        (newNotification.key &&
+          _activeNotificationKeys.includes(newNotification.key)) ||
+        // if it is not open and params.open is true, then apply change to ant.d notification
+        (newNotification.key &&
+          !_activeNotificationKeys.includes(newNotification.key) &&
+          params.open);
+
+      // override description if background task
+      newNotification.description =
+        newNotification.backgroundTask?.status &&
+        newNotification.backgroundTask?.statusDescriptions?.[
+          newNotification.backgroundTask?.status
+        ]
+          ? newNotification.backgroundTask?.statusDescriptions?.[
+              newNotification.backgroundTask?.status
+            ]
+          : newNotification.description;
+
+      if (existingIndex >= 0) {
+        setNotifications([
+          ...notifications.slice(0, existingIndex),
+          newNotification,
+          ...notifications.slice(existingIndex + 1),
+        ]);
+      } else {
+        setNotifications((prevNotifications) => {
+          const newNotifications = [newNotification, ...prevNotifications];
+          // If the number of notifications exceeds 100, remove the oldest ones
+          if (newNotifications.length > 100) {
+            return newNotifications.slice(newNotifications.length - 100);
+          }
+          return newNotifications;
+        });
+      }
+
+      if (shouldUpdateUsingAPI) {
+        if (
+          newNotification.key &&
+          newNotification.open &&
+          _activeNotificationKeys.includes(newNotification.key) === false
+        ) {
+          _activeNotificationKeys.push(newNotification.key);
+        }
+
+        app.notification.open({
+          ...newNotification,
+          placement: 'bottomRight',
+          message: undefined,
+          description: <BAINotificationItem notification={newNotification} />,
+          onClose() {
+            _.remove(
+              _activeNotificationKeys,
+              (key) => key === newNotification.key,
+            );
+            const idx = _.findIndex(notifications, {
+              key: newNotification.key,
+            });
+            if (idx >= 0) {
+              setNotifications((prevList) => {
+                const newList = [...prevList];
+                newList[idx] = {
+                  ...newList[idx],
+                  open: false,
+                };
+                return newList;
+              });
+            }
+          },
+        });
+      } else if (newNotification.open === false && newNotification.key) {
+        destroyNotification(newNotification.key);
+      }
+    },
+    [notifications, app.notification, setNotifications, destroyNotification],
+  );
+
+  // listen to background task if a notification has a background task
+  // and not already listening
+  useEffect(() => {
+    _.each(notifications, (notification) => {
+      if (
+        notification.backgroundTask?.taskId &&
+        !_.includes(
+          listeningTaskIdsRef.current,
+          notification.backgroundTask?.taskId,
+        )
+      ) {
+        // sse and update progress
+        listeningTaskIdsRef.current.push(notification.backgroundTask?.taskId);
+        const sse: EventSource = baiClient.maintenance.attach_background_task(
+          notification.backgroundTask?.taskId,
+        );
+        sse.onerror = () => {
+          sse.close();
+        };
+        let count = 0;
+        sse.addEventListener(
+          'bgtask_updated',
+          _.throttle(
+            (e) => {
+              const data = JSON.parse(e['data']);
+              const ratio = data.current_progress / data.total_progress;
+              upsertNotification({
+                // ...notification,
+                key: notification.key,
+                message: notification.message,
+                backgroundTask: {
+                  // ...notification.backgroundTask,
+                  status: 'pending',
+                  percent: ratio * 100,
+                },
+              });
+            },
+            100,
+            // Set 'trailing' to false to ensure that the 'bgtask_done' will be handled at last.
+            { leading: true, trailing: false },
+          ),
+        );
+        sse.addEventListener('bgtask_done', () => {
+          listeningTaskIdsRef.current = _.without(
+            listeningTaskIdsRef.current,
+            notification.backgroundTask?.taskId,
+          );
+          sse.close();
+          if (_.startsWith(_.toString(notification.key), 'image-rescan:')) {
+            const event = new CustomEvent('image-rescanned');
+            document.dispatchEvent(event);
+          }
+          upsertNotification({
+            key: notification.key,
+            message: notification.message,
+            backgroundTask: {
+              status: 'resolved',
+              percent: 100,
+            },
+            duration: 1,
+          });
+        });
+        sse.addEventListener('bgtask_failed', (e) => {
+          listeningTaskIdsRef.current = _.without(
+            listeningTaskIdsRef.current,
+            notification.backgroundTask?.taskId,
+          );
+          sse.close();
+          const data = JSON.parse(e['data']);
+          const ratio = data.current_progress / data.total_progress;
+          upsertNotification({
+            key: notification.key,
+            message: notification.message,
+            backgroundTask: {
+              status: 'rejected',
+              percent: ratio * 100,
+            },
+            duration: 1,
+          });
+        });
+        sse.addEventListener('bgtask_cancelled', (e) => {
+          listeningTaskIdsRef.current = _.without(
+            listeningTaskIdsRef.current,
+            notification.backgroundTask?.taskId,
+          );
+          sse.close();
+          const data = JSON.parse(e['data']);
+          const ratio = data.current_progress / data.total_progress;
+          upsertNotification({
+            key: notification.key,
+            message: notification.message,
+            backgroundTask: {
+              // ...notification.backgroundTask,
+              status: 'rejected',
+              percent: ratio * 100,
+            },
+            duration: 1,
+          });
+        });
+      }
+    });
+  }, [notifications, upsertNotification]);
 
   return [
     notifications,
     {
-      addNotification,
+      addNotification: upsertNotification,
       clearAllNotifications,
       destroyNotification,
       destroyAllNotifications,
