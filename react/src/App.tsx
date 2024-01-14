@@ -3,12 +3,14 @@ import {
   DefaultProviders2,
   RoutingEventHandler,
 } from './components/DefaultProviders';
-import Information from './components/Information';
 import MainLayout from './components/MainLayout/MainLayout';
-import ServingListPage from './pages/ServingListPage';
+import React from 'react';
 import { FC } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
+
+const Information = React.lazy(() => import('./components/Information'));
+const ServingListPage = React.lazy(() => import('./pages/ServingListPage'));
 
 const router = createBrowserRouter([
   {
