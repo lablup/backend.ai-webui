@@ -1,4 +1,5 @@
 import { theme } from 'antd';
+import _ from 'lodash';
 import React from 'react';
 
 interface TextHighlighterProps {
@@ -18,7 +19,9 @@ const TextHighlighter: React.FC<TextHighlighterProps> = ({
     return <span>{children}</span>;
   } else {
     const { token } = theme.useToken() || '#F1A239';
-    const parts = children.split(new RegExp(`(${keyword})`, 'gi'));
+    const parts = children.split(
+      new RegExp(`(${_.escapeRegExp(keyword)})`, 'gi'),
+    );
 
     return (
       <span>
