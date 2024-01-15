@@ -47,27 +47,32 @@ const ErrorLogList: React.FC = () => {
       title: t('logs.TimeStamp'),
       dataIndex: 'formattedTimeStamp',
       key: 'timeStamp',
-      render: (value) => {
-        return _.isUndefined(value) || value === '' ? (
-          <div>-</div>
-        ) : (
-          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-        );
-      },
+      render: (value) => (
+        <div style={{ minWidth: 50 }}>
+          {_.isUndefined(value) || _.isEmpty(value) ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+          )}
+        </div>
+      ),
       fixed: 'left',
     },
     {
       title: t('logs.Status'),
       dataIndex: 'statusCode',
       key: 'status',
-      render: (value, record) =>
-        _.isUndefined(value) || value === '' ? (
-          <div>-</div>
-        ) : (
-          <TextHighlighter keyword={logSearch}>
-            {value + ' ' + record.statusText}
-          </TextHighlighter>
-        ),
+      render: (value, record) => (
+        <div style={{ minWidth: 50 }}>
+          {_.isUndefined(value) || _.isEmpty(value) ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>
+              {value + ' ' + record.statusText}
+            </TextHighlighter>
+          )}
+        </div>
+      ),
     },
     {
       title: t('logs.ErrorTitle'),
@@ -132,12 +137,15 @@ const ErrorLogList: React.FC = () => {
       title: t('logs.RequestUrl'),
       dataIndex: 'requestUrl',
       key: 'requestUrl',
-      render: (value) =>
-        value === '' ? (
-          <div>-</div>
-        ) : (
-          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-        ),
+      render: (value) => (
+        <div style={{ minWidth: 60 }}>
+          {_.isEmpty(value) ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+          )}
+        </div>
+      ),
     },
     {
       title: t('logs.Parameters'),
@@ -145,7 +153,7 @@ const ErrorLogList: React.FC = () => {
       key: 'requestParameter',
       render: (value) => (
         <div style={{ minWidth: 100 }}>
-          {_.isUndefined(value) || value === '' ? (
+          {_.isUndefined(value) || _.isEmpty(value) ? (
             '-'
           ) : (
             <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
