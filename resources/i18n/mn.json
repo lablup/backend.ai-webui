@@ -255,7 +255,8 @@
       "EnvironmentVariableNamePatternError": "Хувьсагчийн нэр үсэг эсвэл доогуур зураасаар эхлэх ёстой бөгөөд зөвхөн үсэг, тоо, доогуур зураас агуулсан байж болно.",
       "EnvironmentVariableDuplicateName": "Энэ хувьсагчийн нэр аль хэдийн байна.",
       "Template": "Сеанс загвар",
-      "EnableAutomaticShmem": "Автомат хуваалцсан санах ой"
+      "EnableAutomaticShmem": "Автомат хуваалцсан санах ой",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -868,7 +869,9 @@
     "Parameters": "Параметрүүд",
     "ErrorType": "Алдааны төрөл",
     "LogMessageRemoved": "Бүртгэлийн мессежүүдийг устгасан.",
-    "NoLogToDisplay": "Харуулах бүртгэл байхгүй"
+    "NoLogToDisplay": "Харуулах бүртгэл байхгүй",
+    "ShowOnlyError": "Зөвхөн алдаа харуулах",
+    "SearchLogs": "Лог хайх"
   },
   "resourcePolicy": {
     "Resources": "Нөөц",
@@ -1446,7 +1449,8 @@
     "ServiceNameRule": "Зөвхөн 4-24 үсэг тоо, доогуур зураас(_), зураас(-), цэг(.) оруулахыг зөвшөөрөх ба энэ нь үсэг, тоон тэмдэгтээр төгсөх ёстой.",
     "resources": "Нөөц",
     "Image": "Зураг",
-    "Owner": "Эзэмшигч"
+    "Owner": "Эзэмшигч",
+    "ServiceDelegatedFrom": "Загвар үйлчилгээг {{ createdUser }} үүсгэсэн боловч сессийн эрхийг {{ sessionOwner }}-д шилжүүлнэ."
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",

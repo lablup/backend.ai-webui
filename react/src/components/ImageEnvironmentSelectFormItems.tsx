@@ -1,4 +1,7 @@
-import { useBackendAIImageMetaData } from '../hooks';
+import {
+  useBackendAIImageMetaData,
+  useSuspendedBackendaiClient,
+} from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
@@ -36,6 +39,7 @@ export type ImageEnvironmentFormInput = {
     environment: string;
     version: string;
     image: Image | undefined;
+    manual?: string;
   };
 };
 
@@ -81,7 +85,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
 > = ({ filter, showPrivate }) => {
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
-  Form.useWatch('environments', { form, preserve: true });
+  const environments = Form.useWatch('environments', { form, preserve: true });
+  const baiClient = useSuspendedBackendaiClient();
 
   const [environmentSearch, setEnvironmentSearch] = useState('');
   const [versionSearch, setVersionSearch] = useState('');
@@ -129,6 +134,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
   // If not initial value, select first value
   // auto select when relative field is changed
   useEffect(() => {
+    if (!_.isEmpty(environments?.manual)) {
+      return;
+    }
     // if not initial value, select first value
     const nextEnvironmentName =
       form.getFieldValue('environments')?.environment ||
@@ -167,7 +175,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.getFieldValue('environments')?.environment]);
+  }, [environments?.environment, environments?.manual]);
 
   const imageGroups: ImageGroup[] = useMemo(
     () =>
@@ -267,7 +275,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         label={`${t('session.launcher.Environments')} / ${t(
           'session.launcher.Version',
         )}`}
-        rules={[{ required: true }]}
+        rules={[{ required: _.isEmpty(environments?.manual) }]}
         style={{ marginBottom: 10 }}
       >
         <Select
@@ -291,6 +299,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
               });
             }
           }}
+          disabled={
+            baiClient._config.allow_manual_image_name_for_session &&
+            !_.isEmpty(environments?.manual)
+          }
         >
           {fullNameMatchedImage ? (
             <Select.Option
@@ -440,7 +452,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
             <Form.Item
               className="image-environment-select-form-item"
               name={['environments', 'version']}
-              rules={[{ required: true }]}
+              rules={[{ required: _.isEmpty(environments?.manual) }]}
             >
               <Select
                 ref={versionSelectRef}
@@ -476,6 +488,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     {menu}
                   </>
                 )}
+                disabled={
+                  baiClient._config.allow_manual_image_name_for_session &&
+                  !_.isEmpty(environments?.manual)
+                }
               >
                 {_.map(
                   _.uniqBy(selectedEnvironmentGroup?.images, 'digest'),
@@ -570,6 +586,30 @@ const ImageEnvironmentSelectFormItems: React.FC<
             </Form.Item>
           );
         }}
+      </Form.Item>
+      <Form.Item
+        label={t('session.launcher.ManualImageName')}
+        name={['environments', 'manual']}
+        style={{
+          display: baiClient._config.allow_manual_image_name_for_session
+            ? 'block'
+            : 'none',
+        }}
+      >
+        <Input
+          allowClear
+          onChange={(value) => {
+            if (!_.isEmpty(value)) {
+              form.setFieldsValue({
+                environments: {
+                  environment: undefined,
+                  version: undefined,
+                  image: undefined,
+                },
+              });
+            }
+          }}
+        />
       </Form.Item>
       <Form.Item noStyle hidden name={['environments', 'image']}>
         <Input />

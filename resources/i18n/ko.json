@@ -255,7 +255,8 @@
       "EnterEnvironmentVariable": "변수 이름 입력해주세요.",
       "EnvironmentVariableNamePatternError": "변수 이름은 문자 또는 밑줄로 시작해야 하며 문자, 숫자, 밑줄만 포함할 수 있습니다.",
       "EnvironmentVariableDuplicateName": "이미 존재하는 변수명입니다.",
-      "EnableAutomaticShmem": "자동 공유메모리 설정"
+      "EnableAutomaticShmem": "자동 공유메모리 설정",
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -421,7 +422,8 @@
     "FormValidationFailed": "양식 유효성 검사 실패",
     "resources": "자원",
     "Image": "이미지",
-    "Owner": "소유자"
+    "Owner": "소유자",
+    "ServiceDelegatedFrom": "모델 서비스는 {{ createdUser }}에 의해 생성되지만 세션 소유권은 {{ sessionOwner }}에 위임됩니다."
   },
   "button": {
     "Cancel": "취소",
@@ -950,7 +952,9 @@
     "Parameters": "파라미터",
     "ErrorType": "에러 종류",
     "NoLogToDisplay": "로그 정보가 없습니다.",
-    "LogMessageRemoved": "로그 메시지가 삭제되었습니다."
+    "LogMessageRemoved": "로그 메시지가 삭제되었습니다.",
+    "ShowOnlyError": "에러만 표시",
+    "SearchLogs": "로그 검색"
   },
   "resourcePolicy": {
     "Resources": "자원",

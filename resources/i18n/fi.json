@@ -641,7 +641,9 @@
     "RequestUrl": "Pyyntö Url",
     "Status": "Tila",
     "TimeStamp": "Aikaleima",
-    "UpTo3000Logs": "(Enintään 3000 viimeisintä lokia)"
+    "UpTo3000Logs": "(Enintään 3000 viimeisintä lokia)",
+    "ShowOnlyError": "Vain näyttövirhe",
+    "SearchLogs": "Hakulokit"
   },
   "maintenance": {
     "CleanupImages": "Siivous Kuvat",
@@ -717,7 +719,8 @@
     "TrafficRatio": "Liikennesuhde",
     "YouAreAboutToTerminate": "Olet lopettamassa",
     "resources": "Resurssit",
-    "Owner": "Omistaja"
+    "Owner": "Omistaja",
+    "ServiceDelegatedFrom": "Mallipalvelun luo {{ createdUser }}, mutta istunnon omistusoikeus siirretään {{ sessionOwner }}:lle."
   },
   "notification": {
     "Initializing": "Aloitetaan...",
@@ -1132,7 +1135,8 @@
       "EnvironmentVariableDuplicateName": "Muuttujan nimi, joka on jo olemassa.",
       "ErrorCanNotExceedRemaining": "Ei voida asettaa suuremmaksi kuin jäljellä olevat resurssit ({{amount}}).",
       "EnableAutomaticShmem": "Automaattinen jaettu muisti",
-      "Template": "Istuntomalli"
+      "Template": "Istuntomalli",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",
