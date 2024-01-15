@@ -8,6 +8,7 @@ import {
   DeleteOutlined,
   SearchOutlined,
   SettingOutlined,
+  LoadingOutlined,
 } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
 import { Button, Typography, Table, Alert, Checkbox, Input, theme } from 'antd';
@@ -38,6 +39,7 @@ const ErrorLogList: React.FC = () => {
   const [logSearch, setLogSearch] = useState('');
   const [key, checkUpdate] = useUpdatableState('first');
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
+  const [isPendingSearchTransition, startSearchTransition] = useTransition();
 
   const columns: ColumnsType<logType> = [
     {
@@ -221,7 +223,9 @@ const ErrorLogList: React.FC = () => {
                 allowClear
                 prefix={<SearchOutlined />}
                 placeholder={t('logs.SearchLogs')}
-                onChange={(e) => setLogSearch(e.target.value)}
+                onChange={(e) => {
+                  startSearchTransition(() => setLogSearch(e.target.value));
+                }}
                 style={{
                   width: 200,
                 }}
@@ -256,6 +260,13 @@ const ErrorLogList: React.FC = () => {
         </Flex>
         <Table
           pagination={{ showSizeChanger: false }}
+          loading={
+            isPendingSearchTransition
+              ? {
+                  indicator: <LoadingOutlined />,
+                }
+              : false
+          }
           scroll={{ x: 'max-content', y: 'calc(100vh - 430px)' }}
           dataSource={
             checkedShowOnlyError
