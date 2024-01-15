@@ -10,18 +10,18 @@ import React, { useEffect } from 'react';
 interface Props extends ButtonProps {}
 
 const BAINotificationButton: React.FC<Props> = ({ ...props }) => {
-  const [notifications, { addNotification }] = useBAINotification();
+  const [notifications, { upsertNotification }] = useBAINotification();
   const [isOpenDrawer, { toggle: toggleDrawer }] = useToggle();
 
   useEffect(() => {
     const handler = (e: any) => {
-      addNotification(e.detail);
+      upsertNotification(e.detail);
     };
     document.addEventListener('add-bai-notification', handler);
     return () => {
       document.removeEventListener('add-bai-notification', handler);
     };
-  }, [addNotification]);
+  }, [upsertNotification]);
 
   const hasRunningBackgroundTask = _.some(notifications, (n) => {
     return n.backgroundTask?.status === 'pending';

@@ -71,6 +71,7 @@ export const useBAINotification = () => {
         notifications[existingIndex],
         params,
         {
+          key: params.key || uuidv4(),
           created: new Date().toISOString(),
         },
       );
@@ -96,7 +97,6 @@ export const useBAINotification = () => {
             ]
           : newNotification.description;
 
-      newNotification.key = newNotification.key || uuidv4();
       if (existingIndex >= 0) {
         setNotifications([
           ...notifications.slice(0, existingIndex),
@@ -263,7 +263,7 @@ export const useBAINotification = () => {
   return [
     notifications,
     {
-      addNotification: upsertNotification,
+      upsertNotification,
       clearAllNotifications,
       destroyNotification,
       destroyAllNotifications,
