@@ -11,6 +11,7 @@ import { RecoilRoot } from 'recoil';
 
 const Information = React.lazy(() => import('./components/Information'));
 const ServingListPage = React.lazy(() => import('./pages/ServingListPage'));
+const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 
 const router = createBrowserRouter([
   {
@@ -69,6 +70,7 @@ const router = createBrowserRouter([
       {
         path: '/environment',
         handle: { labelKey: 'webui.menu.Environments' },
+        Component: EnvironmentPage,
       },
       {
         path: '/agent',

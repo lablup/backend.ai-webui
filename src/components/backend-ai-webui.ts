@@ -1388,9 +1388,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         <!--<backend-ai-pipeline-view class="page" name="pipeline" ?active="${
           this._page === 'pipeline'
         }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-pipeline-view>-->
-        <backend-ai-environment-view class="page" name="environment" ?active="${
+        <!-- <backend-ai-environment-view class="page" name="environment" ?active="${
           this._page === 'environment'
-        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-environment-view>
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-environment-view> -->
         <backend-ai-settings-view class="page" name="settings" ?active="${
           this._page === 'settings'
         }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-settings-view>

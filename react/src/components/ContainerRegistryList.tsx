@@ -42,7 +42,9 @@ export type ContainerRegistry = NonNullable<
   >
 >[0];
 
-const ContainerRegistryList = () => {
+const ContainerRegistryList: React.FC<{
+  style?: React.CSSProperties;
+}> = ({ style }) => {
   const baiClient = useSuspendedBackendaiClient();
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
   const [isPendingReload, startReloadTransition] = useTransition();
@@ -198,6 +200,7 @@ const ContainerRegistryList = () => {
       align="stretch"
       style={{
         flex: 1,
+        ...style,
         // height: 'calc(100vh - 183px)',
       }}
     >
@@ -208,15 +211,6 @@ const ContainerRegistryList = () => {
         gap={'sm'}
         style={{ padding: token.paddingSM }}
       >
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => {
-            setIsNewModalOpen(true);
-          }}
-        >
-          {t('registry.AddRegistry')}
-        </Button>
         <Tooltip title={t('button.Refresh')}>
           <Button
             loading={isPendingReload}
@@ -228,6 +222,15 @@ const ContainerRegistryList = () => {
             }}
           />
         </Tooltip>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => {
+            setIsNewModalOpen(true);
+          }}
+        >
+          {t('registry.AddRegistry')}
+        </Button>
       </Flex>
       <Table
         scroll={{ x: 'max-content' }}
