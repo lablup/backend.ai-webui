@@ -19,10 +19,11 @@ import {
   Input,
   Row,
   Col,
+  theme,
 } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import _ from 'lodash';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type logType = NonNullable<{
@@ -39,12 +40,14 @@ type logType = NonNullable<{
 }>;
 const ErrorLogList: React.FC = () => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const [isOpenClearLogsModal, setIsOpenClearLogsModal] = useState(false);
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const [checkedShowOnlyError, setCheckedShowOnlyError] = useState(false);
   const [filteredLogData, setFilteredLogData] = useState<logType[]>([]);
   const [logSearch, setLogSearch] = useState('');
   const [key, checkUpdate] = useUpdatableState('first');
+  const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
 
   const columns: ColumnsType<logType> = [
     {
@@ -80,48 +83,60 @@ const ErrorLogList: React.FC = () => {
       title: t('logs.ErrorTitle'),
       dataIndex: 'title',
       key: 'errorTitle',
-      render: (value) =>
-        _.isUndefined(value) || value === '' ? (
-          <div>-</div>
-        ) : (
-          <TextHighlighter keyword={logSearch}>
-            {_.toString(value)}
-            {/* set toString because sometime value type is object */}
-          </TextHighlighter>
-        ),
+      render: (value) => (
+        <div style={{ minWidth: 50 }}>
+          {_.isEmpty(value) ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>
+              {_.toString(value)}
+              {/* set toString because sometime value type is object */}
+            </TextHighlighter>
+          )}
+        </div>
+      ),
     },
     {
       title: t('logs.ErrorMessage'),
       dataIndex: 'message',
       key: 'errorMessage',
-      render: (value) =>
-        value === '' ? (
-          <div>-</div>
-        ) : (
-          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-        ),
+      render: (value) => (
+        <div style={{ minWidth: 70 }}>
+          {_.isEmpty(value) ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+          )}
+        </div>
+      ),
     },
     {
       title: t('logs.ErrorType'),
       dataIndex: 'type',
       key: 'errorType',
-      render: (value) =>
-        value === '' ? (
-          <div>-</div>
-        ) : (
-          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-        ),
+      render: (value) => (
+        <div style={{ minWidth: 60 }}>
+          {_.isEmpty(value) ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+          )}
+        </div>
+      ),
     },
     {
       title: t('logs.Method'),
       dataIndex: 'requestMethod',
       key: 'method',
-      render: (value) =>
-        value === '' ? (
-          <div>-</div>
-        ) : (
-          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-        ),
+      render: (value) => (
+        <div style={{ minWidth: 60 }}>
+          {_.isEmpty(value) ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+          )}
+        </div>
+      ),
     },
     {
       title: t('logs.RequestUrl'),
@@ -193,16 +208,16 @@ const ErrorLogList: React.FC = () => {
           justify="space-between"
           align="middle"
           gutter={[0, 12]}
-          style={{ padding: 20 }}
+          style={{ padding: token.paddingMD }}
         >
           <Col>
-            <Flex gap="sm">
-              <Typography.Title level={4} style={{ margin: 0 }}>
+            <Flex direction="column" align="start">
+              <Typography.Title level={4} style={{ margin: 0, padding: 0 }}>
                 {t('logs.LogMessages')}
               </Typography.Title>
-              <Typography.Title level={4} style={{ margin: 0 }}>
+              <Typography.Text type="secondary">
                 {t('logs.UpTo3000Logs')}
-              </Typography.Title>
+              </Typography.Text>
             </Flex>
           </Col>
           <Col>
@@ -228,16 +243,17 @@ const ErrorLogList: React.FC = () => {
               </Col>
               <Col>
                 <Button
-                  type="link"
                   icon={<RedoOutlined />}
-                  onClick={() => checkUpdate()}
+                  loading={isPendingRefreshTransition}
+                  onClick={() => {
+                    startRefreshTransition(() => checkUpdate());
+                  }}
                 >
                   {t('button.Refresh')}
                 </Button>
               </Col>
               <Col>
                 <Button
-                  type="primary"
                   danger
                   icon={<DeleteOutlined />}
                   onClick={() => {
@@ -251,8 +267,8 @@ const ErrorLogList: React.FC = () => {
           </Col>
         </Row>
         <Table
-          pagination={{ showSizeChanger: false, position: ['bottomCenter'] }}
-          scroll={{ x: window.innerWidth, y: window.innerHeight - 500 }}
+          pagination={{ showSizeChanger: false }}
+          scroll={{ x: 'max-content', y: 'calc(100vh - 430px)' }}
           dataSource={
             checkedShowOnlyError
               ? _.filter(filteredLogData, (log) => {
@@ -270,7 +286,12 @@ const ErrorLogList: React.FC = () => {
           }}
         />
       </Flex>
-      <Flex justify="end">
+      <Flex
+        justify="end"
+        style={{
+          paddingRight: token.paddingXS,
+        }}
+      >
         <Button
           type="text"
           icon={<SettingOutlined />}
