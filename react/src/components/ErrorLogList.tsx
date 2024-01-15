@@ -153,7 +153,6 @@ const ErrorLogList: React.FC = () => {
       title: t('logs.Parameters'),
       dataIndex: 'requestParameters',
       key: 'requestParameter',
-      width: 400,
       render: (value) =>
         _.isUndefined(value) || value === '' ? (
           <div>-</div>
