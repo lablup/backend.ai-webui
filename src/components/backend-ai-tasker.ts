@@ -8,34 +8,34 @@ import { v4 as uuidv4 } from 'uuid';
 
 type AdditionalTaskRequest = 'remove-later' | 'remove-immediately';
 
-// class Task {
-//   tasktitle: string;
-//   taskid: string;
-//   taskobj?: Record<string, unknown>;
-//   tasktype: string;
-//   status: string;
-//   created_at: number;
-//   finished_at: number;
+class Task {
+  tasktitle: string;
+  taskid: string;
+  taskobj?: Record<string, unknown>;
+  tasktype: string;
+  status: string;
+  created_at: number;
+  finished_at: number;
 
-//   constructor(
-//     title: string,
-//     obj: Record<string, unknown>,
-//     taskid: string,
-//     tasktype: string,
-//   ) {
-//     this.tasktitle = title;
-//     this.taskid = taskid;
-//     this.taskobj = obj;
-//     this.tasktype = tasktype;
-//     this.created_at = Date.now();
-//     this.finished_at = 0;
-//     this.status = 'active';
-//   }
+  constructor(
+    title: string,
+    obj: Record<string, unknown>,
+    taskid: string,
+    tasktype: string,
+  ) {
+    this.tasktitle = title;
+    this.taskid = taskid;
+    this.taskobj = obj;
+    this.tasktype = tasktype;
+    this.created_at = Date.now();
+    this.finished_at = 0;
+    this.status = 'active';
+  }
 
-//   remove() {
-//     delete this.taskobj;
-//   }
-// }
+  remove() {
+    delete this.taskobj;
+  }
+}
 
 /**
  Backend.AI Task manager for Console
@@ -156,6 +156,7 @@ export default class BackendAiTasker extends LitElement {
               backgroundTask: {
                 status: 'resolved',
               },
+              duration: 1,
             },
           });
           document.dispatchEvent(event);
@@ -167,6 +168,7 @@ export default class BackendAiTasker extends LitElement {
               backgroundTask: {
                 status: 'rejected',
               },
+              duration: 1,
             },
           });
           document.dispatchEvent(event);
