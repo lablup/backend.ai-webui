@@ -65,7 +65,7 @@ function MainLayout() {
         <Content>
           <Suspense
             fallback={
-              <Layout.Header style={{ visibility: 'hidden', opacity: 0 }} />
+              <Layout.Header style={{ visibility: 'hidden', height: 62 }} />
             }
           >
             <WebUIHeader onClickMenuIcon={() => setSideCollapsed((v) => !v)} />
