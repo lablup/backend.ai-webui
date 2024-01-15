@@ -8,12 +8,14 @@ import {
   DeleteOutlined,
   SearchOutlined,
   SettingOutlined,
+  LoadingOutlined,
 } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
 import { Button, Typography, Table, Alert, Checkbox, Input, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { useState, useMemo, useEffect, useTransition } from 'react';
+import React, { useState, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type logType = NonNullable<{
@@ -27,6 +29,7 @@ type logType = NonNullable<{
   type: string;
   requestUrl: string;
   requestParameters?: string;
+  formattedTimestamp?: string; // for display only
 }>;
 const ErrorLogList: React.FC = () => {
   const { t } = useTranslation();
@@ -34,40 +37,42 @@ const ErrorLogList: React.FC = () => {
   const [isOpenClearLogsModal, setIsOpenClearLogsModal] = useState(false);
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const [checkedShowOnlyError, setCheckedShowOnlyError] = useState(false);
-  const [filteredLogData, setFilteredLogData] = useState<logType[]>([]);
   const [logSearch, setLogSearch] = useState('');
   const [key, checkUpdate] = useUpdatableState('first');
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
+  const [isPendingSearchTransition, startSearchTransition] = useTransition();
 
   const columns: ColumnsType<logType> = [
     {
       title: t('logs.TimeStamp'),
-      dataIndex: 'timestamp',
+      dataIndex: 'formattedTimeStamp',
       key: 'timeStamp',
-      render: (value) => {
-        const date = new Date(value);
-        return _.isUndefined(value) || value === '' ? (
-          <div>-</div>
-        ) : (
-          <TextHighlighter keyword={logSearch}>
-            {date.toLocaleString('en-US', { hour12: false })}
-          </TextHighlighter>
-        );
-      },
+      render: (value) => (
+        <div style={{ minWidth: 50 }}>
+          {_.isUndefined(value) ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+          )}
+        </div>
+      ),
       fixed: 'left',
     },
     {
       title: t('logs.Status'),
       dataIndex: 'statusCode',
       key: 'status',
-      render: (value, record) =>
-        _.isUndefined(value) || value === '' ? (
-          <div>-</div>
-        ) : (
-          <TextHighlighter keyword={logSearch}>
-            {value + ' ' + record.statusText}
-          </TextHighlighter>
-        ),
+      render: (value, record) => (
+        <div style={{ minWidth: 50 }}>
+          {_.isUndefined(value) ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>
+              {value + ' ' + record.statusText}
+            </TextHighlighter>
+          )}
+        </div>
+      ),
     },
     {
       title: t('logs.ErrorTitle'),
@@ -75,7 +80,7 @@ const ErrorLogList: React.FC = () => {
       key: 'errorTitle',
       render: (value) => (
         <div style={{ minWidth: 50 }}>
-          {_.isEmpty(value) ? (
+          {!value ? (
             '-'
           ) : (
             <TextHighlighter keyword={logSearch}>
@@ -92,7 +97,7 @@ const ErrorLogList: React.FC = () => {
       key: 'errorMessage',
       render: (value) => (
         <div style={{ minWidth: 70 }}>
-          {_.isEmpty(value) ? (
+          {!value ? (
             '-'
           ) : (
             <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
@@ -106,7 +111,7 @@ const ErrorLogList: React.FC = () => {
       key: 'errorType',
       render: (value) => (
         <div style={{ minWidth: 60 }}>
-          {_.isEmpty(value) ? (
+          {!value ? (
             '-'
           ) : (
             <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
@@ -120,7 +125,7 @@ const ErrorLogList: React.FC = () => {
       key: 'method',
       render: (value) => (
         <div style={{ minWidth: 60 }}>
-          {_.isEmpty(value) ? (
+          {!value ? (
             '-'
           ) : (
             <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
@@ -132,12 +137,15 @@ const ErrorLogList: React.FC = () => {
       title: t('logs.RequestUrl'),
       dataIndex: 'requestUrl',
       key: 'requestUrl',
-      render: (value) =>
-        value === '' ? (
-          <div>-</div>
-        ) : (
-          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-        ),
+      render: (value) => (
+        <div style={{ minWidth: 60 }}>
+          {!value ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+          )}
+        </div>
+      ),
     },
     {
       title: t('logs.Parameters'),
@@ -145,7 +153,7 @@ const ErrorLogList: React.FC = () => {
       key: 'requestParameter',
       render: (value) => (
         <div style={{ minWidth: 100 }}>
-          {_.isUndefined(value) || value === '' ? (
+          {!value ? (
             '-'
           ) : (
             <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
@@ -163,28 +171,29 @@ const ErrorLogList: React.FC = () => {
   );
 
   const storageLogData = useMemo(() => {
-    return JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]');
+    const raw = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]');
+    return _.map(raw, (log) => {
+      return {
+        ...log,
+        formattedTimeStamp: dayjs(log.timestamp).format('lll'),
+      };
+    });
     // Add blow comment because eslint dependency
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
-  useEffect(() => {
-    setFilteredLogData(
-      _.filter(storageLogData, (log) => {
-        return _.map(_.keysIn(log), (key) => {
-          if (key === 'timestamp') {
-            //timestamp need to change LocaleString
-            const date = new Date(log[key]);
-            return RegExp(`\\w*${logSearch.toLowerCase()}\\w*`).test(
-              date.toLocaleString('en-US', { hour12: false }),
-            );
-          }
-          return RegExp(`\\w*${logSearch.toLowerCase()}\\w*`).test(
-            _.toString(log[key]).toLowerCase(),
-          );
-        }).includes(true);
-      }),
-    );
+  const filteredLogData = useMemo(() => {
+    const regExp = new RegExp(`${_.escapeRegExp(logSearch)}`, 'i');
+    return _.filter(storageLogData, (log) => {
+      if (!logSearch) return true;
+      return !!_.find(log, (value, key) => {
+        if (key === 'timestamp') {
+          // timestamp is not display in table, use formattedTimestamp instead
+          return false;
+        }
+        return _.toString(value).match(regExp);
+      });
+    });
   }, [logSearch, storageLogData]);
 
   const handleOk = () => {
@@ -215,13 +224,20 @@ const ErrorLogList: React.FC = () => {
               {t('logs.UpTo3000Logs')}
             </Typography.Text>
           </Flex>
-          <Flex direction="row" gap={'xs'} wrap="wrap">
+          <Flex
+            direction="row"
+            gap={'xs'}
+            wrap="wrap"
+            style={{ flexShrink: 1 }}
+          >
             <Flex gap={'xs'}>
               <Input
                 allowClear
                 prefix={<SearchOutlined />}
                 placeholder={t('logs.SearchLogs')}
-                onChange={(e) => setLogSearch(e.target.value)}
+                onChange={(e) => {
+                  startSearchTransition(() => setLogSearch(e.target.value));
+                }}
                 style={{
                   width: 200,
                 }}
@@ -256,6 +272,13 @@ const ErrorLogList: React.FC = () => {
         </Flex>
         <Table
           pagination={{ showSizeChanger: false }}
+          loading={
+            isPendingSearchTransition
+              ? {
+                  indicator: <LoadingOutlined />,
+                }
+              : false
+          }
           scroll={{ x: 'max-content', y: 'calc(100vh - 430px)' }}
           dataSource={
             checkedShowOnlyError
