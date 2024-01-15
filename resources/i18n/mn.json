@@ -869,7 +869,9 @@
     "Parameters": "Параметрүүд",
     "ErrorType": "Алдааны төрөл",
     "LogMessageRemoved": "Бүртгэлийн мессежүүдийг устгасан.",
-    "NoLogToDisplay": "Харуулах бүртгэл байхгүй"
+    "NoLogToDisplay": "Харуулах бүртгэл байхгүй",
+    "ShowOnlyError": "Зөвхөн алдаа харуулах",
+    "SearchLogs": "Лог хайх"
   },
   "resourcePolicy": {
     "Resources": "Нөөц",

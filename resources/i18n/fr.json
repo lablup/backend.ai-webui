@@ -869,7 +869,9 @@
     "Parameters": "Paramètres",
     "ErrorType": "Type d'erreur",
     "LogMessageRemoved": "Les messages de journal ont été supprimés.",
-    "NoLogToDisplay": "Aucun journal à afficher"
+    "NoLogToDisplay": "Aucun journal à afficher",
+    "ShowOnlyError": "Afficher uniquement l'erreur",
+    "SearchLogs": "Journaux de recherche"
   },
   "resourcePolicy": {
     "Resources": "Ressources",
