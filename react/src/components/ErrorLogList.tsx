@@ -49,7 +49,7 @@ const ErrorLogList: React.FC = () => {
       key: 'timeStamp',
       render: (value) => (
         <div style={{ minWidth: 50 }}>
-          {_.isUndefined(value) || _.isEmpty(value) ? (
+          {_.isUndefined(value) ? (
             '-'
           ) : (
             <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
@@ -80,7 +80,7 @@ const ErrorLogList: React.FC = () => {
       key: 'errorTitle',
       render: (value) => (
         <div style={{ minWidth: 50 }}>
-          {_.isEmpty(value) ? (
+          {!value ? (
             '-'
           ) : (
             <TextHighlighter keyword={logSearch}>
@@ -97,7 +97,7 @@ const ErrorLogList: React.FC = () => {
       key: 'errorMessage',
       render: (value) => (
         <div style={{ minWidth: 70 }}>
-          {_.isEmpty(value) ? (
+          {!value ? (
             '-'
           ) : (
             <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
@@ -111,7 +111,7 @@ const ErrorLogList: React.FC = () => {
       key: 'errorType',
       render: (value) => (
         <div style={{ minWidth: 60 }}>
-          {_.isEmpty(value) ? (
+          {!value ? (
             '-'
           ) : (
             <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
@@ -125,7 +125,7 @@ const ErrorLogList: React.FC = () => {
       key: 'method',
       render: (value) => (
         <div style={{ minWidth: 60 }}>
-          {_.isEmpty(value) ? (
+          {!value ? (
             '-'
           ) : (
             <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
@@ -139,7 +139,7 @@ const ErrorLogList: React.FC = () => {
       key: 'requestUrl',
       render: (value) => (
         <div style={{ minWidth: 60 }}>
-          {_.isEmpty(value) ? (
+          {!value ? (
             '-'
           ) : (
             <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
@@ -153,7 +153,7 @@ const ErrorLogList: React.FC = () => {
       key: 'requestParameter',
       render: (value) => (
         <div style={{ minWidth: 100 }}>
-          {_.isUndefined(value) || _.isEmpty(value) ? (
+          {!value ? (
             '-'
           ) : (
             <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
@@ -185,7 +185,7 @@ const ErrorLogList: React.FC = () => {
   const filteredLogData = useMemo(() => {
     const regExp = new RegExp(`${_.escapeRegExp(logSearch)}`, 'i');
     return _.filter(storageLogData, (log) => {
-      if (_.isEmpty(logSearch)) return true;
+      if (!logSearch) return true;
       return !!_.find(log, (value, key) => {
         if (key === 'timestamp') {
           // timestamp is not display in table, use formattedTimestamp instead
