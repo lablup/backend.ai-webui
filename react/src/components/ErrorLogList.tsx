@@ -165,7 +165,6 @@ const ErrorLogList: React.FC = () => {
   const storageLogData = useMemo(() => {
     const raw = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]');
     return _.map(raw, (log) => {
-      console.log(log.timestamp);
       return {
         ...log,
         formattedTimeStamp: dayjs(log.timestamp).format('lll'),
@@ -217,7 +216,12 @@ const ErrorLogList: React.FC = () => {
               {t('logs.UpTo3000Logs')}
             </Typography.Text>
           </Flex>
-          <Flex direction="row" gap={'xs'} wrap="wrap">
+          <Flex
+            direction="row"
+            gap={'xs'}
+            wrap="wrap"
+            style={{ flexShrink: 1 }}
+          >
             <Flex gap={'xs'}>
               <Input
                 allowClear
