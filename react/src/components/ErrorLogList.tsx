@@ -10,17 +10,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
-import {
-  Button,
-  Typography,
-  Table,
-  Alert,
-  Checkbox,
-  Input,
-  Row,
-  Col,
-  theme,
-} from 'antd';
+import { Button, Typography, Table, Alert, Checkbox, Input, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import _ from 'lodash';
 import React, { useState, useMemo, useEffect, useTransition } from 'react';
@@ -153,12 +143,15 @@ const ErrorLogList: React.FC = () => {
       title: t('logs.Parameters'),
       dataIndex: 'requestParameters',
       key: 'requestParameter',
-      render: (value) =>
-        _.isUndefined(value) || value === '' ? (
-          <div>-</div>
-        ) : (
-          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-        ),
+      render: (value) => (
+        <div style={{ minWidth: 100 }}>
+          {_.isUndefined(value) || value === '' ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+          )}
+        </div>
+      ),
     },
   ];
 
@@ -203,68 +196,64 @@ const ErrorLogList: React.FC = () => {
   return (
     <>
       <Flex direction="column" align="stretch">
-        <Row
-          justify="space-between"
-          align="middle"
-          gutter={[0, 12]}
-          style={{ padding: token.paddingMD }}
+        <Flex
+          direction="row"
+          justify="between"
+          wrap="wrap"
+          gap={'xs'}
+          style={{
+            padding: token.paddingContentVertical,
+            paddingLeft: token.paddingContentHorizontalSM,
+            paddingRight: token.paddingContentHorizontalSM,
+          }}
         >
-          <Col>
-            <Flex direction="column" align="start">
-              <Typography.Title level={4} style={{ margin: 0, padding: 0 }}>
-                {t('logs.LogMessages')}
-              </Typography.Title>
-              <Typography.Text type="secondary">
-                {t('logs.UpTo3000Logs')}
-              </Typography.Text>
+          <Flex direction="column" align="start">
+            <Typography.Title level={4} style={{ margin: 0, padding: 0 }}>
+              {t('logs.LogMessages')}
+            </Typography.Title>
+            <Typography.Text type="secondary">
+              {t('logs.UpTo3000Logs')}
+            </Typography.Text>
+          </Flex>
+          <Flex direction="row" gap={'xs'} wrap="wrap">
+            <Flex gap={'xs'}>
+              <Input
+                allowClear
+                prefix={<SearchOutlined />}
+                placeholder={t('logs.SearchLogs')}
+                onChange={(e) => setLogSearch(e.target.value)}
+                style={{
+                  width: 200,
+                }}
+              />
+              <Checkbox
+                onChange={(e) => setCheckedShowOnlyError(e.target.checked)}
+              >
+                {t('logs.ShowOnlyError')}
+              </Checkbox>
             </Flex>
-          </Col>
-          <Col>
-            <Row align="middle" gutter={[12, 12]}>
-              <Col xs={24} lg={9}>
-                <Input
-                  allowClear
-                  prefix={<SearchOutlined />}
-                  placeholder={t('logs.SearchLogs')}
-                  onChange={(e) => setLogSearch(e.target.value)}
-                />
-              </Col>
-              {/*
-              Add checkbox because Table filter has an error by shadowRoot 
-              todo: remove below Checkbox and add Table's filter props
-            */}
-              <Col>
-                <Checkbox
-                  onChange={(e) => setCheckedShowOnlyError(e.target.checked)}
-                >
-                  {t('logs.ShowOnlyError')}
-                </Checkbox>
-              </Col>
-              <Col>
-                <Button
-                  icon={<RedoOutlined />}
-                  loading={isPendingRefreshTransition}
-                  onClick={() => {
-                    startRefreshTransition(() => checkUpdate());
-                  }}
-                >
-                  {t('button.Refresh')}
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  danger
-                  icon={<DeleteOutlined />}
-                  onClick={() => {
-                    setIsOpenClearLogsModal(true);
-                  }}
-                >
-                  {t('button.ClearLogs')}
-                </Button>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+            <Flex gap={'xs'}>
+              <Button
+                icon={<RedoOutlined />}
+                loading={isPendingRefreshTransition}
+                onClick={() => {
+                  startRefreshTransition(() => checkUpdate());
+                }}
+              >
+                {t('button.Refresh')}
+              </Button>
+              <Button
+                danger
+                icon={<DeleteOutlined />}
+                onClick={() => {
+                  setIsOpenClearLogsModal(true);
+                }}
+              >
+                {t('button.ClearLogs')}
+              </Button>
+            </Flex>
+          </Flex>
+        </Flex>
         <Table
           pagination={{ showSizeChanger: false }}
           scroll={{ x: 'max-content', y: 'calc(100vh - 430px)' }}
