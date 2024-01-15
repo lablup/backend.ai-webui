@@ -42,4 +42,4 @@ const TextHighlighter: React.FC<TextHighlighterProps> = ({
   }
 };
 
-export default TextHighlighter;
+export default React.memo(TextHighlighter);
