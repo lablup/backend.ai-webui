@@ -15,7 +15,7 @@ import { Button, Typography, Table, Alert, Checkbox, Input, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { useState, useMemo, useEffect, useTransition } from 'react';
+import React, { useState, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type logType = NonNullable<{
