@@ -378,9 +378,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       { once: true },
     );
     document.addEventListener('move-to-from-react', (e) => {
-      // this._moveTo(e.detail.path, e.detail.params);
-      const params = e.detail.params;
-      const path = e.detail.path;
+      const params = (e as CustomEvent).detail.params;
+      const path = (e as CustomEvent).detail.path;
       store.dispatch(navigate(decodeURIComponent(path), params));
     });
     document.addEventListener('show-TOS-agreement', () => {
