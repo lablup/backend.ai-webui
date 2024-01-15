@@ -64,7 +64,7 @@ const ErrorLogList: React.FC = () => {
       key: 'status',
       render: (value, record) => (
         <div style={{ minWidth: 50 }}>
-          {_.isUndefined(value) || _.isEmpty(value) ? (
+          {_.isUndefined(value) ? (
             '-'
           ) : (
             <TextHighlighter keyword={logSearch}>
