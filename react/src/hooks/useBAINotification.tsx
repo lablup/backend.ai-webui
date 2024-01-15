@@ -5,6 +5,7 @@ import { ArgsProps } from 'antd/lib/notification';
 import _ from 'lodash';
 import { Key, useCallback, useEffect, useRef } from 'react';
 import { atom, useRecoilState } from 'recoil';
+import { v4 as uuidv4 } from 'uuid';
 
 const _activeNotificationKeys: Key[] = [];
 
@@ -95,7 +96,7 @@ export const useBAINotification = () => {
             ]
           : newNotification.description;
 
-      newNotification.key = newNotification.key || _.uniqueId('notification-');
+      newNotification.key = newNotification.key || uuidv4();
       if (existingIndex >= 0) {
         setNotifications([
           ...notifications.slice(0, existingIndex),
