@@ -313,7 +313,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     const requestedApp = urlParams.get('app') || 'jupyter';
     let parsedAppName = requestedApp;
     // `requestedApp` is a default value of `sessionTemplateName` for backward compatibility
-    let sessionTemplateName =
+    const sessionTemplateName =
       urlParams.get('session_template') ||
       urlParams.get('sessionTemplate') ||
       requestedApp;
@@ -328,9 +328,9 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
     let sessionTemplates;
     try {
-      const _sessionTemplates =
+      sessionTemplates =
         await globalThis.backendaiclient.sessionTemplate.list(false);
-      sessionTemplates = _sessionTemplates.filter(
+      sessionTemplates = sessionTemplates.filter(
         (t) => t.name === sessionTemplateName,
       );
     } catch (err) {
@@ -362,28 +362,30 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     let sessionId: string | null | unknown;
     if (sessions.compute_session_list.total_count > 0) {
       console.log('Reusing an existing session ...');
-      const sessionStatus = sessions.compute_session_list.items[0].status;
-      if (sessionStatus !== 'RUNNING') {
-        this.appLauncher.indicator.end();
-        this.notification.text =
-          _text('eduapi.sessionStatusIs') +
-          ` ${sessionStatus}. ` +
-          _text('eduapi.PleaseReload');
-        this.notification.show(true);
-        return;
-      }
       let sess: Record<string, unknown> | null = null;
       for (let i = 0; i < sessions.compute_session_list.items.length; i++) {
         const _sess = sessions.compute_session_list.items[i];
-        const usedImage = _sess.image;
+        const sessionImage = _sess.image;
         const servicePorts = JSON.parse(_sess.service_ports || '{}');
         const services = servicePorts.map((s) => s.name);
-        if (usedImage != requestedSessionTemplate.template.spec.kernel.image) {
+        const sessionStatus = _sess.status;
+        if (
+          sessionImage != requestedSessionTemplate.template.spec.kernel.image
+        ) {
           this.appLauncher.indicator.end();
           const errText =
             'Cannot create a session with an image different from any running session.';
           this.notification.text = PainKiller.relieve(errText);
           this.notification.show(true, errText);
+          return;
+        }
+        if (sessionStatus !== 'RUNNING') {
+          this.appLauncher.indicator.end();
+          this.notification.text =
+            _text('eduapi.sessionStatusIs') +
+            ` ${sessionStatus}. ` +
+            _text('eduapi.PleaseReload');
+          this.notification.show(true);
           return;
         }
         if (services.includes(parsedAppName)) {
