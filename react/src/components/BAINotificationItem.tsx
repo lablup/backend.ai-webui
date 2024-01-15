@@ -1,4 +1,4 @@
-import { NotificationState } from '../hooks/useNotifiction';
+import { NotificationState } from '../hooks/useBAINotification';
 import Flex from './Flex';
 import {
   CheckCircleOutlined,

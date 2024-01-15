@@ -1,24 +1,8 @@
 import { useWebUINavigate } from '../hooks';
-import { useWebUINotification } from '../hooks/useNotifiction';
+import { useBAINotification } from '../hooks/useBAINotification';
 import BAINotificationItem from './BAINotificationItem';
-import {
-  CheckOutlined,
-  CloseOutlined,
-  DeleteOutlined,
-  InfoOutlined,
-  QuestionCircleOutlined,
-} from '@ant-design/icons';
-import {
-  Drawer,
-  List,
-  type DrawerProps,
-  theme,
-  Avatar,
-  Button,
-  Popconfirm,
-  Progress,
-} from 'antd';
-import dayjs from 'dayjs';
+import { CheckOutlined, CloseOutlined, InfoOutlined } from '@ant-design/icons';
+import { Drawer, List, type DrawerProps, theme } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +14,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
 
   const webuiNavigate = useWebUINavigate();
 
-  const [notifications, { clearAllNotifications }] = useWebUINotification();
+  const [notifications, { clearAllNotifications }] = useBAINotification();
 
   const avatarMap = {
     success: { icon: <CheckOutlined />, color: token.colorSuccess },
@@ -49,31 +33,36 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
           paddingLeft: token.paddingContentHorizontalSM,
           paddingRight: token.paddingContentHorizontalSM,
         },
+        // header: {
+        //   height: 88,
+        // },
       }}
       contentWrapperStyle={{ padding: 0 }}
-      extra={
-        notifications.length > 0 && (
-          <Popconfirm
-            title={t('notification.ClearNotifications')}
-            description={t('notification.AreYouSureToClearAllNotifications')}
-            okButtonProps={{
-              danger: true,
-            }}
-            okText={t('button.Delete')}
-            onConfirm={clearAllNotifications}
-            icon={
-              <QuestionCircleOutlined style={{ color: token.colorError }} />
-            }
-          >
-            <Button danger type="text" icon={<DeleteOutlined />} />
-          </Popconfirm>
-        )
-      }
+      // comment out the following line because list item
+      // extra={
+      //   notifications.length > 0 && (
+      //     <Popconfirm
+      //       title={t('notification.ClearNotifications')}
+      //       description={t('notification.AreYouSureToClearAllNotifications')}
+      //       okButtonProps={{
+      //         danger: true,
+      //       }}
+      //       okText={t('button.Delete')}
+      //       onConfirm={clearAllNotifications}
+      //       icon={
+      //         <QuestionCircleOutlined style={{ color: token.colorError }} />
+      //       }
+      //     >
+      //       <Button danger type="text" icon={<DeleteOutlined />} />
+      //     </Popconfirm>
+      //   )
+      // }
       {...drawerProps}
     >
       <List
         itemLayout="vertical"
         dataSource={notifications}
+        rowKey={(item) => item.key}
         renderItem={(item) => (
           <BAINotificationItem
             notification={item}

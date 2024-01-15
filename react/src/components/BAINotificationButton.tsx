@@ -1,4 +1,4 @@
-import { useWebUINotification } from '../hooks/useNotifiction';
+import { useBAINotification } from '../hooks/useBAINotification';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
 import { BellOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
@@ -10,7 +10,7 @@ import React, { useEffect } from 'react';
 interface Props extends ButtonProps {}
 
 const BAINotificationButton: React.FC<Props> = ({ ...props }) => {
-  const [notifications, { addNotification }] = useWebUINotification();
+  const [notifications, { addNotification }] = useBAINotification();
   const [isOpenDrawer, { toggle: toggleDrawer }] = useToggle();
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const BAINotificationButton: React.FC<Props> = ({ ...props }) => {
       <Button
         size="large"
         icon={
-          <Badge dot={hasRunningBackgroundTask ? true : false}>
+          <Badge dot={hasRunningBackgroundTask}>
             <BellOutlined />
           </Badge>
         }

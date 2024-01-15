@@ -8,7 +8,9 @@ import { atom, useRecoilState } from 'recoil';
 
 const _activeNotificationKeys: Key[] = [];
 
-export interface NotificationState extends Omit<ArgsProps, 'placement'> {
+export interface NotificationState
+  extends Omit<ArgsProps, 'placement' | 'key'> {
+  key: React.Key;
   created?: string;
   toTextKey?: string;
   toUrl?: string;
@@ -31,7 +33,7 @@ export const notificationListState = atom<NotificationState[]>({
   default: [],
 });
 
-export const useWebUINotification = () => {
+export const useBAINotification = () => {
   const [notifications, setNotifications] = useRecoilState(
     notificationListState,
   );
@@ -58,7 +60,7 @@ export const useWebUINotification = () => {
   }, [app.notification]);
 
   const upsertNotification = useCallback(
-    (params: Omit<NotificationState, 'created'>) => {
+    (params: Partial<Omit<NotificationState, 'created'>>) => {
       const existingIndex = params.key
         ? _.findIndex(notifications, { key: params.key })
         : -1;
@@ -93,6 +95,7 @@ export const useWebUINotification = () => {
             ]
           : newNotification.description;
 
+      newNotification.key = newNotification.key || _.uniqueId('notification-');
       if (existingIndex >= 0) {
         setNotifications([
           ...notifications.slice(0, existingIndex),
@@ -147,6 +150,8 @@ export const useWebUINotification = () => {
       } else if (newNotification.open === false && newNotification.key) {
         destroyNotification(newNotification.key);
       }
+
+      return newNotification;
     },
     [notifications, app.notification, setNotifications, destroyNotification],
   );
