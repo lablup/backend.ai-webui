@@ -869,7 +869,9 @@
     "Parameters": "Parametri",
     "ErrorType": "Tipo di errore",
     "LogMessageRemoved": "I messaggi di registro sono stati rimossi.",
-    "NoLogToDisplay": "Nessun registro da visualizzare"
+    "NoLogToDisplay": "Nessun registro da visualizzare",
+    "ShowOnlyError": "Visualizza solo errore",
+    "SearchLogs": "Cerca nei log"
   },
   "resourcePolicy": {
     "Resources": "risorse",

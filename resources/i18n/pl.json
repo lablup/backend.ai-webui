@@ -871,7 +871,9 @@
     "Parameters": "Parametry",
     "ErrorType": "Typ błędu",
     "LogMessageRemoved": "Komunikaty dziennika zostały usunięte.",
-    "NoLogToDisplay": "Brak dzienników do wyświetlenia"
+    "NoLogToDisplay": "Brak dzienników do wyświetlenia",
+    "ShowOnlyError": "Wyświetl tylko błąd",
+    "SearchLogs": "Przeszukaj logi"
   },
   "resourcePolicy": {
     "Resources": "Zasoby",

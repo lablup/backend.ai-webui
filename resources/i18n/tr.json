@@ -869,7 +869,9 @@
     "Parameters": "parametreler",
     "ErrorType": "Hata Türü",
     "LogMessageRemoved": "Günlük Mesajları kaldırıldı.",
-    "NoLogToDisplay": "Görüntülenecek Günlük Yok"
+    "NoLogToDisplay": "Görüntülenecek Günlük Yok",
+    "ShowOnlyError": "Yalnızca hatayı görüntüle",
+    "SearchLogs": "Günlüklerde arama yapın"
   },
   "resourcePolicy": {
     "Resources": "Kaynaklar",

@@ -17,18 +17,24 @@ const TextHighlighter: React.FC<TextHighlighterProps> = ({
   if (keyword === undefined) {
     return <span>{children}</span>;
   } else {
-    const keyIndex = children.toLowerCase().indexOf(keyword?.toLowerCase());
     const { token } = theme.useToken() || '#F1A239';
-    return keyIndex >= 0 ? (
+    const parts = children.split(new RegExp(`(${keyword})`, 'gi'));
+
+    return (
       <span>
-        {children.substring(0, keyIndex)}
-        <span style={{ backgroundColor: token.colorWarningHover, ...style }}>
-          {children.substring(keyIndex, keyIndex + keyword.length)}
-        </span>
-        {children.substring(keyIndex + keyword.length)}
+        {parts.map((part, i) =>
+          part.toLowerCase() === keyword.toLowerCase() ? (
+            <span
+              key={i}
+              style={{ backgroundColor: token.colorWarningHover, ...style }}
+            >
+              {part}
+            </span>
+          ) : (
+            part
+          ),
+        )}
       </span>
-    ) : (
-      <span>{children}</span>
     );
   }
 };

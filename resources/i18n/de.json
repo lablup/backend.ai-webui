@@ -869,7 +869,9 @@
     "Parameters": "Parameter",
     "ErrorType": "Fehlertyp",
     "LogMessageRemoved": "Protokollnachrichten wurden entfernt.",
-    "NoLogToDisplay": "Keine Protokolle anzeigen"
+    "NoLogToDisplay": "Keine Protokolle anzeigen",
+    "ShowOnlyError": "Nur Anzeigefehler",
+    "SearchLogs": "Protokolle durchsuchen"
   },
   "resourcePolicy": {
     "Resources": "Ressourcen",
