@@ -3,7 +3,7 @@ import Flex from '../components/Flex';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { theme } from 'antd';
 import Card from 'antd/es/card/Card';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type TabKey = 'imageList' | 'presetList' | 'registryList';
@@ -70,7 +70,11 @@ const EnvironmentPage = () => {
         }}
       >
         {isSupportContainerRegistryGraphQL ? (
-          <ContainerRegistryList />
+          curTabKey === 'registryList' ? (
+            <Suspense>
+              <ContainerRegistryList />
+            </Suspense>
+          ) : null
         ) : (
           // @ts-ignore
           <backend-ai-registry-list active={curTabKey === 'registryList'} />

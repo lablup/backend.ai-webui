@@ -32,7 +32,7 @@ import {
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import { useState, useTransition } from 'react';
+import { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery, useMutation } from 'react-relay';
 
@@ -77,7 +77,7 @@ const ContainerRegistryList: React.FC<{
         domain: baiClient._config.domainName,
       },
       {
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'store-and-network',
         fetchKey,
       },
     );
