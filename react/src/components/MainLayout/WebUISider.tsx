@@ -155,7 +155,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           alt="Backend.AI Logo"
           className="logo-wide"
           src={'/manifest/backend.ai-text.svg'}
-          style={{ width: 218, height: 55 }}
+          style={{ width: 218, height: 55, cursor: 'pointer' }}
           onClick={() => webuiNavigate('/summary')}
         />
       }
@@ -164,7 +164,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           alt="Backend.AI Logo"
           className="logo-square"
           src={'/manifest/backend.ai-brand-simple.svg'}
-          style={{ width: 55, height: 55 }}
+          style={{ width: 55, height: 55, cursor: 'pointer' }}
           onClick={() => webuiNavigate('/summary')}
         />
       }
