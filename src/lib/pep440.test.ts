@@ -20,7 +20,6 @@ describe('comparePEP440Versions', () => {
     expect(comparePEP440Versions('1.2.3', '1.2.3.dev.1')).toBe(1);
     expect(comparePEP440Versions('1.2.3.dev.1', '1.2.3.dev.2')).toBe(-1);
     expect(comparePEP440Versions('1.2.3.dev.2', '1.2.3.dev.1')).toBe(1);
-    expect(comparePEP440Versions('1.2.3.dev.2', '1.2.3.dev.1')).toBe(1);
     expect(comparePEP440Versions('1.2.3.*', '1.2.3.dev.1')).toBe(0);
     expect(comparePEP440Versions('1.2.3.*', '1.2.2.dev.1')).toBe(1);
     expect(comparePEP440Versions('1.2.3.*', '1.2.4.dev.1')).toBe(-1);
