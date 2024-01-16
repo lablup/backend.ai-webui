@@ -1,8 +1,21 @@
 import { useWebUINavigate } from '../hooks';
 import { useBAINotification } from '../hooks/useBAINotification';
 import BAINotificationItem from './BAINotificationItem';
-import { CheckOutlined, CloseOutlined, InfoOutlined } from '@ant-design/icons';
-import { Drawer, List, type DrawerProps, theme } from 'antd';
+import {
+  CheckOutlined,
+  ClearOutlined,
+  CloseOutlined,
+  InfoOutlined,
+  QuestionCircleOutlined,
+} from '@ant-design/icons';
+import {
+  Drawer,
+  List,
+  type DrawerProps,
+  theme,
+  Popconfirm,
+  Button,
+} from 'antd';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -33,30 +46,33 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
           paddingLeft: token.paddingContentHorizontalSM,
           paddingRight: token.paddingContentHorizontalSM,
         },
+        header: {
+          padding: 15,
+        },
         // header: {
         //   height: 88,
         // },
       }}
       contentWrapperStyle={{ padding: 0 }}
       // comment out the following line because list item
-      // extra={
-      //   notifications.length > 0 && (
-      //     <Popconfirm
-      //       title={t('notification.ClearNotifications')}
-      //       description={t('notification.AreYouSureToClearAllNotifications')}
-      //       okButtonProps={{
-      //         danger: true,
-      //       }}
-      //       okText={t('button.Delete')}
-      //       onConfirm={clearAllNotifications}
-      //       icon={
-      //         <QuestionCircleOutlined style={{ color: token.colorError }} />
-      //       }
-      //     >
-      //       <Button danger type="text" icon={<DeleteOutlined />} />
-      //     </Popconfirm>
-      //   )
-      // }
+      extra={
+        <Popconfirm
+          title={t('notification.ClearNotifications')}
+          description={t('notification.AreYouSureToClearAllNotifications')}
+          okButtonProps={{
+            danger: true,
+          }}
+          okText={t('button.Delete')}
+          onConfirm={clearAllNotifications}
+          icon={<QuestionCircleOutlined />}
+        >
+          <Button
+            type="text"
+            icon={<ClearOutlined />}
+            disabled={notifications.length === 0}
+          />
+        </Popconfirm>
+      }
       {...drawerProps}
     >
       <List

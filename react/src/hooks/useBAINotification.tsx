@@ -27,6 +27,7 @@ export interface NotificationState
     };
     promise?: Promise<any>;
   };
+  extraDescription?: string;
 }
 
 export const notificationListState = atom<NotificationState[]>({
@@ -219,7 +220,7 @@ export const useBAINotification = () => {
             duration: 1,
           });
         });
-        sse.addEventListener('bgtask_failed', (e) => {
+        const failHandler = (e: any) => {
           listeningTaskIdsRef.current = _.without(
             listeningTaskIdsRef.current,
             notification.backgroundTask?.taskId,
@@ -234,9 +235,13 @@ export const useBAINotification = () => {
               status: 'rejected',
               percent: ratio * 100,
             },
+            extraDescription: data?.message,
             duration: 1,
           });
-        });
+        };
+        sse.addEventListener('bgtask_failed', failHandler);
+        // sse.addEventListener('task_failed', failHandler);
+
         sse.addEventListener('bgtask_cancelled', (e) => {
           listeningTaskIdsRef.current = _.without(
             listeningTaskIdsRef.current,

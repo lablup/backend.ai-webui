@@ -5,10 +5,10 @@ import {
   ClockCircleOutlined,
   CloseOutlined,
 } from '@ant-design/icons';
-import { Button, List, Progress, Typography, theme } from 'antd';
+import { Button, Card, List, Progress, Typography, theme } from 'antd';
 import dayjs from 'dayjs';
-import _ from 'lodash';
-import React from 'react';
+import _, { set } from 'lodash';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const BAINotificationItem: React.FC<{
@@ -21,9 +21,10 @@ const BAINotificationItem: React.FC<{
 }> = ({ notification, onClickAction, showDate }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const [showExtraDescription, setShowExtraDescription] = useState(false);
   return (
     <List.Item>
-      <Flex direction="column" align="stretch">
+      <Flex direction="column" align="stretch" gap={'xxs'}>
         <Flex
           direction="row"
           align="center"
@@ -60,7 +61,28 @@ const BAINotificationItem: React.FC<{
               </Typography.Link>
             </Flex>
           ) : null}
+          {notification.extraDescription ? (
+            <Flex>
+              <Typography.Link
+                onClick={(e) => {
+                  // onClickAction && onClickAction(e, notification);
+                  setShowExtraDescription(!showExtraDescription);
+                }}
+              >
+                {notification.toTextKey
+                  ? t(notification.toTextKey)
+                  : t('notification.SeeDetail')}
+              </Typography.Link>
+            </Flex>
+          ) : null}
         </Flex>
+        {notification.extraDescription && showExtraDescription ? (
+          <Card size="small">
+            <Typography.Text type="secondary" copyable>
+              {notification.extraDescription}
+            </Typography.Text>
+          </Card>
+        ) : null}
 
         <Flex direction="row" align="center" justify="end" gap={'sm'}>
           {notification.backgroundTask &&
