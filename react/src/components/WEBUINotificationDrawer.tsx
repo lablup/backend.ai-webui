@@ -1,17 +1,17 @@
 import { useWebUINavigate } from '../hooks';
 import { useBAINotification } from '../hooks/useBAINotification';
 import BAINotificationItem from './BAINotificationItem';
-import { ClearOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { MoreOutlined } from '@ant-design/icons';
 import {
   Drawer,
   List,
   type DrawerProps,
   theme,
-  Popconfirm,
   Button,
   Segmented,
   Flex,
   Badge,
+  Dropdown,
 } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -53,22 +53,25 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
       contentWrapperStyle={{ padding: 0 }}
       // comment out the following line because list item
       extra={
-        <Popconfirm
-          title={t('notification.ClearNotifications')}
-          description={t('notification.AreYouSureToClearAllNotifications')}
-          okButtonProps={{
-            danger: true,
+        <Dropdown
+          trigger={['click']}
+          menu={{
+            items: [
+              {
+                key: 'clear-all',
+                label: t('notification.ClearNotifications'),
+                danger: true,
+                onClick: clearAllNotifications,
+              },
+            ],
           }}
-          okText={t('button.Delete')}
-          onConfirm={clearAllNotifications}
-          icon={<QuestionCircleOutlined />}
         >
           <Button
             type="text"
-            icon={<ClearOutlined />}
+            icon={<MoreOutlined />}
             disabled={notifications.length === 0}
           />
-        </Popconfirm>
+        </Dropdown>
       }
       {...drawerProps}
     >
