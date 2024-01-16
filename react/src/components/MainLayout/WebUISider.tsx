@@ -129,6 +129,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     'menuitem-superadmin': superAdminMenu,
   };
 
+  // Add plugin pages according to the user role.
   // Iterates over own enumerable string keyed properties of an object and invokes iteratee for each property.
   _.forOwn(props.webuiplugins, (value, key) => {
     // Check if the `pluginMap` object has the current key using the `_.has` function.
