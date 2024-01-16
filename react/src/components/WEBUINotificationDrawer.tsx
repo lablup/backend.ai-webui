@@ -66,8 +66,9 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
         renderItem={(item) => (
           <BAINotificationItem
             notification={item}
-            onClickAction={() => {
+            onClickAction={(e) => {
               item.toUrl && webuiNavigate(item.toUrl);
+              drawerProps.onClose && drawerProps.onClose(e);
             }}
             showDate
           />

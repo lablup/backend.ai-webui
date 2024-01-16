@@ -99,6 +99,7 @@ export default class BackendAIData extends BackendAIPage {
   ];
   @property({ type: Object }) storageProxyInfo = Object();
   @property({ type: String }) folderType = 'user';
+  @property({ type: Number }) currentGroupIdx = 0;
   @query('#add-folder-name') addFolderNameInput!: TextField;
   @query('#clone-folder-name') cloneFolderNameInput!: TextField;
   @query('#add-folder-usage-mode') addFolderUsageModeSelect!: Select;
@@ -536,7 +537,7 @@ export default class BackendAIData extends BackendAIPage {
                       (item, idx) => html`
                         <mwc-list-item
                           value="${item.name}"
-                          ?selected="${idx === 0}"
+                          ?selected="${this.currentGroupIdx === idx}"
                         >
                           ${item.name}
                         </mwc-list-item>
@@ -1149,14 +1150,17 @@ export default class BackendAIData extends BackendAIPage {
     this.addFolderGroupSelect &&
       this.addFolderGroupSelect.layout(true).then(() => {
         if (this.groupListByUsage.length > 0) {
-          let idx = this.addFolderGroupSelect.items.findIndex(
+          this.currentGroupIdx = this.addFolderGroupSelect.items.findIndex(
             (item) => item.value === globalThis.backendaiclient.current_group,
           );
-          idx = idx < 0 ? 0 : idx;
+          this.currentGroupIdx =
+            this.currentGroupIdx < 0 ? 0 : this.currentGroupIdx;
           // FIXME: manually set selected text to follow updated list-item
           (this.addFolderGroupSelect as any)
             .createAdapter()
-            .setSelectedText(this.groupListByUsage[idx]['name']);
+            .setSelectedText(
+              this.groupListByUsage[this.currentGroupIdx]['name'],
+            );
         } else {
           this.addFolderGroupSelect.disabled = true;
         }

@@ -60,8 +60,9 @@ const ContainerRegistryList = React.lazy(
 const KeypairInfoModal = React.lazy(
   () => import('./components/KeypairInfoModal'),
 );
-
 const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
+
+const ErrorLogList = React.lazy(() => import('./components/ErrorLogList'));
 
 customElements.define(
   'backend-ai-react-session-list',
@@ -303,4 +304,15 @@ root.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
+);
+
+customElements.define(
+  'backend-ai-react-error-log-list',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <ErrorLogList />
+      </DefaultProviders>
+    );
+  }),
 );

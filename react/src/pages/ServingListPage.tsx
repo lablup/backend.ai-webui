@@ -25,7 +25,7 @@ import {
 } from '@ant-design/icons';
 import { useRafInterval } from 'ahooks';
 import { useLocalStorageState } from 'ahooks';
-import { Button, Card, ConfigProvider, Table, Typography, theme } from 'antd';
+import { Button, Card, Table, Typography, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
@@ -398,58 +398,48 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             // }}
           >
             <Suspense fallback={<div>loading..</div>}>
-              <ConfigProvider
-                theme={{
-                  components: {
-                    Table: {
-                      headerBorderRadius: 0,
-                    },
-                  },
+              <Table
+                loading={isRefetchPending}
+                scroll={{ x: 'max-content' }}
+                rowKey={'endpoint_id'}
+                dataSource={(sortedEndpointList || []) as Endpoint[]}
+                columns={columns.filter(
+                  (column) =>
+                    displayedColumnKeys?.includes(_.toString(column.key)),
+                )}
+
+                // pagination={{
+                //   pageSize: paginationState.pageSize,
+                //   current: paginationState.current,
+                //   total: modelServiceList?.total_count || 0,
+                //   showSizeChanger: true,
+                //   // showTotal(total, range) {
+                //   //   return `${range[0]}-${range[1]} of ${total}`;
+                //   // },
+                //   onChange(page, pageSize) {
+                //     startRefetchTransition(() => {
+                //       setPaginationState({
+                //         current: page,
+                //         pageSize: pageSize || 100,
+                //       });
+                //     });
+                //   },
+                // }}
+              />
+              <Flex
+                justify="end"
+                style={{
+                  padding: token.paddingXXS,
                 }}
               >
-                <Table
-                  loading={isRefetchPending}
-                  scroll={{ x: 'max-content' }}
-                  rowKey={'endpoint_id'}
-                  dataSource={(sortedEndpointList || []) as Endpoint[]}
-                  columns={columns.filter(
-                    (column) =>
-                      displayedColumnKeys?.includes(_.toString(column.key)),
-                  )}
-
-                  // pagination={{
-                  //   pageSize: paginationState.pageSize,
-                  //   current: paginationState.current,
-                  //   total: modelServiceList?.total_count || 0,
-                  //   showSizeChanger: true,
-                  //   // showTotal(total, range) {
-                  //   //   return `${range[0]}-${range[1]} of ${total}`;
-                  //   // },
-                  //   onChange(page, pageSize) {
-                  //     startRefetchTransition(() => {
-                  //       setPaginationState({
-                  //         current: page,
-                  //         pageSize: pageSize || 100,
-                  //       });
-                  //     });
-                  //   },
-                  // }}
-                />
-                <Flex
-                  justify="end"
-                  style={{
-                    padding: token.paddingXXS,
+                <Button
+                  type="text"
+                  icon={<SettingOutlined />}
+                  onClick={() => {
+                    setIsOpenColumnsSetting(true);
                   }}
-                >
-                  <Button
-                    type="text"
-                    icon={<SettingOutlined />}
-                    onClick={() => {
-                      setIsOpenColumnsSetting(true);
-                    }}
-                  />
-                </Flex>
-              </ConfigProvider>
+                />
+              </Flex>
             </Suspense>
           </Card>
           {/* <Tabs

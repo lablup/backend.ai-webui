@@ -35,7 +35,8 @@ export const notificationListState = atom<NotificationState[]>({
 });
 
 export const useBAINotification = () => {
-  const [notifications, setNotifications] = useRecoilState(
+  // Don't use _notifications carefully when you need to mutate it.
+  const [_notifications, setNotifications] = useRecoilState(
     notificationListState,
   );
   const app = App.useApp();
@@ -62,105 +63,105 @@ export const useBAINotification = () => {
 
   const upsertNotification = useCallback(
     (params: Partial<Omit<NotificationState, 'created'>>) => {
-      const existingIndex = params.key
-        ? _.findIndex(notifications, { key: params.key })
-        : -1;
+      let currentKey: React.Key | undefined;
+      setNotifications((prevNotifications) => {
+        let nextNotifications: NotificationState[];
+        const existingIndex = params.key
+          ? _.findIndex(prevNotifications, { key: params.key })
+          : -1;
 
-      const newNotification: NotificationState = _.merge(
-        {}, // start with empty object
-        notifications[existingIndex],
-        params,
-        {
-          key: params.key || uuidv4(),
-          created: new Date().toISOString(),
-        },
-      );
+        const newNotification: NotificationState = _.merge(
+          {}, // start with empty object
+          prevNotifications[existingIndex],
+          params,
+          {
+            key: params.key || uuidv4(),
+            created: new Date().toISOString(),
+          },
+        );
 
-      const shouldUpdateUsingAPI =
-        (_.isEmpty(params.key) && params.open) ||
-        // if it is already open, then apply change to ant.d notification
-        (newNotification.key &&
-          _activeNotificationKeys.includes(newNotification.key)) ||
-        // if it is not open and params.open is true, then apply change to ant.d notification
-        (newNotification.key &&
-          !_activeNotificationKeys.includes(newNotification.key) &&
-          params.open);
+        // This is to check if the notification should be updated using ant.d notification
+        const shouldUpdateUsingAPI =
+          (_.isEmpty(params.key) && params.open) ||
+          // if it is already opened(active), then apply change to ant.d notification
+          (newNotification.key &&
+            _activeNotificationKeys.includes(newNotification.key)) ||
+          // if it is not opened(active) and params.open is true, then apply change to ant.d notification (open it)
+          (newNotification.key &&
+            !_activeNotificationKeys.includes(newNotification.key) &&
+            params.open);
 
-      // override description if background task
-      newNotification.description =
-        newNotification.backgroundTask?.status &&
-        newNotification.backgroundTask?.statusDescriptions?.[
-          newNotification.backgroundTask?.status
-        ]
-          ? newNotification.backgroundTask?.statusDescriptions?.[
-              newNotification.backgroundTask?.status
-            ]
-          : newNotification.description;
+        // override description according to background task status
+        newNotification.description =
+          newNotification.backgroundTask?.statusDescriptions?.[
+            newNotification.backgroundTask?.status
+          ] || newNotification.description;
 
-      if (existingIndex >= 0) {
-        setNotifications([
-          ...notifications.slice(0, existingIndex),
-          newNotification,
-          ...notifications.slice(existingIndex + 1),
-        ]);
-      } else {
-        setNotifications((prevNotifications) => {
-          const newNotifications = [newNotification, ...prevNotifications];
+        if (existingIndex >= 0) {
+          nextNotifications = [
+            ...prevNotifications.slice(0, existingIndex),
+            newNotification,
+            ...prevNotifications.slice(existingIndex + 1),
+          ];
+        } else {
+          nextNotifications = [newNotification, ...prevNotifications];
           // If the number of notifications exceeds 100, remove the oldest ones
-          if (newNotifications.length > 100) {
-            return newNotifications.slice(newNotifications.length - 100);
+          if (nextNotifications.length > 100) {
+            nextNotifications = nextNotifications.slice(
+              nextNotifications.length - 100,
+            );
           }
-          return newNotifications;
-        });
-      }
-
-      if (shouldUpdateUsingAPI) {
-        if (
-          newNotification.key &&
-          newNotification.open &&
-          _activeNotificationKeys.includes(newNotification.key) === false
-        ) {
-          _activeNotificationKeys.push(newNotification.key);
         }
 
-        app.notification.open({
-          ...newNotification,
-          placement: 'bottomRight',
-          message: undefined,
-          description: <BAINotificationItem notification={newNotification} />,
-          onClose() {
-            _.remove(
-              _activeNotificationKeys,
-              (key) => key === newNotification.key,
-            );
-            const idx = _.findIndex(notifications, {
-              key: newNotification.key,
-            });
-            if (idx >= 0) {
-              setNotifications((prevList) => {
-                const newList = [...prevList];
-                newList[idx] = {
-                  ...newList[idx],
-                  open: false,
-                };
-                return newList;
-              });
-            }
-          },
-        });
-      } else if (newNotification.open === false && newNotification.key) {
-        destroyNotification(newNotification.key);
-      }
+        if (shouldUpdateUsingAPI) {
+          if (
+            newNotification.key &&
+            newNotification.open &&
+            _activeNotificationKeys.includes(newNotification.key) === false
+          ) {
+            _activeNotificationKeys.push(newNotification.key);
+          }
 
-      return newNotification;
+          app.notification.open({
+            ...newNotification,
+            placement: 'bottomRight',
+            message: undefined,
+            description: <BAINotificationItem notification={newNotification} />,
+            onClose() {
+              _.remove(
+                _activeNotificationKeys,
+                (key) => key === newNotification.key,
+              );
+              const idx = _.findIndex(prevNotifications, {
+                key: newNotification.key,
+              });
+              if (idx >= 0) {
+                setNotifications((prevList) => {
+                  const newList = [...prevList];
+                  newList[idx] = {
+                    ...newList[idx],
+                    open: false,
+                  };
+                  return newList;
+                });
+              }
+            },
+          });
+        } else if (newNotification.open === false && newNotification.key) {
+          destroyNotification(newNotification.key);
+        }
+        currentKey = newNotification.key;
+        return nextNotifications;
+      });
+      return currentKey;
     },
-    [notifications, app.notification, setNotifications, destroyNotification],
+    [app.notification, setNotifications, destroyNotification],
   );
 
   // listen to background task if a notification has a background task
   // and not already listening
   useEffect(() => {
-    _.each(notifications, (notification) => {
+    _.each(_notifications, (notification) => {
       if (
         notification.backgroundTask?.taskId &&
         !_.includes(
@@ -176,7 +177,6 @@ export const useBAINotification = () => {
         sse.onerror = () => {
           sse.close();
         };
-        let count = 0;
         sse.addEventListener(
           'bgtask_updated',
           _.throttle(
@@ -258,10 +258,10 @@ export const useBAINotification = () => {
         });
       }
     });
-  }, [notifications, upsertNotification]);
+  }, [_notifications, upsertNotification]);
 
   return [
-    notifications,
+    _notifications,
     {
       upsertNotification,
       clearAllNotifications,
