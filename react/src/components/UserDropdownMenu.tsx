@@ -149,6 +149,7 @@ const UserDropdownMenu: React.FC = () => {
         overlayStyle={{
           maxWidth: 300,
         }}
+        placement="bottomRight"
       >
         <Button type="text" size="large">
           <Flex

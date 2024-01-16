@@ -13,7 +13,10 @@ import { useTranslation } from 'react-i18next';
 
 const BAINotificationItem: React.FC<{
   notification: NotificationState;
-  onClickAction?: (notification: NotificationState) => void;
+  onClickAction?: (
+    e: React.MouseEvent,
+    notification: NotificationState,
+  ) => void;
   showDate?: boolean;
 }> = ({ notification, onClickAction, showDate }) => {
   const { t } = useTranslation();
@@ -41,21 +44,23 @@ const BAINotificationItem: React.FC<{
             }[notification.backgroundTask.status]}
           <Typography.Text strong>{notification.message}</Typography.Text>
         </Flex>
-        {notification.toUrl ? (
-          <Button
-            type="link"
-            rel="noreferrer noopener"
-            onClick={(e) => {
-              // notification.toUrl && webuiNavigate(item.toUrl);
-              onClickAction && onClickAction(notification);
-            }}
-          >
-            {notification.toTextKey
-              ? t(notification.toTextKey)
-              : t('notification.SeeDetail')}
-          </Button>
-        ) : null}
-        <Typography.Text>{notification.description}</Typography.Text>
+
+        <Flex direction="row" align="end" gap={'xxs'} justify="between">
+          <Typography.Text>{notification.description}</Typography.Text>
+          {notification.toUrl ? (
+            <Flex>
+              <Typography.Link
+                onClick={(e) => {
+                  onClickAction && onClickAction(e, notification);
+                }}
+              >
+                {notification.toTextKey
+                  ? t(notification.toTextKey)
+                  : t('notification.SeeDetail')}
+              </Typography.Link>
+            </Flex>
+          ) : null}
+        </Flex>
 
         <Flex direction="row" align="center" justify="end" gap={'sm'}>
           {notification.backgroundTask &&
@@ -64,7 +69,19 @@ const BAINotificationItem: React.FC<{
               size="small"
               showInfo={false}
               percent={notification.backgroundTask.percent}
-              style={{ margin: 0 }}
+              strokeColor={
+                notification.backgroundTask.status === 'rejected'
+                  ? token.colorTextDisabled
+                  : undefined
+              }
+              style={{
+                margin: 0,
+                opacity:
+                  notification.backgroundTask.status === 'resolved' && showDate
+                    ? 0
+                    : 1,
+              }}
+
               // status={item.progressStatus}
             />
           ) : null}

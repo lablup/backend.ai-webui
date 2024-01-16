@@ -1,5 +1,6 @@
 import { filterNonNullItems } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useBAINotification } from '../hooks/useBAINotification';
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal from './BAIModal';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
@@ -32,7 +33,7 @@ import {
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import { Suspense, useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery, useMutation } from 'react-relay';
 
@@ -50,6 +51,7 @@ const ContainerRegistryList: React.FC<{
   const [isPendingReload, startReloadTransition] = useTransition();
   const painKiller = usePainKiller();
   const [messageAPI, contextHolder] = message.useMessage();
+  const [, { upsertNotification }] = useBAINotification();
   const { container_registries, domain } =
     useLazyLoadQuery<ContainerRegistryListQuery>(
       graphql`
@@ -127,13 +129,29 @@ const ContainerRegistryList: React.FC<{
   // const deferredInFlightDomainName = useDeferredValue(inFlightDomainName);
 
   const rescanImage = async (hostname: string) => {
-    const indicator: any =
-      // @ts-ignore
-      await globalThis.lablupIndicator.start('indeterminate');
+    // const indicator: any =
+    //   // @ts-ignore
+    //   await globalThis.lablupIndicator.start('indeterminate');
+
+    // indicator.set(10, t('registry.UpdatingRegistryInfo'));
+    const notiKey = upsertNotification({
+      // key: notiKey,
+      message: `${hostname} ${t('maintenance.RescanImages')}`,
+      description: t('registry.UpdatingRegistryInfo'),
+      open: true,
+      backgroundTask: {
+        status: 'pending',
+      },
+    });
     const handleReScanError = (err: any) => {
       console.log(err);
-      indicator.set(50, t('registry.RescanFailed'));
-      indicator.end(1000);
+      upsertNotification({
+        key: notiKey,
+        backgroundTask: {
+          status: 'rejected',
+        },
+        duration: 1,
+      });
       if (err && err.message) {
         // @ts-ignore
         globalThis.lablupNotification.text = painKiller.relieve(err.title);
@@ -143,52 +161,71 @@ const ContainerRegistryList: React.FC<{
         globalThis.lablupNotification.show(true, err);
       }
     };
-    indicator.set(10, t('registry.UpdatingRegistryInfo'));
     baiClient.maintenance
       .rescan_images(hostname)
       .then(({ rescan_images }: any) => {
         if (rescan_images.ok) {
-          indicator.set(0, t('registry.RescanImages'));
-          const sse: EventSource = baiClient.maintenance.attach_background_task(
-            rescan_images.task_id,
-          );
-          sse.addEventListener('bgtask_updated', (e) => {
-            const data = JSON.parse(e['data']);
-            const ratio = data.current_progress / data.total_progress;
-            indicator.set(100 * ratio, t('registry.RescanImages'));
+          upsertNotification({
+            key: notiKey,
+            backgroundTask: {
+              status: 'pending',
+              percent: 0,
+              taskId: rescan_images.task_id,
+              statusDescriptions: {
+                pending: t('registry.RescanImages'),
+                resolved: t('registry.RegistryUpdateFinished'),
+                rejected: t('registry.RegistryUpdateFailed'),
+              },
+            },
+            toUrl: `/maintenance/background-task/${rescan_images.task_id}`,
           });
-          sse.addEventListener('bgtask_done', () => {
-            const event = new CustomEvent('image-rescanned');
-            document.dispatchEvent(event);
-            indicator.set(100, t('registry.RegistryUpdateFinished'));
-            sse.close();
-          });
-          sse.addEventListener('bgtask_failed', (e) => {
-            console.log('bgtask_failed', e['data']);
-            sse.close();
-            handleReScanError(
-              new Error('Background Image scanning task has failed'),
-            );
-          });
-          sse.addEventListener('bgtask_cancelled', () => {
-            sse.close();
-            handleReScanError(
-              new Error('Background Image scanning task has been cancelled'),
-            );
-          });
+          // indicator.set(0, t('registry.RescanImages'));
+          // const sse: EventSource = baiClient.maintenance.attach_background_task(
+          //   rescan_images.task_id,
+          // );
+          // sse.addEventListener('bgtask_updated', (e) => {
+          //   const data = JSON.parse(e['data']);
+          //   const ratio = data.current_progress / data.total_progress;
+          //   indicator.set(100 * ratio, t('registry.RescanImages'));
+          // });
+          // sse.addEventListener('bgtask_done', () => {
+          //   const event = new CustomEvent('image-rescanned');
+          //   document.dispatchEvent(event);
+          //   indicator.set(100, t('registry.RegistryUpdateFinished'));
+          //   sse.close();
+          // });
+          // sse.addEventListener('bgtask_failed', (e) => {
+          //   console.log('bgtask_failed', e['data']);
+          //   sse.close();
+          //   handleReScanError(
+          //     new Error('Background Image scanning task has failed'),
+          //   );
+          // });
+          // sse.addEventListener('bgtask_cancelled', () => {
+          //   sse.close();
+          //   handleReScanError(
+          //     new Error('Background Image scanning task has been cancelled'),
+          //   );
+          // });
         } else {
-          indicator.set(50, t('registry.RegistryUpdateFailed'));
-          indicator.end(1000);
-
+          upsertNotification({
+            key: notiKey,
+            backgroundTask: {
+              status: 'rejected',
+            },
+            duration: 1,
+          });
+          // indicator.set(50, t('registry.RegistryUpdateFailed'));
+          // indicator.end(1000);
           // TODO: handle notification in react side
           // @ts-ignore
-          globalThis.lablupNotification.text = painKiller.relieve(
-            rescan_images.msg,
-          );
+          // globalThis.lablupNotification.text = painKiller.relieve(
+          //   rescan_images.msg,
+          // );
           // @ts-ignore
-          globalThis.lablupNotification.detail = rescan_images.msg;
+          // globalThis.lablupNotification.detail = rescan_images.msg;
           // @ts-ignore
-          globalThis.lablupNotification.show();
+          // globalThis.lablupNotification.show();
         }
       })
       .catch(handleReScanError);
