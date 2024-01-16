@@ -35,6 +35,8 @@ export const notificationListState = atom<NotificationState[]>({
   default: [],
 });
 
+export const CLOSING_DURATION = 1; //second
+
 export const useBAINotification = () => {
   // Don't use _notifications carefully when you need to mutate it.
   const [_notifications, setNotifications] = useRecoilState(
@@ -217,7 +219,7 @@ export const useBAINotification = () => {
               status: 'resolved',
               percent: 100,
             },
-            duration: 1,
+            duration: CLOSING_DURATION,
           });
         });
         const failHandler = (e: any) => {
@@ -236,11 +238,23 @@ export const useBAINotification = () => {
               percent: ratio * 100,
             },
             extraDescription: data?.message,
-            duration: 1,
+            duration: CLOSING_DURATION,
           });
         };
         sse.addEventListener('bgtask_failed', failHandler);
-        // sse.addEventListener('task_failed', failHandler);
+        sse.addEventListener('task_failed', (e) => {
+          const data = JSON.parse(e['data']);
+          upsertNotification({
+            key: notification.key,
+            message: notification.message,
+            backgroundTask: {
+              status: 'rejected',
+            },
+            extraDescription: data?.message,
+            duration: CLOSING_DURATION,
+          });
+          sse.close();
+        });
 
         sse.addEventListener('bgtask_cancelled', (e) => {
           listeningTaskIdsRef.current = _.without(
@@ -258,7 +272,7 @@ export const useBAINotification = () => {
               status: 'rejected',
               percent: ratio * 100,
             },
-            duration: 1,
+            duration: CLOSING_DURATION,
           });
         });
       }
