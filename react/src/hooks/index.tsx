@@ -301,5 +301,7 @@ type BackendAIConfig = {
   directoryBasedUsage: boolean;
   maxCountForPreopenPorts: number;
   pluginPages: string;
+  blockList: string[];
+  inactiveList: string[];
   [key: string]: any;
 };

@@ -107,8 +107,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) allowSignupWithoutConfirmation = false;
   @property({ type: Boolean }) openPortToPublic = false;
   @property({ type: Boolean }) allowPreferredPort = false;
-  @property({ type: Boolean }) maxCPUCoresPerContainer = 64;
-  @property({ type: Boolean }) maxMemoryPerContainer = 16;
+  @property({ type: Number }) maxCPUCoresPerContainer = 64;
+  @property({ type: Number }) maxMemoryPerContainer = 16;
   @property({ type: Number }) maxCUDADevicesPerContainer = 16;
   @property({ type: Number }) maxCUDASharesPerContainer = 16;
   @property({ type: Number }) maxROCMDevicesPerContainer = 10;
@@ -116,14 +116,14 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Number }) maxIPUDevicesPerContainer = 8;
   @property({ type: Number }) maxATOMDevicesPerContainer = 8;
   @property({ type: Number }) maxWarboyDevicesPerContainer = 8;
-  @property({ type: Boolean }) maxShmPerContainer = 2;
-  @property({ type: Boolean }) maxFileUploadSize = -1;
+  @property({ type: Number }) maxShmPerContainer = 2;
+  @property({ type: Number }) maxFileUploadSize = -1;
   @property({ type: Boolean }) maskUserInfo = false;
   @property({ type: Boolean }) hideAgents = true;
   @property({ type: Boolean }) enable2FA = false;
   @property({ type: Boolean }) force2FA = false;
   @property({ type: Array }) singleSignOnVendors: string[] = [];
-  @property({ type: Array }) ssoRealmName = '';
+  @property({ type: String }) ssoRealmName = '';
   @property({ type: Array }) allow_image_list;
   @property({ type: Array }) endpoints;
   @property({ type: Object }) logoutTimerBeforeOneMin;
@@ -140,6 +140,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) supportModelStore = false;
   @property({ type: String }) eduAppNamePrefix;
   @property({ type: String }) pluginPages;
+  @property({ type: Array }) blockList = [] as string[];
+  @property({ type: Array }) inactiveList = [] as string[];
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel')
@@ -560,8 +562,9 @@ export default class BackendAILogin extends BackendAIPage {
     this._initWSProxyConfigWithKeys(config.wsproxy);
     this._initResourcesConfigWithKeys(config.resources);
     this._initEnvironmentsConfigWithKeys(config.environments);
-    this._initPipelineConfigWithKeys(config.pipeline);
+    this._initMenuConfigWithKeys(config.menu);
     this._initPluginConfigWithKeys(config.plugin);
+    this._initPipelineConfigWithKeys(config.pipeline);
   }
 
   /**
@@ -1022,6 +1025,31 @@ export default class BackendAILogin extends BackendAIPage {
       // sanitize whitespace on user-input after splitting
       value: environmentsConfig?.allowlist
         ? environmentsConfig?.allowlist.split(',').map((el) => el.trim())
+        : [],
+    } as ConfigValueObject) as string[];
+  }
+
+  /**
+   * Initialize global key with value from menu section in config file
+   *
+   * @param {object} menuConfig
+   */
+  private _initMenuConfigWithKeys(menuConfig) {
+    // Block list. This is used for hiding menu items.
+    this.blockList = this._getConfigValueByExists(menuConfig, {
+      valueType: 'array',
+      defaultValue: [] as string[],
+      value: menuConfig?.blocklist
+        ? menuConfig?.blocklist?.split(',')?.map((el) => el.trim())
+        : [],
+    } as ConfigValueObject) as string[];
+
+    // Inactive list. These menu turn into disabled.
+    this.inactiveList = this._getConfigValueByExists(menuConfig, {
+      valueType: 'array',
+      defaultValue: [] as string[],
+      value: menuConfig?.inactivelist
+        ? menuConfig?.inactivelist?.split(',')?.map((el) => el.trim())
         : [],
     } as ConfigValueObject) as string[];
   }
@@ -1822,6 +1850,8 @@ export default class BackendAILogin extends BackendAIPage {
         globalThis.backendaiclient._config.supportModelStore =
           this.supportModelStore;
         globalThis.backendaiclient._config.pluginPages = this.pluginPages;
+        globalThis.backendaiclient._config.blockList = this.blockList;
+        globalThis.backendaiclient._config.inactiveList = this.inactiveList;
         globalThis.backendaiclient.ready = true;
         if (
           this.endpoints.indexOf(

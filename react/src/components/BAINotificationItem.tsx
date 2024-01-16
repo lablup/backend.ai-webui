@@ -5,9 +5,9 @@ import {
   ClockCircleOutlined,
   CloseOutlined,
 } from '@ant-design/icons';
-import { Button, Card, List, Progress, Typography, theme } from 'antd';
+import { Card, List, Progress, Typography, theme } from 'antd';
 import dayjs from 'dayjs';
-import _, { set } from 'lodash';
+import _ from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 

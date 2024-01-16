@@ -39,6 +39,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const baiClient = useSuspendedBackendaiClient();
   const isHideAgents = baiClient?._config?.hideAgents ?? true;
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
+  const blockList = baiClient?._config?.blockList ?? null;
+  const inactiveList = baiClient?._config?.inactiveList ?? null;
 
   const generalMenu: MenuProps['items'] = [
     {
@@ -148,6 +150,17 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     }
   });
 
+  _.forEach([generalMenu, adminMenu, superAdminMenu], (menu) => {
+    // Remove menu items that are in blockList
+    _.remove(menu, (item) => _.includes(blockList, item?.key));
+    // Disable menu items that are in inactiveList
+    _.forEach(menu, (item) => {
+      if (_.includes(inactiveList, item?.key)) {
+        _.extend(item, { disabled: true });
+      }
+    });
+  });
+
   return (
     <BAISider
       logo={
@@ -155,7 +168,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           alt="Backend.AI Logo"
           className="logo-wide"
           src={'/manifest/backend.ai-text.svg'}
-          style={{ width: 218, height: 55 }}
+          style={{ width: 218, height: 55, cursor: 'pointer' }}
           onClick={() => webuiNavigate('/summary')}
         />
       }
@@ -164,7 +177,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           alt="Backend.AI Logo"
           className="logo-square"
           src={'/manifest/backend.ai-brand-simple.svg'}
-          style={{ width: 55, height: 55 }}
+          style={{ width: 55, height: 55, cursor: 'pointer' }}
           onClick={() => webuiNavigate('/summary')}
         />
       }

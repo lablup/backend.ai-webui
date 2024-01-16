@@ -16,7 +16,6 @@ import {
   Popconfirm,
   Button,
 } from 'antd';
-import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 

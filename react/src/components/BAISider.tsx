@@ -2,7 +2,6 @@ import Flex from './Flex';
 import { SiderProps, Typography, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 export interface BAISiderProps extends SiderProps {
   // logo?: React.ReactNode;
