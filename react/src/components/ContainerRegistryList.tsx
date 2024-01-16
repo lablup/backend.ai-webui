@@ -177,7 +177,6 @@ const ContainerRegistryList: React.FC<{
                 rejected: t('registry.RegistryUpdateFailed'),
               },
             },
-            toUrl: `/maintenance/background-task/${rescan_images.task_id}`,
           });
           // indicator.set(0, t('registry.RescanImages'));
           // const sse: EventSource = baiClient.maintenance.attach_background_task(
