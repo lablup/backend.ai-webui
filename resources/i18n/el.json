@@ -451,7 +451,9 @@
     "Enabled": "Ενεργοποιήθηκε",
     "StorageProxies": "Αποθήκες",
     "None": "Κανένα",
-    "Image": "Εικόνα"
+    "Image": "Εικόνα",
+    "All": "Όλα",
+    "InProgress": "Σε εξέλιξη"
   },
   "credential": {
     "Permission": "Αδεια",

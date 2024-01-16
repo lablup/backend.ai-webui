@@ -534,7 +534,9 @@
     "Enabled": "활성화됨",
     "StorageProxies": "스토리지",
     "None": "없음",
-    "Image": "이미지"
+    "Image": "이미지",
+    "All": "전체",
+    "InProgress": "진행중"
   },
   "credential": {
     "Permission": "권한",

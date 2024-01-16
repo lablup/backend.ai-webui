@@ -1,13 +1,7 @@
 import { useWebUINavigate } from '../hooks';
 import { useBAINotification } from '../hooks/useBAINotification';
 import BAINotificationItem from './BAINotificationItem';
-import {
-  CheckOutlined,
-  ClearOutlined,
-  CloseOutlined,
-  InfoOutlined,
-  QuestionCircleOutlined,
-} from '@ant-design/icons';
+import { ClearOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
   Drawer,
   List,
@@ -15,10 +9,14 @@ import {
   theme,
   Popconfirm,
   Button,
+  Segmented,
+  Flex,
+  Badge,
 } from 'antd';
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+type NotificationCategory = 'all' | 'in progress';
 interface Props extends DrawerProps {}
 const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
   const { t } = useTranslation();
@@ -27,13 +25,16 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
   const webuiNavigate = useWebUINavigate();
 
   const [notifications, { clearAllNotifications }] = useBAINotification();
+  const [selectedCategory, setSelectedCategory] =
+    useState<NotificationCategory>('all');
 
-  const avatarMap = {
-    success: { icon: <CheckOutlined />, color: token.colorSuccess },
-    info: { icon: <InfoOutlined />, color: token.colorInfo },
-    warning: { icon: <InfoOutlined />, color: token.colorWarning },
-    error: { icon: <CloseOutlined />, color: token.colorError },
-  };
+  const inProgressNotifications = useMemo(
+    () =>
+      notifications.filter((n) => {
+        return n.backgroundTask?.status === 'pending';
+      }),
+    [notifications],
+  );
 
   return (
     <Drawer
@@ -48,9 +49,6 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
         header: {
           padding: 15,
         },
-        // header: {
-        //   height: 88,
-        // },
       }}
       contentWrapperStyle={{ padding: 0 }}
       // comment out the following line because list item
@@ -76,7 +74,34 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
     >
       <List
         itemLayout="vertical"
-        dataSource={notifications}
+        dataSource={
+          selectedCategory === 'all' ? notifications : inProgressNotifications
+        }
+        header={
+          <Flex justify="end">
+            <Segmented
+              value={selectedCategory}
+              onChange={(value) =>
+                setSelectedCategory(value as NotificationCategory)
+              }
+              options={[
+                {
+                  value: 'all',
+                  // icon: 'All
+                  label: t('general.All'),
+                },
+                {
+                  value: 'in progress',
+                  label: (
+                    <Badge dot={inProgressNotifications.length > 0}>
+                      {t('general.InProgress')}
+                    </Badge>
+                  ),
+                },
+              ]}
+            />
+          </Flex>
+        }
         rowKey={(item) => item.key}
         renderItem={(item) => (
           <BAINotificationItem
@@ -87,53 +112,6 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
             }}
             showDate
           />
-          // <List.Item
-          //   key={item.key}
-          //   actions={[
-          //     item.toUrl ? (
-          //       <Button
-          //         type="link"
-          //         rel="noreferrer noopener"
-          //         onClick={(e) => {
-          //           item.toUrl && webuiNavigate(item.toUrl);
-          //         }}
-          //       >
-          //         {item.toTextKey
-          //           ? t(item.toTextKey)
-          //           : t('notification.SeeDetail')}
-          //       </Button>
-          //     ) : null,
-          //   ]}
-          // >
-          //   <List.Item.Meta
-          //     title={item.message}
-          //     description={
-          //       <>
-          //         {item.description}
-          //         {item.backgroundTask && (
-          //           <Progress
-          //             size="small"
-          //             showInfo={false}
-          //             percent={item.backgroundTask.percent}
-          //             // status={item.progressStatus}
-          //           />
-          //         )}
-          //         <br />({dayjs(item.created).format('ll LTS')})
-          //       </>
-          //     }
-          //     avatar={
-          //       !!item.type && (
-          //         <Avatar
-          //           size="small"
-          //           icon={_.get(avatarMap, `${item.type}.icon`)}
-          //           style={{
-          //             backgroundColor: _.get(avatarMap, `${item.type}.color`),
-          //           }}
-          //         />
-          //       )
-          //     }
-          //   />
-          // </List.Item>
         )}
       />
     </Drawer>

@@ -453,7 +453,9 @@
     "Enabled": "Включено",
     "StorageProxies": "Хранилища данных",
     "None": "Нет",
-    "Image": "Изображение"
+    "Image": "Изображение",
+    "All": "Все",
+    "InProgress": "В процессе"
   },
   "credential": {
     "Permission": "Разрешение",

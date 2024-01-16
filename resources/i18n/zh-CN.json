@@ -451,7 +451,9 @@
     "Enabled": "启用",
     "StorageProxies": "存储",
     "None": "无",
-    "Image": "图像"
+    "Image": "图像",
+    "All": "全部",
+    "InProgress": "进行中"
   },
   "credential": {
     "Permission": "允许",

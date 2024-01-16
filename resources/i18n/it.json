@@ -451,7 +451,9 @@
     "Enabled": "Abilitato",
     "StorageProxies": "Depositi",
     "None": "Nessuno",
-    "Image": "Immagine"
+    "Image": "Immagine",
+    "All": "Tutti",
+    "InProgress": "In corso"
   },
   "credential": {
     "Permission": "Autorizzazione",

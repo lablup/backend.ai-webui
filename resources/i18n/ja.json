@@ -451,7 +451,9 @@
     "Enabled": "有効",
     "StorageProxies": "ストレージ",
     "None": "なし",
-    "Image": "画像"
+    "Image": "画像",
+    "All": "全体",
+    "InProgress": "進行中"
   },
   "credential": {
     "Permission": "許可",

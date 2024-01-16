@@ -451,7 +451,9 @@
     "Enabled": "Diaktifkan",
     "StorageProxies": "Penyimpanan",
     "None": "Tidak ada",
-    "Image": "Gambar"
+    "Image": "Gambar",
+    "All": "Semua",
+    "InProgress": "Sedang Berlangsung"
   },
   "credential": {
     "Permission": "Izin",

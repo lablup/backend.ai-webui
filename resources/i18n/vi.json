@@ -451,7 +451,9 @@
     "Enabled": "Đã bật",
     "StorageProxies": "Kho lưu trữ",
     "None": "Không có",
-    "Image": "Hình ảnh"
+    "Image": "Hình ảnh",
+    "All": "toàn bộ",
+    "InProgress": "Đang tiến hành"
   },
   "credential": {
     "Permission": "Sự cho phép",

@@ -451,7 +451,9 @@
     "Enabled": "Diaktifkan",
     "StorageProxies": "Stor",
     "None": "tiada",
-    "Image": "Gambar"
+    "Image": "Gambar",
+    "All": "keseluruhan",
+    "InProgress": "Prosiding"
   },
   "credential": {
     "Permission": "Kebenaran",

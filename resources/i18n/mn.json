@@ -451,7 +451,9 @@
     "Enabled": "Идэвхжсэн",
     "StorageProxies": "Хадгалах сан",
     "None": "Байхгүй",
-    "Image": "Зураг"
+    "Image": "Зураг",
+    "All": "бүхэлд нь",
+    "InProgress": "Ажиллаж байна"
   },
   "credential": {
     "Permission": "Зөвшөөрөл",

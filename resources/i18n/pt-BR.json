@@ -451,7 +451,9 @@
     "Enabled": "Habilitado",
     "StorageProxies": "Armazéns",
     "None": "Nenhum",
-    "Image": "Imagem"
+    "Image": "Imagem",
+    "All": "Todos",
+    "InProgress": "Em curso"
   },
   "credential": {
     "Permission": "Permissão",

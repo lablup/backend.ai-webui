@@ -453,7 +453,9 @@
     "Enabled": "Włączone",
     "StorageProxies": "Magazyny",
     "None": "Brak",
-    "Image": "Obraz"
+    "Image": "Obraz",
+    "All": "Wszystkie",
+    "InProgress": "W toku"
   },
   "credential": {
     "Permission": "Pozwolenie",

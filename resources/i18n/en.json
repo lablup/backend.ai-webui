@@ -545,7 +545,9 @@
     "Enabled": "Enabled",
     "StorageProxies": "Storages",
     "None": "None",
-    "Image": "Image"
+    "Image": "Image",
+    "All": "All",
+    "InProgress": "In progress"
   },
   "credential": {
     "Permission": "Permission",

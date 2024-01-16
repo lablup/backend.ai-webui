@@ -451,7 +451,9 @@
     "Enabled": "Etkin",
     "StorageProxies": "Depolar",
     "None": "Hiçbiri",
-    "Image": "Resim"
+    "Image": "Resim",
+    "All": "Tümü",
+    "InProgress": "Devam Ediyor"
   },
   "credential": {
     "Permission": "izin",
