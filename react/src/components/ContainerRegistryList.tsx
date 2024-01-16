@@ -142,6 +142,7 @@ const ContainerRegistryList: React.FC<{
       backgroundTask: {
         status: 'pending',
       },
+      duration: 0,
     });
     const handleReScanError = (err: any) => {
       console.log(err);
