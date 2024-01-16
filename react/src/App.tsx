@@ -23,12 +23,15 @@ const router = createBrowserRouter([
     element: (
       <>
         <MainLayout />
-        <Navigate to="/summary" replace />
         <RoutingEventHandler />
       </>
     ),
     handle: { labelKey: 'webui.menu.Summary' },
     children: [
+      {
+        path: '/',
+        element: <Navigate to="/summary" replace />,
+      },
       {
         path: '/summary',
         Component: () => (
