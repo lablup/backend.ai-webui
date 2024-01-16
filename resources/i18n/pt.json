@@ -453,7 +453,8 @@
     "None": "Nenhum",
     "Image": "Imagem",
     "All": "Todos",
-    "InProgress": "Em curso"
+    "InProgress": "Em curso",
+    "Session": "Sessão"
   },
   "credential": {
     "Permission": "Permissão",

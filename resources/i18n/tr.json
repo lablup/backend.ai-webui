@@ -453,7 +453,8 @@
     "None": "Hiçbiri",
     "Image": "Resim",
     "All": "Tümü",
-    "InProgress": "Devam Ediyor"
+    "InProgress": "Devam Ediyor",
+    "Session": "Oturum"
   },
   "credential": {
     "Permission": "izin",

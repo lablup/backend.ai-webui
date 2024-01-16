@@ -453,7 +453,8 @@
     "None": "なし",
     "Image": "画像",
     "All": "全体",
-    "InProgress": "進行中"
+    "InProgress": "進行中",
+    "Session": "セッション"
   },
   "credential": {
     "Permission": "許可",

@@ -485,7 +485,8 @@
     "None": "Ei ole",
     "Image": "Kuva",
     "All": "Kaikki",
-    "InProgress": "Käynnissä"
+    "InProgress": "Käynnissä",
+    "Session": "Istunto"
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",

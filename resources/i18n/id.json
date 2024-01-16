@@ -453,7 +453,8 @@
     "None": "Tidak ada",
     "Image": "Gambar",
     "All": "Semua",
-    "InProgress": "Sedang Berlangsung"
+    "InProgress": "Sedang Berlangsung",
+    "Session": "Sesi"
   },
   "credential": {
     "Permission": "Izin",

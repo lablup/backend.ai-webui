@@ -1790,7 +1790,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
     const createSessionQueue = sessions.map((item) => {
       return this.tasker.add(
-        'Creating ' + item.sessionName,
+        _text('general.Session') + ': ' + item.sessionName,
         this._createKernel(
           item.kernelName,
           item.sessionName,

@@ -453,7 +453,8 @@
     "None": "Không có",
     "Image": "Hình ảnh",
     "All": "toàn bộ",
-    "InProgress": "Đang tiến hành"
+    "InProgress": "Đang tiến hành",
+    "Session": "Phiên họp"
   },
   "credential": {
     "Permission": "Sự cho phép",

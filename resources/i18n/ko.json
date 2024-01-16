@@ -536,7 +536,8 @@
     "None": "없음",
     "Image": "이미지",
     "All": "전체",
-    "InProgress": "진행중"
+    "InProgress": "진행중",
+    "Session": "세션"
   },
   "credential": {
     "Permission": "권한",

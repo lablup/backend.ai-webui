@@ -453,7 +453,8 @@
     "None": "Байхгүй",
     "Image": "Зураг",
     "All": "бүхэлд нь",
-    "InProgress": "Ажиллаж байна"
+    "InProgress": "Ажиллаж байна",
+    "Session": "Сессия"
   },
   "credential": {
     "Permission": "Зөвшөөрөл",

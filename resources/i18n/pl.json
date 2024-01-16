@@ -455,7 +455,8 @@
     "None": "Brak",
     "Image": "Obraz",
     "All": "Wszystkie",
-    "InProgress": "W toku"
+    "InProgress": "W toku",
+    "Session": "Sesja"
   },
   "credential": {
     "Permission": "Pozwolenie",

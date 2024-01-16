@@ -453,7 +453,8 @@
     "None": "tiada",
     "Image": "Gambar",
     "All": "keseluruhan",
-    "InProgress": "Prosiding"
+    "InProgress": "Prosiding",
+    "Session": "Sesi"
   },
   "credential": {
     "Permission": "Kebenaran",

@@ -485,7 +485,8 @@
     "None": "Ninguno",
     "Image": "Imagen",
     "All": "Todos",
-    "InProgress": "En curso"
+    "InProgress": "En curso",
+    "Session": "Sesión"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",

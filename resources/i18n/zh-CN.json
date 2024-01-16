@@ -453,7 +453,8 @@
     "None": "无",
     "Image": "图像",
     "All": "全部",
-    "InProgress": "进行中"
+    "InProgress": "进行中",
+    "Session": "会话"
   },
   "credential": {
     "Permission": "允许",

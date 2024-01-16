@@ -453,7 +453,8 @@
     "None": "Κανένα",
     "Image": "Εικόνα",
     "All": "Όλα",
-    "InProgress": "Σε εξέλιξη"
+    "InProgress": "Σε εξέλιξη",
+    "Session": "Σύνοδος"
   },
   "credential": {
     "Permission": "Αδεια",

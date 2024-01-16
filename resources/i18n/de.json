@@ -453,7 +453,8 @@
     "None": "Keine",
     "Image": "Bild",
     "All": "Alle",
-    "InProgress": "In Arbeit"
+    "InProgress": "In Arbeit",
+    "Session": "Sitzung"
   },
   "credential": {
     "Permission": "Genehmigung",

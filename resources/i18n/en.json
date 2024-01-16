@@ -547,7 +547,8 @@
     "None": "None",
     "Image": "Image",
     "All": "All",
-    "InProgress": "In progress"
+    "InProgress": "In progress",
+    "Session": "Session"
   },
   "credential": {
     "Permission": "Permission",

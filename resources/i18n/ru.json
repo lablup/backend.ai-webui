@@ -455,7 +455,8 @@
     "None": "Нет",
     "Image": "Изображение",
     "All": "Все",
-    "InProgress": "В процессе"
+    "InProgress": "В процессе",
+    "Session": "Сессия"
   },
   "credential": {
     "Permission": "Разрешение",
