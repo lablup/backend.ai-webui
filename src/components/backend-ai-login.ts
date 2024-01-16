@@ -139,6 +139,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) isDirectorySizeVisible = true;
   @property({ type: Boolean }) supportModelStore = false;
   @property({ type: String }) eduAppNamePrefix;
+  @property({ type: String }) pluginPages;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel')
@@ -560,6 +561,7 @@ export default class BackendAILogin extends BackendAIPage {
     this._initResourcesConfigWithKeys(config.resources);
     this._initEnvironmentsConfigWithKeys(config.environments);
     this._initPipelineConfigWithKeys(config.pipeline);
+    this._initPluginConfigWithKeys(config.plugin);
   }
 
   /**
@@ -1035,6 +1037,20 @@ export default class BackendAILogin extends BackendAIPage {
       valueType: 'string',
       defaultValue: '',
       value: pipelineConfig?.frontendEndpoint,
+    } as ConfigValueObject) as string;
+  }
+
+  /**
+   * Initialize global key with value from plugin section in config file
+   *
+   * @param {object} pluginConfig
+   */
+  private _initPluginConfigWithKeys(pluginConfig) {
+    // Plugin page
+    this.pluginPages = this._getConfigValueByExists(pluginConfig, {
+      valueType: 'string',
+      defaultValue: '',
+      value: pluginConfig?.page,
     } as ConfigValueObject) as string;
   }
 
@@ -1805,6 +1821,7 @@ export default class BackendAILogin extends BackendAIPage {
           this.isDirectorySizeVisible;
         globalThis.backendaiclient._config.supportModelStore =
           this.supportModelStore;
+        globalThis.backendaiclient._config.pluginPages = this.pluginPages;
         globalThis.backendaiclient.ready = true;
         if (
           this.endpoints.indexOf(

@@ -65,52 +65,50 @@ const BAISider: React.FC<BAISiderProps> = ({
         {...otherProps}
         className="bai-sider"
       >
-        <Link to="/">
-          <Flex
-            direction="column"
-            justify="start"
-            align="start"
-            style={{
-              padding: 16,
-              overflow: 'visible',
-            }}
-            className={'logo-and-text-container'}
-          >
-            <div className="logo-img-wrap">
-              <div style={{ display: otherProps.collapsed ? 'none' : 'block' }}>
-                {logo}
-              </div>
-              <div style={{ display: otherProps.collapsed ? 'block' : 'none' }}>
-                {logoCollapsed}
-              </div>
+        <Flex
+          direction="column"
+          justify="start"
+          align="start"
+          style={{
+            padding: 16,
+            overflow: 'visible',
+          }}
+          className={'logo-and-text-container'}
+        >
+          <div className="logo-img-wrap">
+            <div style={{ display: otherProps.collapsed ? 'none' : 'block' }}>
+              {logo}
             </div>
-            <div className="logo-title-wrap">
-              {otherProps.collapsed ? (
-                <Typography.Text
-                  style={{
-                    fontSize: 16,
-                    lineHeight: '16px',
-                    fontWeight: 200,
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {logoTitleCollapsed}
-                </Typography.Text>
-              ) : (
-                <Typography.Text
-                  style={{
-                    fontSize: 16,
-                    lineHeight: '16px',
-                    fontWeight: 200,
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {logoTitle}
-                </Typography.Text>
-              )}
+            <div style={{ display: otherProps.collapsed ? 'block' : 'none' }}>
+              {logoCollapsed}
             </div>
-          </Flex>
-        </Link>
+          </div>
+          <div className="logo-title-wrap">
+            {otherProps.collapsed ? (
+              <Typography.Text
+                style={{
+                  fontSize: 16,
+                  lineHeight: '16px',
+                  fontWeight: 200,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {logoTitleCollapsed}
+              </Typography.Text>
+            ) : (
+              <Typography.Text
+                style={{
+                  fontSize: 16,
+                  lineHeight: '16px',
+                  fontWeight: 200,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {logoTitle}
+              </Typography.Text>
+            )}
+          </div>
+        </Flex>
         {children}
         {bottomText && (
           <>

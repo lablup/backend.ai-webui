@@ -300,5 +300,6 @@ type BackendAIConfig = {
   force2FA: boolean;
   directoryBasedUsage: boolean;
   maxCountForPreopenPorts: number;
+  pluginPages: string;
   [key: string]: any;
 };

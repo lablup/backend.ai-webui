@@ -161,11 +161,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'experiment',
     'credential',
     'environment',
-    'agent',
-    'storage-settings',
-    'settings',
-    'maintenance',
-    'information',
   ];
   @property({ type: Array }) superAdminOnlyPages = [
     'agent',
@@ -380,7 +375,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     document.addEventListener('move-to-from-react', (e) => {
       const params = (e as CustomEvent).detail.params;
       const path = (e as CustomEvent).detail.path;
-      store.dispatch(navigate(decodeURIComponent(path), params));
+      this._moveTo(path, params);
     });
     document.addEventListener('show-TOS-agreement', () => {
       this.showTOSAgreement();
@@ -533,7 +528,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               switch (pageItem.permission) {
                 case 'superadmin':
                   this.plugins['menuitem-superadmin'].push(page);
-                  this.adminOnlyPages.push(page);
+                  this.superAdminOnlyPages.push(page);
                   break;
                 case 'admin':
                   this.plugins['menuitem-admin'].push(page);
@@ -563,6 +558,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       }
     }
     this.loginPanel.refreshWithConfig(config);
+    const event = new CustomEvent('backend-ai-config-loaded');
+    document.dispatchEvent(event);
   }
 
   refreshPage(): void {
@@ -1171,7 +1168,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    *
    * @param {string} url
    */
-  _moveTo(url) {
+  _moveTo(url, params = undefined) {
     const page = url.split('/')[1];
     if (
       !this.availablePages.includes(page) &&
@@ -1183,7 +1180,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       return;
     }
     globalThis.history.pushState({}, '', url);
-    store.dispatch(navigate(decodeURIComponent(url), {}));
+    store.dispatch(navigate(decodeURIComponent(url), params ?? {}));
     if ('menuitem' in this.plugins) {
       for (const item of this.plugins.menuitem) {
         if (item !== this._page) {
@@ -1196,7 +1193,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         }
       }
       if (this.plugins['menuitem'].includes(this._page)) {
-        // TODO specify type for web components ffrom variable
+        // TODO specify type for web components from variable
         const component = this.shadowRoot?.querySelector(
           this._page,
         ) as BackendAIPage;

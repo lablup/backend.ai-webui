@@ -6,7 +6,11 @@ import {
 import MainLayout from './components/MainLayout/MainLayout';
 import React from 'react';
 import { FC } from 'react';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import {
+  Navigate,
+  RouterProvider,
+  createBrowserRouter,
+} from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
 const Information = React.lazy(() => import('./components/Information'));
@@ -18,6 +22,7 @@ const router = createBrowserRouter([
     element: (
       <>
         <MainLayout />
+        <Navigate to="/summary" replace />
         <RoutingEventHandler />
       </>
     ),
@@ -114,28 +119,5 @@ const App: FC = () => {
     </RecoilRoot>
   );
 };
-
-// const App = () => {
-//   // return (
-//   //   <>
-//   //     <h1>123</h1>
-//   //     <h1>123</h1>
-//   //     <h1>123</h1>
-//   //     <h1>123</h1>
-//   //     <h1>123</h1>
-//   //     <h1>123</h1>
-//   //   </>
-//   // );
-//   return (
-//     // @ts-ignore
-
-//     // <backend-ai-webui
-//     //   id="webui-shell"
-//     //   // style={{
-//     //   //   backgroundColor: '#222222',
-//     //   // }}
-//     // />
-//   );
-// };
 
 export default App;

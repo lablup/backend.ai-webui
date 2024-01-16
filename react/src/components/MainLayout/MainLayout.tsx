@@ -4,14 +4,27 @@ import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { useLocalStorageState } from 'ahooks';
 import { Layout, theme } from 'antd';
-import { Suspense, useEffect, useLayoutEffect, useState } from 'react';
+import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 
 const { Content } = Layout;
 
+export type PluginPage = {
+  name: string;
+  url: string;
+  menuitem: string;
+};
+
+export type WebUIPluginType = {
+  page: PluginPage[];
+  menuitem: string[];
+  'menuitem-user': string[];
+  'menuitem-admin': string[];
+  'menuitem-superadmin': string[];
+};
+
 function MainLayout() {
   const navigate = useNavigate();
-  // console.log(_.last(matches));
 
   const [sideCollapsed, setSideCollapsed] = useState<boolean>(false);
   const [compactSidebarActive] = useLocalStorageState<boolean | undefined>(
@@ -22,6 +35,21 @@ function MainLayout() {
 
   // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();
+  const webUIRef = useRef<HTMLElement>(null);
+  const [webUIPlugins, setWebUIPlugins] = useState<
+    WebUIPluginType | undefined
+  >();
+
+  useEffect(() => {
+    const handler = () => {
+      // @ts-ignore
+      setWebUIPlugins(webUIRef.current?.plugins);
+    };
+    document.addEventListener('backend-ai-config-loaded', handler);
+    return () => {
+      document.removeEventListener('backend-ai-config-loaded', handler);
+    };
+  }, [webUIRef]);
 
   useLayoutEffect(() => {
     const handleNavigate = (e: any) => {
@@ -55,6 +83,7 @@ function MainLayout() {
             broken ? setCollapsedWidth(0) : setCollapsedWidth(88);
             setSideCollapsed(broken);
           }}
+          webuiplugins={webUIPlugins}
         />
       </Suspense>
       <Layout
@@ -112,7 +141,7 @@ function MainLayout() {
             {/* To match paddig to 16 (2+14) */}
             {/* </Flex> */}
             {/* @ts-ignore */}
-            <backend-ai-webui id="webui-shell" />
+            <backend-ai-webui id="webui-shell" ref={webUIRef} />
           </Flex>
         </Content>
       </Layout>

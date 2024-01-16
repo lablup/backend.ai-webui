@@ -3,6 +3,7 @@ import { useCurrentUserRole } from '../../hooks/backendai';
 import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
 import Flex from '../Flex';
+import { PluginPage, WebUIPluginType } from './MainLayout';
 import {
   BarChartOutlined,
   BarsOutlined,
@@ -10,6 +11,7 @@ import {
   CloudUploadOutlined,
   ControlOutlined,
   DashboardOutlined,
+  ExperimentOutlined,
   ExportOutlined,
   FileDoneOutlined,
   HddOutlined,
@@ -19,22 +21,25 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { theme, MenuProps, Typography } from 'antd';
+import _ from 'lodash';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
-const WebUISider: React.FC<
-  Pick<BAISiderProps, 'collapsed' | 'collapsedWidth' | 'onBreakpoint'>
-> = (props) => {
+interface WebUISiderProps
+  extends Pick<BAISiderProps, 'collapsed' | 'collapsedWidth' | 'onBreakpoint'> {
+  webuiplugins?: WebUIPluginType;
+}
+const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const currentUserRole = useCurrentUserRole();
-
-  // const navigate = useNavigate();
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
   const baiClient = useSuspendedBackendaiClient();
   const isHideAgents = baiClient?._config?.hideAgents ?? true;
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
+
   const generalMenu: MenuProps['items'] = [
     {
       label: t('webui.menu.Summary'),
@@ -80,14 +85,6 @@ const WebUISider: React.FC<
       null,
   ];
 
-  const adminDivider: MenuProps['items'] = [
-    {
-      label: <>{t('webui.menu.Administration')}</>,
-      type: 'group',
-    },
-    { type: 'divider' },
-  ];
-
   const adminMenu: MenuProps['items'] = [
     {
       label: t('webui.menu.Users'),
@@ -124,6 +121,33 @@ const WebUISider: React.FC<
     },
   ];
 
+  const pluginMap = {
+    'menuitem-user': generalMenu,
+    'menuitem-admin': adminMenu,
+    'menuitem-superadmin': superAdminMenu,
+  };
+
+  // Iterates over own enumerable string keyed properties of an object and invokes iteratee for each property.
+  _.forOwn(props.webuiplugins, (value, key) => {
+    // Check if the `pluginMap` object has the current key using the `_.has` function.
+    if (_.has(pluginMap, key)) {
+      const menu = pluginMap[key as keyof typeof pluginMap];
+      const pluginPages = props?.webuiplugins?.page;
+      _.map(value, (name) => {
+        // Find page item belonging to each of menuitem-user, menuitem-admin, menuitem-superadmin in webuiplugins.page
+        const page = _.find(pluginPages, { name: name }) as PluginPage;
+        if (page) {
+          const menuItem = {
+            label: page?.menuitem,
+            icon: <ExperimentOutlined />,
+            key: page?.url,
+          };
+          menu.push(menuItem);
+        }
+      });
+    }
+  });
+
   return (
     <BAISider
       logo={
@@ -132,6 +156,7 @@ const WebUISider: React.FC<
           className="logo-wide"
           src={'/manifest/backend.ai-text.svg'}
           style={{ width: 218, height: 55 }}
+          onClick={() => webuiNavigate('/summary')}
         />
       }
       logoCollapsed={
@@ -140,6 +165,7 @@ const WebUISider: React.FC<
           className="logo-square"
           src={'/manifest/backend.ai-brand-simple.svg'}
           style={{ width: 55, height: 55 }}
+          onClick={() => webuiNavigate('/summary')}
         />
       }
       logoTitle="WebUI"
@@ -239,25 +265,26 @@ const WebUISider: React.FC<
                 },
               ]
             : currentUserRole === 'admin'
-            ? [...generalMenu, ...adminDivider, ...adminMenu]
+            ? [
+                ...generalMenu,
+                {
+                  type: 'group',
+                  label: (
+                    <Flex
+                      style={{ borderBottom: `1px solid ${token.colorBorder}` }}
+                    >
+                      {!props.collapsed && (
+                        <Typography.Text type="secondary" ellipsis>
+                          {t('webui.menu.Administration')}
+                        </Typography.Text>
+                      )}
+                    </Flex>
+                  ),
+                  children: [...adminMenu],
+                },
+              ]
             : [...generalMenu]
         }
-        // {[
-        /**
-         * General menu
-         */
-        /**
-         * Plugin menu
-         */
-        /**
-         * Admin menu
-         */
-        /**
-         * Superadmin menu
-         */
-        /**
-         * Admin plugin menu
-         */
         /**
          * Etc menu
          */
@@ -268,16 +295,6 @@ const WebUISider: React.FC<
         // },
         // ]}
         onClick={({ key, keyPath }) => {
-          // const menu = _.find(
-          //   [...generalMenu, ...adminMenu, ...superAdminMenu],
-          //   {
-          //     key: key,
-          //   },
-          // );
-          // if (menu) {
-          //   // @ts-ignore
-          //   setTitle(menu.label);
-          // }
           webuiNavigate('/' + keyPath.join('/'));
         }}
       />
