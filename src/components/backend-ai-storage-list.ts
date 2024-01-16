@@ -347,6 +347,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           --vaadin-text-field-default-width: auto;
         }
 
+        vaadin-grid-cell-content {
+          overflow: visible;
+        }
+
         div.breadcrumb {
           color: #637282;
           font-size: 1em;
@@ -1614,20 +1618,20 @@ export default class BackendAiStorageList extends BackendAIPage {
   permissionRenderer(root, column?, rowData?) {
     render(
       html`
-        <div class="vertical layout">
-          <mwc-select label="${_t('data.folders.SelectPermission')}">
-            <option ?selected=${rowData.item.perm === 'ro'} value="ro">
-              ${_t('data.folders.View')}
-            </option>
-            <option ?selected=${rowData.item.perm === 'rw'} value="rw">
-              ${_t('data.folders.Edit')}
-            </option>
-            <option ?selected=${rowData.item.perm === 'wd'} value="wd">
-              ${_t('data.folders.EditDelete')}
-            </option>
-            <option value="kickout">${_t('data.folders.KickOut')}</option>
-          </mwc-select>
-        </div>
+        <mwc-select label="${_t('data.folders.SelectPermission')}">
+          <mwc-list-item value="ro" ?selected="${rowData.item.perm === 'ro'}">
+            ${_t('data.folders.View')}
+          </mwc-list-item>
+          <mwc-list-item value="rw" ?selected="${rowData.item.perm === 'rw'}">
+            ${_t('data.folders.Edit')}
+          </mwc-list-item>
+          <mwc-list-item value="wd" ?selected="${rowData.item.perm === 'wd'}">
+            ${_t('data.folders.EditDelete')}
+          </mwc-list-item>
+          <mwc-list-item value="kickout"">
+            ${_t('data.folders.KickOut')}
+          </mwc-list-item>
+        </mwc-select>
       `,
       root,
     );

@@ -669,6 +669,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.09.7')) {
       this._features['main-access-key'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('23.09.8')) {
+      this._features['model-serving-endpoint-user-info'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('24.03.0')) {
       this._features['max-vfolder-count-in-user-resource-policy'] = true;
       this._features['model-store'] = true;
