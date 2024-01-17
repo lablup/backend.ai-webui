@@ -618,16 +618,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this._page === 'unauthorized'
       ) {
         this._page = 'unauthorized';
-        globalThis.history.pushState({}, '', '/unauthorized');
-        store.dispatch(navigate(decodeURIComponent(this._page)));
+        this._moveTo('/unauthorized');
       }
     }
 
     // redirect to unauthorize page when admin user tries to access superadmin only page
     if (!this.is_superadmin && this.superAdminOnlyPages.includes(this._page)) {
       this._page = 'unauthorized';
-      globalThis.history.pushState({}, '', '/unauthorized');
-      store.dispatch(navigate(decodeURIComponent(this._page)));
+      this._moveTo('/unauthorized');
     }
 
     // redirect to error page when blocked by config option.
@@ -640,8 +638,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.inactiveMenuItem.includes(this._page)
     ) {
       this._page = 'error';
-      globalThis.history.pushState({}, '', '/error');
-      store.dispatch(navigate(decodeURIComponent(this._page)));
+      this._moveTo('/error');
     }
   }
 
@@ -974,6 +971,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this.menuTitle = _text('webui.menu.Import&Run');
         break;
       default:
+        this._page = 'error';
+        this.menuTitle = _text('webui.NOTFOUND');
         if (
           'menuitem' in this.plugins &&
           this.plugins['menuitem'].includes(view)
@@ -1004,9 +1003,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           });
           break;
         }
-        // console.log('set to error');
-        this._page = 'error';
-        this.menuTitle = _text('webui.NOTFOUND');
     }
   }
 

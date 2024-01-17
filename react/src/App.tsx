@@ -4,6 +4,7 @@ import {
   RoutingEventHandler,
 } from './components/DefaultProviders';
 import MainLayout from './components/MainLayout/MainLayout';
+import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
 import React from 'react';
 import { FC } from 'react';
@@ -115,8 +116,18 @@ const router = createBrowserRouter([
         handle: { labelKey: 'webui.menu.Logs' },
       },
       {
-        path: '*',
+        path: '/error',
         Component: Page404,
+      },
+      {
+        path: '/unauthorized',
+        handle: { labelKey: 'webui.UNAUTHORIZEDACCESS' },
+        Component: Page401,
+      },
+      // Leave empty tag for plugin pages.
+      {
+        path: '*',
+        element: <></>,
       },
     ],
   },
