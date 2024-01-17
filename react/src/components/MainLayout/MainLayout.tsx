@@ -1,3 +1,5 @@
+import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
+import { isOpenDrawerState } from '../BAINotificationButton';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
 import WebUIHeader from './WebUIHeader';
@@ -6,6 +8,7 @@ import { useLocalStorageState } from 'ahooks';
 import { Layout, theme } from 'antd';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
 const { Content } = Layout;
 
@@ -91,7 +94,7 @@ function MainLayout() {
           backgroundColor: 'transparent',
         }}
       >
-        <Content>
+        <BAIContentWithDrawerArea>
           <Suspense
             fallback={
               <Layout.Header style={{ visibility: 'hidden', height: 62 }} />
@@ -143,7 +146,7 @@ function MainLayout() {
             {/* @ts-ignore */}
             <backend-ai-webui id="webui-shell" ref={webUIRef} />
           </Flex>
-        </Content>
+        </BAIContentWithDrawerArea>
       </Layout>
     </Layout>
   );

@@ -15,9 +15,11 @@ import {
 } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { atom } from 'recoil';
 
 type NotificationCategory = 'all' | 'in progress';
 interface Props extends DrawerProps {}
+
 const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -38,9 +40,11 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
 
   return (
     <Drawer
+      width={256}
       title={t('notification.Notifications')}
+      mask={false}
       styles={{
-        mask: { backgroundColor: 'transparent' },
+        // mask: { backgroundColor: 'transparent' },
         body: {
           padding: 0,
           paddingLeft: token.paddingContentHorizontalSM,
@@ -50,6 +54,9 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
           padding: 15,
         },
       }}
+      // style={{
+      //   boxShadow: 'none !important',
+      // }}
       contentWrapperStyle={{ padding: 0 }}
       // comment out the following line because list item
       extra={

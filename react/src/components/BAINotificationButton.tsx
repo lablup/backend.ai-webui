@@ -6,13 +6,19 @@ import { Badge, Button } from 'antd';
 import type { ButtonProps } from 'antd';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
+import { atom, useRecoilState } from 'recoil';
 
 interface Props extends ButtonProps {}
+export const isOpenDrawerState = atom({
+  key: 'is-open-bai-drawer',
+  default: false,
+});
 
 const BAINotificationButton: React.FC<Props> = ({ ...props }) => {
   const [notifications, { upsertNotification }] = useBAINotification();
-  const [isOpenDrawer, { toggle: toggleDrawer }] = useToggle();
+  // const [isOpenDrawer, { toggle: toggleDrawer }] = useToggle();
 
+  const [isOpenDrawer, setIsOpenDrawer] = useRecoilState(isOpenDrawerState);
   useEffect(() => {
     const handler = (e: any) => {
       upsertNotification(e.detail);
@@ -36,10 +42,13 @@ const BAINotificationButton: React.FC<Props> = ({ ...props }) => {
           </Badge>
         }
         type="text"
-        onClick={toggleDrawer}
+        onClick={() => setIsOpenDrawer((v) => !v)}
         {...props}
       />
-      <WEBUINotificationDrawer open={isOpenDrawer} onClose={toggleDrawer} />
+      <WEBUINotificationDrawer
+        open={isOpenDrawer}
+        onClose={() => setIsOpenDrawer((v) => !v)}
+      />
     </>
   );
 };
