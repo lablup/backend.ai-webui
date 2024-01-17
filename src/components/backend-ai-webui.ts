@@ -1406,9 +1406,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         <backend-ai-edu-applauncher class="page" name="edu-applauncher" ?active="${
           this._page === 'edu-applauncher' || this._page === 'applauncher'
         }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-edu-applauncher>
-        <backend-ai-error-view class="page" name="error" ?active="${
+        <!-- <backend-ai-error-view class="page" name="error" ?active="${
           this._page === 'error'
-        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-error-view>
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-error-view> -->
         <backend-ai-permission-denied-view class="page" name="unauthorized" ?active="${
           this._page === 'unauthorized'
         }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-permission-denied-view>

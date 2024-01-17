@@ -4,6 +4,7 @@ import {
   RoutingEventHandler,
 } from './components/DefaultProviders';
 import MainLayout from './components/MainLayout/MainLayout';
+import Page404 from './pages/Page404';
 import React from 'react';
 import { FC } from 'react';
 import {
@@ -99,7 +100,7 @@ const router = createBrowserRouter([
       },
       {
         path: '*',
-        element: <></>,
+        Component: Page404,
       },
     ],
   },
