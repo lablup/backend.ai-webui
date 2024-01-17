@@ -1371,9 +1371,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         <backend-ai-agent-summary-view class="page" name="agent-summary" ?active="${
           this._page === 'agent-summary'
         }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-summary-view>
-        <backend-ai-storage-host-settings-view class="page" name="storage-settings" ?active="${
+        <!-- <backend-ai-storage-host-settings-view class="page" name="storage-settings" ?active="${
           this._page === 'storage-settings'
-        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-storage-host-settings-view>
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-storage-host-settings-view> -->
         <backend-ai-data-view class="page" name="data" ?active="${
           this._page === 'data'
         }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-data-view>

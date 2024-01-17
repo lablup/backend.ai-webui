@@ -484,6 +484,7 @@
     "DiskPerc": "디스크 %"
   },
   "storageHost": {
+    "StorageSetting": "스토리지 설정",
     "Usage": "사용량",
     "Total": "전체",
     "Used": "사용",

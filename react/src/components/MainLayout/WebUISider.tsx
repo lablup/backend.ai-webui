@@ -255,7 +255,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     />
   </Flex> */}
       <BAIMenu
-        selectedKeys={[location.pathname.split('/')[1] || 'dashboard']}
+        selectedKeys={[
+          location.pathname.split('/')[1] || 'summary',
+          // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
+          location.pathname.split('/')[1] === 'storage-settings' ? 'agent' : '',
+        ]}
         items={
           // TODO: add plugin menu
           currentUserRole === 'superadmin'

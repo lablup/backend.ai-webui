@@ -1,24 +1,24 @@
-import { useWebComponentInfo } from '../components/DefaultProviders';
 import Flex from '../components/Flex';
 import StorageHostResourcePanel from '../components/StorageHostResourcePanel';
 import StorageHostSettingsPanel from '../components/StorageHostSettingsPanel';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { StorageHostSettingPageQuery } from './__generated__/StorageHostSettingPageQuery.graphql';
-import { Breadcrumb, Card, Empty, Typography, theme } from 'antd';
+import { Breadcrumb, Card, Empty, Typography } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
+import { useParams } from 'react-router-dom';
 
 interface StorageHostSettingPageProps {
-  storageHostId: string;
+  // storageHostId: string;
 }
-const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = ({
-  storageHostId,
-}) => {
-  const { token } = theme.useToken();
+const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
+  const { hostname: storageHostId } = useParams<{
+    hostname: string;
+  }>();
   const baiClient = useSuspendedBackendaiClient();
-  const { moveTo } = useWebComponentInfo();
+  const webuiNavigate = useWebUINavigate();
   const { t } = useTranslation();
   const { storage_volume } = useLazyLoadQuery<StorageHostSettingPageQuery>(
     graphql`
@@ -40,23 +40,19 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = ({
     storage_volume?.capabilities?.includes('quota') ?? false;
 
   return (
-    <Flex
-      direction="column"
-      align="stretch"
-      style={{ margin: token.marginSM, gap: token.margin }}
-    >
+    <Flex direction="column" align="stretch" gap={'sm'}>
       <Breadcrumb
         items={[
           {
-            title: 'Resources',
+            title: t('webui.menu.Resources'),
             onClick: (e) => {
               e.preventDefault();
-              moveTo('/agent');
+              webuiNavigate('/agent');
             },
             href: '/agent',
           },
           {
-            title: 'Storage setting',
+            title: t('storageHost.StorageSetting'),
           },
         ]}
       ></Breadcrumb>

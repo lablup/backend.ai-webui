@@ -17,6 +17,9 @@ import { RecoilRoot } from 'recoil';
 const Information = React.lazy(() => import('./components/Information'));
 const ServingListPage = React.lazy(() => import('./pages/ServingListPage'));
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
+const StorageHostSettingPage = React.lazy(
+  () => import('./pages/StorageHostSettingPage'),
+);
 
 const router = createBrowserRouter([
   {
@@ -92,6 +95,11 @@ const router = createBrowserRouter([
       {
         path: '/maintenance',
         handle: { labelKey: 'webui.menu.Maintenance' },
+      },
+      {
+        path: '/storage-settings/:hostname',
+        handle: { labelKey: 'storageHost.StorageSetting' },
+        Component: StorageHostSettingPage,
       },
       {
         path: '/information',
