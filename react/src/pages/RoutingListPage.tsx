@@ -1,4 +1,5 @@
 import CopyableCodeText from '../components/CopyableCodeText';
+import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
 import Flex from '../components/Flex';
@@ -132,6 +133,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               endpoint
               status
             }
+            ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
             ...ModelServiceSettingModal_endpoint
           }
@@ -300,7 +302,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             },
             {
               label: t('modelService.SessionOwner'),
-              children: baiClient.email || '',
+              children: <EndpointOwnerInfo endpointFrgmt={endpoint} />,
             },
             {
               label: t('modelService.DesiredSessionCount'),

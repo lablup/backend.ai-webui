@@ -500,12 +500,12 @@
     "GithubAPIEtcError": "Incidencia en el servidor GitHub.",
     "GithubAPILimitError": "Error de limitación de la API de GitHub.",
     "GithubInternalError": "Error interno de GitHub.",
-    "GitlabDefaultBranch": "Nombre de la rama de Gitlab",
-    "GitlabRepoWillBeFolder": "Los repositorios Gitlab importados se convierten en carpetas y se pueden montar al iniciar la sesión.",
-    "GitlabURL": "URL de Gitlab",
+    "GitlabDefaultBranch": "Nombre de la rama de GitLab",
+    "GitlabRepoWillBeFolder": "Los repositorios GitLab importados se convierten en carpetas y se pueden montar al iniciar la sesión.",
+    "GitlabURL": "URL de GitLab",
     "ImportFinished": "Importación finalizada.",
     "ImportGithubRepo": "Importar repositorio GitHub",
-    "ImportGitlabRepo": "Importar repositorio Gitlab",
+    "ImportGitlabRepo": "Importar repositorio GitLab",
     "ImportNotebook": "Importar cuaderno",
     "NoNotebookCode": "La dirección del cuaderno está vacía. Introduzca un código de libreta válido para copiar el código de identificación.",
     "NoSuitableResourceFoundOnGivenURL": "No se ha encontrado ningún recurso adecuado en la URL indicada.",
@@ -641,7 +641,9 @@
     "RequestUrl": "Solicitar Url",
     "Status": "Estado",
     "TimeStamp": "Marca de tiempo",
-    "UpTo3000Logs": "(Hasta 3000 registros recientes)"
+    "UpTo3000Logs": "(Hasta 3000 registros recientes)",
+    "ShowOnlyError": "Mostrar solo error",
+    "SearchLogs": "Registros de búsqueda"
   },
   "maintenance": {
     "CleanupImages": "Limpieza de imágenes",
@@ -727,7 +729,8 @@
     "SeeContainerLogs": "Ver registros de contenedores",
     "TimeStamp": "Marca de tiempo",
     "Result": "Resultado",
-    "Finished": "Finalizado"
+    "Finished": "Finalizado",
+    "ServiceDelegatedFrom": "El servicio modelo es creado por {{ createdUser }} pero la propiedad de la sesión será delegada a {{ sessionOwner }}"
   },
   "notification": {
     "Initializing": "Inicializando...",
@@ -1142,7 +1145,8 @@
       "EnvironmentVariableNamePatternError": "El nombre de la variable debe empezar por una letra o un guión bajo, y sólo puede contener letras, números y guiones bajos.",
       "EnvironmentVariableDuplicateName": "Un nombre de variable que ya existe.",
       "Template": "Plantilla de sesión",
-      "EnableAutomaticShmem": "Memoria compartida automática"
+      "EnableAutomaticShmem": "Memoria compartida automática",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

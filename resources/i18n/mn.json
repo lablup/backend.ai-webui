@@ -255,7 +255,8 @@
       "EnvironmentVariableNamePatternError": "Хувьсагчийн нэр үсэг эсвэл доогуур зураасаар эхлэх ёстой бөгөөд зөвхөн үсэг, тоо, доогуур зураас агуулсан байж болно.",
       "EnvironmentVariableDuplicateName": "Энэ хувьсагчийн нэр аль хэдийн байна.",
       "Template": "Сеанс загвар",
-      "EnableAutomaticShmem": "Автомат хуваалцсан санах ой"
+      "EnableAutomaticShmem": "Автомат хуваалцсан санах ой",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -868,7 +869,9 @@
     "Parameters": "Параметрүүд",
     "ErrorType": "Алдааны төрөл",
     "LogMessageRemoved": "Бүртгэлийн мессежүүдийг устгасан.",
-    "NoLogToDisplay": "Харуулах бүртгэл байхгүй"
+    "NoLogToDisplay": "Харуулах бүртгэл байхгүй",
+    "ShowOnlyError": "Зөвхөн алдаа харуулах",
+    "SearchLogs": "Лог хайх"
   },
   "resourcePolicy": {
     "Resources": "Нөөц",
@@ -1280,10 +1283,10 @@
     "GithubInternalError": "GitHub дотоод алдаа.",
     "GithubAPILimitError": "GitHub API хязгаарлалтын алдаа.",
     "GithubAPIEtcError": "GitHub серверийн асуудал.",
-    "ImportGitlabRepo": "Gitlab репозиторыг импортлох",
-    "GitlabRepoWillBeFolder": "Импортын Gitlab репозиторуудыг хавтас болгон хөрвүүлдэг бөгөөд сесс эхлэхэд холбож болно.",
-    "GitlabURL": "Gitlab URL",
-    "GitlabDefaultBranch": "Gitlab салбарын нэр"
+    "ImportGitlabRepo": "GitLab репозиторыг импортлох",
+    "GitlabRepoWillBeFolder": "Импортын GitLab репозиторуудыг хавтас болгон хөрвүүлдэг бөгөөд сесс эхлэхэд холбож болно.",
+    "GitlabURL": "GitLab URL",
+    "GitlabDefaultBranch": "GitLab салбарын нэр"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Энэ сарын статистик",
@@ -1456,7 +1459,8 @@
     "SeeContainerLogs": "Контейнерийн бүртгэлийг үзнэ үү",
     "TimeStamp": "Цагийн тэмдэг",
     "Result": "Үр дүн",
-    "Finished": "Дууслаа"
+    "Finished": "Дууслаа",
+    "ServiceDelegatedFrom": "Загвар үйлчилгээг {{ createdUser }} үүсгэсэн боловч сессийн эрхийг {{ sessionOwner }}-д шилжүүлнэ."
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",

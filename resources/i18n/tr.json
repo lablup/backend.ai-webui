@@ -255,7 +255,8 @@
       "EnvironmentVariableNamePatternError": "Değişken adı bir harf veya alt çizgi ile başlamalıdır ve yalnızca harfler, sayılar ve alt çizgiler içerebilir.",
       "EnvironmentVariableDuplicateName": "Zaten var olan bir değişken adı.",
       "Template": "Oturum Şablonu",
-      "EnableAutomaticShmem": "Otomatik paylaşılan bellek"
+      "EnableAutomaticShmem": "Otomatik paylaşılan bellek",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -868,7 +869,9 @@
     "Parameters": "parametreler",
     "ErrorType": "Hata Türü",
     "LogMessageRemoved": "Günlük Mesajları kaldırıldı.",
-    "NoLogToDisplay": "Görüntülenecek Günlük Yok"
+    "NoLogToDisplay": "Görüntülenecek Günlük Yok",
+    "ShowOnlyError": "Yalnızca hatayı görüntüle",
+    "SearchLogs": "Günlüklerde arama yapın"
   },
   "resourcePolicy": {
     "Resources": "Kaynaklar",
@@ -1407,7 +1410,8 @@
     "SeeContainerLogs": "Konteyner Günlüklerini görün",
     "TimeStamp": "Zaman damgası",
     "Result": "Sonuç",
-    "Finished": "Bitmiş"
+    "Finished": "Bitmiş",
+    "ServiceDelegatedFrom": "Model hizmeti {{ createdUser }} tarafından oluşturulur ancak oturum sahipliği {{ sessionOwner }}'a devredilir."
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

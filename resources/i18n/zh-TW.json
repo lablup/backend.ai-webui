@@ -255,7 +255,8 @@
       "EnvironmentVariableNamePatternError": "变量名必须以字母或下划线开头，且只能包含字母、数字和下划线。",
       "EnvironmentVariableDuplicateName": "已经存在的变量名。",
       "Template": "会议模板",
-      "EnableAutomaticShmem": "自动共享内存"
+      "EnableAutomaticShmem": "自动共享内存",
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",
@@ -868,7 +869,9 @@
     "Parameters": "參數",
     "ErrorType": "錯誤類型",
     "LogMessageRemoved": "日誌消息已被刪除。",
-    "NoLogToDisplay": "无日志显示"
+    "NoLogToDisplay": "无日志显示",
+    "ShowOnlyError": "僅顯示錯誤",
+    "SearchLogs": "搜尋日誌"
   },
   "resourcePolicy": {
     "Resources": "資源",
@@ -1280,10 +1283,10 @@
     "GithubInternalError": "GitHub 内部错误。",
     "GithubAPILimitError": "GitHub API 限制错误。",
     "GithubAPIEtcError": "GitHub 服务器问题。",
-    "ImportGitlabRepo": "导入 Gitlab 仓库",
-    "GitlabRepoWillBeFolder": "导入的 Gitlab 资源库会转换为文件夹，并可在会话启动时挂载。",
-    "GitlabURL": "Gitlab URL",
-    "GitlabDefaultBranch": "Gitlab 分支名称"
+    "ImportGitlabRepo": "导入 GitLab 仓库",
+    "GitlabRepoWillBeFolder": "导入的 GitLab 资源库会转换为文件夹，并可在会话启动时挂载。",
+    "GitlabURL": "GitLab URL",
+    "GitlabDefaultBranch": "GitLab 分支名称"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "本月統計",
@@ -1447,7 +1450,8 @@
     "SeeContainerLogs": "查看容器日誌",
     "TimeStamp": "時間戳",
     "Result": "結果",
-    "Finished": "完成的"
+    "Finished": "完成的",
+    "ServiceDelegatedFrom": "模型服务由 {{ createdUser }} 创建，但会话所有权将委托给 {{ sessionOwner }}"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

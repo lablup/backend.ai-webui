@@ -255,7 +255,8 @@
       "EnvironmentVariableNamePatternError": "Το όνομα της μεταβλητής πρέπει να αρχίζει με γράμμα ή υπογράμμιση και μπορεί να περιέχει μόνο γράμματα, αριθμούς και υπογράμμιση.",
       "EnvironmentVariableDuplicateName": "Ένα όνομα μεταβλητής που υπάρχει ήδη.",
       "Template": "Πρότυπο συνεδρίας",
-      "EnableAutomaticShmem": "Αυτόματη κοινή μνήμη"
+      "EnableAutomaticShmem": "Αυτόματη κοινή μνήμη",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",
@@ -868,7 +869,9 @@
     "Parameters": "Παράμετροι",
     "ErrorType": "Τύπος σφάλματος",
     "LogMessageRemoved": "Τα μηνύματα καταγραφής έχουν καταργηθεί.",
-    "NoLogToDisplay": "Δεν εμφανίζονται αρχεία καταγραφής"
+    "NoLogToDisplay": "Δεν εμφανίζονται αρχεία καταγραφής",
+    "ShowOnlyError": "Εμφάνιση μόνο σφάλματος",
+    "SearchLogs": "Αναζήτηση αρχείων καταγραφής"
   },
   "resourcePolicy": {
     "Resources": "Πόροι",
@@ -1280,10 +1283,10 @@
     "GithubInternalError": "Εσωτερικό σφάλμα GitHub.",
     "GithubAPILimitError": "Σφάλμα περιορισμού API GitHub.",
     "GithubAPIEtcError": "Θέμα διακομιστή GitHub.",
-    "ImportGitlabRepo": "Εισαγωγή αποθετηρίου Gitlab",
-    "GitlabRepoWillBeFolder": "Τα εισαγόμενα αποθετήρια Gitlab μετατρέπονται σε φακέλους και μπορούν να προσαρτηθούν κατά την έναρξη της συνεδρίας.",
-    "GitlabURL": "URL του Gitlab",
-    "GitlabDefaultBranch": "Όνομα υποκαταστήματος Gitlab"
+    "ImportGitlabRepo": "Εισαγωγή αποθετηρίου GitLab",
+    "GitlabRepoWillBeFolder": "Τα εισαγόμενα αποθετήρια GitLab μετατρέπονται σε φακέλους και μπορούν να προσαρτηθούν κατά την έναρξη της συνεδρίας.",
+    "GitlabURL": "URL του GitLab",
+    "GitlabDefaultBranch": "Όνομα υποκαταστήματος GitLab"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Στατιστικά για αυτόν τον μήνα",
@@ -1407,7 +1410,8 @@
     "SeeContainerLogs": "Βλέπε αρχεία καταγραφής κοντέινερ",
     "TimeStamp": "Χρονική σήμανση",
     "Result": "Αποτέλεσμα",
-    "Finished": "Πεπερασμένος"
+    "Finished": "Πεπερασμένος",
+    "ServiceDelegatedFrom": "Το μοντέλο υπηρεσίας δημιουργείται από τον {{ createdUser }}, αλλά η ιδιοκτησία της συνεδρίας θα ανατεθεί στον {{ sessionOwner }}"
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",
