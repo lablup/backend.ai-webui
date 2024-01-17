@@ -2,7 +2,7 @@ import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import { isOpenDrawerState } from '../BAINotificationButton';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
-import WebUIHeader from './WebUIHeader';
+import WebUIHeader, { HEADER_HEIGHT } from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { useLocalStorageState } from 'ahooks';
 import { Layout, theme } from 'antd';
@@ -109,6 +109,8 @@ function MainLayout() {
               paddingLeft: token.paddingContentHorizontalLG,
               paddingRight: token.paddingContentHorizontalLG,
               paddingBottom: token.paddingContentVertical,
+              height: `calc(100vh - ${HEADER_HEIGHT}px)`,
+              overflow: 'auto',
             }}
           >
             {/* <Flex direction="column"> */}

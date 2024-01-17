@@ -14,6 +14,8 @@ import { useMatches } from 'react-router-dom';
 export interface WebUIHeaderProps extends FlexProps {
   onClickMenuIcon?: () => void;
 }
+
+export const HEADER_HEIGHT = 62;
 const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const { token } = theme.useToken();
   const currentDomainName = useCurrentDomainValue();
@@ -32,7 +34,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
       direction="row"
       style={{
         position: 'sticky',
-        height: 62,
+        height: HEADER_HEIGHT,
         top: 0,
         zIndex: 1,
         // width: '100%',
