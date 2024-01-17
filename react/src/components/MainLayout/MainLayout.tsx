@@ -2,6 +2,7 @@ import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import { isOpenDrawerState } from '../BAINotificationButton';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
+import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIHeader, { HEADER_HEIGHT } from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { useLocalStorageState } from 'ahooks';
@@ -95,7 +96,7 @@ function MainLayout() {
           backgroundColor: 'transparent',
         }}
       >
-        <BAIContentWithDrawerArea>
+        <BAIContentWithDrawerArea drawerWidth={DRAWER_WIDTH}>
           <Flex
             ref={contentScrollFlexRef}
             direction="column"

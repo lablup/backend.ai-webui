@@ -20,6 +20,7 @@ import { atom } from 'recoil';
 type NotificationCategory = 'all' | 'in progress';
 interface Props extends DrawerProps {}
 
+export const DRAWER_WIDTH = 280;
 const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -40,7 +41,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
 
   return (
     <Drawer
-      width={256}
+      width={DRAWER_WIDTH}
       title={t('notification.Notifications')}
       mask={false}
       styles={{
