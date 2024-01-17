@@ -16,6 +16,8 @@ import ResourceGroupSelect from './ResourceGroupSelect';
 import SliderInputFormItem from './SliderInputFormItem';
 import VFolderSelect from './VFolderSelect';
 import ValidationStatusTag from './ValidationStatusTag';
+import { AnsiUp } from 'ansi_up';
+import type { CollapseProps } from 'antd';
 import {
   Button,
   Card,
@@ -25,6 +27,7 @@ import {
   Input,
   theme,
   Switch,
+  Tag,
   message,
 } from 'antd';
 import _ from 'lodash';
@@ -95,8 +98,6 @@ type ServiceLauncherFormValue = ServiceLauncherInput &
   ImageEnvironmentFormInput &
   ResourceAllocationFormValue;
 
-const { Panel } = Collapse;
-
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   extraP,
   onRequestClose,
@@ -104,14 +105,12 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 }) => {
   const { t } = useTranslation();
   const [validationStatus, setValidationStatus] = useState('');
-  const [validationPanelStatus, setValidationPanelStatus] =
-    useState('disabled');
-  const [openedPanelList, setOpenedPanelList] = useState(['1']);
+  const [validationTime, setValidationTime] = useState('Before validation');
+  const [containerLogSummary, setContainerLogSummary] = useState('loading...');
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
   const [form] = Form.useForm<ServiceLauncherFormValue>();
-
   const mutationsToValidateService = useTanMutation<
     unknown,
     {
@@ -218,6 +217,14 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     },
   });
 
+  const validateButtonInHeader = () => (
+    <Flex direction="row" justify="between" align="stretch">
+      <Button key="validate" type="primary" onClick={(e) => handleValidate(e)}>
+        {t('modelService.Validate')}
+      </Button>
+    </Flex>
+  );
+
   // Apply any operation after clicking OK button
   const handleOk = () => {
     form
@@ -225,7 +232,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       .then((values) => {
         mutationToCreateService.mutate(values, {
           onSuccess: (resp) => {
-            console.log(resp);
             onRequestClose(true);
           },
           onError: (error) => {
@@ -252,48 +258,63 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
   // Apply any operation after clicking Cancel or close button button
   const handleCancel = () => {
-    setValidationPanelStatus('disabled');
-    setOpenedPanelList(['1']); // set to default
     onRequestClose();
   };
 
+  async function getLogs(sessionId: string) {
+    return baiClient
+      .get_logs(sessionId, baiClient._config.accessKey, 0)
+      .then((req: any) => {
+        const ansi_up = new AnsiUp();
+        const logs = ansi_up.ansi_to_html(req.result.logs);
+        return logs;
+      });
+  }
+
   // Apply any operation after clicking Validate button
-  const handleValidate = () => {
+  const handleValidate = (event: any) => {
+    const validationDateTime = new Date().toUTCString();
     form
       .validateFields()
       .then((values) => {
         mutationsToValidateService.mutate(values, {
           onSuccess: (data: any) => {
-            const response = JSON.parse(data);
+            setValidationTime(validationDateTime);
+            setContainerLogSummary('loading...');
+            const response = data;
             const sse: EventSource =
               baiClient.maintenance.attach_background_task(response['task_id']);
-            setOpenedPanelList(
-              openedPanelList
-                .filter((panelIdx) => panelIdx !== panelIdx)
-                .concat(['2']),
-            );
-            sse.addEventListener('bgtask_updated', (e) => {
+            sse.addEventListener('bgtask_updated', async (e) => {
               const data = JSON.parse(e['data']);
+              const msg = JSON.parse(data.message);
+              if (
+                ['session_started', 'session_terminated'].includes(msg.event)
+              ) {
+                const logs = await getLogs(msg.session_id);
+                setContainerLogSummary(logs);
+                // temporally close sse manually when session is terminated
+                if (msg.event === 'session_terminated') {
+                  sse.close();
+                  return;
+                }
+              }
               setValidationStatus('processing');
-              setValidationPanelStatus('icon');
             });
-            sse.addEventListener('bgtask_done', (e) => {
-              setValidationStatus('success');
-              setValidationPanelStatus('icon');
+            sse.addEventListener('bgtask_done', async (e) => {
+              setValidationStatus('finished');
               sse.close();
             });
-            sse.addEventListener('bgtask_failed', (e) => {
+            sse.addEventListener('bgtask_failed', async (e) => {
+              const data = JSON.parse(e['data']);
+              const msg = JSON.parse(data.message);
+              const logs = await getLogs(msg.session_id);
+              setContainerLogSummary(logs);
               setValidationStatus('error');
-              setValidationPanelStatus('icon');
               sse.close();
               throw new Error(e['data']);
             });
-            sse.addEventListener('bgtask_cancelled', (e) => {
+            sse.addEventListener('bgtask_cancelled', async (e) => {
               setValidationStatus('error');
-              console.log(validationPanelStatus);
-              setValidationPanelStatus('icon');
-              console.log(validationPanelStatus);
-
               sse.close();
               throw new Error(e['data']);
             });
@@ -317,6 +338,141 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       });
   };
 
+  const getItems: () => CollapseProps['items'] = () => [
+    {
+      key: '1',
+      label: t('modelService.ServiceInfo'),
+      children: (
+        <Form
+          disabled={mutationToCreateService.isLoading}
+          form={form}
+          preserve={false}
+          layout="vertical"
+          labelCol={{ span: 12 }}
+          initialValues={{
+            desiredRoutingCount: 1,
+            ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+          }}
+        >
+          <Form.Item
+            label={t('modelService.ServiceName')}
+            name="serviceName"
+            rules={[
+              {
+                pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
+                message: t('modelService.ServiceNameRule'),
+              },
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="resourceGroup"
+            label={t('session.ResourceGroup')}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <ResourceGroupSelect autoSelectDefault />
+          </Form.Item>
+          <Form.Item
+            name="openToPublic"
+            label={t('modelService.OpenToPublic')}
+            valuePropName="checked"
+          >
+            <Switch></Switch>
+          </Form.Item>
+          {/* <VFolderTableFromItem /> */}
+          <Form.Item
+            name={'vFolderName'}
+            label={t('session.launcher.ModelStorageToMount')}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <VFolderSelect
+              filter={(vf) => vf.usage_mode === 'model'}
+              autoSelectDefault
+            />
+          </Form.Item>
+          <SliderInputFormItem
+            label={t('modelService.DesiredRoutingCount')}
+            name="desiredRoutingCount"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+            inputNumberProps={{
+              //TODO: change unit based on resource limit
+              addonAfter: '#',
+            }}
+            required
+          />
+          <Card
+            style={{
+              marginBottom: token.margin,
+            }}
+          >
+            <ImageEnvironmentSelectFormItems
+            // //TODO: test with real inference images
+            // filter={(image) => {
+            //   return !!_.find(image?.labels, (label) => {
+            //     return (
+            //       label?.key === "ai.backend.role" &&
+            //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
+            //     );
+            //   });
+            // }}
+            />
+            <ResourceAllocationFormItems />
+          </Card>
+        </Form>
+      ),
+    },
+    {
+      key: '2',
+      label: t('modelService.ValidationInfo'),
+      extra: validateButtonInHeader(),
+      children: (
+        <>
+          <Flex direction="row" justify="between" align="center">
+            <h3>{t('modelService.Result')}</h3>
+            <ValidationStatusTag
+              status={validationStatus}
+            ></ValidationStatusTag>
+          </Flex>
+          <Flex direction="row" justify="between" align="center">
+            <h3>{t('modelService.TimeStamp')}</h3>
+            <Tag>{validationTime}</Tag>
+          </Flex>
+          <h3>{t('modelService.SeeContainerLogs')}</h3>
+          <Flex
+            direction="column"
+            justify="start"
+            align="start"
+            style={{
+              overflowX: 'scroll',
+              color: 'white',
+              backgroundColor: 'black',
+              padding: 10,
+              borderRadius: 5,
+            }}
+          >
+            <pre dangerouslySetInnerHTML={{ __html: containerLogSummary }} />
+          </Flex>
+        </>
+      ),
+    },
+  ];
+
   return (
     <BAIModal
       title={t('modelService.StartNewServing')}
@@ -336,143 +492,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       {...modalProps}
     >
       <Suspense fallback={<FlexActivityIndicator />}>
-        <Collapse
-          defaultActiveKey={['1']}
-          collapsible="icon"
-          activeKey={openedPanelList}
-        >
-          <Panel header={t('modelService.ServiceInfo')} key="1">
-            <Form
-              disabled={mutationToCreateService.isLoading}
-              form={form}
-              preserve={false}
-              layout="vertical"
-              labelCol={{ span: 12 }}
-              initialValues={{
-                desiredRoutingCount: 1,
-                ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
-              }}
-            >
-              <Form.Item
-                label={t('modelService.ServiceName')}
-                name="serviceName"
-                rules={[
-                  {
-                    pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
-                    message: t('modelService.ServiceNameRule'),
-                  },
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                name="resourceGroup"
-                label={t('session.ResourceGroup')}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <ResourceGroupSelect autoSelectDefault />
-              </Form.Item>
-              <Form.Item
-                name="openToPublic"
-                label={t('modelService.OpenToPublic')}
-                valuePropName="checked"
-              >
-                <Switch></Switch>
-              </Form.Item>
-              {/* <VFolderTableFromItem /> */}
-              <Form.Item
-                name={'vFolderName'}
-                label={t('session.launcher.ModelStorageToMount')}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <VFolderSelect
-                  filter={(vf) => vf.usage_mode === 'model'}
-                  autoSelectDefault
-                />
-              </Form.Item>
-              <SliderInputFormItem
-                label={t('modelService.DesiredRoutingCount')}
-                name="desiredRoutingCount"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-                inputNumberProps={{
-                  //TODO: change unit based on resource limit
-                  addonAfter: '#',
-                }}
-                required
-              />
-              <Card
-                style={{
-                  marginBottom: token.margin,
-                }}
-              >
-                <ImageEnvironmentSelectFormItems
-                // //TODO: test with real inference images
-                // filter={(image) => {
-                //   return !!_.find(image?.labels, (label) => {
-                //     return (
-                //       label?.key === "ai.backend.role" &&
-                //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
-                //     );
-                //   });
-                // }}
-                />
-                <ResourceAllocationFormItems />
-              </Card>
-            </Form>
-          </Panel>
-          <Panel
-            header={
-              <Flex direction="row" justify="between" align="stretch">
-                {t('modelService.ValidationInfo')}
-                <Button key="validate" type="primary" onClick={handleValidate}>
-                  {t('modelService.Validate')}
-                </Button>
-              </Flex>
-            }
-            key="2"
-            // @ts-ignore
-            collapsible={validationPanelStatus}
-          >
-            {
-              <Descriptions
-                bordered
-                style={{
-                  backgroundColor: token.colorBgBase,
-                }}
-                items={[
-                  {
-                    label: 'Result',
-                    children: (
-                      <ValidationStatusTag
-                        status={validationStatus}
-                      ></ValidationStatusTag>
-                    ),
-                    span: 4,
-                  },
-                  {
-                    label: 'See Container Log',
-                    children: 'lorem ipsum...',
-                  },
-                ]}
-              ></Descriptions>
-            }
-          </Panel>
-        </Collapse>
+        <Collapse defaultActiveKey={'1'} items={getItems()} accordion />
       </Suspense>
     </BAIModal>
   );
