@@ -615,6 +615,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     if (!this.is_admin && !this.is_superadmin) {
       if (
         this.adminOnlyPages.includes(this._page) ||
+        this.superAdminOnlyPages.includes(this._page) ||
         this._page === 'unauthorized'
       ) {
         this._page = 'unauthorized';
@@ -628,14 +629,16 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this._moveTo('/unauthorized');
     }
 
-    // redirect to error page when blocked by config option.
+    // redirect to error page when blocked by config option or the page is not available page.
     if (
       this.optionalPages
         .filter((item) => !item.available)
         .map((item) => item.page)
         .includes(this._page) ||
       this.blockedMenuItem.includes(this._page) ||
-      this.inactiveMenuItem.includes(this._page)
+      this.inactiveMenuItem.includes(this._page) ||
+      (!this.availablePages.includes(this._page) &&
+        !this.plugins['menuitem'].includes(this._page))
     ) {
       this._page = 'error';
       this._moveTo('/error');
@@ -1165,16 +1168,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * @param {string} url
    */
   _moveTo(url, params = undefined, fromReact = false) {
-    const page = url.split('/')[1];
-    if (
-      !this.availablePages.includes(page) &&
-      this.is_admin &&
-      !this.adminOnlyPages.includes(page)
-    ) {
-      store.dispatch(navigate(decodeURIComponent('/error')));
-      this._page = 'error';
-      return;
-    }
     !fromReact && globalThis.history.pushState({}, '', url);
     store.dispatch(navigate(decodeURIComponent(url), params ?? {}));
     if ('menuitem' in this.plugins) {
