@@ -40,7 +40,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
     <Drawer
       title={t('notification.Notifications')}
       styles={{
-        mask: { backgroundColor: 'transparent' },
+        // mask: { backgroundColor: 'transparent' },
         body: {
           padding: 0,
           paddingLeft: token.paddingContentHorizontalSM,
