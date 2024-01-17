@@ -39,6 +39,7 @@ function MainLayout() {
   // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();
   const webUIRef = useRef<HTMLElement>(null);
+  const contentScrollFlexRef = useRef<HTMLDivElement>(null);
   const [webUIPlugins, setWebUIPlugins] = useState<
     WebUIPluginType | undefined
   >();
@@ -95,24 +96,40 @@ function MainLayout() {
         }}
       >
         <BAIContentWithDrawerArea>
-          <Suspense
-            fallback={
-              <Layout.Header style={{ visibility: 'hidden', height: 62 }} />
-            }
-          >
-            <WebUIHeader onClickMenuIcon={() => setSideCollapsed((v) => !v)} />
-          </Suspense>
           <Flex
+            ref={contentScrollFlexRef}
             direction="column"
             align="stretch"
             style={{
               paddingLeft: token.paddingContentHorizontalLG,
               paddingRight: token.paddingContentHorizontalLG,
               paddingBottom: token.paddingContentVertical,
-              height: `calc(100vh - ${HEADER_HEIGHT}px)`,
+              height: '100vh',
+              // height: `calc(100vh - ${HEADER_HEIGHT}px)`,
               overflow: 'auto',
             }}
           >
+            <Suspense
+              fallback={
+                <div>
+                  <Layout.Header style={{ visibility: 'hidden', height: 62 }} />
+                </div>
+              }
+            >
+              <div
+                style={{
+                  margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                <WebUIHeader
+                  onClickMenuIcon={() => setSideCollapsed((v) => !v)}
+                  containerElement={contentScrollFlexRef.current}
+                />
+              </div>
+            </Suspense>
             {/* <Flex direction="column"> */}
 
             {/* TODO: Breadcrumb */}

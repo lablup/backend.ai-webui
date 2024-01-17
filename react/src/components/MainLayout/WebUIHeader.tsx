@@ -13,17 +13,24 @@ import { useMatches } from 'react-router-dom';
 
 export interface WebUIHeaderProps extends FlexProps {
   onClickMenuIcon?: () => void;
+  containerElement?: HTMLDivElement | null;
 }
 
 export const HEADER_HEIGHT = 62;
-const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
+const WebUIHeader: React.FC<WebUIHeaderProps> = ({
+  onClickMenuIcon,
+  containerElement,
+}) => {
   const { token } = theme.useToken();
   const currentDomainName = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   const matches = useMatches();
-  const { y: scrolled } = useScrollBreakPoint({
-    y: 1,
-  });
+  const { y: scrolled } = useScrollBreakPoint(
+    {
+      y: 1,
+    },
+    containerElement,
+  );
 
   const { md } = Grid.useBreakpoint();
 
