@@ -1443,7 +1443,11 @@
     "ValidationInfo": "验证信息",
     "Processing": "加工...",
     "Success": "成功",
-    "Error": "错误"
+    "Error": "错误",
+    "SeeContainerLogs": "查看容器日志",
+    "TimeStamp": "时间戳",
+    "Result": "结果",
+    "Finished": "完成的"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

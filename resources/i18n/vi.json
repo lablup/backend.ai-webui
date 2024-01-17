@@ -1443,7 +1443,11 @@
     "ValidationInfo": "Thông tin xác thực",
     "Processing": "Xử lý...",
     "Success": "Thành công",
-    "Error": "Lỗi"
+    "Error": "Lỗi",
+    "SeeContainerLogs": "Xem nhật ký vùng chứa",
+    "TimeStamp": "Dấu thời gian",
+    "Result": "Kết quả",
+    "Finished": "Hoàn thành"
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",

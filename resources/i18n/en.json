@@ -408,11 +408,14 @@
     "StartService": "Start Service",
     "Validate": "Validate",
     "Cancel": "Cancel",
+    "Result": "Result",
+    "TimeStamp": "Timestamp",
     "ValidationInfo": "Validation Info",
     "GenerateToken": "Generate Token",
     "GenerateNewToken": "Generate new token",
     "SessionOwner": "Session Owner",
     "ServiceEndpoint": "Service Endpoint",
+    "SeeContainerLogs":"See Container Logs",
     "NoServiceEndpoint": "No Service Endpoint",
     "RoutesInfo": "Routes Info",
     "GeneratedTokens": "Generated Tokens",
@@ -438,6 +441,7 @@
     "Owner": "Owner",
     "Processing": "Processing...",
     "Success": "Success",
+    "Finished": "Finished",
     "Error": "Error"
   },
   "button": {

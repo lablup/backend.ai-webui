@@ -1452,7 +1452,11 @@
     "ValidationInfo": "Informations de validation",
     "Processing": "Traitement...",
     "Success": "Succès",
-    "Error": "Erreur"
+    "Error": "Erreur",
+    "SeeContainerLogs": "Voir les journaux de conteneur",
+    "TimeStamp": "Horodatage",
+    "Result": "Résultat",
+    "Finished": "Fini"
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",

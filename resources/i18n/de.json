@@ -1403,7 +1403,11 @@
     "ValidationInfo": "Validierungsinformationen",
     "Processing": "Wird bearbeitet...",
     "Success": "Erfolg",
-    "Error": "Fehler"
+    "Error": "Fehler",
+    "SeeContainerLogs": "Siehe Containerprotokolle",
+    "TimeStamp": "Zeitstempel",
+    "Result": "Ergebnis",
+    "Finished": "Fertig"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

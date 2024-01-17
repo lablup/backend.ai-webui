@@ -723,7 +723,11 @@
     "ValidationInfo": "Vahvistustiedot",
     "Processing": "Käsitellään...",
     "Success": "Menestys",
-    "Error": "Virhe"
+    "Error": "Virhe",
+    "SeeContainerLogs": "Katso Säilön lokit",
+    "TimeStamp": "Aikaleima",
+    "Result": "Tulos",
+    "Finished": "Valmis"
   },
   "notification": {
     "Initializing": "Aloitetaan...",

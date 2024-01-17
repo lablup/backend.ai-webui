@@ -1443,7 +1443,11 @@
     "ValidationInfo": "Informações de validação",
     "Processing": "Em processamento...",
     "Success": "Sucesso",
-    "Error": "Erro"
+    "Error": "Erro",
+    "SeeContainerLogs": "Consulte os registros do contêiner",
+    "TimeStamp": "Carimbo de data e hora",
+    "Result": "Resultado",
+    "Finished": "Finalizado"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

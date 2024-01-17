@@ -1403,7 +1403,11 @@
     "ValidationInfo": "Doğrulama Bilgisi",
     "Processing": "İşleme...",
     "Success": "Başarı",
-    "Error": "Hata"
+    "Error": "Hata",
+    "SeeContainerLogs": "Konteyner Günlüklerini görün",
+    "TimeStamp": "Zaman damgası",
+    "Result": "Sonuç",
+    "Finished": "Bitmiş"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

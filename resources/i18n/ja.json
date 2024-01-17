@@ -1403,7 +1403,11 @@
     "ValidationInfo": "検証情報",
     "Processing": "処理...",
     "Success": "成功",
-    "Error": "エラー"
+    "Error": "エラー",
+    "SeeContainerLogs": "コンテナログを参照",
+    "TimeStamp": "タイムスタンプ",
+    "Result": "結果",
+    "Finished": "終了した"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

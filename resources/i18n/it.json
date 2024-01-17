@@ -1400,7 +1400,11 @@
     "Owner": "Proprietario",
     "Processing": "In lavorazione...",
     "Success": "Successo",
-    "Error": "Errore"
+    "Error": "Errore",
+    "SeeContainerLogs": "Consulta Log del contenitore",
+    "TimeStamp": "Timestamp",
+    "Result": "Risultato",
+    "Finished": "Finito"
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",

@@ -1452,7 +1452,11 @@
     "ValidationInfo": "Информация о проверке",
     "Processing": "Обработка...",
     "Success": "Успех",
-    "Error": "Ошибка"
+    "Error": "Ошибка",
+    "SeeContainerLogs": "См. журналы контейнеров",
+    "TimeStamp": "Временная метка",
+    "Result": "Результат",
+    "Finished": "Законченный"
   },
   "ErrorBoundary": {
     "title": "Произошла ошибка.",

@@ -1403,7 +1403,11 @@
     "ValidationInfo": "Informacje o weryfikacji",
     "Processing": "Przetwarzanie...",
     "Success": "Powodzenie",
-    "Error": "Błąd"
+    "Error": "Błąd",
+    "SeeContainerLogs": "Zobacz dzienniki kontenerów",
+    "TimeStamp": "Znak czasu",
+    "Result": "Wynik",
+    "Finished": "Skończone"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",

@@ -723,7 +723,11 @@
     "ValidationInfo": "Información de validación",
     "Processing": "Procesando...",
     "Success": "Éxito",
-    "Error": "Error"
+    "Error": "Error",
+    "SeeContainerLogs": "Ver registros de contenedores",
+    "TimeStamp": "Marca de tiempo",
+    "Result": "Resultado",
+    "Finished": "Finalizado"
   },
   "notification": {
     "Initializing": "Inicializando...",

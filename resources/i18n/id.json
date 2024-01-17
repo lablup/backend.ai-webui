@@ -1449,7 +1449,11 @@
     "Owner": "Pemilik",
     "Processing": "Pengolahan...",
     "Success": "Kesuksesan",
-    "Error": "Kesalahan"
+    "Error": "Kesalahan",
+    "SeeContainerLogs": "Lihat Log Kontainer",
+    "TimeStamp": "Stempel waktu",
+    "Result": "Hasil",
+    "Finished": "Selesai"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

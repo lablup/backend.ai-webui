@@ -1443,7 +1443,11 @@
     "ValidationInfo": "Maklumat Pengesahan",
     "Processing": "Memproses...",
     "Success": "Kejayaan",
-    "Error": "ralat"
+    "Error": "ralat",
+    "SeeContainerLogs": "Lihat Log Bekas",
+    "TimeStamp": "Cap masa",
+    "Result": "Hasilnya",
+    "Finished": "Selesai"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

@@ -1452,7 +1452,11 @@
     "ValidationInfo": "Баталгаажуулалтын мэдээлэл",
     "Processing": "Боловсруулж байна...",
     "Success": "Амжилт",
-    "Error": "Алдаа"
+    "Error": "Алдаа",
+    "SeeContainerLogs": "Контейнерийн бүртгэлийг үзнэ үү",
+    "TimeStamp": "Цагийн тэмдэг",
+    "Result": "Үр дүн",
+    "Finished": "Дууслаа"
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",

@@ -427,7 +427,11 @@
     "ValidationInfo": "유효성 검사 결과",
     "Processing": "확인 중...",
     "Success": "성공",
-    "Error": "오류"
+    "Error": "오류",
+    "SeeContainerLogs": "컨테이너 로그 보기",
+    "TimeStamp": "타임스탬프",
+    "Result": "실행 결과",
+    "Finished": "완료됨"
   },
   "button": {
     "Cancel": "취소",

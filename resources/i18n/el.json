@@ -1403,7 +1403,11 @@
     "ValidationInfo": "Πληροφορίες επικύρωσης",
     "Processing": "Επεξεργασία...",
     "Success": "Επιτυχία",
-    "Error": "Λάθος"
+    "Error": "Λάθος",
+    "SeeContainerLogs": "Βλέπε αρχεία καταγραφής κοντέινερ",
+    "TimeStamp": "Χρονική σήμανση",
+    "Result": "Αποτέλεσμα",
+    "Finished": "Πεπερασμένος"
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",
