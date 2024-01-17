@@ -76,17 +76,13 @@ const router = createBrowserRouter([
         handle: { labelKey: 'webui.menu.Statistics' },
       },
       {
-        path: '/credential',
-        handle: { labelKey: 'webui.menu.Users' },
-      },
-      {
         path: '/environment',
         handle: { labelKey: 'webui.menu.Environments' },
         Component: EnvironmentPage,
       },
       {
         path: '/agent',
-        handle: { labelKey: 'webui.menu.Resources' },
+        handle: { labelKey: 'webui.menu.ComputationResources' },
       },
       {
         path: '/settings',
@@ -94,7 +90,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/maintenance',
-        handle: { labelKey: 'webui.menu.Maintenance' },
+        handle: { labelKey: 'webui.menu.Environments&Presets' },
       },
       {
         path: '/storage-settings/:hostname',
@@ -105,6 +101,18 @@ const router = createBrowserRouter([
         path: '/information',
         handle: { labelKey: 'webui.menu.Information' },
         Component: Information,
+      },
+      {
+        path: '/usersettings',
+        handle: { labelKey: 'webui.menu.Settings&Logs' },
+      },
+      {
+        path: '/credential',
+        handle: { labelKey: 'webui.menu.UserCredentials&Policies' },
+      },
+      {
+        path: '/logs',
+        handle: { labelKey: 'webui.menu.Logs' },
       },
       {
         path: '*',

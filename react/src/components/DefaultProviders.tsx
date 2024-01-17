@@ -89,7 +89,7 @@ i18n
     },
   });
 
-const useCurrentLanguage = () => {
+export const useCurrentLanguage = () => {
   const [lang, _setLang] = useState(
     //@ts-ignore
     globalThis?.backendaioptions?.get('current_language'),
