@@ -375,7 +375,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     document.addEventListener('move-to-from-react', (e) => {
       const params = (e as CustomEvent).detail.params;
       const path = (e as CustomEvent).detail.path;
-      this._moveTo(path, params);
+      this._moveTo(path, params, true);
     });
     document.addEventListener('show-TOS-agreement', () => {
       this.showTOSAgreement();
@@ -1168,7 +1168,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    *
    * @param {string} url
    */
-  _moveTo(url, params = undefined) {
+  _moveTo(url, params = undefined, fromReact = false) {
     const page = url.split('/')[1];
     if (
       !this.availablePages.includes(page) &&
@@ -1179,7 +1179,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this._page = 'error';
       return;
     }
-    globalThis.history.pushState({}, '', url);
+    !fromReact && globalThis.history.pushState({}, '', url);
     store.dispatch(navigate(decodeURIComponent(url), params ?? {}));
     if ('menuitem' in this.plugins) {
       for (const item of this.plugins.menuitem) {
@@ -1203,11 +1203,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       }
     }
 
-    document.dispatchEvent(
-      new CustomEvent('react-navigate', {
-        detail: url,
-      }),
-    );
+    !fromReact &&
+      document.dispatchEvent(
+        new CustomEvent('react-navigate', {
+          detail: url,
+        }),
+      );
   }
 
   /**
