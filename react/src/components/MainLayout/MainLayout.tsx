@@ -7,6 +7,7 @@ import WebUIHeader, { HEADER_HEIGHT } from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { useLocalStorageState } from 'ahooks';
 import { Layout, theme } from 'antd';
+import _ from 'lodash';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
@@ -32,7 +33,7 @@ function MainLayout() {
 
   const [sideCollapsed, setSideCollapsed] = useState<boolean>(false);
   const [compactSidebarActive] = useLocalStorageState<boolean | undefined>(
-    'compactSidebarActive',
+    'backendaiwebui.settings.user.compact_sidebar',
   );
   const [collapsedWidth, setCollapsedWidth] = useState(88);
   // const [isOpenPreferences, { toggle: toggleIsOpenPreferences }] = useToggle();
@@ -69,7 +70,7 @@ function MainLayout() {
   }, [navigate]);
 
   useEffect(() => {
-    if (compactSidebarActive !== undefined) {
+    if (!_.isUndefined(compactSidebarActive)) {
       setSideCollapsed(compactSidebarActive);
     }
   }, [compactSidebarActive]);
@@ -86,7 +87,7 @@ function MainLayout() {
           collapsedWidth={collapsedWidth}
           onBreakpoint={(broken) => {
             broken ? setCollapsedWidth(0) : setCollapsedWidth(88);
-            setSideCollapsed(broken);
+            // setSideCollapsed(broken);
           }}
           webuiplugins={webUIPlugins}
         />
