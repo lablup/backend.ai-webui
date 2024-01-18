@@ -2142,7 +2142,7 @@ export default class BackendAISessionList extends BackendAIPage {
               </mwc-list>
             </div>
           </div>
-          <lablup-expansion summary="Predicates">
+          <lablup-expansion summary="Predicates" open="true">
             <div slot="title" class="horizontal layout center start-justified">
               ${failedCount > 0
                 ? html`
