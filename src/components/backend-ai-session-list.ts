@@ -2024,26 +2024,42 @@ export default class BackendAISessionList extends BackendAIPage {
             </h3>
             <div class="vertical layout flex" style="width:100%;">
               <mwc-list>
-                <mwc-list-item twoline noninteractive class="predicate-check">
-                  <span class="subheading">
-                    <strong>Kernel Exit Code</strong>
-                  </span>
-                  <span
-                    class="monospace predicate-check-comment"
-                    slot="secondary"
-                  >
-                    ${tmpSessionStatus.kernel?.exit_code ?? 'null'}
-                  </span>
-                </mwc-list-item>
-                <mwc-list-item twoline noninteractive class="predicate-check">
-                  <span class="subheading">Session Status</span>
-                  <span
-                    class="monospace predicate-check-comment"
-                    slot="secondary"
-                  >
-                    ${tmpSessionStatus.session?.status}
-                  </span>
-                </mwc-list-item>
+                ${tmpSessionStatus.kernel?.exit_code
+                  ? html`
+                      <mwc-list-item
+                        twoline
+                        noninteractive
+                        class="predicate-check"
+                      >
+                        <span class="subheading">
+                          <strong>Kernel Exit Code</strong>
+                        </span>
+                        <span
+                          class="monospace predicate-check-comment"
+                          slot="secondary"
+                        >
+                          ${tmpSessionStatus.kernel?.exit_code ?? 'null'}
+                        </span>
+                      </mwc-list-item>
+                    `
+                  : html``}
+                ${tmpSessionStatus.session?.status
+                  ? html`
+                      <mwc-list-item
+                        twoline
+                        noninteractive
+                        class="predicate-check"
+                      >
+                        <span class="subheading">Session Status</span>
+                        <span
+                          class="monospace predicate-check-comment"
+                          slot="secondary"
+                        >
+                          ${tmpSessionStatus.session?.status}
+                        </span>
+                      </mwc-list-item>
+                    `
+                  : html``}
               </mwc-list>
             </div>
           </div>
@@ -2064,37 +2080,65 @@ export default class BackendAISessionList extends BackendAIPage {
             </h3>
             <div class="vertical layout flex" style="width:100%;">
               <mwc-list>
-                <mwc-list-item twoline noninteractive class="predicate-check">
-                  <span class="subheading">${_text('session.Message')}</span>
-                  <span
-                    class="monospace predicate-check-comment"
-                    slot="secondary"
-                  >
-                    ${tmpSessionStatus.scheduler.msg}
-                  </span>
-                </mwc-list-item>
-                <mwc-list-item twoline noninteractive class="predicate-check">
-                  <span class="subheading">
-                    ${_text('session.TotalRetries')}
-                  </span>
-                  <span
-                    class="monospace predicate-check-comment"
-                    slot="secondary"
-                  >
-                    ${tmpSessionStatus.scheduler.retries}
-                  </span>
-                </mwc-list-item>
-                <mwc-list-item twoline noninteractive class="predicate-check">
-                  <span class="subheading">${_text('session.LastTry')}</span>
-                  <span
-                    class="monospace predicate-check-comment"
-                    slot="secondary"
-                  >
-                    ${this._humanReadableTime(
-                      tmpSessionStatus.scheduler.last_try,
-                    )}
-                  </span>
-                </mwc-list-item>
+                ${tmpSessionStatus.scheduler.msg
+                  ? html`
+                      <mwc-list-item
+                        twoline
+                        noninteractive
+                        class="predicate-check"
+                      >
+                        <span class="subheading">
+                          ${_text('session.Message')}
+                        </span>
+                        <span
+                          class="monospace predicate-check-comment"
+                          slot="secondary"
+                        >
+                          ${tmpSessionStatus.scheduler.msg}
+                        </span>
+                      </mwc-list-item>
+                    `
+                  : html``}
+                ${tmpSessionStatus.scheduler.retries
+                  ? html`
+                      <mwc-list-item
+                        twoline
+                        noninteractive
+                        class="predicate-check"
+                      >
+                        <span class="subheading">
+                          ${_text('session.TotalRetries')}
+                        </span>
+                        <span
+                          class="monospace predicate-check-comment"
+                          slot="secondary"
+                        >
+                          ${tmpSessionStatus.scheduler.retries}
+                        </span>
+                      </mwc-list-item>
+                    `
+                  : html``}
+                ${tmpSessionStatus.scheduler.last_try
+                  ? html`
+                      <mwc-list-item
+                        twoline
+                        noninteractive
+                        class="predicate-check"
+                      >
+                        <span class="subheading">
+                          ${_text('session.LastTry')}
+                        </span>
+                        <span
+                          class="monospace predicate-check-comment"
+                          slot="secondary"
+                        >
+                          ${this._humanReadableTime(
+                            tmpSessionStatus.scheduler.last_try,
+                          )}
+                        </span>
+                      </mwc-list-item>
+                    `
+                  : html``}
               </mwc-list>
             </div>
           </div>
