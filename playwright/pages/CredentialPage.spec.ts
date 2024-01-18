@@ -17,9 +17,9 @@ test.describe('Create account', () => {
     await page.waitForTimeout(1000);
   });
   test('Admin can create account', async ({ page }) => {
-    const email = 'test4@lablup.com';
-    const userName = 'test4';
-    const password = 'test123!';
+    const email = 'test4@lablup.com'; //Write new account'email
+    const userName = 'test4'; //Write new account'userName
+    const password = 'test123!'; //Write new account'password
     await page.locator('#add-user').click();
     await page.locator('#new-user-dialog #id_user_email').click();
     await page.locator('#new-user-dialog #id_user_email label').fill(email);
@@ -35,21 +35,19 @@ test.describe('Create account', () => {
       .fill(password);
     await page.locator('#new-user-dialog #create-user-button').click();
     await page.waitForTimeout(5000);
-    expect(
-      await page
+    await expect(
+      page
         .locator('#active-user-list vaadin-grid-cell-content')
-        .filter({ hasText: email })
-        .isVisible(),
-    ).toBe(true);
+        .filter({ hasText: email }),
+    ).toBeVisible();
     await page.getByRole('tab', { name: 'Credentials' }).click();
     await page.getByRole('tab', { name: 'Active', exact: true }).click();
     await page.waitForTimeout(1000);
-    expect(
-      await page
+    await expect(
+      page
         .locator('#active-credential-list vaadin-grid-cell-content')
-        .filter({ hasText: email })
-        .isVisible(),
-    ).toBe(true);
+        .filter({ hasText: email }),
+    ).toBeVisible();
   });
 });
 
@@ -70,38 +68,34 @@ test.describe('Delete account', () => {
     await page.waitForTimeout(1000);
   });
   test('Admin can delete account', async ({ page }) => {
-    const email = 'test4@lablup.com';
+    const email = 'test4@lablup.com'; //Write account's email you want to delete
     await page
       .locator(`#controls[user-id="${email}"]`)
       .locator('mwc-icon-button[icon="delete_forever"]')
       .click();
     await page.locator('#active-user-list #deleteOk').click();
     await page.waitForTimeout(5000);
-    expect(
-      await page.getByRole('gridcell', { name: email, exact: true }).isHidden(),
-    ).toBe(true);
+    await expect(
+      page.getByRole('gridcell', { name: email, exact: true }),
+    ).toBeHidden();
     await page.getByRole('tab', { name: 'Inactive' }).click();
     await page.waitForTimeout(1000);
-    expect(
-      await page
-        .getByRole('gridcell', { name: email, exact: true })
-        .isVisible(),
-    ).toBe(true);
+    await expect(
+      page.getByRole('gridcell', { name: email, exact: true }),
+    ).toBeVisible();
     await page.getByRole('tab', { name: 'Credentials' }).click();
     await page.waitForTimeout(1000);
-    expect(
-      await page
+    await expect(
+      page
         .locator('#active-credential-list vaadin-grid-cell-content')
-        .filter({ hasText: email })
-        .isHidden(),
-    ).toBe(true);
+        .filter({ hasText: email }),
+    ).toBeHidden();
     await page.getByRole('tab', { name: 'Inactive' }).click();
     await page.waitForTimeout(1000);
-    expect(
-      await page
+    await expect(
+      page
         .locator('#inactive-credential-list vaadin-grid-cell-content')
-        .filter({ hasText: email })
-        .isVisible(),
-    ).toBe(true);
+        .filter({ hasText: email }),
+    ).toBeVisible();
   });
 });

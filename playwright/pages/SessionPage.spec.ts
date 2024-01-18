@@ -13,15 +13,14 @@ test.describe('Create Session', () => {
     await page.locator('#login-button').click();
     await page.locator('#session').click();
     await page.waitForURL('**/job');
-    await page.waitForTimeout(1000);
   });
   test('User can create session', async ({ page }) => {
-    const version = 'Ubuntu 20.04 aarch64';
     const randomSessionName = generateRandomString(
       4,
       '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-    );
-    const mountVfolderName = 'test';
+    ); //Make random vfolder name
+    const version = 'Ubuntu 20.04 aarch64'; //Write version
+    const mountVfolderName = 'test'; //Write mount vfolder
     await page
       .locator('backend-ai-session-view')
       .locator('#launch-session')
@@ -78,8 +77,8 @@ test.describe('Delete Session', () => {
     await page.waitForTimeout(1000);
   });
   test('User can delete session', async ({ page }) => {
-    const sessionName = 'ssss';
-    const sessionOwner = 'test@lablup.com';
+    const sessionName = 'ssss'; //Write session name you want to delete
+    const sessionOwner = 'test@lablup.com'; //Write session owner
     await page
       .locator(`[id="${sessionName}-power"]`)
       .getByLabel('power_settings_new')
