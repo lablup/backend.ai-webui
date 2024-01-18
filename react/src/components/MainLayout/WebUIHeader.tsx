@@ -41,23 +41,12 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
       justify="between"
       direction="row"
       style={{
-        position: 'sticky',
         height: HEADER_HEIGHT,
-        top: 0,
-        zIndex: 1,
-        // width: '100%',
-        // justifyContent: 'space-between',
-        // padding: token.marginMD,
         paddingRight: token.marginMD,
         paddingLeft: token.marginMD,
-
-        // backdropFilter: 'blur(15px)',
         backgroundColor: scrolled ? token.colorBgContainer : 'transparent',
         boxShadow: scrolled ? '0 5px 6px -6px rgba(0, 0, 0, 0.1)' : 'none',
         transition: 'background-color 0.2s ease-in-out',
-
-        // margin: token.marginMD * -1,
-        // borderBottom: `1px solid ${token.colorBorder}`,
       }}
     >
       <Flex direction="row" gap={'sm'}>
