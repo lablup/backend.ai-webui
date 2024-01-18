@@ -432,7 +432,7 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         .predicate-check-comment {
-          white-space: pre-wrap;
+          white-space: normal;
         }
 
         .error-description {
@@ -932,16 +932,18 @@ export default class BackendAISessionList extends BackendAIPage {
                       statKey === 'io_scratch_size' ||
                       statKey === 'net_rx' ||
                       statKey === 'net_tx'
-                    )
+                    ) {
                       return;
+                    }
                     if (statKey.includes('_util')) {
                       // core utilization
-                      if (!liveStat[statKey])
+                      if (!liveStat[statKey]) {
                         liveStat[statKey] = {
                           capacity: 0,
                           current: 0,
                           ratio: 0,
                         };
+                      }
                       liveStat[statKey].current += parseFloat(
                         parsedLiveStat[statKey].current,
                       );
@@ -952,12 +954,13 @@ export default class BackendAISessionList extends BackendAIPage {
                       // memory utilization
                       // Currently, the addition logic of memory utilization is the same as that of core utilization.
                       // But, we may want to change this in the future.
-                      if (!liveStat[statKey])
+                      if (!liveStat[statKey]) {
                         liveStat[statKey] = {
                           capacity: 0,
                           current: 0,
                           ratio: 0,
                         };
+                      }
                       liveStat[statKey].current += parseFloat(
                         parsedLiveStat[statKey].current,
                       );
