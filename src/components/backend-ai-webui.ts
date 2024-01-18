@@ -638,7 +638,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.blockedMenuItem.includes(this._page) ||
       this.inactiveMenuItem.includes(this._page) ||
       (!this.availablePages.includes(this._page) &&
-        !this.plugins['menuitem'].includes(this._page))
+        !this.plugins?.['menuitem'].includes(this._page))
     ) {
       this._page = 'error';
       this._moveTo('/error');
@@ -974,8 +974,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this.menuTitle = _text('webui.menu.Import&Run');
         break;
       default:
-        this._page = 'error';
-        this.menuTitle = _text('webui.NOTFOUND');
         if (
           'menuitem' in this.plugins &&
           this.plugins['menuitem'].includes(view)
