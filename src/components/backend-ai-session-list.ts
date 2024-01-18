@@ -420,6 +420,7 @@ export default class BackendAISessionList extends BackendAIPage {
         span.subheading {
           color: #666;
           font-weight: bold;
+          font-size: 15px;
         }
 
         mwc-list-item.commit-session-info {
@@ -433,6 +434,7 @@ export default class BackendAISessionList extends BackendAIPage {
 
         .predicate-check-comment {
           white-space: normal;
+          font-size: 14px;
         }
 
         .error-description {
@@ -2005,7 +2007,7 @@ export default class BackendAISessionList extends BackendAIPage {
           color="${this.statusColorTable[this.selectedSessionStatus.info]}"
           description="${this.selectedSessionStatus.info}"
           ui="round"
-          style="padding-left:10px;padding-right:10px;"
+          style="padding-left:15px;"
         ></lablup-shields>
       </div>
     `);
@@ -2074,7 +2076,7 @@ export default class BackendAISessionList extends BackendAIPage {
         <div class="vertical layout start flex" style="width:100%;">
           <div style="width:100%;">
             <h3
-              style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;"
+              style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;margin-bottom:0px;"
             >
               ${_text('session.StatusDetail')}
             </h3>
