@@ -1,11 +1,15 @@
+import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
+import { isOpenDrawerState } from '../BAINotificationButton';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
-import WebUIHeader from './WebUIHeader';
+import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
+import WebUIHeader, { HEADER_HEIGHT } from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { useLocalStorageState } from 'ahooks';
 import { Layout, theme } from 'antd';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
 const { Content } = Layout;
 
@@ -36,6 +40,7 @@ function MainLayout() {
   // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();
   const webUIRef = useRef<HTMLElement>(null);
+  const contentScrollFlexRef = useRef<HTMLDivElement>(null);
   const [webUIPlugins, setWebUIPlugins] = useState<
     WebUIPluginType | undefined
   >();
@@ -91,23 +96,41 @@ function MainLayout() {
           backgroundColor: 'transparent',
         }}
       >
-        <Content>
-          <Suspense
-            fallback={
-              <Layout.Header style={{ visibility: 'hidden', height: 62 }} />
-            }
-          >
-            <WebUIHeader onClickMenuIcon={() => setSideCollapsed((v) => !v)} />
-          </Suspense>
+        <BAIContentWithDrawerArea drawerWidth={DRAWER_WIDTH}>
           <Flex
+            ref={contentScrollFlexRef}
             direction="column"
             align="stretch"
             style={{
               paddingLeft: token.paddingContentHorizontalLG,
               paddingRight: token.paddingContentHorizontalLG,
               paddingBottom: token.paddingContentVertical,
+              height: '100vh',
+              // height: `calc(100vh - ${HEADER_HEIGHT}px)`,
+              overflow: 'auto',
             }}
           >
+            <Suspense
+              fallback={
+                <div>
+                  <Layout.Header style={{ visibility: 'hidden', height: 62 }} />
+                </div>
+              }
+            >
+              <div
+                style={{
+                  margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                <WebUIHeader
+                  onClickMenuIcon={() => setSideCollapsed((v) => !v)}
+                  containerElement={contentScrollFlexRef.current}
+                />
+              </div>
+            </Suspense>
             {/* <Flex direction="column"> */}
 
             {/* TODO: Breadcrumb */}
@@ -143,7 +166,7 @@ function MainLayout() {
             {/* @ts-ignore */}
             <backend-ai-webui id="webui-shell" ref={webUIRef} />
           </Flex>
-        </Content>
+        </BAIContentWithDrawerArea>
       </Layout>
     </Layout>
   );
