@@ -33,15 +33,13 @@ const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
       : '');
 
   return (
-    <>
-      <Button
-        size="large"
-        icon={<QuestionCircleOutlined />}
-        type="text"
-        href={URL}
-        {...props}
-      />
-    </>
+    <Button
+      size="large"
+      icon={<QuestionCircleOutlined />}
+      type="text"
+      href={URL}
+      {...props}
+    />
   );
 };
 
