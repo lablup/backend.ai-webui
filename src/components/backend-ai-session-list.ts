@@ -2213,7 +2213,7 @@ export default class BackendAISessionList extends BackendAIPage {
               ${tmpSessionStatus.scheduler.passed_predicates.map((item) => {
                 return html`
                   <mwc-list-item graphic="icon" noninteractive>
-                    <span style="padding-left:3px;">${item.name}</span>
+                    <span>${item.name}</span>
                     <mwc-icon
                       slot="graphic"
                       class="fg green inverted status-check"
