@@ -124,6 +124,14 @@ const router = createBrowserRouter([
         handle: { labelKey: 'webui.UNAUTHORIZEDACCESS' },
         Component: Page401,
       },
+      {
+        path: '/session',
+        handle: { labelKey: 'webui.menu.Sessions' },
+      },
+      {
+        path: '/session/start',
+        handle: { labelKey: 'session.launcher.StartNewSession' },
+      },
       // Leave empty tag for plugin pages.
       {
         path: '*',

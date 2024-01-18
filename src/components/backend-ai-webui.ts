@@ -156,7 +156,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'github',
     'import',
     'unauthorized',
-  ]; // temporally block pipeline from available pages 'pipeline', 'pipeline-job', 'session'
+    'session',
+    'session/start',
+  ]; // temporally block pipeline from available pages 'pipeline', 'pipeline-job'
   @property({ type: Array }) adminOnlyPages = [
     'experiment',
     'credential',
