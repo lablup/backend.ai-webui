@@ -1,10 +1,10 @@
 import { useCurrentDomainValue, useCurrentProjectValue } from '../../hooks';
 import { useScrollBreakPoint } from '../../hooks/useScrollBreackPoint';
-import BAIHelpButton from '../BAIHelpButton';
 import BAINotificationButton from '../BAINotificationButton';
 import Flex, { FlexProps } from '../Flex';
 import ProjectSelector from '../ProjectSelector';
 import UserDropdownMenu from '../UserDropdownMenu';
+import WEBUIHelpButton from '../WEBUIHelpButton';
 import { MenuOutlined } from '@ant-design/icons';
 import { theme, Button, Typography, Grid } from 'antd';
 import { t } from 'i18next';
@@ -98,7 +98,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
 
         <Flex direction="row">
           <BAINotificationButton />
-          <BAIHelpButton />
+          <WEBUIHelpButton />
           <UserDropdownMenu />
         </Flex>
       </Flex>

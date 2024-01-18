@@ -6,8 +6,8 @@ import { Button, ButtonProps } from 'antd';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
-interface BAIHelpButtonProps extends ButtonProps {}
-const BAIHelpButton: React.FC<BAIHelpButtonProps> = ({ ...props }) => {
+interface WEBUIHelpButtonProps extends ButtonProps {}
+const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
   const [isOpenDrawer, { toggle: toggleDrawer }] = useToggle();
   const [lang] = useCurrentLanguage();
   const location = useLocation();
@@ -47,4 +47,4 @@ const BAIHelpButton: React.FC<BAIHelpButtonProps> = ({ ...props }) => {
   );
 };
 
-export default BAIHelpButton;
+export default WEBUIHelpButton;
