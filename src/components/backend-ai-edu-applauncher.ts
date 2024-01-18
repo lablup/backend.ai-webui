@@ -367,7 +367,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         const _sess = sessions.compute_session_list.items[i];
         const sessionImage = _sess.image;
         const servicePorts = JSON.parse(_sess.service_ports || '{}');
-        const services = servicePorts.map((s) => s.name);
+        const services = Object.keys(servicePorts).map((s) => s.name) || [];
         const sessionStatus = _sess.status;
         if (
           sessionImage != requestedSessionTemplate.template.spec.kernel.image
