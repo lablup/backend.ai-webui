@@ -1,7 +1,6 @@
 import Flex from '../components/Flex';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { Button, Typography } from 'antd';
-import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 const Page404 = () => {
@@ -30,6 +29,7 @@ const Page404 = () => {
         />
         <Flex direction="column" align="start" gap={'lg'}>
           <Typography.Title level={2} style={{ margin: 0 }}>
+            {/* t('webui.NOTFOUND') */}
             <Trans i18nKey={'webui.NOTFOUND'} />
           </Typography.Title>
           <Typography.Text type="secondary" style={{ margin: 0 }}>
