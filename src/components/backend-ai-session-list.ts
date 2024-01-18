@@ -2040,7 +2040,7 @@ export default class BackendAISessionList extends BackendAIPage {
                           class="monospace predicate-check-comment"
                           slot="secondary"
                         >
-                          ${tmpSessionStatus.kernel?.exit_code ?? 'null'}
+                          ${tmpSessionStatus.kernel?.exit_code}
                         </span>
                       </mwc-list-item>
                     `
