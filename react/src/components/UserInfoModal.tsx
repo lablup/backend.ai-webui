@@ -31,6 +31,9 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
   const { open, userEmail } = parsedValue;
 
   const baiClient = useSuspendedBackendaiClient();
+  const sudoSessionEnabledSupported = baiClient?.supports(
+    'sudo-session-enabled',
+  );
   let totpSupported = false;
   let {
     data: isManagerSupportingTOTP,
@@ -49,7 +52,11 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
 
   const { user } = useLazyLoadQuery<UserInfoModalQuery>(
     graphql`
-      query UserInfoModalQuery($email: String, $isTOTPSupported: Boolean!) {
+      query UserInfoModalQuery(
+        $email: String
+        $isNotSupportSudoSessionEnabled: Boolean!
+        $isTOTPSupported: Boolean!
+      ) {
         user(email: $email) {
           email
           username
@@ -63,12 +70,19 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
             id
             name
           }
+          # TODO: reflect https://github.com/lablup/backend.ai-webui/pull/1999
+          # support from 23.09.0b1
+          # https://github.com/lablup/backend.ai/pull/1530
+          sudo_session_enabled
+            @skipOnClient(if: $isNotSupportSudoSessionEnabled)
           totp_activated @include(if: $isTOTPSupported)
+          main_access_key @since(version: "23.09.7")
         }
       }
     `,
     {
       email: userEmail,
+      isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
       isTOTPSupported: totpSupported ?? false,
     },
   );
@@ -119,12 +133,20 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
         <Descriptions.Item label={t('credential.FullName')}>
           {user?.full_name}
         </Descriptions.Item>
+        <Descriptions.Item label={t('credential.MainAccessKey')}>
+          {user?.main_access_key}
+        </Descriptions.Item>
         <Descriptions.Item label={t('credential.DescActiveUser')}>
           {user?.status === 'active' ? t('button.Yes') : t('button.No')}
         </Descriptions.Item>
         <Descriptions.Item label={t('credential.DescRequirePasswordChange')}>
           {user?.need_password_change ? t('button.Yes') : t('button.No')}
         </Descriptions.Item>
+        {sudoSessionEnabledSupported && (
+          <Descriptions.Item label={t('credential.EnableSudoSession')}>
+            {user?.sudo_session_enabled ? t('button.Yes') : t('button.No')}
+          </Descriptions.Item>
+        )}
         {totpSupported && (
           <Descriptions.Item label={t('webui.menu.TotpActivated')}>
             <Spin spinning={isLoadingManagerSupportingTOTP}>

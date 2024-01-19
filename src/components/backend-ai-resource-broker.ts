@@ -257,6 +257,15 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     }
   }
 
+  async _sftpScalingGroups() {
+    const hosts = await globalThis.backendaiclient?.vfolder?.list_hosts(
+      globalThis.backendaiclient?.current_group_id(),
+    );
+    return Object.values(hosts.volume_info).map(
+      (item: any) => item?.sftp_scaling_groups.join(', '),
+    );
+  }
+
   /**
    * Update all variables on the broker.
    *
@@ -273,12 +282,26 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           this.current_user_group = globalThis.backendaiclient.current_group;
         }
         // const currentGroup = globalThis.backendaiclient.current_group || null;
-        const sgs = await globalThis.backendaiclient.scalingGroup.list(
+        let sgs = await globalThis.backendaiclient.scalingGroup.list(
           this.current_user_group,
         );
+        // TODO: Delete these codes after backend.ai support scaling groups filtering.
+        // ================================ START ====================================
+        const sftpResourceGroups = await this._sftpScalingGroups();
+        if (sgs.scaling_groups.length > 0) {
+          sgs = sgs.scaling_groups.filter(
+            (item) => !sftpResourceGroups?.includes(item.name),
+          );
+        }
+        sgs = sgs ?? [];
+        if (Array.isArray(sgs) && sgs.length === 0) {
+          this.scaling_groups = [{ name: '' }];
+        }
+        // ================================ END ======================================
+
         // Make empty scaling group item if there is no scaling groups.
-        this.scaling_groups =
-          sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{ name: '' }];
+        // this.scaling_groups =
+        //   sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{ name: '' }];
         this.scaling_group = this.scaling_groups[0].name;
       }
 
@@ -326,6 +349,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    *
    */
   async _refreshResourcePolicy() {
+    if (!globalThis.backendaiclient) {
+      // To prevent a silent failure when the client is not ready in aggregating resources.
+      return Promise.resolve(false);
+    }
     if (Date.now() - this.lastResourcePolicyQueryTime < 2000) {
       return Promise.resolve(false);
     }
@@ -459,7 +486,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    * @param {string} from - set the value for debugging purpose.
    */
   async _aggregateCurrentResource(from = '') {
-    if (this.aggregate_updating) {
+    if (!globalThis.backendaiclient || this.aggregate_updating) {
       return Promise.resolve(false);
     }
     if (Date.now() - this.lastQueryTime < 1000) {
@@ -490,6 +517,15 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         const sgs = await globalThis.backendaiclient.scalingGroup.list(
           this.current_user_group,
         );
+        // TODO: Delete these codes after backend.ai support scaling groups filtering.
+        // ================================ START ====================================
+        if (sgs && sgs.scaling_groups && sgs.scaling_groups.length > 0) {
+          const sftpResourceGroups = await this._sftpScalingGroups();
+          sgs.scaling_groups = sgs.scaling_groups.filter(
+            (item) => !sftpResourceGroups?.includes(item.name),
+          );
+        }
+        // ================================ END ====================================
         // Make empty scaling group item if there is no scaling groups.
         this.scaling_groups =
           sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{ name: '' }];
@@ -539,7 +575,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           using: { cpu: 0, mem: 0 },
           remaining: { cpu: 0, mem: 0 },
         };
-      } else if (this.scaling_groups.length === 0) {
+      } else if (
+        this.scaling_groups.length === 0 ||
+        resourcePresetInfo.scaling_groups[this.scaling_group] === undefined
+      ) {
         this.aggregate_updating = false;
         return Promise.resolve(false);
       }
@@ -973,7 +1012,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       // clamp to roundUpNumber if the number of decimal place exceeds
       if (
         !Number.isInteger(Number(resourceValue)) &&
-        resourceValue.split('.')[1].length > roundUpNumber
+        resourceValue.split('.')[1]?.length > roundUpNumber
       ) {
         resourceValue = (Math.round(Number(resourceValue) * 100) / 100).toFixed(
           2,

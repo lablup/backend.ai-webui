@@ -29,9 +29,9 @@ import { get as _text, translate as _t } from 'lit-translate';
 import { customElement, property, query } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
-//@ts-ignore for react-based component
+// @ts-ignore for react-based component
 globalThis.BackendAIClient = ai.backend.Client;
-//@ts-ignore for react-based component
+// @ts-ignore for react-based component
 globalThis.BackendAIClientConfig = ai.backend.ClientConfig;
 
 /* FIXME:
@@ -83,8 +83,10 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: String }) blockType = '';
   @property({ type: String }) blockMessage = '';
   @property({ type: String }) appDownloadUrl;
+  @property({ type: Boolean }) allowAppDownloadPanel = true;
   @property({ type: String }) connection_mode = 'SESSION' as ConnectionMode;
   @property({ type: String }) systemSSHImage = '';
+  @property({ type: String }) fasttrackEndpoint = '';
   @property({ type: Number }) login_attempt_limit = 500;
   @property({ type: Number }) login_block_time = 180;
   @property({ type: String }) user;
@@ -109,6 +111,11 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) maxMemoryPerContainer = 16;
   @property({ type: Number }) maxCUDADevicesPerContainer = 16;
   @property({ type: Number }) maxCUDASharesPerContainer = 16;
+  @property({ type: Number }) maxROCMDevicesPerContainer = 10;
+  @property({ type: Number }) maxTPUDevicesPerContainer = 8;
+  @property({ type: Number }) maxIPUDevicesPerContainer = 8;
+  @property({ type: Number }) maxATOMDevicesPerContainer = 8;
+  @property({ type: Number }) maxWarboyDevicesPerContainer = 8;
   @property({ type: Boolean }) maxShmPerContainer = 2;
   @property({ type: Boolean }) maxFileUploadSize = -1;
   @property({ type: Boolean }) maskUserInfo = false;
@@ -128,12 +135,14 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) needToResetPassword = false;
   @property({ type: Boolean }) directoryBasedUsage = false;
   @property({ type: Number }) maxCountForPreopenPorts = 10;
+  @property({ type: Boolean }) allowCustomResourceAllocation = true;
+  @property({ type: Boolean }) isDirectorySizeVisible = true;
+  @property({ type: Boolean }) supportModelStore = false;
+  @property({ type: String }) eduAppNamePrefix;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel')
   loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#signout-panel')
-  signoutPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
   @query('#block-panel')
   blockPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
   @query('#id_api_endpoint_container') apiEndpointContainer!: HTMLDivElement;
@@ -172,22 +181,33 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         fieldset input {
-          width: 100%;
           border: 0;
-          margin: 15px 0 0 0;
           font: inherit;
           font-size: 16px;
           outline: none;
         }
 
         mwc-textfield {
+          width: -webkit-fill-available;
           font-family: var(--general-font-family);
           --mdc-theme-primary: black;
-          --mdc-text-field-fill-color: rgb(250, 250, 250);
-          width: 100%;
+          --mdc-text-field-fill-color: #ffffff;
         }
 
-        .endpoint-text {
+        .login-input-without-trailing-icon {
+          margin-right: 48px;
+        }
+
+        .align-self-center {
+          align-self: center;
+        }
+
+        .login-input {
+          padding-left: 15px;
+          padding-right: 15px;
+        }
+
+        .login-input mwc-textfield {
           --mdc-text-field-idle-line-color: rgba(0, 0, 0, 0);
           --mdc-text-field-hover-line-color: rgba(0, 0, 0, 0);
           --mdc-text-field-disabled-line-color: rgba(0, 0, 0, 0);
@@ -196,7 +216,6 @@ export default class BackendAILogin extends BackendAIPage {
         mwc-icon-button {
           /*color: rgba(0, 0, 0, 0.54); Matched color with above icons*/
           color: var(--paper-blue-600);
-          background-color: #fafafa;
           --mdc-icon-size: 24px;
         }
 
@@ -274,8 +293,8 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         #endpoint-button {
-          padding-left: 3px;
-          background-color: rgb(250, 250, 250);
+          background-color: #ffffff;
+          margin-top: 4px;
         }
 
         #help-description {
@@ -284,25 +303,6 @@ export default class BackendAILogin extends BackendAIPage {
 
         #help-description p {
           padding: 5px !important;
-        }
-
-        .login-input {
-          background-color: #fafafa;
-          border-bottom: 1px solid #ccc;
-          height: 50px;
-        }
-
-        .login-input mwc-icon {
-          margin: 5px 15px 5px 15px;
-          color: #737373;
-        }
-
-        .login-input input {
-          width: 100%;
-          background-color: #fafafa;
-          margin-bottom: 5px;
-          font-size: 18px;
-          margin-top: 5px;
         }
 
         #login-title-area {
@@ -559,6 +559,7 @@ export default class BackendAILogin extends BackendAIPage {
     this._initWSProxyConfigWithKeys(config.wsproxy);
     this._initResourcesConfigWithKeys(config.resources);
     this._initEnvironmentsConfigWithKeys(config.environments);
+    this._initPipelineConfigWithKeys(config.pipeline);
   }
 
   /**
@@ -760,6 +761,13 @@ export default class BackendAILogin extends BackendAIPage {
       value: generalConfig?.appDownloadUrl,
     } as ConfigValueObject) as string;
 
+    // Enable allowAppDownloadPanel flag
+    this.allowAppDownloadPanel = this._getConfigValueByExists(generalConfig, {
+      valueType: 'boolean',
+      defaultValue: true,
+      value: generalConfig?.allowAppDownloadPanel,
+    } as ConfigValueObject) as boolean;
+
     // System role ssh image
     this.systemSSHImage = this._getConfigValueByExists(generalConfig, {
       valueType: 'string',
@@ -830,6 +838,36 @@ export default class BackendAILogin extends BackendAIPage {
       defaultValue: this.maxCountForPreopenPorts, // default value has been already assigned in property declaration
       value: parseInt(generalConfig?.maxCountForPreopenPorts),
     } as ConfigValueObject) as number;
+
+    // Enable allow custom resource allocation
+    this.allowCustomResourceAllocation = this._getConfigValueByExists(
+      generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: true,
+        value: generalConfig?.allowCustomResourceAllocation,
+      } as ConfigValueObject,
+    ) as boolean;
+
+    // Enable hide directory size
+    this.isDirectorySizeVisible = this._getConfigValueByExists(generalConfig, {
+      valueType: 'boolean',
+      defaultValue: false,
+      value: generalConfig?.isDirectorySizeVisible,
+    } as ConfigValueObject) as boolean;
+
+    this.eduAppNamePrefix = this._getConfigValueByExists(generalConfig, {
+      valueType: 'string',
+      defaultValue: '',
+      value: generalConfig?.eduAppNamePrefix,
+    } as ConfigValueObject) as string;
+
+    // Enable model store support
+    this.supportModelStore = this._getConfigValueByExists(generalConfig, {
+      valueType: 'boolean',
+      defaultValue: false,
+      value: generalConfig?.supportModelStore,
+    } as ConfigValueObject) as boolean;
   }
 
   /**
@@ -903,7 +941,57 @@ export default class BackendAILogin extends BackendAIPage {
       } as ConfigValueObject,
     ) as number;
 
-    // Max CUDA shares per container number
+    // Max ROCm devices per container number
+    this.maxROCMDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 10,
+        value: parseInt(resourcesConfig?.maxROCMDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max TPU devices per container number
+    this.maxTPUDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxTPUDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max IPU devices per container number
+    this.maxIPUDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxIPUDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max ATOM devices per container number
+    this.maxATOMDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxATOMDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max Warboy devices per container number
+    this.maxWarboyDevicesPerContainer = this._getConfigValueByExists(
+      resourcesConfig,
+      {
+        valueType: 'number',
+        defaultValue: 8,
+        value: parseInt(resourcesConfig?.maxWarboyDevicesPerContainer),
+      } as ConfigValueObject,
+    ) as number;
+
+    // Max shared memory per container number
     this.maxShmPerContainer = this._getConfigValueByExists(resourcesConfig, {
       valueType: 'number',
       defaultValue: 2,
@@ -934,6 +1022,20 @@ export default class BackendAILogin extends BackendAIPage {
         ? environmentsConfig?.allowlist.split(',').map((el) => el.trim())
         : [],
     } as ConfigValueObject) as string[];
+  }
+
+  /**
+   * Initialize global key with value from pipeline section in config file
+   *
+   * @param {object} pipelineConfig
+   */
+  private _initPipelineConfigWithKeys(pipelineConfig) {
+    // FastTrack endpoint
+    this.fasttrackEndpoint = this._getConfigValueByExists(pipelineConfig, {
+      valueType: 'string',
+      defaultValue: '',
+      value: pipelineConfig?.frontendEndpoint,
+    } as ConfigValueObject) as string;
   }
 
   /**
@@ -1112,10 +1214,6 @@ export default class BackendAILogin extends BackendAIPage {
     return this.client?.logout();
   }
 
-  signout() {
-    this.signoutPanel.show();
-  }
-
   async loginWithSAML() {
     const rqst = this.client?.newUnsignedRequest('POST', '/saml/login', null);
     const form = document.createElement('form');
@@ -1210,48 +1308,6 @@ export default class BackendAILogin extends BackendAIPage {
 
   private _submitIfEnter(e) {
     if (e.keyCode === 13) this._login();
-  }
-
-  private _signoutIfEnter(e) {
-    if (e.keyCode === 13) this._signout();
-  }
-
-  private _signout() {
-    const user_id = (
-      this.shadowRoot?.querySelector('#id_signout_user_id') as TextField
-    ).value;
-    const password = (
-      this.shadowRoot?.querySelector('#id_signout_password') as TextField
-    ).value;
-    this.client
-      ?.signout(user_id, password)
-      .then((response) => {
-        this.notification.text = _text('login.SignoutFinished');
-        this.notification.show();
-        const event = new CustomEvent('backend-ai-logout', { detail: '' });
-        document.dispatchEvent(event);
-      })
-      .catch((err) => {
-        // Signout failed
-        this.free();
-        if (this.signoutPanel.open !== true) {
-          console.log(err);
-          if (typeof err.message !== 'undefined') {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-          } else {
-            this.notification.text = PainKiller.relieve(
-              'Login information mismatch. Check your information and try again.',
-            );
-          }
-          this.notification.show();
-        } else {
-          this.notification.text = PainKiller.relieve(
-            'Signout failed. Check ID/password information.',
-          );
-          this.notification.show();
-        }
-      });
   }
 
   async _token_login(sToken) {
@@ -1708,6 +1764,16 @@ export default class BackendAILogin extends BackendAIPage {
           this.maxCUDADevicesPerContainer;
         globalThis.backendaiclient._config.maxCUDASharesPerContainer =
           this.maxCUDASharesPerContainer;
+        globalThis.backendaiclient._config.maxROCMDevicesPerContainer =
+          this.maxROCMDevicesPerContainer;
+        globalThis.backendaiclient._config.maxTPUDevicesPerContainer =
+          this.maxTPUDevicesPerContainer;
+        globalThis.backendaiclient._config.maxIPUDevicesPerContainer =
+          this.maxIPUDevicesPerContainer;
+        globalThis.backendaiclient._config.maxATOMDevicesPerContainer =
+          this.maxATOMDevicesPerContainer;
+        globalThis.backendaiclient._config.maxWarboyDevicesPerContainer =
+          this.maxWarboyDevicesPerContainer;
         globalThis.backendaiclient._config.maxShmPerContainer =
           this.maxShmPerContainer;
         globalThis.backendaiclient._config.maxFileUploadSize =
@@ -1721,7 +1787,11 @@ export default class BackendAILogin extends BackendAIPage {
         globalThis.backendaiclient._config.enableContainerCommit =
           this._enableContainerCommit;
         globalThis.backendaiclient._config.appDownloadUrl = this.appDownloadUrl;
+        globalThis.backendaiclient._config.allowAppDownloadPanel =
+          this.allowAppDownloadPanel;
         globalThis.backendaiclient._config.systemSSHImage = this.systemSSHImage;
+        globalThis.backendaiclient._config.fasttrackEndpoint =
+          this.fasttrackEndpoint;
         globalThis.backendaiclient._config.hideAgents = this.hideAgents;
         globalThis.backendaiclient._config.enable2FA = this.enable2FA;
         globalThis.backendaiclient._config.force2FA = this.force2FA;
@@ -1729,6 +1799,12 @@ export default class BackendAILogin extends BackendAIPage {
           this.directoryBasedUsage;
         globalThis.backendaiclient._config.maxCountForPreopenPorts =
           this.maxCountForPreopenPorts;
+        globalThis.backendaiclient._config.allowCustomResourceAllocation =
+          this.allowCustomResourceAllocation;
+        globalThis.backendaiclient._config.isDirectorySizeVisible =
+          this.isDirectorySizeVisible;
+        globalThis.backendaiclient._config.supportModelStore =
+          this.supportModelStore;
         globalThis.backendaiclient.ready = true;
         if (
           this.endpoints.indexOf(
@@ -1934,24 +2010,36 @@ export default class BackendAILogin extends BackendAIPage {
               id="session-login-form"
               class="${this.connection_mode === 'SESSION' ? 'block' : 'none'}"
             >
-              <fieldset>
-                <mwc-textfield
-                  type="email"
-                  id="id_user_id"
-                  maxlength="64"
-                  autocomplete="username"
-                  label="${_t('login.E-mail')}"
-                  icon="email"
-                  value="${this.user_id}"
-                  @keyup="${this._submitIfEnter}"
-                ></mwc-textfield>
+              <fieldset class="login-input">
+                <div
+                  class="horizontal flex layout login-input-without-trailing-icon"
+                >
+                  <mwc-icon-button
+                    icon="email"
+                    class="fg grey layout align-self-center"
+                    disabled
+                  ></mwc-icon-button>
+                  <mwc-textfield
+                    type="email"
+                    id="id_user_id"
+                    maxlength="64"
+                    autocomplete="username"
+                    label="${_t('login.E-mail')}"
+                    value="${this.user_id}"
+                    @keyup="${this._submitIfEnter}"
+                  ></mwc-textfield>
+                </div>
                 <div class="horizontal flex layout">
+                  <mwc-icon-button
+                    icon="vpn_key"
+                    class="fg grey layout align-self-center"
+                    disabled
+                  ></mwc-icon-button>
                   <mwc-textfield
                     type="password"
                     id="id_password"
                     autocomplete="current-password"
                     label="${_t('login.Password')}"
-                    icon="vpn_key"
                     value="${this.password}"
                     @keyup="${this._submitIfEnter}"
                   ></mwc-textfield>
@@ -1959,48 +2047,72 @@ export default class BackendAILogin extends BackendAIPage {
                     off
                     onIcon="visibility"
                     offIcon="visibility_off"
-                    style="position: absolute; right: 0;"
+                    style="align-self:center;"
                     @click="${(e) => this._togglePasswordVisibility(e.target)}"
                   ></mwc-icon-button-toggle>
                 </div>
-                <mwc-textfield
-                  type="number"
-                  id="otp"
-                  style="display: ${this.otpRequired ? 'block' : 'none'};"
-                  label="${_t('totp.OTP')}"
-                  icon="pin"
-                  value="${this.otp}"
-                  @keyup="${this._submitIfEnter}"
-                ></mwc-textfield>
+                <div
+                  class="horizontal flex layout login-input-without-trailing-icon"
+                  style="display: ${this.otpRequired ? 'flex' : 'none'};"
+                >
+                  <mwc-icon-button
+                    icon="pin"
+                    class="fg grey layout align-self-center"
+                    disabled
+                  ></mwc-icon-button>
+                  <mwc-textfield
+                    type="number"
+                    id="otp"
+                    label="${_t('totp.OTP')}"
+                    value="${this.otp}"
+                    @keyup="${this._submitIfEnter}"
+                  ></mwc-textfield>
+                </div>
               </fieldset>
             </form>
             <form
               id="api-login-form"
               class="${this.connection_mode === 'SESSION' ? 'none' : 'block'}"
             >
-              <fieldset>
-                <mwc-textfield
-                  type="text"
-                  id="id_api_key"
-                  maxLength="20"
-                  label="${_t('login.APIKey')}"
-                  icon="lock"
-                  value="${this.api_key}"
-                  @keyup="${this._submitIfEnter}"
-                ></mwc-textfield>
-                <mwc-textfield
-                  type="password"
-                  id="id_secret_key"
-                  maxLength="40"
-                  label="${_t('login.SecretKey')}"
-                  icon="vpn_key"
-                  value="${this.secret_key}"
-                  @keyup="${this._submitIfEnter}"
-                ></mwc-textfield>
+              <fieldset class="login-input">
+                <div
+                  class="horizontal flex layout login-input-without-trailing-icon"
+                >
+                  <mwc-icon-button
+                    icon="lock"
+                    class="fg grey layout align-self-center"
+                    disabled
+                  ></mwc-icon-button>
+                  <mwc-textfield
+                    type="text"
+                    id="id_api_key"
+                    maxLength="20"
+                    label="${_t('login.APIKey')}"
+                    value="${this.api_key}"
+                    @keyup="${this._submitIfEnter}"
+                  ></mwc-textfield>
+                </div>
+                <div
+                  class="horizontal flex layout login-input-without-trailing-icon"
+                >
+                  <mwc-icon-button
+                    icon="vpn_key"
+                    class="fg grey layout align-self-center"
+                    disabled
+                  ></mwc-icon-button>
+                  <mwc-textfield
+                    type="password"
+                    id="id_secret_key"
+                    maxLength="40"
+                    label="${_t('login.SecretKey')}"
+                    value="${this.secret_key}"
+                    @keyup="${this._submitIfEnter}"
+                  ></mwc-textfield>
+                </div>
               </fieldset>
             </form>
             <form>
-              <fieldset>
+              <fieldset class="login-input">
                 <div
                   class="horizontal layout"
                   id="id_api_endpoint_container"
@@ -2048,7 +2160,6 @@ export default class BackendAILogin extends BackendAIPage {
                     class="endpoint-text"
                     type="text"
                     id="id_api_endpoint"
-                    style="background-color: #fafafa;"
                     maxLength="2048"
                     label="${_t('login.Endpoint')}"
                     pattern="^https?://(.*)"
@@ -2060,6 +2171,7 @@ export default class BackendAILogin extends BackendAIPage {
                   <mwc-icon-button
                     icon="info"
                     class="fg grey info"
+                    style="margin-top:4px;"
                     @click="${(e) => this._showEndpointDescription(e)}"
                   ></mwc-icon-button>
                 </div>
@@ -2163,49 +2275,6 @@ export default class BackendAILogin extends BackendAIPage {
               this.notification.show();
             }}"
           ></backend-ai-react-reset-password-required-modal>
-        </div>
-      </backend-ai-dialog>
-      <backend-ai-dialog
-        id="signout-panel"
-        fixed
-        backdrop
-        blockscrolling
-        persistent
-        disablefocustrap
-      >
-        <span slot="title">${_t('login.LeaveService')}</span>
-        <div slot="content">
-          <section>
-            <div class="warning">${_t('login.DescConfirmLeave')}</div>
-          </section>
-          <mwc-textfield
-            type="email"
-            name="signout_user_id"
-            id="id_signout_user_id"
-            maxLength="64"
-            label="E-mail"
-            value=""
-            @keyup="${this._signoutIfEnter}"
-          ></mwc-textfield>
-          <mwc-textfield
-            type="password"
-            name="signout_password"
-            id="id_signout_password"
-            maxLength="64"
-            label="Password"
-            value=""
-            @keyup="${this._signoutIfEnter}"
-          ></mwc-textfield>
-        </div>
-        <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button
-            outlined
-            fullwidth
-            id="signout-button"
-            icon="check"
-            label="${_t('login.LeaveService')}"
-            @click="${() => this._signout()}"
-          ></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog

@@ -56,6 +56,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({ type: String }) sshPort = '';
   @property({ type: Number }) vncPort = 0;
   @property({ type: Number }) xrdpPort = 0;
+  @property({ type: String }) mountedVfolderName = '';
   @property({ type: Number }) vscodeDesktopPort = 0;
   @property({ type: String }) tensorboardPath = '';
   @property({ type: String }) endpointURL = '';
@@ -126,6 +127,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         mwc-icon-button {
           color: var(--general-button-background-color);
+        }
+
+        mwc-icon-button.sftp-session-connection-copy {
+          --mdc-icon-size: 20px;
         }
 
         #ssh-dialog {
@@ -265,13 +270,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         .ssh-connection-example {
           display: flex;
+          background-color: rgba(230, 230, 230, 1);
+          padding: 10px;
+          border-radius: 5px;
+          margin-bottom: 5px;
         }
 
-        #current-ssh-connection-example {
-          color: #ffffff;
-          background-color: #242424;
-          padding: 15px;
-          margin: 0 5px 0 0;
+        .ssh-connection-example > span {
+          word-break: break-word;
         }
 
         @media screen and (max-width: 810px) {
@@ -316,6 +322,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           this._readSSHKey(e.detail.sessionUuid);
           this.sshPort = e.detail.port;
           this.sshHost = e.detail.host;
+          this.mountedVfolderName = e.detail.mounted;
           this._openSSHDialog();
         }
       },
@@ -484,8 +491,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     this.preOpenedPortList = [];
     const preOpenAppNameList = servicePorts
-      ?.filter((item) => item.protocol === 'preopen')
+      ?.filter(
+        (item) => item.protocol === 'preopen' && item.is_inference === false,
+      )
       .map((item) => item.name);
+    const inferenceAppNameList = servicePorts
+      ?.filter((item) => item.is_inference === true)
+      .map((item) => item.name);
+
     preOpenAppNameList?.forEach((elm) => {
       this.preOpenedPortList.push({
         name: elm,
@@ -495,8 +508,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       });
     });
     const filteredAppServices =
-      appServices?.filter((item) => !preOpenAppNameList?.includes(item)) ??
-      appServices;
+      appServices?.filter(
+        (item) =>
+          !preOpenAppNameList?.includes(item) &&
+          !inferenceAppNameList?.includes(item),
+      ) ?? appServices;
     this.appSupportList = [];
     if (!filteredAppServices?.includes('ttyd')) {
       this.appSupportList.push({
@@ -1445,7 +1461,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </span>
           <div class="flex layout center-justified vertical center">
             <p>${_text('webTerminalUsageGuide.CopyGuideFour')}</p>
-            <a href="https://console.docs.backend.ai/${lang}/latest/sessions_all/sessions_all.html#advanced-web-terminal-usage"
+            <a href="https://webui.docs.backend.ai/${lang}/latest/sessions_all/sessions_all.html#advanced-web-terminal-usage"
                target="_blank" style="width:100%;text-align:right;">
               <p>${_text('webTerminalUsageGuide.LearnMore')}</p>
             </a>
@@ -1488,7 +1504,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   _copySSHConnectionExample(divSelector) {
     const divElement = this.shadowRoot?.querySelector(divSelector);
     if (divElement) {
-      const textToCopy = divElement.textContent;
+      const textToCopy = divElement.textContent.trim();
 
       if (textToCopy.length === 0) {
         this.notification.text = _text(
@@ -1748,27 +1764,48 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             </div>
             <div><span>Port:</span> ${this.sshPort}</div>
             <h4>${_t('session.ConnectionExample')}</h4>
-            <div class="monospace ssh-connection-example">
-              <div id="current-ssh-connection-example">
-                sftp -i ./id_container -P ${this.sshPort} work@${
-                  this.sshHost
-                }<br/>
-                scp -i ./id_container -P ${
-                  this.sshPort
-                } -rp /path/to/source work@${this.sshHost}:~/<vfolder-name><br/>
-                rsync -av -e "ssh -i ./id_container" /path/to/source/ work@${
-                  this.sshHost
-                }:~/<vfolder-name>/<br/>
-              </div>
-              <mwc-icon-button
-                id="current-ssh-connection-example-copy-button"
-                icon="content_copy"
-                @click="${() =>
-                  this._copySSHConnectionExample(
-                    '#current-ssh-connection-example',
-                  )}">
-              </mwc-icon-button>
-            </div>
+                <div class="horizontal layout flex monospace ssh-connection-example">
+                <span id="sftp-string">
+                  sftp -i ./id_container -P ${
+                    this.sshPort
+                  } -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${
+                    this.sshHost
+                  }
+                </span>
+                <mwc-icon-button
+                class="sftp-session-connection-copy"
+                icon="content_copy" @click="${() =>
+                  this._copySSHConnectionExample('#sftp-string')}">
+                </mwc-icon-button>
+                </div>
+                <div class="horizontal layout flex monospace ssh-connection-example">
+                <span id="scp-string">
+                  scp -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${
+                    this.sshPort
+                  } -rp /path/to/source work@${this.sshHost}:~/${
+                    this.mountedVfolderName
+                  }
+                </span>
+                <mwc-icon-button
+                class="sftp-session-connection-copy"
+                icon="content_copy" @click="${() =>
+                  this._copySSHConnectionExample('#scp-string')}">
+                </mwc-icon-button>
+                </div>
+                <div class="horizontal layout flex monospace ssh-connection-example">
+                <span id="rsync-string">
+                  rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${
+                    this.sshPort
+                  }" /path/to/source/ work@${this.sshHost}:~/${
+                    this.mountedVfolderName
+                  }/
+                </span>
+                <mwc-icon-button
+                class="sftp-session-connection-copy"
+                icon="content_copy" @click="${() =>
+                  this._copySSHConnectionExample('#rsync-string')}">
+                </mwc-icon-button>
+                </div>
           </section>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">

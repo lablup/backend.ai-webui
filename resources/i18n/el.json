@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Καλως ΗΡΘΑΤΕ,",
-      "WelcomeMessage_2": " .",
+      "WelcomeMessage": "Καλώς ορίσατε, {{ username }}.",
       "Summary": "Περίληψη",
       "Sessions": "Συνεδρίες",
       "Import&Run": "Εισαγωγή και εκτέλεση",
@@ -60,7 +59,12 @@
       "Serving": "Εξυπηρέτηση",
       "PasswordChangePlace": "Κάντε κλικ στο εικονίδιο προσώπου στην επάνω μπάρα και μεταβείτε στο μενού \"Ο λογαριασμός μου\".",
       "Notifications": "Ειδοποιήσεις",
-      "Tasks": "Εργασίες"
+      "Tasks": "Εργασίες",
+      "FastTrack": "FastTrack",
+      "Data&Model": "Δεδομένα",
+      "InvalidBlankPassword": "Εισάγετε τον κωδικό σας",
+      "InvalidBlankEmail": "Συμπληρώστε το email σας",
+      "DisMatchUserEmail": "Το email χρήστη δεν ταιριάζει"
     },
     "YouAreOffline": "Είστε πλέον εκτός σύνδεσης",
     "YouAreOnline": "Είστε πλέον συνδεδεμένοι",
@@ -108,7 +112,8 @@
     "IPUEnabled": "IPU NPU Ενεργοποιημένη",
     "ATOMEnabled": "ATOM NPU Ενεργοποιημένη",
     "WarboyEnabled": "Ενεργοποιημένη NPU Warboy",
-    "DownloadWebUIApp": "Κατεβάστε την εφαρμογή Backend.AI Web UI App"
+    "DownloadWebUIApp": "Κατεβάστε την εφαρμογή Backend.AI Web UI App",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {
@@ -230,7 +235,28 @@
       "PreOpenPortPanelTitle": "Προανοικτές θύρες για ρύθμιση (προαιρετικά)",
       "PortsTitleWithRange": "Τιμή θύρας (μεταξύ 1024 ~ 65535)",
       "PrePortConfigWillDisappear": "Τυχόν μη αποθηκευμένες προ-ανοιχτές θύρες θα εξαφανιστούν.",
-      "StartModelServing": "Έναρξη μοντέλου σερβιρίσματος"
+      "StartModelServing": "Έναρξη μοντέλου σερβιρίσματος",
+      "PreOpenPortRangeGuide": "Εισαγάγετε πολλές τιμές διαχωρισμένες είτε με κόμμα (,) είτε με κενό.",
+      "preopen": "προανοίγει",
+      "Network": "Δίκτυο",
+      "Enable": "επιτρέπω",
+      "FolderAliasInvalid": "Επιτρέπονται μόνο αλφαριθμητικοί χαρακτήρες, κάτω παύλα (_), κάθετος (/) και παύλα (-).",
+      "PreOpenPortMaxCountLimit": "Μπορείτε να ορίσετε έως και {{count}} προ-ανοικτές θύρες.",
+      "StartTimeMustBeInTheFuture": "Η ώρα έναρξης πρέπει να είναι μετά την τρέχουσα ώρα.",
+      "EnqueueComputeSessionWarning": "Εάν το ορίσετε μεγαλύτερο από τους διαθέσιμους πόρους, η δημιουργία συνεδρίας θα καθυστερήσει στην ουρά μέχρι να γίνει διαθέσιμη.",
+      "SessionName": "Όνομα συνεδρίας",
+      "ResetFormConfirm": "Θέλετε να επαναφέρετε όλες τις καταχωρήσεις σας;",
+      "TemplateAndHistory": "Πρότυπα",
+      "ScheduleTimeSimple": "Ρύθμιση ώρας έναρξης",
+      "ResourceAllocationPerContainer": "Κατανομή πόρων ανά εμπορευματοκιβώτιο",
+      "NumberOfContainer": "Αριθμός εμπορευματοκιβωτίων",
+      "ErrorCanNotExceedRemaining": "Δεν μπορεί να οριστεί σε τιμή μεγαλύτερη από τους υπόλοιπους πόρους ({{amount}}).",
+      "EnterEnvironmentVariable": "Εισάγετε το όνομα της μεταβλητής",
+      "EnvironmentVariableNamePatternError": "Το όνομα της μεταβλητής πρέπει να αρχίζει με γράμμα ή υπογράμμιση και μπορεί να περιέχει μόνο γράμματα, αριθμούς και υπογράμμιση.",
+      "EnvironmentVariableDuplicateName": "Ένα όνομα μεταβλητής που υπάρχει ήδη.",
+      "Template": "Πρότυπο συνεδρίας",
+      "EnableAutomaticShmem": "Αυτόματη κοινή μνήμη",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",
@@ -286,7 +312,9 @@
       "EnterValidSessionName": "Εισάγετε έγκυρο όνομα συνεδρίας",
       "SessionNameRequired": "Το όνομα συνεδρίας είναι υποχρεωτικό",
       "SluggedStrings": "Στιγμιότυπα αλφαριθμητικά (>3 χαρακτήρες)",
-      "SessionNameAlreadyExist": "Το όνομα συνεδρίας υπάρχει ήδη"
+      "SessionNameAlreadyExist": "Το όνομα συνεδρίας υπάρχει ήδη",
+      "SessionNameTooLong64": "Εισαγάγετε 64 χαρακτήρες ή λιγότερους.",
+      "PleaseFollowSessionNameRule": "Εισαγάγετε έναν συνδυασμό τουλάχιστον 4 γραμμάτων, αριθμών, '.', '_' και '-'."
     },
     "Interactive": "Διαδραστικό",
     "Batch": "Παρτίδα",
@@ -341,7 +369,12 @@
     "DescCommitSession": "Πρόκειται να δεσμεύσετε το δοχείο που αντιστοιχεί στην παρακάτω συνεδρία:",
     "NoSessionToDisplay": "Δεν υπάρχουν συνεδρίες για εμφάνιση",
     "StatusInfo": "Πληροφορίες κατάστασης",
-    "System": "Upload συνεδριών"
+    "System": "Upload συνεδριών",
+    "ExpiresAfter": "Υπολειπόμενος χρόνος",
+    "CPU": "CPU",
+    "MEM": "Μνήμη",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (μνήμη)"
   },
   "button": {
     "Cancel": "Ματαίωση",
@@ -362,7 +395,6 @@
     "DeleteAll": "Διαγραφή όλων",
     "Update": "Εκσυγχρονίζω",
     "Delete": "Διαγράφω",
-    "Dismiss": "Απολύω",
     "DismissAndProceed": "Παράβλεψη και συνέχεια",
     "Close": "Κλείσε",
     "Confirm": "Επιβεβαιώνω",
@@ -373,7 +405,9 @@
     "Unset": "Μη ρυθμισμένο",
     "OK": "OK",
     "Commit": "Δέσμευση",
-    "EnterManually": "Εισάγετε χειροκίνητα"
+    "EnterManually": "Εισάγετε χειροκίνητα",
+    "Download": "Λήψη",
+    "Clone": "Κλώνος"
   },
   "agent": {
     "Endpoint": "Τελικό σημείο",
@@ -415,7 +449,9 @@
     "Control": "Ελεγχος",
     "NewPassword": "νέος κωδικός πρόσβασης",
     "Enabled": "Ενεργοποιήθηκε",
-    "StorageProxies": "Αποθήκες"
+    "StorageProxies": "Αποθήκες",
+    "None": "Κανένα",
+    "Image": "Εικόνα"
   },
   "credential": {
     "Permission": "Αδεια",
@@ -492,7 +528,9 @@
     "KeypairDetail": "Λεπτομέρεια ζεύγους κλειδιών",
     "SignoutSeccessfullyFinished": "Η αποσύνδεση ολοκληρώθηκε επιτυχώς",
     "Status": "Κατάσταση",
-    "NoUserToDisplay": "Δεν υπάρχουν χρήστες για εμφάνιση"
+    "NoUserToDisplay": "Δεν υπάρχουν χρήστες για εμφάνιση",
+    "EnableSudoSession": "Ενεργοποίηση συνεδρίας sudo",
+    "MainAccessKey": "Κύριο κλειδί πρόσβασης"
   },
   "data": {
     "Folders": "Φάκελοι",
@@ -657,7 +695,12 @@
     "Used": "Μεταχειρισμένο",
     "Pipeline": "Φάκελοι αγωγών",
     "DialogDataFolder": "Ειδικοί φάκελοι αγωγών που δημιουργούνται αυτόματα κατά τη δημιουργία αγωγών στο FastTrack.",
-    "DialogModelFolder": "Μπορείτε να εξυπηρετείτε και να διαχειρίζεστε μοντέλα."
+    "DialogModelFolder": "Μπορείτε να εξυπηρετείτε και να διαχειρίζεστε μοντέλα.",
+    "SearchByName": "Αναζήτηση με όνομα",
+    "ModelStore": "Κατάστημα μοντέλων",
+    "New": "Νέος",
+    "Add": "Προσθέστε",
+    "CloningIsOnlyPossibleSameHost": "Προς το παρόν, η κλωνοποίηση είναι δυνατή μόνο στον ίδιο κεντρικό υπολογιστή."
   },
   "dialog": {
     "warning": {
@@ -748,7 +791,8 @@
     "RAM": "RAM (GB)",
     "SharedMemory": "Κοινή μνήμη (GB)",
     "NoResourcePresetToDisplay": "Δεν εμφανίζονται Προεπιλογές πόρων",
-    "Deleted": "Η προεπιλογή πόρων διαγράφηκε επιτυχώς."
+    "Deleted": "Η προεπιλογή πόρων διαγράφηκε επιτυχώς.",
+    "SHMEMShouldBeSmallerThanMemory": "Η κοινόχρηστη μνήμη πρέπει να είναι μικρότερη από τη μνήμη"
   },
   "usersettings": {
     "General": "Γενικός",
@@ -801,7 +845,9 @@
     "DescAutoLogout": "Αποσυνδεθείτε αυτόματα εάν όλες οι συνδεδεμένες σελίδες είναι κλειστές εκτός από τις σελίδες που προέρχονται από περίοδο σύνδεσης για εφαρμογές (π.χ. jupyter notebook, web terminal κ.λπ.)",
     "SSHKeypairEnterManuallyFinished": "Το ζεύγος κλειδιών SSH καταχωρήθηκε με επιτυχία.",
     "BootstrapScriptDescription": "Το σενάριο Bootstrap θα εκτελεστεί μόνο μία φορά μετά τη δημιουργία συνεδρίας",
-    "SSHKeypairEnterManually": "Ζεύγος κλειδιών SSH"
+    "SSHKeypairEnterManually": "Ζεύγος κλειδιών SSH",
+    "MyKeypairInfo": "Πληροφορίες για το ζεύγος κλειδιών μου",
+    "DescMyKeypairInfo": "Δείτε τις πληροφορίες του ζεύγους κλειδιών μου"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Σύνθετη χρήση τερματικού Web: Αντιγραφή περιεχομένου τερματικού",
@@ -823,7 +869,9 @@
     "Parameters": "Παράμετροι",
     "ErrorType": "Τύπος σφάλματος",
     "LogMessageRemoved": "Τα μηνύματα καταγραφής έχουν καταργηθεί.",
-    "NoLogToDisplay": "Δεν εμφανίζονται αρχεία καταγραφής"
+    "NoLogToDisplay": "Δεν εμφανίζονται αρχεία καταγραφής",
+    "ShowOnlyError": "Εμφάνιση μόνο σφάλματος",
+    "SearchLogs": "Αναζήτηση αρχείων καταγραφής"
   },
   "resourcePolicy": {
     "Resources": "Πόροι",
@@ -884,7 +932,8 @@
     "PleaseSelectOption": "Επιλέξτε μία από τις επιλογές.",
     "RegistrySuccessfullyModified": "Το μητρώο τροποποιήθηκε επιτυχώς.",
     "NoRegistryToDisplay": "Δεν εμφανίζονται μητρώα",
-    "ModifyRegistry": "Τροποποίηση μητρώου"
+    "ModifyRegistry": "Τροποποίηση μητρώου",
+    "ConfirmNoUserName": "Ο χρήστης και ο κωδικός πρόσβασης δεν έχουν καθοριστεί, θέλετε να αποθηκεύσετε;"
   },
   "resourceGroup": {
     "ResourceGroups": "Ομάδες πόρων",
@@ -991,14 +1040,27 @@
     "IOWriteDesc": "Το ποσό της εγγραφής δεδομένων από τη συνεδρία υπολογισμού. (Το ποσό εγγραφής δεδομένων από εξωτερικά τοποθετημένες συσκευές, όπως οι φάκελοι δεδομένων, δεν περιλαμβάνεται)."
   },
   "language": {
-    "English": "Αγγλικά",
-    "Korean": "κορεάτης",
+    "English": "English",
+    "Korean": "한국어",
     "Language": "Γλώσσα",
     "OSDefault": "Προεπιλογή λειτουργικού συστήματος",
-    "Russian": "Ρωσική",
-    "French": "Γαλλικά",
-    "Mongolian": "Μογγολικά",
-    "Indonesian": "Ινδονησιακή"
+    "Russian": "русский",
+    "French": "Français",
+    "Mongolian": "Монгол",
+    "Indonesian": "Bahasa Indonesia",
+    "Brazilian": "brasileiro",
+    "Chinese": "中文",
+    "Chinese (Simplified)": "简体中文",
+    "Finnish": "Suomalainen",
+    "German": "Deutsch",
+    "Greek": "Ελληνική",
+    "Italian": "Italiano",
+    "Japanese": "日本語",
+    "Polish": "Polski",
+    "Portuguese": "Português",
+    "Spanish": "Español",
+    "Turkish": "Türkçe",
+    "Vietnamese": "Tiếng Việt"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Καταχωρήστε νέες εικόνες από το αποθετήριο",
@@ -1011,8 +1073,6 @@
     "Scaling": "Απολέπιση",
     "AllowAgentSideRegistration": "Να επιτρέπεται η εγγραφή από τον αντιπρόσωπο",
     "DescAllowAgentSideRegistration": "Επιτρέψτε στον πράκτορα να εγγραφεί στον διαχειριστή. <br/> Χρησιμοποιήστε μόνο εάν το σύμπλεγμα Backend.AI διαχειρίζεται σε ασφαλή τοποθεσία.",
-    "Plugins": "Πρόσθετα",
-    "CUDAGPUsupport": "Υποστήριξη CUDA GPU",
     "DescCUDAGPUsupport": "Υποστήριξη NVIDIA CUDA GPU. <br/> Απαιτείται πρόσθετο Backend.AI CUDA.",
     "CUDAGPUdisabledByFGPUsupport": "Απενεργοποιήθηκε επειδή το σύστημα χρησιμοποιεί Fractional GPU plugin",
     "ROCMGPUsupport": "Υποστήριξη ROCm GPU",
@@ -1062,7 +1122,9 @@
     "OverlayNetworkSettings": "Ρυθμίσεις δικτύου επικάλυψης",
     "OverlayNetworkSettingsDescription": "Ένα δίκτυο επικάλυψης είναι ένα δίκτυο υπολογιστών που τοποθετείται πάνω σε ένα άλλο δίκτυο. Το δίκτυο επικάλυψης δημιουργεί ένα κατανεμημένο δίκτυο μεταξύ πολλαπλών υποδοχέων Docker daemon του διαχειριστή Backend.AI.",
     "MTUDescription": "Μέγιστη μονάδα μετάδοσης, το μέγεθος του μεγαλύτερου πακέτου που μπορεί να μεταδώσει ένα πρωτόκολλο δικτύου.",
-    "OutOfRange": "Εκτός εμβέλειας."
+    "OutOfRange": "Εκτός εμβέλειας.",
+    "Plugins": "Πρόσθετα",
+    "OpenSourceCUDAGPUsupport": "Υποστήριξη ανοιχτού κώδικα CUDA GPU"
   },
   "notification": {
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
@@ -1204,7 +1266,7 @@
     "CouldNotCopyText": "Δεν ήταν δυνατή η αντιγραφή κειμένου:",
     "NotebookBadgeURL": "URL σημειωματάριου",
     "GetAndRunNotebook": "Εισαγωγή και εκτέλεση",
-    "ImportGithubRepo": "Εισαγωγή αποθετηρίου Github",
+    "ImportGithubRepo": "Εισαγωγή αποθετηρίου GitHub",
     "GitHubURL": "URL GitHub",
     "GetToFolder": "Μεταβείτε στο φάκελο",
     "RepoWillBeFolder": "Τα εισαγόμενα αποθετήρια GitHub μετατρέπονται σε φακέλους και μπορούν να προσαρτηθούν κατά την έναρξη της περιόδου λειτουργίας.",
@@ -1218,13 +1280,13 @@
     "FolderName": "Εισαγόμενο όνομα φακέλου:",
     "NotebookBadgeCodeHTML": "Κωδικός σήματος σημειωματάριου (HTML)",
     "NotebookBadgeCodeMarkdown": "Κωδικός σήματος σημειωματάριου (Markdown)",
-    "GithubInternalError": "Εσωτερικό σφάλμα Github.",
-    "GithubAPILimitError": "Σφάλμα περιορισμού API Github.",
-    "GithubAPIEtcError": "Θέμα διακομιστή Github.",
-    "ImportGitlabRepo": "Εισαγωγή αποθετηρίου Gitlab",
-    "GitlabRepoWillBeFolder": "Τα εισαγόμενα αποθετήρια Gitlab μετατρέπονται σε φακέλους και μπορούν να προσαρτηθούν κατά την έναρξη της συνεδρίας.",
-    "GitlabURL": "URL του Gitlab",
-    "GitlabDefaultBranch": "Όνομα υποκαταστήματος Gitlab"
+    "GithubInternalError": "Εσωτερικό σφάλμα GitHub.",
+    "GithubAPILimitError": "Σφάλμα περιορισμού API GitHub.",
+    "GithubAPIEtcError": "Θέμα διακομιστή GitHub.",
+    "ImportGitlabRepo": "Εισαγωγή αποθετηρίου GitLab",
+    "GitlabRepoWillBeFolder": "Τα εισαγόμενα αποθετήρια GitLab μετατρέπονται σε φακέλους και μπορούν να προσαρτηθούν κατά την έναρξη της συνεδρίας.",
+    "GitlabURL": "URL του GitLab",
+    "GitlabDefaultBranch": "Όνομα υποκαταστήματος GitLab"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Στατιστικά για αυτόν τον μήνα",
@@ -1257,7 +1319,28 @@
   "error": {
     "UpdateError": "Σφάλμα ενημέρωσης",
     "APIEndpointIsEmpty": "Το API Endpoint είναι κενό. Προσδιορίστε το τελικό σημείο του Backend.AI API για εγγραφή.",
-    "LoginSucceededManagerNotResponding": "Η σύνδεση έγινε επιτυχής, αλλά ο διαχειριστής δεν αποκρίνεται."
+    "LoginSucceededManagerNotResponding": "Η σύνδεση έγινε επιτυχής, αλλά ο διαχειριστής δεν αποκρίνεται.",
+    "NetworkConnectionFailed": "Η σύνδεση δικτύου απέτυχε. Ελέγξτε την κατάσταση του δικτύου.",
+    "LoginFailed": "Η σύνδεση απέτυχε. Ελέγξτε τα στοιχεία σύνδεσης.",
+    "AuthenticationFailed": "Ο έλεγχος ταυτότητας απέτυχε. Ελέγξτε τις πληροφορίες και την κατάσταση του διαχειριστή.",
+    "VirtualFolderAlreadyExist": "Ένας εικονικός φάκελος με το ίδιο όνομα υπάρχει ήδη. Διαγράψτε τον δικό σας φάκελο ή απορρίψτε την πρόσκληση.",
+    "TooManyLoginFailures": "Υπήρξαν πάρα πολλές αποτυχίες σύνδεσης σε σύντομο χρονικό διάστημα. Η είσοδος έχει μπλοκαριστεί για λίγο.",
+    "MaximumVfolderCreation": "Δεν μπορείτε να δημιουργήσετε περισσότερους φακέλους v λόγω της πολιτικής πόρων",
+    "CannotChangeVirtualFolderOption": "Δεν μπορείτε να αλλάξετε τις επιλογές ενός φακέλου vfolder που δεν ανήκει στον εαυτό μου.",
+    "CannotSharePrivateAutomountFolder": "Δεν είναι δυνατή η κοινή χρήση φακέλων vfolders με αυτόματη προσάρτηση σύμφωνα με την πολιτική.",
+    "FolderSharingNotAvailableToUser": "Η κοινή χρήση φακέλων δεν είναι διαθέσιμη για τον/τους ζητούμενο/ους χρήστη/ες.",
+    "ReachedResourceLimit": "Έφτασε το όριο των πόρων σας. Ελέγξτε τους πόρους και τις συνεδρίες.",
+    "UserHasNoGroup": "Ο χρήστης δεν έχει ομάδα. Παρακαλούμε επικοινωνήστε με τον διαχειριστή για να το διορθώσετε.",
+    "InvalidSignupToken": "Μη έγκυρο κουπόνι εγγραφής",
+    "LoginInformationMismatch": "Αναντιστοιχία πληροφοριών σύνδεσης. Ελέγξτε τις πληροφορίες σας",
+    "ResourcePolicyAlreadyExist": "Μια πολιτική πόρων με το ίδιο όνομα υπάρχει ήδη.",
+    "ScalingGroupAlreadyExist": "Μια ομάδα πόρων με το ίδιο όνομα υπάρχει ήδη.",
+    "UserNameAlreadyExist": "Το όνομα χρήστη υπάρχει ήδη. Δεν μπορεί να αντιγραφεί.",
+    "ResourceLimitExceed": "Υπέρβαση του ορίου πόρων. Ελέγξτε τους ελεύθερους πόρους σας.",
+    "ResourcePolicyStillReferenced": "Υπάρχουν ζεύγη κλειδιών που παραπέμπουν σε αυτή την πολιτική πόρων.",
+    "SmallerResourceThenImageRequires": "Το αίτημα πόρων είναι μικρότερο από το ελάχιστο απαιτούμενο από την εικόνα. Δοκιμάστε περισσότερους πόρους.",
+    "APINotSupported": "Το API δεν υποστηρίζεται. Απαιτείται η τελευταία έκδοση του διαχειριστή Backend.AI.",
+    "WrongAPIServerAddress": "Λάθος διεύθυνση διακομιστή API."
   },
   "maxLength": {
     "64chars": "(έως 64 χαρακτήρες)",
@@ -1288,7 +1371,7 @@
     "FormValidationFailed": "Η επικύρωση της φόρμας απέτυχε",
     "StartNewServing": "Έναρξη νέου σερβιρίσματος",
     "ServiceName": "Όνομα υπηρεσίας",
-    "ServiceNameRule": "Επιτρέπονται μόνο 4 έως 64 αλφαριθμητικοί χαρακτήρες, υπογράμμιση(_), παύλα(-) και τελεία(.) και πρέπει να τελειώνουν με έναν αλφαριθμητικό χαρακτήρα.",
+    "ServiceNameRule": "Επιτρέπονται μόνο 4 έως 24 αλφαριθμητικοί χαρακτήρες, υπογράμμιση(_), παύλα(-) και τελεία(.) και πρέπει να τελειώνουν με έναν αλφαριθμητικό χαρακτήρα.",
     "OpenToPublic": "Ανοιχτό για το κοινό",
     "DesiredRoutingCount": "Επιθυμητός αριθμός δρομολόγησης",
     "ServingRouteErrorModalTitle": "Σφάλμα διαδρομής εξυπηρέτησης",
@@ -1316,7 +1399,9 @@
     "RoutingsCount": "Αριθμός δρομολογίων",
     "Active/Total": "Ενεργό/Σύνολο",
     "Public": "Δημόσιο",
-    "YouAreAboutToTerminate": "Πρόκειται να τερματίσετε"
+    "YouAreAboutToTerminate": "Πρόκειται να τερματίσετε",
+    "Owner": "Ιδιοκτήτης",
+    "ServiceDelegatedFrom": "Το μοντέλο υπηρεσίας δημιουργείται από τον {{ createdUser }}, αλλά η ιδιοκτησία της συνεδρίας θα ανατεθεί στον {{ sessionOwner }}"
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",
@@ -1372,5 +1457,38 @@
   "OpenVSCodeRemote": "Ανοίξτε τον τοπικό κώδικα του Visual Studio",
   "inputLimit": {
     "4to64chars": "(4~64 χαρακτήρες)"
+  },
+  "modelStore": {
+    "Description": "Περιγραφή",
+    "Model": "Μοντέλο",
+    "FilterByName": "Φιλτράρισμα κατά όνομα",
+    "ServiceDetails": "Στοιχεία υπηρεσίας",
+    "Metadata": "Μεταδεδομένα",
+    "ModelPath": "Μοντέλο Μονοπάτι",
+    "SearchModels": "Αναζήτηση μοντέλων",
+    "MinResource": "Ελάχιστος πόρος",
+    "LastModified": "Τελευταία τροποποίηση",
+    "Created": "Δημιουργήθηκε",
+    "Version": "Εκδοχή",
+    "Author": "Συγγραφέας",
+    "MaxRetries": "Μέγιστες επαναλήψεις",
+    "Path": "Μονοπάτι",
+    "HealthCheck": "Ελεγχος υγείας",
+    "Port": "Λιμάνι",
+    "StartCommand": "Εκκίνηση Εντολή",
+    "PreStartActions": "Ενέργειες πριν από την έναρξη",
+    "Framework": "Πλαίσιο",
+    "Category": "Κατηγορίες",
+    "Label": "Ετικέτα",
+    "Task": "Εργασία",
+    "CloneAsFolder": "Clone as Folder",
+    "CloneSuccess": "Η αίτηση κλωνοποίησης έχει σταλεί με επιτυχία.",
+    "CloneInfo": "Θα κλωνοποιηθεί ως φάκελος τύπου χρήστη.",
+    "category": "Κατηγορία"
+  },
+  "table": {
+    "SettingTable": "Ρύθμιση πίνακα",
+    "SelectColumnToDisplay": "Επιλέξτε για εμφάνιση στηλών",
+    "SearchTableColumn": "Αναζήτηση στηλών πίνακα"
   }
 }

@@ -3,17 +3,17 @@ import { Tag } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 
-type ObjectValue = {
+export type DoubleTagObjectValue = {
   label: ValueType;
   color?: string;
 };
 
 type ValueType = string | React.ReactNode;
 const DoubleTag: React.FC<{
-  values?: ValueType[] | ObjectValue[];
+  values?: ValueType[] | DoubleTagObjectValue[];
 }> = ({ values = [] }) => {
   if (values.length === 0) return null;
-  let objectValues: ObjectValue[];
+  let objectValues: DoubleTagObjectValue[];
   if (
     values[0] &&
     (typeof values[0] === 'string' || React.isValidElement(values[0]))
@@ -23,10 +23,10 @@ const DoubleTag: React.FC<{
         ({
           label: value,
           color: 'blue',
-        }) as ObjectValue,
+        }) as DoubleTagObjectValue,
     );
   } else {
-    objectValues = values as ObjectValue[];
+    objectValues = values as DoubleTagObjectValue[];
   }
 
   return (
@@ -38,8 +38,9 @@ const DoubleTag: React.FC<{
             style={
               _.last(objectValues) === objValue
                 ? undefined
-                : { margin: 0, marginRight: -1, zIndex: 1 }
+                : { margin: 0, marginRight: -1 }
             }
+            color={objValue.color}
           >
             {objValue.label}
           </Tag>

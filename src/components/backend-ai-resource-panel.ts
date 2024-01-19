@@ -188,7 +188,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         .resource {
           margin-bottom: 10px;
           margin-left: 5px;
-          height: 46px;
         }
 
         .resource-line {

@@ -131,13 +131,13 @@ export const BackendAIWebUIStyles = [
       font-size: 14px;
     }
 
-    mwc-list.sidebar > mwc-list-item > i {
+    mwc-list.sidebar mwc-list-item i {
       color: #949494;
       font-size: 17px;
       padding-top: 5px;
     }
 
-    mwc-list.sidebar > mwc-list-item[disabled] > i {
+    mwc-list.sidebar mwc-list-item[disabled] i {
       color: rgb(70, 70, 70);
     }
 
@@ -195,7 +195,7 @@ export const BackendAIWebUIStyles = [
     }
 
     .user-name {
-      max-width: 10vw;
+      max-width: 15vw;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;

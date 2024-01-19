@@ -4,69 +4,86 @@ import { Tooltip, Typography, theme } from 'antd';
 import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export type ResourceTypeKey =
-  | 'cpu'
-  | 'mem'
-  | 'cuda.device'
-  | 'cuda.shares'
-  | 'rocm.device'
-  | 'tpu.device'
-  | 'ipu.device'
-  | 'atom.device'
-  | 'warboy.device';
+const resourceTypes = [
+  'cpu',
+  'mem',
+  'cuda.device',
+  'cuda.shares',
+  'rocm.device',
+  'tpu.device',
+  'ipu.device',
+  'atom.device',
+  'warboy.device',
+] as const;
+
+export type ResourceTypeKey = (typeof resourceTypes)[number];
+
+export const ACCELERATOR_UNIT_MAP: {
+  [key: string]: string;
+} = {
+  'cuda.device': 'GPU',
+  'cuda.shares': 'FGPU',
+  'rocm.device': 'GPU',
+  'tpu.device': 'TPU',
+  'ipu.device': 'IPU',
+  'atom.device': 'ATOM',
+  'warboy.device': 'Warboy',
+};
 
 export type ResourceOpts = {
-  shmem: number;
+  shmem?: number;
 };
 interface Props {
   type: ResourceTypeKey;
   extra?: ReactElement;
   opts?: ResourceOpts;
   value: string;
+  hideTooltip?: boolean;
 }
 
 type ResourceTypeInfo<V> = {
-  [key in ResourceTypeKey]: V;
+  [key in string]: V;
 };
 const ResourceNumber: React.FC<Props> = ({
   type,
   value: amount,
   extra,
   opts,
+  hideTooltip = false,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const units: ResourceTypeInfo<string> = {
     cpu: t('session.core'),
     mem: 'GiB',
-    'cuda.device': 'GPU',
-    'cuda.shares': 'FGPU',
-    'rocm.device': 'GPU',
-    'tpu.device': 'TPU',
-    'ipu.device': 'IPU',
-    'atom.device': 'ATOM',
-    'warboy.device': 'Warboy',
+    ...ACCELERATOR_UNIT_MAP,
   };
 
   return (
     <Flex direction="row" gap="xxs">
-      <ResourceTypeIcon type={type} />
+      {resourceTypes.includes(type) ? (
+        <ResourceTypeIcon type={type} showTooltip={!hideTooltip} />
+      ) : (
+        type
+      )}
+
       <Typography.Text>
         {units[type] === 'GiB'
-          ? iSizeToSize(amount + 'b', 'g', 2).numberFixed
+          ? Number(iSizeToSize(amount, 'g', 3)?.numberFixed).toString()
           : units[type] === 'FGPU'
           ? parseFloat(amount).toFixed(2)
           : amount}
       </Typography.Text>
       <Typography.Text type="secondary">{units[type]}</Typography.Text>
-      {type === 'mem' && opts?.shmem && (
+      {type === 'mem' && opts?.shmem && opts?.shmem > 0 ? (
         <Typography.Text
           type="secondary"
           style={{ fontSize: token.fontSizeSM }}
         >
-          (SHM: {iSizeToSize(opts.shmem + 'b', 'g', 2).numberFixed}GiB)
+          (SHM: {iSizeToSize(opts.shmem + 'b', 'g', 2)?.numberFixed}
+          GiB)
         </Typography.Text>
-      )}
+      ) : null}
       {extra}
     </Flex>
   );
@@ -125,29 +142,30 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     'warboy.device': ['/resources/icons/furiosa.svg', 'Warboy'],
   };
 
-  return (
-    <Tooltip
-      title={
-        showTooltip ? `${type} (${resourceTypeIconSrcMap[type][1]})` : undefined
-      }
-    >
-      {typeof resourceTypeIconSrcMap[type]?.[0] === 'string' ? (
-        <img
-          {...props}
-          style={{
-            height: size,
-            ...(props.style || {}),
-          }}
-          // @ts-ignore
-          src={resourceTypeIconSrcMap[type]?.[0] || ''}
-          alt={type}
-        />
-      ) : (
-        <div style={{ width: 16, height: 16 }}>
-          {resourceTypeIconSrcMap[type]?.[0]}
-        </div>
-      )}
-    </Tooltip>
+  const content =
+    typeof resourceTypeIconSrcMap[type]?.[0] === 'string' ? (
+      <img
+        {...props}
+        style={{
+          height: size,
+          alignSelf: 'center',
+          ...(props.style || {}),
+        }}
+        // @ts-ignore
+        src={resourceTypeIconSrcMap[type]?.[0] || ''}
+        alt={type}
+      />
+    ) : (
+      <Flex style={{ width: 16, height: 16 }}>
+        {resourceTypeIconSrcMap[type]?.[0] || type}
+      </Flex>
+    );
+
+  return showTooltip ? (
+    // <Tooltip title={showTooltip ? `${type} (${resourceTypeIconSrcMap[type][1]})` : undefined}>
+    <Tooltip title={type}>{content}</Tooltip>
+  ) : (
+    <Flex style={{ pointerEvents: 'none' }}>{content}</Flex>
   );
 };
 

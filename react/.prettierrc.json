@@ -7,5 +7,6 @@
   "printWidth": 80,
   "bracketSpacing": true,
   "trailingComma": "all",
-  "plugins": ["@trivago/prettier-plugin-sort-imports"]
+  "plugins": ["@trivago/prettier-plugin-sort-imports"],
+  "singleAttributePerLine": false
 }

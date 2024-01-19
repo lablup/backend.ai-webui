@@ -1,4 +1,5 @@
 import CopyableCodeText from '../components/CopyableCodeText';
+import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
 import Flex from '../components/Flex';
@@ -132,6 +133,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               endpoint
               status
             }
+            ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
             ...ModelServiceSettingModal_endpoint
           }
@@ -283,68 +285,99 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           style={{
             backgroundColor: token.colorBgBase,
           }}
-        >
-          <Descriptions.Item label={t('modelService.EndpointName')}>
-            <Typography.Text copyable>{endpoint?.name}</Typography.Text>
-          </Descriptions.Item>
-          <Descriptions.Item label={t('modelService.Status')}>
-            <EndpointStatusTag endpointFrgmt={endpoint} />
-          </Descriptions.Item>
-          <Descriptions.Item label={t('modelService.EndpointId')}>
-            {endpoint?.endpoint_id}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('modelService.SessionOwner')}>
-            {baiClient.email || ''}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('modelService.DesiredSessionCount')}>
-            {endpoint?.desired_session_count}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('modelService.ServiceEndpoint')}>
-            {endpoint?.url ? (
-              <Typography.Text copyable>{endpoint?.url}</Typography.Text>
-            ) : (
-              <Tag>{t('modelService.NoServiceEndpoint')}</Tag>
-            )}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('modelService.OpenToPublic')}>
-            {endpoint?.open_to_public ? <CheckOutlined /> : <CloseOutlined />}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('modelService.resources')} span={2}>
-            <Flex direction="row" wrap="wrap" gap={'md'}>
-              <Tooltip title={t('session.ResourceGroup')}>
-                <Tag>{endpoint?.resource_group}</Tag>
-              </Tooltip>
-              {_.map(
-                JSON.parse(endpoint?.resource_slots || '{}'),
-                (value: string, type: ResourceTypeKey) => {
-                  return (
-                    <ResourceNumber
-                      key={type}
-                      type={type}
-                      value={value}
-                      opts={resource_opts}
-                    />
-                  );
-                },
-              )}
-            </Flex>
-          </Descriptions.Item>
-          <Descriptions.Item label={t('session.launcher.ModelStorage')}>
-            <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
-              {endpoint?.model && (
-                <VFolderLazyView uuid={endpoint?.model} clickable={false} />
-              )}
-            </Suspense>
-          </Descriptions.Item>
-          <Descriptions.Item label={t('modelService.Image')} span={2}>
-            {endpoint?.image && (
-              <Flex direction="row" gap={'xs'}>
-                <ImageMetaIcon image={endpoint.image} />
-                <CopyableCodeText>{endpoint.image}</CopyableCodeText>
-              </Flex>
-            )}
-          </Descriptions.Item>
-        </Descriptions>
+          items={[
+            {
+              label: t('modelService.EndpointName'),
+              children: (
+                <Typography.Text copyable>{endpoint?.name}</Typography.Text>
+              ),
+            },
+            {
+              label: t('modelService.Status'),
+              children: <EndpointStatusTag endpointFrgmt={endpoint} />,
+            },
+            {
+              label: t('modelService.EndpointId'),
+              children: endpoint?.endpoint_id,
+            },
+            {
+              label: t('modelService.SessionOwner'),
+              children: <EndpointOwnerInfo endpointFrgmt={endpoint} />,
+            },
+            {
+              label: t('modelService.DesiredSessionCount'),
+              children: endpoint?.desired_session_count,
+            },
+            {
+              label: t('modelService.ServiceEndpoint'),
+              children: endpoint?.url ? (
+                <Typography.Text copyable>{endpoint?.url}</Typography.Text>
+              ) : (
+                <Typography.Text type="secondary">
+                  {t('modelService.NoServiceEndpoint')}
+                </Typography.Text>
+              ),
+            },
+            {
+              label: t('modelService.OpenToPublic'),
+              children: endpoint?.open_to_public ? (
+                <CheckOutlined />
+              ) : (
+                <CloseOutlined />
+              ),
+            },
+            {
+              label: t('modelService.resources'),
+              children: (
+                <Flex direction="row" wrap="wrap" gap={'md'}>
+                  <Tooltip title={t('session.ResourceGroup')}>
+                    <Tag>{endpoint?.resource_group}</Tag>
+                  </Tooltip>
+                  {_.map(
+                    JSON.parse(endpoint?.resource_slots || '{}'),
+                    (value: string, type: ResourceTypeKey) => {
+                      return (
+                        <ResourceNumber
+                          key={type}
+                          type={type}
+                          value={value}
+                          opts={resource_opts}
+                        />
+                      );
+                    },
+                  )}
+                </Flex>
+              ),
+              span: {
+                xl: 2,
+              },
+            },
+            {
+              label: t('session.launcher.ModelStorage'),
+              children: (
+                <Suspense
+                  fallback={<Spin indicator={<LoadingOutlined spin />} />}
+                >
+                  {endpoint?.model && (
+                    <VFolderLazyView uuid={endpoint?.model} clickable={false} />
+                  )}
+                </Suspense>
+              ),
+            },
+            {
+              label: t('modelService.Image'),
+              children: endpoint?.image && (
+                <Flex direction="row" gap={'xs'}>
+                  <ImageMetaIcon image={endpoint.image} />
+                  <CopyableCodeText>{endpoint.image}</CopyableCodeText>
+                </Flex>
+              ),
+              span: {
+                xl: 2,
+              },
+            },
+          ]}
+        ></Descriptions>
       </Card>
       <Card
         title={t('modelService.GeneratedTokens')}

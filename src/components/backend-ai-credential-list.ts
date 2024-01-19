@@ -86,6 +86,8 @@ export default class BackendAICredentialList extends BackendAIPage {
   @property({ type: Boolean }) isUserInfoMaskEnabled = false;
   @property({ type: String }) deleteKeyPairUserName = '';
   @property({ type: String }) deleteKeyPairAccessKey = '';
+  @property({ type: Boolean }) supportMainAccessKey = false;
+  @property({ type: Array }) _mainAccessKeyList: string[] = [];
   @query('#keypair-info-dialog') keypairInfoDialog!: BackendAIDialog;
   @query('#keypair-modify-dialog') keypairModifyDialog!: BackendAIDialog;
   @query('#delete-keypair-dialog') deleteKeyPairDialog!: BackendAIDialog;
@@ -209,6 +211,8 @@ export default class BackendAICredentialList extends BackendAIPage {
         () => {
           this._refreshKeyData();
           this.isAdmin = globalThis.backendaiclient.is_admin;
+          this.supportMainAccessKey =
+            globalThis.backendaiclient.supports('main-access-key');
           this.isUserInfoMaskEnabled =
             globalThis.backendaiclient._config.maskUserInfo;
           this.keypairGrid = this.shadowRoot?.querySelector('#keypair-grid');
@@ -219,6 +223,8 @@ export default class BackendAICredentialList extends BackendAIPage {
       // already connected
       this._refreshKeyData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
+      this.supportMainAccessKey =
+        globalThis.backendaiclient.supports('main-access-key');
       this.isUserInfoMaskEnabled =
         globalThis.backendaiclient._config.maskUserInfo;
       this.keypairGrid = this.shadowRoot?.querySelector('#keypair-grid');
@@ -226,7 +232,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   /**
-   * Refresh key datas when user id is null.
+   * Refresh key data when user id is null.
    *
    * @param {string} user_id
    * @return {void}
@@ -271,7 +277,32 @@ export default class BackendAICredentialList extends BackendAIPage {
           is_active,
         );
       })
-      .then((response) => {
+      .then(async (response) => {
+        if (this.supportMainAccessKey) {
+          try {
+            // since accesskey and user account status doesn't match all the time,
+            // therefore we need to query from both active and inactive user
+            const activeUserMainAccessKeyList =
+              await globalThis.backendaiclient.user.list(true, [
+                'main_access_key',
+              ]);
+            const inactiveUserMainAccessKeyList =
+              await globalThis.backendaiclient.user.list(false, [
+                'main_access_key',
+              ]);
+            if (
+              activeUserMainAccessKeyList.users &&
+              inactiveUserMainAccessKeyList.users
+            ) {
+              this._mainAccessKeyList = [
+                ...activeUserMainAccessKeyList.users,
+                ...inactiveUserMainAccessKeyList.users,
+              ].map((userInfo) => userInfo.main_access_key);
+            }
+          } catch (err) {
+            throw err;
+          }
+        }
         const keypairs = response.keypairs;
         Object.keys(keypairs).map((objectKey, index) => {
           const keypair = keypairs[objectKey];
@@ -725,6 +756,9 @@ export default class BackendAICredentialList extends BackendAIPage {
                   class="fg red"
                   icon="delete_forever"
                   fab
+                  ?disabled=${this._mainAccessKeyList.includes(
+                    rowData.item?.access_key,
+                  )}
                   flat
                   inverted
                   @click="${(e) => this._deleteKeyPairDialog(e)}"
@@ -760,7 +794,19 @@ export default class BackendAICredentialList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div class="monospace">${rowData.item.access_key}</div>
+        <div class="vertical layout flex">
+          <div class="monospace">${rowData.item.access_key}</div>
+          ${this._mainAccessKeyList.includes(rowData.item?.access_key)
+            ? html`
+                <lablup-shields
+                  app=""
+                  color="red"
+                  description="${_t('credential.MainAccessKey')}"
+                  ui="flat"
+                ></lablup-shields>
+              `
+            : html``}
+        </div>
       `,
       root,
     );
@@ -847,11 +893,11 @@ export default class BackendAICredentialList extends BackendAIPage {
             <span>${rowData.item.max_vfolder_size}</span>
             <span class="indicator">GB</span>
           </div>
-          <div class="layout horizontal configuration">
-            <mwc-icon class="fg green">folder</mwc-icon>
-            <span>${rowData.item.max_vfolder_count}</span>
-            <span class="indicator">${_t('general.Folders')}</span>
-          </div>
+        </div>
+        <div class="layout horizontal configuration">
+          <mwc-icon class="fg green">folder</mwc-icon>
+          <span>${rowData.item.max_vfolder_count}</span>
+          <span class="indicator">${_t('general.Folders')}</span>
         </div>
       `,
       root,

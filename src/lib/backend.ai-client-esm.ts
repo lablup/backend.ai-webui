@@ -477,8 +477,8 @@ class Client {
       localStorage.getItem('backendaiwebui.logs') as any,
     );
     if (previous_log) {
-      if (previous_log.length > 3000) {
-        previous_log = previous_log.slice(1, 3000);
+      if (previous_log.length > 2000) {
+        previous_log = previous_log.slice(1, 2000);
       }
     }
     let log_stack: Record<string, unknown>[] = [];
@@ -562,7 +562,7 @@ class Client {
       this._managerVersion = v.manager;
       this._apiVersion = v.version;
       this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
-      this._apiVersionMajor = v.version.substring(1, 3);
+      this._apiVersionMajor = v.version?.substring(1, 3);
       this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
       if (this._apiVersionMajor > 4) {
         this.kernelPrefix = '/session';
@@ -659,6 +659,22 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('23.03.11')) {
       this._features['model-serving'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.0')) {
+      this._features['sudo-session-enabled'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.2')) {
+      this._features['container-registry-gql'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.7')) {
+      this._features['main-access-key'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.8')) {
+      this._features['model-serving-endpoint-user-info'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('24.03.0')) {
+      this._features['max-vfolder-count-in-user-resource-policy'] = true;
+      this._features['model-store'] = true;
     }
   }
 
@@ -1483,12 +1499,12 @@ class Client {
     };
     let rqst = this.newSignedRequest(
       'POST',
-      `/admin/graphql`,
+      `/admin/gql`,
       query,
       null,
       secure,
     );
-    return this._wrapWithPromise(rqst, false, signal, timeout, retry);
+    return this._wrapWithPromise(rqst, false, signal, timeout, retry).then(r => r.data);
   }
 
   /**
@@ -3165,7 +3181,6 @@ class ResourcePolicy {
       'max_concurrent_sessions',
       'max_containers_per_session',
       'max_vfolder_count',
-      'max_vfolder_size',
       'allowed_vfolder_hosts',
       'idle_timeout',
     ],
@@ -3199,8 +3214,6 @@ class ResourcePolicy {
    *   'max_concurrent_sessions': concurrency_limit,
    *   'max_containers_per_session': containers_per_session_limit,
    *   'idle_timeout': idle_timeout,
-   *   'max_vfolder_count': vfolder_count_limit,
-   *   'max_vfolder_size': vfolder_capacity_limit,
    *   'allowed_vfolder_hosts': vfolder_hosts,
    *   'max_session_lifetime': max_session_lifetime
    * };
@@ -3214,7 +3227,6 @@ class ResourcePolicy {
       'max_concurrent_sessions',
       'max_containers_per_session',
       'max_vfolder_count',
-      'max_vfolder_size',
       'allowed_vfolder_hosts',
       'idle_timeout',
     ];
@@ -3249,8 +3261,7 @@ class ResourcePolicy {
    *   {int} 'max_concurrent_sessions': concurrency_limit,
    *   {int} 'max_containers_per_session': containers_per_session_limit,
    *   {bigint} 'idle_timeout': idle_timeout,
-   *   {int} 'max_vfolder_count': vfolder_count_limit,
-   *   {bigint} 'max_vfolder_size': vfolder_capacity_limit,
+  *     {int} 'max_vfolder_count': vfolder_count_limit,
    *   {[string]} 'allowed_vfolder_hosts': vfolder_hosts,
    *   {int} 'max_session_lifetime': max_session_lifetime
    * };
@@ -3998,10 +4009,33 @@ class Group {
       'created_at',
       'modified_at',
       'domain_name',
+      'type',
     ],
+    type = ["GENERAL"],
   ): Promise<any> {
     let q, v;
-    if (this.client.is_admin === true) {
+    if (this.client.supports('model-store')) {
+      q =
+        `query($is_active:Boolean, $type:[String!]) {` +
+        `  groups(is_active:$is_active, type:$type) { ${fields.join(' ')} }` +
+        '}';
+      v = { is_active: is_active, type: type };
+      if (domain_name) {
+        q =
+          `query($domain_name: String, $is_active:Boolean, $type:[String!]) {` +
+          `  groups(domain_name: $domain_name, is_active:$is_active, type:$type) { ${fields.join(
+            ' ',
+          )} }` +
+          '}';
+        v = {
+          is_active: is_active,
+          domain_name: domain_name,
+          type: type,
+        };
+      }
+    } else {
+      // remove 'type' from fields
+      fields = fields.filter((item) => item !== 'type');
       q =
         `query($is_active:Boolean) {` +
         `  groups(is_active:$is_active) { ${fields.join(' ')} }` +
@@ -4019,12 +4053,6 @@ class Group {
           domain_name: domain_name,
         };
       }
-    } else {
-      q =
-        `query($is_active:Boolean) {` +
-        `  groups(is_active:$is_active) { ${fields.join(' ')} }` +
-        '}';
-      v = { is_active: is_active };
     }
     return this.client.query(q, v);
   }
@@ -4257,6 +4285,7 @@ class User {
       'role',
       'groups {id name}',
       'status',
+      'main_access_key',
     ],
   ): Promise<any> {
     let q, v;
@@ -4279,6 +4308,9 @@ class User {
       // we iterate pages to gather all users for client-side compability.
       const limit = 100;
       const users = [] as any;
+      if (!this.client.supports('main-access-key')) {
+        fields = fields.filter(field => field !== 'main_access_key');
+      }
       q = this.client.is_admin
         ? `
         query($offset:Int!, $limit:Int!, $is_active:Boolean) {
@@ -4498,6 +4530,10 @@ class ScalingGroup {
   async list(group = 'default'): Promise<any> {
     const queryString = `/scaling-groups?group=${group}`;
     const rqst = this.client.newSignedRequest('GET', queryString, null, null);
+    //const result = await this.client._wrapWithPromise(rqst);
+    //console.log("test");
+    //console.log(result);
+    //return result;
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -5449,6 +5485,14 @@ class EduApp {
    */
   async get_user_projects() {
     const rqst = this.client.newSignedRequest('GET', '/eduapp/projects');
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Get credential of user.
+   */
+  async get_user_credential(stoken: string) {
+    const rqst = this.client.newSignedRequest('GET', `/eduapp/credential?sToken=${stoken}`);
     return this.client._wrapWithPromise(rqst);
   }
 }

@@ -86,6 +86,7 @@ export default class BackendAIWebUI extends BackendAIWebUI_base {
   lang: string;
   supportLanguageCodes: string[];
   blockedMenuitem: any;
+  inactiveMenuItem: any;
   constructor();
   static get styles(): (
     | import('lit-element').CSSResult

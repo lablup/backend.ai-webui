@@ -29,7 +29,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         id
         name
         created_at
-        max_vfolder_size
+        max_quota_scope_size
       }
     `,
     resourcePolicyFrgmt,
@@ -47,7 +47,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
   //       ok
   //       msg
   //       resource_policy {
-  //         max_vfolder_size
+  //         max_quota_scope_size
   //       }
   //     }
   //   }
@@ -72,13 +72,14 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
     form.validateFields().then((values) => {
       if (
         projectResourcePolicyInfo?.name &&
-        projectResourcePolicyInfo?.max_vfolder_size
+        projectResourcePolicyInfo?.max_quota_scope_size
       ) {
         commitModifyProjectResourcePolicy({
           variables: {
             name: projectResourcePolicyInfo?.name,
             props: {
-              max_vfolder_size: GBToBytes(values?.max_vfolder_size),
+              // max_vfolder_count: values?.max_vfolder_count,
+              max_quota_scope_size: GBToBytes(values?.max_quota_scope_size),
             },
           },
           onCompleted(response) {
@@ -103,7 +104,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         //       // Create a project resource policy with the same name as the project name
         //       name: projectResourcePolicy || "",
         //       props: {
-        //         max_vfolder_size: GBToBytes(values?.max_vfolder_size),
+        //         max_quota_scope_size: GBToBytes(values?.max_quota_scope_size),
         //       },
         //     },
         //     onCompleted(response) {
@@ -151,14 +152,14 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
           id: projectResourcePolicyInfo?.id,
           name: projectResourcePolicyInfo?.name,
           created_at: projectResourcePolicyInfo?.created_at,
-          max_vfolder_size:
-            projectResourcePolicyInfo?.max_vfolder_size === -1
+          max_quota_scope_size:
+            projectResourcePolicyInfo?.max_quota_scope_size === -1
               ? null
-              : bytesToGB(projectResourcePolicyInfo?.max_vfolder_size),
+              : bytesToGB(projectResourcePolicyInfo?.max_quota_scope_size),
         }}
       >
         <Form.Item
-          name="max_vfolder_size"
+          name="max_quota_scope_size"
           label={t('storageHost.MaxFolderSize')}
           rules={[
             {

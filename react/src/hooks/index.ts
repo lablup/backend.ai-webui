@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 
@@ -111,7 +112,17 @@ export const useSuspendedBackendaiClient = () => {
     suspense: true,
   });
 
-  return client;
+  return client as {
+    vfolder: {
+      list: (path: string) => Promise<any>;
+      list_hosts: () => Promise<any>;
+      list_files: (path: string, id: string) => Promise<any>;
+      list_allowed_types: () => Promise<string[]>;
+      clone: (input: any, name: string) => Promise<any>;
+    };
+    [key: string]: any;
+    _config: BackendAIConfig;
+  };
 };
 
 interface ImageMetadata {
@@ -127,7 +138,7 @@ interface ImageMetadata {
   }[];
 }
 
-export const useBackendaiImageMetaData = () => {
+export const useBackendAIImageMetaData = () => {
   const { data: metadata } = useQuery({
     queryKey: 'backendai-metadata-for-suspense',
     queryFn: () => {
@@ -156,7 +167,7 @@ export const useBackendaiImageMetaData = () => {
   const getImageMeta = (imageName: string) => {
     // cr.backend.ai/multiarch/python:3.9-ubuntu20.04
     // key = python, tags = [3.9, ubuntu20.04]
-    if (!imageName) {
+    if (_.isEmpty(imageName)) {
       return {
         key: '',
         tags: [],
@@ -164,10 +175,22 @@ export const useBackendaiImageMetaData = () => {
     }
     const specs = imageName.split('/');
 
-    const [key, tag] = (specs[2] || specs[1]).split(':');
-    const tags = tag.split('-');
+    try {
+      const [key, tag] = (
+        specs[specs.length - 1] ||
+        specs[specs.length - 2] ||
+        ''
+      ).split(':');
 
-    return { key, tags };
+      // remove architecture string and split by '-'
+      const tags = tag.split('@')[0].split('-');
+      return { key, tags };
+    } catch (error) {
+      return {
+        key: '',
+        tags: [],
+      };
+    }
   };
 
   return [
@@ -201,4 +224,54 @@ export const useBackendaiImageMetaData = () => {
       getImageMeta,
     },
   ] as const;
+};
+
+type BackendAIConfig = {
+  _apiVersionMajor: string;
+  _apiVersion: string;
+  _hashType: string;
+  _endpoint: string;
+  endpoint: string;
+  _endpointHost: string;
+  accessKey: string;
+  _secretKey: string;
+  _userId: string;
+  _password: string;
+  _proxyURL: string;
+  _proxyToken: string;
+  _connectionMode: string;
+  _session_id: string;
+  domainName: string;
+  default_session_environment: string;
+  default_import_environment: string;
+  allow_project_resource_monitor: boolean;
+  allow_manual_image_name_for_session: boolean;
+  always_enqueue_compute_session: boolean;
+  openPortToPublic: boolean;
+  allowPreferredPort: boolean;
+  maxCPUCoresPerContainer: number;
+  maxMemoryPerContainer: number;
+  maxCUDADevicesPerContainer: number;
+  maxCUDASharesPerContainer: number;
+  maxROCMDevicesPerContainer: number;
+  maxTPUDevicesPerContainer: number;
+  maxIPUDevicesPerContainer: number;
+  maxATOMDevicesPerContainer: number;
+  maxWarboyDevicesPerContainer: number;
+  maxShmPerContainer: number;
+  maxFileUploadSize: number;
+  allow_image_list: string[];
+  maskUserInfo: boolean;
+  singleSignOnVendors: string[];
+  ssoRealmName: string;
+  enableContainerCommit: boolean;
+  appDownloadUrl: string;
+  systemSSHImage: string;
+  fasttrackEndpoint: string;
+  hideAgents: boolean;
+  enable2FA: boolean;
+  force2FA: boolean;
+  directoryBasedUsage: boolean;
+  maxCountForPreopenPorts: number;
+  [key: string]: any;
 };

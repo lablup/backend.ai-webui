@@ -17,7 +17,7 @@ Backend.AI Web UI focuses to
 
  * Both desktop app (Windows, macOS and Linux) and web service
  * Provide both basic administration and user mode
-    * Use CLI for detailed administration features such as domain administation
+    * Use CLI for detailed administration features such as domain administration
  * Versatile devices ready such as mobile, tablet and desktop
  * Built-in websocket proxy feature for desktop app
 
@@ -232,6 +232,13 @@ $ make compile
 ```
 
 Then bundled resource will be prepared in `build/rollup`. Basically, both app and web serving is based on static serving sources in the directory. However, to work as single page application, URL request fallback is needed.
+
+If you want to create the bundle zip file, 
+
+```console
+$ make bundle
+```
+will generate compiled static web bundle at `./app` directory. Then you can serve the web bundle via webservers.
 
 ### Serving with nginx
 

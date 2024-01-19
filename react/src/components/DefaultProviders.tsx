@@ -3,8 +3,9 @@ import { RelayEnvironment } from '../RelayEnvironment';
 import rawFixAntCss from '../fix_antd.css?raw';
 import { useCustomThemeConfig } from '../helper/customThemeConfig';
 import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
+import { useThemeMode } from '../hooks/useThemeMode';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
-import { ConfigProvider } from 'antd';
+import { App, ConfigProvider, theme } from 'antd';
 import en_US from 'antd/locale/en_US';
 import ko_KR from 'antd/locale/ko_KR';
 import dayjs from 'dayjs';
@@ -28,6 +29,8 @@ import { useTranslation, initReactI18next } from 'react-i18next';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { BrowserRouter, useNavigate } from 'react-router-dom';
+import { QueryParamProvider } from 'use-query-params';
+import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -80,6 +83,10 @@ i18n
     interpolation: {
       escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
     },
+    react: {
+      transSupportBasicHtmlNodes: true,
+      transKeepBasicHtmlNodesFor: ['br', 'strong', 'span', 'code', 'p'],
+    },
   });
 
 const useCurrentLanguage = () => {
@@ -124,6 +131,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   const cache = useMemo(() => createCache(), []);
   const [lang] = useCurrentLanguage();
   const themeConfig = useCustomThemeConfig();
+  const { isDarkMode } = useThemeMode();
 
   const componentValues = useMemo(() => {
     return {
@@ -153,16 +161,35 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                     }}
                     //TODO: apply other supported locales
                     locale={'ko' === lang ? ko_KR : en_US}
-                    theme={themeConfig}
+                    theme={{
+                      ...(isDarkMode
+                        ? { ...themeConfig.dark }
+                        : { ...themeConfig.light }),
+                      algorithm: isDarkMode
+                        ? theme.darkAlgorithm
+                        : theme.defaultAlgorithm,
+                    }}
                   >
-                    <StyleProvider container={shadowRoot} cache={cache}>
-                      <Suspense fallback="">
-                        <BrowserRouter>
-                          <RoutingEventHandler />
-                          {children}
-                        </BrowserRouter>
-                      </Suspense>
-                    </StyleProvider>
+                    <App>
+                      <StyleProvider container={shadowRoot} cache={cache}>
+                        <Suspense fallback="">
+                          <BrowserRouter>
+                            <QueryParamProvider
+                              adapter={ReactRouter6Adapter}
+                              options={
+                                {
+                                  // searchStringToObject: queryString.parse,
+                                  // objectToSearchString: queryString.stringify,
+                                }
+                              }
+                            >
+                              <RoutingEventHandler />
+                              {children}
+                            </QueryParamProvider>
+                          </BrowserRouter>
+                        </Suspense>
+                      </StyleProvider>
+                    </App>
                   </ConfigProvider>
                 </WebComponentContext.Provider>
               </ShadowRootContext.Provider>

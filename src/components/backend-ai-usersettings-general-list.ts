@@ -57,10 +57,23 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     { name: _t('language.OSDefault'), code: 'default' },
     { name: _t('language.English'), code: 'en' },
     { name: _t('language.Korean'), code: 'ko' },
-    { name: _t('language.Russian'), code: 'ru' },
+    { name: _t('language.Brazilian'), code: 'pt-BR' },
+    { name: _t('language.Chinese'), code: 'zh-CN' },
+    { name: _t('language.Chinese (Simplified)'), code: 'zh-TW' },
     { name: _t('language.French'), code: 'fr' },
-    { name: _t('language.Mongolian'), code: 'mn' },
+    { name: _t('language.Finnish'), code: 'fi' },
+    { name: _t('language.German'), code: 'de' },
+    { name: _t('language.Greek'), code: 'el' },
     { name: _t('language.Indonesian'), code: 'id' },
+    { name: _t('language.Italian'), code: 'it' },
+    { name: _t('language.Japanese'), code: 'ja' },
+    { name: _t('language.Mongolian'), code: 'mn' },
+    { name: _t('language.Polish'), code: 'pl' },
+    { name: _t('language.Portuguese'), code: 'pt' },
+    { name: _t('language.Russian'), code: 'ru' },
+    { name: _t('language.Spanish'), code: 'es' },
+    { name: _t('language.Turkish'), code: 'tr' },
+    { name: _t('language.Vietnamese'), code: 'vi' },
   ];
   @property({ type: Boolean }) beta_feature_panel = false;
   @property({ type: Boolean }) shell_script_edit = false;
@@ -90,7 +103,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @query('#ssh-keypair-form-dialog') sshKeypairFormDialog!: BackendAIDialog;
   @query('#entered-ssh-public-key') enteredSSHPublicKeyInput!: TextArea;
   @query('#entered-ssh-private-key') enteredSSHPrivateKeyInput!: TextArea;
-
+  @property({ type: Boolean }) isOpenMyKeypairInfoDialog = false;
   @query('#ui-language') languageSelect!: Select;
   @query('#delete-rcfile') deleteRcfileButton!: Button;
 
@@ -947,6 +960,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this._hideSSHKeypairGenerationDialog();
   }
 
+  _openMyKeypairDialog() {
+    this.isOpenMyKeypairInfoDialog = true;
+  }
+
   _discardCurrentEditorChange() {
     this._updateSelectedRcFileName(this.rcfile);
     this._hideCurrentEditorChangeDialog();
@@ -1186,6 +1203,21 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                 false,
               )}"
             ></mwc-switch>
+          </div>
+        </div>
+        <div class="horizontal layout wrap setting-item">
+          <div class="vertical start start-justified layout setting-desc">
+            <div class="title">${_t('usersettings.MyKeypairInfo')}</div>
+            <div class="description">
+              ${_tr('usersettings.DescMyKeypairInfo')}
+            </div>
+          </div>
+          <div class="vertical center-justified layout flex end">
+            <mwc-icon-button
+              id="ssh-keypair-details"
+              icon="more"
+              @click="${this._openMyKeypairDialog}"
+            ></mwc-icon-button>
           </div>
         </div>
         ${this.beta_feature_panel
@@ -1529,6 +1561,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           ></mwc-button>
         </div>
       </backend-ai-dialog>
+      <backend-ai-react-keypair-info-modal
+        value="${this.isOpenMyKeypairInfoDialog ? 'true' : 'false'}"
+        @close="${() => {
+          this.isOpenMyKeypairInfoDialog = false;
+        }}"
+      ></backend-ai-react-keypair-info-modal>
     `;
   }
 }

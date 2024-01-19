@@ -30,7 +30,8 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
         id
         name
         created_at
-        max_vfolder_size
+        # max_vfolder_count
+        max_quota_scope_size
       }
     `,
     resourcePolicyFrgmt,
@@ -48,7 +49,8 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
   //       ok
   //       msg
   //       resource_policy {
-  //         max_vfolder_size
+  //         max_vfolder_count
+  //         max_quota_scope_size
   //       }
   //     }
   //   }
@@ -76,7 +78,8 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
           variables: {
             name: userResourcePolicyInfo?.name,
             props: {
-              max_vfolder_size: GBToBytes(values?.max_vfolder_size),
+              // max_vfolder_count: values?.max_vfolder_count,
+              max_quota_scope_size: GBToBytes(values?.max_quota_scope_size),
             },
           },
           onCompleted(response) {
@@ -101,7 +104,8 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
         //     // Create a user resource policy with the same name as the user name
         //     name: userResourcePolicy || "",
         //     props: {
-        //       max_vfolder_size: GBToBytes(values?.max_vfolder_size),
+        //       max_vfolder_count: values?.max_vfolder_count,
+        //       max_quota_scope_size: GBToBytes(values?.max_vfolmax_quota_scope_sizeder_count),
         //     },
         //   },
         //   onCompleted(response) {
@@ -149,14 +153,14 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
           id: userResourcePolicyInfo?.id,
           name: userResourcePolicyInfo?.name,
           created_at: userResourcePolicyInfo?.created_at,
-          max_vfolder_size:
-            userResourcePolicyInfo?.max_vfolder_size === -1
+          max_quota_scope_size:
+            userResourcePolicyInfo?.max_quota_scope_size === -1
               ? null
-              : bytesToGB(userResourcePolicyInfo?.max_vfolder_size),
+              : bytesToGB(userResourcePolicyInfo?.max_quota_scope_size),
         }}
       >
         <Form.Item
-          name="max_vfolder_size"
+          name="max_quota_scope_size"
           label={t('storageHost.MaxFolderSize')}
           rules={[
             {

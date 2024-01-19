@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Hoşgeldiniz,",
-      "WelcomeMessage_2": " .",
+      "WelcomeMessage": "Hoş geldiniz, {{ userName }}.",
       "Summary": "Özet",
       "Sessions": "Oturumlar",
       "Import&Run": "İçe Aktar ve Çalıştır",
@@ -60,7 +59,12 @@
       "Serving": "Servis",
       "PasswordChangePlace": "Üst çubuktaki kişi simgesine tıklayın ve \"Hesabım\" menüsüne gidin.",
       "Notifications": "Bildirimler",
-      "Tasks": "Görevler"
+      "Tasks": "Görevler",
+      "FastTrack": "FastTrack",
+      "Data&Model": "Veri",
+      "InvalidBlankPassword": "Şifrenizi girin",
+      "InvalidBlankEmail": "E-postanızı giriniz",
+      "DisMatchUserEmail": "Kullanıcı E-postası eşleşmiyor"
     },
     "YouAreOffline": "Şu anda çevrimdışısın",
     "YouAreOnline": "artık çevrimiçisin",
@@ -108,7 +112,8 @@
     "IPUEnabled": "IPU NPU Etkin",
     "ATOMEnabled": "ATOM NPU Etkin",
     "WarboyEnabled": "Warboy NPU Etkinleştirildi",
-    "DownloadWebUIApp": "Backend.AI Web UI Uygulamasını İndirin"
+    "DownloadWebUIApp": "Backend.AI Web UI Uygulamasını İndirin",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {
@@ -230,7 +235,28 @@
       "PreOpenPortPanelTitle": "Ayarlanacak ön açık bağlantı noktaları (isteğe bağlı)",
       "PortsTitleWithRange": "Port değeri (1024 ~ 65535 arasında)",
       "PrePortConfigWillDisappear": "Kaydedilmemiş tüm önceden açık portlar kaybolacaktır.",
-      "StartModelServing": "Model Servisini Başlat"
+      "StartModelServing": "Model Servisini Başlat",
+      "PreOpenPortRangeGuide": "Virgülle (,) veya boşlukla ayırarak birden fazla değer girin.",
+      "preopen": "önceden açılmak",
+      "Network": "Ağ",
+      "Enable": "Olanak vermek",
+      "FolderAliasInvalid": "Yalnızca alfasayısal karakterlere, alt çizgiye (_), eğik çizgiye (/) ve kısa çizgiye (-) izin verilir.",
+      "PreOpenPortMaxCountLimit": "En fazla {{sayı}} ön açık bağlantı noktası ayarlayabilirsiniz.",
+      "StartTimeMustBeInTheFuture": "Başlangıç zamanı geçerli saatten sonra olmalıdır.",
+      "EnqueueComputeSessionWarning": "Mevcut mevcut kaynaklardan daha büyük bir değere ayarlarsanız, oturumun oluşturulması, kullanılabilir hale gelene kadar kuyrukta ertelenecektir.",
+      "SessionName": "Oturum adı",
+      "ResetFormConfirm": "Tüm girişlerinizi sıfırlamak istiyor musunuz?",
+      "TemplateAndHistory": "Şablonlar",
+      "ScheduleTimeSimple": "Başlangıç ​​zamanını ayarla",
+      "ResourceAllocationPerContainer": "Konteyner Başına Kaynak Tahsisi",
+      "NumberOfContainer": "Konteyner sayısı",
+      "ErrorCanNotExceedRemaining": "Kalan kaynaklardan ({{amount}}) daha büyük bir değere ayarlanamaz.",
+      "EnterEnvironmentVariable": "Değişken adını girin",
+      "EnvironmentVariableNamePatternError": "Değişken adı bir harf veya alt çizgi ile başlamalıdır ve yalnızca harfler, sayılar ve alt çizgiler içerebilir.",
+      "EnvironmentVariableDuplicateName": "Zaten var olan bir değişken adı.",
+      "Template": "Oturum Şablonu",
+      "EnableAutomaticShmem": "Otomatik paylaşılan bellek",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -286,7 +312,9 @@
       "EnterValidSessionName": "Geçerli oturum adını girin",
       "SessionNameRequired": "Oturum adı gereklidir",
       "SluggedStrings": "Kesikli dizeler (>3 karakter)",
-      "SessionNameAlreadyExist": "Oturum adı zaten mevcut"
+      "SessionNameAlreadyExist": "Oturum adı zaten mevcut",
+      "SessionNameTooLong64": "Lütfen 64 veya daha az karakter girin.",
+      "PleaseFollowSessionNameRule": "Lütfen en az 4 harf, rakam, '.', '_' ve '-' kombinasyonunu girin."
     },
     "Interactive": "İnteraktif",
     "Batch": "Toplu İş",
@@ -341,7 +369,12 @@
     "DescCommitSession": "Aşağıdaki oturuma karşılık gelen konteyneri işlemek üzeresiniz:",
     "NoSessionToDisplay": "Görüntülenecek oturum yok",
     "StatusInfo": "Durum Bilgisi",
-    "System": "Oturumları Yükle"
+    "System": "Oturumları Yükle",
+    "ExpiresAfter": "Kalan süre",
+    "CPU": "CPU",
+    "MEM": "Hafıza",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU (bellek)"
   },
   "button": {
     "Cancel": "İptal etmek",
@@ -362,7 +395,6 @@
     "DeleteAll": "Hepsini sil",
     "Update": "Güncelleme",
     "Delete": "Sil",
-    "Dismiss": "Reddet",
     "DismissAndProceed": "Kapat ve Devam Et",
     "Close": "Kapat",
     "Confirm": "Onaylamak",
@@ -373,7 +405,9 @@
     "Unset": "Ayarlanmamış",
     "OK": "TAMAM.",
     "Commit": "Taahhüt",
-    "EnterManually": "Manuel Olarak Girin"
+    "EnterManually": "Manuel Olarak Girin",
+    "Download": "İndir",
+    "Clone": "Klon"
   },
   "agent": {
     "Endpoint": "uç nokta",
@@ -415,7 +449,9 @@
     "Control": "Kontrol",
     "NewPassword": "Yeni Şifre",
     "Enabled": "Etkin",
-    "StorageProxies": "Depolar"
+    "StorageProxies": "Depolar",
+    "None": "Hiçbiri",
+    "Image": "Resim"
   },
   "credential": {
     "Permission": "izin",
@@ -492,7 +528,9 @@
     "KeypairDetail": "Anahtar Çifti Detayı",
     "SignoutSeccessfullyFinished": "Çıkış işlemi başarıyla tamamlandı",
     "Status": "Durum",
-    "NoUserToDisplay": "Görüntülenecek Kullanıcı Yok"
+    "NoUserToDisplay": "Görüntülenecek Kullanıcı Yok",
+    "EnableSudoSession": "Sudo oturumunu etkinleştir",
+    "MainAccessKey": "Ana Erişim Anahtarı"
   },
   "data": {
     "Folders": "klasörler",
@@ -657,7 +695,12 @@
     "Used": "Kullanılmış",
     "Pipeline": "Boru Hattı Klasörleri",
     "DialogDataFolder": "FastTrack'te boru hatları oluşturulurken otomatik olarak oluşturulan boru hattına özel klasörler.",
-    "DialogModelFolder": "Modellere hizmet verebilir ve yönetebilirsiniz."
+    "DialogModelFolder": "Modellere hizmet verebilir ve yönetebilirsiniz.",
+    "SearchByName": "Ada göre ara",
+    "ModelStore": "Model Mağazası",
+    "New": "Yeni",
+    "Add": "Ekle",
+    "CloningIsOnlyPossibleSameHost": "Şu anda klonlama yalnızca aynı ana bilgisayarda mümkündür."
   },
   "dialog": {
     "warning": {
@@ -748,7 +791,8 @@
     "RAM": "RAM (GB)",
     "SharedMemory": "Paylaşılan bellek (GB)",
     "NoResourcePresetToDisplay": "Görüntülenecek Kaynak Ön Ayarı yok",
-    "Deleted": "Kaynak ön ayarı başarıyla silindi."
+    "Deleted": "Kaynak ön ayarı başarıyla silindi.",
+    "SHMEMShouldBeSmallerThanMemory": "Paylaşılan bellek, bellekten daha küçük olmalıdır"
   },
   "usersettings": {
     "General": "Genel",
@@ -801,7 +845,9 @@
     "DescAutoLogout": "Uygulamalar için oturum kaynaklı sayfalar (örneğin jupyter notebook, web terminal, vb.)",
     "SSHKeypairEnterManuallyFinished": "SSH Anahtar Çifti başarıyla kaydedildi.",
     "BootstrapScriptDescription": "Bootstrap komut dosyası oturum oluşturulduktan sonra yalnızca bir kez çalıştırılacaktır",
-    "SSHKeypairEnterManually": "SSH Anahtar Çifti"
+    "SSHKeypairEnterManually": "SSH Anahtar Çifti",
+    "MyKeypairInfo": "Anahtar Çifti Bilgilerim",
+    "DescMyKeypairInfo": "Anahtar çifti bilgilerimi görün"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Gelişmiş Web Terminali Kullanımı: Terminal içeriğini kopyalayın",
@@ -823,7 +869,9 @@
     "Parameters": "parametreler",
     "ErrorType": "Hata Türü",
     "LogMessageRemoved": "Günlük Mesajları kaldırıldı.",
-    "NoLogToDisplay": "Görüntülenecek Günlük Yok"
+    "NoLogToDisplay": "Görüntülenecek Günlük Yok",
+    "ShowOnlyError": "Yalnızca hatayı görüntüle",
+    "SearchLogs": "Günlüklerde arama yapın"
   },
   "resourcePolicy": {
     "Resources": "Kaynaklar",
@@ -884,7 +932,8 @@
     "PleaseSelectOption": "Lütfen bir seçeneği seçin.",
     "RegistrySuccessfullyModified": "Kayıt defteri başarıyla değiştirildi.",
     "NoRegistryToDisplay": "Görüntülenecek Kayıt Yok",
-    "ModifyRegistry": "Kayıt Defterini Değiştir"
+    "ModifyRegistry": "Kayıt Defterini Değiştir",
+    "ConfirmNoUserName": "Kullanıcı ve şifre belirtilmemiş, kaydetmek ister misiniz?"
   },
   "resourceGroup": {
     "ResourceGroups": "Kaynak Grupları",
@@ -991,14 +1040,27 @@
     "IOWriteDesc": "Hesaplama oturumundan yazılan veri miktarı. (Veri klasörleri gibi harici olarak bağlanan aygıtlardan yazılan veri miktarı dahil değildir)."
   },
   "language": {
-    "English": "ingilizce",
-    "Korean": "Koreli",
+    "English": "English",
+    "Korean": "한국어",
     "Language": "Dil",
     "OSDefault": "İşletim Sistemi Varsayılanı",
-    "Russian": "Rusça",
-    "French": "Fransızca",
-    "Mongolian": "Moğolca",
-    "Indonesian": "Endonezce"
+    "Russian": "русский",
+    "French": "Français",
+    "Mongolian": "Монгол",
+    "Indonesian": "Bahasa Indonesia",
+    "Brazilian": "brasileiro",
+    "Chinese": "中文",
+    "Chinese (Simplified)": "简体中文",
+    "Finnish": "Suomalainen",
+    "German": "Deutsch",
+    "Greek": "Ελληνική",
+    "Italian": "Italiano",
+    "Japanese": "日本語",
+    "Polish": "Polski",
+    "Portuguese": "Português",
+    "Spanish": "Español",
+    "Turkish": "Türkçe",
+    "Vietnamese": "Tiếng Việt"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "Depodan yeni görüntüler kaydet",
@@ -1011,8 +1073,6 @@
     "Scaling": "ölçekleme",
     "AllowAgentSideRegistration": "Aracı tarafı kaydına izin ver",
     "DescAllowAgentSideRegistration": "Aracının kendisini yöneticiye kaydetmesine izin verin. <br/> Yalnızca Backend.AI kümesi güvenli konumda yönetiliyorsa kullanın.",
-    "Plugins": "Eklentiler",
-    "CUDAGPUsupport": "CUDA GPU desteği",
     "DescCUDAGPUsupport": "NVIDIA CUDA GPU desteği. <br/> Backend.AI CUDA Eklentisi gerektirir.",
     "CUDAGPUdisabledByFGPUsupport": "Sistem Kesirli GPU eklentisi kullandığı için devre dışı bırakıldı",
     "ROCMGPUsupport": "ROCm GPU desteği",
@@ -1062,7 +1122,9 @@
     "OverlayNetworkSettings": "Yer Paylaşımlı Ağ ayarları",
     "OverlayNetworkSettingsDescription": "Kaplama ağı, başka bir ağın üzerine katmanlanmış bir bilgisayar ağıdır. Kaplama ağı, Backend.AI yöneticisinin birden fazla Docker daemon ana bilgisayarı arasında dağıtılmış bir ağ oluşturur.",
     "MTUDescription": "Maksimum iletim birimi, bir ağ protokolünün iletebileceği en büyük paketin boyutu.",
-    "OutOfRange": "Menzil dışında."
+    "OutOfRange": "Menzil dışında.",
+    "Plugins": "Eklentiler",
+    "OpenSourceCUDAGPUsupport": "Açık Kaynak CUDA GPU desteği"
   },
   "notification": {
     "SuccessfullyUpdated": "Başarıyla güncellendi",
@@ -1204,7 +1266,7 @@
     "CouldNotCopyText": "Metin kopyalanamadı:",
     "NotebookBadgeURL": "Not Defteri URL'si",
     "GetAndRunNotebook": "İçe Aktar ve Çalıştır",
-    "ImportGithubRepo": "Github Deposunu İçe Aktar",
+    "ImportGithubRepo": "GitHub Deposunu İçe Aktar",
     "GitHubURL": "GitHub URL'si",
     "GetToFolder": "Klasöre Git",
     "RepoWillBeFolder": "İçe aktarılan GitHub depoları klasörlere dönüştürülür ve oturum başladığında eklenebilir.",
@@ -1218,9 +1280,9 @@
     "FolderName": "İçe aktarılan klasör adı:",
     "NotebookBadgeCodeHTML": "Defter Rozeti Kodu (HTML)",
     "NotebookBadgeCodeMarkdown": "Defter Rozeti Kodu (Markdown)",
-    "GithubInternalError": "Github Dahili Hatası.",
-    "GithubAPILimitError": "Github API Sınırlama Hatası.",
-    "GithubAPIEtcError": "Github Sunucu Sorunu.",
+    "GithubInternalError": "GitHub Dahili Hatası.",
+    "GithubAPILimitError": "GitHub API Sınırlama Hatası.",
+    "GithubAPIEtcError": "GitHub Sunucu Sorunu.",
     "ImportGitlabRepo": "Gitlab Deposunu İçe Aktarma",
     "GitlabRepoWillBeFolder": "İçe aktarılan Gitlab depoları klasörlere dönüştürülür ve oturum başladığında bağlanabilir.",
     "GitlabURL": "Gitlab URL'si",
@@ -1257,7 +1319,28 @@
   "error": {
     "UpdateError": "Güncelleme hatası",
     "APIEndpointIsEmpty": "API Uç Noktası boş. Lütfen kaydolmak için Backend.AI API uç noktasını belirtin.",
-    "LoginSucceededManagerNotResponding": "Giriş başarılı ancak yönetici yanıt vermiyor."
+    "LoginSucceededManagerNotResponding": "Giriş başarılı ancak yönetici yanıt vermiyor.",
+    "NetworkConnectionFailed": "Ağ bağlantısı başarısız oldu. Ağ durumunu kontrol edin.",
+    "LoginFailed": "Giriş başarısız oldu. Giriş bilgilerini kontrol edin.",
+    "AuthenticationFailed": "Kimlik doğrulama başarısız oldu. Bilgileri ve yönetici durumunu kontrol edin.",
+    "VirtualFolderAlreadyExist": "Aynı ada sahip bir sanal klasör zaten mevcut. Kendi klasörünüzü silin veya daveti reddedin.",
+    "TooManyLoginFailures": "Kısa süre içinde çok fazla oturum açma hatası oldu. Giriş bir süreliğine engellendi.",
+    "MaximumVfolderCreation": "Kaynak ilkesi nedeniyle daha fazla vfolder oluşturamazsınız",
+    "CannotChangeVirtualFolderOption": "Bana ait olmayan bir vfolder'ın seçeneklerini değiştiremezsiniz.",
+    "CannotSharePrivateAutomountFolder": "İlkeye uygun olarak automount vfolders paylaşılamıyor.",
+    "FolderSharingNotAvailableToUser": "Klasör paylaşımı istenen kullanıcı(lar) için mevcut değil.",
+    "ReachedResourceLimit": "Kaynak sınırınıza ulaştınız. Kaynakları ve oturumları kontrol edin.",
+    "UserHasNoGroup": "Kullanıcının grubu yok. Düzeltmek için lütfen yöneticiyle iletişime geçin.",
+    "InvalidSignupToken": "Geçersiz kayıt belirteci",
+    "LoginInformationMismatch": "Giriş bilgileri uyuşmazlığı. Bilgilerinizi kontrol edin",
+    "ResourcePolicyAlreadyExist": "Aynı ada sahip bir kaynak ilkesi zaten mevcut.",
+    "ScalingGroupAlreadyExist": "Aynı ada sahip bir kaynak grubu zaten mevcut.",
+    "UserNameAlreadyExist": "Kullanıcı adı zaten mevcut. Çoğaltılamaz.",
+    "ResourceLimitExceed": "Kaynak sınırı aşıldı. Ücretsiz kaynaklarınızı kontrol edin.",
+    "ResourcePolicyStillReferenced": "Bu kaynak ilkesine referans veren anahtar çiftleri vardır.",
+    "SmallerResourceThenImageRequires": "Kaynak isteğiniz görüntünün gerektirdiği minimum değerden daha küçük. Daha fazla kaynak deneyin.",
+    "APINotSupported": "API desteklenmiyor. Backend.AI yöneticisinin en son sürümünü gerektirir.",
+    "WrongAPIServerAddress": "Yanlış API sunucu adresi."
   },
   "maxLength": {
     "64chars": "(maksimum 64 karakter)",
@@ -1288,7 +1371,7 @@
     "FormValidationFailed": "Form doğrulama başarısız oldu",
     "StartNewServing": "Yeni servis başlatın",
     "ServiceName": "Hizmet Adı",
-    "ServiceNameRule": "Yalnızca alfanümerik, alt çizgi (_), kısa çizgi (-) ve nokta (.) karakterlerinden oluşan 4 ila 64 karaktere izin verin ve alfanümerik bir karakterle bitmelidir.",
+    "ServiceNameRule": "Yalnızca alfanümerik, alt çizgi (_), kısa çizgi (-) ve nokta (.) karakterlerinden oluşan 4 ila 24 karaktere izin verin ve alfanümerik bir karakterle bitmelidir.",
     "OpenToPublic": "Halka Açık",
     "DesiredRoutingCount": "İstenen Yönlendirme Sayısı",
     "ServingRouteErrorModalTitle": "Hizmet Veren Rota Hatası",
@@ -1316,7 +1399,9 @@
     "RoutingsCount": "Güzergah Sayısı",
     "Active/Total": "Aktif/Toplam",
     "Public": "Kamu",
-    "YouAreAboutToTerminate": "Sonlandırmak üzeresiniz"
+    "YouAreAboutToTerminate": "Sonlandırmak üzeresiniz",
+    "Owner": "Mal sahibi",
+    "ServiceDelegatedFrom": "Model hizmeti {{ createdUser }} tarafından oluşturulur ancak oturum sahipliği {{ sessionOwner }}'a devredilir."
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",
@@ -1372,5 +1457,38 @@
   "OpenVSCodeRemote": "Yerel Visual Studio Kodunu açın",
   "inputLimit": {
     "4to64chars": "(4~64 karakter)"
+  },
+  "modelStore": {
+    "Description": "Tanım",
+    "Model": "Modeli",
+    "FilterByName": "Ada Göre Filtrele",
+    "ServiceDetails": "Hizmet Detayları",
+    "Metadata": "Meta veriler",
+    "ModelPath": "Model Yolu",
+    "SearchModels": "Modelleri Ara",
+    "MinResource": "Minimum Kaynak",
+    "LastModified": "Son düzenleme",
+    "Created": "Oluşturuldu",
+    "Version": "Sürüm",
+    "Author": "Yazar",
+    "MaxRetries": "Maksimum Yeniden Deneme Sayısı",
+    "Path": "Yol",
+    "HealthCheck": "Sağlık kontrolü",
+    "Port": "Liman",
+    "StartCommand": "Komutu Başlat",
+    "PreStartActions": "Başlangıç ​​Öncesi Eylemler",
+    "Framework": "Çerçeve",
+    "Category": "Kategori",
+    "Label": "Etiket",
+    "Task": "Görev",
+    "CloneAsFolder": "Klasör olarak klonla",
+    "CloneSuccess": "Klonlama isteği başarıyla gönderildi.",
+    "CloneInfo": "Kullanıcı tipi klasörünüz olarak klonlanacaktır.",
+    "category": "Kategori"
+  },
+  "table": {
+    "SettingTable": "Tablo Ayarı",
+    "SelectColumnToDisplay": "Görüntülenecek sütunları seçin",
+    "SearchTableColumn": "Tablo sütunlarında arama yapın"
   }
 }

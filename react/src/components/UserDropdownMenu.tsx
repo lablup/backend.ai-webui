@@ -14,12 +14,13 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons';
 import { useDebounce } from 'ahooks';
-import { Avatar, Dropdown, Grid, MenuProps, Typography } from 'antd';
+import { Avatar, Dropdown, Grid, MenuProps, Typography, theme } from 'antd';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const UserDropdownMenu: React.FC = () => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { dispatchEvent } = useWebComponentInfo();
   const baiClient = useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
@@ -48,12 +49,12 @@ const UserDropdownMenu: React.FC = () => {
 
   const items: MenuProps['items'] = [
     {
-      label: userInfo.username,
+      label: <Typography.Text>{userInfo.username}</Typography.Text>, //To display properly when the user name is too long.
       key: 'userFullName',
       icon: <UserOutlined />,
       disabled: true,
       style: {
-        color: '#1f1f1f',
+        color: token.colorText,
         cursor: 'default',
       },
     },
@@ -141,12 +142,23 @@ const UserDropdownMenu: React.FC = () => {
         trigger={['click']}
         open={debouncedOpenToFixDropdownMenu}
         onOpenChange={(v) => setOpen(v)}
+        overlayStyle={{
+          maxWidth: 300,
+        }}
       >
-        <Flex direction="row" gap="sm" style={{ cursor: 'pointer' }}>
+        <Flex
+          direction="row"
+          gap="sm"
+          style={{ cursor: 'pointer', maxWidth: '15vw' }}
+        >
           {screens.md && (
-            <Typography.Text strong>{userInfo.username}</Typography.Text>
+            <Typography.Text strong ellipsis>
+              {userInfo.username}
+            </Typography.Text>
           )}
-          <Avatar icon={<UserOutlined />} />
+          <Flex>
+            <Avatar size={'default'} icon={<UserOutlined />} />
+          </Flex>
         </Flex>
       </Dropdown>
     </>

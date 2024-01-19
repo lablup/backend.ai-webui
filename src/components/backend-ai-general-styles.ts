@@ -194,6 +194,7 @@ export const BackendAiStyles = [
 
     ::-webkit-scrollbar {
       max-width: 2px;
+      max-height: 2px;
       background-color: transparent;
     }
 
@@ -408,6 +409,15 @@ export const BackendAiStyles = [
       --mdc-switch-selected-pressed-state-layer-color: var(
         --general-switch-on-color
       );
+    }
+
+    mwc-switch[disabled] {
+      --mdc-switch-disabled-selected-handle-color: var(
+        --general-switch-on-color
+      );
+      --mdc-switch-disabled-selected-track-color: var(
+        --general-switch-on-color
+      ) !important;
     }
 
     div.card p {

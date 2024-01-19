@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "ようこそ、",
-      "WelcomeMessage_2": ".",
+      "WelcomeMessage": "ようこそ、{{ userName }}.",
       "Summary": "要約",
       "Sessions": "セッション",
       "Import&Run": "インポートして実行",
@@ -60,7 +59,12 @@
       "Serving": "モデルサービング",
       "PasswordChangePlace": "トップバーの人物アイコンをクリックして「ユーザー情報の変更」メニューに移動してください。",
       "Notifications": "お知らせ",
-      "Tasks": "作業"
+      "Tasks": "作業",
+      "FastTrack": "FastTrack",
+      "Data&Model": "データ",
+      "InvalidBlankPassword": "パスワードを入力してください",
+      "InvalidBlankEmail": "メールアドレスを入力",
+      "DisMatchUserEmail": "ユーザーの電子メールが一致しません"
     },
     "YouAreOffline": "あなたは今オフラインです",
     "YouAreOnline": "あなたは今オンラインです",
@@ -108,7 +112,8 @@
     "IPUEnabled": "IPU NPU使用中",
     "ATOMEnabled": "ATOM NPU使用中",
     "WarboyEnabled": "Warboy NPU使用中",
-    "DownloadWebUIApp": "Backend.AI Web UIアプリのダウンロード"
+    "DownloadWebUIApp": "Backend.AI Web UIアプリのダウンロード",
+    "FastTrack": "FastTrack"
   },
   "session": {
     "launcher": {
@@ -230,7 +235,28 @@
       "PortsTitleWithRange": "ポート値 (1024 ~ 65535 の間)",
       "PrePortConfigWillDisappear": "保存されていない事前開放ポート値は消えます。",
       "StartModelServing": "モデルサービス開始",
-      "ModelStorage": "モデルストレージフォルダ"
+      "ModelStorage": "モデルストレージフォルダ",
+      "PreOpenPortRangeGuide": "複数の値をカンマ（、）またはスペースで区切って入力できます。",
+      "preopen": "事前開放ポート",
+      "Network": "ネットワーク",
+      "Enable": "活性化",
+      "FolderAliasInvalid": "英語の大文字と小文字、数字、アンダースコア（_）、スラッシュ（/）、ダッシュ（-）のみを入力できます。",
+      "PreOpenPortMaxCountLimit": "count}}までプレオープンポートを設定できる。",
+      "StartTimeMustBeInTheFuture": "開始時刻は現在時刻より後でなければならない。",
+      "EnqueueComputeSessionWarning": "現在利用可能なリソースよりも大きく設定すると、セッションの作成は利用可能になるまでキュー内で遅延します。",
+      "SessionName": "セッション名",
+      "ResetFormConfirm": "入力した内容をすべて初期化しますか？",
+      "TemplateAndHistory": "テンプレート",
+      "ScheduleTimeSimple": "開始時間の設定",
+      "ResourceAllocationPerContainer": "コンテナあたりのリソース割り当て",
+      "NumberOfContainer": "コンテナ数",
+      "ErrorCanNotExceedRemaining": "残りのリソース ({{amount}}) より大きい値を設定することはできません。",
+      "EnterEnvironmentVariable": "変数名の入力",
+      "EnvironmentVariableNamePatternError": "変数名は文字またはアンダースコアで始まり、文字、数字、アンダースコアのみを含むことができます。",
+      "EnvironmentVariableDuplicateName": "既に存在する変数名です。",
+      "Template": "セッションテンプレート",
+      "EnableAutomaticShmem": "自動共有メモリー",
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -286,7 +312,9 @@
       "EnterValidSessionName": "正しいセッション名を入力してください",
       "SessionNameRequired": "セッション名を入力してください",
       "SluggedStrings": "最低4文字以上の固有の文字列で入力してください。",
-      "SessionNameAlreadyExist": "同じ名前のセッションが既にあります"
+      "SessionNameAlreadyExist": "同じ名前のセッションが既にあります",
+      "SessionNameTooLong64": "64文字以下で入力してください。",
+      "PleaseFollowSessionNameRule": "少なくとも4文字以上の文字、数字、「.」、「_」、「-」の組み合わせで入力してください。"
     },
     "Interactive": "インタラクティブ",
     "Batch": "バッチ",
@@ -341,7 +369,12 @@
     "DescCommitSession": "次のセッションに対応するコンテナをコミットします：",
     "NoSessionToDisplay": "セッション情報がありません。",
     "StatusInfo": "ステータス情報",
-    "System": "アップロードセッション"
+    "System": "アップロードセッション",
+    "ExpiresAfter": "残り時間",
+    "CPU": "CPU",
+    "MEM": "メモリ",
+    "GPU": "GPU",
+    "GPU(MEM)": "GPU(メモリ)"
   },
   "button": {
     "Cancel": "キャンセル",
@@ -362,7 +395,6 @@
     "DeleteAll": "すべて削除",
     "Update": "更新",
     "Delete": "削除",
-    "Dismiss": "退出させる",
     "DismissAndProceed": "却下して続行",
     "Close": "閉じる",
     "Confirm": "確認",
@@ -373,7 +405,9 @@
     "Unset": "初期化",
     "OK": "確認",
     "Commit": "コミットする",
-    "EnterManually": "直接入力する"
+    "EnterManually": "直接入力する",
+    "Download": "ダウンロード",
+    "Clone": "クローン"
   },
   "agent": {
     "Endpoint": "終点",
@@ -415,7 +449,9 @@
     "Control": "コントロール",
     "NewPassword": "新しいパスワード",
     "Enabled": "有効",
-    "StorageProxies": "ストレージ"
+    "StorageProxies": "ストレージ",
+    "None": "なし",
+    "Image": "画像"
   },
   "credential": {
     "Permission": "許可",
@@ -492,7 +528,9 @@
     "KeypairDetail": "キーフェア情報",
     "SignoutSeccessfullyFinished": "ユーザーアカウントが正常に削除されました。",
     "Status": "状態",
-    "NoUserToDisplay": "ユーザー情報がありません。"
+    "NoUserToDisplay": "ユーザー情報がありません。",
+    "EnableSudoSession": "sudoセッションを有効にする",
+    "MainAccessKey": "メインアクセスキー"
   },
   "data": {
     "Folders": "フォルダー",
@@ -657,7 +695,12 @@
     "Used": "使用済み",
     "Pipeline": "パイプラインフォルダ",
     "DialogDataFolder": "FastTrackでパイプライン作成時に自動的に生成されるパイプライン専用フォルダ。",
-    "DialogModelFolder": "モデルを選択して実行したり、モデルを管理することができます。"
+    "DialogModelFolder": "モデルを選択して実行したり、モデルを管理することができます。",
+    "SearchByName": "名前で検索",
+    "ModelStore": "模型店",
+    "New": "新しい",
+    "Add": "追加",
+    "CloningIsOnlyPossibleSameHost": "現在、クローン作成は同じホスト上でのみ可能です。"
   },
   "dialog": {
     "warning": {
@@ -748,7 +791,8 @@
     "RAM": "RAM（GB）",
     "SharedMemory": "共有メモリ（GB）",
     "NoResourcePresetToDisplay": "リソースプリセット情報がありません。",
-    "Deleted": "リソースプリセットの削除に成功しました"
+    "Deleted": "リソースプリセットの削除に成功しました",
+    "SHMEMShouldBeSmallerThanMemory": "共有メモリはメモリより小さくなければならない"
   },
   "usersettings": {
     "General": "一般",
@@ -801,7 +845,9 @@
     "DescAutoLogout": "アプリのセッション開始ページ（jupyterノートブック、Webターミナルなど）を除き、ログインしたすべてのページが閉じている場合は、自動的にログアウトします。",
     "SSHKeypairEnterManuallyFinished": "SSHキーフェア登録が正常に完了しました。",
     "BootstrapScriptDescription": "ブートストラップスクリプトはセッション作成後一度だけ実行されます。",
-    "SSHKeypairEnterManually": "SSHキーペア入力"
+    "SSHKeypairEnterManually": "SSHキーペア入力",
+    "MyKeypairInfo": "私のキーペア情報",
+    "DescMyKeypairInfo": "私のキーペア情報を参照してください"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高度なWeb端末の使用法：端末の内容をコピーする",
@@ -823,7 +869,9 @@
     "Parameters": "パラメーター",
     "ErrorType": "エラータイプ",
     "LogMessageRemoved": "ログメッセージは削除されました。",
-    "NoLogToDisplay": "ログ情報がありません。"
+    "NoLogToDisplay": "ログ情報がありません。",
+    "ShowOnlyError": "表示のみのエラー",
+    "SearchLogs": "ログの検索"
   },
   "resourcePolicy": {
     "Resources": "リソース",
@@ -884,7 +932,8 @@
     "PleaseSelectOption": "オプションを1つ選択してください。",
     "RegistrySuccessfullyModified": "レジストリが正常に修正されました。",
     "NoRegistryToDisplay": "レジストリ情報がありません。",
-    "ModifyRegistry": "レジストリの修正"
+    "ModifyRegistry": "レジストリの修正",
+    "ConfirmNoUserName": "ユーザーとパスワードが指定されていません。"
   },
   "resourceGroup": {
     "ResourceGroups": "リソースグループ",
@@ -991,14 +1040,27 @@
     "IOWriteDesc": "演算セッションで記録(write)したデータのサイズです。ただし、データフォルダなど外部からマウントされたデバイスで生成したデータの量は含まれません。"
   },
   "language": {
-    "English": "英語",
-    "Korean": "韓国語",
+    "English": "English",
+    "Korean": "한국어",
     "Language": "言語",
     "OSDefault": "OSのデフォルト",
-    "Russian": "ロシア語",
-    "French": "フランス語",
-    "Mongolian": "モンゴル語",
-    "Indonesian": "インドネシア語"
+    "Russian": "русский",
+    "French": "Français",
+    "Mongolian": "Монгол",
+    "Indonesian": "Bahasa Indonesia",
+    "Brazilian": "brasileiro",
+    "Chinese": "中文",
+    "Chinese (Simplified)": "简体中文",
+    "Finnish": "Suomalainen",
+    "German": "Deutsch",
+    "Greek": "Ελληνική",
+    "Italian": "Italiano",
+    "Japanese": "日本語",
+    "Polish": "Polski",
+    "Portuguese": "Português",
+    "Spanish": "Español",
+    "Turkish": "Türkçe",
+    "Vietnamese": "Tiếng Việt"
   },
   "settings": {
     "RegisterNewImagesFromRepo": "リポジトリから新しい画像を登録する",
@@ -1011,8 +1073,6 @@
     "Scaling": "スケーリング",
     "AllowAgentSideRegistration": "エージェント側の登録を許可する",
     "DescAllowAgentSideRegistration": "エージェントが自分自身をマネージャーに登録できるようにします。 <br/>Backend.AIクラスターが安全な場所で管理されている場合にのみ使用します。",
-    "Plugins": "プラグイン",
-    "CUDAGPUsupport": "CUDAGPUサポート",
     "DescCUDAGPUsupport": "NVIDIA CUDAGPUのサポート。 <br/> Backend.AICUDAプラグインが必要です。",
     "CUDAGPUdisabledByFGPUsupport": "システムがフラクショナルGPUプラグインを使用しているため無効になっています",
     "ROCMGPUsupport": "ROCmGPUサポート",
@@ -1062,7 +1122,9 @@
     "OverlayNetworkSettings": "オーバーレイネットワーク設定",
     "OverlayNetworkSettingsDescription": "オーバーレイネットワークは、物理ネットワークの上に構築される仮想的なコンピュータネットワークです。オーバーレイネットワークは、Backend.AIマネージャーの複数のDockerデーモンホスト間で分散ネットワークを作成します。",
     "MTUDescription": "最大送信単位 - 当該レイヤーが送信できる最大プロトコルデータ単位のサイズです。",
-    "OutOfRange": "入力範囲外です。"
+    "OutOfRange": "入力範囲外です。",
+    "Plugins": "プラグイン",
+    "OpenSourceCUDAGPUsupport": "オープンソースのCUDA GPUのサポート"
   },
   "notification": {
     "SuccessfullyUpdated": "正常に更新されました",
@@ -1204,7 +1266,7 @@
     "CouldNotCopyText": "テキストをコピーできませんでした：",
     "NotebookBadgeURL": "ノートブックのURL",
     "GetAndRunNotebook": "インポートして実行",
-    "ImportGithubRepo": "Githubリポジトリをインポートする",
+    "ImportGithubRepo": "GitHubリポジトリをインポートする",
     "GitHubURL": "GitHubのURL",
     "GetToFolder": "フォルダに移動",
     "RepoWillBeFolder": "インポートされたGitHubリポジトリはフォルダーに変換され、セッションの開始時にマウントできます。",
@@ -1218,13 +1280,13 @@
     "FolderName": "インポートされたフォルダ名：",
     "NotebookBadgeCodeHTML": "ノートブックバッジコード（HTML）",
     "NotebookBadgeCodeMarkdown": "ノートブックバッジコード（マークダウン）",
-    "GithubInternalError": "Githubリポジトリがしばらく停止しました。しばらくしてからお試しください。",
-    "GithubAPILimitError": "Github APIの呼び出し回数が多いので、しばらくお待ちください。",
-    "GithubAPIEtcError": "Github API呼び出しの問題があります。しばらくしてから試してみてください。",
-    "ImportGitlabRepo": "Gitlabリポジトリのインポート",
-    "GitlabRepoWillBeFolder": "インポートしたGitlabリポジトリはフォルダに変換され、セッション開始時にマウントすることができます。",
-    "GitlabURL": "Gitlabアドレス",
-    "GitlabDefaultBranch": "Gitlab ブランチ名"
+    "GithubInternalError": "GitHubリポジトリがしばらく停止しました。しばらくしてからお試しください。",
+    "GithubAPILimitError": "GitHub APIの呼び出し回数が多いので、しばらくお待ちください。",
+    "GithubAPIEtcError": "GitHub API呼び出しの問題があります。しばらくしてから試してみてください。",
+    "ImportGitlabRepo": "GitLabリポジトリのインポート",
+    "GitlabRepoWillBeFolder": "インポートしたGitLabリポジトリはフォルダに変換され、セッション開始時にマウントすることができます。",
+    "GitlabURL": "GitLabアドレス",
+    "GitlabDefaultBranch": "GitLab ブランチ名"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "今月の統計",
@@ -1257,7 +1319,28 @@
   "error": {
     "UpdateError": "更新エラー",
     "APIEndpointIsEmpty": "APIエンドポイントが空です。サインアップするには、Backend.AIAPIエンドポイントを指定してください。",
-    "LoginSucceededManagerNotResponding": "ログインは成功しましたが、マネージャーが応答していません。"
+    "LoginSucceededManagerNotResponding": "ログインは成功しましたが、マネージャーが応答していません。",
+    "NetworkConnectionFailed": "ネットワーク接続に失敗しました。ネットワークの状態を確認してください。",
+    "LoginFailed": "ログインに失敗しました。ログイン情報を確認してください。",
+    "AuthenticationFailed": "認証に失敗しました。情報とマネージャーのステータスを確認してください。",
+    "VirtualFolderAlreadyExist": "同じ名前の仮想フォルダがすでに存在します。自分のフォルダを削除するか、招待を断ってください。",
+    "TooManyLoginFailures": "短時間にログイン失敗が多すぎます。しばらくログインがブロックされます。",
+    "MaximumVfolderCreation": "リソースポリシーのため、Vフォルダーをさらに作成することはできません。",
+    "CannotChangeVirtualFolderOption": "自分が所有していないvfolderのオプションを変更することはできません。",
+    "CannotSharePrivateAutomountFolder": "ポリシーに従って自動マウントVフォルダーを共有できない。",
+    "FolderSharingNotAvailableToUser": "要求されたユーザーのフォルダ共有は利用できません。",
+    "ReachedResourceLimit": "リソースの上限に達しました。リソースとセッションを確認してください。",
+    "UserHasNoGroup": "ユーザーにグループがありません。管理者に連絡して修正してください。",
+    "InvalidSignupToken": "無効なサインアップトークン",
+    "LoginInformationMismatch": "ログイン情報が一致しません。情報を確認する",
+    "ResourcePolicyAlreadyExist": "同じ名前のリソースポリシーがすでに存在する。",
+    "ScalingGroupAlreadyExist": "同じ名前のリソースグループがすでに存在する。",
+    "UserNameAlreadyExist": "ユーザー名はすでに存在します。複製することはできません。",
+    "ResourceLimitExceed": "リソースの上限を超えました。空きリソースを確認してください。",
+    "ResourcePolicyStillReferenced": "このリソース・ポリシーを参照するキー・ペアが存在する。",
+    "SmallerResourceThenImageRequires": "リソース要求が画像に必要な最小値より小さい。より多くのリソースを試してください。",
+    "APINotSupported": "APIはサポートされていません。最新バージョンのBackend.AIマネージャが必要です。",
+    "WrongAPIServerAddress": "APIサーバーのアドレスが間違っています。"
   },
   "maxLength": {
     "64chars": "（最大64文字）",
@@ -1288,7 +1371,7 @@
     "FormValidationFailed": "フォーム検証の失敗",
     "StartNewServing": "新サービス開始",
     "ServiceName": "サービス名",
-    "ServiceNameRule": "4～64文字の英字、数字、アンダーライン(_)、ハイフン(-)、ピリオド(.)のみを許可し、英文で英字または数字で終わる必要があります。",
+    "ServiceNameRule": "4～24文字の英字、数字、アンダーライン(_)、ハイフン(-)、ピリオド(.)のみを許可し、英文で英字または数字で終わる必要があります。",
     "OpenToPublic": "アプリを外部に公開",
     "DesiredRoutingCount": "希望のルーティング数",
     "ServingRouteErrorModalTitle": "サービングルートエラー",
@@ -1316,7 +1399,9 @@
     "Active/Total": "アクティブ/全体",
     "Public": "公開",
     "YouAreAboutToTerminate": "以下のサービスを削除しようとします：",
-    "Image": "イメージ"
+    "Image": "イメージ",
+    "Owner": "所有者",
+    "ServiceDelegatedFrom": "モデルサービスは{{ createdUser }}によって作成されますが、セッションの所有権は{{ sessionOwner }}に委譲されます。"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",
@@ -1372,5 +1457,38 @@
   "OpenVSCodeRemote": "ローカルVisual Studio Codeを開く",
   "inputLimit": {
     "4to64chars": "(4～64文字)"
+  },
+  "modelStore": {
+    "Description": "説明",
+    "Model": "モデル",
+    "FilterByName": "名前でフィルタリングする",
+    "ServiceDetails": "サービス内容",
+    "Metadata": "メタデータ",
+    "ModelPath": "モデルパス",
+    "SearchModels": "モデルの検索",
+    "MinResource": "最小リソース",
+    "LastModified": "最終更新日",
+    "Created": "作成した",
+    "Version": "バージョン",
+    "Author": "著者",
+    "MaxRetries": "最大再試行回数",
+    "Path": "パス",
+    "HealthCheck": "健康診断",
+    "Port": "ポート",
+    "StartCommand": "開始コマンド",
+    "PreStartActions": "開始前のアクション",
+    "Framework": "フレームワーク",
+    "Category": "カテゴリー",
+    "Label": "ラベル",
+    "Task": "タスク",
+    "CloneAsFolder": "フォルダとしてクローン",
+    "CloneSuccess": "クローン要求は正常に送信された。",
+    "CloneInfo": "ユーザータイプのフォルダとしてクローンされます。",
+    "category": "カテゴリー"
+  },
+  "table": {
+    "SettingTable": "テーブルセッティング",
+    "SelectColumnToDisplay": "表示する列を選択します",
+    "SearchTableColumn": "テーブルの列を検索する"
   }
 }

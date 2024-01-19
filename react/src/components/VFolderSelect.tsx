@@ -16,10 +16,10 @@ export type VFolder = {
   is_owner: boolean;
   permission: string;
   user: null;
-  group: string;
+  group: string | null;
   creator: string;
   user_email: null;
-  group_name: string;
+  group_name: string | null;
   ownership_type: string;
   type: string;
   cloneable: boolean;

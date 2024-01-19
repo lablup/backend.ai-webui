@@ -124,6 +124,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({ type: Object }) _boundOwnerRenderer = Object();
   @property({ type: Object }) _boundFileNameRenderer = Object();
   @property({ type: Object }) _boundCreatedTimeRenderer = Object();
+  @property({ type: Object }) _boundSizeRenderer = Object();
   @property({ type: Object }) _boundPermissionRenderer = Object();
   @property({ type: Object }) _boundCloneableRenderer = Object();
   @property({ type: Object }) _boundQuotaRenderer = Object();
@@ -146,6 +147,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({ type: String }) oldFileExtension = '';
   @property({ type: String }) newFileExtension = '';
   @property({ type: Boolean }) is_dir = false;
+  @property({ type: Boolean }) _isDirectorySizeVisible = true;
   @property({ type: Number }) minimumResource = {
     cpu: 1,
     mem: 0.5,
@@ -215,6 +217,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundOwnerRenderer = this.OwnerRenderer.bind(this);
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
+    this._boundSizeRenderer = this.sizeRenderer.bind(this);
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
     this._boundFolderListRenderer = this.folderListRenderer.bind(this);
     this._boundQuotaRenderer = this.quotaRenderer.bind(this);
@@ -235,7 +238,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       css`
         vaadin-grid {
           border: 0 !important;
-          height: calc(100vh - 229px);
+          height: calc(100vh - 460px);
         }
 
         vaadin-grid.folderlist {
@@ -327,9 +330,9 @@ export default class BackendAiStorageList extends BackendAIPage {
           ); /* 88px is width for mini-ui icon of drawer menu */
         }
 
-        #folder-explorer-dialog vaadin-grid vaadin-grid-column {
+        /* #folder-explorer-dialog vaadin-grid vaadin-grid-column {
           height: 32px !important;
-        }
+        }*/
 
         #folder-explorer-dialog vaadin-grid mwc-icon-button {
           --mdc-icon-size: 24px;
@@ -342,6 +345,10 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         vaadin-text-field {
           --vaadin-text-field-default-width: auto;
+        }
+
+        vaadin-grid-cell-content {
+          overflow: visible;
         }
 
         div.breadcrumb {
@@ -686,15 +693,18 @@ export default class BackendAiStorageList extends BackendAIPage {
             header="${_t('data.folders.Owner')}"
             .renderer="${this._boundOwnerRenderer}"
           ></vaadin-grid-column>
-          ${this.enableStorageProxy
+          ${this.enableStorageProxy &&
+          this.storageType === 'model' &&
+          this.is_admin
             ? html`
-            <!--<vaadin-grid-column
-                auto-width flex-grow="0" resizable header="${_t(
-                  'data.folders.Cloneable',
-                )}"
-                .renderer="${
-                  this._boundCloneableRenderer
-                }"></vaadin-grid-column>`
+                <vaadin-grid-column
+                  auto-width
+                  flex-grow="0"
+                  resizable
+                  header="${_t('data.folders.Cloneable')}"
+                  .renderer="${this._boundCloneableRenderer}"
+                ></vaadin-grid-column>
+              `
             : html``}
           <vaadin-grid-column
             auto-width
@@ -702,7 +712,6 @@ export default class BackendAiStorageList extends BackendAIPage {
             header="${_t('data.folders.Control')}"
             .renderer="${this._boundControlFolderListRenderer}"
           ></vaadin-grid-column>
-          -->
         </vaadin-grid>
         <backend-ai-list-status
           id="list-status"
@@ -769,15 +778,22 @@ export default class BackendAiStorageList extends BackendAIPage {
               `,
             )}
           </mwc-select>
-          ${this.enableStorageProxy
+          ${this.enableStorageProxy &&
+          this.storageType === 'model' &&
+          this.is_admin
             ? html`
-                <!--<div class="horizontal layout flex wrap center justified">
-            <p style="color:rgba(0, 0, 0, 0.6);">
-              ${_t('data.folders.Cloneable')}
-            </p>
-            <mwc-switch id="update-folder-cloneable" style="margin-right:10px;">
-            </mwc-switch>
-          </div>-->
+                <div
+                  id="update-folder-cloneable-container"
+                  class="horizontal layout flex wrap center justified"
+                >
+                  <p style="color:rgba(0, 0, 0, 0.6);margin-left:10px;">
+                    ${_t('data.folders.Cloneable')}
+                  </p>
+                  <mwc-switch
+                    id="update-folder-cloneable"
+                    style="margin-right:10px;"
+                  ></mwc-switch>
+                </div>
               `
             : html``}
         </div>
@@ -1245,10 +1261,11 @@ export default class BackendAiStorageList extends BackendAIPage {
               .renderer="${this._boundCreatedTimeRenderer}"
             ></vaadin-grid-sort-column>
             <vaadin-grid-sort-column
-              path="size"
               auto-width
               resizable
               header="${_t('data.explorer.Size')}"
+              path="size"
+              .renderer="${this._boundSizeRenderer}"
             ></vaadin-grid-sort-column>
             <vaadin-grid-column
               resizable
@@ -1289,7 +1306,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="share-folder-dialog" fixed backdrop persistent>
+      <backend-ai-dialog id="share-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.explorer.ShareFolder')}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;">
           <div style="margin: 10px 0px">${_t('data.explorer.People')}</div>
@@ -1534,14 +1551,14 @@ export default class BackendAiStorageList extends BackendAIPage {
     for (const textfield of Array.from(textfields)) {
       this._addInputValidator(textfield);
     }
-    if (['automount', 'model'].includes(this.storageType)) {
+    if (['data', 'automount', 'model'].includes(this.storageType)) {
       (
         this.shadowRoot?.querySelector('vaadin-grid.folderlist') as HTMLElement
-      ).style.height = 'calc(100vh - 230px)';
+      ).style.height = 'calc(100vh - 464px)';
     } else {
       (
         this.shadowRoot?.querySelector('vaadin-grid.folderlist') as HTMLElement
-      ).style.height = 'calc(100vh - 185px)';
+      ).style.height = 'calc(100vh - 420px)';
     }
     document.addEventListener('backend-ai-group-changed', (e) =>
       this._refreshFolderList(true, 'group-changed'),
@@ -1601,20 +1618,20 @@ export default class BackendAiStorageList extends BackendAIPage {
   permissionRenderer(root, column?, rowData?) {
     render(
       html`
-        <div class="vertical layout">
-          <mwc-select label="${_t('data.folders.SelectPermission')}">
-            <option ?selected=${rowData.item.perm === 'ro'} value="ro">
-              ${_t('data.folders.View')}
-            </option>
-            <option ?selected=${rowData.item.perm === 'rw'} value="rw">
-              ${_t('data.folders.Edit')}
-            </option>
-            <option ?selected=${rowData.item.perm === 'wd'} value="wd">
-              ${_t('data.folders.EditDelete')}
-            </option>
-            <option value="kickout">${_t('data.folders.KickOut')}</option>
-          </mwc-select>
-        </div>
+        <mwc-select label="${_t('data.folders.SelectPermission')}">
+          <mwc-list-item value="ro" ?selected="${rowData.item.perm === 'ro'}">
+            ${_t('data.folders.View')}
+          </mwc-list-item>
+          <mwc-list-item value="rw" ?selected="${rowData.item.perm === 'rw'}">
+            ${_t('data.folders.Edit')}
+          </mwc-list-item>
+          <mwc-list-item value="wd" ?selected="${rowData.item.perm === 'wd'}">
+            ${_t('data.folders.EditDelete')}
+          </mwc-list-item>
+          <mwc-list-item value="kickout"">
+            ${_t('data.folders.KickOut')}
+          </mwc-list-item>
+        </mwc-select>
       `,
       root,
     );
@@ -1881,7 +1898,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <mwc-icon-button
                   class="fg blue controls-running"
                   icon="content_copy"
-                  disabled
+                  ?disabled=${!rowData.item.cloneable}
                   @click="${() => {
                     this._requestCloneFolder(rowData.item);
                   }}"
@@ -2185,7 +2202,10 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         ${rowData.item.cloneable
           ? html`
-              <div class="horizontal center-justified center layout">
+              <div
+                class="horizontal center-justified center layout"
+                style="pointer-events: none;"
+              >
                 <mwc-icon-button class="fg green" icon="done"></mwc-icon-button>
               </div>
             `
@@ -2208,6 +2228,32 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         <div class="layout vertical">
           <span>${this._humanReadableTime(rowData.item.ctime)}</span>
+        </div>
+      `,
+      root,
+    );
+  }
+
+  /**
+   * Render size by condition
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
+  sizeRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div class="layout horizontal">
+          ${(rowData.item.type as string).toUpperCase() === 'DIRECTORY' &&
+          !this._isDirectorySizeVisible
+            ? html`
+                <span class="monospace">-</span>
+              `
+            : html`
+                <span>${rowData.item.size}</span>
+              `}
         </div>
       `,
       root,
@@ -2267,13 +2313,13 @@ export default class BackendAiStorageList extends BackendAIPage {
       );
 
     const allowedPermissionForDomainsByVolume = JSON.parse(
-      mergedData.domain.allowed_vfolder_hosts,
+      mergedData?.domain?.allowed_vfolder_hosts || '{}',
     );
     const allowedPermissionForGroupsByVolume = JSON.parse(
-      mergedData.group.allowed_vfolder_hosts,
+      mergedData?.group?.allowed_vfolder_hosts || '{}',
     );
     const allowedPermissionForResourcePolicyByVolume = JSON.parse(
-      mergedData.keypair_resource_policy.allowed_vfolder_hosts,
+      mergedData?.keypair_resource_policy.allowed_vfolder_hosts || '{}',
     );
 
     const _mergeDedupe = (arr) => [...new Set([].concat(...arr))];
@@ -2460,6 +2506,8 @@ export default class BackendAiStorageList extends BackendAIPage {
             globalThis.backendaiclient._config.maxFileUploadSize;
           this.directoryBasedUsage =
             globalThis.backendaiclient._config.directoryBasedUsage;
+          this._isDirectorySizeVisible =
+            globalThis.backendaiclient._config.isDirectorySizeVisible;
           this._getAllowedVFolderHostsByCurrentUserInfo();
           this._checkImageSupported();
           this._getVolumeInformation();
@@ -2480,6 +2528,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         globalThis.backendaiclient._config.maxFileUploadSize;
       this.directoryBasedUsage =
         globalThis.backendaiclient._config.directoryBasedUsage;
+      this._isDirectorySizeVisible =
+        globalThis.backendaiclient._config.isDirectorySizeVisible;
       this._getAllowedVFolderHostsByCurrentUserInfo();
       this._checkImageSupported();
       this._getVolumeInformation();
@@ -2887,28 +2937,24 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    */
   async _getMaxSize() {
-    const accessKey = globalThis.backendaiclient._config.accessKey;
-    const res = await globalThis.backendaiclient.keypair.info(accessKey, [
-      'resource_policy',
-    ]);
-    const policyName = res.keypair.resource_policy;
-    const resource_policy = await globalThis.backendaiclient.resourcePolicy.get(
-      policyName,
-      ['max_vfolder_count', 'max_vfolder_size'],
-    );
-    const max_vfolder_size =
-      resource_policy.keypair_resource_policy.max_vfolder_size;
+    // const accessKey = globalThis.backendaiclient._config.accessKey;
+    // const res = await globalThis.backendaiclient.keypair.info(accessKey, [
+    //  'resource_policy',
+    // ]);
+    // const policyName = res.keypair.resource_policy;
+    // const resource_policy =
+    //  await globalThis.backendaiclient.resourcePolicy.get(policyName);
     // default unit starts with MB.
-    [this.maxSize.value, this.maxSize.unit] = globalThis.backendaiutils
-      ._humanReadableFileSize(max_vfolder_size)
-      .split(' ');
-    if (['Bytes', 'KB', 'MB'].includes(this.maxSize.unit)) {
-      this.maxSize.value =
-        this.maxSize.value < 1 ? 1 : Math.round(this.maxSize.value);
-      this.maxSize.unit = 'MB';
-    } else {
-      this.maxSize.value = Math.round(this.maxSize.value * 10) / 10;
-    }
+    // [this.maxSize.value, this.maxSize.unit] = globalThis.backendaiutils
+    //   ._humanReadableFileSize(max_vfolder_size)
+    //   .split(' ');
+    // if (['Bytes', 'KB', 'MB'].includes(this.maxSize.unit)) {
+    //   this.maxSize.value =
+    //     this.maxSize.value < 1 ? 1 : Math.round(this.maxSize.value);
+    //   this.maxSize.unit = 'MB';
+    // } else {
+    //   this.maxSize.value = Math.round(this.maxSize.value * 10) / 10;
+    // }
   }
 
   /**
@@ -3389,8 +3435,9 @@ export default class BackendAiStorageList extends BackendAIPage {
       let text = '';
       const possible =
         'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      for (let i = 0; i < 5; i++)
+      for (let i = 0; i < 5; i++) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
       /* File upload size limits to configuration */
       if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
         this.notification.text =
@@ -3817,9 +3864,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const imageResource: Record<string, unknown> = {};
     const configSSHImage = globalThis.backendaiclient._config.systemSSHImage;
     const images = this.systemRoleSupportedImages.filter(
-      (image: any) =>
-        image['name'].toLowerCase().includes('sftp-upload') &&
-        image['installed'],
+      (image: any) => image['installed'],
     );
     // TODO: use lablup/openssh-server image
     // select one image to launch system role supported session
@@ -3880,6 +3925,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             sessionUuid: sessionResponse.sessionId,
             host: host,
             port: port,
+            mounted: this.explorer.id,
           },
         });
         document.dispatchEvent(event);

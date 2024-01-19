@@ -1,21 +1,27 @@
-import { baiSignedRequestWithPromise, iSizeToSize } from '../helper';
+import ResourceAllocationFormItems, {
+  ResourceAllocationFormValue,
+  RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+} from '../components/ResourceAllocationFormItems';
+import { baiSignedRequestWithPromise, compareNumberWithUnits } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentDomainValue } from '../hooks';
-import { useResourceSlots } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems, {
-  Image,
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import ResourceGroupSelect from './ResourceGroupSelect';
-import SliderInputItem from './SliderInputFormItem';
+import SliderInputFormItem from './SliderInputFormItem';
 import VFolderSelect from './VFolderSelect';
 import { Card, Form, Input, theme, Switch, message } from 'antd';
 import _ from 'lodash';
 import React, { Suspense } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+
+// TODO: set initial form values for later use
+// const INITIAL_FORM_VALUES: ServiceLauncherFormValue = {
+// }
 
 type ClusterMode = 'single-node' | 'multi-node';
 
@@ -27,6 +33,11 @@ interface ServiceCreateConfigResourceType {
   mem: string;
   'cuda.device'?: number | string;
   'cuda.shares'?: number | string;
+  'rocm.device'?: number | string;
+  'tpu.device'?: number | string;
+  'ipu.device'?: number | string;
+  'atom.device'?: number | string;
+  'warboy.device'?: number | string;
 }
 
 interface ServiceCreateConfigType {
@@ -60,17 +71,16 @@ interface ServiceLauncherProps
   extraP?: boolean;
   onRequestClose: (success?: boolean) => void;
 }
-interface ServiceLauncherFormInput extends ImageEnvironmentFormInput {
+interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   serviceName: string;
-  gpu: number;
-  cpu: number;
-  mem: number;
-  shmem: number;
-  resourceGroup: string;
   vFolderName: string;
   desiredRoutingCount: number;
   openToPublic: boolean;
 }
+
+type ServiceLauncherFormValue = ServiceLauncherInput &
+  ImageEnvironmentFormInput &
+  ResourceAllocationFormValue;
 
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   extraP,
@@ -80,20 +90,23 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
-  // const [modalText, setModalText] = useState("Content of the modal");
   const currentDomain = useCurrentDomainValue();
-  const [form] = Form.useForm<ServiceLauncherFormInput>();
-  const [resourceSlots] = useResourceSlots();
+  const [form] = Form.useForm<ServiceLauncherFormValue>();
 
   const mutationToCreateService = useTanMutation<
     unknown,
     {
       message?: string;
     },
-    ServiceLauncherFormInput
+    ServiceLauncherFormValue
   >({
     mutationFn: (values) => {
-      const image: string = `${values.environments.image?.registry}/${values.environments.image?.name}:${values.environments.image?.tag}`;
+      const image: string =
+        baiClient._config.allow_manual_image_name_for_session &&
+        values.environments?.manual &&
+        !_.isEmpty(values.environments.manual)
+          ? values.environments.manual
+          : `${values.environments.image?.registry}/${values.environments.image?.name}:${values.environments.image?.tag}`;
       const body: ServiceCreateType = {
         name: values.serviceName,
         desired_session_count: values.desiredRoutingCount,
@@ -101,8 +114,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         arch: values.environments.image?.architecture as string,
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
-        cluster_size: 1, // FIXME: hardcoded. change it with option later
-        cluster_mode: 'single-node', // FIXME: hardcoded. change it with option later
+        cluster_size: values.cluster_size,
+        cluster_mode: values.cluster_mode,
         open_to_public: values.openToPublic,
         config: {
           model: values.vFolderName,
@@ -110,22 +123,25 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           environ: {}, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {
-            cpu: values.cpu,
-            mem: values.mem + 'G',
+            // FIXME: manually convert to string since server-side only allows [str,str] tuple
+            cpu: values.resource.cpu.toString(),
+            mem: values.resource.mem,
+            ...(values.resource.accelerator > 0
+              ? {
+                  [values.resource.acceleratorType]:
+                    values.resource.accelerator,
+                }
+              : undefined),
+          },
+          resource_opts: {
+            shmem:
+              compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
+              compareNumberWithUnits(values.resource.shmem, '1g') < 0
+                ? '1g'
+                : values.resource.shmem,
           },
         },
       };
-      if (resourceSlots?.['cuda.shares']) {
-        body['config'].resources['cuda.shares'] = values.gpu;
-      }
-      if (resourceSlots?.['cuda.device']) {
-        body['config'].resources['cuda.device'] = values.gpu;
-      }
-      if (values.shmem && values.shmem > 0) {
-        body['config'].resource_opts = {
-          shmem: values.shmem + 'G',
-        };
-      }
       return baiSignedRequestWithPromise({
         method: 'POST',
         url: '/services',
@@ -134,23 +150,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       });
     },
   });
-  // const scalingGroupList = use;
-  // modelStorageList: Record<string, any>[];
-  // environmentList: Record<string, any>[];
-  // name?: string;
-  // cpu: number | string;
-  // mem: number | string;
-  // npu?: number | string;
-  // shmem?: number | string;
 
   // Apply any operation after clicking OK button
   const handleOk = () => {
-    // setModalText("Lorem Ipsum");
-    // setConfirmLoading(true);
-    // // TODO: send request to start service to manager server
-    // setTimeout(() => {
-    //   setConfirmLoading(false);
-    // }, 2000);
     form
       .validateFields()
       .then((values) => {
@@ -182,7 +184,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
   // Apply any operation after clicking Cancel button
   const handleCancel = () => {
-    // console.log("Clicked cancel button");
     onRequestClose();
   };
 
@@ -203,22 +204,18 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           preserve={false}
           layout="vertical"
           labelCol={{ span: 12 }}
-          initialValues={
-            {
-              cpu: 1,
-              gpu: 0,
-              mem: 0.25,
-              shmem: 0,
-              desiredRoutingCount: 1,
-            } as ServiceLauncherFormInput
-          }
+          initialValues={{
+            desiredRoutingCount: 1,
+            ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+          }}
+          requiredMark="optional"
         >
           <Form.Item
             label={t('modelService.ServiceName')}
             name="serviceName"
             rules={[
               {
-                pattern: /^(?=.{4,64}$)\w[\w.-]*\w$/,
+                pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
                 message: t('modelService.ServiceNameRule'),
               },
               {
@@ -246,6 +243,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           >
             <Switch></Switch>
           </Form.Item>
+          {/* <VFolderTableFromItem /> */}
           <Form.Item
             name={'vFolderName'}
             label={t('session.launcher.ModelStorageToMount')}
@@ -260,7 +258,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               autoSelectDefault
             />
           </Form.Item>
-          <SliderInputItem
+          <SliderInputFormItem
             label={t('modelService.DesiredRoutingCount')}
             name="desiredRoutingCount"
             rules={[
@@ -290,134 +288,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             //   });
             // }}
             />
-            <Form.Item
-              noStyle
-              shouldUpdate={(prev, cur) =>
-                prev.environments?.image?.digest !==
-                cur.environments?.image?.digest
-              }
-            >
-              {({ getFieldValue }) => {
-                // TODO: change min/max based on selected images resource limit and current user limit
-                const currentImage: Image =
-                  getFieldValue('environments')?.image;
-
-                return (
-                  <>
-                    <SliderInputItem
-                      name={'cpu'}
-                      label={t('session.launcher.CPU')}
-                      tooltip={<Trans i18nKey={'session.launcher.DescCPU'} />}
-                      min={parseInt(
-                        _.find(
-                          currentImage?.resource_limits,
-                          (i) => i?.key === 'cpu',
-                        )?.min || '0',
-                      )}
-                      max={baiClient._config.maxCPUCoresPerContainer || 128}
-                      inputNumberProps={{
-                        addonAfter: t('session.launcher.Core'),
-                      }}
-                      required
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    />
-                    <SliderInputItem
-                      name={'mem'}
-                      label={t('session.launcher.Memory')}
-                      tooltip={
-                        <Trans i18nKey={'session.launcher.DescMemory'} />
-                      }
-                      max={baiClient._config.maxMemoryPerContainer || 1536}
-                      min={0}
-                      inputNumberProps={{
-                        addonAfter: 'GiB',
-                      }}
-                      step={0.25}
-                      required
-                      rules={[
-                        {
-                          required: true,
-                        },
-                        ({ getFieldValue }) => ({
-                          validator(_form, value) {
-                            const sizeGInfo = iSizeToSize(
-                              _.find(
-                                currentImage?.resource_limits,
-                                (i) => i?.key === 'mem',
-                              )?.min || '0B',
-                              'G',
-                            );
-
-                            if (sizeGInfo.number > value) {
-                              return Promise.reject(
-                                new Error(
-                                  t('session.launcher.MinMemory', {
-                                    size: sizeGInfo.numberUnit,
-                                  }),
-                                ),
-                              );
-                            }
-                            return Promise.resolve();
-                          },
-                        }),
-                      ]}
-                    />
-                    <SliderInputItem
-                      name={'shmem'}
-                      label={t('session.launcher.SharedMemory')}
-                      tooltip={
-                        <Trans i18nKey={'session.launcher.DescSharedMemory'} />
-                      }
-                      max={baiClient._config.maxShmPerContainer || 8}
-                      min={0}
-                      step={0.25}
-                      inputNumberProps={{
-                        addonAfter: 'GiB',
-                      }}
-                      required
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    />
-                    {(resourceSlots?.['cuda.device'] ||
-                      resourceSlots?.['cuda.shares']) && (
-                      <SliderInputItem
-                        style={{ marginBottom: 0 }}
-                        name={'gpu'}
-                        label={t('session.launcher.AIAccelerator')}
-                        tooltip={
-                          <Trans
-                            i18nKey={'session.launcher.DescAIAccelerator'}
-                          />
-                        }
-                        max={
-                          resourceSlots['cuda.shares']
-                            ? baiClient._config.maxCUDASharesPerContainer
-                            : baiClient._config.maxCUDADevicesPerContainer
-                        }
-                        step={resourceSlots['cuda.shares'] ? 0.1 : 1}
-                        inputNumberProps={{
-                          //TODO: change unit based on resource limit
-                          addonAfter: 'GPU',
-                        }}
-                        required
-                        rules={[
-                          {
-                            required: true,
-                          },
-                        ]}
-                      />
-                    )}
-                  </>
-                );
-              }}
-            </Form.Item>
+            <ResourceAllocationFormItems />
           </Card>
         </Form>
       </Suspense>
