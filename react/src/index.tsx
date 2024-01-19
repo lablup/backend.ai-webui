@@ -168,22 +168,6 @@ customElements.define(
   }),
 );
 customElements.define(
-  'backend-ai-react-user-profile-setting-dialog',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <UserProfileSettingModal
-          open={props.value === 'true'}
-          onRequestClose={() => {
-            props.dispatchEvent('close', null);
-          }}
-        />
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
   'backend-ai-react-resource-group-select',
   reactToWebComponent((props) => {
     const [value, setValue] = React.useState(props.value || '');

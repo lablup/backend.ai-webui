@@ -1,7 +1,11 @@
-import { useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
+import { useTanQuery } from '../hooks/reactQueryAlias';
 import Flex from './Flex';
-import UserProfileSettingModal from './UserProfileSettingModal';
+import UserProfileSettingModal, {
+  UserProfileQuery,
+} from './UserProfileSettingModal';
+import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
 import {
   UserOutlined,
   MailOutlined,
@@ -22,14 +26,16 @@ import {
   Typography,
   theme,
 } from 'antd';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryLoader } from 'react-relay';
 
 const UserDropdownMenu: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [userInfo] = useCurrentUserInfo();
   const screens = Grid.useBreakpoint();
+  const baiClient = useSuspendedBackendaiClient();
 
   const [isOpenUserSettingModal, { set: setIsOpenUserSettingModal }] =
     useToggle(false);
@@ -42,7 +48,16 @@ const UserDropdownMenu: React.FC = () => {
   const userRole = useCurrentUserRole();
 
   const webuiNavigate = useWebUINavigate();
-
+  const { data: isManagerSupportingTOTP } = useTanQuery<boolean>(
+    'isManagerSupportingTOTP',
+    () => {
+      return baiClient.isManagerSupportingTOTP();
+    },
+    {
+      suspense: false,
+    },
+  );
+  const totpSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
   const items: MenuProps['items'] = [
     {
       label: <Typography.Text>{userInfo.username}</Typography.Text>, //To display properly when the user name is too long.
@@ -92,6 +107,10 @@ const UserDropdownMenu: React.FC = () => {
       key: 'userProfileSetting',
       icon: <LockOutlined />,
       onClick: () => {
+        loadUserProfileSettingQuery({
+          email: userInfo.email,
+          isNotSupportTotp: !totpSupported,
+        });
         setIsOpenUserSettingModal(true);
         // toggleUserProfileModal();
         // dispatchEvent('moveTo', {
@@ -140,6 +159,9 @@ const UserDropdownMenu: React.FC = () => {
     },
   ];
 
+  const [userProfileSettingQueryRef, loadUserProfileSettingQuery] =
+    useQueryLoader<UserProfileSettingModalQuery>(UserProfileQuery);
+
   return (
     <>
       <Dropdown
@@ -168,12 +190,19 @@ const UserDropdownMenu: React.FC = () => {
           </Flex>
         </Button>
       </Dropdown>
-      <UserProfileSettingModal
-        open={isOpenUserSettingModal}
-        onRequestClose={() => {
-          setIsOpenUserSettingModal(false);
-        }}
-      />
+      <Suspense>
+        {userProfileSettingQueryRef && (
+          <UserProfileSettingModal
+            totpSupported={totpSupported}
+            queryRef={userProfileSettingQueryRef}
+            open={isOpenUserSettingModal}
+            onRequestClose={() => {
+              setIsOpenUserSettingModal(false);
+            }}
+            onRequestRefresh={() => {}}
+          />
+        )}
+      </Suspense>
     </>
   );
 };

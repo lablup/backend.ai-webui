@@ -14,12 +14,21 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Modal, ModalProps, Input, Form, message, Switch } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import React, { useDeferredValue } from 'react';
+import React, { useDeferredValue, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import {
+  PreloadedQuery,
+  loadQuery,
+  useLazyLoadQuery,
+  usePreloadedQuery,
+  useRelayEnvironment,
+} from 'react-relay';
 
 interface Props extends ModalProps {
+  queryRef: PreloadedQuery<UserProfileSettingModalQuery>;
   onRequestClose: (success?: boolean) => void;
+  onRequestRefresh: () => void;
+  totpSupported?: boolean;
 }
 
 type UserProfileFormValues = {
@@ -30,8 +39,23 @@ type UserProfileFormValues = {
   totp_activated: boolean;
 };
 
+export const UserProfileQuery = graphql`
+  query UserProfileSettingModalQuery(
+    $email: String!
+    $isNotSupportTotp: Boolean!
+  ) {
+    user(email: $email) {
+      id
+      totp_activated @skipOnClient(if: $isNotSupportTotp)
+      ...TOTPActivateModalFragment
+    }
+  }
+`;
 const UserProfileSettingModal: React.FC<Props> = ({
   onRequestClose,
+  onRequestRefresh,
+  totpSupported,
+  queryRef,
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
@@ -42,43 +66,22 @@ const UserProfileSettingModal: React.FC<Props> = ({
     useToggle(false);
   const baiClient = useSuspendedBackendaiClient();
 
-  const { data: isManagerSupportingTOTP } = useTanQuery(
-    'isManagerSupportingTOTP',
-    () => {
-      return baiClient.isManagerSupportingTOTP();
-    },
-    {
-      suspense: true,
-    },
-  );
-  const totpSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
+  // const { data: isManagerSupportingTOTP } = useTanQuery(
+  //   'isManagerSupportingTOTP',
+  //   () => {
+  //     return baiClient.isManagerSupportingTOTP();
+  //   },
+  //   {
+  //     suspense: true,
+  //   },
+  // );
+  // const totpSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
 
   const [userInfo, userMutations] = useCurrentUserInfo();
-  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
-  const deferredMergedFetchKey = useDeferredValue(fetchKey);
+  // const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
 
-  const { user } = useLazyLoadQuery<UserProfileSettingModalQuery>(
-    graphql`
-      query UserProfileSettingModalQuery(
-        $email: String!
-        $isNotSupportTotp: Boolean!
-      ) {
-        user(email: $email) {
-          id
-          totp_activated @skipOnClient(if: $isNotSupportTotp)
-          ...TOTPActivateModalFragment
-        }
-      }
-    `,
-    {
-      email: userInfo.email,
-      isNotSupportTotp: !totpSupported,
-    },
-    {
-      fetchPolicy: 'network-only',
-      fetchKey: deferredMergedFetchKey,
-    },
-  );
+  const { user } = usePreloadedQuery(UserProfileQuery, queryRef);
+  console.log(user);
 
   const mutationToRemoveTotp = useTanMutation({
     mutationFn: () => {
@@ -264,7 +267,9 @@ const UserProfileSettingModal: React.FC<Props> = ({
                               message.success(
                                 t('totp.RemoveTotpSetupCompleted'),
                               );
-                              updateFetchKey();
+                              // updateFetchKey();
+                              onRequestRefresh();
+
                               form.setFieldValue('totp_activated', false);
                             },
                             onError: (error: any) => {
@@ -289,7 +294,8 @@ const UserProfileSettingModal: React.FC<Props> = ({
             open={isOpenTOTPActivateModal}
             onRequestClose={(success) => {
               if (success) {
-                updateFetchKey();
+                // updateFetchKey();
+                onRequestRefresh();
               } else {
                 form.setFieldValue('totp_activated', false);
               }
