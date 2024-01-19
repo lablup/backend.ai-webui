@@ -199,7 +199,12 @@ const UserDropdownMenu: React.FC = () => {
             onRequestClose={() => {
               setIsOpenUserSettingModal(false);
             }}
-            onRequestRefresh={() => {}}
+            onRequestRefresh={() => {
+              loadUserProfileSettingQuery({
+                email: userInfo.email,
+                isNotSupportTotp: !totpSupported,
+              });
+            }}
           />
         )}
       </Suspense>
