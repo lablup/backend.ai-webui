@@ -30,7 +30,6 @@ import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
-import { string } from 'prop-types';
 import React, {
   PropsWithChildren,
   Suspense,
