@@ -373,7 +373,6 @@ export default class BackendAIUserList extends BackendAIPage {
     this._refreshUserData();
     // update current grid to new data
     this.userGrid.clearCache();
-    this.userEmail = '';
   }
 
   _isActive() {

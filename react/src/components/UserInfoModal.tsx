@@ -1,18 +1,23 @@
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
 import { UserInfoModalQuery } from './__generated__/UserInfoModalQuery.graphql';
 import { Descriptions, DescriptionsProps, Button, Tag, Spin } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React from 'react';
+import React, { useDeferredValue, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useLazyLoadQuery } from 'react-relay';
 
-interface Props extends BAIModalProps {}
+interface Props extends BAIModalProps {
+  extraFetchKey?: string;
+}
 
-const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
+const UserInfoModal: React.FC<Props> = ({
+  extraFetchKey = '',
+  ...baiModalProps
+}) => {
   const { t } = useTranslation();
 
   const { value, dispatchEvent } = useWebComponentInfo();
@@ -50,6 +55,13 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
   );
   totpSupported = baiClient?.supports('2FA') && isManagerSupportingTOTP;
 
+  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
+  useEffect(() => {
+    updateFetchKey();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
   const { user } = useLazyLoadQuery<UserInfoModalQuery>(
     graphql`
       query UserInfoModalQuery(
@@ -84,6 +96,10 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
       email: userEmail,
       isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
       isTOTPSupported: totpSupported ?? false,
+    },
+    {
+      fetchKey: deferredMergedFetchKey,
+      fetchPolicy: 'network-only',
     },
   );
 
