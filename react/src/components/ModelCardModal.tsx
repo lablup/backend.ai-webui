@@ -1,4 +1,4 @@
-import { useBackendaiImageMetaData } from '../hooks';
+import { useBackendAIImageMetaData } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import ModelCloneModal from './ModelCloneModal';
@@ -46,7 +46,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
   const [visibleCloneModal, setVisibleCloneModal] = useState(false);
 
   const screen = Grid.useBreakpoint();
-  const [metadata] = useBackendaiImageMetaData();
+  const [metadata] = useBackendAIImageMetaData();
   const model_card = useFragment(
     graphql`
       fragment ModelCardModalFragment on ModelCard {

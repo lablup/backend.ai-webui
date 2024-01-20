@@ -1,6 +1,6 @@
 {
   "name": "backend-ai-webui-react",
-  "version": "23.09.8-rc.1",
+  "version": "23.09.8",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
@@ -39,6 +39,7 @@
     "test": "craco test",
     "eject": "react-scripts eject",
     "relay": "relay-compiler",
+    "relay:watch": "nodemon --watch schema.graphql --watch client-directives.graphql --exec 'npm run relay -- --watch'",
     "lint": "npx eslint ./src --ignore-pattern '*.test.*' --max-warnings=0",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -82,6 +83,7 @@
     "babel-plugin-named-exports-order": "^0.0.2",
     "babel-plugin-relay": "^15.0.0",
     "eslint-plugin-storybook": "^0.6.14",
+    "nodemon": "^3.0.2",
     "prop-types": "^15.8.1",
     "react-test-renderer": "^18.2.0",
     "relay-compiler": "^15.0.0",

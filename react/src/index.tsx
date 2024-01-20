@@ -59,6 +59,11 @@ const ContainerRegistryList = React.lazy(
 const KeypairInfoModal = React.lazy(
   () => import('./components/KeypairInfoModal'),
 );
+const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
+const AnnouncementAlert = React.lazy(
+  () => import('./components/AnnouncementAlert'),
+);
+const ErrorLogList = React.lazy(() => import('./components/ErrorLogList'));
 
 customElements.define(
   'backend-ai-react-information',
@@ -285,6 +290,44 @@ customElements.define(
             props.dispatchEvent('close', null);
           }}
         />
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-signout-modal',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <SignoutModal
+          open={props.value === 'true'}
+          onRequestClose={() => {
+            props.dispatchEvent('close', null);
+          }}
+        />
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-announcement-alert',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <AnnouncementAlert />
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-error-log-list',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <ErrorLogList />
       </DefaultProviders>
     );
   }),

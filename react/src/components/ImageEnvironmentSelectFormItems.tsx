@@ -1,7 +1,8 @@
 import {
-  useBackendaiImageMetaData,
+  useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
+import { useThemeMode } from '../hooks/useThemeMode';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 // @ts-ignore
@@ -38,6 +39,7 @@ export type ImageEnvironmentFormInput = {
     environment: string;
     version: string;
     image: Image | undefined;
+    manual?: string;
   };
 };
 
@@ -82,18 +84,16 @@ const isPrivateImage = (image: Image) => {
 const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
 > = ({ filter, showPrivate }) => {
-  // TODO: fix below without useSuspendedBackendaiClient
-  // Before fetching on relay environment, BAI client should be ready
-  useSuspendedBackendaiClient();
-
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
-  Form.useWatch('environments', { form, preserve: true });
+  const environments = Form.useWatch('environments', { form, preserve: true });
+  const baiClient = useSuspendedBackendaiClient();
 
   const [environmentSearch, setEnvironmentSearch] = useState('');
   const [versionSearch, setVersionSearch] = useState('');
   const { t } = useTranslation();
-  const [metadata, { getImageMeta }] = useBackendaiImageMetaData();
+  const [metadata, { getImageMeta }] = useBackendAIImageMetaData();
   const { token } = theme.useToken();
+  const { isDarkMode } = useThemeMode();
 
   const envSelectRef = useRef<RefSelectProps>(null);
   const versionSelectRef = useRef<RefSelectProps>(null);
@@ -134,6 +134,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
   // If not initial value, select first value
   // auto select when relative field is changed
   useEffect(() => {
+    if (!_.isEmpty(environments?.manual)) {
+      return;
+    }
     // if not initial value, select first value
     const nextEnvironmentName =
       form.getFieldValue('environments')?.environment ||
@@ -172,7 +175,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.getFieldValue('environments')?.environment]);
+  }, [environments?.environment, environments?.manual]);
 
   const imageGroups: ImageGroup[] = useMemo(
     () =>
@@ -203,20 +206,31 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   image?.name
                 );
               })
-              .map((images, environmentName) => ({
-                environmentName,
-                displayName:
-                  metadata?.imageInfo[environmentName.split('/')?.[1]]?.name ||
+              .map((images, environmentName) => {
+                const imageKey = environmentName.split('/')?.[1];
+                const displayName =
+                  imageKey && metadata?.imageInfo[imageKey]?.name;
+
+                return {
                   environmentName,
-                prefix: environmentName.split('/')?.[0],
-                images: images.sort((a, b) =>
-                  compareVersions(
-                    // latest version comes first
-                    b?.tag?.split('-')?.[0] ?? '',
-                    a?.tag?.split('-')?.[0] ?? '',
+                  displayName:
+                    displayName ||
+                    (_.last(environmentName.split('/')) as string),
+                  prefix: _.chain(environmentName)
+                    .split('/')
+                    .dropRight(1)
+                    .join('/')
+                    .value(),
+                  images: images.sort((a, b) =>
+                    compareVersions(
+                      // latest version comes first
+                      b?.tag?.split('-')?.[0] ?? '',
+                      a?.tag?.split('-')?.[0] ?? '',
+                    ),
                   ),
-                ),
-              }))
+                };
+              })
+
               .sortBy((item) => item.displayName)
               .value(),
           };
@@ -261,7 +275,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         label={`${t('session.launcher.Environments')} / ${t(
           'session.launcher.Version',
         )}`}
-        rules={[{ required: true }]}
+        rules={[{ required: _.isEmpty(environments?.manual) }]}
         style={{ marginBottom: 10 }}
       >
         <Select
@@ -285,6 +299,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
               });
             }
           }}
+          disabled={
+            baiClient._config.allow_manual_image_name_for_session &&
+            !_.isEmpty(environments?.manual)
+          }
         >
           {fullNameMatchedImage ? (
             <Select.Option
@@ -385,7 +403,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           <Flex
                             direction="row"
                             // set specific class name to handle flex wrap using css
-                            className="tag-wrap"
+                            className={
+                              isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
+                            }
                             // style={{ flex: 1 }}
                             style={{
                               marginLeft: token.marginXS,
@@ -432,7 +452,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
             <Form.Item
               className="image-environment-select-form-item"
               name={['environments', 'version']}
-              rules={[{ required: true }]}
+              rules={[{ required: _.isEmpty(environments?.manual) }]}
             >
               <Select
                 ref={versionSelectRef}
@@ -468,6 +488,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     {menu}
                   </>
                 )}
+                disabled={
+                  baiClient._config.allow_manual_image_name_for_session &&
+                  !_.isEmpty(environments?.manual)
+                }
               >
                 {_.map(
                   _.uniqBy(selectedEnvironmentGroup?.images, 'digest'),
@@ -498,21 +522,20 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         ? _.map(requirements, (requirement, idx) => (
                             <DoubleTag
                               key={idx}
-                              values={
-                                metadata?.tagAlias[requirement]
-                                  ?.split(':')
-                                  .map((str) => {
-                                    extraFilterValues.push(str);
-                                    return (
-                                      <TextHighlighter
-                                        keyword={versionSearch}
-                                        key={str}
-                                      >
-                                        {str}
-                                      </TextHighlighter>
-                                    );
-                                  }) || requirements
-                              }
+                              values={_.split(
+                                metadata?.tagAlias[requirement] || requirement,
+                                ':',
+                              ).map((str) => {
+                                extraFilterValues.push(str);
+                                return (
+                                  <TextHighlighter
+                                    keyword={versionSearch}
+                                    key={str}
+                                  >
+                                    {str}
+                                  </TextHighlighter>
+                                );
+                              })}
                             />
                           ))
                         : '-';
@@ -544,7 +567,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           <Flex
                             direction="row"
                             // set specific class name to handle flex wrap using css
-                            className="tag-wrap"
+                            className={
+                              isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
+                            }
                             style={{
                               marginLeft: token.marginXS,
                               flexShrink: 1,
@@ -561,6 +586,30 @@ const ImageEnvironmentSelectFormItems: React.FC<
             </Form.Item>
           );
         }}
+      </Form.Item>
+      <Form.Item
+        label={t('session.launcher.ManualImageName')}
+        name={['environments', 'manual']}
+        style={{
+          display: baiClient._config.allow_manual_image_name_for_session
+            ? 'block'
+            : 'none',
+        }}
+      >
+        <Input
+          allowClear
+          onChange={(value) => {
+            if (!_.isEmpty(value)) {
+              form.setFieldsValue({
+                environments: {
+                  environment: undefined,
+                  version: undefined,
+                  image: undefined,
+                },
+              });
+            }
+          }}
+        />
       </Form.Item>
       <Form.Item noStyle hidden name={['environments', 'image']}>
         <Input />

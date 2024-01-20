@@ -1,4 +1,5 @@
 import BAIModal from '../components/BAIModal';
+import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
 import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
@@ -24,7 +25,7 @@ import {
 } from '@ant-design/icons';
 import { useRafInterval } from 'ahooks';
 import { useLocalStorageState } from 'ahooks';
-import { Button, Table, Tabs, Typography, theme } from 'antd';
+import { Button, Table, Tabs, Typography, theme, message } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
@@ -177,9 +178,12 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       ? [
           {
             title: t('modelService.Owner'),
-            dataIndex: 'created_user',
+            // created_user_email is refered by EndpointOwnerInfoFragment
+            dataIndex: 'created_user_email',
             key: 'session_owner',
-            render: (created_user: string) => created_user,
+            render: (_: string, endpoint_info: Endpoint) => (
+              <EndpointOwnerInfo endpointFrgmt={endpoint_info} />
+            ),
           },
         ]
       : []),
@@ -280,7 +284,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               url
               open_to_public
               created_at @since(version: "23.09.0")
-              created_user
               desired_session_count @required(action: NONE)
               routings {
                 routing_id
@@ -290,6 +293,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 status
               }
               ...ModelServiceSettingModal_endpoint
+              ...EndpointOwnerInfoFragment
               ...EndpointStatusTagFragment
             }
           }
@@ -320,7 +324,12 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   //   (item: any) => item.desired_session_count < 0
   // );
 
-  const terminateModelServiceMutation = useTanMutation({
+  const terminateModelServiceMutation = useTanMutation<
+    unknown,
+    {
+      message?: string;
+    }
+  >({
     mutationFn: () => {
       return baiSignedRequestWithPromise({
         method: 'DELETE',
@@ -488,7 +497,15 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               setIsOpenModelServiceTerminatingModal(false);
             },
             onError: (err) => {
-              console.log('terminateModelServiceMutation Error', err);
+              if (err?.message) {
+                message.error(
+                  _.truncate(err?.message, {
+                    length: 200,
+                  }),
+                );
+              } else {
+                message.error(t('modelService.FailedToTerminateService'));
+              }
             },
           });
         }}
