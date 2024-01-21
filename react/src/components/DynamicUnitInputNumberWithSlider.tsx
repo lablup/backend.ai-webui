@@ -171,7 +171,11 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                   },
                 }),
               // extra: remaining mark code should be located before max mark code to prevent overlapping when it is same value
-              ...extraMarks,
+              ..._.omitBy(extraMarks, (option, key) => {
+                return _.isNumber(maxGiB?.number)
+                  ? _.parseInt(key) > (maxGiB?.number as number)
+                  : false;
+              }),
               ...(maxGiB?.number && {
                 [maxGiB.number]: {
                   style: {

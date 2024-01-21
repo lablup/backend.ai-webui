@@ -25,7 +25,7 @@ import {
 } from '@ant-design/icons';
 import { useRafInterval } from 'ahooks';
 import { useLocalStorageState } from 'ahooks';
-import { Button, Table, Tabs, Typography, theme } from 'antd';
+import { Button, Table, Tabs, Typography, theme, message } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
@@ -324,7 +324,12 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   //   (item: any) => item.desired_session_count < 0
   // );
 
-  const terminateModelServiceMutation = useTanMutation({
+  const terminateModelServiceMutation = useTanMutation<
+    unknown,
+    {
+      message?: string;
+    }
+  >({
     mutationFn: () => {
       return baiSignedRequestWithPromise({
         method: 'DELETE',
@@ -492,7 +497,15 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               setIsOpenModelServiceTerminatingModal(false);
             },
             onError: (err) => {
-              console.log('terminateModelServiceMutation Error', err);
+              if (err?.message) {
+                message.error(
+                  _.truncate(err?.message, {
+                    length: 200,
+                  }),
+                );
+              } else {
+                message.error(t('modelService.FailedToTerminateService'));
+              }
             },
           });
         }}
