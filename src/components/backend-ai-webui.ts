@@ -1394,7 +1394,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <i class="fas fa-th-large" slot="graphic" id="summary-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Summary')}</span>
             </mwc-list-item>
-            <mwc-list-item id="session" graphic="icon" ?selected="${
+            <mwc-list-item data-testid="session" graphic="icon" ?selected="${
               this._page === 'job'
             }" @click="${() =>
               this._moveTo(
@@ -1477,7 +1477,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 <i class="fas fa-play" slot="graphic" id="import-menu-icon"></i>
                 <span class="full-menu">${_t('webui.menu.Import&Run')}</span>
               </mwc-list-item>
-            <mwc-list-item id="data" graphic="icon" ?selected="${
+            <mwc-list-item data-testid="data" graphic="icon" ?selected="${
               this._page === 'data'
             }" @click="${() =>
               this._moveTo(
@@ -1619,7 +1619,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                       ${_t('webui.menu.Administration')}
                     </h3>
                     <mwc-list-item
-                      id="credential"
+                      data-testid="credential"
                       graphic="icon"
                       ?selected="${this._page === 'credential'}"
                       @click="${() => this._moveTo('/credential')}"
