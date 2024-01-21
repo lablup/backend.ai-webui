@@ -41,20 +41,20 @@ type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
-  Backend AI User List
+ Backend AI User List
 
-  `backend-ai-user-list` is list of user details.
-  Through this, user information can be read or modified, and the user can be logged out.
+ `backend-ai-user-list` is list of user details.
+ Through this, user information can be read or modified, and the user can be logged out.
 
-  Example:
+ Example:
 
-  <backend-ai-user-list>
-  ...
-  </backend-ai-user-list>
+ <backend-ai-user-list>
+ ...
+ </backend-ai-user-list>
 
- @group Backend.AI Web UI
-  @element backend-ai-user-list
-  */
+@group Backend.AI Web UI
+ @element backend-ai-user-list
+ */
 
 @customElement('backend-ai-user-list')
 export default class BackendAIUserList extends BackendAIPage {
