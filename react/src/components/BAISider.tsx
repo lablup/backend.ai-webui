@@ -1,7 +1,8 @@
 import Flex from './Flex';
 import { SiderProps, Typography, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
-import React from 'react';
+import _ from 'lodash';
+import React, { useState } from 'react';
 
 export interface BAISiderProps extends SiderProps {
   // logo?: React.ReactNode;
@@ -12,6 +13,7 @@ export interface BAISiderProps extends SiderProps {
   bottomText?: React.ReactNode;
 }
 
+const COLLAPSED_WIDTH = 74;
 const BAISider: React.FC<BAISiderProps> = ({
   children,
   logo,
@@ -23,6 +25,11 @@ const BAISider: React.FC<BAISiderProps> = ({
 }) => {
   const { token } = theme.useToken();
   const { Text } = Typography;
+  const [collapsedWidth, setCollapsedWidth] = useState(
+    _.isNumber(otherProps.collapsedWidth)
+      ? otherProps.collapsedWidth
+      : COLLAPSED_WIDTH,
+  );
 
   return (
     <>
@@ -47,8 +54,7 @@ const BAISider: React.FC<BAISiderProps> = ({
         `}
       </style>
       <Sider
-        collapsedWidth={88}
-        width={251}
+        width={221}
         breakpoint="sm"
         style={{
           overflowX: 'hidden',
@@ -60,8 +66,20 @@ const BAISider: React.FC<BAISiderProps> = ({
           borderRight: '1px solid',
           borderColor: token.colorBorder,
           backgroundColor: '#F4F7FD',
+          paddingTop: token.paddingContentVerticalSM,
         }}
         {...otherProps}
+        collapsedWidth={collapsedWidth}
+        onBreakpoint={(broken) => {
+          broken
+            ? setCollapsedWidth(0)
+            : setCollapsedWidth(
+                _.isNumber(otherProps.collapsedWidth)
+                  ? otherProps.collapsedWidth
+                  : COLLAPSED_WIDTH,
+              );
+          otherProps.onBreakpoint?.(broken);
+        }}
         className="bai-sider"
       >
         <Flex
@@ -69,8 +87,12 @@ const BAISider: React.FC<BAISiderProps> = ({
           justify="start"
           align="start"
           style={{
-            padding: 16,
+            padding: otherProps.collapsed
+              ? '12px 12px 12px 12px'
+              : '12px 16px 12px 16px',
             overflow: 'visible',
+            transition: 'all 0.2s ease-in-out',
+            marginBottom: token.marginSM,
           }}
           className={'logo-and-text-container'}
         >
@@ -83,29 +105,16 @@ const BAISider: React.FC<BAISiderProps> = ({
             </div>
           </div>
           <div className="logo-title-wrap">
-            {otherProps.collapsed ? (
-              <Typography.Text
-                style={{
-                  fontSize: 16,
-                  lineHeight: '16px',
-                  fontWeight: 200,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {logoTitleCollapsed}
-              </Typography.Text>
-            ) : (
-              <Typography.Text
-                style={{
-                  fontSize: 16,
-                  lineHeight: '16px',
-                  fontWeight: 200,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {logoTitle}
-              </Typography.Text>
-            )}
+            <Typography.Text
+              style={{
+                fontSize: 16,
+                lineHeight: '16px',
+                fontWeight: 200,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {otherProps.collapsed ? logoTitleCollapsed : logoTitle}
+            </Typography.Text>
           </div>
         </Flex>
         {children}
