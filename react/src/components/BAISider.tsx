@@ -2,7 +2,7 @@ import Flex from './Flex';
 import { Grid, SiderProps, Typography, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import _ from 'lodash';
-import React, { useState } from 'react';
+import React from 'react';
 
 export interface BAISiderProps extends SiderProps {
   // logo?: React.ReactNode;
@@ -13,7 +13,7 @@ export interface BAISiderProps extends SiderProps {
   bottomText?: React.ReactNode;
 }
 
-const COLLAPSED_WIDTH = 74;
+export const DEFAULT_COLLAPSED_WIDTH = 74;
 const BAISider: React.FC<BAISiderProps> = ({
   children,
   logo,
@@ -25,11 +25,6 @@ const BAISider: React.FC<BAISiderProps> = ({
 }) => {
   const { token } = theme.useToken();
   const { Text } = Typography;
-  const [collapsedWidth, setCollapsedWidth] = useState(
-    _.isNumber(otherProps.collapsedWidth)
-      ? otherProps.collapsedWidth
-      : COLLAPSED_WIDTH,
-  );
   const { xs } = Grid.useBreakpoint();
 
   return (
@@ -70,7 +65,13 @@ const BAISider: React.FC<BAISiderProps> = ({
           paddingTop: token.paddingContentVerticalSM,
         }}
         {...otherProps}
-        collapsedWidth={xs ? 0 : collapsedWidth}
+        collapsedWidth={
+          xs
+            ? 0
+            : _.isNumber(otherProps.collapsedWidth)
+            ? otherProps.collapsedWidth
+            : DEFAULT_COLLAPSED_WIDTH
+        }
         className="bai-sider"
       >
         <Flex

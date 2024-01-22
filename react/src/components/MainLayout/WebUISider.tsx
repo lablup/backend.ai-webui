@@ -246,15 +246,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       }
       {...props}
     >
-      {/* <Flex justify="center" align="center">
-    <Button
-      icon={<MenuOutlined />}
-      type="text"
-      onClick={() => {
-        setSideCollapsed((v) => !v);
-      }}
-    />
-  </Flex> */}
       <BAIMenu
         selectedKeys={[
           location.pathname.split('/')[1] || 'summary',
