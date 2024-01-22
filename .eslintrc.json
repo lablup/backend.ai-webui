@@ -9,7 +9,9 @@
     "plugin:wc/recommended",
     "plugin:lit-a11y/recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:wc/best-practice"
+    "plugin:wc/best-practice",
+    "prettier",
+    "plugin:prettier/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -23,19 +25,39 @@
   "plugins": [
     "@typescript-eslint",
     "lit-a11y",
-    "wc"
+    "wc",
+    "prettier"
   ],
   "rules": {
-    "comma-dangle": 0,
-    "require-jsdoc": 0,
-    "max-len": 0,
-    "new-cap": 0,
-    "indent": ["error", 2],
-    "camelcase": "off",
-    "no-empty": "off",
-    "no-empty-function": "off",
-    "no-invalid-this": "off",
-    "wc/guard-super-call": "off",
-    "lit-a11y/alt-text": "off"
-  }
+    "prettier/prettier": ["error", {
+      "tabWidth": 2,
+      "semi": true,
+      "singleQuote": true,
+      "importOrderSeparation": true,
+      "printWidth": 80,
+      "bracketSpacing": true,
+      "trailingComma": "all",
+      "singleAttributePerLine": false,
+      "plugins": ["@trivago/prettier-plugin-sort-imports"]
+    }]
+  },
+  "overrides": [
+    {
+    "files": ["react/**/*.js","react/**/*.jsx", "react/**/*.ts", "react/**/*.tsx"],
+    "rules": {
+      "prettier/prettier": ["error", {
+        "importOrderParserPlugins": ["typescript", "decorators"],
+        "htmlWhitespaceSensitivity": "ignore"
+        }]
+      }
+    },
+    {
+      "files": ["src/**/*.ts", "src/**/*.js"],
+      "rules": {
+        "prettier/prettier": ["error", {
+          "importOrderParserPlugins": ["typescript", "jsx"]
+        }]
+      }
+    }
+  ]
 }
