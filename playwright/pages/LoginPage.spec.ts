@@ -11,20 +11,23 @@ test.describe('Login user', () => {
   });
   test('User login success', async ({ page }) => {
     await page.locator('#id_user_id label').click();
-    await page.locator('#id_user_id label').fill(process.env.SUPER_ADMIN_EMAIL);
+    await page
+      .locator('#id_user_id label')
+      .fill(process.env.SUPER_ADMIN_EMAIL as string);
     await page.locator('#id_password label').click();
     await page
       .locator('#id_password label')
-      .fill(process.env.SUPER_ADMIN_PASSWORD);
+      .fill(process.env.SUPER_ADMIN_PASSWORD as string);
     await page.locator('#id_api_endpoint label').click();
-    await page.locator('#id_api_endpoint label').fill(process.env.ENDPOINT);
+    await page
+      .locator('#id_api_endpoint label')
+      .fill(process.env.ENDPOINT as string);
     await page.locator('#login-button').click();
     await page.waitForResponse(async (response) => {
-      const responseJSONData = await response.json();
       return (
         response.url() === 'http://localhost:8090/server/login' &&
         response.status() === 200 &&
-        responseJSONData?.authenticated
+        (await response.json()).authenticated
       );
     });
     await expect(page.locator('#app-body')).toBeVisible();
@@ -35,14 +38,15 @@ test.describe('Login user', () => {
     await page.locator('#id_password label').click();
     await page.locator('#id_password label').fill('test123!');
     await page.locator('#id_api_endpoint label').click();
-    await page.locator('#id_api_endpoint label').fill(process.env.ENDPOINT);
+    await page
+      .locator('#id_api_endpoint label')
+      .fill(process.env.ENDPOINT as string);
     await page.locator('#login-button').click();
     await page.waitForResponse(async (response) => {
-      const responseJSONData = await response.json();
       return (
         response.url() === 'http://localhost:8090/server/login' &&
         response.status() === 200 && //todo: Need to change status code after resolving this issue at core.
-        responseJSONData?.data?.details === 'User credential mismatch.'
+        (await response.json()).data.details === 'User credential mismatch.'
       );
     });
     await expect(page.locator('#app-body')).toBeHidden();
