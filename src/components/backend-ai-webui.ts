@@ -640,7 +640,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.blockedMenuItem.includes(this._page) ||
       this.inactiveMenuItem.includes(this._page) ||
       (!this.availablePages.includes(this._page) &&
-        !this.plugins?.['menuitem'].includes(this._page))
+        !this.plugins?.['menuitem']?.includes(this._page))
     ) {
       this._page = 'error';
       this._moveTo('/error');
@@ -978,7 +978,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       default:
         if (
           'menuitem' in this.plugins &&
-          this.plugins['menuitem'].includes(view)
+          this.plugins['menuitem']?.includes(view)
         ) {
           this.menuTitle = view;
           break;
@@ -993,7 +993,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             }
             if (
               'menuitem' in this.plugins &&
-              this.plugins['menuitem'].includes(this._page)
+              this.plugins['menuitem']?.includes(this._page)
             ) {
               // TODO specify type for web components from variable
               const component = this.shadowRoot?.querySelector(
@@ -1181,7 +1181,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           component.removeAttribute('active');
         }
       }
-      if (this.plugins['menuitem'].includes(this._page)) {
+      if (this.plugins['menuitem']?.includes(this._page)) {
         // TODO specify type for web components from variable
         const component = this.shadowRoot?.querySelector(
           this._page,
