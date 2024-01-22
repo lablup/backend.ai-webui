@@ -1,3 +1,4 @@
+import { useThemeMode } from '../hooks/useThemeMode';
 import Flex from './Flex';
 import { SiderProps, Typography, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
@@ -23,6 +24,7 @@ const BAISider: React.FC<BAISiderProps> = ({
 }) => {
   const { token } = theme.useToken();
   const { Text } = Typography;
+  const { isDarkMode } = useThemeMode();
 
   return (
     <>
@@ -59,10 +61,10 @@ const BAISider: React.FC<BAISiderProps> = ({
           left: 0,
           borderRight: '1px solid',
           borderColor: token.colorBorder,
-          backgroundColor: '#F4F7FD',
         }}
         {...otherProps}
         className="bai-sider"
+        theme={isDarkMode ? 'dark' : 'light'}
       >
         <Flex
           direction="column"
@@ -82,7 +84,7 @@ const BAISider: React.FC<BAISiderProps> = ({
               {logoCollapsed}
             </div>
           </div>
-          <div className="logo-title-wrap">
+          <div className="logo-title-wrap site-name">
             {otherProps.collapsed ? (
               <Typography.Text
                 style={{

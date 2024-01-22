@@ -247,8 +247,8 @@ export const DefaultProviders2: React.FC<Partial<DefaultProvidersProps>> = ({
               locale={'ko' === lang ? ko_KR : en_US}
               theme={{
                 ...(isDarkMode
-                  ? { ...themeConfig.dark }
-                  : { ...themeConfig.light }),
+                  ? { ...themeConfig?.dark }
+                  : { ...themeConfig?.light }),
                 algorithm: isDarkMode
                   ? theme.darkAlgorithm
                   : theme.defaultAlgorithm,

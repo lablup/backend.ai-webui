@@ -16,6 +16,9 @@
       },
       "Table": {
         "headerBorderRadius": 0
+      },
+      "Layout": {
+        "lightSiderBg": "#F4F7FD"
       }
     }
   },
