@@ -32,6 +32,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
     },
     containerElement,
   );
+  const gridBreakpoint = Grid.useBreakpoint();
 
   const { md } = Grid.useBreakpoint();
 
@@ -67,11 +68,15 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
           {t('webui.menu.Project')}
         </Typography.Text>
         <Suspense>
-          <ProjectSelector
-            style={{ minWidth: 150 }}
+          <ProjectSelect
+            popupMatchSelectWidth={false}
+            style={{
+              minWidth: 100,
+              maxWidth: gridBreakpoint.lg ? undefined : 100,
+            }}
             showSearch
             domain={currentDomainName}
-            size="large"
+            size={gridBreakpoint.lg ? 'large' : 'middle'}
             value={currentProject?.id}
             onChange={(value) => {
               const event: CustomEvent = new CustomEvent(
