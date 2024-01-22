@@ -15,7 +15,6 @@ import {
 } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { atom } from 'recoil';
 
 type NotificationCategory = 'all' | 'in progress';
 interface Props extends DrawerProps {}

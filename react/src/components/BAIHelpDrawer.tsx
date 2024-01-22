@@ -1,6 +1,5 @@
 import { ExportOutlined } from '@ant-design/icons';
 import { Button, Drawer, DrawerProps } from 'antd';
-import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 

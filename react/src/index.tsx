@@ -45,9 +45,6 @@ const ManageAppsModal = React.lazy(
 const UserDropdownMenu = React.lazy(
   () => import('./components/UserDropdownMenu'),
 );
-const UserProfileSettingModal = React.lazy(
-  () => import('./components/UserProfileSettingModal'),
-);
 const SessionLauncherPage = React.lazy(
   () => import('./pages/SessionLauncherPage'),
 );

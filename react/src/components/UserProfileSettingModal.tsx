@@ -2,33 +2,28 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
-import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
+import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal from './BAIModal';
 import { passwordPattern } from './ResetPasswordRequired';
 import TOTPActivateModal from './TOTPActivateModal';
+import { UserProfileQuery } from './UserProfileSettingModalQuery';
 // @ts-ignore
 import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
-import { ExclamationCircleFilled } from '@ant-design/icons';
+import { ExclamationCircleFilled, LoadingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Modal, ModalProps, Input, Form, message, Switch } from 'antd';
-import graphql from 'babel-plugin-relay/macro';
-import React, { useDeferredValue, useEffect, useMemo } from 'react';
+import { Modal, ModalProps, Input, Form, message, Switch, Spin } from 'antd';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  PreloadedQuery,
-  loadQuery,
-  useLazyLoadQuery,
-  usePreloadedQuery,
-  useRelayEnvironment,
-} from 'react-relay';
+import { PreloadedQuery, usePreloadedQuery } from 'react-relay';
 
 interface Props extends ModalProps {
   queryRef: PreloadedQuery<UserProfileSettingModalQuery>;
   onRequestClose: (success?: boolean) => void;
   onRequestRefresh: () => void;
   totpSupported?: boolean;
+  isRefreshModalPending?: boolean;
 }
 
 type UserProfileFormValues = {
@@ -39,21 +34,10 @@ type UserProfileFormValues = {
   totp_activated: boolean;
 };
 
-export const UserProfileQuery = graphql`
-  query UserProfileSettingModalQuery(
-    $email: String!
-    $isNotSupportTotp: Boolean!
-  ) {
-    user(email: $email) {
-      id
-      totp_activated @skipOnClient(if: $isNotSupportTotp)
-      ...TOTPActivateModalFragment
-    }
-  }
-`;
 const UserProfileSettingModal: React.FC<Props> = ({
   onRequestClose,
   onRequestRefresh,
+  isRefreshModalPending,
   totpSupported,
   queryRef,
   ...baiModalProps
@@ -159,135 +143,138 @@ const UserProfileSettingModal: React.FC<Props> = ({
         destroyOnClose
         title={t('webui.menu.MyAccountInformation')}
       >
-        <Form
-          layout="vertical"
-          labelCol={{ span: 8 }}
-          form={form}
-          initialValues={{
-            full_name: userInfo.full_name,
-            totp_activated: user?.totp_activated || false,
-          }}
-          preserve={false}
-        >
-          <Form.Item
-            name="full_name"
-            label={t('webui.menu.FullName')}
-            rules={[
-              () => ({
-                validator(_, value) {
-                  if (value && value.length < 65) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error(t('webui.menu.FullNameInvalid')),
-                  );
-                },
-              }),
-            ]}
+        <Spin spinning={isRefreshModalPending} indicator={<LoadingOutlined />}>
+          <Form
+            layout="vertical"
+            labelCol={{ span: 8 }}
+            form={form}
+            initialValues={{
+              full_name: userInfo.full_name,
+              totp_activated: user?.totp_activated || false,
+            }}
+            preserve={false}
           >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="originalPassword"
-            label={t('webui.menu.OriginalPassword')}
-            rules={[
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (
-                    !value &&
-                    (getFieldValue('newPassword') ||
-                      getFieldValue('newPasswordConfirm'))
-                  ) {
-                    return Promise.reject(
-                      new Error(t('webui.menu.InputOriginalPassword')),
-                    );
-                  }
-                  return Promise.resolve();
-                },
-              }),
-            ]}
-            dependencies={['newPassword', 'newPasswordConfirm']}
-          >
-            <Input.Password />
-          </Form.Item>
-          <Form.Item
-            name="newPassword"
-            label={t('webui.menu.NewPassword')}
-            rules={[
-              {
-                pattern: passwordPattern,
-                message: t('webui.menu.InvalidPasswordMessage'),
-              },
-            ]}
-          >
-            <Input.Password />
-          </Form.Item>
-          <Form.Item
-            name="newPasswordConfirm"
-            label={t('webui.menu.NewPasswordAgain')}
-            dependencies={['newPassword']}
-            rules={[
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue('newPassword') === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error(t('webui.menu.NewPasswordMismatch')),
-                  );
-                },
-              }),
-            ]}
-          >
-            <Input.Password />
-          </Form.Item>
-          {!!totpSupported && (
             <Form.Item
-              name="totp_activated"
-              label={t('webui.menu.TotpActivated')}
-              valuePropName="checked"
-            >
-              <Switch
-                onChange={(checked: boolean) => {
-                  if (checked) {
-                    toggleTOTPActivateModal();
-                  } else {
-                    if (user?.totp_activated) {
-                      form.setFieldValue('totp_activated', true);
-                      modal.confirm({
-                        title: t('totp.TurnOffTotp'),
-                        icon: <ExclamationCircleFilled />,
-                        content: t('totp.ConfirmTotpRemovalBody'),
-                        okText: t('button.Yes'),
-                        okType: 'danger',
-                        cancelText: t('button.No'),
-                        onOk() {
-                          mutationToRemoveTotp.mutate(undefined, {
-                            onSuccess: () => {
-                              message.success(
-                                t('totp.RemoveTotpSetupCompleted'),
-                              );
-                              // updateFetchKey();
-                              onRequestRefresh();
-
-                              form.setFieldValue('totp_activated', false);
-                            },
-                            onError: (error: any) => {
-                              message.error(error.message);
-                            },
-                          });
-                        },
-                        onCancel() {
-                          form.setFieldValue('totp_activated', true);
-                        },
-                      });
+              name="full_name"
+              label={t('webui.menu.FullName')}
+              rules={[
+                () => ({
+                  validator(_, value) {
+                    if (value && value.length < 65) {
+                      return Promise.resolve();
                     }
-                  }
-                }}
-              />
+                    return Promise.reject(
+                      new Error(t('webui.menu.FullNameInvalid')),
+                    );
+                  },
+                }),
+              ]}
+            >
+              <Input />
             </Form.Item>
-          )}
-        </Form>
+            <Form.Item
+              name="originalPassword"
+              label={t('webui.menu.OriginalPassword')}
+              rules={[
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (
+                      !value &&
+                      (getFieldValue('newPassword') ||
+                        getFieldValue('newPasswordConfirm'))
+                    ) {
+                      return Promise.reject(
+                        new Error(t('webui.menu.InputOriginalPassword')),
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                }),
+              ]}
+              dependencies={['newPassword', 'newPasswordConfirm']}
+            >
+              <Input.Password />
+            </Form.Item>
+            <Form.Item
+              name="newPassword"
+              label={t('webui.menu.NewPassword')}
+              rules={[
+                {
+                  pattern: passwordPattern,
+                  message: t('webui.menu.InvalidPasswordMessage'),
+                },
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
+            <Form.Item
+              name="newPasswordConfirm"
+              label={t('webui.menu.NewPasswordAgain')}
+              dependencies={['newPassword']}
+              rules={[
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue('newPassword') === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error(t('webui.menu.NewPasswordMismatch')),
+                    );
+                  },
+                }),
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
+            {!!totpSupported && (
+              <Form.Item
+                name="totp_activated"
+                label={t('webui.menu.TotpActivated')}
+                valuePropName="checked"
+              >
+                <Switch
+                  loading={mutationToRemoveTotp.isLoading}
+                  onChange={(checked: boolean) => {
+                    if (checked) {
+                      toggleTOTPActivateModal();
+                    } else {
+                      if (user?.totp_activated) {
+                        form.setFieldValue('totp_activated', true);
+                        modal.confirm({
+                          title: t('totp.TurnOffTotp'),
+                          icon: <ExclamationCircleFilled />,
+                          content: t('totp.ConfirmTotpRemovalBody'),
+                          okText: t('button.Yes'),
+                          okType: 'danger',
+                          cancelText: t('button.No'),
+                          onOk() {
+                            mutationToRemoveTotp.mutate(undefined, {
+                              onSuccess: () => {
+                                message.success(
+                                  t('totp.RemoveTotpSetupCompleted'),
+                                );
+                                // updateFetchKey();
+                                onRequestRefresh();
+
+                                form.setFieldValue('totp_activated', false);
+                              },
+                              onError: (error: any) => {
+                                message.error(error.message);
+                              },
+                            });
+                          },
+                          onCancel() {
+                            form.setFieldValue('totp_activated', true);
+                          },
+                        });
+                      }
+                    }
+                  }}
+                />
+              </Form.Item>
+            )}
+          </Form>
+        </Spin>
         {!!totpSupported && (
           <TOTPActivateModal
             userFrgmt={user}

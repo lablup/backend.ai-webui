@@ -1,18 +1,14 @@
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
-import { isOpenDrawerState } from '../BAINotificationButton';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
-import WebUIHeader, { HEADER_HEIGHT } from './WebUIHeader';
+import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { useLocalStorageState } from 'ahooks';
 import { Layout, theme } from 'antd';
 import _ from 'lodash';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
-
-const { Content } = Layout;
 
 export type PluginPage = {
   name: string;

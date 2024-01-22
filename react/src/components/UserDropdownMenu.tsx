@@ -1,10 +1,10 @@
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
-import { useTanQuery } from '../hooks/reactQueryAlias';
-import Flex from './Flex';
-import UserProfileSettingModal, {
-  UserProfileQuery,
-} from './UserProfileSettingModal';
+import { useWebUINavigate } from '../hooks';
+import {
+  useCurrentUserInfo,
+  useCurrentUserRole,
+  useTOTPSupported,
+} from '../hooks/backendai';
+import { UserProfileQuery } from './UserProfileSettingModalQuery';
 import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
 import {
   UserOutlined,
@@ -15,6 +15,7 @@ import {
   HolderOutlined,
   FileTextOutlined,
   LogoutOutlined,
+  LoadingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
@@ -26,16 +27,20 @@ import {
   Typography,
   theme,
 } from 'antd';
-import React, { Suspense } from 'react';
+import _ from 'lodash';
+import React, { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryLoader } from 'react-relay';
+
+const UserProfileSettingModal = React.lazy(
+  () => import('./UserProfileSettingModal'),
+);
 
 const UserDropdownMenu: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [userInfo] = useCurrentUserInfo();
   const screens = Grid.useBreakpoint();
-  const baiClient = useSuspendedBackendaiClient();
 
   const [isOpenUserSettingModal, { set: setIsOpenUserSettingModal }] =
     useToggle(false);
@@ -48,16 +53,13 @@ const UserDropdownMenu: React.FC = () => {
   const userRole = useCurrentUserRole();
 
   const webuiNavigate = useWebUINavigate();
-  const { data: isManagerSupportingTOTP } = useTanQuery<boolean>(
-    'isManagerSupportingTOTP',
-    () => {
-      return baiClient.isManagerSupportingTOTP();
-    },
-    {
-      suspense: false,
-    },
-  );
-  const totpSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
+  const totpSupported = useTOTPSupported();
+
+  const [isPendingRefreshModal, startRefreshModalTransition] = useTransition();
+  const [
+    isPendingInitializeSettingModal,
+    startInitializeSettingModalTransition,
+  ] = useTransition();
   const items: MenuProps['items'] = [
     {
       label: <Typography.Text>{userInfo.username}</Typography.Text>, //To display properly when the user name is too long.
@@ -105,17 +107,26 @@ const UserDropdownMenu: React.FC = () => {
     {
       label: t('webui.menu.MyAccount'),
       key: 'userProfileSetting',
-      icon: <LockOutlined />,
-      onClick: () => {
-        loadUserProfileSettingQuery({
-          email: userInfo.email,
-          isNotSupportTotp: !totpSupported,
+      icon: isPendingInitializeSettingModal ? (
+        <LoadingOutlined spin />
+      ) : (
+        <LockOutlined />
+      ),
+      onClick: (e) => {
+        startInitializeSettingModalTransition(() => {
+          loadUserProfileSettingQuery(
+            {
+              email: userInfo.email,
+              isNotSupportTotp: !totpSupported,
+            },
+            {
+              fetchPolicy: 'network-only',
+            },
+          );
+          setIsOpenUserSettingModal(true);
         });
-        setIsOpenUserSettingModal(true);
-        // toggleUserProfileModal();
-        // dispatchEvent('moveTo', {
-        //   path: '#userprofile',
-        // });
+        // e.domEvent.stopPropagation();
+        // e.domEvent.preventDefault();
       },
     },
     {
@@ -173,21 +184,35 @@ const UserDropdownMenu: React.FC = () => {
         }}
         placement="bottomRight"
       >
-        <Button type="text" size="large">
-          <Flex
-            direction="row"
-            gap="sm"
-            style={{ cursor: 'pointer', maxWidth: '15vw' }}
-          >
-            <Flex>
-              <Avatar size={'small'} icon={<UserOutlined />} />
-            </Flex>
-            {screens.md && (
-              <Typography.Text strong ellipsis>
-                {userInfo.username}
-              </Typography.Text>
-            )}
-          </Flex>
+        <Button
+          type="text"
+          size="large"
+          // loading={isPendingInitializeSettingModal}
+          onClick={(e) => e.preventDefault()}
+          style={{
+            textOverflow: 'ellipsis',
+            maxWidth: 150,
+            whiteSpace: 'nowrap',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: -2,
+            fontSize: token.fontSize,
+          }}
+          // icon={<UserOutlined />}
+          icon={
+            <Avatar
+              size={20}
+              icon={<UserOutlined style={{ fontSize: 13 }} />}
+              style={
+                {
+                  // border: 1,
+                }
+              }
+            ></Avatar>
+          }
+        >
+          {screens.lg && _.truncate(userInfo.username, { length: 30 })}
         </Button>
       </Dropdown>
       <Suspense>
@@ -199,10 +224,18 @@ const UserDropdownMenu: React.FC = () => {
             onRequestClose={() => {
               setIsOpenUserSettingModal(false);
             }}
+            isRefreshModalPending={isPendingRefreshModal}
             onRequestRefresh={() => {
-              loadUserProfileSettingQuery({
-                email: userInfo.email,
-                isNotSupportTotp: !totpSupported,
+              startRefreshModalTransition(() => {
+                loadUserProfileSettingQuery(
+                  {
+                    email: userInfo.email,
+                    isNotSupportTotp: !totpSupported,
+                  },
+                  {
+                    fetchPolicy: 'network-only',
+                  },
+                );
               });
             }}
           />
