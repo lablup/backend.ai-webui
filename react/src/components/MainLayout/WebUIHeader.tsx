@@ -7,9 +7,9 @@ import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
 import { MenuOutlined } from '@ant-design/icons';
 import { theme, Button, Typography, Grid } from 'antd';
-import { t } from 'i18next';
 import _ from 'lodash';
 import { Suspense } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMatches } from 'react-router-dom';
 
 export interface WebUIHeaderProps extends FlexProps {
@@ -23,6 +23,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
   containerElement,
 }) => {
   const { token } = theme.useToken();
+  const { t } = useTranslation();
   const currentDomainName = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   const matches = useMatches();
@@ -89,7 +90,6 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
             }}
           />
         </Suspense>
-
         <Flex direction="row">
           <BAINotificationButton />
           <WEBUIHelpButton />
