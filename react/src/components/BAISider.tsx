@@ -85,6 +85,7 @@ const BAISider: React.FC<BAISiderProps> = ({
             overflow: 'visible',
             transition: 'all 0.2s ease-in-out',
             marginBottom: token.marginSM,
+            marginTop: token.marginSM,
           }}
           className={'logo-and-text-container'}
         >
