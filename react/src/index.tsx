@@ -7,9 +7,9 @@ import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
 import ModelStoreListPage from './pages/ModelStoreListPage';
 import { Form } from 'antd';
-import { t } from 'i18next';
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
+import { useTranslation } from 'react-i18next';
 import { Route, Routes } from 'react-router-dom';
 
 // Load custom theme config once in react/index.tsx
@@ -168,7 +168,7 @@ customElements.define(
   'backend-ai-react-resource-group-select',
   reactToWebComponent((props) => {
     const [value, setValue] = React.useState(props.value || '');
-
+    const { t } = useTranslation();
     React.useEffect(() => {
       if (props.value !== value) {
         setValue(props.value || '');
