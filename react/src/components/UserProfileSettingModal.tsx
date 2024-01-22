@@ -65,7 +65,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
   // const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
 
   const { user } = usePreloadedQuery(UserProfileQuery, queryRef);
-  console.log(user);
 
   const mutationToRemoveTotp = useTanMutation({
     mutationFn: () => {
