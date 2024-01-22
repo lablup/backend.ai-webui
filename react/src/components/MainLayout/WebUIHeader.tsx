@@ -78,11 +78,11 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
             domain={currentDomainName}
             size={gridBreakpoint.lg ? 'large' : 'middle'}
             value={currentProject?.id}
-            onSelectProject={(project) => {
+            onSelectProject={(projectInfo) => {
               const event: CustomEvent = new CustomEvent(
                 'backend-ai-group-changed',
                 {
-                  detail: project.projectName,
+                  detail: projectInfo.projectName,
                 },
               );
               document.dispatchEvent(event);
