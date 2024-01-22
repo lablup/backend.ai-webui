@@ -714,24 +714,32 @@ export default class BackendAIUserList extends BackendAIPage {
           ></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-react-user-info-dialog
-        value="${JSON.stringify({
-          open: this.openUserInfoModal,
-          userEmail: this.userEmail,
-        })}"
-        @cancel="${() => (this.openUserInfoModal = false)}"
-      ></backend-ai-react-user-info-dialog>
-      <backend-ai-react-user-setting-dialog
-        value="${JSON.stringify({
-          open: this.openUserSettingModal,
-          userEmail: this.userEmail,
-        })}"
-        @ok="${() => {
-          this.openUserSettingModal = false;
-          this.refresh();
-        }}"
-        @cancel="${() => (this.openUserSettingModal = false)}"
-      ></backend-ai-react-user-setting-dialog>
+      ${this.openUserInfoModal
+        ? html`
+            <backend-ai-react-user-info-dialog
+              value="${JSON.stringify({
+                open: this.openUserInfoModal,
+                userEmail: this.userEmail,
+              })}"
+              @cancel="${() => (this.openUserInfoModal = false)}"
+            ></backend-ai-react-user-info-dialog>
+          `
+        : html``}
+      ${this.openUserSettingModal
+        ? html`
+            <backend-ai-react-user-setting-dialog
+              value="${JSON.stringify({
+                open: this.openUserSettingModal,
+                userEmail: this.userEmail,
+              })}"
+              @ok="${() => {
+                this.openUserSettingModal = false;
+                this.refresh();
+              }}"
+              @cancel="${() => (this.openUserSettingModal = false)}"
+            ></backend-ai-react-user-setting-dialog>
+          `
+        : html``}
     `;
   }
 }

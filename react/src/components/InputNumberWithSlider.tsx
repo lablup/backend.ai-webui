@@ -2,6 +2,7 @@ import Flex from './Flex';
 import { useControllableValue } from 'ahooks';
 import { InputNumber, Slider, InputNumberProps, SliderSingleProps } from 'antd';
 import { SliderRangeProps } from 'antd/es/slider';
+import _ from 'lodash';
 import React, { useEffect } from 'react';
 
 type OmitControlledProps<T> = Omit<T, 'value' | 'onChange'>;
@@ -67,6 +68,10 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
             }
           }}
           {...sliderProps}
+          // remove marks that are greater than max
+          marks={_.omitBy(sliderProps?.marks, (option, key) => {
+            return _.isNumber(max) ? _.parseInt(key) > max : false;
+          })}
         />
       </Flex>
     </Flex>
