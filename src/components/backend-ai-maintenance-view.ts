@@ -191,7 +191,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
    */
   async rescan_images() {
     this.scanning = true;
-    let taskId;
+    // let taskId;
 
     const notiKey = 'image-rescan:' + new Date().getTime();
 
