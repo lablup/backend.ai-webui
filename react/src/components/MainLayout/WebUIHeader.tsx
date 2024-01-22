@@ -2,7 +2,7 @@ import { useCurrentDomainValue, useCurrentProjectValue } from '../../hooks';
 import { useScrollBreakPoint } from '../../hooks/useScrollBreackPoint';
 import BAINotificationButton from '../BAINotificationButton';
 import Flex, { FlexProps } from '../Flex';
-import ProjectSelector from '../ProjectSelector';
+import ProjectSelect from '../ProjectSelect';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
 import { MenuOutlined } from '@ant-design/icons';
@@ -78,11 +78,11 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
             domain={currentDomainName}
             size={gridBreakpoint.lg ? 'large' : 'middle'}
             value={currentProject?.id}
-            onChange={(value) => {
+            onSelectProject={(project) => {
               const event: CustomEvent = new CustomEvent(
                 'backend-ai-group-changed',
                 {
-                  detail: value,
+                  detail: project.projectName,
                 },
               );
               document.dispatchEvent(event);

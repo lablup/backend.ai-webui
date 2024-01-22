@@ -85,7 +85,7 @@ export const useCurrentProjectValue = () => {
     return () => {
       document.removeEventListener('backend-ai-group-changed', listener);
     };
-  });
+  }, []);
 
   return project;
 };
