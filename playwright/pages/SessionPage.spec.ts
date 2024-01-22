@@ -1,17 +1,28 @@
 import { generateRandomString } from '../helper/helper';
 import { test, expect } from '@playwright/test';
+import dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
 test.describe('Create Session', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:9081');
     await page.locator('#id_user_id label').click();
-    await page.locator('#id_user_id label').fill('test@lablup.com');
+    await page
+      .locator('#id_user_id label')
+      .fill(process.env.SUPER_ADMIN_EMAIL as string);
     await page.locator('#id_password label').click();
-    await page.locator('#id_password label').fill('test123!');
+    await page
+      .locator('#id_password label')
+      .fill(process.env.SUPER_ADMIN_PASSWORD as string);
     await page.locator('#id_api_endpoint label').click();
-    await page.locator('#id_api_endpoint label').fill('http://localhost:8090');
+    await page
+      .locator('#id_api_endpoint label')
+      .fill(process.env.ENDPOINT as string);
     await page.locator('#login-button').click();
-    await page.locator('#session').click();
+    await page.getByTestId('session').click();
     await page.waitForURL('**/job');
   });
   test('User can create session', async ({ page }) => {
@@ -55,10 +66,16 @@ test.describe('Create Session', () => {
       .locator('backend-ai-session-view')
       .locator('#launch-button')
       .click();
-    await page.waitForTimeout(5000);
+    await page.waitForResponse(
+      (response) =>
+        response.url() === 'http://localhost:8090/func/session' &&
+        response.status() === 201,
+      { timeout: 0 },
+    );
     await page.getByRole('button', { name: 'close' }).click();
-    await page.waitForTimeout(2000);
-    expect(await page.getByText(randomSessionName).isVisible()).toBe(true);
+    await expect(
+      page.getByTestId(randomSessionName).getByText('RUNNING'),
+    ).toBeVisible();
   });
 });
 
@@ -66,35 +83,38 @@ test.describe('Delete Session', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:9081');
     await page.locator('#id_user_id label').click();
-    await page.locator('#id_user_id label').fill('test@lablup.com');
+    await page
+      .locator('#id_user_id label')
+      .fill(process.env.SUPER_ADMIN_EMAIL as string);
     await page.locator('#id_password label').click();
-    await page.locator('#id_password label').fill('test123!');
+    await page
+      .locator('#id_password label')
+      .fill(process.env.SUPER_ADMIN_PASSWORD as string);
     await page.locator('#id_api_endpoint label').click();
-    await page.locator('#id_api_endpoint label').fill('http://localhost:8090');
+    await page
+      .locator('#id_api_endpoint label')
+      .fill(process.env.ENDPOINT as string);
     await page.locator('#login-button').click();
-    await page.locator('#session').click();
+    await page.getByTestId('session').click();
     await page.waitForURL('**/job');
-    await page.waitForTimeout(1000);
   });
   test('User can delete session', async ({ page }) => {
-    const sessionName = 'ssss'; //Write session name you want to delete
-    const sessionOwner = 'test@lablup.com'; //Write session owner
-    await page
-      .locator(`[id="${sessionName}-power"]`)
-      .getByLabel('power_settings_new')
-      .click();
+    const deleteSessionName = 'kxCW'; //Write session name you want to delete
+    await page.getByTestId(deleteSessionName + '-delete').click();
     await page
       .locator(`#terminate-session-dialog`)
       .locator('mwc-button[class="ok"]')
       .click();
-    await page.waitForTimeout(5000);
-    expect(await page.getByText(sessionName).isHidden()).toBe(true);
-    await page.getByRole('tab', { name: 'Finished' }).click();
-    await page.waitForTimeout(1000);
-    expect(
-      await page
-        .getByRole('row', { name: `1 ${sessionOwner} ${sessionName}` })
-        .isVisible(),
-    ).toBe(true);
+    await page.waitForRequest(
+      async (request) =>
+        request.method() === 'DELETE' &&
+        (await request.response())?.status() === 200,
+      { timeout: 0 },
+    );
+    await expect(page.getByText(deleteSessionName)).toBeHidden();
+    await page.locator('mwc-tab[title="finished"]').click();
+    await expect(
+      page.getByTestId(deleteSessionName).getByText('TERMINATED'),
+    ).toBeVisible();
   });
 });

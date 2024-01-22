@@ -3020,7 +3020,7 @@ ${rowData.item[this.sessionNameField]}</pre
                 <mwc-icon-button
                   class="fg red controls-running"
                   id="${rowData.index + '-power'}"
-                  data-testid="${rowData.item.name}"
+                  data-testid="${rowData.item.name}-delete"
                   ?disabled=${!this._isPending(rowData.item.status) &&
                   (rowData.item?.commit_status as CommitSessionStatus) ===
                     'ongoing'}
@@ -3808,7 +3808,9 @@ ${rowData.item[this.sessionNameField]}</pre
     render(
       html`
         <div class="horizontal layout center">
-          <span style="font-size: 12px;">${rowData.item.status}</span>
+          <span data-testid="${rowData.item.name}" style="font-size: 12px;">
+            ${rowData.item.status}
+          </span>
           ${!rowData.item.status_data || rowData.item.status_data === '{}'
             ? html``
             : html`
