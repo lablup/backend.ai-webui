@@ -1,5 +1,5 @@
 import Flex from './Flex';
-import { SiderProps, Typography, theme } from 'antd';
+import { Grid, SiderProps, Typography, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import _ from 'lodash';
 import React, { useState } from 'react';
@@ -30,6 +30,7 @@ const BAISider: React.FC<BAISiderProps> = ({
       ? otherProps.collapsedWidth
       : COLLAPSED_WIDTH,
   );
+  const { xs } = Grid.useBreakpoint();
 
   return (
     <>
@@ -55,7 +56,7 @@ const BAISider: React.FC<BAISiderProps> = ({
       </style>
       <Sider
         width={221}
-        breakpoint="sm"
+        breakpoint="md"
         style={{
           overflowX: 'hidden',
           overflowY: 'auto',
@@ -69,17 +70,7 @@ const BAISider: React.FC<BAISiderProps> = ({
           paddingTop: token.paddingContentVerticalSM,
         }}
         {...otherProps}
-        collapsedWidth={collapsedWidth}
-        onBreakpoint={(broken) => {
-          broken
-            ? setCollapsedWidth(0)
-            : setCollapsedWidth(
-                _.isNumber(otherProps.collapsedWidth)
-                  ? otherProps.collapsedWidth
-                  : COLLAPSED_WIDTH,
-              );
-          otherProps.onBreakpoint?.(broken);
-        }}
+        collapsedWidth={xs ? 0 : collapsedWidth}
         className="bai-sider"
       >
         <Flex

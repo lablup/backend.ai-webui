@@ -76,7 +76,13 @@ function MainLayout() {
       }}
     >
       <Suspense fallback={<BAISider style={{ visibility: 'hidden' }} />}>
-        <WebUISider collapsed={sideCollapsed} webuiplugins={webUIPlugins} />
+        <WebUISider
+          collapsed={sideCollapsed}
+          onBreakpoint={(broken) => {
+            setSideCollapsed(broken);
+          }}
+          webuiplugins={webUIPlugins}
+        />
       </Suspense>
       <Layout
         style={{
