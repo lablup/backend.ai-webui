@@ -25,7 +25,7 @@ import {
 import { useToggle } from 'ahooks';
 import { theme, MenuProps, Typography } from 'antd';
 import _ from 'lodash';
-import React, { useRef } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
@@ -46,8 +46,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const inactiveList = baiClient?._config?.inactiveList ?? null;
   const siteDescription = baiClient?._config?.siteDescription ?? null;
   const themeConfig = useCustomThemeConfig();
-  const logoRef = useRef<HTMLImageElement>(null);
-  const logoCollapsedRef = useRef<HTMLImageElement>(null);
   const supportServing = baiClient?.supports('model-serving') ?? false;
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
 
@@ -172,44 +170,25 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   return (
     <BAISider
       logo={
-        themeConfig?.logo ? (
-          <img
-            className="logo-wide"
-            ref={logoRef}
-            src={themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'}
-            alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
-            onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
-          />
-        ) : (
-          <img
-            alt="Backend.AI Logo"
-            className="logo-wide"
-            src={'/manifest/backend.ai-text.svg'}
-            style={{ width: 191, height: 32, cursor: 'pointer' }}
-            onClick={() => webuiNavigate('/summary')}
-          />
-        )
+        <img
+          className="logo-wide"
+          alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
+          src={themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'}
+          style={{ width: 191, height: 32, cursor: 'pointer' }}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
+        />
       }
       logoCollapsed={
-        themeConfig?.logo ? (
-          <img
-            className="logo-square"
-            ref={logoCollapsedRef}
-            src={
-              themeConfig?.logo?.srcCollapsed || '/manifest/backend.ai-text.svg'
-            }
-            alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
-            onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
-          />
-        ) : (
-          <img
-            alt="Backend.AI Logo"
-            className="logo-square"
-            src={'/manifest/backend.ai-brand-simple.svg'}
-            style={{ width: 48, height: 32, cursor: 'pointer' }}
-            onClick={() => webuiNavigate('/summary')}
-          />
-        )
+        <img
+          className="logo-collapsed"
+          alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
+          src={
+            themeConfig?.logo?.srcCollapsed ||
+            '/manifest/backend.ai-brand-simple.svg'
+          }
+          style={{ width: 48, height: 32, cursor: 'pointer' }}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
+        />
       }
       logoTitle={themeConfig?.logo?.logoTitle || siteDescription || 'WebUI'}
       logoTitleCollapsed={
