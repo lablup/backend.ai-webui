@@ -1401,6 +1401,13 @@
     "Public": "Pubblico",
     "YouAreAboutToTerminate": "State per terminare",
     "Owner": "Proprietario",
+    "Processing": "In lavorazione...",
+    "Success": "Successo",
+    "Error": "Errore",
+    "SeeContainerLogs": "Consulta Log del contenitore",
+    "TimeStamp": "Timestamp",
+    "Result": "Risultato",
+    "Finished": "Finito",
     "ServiceDelegatedFrom": "Il servizio modello è creato da {{ createdUser }}, ma la proprietà della sessione sarà delegata a {{ sessionOwner }}.",
     "FailedToTerminateService": "La richiesta di terminare il servizio è fallita."
   },

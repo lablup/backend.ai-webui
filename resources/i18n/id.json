@@ -1450,6 +1450,13 @@
     "resources": "Sumber daya",
     "Image": "Gambar",
     "Owner": "Pemilik",
+    "Processing": "Pengolahan...",
+    "Success": "Kesuksesan",
+    "Error": "Kesalahan",
+    "SeeContainerLogs": "Lihat Log Kontainer",
+    "TimeStamp": "Stempel waktu",
+    "Result": "Hasil",
+    "Finished": "Selesai",
     "ServiceDelegatedFrom": "Layanan model dibuat oleh {{ createdUser }} namun kepemilikan sesi akan didelegasikan ke {{ sessionOwner }}",
     "FailedToTerminateService": "Permintaan untuk menghentikan layanan gagal."
   },
