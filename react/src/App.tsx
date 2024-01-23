@@ -6,6 +6,7 @@ import {
 import MainLayout from './components/MainLayout/MainLayout';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
+import ServingListPagePreloaded from './pages/ServingListPagePreloaded';
 import React from 'react';
 import { FC } from 'react';
 import {
@@ -16,7 +17,6 @@ import {
 import { RecoilRoot } from 'recoil';
 
 const Information = React.lazy(() => import('./components/Information'));
-const ServingListPage = React.lazy(() => import('./pages/ServingListPage'));
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 const StorageHostSettingPage = React.lazy(
   () => import('./pages/StorageHostSettingPage'),
@@ -57,8 +57,25 @@ const router = createBrowserRouter([
       {
         path: '/serving',
         // element: <ServingListPage />,
-        Component: ServingListPage,
+        Component: ServingListPagePreloaded,
         handle: { labelKey: 'webui.menu.Serving' },
+        // loader: () => {
+        //   // @ts-ignore
+        //   // alert(globalThis.backendaiclient.current_group_id());
+        //   return null;
+        //   // return loadQuery(
+        //   //   RelayEnvironment,
+        //   //   ServingListPageQuery,
+        //   //   {
+        //   //     offset: 1,
+        //   //     limit: 100,
+        //   //     // @ts-ignore
+        //   //     // projectID: globalThis.backendaiclient.current_group_id()
+        //   //     projectID: '2de2b969-1d04-48a6-af16-0bc8adb3c831',
+        //   //   },
+        //   //   { fetchPolicy: 'store-or-network' },
+        //   // );
+        // },
       },
       {
         path: '/import',

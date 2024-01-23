@@ -6,16 +6,14 @@ import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import { baiSignedRequestWithPromise } from '../helper';
-import {
-  useCurrentProjectValue,
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-} from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 // import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import {
-  ServingListPageQuery,
+import { ServingListPageQuery } from './ServingListPageQuery';
+import type {
+  ServingListPageQuery as ServingListPageQueryType,
   ServingListPageQuery$data,
+  ServingListPageQuery$variables,
 } from './__generated__/ServingListPageQuery.graphql';
 import {
   CheckOutlined,
@@ -27,7 +25,6 @@ import { useRafInterval } from 'ahooks';
 import { useLocalStorageState } from 'ahooks';
 import { Button, Card, Table, Typography, theme, message } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
 import React, {
@@ -38,7 +35,11 @@ import React, {
   startTransition as startTransitionWithoutPendingState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
+import {
+  PreloadedQuery,
+  UseQueryLoaderLoadQueryOptions,
+  usePreloadedQuery,
+} from 'react-relay';
 import { Link } from 'react-router-dom';
 
 // FIXME: need to apply filtering type of service later
@@ -52,33 +53,31 @@ export type Endpoint = NonNullable<
   >[0]
 >;
 
-const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
+interface Props extends PropsWithChildren {
+  queryRef: PreloadedQuery<ServingListPageQueryType>;
+  onRequestReloadQuery: (
+    variables: ServingListPageQuery$variables,
+    options: UseQueryLoaderLoadQueryOptions,
+  ) => void;
+}
+
+const ServingListPage: React.FC<Props> = (props) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
-  const curProject = useCurrentProjectValue();
   const [isOpenServiceLauncher, setIsOpenServiceLauncher] = useState(false);
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const [selectedModelService, setSelectedModelService] = useState<Endpoint>();
   const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] =
     useState(false);
 
-  // const [paginationState, setPaginationState] = useState<{
-  const [paginationState] = useState<{
-    current: number;
-    pageSize: number;
-  }>({
-    current: 1,
-    pageSize: 100,
-  });
-
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [
     isOpenModelServiceTerminatingModal,
     setIsOpenModelServiceTerminatingModal,
   ] = useState(false);
-  const [servicesFetchKey, updateServicesFetchKey] =
-    useUpdatableState('initial-fetch');
+  // const [servicesFetchKey, updateServicesFetchKey] =
+  //   useUpdatableState('initial-fetch');
   // FIXME: need to apply filtering type of service later
   const [selectedTab] = useState<TabKey>('services');
   // const [selectedGeneration, setSelectedGeneration] = useState<
@@ -251,66 +250,17 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
 
   useRafInterval(() => {
     startTransitionWithoutPendingState(() => {
-      updateServicesFetchKey();
+      props.onRequestReloadQuery(props.queryRef.variables, {
+        fetchPolicy: 'network-only',
+      });
     });
   }, 7000);
 
   const { endpoint_list: modelServiceList } =
     // TODO: need to convert LazyLoadQuery to pagination query with option
-    useLazyLoadQuery<ServingListPageQuery>(
-      graphql`
-        query ServingListPageQuery(
-          $offset: Int!
-          $limit: Int!
-          $projectID: UUID
-        ) {
-          endpoint_list(
-            offset: $offset
-            limit: $limit
-            project: $projectID
-            filter: "name != 'koalpaca-test'"
-          ) {
-            total_count
-            items {
-              name
-              endpoint_id
-              image
-              model
-              domain
-              status
-              project
-              resource_group
-              resource_slots
-              url
-              open_to_public
-              created_at @since(version: "23.09.0")
-              desired_session_count @required(action: NONE)
-              routings {
-                routing_id
-                endpoint
-                session
-                traffic_ratio
-                status
-              }
-              ...ModelServiceSettingModal_endpoint
-              ...EndpointOwnerInfoFragment
-              ...EndpointStatusTagFragment
-            }
-          }
-        }
-      `,
-      {
-        offset: (paginationState.current - 1) * paginationState.pageSize,
-        limit: paginationState.pageSize,
-        projectID: curProject.id,
-      },
-      {
-        fetchPolicy:
-          servicesFetchKey === 'initial-fetch'
-            ? 'store-and-network'
-            : 'network-only',
-        fetchKey: servicesFetchKey,
-      },
+    usePreloadedQuery<ServingListPageQueryType>(
+      ServingListPageQuery,
+      props.queryRef,
     );
 
   const sortedEndpointList = _.sortBy(modelServiceList?.items, 'name');
@@ -527,7 +477,9 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
           terminateModelServiceMutation.mutate(undefined, {
             onSuccess: (res) => {
               startRefetchTransition(() => {
-                updateServicesFetchKey();
+                props.onRequestReloadQuery(props.queryRef.variables, {
+                  fetchPolicy: 'network-only',
+                });
               });
               setIsOpenModelServiceTerminatingModal(false);
             },
@@ -563,7 +515,9 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
           setIsOpenModelServiceSettingModal(false);
           if (success) {
             startRefetchTransition(() => {
-              updateServicesFetchKey();
+              props.onRequestReloadQuery(props.queryRef.variables, {
+                fetchPolicy: 'network-only',
+              });
             });
           }
         }}
@@ -575,7 +529,9 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
           setIsOpenServiceLauncher(!isOpenServiceLauncher);
           if (success) {
             startRefetchTransition(() => {
-              updateServicesFetchKey();
+              props.onRequestReloadQuery(props.queryRef.variables, {
+                fetchPolicy: 'network-only',
+              });
             });
           }
         }}
