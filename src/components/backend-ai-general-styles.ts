@@ -30,7 +30,7 @@ export const BackendAiStyles = [
       --general-content-container-width: 980px;
       --general-background-color: rgba(247, 246, 246, 1);
       --general-sidebar-color: #949494;
-      --general-sidebar-background-color: #37B076;
+      --general-sidebar-background-color: #ffffff;
       --general-sidebar-h3-color: #cccccc;
       --general-sidebar-h3-border-color: 1px solid #444444;
       --general-sidebar-topbar-background-color-3: #383e48;
