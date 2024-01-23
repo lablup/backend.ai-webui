@@ -1852,6 +1852,7 @@ export default class BackendAILogin extends BackendAIPage {
         globalThis.backendaiclient._config.pluginPages = this.pluginPages;
         globalThis.backendaiclient._config.blockList = this.blockList;
         globalThis.backendaiclient._config.inactiveList = this.inactiveList;
+        globalThis.backendaiclient._config.allowSignout = this.allow_signout;
         globalThis.backendaiclient.ready = true;
         if (
           this.endpoints.indexOf(
