@@ -1,4 +1,5 @@
 import AnnouncementAlert from './components/AnnouncementAlert';
+import BAIErrorBoundary from './components/BAIErrorBoundary';
 import {
   DefaultProviders2,
   RoutingEventHandler,
@@ -21,6 +22,7 @@ const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 const StorageHostSettingPage = React.lazy(
   () => import('./pages/StorageHostSettingPage'),
 );
+const RoutingListPage = React.lazy(() => import('./pages/RoutingListPage'));
 
 const router = createBrowserRouter([
   {
@@ -56,9 +58,21 @@ const router = createBrowserRouter([
       },
       {
         path: '/serving',
-        // element: <ServingListPage />,
-        Component: ServingListPage,
+        element: (
+          <BAIErrorBoundary>
+            <ServingListPage />
+          </BAIErrorBoundary>
+        ),
         handle: { labelKey: 'webui.menu.Serving' },
+      },
+      {
+        path: '/serving/:serviceId',
+        element: (
+          <BAIErrorBoundary>
+            <RoutingListPage />
+          </BAIErrorBoundary>
+        ),
+        handle: { labelKey: 'modelService.RoutingInfo' },
       },
       {
         path: '/import',

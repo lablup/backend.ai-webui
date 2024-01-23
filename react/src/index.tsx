@@ -1,5 +1,4 @@
 import App from './App';
-import BAIErrorBoundary from './components/BAIErrorBoundary';
 import Flex from './components/Flex';
 import FlexActivityIndicator from './components/FlexActivityIndicator';
 import ResourceGroupSelect from './components/ResourceGroupSelect';
@@ -19,8 +18,6 @@ const DefaultProviders = React.lazy(
   () => import('./components/DefaultProviders'),
 );
 const SessionList = React.lazy(() => import('./pages/SessionListPage'));
-const ServingList = React.lazy(() => import('./pages/ServingListPage'));
-const RoutingList = React.lazy(() => import('./pages/RoutingListPage'));
 const ResetPasswordRequired = React.lazy(
   () => import('./components/ResetPasswordRequired'),
 );
@@ -67,22 +64,6 @@ customElements.define(
           <Route path="/session" element={<SessionList />} />
           <Route path="/session/start" element={<SessionLauncherPage />} />
         </Routes>
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
-  'backend-ai-react-serving-list',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <BAIErrorBoundary>
-          <Routes>
-            <Route path="/serving" element={<ServingList />} />
-            <Route path="/serving/:serviceId" element={<RoutingList />} />
-          </Routes>
-        </BAIErrorBoundary>
       </DefaultProviders>
     );
   }),
