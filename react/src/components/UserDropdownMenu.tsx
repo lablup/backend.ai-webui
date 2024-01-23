@@ -191,7 +191,6 @@ const UserDropdownMenu: React.FC = () => {
           onClick={(e) => e.preventDefault()}
           style={{
             textOverflow: 'ellipsis',
-            maxWidth: 150,
             whiteSpace: 'nowrap',
             display: 'flex',
             alignItems: 'center',
