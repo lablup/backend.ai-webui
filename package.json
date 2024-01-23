@@ -11,8 +11,6 @@
     "lint-fix": "npx eslint src -c ./.eslintrc.json  --quiet --ext .js,.ts --fix;exit 0",
     "format": "npx prettier --check 'src/**/*.{js, ts}'",
     "format-fix": "npx prettier --write 'src/**/*.{js, ts}'",
-    "format-react": "npx prettier --check 'react/*.{js, jsx, ts, tsx}'",
-    "format-fix-react": "npx prettier --write 'react/*.{js, jsx, ts, tsx}'",
     "test": "npx testcafe chrome ./tests/*.js",
     "test:react": "npm test --prefix ./react test",
     "wsproxy": "node ./src/wsproxy/local_proxy.js",
