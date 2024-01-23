@@ -296,14 +296,16 @@ export default class BackendAISummary extends BackendAIPage {
           cursor: pointer;
           outline: inherit;
         }
-        button > i {
+        button.link-button > i {
           color: #5b5b5b;
           margin: 10px;
         }
-
-        button > span {
+        button.link-button > span {
           max-width: 70px;
           color: #838383;
+        }
+        button.link-button:hover {
+          color: #3e872d;
         }
       `,
     ];
