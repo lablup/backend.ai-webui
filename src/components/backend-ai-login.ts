@@ -71,6 +71,7 @@ type ConfigValueObject = {
 export default class BackendAILogin extends BackendAIPage {
   shadowRoot!: ShadowRoot | null;
 
+  @property({ type: String }) siteDescription = '';
   @property({ type: String }) api_key = '';
   @property({ type: String }) secret_key = '';
   @property({ type: String }) user_id = '';
@@ -585,6 +586,13 @@ export default class BackendAILogin extends BackendAIPage {
     if (globalThis.backendaiwebui.debug) {
       console.log('Debug flag is set to true');
     }
+
+    // Default session environment value
+    this.siteDescription = this._getConfigValueByExists(generalConfig, {
+      valueType: 'string',
+      defaultValue: 'WebUI',
+      value: generalConfig?.siteDescription,
+    } as ConfigValueObject) as string;
 
     // Signup support flag
     this.signup_support = this._getConfigValueByExists(generalConfig, {
@@ -1155,13 +1163,16 @@ export default class BackendAILogin extends BackendAIPage {
         const fieldsToExclude = [
           'general.apiEndpoint',
           'general.apiEndpointText',
-          'general.siteDescription',
           'general.appDownloadUrl',
           'wsproxy',
         ];
         const webserverConfigURL = new URL('./config.toml', this.api_endpoint)
           .href;
         webuiEl._parseConfig(webserverConfigURL, true).then((config) => {
+          // Monkey patch for backwards compatibility.
+          // From 24.04, we use `logoTitle` and `logoTitleCollapsed` of /resources/theme.json instead of `general.siteDescription`.
+          this.siteDescription =
+            config?.['general.siteDescription'] || this.siteDescription || '';
           fieldsToExclude.forEach((key) => {
             globalThis.backendaiutils.deleteNestedKeyFromObject(config, key);
           });
@@ -1783,6 +1794,8 @@ export default class BackendAILogin extends BackendAIPage {
             globalThis.backendaiclient.current_group
           ];
         };
+        globalThis.backendaiclient._config.siteDescription =
+          this.siteDescription;
         globalThis.backendaiclient._config._proxyURL = this.proxy_url;
         globalThis.backendaiclient._config._proxyToken = '';
         globalThis.backendaiclient._config.domainName = this.domain_name;

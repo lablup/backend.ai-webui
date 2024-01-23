@@ -1,3 +1,4 @@
+import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import BAIMenu from '../BAIMenu';
@@ -39,11 +40,15 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
   const baiClient = useSuspendedBackendaiClient();
+  const themeConfig = useCustomThemeConfig();
+
   const isHideAgents = baiClient?._config?.hideAgents ?? true;
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
   const blockList = baiClient?._config?.blockList ?? null;
   const inactiveList = baiClient?._config?.inactiveList ?? null;
+  const siteDescription = baiClient?._config?.siteDescription ?? null;
   const supportServing = baiClient?.supports('model-serving') ?? false;
+
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
 
   const generalMenu: MenuProps['items'] = [
@@ -168,24 +173,29 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     <BAISider
       logo={
         <img
-          alt="Backend.AI Logo"
           className="logo-wide"
-          src={'/manifest/backend.ai-text.svg'}
+          alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
+          src={themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'}
           style={{ width: 191, height: 32, cursor: 'pointer' }}
-          onClick={() => webuiNavigate('/summary')}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
         />
       }
       logoCollapsed={
         <img
-          alt="Backend.AI Logo"
-          className="logo-square"
-          src={'/manifest/backend.ai-brand-simple.svg'}
+          className="logo-collapsed"
+          alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
+          src={
+            themeConfig?.logo?.srcCollapsed ||
+            '/manifest/backend.ai-brand-simple.svg'
+          }
           style={{ width: 48, height: 32, cursor: 'pointer' }}
-          onClick={() => webuiNavigate('/summary')}
+          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
         />
       }
-      logoTitle="WebUI"
-      logoTitleCollapsed="WebUI"
+      logoTitle={themeConfig?.logo?.logoTitle || siteDescription || 'WebUI'}
+      logoTitleCollapsed={
+        themeConfig?.logo?.logoTitleCollapsed || siteDescription || 'WebUI'
+      }
       bottomText={
         props.collapsed ? null : (
           <>

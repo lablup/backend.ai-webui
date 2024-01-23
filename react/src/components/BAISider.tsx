@@ -5,7 +5,6 @@ import _ from 'lodash';
 import React from 'react';
 
 export interface BAISiderProps extends SiderProps {
-  // logo?: React.ReactNode;
   logoCollapsed?: React.ReactNode;
   logo?: React.ReactNode;
   logoTitleCollapsed?: React.ReactNode;
