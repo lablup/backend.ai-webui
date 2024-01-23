@@ -31,8 +31,6 @@ function MainLayout() {
   const [compactSidebarActive] = useLocalStorageState<boolean | undefined>(
     'backendaiwebui.settings.user.compact_sidebar',
   );
-  const [collapsedWidth, setCollapsedWidth] = useState(88);
-  // const [isOpenPreferences, { toggle: toggleIsOpenPreferences }] = useToggle();
 
   // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();
@@ -80,10 +78,8 @@ function MainLayout() {
       <Suspense fallback={<BAISider style={{ visibility: 'hidden' }} />}>
         <WebUISider
           collapsed={sideCollapsed}
-          collapsedWidth={collapsedWidth}
           onBreakpoint={(broken) => {
-            broken ? setCollapsedWidth(0) : setCollapsedWidth(88);
-            // setSideCollapsed(broken);
+            setSideCollapsed(broken);
           }}
           webuiplugins={webUIPlugins}
         />

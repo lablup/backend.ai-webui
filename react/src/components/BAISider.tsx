@@ -1,7 +1,8 @@
 import { useThemeMode } from '../hooks/useThemeMode';
 import Flex from './Flex';
-import { SiderProps, Typography, theme } from 'antd';
+import { Grid, SiderProps, Typography, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
+import _ from 'lodash';
 import React from 'react';
 
 export interface BAISiderProps extends SiderProps {
@@ -13,6 +14,7 @@ export interface BAISiderProps extends SiderProps {
   bottomText?: React.ReactNode;
 }
 
+export const DEFAULT_COLLAPSED_WIDTH = 74;
 const BAISider: React.FC<BAISiderProps> = ({
   children,
   logo,
@@ -25,6 +27,7 @@ const BAISider: React.FC<BAISiderProps> = ({
   const { token } = theme.useToken();
   const { Text } = Typography;
   const { isDarkMode } = useThemeMode();
+  const { xs } = Grid.useBreakpoint();
 
   return (
     <>
@@ -49,9 +52,8 @@ const BAISider: React.FC<BAISiderProps> = ({
         `}
       </style>
       <Sider
-        collapsedWidth={88}
-        width={251}
-        breakpoint="sm"
+        width={221}
+        breakpoint="md"
         style={{
           overflowX: 'hidden',
           overflowY: 'auto',
@@ -61,8 +63,16 @@ const BAISider: React.FC<BAISiderProps> = ({
           left: 0,
           borderRight: '1px solid',
           borderColor: token.colorBorder,
+          paddingTop: token.paddingContentVerticalSM,
         }}
         {...otherProps}
+        collapsedWidth={
+          xs
+            ? 0
+            : _.isNumber(otherProps.collapsedWidth)
+            ? otherProps.collapsedWidth
+            : DEFAULT_COLLAPSED_WIDTH
+        }
         className="bai-sider"
         theme={isDarkMode ? 'dark' : 'light'}
       >
@@ -71,8 +81,13 @@ const BAISider: React.FC<BAISiderProps> = ({
           justify="start"
           align="start"
           style={{
-            padding: 16,
+            padding: otherProps.collapsed
+              ? '12px 12px 12px 12px'
+              : '12px 16px 12px 16px',
             overflow: 'visible',
+            transition: 'all 0.2s ease-in-out',
+            marginBottom: token.marginSM,
+            marginTop: token.marginSM,
           }}
           className={'logo-and-text-container'}
         >
@@ -85,29 +100,16 @@ const BAISider: React.FC<BAISiderProps> = ({
             </div>
           </div>
           <div className="logo-title-wrap site-name">
-            {otherProps.collapsed ? (
-              <Typography.Text
-                style={{
-                  fontSize: 16,
-                  lineHeight: '16px',
-                  fontWeight: 200,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {logoTitleCollapsed}
-              </Typography.Text>
-            ) : (
-              <Typography.Text
-                style={{
-                  fontSize: 16,
-                  lineHeight: '16px',
-                  fontWeight: 200,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {logoTitle}
-              </Typography.Text>
-            )}
+            <Typography.Text
+              style={{
+                fontSize: 16,
+                lineHeight: '16px',
+                fontWeight: 200,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {otherProps.collapsed ? logoTitleCollapsed : logoTitle}
+            </Typography.Text>
           </div>
         </Flex>
         {children}
