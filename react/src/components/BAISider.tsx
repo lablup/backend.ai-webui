@@ -1,4 +1,3 @@
-import { useWebUINavigate } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import Flex from './Flex';
 import { Grid, SiderProps, Typography, theme } from 'antd';

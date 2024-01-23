@@ -44,6 +44,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
   const blockList = baiClient?._config?.blockList ?? null;
   const inactiveList = baiClient?._config?.inactiveList ?? null;
+  const siteDescription = baiClient?._config?.siteDescription ?? null;
   const themeConfig = useCustomThemeConfig();
   const logoRef = useRef<HTMLImageElement>(null);
   const logoCollapsedRef = useRef<HTMLImageElement>(null);
@@ -210,8 +211,10 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           />
         )
       }
-      logoTitle={themeConfig?.logo?.logoTitle || 'WebUI'}
-      logoTitleCollapsed={themeConfig?.logo?.logoTitleCollapsed || 'WebUI'}
+      logoTitle={themeConfig?.logo?.logoTitle || siteDescription || 'WebUI'}
+      logoTitleCollapsed={
+        themeConfig?.logo?.logoTitleCollapsed || siteDescription || 'WebUI'
+      }
       bottomText={
         props.collapsed ? null : (
           <>
