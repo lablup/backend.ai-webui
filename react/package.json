@@ -41,6 +41,8 @@
     "relay": "relay-compiler",
     "relay:watch": "nodemon --watch schema.graphql --watch client-directives.graphql --exec 'npm run relay -- --watch'",
     "lint": "npx eslint ./src --ignore-pattern '*.test.*' --max-warnings=0",
+    "format": "npx prettier --check 'src/**/*.{js,jsx,ts,tsx}'",
+    "format-fix": "npx prettier --write './src/**/*.{js,jsx,ts,tsx}'",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
