@@ -1462,7 +1462,8 @@
     "TimeStamp": "Временная метка",
     "Result": "Результат",
     "Finished": "Законченный",
-    "ServiceDelegatedFrom": "Сервис модели создается {{ createdUser }}, но право владения сессией будет передано {{ sessionOwner }}."
+    "ServiceDelegatedFrom": "Сервис модели создается {{ createdUser }}, но право владения сессией будет передано {{ sessionOwner }}.",
+    "FailedToTerminateService": "Запрос на завершение службы завершился неудачно."
   },
   "ErrorBoundary": {
     "title": "Произошла ошибка.",

@@ -1411,7 +1411,8 @@
     "TimeStamp": "Zaman damgası",
     "Result": "Sonuç",
     "Finished": "Bitmiş",
-    "ServiceDelegatedFrom": "Model hizmeti {{ createdUser }} tarafından oluşturulur ancak oturum sahipliği {{ sessionOwner }}'a devredilir."
+    "ServiceDelegatedFrom": "Model hizmeti {{ createdUser }} tarafından oluşturulur ancak oturum sahipliği {{ sessionOwner }}'a devredilir.",
+    "FailedToTerminateService": "Hizmeti sonlandırma isteği başarısız oldu."
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

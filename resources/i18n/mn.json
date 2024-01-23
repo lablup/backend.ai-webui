@@ -1460,7 +1460,8 @@
     "TimeStamp": "Цагийн тэмдэг",
     "Result": "Үр дүн",
     "Finished": "Дууслаа",
-    "ServiceDelegatedFrom": "Загвар үйлчилгээг {{ createdUser }} үүсгэсэн боловч сессийн эрхийг {{ sessionOwner }}-д шилжүүлнэ."
+    "ServiceDelegatedFrom": "Загвар үйлчилгээг {{ createdUser }} үүсгэсэн боловч сессийн эрхийг {{ sessionOwner }}-д шилжүүлнэ.",
+    "FailedToTerminateService": "Үйлчилгээг цуцлах хүсэлт амжилтгүй боллоо."
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",

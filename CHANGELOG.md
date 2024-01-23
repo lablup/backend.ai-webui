@@ -1,5 +1,24 @@
 # Changelog
 
+## v23.09.7 (25/11/2023)
+## What's Changed
+* fix: Data&Storage menu is not visible by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2051
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.6...v23.09.7
+
+
+## v23.09.6 (24/11/2023)
+## What's Changed
+* feature: rename `blockedMenuItem` to `inactiveMenuItem` by @rapsealk in https://github.com/lablup/backend.ai-webui/pull/2040
+* fix: exception caused by mismatched selected resource group information. by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2043
+* fix: Use `blockedMenuItem` to hide and show pipeline button by @rapsealk in https://github.com/lablup/backend.ai-webui/pull/2036
+* Feat:Cancelled session's log button is disabled by @gee05053 in https://github.com/lablup/backend.ai-webui/pull/2045
+* fix: update edu app launcher by @fregataa in https://github.com/lablup/backend.ai-webui/pull/1993
+* fix: add blockedMenuItem again by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2049
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.5...v23.09.6
+
+
 ## v23.09.5 (21/11/2023)
 ## What's Changed
 * update: stand-alone local proxy packaging by @inureyes in https://github.com/lablup/backend.ai-webui/pull/2013

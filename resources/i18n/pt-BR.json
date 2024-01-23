@@ -1451,7 +1451,8 @@
     "TimeStamp": "Carimbo de data e hora",
     "Result": "Resultado",
     "Finished": "Finalizado",
-    "ServiceDelegatedFrom": "O serviço de modelo é criado por {{ createdUser }} mas a propriedade da sessão será delegada a {{ sessionOwner }}"
+    "ServiceDelegatedFrom": "O serviço de modelo é criado por {{ createdUser }} mas a propriedade da sessão será delegada a {{ sessionOwner }}",
+    "FailedToTerminateService": "O pedido para terminar o serviço falhou."
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

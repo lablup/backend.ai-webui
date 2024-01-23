@@ -1457,7 +1457,8 @@
     "TimeStamp": "Stempel waktu",
     "Result": "Hasil",
     "Finished": "Selesai",
-    "ServiceDelegatedFrom": "Layanan model dibuat oleh {{ createdUser }} namun kepemilikan sesi akan didelegasikan ke {{ sessionOwner }}"
+    "ServiceDelegatedFrom": "Layanan model dibuat oleh {{ createdUser }} namun kepemilikan sesi akan didelegasikan ke {{ sessionOwner }}",
+    "FailedToTerminateService": "Permintaan untuk menghentikan layanan gagal."
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",
