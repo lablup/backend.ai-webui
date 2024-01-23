@@ -34,5 +34,13 @@
         "headerBorderRadius": 0
       }
     }
+  },
+  "logo": {
+    "src": "/manifest/backend.ai-text.svg",
+    "srcCollapsed": "/manifest/backend.ai-brand-simple.svg",
+    "logoTitle": "WebUI",
+    "logoTitleCollapsed": "WebUI",
+    "alt": "Backend.AI Logo",
+    "href": "/summary"
   }
 }

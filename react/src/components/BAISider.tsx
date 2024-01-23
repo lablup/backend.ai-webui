@@ -1,12 +1,13 @@
+import { useCustomThemeConfig } from '../helper/customThemeConfig';
+import { useWebUINavigate } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import Flex from './Flex';
 import { Grid, SiderProps, Typography, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import _ from 'lodash';
-import React from 'react';
+import React, { useRef } from 'react';
 
 export interface BAISiderProps extends SiderProps {
-  // logo?: React.ReactNode;
   logoCollapsed?: React.ReactNode;
   logo?: React.ReactNode;
   logoTitleCollapsed?: React.ReactNode;
@@ -28,6 +29,10 @@ const BAISider: React.FC<BAISiderProps> = ({
   const { Text } = Typography;
   const { isDarkMode } = useThemeMode();
   const { xs } = Grid.useBreakpoint();
+  const themeConfig = useCustomThemeConfig();
+  const logoRef = useRef<HTMLImageElement>(null);
+  const logoCollapsedRef = useRef<HTMLImageElement>(null);
+  const webuiNavigate = useWebUINavigate();
 
   return (
     <>
@@ -93,13 +98,42 @@ const BAISider: React.FC<BAISiderProps> = ({
         >
           <div className="logo-img-wrap">
             <div style={{ display: otherProps.collapsed ? 'none' : 'block' }}>
-              {logo}
+              {themeConfig?.logo ? (
+                <img
+                  className="logo-wide"
+                  ref={logoRef}
+                  src={
+                    themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'
+                  }
+                  alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
+                  onClick={() =>
+                    webuiNavigate(themeConfig?.logo?.href || '/summary')
+                  }
+                />
+              ) : (
+                logo
+              )}
             </div>
             <div style={{ display: otherProps.collapsed ? 'block' : 'none' }}>
-              {logoCollapsed}
+              {themeConfig?.logo ? (
+                <img
+                  className="logo-square"
+                  ref={logoCollapsedRef}
+                  src={
+                    themeConfig?.logo?.srcCollapsed ||
+                    '/manifest/backend.ai-text.svg'
+                  }
+                  alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
+                  onClick={() =>
+                    webuiNavigate(themeConfig?.logo?.href || '/summary')
+                  }
+                />
+              ) : (
+                logoCollapsed
+              )}
             </div>
           </div>
-          <div className="logo-title-wrap site-name">
+          <div className="logo-title-wrap">
             <Typography.Text
               style={{
                 fontSize: 16,
@@ -108,7 +142,9 @@ const BAISider: React.FC<BAISiderProps> = ({
                 whiteSpace: 'nowrap',
               }}
             >
-              {otherProps.collapsed ? logoTitleCollapsed : logoTitle}
+              {otherProps.collapsed
+                ? themeConfig?.logo?.logoTitleCollapsed || logoTitleCollapsed
+                : themeConfig?.logo?.logoTitle || logoTitle}
             </Typography.Text>
           </div>
         </Flex>
