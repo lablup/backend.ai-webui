@@ -4,6 +4,7 @@ import { useCurrentUserRole } from '../../hooks/backendai';
 import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
 import Flex from '../Flex';
+import SignoutModal from '../SignoutModal';
 import { PluginPage, WebUIPluginType } from './MainLayout';
 import {
   BarChartOutlined,
@@ -21,6 +22,7 @@ import {
   ToolOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import { theme, MenuProps, Typography } from 'antd';
 import _ from 'lodash';
 import React, { useRef } from 'react';
@@ -45,6 +47,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const themeConfig = useCustomThemeConfig();
   const logoRef = useRef<HTMLImageElement>(null);
   const logoCollapsedRef = useRef<HTMLImageElement>(null);
+  const supportServing = baiClient?.supports('model-serving') ?? false;
+  const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
 
   const generalMenu: MenuProps['items'] = [
     {
@@ -57,7 +61,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <BarsOutlined />,
       key: 'job',
     },
-    {
+    supportServing && {
       label: t('webui.menu.Serving'),
       icon: <RocketOutlined />,
       key: 'serving',
@@ -72,23 +76,21 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <CloudUploadOutlined />,
       key: 'data',
     },
-    (!isHideAgents && {
+    !isHideAgents && {
       label: t('webui.menu.AgentSummary'),
       icon: <HddOutlined />,
       key: 'agent-summary',
-    }) ||
-      null,
+    },
     {
       label: t('webui.menu.Statistics'),
       icon: <BarChartOutlined />,
       key: 'statistics',
     },
-    (!!fasttrackEndpoint && {
+    !!fasttrackEndpoint && {
       label: t('webui.menu.FastTrack'),
       icon: <ExportOutlined />,
       key: 'fasttrack',
-    }) ||
-      null,
+    },
   ];
 
   const adminMenu: MenuProps['items'] = [
@@ -254,6 +256,22 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 >
                   {t('webui.menu.AboutBackendAI')}
                 </Typography.Link>
+                {!!baiClient?._config?.allowSignout && (
+                  <>
+                    &nbsp;·&nbsp;
+                    <Typography.Link
+                      type="secondary"
+                      style={{ fontSize: 11 }}
+                      onClick={toggleSignoutModal}
+                    >
+                      {t('webui.menu.LeaveService')}
+                    </Typography.Link>
+                    <SignoutModal
+                      open={isOpenSignoutModal}
+                      onRequestClose={toggleSignoutModal}
+                    />
+                  </>
+                )}
               </Flex>
             </div>
             <address>

@@ -303,5 +303,6 @@ type BackendAIConfig = {
   pluginPages: string;
   blockList: string[];
   inactiveList: string[];
+  allowSignout: boolean;
   [key: string]: any;
 };

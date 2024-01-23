@@ -1,11 +1,12 @@
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
+import FlexActivityIndicator from '../FlexActivityIndicator';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { useLocalStorageState } from 'ahooks';
-import { Layout, theme } from 'antd';
+import { App, Layout, theme } from 'antd';
 import _ from 'lodash';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
@@ -75,7 +76,14 @@ function MainLayout() {
         backgroundColor: 'transparent',
       }}
     >
-      <Suspense fallback={<BAISider style={{ visibility: 'hidden' }} />}>
+      <Suspense
+        fallback={
+          <>
+            <BAISider style={{ visibility: 'hidden' }} />
+            <NotificationForAnonymous />
+          </>
+        }
+      >
         <WebUISider
           collapsed={sideCollapsed}
           onBreakpoint={(broken) => {
@@ -151,7 +159,7 @@ function MainLayout() {
               })}
             />
           )} */}
-            <Suspense>
+            <Suspense fallback={<FlexActivityIndicator />}>
               <Outlet />
             </Suspense>
             {/* To match paddig to 16 (2+14) */}
@@ -164,5 +172,22 @@ function MainLayout() {
     </Layout>
   );
 }
+
+const NotificationForAnonymous = () => {
+  const app = App.useApp();
+  useEffect(() => {
+    const handler = (e: any) => {
+      app.notification.open({
+        ...e.detail,
+        placement: 'bottomRight',
+      });
+    };
+    document.addEventListener('add-bai-notification', handler);
+    return () => {
+      document.removeEventListener('add-bai-notification', handler);
+    };
+  }, [app.notification]);
+  return null;
+};
 
 export default MainLayout;
