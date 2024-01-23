@@ -1106,9 +1106,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
                     resource-legend-stack">
           <div class="resource-legend-icon start"></div>
-          <span class="resource-legend">${_t(
-            'session.launcher.CurrentResourceGroup',
-          )} (${this.scaling_group})</span>
+          <span class="resource-legend" style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">
+            ${_t('session.launcher.CurrentResourceGroup')}
+            (${this.scaling_group})
+          </span>
         </div>
         <div class="layout horizontal center ${
           this.direction === 'vertical' ? 'start-justified' : 'end-justified'

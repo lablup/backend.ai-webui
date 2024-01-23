@@ -240,6 +240,7 @@ customElements.define(
                 size="large"
                 value={value}
                 loading={value !== props.value || value === ''}
+                style={{ maxWidth: 310 }}
                 onChange={(value) => {
                   setValue(value);
                   props.dispatchEvent('change', value);
