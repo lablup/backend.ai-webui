@@ -40,13 +40,15 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
   const baiClient = useSuspendedBackendaiClient();
+  const themeConfig = useCustomThemeConfig();
+
   const isHideAgents = baiClient?._config?.hideAgents ?? true;
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
   const blockList = baiClient?._config?.blockList ?? null;
   const inactiveList = baiClient?._config?.inactiveList ?? null;
   const siteDescription = baiClient?._config?.siteDescription ?? null;
-  const themeConfig = useCustomThemeConfig();
   const supportServing = baiClient?.supports('model-serving') ?? false;
+
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
 
   const generalMenu: MenuProps['items'] = [

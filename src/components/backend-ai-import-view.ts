@@ -813,8 +813,8 @@ export default class BackendAIImport extends BackendAIPage {
             </div>
           </div>
         </lablup-activity-panel>
-        <!-- </div>
-      <div class="horizontal wrap layout"> -->
+      </div>
+      <div class="horizontal wrap layout" style="margin-top:24px;">
         <lablup-activity-panel
           title="${_t('import.ImportGithubRepo')}"
           elevation="1"
