@@ -5,6 +5,7 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import ImageEnvironmentSelectFormItems from './ImageEnvironmentSelectFormItems';
 import ResourceAllocationFormItems, {
+  AUTOMATIC_DEFAULT_SHMEM,
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
 } from './ResourceAllocationFormItems';
 import SliderInputFormItem from './SliderInputFormItem';
@@ -155,19 +156,29 @@ const ModelServiceSettingModal: React.FC<Props> = ({
           initialValues={
             endpoint
               ? {
-                  ...endpoint,
                   desired_session_count: endpoint?.desired_session_count,
                   // FIXME: memory doesn't applied to resource allocation
                   resource: {
-                    cpu: JSON.parse(endpoint?.resource_slots)?.cpu, //JSON.parse(endpoint?.resource_slots)?.cpu,
-                    mem: '3.5g', // iSizeToSize((JSON.parse(endpoint?.resource_slots)?.mem || 0) + 'b', 'g', 2)?.numberUnit,// '4g', //
-                    shmem: '1.25g', // iSizeToSize((JSON.parse(endpoint?.resource_opts)?.shmem || 0) + 'b', 'g', 2)?.numberUnit,// '0.125g',
+                    cpu: JSON.parse(endpoint?.resource_slots)?.cpu,
+                    mem: iSizeToSize(
+                      JSON.parse(endpoint?.resource_slots)?.mem + 'b',
+                      'g',
+                      2,
+                    )?.numberUnit,
+                    shmem: iSizeToSize(
+                      JSON.parse(endpoint?.resource_opts)?.shmem ||
+                        AUTOMATIC_DEFAULT_SHMEM,
+                      'g',
+                      2,
+                    )?.numberUnit,
                   },
                   cluster_mode: endpoint?.cluster_mode,
                   cluster_size: endpoint?.cluster_size,
-                  enabledAutomaticShmem: true,
                 }
-              : {}
+              : {
+                  desired_session_count: 0,
+                  ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+                }
           }
           requiredMark="optional"
           style={{ marginBottom: token.marginLG, marginTop: token.margin }}
