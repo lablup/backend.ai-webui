@@ -8,7 +8,7 @@ type Queries {
   node(
     """The ID of the object"""
     id: ID!
-  ): AsyncNode
+  ): Node
   agent(agent_id: String!): Agent
   agent_list(limit: Int!, offset: Int!, filter: String, order: String, scaling_group: String, status: String): AgentList
   agents(scaling_group: String, status: String): [Agent]
@@ -96,7 +96,7 @@ type Queries {
 This GraphQL Relay Node extension is for running asynchronous resolvers and fine-grained handling of global id.
 Refer to: https://github.com/graphql-python/graphene/blob/master/graphene/relay/node.py
 """
-interface AsyncNode {
+interface Node {
   """The ID of the object"""
   id: ID!
 }
@@ -230,7 +230,7 @@ type Domain {
   scaling_groups: [String]
 }
 
-type GroupNode implements AsyncNode {
+type GroupNode implements Node {
   """The ID of the object"""
   id: ID!
   name: String
@@ -284,7 +284,7 @@ type UserEdge {
   cursor: String!
 }
 
-type UserNode implements AsyncNode {
+type UserNode implements Node {
   """The ID of the object"""
   id: ID!
 
@@ -827,12 +827,6 @@ type ContainerRegistry implements Node {
   config: ContainerRegistryConfig
 }
 
-"""An object with an ID"""
-interface Node {
-  """The ID of the object"""
-  id: ID!
-}
-
 type ContainerRegistryConfig {
   url: String!
   type: String!
@@ -842,7 +836,7 @@ type ContainerRegistryConfig {
   ssl_verify: Boolean
 }
 
-type ModelCard implements AsyncNode {
+type ModelCard implements Node {
   """The ID of the object"""
   id: ID!
   name: String
@@ -988,6 +982,7 @@ type Mutations {
   create_container_registry(hostname: String!, props: CreateContainerRegistryInput!): CreateContainerRegistry
   modify_container_registry(hostname: String!, props: ModifyContainerRegistryInput!): ModifyContainerRegistry
   delete_container_registry(hostname: String!): DeleteContainerRegistry
+  modify_endpoint(endpoint_id: UUID!, props: ModifyEndpointInput!): ModifyEndpoint
 }
 
 type ModifyAgent {
@@ -1540,4 +1535,17 @@ input ModifyContainerRegistryInput {
 
 type DeleteContainerRegistry {
   container_registry: ContainerRegistry
+}
+
+type ModifyEndpoint {
+  ok: Boolean
+  msg: String
+}
+
+input ModifyEndpointInput {
+  resource_slots: JSONString!
+  resource_opts: JSONString
+  cluster_mode: String
+  cluster_size: Int
+  desired_session_count: Int
 }
