@@ -1548,4 +1548,5 @@ input ModifyEndpointInput {
   cluster_mode: String
   cluster_size: Int
   desired_session_count: Int
+  image: String
 }
