@@ -137,10 +137,12 @@ const ModelServiceSettingModal: React.FC<Props> = ({
       style={{
         zIndex: 10000,
       }}
-      destroyOnClose
+      destroyOnClose={true}
+      maskClosable={false}
       okButtonProps={{
         loading: mutationToUpdateService.isLoading,
       }}
+      onCancel={() => onRequestClose()}
       title={t('modelService.EditModelService')}
       {...baiModalProps}
       footer={() => (

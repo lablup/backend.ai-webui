@@ -193,6 +193,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       title={t('modelService.StartNewServing')}
       destroyOnClose={true}
       maskClosable={false}
+      onCancel={() => onRequestClose()}
       footer={() => (
         <Flex direction="row" justify="end">
           <Button onClick={handleCancel}>{t('button.Cancel')}</Button>
