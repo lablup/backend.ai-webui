@@ -7,6 +7,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentDomainValue } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
+import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
@@ -14,7 +15,7 @@ import ImageEnvironmentSelectFormItems, {
 import ResourceGroupSelect from './ResourceGroupSelect';
 import SliderInputFormItem from './SliderInputFormItem';
 import VFolderSelect from './VFolderSelect';
-import { Card, Form, Input, theme, Switch, message } from 'antd';
+import { Card, Form, Input, theme, Switch, message, Button } from 'antd';
 import _ from 'lodash';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -190,10 +191,16 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   return (
     <BAIModal
       title={t('modelService.StartNewServing')}
-      onOk={handleOk}
-      onCancel={handleCancel}
       destroyOnClose={true}
       maskClosable={false}
+      footer={() => (
+        <Flex direction="row" justify="end">
+          <Button onClick={handleCancel}>{t('button.Cancel')}</Button>
+          <Button type="primary" onClick={handleOk}>
+            {t('button.Create')}
+          </Button>
+        </Flex>
+      )}
       confirmLoading={mutationToCreateService.isLoading}
       {...modalProps}
     >

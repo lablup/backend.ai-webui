@@ -11,7 +11,7 @@ import ResourceAllocationFormItems, {
 import SliderInputFormItem from './SliderInputFormItem';
 import { ModelServiceSettingModalModifyMutation } from './__generated__/ModelServiceSettingModalModifyMutation.graphql';
 import { ModelServiceSettingModal_endpoint$key } from './__generated__/ModelServiceSettingModal_endpoint.graphql';
-import { Form, InputNumber, theme } from 'antd';
+import { Button, Form, InputNumber, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -138,13 +138,19 @@ const ModelServiceSettingModal: React.FC<Props> = ({
         zIndex: 10000,
       }}
       destroyOnClose
-      onOk={handleOk}
-      onCancel={handleCancel}
       okButtonProps={{
         loading: mutationToUpdateService.isLoading,
       }}
       title={t('modelService.EditModelService')}
       {...baiModalProps}
+      footer={() => (
+        <Flex direction="row" justify="end">
+          <Button onClick={handleCancel}>{t('button.Cancel')}</Button>
+          <Button type="primary" onClick={handleOk}>
+            {t('button.Update')}
+          </Button>
+        </Flex>
+      )}
     >
       <Flex direction="row" align="stretch" justify="around">
         <Form
