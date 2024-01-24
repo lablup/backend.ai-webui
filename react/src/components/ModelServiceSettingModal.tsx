@@ -1,4 +1,4 @@
-import { baiSignedRequestWithPromise } from '../helper';
+import { baiSignedRequestWithPromise, iSizeToSize } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
@@ -132,75 +132,77 @@ const ModelServiceSettingModal: React.FC<Props> = ({
   };
 
   return (
-    <Suspense>
-      <BAIModal
-        style={{
-          zIndex: 10000,
-        }}
-        destroyOnClose
-        onOk={handleOk}
-        onCancel={handleCancel}
-        okButtonProps={{
-          loading: mutationToUpdateService.isLoading,
-        }}
-        title={t('modelService.EditModelService')}
-        {...baiModalProps}
-      >
-        <Flex direction="row" align="stretch" justify="around">
-          <Form
-            form={form}
-            preserve={false}
-            validateTrigger={['onChange', 'onBlur']}
-            layout="vertical"
-            labelCol={{ span: 12 }}
-            initialValues={{
-              desired_session_count: endpoint?.desired_session_count,
-              ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
-              // FIXME: parsing error derived from undefined
-              // resource: {
-              //   cpu: parseInt(JSON.parse(endpoint?.resource_slots).cpu),
-              //   mem: '4g',
-              //   shmem: 0.125,// JSON.parse(endpoint?.resource_opts).shmem,
-              //   accelerator: 0,// endpoint?.resource_slots.gpu,
-              // },
-              cluster_mode: endpoint?.cluster_mode,
-              cluster_size: endpoint?.cluster_size,
+    <BAIModal
+      style={{
+        zIndex: 10000,
+      }}
+      destroyOnClose
+      onOk={handleOk}
+      onCancel={handleCancel}
+      okButtonProps={{
+        loading: mutationToUpdateService.isLoading,
+      }}
+      title={t('modelService.EditModelService')}
+      {...baiModalProps}
+    >
+      <Flex direction="row" align="stretch" justify="around">
+        <Form
+          form={form}
+          preserve={false}
+          validateTrigger={['onChange', 'onBlur']}
+          layout="vertical"
+          labelCol={{ span: 12 }}
+          initialValues={
+            endpoint
+              ? {
+                  ...endpoint,
+                  desired_session_count: endpoint?.desired_session_count,
+                  // FIXME: memory doesn't applied to resource allocation
+                  resource: {
+                    cpu: JSON.parse(endpoint?.resource_slots)?.cpu, //JSON.parse(endpoint?.resource_slots)?.cpu,
+                    mem: '3.5g', // iSizeToSize((JSON.parse(endpoint?.resource_slots)?.mem || 0) + 'b', 'g', 2)?.numberUnit,// '4g', //
+                    shmem: '1.25g', // iSizeToSize((JSON.parse(endpoint?.resource_opts)?.shmem || 0) + 'b', 'g', 2)?.numberUnit,// '0.125g',
+                  },
+                  cluster_mode: endpoint?.cluster_mode,
+                  cluster_size: endpoint?.cluster_size,
+                  enabledAutomaticShmem: true,
+                }
+              : {}
+          }
+          requiredMark="optional"
+          style={{ marginBottom: token.marginLG, marginTop: token.margin }}
+        >
+          <SliderInputFormItem
+            label={t('modelService.DesiredRoutingCount')}
+            name="desiredRoutingCount"
+            rules={[
+              {
+                required: true,
+                pattern: /^[0-9]+$/,
+                message: t('modelService.OnlyAllowsNonNegativeIntegers'),
+              },
+            ]}
+            inputNumberProps={{
+              //TODO: change unit based on resource limit
+              addonAfter: '#',
             }}
-            requiredMark="optional"
-            style={{ marginBottom: token.marginLG, marginTop: token.margin }}
-          >
-            <SliderInputFormItem
-              label={t('modelService.DesiredRoutingCount')}
-              name="desiredRoutingCount"
-              rules={[
-                {
-                  required: true,
-                  pattern: /^[0-9]+$/,
-                  message: t('modelService.OnlyAllowsNonNegativeIntegers'),
-                },
-              ]}
-              inputNumberProps={{
-                //TODO: change unit based on resource limit
-                addonAfter: '#',
-              }}
-              required
-            />
-            <ImageEnvironmentSelectFormItems
-            // //TODO: test with real inference images
-            // filter={(image) => {
-            //   return !!_.find(image?.labels, (label) => {
-            //     return (
-            //       label?.key === "ai.backend.role" &&
-            //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
-            //     );
-            //   });
-            // }}
-            />
-            <ResourceAllocationFormItems />
-          </Form>
-        </Flex>
-      </BAIModal>
-    </Suspense>
+            required
+          />
+          <ImageEnvironmentSelectFormItems
+          // //TODO: test with real inference images
+          // filter={(image) => {
+          //   return !!_.find(image?.labels, (label) => {
+          //     return (
+          //       label?.key === "ai.backend.role" &&
+          //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
+          //     );
+          //   });
+          // }}
+          />
+          <ResourceAllocationFormItems />
+        </Form>
+      </Flex>
+    </BAIModal>
   );
 };
 
