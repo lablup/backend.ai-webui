@@ -3,12 +3,18 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
+import ImageEnvironmentSelectFormItems from './ImageEnvironmentSelectFormItems';
+import ResourceAllocationFormItems, {
+  RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+} from './ResourceAllocationFormItems';
+import SliderInputFormItem from './SliderInputFormItem';
+import { ModelServiceSettingModalModifyMutation } from './__generated__/ModelServiceSettingModalModifyMutation.graphql';
 import { ModelServiceSettingModal_endpoint$key } from './__generated__/ModelServiceSettingModal_endpoint.graphql';
 import { Form, InputNumber, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment } from 'react-relay';
+import { useFragment, useMutation } from 'react-relay';
 
 interface Props extends BAIModalProps {
   endpointFrgmt: ModelServiceSettingModal_endpoint$key | null;
@@ -34,6 +40,11 @@ const ModelServiceSettingModal: React.FC<Props> = ({
       fragment ModelServiceSettingModal_endpoint on Endpoint {
         endpoint_id
         desired_session_count
+        resource_slots
+        resource_opts
+        cluster_mode
+        cluster_size
+        image
       }
     `,
     endpointFrgmt,
@@ -53,21 +64,61 @@ const ModelServiceSettingModal: React.FC<Props> = ({
     },
   });
 
+  const [
+    commitModifyEndpoint,
+    // inInFlightCommitModifyEndpoint
+  ] = useMutation<ModelServiceSettingModalModifyMutation>(graphql`
+    mutation ModelServiceSettingModalModifyMutation(
+      $endpoint_id: UUID!
+      $props: ModifyEndpointInput!
+    ) {
+      modify_endpoint(endpoint_id: $endpoint_id, props: $props) {
+        ok
+        msg
+      }
+    }
+  `);
+
   // Apply any operation after clicking OK button
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
     form
       .validateFields()
       .then((values) => {
-        mutationToUpdateService.mutate(values, {
-          onSuccess: () => {
-            console.log('service updated');
+        commitModifyEndpoint({
+          variables: {
+            // @ts-ignore
+            endpoint_id: endpoint?.endpoint_id,
+            props: {
+              // TODO: setting resource_slots based on form values
+              resource_slots: JSON.stringify({
+                cpu: 2,
+                mem: '4g',
+              }),
+            },
+          },
+          onCompleted(response) {
+            if (response?.modify_endpoint?.ok) {
+              console.log('successfully modified');
+            } else {
+              console.log('error occurred');
+            }
             onRequestClose(true);
           },
-          onError: (error) => {
-            console.log(error);
-            // TODO: show error message
+          onError: (err) => {
+            // console.log(err);
+            throw err;
           },
         });
+        // mutationToUpdateService.mutate(values, {
+        //   onSuccess: () => {
+        //     console.log('service updated');
+        //     onRequestClose(true);
+        //   },
+        //   onError: (error) => {
+        //     console.log(error);
+        //     // TODO: show error message
+        //   },
+        // });
       })
       .catch((err) => {
         console.log(err);
@@ -81,44 +132,75 @@ const ModelServiceSettingModal: React.FC<Props> = ({
   };
 
   return (
-    <BAIModal
-      style={{
-        zIndex: 10000,
-      }}
-      destroyOnClose
-      onOk={handleOk}
-      onCancel={handleCancel}
-      okButtonProps={{
-        loading: mutationToUpdateService.isLoading,
-      }}
-      title={t('modelService.EditModelService')}
-      {...baiModalProps}
-    >
-      <Flex direction="row" align="stretch" justify="around">
-        <Form
-          form={form}
-          preserve={false}
-          validateTrigger={['onChange', 'onBlur']}
-          initialValues={{
-            desired_session_count: endpoint?.desired_session_count,
-          }}
-          style={{ marginBottom: token.marginLG, marginTop: token.margin }}
-        >
-          <Form.Item
-            name="desired_session_count"
-            label={t('modelService.DesiredSessionCount')}
-            rules={[
-              {
-                pattern: /^[0-9]+$/,
-                message: t('modelService.OnlyAllowsNonNegativeIntegers'),
-              },
-            ]}
+    <Suspense>
+      <BAIModal
+        style={{
+          zIndex: 10000,
+        }}
+        destroyOnClose
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okButtonProps={{
+          loading: mutationToUpdateService.isLoading,
+        }}
+        title={t('modelService.EditModelService')}
+        {...baiModalProps}
+      >
+        <Flex direction="row" align="stretch" justify="around">
+          <Form
+            form={form}
+            preserve={false}
+            validateTrigger={['onChange', 'onBlur']}
+            layout="vertical"
+            labelCol={{ span: 12 }}
+            initialValues={{
+              desired_session_count: endpoint?.desired_session_count,
+              ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+              // FIXME: parsing error derived from undefined
+              // resource: {
+              //   cpu: parseInt(JSON.parse(endpoint?.resource_slots).cpu),
+              //   mem: '4g',
+              //   shmem: 0.125,// JSON.parse(endpoint?.resource_opts).shmem,
+              //   accelerator: 0,// endpoint?.resource_slots.gpu,
+              // },
+              cluster_mode: endpoint?.cluster_mode,
+              cluster_size: endpoint?.cluster_size,
+            }}
+            requiredMark="optional"
+            style={{ marginBottom: token.marginLG, marginTop: token.margin }}
           >
-            <InputNumber type="number" min={0} />
-          </Form.Item>
-        </Form>
-      </Flex>
-    </BAIModal>
+            <SliderInputFormItem
+              label={t('modelService.DesiredRoutingCount')}
+              name="desiredRoutingCount"
+              rules={[
+                {
+                  required: true,
+                  pattern: /^[0-9]+$/,
+                  message: t('modelService.OnlyAllowsNonNegativeIntegers'),
+                },
+              ]}
+              inputNumberProps={{
+                //TODO: change unit based on resource limit
+                addonAfter: '#',
+              }}
+              required
+            />
+            <ImageEnvironmentSelectFormItems
+            // //TODO: test with real inference images
+            // filter={(image) => {
+            //   return !!_.find(image?.labels, (label) => {
+            //     return (
+            //       label?.key === "ai.backend.role" &&
+            //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
+            //     );
+            //   });
+            // }}
+            />
+            <ResourceAllocationFormItems />
+          </Form>
+        </Flex>
+      </BAIModal>
+    </Suspense>
   );
 };
 
