@@ -164,7 +164,7 @@ const ModelServiceSettingModal: React.FC<Props> = ({
           initialValues={
             endpoint
               ? {
-                  desired_session_count: endpoint?.desired_session_count,
+                  desiredRoutingCount: endpoint?.desired_session_count || 0,
                   // FIXME: memory doesn't applied to resource allocation
                   resource: {
                     cpu: JSON.parse(endpoint?.resource_slots)?.cpu,
@@ -200,7 +200,6 @@ const ModelServiceSettingModal: React.FC<Props> = ({
             rules={[
               {
                 required: true,
-                pattern: /^[0-9]+$/,
                 message: t('modelService.OnlyAllowsNonNegativeIntegers'),
               },
             ]}
