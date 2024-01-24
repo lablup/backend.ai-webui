@@ -2,8 +2,8 @@ import BAIModal from '../components/BAIModal';
 import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
-import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
+import ServiceSettingModal from '../components/ServiceSettingModal';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import { baiSignedRequestWithPromise } from '../helper';
 import {
@@ -60,7 +60,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const [isOpenServiceLauncher, setIsOpenServiceLauncher] = useState(false);
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const [selectedModelService, setSelectedModelService] = useState<Endpoint>();
-  const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] =
+  const [isOpenServiceSettingModal, setIsOpenServiceSettingModal] =
     useState(false);
 
   // const [paginationState, setPaginationState] = useState<{
@@ -139,7 +139,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               row.status?.toLowerCase() === 'destroying'
             }
             onClick={() => {
-              setIsOpenModelServiceSettingModal(true);
+              setIsOpenServiceSettingModal(true);
               setSelectedModelService(row);
             }}
           />
@@ -292,7 +292,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 traffic_ratio
                 status
               }
-              ...ModelServiceSettingModal_endpoint
+              ...ServiceSettingModal_endpoint
               ...EndpointOwnerInfoFragment
               ...EndpointStatusTagFragment
             }
@@ -433,7 +433,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               extraFetchKey={""}
               dataSource={modelServiceList}
               onClickEdit={(row) => {
-                setIsOpenModelServiceSettingModal(true);
+                setIsOpenServiceSettingModal(true);
                 setSelectedModelService(row);
               }}
               onClickTerminate={(row) => {
@@ -522,10 +522,10 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
           <p>{t('dialog.ask.DoYouWantToProceed')}</p>
         </Flex>
       </BAIModal>
-      <ModelServiceSettingModal
-        open={isOpenModelServiceSettingModal}
+      <ServiceSettingModal
+        open={isOpenServiceSettingModal}
         onRequestClose={(success) => {
-          setIsOpenModelServiceSettingModal(false);
+          setIsOpenServiceSettingModal(false);
           if (success) {
             startRefetchTransition(() => {
               updateServicesFetchKey();

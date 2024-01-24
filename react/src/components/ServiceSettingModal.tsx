@@ -9,8 +9,8 @@ import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
 } from './ResourceAllocationFormItems';
 import SliderInputFormItem from './SliderInputFormItem';
-import { ModelServiceSettingModalModifyMutation } from './__generated__/ModelServiceSettingModalModifyMutation.graphql';
-import { ModelServiceSettingModal_endpoint$key } from './__generated__/ModelServiceSettingModal_endpoint.graphql';
+import { ServiceSettingModalModifyMutation } from './__generated__/ServiceSettingModalModifyMutation.graphql';
+import { ServiceSettingModal_endpoint$key } from './__generated__/ServiceSettingModal_endpoint.graphql';
 import { Button, Form, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React, { Suspense } from 'react';
@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
 
 interface Props extends BAIModalProps {
-  endpointFrgmt: ModelServiceSettingModal_endpoint$key | null;
+  endpointFrgmt: ServiceSettingModal_endpoint$key | null;
   onRequestClose: (success?: boolean) => void;
 }
 
@@ -26,7 +26,7 @@ interface ServiceSettingFormInput {
   desired_session_count: number;
 }
 
-const ModelServiceSettingModal: React.FC<Props> = ({
+const ServiceSettingModal: React.FC<Props> = ({
   onRequestClose,
   endpointFrgmt,
   ...baiModalProps
@@ -38,7 +38,7 @@ const ModelServiceSettingModal: React.FC<Props> = ({
 
   const endpoint = useFragment(
     graphql`
-      fragment ModelServiceSettingModal_endpoint on Endpoint {
+      fragment ServiceSettingModal_endpoint on Endpoint {
         endpoint_id
         desired_session_count
         resource_slots
@@ -68,8 +68,8 @@ const ModelServiceSettingModal: React.FC<Props> = ({
   const [
     commitModifyEndpoint,
     // inInFlightCommitModifyEndpoint
-  ] = useMutation<ModelServiceSettingModalModifyMutation>(graphql`
-    mutation ModelServiceSettingModalModifyMutation(
+  ] = useMutation<ServiceSettingModalModifyMutation>(graphql`
+    mutation ServiceSettingModalModifyMutation(
       $endpoint_id: UUID!
       $props: ModifyEndpointInput!
     ) {
@@ -227,4 +227,4 @@ const ModelServiceSettingModal: React.FC<Props> = ({
   );
 };
 
-export default ModelServiceSettingModal;
+export default ServiceSettingModal;
