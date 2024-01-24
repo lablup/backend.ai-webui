@@ -123,21 +123,27 @@ const ResourceAllocationFormItems: React.FC<
   };
 
   useEffect(() => {
-    // when image changed, set value of resources to min value
+    // when image changed, set value of resources to min value only if it's larger than current value
+
+    const cpuValue = Math.max(
+      resourceLimits.cpu?.min as number,
+      form.getFieldValue(['resource', 'cpu']),
+    );
+    const memValue = Math.max(
+      (iSizeToSize(resourceLimits.shmem?.min, 'm')?.number || 0) +
+        (iSizeToSize(resourceLimits.mem?.min, 'm')?.number || 0),
+      iSizeToSize(form.getFieldValue(['resource', 'mem']), 'm')
+        ?.number as number,
+    );
 
     form.setFieldsValue({
       resource: {
-        cpu: resourceLimits.cpu?.min,
-        mem:
-          iSizeToSize(
-            (iSizeToSize(resourceLimits.shmem?.min, 'm')?.number || 0) +
-              (iSizeToSize(resourceLimits.mem?.min, 'm')?.number || 0) +
-              'm',
-            'g',
-          )?.number + 'g', //to prevent loosing precision
+        cpu: cpuValue,
+        mem: iSizeToSize(memValue + 'm', 'g')?.number + 'g', // to prevent losing precision
       },
     });
 
+    // NOTE: accelerator value setting is done inside the conditional statement
     if (currentImageAcceleratorLimits.length > 0) {
       if (
         _.find(
@@ -149,9 +155,12 @@ const ResourceAllocationFormItems: React.FC<
         // if current selected accelerator type is supported in the selected image,
         form.setFieldValue(
           ['resource', 'accelerator'],
-          resourceLimits.accelerators[
-            form.getFieldValue(['resource', 'acceleratorType'])
-          ]?.min,
+          Math.max(
+            resourceLimits.accelerators[
+              form.getFieldValue(['resource', 'acceleratorType'])
+            ]?.min as number,
+            form.getFieldValue(['resource', 'accelerator']) || 0,
+          ),
         );
       } else {
         // if current selected accelerator type is not supported in the selected image,
@@ -167,7 +176,10 @@ const ResourceAllocationFormItems: React.FC<
         if (nextImageSelectorType) {
           form.setFieldValue(
             ['resource', 'accelerator'],
-            resourceLimits.accelerators[nextImageSelectorType]?.min,
+            Math.max(
+              resourceLimits.accelerators[nextImageSelectorType]?.min as number,
+              form.getFieldValue(['resource', 'accelerator']) || 0,
+            ),
           );
           form.setFieldValue(
             ['resource', 'acceleratorType'],
