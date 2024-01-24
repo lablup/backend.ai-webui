@@ -11,7 +11,7 @@ import ResourceAllocationFormItems, {
 import SliderInputFormItem from './SliderInputFormItem';
 import { ModelServiceSettingModalModifyMutation } from './__generated__/ModelServiceSettingModalModifyMutation.graphql';
 import { ModelServiceSettingModal_endpoint$key } from './__generated__/ModelServiceSettingModal_endpoint.graphql';
-import { Button, Form, InputNumber, theme } from 'antd';
+import { Button, Form, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -178,7 +178,10 @@ const ModelServiceSettingModal: React.FC<Props> = ({
                       2,
                     )?.numberUnit,
                   },
-                  cluster_mode: endpoint?.cluster_mode,
+                  cluster_mode:
+                    endpoint?.cluster_mode === 'MULTI_NODE'
+                      ? 'multi-node'
+                      : 'single-node',
                   cluster_size: endpoint?.cluster_size,
                 }
               : {
