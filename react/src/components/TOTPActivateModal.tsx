@@ -130,12 +130,21 @@ const TOTPActivateModal: React.FC<Props> = ({
               justify="center"
               style={{ margin: token.marginSM, gap: token.margin }}
             >
-              <Form.Item name="OTP" rules={[{ required: true }]}>
+              <Form.Item
+                name="OTP"
+                rules={[
+                  {
+                    required: true,
+                    pattern: /^[0-9]+$/,
+                    message: t('credential.validation.NumbersOnly'),
+                  },
+                ]}
+              >
                 <Input
                   maxLength={6}
                   allowClear
                   placeholder="000000"
-                  style={{ maxWidth: 120 }}
+                  style={{ maxWidth: 150 }}
                 />
               </Form.Item>
             </Flex>
