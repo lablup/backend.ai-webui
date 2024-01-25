@@ -40,6 +40,16 @@ const router = createBrowserRouter([
         element: <Navigate to="/summary" replace />,
       },
       {
+        //for electron dev mode
+        path: '/build/electron-app/app/index.html',
+        element: <Navigate to="/summary" replace />,
+      },
+      {
+        //for electron prod mode
+        path: '/app/index.html',
+        element: <Navigate to="/summary" replace />,
+      },
+      {
         path: '/summary',
         Component: () => (
           <AnnouncementAlert
