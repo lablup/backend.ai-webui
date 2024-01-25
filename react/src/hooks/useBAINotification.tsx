@@ -181,6 +181,8 @@ export const useBAINotification = () => {
       });
       return currentKey;
     },
+    // webuiNavigate is not a dependency because it is not used in the callback of useCallback
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [app.notification, setNotifications, destroyNotification],
   );
 

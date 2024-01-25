@@ -4,7 +4,6 @@ import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
-  CloseOutlined,
 } from '@ant-design/icons';
 import { Card, List, Progress, Typography, theme } from 'antd';
 import dayjs from 'dayjs';
