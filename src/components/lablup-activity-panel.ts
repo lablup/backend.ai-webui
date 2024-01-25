@@ -62,6 +62,7 @@ export default class LablupActivityPanel extends LitElement {
           border-radius: 5px;
           box-shadow: rgba(4, 7, 22, 0.7) 0px 0px 4px -2px;
           width: 280px;
+          line-height: 1.1;
         }
 
         div.card > h4 {

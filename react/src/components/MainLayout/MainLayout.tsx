@@ -7,7 +7,6 @@ import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { useLocalStorageState } from 'ahooks';
 import { App, Layout, theme } from 'antd';
-import _ from 'lodash';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 
@@ -28,9 +27,11 @@ export type WebUIPluginType = {
 function MainLayout() {
   const navigate = useNavigate();
 
-  const [sideCollapsed, setSideCollapsed] = useState<boolean>(false);
   const [compactSidebarActive] = useLocalStorageState<boolean | undefined>(
     'backendaiwebui.settings.user.compact_sidebar',
+  );
+  const [sideCollapsed, setSideCollapsed] = useState<boolean>(
+    !!compactSidebarActive,
   );
 
   // const currentDomainName = useCurrentDomainValue();
@@ -64,12 +65,6 @@ function MainLayout() {
     };
   }, [navigate]);
 
-  useEffect(() => {
-    if (!_.isUndefined(compactSidebarActive)) {
-      setSideCollapsed(compactSidebarActive);
-    }
-  }, [compactSidebarActive]);
-
   return (
     <Layout
       style={{
@@ -87,7 +82,11 @@ function MainLayout() {
         <WebUISider
           collapsed={sideCollapsed}
           onBreakpoint={(broken) => {
-            setSideCollapsed(broken);
+            if (broken) {
+              setSideCollapsed(true);
+            } else {
+              !compactSidebarActive && setSideCollapsed(false);
+            }
           }}
           webuiplugins={webUIPlugins}
         />
@@ -179,6 +178,7 @@ const NotificationForAnonymous = () => {
     const handler = (e: any) => {
       app.notification.open({
         ...e.detail,
+        closeIcon: false,
         placement: 'bottomRight',
       });
     };

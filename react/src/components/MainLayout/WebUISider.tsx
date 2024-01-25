@@ -91,6 +91,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       label: t('webui.menu.FastTrack'),
       icon: <ExportOutlined />,
       key: 'fasttrack',
+      onClick: () => {
+        window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
+      },
     },
   ];
 

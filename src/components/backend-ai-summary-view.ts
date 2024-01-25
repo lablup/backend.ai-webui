@@ -296,14 +296,16 @@ export default class BackendAISummary extends BackendAIPage {
           cursor: pointer;
           outline: inherit;
         }
-        button > i {
+        button.link-button > i {
           color: #5b5b5b;
           margin: 10px;
         }
-
-        button > span {
+        button.link-button > span {
           max-width: 70px;
           color: #838383;
+        }
+        button.link-button:hover {
+          color: #3e872d;
         }
       `,
     ];
@@ -865,19 +867,42 @@ export default class BackendAISummary extends BackendAIPage {
                           `
                         : html``
                     }
-
-                    <lablup-activity-panel class="footer-menu" noheader autowidth>
-                      <div slot="message" class="layout horizontal center center-justified flex upper-lower-space">
-                          <button class="link-button" @click="${() =>
-                            this._moveTo('/maintenance')}">
-                            <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
-                              <i class="fas fa-tools larger left-end-icon"></i>
-                              <span>${_t('summary.SystemMaintenance')}</span>
-                              <i class="fas fa-chevron-right right-end-icon"></i>
-                            </div>
-                          </button>
-                      </div>
-                    </lablup-activity-panel>
+                    ${
+                      this.is_superadmin
+                        ? html`
+                            <lablup-activity-panel
+                              class="footer-menu"
+                              noheader
+                              autowidth
+                            >
+                              <div
+                                slot="message"
+                                class="layout horizontal center center-justified flex upper-lower-space"
+                              >
+                                <button
+                                  class="link-button"
+                                  @click="${() => this._moveTo('/maintenance')}"
+                                >
+                                  <div
+                                    class="layout horizontal center center-justified flex"
+                                    style="font-size:14px;"
+                                  >
+                                    <i
+                                      class="fas fa-tools larger left-end-icon"
+                                    ></i>
+                                    <span>
+                                      ${_t('summary.SystemMaintenance')}
+                                    </span>
+                                    <i
+                                      class="fas fa-chevron-right right-end-icon"
+                                    ></i>
+                                  </div>
+                                </button>
+                              </div>
+                            </lablup-activity-panel>
+                          `
+                        : html``
+                    }
                   </div>
                 </div>
               </div>
