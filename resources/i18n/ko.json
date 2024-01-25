@@ -1451,7 +1451,8 @@
     "ConfirmTotpRemovalBody": "이중 인증을 정말 비활성화 하시겠습니까?",
     "TotpSetupNotAvailable": "이중 인증 설정이 불가합니다.",
     "RemoveTotpSetupCompleted": "이중 인증이 비활성화 되었습니다.",
-    "TurnOffTotp": "이중 인증 비활성화"
+    "TurnOffTotp": "이중 인증 비활성화",
+    "EnterConfirmationCode": "이제 확인을 위해 인증기에서 생성된 OTP를 입력하세요."
   },
   "ErrorBoundary": {
     "title": "에러가 발생했습니다.",

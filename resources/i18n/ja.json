@@ -1453,7 +1453,8 @@
     "TurnOffTotp": "二要素認証を無効にする",
     "ConfirmTotpRemovalBody": "本当に二要素認証を無効にしますか？",
     "RemoveTotpSetupCompleted": "二要素認証が無効になりました。",
-    "OTP": "二要素認証"
+    "OTP": "二要素認証",
+    "EnterConfirmationCode": "次に、認証システムによって生成された OTP を入力して確認します。"
   },
   "OpenVSCodeRemote": "ローカルVisual Studio Codeを開く",
   "inputLimit": {

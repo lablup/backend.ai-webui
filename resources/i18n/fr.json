@@ -1364,7 +1364,8 @@
     "ConfirmTotpRemovalBody": "Êtes-vous sûr de ne pas utiliser l'authentification à deux facteurs ?",
     "TotpSetupNotAvailable": "L'authentification à deux facteurs ne peut pas être configurée.",
     "TurnOffTotp": "Désactiver l'authentification à deux facteurs",
-    "RemoveTotpSetupCompleted": "2FA désactivé"
+    "RemoveTotpSetupCompleted": "2FA désactivé",
+    "EnterConfirmationCode": "Entrez maintenant l'OTP généré par l'authentificateur pour vérifier."
   },
   "inputLimit": {
     "4to64chars": "(4~64 caractères)"
