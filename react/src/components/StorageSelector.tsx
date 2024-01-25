@@ -1,4 +1,6 @@
 import { useSuspendedBackendaiClient } from '../hooks';
+import Flex from './Flex';
+import './StorageSelector.css';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
@@ -18,11 +20,13 @@ interface Props extends Omit<SelectProps, 'value' | 'onChange'> {
   value?: string | VolumeInfo;
   onChange?: (hostName: string, volumeInfo: VolumeInfo) => void;
   autoSelectDefault?: boolean;
+  showUsageStatus?: boolean;
 }
-const StorageSelector: React.FC<Props> = ({
+const StorageSelect: React.FC<Props> = ({
   value,
   onChange,
   autoSelectDefault,
+  showUsageStatus,
   ...selectProps
 }) => {
   const { t } = useTranslation();
@@ -39,20 +43,35 @@ const StorageSelector: React.FC<Props> = ({
 
   useEffect(() => {
     if (autoSelectDefault && !value && vhostInfo?.default) {
-      onChange?.(vhostInfo?.default, {
-        id: vhostInfo?.default,
-        ...(vhostInfo?.volume_info[vhostInfo?.default] || {}),
+      let selectedHost = vhostInfo?.default;
+
+      if (showUsageStatus) {
+        const lowestPercentageHost = _.minBy(
+          _.map(vhostInfo?.allowed, (host) => ({
+            host,
+            volume_info: vhostInfo?.volume_info[host],
+          })),
+          'volume_info.usage.percentage',
+        );
+        selectedHost = lowestPercentageHost?.host || vhostInfo?.default;
+      }
+
+      onChange?.(selectedHost, {
+        id: `auto (${selectedHost})`,
+        ...(vhostInfo?.volume_info[selectedHost] || {}),
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    console.log(vhostInfo);
   }, []);
 
+  //const idx = percentage < 70 ? 0 : percentage < 90 ? 1 : 2;
+  // const type = ['Adequate', 'Caution', 'Insufficient'][idx];
   return (
     <Select
-      filterOption={false}
+      filterOption={true}
       placeholder={t('data.SelectStorageHost')}
       loading={isLoadingVhostInfo}
-      style={{ minWidth: 165 }}
+      style={{ minWidth: 165, direction: 'ltr' }}
       // @ts-ignore
       value={value?.id || value}
       onChange={(id) => {
@@ -61,15 +80,19 @@ const StorageSelector: React.FC<Props> = ({
           ...(vhostInfo?.volume_info[id] || {}),
         });
       }}
-      options={_.map(vhostInfo?.allowed, (host) => {
-        return {
-          value: host,
-          label: host,
-        };
-      })}
       {...selectProps}
-    />
+    >
+      {_.map(vhostInfo?.allowed, (host) => {
+        return (
+          <Select.Option key={host} value={host}>
+            <Flex style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              {host}
+            </Flex>
+          </Select.Option>
+        );
+      })}
+    </Select>
   );
 };
 
-export default StorageSelector;
+export default StorageSelect;
