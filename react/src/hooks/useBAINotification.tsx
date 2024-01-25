@@ -1,9 +1,10 @@
-import { useSuspendedBackendaiClient } from '.';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '.';
 import BAINotificationItem from '../components/BAINotificationItem';
 import { App } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
 import _ from 'lodash';
 import { Key, useCallback, useEffect, useRef } from 'react';
+import { To } from 'react-router-dom';
 import { atom, useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -14,7 +15,7 @@ export interface NotificationState
   key: React.Key;
   created?: string;
   toTextKey?: string;
-  toUrl?: string;
+  to?: string | To;
   open?: boolean;
   backgroundTask?: {
     taskId?: string;
@@ -48,6 +49,7 @@ export const useBAINotification = () => {
   // const closedNotificationKeysRef = useRef<(React.Key | undefined)[]>([]);
 
   const baiClient = useSuspendedBackendaiClient();
+  const webuiNavigate = useWebUINavigate();
 
   const clearAllNotifications = useCallback(() => {
     setNotifications([]);
@@ -66,6 +68,7 @@ export const useBAINotification = () => {
 
   const upsertNotification = useCallback(
     (params: Partial<Omit<NotificationState, 'created'>>) => {
+      console.log('##3', params);
       let currentKey: React.Key | undefined;
       setNotifications((prevNotifications: NotificationState[]) => {
         let nextNotifications: NotificationState[];
@@ -127,9 +130,29 @@ export const useBAINotification = () => {
 
           app.notification.open({
             ...newNotification,
+            type: undefined, // override type to remove default icon from notification, icon displayed in BAINotificationItem
             placement: 'bottomRight',
             message: undefined,
-            description: <BAINotificationItem notification={newNotification} />,
+            description: (
+              <BAINotificationItem
+                notification={newNotification}
+                onClickAction={() => {
+                  if (newNotification.to) {
+                    webuiNavigate(
+                      newNotification.to,
+                      newNotification.to === '/usersettings'
+                        ? {
+                            params: {
+                              tab: 'logs',
+                            },
+                          }
+                        : undefined,
+                    );
+                  }
+                  destroyNotification(newNotification.key);
+                }}
+              />
+            ),
             onClose() {
               _.remove(
                 _activeNotificationKeys,

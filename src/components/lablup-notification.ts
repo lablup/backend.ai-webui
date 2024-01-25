@@ -186,7 +186,8 @@ export default class LablupNotification extends LitElement {
     if (this.text === '_DISCONNECTED') {
       return;
     }
-    if (Object.keys(log).length !== 0) {
+    const shouldSaveLog = Object.keys(log).length !== 0;
+    if (shouldSaveLog) {
       console.log(log);
       this._saveToLocalStorage('backendaiwebui.logs', log);
     }
@@ -194,11 +195,11 @@ export default class LablupNotification extends LitElement {
     const event: CustomEvent = new CustomEvent('add-bai-notification', {
       detail: {
         open: true,
-        type: Object.keys(log).length !== 0 ? 'error' : null,
-        message: this.text ?? this.detail,
-        description: this.detail,
-        toUrl: this.url,
-        duration: persistent ? 0 : 4.5,
+        type: shouldSaveLog ? 'error' : null,
+        message: this.text,
+        description: this.text ? undefined : this.detail,
+        to: shouldSaveLog ? '/usersettings' : this.url,
+        duration: persistent ? 0 : undefined,
         // closeIcon: persistent,
       },
     });

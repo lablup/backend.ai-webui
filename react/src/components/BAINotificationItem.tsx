@@ -3,6 +3,7 @@ import Flex from './Flex';
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
+  CloseCircleOutlined,
   CloseOutlined,
 } from '@ant-design/icons';
 import { Card, List, Progress, Typography, theme } from 'antd';
@@ -27,28 +28,43 @@ const BAINotificationItem: React.FC<{
       <Flex direction="column" align="stretch" gap={'xxs'}>
         <Flex
           direction="row"
-          align="center"
+          align="start"
           gap={'xs'}
           style={{
             paddingRight: token.paddingMD,
           }}
         >
-          {notification.backgroundTask &&
-            {
-              pending: (
-                <ClockCircleOutlined style={{ color: token.colorInfo }} />
-              ),
-              resolved: (
-                <CheckCircleOutlined style={{ color: token.colorSuccess }} />
-              ),
-              rejected: <CloseOutlined style={{ color: token.colorError }} />,
-            }[notification.backgroundTask.status]}
-          <Typography.Text strong>{notification.message}</Typography.Text>
+          <Flex style={{ height: 22 }}>
+            {notification.backgroundTask &&
+              {
+                pending: (
+                  <ClockCircleOutlined style={{ color: token.colorInfo }} />
+                ),
+                resolved: (
+                  <CheckCircleOutlined style={{ color: token.colorSuccess }} />
+                ),
+                rejected: (
+                  <CloseCircleOutlined style={{ color: token.colorError }} />
+                ),
+              }[notification.backgroundTask.status]}
+            {notification.type === 'error' ? (
+              <CloseCircleOutlined style={{ color: token.colorError }} />
+            ) : notification.type === 'success' ? (
+              <CheckCircleOutlined style={{ color: token.colorSuccess }} />
+            ) : null}
+          </Flex>
+          <Typography.Text
+            style={{
+              fontWeight: 500,
+            }}
+          >
+            {notification.message}
+          </Typography.Text>
         </Flex>
 
         <Flex direction="row" align="end" gap={'xxs'} justify="between">
           <Typography.Text>{notification.description}</Typography.Text>
-          {notification.toUrl ? (
+          {notification.to ? (
             <Flex>
               <Typography.Link
                 onClick={(e) => {
