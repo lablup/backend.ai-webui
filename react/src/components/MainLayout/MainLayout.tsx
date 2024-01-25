@@ -178,6 +178,7 @@ const NotificationForAnonymous = () => {
     const handler = (e: any) => {
       app.notification.open({
         ...e.detail,
+        closeIcon: false,
         placement: 'bottomRight',
       });
     };
