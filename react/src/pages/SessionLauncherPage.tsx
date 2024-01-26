@@ -990,7 +990,11 @@ const SessionLauncherPage = () => {
                     display: currentStepKey === 'storage' ? 'block' : 'none',
                   }}
                 >
-                  <VFolderTableFromItem />
+                  <VFolderTableFromItem
+                    filter={(vfolder) => {
+                      return vfolder.status === 'ready';
+                    }}
+                  />
                   {/* <VFolderTable /> */}
                 </Card>
 
