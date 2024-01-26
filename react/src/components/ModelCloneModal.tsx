@@ -3,7 +3,7 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import StorageSelect from './StorageSelector';
+import StorageSelect from './StorageSelect';
 import { Alert, Form, Input, Select, Switch, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 

@@ -6,7 +6,7 @@ import {
 } from '../hooks';
 import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
-import StorageSelect, { VolumeInfo } from './StorageSelector';
+import StorageSelect, { VolumeInfo } from './StorageSelect';
 import UsageProgress from './UsageProgress';
 import { StorageStatusPanelKeypairQuery } from './__generated__/StorageStatusPanelKeypairQuery.graphql';
 import { StorageStatusPanelQuery } from './__generated__/StorageStatusPanelQuery.graphql';
@@ -235,8 +235,8 @@ const StorageStatusPanel: React.FC<{
                 setSelectedVolumeInfo(info);
               }}
               value={selectedVolumeInfo}
-              // autoSelectDefault
-              // showUsageStatus
+              autoSelectDefault
+              showUsageStatus
             />
           </Flex>
           {selectedVolumeInfo !== deferredSelectedVolumeInfo ? (
