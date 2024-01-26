@@ -197,22 +197,73 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     form
       .validateFields()
       .then((values) => {
-        mutationToCreateService.mutate(values, {
-          onSuccess: () => {
-            onRequestClose(true);
-          },
-          onError: (error) => {
-            if (error?.message) {
-              message.error(
-                _.truncate(error?.message, {
-                  length: 200,
-                }),
-              );
-            } else {
-              message.error(t('modelService.FailedToStartService'));
-            }
-          },
-        });
+        if (endpoint) {
+          const mutationVariables = {
+            endpoint_id: endpoint?.endpoint_id || '',
+            props: {
+              resource_slots: JSON.stringify({
+                cpu: values.resource.cpu.toString(),
+                mem: values.resource.mem,
+                ...(values.resource.accelerator > 0
+                  ? {
+                      [values.resource.acceleratorType]:
+                        values.resource.accelerator,
+                    }
+                  : undefined),
+              }),
+              resource_opts: JSON.stringify({ shmem: values.resource.shmem }),
+              // FIXME: temporally convert cluster mode string according to server-side type
+              cluster_mode:
+                'single-node' === values.cluster_mode
+                  ? 'SINGLE_NODE'
+                  : 'MULTI_NODE',
+              cluster_size: values.cluster_size,
+              desired_session_count: values.desiredRoutingCount,
+              image: {
+                name: values.environments.version.split('@')[0],
+                registry: values.environments.image?.registry,
+                architecture: values.environments.image?.architecture,
+              },
+              name: values.serviceName,
+              resource_group: values.resourceGroup,
+            },
+          };
+          commitModifyEndpoint({
+            variables: mutationVariables,
+            onCompleted: (res, error) => {
+              if (error) {
+                message.error(t('dialog.ErrorOccurred'));
+              } else {
+                onRequestClose(true);
+              }
+            },
+            onError: (error) => {
+              message.error(t('dialog.ErrorOccurred'));
+            },
+          });
+        } else {
+          // create service
+          mutationToCreateService.mutate(values, {
+            onSuccess: () => {
+              onRequestClose(true);
+            },
+            onError: (error) => {
+              if (error?.message) {
+                message.error(
+                  _.truncate(error?.message, {
+                    length: 200,
+                  }),
+                );
+              } else {
+                if (endpoint) {
+                  message.error(t('modelService.FailedToUpdateService'));
+                } else {
+                  message.error(t('modelService.FailedToStartService'));
+                }
+              }
+            },
+          });
+        }
       })
       .catch((err) => {
         if (err.errorFields?.[0].errors?.[0]) {
