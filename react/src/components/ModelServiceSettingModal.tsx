@@ -4,9 +4,9 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { ModelServiceSettingModal_endpoint$key } from './__generated__/ModelServiceSettingModal_endpoint.graphql';
-import { Form, InputNumber, theme } from 'antd';
+import { Form, FormInstance, InputNumber, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
@@ -27,7 +27,7 @@ const ModelServiceSettingModal: React.FC<Props> = ({
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const { t } = useTranslation();
-  const [form] = Form.useForm();
+  const formRef = useRef<FormInstance>(null);
 
   const endpoint = useFragment(
     graphql`
@@ -55,8 +55,8 @@ const ModelServiceSettingModal: React.FC<Props> = ({
 
   // Apply any operation after clicking OK button
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
-    form
-      .validateFields()
+    formRef.current
+      ?.validateFields()
       .then((values) => {
         mutationToUpdateService.mutate(values, {
           onSuccess: () => {
@@ -96,7 +96,7 @@ const ModelServiceSettingModal: React.FC<Props> = ({
     >
       <Flex direction="row" align="stretch" justify="around">
         <Form
-          form={form}
+          ref={formRef}
           preserve={false}
           validateTrigger={['onChange', 'onBlur']}
           initialValues={{

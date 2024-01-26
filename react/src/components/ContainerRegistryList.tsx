@@ -270,6 +270,7 @@ const ContainerRegistryList: React.FC<{
         </Button>
       </Flex>
       <Table
+        rowKey={(record) => record.id}
         scroll={{ x: 'max-content' }}
         pagination={false}
         columns={[
