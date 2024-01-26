@@ -203,104 +203,98 @@ const ErrorLogList: React.FC = () => {
   };
 
   return (
-    <>
-      <Flex direction="column" align="stretch">
-        <Flex
-          direction="row"
-          justify="between"
-          wrap="wrap"
-          gap={'xs'}
-          style={{
-            padding: token.paddingContentVertical,
-            paddingLeft: token.paddingContentHorizontalSM,
-            paddingRight: token.paddingContentHorizontalSM,
-          }}
-        >
-          <Flex direction="column" align="start">
-            <Typography.Title level={4} style={{ margin: 0, padding: 0 }}>
-              {t('logs.LogMessages')}
-            </Typography.Title>
-            <Typography.Text type="secondary">
-              {t('logs.UpTo3000Logs')}
-            </Typography.Text>
+    <Flex direction="column" align="stretch">
+      <Flex
+        direction="row"
+        justify="between"
+        wrap="wrap"
+        gap={'xs'}
+        style={{
+          padding: token.paddingContentVertical,
+          paddingLeft: token.paddingContentHorizontalSM,
+          paddingRight: token.paddingContentHorizontalSM,
+        }}
+      >
+        <Flex direction="column" align="start">
+          <Typography.Title level={4} style={{ margin: 0, padding: 0 }}>
+            {t('logs.LogMessages')}
+          </Typography.Title>
+          <Typography.Text type="secondary">
+            {t('logs.UpTo3000Logs')}
+          </Typography.Text>
+        </Flex>
+        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
+          <Flex gap={'xs'}>
+            <Input
+              allowClear
+              prefix={<SearchOutlined />}
+              placeholder={t('logs.SearchLogs')}
+              onChange={(e) => {
+                startSearchTransition(() => setLogSearch(e.target.value));
+              }}
+              style={{
+                width: 200,
+              }}
+            />
+            <Checkbox
+              onChange={(e) => setCheckedShowOnlyError(e.target.checked)}
+            >
+              {t('logs.ShowOnlyError')}
+            </Checkbox>
           </Flex>
-          <Flex
-            direction="row"
-            gap={'xs'}
-            wrap="wrap"
-            style={{ flexShrink: 1 }}
-          >
-            <Flex gap={'xs'}>
-              <Input
-                allowClear
-                prefix={<SearchOutlined />}
-                placeholder={t('logs.SearchLogs')}
-                onChange={(e) => {
-                  startSearchTransition(() => setLogSearch(e.target.value));
-                }}
-                style={{
-                  width: 200,
-                }}
-              />
-              <Checkbox
-                onChange={(e) => setCheckedShowOnlyError(e.target.checked)}
-              >
-                {t('logs.ShowOnlyError')}
-              </Checkbox>
-            </Flex>
-            <Flex gap={'xs'}>
-              <Button
-                icon={<RedoOutlined />}
-                loading={isPendingRefreshTransition}
-                onClick={() => {
-                  startRefreshTransition(() => checkUpdate());
-                }}
-              >
-                {t('button.Refresh')}
-              </Button>
-              <Button
-                danger
-                icon={<DeleteOutlined />}
-                onClick={() => {
-                  setIsOpenClearLogsModal(true);
-                }}
-              >
-                {t('button.ClearLogs')}
-              </Button>
-            </Flex>
+          <Flex gap={'xs'}>
+            <Button
+              icon={<RedoOutlined />}
+              loading={isPendingRefreshTransition}
+              onClick={() => {
+                startRefreshTransition(() => checkUpdate());
+              }}
+            >
+              {t('button.Refresh')}
+            </Button>
+            <Button
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => {
+                setIsOpenClearLogsModal(true);
+              }}
+            >
+              {t('button.ClearLogs')}
+            </Button>
           </Flex>
         </Flex>
-        <Table
-          pagination={{ showSizeChanger: false }}
-          loading={
-            isPendingSearchTransition
-              ? {
-                  indicator: <LoadingOutlined />,
-                }
-              : false
-          }
-          scroll={{ x: 'max-content', y: 'calc(100vh - 430px)' }}
-          dataSource={
-            checkedShowOnlyError
-              ? _.filter(filteredLogData, (log) => {
-                  return log.isError;
-                })
-              : (filteredLogData as logType[])
-          }
-          columns={columns.filter(
-            (column) => displayedColumnKeys?.includes(_.toString(column.key)),
-          )}
-          onRow={(record) => {
-            return {
-              style: { color: record.isError ? 'red' : '' },
-            };
-          }}
-        />
       </Flex>
+      <Table
+        pagination={{ showSizeChanger: false }}
+        loading={
+          isPendingSearchTransition
+            ? {
+                indicator: <LoadingOutlined />,
+              }
+            : false
+        }
+        scroll={{ x: 'max-content', y: 'calc(100vh - 400px)' }}
+        dataSource={
+          checkedShowOnlyError
+            ? _.filter(filteredLogData, (log) => {
+                return log.isError;
+              })
+            : (filteredLogData as logType[])
+        }
+        columns={columns.filter(
+          (column) => displayedColumnKeys?.includes(_.toString(column.key)),
+        )}
+        onRow={(record) => {
+          return {
+            style: { color: record.isError ? 'red' : '' },
+          };
+        }}
+      />
       <Flex
         justify="end"
         style={{
           paddingRight: token.paddingXS,
+          marginTop: token.paddingContentVertical * -1,
         }}
       >
         <Button
@@ -332,7 +326,7 @@ const ErrorLogList: React.FC = () => {
         columns={columns}
         displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
       />
-    </>
+    </Flex>
   );
 };
 

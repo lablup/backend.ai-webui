@@ -15,6 +15,8 @@ import {
   createBrowserRouter,
 } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
+import { QueryParamProvider } from 'use-query-params';
+import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
 const Information = React.lazy(() => import('./components/Information'));
 const ServingListPage = React.lazy(() => import('./pages/ServingListPage'));
@@ -23,15 +25,24 @@ const StorageHostSettingPage = React.lazy(
   () => import('./pages/StorageHostSettingPage'),
 );
 const RoutingListPage = React.lazy(() => import('./pages/RoutingListPage'));
+const UserSettingsPage = React.lazy(() => import('./pages/UserSettingsPage'));
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <>
+      <QueryParamProvider
+        adapter={ReactRouter6Adapter}
+        options={
+          {
+            // searchStringToObject: queryString.parse,
+            // objectToSearchString: queryString.stringify,
+          }
+        }
+      >
         <MainLayout />
         <RoutingEventHandler />
-      </>
+      </QueryParamProvider>
     ),
     handle: { labelKey: 'webui.menu.Summary' },
     children: [
@@ -130,6 +141,7 @@ const router = createBrowserRouter([
       {
         path: '/usersettings',
         handle: { labelKey: 'webui.menu.Settings&Logs' },
+        Component: UserSettingsPage,
       },
       {
         path: '/credential',
@@ -169,17 +181,7 @@ const App: FC = () => {
   return (
     <RecoilRoot>
       <DefaultProviders2>
-        {/* <QueryParamProvider
-        adapter={ReactRouter6Adapter}
-        options={
-          {
-            // searchStringToObject: queryString.parse,
-            // objectToSearchString: queryString.stringify,
-          }
-        }
-      > */}
         <RouterProvider router={router} />
-        {/* </QueryParamProvider> */}
       </DefaultProviders2>
     </RecoilRoot>
   );

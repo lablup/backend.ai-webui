@@ -138,17 +138,7 @@ export const useBAINotification = () => {
                 notification={newNotification}
                 onClickAction={() => {
                   if (newNotification.to) {
-                    webuiNavigate(
-                      newNotification.to,
-                      newNotification.type === 'error' &&
-                        newNotification.to === '/usersettings'
-                        ? {
-                            params: {
-                              tab: 'logs',
-                            },
-                          }
-                        : undefined,
-                    );
+                    webuiNavigate(newNotification.to);
                   }
                   destroyNotification(newNotification.key);
                 }}

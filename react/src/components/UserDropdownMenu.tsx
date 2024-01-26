@@ -149,11 +149,7 @@ const UserDropdownMenu: React.FC = () => {
       key: 'logs',
       icon: <FileTextOutlined />,
       onClick: () => {
-        webuiNavigate('/usersettings', {
-          params: {
-            tab: 'logs',
-          },
-        });
+        webuiNavigate('/usersettings?tab=logs');
         // dispatch event to update tab of backend-ai-usersettings
         const event = new CustomEvent('backend-ai-usersettings', {});
         document.dispatchEvent(event);

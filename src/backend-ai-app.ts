@@ -117,7 +117,7 @@ const loadPage =
         import('./components/backend-ai-data-view.js');
         break;
       case 'usersettings':
-        import('./components/backend-ai-usersettings-view.js');
+        import('./components/backend-ai-usersettings-general-list');
         break;
       case 'agent':
       case 'resource':

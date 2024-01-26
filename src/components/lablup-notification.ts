@@ -134,47 +134,45 @@ export default class LablupNotification extends LitElement {
     }
   }
 
-  /**
-   * When click the close_button, hide dialog(mwc-snackbar).
-   *
-   * @param {Event} e - Click the close_button
-   * */
-  _hideNotification(e) {
-    const hideButton = e.target;
-    const dialog = hideButton.closest('mwc-snackbar');
-    dialog.close();
-  }
+  // /**
+  //  * When click the close_button, hide dialog(mwc-snackbar).
+  //  *
+  //  * @param {Event} e - Click the close_button
+  //  * */
+  // _hideNotification(e) {
+  //   const hideButton = e.target;
+  //   const dialog = hideButton.closest('mwc-snackbar');
+  //   dialog.close();
+  // }
 
-  /**
-   * When click the more_button, dispatch 'backend-ai-usersettings-logs' event.
-   *
-   * @param {Event} e - Click the more_button
-   * */
-  _moreNotification(e) {
-    this._hideNotification(e);
-    const currentPage = globalThis.location.toString().split(/[/]+/).pop();
-    globalThis.history.pushState({}, '', '/usersettings');
-    store.dispatch(
-      navigate(decodeURIComponent('/usersettings'), { tab: 'logs' }),
-    );
-    if (currentPage && currentPage === 'usersettings') {
-      const event = new CustomEvent('backend-ai-usersettings-logs', {});
-      document.dispatchEvent(event);
-    }
-  }
+  // /**
+  //  * When click the more_button, dispatch 'backend-ai-usersettings-logs' event.
+  //  *
+  //  * @param {Event} e - Click the more_button
+  //  * */
+  // _moreNotification(e) {
+  //   this._hideNotification(e);
+  //   const currentPage = globalThis.location.toString().split(/[/]+/).pop();
+  //   globalThis.history.pushState({}, '', '/usersettings');
+  //   store.dispatch(navigate(decodeURIComponent('/usersettings?tab=logs')));
+  //   if (currentPage && currentPage === 'usersettings') {
+  //     const event = new CustomEvent('backend-ai-usersettings-logs', {});
+  //     document.dispatchEvent(event);
+  //   }
+  // }
 
-  /**
-   * Create close_button that bind with function '_hideNotification(e)'
-   *
-   * @param{HTMLElement} notification - Notification webcomponent
-   * */
-  _createCloseButton(notification) {
-    const button = document.createElement('mwc-icon-button');
-    button.setAttribute('icon', 'close');
-    button.setAttribute('slot', 'dismiss');
-    button.addEventListener('click', this._hideNotification.bind(this));
-    notification.appendChild(button);
-  }
+  // /**
+  //  * Create close_button that bind with function '_hideNotification(e)'
+  //  *
+  //  * @param{HTMLElement} notification - Notification webcomponent
+  //  * */
+  // _createCloseButton(notification) {
+  //   const button = document.createElement('mwc-icon-button');
+  //   button.setAttribute('icon', 'close');
+  //   button.setAttribute('slot', 'dismiss');
+  //   button.addEventListener('click', this._hideNotification.bind(this));
+  //   notification.appendChild(button);
+  // }
 
   /**
    * Dispatch 'show-bai-notification' event that handled by `BAINotificationButton` component.
@@ -198,7 +196,7 @@ export default class LablupNotification extends LitElement {
         type: shouldSaveLog ? 'error' : null,
         message: this.text,
         description: this.text ? undefined : this.detail,
-        to: shouldSaveLog ? '/usersettings' : this.url,
+        to: shouldSaveLog ? '/usersettings?tab=logs' : this.url,
         duration: persistent ? 0 : undefined,
         // closeIcon: persistent,
       },

@@ -258,10 +258,8 @@ export const DefaultProviders2: React.FC<Partial<DefaultProvidersProps>> = ({
                 {/* <StyleProvider container={shadowRoot} cache={cache}> */}
                 <Suspense>
                   {/* <BrowserRouter> */}
-
                   {/* <RoutingEventHandler /> */}
                   {children}
-                  {/* </QueryParamProvider> */}
                   {/* </BrowserRouter> */}
                 </Suspense>
                 {/* </StyleProvider> */}

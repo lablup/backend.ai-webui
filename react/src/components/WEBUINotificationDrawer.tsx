@@ -119,17 +119,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
           <BAINotificationItem
             notification={item}
             onClickAction={(e) => {
-              item.to &&
-                webuiNavigate(
-                  item.to,
-                  item.to === '/usersettings'
-                    ? {
-                        params: {
-                          tab: 'logs',
-                        },
-                      }
-                    : undefined,
-                );
+              item.to && webuiNavigate(item.to);
               drawerProps.onClose && drawerProps.onClose(e);
             }}
             showDate
