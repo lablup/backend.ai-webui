@@ -1402,7 +1402,8 @@
     "YouAreAboutToTerminate": "State per terminare",
     "Owner": "Proprietario",
     "ServiceDelegatedFrom": "Il servizio modello è creato da {{ createdUser }}, ma la proprietà della sessione sarà delegata a {{ sessionOwner }}.",
-    "FailedToTerminateService": "La richiesta di terminare il servizio è fallita."
+    "FailedToTerminateService": "La richiesta di terminare il servizio è fallita.",
+    "FailedToUpdateService": "Impossibile aggiornare il servizio."
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",

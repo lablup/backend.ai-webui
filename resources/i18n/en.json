@@ -421,6 +421,7 @@
     "ClearErrors": "Clear error and retry",
     "ServingRouteErrorModalTitle": "Serving Route Error",
     "FailedToStartService": "Failed to create service.",
+    "FailedToUpdateService": "Failed to update service.",
     "CurrentTime": "Current time",
     "Generate": "Generate",
     "TokenGenerated": "Token generated",

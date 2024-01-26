@@ -1442,7 +1442,8 @@
     "YouAreAboutToTerminate": "Anda akan menamatkan perkhidmatan",
     "Owner": "Pemilik",
     "ServiceDelegatedFrom": "Perkhidmatan model dicipta oleh {{ createdUser }} tetapi pemilikan sesi akan diwakilkan kepada {{ sessionOwner }}",
-    "FailedToTerminateService": "Permintaan untuk menamatkan perkhidmatan gagal."
+    "FailedToTerminateService": "Permintaan untuk menamatkan perkhidmatan gagal.",
+    "FailedToUpdateService": "Gagal mengemas kini perkhidmatan."
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

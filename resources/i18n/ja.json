@@ -1402,7 +1402,8 @@
     "Image": "イメージ",
     "Owner": "所有者",
     "ServiceDelegatedFrom": "モデルサービスは{{ createdUser }}によって作成されますが、セッションの所有権は{{ sessionOwner }}に委譲されます。",
-    "FailedToTerminateService": "サービス終了のリクエストに失敗しました。"
+    "FailedToTerminateService": "サービス終了のリクエストに失敗しました。",
+    "FailedToUpdateService": "サービスの更新に失敗しました。"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

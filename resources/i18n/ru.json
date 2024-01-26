@@ -1453,7 +1453,8 @@
     "Image": "Изображение",
     "Owner": "Владелец",
     "ServiceDelegatedFrom": "Сервис модели создается {{ createdUser }}, но право владения сессией будет передано {{ sessionOwner }}.",
-    "FailedToTerminateService": "Запрос на завершение службы завершился неудачно."
+    "FailedToTerminateService": "Запрос на завершение службы завершился неудачно.",
+    "FailedToUpdateService": "Не удалось обновить службу."
   },
   "ErrorBoundary": {
     "title": "Произошла ошибка.",

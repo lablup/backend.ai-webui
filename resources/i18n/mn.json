@@ -1451,7 +1451,8 @@
     "Image": "Зураг",
     "Owner": "Эзэмшигч",
     "ServiceDelegatedFrom": "Загвар үйлчилгээг {{ createdUser }} үүсгэсэн боловч сессийн эрхийг {{ sessionOwner }}-д шилжүүлнэ.",
-    "FailedToTerminateService": "Үйлчилгээг цуцлах хүсэлт амжилтгүй боллоо."
+    "FailedToTerminateService": "Үйлчилгээг цуцлах хүсэлт амжилтгүй боллоо.",
+    "FailedToUpdateService": "Үйлчилгээг шинэчилж чадсангүй."
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",

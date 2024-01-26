@@ -1451,7 +1451,8 @@
     "Image": "Gambar",
     "Owner": "Pemilik",
     "ServiceDelegatedFrom": "Layanan model dibuat oleh {{ createdUser }} namun kepemilikan sesi akan didelegasikan ke {{ sessionOwner }}",
-    "FailedToTerminateService": "Permintaan untuk menghentikan layanan gagal."
+    "FailedToTerminateService": "Permintaan untuk menghentikan layanan gagal.",
+    "FailedToUpdateService": "Gagal memperbarui layanan."
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

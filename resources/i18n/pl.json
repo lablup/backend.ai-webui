@@ -1404,7 +1404,8 @@
     "YouAreAboutToTerminate": "Zamierzasz zakończyć",
     "Owner": "Właściciel",
     "ServiceDelegatedFrom": "Usługa modelu jest tworzona przez {{ createdUser }}, ale własność sesji będzie delegowana do {{ sessionOwner }}.",
-    "FailedToTerminateService": "Żądanie zakończenia usługi nie powiodło się."
+    "FailedToTerminateService": "Żądanie zakończenia usługi nie powiodło się.",
+    "FailedToUpdateService": "Nie udało się zaktualizować usługi."
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",

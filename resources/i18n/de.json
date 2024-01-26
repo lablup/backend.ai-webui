@@ -1402,7 +1402,8 @@
     "YouAreAboutToTerminate": "Sie stehen kurz vor der Beendigung",
     "Owner": "Eigentümer",
     "ServiceDelegatedFrom": "Der Modelldienst wird von {{ createdUser }} erstellt, aber das Eigentum an der Sitzung wird an {{ sessionOwner }} delegiert.",
-    "FailedToTerminateService": "Die Anfrage zur Beendigung des Dienstes ist fehlgeschlagen."
+    "FailedToTerminateService": "Die Anfrage zur Beendigung des Dienstes ist fehlgeschlagen.",
+    "FailedToUpdateService": "Der Dienst konnte nicht aktualisiert werden."
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

@@ -1451,7 +1451,8 @@
     "Image": "Image",
     "Owner": "Propriétaire",
     "ServiceDelegatedFrom": "Le service modèle est créé par {{ createdUser }} mais la propriété de la session sera déléguée à {{ sessionOwner }}.",
-    "FailedToTerminateService": "La demande d'arrêt du service a échoué."
+    "FailedToTerminateService": "La demande d'arrêt du service a échoué.",
+    "FailedToUpdateService": "Échec de la mise à jour du service."
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",
