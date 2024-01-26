@@ -230,6 +230,7 @@ const ContainerRegistryList = () => {
         </Tooltip>
       </Flex>
       <Table
+        rowKey={(record) => record.id}
         scroll={{ x: 'max-content' }}
         pagination={false}
         columns={[
