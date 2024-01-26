@@ -158,7 +158,7 @@ function MainLayout() {
               })}
             />
           )} */}
-            <Suspense fallback={<FlexActivityIndicator />}>
+            <Suspense>
               <Outlet />
             </Suspense>
             {/* To match paddig to 16 (2+14) */}
