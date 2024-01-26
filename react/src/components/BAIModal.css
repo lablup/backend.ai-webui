@@ -9,6 +9,10 @@
   padding: var(--general-modal-footer-padding, 0 20px 24px 20px);
 }
 
+.ant-modal.bai-modal .ant-modal-title {
+  width: 100%;
+}
+
 .ant-modal.bai-modal .ant-modal-header {
   border-bottom: 1px solid rgb(221, 221, 221);
   border-width: 100%;
@@ -17,7 +21,6 @@
   align-items: center;
 }
 
-.ant-modal.bai-modal .ant-modal-content .ant-modal-header,
 .ant-modal.bai-modal .ant-modal-content > button.ant-modal-close {
   padding: var(--general-modal-header-padding, 10px 20px);
   height: var(--general-modal-header-height, 69px);
