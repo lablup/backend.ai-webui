@@ -1557,6 +1557,6 @@ input ModifyEndpointInput {
 
 input ImageRefType {
   name: String!
-  registry: JSONString
+  registry: String
   architecture: String
 }
