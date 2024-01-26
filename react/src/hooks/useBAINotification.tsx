@@ -140,7 +140,8 @@ export const useBAINotification = () => {
                   if (newNotification.to) {
                     webuiNavigate(
                       newNotification.to,
-                      newNotification.to === '/usersettings'
+                      newNotification.type === 'error' &&
+                        newNotification.to === '/usersettings'
                         ? {
                             params: {
                               tab: 'logs',
