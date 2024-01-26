@@ -152,7 +152,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
       });
     });
 
-    // if current version does'nt exist in next environment group, select a version of the first image of next environment group
+    let nextNewImage;
+    // if current version doesn't exist in next environment group, select a version of the first image of next environment group
     if (
       !_.find(
         nextEnvironmentGroup?.images,
@@ -161,19 +162,27 @@ const ImageEnvironmentSelectFormItems: React.FC<
           getImageFullName(image),
       )
     ) {
-      const nextNewImage = nextEnvironmentGroup?.images[0];
-      if (nextNewImage) {
-        form.setFieldsValue({
-          environments: {
-            environment: nextEnvironmentName,
-            version: getImageFullName(nextNewImage),
-            image: nextNewImage,
-          },
-        });
-      }
+      nextNewImage = nextEnvironmentGroup?.images[0];
+    } else {
+      // if image info is partially set, fill out image info
+      nextNewImage = _.find(
+        nextEnvironmentGroup?.images,
+        (image) =>
+          form.getFieldValue('environments')?.version ===
+          getImageFullName(image),
+      );
+    }
+    if (nextNewImage) {
+      form.setFieldsValue({
+        environments: {
+          environment: nextEnvironmentName,
+          version: getImageFullName(nextNewImage),
+          image: nextNewImage,
+        },
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [environments?.environment, environments?.manual]);
+  }, [environments?.environment, environments?.version, environments?.manual]);
 
   const imageGroups: ImageGroup[] = useMemo(
     () =>
