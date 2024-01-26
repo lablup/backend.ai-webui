@@ -53,11 +53,13 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
         header: {
           padding: 15,
         },
+        wrapper: {
+          padding: 0,
+        },
       }}
       // style={{
       //   boxShadow: 'none !important',
       // }}
-      contentWrapperStyle={{ padding: 0 }}
       // comment out the following line because list item
       extra={
         <Dropdown
