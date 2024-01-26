@@ -1,4 +1,4 @@
-import { useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import BAIModal from './BAIModal';
 import Flex from './Flex';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -41,7 +41,7 @@ const ErrorLogList: React.FC = () => {
   const [key, checkUpdate] = useUpdatableState('first');
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
-
+  useSuspendedBackendaiClient(); // TODO: remove this after react routing is stable. This is for remove flickering when browser reload
   const columns: ColumnsType<logType> = [
     {
       title: t('logs.TimeStamp'),
