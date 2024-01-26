@@ -1072,30 +1072,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       if (performClose === true) {
         // Do nothing. this window will be closed.
       } else if (globalThis.isElectron) {
-        this.user_id = '';
-        this.domain = '';
-        this._page = 'summary';
-        this._moveTo('/');
-        // globalThis.history.pushState({}, '', '/summary');
-        // store.dispatch(navigate(decodeURIComponent('/')));
-        // globalThis.location.reload();
-        document.body.style.backgroundImage =
-          'url("/resources/images/loading-background-large.jpg")';
-        this.appBody.style.visibility = 'hidden';
-        const curtain = this.shadowRoot?.getElementById('loading-curtain');
-        curtain?.classList.remove('visuallyhidden');
-        curtain?.addEventListener(
-          'transitionend',
-          () => {
-            curtain.classList.remove('hidden');
-          },
-          {
-            capture: false,
-            once: true,
-            passive: false,
-          },
-        );
-        this.loginPanel.open();
+        globalThis.location.href = globalThis.electronInitialHref;
       } else {
         this._moveTo('/');
         globalThis.location.reload();

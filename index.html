@@ -22,6 +22,9 @@
   <script src="./src/lib/web-animations-js/web-animations-next-lite.min.js"></script>
   <script>
     globalThis.isElectron = isElectron();
+    if (isElectron) {
+      globalThis.electronInitialHref = window.location.href;
+    }
     globalThis.enableSW = true;
 
     globalThis.process = {
