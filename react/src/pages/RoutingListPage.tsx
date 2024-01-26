@@ -5,7 +5,7 @@ import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationM
 import Flex from '../components/Flex';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import ResourceNumber, { ResourceTypeKey } from '../components/ResourceNumber';
-import ServiceSettingModal from '../components/ServiceSettingModal';
+import ServiceLauncherModal from '../components/ServiceLauncherModal';
 import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
@@ -89,7 +89,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
   const [isPendingClearError, startClearErrorTransition] = useTransition();
   const [selectedSessionErrorForModal, setSelectedSessionErrorForModal] =
     useState<ServingRouteErrorModalFragment$key | null>(null);
-  const [isOpenServiceSettingModal, setIsOpenServiceSettingModal] =
+  const [isOpenServiceLauncherModal, setIsOpenServiceLauncherModal] =
     useState(false);
   const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
     useState(false);
@@ -133,9 +133,9 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               endpoint
               status
             }
+            ...ServiceLauncherModalFragment
             ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
-            ...ServiceSettingModal_endpoint
           }
           endpoint_token_list(
             offset: $tokenListOffset
@@ -272,7 +272,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             icon={<SettingOutlined />}
             disabled={(endpoint?.desired_session_count || 0) < 0}
             onClick={() => {
-              setIsOpenServiceSettingModal(true);
+              setIsOpenServiceLauncherModal(true);
             }}
           >
             {t('button.Edit')}
@@ -517,18 +517,18 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         inferenceSessionErrorFrgmt={selectedSessionErrorForModal}
         onRequestClose={() => setSelectedSessionErrorForModal(null)}
       />
-      <ServiceSettingModal
-        open={isOpenServiceSettingModal}
+      <ServiceLauncherModal
+        endpointFrgmt={endpoint}
+        open={isOpenServiceLauncherModal}
         onRequestClose={(success) => {
-          setIsOpenServiceSettingModal(false);
+          setIsOpenServiceLauncherModal(false);
           if (success) {
             startRefetchTransition(() => {
               updateFetchKey();
             });
           }
         }}
-        endpointFrgmt={endpoint}
-      />
+      ></ServiceLauncherModal>
       <EndpointTokenGenerationModal
         open={isOpenTokenGenerationModal}
         onRequestClose={(success) => {

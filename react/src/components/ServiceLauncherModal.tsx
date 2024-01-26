@@ -1,8 +1,13 @@
 import ResourceAllocationFormItems, {
   ResourceAllocationFormValue,
+  AUTOMATIC_DEFAULT_SHMEM,
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
 } from '../components/ResourceAllocationFormItems';
-import { baiSignedRequestWithPromise, compareNumberWithUnits } from '../helper';
+import {
+  baiSignedRequestWithPromise,
+  compareNumberWithUnits,
+  iSizeToSize,
+} from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentDomainValue } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -15,14 +20,14 @@ import ImageEnvironmentSelectFormItems, {
 import ResourceGroupSelect from './ResourceGroupSelect';
 import SliderInputFormItem from './SliderInputFormItem';
 import VFolderSelect from './VFolderSelect';
+import { ServiceLauncherModalFragment$key } from './__generated__/ServiceLauncherModalFragment.graphql';
+import { ServiceLauncherModalModifyMutation } from './__generated__/ServiceLauncherModalModifyMutation.graphql';
 import { Card, Form, Input, theme, Switch, message, Button } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-
-// TODO: set initial form values for later use
-// const INITIAL_FORM_VALUES: ServiceLauncherFormValue = {
-// }
+import { useFragment, useMutation } from 'react-relay';
 
 type ClusterMode = 'single-node' | 'multi-node';
 
@@ -69,6 +74,7 @@ interface ServiceCreateType {
 
 interface ServiceLauncherProps
   extends Omit<BAIModalProps, 'onOK' | 'onCancel'> {
+  endpointFrgmt?: ServiceLauncherModalFragment$key | null;
   extraP?: boolean;
   onRequestClose: (success?: boolean) => void;
 }
@@ -85,6 +91,7 @@ type ServiceLauncherFormValue = ServiceLauncherInput &
 
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   extraP,
+  endpointFrgmt = null,
   onRequestClose,
   ...modalProps
 }) => {
@@ -94,6 +101,24 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const currentDomain = useCurrentDomainValue();
   const [form] = Form.useForm<ServiceLauncherFormValue>();
 
+  const endpoint = useFragment(
+    graphql`
+      fragment ServiceLauncherModalFragment on Endpoint {
+        endpoint_id
+        desired_session_count
+        resource_group
+        resource_slots
+        resource_opts
+        cluster_mode
+        cluster_size
+        open_to_public
+        image
+        architecture
+        name
+      }
+    `,
+    endpointFrgmt,
+  );
   const mutationToCreateService = useTanMutation<
     unknown,
     {
@@ -152,6 +177,21 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     },
   });
 
+  const [
+    commitModifyEndpoint,
+    // inInFlightCommitModifyEndpoint
+  ] = useMutation<ServiceLauncherModalModifyMutation>(graphql`
+    mutation ServiceLauncherModalModifyMutation(
+      $endpoint_id: UUID!
+      $props: ModifyEndpointInput!
+    ) {
+      modify_endpoint(endpoint_id: $endpoint_id, props: $props) {
+        ok
+        msg
+      }
+    }
+  `);
+
   // Apply any operation after clicking OK button
   const handleOk = () => {
     form
@@ -185,20 +225,25 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
   // Apply any operation after clicking Cancel button
   const handleCancel = () => {
+    form.resetFields();
     onRequestClose();
   };
 
   return (
     <BAIModal
-      title={t('modelService.StartNewServing')}
-      destroyOnClose={true}
+      title={
+        endpoint
+          ? t('modelService.EditModelService')
+          : t('modelService.StartNewServing')
+      }
+      destroyOnClose
       maskClosable={false}
-      onCancel={() => onRequestClose()}
+      onCancel={() => handleCancel()}
       footer={() => (
         <Flex direction="row" justify="end">
           <Button onClick={handleCancel}>{t('button.Cancel')}</Button>
           <Button type="primary" onClick={handleOk}>
-            {t('button.Create')}
+            {endpoint ? t('button.Update') : t('button.Create')}
           </Button>
         </Flex>
       )}
@@ -212,10 +257,47 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           preserve={false}
           layout="vertical"
           labelCol={{ span: 12 }}
-          initialValues={{
-            desiredRoutingCount: 1,
-            ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
-          }}
+          initialValues={
+            endpoint
+              ? {
+                  serviceName: endpoint?.name,
+                  resourceGroup: endpoint?.resource_group,
+                  desiredRoutingCount: endpoint?.desired_session_count || 0,
+                  // FIXME: memory doesn't applied to resource allocation
+                  resource: {
+                    cpu: parseInt(JSON.parse(endpoint?.resource_slots)?.cpu),
+                    mem: iSizeToSize(
+                      JSON.parse(endpoint?.resource_slots)?.mem + 'b',
+                      'g',
+                      2,
+                    )?.numberUnit,
+                    shmem: iSizeToSize(
+                      JSON.parse(endpoint?.resource_opts)?.shmem ||
+                        AUTOMATIC_DEFAULT_SHMEM,
+                      'g',
+                      2,
+                    )?.numberUnit,
+                  },
+                  cluster_mode:
+                    endpoint?.cluster_mode === 'MULTI_NODE'
+                      ? 'multi-node'
+                      : 'single-node',
+                  cluster_size: endpoint?.cluster_size,
+                  openToPublic: endpoint?.open_to_public,
+                  environments: {
+                    version: `${endpoint?.image}@${endpoint?.architecture}`,
+                    // FIXME: parse environment manually
+                    environment: endpoint?.image
+                      ?.split('/')
+                      .splice(1, 3)
+                      .join('/')
+                      .split(':')[0],
+                  },
+                }
+              : {
+                  ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+                }
+          }
           requiredMark="optional"
         >
           <Form.Item
@@ -249,7 +331,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             label={t('modelService.OpenToPublic')}
             valuePropName="checked"
           >
-            <Switch></Switch>
+            <Switch disabled={endpoint ? true : false}></Switch>
           </Form.Item>
           {/* <VFolderTableFromItem /> */}
           <Form.Item

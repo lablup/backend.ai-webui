@@ -3,7 +3,6 @@ import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
-import ServiceSettingModal from '../components/ServiceSettingModal';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import { baiSignedRequestWithPromise } from '../helper';
 import {
@@ -60,8 +59,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const [isOpenServiceLauncher, setIsOpenServiceLauncher] = useState(false);
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const [selectedModelService, setSelectedModelService] = useState<Endpoint>();
-  const [isOpenServiceSettingModal, setIsOpenServiceSettingModal] =
-    useState(false);
 
   // const [paginationState, setPaginationState] = useState<{
   const [paginationState] = useState<{
@@ -139,7 +136,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               row.status?.toLowerCase() === 'destroying'
             }
             onClick={() => {
-              setIsOpenServiceSettingModal(true);
+              setIsOpenServiceLauncher(!isOpenServiceLauncher);
               setSelectedModelService(row);
             }}
           />
@@ -292,7 +289,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 traffic_ratio
                 status
               }
-              ...ServiceSettingModal_endpoint
+              ...ServiceLauncherModalFragment
               ...EndpointOwnerInfoFragment
               ...EndpointStatusTagFragment
             }
@@ -522,20 +519,9 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
           <p>{t('dialog.ask.DoYouWantToProceed')}</p>
         </Flex>
       </BAIModal>
-      <ServiceSettingModal
-        open={isOpenServiceSettingModal}
-        onRequestClose={(success) => {
-          setIsOpenServiceSettingModal(false);
-          if (success) {
-            startRefetchTransition(() => {
-              updateServicesFetchKey();
-            });
-          }
-        }}
-        endpointFrgmt={selectedModelService || null}
-      />
       <ServiceLauncherModal
         open={isOpenServiceLauncher}
+        endpointFrgmt={selectedModelService || null}
         onRequestClose={(success) => {
           setIsOpenServiceLauncher(!isOpenServiceLauncher);
           if (success) {

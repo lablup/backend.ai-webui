@@ -718,6 +718,7 @@ type Endpoint implements Item {
   id: ID
   endpoint_id: UUID
   image: String
+  architecture: String
   domain: String
   project: String
   resource_group: String
@@ -1543,10 +1544,19 @@ type ModifyEndpoint {
 }
 
 input ModifyEndpointInput {
-  resource_slots: JSONString!
+  resource_slots: JSONString
   resource_opts: JSONString
   cluster_mode: String
   cluster_size: Int
   desired_session_count: Int
-  image: String
+  image: ImageRefType
+  name: String
+  resource_group: String
+  open_to_public: Boolean
+}
+
+input ImageRefType {
+  name: String!
+  registry: JSONString
+  architecture: String
 }
