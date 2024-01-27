@@ -216,7 +216,7 @@ export default class LablupNotification extends LitElement {
       );
       if (this.url != '') {
         more_button.label = _text('notification.Visit');
-        //more_button.innerHTML = _text('notification.Visit');
+        // more_button.innerHTML = _text('notification.Visit');
         more_button.addEventListener(
           'click',
           this._openURL.bind(this, this.url),

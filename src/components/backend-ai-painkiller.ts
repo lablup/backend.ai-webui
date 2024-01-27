@@ -94,7 +94,7 @@ export default class BackendAIPainKiller {
         return 'Problem occurred.';
       }
     }
-    console.log('Error:', msg);
+    // console.log('Error:', msg);
     if (globalThis.backendaiwebui.debug === true) {
       return msg;
     }
