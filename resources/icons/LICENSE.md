@@ -8,7 +8,7 @@ Icon made by Freepik from www.flaticon.com
 
 file_type_*.svg from vscode-icon project ( https://github.com/vscode-icons/vscode-icons )
 
-ROCm.png , ROCm project icon is trademark of amd.com
+rocm.png , ROCm project icon is trademark of amd.com
 
 Icons made by Kiranshastry from www.flaticon.com
  * default.png

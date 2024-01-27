@@ -1268,7 +1268,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 <div class="layout horizontal configuration">
                   <img
                     class="indicator-icon fg green"
-                    src="/resources/icons/ROCm.png"
+                    src="/resources/icons/rocm.png"
                   />
                   <span>${rowData.item.rocm_device_limit_min}</span>
                   ~
