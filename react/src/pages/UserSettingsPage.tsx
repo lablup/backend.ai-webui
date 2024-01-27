@@ -29,8 +29,6 @@ const UserSettingPage = () => {
       ]}
       bodyStyle={{
         padding: 0,
-        paddingTop: 1,
-        overflow: 'hidden',
       }}
     >
       <Flex
