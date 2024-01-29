@@ -18,7 +18,7 @@ import _ from 'lodash';
 import React, { useState, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type logType = NonNullable<{
+type LogType = {
   isError: boolean;
   statusCode: any;
   statusText: any;
@@ -30,8 +30,10 @@ type logType = NonNullable<{
   requestUrl: string;
   requestParameters?: string;
   formattedTimestamp?: string; // for display only
-}>;
-const ErrorLogList: React.FC = () => {
+};
+const ErrorLogList: React.FC<{
+  onChangeSearch?: (value: string) => void;
+}> = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [isOpenClearLogsModal, setIsOpenClearLogsModal] = useState(false);
@@ -42,7 +44,7 @@ const ErrorLogList: React.FC = () => {
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
   useSuspendedBackendaiClient(); // TODO: remove this after react routing is stable. This is for remove flickering when browser reload
-  const columns: ColumnsType<logType> = [
+  const columns: ColumnsType<LogType> = [
     {
       title: t('logs.TimeStamp'),
       dataIndex: 'formattedTimeStamp',
@@ -171,11 +173,13 @@ const ErrorLogList: React.FC = () => {
   );
 
   const storageLogData = useMemo(() => {
-    const raw = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]');
+    const raw: LogType[] = JSON.parse(
+      localStorage.getItem('backendaiwebui.logs') || '[]',
+    );
     return _.map(raw, (log) => {
       return {
         ...log,
-        formattedTimeStamp: dayjs(log.timestamp).format('lll'),
+        formattedTimeStamp: dayjs(log.timestamp).format('ll LTS'),
       };
     });
     // Add blow comment because eslint dependency
@@ -279,7 +283,7 @@ const ErrorLogList: React.FC = () => {
             ? _.filter(filteredLogData, (log) => {
                 return log.isError;
               })
-            : (filteredLogData as logType[])
+            : (filteredLogData as LogType[])
         }
         columns={columns.filter(
           (column) => displayedColumnKeys?.includes(_.toString(column.key)),
