@@ -17,6 +17,10 @@
   align-items: center;
 }
 
+div > div.ant-modal-wrap.draggable.ant-modal-centered {
+  overflow: hidden;
+}
+
 .ant-modal.bai-modal .ant-modal-content .ant-modal-header,
 .ant-modal.bai-modal .ant-modal-content > button.ant-modal-close {
   padding: var(--general-modal-header-padding, 10px 20px);

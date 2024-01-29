@@ -41,6 +41,7 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
         {...modalProps}
         centered={modalProps.centered ?? true}
         className="bai-modal"
+        wrapClassName={modalProps.draggable ? 'draggable' : ''}
         styles={{
           ...styles,
           header: {
