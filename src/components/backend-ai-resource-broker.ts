@@ -786,7 +786,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             timeout,
           );
         // resourceGroupSlots will have three fields: available, occupied, and remaining.
-        const resourceGroupSlots = agentSummaryList.agent_summary_list.items
+        const resourceGroupSlots = agentSummaryList.agent_summary_list?.items
           .filter(
             (agent) =>
               agent.scaling_group == this.scaling_group && agent.schedulable,

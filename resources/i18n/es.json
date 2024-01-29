@@ -483,7 +483,10 @@
     "Username": "Nombre de usuario",
     "cores": "núcleos",
     "None": "Ninguno",
-    "Image": "Imagen"
+    "Image": "Imagen",
+    "All": "Todos",
+    "InProgress": "En curso",
+    "Session": "Sesión"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",
@@ -727,7 +730,11 @@
     "Initializing": "Inicializando...",
     "SeeDetail": "Ver detalle",
     "SuccessfullyUpdated": "Actualizado con éxito",
-    "Visit": "Visite"
+    "Visit": "Visite",
+    "NoNotification": "Sin notificación.",
+    "Notifications": "Notificaciones",
+    "ClearNotifications": "Borrar notificaciones",
+    "AreYouSureToClearAllNotifications": "¿Estás seguro de borrar todas las notificaciones?"
   },
   "pipeline": {
     "Component": {

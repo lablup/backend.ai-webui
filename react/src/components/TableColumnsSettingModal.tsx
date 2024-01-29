@@ -2,8 +2,9 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import { SearchOutlined } from '@ant-design/icons';
 import { Checkbox, Input, theme, Form } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import { FormInstance } from 'antd/lib';
 import _ from 'lodash';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface FormValues {
@@ -25,7 +26,7 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
   displayedColumnKeys,
   ...modalProps
 }) => {
-  const [form] = Form.useForm<FormValues>();
+  const formRef = useRef<FormInstance>(null);
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
@@ -64,8 +65,8 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
       destroyOnClose
       centered
       onOk={() => {
-        form
-          .validateFields()
+        formRef.current
+          ?.validateFields()
           .then((values) => {
             onRequestClose(values);
           })
@@ -77,7 +78,7 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
       {...modalProps}
     >
       <Form
-        form={form}
+        ref={formRef}
         preserve={false}
         initialValues={{
           selectedColumnKeys:

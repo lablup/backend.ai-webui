@@ -451,7 +451,10 @@
     "Enabled": "Đã bật",
     "StorageProxies": "Kho lưu trữ",
     "None": "Không có",
-    "Image": "Hình ảnh"
+    "Image": "Hình ảnh",
+    "All": "toàn bộ",
+    "InProgress": "Đang tiến hành",
+    "Session": "Phiên họp"
   },
   "credential": {
     "Permission": "Sự cho phép",
@@ -1130,7 +1133,11 @@
     "SuccessfullyUpdated": "Cập nhật thành công",
     "Visit": "Chuyến thăm",
     "SeeDetail": "Xem chi tiết",
-    "Initializing": "Đang khởi tạo ..."
+    "Initializing": "Đang khởi tạo ...",
+    "NoNotification": "Không có thông báo.",
+    "Notifications": "Thông báo",
+    "ClearNotifications": "Xóa thông báo",
+    "AreYouSureToClearAllNotifications": "Bạn có chắc chắn xóa tất cả thông báo không?"
   },
   "information": {
     "Core": "Cốt lõi",
