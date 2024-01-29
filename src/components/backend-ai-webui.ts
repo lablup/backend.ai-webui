@@ -156,16 +156,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'github',
     'import',
     'unauthorized',
-  ]; // temporally block pipeline from available pages 'pipeline', 'pipeline-job', 'session'
+    'session',
+    'session/start',
+  ]; // temporally block pipeline from available pages 'pipeline', 'pipeline-job'
   @property({ type: Array }) adminOnlyPages = [
     'experiment',
     'credential',
     'environment',
-    'agent',
-    'storage-settings',
-    'settings',
-    'maintenance',
-    'information',
   ];
   @property({ type: Array }) superAdminOnlyPages = [
     'agent',
@@ -377,6 +374,20 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       },
       { once: true },
     );
+    document.addEventListener('move-to-from-react', (e) => {
+      const params = (e as CustomEvent).detail.params;
+      const path = (e as CustomEvent).detail.path;
+      this._moveTo(path, params, true);
+    });
+    document.addEventListener('show-TOS-agreement', () => {
+      this.showTOSAgreement();
+    });
+    document.addEventListener('show-PP-agreement', () => {
+      this.showPPAgreement();
+    });
+    document.addEventListener('show-about-backendai', () => {
+      this._showSplash();
+    });
   }
 
   async connectedCallback() {
@@ -519,7 +530,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               switch (pageItem.permission) {
                 case 'superadmin':
                   this.plugins['menuitem-superadmin'].push(page);
-                  this.adminOnlyPages.push(page);
+                  this.superAdminOnlyPages.push(page);
                   break;
                 case 'admin':
                   this.plugins['menuitem-admin'].push(page);
@@ -549,6 +560,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       }
     }
     this.loginPanel.refreshWithConfig(config);
+    const event = new CustomEvent('backend-ai-config-loaded');
+    document.dispatchEvent(event);
   }
 
   refreshPage(): void {
@@ -604,33 +617,33 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     if (!this.is_admin && !this.is_superadmin) {
       if (
         this.adminOnlyPages.includes(this._page) ||
+        this.superAdminOnlyPages.includes(this._page) ||
         this._page === 'unauthorized'
       ) {
         this._page = 'unauthorized';
-        globalThis.history.pushState({}, '', '/unauthorized');
-        store.dispatch(navigate(decodeURIComponent(this._page)));
+        this._moveTo('/unauthorized');
       }
     }
 
     // redirect to unauthorize page when admin user tries to access superadmin only page
     if (!this.is_superadmin && this.superAdminOnlyPages.includes(this._page)) {
       this._page = 'unauthorized';
-      globalThis.history.pushState({}, '', '/unauthorized');
-      store.dispatch(navigate(decodeURIComponent(this._page)));
+      this._moveTo('/unauthorized');
     }
 
-    // redirect to error page when blocked by config option.
+    // redirect to error page when blocked by config option or the page is not available page.
     if (
       this.optionalPages
         .filter((item) => !item.available)
         .map((item) => item.page)
         .includes(this._page) ||
       this.blockedMenuItem.includes(this._page) ||
-      this.inactiveMenuItem.includes(this._page)
+      this.inactiveMenuItem.includes(this._page) ||
+      (!this.availablePages.includes(this._page) &&
+        !this.plugins?.['menuitem']?.includes(this._page))
     ) {
       this._page = 'error';
-      globalThis.history.pushState({}, '', '/error');
-      store.dispatch(navigate(decodeURIComponent(this._page)));
+      this._moveTo('/error');
     }
   }
 
@@ -965,7 +978,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       default:
         if (
           'menuitem' in this.plugins &&
-          this.plugins['menuitem'].includes(view)
+          this.plugins['menuitem']?.includes(view)
         ) {
           this.menuTitle = view;
           break;
@@ -980,7 +993,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             }
             if (
               'menuitem' in this.plugins &&
-              this.plugins['menuitem'].includes(this._page)
+              this.plugins['menuitem']?.includes(this._page)
             ) {
               // TODO specify type for web components from variable
               const component = this.shadowRoot?.querySelector(
@@ -993,9 +1006,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           });
           break;
         }
-        // console.log('set to error');
-        this._page = 'error';
-        this.menuTitle = _text('webui.NOTFOUND');
     }
   }
 
@@ -1062,30 +1072,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       if (performClose === true) {
         // Do nothing. this window will be closed.
       } else if (globalThis.isElectron) {
-        this.user_id = '';
-        this.domain = '';
-        this._page = 'summary';
-        this._moveTo('/');
-        // globalThis.history.pushState({}, '', '/summary');
-        // store.dispatch(navigate(decodeURIComponent('/')));
-        // globalThis.location.reload();
-        document.body.style.backgroundImage =
-          'url("/resources/images/loading-background-large.jpg")';
-        this.appBody.style.visibility = 'hidden';
-        const curtain = this.shadowRoot?.getElementById('loading-curtain');
-        curtain?.classList.remove('visuallyhidden');
-        curtain?.addEventListener(
-          'transitionend',
-          () => {
-            curtain.classList.remove('hidden');
-          },
-          {
-            capture: false,
-            once: true,
-            passive: false,
-          },
-        );
-        this.loginPanel.open();
+        globalThis.location.href = globalThis.electronInitialHref;
       } else {
         this._moveTo('/');
         globalThis.location.reload();
@@ -1157,19 +1144,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    *
    * @param {string} url
    */
-  _moveTo(url) {
-    const page = url.split('/')[1];
-    if (
-      !this.availablePages.includes(page) &&
-      this.is_admin &&
-      !this.adminOnlyPages.includes(page)
-    ) {
-      store.dispatch(navigate(decodeURIComponent('/error')));
-      this._page = 'error';
-      return;
-    }
-    globalThis.history.pushState({}, '', url);
-    store.dispatch(navigate(decodeURIComponent(url), {}));
+  _moveTo(url, params = undefined, fromReact = false) {
+    !fromReact && globalThis.history.pushState({}, '', url);
+    store.dispatch(navigate(decodeURIComponent(url), params ?? {}));
     if ('menuitem' in this.plugins) {
       for (const item of this.plugins.menuitem) {
         if (item !== this._page) {
@@ -1181,8 +1158,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           component.removeAttribute('active');
         }
       }
-      if (this.plugins['menuitem'].includes(this._page)) {
-        // TODO specify type for web components ffrom variable
+      if (this.plugins['menuitem']?.includes(this._page)) {
+        // TODO specify type for web components from variable
         const component = this.shadowRoot?.querySelector(
           this._page,
         ) as BackendAIPage;
@@ -1192,11 +1169,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       }
     }
 
-    document.dispatchEvent(
-      new CustomEvent('react-navigate', {
-        detail: url,
-      }),
-    );
+    !fromReact &&
+      document.dispatchEvent(
+        new CustomEvent('react-navigate', {
+          detail: url,
+        }),
+      );
   }
 
   /**
@@ -1328,6 +1306,81 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       <div id="loading-curtain" class="loading-background">
         <div id="loading-drag-area" class="loading-background-drag-area"></div>
       </div>
+      <div id="app-page">
+        <backend-ai-summary-view class="page" name="summary" ?active="${
+          this._page === 'summary'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
+        <backend-ai-import-view class="page" name="import" ?active="${
+          this._page === 'github' || this._page === 'import'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
+        <backend-ai-session-view class="page" name="job" ?active="${
+          this._page === 'job'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
+        <backend-ai-session-view-next class="page" name="session" ?active="${
+          this._page === 'session'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view-next>
+        <!-- <backend-ai-serving-view class="page" name="serving" ?active="${
+          this._page === 'serving'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-serving-view> -->
+        <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${
+          this._page === 'experiment'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
+        <!-- <backend-ai-usersettings-view class="page" name="usersettings" ?active="${
+          this._page === 'usersettings'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view> -->
+        <backend-ai-credential-view class="page" name="credential" ?active="${
+          this._page === 'credential'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
+        <backend-ai-agent-view class="page" name="agent" ?active="${
+          this._page === 'agent'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-view>
+        <backend-ai-agent-summary-view class="page" name="agent-summary" ?active="${
+          this._page === 'agent-summary'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-summary-view>
+        <!-- <backend-ai-storage-host-settings-view class="page" name="storage-settings" ?active="${
+          this._page === 'storage-settings'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-storage-host-settings-view> -->
+        <backend-ai-data-view class="page" name="data" ?active="${
+          this._page === 'data'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-data-view>
+        <!--<pipeline-view class="page" name="pipeline" ?active="${
+          this._page === 'pipeline'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-view>-->
+        <!--<pipeline-job-view class="page" name="pipeline-job" ?active="${
+          this._page === 'pipeline-job'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-job-view>-->
+        <!--<backend-ai-pipeline-view class="page" name="pipeline" ?active="${
+          this._page === 'pipeline'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-pipeline-view>-->
+        <!-- <backend-ai-environment-view class="page" name="environment" ?active="${
+          this._page === 'environment'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-environment-view> -->
+        <backend-ai-settings-view class="page" name="settings" ?active="${
+          this._page === 'settings'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-settings-view>
+        <backend-ai-maintenance-view class="page" name="maintenance" ?active="${
+          this._page === 'maintenance'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-maintenance-view>
+        <backend-ai-statistics-view class="page" name="statistics" ?active="${
+          this._page === 'statistics'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-statistics-view>
+        <backend-ai-email-verification-view class="page" name="email-verification" ?active="${
+          this._page === 'verify-email'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-email-verification-view>
+        <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${
+          this._page === 'change-password'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-change-forgot-password-view>
+        <backend-ai-edu-applauncher class="page" name="edu-applauncher" ?active="${
+          this._page === 'edu-applauncher' || this._page === 'applauncher'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-edu-applauncher>
+        <!-- <backend-ai-error-view class="page" name="error" ?active="${
+          this._page === 'error'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-error-view> -->
+        <!-- <backend-ai-permission-denied-view class="page" name="unauthorized" ?active="${
+          this._page === 'unauthorized'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-permission-denied-view> -->
+      </div>
+      <div style="display:none">
       <mwc-drawer id="app-body" class="${
         this.mini_ui ? 'mini-ui' : ''
       }" style="visibility:hidden;">
@@ -1925,90 +1978,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <div class="content" style="box-sizing:border-box; padding:14px;">
                 <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
                 <section role="main" id="content" class="container layout vertical center">
-                  <div id="app-page">
-                    <backend-ai-summary-view class="page" name="summary" ?active="${
-                      this._page === 'summary'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
-                    <backend-ai-import-view class="page" name="import" ?active="${
-                      this._page === 'github' || this._page === 'import'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
-                    <backend-ai-session-view class="page" name="job" ?active="${
-                      this._page === 'job'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
-                    <backend-ai-session-view-next class="page" name="session" ?active="${
-                      this._page === 'session'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view-next>
-                    <backend-ai-serving-view class="page" name="serving" ?active="${
-                      this._page === 'serving'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-serving-view>
-                    <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${
-                      this._page === 'experiment'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
-                    <backend-ai-usersettings-view class="page" name="usersettings" ?active="${
-                      this._page === 'usersettings'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view>
-                    <backend-ai-credential-view class="page" name="credential" ?active="${
-                      this._page === 'credential'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
-                    <backend-ai-agent-view class="page" name="agent" ?active="${
-                      this._page === 'agent'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-view>
-                    <backend-ai-agent-summary-view class="page" name="agent-summary" ?active="${
-                      this._page === 'agent-summary'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-summary-view>
-                    <backend-ai-storage-host-settings-view class="page" name="storage-settings" ?active="${
-                      this._page === 'storage-settings'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-storage-host-settings-view>
-                    <backend-ai-data-view class="page" name="data" ?active="${
-                      this._page === 'data'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-data-view>
-                    <!--<pipeline-view class="page" name="pipeline" ?active="${
-                      this._page === 'pipeline'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-view>-->
-                    <!--<pipeline-job-view class="page" name="pipeline-job" ?active="${
-                      this._page === 'pipeline-job'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-job-view>-->
-                    <!--<backend-ai-pipeline-view class="page" name="pipeline" ?active="${
-                      this._page === 'pipeline'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-pipeline-view>-->
-                    <backend-ai-environment-view class="page" name="environment" ?active="${
-                      this._page === 'environment'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-environment-view>
-                    <backend-ai-settings-view class="page" name="settings" ?active="${
-                      this._page === 'settings'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-settings-view>
-                    <backend-ai-maintenance-view class="page" name="maintenance" ?active="${
-                      this._page === 'maintenance'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-maintenance-view>
-                    <backend-ai-information-view class="page" name="information" ?active="${
-                      this._page === 'information'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-information-view>
-                    <backend-ai-statistics-view class="page" name="statistics" ?active="${
-                      this._page === 'statistics'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-statistics-view>
-                    <backend-ai-email-verification-view class="page" name="email-verification" ?active="${
-                      this._page === 'verify-email'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-email-verification-view>
-                    <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${
-                      this._page === 'change-password'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-change-forgot-password-view>
-                    <backend-ai-edu-applauncher class="page" name="edu-applauncher" ?active="${
-                      this._page === 'edu-applauncher' ||
-                      this._page === 'applauncher'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-edu-applauncher>
-                    <backend-ai-error-view class="page" name="error" ?active="${
-                      this._page === 'error'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-error-view>
-                    <backend-ai-permission-denied-view class="page" name="unauthorized" ?active="${
-                      this._page === 'unauthorized'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-permission-denied-view>
-                  </div>
                 </section>
               </div>
             </div>
           </mwc-drawer>
         </div>
       </mwc-drawer>
+                  </div>
       <div id="mini-tooltips" style="display:${
         this.mini_ui ? 'block' : 'none'
       };">

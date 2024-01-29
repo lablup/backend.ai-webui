@@ -14,9 +14,8 @@
       "Tag": {
         "borderRadiusSM": 1
       },
-      "Tabs": {
-        "colorPrimary": "var(--general-sidebar-selected-color, #72EB51)",
-        "colorTextHeading": "var(--general-sidebar-color, #949494)"
+      "Table": {
+        "headerBorderRadius": 0
       }
     }
   },
@@ -28,10 +27,17 @@
       "Tag": {
         "borderRadiusSM": 1
       },
-      "Tabs": {
-        "colorPrimary": "var(--general-sidebar-selected-color, #72EB51)",
-        "colorTextHeading": "var(--general-sidebar-color, #949494)"
+      "Table": {
+        "headerBorderRadius": 0
       }
     }
+  },
+  "logo": {
+    "src": "/manifest/backend.ai-text.svg",
+    "srcCollapsed": "/manifest/backend.ai-brand-simple.svg",
+    "logoTitle": "WebUI",
+    "logoTitleCollapsed": "WebUI",
+    "alt": "Backend.AI Logo",
+    "href": "/summary"
   }
 }

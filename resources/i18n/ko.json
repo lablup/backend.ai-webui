@@ -485,6 +485,7 @@
     "DiskPerc": "디스크 %"
   },
   "storageHost": {
+    "StorageSetting": "스토리지 설정",
     "Usage": "사용량",
     "Total": "전체",
     "Used": "사용",
@@ -535,7 +536,10 @@
     "Enabled": "활성화됨",
     "StorageProxies": "스토리지",
     "None": "없음",
-    "Image": "이미지"
+    "Image": "이미지",
+    "All": "전체",
+    "InProgress": "진행중",
+    "Session": "세션"
   },
   "credential": {
     "Permission": "권한",
@@ -1214,7 +1218,11 @@
     "SuccessfullyUpdated": "성공적으로 수정되었습니다.",
     "Visit": "방문",
     "SeeDetail": "상세보기",
-    "Initializing": "초기화 중..."
+    "Initializing": "초기화 중...",
+    "NoNotification": "알림이 없습니다.",
+    "Notifications": "알림",
+    "ClearNotifications": "모든 알림 삭제",
+    "AreYouSureToClearAllNotifications": "모든 알림을 삭제하시겠습니까?"
   },
   "information": {
     "Core": "핵심 구성 요소",

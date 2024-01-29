@@ -23,7 +23,8 @@
   "plugins": [
     "@typescript-eslint",
     "lit-a11y",
-    "wc"
+    "wc",
+    "react-hooks"
   ],
   "rules": {
     "comma-dangle": 0,
@@ -36,6 +37,13 @@
     "no-empty-function": "off",
     "no-invalid-this": "off",
     "wc/guard-super-call": "off",
-    "lit-a11y/alt-text": "off"
+    "lit-a11y/alt-text": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": [
+      "warn",
+      {
+        "additionalHooks": "useRecoilCallback"
+      }
+    ]
   }
 }
