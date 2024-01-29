@@ -72,8 +72,7 @@ interface ServiceCreateType {
   config: ServiceCreateConfigType;
 }
 
-interface ServiceLauncherProps
-  extends Omit<BAIModalProps, 'onOK' | 'onCancel'> {
+interface ServiceLauncherProps extends Omit<BAIModalProps, 'onOK'> {
   endpointFrgmt?: ServiceLauncherModalFragment$key | null;
   extraP?: boolean;
   onRequestClose: (success?: boolean) => void;
@@ -289,7 +288,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       }
       destroyOnClose
       maskClosable={false}
-      onCancel={() => handleCancel()}
       footer={() => (
         <Flex direction="row" justify="end">
           <Button onClick={handleCancel}>{t('button.Cancel')}</Button>

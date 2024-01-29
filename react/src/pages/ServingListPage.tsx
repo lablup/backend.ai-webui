@@ -58,7 +58,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const curProject = useCurrentProjectValue();
   const [isOpenServiceLauncher, setIsOpenServiceLauncher] = useState(false);
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
-  const [selectedModelService, setSelectedModelService] = useState<Endpoint>();
+  const [selectedModelService, setSelectedModelService] =
+    useState<Endpoint | null>(null);
 
   // const [paginationState, setPaginationState] = useState<{
   const [paginationState] = useState<{
@@ -557,6 +558,10 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       <ServiceLauncherModal
         open={isOpenServiceLauncher}
         endpointFrgmt={selectedModelService || null}
+        onCancel={() => {
+          setSelectedModelService(null);
+          setIsOpenServiceLauncher(false);
+        }}
         onRequestClose={(success) => {
           setIsOpenServiceLauncher(!isOpenServiceLauncher);
           if (success) {
