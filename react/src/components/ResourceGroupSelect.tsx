@@ -1,9 +1,10 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useCurrentProjectValue, useUpdatableState } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import TextHighlighter from './TextHighlighter';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
-import React, { useEffect, useTransition } from 'react';
+import React, { useState, useMemo, useEffect, useTransition } from 'react';
 
 interface ResourceGroupSelectProps extends SelectProps {
   projectId?: string;
@@ -21,6 +22,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
   const [key, checkUpdate] = useUpdatableState('first');
+  const [groupSearch, setGroupSearch] = useState('');
 
   const [isPendingLoading, startLoadingTransition] = useTransition();
   const { data: resourceGroupSelectQueryResult } = useTanQuery<
@@ -100,9 +102,19 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault]);
+
+  const filteredResourceGroups = useMemo(() => {
+    return _.filter(resourceGroups, (resourceGroup) => {
+      if (!groupSearch) return true;
+      return resourceGroup.name.includes(groupSearch);
+    });
+  }, [groupSearch, resourceGroups]);
+
   return (
     <Select
       defaultActiveFirstOption
+      showSearch
+      onSearch={(value) => setGroupSearch(value)}
       defaultValue={autoSelectDefault ? autoSelectedOption : undefined}
       onDropdownVisibleChange={(open) => {
         if (open) {
@@ -114,10 +126,12 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       loading={isPendingLoading || loading}
       {...selectProps}
     >
-      {_.map(resourceGroups, (resourceGroup, idx) => {
+      {_.map(filteredResourceGroups, (resourceGroup, idx) => {
         return (
           <Select.Option key={resourceGroup?.name} value={resourceGroup?.name}>
-            {resourceGroup?.name}
+            <TextHighlighter keyword={groupSearch}>
+              {resourceGroup?.name}
+            </TextHighlighter>
           </Select.Option>
         );
       })}
