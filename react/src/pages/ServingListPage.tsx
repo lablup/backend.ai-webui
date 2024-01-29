@@ -24,7 +24,7 @@ import {
 } from '@ant-design/icons';
 import { useRafInterval } from 'ahooks';
 import { useLocalStorageState } from 'ahooks';
-import { Button, Table, Tabs, Typography, theme, message } from 'antd';
+import { Button, Card, Table, Typography, theme, message } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
@@ -77,7 +77,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const [servicesFetchKey, updateServicesFetchKey] =
     useUpdatableState('initial-fetch');
   // FIXME: need to apply filtering type of service later
-  const [selectedTab, setSelectedTab] = useState<TabKey>('services');
+  const [selectedTab] = useState<TabKey>('services');
   // const [selectedGeneration, setSelectedGeneration] = useState<
   //   "current" | "next"
   // >("next");
@@ -357,87 +357,131 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <>
-      <Flex
-        direction="column"
-        align="stretch"
-        style={{ padding: token.padding }}
-        gap={'xs'}
-      >
+      <Flex direction="column" align="stretch" gap={'xs'}>
         {/* <Card bordered title={t("summary.ResourceStatistics")}>
           <p>SessionList</p>
         </Card> */}
         {/* <Card bodyStyle={{ paddingTop: 0 }}> */}
         <Flex direction="column" align="stretch">
-          <Flex style={{ flex: 1 }}>
-            <Tabs
-              // type="card"
-              activeKey={selectedTab}
-              onChange={(key) => setSelectedTab(key as TabKey)}
-              tabBarStyle={{ marginBottom: 0 }}
-              style={{
-                width: '100%',
-                paddingLeft: token.paddingMD,
-                paddingRight: token.paddingMD,
-                borderTopLeftRadius: token.borderRadius,
-                borderTopRightRadius: token.borderRadius,
-              }}
-              items={[
-                { key: 'services', label: t('modelService.Services') },
-                // FIXME: need to apply filtering type of service later
-                // {
-                //   key: "running",
-                //   label: t("session.Running"),
-                // },
-                // {
-                //   key: "finished",
-                //   label: t("session.Finished"),
-                // },
-                // {
-                //   key: "others",
-                //   label: t("session.Others"),
-                // },
-              ]}
-              tabBarExtraContent={{
-                right: (
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      setIsOpenServiceLauncher(true);
-                    }}
-                  >
-                    {t('modelService.StartService')}
-                  </Button>
-                ),
-              }}
-            />
-            {/* <Button type="text" icon={<MoreOutlined />} /> */}
-          </Flex>
-          {/* <Button type="primary" icon={<PoweroffOutlined />}>
-          시작
-        </Button> */}
+          <Card
+            tabList={[
+              { key: 'services', label: t('modelService.Services') },
+              // FIXME: need to apply filtering type of service later
+              // {
+              //   key: "running",
+              //   label: t("session.Running"),
+              // },
+              // {
+              //   key: "finished",
+              //   label: t("session.Finished"),
+              // },
+              // {
+              //   key: "others",
+              //   label: t("session.Others"),
+              // },
+            ]}
+            activeTabKey={selectedTab}
+            tabBarExtraContent={
+              <Button
+                type="primary"
+                onClick={() => {
+                  setIsOpenServiceLauncher(true);
+                }}
+              >
+                {t('modelService.StartService')}
+              </Button>
+            }
+            bodyStyle={{
+              padding: 0,
+              paddingTop: 1,
+            }}
+            // tabProps={{
+            //   size: 'middle',
+            // }}
+          >
+            <Suspense fallback={<div>loading..</div>}>
+              <Table
+                loading={isRefetchPending}
+                scroll={{ x: 'max-content' }}
+                rowKey={'endpoint_id'}
+                dataSource={(sortedEndpointList || []) as Endpoint[]}
+                columns={columns.filter(
+                  (column) =>
+                    displayedColumnKeys?.includes(_.toString(column.key)),
+                )}
 
-          {/* @ts-ignore */}
-          {/* <backend-ai-session-launcher
-        location="session"
-        id="session-launcher"
-        active
-      /> */}
+                // pagination={{
+                //   pageSize: paginationState.pageSize,
+                //   current: paginationState.current,
+                //   total: modelServiceList?.total_count || 0,
+                //   showSizeChanger: true,
+                //   // showTotal(total, range) {
+                //   //   return `${range[0]}-${range[1]} of ${total}`;
+                //   // },
+                //   onChange(page, pageSize) {
+                //     startRefetchTransition(() => {
+                //       setPaginationState({
+                //         current: page,
+                //         pageSize: pageSize || 100,
+                //       });
+                //     });
+                //   },
+                // }}
+              />
+              <Flex
+                justify="end"
+                style={{
+                  padding: token.paddingXXS,
+                }}
+              >
+                <Button
+                  type="text"
+                  icon={<SettingOutlined />}
+                  onClick={() => {
+                    setIsOpenColumnsSetting(true);
+                  }}
+                />
+              </Flex>
+            </Suspense>
+          </Card>
+          {/* <Tabs
+            // type="card"
+            activeKey={selectedTab}
+            onChange={(key) => setSelectedTab(key as TabKey)}
+            tabBarStyle={{ marginBottom: 0 }}
+            style={{
+              width: '100%',
+            }}
+            items={[
+              { key: 'services', label: t('modelService.Services') },
+              // FIXME: need to apply filtering type of service later
+              // {
+              //   key: "running",
+              //   label: t("session.Running"),
+              // },
+              // {
+              //   key: "finished",
+              //   label: t("session.Finished"),
+              // },
+              // {
+              //   key: "others",
+              //   label: t("session.Others"),
+              // },
+            ]}
+            tabBarExtraContent={{
+              right: (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setIsOpenServiceLauncher(true);
+                  }}
+                >
+                  {t('modelService.StartService')}
+                </Button>
+              ),
+            }}
+          />
           <Suspense fallback={<div>loading..</div>}>
-            {/* <ServingList
-              loading={isRefetchPending}
-              projectId={curProject.id}
-              status={[]}
-              extraFetchKey={""}
-              dataSource={modelServiceList}
-              onClickEdit={(row) => {
-                setIsOpenServiceSettingModal(true);
-                setSelectedModelService(row);
-              }}
-              onClickTerminate={(row) => {
-                setIsOpenModelServiceTerminatingModal(true);
-                setSelectedModelService(row);
-              }}
-            /> */}
             <Table
               loading={isRefetchPending}
               scroll={{ x: 'max-content' }}
@@ -466,16 +510,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               //   },
               // }}
             />
-          </Suspense>
-        </Flex>
-        <Flex justify="end">
-          <Button
-            type="text"
-            icon={<SettingOutlined />}
-            onClick={() => {
-              setIsOpenColumnsSetting(true);
-            }}
-          />
+          </Suspense> */}
         </Flex>
       </Flex>
       <BAIModal

@@ -1,8 +1,11 @@
-import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentUserInfo } from '../hooks/backendai';
-import { useTanQuery } from '../hooks/reactQueryAlias';
-import { useWebComponentInfo } from './DefaultProviders';
-import Flex from './Flex';
+import { useWebUINavigate } from '../hooks';
+import {
+  useCurrentUserInfo,
+  useCurrentUserRole,
+  useTOTPSupported,
+} from '../hooks/backendai';
+import { UserProfileQuery } from './UserProfileSettingModalQuery';
+import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
 import {
   UserOutlined,
   MailOutlined,
@@ -12,41 +15,51 @@ import {
   HolderOutlined,
   FileTextOutlined,
   LogoutOutlined,
+  LoadingOutlined,
 } from '@ant-design/icons';
-import { useDebounce } from 'ahooks';
-import { Avatar, Dropdown, Grid, MenuProps, Typography, theme } from 'antd';
-import React, { useState } from 'react';
+import { useToggle } from 'ahooks';
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  Grid,
+  MenuProps,
+  Typography,
+  theme,
+} from 'antd';
+import _ from 'lodash';
+import React, { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryLoader } from 'react-relay';
+
+const UserProfileSettingModal = React.lazy(
+  () => import('./UserProfileSettingModal'),
+);
 
 const UserDropdownMenu: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { dispatchEvent } = useWebComponentInfo();
-  const baiClient = useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
-  const [open, setOpen] = useState(false);
   const screens = Grid.useBreakpoint();
-  const debouncedOpenToFixDropdownMenu = useDebounce(open, {
-    wait: 100,
-    leading: true,
-    trailing: false,
-  });
 
-  const { data: roleData } = useTanQuery<{
-    user: {
-      role: string;
-    };
-  }>(
-    'getUserRole',
-    () => {
-      return baiClient.user.get(userInfo.email, ['role']);
-    },
-    {
-      suspense: false,
-    },
-  );
-  const userRole = roleData?.user.role;
+  const [isOpenUserSettingModal, { set: setIsOpenUserSettingModal }] =
+    useToggle(false);
+  // const debouncedOpenToFixDropdownMenu = useDebounce(open, {
+  //   wait: 100,
+  //   leading: true,
+  //   trailing: false,
+  // });
 
+  const userRole = useCurrentUserRole();
+
+  const webuiNavigate = useWebUINavigate();
+  const totpSupported = useTOTPSupported();
+
+  const [isPendingRefreshModal, startRefreshModalTransition] = useTransition();
+  const [
+    isPendingInitializeSettingModal,
+    startInitializeSettingModalTransition,
+  ] = useTransition();
   const items: MenuProps['items'] = [
     {
       label: <Typography.Text>{userInfo.username}</Typography.Text>, //To display properly when the user name is too long.
@@ -94,12 +107,26 @@ const UserDropdownMenu: React.FC = () => {
     {
       label: t('webui.menu.MyAccount'),
       key: 'userProfileSetting',
-      icon: <LockOutlined />,
-      onClick: () => {
-        // toggleUserProfileModal();
-        dispatchEvent('moveTo', {
-          path: '#userprofile',
+      icon: isPendingInitializeSettingModal ? (
+        <LoadingOutlined spin />
+      ) : (
+        <LockOutlined />
+      ),
+      onClick: (e) => {
+        startInitializeSettingModalTransition(() => {
+          loadUserProfileSettingQuery(
+            {
+              email: userInfo.email,
+              isNotSupportTotp: !totpSupported,
+            },
+            {
+              fetchPolicy: 'network-only',
+            },
+          );
+          setIsOpenUserSettingModal(true);
         });
+        // e.domEvent.stopPropagation();
+        // e.domEvent.preventDefault();
       },
     },
     {
@@ -107,10 +134,14 @@ const UserDropdownMenu: React.FC = () => {
       key: 'preferences',
       icon: <HolderOutlined />,
       onClick: () => {
-        dispatchEvent('moveTo', {
-          path: '/usersettings',
-          params: { tab: 'general' },
+        webuiNavigate('/usersettings', {
+          params: {
+            tab: 'general',
+          },
         });
+        // dispatch event to update tab of backend-ai-usersettings
+        const event = new CustomEvent('backend-ai-usersettings', {});
+        document.dispatchEvent(event);
       },
     },
     {
@@ -118,10 +149,10 @@ const UserDropdownMenu: React.FC = () => {
       key: 'logs',
       icon: <FileTextOutlined />,
       onClick: () => {
-        dispatchEvent('moveTo', {
-          path: '/usersettings',
-          params: { tab: 'logs' },
-        });
+        webuiNavigate('/usersettings?tab=logs');
+        // dispatch event to update tab of backend-ai-usersettings
+        const event = new CustomEvent('backend-ai-usersettings', {});
+        document.dispatchEvent(event);
       },
     },
     {
@@ -135,32 +166,76 @@ const UserDropdownMenu: React.FC = () => {
     },
   ];
 
+  const [userProfileSettingQueryRef, loadUserProfileSettingQuery] =
+    useQueryLoader<UserProfileSettingModalQuery>(UserProfileQuery);
+
   return (
     <>
       <Dropdown
         menu={{ items }}
         trigger={['click']}
-        open={debouncedOpenToFixDropdownMenu}
-        onOpenChange={(v) => setOpen(v)}
+        // open={debouncedOpenToFixDropdownMenu}
         overlayStyle={{
           maxWidth: 300,
         }}
+        placement="bottomRight"
       >
-        <Flex
-          direction="row"
-          gap="sm"
-          style={{ cursor: 'pointer', maxWidth: '15vw' }}
+        <Button
+          type="text"
+          size="large"
+          // loading={isPendingInitializeSettingModal}
+          onClick={(e) => e.preventDefault()}
+          style={{
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: -2,
+            fontSize: token.fontSize,
+          }}
+          // icon={<UserOutlined />}
+          icon={
+            <Avatar
+              size={20}
+              icon={<UserOutlined style={{ fontSize: 13 }} />}
+              style={
+                {
+                  // border: 1,
+                }
+              }
+            ></Avatar>
+          }
         >
-          {screens.md && (
-            <Typography.Text strong ellipsis>
-              {userInfo.username}
-            </Typography.Text>
-          )}
-          <Flex>
-            <Avatar size={'default'} icon={<UserOutlined />} />
-          </Flex>
-        </Flex>
+          {screens.lg && _.truncate(userInfo.username, { length: 30 })}
+        </Button>
       </Dropdown>
+      <Suspense>
+        {userProfileSettingQueryRef && (
+          <UserProfileSettingModal
+            totpSupported={totpSupported}
+            queryRef={userProfileSettingQueryRef}
+            open={isOpenUserSettingModal}
+            onRequestClose={() => {
+              setIsOpenUserSettingModal(false);
+            }}
+            isRefreshModalPending={isPendingRefreshModal}
+            onRequestRefresh={() => {
+              startRefreshModalTransition(() => {
+                loadUserProfileSettingQuery(
+                  {
+                    email: userInfo.email,
+                    isNotSupportTotp: !totpSupported,
+                  },
+                  {
+                    fetchPolicy: 'network-only',
+                  },
+                );
+              });
+            }}
+          />
+        )}
+      </Suspense>
     </>
   );
 };

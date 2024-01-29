@@ -546,7 +546,10 @@
     "Enabled": "Enabled",
     "StorageProxies": "Storages",
     "None": "None",
-    "Image": "Image"
+    "Image": "Image",
+    "All": "All",
+    "InProgress": "In progress",
+    "Session": "Session"
   },
   "credential": {
     "Permission": "Permission",
@@ -1225,7 +1228,11 @@
     "SuccessfullyUpdated": "Successfully Updated",
     "Visit": "Visit",
     "SeeDetail": "See Detail",
-    "Initializing": "Initializing..."
+    "Initializing": "Initializing...",
+    "Notifications": "Notifications",
+    "NoNotification": "No Notification.",
+    "ClearNotifications": "Clear Notifications",
+    "AreYouSureToClearAllNotifications": "Are you sure to clear all notifications?"
   },
   "information": {
     "Core": "Core",
@@ -1436,7 +1443,8 @@
     "InvalidSignupToken": "Invalid signup token",
     "CannotSharePrivateAutomountFolder": "Cannot share automount vfolders in line with the policy.",
     "FolderSharingNotAvailableToUser": "Folder sharing is not available for requested user(s).",
-    "APINotSupported": "API not supported. Requires latest version of Backend.AI manager."
+    "APINotSupported": "API not supported. Requires latest version of Backend.AI manager.",
+    "ErrorFetchingExternalContent": "Error fetching external content:"
   },
   "maxLength": {
     "64chars": "(maximum 64 chars)",
