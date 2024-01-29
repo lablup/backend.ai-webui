@@ -54,6 +54,6 @@
     "spaced-comment": "off",
     "quotes": "off",
     "quote-props": "off",
-    "space-before-function-paren": "off",
+    "space-before-function-paren": "off"
   }
 }
