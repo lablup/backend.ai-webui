@@ -77,11 +77,7 @@ const Information: React.FC<InformationProps> = () => {
   };
 
   return (
-    <Flex
-      direction="column"
-      align="stretch"
-      style={{ margin: token.marginSM, gap: token.margin }}
-    >
+    <Flex direction="column" align="stretch" style={{ gap: token.margin }}>
       <Row gutter={[token.margin, token.margin]}>
         <Col xs={24} xxl={12}>
           <Card

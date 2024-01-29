@@ -1,6 +1,33 @@
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
+import { NavigateOptions, To, useNavigate } from 'react-router-dom';
+
+interface WebUINavigateOptions extends NavigateOptions {
+  params?: any;
+}
+export const useWebUINavigate = () => {
+  const _reactNavigate = useNavigate();
+  // @ts-ignore
+  return (to: To, options?: WebUINavigateOptions) => {
+    _reactNavigate(to, _.omit(options, ['params']));
+    const pathName = _.isString(to) ? to : to.pathname || '';
+    document.dispatchEvent(
+      new CustomEvent('move-to-from-react', {
+        detail: {
+          path: pathName,
+          params: options?.params,
+        },
+      }),
+    );
+
+    // dispatch event to update tab of backend-ai-usersettings
+    if (pathName === '/usersettings') {
+      const event = new CustomEvent('backend-ai-usersettings', {});
+      document.dispatchEvent(event);
+    }
+  };
+};
 
 export const useBackendAIConnectedState = () => {
   const [time, setTime] = useState<string>();
@@ -58,7 +85,7 @@ export const useCurrentProjectValue = () => {
     return () => {
       document.removeEventListener('backend-ai-group-changed', listener);
     };
-  });
+  }, [baiClient.groupIds]);
 
   return project;
 };
@@ -273,5 +300,9 @@ type BackendAIConfig = {
   force2FA: boolean;
   directoryBasedUsage: boolean;
   maxCountForPreopenPorts: number;
+  pluginPages: string;
+  blockList: string[];
+  inactiveList: string[];
+  allowSignout: boolean;
   [key: string]: any;
 };

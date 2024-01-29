@@ -1,8 +1,8 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import { Form, Input, message, Alert } from 'antd';
-import React from 'react';
+import { Form, Input, message, Alert, FormInstance } from 'antd';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SignoutModalProps extends BAIModalProps {
@@ -15,7 +15,7 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
-  const [form] = Form.useForm();
+  const formRef = useRef<FormInstance>(null);
   const { t } = useTranslation();
   const [messageApi, contextHolder] = message.useMessage();
   const baiClient = useSuspendedBackendaiClient();
@@ -25,8 +25,8 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
     },
   });
   const handleOk = () => {
-    form
-      .validateFields()
+    formRef.current
+      ?.validateFields()
       .then((values) => {
         signoutMutation.mutate(
           {
@@ -66,7 +66,7 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
         {...modalProps}
       >
         <Form
-          form={form}
+          ref={formRef}
           layout="vertical"
           labelCol={{ span: 6 }}
           disabled={signoutMutation.isLoading}

@@ -12,7 +12,7 @@
     "@types/react": "^18.2.23",
     "@types/react-dom": "^18.2.8",
     "ahooks": "^3.7.8",
-    "antd": "^5.10.1",
+    "antd": "^5.13.2",
     "dayjs": "^1.11.10",
     "i18next": "^23.5.1",
     "i18next-http-backend": "^2.2.2",
@@ -29,8 +29,10 @@
     "react-router-dom": "^6.16.0",
     "react-scripts": "5.0.1",
     "react-syntax-highlighter": "^15.5.0",
+    "recoil": "^0.7.7",
     "typescript": "^5.2.2",
     "use-query-params": "^2.2.1",
+    "uuid": "^9.0.1",
     "web-vitals": "^3.4.0"
   },
   "scripts": {
@@ -81,6 +83,7 @@
     "@types/react-test-renderer": "^18.0.3",
     "@types/relay-runtime": "^14.1.14",
     "@types/relay-test-utils": "^14.1.1",
+    "@types/uuid": "^9.0.7",
     "babel-plugin-named-exports-order": "^0.0.2",
     "babel-plugin-relay": "^15.0.0",
     "eslint-plugin-storybook": "^0.6.14",

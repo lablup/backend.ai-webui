@@ -208,3 +208,40 @@ export const useCurrentUserInfo = () => {
     },
   ] as const;
 };
+
+export const useCurrentUserRole = () => {
+  const [userInfo] = useCurrentUserInfo();
+  const baiClient = useSuspendedBackendaiClient();
+  const { data: roleData } = useTanQuery<{
+    user: {
+      role: 'superadmin' | 'admin' | 'user' | 'monitor';
+    };
+  }>(
+    ['getUserRole', userInfo.email],
+    () => {
+      return baiClient.user.get(userInfo.email, ['role']);
+    },
+    {
+      suspense: false,
+    },
+  );
+  const userRole = roleData?.user.role;
+
+  return userRole;
+};
+
+export const useTOTPSupported = () => {
+  const baiClient = useSuspendedBackendaiClient();
+  const { data: isManagerSupportingTOTP } = useTanQuery<boolean>(
+    'isManagerSupportingTOTP',
+    () => {
+      return baiClient.isManagerSupportingTOTP();
+    },
+    {
+      suspense: false,
+    },
+  );
+  const isSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
+
+  return isSupported;
+};
