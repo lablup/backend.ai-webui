@@ -159,7 +159,11 @@ customElements.define(
 
     return (
       <DefaultProviders {...props}>
-        <Flex direction="column" align="stretch" style={{ minWidth: 200 }}>
+        <Flex
+          direction="column"
+          align="stretch"
+          style={{ minWidth: 200, maxWidth: 310 }}
+        >
           <Form layout="vertical">
             <Form.Item
               label={t('session.launcher.ResourceGroup')}
@@ -169,7 +173,6 @@ customElements.define(
                 size="large"
                 value={value}
                 loading={value !== props.value || value === ''}
-                style={{ maxWidth: 310 }}
                 onChange={(value) => {
                   setValue(value);
                   props.dispatchEvent('change', value);
