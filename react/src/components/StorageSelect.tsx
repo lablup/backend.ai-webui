@@ -1,7 +1,6 @@
 import { useSuspendedBackendaiClient } from '../hooks';
-// @ts-ignore
-import rawSelectCss from './StorageSelect.css?raw';
-import { Select, SelectProps, Space } from 'antd';
+import Flex from './Flex';
+import { Select, SelectProps, Badge } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -56,61 +55,48 @@ const StorageSelect: React.FC<Props> = ({
       );
       selectedHost = lowestUsageHost?.host || selectedHost;
     }
-
     onChange?.(selectedHost, {
       id: selectedHost,
       ...(vhostInfo?.volume_info[selectedHost] || {}),
     });
-  }, []);
-
-  const options = useMemo(() => {
-    return _.map(vhostInfo?.allowed, (host) => ({
-      label: host,
-      value: host,
-    }));
   }, [vhostInfo]);
 
-  const hostUsageStatus = (host: string) => {
-    const percentage = vhostInfo?.volume_info[host]?.usage?.percentage;
-    const idx = percentage < 70 ? 0 : percentage < 90 ? 1 : 2;
-    const type = ['adequate', 'caution', 'insufficient'][idx];
+  const optionRender = useMemo(() => {
+    const status = ['success', 'warning', 'error'];
+    return (option: any) => {
+      const percentage =
+        vhostInfo?.volume_info[option.label]?.usage?.percentage;
+      const idx = percentage < 70 ? 0 : percentage < 90 ? 1 : 2;
 
-    return type;
-  };
+      if (showUsageStatus) {
+        // @ts-ignore
+        return <Badge status={status[idx]} text={option.label} />;
+      }
+      return option.label;
+    };
+  }, [vhostInfo]);
 
   return (
-    <>
-      <style>{rawSelectCss}</style>
-      <Select
-        filterOption={true}
-        placeholder={t('data.SelectStorageHost')}
-        loading={isLoadingVhostInfo}
-        style={{ minWidth: 165, direction: 'ltr' }}
-        // @ts-ignore
-        value={value?.id || value}
-        onChange={(host) => {
-          onChange?.(host, {
-            id: host,
-            ...(vhostInfo?.volume_info[host] || {}),
-          });
-        }}
-        options={options}
-        optionRender={(option) => (
-          <Space>
-            {option.label}
-            {showUsageStatus && (
-              <div
-                className={`host-status-indicator ${
-                  // @ts-ignore
-                  hostUsageStatus(option.label)
-                }`}
-              />
-            )}
-          </Space>
-        )}
-        {...selectProps}
-      ></Select>
-    </>
+    <Select
+      filterOption={true}
+      placeholder={t('data.SelectStorageHost')}
+      loading={isLoadingVhostInfo}
+      style={{ minWidth: 165, direction: 'ltr' }}
+      // @ts-ignore
+      value={value?.id || value}
+      onChange={(host) => {
+        onChange?.(host, {
+          id: host,
+          ...(vhostInfo?.volume_info[host] || {}),
+        });
+      }}
+      options={_.map(vhostInfo?.allowed, (host) => ({
+        label: host,
+        value: host,
+      }))}
+      optionRender={optionRender}
+      {...selectProps}
+    ></Select>
   );
 };
 
