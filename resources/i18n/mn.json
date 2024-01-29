@@ -451,7 +451,10 @@
     "Enabled": "Идэвхжсэн",
     "StorageProxies": "Хадгалах сан",
     "None": "Байхгүй",
-    "Image": "Зураг"
+    "Image": "Зураг",
+    "All": "бүхэлд нь",
+    "InProgress": "Ажиллаж байна",
+    "Session": "Сессия"
   },
   "credential": {
     "Permission": "Зөвшөөрөл",
@@ -1130,7 +1133,11 @@
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
     "Visit": "Айлчлах",
     "SeeDetail": "Дэлгэрэнгүйг үзнэ үү",
-    "Initializing": "Эхлүүлж байна ..."
+    "Initializing": "Эхлүүлж байна ...",
+    "NoNotification": "Мэдэгдэл байхгүй.",
+    "Notifications": "Мэдэгдэл",
+    "ClearNotifications": "Мэдэгдлийг арилгах",
+    "AreYouSureToClearAllNotifications": "Та бүх мэдэгдлийг арилгахдаа итгэлтэй байна уу?"
   },
   "information": {
     "Core": "Гол",

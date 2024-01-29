@@ -451,7 +451,10 @@
     "Enabled": "Habilitado",
     "StorageProxies": "Armazéns",
     "None": "Nenhum",
-    "Image": "Imagem"
+    "Image": "Imagem",
+    "All": "Todos",
+    "InProgress": "Em curso",
+    "Session": "Sessão"
   },
   "credential": {
     "Permission": "Permissão",
@@ -1130,7 +1133,11 @@
     "SuccessfullyUpdated": "Atualizado com sucesso",
     "Visit": "Visita",
     "SeeDetail": "Veja detalhes",
-    "Initializing": "Inicializando ..."
+    "Initializing": "Inicializando ...",
+    "NoNotification": "Nenhuma notificação.",
+    "Notifications": "Notificações",
+    "ClearNotifications": "Limpar notificações",
+    "AreYouSureToClearAllNotifications": "Tem certeza de que deseja limpar todas as notificações?"
   },
   "information": {
     "Core": "Testemunho",

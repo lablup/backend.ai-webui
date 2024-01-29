@@ -1,11 +1,13 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { Alert, Tag, theme } from 'antd';
+import { Alert, theme } from 'antd';
+import { AlertProps } from 'antd/lib';
 import _ from 'lodash';
 import Markdown from 'markdown-to-jsx';
 import React from 'react';
 
-const AnnouncementAlert: React.FC = () => {
+interface Props extends AlertProps {}
+const AnnouncementAlert: React.FC<Props> = ({ style, ...otherProps }) => {
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
   const { data: announcement } = useTanQuery({
@@ -19,34 +21,40 @@ const AnnouncementAlert: React.FC = () => {
     <Alert
       banner
       style={{
-        alignItems: 'flex-start',
-        overflow: 'auto',
+        // alignItems: 'flex-start',
+        // overflow: 'auto',
+        ...style,
       }}
-      icon={
-        //use <> because tag border is not displayed normally when Tag component is used only
-        <>
-          <Tag color="error" style={{ fontSize: token.fontSize }}>
-            Notice
-          </Tag>
-        </>
-      }
-      message={
-        <Markdown
-          options={{
-            overrides: {
-              p: {
-                props: {
-                  style: {
-                    marginTop: 0,
+      // icon={
+      //   //use <> because tag border is not displayed normally when Tag component is used only
+      //   <>
+      //     <Tag color="error" style={{ fontSize: token.fontSize }}>
+      //       Notice
+      //     </Tag>
+      //   </>
+      // }
+      description={
+        <div style={{ marginBottom: token.marginSM * -1 }}>
+          <Markdown
+            options={{
+              overrides: {
+                p: {
+                  props: {
+                    style: {
+                      marginTop: 0,
+                      marginBottom: token.marginSM,
+                    },
                   },
                 },
               },
-            },
-          }}
-        >
-          {announcement.message}
-        </Markdown>
+            }}
+          >
+            {/* add dummy <p> to remove unnecessary margin bottom  */}
+            {announcement.message + '<p></p>'}
+          </Markdown>
+        </div>
       }
+      {...otherProps}
     />
   ) : (
     ''

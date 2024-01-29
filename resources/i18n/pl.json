@@ -453,7 +453,10 @@
     "Enabled": "Włączone",
     "StorageProxies": "Magazyny",
     "None": "Brak",
-    "Image": "Obraz"
+    "Image": "Obraz",
+    "All": "Wszystkie",
+    "InProgress": "W toku",
+    "Session": "Sesja"
   },
   "credential": {
     "Permission": "Pozwolenie",
@@ -1132,7 +1135,11 @@
     "SuccessfullyUpdated": "Pomyślnie zaktualizowano",
     "Visit": "Wizyta",
     "SeeDetail": "Zobacz detale",
-    "Initializing": "Inicjowanie..."
+    "Initializing": "Inicjowanie...",
+    "NoNotification": "Brak powiadomienia.",
+    "Notifications": "Powiadomienia",
+    "ClearNotifications": "Wyczyść powiadomienia",
+    "AreYouSureToClearAllNotifications": "Czy na pewno wyczyścić wszystkie powiadomienia?"
   },
   "information": {
     "Core": "Rdzeń",

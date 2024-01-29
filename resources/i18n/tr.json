@@ -451,7 +451,10 @@
     "Enabled": "Etkin",
     "StorageProxies": "Depolar",
     "None": "Hiçbiri",
-    "Image": "Resim"
+    "Image": "Resim",
+    "All": "Tümü",
+    "InProgress": "Devam Ediyor",
+    "Session": "Oturum"
   },
   "credential": {
     "Permission": "izin",
@@ -1130,7 +1133,11 @@
     "SuccessfullyUpdated": "Başarıyla güncellendi",
     "Visit": "Ziyaret etmek",
     "SeeDetail": "Ayrıntıları gör",
-    "Initializing": "Başlatılıyor..."
+    "Initializing": "Başlatılıyor...",
+    "NoNotification": "Bildirim yok.",
+    "Notifications": "Bildirimler",
+    "ClearNotifications": "Bildirimleri Temizle",
+    "AreYouSureToClearAllNotifications": "Tüm bildirimleri temizlediğinizden emin misiniz?"
   },
   "information": {
     "Core": "çekirdek",

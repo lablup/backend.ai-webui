@@ -4,7 +4,16 @@ import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import StorageSelector from './StorageSelector';
-import { Alert, Form, Input, Select, Switch, message } from 'antd';
+import {
+  Alert,
+  Form,
+  FormInstance,
+  Input,
+  Select,
+  Switch,
+  message,
+} from 'antd';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ModelCloneModalProps extends BAIModalProps {
@@ -18,7 +27,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const [form] = Form.useForm();
+  const formRef = useRef<FormInstance>(null);
   const painKiller = usePainKiller();
 
   // const { data: allowed_vfolder_types } = useTanQuery({
@@ -42,8 +51,8 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
       okText={t('button.Clone')}
       confirmLoading={mutationToClone.isLoading}
       onOk={() => {
-        form
-          .validateFields()
+        formRef.current
+          ?.validateFields()
           .then((values) => {
             mutationToClone.mutate(
               {
@@ -73,7 +82,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
       <Flex direction="column" align="stretch" gap="sm">
         <Alert showIcon type="info" message={t('modelStore.CloneInfo')} />
         <Form
-          form={form}
+          ref={formRef}
           layout="vertical"
           requiredMark="optional"
           initialValues={{

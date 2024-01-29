@@ -451,7 +451,10 @@
     "Enabled": "启用",
     "StorageProxies": "存储",
     "None": "无",
-    "Image": "图像"
+    "Image": "图像",
+    "All": "全部",
+    "InProgress": "进行中",
+    "Session": "会话"
   },
   "credential": {
     "Permission": "允许",
@@ -1130,7 +1133,11 @@
     "SuccessfullyUpdated": "成功更新",
     "Visit": "访问",
     "SeeDetail": "查看详情",
-    "Initializing": "正在初始化..."
+    "Initializing": "正在初始化...",
+    "NoNotification": "无通知。",
+    "Notifications": "通知",
+    "ClearNotifications": "清除通知",
+    "AreYouSureToClearAllNotifications": "您确定清除所有通知吗？"
   },
   "information": {
     "Core": "核",

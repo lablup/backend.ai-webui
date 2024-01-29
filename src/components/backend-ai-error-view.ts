@@ -73,6 +73,11 @@ export default class BackendAIErrorView extends BackendAIPage {
     const page = url !== '' ? url : 'summary';
     globalThis.history.pushState({}, '', '/summary');
     store.dispatch(navigate(decodeURIComponent('/' + page), {}));
+    document.dispatchEvent(
+      new CustomEvent('react-navigate', {
+        detail: url,
+      }),
+    );
   }
 
   render() {

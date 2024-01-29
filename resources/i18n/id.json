@@ -451,7 +451,10 @@
     "Enabled": "Diaktifkan",
     "StorageProxies": "Penyimpanan",
     "None": "Tidak ada",
-    "Image": "Gambar"
+    "Image": "Gambar",
+    "All": "Semua",
+    "InProgress": "Sedang Berlangsung",
+    "Session": "Sesi"
   },
   "credential": {
     "Permission": "Izin",
@@ -1130,7 +1133,11 @@
     "SuccessfullyUpdated": "Berhasil Diperbarui",
     "Visit": "Kunjungi",
     "SeeDetail": "Lihat Detail",
-    "Initializing": "Inisialisasi..."
+    "Initializing": "Inisialisasi...",
+    "NoNotification": "Tidak Ada Pemberitahuan.",
+    "Notifications": "Pemberitahuan",
+    "ClearNotifications": "Hapus Notifikasi",
+    "AreYouSureToClearAllNotifications": "Apakah Anda yakin untuk menghapus semua notifikasi?"
   },
   "information": {
     "Core": "Core",
