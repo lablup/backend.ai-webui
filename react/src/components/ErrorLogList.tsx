@@ -269,7 +269,12 @@ const ErrorLogList: React.FC<{
         </Flex>
       </Flex>
       <Table
-        pagination={{ showSizeChanger: false }}
+        pagination={{
+          showSizeChanger: false,
+          style: {
+            marginBottom: 0,
+          },
+        }}
         loading={
           isPendingSearchTransition
             ? {
@@ -298,7 +303,6 @@ const ErrorLogList: React.FC<{
         justify="end"
         style={{
           paddingRight: token.paddingXS,
-          marginTop: token.paddingContentVertical * -1,
         }}
       >
         <Button
