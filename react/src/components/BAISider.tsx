@@ -1,3 +1,4 @@
+import { useThemeMode } from '../hooks/useThemeMode';
 import Flex from './Flex';
 import { Grid, SiderProps, Typography, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
@@ -24,6 +25,7 @@ const BAISider: React.FC<BAISiderProps> = ({
 }) => {
   const { token } = theme.useToken();
   const { Text } = Typography;
+  const { isDarkMode } = useThemeMode();
   const { xs } = Grid.useBreakpoint();
 
   return (
@@ -66,7 +68,6 @@ const BAISider: React.FC<BAISiderProps> = ({
           left: 0,
           borderRight: '1px solid',
           borderColor: token.colorBorder,
-          backgroundColor: '#F4F7FD',
           paddingTop: token.paddingContentVerticalSM,
         }}
         {...otherProps}
@@ -78,6 +79,7 @@ const BAISider: React.FC<BAISiderProps> = ({
             : DEFAULT_COLLAPSED_WIDTH
         }
         className="bai-sider"
+        theme={isDarkMode ? 'dark' : 'light'}
       >
         <Flex
           direction="column"
