@@ -7,8 +7,15 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
+type ProjectInfo = {
+  label: React.ReactNode;
+  value: string | number;
+  projectId: string;
+  projectResourcePolicy: any; // Replace 'any' with the actual type
+  projectName: string;
+};
 interface Props extends SelectProps {
-  onSelectProject?: (project: any) => void;
+  onSelectProject?: (projectInfo: ProjectInfo) => void;
   domain: string;
   autoSelectDefault?: boolean;
 }
@@ -56,24 +63,22 @@ const ProjectSelector: React.FC<Props> = ({
     <Select
       onChange={(value, option) => {
         setValue(value);
-        onSelectProject?.(option);
+        onSelectProject?.(option as ProjectInfo);
       }}
       placeholder={t('storageHost.quotaSettings.SelectProject')}
       {...selectProps}
       value={value}
-    >
-      {_.map(projects, (project) => {
-        return (
-          <Select.Option
-            key={project?.id}
-            projectId={project?.id}
-            projectResourcePolicy={project?.resource_policy}
-          >
-            {project?.name}
-          </Select.Option>
-        );
+      optionFilterProp="projectName"
+      options={_.map(_.sortBy(projects, 'name'), (project) => {
+        return {
+          label: project?.name,
+          value: project?.id,
+          projectId: project?.id,
+          projectResourcePolicy: project?.resource_policy,
+          projectName: project?.name,
+        };
       })}
-    </Select>
+    />
   );
 };
 

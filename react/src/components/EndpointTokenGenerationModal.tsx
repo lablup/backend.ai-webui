@@ -3,9 +3,9 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import { Alert, DatePicker, Form, message } from 'antd';
+import { Alert, DatePicker, Form, FormInstance, message } from 'antd';
 import dayjs from 'dayjs';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // import { graphql, useFragment } from "react-relay";
@@ -25,7 +25,7 @@ const EndpointTokenGenerationModal: React.FC<
 > = ({ onRequestClose, onCancel, endpoint_id, ...baiModalProps }) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const [form] = Form.useForm();
+  const formRef = useRef<FormInstance>(null);
 
   const mutationToGenerateToken = useTanMutation<
     unknown,
@@ -49,7 +49,7 @@ const EndpointTokenGenerationModal: React.FC<
 
   // Apply any operation after clicking OK button
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
-    form.validateFields().then((values) => {
+    formRef.current?.validateFields().then((values) => {
       const validUntil = values.datetime.unix();
       mutationToGenerateToken.mutate(
         {
@@ -91,6 +91,7 @@ const EndpointTokenGenerationModal: React.FC<
       title={t('modelService.GenerateNewToken')}
     >
       <Form
+        ref={formRef}
         preserve={false}
         labelCol={{ span: 10 }}
         initialValues={{
@@ -98,7 +99,6 @@ const EndpointTokenGenerationModal: React.FC<
         }}
         validateTrigger={['onChange', 'onBlur']}
         style={{ maxWidth: 500 }}
-        form={form}
       >
         <Flex direction="column" gap="sm" align="stretch">
           <Alert

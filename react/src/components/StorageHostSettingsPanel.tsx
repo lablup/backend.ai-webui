@@ -2,7 +2,7 @@ import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
 import { useCurrentDomainValue, useUpdatableState } from '../hooks';
 import DomainSelector from './DomainSelector';
 import Flex from './Flex';
-import ProjectSelector from './ProjectSelector';
+import ProjectSelector from './ProjectSelect';
 import QuotaScopeCard from './QuotaScopeCard';
 import QuotaSettingModal from './QuotaSettingModal';
 import UserSelector from './UserSelector';
