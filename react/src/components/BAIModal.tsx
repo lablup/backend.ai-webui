@@ -1,5 +1,7 @@
 // @ts-ignore
 import rawBAIModalCss from './BAIModal.css?raw';
+import Flex from './Flex';
+import { HolderOutlined } from '@ant-design/icons';
 import { Modal, ModalProps, theme } from 'antd';
 import React, { useState, useRef } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
@@ -26,7 +28,7 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
       return;
     }
     setBounds({
-      left: uiData.x + (250 - targetRect.left), //250 is sidebar width
+      left: uiData.x - targetRect.left,
       right: clientWidth - (targetRect.right - uiData.x),
       top: -targetRect.top + uiData.y,
       bottom: clientHeight - (targetRect.bottom - uiData.y),
@@ -43,29 +45,27 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
           ...styles,
           header: {
             marginBottom: token.marginSM,
-            cursor: modalProps.draggable ? 'move' : '',
             ...styles?.header,
           },
         }}
         title={
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              height: 69,
-              paddingLeft: 20,
-            }}
-            onMouseOver={() => {
-              if (disabled) {
-                setDisabled(false);
-              }
-            }}
-          >
+          <Flex gap={'xs'}>
+            <HolderOutlined
+              style={{
+                cursor: modalProps.draggable ? 'move' : '',
+                display: !modalProps.draggable ? 'none' : '',
+              }}
+              onMouseOver={() => {
+                if (disabled) {
+                  setDisabled(false);
+                }
+              }}
+              onMouseLeave={() => {
+                setDisabled(true);
+              }}
+            />
             {modalProps.title}
-          </div>
-        }
-        children={
-          <div onMouseOver={() => setDisabled(true)}>{modalProps.children}</div>
+          </Flex>
         }
         modalRender={(modal) =>
           modalProps.draggable ? (
