@@ -1,4 +1,4 @@
-.webui-header-container.draggable,
+.webui-header-container,
 .webui-header-container .draggable {
   -webkit-app-region: drag;
 }
