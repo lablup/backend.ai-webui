@@ -8,10 +8,7 @@ import {
   compareNumberWithUnits,
   iSizeToSize,
 } from '../helper';
-import {
-  useBackendAIImageMetaData,
-  useSuspendedBackendaiClient,
-} from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentDomainValue } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
@@ -102,8 +99,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
   const [form] = Form.useForm<ServiceLauncherFormValue>();
-  const [metadata, { getImageMeta }] = useBackendAIImageMetaData();
-
   const endpoint = useFragment(
     graphql`
       fragment ServiceLauncherModalFragment on Endpoint {
