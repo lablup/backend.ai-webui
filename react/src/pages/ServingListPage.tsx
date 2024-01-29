@@ -58,7 +58,9 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const curProject = useCurrentProjectValue();
   const [isOpenServiceLauncher, setIsOpenServiceLauncher] = useState(false);
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
-  const [selectedModelService, setSelectedModelService] =
+  const [editingModelService, setEditingModelService] =
+    useState<Endpoint | null>(null);
+  const [terminatingModelService, setTerminatingModelService] =
     useState<Endpoint | null>(null);
 
   // const [paginationState, setPaginationState] = useState<{
@@ -71,10 +73,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   });
 
   const [isRefetchPending, startRefetchTransition] = useTransition();
-  const [
-    isOpenModelServiceTerminatingModal,
-    setIsOpenModelServiceTerminatingModal,
-  ] = useState(false);
+  const [isOpenModelServiceTerminatingModal, setIsOpenServiceTerminatingModal] =
+    useState(false);
   const [servicesFetchKey, updateServicesFetchKey] =
     useUpdatableState('initial-fetch');
   // FIXME: need to apply filtering type of service later
@@ -138,7 +138,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             }
             onClick={() => {
               setIsOpenServiceLauncher(!isOpenServiceLauncher);
-              setSelectedModelService(row);
+              setEditingModelService(row);
             }}
           />
           <Button
@@ -160,8 +160,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               row.status?.toLowerCase() === 'destroying'
             }
             onClick={() => {
-              setIsOpenModelServiceTerminatingModal(true);
-              setSelectedModelService(row);
+              setIsOpenServiceTerminatingModal(true);
+              setTerminatingModelService(row);
             }}
           />
         </Flex>
@@ -322,16 +322,11 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   //   (item: any) => item.desired_session_count < 0
   // );
 
-  const terminateModelServiceMutation = useTanMutation<
-    unknown,
-    {
-      message?: string;
-    }
-  >({
-    mutationFn: () => {
+  const terminateModelServiceMutation = useTanMutation({
+    mutationFn: (endpoint_id: string) => {
       return baiSignedRequestWithPromise({
         method: 'DELETE',
-        url: '/services/' + selectedModelService?.endpoint_id,
+        url: '/services/' + endpoint_id,
         client: baiClient,
       });
     },
@@ -341,7 +336,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   //   queryFn: () => {
   //     return baiSignedRequestWithPromise({
   //       method: "DELETE",
-  //       url: "/services/" + selectedModelService?.id,
+  //       url: "/services/" + editingModelService?.id,
   //       client: baiClient,
   //     });
   //   },
@@ -522,34 +517,30 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         }}
         onOk={() => {
           // FIXME: any better idea for handling result?
-          terminateModelServiceMutation.mutate(undefined, {
-            onSuccess: (res) => {
-              startRefetchTransition(() => {
-                updateServicesFetchKey();
-              });
-              setIsOpenModelServiceTerminatingModal(false);
-            },
-            onError: (err) => {
-              if (err?.message) {
-                message.error(
-                  _.truncate(err?.message, {
-                    length: 200,
-                  }),
-                );
-              } else {
+          terminateModelServiceMutation.mutate(
+            terminatingModelService?.endpoint_id || '',
+            {
+              onSuccess: (res) => {
+                startRefetchTransition(() => {
+                  updateServicesFetchKey();
+                });
+                setIsOpenServiceTerminatingModal(false);
+              },
+              onError: (err) => {
+                console.log(err);
                 message.error(t('modelService.FailedToTerminateService'));
-              }
+              },
             },
-          });
+          );
         }}
         onCancel={() => {
-          setIsOpenModelServiceTerminatingModal(false);
+          setIsOpenServiceTerminatingModal(false);
         }}
       >
         <Flex direction="column" align="stretch" justify="center">
           <p>
             {t('modelService.YouAreAboutToTerminate') +
-              (selectedModelService?.name || '') +
+              (terminatingModelService?.name || '') +
               '.'}
           </p>
           <p>{t('dialog.ask.DoYouWantToProceed')}</p>
@@ -557,9 +548,9 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       </BAIModal>
       <ServiceLauncherModal
         open={isOpenServiceLauncher}
-        endpointFrgmt={selectedModelService || null}
+        endpointFrgmt={editingModelService || null}
         onCancel={() => {
-          setSelectedModelService(null);
+          setEditingModelService(null);
           setIsOpenServiceLauncher(false);
         }}
         onRequestClose={(success) => {
