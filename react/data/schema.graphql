@@ -1541,6 +1541,7 @@ type DeleteContainerRegistry {
 type ModifyEndpoint {
   ok: Boolean
   msg: String
+  endpoint: Endpoint
 }
 
 input ModifyEndpointInput {
