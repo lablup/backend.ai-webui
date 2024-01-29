@@ -21,6 +21,7 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
             ...styles?.header,
           },
         }}
+        zIndex={1001}
         {...modalProps}
       />
     </>
