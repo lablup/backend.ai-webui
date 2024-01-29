@@ -5,6 +5,7 @@ import Flex, { FlexProps } from '../Flex';
 import ProjectSelect from '../ProjectSelect';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
+import './WebUIHeader.css';
 import { MenuOutlined } from '@ant-design/icons';
 import { theme, Button, Typography, Grid } from 'antd';
 import _ from 'lodash';
@@ -50,6 +51,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
         boxShadow: scrolled ? '0 5px 6px -6px rgba(0, 0, 0, 0.1)' : 'none',
         transition: 'background-color 0.2s ease-in-out',
       }}
+      className={'webui-header-container draggable'}
     >
       <Flex direction="row" gap={'sm'}>
         <Button
@@ -58,6 +60,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
           onClick={() => {
             onClickMenuIcon?.();
           }}
+          className="non-draggable"
         />
         <Typography.Title level={5} style={{ margin: 0 }}>
           {/* @ts-ignore */}
@@ -75,6 +78,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
               minWidth: 100,
               maxWidth: gridBreakpoint.lg ? undefined : 100,
             }}
+            className="non-draggable"
             showSearch
             domain={currentDomainName}
             size={gridBreakpoint.lg ? 'large' : 'middle'}
@@ -90,7 +94,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
             }}
           />
         </Suspense>
-        <Flex direction="row">
+        <Flex direction="row" className="non-draggable">
           <BAINotificationButton />
           <WEBUIHelpButton />
           <UserDropdownMenu />

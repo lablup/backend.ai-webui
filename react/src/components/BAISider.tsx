@@ -46,6 +46,12 @@ const BAISider: React.FC<BAISiderProps> = ({
           .bai-sider::-webkit-scrollbar-thumb {
             background: transparent;
           }
+          .bai-sider .draggable {
+            -webkit-app-region: drag;
+          }
+          .bai-sider .non-draggable {
+            -webkit-app-region: no-drag;
+          }
         `}
       </style>
       <Sider
@@ -79,16 +85,15 @@ const BAISider: React.FC<BAISiderProps> = ({
           align="start"
           style={{
             padding: otherProps.collapsed
-              ? '12px 12px 12px 12px'
-              : '12px 16px 12px 16px',
+              ? `${12 + token.marginSM}px 12px 12px 12px`
+              : `${12 + token.marginSM}px 16px 12px 16px`,
             overflow: 'visible',
             transition: 'all 0.2s ease-in-out',
             marginBottom: token.marginSM,
-            marginTop: token.marginSM,
           }}
-          className={'logo-and-text-container'}
+          className={'logo-and-text-container draggable'}
         >
-          <div className="logo-img-wrap">
+          <div className="logo-img-wrap non-draggable">
             <div style={{ display: otherProps.collapsed ? 'none' : 'block' }}>
               {logo}
             </div>
@@ -96,7 +101,7 @@ const BAISider: React.FC<BAISiderProps> = ({
               {logoCollapsed}
             </div>
           </div>
-          <div className="logo-title-wrap">
+          <div className="logo-title-wrap non-draggable">
             <Typography.Text
               style={{
                 fontSize: 16,
