@@ -99,7 +99,7 @@ export default class BackendAIImport extends BackendAIPage {
         mwc-textarea {
           --mdc-theme-primary: var(--general-textfield-selected-color);
           width: 100%;
-          margin: 10px auto;
+          margin: 5px auto;
         }
 
         mwc-textfield#notebook-url {
@@ -750,11 +750,11 @@ export default class BackendAIImport extends BackendAIPage {
         ?active="${this.active === true}"
         .newSessionDialogTitle="${_t('session.launcher.StartImportedNotebook')}"
       ></backend-ai-session-launcher>
-      <div class="horizontal wrap layout">
+      <div class="horizontal wrap layout" style="gap:24px">
         <lablup-activity-panel
           title="${_t('summary.ResourceStatistics')}"
           elevation="1"
-          width="350"
+          width="352"
           height="490"
           narrow
         >
@@ -770,6 +770,7 @@ export default class BackendAIImport extends BackendAIPage {
         <lablup-activity-panel
           title="${_t('import.CreateNotebookButton')}"
           elevation="1"
+          width="352"
           height="490"
         >
           <div slot="message">
@@ -813,7 +814,7 @@ export default class BackendAIImport extends BackendAIPage {
           </div>
         </lablup-activity-panel>
       </div>
-      <div class="horizontal wrap layout">
+      <div class="horizontal wrap layout" style="margin-top:24px;">
         <lablup-activity-panel
           title="${_t('import.ImportGithubRepo')}"
           elevation="1"
