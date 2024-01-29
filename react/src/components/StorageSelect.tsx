@@ -1,5 +1,5 @@
 import { useSuspendedBackendaiClient } from '../hooks';
-import Flex from './Flex';
+import { useControllableValue } from 'ahooks';
 import { Select, SelectProps, Badge } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useMemo } from 'react';
@@ -17,7 +17,7 @@ export type VolumeInfo = {
 };
 interface Props extends Omit<SelectProps, 'value' | 'onChange'> {
   value?: string | VolumeInfo;
-  onChange?: (hostName: string, volumeInfo: VolumeInfo) => void;
+  onChange?: React.Dispatch<React.SetStateAction<VolumeInfo | undefined>>;
   autoSelectType?: 'usage' | 'default';
   showUsageStatus?: boolean;
 }
@@ -40,6 +40,8 @@ const StorageSelect: React.FC<Props> = ({
     return baiClient.vfolder.list_hosts();
   });
 
+  const [state, setState] = useControllableValue({ value, onChange });
+
   //for selecting default host
   useEffect(() => {
     if (!autoSelectType) return;
@@ -55,11 +57,11 @@ const StorageSelect: React.FC<Props> = ({
       );
       selectedHost = lowestUsageHost?.host || selectedHost;
     }
-    onChange?.(selectedHost, {
+    setState({
       id: selectedHost,
       ...(vhostInfo?.volume_info[selectedHost] || {}),
     });
-  }, [vhostInfo]);
+  }, []);
 
   const optionRender = useMemo(() => {
     const status = ['success', 'warning', 'error'];
@@ -74,7 +76,7 @@ const StorageSelect: React.FC<Props> = ({
       }
       return option.label;
     };
-  }, [vhostInfo]);
+  }, []);
 
   return (
     <Select
@@ -83,9 +85,9 @@ const StorageSelect: React.FC<Props> = ({
       loading={isLoadingVhostInfo}
       style={{ minWidth: 165, direction: 'ltr' }}
       // @ts-ignore
-      value={value?.id || value}
+      value={state?.id || state}
       onChange={(host) => {
-        onChange?.(host, {
+        setState({
           id: host,
           ...(vhostInfo?.volume_info[host] || {}),
         });
