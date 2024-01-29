@@ -57,7 +57,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({ type: Number }) vncPort = 0;
   @property({ type: Number }) xrdpPort = 0;
   @property({ type: String }) mountedVfolderName = '';
-  @property({ type: Number }) vscodeDesktopPort = 0;
+  @property({ type: String }) vscodeDesktopPort = '';
   @property({ type: String }) tensorboardPath = '';
   @property({ type: String }) endpointURL = '';
   @property({ type: Boolean }) isPathConfigured = false;
@@ -66,11 +66,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     'mlflow-ui',
   ];
   @property({ type: Object }) appController = Object();
+  @property({ type: Boolean }) allowTCPApps = false;
   @property({ type: Boolean }) openPortToPublic = false;
   @property({ type: Boolean }) allowPreferredPort = false;
   @property({ type: Array }) appOrder;
   @property({ type: Object }) appEnvs = Object();
   @property({ type: Object }) appArgs = Object();
+  @property({ type: String }) vscodeDesktopHost = '127.0.0.1';
   @property({ type: String }) vscodeDesktopPassword = '';
   @query('#app-dialog') dialog!: BackendAIDialog;
   @query('#app-port') appPort!: TextField;
@@ -554,9 +556,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (Object.keys(appServicesOption).length > 0) {
       this.appSupportOption = appServicesOption;
     }
+    this.allowTCPApps =
+      globalThis.isElectron ||
+      globalThis.backendaiclient._config.allowNonAuthTCP;
+
     filteredAppServices.forEach((elm) => {
       if (elm in this.appTemplate) {
-        if (elm !== 'sshd' || (elm === 'sshd' && globalThis.isElectron)) {
+        if (elm !== 'sshd' || (elm === 'sshd' && this.allowTCPApps)) {
           if (interText !== this.appTemplate[elm][0].category) {
             this.appSupportList.push({
               name: this.appTemplate[elm][0].category.substring(2),
@@ -587,7 +593,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
     if (
       globalThis.backendaiclient.supports('local-vscode-remote-connection') &&
-      globalThis.isElectron &&
+      this.allowTCPApps &&
       !filteredAppServices.includes('vscode-desktop')
     ) {
       const insertAfterIndex = this.appSupportList.findIndex(
@@ -905,14 +911,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this._hideAppLauncher();
       this.indicator = await globalThis.lablupIndicator.start();
       let port = null;
-      if (globalThis.isElectron && appName === 'sshd') {
+      if (this.allowTCPApps && appName === 'sshd') {
         port = globalThis.backendaioptions.get('custom_ssh_port', 0);
         if (port === '0' || port === 0) {
           // setting store does not accept null.
           port = null;
         }
       }
-      if (globalThis.isElectron && appName === 'vscode-desktop') {
+      if (this.allowTCPApps && appName === 'vscode-desktop') {
         port = globalThis.backendaioptions.get('custom_ssh_port', 0);
         if (port === '0' || port === 0) {
           // setting store does not accept null.
@@ -936,7 +942,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               this.indicator.set(100, _text('session.applauncher.Prepared'));
               setTimeout(() => {
                 globalThis.open(
-                  appConnectUrl || response.url + urlPostfix,
+                  appConnectUrl?.href || response.url + urlPostfix,
                   '_blank',
                 );
                 // console.log(appName + " proxy loaded: ");
@@ -974,7 +980,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         localStorage.setItem('backendaiwebui.appproxy-permit-key', permitKey);
       }
 
-      if (!resp.reuse) {
+      if (
+        redirectUrl.host === 'localhost:45678' &&
+        redirectUrl.searchParams.get('directTCP')
+      ) {
+        // nonauth TCP mode
+        rqstUrl = redirectUrl;
+      } else if (!resp.reuse) {
         // For the new permit, we need to follow the redirect to open the
         // corresponding port.
         const redirectRqst = {
@@ -1042,7 +1054,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       );
       rqstUrl = new URL(rqstUrl.href);
     }
-    return rqstUrl.href;
+    return rqstUrl;
   }
 
   async _sleep(ms) {
@@ -1118,14 +1130,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this._hideAppLauncher();
       this.indicator = await globalThis.lablupIndicator.start();
       let port;
-      if (globalThis.isElectron && appName === 'sshd') {
+      if (this.allowTCPApps && appName === 'sshd') {
         port = globalThis.backendaioptions.get('custom_ssh_port', 0);
         if (port === '0' || port === 0) {
           // setting store does not accept null.
           port = null;
         }
       }
-      if (globalThis.isElectron && appName === 'vscode-desktop') {
+      if (this.allowTCPApps && appName === 'vscode-desktop') {
         port = globalThis.backendaioptions.get('custom_ssh_port', 0);
         if (port === '0' || port === 0) {
           // setting store does not accept null.
@@ -1152,8 +1164,17 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           );
           if (appName === 'sshd') {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
-            this.sshHost = '127.0.0.1';
-            this.sshPort = response.port;
+            if (globalThis.isElectron) {
+              this.sshHost = '127.0.0.1';
+              this.sshPort = response.port.toString();
+            } else {
+              // eligiblity for spawning TCP-based apps are already verified when first loading the app launcher icons, so here we assume that either non-auth TCP mode is enabled on system or user is using electron app
+              const gateway = new URL(
+                appConnectUrl.searchParams.get('gateway') || '',
+              );
+              this.sshHost = gateway.host;
+              this.sshPort = gateway.port.toString();
+            }
             this._readSSHKey(sessionUuid);
             this._openSSHDialog();
             setTimeout(() => {
@@ -1169,7 +1190,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this._openXRDPDialog();
           } else if (appName === 'vscode-desktop') {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
-            this.vscodeDesktopPort = response.port;
+            if (globalThis.isElectron) {
+              this.vscodeDesktopHost = '127.0.0.1';
+              this.vscodeDesktopPort = response.port.toString();
+            } else {
+              const gateway = new URL(
+                appConnectUrl.searchParams.get('gateway') || '',
+              );
+              this.vscodeDesktopHost = gateway.host;
+              this.vscodeDesktopPort = gateway.port.toString();
+            }
             this._readTempPasswd(sessionUuid);
             this._openVSCodeDesktopDialog();
             setTimeout(() => {
@@ -1179,7 +1209,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(
-                appConnectUrl || response.url + urlPostfix,
+                appConnectUrl?.href || response.url + urlPostfix,
                 '_blank',
               );
               // console.log(appName + " proxy loaded: ");
@@ -1252,7 +1282,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         if (response.url) {
           this.indicator.set(100, _text('session.applauncher.Prepared'));
           setTimeout(() => {
-            globalThis.open(appConnectUrl || response.url, '_blank');
+            globalThis.open(appConnectUrl?.href || response.url, '_blank');
             this.indicator.end();
             // console.log("Terminal proxy loaded: ");
             // console.log(sessionUuid);
@@ -1348,7 +1378,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           button.removeAttribute('disabled');
           setTimeout(() => {
             globalThis.open(
-              appConnectUrl || response.url + urlPostfix,
+              appConnectUrl?.href || response.url + urlPostfix,
               '_blank',
             );
             // console.log(appName + ' proxy loaded: ');
@@ -1914,7 +1944,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               )}</p>
               <p style="margin:auto 10px;">
                 <pre style="white-space:pre-line; margin:10px 10px 0 10px">
-                  Host 127.0.0.1
+                  Host ${this.vscodeDesktopHost}
                   &nbsp;&nbsp;StrictHostKeyChecking no
                   &nbsp;&nbsp;UserKnownHostsFile /dev/null
                 </pre>
@@ -1923,9 +1953,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </section>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <a id="vscode-link" style="margin-top:15px;width:100%;" href="vscode://vscode-remote/ssh-remote+work@127.0.0.1%3A${
-            this.vscodeDesktopPort
-          }/home/work">
+          <a id="vscode-link" style="margin-top:15px;width:100%;" href="vscode://vscode-remote/ssh-remote+work@${
+            this.vscodeDesktopHost
+          }%3A${this.vscodeDesktopPort}/home/work">
             <mwc-button unelevated fullwidth>${_t(
               'OpenVSCodeRemote',
             )}</mwc-button>
