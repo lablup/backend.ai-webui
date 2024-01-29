@@ -88,7 +88,6 @@ const TOTPActivateModal: React.FC<Props> = ({
       onCancel={() => {
         onRequestClose();
       }}
-      style={{ zIndex: 1 }}
       {...baiModalProps}
     >
       {initializedTotp.isLoading ? (
