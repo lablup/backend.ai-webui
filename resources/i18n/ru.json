@@ -453,7 +453,10 @@
     "Enabled": "Включено",
     "StorageProxies": "Хранилища данных",
     "None": "Нет",
-    "Image": "Изображение"
+    "Image": "Изображение",
+    "All": "Все",
+    "InProgress": "В процессе",
+    "Session": "Сессия"
   },
   "credential": {
     "Permission": "Разрешение",
@@ -1132,7 +1135,11 @@
     "SuccessfullyUpdated": "Успешно обновлено",
     "Visit": "Посещение",
     "SeeDetail": "См детали",
-    "Initializing": "Инициализация ..."
+    "Initializing": "Инициализация ...",
+    "NoNotification": "Нет уведомлений.",
+    "Notifications": "Уведомления",
+    "ClearNotifications": "Очистить уведомления",
+    "AreYouSureToClearAllNotifications": "Вы уверены, что удалите все уведомления?"
   },
   "information": {
     "Core": "Основной",

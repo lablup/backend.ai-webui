@@ -250,8 +250,14 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
    */
   _moveTo(url = '') {
     const page = url !== '' ? url : 'summary';
-    globalThis.history.pushState({}, '', page);
+    // globalThis.history.pushState({}, '', page);
     store.dispatch(navigate(decodeURIComponent(page), {}));
+
+    document.dispatchEvent(
+      new CustomEvent('react-navigate', {
+        detail: url,
+      }),
+    );
   }
 
   /**

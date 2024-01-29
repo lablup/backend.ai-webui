@@ -451,7 +451,10 @@
     "Enabled": "Activée",
     "StorageProxies": "Stockages",
     "None": "Aucun",
-    "Image": "Image"
+    "Image": "Image",
+    "All": "Tous",
+    "InProgress": "En cours",
+    "Session": "Session"
   },
   "credential": {
     "Permission": "Autorisation",
@@ -1130,7 +1133,11 @@
     "SuccessfullyUpdated": "Mise à jour réussie",
     "Visit": "Visite",
     "SeeDetail": "Voir le détail",
-    "Initializing": "Initialisation..."
+    "Initializing": "Initialisation...",
+    "NoNotification": "Aucune notification.",
+    "Notifications": "Notifications",
+    "ClearNotifications": "Effacer les notifications",
+    "AreYouSureToClearAllNotifications": "Êtes-vous sûr d'avoir effacé toutes les notifications ?"
   },
   "information": {
     "Core": "Cœur",

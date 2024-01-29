@@ -174,8 +174,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         }
 
         div.indicators {
-          min-height: 80px;
-          padding: 15px 20px 5px 20px;
+          min-height: 83px;
+          padding: 10px 20px;
           background-color: #f6f6f6;
         }
 

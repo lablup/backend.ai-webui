@@ -657,80 +657,98 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css">
+      <link rel="stylesheet" href="resources/custom.css" />
       <div class="layout ${this.direction} justified flex wrap">
-      <div id="scaling-group-select-box" class="layout horizontal center-justified ${
-        this.direction
-      }">
-      <backend-ai-react-resource-group-select 
-        value=${this.scaling_group}
-        @change=${({ detail: value }) => {
-          this.updateScalingGroup(true, {
-            target: {
-              value,
-            },
-          });
-        }}/>
-      </div>
-      <div class="layout ${this.direction}-card flex wrap">
-        <div id="resource-gauges" class="layout ${this.direction} ${
-          this.direction
-        }-panel resources flex wrap">
-          <div class="layout horizontal center-justified monitor">
-            <div class="layout vertical center center-justified resource-name">
-              <div class="gauge-name">CPU</div>
+        <div
+          id="scaling-group-select-box"
+          class="layout horizontal center-justified ${this.direction}"
+        >
+          <backend-ai-react-resource-group-select
+            value=${this.scaling_group}
+            @change=${({ detail: value }) => {
+              this.updateScalingGroup(true, {
+                target: {
+                  value,
+                },
+              });
+            }}
+          ></backend-ai-react-resource-group-select>
+        </div>
+        <div class="layout ${this.direction}-card flex wrap">
+          <div
+            id="resource-gauges"
+            class="layout ${this.direction} ${this
+              .direction}-panel resources flex wrap"
+          >
+            <div class="layout horizontal center-justified monitor">
+              <div
+                class="layout vertical center center-justified resource-name"
+              >
+                <div class="gauge-name">CPU</div>
+              </div>
+              <div class="layout vertical start-justified wrap">
+                <lablup-progress-bar
+                  id="cpu-usage-bar"
+                  class="start"
+                  progress="${this.used_resource_group_slot_percent.cpu /
+                  100.0}"
+                  description="${this.used_resource_group_slot.cpu}/${this
+                    .total_resource_group_slot.cpu}"
+                ></lablup-progress-bar>
+                <lablup-progress-bar
+                  id="cpu-usage-bar-2"
+                  class="end"
+                  progress="${this.used_slot_percent.cpu / 100.0}"
+                  description="${this.used_slot.cpu}/${this.total_slot.cpu}"
+                ></lablup-progress-bar>
+              </div>
+              <div class="layout vertical center center-justified">
+                <span class="percentage start-bar">
+                  ${this._numberWithPostfix(
+                    this.used_resource_group_slot_percent.cpu,
+                    '%',
+                  )}
+                </span>
+                <span class="percentage end-bar">
+                  ${this._numberWithPostfix(this.used_slot_percent.cpu, '%')}
+                </span>
+              </div>
             </div>
-            <div class="layout vertical start-justified wrap">
-              <lablup-progress-bar id="cpu-usage-bar" class="start"
-                progress="${this.used_resource_group_slot_percent.cpu / 100.0}"
-                description="${this.used_resource_group_slot.cpu}/${
-                  this.total_resource_group_slot.cpu
-                }"></lablup-progress-bar>
-              <lablup-progress-bar id="cpu-usage-bar-2" class="end"
-                progress="${this.used_slot_percent.cpu / 100.0}"
-                description="${this.used_slot.cpu}/${
-                  this.total_slot.cpu
-                }"></lablup-progress-bar>
+            <div class="layout horizontal center-justified monitor">
+              <div
+                class="layout vertical center center-justified resource-name"
+              >
+                <span class="gauge-name">RAM</span>
+              </div>
+              <div class="layout vertical start-justified wrap">
+                <lablup-progress-bar
+                  id="mem-usage-bar"
+                  class="start"
+                  progress="${this.used_resource_group_slot_percent.mem /
+                  100.0}"
+                  description="${this.used_resource_group_slot.mem}/${this
+                    .total_resource_group_slot.mem}GiB"
+                ></lablup-progress-bar>
+                <lablup-progress-bar
+                  id="mem-usage-bar-2"
+                  class="end"
+                  progress="${this.used_slot_percent.mem / 100.0}"
+                  description="${this.used_slot.mem}/${this.total_slot.mem}GiB"
+                ></lablup-progress-bar>
+              </div>
+              <div class="layout vertical center center-justified">
+                <span class="percentage start-bar">
+                  ${this._numberWithPostfix(
+                    this.used_resource_group_slot_percent.mem,
+                    '%',
+                  )}
+                </span>
+                <span class="percentage end-bar">
+                  ${this._numberWithPostfix(this.used_slot_percent.mem, '%')}
+                </span>
+              </div>
             </div>
-            <div class="layout vertical center center-justified">
-              <span class="percentage start-bar">${this._numberWithPostfix(
-                this.used_resource_group_slot_percent.cpu,
-                '%',
-              )}</span>
-              <span class="percentage end-bar">${this._numberWithPostfix(
-                this.used_slot_percent.cpu,
-                '%',
-              )}</span>
-            </div>
-          </div>
-          <div class="layout horizontal center-justified monitor">
-            <div class="layout vertical center center-justified resource-name">
-              <span class="gauge-name">RAM</span>
-            </div>
-            <div class="layout vertical start-justified wrap">
-              <lablup-progress-bar id="mem-usage-bar" class="start"
-                progress="${this.used_resource_group_slot_percent.mem / 100.0}"
-                description="${this.used_resource_group_slot.mem}/${
-                  this.total_resource_group_slot.mem
-                }GiB"></lablup-progress-bar>
-              <lablup-progress-bar id="mem-usage-bar-2" class="end"
-                progress="${this.used_slot_percent.mem / 100.0}"
-                description="${this.used_slot.mem}/${this.total_slot.mem}GiB"
-              ></lablup-progress-bar>
-            </div>
-            <div class="layout vertical center center-justified">
-              <span class="percentage start-bar">${this._numberWithPostfix(
-                this.used_resource_group_slot_percent.mem,
-                '%',
-              )}</span>
-              <span class="percentage end-bar">${this._numberWithPostfix(
-                this.used_slot_percent.mem,
-                '%',
-              )}</span>
-            </div>
-          </div>
-          ${
-            this.total_slot.cuda_device
+            ${this.total_slot.cuda_device
               ? html`
                   <div class="layout horizontal center-justified monitor">
                     <div
@@ -773,10 +791,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     </div>
                   </div>
                 `
-              : html``
-          }
-          ${
-            this.resourceBroker.total_slot.cuda_shares &&
+              : html``}
+            ${this.resourceBroker.total_slot.cuda_shares &&
             this.resourceBroker.total_slot.cuda_shares > 0
               ? html`
                   <div class="layout horizontal center-justified monitor">
@@ -820,19 +836,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     </div>
                   </div>
                 `
-              : html``
-          }
-          ${
-            this.total_slot.rocm_device
+              : html``}
+            ${this.total_slot.rocm_device
               ? html`
                   <div class="layout horizontal center-justified monitor">
                     <div
                       class="layout vertical center center-justified resource-name"
                     >
-                      <img
-                        class="resource-type-icon fg green"
-                        src="/resources/icons/ROCm.png"
-                      />
                       <span class="gauge-name">
                         ROCm
                         <br />
@@ -877,10 +887,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     </div>
                   </div>
                 `
-              : html``
-          }
-          ${
-            this.total_slot.tpu_device
+              : html``}
+            ${this.total_slot.tpu_device
               ? html`
                   <div class="layout horizontal center-justified monitor">
                     <div
@@ -923,10 +931,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     </div>
                   </div>
                 `
-              : html``
-          }
-          ${
-            this.total_slot.ipu_device
+              : html``}
+            ${this.total_slot.ipu_device
               ? html`
                   <div class="layout horizontal center-justified monitor">
                     <div
@@ -969,10 +975,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     </div>
                   </div>
                 `
-              : html``
-          }
-          ${
-            this.total_slot.atom_device
+              : html``}
+            ${this.total_slot.atom_device
               ? html`
                   <div class="layout horizontal center-justified monitor">
                     <div
@@ -1015,10 +1019,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     </div>
                   </div>
                 `
-              : html``
-          }
-          ${
-            this.total_slot.warboy_device
+              : html``}
+            ${this.total_slot.warboy_device
               ? html`
                   <div class="layout horizontal center-justified monitor">
                     <div
@@ -1062,419 +1064,417 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     </div>
                   </div>
                 `
-              : html``
-          }
-          <div class="layout horizontal center-justified monitor">
-            <div class="layout vertical center center-justified resource-name">
-              <span class="gauge-name">${_t('session.launcher.Sessions')}</span>
-            </div>
-            <div class="layout vertical center-justified wrap">
-              <lablup-progress-bar id="concurrency-usage-bar" class="start"
-                progress="${this.used_slot_percent.concurrency / 100.0}"
-                description="${this.concurrency_used}/${
-                  this.concurrency_max === 1000000
+              : html``}
+            <div class="layout horizontal center-justified monitor">
+              <div
+                class="layout vertical center center-justified resource-name"
+              >
+                <span class="gauge-name">
+                  ${_t('session.launcher.Sessions')}
+                </span>
+              </div>
+              <div class="layout vertical center-justified wrap">
+                <lablup-progress-bar
+                  id="concurrency-usage-bar"
+                  class="start"
+                  progress="${this.used_slot_percent.concurrency / 100.0}"
+                  description="${this.concurrency_used}/${this
+                    .concurrency_max === 1000000
                     ? '∞'
-                    : parseInt(this.concurrency_max)
-                }"
+                    : parseInt(this.concurrency_max)}"
                 ></lablup-progress-bar>
-            </div>
-            <div class="layout vertical center center-justified">
-              <span class="percentage end-bar" style="margin-top:0px;">${this._numberWithPostfix(
-                this.used_slot_percent.concurrency,
-                '%',
-              )}</span>
+              </div>
+              <div class="layout vertical center center-justified">
+                <span class="percentage end-bar" style="margin-top:0px;">
+                  ${this._numberWithPostfix(
+                    this.used_slot_percent.concurrency,
+                    '%',
+                  )}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="layout horizontal center end-justified" id="resource-gauge-toggle">
-          <p style="font-size:12px;color:#242424;margin-right:10px;">
-            ${_t('session.launcher.ResourceMonitorToggle')}
-          </p>
-          <mwc-switch selected class="${
-            this.direction
-          }" id="resource-gauge-toggle-button" @click="${() =>
-            this._updateToggleResourceMonitorDisplay()}">
-          </mwc-switch>
+          <div
+            class="layout horizontal center end-justified"
+            id="resource-gauge-toggle"
+          >
+            <p style="font-size:12px;color:#242424;margin-right:10px;">
+              ${_t('session.launcher.ResourceMonitorToggle')}
+            </p>
+            <mwc-switch
+              selected
+              class="${this.direction}"
+              id="resource-gauge-toggle-button"
+              @click="${() => this._updateToggleResourceMonitorDisplay()}"
+            ></mwc-switch>
+          </div>
         </div>
       </div>
-      </div>
-      <div class="vertical start-justified layout ${
-        this.direction
-      }-card" id="resource-legend">
-        <div class="layout horizontal center ${
-          this.direction === 'vertical' ? 'start-justified' : 'end-justified'
-        }
-                    resource-legend-stack">
+      <div
+        class="vertical start-justified layout ${this.direction}-card"
+        id="resource-legend"
+      >
+        <div
+          class="layout horizontal center ${this.direction === 'vertical'
+            ? 'start-justified'
+            : 'end-justified'}
+                    resource-legend-stack"
+        >
           <div class="resource-legend-icon start"></div>
-          <span class="resource-legend">${_t(
-            'session.launcher.CurrentResourceGroup',
-          )} (${this.scaling_group})</span>
+          <span class="resource-legend">
+            ${_t('session.launcher.CurrentResourceGroup')}
+            (${this.scaling_group})
+          </span>
         </div>
-        <div class="layout horizontal center ${
-          this.direction === 'vertical' ? 'start-justified' : 'end-justified'
-        }"">
+        <div
+          class="layout horizontal center ${this.direction === 'vertical'
+            ? 'start-justified'
+            : 'end-justified'}"
+        >
           <div class="resource-legend-icon end"></div>
-          <span class="resource-legend">${_t(
-            'session.launcher.UserResourceLimit',
-          )}</span>
+          <span class="resource-legend">
+            ${_t('session.launcher.UserResourceLimit')}
+          </span>
         </div>
       </div>
-      ${
-        this.direction === 'vertical' &&
-        this.project_resource_monitor === true &&
-        (this.total_project_slot.cpu > 0 ||
-          this.total_project_slot.cpu === Infinity)
-          ? html`
-              <hr />
-              <div class="vertical start-justified layout">
-                <div class="flex"></div>
-                <div class="layout horizontal center-justified monitor">
-                  <div
-                    class="layout vertical center center-justified"
-                    style="margin-right:5px;"
-                  >
-                    <mwc-icon class="fg blue">group_work</mwc-icon>
-                    <span class="gauge-name">
-                      ${_t('session.launcher.Project')}
-                    </span>
-                  </div>
-                  <div
-                    class="layout vertical start-justified wrap short-indicator"
-                  >
-                    <div class="layout horizontal">
-                      <span
-                        style="width:35px; margin-left:5px; margin-right:5px;"
-                      >
-                        CPU
-                      </span>
-                      <lablup-progress-bar
-                        id="cpu-project-usage-bar"
-                        class="start"
-                        progress="${this.used_project_slot_percent.cpu / 100.0}"
-                        description="${this.used_project_slot.cpu}/${this
-                          .total_project_slot.cpu === Infinity
-                          ? '∞'
-                          : this.total_project_slot.cpu}"
-                      ></lablup-progress-bar>
-                      <div class="layout vertical center center-justified">
-                        <span class="percentage start-bar">
-                          ${this._numberWithPostfix(
-                            this.used_project_slot_percent.cpu,
-                            '%',
-                          )}
-                        </span>
-                        <span class="percentage end-bar">
-                          ${this._numberWithPostfix(
-                            this.total_project_slot.cpu,
-                            '%',
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                    <div class="layout horizontal">
-                      <span
-                        style="width:35px;margin-left:5px; margin-right:5px;"
-                      >
-                        RAM
-                      </span>
-                      <lablup-progress-bar
-                        id="mem-project-usage-bar"
-                        class="end"
-                        progress="${this.used_project_slot_percent.mem / 100.0}"
-                        description=">${this.used_project_slot.mem}/${this
-                          .total_project_slot.mem === Infinity
-                          ? '∞'
-                          : this.total_project_slot.mem}"
-                      ></lablup-progress-bar>
-                      <div class="layout vertical center center-justified">
-                        <span class="percentage start-bar">
-                          ${this._numberWithPostfix(
-                            this.used_project_slot_percent.mem,
-                            '%',
-                          )}
-                        </span>
-                        <span class="percentage end-bar">
-                          ${this._numberWithPostfix(
-                            this.total_project_slot.mem,
-                            '%',
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                    ${this.total_project_slot.cuda_device
-                      ? html`
-                          <div class="layout horizontal">
-                            <span
-                              style="width:35px;margin-left:5px; margin-right:5px;"
-                            >
-                              GPU
-                            </span>
-                            <lablup-progress-bar
-                              id="gpu-project-usage-bar"
-                              class="end"
-                              progress="${this.used_project_slot_percent
-                                .cuda_device / 100.0}"
-                              description="${this.used_project_slot
-                                .cuda_device}/${this.total_project_slot
-                                .cuda_device === 'Infinity'
-                                ? '∞'
-                                : this.total_project_slot.cuda_device}"
-                            ></lablup-progress-bar>
-                            <div
-                              class="layout vertical center center-justified"
-                            >
-                              <span class="percentage start-bar">
-                                ${this._numberWithPostfix(
-                                  this.used_project_slot_percent.cuda_device,
-                                  '%',
-                                )}
-                              </span>
-                              <span class="percentage end-bar">
-                                ${this._numberWithPostfix(
-                                  this.total_project_slot.cuda_device,
-                                  '%',
-                                )}
-                              </span>
-                            </div>
-                          </div>
-                        `
-                      : html``}
-                    ${this.total_project_slot.cuda_shares
-                      ? html`
-                          <div class="layout horizontal">
-                            <span
-                              style="width:35px;margin-left:5px; margin-right:5px;"
-                            >
-                              FGPU
-                            </span>
-                            <lablup-progress-bar
-                              id="fgpu-project-usage-bar"
-                              class="end"
-                              progress="${this.used_project_slot_percent
-                                .cuda_shares / 100.0}"
-                              description="${this.used_project_slot
-                                .cuda_shares}/${this.total_project_slot
-                                .cuda_shares === 'Infinity'
-                                ? '∞'
-                                : this.total_project_slot.cuda_shares}"
-                            ></lablup-progress-bar>
-                            <div
-                              class="layout vertical center center-justified"
-                            >
-                              <span class="percentage start-bar">
-                                ${this._numberWithPostfix(
-                                  this.used_project_slot_percent.cuda_shares,
-                                  '%',
-                                )}
-                              </span>
-                              <span class="percentage end-bar">
-                                ${this._numberWithPostfix(
-                                  this.total_project_slot.cuda_shares,
-                                  '%',
-                                )}
-                              </span>
-                            </div>
-                          </div>
-                        `
-                      : html``}
-                    ${this.total_project_slot.rocm_device
-                      ? html`
-                          <div class="layout horizontal">
-                            <span
-                              style="width:35px;margin-left:5px; margin-right:5px;"
-                            >
-                              GPU
-                            </span>
-                            <lablup-progress-bar
-                              id="rocm-project-usage-bar"
-                              class="end"
-                              progress="${this.used_project_slot_percent
-                                .rocm_device / 100.0}"
-                              description="${this.used_project_slot
-                                .rocm_device}/${this.total_project_slot
-                                .rocm_device === 'Infinity'
-                                ? '∞'
-                                : this.total_project_slot.rocm_device}"
-                            ></lablup-progress-bar>
-                            <div
-                              class="layout vertical center center-justified"
-                            >
-                              <span class="percentage start-bar">
-                                ${this._numberWithPostfix(
-                                  this.used_project_slot_percent.rocm_device,
-                                  '%',
-                                )}
-                              </span>
-                              <span class="percentage end-bar">
-                                ${this._numberWithPostfix(
-                                  this.total_project_slot.rocm_device,
-                                  '%',
-                                )}
-                              </span>
-                            </div>
-                          </div>
-                        `
-                      : html``}
-                    ${this.total_project_slot.tpu_device
-                      ? html`
-                          <div class="layout horizontal">
-                            <span
-                              style="width:35px;margin-left:5px; margin-right:5px;"
-                            >
-                              GPU
-                            </span>
-                            <lablup-progress-bar
-                              id="tpu-project-usage-bar"
-                              class="end"
-                              progress="${this.used_project_slot_percent
-                                .tpu_device / 100.0}"
-                              description="${this.used_project_slot
-                                .tpu_device}/${this.total_project_slot
-                                .tpu_device === 'Infinity'
-                                ? '∞'
-                                : this.total_project_slot.tpu_device}"
-                            ></lablup-progress-bar>
-                            <div
-                              class="layout vertical center center-justified"
-                            >
-                              <span class="percentage start-bar">
-                                ${this._numberWithPostfix(
-                                  this.used_project_slot_percent.tpu_device,
-                                  '%',
-                                )}
-                              </span>
-                              <span class="percentage end-bar">
-                                ${this._numberWithPostfix(
-                                  this.total_project_slot.tpu_device,
-                                  '%',
-                                )}
-                              </span>
-                            </div>
-                          </div>
-                        `
-                      : html``}
-                    ${this.total_project_slot.ipu_device
-                      ? html`
-                          <div class="layout horizontal">
-                            <span
-                              style="width:35px;margin-left:5px; margin-right:5px;"
-                            >
-                              IPU
-                            </span>
-                            <lablup-progress-bar
-                              id="ipu-project-usage-bar"
-                              class="end"
-                              progress="${this.used_project_slot_percent
-                                .ipu_device / 100.0}"
-                              description="${this.used_project_slot
-                                .ipu_device}/${this.total_project_slot
-                                .ipu_device === 'Infinity'
-                                ? '∞'
-                                : this.total_project_slot.ipu_device}"
-                            ></lablup-progress-bar>
-                            <div
-                              class="layout vertical center center-justified"
-                            >
-                              <span class="percentage start-bar">
-                                ${this._numberWithPostfix(
-                                  this.used_project_slot_percent.ipu_device,
-                                  '%',
-                                )}
-                              </span>
-                              <span class="percentage end-bar">
-                                ${this._numberWithPostfix(
-                                  this.total_project_slot.ipu_device,
-                                  '%',
-                                )}
-                              </span>
-                            </div>
-                          </div>
-                        `
-                      : html``}
-                    ${this.total_project_slot.atom_device
-                      ? html`
-                          <div class="layout horizontal">
-                            <span
-                              style="width:35px;margin-left:5px; margin-right:5px;"
-                            >
-                              ATOM
-                            </span>
-                            <lablup-progress-bar
-                              id="tpu-project-usage-bar"
-                              class="end"
-                              progress="${this.used_project_slot_percent
-                                .atom_device / 100.0}"
-                              description="${this.used_project_slot
-                                .atom_device}/${this.total_project_slot
-                                .atom_device === 'Infinity'
-                                ? '∞'
-                                : this.total_project_slot.atom_device}"
-                            ></lablup-progress-bar>
-                            <div
-                              class="layout vertical center center-justified"
-                            >
-                              <span class="percentage start-bar">
-                                ${this._numberWithPostfix(
-                                  this.used_project_slot_percent.atom_device,
-                                  '%',
-                                )}
-                              </span>
-                              <span class="percentage end-bar">
-                                ${this._numberWithPostfix(
-                                  this.total_project_slot.atom_device,
-                                  '%',
-                                )}
-                              </span>
-                            </div>
-                          </div>
-                        `
-                      : html``}
-                    ${this.total_project_slot.warboy_device
-                      ? html`
-                          <div class="layout horizontal">
-                            <span
-                              style="width:35px;margin-left:5px; margin-right:5px;"
-                            >
-                              Warboy
-                            </span>
-                            <lablup-progress-bar
-                              id="tpu-project-usage-bar"
-                              class="end"
-                              progress="${this.used_project_slot_percent
-                                .warboy_device / 100.0}"
-                              description="${this.used_project_slot
-                                .warboy_device}/${this.total_project_slot
-                                .warboy_device === 'Infinity'
-                                ? '∞'
-                                : this.total_project_slot.warboy_device}"
-                            ></lablup-progress-bar>
-                            <div
-                              class="layout vertical center center-justified"
-                            >
-                              <span class="percentage start-bar">
-                                ${this._numberWithPostfix(
-                                  this.used_project_slot_percent.warboy_device,
-                                  '%',
-                                )}
-                              </span>
-                              <span class="percentage end-bar">
-                                ${this._numberWithPostfix(
-                                  this.total_project_slot.warboy_device,
-                                  '%',
-                                )}
-                              </span>
-                            </div>
-                          </div>
-                        `
-                      : html``}
-                  </div>
-                  <div class="flex"></div>
+      ${this.direction === 'vertical' &&
+      this.project_resource_monitor === true &&
+      (this.total_project_slot.cpu > 0 ||
+        this.total_project_slot.cpu === Infinity)
+        ? html`
+            <hr />
+            <div class="vertical start-justified layout">
+              <div class="flex"></div>
+              <div class="layout horizontal center-justified monitor">
+                <div
+                  class="layout vertical center center-justified"
+                  style="margin-right:5px;"
+                >
+                  <mwc-icon class="fg blue">group_work</mwc-icon>
+                  <span class="gauge-name">
+                    ${_t('session.launcher.Project')}
+                  </span>
                 </div>
+                <div
+                  class="layout vertical start-justified wrap short-indicator"
+                >
+                  <div class="layout horizontal">
+                    <span
+                      style="width:35px; margin-left:5px; margin-right:5px;"
+                    >
+                      CPU
+                    </span>
+                    <lablup-progress-bar
+                      id="cpu-project-usage-bar"
+                      class="start"
+                      progress="${this.used_project_slot_percent.cpu / 100.0}"
+                      description="${this.used_project_slot.cpu}/${this
+                        .total_project_slot.cpu === Infinity
+                        ? '∞'
+                        : this.total_project_slot.cpu}"
+                    ></lablup-progress-bar>
+                    <div class="layout vertical center center-justified">
+                      <span class="percentage start-bar">
+                        ${this._numberWithPostfix(
+                          this.used_project_slot_percent.cpu,
+                          '%',
+                        )}
+                      </span>
+                      <span class="percentage end-bar">
+                        ${this._numberWithPostfix(
+                          this.total_project_slot.cpu,
+                          '%',
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="layout horizontal">
+                    <span style="width:35px;margin-left:5px; margin-right:5px;">
+                      RAM
+                    </span>
+                    <lablup-progress-bar
+                      id="mem-project-usage-bar"
+                      class="end"
+                      progress="${this.used_project_slot_percent.mem / 100.0}"
+                      description=">${this.used_project_slot.mem}/${this
+                        .total_project_slot.mem === Infinity
+                        ? '∞'
+                        : this.total_project_slot.mem}"
+                    ></lablup-progress-bar>
+                    <div class="layout vertical center center-justified">
+                      <span class="percentage start-bar">
+                        ${this._numberWithPostfix(
+                          this.used_project_slot_percent.mem,
+                          '%',
+                        )}
+                      </span>
+                      <span class="percentage end-bar">
+                        ${this._numberWithPostfix(
+                          this.total_project_slot.mem,
+                          '%',
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                  ${this.total_project_slot.cuda_device
+                    ? html`
+                        <div class="layout horizontal">
+                          <span
+                            style="width:35px;margin-left:5px; margin-right:5px;"
+                          >
+                            GPU
+                          </span>
+                          <lablup-progress-bar
+                            id="gpu-project-usage-bar"
+                            class="end"
+                            progress="${this.used_project_slot_percent
+                              .cuda_device / 100.0}"
+                            description="${this.used_project_slot
+                              .cuda_device}/${this.total_project_slot
+                              .cuda_device === 'Infinity'
+                              ? '∞'
+                              : this.total_project_slot.cuda_device}"
+                          ></lablup-progress-bar>
+                          <div class="layout vertical center center-justified">
+                            <span class="percentage start-bar">
+                              ${this._numberWithPostfix(
+                                this.used_project_slot_percent.cuda_device,
+                                '%',
+                              )}
+                            </span>
+                            <span class="percentage end-bar">
+                              ${this._numberWithPostfix(
+                                this.total_project_slot.cuda_device,
+                                '%',
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      `
+                    : html``}
+                  ${this.total_project_slot.cuda_shares
+                    ? html`
+                        <div class="layout horizontal">
+                          <span
+                            style="width:35px;margin-left:5px; margin-right:5px;"
+                          >
+                            FGPU
+                          </span>
+                          <lablup-progress-bar
+                            id="fgpu-project-usage-bar"
+                            class="end"
+                            progress="${this.used_project_slot_percent
+                              .cuda_shares / 100.0}"
+                            description="${this.used_project_slot
+                              .cuda_shares}/${this.total_project_slot
+                              .cuda_shares === 'Infinity'
+                              ? '∞'
+                              : this.total_project_slot.cuda_shares}"
+                          ></lablup-progress-bar>
+                          <div class="layout vertical center center-justified">
+                            <span class="percentage start-bar">
+                              ${this._numberWithPostfix(
+                                this.used_project_slot_percent.cuda_shares,
+                                '%',
+                              )}
+                            </span>
+                            <span class="percentage end-bar">
+                              ${this._numberWithPostfix(
+                                this.total_project_slot.cuda_shares,
+                                '%',
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      `
+                    : html``}
+                  ${this.total_project_slot.rocm_device
+                    ? html`
+                        <div class="layout horizontal">
+                          <span
+                            style="width:35px;margin-left:5px; margin-right:5px;"
+                          >
+                            GPU
+                          </span>
+                          <lablup-progress-bar
+                            id="rocm-project-usage-bar"
+                            class="end"
+                            progress="${this.used_project_slot_percent
+                              .rocm_device / 100.0}"
+                            description="${this.used_project_slot
+                              .rocm_device}/${this.total_project_slot
+                              .rocm_device === 'Infinity'
+                              ? '∞'
+                              : this.total_project_slot.rocm_device}"
+                          ></lablup-progress-bar>
+                          <div class="layout vertical center center-justified">
+                            <span class="percentage start-bar">
+                              ${this._numberWithPostfix(
+                                this.used_project_slot_percent.rocm_device,
+                                '%',
+                              )}
+                            </span>
+                            <span class="percentage end-bar">
+                              ${this._numberWithPostfix(
+                                this.total_project_slot.rocm_device,
+                                '%',
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      `
+                    : html``}
+                  ${this.total_project_slot.tpu_device
+                    ? html`
+                        <div class="layout horizontal">
+                          <span
+                            style="width:35px;margin-left:5px; margin-right:5px;"
+                          >
+                            GPU
+                          </span>
+                          <lablup-progress-bar
+                            id="tpu-project-usage-bar"
+                            class="end"
+                            progress="${this.used_project_slot_percent
+                              .tpu_device / 100.0}"
+                            description="${this.used_project_slot
+                              .tpu_device}/${this.total_project_slot
+                              .tpu_device === 'Infinity'
+                              ? '∞'
+                              : this.total_project_slot.tpu_device}"
+                          ></lablup-progress-bar>
+                          <div class="layout vertical center center-justified">
+                            <span class="percentage start-bar">
+                              ${this._numberWithPostfix(
+                                this.used_project_slot_percent.tpu_device,
+                                '%',
+                              )}
+                            </span>
+                            <span class="percentage end-bar">
+                              ${this._numberWithPostfix(
+                                this.total_project_slot.tpu_device,
+                                '%',
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      `
+                    : html``}
+                  ${this.total_project_slot.ipu_device
+                    ? html`
+                        <div class="layout horizontal">
+                          <span
+                            style="width:35px;margin-left:5px; margin-right:5px;"
+                          >
+                            IPU
+                          </span>
+                          <lablup-progress-bar
+                            id="ipu-project-usage-bar"
+                            class="end"
+                            progress="${this.used_project_slot_percent
+                              .ipu_device / 100.0}"
+                            description="${this.used_project_slot
+                              .ipu_device}/${this.total_project_slot
+                              .ipu_device === 'Infinity'
+                              ? '∞'
+                              : this.total_project_slot.ipu_device}"
+                          ></lablup-progress-bar>
+                          <div class="layout vertical center center-justified">
+                            <span class="percentage start-bar">
+                              ${this._numberWithPostfix(
+                                this.used_project_slot_percent.ipu_device,
+                                '%',
+                              )}
+                            </span>
+                            <span class="percentage end-bar">
+                              ${this._numberWithPostfix(
+                                this.total_project_slot.ipu_device,
+                                '%',
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      `
+                    : html``}
+                  ${this.total_project_slot.atom_device
+                    ? html`
+                        <div class="layout horizontal">
+                          <span
+                            style="width:35px;margin-left:5px; margin-right:5px;"
+                          >
+                            ATOM
+                          </span>
+                          <lablup-progress-bar
+                            id="tpu-project-usage-bar"
+                            class="end"
+                            progress="${this.used_project_slot_percent
+                              .atom_device / 100.0}"
+                            description="${this.used_project_slot
+                              .atom_device}/${this.total_project_slot
+                              .atom_device === 'Infinity'
+                              ? '∞'
+                              : this.total_project_slot.atom_device}"
+                          ></lablup-progress-bar>
+                          <div class="layout vertical center center-justified">
+                            <span class="percentage start-bar">
+                              ${this._numberWithPostfix(
+                                this.used_project_slot_percent.atom_device,
+                                '%',
+                              )}
+                            </span>
+                            <span class="percentage end-bar">
+                              ${this._numberWithPostfix(
+                                this.total_project_slot.atom_device,
+                                '%',
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      `
+                    : html``}
+                  ${this.total_project_slot.warboy_device
+                    ? html`
+                        <div class="layout horizontal">
+                          <span
+                            style="width:35px;margin-left:5px; margin-right:5px;"
+                          >
+                            Warboy
+                          </span>
+                          <lablup-progress-bar
+                            id="tpu-project-usage-bar"
+                            class="end"
+                            progress="${this.used_project_slot_percent
+                              .warboy_device / 100.0}"
+                            description="${this.used_project_slot
+                              .warboy_device}/${this.total_project_slot
+                              .warboy_device === 'Infinity'
+                              ? '∞'
+                              : this.total_project_slot.warboy_device}"
+                          ></lablup-progress-bar>
+                          <div class="layout vertical center center-justified">
+                            <span class="percentage start-bar">
+                              ${this._numberWithPostfix(
+                                this.used_project_slot_percent.warboy_device,
+                                '%',
+                              )}
+                            </span>
+                            <span class="percentage end-bar">
+                              ${this._numberWithPostfix(
+                                this.total_project_slot.warboy_device,
+                                '%',
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      `
+                    : html``}
+                </div>
+                <div class="flex"></div>
               </div>
-            `
-          : html``
-      }
-`;
+            </div>
+          `
+        : html``}
+    `;
   }
 }
 

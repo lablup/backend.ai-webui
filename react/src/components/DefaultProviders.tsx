@@ -89,7 +89,7 @@ i18n
     },
   });
 
-const useCurrentLanguage = () => {
+export const useCurrentLanguage = () => {
   const [lang, _setLang] = useState(
     //@ts-ignore
     globalThis?.backendaioptions?.get('current_language'),
@@ -163,8 +163,8 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                     locale={'ko' === lang ? ko_KR : en_US}
                     theme={{
                       ...(isDarkMode
-                        ? { ...themeConfig.dark }
-                        : { ...themeConfig.light }),
+                        ? { ...themeConfig?.dark }
+                        : { ...themeConfig?.light }),
                       algorithm: isDarkMode
                         ? theme.darkAlgorithm
                         : theme.defaultAlgorithm,
@@ -201,7 +201,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   );
 };
 
-const RoutingEventHandler = () => {
+export const RoutingEventHandler = () => {
   const navigate = useNavigate();
   useLayoutEffect(() => {
     const handleNavigate = (e: any) => {
@@ -223,3 +223,51 @@ const RoutingEventHandler = () => {
 };
 
 export default DefaultProviders;
+
+export const DefaultProviders2: React.FC<Partial<DefaultProvidersProps>> = ({
+  children,
+  value,
+  styles,
+}) => {
+  const [lang] = useCurrentLanguage();
+  const themeConfig = useCustomThemeConfig();
+  const { isDarkMode } = useThemeMode();
+
+  return (
+    <>
+      {RelayEnvironment && (
+        <RelayEnvironmentProvider environment={RelayEnvironment}>
+          <QueryClientProvider client={queryClient}>
+            <ConfigProvider
+              // @ts-ignore
+              // getPopupContainer={(triggerNode) => {
+              //   return triggerNode?.parentNode || shadowRoot;
+              // }}
+              //TODO: apply other supported locales
+              locale={'ko' === lang ? ko_KR : en_US}
+              theme={{
+                ...(isDarkMode
+                  ? { ...themeConfig?.dark }
+                  : { ...themeConfig?.light }),
+                algorithm: isDarkMode
+                  ? theme.darkAlgorithm
+                  : theme.defaultAlgorithm,
+              }}
+            >
+              <App>
+                {/* <StyleProvider container={shadowRoot} cache={cache}> */}
+                <Suspense>
+                  {/* <BrowserRouter> */}
+                  {/* <RoutingEventHandler /> */}
+                  {children}
+                  {/* </BrowserRouter> */}
+                </Suspense>
+                {/* </StyleProvider> */}
+              </App>
+            </ConfigProvider>
+          </QueryClientProvider>
+        </RelayEnvironmentProvider>
+      )}
+    </>
+  );
+};
