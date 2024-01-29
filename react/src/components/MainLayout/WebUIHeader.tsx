@@ -5,7 +5,8 @@ import Flex, { FlexProps } from '../Flex';
 import ProjectSelect from '../ProjectSelect';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
-import './WebUIHeader.css';
+// @ts-ignore
+import rawCss from './WebUIHeader.css?raw';
 import { MenuOutlined } from '@ant-design/icons';
 import { theme, Button, Typography, Grid } from 'antd';
 import _ from 'lodash';
@@ -51,8 +52,9 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
         boxShadow: scrolled ? '0 5px 6px -6px rgba(0, 0, 0, 0.1)' : 'none',
         transition: 'background-color 0.2s ease-in-out',
       }}
-      className={'webui-header-container draggable'}
+      className={'webui-header-container'}
     >
+      <style>{rawCss}</style>
       <Flex direction="row" gap={'sm'}>
         <Button
           icon={<MenuOutlined />}

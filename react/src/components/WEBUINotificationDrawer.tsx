@@ -43,6 +43,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
       width={DRAWER_WIDTH}
       title={t('notification.Notifications')}
       mask={false}
+      className="webui-notification-drawer"
       styles={{
         // mask: { backgroundColor: 'transparent' },
         body: {
@@ -51,7 +52,8 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
           paddingRight: token.paddingContentHorizontalSM,
         },
         header: {
-          padding: 15,
+          // @ts-ignore
+          '-webkit-app-region': 'drag',
         },
         wrapper: {
           padding: 0,
@@ -84,6 +86,14 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
       }
       {...drawerProps}
     >
+      <style>
+        {`
+          .ant-drawer-header-title .ant-drawer-close,
+          .ant-drawer-header .ant-drawer-extra{
+            -webkit-app-region: no-drag;
+          }
+        `}
+      </style>
       <List
         itemLayout="vertical"
         dataSource={

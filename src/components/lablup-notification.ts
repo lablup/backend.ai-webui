@@ -2,9 +2,7 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { navigate } from '../backend-ai-app';
 import '../plastics/mwc/mwc-snackbar';
-import { store } from '../store';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import '@material/mwc-icon-button';
 import { css, CSSResultGroup, html, LitElement } from 'lit';
