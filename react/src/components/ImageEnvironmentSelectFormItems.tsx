@@ -135,10 +135,36 @@ const ImageEnvironmentSelectFormItems: React.FC<
     if (!_.isEmpty(environments?.manual)) {
       return;
     }
+
+    let matchedEnvironmentByVersion:
+      | ImageGroup['environmentGroups'][0]
+      | undefined;
+    // let matchedImageByVersion;
+
+    form.getFieldValue('environments')?.environment === undefined &&
+      form.getFieldValue('environments')?.version &&
+      _.find(imageGroups, (group) => {
+        return _.find(group.environmentGroups, (environment) => {
+          return _.find(environment.images, (image) => {
+            const matched =
+              getImageFullName(image) ===
+              form.getFieldValue('environments')?.version;
+
+            if (matched) {
+              matchedEnvironmentByVersion = environment;
+              // matchedImageByVersion = image;
+            }
+            return matched;
+          });
+        });
+      });
+
     // if not initial value, select first value
     const nextEnvironmentName =
       form.getFieldValue('environments')?.environment ||
-      imageGroups[0]?.environmentGroups[0]?.environmentName;
+      form.getFieldValue('environments')?.version
+        ? matchedEnvironmentByVersion?.environmentName
+        : imageGroups[0]?.environmentGroups[0]?.environmentName;
 
     let nextEnvironmentGroup: ImageGroup['environmentGroups'][0] | undefined;
     _.find(imageGroups, (group) => {

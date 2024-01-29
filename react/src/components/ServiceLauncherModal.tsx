@@ -8,7 +8,10 @@ import {
   compareNumberWithUnits,
   iSizeToSize,
 } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
+import {
+  useBackendAIImageMetaData,
+  useSuspendedBackendaiClient,
+} from '../hooks';
 import { useCurrentDomainValue } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
@@ -99,6 +102,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
   const [form] = Form.useForm<ServiceLauncherFormValue>();
+  const [metadata, { getImageMeta }] = useBackendAIImageMetaData();
 
   const endpoint = useFragment(
     graphql`
@@ -334,13 +338,13 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   cluster_size: endpoint?.cluster_size,
                   openToPublic: endpoint?.open_to_public,
                   environments: {
-                    version: `${endpoint?.image}@${endpoint?.architecture}`,
-                    // FIXME: parse environment manually
-                    environment: endpoint?.image
-                      ?.split('/')
-                      .splice(1, 3)
-                      .join('/')
-                      .split(':')[0],
+                    // version: `${endpoint?.image}@${endpoint?.architecture}`,
+                    // // FIXME: parse environment manually
+                    // environment: getImageMeta(
+                    //   `${endpoint?.image}@${endpoint?.architecture}`,
+                    // ),
+                    version:
+                      'bai-repo:7443/bai/furiosa-server:3.10-ubuntu22.04@x86_64',
                   },
                 }
               : {
