@@ -19,13 +19,13 @@ export type VolumeInfo = {
 interface Props extends Omit<SelectProps, 'value' | 'onChange'> {
   value?: string | VolumeInfo;
   onChange?: (hostName: string, volumeInfo: VolumeInfo) => void;
-  autoSelectDefault?: boolean;
+  autoSelectType?: 'usage' | 'default';
   showUsageStatus?: boolean;
 }
 const StorageSelect: React.FC<Props> = ({
   value,
   onChange,
-  autoSelectDefault,
+  autoSelectType,
   showUsageStatus,
   ...selectProps
 }) => {
@@ -41,27 +41,26 @@ const StorageSelect: React.FC<Props> = ({
     return baiClient.vfolder.list_hosts();
   });
 
+  //for selecting default host
   useEffect(() => {
-    if (autoSelectDefault && !value && vhostInfo?.default) {
-      let selectedHost = vhostInfo?.default;
+    if (!autoSelectType) return;
 
-      if (showUsageStatus) {
-        const lowestPercentageHost = _.minBy(
-          _.map(vhostInfo?.allowed, (host) => ({
-            host,
-            volume_info: vhostInfo?.volume_info[host],
-          })),
-          'volume_info.usage.percentage',
-        );
-        selectedHost =
-          `auto (${lowestPercentageHost?.host})` || vhostInfo?.default;
-      }
-
-      onChange?.(selectedHost, {
-        id: selectedHost,
-        ...(vhostInfo?.volume_info[selectedHost] || {}),
-      });
+    let selectedHost = vhostInfo?.default ?? vhostInfo?.allowed[0] ?? '';
+    if (autoSelectType === 'usage') {
+      const lowestUsageHost = _.minBy(
+        _.map(vhostInfo?.allowed, (host) => ({
+          host,
+          volume_info: vhostInfo?.volume_info[host],
+        })),
+        'volume_info.usage.percentage',
+      );
+      selectedHost = lowestUsageHost?.host || selectedHost;
     }
+
+    onChange?.(selectedHost, {
+      id: selectedHost,
+      ...(vhostInfo?.volume_info[selectedHost] || {}),
+    });
   }, []);
 
   const options = useMemo(() => {

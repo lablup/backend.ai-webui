@@ -232,10 +232,11 @@ const StorageStatusPanel: React.FC<{
             <Typography.Text type="secondary">{t('data.Host')}</Typography.Text>
             <StorageSelect
               onChange={(value, info) => {
+                console.log(info);
                 setSelectedVolumeInfo(info);
               }}
               value={selectedVolumeInfo}
-              autoSelectDefault
+              autoSelectType="usage"
               showUsageStatus
             />
           </Flex>
