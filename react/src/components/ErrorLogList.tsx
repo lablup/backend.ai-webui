@@ -1,4 +1,4 @@
-import { useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import BAIModal from './BAIModal';
 import Flex from './Flex';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -18,7 +18,7 @@ import _ from 'lodash';
 import React, { useState, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type logType = NonNullable<{
+type LogType = {
   isError: boolean;
   statusCode: any;
   statusText: any;
@@ -30,8 +30,10 @@ type logType = NonNullable<{
   requestUrl: string;
   requestParameters?: string;
   formattedTimestamp?: string; // for display only
-}>;
-const ErrorLogList: React.FC = () => {
+};
+const ErrorLogList: React.FC<{
+  onChangeSearch?: (value: string) => void;
+}> = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [isOpenClearLogsModal, setIsOpenClearLogsModal] = useState(false);
@@ -41,8 +43,8 @@ const ErrorLogList: React.FC = () => {
   const [key, checkUpdate] = useUpdatableState('first');
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
-
-  const columns: ColumnsType<logType> = [
+  useSuspendedBackendaiClient(); // TODO: remove this after react routing is stable. This is for remove flickering when browser reload
+  const columns: ColumnsType<LogType> = [
     {
       title: t('logs.TimeStamp'),
       dataIndex: 'formattedTimeStamp',
@@ -171,11 +173,13 @@ const ErrorLogList: React.FC = () => {
   );
 
   const storageLogData = useMemo(() => {
-    const raw = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]');
+    const raw: LogType[] = JSON.parse(
+      localStorage.getItem('backendaiwebui.logs') || '[]',
+    );
     return _.map(raw, (log) => {
       return {
         ...log,
-        formattedTimeStamp: dayjs(log.timestamp).format('lll'),
+        formattedTimeStamp: dayjs(log.timestamp).format('ll LTS'),
       };
     });
     // Add blow comment because eslint dependency
@@ -203,100 +207,98 @@ const ErrorLogList: React.FC = () => {
   };
 
   return (
-    <>
-      <Flex direction="column" align="stretch">
-        <Flex
-          direction="row"
-          justify="between"
-          wrap="wrap"
-          gap={'xs'}
-          style={{
-            padding: token.paddingContentVertical,
-            paddingLeft: token.paddingContentHorizontalSM,
-            paddingRight: token.paddingContentHorizontalSM,
-          }}
-        >
-          <Flex direction="column" align="start">
-            <Typography.Title level={4} style={{ margin: 0, padding: 0 }}>
-              {t('logs.LogMessages')}
-            </Typography.Title>
-            <Typography.Text type="secondary">
-              {t('logs.UpTo3000Logs')}
-            </Typography.Text>
+    <Flex direction="column" align="stretch">
+      <Flex
+        direction="row"
+        justify="between"
+        wrap="wrap"
+        gap={'xs'}
+        style={{
+          padding: token.paddingContentVertical,
+          paddingLeft: token.paddingContentHorizontalSM,
+          paddingRight: token.paddingContentHorizontalSM,
+        }}
+      >
+        <Flex direction="column" align="start">
+          <Typography.Title level={4} style={{ margin: 0, padding: 0 }}>
+            {t('logs.LogMessages')}
+          </Typography.Title>
+          <Typography.Text type="secondary">
+            {t('logs.UpTo3000Logs')}
+          </Typography.Text>
+        </Flex>
+        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
+          <Flex gap={'xs'}>
+            <Input
+              allowClear
+              prefix={<SearchOutlined />}
+              placeholder={t('logs.SearchLogs')}
+              onChange={(e) => {
+                startSearchTransition(() => setLogSearch(e.target.value));
+              }}
+              style={{
+                width: 200,
+              }}
+            />
+            <Checkbox
+              onChange={(e) => setCheckedShowOnlyError(e.target.checked)}
+            >
+              {t('logs.ShowOnlyError')}
+            </Checkbox>
           </Flex>
-          <Flex
-            direction="row"
-            gap={'xs'}
-            wrap="wrap"
-            style={{ flexShrink: 1 }}
-          >
-            <Flex gap={'xs'}>
-              <Input
-                allowClear
-                prefix={<SearchOutlined />}
-                placeholder={t('logs.SearchLogs')}
-                onChange={(e) => {
-                  startSearchTransition(() => setLogSearch(e.target.value));
-                }}
-                style={{
-                  width: 200,
-                }}
-              />
-              <Checkbox
-                onChange={(e) => setCheckedShowOnlyError(e.target.checked)}
-              >
-                {t('logs.ShowOnlyError')}
-              </Checkbox>
-            </Flex>
-            <Flex gap={'xs'}>
-              <Button
-                icon={<RedoOutlined />}
-                loading={isPendingRefreshTransition}
-                onClick={() => {
-                  startRefreshTransition(() => checkUpdate());
-                }}
-              >
-                {t('button.Refresh')}
-              </Button>
-              <Button
-                danger
-                icon={<DeleteOutlined />}
-                onClick={() => {
-                  setIsOpenClearLogsModal(true);
-                }}
-              >
-                {t('button.ClearLogs')}
-              </Button>
-            </Flex>
+          <Flex gap={'xs'}>
+            <Button
+              icon={<RedoOutlined />}
+              loading={isPendingRefreshTransition}
+              onClick={() => {
+                startRefreshTransition(() => checkUpdate());
+              }}
+            >
+              {t('button.Refresh')}
+            </Button>
+            <Button
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => {
+                setIsOpenClearLogsModal(true);
+              }}
+            >
+              {t('button.ClearLogs')}
+            </Button>
           </Flex>
         </Flex>
-        <Table
-          pagination={{ showSizeChanger: false }}
-          loading={
-            isPendingSearchTransition
-              ? {
-                  indicator: <LoadingOutlined />,
-                }
-              : false
-          }
-          scroll={{ x: 'max-content', y: 'calc(100vh - 430px)' }}
-          dataSource={
-            checkedShowOnlyError
-              ? _.filter(filteredLogData, (log) => {
-                  return log.isError;
-                })
-              : (filteredLogData as logType[])
-          }
-          columns={columns.filter(
-            (column) => displayedColumnKeys?.includes(_.toString(column.key)),
-          )}
-          onRow={(record) => {
-            return {
-              style: { color: record.isError ? 'red' : '' },
-            };
-          }}
-        />
       </Flex>
+      <Table
+        pagination={{
+          showSizeChanger: false,
+          style: {
+            marginBottom: 0,
+          },
+        }}
+        loading={
+          isPendingSearchTransition
+            ? {
+                indicator: <LoadingOutlined />,
+              }
+            : false
+        }
+        scroll={{ x: 'max-content', y: 'calc(100vh - 400px)' }}
+        dataSource={
+          checkedShowOnlyError
+            ? _.filter(filteredLogData, (log) => {
+                return log.isError;
+              })
+            : (filteredLogData as LogType[])
+        }
+        columns={columns.filter(
+          (column) => displayedColumnKeys?.includes(_.toString(column.key)),
+        )}
+        onRow={(record) => {
+          return {
+            style: { color: record.isError ? 'red' : '' },
+          };
+        }}
+      />
       <Flex
         justify="end"
         style={{
@@ -332,7 +334,7 @@ const ErrorLogList: React.FC = () => {
         columns={columns}
         displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
       />
-    </>
+    </Flex>
   );
 };
 
