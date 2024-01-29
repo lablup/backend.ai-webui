@@ -52,6 +52,8 @@
       }
     ],
     "spaced-comment": "off",
-    "quotes": "off"
+    "quotes": "off",
+    "quote-props": "off",
+    "space-before-function-paren": "off",
   }
 }
