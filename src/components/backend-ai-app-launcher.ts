@@ -368,7 +368,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       if (contentType === null) {
         body = resp.ok;
         if (!resp.ok) {
-          console.log(resp);
           throw new Error(resp);
         }
       } else if (
@@ -382,7 +381,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         body = await resp.blob();
       }
       if (!resp.ok) {
-        console.log(resp);
         throw body;
       }
     } catch (e) {
@@ -1177,11 +1175,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             } else {
               let gatewayURL: URL;
               if (!reused) {
-                console.log('connect URL', appConnectUrl.href);
                 appConnectUrl.searchParams.set('do-not-redirect', 'true');
                 const result = await fetch(appConnectUrl.href);
                 const body = await result.json();
-                console.log(body);
                 const { redirectURI } = body;
                 if (redirectURI === null) {
                   this.indicator.end();
