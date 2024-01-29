@@ -338,13 +338,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   cluster_size: endpoint?.cluster_size,
                   openToPublic: endpoint?.open_to_public,
                   environments: {
-                    // version: `${endpoint?.image}@${endpoint?.architecture}`,
-                    // // FIXME: parse environment manually
-                    // environment: getImageMeta(
-                    //   `${endpoint?.image}@${endpoint?.architecture}`,
-                    // ),
-                    version:
-                      'bai-repo:7443/bai/furiosa-server:3.10-ubuntu22.04@x86_64',
+                    version: `${endpoint?.image}@${endpoint?.architecture}`,
                   },
                 }
               : {
