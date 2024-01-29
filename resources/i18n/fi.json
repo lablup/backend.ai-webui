@@ -483,7 +483,10 @@
     "Username": "Käyttäjätunnus",
     "cores": "ytimet",
     "None": "Ei ole",
-    "Image": "Kuva"
+    "Image": "Kuva",
+    "All": "Kaikki",
+    "InProgress": "Käynnissä",
+    "Session": "Istunto"
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",
@@ -727,7 +730,11 @@
     "Initializing": "Aloitetaan...",
     "SeeDetail": "Katso lisätietoja",
     "SuccessfullyUpdated": "Päivitetty onnistuneesti",
-    "Visit": "Käy osoitteessa"
+    "Visit": "Käy osoitteessa",
+    "NoNotification": "Ei ilmoitusta.",
+    "Notifications": "Ilmoitukset",
+    "ClearNotifications": "Tyhjennä ilmoitukset",
+    "AreYouSureToClearAllNotifications": "Oletko varma, että tyhjennät kaikki ilmoitukset?"
   },
   "pipeline": {
     "Component": {

@@ -1790,7 +1790,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
     const createSessionQueue = sessions.map((item) => {
       return this.tasker.add(
-        'Creating ' + item.sessionName,
+        _text('general.Session') + ': ' + item.sessionName,
         this._createKernel(
           item.kernelName,
           item.sessionName,
@@ -1799,6 +1799,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         ),
         '',
         'session',
+        '',
+        _text('eduapi.CreatingComputeSession'),
+        _text('eduapi.ComputeSessionPrepared'),
+        true,
       );
     });
     Promise.all(createSessionQueue)
@@ -1820,7 +1824,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         document.dispatchEvent(event);
         // only open appLauncher when session type is 'interactive' or 'inference'.
         if (res.length === 1 && this.sessionType !== 'batch') {
-          res[0].taskobj
+          res[0]?.taskobj
             .then((res) => {
               let appOptions;
               if ('kernelId' in res) {

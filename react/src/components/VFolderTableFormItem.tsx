@@ -1,10 +1,12 @@
-import VFolderTable, { AliasMap } from './VFolderTable';
+import VFolderTable, { AliasMap, VFolderTableProps } from './VFolderTable';
 import { Form, FormItemProps, Input } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface VFolderTableFromItemProps extends Omit<FormItemProps, 'name'> {}
+interface VFolderTableFromItemProps extends Omit<FormItemProps, 'name'> {
+  filter?: VFolderTableProps['filter'];
+}
 
 export interface VFolderTableFormValues {
   mounts: string[];
@@ -12,6 +14,7 @@ export interface VFolderTableFormValues {
 }
 
 const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
+  filter,
   ...formItemProps
 }) => {
   const form = Form.useFormInstance();
@@ -62,6 +65,7 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
           }}
           // TODO: implement pagination
           pagination={false}
+          filter={filter}
         />
       </Form.Item>
     </>

@@ -172,11 +172,7 @@ const StorageStatusPanel: React.FC<{
   ) as number;
 
   return (
-    <Card
-      size="small"
-      title={t('data.StorageStatus')}
-      style={{ margin: '3px 14px' }}
-    >
+    <Card size="small" title={t('data.StorageStatus')}>
       <Descriptions bordered column={columnSetting} size="small">
         <Descriptions.Item label={t('data.NumberOfFolders')}>
           <Progress
@@ -293,11 +289,7 @@ const StorageStatusPanel: React.FC<{
 export const StorageStatusPanelFallback = () => {
   const { t } = useTranslation();
   return (
-    <Card
-      size="small"
-      title={t('data.StorageStatus')}
-      style={{ margin: '3px 14px' }}
-    >
+    <Card size="small" title={t('data.StorageStatus')}>
       <Skeleton active />
     </Card>
   );

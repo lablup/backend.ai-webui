@@ -205,12 +205,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
 
   const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
   return (
-    <Flex
-      direction="column"
-      align="stretch"
-      style={{ margin: token.marginSM }}
-      gap="sm"
-    >
+    <Flex direction="column" align="stretch" gap="sm">
       <Breadcrumb
         items={[
           {
