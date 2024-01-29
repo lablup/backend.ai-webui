@@ -49,7 +49,7 @@
       "warn",
       {
         "additionalHooks": "useRecoilCallback"
-      },
+      }
     ],
     "spaced-comment": "off",
     "quotes": "off"
