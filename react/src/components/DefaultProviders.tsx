@@ -90,9 +90,10 @@ i18n
   });
 
 export const useCurrentLanguage = () => {
-  const [lang, _setLang] = useState(
+  const [lang, setLang] = useState(
     //@ts-ignore
-    globalThis?.backendaioptions?.get('current_language'),
+    // globalThis?.backendaioptions?.get('current_language'),
+    localStorage.getItem('current_language') || 'en',
   );
   const { i18n } = useTranslation();
 
@@ -107,7 +108,7 @@ export const useCurrentLanguage = () => {
   useEffect(() => {
     const handler = (e: Event) => {
       //@ts-ignore
-      _setLang(e?.detail?.lang);
+      setLang(e?.detail?.lang);
       //@ts-ignore
       const lang: string = e?.detail?.lang || 'en';
       i18n?.changeLanguage(lang);
@@ -118,7 +119,7 @@ export const useCurrentLanguage = () => {
     return () => window.removeEventListener('langChanged', handler);
   }, [i18n]);
 
-  return [lang] as const;
+  return { lang, setLang } as const;
 };
 
 const DefaultProviders: React.FC<DefaultProvidersProps> = ({
@@ -129,7 +130,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   dispatchEvent,
 }) => {
   const cache = useMemo(() => createCache(), []);
-  const [lang] = useCurrentLanguage();
+  const { lang } = useCurrentLanguage();
   const themeConfig = useCustomThemeConfig();
   const { isDarkMode } = useThemeMode();
 
@@ -229,7 +230,7 @@ export const DefaultProviders2: React.FC<Partial<DefaultProvidersProps>> = ({
   value,
   styles,
 }) => {
-  const [lang] = useCurrentLanguage();
+  const { lang } = useCurrentLanguage();
   const themeConfig = useCustomThemeConfig();
   const { isDarkMode } = useThemeMode();
 
