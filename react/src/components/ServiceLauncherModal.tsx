@@ -17,7 +17,6 @@ import FlexActivityIndicator from './FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
-import ResourceGroupSelect from './ResourceGroupSelect';
 import SliderInputFormItem from './SliderInputFormItem';
 import VFolderSelect from './VFolderSelect';
 import { ServiceLauncherModalFragment$key } from './__generated__/ServiceLauncherModalFragment.graphql';
@@ -366,17 +365,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             ]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item
-            name="resourceGroup"
-            label={t('session.ResourceGroup')}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <ResourceGroupSelect autoSelectDefault />
           </Form.Item>
           <Form.Item
             name="openToPublic"
