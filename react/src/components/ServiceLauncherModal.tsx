@@ -359,6 +359,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   },
                 }
               : {
+                  desiredRoutingCount: 1,
                   ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
                 }
           }
