@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "light": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "object",
+          "properties": {
+            "fontFamily": { "type": "string" },
+            "colorPrimary": { "type": "string" },
+            "colorLink": { "type": "string" },
+            "colorLinkHover": { "type": "string" },
+            "colorSuccess": { "type": "string" },
+            "colorBorder": { "type": "string" },
+            "colorBorderSecondary": { "type": "string" },
+            "colorWarning": { "type": "string" }
+          }
+        },
+        "components": {
+          "type": "object",
+          "properties": {
+            "Tag": {
+              "type": "object",
+              "properties": {
+                "borderRadiusSM": { "type": "number" }
+              }
+            },
+            "Table": {
+              "type": "object",
+              "properties": {
+                "headerBorderRadius": { "type": "number" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "dark": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "object",
+          "properties": {
+            "colorPrimary": { "type": "string" }
+          }
+        },
+        "components": {
+          "type": "object",
+          "properties": {
+            "Tag": {
+              "type": "object",
+              "properties": {
+                "borderRadiusSM": { "type": "number" }
+              }
+            },
+            "Table": {
+              "type": "object",
+              "properties": {
+                "headerBorderRadius": { "type": "number" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "logo": {
+      "type": "object",
+      "properties": {
+        "src": { "type": "string" },
+        "srcCollapsed": { "type": "string" },
+        "logoTitle": { "type": "string" },
+        "logoTitleCollapsed": { "type": "string" },
+        "alt": { "type": "string" },
+        "href": { "type": "string" }
+      }
+    }
+  }
+}
