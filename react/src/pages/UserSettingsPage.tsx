@@ -1,53 +1,52 @@
 import ErrorLogList from '../components/ErrorLogList';
 import Flex from '../components/Flex';
-import { theme } from 'antd';
-import Card from 'antd/es/card/Card';
+import UserSettings from '../components/UserSettings';
+import { Card } from 'antd';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
-type TabKey = 'general' | 'logs';
-
-const tabParam = withDefault(StringParam, 'general');
-
-const UserSettingPage = () => {
+interface UserSettingsProps {}
+const UserSettingsPage: React.FC<UserSettingsProps> = () => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const currentTab = searchParams.get('tab') || 'general';
+  const contentList: Record<string, React.ReactNode> = {
+    general: <UserSettings />,
+    logs: <ErrorLogList />,
+  };
+
   return (
-    <Card
-      activeTabKey={curTabKey}
-      onTabChange={(key) => setCurTabKey(key as TabKey)}
-      tabList={[
-        {
-          key: 'general',
-          label: t('usersettings.General'),
-        },
-        {
-          key: 'logs',
-          label: t('usersettings.Logs'),
-        },
-      ]}
-      bodyStyle={{
-        padding: 0,
-      }}
-    >
-      <Flex
-        style={{
-          display: curTabKey === 'general' ? 'block' : 'none',
-          paddingTop: token.paddingContentVerticalSM,
-          paddingBottom: token.paddingContentVerticalLG,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
-        }}
-      >
-        {/* @ts-ignore */}
-        <backend-ai-usersettings-general-list
-          active={curTabKey === 'general'}
-        />
+    <>
+      <Flex direction="column" align="stretch" gap={'xs'}>
+        <Flex direction="column" align="stretch">
+          <Card
+            tabList={[
+              {
+                key: 'general',
+                tab: t('usersettings.General'),
+              },
+              {
+                key: 'logs',
+                tab: t('usersettings.Logs'),
+              },
+            ]}
+            activeTabKey={currentTab}
+            onTabChange={(key) => {
+              navigate(`/usersettings?tab=${key}`);
+            }}
+            bodyStyle={{
+              padding: 0,
+              paddingTop: 1,
+            }}
+          >
+            {contentList[currentTab]}
+          </Card>
+        </Flex>
       </Flex>
-      {curTabKey === 'logs' && <ErrorLogList />}
-    </Card>
+    </>
   );
 };
 
-export default UserSettingPage;
+export default UserSettingsPage;
