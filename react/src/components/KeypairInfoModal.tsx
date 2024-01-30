@@ -63,6 +63,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
       width={'auto'}
       footer={[
         <Button
+          key="keypairInfoClose"
           onClick={() => {
             onRequestClose();
           }}
@@ -88,6 +89,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
           },
           {
             title: t('general.AccessKey'),
+            key: 'accessKey',
             dataIndex: 'access_key',
             fixed: 'left',
             render: (value) => (
@@ -103,6 +105,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
           },
           {
             title: t('general.SecretKey'),
+            key: 'secretKey',
             dataIndex: 'secret_key',
             fixed: 'left',
             render: (value) => (
@@ -112,7 +115,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
             ),
           },
         ]}
-      ></Table>
+      />
     </BAIModal>
   );
 };
