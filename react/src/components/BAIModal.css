@@ -15,19 +15,16 @@
   justify-content: space-between;
   display: flex;
   align-items: center;
+  height: var(--general-modal-header-height, 69px);
+  padding: var(--general-modal-header-padding, 10px 20px);
 }
 
 div > div.ant-modal-wrap.draggable.ant-modal-centered {
   overflow: hidden;
 }
 
-.ant-modal.bai-modal .ant-modal-content .ant-modal-header,
 .ant-modal.bai-modal .ant-modal-content > button.ant-modal-close {
-  padding: var(--general-modal-header-padding, 10px 20px);
-  height: var(--general-modal-header-height, 69px);
-}
-
-.ant-modal.bai-modal .ant-modal-content > button.ant-modal-close {
-  /* center */
-  top: 0;
+  width: var(--general-modal-header-width, 26px);
+  height: var(--general-modal-header-height, 26px);
+  top: 22px;
 }
