@@ -850,7 +850,12 @@
     "SSHKeypairEnterManually": "SSH товчлуурын хослол",
     "SSHKeypairEnterManuallyFinished": "SSH Keypair амжилттай бүртгэгдлээ.",
     "MyKeypairInfo": "Миний товчлуурын мэдээлэл",
-    "DescMyKeypairInfo": "Миний товчлуурын мэдээллийг харна уу"
+    "DescMyKeypairInfo": "Миний товчлуурын мэдээллийг харна уу",
+    "DarkMode": "Харанхуй горим",
+    "LightMode": "Гэрэл горим",
+    "UseSystemSetting": "Системийн тохиргоог ашиглана уу",
+    "DescThemeMode": "Backend.AI WebUI төхөөрөмж дээрээ хэрхэн харагдахыг тохируулна уу.",
+    "ThemeMode": "Загварын горим"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Дэвшилтэт вэб терминалын хэрэглээ: Терминалын агуулгыг хуулах",

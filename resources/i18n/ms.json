@@ -850,7 +850,12 @@
     "BootstrapScriptDescription": "Skrip Bootstrap akan dilaksanakan sekali sahaja selepas penciptaan sesi",
     "SSHKeypairEnterManually": "SSH Keypair",
     "MyKeypairInfo": "Maklumat Pasangan Kunci Saya",
-    "DescMyKeypairInfo": "Lihat maklumat pasangan kunci saya"
+    "DescMyKeypairInfo": "Lihat maklumat pasangan kunci saya",
+    "DarkMode": "Mod Gelap",
+    "LightMode": "Mod Cahaya",
+    "UseSystemSetting": "Gunakan Tetapan Sistem",
+    "DescThemeMode": "Sesuaikan rupa Backend.AI WebUI pada peranti anda.",
+    "ThemeMode": "Mod Tema"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Lanjutan: Salin kandungan terminal",

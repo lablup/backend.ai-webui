@@ -850,7 +850,12 @@
     "BootstrapScriptDescription": "O script bootstrap será executado apenas uma vez após a criação da sessão",
     "SSHKeypairEnterManually": "Par de chaves SSH",
     "MyKeypairInfo": "Minhas informações de par de chaves",
-    "DescMyKeypairInfo": "Ver as informações do meu par de chaves"
+    "DescMyKeypairInfo": "Ver as informações do meu par de chaves",
+    "DarkMode": "Modo escuro",
+    "LightMode": "Modo claro",
+    "UseSystemSetting": "Usar configuração do sistema",
+    "DescThemeMode": "Personalize a aparência do Backend.AI WebUI em seu dispositivo.",
+    "ThemeMode": "Modo Tema"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avançado do terminal da Web: Copiar o conteúdo do terminal",

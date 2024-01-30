@@ -850,7 +850,12 @@
     "SSHKeypairEnterManually": "SSH Keypair",
     "SSHKeypairEnterManuallyFinished": "SSH Keypair telah berhasil didaftarkan.",
     "MyKeypairInfo": "Informasi Pasangan Kunci Saya",
-    "DescMyKeypairInfo": "Lihat informasi keypair saya"
+    "DescMyKeypairInfo": "Lihat informasi keypair saya",
+    "DarkMode": "Mode Gelap",
+    "LightMode": "Modus Cahaya",
+    "UseSystemSetting": "Gunakan Pengaturan Sistem",
+    "DescThemeMode": "Sesuaikan tampilan Backend.AI WebUI di perangkat Anda.",
+    "ThemeMode": "Modus Tema"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Tingkat Lanjut: Salin konten terminal",
