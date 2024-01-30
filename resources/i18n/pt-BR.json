@@ -1450,7 +1450,10 @@
     "Owner": "Proprietário",
     "ServiceDelegatedFrom": "O serviço de modelo é criado por {{ createdUser }} mas a propriedade da sessão será delegada a {{ sessionOwner }}",
     "FailedToTerminateService": "O pedido para terminar o serviço falhou.",
-    "FailedToUpdateService": "Falha ao atualizar o serviço."
+    "FailedToUpdateService": "Falha ao atualizar o serviço.",
+    "ServiceCreated": "O serviço de modelo {{ name }} foi criado com sucesso.",
+    "ServiceUpdated": "O serviço de modelo {{ name }} foi atualizado com sucesso.",
+    "ServiceTerminated": "O serviço de modelo {{ name }} foi encerrado com sucesso."
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

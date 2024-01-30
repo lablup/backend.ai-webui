@@ -1410,7 +1410,10 @@
     "Owner": "Eigentümer",
     "ServiceDelegatedFrom": "Der Modelldienst wird von {{ createdUser }} erstellt, aber das Eigentum an der Sitzung wird an {{ sessionOwner }} delegiert.",
     "FailedToTerminateService": "Die Anfrage zur Beendigung des Dienstes ist fehlgeschlagen.",
-    "FailedToUpdateService": "Der Dienst konnte nicht aktualisiert werden."
+    "FailedToUpdateService": "Der Dienst konnte nicht aktualisiert werden.",
+    "ServiceCreated": "Der Modelldienst {{ name }} wurde erfolgreich erstellt.",
+    "ServiceUpdated": "Der Modelldienst {{ name }} wurde erfolgreich aktualisiert.",
+    "ServiceTerminated": "Der Modelldienst {{ name }} wurde erfolgreich beendet."
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

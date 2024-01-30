@@ -1412,7 +1412,10 @@
     "Owner": "Właściciel",
     "ServiceDelegatedFrom": "Usługa modelu jest tworzona przez {{ createdUser }}, ale własność sesji będzie delegowana do {{ sessionOwner }}.",
     "FailedToTerminateService": "Żądanie zakończenia usługi nie powiodło się.",
-    "FailedToUpdateService": "Nie udało się zaktualizować usługi."
+    "FailedToUpdateService": "Nie udało się zaktualizować usługi.",
+    "ServiceCreated": "Usługa modelowa {{ name }} została pomyślnie utworzona.",
+    "ServiceUpdated": "Usługa modelowa {{ name }} została pomyślnie zaktualizowana.",
+    "ServiceTerminated": "Usługa modelowa {{ name }} została pomyślnie zakończona."
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",

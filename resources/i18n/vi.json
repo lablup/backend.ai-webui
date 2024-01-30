@@ -1450,7 +1450,10 @@
     "Owner": "Người sở hữu",
     "ServiceDelegatedFrom": "Dịch vụ mô hình được tạo bởi {{ createUser }} nhưng quyền sở hữu phiên sẽ được ủy quyền cho {{ sessionOwner }}",
     "FailedToTerminateService": "Yêu cầu chấm dứt dịch vụ không thành công.",
-    "FailedToUpdateService": "Không thể cập nhật dịch vụ."
+    "FailedToUpdateService": "Không thể cập nhật dịch vụ.",
+    "ServiceCreated": "Dịch vụ mẫu {{ name }} đã được tạo thành công.",
+    "ServiceUpdated": "Dịch vụ mẫu {{ name }} đã được cập nhật thành công.",
+    "ServiceTerminated": "Dịch vụ mẫu {{ name }} đã được chấm dứt thành công."
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",

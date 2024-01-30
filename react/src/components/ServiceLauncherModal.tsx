@@ -229,6 +229,12 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           commitModifyEndpoint({
             variables: mutationVariables,
             onCompleted: (res, error) => {
+              const updatedEndpoint = res.modify_endpoint?.endpoint;
+              message.success(
+                t('modelService.ServiceUpdated', {
+                  name: updatedEndpoint?.name,
+                }),
+              );
               if (error) {
                 message.error(t('dialog.ErrorOccurred'));
               } else {
@@ -243,6 +249,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           // create service
           mutationToCreateService.mutate(values, {
             onSuccess: () => {
+              // FIXME: temporally refer to mutate input to message
+              message.success(
+                t('modelService.ServiceCreated', { name: values.serviceName }),
+              );
               onRequestClose(true);
             },
             onError: (error) => {

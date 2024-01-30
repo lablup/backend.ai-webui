@@ -1410,7 +1410,10 @@
     "Owner": "Mal sahibi",
     "ServiceDelegatedFrom": "Model hizmeti {{ createdUser }} tarafından oluşturulur ancak oturum sahipliği {{ sessionOwner }}'a devredilir.",
     "FailedToTerminateService": "Hizmeti sonlandırma isteği başarısız oldu.",
-    "FailedToUpdateService": "Hizmet güncellenemedi."
+    "FailedToUpdateService": "Hizmet güncellenemedi.",
+    "ServiceCreated": "Model hizmeti {{ name }} başarıyla oluşturuldu.",
+    "ServiceUpdated": "Model hizmeti {{ name }} başarıyla güncellendi.",
+    "ServiceTerminated": "{{ name }} model hizmeti başarıyla sonlandırıldı."
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

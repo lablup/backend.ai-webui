@@ -725,7 +725,10 @@
     "Owner": "Omistaja",
     "ServiceDelegatedFrom": "Mallipalvelun luo {{ createdUser }}, mutta istunnon omistusoikeus siirretään {{ sessionOwner }}:lle.",
     "FailedToTerminateService": "Palvelun lopettamispyyntö epäonnistui.",
-    "FailedToUpdateService": "Palvelun päivittäminen epäonnistui."
+    "FailedToUpdateService": "Palvelun päivittäminen epäonnistui.",
+    "ServiceCreated": "Mallipalvelun {{ nimi }} luominen onnistui.",
+    "ServiceUpdated": "Mallipalvelun {{ nimi }} päivitys onnistui.",
+    "ServiceTerminated": "Mallipalvelu {{ name }} on lopetettu onnistuneesti."
   },
   "notification": {
     "Initializing": "Aloitetaan...",

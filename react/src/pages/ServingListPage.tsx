@@ -524,7 +524,15 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 startRefetchTransition(() => {
                   updateServicesFetchKey();
                 });
-                setIsOpenServiceTerminatingModal(false);
+                setIsOpenServiceTerminatingModal(
+                  !isOpenModelServiceTerminatingModal,
+                );
+                // FIXME: temporally refer to mutate input to message
+                message.success(
+                  t('modelService.ServiceTerminated', {
+                    name: terminatingModelService?.name,
+                  }),
+                );
               },
               onError: (err) => {
                 console.log(err);

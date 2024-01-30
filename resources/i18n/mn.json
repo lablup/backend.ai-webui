@@ -1459,7 +1459,10 @@
     "Owner": "Эзэмшигч",
     "ServiceDelegatedFrom": "Загвар үйлчилгээг {{ createdUser }} үүсгэсэн боловч сессийн эрхийг {{ sessionOwner }}-д шилжүүлнэ.",
     "FailedToTerminateService": "Үйлчилгээг цуцлах хүсэлт амжилтгүй боллоо.",
-    "FailedToUpdateService": "Үйлчилгээг шинэчилж чадсангүй."
+    "FailedToUpdateService": "Үйлчилгээг шинэчилж чадсангүй.",
+    "ServiceCreated": "Загвар үйлчилгээ {{ нэр }} амжилттай үүсгэгдсэн.",
+    "ServiceUpdated": "Загвар үйлчилгээ {{ name }} амжилттай шинэчлэгдсэн.",
+    "ServiceTerminated": "Загварын үйлчилгээ {{ нэр }} амжилттай хаагдсан."
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",

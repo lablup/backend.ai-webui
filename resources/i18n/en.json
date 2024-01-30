@@ -436,7 +436,10 @@
     "Image": "Image",
     "Owner": "Owner",
     "ServiceDelegatedFrom": "Model service is created by {{ createdUser }} but the session ownership will be delegated to {{ sessionOwner }}",
-    "FailedToTerminateService": "The request to terminate the service failed."
+    "FailedToTerminateService": "The request to terminate the service failed.",
+    "ServiceCreated": "Model service {{ name }} has been created successfully.",
+    "ServiceUpdated": "Model service {{ name }} has been updated successfully.",
+    "ServiceTerminated": "Model service {{ name }} has been terminated successfully."
   },
   "button": {
     "Cancel": "Cancel",
