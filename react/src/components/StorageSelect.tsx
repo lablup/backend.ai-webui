@@ -1,6 +1,8 @@
 import { useSuspendedBackendaiClient } from '../hooks';
+import Flex from './Flex';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
-import { Select, SelectProps, Badge } from 'antd';
+import { Select, SelectProps, Badge, Button } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -42,7 +44,6 @@ const StorageSelect: React.FC<Props> = ({
 
   const [state, setState] = useControllableValue({ value, onChange });
 
-  //for selecting default host
   useEffect(() => {
     if (!autoSelectType) return;
 
@@ -61,7 +62,7 @@ const StorageSelect: React.FC<Props> = ({
       id: selectedHost,
       ...(vhostInfo?.volume_info[selectedHost] || {}),
     });
-  }, []);
+  }, [vhostInfo]);
 
   const optionRender = useMemo(() => {
     const status = ['success', 'warning', 'error'];
@@ -71,19 +72,30 @@ const StorageSelect: React.FC<Props> = ({
       const idx = percentage < 70 ? 0 : percentage < 90 ? 1 : 2;
 
       if (showUsageStatus) {
-        // @ts-ignore
-        return <Badge status={status[idx]} text={option.label} />;
+        return (
+          <Flex justify="between" align="center">
+            <Badge
+              // @ts-ignore
+              status={status[idx]}
+              text={option.label}
+            />
+            <Button type="link" size="small" icon={<InfoCircleOutlined />} />
+          </Flex>
+        );
       }
       return option.label;
     };
-  }, []);
+  }, [vhostInfo]);
 
   return (
     <Select
       filterOption={true}
       placeholder={t('data.SelectStorageHost')}
       loading={isLoadingVhostInfo}
-      style={{ minWidth: 165, direction: 'ltr' }}
+      style={{
+        minWidth: 165,
+        direction: 'ltr',
+      }}
       // @ts-ignore
       value={state?.id || state}
       onChange={(host) => {
@@ -98,7 +110,7 @@ const StorageSelect: React.FC<Props> = ({
       }))}
       optionRender={optionRender}
       {...selectProps}
-    ></Select>
+    />
   );
 };
 
