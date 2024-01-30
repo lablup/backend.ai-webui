@@ -378,7 +378,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               },
             ]}
           >
-            <Input />
+            <Input disabled={endpoint ? true : false} />
           </Form.Item>
           <Form.Item
             name="openToPublic"
@@ -400,6 +400,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             <VFolderSelect
               filter={(vf) => vf.usage_mode === 'model'}
               autoSelectDefault
+              disabled={endpoint ? true : false}
             />
           </Form.Item>
           <SliderInputFormItem
