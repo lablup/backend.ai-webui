@@ -29,9 +29,13 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
     }
     setBounds({
       left: uiData.x - targetRect.left,
-      right: clientWidth - (targetRect.right - uiData.x),
+      right:
+        clientWidth - (targetRect.right - uiData.x) + (targetRect.width - 44), // 44 is sum of draggable icon width, gap and padding
       top: -targetRect.top + uiData.y,
-      bottom: clientHeight - (targetRect.bottom - uiData.y),
+      bottom:
+        clientHeight -
+        (targetRect.bottom - uiData.y) +
+        (targetRect.height - 69), // 69 is height of modal header
     });
   };
   return (
