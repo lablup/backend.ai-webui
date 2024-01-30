@@ -542,7 +542,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
           );
         }}
         onCancel={() => {
-          setIsOpenServiceTerminatingModal(false);
+          setIsOpenServiceTerminatingModal(!isOpenModelServiceTerminatingModal);
         }}
       >
         <Flex direction="column" align="stretch" justify="center">
@@ -559,7 +559,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         endpointFrgmt={editingModelService || null}
         onCancel={() => {
           setEditingModelService(null);
-          setIsOpenServiceLauncher(false);
+          setIsOpenServiceLauncher(!isOpenServiceLauncher);
         }}
         onRequestClose={(success) => {
           setIsOpenServiceLauncher(!isOpenServiceLauncher);
@@ -575,7 +575,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         onRequestClose={(values) => {
           values?.selectedColumnKeys &&
             setDisplayedColumnKeys(values?.selectedColumnKeys);
-          setIsOpenColumnsSetting(false);
+          setIsOpenColumnsSetting(!isOpenColumnsSetting);
         }}
         columns={columns}
         displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}

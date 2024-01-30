@@ -515,8 +515,11 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       <ServiceLauncherModal
         endpointFrgmt={endpoint}
         open={isOpenServiceLauncherModal}
+        onCancel={() => {
+          setIsOpenServiceLauncherModal(!isOpenServiceLauncherModal);
+        }}
         onRequestClose={(success) => {
-          setIsOpenServiceLauncherModal(false);
+          setIsOpenServiceLauncherModal(!isOpenServiceLauncherModal);
           if (success) {
             startRefetchTransition(() => {
               updateFetchKey();
@@ -527,7 +530,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       <EndpointTokenGenerationModal
         open={isOpenTokenGenerationModal}
         onRequestClose={(success) => {
-          setIsOpenTokenGenerationModal(false);
+          setIsOpenTokenGenerationModal(!isOpenTokenGenerationModal);
           if (success) {
             startRefetchTransition(() => {
               updateFetchKey();
