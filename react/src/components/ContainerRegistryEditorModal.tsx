@@ -254,9 +254,6 @@ const ContainerRegistryEditorModal: React.FC<
               required: true,
             },
             {
-              type: 'url',
-            },
-            {
               validator: (_, value) => {
                 if (
                   value &&
@@ -265,6 +262,14 @@ const ContainerRegistryEditorModal: React.FC<
                 ) {
                   return Promise.reject(t('registry.DescURLStartString'));
                 }
+                const pattern = new RegExp(
+                  '^(https?|ftp)://[a-zA-Z0-9-_.]+(:[0-9]{1,5})?(/[a-zA-Z0-9-_./]*)?$',
+                );
+
+                if (value && !pattern.test(value)) {
+                  return Promise.reject(t('registry.DescURLFormat'));
+                }
+
                 return Promise.resolve();
               },
             },
