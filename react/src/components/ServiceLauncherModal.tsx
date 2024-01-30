@@ -185,6 +185,19 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       modify_endpoint(endpoint_id: $endpoint_id, props: $props) {
         ok
         msg
+        endpoint {
+          endpoint_id
+          desired_session_count
+          resource_group
+          resource_slots
+          resource_opts
+          cluster_mode
+          cluster_size
+          open_to_public
+          image
+          architecture
+          name
+        }
       }
     }
   `);
