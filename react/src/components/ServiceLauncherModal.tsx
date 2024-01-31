@@ -152,7 +152,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             ...(values.resource.accelerator > 0
               ? {
                   [values.resource.acceleratorType]:
-                    values.resource.accelerator,
+                    // FIXME: manually convert to string since server-side only allows [str,str] tuple
+                    values.resource.accelerator.toString(),
                 }
               : undefined),
           },
