@@ -1185,9 +1185,22 @@ export default class BackendAICredentialView extends BackendAIPage {
 
       switch (action) {
         case 'add':
+          this._showTab(
+            this.shadowRoot?.querySelector('mwc-tab[title=credential-lists]'),
+          );
+          this.shadowRoot
+            ?.querySelector('mwc-tab-bar.main-bar')
+            ?.setAttribute('activeindex', '1');
           await this._launchKeyPairDialog();
           break;
       }
+    } else if (location.search.includes('manage')) {
+      this._showTab(
+        this.shadowRoot?.querySelector('mwc-tab[title=credential-lists]'),
+      );
+      this.shadowRoot
+        ?.querySelector('mwc-tab-bar.main-bar')
+        ?.setAttribute('activeindex', '1');
     }
   }
 
@@ -1198,7 +1211,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal wrap layout">
-           <mwc-tab-bar>
+           <mwc-tab-bar class="main-bar">
             <mwc-tab title="user-lists" label="${_t('credential.Users')}"
                 @click="${(e) => this._showTab(e.target)}"></mwc-tab>
             <mwc-tab title="credential-lists" label="${_t(
