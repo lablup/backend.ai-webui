@@ -28,11 +28,17 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
   const { data: keypairs } = useTanQuery({
     queryKey: ['baiClient.keypair.list', baiModalProps.open], // refetch on open state
     queryFn: () => {
-      return baiClient.keypair
-        .list(userInfo.email, ['access_key', 'secret_key', 'is_active'], true)
-        .then((res: any) => res.keypairs);
+      return baiModalProps.open
+        ? baiClient.keypair
+            .list(
+              userInfo.email,
+              ['access_key', 'secret_key', 'is_active'],
+              true,
+            )
+            .then((res: any) => res.keypairs)
+        : null;
     },
-    suspense: true,
+    suspense: false,
     staleTime: 0,
     cacheTime: 0,
   });
