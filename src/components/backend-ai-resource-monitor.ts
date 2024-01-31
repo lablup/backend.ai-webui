@@ -843,10 +843,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     <div
                       class="layout vertical center center-justified resource-name"
                     >
-                      <img
-                        class="resource-type-icon fg green"
-                        src="/resources/icons/ROCm.png"
-                      />
                       <span class="gauge-name">
                         ROCm
                         <br />
