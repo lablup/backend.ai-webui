@@ -406,10 +406,13 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           <SliderInputFormItem
             label={t('modelService.DesiredRoutingCount')}
             name="desiredRoutingCount"
+            min={0}
+            max={10}
             rules={[
               {
                 required: true,
                 min: 0,
+                max: 10,
                 type: 'number',
               },
             ]}
