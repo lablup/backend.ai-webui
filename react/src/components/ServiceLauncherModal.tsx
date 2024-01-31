@@ -410,6 +410,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               {
                 required: true,
                 min: 0,
+                type: 'number',
               },
             ]}
             inputNumberProps={{
