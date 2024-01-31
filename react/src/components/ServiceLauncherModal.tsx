@@ -301,6 +301,23 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     onRequestClose();
   };
 
+  const getAIAcceleratorWithStringifiedKey = (resourceSlot: any) => {
+    if (Object.keys(resourceSlot).length <= 0) {
+      return undefined;
+    }
+    const keyName: string = Object.keys(resourceSlot)[0];
+    return {
+      acceleratorType: keyName,
+      // FIXME: temporally convert to number if the typeof accelerator is string
+      accelerator:
+        typeof resourceSlot[keyName] === 'string'
+          ? keyName === 'cuda.shares'
+            ? parseFloat(resourceSlot[keyName])
+            : parseInt(resourceSlot[keyName])
+          : resourceSlot[keyName],
+    };
+  };
+
   return (
     <BAIModal
       title={
@@ -348,6 +365,12 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       'g',
                       2,
                     )?.numberUnit,
+                    ...getAIAcceleratorWithStringifiedKey(
+                      _.omit(JSON.parse(endpoint?.resource_slots), [
+                        'cpu',
+                        'mem',
+                      ]),
+                    ),
                   },
                   cluster_mode:
                     endpoint?.cluster_mode === 'MULTI_NODE'
