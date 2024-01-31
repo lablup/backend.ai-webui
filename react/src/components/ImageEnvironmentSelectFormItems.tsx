@@ -331,6 +331,20 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 },
               });
             }
+            // NOTE: when user set environment only then set the version to the first item
+            else {
+              const firstInListImage: Image = imageGroups
+                .flatMap((group) => group.environmentGroups)
+                .filter((envGroup) => envGroup.environmentName === value)[0]
+                .images[0];
+              form.setFieldsValue({
+                environments: {
+                  environment: firstInListImage?.name || '',
+                  version: getImageFullName(firstInListImage),
+                  image: firstInListImage,
+                },
+              });
+            }
           }}
           disabled={
             baiClient._config.allow_manual_image_name_for_session &&
