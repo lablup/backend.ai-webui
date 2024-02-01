@@ -1541,6 +1541,8 @@ type DeleteContainerRegistry {
 type ModifyEndpoint {
   ok: Boolean
   msg: String
+
+  """Added since 23.09.9."""
   endpoint: Endpoint
 }
 
