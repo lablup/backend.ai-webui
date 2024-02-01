@@ -88,7 +88,7 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
             style={{ marginTop: token.margin }}
           />
         </Flex>
-        <Typography.Text strong>{t('usersettings.PrivateKey')}</Typography.Text>{' '}
+        <Typography.Text strong>{t('usersettings.PrivateKey')}</Typography.Text>
         <Flex direction="row" align="start" justify="between">
           <Typography.Paragraph>
             <pre
