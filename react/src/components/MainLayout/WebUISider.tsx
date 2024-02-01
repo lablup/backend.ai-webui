@@ -1,6 +1,7 @@
 import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
+import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
 import Flex from '../Flex';
@@ -36,6 +37,8 @@ interface WebUISiderProps
 const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { isDarkMode } = useThemeMode();
+
   const currentUserRole = useCurrentUserRole();
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
@@ -178,7 +181,12 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         <img
           className="logo-wide"
           alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
-          src={themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'}
+          src={
+            isDarkMode && themeConfig?.logo?.srcDark
+              ? themeConfig?.logo?.srcDark ||
+                '/manifest/backend.ai-text-bgdark.svg'
+              : themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'
+          }
           style={{ width: 191, height: 32, cursor: 'pointer' }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
         />
@@ -188,8 +196,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           className="logo-collapsed"
           alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
           src={
-            themeConfig?.logo?.srcCollapsed ||
-            '/manifest/backend.ai-brand-simple.svg'
+            isDarkMode && themeConfig?.logo?.srcCollapsedDark
+              ? themeConfig?.logo?.srcCollapsedDark ||
+                '/manifest/backend.ai-brand-simple-bgdark.svg'
+              : themeConfig?.logo?.srcCollapsed ||
+                '/manifest/backend.ai-brand-simple.svg'
           }
           style={{ width: 48, height: 32, cursor: 'pointer' }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
@@ -305,25 +316,27 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 },
               ]
             : currentUserRole === 'admin'
-            ? [
-                ...generalMenu,
-                {
-                  type: 'group',
-                  label: (
-                    <Flex
-                      style={{ borderBottom: `1px solid ${token.colorBorder}` }}
-                    >
-                      {!props.collapsed && (
-                        <Typography.Text type="secondary" ellipsis>
-                          {t('webui.menu.Administration')}
-                        </Typography.Text>
-                      )}
-                    </Flex>
-                  ),
-                  children: [...adminMenu],
-                },
-              ]
-            : [...generalMenu]
+              ? [
+                  ...generalMenu,
+                  {
+                    type: 'group',
+                    label: (
+                      <Flex
+                        style={{
+                          borderBottom: `1px solid ${token.colorBorder}`,
+                        }}
+                      >
+                        {!props.collapsed && (
+                          <Typography.Text type="secondary" ellipsis>
+                            {t('webui.menu.Administration')}
+                          </Typography.Text>
+                        )}
+                      </Flex>
+                    ),
+                    children: [...adminMenu],
+                  },
+                ]
+              : [...generalMenu]
         }
         /**
          * Etc menu
