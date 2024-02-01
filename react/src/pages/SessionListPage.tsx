@@ -1,11 +1,14 @@
 import Flex from '../components/Flex';
 import SessionList from '../components/SessionList';
-import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
+import {
+  useCurrentProjectValue,
+  useSuspendedBackendaiClient,
+  useWebUINavigate,
+} from '../hooks';
 import { PoweroffOutlined, ThunderboltTwoTone } from '@ant-design/icons';
-import { Alert, Button, Segmented, Tabs, Typography, theme } from 'antd';
+import { Alert, Button, Card, Segmented, Tabs, Typography, theme } from 'antd';
 import React, { PropsWithChildren, Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 
 const RUNNINGS = [
   'RUNNING',
@@ -39,7 +42,7 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
   const curProject = useCurrentProjectValue();
-  const navigate = useNavigate();
+  const webuiNavigate = useWebUINavigate();
 
   const [selectedTab, setSelectedTab] = useState<TabKey>('running');
   const [selectedGeneration, setSelectedGeneration] = useState<
@@ -48,7 +51,7 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
 
   // console.log(compute_session_list?.items[0].);
   return (
-    <>
+    <Flex direction="column" align="stretch" gap={'sm'}>
       <Alert
         message={
           <Flex gap={'md'}>
@@ -91,15 +94,63 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
             />
           </Flex>
         }
-        type="warning"
-        banner
-        style={{ marginTop: -14, marginLeft: -14, marginRight: -14 }}
+        type="info"
+        showIcon
       />
       {selectedGeneration === 'next' ? (
-        <Flex
-          direction="column"
-          align="stretch"
-          style={{ padding: token.padding, gap: token.margin }}
+        <Card
+          bodyStyle={{
+            padding: 0,
+          }}
+          tabList={[
+            {
+              key: 'running',
+              label: t('session.Running'),
+            },
+            {
+              key: 'interactive',
+              label: t('session.Interactive'),
+            },
+            {
+              key: 'batch',
+              label: t('session.Batch'),
+            },
+            ...(baiClient.supports('inference-workload')
+              ? [
+                  {
+                    key: 'inference',
+                    label: t('session.Inference'),
+                  },
+                ]
+              : []),
+            {
+              key: 'finished',
+              label: t('session.Finished'),
+            },
+            {
+              key: 'others',
+              label: t('session.Others'),
+            },
+          ]}
+          activeTabKey={selectedTab}
+          onTabChange={(key) => setSelectedTab(key as TabKey)}
+          tabBarExtraContent={
+            <Flex direction="row" gap={'sm'}>
+              {/* <Tooltip title={t("session.exportCSV")}>
+                    <Button icon={<DownloadOutlined />} type="text" />
+                  </Tooltip> */}
+              {/* @ts-ignore */}
+              <Button
+                type="primary"
+                icon={<PoweroffOutlined />}
+                onClick={() => {
+                  webuiNavigate('/session/start');
+                }}
+              >
+                START
+              </Button>
+            </Flex>
+          }
         >
           {children}
           {/* <Card bordered title={t("summary.ResourceStatistics")}>
@@ -108,71 +159,6 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
 
           {/* <Card bodyStyle={{ paddingTop: 0 }}> */}
           <Flex direction="column" align="stretch">
-            <Flex style={{ flex: 1 }}>
-              <Tabs
-                // type="card"
-                activeKey={selectedTab}
-                onChange={(key) => setSelectedTab(key as TabKey)}
-                tabBarStyle={{ marginBottom: 0 }}
-                style={{
-                  width: '100%',
-                  paddingLeft: token.paddingMD,
-                  paddingRight: token.paddingMD,
-                  borderTopLeftRadius: token.borderRadius,
-                  borderTopRightRadius: token.borderRadius,
-                }}
-                items={[
-                  {
-                    key: 'running',
-                    label: t('session.Running'),
-                  },
-                  {
-                    key: 'interactive',
-                    label: t('session.Interactive'),
-                  },
-                  {
-                    key: 'batch',
-                    label: t('session.Batch'),
-                  },
-                  ...(baiClient.supports('inference-workload')
-                    ? [
-                        {
-                          key: 'inference',
-                          label: t('session.Inference'),
-                        },
-                      ]
-                    : []),
-                  {
-                    key: 'finished',
-                    label: t('session.Finished'),
-                  },
-                  {
-                    key: 'others',
-                    label: t('session.Others'),
-                  },
-                ]}
-                tabBarExtraContent={{
-                  right: (
-                    <Flex direction="row" gap={'sm'}>
-                      {/* <Tooltip title={t("session.exportCSV")}>
-                        <Button icon={<DownloadOutlined />} type="text" />
-                      </Tooltip> */}
-                      {/* @ts-ignore */}
-                      <Button
-                        type="primary"
-                        icon={<PoweroffOutlined />}
-                        onClick={() => {
-                          navigate('/session/start');
-                        }}
-                      >
-                        START
-                      </Button>
-                    </Flex>
-                  ),
-                }}
-              />
-              {/* <Button type="text" icon={<MoreOutlined />} /> */}
-            </Flex>
             {/* <Button type="primary" icon={<PoweroffOutlined />}>
             시작
           </Button> */}
@@ -184,31 +170,43 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
           active
         /> */}
             <Suspense fallback={<div>loading..</div>}>
-              <SessionList
-                projectId={curProject.id}
-                status={
-                  TAB_STATUS_MAP[selectedTab] || TAB_STATUS_MAP['default']
-                }
-                filter={(session) => {
-                  if (
-                    ['interactive', 'batch', 'inference'].includes(selectedTab)
-                  ) {
-                    return session?.type?.toLowerCase() === selectedTab;
-                  }
-                  return true;
+              <Flex
+                style={{
+                  marginLeft: -1,
+                  marginRight: -1,
                 }}
-                extraFetchKey={selectedTab}
-              />
+                direction="column"
+                align="stretch"
+              >
+                <SessionList
+                  projectId={curProject.id}
+                  bordered
+                  status={
+                    TAB_STATUS_MAP[selectedTab] || TAB_STATUS_MAP['default']
+                  }
+                  filter={(session) => {
+                    if (
+                      ['interactive', 'batch', 'inference'].includes(
+                        selectedTab,
+                      )
+                    ) {
+                      return session?.type?.toLowerCase() === selectedTab;
+                    }
+                    return true;
+                  }}
+                  extraFetchKey={selectedTab}
+                />
+              </Flex>
             </Suspense>
           </Flex>
-        </Flex>
+        </Card>
       ) : (
         <>
           {/* @ts-ignore */}
           <backend-ai-session-view class="page" name="job" active />
         </>
       )}
-    </>
+    </Flex>
   );
 };
 
