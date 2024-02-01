@@ -1,3 +1,4 @@
+import { usageIndicatorColor } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import Flex from './Flex';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -65,18 +66,15 @@ const StorageSelect: React.FC<Props> = ({
   }, [vhostInfo]);
 
   const optionRender = useMemo(() => {
-    const status = ['success', 'warning', 'error'];
     return (option: any) => {
-      const percentage =
-        vhostInfo?.volume_info[option.label]?.usage?.percentage;
-      const idx = percentage < 70 ? 0 : percentage < 90 ? 1 : 2;
-
       if (showUsageStatus) {
+        const percentage =
+          vhostInfo?.volume_info[option.label]?.usage?.percentage;
         return (
           <Flex justify="between" align="center">
             <Badge
               // @ts-ignore
-              status={status[idx]}
+              color={usageIndicatorColor(percentage)}
               text={option.label}
             />
             <Button type="link" size="small" icon={<InfoCircleOutlined />} />
