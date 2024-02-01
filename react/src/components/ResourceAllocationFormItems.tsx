@@ -211,7 +211,7 @@ const ResourceAllocationFormItems: React.FC<
     });
 
     // set to 0 when currentImage doesn't support any AI accelerator
-    if (currentImageAcceleratorLimits.length === 0) {
+    if (currentImage && currentImageAcceleratorLimits.length === 0) {
       form.setFieldValue(['resource', 'accelerator'], 0);
     }
 
