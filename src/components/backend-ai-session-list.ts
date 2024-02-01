@@ -3198,7 +3198,7 @@ ${rowData.item[this.sessionNameField]}</pre
                 ? html`
                     <img
                       class="indicator-icon fg green"
-                      src="/resources/icons/rocm.png"
+                      src="/resources/icons/rocm.svg"
                     />
                     <span>${rowData.item.rocm_gpu_slot}</span>
                     <span class="indicator">GPU</span>

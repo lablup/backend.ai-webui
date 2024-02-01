@@ -135,7 +135,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     mem: [<MWCIconWrap size={size}>memory</MWCIconWrap>, 'GiB'],
     'cuda.device': ['/resources/icons/file_type_cuda.svg', 'GPU'],
     'cuda.shares': ['/resources/icons/file_type_cuda.svg', 'FGPU'],
-    'rocm.device': ['/resources/icons/rocm.png', 'GPU'],
+    'rocm.device': ['/resources/icons/rocm.svg', 'GPU'],
     'tpu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'TPU'],
     'ipu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'IPU'],
     'atom.device': ['/resources/icons/rebel.svg', 'ATOM'],
