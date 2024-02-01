@@ -5,6 +5,7 @@ import {
   ClockCircleOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
+import { useControllableValue } from 'ahooks';
 import { Card, List, Progress, Typography, theme } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -18,10 +19,14 @@ const BAINotificationItem: React.FC<{
     notification: NotificationState,
   ) => void;
   showDate?: boolean;
-}> = ({ notification, onClickAction, showDate }) => {
+  allowEllipsis?: boolean;
+}> = ({ notification, onClickAction, showDate, allowEllipsis }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [showExtraDescription, setShowExtraDescription] = useState(false);
+  const [ellipsis, setEllipsis] = useControllableValue({
+    defaultValue: allowEllipsis,
+  });
   return (
     <List.Item>
       <Flex direction="column" align="stretch" gap={'xxs'}>
@@ -52,17 +57,28 @@ const BAINotificationItem: React.FC<{
               <CheckCircleOutlined style={{ color: token.colorSuccess }} />
             ) : null}
           </Flex>
-          <Typography.Text
+          <Typography.Paragraph
             style={{
               fontWeight: 500,
             }}
+            ellipsis={ellipsis ? { rows: 3 } : false}
+            onClick={() => {
+              setEllipsis(!ellipsis);
+            }}
           >
             {notification.message}
-          </Typography.Text>
+          </Typography.Paragraph>
         </Flex>
 
         <Flex direction="row" align="end" gap={'xxs'} justify="between">
-          <Typography.Text>{notification.description}</Typography.Text>
+          <Typography.Paragraph
+            ellipsis={ellipsis ? { rows: 3 } : false}
+            onClick={() => {
+              setEllipsis(!ellipsis);
+            }}
+          >
+            {notification.description}
+          </Typography.Paragraph>
           {notification.to ? (
             <Flex>
               <Typography.Link
@@ -93,9 +109,16 @@ const BAINotificationItem: React.FC<{
         </Flex>
         {notification.extraDescription && showExtraDescription ? (
           <Card size="small">
-            <Typography.Text type="secondary" copyable>
+            <Typography.Paragraph
+              type="secondary"
+              copyable
+              ellipsis={ellipsis ? { rows: 3 } : false}
+              onClick={() => {
+                setEllipsis(!ellipsis);
+              }}
+            >
               {notification.extraDescription}
-            </Typography.Text>
+            </Typography.Paragraph>
           </Card>
         ) : null}
 

@@ -142,6 +142,7 @@ export const useBAINotification = () => {
                   }
                   destroyNotification(newNotification.key);
                 }}
+                allowEllipsis
               />
             ),
             onClose() {
