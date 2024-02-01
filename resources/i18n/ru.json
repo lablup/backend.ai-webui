@@ -943,7 +943,8 @@
     "RegistrySuccessfullyModified": "Реестр успешно модифицирован.",
     "ModifyRegistry": "Изменение реестра",
     "NoRegistryToDisplay": "Отсутствие отображаемых реестров",
-    "ConfirmNoUserName": "Пользователь и пароль не указаны, хотите сохранить?"
+    "ConfirmNoUserName": "Пользователь и пароль не указаны, хотите сохранить?",
+    "DescURLFormat": "Неверный тип URL"
   },
   "resourceGroup": {
     "ResourceGroups": "Группы ресурсов",

@@ -941,7 +941,8 @@
     "RegistrySuccessfullyModified": "Бүртгэл амжилттай өөрчлөгдсөн.",
     "ModifyRegistry": "Бүртгэлийг өөрчлөх",
     "NoRegistryToDisplay": "Харуулах бүртгэл байхгүй",
-    "ConfirmNoUserName": "Хэрэглэгч болон нууц үгийг заагаагүй тул хадгалах уу?"
+    "ConfirmNoUserName": "Хэрэглэгч болон нууц үгийг заагаагүй тул хадгалах уу?",
+    "DescURLFormat": "Хүчингүй URL төрөл"
   },
   "resourceGroup": {
     "ResourceGroups": "Нөөцийн бүлгүүд",

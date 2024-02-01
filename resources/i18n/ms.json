@@ -941,7 +941,8 @@
     "RegistrySuccessfullyModified": "Pendaftaran berjaya diubah suai.",
     "NoRegistryToDisplay": "Tiada Pendaftaran untuk dipaparkan",
     "ModifyRegistry": "Ubah suai Pendaftaran",
-    "ConfirmNoUserName": "Pengguna dan kata laluan tidak dinyatakan, adakah anda ingin menyimpan?"
+    "ConfirmNoUserName": "Pengguna dan kata laluan tidak dinyatakan, adakah anda ingin menyimpan?",
+    "DescURLFormat": "Jenis URL tidak sah"
   },
   "resourceGroup": {
     "ResourceGroups": "Kumpulan Sumber",

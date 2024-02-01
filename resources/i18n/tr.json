@@ -941,7 +941,8 @@
     "RegistrySuccessfullyModified": "Kayıt defteri başarıyla değiştirildi.",
     "NoRegistryToDisplay": "Görüntülenecek Kayıt Yok",
     "ModifyRegistry": "Kayıt Defterini Değiştir",
-    "ConfirmNoUserName": "Kullanıcı ve şifre belirtilmemiş, kaydetmek ister misiniz?"
+    "ConfirmNoUserName": "Kullanıcı ve şifre belirtilmemiş, kaydetmek ister misiniz?",
+    "DescURLFormat": "Geçersiz URL Türü"
   },
   "resourceGroup": {
     "ResourceGroups": "Kaynak Grupları",

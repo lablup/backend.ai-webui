@@ -1036,7 +1036,8 @@
     "NoRegistryToDisplay": "No Registries to display",
     "RegistrySuccessfullyModified": "Registry successfully modified.",
     "PleaseSelectOption": "Please Select Option",
-    "ConfirmNoUserName": "User and password not specified, would you like to save?"
+    "ConfirmNoUserName": "User and password not specified, would you like to save?",
+    "DescURLFormat": "Invalid URL Type"
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",

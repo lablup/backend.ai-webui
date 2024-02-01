@@ -941,7 +941,8 @@
     "RegistrySuccessfullyModified": "Registo modificado com sucesso.",
     "NoRegistryToDisplay": "Não há registos a apresentar",
     "ModifyRegistry": "Modificar o registo",
-    "ConfirmNoUserName": "Utilizador e palavra-passe não especificados, pretende guardar?"
+    "ConfirmNoUserName": "Utilizador e palavra-passe não especificados, pretende guardar?",
+    "DescURLFormat": "Tipo de URL inválido"
   },
   "resourceGroup": {
     "ResourceGroups": "Grupos de Recursos",

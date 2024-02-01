@@ -941,7 +941,8 @@
     "RegistrySuccessfullyModified": "Registry berhasil dimodifikasi.",
     "ModifyRegistry": "Memodifikasi Registri",
     "NoRegistryToDisplay": "Tidak ada Pendaftaran untuk ditampilkan",
-    "ConfirmNoUserName": "Pengguna dan kata sandi tidak ditentukan, apakah Anda ingin menyimpan?"
+    "ConfirmNoUserName": "Pengguna dan kata sandi tidak ditentukan, apakah Anda ingin menyimpan?",
+    "DescURLFormat": "Jenis URL tidak valid"
   },
   "resourceGroup": {
     "ResourceGroups": "Grup Sumber Daya",

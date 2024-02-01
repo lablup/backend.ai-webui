@@ -941,7 +941,8 @@
     "RegistrySuccessfullyModified": "Registro modificato con successo.",
     "NoRegistryToDisplay": "Nessun registro da visualizzare",
     "ModifyRegistry": "Modificare il registro",
-    "ConfirmNoUserName": "Utente e password non specificati, si desidera salvare?"
+    "ConfirmNoUserName": "Utente e password non specificati, si desidera salvare?",
+    "DescURLFormat": "Tipo di URL non valido"
   },
   "resourceGroup": {
     "ResourceGroups": "Gruppi di risorse",

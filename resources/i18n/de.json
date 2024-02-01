@@ -941,7 +941,8 @@
     "RegistrySuccessfullyModified": "Registry erfolgreich geändert.",
     "NoRegistryToDisplay": "Keine Registrierungen anzeigen",
     "ModifyRegistry": "Registry ändern",
-    "ConfirmNoUserName": "Benutzer und Passwort nicht angegeben, möchten Sie speichern?"
+    "ConfirmNoUserName": "Benutzer und Passwort nicht angegeben, möchten Sie speichern?",
+    "DescURLFormat": "Ungültiger URL-Typ"
   },
   "resourceGroup": {
     "ResourceGroups": "Ressourcengruppen",
