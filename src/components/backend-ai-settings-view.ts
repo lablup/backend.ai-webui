@@ -255,7 +255,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css" />
-      <div class="horizontal layout wrap">
+      <div class="horizontal layout wrap" style="gap:24px">
         <lablup-activity-panel title="${_t('settings.Image')}" autowidth>
           <div slot="message" class="horizontal wrap layout">
             <div class="horizontal layout setting-item">
