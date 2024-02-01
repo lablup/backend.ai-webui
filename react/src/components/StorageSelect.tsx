@@ -46,6 +46,7 @@ const StorageSelect: React.FC<Props> = ({
   const [state, setState] = useControllableValue({ value, onChange });
 
   useEffect(() => {
+    console.log('!');
     if (!autoSelectType) return;
 
     let selectedHost = vhostInfo?.default ?? vhostInfo?.allowed[0] ?? '';
@@ -63,6 +64,7 @@ const StorageSelect: React.FC<Props> = ({
       id: selectedHost,
       ...(vhostInfo?.volume_info[selectedHost] || {}),
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vhostInfo]);
 
   const optionRender = useMemo(() => {
@@ -83,6 +85,7 @@ const StorageSelect: React.FC<Props> = ({
       }
       return option.label;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vhostInfo]);
 
   return (
