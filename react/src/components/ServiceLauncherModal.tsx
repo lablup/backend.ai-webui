@@ -21,7 +21,7 @@ import SliderInputFormItem from './SliderInputFormItem';
 import VFolderSelect from './VFolderSelect';
 import { ServiceLauncherModalFragment$key } from './__generated__/ServiceLauncherModalFragment.graphql';
 import { ServiceLauncherModalModifyMutation } from './__generated__/ServiceLauncherModalModifyMutation.graphql';
-import { Card, Form, Input, theme, Switch, message, Button } from 'antd';
+import { Card, Form, Input, theme, Switch, message, Button, Space } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { Suspense } from 'react';
@@ -328,11 +328,13 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       destroyOnClose
       maskClosable={false}
       footer={() => (
-        <Flex direction="row" justify="end">
-          <Button onClick={handleCancel}>{t('button.Cancel')}</Button>
-          <Button type="primary" onClick={handleOk}>
-            {endpoint ? t('button.Update') : t('button.Create')}
-          </Button>
+        <Flex direction="row" justify="end" align="end">
+          <Space size="middle">
+            <Button onClick={handleCancel}>{t('button.Cancel')}</Button>
+            <Button type="primary" onClick={handleOk}>
+              {endpoint ? t('button.Update') : t('button.Create')}
+            </Button>
+          </Space>
         </Flex>
       )}
       confirmLoading={mutationToCreateService.isLoading}
