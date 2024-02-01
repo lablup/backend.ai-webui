@@ -329,7 +329,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       maskClosable={false}
       footer={() => (
         <Flex direction="row" justify="end" align="end">
-          <Space size="middle">
+          <Space size="small">
             <Button onClick={handleCancel}>{t('button.Cancel')}</Button>
             <Button type="primary" onClick={handleOk}>
               {endpoint ? t('button.Update') : t('button.Create')}
