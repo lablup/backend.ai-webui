@@ -174,7 +174,7 @@ export const useBackendAIImageMetaData = () => {
         .then(
           (json: {
             imageInfo: {
-              [key: string]: ImageMetadata;
+              [key: string]: ImageMetadata | undefined;
             };
             tagAlias: {
               [key: string]: string;
@@ -225,7 +225,7 @@ export const useBackendAIImageMetaData = () => {
     {
       getImageAliasName: (imageName: string) => {
         const { key } = getImageMeta(imageName);
-        return metadata?.imageInfo[key].name || key;
+        return metadata?.imageInfo[key]?.name || key;
       },
       getImageIcon: (imageName?: string | null, path = 'resources/icons/') => {
         if (!imageName) return 'default.png';

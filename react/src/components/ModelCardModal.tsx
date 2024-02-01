@@ -227,7 +227,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                           );
                           const imageInfo = _.find(
                             metadata?.imageInfo,
-                            (imageInfo) => imageInfo.name === targetImageKey,
+                            (imageInfo) => imageInfo?.name === targetImageKey,
                           );
                           return imageInfo?.icon ? (
                             <Flex gap={'xxs'}>
