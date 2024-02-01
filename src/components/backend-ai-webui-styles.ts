@@ -81,7 +81,7 @@ export const BackendAIWebUIStyles = [
       overflow: -moz-scrollbars-none;
       -ms-overflow-style: none;
       will-change: transform;
-      background-color: var(--general-sidebar-background-color, #fafafa);
+      background-color: var(--general-background-color, #fafafa);
       scrollbar-width: none;
     }
 
@@ -167,10 +167,7 @@ export const BackendAIWebUIStyles = [
     }
 
     #app-body {
-      --mdc-drawer-background-color: var(
-        --sidebar-background-color,
-        var(--general-sidebar-background-color, #fafafa)
-      );
+      --mdc-drawer-background-color: var(--general-background-color, #fafafa);
       --mdc-drawer-border-left: 0;
       --mdc-drawer-border-right: 0;
     }
@@ -183,7 +180,7 @@ export const BackendAIWebUIStyles = [
     footer#short-height {
       bottom: 0;
       color: var(--general-sidebar-footer-color, #aaaaaa);
-      background-color: var(--general-sidebar-background-color);
+      background-color: var(--general-background-color);
       margin: 0;
       padding-bottom: 5px;
       line-height: 1;
@@ -306,7 +303,7 @@ export const BackendAIWebUIStyles = [
     }
 
     mwc-tab {
-      color: #ffffff;
+      color: var(--general-color-primary, #ffffff);
     }
 
     mwc-menu {
@@ -348,7 +345,6 @@ export const BackendAIWebUIStyles = [
       --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
       --mdc-select-disabled-dropdown-icon-color: rgba(255, 255, 255, 0.87);
       --mdc-theme-surface: white;
-      --mdc-list-vertical-padding: 5px;
       --mdc-list-side-padding: 10px;
       --mdc-menu-item-height: 28px;
       --mdc-list-item__primary-text: {
@@ -585,7 +581,7 @@ export const BackendAIWebUIStyles = [
 
     @media screen and (min-width: 450px) {
       #sidebar-navbar-footer {
-        background-color: var(--general-sidebar-background-color);
+        background-color: var(--general-background-color);
         color: var(--general-sidebar-color);
       }
     }

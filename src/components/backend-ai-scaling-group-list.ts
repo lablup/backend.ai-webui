@@ -118,9 +118,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
 
         mwc-select {
           width: 100%;
-          --mdc-typography-font-family: var(--general-font-family);
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-select-fill-color: transparent;
         }
 
         backend-ai-dialog {

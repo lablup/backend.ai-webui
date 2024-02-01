@@ -10,10 +10,12 @@ export const BackendAiStyles = [
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
       box-sizing: border-box;
-      --general-text-color: #222222;
       --general-menu-background-color: transparent;
       --general-menu-background-color-less: rgba(255, 255, 255, 0.6);
-      --general-menu-background-border: rgba(23, 23, 23, 1);
+      --general-menu-background-border: var(
+        --general-color-border,
+        rgba(23, 23, 23, 1)
+      );
       --general-menu-background-opacity: 1;
       --general-menu-color-2: #242424;
       --general-menu-color: #efefef;
@@ -22,13 +24,19 @@ export const BackendAiStyles = [
       --general-navbar-footer-background-color-b: 255;
       --general-navbar-footer-background-color: #2a2c30;
       --general-navbar-footer-background-color-less: rgba(255, 255, 255, 0.6);
-      --general-navbar-footer-background-border: rgba(23, 23, 23, 1);
+      --general-navbar-footer-background-border: var(
+        --general-color-border,
+        rgba(23, 23, 23, 1)
+      );
       --general-navbar-footer-background-opacity: 1;
       --general-navbar-footer-color: #424242;
       --general-panel-width: 280px;
       --general-big-panel-width: 560px;
       --general-content-container-width: 980px;
-      --general-background-color: rgba(247, 246, 246, 1);
+      --general-background-color: var(
+        --general-color-bg-base,
+        rgba(247, 246, 246, 1)
+      );
       --general-sidebar-color: #949494;
       --general-sidebar-background-color: #ffffff;
       --general-sidebar-h3-color: #cccccc;
@@ -50,20 +58,33 @@ export const BackendAiStyles = [
       --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
       --general-sidepanel-color: #dddddd;
       --general-sidepanel-background-color: #ffffff; /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
-      --general-tabbar-background-color: var(
-        --general-sidebar-background-color
-      );
+      --general-tabbar-background-color: var(--general-background-color);
       --general-tabbar-tab-disabled-color: var(--general-sidebar-color);
       --general-tabbar-button-color: rgba(103, 172, 91, 1);
       --general-sub-tabbar-background-color: #ffffff;
       --general-textfield-selected-color: #27824f;
       --general-textfield-idle-color: #27824f;
       --general-dropdown-color: var(--general-sidebar-color);
-      --general-checkbox-color: var(--general-textfield-selected-color);
-      --general-textarea-color: var(--general-textfield-selected-color);
-      --general-textarea-idle-color: var(--general-textfield-selected-color);
-      --general-select-color: var(--general-textfield-selected-color);
-      --general-select-idle-color: var(--general-textfield-selected-color);
+      --general-checkbox-color: var(
+        --general-color-primary,
+        --general-textfield-selected-color
+      );
+      --general-textarea-color: var(
+        --general-color-primary,
+        --general-textfield-selected-color
+      );
+      --general-textarea-idle-color: var(
+        --general-color-primary,
+        --general-textfield-selected-color
+      );
+      --general-select-color: var(
+        --general-color-primary,
+        --general-textfield-selected-color
+      );
+      --general-select-idle-color: var(
+        --general-color-primary,
+        --general-textfield-selected-color
+      );
       --general-button-background-color: #27824f;
       --general-button-color: #ffffff;
       --general-button-disabled-background-color: #27824f;
@@ -97,7 +118,7 @@ export const BackendAiStyles = [
       --lumo-font-family: var(--general-font-family);
       font-weight: 400;
       font-size: 14px;
-      color: var(--general-text-color);
+      color: var(--general-color-text);
       margin: 0;
       overflow-x: hidden;
       word-break: keep-all;
@@ -231,7 +252,10 @@ export const BackendAiStyles = [
 
     backend-ai-multi-select {
       /* override for mwc-list */
-      --select-primary-theme: var(--general-sidebar-color);
+      --select-primary-theme: var(
+        --general-color-primary,
+        --general-sidebar-color
+      );
       --select-secondary-theme: var(--general-checkbox-color);
       --select-background-color: var(#e7ebee, #efefef);
       --select-background-border-radius: 5px;
@@ -264,10 +288,6 @@ export const BackendAiStyles = [
       box-sizing: border-box;
       padding: 0;
       border-radius: 2px;
-    }
-
-    div.item {
-      color: #000000;
     }
 
     #content > div.card {
@@ -354,7 +374,7 @@ export const BackendAiStyles = [
     }
 
     mwc-list mwc-list-item {
-      font-size: 14px;
+      font-size: var(--general-font-size, 14px);
       font-family: var(--general-font-family);
       --mdc-typography-font-family: var(--general-font-family);
     }
@@ -430,7 +450,7 @@ export const BackendAiStyles = [
 
     div.card .commands {
       margin: 0;
-      border-top: 1px solid #dddddd;
+      border-top: 1px solid var(--general-color-border, #dddddd);
       text-align: left;
     }
 
@@ -479,13 +499,13 @@ export const BackendAiStyles = [
       width: auto;
       height: 1px;
       border: 0;
-      border-top: 1px solid #ccc;
+      border-top: 1px solid var(--general-color-border, #ccc);
       margin: 20px;
       padding: 0;
     }
 
     .resource-line {
-      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid var(--general-color-border, #ccc);
       height: 1px;
       width: 60%;
       margin-left: 80px;
@@ -498,7 +518,7 @@ export const BackendAiStyles = [
       padding: 10px 20px;
       margin: 0;
       display: block;
-      border-bottom: 1px solid #dddddd;
+      border-bottom: 1px solid var(--general-color-border, #dddddd);
     }
 
     div.card > h3 > .date {
@@ -548,7 +568,7 @@ export const BackendAiStyles = [
       padding: 5px 15px 5px 20px;
       margin: 0 0 10px 0;
       display: block;
-      border-bottom: 1px solid #dddddd;
+      border-bottom: 1px solid var(--general-color-border, #dddddd);
       -ms-flex-pack: justify;
       -webkit-justify-content: space-between;
       justify-content: space-between;
@@ -565,58 +585,111 @@ export const BackendAiStyles = [
     mwc-button,
     mwc-button[unelevated] {
       background-image: none;
-      --mdc-theme-primary: var(--general-button-background-color);
+      --mdc-theme-primary: var(
+        --general-color-primary,
+        --general-button-background-color
+      );
       --mdc-theme-on-primary: var(--general-button-color);
       --mdc-typography-font-family: var(--general-font-family);
     }
 
     mwc-textfield {
-      --mdc-text-field-fill-color: transparent;
-      --mdc-theme-primary: var(--general-textfield-selected-color);
-      --mdc-text-field-hover-line-color: transparent;
-      --mdc-text-field-idle-line-color: var(--general-textfield-idle-color);
-      --mdc-text-field-fill-color: rgb(250, 250, 250);
+      --mdc-theme-primary: var(
+        --general-color-primary,
+        --general-textfield-selected-color
+      );
+      --mdc-text-field-hover-line-color: var(
+        --general-color-primary,
+        transparent
+      );
+      --mdc-text-field-idle-line-color: var(
+        --general-color-primary,
+        --general-textfield-idle-color
+      );
+      --mdc-text-field-fill-color: var(
+        --general-color-bg-container,
+        transparent
+      );
       --mdc-typography-font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-family: var(--general-font-family);
-      --mdc-typography-subtitle1-font-size: 14px;
-      --mdc-typography-subtitle1-font-color: black;
+      --mdc-typography-subtitle1-font-size: var(--general-font-size, 14px);
+      --mdc-typography-subtitle1-font-color: var(--general-color-text, black);
       --mdc-typography-subtitle1-font-weight: 400;
       --mdc-typography-subtitle1-line-height: 16px;
+      --mdc-text-field-label-ink-color: var(--general-color-text);
+      --mdc-text-field-ink-color: var(--general-color-text);
     }
 
     mwc-textarea {
-      --mdc-text-field-fill-color: transparent;
-      --mdc-theme-primary: var(--general-textarea-color);
+      --mdc-text-field-fill-color: var(
+        --general-color-bg-container,
+        transparent
+      );
+      --mdc-theme-primary: var(
+        --general-color-primary,
+        --general-textarea-color
+      );
       --mdc-text-area-outlined-idle-border-color: var(
+        --general-color-primary,
         --general-textarea-idle-color
       );
       font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-family: var(--general-font-family);
-      --mdc-typography-subtitle1-font-size: 14px;
-      --mdc-typography-subtitle1-font-color: black;
+      --mdc-typography-subtitle1-font-size: var(--general-font-size, 14px);
+      --mdc-typography-subtitle1-font-color: var(--general-color-text);
       --mdc-typography-subtitle1-font-weight: 400;
       --mdc-typography-subtitle1-line-height: 16px;
+      --mdc-text-field-label-ink-color: var(--general-color-text);
+      --mdc-text-field-ink-color: var(--general-color-text);
     }
 
     mwc-select {
       font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-family: var(--general-font-family);
-      --mdc-typography-subtitle1-font-size: 14px;
-      --mdc-typography-subtitle1-font-color: black;
+      --mdc-typography-subtitle1-font-size: var(--general-font-size, 14px);
+      --mdc-typography-subtitle1-font-color: var(--general-color-text, black);
       --mdc-typography-subtitle1-font-weight: 400;
       --mdc-typography-subtitle1-line-height: 16px;
-      --mdc-theme-primary: var(--general-select-color);
-      --mdc-select-idle-line-color: var(--general-select-idle-color);
-      --mdc-select-hover-line-color: var(--general-select-color);
-      --mdc-select-outlined-idle-border-color: var(--general-select-idle-color);
-      --mdc-select-outlined-hover-border-color: var(--general-select-color);
-      --mdc-select-outlined-disabled-border-color: rgba(255, 255, 255, 0.87);
-      --mdc-select-fill-color: transparent;
-      --mdc-select-ink-color: black;
-      --mdc-select-label-ink-color: black;
-      --mdc-select-focused-label-color: rgba(24, 24, 24, 1);
+      --mdc-theme-primary: var(--general-color-primary, --general-select-color);
+      --mdc-select-idle-line-color: var(
+        --general-color-primary,
+        --general-select-idle-color
+      );
+      --mdc-select-hover-line-color: var(
+        --general-color-primary,
+        --general-select-color
+      );
+      --mdc-select-outlined-border-color: var(
+        --general-color-primary,
+        --general-select-color
+      );
+      --mdc-select-outlined-idle-border-color: var(
+        --general-color-border,
+        --general-select-idle-color
+      );
+      --mdc-select-outlined-hover-border-color: var(
+        --general-color-primary,
+        --general-select-color
+      );
+      --mdc-select-outlined-disabled-border-color: var(
+        --general-color-text-disabled,
+        rgba(255, 255, 255, 0.87)
+      );
+      --mdc-select-fill-color: var(--general-color-bg-container, transparent);
+      --mdc-select-ink-color: var(--general-color-text, black);
+      --mdc-select-label-ink-color: var(--general-color-text, black);
+      --mdc-select-focused-label-color: var(
+        --general-color-primary,
+        rgba(24, 24, 24, 1)
+      );
       --mdc-select-dropdown-icon-color: #747474;
       --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
+      --mdc-list-vertical-padding: 0;
+    }
+
+    mwc-list-item {
+      background-color: var(--general-color-bg-container);
+      color: var(--general-color-text);
     }
 
     .bg-blue {
@@ -773,7 +846,7 @@ export const BackendAiStyles = [
 
     /* Button */
     mwc-button {
-      --mdc-typography-button-font-size: 14px;
+      --mdc-typography-button-font-size: var(--general-font-size, 14px);
     }
 
     mwc-button.full-size,
@@ -808,26 +881,26 @@ export const BackendAiStyles = [
       left: 0.5em;
       top: 25%;
       z-index: 1;
-      color: #2f2f2f;
+      color: var(--general-color-text-secondary, #2f2f2f);
     }
 
     .gauge-label {
       width: inherit;
       font-weight: bold;
       font-size: 10px;
-      color: #2f2f2f;
+      color: var(--general-color-text-secondary, #2f2f2f);
     }
 
     .gauge-name {
       float: right;
       font-size: 14px;
       font-weight: bold;
-      color: #2f2f2f;
+      color: var(--general-color-text-secondary, #2f2f2f);
     }
 
     span.percentage {
       font-size: 10px;
-      color: #2f2f2f;
+      color: var(--general-color-text-secondary, #2f2f2f);
     }
 
     span.start-bar {

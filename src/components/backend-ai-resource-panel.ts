@@ -176,7 +176,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         div.indicators {
           min-height: 83px;
           padding: 10px 20px;
-          background-color: #f6f6f6;
+          background-color: var(--general-color-bg-container, #f6f6f6);
         }
 
         .system-health-indicator {

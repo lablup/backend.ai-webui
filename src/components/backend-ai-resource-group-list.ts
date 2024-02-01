@@ -134,9 +134,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
 
         mwc-select {
           width: 100%;
-          --mdc-typography-font-family: var(--general-font-family);
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-select-fill-color: transparent;
         }
 
         mwc-list-item {

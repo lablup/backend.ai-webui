@@ -88,7 +88,7 @@ export default class BackendAIImport extends BackendAIPage {
       css`
         div.description {
           font-size: 14px;
-          color: var(--general-sidebar-color);
+          color: var(--general-color-text-secondary, --general-sidebar-color);
         }
 
         #session-launcher {
@@ -97,7 +97,6 @@ export default class BackendAIImport extends BackendAIPage {
 
         mwc-textfield,
         mwc-textarea {
-          --mdc-theme-primary: var(--general-textfield-selected-color);
           width: 100%;
           margin: 5px auto;
         }
@@ -127,31 +126,11 @@ export default class BackendAIImport extends BackendAIPage {
           margin: auto;
           width: 35%;
           margin-bottom: 10px;
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: var(
-            --general-textfield-selected-color
-          );
-          --mdc-select-hover-line-color: var(
-            --general-textfield-selected-color
-          );
-          --mdc-list-vertical-padding: 5px;
         }
         mwc-select.github-select {
           margin: inherit;
           width: 440px;
           margin-bottom: 10px;
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: var(
-            --general-textfield-selected-color
-          );
-          --mdc-select-hover-line-color: var(
-            --general-textfield-selected-color
-          );
-          --mdc-list-vertical-padding: 5px;
         }
 
         @media screen and (max-width: 1015px) {

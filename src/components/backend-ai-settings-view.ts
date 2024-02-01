@@ -213,30 +213,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
           --component-width: 400px;
         }
 
-        lablup-activity-panel {
-          color: #000;
-        }
-
         mwc-select {
-          font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-theme-primary: var(--general-sidebar-color);
-          --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-focused-dropdown-icon-color: var(
-            --general-sidebar-color
-          );
-          --mdc-select-disabled-dropdown-icon-color: var(
-            --general-sidebar-color
-          );
-          --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
-          --mdc-select-hover-line-color: var(--general-sidebar-color);
-          --mdc-select-outlined-idle-border-color: var(--general-sidebar-color);
-          --mdc-select-outlined-hover-border-color: var(
-            --general-sidebar-color
-          );
-          --mdc-theme-surface: white;
-          --mdc-list-vertical-padding: 5px;
           --mdc-list-side-padding: 25px;
           --mdc-list-item__primary-text: {
             height: 20px;

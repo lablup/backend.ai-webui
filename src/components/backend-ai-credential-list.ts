@@ -178,10 +178,6 @@ export default class BackendAICredentialList extends BackendAIPage {
           --mdc-theme-on-primary: var(--general-button-color);
           --mdc-typography-font-family: var(--general-font-family);
         }
-
-        mwc-select {
-          --mdc-theme-primary: var(--general-sidebar-color);
-        }
       `,
     ];
   }

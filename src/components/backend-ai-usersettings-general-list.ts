@@ -222,7 +222,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             --general-sidebar-color
           );
           --mdc-theme-surface: white;
-          --mdc-list-vertical-padding: 5px;
           --mdc-list-side-padding: 25px;
         }
 

@@ -89,10 +89,6 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
           --mdc-theme-primary: #38bd73;
           --mdc-theme-on-primary: #38bd73;
         }
-
-        lablup-activity-panel {
-          color: #000;
-        }
       `,
     ];
   }

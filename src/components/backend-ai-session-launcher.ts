@@ -582,22 +582,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         mwc-select {
           width: 100%;
-          font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-theme-primary: var(--paper-red-600);
-          --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: rgba(255, 0, 0, 0.87);
-          --mdc-select-focused-dropdown-icon-color: rgba(255, 0, 0, 0.42);
-          --mdc-select-disabled-ink-color: rgba(0, 0, 0, 0.64);
-          --mdc-select-disabled-dropdown-icon-color: rgba(255, 0, 0, 0.87);
-          --mdc-select-disabled-fill-color: rgba(244, 244, 244, 1);
-          --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
-          --mdc-select-hover-line-color: rgba(255, 0, 0, 0.87);
-          --mdc-select-outlined-idle-border-color: rgba(255, 0, 0, 0.42);
-          --mdc-select-outlined-hover-border-color: rgba(255, 0, 0, 0.87);
-          --mdc-theme-surface: white;
-          --mdc-list-vertical-padding: 5px;
           --mdc-list-side-padding: 15px;
           --mdc-list-item__primary-text: {
             height: 20px;

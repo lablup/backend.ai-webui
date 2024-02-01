@@ -51,6 +51,13 @@ function MainLayout() {
     };
   }, [webUIRef]);
 
+  useEffect(() => {
+    const event: Event = new CustomEvent('theme-loaded', {
+      detail: { token },
+    });
+    document.dispatchEvent(event);
+  });
+
   useLayoutEffect(() => {
     const handleNavigate = (e: any) => {
       const { detail } = e;

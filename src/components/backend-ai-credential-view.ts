@@ -173,7 +173,10 @@ export default class BackendAICredentialView extends BackendAIPage {
         }
 
         mwc-tab-bar.sub-bar mwc-tab {
-          --mdc-theme-primary: var(--general-tabbar-button-color);
+          --mdc-theme-primary: var(
+            --general-color-primary,
+            --general-tabbar-button-color
+          );
           --mdc-tab-height: 46px;
           --mdc-text-transform: none;
         }

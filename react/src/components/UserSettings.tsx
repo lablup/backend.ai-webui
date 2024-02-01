@@ -259,7 +259,13 @@ const UserSettings: React.FC<UserSettingsProps> = ({}) => {
               <Select
                 style={{ minWidth: 170 }}
                 defaultValue={themeMode}
-                onChange={setThemeMode}
+                onChange={(value) => {
+                  setThemeMode(value);
+                  const event: Event = new CustomEvent('theme-mode-changed', {
+                    detail: { token },
+                  });
+                  document.dispatchEvent(event);
+                }}
                 options={[
                   {
                     value: 'system',

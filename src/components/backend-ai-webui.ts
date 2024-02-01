@@ -180,6 +180,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Object }) keyPairInfo = Object();
   @property({ type: Boolean }) isOpenUserProfileDialog = false;
   @property({ type: Boolean }) isOpenSignoutDialog = false;
+  @property({ type: Object }) token = Object();
   @query('#app-body') appBody!: Drawer;
   @query('#app-page') appPage!: HTMLDivElement;
   @query('#content-body') contentBody!: Drawer;
@@ -390,6 +391,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     });
     document.addEventListener('language-changed', async (e) => {
       await setLanguage((e as CustomEvent).detail.language);
+    });
+    document.addEventListener('theme-loaded', (e) => {
+      this.token = (e as CustomEvent).detail.token;
+    });
+    document.addEventListener('theme-mode-changed', (e) => {
+      this.token = (e as CustomEvent).detail.token;
     });
   }
 
@@ -1304,6 +1311,46 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   protected render() {
     // language=HTML
     return html`
+      <style>
+        :host > *, html {
+          --general-color-bg-base: ${this.token.colorBgBase};
+          --general-color-primary: ${this.token.colorPrimary};
+          --general-color-border: ${this.token.colorBorder};
+          --general-color-success: ${this.token.colorSuccess};
+          --general-color-warning: ${this.token.colorWarning};
+          --general-color-error: ${this.token.colorError};
+          --general-color-info: ${this.token.colorInfo};
+          --general-color-link: ${this.token.colorLink};
+          --general-color-text: ${this.token.colorText};
+          --general-color-text-secondary: ${this.token.colorTextSecondary};
+          --general-color-text-disabled: ${this.token.colorTextDisabled};
+          --general-font-family: ${this.token.fontFamily};
+          --general-font-size: ${this.token.fontSize};
+          --general-color-bg-container: ${this.token.colorBgContainer};
+          --general-color-bg-container-disabled: ${this.token.colorBgContainerDisabled};
+          --general-color-text-disabled: ${this.token.colorTextDisabled};
+          --general-margin-XXS: ${this.token.marginXXS};
+          --general-margin-XS: ${this.token.marginXS};
+          --general-margin-SM: ${this.token.marginSM};
+          --general-margin: ${this.token.margin};
+          --general-margin-MD: ${this.token.marginMD};
+          --general-margin-LG: ${this.token.marginLG};
+          --general-margin-XL: ${this.token.marginXL};
+          --general-margin-XXL: ${this.token.marginXXL};
+          --general-padding-XXS: ${this.token.paddingXXS};
+          --general-padding-XS: ${this.token.paddingXS};
+          --general-padding-SM: ${this.token.paddingSM};
+          --general-padding: ${this.token.padding};
+          --general-padding-MD: ${this.token.paddingMD};
+          --general-padding-LG: ${this.token.paddingLG};
+          --general-padding-XL: ${this.token.paddingXL};
+          --general-padding-XXL: ${this.token.paddingXXL};
+          --general-primary-bg: ${this.token.colorPrimaryBg};
+          --general-primary-bg-hover: ${this.token.colorPrimaryBgHover};
+          --general-primary-border: ${this.token.colorPrimaryBorder};
+          --general-primary-border-hover: ${this.token.colorPrimaryBorderHover};
+        }
+      </style>
       <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css" />
       <link rel="stylesheet" href="resources/custom.css" />
       <div id="loading-curtain" class="loading-background">

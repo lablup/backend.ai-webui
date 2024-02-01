@@ -171,20 +171,9 @@ export default class BackendAIData extends BackendAIPage {
         mwc-select {
           width: 50%;
           margin-bottom: 10px;
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: var(
-            --general-textfield-selected-color
-          );
-          --mdc-select-hover-line-color: var(
-            --general-textfield-selected-color
-          );
-          --mdc-list-vertical-padding: 5px;
           /* Need to be set when fixedMenuPosition attribute is enabled */
           --mdc-menu-max-width: 345px;
           --mdc-menu-min-width: 172.5px;
-          --mdc-select-disabled-ink-color: #cccccc;
         }
 
         mwc-select.full-width.fixed-position {

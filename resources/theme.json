@@ -24,7 +24,7 @@
   },
   "dark": {
     "token": {
-      "colorPrimary": "#37B076"
+      "colorPrimary": "#25C2A0"
     },
     "components": {
       "Tag": {

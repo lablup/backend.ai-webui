@@ -151,7 +151,7 @@ export default class BackendAIUserList extends BackendAIPage {
         }
 
         mwc-textfield.display-textfield {
-          --mdc-text-field-disabled-ink-color: var(--general-text-color);
+          --mdc-text-field-disabled-ink-color: var(--general-color-text);
         }
 
         backend-ai-dialog li {
