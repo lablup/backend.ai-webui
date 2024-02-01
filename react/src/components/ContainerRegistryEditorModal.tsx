@@ -255,21 +255,18 @@ const ContainerRegistryEditorModal: React.FC<
             },
             {
               validator: (_, value) => {
-                if (
-                  value &&
-                  !value.startsWith('http://') &&
-                  !value.startsWith('https://')
-                ) {
-                  return Promise.reject(t('registry.DescURLStartString'));
+                if (value) {
+                  if (
+                    !value.startsWith('http://') &&
+                    !value.startsWith('https://')
+                  )
+                    return Promise.reject(t('registry.DescURLStartString'));
+                  try {
+                    new URL(value);
+                  } catch (e) {
+                    return Promise.reject(t('registry.DescURLFormat'));
+                  }
                 }
-                const pattern = new RegExp(
-                  '^(https?|ftp)://[a-zA-Z0-9-_.]+(:[0-9]{1,5})?(/[a-zA-Z0-9-_./]*)?$',
-                );
-
-                if (value && !pattern.test(value)) {
-                  return Promise.reject(t('registry.DescURLFormat'));
-                }
-
                 return Promise.resolve();
               },
             },
