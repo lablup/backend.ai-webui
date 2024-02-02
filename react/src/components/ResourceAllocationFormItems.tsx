@@ -245,11 +245,13 @@ const ResourceAllocationFormItems: React.FC<
                 JSON.parse(options?.preset?.resource_slots || '{}'),
                 _.keys(resourceSlots),
               );
+              const mem = iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)
+                ?.numberUnit;
               form.setFieldsValue({
                 resource: {
                   ...slots,
                   // transform to GB based on preset values
-                  mem: iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.numberUnit,
+                  mem,
                   shmem: iSizeToSize(
                     (options?.preset?.shared_memory || 0) + 'b',
                     'g',
@@ -257,6 +259,7 @@ const ResourceAllocationFormItems: React.FC<
                   )?.numberUnit,
                 },
               });
+              runShmemAutomationRule(mem || '0g');
             }}
             availableFilter={(preset) => {
               const parsedSlots = JSON.parse(preset?.resource_slots || '{}');
