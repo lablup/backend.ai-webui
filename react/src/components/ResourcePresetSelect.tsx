@@ -2,7 +2,10 @@ import { useUpdatableState } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
-import { ResourcePresetSelectQuery } from './__generated__/ResourcePresetSelectQuery.graphql';
+import {
+  ResourcePresetSelectQuery,
+  ResourcePresetSelectQuery$data,
+} from './__generated__/ResourcePresetSelectQuery.graphql';
 import { EditOutlined } from '@ant-design/icons';
 import { useThrottleFn } from 'ahooks';
 import { Select } from 'antd';
@@ -53,10 +56,15 @@ interface PresetOptionType extends Y {
     shared_memory: string;
   };
 }
+type ResourcePreset = NonNullable<
+  NonNullable<ResourcePresetSelectQuery$data['resource_presets']>[number]
+>;
 interface ResourcePresetSelectProps extends Omit<SelectProps, 'onChange'> {
   onChange?: (value: string, options: PresetOptionType) => void;
+  availableFilter?: (option: ResourcePreset) => boolean;
 }
 const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
+  availableFilter,
   ...selectProps
 }) => {
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
@@ -123,6 +131,8 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
             const slotsInfo: {
               [key in string]: string;
             } = JSON.parse(preset?.resource_slots);
+            const isAvailable =
+              availableFilter && preset ? availableFilter(preset) : true;
             return {
               value: preset?.name,
               label: (
@@ -132,8 +142,8 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                     direction="row"
                     gap={'xxs'}
                     style={{
-                      color: 'black',
-                      opacity: index === 1 ? 0.5 : 1,
+                      // color: 'black',
+                      opacity: isAvailable ? 1 : 0.4,
                     }}
                   >
                     {_.map(
@@ -157,7 +167,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                 </Flex>
               ),
               preset,
-              // disabled: index === 1,
+              disabled: !isAvailable,
             };
           }),
         },
