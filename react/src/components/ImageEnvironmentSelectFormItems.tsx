@@ -190,7 +190,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
     ) {
       nextNewImage = nextEnvironmentGroup?.images[0];
     } else {
-      // if image info is partially set, fill out image info
+      // if image info is partially set (version), fill out image info
       nextNewImage = _.find(
         nextEnvironmentGroup?.images,
         (image) =>
@@ -208,7 +208,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [environments?.environment, environments?.version, environments?.manual]);
+  }, [environments?.version, environments?.manual]); // environments?.environment,
 
   const imageGroups: ImageGroup[] = useMemo(
     () =>
@@ -654,6 +654,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   image: undefined,
                 },
               });
+            } else {
             }
           }}
         />

@@ -58,7 +58,7 @@ interface ServiceCreateType {
   name: string;
   desired_session_count: number;
   image: string;
-  arch: string;
+  architecture: string;
   group: string;
   domain: string;
   cluster_size: number;
@@ -116,6 +116,49 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     `,
     endpointFrgmt,
   );
+
+  const checkManualImageAllowed = (
+    isConfigAllowed = false,
+    manualImageInput = '',
+  ): boolean => {
+    return (isConfigAllowed &&
+      manualImageInput &&
+      !_.isEmpty(manualImageInput)) as boolean;
+  };
+
+  const getImageInfoFromInputInEditing = (
+    isManualImageEnabled = false,
+    formInput: ServiceLauncherInput,
+  ) => {
+    return {
+      image: {
+        name: (isManualImageEnabled
+          ? formInput.environments.manual?.split('@')[0]
+          : formInput.environments.version.split('@')[0]) as string,
+        architecture: (isManualImageEnabled
+          ? formInput.environments.manual?.split('@')[1]
+          : formInput.environments.image?.architecture) as string,
+        registry: (isManualImageEnabled
+          ? formInput.environments.manual?.split('/')[0]
+          : formInput.environments.image?.registry) as string,
+      },
+    };
+  };
+
+  const getImageInfoFromInputInCreating = (
+    isManualImageEnabled = false,
+    formInput: ServiceLauncherInput,
+  ) => {
+    return {
+      image: (isManualImageEnabled
+        ? formInput.environments.manual?.split('@')[0]
+        : `${formInput.environments.image?.registry}/${formInput.environments.image?.name}:${formInput.environments.image?.tag}`) as string,
+      architecture: (isManualImageEnabled
+        ? formInput.environments.manual?.split('@')[1]
+        : formInput.environments.image?.architecture) as string,
+    };
+  };
+
   const mutationToCreateService = useTanMutation<
     unknown,
     {
@@ -133,8 +176,13 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       const body: ServiceCreateType = {
         name: values.serviceName,
         desired_session_count: values.desiredRoutingCount,
-        image: image,
-        arch: values.environments.image?.architecture as string,
+        ...getImageInfoFromInputInCreating(
+          checkManualImageAllowed(
+            baiClient._config.allow_manual_image_name_for_session,
+            values.environments?.manual,
+          ),
+          values,
+        ),
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
         cluster_size: values.cluster_size,
@@ -230,11 +278,13 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   : 'MULTI_NODE',
               cluster_size: values.cluster_size,
               desired_session_count: values.desiredRoutingCount,
-              image: {
-                name: values.environments.version.split('@')[0],
-                registry: values.environments.image?.registry,
-                architecture: values.environments.image?.architecture,
-              },
+              ...getImageInfoFromInputInEditing(
+                checkManualImageAllowed(
+                  baiClient._config.allow_manual_image_name_for_session,
+                  values.environments?.manual,
+                ),
+                values,
+              ),
               name: values.serviceName,
               resource_group: values.resourceGroup,
             },
@@ -381,7 +431,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   cluster_size: endpoint?.cluster_size,
                   openToPublic: endpoint?.open_to_public,
                   environments: {
-                    version: `${endpoint?.image}@${endpoint?.architecture}`,
+                    manual: `${endpoint?.image}@${endpoint?.architecture}`,
                   },
                 }
               : {
