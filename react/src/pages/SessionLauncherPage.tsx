@@ -868,7 +868,10 @@ const SessionLauncherPage = () => {
                       currentStepKey === 'environment' ? 'block' : 'none',
                   }}
                 >
-                  <ResourceAllocationFormItems enableNumOfSessions />
+                  <ResourceAllocationFormItems
+                    enableNumOfSessions
+                    enableResourcePresets
+                  />
                 </Card>
                 <Card
                   title={t('session.launcher.HPCOptimization')}

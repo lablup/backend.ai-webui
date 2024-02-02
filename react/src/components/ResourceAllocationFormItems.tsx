@@ -258,6 +258,15 @@ const ResourceAllocationFormItems: React.FC<
                 },
               });
             }}
+            availableFilter={(preset) => {
+              const parsedSlots = JSON.parse(preset?.resource_slots || '{}');
+              return baiClient._config?.always_enqueue_compute_session
+                ? true
+                : _.every(parsedSlots, (value, key) => {
+                    // @ts-ignore
+                    return parseInt(value) <= remaining[key];
+                  });
+            }}
           />
         </Form.Item>
       ) : null}
