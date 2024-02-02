@@ -4,7 +4,7 @@ import { useTanQuery } from '../hooks/reactQueryAlias';
 import TextHighlighter from './TextHighlighter';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
-import React, { useState, useMemo, useEffect, useTransition } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 
 interface ResourceGroupSelectProps extends SelectProps {
   projectId?: string;
@@ -103,13 +103,6 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault]);
 
-  const filteredResourceGroups = useMemo(() => {
-    return _.filter(resourceGroups, (resourceGroup) => {
-      if (!groupSearch) return true;
-      return resourceGroup.name.includes(groupSearch);
-    });
-  }, [groupSearch, resourceGroups]);
-
   return (
     <Select
       defaultActiveFirstOption
@@ -124,18 +117,18 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
         }
       }}
       loading={isPendingLoading || loading}
-      {...selectProps}
-    >
-      {_.map(filteredResourceGroups, (resourceGroup, idx) => {
-        return (
-          <Select.Option key={resourceGroup?.name} value={resourceGroup?.name}>
-            <TextHighlighter keyword={groupSearch}>
-              {resourceGroup?.name}
-            </TextHighlighter>
-          </Select.Option>
-        );
+      options={_.map(resourceGroups, (resourceGroup) => {
+        return { value: resourceGroup.name, label: resourceGroup.name };
       })}
-    </Select>
+      optionRender={(option) => {
+        return (
+          <TextHighlighter keyword={groupSearch}>
+            {option.data.value}
+          </TextHighlighter>
+        );
+      }}
+      {...selectProps}
+    />
   );
 };
 
