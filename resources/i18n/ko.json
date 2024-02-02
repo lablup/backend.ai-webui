@@ -426,8 +426,8 @@
     "ServiceDelegatedFrom": "모델 서비스는 {{ createdUser }}에 의해 생성되지만 세션 소유권은 {{ sessionOwner }}에 위임됩니다.",
     "FailedToTerminateService": "서비스 삭제 요청이 실패하였습니다.",
     "FailedToUpdateService": "서비스를 업데이트하지 못했습니다.",
-    "ServiceCreated": "모델 서비스 {{ 이름 }}이(가) 성공적으로 생성되었습니다.",
-    "ServiceUpdated": "모델 서비스 {{ 이름 }}이(가) 성공적으로 업데이트되었습니다.",
+    "ServiceCreated": "모델 서비스 {{ name }}이(가) 성공적으로 생성되었습니다.",
+    "ServiceUpdated": "모델 서비스 {{ name }}이(가) 성공적으로 업데이트되었습니다.",
     "ServiceTerminated": "모델 서비스 {{ name }}이(가) 성공적으로 종료되었습니다."
   },
   "button": {

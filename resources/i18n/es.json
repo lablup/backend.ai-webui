@@ -726,9 +726,9 @@
     "ServiceDelegatedFrom": "El servicio modelo es creado por {{ createdUser }} pero la propiedad de la sesión será delegada a {{ sessionOwner }}",
     "FailedToTerminateService": "La solicitud para finalizar el servicio ha fallado.",
     "FailedToUpdateService": "No se pudo actualizar el servicio.",
-    "ServiceCreated": "El servicio modelo {{ nombre }} se ha creado correctamente.",
-    "ServiceUpdated": "El servicio de modelo {{ nombre }} se ha actualizado correctamente.",
-    "ServiceTerminated": "El servicio de modelo {{ nombre }} se ha finalizado correctamente."
+    "ServiceCreated": "El servicio modelo {{ name }} se ha creado correctamente.",
+    "ServiceUpdated": "El servicio de modelo {{ name }} se ha actualizado correctamente.",
+    "ServiceTerminated": "El servicio de modelo {{ name }} se ha finalizado correctamente."
   },
   "notification": {
     "Initializing": "Inicializando...",

@@ -1460,7 +1460,7 @@
     "ServiceDelegatedFrom": "Layanan model dibuat oleh {{ createdUser }} namun kepemilikan sesi akan didelegasikan ke {{ sessionOwner }}",
     "FailedToTerminateService": "Permintaan untuk menghentikan layanan gagal.",
     "FailedToUpdateService": "Gagal memperbarui layanan.",
-    "ServiceCreated": "Layanan model {{ nama }} telah berhasil dibuat.",
+    "ServiceCreated": "Layanan model {{ name }} telah berhasil dibuat.",
     "ServiceUpdated": "Layanan model {{ name }} telah berhasil diperbarui.",
     "ServiceTerminated": "Layanan model {{ name }} telah berhasil dihentikan."
   },
