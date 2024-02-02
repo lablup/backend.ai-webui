@@ -161,25 +161,20 @@ customElements.define(
       <DefaultProviders {...props}>
         <Flex
           direction="column"
+          gap="sm"
           align="stretch"
-          style={{ minWidth: 200, maxWidth: 310 }}
+          style={{ minWidth: 200 }}
         >
-          <Form layout="vertical">
-            <Form.Item
-              label={t('session.launcher.ResourceGroup')}
-              style={{ margin: 0 }}
-            >
-              <ResourceGroupSelect
-                size="large"
-                value={value}
-                loading={value !== props.value || value === ''}
-                onChange={(value) => {
-                  setValue(value);
-                  props.dispatchEvent('change', value);
-                }}
-              />
-            </Form.Item>
-          </Form>
+          {t('session.launcher.ResourceGroup')}
+          <ResourceGroupSelect
+            size="large"
+            value={value}
+            loading={value !== props.value || value === ''}
+            onChange={(value) => {
+              setValue(value);
+              props.dispatchEvent('change', value);
+            }}
+          />
         </Flex>
       </DefaultProviders>
     );

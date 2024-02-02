@@ -658,7 +658,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css" />
-      <div class="layout ${this.direction} justified flex wrap">
+      <div class="layout ${this.direction} justified flex">
         <div
           id="scaling-group-select-box"
           class="layout horizontal center-justified ${this.direction}"
