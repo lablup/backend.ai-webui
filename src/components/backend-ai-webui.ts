@@ -1324,11 +1324,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           --general-color-text: ${this.token.colorText};
           --general-color-text-secondary: ${this.token.colorTextSecondary};
           --general-color-text-disabled: ${this.token.colorTextDisabled};
-          --general-font-family: ${this.token.fontFamily};
-          --general-font-size: ${this.token.fontSize};
           --general-color-bg-container: ${this.token.colorBgContainer};
           --general-color-bg-container-disabled: ${this.token.colorBgContainerDisabled};
           --general-color-text-disabled: ${this.token.colorTextDisabled};
+          --general-color-text-light-solid: ${this.token.colorTextLightSolid};
+          --general-font-family: ${this.token.fontFamily};
+          --general-font-size: ${this.token.fontSize};
           --general-margin-XXS: ${this.token.marginXXS};
           --general-margin-XS: ${this.token.marginXS};
           --general-margin-SM: ${this.token.marginSM};

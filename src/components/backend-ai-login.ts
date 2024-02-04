@@ -193,9 +193,6 @@ export default class BackendAILogin extends BackendAIPage {
 
         mwc-textfield {
           width: -webkit-fill-available;
-          font-family: var(--general-font-family);
-          --mdc-theme-primary: black;
-          --mdc-text-field-fill-color: #ffffff;
         }
 
         .login-input-without-trailing-icon {
@@ -211,16 +208,16 @@ export default class BackendAILogin extends BackendAIPage {
           padding-right: 15px;
         }
 
-        .login-input mwc-textfield {
-          --mdc-text-field-idle-line-color: rgba(0, 0, 0, 0);
-          --mdc-text-field-hover-line-color: rgba(0, 0, 0, 0);
-          --mdc-text-field-disabled-line-color: rgba(0, 0, 0, 0);
-        }
-
         mwc-icon-button {
           /*color: rgba(0, 0, 0, 0.54); Matched color with above icons*/
-          color: var(--paper-blue-600);
+          color: var(--general-color-text);
           --mdc-icon-size: 24px;
+        }
+
+        mwc-icon-button.disabled {
+          color: var(--general-color-text-disabled);
+          pointer-events: none;
+          text-decoration: none;
         }
 
         mwc-icon-button.endpoint-control-button {
@@ -237,31 +234,19 @@ export default class BackendAILogin extends BackendAIPage {
 
         mwc-list-item[disabled] {
           --mdc-menu-item-height: 30px;
-          border-bottom: 1px solid #ccc;
         }
 
         mwc-button {
           background-image: none;
-          --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         mwc-button[unelevated] {
           background-image: none;
-          --mdc-theme-primary: var(--general-button-background-color);
         }
 
         mwc-button[outlined] {
           background-image: none;
           --mdc-button-outline-width: 2px;
-          --mdc-button-disabled-outline-color: var(
-            --general-button-background-color
-          );
-          --mdc-button-disabled-ink-color: var(
-            --general-button-background-color
-          );
-          --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         h3 small {
@@ -297,7 +282,7 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         #endpoint-button {
-          background-color: #ffffff;
+          color: var(--general-color-info);
           margin-top: 4px;
         }
 
@@ -2018,11 +2003,22 @@ export default class BackendAILogin extends BackendAIPage {
         <div slot="title">
           <div id="login-title-area"></div>
           <div class="horizontal center layout">
-            <img
-              class="title-img"
-              src="manifest/backend.ai-text.svg"
-              alt="backend.ai"
-            />
+            ${localStorage.getItem('backendaiwebui.settings.isDarkMode') ===
+            'true'
+              ? html`
+                  <img
+                    class="title-img"
+                    src="manifest/backend.ai-text-bgdark.svg"
+                    alt="backend.ai"
+                  />
+                `
+              : html`
+                  <img
+                    class="title-img"
+                    src="manifest/backend.ai-text.svg"
+                    alt="backend.ai"
+                  />
+                `}
           </div>
         </div>
         <div slot="content" class="login-panel intro centered">
@@ -2077,8 +2073,7 @@ export default class BackendAILogin extends BackendAIPage {
                 >
                   <mwc-icon-button
                     icon="email"
-                    class="fg grey layout align-self-center"
-                    disabled
+                    class="layout align-self-center disabled"
                   ></mwc-icon-button>
                   <mwc-textfield
                     type="email"
@@ -2093,8 +2088,7 @@ export default class BackendAILogin extends BackendAIPage {
                 <div class="horizontal flex layout">
                   <mwc-icon-button
                     icon="vpn_key"
-                    class="fg grey layout align-self-center"
-                    disabled
+                    class="layout align-self-center disabled"
                   ></mwc-icon-button>
                   <mwc-textfield
                     type="password"
@@ -2118,8 +2112,7 @@ export default class BackendAILogin extends BackendAIPage {
                 >
                   <mwc-icon-button
                     icon="pin"
-                    class="fg grey layout align-self-center"
-                    disabled
+                    class="layout align-self-center disabled"
                   ></mwc-icon-button>
                   <mwc-textfield
                     type="number"
@@ -2141,8 +2134,7 @@ export default class BackendAILogin extends BackendAIPage {
                 >
                   <mwc-icon-button
                     icon="lock"
-                    class="fg grey layout align-self-center"
-                    disabled
+                    class="layout align-self-center disabled"
                   ></mwc-icon-button>
                   <mwc-textfield
                     type="text"
@@ -2158,8 +2150,7 @@ export default class BackendAILogin extends BackendAIPage {
                 >
                   <mwc-icon-button
                     icon="vpn_key"
-                    class="fg grey layout align-self-center"
-                    disabled
+                    class="layout align-self-center disabled"
                   ></mwc-icon-button>
                   <mwc-textfield
                     type="password"
@@ -2231,7 +2222,7 @@ export default class BackendAILogin extends BackendAIPage {
                   ></mwc-textfield>
                   <mwc-icon-button
                     icon="info"
-                    class="fg grey info"
+                    class="info"
                     style="margin-top:4px;"
                     @click="${(e) => this._showEndpointDescription(e)}"
                   ></mwc-icon-button>

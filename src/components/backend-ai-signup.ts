@@ -596,14 +596,14 @@ export default class BackendAiSignup extends BackendAIPage {
             <p style="font-size:12px;">
               ${_text('signup.PolicyAgreement_1')}
               <a
-                style="color:forestgreen;"
+                style="color:var(--general-color-primary);"
                 @click="${() => this.receiveTOSAgreement()}"
               >
                 ${_t('signup.TermsOfService')}
               </a>
               ${_text('signup.PolicyAgreement_2')}
               <a
-                style="color:forestgreen;"
+                style="color:var(--general-color-primary);"
                 @click="${() => this.receivePPAgreement()}"
               >
                 ${_t('signup.PrivacyPolicy')}

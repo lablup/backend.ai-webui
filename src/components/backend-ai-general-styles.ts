@@ -37,8 +37,11 @@ export const BackendAiStyles = [
         --general-color-bg-base,
         rgba(247, 246, 246, 1)
       );
-      --general-sidebar-color: #949494;
-      --general-sidebar-background-color: #ffffff;
+      --general-sidebar-color: var(--general-color-border, #949494);
+      --general-sidebar-background-color: var(
+        --general-background-color,
+        #ffffff
+      );
       --general-sidebar-h3-color: #cccccc;
       --general-sidebar-h3-border-color: 1px solid #444444;
       --general-sidebar-topbar-background-color-3: #383e48;
@@ -57,13 +60,19 @@ export const BackendAiStyles = [
       --general-sidebar-item-even-background-color: transparent;
       --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
       --general-sidepanel-color: #dddddd;
-      --general-sidepanel-background-color: #ffffff; /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
+      --general-sidepanel-background-color: var(
+        --general-background-color,
+        #ffffff
+      ); /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
       --general-tabbar-background-color: var(--general-background-color);
       --general-tabbar-tab-disabled-color: var(--general-sidebar-color);
       --general-tabbar-button-color: rgba(103, 172, 91, 1);
-      --general-sub-tabbar-background-color: #ffffff;
-      --general-textfield-selected-color: #27824f;
-      --general-textfield-idle-color: #27824f;
+      --general-sub-tabbar-background-color: var(
+        --general-background-color,
+        #ffffff
+      );
+      --general-textfield-selected-color: var(--general-primary-color, #27824f);
+      --general-textfield-idle-color: var(--general-primary-color, #27824f);
       --general-dropdown-color: var(--general-sidebar-color);
       --general-checkbox-color: var(
         --general-color-primary,
@@ -85,15 +94,29 @@ export const BackendAiStyles = [
         --general-color-primary,
         --general-textfield-selected-color
       );
-      --general-button-background-color: #27824f;
-      --general-button-color: #ffffff;
-      --general-button-disabled-background-color: #27824f;
-      --general-button-disabled-color: #ffffff;
-      --general-switch-off-color: #aaa;
-      --general-switch-on-color: #27824f;
-      --general-switch-on-background-color: #e3e7d8;
-      --general-slider-color: var(--general-textfield-selected-color);
-      --general-dialog-background-color: #ffffff;
+      --general-button-background-color: var(--general-color-primary, #27824f);
+      --general-button-color: var(
+        --general-color-text,
+        --general-background-color,
+        #ffffff
+      );
+      --general-button-disabled-background-color: var(
+        --general-color-primary,
+        #27824f
+      );
+      --general-button-disabled-color: var(--general-background-color, #ffffff);
+      --general-switch-off-color: var(--general-color-border, #aaa);
+      --general-switch-on-color: var(--general-color-primary, #27824f);
+      --general-switch-on-background-color: var(--general-primary-bg, #e3e7d8);
+      --general-slider-color: var(
+        --general-color-primary,
+        --general-textfield-selected-color
+      );
+      --general-dialog-background-color: var(
+        --general-color-bg-base,
+        --general-background-color,
+        #ffffff
+      );
       --general-font-family: 'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont,
         'Segoe UI', Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', AppleSDGothic, 'Apple SD Gothic Neo', NanumGothic,
@@ -229,12 +252,12 @@ export const BackendAiStyles = [
       font-size: 16px;
       line-height: 60px;
       padding: 0 10px;
-      color: white;
+      color: var(--general-color-text, white);
       transition: height 0.2s;
     }
 
     .paper-header a {
-      color: white;
+      color: var(--general-color-text, white);
     }
 
     .paper-header.tall {
@@ -339,9 +362,13 @@ export const BackendAiStyles = [
       border-radius: 5px;
       background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
       --mdc-theme-primary: var(
+        --general-color-primary,
         --general-button-color
       ); /* gradient-color doesn't work in mwc-button styling */
-      --mdc-theme-on-primary: var(--general-button-color);
+      --mdc-theme-on-primary: var(
+        --general-color-text-light-solid,
+        --general-button-color
+      );
     }
 
     mwc-button.primary-action[disabled] {
@@ -352,9 +379,13 @@ export const BackendAiStyles = [
         rgba(56, 189, 115, 0.2) 100%
       );
       --mdc-theme-primary: var(
+        --general-color-primary,
         --general-button-color
       ); /* gradient-color doesn't work in mwc-button styling */
-      --mdc-theme-on-primary: var(--general-button-color);
+      --mdc-theme-on-primary: var(
+        --general-color-text-light-solid,
+        --general-button-color
+      );
     }
 
     mwc-button.operation {
@@ -364,7 +395,7 @@ export const BackendAiStyles = [
     mwc-icon-button.pagination {
       --mdc-icon-button-size: 30px;
       --mdc-theme-text-disabled-on-light: var(--paper-grey-400);
-      color: var(--general-button-background-color);
+      color: var(--general-color-text);
       box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
       border-radius: 5px;
     }
@@ -438,6 +469,11 @@ export const BackendAiStyles = [
       --mdc-switch-disabled-selected-track-color: var(
         --general-switch-on-color
       ) !important;
+    }
+
+    mwc-checkbox {
+      --mdc-theme-secondary: var(--general-color-primary);
+      --mdc-checkbox-unchecked-color: var(--general-color-text);
     }
 
     div.card p {
@@ -583,13 +619,17 @@ export const BackendAiStyles = [
     }
 
     mwc-button,
-    mwc-button[unelevated] {
+    mwc-button[unelevated],
+    mwc-button[raised] {
       background-image: none;
       --mdc-theme-primary: var(
         --general-color-primary,
         --general-button-background-color
       );
-      --mdc-theme-on-primary: var(--general-button-color);
+      --mdc-theme-on-primary: var(
+        --general-color-text-light-solid,
+        --general-button-color
+      );
       --mdc-typography-font-family: var(--general-font-family);
     }
 
@@ -618,6 +658,8 @@ export const BackendAiStyles = [
       --mdc-typography-subtitle1-line-height: 16px;
       --mdc-text-field-label-ink-color: var(--general-color-text);
       --mdc-text-field-ink-color: var(--general-color-text);
+      --mdc-text-field-disabled-fill-color: var(--general-color-bg-container);
+      --mdc-text-field-disabled-ink-color: var(--general-color-text-disabled);
     }
 
     mwc-textarea {
@@ -849,6 +891,10 @@ export const BackendAiStyles = [
       --mdc-typography-button-font-size: var(--general-font-size, 14px);
     }
 
+    mwc-button[outlined] {
+      --mdc-button-outline-color: var(--general-color-border);
+    }
+
     mwc-button.full-size,
     mwc-button.full {
       width: 100%;
@@ -973,7 +1019,7 @@ export const BackendAiStyles = [
     }
 
     backend-ai-session-launcher#session-launcher {
-      --component-color: #ffffff;
+      --component-color: var(--general-background-color, #ffffff);
       --component-bg: rgb(104, 185, 155);
       --component-bg: linear-gradient(
           rgba(56, 189, 115, 0.5),
@@ -1028,7 +1074,7 @@ export const BackendAiStyles = [
     div.note-title {
       background-color: var(--paper-green-400);
       padding: 5px 10px;
-      color: #ffffff;
+      color: var(--general-color-text, #ffffff);
       display: -ms-flexbox;
       display: -webkit-flex;
       display: flex;

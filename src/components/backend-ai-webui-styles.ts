@@ -224,8 +224,11 @@ export const BackendAIWebUIStyles = [
     }
 
     mwc-button[unelevated] {
-      --mdc-theme-primary: var(--general-button-background-color);
-      --mdc-theme-on-primary: var(--general-button-color);
+      --mdc-theme-primary: var(--general-color-primary);
+      --mdc-theme-on-primary: var(
+        --general-color-text-light-solid,
+        --general-button-color
+      );
     }
 
     mwc-button.full {

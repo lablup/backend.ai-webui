@@ -73,11 +73,16 @@ export default class BackendAIDialog extends LitElement {
           --mdc-dialog-width: var(--component-width, auto);
           --mdc-dialog-height: var(--component-height, auto);
           --mdc-typography-body1-font-family: var(--general-font-family);
-          --mdc-typography-body1-font-color: black;
+          --mdc-typography-body1-font-color: var(--general-color-text, black);
           --mdc-typography-headline6-font-family: var(--general-font-family);
-          --mdc-typography-headline6-font-color: black;
+          --mdc-typography-headline6-font-color: var(
+            --general-color-text,
+            black
+          );
           --mdc-shape-medium: 10px;
           --mdc-dialog-z-index: 1001;
+          --mdc-dialog-heading-ink-color: var(--general-color-text, black);
+          --mdc-theme-surface: var(--general-color-bg-base);
         }
 
         mwc-dialog > div.card {
@@ -86,11 +91,20 @@ export default class BackendAIDialog extends LitElement {
         }
 
         mwc-dialog > div.card > h3 {
-          background-color: var(--general-dialog-background-color, #ffffff);
+          background-color: var(
+            --general-color-bg-base,
+            --general-dialog-background-color,
+            #ffffff
+          );
         }
 
         mwc-dialog.warning h3 {
           color: red;
+        }
+
+        mwc-dialog span.title {
+          color: var(--general-color-text);
+          background-color: var(--general-color-bg-base);
         }
 
         mwc-dialog div.content {
@@ -98,10 +112,14 @@ export default class BackendAIDialog extends LitElement {
           font-size: var(--component-font-size, 14px);
           word-break: keep-all;
           overflow-x: hidden;
+          color: var(--general-color-text);
+          background-color: var(--general-color-bg-base);
         }
 
         mwc-dialog div.footer {
           padding: 5px 15px 15px 15px;
+          color: var(--general-color-text);
+          background-color: var(--general-color-bg-base);
         }
 
         mwc-dialog.ticker {
@@ -124,12 +142,16 @@ export default class BackendAIDialog extends LitElement {
         }
 
         mwc-dialog div.content h4 {
-          font-size: 14px;
+          font-size: var(--general-font-size, 14px);
           padding: 5px 15px 5px 12px;
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
           border-bottom: 1px solid #ddd !important;
+        }
+
+        mwc-icon-button {
+          color: var(--general-color-text-secondary);
         }
 
         .sticky {
@@ -245,7 +267,7 @@ export default class BackendAIDialog extends LitElement {
       >
         <div elevation="1" class="card" style="margin: 0;padding:0;">
           <h3 class="horizontal justified layout" style="font-weight:bold">
-            <span class="vertical center-justified layout">
+            <span class="title vertical center-justified layout">
               <slot name="title"></slot>
             </span>
             <div class="flex"></div>

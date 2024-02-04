@@ -52,6 +52,8 @@ export default class LablupExpansion extends LitElement {
         div.card {
           padding: 0;
           margin: 0;
+          background-color: var(--general-color-bg-base);
+          color: var(--general-color-text);
         }
 
         #accordion > div.card > h3 {
