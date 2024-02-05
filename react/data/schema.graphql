@@ -719,6 +719,7 @@ type Endpoint implements Item {
   endpoint_id: UUID
   image: String
   architecture: String
+  image_row: Image
   domain: String
   project: String
   resource_group: String

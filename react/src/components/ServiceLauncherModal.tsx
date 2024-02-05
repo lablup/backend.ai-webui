@@ -110,6 +110,17 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         cluster_size
         open_to_public
         image
+        image_row {
+          name
+          humanized_name
+          tag
+          registry
+          architecture
+          supported_accelerators
+          digest
+          installed
+          installed_agents
+        }
         architecture
         name
       }
@@ -167,12 +178,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     ServiceLauncherFormValue
   >({
     mutationFn: (values) => {
-      const image: string =
-        baiClient._config.allow_manual_image_name_for_session &&
-        values.environments?.manual &&
-        !_.isEmpty(values.environments.manual)
-          ? values.environments.manual
-          : `${values.environments.image?.registry}/${values.environments.image?.name}:${values.environments.image?.tag}`;
       const body: ServiceCreateType = {
         name: values.serviceName,
         desired_session_count: values.desiredRoutingCount,
@@ -431,7 +436,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   cluster_size: endpoint?.cluster_size,
                   openToPublic: endpoint?.open_to_public,
                   environments: {
-                    manual: `${endpoint?.image}@${endpoint?.architecture}`,
+                    version: `${endpoint?.image}@${endpoint?.architecture}`,
                   },
                 }
               : {
