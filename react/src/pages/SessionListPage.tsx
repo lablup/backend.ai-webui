@@ -8,7 +8,9 @@ import {
   useSuspendedBackendaiClient,
   useWebUINavigate,
 } from '../hooks';
+import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import {
+  InfoCircleOutlined,
   PoweroffOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
@@ -67,6 +69,8 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
     'current' | 'next'
   >('next');
 
+  const [{ keypair, keypairResourcePolicy }] =
+    useCurrentKeyPairResourcePolicyLazyLoadQuery();
   // console.log(compute_session_list?.items[0].);
   return (
     <Flex direction="column" align="stretch" gap={'sm'}>
@@ -125,7 +129,13 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
             tabList={[
               {
                 key: 'running',
-                label: t('session.Running'),
+                label: (
+                  <>
+                    {t('session.Running') +
+                      ` (${keypair.concurrency_used}/${keypairResourcePolicy.max_concurrent_sessions})`}
+                    {/* <Tooltip><InfoCircleOutlined/></Tooltip> */}
+                  </>
+                ),
               },
               {
                 key: 'interactive',

@@ -30,6 +30,7 @@ const AvailableResourcesCard = () => {
             value={selectedResourceGroup}
             onChange={(v) => setSelectedResourceGroup(v)}
             loading={selectedResourceGroup !== deferredSelectedResourceGroup}
+            popupMatchSelectWidth={false}
           />{' '}
           리소스 그룹 사용 가능한 자원
           <Tooltip
