@@ -27,7 +27,7 @@ import {
   theme,
 } from 'antd';
 import _ from 'lodash';
-import React, { useEffect, useState, useTransition } from 'react';
+import React, { useEffect, useMemo, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 export const AUTOMATIC_DEFAULT_SHMEM = '64m';
@@ -57,6 +57,7 @@ export interface ResourceAllocationFormValue {
   cluster_mode: 'single-node' | 'multi-node';
   cluster_size: number;
   enabledAutomaticShmem: boolean;
+  allocationPreset?: string;
 }
 
 type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
@@ -78,7 +79,7 @@ const ResourceAllocationFormItems: React.FC<
   const [resourceSlots] = useResourceSlots();
   const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
 
-  const [{ keypair, keypairResourcePolicy }] =
+  const [{ keypairResourcePolicy, sessionLimitAndRemaining }] =
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
 
   const currentProject = useCurrentProjectValue();
@@ -89,16 +90,16 @@ const ResourceAllocationFormItems: React.FC<
   //   preserve: true,
   // });
 
-  // use `useState` instead of `Form.useWatch` for handling `resourcePreset.check` pending state
-  const [currentResourceGroup, setCurrentResourceGroup] = useState<string>(
-    form.getFieldValue('resourceGroup'),
-  );
   const [isPendingCheckResets, startCheckRestsTransition] = useTransition();
   const currentImage = Form.useWatch(['environments', 'image'], {
     form,
     preserve: true,
   });
-  const [{ currentImageMinM, remaining, resourceLimits }] =
+  const currentResourceGroup = Form.useWatch('resourceGroup', {
+    form,
+    preserve: true,
+  });
+  const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
     useResourceLimitAndRemaining({
       currentProjectName: currentProject.name,
       currentResourceGroup: currentResourceGroup,
@@ -113,14 +114,60 @@ const ResourceAllocationFormItems: React.FC<
 
   const sessionSliderLimitAndRemaining = {
     min: 1,
-    max: _.min([
-      keypairResourcePolicy.max_concurrent_sessions,
-      3, //BackendAiResourceBroker.DEFAULT_CONCURRENT_SESSION_COUNT
-    ]) as number,
-    remaining:
-      (keypairResourcePolicy.max_concurrent_sessions || 3) -
-      (keypair.concurrency_used || 0),
+    max: sessionLimitAndRemaining.max,
+    remaining: sessionLimitAndRemaining.remaining,
   };
+
+  const allocatablePresetNames = useMemo(() => {
+    const byPresetInfo = _.filter(checkPresetInfo?.presets, (preset) => {
+      return preset.allocatable;
+    }).map((preset) => preset.name);
+
+    const bySliderLimit = _.filter(checkPresetInfo?.presets, (preset) => {
+      if (
+        typeof preset.resource_slots.mem === 'string' &&
+        typeof resourceLimits.mem?.max === 'string' &&
+        compareNumberWithUnits(
+          preset.resource_slots.mem,
+          resourceLimits.mem?.max,
+        ) > 0
+      ) {
+        return false;
+      }
+      if (
+        typeof preset.resource_slots.cpu === 'number' &&
+        typeof resourceLimits.cpu?.max === 'number' &&
+        preset.resource_slots.cpu > resourceLimits.cpu?.max
+      ) {
+        return false;
+      }
+      const acceleratorKeys = _.keys(
+        _.omit(preset.resource_slots, ['mem', 'cpu']),
+      );
+      const isAvailable = _.every(acceleratorKeys, (key) => {
+        if (
+          key &&
+          typeof preset.resource_slots[key] === 'string' &&
+          typeof resourceLimits.accelerators[key]?.max === 'number' &&
+          _.toNumber(preset.resource_slots[key]) >
+            _.toNumber(resourceLimits.accelerators[key]?.max)
+        ) {
+          return false;
+        }
+        return true;
+      });
+      return isAvailable;
+    }).map((preset) => preset.name);
+    return baiClient._config?.always_enqueue_compute_session
+      ? bySliderLimit
+      : byPresetInfo;
+  }, [
+    baiClient._config?.always_enqueue_compute_session,
+    checkPresetInfo?.presets,
+    resourceLimits.accelerators,
+    resourceLimits.cpu?.max,
+    resourceLimits.mem?.max,
+  ]);
 
   useEffect(() => {
     // when image changed, set value of resources to min value
@@ -179,17 +226,53 @@ const ResourceAllocationFormItems: React.FC<
       form.setFieldValue(['resource', 'accelerator'], 0);
     }
 
-    form
-      .validateFields([
-        ['resource', 'cpu'],
-        ['resource', 'mem'],
-        ['resource', 'shmem'],
-        ['resource', 'accelerator'],
-        ['resource', 'acceleratorType'],
-      ])
-      .catch(() => {});
+    form.getFieldValue('allocationPreset') === 'custom' &&
+      form
+        .validateFields([
+          ['resource', 'cpu'],
+          ['resource', 'mem'],
+          ['resource', 'shmem'],
+          ['resource', 'accelerator'],
+          ['resource', 'acceleratorType'],
+        ])
+        .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImage]);
+
+  useEffect(() => {
+    if (allocatablePresetNames[0]) {
+      const autoSelectedPreset = _.sortBy(allocatablePresetNames, 'name')[0];
+      form.setFieldsValue({
+        allocationPreset: autoSelectedPreset,
+      });
+      updateResourceFieldsBasedOnPreset(autoSelectedPreset);
+    } else {
+      form.setFieldsValue({
+        allocationPreset: 'custom',
+      });
+    }
+    form.validateFields().catch(() => {});
+  }, [currentResourceGroup]);
+
+  const updateResourceFieldsBasedOnPreset = (name: string) => {
+    const preset = _.find(
+      checkPresetInfo?.presets,
+      (preset) => preset.name === name,
+    );
+    const slots = _.pick(preset?.resource_slots, _.keys(resourceSlots));
+    const mem = iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.numberUnit;
+    form.setFieldsValue({
+      resource: {
+        ...slots,
+        // transform to GB based on preset values
+        mem,
+        shmem: iSizeToSize((preset?.shared_memory || 0) + 'b', 'g', 2)
+          ?.numberUnit,
+        cpu: parseInt(slots?.cpu || '0') || 0,
+      },
+    });
+    runShmemAutomationRule(mem || '0g');
+  };
 
   const runShmemAutomationRule = (M_plus_S: string) => {
     // if M+S > 4G, S can be 1G regard to current image's minimum mem(M)
@@ -220,6 +303,8 @@ const ResourceAllocationFormItems: React.FC<
             required: true,
           },
         ]}
+        // Set the trigger to a non-existent value to manually handle updates for the granular pending status management.
+        trigger="_this_is_non_existent_trigger"
       >
         <ResourceGroupSelect
           autoSelectDefault
@@ -227,11 +312,13 @@ const ResourceAllocationFormItems: React.FC<
           loading={isPendingCheckResets}
           onChange={(v) => {
             startCheckRestsTransition(() => {
-              setCurrentResourceGroup(v);
+              // update manually to handle granular pending status management
+              form.setFieldValue('resourceGroup', v);
             });
           }}
         />
       </Form.Item>
+
       {enableResourcePresets ? (
         <Form.Item
           label={t('resourcePreset.ResourcePresets')}
@@ -241,35 +328,9 @@ const ResourceAllocationFormItems: React.FC<
         >
           <ResourcePresetSelect
             onChange={(value, options) => {
-              const slots = _.pick(
-                JSON.parse(options?.preset?.resource_slots || '{}'),
-                _.keys(resourceSlots),
-              );
-              const mem = iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)
-                ?.numberUnit;
-              form.setFieldsValue({
-                resource: {
-                  ...slots,
-                  // transform to GB based on preset values
-                  mem,
-                  shmem: iSizeToSize(
-                    (options?.preset?.shared_memory || 0) + 'b',
-                    'g',
-                    2,
-                  )?.numberUnit,
-                },
-              });
-              runShmemAutomationRule(mem || '0g');
+              updateResourceFieldsBasedOnPreset(value);
             }}
-            availableFilter={(preset) => {
-              const parsedSlots = JSON.parse(preset?.resource_slots || '{}');
-              return baiClient._config?.always_enqueue_compute_session
-                ? true
-                : _.every(parsedSlots, (value, key) => {
-                    // @ts-ignore
-                    return parseInt(value) <= remaining[key];
-                  });
-            }}
+            allocatablePresetNames={allocatablePresetNames}
           />
         </Form.Item>
       ) : null}
