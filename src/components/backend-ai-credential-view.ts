@@ -151,25 +151,10 @@ export default class BackendAICredentialView extends BackendAIPage {
           margin-bottom: 10px;
         }
 
-        h3.tab {
-          background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0 0;
-          margin: 0 auto;
-        }
-
         #user-lists > h4,
         #credential-lists > h4 {
           padding-top: 0 !important;
           padding-bottom: 0 !important;
-        }
-
-        mwc-tab-bar {
-          --mdc-theme-primary: var(--general-sidebar-selected-color);
-          --mdc-text-transform: none;
-          --mdc-tab-color-default: var(--general-tabbar-background-color);
-          --mdc-tab-text-label-color-default: var(
-            --general-tabbar-tab-disabled-color
-          );
         }
 
         mwc-tab-bar.sub-bar mwc-tab {

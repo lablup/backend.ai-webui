@@ -50,7 +50,7 @@ export const BackendAiStyles = [
       --general-sidebar-topbar-color-4: #222222;
       --general-sidebar-topbar-background-color: rgba(24, 24, 24, 1);
       --general-sidebar-topbar-color: #efefef;
-      --general-sidebar-selected-color: #37b076;
+      --general-sidebar-selected-color: var(--general-color-primary, #37b076);
       --general-sidebar-selected-background-color: transparent;
       --general-sidebar-selected-background-gradient-color: transparent;
       --general-sidebar-selected-border-left: 3px solid
@@ -394,14 +394,20 @@ export const BackendAiStyles = [
 
     mwc-icon-button.pagination {
       --mdc-icon-button-size: 30px;
-      --mdc-theme-text-disabled-on-light: var(--paper-grey-400);
+      --mdc-theme-text-disabled-on-light: var(
+        --general-color-text-disabled,
+        --paper-grey-400
+      );
       color: var(--general-color-text);
       box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
       border-radius: 5px;
     }
 
     mwc-icon-button[disabled].pagination {
-      background-color: var(--paper-grey-100);
+      background-color: var(
+        --var-color-bg-container-disabled,
+        --paper-grey-100
+      );
     }
 
     mwc-list mwc-list-item {
@@ -734,6 +740,20 @@ export const BackendAiStyles = [
       color: var(--general-color-text);
     }
 
+    h3.tab {
+      background-color: var(--general-tabbar-background-color);
+      border-radius: 5px 5px 0px 0px;
+      margin: 0px auto;
+    }
+
+    mwc-tab-bar {
+      --mdc-theme-primary: var(--general-sidebar-selected-color);
+      --mdc-text-transform: none;
+      --mdc-tab-color-default: var(--general-tabbar-background-color);
+      --mdc-tab-text-label-color-default: var(--general-color-text);
+      font-family: var(--general-font-family);
+    }
+
     .bg-blue {
       background-color: var(--paper-light-blue-400);
       --mdc-theme-primary: var(--paper-light-blue-400);
@@ -984,7 +1004,7 @@ export const BackendAiStyles = [
     }
 
     span.resource-legend {
-      color: var(--general-sidebar-color);
+      color: var(--general-color-text-secondary, --general-sidebar-color);
       margin-right: 5px;
     }
 

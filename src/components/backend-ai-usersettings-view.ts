@@ -80,21 +80,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
           margin-right: 5px;
         }
 
-        h3.tab {
-          background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0px 0px;
-          margin: 0px auto;
-        }
-
-        mwc-tab-bar {
-          --mdc-theme-primary: var(--general-sidebar-selected-color);
-          --mdc-text-transform: none;
-          --mdc-tab-color-default: var(--general-tabbar-background-color);
-          --mdc-tab-text-label-color-default: var(
-            --general-tabbar-tab-disabled-color
-          );
-        }
-
         mwc-button {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);

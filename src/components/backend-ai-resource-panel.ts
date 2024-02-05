@@ -133,7 +133,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         }
 
         a:hover {
-          color: #3e872d;
+          color: var(--general-color-primary, #3e872d);
         }
 
         mwc-linear-progress {
