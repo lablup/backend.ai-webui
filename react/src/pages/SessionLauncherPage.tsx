@@ -324,9 +324,9 @@ const SessionLauncherPage = () => {
           // TODO: allow_manual_image_name_for_session
           kernelName,
           architecture,
-          sessionName: _.isEmpty(values.name)
+          sessionName: _.isEmpty(values.sessionName)
             ? generateSessionId()
-            : values.name,
+            : values.sessionName,
           config: {
             type: values.sessionType,
 
