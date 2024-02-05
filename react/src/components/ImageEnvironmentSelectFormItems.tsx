@@ -143,8 +143,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
 
     const version = form.getFieldValue('environments')?.version;
 
-    form.getFieldValue('environments')?.environment === undefined &&
-      form.getFieldValue('environments')?.version &&
+    form.getFieldValue('environments')?.version &&
       _.find(imageGroups, (group) => {
         return _.find(group.environmentGroups, (environment) => {
           return _.find(environment.images, (image) => {
@@ -170,11 +169,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
     //     return;
     //   }
     // }
-    // if not initial value, select first value
-    const nextEnvironmentName =
-      form.getFieldValue('environments')?.environment || version
-        ? matchedEnvironmentByVersion?.environmentName
-        : imageGroups[0]?.environmentGroups[0]?.environmentName;
+
+    // if matchedEnvironmentByVersion is not existed, select first value
+    const nextEnvironmentName = matchedEnvironmentByVersion?.environmentName
+      ? matchedEnvironmentByVersion?.environmentName
+      : imageGroups[0]?.environmentGroups[0]?.environmentName;
 
     let nextEnvironmentGroup: ImageGroup['environmentGroups'][0] | undefined;
     _.find(imageGroups, (group) => {
@@ -210,6 +209,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
           environment: nextEnvironmentName,
           version: getImageFullName(nextNewImage),
           image: nextNewImage,
+          manual:
+            !matchedEnvironmentByVersion &&
+            baiClient._config.allow_manual_image_name_for_session
+              ? version
+              : undefined,
         },
       });
     }
