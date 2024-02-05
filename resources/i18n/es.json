@@ -1315,7 +1315,8 @@
     "TotpSetupNotAvailable": "No se puede configurar la autenticación de dos factores.",
     "TurnOffTotp": "Desactivar la autenticación de dos factores",
     "TypeInAuthKey": "También puede introducir manualmente el código de autenticación.",
-    "EnterConfirmationCode": "Ahora ingrese la OTP generada por el autenticador para verificar."
+    "EnterConfirmationCode": "Ahora ingrese la OTP generada por el autenticador para verificar.",
+    "RequireOTP": "Escribe OTP."
   },
   "update": {
     "NewWebUIVersionAvailable": "Nueva versión disponible:"

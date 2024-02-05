@@ -135,6 +135,9 @@ const TOTPActivateModal: React.FC<Props> = ({
                 rules={[
                   {
                     required: true,
+                    message: t('totp.RequireOTP'),
+                  },
+                  {
                     pattern: /^[0-9]+$/,
                     message: t('credential.validation.NumbersOnly'),
                   },

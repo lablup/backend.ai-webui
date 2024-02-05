@@ -1462,7 +1462,8 @@
     "ConfirmTotpRemovalBody": "Adakah anda pasti untuk menarik diri daripada menggunakan pengesahan dua faktor?",
     "RemoveTotpSetupCompleted": "Dilumpuhkan 2FA",
     "OTP": "Kata laluan sekali sahaja",
-    "EnterConfirmationCode": "Sekarang masukkan OTP yang dijana oleh pengesah untuk mengesahkan."
+    "EnterConfirmationCode": "Sekarang masukkan OTP yang dijana oleh pengesah untuk mengesahkan.",
+    "RequireOTP": "Tulis OTP."
   },
   "OpenVSCodeRemote": "Buka Kod Visual Studio tempatan",
   "inputLimit": {

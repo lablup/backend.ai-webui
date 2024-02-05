@@ -1462,7 +1462,8 @@
     "ConfirmTotpRemovalBody": "Tem a certeza de que não quer utilizar a autenticação de dois factores?",
     "RemoveTotpSetupCompleted": "2FA desactivada",
     "OTP": "Palavra-passe única",
-    "EnterConfirmationCode": "Agora insira o OTP gerado pelo autenticador para verificar."
+    "EnterConfirmationCode": "Agora insira o OTP gerado pelo autenticador para verificar.",
+    "RequireOTP": "Escreva OTP."
   },
   "OpenVSCodeRemote": "Abrir o código local do Visual Studio",
   "inputLimit": {

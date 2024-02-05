@@ -1462,7 +1462,8 @@
     "ConfirmTotpRemovalBody": "İki faktörlü kimlik doğrulamayı kullanmaktan vazgeçtiğinizden emin misiniz?",
     "RemoveTotpSetupCompleted": "Devre Dışı 2FA",
     "OTP": "Tek kullanımlık şifre",
-    "EnterConfirmationCode": "Şimdi doğrulamak için kimlik doğrulayıcı tarafından oluşturulan OTP'yi girin."
+    "EnterConfirmationCode": "Şimdi doğrulamak için kimlik doğrulayıcı tarafından oluşturulan OTP'yi girin.",
+    "RequireOTP": "OTP'yi yazın."
   },
   "OpenVSCodeRemote": "Yerel Visual Studio Kodunu açın",
   "inputLimit": {

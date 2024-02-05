@@ -1375,7 +1375,8 @@
     "TotpSetupNotAvailable": "Двухфакторная аутентификация не может быть настроена.",
     "TurnOffTotp": "Отключите двухфакторную аутентификацию",
     "RemoveTotpSetupCompleted": "Отключенная 2FA",
-    "EnterConfirmationCode": "Теперь введите OTP, сгенерированный аутентификатором, для проверки."
+    "EnterConfirmationCode": "Теперь введите OTP, сгенерированный аутентификатором, для проверки.",
+    "RequireOTP": "Напишите ОТП."
   },
   "inputLimit": {
     "4to64chars": "(4~64 символа)"
