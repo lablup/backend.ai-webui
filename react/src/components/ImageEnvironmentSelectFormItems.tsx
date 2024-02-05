@@ -13,7 +13,16 @@ import {
   ImageEnvironmentSelectFormItemsQuery,
   ImageEnvironmentSelectFormItemsQuery$data,
 } from './__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
-import { Divider, Form, Input, RefSelectProps, Select, Tag, theme } from 'antd';
+import {
+  Divider,
+  Form,
+  Input,
+  RefSelectProps,
+  Select,
+  Tag,
+  message,
+  theme,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -139,76 +148,41 @@ const ImageEnvironmentSelectFormItems: React.FC<
     let matchedEnvironmentByVersion:
       | ImageGroup['environmentGroups'][0]
       | undefined;
-    // let matchedImageByVersion;
-
+    let matchedImageByVersion: Image | undefined;
     const version = form.getFieldValue('environments')?.version;
 
-    form.getFieldValue('environments')?.version &&
+    version &&
       _.find(imageGroups, (group) => {
-        return _.find(group.environmentGroups, (environment) => {
-          return _.find(environment.images, (image) => {
-            const matched =
-              getImageFullName(image) ===
-              form.getFieldValue('environments')?.version;
-
-            if (matched) {
-              matchedEnvironmentByVersion = environment;
-              // matchedImageByVersion = image;
-            }
-            return matched;
-          });
-        });
+        matchedEnvironmentByVersion = _.find(
+          group.environmentGroups,
+          (environment) => {
+            matchedImageByVersion = _.find(
+              environment.images,
+              (image) => getImageFullName(image) === version,
+            );
+            return !!matchedImageByVersion; // break iteration
+          },
+        );
+        return !!matchedEnvironmentByVersion; // break iteration
       });
 
-    // console.log(matchedEnvironmentByVersion)
-    // console.log(imageGroups[0]?.environmentGroups[0]?.environmentName)
-
-    // if(!matchedEnvironmentByVersion){
-    //   if(baiClient._config.allow_manual_image_name_for_session ){
-    //     form.setFieldValue(['environments', 'manual'], version);
-    //     return;
-    //   }
-    // }
-
-    // if matchedEnvironmentByVersion is not existed, select first value
-    const nextEnvironmentName = matchedEnvironmentByVersion?.environmentName
-      ? matchedEnvironmentByVersion?.environmentName
-      : imageGroups[0]?.environmentGroups[0]?.environmentName;
-
-    let nextEnvironmentGroup: ImageGroup['environmentGroups'][0] | undefined;
-    _.find(imageGroups, (group) => {
-      return _.find(group.environmentGroups, (environment) => {
-        if (environment.environmentName === nextEnvironmentName) {
-          nextEnvironmentGroup = environment;
-          return true;
-        } else {
-          return false;
-        }
-      });
-    });
-
-    let nextNewImage;
-    // if current version doesn't exist in next environment group, select a version of the first image of next environment group
-    if (
-      !_.find(
-        nextEnvironmentGroup?.images,
-        (image) => version === getImageFullName(image),
-      )
-    ) {
-      nextNewImage = nextEnvironmentGroup?.images[0];
+    // if matchedEnvironmentByVersion is not existed, select first values
+    let nextEnvironment: ImageGroup['environmentGroups'][0] | undefined;
+    let nextImage: Image | undefined;
+    if (matchedEnvironmentByVersion) {
+      nextEnvironment = matchedEnvironmentByVersion;
+      nextImage = matchedImageByVersion;
     } else {
-      // if image info is partially set (version), fill out image info
-      nextNewImage = _.find(
-        nextEnvironmentGroup?.images,
-        (image) => version === getImageFullName(image),
-      );
+      nextEnvironment = imageGroups[0]?.environmentGroups[0];
+      nextImage = nextEnvironment?.images[0];
     }
-    if (nextNewImage) {
+
+    if (nextImage) {
       form.setFieldsValue({
         environments: {
-          environment: nextEnvironmentName,
-          version: getImageFullName(nextNewImage),
-          image: nextNewImage,
+          environment: nextEnvironment.environmentName,
+          version: getImageFullName(nextImage),
+          image: nextImage,
           manual:
             !matchedEnvironmentByVersion &&
             baiClient._config.allow_manual_image_name_for_session
@@ -216,7 +190,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
               : undefined,
         },
       });
+    } else if (baiClient._config.allow_manual_image_name_for_session) {
+      // if no image is available, only set manual if it's allowed
+      form.setFieldValue(['environments', 'manual'], version);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [environments?.version, environments?.manual]); // environments?.environment,
 
