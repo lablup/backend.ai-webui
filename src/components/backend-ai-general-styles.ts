@@ -280,10 +280,12 @@ export const BackendAiStyles = [
         --general-sidebar-color
       );
       --select-secondary-theme: var(--general-checkbox-color);
-      --select-background-color: var(#e7ebee, #efefef);
+      --select-color: var(--general-color-text);
+      --select-background-color: var(--general-background-color, #efefef);
       --select-background-border-radius: 5px;
       --select-box-shadow: 0 1px 3px -1px rgba(0, 0, 0, 60%),
         0 3px 12px -1px rgb(200, 200, 200, 80%);
+      --selected-item-disabled-text-color: var(--general-color-text-disabled);
 
       /* override for selected-area */
       --select-title-font-size: 10px;
@@ -477,9 +479,10 @@ export const BackendAiStyles = [
       ) !important;
     }
 
-    mwc-checkbox {
+    mwc-checkbox,
+    mwc-check-list-item {
       --mdc-theme-secondary: var(--general-color-primary);
-      --mdc-checkbox-unchecked-color: var(--general-color-text);
+      --mdc-checkbox-unchecked-color: var(--general-color-border);
     }
 
     div.card p {
@@ -724,11 +727,19 @@ export const BackendAiStyles = [
         rgba(255, 255, 255, 0.87)
       );
       --mdc-select-fill-color: var(--general-color-bg-container, transparent);
+      --mdc-select-disabled-fill-color: var(
+        --general-color-bg-container,
+        transparent
+      );
       --mdc-select-ink-color: var(--general-color-text, black);
       --mdc-select-label-ink-color: var(--general-color-text, black);
       --mdc-select-focused-label-color: var(
         --general-color-primary,
         rgba(24, 24, 24, 1)
+      );
+      --mdc-select-disabled-ink-color: var(
+        --general-color-text-disabled,
+        #747474
       );
       --mdc-select-dropdown-icon-color: #747474;
       --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);

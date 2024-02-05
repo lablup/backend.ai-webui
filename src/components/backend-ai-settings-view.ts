@@ -341,7 +341,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
           <div slot="message" class="vertical wrap layout">
             <div
               class="horizontal wrap layout note"
-              style="background-color:#FFFBE7;width:100%;padding:10px 0px;"
+              style="background-color:#FFFBE7;width:100%;padding:10px 0px;color:rgba(0,0,0,0.88);"
             >
               <p style="margin:auto 10px;">
                 ${_t('settings.NoteAboutFixedSetup')}

@@ -118,11 +118,13 @@ export default class BackendAIMultiSelect extends LitElement {
           background-color: var(--select-background-color, #efefef);
           --mdc-theme-primary: var(--select-primary-theme);
           --mdc-theme-secondary: var(--select-secondary-theme);
+          --mdc-theme-on-surface: var(--selected-item-disabled-text-color);
           box-shadow: var(--select-box-shadow);
         }
 
         mwc-list > mwc-check-list-item {
           background-color: var(--select-background-color, #efefef);
+          color: var(--select-color);
         }
 
         div.invalid {
