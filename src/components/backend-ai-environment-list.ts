@@ -144,7 +144,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 229px);
+          height: calc(100vh - 199px);
+          /* height: calc(100vh - 229px); */
         }
         h4 {
           font-weight: 200;
@@ -1785,7 +1786,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             <div>${_t('environment.Port')}</div>
             <div>${_t('environment.Action')}</div>
           </div>
-          ${this.servicePorts.map(
+          ${this.servicePorts?.map(
             (item, index) => html`
               <div class="row">
                 <mwc-textfield type="text" value=${item.app}></mwc-textfield>

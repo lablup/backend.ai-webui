@@ -1,5 +1,33 @@
+import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
+import { NavigateOptions, To, useNavigate } from 'react-router-dom';
+
+interface WebUINavigateOptions extends NavigateOptions {
+  params?: any;
+}
+export const useWebUINavigate = () => {
+  const _reactNavigate = useNavigate();
+  // @ts-ignore
+  return (to: To, options?: WebUINavigateOptions) => {
+    _reactNavigate(to, _.omit(options, ['params']));
+    const pathName = _.isString(to) ? to : to.pathname || '';
+    document.dispatchEvent(
+      new CustomEvent('move-to-from-react', {
+        detail: {
+          path: pathName,
+          params: options?.params,
+        },
+      }),
+    );
+
+    // dispatch event to update tab of backend-ai-usersettings
+    if (pathName === '/usersettings') {
+      const event = new CustomEvent('backend-ai-usersettings', {});
+      document.dispatchEvent(event);
+    }
+  };
+};
 
 export const useBackendAIConnectedState = () => {
   const [time, setTime] = useState<string>();
@@ -57,7 +85,7 @@ export const useCurrentProjectValue = () => {
     return () => {
       document.removeEventListener('backend-ai-group-changed', listener);
     };
-  });
+  }, [baiClient.groupIds]);
 
   return project;
 };
@@ -116,6 +144,8 @@ export const useSuspendedBackendaiClient = () => {
       list: (path: string) => Promise<any>;
       list_hosts: () => Promise<any>;
       list_files: (path: string, id: string) => Promise<any>;
+      list_allowed_types: () => Promise<string[]>;
+      clone: (input: any, name: string) => Promise<any>;
     };
     [key: string]: any;
     _config: BackendAIConfig;
@@ -135,7 +165,7 @@ interface ImageMetadata {
   }[];
 }
 
-export const useBackendaiImageMetaData = () => {
+export const useBackendAIImageMetaData = () => {
   const { data: metadata } = useQuery({
     queryKey: 'backendai-metadata-for-suspense',
     queryFn: () => {
@@ -144,7 +174,7 @@ export const useBackendaiImageMetaData = () => {
         .then(
           (json: {
             imageInfo: {
-              [key: string]: ImageMetadata;
+              [key: string]: ImageMetadata | undefined;
             };
             tagAlias: {
               [key: string]: string;
@@ -164,7 +194,7 @@ export const useBackendaiImageMetaData = () => {
   const getImageMeta = (imageName: string) => {
     // cr.backend.ai/multiarch/python:3.9-ubuntu20.04
     // key = python, tags = [3.9, ubuntu20.04]
-    if (!imageName) {
+    if (_.isEmpty(imageName)) {
       return {
         key: '',
         tags: [],
@@ -172,10 +202,22 @@ export const useBackendaiImageMetaData = () => {
     }
     const specs = imageName.split('/');
 
-    const [key, tag] = (specs[2] || specs[1]).split(':');
-    const tags = tag.split('-');
+    try {
+      const [key, tag] = (
+        specs[specs.length - 1] ||
+        specs[specs.length - 2] ||
+        ''
+      ).split(':');
 
-    return { key, tags };
+      // remove architecture string and split by '-'
+      const tags = tag.split('@')[0].split('-');
+      return { key, tags };
+    } catch (error) {
+      return {
+        key: '',
+        tags: [],
+      };
+    }
   };
 
   return [
@@ -183,7 +225,7 @@ export const useBackendaiImageMetaData = () => {
     {
       getImageAliasName: (imageName: string) => {
         const { key } = getImageMeta(imageName);
-        return metadata?.imageInfo[key].name || key;
+        return metadata?.imageInfo[key]?.name || key;
       },
       getImageIcon: (imageName?: string | null, path = 'resources/icons/') => {
         if (!imageName) return 'default.png';
@@ -238,6 +280,11 @@ type BackendAIConfig = {
   maxMemoryPerContainer: number;
   maxCUDADevicesPerContainer: number;
   maxCUDASharesPerContainer: number;
+  maxROCMDevicesPerContainer: number;
+  maxTPUDevicesPerContainer: number;
+  maxIPUDevicesPerContainer: number;
+  maxATOMDevicesPerContainer: number;
+  maxWarboyDevicesPerContainer: number;
   maxShmPerContainer: number;
   maxFileUploadSize: number;
   allow_image_list: string[];
@@ -253,5 +300,9 @@ type BackendAIConfig = {
   force2FA: boolean;
   directoryBasedUsage: boolean;
   maxCountForPreopenPorts: number;
+  pluginPages: string;
+  blockList: string[];
+  inactiveList: string[];
+  allowSignout: boolean;
   [key: string]: any;
 };

@@ -351,6 +351,12 @@ const SessionLauncherPage = () => {
               compareNumberWithUnits(values.resource.shmem, '1g') < 0
                 ? '1g'
                 : values.resource.shmem,
+            ...(values.resource.accelerator > 0
+              ? {
+                  [values.resource.acceleratorType]:
+                    values.resource.accelerator,
+                }
+              : undefined),
             mounts: values.mounts,
             mount_map: values.vfoldersAliasMap,
 
@@ -984,7 +990,11 @@ const SessionLauncherPage = () => {
                     display: currentStepKey === 'storage' ? 'block' : 'none',
                   }}
                 >
-                  <VFolderTableFromItem />
+                  <VFolderTableFromItem
+                    filter={(vfolder) => {
+                      return vfolder.status === 'ready';
+                    }}
+                  />
                   {/* <VFolderTable /> */}
                 </Card>
 
@@ -1484,7 +1494,7 @@ const SessionLauncherPage = () => {
           </Form.Provider>
           {/* </Suspense> */}
         </Flex>
-        {screens.md && (
+        {screens.lg && (
           <Affix
             offsetTop={150}
             // direction="column"

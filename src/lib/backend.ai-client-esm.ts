@@ -8,7 +8,7 @@ Licensed under MIT
 /*jshint esnext: true */
 import CryptoES from 'crypto-es';
 //var CryptoES = require("crypto-js"); /* Exclude for ES6 */
-
+import { comparePEP440Versions } from './pep440';
 type requestInfo = {
   method: string;
   headers: Headers;
@@ -477,8 +477,8 @@ class Client {
       localStorage.getItem('backendaiwebui.logs') as any,
     );
     if (previous_log) {
-      if (previous_log.length > 3000) {
-        previous_log = previous_log.slice(1, 3000);
+      if (previous_log.length > 2000) {
+        previous_log = previous_log.slice(1, 2000);
       }
     }
     let log_stack: Record<string, unknown>[] = [];
@@ -666,8 +666,15 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.09.2')) {
       this._features['container-registry-gql'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('23.09.7')) {
+      this._features['main-access-key'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.8')) {
+      this._features['model-serving-endpoint-user-info'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('24.03.0')) {
       this._features['max-vfolder-count-in-user-resource-policy'] = true;
+      this._features['model-store'] = true;
     }
   }
 
@@ -676,15 +683,7 @@ class Client {
    */
   isManagerVersionCompatibleWith(version) {
     let managerVersion = this._managerVersion;
-    managerVersion = managerVersion
-      .split('.')
-      .map((s) => s.padStart(10))
-      .join('.');
-    version = version
-      .split('.')
-      .map((s) => s.padStart(10))
-      .join('.');
-    return version <= managerVersion;
+    return comparePEP440Versions(managerVersion, version) >= 0;
   }
 
   /**
@@ -4070,10 +4069,33 @@ class Group {
       'created_at',
       'modified_at',
       'domain_name',
+      'type',
     ],
+    type = ["GENERAL"],
   ): Promise<any> {
     let q, v;
-    if (this.client.is_admin === true) {
+    if (this.client.supports('model-store')) {
+      q =
+        `query($is_active:Boolean, $type:[String!]) {` +
+        `  groups(is_active:$is_active, type:$type) { ${fields.join(' ')} }` +
+        '}';
+      v = { is_active: is_active, type: type };
+      if (domain_name) {
+        q =
+          `query($domain_name: String, $is_active:Boolean, $type:[String!]) {` +
+          `  groups(domain_name: $domain_name, is_active:$is_active, type:$type) { ${fields.join(
+            ' ',
+          )} }` +
+          '}';
+        v = {
+          is_active: is_active,
+          domain_name: domain_name,
+          type: type,
+        };
+      }
+    } else {
+      // remove 'type' from fields
+      fields = fields.filter((item) => item !== 'type');
       q =
         `query($is_active:Boolean) {` +
         `  groups(is_active:$is_active) { ${fields.join(' ')} }` +
@@ -4091,12 +4113,6 @@ class Group {
           domain_name: domain_name,
         };
       }
-    } else {
-      q =
-        `query($is_active:Boolean) {` +
-        `  groups(is_active:$is_active) { ${fields.join(' ')} }` +
-        '}';
-      v = { is_active: is_active };
     }
     return this.client.query(q, v);
   }
@@ -4329,6 +4345,7 @@ class User {
       'role',
       'groups {id name}',
       'status',
+      'main_access_key',
     ],
   ): Promise<any> {
     let q, v;
@@ -4351,6 +4368,9 @@ class User {
       // we iterate pages to gather all users for client-side compability.
       const limit = 100;
       const users = [] as any;
+      if (!this.client.supports('main-access-key')) {
+        fields = fields.filter(field => field !== 'main_access_key');
+      }
       q = this.client.is_admin
         ? `
         query($offset:Int!, $limit:Int!, $is_active:Boolean) {
@@ -4570,6 +4590,10 @@ class ScalingGroup {
   async list(group = 'default'): Promise<any> {
     const queryString = `/scaling-groups?group=${group}`;
     const rqst = this.client.newSignedRequest('GET', queryString, null, null);
+    //const result = await this.client._wrapWithPromise(rqst);
+    //console.log("test");
+    //console.log(result);
+    //return result;
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -5521,6 +5545,14 @@ class EduApp {
    */
   async get_user_projects() {
     const rqst = this.client.newSignedRequest('GET', '/eduapp/projects');
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Get credential of user.
+   */
+  async get_user_credential(stoken: string) {
+    const rqst = this.client.newSignedRequest('GET', `/eduapp/credential?sToken=${stoken}`);
     return this.client._wrapWithPromise(rqst);
   }
 }

@@ -46,6 +46,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   @property({ type: Object }) client = Object();
   @property({ type: Object }) notification = Object();
   @property({ type: String }) resources = Object();
+  @property({ type: String }) _eduAppNamePrefix = '';
   @query('#app-launcher') appLauncher!: BackendAIAppLauncher;
 
   static get styles(): CSSResultGroup | undefined {
@@ -123,6 +124,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     this.resources = {
       cpu: queryParams.get('cpu'),
       mem: queryParams.get('mem'),
+      shmem: queryParams.get('shmem'),
       'cuda.shares': queryParams.get('cuda-shares'),
       'cuda.device': queryParams.get('cuda-device'),
     };
@@ -236,6 +238,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
   async _createEduSession() {
     this.appLauncher.indicator = await globalThis.lablupIndicator.start();
+    this._eduAppNamePrefix =
+      globalThis.backendaiclient._config.eduAppNamePrefix;
 
     // Query current user's compute session in the current group.
     const fields = [
@@ -286,6 +290,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         0,
       );
     } catch (err) {
+      this.appLauncher.indicator.end();
       console.error(err);
       if (err && err.message) {
         if (err.description) {
@@ -305,29 +310,86 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     // URL Parameter parsing.
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    let requestedApp = urlParams.get('app') || 'jupyter';
+    const requestedApp = urlParams.get('app') || 'jupyter';
+    let parsedAppName = requestedApp;
+    // `requestedApp` is a default value of `sessionTemplateName` for backward compatibility
+    const sessionTemplateName =
+      urlParams.get('session_template') ||
+      urlParams.get('sessionTemplate') ||
+      requestedApp;
+    if (
+      this._eduAppNamePrefix !== '' &&
+      requestedApp.startsWith(this._eduAppNamePrefix)
+    ) {
+      parsedAppName = requestedApp.slice(this._eduAppNamePrefix.length);
+    }
 
     let launchNewSession = true;
+
+    let sessionTemplates;
+    try {
+      sessionTemplates =
+        await globalThis.backendaiclient.sessionTemplate.list(false);
+      sessionTemplates = sessionTemplates.filter(
+        (t) => t.name === sessionTemplateName,
+      );
+    } catch (err) {
+      this.appLauncher.indicator.end();
+      console.error(err);
+      if (err && err.message) {
+        if (err.description) {
+          this.notification.text = PainKiller.relieve(err.description);
+        } else {
+          this.notification.text = PainKiller.relieve(err.message);
+        }
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      } else if (err && err.title) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show(true, err);
+      }
+      return;
+    }
+    if (sessionTemplates.length < 1) {
+      this.appLauncher.indicator.end();
+      this.notification.text = _text('eduapi.NoSessionTemplate');
+      this.notification.show(true);
+      return;
+    }
+    const requestedSessionTemplate = sessionTemplates[0];
 
     // Create or select an existing compute session before lauching app.
     let sessionId: string | null | unknown;
     if (sessions.compute_session_list.total_count > 0) {
       console.log('Reusing an existing session ...');
-      const sessionStatus = sessions.compute_session_list.items[0].status;
-      if (sessionStatus !== 'RUNNING') {
-        this.notification.text =
-          _text('eduapi.sessionStatusIs') +
-          ` ${sessionStatus}. ` +
-          _text('eduapi.PleaseReload');
-        this.notification.show(true);
-        return;
-      }
       let sess: Record<string, unknown> | null = null;
       for (let i = 0; i < sessions.compute_session_list.items.length; i++) {
         const _sess = sessions.compute_session_list.items[i];
+        const sessionImage = _sess.image;
         const servicePorts = JSON.parse(_sess.service_ports || '{}');
-        const services = servicePorts.map((s) => s.name);
-        if (services.includes(requestedApp)) {
+        const services =
+          Object.keys(servicePorts).map((s) => servicePorts[s].name) || [];
+        const sessionStatus = _sess.status;
+        if (
+          sessionImage != requestedSessionTemplate.template.spec.kernel.image
+        ) {
+          this.appLauncher.indicator.end();
+          const errText =
+            'Cannot create a session with an image different from any running session.';
+          this.notification.text = PainKiller.relieve(errText);
+          this.notification.show(true, errText);
+          return;
+        }
+        if (sessionStatus !== 'RUNNING') {
+          this.appLauncher.indicator.end();
+          this.notification.text =
+            _text('eduapi.sessionStatusIs') +
+            ` ${sessionStatus}. ` +
+            _text('eduapi.PleaseReload');
+          this.notification.show(true);
+          return;
+        }
+        if (services.includes(parsedAppName)) {
           sess = _sess;
           break;
         }
@@ -365,36 +427,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         40,
         _text('eduapi.FindingSessionTemplate'),
       );
-      let sessionTemplates;
-      try {
-        sessionTemplates =
-          await globalThis.backendaiclient.sessionTemplate.list(false);
-      } catch (err) {
-        console.error(err);
-        if (err && err.message) {
-          if (err.description) {
-            this.notification.text = PainKiller.relieve(err.description);
-          } else {
-            this.notification.text = PainKiller.relieve(err.message);
-          }
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        } else if (err && err.title) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.show(true, err);
-        }
-        return;
-      }
-      // Assume that session templates' name match requsetedApp name.
-      sessionTemplates = sessionTemplates.filter(
-        (t) => t.name === requestedApp,
-      );
-      if (sessionTemplates.length < 1) {
-        this.notification.text = _text('eduapi.NoSessionTemplate');
-        this.notification.show(true);
-        return;
-      }
-      const templateId = sessionTemplates[0].id; // NOTE: use the first template. will it be okay?
+      const templateId = requestedSessionTemplate.id;
       try {
         const mounts =
           await globalThis.backendaiclient.eduApp.get_mount_folders();
@@ -433,6 +466,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
             20000,
           );
         } catch (err) {
+          this.appLauncher.indicator.end();
           console.error(err);
           if (err && err.message) {
             if (err.description) {
@@ -450,6 +484,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         }
         sessionId = response.sessionId;
       } catch (err) {
+        this.appLauncher.indicator.end();
         console.error(err);
         if (err && err.message) {
           if ('statusCode' in err && err.statusCode === 408) {
@@ -473,18 +508,15 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
     // Launch app.
     if (sessionId) {
-      if (requestedApp.startsWith('jupyter') && !this.detectIE()) {
-        requestedApp = 'jupyterlab';
-      }
-      this._openServiceApp(sessionId, requestedApp);
+      this._openServiceApp(sessionId, parsedAppName);
     }
   }
 
-  async _openServiceApp(sessionId, appName) {
+  async _openServiceApp(sessionId, requestedApp) {
     this.appLauncher.indicator = await globalThis.lablupIndicator.start();
-    console.log(`launching ${appName} from session ${sessionId} ...`);
+    console.log(`launching ${requestedApp} from session ${sessionId} ...`);
     this.appLauncher
-      ._open_wsproxy(sessionId, appName, null, null)
+      ._open_wsproxy(sessionId, requestedApp, null, null)
       .then(async (resp) => {
         if (resp.url) {
           const appConnectUrl = await this.appLauncher._connectToProxyWorker(

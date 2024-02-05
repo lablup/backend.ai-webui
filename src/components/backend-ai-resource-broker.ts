@@ -575,7 +575,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           using: { cpu: 0, mem: 0 },
           remaining: { cpu: 0, mem: 0 },
         };
-      } else if (this.scaling_groups.length === 0) {
+      } else if (
+        this.scaling_groups.length === 0 ||
+        resourcePresetInfo.scaling_groups[this.scaling_group] === undefined
+      ) {
         this.aggregate_updating = false;
         return Promise.resolve(false);
       }
@@ -783,7 +786,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             timeout,
           );
         // resourceGroupSlots will have three fields: available, occupied, and remaining.
-        const resourceGroupSlots = agentSummaryList.agent_summary_list.items
+        const resourceGroupSlots = agentSummaryList.agent_summary_list?.items
           .filter(
             (agent) =>
               agent.scaling_group == this.scaling_group && agent.schedulable,

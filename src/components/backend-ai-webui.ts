@@ -103,7 +103,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Array }) groups = [];
   @property({ type: Object }) plugins = Object();
   @property({ type: String }) fasttrackEndpoint = '';
-  @property({ type: Boolean }) isHideSideMenuFastTrackButton = false;
   @property({ type: String }) _page = '';
   @property({ type: String }) _lazyPage = '';
   @property({ type: Object }) _pageParams = {};
@@ -132,6 +131,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'id',
   ];
   @property({ type: Array }) blockedMenuItem;
+  @property({ type: Array }) inactiveMenuItem;
   @property({ type: Number }) minibarWidth = 88;
   @property({ type: Number }) sidebarWidth = 250;
   @property({ type: Number }) sidepanelWidth = 250;
@@ -156,16 +156,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'github',
     'import',
     'unauthorized',
-  ]; // temporally block pipeline from available pages 'pipeline', 'pipeline-job', 'session'
+    'session',
+    'session/start',
+  ]; // temporally block pipeline from available pages 'pipeline', 'pipeline-job'
   @property({ type: Array }) adminOnlyPages = [
     'experiment',
     'credential',
     'environment',
-    'agent',
-    'storage-settings',
-    'settings',
-    'maintenance',
-    'information',
   ];
   @property({ type: Array }) superAdminOnlyPages = [
     'agent',
@@ -182,6 +179,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Object }) roleInfo = Object();
   @property({ type: Object }) keyPairInfo = Object();
   @property({ type: Boolean }) isOpenUserProfileDialog = false;
+  @property({ type: Boolean }) isOpenSignoutDialog = false;
   @query('#app-body') appBody!: Drawer;
   @query('#app-page') appPage!: HTMLDivElement;
   @query('#content-body') contentBody!: Drawer;
@@ -198,6 +196,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   constructor() {
     super();
     this.blockedMenuItem = [];
+    this.inactiveMenuItem = [];
   }
 
   static get styles(): CSSResultGroup {
@@ -375,6 +374,20 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       },
       { once: true },
     );
+    document.addEventListener('move-to-from-react', (e) => {
+      const params = (e as CustomEvent).detail.params;
+      const path = (e as CustomEvent).detail.path;
+      this._moveTo(path, params, true);
+    });
+    document.addEventListener('show-TOS-agreement', () => {
+      this.showTOSAgreement();
+    });
+    document.addEventListener('show-PP-agreement', () => {
+      this.showPPAgreement();
+    });
+    document.addEventListener('show-about-backendai', () => {
+      this._showSplash();
+    });
   }
 
   async connectedCallback() {
@@ -446,7 +459,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.edition = config.license.edition;
     }
     if (typeof config.menu !== 'undefined' && 'blocklist' in config.menu) {
-      this.blockedMenuItem = config.menu.blocklist.split(',');
+      this.blockedMenuItem = config.menu.blocklist
+        .split(',')
+        .map((x: string) => x.trim());
+    }
+    if (typeof config.menu !== 'undefined' && 'inactivelist' in config.menu) {
+      this.inactiveMenuItem = config.menu.inactivelist
+        .split(',')
+        .map((x: string) => x.trim());
     }
     if (
       typeof config.general !== 'undefined' &&
@@ -486,14 +506,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     ) {
       this.fasttrackEndpoint = config.pipeline.frontendEndpoint;
     }
-    if (
-      typeof config.pipeline !== 'undefined' &&
-      'hideSideMenuButton' in config.pipeline
-    ) {
-      this.isHideSideMenuFastTrackButton = config.pipeline.hideSideMenuButton;
-    }
     if (typeof config.plugin !== 'undefined') {
-      // Store plugin informations
+      // Store plugin information
       if ('login' in config.plugin) {
         this.plugins['login'] = config.plugin.login;
       }
@@ -516,7 +530,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               switch (pageItem.permission) {
                 case 'superadmin':
                   this.plugins['menuitem-superadmin'].push(page);
-                  this.adminOnlyPages.push(page);
+                  this.superAdminOnlyPages.push(page);
                   break;
                 case 'admin':
                   this.plugins['menuitem-admin'].push(page);
@@ -546,6 +560,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       }
     }
     this.loginPanel.refreshWithConfig(config);
+    const event = new CustomEvent('backend-ai-config-loaded');
+    document.dispatchEvent(event);
   }
 
   refreshPage(): void {
@@ -601,32 +617,33 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     if (!this.is_admin && !this.is_superadmin) {
       if (
         this.adminOnlyPages.includes(this._page) ||
+        this.superAdminOnlyPages.includes(this._page) ||
         this._page === 'unauthorized'
       ) {
         this._page = 'unauthorized';
-        globalThis.history.pushState({}, '', '/unauthorized');
-        store.dispatch(navigate(decodeURIComponent(this._page)));
+        this._moveTo('/unauthorized');
       }
     }
 
     // redirect to unauthorize page when admin user tries to access superadmin only page
     if (!this.is_superadmin && this.superAdminOnlyPages.includes(this._page)) {
       this._page = 'unauthorized';
-      globalThis.history.pushState({}, '', '/unauthorized');
-      store.dispatch(navigate(decodeURIComponent(this._page)));
+      this._moveTo('/unauthorized');
     }
 
-    // redirect to error page when blocked by config option.
+    // redirect to error page when blocked by config option or the page is not available page.
     if (
       this.optionalPages
         .filter((item) => !item.available)
         .map((item) => item.page)
         .includes(this._page) ||
-      this.blockedMenuItem.includes(this._page)
+      this.blockedMenuItem.includes(this._page) ||
+      this.inactiveMenuItem.includes(this._page) ||
+      (!this.availablePages.includes(this._page) &&
+        !this.plugins?.['menuitem']?.includes(this._page))
     ) {
       this._page = 'error';
-      globalThis.history.pushState({}, '', '/error');
-      store.dispatch(navigate(decodeURIComponent(this._page)));
+      this._moveTo('/error');
     }
   }
 
@@ -961,7 +978,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       default:
         if (
           'menuitem' in this.plugins &&
-          this.plugins['menuitem'].includes(view)
+          this.plugins['menuitem']?.includes(view)
         ) {
           this.menuTitle = view;
           break;
@@ -976,7 +993,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             }
             if (
               'menuitem' in this.plugins &&
-              this.plugins['menuitem'].includes(this._page)
+              this.plugins['menuitem']?.includes(this._page)
             ) {
               // TODO specify type for web components from variable
               const component = this.shadowRoot?.querySelector(
@@ -989,9 +1006,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           });
           break;
         }
-        // console.log('set to error');
-        this._page = 'error';
-        this.menuTitle = _text('webui.NOTFOUND');
     }
   }
 
@@ -1040,9 +1054,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     ) {
       this.notification.text = _text('webui.CleanUpNow');
       this.notification.show();
-      // if (globalThis.backendaiclient._config.connectionMode === 'SESSION' && this._usePipeline) {
-      //   await Promise.all([globalThis.backendaiclient.pipeline.logout(), globalThis.backendaiclient.logout()]);
-      // }
       if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
         await globalThis.backendaiclient.logout();
       }
@@ -1061,30 +1072,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       if (performClose === true) {
         // Do nothing. this window will be closed.
       } else if (globalThis.isElectron) {
-        this.user_id = '';
-        this.domain = '';
-        this._page = 'summary';
-        this._moveTo('/');
-        // globalThis.history.pushState({}, '', '/summary');
-        // store.dispatch(navigate(decodeURIComponent('/')));
-        // globalThis.location.reload();
-        document.body.style.backgroundImage =
-          'url("/resources/images/loading-background-large.jpg")';
-        this.appBody.style.visibility = 'hidden';
-        const curtain = this.shadowRoot?.getElementById('loading-curtain');
-        curtain?.classList.remove('visuallyhidden');
-        curtain?.addEventListener(
-          'transitionend',
-          () => {
-            curtain.classList.remove('hidden');
-          },
-          {
-            capture: false,
-            once: true,
-            passive: false,
-          },
-        );
-        this.loginPanel.open();
+        globalThis.location.href = globalThis.electronInitialHref;
       } else {
         this._moveTo('/');
         globalThis.location.reload();
@@ -1156,19 +1144,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    *
    * @param {string} url
    */
-  _moveTo(url) {
-    const page = url.split('/')[1];
-    if (
-      !this.availablePages.includes(page) &&
-      this.is_admin &&
-      !this.adminOnlyPages.includes(page)
-    ) {
-      store.dispatch(navigate(decodeURIComponent('/error')));
-      this._page = 'error';
-      return;
-    }
-    globalThis.history.pushState({}, '', url);
-    store.dispatch(navigate(decodeURIComponent(url), {}));
+  _moveTo(url, params = undefined, fromReact = false) {
+    !fromReact && globalThis.history.pushState({}, '', url);
+    store.dispatch(navigate(decodeURIComponent(url), params ?? {}));
     if ('menuitem' in this.plugins) {
       for (const item of this.plugins.menuitem) {
         if (item !== this._page) {
@@ -1180,8 +1158,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           component.removeAttribute('active');
         }
       }
-      if (this.plugins['menuitem'].includes(this._page)) {
-        // TODO specify type for web components ffrom variable
+      if (this.plugins['menuitem']?.includes(this._page)) {
+        // TODO specify type for web components from variable
         const component = this.shadowRoot?.querySelector(
           this._page,
         ) as BackendAIPage;
@@ -1191,11 +1169,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       }
     }
 
-    document.dispatchEvent(
-      new CustomEvent('react-navigate', {
-        detail: url,
-      }),
-    );
+    !fromReact &&
+      document.dispatchEvent(
+        new CustomEvent('react-navigate', {
+          detail: url,
+        }),
+      );
   }
 
   /**
@@ -1243,7 +1222,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         _text('webui.menu.AgentSummary'),
       );
     }
-    if (!this.isHideSideMenuFastTrackButton && this.fasttrackEndpoint !== '') {
+    if (
+      !this.blockedMenuItem.includes('pipeline') &&
+      this.fasttrackEndpoint !== ''
+    ) {
       this._createPopover('fasttrack-menu-icon', _text('webui.menu.FastTrack'));
     }
   }
@@ -1319,11 +1301,86 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   protected render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
-      <link rel="stylesheet" href="resources/custom.css">
+      <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css" />
+      <link rel="stylesheet" href="resources/custom.css" />
       <div id="loading-curtain" class="loading-background">
         <div id="loading-drag-area" class="loading-background-drag-area"></div>
       </div>
+      <div id="app-page">
+        <backend-ai-summary-view class="page" name="summary" ?active="${
+          this._page === 'summary'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
+        <backend-ai-import-view class="page" name="import" ?active="${
+          this._page === 'github' || this._page === 'import'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
+        <backend-ai-session-view class="page" name="job" ?active="${
+          this._page === 'job'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
+        <backend-ai-session-view-next class="page" name="session" ?active="${
+          this._page === 'session'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view-next>
+        <!-- <backend-ai-serving-view class="page" name="serving" ?active="${
+          this._page === 'serving'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-serving-view> -->
+        <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${
+          this._page === 'experiment'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
+        <!-- <backend-ai-usersettings-view class="page" name="usersettings" ?active="${
+          this._page === 'usersettings'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view> -->
+        <backend-ai-credential-view class="page" name="credential" ?active="${
+          this._page === 'credential'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
+        <backend-ai-agent-view class="page" name="agent" ?active="${
+          this._page === 'agent'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-view>
+        <backend-ai-agent-summary-view class="page" name="agent-summary" ?active="${
+          this._page === 'agent-summary'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-summary-view>
+        <!-- <backend-ai-storage-host-settings-view class="page" name="storage-settings" ?active="${
+          this._page === 'storage-settings'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-storage-host-settings-view> -->
+        <backend-ai-data-view class="page" name="data" ?active="${
+          this._page === 'data'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-data-view>
+        <!--<pipeline-view class="page" name="pipeline" ?active="${
+          this._page === 'pipeline'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-view>-->
+        <!--<pipeline-job-view class="page" name="pipeline-job" ?active="${
+          this._page === 'pipeline-job'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-job-view>-->
+        <!--<backend-ai-pipeline-view class="page" name="pipeline" ?active="${
+          this._page === 'pipeline'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-pipeline-view>-->
+        <!-- <backend-ai-environment-view class="page" name="environment" ?active="${
+          this._page === 'environment'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-environment-view> -->
+        <backend-ai-settings-view class="page" name="settings" ?active="${
+          this._page === 'settings'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-settings-view>
+        <backend-ai-maintenance-view class="page" name="maintenance" ?active="${
+          this._page === 'maintenance'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-maintenance-view>
+        <backend-ai-statistics-view class="page" name="statistics" ?active="${
+          this._page === 'statistics'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-statistics-view>
+        <backend-ai-email-verification-view class="page" name="email-verification" ?active="${
+          this._page === 'verify-email'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-email-verification-view>
+        <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${
+          this._page === 'change-password'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-change-forgot-password-view>
+        <backend-ai-edu-applauncher class="page" name="edu-applauncher" ?active="${
+          this._page === 'edu-applauncher' || this._page === 'applauncher'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-edu-applauncher>
+        <!-- <backend-ai-error-view class="page" name="error" ?active="${
+          this._page === 'error'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-error-view> -->
+        <!-- <backend-ai-permission-denied-view class="page" name="unauthorized" ?active="${
+          this._page === 'unauthorized'
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-permission-denied-view> -->
+      </div>
+      <div style="display:none">
       <mwc-drawer id="app-body" class="${
         this.mini_ui ? 'mini-ui' : ''
       }" style="visibility:hidden;">
@@ -1386,16 +1443,18 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             }" @click="${() =>
               this._moveTo(
                 '/summary',
-              )}" ?disabled="${this.blockedMenuItem.includes('summary')}">
+              )}" ?disabled="${this.inactiveMenuItem.includes('summary')}">
               <i class="fas fa-th-large" slot="graphic" id="summary-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Summary')}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${
               this._page === 'job'
             }" @click="${() =>
-              this._moveTo('/job')}" ?disabled="${this.blockedMenuItem.includes(
-              'job',
-            )}">
+              this._moveTo(
+                '/job',
+              )}" ?disabled="${this.inactiveMenuItem.includes('job')}" class="${
+              this.blockedMenuItem.includes('job') ? 'hidden' : ''
+            }">
               <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Sessions')}</span>
             </mwc-list-item>
@@ -1404,7 +1463,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             }" @click="${() =>
               this._moveTo(
                 '/session',
-              )}" ?disabled="${this.blockedMenuItem.includes('session')}">
+              )}" ?disabled="${this.inactiveMenuItem.includes(
+              'session',
+            )}" class="${
+              this.blockedMenuItem.includes('session') ? 'hidden' : ''
+            }">
               <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
               <span class="full-menu">${_t(
                 'webui.menu.Sessions',
@@ -1417,7 +1480,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                       graphic="icon"
                       ?selected="${this._page === 'serving'}"
                       @click="${() => this._moveTo('/serving')}"
-                      ?disabled="${this.blockedMenuItem.includes('serving')}"
+                      ?disabled="${this.inactiveMenuItem.includes('serving')}"
+                      class="${this.blockedMenuItem.includes('serving')
+                        ? 'hidden'
+                        : ''}"
                     >
                       <i
                         class="fa fa-rocket"
@@ -1436,7 +1502,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                       graphic="icon"
                       ?selected="${this._page === 'experiment'}"
                       @click="${() => this._moveTo('/experiment')}"
-                      ?disabled="${this.blockedMenuItem.includes('experiment')}"
+                      ?disabled="${this.inactiveMenuItem.includes(
+                        'experiment',
+                      )}"
+                      class="${this.blockedMenuItem.includes('experiment')
+                        ? 'hidden'
+                        : ''}"
                     >
                       <i class="fas fa-flask" slot="graphic"></i>
                       <span class="full-menu">
@@ -1451,7 +1522,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               }" @click="${() =>
                 this._moveTo(
                   '/import',
-                )}" ?disabled="${this.blockedMenuItem.includes('import')}">
+                )}" ?disabled="${this.inactiveMenuItem.includes('import')}"
+                class="${
+                  this.blockedMenuItem.includes('import') ? 'hidden' : ''
+                }"
+              >
                 <i class="fas fa-play" slot="graphic" id="import-menu-icon"></i>
                 <span class="full-menu">${_t('webui.menu.Import&Run')}</span>
               </mwc-list-item>
@@ -1460,9 +1535,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             }" @click="${() =>
               this._moveTo(
                 '/data',
-              )}" ?disabled="${this.blockedMenuItem.includes('data')}">
+              )}" ?disabled="${this.inactiveMenuItem.includes('data')}"
+              class="${this.blockedMenuItem.includes('data') ? 'hidden' : ''}"
+            >
               <i class="fas fa-cloud-upload-alt" slot="graphic" id="data-menu-icon"></i>
-              <span class="full-menu">${_t('webui.menu.Data&Storage')}</span>
+              <span class="full-menu">${_t('webui.menu.Data&Model')}</span>
             </mwc-list-item>
             ${
               this._usePipeline
@@ -1471,7 +1548,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                       graphic="icon"
                       ?selected="${this._page === 'pipeline'}"
                       @click="${() => this._moveTo('/pipeline')}"
-                      ?disabled="${this.blockedMenuItem.includes('pipeline')}"
+                      ?disabled="${this.inactiveMenuItem.includes('pipeline')}"
                       style="display:none;"
                     >
                       <i
@@ -1487,7 +1564,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                       graphic="icon"
                       ?selected="${this._page === 'pipeline-job'}"
                       @click="${() => this._moveTo('/pipeline-job')}"
-                      ?disabled="${this.blockedMenuItem.includes(
+                      ?disabled="${this.inactiveMenuItem.includes(
                         'pipeline-job',
                       )}"
                       style="display:none;"
@@ -1512,9 +1589,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                       graphic="icon"
                       ?selected="${this._page === 'agent-summary'}"
                       @click="${() => this._moveTo('/agent-summary')}"
-                      ?disabled="${this.blockedMenuItem.includes(
+                      ?disabled="${this.inactiveMenuItem.includes(
                         'agent-summary',
                       )}"
+                      class="${this.blockedMenuItem.includes('agent-summary')
+                        ? 'hidden'
+                        : ''}"
                     >
                       <i
                         class="fas fa-server"
@@ -1532,12 +1612,15 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             }" @click="${() =>
               this._moveTo(
                 '/statistics',
-              )}" ?disabled="${this.blockedMenuItem.includes('statistics')}">
+              )}" ?disabled="${this.inactiveMenuItem.includes('statistics')}"
+              class="${
+                this.blockedMenuItem.includes('statistics') ? 'hidden' : ''
+              }">
               <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Statistics')}</span>
             </mwc-list-item>
             ${
-              !this.isHideSideMenuFastTrackButton &&
+              !this.blockedMenuItem.includes('pipeline') &&
               this.fasttrackEndpoint !== ''
                 ? html`
                     <a href="${this.fasttrackEndpoint}" target="_blank">
@@ -1619,31 +1702,31 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   `
                 : html``
             }
-                ${
-                  'page' in this.plugins
-                    ? this.plugins['page']
-                        .filter((item) =>
-                          this.plugins['menuitem-admin'].includes(item.url),
-                        )
-                        .map(
-                          (item) => html`
-                            <mwc-list-item
-                              graphic="icon"
-                              ?selected="${this._page === item.url}"
-                              @click="${() => this._moveTo('/' + item.url)}"
-                              ?disabled="${!this.is_admin}"
-                            >
-                              <i
-                                class="fas fa-puzzle-piece"
-                                slot="graphic"
-                                id="${item}-menu-icon"
-                              ></i>
-                              <span class="full-menu">${item.menuitem}</span>
-                            </mwc-list-item>
-                          `,
-                        )
-                    : html``
-                }
+            ${
+              'page' in this.plugins
+                ? this.plugins['page']
+                    .filter((item) =>
+                      this.plugins['menuitem-admin'].includes(item.url),
+                    )
+                    .map(
+                      (item) => html`
+                        <mwc-list-item
+                          graphic="icon"
+                          ?selected="${this._page === item.url}"
+                          @click="${() => this._moveTo('/' + item.url)}"
+                          ?disabled="${!this.is_admin}"
+                        >
+                          <i
+                            class="fas fa-puzzle-piece"
+                            slot="graphic"
+                            id="${item}-menu-icon"
+                          ></i>
+                          <span class="full-menu">${item.menuitem}</span>
+                        </mwc-list-item>
+                      `,
+                    )
+                : html``
+            }
             ${
               this.is_superadmin
                 ? html`
@@ -1756,7 +1839,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     this.allow_signout === true
                       ? html`
                           ·
-                          <a @click="${() => this.loginPanel.signout()}">
+                          <a
+                            @click="${() => {
+                              this.isOpenSignoutDialog = true;
+                            }}"
+                          >
                             ${_t('webui.menu.LeaveService')}
                           </a>
                         `
@@ -1766,7 +1853,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">24.03.0-alpha.3.231113</small>
+                <small class="sidebar-footer" style="font-size:9px;">24.03.0-alpha.4.5862</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1794,7 +1881,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   this.allow_signout === true
                     ? html`
                         ·
-                        <a @click="${() => this.loginPanel.signout()}">
+                        <a
+                          @click="${() => {
+                            this.isOpenSignoutDialog = true;
+                          }}"
+                        >
                           ${_t('webui.menu.LeaveService')}
                         </a>
                       `
@@ -1804,7 +1895,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">24.03.0-alpha.3.231113</small>
+              <small class="sidebar-footer" style="font-size:9px;">24.03.0-alpha.4.5862</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1833,9 +1924,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 </div>
                 <div slot="navigationIcon" class="vertical-line" style="height:20px;margin:0;"></div>
                 <div class="horizontal center layout" slot="title" id="welcome-message" style="font-size:12px;margin-left:10px;" class="draggable">
-                  <p>${_t('webui.menu.WelcomeMessage')}</p>
-                  <p class="user-name">${this._getUsername()}</p>
-                  <p>${_t('webui.menu.WelcomeMessage_2')}</p>
+                  <p class="user-name">${_t('webui.menu.WelcomeMessage', {
+                    userName: this._getUsername(),
+                  })}
+                  </p>
                 </div>
                   <backend-ai-project-switcher slot="actionItems" style="margin-right:10px;"></backend-ai-project-switcher>
                   <backend-ai-react-user-dropdown-menu
@@ -1885,90 +1977,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <div class="content" style="box-sizing:border-box; padding:14px;">
                 <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
                 <section role="main" id="content" class="container layout vertical center">
-                  <div id="app-page">
-                    <backend-ai-summary-view class="page" name="summary" ?active="${
-                      this._page === 'summary'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
-                    <backend-ai-import-view class="page" name="import" ?active="${
-                      this._page === 'github' || this._page === 'import'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
-                    <backend-ai-session-view class="page" name="job" ?active="${
-                      this._page === 'job'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
-                    <backend-ai-session-view-next class="page" name="session" ?active="${
-                      this._page === 'session'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view-next>
-                    <backend-ai-serving-view class="page" name="serving" ?active="${
-                      this._page === 'serving'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-serving-view>
-                    <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${
-                      this._page === 'experiment'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
-                    <backend-ai-usersettings-view class="page" name="usersettings" ?active="${
-                      this._page === 'usersettings'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view>
-                    <backend-ai-credential-view class="page" name="credential" ?active="${
-                      this._page === 'credential'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
-                    <backend-ai-agent-view class="page" name="agent" ?active="${
-                      this._page === 'agent'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-view>
-                    <backend-ai-agent-summary-view class="page" name="agent-summary" ?active="${
-                      this._page === 'agent-summary'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-summary-view>
-                    <backend-ai-storage-host-settings-view class="page" name="storage-settings" ?active="${
-                      this._page === 'storage-settings'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-storage-host-settings-view>
-                    <backend-ai-data-view class="page" name="data" ?active="${
-                      this._page === 'data'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-data-view>
-                    <!--<pipeline-view class="page" name="pipeline" ?active="${
-                      this._page === 'pipeline'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-view>-->
-                    <!--<pipeline-job-view class="page" name="pipeline-job" ?active="${
-                      this._page === 'pipeline-job'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-job-view>-->
-                    <!--<backend-ai-pipeline-view class="page" name="pipeline" ?active="${
-                      this._page === 'pipeline'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-pipeline-view>-->
-                    <backend-ai-environment-view class="page" name="environment" ?active="${
-                      this._page === 'environment'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-environment-view>
-                    <backend-ai-settings-view class="page" name="settings" ?active="${
-                      this._page === 'settings'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-settings-view>
-                    <backend-ai-maintenance-view class="page" name="maintenance" ?active="${
-                      this._page === 'maintenance'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-maintenance-view>
-                    <backend-ai-information-view class="page" name="information" ?active="${
-                      this._page === 'information'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-information-view>
-                    <backend-ai-statistics-view class="page" name="statistics" ?active="${
-                      this._page === 'statistics'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-statistics-view>
-                    <backend-ai-email-verification-view class="page" name="email-verification" ?active="${
-                      this._page === 'verify-email'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-email-verification-view>
-                    <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${
-                      this._page === 'change-password'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-change-forgot-password-view>
-                    <backend-ai-edu-applauncher class="page" name="edu-applauncher" ?active="${
-                      this._page === 'edu-applauncher' ||
-                      this._page === 'applauncher'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-edu-applauncher>
-                    <backend-ai-error-view class="page" name="error" ?active="${
-                      this._page === 'error'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-error-view>
-                    <backend-ai-permission-denied-view class="page" name="unauthorized" ?active="${
-                      this._page === 'unauthorized'
-                    }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-permission-denied-view>
-                  </div>
                 </section>
               </div>
             </div>
           </mwc-drawer>
         </div>
       </mwc-drawer>
+                  </div>
       <div id="mini-tooltips" style="display:${
         this.mini_ui ? 'block' : 'none'
       };">
@@ -1991,6 +2006,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       <backend-ai-resource-broker id="resource-broker" ?active="${
         this.is_connected
       }"></backend-ai-resource-broker>
+      <backend-ai-react-signout-modal value="${
+        this.isOpenSignoutDialog ? 'true' : 'false'
+      }" @close="${() => {
+        this.isOpenSignoutDialog = false;
+      }}"></backend-ai-react-signout-modal>
     `;
   }
 }

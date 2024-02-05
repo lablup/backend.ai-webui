@@ -1,23 +1,34 @@
 import { ProjectSelectorQuery } from './__generated__/ProjectSelectorQuery.graphql';
+import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
+type ProjectInfo = {
+  label: React.ReactNode;
+  value: string | number;
+  projectId: string;
+  projectResourcePolicy: any; // Replace 'any' with the actual type
+  projectName: string;
+};
 interface Props extends SelectProps {
-  onSelectProject?: (project: any) => void;
+  onSelectProject?: (projectInfo: ProjectInfo) => void;
   domain: string;
+  autoSelectDefault?: boolean;
 }
 
 const ProjectSelector: React.FC<Props> = ({
   onSelectProject,
   domain,
+  autoClearSearchValue,
   ...selectProps
 }) => {
   const { t } = useTranslation();
 
+  const [value, setValue] = useControllableValue(selectProps);
   const { projects } = useLazyLoadQuery<ProjectSelectorQuery>(
     graphql`
       query ProjectSelectorQuery($domain_name: String) {
@@ -36,26 +47,38 @@ const ProjectSelector: React.FC<Props> = ({
       fetchPolicy: 'store-and-network',
     },
   );
+
+  useEffect(() => {
+    if (
+      autoClearSearchValue &&
+      !value &&
+      projects?.length &&
+      projects?.length > 0
+    ) {
+      alert(projects[0]?.id);
+      setValue(projects[0]?.id);
+    }
+  });
   return (
     <Select
       onChange={(value, option) => {
-        onSelectProject?.(option);
+        setValue(value);
+        onSelectProject?.(option as ProjectInfo);
       }}
       placeholder={t('storageHost.quotaSettings.SelectProject')}
       {...selectProps}
-    >
-      {_.map(projects, (project) => {
-        return (
-          <Select.Option
-            key={project?.id}
-            projectId={project?.id}
-            projectResourcePolicy={project?.resource_policy}
-          >
-            {project?.name}
-          </Select.Option>
-        );
+      value={value}
+      optionFilterProp="projectName"
+      options={_.map(_.sortBy(projects, 'name'), (project) => {
+        return {
+          label: project?.name,
+          value: project?.id,
+          projectId: project?.id,
+          projectResourcePolicy: project?.resource_policy,
+          projectName: project?.name,
+        };
       })}
-    </Select>
+    />
   );
 };
 

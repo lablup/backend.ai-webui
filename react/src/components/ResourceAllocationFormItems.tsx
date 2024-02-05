@@ -1,8 +1,12 @@
-import { compareNumberWithUnits, iSizeToSize } from '../helper';
+import {
+  addNumberWithUnits,
+  compareNumberWithUnits,
+  iSizeToSize,
+} from '../helper';
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
-import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import Flex from './Flex';
 import { ImageEnvironmentFormInput } from './ImageEnvironmentSelectFormItems';
@@ -10,21 +14,23 @@ import InputNumberWithSlider from './InputNumberWithSlider';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import ResourcePresetSelect from './ResourcePresetSelect';
+import { CaretDownOutlined } from '@ant-design/icons';
 import {
   Card,
   Col,
   Divider,
   Form,
-  FormRule,
   Radio,
   Row,
   Select,
+  Switch,
   theme,
 } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+export const AUTOMATIC_DEFAULT_SHMEM = '64m';
 export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES = {
   resource: {
     cpu: 0,
@@ -35,6 +41,7 @@ export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES = {
   num_of_sessions: 1,
   cluster_mode: 'single-node',
   cluster_size: 1,
+  enabledAutomaticShmem: true,
 };
 
 export interface ResourceAllocationFormValue {
@@ -49,29 +56,20 @@ export interface ResourceAllocationFormValue {
   num_of_sessions?: number;
   cluster_mode: 'single-node' | 'multi-node';
   cluster_size: number;
+  enabledAutomaticShmem: boolean;
 }
 
 type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
   ImageEnvironmentFormInput;
-const limitParser = (limit: string | undefined) => {
-  if (limit === undefined) {
-    return undefined;
-  } else if (limit === 'Infinity') {
-    return undefined;
-  } else if (limit === 'NaN') {
-    return undefined;
-  } else {
-    return _.toNumber(limit);
-  }
-};
 
 interface ResourceAllocationFormItemsProps {
   enableNumOfSessions?: boolean;
+  enableResourcePresets?: boolean;
 }
 
 const ResourceAllocationFormItems: React.FC<
   ResourceAllocationFormItemsProps
-> = ({ enableNumOfSessions }) => {
+> = ({ enableNumOfSessions, enableResourcePresets }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -92,7 +90,7 @@ const ResourceAllocationFormItems: React.FC<
   // });
 
   // use `useState` instead of `Form.useWatch` for handling `resourcePreset.check` pending state
-  const [currentResourceGroup, setCurrentResourceGroup] = useState(
+  const [currentResourceGroup, setCurrentResourceGroup] = useState<string>(
     form.getFieldValue('resourceGroup'),
   );
   const [isPendingCheckResets, startCheckRestsTransition] = useTransition();
@@ -100,254 +98,43 @@ const ResourceAllocationFormItems: React.FC<
     form,
     preserve: true,
   });
+  const [{ currentImageMinM, remaining, resourceLimits }] =
+    useResourceLimitAndRemaining({
+      currentProjectName: currentProject.name,
+      currentResourceGroup: currentResourceGroup,
+      currentImage: currentImage,
+    });
+
   const currentImageAcceleratorLimits = _.filter(
     currentImage?.resource_limits,
     (limit) =>
       limit ? !_.includes(['cpu', 'mem', 'shmem'], limit.key) : false,
   );
 
-  const { data: checkPresetInfo } = useTanQuery<ResourceAllocation>({
-    queryKey: ['check-resets', currentProject.name, currentResourceGroup],
-    queryFn: () => {
-      if (currentResourceGroup) {
-        return baiClient.resourcePreset.check({
-          group: currentProject.name,
-          scaling_group: currentResourceGroup,
-        });
-      } else {
-        return;
-      }
-    },
-    staleTime: 0,
-    suspense: !_.isEmpty(currentResourceGroup), //prevent flicking
-  });
-
-  // interface ResourceLimit {
-  //   min: number | string;
-  //   max: number | string;
-  //   remaining?: number | string;
-  // }
-
-  // interface AcceleratorLimit {
-  //   min: number;
-  //   max: number;
-  //   remaining: number;
-  // }
-
-  // type ResourceSlots = {
-  //   cpu?: ResourceLimit;
-  //   mem?: ResourceLimit;
-  //   shmem?: {
-  //     min: string | undefined;
-  //   };
-  // } & {
-  //   [key in string]?: AcceleratorLimit | undefined;
-  // };
-
-  const sliderMinMaxLimit: any = {
-    ...(resourceSlots?.cpu
-      ? {
-          cpu: {
-            min: _.max([
-              _.toNumber(
-                _.find(currentImage?.resource_limits, (i) => i?.key === 'cpu')
-                  ?.min || '0',
-              ),
-            ]),
-            max: _.min([
-              baiClient._config.maxCPUCoresPerContainer,
-              limitParser(checkPresetInfo?.keypair_limits.cpu),
-              limitParser(checkPresetInfo?.group_limits.cpu),
-              // scaling group all cpu (using + remaining), string type
-              !_.isEmpty(
-                checkPresetInfo?.scaling_groups[currentResourceGroup]?.using
-                  ?.cpu,
-              ) &&
-              !_.isEmpty(
-                checkPresetInfo?.scaling_groups[currentResourceGroup]?.remaining
-                  ?.cpu,
-              )
-                ? _.toNumber(
-                    checkPresetInfo?.scaling_groups[currentResourceGroup]?.using
-                      .cpu,
-                  ) +
-                  _.toNumber(
-                    checkPresetInfo?.scaling_groups[currentResourceGroup]
-                      ?.remaining.cpu,
-                  )
-                : undefined,
-            ]),
-            remaining:
-              _.min([
-                checkPresetInfo?.keypair_remaining.cpu,
-                checkPresetInfo?.group_remaining.cpu,
-                checkPresetInfo?.scaling_group_remaining.cpu,
-              ]) ?? Number.MAX_SAFE_INTEGER,
-          },
-        }
-      : {}),
-    ...(resourceSlots?.mem
-      ? {
-          mem: {
-            min:
-              _.max([
-                _.find(currentImage?.resource_limits, (i) => i?.key === 'mem')
-                  ?.min,
-              ]) || '0g',
-            max:
-              _.min([
-                baiClient._config.maxMemoryPerContainer,
-                limitParser(checkPresetInfo?.keypair_limits.mem) &&
-                  iSizeToSize(
-                    limitParser(checkPresetInfo?.keypair_limits.mem) + '',
-                    'g',
-                  )?.number,
-                limitParser(checkPresetInfo?.group_limits.mem) &&
-                  iSizeToSize(
-                    limitParser(checkPresetInfo?.group_limits.mem) + '',
-                    'g',
-                  )?.number,
-                // scaling group all mem (using + remaining), string type
-                !_.isEmpty(
-                  checkPresetInfo?.scaling_groups[currentResourceGroup]?.using
-                    ?.mem,
-                ) &&
-                !_.isEmpty(
-                  checkPresetInfo?.scaling_groups[currentResourceGroup]?.using
-                    ?.mem,
-                )
-                  ? iSizeToSize(
-                      _.toNumber(
-                        checkPresetInfo?.scaling_groups[currentResourceGroup]
-                          ?.using.mem,
-                      ) +
-                        _.toNumber(
-                          checkPresetInfo?.scaling_groups[currentResourceGroup]
-                            ?.remaining.mem,
-                        ) +
-                        'b',
-                      'g',
-                      2,
-                    )?.numberFixed
-                  : undefined,
-              ]) + 'g',
-            remaining:
-              _.min([
-                checkPresetInfo?.keypair_remaining.mem,
-                checkPresetInfo?.group_remaining.mem,
-                checkPresetInfo?.scaling_group_remaining.mem,
-              ]) ?? Number.MAX_SAFE_INTEGER,
-          },
-          shmem: {
-            min:
-              _.max([
-                _.find(currentImage?.resource_limits, (i) => i?.key === 'shmem')
-                  ?.min,
-              ]) || '64m',
-            // shmem max is mem max
-          },
-        }
-      : {}),
-    ..._.reduce(
-      acceleratorSlots,
-      (result, value, key) => {
-        const configName =
-          {
-            'cuda.device': 'maxCUDADevicesPerContainer',
-            'cuda.shares': 'maxCUDASharesPerContainer',
-            'rocm.device': 'maxROCMDevicesPerContainer',
-            'tpu.device': 'maxTPUDevicesPerContainer',
-            'ipu.device': 'maxIPUDevicesPerContainer',
-            'atom.device': 'maxATOMDevicesPerContainer',
-            'warboy.device': 'maxWarboyDevicesPerContainer',
-          }[key] || 'cuda.device'; // FIXME: temporally `cuda.device` config, when undefined
-        result[key] = {
-          min:
-            parseInt(
-              _.filter(
-                currentImageAcceleratorLimits,
-                (supportedAcceleratorInfo) => {
-                  return supportedAcceleratorInfo?.key === key;
-                },
-              )[0]?.min as string,
-            ) || 0,
-          //
-          max: _.min([
-            baiClient._config[configName] || 8,
-            // scaling group all cpu (using + remaining), string type
-            !_.isEmpty(
-              // @ts-ignore
-              checkPresetInfo?.scaling_groups[currentResourceGroup]?.using?.[
-                key
-              ],
-            ) &&
-            !_.isEmpty(
-              // @ts-ignore
-              checkPresetInfo?.scaling_groups[currentResourceGroup]
-                ?.remaining?.[key],
-            )
-              ? _.toNumber(
-                  // @ts-ignore
-                  checkPresetInfo?.scaling_groups[currentResourceGroup]?.using[
-                    key
-                  ],
-                ) +
-                _.toNumber(
-                  // @ts-ignore
-                  checkPresetInfo?.scaling_groups[currentResourceGroup]
-                    ?.remaining[key],
-                )
-              : undefined,
-          ]),
-          remaining:
-            _.min([
-              // @ts-ignore
-              _.toNumber(checkPresetInfo?.keypair_remaining[key]),
-              // @ts-ignore
-              _.toNumber(checkPresetInfo?.group_remaining[key]),
-              // @ts-ignore
-              _.toNumber(checkPresetInfo?.scaling_group_remaining[key]),
-            ]) ?? Number.MAX_SAFE_INTEGER,
-        };
-        return result;
-      },
-      {} as {
-        [key: string]: {
-          min: number;
-          max: number;
-          remaining: number;
-        };
-      },
-    ),
-
-    session: {
-      min: 1,
-      max: _.min([
-        keypairResourcePolicy.max_concurrent_sessions,
-        3, //BackendAiResourceBroker.DEFAULT_CONCURRENT_SESSION_COUNT
-      ]),
-      remaining:
-        (keypairResourcePolicy.max_concurrent_sessions || 3) -
-        (keypair.concurrency_used || 0),
-    },
+  const sessionSliderLimitAndRemaining = {
+    min: 1,
+    max: _.min([
+      keypairResourcePolicy.max_concurrent_sessions,
+      3, //BackendAiResourceBroker.DEFAULT_CONCURRENT_SESSION_COUNT
+    ]) as number,
+    remaining:
+      (keypairResourcePolicy.max_concurrent_sessions || 3) -
+      (keypair.concurrency_used || 0),
   };
 
   useEffect(() => {
     // when image changed, set value of resources to min value
 
-    // const miniumShmem = '64m';
     form.setFieldsValue({
       resource: {
-        cpu: sliderMinMaxLimit.cpu?.min,
+        cpu: resourceLimits.cpu?.min,
         mem:
           iSizeToSize(
-            (iSizeToSize(sliderMinMaxLimit.shmem?.min, 'm')?.number || 0) +
-              (iSizeToSize(sliderMinMaxLimit.mem?.min, 'm')?.number || 0) +
+            (iSizeToSize(resourceLimits.shmem?.min, 'm')?.number || 0) +
+              (iSizeToSize(resourceLimits.mem?.min, 'm')?.number || 0) +
               'm',
             'g',
           )?.number + 'g', //to prevent loosing precision
-        shmem: sliderMinMaxLimit.shmem?.min,
-        // shmem: sliderMinMax.shmem?.min,
       },
     });
 
@@ -362,8 +149,9 @@ const ResourceAllocationFormItems: React.FC<
         // if current selected accelerator type is supported in the selected image,
         form.setFieldValue(
           ['resource', 'accelerator'],
-          sliderMinMaxLimit[form.getFieldValue(['resource', 'acceleratorType'])]
-            .min,
+          resourceLimits.accelerators[
+            form.getFieldValue(['resource', 'acceleratorType'])
+          ]?.min,
         );
       } else {
         // if current selected accelerator type is not supported in the selected image,
@@ -379,7 +167,7 @@ const ResourceAllocationFormItems: React.FC<
         if (nextImageSelectorType) {
           form.setFieldValue(
             ['resource', 'accelerator'],
-            sliderMinMaxLimit[nextImageSelectorType].min,
+            resourceLimits.accelerators[nextImageSelectorType]?.min,
           );
           form.setFieldValue(
             ['resource', 'acceleratorType'],
@@ -387,101 +175,39 @@ const ResourceAllocationFormItems: React.FC<
           );
         }
       }
+    } else {
+      form.setFieldValue(['resource', 'accelerator'], 0);
     }
 
-    form.validateFields().catch(() => {});
+    form
+      .validateFields([
+        ['resource', 'cpu'],
+        ['resource', 'mem'],
+        ['resource', 'shmem'],
+        ['resource', 'accelerator'],
+        ['resource', 'acceleratorType'],
+      ])
+      .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImage]);
 
-  const remainingValidationRules: {
-    [key: string]: FormRule;
-  } = {
-    cpu: {
-      warningOnly: true,
-      validator: async (rule, value: string) => {
-        if (sliderMinMaxLimit.cpu && value > sliderMinMaxLimit.cpu.remaining) {
-          return Promise.reject(
-            t('session.launcher.EnqueueComputeSessionWarning'),
-          );
-        } else {
-          return Promise.resolve();
-        }
-      },
-    },
-    mem: {
-      warningOnly: true,
-      validator: async (rule, value: string) => {
-        if (
-          !_.isElement(value) &&
-          sliderMinMaxLimit.mem &&
-          compareNumberWithUnits(value, sliderMinMaxLimit.mem.remaining + 'b') >
-            0
-        ) {
-          return Promise.reject(
-            t('session.launcher.EnqueueComputeSessionWarning'),
-          );
-        } else {
-          return Promise.resolve();
-        }
-      },
-    },
-    ..._.reduce(
-      acceleratorSlots,
-      (result, slot, slotKey) => {
-        return {
-          ...result,
-          [slotKey]: {
-            warningOnly: true,
-            validator: async (rule: any, value: number) => {
-              if (
-                sliderMinMaxLimit[slotKey] &&
-                value > sliderMinMaxLimit[slotKey].remaining
-              ) {
-                return Promise.reject(
-                  t('session.launcher.EnqueueComputeSessionWarning'),
-                );
-              } else {
-                return Promise.resolve();
-              }
-            },
-          },
-        };
-      },
-      {},
-    ),
-    session: {
-      warningOnly: true,
-      validator: async (rule, value: number) => {
-        if (
-          sliderMinMaxLimit.session &&
-          value > sliderMinMaxLimit.session.remaining
-        ) {
-          return Promise.reject(
-            t('session.launcher.EnqueueComputeSessionWarning'),
-          );
-        } else {
-          return Promise.resolve();
-        }
-      },
-    },
-    clusterSize: {
-      warningOnly: true,
-      validator: async (rule, value: number) => {
-        if (
-          value >
-          _.min([
-            sliderMinMaxLimit.cpu?.remaining,
-            keypairResourcePolicy.max_containers_per_session,
-          ])
-        ) {
-          return Promise.reject(
-            t('session.launcher.EnqueueComputeSessionWarning'),
-          );
-        } else {
-          return Promise.resolve();
-        }
-      },
-    },
+  const runShmemAutomationRule = (M_plus_S: string) => {
+    // if M+S > 4G, S can be 1G regard to current image's minimum mem(M)
+    if (
+      // M+S > 4G
+      compareNumberWithUnits(M_plus_S, '4g') >= 0 &&
+      // M+S > M+1G
+      compareNumberWithUnits(
+        M_plus_S,
+        addNumberWithUnits(currentImageMinM, '1g') || '0b',
+      ) >= 0 &&
+      // if 1G < AUTOMATIC_DEFAULT_SHMEM, no need to apply 1G rule
+      compareNumberWithUnits('1g', AUTOMATIC_DEFAULT_SHMEM) > 0
+    ) {
+      form.setFieldValue(['resource', 'shmem'], '1g');
+    } else {
+      form.setFieldValue(['resource', 'shmem'], AUTOMATIC_DEFAULT_SHMEM);
+    }
   };
 
   return (
@@ -506,33 +232,35 @@ const ResourceAllocationFormItems: React.FC<
           }}
         />
       </Form.Item>
-      <Form.Item
-        label={t('resourcePreset.ResourcePresets')}
-        name="allocationPreset"
-        required
-        style={{ marginBottom: token.marginXS }}
-      >
-        <ResourcePresetSelect
-          onChange={(value, options) => {
-            const slots = _.pick(
-              JSON.parse(options?.preset?.resource_slots || '{}'),
-              _.keys(resourceSlots),
-            );
-            form.setFieldsValue({
-              resource: {
-                ...slots,
-                // transform to GB based on preset values
-                mem: iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.numberUnit,
-                shmem: iSizeToSize(
-                  (options?.preset?.shared_memory || 0) + 'b',
-                  'g',
-                  2,
-                )?.numberUnit,
-              },
-            });
-          }}
-        />
-      </Form.Item>
+      {enableResourcePresets ? (
+        <Form.Item
+          label={t('resourcePreset.ResourcePresets')}
+          name="allocationPreset"
+          required
+          style={{ marginBottom: token.marginXS }}
+        >
+          <ResourcePresetSelect
+            onChange={(value, options) => {
+              const slots = _.pick(
+                JSON.parse(options?.preset?.resource_slots || '{}'),
+                _.keys(resourceSlots),
+              );
+              form.setFieldsValue({
+                resource: {
+                  ...slots,
+                  // transform to GB based on preset values
+                  mem: iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.numberUnit,
+                  shmem: iSizeToSize(
+                    (options?.preset?.shared_memory || 0) + 'b',
+                    'g',
+                    2,
+                  )?.numberUnit,
+                },
+              });
+            }}
+          />
+        </Form.Item>
+      ) : null}
       <Card
         style={{
           marginBottom: token.margin,
@@ -553,7 +281,10 @@ const ResourceAllocationFormItems: React.FC<
                     name={['resource', 'cpu']}
                     // initialValue={0}
                     label={t('session.launcher.CPU')}
-                    tooltip={<Trans i18nKey={'session.launcher.DescCPU'} />}
+                    tooltip={{
+                      placement: 'right',
+                      title: <Trans i18nKey={'session.launcher.DescCPU'} />,
+                    }}
                     required
                     rules={[
                       {
@@ -561,10 +292,34 @@ const ResourceAllocationFormItems: React.FC<
                       },
                       {
                         type: 'number',
-                        min: sliderMinMaxLimit.cpu?.min,
+                        min: resourceLimits.cpu?.min,
                         // TODO: set message
                       },
-                      remainingValidationRules.cpu,
+                      {
+                        warningOnly:
+                          baiClient._config?.always_enqueue_compute_session,
+                        validator: async (rule, value: number) => {
+                          if (
+                            _.isNumber(remaining.cpu) &&
+                            value > remaining.cpu
+                          ) {
+                            return Promise.reject(
+                              baiClient._config?.always_enqueue_compute_session
+                                ? t(
+                                    'session.launcher.EnqueueComputeSessionWarning',
+                                  )
+                                : t(
+                                    'session.launcher.ErrorCanNotExceedRemaining',
+                                    {
+                                      amount: remaining.cpu,
+                                    },
+                                  ),
+                            );
+                          } else {
+                            return Promise.resolve();
+                          }
+                        },
+                      },
                     ]}
                   >
                     <InputNumberWithSlider
@@ -573,142 +328,315 @@ const ResourceAllocationFormItems: React.FC<
                       }}
                       sliderProps={{
                         marks: {
-                          0: {
-                            style: {
-                              color: token.colorTextSecondary,
-                            },
-                            label: 0,
-                          },
-                          ...(sliderMinMaxLimit.cpu?.max
+                          // remaining mark code should be located before max mark code to prevent overlapping when it is same value
+                          ...(remaining.cpu
                             ? {
-                                [sliderMinMaxLimit.cpu?.max]: {
+                                [remaining.cpu]: {
+                                  label: <RemainingMark />,
+                                },
+                              }
+                            : {}),
+                          ...(resourceLimits.cpu?.min
+                            ? {
+                                [resourceLimits.cpu?.min]:
+                                  resourceLimits.cpu?.min,
+                              }
+                            : {}),
+                          ...(resourceLimits.cpu?.max
+                            ? {
+                                [resourceLimits.cpu?.max]: {
                                   style: {
                                     color: token.colorTextSecondary,
                                   },
-                                  label: sliderMinMaxLimit.cpu?.max,
+                                  label: resourceLimits.cpu?.max,
                                 },
                               }
                             : {}),
                         },
                       }}
-                      min={0}
-                      max={sliderMinMaxLimit.cpu?.max}
+                      min={resourceLimits.cpu?.min}
+                      max={resourceLimits.cpu?.max}
                     />
                   </Form.Item>
                 )}
                 {resourceSlots?.mem && (
                   <Form.Item
-                    name={['resource', 'mem']}
                     label={t('session.launcher.Memory')}
-                    tooltip={<Trans i18nKey={'session.launcher.DescMemory'} />}
-                    rules={[
-                      {
-                        required: true,
+                    tooltip={{
+                      placement: 'right',
+                      props: {
+                        onClick: (e: any) => e.preventDefault(),
                       },
-                      {
-                        validator: async (rule, value: string) => {
-                          if (
-                            compareNumberWithUnits(
-                              value || '0b',
-                              sliderMinMaxLimit.mem?.min,
-                            ) < 0
-                          ) {
-                            return Promise.reject(
-                              t('session.launcher.MinMemory', {
-                                size: _.toUpper(sliderMinMaxLimit.mem?.min),
-                              }),
-                            );
-                          }
-                          return Promise.resolve();
-                        },
-                      },
-                      remainingValidationRules.mem,
-                      // {
-                      //   warningOnly: true,
-                      //   validator: async (rule, value: string) => {
-                      //     if (
-                      //       compareNumberWithUnits(
-                      //         value || '0b',
-                      //         checkPresetInfo?.keypair_remaining.mem + 'b',
-                      //       ) > 0
-                      //     ) {
-                      //       return Promise.reject(
-                      //         t(
-                      //           'session.launcher.EnqueueComputeSessionWarning',
-                      //         ),
-                      //       );
-                      //     }
-                      //     return Promise.resolve();
-                      //   },
-                      // },
-                    ]}
+                      title: (
+                        <Flex
+                          direction="column"
+                          onClick={(e) => e.preventDefault()}
+                        >
+                          <Trans i18nKey={'session.launcher.DescMemory'} />
+                          {/* <Divider
+                            style={{
+                              margin: 0,
+                              backgroundColor: token.colorBorderSecondary,
+                            }}
+                          />
+                         
+                          <Trans
+                            i18nKey={'session.launcher.DescSharedMemory'}
+                          /> */}
+                        </Flex>
+                      ),
+                    }}
+                    required
                   >
-                    <DynamicUnitInputNumberWithSlider
-                      max={sliderMinMaxLimit.mem?.max}
-                      // min="256m"
-                      min={'0g'}
-                      // warn={
-                      //   checkPresetInfo?.scaling_group_remaining.mem ===
-                      //   undefined
-                      //     ? undefined
-                      //     : checkPresetInfo?.scaling_group_remaining.mem + 'g'
-                      // }
-                      extraMarks={
-                        checkPresetInfo?.scaling_group_remaining.mem
-                          ? {
-                              // @ts-ignore
-                              [iSizeToSize(
-                                checkPresetInfo?.scaling_group_remaining.mem,
-                                'g',
-                                3,
-                              ).numberFixed]: {
-                                label: '-',
-                              },
-                            }
-                          : undefined
+                    <Form.Item
+                      noStyle
+                      shouldUpdate={(prev, next) =>
+                        prev.resource.shmem !== next.resource.shmem
                       }
-                    />
-                  </Form.Item>
-                )}
-                {resourceSlots?.mem && (
-                  <Form.Item
-                    name={['resource', 'shmem']}
-                    // initialValue={'0g'}
-                    label={t('session.launcher.SharedMemory')}
-                    tooltip={
-                      <Trans i18nKey={'session.launcher.DescSharedMemory'} />
-                    }
-                    dependencies={[['resource', 'mem']]}
-                    rules={[
-                      {
-                        required: true,
-                      },
-                      {},
-                      {
-                        validator: async (rule, value: string) => {
-                          if (
-                            _.isEmpty(getFieldValue('resource')?.mem) ||
-                            _.isEmpty(value) ||
-                            compareNumberWithUnits(
-                              getFieldValue('resource')?.mem,
-                              value,
-                            ) >= 0
-                          ) {
-                            return Promise.resolve();
-                          } else {
-                            throw t(
-                              'resourcePreset.SHMEMShouldBeSmallerThanMemory',
-                            );
-                          }
-                        },
-                      },
-                    ]}
-                  >
-                    <DynamicUnitInputNumberWithSlider
-                      // shmem max is mem max
-                      min="0g"
-                      max={sliderMinMaxLimit.mem?.max}
-                    />
+                    >
+                      {() => {
+                        return (
+                          <Form.Item
+                            name={['resource', 'mem']}
+                            noStyle
+                            rules={[
+                              {
+                                required: true,
+                              },
+                              {
+                                // TODO: min of mem should be shmem + image's mem limit??
+                                validator: async (rule, value: string) => {
+                                  // const memMinPlusShmem =
+                                  //   addNumberWithUnits(
+                                  //     resourceLimits.mem?.min,
+                                  //     form.getFieldValue(['resource', 'shmem']),
+                                  //   ) || '0b';
+
+                                  if (
+                                    !_.isElement(value) &&
+                                    resourceLimits.mem?.min &&
+                                    compareNumberWithUnits(
+                                      value,
+                                      resourceLimits.mem?.min || '0g',
+                                    ) < 0
+                                  ) {
+                                    return Promise.reject(
+                                      t('session.launcher.MinMemory', {
+                                        size: _.toUpper(
+                                          resourceLimits.mem?.min || '0g',
+                                        ),
+                                      }),
+                                    );
+                                  } else {
+                                    return Promise.resolve();
+                                  }
+                                },
+                              },
+                              {
+                                warningOnly:
+                                  baiClient._config
+                                    ?.always_enqueue_compute_session,
+                                validator: async (rule, value: string) => {
+                                  if (
+                                    !_.isElement(value) &&
+                                    resourceLimits.mem &&
+                                    compareNumberWithUnits(
+                                      value,
+                                      remaining.mem + 'b',
+                                    ) > 0
+                                  ) {
+                                    return Promise.reject(
+                                      baiClient._config
+                                        ?.always_enqueue_compute_session
+                                        ? t(
+                                            'session.launcher.EnqueueComputeSessionWarning',
+                                          )
+                                        : t(
+                                            'session.launcher.ErrorCanNotExceedRemaining',
+                                            {
+                                              amount:
+                                                iSizeToSize(
+                                                  remaining.mem + 'b',
+                                                  'g',
+                                                  3,
+                                                )?.numberUnit + 'iB',
+                                            },
+                                          ),
+                                    );
+                                  } else {
+                                    return Promise.resolve();
+                                  }
+                                },
+                              },
+                            ]}
+                          >
+                            <DynamicUnitInputNumberWithSlider
+                              max={resourceLimits.mem?.max}
+                              // min="256m"
+                              // min={'0g'}
+                              // min={addNumberWithUnits(
+                              //   resourceLimits.mem?.min,
+                              //   form.getFieldValue(['resource', 'shmem']) || '0g',
+                              // )}
+                              min={resourceLimits.mem?.min}
+                              // warn={
+                              //   checkPresetInfo?.scaling_group_remaining.mem ===
+                              //   undefined
+                              //     ? undefined
+                              //     : checkPresetInfo?.scaling_group_remaining.mem + 'g'
+                              // }
+                              addonBefore={'MEM'}
+                              extraMarks={{
+                                // ...(checkPresetInfo?.scaling_group_remaining.mem
+                                //   ? {
+                                //       // @ts-ignore
+                                //       [iSizeToSize(
+                                //         checkPresetInfo?.scaling_group_remaining
+                                //           .mem,
+                                //         'g',
+                                //         3,
+                                //       ).numberFixed]: {
+                                //         label: '-',
+                                //       },
+                                //     }
+                                //   : {}),
+                                // ...(form.getFieldValue(['resource', 'shmem'])
+                                //   ? {
+                                //       [iSizeToSize(
+                                //         form.getFieldValue([
+                                //           'resource',
+                                //           'shmem',
+                                //         ]),
+                                //         'g',
+                                //       )?.number || 0]: (
+                                //         <Flex
+                                //           style={{
+                                //             height: 8,
+                                //             width: 8,
+                                //             borderRadius: 4,
+                                //             backgroundColor: token.colorInfo,
+                                //             position: 'absolute',
+                                //             top: -10,
+                                //             transform: 'translateX(-50%)',
+                                //             opacity: 0.5,
+                                //             pointerEvents: 'none',
+                                //           }}
+                                //         ></Flex>
+                                //       ),
+                                //     }
+                                //   : undefined),
+                                ...(remaining.mem
+                                  ? {
+                                      //@ts-ignore
+                                      [iSizeToSize(remaining.mem + 'b', 'g', 3)
+                                        ?.numberFixed]: {
+                                        label: <RemainingMark />,
+                                      },
+                                    }
+                                  : {}),
+                              }}
+                              onChange={(M_plus_S) => {
+                                if (
+                                  !M_plus_S ||
+                                  !form.getFieldValue('enabledAutomaticShmem')
+                                )
+                                  return;
+                                runShmemAutomationRule(M_plus_S);
+                              }}
+                            />
+                          </Form.Item>
+                        );
+                      }}
+                    </Form.Item>
+
+                    <Flex direction="column" gap={'xxs'} align="start">
+                      <Flex direction="row" gap={'xs'}>
+                        {t('session.launcher.EnableAutomaticShmem')}{' '}
+                        <Form.Item
+                          noStyle
+                          name={'enabledAutomaticShmem'}
+                          valuePropName="checked"
+                        >
+                          <Switch
+                            size="small"
+                            onChange={(checked) => {
+                              if (checked)
+                                runShmemAutomationRule(
+                                  form.getFieldValue(['resource', 'mem']) ||
+                                    '0g',
+                                );
+                            }}
+                          />
+                        </Form.Item>
+                      </Flex>
+                      <Form.Item
+                        noStyle
+                        shouldUpdate={(prev, next) =>
+                          prev.resource.mem !== next.resource.mem ||
+                          prev.enabledAutomaticShmem !==
+                            next.enabledAutomaticShmem
+                        }
+                      >
+                        {() => {
+                          return (
+                            <Form.Item
+                              noStyle
+                              name={['resource', 'shmem']}
+                              // initialValue={'0g'}
+                              // label={t('session.launcher.SharedMemory')}
+                              hidden={form.getFieldValue(
+                                'enabledAutomaticShmem',
+                              )}
+                              tooltip={
+                                <Trans
+                                  i18nKey={'session.launcher.DescSharedMemory'}
+                                />
+                              }
+                              dependencies={[['resource', 'mem']]}
+                              rules={[
+                                {
+                                  required: true,
+                                },
+                                {},
+                                {
+                                  validator: async (rule, value: string) => {
+                                    if (
+                                      _.isEmpty(
+                                        getFieldValue('resource')?.mem,
+                                      ) ||
+                                      _.isEmpty(value) ||
+                                      compareNumberWithUnits(
+                                        getFieldValue('resource')?.mem,
+                                        value,
+                                      ) >= 0
+                                    ) {
+                                      return Promise.resolve();
+                                    } else {
+                                      throw t(
+                                        'resourcePreset.SHMEMShouldBeSmallerThanMemory',
+                                      );
+                                    }
+                                  },
+                                },
+                              ]}
+                            >
+                              <DynamicUnitInputNumberWithSlider
+                                // shmem max is mem max
+                                // min={resourceLimits.shmem?.min}
+                                min={resourceLimits.shmem?.min}
+                                // max={resourceLimits.mem?.max || '0g'}
+                                addonBefore={'SHM'}
+                                max={
+                                  form.getFieldValue(['resource', 'mem']) ||
+                                  '0g'
+                                }
+                                hideSlider
+                              />
+                            </Form.Item>
+                          );
+                        }}
+                      </Form.Item>
+                    </Flex>
                   </Form.Item>
                 )}
                 <Form.Item
@@ -740,35 +668,104 @@ const ResourceAllocationFormItems: React.FC<
                             />
                           ),
                         }}
-                        required
                         rules={[
                           {
-                            required: true,
+                            required: currentImageAcceleratorLimits.length > 0,
                           },
                           {
                             type: 'number',
                             min:
-                              sliderMinMaxLimit[currentAcceleratorType]?.min ||
-                              0,
+                              resourceLimits.accelerators[
+                                currentAcceleratorType
+                              ]?.min || 0,
                           },
-                          remainingValidationRules[currentAcceleratorType],
+                          {
+                            warningOnly:
+                              baiClient._config?.always_enqueue_compute_session,
+                            validator: async (rule: any, value: number) => {
+                              if (
+                                _.isNumber(
+                                  remaining.accelerators[
+                                    currentAcceleratorType
+                                  ],
+                                ) &&
+                                value >
+                                  remaining.accelerators[currentAcceleratorType]
+                              ) {
+                                return Promise.reject(
+                                  baiClient._config
+                                    ?.always_enqueue_compute_session
+                                    ? t(
+                                        'session.launcher.EnqueueComputeSessionWarning',
+                                      )
+                                    : t(
+                                        'session.launcher.ErrorCanNotExceedRemaining',
+                                        {
+                                          amount:
+                                            remaining.accelerators[
+                                              currentAcceleratorType
+                                            ],
+                                        },
+                                      ),
+                                );
+                              } else {
+                                return Promise.resolve();
+                              }
+                            },
+                          },
                         ]}
                       >
                         <InputNumberWithSlider
                           sliderProps={{
                             marks: {
                               0: 0,
-                              [sliderMinMaxLimit[currentAcceleratorType]?.max]:
-                                sliderMinMaxLimit[currentAcceleratorType]?.max,
+                              // remaining mark code should be located before max mark code to prevent overlapping when it is same value
+                              ...(remaining.accelerators[currentAcceleratorType]
+                                ? {
+                                    [remaining.accelerators[
+                                      currentAcceleratorType
+                                    ]]: {
+                                      label: <RemainingMark />,
+                                    },
+                                  }
+                                : {}),
+                              ...(_.isNumber(
+                                resourceLimits.accelerators[
+                                  currentAcceleratorType
+                                ]?.max,
+                              )
+                                ? {
+                                    // @ts-ignore
+                                    [resourceLimits.accelerators[
+                                      currentAcceleratorType
+                                    ]?.max]:
+                                      resourceLimits.accelerators[
+                                        currentAcceleratorType
+                                      ]?.max,
+                                  }
+                                : {}),
                             },
                             tooltip: {
                               formatter: (value = 0) => {
                                 return `${value} ${ACCELERATOR_UNIT_MAP[currentAcceleratorType]}`;
                               },
+                              open:
+                                currentImageAcceleratorLimits.length <= 0
+                                  ? false
+                                  : undefined,
                             },
                           }}
+                          disabled={
+                            currentImageAcceleratorLimits.length === 0 &&
+                            _.isEmpty(
+                              form.getFieldValue(['environments', 'manual']),
+                            )
+                          }
                           min={0}
-                          max={sliderMinMaxLimit[currentAcceleratorType]?.max}
+                          max={
+                            resourceLimits.accelerators[currentAcceleratorType]
+                              ?.max
+                          }
                           step={
                             _.endsWith(currentAcceleratorType, 'shares') &&
                             form.getFieldValue('cluster_size') < 2
@@ -783,6 +780,17 @@ const ResourceAllocationFormItems: React.FC<
                                 initialValue={_.keys(acceleratorSlots)[0]}
                               >
                                 <Select
+                                  tabIndex={-1}
+                                  disabled={
+                                    currentImageAcceleratorLimits.length ===
+                                      0 &&
+                                    _.isEmpty(
+                                      form.getFieldValue([
+                                        'environments',
+                                        'manual',
+                                      ]),
+                                    )
+                                  }
                                   suffixIcon={
                                     _.size(acceleratorSlots) > 1
                                       ? undefined
@@ -820,59 +828,92 @@ const ResourceAllocationFormItems: React.FC<
                     );
                   }}
                 </Form.Item>
-                {/* TODO:  */}
-                {enableNumOfSessions ? (
-                  <>
-                    <Divider> x </Divider>
-                    <Form.Item
-                      noStyle
-                      shouldUpdate={(prev, next) =>
-                        prev.cluster_size !== next.cluster_size
-                      }
-                    >
-                      {() => {
-                        return (
-                          <Form.Item
-                            name={['num_of_sessions']}
-                            label={t('webui.menu.Sessions')}
-                            tooltip={
-                              <Trans i18nKey={'session.launcher.DescSession'} />
-                            }
-                            required
-                            rules={[
-                              {
-                                required: true,
-                              },
-                              remainingValidationRules.session,
-                            ]}
-                          >
-                            <InputNumberWithSlider
-                              inputNumberProps={{
-                                addonAfter: '#',
-                              }}
-                              disabled={form.getFieldValue('cluster_size') > 1}
-                              sliderProps={{
-                                marks: {
-                                  [sliderMinMaxLimit.session?.min]:
-                                    sliderMinMaxLimit.session?.min,
-                                  [sliderMinMaxLimit.session?.max]:
-                                    sliderMinMaxLimit.session?.max,
-                                },
-                              }}
-                              min={sliderMinMaxLimit.session?.min}
-                              max={sliderMinMaxLimit.session?.max}
-                            />
-                          </Form.Item>
-                        );
-                      }}
-                    </Form.Item>
-                  </>
-                ) : null}
               </>
             );
           }}
         </Form.Item>
       </Card>
+      {enableNumOfSessions ? (
+        <Card
+          style={{
+            marginBottom: token.margin,
+          }}
+        >
+          <Form.Item
+            noStyle
+            shouldUpdate={(prev, next) =>
+              prev.cluster_size !== next.cluster_size
+            }
+          >
+            {() => {
+              return (
+                <Form.Item
+                  name={['num_of_sessions']}
+                  label={t('webui.menu.Sessions')}
+                  tooltip={<Trans i18nKey={'session.launcher.DescSession'} />}
+                  required
+                  rules={[
+                    {
+                      required: true,
+                    },
+                    {
+                      warningOnly:
+                        baiClient._config?.always_enqueue_compute_session,
+                      validator: async (rule, value: number) => {
+                        if (
+                          sessionSliderLimitAndRemaining &&
+                          value > sessionSliderLimitAndRemaining.remaining
+                        ) {
+                          return Promise.reject(
+                            baiClient._config?.always_enqueue_compute_session
+                              ? t(
+                                  'session.launcher.EnqueueComputeSessionWarning',
+                                )
+                              : t(
+                                  'session.launcher.ErrorCanNotExceedRemaining',
+                                  {
+                                    amount:
+                                      sessionSliderLimitAndRemaining.remaining,
+                                  },
+                                ),
+                          );
+                        } else {
+                          return Promise.resolve();
+                        }
+                      },
+                    },
+                  ]}
+                >
+                  <InputNumberWithSlider
+                    inputNumberProps={{
+                      addonAfter: '#',
+                    }}
+                    disabled={form.getFieldValue('cluster_size') > 1}
+                    sliderProps={{
+                      marks: {
+                        [sessionSliderLimitAndRemaining?.min]:
+                          sessionSliderLimitAndRemaining?.min,
+                        // remaining mark code should be located before max mark code to prevent overlapping when it is same value
+                        ...(sessionSliderLimitAndRemaining?.remaining
+                          ? {
+                              [sessionSliderLimitAndRemaining?.remaining]: {
+                                label: <RemainingMark />,
+                              },
+                            }
+                          : {}),
+                        [sessionSliderLimitAndRemaining?.max]:
+                          sessionSliderLimitAndRemaining?.max,
+                      },
+                    }}
+                    min={sessionSliderLimitAndRemaining?.min}
+                    max={sessionSliderLimitAndRemaining?.max}
+                  />
+                </Form.Item>
+              );
+            }}
+          </Form.Item>
+        </Card>
+      ) : null}
       {/* TODO: Support cluster mode */}
       {baiClient.supports('multi-container') && (
         // {false && (
@@ -921,7 +962,7 @@ const ResourceAllocationFormItems: React.FC<
                 >
                   {() => {
                     const derivedClusterSizeMaxLimit = _.min([
-                      sliderMinMaxLimit.cpu?.max,
+                      resourceLimits.cpu?.max,
                       keypairResourcePolicy.max_containers_per_session,
                     ]);
                     const clusterUnit =
@@ -933,18 +974,54 @@ const ResourceAllocationFormItems: React.FC<
                         name={'cluster_size'}
                         label={t('session.launcher.ClusterSize')}
                         required
-                        rules={[remainingValidationRules.clusterSize]}
+                        rules={[
+                          {
+                            warningOnly:
+                              baiClient._config?.always_enqueue_compute_session,
+                            validator: async (rule, value: number) => {
+                              const minCPU = _.min([
+                                remaining.cpu,
+                                keypairResourcePolicy.max_containers_per_session,
+                              ]);
+                              if (_.isNumber(minCPU) && value > minCPU) {
+                                return Promise.reject(
+                                  t(
+                                    'session.launcher.EnqueueComputeSessionWarning',
+                                  ),
+                                );
+                              } else {
+                                return Promise.resolve();
+                              }
+                            },
+                          },
+                        ]}
                       >
                         <InputNumberWithSlider
                           min={1}
                           // TODO: max cluster size
-                          max={derivedClusterSizeMaxLimit}
+                          max={
+                            _.isNumber(derivedClusterSizeMaxLimit)
+                              ? derivedClusterSizeMaxLimit
+                              : undefined
+                          }
                           disabled={derivedClusterSizeMaxLimit === 1}
                           sliderProps={{
                             marks: {
                               1: '1',
-                              [derivedClusterSizeMaxLimit]:
-                                derivedClusterSizeMaxLimit,
+                              // remaining mark code should be located before max mark code to prevent overlapping when it is same value
+                              ...(remaining.cpu
+                                ? {
+                                    [remaining.cpu]: {
+                                      label: <RemainingMark />,
+                                    },
+                                  }
+                                : {}),
+                              ...(_.isNumber(derivedClusterSizeMaxLimit)
+                                ? {
+                                    [derivedClusterSizeMaxLimit]:
+                                      derivedClusterSizeMaxLimit,
+                                  }
+                                : {}),
                             },
                             tooltip: {
                               formatter: (value = 0) => {
@@ -974,45 +1051,21 @@ const ResourceAllocationFormItems: React.FC<
   );
 };
 
-type ResourceLimits = {
-  cpu: string | 'Infinity' | 'NaN';
-  mem: string | 'Infinity' | 'NaN';
-  'cuda.device': string | 'Infinity' | 'NaN';
-};
-type ResourceUsing = ResourceLimits;
-type ResourceRemaining = ResourceLimits;
-
-type ResourceSlots = {
-  cpu: string;
-  mem: string;
-  'cuda.device': string;
-  [key: string]: string;
-};
-
-type Preset = {
-  name: string;
-  resource_slots: ResourceSlots;
-  shared_memory: string | null;
-  allocatable: boolean;
-};
-
-type ScalingGroup = {
-  using: ResourceUsing;
-  remaining: ResourceRemaining;
-};
-
-type ResourceAllocation = {
-  keypair_limits: ResourceLimits;
-  keypair_using: ResourceUsing;
-  keypair_remaining: ResourceRemaining;
-  scaling_group_remaining: ResourceRemaining;
-  scaling_groups: {
-    [key: string]: ScalingGroup;
-  };
-  presets: Preset[];
-  group_limits: ResourceLimits;
-  group_using: ResourceUsing;
-  group_remaining: ResourceRemaining;
+const RemainingMark: React.FC<{ title?: string }> = () => {
+  const { token } = theme.useToken();
+  return (
+    <Flex
+      style={{
+        position: 'absolute',
+        top: -24,
+        transform: 'translateX(-50%)',
+        color: token.colorSuccess,
+        opacity: 0.5,
+      }}
+    >
+      <CaretDownOutlined />
+    </Flex>
+  );
 };
 
 const MemoizedResourceAllocationFormItems = React.memo(

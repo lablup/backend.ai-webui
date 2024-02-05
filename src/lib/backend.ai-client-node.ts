@@ -4997,7 +4997,7 @@ class EduApp {
    * Get credential of user.
    */
   async get_user_credential(stoken: string) {
-    const rqst = this.client.newSignedRequest('GET', '/eduapp/credential', {sToken: stoken});
+    const rqst = this.client.newSignedRequest('GET', `/eduapp/credential?sToken=${stoken}`);
     return this.client._wrapWithPromise(rqst);
   }
 }

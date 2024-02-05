@@ -18,6 +18,7 @@ import '@material/mwc-button';
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
 import { Select } from '@material/mwc-select';
+import '@material/mwc-switch';
 import { Switch } from '@material/mwc-switch';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
@@ -39,6 +40,7 @@ interface GroupData {
   created_at: string;
   modified_at: string;
   domain_name: string;
+  type?: string;
 }
 /**
  Backend.AI Data View
@@ -60,6 +62,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({ type: Boolean }) is_admin = false;
   @property({ type: Boolean }) enableStorageProxy = false;
   @property({ type: Boolean }) enableInferenceWorkload = false;
+  @property({ type: Boolean }) supportModelStore = false;
   @property({ type: Boolean }) authenticated = false;
   @property({ type: String }) vhost = '';
   @property({ type: String }) selectedVhost = '';
@@ -71,6 +74,9 @@ export default class BackendAIData extends BackendAIPage {
     'Delete',
   ];
   @property({ type: Array }) allowedGroups: GroupData[] = [];
+  @property({ type: Array }) allowedModelTypeGroups: GroupData[] = [];
+  @property({ type: Array }) groupListByUsage: GroupData[] = [];
+  @property({ type: Array }) generalTypeGroups: GroupData[] = [];
   @property({ type: Array }) allowed_folder_type: string[] = [];
   @property({ type: Object }) notification = Object();
   @property({ type: Object }) folderLists = Object();
@@ -93,8 +99,13 @@ export default class BackendAIData extends BackendAIPage {
   ];
   @property({ type: Object }) storageProxyInfo = Object();
   @property({ type: String }) folderType = 'user';
+  @property({ type: Number }) currentGroupIdx = 0;
   @query('#add-folder-name') addFolderNameInput!: TextField;
   @query('#clone-folder-name') cloneFolderNameInput!: TextField;
+  @query('#add-folder-usage-mode') addFolderUsageModeSelect!: Select;
+  @query('#add-folder-group') addFolderGroupSelect!: Select;
+  @query('#add-folder-type') addFolderTypeSelect!: Select;
+  @query('#cloneable-container') cloneableContainer!: HTMLDivElement;
 
   static get styles(): CSSResultGroup {
     return [
@@ -291,7 +302,7 @@ export default class BackendAIData extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css" />
-      <div class="vertical layout">
+      <div class="vertical layout" style="gap:24px">
         <backend-ai-react-storage-status-panel
           .value="${this.folderListFetchKey}"
         ></backend-ai-react-storage-status-panel>
@@ -323,6 +334,15 @@ export default class BackendAIData extends BackendAIPage {
                       ></mwc-tab>
                     `
                   : html``}
+                ${this.supportModelStore
+                  ? html`
+                      <mwc-tab
+                        title="model-store"
+                        label="${_t('data.ModelStore')}"
+                        @click="${(e) => this._showTab(e.target)}"
+                      ></mwc-tab>
+                    `
+                  : html``}
               </mwc-tab-bar>
               <span class="flex"></span>
               <mwc-button
@@ -333,7 +353,7 @@ export default class BackendAIData extends BackendAIPage {
                 @click="${() => this._addFolderDialog()}"
                 style="margin-right:15px;"
               >
-                <span>${_t('data.NewFolder')}</span>
+                <span>${_t('data.Add')}</span>
               </mwc-button>
             </h3>
             <div id="general-folder-lists" class="tab-content">
@@ -390,6 +410,17 @@ export default class BackendAIData extends BackendAIPage {
                       this._activeTab === 'model'}"
                     ></backend-ai-storage-list>
                   </div>
+                `
+              : html``}
+            ${this.supportModelStore
+              ? html`
+                  <backend-ai-react-model-store-list
+                    id="model-store-folder-lists"
+                    class="tab-content"
+                    style="display:none;"
+                    ?active="${this.active === true &&
+                    this._activeTab === 'modelStore'}"
+                  ></backend-ai-react-model-store-list>
                 `
               : html``}
           </div>
@@ -469,7 +500,10 @@ export default class BackendAIData extends BackendAIPage {
               !this.allowed_folder_type.includes('group')
                 ? '100%'
                 : '50%'}"
-              @change=${this._toggleFolderTypeInput}
+              @change=${() => {
+                this._toggleFolderTypeInput();
+                this._toggleGroupSelect();
+              }}
               required
             >
               ${this.allowed_folder_type.includes('user')
@@ -499,11 +533,11 @@ export default class BackendAIData extends BackendAIPage {
                     label="${_t('data.Project')}"
                     FixedMenuPosition
                   >
-                    ${this.allowedGroups.map(
+                    ${this.groupListByUsage.map(
                       (item, idx) => html`
                         <mwc-list-item
                           value="${item.name}"
-                          ?selected="${idx === 0}"
+                          ?selected="${this.currentGroupIdx === idx}"
                         >
                           ${item.name}
                         </mwc-list-item>
@@ -521,6 +555,9 @@ export default class BackendAIData extends BackendAIPage {
                     id="add-folder-usage-mode"
                     label="${_t('data.UsageMode')}"
                     fixedMenuPosition
+                    @change=${() => {
+                      this._toggleGroupSelect();
+                    }}
                   >
                     ${this.usageModes.map(
                       (item, idx) => html`
@@ -549,13 +586,19 @@ export default class BackendAIData extends BackendAIPage {
             : html``}
           ${this.enableStorageProxy
             ? html`
-                <!--<div class="horizontal layout flex wrap center justified">
-              <p style="color:rgba(0, 0, 0, 0.6);">
-                ${_t('data.folders.Cloneable')}
-              </p>
-              <mwc-switch id="add-folder-cloneable" style="margin-right:10px;">
-              </mwc-switch>
-            </div>-->
+                <div
+                  id="cloneable-container"
+                  class="horizontal layout flex wrap center justified"
+                  style="display:none;"
+                >
+                  <p style="color:rgba(0, 0, 0, 0.6);margin-left:10px;">
+                    ${_t('data.folders.Cloneable')}
+                  </p>
+                  <mwc-switch
+                    id="add-folder-cloneable"
+                    style="margin-right:10px;"
+                  ></mwc-switch>
+                </div>
               `
             : html``}
           <div style="font-size:11px;">
@@ -650,7 +693,8 @@ export default class BackendAIData extends BackendAIPage {
                       (item, idx) => html`
                         <mwc-list-item
                           value="${item.name}"
-                          ?selected="${idx === 0}"
+                          ?selected="${item.name ===
+                          globalThis.backendaiclient.current_group}"
                         >
                           ${item.name}
                         </mwc-list-item>
@@ -871,6 +915,9 @@ export default class BackendAIData extends BackendAIPage {
         globalThis.backendaiclient.supports('storage-proxy');
       this.enableInferenceWorkload =
         globalThis.backendaiclient.supports('inference-workload');
+      this.supportModelStore =
+        globalThis.backendaiclient.supports('model-store') &&
+        globalThis.backendaiclient._config.supportModelStore;
       if (this.enableInferenceWorkload && !this.usageModes.includes('Model')) {
         this.usageModes.push('Model');
       }
@@ -912,9 +959,7 @@ export default class BackendAIData extends BackendAIPage {
   }
 */
   _toggleFolderTypeInput() {
-    this.folderType = (
-      this.shadowRoot?.querySelector('#add-folder-type') as Select
-    ).value;
+    this.folderType = this.addFolderTypeSelect.value;
   }
 
   /**
@@ -1030,8 +1075,23 @@ export default class BackendAIData extends BackendAIPage {
       this.vhost = this.selectedVhost = vhostInfo.default;
     }
     if (this.allowed_folder_type.includes('group')) {
-      const group_info = await globalThis.backendaiclient.group.list();
-      this.allowedGroups = group_info.groups;
+      const group_info = await globalThis.backendaiclient.group.list(
+        undefined,
+        undefined,
+        undefined,
+        ['GENERAL', 'MODEL_STORE'],
+      );
+      this.allowedModelTypeGroups = [];
+      this.allowedGroups = [];
+
+      group_info?.groups?.forEach((element) => {
+        if (element.type === 'MODEL_STORE') {
+          this.allowedModelTypeGroups.push(element);
+        } else {
+          this.allowedGroups.push(element);
+        }
+      });
+      this._toggleGroupSelect();
     }
     this.openDialog('add-folder-dialog');
   }
@@ -1079,6 +1139,50 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   /**
+   * toggle visibility of group select
+   * - only disable when (folderType is not 'user') and folderUsageMode is not 'Model'
+   */
+  _toggleGroupSelect() {
+    this.groupListByUsage =
+      this.addFolderUsageModeSelect?.value !== 'Model'
+        ? this.allowedGroups
+        : [...this.allowedGroups, ...this.allowedModelTypeGroups];
+    this.addFolderGroupSelect &&
+      this.addFolderGroupSelect.layout(true).then(() => {
+        if (this.groupListByUsage.length > 0) {
+          this.currentGroupIdx = this.addFolderGroupSelect.items.findIndex(
+            (item) => item.value === globalThis.backendaiclient.current_group,
+          );
+          this.currentGroupIdx =
+            this.currentGroupIdx < 0 ? 0 : this.currentGroupIdx;
+          // FIXME: manually set selected text to follow updated list-item
+          (this.addFolderGroupSelect as any)
+            .createAdapter()
+            .setSelectedText(
+              this.groupListByUsage[this.currentGroupIdx]['name'],
+            );
+        } else {
+          this.addFolderGroupSelect.disabled = true;
+        }
+      });
+    this._toggleCloneableSwitch();
+  }
+
+  /**
+   * toggle visibility of cloneable switch
+   * - only visible when only admin selected Model usage mode.
+   */
+  _toggleCloneableSwitch() {
+    if (this.cloneableContainer) {
+      if (this.addFolderUsageModeSelect?.value === 'Model' && this.is_admin) {
+        this.cloneableContainer.style.display = 'flex';
+      } else {
+        this.cloneableContainer.style.display = 'none';
+      }
+    }
+  }
+
+  /**
    * Add folder with name, host, type, usage mode and permission.
    */
   _addFolder() {
@@ -1091,13 +1195,9 @@ export default class BackendAIData extends BackendAIPage {
     if (match) {
       host = match[1];
     }
-    let ownershipType = (
-      this.shadowRoot?.querySelector('#add-folder-type') as Select
-    ).value;
+    let ownershipType = this.addFolderTypeSelect.value;
     let group;
-    const usageModeEl = this.shadowRoot?.querySelector(
-      '#add-folder-usage-mode',
-    ) as Select;
+    const usageModeEl = this.addFolderUsageModeSelect;
     const permissionEl = this.shadowRoot?.querySelector(
       '#add-folder-permission',
     ) as Select;
@@ -1114,7 +1214,7 @@ export default class BackendAIData extends BackendAIPage {
       group = '';
     } else {
       group = this.is_admin
-        ? (this.shadowRoot?.querySelector('#add-folder-group') as Select).value
+        ? this.addFolderGroupSelect.value
         : globalThis.backendaiclient.current_group;
     }
     if (usageModeEl) {
@@ -1170,7 +1270,7 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   /**
-   *
+   * Clone VFolder
    */
   async _cloneFolder() {
     const name = await this._checkFolderNameAlreadyExists(

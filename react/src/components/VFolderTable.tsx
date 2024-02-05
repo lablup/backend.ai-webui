@@ -48,7 +48,7 @@ export interface AliasMap {
 
 type DataIndex = keyof VFolder;
 
-interface Props extends Omit<TableProps<VFolder>, 'rowKey'> {
+export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
   showAliasInput?: boolean;
   selectedRowKeys?: VFolderKey[];
   onChangeSelectedRowKeys?: (selectedKeys: VFolderKey[]) => void;
@@ -59,7 +59,7 @@ interface Props extends Omit<TableProps<VFolder>, 'rowKey'> {
   rowKey: string | number;
 }
 
-const VFolderTable: React.FC<Props> = ({
+const VFolderTable: React.FC<VFolderTableProps> = ({
   filter,
   showAliasInput = false,
   selectedRowKeys: controlledSelectedRowKeys = [],

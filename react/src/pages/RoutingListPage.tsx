@@ -1,4 +1,5 @@
 import CopyableCodeText from '../components/CopyableCodeText';
+import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
 import Flex from '../components/Flex';
@@ -132,6 +133,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               endpoint
               status
             }
+            ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
             ...ModelServiceSettingModal_endpoint
           }
@@ -203,12 +205,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
 
   const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
   return (
-    <Flex
-      direction="column"
-      align="stretch"
-      style={{ margin: token.marginSM }}
-      gap="sm"
-    >
+    <Flex direction="column" align="stretch" gap="sm">
       <Breadcrumb
         items={[
           {
@@ -300,7 +297,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             },
             {
               label: t('modelService.SessionOwner'),
-              children: baiClient.email || '',
+              children: <EndpointOwnerInfo endpointFrgmt={endpoint} />,
             },
             {
               label: t('modelService.DesiredSessionCount'),
@@ -311,7 +308,9 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               children: endpoint?.url ? (
                 <Typography.Text copyable>{endpoint?.url}</Typography.Text>
               ) : (
-                <Tag>{t('modelService.NoServiceEndpoint')}</Tag>
+                <Typography.Text type="secondary">
+                  {t('modelService.NoServiceEndpoint')}
+                </Typography.Text>
               ),
             },
             {

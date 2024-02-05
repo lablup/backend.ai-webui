@@ -1,8 +1,7 @@
 {
   "webui": {
     "menu": {
-      "WelcomeMessage": "Receber,",
-      "WelcomeMessage_2": " .",
+      "WelcomeMessage": "Bem vindo, {{userName }}.",
       "Summary": "Resumo",
       "Sessions": "Sessões",
       "Import&Run": "Importar e executar",
@@ -61,7 +60,11 @@
       "PasswordChangePlace": "Clique no ícone da pessoa na barra superior e aceda ao menu \"A minha conta\".",
       "Notifications": "Notificações",
       "Tasks": "Tarefas",
-      "FastTrack": "FastTrack"
+      "FastTrack": "FastTrack",
+      "Data&Model": "Dados",
+      "InvalidBlankPassword": "Coloque sua senha",
+      "InvalidBlankEmail": "Digite seu e-mail",
+      "DisMatchUserEmail": "E-mail do usuário não corresponde"
     },
     "YouAreOffline": "Agora você está offline",
     "YouAreOnline": "Agora você está online",
@@ -240,17 +243,20 @@
       "FolderAliasInvalid": "Somente caracteres alfanuméricos, sublinhado (_), barra (/) e traço (-) são permitidos.",
       "PreOpenPortMaxCountLimit": "Pode definir até {{count}} portas pré-abertas.",
       "StartTimeMustBeInTheFuture": "A hora de início deve ser posterior à hora atual.",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "EnqueueComputeSessionWarning": "__NOT_TRANSLATED__",
-      "SessionName": "__NOT_TRANSLATED__",
-      "ResetFormConfirm": "__NOT_TRANSLATED__",
-      "TemplateAndHistory": "__NOT_TRANSLATED__",
-      "ScheduleTimeSimple": "__NOT_TRANSLATED__",
+      "EnqueueComputeSessionWarning": "Se você definir um valor maior que os recursos atualmente disponíveis, a criação da sessão será atrasada na fila até que fique disponível.",
+      "SessionName": "Nome da sessão",
+      "ResetFormConfirm": "Deseja redefinir todas as suas entradas?",
+      "TemplateAndHistory": "Modelos",
+      "ScheduleTimeSimple": "Definir horário de início",
       "ResourceAllocationPerContainer": "Atribuição de recursos por contentor",
       "NumberOfContainer": "Número de contentores",
+      "ErrorCanNotExceedRemaining": "Não pode ser definido como superior aos recursos restantes ({{amount}}).",
       "EnterEnvironmentVariable": "Introduzir o nome da variável",
       "EnvironmentVariableNamePatternError": "O nome da variável deve começar com uma letra ou um sublinhado e só pode conter letras, números e sublinhados.",
-      "EnvironmentVariableDuplicateName": "Um nome de variável que já existe."
+      "EnvironmentVariableDuplicateName": "Um nome de variável que já existe.",
+      "Template": "Modelo de sessão",
+      "EnableAutomaticShmem": "Memória partilhada automática",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",
@@ -399,7 +405,9 @@
     "Unset": "Não definido",
     "OK": "OK",
     "Commit": "Compromisso",
-    "EnterManually": "Introduzir manualmente"
+    "EnterManually": "Introduzir manualmente",
+    "Download": "Descarregar",
+    "Clone": "Clone"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -443,7 +451,10 @@
     "Enabled": "Habilitado",
     "StorageProxies": "Armazéns",
     "None": "Nenhum",
-    "Image": "__NOT_TRANSLATED__"
+    "Image": "Imagem",
+    "All": "Todos",
+    "InProgress": "Em curso",
+    "Session": "Sessão"
   },
   "credential": {
     "Permission": "Permissão",
@@ -521,7 +532,8 @@
     "SignoutSeccessfullyFinished": "O registo foi concluído com êxito",
     "Status": "Estado",
     "NoUserToDisplay": "Nenhum utilizador a apresentar",
-    "EnableSudoSession": "__NOT_TRANSLATED__"
+    "EnableSudoSession": "Habilitar sessão sudo",
+    "MainAccessKey": "Chave de acesso principal"
   },
   "data": {
     "Folders": "Pastas",
@@ -687,7 +699,11 @@
     "Pipeline": "Pastas de pipelines",
     "DialogDataFolder": "Pastas dedicadas ao pipeline que são criadas automaticamente ao criar pipelines no FastTrack.",
     "DialogModelFolder": "Pode servir e gerir modelos.",
-    "SearchByName": "Procura por nome"
+    "SearchByName": "Procura por nome",
+    "ModelStore": "Loja de modelos",
+    "New": "Novo",
+    "Add": "Adicionar",
+    "CloningIsOnlyPossibleSameHost": "Atualmente, a clonagem só é possível no mesmo host."
   },
   "dialog": {
     "warning": {
@@ -832,7 +848,9 @@
     "DescAutoLogout": "Saia automaticamente se todas as páginas logadas forem fechadas, exceto as páginas originadas da sessão para aplicativos (por exemplo, notebook jupyter, terminal da web, etc.)",
     "SSHKeypairEnterManuallyFinished": "O par de chaves SSH foi registado com sucesso.",
     "BootstrapScriptDescription": "O script bootstrap será executado apenas uma vez após a criação da sessão",
-    "SSHKeypairEnterManually": "Par de chaves SSH"
+    "SSHKeypairEnterManually": "Par de chaves SSH",
+    "MyKeypairInfo": "Minhas informações de par de chaves",
+    "DescMyKeypairInfo": "Ver as informações do meu par de chaves"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avançado do terminal da Web: Copiar o conteúdo do terminal",
@@ -854,7 +872,9 @@
     "Parameters": "Parâmetros",
     "ErrorType": "Tipo de Erro",
     "LogMessageRemoved": "As mensagens de log foram removidas.",
-    "NoLogToDisplay": "Não há registos a apresentar"
+    "NoLogToDisplay": "Não há registos a apresentar",
+    "ShowOnlyError": "Exibir apenas erro",
+    "SearchLogs": "Registros de pesquisa"
   },
   "resourcePolicy": {
     "Resources": "Recursos",
@@ -916,7 +936,8 @@
     "RegistrySuccessfullyModified": "Registo modificado com sucesso.",
     "NoRegistryToDisplay": "Não há registos a apresentar",
     "ModifyRegistry": "Modificar o registo",
-    "ConfirmNoUserName": "Utilizador e palavra-passe não especificados, pretende guardar?"
+    "ConfirmNoUserName": "Utilizador e palavra-passe não especificados, pretende guardar?",
+    "DescURLFormat": "Tipo de URL inválido"
   },
   "resourceGroup": {
     "ResourceGroups": "Grupos de Recursos",
@@ -1056,8 +1077,6 @@
     "Scaling": "Dimensionamento",
     "AllowAgentSideRegistration": "Permitir registro do lado do agente",
     "DescAllowAgentSideRegistration": "Permitir que o agente se registre no gerente. <br/> Use apenas se o cluster Backend.AI for gerenciado em local seguro.",
-    "Plugins": "Plugins",
-    "CUDAGPUsupport": "Suporte para GPU CUDA",
     "DescCUDAGPUsupport": "Suporte para GPU NVIDIA CUDA. <br/> Requer Backend.AI CUDA Plugin.",
     "CUDAGPUdisabledByFGPUsupport": "Desativado porque o sistema usa o plugin de GPU fracionário",
     "ROCMGPUsupport": "Suporte para GPU ROCm",
@@ -1107,13 +1126,19 @@
     "OverlayNetworkSettings": "Definições de rede de sobreposição",
     "OverlayNetworkSettingsDescription": "Uma rede de sobreposição é uma rede de computadores que é colocada em camadas sobre outra rede. A rede de sobreposição cria uma rede distribuída entre vários hosts daemon do Docker do gerenciador Backend.AI.",
     "MTUDescription": "Unidade máxima de transmissão, o tamanho do maior pacote que um protocolo de rede pode transmitir.",
-    "OutOfRange": "Fora de alcance."
+    "OutOfRange": "Fora de alcance.",
+    "Plugins": "Plug-ins",
+    "OpenSourceCUDAGPUsupport": "Suporte para GPU CUDA de código aberto"
   },
   "notification": {
     "SuccessfullyUpdated": "Atualizado com sucesso",
     "Visit": "Visita",
     "SeeDetail": "Veja detalhes",
-    "Initializing": "Inicializando ..."
+    "Initializing": "Inicializando ...",
+    "NoNotification": "Nenhuma notificação.",
+    "Notifications": "Notificações",
+    "ClearNotifications": "Limpar notificações",
+    "AreYouSureToClearAllNotifications": "Tem certeza de que deseja limpar todas as notificações?"
   },
   "information": {
     "Core": "Testemunho",
@@ -1249,7 +1274,7 @@
     "CouldNotCopyText": "Não foi possível copiar o texto:",
     "NotebookBadgeURL": "URL do notebook",
     "GetAndRunNotebook": "Importar e executar",
-    "ImportGithubRepo": "Importar Repositório Github",
+    "ImportGithubRepo": "Importar Repositório GitHub",
     "GitHubURL": "URL do GitHub",
     "GetToFolder": "Obter para a pasta",
     "RepoWillBeFolder": "Os repositórios GitHub importados são convertidos em pastas e podem ser montados quando a sessão é iniciada.",
@@ -1263,13 +1288,13 @@
     "FolderName": "Nome da pasta importada:",
     "NotebookBadgeCodeHTML": "Código do emblema do notebook (HTML)",
     "NotebookBadgeCodeMarkdown": "Código do emblema do notebook (Markdown)",
-    "GithubInternalError": "Erro interno do Github.",
-    "GithubAPILimitError": "Erro de limitação da API do Github.",
-    "GithubAPIEtcError": "Problema no servidor do Github.",
-    "ImportGitlabRepo": "Importar o repositório Gitlab",
-    "GitlabRepoWillBeFolder": "Os repositórios Gitlab importados são convertidos em pastas e podem ser montados quando a sessão é iniciada.",
-    "GitlabURL": "URL do Gitlab",
-    "GitlabDefaultBranch": "Nome do ramo do Gitlab"
+    "GithubInternalError": "Erro interno do GitHub.",
+    "GithubAPILimitError": "Erro de limitação da API do GitHub.",
+    "GithubAPIEtcError": "Problema no servidor do GitHub.",
+    "ImportGitlabRepo": "Importar o repositório GitLab",
+    "GitlabRepoWillBeFolder": "Os repositórios GitLab importados são convertidos em pastas e podem ser montados quando a sessão é iniciada.",
+    "GitlabURL": "URL do GitLab",
+    "GitlabDefaultBranch": "Nome do ramo do GitLab"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Estatísticas para este mês",
@@ -1422,7 +1447,10 @@
     "RoutingsCount": "Contagem de rotas",
     "Active/Total": "Ativo/Total",
     "Public": "Público",
-    "YouAreAboutToTerminate": "Está prestes a terminar"
+    "YouAreAboutToTerminate": "Está prestes a terminar",
+    "Owner": "Proprietário",
+    "ServiceDelegatedFrom": "O serviço de modelo é criado por {{ createdUser }} mas a propriedade da sessão será delegada a {{ sessionOwner }}",
+    "FailedToTerminateService": "O pedido para terminar o serviço falhou."
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",
@@ -1433,10 +1461,45 @@
     "TurnOffTotp": "Desativar a autenticação de dois factores",
     "ConfirmTotpRemovalBody": "Tem a certeza de que não quer utilizar a autenticação de dois factores?",
     "RemoveTotpSetupCompleted": "2FA desactivada",
-    "OTP": "Palavra-passe única"
+    "OTP": "Palavra-passe única",
+    "EnterConfirmationCode": "Agora insira o OTP gerado pelo autenticador para verificar.",
+    "RequireOTP": "Escreva OTP."
   },
   "OpenVSCodeRemote": "Abrir o código local do Visual Studio",
   "inputLimit": {
     "4to64chars": "(4~64 caracteres)"
+  },
+  "modelStore": {
+    "Description": "Descrição",
+    "Model": "Modelo",
+    "FilterByName": "Filtrar por nome",
+    "ServiceDetails": "Detalhes do serviço",
+    "Metadata": "Metadados",
+    "ModelPath": "Caminho do modelo",
+    "SearchModels": "Pesquisar modelos",
+    "MinResource": "Recurso mínimo",
+    "LastModified": "Última modificação",
+    "Created": "Criada",
+    "Version": "Versão",
+    "Author": "Autor",
+    "MaxRetries": "Máximo de tentativas",
+    "Path": "Caminho",
+    "HealthCheck": "Exame de saúde",
+    "Port": "Porta",
+    "StartCommand": "Comando Iniciar",
+    "PreStartActions": "Ações pré-início",
+    "Framework": "Enquadramento",
+    "Category": "Categoria",
+    "Label": "Etiqueta",
+    "Task": "Tarefa",
+    "CloneAsFolder": "Clonar como Pasta",
+    "CloneSuccess": "O pedido de clone foi enviado com sucesso.",
+    "CloneInfo": "Será clonada como a pasta do seu tipo de utilizador.",
+    "category": "Categoria"
+  },
+  "table": {
+    "SettingTable": "Configuração de mesa",
+    "SelectColumnToDisplay": "Selecione as colunas a serem exibidas",
+    "SearchTableColumn": "Pesquisar colunas da tabela"
   }
 }

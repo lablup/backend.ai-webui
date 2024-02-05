@@ -30,7 +30,7 @@ export const BackendAiStyles = [
       --general-content-container-width: 980px;
       --general-background-color: rgba(247, 246, 246, 1);
       --general-sidebar-color: #949494;
-      --general-sidebar-background-color: #2a2c30;
+      --general-sidebar-background-color: #ffffff;
       --general-sidebar-h3-color: #cccccc;
       --general-sidebar-h3-border-color: 1px solid #444444;
       --general-sidebar-topbar-background-color-3: #383e48;
@@ -39,7 +39,7 @@ export const BackendAiStyles = [
       --general-sidebar-topbar-color-4: #222222;
       --general-sidebar-topbar-background-color: rgba(24, 24, 24, 1);
       --general-sidebar-topbar-color: #efefef;
-      --general-sidebar-selected-color: #72eb51; /*var(--paper-green-400);*/
+      --general-sidebar-selected-color: #37b076;
       --general-sidebar-selected-background-color: transparent;
       --general-sidebar-selected-background-gradient-color: transparent;
       --general-sidebar-selected-border-left: 3px solid
@@ -194,6 +194,7 @@ export const BackendAiStyles = [
 
     ::-webkit-scrollbar {
       max-width: 2px;
+      max-height: 2px;
       background-color: transparent;
     }
 
@@ -408,6 +409,15 @@ export const BackendAiStyles = [
       --mdc-switch-selected-pressed-state-layer-color: var(
         --general-switch-on-color
       );
+    }
+
+    mwc-switch[disabled] {
+      --mdc-switch-disabled-selected-handle-color: var(
+        --general-switch-on-color
+      );
+      --mdc-switch-disabled-selected-track-color: var(
+        --general-switch-on-color
+      ) !important;
     }
 
     div.card p {
