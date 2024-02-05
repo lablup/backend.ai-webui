@@ -142,6 +142,16 @@ const ImageEnvironmentSelectFormItems: React.FC<
   // auto select when relative field is changed
   useEffect(() => {
     if (!_.isEmpty(environments?.manual)) {
+      // set undefined fields related to environments when manual is set
+      if (environments.environment || environments.version) {
+        form.setFieldsValue({
+          environments: {
+            environment: undefined,
+            version: undefined,
+            image: undefined,
+          },
+        });
+      }
       return;
     }
 
@@ -178,18 +188,28 @@ const ImageEnvironmentSelectFormItems: React.FC<
     }
 
     if (nextImage) {
-      form.setFieldsValue({
-        environments: {
-          environment: nextEnvironment.environmentName,
-          version: getImageFullName(nextImage),
-          image: nextImage,
-          manual:
-            !matchedEnvironmentByVersion &&
-            baiClient._config.allow_manual_image_name_for_session
-              ? version
-              : undefined,
-        },
-      });
+      if (
+        !matchedEnvironmentByVersion &&
+        baiClient._config.allow_manual_image_name_for_session &&
+        version
+      ) {
+        form.setFieldsValue({
+          environments: {
+            environment: undefined,
+            version: undefined,
+            image: undefined,
+            manual: version,
+          },
+        });
+      } else {
+        form.setFieldsValue({
+          environments: {
+            environment: nextEnvironment.environmentName,
+            version: getImageFullName(nextImage),
+            image: nextImage,
+          },
+        });
+      }
     } else if (baiClient._config.allow_manual_image_name_for_session) {
       // if no image is available, only set manual if it's allowed
       form.setFieldValue(['environments', 'manual'], version);
