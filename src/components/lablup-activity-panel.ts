@@ -55,7 +55,11 @@ export default class LablupActivityPanel extends LitElement {
       css`
         div.card {
           display: block;
-          background: var(--general-background-color, #ffffff);
+          background: var(
+            --general-color-bg-container,
+            --general-background-color,
+            #ffffff
+          );
           box-sizing: border-box;
           margin: 0 !important;
           padding: 0;
@@ -68,7 +72,7 @@ export default class LablupActivityPanel extends LitElement {
         }
 
         div.card > h4 {
-          background-color: var(--general-background-color, #ffffff);
+          background-color: var(--general-color-bg-container, #ffffff);
           color: var(--general-color-text, #000000);
           font-size: var(--general-font-size, 14px);
           font-weight: 400;

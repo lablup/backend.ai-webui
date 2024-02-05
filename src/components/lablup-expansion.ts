@@ -52,7 +52,7 @@ export default class LablupExpansion extends LitElement {
         div.card {
           padding: 0;
           margin: 0;
-          background-color: var(--general-color-bg-base);
+          background-color: var(--general-color-bg-container);
           color: var(--general-color-text);
         }
 

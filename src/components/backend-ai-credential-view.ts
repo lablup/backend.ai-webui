@@ -132,6 +132,7 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         div.card > h4 {
           margin-bottom: 0px;
+          background-color: var(--general-color-bg-container);
         }
 
         div.card h3 {
@@ -158,10 +159,6 @@ export default class BackendAICredentialView extends BackendAIPage {
         }
 
         mwc-tab-bar.sub-bar mwc-tab {
-          --mdc-theme-primary: var(
-            --general-color-primary,
-            --general-tabbar-button-color
-          );
           --mdc-tab-height: 46px;
           --mdc-text-transform: none;
         }

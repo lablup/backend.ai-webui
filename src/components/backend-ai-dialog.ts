@@ -92,7 +92,7 @@ export default class BackendAIDialog extends LitElement {
 
         mwc-dialog > div.card > h3 {
           background-color: var(
-            --general-color-bg-base,
+            --general-color-bg-container,
             --general-dialog-background-color,
             #ffffff
           );

@@ -258,7 +258,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
         </h4>
         <div class="list-wrapper">
           <vaadin-grid
-            theme="row-stripes column-borders compact"
+            theme="row-stripes column-borders compact ${localStorage.getItem(
+              'backendaiwebui.settings.isDarkMode',
+            )
+              ? 'dark'
+              : ''}"
             height-by-rows
             aria-label="Resource Policy list"
             .items="${this.resourcePresets}"

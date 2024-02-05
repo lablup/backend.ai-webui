@@ -614,7 +614,11 @@ export default class BackendAiStorageList extends BackendAIPage {
         <vaadin-grid
           class="folderlist"
           id="folder-list-grid"
-          theme="row-stripes column-borders wrap-cell-content compact"
+          theme="row-stripes column-borders wrap-cell-content compact ${localStorage.getItem(
+            'backendaiwebui.settings.isDarkMode',
+          )
+            ? 'dark'
+            : ''}"
           column-reordering-allowed
           aria-label="Folder list"
           .items="${this.folders}"
@@ -1231,7 +1235,11 @@ export default class BackendAiStorageList extends BackendAIPage {
           <vaadin-grid
             id="file-list-grid"
             class="explorer"
-            theme="row-stripes compact"
+            theme="row-stripes compact ${localStorage.getItem(
+              'backendaiwebui.settings.isDarkMode',
+            )
+              ? 'dark'
+              : ''}"
             aria-label="Explorer"
             .items="${this.explorerFiles}"
           >
@@ -1368,7 +1376,11 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t('data.explorer.ModifyPermissions')}</span>
         <div slot="content" role="listbox" style="margin: 0; padding: 10px;">
           <vaadin-grid
-            theme="row-stripes column-borders compact"
+            theme="row-stripes column-borders compact ${localStorage.getItem(
+              'backendaiwebui.settings.isDarkMode',
+            )
+              ? 'dark'
+              : ''}"
             .items="${this.invitees}"
           >
             <vaadin-grid-column

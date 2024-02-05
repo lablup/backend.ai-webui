@@ -1835,7 +1835,11 @@ export default class PipelineConfigurationForm extends LitElement {
     return html`
       <div class="vfolder-list">
         <vaadin-grid
-          theme="row-stripes column-borders compact"
+          theme="row-stripes column-borders compact ${localStorage.getItem(
+            'backendaiwebui.settings.isDarkMode',
+          )
+            ? 'dark'
+            : ''}"
           id="vfolder-grid"
           aria-label="vfolder list"
           all-rows-visible

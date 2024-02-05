@@ -4932,7 +4932,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <span slot="title">${_t('session.launcher.FolderToMount')}</span>
               <div class="vfolder-list">
                 <vaadin-grid
-                  theme="row-stripes column-borders compact"
+                  theme="row-stripes column-borders compact ${localStorage.getItem(
+                    'backendaiwebui.settings.isDarkMode',
+                  )
+                    ? 'dark'
+                    : ''}"
                   id="non-auto-mounted-folder-grid"
                   aria-label="vfolder list"
                   height-by-rows
@@ -4982,7 +4986,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               </span>
               <div class="vfolder-list">
                 <vaadin-grid
-                  theme="row-stripes column-borders compact"
+                  theme="row-stripes column-borders compact ${localStorage.getItem(
+                    'backendaiwebui.settings.isDarkMode',
+                  )
+                    ? 'dark'
+                    : ''}"
                   id="model-folder-grid"
                   aria-label="model storage vfolder list"
                   height-by-rows

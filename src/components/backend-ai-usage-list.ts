@@ -107,6 +107,12 @@ export default class BackendAIUsageList extends BackendAIPage {
           --component-width: 70vw;
           --component-padding: 20px 40px;
         }
+
+        .card > div,
+        .usage-title {
+          color: var(--general-color-text);
+          background-color: var(--general-color-bg-container);
+        }
       `,
     ];
   }
@@ -375,6 +381,9 @@ export default class BackendAIUsageList extends BackendAIPage {
           <p id="select-period">${_t('statistics.SelectPeriod')}</p>
           <vaadin-select
             id="period-selector"
+            theme="${localStorage.getItem('backendaiwebui.settings.isDarkMode')
+              ? 'dark'
+              : ''}"
             .items="${this.periodSelectItems}"
             @change="${(e) => this.pulldownChange(e)}"
           ></vaadin-select>
@@ -387,8 +396,8 @@ export default class BackendAIUsageList extends BackendAIPage {
         ${Object.keys(this.collection).length > 0
           ? Object.keys(this._map).map(
               (key, idx) => html`
-                <h3 class="horizontal center layout">
-                  <span style="color:#222222;">${this._map[key]}</span>
+                <h3 class="horizontal center layout usage-title">
+                  <span>${this._map[key]}</span>
                   <span class="flex"></span>
                 </h3>
                 <div style="width:100%;min-height:180px;">

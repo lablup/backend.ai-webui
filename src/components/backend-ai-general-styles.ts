@@ -64,11 +64,14 @@ export const BackendAiStyles = [
         --general-background-color,
         #ffffff
       ); /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
-      --general-tabbar-background-color: var(--general-background-color);
+      --general-tabbar-background-color: var(
+        --general-color-bg-container,
+        --general-background-color
+      );
       --general-tabbar-tab-disabled-color: var(--general-sidebar-color);
       --general-tabbar-button-color: rgba(103, 172, 91, 1);
       --general-sub-tabbar-background-color: var(
-        --general-background-color,
+        --general-color-bg-container,
         #ffffff
       );
       --general-textfield-selected-color: var(--general-primary-color, #27824f);
@@ -113,7 +116,7 @@ export const BackendAiStyles = [
         --general-textfield-selected-color
       );
       --general-dialog-background-color: var(
-        --general-color-bg-base,
+        --general-color-bg-container,
         --general-background-color,
         #ffffff
       );
@@ -133,6 +136,16 @@ export const BackendAiStyles = [
         linear-gradient(to left, #722cd7, #5c7cfa);
       --lumo-font-family: var(--general-font-family);
       --general-warning-text: var(--paper-red-400);
+
+      [theme~='dark'] {
+        --lumo-primary-color: var(--general-color-primary);
+        --lumo-secondary-text-color: var(--general-color-text-secondary);
+        --lumo-tertiary-text-color: var(--general-color-text-tertiary);
+        --lumo-base-color: var(--general-color-bg-container);
+        --lumo-header-text-color: var(--general-color-text);
+        --lumo-body-text-color: var(--general-color-text);
+        --lumo-contrast-10pct: var(--general-color-border);
+      }
     }
 
     body {
@@ -407,9 +420,17 @@ export const BackendAiStyles = [
 
     mwc-icon-button[disabled].pagination {
       background-color: var(
+        --general-color-bg-container,
         --var-color-bg-container-disabled,
         --paper-grey-100
       );
+    }
+
+    mwc-button.disabled,
+    mwc-icon-button.disabled {
+      color: var(--general-color-text-disabled);
+      pointer-events: none;
+      text-decoration: none;
     }
 
     mwc-list mwc-list-item {
@@ -757,7 +778,9 @@ export const BackendAiStyles = [
       margin: 0px auto;
     }
 
+    mwc-tab,
     mwc-tab-bar {
+      background-color: var(--general-tabbar-background-color);
       --mdc-theme-primary: var(--general-sidebar-selected-color);
       --mdc-text-transform: none;
       --mdc-tab-color-default: var(--general-tabbar-background-color);
@@ -1105,7 +1128,7 @@ export const BackendAiStyles = [
     div.note-title {
       background-color: var(--paper-green-400);
       padding: 5px 10px;
-      color: var(--general-color-text, #ffffff);
+      color: #ffffff;
       display: -ms-flexbox;
       display: -webkit-flex;
       display: flex;
@@ -1120,6 +1143,8 @@ export const BackendAiStyles = [
 
     div.note-contents {
       padding: 20px;
+      /* Fix the color for readability */
+      color: #222222;
     }
   `,
 ];

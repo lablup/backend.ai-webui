@@ -802,7 +802,11 @@ export default class PipelineJobList extends BackendAIPage {
     return html`
       <vaadin-grid
         id="pipeline-job-list"
-        theme="row-stripes column-borders compact"
+        theme="row-stripes column-borders compact ${localStorage.getItem(
+          'backendaiwebui.settings.isDarkMode',
+        )
+          ? 'dark'
+          : ''}"
         aria-label="Pipeline Job List"
         .items="${this.pipelineJobs}"
       >

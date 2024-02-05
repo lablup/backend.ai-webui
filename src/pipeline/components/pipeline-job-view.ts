@@ -711,7 +711,11 @@ export default class PipelineJobView extends BackendAIPage {
             <pipeline-flow id="pipeline-job-flow"></pipeline-flow>
             <vaadin-grid
               id="pipeline-task-instance-list"
-              theme="row-stripes column-borders compact wrap-cell-content"
+              theme="row-stripes column-borders compact wrap-cell-content ${localStorage.getItem(
+                'backendaiwebui.settings.isDarkMode',
+              )
+                ? 'dark'
+                : ''}"
               aria-label="Pipeline Task List"
               .items="${this.taskInstanceList}"
             >

@@ -448,7 +448,7 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         div.pagination-label {
-          background-color: var(--general-color-bg-base, --paper-grey-100);
+          background-color: var(--general-color-bg-container, --paper-grey-100);
           min-width: 60px;
           font-size: 12px;
           font-family: var(--general-font-family);
@@ -4026,7 +4026,11 @@ ${rowData.item[this.sessionNameField]}</pre
         </div>
       </div>
       <div class="list-wrapper">
-        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
+        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact ${
+          localStorage.getItem('backendaiwebui.settings.isDarkMode')
+            ? 'dark'
+            : ''
+        }" aria-label="Session list"
           .items="${this.compute_sessions}" height-by-rows>
           ${
             this._isRunning

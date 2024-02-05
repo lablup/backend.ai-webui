@@ -1158,7 +1158,11 @@ export default class BackendAICredentialList extends BackendAIPage {
     return html`
       <div class="list-wrapper">
         <vaadin-grid
-          theme="row-stripes column-borders compact"
+          theme="row-stripes column-borders compact ${localStorage.getItem(
+            'backendaiwebui.settings.isDarkMode',
+          )
+            ? 'dark'
+            : ''}"
           aria-label="Credential list"
           id="keypair-grid"
           .items="${this.keypairs}"

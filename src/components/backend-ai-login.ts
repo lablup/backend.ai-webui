@@ -214,12 +214,6 @@ export default class BackendAILogin extends BackendAIPage {
           --mdc-icon-size: 24px;
         }
 
-        mwc-icon-button.disabled {
-          color: var(--general-color-text-disabled);
-          pointer-events: none;
-          text-decoration: none;
-        }
-
         mwc-icon-button.endpoint-control-button {
           --mdc-icon-size: 16px;
           --mdc-icon-button-size: 24px;
@@ -2074,6 +2068,7 @@ export default class BackendAILogin extends BackendAIPage {
                   <mwc-icon-button
                     icon="email"
                     class="layout align-self-center disabled"
+                    tabindex="-1"
                   ></mwc-icon-button>
                   <mwc-textfield
                     type="email"
@@ -2089,6 +2084,7 @@ export default class BackendAILogin extends BackendAIPage {
                   <mwc-icon-button
                     icon="vpn_key"
                     class="layout align-self-center disabled"
+                    tabindex="-1"
                   ></mwc-icon-button>
                   <mwc-textfield
                     type="password"
@@ -2113,6 +2109,7 @@ export default class BackendAILogin extends BackendAIPage {
                   <mwc-icon-button
                     icon="pin"
                     class="layout align-self-center disabled"
+                    tabindex="-1"
                   ></mwc-icon-button>
                   <mwc-textfield
                     type="number"
@@ -2135,6 +2132,7 @@ export default class BackendAILogin extends BackendAIPage {
                   <mwc-icon-button
                     icon="lock"
                     class="layout align-self-center disabled"
+                    tabindex="-1"
                   ></mwc-icon-button>
                   <mwc-textfield
                     type="text"
@@ -2151,6 +2149,7 @@ export default class BackendAILogin extends BackendAIPage {
                   <mwc-icon-button
                     icon="vpn_key"
                     class="layout align-self-center disabled"
+                    tabindex="-1"
                   ></mwc-icon-button>
                   <mwc-textfield
                     type="password"

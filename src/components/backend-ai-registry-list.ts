@@ -733,7 +733,11 @@ class BackendAIRegistryList extends BackendAIPage {
       </h4>
       <div class="list-wrapper">
         <vaadin-grid
-          theme="row-stripes column-borders compact"
+          theme="row-stripes column-borders compact ${localStorage.getItem(
+            'backendaiwebui.settings.isDarkMode',
+          )
+            ? 'dark'
+            : ''}"
           aria-label="Registry list"
           .items="${this._registryList}"
         >

@@ -722,7 +722,11 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         ></mwc-button>
       </h4>
       <vaadin-grid
-        theme="row-stripes column-borders compact"
+        theme="row-stripes column-borders compact ${localStorage.getItem(
+          'backendaiwebui.settings.isDarkMode',
+        )
+          ? 'dark'
+          : ''}"
         aria-label="Job list"
         .items="${this.resourceGroups}"
       >
@@ -882,9 +886,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               `
             : html``}
           <div class="horizontal layout flex wrap center justified">
-            <p style="margin-left: 18px;color:rgba(0, 0, 0, 0.6);">
-              ${_t('resourceGroup.Active')}
-            </p>
+            <p style="margin-left: 18px;">${_t('resourceGroup.Active')}</p>
             <mwc-switch
               id="resource-group-active"
               style="margin-right:10px;"
@@ -894,7 +896,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
             ></mwc-switch>
             ${this.enableIsPublic
               ? html`
-                  <p style="margin-left: 18px;color:rgba(0, 0, 0, 0.6);">
+                  <p style="margin-left: 18px;">
                     ${_t('resourceGroup.Public')}
                   </p>
                   <mwc-switch

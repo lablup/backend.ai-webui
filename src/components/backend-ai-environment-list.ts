@@ -1529,7 +1529,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       </h4>
       <div class="list-wrapper">
         <vaadin-grid
-          theme="row-stripes column-borders compact"
+          theme="row-stripes column-borders compact ${localStorage.getItem(
+            'backendaiwebui.settings.isDarkMode',
+          )
+            ? 'dark'
+            : ''}"
           aria-label="Environments"
           id="testgrid"
           .items="${this.images}"
