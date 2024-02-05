@@ -254,16 +254,18 @@ const ContainerRegistryEditorModal: React.FC<
               required: true,
             },
             {
-              type: 'url',
-            },
-            {
               validator: (_, value) => {
-                if (
-                  value &&
-                  !value.startsWith('http://') &&
-                  !value.startsWith('https://')
-                ) {
-                  return Promise.reject(t('registry.DescURLStartString'));
+                if (value) {
+                  if (
+                    !value.startsWith('http://') &&
+                    !value.startsWith('https://')
+                  )
+                    return Promise.reject(t('registry.DescURLStartString'));
+                  try {
+                    new URL(value);
+                  } catch (e) {
+                    return Promise.reject(t('registry.DescURLFormat'));
+                  }
                 }
                 return Promise.resolve();
               },

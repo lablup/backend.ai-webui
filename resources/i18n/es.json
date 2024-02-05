@@ -806,7 +806,8 @@
     "UpdatingRegistryInfo": "Actualización de la información del registro...",
     "Username": "Nombre de usuario",
     "UsernameOptional": "Nombre de usuario (opcional)",
-    "ConfirmNoUserName": "Usuario y contraseña no especificados, ¿desea guardar?"
+    "ConfirmNoUserName": "Usuario y contraseña no especificados, ¿desea guardar?",
+    "DescURLFormat": "Tipo de URL no válido"
   },
   "resourceGroup": {
     "Active": "Activo",

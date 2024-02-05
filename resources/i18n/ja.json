@@ -936,7 +936,8 @@
     "RegistrySuccessfullyModified": "レジストリが正常に修正されました。",
     "NoRegistryToDisplay": "レジストリ情報がありません。",
     "ModifyRegistry": "レジストリの修正",
-    "ConfirmNoUserName": "ユーザーとパスワードが指定されていません。"
+    "ConfirmNoUserName": "ユーザーとパスワードが指定されていません。",
+    "DescURLFormat": "無効な URL タイプ"
   },
   "resourceGroup": {
     "ResourceGroups": "リソースグループ",
