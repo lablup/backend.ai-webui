@@ -227,7 +227,7 @@ const StorageStatusPanel: React.FC<{
           >
             <Typography.Text type="secondary">{t('data.Host')}</Typography.Text>
             <StorageSelect
-              value={selectedVolumeInfo}
+              value={selectedVolumeInfo?.id}
               onChange={setSelectedVolumeInfo}
               autoSelectType="usage"
               showUsageStatus

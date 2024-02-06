@@ -19,17 +19,21 @@ export type VolumeInfo = {
   sftp_scaling_groups: string[];
 };
 interface Props extends Omit<SelectProps, 'value' | 'onChange'> {
-  value?: string | VolumeInfo;
+  //  TODO: only string
+  value?: string;
+  // TODO: revet to (value, volumnInfo) => void
   onChange?: React.Dispatch<React.SetStateAction<VolumeInfo | undefined>>;
   autoSelectType?: 'usage' | 'default';
   showUsageStatus?: boolean;
 }
+// TODO: use React.forwardRef
 const StorageSelect: React.FC<Props> = ({
-  value,
-  onChange,
   autoSelectType,
   showUsageStatus,
-  ...selectProps
+  value,
+  onChange,
+  defaultValue,
+  ...partialSelectProps
 }) => {
   const { t } = useTranslation();
 
@@ -43,13 +47,16 @@ const StorageSelect: React.FC<Props> = ({
     return baiClient.vfolder.list_hosts();
   });
 
-  const [state, setState] = useControllableValue({ value, onChange });
+  // TODO: default value
+  const [controllableState, setControllableState] = useControllableValue({
+    value,
+    onChange,
+    defaultValue,
+  });
 
   useEffect(() => {
-    console.log('!');
     if (!autoSelectType) return;
-
-    let selectedHost = vhostInfo?.default ?? vhostInfo?.allowed[0] ?? '';
+    let nextHost = vhostInfo?.default ?? vhostInfo?.allowed[0] ?? '';
     if (autoSelectType === 'usage') {
       const lowestUsageHost = _.minBy(
         _.map(vhostInfo?.allowed, (host) => ({
@@ -57,34 +64,13 @@ const StorageSelect: React.FC<Props> = ({
           volume_info: vhostInfo?.volume_info[host],
         })),
         'volume_info.usage.percentage',
-      );
-      selectedHost = lowestUsageHost?.host || selectedHost;
+      )?.host;
+      nextHost = lowestUsageHost || nextHost;
     }
-    setState({
-      id: selectedHost,
-      ...(vhostInfo?.volume_info[selectedHost] || {}),
+    setControllableState(nextHost, {
+      id: nextHost,
+      ...vhostInfo?.volume_info[nextHost],
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vhostInfo]);
-
-  const optionRender = useMemo(() => {
-    return (option: any) => {
-      if (showUsageStatus) {
-        const percentage =
-          vhostInfo?.volume_info[option.label]?.usage?.percentage;
-        return (
-          <Flex justify="between" align="center">
-            <Badge
-              // @ts-ignore
-              color={usageIndicatorColor(percentage)}
-              text={option.label}
-            />
-            <Button type="link" size="small" icon={<InfoCircleOutlined />} />
-          </Flex>
-        );
-      }
-      return option.label;
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vhostInfo]);
 
@@ -94,23 +80,41 @@ const StorageSelect: React.FC<Props> = ({
       placeholder={t('data.SelectStorageHost')}
       loading={isLoadingVhostInfo}
       style={{
+        // TODO: not good to hardcode
         minWidth: 165,
-        direction: 'ltr',
       }}
       // @ts-ignore
-      value={state?.id || state}
+      value={controllableState}
       onChange={(host) => {
-        setState({
+        setControllableState({
           id: host,
           ...(vhostInfo?.volume_info[host] || {}),
         });
       }}
+      optionLabelProp="value"
       options={_.map(vhostInfo?.allowed, (host) => ({
-        label: host,
+        label: showUsageStatus ? (
+          <Flex justify="between" align="center">
+            {/* TODO: add tooltip for '여유/주의/부족' */}
+            {/* TODO: check the related configuration */}
+            {/* TODO: handle the case usage info is not provided */}
+            <Badge
+              // @ts-ignore
+              color={usageIndicatorColor(
+                vhostInfo?.volume_info[host]?.usage?.percentage,
+              )}
+              text={host}
+            />
+            {/* TODO:  */}
+            <Button type="link" size="small" icon={<InfoCircleOutlined />} />
+          </Flex>
+        ) : (
+          host
+        ),
         value: host,
       }))}
-      optionRender={optionRender}
-      {...selectProps}
+      // optionRender={optionRender}
+      {...partialSelectProps}
     />
   );
 };
