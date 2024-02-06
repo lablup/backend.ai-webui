@@ -718,8 +718,13 @@ type Endpoint implements Item {
   id: ID
   endpoint_id: UUID
   image: String
-  architecture: String
+
+  """Added at 23.09.9"""
+  image_id: UUID
+
+  """Added at 23.09.9"""
   image_row: Image
+  architecture: String
   domain: String
   project: String
   resource_group: String
