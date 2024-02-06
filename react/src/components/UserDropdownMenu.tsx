@@ -12,10 +12,10 @@ import {
   SecurityScanOutlined,
   ExclamationCircleOutlined,
   LockOutlined,
-  HolderOutlined,
   FileTextOutlined,
   LogoutOutlined,
   LoadingOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
@@ -132,7 +132,7 @@ const UserDropdownMenu: React.FC = () => {
     {
       label: t('webui.menu.Preferences'),
       key: 'preferences',
-      icon: <HolderOutlined />,
+      icon: <SettingOutlined />,
       onClick: () => {
         webuiNavigate('/usersettings', {
           params: {
