@@ -138,7 +138,7 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
               label: (
                 <>
                   {t('session.Running') +
-                    ` (${keypair.concurrency_used}/${keypairResourcePolicy.max_concurrent_sessions})`}
+                    ` (${keypair.concurrency_used}/${keypairResourcePolicy.max_concurrent_sessions === 1000000 ? '∞' : keypairResourcePolicy.max_concurrent_sessions})`}
                   {/* <Tooltip><InfoCircleOutlined/></Tooltip> */}
                 </>
               ),
