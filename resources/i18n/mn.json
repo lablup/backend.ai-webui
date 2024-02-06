@@ -613,7 +613,9 @@
       "CloneFolder": "Фолдерыг хувилах",
       "LeaveFolder": "Фолдерыг орхи",
       "ShareFolder": "Фолдер хуваалцах",
-      "ModifyPermissions": "Зөвшөөрлийг өөрчлөх"
+      "ModifyPermissions": "Зөвшөөрлийг өөрчлөх",
+      "Restore": "Сэргээх",
+      "DeleteForever": "Бүрмөсөн устгах"
     },
     "explorer": {
       "Delete": "Устгах ...",
@@ -710,14 +712,16 @@
       "CannotBeUndone": "АНХААРУУЛГА: үүнийг буцаах боломжгүй!",
       "LogDeletion": "Бүртгэлийн бүх мессежийг устгахдаа итгэлтэй байна уу?",
       "WillBeAppliedToNewSessions": "Энэхүү шинэчлэлтийг шинэ Sessionүүдэд ашиглах болно.",
-      "Required": "Шаардлагатай"
+      "Required": "Шаардлагатай",
+      "DeleteForeverDesc": "Сонгосон зүйлс үүрд устах бөгөөд та тэдгээрийг сэргээх боломжгүй болно."
     },
     "ask": {
       "DoYouWantToProceed": "Та үргэлжлүүлэхийг хүсч байна уу?"
     },
     "title": {
       "LetsDouble-Check": "Давхар шалгуулъя",
-      "Notice": "Анхаар"
+      "Notice": "Анхаар",
+      "DeleteForever": "Бүрмөсөн устгах уу?"
     },
     "ErrorOccurred": "Алдаа гарлаа",
     "error": {

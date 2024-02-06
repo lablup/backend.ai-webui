@@ -63,6 +63,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({ type: Boolean }) enableStorageProxy = false;
   @property({ type: Boolean }) enableInferenceWorkload = false;
   @property({ type: Boolean }) supportModelStore = false;
+  @property({ type: Boolean }) supportVFolderTrashBin = false;
   @property({ type: Boolean }) authenticated = false;
   @property({ type: String }) vhost = '';
   @property({ type: String }) selectedVhost = '';
@@ -153,7 +154,7 @@ export default class BackendAIData extends BackendAIPage {
         mwc-tab-bar {
           --mdc-theme-primary: var(--general-sidebar-selected-color);
           --mdc-text-transform: none;
-          --mdc-tab-color-default: var(--general-tabbar-background-color);
+          --mdc-tab-color-default: var(--general-tabbar-tab-disabled-color);
           --mdc-tab-text-label-color-default: var(
             --general-tabbar-tab-disabled-color
           );
@@ -343,6 +344,15 @@ export default class BackendAIData extends BackendAIPage {
                       ></mwc-tab>
                     `
                   : html``}
+                ${this.supportVFolderTrashBin
+                  ? html`
+                      <mwc-tab
+                        title="trash-bin"
+                        icon="delete"
+                        @click="${(e) => this._showTab(e.target)}"
+                      ></mwc-tab>
+                    `
+                  : html``}
               </mwc-tab-bar>
               <span class="flex"></span>
               <mwc-button
@@ -421,6 +431,22 @@ export default class BackendAIData extends BackendAIPage {
                     ?active="${this.active === true &&
                     this._activeTab === 'modelStore'}"
                   ></backend-ai-react-model-store-list>
+                `
+              : html``}
+            ${this.supportVFolderTrashBin
+              ? html`
+                  <div
+                    id="trash-bin-folder-lists"
+                    class="tab-content"
+                    style="display:none;"
+                  >
+                    <backend-ai-storage-list
+                      id="trash-bin-folder-storage"
+                      storageType="deletePendingOrDeleteOngoing"
+                      ?active="${this.active === true &&
+                      this._activeTab === 'trash-bin'}"
+                    ></backend-ai-storage-list>
+                  </div>
                 `
               : html``}
           </div>
@@ -918,6 +944,8 @@ export default class BackendAIData extends BackendAIPage {
       this.supportModelStore =
         globalThis.backendaiclient.supports('model-store') &&
         globalThis.backendaiclient._config.supportModelStore;
+      this.supportVFolderTrashBin =
+        globalThis.backendaiclient.supports('vfolder-trash-bin');
       if (this.enableInferenceWorkload && !this.usageModes.includes('Model')) {
         this.usageModes.push('Model');
       }

@@ -350,7 +350,9 @@
       "TypeFolderNameToDelete": "Kirjoita poistettavan kansion nimi",
       "TypeFolderNameToLeave": "Kirjoita poistuvan kansion nimi",
       "TypeNewFolderName": "Kirjoita uuden kansion nimi",
-      "View": "Näytä"
+      "View": "Näytä",
+      "Restore": "Palauttaa",
+      "DeleteForever": "Poista ikuisesti"
     },
     "invitation": {
       "FolderSharingNotAvailableToUser": "Kansioiden jakaminen ei ole käytettävissä pyydetyille käyttäjille:",
@@ -393,13 +395,15 @@
     },
     "title": {
       "LetsDouble-Check": "Tupla-tarkistetaan",
-      "Notice": "Ilmoitus"
+      "Notice": "Ilmoitus",
+      "DeleteForever": "Poistetaanko ikuisesti?"
     },
     "warning": {
       "CannotBeUndone": "VAROITUS: tätä ei voi perua!",
       "LogDeletion": "Haluatko varmasti poistaa kaikki lokiviestit?",
       "Required": "Vaadittu",
-      "WillBeAppliedToNewSessions": "Tätä päivitystä sovelletaan uusiin istuntoihin."
+      "WillBeAppliedToNewSessions": "Tätä päivitystä sovelletaan uusiin istuntoihin.",
+      "DeleteForeverDesc": "Valitut kohteet poistetaan pysyvästi, etkä voi palauttaa niitä."
     }
   },
   "eduapi": {

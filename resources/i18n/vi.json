@@ -613,7 +613,9 @@
       "CloneFolder": "Sao chép thư mục",
       "ShareFolder": "Chia sẻ thư mục",
       "ModifyPermissions": "Sửa đổi quyền",
-      "LeaveFolder": "Rời khỏi thư mục"
+      "LeaveFolder": "Rời khỏi thư mục",
+      "Restore": "Khôi phục",
+      "DeleteForever": "Xóa vĩnh viễn"
     },
     "explorer": {
       "Delete": "Xóa bỏ...",
@@ -710,14 +712,16 @@
       "CannotBeUndone": "CẢNH BÁO: không thể hoàn tác thao tác này!",
       "LogDeletion": "Bạn có chắc chắn muốn xóa tất cả các thông báo nhật ký không?",
       "WillBeAppliedToNewSessions": "Bản cập nhật này sẽ được áp dụng cho các phiên mới.",
-      "Required": "Yêu cầu"
+      "Required": "Yêu cầu",
+      "DeleteForeverDesc": "Các mục đã chọn sẽ bị xóa vĩnh viễn và bạn sẽ không thể khôi phục chúng."
     },
     "ask": {
       "DoYouWantToProceed": "Bạn có muốn tiếp tục?"
     },
     "title": {
       "LetsDouble-Check": "Hãy kiểm tra kỹ",
-      "Notice": "Để ý"
+      "Notice": "Để ý",
+      "DeleteForever": "Xóa vĩnh viễn?"
     },
     "ErrorOccurred": "Xảy ra lỗi",
     "error": {

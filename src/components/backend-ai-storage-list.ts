@@ -129,6 +129,8 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({ type: Object }) _boundTypeRenderer = Object();
   @property({ type: Object }) _boundFolderListRenderer = Object();
   @property({ type: Object }) _boundControlFolderListRenderer = Object();
+  @property({ type: Object }) _boundTrashBinControlFolderListRenderer =
+    Object();
   @property({ type: Object }) _boundControlFileListRenderer = Object();
   @property({ type: Object }) _boundPermissionViewRenderer = Object();
   @property({ type: Object }) _boundOwnerRenderer = Object();
@@ -220,6 +222,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundTypeRenderer = this.typeRenderer.bind(this);
     this._boundControlFolderListRenderer =
       this.controlFolderListRenderer.bind(this);
+    this._boundTrashBinControlFolderListRenderer =
+      this.trashBinControlFolderListRenderer.bind(this);
     this._boundControlFileListRenderer =
       this.controlFileListRenderer.bind(this);
     this._boundPermissionViewRenderer = this.permissionViewRenderer.bind(this);
@@ -716,12 +720,23 @@ export default class BackendAiStorageList extends BackendAIPage {
                 ></vaadin-grid-column>
               `
             : html``}
-          <vaadin-grid-column
-            auto-width
-            resizable
-            header="${_t('data.folders.Control')}"
-            .renderer="${this._boundControlFolderListRenderer}"
-          ></vaadin-grid-column>
+          ${this.storageType !== 'deletePendingOrDeleteOngoing'
+            ? html`
+                <vaadin-grid-column
+                  auto-width
+                  resizable
+                  header="${_t('data.folders.Control')}"
+                  .renderer="${this._boundControlFolderListRenderer}"
+                ></vaadin-grid-column>
+              `
+            : html`
+                <vaadin-grid-column
+                  auto-width
+                  resizable
+                  header="${_t('data.folders.Control')}"
+                  .renderer="${this._boundTrashBinControlFolderListRenderer}"
+                ></vaadin-grid-column>
+              `}
         </vaadin-grid>
         <backend-ai-list-status
           id="list-status"
@@ -1544,6 +1559,24 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
+      <backend-ai-dialog id="delete-forever-confirm-dialog" fixed backdrop>
+        <span slot="title">${_t('dialog.title.DeleteForever')}</span>
+        <div slot="content">
+          <p>${_t('dialog.warning.DeleteForeverDesc')}</p>
+        </div>
+        <div
+          slot="footer"
+          class="horizontal end-justified flex layout"
+          style="gap:5px;"
+        >
+          <mwc-button outlined @click="${(e) => this._hideDialog(e)}">
+            ${_t('button.Cancel')}
+          </mwc-button>
+          <mwc-button raised @click="${(e) => this._deleteForever(e)}">
+            ${_t('data.folders.DeleteForever')}
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 
@@ -1672,8 +1705,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         <div
-          id="controls"
-          class="layout flex horizontal start-justified center wrap"
+          class="controls layout flex horizontal start-justified center wrap"
           folder-id="${rowData.item.id}"
           folder-name="${rowData.item.name}"
           folder-type="${rowData.item.type}"
@@ -1878,8 +1910,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         <div
-          id="controls"
-          class="layout flex center wrap"
+          class="controls layout flex center wrap"
           folder-id="${rowData.item.id}"
           folder-name="${rowData.item.name}"
           folder-type="${rowData.item.type}"
@@ -2037,6 +2068,62 @@ export default class BackendAiStorageList extends BackendAIPage {
                 ></vaadin-tooltip>
               `
             : html``}
+        </div>
+      `,
+      root,
+    );
+  }
+
+  /**
+   * Render trash bin control folder options - infoFolder, restore, delete forever, etc.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
+  trashBinControlFolderListRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div
+          class="controls layout flex center wrap"
+          folder-id="${rowData.item.id}"
+          folder-name="${rowData.item.name}"
+          folder-type="${rowData.item.type}"
+        >
+          <mwc-icon-button
+            class="fg green controls-running"
+            icon="info"
+            @click="${(e) => this._infoFolder(e)}"
+            id="${rowData.item.id + '-folderinfo'}"
+          ></mwc-icon-button>
+          <vaadin-tooltip
+            for="${rowData.item.id + '-folderinfo'}"
+            text="${_t('data.folders.FolderInfo')}"
+            position="top-start"
+          ></vaadin-tooltip>
+          <mwc-icon-button
+            class="fg blue controls-running"
+            icon="redo"
+            @click="${(e) => this._restoreFolder(e)}"
+            id="${rowData.item.id + '-restore'}"
+          ></mwc-icon-button>
+          <vaadin-tooltip
+            for="${rowData.item.id + '-restore'}"
+            text="${_t('data.folders.Restore')}"
+            position="top-start"
+          ></vaadin-tooltip>
+          <mwc-icon-button
+            class="fg red controls-running"
+            icon="delete_forever"
+            @click="${(e) => this.openDialog('delete-forever-confirm-dialog')}"
+            id="${rowData.item.id + '-delete-forever'}"
+          ></mwc-icon-button>
+          <vaadin-tooltip
+            for="${rowData.item.id + '-delete-forever'}"
+            text="${_t('data.folders.DeleteForever')}"
+            position="top-start"
+          ></vaadin-tooltip>
         </div>
       `,
       root,
@@ -2400,7 +2487,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     globalThis.backendaiclient.vfolder
       .list(groupId)
       .then((value) => {
-        const folders = value.filter((item) => {
+        let folders = value.filter((item) => {
           if (
             !this.enableInferenceWorkload &&
             this.storageType === 'general' &&
@@ -2431,8 +2518,27 @@ export default class BackendAiStorageList extends BackendAIPage {
             item.usage_mode == 'model'
           ) {
             return item;
+          } else if (
+            this.storageType === 'deletePendingOrDeleteOngoing' &&
+            (item.status === 'delete-pending' ||
+              item.status === 'delete-ongoing' ||
+              item.status === 'deleted-complete') // TODO: delete this line later
+          ) {
+            return item;
           }
         });
+        // Filter folder lists whose status is `delete-pending` or `delete-ongoing`
+        // for storageTypes other than `delete-pending-deletion-ongoing`
+        if (this.storageType !== 'deletePendingOrDeleteOngoing') {
+          folders = folders.filter(
+            (item) =>
+              item.status !== 'delete-pending' &&
+              item.status !== 'delete-ongoing' &&
+              item.status !== 'deleted-complete', // TODO: delete this line later
+          );
+        }
+        // Filter `delete-complete` status folders.
+        folders = folders.filter((item) => item.status !== 'delete-complete');
         this.folders = folders;
         this._triggerFolderListChanged();
         if (this.folders.length == 0) {
@@ -2602,21 +2708,21 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   _getControlName(e) {
     const controller = e.target;
-    const controls = controller.closest('#controls');
+    const controls = controller.closest('.controls');
     const folderName = controls.getAttribute('folder-name');
     return folderName;
   }
 
   _getControlId(e) {
     const controller = e.target;
-    const controls = controller.closest('#controls');
+    const controls = controller.closest('.controls');
     const folderId = controls.getAttribute('folder-id');
     return folderId;
   }
 
   _getControlType(e) {
     const controller = e.target;
-    const controls = controller.closest('#controls');
+    const controls = controller.closest('.controls');
     const folderId = controls.getAttribute('folder-type');
     return folderId;
   }
@@ -3580,9 +3686,8 @@ export default class BackendAiStorageList extends BackendAIPage {
             this.uploadFiles[this.uploadFiles.indexOf(fileObj)];
           if (!this._uploadFlag) {
             upload.abort();
-            this.uploadFiles[
-              this.uploadFiles.indexOf(fileObj)
-            ].caption = `Canceling...`;
+            this.uploadFiles[this.uploadFiles.indexOf(fileObj)].caption =
+              `Canceling...`;
             this.uploadFiles = this.uploadFiles.slice();
             setTimeout(() => {
               this.uploadFiles = [];
@@ -3615,9 +3720,8 @@ export default class BackendAiStorageList extends BackendAIPage {
           const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(1);
           this.uploadFiles[this.uploadFiles.indexOf(fileObj)].progress =
             bytesUploaded / bytesTotal;
-          this.uploadFiles[
-            this.uploadFiles.indexOf(fileObj)
-          ].caption = `${percentage}% / Time left : ${estimated_time_left} / Speed : ${speed}`;
+          this.uploadFiles[this.uploadFiles.indexOf(fileObj)].caption =
+            `${percentage}% / Time left : ${estimated_time_left} / Speed : ${speed}`;
           this.uploadFiles = this.uploadFiles.slice();
         },
         onSuccess: () => {
@@ -4377,6 +4481,42 @@ export default class BackendAiStorageList extends BackendAIPage {
         };
       }
     };
+  }
+
+  /**
+   * Restore folder. Change the folder status from `delete-pending` to `ready`.
+   * */
+  _restoreFolder(e) {
+    const folderName = this._getControlName(e);
+    globalThis.backendaiclient.vfolder
+      // TODO: replace `update_folder` with `restore_folder` when the API is updated
+      .update_folder(
+        {
+          status: 'ready',
+        },
+        folderName,
+      )
+      .then(async (resp) => {
+        this.notification.text = _text('data.folders.FolderDeleted');
+        this.notification.show();
+        await this.refreshFolderList();
+        this._triggerFolderListChanged();
+      })
+      .catch((err) => {
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
+  }
+
+  /**
+   * Call `delete_from_trash_bin` API to delete the folder permanently.
+   * */
+  _deleteForever(e) {
+    // const folderName = this._getControlName(e);
+    this.closeDialog('delete-forever-confirm-dialog');
   }
 }
 declare global {

@@ -613,7 +613,9 @@
       "CloneFolder": "Folder klon",
       "LeaveFolder": "Tinggalkan folder",
       "ShareFolder": "Folder berbagi",
-      "ModifyPermissions": "Memodifikasi izin"
+      "ModifyPermissions": "Memodifikasi izin",
+      "Restore": "Memulihkan",
+      "DeleteForever": "Hapus selamanya"
     },
     "explorer": {
       "Delete": "Menghapus...",
@@ -710,14 +712,16 @@
       "CannotBeUndone": "PERINGATAN: ini tidak dapat dibatalkan!",
       "LogDeletion": "Anda yakin ingin menghapus semua pesan log?",
       "WillBeAppliedToNewSessions": "Pembaruan ini akan diterapkan ke sesi baru.",
-      "Required": "Diperlukan"
+      "Required": "Diperlukan",
+      "DeleteForeverDesc": "Item yang dipilih akan dihapus selamanya dan Anda tidak dapat memulihkannya."
     },
     "ask": {
       "DoYouWantToProceed": "Apakah Anda ingin lanjut?"
     },
     "title": {
       "LetsDouble-Check": "Mari Periksa Kembali",
-      "Notice": "Pemberitahuan"
+      "Notice": "Pemberitahuan",
+      "DeleteForever": "Hapus selamanya?"
     },
     "ErrorOccurred": "Terjadi Galat",
     "error": {

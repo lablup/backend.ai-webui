@@ -350,7 +350,9 @@
       "TypeFolderNameToDelete": "Escriba el nombre de la carpeta que desea eliminar",
       "TypeFolderNameToLeave": "Escriba el nombre de la carpeta que desea abandonar",
       "TypeNewFolderName": "Escriba el nombre de la nueva carpeta",
-      "View": "Ver"
+      "View": "Ver",
+      "Restore": "Restaurar",
+      "DeleteForever": "Borrar para siempre"
     },
     "invitation": {
       "FolderSharingNotAvailableToUser": "El uso compartido de carpetas no está disponible para los usuarios solicitados:",
@@ -393,13 +395,15 @@
     },
     "title": {
       "LetsDouble-Check": "Doble comprobación",
-      "Notice": "Aviso"
+      "Notice": "Aviso",
+      "DeleteForever": "¿Borrar para siempre?"
     },
     "warning": {
       "CannotBeUndone": "ATENCIÓN: ¡esto no se puede deshacer!",
       "LogDeletion": "¿Estás seguro de que quieres borrar todos los mensajes de registro?",
       "Required": "Requerido",
-      "WillBeAppliedToNewSessions": "Esta actualización se aplicará a las nuevas sesiones."
+      "WillBeAppliedToNewSessions": "Esta actualización se aplicará a las nuevas sesiones.",
+      "DeleteForeverDesc": "Los elementos seleccionados se eliminarán para siempre y no podrás restaurarlos."
     }
   },
   "eduapi": {

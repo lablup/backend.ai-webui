@@ -615,7 +615,9 @@
       "CloneFolder": "Klonowanie folderu",
       "ShareFolder": "Folder udostępniony",
       "ModifyPermissions": "Modyfikowanie uprawnień",
-      "LeaveFolder": "Zostaw folder"
+      "LeaveFolder": "Zostaw folder",
+      "Restore": "Przywrócić",
+      "DeleteForever": "Usuń na zawsze"
     },
     "explorer": {
       "Delete": "Kasować...",
@@ -712,14 +714,16 @@
       "CannotBeUndone": "UWAGA: nie można tego cofnąć!",
       "LogDeletion": "Czy na pewno chcesz usunąć wszystkie komunikaty dziennika?",
       "WillBeAppliedToNewSessions": "Ta aktualizacja zostanie zastosowana do nowych sesji.",
-      "Required": "Wymagane"
+      "Required": "Wymagane",
+      "DeleteForeverDesc": "Wybrane elementy zostaną usunięte na zawsze i nie będzie można ich przywrócić."
     },
     "ask": {
       "DoYouWantToProceed": "Czy chcesz kontynuować?"
     },
     "title": {
       "LetsDouble-Check": "Sprawdźmy dokładnie",
-      "Notice": "Zawiadomienie"
+      "Notice": "Zawiadomienie",
+      "DeleteForever": "Usuń na zawsze?"
     },
     "ErrorOccurred": "Wystąpił błąd",
     "error": {

@@ -613,7 +613,9 @@
       "CloneFolder": "Klon folder",
       "ShareFolder": "Kongsi folder",
       "ModifyPermissions": "Ubah suai kebenaran",
-      "LeaveFolder": "Tinggalkan folder"
+      "LeaveFolder": "Tinggalkan folder",
+      "Restore": "Pulihkan",
+      "DeleteForever": "Padam selama-lamanya"
     },
     "explorer": {
       "Delete": "Padamkan ...",
@@ -710,14 +712,16 @@
       "CannotBeUndone": "PERINGATAN: ini tidak boleh dibuat asal!",
       "LogDeletion": "Adakah anda pasti mahu memadamkan semua mesej log?",
       "WillBeAppliedToNewSessions": "Kemas kini ini akan digunakan untuk sesi baru.",
-      "Required": "Diperlukan"
+      "Required": "Diperlukan",
+      "DeleteForeverDesc": "Item yang dipilih akan dipadamkan selama-lamanya dan anda tidak akan dapat memulihkannya."
     },
     "ask": {
       "DoYouWantToProceed": "Adakah anda mahu meneruskan?"
     },
     "title": {
       "LetsDouble-Check": "Mari Periksa Semula",
-      "Notice": "Notis"
+      "Notice": "Notis",
+      "DeleteForever": "Padam Selamanya?"
     },
     "ErrorOccurred": "Ralat Berlaku",
     "error": {
