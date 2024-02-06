@@ -119,7 +119,15 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           supported_accelerators
           digest
           installed
-          installed_agents
+          resource_limits {
+            key
+            min
+            max
+          }
+          labels {
+            key
+            value
+          }
         }
         architecture
         name
@@ -436,7 +444,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   cluster_size: endpoint?.cluster_size,
                   openToPublic: endpoint?.open_to_public,
                   environments: {
-                    version: `${endpoint?.image}@${endpoint?.architecture}`,
+                    environment: endpoint?.image_row?.name,
+                    version: `${endpoint?.image}@${endpoint?.image_row?.architecture}`,
+                    image: endpoint?.image_row,
                   },
                 }
               : {
