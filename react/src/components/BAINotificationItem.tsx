@@ -5,7 +5,6 @@ import {
   ClockCircleOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
-import { useControllableValue } from 'ahooks';
 import { Card, List, Progress, Typography, theme } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -24,9 +23,7 @@ const BAINotificationItem: React.FC<{
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [showExtraDescription, setShowExtraDescription] = useState(false);
-  const [ellipsis, setEllipsis] = useControllableValue({
-    defaultValue: allowEllipsis,
-  });
+  const [ellipsis, setEllipsis] = useState(allowEllipsis ?? false);
   return (
     <List.Item>
       <Flex direction="column" align="stretch" gap={'xxs'}>
@@ -63,7 +60,7 @@ const BAINotificationItem: React.FC<{
             }}
             ellipsis={ellipsis ? { rows: 3 } : false}
             onClick={() => {
-              setEllipsis(!ellipsis);
+              !allowEllipsis && setEllipsis(!ellipsis);
             }}
           >
             {notification.message}
@@ -74,7 +71,7 @@ const BAINotificationItem: React.FC<{
           <Typography.Paragraph
             ellipsis={ellipsis ? { rows: 3 } : false}
             onClick={() => {
-              setEllipsis(!ellipsis);
+              !allowEllipsis && setEllipsis(!ellipsis);
             }}
           >
             {notification.description}
@@ -114,7 +111,7 @@ const BAINotificationItem: React.FC<{
               copyable
               ellipsis={ellipsis ? { rows: 3 } : false}
               onClick={() => {
-                setEllipsis(!ellipsis);
+                !allowEllipsis && setEllipsis(!ellipsis);
               }}
             >
               {notification.extraDescription}
