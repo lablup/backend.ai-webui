@@ -374,7 +374,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       // FIXME: temporally convert to number if the typeof accelerator is string
       accelerator:
         typeof resourceSlot[keyName] === 'string'
-          ? keyName == 'cuda.shares'
+          ? keyName === 'cuda.shares'
             ? parseFloat(resourceSlot[keyName])
             : parseInt(resourceSlot[keyName])
           : resourceSlot[keyName],
