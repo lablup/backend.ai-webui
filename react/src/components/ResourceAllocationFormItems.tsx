@@ -88,12 +88,6 @@ const ResourceAllocationFormItems: React.FC<
 
   const currentProject = useCurrentProjectValue();
 
-  // Form watch
-  // const currentResourceGroup = Form.useWatch('resourceGroup', {
-  //   form,
-  //   preserve: true,
-  // });
-
   // use `useState` instead of `Form.useWatch` for handling `resourcePreset.check` pending state
   const [currentResourceGroup, setCurrentResourceGroup] = useState<string>(
     form.getFieldValue('resourceGroup'),
@@ -720,6 +714,23 @@ const ResourceAllocationFormItems: React.FC<
                             max: resourceLimits.accelerators[
                               currentAcceleratorType
                             ]?.max,
+                          },
+                          {
+                            validator: async (rule: any, value: number) => {
+                              if (
+                                _.endsWith(currentAcceleratorType, 'shares') &&
+                                form.getFieldValue('cluster_size') >= 2 &&
+                                value % 1 !== 0
+                              ) {
+                                return Promise.reject(
+                                  t(
+                                    'session.launcher.OnlyAllowsDiscreteNumberByClusterSize',
+                                  ),
+                                );
+                              } else {
+                                return Promise.resolve();
+                              }
+                            },
                           },
                           {
                             warningOnly:
