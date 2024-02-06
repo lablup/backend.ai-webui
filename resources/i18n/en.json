@@ -264,6 +264,7 @@
       "ResourceAllocationPerContainer": "Resource Allocation Per Container",
       "NumberOfContainer": "Number of container",
       "ErrorCanNotExceedRemaining": "Cannot be set to greater than the remaining resources ({{amount}}).",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Only integer is allowed when cluster size is not less than 2.",
       "EnterEnvironmentVariable": "Enter Variable name",
       "EnvironmentVariableNamePatternError": "Variable name must start with a letter or underscore, and can only contain letters, numbers, and underscores.",
       "EnvironmentVariableDuplicateName": "A variable name that already exists.",

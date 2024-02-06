@@ -256,7 +256,8 @@
       "EnvironmentVariableDuplicateName": "已经存在的变量名。",
       "Template": "会议模板",
       "EnableAutomaticShmem": "自动共享内存",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "當簇大小不小於 2 時，只允許使用整數。"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",

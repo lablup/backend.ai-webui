@@ -258,7 +258,8 @@
       "EnableAutomaticShmem": "Автоматическая разделяемая память",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Допускается только целое число, если размер кластера не меньше 2."
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",

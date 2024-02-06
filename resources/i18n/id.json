@@ -256,7 +256,8 @@
       "EnvironmentVariableDuplicateName": "Nama variabel yang sudah ada.",
       "Template": "Templat Sesi",
       "EnableAutomaticShmem": "Memori bersama otomatis",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Hanya bilangan bulat yang diperbolehkan jika ukuran cluster tidak kurang dari 2."
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",

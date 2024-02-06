@@ -256,7 +256,8 @@
       "EnvironmentVariableDuplicateName": "Zaten var olan bir değişken adı.",
       "Template": "Oturum Şablonu",
       "EnableAutomaticShmem": "Otomatik paylaşılan bellek",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Küme boyutu 2'den az olmadığında yalnızca tam sayılara izin verilir."
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
