@@ -936,7 +936,8 @@
     "RegistrySuccessfullyModified": "Registro modificato con successo.",
     "NoRegistryToDisplay": "Nessun registro da visualizzare",
     "ModifyRegistry": "Modificare il registro",
-    "ConfirmNoUserName": "Utente e password non specificati, si desidera salvare?"
+    "ConfirmNoUserName": "Utente e password non specificati, si desidera salvare?",
+    "DescURLFormat": "Tipo di URL non valido"
   },
   "resourceGroup": {
     "ResourceGroups": "Gruppi di risorse",
@@ -1460,7 +1461,9 @@
     "TurnOffTotp": "Disattivare l'autenticazione a due fattori",
     "ConfirmTotpRemovalBody": "Siete sicuri di non voler utilizzare l'autenticazione a due fattori?",
     "RemoveTotpSetupCompleted": "2FA disabilitato",
-    "OTP": "Password unica"
+    "OTP": "Password unica",
+    "EnterConfirmationCode": "Ora inserisci l'OTP generato dall'autenticatore per verificare.",
+    "RequireOTP": "Scrivi OTP."
   },
   "OpenVSCodeRemote": "Aprire il codice locale di Visual Studio",
   "inputLimit": {

@@ -938,7 +938,8 @@
     "RegistrySuccessfullyModified": "Реестр успешно модифицирован.",
     "ModifyRegistry": "Изменение реестра",
     "NoRegistryToDisplay": "Отсутствие отображаемых реестров",
-    "ConfirmNoUserName": "Пользователь и пароль не указаны, хотите сохранить?"
+    "ConfirmNoUserName": "Пользователь и пароль не указаны, хотите сохранить?",
+    "DescURLFormat": "Неверный тип URL"
   },
   "resourceGroup": {
     "ResourceGroups": "Группы ресурсов",
@@ -1373,7 +1374,9 @@
     "ConfirmTotpRemovalBody": "Уверены ли вы в том, что отказались от использования двухфакторной аутентификации?",
     "TotpSetupNotAvailable": "Двухфакторная аутентификация не может быть настроена.",
     "TurnOffTotp": "Отключите двухфакторную аутентификацию",
-    "RemoveTotpSetupCompleted": "Отключенная 2FA"
+    "RemoveTotpSetupCompleted": "Отключенная 2FA",
+    "EnterConfirmationCode": "Теперь введите OTP, сгенерированный аутентификатором, для проверки.",
+    "RequireOTP": "Напишите ОТП."
   },
   "inputLimit": {
     "4to64chars": "(4~64 символа)"

@@ -111,6 +111,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         ) {
           endpoint(endpoint_id: $endpointId) {
             name
+            status
             endpoint_id
             image
             desired_session_count
@@ -265,7 +266,10 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           <Button
             type="primary"
             icon={<SettingOutlined />}
-            disabled={(endpoint?.desired_session_count || 0) < 0}
+            disabled={
+              (endpoint?.desired_session_count || 0) < 0 ||
+              endpoint?.status === 'DESTROYING'
+            }
             onClick={() => {
               setIsOpenModelServiceSettingModal(true);
             }}
@@ -380,6 +384,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           <Button
             type="primary"
             icon={<PlusOutlined />}
+            disabled={endpoint?.status === 'DESTROYING'}
             onClick={() => {
               setIsOpenTokenGenerationModal(true);
             }}

@@ -106,7 +106,7 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <UserInfoModal />
+        <UserInfoModal draggable />
       </DefaultProviders>
     );
   }),
@@ -117,7 +117,7 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <UserSettingsModal />
+        <UserSettingsModal draggable />
       </DefaultProviders>
     );
   }),

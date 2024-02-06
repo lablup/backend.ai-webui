@@ -936,7 +936,8 @@
     "RegistrySuccessfullyModified": "Бүртгэл амжилттай өөрчлөгдсөн.",
     "ModifyRegistry": "Бүртгэлийг өөрчлөх",
     "NoRegistryToDisplay": "Харуулах бүртгэл байхгүй",
-    "ConfirmNoUserName": "Хэрэглэгч болон нууц үгийг заагаагүй тул хадгалах уу?"
+    "ConfirmNoUserName": "Хэрэглэгч болон нууц үгийг заагаагүй тул хадгалах уу?",
+    "DescURLFormat": "Хүчингүй URL төрөл"
   },
   "resourceGroup": {
     "ResourceGroups": "Нөөцийн бүлгүүд",
@@ -1371,7 +1372,9 @@
     "ConfirmTotpRemovalBody": "Та хоёр хүчин зүйлийн баталгаажуулалтыг ашиглахаас татгалзахдаа итгэлтэй байна уу?",
     "TotpSetupNotAvailable": "Хоёр хүчин зүйлийн баталгаажуулалтыг тохируулах боломжгүй.",
     "TurnOffTotp": "Хоёр хүчин зүйлийн баталгаажуулалтыг унтраа",
-    "RemoveTotpSetupCompleted": "2FA-г идэвхгүй болгосон"
+    "RemoveTotpSetupCompleted": "2FA-г идэвхгүй болгосон",
+    "EnterConfirmationCode": "Одоо баталгаажуулахын тулд баталгаажуулагчийн үүсгэсэн OTP-г оруулна уу.",
+    "RequireOTP": "OTP бичнэ үү."
   },
   "inputLimit": {
     "4to64chars": "(4~64 тэмдэгт)"

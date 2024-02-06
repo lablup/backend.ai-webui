@@ -129,9 +129,6 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
   return (
     <BAIModal
       {...baiModalProps}
-      style={{
-        zIndex: 10000,
-      }}
       destroyOnClose
       title={t('storageHost.ResourcePolicySettings')}
       onOk={_onOk}
