@@ -1020,7 +1020,7 @@ const SessionLauncherPage = () => {
                       title={t('session.launcher.SessionType')}
                       size="small"
                       status={
-                        form.getFieldError('name').length > 0 ||
+                        form.getFieldError('sessionName').length > 0 ||
                         form.getFieldError(['batch', 'command']).length > 0 ||
                         form.getFieldError(['batch', 'scheduleDate']).length > 0
                           ? 'error'
@@ -1061,12 +1061,12 @@ const SessionLauncherPage = () => {
                         >
                           {form.getFieldValue('sessionType')}
                         </Descriptions.Item>
-                        {!_.isEmpty(form.getFieldValue('name')) && (
+                        {!_.isEmpty(form.getFieldValue('sessionName')) && (
                           <Descriptions.Item
                             label={t('session.launcher.SessionName')}
                             span={24}
                           >
-                            {form.getFieldValue('name')}
+                            {form.getFieldValue('sessionName')}
                           </Descriptions.Item>
                         )}
                         {sessionType === 'batch' && (
