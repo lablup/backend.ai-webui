@@ -75,9 +75,16 @@ type VFolderOperationStatus =
   | 'cloning'
   | 'mounted'
   | 'error'
+  | 'delete-pending'
   | 'delete-ongoing'
-  | 'deleted-complete'
-  | 'purge-ongoing';
+  | 'delete-complete'
+  | 'delete-error';
+
+type DeadVFolderStatus =
+  | 'delete-pending'
+  | 'delete-ongoing'
+  | 'delete-complete'
+  | 'delete-error';
 
 /**
  Backend AI Storage List
@@ -1653,9 +1660,19 @@ export default class BackendAiStorageList extends BackendAIPage {
       'cloning',
       'mounted',
       'error',
+      'delete-pending',
       'delete-ongoing',
       'deleted-complete',
-      'purge-ongoing',
+      'delete-error',
+    ].includes(status);
+  }
+
+  _isDeadVFolderStatus(status: DeadVFolderStatus) {
+    return [
+      'delete-pending',
+      'delete-ongoing',
+      'delete-complete',
+      'delete-error',
     ].includes(status);
   }
 
@@ -2522,21 +2539,16 @@ export default class BackendAiStorageList extends BackendAIPage {
             return item;
           } else if (
             this.storageType === 'deletePendingOrDeleteOngoing' &&
-            (item.status === 'delete-pending' ||
-              item.status === 'delete-ongoing' ||
-              item.status === 'deleted-complete') // TODO: delete this line later
+            this._isDeadVFolderStatus(item.status)
           ) {
             return item;
           }
         });
-        // Filter folder lists whose status is `delete-pending` or `delete-ongoing`
+        // Filter folder lists whose status is belonging to `DeadVFolderStatus`
         // for storageTypes other than `delete-pending-deletion-ongoing`
         if (this.storageType !== 'deletePendingOrDeleteOngoing') {
           folders = folders.filter(
-            (item) =>
-              item.status !== 'delete-pending' &&
-              item.status !== 'delete-ongoing' &&
-              item.status !== 'deleted-complete', // TODO: delete this line later
+            (item) => !this._isDeadVFolderStatus(item.status),
           );
         }
         // Filter `delete-complete` status folders.
@@ -4491,15 +4503,9 @@ export default class BackendAiStorageList extends BackendAIPage {
   _restoreFolder(e) {
     const folderName = this._getControlName(e);
     globalThis.backendaiclient.vfolder
-      // TODO: replace `update_folder` with `restore_folder` when the API is updated
-      .update_folder(
-        {
-          status: 'ready',
-        },
-        folderName,
-      )
+      .restore_from_trash_bin(folderName)
       .then(async (resp) => {
-        this.notification.text = _text('data.folders.FolderDeleted');
+        this.notification.text = _text('data.folders.FolderRestored');
         this.notification.show();
         await this.refreshFolderList();
         this._triggerFolderListChanged();
@@ -4517,7 +4523,22 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Call `delete_from_trash_bin` API to delete the folder permanently.
    * */
   _deleteForever(e) {
-    // const folderName = this._getControlName(e);
+    const folderName = this._getControlName(e);
+    globalThis.backendaiclient.vfolder
+      .delete_from_trash_bin(folderName)
+      .then(async (resp) => {
+        this.notification.text = _text('data.folders.FolderDeleted');
+        this.notification.show();
+        await this.refreshFolderList();
+        this._triggerFolderListChanged();
+      })
+      .catch((err) => {
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
     this.closeDialog('delete-forever-confirm-dialog');
   }
 }
