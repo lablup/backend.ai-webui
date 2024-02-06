@@ -2105,6 +2105,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button
             class="fg blue controls-running"
             icon="redo"
+            ?disabled=${rowData.item.status === 'delete-ongoing'}
             @click="${(e) => this._restoreFolder(e)}"
             id="${rowData.item.id + '-restore'}"
           ></mwc-icon-button>
@@ -2116,6 +2117,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button
             class="fg red controls-running"
             icon="delete_forever"
+            ?disabled=${rowData.item.status === 'delete-ongoing'}
             @click="${(e) => this.openDialog('delete-forever-confirm-dialog')}"
             id="${rowData.item.id + '-delete-forever'}"
           ></mwc-icon-button>
