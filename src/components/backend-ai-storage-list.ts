@@ -1579,7 +1579,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-button outlined @click="${(e) => this._hideDialog(e)}">
             ${_t('button.Cancel')}
           </mwc-button>
-          <mwc-button raised @click="${(e) => this._deleteForever(e)}">
+          <mwc-button raised @click="${() => this._deleteForever()}">
             ${_t('data.folders.DeleteForever')}
           </mwc-button>
         </div>
@@ -2135,7 +2135,10 @@ export default class BackendAiStorageList extends BackendAIPage {
             class="fg red controls-running"
             icon="delete_forever"
             ?disabled=${rowData.item.status === 'delete-ongoing'}
-            @click="${(e) => this.openDialog('delete-forever-confirm-dialog')}"
+            @click="${(e) => {
+              this.deleteFolderName = this._getControlName(e);
+              this.openDialog('delete-forever-confirm-dialog');
+            }}"
             id="${rowData.item.id + '-delete-forever'}"
           ></mwc-icon-button>
           <vaadin-tooltip
@@ -4522,10 +4525,9 @@ export default class BackendAiStorageList extends BackendAIPage {
   /**
    * Call `delete_from_trash_bin` API to delete the folder permanently.
    * */
-  _deleteForever(e) {
-    const folderName = this._getControlName(e);
+  _deleteForever() {
     globalThis.backendaiclient.vfolder
-      .delete_from_trash_bin(folderName)
+      .delete_from_trash_bin(this.deleteFolderName)
       .then(async (resp) => {
         this.notification.text = _text('data.folders.FolderDeleted');
         this.notification.show();
