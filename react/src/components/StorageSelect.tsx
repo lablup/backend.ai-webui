@@ -19,12 +19,10 @@ export type VolumeInfo = {
   sftp_scaling_groups: string[];
 };
 interface Props extends Omit<SelectProps, 'value' | 'onChange'> {
-  //  TODO: only string
-  value?: string;
-  // TODO: revet to (value, volumnInfo) => void
-  onChange?: React.Dispatch<React.SetStateAction<VolumeInfo | undefined>>;
   autoSelectType?: 'usage' | 'default';
   showUsageStatus?: boolean;
+  value?: string;
+  onChange?: React.Dispatch<React.SetStateAction<VolumeInfo | undefined>>;
 }
 // TODO: use React.forwardRef
 const StorageSelect: React.FC<Props> = ({
@@ -48,12 +46,13 @@ const StorageSelect: React.FC<Props> = ({
   });
 
   // TODO: default value
-  const [controllableState, setControllableState] = useControllableValue({
-    value,
-    onChange,
-    defaultValue,
-  });
-
+  const controllableValueProps = _.omitBy(
+    { value, onChange, defaultValue },
+    _.isUndefined,
+  );
+  const [controllableState, setControllableState] = useControllableValue(
+    controllableValueProps,
+  );
   useEffect(() => {
     if (!autoSelectType) return;
     let nextHost = vhostInfo?.default ?? vhostInfo?.allowed[0] ?? '';
@@ -69,11 +68,10 @@ const StorageSelect: React.FC<Props> = ({
     }
     setControllableState(nextHost, {
       id: nextHost,
-      ...vhostInfo?.volume_info[nextHost],
+      ...(vhostInfo?.volume_info[nextHost] || {}),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vhostInfo]);
-
   return (
     <Select
       filterOption={true}
@@ -83,10 +81,9 @@ const StorageSelect: React.FC<Props> = ({
         // TODO: not good to hardcode
         minWidth: 165,
       }}
-      // @ts-ignore
       value={controllableState}
       onChange={(host) => {
-        setControllableState({
+        setControllableState(host, {
           id: host,
           ...(vhostInfo?.volume_info[host] || {}),
         });
@@ -96,16 +93,14 @@ const StorageSelect: React.FC<Props> = ({
         label: showUsageStatus ? (
           <Flex justify="between" align="center">
             {/* TODO: add tooltip for '여유/주의/부족' */}
-            {/* TODO: check the related configuration */}
-            {/* TODO: handle the case usage info is not provided */}
-            <Badge
-              // @ts-ignore
-              color={usageIndicatorColor(
-                vhostInfo?.volume_info[host]?.usage?.percentage,
-              )}
-              text={host}
-            />
-            {/* TODO:  */}
+            {vhostInfo?.volume_info[host]?.usage && (
+              <Badge
+                color={usageIndicatorColor(
+                  vhostInfo?.volume_info[host]?.usage?.percentage,
+                )}
+                text={host}
+              />
+            )}
             <Button type="link" size="small" icon={<InfoCircleOutlined />} />
           </Flex>
         ) : (
@@ -113,7 +108,6 @@ const StorageSelect: React.FC<Props> = ({
         ),
         value: host,
       }))}
-      // optionRender={optionRender}
       {...partialSelectProps}
     />
   );
