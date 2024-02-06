@@ -82,7 +82,7 @@ export default class BackendAIDialog extends LitElement {
           --mdc-shape-medium: 10px;
           --mdc-dialog-z-index: 1001;
           --mdc-dialog-heading-ink-color: var(--general-color-text, black);
-          --mdc-theme-surface: var(--general-color-bg-base);
+          --mdc-theme-surface: var(--general-color-bg-container);
         }
 
         mwc-dialog > div.card {
@@ -104,7 +104,7 @@ export default class BackendAIDialog extends LitElement {
 
         mwc-dialog span.title {
           color: var(--general-color-text);
-          background-color: var(--general-color-bg-base);
+          background-color: var(--general-color-bg-container);
         }
 
         mwc-dialog div.content {
@@ -113,13 +113,13 @@ export default class BackendAIDialog extends LitElement {
           word-break: keep-all;
           overflow-x: hidden;
           color: var(--general-color-text);
-          background-color: var(--general-color-bg-base);
+          background-color: var(--general-color-bg-container);
         }
 
         mwc-dialog div.footer {
           padding: 5px 15px 15px 15px;
           color: var(--general-color-text);
-          background-color: var(--general-color-bg-base);
+          background-color: var(--general-color-bg-container);
         }
 
         mwc-dialog.ticker {
