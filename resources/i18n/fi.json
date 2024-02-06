@@ -810,7 +810,8 @@
     "UpdatingRegistryInfo": "Rekisteritietojen päivittäminen...",
     "Username": "Käyttäjätunnus",
     "UsernameOptional": "Käyttäjätunnus (valinnainen)",
-    "ConfirmNoUserName": "Käyttäjää ja salasanaa ei ole määritetty, haluatko tallentaa?"
+    "ConfirmNoUserName": "Käyttäjää ja salasanaa ei ole määritetty, haluatko tallentaa?",
+    "DescURLFormat": "Virheellinen URL-tyyppi"
   },
   "resourceGroup": {
     "Active": "Aktiivinen",
@@ -1317,7 +1318,9 @@
     "TotpSetupCompleted": "Käytössä 2FA",
     "TotpSetupNotAvailable": "Kaksitekijätodennusta ei voi ottaa käyttöön.",
     "TurnOffTotp": "Ota kaksitekijätodennus pois käytöstä",
-    "TypeInAuthKey": "Vaihtoehtoisesti voit kirjoittaa alla olevan todennuskoodin manuaalisesti."
+    "TypeInAuthKey": "Vaihtoehtoisesti voit kirjoittaa alla olevan todennuskoodin manuaalisesti.",
+    "EnterConfirmationCode": "Anna nyt autentikaattorin luoma OTP vahvistaaksesi.",
+    "RequireOTP": "Kirjoita OTP."
   },
   "update": {
     "NewWebUIVersionAvailable": "Uusi versio on saatavilla:"

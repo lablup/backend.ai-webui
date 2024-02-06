@@ -71,8 +71,8 @@ const ResourceNumber: React.FC<Props> = ({
         {units[type] === 'GiB'
           ? Number(iSizeToSize(amount, 'g', 3)?.numberFixed).toString()
           : units[type] === 'FGPU'
-          ? parseFloat(amount).toFixed(2)
-          : amount}
+            ? parseFloat(amount).toFixed(2)
+            : amount}
       </Typography.Text>
       <Typography.Text type="secondary">{units[type]}</Typography.Text>
       {type === 'mem' && opts?.shmem && opts?.shmem > 0 ? (
@@ -135,7 +135,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     mem: [<MWCIconWrap size={size}>memory</MWCIconWrap>, 'GiB'],
     'cuda.device': ['/resources/icons/file_type_cuda.svg', 'GPU'],
     'cuda.shares': ['/resources/icons/file_type_cuda.svg', 'FGPU'],
-    'rocm.device': ['/resources/icons/ROCm.png', 'GPU'],
+    'rocm.device': ['/resources/icons/rocm.svg', 'GPU'],
     'tpu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'TPU'],
     'ipu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'IPU'],
     'atom.device': ['/resources/icons/rebel.svg', 'ATOM'],

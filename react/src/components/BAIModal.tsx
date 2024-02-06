@@ -86,6 +86,7 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
             modal
           )
         }
+        zIndex={1001}
       />
     </>
   );

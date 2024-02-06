@@ -810,7 +810,8 @@
     "UpdatingRegistryInfo": "Actualización de la información del registro...",
     "Username": "Nombre de usuario",
     "UsernameOptional": "Nombre de usuario (opcional)",
-    "ConfirmNoUserName": "Usuario y contraseña no especificados, ¿desea guardar?"
+    "ConfirmNoUserName": "Usuario y contraseña no especificados, ¿desea guardar?",
+    "DescURLFormat": "Tipo de URL no válido"
   },
   "resourceGroup": {
     "Active": "Activo",
@@ -1317,7 +1318,9 @@
     "TotpSetupCompleted": "2FA activado",
     "TotpSetupNotAvailable": "No se puede configurar la autenticación de dos factores.",
     "TurnOffTotp": "Desactivar la autenticación de dos factores",
-    "TypeInAuthKey": "También puede introducir manualmente el código de autenticación."
+    "TypeInAuthKey": "También puede introducir manualmente el código de autenticación.",
+    "EnterConfirmationCode": "Ahora ingrese la OTP generada por el autenticador para verificar.",
+    "RequireOTP": "Escribe OTP."
   },
   "update": {
     "NewWebUIVersionAvailable": "Nueva versión disponible:"

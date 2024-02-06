@@ -392,16 +392,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           return a[sorterPath] < b[sorterPath]
             ? -1
             : a[sorterPath] > b[sorterPath]
-            ? 1
-            : 0;
+              ? 1
+              : 0;
         });
       } else {
         this._grid.items.sort((a, b) => {
           return a[sorterPath] > b[sorterPath]
             ? -1
             : a[sorterPath] < b[sorterPath]
-            ? 1
-            : 0;
+              ? 1
+              : 0;
         });
       }
     }
@@ -699,8 +699,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ? 1
         : 2
       : this._cuda_fgpu_disabled
-      ? 2
-      : 3;
+        ? 2
+        : 3;
     if (cpu !== resource_limits[0].min) input['cpu'] = { min: cpu };
     const memory = this._symbolicUnit(mem);
     if (memory !== resource_limits[mem_idx].min) input['mem'] = { min: memory };
@@ -965,9 +965,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         );
     } else {
       this.modifyImageCudaGpu.label = _t('environment.Disabled') as string;
-      (
-        this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as Slider
-      ).value = 0;
+      (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as Slider).value =
+        0;
     }
     if (!this._cuda_fgpu_disabled) {
       this.modifyImageCudaFGpu.label = resources['cuda_shares'].min;
@@ -979,9 +978,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         );
     } else {
       this.modifyImageCudaFGpu.label = _t('environment.Disabled') as string;
-      (
-        this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as Slider
-      ).value = 0;
+      (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as Slider).value =
+        0;
     }
     if (!this._rocm_gpu_disabled) {
       this.modifyImageRocmGpu.label = resources['rocm_device'].min;
@@ -993,9 +991,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         );
     } else {
       this.modifyImageRocmGpu.label = _t('environment.Disabled') as string;
-      (
-        this.shadowRoot?.querySelector('mwc-slider#rocm-gpu') as Slider
-      ).value = 0;
+      (this.shadowRoot?.querySelector('mwc-slider#rocm-gpu') as Slider).value =
+        0;
     }
     if (!this._tpu_disabled) {
       this.modifyImageTpu.label = resources['tpu_device'].min;
@@ -1269,7 +1266,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 <div class="layout horizontal configuration">
                   <img
                     class="indicator-icon fg green"
-                    src="/resources/icons/ROCm.png"
+                    src="/resources/icons/rocm.svg"
                   />
                   <span>${rowData.item.rocm_device_limit_min}</span>
                   ~

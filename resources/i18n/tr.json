@@ -936,7 +936,8 @@
     "RegistrySuccessfullyModified": "Kayıt defteri başarıyla değiştirildi.",
     "NoRegistryToDisplay": "Görüntülenecek Kayıt Yok",
     "ModifyRegistry": "Kayıt Defterini Değiştir",
-    "ConfirmNoUserName": "Kullanıcı ve şifre belirtilmemiş, kaydetmek ister misiniz?"
+    "ConfirmNoUserName": "Kullanıcı ve şifre belirtilmemiş, kaydetmek ister misiniz?",
+    "DescURLFormat": "Geçersiz URL Türü"
   },
   "resourceGroup": {
     "ResourceGroups": "Kaynak Grupları",
@@ -1464,7 +1465,9 @@
     "TurnOffTotp": "İki faktörlü kimlik doğrulamayı kapatın",
     "ConfirmTotpRemovalBody": "İki faktörlü kimlik doğrulamayı kullanmaktan vazgeçtiğinizden emin misiniz?",
     "RemoveTotpSetupCompleted": "Devre Dışı 2FA",
-    "OTP": "Tek kullanımlık şifre"
+    "OTP": "Tek kullanımlık şifre",
+    "EnterConfirmationCode": "Şimdi doğrulamak için kimlik doğrulayıcı tarafından oluşturulan OTP'yi girin.",
+    "RequireOTP": "OTP'yi yazın."
   },
   "OpenVSCodeRemote": "Yerel Visual Studio Kodunu açın",
   "inputLimit": {

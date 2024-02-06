@@ -936,7 +936,8 @@
     "RegistrySuccessfullyModified": "Đã sửa đổi sổ đăng ký thành công.",
     "NoRegistryToDisplay": "Không có đăng ký để hiển thị",
     "ModifyRegistry": "Sửa đổi sổ đăng ký",
-    "ConfirmNoUserName": "Người dùng và mật khẩu không được chỉ định, bạn có muốn lưu không?"
+    "ConfirmNoUserName": "Người dùng và mật khẩu không được chỉ định, bạn có muốn lưu không?",
+    "DescURLFormat": "Loại URL không hợp lệ"
   },
   "resourceGroup": {
     "ResourceGroups": "Nhóm tài nguyên",
@@ -1464,7 +1465,9 @@
     "TurnOffTotp": "Tắt xác thực hai yếu tố",
     "ConfirmTotpRemovalBody": "Bạn có chắc chắn chọn không sử dụng xác thực hai yếu tố không?",
     "RemoveTotpSetupCompleted": "2FA bị vô hiệu hóa",
-    "OTP": "Mật khẩu một lần"
+    "OTP": "Mật khẩu một lần",
+    "EnterConfirmationCode": "Bây giờ hãy nhập OTP do trình xác thực tạo ra để xác minh.",
+    "RequireOTP": "Viết OTP."
   },
   "OpenVSCodeRemote": "Mở mã Visual Studio cục bộ",
   "inputLimit": {

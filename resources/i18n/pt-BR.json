@@ -936,7 +936,8 @@
     "RegistrySuccessfullyModified": "Registo modificado com sucesso.",
     "NoRegistryToDisplay": "Não há registos a apresentar",
     "ModifyRegistry": "Modificar o registo",
-    "ConfirmNoUserName": "Utilizador e palavra-passe não especificados, pretende guardar?"
+    "ConfirmNoUserName": "Utilizador e palavra-passe não especificados, pretende guardar?",
+    "DescURLFormat": "Tipo de URL inválido"
   },
   "resourceGroup": {
     "ResourceGroups": "Grupos de Recursos",
@@ -1464,7 +1465,9 @@
     "TurnOffTotp": "Desativar a autenticação de dois factores",
     "ConfirmTotpRemovalBody": "Tem a certeza de que não quer utilizar a autenticação de dois factores?",
     "RemoveTotpSetupCompleted": "2FA desactivada",
-    "OTP": "Palavra-passe única"
+    "OTP": "Palavra-passe única",
+    "EnterConfirmationCode": "Agora insira o OTP gerado pelo autenticador para verificar.",
+    "RequireOTP": "Escreva OTP."
   },
   "OpenVSCodeRemote": "Abrir o código local do Visual Studio",
   "inputLimit": {
