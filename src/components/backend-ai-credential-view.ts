@@ -1177,7 +1177,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   async _runAction() {
-    const regex = /action=(add)$/; // If there is a new action, add it with |action after it.
+    const regex = /action=/; // If there is a new action, add it with |action after it.
     const isActionExist = regex.test(location.search);
 
     if (isActionExist) {
@@ -1193,14 +1193,15 @@ export default class BackendAICredentialView extends BackendAIPage {
             ?.setAttribute('activeindex', '1');
           await this._launchKeyPairDialog();
           break;
+        case 'manage':
+          this._showTab(
+            this.shadowRoot?.querySelector('mwc-tab[title=credential-lists]'),
+          );
+          this.shadowRoot
+            ?.querySelector('mwc-tab-bar.main-bar')
+            ?.setAttribute('activeindex', '1');
+          break;
       }
-    } else if (location.search.includes('manage')) {
-      this._showTab(
-        this.shadowRoot?.querySelector('mwc-tab[title=credential-lists]'),
-      );
-      this.shadowRoot
-        ?.querySelector('mwc-tab-bar.main-bar')
-        ?.setAttribute('activeindex', '1');
     }
   }
 
