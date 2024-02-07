@@ -5,7 +5,7 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import { Select, SelectProps, Badge, Button } from 'antd';
 import _ from 'lodash';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 
