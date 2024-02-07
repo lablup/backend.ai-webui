@@ -17,6 +17,7 @@ import FlexActivityIndicator from './FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
+import InputNumberWithSlider from './InputNumberWithSlider';
 import SliderInputFormItem from './SliderInputFormItem';
 import VFolderSelect from './VFolderSelect';
 import { ServiceLauncherModalFragment$key } from './__generated__/ServiceLauncherModalFragment.graphql';
@@ -494,11 +495,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               disabled={endpoint ? true : false}
             />
           </Form.Item>
-          <SliderInputFormItem
+          <Form.Item
             label={t('modelService.DesiredRoutingCount')}
             name="desiredRoutingCount"
-            min={0}
-            max={10}
             rules={[
               {
                 required: true,
@@ -507,12 +506,17 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                 type: 'number',
               },
             ]}
-            inputNumberProps={{
-              //TODO: change unit based on resource limit
-              addonAfter: '#',
-            }}
-            required
-          />
+          >
+            <InputNumberWithSlider
+              min={0}
+              max={10}
+              inputNumberProps={{
+                //TODO: change unit based on resource limit
+                addonAfter: '#',
+              }}
+              step={1}
+            />
+          </Form.Item>
           <Card
             style={{
               marginBottom: token.margin,

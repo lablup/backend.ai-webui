@@ -389,6 +389,7 @@ const ResourceAllocationFormItems: React.FC<
                       }}
                       min={resourceLimits.cpu?.min}
                       max={resourceLimits.cpu?.max}
+                      step={1}
                     />
                   </Form.Item>
                 )}
@@ -1051,6 +1052,7 @@ const ResourceAllocationFormItems: React.FC<
                       >
                         <InputNumberWithSlider
                           min={1}
+                          step={1}
                           // TODO: max cluster size
                           max={
                             _.isNumber(derivedClusterSizeMaxLimit)
