@@ -721,77 +721,79 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           @click=${this._launchCreateDialog}
         ></mwc-button>
       </h4>
-      <vaadin-grid
-        theme="row-stripes column-borders compact ${localStorage.getItem(
-          'backendaiwebui.settings.isDarkMode',
-        )
-          ? 'dark'
-          : ''}"
-        aria-label="Job list"
-        .items="${this.resourceGroups}"
-      >
-        <vaadin-grid-column
-          frozen
-          flex-grow="0"
-          header="#"
-          width="40px"
-          .renderer=${this._indexRenderer}
-        ></vaadin-grid-column>
-        <vaadin-grid-column
-          frozen
-          flex-grow="1"
-          header="${_t('resourceGroup.Name')}"
-          path="name"
-          resizable
-        ></vaadin-grid-column>
-        <vaadin-grid-column
-          flex-grow="1"
-          header="${_t('resourceGroup.Description')}"
-          path="description"
-          resizable
-        ></vaadin-grid-column>
-        <vaadin-grid-column
-          flex-grow="1"
-          header="${_t('resourceGroup.ActiveStatus')}"
-          resizable
-          .renderer=${this._activeStatusRenderer}
-        ></vaadin-grid-column>
-        <vaadin-grid-column
-          flex-grow="1"
-          header="${_t('resourceGroup.PublicStatus')}"
-          resizable
-          .renderer=${this._isPublicRenderer}
-        ></vaadin-grid-column>
-        <vaadin-grid-column
-          flex-grow="1"
-          header="${_t('resourceGroup.Driver')}"
-          path="driver"
-          resizable
-        ></vaadin-grid-column>
-        <vaadin-grid-column
-          flex-grow="1"
-          header="${_t('resourceGroup.Scheduler')}"
-          path="scheduler"
-          resizable
-        ></vaadin-grid-column>
-        ${this.enableWSProxyAddr
-          ? html`
-              <vaadin-grid-column
-                resizable
-                header="${_t('resourceGroup.WsproxyAddress')}"
-                path="wsproxy_addr"
-                resizable
-              ></vaadin-grid-column>
-            `
-          : html``}
-        <vaadin-grid-column
-          frozen-to-end
-          resizable
-          width="150px"
-          header="${_t('general.Control')}"
-          .renderer=${this._boundControlRenderer}
-        ></vaadin-grid-column>
-      </vaadin-grid>
+      <div class="list-wrapper">
+        <vaadin-grid
+          theme="row-stripes column-borders compact ${localStorage.getItem(
+            'backendaiwebui.settings.isDarkMode',
+          )
+            ? 'dark'
+            : ''}"
+          aria-label="Job list"
+          .items="${this.resourceGroups}"
+        >
+          <vaadin-grid-column
+            frozen
+            flex-grow="0"
+            header="#"
+            width="40px"
+            .renderer=${this._indexRenderer}
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            frozen
+            flex-grow="1"
+            header="${_t('resourceGroup.Name')}"
+            path="name"
+            resizable
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="1"
+            header="${_t('resourceGroup.Description')}"
+            path="description"
+            resizable
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="1"
+            header="${_t('resourceGroup.ActiveStatus')}"
+            resizable
+            .renderer=${this._activeStatusRenderer}
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="1"
+            header="${_t('resourceGroup.PublicStatus')}"
+            resizable
+            .renderer=${this._isPublicRenderer}
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="1"
+            header="${_t('resourceGroup.Driver')}"
+            path="driver"
+            resizable
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="1"
+            header="${_t('resourceGroup.Scheduler')}"
+            path="scheduler"
+            resizable
+          ></vaadin-grid-column>
+          ${this.enableWSProxyAddr
+            ? html`
+                <vaadin-grid-column
+                  resizable
+                  header="${_t('resourceGroup.WsproxyAddress')}"
+                  path="wsproxy_addr"
+                  resizable
+                ></vaadin-grid-column>
+              `
+            : html``}
+          <vaadin-grid-column
+            frozen-to-end
+            resizable
+            width="150px"
+            header="${_t('general.Control')}"
+            .renderer=${this._boundControlRenderer}
+          ></vaadin-grid-column>
+        </vaadin-grid>
+      </div>
       <backend-ai-dialog
         id="resource-group-dialog"
         fixed
