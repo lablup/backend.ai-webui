@@ -86,7 +86,6 @@ export default class BackendAISessionView extends BackendAIPage {
       // language=CSS
       css`
         mwc-menu {
-          --mdc-theme-surface: #f1f1f1;
           --mdc-menu-item-height: auto;
         }
 
@@ -601,7 +600,9 @@ export default class BackendAISessionView extends BackendAIPage {
                             class="horizontal layout start center"
                             @click="${() => this._openExportToCsvDialog()}"
                           >
-                            <mwc-icon style="color:#242424;padding-right:10px;">
+                            <mwc-icon
+                              style="color:var(--general-color-text-secondary);padding-right:10px;"
+                            >
                               get_app
                             </mwc-icon>
                             ${_t('session.exportCSV')}

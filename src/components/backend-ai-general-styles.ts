@@ -433,10 +433,18 @@ export const BackendAiStyles = [
       text-decoration: none;
     }
 
+    mwc-list-item,
     mwc-list mwc-list-item {
       font-size: var(--general-font-size, 14px);
       font-family: var(--general-font-family);
+      color: var(--general-color-text);
+      background-color: var(--general-color-bg-container);
       --mdc-typography-font-family: var(--general-font-family);
+    }
+
+    mwc-menu {
+      --mdc-theme-surface: var(--general-color-bg-container);
+      --mdc-menu-item-height: auto;
     }
 
     mwc-switch {
@@ -764,12 +772,7 @@ export const BackendAiStyles = [
       );
       --mdc-select-dropdown-icon-color: #747474;
       --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
-      --mdc-list-vertical-padding: 0;
-    }
-
-    mwc-list-item {
-      background-color: var(--general-color-bg-container);
-      color: var(--general-color-text);
+      --mdc-theme-surface: var(--general-color-bg-container, #f1f1f1);
     }
 
     h3.tab {

@@ -131,7 +131,6 @@ export default class PipelineJobView extends BackendAIPage {
           left: 0px;
           top: 40px;
           --mdc-menu-item-height: auto;
-          --mdc-theme-surface: #f1f1f1;
           --mdc-menu-item-height: auto;
         }
 

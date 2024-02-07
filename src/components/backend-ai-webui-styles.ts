@@ -396,7 +396,6 @@ export const BackendAIWebUIStyles = [
     }
 
     mwc-menu.user-menu {
-      --mdc-theme-surface: #f1f1f1;
       --mdc-menu-item-height: 28px;
       --mdc-menu-min-width: 200px;
       box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);

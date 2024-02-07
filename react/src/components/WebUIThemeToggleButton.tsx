@@ -15,7 +15,7 @@ const WebUIThemeToggleButton: React.FC<WebUIThemeToggleButtonProps> = ({
     <Button
       size="large"
       type="text"
-      icon={isDarkMode ? <MoonOutlined /> : <SunOutlined />}
+      icon={isDarkMode ? <SunOutlined /> : <MoonOutlined />}
       onClick={() => {
         const event: Event = new CustomEvent('theme-mode-changed', {
           detail: { token },
