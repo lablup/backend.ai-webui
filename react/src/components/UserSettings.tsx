@@ -16,12 +16,11 @@ import {
   Switch,
   theme,
 } from 'antd';
-import _ from 'lodash';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 interface UserSettingsProps {}
-const UserSettings: React.FC<UserSettingsProps> = ({}) => {
+const UserSettings: React.FC<UserSettingsProps> = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { themeMode, setThemeMode } = useThemeMode();
@@ -36,12 +35,12 @@ const UserSettings: React.FC<UserSettingsProps> = ({}) => {
       'backendaiwebui.settings.user.compact_sidebar',
       false,
     );
-  const [preserveLogin, setPreserveLogin] = useLocalStorageGlobalState<boolean>(
-    'backendaiwebui.settings.user.preserve_login',
-    false,
-  );
-  const { lang: currentLanguage, setLang: setCurrentLanguage } =
-    useCurrentLanguage();
+  // const [preserveLogin, setPreserveLogin] = useLocalStorageGlobalState<boolean>(
+  //   'backendaiwebui.settings.user.preserve_login',
+  //   false,
+  // );
+  // const { lang: currentLanguage, setLang: setCurrentLanguage } =
+  const { setLang: setCurrentLanguage } = useCurrentLanguage();
   const [language, setLanguage] = useLocalStorageGlobalState<string>(
     'backendaiwebui.settings.user.language',
     'default',
@@ -51,23 +50,23 @@ const UserSettings: React.FC<UserSettingsProps> = ({}) => {
       'backendaiwebui.settings.user.automatic_update_check',
       true,
     );
-  const [autoAutomaticCountTrial, setAutoAutomaticCountTrial] =
-    useLocalStorageGlobalState<number>(
-      'backendaiwebui.settings.user.automatic_update_count_trial',
-      0,
-    );
-  const [customSSHPort, setCustomSSHPort] = useLocalStorageGlobalState<string>(
-    'backendaiwebui.settings.user.custom_ssh_port',
-    '',
+  // const [autoAutomaticCountTrial, setAutoAutomaticCountTrial] =
+  const [, setAutoAutomaticCountTrial] = useLocalStorageGlobalState<number>(
+    'backendaiwebui.settings.user.automatic_update_count_trial',
+    0,
   );
+  // const [customSSHPort, setCustomSSHPort] = useLocalStorageGlobalState<string>(
+  //   'backendaiwebui.settings.user.custom_ssh_port',
+  //   '',
+  // );
   const [autoLogout, setAutoLogout] = useLocalStorageGlobalState<boolean>(
     'backendaiwebui.settings.user.auto_logout',
     false,
   );
-  const [betaFeatures, setBetaFeatures] = useLocalStorageGlobalState<boolean>(
-    'backendaiwebui.settings.user.beta_features',
-    false,
-  );
+  // const [betaFeatures, setBetaFeatures] = useLocalStorageGlobalState<boolean>(
+  //   'backendaiwebui.settings.user.beta_features',
+  //   false,
+  // );
 
   const columnSetting: DescriptionsProps['column'] = {
     xxl: 3,
