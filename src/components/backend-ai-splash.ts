@@ -62,7 +62,6 @@ export default class BackendAISplash extends LitElement {
           background-size: contain;
           background-repeat: no-repeat;
           background-position: left top;
-          background-image: url('/manifest/backend.ai-text.svg');
         }
 
         ul {
@@ -114,7 +113,13 @@ export default class BackendAISplash extends LitElement {
     // language=HTML
     return html`
       <backend-ai-dialog id="splash-panel" fixed backdrop blockscrolling persistent narrowLayout hideActions>
-        <div class="splash-header" slot="title">
+        <div class="splash-header" slot="title"
+          style="background-image:url(${
+            localStorage.getItem('backendaiwebui.settings.isDarkMode')
+              ? 'manifest/backend.ai-text-bgdark.svg'
+              : 'manifest/backend.ai-text.svg'
+          });"
+        >
         </div>
         <div class="splash-information" slot="content">
           <ul>

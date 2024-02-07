@@ -1997,8 +1997,7 @@ export default class BackendAILogin extends BackendAIPage {
         <div slot="title">
           <div id="login-title-area"></div>
           <div class="horizontal center layout">
-            ${localStorage.getItem('backendaiwebui.settings.isDarkMode') ===
-            'true'
+            ${localStorage.getItem('backendaiwebui.settings.isDarkMode')
               ? html`
                   <img
                     class="title-img"
