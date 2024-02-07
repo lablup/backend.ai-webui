@@ -18,12 +18,10 @@ const BAINotificationItem: React.FC<{
     notification: NotificationState,
   ) => void;
   showDate?: boolean;
-  allowEllipsis?: boolean;
-}> = ({ notification, onClickAction, showDate, allowEllipsis }) => {
+}> = ({ notification, onClickAction, showDate }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [showExtraDescription, setShowExtraDescription] = useState(false);
-  const [ellipsis, setEllipsis] = useState(allowEllipsis ?? false);
   return (
     <List.Item>
       <Flex direction="column" align="stretch" gap={'xxs'}>
@@ -58,22 +56,14 @@ const BAINotificationItem: React.FC<{
             style={{
               fontWeight: 500,
             }}
-            ellipsis={ellipsis ? { rows: 3 } : false}
-            onClick={() => {
-              !allowEllipsis && setEllipsis(!ellipsis);
-            }}
+            ellipsis={{ rows: 3 }}
           >
             {notification.message}
           </Typography.Paragraph>
         </Flex>
 
         <Flex direction="row" align="end" gap={'xxs'} justify="between">
-          <Typography.Paragraph
-            ellipsis={ellipsis ? { rows: 3 } : false}
-            onClick={() => {
-              !allowEllipsis && setEllipsis(!ellipsis);
-            }}
-          >
+          <Typography.Paragraph ellipsis={{ rows: 3, expandable: true }}>
             {notification.description}
           </Typography.Paragraph>
           {notification.to ? (
@@ -106,16 +96,9 @@ const BAINotificationItem: React.FC<{
         </Flex>
         {notification.extraDescription && showExtraDescription ? (
           <Card size="small">
-            <Typography.Paragraph
-              type="secondary"
-              copyable
-              ellipsis={ellipsis ? { rows: 3 } : false}
-              onClick={() => {
-                !allowEllipsis && setEllipsis(!ellipsis);
-              }}
-            >
+            <Typography.Text type="secondary" copyable>
               {notification.extraDescription}
-            </Typography.Paragraph>
+            </Typography.Text>
           </Card>
         ) : null}
 
