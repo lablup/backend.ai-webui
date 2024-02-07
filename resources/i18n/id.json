@@ -1377,7 +1377,9 @@
     "ConfirmTotpRemovalBody": "Apakah Anda yakin untuk tidak menggunakan autentikasi dua faktor?",
     "TotpSetupNotAvailable": "Autentikasi dua faktor tidak dapat diatur.",
     "TurnOffTotp": "Menonaktifkan autentikasi dua faktor",
-    "RemoveTotpSetupCompleted": "Menonaktifkan 2FA"
+    "RemoveTotpSetupCompleted": "Menonaktifkan 2FA",
+    "EnterConfirmationCode": "Sekarang masukkan OTP yang dihasilkan oleh autentikator untuk memverifikasi.",
+    "RequireOTP": "Tulis OTP."
   },
   "inputLimit": {
     "4to64chars": "(4 ~ 64 karakter)"

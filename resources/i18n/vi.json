@@ -1466,7 +1466,9 @@
     "TurnOffTotp": "Tắt xác thực hai yếu tố",
     "ConfirmTotpRemovalBody": "Bạn có chắc chắn chọn không sử dụng xác thực hai yếu tố không?",
     "RemoveTotpSetupCompleted": "2FA bị vô hiệu hóa",
-    "OTP": "Mật khẩu một lần"
+    "OTP": "Mật khẩu một lần",
+    "EnterConfirmationCode": "Bây giờ hãy nhập OTP do trình xác thực tạo ra để xác minh.",
+    "RequireOTP": "Viết OTP."
   },
   "OpenVSCodeRemote": "Mở mã Visual Studio cục bộ",
   "inputLimit": {
