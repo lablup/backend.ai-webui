@@ -727,7 +727,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 ></vaadin-grid-column>
               `
             : html``}
-          ${this.storageType !== 'deletePendingOrDeleteOngoing'
+          ${this.storageType !== 'deadVFolderStatus'
             ? html`
                 <vaadin-grid-column
                   auto-width
@@ -2122,7 +2122,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button
             class="fg blue controls-running"
             icon="redo"
-            ?disabled=${rowData.item.status === 'delete-ongoing'}
+            ?disabled=${rowData.item.status !== 'delete-pending'}
             @click="${(e) => this._restoreFolder(e)}"
             id="${rowData.item.id + '-restore'}"
           ></mwc-icon-button>
@@ -2134,7 +2134,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button
             class="fg red controls-running"
             icon="delete_forever"
-            ?disabled=${rowData.item.status === 'delete-ongoing'}
+            ?disabled=${rowData.item.status !== 'delete-pending'}
             @click="${(e) => {
               this.deleteFolderName = this._getControlName(e);
               this.openDialog('delete-forever-confirm-dialog');
@@ -2541,7 +2541,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           ) {
             return item;
           } else if (
-            this.storageType === 'deletePendingOrDeleteOngoing' &&
+            this.storageType === 'deadVFolderStatus' &&
             this._isDeadVFolderStatus(item.status)
           ) {
             return item;
@@ -2549,7 +2549,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         });
         // Filter folder lists whose status is belonging to `DeadVFolderStatus`
         // for storageTypes other than `delete-pending-deletion-ongoing`
-        if (this.storageType !== 'deletePendingOrDeleteOngoing') {
+        if (this.storageType !== 'deadVFolderStatus') {
           folders = folders.filter(
             (item) => !this._isDeadVFolderStatus(item.status),
           );

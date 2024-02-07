@@ -442,7 +442,7 @@ export default class BackendAIData extends BackendAIPage {
                   >
                     <backend-ai-storage-list
                       id="trash-bin-folder-storage"
-                      storageType="deletePendingOrDeleteOngoing"
+                      storageType="deadVFolderStatus"
                       ?active="${this.active === true &&
                       this._activeTab === 'trash-bin'}"
                     ></backend-ai-storage-list>
