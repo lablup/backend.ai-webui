@@ -5,6 +5,7 @@ import Flex, { FlexProps } from '../Flex';
 import ProjectSelect from '../ProjectSelect';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
+import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 // @ts-ignore
 import rawCss from './WebUIHeader.css?raw';
 import { MenuOutlined } from '@ant-design/icons';
@@ -99,6 +100,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
         <Flex direction="row" className="non-draggable">
           <BAINotificationButton />
           <WEBUIHelpButton />
+          <WebUIThemeToggleButton />
           <UserDropdownMenu />
         </Flex>
       </Flex>
