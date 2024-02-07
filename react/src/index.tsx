@@ -167,6 +167,7 @@ customElements.define(
           {t('session.launcher.ResourceGroup')}
           <ResourceGroupSelect
             size="large"
+            showSearch
             value={value}
             loading={value !== props.value || value === ''}
             onChange={(value) => {

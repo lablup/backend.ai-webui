@@ -2,27 +2,42 @@ import { useBaiSignedRequestWithPromise } from '../helper';
 import { useCurrentProjectValue, useUpdatableState } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import TextHighlighter from './TextHighlighter';
+import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
-import React, { useState, useEffect, useTransition } from 'react';
+import React, { useEffect, useTransition } from 'react';
 
-interface ResourceGroupSelectProps extends SelectProps {
+interface ResourceGroupSelectProps
+  extends Omit<SelectProps, 'searchValue' | 'onSearch'> {
   projectId?: string;
   autoSelectDefault?: boolean;
   filter?: (projectName: string) => boolean;
+  searchValue?: string;
+  onSearch?: (value: string) => void;
 }
 
 const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   projectId,
   autoSelectDefault,
   filter,
+  searchValue,
+  onSearch,
   loading,
   ...selectProps
 }) => {
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
   const [key, checkUpdate] = useUpdatableState('first');
-  const [groupSearch, setGroupSearch] = useState('');
+  const [groupSearch, setGroupSearch] = useControllableValue<string>(
+    {
+      value: searchValue,
+      onChange: onSearch,
+    },
+    {
+      defaultValue: '',
+      valuePropName: 'searchValue',
+    },
+  );
 
   const [isPendingLoading, startLoadingTransition] = useTransition();
   const { data: resourceGroupSelectQueryResult } = useTanQuery<
@@ -100,14 +115,17 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
     ) {
       selectProps.onChange?.(autoSelectedOption.value, autoSelectedOption);
     }
+    if (searchValue) {
+      setGroupSearch(searchValue);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault]);
 
   return (
     <Select
       defaultActiveFirstOption
-      showSearch
-      onSearch={(value) => setGroupSearch(value)}
+      onSearch={setGroupSearch}
+      searchValue={groupSearch}
       defaultValue={autoSelectDefault ? autoSelectedOption : undefined}
       onDropdownVisibleChange={(open) => {
         if (open) {
