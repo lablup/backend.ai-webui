@@ -305,21 +305,23 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           };
           commitModifyEndpoint({
             variables: mutationVariables,
-            onCompleted: (res, error) => {
-              const updatedEndpoint = res.modify_endpoint?.endpoint;
-              message.success(
-                t('modelService.ServiceUpdated', {
-                  name: updatedEndpoint?.name,
-                }),
-              );
-              if (error) {
-                message.error(t('dialog.ErrorOccurred'));
+            onCompleted: (res, errors) => {
+              if (errors && errors?.length > 0) {
+                const errorMsgList = errors.map((error) => error.message);
+                // throw just first error message
+                throw new Error(errorMsgList[0]);
               } else {
+                const updatedEndpoint = res.modify_endpoint?.endpoint;
+                message.success(
+                  t('modelService.ServiceUpdated', {
+                    name: updatedEndpoint?.name,
+                  }),
+                );
                 onRequestClose(true);
               }
             },
             onError: (error) => {
-              message.error(t('dialog.ErrorOccurred'));
+              throw error;
             },
           });
         } else {
@@ -351,8 +353,11 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         }
       })
       .catch((err) => {
+        console.log(err);
         if (err.errorFields?.[0].errors?.[0]) {
           message.error(err.errorFields?.[0].errors?.[0]);
+        } else if (err.message) {
+          message.error(err.message);
         } else {
           message.error(t('modelService.FormValidationFailed'));
         }
