@@ -724,6 +724,8 @@ type Endpoint implements Item {
 
   """Added at 23.09.9"""
   image_row: Image
+
+  """Added at 23.09.9"""
   architecture: String
   domain: String
   project: String
