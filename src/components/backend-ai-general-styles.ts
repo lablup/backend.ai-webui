@@ -378,7 +378,7 @@ export const BackendAiStyles = [
       border-radius: 5px;
       background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
       --mdc-theme-primary: var(
-        --general-color-primary,
+        --general-color-text-light-solid,
         --general-button-color
       ); /* gradient-color doesn't work in mwc-button styling */
       --mdc-theme-on-primary: var(
@@ -395,7 +395,7 @@ export const BackendAiStyles = [
         rgba(56, 189, 115, 0.2) 100%
       );
       --mdc-theme-primary: var(
-        --general-color-primary,
+        --general-color-text-light-solid,
         --general-button-color
       ); /* gradient-color doesn't work in mwc-button styling */
       --mdc-theme-on-primary: var(
