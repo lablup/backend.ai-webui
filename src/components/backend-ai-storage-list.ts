@@ -111,6 +111,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({ type: Boolean }) authenticated = false;
   @property({ type: String }) renameFolderName = '';
   @property({ type: String }) deleteFolderName = '';
+  @property({ type: String }) deleteFolderID = '';
   @property({ type: String }) leaveFolderName = '';
   @property({ type: Object }) explorer = Object();
   @property({ type: Array }) explorerFiles = [];
@@ -2136,7 +2137,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             icon="delete_forever"
             ?disabled=${rowData.item.status !== 'delete-pending'}
             @click="${(e) => {
-              this.deleteFolderName = this._getControlName(e);
+              this.deleteFolderID = this._getControlID(e);
               this.openDialog('delete-forever-confirm-dialog');
             }}"
             id="${rowData.item.id + '-delete-forever'}"
@@ -2730,7 +2731,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     return folderName;
   }
 
-  _getControlId(e) {
+  _getControlID(e) {
     const controller = e.target;
     const controls = controller.closest('.controls');
     const folderId = controls.getAttribute('folder-id');
@@ -4504,9 +4505,9 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Restore folder. Change the folder status from `delete-pending` to `ready`.
    * */
   _restoreFolder(e) {
-    const folderName = this._getControlName(e);
+    const folderID = this._getControlID(e);
     globalThis.backendaiclient.vfolder
-      .restore_from_trash_bin(folderName)
+      .restore_from_trash_bin(folderID)
       .then(async (resp) => {
         this.notification.text = _text('data.folders.FolderRestored');
         this.notification.show();
@@ -4527,7 +4528,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _deleteForever() {
     globalThis.backendaiclient.vfolder
-      .delete_from_trash_bin(this.deleteFolderName)
+      .delete_from_trash_bin(this.deleteFolderID)
       .then(async (resp) => {
         this.notification.text = _text('data.folders.FolderDeleted');
         this.notification.show();

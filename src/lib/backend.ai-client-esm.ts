@@ -2668,15 +2668,12 @@ class VFolder {
   /**
    * Restore vfolder from trash bin, by changing status.
    * 
-   * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
+   * @param {string} vfolder_id - id of the vfolder.
    */
-  async restore_from_trash_bin(name = null): Promise<any> {
-    if (name == null) {
-      name = this.name;
-    }
+  async restore_from_trash_bin(vfolder_id): Promise<any> {
     let rqst = this.client.newSignedRequest(
       'POST',
-      `${this.urlPrefix}/${name}/restore-from-trash-bin`,
+      `${this.urlPrefix}/${vfolder_id}/restore-from-trash-bin`,
       null,
     );
     return this.client._wrapWithPromise(rqst);
@@ -2686,15 +2683,12 @@ class VFolder {
   /**
    * Delete `delete-pending` vfolders in storage proxy
    *
-   * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
+   * @param {string} vfolder_id - id of the vfolder.
    */
-  async delete_from_trash_bin(name = null): Promise<any> {
-    if (name == null) {
-      name = this.name;
-    }
+  async delete_from_trash_bin(vfolder_id): Promise<any> {
     let rqst = this.client.newSignedRequest(
       'POST',
-      `${this.urlPrefix}/${name}/delete-from-trash-bin`,
+      `${this.urlPrefix}/${vfolder_id}/delete-from-trash-bin`,
       null,
     );
     return this.client._wrapWithPromise(rqst);
