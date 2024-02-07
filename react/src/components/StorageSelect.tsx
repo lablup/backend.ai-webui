@@ -46,12 +46,8 @@ const StorageSelect: React.FC<Props> = ({
   });
 
   // TODO: default value
-  const controllableValueProps = _.omitBy(
-    { value, onChange, defaultValue },
-    _.isUndefined,
-  );
   const [controllableState, setControllableState] = useControllableValue(
-    controllableValueProps,
+    _.omitBy({ value, onChange, defaultValue }, _.isUndefined),
   );
   useEffect(() => {
     if (!autoSelectType) return;
