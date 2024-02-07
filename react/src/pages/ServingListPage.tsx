@@ -364,7 +364,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         {/* <Card bordered title={t("summary.ResourceStatistics")}>
           <p>SessionList</p>
         </Card> */}
-        {/* <Card bodyStyle={{ paddingTop: 0 }}> */}
+        {/* <Card styles={{ body: {paddingTop: 0} }}> */}
         <Flex direction="column" align="stretch">
           <Card
             tabList={[
@@ -394,9 +394,11 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 {t('modelService.StartService')}
               </Button>
             }
-            bodyStyle={{
-              padding: 0,
-              paddingTop: 1,
+            styles={{
+              body: {
+                padding: 0,
+                paddingTop: 1,
+              },
             }}
             // tabProps={{
             //   size: 'middle',
@@ -408,9 +410,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 scroll={{ x: 'max-content' }}
                 rowKey={'endpoint_id'}
                 dataSource={(sortedEndpointList || []) as Endpoint[]}
-                columns={columns.filter(
-                  (column) =>
-                    displayedColumnKeys?.includes(_.toString(column.key)),
+                columns={columns.filter((column) =>
+                  displayedColumnKeys?.includes(_.toString(column.key)),
                 )}
 
                 // pagination={{

@@ -724,6 +724,10 @@ export const BackendAiStyles = [
       --mdc-text-field-ink-color: var(--general-color-text);
     }
 
+    mwc-formfield {
+      --mdc-theme-text-primary-on-background: var(--general-color-text);
+    }
+
     mwc-select {
       font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-family: var(--general-font-family);
