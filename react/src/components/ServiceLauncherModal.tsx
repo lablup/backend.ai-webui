@@ -422,13 +422,13 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     mem: iSizeToSize(
                       JSON.parse(endpoint?.resource_slots)?.mem + 'b',
                       'g',
-                      2,
+                      3,
                     )?.numberUnit,
                     shmem: iSizeToSize(
                       JSON.parse(endpoint?.resource_opts)?.shmem ||
                         AUTOMATIC_DEFAULT_SHMEM,
                       'g',
-                      2,
+                      3,
                     )?.numberUnit,
                     ...getAIAcceleratorWithStringifiedKey(
                       _.omit(JSON.parse(endpoint?.resource_slots), [
