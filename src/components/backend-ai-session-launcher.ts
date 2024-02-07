@@ -298,14 +298,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         hr.separator {
-          border-top: 1px solid #ddd;
+          border-top: 1px solid var(--general-color-border, #ddd);
         }
 
         lablup-slider {
           width: 350px !important;
           --textfield-min-width: 135px;
           --slider-width: 210px;
-          --mdc-theme-primary: var(--paper-green-400);
         }
 
         lablup-progress-bar {
@@ -362,7 +361,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         mwc-list-item.resource-type {
-          color: #040716;
           font-size: 14px;
           font-weight: 500;
           height: 20px;
@@ -378,7 +376,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         #mounted-folders-container,
         .environment-variables-container,
         .preopen-ports-container {
-          background-color: rgba(244, 244, 244, 1);
+          background-color: var(
+            --general-color-bg-container,
+            rgba(244, 244, 244, 1)
+          );
+          color: var(--general-color-text);
           overflow-y: scroll;
         }
 
@@ -418,7 +420,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
         .cluster-total-allocation-container {
           border-radius: 10px;
-          border: 1px dotted var(--general-button-background-color);
+          border: 1px dotted
+            var(--general-color-border, --general-button-background-color);
           padding-top: 10px;
           margin-left: 15px;
           margin-right: 15px;
@@ -468,7 +471,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           margin: 5px;
           padding: 0px 5px;
           background-color: var(--general-button-background-color);
-          color: white;
           line-height: 1.2em;
         }
 
@@ -496,7 +498,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         .resource-allocated-box {
-          background-color: var(--paper-grey-300);
+          background-color: var(--general-color-bg-container, --paper-grey-300);
           border-radius: 5px;
           margin: 5px;
           z-index: 10;
@@ -546,7 +548,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --expansion-margin-open: 0;
           --expansion-header-font-weight: normal;
           --expansion-header-font-size: 14px;
-          --expansion-header-font-color: rgb(64, 64, 64);
+          --expansion-header-font-color: var(
+            --general-color-text,
+            rgb(64, 64, 64)
+          );
         }
 
         lablup-expansion.vfolder,
@@ -603,12 +608,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         mwc-textfield {
           width: 100%;
-          font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-text-field-idle-line-color: rgba(0, 0, 0, 0.42);
-          --mdc-text-field-hover-line-color: rgba(255, 0, 0, 0.87);
-          --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--paper-red-600);
         }
 
         mwc-textfield#session-name {
@@ -622,14 +621,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           width: 100%;
         }
 
-        mwc-button[disabled] {
-          background-image: none;
-          --mdc-theme-primary: #ddd;
-          --mdc-theme-on-primary: var(
-            --general-sidebar-topbar-background-color
-          );
-        }
-
         mwc-checkbox {
           --mdc-theme-secondary: var(--general-checkbox-color);
         }
@@ -640,7 +631,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         #prev-button,
         #next-button {
-          color: #27824f;
+          color: var(--general-color-primary, #27824f);
         }
 
         #environment {
@@ -721,7 +712,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           margin-top: 0;
           font-size: 12px;
           font-weight: 200;
-          color: #404040;
+          color: var(--general-color-text-tertiary, #404040);
         }
 
         #progress-04 p.title {
@@ -730,16 +721,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         #batch-mode-config-section {
           width: 100%;
-          border-bottom: solid 1px rgba(0, 0, 0, 0.42);
+          border-bottom: solid 1px
+            var(--general-color-border, rgba(0, 0, 0, 0.42));
           margin-bottom: 15px;
-        }
-
-        .launcher-item-title {
-          font-size: 14px;
-          color: #404040;
-          font-weight: 400;
-          padding-left: 16px;
-          width: 100%;
         }
 
         .allocation-shadow {
@@ -748,7 +732,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           position: absolute;
           top: -5px;
           left: 5px;
-          border: 1px solid #ccc;
+          border: 1px solid var(--general-color-border, #ccc);
         }
 
         #modify-env-dialog,
@@ -781,9 +765,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         #modify-preopen-ports-dialog mwc-textfield {
           width: 90%;
           margin: auto 5px;
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-text-field-hover-line-color: transparent;
-          --mdc-text-field-idle-line-color: var(--general-textfield-idle-color);
         }
 
         #env-add-btn,
@@ -808,7 +789,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         .environment-variables-container mwc-textfield,
         .preopen-ports-container mwc-textfield {
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-text-field-disabled-ink-color: #222;
+          --mdc-text-field-disabled-ink-color: var(--general-color-text);
         }
 
         .optional-buttons {
@@ -818,6 +799,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         .optional-buttons mwc-button {
           width: 50%;
           --mdc-typography-button-font-size: 0.5vw;
+        }
+
+        h5 {
+          color: var(--general-color-text);
         }
 
         [name='resource-group'] mwc-list-item {
@@ -4552,7 +4537,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ${item.clickable === false
                     ? html`
                         <h5
-                          style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;"
+                          style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid var(--general-color-border, #ccc);"
                           role="separator"
                           disabled="true"
                         >
@@ -4621,7 +4606,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 ? html``
                 : html`
                     <h5
-                      style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
+                      style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid var(--general-color-border, #ccc);"
                       role="separator"
                       disabled="true"
                       class="horizontal layout"
@@ -4919,9 +4904,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
                 <div class="horizontal layout start-justified center">
                   <mwc-checkbox id="owner-enabled"></mwc-checkbox>
-                  <p style="color: rgba(0,0,0,0.6);">
-                    ${_t('session.launcher.LaunchSessionWithAccessKey')}
-                  </p>
+                  <p>${_t('session.launcher.LaunchSessionWithAccessKey')}</p>
                 </div>
               </div>
             </lablup-expansion>
@@ -5110,7 +5093,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   style="display:none!important;"
                 ></mwc-list-item>
                 <h5
-                  style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
+                  style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid var(--general-color-border, #ccc);"
                   role="separator"
                   disabled="true"
                   class="horizontal layout center"

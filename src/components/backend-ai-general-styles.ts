@@ -145,6 +145,7 @@ export const BackendAiStyles = [
         --lumo-header-text-color: var(--general-color-text);
         --lumo-body-text-color: var(--general-color-text);
         --lumo-contrast-10pct: var(--general-color-border);
+        --lumo-contrast-20pct: var(--general-color-border, #ccc);
       }
     }
 
