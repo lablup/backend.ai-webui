@@ -1,8 +1,7 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import Flex from './Flex';
-import { Form, FormInstance, Input, Typography, theme } from 'antd';
+import { Form, FormInstance, Input, Typography } from 'antd';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -17,7 +16,6 @@ const SSHKeypairManualFormModal: React.FC<SSHKeypairManualFormModalProps> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const formRef = useRef<FormInstance>(null);
 

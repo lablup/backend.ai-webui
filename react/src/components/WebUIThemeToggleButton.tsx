@@ -1,7 +1,7 @@
 import { useThemeMode } from '../hooks/useThemeMode';
 import { MoonOutlined, SunOutlined } from '@ant-design/icons';
 import { Button, ButtonProps, theme } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 
 interface WebUIThemeToggleButtonProps extends ButtonProps {}
 
