@@ -69,7 +69,7 @@ const ResourceNumber: React.FC<Props> = ({
 
       <Typography.Text>
         {units[type] === 'GiB'
-          ? Number(iSizeToSize(amount, 'g', 3)?.numberFixed).toString()
+          ? Number(iSizeToSize(amount, 'g', 3, true)?.numberFixed).toString()
           : units[type] === 'FGPU'
             ? parseFloat(amount).toFixed(2)
             : amount}
@@ -80,7 +80,7 @@ const ResourceNumber: React.FC<Props> = ({
           type="secondary"
           style={{ fontSize: token.fontSizeSM }}
         >
-          (SHM: {iSizeToSize(opts.shmem + 'b', 'g', 2)?.numberFixed}
+          (SHM: {iSizeToSize(opts.shmem + 'b', 'g', 2, true)?.numberFixed}
           GiB)
         </Typography.Text>
       ) : null}
