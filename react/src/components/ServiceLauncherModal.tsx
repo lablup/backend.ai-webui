@@ -307,8 +307,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             onCompleted: (res, errors) => {
               if (errors && errors?.length > 0) {
                 const errorMsgList = errors.map((error) => error.message);
-                // throw just first error message
-                throw new Error(errorMsgList[0]);
+                for (let error of errorMsgList) {
+                  message.error(error, 2.5);
+                }
               } else {
                 const updatedEndpoint = res.modify_endpoint?.endpoint;
                 message.success(
@@ -320,7 +321,11 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               }
             },
             onError: (error) => {
-              throw error;
+              if (error.message) {
+                message.error(error.message);
+              } else {
+                message.error(t('modelService.FailedToUpdateService'));
+              }
             },
           });
         } else {
