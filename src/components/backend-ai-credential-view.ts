@@ -1177,32 +1177,15 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   async _runAction() {
-    const regex = /action=/; // If there is a new action, add it with |action after it.
-    const isActionExist = regex.test(location.search);
-
-    if (isActionExist) {
-      const action = location.search.split('action=')[1];
-
-      switch (action) {
-        case 'add':
-          this._showTab(
-            this.shadowRoot?.querySelector('mwc-tab[title=credential-lists]'),
-          );
-          this.shadowRoot
-            ?.querySelector('mwc-tab-bar.main-bar')
-            ?.setAttribute('activeindex', '1');
-          await this._launchKeyPairDialog();
-          break;
-        case 'manage':
-          this._showTab(
-            this.shadowRoot?.querySelector('mwc-tab[title=credential-lists]'),
-          );
-          this.shadowRoot
-            ?.querySelector('mwc-tab-bar.main-bar')
-            ?.setAttribute('activeindex', '1');
-          break;
-      }
+    if (location.search.includes('add')) {
+      await this._launchKeyPairDialog();
     }
+    this._showTab(
+      this.shadowRoot?.querySelector('mwc-tab[title=credential-lists]'),
+    );
+    this.shadowRoot
+      ?.querySelector('mwc-tab-bar.main-bar')
+      ?.setAttribute('activeindex', '1');
   }
 
   render() {
