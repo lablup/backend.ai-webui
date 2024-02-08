@@ -231,6 +231,8 @@ const StorageStatusPanel: React.FC<{
               onChange={setSelectedVolumeInfo}
               autoSelectType="usage"
               showUsageStatus
+              showSearch
+              allowClear
             />
           </Flex>
           {selectedVolumeInfo !== deferredSelectedVolumeInfo ? (

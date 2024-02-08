@@ -2,6 +2,7 @@ import { usageIndicatorColor } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useShadowRoot } from './DefaultProviders';
 import Flex from './Flex';
+import TextHighlighter from './TextHighlighter';
 import { useControllableValue } from 'ahooks';
 import { Select, SelectProps, Badge, Tooltip } from 'antd';
 import _ from 'lodash';
@@ -31,6 +32,8 @@ const StorageSelect: React.FC<Props> = ({
   value,
   onChange,
   defaultValue,
+  searchValue,
+  onSearch,
   ...partialSelectProps
 }) => {
   const { t } = useTranslation();
@@ -49,6 +52,10 @@ const StorageSelect: React.FC<Props> = ({
   const [controllableState, setControllableState] = useControllableValue(
     _.omitBy({ value, onChange, defaultValue }, _.isUndefined),
   );
+  const [controllableSearchValue, setControllableSearchValue] =
+    useControllableValue(
+      _.omitBy({ value: searchValue, onChange: onSearch }, _.isUndefined),
+    );
   useEffect(() => {
     if (!autoSelectType) return;
     let nextHost = vhostInfo?.default ?? vhostInfo?.allowed[0] ?? '';
@@ -84,6 +91,8 @@ const StorageSelect: React.FC<Props> = ({
           ...(vhostInfo?.volume_info[host] || {}),
         });
       }}
+      searchValue={controllableSearchValue}
+      onSearch={setControllableSearchValue}
       optionLabelProp="value"
       options={_.map(vhostInfo?.allowed, (host) => ({
         label: showUsageStatus ? (
@@ -108,7 +117,9 @@ const StorageSelect: React.FC<Props> = ({
                 />
               </Tooltip>
             )}
-            {host}
+            <TextHighlighter keyword={controllableSearchValue}>
+              {host}
+            </TextHighlighter>
             {/* TODO: uncomment after implementing click action */}
             {/* <Button type="link" size="small" icon={<InfoCircleOutlined />} /> */}
           </Flex>
