@@ -1,4 +1,5 @@
 import { useSuspendedBackendaiClient } from '../hooks';
+import _ from 'lodash';
 
 export const newLineToBrElement = (
   text: string,
@@ -274,3 +275,25 @@ export function parseUnit(str: string): [number, string] {
   const unit = match[2];
   return [num, unit.toLowerCase() || 'b'];
 }
+
+export const isOutsideRange = (
+  value?: number | string,
+  min?: number | string,
+  max?: number | string,
+) => {
+  if (value === undefined) return false;
+  value = _.toNumber(value);
+  if (min !== undefined && value < _.toNumber(min)) return true;
+  if (max !== undefined && value > _.toNumber(max)) return true;
+  return false;
+};
+export const isOutsideRangeWithUnits = (
+  value: string,
+  min?: string,
+  max?: string,
+) => {
+  if (value === undefined) return false;
+  if (min !== undefined && compareNumberWithUnits(value, min) < 0) return true;
+  if (max !== undefined && compareNumberWithUnits(value, max) > 0) return true;
+  return false;
+};
