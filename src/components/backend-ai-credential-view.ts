@@ -1177,18 +1177,15 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   async _runAction() {
-    const regex = /action=(add)$/; // If there is a new action, add it with |action after it.
-    const isActionExist = regex.test(location.search);
-
-    if (isActionExist) {
-      const action = location.search.split('action=')[1];
-
-      switch (action) {
-        case 'add':
-          await this._launchKeyPairDialog();
-          break;
-      }
+    if (location.search.includes('add')) {
+      await this._launchKeyPairDialog();
     }
+    this._showTab(
+      this.shadowRoot?.querySelector('mwc-tab[title=credential-lists]'),
+    );
+    this.shadowRoot
+      ?.querySelector('mwc-tab-bar.main-bar')
+      ?.setAttribute('activeindex', '1');
   }
 
   render() {
@@ -1198,7 +1195,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal wrap layout">
-           <mwc-tab-bar>
+           <mwc-tab-bar class="main-bar">
             <mwc-tab title="user-lists" label="${_t('credential.Users')}"
                 @click="${(e) => this._showTab(e.target)}"></mwc-tab>
             <mwc-tab title="credential-lists" label="${_t(
