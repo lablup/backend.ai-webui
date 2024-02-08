@@ -46,7 +46,6 @@ const StorageSelect: React.FC<Props> = ({
     return baiClient.vfolder.list_hosts();
   });
 
-  // TODO: default value
   const [controllableState, setControllableState] = useControllableValue(
     _.omitBy({ value, onChange, defaultValue }, _.isUndefined),
   );
@@ -89,10 +88,16 @@ const StorageSelect: React.FC<Props> = ({
       options={_.map(vhostInfo?.allowed, (host) => ({
         label: showUsageStatus ? (
           <Flex align="center" gap={'xs'}>
-            {/* TODO: add tooltip for '여유/주의/부족' */}
             {vhostInfo?.volume_info[host]?.usage && (
               <Tooltip
-                title="여유 or 주의 or 부족"
+                title={`${t('data.Host')} ${t('data.usage.Status')}:
+                ${
+                  vhostInfo?.volume_info[host]?.usage?.percentage < 70
+                    ? t('data.usage.Adequate')
+                    : vhostInfo?.volume_info[host]?.usage?.percentage < 90
+                      ? t('data.usage.Caution')
+                      : t('data.usage.Insufficient')
+                }`}
                 // @ts-ignore
                 getPopupContainer={() => shadowRoot}
               >
