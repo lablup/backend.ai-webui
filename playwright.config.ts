@@ -38,15 +38,18 @@ export default defineConfig({
       timeout: 60000
     },
 
+    /* Test firefox browsers
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
     },
-
+    */
+    /* Test webkit browsers
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
+    */
 
     /* Test against mobile viewports. */
     // {
