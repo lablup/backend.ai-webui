@@ -274,7 +274,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             endpoint_id: endpoint?.endpoint_id || '',
             props: {
               resource_slots: JSON.stringify({
-                cpu: values.resource.cpu.toString(),
+                cpu: values.resource.cpu,
                 mem: values.resource.mem,
                 ...(values.resource.accelerator > 0
                   ? {
