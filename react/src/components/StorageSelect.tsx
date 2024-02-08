@@ -44,7 +44,16 @@ const StorageSelect: React.FC<Props> = ({
   const { data: vhostInfo, isLoading: isLoadingVhostInfo } = useQuery<{
     default: string;
     allowed: Array<string>;
-    volume_info: any;
+    volume_info?: {
+      [key: string]: {
+        backend: string;
+        capabilities: string[];
+        usage: {
+          percentage: number;
+        };
+        sftp_scaling_groups: any[];
+      };
+    };
   }>('vhostInfo', () => {
     return baiClient.vfolder.list_hosts();
   });
@@ -63,7 +72,7 @@ const StorageSelect: React.FC<Props> = ({
       const lowestUsageHost = _.minBy(
         _.map(vhostInfo?.allowed, (host) => ({
           host,
-          volume_info: vhostInfo?.volume_info[host],
+          volume_info: vhostInfo?.volume_info?.[host],
         })),
         'volume_info.usage.percentage',
       )?.host;
@@ -71,7 +80,7 @@ const StorageSelect: React.FC<Props> = ({
     }
     setControllableState(nextHost, {
       id: nextHost,
-      ...(vhostInfo?.volume_info[nextHost] || {}),
+      ...(vhostInfo?.volume_info?.[nextHost] || {}),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vhostInfo]);
@@ -88,7 +97,7 @@ const StorageSelect: React.FC<Props> = ({
       onChange={(host) => {
         setControllableState(host, {
           id: host,
-          ...(vhostInfo?.volume_info[host] || {}),
+          ...(vhostInfo?.volume_info?.[host] || {}),
         });
       }}
       searchValue={controllableSearchValue}
@@ -97,7 +106,7 @@ const StorageSelect: React.FC<Props> = ({
       options={_.map(vhostInfo?.allowed, (host) => ({
         label: showUsageStatus ? (
           <Flex align="center" gap={'xs'}>
-            {vhostInfo?.volume_info[host]?.usage && (
+            {vhostInfo?.volume_info?.[host]?.usage && (
               <Tooltip
                 title={`${t('data.Host')} ${t('data.usage.Status')}:
                 ${
