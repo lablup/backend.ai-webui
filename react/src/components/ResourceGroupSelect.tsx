@@ -7,13 +7,10 @@ import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useTransition } from 'react';
 
-interface ResourceGroupSelectProps
-  extends Omit<SelectProps, 'searchValue' | 'onSearch'> {
+interface ResourceGroupSelectProps extends SelectProps {
   projectId?: string;
   autoSelectDefault?: boolean;
   filter?: (projectName: string) => boolean;
-  searchValue?: string;
-  onSearch?: (value: string) => void;
 }
 
 const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
@@ -28,16 +25,16 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
   const [key, checkUpdate] = useUpdatableState('first');
-  const [groupSearch, setGroupSearch] = useControllableValue<string>(
-    {
-      value: searchValue,
-      onChange: onSearch,
-    },
-    {
-      defaultValue: '',
-      valuePropName: 'searchValue',
-    },
-  );
+  const [controllableSearchValue, setControllableSearchValue] =
+    useControllableValue<string>(
+      _.omitBy(
+        {
+          value: searchValue,
+          onChange: onSearch,
+        },
+        _.isUndefined,
+      ),
+    );
 
   const [isPendingLoading, startLoadingTransition] = useTransition();
   const { data: resourceGroupSelectQueryResult } = useTanQuery<
@@ -115,17 +112,14 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
     ) {
       selectProps.onChange?.(autoSelectedOption.value, autoSelectedOption);
     }
-    if (searchValue) {
-      setGroupSearch(searchValue);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault]);
 
   return (
     <Select
       defaultActiveFirstOption
-      onSearch={setGroupSearch}
-      searchValue={groupSearch}
+      onSearch={setControllableSearchValue}
+      searchValue={controllableSearchValue}
       defaultValue={autoSelectDefault ? autoSelectedOption : undefined}
       onDropdownVisibleChange={(open) => {
         if (open) {
@@ -140,7 +134,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       })}
       optionRender={(option) => {
         return (
-          <TextHighlighter keyword={groupSearch}>
+          <TextHighlighter keyword={controllableSearchValue}>
             {option.data.value}
           </TextHighlighter>
         );
