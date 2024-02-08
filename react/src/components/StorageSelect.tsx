@@ -1,9 +1,9 @@
 import { usageIndicatorColor } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useShadowRoot } from './DefaultProviders';
 import Flex from './Flex';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
-import { Select, SelectProps, Badge, Button } from 'antd';
+import { Select, SelectProps, Badge, Tooltip } from 'antd';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +35,7 @@ const StorageSelect: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
 
+  const shadowRoot = useShadowRoot();
   const baiClient = useSuspendedBackendaiClient();
 
   const { data: vhostInfo, isLoading: isLoadingVhostInfo } = useQuery<{
@@ -87,17 +88,24 @@ const StorageSelect: React.FC<Props> = ({
       optionLabelProp="value"
       options={_.map(vhostInfo?.allowed, (host) => ({
         label: showUsageStatus ? (
-          <Flex justify="between" align="center">
+          <Flex align="center" gap={'xs'}>
             {/* TODO: add tooltip for '여유/주의/부족' */}
             {vhostInfo?.volume_info[host]?.usage && (
-              <Badge
-                color={usageIndicatorColor(
-                  vhostInfo?.volume_info[host]?.usage?.percentage,
-                )}
-                text={host}
-              />
+              <Tooltip
+                title="여유 or 주의 or 부족"
+                // @ts-ignore
+                getPopupContainer={() => shadowRoot}
+              >
+                <Badge
+                  color={usageIndicatorColor(
+                    vhostInfo?.volume_info[host]?.usage?.percentage,
+                  )}
+                />
+              </Tooltip>
             )}
-            <Button type="link" size="small" icon={<InfoCircleOutlined />} />
+            {host}
+            {/* TODO: uncomment after implementing click action */}
+            {/* <Button type="link" size="small" icon={<InfoCircleOutlined />} /> */}
           </Flex>
         ) : (
           host
