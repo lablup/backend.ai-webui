@@ -174,6 +174,7 @@ customElements.define(
               setValue(value);
               props.dispatchEvent('change', value);
             }}
+            popupMatchSelectWidth={false}
           />
         </Flex>
       </DefaultProviders>
