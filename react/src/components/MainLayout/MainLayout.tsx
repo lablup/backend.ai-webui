@@ -2,7 +2,7 @@ import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
-import WebUIHeader from './WebUIHeader';
+import WebUIHeader, { HEADER_HEIGHT } from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { useLocalStorageState } from 'ahooks';
 import { App, Layout, theme } from 'antd';
