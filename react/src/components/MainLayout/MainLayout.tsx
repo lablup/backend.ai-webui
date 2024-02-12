@@ -2,13 +2,14 @@ import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
-import WebUIHeader from './WebUIHeader';
+import WebUIHeader, { HEADER_HEIGHT } from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { useLocalStorageState } from 'ahooks';
 import { App, Layout, theme } from 'antd';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 
+export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 5;
 export type PluginPage = {
   name: string;
   url: string;
@@ -29,9 +30,8 @@ function MainLayout() {
   const [compactSidebarActive] = useLocalStorageState<boolean | undefined>(
     'backendaiwebui.settings.user.compact_sidebar',
   );
-  const [sideCollapsed, setSideCollapsed] = useState<boolean>(
-    !!compactSidebarActive,
-  );
+  const [sideCollapsed, setSideCollapsed] =
+    useState<boolean>(!!compactSidebarActive);
 
   // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();
@@ -121,7 +121,7 @@ function MainLayout() {
                   margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
                   position: 'sticky',
                   top: 0,
-                  zIndex: 1,
+                  zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT,
                 }}
               >
                 <WebUIHeader
