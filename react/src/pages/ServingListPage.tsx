@@ -364,7 +364,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         {/* <Card bordered title={t("summary.ResourceStatistics")}>
           <p>SessionList</p>
         </Card> */}
-        {/* <Card styles={{ body: {paddingTop: 0} }}> */}
+        {/* <Card bodyStyle={{ paddingTop: 0 }}> */}
         <Flex direction="column" align="stretch">
           <Card
             tabList={[
@@ -394,11 +394,9 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 {t('modelService.StartService')}
               </Button>
             }
-            styles={{
-              body: {
-                padding: 0,
-                paddingTop: 1,
-              },
+            bodyStyle={{
+              padding: 0,
+              paddingTop: 1,
             }}
             // tabProps={{
             //   size: 'middle',
