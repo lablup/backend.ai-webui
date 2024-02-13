@@ -58,7 +58,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'summary',
     },
     {
-      label: t('webui.menu.Sessions'),
+      label: <div data-testid="session">{t('webui.menu.Sessions')}</div>,
       icon: <BarsOutlined />,
       key: 'job',
     },
@@ -73,7 +73,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'import',
     },
     {
-      label: t('webui.menu.Data&Storage'),
+      label: <div data-testid="data">{t('webui.menu.Data&Storage')}</div>,
       icon: <CloudUploadOutlined />,
       key: 'data',
     },
@@ -99,7 +99,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   const adminMenu: MenuProps['items'] = [
     {
-      label: t('webui.menu.Users'),
+      label: <div data-testid="credential">{t('webui.menu.Users')}</div>,
       icon: <UserOutlined />,
       key: 'credential',
     },
@@ -305,25 +305,27 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 },
               ]
             : currentUserRole === 'admin'
-            ? [
-                ...generalMenu,
-                {
-                  type: 'group',
-                  label: (
-                    <Flex
-                      style={{ borderBottom: `1px solid ${token.colorBorder}` }}
-                    >
-                      {!props.collapsed && (
-                        <Typography.Text type="secondary" ellipsis>
-                          {t('webui.menu.Administration')}
-                        </Typography.Text>
-                      )}
-                    </Flex>
-                  ),
-                  children: [...adminMenu],
-                },
-              ]
-            : [...generalMenu]
+              ? [
+                  ...generalMenu,
+                  {
+                    type: 'group',
+                    label: (
+                      <Flex
+                        style={{
+                          borderBottom: `1px solid ${token.colorBorder}`,
+                        }}
+                      >
+                        {!props.collapsed && (
+                          <Typography.Text type="secondary" ellipsis>
+                            {t('webui.menu.Administration')}
+                          </Typography.Text>
+                        )}
+                      </Flex>
+                    ),
+                    children: [...adminMenu],
+                  },
+                ]
+              : [...generalMenu]
         }
         /**
          * Etc menu

@@ -8,7 +8,7 @@ dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
 test.describe('Create Session', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:9081');
+    await page.goto(process.env.PAGE_URL as string);
     await page.locator('#id_user_id label').click();
     await page
       .locator('#id_user_id label')
@@ -22,7 +22,7 @@ test.describe('Create Session', () => {
       .locator('#id_api_endpoint label')
       .fill(process.env.ENDPOINT as string);
     await page.locator('#login-button').click();
-    await page.getByTestId('session').click();
+    await page.getByRole('menu').getByTestId('session').click();
     await page.waitForURL('**/job');
   });
   test('User can create session', async ({ page }) => {
@@ -30,8 +30,6 @@ test.describe('Create Session', () => {
       4,
       '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
     ); //Make random vfolder name
-    const version = 'Ubuntu 20.04 aarch64'; //Write version
-    const mountVfolderName = 'test'; //Write mount vfolder
     await page
       .locator('backend-ai-session-view')
       .locator('#launch-session')
@@ -39,7 +37,7 @@ test.describe('Create Session', () => {
     await page.locator('backend-ai-session-view').locator('#version').click();
     await page
       .locator('backend-ai-session-view')
-      .getByRole('option', { name: version })
+      .getByRole('option', { name: process.env.NEW_SESSION_VERSION })
       .click();
     await page
       .locator('backend-ai-session-view')
@@ -53,7 +51,9 @@ test.describe('Create Session', () => {
       .locator('backend-ai-session-view')
       .locator('#next-button')
       .click();
-    await page.getByText(`${mountVfolderName} local:volume1`).click();
+    await page
+      .getByText(`${process.env.NEW_SESSION_MOUNTED_VFOLDER} local:volume1`)
+      .click();
     await page
       .locator('backend-ai-session-view')
       .locator('#next-button')
@@ -68,7 +68,7 @@ test.describe('Create Session', () => {
       .click();
     await page.waitForResponse(
       (response) =>
-        response.url() === 'http://localhost:8090/func/session' &&
+        response.url() === `${process.env.ENDPOINT}/func/session` &&
         response.status() === 201,
       { timeout: 0 },
     );
@@ -81,7 +81,7 @@ test.describe('Create Session', () => {
 
 test.describe('Delete Session', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:9081');
+    await page.goto(process.env.PAGE_URL as string);
     await page.locator('#id_user_id label').click();
     await page
       .locator('#id_user_id label')
@@ -95,12 +95,11 @@ test.describe('Delete Session', () => {
       .locator('#id_api_endpoint label')
       .fill(process.env.ENDPOINT as string);
     await page.locator('#login-button').click();
-    await page.getByTestId('session').click();
+    await page.getByRole('menu').getByTestId('session').click();
     await page.waitForURL('**/job');
   });
   test('User can delete session', async ({ page }) => {
-    const deleteSessionName = 'kxCW'; //Write session name you want to delete
-    await page.getByTestId(deleteSessionName + '-delete').click();
+    await page.getByTestId(process.env.DELETE_SESSION + '-delete').click();
     await page
       .locator(`#terminate-session-dialog`)
       .locator('mwc-button[class="ok"]')
@@ -111,10 +110,14 @@ test.describe('Delete Session', () => {
         (await request.response())?.status() === 200,
       { timeout: 0 },
     );
-    await expect(page.getByText(deleteSessionName)).toBeHidden();
+    await expect(
+      page.getByText(process.env.DELETE_SESSION as string),
+    ).toBeHidden();
     await page.locator('mwc-tab[title="finished"]').click();
     await expect(
-      page.getByTestId(deleteSessionName).getByText('TERMINATED'),
+      page
+        .getByTestId(process.env.DELETE_SESSION as string)
+        .getByText('TERMINATED'),
     ).toBeVisible();
   });
 });

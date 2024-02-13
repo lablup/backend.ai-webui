@@ -25,7 +25,7 @@ test.describe('Login user', () => {
     await page.locator('#login-button').click();
     await page.waitForResponse(async (response) => {
       return (
-        response.url() === `${process.env.ENDPOINT as string}/server/login` &&
+        response.url() === `${process.env.ENDPOINT}/server/login` &&
         response.status() === 200 &&
         (await response.json()).authenticated
       );
@@ -48,7 +48,7 @@ test.describe('Login user', () => {
     await page.locator('#login-button').click();
     await page.waitForResponse(async (response) => {
       return (
-        response.url() === `${process.env.ENDPOINT as string}/server/login` &&
+        response.url() === `${process.env.ENDPOINT}/server/login` &&
         response.status() === 200 && //todo: Need to change status code after resolving this issue at core.
         (await response.json()).data.details === 'User credential mismatch.'
       );
