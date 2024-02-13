@@ -191,9 +191,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                 ({t('session.launcher.FolderAlias')}{' '}
                 <Tooltip
                   title={<Trans i18nKey={'session.launcher.DescFolderAlias'} />}
-                  style={{
-                    zIndex: 10000,
-                  }}
                   // @ts-ignore
                   getPopupContainer={() => shadowRoot}
                 >

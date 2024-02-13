@@ -1463,7 +1463,9 @@
     "TurnOffTotp": "Wyłącz uwierzytelnianie dwuskładnikowe",
     "ConfirmTotpRemovalBody": "Czy na pewno chcesz zrezygnować z uwierzytelniania dwuskładnikowego?",
     "RemoveTotpSetupCompleted": "Wyłączone 2FA",
-    "OTP": "Hasło jednorazowe"
+    "OTP": "Hasło jednorazowe",
+    "EnterConfirmationCode": "Teraz wprowadź hasło jednorazowe wygenerowane przez moduł uwierzytelniający w celu weryfikacji.",
+    "RequireOTP": "Napisz OTP."
   },
   "OpenVSCodeRemote": "Otwórz lokalny kod Visual Studio",
   "inputLimit": {

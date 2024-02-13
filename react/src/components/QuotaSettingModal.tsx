@@ -91,9 +91,6 @@ const QuotaSettingModal: React.FC<Props> = ({
   return (
     <BAIModal
       {...baiModalProps}
-      style={{
-        zIndex: 10000,
-      }}
       destroyOnClose
       onOk={_onOk}
       confirmLoading={isInFlightCommitSetQuotaScope}

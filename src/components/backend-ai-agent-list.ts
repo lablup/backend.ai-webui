@@ -1074,7 +1074,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                   <div class="layout horizontal start resource-indicator">
                     <img
                       class="indicator-icon fg green"
-                      src="/resources/icons/ROCm.png"
+                      src="/resources/icons/rocm.svg"
                     />
                     <span class="monospace" style="padding-left:5px;">
                       ${rowData.item.used_rocm_gpu_slots}/${rowData.item

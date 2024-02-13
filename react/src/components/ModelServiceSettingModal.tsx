@@ -82,9 +82,6 @@ const ModelServiceSettingModal: React.FC<Props> = ({
 
   return (
     <BAIModal
-      style={{
-        zIndex: 10000,
-      }}
       destroyOnClose
       onOk={handleOk}
       onCancel={handleCancel}
