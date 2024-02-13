@@ -1177,15 +1177,17 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   async _runAction() {
-    if (location.search.includes('add')) {
-      await this._launchKeyPairDialog();
+    if (location.search.includes('action')) {
+      if (location.search.includes('add')) {
+        await this._launchKeyPairDialog();
+      }
+      this._showTab(
+        this.shadowRoot?.querySelector('mwc-tab[title=credential-lists]'),
+      );
+      this.shadowRoot
+        ?.querySelector('mwc-tab-bar.main-bar')
+        ?.setAttribute('activeindex', '1');
     }
-    this._showTab(
-      this.shadowRoot?.querySelector('mwc-tab[title=credential-lists]'),
-    );
-    this.shadowRoot
-      ?.querySelector('mwc-tab-bar.main-bar')
-      ?.setAttribute('activeindex', '1');
   }
 
   render() {
