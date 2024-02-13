@@ -162,7 +162,7 @@ customElements.define(
           direction="column"
           gap="sm"
           align="stretch"
-          style={{ minWidth: 200 }}
+          style={{ minWidth: 200, maxWidth: 310 }}
         >
           {t('session.launcher.ResourceGroup')}
           <ResourceGroupSelect
