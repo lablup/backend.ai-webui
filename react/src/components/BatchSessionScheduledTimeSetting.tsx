@@ -6,7 +6,6 @@ import Flex from './Flex';
 import { useToggle } from 'ahooks';
 import { Typography, Checkbox, theme } from 'antd';
 import dayjs from 'dayjs';
-import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
