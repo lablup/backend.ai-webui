@@ -1,5 +1,6 @@
 import ErrorLogList from '../components/ErrorLogList';
 import Flex from '../components/Flex';
+import { useWebUINavigate } from '../hooks';
 import { theme } from 'antd';
 import Card from 'antd/es/card/Card';
 import { useTranslation } from 'react-i18next';
@@ -12,11 +13,25 @@ const tabParam = withDefault(StringParam, 'general');
 const UserSettingPage = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+  const webUINavigate = useWebUINavigate();
+  const [curTabKey] = useQueryParam('tab', tabParam);
   return (
     <Card
       activeTabKey={curTabKey}
-      onTabChange={(key) => setCurTabKey(key as TabKey)}
+      onTabChange={(key) => {
+        webUINavigate(
+          {
+            pathname: '/usersettings',
+            search: `?tab=${key}`,
+          },
+          // Pass the tab as a `params`` to update the tab in backend-ai-usersettings
+          {
+            params: {
+              tab: key,
+            },
+          },
+        );
+      }}
       tabList={[
         {
           key: 'general',
