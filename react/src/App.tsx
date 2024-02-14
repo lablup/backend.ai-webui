@@ -26,6 +26,10 @@ const StorageHostSettingPage = React.lazy(
 );
 const RoutingListPage = React.lazy(() => import('./pages/RoutingListPage'));
 const UserSettingsPage = React.lazy(() => import('./pages/UserSettingsPage'));
+const SessionListPage = React.lazy(() => import('./pages/SessionListPage'));
+const SessionLauncherPage = React.lazy(
+  () => import('./pages/SessionLauncherPage'),
+);
 
 const router = createBrowserRouter([
   {
@@ -163,10 +167,12 @@ const router = createBrowserRouter([
       {
         path: '/session',
         handle: { labelKey: 'webui.menu.Sessions' },
+        Component: SessionListPage,
       },
       {
         path: '/session/start',
         handle: { labelKey: 'session.launcher.StartNewSession' },
+        Component: SessionLauncherPage,
       },
       // Leave empty tag for plugin pages.
       {
