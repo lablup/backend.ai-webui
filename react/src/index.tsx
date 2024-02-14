@@ -5,7 +5,6 @@ import ResourceGroupSelect from './components/ResourceGroupSelect';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
 import ModelStoreListPage from './pages/ModelStoreListPage';
-import { Form } from 'antd';
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
@@ -159,23 +158,24 @@ customElements.define(
 
     return (
       <DefaultProviders {...props}>
-        <Flex direction="column" align="stretch" style={{ minWidth: 200 }}>
-          <Form layout="vertical">
-            <Form.Item
-              label={t('session.launcher.ResourceGroup')}
-              style={{ margin: 0 }}
-            >
-              <ResourceGroupSelect
-                size="large"
-                value={value}
-                loading={value !== props.value || value === ''}
-                onChange={(value) => {
-                  setValue(value);
-                  props.dispatchEvent('change', value);
-                }}
-              />
-            </Form.Item>
-          </Form>
+        <Flex
+          direction="column"
+          gap="sm"
+          align="stretch"
+          style={{ minWidth: 200 }}
+        >
+          {t('session.launcher.ResourceGroup')}
+          <ResourceGroupSelect
+            size="large"
+            showSearch
+            value={value}
+            loading={value !== props.value || value === ''}
+            onChange={(value) => {
+              setValue(value);
+              props.dispatchEvent('change', value);
+            }}
+            popupMatchSelectWidth={false}
+          />
         </Flex>
       </DefaultProviders>
     );
