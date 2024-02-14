@@ -1,7 +1,8 @@
 import DatePickerISO, { DatePickerISOProps } from './DatePickerISO';
+import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
 import { useToggle } from 'ahooks';
-import { Typography, Checkbox, Form, FormInstance, theme } from 'antd';
+import { Typography, Checkbox, theme } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React from 'react';
@@ -14,7 +15,14 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [isChecked, { toggle: toggleChecked }] = useToggle(false);
-  // const [form] = Form.useForm();
+  const [scheduleTime, setScheduleTime] = React.useState<
+    string | undefined | null
+  >();
+  const { dispatchEvent } = useWebComponentInfo();
+  const dispatchAndSetScheduleTime = (value: string | undefined | null) => {
+    setScheduleTime(value);
+    dispatchEvent('change', value);
+  };
 
   return (
     <>
@@ -22,7 +30,16 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
         {t('session.launcher.SessionStartTime')}
       </Typography.Text>
       <Flex>
-        <Checkbox checked={isChecked} onClick={toggleChecked}>
+        <Checkbox
+          checked={isChecked}
+          onClick={(v) => {
+            toggleChecked();
+            const newScheduleTime = v
+              ? dayjs().add(2, 'minutes').toISOString()
+              : undefined;
+            dispatchAndSetScheduleTime(newScheduleTime);
+          }}
+        >
           {t('session.launcher.Enable')}
         </Checkbox>
         <DatePickerISO
@@ -34,62 +51,23 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
           disabled={!isChecked}
           showTime={{
             hideDisabledOptions: true,
-            defaultValue: dayjs().add(2, 'minutes'),
           }}
+          value={isChecked ? scheduleTime : undefined}
+          onChange={(value) => {
+            dispatchAndSetScheduleTime(value);
+          }}
+          onBlur={() => {
+            dispatchAndSetScheduleTime(scheduleTime);
+          }}
+          status={
+            (isChecked && !scheduleTime) ||
+            dayjs(scheduleTime).isBefore(dayjs())
+              ? 'error'
+              : undefined
+          }
         />
       </Flex>
     </>
-    // <Form form={form} layout="vertical" requiredMark="optional">
-    //   <Form.Item label={t('session.launcher.SessionStartTime')}>
-    //     <Flex direction="row" gap={'xs'}>
-    //       <Form.Item
-    //         noStyle
-    //         name={['batch', 'enabled']}
-    //         valuePropName="checked"
-    //       >
-    //         <Checkbox
-    //           onChange={(e) => {
-    //             if (e.target.checked) {
-    //               form.setFieldValue(
-    //                 ['batch', 'scheduleDate'],
-    //                 dayjs().add(2, 'minutes').toISOString(),
-    //               );
-    //             } else if (e.target.checked === false) {
-    //               form.setFieldValue(['batch', 'scheduleDate'], undefined);
-    //             }
-    //           }}
-    //         >
-    //           {t('session.launcher.Enable')}
-    //         </Checkbox>
-    //       </Form.Item>
-    //       <Form.Item
-    //         noStyle
-    //         name={['batch', 'scheduleDate']}
-    //         rules={[
-    //           {
-    //             validator: async (__, value) => {
-    //               if (value && dayjs(value).isBefore(dayjs())) {
-    //                 return Promise.reject(
-    //                   t('session.launcher.StartTimeMustBeInTheFuture'),
-    //                 );
-    //               }
-    //               return Promise.resolve();
-    //             },
-    //           },
-    //         ]}
-    //       >
-    //         <DatePickerISO
-    //           showTime
-    //           popupStyle={{ position: 'fixed' }}
-    //           disabledDate={(date) => {
-    //             return date.isBefore(dayjs());
-    //           }}
-    //           {...datePickerISOProps}
-    //         />
-    //       </Form.Item>
-    //     </Flex>
-    //   </Form.Item>
-    // </Form>
   );
 };
 

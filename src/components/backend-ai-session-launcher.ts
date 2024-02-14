@@ -4386,7 +4386,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         fixed
         backdrop
         persistent
-        @dialog-closed="${() => this._toggleScheduleTime(true)}"
         style="position:relative;"
       >
         <span slot="title">
