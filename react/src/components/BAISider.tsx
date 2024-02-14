@@ -52,6 +52,9 @@ const BAISider: React.FC<BAISiderProps> = ({
           .bai-sider .non-draggable {
             -webkit-app-region: no-drag;
           }
+          .bai-sider .siderContents::-webkit-scrollbar {
+            display: none;
+          }
         `}
       </style>
       <Sider
@@ -74,8 +77,8 @@ const BAISider: React.FC<BAISiderProps> = ({
           xs
             ? 0
             : _.isNumber(otherProps.collapsedWidth)
-            ? otherProps.collapsedWidth
-            : DEFAULT_COLLAPSED_WIDTH
+              ? otherProps.collapsedWidth
+              : DEFAULT_COLLAPSED_WIDTH
         }
         className="bai-sider"
       >
@@ -114,31 +117,33 @@ const BAISider: React.FC<BAISiderProps> = ({
             </Typography.Text>
           </div>
         </Flex>
-        {children}
-        {bottomText && (
-          <>
-            <Flex style={{ flex: 1 }} />
-            <Flex
-              justify="center"
-              direction="column"
-              style={{
-                width: '100%',
-                padding: 20,
-                textAlign: 'center',
-              }}
-            >
-              <Text
-                type="secondary"
+        <div className="siderContents" style={{ overflowY: 'auto' }}>
+          {children}
+          {bottomText && (
+            <>
+              <Flex style={{ flex: 1 }} />
+              <Flex
+                justify="center"
+                direction="column"
                 style={{
-                  fontSize: '12px',
-                  wordBreak: 'normal',
+                  width: '100%',
+                  padding: 20,
+                  textAlign: 'center',
                 }}
               >
-                {bottomText}
-              </Text>
-            </Flex>
-          </>
-        )}
+                <Text
+                  type="secondary"
+                  style={{
+                    fontSize: '12px',
+                    wordBreak: 'normal',
+                  }}
+                >
+                  {bottomText}
+                </Text>
+              </Flex>
+            </>
+          )}
+        </div>
       </Sider>
     </>
   );
