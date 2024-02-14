@@ -6,8 +6,6 @@ import Card from 'antd/es/card/Card';
 import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
-type TabKey = 'general' | 'logs';
-
 const tabParam = withDefault(StringParam, 'general');
 
 const UserSettingPage = () => {
@@ -24,7 +22,7 @@ const UserSettingPage = () => {
             pathname: '/usersettings',
             search: `?tab=${key}`,
           },
-          // Pass the tab as a `params`` to update the tab in backend-ai-usersettings
+          // Pass the tab as a `params` to update the tab in backend-ai-usersettings
           {
             params: {
               tab: key,
