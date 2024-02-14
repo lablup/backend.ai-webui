@@ -256,7 +256,8 @@
       "EnvironmentVariableNamePatternError": "변수 이름은 문자 또는 밑줄로 시작해야 하며 문자, 숫자, 밑줄만 포함할 수 있습니다.",
       "EnvironmentVariableDuplicateName": "이미 존재하는 변수명입니다.",
       "EnableAutomaticShmem": "자동 공유메모리 설정",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "StartAfter": "다음 이후에 시작: "
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

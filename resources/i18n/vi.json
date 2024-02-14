@@ -256,7 +256,8 @@
       "Template": "Mẫu phiên",
       "EnableAutomaticShmem": "Bộ nhớ chia sẻ tự động",
       "PreOpenPortMaxCountLimit": "Bạn có thể thiết lập tối đa {{count}} cổng mở trước.",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "StartAfter": "Bắt đầu sau: "
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",

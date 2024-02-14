@@ -258,7 +258,8 @@
       "EnableAutomaticShmem": "Automatyczna pamięć współdzielona",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",
+      "StartAfter": "Zacznij po: "
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",

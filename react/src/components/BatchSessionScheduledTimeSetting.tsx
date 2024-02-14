@@ -1,3 +1,5 @@
+import { useSuspendedBackendaiClient } from '../hooks';
+import BAIIntervalText from './BAIIntervalText';
 import DatePickerISO, { DatePickerISOProps } from './DatePickerISO';
 import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
@@ -14,6 +16,8 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const baiClient = useSuspendedBackendaiClient();
+
   const [isChecked, { toggle: toggleChecked }] = useToggle(false);
   const [scheduleTime, setScheduleTime] = React.useState<
     string | undefined | null
@@ -29,7 +33,7 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
       <Typography.Text type="secondary" style={{ fontSize: token.fontSizeSM }}>
         {t('session.launcher.SessionStartTime')}
       </Typography.Text>
-      <Flex>
+      <Flex align="start" gap="sm">
         <Checkbox
           checked={isChecked}
           onClick={(v) => {
@@ -42,30 +46,47 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
         >
           {t('session.launcher.Enable')}
         </Checkbox>
-        <DatePickerISO
-          {...datePickerISOProps}
-          popupStyle={{ position: 'fixed' }}
-          disabledDate={(date) => {
-            return date.isBefore(dayjs().startOf('minute'));
-          }}
-          disabled={!isChecked}
-          showTime={{
-            hideDisabledOptions: true,
-          }}
-          value={isChecked ? scheduleTime : undefined}
-          onChange={(value) => {
-            dispatchAndSetScheduleTime(value);
-          }}
-          onBlur={() => {
-            dispatchAndSetScheduleTime(scheduleTime);
-          }}
-          status={
-            (isChecked && !scheduleTime) ||
-            dayjs(scheduleTime).isBefore(dayjs())
-              ? 'error'
-              : undefined
-          }
-        />
+        <Flex direction="column" align="end">
+          <DatePickerISO
+            {...datePickerISOProps}
+            popupStyle={{ position: 'fixed' }}
+            disabledDate={(date) => {
+              return date.isBefore(dayjs().startOf('minute'));
+            }}
+            disabled={!isChecked}
+            showTime={{
+              hideDisabledOptions: true,
+            }}
+            value={isChecked ? scheduleTime : undefined}
+            onChange={(value) => {
+              dispatchAndSetScheduleTime(value);
+            }}
+            onBlur={() => {
+              dispatchAndSetScheduleTime(scheduleTime);
+            }}
+            status={
+              (isChecked && !scheduleTime) ||
+              dayjs(scheduleTime).isBefore(dayjs())
+                ? 'error'
+                : undefined
+            }
+          />
+          {isChecked && scheduleTime && (
+            <Typography.Text
+              type="secondary"
+              style={{ fontSize: token.fontSizeSM - 2 }}
+            >
+              ({t('session.launcher.StartAfter')}
+              <BAIIntervalText
+                callback={() => {
+                  return baiClient.utils.elapsedTime(dayjs(), scheduleTime);
+                }}
+                delay={1000}
+              />
+              )
+            </Typography.Text>
+          )}
+        </Flex>
       </Flex>
     </>
   );

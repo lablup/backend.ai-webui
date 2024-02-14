@@ -256,7 +256,8 @@
       "EnvironmentVariableDuplicateName": "Un nom de variable qui existe déjà.",
       "Template": "Modèle de session",
       "EnableAutomaticShmem": "Mémoire partagée automatique",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "StartAfter": "Commencer après: "
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
