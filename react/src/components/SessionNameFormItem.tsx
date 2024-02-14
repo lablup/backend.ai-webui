@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 interface SessionNameFormItemProps extends FormItemProps {}
 
 export interface SessionNameFormItemValue {
-  sessionName: string;
+  name: string;
 }
 const SessionNameFormItem: React.FC<SessionNameFormItemProps> = ({
   ...formItemProps
@@ -15,7 +15,7 @@ const SessionNameFormItem: React.FC<SessionNameFormItemProps> = ({
   return (
     <Form.Item
       label={t('session.launcher.SessionName')}
-      name="sessionName"
+      name="name"
       rules={[
         {
           max: 64,
@@ -30,7 +30,7 @@ const SessionNameFormItem: React.FC<SessionNameFormItemProps> = ({
       ]}
       {...formItemProps}
     >
-      <Input allowClear autoComplete="off" />
+      <Input allowClear />
     </Form.Item>
   );
 };

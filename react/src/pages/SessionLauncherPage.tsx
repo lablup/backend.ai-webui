@@ -25,11 +25,7 @@ import VFolderTableFromItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
 import { compareNumberWithUnits, iSizeToSize } from '../helper';
-import {
-  useCurrentProjectValue,
-  useSuspendedBackendaiClient,
-  useWebUINavigate,
-} from '../hooks';
+import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
 // @ts-ignore
 import customCSS from './SessionLauncherPage.css?raw';
 import {
@@ -172,8 +168,7 @@ const SessionLauncherPage = () => {
   });
 
   const navigate = useNavigate();
-  // const { moveTo } = useWebComponentInfo();
-  const webuiNavigate = useWebUINavigate();
+  const { moveTo } = useWebComponentInfo();
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
 
@@ -324,9 +319,9 @@ const SessionLauncherPage = () => {
           // TODO: allow_manual_image_name_for_session
           kernelName,
           architecture,
-          sessionName: _.isEmpty(values.sessionName)
+          sessionName: _.isEmpty(values.name)
             ? generateSessionId()
-            : values.sessionName,
+            : values.name,
           config: {
             type: values.sessionType,
 
@@ -484,7 +479,10 @@ const SessionLauncherPage = () => {
                 globalThis.appLauncher.showLauncher(appOptions);
               }
             }
-            webuiNavigate('/session');
+            navigate('/job', {
+              // replace: true,
+            });
+            moveTo('/job');
           })
           .catch(() => {
             // this.metadata_updating = false;
@@ -538,7 +536,7 @@ const SessionLauncherPage = () => {
               title: t('webui.menu.Sessions'),
               onClick: (e) => {
                 e.preventDefault();
-                webuiNavigate(redirectTo);
+                moveTo(redirectTo);
               },
               href: redirectTo,
             },
@@ -868,10 +866,7 @@ const SessionLauncherPage = () => {
                       currentStepKey === 'environment' ? 'block' : 'none',
                   }}
                 >
-                  <ResourceAllocationFormItems
-                    enableNumOfSessions
-                    enableResourcePresets
-                  />
+                  <ResourceAllocationFormItems enableNumOfSessions />
                 </Card>
                 <Card
                   title={t('session.launcher.HPCOptimization')}

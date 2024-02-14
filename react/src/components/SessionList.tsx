@@ -1,6 +1,5 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useBackendAIImageMetaData } from '../hooks';
-import BAIIntervalText from './BAIIntervalText';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import ImageMetaIcon from './ImageMetaIcon';
@@ -10,7 +9,6 @@ import { SessionListQuery } from './__generated__/SessionListQuery.graphql';
 import { FolderOutlined, GroupOutlined } from '@ant-design/icons';
 import { Table, TableProps, Tag, Typography, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -265,24 +263,14 @@ const SessionList: React.FC<SessionListProps> = ({
             dataIndex: 'created_at',
             render(value, record) {
               const localeStringDate = new Date(value).toLocaleString();
-
+              const elapsedTime = baiClient.utils.elapsedTime(
+                value,
+                record.terminated_at,
+              );
               return (
                 <Flex direction="column" gap="xs">
                   {localeStringDate}
-                  <DoubleTag
-                    values={[
-                      t('session.ElapsedTime'),
-                      <BAIIntervalText
-                        callback={() => {
-                          return baiClient.utils.elapsedTime(
-                            value,
-                            record.terminated_at,
-                          );
-                        }}
-                        delay={1000}
-                      />,
-                    ]}
-                  />
+                  <DoubleTag values={[t('session.ElapsedTime'), elapsedTime]} />
                 </Flex>
               );
             },

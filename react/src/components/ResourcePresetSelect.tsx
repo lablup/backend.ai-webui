@@ -2,18 +2,47 @@ import { useUpdatableState } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
 import Flex from './Flex';
 import ResourceNumber from './ResourceNumber';
-import {
-  ResourcePresetSelectQuery,
-  ResourcePresetSelectQuery$data,
-} from './__generated__/ResourcePresetSelectQuery.graphql';
+import { ResourcePresetSelectQuery } from './__generated__/ResourcePresetSelectQuery.graphql';
 import { EditOutlined } from '@ant-design/icons';
-import { useControllableValue, useThrottleFn } from 'ahooks';
+import { useThrottleFn } from 'ahooks';
 import { Select } from 'antd';
 import { SelectProps } from 'antd/lib';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useTransition } from 'react';
 import { useLazyLoadQuery } from 'react-relay';
+
+// const myFunc= ()=>{
+//   const param: any = { group: globalThis.backendaiclient.current_group };
+//       if (
+//         this.current_user_group !== globalThis.backendaiclient.current_group ||
+//         this.scaling_groups.length == 0 ||
+//         (this.scaling_groups.length === 1 && this.scaling_groups[0].name === '')
+//       ) {
+//         this.current_user_group = globalThis.backendaiclient.current_group;
+//         const sgs = await globalThis.backendaiclient.scalingGroup.list(
+//           this.current_user_group,
+//         );
+//         // Make empty scaling group item if there is no scaling groups.
+//         this.scaling_groups =
+//           sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{ name: '' }];
+//       }
+//       if (this.scaling_groups.length > 0) {
+//         const scaling_groups: any = [];
+//         this.scaling_groups.map((group) => {
+//           scaling_groups.push(group.name);
+//         });
+//         if (
+//           this.scaling_group === '' ||
+//           !scaling_groups.includes(this.scaling_group)
+//         ) {
+//           this.scaling_group = this.scaling_groups[0].name;
+//         }
+//         param['scaling_group'] = this.scaling_group;
+//       }
+//       const resourcePresetInfo =
+//         await globalThis.backendaiclient.resourcePreset.check(param);
+// }
 
 type Y = ArrayElement<NonNullable<SelectProps['options']>>;
 interface PresetOptionType extends Y {
@@ -24,17 +53,10 @@ interface PresetOptionType extends Y {
     shared_memory: string;
   };
 }
-
-export type ResourcePreset = NonNullable<
-  NonNullable<ResourcePresetSelectQuery$data['resource_presets']>[number]
->;
-export interface ResourcePresetSelectProps
-  extends Omit<SelectProps, 'onChange'> {
+interface ResourcePresetSelectProps extends Omit<SelectProps, 'onChange'> {
   onChange?: (value: string, options: PresetOptionType) => void;
-  allocatablePresetNames?: string[];
 }
 const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
-  allocatablePresetNames,
   ...selectProps
 }) => {
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
@@ -45,8 +67,6 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   });
   const [resourceSlots] = useResourceSlots();
   const [isPendingUpdate, _startTransition] = useTransition();
-  const [controllableValue, setControllableValue] =
-    useControllableValue(selectProps);
   const updateFetchKeyUnderTransition = () => {
     _startTransition(() => {
       updateFetchKeyThrottled();
@@ -68,10 +88,16 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
       fetchPolicy: fetchKey === 'first' ? 'store-and-network' : 'network-only',
     },
   );
-
+  // const resourcePresetInfo = await globalThis.backendaiclient.resourcePreset.check(param);
   return (
     <Select
       loading={isPendingUpdate}
+      // options={_.map(resource_presets, (preset) => {
+      //   return {
+      //     value: preset?.name,
+      //     label: preset?.name,
+      //   };
+      // })}
       options={[
         {
           value: 'custom',
@@ -80,6 +106,14 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
               <EditOutlined /> Custom
             </Flex>
           ),
+          // label: (
+          //   <Flex direction="row" gap="xs">
+          //     <Typography.Text strong>Custom</Typography.Text>
+          //     <Typography.Text type="secondary">
+          //       Customize allocation amount
+          //     </Typography.Text>
+          //   </Flex>
+          // ),
         },
         {
           // value: 'preset1',
@@ -89,9 +123,6 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
             const slotsInfo: {
               [key in string]: string;
             } = JSON.parse(preset?.resource_slots);
-            const disabled = allocatablePresetNames
-              ? !allocatablePresetNames.includes(preset?.name || '')
-              : undefined;
             return {
               value: preset?.name,
               label: (
@@ -100,12 +131,10 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                   <Flex
                     direction="row"
                     gap={'xxs'}
-                    style={
-                      {
-                        // color: 'black',
-                        // opacity: isAvailable ? 1 : 0.4,
-                      }
-                    }
+                    style={{
+                      color: 'black',
+                      opacity: index === 1 ? 0.5 : 1,
+                    }}
                   >
                     {_.map(
                       _.omitBy(slotsInfo, (slot, key) =>
@@ -128,23 +157,16 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                 </Flex>
               ),
               preset,
-              disabled: disabled,
+              // disabled: index === 1,
             };
-            // sort by disabled
-          }).sort((a, b) =>
-            a.disabled === b.disabled ? 0 : a.disabled ? 1 : -1,
-          ),
+          }),
         },
       ]}
       showSearch
-      // Set props from parent and override it
       {...selectProps}
-      value={controllableValue}
-      onChange={setControllableValue}
       onDropdownVisibleChange={(open) => {
-        selectProps.onDropdownVisibleChange &&
-          selectProps.onDropdownVisibleChange(open);
         if (open) {
+          console.log(open);
           updateFetchKeyUnderTransition();
         }
       }}

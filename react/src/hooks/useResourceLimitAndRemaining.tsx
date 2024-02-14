@@ -110,8 +110,7 @@ export const useResourceLimitAndRemaining = ({
       }
     },
     staleTime: 0,
-    suspense: true,
-    // suspense: !_.isEmpty(currentResourceGroup), //prevent flicking
+    suspense: !_.isEmpty(currentResourceGroup), //prevent flicking
   });
 
   const currentImageMinM =
@@ -327,7 +326,6 @@ export const useResourceLimitAndRemaining = ({
       remaining,
       currentImageMinM,
       isRefetching,
-      checkPresetInfo,
     },
     {
       refetch,
