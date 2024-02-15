@@ -257,7 +257,8 @@
       "Template": "Templat Sesi",
       "EnableAutomaticShmem": "Memori bersama otomatis",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "StartAfter": "Mulai setelah:"
+      "StartAfter": "Mulai setelah:",
+      "StartTimeDoesNotApply": "Jika waktu mulai tidak ditetapkan, maka tidak berlaku."
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",

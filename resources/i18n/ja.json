@@ -257,7 +257,8 @@
       "Template": "セッションテンプレート",
       "EnableAutomaticShmem": "自動共有メモリー",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "StartAfter": "次の後に開始します:"
+      "StartAfter": "次の後に開始します:",
+      "StartTimeDoesNotApply": "開始時間が設定されていない場合は適用されません。"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",

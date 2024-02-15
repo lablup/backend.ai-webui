@@ -257,7 +257,8 @@
       "Template": "Modello di sessione",
       "EnableAutomaticShmem": "Memoria condivisa automatica",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "StartAfter": "Inizia dopo:"
+      "StartAfter": "Inizia dopo:",
+      "StartTimeDoesNotApply": "Se l'ora di inizio non è impostata, non si applica."
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",

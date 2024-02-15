@@ -257,7 +257,8 @@
       "EnableAutomaticShmem": "Memori dikongsi automatik",
       "PreOpenPortMaxCountLimit": "Anda boleh menyediakan kepada {{count}} port pra-buka.",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "StartAfter": "Mulakan selepas:"
+      "StartAfter": "Mulakan selepas:",
+      "StartTimeDoesNotApply": "Jika masa mula tidak ditetapkan, ia tidak terpakai."
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",

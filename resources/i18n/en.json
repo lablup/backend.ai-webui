@@ -270,7 +270,8 @@
       "Template": "Session Template",
       "EnableAutomaticShmem": "Automatic shared memory",
       "PreOpenPortMaxCountLimit_plural": "PreOpenPortMaxCountLimit",
-      "StartAfter": "Start after: "
+      "StartAfter": "Start after: ",
+      "StartTimeDoesNotApply": "If the start time is not set, it doesn't apply."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

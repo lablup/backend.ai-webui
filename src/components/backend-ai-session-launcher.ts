@@ -1720,7 +1720,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
       if (this.scheduledTime) {
         config['startsAt'] = this.scheduledTime;
-        console.log('startsAt', config['startsAt']);
       }
     }
     if (this.environ_values && Object.keys(this.environ_values).length !== 0) {
@@ -4207,9 +4206,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.sessionType === 'batch'
           ? this.commandEditor._validateInput()
           : true;
+      const isBatchScheduledTimeValid =
+        this.sessionType === 'batch' && this.scheduledTime
+          ? new Date(this.scheduledTime).getTime() > new Date().getTime()
+          : true;
       const isSessionNameValid = this.sessionName.checkValidity();
 
-      if (!isBatchModeValid || !isSessionNameValid) {
+      if (
+        !isBatchModeValid ||
+        !isBatchScheduledTimeValid ||
+        !isSessionNameValid
+      ) {
         return false;
       }
     }

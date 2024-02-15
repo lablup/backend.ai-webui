@@ -61,10 +61,11 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
               dispatchAndSetScheduleTime(scheduleTime);
             }}
             status={
-              (isChecked && !scheduleTime) ||
-              dayjs(scheduleTime).isBefore(dayjs())
-                ? 'error'
-                : undefined
+              isChecked && !scheduleTime
+                ? 'warning'
+                : dayjs(scheduleTime).isBefore(dayjs())
+                  ? 'error'
+                  : undefined
             }
           />
           {isChecked && scheduleTime && (
@@ -80,6 +81,14 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
                 delay={1000}
               />
               )
+            </Typography.Text>
+          )}
+          {isChecked && !scheduleTime && (
+            <Typography.Text
+              type="warning"
+              style={{ fontSize: token.fontSizeSM - 2 }}
+            >
+              {t('session.launcher.StartTimeDoesNotApply')}
             </Typography.Text>
           )}
         </Flex>

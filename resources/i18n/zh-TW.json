@@ -257,7 +257,8 @@
       "Template": "会议模板",
       "EnableAutomaticShmem": "自动共享内存",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "StartAfter": "之後開始："
+      "StartAfter": "之後開始：",
+      "StartTimeDoesNotApply": "如果未設定開始時間，則不適用。"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",

@@ -1146,7 +1146,8 @@
       "EnableAutomaticShmem": "Automaattinen jaettu muisti",
       "Template": "Istuntomalli",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "StartAfter": "Aloita sen jälkeen:"
+      "StartAfter": "Aloita sen jälkeen:",
+      "StartTimeDoesNotApply": "Jos aloitusaikaa ei ole asetettu, se ei ole voimassa."
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

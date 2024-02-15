@@ -257,7 +257,8 @@
       "EnvironmentVariableDuplicateName": "이미 존재하는 변수명입니다.",
       "EnableAutomaticShmem": "자동 공유메모리 설정",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "StartAfter": "다음 이후에 시작:"
+      "StartAfter": "다음 이후에 시작:",
+      "StartTimeDoesNotApply": "시작 시간을 설정하지 않으면 적용되지 않습니다."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

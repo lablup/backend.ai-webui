@@ -1,7 +1,8 @@
 {
   "session": {
     "launcher": {
-      "StartAfter": "Comece depois:"
+      "StartAfter": "Comece depois:",
+      "StartTimeDoesNotApply": "Se a hora de início não estiver definida, ela não se aplica."
     }
   }
 }
