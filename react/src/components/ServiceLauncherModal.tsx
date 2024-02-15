@@ -128,7 +128,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             value
           }
         }
-        architecture @since(version: "23.09.9")
         name
       }
     `,
@@ -256,7 +255,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           cluster_size
           open_to_public
           image
-          architecture
           name
         }
       }
@@ -455,9 +453,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   cluster_size: endpoint?.cluster_size,
                   openToPublic: endpoint?.open_to_public,
                   environments: {
-                    environment: endpoint?.image_row?.name,
-                    version: `${endpoint?.image}@${endpoint?.image_row?.architecture}`,
-                    image: endpoint?.image_row,
+                    environment: endpoint?.image_object?.name,
+                    version: `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`,
+                    image: endpoint?.image_object,
                   },
                 }
               : {
