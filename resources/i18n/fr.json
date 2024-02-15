@@ -257,7 +257,7 @@
       "Template": "Modèle de session",
       "EnableAutomaticShmem": "Mémoire partagée automatique",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "StartAfter": "Commencer après: "
+      "StartAfter": "Commencez après :"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",

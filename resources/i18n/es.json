@@ -1146,7 +1146,7 @@
       "Template": "Plantilla de sesión",
       "EnableAutomaticShmem": "Memoria compartida automática",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "StartAfter": "Empezar después: "
+      "StartAfter": "Empezar después:"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

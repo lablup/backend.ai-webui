@@ -257,7 +257,7 @@
       "Template": "Sitzungsvorlage",
       "EnableAutomaticShmem": "Automatischer gemeinsamer Speicher",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "StartAfter": "Beginnen Sie danach: "
+      "StartAfter": "Beginnen Sie nach:"
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",

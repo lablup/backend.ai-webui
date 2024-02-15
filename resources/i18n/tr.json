@@ -257,7 +257,7 @@
       "Template": "Oturum Şablonu",
       "EnableAutomaticShmem": "Otomatik paylaşılan bellek",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "StartAfter": "Şu Süreden Sonra Başla: "
+      "StartAfter": "Şundan sonra başla:"
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",

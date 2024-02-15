@@ -257,7 +257,7 @@
       "Template": "Πρότυπο συνεδρίας",
       "EnableAutomaticShmem": "Αυτόματη κοινή μνήμη",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "StartAfter": "Έναρξη Μετά: "
+      "StartAfter": "Έναρξη μετά:"
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",

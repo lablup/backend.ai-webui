@@ -1,4 +1,3 @@
-import { useSuspendedBackendaiClient } from '../hooks';
 import BAIIntervalText from './BAIIntervalText';
 import DatePickerISO, { DatePickerISOProps } from './DatePickerISO';
 import { useWebComponentInfo } from './DefaultProviders';
@@ -15,8 +14,6 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const baiClient = useSuspendedBackendaiClient();
-
   const [isChecked, { toggle: toggleChecked }] = useToggle(false);
   const [scheduleTime, setScheduleTime] = React.useState<
     string | undefined | null
@@ -78,7 +75,7 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
               ({t('session.launcher.StartAfter')}
               <BAIIntervalText
                 callback={() => {
-                  return baiClient.utils.elapsedTime(dayjs(), scheduleTime);
+                  return dayjs(scheduleTime).fromNow();
                 }}
                 delay={1000}
               />
