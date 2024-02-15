@@ -199,6 +199,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       logoTitleCollapsed={
         themeConfig?.logo?.logoTitleCollapsed || siteDescription || 'WebUI'
       }
+      fixedLogo
       bottomText={
         props.collapsed ? null : (
           <>
@@ -305,25 +306,27 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 },
               ]
             : currentUserRole === 'admin'
-            ? [
-                ...generalMenu,
-                {
-                  type: 'group',
-                  label: (
-                    <Flex
-                      style={{ borderBottom: `1px solid ${token.colorBorder}` }}
-                    >
-                      {!props.collapsed && (
-                        <Typography.Text type="secondary" ellipsis>
-                          {t('webui.menu.Administration')}
-                        </Typography.Text>
-                      )}
-                    </Flex>
-                  ),
-                  children: [...adminMenu],
-                },
-              ]
-            : [...generalMenu]
+              ? [
+                  ...generalMenu,
+                  {
+                    type: 'group',
+                    label: (
+                      <Flex
+                        style={{
+                          borderBottom: `1px solid ${token.colorBorder}`,
+                        }}
+                      >
+                        {!props.collapsed && (
+                          <Typography.Text type="secondary" ellipsis>
+                            {t('webui.menu.Administration')}
+                          </Typography.Text>
+                        )}
+                      </Flex>
+                    ),
+                    children: [...adminMenu],
+                  },
+                ]
+              : [...generalMenu]
         }
         /**
          * Etc menu

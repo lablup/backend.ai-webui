@@ -9,6 +9,7 @@ export interface BAISiderProps extends SiderProps {
   logo?: React.ReactNode;
   logoTitleCollapsed?: React.ReactNode;
   logoTitle?: React.ReactNode;
+  fixedLogo?: boolean;
   bottomText?: React.ReactNode;
 }
 
@@ -19,6 +20,7 @@ const BAISider: React.FC<BAISiderProps> = ({
   logoCollapsed,
   logoTitle,
   logoTitleCollapsed,
+  fixedLogo,
   bottomText,
   ...otherProps
 }) => {
@@ -117,7 +119,10 @@ const BAISider: React.FC<BAISiderProps> = ({
             </Typography.Text>
           </div>
         </Flex>
-        <div className="siderContents" style={{ overflowY: 'auto' }}>
+        <div
+          className="siderContents"
+          style={{ overflowY: fixedLogo ? 'auto' : undefined }}
+        >
           {children}
           {bottomText && (
             <>
