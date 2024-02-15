@@ -353,7 +353,7 @@
       "View": "Näytä",
       "Restore": "Palauttaa",
       "DeleteForever": "Poista ikuisesti",
-      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderRestored": "Kansio palautettu",
       "FolderDeletedForever": "Kansio poistettu pysyvästi"
     },
     "invitation": {

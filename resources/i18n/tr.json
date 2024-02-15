@@ -616,7 +616,7 @@
       "LeaveFolder": "Klasörden ayrıl",
       "Restore": "Eski haline getirmek",
       "DeleteForever": "Tamamen sil",
-      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderRestored": "Klasör geri yüklendi",
       "FolderDeletedForever": "Klasör kalıcı olarak silindi"
     },
     "explorer": {

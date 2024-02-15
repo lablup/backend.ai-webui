@@ -616,7 +616,7 @@
       "ModifyPermissions": "Зөвшөөрлийг өөрчлөх",
       "Restore": "Сэргээх",
       "DeleteForever": "Бүрмөсөн устгах",
-      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderRestored": "Фолдер сэргээгдсэн",
       "FolderDeletedForever": "Фолдер бүрмөсөн устгагдсан"
     },
     "explorer": {

@@ -616,7 +616,7 @@
       "LeaveFolder": "招待されたフォルダを出る",
       "Restore": "復元する",
       "DeleteForever": "永久に削除",
-      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderRestored": "フォルダが復元されました",
       "FolderDeletedForever": "フォルダーが永久に削除されました"
     },
     "explorer": {

@@ -616,7 +616,7 @@
       "LeaveFolder": "Rời khỏi thư mục",
       "Restore": "Khôi phục",
       "DeleteForever": "Xóa vĩnh viễn",
-      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderRestored": "Đã khôi phục thư mục",
       "FolderDeletedForever": "Thư mục bị xóa vĩnh viễn"
     },
     "explorer": {

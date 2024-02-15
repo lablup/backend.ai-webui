@@ -616,7 +616,7 @@
       "LeaveFolder": "离开文件夹",
       "Restore": "恢复",
       "DeleteForever": "永久删除",
-      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderRestored": "文件夹已恢复",
       "FolderDeletedForever": "文件夹永久删除"
     },
     "explorer": {

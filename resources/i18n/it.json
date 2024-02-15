@@ -616,7 +616,7 @@
       "LeaveFolder": "Lasciare la cartella",
       "Restore": "Ristabilire",
       "DeleteForever": "Elimina per sempre",
-      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderRestored": "Cartella ripristinata",
       "FolderDeletedForever": "Cartella eliminata per sempre"
     },
     "explorer": {

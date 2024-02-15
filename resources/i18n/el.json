@@ -616,7 +616,7 @@
       "LeaveFolder": "Αφήστε το φάκελο",
       "Restore": "Επαναφέρω",
       "DeleteForever": "Διαγραφή για πάντα",
-      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderRestored": "Ο φάκελος αποκαταστάθηκε",
       "FolderDeletedForever": "Ο φάκελος διαγράφηκε οριστικά"
     },
     "explorer": {

@@ -616,7 +616,7 @@
       "LeaveFolder": "Ordner verlassen",
       "Restore": "Wiederherstellen",
       "DeleteForever": "Unwiederuflich löschen",
-      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderRestored": "Ordner wiederhergestellt",
       "FolderDeletedForever": "Ordner für immer gelöscht"
     },
     "explorer": {

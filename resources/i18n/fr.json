@@ -616,7 +616,7 @@
       "ModifyPermissions": "Modifier les autorisations",
       "Restore": "Restaurer",
       "DeleteForever": "Supprimer pour toujours",
-      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderRestored": "Dossier restauré",
       "FolderDeletedForever": "Dossier supprimé définitivement"
     },
     "explorer": {

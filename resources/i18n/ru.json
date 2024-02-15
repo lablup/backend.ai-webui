@@ -618,7 +618,7 @@
       "ModifyPermissions": "Изменение прав доступа",
       "Restore": "Восстановить",
       "DeleteForever": "Удалить навсегда",
-      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderRestored": "Папка восстановлена",
       "FolderDeletedForever": "Папка удалена навсегда"
     },
     "explorer": {

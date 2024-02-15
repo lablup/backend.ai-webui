@@ -616,7 +616,7 @@
       "ModifyPermissions": "Memodifikasi izin",
       "Restore": "Memulihkan",
       "DeleteForever": "Hapus selamanya",
-      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderRestored": "Folder dipulihkan",
       "FolderDeletedForever": "Folder dihapus selamanya"
     },
     "explorer": {

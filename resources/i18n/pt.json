@@ -616,7 +616,7 @@
       "LeaveFolder": "Pasta de saída",
       "Restore": "Restaurar",
       "DeleteForever": "Apagar para sempre",
-      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderRestored": "Pasta restaurada",
       "FolderDeletedForever": "Pasta excluída para sempre"
     },
     "explorer": {
