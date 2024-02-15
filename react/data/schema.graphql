@@ -717,15 +717,12 @@ type PredefinedAtomicPermission {
 type Endpoint implements Item {
   id: ID
   endpoint_id: UUID
-  image: String
+  image: String @deprecated(reason: "Deprecated since 23.09.9. use `image_object")
 
-  """Added at 23.09.9"""
-  image_id: UUID
+  """Added since 23.09.9."""
+  image_object: Image
 
-  """Added at 23.09.9"""
-  image_row: Image
-
-  """Added at 23.09.9"""
+  """Added since 23.09.9."""
   architecture: String
   domain: String
   project: String
@@ -734,19 +731,19 @@ type Endpoint implements Item {
   url: String
   model: UUID
   model_mount_destiation: String
-  created_user: UUID @deprecated(reason: "Deprecated since 23.09.8; use `created_user_id`")
+  created_user: UUID @deprecated(reason: "Deprecated since 23.09.8. use `created_user_id`")
 
-  """Added at 23.09.8"""
+  """Added since 23.09.8."""
   created_user_email: String
 
-  """Added at 23.09.8"""
+  """Added since 23.09.8."""
   created_user_id: UUID
-  session_owner: UUID @deprecated(reason: "Deprecated since 23.09.8; use `session_owner_id`")
+  session_owner: UUID @deprecated(reason: "Deprecated since 23.09.8. use `session_owner_id`")
 
-  """Added at 23.09.8"""
+  """Added since 23.09.8."""
   session_owner_email: String
 
-  """Added at 23.09.8"""
+  """Added since 23.09.8."""
   session_owner_id: UUID
   tag: String
   startup_command: String

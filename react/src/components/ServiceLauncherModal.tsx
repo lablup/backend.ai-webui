@@ -109,8 +109,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         cluster_mode
         cluster_size
         open_to_public
-        image
-        image_row @since(version: "23.09.9") {
+        image_object @since(version: "23.09.9") {
           name
           humanized_name
           tag
