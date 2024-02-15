@@ -352,7 +352,9 @@
       "TypeNewFolderName": "Kirjoita uuden kansion nimi",
       "View": "Näytä",
       "Restore": "Palauttaa",
-      "DeleteForever": "Poista ikuisesti"
+      "DeleteForever": "Poista ikuisesti",
+      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderDeletedForever": "Kansio poistettu pysyvästi"
     },
     "invitation": {
       "FolderSharingNotAvailableToUser": "Kansioiden jakaminen ei ole käytettävissä pyydetyille käyttäjille:",
@@ -1307,7 +1309,8 @@
       "SelectProject": "Valitse projekti",
       "SelectUser": "Etsi ja valitse Käyttäjä",
       "UnsetCustomSettings": "Mukautettujen asetusten poistaminen"
-    }
+    },
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "totp": {
     "ConfirmTotpRemovalBody": "Oletko varma, ettet halua käyttää kaksitekijätodennusta?",

@@ -615,7 +615,9 @@
       "ModifyPermissions": "Τροποποίηση δικαιωμάτων",
       "LeaveFolder": "Αφήστε το φάκελο",
       "Restore": "Επαναφέρω",
-      "DeleteForever": "Διαγραφή για πάντα"
+      "DeleteForever": "Διαγραφή για πάντα",
+      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderDeletedForever": "Ο φάκελος διαγράφηκε οριστικά"
     },
     "explorer": {
       "Delete": "Διαγράφω...",
@@ -1454,7 +1456,8 @@
     "ForUser": "Για τον χρήστη",
     "ForProject": "Για το έργο",
     "QuotaDoesNotSupported": "Αυτό το backend αποθήκευσης δεν υποστηρίζει ποσόστωση.",
-    "BeCarefulToSetUserResourcePolicy": "Η αλλαγή μιας πολιτικής πόρων μπορεί να επηρεάσει όλους τους χρήστες που χρησιμοποιούν αυτή την πολιτική πόρων χρήστη, γι' αυτό χρησιμοποιήστε την με προσοχή."
+    "BeCarefulToSetUserResourcePolicy": "Η αλλαγή μιας πολιτικής πόρων μπορεί να επηρεάσει όλους τους χρήστες που χρησιμοποιούν αυτή την πολιτική πόρων χρήστη, γι' αυτό χρησιμοποιήστε την με προσοχή.",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "totp": {
     "TotpSetupCompleted": "Ενεργοποιημένο 2FA",

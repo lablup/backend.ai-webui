@@ -615,7 +615,9 @@
       "ModifyPermissions": "Sửa đổi quyền",
       "LeaveFolder": "Rời khỏi thư mục",
       "Restore": "Khôi phục",
-      "DeleteForever": "Xóa vĩnh viễn"
+      "DeleteForever": "Xóa vĩnh viễn",
+      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderDeletedForever": "Thư mục bị xóa vĩnh viễn"
     },
     "explorer": {
       "Delete": "Xóa bỏ...",
@@ -1404,7 +1406,8 @@
     "ForUser": "Dành cho người dùng",
     "ForProject": "Dành cho dự án",
     "QuotaDoesNotSupported": "Phần phụ trợ lưu trữ này không hỗ trợ hạn ngạch.",
-    "BeCarefulToSetUserResourcePolicy": "Việc thay đổi chính sách tài nguyên có thể ảnh hưởng đến tất cả người dùng sử dụng chính sách tài nguyên người dùng đó, vì vậy hãy cẩn thận khi sử dụng chính sách đó."
+    "BeCarefulToSetUserResourcePolicy": "Việc thay đổi chính sách tài nguyên có thể ảnh hưởng đến tất cả người dùng sử dụng chính sách tài nguyên người dùng đó, vì vậy hãy cẩn thận khi sử dụng chính sách đó.",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "modelService": {
     "TokenGenerated": "Mã thông báo được tạo",

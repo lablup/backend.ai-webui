@@ -352,7 +352,9 @@
       "TypeNewFolderName": "Escriba el nombre de la nueva carpeta",
       "View": "Ver",
       "Restore": "Restaurar",
-      "DeleteForever": "Borrar para siempre"
+      "DeleteForever": "Borrar para siempre",
+      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderDeletedForever": "Carpeta eliminada para siempre."
     },
     "invitation": {
       "FolderSharingNotAvailableToUser": "El uso compartido de carpetas no está disponible para los usuarios solicitados:",
@@ -1307,7 +1309,8 @@
       "SelectProject": "Seleccionar proyecto",
       "SelectUser": "Buscar y seleccionar Usuario",
       "UnsetCustomSettings": "Desactivar la configuración personalizada"
-    }
+    },
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "totp": {
     "ConfirmTotpRemovalBody": "¿Está seguro de que no desea utilizar la autenticación de dos factores?",

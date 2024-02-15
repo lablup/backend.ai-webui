@@ -529,7 +529,8 @@
       "SelectUser": "Search and select User",
       "QuotaScopeSuccessfullyUpdated": "Quota Scope successfully updated",
       "AllowNumberAndDot": "Allows positive numbers and .(dot) only"
-    }
+    },
+    "StorageSetting": "StorageSetting"
   },
   "general": {
     "cores": "cores",
@@ -720,7 +721,9 @@
       "ShareFolder": "Share folder",
       "ModifyPermissions": "Modify permissions",
       "Restore": "Restore",
-      "DeleteForever": "Delete forever"
+      "DeleteForever": "Delete forever",
+      "FolderRestored": "Folder restored",
+      "FolderDeletedForever": "Folder deleted forever"
     },
     "explorer": {
       "Delete": "Delete",

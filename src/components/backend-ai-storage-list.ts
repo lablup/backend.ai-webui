@@ -4530,7 +4530,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     globalThis.backendaiclient.vfolder
       .delete_from_trash_bin(this.deleteFolderID)
       .then(async (resp) => {
-        this.notification.text = _text('data.folders.FolderDeleted');
+        this.notification.text = _text('data.folders.FolderDeletedForever');
         this.notification.show();
         await this.refreshFolderList();
         this._triggerFolderListChanged();

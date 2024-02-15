@@ -2671,10 +2671,11 @@ class VFolder {
    * @param {string} vfolder_id - id of the vfolder.
    */
   async restore_from_trash_bin(vfolder_id): Promise<any> {
+    const body = {vfolder_id};
     let rqst = this.client.newSignedRequest(
       'POST',
-      `${this.urlPrefix}/${vfolder_id}/restore-from-trash-bin`,
-      null,
+      `${this.urlPrefix}/restore-from-trash-bin`,
+      body,
     );
     return this.client._wrapWithPromise(rqst);
   }
@@ -2686,10 +2687,11 @@ class VFolder {
    * @param {string} vfolder_id - id of the vfolder.
    */
   async delete_from_trash_bin(vfolder_id): Promise<any> {
+    const body = {vfolder_id};
     let rqst = this.client.newSignedRequest(
       'POST',
-      `${this.urlPrefix}/${vfolder_id}/delete-from-trash-bin`,
-      null,
+      `${this.urlPrefix}/delete-from-trash-bin`,
+      body,
     );
     return this.client._wrapWithPromise(rqst);
   }

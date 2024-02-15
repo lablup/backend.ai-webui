@@ -615,7 +615,9 @@
       "ModifyPermissions": "修改权限",
       "LeaveFolder": "离开文件夹",
       "Restore": "恢复",
-      "DeleteForever": "永久删除"
+      "DeleteForever": "永久删除",
+      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderDeletedForever": "文件夹永久删除"
     },
     "explorer": {
       "Delete": "删除...",
@@ -1404,7 +1406,8 @@
     "ForUser": "用户",
     "ForProject": "项目",
     "QuotaDoesNotSupported": "该存储后端不支持配额。",
-    "BeCarefulToSetUserResourcePolicy": "更改资源策略会影响使用该用户资源策略的所有用户，因此请谨慎使用。"
+    "BeCarefulToSetUserResourcePolicy": "更改资源策略会影响使用该用户资源策略的所有用户，因此请谨慎使用。",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "modelService": {
     "TokenGenerated": "生成的令牌",

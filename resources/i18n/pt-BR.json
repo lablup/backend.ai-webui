@@ -615,7 +615,9 @@
       "ModifyPermissions": "Modificar permissões",
       "LeaveFolder": "Pasta de saída",
       "Restore": "Restaurar",
-      "DeleteForever": "Apagar para sempre"
+      "DeleteForever": "Apagar para sempre",
+      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderDeletedForever": "Pasta excluída para sempre"
     },
     "explorer": {
       "Delete": "Excluir...",
@@ -1404,7 +1406,8 @@
     "ForUser": "Para o utilizador",
     "ForProject": "Para o projeto",
     "QuotaDoesNotSupported": "Este backend de armazenamento não suporta quotas.",
-    "BeCarefulToSetUserResourcePolicy": "A alteração de uma política de recursos pode afetar todos os utilizadores que utilizam essa política de recursos do utilizador, pelo que deve ser utilizada com cuidado."
+    "BeCarefulToSetUserResourcePolicy": "A alteração de uma política de recursos pode afetar todos os utilizadores que utilizam essa política de recursos do utilizador, pelo que deve ser utilizada com cuidado.",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "modelService": {
     "TokenGenerated": "Token gerado",

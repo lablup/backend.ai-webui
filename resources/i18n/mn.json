@@ -615,7 +615,9 @@
       "ShareFolder": "Фолдер хуваалцах",
       "ModifyPermissions": "Зөвшөөрлийг өөрчлөх",
       "Restore": "Сэргээх",
-      "DeleteForever": "Бүрмөсөн устгах"
+      "DeleteForever": "Бүрмөсөн устгах",
+      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderDeletedForever": "Фолдер бүрмөсөн устгагдсан"
     },
     "explorer": {
       "Delete": "Устгах ...",
@@ -1415,7 +1417,8 @@
     "ForUser": "Хэрэглэгчийн хувьд",
     "ForProject": "Төслийн хувьд",
     "QuotaDoesNotSupported": "Энэ хадгалах сан нь квотыг дэмждэггүй.",
-    "BeCarefulToSetUserResourcePolicy": "Нөөцийн бодлогыг өөрчлөх нь тухайн хэрэглэгчийн нөөцийн бодлогыг ашигладаг бүх хэрэглэгчдэд нөлөөлж болзошгүй тул үүнийг болгоомжтой ашиглаарай."
+    "BeCarefulToSetUserResourcePolicy": "Нөөцийн бодлогыг өөрчлөх нь тухайн хэрэглэгчийн нөөцийн бодлогыг ашигладаг бүх хэрэглэгчдэд нөлөөлж болзошгүй тул үүнийг болгоомжтой ашиглаарай.",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "modelService": {
     "EditModelService": "Загварын үйлчилгээг засах",

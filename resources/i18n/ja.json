@@ -615,7 +615,9 @@
       "ModifyPermissions": "権限修正",
       "LeaveFolder": "招待されたフォルダを出る",
       "Restore": "復元する",
-      "DeleteForever": "永久に削除"
+      "DeleteForever": "永久に削除",
+      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderDeletedForever": "フォルダーが永久に削除されました"
     },
     "explorer": {
       "Delete": "削除...",
@@ -1454,7 +1456,8 @@
     "ForUser": "ユーザー",
     "ForProject": "プロジェクト",
     "QuotaDoesNotSupported": "このストレージバックエンドは可用量設定をサポートしていません。",
-    "BeCarefulToSetUserResourcePolicy": "リソースポリシーを変更すると、そのリソースポリシーを使用しているすべてのユーザーに影響を与える可能性がありますので、慎重に使用してください。"
+    "BeCarefulToSetUserResourcePolicy": "リソースポリシーを変更すると、そのリソースポリシーを使用しているすべてのユーザーに影響を与える可能性がありますので、慎重に使用してください。",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "totp": {
     "TotpSetupCompleted": "二要素認証が有効になりました。",

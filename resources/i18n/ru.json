@@ -617,7 +617,9 @@
       "ShareFolder": "Папка общего доступа",
       "ModifyPermissions": "Изменение прав доступа",
       "Restore": "Восстановить",
-      "DeleteForever": "Удалить навсегда"
+      "DeleteForever": "Удалить навсегда",
+      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderDeletedForever": "Папка удалена навсегда"
     },
     "explorer": {
       "Delete": "Удалить...",
@@ -1417,7 +1419,8 @@
     "ForUser": "Для пользователя",
     "ForProject": "Для проекта",
     "QuotaDoesNotSupported": "Данный бэкэнд хранилища не поддерживает квотирование.",
-    "BeCarefulToSetUserResourcePolicy": "Изменение политики ресурсов может повлиять на всех пользователей, использующих данную политику ресурсов, поэтому использовать ее следует с осторожностью."
+    "BeCarefulToSetUserResourcePolicy": "Изменение политики ресурсов может повлиять на всех пользователей, использующих данную политику ресурсов, поэтому использовать ее следует с осторожностью.",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "modelService": {
     "EditModelService": "Редактирование модели сервиса",

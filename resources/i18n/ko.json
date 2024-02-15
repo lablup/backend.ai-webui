@@ -709,7 +709,9 @@
       "ShareFolder": "폴더 공유하기",
       "ModifyPermissions": "권한 수정",
       "Restore": "복원",
-      "DeleteForever": "영구 삭제"
+      "DeleteForever": "영구 삭제",
+      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderDeletedForever": "폴더가 완전히 삭제되었습니다."
     },
     "explorer": {
       "Delete": "삭제",

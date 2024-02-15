@@ -615,7 +615,9 @@
       "ShareFolder": "Folder berbagi",
       "ModifyPermissions": "Memodifikasi izin",
       "Restore": "Memulihkan",
-      "DeleteForever": "Hapus selamanya"
+      "DeleteForever": "Hapus selamanya",
+      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderDeletedForever": "Folder dihapus selamanya"
     },
     "explorer": {
       "Delete": "Menghapus...",
@@ -1415,7 +1417,8 @@
     "ForUser": "Untuk Pengguna",
     "ForProject": "Untuk Proyek",
     "QuotaDoesNotSupported": "Backend penyimpanan ini tidak mendukung kuota.",
-    "BeCarefulToSetUserResourcePolicy": "Mengubah kebijakan sumber daya dapat memengaruhi semua pengguna yang menggunakan kebijakan sumber daya pengguna tersebut, jadi gunakanlah dengan hati-hati."
+    "BeCarefulToSetUserResourcePolicy": "Mengubah kebijakan sumber daya dapat memengaruhi semua pengguna yang menggunakan kebijakan sumber daya pengguna tersebut, jadi gunakanlah dengan hati-hati.",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "modelService": {
     "EditModelService": "Layanan Edit Model",

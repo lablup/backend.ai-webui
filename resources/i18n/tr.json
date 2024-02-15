@@ -615,7 +615,9 @@
       "ModifyPermissions": "İzinleri değiştirme",
       "LeaveFolder": "Klasörden ayrıl",
       "Restore": "Eski haline getirmek",
-      "DeleteForever": "Tamamen sil"
+      "DeleteForever": "Tamamen sil",
+      "FolderRestored": "__NOT_TRANSLATED__",
+      "FolderDeletedForever": "Klasör kalıcı olarak silindi"
     },
     "explorer": {
       "Delete": "Sil...",
@@ -1454,7 +1456,8 @@
     "ForUser": "Kullanıcı için",
     "ForProject": "Proje için",
     "QuotaDoesNotSupported": "Bu depolama arka ucu kotayı desteklemez.",
-    "BeCarefulToSetUserResourcePolicy": "Bir kaynak ilkesinin değiştirilmesi, o kullanıcı kaynak ilkesini kullanan tüm kullanıcıları etkileyebilir, bu nedenle dikkatli kullanın."
+    "BeCarefulToSetUserResourcePolicy": "Bir kaynak ilkesinin değiştirilmesi, o kullanıcı kaynak ilkesini kullanan tüm kullanıcıları etkileyebilir, bu nedenle dikkatli kullanın.",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "totp": {
     "TotpSetupCompleted": "Etkinleştirilmiş 2FA",
