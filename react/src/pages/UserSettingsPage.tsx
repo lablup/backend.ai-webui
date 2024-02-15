@@ -1,9 +1,10 @@
 import { useCurrentLanguage } from '../components/DefaultProviders';
 import ErrorLogList from '../components/ErrorLogList';
 import Flex from '../components/Flex';
-import SettingPage from '../components/SettingPage';
-import { SettingItemProps } from '../components/SettingPageItem';
+import { SettingItemProps } from '../components/SettingItem';
+import SettingList from '../components/SettingList';
 import { useLocalStorageGlobalState } from '../hooks/useLocalStorageGlobalState';
+import { useToggle } from 'ahooks';
 import { theme } from 'antd';
 import Card from 'antd/es/card/Card';
 import { useRef } from 'react';
@@ -26,7 +27,7 @@ const UserPreferencesPage = () => {
   const [desktopNotification, setDesktopNotification] =
     useLocalStorageGlobalState<boolean>(
       'backendaiwebui.settings.user.desktop_notification',
-      true,
+      false,
     );
   const [language, setLanguage] = useLocalStorageGlobalState<string>(
     'backendaiwebui.settings.user.language',
@@ -41,24 +42,28 @@ const UserPreferencesPage = () => {
     'backendaiwebui.settings.user.auto_logout',
     false,
   );
+  const [isOpenSSHKeypairInfoModal, { toggle: toggleSSHKeypairInfoModal }] =
+    useToggle(false);
+  //Todo: [[]] 형태보다는, https://ant.design/components/select#select-demo-optgroup 참조
   const settingOptions: [string, SettingItemProps[]][] = [
     [
       t('usersettings.Preferences'),
       [
         {
-          type: 'toggle',
+          type: 'checkbox',
           title: t('usersettings.DesktopNotification'),
           description: t('usersettings.DescDesktopNotification'),
           value: desktopNotification,
+          // 유저 변경값이 아니라 시스템 초기 설정값과의 비교.
           defaultValue: useRef(desktopNotification).current,
           onChange: (e) => {
             setDesktopNotification(e.target.checked);
           },
         },
         {
-          type: 'toggle',
+          type: 'checkbox',
           title: t('usersettings.UseCompactSidebar'),
-          description: <Trans i18nKey="usersettings.DescUseCompactSidebar" />,
+          description: t('usersettings.DescUseCompactSidebar'),
           value: compactSidebar,
           defaultValue: useRef(compactSidebar).current,
           onChange: (e) => {
@@ -66,7 +71,7 @@ const UserPreferencesPage = () => {
           },
         },
         {
-          type: 'dropdown',
+          type: 'select',
           title: t('usersettings.Language'),
           description: t('usersettings.DescLanguage'),
           options: [
@@ -98,6 +103,13 @@ const UserPreferencesPage = () => {
           defaultValue: useRef(language).current,
           onChange: (value) => {
             setLanguage(value);
+            const currentLanguage =
+              value === 'default' ? navigator.language.split('-')[0] : value;
+            const event = new CustomEvent('language-changed', {
+              detail: { language: currentLanguage },
+            });
+            document.dispatchEvent(event);
+            return value;
           },
         },
         {
@@ -106,9 +118,10 @@ const UserPreferencesPage = () => {
           description: t('usersettings.DescSSHKeypairManagement'),
           value: false,
           defaultValue: false,
+          onClick: toggleSSHKeypairInfoModal,
         },
         {
-          type: 'toggle',
+          type: 'checkbox',
           title: t('usersettings.AutomaticUpdateCheck'),
           description: t('usersettings.DescAutomaticUpdateCheck'),
           value: autoAutomaticUpdateCheck,
@@ -118,7 +131,7 @@ const UserPreferencesPage = () => {
           },
         },
         {
-          type: 'toggle',
+          type: 'checkbox',
           title: t('usersettings.AutoLogout'),
           description: t('usersettings.DescAutoLogout'),
           value: autoLogout,
@@ -171,13 +184,13 @@ const UserPreferencesPage = () => {
       <Flex
         style={{
           display: curTabKey === 'general' ? 'block' : 'none',
-          paddingTop: token.paddingContentVerticalSM,
+          paddingTop: token.paddingContentVerticalLG,
           paddingBottom: token.paddingContentVerticalLG,
           paddingLeft: token.paddingContentHorizontalSM,
           paddingRight: token.paddingContentHorizontalSM,
         }}
       >
-        <SettingPage settingOptions={settingOptions} />
+        <SettingList settingOptions={settingOptions} />
         {/* @ts-ignore */}
         {/* <backend-ai-usersettings-general-list
           active={curTabKey === 'general'}
