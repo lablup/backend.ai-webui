@@ -365,7 +365,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               onSuccess: () => {
                 message.success(
                   t('modelService.ServiceUpdated', {
-                    name: values.serviceName,
+                    name: endpoint.name, // FIXME: temporally get name from endpoint, not input value
                   }),
                 );
                 onRequestClose(true);
