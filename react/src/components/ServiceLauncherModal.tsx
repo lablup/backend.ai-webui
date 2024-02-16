@@ -374,9 +374,11 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.errorFields?.[0].errors?.[0]) {
-          message.error(err.errorFields?.[0].errors?.[0]);
+        // error on input
+        if (err.errorFields.length > 0) {
+          err.errorFields.forEach((error: any) => {
+            message.error(error.errors);
+          });
         } else if (err.message) {
           message.error(err.message);
         } else {
