@@ -151,6 +151,7 @@ export function iSizeToSize(
   sizeWithUnit: string | undefined,
   targetSizeUnit?: SizeUnit,
   fixed: number = 2,
+  round: boolean = false,
 ):
   | {
       number: number;
@@ -174,7 +175,9 @@ export function iSizeToSize(
     : sizeIndex;
   const targetBytes = bytes / Math.pow(1024, targetIndex);
   // const numberFixed = targetBytes.toFixed(fixed);
-  const numberFixed = toFixedFloorWithoutTrailingZeros(targetBytes, fixed);
+  const numberFixed = round
+    ? targetBytes.toFixed(fixed)
+    : toFixedFloorWithoutTrailingZeros(targetBytes, fixed);
   return {
     number: targetBytes,
     numberFixed,
@@ -228,8 +231,8 @@ export const usageIndicatorColor = (percentage: number) => {
   return percentage < 70
     ? 'rgba(58, 178, 97, 1)'
     : percentage < 90
-    ? 'rgb(223, 179, 23)'
-    : '#ef5350';
+      ? 'rgb(223, 179, 23)'
+      : '#ef5350';
 };
 
 export const maskString = (

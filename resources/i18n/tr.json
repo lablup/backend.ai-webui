@@ -256,7 +256,8 @@
       "EnvironmentVariableDuplicateName": "Zaten var olan bir değişken adı.",
       "Template": "Oturum Şablonu",
       "EnableAutomaticShmem": "Otomatik paylaşılan bellek",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Küme boyutu 2'den az olmadığında yalnızca tam sayılara izin verilir."
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -1410,7 +1411,11 @@
     "YouAreAboutToTerminate": "Sonlandırmak üzeresiniz",
     "Owner": "Mal sahibi",
     "ServiceDelegatedFrom": "Model hizmeti {{ createdUser }} tarafından oluşturulur ancak oturum sahipliği {{ sessionOwner }}'a devredilir.",
-    "FailedToTerminateService": "Hizmeti sonlandırma isteği başarısız oldu."
+    "FailedToTerminateService": "Hizmeti sonlandırma isteği başarısız oldu.",
+    "FailedToUpdateService": "Hizmet güncellenemedi.",
+    "ServiceCreated": "Model hizmeti {{ name }} başarıyla oluşturuldu.",
+    "ServiceUpdated": "Model hizmeti {{ name }} başarıyla güncellendi.",
+    "ServiceTerminated": "{{ name }} model hizmeti başarıyla sonlandırıldı."
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

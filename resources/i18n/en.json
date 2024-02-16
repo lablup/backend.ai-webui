@@ -264,6 +264,7 @@
       "ResourceAllocationPerContainer": "Resource Allocation Per Container",
       "NumberOfContainer": "Number of container",
       "ErrorCanNotExceedRemaining": "Cannot be set to greater than the remaining resources ({{amount}}).",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Only integer is allowed when cluster size is not less than 2.",
       "EnterEnvironmentVariable": "Enter Variable name",
       "EnvironmentVariableNamePatternError": "Variable name must start with a letter or underscore, and can only contain letters, numbers, and underscores.",
       "EnvironmentVariableDuplicateName": "A variable name that already exists.",
@@ -423,6 +424,7 @@
     "ClearErrors": "Clear error and retry",
     "ServingRouteErrorModalTitle": "Serving Route Error",
     "FailedToStartService": "Failed to create service.",
+    "FailedToUpdateService": "Failed to update service.",
     "CurrentTime": "Current time",
     "Generate": "Generate",
     "TokenGenerated": "Token generated",
@@ -437,7 +439,10 @@
     "Image": "Image",
     "Owner": "Owner",
     "ServiceDelegatedFrom": "Model service is created by {{ createdUser }} but the session ownership will be delegated to {{ sessionOwner }}",
-    "FailedToTerminateService": "The request to terminate the service failed."
+    "FailedToTerminateService": "The request to terminate the service failed.",
+    "ServiceCreated": "Model service {{ name }} has been created successfully.",
+    "ServiceUpdated": "Model service {{ name }} has been updated successfully.",
+    "ServiceTerminated": "Model service {{ name }} has been terminated successfully."
   },
   "button": {
     "Cancel": "Cancel",

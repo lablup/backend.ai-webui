@@ -256,7 +256,8 @@
       "EnvironmentVariableDuplicateName": "Энэ хувьсагчийн нэр аль хэдийн байна.",
       "Template": "Сеанс загвар",
       "EnableAutomaticShmem": "Автомат хуваалцсан санах ой",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Кластерын хэмжээ 2-оос багагүй тохиолдолд зөвхөн бүхэл тоог зөвшөөрнө."
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -1461,7 +1462,11 @@
     "Image": "Зураг",
     "Owner": "Эзэмшигч",
     "ServiceDelegatedFrom": "Загвар үйлчилгээг {{ createdUser }} үүсгэсэн боловч сессийн эрхийг {{ sessionOwner }}-д шилжүүлнэ.",
-    "FailedToTerminateService": "Үйлчилгээг цуцлах хүсэлт амжилтгүй боллоо."
+    "FailedToTerminateService": "Үйлчилгээг цуцлах хүсэлт амжилтгүй боллоо.",
+    "FailedToUpdateService": "Үйлчилгээг шинэчилж чадсангүй.",
+    "ServiceCreated": "Загвар үйлчилгээ {{ name }} амжилттай үүсгэгдсэн.",
+    "ServiceUpdated": "Загвар үйлчилгээ {{ name }} амжилттай шинэчлэгдсэн.",
+    "ServiceTerminated": "Загварын үйлчилгээ {{ name }} амжилттай хаагдсан."
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",
