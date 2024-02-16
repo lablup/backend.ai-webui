@@ -121,7 +121,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const { data: allFolderList } = useTanQuery({
-    queryKey: ['VFolderSelectQuery', fetchKey],
+    queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id],
     queryFn: () => {
       return baiRequestWithPromise({
         method: 'GET',
