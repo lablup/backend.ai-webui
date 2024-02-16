@@ -518,7 +518,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           }
           requiredMark="optional"
         >
-          {baiClient.supports('modify-endpoint') && (
+          {(baiClient.supports('modify-endpoint') || !endpoint) && (
             <>
               <Form.Item
                 label={t('modelService.ServiceName')}
@@ -582,7 +582,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               step={1}
             />
           </Form.Item>
-          {baiClient.supports('modify-endpoint') && (
+          {(baiClient.supports('modify-endpoint') || !endpoint) && (
             <Card
               style={{
                 marginBottom: token.margin,
