@@ -549,9 +549,9 @@ type KeyPairResourcePolicy {
   max_containers_per_session: Int
   idle_timeout: BigInt
   allowed_vfolder_hosts: JSONString
-  max_vfolder_count: Int @deprecated(reason: "Deprecated since 23.09.4.")
-  max_vfolder_size: BigInt @deprecated(reason: "Deprecated since 23.09.4.")
-  max_quota_scope_size: BigInt @deprecated(reason: "Deprecated since 23.09.4.")
+  max_vfolder_count: Int @deprecated(reason: "Deprecated since 23.09.4")
+  max_vfolder_size: BigInt @deprecated(reason: "Deprecated since 23.09.4")
+  max_quota_scope_size: BigInt @deprecated(reason: "Deprecated since 23.09.4")
 }
 
 type UserResourcePolicy {
@@ -564,7 +564,7 @@ type UserResourcePolicy {
 
   """Added since 24.03.1. Limitation of the quota size of user vfolders."""
   max_quota_scope_size: BigInt
-  max_vfolder_size: BigInt @deprecated(reason: "Deprecated since 23.09.1.")
+  max_vfolder_size: BigInt @deprecated(reason: "Deprecated since 23.09.1")
 }
 
 type ProjectResourcePolicy {
@@ -577,7 +577,7 @@ type ProjectResourcePolicy {
 
   """Added since 24.03.1. Limitation of the quota size of project vfolders."""
   max_quota_scope_size: BigInt
-  max_vfolder_size: BigInt @deprecated(reason: "Deprecated since 23.09.1.")
+  max_vfolder_size: BigInt @deprecated(reason: "Deprecated since 23.09.1")
 }
 
 type ResourcePreset {
@@ -717,13 +717,10 @@ type PredefinedAtomicPermission {
 type Endpoint implements Item {
   id: ID
   endpoint_id: UUID
-  image: String @deprecated(reason: "Deprecated since 23.09.9. use `image_object")
+  image: String @deprecated(reason: "Deprecated since 23.09.9; use `image_object`")
 
-  """Added since 23.09.9."""
-  image_object: Image
-
-  """Added since 23.09.9."""
-  architecture: String
+  """Added at 23.09.9"""
+  image_object: ImageNode
   domain: String
   project: String
   resource_group: String
@@ -731,19 +728,19 @@ type Endpoint implements Item {
   url: String
   model: UUID
   model_mount_destiation: String
-  created_user: UUID @deprecated(reason: "Deprecated since 23.09.8. use `created_user_id`")
+  created_user: UUID @deprecated(reason: "Deprecated since 23.09.8; use `created_user_id`")
 
-  """Added since 23.09.8."""
+  """Added at 23.09.8"""
   created_user_email: String
 
-  """Added since 23.09.8."""
+  """Added at 23.09.8"""
   created_user_id: UUID
-  session_owner: UUID @deprecated(reason: "Deprecated since 23.09.8. use `session_owner_id`")
+  session_owner: UUID @deprecated(reason: "Deprecated since 23.09.8; use `session_owner_id`")
 
-  """Added since 23.09.8."""
+  """Added at 23.09.8"""
   session_owner_email: String
 
-  """Added since 23.09.8."""
+  """Added at 23.09.8"""
   session_owner_id: UUID
   tag: String
   startup_command: String
@@ -763,6 +760,22 @@ type Endpoint implements Item {
   status: String
   lifecycle_stage: String
   errors: [InferenceSessionError!]!
+}
+
+type ImageNode implements Node {
+  """The ID of the object"""
+  id: ID!
+  name: String
+  humanized_name: String
+  tag: String
+  registry: String
+  architecture: String
+  is_local: Boolean
+  digest: String
+  labels: [KVPair]
+  size_bytes: BigInt
+  resource_limits: [ResourceLimit]
+  supported_accelerators: [String]
 }
 
 type Routing implements Item {
@@ -1300,9 +1313,9 @@ input CreateKeyPairResourcePolicyInput {
   max_containers_per_session: Int!
   idle_timeout: BigInt!
   allowed_vfolder_hosts: JSONString
-  max_vfolder_count: Int @deprecated(reason: "Deprecated since 23.09.4.")
-  max_vfolder_size: BigInt @deprecated(reason: "Deprecated since 23.09.4.")
-  max_quota_scope_size: BigInt @deprecated(reason: "Deprecated since 23.09.4.")
+  max_vfolder_count: Int @deprecated(reason: "Deprecated since 23.09.4")
+  max_vfolder_size: BigInt @deprecated(reason: "Deprecated since 23.09.4")
+  max_quota_scope_size: BigInt @deprecated(reason: "Deprecated since 23.09.4")
 }
 
 type ModifyKeyPairResourcePolicy {
@@ -1319,9 +1332,9 @@ input ModifyKeyPairResourcePolicyInput {
   max_containers_per_session: Int
   idle_timeout: BigInt
   allowed_vfolder_hosts: JSONString
-  max_vfolder_count: Int @deprecated(reason: "Deprecated since 23.09.4.")
-  max_vfolder_size: BigInt @deprecated(reason: "Deprecated since 23.09.4.")
-  max_quota_scope_size: BigInt @deprecated(reason: "Deprecated since 23.09.4.")
+  max_vfolder_count: Int @deprecated(reason: "Deprecated since 23.09.4")
+  max_vfolder_size: BigInt @deprecated(reason: "Deprecated since 23.09.4")
+  max_quota_scope_size: BigInt @deprecated(reason: "Deprecated since 23.09.4")
 }
 
 type DeleteKeyPairResourcePolicy {
@@ -1547,7 +1560,7 @@ type ModifyEndpoint {
   ok: Boolean
   msg: String
 
-  """Added since 23.09.9."""
+  """Added at 23.09.8"""
   endpoint: Endpoint
 }
 
