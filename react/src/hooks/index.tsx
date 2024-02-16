@@ -94,6 +94,8 @@ export const useSetCurrentProject = () => {
   const baiClient = useSuspendedBackendaiClient();
   return (projectInfo: { projectName: string; projectId: string }) => {
     baiClient.current_group = projectInfo.projectName;
+    // @ts-ignore
+    globalThis.backendaiutils._writeRecentProjectGroup(baiClient.current_group);
     const event: CustomEvent = new CustomEvent('backend-ai-group-changed', {
       detail: projectInfo.projectName,
     });
