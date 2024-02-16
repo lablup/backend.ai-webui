@@ -115,9 +115,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           tag
           registry
           architecture
-          supported_accelerators
+          is_local
           digest
-          installed
           resource_limits {
             key
             min
@@ -127,6 +126,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             key
             value
           }
+          size_bytes
+          supported_accelerators
         }
         name
       }
@@ -254,7 +255,26 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           cluster_mode
           cluster_size
           open_to_public
-          image
+          image_object @since(version: "23.09.9") {
+            name
+            humanized_name
+            tag
+            registry
+            architecture
+            is_local
+            digest
+            resource_limits {
+              key
+              min
+              max
+            }
+            labels {
+              key
+              value
+            }
+            size_bytes
+            supported_accelerators
+          }
           name
         }
       }
