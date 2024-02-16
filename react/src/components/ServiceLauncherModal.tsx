@@ -177,6 +177,20 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     };
   };
 
+  const legacyMutationToUpdateService = useTanMutation({
+    mutationFn: (values: ServiceLauncherFormValue) => {
+      const body = {
+        to: values.desiredRoutingCount,
+      };
+      return baiSignedRequestWithPromise({
+        method: 'POST',
+        url: `/services/${endpoint?.endpoint_id}/scale`,
+        body,
+        client: baiClient,
+      });
+    },
+  });
+
   const mutationToCreateService = useTanMutation<
     unknown,
     {
@@ -287,64 +301,81 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       .validateFields()
       .then((values) => {
         if (endpoint) {
-          const mutationVariables = {
-            endpoint_id: endpoint?.endpoint_id || '',
-            props: {
-              resource_slots: JSON.stringify({
-                cpu: values.resource.cpu,
-                mem: values.resource.mem,
-                ...(values.resource.accelerator > 0
-                  ? {
-                      [values.resource.acceleratorType]:
-                        values.resource.accelerator,
-                    }
-                  : undefined),
-              }),
-              resource_opts: JSON.stringify({ shmem: values.resource.shmem }),
-              // FIXME: temporally convert cluster mode string according to server-side type
-              cluster_mode:
-                'single-node' === values.cluster_mode
-                  ? 'SINGLE_NODE'
-                  : 'MULTI_NODE',
-              cluster_size: values.cluster_size,
-              desired_session_count: values.desiredRoutingCount,
-              ...getImageInfoFromInputInEditing(
-                checkManualImageAllowed(
-                  baiClient._config.allow_manual_image_name_for_session,
-                  values.environments?.manual,
+          if (baiClient.supports('modify-endpoint')) {
+            const mutationVariables = {
+              endpoint_id: endpoint?.endpoint_id || '',
+              props: {
+                resource_slots: JSON.stringify({
+                  cpu: values.resource.cpu,
+                  mem: values.resource.mem,
+                  ...(values.resource.accelerator > 0
+                    ? {
+                        [values.resource.acceleratorType]:
+                          values.resource.accelerator,
+                      }
+                    : undefined),
+                }),
+                resource_opts: JSON.stringify({ shmem: values.resource.shmem }),
+                // FIXME: temporally convert cluster mode string according to server-side type
+                cluster_mode:
+                  'single-node' === values.cluster_mode
+                    ? 'SINGLE_NODE'
+                    : 'MULTI_NODE',
+                cluster_size: values.cluster_size,
+                desired_session_count: values.desiredRoutingCount,
+                ...getImageInfoFromInputInEditing(
+                  checkManualImageAllowed(
+                    baiClient._config.allow_manual_image_name_for_session,
+                    values.environments?.manual,
+                  ),
+                  values,
                 ),
-                values,
-              ),
-              name: values.serviceName,
-              resource_group: values.resourceGroup,
-            },
-          };
-          commitModifyEndpoint({
-            variables: mutationVariables,
-            onCompleted: (res, errors) => {
-              if (errors && errors?.length > 0) {
-                const errorMsgList = errors.map((error) => error.message);
-                for (let error of errorMsgList) {
-                  message.error(error, 2.5);
+                name: values.serviceName,
+                resource_group: values.resourceGroup,
+              },
+            };
+            commitModifyEndpoint({
+              variables: mutationVariables,
+              onCompleted: (res, errors) => {
+                if (errors && errors?.length > 0) {
+                  const errorMsgList = errors.map((error) => error.message);
+                  for (let error of errorMsgList) {
+                    message.error(error, 2.5);
+                  }
+                } else {
+                  const updatedEndpoint = res.modify_endpoint?.endpoint;
+                  message.success(
+                    t('modelService.ServiceUpdated', {
+                      name: updatedEndpoint?.name,
+                    }),
+                  );
+                  onRequestClose(true);
                 }
-              } else {
-                const updatedEndpoint = res.modify_endpoint?.endpoint;
+              },
+              onError: (error) => {
+                if (error.message) {
+                  message.error(error.message);
+                } else {
+                  message.error(t('modelService.FailedToUpdateService'));
+                }
+              },
+            });
+          } else {
+            legacyMutationToUpdateService.mutate(values, {
+              onSuccess: () => {
                 message.success(
                   t('modelService.ServiceUpdated', {
-                    name: updatedEndpoint?.name,
+                    name: values.serviceName,
                   }),
                 );
                 onRequestClose(true);
-              }
-            },
-            onError: (error) => {
-              if (error.message) {
-                message.error(error.message);
-              } else {
+              },
+              onError: (error) => {
+                console.log(error);
                 message.error(t('modelService.FailedToUpdateService'));
-              }
-            },
-          });
+              },
+            });
+          }
         } else {
           // create service
           mutationToCreateService.mutate(values, {
@@ -373,9 +404,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           });
         }
       })
-      .catch((err) => {
+      .catch((err: any) => {
         // error on input
-        if (err.errorFields.length > 0) {
+        if (err.errorFields?.length > 0) {
           err.errorFields.forEach((error: any) => {
             message.error(error.errors);
           });
@@ -487,44 +518,48 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           }
           requiredMark="optional"
         >
-          <Form.Item
-            label={t('modelService.ServiceName')}
-            name="serviceName"
-            rules={[
-              {
-                pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
-                message: t('modelService.ServiceNameRule'),
-              },
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input disabled={endpoint ? true : false} />
-          </Form.Item>
-          <Form.Item
-            name="openToPublic"
-            label={t('modelService.OpenToPublic')}
-            valuePropName="checked"
-          >
-            <Switch disabled={endpoint ? true : false}></Switch>
-          </Form.Item>
-          {/* <VFolderTableFromItem /> */}
-          <Form.Item
-            name={'vFolderName'}
-            label={t('session.launcher.ModelStorageToMount')}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <VFolderSelect
-              filter={(vf) => vf.usage_mode === 'model'}
-              autoSelectDefault
-              disabled={endpoint ? true : false}
-            />
-          </Form.Item>
+          {baiClient.supports('modify-endpoint') && (
+            <>
+              <Form.Item
+                label={t('modelService.ServiceName')}
+                name="serviceName"
+                rules={[
+                  {
+                    pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
+                    message: t('modelService.ServiceNameRule'),
+                  },
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input disabled={endpoint ? true : false} />
+              </Form.Item>
+              <Form.Item
+                name="openToPublic"
+                label={t('modelService.OpenToPublic')}
+                valuePropName="checked"
+              >
+                <Switch disabled={endpoint ? true : false}></Switch>
+              </Form.Item>
+              {/* <VFolderTableFromItem /> */}
+              <Form.Item
+                name={'vFolderName'}
+                label={t('session.launcher.ModelStorageToMount')}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <VFolderSelect
+                  filter={(vf) => vf.usage_mode === 'model'}
+                  autoSelectDefault
+                  disabled={endpoint ? true : false}
+                />
+              </Form.Item>
+            </>
+          )}
           <Form.Item
             label={t('modelService.DesiredRoutingCount')}
             name="desiredRoutingCount"
@@ -547,24 +582,26 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               step={1}
             />
           </Form.Item>
-          <Card
-            style={{
-              marginBottom: token.margin,
-            }}
-          >
-            <ImageEnvironmentSelectFormItems
-            // //TODO: test with real inference images
-            // filter={(image) => {
-            //   return !!_.find(image?.labels, (label) => {
-            //     return (
-            //       label?.key === "ai.backend.role" &&
-            //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
-            //     );
-            //   });
-            // }}
-            />
-            <ResourceAllocationFormItems />
-          </Card>
+          {baiClient.supports('modify-endpoint') && (
+            <Card
+              style={{
+                marginBottom: token.margin,
+              }}
+            >
+              <ImageEnvironmentSelectFormItems
+              // //TODO: test with real inference images
+              // filter={(image) => {
+              //   return !!_.find(image?.labels, (label) => {
+              //     return (
+              //       label?.key === "ai.backend.role" &&
+              //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
+              //     );
+              //   });
+              // }}
+              />
+              <ResourceAllocationFormItems />
+            </Card>
+          )}
         </Form>
       </Suspense>
     </BAIModal>
