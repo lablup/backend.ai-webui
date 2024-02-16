@@ -295,7 +295,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           </Flex>
         );
       },
-      fixed: 'left',
       // ...getColumnSearchProps('name'),
     },
     {
