@@ -762,6 +762,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 `
               : html``}
           </h3>
+          <backend-ai-react-user-list style="display: ${this._activeTab === 'user-lists' ? 'block' : 'none'};"></backend-ai-react-user-list>
           <div id="user-lists" class="admin item tab-content card">
             <h4 class="horizontal flex center center-justified layout">
               <mwc-tab-bar class="sub-bar">
