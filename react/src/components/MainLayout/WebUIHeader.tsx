@@ -1,4 +1,8 @@
-import { useCurrentDomainValue, useCurrentProjectValue } from '../../hooks';
+import {
+  useCurrentDomainValue,
+  useCurrentProjectValue,
+  useSetCurrentProject,
+} from '../../hooks';
 import { useScrollBreakPoint } from '../../hooks/useScrollBreackPoint';
 import BAINotificationButton from '../BAINotificationButton';
 import Flex, { FlexProps } from '../Flex';
@@ -28,6 +32,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
   const { t } = useTranslation();
   const currentDomainName = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
+  const setCurrentProject = useSetCurrentProject();
   const matches = useMatches();
   const { y: scrolled } = useScrollBreakPoint(
     {
@@ -86,13 +91,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
             size={gridBreakpoint.lg ? 'large' : 'middle'}
             value={currentProject?.id}
             onSelectProject={(projectInfo) => {
-              const event: CustomEvent = new CustomEvent(
-                'backend-ai-group-changed',
-                {
-                  detail: projectInfo.projectName,
-                },
-              );
-              document.dispatchEvent(event);
+              setCurrentProject(projectInfo);
             }}
           />
         </Suspense>

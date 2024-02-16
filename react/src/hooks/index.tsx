@@ -90,6 +90,17 @@ export const useCurrentProjectValue = () => {
   return project;
 };
 
+export const useSetCurrentProject = () => {
+  const baiClient = useSuspendedBackendaiClient();
+  return (projectInfo: { projectName: string; projectId: string }) => {
+    baiClient.current_group = projectInfo.projectName;
+    const event: CustomEvent = new CustomEvent('backend-ai-group-changed', {
+      detail: projectInfo.projectName,
+    });
+    document.dispatchEvent(event);
+  };
+};
+
 export const useAnonymousBackendaiClient = ({
   api_endpoint,
 }: {
