@@ -53,6 +53,7 @@ const UserPreferencesPage = () => {
           title: t('usersettings.DesktopNotification'),
           description: t('usersettings.DescDesktopNotification'),
           value: desktopNotification,
+          setValue: setDesktopNotification,
           defaultValue: false,
           onChange: (e) => {
             setDesktopNotification(e.target.checked);
@@ -63,6 +64,7 @@ const UserPreferencesPage = () => {
           title: t('usersettings.UseCompactSidebar'),
           description: t('usersettings.DescUseCompactSidebar'),
           value: compactSidebar,
+          setValue: setCompactSidebar,
           defaultValue: false,
           onChange: (e) => {
             setCompactSidebar(e.target.checked);
@@ -98,6 +100,7 @@ const UserPreferencesPage = () => {
             { label: t('language.Vietnamese'), value: 'vi' },
           ],
           value: language,
+          setValue: setLanguage,
           defaultValue: 'ko',
           onChange: (value) => {
             setLanguage(value);
@@ -115,6 +118,7 @@ const UserPreferencesPage = () => {
           title: t('usersettings.AutomaticUpdateCheck'),
           description: t('usersettings.DescAutomaticUpdateCheck'),
           value: autoAutomaticUpdateCheck,
+          setValue: setAutoAutomaticUpdateCheck,
           defaultValue: useRef(autoAutomaticUpdateCheck).current,
           onChange: (e) => {
             setAutoAutomaticUpdateCheck(e.target.checked);
@@ -125,6 +129,7 @@ const UserPreferencesPage = () => {
           title: t('usersettings.SSHKeypairManagement'),
           description: t('usersettings.DescSSHKeypairManagement'),
           value: false,
+          setValue: toggleSSHKeypairInfoModal,
           defaultValue: false,
           onClick: toggleSSHKeypairInfoModal,
         },
@@ -133,6 +138,7 @@ const UserPreferencesPage = () => {
           title: t('usersettings.AutoLogout'),
           description: t('usersettings.DescAutoLogout'),
           value: autoLogout,
+          setValue: setAutoLogout,
           defaultValue: useRef(autoLogout).current,
           onChange: (e) => {
             setAutoLogout(e.target.checked);
@@ -148,6 +154,7 @@ const UserPreferencesPage = () => {
           title: t('usersettings.EditBootstrapScript'),
           description: '',
           value: false,
+          setValue: () => {},
           defaultValue: false,
           children: (
             <Button
@@ -164,6 +171,7 @@ const UserPreferencesPage = () => {
           title: t('usersettings.EditUserConfigScript'),
           description: '',
           value: false,
+          setValue: () => {},
           defaultValue: false,
           children: (
             <Button

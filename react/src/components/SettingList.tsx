@@ -2,6 +2,7 @@ import Flex from './Flex';
 import SettingItem from './SettingItem';
 import { SettingItemProps } from './SettingItem';
 import { RedoOutlined, SearchOutlined } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import { Button, Checkbox, Empty, Input, Tabs, Typography, theme } from 'antd';
 import _ from 'lodash';
 import { useState } from 'react';
@@ -25,6 +26,7 @@ const SettingList: React.FC<SettingPageProps> = ({
   const { token } = theme.useToken();
   const [searchValue, setSearchValue] = useState('');
   const [changedOptionFilter, setChangedOptionFilter] = useState(false);
+  const [isRefreshFinished, setisRefreshFinished] = useState(false);
 
   return (
     <Flex
@@ -68,10 +70,16 @@ const SettingList: React.FC<SettingPageProps> = ({
           </Flex>
           <Button
             icon={<RedoOutlined />}
-            // loading={isPendingRefreshTransition}
-            // onClick={() => {
-            //   startRefreshTransition(() => checkUpdate());
-            // }}
+            loading={isRefreshFinished}
+            onClick={() => {
+              setisRefreshFinished(true);
+              _.flatMap(settingOptions, (item) => item.options).forEach(
+                (option) => {
+                  option.setValue(option.defaultValue);
+                },
+              );
+              setisRefreshFinished(false);
+            }}
           >
             {/* Todo: Change message */}
             {t('button.Refresh')}

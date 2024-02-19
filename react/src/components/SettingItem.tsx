@@ -7,6 +7,7 @@ export interface SettingItemProps {
   title: string;
   description: ReactNode;
   value: any;
+  setValue: (value: any) => void;
   defaultValue: any;
   options?: any;
   children?: ReactNode;
@@ -19,6 +20,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
   title,
   description,
   value,
+  setValue,
   defaultValue,
   options,
   children,
