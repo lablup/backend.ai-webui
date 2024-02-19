@@ -1,13 +1,21 @@
-import Flex from '../components/Flex';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import Flex from './Flex';
+import UserInfoModal from './UserInfoModal';
+import UserSettingModal from './UserSettingModal';
 import {
   UserListQuery,
   UserListQuery$data,
 } from './__generated__/UserListQuery.graphql';
-import { Tabs, Table, theme } from 'antd';
+import {
+  SolutionOutlined,
+  SettingOutlined,
+  DeleteOutlined,
+} from '@ant-design/icons';
+import { useToggle } from 'ahooks';
+import { Tabs, Table, theme, Button } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
-import React, { useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useLazyLoadQuery } from 'react-relay';
@@ -22,7 +30,15 @@ const UserList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
+  const [isPendingReload, startReloadTransition] = useTransition();
+  const [userListFetchKey, updateUserListFetchKey] =
+    useUpdatableState('initial-fetch');
   const [curTabKey, setCurTabKey] = useState('active');
+  const [selectedUserEmail, setSelectedUserEmail] = useState('');
+  const [isOpenUserInfoModal, { toggle: toggleUserInfoModal }] =
+    useToggle(false);
+  const [isOpenUserSettingModal, { toggle: toggleUserSettingModal }] =
+    useToggle(false);
   let totpSupported = false;
   let { data: isManagerSupportingTOTP } = useQuery(
     'isManagerSupportingTOTP',
@@ -78,11 +94,18 @@ const UserList: React.FC = () => {
     `,
     {
       //todo: core can't filter status
-      //filter:curTabKey === 'active' ? 'status like "active"' : 'status != "active"',
+      filter:
+        curTabKey === 'active' ? 'status == "active"' : 'status != "active"',
       isTOTPSupported: totpSupported ?? false,
     },
+    {
+      fetchPolicy:
+        userListFetchKey === 'initial-fetch'
+          ? 'store-and-network'
+          : 'network-only',
+      fetchKey: userListFetchKey,
+    },
   );
-  console.log(user_nodes);
 
   const columns: ColumnsType<UserNode> = [
     {
@@ -132,6 +155,39 @@ const UserList: React.FC = () => {
     {
       title: t('general.Control'),
       key: 'control',
+      render(record) {
+        return (
+          <Flex>
+            <Button
+              size="large"
+              type="text"
+              loading={isPendingReload}
+              icon={<SolutionOutlined />}
+              style={{
+                color: token.colorPrimary,
+              }}
+              onClick={() => {
+                toggleUserInfoModal();
+                setSelectedUserEmail(record.node?.email);
+              }}
+            />
+            <Button
+              size="large"
+              type="text"
+              loading={isPendingReload}
+              icon={<SettingOutlined />}
+              style={{
+                color: token.colorInfo,
+              }}
+              onClick={() => {
+                toggleUserSettingModal();
+                setSelectedUserEmail(record.node?.email);
+              }}
+            />
+            <Button size="large" type="text" danger icon={<DeleteOutlined />} />
+          </Flex>
+        );
+      },
     },
   ];
   return (
@@ -168,6 +224,24 @@ const UserList: React.FC = () => {
           borderTopLeftRadius: token.borderRadius,
           borderTopRightRadius: token.borderRadius,
         }}
+      />
+      <UserInfoModal
+        draggable
+        open={isOpenUserInfoModal}
+        onRequestClose={toggleUserInfoModal}
+        email={selectedUserEmail}
+      />
+      <UserSettingModal
+        draggable
+        open={isOpenUserSettingModal}
+        onRequestOk={() => {
+          toggleUserSettingModal();
+          startReloadTransition(() => {
+            updateUserListFetchKey();
+          });
+        }}
+        onRequestClose={toggleUserSettingModal}
+        email={selectedUserEmail}
       />
     </>
   );

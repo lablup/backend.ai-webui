@@ -10,12 +10,19 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
-interface Props extends BAIModalProps {}
+interface Props extends BAIModalProps {
+  email?: string;
+  onRequestClose: () => void;
+}
 
-const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
+const UserInfoModal: React.FC<Props> = ({
+  email,
+  onRequestClose,
+  ...baiModalProps
+}) => {
   const { t } = useTranslation();
 
-  const { value, dispatchEvent } = useWebComponentInfo();
+  const { value } = useWebComponentInfo();
   let parsedValue: {
     open: boolean;
     userEmail: string;
@@ -25,7 +32,7 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
   } catch (error) {
     parsedValue = {
       open: false,
-      userEmail: '',
+      userEmail: email ?? '',
     };
   }
   const { open, userEmail } = parsedValue;
@@ -87,19 +94,11 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
   return (
     <BAIModal
       open={open}
-      onCancel={() => {
-        dispatchEvent('cancel', null);
-      }}
+      onCancel={onRequestClose}
       centered
       title={t('credential.UserDetail')}
       footer={[
-        <Button
-          key="ok"
-          type="primary"
-          onClick={() => {
-            dispatchEvent('cancel', null);
-          }}
-        >
+        <Button key="ok" type="primary" onClick={onRequestClose}>
           {t('button.OK')}
         </Button>,
       ]}

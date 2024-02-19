@@ -99,7 +99,12 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <UserInfoModal draggable />
+        <UserInfoModal
+          draggable
+          onRequestClose={() => {
+            props.dispatchEvent('close', null);
+          }}
+        />
       </DefaultProviders>
     );
   }),
@@ -110,7 +115,15 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <UserSettingsModal draggable />
+        <UserSettingsModal
+          draggable
+          onRequestOk={() => {
+            props.dispatchEvent('ok', null);
+          }}
+          onRequestClose={() => {
+            props.dispatchEvent('close', null);
+          }}
+        />
       </DefaultProviders>
     );
   }),
