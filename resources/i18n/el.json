@@ -257,6 +257,8 @@
       "Template": "Πρότυπο συνεδρίας",
       "EnableAutomaticShmem": "Αυτόματη κοινή μνήμη",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "StartAfter": "Έναρξη μετά:",
+      "StartTimeDoesNotApply": "Εάν δεν έχει οριστεί η ώρα έναρξης, δεν ισχύει.",
       "OnlyAllowsDiscreteNumberByClusterSize": "Μόνο ακέραιος επιτρέπεται όταν το μέγεθος του συμπλέγματος δεν είναι μικρότερο από 2."
     },
     "Preparing": "Προετοιμασία ...",
@@ -1411,11 +1413,7 @@
     "YouAreAboutToTerminate": "Πρόκειται να τερματίσετε",
     "Owner": "Ιδιοκτήτης",
     "ServiceDelegatedFrom": "Το μοντέλο υπηρεσίας δημιουργείται από τον {{ createdUser }}, αλλά η ιδιοκτησία της συνεδρίας θα ανατεθεί στον {{ sessionOwner }}",
-    "FailedToTerminateService": "Η αίτηση τερματισμού της υπηρεσίας απέτυχε.",
-    "FailedToUpdateService": "Η ενημέρωση της υπηρεσίας απέτυχε.",
-    "ServiceCreated": "Η υπηρεσία μοντέλου {{ name }} δημιουργήθηκε με επιτυχία.",
-    "ServiceUpdated": "Η υπηρεσία μοντέλου {{ name }} ενημερώθηκε με επιτυχία.",
-    "ServiceTerminated": "Η υπηρεσία μοντέλου {{ name }} τερματίστηκε με επιτυχία."
+    "FailedToTerminateService": "Η αίτηση τερματισμού της υπηρεσίας απέτυχε."
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",

@@ -259,7 +259,9 @@
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
       "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",
-      "OnlyAllowsDiscreteNumberByClusterSize": "Допускается только целое число, если размер кластера не меньше 2."
+      "OnlyAllowsDiscreteNumberByClusterSize": "Допускается только целое число, если размер кластера не меньше 2.",
+      "StartAfter": "Начать после:",
+      "StartTimeDoesNotApply": "Если время начала не установлено, оно не применяется."
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",

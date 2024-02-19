@@ -401,9 +401,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 scroll={{ x: 'max-content' }}
                 rowKey={'endpoint_id'}
                 dataSource={(sortedEndpointList || []) as Endpoint[]}
-                columns={columns.filter(
-                  (column) =>
-                    displayedColumnKeys?.includes(_.toString(column.key)),
+                columns={columns.filter((column) =>
+                  displayedColumnKeys?.includes(_.toString(column.key)),
                 )}
 
                 // pagination={{

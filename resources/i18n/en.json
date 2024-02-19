@@ -270,7 +270,9 @@
       "EnvironmentVariableDuplicateName": "A variable name that already exists.",
       "Template": "Session Template",
       "EnableAutomaticShmem": "Automatic shared memory",
-      "PreOpenPortMaxCountLimit_plural": "PreOpenPortMaxCountLimit"
+      "PreOpenPortMaxCountLimit_plural": "PreOpenPortMaxCountLimit",
+      "StartAfter": "Start after: ",
+      "StartTimeDoesNotApply": "If the start time is not set, it doesn't apply."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

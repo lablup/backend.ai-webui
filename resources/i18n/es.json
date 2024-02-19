@@ -1150,7 +1150,9 @@
       "Template": "Plantilla de sesión",
       "EnableAutomaticShmem": "Memoria compartida automática",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "OnlyAllowsDiscreteNumberByClusterSize": "Solo se permiten números enteros cuando el tamaño del clúster no es inferior a 2."
+      "OnlyAllowsDiscreteNumberByClusterSize": "Solo se permiten números enteros cuando el tamaño del clúster no es inferior a 2.",
+      "StartAfter": "Empezar después:",
+      "StartTimeDoesNotApply": "Si no se establece la hora de inicio, no se aplica."
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

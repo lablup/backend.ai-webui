@@ -257,7 +257,9 @@
       "Template": "Modèle de session",
       "EnableAutomaticShmem": "Mémoire partagée automatique",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
-      "OnlyAllowsDiscreteNumberByClusterSize": "Seul un nombre entier est autorisé lorsque la taille du cluster n'est pas inférieure à 2."
+      "OnlyAllowsDiscreteNumberByClusterSize": "Seul un nombre entier est autorisé lorsque la taille du cluster n'est pas inférieure à 2.",
+      "StartAfter": "Commencez après :",
+      "StartTimeDoesNotApply": "Si l'heure de début n'est pas définie, elle ne s'applique pas."
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",

@@ -257,7 +257,9 @@
       "Template": "セッションテンプレート",
       "EnableAutomaticShmem": "自動共有メモリー",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "OnlyAllowsDiscreteNumberByClusterSize": "クラスター サイズが 2 以上の場合は、整数のみが許可されます。"
+      "OnlyAllowsDiscreteNumberByClusterSize": "クラスター サイズが 2 以上の場合は、整数のみが許可されます。",
+      "StartAfter": "次の後に開始します:",
+      "StartTimeDoesNotApply": "開始時間が設定されていない場合は適用されません。"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
