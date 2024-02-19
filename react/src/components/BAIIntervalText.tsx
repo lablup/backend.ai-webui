@@ -3,11 +3,10 @@ import { useIntervalValue } from '../hooks/useIntervalValue';
 import React from 'react';
 
 const BAIIntervalText: React.FC<{
-  callback: (props: any) => any;
+  callback: () => any;
   delay: number;
 }> = ({ callback, delay }) => {
-  const handler = useEventNotStable(callback);
-  const value = useIntervalValue(handler, delay);
+  const value = useIntervalValue(callback, delay);
   return value;
 };
 
