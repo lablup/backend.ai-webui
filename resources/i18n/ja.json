@@ -257,6 +257,7 @@
       "Template": "セッションテンプレート",
       "EnableAutomaticShmem": "自動共有メモリー",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "クラスター サイズが 2 以上の場合は、整数のみが許可されます。",
       "StartAfter": "次の後に開始します:",
       "StartTimeDoesNotApply": "開始時間が設定されていない場合は適用されません。"
     },
@@ -1412,7 +1413,11 @@
     "Image": "イメージ",
     "Owner": "所有者",
     "ServiceDelegatedFrom": "モデルサービスは{{ createdUser }}によって作成されますが、セッションの所有権は{{ sessionOwner }}に委譲されます。",
-    "FailedToTerminateService": "サービス終了のリクエストに失敗しました。"
+    "FailedToTerminateService": "サービス終了のリクエストに失敗しました。",
+    "FailedToUpdateService": "サービスの更新に失敗しました。",
+    "ServiceCreated": "モデル サービス {{ name }} が正常に作成されました。",
+    "ServiceUpdated": "モデル サービス {{ name }} は正常に更新されました。",
+    "ServiceTerminated": "モデル サービス {{ name }} は正常に終了しました。"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

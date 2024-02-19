@@ -258,7 +258,8 @@
       "EnableAutomaticShmem": "Αυτόματη κοινή μνήμη",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "StartAfter": "Έναρξη μετά:",
-      "StartTimeDoesNotApply": "Εάν δεν έχει οριστεί η ώρα έναρξης, δεν ισχύει."
+      "StartTimeDoesNotApply": "Εάν δεν έχει οριστεί η ώρα έναρξης, δεν ισχύει.",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Μόνο ακέραιος επιτρέπεται όταν το μέγεθος του συμπλέγματος δεν είναι μικρότερο από 2."
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",

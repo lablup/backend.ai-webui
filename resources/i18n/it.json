@@ -257,6 +257,7 @@
       "Template": "Modello di sessione",
       "EnableAutomaticShmem": "Memoria condivisa automatica",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "È consentito solo un numero intero quando la dimensione del cluster non è inferiore a 2.",
       "StartAfter": "Inizia dopo:",
       "StartTimeDoesNotApply": "Se l'ora di inizio non è impostata, non si applica."
     },
@@ -1412,7 +1413,11 @@
     "YouAreAboutToTerminate": "State per terminare",
     "Owner": "Proprietario",
     "ServiceDelegatedFrom": "Il servizio modello è creato da {{ createdUser }}, ma la proprietà della sessione sarà delegata a {{ sessionOwner }}.",
-    "FailedToTerminateService": "La richiesta di terminare il servizio è fallita."
+    "FailedToTerminateService": "La richiesta di terminare il servizio è fallita.",
+    "FailedToUpdateService": "Impossibile aggiornare il servizio.",
+    "ServiceCreated": "Il servizio modello {{ name }} è stato creato correttamente.",
+    "ServiceUpdated": "Il servizio modello {{ name }} è stato aggiornato correttamente.",
+    "ServiceTerminated": "Il servizio modello {{ name }} è stato terminato correttamente."
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",
