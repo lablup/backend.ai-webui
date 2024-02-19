@@ -3,7 +3,6 @@ import { Badge, Checkbox, Select, Typography } from 'antd';
 import React, { ReactNode } from 'react';
 
 export interface SettingItemProps {
-  //default 는 custom, children 으로 node element를 받기
   type: 'checkbox' | 'select' | 'custom';
   title: string;
   description: ReactNode;
