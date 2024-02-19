@@ -1,4 +1,3 @@
-import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useIntervalValue } from '../hooks/useIntervalValue';
 import React from 'react';
 
