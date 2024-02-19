@@ -1,14 +1,14 @@
-import { useCurrentLanguage } from '../components/DefaultProviders';
 import ErrorLogList from '../components/ErrorLogList';
 import Flex from '../components/Flex';
 import { SettingItemProps } from '../components/SettingItem';
 import SettingList from '../components/SettingList';
 import { useLocalStorageGlobalState } from '../hooks/useLocalStorageGlobalState';
+import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { theme } from 'antd';
+import { Button, theme } from 'antd';
 import Card from 'antd/es/card/Card';
 import { useRef } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TabKey = 'general' | 'logs';
@@ -44,18 +44,16 @@ const UserPreferencesPage = () => {
   );
   const [isOpenSSHKeypairInfoModal, { toggle: toggleSSHKeypairInfoModal }] =
     useToggle(false);
-  //Todo: [[]] 형태보다는, https://ant.design/components/select#select-demo-optgroup 참조
-  const settingOptions: [string, SettingItemProps[]][] = [
-    [
-      t('usersettings.Preferences'),
-      [
+  const settingOptions: { title: string; options: SettingItemProps[] }[] = [
+    {
+      title: t('usersettings.Preferences'),
+      options: [
         {
           type: 'checkbox',
           title: t('usersettings.DesktopNotification'),
           description: t('usersettings.DescDesktopNotification'),
           value: desktopNotification,
-          // 유저 변경값이 아니라 시스템 초기 설정값과의 비교.
-          defaultValue: useRef(desktopNotification).current,
+          defaultValue: false,
           onChange: (e) => {
             setDesktopNotification(e.target.checked);
           },
@@ -65,7 +63,7 @@ const UserPreferencesPage = () => {
           title: t('usersettings.UseCompactSidebar'),
           description: t('usersettings.DescUseCompactSidebar'),
           value: compactSidebar,
-          defaultValue: useRef(compactSidebar).current,
+          defaultValue: false,
           onChange: (e) => {
             setCompactSidebar(e.target.checked);
           },
@@ -100,7 +98,7 @@ const UserPreferencesPage = () => {
             { label: t('language.Vietnamese'), value: 'vi' },
           ],
           value: language,
-          defaultValue: useRef(language).current,
+          defaultValue: 'ko',
           onChange: (value) => {
             setLanguage(value);
             const currentLanguage =
@@ -113,14 +111,6 @@ const UserPreferencesPage = () => {
           },
         },
         {
-          type: 'custom',
-          title: t('usersettings.SSHKeypairManagement'),
-          description: t('usersettings.DescSSHKeypairManagement'),
-          value: false,
-          defaultValue: false,
-          onClick: toggleSSHKeypairInfoModal,
-        },
-        {
           type: 'checkbox',
           title: t('usersettings.AutomaticUpdateCheck'),
           description: t('usersettings.DescAutomaticUpdateCheck'),
@@ -129,6 +119,14 @@ const UserPreferencesPage = () => {
           onChange: (e) => {
             setAutoAutomaticUpdateCheck(e.target.checked);
           },
+        },
+        {
+          type: 'custom',
+          title: t('usersettings.SSHKeypairManagement'),
+          description: t('usersettings.DescSSHKeypairManagement'),
+          value: false,
+          defaultValue: false,
+          onClick: toggleSSHKeypairInfoModal,
         },
         {
           type: 'checkbox',
@@ -141,16 +139,25 @@ const UserPreferencesPage = () => {
           },
         },
       ],
-    ],
-    [
-      t('usersettings.ShellEnvironments'),
-      [
+    },
+    {
+      title: t('usersettings.ShellEnvironments'),
+      options: [
         {
           type: 'custom',
           title: t('usersettings.EditBootstrapScript'),
           description: '',
           value: false,
           defaultValue: false,
+          children: (
+            <Button
+              type="primary"
+              icon={<SettingOutlined />}
+              style={{ width: 120 }}
+            >
+              custom
+            </Button>
+          ),
         },
         {
           type: 'custom',
@@ -158,9 +165,18 @@ const UserPreferencesPage = () => {
           description: '',
           value: false,
           defaultValue: false,
+          children: (
+            <Button
+              type="primary"
+              icon={<SettingOutlined />}
+              style={{ width: 120 }}
+            >
+              custom
+            </Button>
+          ),
         },
       ],
-    ],
+    },
   ];
 
   return (

@@ -1,6 +1,5 @@
 import Flex from './Flex';
-import { SettingOutlined } from '@ant-design/icons';
-import { Badge, Button, Checkbox, Select, Typography, theme } from 'antd';
+import { Badge, Checkbox, Select, Typography } from 'antd';
 import React, { ReactNode } from 'react';
 
 export interface SettingItemProps {
@@ -11,6 +10,7 @@ export interface SettingItemProps {
   value: any;
   defaultValue: any;
   options?: any;
+  children?: ReactNode;
   onChange?: (value: any) => void;
   onClick?: () => void;
 }
@@ -22,10 +22,9 @@ const SettingItem: React.FC<SettingItemProps> = ({
   value,
   defaultValue,
   options,
+  children,
   ...particialProps
 }) => {
-  const { token } = theme.useToken();
-
   return (
     <Flex
       direction="column"
@@ -52,18 +51,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
           {...particialProps}
         />
       )}
-      {/* Todo:  */}
-      {type === 'custom' && (
-        //children 으로 범용적으로 사용할 수 있게 변경.
-        <Button
-          type="primary"
-          icon={<SettingOutlined />}
-          style={{ width: 120 }}
-          {...particialProps}
-        >
-          custom
-        </Button>
-      )}
+      {type === 'custom' && children}
     </Flex>
   );
 };
