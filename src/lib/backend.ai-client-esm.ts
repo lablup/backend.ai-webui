@@ -672,6 +672,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.09.8')) {
       this._features['model-serving-endpoint-user-info'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('23.09.9')) {
+      this._features['modify-endpoint'] = true;
+    }
     // TODO: remove this after 24.03.0 release
     if (this.isManagerVersionCompatibleWith('24.03.0.*')) {
       this._features['vfolder-trash-bin'] = true;

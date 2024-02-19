@@ -4,7 +4,7 @@ import { PickerDateProps } from 'antd/es/date-picker/generatePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import React from 'react';
 
-interface DatePickerISOProps
+export interface DatePickerISOProps
   extends Omit<PickerDateProps<Dayjs>, 'value' | 'onChange'> {
   value?: string | undefined | null;
   onChange?: (value: string | undefined) => void;

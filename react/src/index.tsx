@@ -54,6 +54,10 @@ const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
 
 const ErrorLogList = React.lazy(() => import('./components/ErrorLogList'));
 
+const BatchSessionScheduledTimeSetting = React.lazy(
+  () => import('./components/BatchSessionScheduledTimeSetting'),
+);
+
 customElements.define(
   'backend-ai-react-session-list',
   reactToWebComponent((props) => {
@@ -162,7 +166,7 @@ customElements.define(
           direction="column"
           gap="sm"
           align="stretch"
-          style={{ minWidth: 200 }}
+          style={{ minWidth: 200, maxWidth: 310 }}
         >
           {t('session.launcher.ResourceGroup')}
           <ResourceGroupSelect
@@ -255,6 +259,21 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <ErrorLogList />
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-batch-session-scheduled-time-setting',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <BatchSessionScheduledTimeSetting
+          onChange={(value) => {
+            props.dispatchEvent('change', value);
+          }}
+        />
       </DefaultProviders>
     );
   }),

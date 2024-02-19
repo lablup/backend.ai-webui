@@ -15,6 +15,7 @@ export interface DynamicUnitInputNumberProps
   min?: string;
   value?: string | null | undefined;
   units?: string[];
+  roundStep?: number;
   onChange?: (value: string) => void;
 }
 
@@ -24,8 +25,7 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
   disableAutoUnit = false,
   min = '0m',
   max = '300p',
-  // value,
-  // onChange,
+  roundStep,
   ...inputNumberProps
 }) => {
   const [value, setValue] = useControllableValue<string | null | undefined>(
@@ -69,6 +69,14 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
     <InputNumber
       ref={ref}
       {...inputNumberProps}
+      onBlur={() => {
+        if (_.isNumber(roundStep) && roundStep > 0) {
+          const decimalCount = roundStep.toString().split('.')[1]?.length || 0;
+          setValue(
+            `${(Math.round(_.toNumber(ref.current?.value || '0') / roundStep) * roundStep).toFixed(decimalCount)}${unit}`,
+          );
+        }
+      }}
       value={numValue}
       onChange={(newValue) => {
         if (newValue === null || newValue === undefined) {

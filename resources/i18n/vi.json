@@ -256,7 +256,10 @@
       "Template": "Mẫu phiên",
       "EnableAutomaticShmem": "Bộ nhớ chia sẻ tự động",
       "PreOpenPortMaxCountLimit": "Bạn có thể thiết lập tối đa {{count}} cổng mở trước.",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Chỉ cho phép số nguyên khi kích thước cụm không nhỏ hơn 2.",
+      "StartAfter": "Bắt đầu sau:",
+      "StartTimeDoesNotApply": "Nếu thời gian bắt đầu không được đặt, nó sẽ không được áp dụng."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",
@@ -1457,7 +1460,11 @@
     "YouAreAboutToTerminate": "Bạn sắp chấm dứt",
     "Owner": "Người sở hữu",
     "ServiceDelegatedFrom": "Dịch vụ mô hình được tạo bởi {{ createUser }} nhưng quyền sở hữu phiên sẽ được ủy quyền cho {{ sessionOwner }}",
-    "FailedToTerminateService": "Yêu cầu chấm dứt dịch vụ không thành công."
+    "FailedToTerminateService": "Yêu cầu chấm dứt dịch vụ không thành công.",
+    "FailedToUpdateService": "Không thể cập nhật dịch vụ.",
+    "ServiceCreated": "Dịch vụ mẫu {{ name }} đã được tạo thành công.",
+    "ServiceUpdated": "Dịch vụ mẫu {{ name }} đã được cập nhật thành công.",
+    "ServiceTerminated": "Dịch vụ mẫu {{ name }} đã được chấm dứt thành công."
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",
