@@ -1128,7 +1128,8 @@
     "DescWarboysupport": "Utiliser le support Furiosa Warboy",
     "RequireWarboyPlugin": "Requiert le plugin Backend.AI Warboy.",
     "Plugins": "Plugins",
-    "OpenSourceCUDAGPUsupport": "Prise en charge des GPU CUDA Open Source"
+    "OpenSourceCUDAGPUsupport": "Prise en charge des GPU CUDA Open Source",
+    "ShowOnlyChanged": "Afficher uniquement les modifications"
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",
@@ -1501,5 +1502,8 @@
     "SettingTable": "Paramètre de table",
     "SelectColumnToDisplay": "Sélectionnez les colonnes à afficher",
     "SearchTableColumn": "Rechercher des colonnes dans un tableau"
+  },
+  "setting": {
+    "SearchPlaceholder": "Entrez le terme de recherche"
   }
 }

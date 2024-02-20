@@ -2,31 +2,43 @@ import Flex from './Flex';
 import SettingItem from './SettingItem';
 import { SettingItemProps } from './SettingItem';
 import { RedoOutlined, SearchOutlined } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { Button, Checkbox, Empty, Input, Tabs, Typography, theme } from 'antd';
+import { Badge, Button, Checkbox, Input, Tabs, Typography, theme } from 'antd';
 import _ from 'lodash';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SettingPageProps {
   settingOptions: { title: string; options: SettingItemProps[] }[];
+  placeholder?: string;
 }
 
 const SettingList: React.FC<SettingPageProps> = ({
   settingOptions,
+  placeholder,
 }: SettingPageProps) => {
-  const optionRenderItems = [
-    {
-      title: 'General',
-      options: _.flatMap(settingOptions, (item) => item.options),
-    },
-    ...settingOptions,
-  ];
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [searchValue, setSearchValue] = useState('');
   const [changedOptionFilter, setChangedOptionFilter] = useState(false);
   const [isRefreshFinished, setisRefreshFinished] = useState(false);
+
+  const optionRenderItems = [
+    {
+      title: t('general.All'),
+      options: _.flatMap(settingOptions, (item) => item.options),
+    },
+    ...settingOptions,
+  ];
+  const matchedOptionPicker = (option: SettingItemProps) => {
+    return (
+      option.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+      (typeof option.description === 'string' &&
+        option.description.toLowerCase().includes(searchValue.toLowerCase()))
+    );
+  };
+  const changedOptionPicker = (option: SettingItemProps) => {
+    return option.value !== option.defaultValue;
+  };
 
   return (
     <Flex
@@ -38,7 +50,6 @@ const SettingList: React.FC<SettingPageProps> = ({
       <Flex
         direction="row"
         justify="between"
-        align="stretch"
         wrap="wrap"
         gap={'xs'}
         style={{
@@ -49,14 +60,16 @@ const SettingList: React.FC<SettingPageProps> = ({
         }}
       >
         <Typography.Title level={4} style={{ margin: 0, padding: 0 }}>
-          {t('usersettings.Preferences')}
+          {t('settings.Config')}
         </Typography.Title>
         <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
           <Flex gap={'xs'}>
+            {/* 
+            Todo: apply debounce or throttle later if needed
+            */}
             <Input
               prefix={<SearchOutlined />}
-              //Todo: change the placeholder text
-              placeholder={t('table.SearchTableColumn')}
+              placeholder={placeholder || t('setting.SearchPlaceholder')}
               onChange={(e) => setSearchValue(e.target.value)}
               value={searchValue}
               style={{ width: 400 }}
@@ -64,8 +77,7 @@ const SettingList: React.FC<SettingPageProps> = ({
             <Checkbox
               onChange={(e) => setChangedOptionFilter(e.target.checked)}
             >
-              {/* Todo: Change message */}
-              {t('Only Changed Settings')}
+              {t('settings.ShowOnlyChanged')}
             </Checkbox>
           </Flex>
           <Button
@@ -75,18 +87,16 @@ const SettingList: React.FC<SettingPageProps> = ({
               setisRefreshFinished(true);
               _.flatMap(settingOptions, (item) => item.options).forEach(
                 (option) => {
-                  option.setValue(option.defaultValue);
+                  option?.setValue && option.setValue(option.defaultValue);
                 },
               );
               setisRefreshFinished(false);
             }}
           >
-            {/* Todo: Change message */}
-            {t('button.Refresh')}
+            {t('button.Reset')}
           </Button>
         </Flex>
       </Flex>
-      {/* Todo: make rendered children scrollable except the tab bar and search field */}
       <Tabs
         tabPosition="left"
         tabBarStyle={{
@@ -94,27 +104,23 @@ const SettingList: React.FC<SettingPageProps> = ({
         }}
         style={{ width: '100%' }}
         items={optionRenderItems.map((item) => {
+          const filteredOptions = item.options.filter(
+            (option) =>
+              matchedOptionPicker(option) &&
+              (!changedOptionFilter || changedOptionPicker(option)),
+          );
           return {
             key: item.title,
-            label: item.title,
+            label:
+              item.title +
+              (searchValue || changedOptionFilter
+                ? ` (${filteredOptions.length})`
+                : ''),
             children: (
               <Flex direction="column" gap={'md'} align="start">
-                {item.options.map((option) =>
-                  (option.title
-                    .toLowerCase()
-                    .includes(searchValue.toLowerCase()) ||
-                    (typeof option?.description === 'string' &&
-                      option?.description?.includes(
-                        searchValue.toLowerCase(),
-                      ))) &&
-                  changedOptionFilter ? (
-                    option.value !== option.defaultValue ? (
-                      <SettingItem {...option} />
-                    ) : null
-                  ) : (
-                    <SettingItem {...option} />
-                  ),
-                )}
+                {filteredOptions.map((option) => (
+                  <SettingItem {...option} />
+                ))}
               </Flex>
             ),
           };

@@ -1130,7 +1130,8 @@
     "MTUDescription": "Maksymalna jednostka transmisji, rozmiar największego pakietu, jaki może przesłać protokół sieciowy.",
     "OutOfRange": "Poza zasięgiem.",
     "Plugins": "Wtyczki",
-    "OpenSourceCUDAGPUsupport": "Obsługa procesorów graficznych Open Source CUDA"
+    "OpenSourceCUDAGPUsupport": "Obsługa procesorów graficznych Open Source CUDA",
+    "ShowOnlyChanged": "Wyświetl tylko zmiany"
   },
   "notification": {
     "SuccessfullyUpdated": "Pomyślnie zaktualizowano",
@@ -1503,5 +1504,8 @@
     "SettingTable": "Nakrycie stołu",
     "SelectColumnToDisplay": "Wybierz, które kolumny mają być wyświetlane",
     "SearchTableColumn": "Przeszukaj kolumny tabeli"
+  },
+  "setting": {
+    "SearchPlaceholder": "Wprowadź wyszukiwane hasło"
   }
 }

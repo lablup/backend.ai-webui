@@ -1128,7 +1128,8 @@
     "MTUDescription": "最大送信単位 - 当該レイヤーが送信できる最大プロトコルデータ単位のサイズです。",
     "OutOfRange": "入力範囲外です。",
     "Plugins": "プラグイン",
-    "OpenSourceCUDAGPUsupport": "オープンソースのCUDA GPUのサポート"
+    "OpenSourceCUDAGPUsupport": "オープンソースのCUDA GPUのサポート",
+    "ShowOnlyChanged": "表示のみの変更"
   },
   "notification": {
     "SuccessfullyUpdated": "正常に更新されました",
@@ -1501,5 +1502,8 @@
     "SettingTable": "テーブルセッティング",
     "SelectColumnToDisplay": "表示する列を選択します",
     "SearchTableColumn": "テーブルの列を検索する"
+  },
+  "setting": {
+    "SearchPlaceholder": "検索用語を入力してください"
   }
 }

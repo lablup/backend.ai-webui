@@ -1128,7 +1128,8 @@
     "MTUDescription": "Đơn vị truyền tối đa, kích thước của gói lớn nhất mà giao thức mạng có thể truyền.",
     "OutOfRange": "Ngoài phạm vi.",
     "Plugins": "bổ sung",
-    "OpenSourceCUDAGPUsupport": "Hỗ trợ GPU CUDA mã nguồn mở"
+    "OpenSourceCUDAGPUsupport": "Hỗ trợ GPU CUDA mã nguồn mở",
+    "ShowOnlyChanged": "Chỉ hiển thị các thay đổi"
   },
   "notification": {
     "SuccessfullyUpdated": "Cập nhật thành công",
@@ -1501,5 +1502,8 @@
     "SettingTable": "Cài đặt bảng",
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
     "SearchTableColumn": "Tìm kiếm các cột trong bảng"
+  },
+  "setting": {
+    "SearchPlaceholder": "Nhập cụm từ tìm kiếm"
   }
 }

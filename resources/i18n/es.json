@@ -1215,7 +1215,8 @@
       "tag": "Etiqueta"
     },
     "Plugins": "Complementos",
-    "OpenSourceCUDAGPUsupport": "Compatibilidad con GPU CUDA de código abierto"
+    "OpenSourceCUDAGPUsupport": "Compatibilidad con GPU CUDA de código abierto",
+    "ShowOnlyChanged": "Mostrar solo cambios"
   },
   "sidepanel": {
     "BackgroundTasks": "Tareas en curso",
@@ -1501,5 +1502,8 @@
     "SettingTable": "Ajuste de la tabla",
     "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
     "SearchTableColumn": "Buscar columnas de la tabla"
+  },
+  "setting": {
+    "SearchPlaceholder": "Ingrese el término de búsqueda"
   }
 }

@@ -1128,7 +1128,8 @@
     "MTUDescription": "最大传输单位，网络协议可传输的最大数据包的大小。",
     "OutOfRange": "超出范围。",
     "Plugins": "插件",
-    "OpenSourceCUDAGPUsupport": "开源 CUDA GPU 支持"
+    "OpenSourceCUDAGPUsupport": "开源 CUDA GPU 支持",
+    "ShowOnlyChanged": "仅显示更改"
   },
   "notification": {
     "SuccessfullyUpdated": "成功更新",
@@ -1501,5 +1502,8 @@
     "SettingTable": "桌面设置",
     "SelectColumnToDisplay": "选择要显示的列",
     "SearchTableColumn": "搜索表格列"
+  },
+  "setting": {
+    "SearchPlaceholder": "输入搜索词"
   }
 }
