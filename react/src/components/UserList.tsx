@@ -2,6 +2,7 @@ import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal from './BAIModal';
 import Flex from './Flex';
+import UserGenerationModal from './UserGenerationModal';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
 import {
@@ -38,6 +39,8 @@ const UserList: React.FC = () => {
     useUpdatableState('initial-fetch');
   const [curTabKey, setCurTabKey] = useState('active');
   const [selectedUserEmail, setSelectedUserEmail] = useState('');
+  const [isOpenUserGenerationModal, { toggle: toggleUserGenerationModal }] =
+    useToggle(false);
   const [isOpenUserInfoModal, { toggle: toggleUserInfoModal }] =
     useToggle(false);
   const [isOpenUserSettingModal, { toggle: toggleUserSettingModal }] =
@@ -257,6 +260,19 @@ const UserList: React.FC = () => {
           borderTopLeftRadius: token.borderRadius,
           borderTopRightRadius: token.borderRadius,
         }}
+        tabBarExtraContent={{
+          right: (
+            <Flex direction="row" gap={'sm'}>
+              {/* <Tooltip title={t("session.exportCSV")}>
+                <Button icon={<DownloadOutlined />} type="text" />
+              </Tooltip> */}
+              {/* @ts-ignore */}
+              <Button type="primary" onClick={toggleUserGenerationModal}>
+                {t('credential.CreateUser')}
+              </Button>
+            </Flex>
+          ),
+        }}
       />
       <Suspense fallback={<div>loading..</div>}>
         <Table
@@ -269,6 +285,15 @@ const UserList: React.FC = () => {
             paddingRight: token.paddingMD,
             borderTopLeftRadius: token.borderRadius,
             borderTopRightRadius: token.borderRadius,
+          }}
+        />
+        <UserGenerationModal
+          open={isOpenUserGenerationModal}
+          onRequestClose={() => {
+            toggleUserGenerationModal();
+            startReloadTransition(() => {
+              updateUserListFetchKey();
+            });
           }}
         />
         <UserInfoModal
