@@ -22,7 +22,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
   value,
   setValue,
   defaultValue,
-  selectOptions: options,
+  selectOptions,
   children,
   ...particialProps
 }) => {
@@ -44,15 +44,15 @@ const SettingItem: React.FC<SettingItemProps> = ({
         )}
         <Typography.Text>{description}</Typography.Text>
       </Flex>
+      {type === 'custom' && children}
       {type === 'select' && (
         <Select
           value={value}
           style={{ width: 120 }}
-          options={options}
+          options={selectOptions}
           {...particialProps}
         />
       )}
-      {type === 'custom' && children}
     </Flex>
   );
 };

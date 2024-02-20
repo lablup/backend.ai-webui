@@ -53,9 +53,9 @@ const UserPreferencesPage = () => {
           type: 'checkbox',
           title: t('usersettings.DesktopNotification'),
           description: t('usersettings.DescDesktopNotification'),
+          defaultValue: false,
           value: desktopNotification,
           setValue: setDesktopNotification,
-          defaultValue: false,
           onChange: (e) => {
             setDesktopNotification(e.target.checked);
           },

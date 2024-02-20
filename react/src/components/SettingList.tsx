@@ -2,7 +2,7 @@ import Flex from './Flex';
 import SettingItem from './SettingItem';
 import { SettingItemProps } from './SettingItem';
 import { RedoOutlined, SearchOutlined } from '@ant-design/icons';
-import { Badge, Button, Checkbox, Input, Tabs, Typography, theme } from 'antd';
+import { Button, Checkbox, Input, Tabs, Typography, theme } from 'antd';
 import _ from 'lodash';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -29,14 +29,14 @@ const SettingList: React.FC<SettingPageProps> = ({
     },
     ...settingGroup,
   ];
-  const matchedItemPicker = (item: SettingItemProps) => {
+  const matchedItemValidator = (item: SettingItemProps) => {
     return (
       item.title.toLowerCase().includes(searchValue.toLowerCase()) ||
       (typeof item.description === 'string' &&
         item.description.toLowerCase().includes(searchValue.toLowerCase()))
     );
   };
-  const changedItemPicker = (item: SettingItemProps) => {
+  const changedItemValidator = (item: SettingItemProps) => {
     return item.value !== item.defaultValue;
   };
 
@@ -72,7 +72,7 @@ const SettingList: React.FC<SettingPageProps> = ({
               placeholder={placeholder || t('setting.SearchPlaceholder')}
               onChange={(e) => setSearchValue(e.target.value)}
               value={searchValue}
-              style={{ width: 400 }}
+              style={{ width: 300 }}
             />
             <Checkbox
               onChange={(e) => setChangedOptionFilter(e.target.checked)}
@@ -106,8 +106,8 @@ const SettingList: React.FC<SettingPageProps> = ({
         items={appendedSettingGroup.map((settingGroup) => {
           const filteredItems = settingGroup.settingItems.filter((item) => {
             return (
-              (!changedOptionFilter || changedItemPicker(item)) &&
-              matchedItemPicker(item)
+              (!changedOptionFilter || changedItemValidator(item)) &&
+              matchedItemValidator(item)
             );
           });
           return {
