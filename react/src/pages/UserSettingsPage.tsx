@@ -44,11 +44,11 @@ const UserPreferencesPage = () => {
   );
   const [isOpenSSHKeypairInfoModal, { toggle: toggleSSHKeypairInfoModal }] =
     useToggle(false);
-  const settingOptions: { title: string; options: SettingItemProps[] }[] = [
+  const settingGroup: { title: string; settingItems: SettingItemProps[] }[] = [
     {
       title: t('usersettings.Preferences'),
       // re-name options
-      options: [
+      settingItems: [
         {
           type: 'checkbox',
           title: t('usersettings.DesktopNotification'),
@@ -75,7 +75,7 @@ const UserPreferencesPage = () => {
           type: 'select',
           title: t('usersettings.Language'),
           description: t('usersettings.DescLanguage'),
-          options: [
+          selectOptions: [
             { label: t('language.OSDefault'), value: 'default' },
             { label: t('language.English'), value: 'en' },
             { label: t('language.Korean'), value: 'ko' },
@@ -146,7 +146,7 @@ const UserPreferencesPage = () => {
     },
     {
       title: t('usersettings.ShellEnvironments'),
-      options: [
+      settingItems: [
         {
           type: 'custom',
           title: t('usersettings.EditBootstrapScript'),
@@ -206,7 +206,7 @@ const UserPreferencesPage = () => {
           paddingRight: token.paddingContentHorizontalSM,
         }}
       >
-        <SettingList settingOptions={settingOptions} />
+        <SettingList settingGroup={settingGroup} />
       </Flex>
       {curTabKey === 'logs' && <ErrorLogList />}
     </Card>

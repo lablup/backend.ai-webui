@@ -8,12 +8,12 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SettingPageProps {
-  settingOptions: { title: string; options: SettingItemProps[] }[];
+  settingGroup: { title: string; settingItems: SettingItemProps[] }[];
   placeholder?: string;
 }
 
 const SettingList: React.FC<SettingPageProps> = ({
-  settingOptions,
+  settingGroup,
   placeholder,
 }: SettingPageProps) => {
   const { t } = useTranslation();
@@ -22,22 +22,22 @@ const SettingList: React.FC<SettingPageProps> = ({
   const [changedOptionFilter, setChangedOptionFilter] = useState(false);
   const [isRefreshFinished, setisRefreshFinished] = useState(false);
 
-  const optionRenderItems = [
+  const appendedSettingGroup = [
     {
       title: t('general.All'),
-      options: _.flatMap(settingOptions, (item) => item.options),
+      settingItems: _.flatMap(settingGroup, (item) => item.settingItems),
     },
-    ...settingOptions,
+    ...settingGroup,
   ];
-  const matchedOptionPicker = (option: SettingItemProps) => {
+  const matchedItemPicker = (item: SettingItemProps) => {
     return (
-      option.title.toLowerCase().includes(searchValue.toLowerCase()) ||
-      (typeof option.description === 'string' &&
-        option.description.toLowerCase().includes(searchValue.toLowerCase()))
+      item.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+      (typeof item.description === 'string' &&
+        item.description.toLowerCase().includes(searchValue.toLowerCase()))
     );
   };
-  const changedOptionPicker = (option: SettingItemProps) => {
-    return option.value !== option.defaultValue;
+  const changedItemPicker = (item: SettingItemProps) => {
+    return item.value !== item.defaultValue;
   };
 
   return (
@@ -85,7 +85,7 @@ const SettingList: React.FC<SettingPageProps> = ({
             loading={isRefreshFinished}
             onClick={() => {
               setisRefreshFinished(true);
-              _.flatMap(settingOptions, (item) => item.options).forEach(
+              _.flatMap(settingGroup, (item) => item.settingItems).forEach(
                 (option) => {
                   option?.setValue && option.setValue(option.defaultValue);
                 },
@@ -103,23 +103,24 @@ const SettingList: React.FC<SettingPageProps> = ({
           width: 200,
         }}
         style={{ width: '100%' }}
-        items={optionRenderItems.map((item) => {
-          const filteredOptions = item.options.filter(
-            (option) =>
-              matchedOptionPicker(option) &&
-              (!changedOptionFilter || changedOptionPicker(option)),
-          );
+        items={appendedSettingGroup.map((settingGroup) => {
+          const filteredItems = settingGroup.settingItems.filter((item) => {
+            return (
+              (!changedOptionFilter || changedItemPicker(item)) &&
+              matchedItemPicker(item)
+            );
+          });
           return {
-            key: item.title,
+            key: settingGroup.title,
             label:
-              item.title +
+              settingGroup.title +
               (searchValue || changedOptionFilter
-                ? ` (${filteredOptions.length})`
+                ? ` (${filteredItems.length})`
                 : ''),
             children: (
               <Flex direction="column" gap={'md'} align="start">
-                {filteredOptions.map((option) => (
-                  <SettingItem {...option} />
+                {filteredItems.map((item) => (
+                  <SettingItem {...item} />
                 ))}
               </Flex>
             ),

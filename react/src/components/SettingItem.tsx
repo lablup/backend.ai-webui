@@ -3,14 +3,14 @@ import { Badge, Checkbox, Select, Typography } from 'antd';
 import React, { ReactNode } from 'react';
 
 export interface SettingItemProps {
-  type: 'checkbox' | 'select' | 'custom';
+  type: 'custom' | 'checkbox' | 'select';
   title: string;
   description: ReactNode;
+  children?: ReactNode;
+  defaultValue?: any;
   value?: any;
   setValue?: (value: any) => void;
-  defaultValue?: any;
-  options?: any;
-  children?: ReactNode;
+  selectOptions?: any;
   onChange?: (value: any) => void;
   onClick?: () => void;
 }
@@ -22,7 +22,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
   value,
   setValue,
   defaultValue,
-  options,
+  selectOptions: options,
   children,
   ...particialProps
 }) => {
