@@ -168,20 +168,31 @@ const ResourceAllocationFormItems: React.FC<
     resourceLimits.mem?.max,
   ]);
 
-  useEffect(() => {
-    if (allocatablePresetNames[0]) {
-      const autoSelectedPreset = _.sortBy(allocatablePresetNames, 'name')[0];
-      form.setFieldsValue({
-        allocationPreset: autoSelectedPreset,
-      });
-      updateResourceFieldsBasedOnPreset(autoSelectedPreset);
+  const updateAllocationPresetBasedOnResourceGroup = () => {
+    if (
+      _.includes(
+        ['custom', 'minimum-required'],
+        form.getFieldValue('allocationPreset'),
+      )
+    ) {
     } else {
-      form.setFieldsValue({
-        allocationPreset: 'custom',
-      });
+      if (allocatablePresetNames[0]) {
+        const autoSelectedPreset = _.sortBy(allocatablePresetNames, 'name')[0];
+        form.setFieldsValue({
+          allocationPreset: autoSelectedPreset,
+        });
+        updateResourceFieldsBasedOnPreset(autoSelectedPreset);
+      } else {
+        form.setFieldsValue({
+          allocationPreset: 'custom',
+        });
+      }
     }
-    form.validateFields().catch(() => {});
-  }, [currentResourceGroup]);
+    // monkey patch for the issue that the validation result is not updated when the resource group is changed.
+    setTimeout(() => {
+      form.validateFields().catch(() => {});
+    }, 200);
+  };
 
   const updateResourceFieldsBasedOnImage = (force?: boolean) => {
     // when image changed, set value of resources to min value only if it's larger than current value
@@ -344,6 +355,7 @@ const ResourceAllocationFormItems: React.FC<
             startCheckRestsTransition(() => {
               // update manually to handle granular pending status management
               form.setFieldValue('resourceGroup', v);
+              updateAllocationPresetBasedOnResourceGroup();
             });
           }}
         />
@@ -368,6 +380,7 @@ const ResourceAllocationFormItems: React.FC<
                   updateResourceFieldsBasedOnImage(true);
                   break;
                 default:
+                  form.setFieldValue('enabledAutomaticShmem', true);
                   updateResourceFieldsBasedOnPreset(value);
                   break;
               }
@@ -475,6 +488,9 @@ const ResourceAllocationFormItems: React.FC<
                       min={resourceLimits.cpu?.min}
                       max={resourceLimits.cpu?.max}
                       step={1}
+                      onChange={() => {
+                        form.setFieldValue('allocationPreset', 'custom');
+                      }}
                     />
                   </Form.Item>
                 )}
@@ -669,6 +685,11 @@ const ResourceAllocationFormItems: React.FC<
                                 )
                                   return;
                                 runShmemAutomationRule(M_plus_S);
+
+                                form.setFieldValue(
+                                  'allocationPreset',
+                                  'custom',
+                                );
                               }}
                             />
                           </Form.Item>
@@ -687,11 +708,13 @@ const ResourceAllocationFormItems: React.FC<
                           <Switch
                             size="small"
                             onChange={(checked) => {
-                              if (checked)
+                              if (checked) {
                                 runShmemAutomationRule(
                                   form.getFieldValue(['resource', 'mem']) ||
                                     '0g',
                                 );
+                              }
+                              form.setFieldValue('allocationPreset', 'custom');
                             }}
                           />
                         </Form.Item>
@@ -758,6 +781,12 @@ const ResourceAllocationFormItems: React.FC<
                                   '0g'
                                 }
                                 hideSlider
+                                onChange={() => {
+                                  form.setFieldValue(
+                                    'allocationPreset',
+                                    'custom',
+                                  );
+                                }}
                               />
                             </Form.Item>
                           );
@@ -925,6 +954,9 @@ const ResourceAllocationFormItems: React.FC<
                               ? 0.1
                               : 1
                           }
+                          onChange={() => {
+                            form.setFieldValue('allocationPreset', 'custom');
+                          }}
                           inputNumberProps={{
                             addonAfter: (
                               <Form.Item
