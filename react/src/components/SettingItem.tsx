@@ -6,9 +6,9 @@ export interface SettingItemProps {
   type: 'checkbox' | 'select' | 'custom';
   title: string;
   description: ReactNode;
-  value: any;
-  setValue: (value: any) => void;
-  defaultValue: any;
+  value?: any;
+  setValue?: (value: any) => void;
+  defaultValue?: any;
   options?: any;
   children?: ReactNode;
   onChange?: (value: any) => void;

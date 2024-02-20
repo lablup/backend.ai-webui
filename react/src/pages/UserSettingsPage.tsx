@@ -47,6 +47,7 @@ const UserPreferencesPage = () => {
   const settingOptions: { title: string; options: SettingItemProps[] }[] = [
     {
       title: t('usersettings.Preferences'),
+      // re-name options
       options: [
         {
           type: 'checkbox',
@@ -128,9 +129,6 @@ const UserPreferencesPage = () => {
           type: 'custom',
           title: t('usersettings.SSHKeypairManagement'),
           description: t('usersettings.DescSSHKeypairManagement'),
-          value: false,
-          setValue: toggleSSHKeypairInfoModal,
-          defaultValue: false,
           onClick: toggleSSHKeypairInfoModal,
         },
         {
@@ -153,9 +151,6 @@ const UserPreferencesPage = () => {
           type: 'custom',
           title: t('usersettings.EditBootstrapScript'),
           description: '',
-          value: false,
-          setValue: () => {},
-          defaultValue: false,
           children: (
             <Button
               type="primary"
@@ -170,9 +165,6 @@ const UserPreferencesPage = () => {
           type: 'custom',
           title: t('usersettings.EditUserConfigScript'),
           description: '',
-          value: false,
-          setValue: () => {},
-          defaultValue: false,
           children: (
             <Button
               type="primary"
@@ -215,10 +207,6 @@ const UserPreferencesPage = () => {
         }}
       >
         <SettingList settingOptions={settingOptions} />
-        {/* @ts-ignore */}
-        {/* <backend-ai-usersettings-general-list
-          active={curTabKey === 'general'}
-        /> */}
       </Flex>
       {curTabKey === 'logs' && <ErrorLogList />}
     </Card>
