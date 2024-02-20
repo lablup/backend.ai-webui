@@ -261,7 +261,9 @@
       "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Допускается только целое число, если размер кластера не меньше 2.",
       "StartAfter": "Начать после:",
-      "StartTimeDoesNotApply": "Если время начала не установлено, оно не применяется."
+      "StartTimeDoesNotApply": "Если время начала не установлено, оно не применяется.",
+      "MiniumAllocation": "Минимальные требования",
+      "MiniumAllocationTooltip": "Выберите минимальное требование для выбранной среды выполнения"
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",

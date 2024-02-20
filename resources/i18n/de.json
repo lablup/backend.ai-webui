@@ -259,7 +259,9 @@
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Nur Ganzzahlen sind zulässig, wenn die Clustergröße nicht weniger als 2 beträgt.",
       "StartAfter": "Beginnen Sie nach:",
-      "StartTimeDoesNotApply": "Wenn die Startzeit nicht festgelegt ist, gilt sie nicht."
+      "StartTimeDoesNotApply": "Wenn die Startzeit nicht festgelegt ist, gilt sie nicht.",
+      "MiniumAllocation": "Mindestanforderungen",
+      "MiniumAllocationTooltip": "Wählen Sie als Mindestanforderung für die ausgewählte Betriebsumgebung"
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",

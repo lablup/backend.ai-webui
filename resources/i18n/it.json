@@ -259,7 +259,9 @@
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "È consentito solo un numero intero quando la dimensione del cluster non è inferiore a 2.",
       "StartAfter": "Inizia dopo:",
-      "StartTimeDoesNotApply": "Se l'ora di inizio non è impostata, non si applica."
+      "StartTimeDoesNotApply": "Se l'ora di inizio non è impostata, non si applica.",
+      "MiniumAllocation": "Requisiti minimi",
+      "MiniumAllocationTooltip": "Selezionare come requisito minimo per l'ambiente di esecuzione selezionato"
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",

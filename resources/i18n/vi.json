@@ -259,7 +259,9 @@
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Chỉ cho phép số nguyên khi kích thước cụm không nhỏ hơn 2.",
       "StartAfter": "Bắt đầu sau:",
-      "StartTimeDoesNotApply": "Nếu thời gian bắt đầu không được đặt, nó sẽ không được áp dụng."
+      "StartTimeDoesNotApply": "Nếu thời gian bắt đầu không được đặt, nó sẽ không được áp dụng.",
+      "MiniumAllocation": "Yêu cầu tối thiểu",
+      "MiniumAllocationTooltip": "Chọn làm yêu cầu tối thiểu cho môi trường chạy đã chọn"
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",

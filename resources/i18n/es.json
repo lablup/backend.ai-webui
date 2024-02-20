@@ -1152,7 +1152,9 @@
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Solo se permiten números enteros cuando el tamaño del clúster no es inferior a 2.",
       "StartAfter": "Empezar después:",
-      "StartTimeDoesNotApply": "Si no se establece la hora de inicio, no se aplica."
+      "StartTimeDoesNotApply": "Si no se establece la hora de inicio, no se aplica.",
+      "MiniumAllocation": "Requisitos mínimos",
+      "MiniumAllocationTooltip": "Seleccione como requisito mínimo para el entorno de ejecución seleccionado"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

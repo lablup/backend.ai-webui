@@ -259,7 +259,9 @@
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Кластерын хэмжээ 2-оос багагүй тохиолдолд зөвхөн бүхэл тоог зөвшөөрнө.",
       "StartAfter": "Дараа нь эхлэх:",
-      "StartTimeDoesNotApply": "Хэрэв эхлэх цагийг тохируулаагүй бол энэ нь хамаарахгүй."
+      "StartTimeDoesNotApply": "Хэрэв эхлэх цагийг тохируулаагүй бол энэ нь хамаарахгүй.",
+      "MiniumAllocation": "Хамгийн бага шаардлага",
+      "MiniumAllocationTooltip": "Сонгосон ажиллах орчны хамгийн бага шаардлагыг сонгоно уу"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",

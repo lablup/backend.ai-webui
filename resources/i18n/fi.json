@@ -1152,7 +1152,9 @@
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Vain kokonaisluku on sallittu, kun klusterin koko on vähintään 2.",
       "StartAfter": "Aloita sen jälkeen:",
-      "StartTimeDoesNotApply": "Jos aloitusaikaa ei ole asetettu, se ei ole voimassa."
+      "StartTimeDoesNotApply": "Jos aloitusaikaa ei ole asetettu, se ei ole voimassa.",
+      "MiniumAllocation": "Vähimmäisvaatimukset",
+      "MiniumAllocationTooltip": "Valitse valitun käyttöympäristön vähimmäisvaatimukseksi seuraavat tiedot"
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

@@ -169,6 +169,21 @@ const ResourceAllocationFormItems: React.FC<
   ]);
 
   useEffect(() => {
+    if (allocatablePresetNames[0]) {
+      const autoSelectedPreset = _.sortBy(allocatablePresetNames, 'name')[0];
+      form.setFieldsValue({
+        allocationPreset: autoSelectedPreset,
+      });
+      updateResourceFieldsBasedOnPreset(autoSelectedPreset);
+    } else {
+      form.setFieldsValue({
+        allocationPreset: 'custom',
+      });
+    }
+    form.validateFields().catch(() => {});
+  }, [currentResourceGroup]);
+
+  const updateResourceFieldsBasedOnImage = (force?: boolean) => {
     // when image changed, set value of resources to min value only if it's larger than current value
     const minimumResources: Partial<ResourceAllocationFormValue['resource']> = {
       cpu: resourceLimits.cpu?.min,
@@ -220,7 +235,7 @@ const ResourceAllocationFormItems: React.FC<
       minimumResources.accelerator = 0;
     }
 
-    if (forceImageMinValues !== true) {
+    if (!forceImageMinValues && !force) {
       // delete keys that is not less than current value
       (['cpu', 'accelerator'] as const).forEach((key) => {
         const minNum = minimumResources[key];
@@ -256,35 +271,18 @@ const ResourceAllocationFormItems: React.FC<
       form.setFieldValue(['resource', 'accelerator'], 0);
     }
 
-    form
-      .validateFields([
-        ['resource', 'cpu'],
-        ['resource', 'mem'],
-        ['resource', 'shmem'],
-        ['resource', 'accelerator'],
-        ['resource', 'acceleratorType'],
-      ])
-      .catch(() => {});
     if (form.getFieldValue('enabledAutomaticShmem')) {
       runShmemAutomationRule(form.getFieldValue(['resource', 'mem']) || '0g');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentImage]);
+    form.validateFields(['resource']).catch(() => {});
+  };
 
   useEffect(() => {
-    if (allocatablePresetNames[0]) {
-      const autoSelectedPreset = _.sortBy(allocatablePresetNames, 'name')[0];
-      form.setFieldsValue({
-        allocationPreset: autoSelectedPreset,
-      });
-      updateResourceFieldsBasedOnPreset(autoSelectedPreset);
-    } else {
-      form.setFieldsValue({
-        allocationPreset: 'custom',
-      });
-    }
-    form.validateFields().catch(() => {});
-  }, [currentResourceGroup]);
+    updateResourceFieldsBasedOnImage();
+    // When the currentImage is changed, execute the latest updateResourceFieldsBasedOnImage function.
+    // So we don't need to add `updateResourceFieldsBasedOnImage` to the dependencies.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentImage]);
 
   const updateResourceFieldsBasedOnPreset = (name: string) => {
     const preset = _.find(
@@ -359,8 +357,20 @@ const ResourceAllocationFormItems: React.FC<
           style={{ marginBottom: token.marginXS }}
         >
           <ResourcePresetSelect
+            showCustom
+            showMiniumRequired
             onChange={(value, options) => {
-              updateResourceFieldsBasedOnPreset(value);
+              switch (value) {
+                case 'custom':
+                  break;
+                case 'minimum-required':
+                  form.setFieldValue('enabledAutomaticShmem', true);
+                  updateResourceFieldsBasedOnImage(true);
+                  break;
+                default:
+                  updateResourceFieldsBasedOnPreset(value);
+                  break;
+              }
             }}
             allocatablePresetNames={allocatablePresetNames}
           />
@@ -412,6 +422,9 @@ const ResourceAllocationFormItems: React.FC<
                               baiClient._config?.always_enqueue_compute_session
                                 ? t(
                                     'session.launcher.EnqueueComputeSessionWarning',
+                                    {
+                                      amount: remaining.cpu,
+                                    },
                                   )
                                 : t(
                                     'session.launcher.ErrorCanNotExceedRemaining',
@@ -556,6 +569,14 @@ const ResourceAllocationFormItems: React.FC<
                                         ?.always_enqueue_compute_session
                                         ? t(
                                             'session.launcher.EnqueueComputeSessionWarning',
+                                            {
+                                              amount:
+                                                iSizeToSize(
+                                                  remaining.mem + 'b',
+                                                  'g',
+                                                  3,
+                                                )?.numberUnit + 'iB',
+                                            },
                                           )
                                         : t(
                                             'session.launcher.ErrorCanNotExceedRemaining',
@@ -823,6 +844,12 @@ const ResourceAllocationFormItems: React.FC<
                                     ?.always_enqueue_compute_session
                                     ? t(
                                         'session.launcher.EnqueueComputeSessionWarning',
+                                        {
+                                          amount:
+                                            remaining.accelerators[
+                                              currentAcceleratorType
+                                            ],
+                                        },
                                       )
                                     : t(
                                         'session.launcher.ErrorCanNotExceedRemaining',
@@ -994,6 +1021,10 @@ const ResourceAllocationFormItems: React.FC<
                             baiClient._config?.always_enqueue_compute_session
                               ? t(
                                   'session.launcher.EnqueueComputeSessionWarning',
+                                  {
+                                    amount:
+                                      sessionSliderLimitAndRemaining.remaining,
+                                  },
                                 )
                               : t(
                                   'session.launcher.ErrorCanNotExceedRemaining',
@@ -1113,6 +1144,9 @@ const ResourceAllocationFormItems: React.FC<
                                 return Promise.reject(
                                   t(
                                     'session.launcher.EnqueueComputeSessionWarning',
+                                    {
+                                      amount: minCPU,
+                                    },
                                   ),
                                 );
                               } else {

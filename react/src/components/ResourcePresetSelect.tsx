@@ -6,13 +6,14 @@ import {
   ResourcePresetSelectQuery,
   ResourcePresetSelectQuery$data,
 } from './__generated__/ResourcePresetSelectQuery.graphql';
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useControllableValue, useThrottleFn } from 'ahooks';
-import { Select } from 'antd';
+import { Select, Tooltip, theme } from 'antd';
 import { SelectProps } from 'antd/lib';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useTransition } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
 type Y = ArrayElement<NonNullable<SelectProps['options']>>;
@@ -32,9 +33,13 @@ export interface ResourcePresetSelectProps
   extends Omit<SelectProps, 'onChange'> {
   onChange?: (value: string, options: PresetOptionType) => void;
   allocatablePresetNames?: string[];
+  showMiniumRequired?: boolean;
+  showCustom?: boolean;
 }
 const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   allocatablePresetNames,
+  showCustom,
+  showMiniumRequired,
   ...selectProps
 }) => {
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
@@ -44,6 +49,8 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     leading: true,
   });
   const [resourceSlots] = useResourceSlots();
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
   const [isPendingUpdate, _startTransition] = useTransition();
   const [controllableValue, setControllableValue] =
     useControllableValue(selectProps);
@@ -73,14 +80,41 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     <Select
       loading={isPendingUpdate}
       options={[
-        {
-          value: 'custom',
-          label: (
-            <Flex gap={'xs'} style={{ display: 'inline-flex' }}>
-              <EditOutlined /> Custom
-            </Flex>
-          ),
-        },
+        ...(showCustom
+          ? [
+              {
+                value: 'custom',
+                label: (
+                  <Flex gap={'xs'} style={{ display: 'inline-flex' }}>
+                    <EditOutlined /> {t('session.launcher.CustomAllocation')}
+                  </Flex>
+                ),
+                selectedLabel: t('session.launcher.CustomAllocation'),
+              },
+            ]
+          : []),
+        ...(showMiniumRequired
+          ? [
+              {
+                value: 'minimum-required',
+                label: (
+                  <Flex gap={'xs'}>
+                    {t('session.launcher.MiniumAllocation')}
+                    <Tooltip
+                      title={t('session.launcher.MiniumAllocationTooltip')}
+                    >
+                      <InfoCircleOutlined
+                        style={{
+                          color: token.colorTextSecondary,
+                        }}
+                      />
+                    </Tooltip>
+                  </Flex>
+                ),
+                selectedLabel: t('session.launcher.MiniumAllocation'),
+              },
+            ]
+          : []),
         {
           // value: 'preset1',
           label: 'Preset',
@@ -141,6 +175,11 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
       {...selectProps}
       value={controllableValue}
       onChange={setControllableValue}
+      optionLabelProp={
+        _.includes(['custom', 'minimum-required'], controllableValue)
+          ? 'selectedLabel'
+          : 'label'
+      }
       onDropdownVisibleChange={(open) => {
         selectProps.onDropdownVisibleChange &&
           selectProps.onDropdownVisibleChange(open);
