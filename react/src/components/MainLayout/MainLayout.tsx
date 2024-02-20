@@ -2,7 +2,7 @@ import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
-import WebUIHeader, { HEADER_HEIGHT } from './WebUIHeader';
+import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { useLocalStorageState } from 'ahooks';
 import { App, Layout, theme } from 'antd';
@@ -105,7 +105,6 @@ function MainLayout() {
               paddingRight: token.paddingContentHorizontalLG,
               paddingBottom: token.paddingContentVertical,
               height: '100vh',
-              // height: `calc(100vh - ${HEADER_HEIGHT}px)`,
               overflow: 'auto',
             }}
           >
