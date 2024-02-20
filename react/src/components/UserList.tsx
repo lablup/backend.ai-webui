@@ -189,17 +189,19 @@ const UserList: React.FC = () => {
                 setSelectedUserEmail(record.node?.email);
               }}
             />
-            <Button
-              size="large"
-              type="text"
-              danger
-              loading={isPendingReload}
-              icon={<DeleteOutlined />}
-              onClick={() => {
-                toggleUserSignoutModal();
-                setSelectedUserEmail(record.node?.email);
-              }}
-            />
+            {curTabKey === 'active' ? (
+              <Button
+                size="large"
+                type="text"
+                danger
+                loading={isPendingReload}
+                icon={<DeleteOutlined />}
+                onClick={() => {
+                  toggleUserSignoutModal();
+                  setSelectedUserEmail(record.node?.email);
+                }}
+              />
+            ) : undefined}
           </Flex>
         );
       },
