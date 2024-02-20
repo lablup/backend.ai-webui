@@ -8,7 +8,7 @@ import { useToggle } from 'ahooks';
 import { Button, theme } from 'antd';
 import Card from 'antd/es/card/Card';
 import { useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TabKey = 'general' | 'logs';
@@ -52,7 +52,7 @@ const UserPreferencesPage = () => {
         {
           type: 'checkbox',
           title: t('usersettings.DesktopNotification'),
-          description: t('usersettings.DescDesktopNotification'),
+          description: <Trans i18nKey="usersettings.DescDesktopNotification" />,
           defaultValue: false,
           value: desktopNotification,
           setValue: setDesktopNotification,

@@ -1,16 +1,16 @@
 import Flex from './Flex';
 import { Badge, Checkbox, Select, Typography } from 'antd';
-import React, { ReactNode } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 
 export interface SettingItemProps {
   type: 'custom' | 'checkbox' | 'select';
   title: string;
-  description: ReactNode;
+  description: string | ReactElement;
   children?: ReactNode;
   defaultValue?: any;
   value?: any;
   setValue?: (value: any) => void;
-  selectOptions?: any;
+  selectOptions?: { label: string; value: any }[];
   onChange?: (value: any) => void;
   onClick?: () => void;
 }
@@ -26,6 +26,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
   children,
   ...particialProps
 }) => {
+  console.log(typeof description, description);
   return (
     <Flex
       direction="column"
