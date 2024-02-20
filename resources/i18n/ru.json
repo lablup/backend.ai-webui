@@ -255,7 +255,7 @@
       "EnvironmentVariableNamePatternError": "Имя переменной должно начинаться с буквы или символа подчеркивания и может содержать только буквы, цифры и символы подчеркивания.",
       "EnvironmentVariableDuplicateName": "Имя переменной, которая уже существует.",
       "Template": "Шаблон сессии",
-      "EnableAutomaticShmem": "Автоматическая разделяемая память",
+      "EnableAutomaticMiniumShmem": "Установите минимальный объем общей памяти",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
       "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",

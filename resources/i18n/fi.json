@@ -1147,7 +1147,7 @@
       "EnvironmentVariableNamePatternError": "Muuttujan nimen on alettava kirjaimella tai alleviivauksella, ja se voi sisältää vain kirjaimia, numeroita ja alleviivauksia.",
       "EnvironmentVariableDuplicateName": "Muuttujan nimi, joka on jo olemassa.",
       "ErrorCanNotExceedRemaining": "Ei voida asettaa suuremmaksi kuin jäljellä olevat resurssit ({{amount}}).",
-      "EnableAutomaticShmem": "Automaattinen jaettu muisti",
+      "EnableAutomaticMiniumShmem": "Aseta jaetun muistin vähimmäismäärä",
       "Template": "Istuntomalli",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Vain kokonaisluku on sallittu, kun klusterin koko on vähintään 2.",

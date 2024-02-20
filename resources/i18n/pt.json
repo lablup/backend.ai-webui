@@ -255,7 +255,7 @@
       "EnvironmentVariableNamePatternError": "O nome da variável deve começar com uma letra ou um sublinhado e só pode conter letras, números e sublinhados.",
       "EnvironmentVariableDuplicateName": "Um nome de variável que já existe.",
       "Template": "Modelo de sessão",
-      "EnableAutomaticShmem": "Memória partilhada automática",
+      "EnableAutomaticMiniumShmem": "Definir a memória partilhada mínima",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Somente números inteiros são permitidos quando o tamanho do cluster não é menor que 2.",
       "StartAfter": "Comece depois:",

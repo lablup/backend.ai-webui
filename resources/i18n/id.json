@@ -255,7 +255,7 @@
       "EnvironmentVariableNamePatternError": "Nama variabel harus dimulai dengan huruf atau garis bawah, dan hanya boleh terdiri dari huruf, angka, dan garis bawah.",
       "EnvironmentVariableDuplicateName": "Nama variabel yang sudah ada.",
       "Template": "Templat Sesi",
-      "EnableAutomaticShmem": "Memori bersama otomatis",
+      "EnableAutomaticMiniumShmem": "Mengatur memori bersama minimum",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Hanya bilangan bulat yang diperbolehkan jika ukuran cluster tidak kurang dari 2.",
       "StartAfter": "Mulai setelah:",

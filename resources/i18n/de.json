@@ -255,7 +255,7 @@
       "EnvironmentVariableNamePatternError": "Der Variablenname muss mit einem Buchstaben oder Unterstrich beginnen und darf nur Buchstaben, Zahlen und Unterstriche enthalten.",
       "EnvironmentVariableDuplicateName": "Ein Variablenname, der bereits existiert.",
       "Template": "Sitzungsvorlage",
-      "EnableAutomaticShmem": "Automatischer gemeinsamer Speicher",
+      "EnableAutomaticMiniumShmem": "Minimalen gemeinsamen Speicher festlegen",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Nur Ganzzahlen sind zulässig, wenn die Clustergröße nicht weniger als 2 beträgt.",
       "StartAfter": "Beginnen Sie nach:",

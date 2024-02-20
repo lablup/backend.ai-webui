@@ -1148,7 +1148,7 @@
       "EnvironmentVariableNamePatternError": "El nombre de la variable debe empezar por una letra o un guión bajo, y sólo puede contener letras, números y guiones bajos.",
       "EnvironmentVariableDuplicateName": "Un nombre de variable que ya existe.",
       "Template": "Plantilla de sesión",
-      "EnableAutomaticShmem": "Memoria compartida automática",
+      "EnableAutomaticMiniumShmem": "Establecer la memoria compartida mínima",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Solo se permiten números enteros cuando el tamaño del clúster no es inferior a 2.",
       "StartAfter": "Empezar después:",

@@ -255,7 +255,7 @@
       "EnvironmentVariableNamePatternError": "Nazwa zmiennej musi zaczynać się od litery lub podkreślenia i może zawierać tylko litery, cyfry i podkreślenia.",
       "EnvironmentVariableDuplicateName": "Nazwa zmiennej, która już istnieje.",
       "Template": "Szablon sesji",
-      "EnableAutomaticShmem": "Automatyczna pamięć współdzielona",
+      "EnableAutomaticMiniumShmem": "Ustawienie minimalnej ilości pamięci współdzielonej",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
       "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",

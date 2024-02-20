@@ -254,7 +254,7 @@
       "EnvironmentVariableNamePatternError": "Nama pembolehubah mesti bermula dengan huruf atau garis bawah, dan hanya boleh mengandungi huruf, nombor dan garis bawah.",
       "EnvironmentVariableDuplicateName": "Nama pembolehubah ini sudah wujud.",
       "Template": "Templat Sesi",
-      "EnableAutomaticShmem": "Memori dikongsi automatik",
+      "EnableAutomaticMiniumShmem": "Tetapkan memori kongsi minimum",
       "PreOpenPortMaxCountLimit": "Anda boleh menyediakan kepada {{count}} port pra-buka.",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Hanya integer dibenarkan apabila saiz kelompok tidak kurang daripada 2.",

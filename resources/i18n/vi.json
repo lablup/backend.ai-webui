@@ -254,7 +254,7 @@
       "EnvironmentVariableNamePatternError": "Tên biến phải bắt đầu bằng một chữ cái hoặc dấu gạch dưới và chỉ có thể chứa các chữ cái, số và dấu gạch dưới.",
       "EnvironmentVariableDuplicateName": "Tên biến này đã tồn tại.",
       "Template": "Mẫu phiên",
-      "EnableAutomaticShmem": "Bộ nhớ chia sẻ tự động",
+      "EnableAutomaticMiniumShmem": "Đặt bộ nhớ chia sẻ tối thiểu",
       "PreOpenPortMaxCountLimit": "Bạn có thể thiết lập tối đa {{count}} cổng mở trước.",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Chỉ cho phép số nguyên khi kích thước cụm không nhỏ hơn 2.",

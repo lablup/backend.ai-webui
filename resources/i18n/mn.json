@@ -255,7 +255,7 @@
       "EnvironmentVariableNamePatternError": "Хувьсагчийн нэр үсэг эсвэл доогуур зураасаар эхлэх ёстой бөгөөд зөвхөн үсэг, тоо, доогуур зураас агуулсан байж болно.",
       "EnvironmentVariableDuplicateName": "Энэ хувьсагчийн нэр аль хэдийн байна.",
       "Template": "Сеанс загвар",
-      "EnableAutomaticShmem": "Автомат хуваалцсан санах ой",
+      "EnableAutomaticMiniumShmem": "Хамгийн бага хуваалцсан санах ойг тохируулах",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Кластерын хэмжээ 2-оос багагүй тохиолдолд зөвхөн бүхэл тоог зөвшөөрнө.",
       "StartAfter": "Дараа нь эхлэх:",

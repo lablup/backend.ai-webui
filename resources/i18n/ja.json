@@ -255,7 +255,7 @@
       "EnvironmentVariableNamePatternError": "変数名は文字またはアンダースコアで始まり、文字、数字、アンダースコアのみを含むことができます。",
       "EnvironmentVariableDuplicateName": "既に存在する変数名です。",
       "Template": "セッションテンプレート",
-      "EnableAutomaticShmem": "自動共有メモリー",
+      "EnableAutomaticMiniumShmem": "最小共有メモリの設定",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "クラスター サイズが 2 以上の場合は、整数のみが許可されます。",
       "StartAfter": "次の後に開始します:",

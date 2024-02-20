@@ -255,7 +255,7 @@
       "EnvironmentVariableNamePatternError": "Değişken adı bir harf veya alt çizgi ile başlamalıdır ve yalnızca harfler, sayılar ve alt çizgiler içerebilir.",
       "EnvironmentVariableDuplicateName": "Zaten var olan bir değişken adı.",
       "Template": "Oturum Şablonu",
-      "EnableAutomaticShmem": "Otomatik paylaşılan bellek",
+      "EnableAutomaticMiniumShmem": "Minimum paylaşılan belleği ayarlama",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Küme boyutu 2'den az olmadığında yalnızca tam sayılara izin verilir.",
       "StartAfter": "Şundan sonra başla:",
