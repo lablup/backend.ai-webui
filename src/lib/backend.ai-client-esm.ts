@@ -701,6 +701,7 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('24.03.4')) {
       this._features['endpoint-extra-mounts'] = true;
+      this._features['user_nodes'] = true;
     }
   }
 
