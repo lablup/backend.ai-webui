@@ -699,7 +699,7 @@ const ResourceAllocationFormItems: React.FC<
 
                     <Flex direction="column" gap={'xxs'} align="start">
                       <Flex direction="row" gap={'xs'}>
-                        {t('session.launcher.EnableAutomaticShmem')}{' '}
+                        {t('session.launcher.EnableAutomaticMiniumShmem')}{' '}
                         <Form.Item
                           noStyle
                           name={'enabledAutomaticShmem'}
