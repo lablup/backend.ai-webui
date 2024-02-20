@@ -523,8 +523,6 @@ const SessionLauncherPage = () => {
       direction="column"
       align="stretch"
       style={{
-        padding: token.paddingSM,
-        width: '100%',
         justifyContent: 'revert',
         // height: 500,
         // overflow: 'scroll',
@@ -554,35 +552,11 @@ const SessionLauncherPage = () => {
           align="stretch"
           style={{ flex: 1, maxWidth: 700 }}
         >
-          <Flex direction="row" justify="between">
+          {/* <Flex direction="row" justify="between">
             <Typography.Title level={3} style={{ marginTop: 0 }}>
               {t('session.launcher.StartNewSession')}
             </Typography.Title>
             <Flex direction="row" gap={'sm'}>
-              <Popconfirm
-                title={t('button.Reset')}
-                description={t('session.launcher.ResetFormConfirm')}
-                onConfirm={() => {
-                  form.resetFields();
-
-                  navigate('/session/start');
-                }}
-                icon={
-                  <QuestionCircleOutlined style={{ color: token.colorError }} />
-                }
-                okText={t('button.Reset')}
-                okButtonProps={{
-                  danger: true,
-                }}
-              >
-                <Button
-                  danger
-                  type="link"
-                  style={{ paddingRight: 0, paddingLeft: 0 }}
-                >
-                  {t('button.Reset')}
-                </Button>
-              </Popconfirm>
               <Button
                 type="link"
                 icon={<BlockOutlined />}
@@ -592,7 +566,7 @@ const SessionLauncherPage = () => {
                 {t('session.launcher.TemplateAndHistory')}
               </Button>
             </Flex>
-          </Flex>
+          </Flex> */}
           {/* <Suspense fallback={<FlexActivityIndicator />}> */}
           <Form.Provider
             onFormChange={(name, info) => {
@@ -1442,7 +1416,33 @@ const SessionLauncherPage = () => {
                       {t('button.Reset')}
                     </Button>
                   </Popconfirm> */}
-                    {currentStep === steps.length - 1 && (
+                    <Popconfirm
+                      title={t('button.Reset')}
+                      description={t('session.launcher.ResetFormConfirm')}
+                      onConfirm={() => {
+                        form.resetFields();
+
+                        navigate('/session/start');
+                      }}
+                      icon={
+                        <QuestionCircleOutlined
+                          style={{ color: token.colorError }}
+                        />
+                      }
+                      okText={t('button.Reset')}
+                      okButtonProps={{
+                        danger: true,
+                      }}
+                    >
+                      <Button
+                        danger
+                        type="link"
+                        style={{ paddingRight: 0, paddingLeft: 0 }}
+                      >
+                        {t('button.Reset')}
+                      </Button>
+                    </Popconfirm>
+                    {/* {currentStep === steps.length - 1 && (
                       <Button
                         icon={<SaveOutlined />}
                         disabled
@@ -1454,7 +1454,7 @@ const SessionLauncherPage = () => {
                       >
                         Save as a template
                       </Button>
-                    )}
+                    )} */}
                   </Flex>
                   <Flex direction="row" gap="sm">
                     {currentStep !== steps.length - 1 && (
@@ -1501,7 +1501,7 @@ const SessionLauncherPage = () => {
         </Flex>
         {screens.lg && (
           <Affix
-            offsetTop={150}
+            offsetTop={80}
             // direction="column"
             style={{ zIndex: 2 }}
           >
