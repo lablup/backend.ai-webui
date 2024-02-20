@@ -17,7 +17,7 @@ import { useToggle } from 'ahooks';
 import { Tabs, Table, theme, Button, Typography, message } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
-import React, { useState, useTransition } from 'react';
+import React, { useState, useTransition, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useLazyLoadQuery } from 'react-relay';
@@ -236,7 +236,7 @@ const UserList: React.FC = () => {
     });
   };
   return (
-    <>
+    <Flex direction="column" align="stretch">
       <Tabs
         activeKey={curTabKey}
         onChange={(key) => setCurTabKey(key)}
@@ -258,61 +258,63 @@ const UserList: React.FC = () => {
           borderTopRightRadius: token.borderRadius,
         }}
       />
-      <Table
-        scroll={{ x: 'max-content' }}
-        columns={columns}
-        dataSource={(user_nodes?.edges || []) as UserNode[]}
-        style={{
-          width: '100%',
-          paddingLeft: token.paddingMD,
-          paddingRight: token.paddingMD,
-          borderTopLeftRadius: token.borderRadius,
-          borderTopRightRadius: token.borderRadius,
-        }}
-      />
-      <UserInfoModal
-        draggable
-        open={isOpenUserInfoModal}
-        onRequestClose={toggleUserInfoModal}
-        email={selectedUserEmail}
-      />
-      <UserSettingModal
-        draggable
-        open={isOpenUserSettingModal}
-        onRequestOk={() => {
-          toggleUserSettingModal();
-          startReloadTransition(() => {
-            updateUserListFetchKey();
-          });
-        }}
-        onRequestClose={toggleUserSettingModal}
-        email={selectedUserEmail}
-      />
-      <BAIModal
-        open={isOpenUserSignoutModal}
-        title={t('dialog.title.LetsDouble-Check')}
-        onOk={handleSignoutOk}
-        okText={t('button.Okay')}
-        okButtonProps={{ danger: true }}
-        onCancel={toggleUserSignoutModal}
-        cancelText={t('button.Cancel')}
-      >
-        <Flex direction="column" align="start" gap={'xxs'}>
-          <Typography.Text>
-            {t('credential.ConfirmSignoutUser')}
-          </Typography.Text>
-          <Flex justify="center" style={{ width: '100%' }}>
-            <Typography.Text type="danger" strong>
-              {selectedUserEmail}
+      <Suspense fallback={<div>loading..</div>}>
+        <Table
+          scroll={{ x: 'max-content' }}
+          columns={columns}
+          dataSource={(user_nodes?.edges || []) as UserNode[]}
+          style={{
+            width: '100%',
+            paddingLeft: token.paddingMD,
+            paddingRight: token.paddingMD,
+            borderTopLeftRadius: token.borderRadius,
+            borderTopRightRadius: token.borderRadius,
+          }}
+        />
+        <UserInfoModal
+          draggable
+          open={isOpenUserInfoModal}
+          onRequestClose={toggleUserInfoModal}
+          email={selectedUserEmail}
+        />
+        <UserSettingModal
+          draggable
+          open={isOpenUserSettingModal}
+          onRequestOk={() => {
+            toggleUserSettingModal();
+            startReloadTransition(() => {
+              updateUserListFetchKey();
+            });
+          }}
+          onRequestClose={toggleUserSettingModal}
+          email={selectedUserEmail}
+        />
+        <BAIModal
+          open={isOpenUserSignoutModal}
+          title={t('dialog.title.LetsDouble-Check')}
+          onOk={handleSignoutOk}
+          okText={t('button.Okay')}
+          okButtonProps={{ danger: true }}
+          onCancel={toggleUserSignoutModal}
+          cancelText={t('button.Cancel')}
+        >
+          <Flex direction="column" align="start" gap={'xxs'}>
+            <Typography.Text>
+              {t('credential.ConfirmSignoutUser')}
+            </Typography.Text>
+            <Flex justify="center" style={{ width: '100%' }}>
+              <Typography.Text type="danger" strong>
+                {selectedUserEmail}
+              </Typography.Text>
+            </Flex>
+            <Typography.Text>
+              {t('dialog.ask.DoYouWantToProceed')}
             </Typography.Text>
           </Flex>
-          <Typography.Text>
-            {t('dialog.ask.DoYouWantToProceed')}
-          </Typography.Text>
-        </Flex>
-      </BAIModal>
+        </BAIModal>
+      </Suspense>
       {contextHolder}
-    </>
+    </Flex>
   );
 };
 
