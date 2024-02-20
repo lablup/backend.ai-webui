@@ -573,7 +573,8 @@
     "NoUserToDisplay": "Δεν υπάρχουν χρήστες για εμφάνιση",
     "EnableSudoSession": "Ενεργοποίηση συνεδρίας sudo",
     "MainAccessKey": "Κύριο κλειδί πρόσβασης",
-    "InactivateTheFollowingUsers": "Απενεργοποιήστε τους παρακάτω χρήστες."
+    "InactivateTheFollowingUsers": "Απενεργοποιήστε τους παρακάτω χρήστες.",
+    "ConfirmSignoutUser": "Απενεργοποιείτε αυτόν τον χρήστη:"
   },
   "data": {
     "Folders": "Φάκελοι",

@@ -573,7 +573,8 @@
     "ModifyUserDetail": "Изменение сведений о пользователе",
     "EnableSudoSession": "Включить сеанс sudo",
     "MainAccessKey": "Главный ключ доступа",
-    "InactivateTheFollowingUsers": "Деактивируйте следующих пользователей."
+    "InactivateTheFollowingUsers": "Деактивируйте следующих пользователей.",
+    "ConfirmSignoutUser": "Вы деактивируете этого пользователя:"
   },
   "data": {
     "Folders": "Папки",

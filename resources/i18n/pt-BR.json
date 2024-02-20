@@ -573,7 +573,8 @@
     "NoUserToDisplay": "Nenhum utilizador a apresentar",
     "EnableSudoSession": "Habilitar sessão sudo",
     "MainAccessKey": "Chave de acesso principal",
-    "InactivateTheFollowingUsers": "Inative os seguintes usuários."
+    "InactivateTheFollowingUsers": "Inative os seguintes usuários.",
+    "ConfirmSignoutUser": "Você está inativando este usuário:"
   },
   "data": {
     "Folders": "Pastas",

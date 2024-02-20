@@ -573,7 +573,8 @@
     "NoUserToDisplay": "Tiada Pengguna untuk dipaparkan",
     "EnableSudoSession": "Dayakan sesi sudo",
     "MainAccessKey": "Kunci Akses Utama",
-    "InactivateTheFollowingUsers": "Nyahaktifkan pengguna berikut."
+    "InactivateTheFollowingUsers": "Nyahaktifkan pengguna berikut.",
+    "ConfirmSignoutUser": "Anda sedang menyahaktifkan pengguna ini:"
   },
   "data": {
     "Folders": "Folder",

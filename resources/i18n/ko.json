@@ -681,7 +681,8 @@
     "ModifyUserDetail": "사용자 상세 정보 수정",
     "EnableSudoSession": "sudo 세션 허용",
     "MainAccessKey": "기본 액세스 키",
-    "InactivateTheFollowingUsers": "다음 사용자를 비활성화합니다."
+    "InactivateTheFollowingUsers": "다음 사용자를 비활성화합니다.",
+    "ConfirmSignoutUser": "아래 유저를 비활성 상태로 변경합니다 : "
   },
   "data": {
     "Folders": "폴더",

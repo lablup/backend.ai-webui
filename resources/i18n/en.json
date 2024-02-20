@@ -694,7 +694,8 @@
     "SignoutSeccessfullyFinished": "Signout is seccessfully finished",
     "EnableSudoSession": "Enable sudo session",
     "MainAccessKey": "Main Access Key",
-    "InactivateTheFollowingUsers": "Inactivate the following users."
+    "InactivateTheFollowingUsers": "Inactivate the following users.",
+    "ConfirmSignoutUser": "You are inactivating this user : "
   },
   "data": {
     "Folders": "Folders",

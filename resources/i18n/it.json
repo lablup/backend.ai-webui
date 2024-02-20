@@ -574,7 +574,8 @@
     "NoUserToDisplay": "Nessun utente da visualizzare",
     "EnableSudoSession": "Abilita la sessione sudo",
     "MainAccessKey": "Chiave di accesso principale",
-    "InactivateTheFollowingUsers": "Disattiva i seguenti utenti."
+    "InactivateTheFollowingUsers": "Disattiva i seguenti utenti.",
+    "ConfirmSignoutUser": "Stai disattivando questo utente:"
   },
   "data": {
     "Folders": "cartelle",

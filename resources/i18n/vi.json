@@ -573,7 +573,8 @@
     "NoUserToDisplay": "Không có người dùng để hiển thị",
     "EnableSudoSession": "Kích hoạt phiên sudo",
     "MainAccessKey": "Khóa truy cập chính",
-    "InactivateTheFollowingUsers": "Vô hiệu hóa những người dùng sau."
+    "InactivateTheFollowingUsers": "Vô hiệu hóa những người dùng sau.",
+    "ConfirmSignoutUser": "Bạn đang vô hiệu hóa người dùng này:"
   },
   "data": {
     "Folders": "Thư mục",

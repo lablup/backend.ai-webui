@@ -573,7 +573,8 @@
     "NoUserToDisplay": "Brak użytkowników do wyświetlenia",
     "EnableSudoSession": "Włącz sesję sudo",
     "MainAccessKey": "Główny klucz dostępu",
-    "InactivateTheFollowingUsers": "Dezaktywuj następujących użytkowników."
+    "InactivateTheFollowingUsers": "Dezaktywuj następujących użytkowników.",
+    "ConfirmSignoutUser": "Dezaktywujesz tego użytkownika:"
   },
   "data": {
     "Folders": "Lornetka składana",

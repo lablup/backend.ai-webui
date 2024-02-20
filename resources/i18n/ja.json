@@ -573,7 +573,8 @@
     "NoUserToDisplay": "ユーザー情報がありません。",
     "EnableSudoSession": "sudoセッションを有効にする",
     "MainAccessKey": "メインアクセスキー",
-    "InactivateTheFollowingUsers": "以下のユーザーを無効化します。"
+    "InactivateTheFollowingUsers": "以下のユーザーを無効化します。",
+    "ConfirmSignoutUser": "このユーザーを非アクティブ化しています:"
   },
   "data": {
     "Folders": "フォルダー",

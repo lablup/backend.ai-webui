@@ -573,7 +573,8 @@
     "NoUserToDisplay": "Keine Benutzer zum Anzeigen",
     "EnableSudoSession": "Sudo-Sitzung aktivieren",
     "MainAccessKey": "Hauptzugangsschlüssel",
-    "InactivateTheFollowingUsers": "Deaktivieren Sie die folgenden Benutzer."
+    "InactivateTheFollowingUsers": "Deaktivieren Sie die folgenden Benutzer.",
+    "ConfirmSignoutUser": "Sie inaktivieren diesen Benutzer:"
   },
   "data": {
     "Folders": "Ordner",

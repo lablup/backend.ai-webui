@@ -574,7 +574,8 @@
     "ModifyUserDetail": "Ubah Detail Pengguna",
     "EnableSudoSession": "Aktifkan sesi sudo",
     "MainAccessKey": "Kunci Akses Utama",
-    "InactivateTheFollowingUsers": "Nonaktifkan pengguna berikut."
+    "InactivateTheFollowingUsers": "Nonaktifkan pengguna berikut.",
+    "ConfirmSignoutUser": "Anda menonaktifkan pengguna ini:"
   },
   "data": {
     "Folders": "Folder",

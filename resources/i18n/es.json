@@ -217,7 +217,8 @@
     },
     "EnableSudoSession": "Habilitar sesión sudo",
     "MainAccessKey": "Clave de acceso principal",
-    "InactivateTheFollowingUsers": "Desactivar los siguientes usuarios."
+    "InactivateTheFollowingUsers": "Desactivar los siguientes usuarios.",
+    "ConfirmSignoutUser": "Estás desactivando este usuario:"
   },
   "data": {
     "Allowslettersnumbersand-_": "Permite letras, números y -_",

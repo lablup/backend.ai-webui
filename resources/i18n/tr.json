@@ -573,7 +573,8 @@
     "NoUserToDisplay": "Görüntülenecek Kullanıcı Yok",
     "EnableSudoSession": "Sudo oturumunu etkinleştir",
     "MainAccessKey": "Ana Erişim Anahtarı",
-    "InactivateTheFollowingUsers": "Aşağıdaki kullanıcıları devre dışı bırakın."
+    "InactivateTheFollowingUsers": "Aşağıdaki kullanıcıları devre dışı bırakın.",
+    "ConfirmSignoutUser": "Bu kullanıcıyı devre dışı bırakıyorsunuz:"
   },
   "data": {
     "Folders": "klasörler",

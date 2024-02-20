@@ -217,7 +217,8 @@
     },
     "EnableSudoSession": "Ota sudo-istunto käyttöön",
     "MainAccessKey": "Pääkäyttöavain",
-    "InactivateTheFollowingUsers": "Poista seuraavat käyttäjät käytöstä."
+    "InactivateTheFollowingUsers": "Poista seuraavat käyttäjät käytöstä.",
+    "ConfirmSignoutUser": "Olet inaktivoimassa tätä käyttäjää:"
   },
   "data": {
     "Allowslettersnumbersand-_": "Sallii kirjaimet, numerot ja -_",

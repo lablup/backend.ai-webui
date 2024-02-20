@@ -573,7 +573,8 @@
     "ModifyUserDetail": "Modifier les détails de l'utilisateur",
     "EnableSudoSession": "Activer la session sudo",
     "MainAccessKey": "Clé d'accès principale",
-    "InactivateTheFollowingUsers": "Désactivez les utilisateurs suivants."
+    "InactivateTheFollowingUsers": "Désactivez les utilisateurs suivants.",
+    "ConfirmSignoutUser": "Vous désactivez cet utilisateur :"
   },
   "data": {
     "Folders": "Dossiers",
