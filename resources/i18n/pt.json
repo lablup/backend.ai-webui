@@ -256,7 +256,10 @@
       "EnvironmentVariableDuplicateName": "Um nome de variável que já existe.",
       "Template": "Modelo de sessão",
       "EnableAutomaticShmem": "Memória partilhada automática",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Somente números inteiros são permitidos quando o tamanho do cluster não é menor que 2.",
+      "StartAfter": "Comece depois:",
+      "StartTimeDoesNotApply": "Se a hora de início não estiver definida, ela não se aplica."
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",
@@ -1450,7 +1453,11 @@
     "Image": "Imagem",
     "Owner": "Proprietário",
     "ServiceDelegatedFrom": "O serviço de modelo é criado por {{ createdUser }} mas a propriedade da sessão será delegada a {{ sessionOwner }}",
-    "FailedToTerminateService": "O pedido para terminar o serviço falhou."
+    "FailedToTerminateService": "O pedido para terminar o serviço falhou.",
+    "FailedToUpdateService": "Falha ao atualizar o serviço.",
+    "ServiceCreated": "O serviço de modelo {{ name }} foi criado com sucesso.",
+    "ServiceUpdated": "O serviço de modelo {{ name }} foi atualizado com sucesso.",
+    "ServiceTerminated": "O serviço de modelo {{ name }} foi encerrado com sucesso."
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

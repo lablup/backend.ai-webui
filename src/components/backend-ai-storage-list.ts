@@ -3582,9 +3582,8 @@ export default class BackendAiStorageList extends BackendAIPage {
             this.uploadFiles[this.uploadFiles.indexOf(fileObj)];
           if (!this._uploadFlag) {
             upload.abort();
-            this.uploadFiles[
-              this.uploadFiles.indexOf(fileObj)
-            ].caption = `Canceling...`;
+            this.uploadFiles[this.uploadFiles.indexOf(fileObj)].caption =
+              `Canceling...`;
             this.uploadFiles = this.uploadFiles.slice();
             setTimeout(() => {
               this.uploadFiles = [];
@@ -3617,9 +3616,8 @@ export default class BackendAiStorageList extends BackendAIPage {
           const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(1);
           this.uploadFiles[this.uploadFiles.indexOf(fileObj)].progress =
             bytesUploaded / bytesTotal;
-          this.uploadFiles[
-            this.uploadFiles.indexOf(fileObj)
-          ].caption = `${percentage}% / Time left : ${estimated_time_left} / Speed : ${speed}`;
+          this.uploadFiles[this.uploadFiles.indexOf(fileObj)].caption =
+            `${percentage}% / Time left : ${estimated_time_left} / Speed : ${speed}`;
           this.uploadFiles = this.uploadFiles.slice();
         },
         onSuccess: () => {
