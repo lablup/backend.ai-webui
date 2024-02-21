@@ -35,7 +35,7 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      timeout: 60000
+      timeout: 80000
     },
 
     /* Test firefox browsers

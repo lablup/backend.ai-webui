@@ -24,10 +24,10 @@ test.describe('Create vfolder', () => {
     await page.locator('#login-button').click();
     await page.getByRole('menu').getByTestId('data').click();
     await page.waitForURL('**/data');
-  });
-  test('User can create vfolder', async ({ page }) => {
-    const randomVfolderName = generateRandomString(); //Make random vfolder name
     await page.locator('#add-folder').click();
+  });
+  test('User can create user vfolder', async ({ page }) => {
+    const randomVfolderName = generateRandomString(); //Make random vfolder name
     await page.locator('#add-folder-name').click();
     await page.locator('#add-folder-name label').fill(randomVfolderName);
     await page.locator('#add-button').click();
@@ -55,6 +55,74 @@ test.describe('Create vfolder', () => {
     await expect(
       page.getByTestId(randomVfolderName).getByText('ready'),
     ).toBeVisible();
+  });
+  test('User can create group vfolder', async ({ page }) => {
+    const randomVfolderName = generateRandomString(); //Make random vfolder name
+    await page.locator('#add-folder-name').click();
+    await page.locator('#add-folder-name label').fill(randomVfolderName);
+    await page.locator('#add-folder-type').click();
+    await page.getByTestId('group').click();
+    await page.locator('#add-folder-group').click();
+    await page.getByTestId(`${process.env.CREATE_VFOLDER_GROUP}`).click();
+    await page.locator('#add-button').click();
+    await page.waitForResponse(
+      (response) =>
+        response.url() === `${process.env.ENDPOINT}/func/folders` &&
+        response.status() === 201,
+      { timeout: 0 },
+    ); //POST vfolder create
+    await page.waitForResponse(
+      (response) =>
+        response
+          .url()
+          .includes(`${process.env.ENDPOINT}/func/folders?group_id`) &&
+        response.status() === 200,
+      { timeout: 0 },
+    ); //GET vfolder list
+    await page.getByTestId('projectSelect').click();
+    await page
+      .locator('#rc_select_1')
+      .fill(`${process.env.CREATE_VFOLDER_GROUP}`);
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(1000);
+    await page.waitForResponse(
+      (response) =>
+        response
+          .url()
+          .includes(`${process.env.ENDPOINT}/func/folders?group_id`) &&
+        response.status() === 200,
+      { timeout: 0 },
+    ); //GET vfolder list
+    await page
+      .getByRole('treegrid')
+      .evaluate(async (e) => (e.scrollTop = e.scrollHeight));
+    await page.waitForSelector(`div[folder-name="${randomVfolderName}"]`);
+    await expect(
+      page.getByText(`folder_open ${randomVfolderName}`, { exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByTestId(randomVfolderName).getByText('ready'),
+    ).toBeVisible();
+    await page.getByTestId('projectSelect').click();
+    await page
+      .locator('#rc_select_1')
+      .fill(`${process.env.NOT_CREATE_VFOLDER_GROUP}`);
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(1000);
+    await page.waitForResponse(
+      (response) =>
+        response
+          .url()
+          .includes(`${process.env.ENDPOINT}/func/folders?group_id`) &&
+        response.status() === 200,
+      { timeout: 0 },
+    ); //GET vfolder list
+    await page
+      .getByRole('treegrid')
+      .evaluate(async (e) => (e.scrollTop = e.scrollHeight));
+    await expect(
+      page.getByText(`folder_open ${randomVfolderName}`, { exact: true }),
+    ).not.toBeVisible();
   });
 });
 
