@@ -33,11 +33,18 @@ test.describe('Create vfolder', () => {
     await page.locator('#add-button').click();
     await page.waitForResponse(
       (response) =>
-        response.url() ===
-          `${process.env.ENDPOINT}/func/folders?group_id=2de2b969-1d04-48a6-af16-0bc8adb3c831` &&
+        response.url() === `${process.env.ENDPOINT}/func/folders` &&
+        response.status() === 201,
+      { timeout: 0 },
+    ); //POST vfolder create
+    await page.waitForResponse(
+      (response) =>
+        response
+          .url()
+          .includes(`${process.env.ENDPOINT}/func/folders?group_id`) &&
         response.status() === 200,
       { timeout: 0 },
-    );
+    ); //GET vfolder list
     await page
       .getByRole('treegrid')
       .evaluate(async (e) => (e.scrollTop = e.scrollHeight));
@@ -89,10 +96,18 @@ test.describe('Delete Vfolder', () => {
     await page.waitForResponse(
       (response) =>
         response.url() ===
-          `${process.env.ENDPOINT}/func/folders?group_id=2de2b969-1d04-48a6-af16-0bc8adb3c831` &&
+          `${process.env.ENDPOINT}/func/folders/${process.env.DELETE_VFOLDER}` &&
+        response.status() === 204,
+      { timeout: 0 },
+    ); //DELETE vfolder
+    await page.waitForResponse(
+      (response) =>
+        response
+          .url()
+          .includes(`${process.env.ENDPOINT}/func/folders?group_id`) &&
         response.status() === 200,
       { timeout: 0 },
-    );
+    ); //GET vfolder list
     await page
       .getByRole('treegrid')
       .evaluate(async (e) => (e.scrollTop = e.scrollHeight));
