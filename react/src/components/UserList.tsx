@@ -39,6 +39,13 @@ const UserList: React.FC = () => {
     useUpdatableState('initial-fetch');
   const [curTabKey, setCurTabKey] = useState('active');
   const [selectedUserEmail, setSelectedUserEmail] = useState('');
+  const [paginationState, setPaginationState] = useState<{
+    current: number;
+    pageSize: number;
+  }>({
+    current: 1,
+    pageSize: 5,
+  });
   const [isOpenUserGenerationModal, { toggle: toggleUserGenerationModal }] =
     useToggle(false);
   const [isOpenUserInfoModal, { toggle: toggleUserInfoModal }] =
@@ -64,25 +71,11 @@ const UserList: React.FC = () => {
     graphql`
       query UserListQuery(
         $filter: String
-        $before: String
-        $after: String
-        $first: Int
-        $last: Int
+        $offset: Int!
+        $first: Int!
         $isTOTPSupported: Boolean!
       ) {
-        user_nodes(
-          filter: $filter
-          before: $before
-          after: $after
-          first: $first
-          last: $last
-        ) {
-          pageInfo {
-            hasNextPage
-            hasPreviousPage
-            startCursor
-            endCursor
-          }
+        user_nodes(filter: $filter, offset: $offset, first: $first) {
           edges {
             node {
               email
@@ -102,6 +95,8 @@ const UserList: React.FC = () => {
     `,
     {
       //todo: core can't filter status
+      offset: (paginationState.current - 1) * paginationState.pageSize,
+      first: paginationState.pageSize,
       filter:
         curTabKey === 'active' ? 'status == "active"' : 'status != "active"',
       isTOTPSupported: totpSupported ?? false,
@@ -279,6 +274,19 @@ const UserList: React.FC = () => {
           scroll={{ x: 'max-content' }}
           columns={columns}
           dataSource={(user_nodes?.edges || []) as UserNode[]}
+          pagination={{
+            total: user_nodes?.count ?? 0,
+            pageSize: paginationState.pageSize,
+            current: paginationState.current,
+            onChange(page, pageSize) {
+              startReloadTransition(() => {
+                setPaginationState({
+                  current: page,
+                  pageSize: pageSize || 100,
+                });
+              });
+            },
+          }}
           style={{
             width: '100%',
             paddingLeft: token.paddingMD,
