@@ -491,18 +491,21 @@ export default class BackendAICredentialView extends BackendAIPage {
       els[x].style.display = 'none';
     }
     this._activeTab = tab.title;
-    (
-      this.shadowRoot?.querySelector('#' + tab.title) as HTMLElement
-    ).style.display = 'block';
+    const displayedList = this.shadowRoot?.querySelector(
+      '#' + tab.title,
+    ) as HTMLElement;
+    displayedList ? (displayedList.style.display = 'block') : undefined;
     const tabKeyword = this._activeTab.substring(0, this._activeTab.length - 1); // to remove '-s'.
     let innerTab;
     // show inner tab(active) after selecting outer tab
     switch (this._activeTab) {
       case 'user-lists':
-        innerTab = this.shadowRoot?.querySelector(
-          'mwc-tab[title=' + this.activeUserInnerTab + '-' + tabKeyword + ']',
-        );
-        this._showList(innerTab);
+        if (!this.isSupportReactUserNode) {
+          innerTab = this.shadowRoot?.querySelector(
+            'mwc-tab[title=' + this.activeUserInnerTab + '-' + tabKeyword + ']',
+          );
+          this._showList(innerTab);
+        }
         break;
       case 'credential-lists':
         innerTab = this.shadowRoot?.querySelector(
