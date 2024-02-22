@@ -238,7 +238,9 @@ const UserList: React.FC = () => {
                 addonBefore={
                   <Select
                     defaultValue={filterType}
-                    onChange={(value) => setFilterType(value)}
+                    onChange={(value) =>
+                      startReloadTransition(() => setFilterType(value))
+                    }
                     dropdownStyle={{ minWidth: 'max-content' }}
                     options={[
                       { value: 'email', label: t('credential.UserID') },
