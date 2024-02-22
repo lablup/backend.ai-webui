@@ -15,7 +15,16 @@ import {
   DeleteOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Tabs, Table, theme, Button, Typography, message } from 'antd';
+import {
+  Tabs,
+  Table,
+  theme,
+  Button,
+  Typography,
+  message,
+  Input,
+  Select,
+} from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import React, { useState, useTransition, Suspense } from 'react';
@@ -39,12 +48,14 @@ const UserList: React.FC = () => {
     useUpdatableState('initial-fetch');
   const [curTabKey, setCurTabKey] = useState('active');
   const [selectedUserEmail, setSelectedUserEmail] = useState('');
+  const [filterValue, setFilterValue] = useState('');
+  const [filterType, setFilterType] = useState('email');
   const [paginationState, setPaginationState] = useState<{
     current: number;
     pageSize: number;
   }>({
     current: 1,
-    pageSize: 5,
+    pageSize: 10,
   });
   const [isOpenUserGenerationModal, { toggle: toggleUserGenerationModal }] =
     useToggle(false);
@@ -98,14 +109,13 @@ const UserList: React.FC = () => {
       offset: (paginationState.current - 1) * paginationState.pageSize,
       first: paginationState.pageSize,
       filter:
-        curTabKey === 'active' ? 'status == "active"' : 'status != "active"',
+        curTabKey === 'active'
+          ? `${filterType} ilike "%${filterValue}%" & status == "active"`
+          : `${filterType} ilike "%${filterValue}%" & status != "active"`,
       isTOTPSupported: totpSupported ?? false,
     },
     {
-      fetchPolicy:
-        userListFetchKey === 'initial-fetch'
-          ? 'store-and-network'
-          : 'network-only',
+      fetchPolicy: 'store-and-network',
       fetchKey: userListFetchKey,
     },
   );
@@ -258,10 +268,29 @@ const UserList: React.FC = () => {
         tabBarExtraContent={{
           right: (
             <Flex direction="row" gap={'sm'}>
-              {/* <Tooltip title={t("session.exportCSV")}>
-                <Button icon={<DownloadOutlined />} type="text" />
-              </Tooltip> */}
-              {/* @ts-ignore */}
+              <Input.Search
+                addonBefore={
+                  <Select
+                    defaultValue={filterType}
+                    onChange={(value) => setFilterType(value)}
+                    dropdownStyle={{ minWidth: 'max-content' }}
+                    options={[
+                      { value: 'email', label: t('credential.UserID') },
+                      { value: 'username', label: t('credential.Name') },
+                      {
+                        value: 'main_access_key',
+                        label: t('credential.MainAccessKey'),
+                      },
+                    ]}
+                  />
+                }
+                onSearch={(value) => {
+                  setFilterValue(value);
+                  startReloadTransition(() => {
+                    updateUserListFetchKey();
+                  });
+                }}
+              />
               <Button type="primary" onClick={toggleUserGenerationModal}>
                 {t('credential.CreateUser')}
               </Button>
