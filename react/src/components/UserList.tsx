@@ -36,7 +36,9 @@ const UserList: React.FC = () => {
   const [userListFetchKey, updateUserListFetchKey] =
     useUpdatableState('initial-fetch');
   const [curTabKey, setCurTabKey] = useState('active');
-  const [selectedUserEmail, setSelectedUserEmail] = useState('');
+  const [selectedUser, setSelectedUser] = useState<UserNode['node'] | null>(
+    null,
+  );
   const [filterValue, setFilterValue] = useState('');
   const [filterType, setFilterType] = useState('email');
   const [paginationState, setPaginationState] = useState<{
@@ -163,27 +165,29 @@ const UserList: React.FC = () => {
             <Button
               size="large"
               type="text"
-              loading={isPendingReload}
               icon={<SolutionOutlined />}
               style={{
                 color: token.colorPrimary,
               }}
               onClick={() => {
-                toggleUserInfoModal();
-                setSelectedUserEmail(record.node?.email);
+                startReloadTransition(() => {
+                  toggleUserInfoModal();
+                  setSelectedUser(record.node);
+                });
               }}
             />
             <Button
               size="large"
               type="text"
-              loading={isPendingReload}
               icon={<SettingOutlined />}
               style={{
                 color: token.colorInfo,
               }}
               onClick={() => {
-                toggleUserSettingModal();
-                setSelectedUserEmail(record.node?.email);
+                startReloadTransition(() => {
+                  toggleUserSettingModal();
+                  setSelectedUser(record.node);
+                });
               }}
             />
             {curTabKey === 'active' ? (
@@ -191,11 +195,12 @@ const UserList: React.FC = () => {
                 size="large"
                 type="text"
                 danger
-                loading={isPendingReload}
                 icon={<DeleteOutlined />}
                 onClick={() => {
-                  toggleUserSignoutModal();
-                  setSelectedUserEmail(record.node?.email);
+                  startReloadTransition(() => {
+                    toggleUserSignoutModal();
+                    setSelectedUser(record.node);
+                  });
                 }}
               />
             ) : undefined}
@@ -208,7 +213,7 @@ const UserList: React.FC = () => {
     <Flex direction="column" align="stretch">
       <Tabs
         activeKey={curTabKey}
-        onChange={(key) => setCurTabKey(key)}
+        onChange={(key) => startReloadTransition(() => setCurTabKey(key))}
         items={[
           {
             key: 'active',
@@ -285,45 +290,45 @@ const UserList: React.FC = () => {
             borderTopRightRadius: token.borderRadius,
           }}
         />
-        <UserGenerationModal
-          open={isOpenUserGenerationModal}
-          onRequestClose={() => {
-            toggleUserGenerationModal();
-            startReloadTransition(() => {
-              updateUserListFetchKey();
-            });
-          }}
-        />
-        <UserInfoModal
-          draggable
-          open={isOpenUserInfoModal}
-          onRequestClose={toggleUserInfoModal}
-          email={selectedUserEmail}
-        />
-        <UserSettingModal
-          draggable
-          open={isOpenUserSettingModal}
-          onRequestOk={() => {
-            toggleUserSettingModal();
-            startReloadTransition(() => {
-              updateUserListFetchKey();
-            });
-          }}
-          onRequestClose={toggleUserSettingModal}
-          email={selectedUserEmail}
-        />
-        <UserSignoutModal
-          draggable
-          open={isOpenUserSignoutModal}
-          email={selectedUserEmail}
-          onRequestClose={() => {
-            toggleUserSignoutModal();
-            startReloadTransition(() => {
-              updateUserListFetchKey();
-            });
-          }}
-        />
       </Suspense>
+      <UserGenerationModal
+        open={isOpenUserGenerationModal}
+        onRequestClose={() => {
+          toggleUserGenerationModal();
+          startReloadTransition(() => {
+            updateUserListFetchKey();
+          });
+        }}
+      />
+      <UserInfoModal
+        draggable
+        email={selectedUser?.email || ''}
+        open={isOpenUserInfoModal}
+        onRequestClose={toggleUserInfoModal}
+      />
+      <UserSettingModal
+        draggable
+        email={selectedUser?.email || ''}
+        open={isOpenUserSettingModal}
+        onRequestOk={() => {
+          toggleUserSettingModal();
+          startReloadTransition(() => {
+            updateUserListFetchKey();
+          });
+        }}
+        onRequestClose={toggleUserSettingModal}
+      />
+      <UserSignoutModal
+        draggable
+        email={selectedUser?.email || ''}
+        open={isOpenUserSignoutModal}
+        onRequestClose={() => {
+          toggleUserSignoutModal();
+          startReloadTransition(() => {
+            updateUserListFetchKey();
+          });
+        }}
+      />
     </Flex>
   );
 };
