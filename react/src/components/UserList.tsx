@@ -32,7 +32,7 @@ const UserList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
-  const [isPendingReload, startReloadTransition] = useTransition();
+  const [, startReloadTransition] = useTransition();
   const [userListFetchKey, updateUserListFetchKey] =
     useUpdatableState('initial-fetch');
   const [curTabKey, setCurTabKey] = useState('active');
