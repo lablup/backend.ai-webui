@@ -46,7 +46,7 @@ export default class BackendAIProjectSwitcher extends LitElement {
       css`
         vaadin-combo-box {
           font-size: 14px;
-          --lumo-font-family: var(--general-font-family) !important;
+          --lumo-font-family: var(--general-fontFamily) !important;
         }
       `,
     ];

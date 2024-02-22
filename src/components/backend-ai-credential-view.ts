@@ -132,7 +132,7 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         div.card > h4 {
           margin-bottom: 0px;
-          background-color: var(--general-color-bg-container);
+          background-color: var(--general-colorBgContainer);
         }
 
         div.card h3 {
@@ -185,7 +185,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-font-family: var(--general-fontFamily);
         }
 
         mwc-textfield.resource-input {
@@ -1207,7 +1207,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                             @click="${this._openExportToCsvDialog}"
                           >
                             <mwc-icon
-                              style="color:var(--general-color-text-secondary);padding-right:10px;"
+                              style="color:var(--general-colorTextSecondary);padding-right:10px;"
                             >
                               get_app
                             </mwc-icon>

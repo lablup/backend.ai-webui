@@ -72,17 +72,17 @@ export default class BackendAIDialog extends LitElement {
           );
           --mdc-dialog-width: var(--component-width, auto);
           --mdc-dialog-height: var(--component-height, auto);
-          --mdc-typography-body1-font-family: var(--general-font-family);
-          --mdc-typography-body1-font-color: var(--general-color-text, black);
-          --mdc-typography-headline6-font-family: var(--general-font-family);
+          --mdc-typography-body1-font-family: var(--general-fontFamily);
+          --mdc-typography-body1-font-color: var(--general-colorText, black);
+          --mdc-typography-headline6-font-family: var(--general-fontFamily);
           --mdc-typography-headline6-font-color: var(
-            --general-color-text,
+            --general-colorText,
             black
           );
           --mdc-shape-medium: 10px;
           --mdc-dialog-z-index: 1001;
-          --mdc-dialog-heading-ink-color: var(--general-color-text, black);
-          --mdc-theme-surface: var(--general-color-bg-container);
+          --mdc-dialog-heading-ink-color: var(--general-colorText, black);
+          --mdc-theme-surface: var(--general-colorBgContainer);
         }
 
         mwc-dialog > div.card {
@@ -92,7 +92,7 @@ export default class BackendAIDialog extends LitElement {
 
         mwc-dialog > div.card > h3 {
           background-color: var(
-            --general-color-bg-container,
+            --general-colorBgContainer,
             --general-dialog-background-color,
             #ffffff
           );
@@ -103,8 +103,8 @@ export default class BackendAIDialog extends LitElement {
         }
 
         mwc-dialog span.title {
-          color: var(--general-color-text);
-          background-color: var(--general-color-bg-container);
+          color: var(--general-colorText);
+          background-color: var(--general-colorBgContainer);
         }
 
         mwc-dialog div.content {
@@ -112,14 +112,14 @@ export default class BackendAIDialog extends LitElement {
           font-size: var(--component-font-size, 14px);
           word-break: keep-all;
           overflow-x: hidden;
-          color: var(--general-color-text);
-          background-color: var(--general-color-bg-container);
+          color: var(--general-colorText);
+          background-color: var(--general-colorBgContainer);
         }
 
         mwc-dialog div.footer {
           padding: 5px 15px 15px 15px;
-          color: var(--general-color-text);
-          background-color: var(--general-color-bg-container);
+          color: var(--general-colorText);
+          background-color: var(--general-colorBgContainer);
         }
 
         mwc-dialog.ticker {
@@ -142,7 +142,7 @@ export default class BackendAIDialog extends LitElement {
         }
 
         mwc-dialog div.content h4 {
-          font-size: var(--general-font-size, 14px);
+          font-size: var(--general-fontSize, 14px);
           padding: 5px 15px 5px 12px;
           margin: 0 0 10px 0;
           display: block;
@@ -151,7 +151,7 @@ export default class BackendAIDialog extends LitElement {
         }
 
         mwc-icon-button {
-          color: var(--general-color-text-secondary);
+          color: var(--general-colorTextSecondary);
         }
 
         .sticky {

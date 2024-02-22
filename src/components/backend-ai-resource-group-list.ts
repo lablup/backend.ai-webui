@@ -115,7 +115,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         backend-ai-dialog mwc-textarea {
           width: 100%;
           margin: 5px auto 5px auto;
-          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-font-family: var(--general-fontFamily);
           --mdc-theme-primary: var(--general-textfield-selected-color);
         }
 

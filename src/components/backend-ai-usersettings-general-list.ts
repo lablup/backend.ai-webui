@@ -203,8 +203,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
         mwc-select {
           width: 160px;
-          font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
+          font-family: var(--general-fontFamily);
+          --mdc-typography-subtitle1-font-family: var(--general-fontFamily);
           --mdc-typography-subtitle1-font-size: 11px;
           --mdc-theme-primary: var(--general-sidebar-color);
           --mdc-select-fill-color: transparent;

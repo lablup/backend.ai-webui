@@ -448,10 +448,10 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         div.pagination-label {
-          background-color: var(--general-color-bg-container, --paper-grey-100);
+          background-color: var(--general-colorBgContainer, --paper-grey-100);
           min-width: 60px;
           font-size: 12px;
-          font-family: var(--general-font-family);
+          font-family: var(--general-fontFamily);
           padding-top: 5px;
           width: auto;
           text-align: center;
@@ -466,7 +466,7 @@ export default class BackendAISessionList extends BackendAIPage {
         div.filters #access-key-filter {
           --input-font-size: small;
           --input-label-font-size: small;
-          --input-font-family: var(--general-font-family);
+          --input-font-family: var(--general-fontFamily);
         }
 
         .mount-button,
@@ -476,7 +476,7 @@ export default class BackendAISessionList extends BackendAIPage {
           background: none;
           padding: 0;
           outline-style: none;
-          font-family: var(--general-font-family);
+          font-family: var(--general-fontFamily);
         }
 
         .no-mount {
@@ -1972,7 +1972,7 @@ export default class BackendAISessionList extends BackendAIPage {
         mountedFolderItem.style.height = '25px';
         mountedFolderItem.style.fontWeight = '400';
         mountedFolderItem.style.fontSize = '14px';
-        mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
+        mountedFolderItem.style.fontFamily = 'var(--general-fontFamily)';
         mountedFolderItem.innerHTML =
           mounts.length > 1 ? key : _text('session.OnlyOneFolderAttached');
 
@@ -2627,7 +2627,7 @@ ${item.traceback}</pre
           }
           .util-detail-menu-header > div {
             font-size: 13px;
-            font-family: var(--general-font-family);
+            font-family: var(--general-fontFamily);
             font-weight: 600;
           }
           .util-detail-menu-content {
@@ -2641,7 +2641,7 @@ ${item.traceback}</pre
             justify-content: center;
             justify-content: space-between;
             font-size: 12px;
-            font-family: var(--general-font-family);
+            font-family: var(--general-fontFamily);
             font-weight: 400;
             min-width: 155px;
           }

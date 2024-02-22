@@ -52,7 +52,7 @@ export default class LablupProgressBar extends LitElement {
           font-size: var(--progress-bar-font-size, 10px);
           font-family: var(
             --progress-bar-font-family,
-            var(--general-font-family)
+            var(--general-fontFamily)
           );
           overflow: hidden;
         }

@@ -120,7 +120,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-theme-on-primary: var(--general-button-color);
-          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-font-family: var(--general-fontFamily);
         }
 
         h4 {

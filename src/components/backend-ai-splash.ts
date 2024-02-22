@@ -39,7 +39,7 @@ export default class BackendAISplash extends LitElement {
       css`
         :host > *,
         html {
-          font-family: var(--general-font-family);
+          font-family: var(--general-fontFamily);
         }
 
         a,

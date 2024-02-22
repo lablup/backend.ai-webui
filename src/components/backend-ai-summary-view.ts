@@ -163,7 +163,7 @@ export default class BackendAISummary extends BackendAIPage {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-theme-on-primary: var(--general-button-color);
-          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-font-family: var(--general-fontFamily);
         }
 
         #session-launcher {
@@ -240,8 +240,8 @@ export default class BackendAISummary extends BackendAIPage {
           height: 80px;
           padding-top: 20px;
           padding-left: 20px;
-          background-color: var(--general-color-bg-container, #f6f6f6);
-          margin-bottom: var(--general-margin-SM);
+          background-color: var(--general-colorBgContainer, #f6f6f6);
+          margin-bottom: var(--general-marginSM);
         }
 
         #download-app-os-select-box mwc-select {

@@ -108,7 +108,7 @@ export default class BackendAIMultiSelect extends LitElement {
         }
 
         mwc-list {
-          font-family: var(--general-font-family);
+          font-family: var(--general-fontFamily);
           width: 100%;
           position: absolute;
           left: 0;

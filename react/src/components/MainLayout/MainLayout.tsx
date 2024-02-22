@@ -6,6 +6,7 @@ import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { useLocalStorageState } from 'ahooks';
 import { App, Layout, theme } from 'antd';
+import _ from 'lodash';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 
@@ -52,13 +53,6 @@ function MainLayout() {
     };
   }, [webUIRef]);
 
-  useEffect(() => {
-    const event: Event = new CustomEvent('theme-loaded', {
-      detail: { token },
-    });
-    document.dispatchEvent(event);
-  });
-
   useLayoutEffect(() => {
     const handleNavigate = (e: any) => {
       const { detail } = e;
@@ -70,6 +64,14 @@ function MainLayout() {
       document.removeEventListener('react-navigate', handleNavigate);
     };
   }, [navigate]);
+
+  // Add antd token styles to react root for web components
+  _.forEach(token, (value, key) => {
+    document.documentElement.style.setProperty(
+      `--general-${key}`,
+      value?.toString() ?? '',
+    );
+  });
 
   return (
     <Layout>

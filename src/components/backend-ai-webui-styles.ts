@@ -43,8 +43,8 @@ export const BackendAIWebUIStyles = [
     }
 
     mwc-top-app-bar-fixed {
-      --mdc-typography-headline6-font-family: var(--general-font-family);
-      --mdc-typography-font-family: var(--general-font-family);
+      --mdc-typography-headline6-font-family: var(--general-fontFamily);
+      --mdc-typography-font-family: var(--general-fontFamily);
     }
 
     .site-name {
@@ -55,7 +55,7 @@ export const BackendAIWebUIStyles = [
       font-size: 16px;
       font-weight: 100;
       color: var(--general-sidebar-topbar-color, #efefef);
-      font-family: var(--general-font-family);
+      font-family: var(--general-fontFamily);
     }
 
     .site-name > .bold {
@@ -224,9 +224,9 @@ export const BackendAIWebUIStyles = [
     }
 
     mwc-button[unelevated] {
-      --mdc-theme-primary: var(--general-color-primary);
+      --mdc-theme-primary: var(--general-colorPrimary);
       --mdc-theme-on-primary: var(
-        --general-color-text-light-solid,
+        --general-colorTextLightSolid,
         --general-button-color
       );
     }
@@ -306,16 +306,16 @@ export const BackendAIWebUIStyles = [
     }
 
     mwc-tab {
-      color: var(--general-color-primary, #ffffff);
+      color: var(--general-colorPrimary, #ffffff);
     }
 
     mwc-menu {
-      font-family: var(--general-font-family);
-      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+      font-family: var(--general-fontFamily);
+      --mdc-typography-subtitle1-font-family: var(--general-fontFamily);
     }
 
     mwc-formfield {
-      --mdc-typography-body2-font-family: var(--general-font-family);
+      --mdc-typography-body2-font-family: var(--general-fontFamily);
     }
 
     span.full_name,
@@ -326,8 +326,8 @@ export const BackendAIWebUIStyles = [
     mwc-multi-select {
       width: 135px;
       min-width: 135px;
-      font-family: var(--general-font-family);
-      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+      font-family: var(--general-fontFamily);
+      --mdc-typography-subtitle1-font-family: var(--general-fontFamily);
       --mdc-typography-subtitle1-font-size: 14px;
       --mdc-typography-subtitle1-font-color: white;
       --mdc-typography-subtitle1-font-weight: 400;
@@ -385,9 +385,9 @@ export const BackendAIWebUIStyles = [
     }
 
     mwc-list-item {
-      font-family: var(--general-font-family);
-      --mdc-typography-subtitle1-font-family: var(--general-font-family);
-      --mdc-typography-body2-font-family: var(--general-font-family);
+      font-family: var(--general-fontFamily);
+      --mdc-typography-subtitle1-font-family: var(--general-fontFamily);
+      --mdc-typography-body2-font-family: var(--general-fontFamily);
       font-weight: 400;
     }
 
@@ -439,7 +439,7 @@ export const BackendAIWebUIStyles = [
       line-height: 16px;
       font-size: 12px;
       font-weight: 100;
-      font-family: var(--general-font-family);
+      font-family: var(--general-fontFamily);
     }
 
     .portrait-canvas {

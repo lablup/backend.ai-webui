@@ -168,7 +168,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         }
         span.resource-limit-title {
           font-size: 14px;
-          font-family: var(--general-font-family);
+          font-family: var(--general-fontFamily);
           text-align: left;
           width: 70px;
         }
@@ -227,7 +227,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-font-family: var(--general-fontFamily);
         }
         mwc-slider {
           width: 150px;

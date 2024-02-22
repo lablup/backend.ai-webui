@@ -452,7 +452,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         backend-ai-dialog mwc-textfield,
         backend-ai-dialog mwc-select {
-          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-font-family: var(--general-fontFamily);
           --mdc-typography-label-font-size: 12px;
         }
 

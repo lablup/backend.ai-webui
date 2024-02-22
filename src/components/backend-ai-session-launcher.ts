@@ -296,7 +296,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         hr.separator {
-          border-top: 1px solid var(--general-color-border, #ddd);
+          border-top: 1px solid var(--general-colorBorder, #ddd);
         }
 
         lablup-slider {
@@ -375,10 +375,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         .environment-variables-container,
         .preopen-ports-container {
           background-color: var(
-            --general-color-bg-container,
+            --general-colorBgContainer,
             rgba(244, 244, 244, 1)
           );
-          color: var(--general-color-text);
+          color: var(--general-colorText);
           overflow-y: scroll;
         }
 
@@ -419,7 +419,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         .cluster-total-allocation-container {
           border-radius: 10px;
           border: 1px dotted
-            var(--general-color-border, --general-button-background-color);
+            var(--general-colorBorder, --general-button-background-color);
           padding-top: 10px;
           margin-left: 15px;
           margin-right: 15px;
@@ -496,7 +496,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         .resource-allocated-box {
-          background-color: var(--general-color-bg-container, --paper-grey-300);
+          background-color: var(--general-colorBgContainer, --paper-grey-300);
           border-radius: 5px;
           margin: 5px;
           z-index: 10;
@@ -547,7 +547,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --expansion-header-font-weight: normal;
           --expansion-header-font-size: 14px;
           --expansion-header-font-color: var(
-            --general-color-text,
+            --general-colorText,
             rgb(64, 64, 64)
           );
         }
@@ -629,7 +629,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         #prev-button,
         #next-button {
-          color: var(--general-color-primary, #27824f);
+          color: var(--general-colorPrimary, #27824f);
         }
 
         #environment {
@@ -652,7 +652,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         #vfolder-header-title {
           text-align: center;
           font-size: 16px;
-          font-family: var(--general-font-family);
+          font-family: var(--general-fontFamily);
           font-weight: 500;
         }
 
@@ -710,7 +710,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           margin-top: 0;
           font-size: 12px;
           font-weight: 200;
-          color: var(--general-color-text-tertiary, #404040);
+          color: var(--general-colorTextTertiary, #404040);
         }
 
         #progress-04 p.title {
@@ -720,7 +720,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         #batch-mode-config-section {
           width: 100%;
           border-bottom: solid 1px
-            var(--general-color-border, rgba(0, 0, 0, 0.42));
+            var(--general-colorBorder, rgba(0, 0, 0, 0.42));
           margin-bottom: 15px;
         }
 
@@ -730,7 +730,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           position: absolute;
           top: -5px;
           left: 5px;
-          border: 1px solid var(--general-color-border, #ccc);
+          border: 1px solid var(--general-colorBorder, #ccc);
         }
 
         #modify-env-dialog,
@@ -786,8 +786,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         .environment-variables-container mwc-textfield,
         .preopen-ports-container mwc-textfield {
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-text-field-disabled-ink-color: var(--general-color-text);
+          --mdc-typography-subtitle1-font-family: var(--general-fontFamily);
+          --mdc-text-field-disabled-ink-color: var(--general-colorText);
         }
 
         .optional-buttons {
@@ -800,7 +800,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         h5 {
-          color: var(--general-color-text);
+          color: var(--general-colorText);
         }
 
         [name='resource-group'] mwc-list-item {
@@ -4420,7 +4420,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ${item.clickable === false
                     ? html`
                         <h5
-                          style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid var(--general-color-border, #ccc);"
+                          style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid var(--general-colorBorder, #ccc);"
                           role="separator"
                           disabled="true"
                         >
@@ -4489,7 +4489,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 ? html``
                 : html`
                     <h5
-                      style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid var(--general-color-border, #ccc);"
+                      style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid var(--general-colorBorder, #ccc);"
                       role="separator"
                       disabled="true"
                       class="horizontal layout"
@@ -4962,7 +4962,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   style="display:none!important;"
                 ></mwc-list-item>
                 <h5
-                  style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid var(--general-color-border, #ccc);"
+                  style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid var(--general-colorBorder, #ccc);"
                   role="separator"
                   disabled="true"
                   class="horizontal layout center"

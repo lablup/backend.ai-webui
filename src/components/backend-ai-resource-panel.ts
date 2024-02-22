@@ -133,7 +133,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         }
 
         a:hover {
-          color: var(--general-color-primary, #3e872d);
+          color: var(--general-colorPrimary, #3e872d);
         }
 
         mwc-linear-progress {
@@ -176,7 +176,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         div.indicators {
           min-height: 83px;
           padding: 10px 20px;
-          background-color: var(--general-color-bg-container, #f6f6f6);
+          background-color: var(--general-colorBgContainer, #f6f6f6);
         }
 
         .system-health-indicator {

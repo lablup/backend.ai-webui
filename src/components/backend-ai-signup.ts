@@ -101,7 +101,7 @@ export default class BackendAiSignup extends BackendAIPage {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-font-family: var(--general-fontFamily);
         }
 
         mwc-textfield#id_user_name {
@@ -596,14 +596,14 @@ export default class BackendAiSignup extends BackendAIPage {
             <p style="font-size:12px;">
               ${_text('signup.PolicyAgreement_1')}
               <a
-                style="color:var(--general-color-primary);"
+                style="color:var(--general-colorPrimary);"
                 @click="${() => this.receiveTOSAgreement()}"
               >
                 ${_t('signup.TermsOfService')}
               </a>
               ${_text('signup.PolicyAgreement_2')}
               <a
-                style="color:var(--general-color-primary);"
+                style="color:var(--general-colorPrimary);"
                 @click="${() => this.receivePPAgreement()}"
               >
                 ${_t('signup.PrivacyPolicy')}
