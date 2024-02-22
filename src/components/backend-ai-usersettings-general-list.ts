@@ -221,7 +221,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           --mdc-select-outlined-hover-border-color: var(
             --general-sidebar-color
           );
-          --mdc-theme-surface: white;
           --mdc-list-side-padding: 25px;
         }
 

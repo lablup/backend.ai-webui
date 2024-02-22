@@ -253,7 +253,7 @@ export const BackendAiStyles = [
     ::-webkit-scrollbar {
       max-width: 2px;
       max-height: 2px;
-      background-color: transparent;
+      background-color: var(--general-colorBg, transparent);
     }
 
     ::-webkit-scrollbar-thumb {
@@ -425,13 +425,6 @@ export const BackendAiStyles = [
         --var-color-bg-container-disabled,
         --paper-grey-100
       );
-    }
-
-    mwc-button.disabled,
-    mwc-icon-button.disabled {
-      color: var(--general-colorTextDisabled);
-      pointer-events: none;
-      text-decoration: none;
     }
 
     mwc-list-item,
@@ -670,6 +663,14 @@ export const BackendAiStyles = [
         --general-button-color
       );
       --mdc-typography-font-family: var(--general-fontFamily);
+    }
+
+    mwc-icon-button[disabled] {
+      --mdc-theme-text-disabled-on-light: var(--general-colorTextDisabled);
+    }
+
+    mwc-button[disabled] {
+      --mdc-button-disabled-ink-color: var(--general-colorTextDisabled);
     }
 
     mwc-textfield {
