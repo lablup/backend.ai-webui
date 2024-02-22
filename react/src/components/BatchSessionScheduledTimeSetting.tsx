@@ -46,7 +46,7 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
           <DatePickerISO
             {...datePickerISOProps}
             popupStyle={{ position: 'fixed' }}
-            disabledDate={(date: dayjs.Dayjs) => {
+            disabledDate={(date) => {
               return date.isBefore(dayjs().startOf('minute'));
             }}
             disabled={!isChecked}
