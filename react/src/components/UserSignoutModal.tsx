@@ -35,7 +35,7 @@ const UserSignoutModal: React.FC<UserSignoutModalProps> = ({
       },
       onCompleted(res) {
         if (res?.delete_user?.ok) {
-          message.success(t('credential.UserAccountCreated'));
+          message.success(t('credential.SignoutSeccessfullyFinished'));
         } else {
           message.error(res?.delete_user?.msg);
         }
