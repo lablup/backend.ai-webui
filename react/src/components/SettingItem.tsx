@@ -26,7 +26,6 @@ const SettingItem: React.FC<SettingItemProps> = ({
   children,
   ...particialProps
 }) => {
-  console.log(typeof description, description);
   return (
     <Flex
       direction="column"

@@ -20,7 +20,6 @@ const SettingList: React.FC<SettingPageProps> = ({
   const { token } = theme.useToken();
   const [searchValue, setSearchValue] = useState('');
   const [changedOptionFilter, setChangedOptionFilter] = useState(false);
-  const [isRefreshFinished, setisRefreshFinished] = useState(false);
 
   const appendedSettingGroup = [
     {
@@ -82,15 +81,12 @@ const SettingList: React.FC<SettingPageProps> = ({
           </Flex>
           <Button
             icon={<RedoOutlined />}
-            loading={isRefreshFinished}
             onClick={() => {
-              setisRefreshFinished(true);
               _.flatMap(settingGroup, (item) => item.settingItems).forEach(
                 (option) => {
                   option?.setValue && option.setValue(option.defaultValue);
                 },
               );
-              setisRefreshFinished(false);
             }}
           >
             {t('button.Reset')}
