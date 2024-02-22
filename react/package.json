@@ -101,6 +101,7 @@
     "webpack": "^5.88.2"
   },
   "overrides": {
+    "@typescript-eslint/typescript-estree": "^5.57.1",
     "typescript": "^5.2.2"
   },
   "proxy": "http://localhost:3081"
