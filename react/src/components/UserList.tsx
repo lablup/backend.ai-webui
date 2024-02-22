@@ -1,10 +1,9 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import { useTanMutation } from '../hooks/reactQueryAlias';
-import BAIModal from './BAIModal';
 import Flex from './Flex';
 import UserGenerationModal from './UserGenerationModal';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
+import UserSignoutModal from './UserSignoutModal';
 import {
   UserListQuery,
   UserListQuery$data,
@@ -15,16 +14,7 @@ import {
   DeleteOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  Tabs,
-  Table,
-  theme,
-  Button,
-  Typography,
-  message,
-  Input,
-  Select,
-} from 'antd';
+import { Tabs, Table, theme, Button, Input, Select } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import React, { useState, useTransition, Suspense } from 'react';
@@ -41,7 +31,6 @@ type UserNode = NonNullable<
 const UserList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [messageApi, contextHolder] = message.useMessage();
   const baiClient = useSuspendedBackendaiClient();
   const [isPendingReload, startReloadTransition] = useTransition();
   const [userListFetchKey, updateUserListFetchKey] =
@@ -215,34 +204,6 @@ const UserList: React.FC = () => {
       },
     },
   ];
-
-  const userSignoutMutation = useTanMutation({
-    mutationFn: (email: string) => {
-      return baiClient.user.delete(email);
-    },
-  });
-
-  const handleSignoutOk = () => {
-    userSignoutMutation.mutate(selectedUserEmail, {
-      onSuccess: () => {
-        messageApi.open({
-          type: 'success',
-          content: t('credential.SignoutSeccessfullyFinished'),
-        });
-        toggleUserSignoutModal();
-        startReloadTransition(() => {
-          updateUserListFetchKey();
-        });
-      },
-      onError: (e: any) => {
-        messageApi.open({
-          type: 'error',
-          content: e.message,
-        });
-        toggleUserSignoutModal();
-      },
-    });
-  };
   return (
     <Flex direction="column" align="stretch">
       <Tabs
@@ -351,31 +312,18 @@ const UserList: React.FC = () => {
           onRequestClose={toggleUserSettingModal}
           email={selectedUserEmail}
         />
-        <BAIModal
+        <UserSignoutModal
+          draggable
           open={isOpenUserSignoutModal}
-          title={t('dialog.title.LetsDouble-Check')}
-          onOk={handleSignoutOk}
-          okText={t('button.Okay')}
-          okButtonProps={{ danger: true }}
-          onCancel={toggleUserSignoutModal}
-          cancelText={t('button.Cancel')}
-        >
-          <Flex direction="column" align="start" gap={'xxs'}>
-            <Typography.Text>
-              {t('credential.ConfirmSignoutUser')}
-            </Typography.Text>
-            <Flex justify="center" style={{ width: '100%' }}>
-              <Typography.Text type="danger" strong>
-                {selectedUserEmail}
-              </Typography.Text>
-            </Flex>
-            <Typography.Text>
-              {t('dialog.ask.DoYouWantToProceed')}
-            </Typography.Text>
-          </Flex>
-        </BAIModal>
+          email={selectedUserEmail}
+          onRequestClose={() => {
+            toggleUserSignoutModal();
+            startReloadTransition(() => {
+              updateUserListFetchKey();
+            });
+          }}
+        />
       </Suspense>
-      {contextHolder}
     </Flex>
   );
 };
