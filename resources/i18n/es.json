@@ -483,7 +483,10 @@
     "Username": "Nombre de usuario",
     "cores": "núcleos",
     "None": "Ninguno",
-    "Image": "Imagen"
+    "Image": "Imagen",
+    "All": "Todos",
+    "InProgress": "En curso",
+    "Session": "Sesión"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",
@@ -721,13 +724,21 @@
     "resources": "Recursos",
     "Owner": "Dueño",
     "ServiceDelegatedFrom": "El servicio modelo es creado por {{ createdUser }} pero la propiedad de la sesión será delegada a {{ sessionOwner }}",
-    "FailedToTerminateService": "La solicitud para finalizar el servicio ha fallado."
+    "FailedToTerminateService": "La solicitud para finalizar el servicio ha fallado.",
+    "FailedToUpdateService": "No se pudo actualizar el servicio.",
+    "ServiceCreated": "El servicio modelo {{ name }} se ha creado correctamente.",
+    "ServiceUpdated": "El servicio de modelo {{ name }} se ha actualizado correctamente.",
+    "ServiceTerminated": "El servicio de modelo {{ name }} se ha finalizado correctamente."
   },
   "notification": {
     "Initializing": "Inicializando...",
     "SeeDetail": "Ver detalle",
     "SuccessfullyUpdated": "Actualizado con éxito",
-    "Visit": "Visite"
+    "Visit": "Visite",
+    "NoNotification": "Sin notificación.",
+    "Notifications": "Notificaciones",
+    "ClearNotifications": "Borrar notificaciones",
+    "AreYouSureToClearAllNotifications": "¿Estás seguro de borrar todas las notificaciones?"
   },
   "pipeline": {
     "Component": {
@@ -799,7 +810,8 @@
     "UpdatingRegistryInfo": "Actualización de la información del registro...",
     "Username": "Nombre de usuario",
     "UsernameOptional": "Nombre de usuario (opcional)",
-    "ConfirmNoUserName": "Usuario y contraseña no especificados, ¿desea guardar?"
+    "ConfirmNoUserName": "Usuario y contraseña no especificados, ¿desea guardar?",
+    "DescURLFormat": "Tipo de URL no válido"
   },
   "resourceGroup": {
     "Active": "Activo",
@@ -1137,7 +1149,10 @@
       "EnvironmentVariableDuplicateName": "Un nombre de variable que ya existe.",
       "Template": "Plantilla de sesión",
       "EnableAutomaticShmem": "Memoria compartida automática",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Solo se permiten números enteros cuando el tamaño del clúster no es inferior a 2.",
+      "StartAfter": "Empezar después:",
+      "StartTimeDoesNotApply": "Si no se establece la hora de inicio, no se aplica."
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",
@@ -1306,7 +1321,9 @@
     "TotpSetupCompleted": "2FA activado",
     "TotpSetupNotAvailable": "No se puede configurar la autenticación de dos factores.",
     "TurnOffTotp": "Desactivar la autenticación de dos factores",
-    "TypeInAuthKey": "También puede introducir manualmente el código de autenticación."
+    "TypeInAuthKey": "También puede introducir manualmente el código de autenticación.",
+    "EnterConfirmationCode": "Ahora ingrese la OTP generada por el autenticador para verificar.",
+    "RequireOTP": "Escribe OTP."
   },
   "update": {
     "NewWebUIVersionAvailable": "Nueva versión disponible:"

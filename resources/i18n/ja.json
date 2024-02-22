@@ -256,7 +256,10 @@
       "EnvironmentVariableDuplicateName": "既に存在する変数名です。",
       "Template": "セッションテンプレート",
       "EnableAutomaticShmem": "自動共有メモリー",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "クラスター サイズが 2 以上の場合は、整数のみが許可されます。",
+      "StartAfter": "次の後に開始します:",
+      "StartTimeDoesNotApply": "開始時間が設定されていない場合は適用されません。"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -451,7 +454,10 @@
     "Enabled": "有効",
     "StorageProxies": "ストレージ",
     "None": "なし",
-    "Image": "画像"
+    "Image": "画像",
+    "All": "全体",
+    "InProgress": "進行中",
+    "Session": "セッション"
   },
   "credential": {
     "Permission": "許可",
@@ -933,7 +939,8 @@
     "RegistrySuccessfullyModified": "レジストリが正常に修正されました。",
     "NoRegistryToDisplay": "レジストリ情報がありません。",
     "ModifyRegistry": "レジストリの修正",
-    "ConfirmNoUserName": "ユーザーとパスワードが指定されていません。"
+    "ConfirmNoUserName": "ユーザーとパスワードが指定されていません。",
+    "DescURLFormat": "無効な URL タイプ"
   },
   "resourceGroup": {
     "ResourceGroups": "リソースグループ",
@@ -1130,7 +1137,11 @@
     "SuccessfullyUpdated": "正常に更新されました",
     "Visit": "訪問",
     "SeeDetail": "詳細を見る",
-    "Initializing": "初期化中..."
+    "Initializing": "初期化中...",
+    "NoNotification": "通知はありません。",
+    "Notifications": "通知",
+    "ClearNotifications": "通知をクリアする",
+    "AreYouSureToClearAllNotifications": "すべての通知をクリアしてもよろしいですか?"
   },
   "information": {
     "Core": "芯",
@@ -1402,7 +1413,11 @@
     "Image": "イメージ",
     "Owner": "所有者",
     "ServiceDelegatedFrom": "モデルサービスは{{ createdUser }}によって作成されますが、セッションの所有権は{{ sessionOwner }}に委譲されます。",
-    "FailedToTerminateService": "サービス終了のリクエストに失敗しました。"
+    "FailedToTerminateService": "サービス終了のリクエストに失敗しました。",
+    "FailedToUpdateService": "サービスの更新に失敗しました。",
+    "ServiceCreated": "モデル サービス {{ name }} が正常に作成されました。",
+    "ServiceUpdated": "モデル サービス {{ name }} は正常に更新されました。",
+    "ServiceTerminated": "モデル サービス {{ name }} は正常に終了しました。"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",
@@ -1453,7 +1468,9 @@
     "TurnOffTotp": "二要素認証を無効にする",
     "ConfirmTotpRemovalBody": "本当に二要素認証を無効にしますか？",
     "RemoveTotpSetupCompleted": "二要素認証が無効になりました。",
-    "OTP": "二要素認証"
+    "OTP": "二要素認証",
+    "EnterConfirmationCode": "次に、認証システムによって生成された OTP を入力して確認します。",
+    "RequireOTP": "OTPを書き込みます。"
   },
   "OpenVSCodeRemote": "ローカルVisual Studio Codeを開く",
   "inputLimit": {

@@ -1668,6 +1668,7 @@ export default class BackendAISessionList extends BackendAIPage {
       commitSessionInfo.taskId ?? '',
       'commit',
       'remove-later',
+      _text('session.CommitSession') + commitSessionInfo.session.name,
     );
   }
 
@@ -3197,7 +3198,7 @@ ${rowData.item[this.sessionNameField]}</pre
                 ? html`
                     <img
                       class="indicator-icon fg green"
-                      src="/resources/icons/ROCm.png"
+                      src="/resources/icons/rocm.svg"
                     />
                     <span>${rowData.item.rocm_gpu_slot}</span>
                     <span class="indicator">GPU</span>

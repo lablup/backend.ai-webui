@@ -256,7 +256,10 @@
       "EnvironmentVariableDuplicateName": "Энэ хувьсагчийн нэр аль хэдийн байна.",
       "Template": "Сеанс загвар",
       "EnableAutomaticShmem": "Автомат хуваалцсан санах ой",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Кластерын хэмжээ 2-оос багагүй тохиолдолд зөвхөн бүхэл тоог зөвшөөрнө.",
+      "StartAfter": "Дараа нь эхлэх:",
+      "StartTimeDoesNotApply": "Хэрэв эхлэх цагийг тохируулаагүй бол энэ нь хамаарахгүй."
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -451,7 +454,10 @@
     "Enabled": "Идэвхжсэн",
     "StorageProxies": "Хадгалах сан",
     "None": "Байхгүй",
-    "Image": "Зураг"
+    "Image": "Зураг",
+    "All": "бүхэлд нь",
+    "InProgress": "Ажиллаж байна",
+    "Session": "Сессия"
   },
   "credential": {
     "Permission": "Зөвшөөрөл",
@@ -933,7 +939,8 @@
     "RegistrySuccessfullyModified": "Бүртгэл амжилттай өөрчлөгдсөн.",
     "ModifyRegistry": "Бүртгэлийг өөрчлөх",
     "NoRegistryToDisplay": "Харуулах бүртгэл байхгүй",
-    "ConfirmNoUserName": "Хэрэглэгч болон нууц үгийг заагаагүй тул хадгалах уу?"
+    "ConfirmNoUserName": "Хэрэглэгч болон нууц үгийг заагаагүй тул хадгалах уу?",
+    "DescURLFormat": "Хүчингүй URL төрөл"
   },
   "resourceGroup": {
     "ResourceGroups": "Нөөцийн бүлгүүд",
@@ -1130,7 +1137,11 @@
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
     "Visit": "Айлчлах",
     "SeeDetail": "Дэлгэрэнгүйг үзнэ үү",
-    "Initializing": "Эхлүүлж байна ..."
+    "Initializing": "Эхлүүлж байна ...",
+    "NoNotification": "Мэдэгдэл байхгүй.",
+    "Notifications": "Мэдэгдэл",
+    "ClearNotifications": "Мэдэгдлийг арилгах",
+    "AreYouSureToClearAllNotifications": "Та бүх мэдэгдлийг арилгахдаа итгэлтэй байна уу?"
   },
   "information": {
     "Core": "Гол",
@@ -1364,7 +1375,9 @@
     "ConfirmTotpRemovalBody": "Та хоёр хүчин зүйлийн баталгаажуулалтыг ашиглахаас татгалзахдаа итгэлтэй байна уу?",
     "TotpSetupNotAvailable": "Хоёр хүчин зүйлийн баталгаажуулалтыг тохируулах боломжгүй.",
     "TurnOffTotp": "Хоёр хүчин зүйлийн баталгаажуулалтыг унтраа",
-    "RemoveTotpSetupCompleted": "2FA-г идэвхгүй болгосон"
+    "RemoveTotpSetupCompleted": "2FA-г идэвхгүй болгосон",
+    "EnterConfirmationCode": "Одоо баталгаажуулахын тулд баталгаажуулагчийн үүсгэсэн OTP-г оруулна уу.",
+    "RequireOTP": "OTP бичнэ үү."
   },
   "inputLimit": {
     "4to64chars": "(4~64 тэмдэгт)"
@@ -1451,7 +1464,11 @@
     "Image": "Зураг",
     "Owner": "Эзэмшигч",
     "ServiceDelegatedFrom": "Загвар үйлчилгээг {{ createdUser }} үүсгэсэн боловч сессийн эрхийг {{ sessionOwner }}-д шилжүүлнэ.",
-    "FailedToTerminateService": "Үйлчилгээг цуцлах хүсэлт амжилтгүй боллоо."
+    "FailedToTerminateService": "Үйлчилгээг цуцлах хүсэлт амжилтгүй боллоо.",
+    "FailedToUpdateService": "Үйлчилгээг шинэчилж чадсангүй.",
+    "ServiceCreated": "Загвар үйлчилгээ {{ name }} амжилттай үүсгэгдсэн.",
+    "ServiceUpdated": "Загвар үйлчилгээ {{ name }} амжилттай шинэчлэгдсэн.",
+    "ServiceTerminated": "Загварын үйлчилгээ {{ name }} амжилттай хаагдсан."
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",

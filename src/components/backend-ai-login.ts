@@ -71,6 +71,7 @@ type ConfigValueObject = {
 export default class BackendAILogin extends BackendAIPage {
   shadowRoot!: ShadowRoot | null;
 
+  @property({ type: String }) siteDescription = '';
   @property({ type: String }) api_key = '';
   @property({ type: String }) secret_key = '';
   @property({ type: String }) user_id = '';
@@ -107,8 +108,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) allowSignupWithoutConfirmation = false;
   @property({ type: Boolean }) openPortToPublic = false;
   @property({ type: Boolean }) allowPreferredPort = false;
-  @property({ type: Boolean }) maxCPUCoresPerContainer = 64;
-  @property({ type: Boolean }) maxMemoryPerContainer = 16;
+  @property({ type: Number }) maxCPUCoresPerContainer = 64;
+  @property({ type: Number }) maxMemoryPerContainer = 16;
   @property({ type: Number }) maxCUDADevicesPerContainer = 16;
   @property({ type: Number }) maxCUDASharesPerContainer = 16;
   @property({ type: Number }) maxROCMDevicesPerContainer = 10;
@@ -116,14 +117,14 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Number }) maxIPUDevicesPerContainer = 8;
   @property({ type: Number }) maxATOMDevicesPerContainer = 8;
   @property({ type: Number }) maxWarboyDevicesPerContainer = 8;
-  @property({ type: Boolean }) maxShmPerContainer = 2;
-  @property({ type: Boolean }) maxFileUploadSize = -1;
+  @property({ type: Number }) maxShmPerContainer = 2;
+  @property({ type: Number }) maxFileUploadSize = -1;
   @property({ type: Boolean }) maskUserInfo = false;
   @property({ type: Boolean }) hideAgents = true;
   @property({ type: Boolean }) enable2FA = false;
   @property({ type: Boolean }) force2FA = false;
   @property({ type: Array }) singleSignOnVendors: string[] = [];
-  @property({ type: Array }) ssoRealmName = '';
+  @property({ type: String }) ssoRealmName = '';
   @property({ type: Array }) allow_image_list;
   @property({ type: Array }) endpoints;
   @property({ type: Object }) logoutTimerBeforeOneMin;
@@ -139,6 +140,9 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) isDirectorySizeVisible = true;
   @property({ type: Boolean }) supportModelStore = false;
   @property({ type: String }) eduAppNamePrefix;
+  @property({ type: String }) pluginPages;
+  @property({ type: Array }) blockList = [] as string[];
+  @property({ type: Array }) inactiveList = [] as string[];
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel')
@@ -559,6 +563,8 @@ export default class BackendAILogin extends BackendAIPage {
     this._initWSProxyConfigWithKeys(config.wsproxy);
     this._initResourcesConfigWithKeys(config.resources);
     this._initEnvironmentsConfigWithKeys(config.environments);
+    this._initMenuConfigWithKeys(config.menu);
+    this._initPluginConfigWithKeys(config.plugin);
     this._initPipelineConfigWithKeys(config.pipeline);
   }
 
@@ -580,6 +586,13 @@ export default class BackendAILogin extends BackendAIPage {
     if (globalThis.backendaiwebui.debug) {
       console.log('Debug flag is set to true');
     }
+
+    // Default session environment value
+    this.siteDescription = this._getConfigValueByExists(generalConfig, {
+      valueType: 'string',
+      defaultValue: 'WebUI',
+      value: generalConfig?.siteDescription,
+    } as ConfigValueObject) as string;
 
     // Signup support flag
     this.signup_support = this._getConfigValueByExists(generalConfig, {
@@ -1025,6 +1038,31 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   /**
+   * Initialize global key with value from menu section in config file
+   *
+   * @param {object} menuConfig
+   */
+  private _initMenuConfigWithKeys(menuConfig) {
+    // Block list. This is used for hiding menu items.
+    this.blockList = this._getConfigValueByExists(menuConfig, {
+      valueType: 'array',
+      defaultValue: [] as string[],
+      value: menuConfig?.blocklist
+        ? menuConfig?.blocklist?.split(',')?.map((el) => el.trim())
+        : [],
+    } as ConfigValueObject) as string[];
+
+    // Inactive list. These menu turn into disabled.
+    this.inactiveList = this._getConfigValueByExists(menuConfig, {
+      valueType: 'array',
+      defaultValue: [] as string[],
+      value: menuConfig?.inactivelist
+        ? menuConfig?.inactivelist?.split(',')?.map((el) => el.trim())
+        : [],
+    } as ConfigValueObject) as string[];
+  }
+
+  /**
    * Initialize global key with value from pipeline section in config file
    *
    * @param {object} pipelineConfig
@@ -1035,6 +1073,20 @@ export default class BackendAILogin extends BackendAIPage {
       valueType: 'string',
       defaultValue: '',
       value: pipelineConfig?.frontendEndpoint,
+    } as ConfigValueObject) as string;
+  }
+
+  /**
+   * Initialize global key with value from plugin section in config file
+   *
+   * @param {object} pluginConfig
+   */
+  private _initPluginConfigWithKeys(pluginConfig) {
+    // Plugin page
+    this.pluginPages = this._getConfigValueByExists(pluginConfig, {
+      valueType: 'string',
+      defaultValue: '',
+      value: pluginConfig?.page,
     } as ConfigValueObject) as string;
   }
 
@@ -1111,13 +1163,16 @@ export default class BackendAILogin extends BackendAIPage {
         const fieldsToExclude = [
           'general.apiEndpoint',
           'general.apiEndpointText',
-          'general.siteDescription',
           'general.appDownloadUrl',
           'wsproxy',
         ];
         const webserverConfigURL = new URL('./config.toml', this.api_endpoint)
           .href;
         webuiEl._parseConfig(webserverConfigURL, true).then((config) => {
+          // Monkey patch for backwards compatibility.
+          // From 24.04, we use `logoTitle` and `logoTitleCollapsed` of /resources/theme.json instead of `general.siteDescription`.
+          this.siteDescription =
+            config?.['general.siteDescription'] || this.siteDescription || '';
           fieldsToExclude.forEach((key) => {
             globalThis.backendaiutils.deleteNestedKeyFromObject(config, key);
           });
@@ -1739,6 +1794,8 @@ export default class BackendAILogin extends BackendAIPage {
             globalThis.backendaiclient.current_group
           ];
         };
+        globalThis.backendaiclient._config.siteDescription =
+          this.siteDescription;
         globalThis.backendaiclient._config._proxyURL = this.proxy_url;
         globalThis.backendaiclient._config._proxyToken = '';
         globalThis.backendaiclient._config.domainName = this.domain_name;
@@ -1805,6 +1862,10 @@ export default class BackendAILogin extends BackendAIPage {
           this.isDirectorySizeVisible;
         globalThis.backendaiclient._config.supportModelStore =
           this.supportModelStore;
+        globalThis.backendaiclient._config.pluginPages = this.pluginPages;
+        globalThis.backendaiclient._config.blockList = this.blockList;
+        globalThis.backendaiclient._config.inactiveList = this.inactiveList;
+        globalThis.backendaiclient._config.allowSignout = this.allow_signout;
         globalThis.backendaiclient.ready = true;
         if (
           this.endpoints.indexOf(

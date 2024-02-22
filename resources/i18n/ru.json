@@ -258,7 +258,10 @@
       "EnableAutomaticShmem": "Автоматическая разделяемая память",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Допускается только целое число, если размер кластера не меньше 2.",
+      "StartAfter": "Начать после:",
+      "StartTimeDoesNotApply": "Если время начала не установлено, оно не применяется."
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -453,7 +456,10 @@
     "Enabled": "Включено",
     "StorageProxies": "Хранилища данных",
     "None": "Нет",
-    "Image": "Изображение"
+    "Image": "Изображение",
+    "All": "Все",
+    "InProgress": "В процессе",
+    "Session": "Сессия"
   },
   "credential": {
     "Permission": "Разрешение",
@@ -935,7 +941,8 @@
     "RegistrySuccessfullyModified": "Реестр успешно модифицирован.",
     "ModifyRegistry": "Изменение реестра",
     "NoRegistryToDisplay": "Отсутствие отображаемых реестров",
-    "ConfirmNoUserName": "Пользователь и пароль не указаны, хотите сохранить?"
+    "ConfirmNoUserName": "Пользователь и пароль не указаны, хотите сохранить?",
+    "DescURLFormat": "Неверный тип URL"
   },
   "resourceGroup": {
     "ResourceGroups": "Группы ресурсов",
@@ -1132,7 +1139,11 @@
     "SuccessfullyUpdated": "Успешно обновлено",
     "Visit": "Посещение",
     "SeeDetail": "См детали",
-    "Initializing": "Инициализация ..."
+    "Initializing": "Инициализация ...",
+    "NoNotification": "Нет уведомлений.",
+    "Notifications": "Уведомления",
+    "ClearNotifications": "Очистить уведомления",
+    "AreYouSureToClearAllNotifications": "Вы уверены, что удалите все уведомления?"
   },
   "information": {
     "Core": "Основной",
@@ -1366,7 +1377,9 @@
     "ConfirmTotpRemovalBody": "Уверены ли вы в том, что отказались от использования двухфакторной аутентификации?",
     "TotpSetupNotAvailable": "Двухфакторная аутентификация не может быть настроена.",
     "TurnOffTotp": "Отключите двухфакторную аутентификацию",
-    "RemoveTotpSetupCompleted": "Отключенная 2FA"
+    "RemoveTotpSetupCompleted": "Отключенная 2FA",
+    "EnterConfirmationCode": "Теперь введите OTP, сгенерированный аутентификатором, для проверки.",
+    "RequireOTP": "Напишите ОТП."
   },
   "inputLimit": {
     "4to64chars": "(4~64 символа)"
@@ -1453,7 +1466,11 @@
     "Image": "Изображение",
     "Owner": "Владелец",
     "ServiceDelegatedFrom": "Сервис модели создается {{ createdUser }}, но право владения сессией будет передано {{ sessionOwner }}.",
-    "FailedToTerminateService": "Запрос на завершение службы завершился неудачно."
+    "FailedToTerminateService": "Запрос на завершение службы завершился неудачно.",
+    "FailedToUpdateService": "Не удалось обновить службу.",
+    "ServiceCreated": "Сервис модели {{ name }} успешно создан.",
+    "ServiceUpdated": "Сервис модели {{ name }} успешно обновлен.",
+    "ServiceTerminated": "Служба модели {{ name }} успешно прекращена."
   },
   "ErrorBoundary": {
     "title": "Произошла ошибка.",

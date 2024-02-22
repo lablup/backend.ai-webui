@@ -256,7 +256,10 @@
       "Template": "Templat Sesi",
       "EnableAutomaticShmem": "Memori dikongsi automatik",
       "PreOpenPortMaxCountLimit": "Anda boleh menyediakan kepada {{count}} port pra-buka.",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Hanya integer dibenarkan apabila saiz kelompok tidak kurang daripada 2.",
+      "StartAfter": "Mulakan selepas:",
+      "StartTimeDoesNotApply": "Jika masa mula tidak ditetapkan, ia tidak terpakai."
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",
@@ -451,7 +454,10 @@
     "Enabled": "Diaktifkan",
     "StorageProxies": "Stor",
     "None": "tiada",
-    "Image": "Gambar"
+    "Image": "Gambar",
+    "All": "keseluruhan",
+    "InProgress": "Prosiding",
+    "Session": "Sesi"
   },
   "credential": {
     "Permission": "Kebenaran",
@@ -933,7 +939,8 @@
     "RegistrySuccessfullyModified": "Pendaftaran berjaya diubah suai.",
     "NoRegistryToDisplay": "Tiada Pendaftaran untuk dipaparkan",
     "ModifyRegistry": "Ubah suai Pendaftaran",
-    "ConfirmNoUserName": "Pengguna dan kata laluan tidak dinyatakan, adakah anda ingin menyimpan?"
+    "ConfirmNoUserName": "Pengguna dan kata laluan tidak dinyatakan, adakah anda ingin menyimpan?",
+    "DescURLFormat": "Jenis URL tidak sah"
   },
   "resourceGroup": {
     "ResourceGroups": "Kumpulan Sumber",
@@ -1130,7 +1137,11 @@
     "SuccessfullyUpdated": "Berjaya Dikemas kini",
     "Visit": "Lawati",
     "SeeDetail": "Lihat Perincian",
-    "Initializing": "Memulakan ..."
+    "Initializing": "Memulakan ...",
+    "NoNotification": "Tiada Pemberitahuan.",
+    "Notifications": "Pemberitahuan",
+    "ClearNotifications": "Kosongkan Pemberitahuan",
+    "AreYouSureToClearAllNotifications": "Adakah anda pasti mengosongkan semua pemberitahuan?"
   },
   "information": {
     "Core": "Teras",
@@ -1442,7 +1453,11 @@
     "YouAreAboutToTerminate": "Anda akan menamatkan perkhidmatan",
     "Owner": "Pemilik",
     "ServiceDelegatedFrom": "Perkhidmatan model dicipta oleh {{ createdUser }} tetapi pemilikan sesi akan diwakilkan kepada {{ sessionOwner }}",
-    "FailedToTerminateService": "Permintaan untuk menamatkan perkhidmatan gagal."
+    "FailedToTerminateService": "Permintaan untuk menamatkan perkhidmatan gagal.",
+    "FailedToUpdateService": "Gagal mengemas kini perkhidmatan.",
+    "ServiceCreated": "Perkhidmatan model {{ name }} telah berjaya dibuat.",
+    "ServiceUpdated": "Perkhidmatan model {{ name }} telah berjaya dikemas kini.",
+    "ServiceTerminated": "Perkhidmatan model {{ name }} telah berjaya ditamatkan."
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",
@@ -1453,7 +1468,9 @@
     "TurnOffTotp": "Matikan pengesahan dua faktor",
     "ConfirmTotpRemovalBody": "Adakah anda pasti untuk menarik diri daripada menggunakan pengesahan dua faktor?",
     "RemoveTotpSetupCompleted": "Dilumpuhkan 2FA",
-    "OTP": "Kata laluan sekali sahaja"
+    "OTP": "Kata laluan sekali sahaja",
+    "EnterConfirmationCode": "Sekarang masukkan OTP yang dijana oleh pengesah untuk mengesahkan.",
+    "RequireOTP": "Tulis OTP."
   },
   "OpenVSCodeRemote": "Buka Kod Visual Studio tempatan",
   "inputLimit": {

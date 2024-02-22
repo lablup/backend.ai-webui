@@ -30,7 +30,6 @@ import { Select } from '@material/mwc-select';
 import '@material/mwc-slider';
 import { Switch } from '@material/mwc-switch';
 import { TextField } from '@material/mwc-textfield/mwc-textfield';
-import '@vaadin/date-time-picker/vaadin-date-time-picker';
 import '@vaadin/grid/vaadin-grid';
 import '@vaadin/grid/vaadin-grid-filter-column';
 import '@vaadin/grid/vaadin-grid-selection-column';
@@ -44,7 +43,6 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type VaadinTextField = HTMLElementTagNameMap['vaadin-text-field'];
-type VaadinDateTimePicker = HTMLElementTagNameMap['vaadin-date-time-picker'];
 type LablupSlider = HTMLElementTagNameMap['lablup-slider'];
 type LablupCodemirror = HTMLElementTagNameMap['lablup-codemirror'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
@@ -218,7 +216,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.folderMapRenderer.bind(this);
   @property({ type: Object }) _boundPathRenderer =
     this.infoHeaderRenderer.bind(this);
-  @property({ type: Boolean }) useScheduledTime = false;
+  @property({ type: String }) scheduledTime = '';
   @property({ type: Object }) schedulerTimer;
   @property({ type: Object }) sessionInfoObj = {
     environment: '',
@@ -241,7 +239,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#owner-accesskey') ownerAccesskeySelect!: Select;
   @query('#owner-email') ownerEmailInput!: TextField;
   @query('#vfolder-mount-preview') vfolderMountPreview!: LablupExpansion;
-  @query('#use-scheduled-time') useScheduledTimeSwitch!: Switch;
   @query('#launch-button') launchButton!: Button;
   @query('#prev-button') prevButton!: IconButton;
   @query('#next-button') nextButton!: IconButton;
@@ -253,7 +250,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#session-resource') sessionResouceSlider!: LablupSlider;
   @query('#cluster-size') clusterSizeSlider!: LablupSlider;
   @query('#launch-button-msg') launchButtonMessage!: HTMLSpanElement;
-  @query('vaadin-date-time-picker') dateTimePicker!: VaadinDateTimePicker;
   @query('#new-session-dialog') newSessionDialog!: BackendAIDialog;
   @query('#modify-env-dialog') modifyEnvDialog!: BackendAIDialog;
   @query('#modify-env-container') modifyEnvContainer!: HTMLDivElement;
@@ -266,6 +262,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
   @query('#command-editor') commandEditor!: LablupCodemirror;
   @query('#session-name') sessionName!: TextField;
+  @query('backend-ai-react-batch-session-scheduled-time-setting')
+  batchSessionDatePicker!: HTMLElement;
 
   constructor() {
     super();
@@ -1480,7 +1478,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       /* To reflect current resource policy */
       await this._refreshResourcePolicy();
       this.requestUpdate();
-      this._toggleScheduleTime(!this.useScheduledTime);
       this.newSessionDialog.show();
     }
   }
@@ -1721,22 +1718,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.sessionType === 'batch') {
       config['startupCommand'] = this.commandEditor.getValue();
 
-      const scheduledTime = this.dateTimePicker.value;
-      const useScheduledTime = this.useScheduledTimeSwitch.selected;
-      if (scheduledTime && useScheduledTime) {
-        // modify client timezone offset
-        const getClientTimezoneOffset = () => {
-          let offset = new Date().getTimezoneOffset();
-          const sign = offset < 0 ? '+' : '-';
-          offset = Math.abs(offset);
-          return (
-            sign +
-            ((offset / 60) | 0).toString().padStart(2, '0') +
-            ':' +
-            (offset % 60).toString().padStart(2, '0')
-          );
-        };
-        config['startsAt'] = scheduledTime + getClientTimezoneOffset();
+      if (this.scheduledTime) {
+        config['startsAt'] = this.scheduledTime;
       }
     }
     if (this.environ_values && Object.keys(this.environ_values).length !== 0) {
@@ -1790,7 +1773,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
     const createSessionQueue = sessions.map((item) => {
       return this.tasker.add(
-        'Creating ' + item.sessionName,
+        _text('general.Session') + ': ' + item.sessionName,
         this._createKernel(
           item.kernelName,
           item.sessionName,
@@ -1799,6 +1782,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         ),
         '',
         'session',
+        '',
+        _text('eduapi.CreatingComputeSession'),
+        _text('eduapi.ComputeSessionPrepared'),
+        true,
       );
     });
     Promise.all(createSessionQueue)
@@ -1820,7 +1807,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         document.dispatchEvent(event);
         // only open appLauncher when session type is 'interactive' or 'inference'.
         if (res.length === 1 && this.sessionType !== 'batch') {
-          res[0].taskobj
+          res[0]?.taskobj
             .then((res) => {
               let appOptions;
               if ('kernelId' in res) {
@@ -2057,8 +2044,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   async _updateVirtualFolderList() {
+    // Set to a list of vfolders that can only be mounted if the status is 'ready'
     return this.resourceBroker.updateVirtualFolderList().then(() => {
-      this.vfolders = this.resourceBroker.vfolders;
+      this.vfolders = this.resourceBroker.vfolders.filter(
+        (vf) => vf.status === 'ready',
+      );
     });
   }
 
@@ -4216,9 +4206,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.sessionType === 'batch'
           ? this.commandEditor._validateInput()
           : true;
+      const isBatchScheduledTimeValid =
+        this.sessionType === 'batch' && this.scheduledTime
+          ? new Date(this.scheduledTime).getTime() > new Date().getTime()
+          : true;
       const isSessionNameValid = this.sessionName.checkValidity();
 
-      if (!isBatchModeValid || !isSessionNameValid) {
+      if (
+        !isBatchModeValid ||
+        !isBatchScheduledTimeValid ||
+        !isSessionNameValid
+      ) {
         return false;
       }
     }
@@ -4367,114 +4365,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
   }
 
-  /**
-   * Toggle scheduling time UI when session type is in batch
-   *
-   */
-  _toggleScheduleTimeDisplay() {
-    this.useScheduledTime = this.useScheduledTimeSwitch.selected;
-    this.dateTimePicker.style.display = this.useScheduledTime
-      ? 'block'
-      : 'none';
-    this._toggleScheduleTime(!this.useScheduledTime);
-  }
-
-  /**
-   * Toggle scheduling time interval according to `isActive` parameter
-   *
-   * @param {Boolean} isActive
-   */
-
-  _toggleScheduleTime(isActive = false) {
-    if (isActive) {
-      clearInterval(this.schedulerTimer);
-    } else {
-      this.schedulerTimer = setInterval(() => {
-        // interval every 1 sec.
-        this._getSchedulableTime();
-      }, 1000);
-    }
-  }
-
-  /**
-   * Returns schedulable time according to current time (default: 2min after current time)
-   *
-   * @return {string}
-   */
-  _getSchedulableTime() {
-    const getFormattedTime = (date) => {
-      // YYYY-MM-DD`T`hh:mm:ss
-      return (
-        date.getFullYear() +
-        '-' +
-        (date.getMonth() + 1) +
-        '-' +
-        date.getDate() +
-        'T' +
-        date.getHours() +
-        ':' +
-        date.getMinutes() +
-        ':' +
-        date.getSeconds()
-      );
-    };
-    let currentTime = new Date();
-    const extraMinutes = 60 * 2 * 1000;
-    // add 2min
-    let futureTime = new Date(currentTime.getTime() + extraMinutes);
-    // disable scheduling in past
-    this.dateTimePicker.min = getFormattedTime(currentTime);
-    // schedulerEl.value = getFormattedTime(futureTime);
-
-    if (this.dateTimePicker.value && this.dateTimePicker.value !== '') {
-      const scheduledTime = new Date(this.dateTimePicker.value).getTime();
-      currentTime = new Date();
-      if (scheduledTime <= currentTime.getTime()) {
-        futureTime = new Date(currentTime.getTime() + extraMinutes);
-        this.dateTimePicker.value = getFormattedTime(futureTime);
-      }
-    } else {
-      this.dateTimePicker.value = getFormattedTime(futureTime);
-    }
-    this._setRelativeTimeStamp();
-  }
-
-  _setRelativeTimeStamp() {
-    // in miliseconds
-    const units = {
-      year: 24 * 60 * 60 * 1000 * 365,
-      month: (24 * 60 * 60 * 1000 * 365) / 12,
-      day: 24 * 60 * 60 * 1000,
-      hour: 60 * 60 * 1000,
-      minute: 60 * 1000,
-      second: 1000,
-    };
-    const i18n = globalThis.backendaioptions.get('current_language') ?? 'en';
-    const rtf = new Intl.RelativeTimeFormat(i18n, { numeric: 'auto' });
-
-    const getRelativeTime = (d1: number, d2 = +new Date()) => {
-      const elapsed = d1 - d2;
-      for (const u in units) {
-        // "Math.abs" accounts for both "past" & "future" scenarios
-        if (Math.abs(elapsed) > units[u] || u == 'second') {
-          // type casting
-          const formatString: Intl.RelativeTimeFormatUnit = <
-            Intl.RelativeTimeFormatUnit
-          >u;
-          return rtf.format(Math.round(elapsed / units[u]), formatString);
-        }
-      }
-      return _text('session.launcher.InfiniteTime');
-    };
-    if (this.dateTimePicker?.invalid) {
-      this.dateTimePicker.helperText = _text('session.launcher.ResetStartTime');
-    } else {
-      this.dateTimePicker.helperText =
-        _text('session.launcher.SessionStartTime') +
-        getRelativeTime(+new Date(this.dateTimePicker.value));
-    }
-  }
-
   _updateisExceedMaxCountForPreopenPorts() {
     const currentRowCount =
       this.modifyPreOpenPortContainer?.querySelectorAll('mwc-textfield')
@@ -4503,7 +4393,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         fixed
         backdrop
         persistent
-        @dialog-closed="${() => this._toggleScheduleTime(true)}"
+        style="position:relative;"
       >
         <span slot="title">
           ${this.newSessionDialogTitle
@@ -4712,7 +4602,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <div
               class="vertical layout center flex"
               id="batch-mode-config-section"
-              style="display:none;"
+              style="display:none;gap:3px;"
             >
               <span class="launcher-item-title" style="width:386px;">
                 ${_t('session.launcher.BatchModeConfig')}
@@ -4728,26 +4618,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 required
                 validationMessage="${_t('dialog.warning.Required')}"
               ></lablup-codemirror>
-              <div
-                class="horizontal center layout justified"
-                style="margin: 10px auto;"
-              >
-                <div style="width:330px;font-size:12px;">
-                  ${_t('session.launcher.ScheduleTime')}
-                </div>
-                <mwc-switch
-                  id="use-scheduled-time"
-                  @click="${() => this._toggleScheduleTimeDisplay()}"
-                ></mwc-switch>
-              </div>
-              <vaadin-date-time-picker
-                step="1"
-                date-placeholder="DD/MM/YYYY"
-                time-placeholder="hh:mm:ss"
-                ?required="${this.useScheduledTime}"
-                @change="${this._getSchedulableTime}"
-                style="display:none;"
-              ></vaadin-date-time-picker>
+              <backend-ai-react-batch-session-scheduled-time-setting
+                @change=${({ detail: value }) => {
+                  this.scheduledTime = value;
+                }}
+                style="align-self:start;margin-left:15px;margin-bottom:10px;"
+              ></backend-ai-react-batch-session-scheduled-time-setting>
             </div>
             <lablup-expansion
               leftIconName="expand_more"

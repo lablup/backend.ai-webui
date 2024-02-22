@@ -1,13 +1,13 @@
-import BAIErrorBoundary from './components/BAIErrorBoundary';
+import App from './App';
 import Flex from './components/Flex';
 import FlexActivityIndicator from './components/FlexActivityIndicator';
 import ResourceGroupSelect from './components/ResourceGroupSelect';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
 import ModelStoreListPage from './pages/ModelStoreListPage';
-import { Form } from 'antd';
-import { t } from 'i18next';
 import React, { Suspense } from 'react';
+import ReactDOM from 'react-dom/client';
+import { useTranslation } from 'react-i18next';
 import { Route, Routes } from 'react-router-dom';
 
 // Load custom theme config once in react/index.tsx
@@ -16,15 +16,9 @@ loadCustomThemeConfig();
 const DefaultProviders = React.lazy(
   () => import('./components/DefaultProviders'),
 );
-const Information = React.lazy(() => import('./components/Information'));
 const SessionList = React.lazy(() => import('./pages/SessionListPage'));
-const ServingList = React.lazy(() => import('./pages/ServingListPage'));
-const RoutingList = React.lazy(() => import('./pages/RoutingListPage'));
 const ResetPasswordRequired = React.lazy(
   () => import('./components/ResetPasswordRequired'),
-);
-const StorageHostSettingPage = React.lazy(
-  () => import('./pages/StorageHostSettingPage'),
 );
 const StorageStatusPanel = React.lazy(
   () => import('./components/StorageStatusPanel'),
@@ -47,9 +41,6 @@ const ManageAppsModal = React.lazy(
 const UserDropdownMenu = React.lazy(
   () => import('./components/UserDropdownMenu'),
 );
-const UserProfileSettingModal = React.lazy(
-  () => import('./components/UserProfileSettingModal'),
-);
 const SessionLauncherPage = React.lazy(
   () => import('./pages/SessionLauncherPage'),
 );
@@ -60,22 +51,11 @@ const KeypairInfoModal = React.lazy(
   () => import('./components/KeypairInfoModal'),
 );
 const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
-const AnnouncementAlert = React.lazy(
-  () => import('./components/AnnouncementAlert'),
-);
+
 const ErrorLogList = React.lazy(() => import('./components/ErrorLogList'));
 
-customElements.define(
-  'backend-ai-react-information',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <BAIErrorBoundary>
-          <Information />
-        </BAIErrorBoundary>
-      </DefaultProviders>
-    );
-  }),
+const BatchSessionScheduledTimeSetting = React.lazy(
+  () => import('./components/BatchSessionScheduledTimeSetting'),
 );
 
 customElements.define(
@@ -93,44 +73,12 @@ customElements.define(
 );
 
 customElements.define(
-  'backend-ai-react-serving-list',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <BAIErrorBoundary>
-          <Routes>
-            <Route path="/serving" element={<ServingList />} />
-            <Route path="/serving/:serviceId" element={<RoutingList />} />
-          </Routes>
-        </BAIErrorBoundary>
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
   'backend-ai-react-reset-password-required-modal',
   reactToWebComponent((props) => (
     <DefaultProviders {...props}>
       <ResetPasswordRequired />
     </DefaultProviders>
   )),
-);
-
-customElements.define(
-  'backend-ai-react-storage-host-settings',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <BAIErrorBoundary>
-          <StorageHostSettingPage
-            key={props.value}
-            storageHostId={props.value || ''}
-          />
-        </BAIErrorBoundary>
-      </DefaultProviders>
-    );
-  }),
 );
 
 customElements.define(
@@ -162,7 +110,7 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <UserInfoModal />
+        <UserInfoModal draggable />
       </DefaultProviders>
     );
   }),
@@ -173,7 +121,7 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <UserSettingsModal />
+        <UserSettingsModal draggable />
       </DefaultProviders>
     );
   }),
@@ -201,26 +149,10 @@ customElements.define(
   }),
 );
 customElements.define(
-  'backend-ai-react-user-profile-setting-dialog',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <UserProfileSettingModal
-          open={props.value === 'true'}
-          onRequestClose={() => {
-            props.dispatchEvent('close', null);
-          }}
-        />
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
   'backend-ai-react-resource-group-select',
   reactToWebComponent((props) => {
     const [value, setValue] = React.useState(props.value || '');
-
+    const { t } = useTranslation();
     React.useEffect(() => {
       if (props.value !== value) {
         setValue(props.value || '');
@@ -230,23 +162,24 @@ customElements.define(
 
     return (
       <DefaultProviders {...props}>
-        <Flex direction="column" align="stretch" style={{ minWidth: 200 }}>
-          <Form layout="vertical">
-            <Form.Item
-              label={t('session.launcher.ResourceGroup')}
-              style={{ margin: 0 }}
-            >
-              <ResourceGroupSelect
-                size="large"
-                value={value}
-                loading={value !== props.value || value === ''}
-                onChange={(value) => {
-                  setValue(value);
-                  props.dispatchEvent('change', value);
-                }}
-              />
-            </Form.Item>
-          </Form>
+        <Flex
+          direction="column"
+          gap="sm"
+          align="stretch"
+          style={{ minWidth: 200, maxWidth: 310 }}
+        >
+          {t('session.launcher.ResourceGroup')}
+          <ResourceGroupSelect
+            size="large"
+            showSearch
+            value={value}
+            loading={value !== props.value || value === ''}
+            onChange={(value) => {
+              setValue(value);
+              props.dispatchEvent('change', value);
+            }}
+            popupMatchSelectWidth={false}
+          />
         </Flex>
       </DefaultProviders>
     );
@@ -311,15 +244,13 @@ customElements.define(
   }),
 );
 
-customElements.define(
-  'backend-ai-react-announcement-alert',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <AnnouncementAlert />
-      </DefaultProviders>
-    );
-  }),
+const root = ReactDOM.createRoot(
+  document.getElementById('react-root') as HTMLElement,
+);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
 );
 
 customElements.define(
@@ -328,6 +259,21 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <ErrorLogList />
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-batch-session-scheduled-time-setting',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <BatchSessionScheduledTimeSetting
+          onChange={(value) => {
+            props.dispatchEvent('change', value);
+          }}
+        />
       </DefaultProviders>
     );
   }),

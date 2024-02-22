@@ -4,8 +4,8 @@ import EndpointStatusTag from '../components/EndpointStatusTag';
 import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
 import Flex from '../components/Flex';
 import ImageMetaIcon from '../components/ImageMetaIcon';
-import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
 import ResourceNumber, { ResourceTypeKey } from '../components/ResourceNumber';
+import ServiceLauncherModal from '../components/ServiceLauncherModal';
 import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
@@ -89,7 +89,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
   const [isPendingClearError, startClearErrorTransition] = useTransition();
   const [selectedSessionErrorForModal, setSelectedSessionErrorForModal] =
     useState<ServingRouteErrorModalFragment$key | null>(null);
-  const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] =
+  const [isOpenServiceLauncherModal, setIsOpenServiceLauncherModal] =
     useState(false);
   const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
     useState(false);
@@ -111,6 +111,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         ) {
           endpoint(endpoint_id: $endpointId) {
             name
+            status
             endpoint_id
             image
             desired_session_count
@@ -133,9 +134,9 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               endpoint
               status
             }
+            ...ServiceLauncherModalFragment
             ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
-            ...ModelServiceSettingModal_endpoint
           }
           endpoint_token_list(
             offset: $tokenListOffset
@@ -205,12 +206,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
 
   const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
   return (
-    <Flex
-      direction="column"
-      align="stretch"
-      style={{ margin: token.marginSM }}
-      gap="sm"
-    >
+    <Flex direction="column" align="stretch" gap="sm">
       <Breadcrumb
         items={[
           {
@@ -270,9 +266,12 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           <Button
             type="primary"
             icon={<SettingOutlined />}
-            disabled={(endpoint?.desired_session_count || 0) < 0}
+            disabled={
+              (endpoint?.desired_session_count || 0) < 0 ||
+              endpoint?.status === 'DESTROYING'
+            }
             onClick={() => {
-              setIsOpenModelServiceSettingModal(true);
+              setIsOpenServiceLauncherModal(true);
             }}
           >
             {t('button.Edit')}
@@ -385,6 +384,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           <Button
             type="primary"
             icon={<PlusOutlined />}
+            disabled={endpoint?.status === 'DESTROYING'}
             onClick={() => {
               setIsOpenTokenGenerationModal(true);
             }}
@@ -517,22 +517,25 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         inferenceSessionErrorFrgmt={selectedSessionErrorForModal}
         onRequestClose={() => setSelectedSessionErrorForModal(null)}
       />
-      <ModelServiceSettingModal
-        open={isOpenModelServiceSettingModal}
+      <ServiceLauncherModal
+        endpointFrgmt={endpoint}
+        open={isOpenServiceLauncherModal}
+        onCancel={() => {
+          setIsOpenServiceLauncherModal(!isOpenServiceLauncherModal);
+        }}
         onRequestClose={(success) => {
-          setIsOpenModelServiceSettingModal(false);
+          setIsOpenServiceLauncherModal(!isOpenServiceLauncherModal);
           if (success) {
             startRefetchTransition(() => {
               updateFetchKey();
             });
           }
         }}
-        endpointFrgmt={endpoint}
-      />
+      ></ServiceLauncherModal>
       <EndpointTokenGenerationModal
         open={isOpenTokenGenerationModal}
         onRequestClose={(success) => {
-          setIsOpenTokenGenerationModal(false);
+          setIsOpenTokenGenerationModal(!isOpenTokenGenerationModal);
           if (success) {
             startRefetchTransition(() => {
               updateFetchKey();

@@ -6,7 +6,7 @@ import {
 } from '../hooks';
 import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
-import StorageSelector, { VolumeInfo } from './StorageSelector';
+import StorageSelect, { VolumeInfo } from './StorageSelect';
 import UsageProgress from './UsageProgress';
 import { StorageStatusPanelKeypairQuery } from './__generated__/StorageStatusPanelKeypairQuery.graphql';
 import { StorageStatusPanelQuery } from './__generated__/StorageStatusPanelQuery.graphql';
@@ -172,11 +172,7 @@ const StorageStatusPanel: React.FC<{
   ) as number;
 
   return (
-    <Card
-      size="small"
-      title={t('data.StorageStatus')}
-      style={{ margin: '3px 14px' }}
-    >
+    <Card size="small" title={t('data.StorageStatus')}>
       <Descriptions bordered column={columnSetting} size="small">
         <Descriptions.Item label={t('data.NumberOfFolders')}>
           <Progress
@@ -230,12 +226,13 @@ const StorageStatusPanel: React.FC<{
             style={{ minWidth: '25vw' }}
           >
             <Typography.Text type="secondary">{t('data.Host')}</Typography.Text>
-            <StorageSelector
-              onChange={(value, info) => {
-                setSelectedVolumeInfo(info);
-              }}
-              value={selectedVolumeInfo}
-              autoSelectDefault
+            <StorageSelect
+              value={selectedVolumeInfo?.id}
+              onChange={setSelectedVolumeInfo}
+              autoSelectType="usage"
+              showUsageStatus
+              showSearch
+              allowClear
             />
           </Flex>
           {selectedVolumeInfo !== deferredSelectedVolumeInfo ? (
@@ -291,11 +288,7 @@ const StorageStatusPanel: React.FC<{
 export const StorageStatusPanelFallback = () => {
   const { t } = useTranslation();
   return (
-    <Card
-      size="small"
-      title={t('data.StorageStatus')}
-      style={{ margin: '3px 14px' }}
-    >
+    <Card size="small" title={t('data.StorageStatus')}>
       <Skeleton active />
     </Card>
   );

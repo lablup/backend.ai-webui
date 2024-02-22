@@ -256,7 +256,10 @@
       "EnvironmentVariableDuplicateName": "Zaten var olan bir değişken adı.",
       "Template": "Oturum Şablonu",
       "EnableAutomaticShmem": "Otomatik paylaşılan bellek",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Küme boyutu 2'den az olmadığında yalnızca tam sayılara izin verilir.",
+      "StartAfter": "Şundan sonra başla:",
+      "StartTimeDoesNotApply": "Başlangıç ​​zamanı ayarlanmamışsa geçerli değildir."
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -451,7 +454,10 @@
     "Enabled": "Etkin",
     "StorageProxies": "Depolar",
     "None": "Hiçbiri",
-    "Image": "Resim"
+    "Image": "Resim",
+    "All": "Tümü",
+    "InProgress": "Devam Ediyor",
+    "Session": "Oturum"
   },
   "credential": {
     "Permission": "izin",
@@ -933,7 +939,8 @@
     "RegistrySuccessfullyModified": "Kayıt defteri başarıyla değiştirildi.",
     "NoRegistryToDisplay": "Görüntülenecek Kayıt Yok",
     "ModifyRegistry": "Kayıt Defterini Değiştir",
-    "ConfirmNoUserName": "Kullanıcı ve şifre belirtilmemiş, kaydetmek ister misiniz?"
+    "ConfirmNoUserName": "Kullanıcı ve şifre belirtilmemiş, kaydetmek ister misiniz?",
+    "DescURLFormat": "Geçersiz URL Türü"
   },
   "resourceGroup": {
     "ResourceGroups": "Kaynak Grupları",
@@ -1130,7 +1137,11 @@
     "SuccessfullyUpdated": "Başarıyla güncellendi",
     "Visit": "Ziyaret etmek",
     "SeeDetail": "Ayrıntıları gör",
-    "Initializing": "Başlatılıyor..."
+    "Initializing": "Başlatılıyor...",
+    "NoNotification": "Bildirim yok.",
+    "Notifications": "Bildirimler",
+    "ClearNotifications": "Bildirimleri Temizle",
+    "AreYouSureToClearAllNotifications": "Tüm bildirimleri temizlediğinizden emin misiniz?"
   },
   "information": {
     "Core": "çekirdek",
@@ -1402,7 +1413,11 @@
     "YouAreAboutToTerminate": "Sonlandırmak üzeresiniz",
     "Owner": "Mal sahibi",
     "ServiceDelegatedFrom": "Model hizmeti {{ createdUser }} tarafından oluşturulur ancak oturum sahipliği {{ sessionOwner }}'a devredilir.",
-    "FailedToTerminateService": "Hizmeti sonlandırma isteği başarısız oldu."
+    "FailedToTerminateService": "Hizmeti sonlandırma isteği başarısız oldu.",
+    "FailedToUpdateService": "Hizmet güncellenemedi.",
+    "ServiceCreated": "Model hizmeti {{ name }} başarıyla oluşturuldu.",
+    "ServiceUpdated": "Model hizmeti {{ name }} başarıyla güncellendi.",
+    "ServiceTerminated": "{{ name }} model hizmeti başarıyla sonlandırıldı."
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",
@@ -1453,7 +1468,9 @@
     "TurnOffTotp": "İki faktörlü kimlik doğrulamayı kapatın",
     "ConfirmTotpRemovalBody": "İki faktörlü kimlik doğrulamayı kullanmaktan vazgeçtiğinizden emin misiniz?",
     "RemoveTotpSetupCompleted": "Devre Dışı 2FA",
-    "OTP": "Tek kullanımlık şifre"
+    "OTP": "Tek kullanımlık şifre",
+    "EnterConfirmationCode": "Şimdi doğrulamak için kimlik doğrulayıcı tarafından oluşturulan OTP'yi girin.",
+    "RequireOTP": "OTP'yi yazın."
   },
   "OpenVSCodeRemote": "Yerel Visual Studio Kodunu açın",
   "inputLimit": {

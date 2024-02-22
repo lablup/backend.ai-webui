@@ -2,10 +2,18 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import { ContainerRegistryEditorModalCreateMutation } from './__generated__/ContainerRegistryEditorModalCreateMutation.graphql';
 import { ContainerRegistryEditorModalFragment$key } from './__generated__/ContainerRegistryEditorModalFragment.graphql';
 import { ContainerRegistryEditorModalModifyMutation } from './__generated__/ContainerRegistryEditorModalModifyMutation.graphql';
-import { message, Form, Input, Select, Modal, Checkbox } from 'antd';
+import {
+  message,
+  Form,
+  Input,
+  Select,
+  Modal,
+  Checkbox,
+  FormInstance,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
 
@@ -24,7 +32,7 @@ const ContainerRegistryEditorModal: React.FC<
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const [form] = Form.useForm();
+  const formRef = useRef<FormInstance>(null);
 
   const [messageAPI, contextHolder] = message.useMessage();
   const [modal, modalContextHolder] = Modal.useModal();
@@ -92,8 +100,8 @@ const ContainerRegistryEditorModal: React.FC<
     `);
 
   const handleSave = async () => {
-    return form
-      .validateFields()
+    return formRef.current
+      ?.validateFields()
       .then((values) => {
         const mutationVariables = {
           hostname: values.hostname,
@@ -159,8 +167,8 @@ const ContainerRegistryEditorModal: React.FC<
       okText={containerRegistry ? t('button.Save') : t('button.Add')}
       confirmLoading={isInflightCreateRegistry || isInflightModifyRegistry}
       onOk={() => {
-        form
-          .validateFields()
+        formRef.current
+          ?.validateFields()
           .then((values) => {
             if (
               _.includes(values.config?.type, 'harbor') &&
@@ -189,7 +197,7 @@ const ContainerRegistryEditorModal: React.FC<
       {contextHolder}
       {modalContextHolder}
       <Form
-        form={form}
+        ref={formRef}
         layout="vertical"
         requiredMark="optional"
         initialValues={
@@ -246,16 +254,18 @@ const ContainerRegistryEditorModal: React.FC<
               required: true,
             },
             {
-              type: 'url',
-            },
-            {
               validator: (_, value) => {
-                if (
-                  value &&
-                  !value.startsWith('http://') &&
-                  !value.startsWith('https://')
-                ) {
-                  return Promise.reject(t('registry.DescURLStartString'));
+                if (value) {
+                  if (
+                    !value.startsWith('http://') &&
+                    !value.startsWith('https://')
+                  )
+                    return Promise.reject(t('registry.DescURLStartString'));
+                  try {
+                    new URL(value);
+                  } catch (e) {
+                    return Promise.reject(t('registry.DescURLFormat'));
+                  }
                 }
                 return Promise.resolve();
               },
@@ -272,17 +282,15 @@ const ContainerRegistryEditorModal: React.FC<
             _.isEmpty(next.config?.password)
           }
         >
-          {() => {
-            form.validateFields([['config', 'username']]);
+          {({ validateFields, getFieldValue }) => {
+            validateFields([['config', 'username']]);
             return (
               <Form.Item
                 name={['config', 'username']}
                 label={t('registry.Username')}
                 rules={[
                   {
-                    required: !_.isEmpty(
-                      form.getFieldValue(['config', 'password']),
-                    ),
+                    required: !_.isEmpty(getFieldValue(['config', 'password'])),
                   },
                 ]}
               >
@@ -299,12 +307,12 @@ const ContainerRegistryEditorModal: React.FC<
               prev.isChangedPassword !== next.isChangedPassword
             }
           >
-            {() => (
+            {({ getFieldValue }) => (
               <Form.Item noStyle name={['config', 'password']}>
                 <Input.Password
                   disabled={
                     !_.isEmpty(containerRegistry) &&
-                    !form.getFieldValue('isChangedPassword')
+                    !getFieldValue('isChangedPassword')
                   }
                 />
               </Form.Item>
@@ -315,7 +323,7 @@ const ContainerRegistryEditorModal: React.FC<
               <Checkbox
                 onChange={(e) => {
                   if (!e.target.checked) {
-                    form.setFieldValue(['config', 'password'], '');
+                    formRef.current?.setFieldValue(['config', 'password'], '');
                   }
                 }}
               >
@@ -358,9 +366,9 @@ const ContainerRegistryEditorModal: React.FC<
           }
           noStyle
         >
-          {() => {
+          {({ getFieldValue }) => {
             return (
-              form.getFieldValue(['config', 'type']) !== 'docker' && (
+              getFieldValue(['config', 'type']) !== 'docker' && (
                 <Form.Item
                   name={['config', 'project']}
                   label={t('registry.ProjectName')}

@@ -23,7 +23,6 @@ jobs:
         node-version-file: '.nvmrc'
     - name: Install dependencies
       run: npm install
-    - run: npm run relay
     - name: Run ESLint on React
       run: npx eslint ./src --ignore-pattern '*.test.*' --max-warnings=0
     - name: run relay-compiler

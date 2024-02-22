@@ -256,7 +256,10 @@
       "EnvironmentVariableDuplicateName": "Nama variabel yang sudah ada.",
       "Template": "Templat Sesi",
       "EnableAutomaticShmem": "Memori bersama otomatis",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Hanya bilangan bulat yang diperbolehkan jika ukuran cluster tidak kurang dari 2.",
+      "StartAfter": "Mulai setelah:",
+      "StartTimeDoesNotApply": "Jika waktu mulai tidak ditetapkan, maka tidak berlaku."
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -451,7 +454,10 @@
     "Enabled": "Diaktifkan",
     "StorageProxies": "Penyimpanan",
     "None": "Tidak ada",
-    "Image": "Gambar"
+    "Image": "Gambar",
+    "All": "Semua",
+    "InProgress": "Sedang Berlangsung",
+    "Session": "Sesi"
   },
   "credential": {
     "Permission": "Izin",
@@ -933,7 +939,8 @@
     "RegistrySuccessfullyModified": "Registry berhasil dimodifikasi.",
     "ModifyRegistry": "Memodifikasi Registri",
     "NoRegistryToDisplay": "Tidak ada Pendaftaran untuk ditampilkan",
-    "ConfirmNoUserName": "Pengguna dan kata sandi tidak ditentukan, apakah Anda ingin menyimpan?"
+    "ConfirmNoUserName": "Pengguna dan kata sandi tidak ditentukan, apakah Anda ingin menyimpan?",
+    "DescURLFormat": "Jenis URL tidak valid"
   },
   "resourceGroup": {
     "ResourceGroups": "Grup Sumber Daya",
@@ -1130,7 +1137,11 @@
     "SuccessfullyUpdated": "Berhasil Diperbarui",
     "Visit": "Kunjungi",
     "SeeDetail": "Lihat Detail",
-    "Initializing": "Inisialisasi..."
+    "Initializing": "Inisialisasi...",
+    "NoNotification": "Tidak Ada Pemberitahuan.",
+    "Notifications": "Pemberitahuan",
+    "ClearNotifications": "Hapus Notifikasi",
+    "AreYouSureToClearAllNotifications": "Apakah Anda yakin untuk menghapus semua notifikasi?"
   },
   "information": {
     "Core": "Core",
@@ -1364,7 +1375,9 @@
     "ConfirmTotpRemovalBody": "Apakah Anda yakin untuk tidak menggunakan autentikasi dua faktor?",
     "TotpSetupNotAvailable": "Autentikasi dua faktor tidak dapat diatur.",
     "TurnOffTotp": "Menonaktifkan autentikasi dua faktor",
-    "RemoveTotpSetupCompleted": "Menonaktifkan 2FA"
+    "RemoveTotpSetupCompleted": "Menonaktifkan 2FA",
+    "EnterConfirmationCode": "Sekarang masukkan OTP yang dihasilkan oleh autentikator untuk memverifikasi.",
+    "RequireOTP": "Tulis OTP."
   },
   "inputLimit": {
     "4to64chars": "(4 ~ 64 karakter)"
@@ -1451,7 +1464,11 @@
     "Image": "Gambar",
     "Owner": "Pemilik",
     "ServiceDelegatedFrom": "Layanan model dibuat oleh {{ createdUser }} namun kepemilikan sesi akan didelegasikan ke {{ sessionOwner }}",
-    "FailedToTerminateService": "Permintaan untuk menghentikan layanan gagal."
+    "FailedToTerminateService": "Permintaan untuk menghentikan layanan gagal.",
+    "FailedToUpdateService": "Gagal memperbarui layanan.",
+    "ServiceCreated": "Layanan model {{ name }} telah berhasil dibuat.",
+    "ServiceUpdated": "Layanan model {{ name }} telah berhasil diperbarui.",
+    "ServiceTerminated": "Layanan model {{ name }} telah berhasil dihentikan."
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

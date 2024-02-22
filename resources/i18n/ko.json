@@ -256,7 +256,10 @@
       "EnvironmentVariableNamePatternError": "변수 이름은 문자 또는 밑줄로 시작해야 하며 문자, 숫자, 밑줄만 포함할 수 있습니다.",
       "EnvironmentVariableDuplicateName": "이미 존재하는 변수명입니다.",
       "EnableAutomaticShmem": "자동 공유메모리 설정",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "클러스터 크기가 2 이상인 경우 정수만 허용됩니다.",
+      "StartAfter": "다음 이후에 시작:",
+      "StartTimeDoesNotApply": "시작 시간을 설정하지 않으면 적용되지 않습니다."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -424,7 +427,11 @@
     "Image": "이미지",
     "Owner": "소유자",
     "ServiceDelegatedFrom": "모델 서비스는 {{ createdUser }}에 의해 생성되지만 세션 소유권은 {{ sessionOwner }}에 위임됩니다.",
-    "FailedToTerminateService": "서비스 삭제 요청이 실패하였습니다."
+    "FailedToTerminateService": "서비스 삭제 요청이 실패하였습니다.",
+    "FailedToUpdateService": "서비스를 업데이트하지 못했습니다.",
+    "ServiceCreated": "모델 서비스 {{ name }}이(가) 성공적으로 생성되었습니다.",
+    "ServiceUpdated": "모델 서비스 {{ name }}이(가) 성공적으로 업데이트되었습니다.",
+    "ServiceTerminated": "모델 서비스 {{ name }}이(가) 성공적으로 종료되었습니다."
   },
   "button": {
     "Cancel": "취소",
@@ -485,6 +492,7 @@
     "DiskPerc": "디스크 %"
   },
   "storageHost": {
+    "StorageSetting": "스토리지 설정",
     "Usage": "사용량",
     "Total": "전체",
     "Used": "사용",
@@ -535,7 +543,10 @@
     "Enabled": "활성화됨",
     "StorageProxies": "스토리지",
     "None": "없음",
-    "Image": "이미지"
+    "Image": "이미지",
+    "All": "전체",
+    "InProgress": "진행중",
+    "Session": "세션"
   },
   "credential": {
     "Permission": "권한",
@@ -1017,7 +1028,8 @@
     "NoRegistryToDisplay": "레지스트리 정보가 없습니다.",
     "RegistrySuccessfullyModified": "레지스트리가 성공적으로 수정되었습니다.",
     "PleaseSelectOption": "옵션을 선택하세요",
-    "ConfirmNoUserName": "사용자 및 비밀번호가 지정되지 않았습니다. 저장하시겠습니까?"
+    "ConfirmNoUserName": "사용자 및 비밀번호가 지정되지 않았습니다. 저장하시겠습니까?",
+    "DescURLFormat": "올바르지 않는 URL 타입입니다."
   },
   "resourceGroup": {
     "ResourceGroups": "자원 그룹",
@@ -1214,7 +1226,11 @@
     "SuccessfullyUpdated": "성공적으로 수정되었습니다.",
     "Visit": "방문",
     "SeeDetail": "상세보기",
-    "Initializing": "초기화 중..."
+    "Initializing": "초기화 중...",
+    "NoNotification": "알림이 없습니다.",
+    "Notifications": "알림",
+    "ClearNotifications": "모든 알림 삭제",
+    "AreYouSureToClearAllNotifications": "모든 알림을 삭제하시겠습니까?"
   },
   "information": {
     "Core": "핵심 구성 요소",
@@ -1451,7 +1467,9 @@
     "ConfirmTotpRemovalBody": "이중 인증을 정말 비활성화 하시겠습니까?",
     "TotpSetupNotAvailable": "이중 인증 설정이 불가합니다.",
     "RemoveTotpSetupCompleted": "이중 인증이 비활성화 되었습니다.",
-    "TurnOffTotp": "이중 인증 비활성화"
+    "TurnOffTotp": "이중 인증 비활성화",
+    "EnterConfirmationCode": "이제 확인을 위해 인증기에서 생성된 OTP를 입력하세요.",
+    "RequireOTP": "OTP값을 입력하세요."
   },
   "ErrorBoundary": {
     "title": "에러가 발생했습니다.",

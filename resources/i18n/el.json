@@ -256,7 +256,10 @@
       "EnvironmentVariableDuplicateName": "Ένα όνομα μεταβλητής που υπάρχει ήδη.",
       "Template": "Πρότυπο συνεδρίας",
       "EnableAutomaticShmem": "Αυτόματη κοινή μνήμη",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "StartAfter": "Έναρξη μετά:",
+      "StartTimeDoesNotApply": "Εάν δεν έχει οριστεί η ώρα έναρξης, δεν ισχύει.",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Μόνο ακέραιος επιτρέπεται όταν το μέγεθος του συμπλέγματος δεν είναι μικρότερο από 2."
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",
@@ -451,7 +454,10 @@
     "Enabled": "Ενεργοποιήθηκε",
     "StorageProxies": "Αποθήκες",
     "None": "Κανένα",
-    "Image": "Εικόνα"
+    "Image": "Εικόνα",
+    "All": "Όλα",
+    "InProgress": "Σε εξέλιξη",
+    "Session": "Σύνοδος"
   },
   "credential": {
     "Permission": "Αδεια",
@@ -933,7 +939,8 @@
     "RegistrySuccessfullyModified": "Το μητρώο τροποποιήθηκε επιτυχώς.",
     "NoRegistryToDisplay": "Δεν εμφανίζονται μητρώα",
     "ModifyRegistry": "Τροποποίηση μητρώου",
-    "ConfirmNoUserName": "Ο χρήστης και ο κωδικός πρόσβασης δεν έχουν καθοριστεί, θέλετε να αποθηκεύσετε;"
+    "ConfirmNoUserName": "Ο χρήστης και ο κωδικός πρόσβασης δεν έχουν καθοριστεί, θέλετε να αποθηκεύσετε;",
+    "DescURLFormat": "Μη έγκυρος τύπος URL"
   },
   "resourceGroup": {
     "ResourceGroups": "Ομάδες πόρων",
@@ -1130,7 +1137,11 @@
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
     "Visit": "Επίσκεψη",
     "SeeDetail": "Δείτε Λεπτομέρεια",
-    "Initializing": "Αρχικοποίηση ..."
+    "Initializing": "Αρχικοποίηση ...",
+    "NoNotification": "Καμία ειδοποίηση.",
+    "Notifications": "Ειδοποιήσεις",
+    "ClearNotifications": "Εκκαθάριση ειδοποιήσεων",
+    "AreYouSureToClearAllNotifications": "Είστε βέβαιοι ότι θα διαγράψετε όλες τις ειδοποιήσεις;"
   },
   "information": {
     "Core": "Πυρήνας",
@@ -1453,7 +1464,9 @@
     "TurnOffTotp": "Απενεργοποιήστε τον έλεγχο ταυτότητας δύο παραγόντων",
     "ConfirmTotpRemovalBody": "Είστε σίγουροι ότι δεν θέλετε να χρησιμοποιείτε έλεγχο ταυτότητας δύο παραγόντων;",
     "RemoveTotpSetupCompleted": "Απενεργοποιημένο 2FA",
-    "OTP": "Κωδικός πρόσβασης μίας χρήσης"
+    "OTP": "Κωδικός πρόσβασης μίας χρήσης",
+    "EnterConfirmationCode": "Τώρα εισαγάγετε το OTP που δημιουργήθηκε από τον έλεγχο ταυτότητας για επαλήθευση.",
+    "RequireOTP": "Γράψτε OTP."
   },
   "OpenVSCodeRemote": "Ανοίξτε τον τοπικό κώδικα του Visual Studio",
   "inputLimit": {
