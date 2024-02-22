@@ -1072,7 +1072,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     resource-legend-stack"
         >
           <div class="resource-legend-icon start"></div>
-          <span class="resource-legend">
+          <span
+            class="resource-legend"
+            style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;"
+          >
             ${_t('session.launcher.CurrentResourceGroup')}
             (${this.scaling_group})
           </span>

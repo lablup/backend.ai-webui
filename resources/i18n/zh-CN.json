@@ -256,7 +256,10 @@
       "EnvironmentVariableDuplicateName": "已经存在的变量名。",
       "Template": "会议模板",
       "EnableAutomaticShmem": "自动共享内存",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "当簇大小不小于 2 时，只允许使用整数。",
+      "StartAfter": "之后开始：",
+      "StartTimeDoesNotApply": "如果未设置开始时间，则不适用。"
     },
     "Preparing": "正在准备...",
     "PreparingSession": "正在准备会议...",
@@ -1455,7 +1458,11 @@
     "Image": "图片",
     "Owner": "所有者",
     "ServiceDelegatedFrom": "模型服务由 {{ createdUser }} 创建，但会话所有权将委托给 {{ sessionOwner }}",
-    "FailedToTerminateService": "终止服务的请求失败。"
+    "FailedToTerminateService": "终止服务的请求失败。",
+    "FailedToUpdateService": "更新服务失败。",
+    "ServiceCreated": "模型服务 {{ name }} 已成功创建。",
+    "ServiceUpdated": "模型服务 {{ name }} 已成功更新。",
+    "ServiceTerminated": "模型服务 {{ name }} 已成功终止。"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

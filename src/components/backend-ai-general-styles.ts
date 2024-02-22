@@ -1051,7 +1051,7 @@ export const BackendAiStyles = [
     }
 
     .resource-legend-icon {
-      width: 10px;
+      min-width: 10px;
       height: 10px;
       margin-top: 2px;
       margin-left: 10px;

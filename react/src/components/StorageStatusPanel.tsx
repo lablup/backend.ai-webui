@@ -6,7 +6,7 @@ import {
 } from '../hooks';
 import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
-import StorageSelector, { VolumeInfo } from './StorageSelector';
+import StorageSelect, { VolumeInfo } from './StorageSelect';
 import UsageProgress from './UsageProgress';
 import { StorageStatusPanelKeypairQuery } from './__generated__/StorageStatusPanelKeypairQuery.graphql';
 import { StorageStatusPanelQuery } from './__generated__/StorageStatusPanelQuery.graphql';
@@ -226,12 +226,13 @@ const StorageStatusPanel: React.FC<{
             style={{ minWidth: '25vw' }}
           >
             <Typography.Text type="secondary">{t('data.Host')}</Typography.Text>
-            <StorageSelector
-              onChange={(value, info) => {
-                setSelectedVolumeInfo(info);
-              }}
-              value={selectedVolumeInfo}
-              autoSelectDefault
+            <StorageSelect
+              value={selectedVolumeInfo?.id}
+              onChange={setSelectedVolumeInfo}
+              autoSelectType="usage"
+              showUsageStatus
+              showSearch
+              allowClear
             />
           </Flex>
           {selectedVolumeInfo !== deferredSelectedVolumeInfo ? (

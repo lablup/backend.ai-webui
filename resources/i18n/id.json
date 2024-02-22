@@ -256,7 +256,10 @@
       "EnvironmentVariableDuplicateName": "Nama variabel yang sudah ada.",
       "Template": "Templat Sesi",
       "EnableAutomaticShmem": "Memori bersama otomatis",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Hanya bilangan bulat yang diperbolehkan jika ukuran cluster tidak kurang dari 2.",
+      "StartAfter": "Mulai setelah:",
+      "StartTimeDoesNotApply": "Jika waktu mulai tidak ditetapkan, maka tidak berlaku."
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -1466,7 +1469,11 @@
     "Image": "Gambar",
     "Owner": "Pemilik",
     "ServiceDelegatedFrom": "Layanan model dibuat oleh {{ createdUser }} namun kepemilikan sesi akan didelegasikan ke {{ sessionOwner }}",
-    "FailedToTerminateService": "Permintaan untuk menghentikan layanan gagal."
+    "FailedToTerminateService": "Permintaan untuk menghentikan layanan gagal.",
+    "FailedToUpdateService": "Gagal memperbarui layanan.",
+    "ServiceCreated": "Layanan model {{ name }} telah berhasil dibuat.",
+    "ServiceUpdated": "Layanan model {{ name }} telah berhasil diperbarui.",
+    "ServiceTerminated": "Layanan model {{ name }} telah berhasil dihentikan."
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

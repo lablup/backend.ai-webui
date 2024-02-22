@@ -546,7 +546,7 @@ export default class BackendAISummary extends BackendAIPage {
                       </button>
                       <button
                         @click="${() => {
-                          this._moveTo('/credential');
+                          this._moveTo('/credential', '?action=manage');
                         }}"
                         class="vertical center center-justified layout start-menu-items link-button"
                         style="border-left:1px solid #ccc;"
