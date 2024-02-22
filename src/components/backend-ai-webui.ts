@@ -520,7 +520,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         const pluginLoaderQueue: object[] = [];
         for (const page of config.plugin.page.split(',')) {
           pluginLoaderQueue.push(
-            import('../plugins/' + page + '.js').then(() => {
+            import(`../plugins/${page}.js`).then(() => {
               const pageItem = document.createElement(page) as BackendAIPage;
               pageItem.classList.add('page');
               pageItem.setAttribute('name', page);
