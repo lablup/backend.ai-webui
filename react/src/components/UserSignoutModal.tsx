@@ -50,7 +50,7 @@ const UserSignoutModal: React.FC<UserSignoutModalProps> = ({
     <BAIModal
       {...baiModalProps}
       destroyOnClose={true}
-      centered
+      width={350}
       title={t('dialog.title.LetsDouble-Check')}
       onOk={handleSignoutOk}
       okText={t('button.Okay')}
