@@ -77,7 +77,12 @@ const UserList: React.FC = () => {
         $first: Int!
         $isTOTPSupported: Boolean!
       ) {
-        user_nodes(filter: $filter, offset: $offset, first: $first) {
+        user_nodes(
+          filter: $filter
+          offset: $offset
+          first: $first
+          order: "-created_at"
+        ) {
           edges {
             node {
               email
