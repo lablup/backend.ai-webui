@@ -776,7 +776,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         .minus-btn {
           --mdc-icon-size: 20px;
-          color: #27824f;
+          color: var(--general-colorPrimary, #27824f);
         }
 
         .environment-variables-container h4,
@@ -799,7 +799,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-typography-button-font-size: 0.5vw;
         }
 
-        h5 {
+        h5,
+        p,
+        span {
           color: var(--general-colorText);
         }
 

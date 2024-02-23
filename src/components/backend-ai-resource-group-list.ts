@@ -124,8 +124,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           margin: 10px auto;
           background-image: none;
           --mdc-button-outline-width: 2px;
-          --mdc-theme-primary: #38bd73;
-          --mdc-theme-on-primary: #38bd73;
         }
 
         mwc-textarea {
@@ -161,7 +159,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-          border-bottom: 1px solid #ddd;
+          border-bottom: 1px solid var(--general-colorBorder, #ddd);
         }
 
         vaadin-grid {

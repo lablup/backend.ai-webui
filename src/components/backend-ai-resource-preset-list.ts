@@ -107,8 +107,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
         mwc-textfield {
           width: 100%;
-          --mdc-theme-primary: #242424;
-          --mdc-text-field-fill-color: transparent;
         }
 
         mwc-textfield.yellow {
@@ -136,7 +134,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-          border-bottom: 1px solid #ddd;
+          border-bottom: 1px solid var(--general-colorBorder, #ddd);
         }
       `,
     ];

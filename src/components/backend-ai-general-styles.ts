@@ -781,9 +781,18 @@ export const BackendAiStyles = [
         --general-colorTextDisabled,
         #747474
       );
-      --mdc-select-dropdown-icon-color: #747474;
-      --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
+      --mdc-select-dropdown-icon-color: var(
+        --general-colorTextDisabled,
+        #747474
+      );
+      --mdc-select-focused-dropdown-icon-color: var(
+        --general-colorTextDisabled,
+        rgba(255, 255, 255, 0.42)
+      );
       --mdc-theme-surface: var(--general-colorBgContainer, #f1f1f1);
+      --mdc-select-disabled-dropdown-icon-color: var(
+        --general-colorTextDisabled
+      );
     }
 
     h3.tab {
@@ -973,8 +982,8 @@ export const BackendAiStyles = [
       --progress-bar-height: 17px;
       --progress-bar-font-family: var(--general-fontFamily);
       --progress-bar-border-radius: 3px;
-      --progress-bar-font-color-inverse: white;
-      --progress-bar-font-color: black;
+      --progress-bar-font-color-inverse: var(--general-colorBgContainer, white);
+      --progress-bar-font-color: var(--general-colorText, black);
       margin-bottom: 5px;
     }
 
