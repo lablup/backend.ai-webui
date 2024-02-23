@@ -982,8 +982,8 @@ export const BackendAiStyles = [
       --progress-bar-height: 17px;
       --progress-bar-font-family: var(--general-fontFamily);
       --progress-bar-border-radius: 3px;
-      --progress-bar-font-color-inverse: var(--general-colorBgContainer, white);
-      --progress-bar-font-color: var(--general-colorText, black);
+      --progress-bar-font-color-inverse: white;
+      --progress-bar-font-color: black;
       margin-bottom: 5px;
     }
 
