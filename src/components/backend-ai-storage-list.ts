@@ -207,8 +207,8 @@ export default class BackendAiStorageList extends BackendAIPage {
   @query('#folder-list-grid') folderListGrid!: VaadinGrid;
   @query('#mkdir-name') mkdirNameInput!: TextField;
   @query('#delete-folder-name') deleteFolderNameInput!: TextField;
-  @query('#delete-forever-folder-name')
-  deleteForeverFolderNameInput!: TextField;
+  @query('#delete-from-trash-bin-name-input')
+  deleteFromTrashBinNameInput!: TextField;
   @query('#new-folder-name') newFolderNameInput!: TextField;
   @query('#new-file-name') newFileNameInput!: TextField;
   @query('#leave-folder-name') leaveFolderNameInput!: TextField;
@@ -1569,13 +1569,13 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="delete-forever-confirm-dialog" fixed backdrop>
+      <backend-ai-dialog id="delete-from-trash-bin-dialog" fixed backdrop>
         <span slot="title">${_t('dialog.title.DeleteForever')}</span>
         <div slot="content">
           <div class="warning">${_t('dialog.warning.DeleteForeverDesc')}</div>
           <mwc-textfield
             class="red"
-            id="delete-forever-folder-name"
+            id="delete-from-trash-bin-name-input"
             label="${_t('data.folders.TypeFolderNameToDelete')}"
             maxLength="64"
             placeholder="${_text('maxLength.64chars')}"
@@ -2150,9 +2150,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             icon="delete_forever"
             ?disabled=${rowData.item.status !== 'delete-pending'}
             @click="${(e) => {
-              this.deleteFolderID = this._getControlID(e);
-              this.deleteFolderName = this._getControlName(e) || '';
-              this.openDialog('delete-forever-confirm-dialog');
+              this.openDeleteFromTrashBinDialog(e);
             }}"
             id="${rowData.item.id + '-delete-forever'}"
           ></mwc-icon-button>
@@ -2955,6 +2953,18 @@ export default class BackendAiStorageList extends BackendAIPage {
     //   this.notification.text = _text('data.folders.CannotDeleteFolder');
     //   this.notification.show(true);
     // }
+  }
+
+  /**
+   * Open delete-from-trash-bin-dialog to delete folder from trash bin.
+   *
+   * @param {Event} e - click the delete icon button
+   * */
+  openDeleteFromTrashBinDialog(e) {
+    this.deleteFolderID = this._getControlID(e);
+    this.deleteFolderName = this._getControlName(e) || '';
+    this.deleteFromTrashBinNameInput.value = '';
+    this.openDialog('delete-from-trash-bin-dialog');
   }
 
   /**
@@ -4541,8 +4551,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Call `delete_from_trash_bin` API to delete the folder permanently.
    * */
   _deleteFromTrashBin() {
-    const typedDeleteForeverFolderName =
-      this.deleteForeverFolderNameInput.value;
+    const typedDeleteForeverFolderName = this.deleteFromTrashBinNameInput.value;
     if (typedDeleteForeverFolderName !== this.deleteFolderName) {
       this.notification.text = _text('data.folders.FolderNameMismatched');
       this.notification.show();
@@ -4563,7 +4572,8 @@ export default class BackendAiStorageList extends BackendAIPage {
           this.notification.show(true, err);
         }
       });
-    this.closeDialog('delete-forever-confirm-dialog');
+    this.closeDialog('delete-from-trash-bin-dialog');
+    this.deleteFromTrashBinNameInput.value = '';
   }
 }
 declare global {
