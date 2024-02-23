@@ -724,7 +724,11 @@
     "resources": "Recursos",
     "Owner": "Dueño",
     "ServiceDelegatedFrom": "El servicio modelo es creado por {{ createdUser }} pero la propiedad de la sesión será delegada a {{ sessionOwner }}",
-    "FailedToTerminateService": "La solicitud para finalizar el servicio ha fallado."
+    "FailedToTerminateService": "La solicitud para finalizar el servicio ha fallado.",
+    "FailedToUpdateService": "No se pudo actualizar el servicio.",
+    "ServiceCreated": "El servicio modelo {{ name }} se ha creado correctamente.",
+    "ServiceUpdated": "El servicio de modelo {{ name }} se ha actualizado correctamente.",
+    "ServiceTerminated": "El servicio de modelo {{ name }} se ha finalizado correctamente."
   },
   "notification": {
     "Initializing": "Inicializando...",
@@ -1145,7 +1149,10 @@
       "EnvironmentVariableDuplicateName": "Un nombre de variable que ya existe.",
       "Template": "Plantilla de sesión",
       "EnableAutomaticShmem": "Memoria compartida automática",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Solo se permiten números enteros cuando el tamaño del clúster no es inferior a 2.",
+      "StartAfter": "Empezar después:",
+      "StartTimeDoesNotApply": "Si no se establece la hora de inicio, no se aplica."
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

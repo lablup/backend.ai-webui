@@ -14,6 +14,7 @@ export interface DynamicUnitInputNumberWithSliderProps
   extraMarks?: SliderMarks;
   hideSlider?: boolean;
   warn?: string;
+  step?: number;
 }
 const DynamicUnitInputNumberWithSlider: React.FC<
   DynamicUnitInputNumberWithSliderProps
@@ -24,6 +25,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   units = ['m', 'g'],
   extraMarks,
   hideSlider,
+  step = 0.05,
   ...otherProps
 }) => {
   const [value, setValue] = useControllableValue<string | undefined | null>(
@@ -62,6 +64,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
           style={{
             minWidth: 130,
           }}
+          roundStep={step}
         />
       </Flex>
       <Flex
@@ -112,22 +115,21 @@ const DynamicUnitInputNumberWithSlider: React.FC<
           )} */}
           <Slider
             max={maxGiB?.number}
-            trackStyle={
-              (warn && {
-                backgroundColor:
-                  compareNumberWithUnits(warn, value || '0b') < 0
-                    ? token.colorWarning
-                    : undefined,
-              }) ||
-              undefined
-            }
-            railStyle={
-              {
+            styles={{
+              track:
+                (warn && {
+                  backgroundColor:
+                    compareNumberWithUnits(warn, value || '0b') < 0
+                      ? token.colorWarning
+                      : undefined,
+                }) ||
+                undefined,
+              rail: {
                 // backgroundColor:'red',
                 // fill: 'red',
-              }
-            }
-            step={0.125}
+              },
+            }}
+            step={step}
             // min={minGiB.number}  // DO NOT use min, because slider left should be 0
             value={valueGiB?.number}
             tooltip={{
@@ -166,8 +168,8 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                       minGiB.number === 0
                         ? minGiB.number
                         : minGiB.number >= 1
-                        ? minGiB.number + 'g'
-                        : minGiB.number * 1024 + 'm',
+                          ? minGiB.number + 'g'
+                          : minGiB.number * 1024 + 'm',
                   },
                 }),
               // extra: remaining mark code should be located before max mark code to prevent overlapping when it is same value
@@ -185,8 +187,8 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                     maxGiB.number === 0
                       ? maxGiB.number
                       : maxGiB.number >= 1
-                      ? maxGiB.number + 'g'
-                      : maxGiB.number * 1024 + 'm',
+                        ? maxGiB.number + 'g'
+                        : maxGiB.number * 1024 + 'm',
                 },
               }),
             }}
