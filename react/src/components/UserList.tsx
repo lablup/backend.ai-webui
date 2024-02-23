@@ -210,80 +210,42 @@ const UserList: React.FC = () => {
     },
   ];
   return (
-    <Flex direction="column" align="stretch">
-      <Tabs
-        activeKey={curTabKey}
-        onChange={(key) => startReloadTransition(() => setCurTabKey(key))}
-        items={[
-          {
-            key: 'active',
-            label: t('credential.Active'),
-          },
-          {
-            key: 'inActive',
-            label: t('credential.Inactive'),
-          },
-        ]}
-        style={{
-          width: '100%',
-          paddingLeft: token.paddingMD,
-          paddingRight: token.paddingMD,
-          borderTopLeftRadius: token.borderRadius,
-          borderTopRightRadius: token.borderRadius,
-        }}
-        tabBarExtraContent={{
-          right: (
-            <Flex direction="row" gap={'sm'}>
-              <Input.Search
-                addonBefore={
-                  <Select
-                    defaultValue={filterType}
-                    onChange={(value) =>
-                      startReloadTransition(() => setFilterType(value))
-                    }
-                    dropdownStyle={{ minWidth: 'max-content' }}
-                    options={[
-                      { value: 'email', label: t('credential.UserID') },
-                      { value: 'username', label: t('credential.Name') },
-                      {
-                        value: 'main_access_key',
-                        label: t('credential.MainAccessKey'),
-                      },
-                    ]}
-                  />
-                }
-                onSearch={(value) => {
-                  setFilterValue(value);
-                  startReloadTransition(() => {
-                    updateUserListFetchKey();
-                  });
-                }}
-              />
-              <Button type="primary" onClick={toggleUserGenerationModal}>
-                {t('credential.CreateUser')}
-              </Button>
-            </Flex>
-          ),
-        }}
-      />
-      <Suspense fallback={<div>loading..</div>}>
-        <Table
-          scroll={{ x: 'max-content' }}
-          columns={columns}
-          dataSource={(user_nodes?.edges || []) as UserNode[]}
-          pagination={{
-            total: user_nodes?.count ?? 0,
-            pageSize: paginationState.pageSize,
-            current: paginationState.current,
-            onChange(page, pageSize) {
-              startReloadTransition(() => {
-                setPaginationState({
-                  current: page,
-                  pageSize: pageSize || 100,
-                });
-              });
+    <>
+      <style>
+        {`
+          .ant-tabs-nav {
+            flex-wrap: wrap;
+            justify-content: space-between;
+          }
+          .ant-tabs > .ant-tabs-nav .ant-tabs-nav-operations {
+            display: none;
+          }
+          .ant-tabs-nav-wrap {
+            flex:none;
+          }
+          .ant-tabs-nav-wrap-ping-right {
+            padding-bottom: ${token.paddingSM}px;
+          }
+          .ant-tabs .ant-tabs-extra-content {
+            display: flex;
+            flex-shrink: 1;
+          }
+        `}
+      </style>
+      <Flex direction="column" align="stretch">
+        <Tabs
+          activeKey={curTabKey}
+          onChange={(key) => startReloadTransition(() => setCurTabKey(key))}
+          items={[
+            {
+              key: 'active',
+              label: t('credential.Active'),
             },
-          }}
+            {
+              key: 'inActive',
+              label: t('credential.Inactive'),
+            },
+          ]}
           style={{
             width: '100%',
             paddingLeft: token.paddingMD,
@@ -291,47 +253,117 @@ const UserList: React.FC = () => {
             borderTopLeftRadius: token.borderRadius,
             borderTopRightRadius: token.borderRadius,
           }}
+          tabBarExtraContent={{
+            right: (
+              <Flex
+                direction="row"
+                gap={'sm'}
+                wrap="wrap"
+                style={{ flexShrink: 1 }}
+              >
+                <Flex style={{ flexGrow: 1 }}>
+                  <Input.Search
+                    addonBefore={
+                      <Select
+                        defaultValue={filterType}
+                        onChange={(value) =>
+                          startReloadTransition(() => setFilterType(value))
+                        }
+                        dropdownStyle={{ minWidth: 'max-content' }}
+                        options={[
+                          { value: 'email', label: t('credential.UserID') },
+                          { value: 'username', label: t('credential.Name') },
+                          {
+                            value: 'main_access_key',
+                            label: t('credential.MainAccessKey'),
+                          },
+                        ]}
+                      />
+                    }
+                    onSearch={(value) => {
+                      setFilterValue(value);
+                      startReloadTransition(() => {
+                        updateUserListFetchKey();
+                      });
+                    }}
+                  />
+                </Flex>
+                <Flex>
+                  <Button type="primary" onClick={toggleUserGenerationModal}>
+                    {t('credential.CreateUser')}
+                  </Button>
+                </Flex>
+              </Flex>
+            ),
+          }}
         />
-      </Suspense>
-      <UserGenerationModal
-        open={isOpenUserGenerationModal}
-        onRequestClose={() => {
-          toggleUserGenerationModal();
-          startReloadTransition(() => {
-            updateUserListFetchKey();
-          });
-        }}
-      />
-      <UserInfoModal
-        draggable
-        email={selectedUser?.email || ''}
-        open={isOpenUserInfoModal}
-        onRequestClose={toggleUserInfoModal}
-      />
-      <UserSettingModal
-        draggable
-        email={selectedUser?.email || ''}
-        open={isOpenUserSettingModal}
-        onRequestOk={() => {
-          toggleUserSettingModal();
-          startReloadTransition(() => {
-            updateUserListFetchKey();
-          });
-        }}
-        onRequestClose={toggleUserSettingModal}
-      />
-      <UserSignoutModal
-        draggable
-        email={selectedUser?.email || ''}
-        open={isOpenUserSignoutModal}
-        onRequestClose={() => {
-          toggleUserSignoutModal();
-          startReloadTransition(() => {
-            updateUserListFetchKey();
-          });
-        }}
-      />
-    </Flex>
+        <Suspense fallback={<div>loading..</div>}>
+          <Table
+            scroll={{ x: 'max-content' }}
+            columns={columns}
+            dataSource={(user_nodes?.edges || []) as UserNode[]}
+            pagination={{
+              total: user_nodes?.count ?? 0,
+              pageSize: paginationState.pageSize,
+              current: paginationState.current,
+              onChange(page, pageSize) {
+                startReloadTransition(() => {
+                  setPaginationState({
+                    current: page,
+                    pageSize: pageSize || 100,
+                  });
+                });
+              },
+            }}
+            style={{
+              width: '100%',
+              paddingLeft: token.paddingMD,
+              paddingRight: token.paddingMD,
+              borderTopLeftRadius: token.borderRadius,
+              borderTopRightRadius: token.borderRadius,
+            }}
+          />
+        </Suspense>
+        <UserGenerationModal
+          open={isOpenUserGenerationModal}
+          onRequestClose={() => {
+            toggleUserGenerationModal();
+            startReloadTransition(() => {
+              updateUserListFetchKey();
+            });
+          }}
+        />
+        <UserInfoModal
+          draggable
+          email={selectedUser?.email || ''}
+          open={isOpenUserInfoModal}
+          onRequestClose={toggleUserInfoModal}
+        />
+        <UserSettingModal
+          draggable
+          email={selectedUser?.email || ''}
+          open={isOpenUserSettingModal}
+          onRequestOk={() => {
+            toggleUserSettingModal();
+            startReloadTransition(() => {
+              updateUserListFetchKey();
+            });
+          }}
+          onRequestClose={toggleUserSettingModal}
+        />
+        <UserSignoutModal
+          draggable
+          email={selectedUser?.email || ''}
+          open={isOpenUserSignoutModal}
+          onRequestClose={() => {
+            toggleUserSignoutModal();
+            startReloadTransition(() => {
+              updateUserListFetchKey();
+            });
+          }}
+        />
+      </Flex>
+    </>
   );
 };
 
