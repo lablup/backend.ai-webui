@@ -75,6 +75,31 @@ function MainLayout() {
 
   return (
     <Layout>
+      <style>
+        {`
+          /* Scrollbar stylings */
+          /* Works on Firefox */
+          * {
+            scrollbar-width: 2px;
+            scrollbar-color: var(--general-colorBorderSecondary, #464646)
+              var(--general-colorBgContainer, transparent);
+          }
+
+          /* Works on Chrome, Edge, and Safari */
+          *::-webkit-scrollbar {
+            max-width: 2px;
+            background-color: var(--general-colorBgContainer, transparent);
+          }
+
+          *::-webkit-scrollbar-track {
+            background: var(--general-colorBgContainer, transparent);
+          }
+
+          *::-webkit-scrollbar-thumb {
+            background-color: var(--general-colorBorderSecondary, #464646);
+          }
+        `}
+      </style>
       <Suspense
         fallback={
           <>

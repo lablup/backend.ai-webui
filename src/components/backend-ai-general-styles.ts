@@ -250,28 +250,6 @@ export const BackendAiStyles = [
       transition: all 400ms;
     }
 
-    /* Works on Firefox */
-    * {
-      scrollbar-width: 2px;
-      scrollbar-color: var(--general-colorBgSpotlight, #464646)
-        var(--general-colorBgContainer, transparent);
-    }
-
-    /* Works on Chrome, Edge, and Safari */
-    *::-webkit-scrollbar {
-      max-width: 2px;
-      max-height: 2px;
-      background-color: var(--general-colorBgContainer, transparent);
-    }
-
-    *::-webkit-scrollbar-track {
-      background: var(--general-colorBgContainer, transparent);
-    }
-
-    *::-webkit-scrollbar-thumb {
-      background-color: var(--general-colorBgSpotlight, #464646);
-    }
-
     .paper-header {
       height: 60px;
       font-size: 16px;
