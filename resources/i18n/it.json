@@ -718,7 +718,7 @@
       "LogDeletion": "Sei sicuro di voler eliminare tutti i messaggi di registro?",
       "WillBeAppliedToNewSessions": "Questo aggiornamento verrà applicato alle nuove sessioni.",
       "Required": "Richiesto",
-      "DeleteForeverDesc": "Gli elementi selezionati verranno eliminati per sempre e non potrai ripristinarli."
+      "DeleteForeverDesc": "ATTENZIONE: gli elementi selezionati verranno eliminati per sempre e non potrai ripristinarli."
     },
     "ask": {
       "DoYouWantToProceed": "Vuoi procedere?"

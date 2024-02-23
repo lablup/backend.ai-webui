@@ -718,7 +718,7 @@
       "LogDeletion": "Tem certeza de que deseja excluir todas as mensagens de log?",
       "WillBeAppliedToNewSessions": "Esta atualização será aplicada a novas sessões.",
       "Required": "Necessário",
-      "DeleteForeverDesc": "Os itens selecionados serão excluídos permanentemente e você não poderá restaurá-los."
+      "DeleteForeverDesc": "AVISO: os itens selecionados serão excluídos para sempre e você não poderá restaurá-los."
     },
     "ask": {
       "DoYouWantToProceed": "Você quer prosseguir?"

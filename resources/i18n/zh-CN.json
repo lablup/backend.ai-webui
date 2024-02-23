@@ -718,7 +718,7 @@
       "LogDeletion": "您确定要删除所有日志消息吗？",
       "WillBeAppliedToNewSessions": "此更新将应用于新会话。",
       "Required": "需要",
-      "DeleteForeverDesc": "选定的项目将被永久删除，并且您将无法恢复它们。"
+      "DeleteForeverDesc": "警告：所选项目将被永久删除，并且您将无法恢复它们。"
     },
     "ask": {
       "DoYouWantToProceed": "您要继续吗？"

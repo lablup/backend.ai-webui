@@ -718,7 +718,7 @@
       "LogDeletion": "Tüm günlük mesajlarını silmek istediğinizden emin misiniz?",
       "WillBeAppliedToNewSessions": "Bu güncelleme yeni oturumlara uygulanacaktır.",
       "Required": "Gerekli",
-      "DeleteForeverDesc": "Seçilen öğeler kalıcı olarak silinecek ve bunları geri yükleyemeyeceksiniz."
+      "DeleteForeverDesc": "UYARI: seçilen öğeler kalıcı olarak silinecek ve bunları geri yükleyemeyeceksiniz."
     },
     "ask": {
       "DoYouWantToProceed": "Devam etmek istiyor musunuz?"

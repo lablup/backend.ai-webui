@@ -718,7 +718,7 @@
       "LogDeletion": "Möchten Sie wirklich alle Protokollnachrichten löschen?",
       "WillBeAppliedToNewSessions": "Dieses Update wird auf neue Sitzungen angewendet.",
       "Required": "Erforderlich",
-      "DeleteForeverDesc": "Ausgewählte Elemente werden für immer gelöscht und können nicht wiederhergestellt werden."
+      "DeleteForeverDesc": "ACHTUNG: Ausgewählte Elemente werden für immer gelöscht und Sie können sie nicht wiederherstellen."
     },
     "ask": {
       "DoYouWantToProceed": "Willst du fortfahren?"

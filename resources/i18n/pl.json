@@ -720,7 +720,7 @@
       "LogDeletion": "Czy na pewno chcesz usunąć wszystkie komunikaty dziennika?",
       "WillBeAppliedToNewSessions": "Ta aktualizacja zostanie zastosowana do nowych sesji.",
       "Required": "Wymagane",
-      "DeleteForeverDesc": "Wybrane elementy zostaną usunięte na zawsze i nie będzie można ich przywrócić."
+      "DeleteForeverDesc": "UWAGA: wybrane elementy zostaną usunięte na zawsze i nie będzie można ich przywrócić."
     },
     "ask": {
       "DoYouWantToProceed": "Czy chcesz kontynuować?"

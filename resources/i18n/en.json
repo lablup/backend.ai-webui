@@ -820,7 +820,7 @@
       "LogDeletion": "Are you sure you want to delete all of the log messages?",
       "WillBeAppliedToNewSessions": "This update will be applied to new sessions.",
       "Required": "Required",
-      "DeleteForeverDesc": "Selected items will be deleted forever and you won't be able to restore them."
+      "DeleteForeverDesc": "WARNING: selected items will be deleted forever and you won't be able to restore them."
     },
     "ask": {
       "DoYouWantToProceed": "Do you want to proceed?"

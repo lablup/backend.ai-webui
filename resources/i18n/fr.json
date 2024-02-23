@@ -718,7 +718,7 @@
       "LogDeletion": "Voulez-vous vraiment supprimer tous les messages du journal ?",
       "WillBeAppliedToNewSessions": "Cette mise à jour sera appliquée aux nouvelles sessions.",
       "Required": "Exigée",
-      "DeleteForeverDesc": "Les éléments sélectionnés seront supprimés définitivement et vous ne pourrez pas les restaurer."
+      "DeleteForeverDesc": "ATTENTION : les éléments sélectionnés seront supprimés définitivement et vous ne pourrez pas les restaurer."
     },
     "ask": {
       "DoYouWantToProceed": "Voulez-vous poursuivre?"

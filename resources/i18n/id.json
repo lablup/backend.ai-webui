@@ -718,7 +718,7 @@
       "LogDeletion": "Anda yakin ingin menghapus semua pesan log?",
       "WillBeAppliedToNewSessions": "Pembaruan ini akan diterapkan ke sesi baru.",
       "Required": "Diperlukan",
-      "DeleteForeverDesc": "Item yang dipilih akan dihapus selamanya dan Anda tidak dapat memulihkannya."
+      "DeleteForeverDesc": "PERINGATAN: item yang dipilih akan dihapus selamanya dan Anda tidak dapat memulihkannya."
     },
     "ask": {
       "DoYouWantToProceed": "Apakah Anda ingin lanjut?"

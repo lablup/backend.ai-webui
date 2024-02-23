@@ -718,7 +718,7 @@
       "LogDeletion": "Bạn có chắc chắn muốn xóa tất cả các thông báo nhật ký không?",
       "WillBeAppliedToNewSessions": "Bản cập nhật này sẽ được áp dụng cho các phiên mới.",
       "Required": "Yêu cầu",
-      "DeleteForeverDesc": "Các mục đã chọn sẽ bị xóa vĩnh viễn và bạn sẽ không thể khôi phục chúng."
+      "DeleteForeverDesc": "CẢNH BÁO: các mục đã chọn sẽ bị xóa vĩnh viễn và bạn sẽ không thể khôi phục chúng."
     },
     "ask": {
       "DoYouWantToProceed": "Bạn có muốn tiếp tục?"

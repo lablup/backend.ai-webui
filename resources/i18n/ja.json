@@ -718,7 +718,7 @@
       "LogDeletion": "すべてのログメッセージを削除してもよろしいですか？",
       "WillBeAppliedToNewSessions": "このアップデートは、新しいセッションに適用されます。",
       "Required": "必須入力です。",
-      "DeleteForeverDesc": "選択したアイテムは完全に削除され、復元することはできません。"
+      "DeleteForeverDesc": "警告: 選択したアイテムは完全に削除され、復元することはできません。"
     },
     "ask": {
       "DoYouWantToProceed": "続行しますか？"
