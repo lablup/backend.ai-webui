@@ -2201,6 +2201,23 @@ class VFolder {
   }
 
   /**
+   * Delete a Virtual folder by id.
+   *
+   * @param {string} id - Virtual folder id.
+   */
+  async delete_by_id(id): Promise<any> {
+    let body = {
+      vfolder_id: id,
+    };
+    let rqst = this.client.newSignedRequest(
+      'DELETE',
+      `${this.urlPrefix}`,
+      body,
+    );
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
    * Leave an invited Virtual folder.
    *
    * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
