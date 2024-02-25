@@ -37,13 +37,18 @@ interface WebUISiderProps
 const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const themeConfig = useCustomThemeConfig();
   const { isDarkMode } = useThemeMode();
+  const mergedSiderTheme = themeConfig.sider?.theme
+    ? themeConfig.sider.theme
+    : isDarkMode
+      ? 'dark'
+      : 'light';
 
   const currentUserRole = useCurrentUserRole();
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
   const baiClient = useSuspendedBackendaiClient();
-  const themeConfig = useCustomThemeConfig();
 
   const isHideAgents = baiClient?._config?.hideAgents ?? true;
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
@@ -182,7 +187,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           className="logo-wide"
           alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
           src={
-            isDarkMode && themeConfig?.logo?.srcDark
+            mergedSiderTheme === 'dark' && themeConfig?.logo?.srcDark
               ? themeConfig?.logo?.srcDark ||
                 '/manifest/backend.ai-text-bgdark.svg'
               : themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'
@@ -191,12 +196,13 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
         />
       }
+      theme={mergedSiderTheme}
       logoCollapsed={
         <img
           className="logo-collapsed"
           alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
           src={
-            isDarkMode && themeConfig?.logo?.srcCollapsedDark
+            mergedSiderTheme === 'dark' && themeConfig?.logo?.srcCollapsedDark
               ? themeConfig?.logo?.srcCollapsedDark ||
                 '/manifest/backend.ai-brand-simple-bgdark.svg'
               : themeConfig?.logo?.srcCollapsed ||

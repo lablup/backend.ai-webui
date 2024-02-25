@@ -12,7 +12,15 @@ type LogoConfig = {
   alt?: string;
   href?: string;
 };
-let _customTheme: { light: ThemeConfig; dark: ThemeConfig; logo: LogoConfig };
+type SiderConfig = {
+  theme?: 'light' | 'dark';
+};
+let _customTheme: {
+  light: ThemeConfig;
+  dark: ThemeConfig;
+  logo: LogoConfig;
+  sider?: SiderConfig;
+};
 
 export const loadCustomThemeConfig = () => {
   fetch('resources/theme.json')
