@@ -106,7 +106,7 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
             <p>SessionList</p>
           </Card> */}
 
-          {/* <Card bodyStyles={{paddingTop: 0}}> */}
+          {/* <Card bodyStyle={{ paddingTop: 0 }}> */}
           <Flex direction="column" align="stretch">
             <Flex style={{ flex: 1 }}>
               <Tabs
