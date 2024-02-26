@@ -256,9 +256,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         </h4>
         <div class="list-wrapper">
           <vaadin-grid
-            theme="row-stripes column-borders compact ${localStorage.getItem(
-              'backendaiwebui.settings.isDarkMode',
-            )
+            theme="row-stripes column-borders compact ${globalThis.isDarkMode
               ? 'dark'
               : ''}"
             height-by-rows

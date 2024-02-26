@@ -1,0 +1,13 @@
+diff --git a/node_modules/@material/mwc-select/mwc-select-base.js b/node_modules/@material/mwc-select/mwc-select-base.js
+index 66a2c20..bee6b8b 100644
+--- a/node_modules/@material/mwc-select/mwc-select-base.js
++++ b/node_modules/@material/mwc-select/mwc-select-base.js
+@@ -247,7 +247,7 @@ export class SelectBase extends FormElement {
+         if (!this.icon) {
+             return nothing;
+         }
+-        return html `<mwc-icon class="mdc-select__icon"><div>${this.icon}</div></mwc-icon>`;
++        return html `<mwc-icon class="mdc-select__icon" style="color:var(--general-colorTextSecondary);"><div>${this.icon}</div></mwc-icon>`;
+     }
+     renderLineRipple() {
+         if (this.outlined) {

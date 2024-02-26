@@ -755,9 +755,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
       <div class="list-wrapper">
         <vaadin-grid
           class="${this.condition}"
-          theme="row-stripes column-borders compact ${localStorage.getItem(
-            'backendaiwebui.settings.isDarkMode',
-          )
+          theme="row-stripes column-borders compact ${globalThis.isDarkMode
             ? 'dark'
             : ''}"
           aria-label="Job list"

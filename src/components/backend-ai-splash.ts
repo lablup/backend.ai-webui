@@ -115,7 +115,7 @@ export default class BackendAISplash extends LitElement {
       <backend-ai-dialog id="splash-panel" fixed backdrop blockscrolling persistent narrowLayout hideActions>
         <div class="splash-header" slot="title"
           style="background-image:url(${
-            localStorage.getItem('backendaiwebui.settings.isDarkMode')
+            globalThis.isDarkMode
               ? 'manifest/backend.ai-text-bgdark.svg'
               : 'manifest/backend.ai-text.svg'
           });"

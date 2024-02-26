@@ -98,8 +98,8 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
         </Suspense>
         <Flex direction="row" className="non-draggable">
           <BAINotificationButton />
-          <WEBUIHelpButton />
           <WebUIThemeToggleButton />
+          <WEBUIHelpButton />
           <UserDropdownMenu />
         </Flex>
       </Flex>
