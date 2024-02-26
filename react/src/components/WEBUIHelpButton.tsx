@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom';
 
 interface WEBUIHelpButtonProps extends ButtonProps {}
 const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
-  const { lang } = useCurrentLanguage();
+  const [lang] = useCurrentLanguage();
   const location = useLocation();
   const manualURL = `https://webui.docs.backend.ai/${lang}/latest/`;
   const matchingKey = location.pathname.split('/')[1] || '';
