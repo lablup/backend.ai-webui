@@ -126,7 +126,7 @@ export const BackendAiStyles = [
         'NanumGothicOTF', 'Nanum Gothic', 'Malgun Gothic', sans-serif;
       --general-monospace-font-family: 'Ubuntu Mono', Menlo, Courier,
         'Courier New', RobotoMono, sans-serif;
-      --general-progress-bar-bg: #e8e8e8;
+      --general-progress-bar-bg: var(--general-colorBorderSecondary, #e8e8e8);
       --general-progress-bar-reserved: linear-gradient(
         to left,
         #722cd7,
@@ -960,8 +960,8 @@ export const BackendAiStyles = [
       --progress-bar-height: 17px;
       --progress-bar-font-family: var(--general-fontFamily);
       --progress-bar-border-radius: 3px;
-      --progress-bar-font-color-inverse: white;
-      --progress-bar-font-color: black;
+      --progress-bar-font-color-inverse: var(--general-colorBgBase, white);
+      --progress-bar-font-color: var(--general-colorText, black);
       margin-bottom: 5px;
     }
 
