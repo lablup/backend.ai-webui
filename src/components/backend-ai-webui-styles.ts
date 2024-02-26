@@ -12,12 +12,27 @@ export const BackendAIWebUIStyles = [
       left: 0;
       width: 100%;
       height: 100%;
+      /* background-image: url('/resources/images/loading-background-large.jpg'); */
+      /* background-repeat: no-repeat; */
+      /* background-attachment: fixed; */
+      /* background-position: top left; */
+      -webkit-user-select: none !important;
+      z-index: 1;
+    }
+
+    .loading-background::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
       background-image: url('/resources/images/loading-background-large.jpg');
+      z-index: -1;
       background-repeat: no-repeat;
       background-attachment: fixed;
       background-position: top left;
-      -webkit-user-select: none !important;
-      z-index: 1;
+      filter: var(--theme-image-filter);
     }
 
     .loading-background-drag-area {

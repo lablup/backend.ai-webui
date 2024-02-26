@@ -6,10 +6,33 @@ body {
   --lumo-primary-text-color: var(--general-colorPrimary, #27824F);
   --lumo-primary-color-50pct: var(--general-colorPrimary, #27824F);
   background-color: var(--general-colorBgBase, rgba(247, 247, 246, 1));
+  /* background-image: url("images/loading-background-large.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: top left; */
+}
+
+body.dark-theme {
+  background-color: #3E3E3E;
+  --theme-image-filter: brightness(0.25);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background-image: url("images/loading-background-large.jpg");
+  z-index: -1;
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: top left;
+}
+
+body.dark-theme::before {
+  filter: brightness(0.25);
 }
 
 .splash {
@@ -24,6 +47,12 @@ body {
   box-shadow: 0px 0px 3px 3px rgba(0, 0, 0, 0.2);
 }
 
+body.dark-theme .splash {
+  background-color: #141414;
+  border: 1px solid #444;
+  color: #DCDCDC;
+}
+
 .splash-header {
   width: 340px;
   height: 120px;
@@ -36,6 +65,23 @@ body {
   font-size: 28px;
   font-weight: 400;
   line-height: 60px;
+  overflow: hidden;
+}
+.splash-header .logo{
+  background-image: url("/manifest/backend.ai-text.svg");
+  width: 300px;
+  height: 50px;
+  margin: 30px 20px;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+body.dark-theme .splash-header .logo{
+  background-image: url("/manifest/backend.ai-text-bgdark.svg");
+}
+
+body.dark-theme .splash-header {
+  background-color: #141414;
 }
 
 ul {
