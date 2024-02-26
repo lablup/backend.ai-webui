@@ -54,8 +54,8 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
         height: HEADER_HEIGHT,
         paddingRight: token.marginMD,
         paddingLeft: token.marginMD,
-        backgroundColor: scrolled ? token.colorBgContainer : 'transparent',
-        boxShadow: scrolled ? '0 5px 6px -6px rgba(0, 0, 0, 0.1)' : 'none',
+        backgroundColor: scrolled ? token.colorBgElevated : 'transparent',
+        boxShadow: scrolled ? `0 5px 6px -6px ${token.colorBorder}` : 'none',
         transition: 'background-color 0.2s ease-in-out',
       }}
       className={'webui-header-container'}
