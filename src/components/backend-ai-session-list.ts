@@ -4027,9 +4027,7 @@ ${rowData.item[this.sessionNameField]}</pre
       </div>
       <div class="list-wrapper">
         <vaadin-grid id="list-grid" theme="row-stripes column-borders compact ${
-          localStorage.getItem('backendaiwebui.settings.isDarkMode')
-            ? 'dark'
-            : ''
+          globalThis.isDarkMode ? 'dark' : ''
         }" aria-label="Session list"
           .items="${this.compute_sessions}" height-by-rows>
           ${
