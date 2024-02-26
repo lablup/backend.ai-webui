@@ -78,7 +78,8 @@ type VFolderOperationStatus =
   | 'delete-pending'
   | 'delete-ongoing'
   | 'delete-complete'
-  | 'delete-error';
+  | 'delete-error'
+  | 'purge-ongoing'; // Deprecated since 24.03.0
 
 type DeadVFolderStatus =
   | 'delete-pending'
@@ -108,6 +109,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({ type: Boolean }) is_admin = false;
   @property({ type: Boolean }) enableStorageProxy = false;
   @property({ type: Boolean }) enableInferenceWorkload = false;
+  @property({ type: Boolean }) enableVfolderTrashBin = false;
   @property({ type: Boolean }) authenticated = false;
   @property({ type: String }) renameFolderName = '';
   @property({ type: String }) deleteFolderName = '';
@@ -1678,6 +1680,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       'delete-ongoing',
       'deleted-complete',
       'delete-error',
+      'purge-ongoing', // Deprecated since 24.03.0
     ].includes(status);
   }
 
@@ -2658,6 +2661,8 @@ export default class BackendAiStorageList extends BackendAIPage {
             globalThis.backendaiclient.supports('storage-proxy');
           this.enableInferenceWorkload =
             globalThis.backendaiclient.supports('inference-workload');
+          this.enableVfolderTrashBin =
+            globalThis.backendaiclient.supports('vfolder-trash-bin');
           this.authenticated = true;
           this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
           this._maxFileUploadSize =
@@ -2680,6 +2685,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         globalThis.backendaiclient.supports('storage-proxy');
       this.enableInferenceWorkload =
         globalThis.backendaiclient.supports('inference-workload');
+      this.enableVfolderTrashBin =
+        globalThis.backendaiclient.supports('vfolder-trash-bin');
       this.authenticated = true;
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._maxFileUploadSize =
@@ -2978,16 +2985,21 @@ export default class BackendAiStorageList extends BackendAIPage {
       return;
     }
     this.closeDialog('delete-folder-dialog');
-    this._deleteFolder(this.deleteFolderID);
+    const folder = this.enableVfolderTrashBin
+      ? this.deleteFolderID
+      : this.deleteFolderName;
+    this._deleteFolder(folder);
   }
 
   /**
    * Delete folder and notice.
    *
-   * @param {string} folderID
+   * @param {string} folder
    * */
-  _deleteFolder(folderID) {
-    const job = globalThis.backendaiclient.vfolder.delete_by_id(folderID);
+  _deleteFolder(folder) {
+    const job = this.enableVfolderTrashBin
+      ? globalThis.backendaiclient.vfolder.delete_by_id(folder)
+      : globalThis.backendaiclient.vfolder.delete(folder);
     job
       .then(async (resp) => {
         // console.log(resp);
