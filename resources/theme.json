@@ -26,7 +26,8 @@
   "dark": {
     "token": {
       "fontFamily": "'Ubuntu', Roboto, sans-serif",
-      "colorPrimary": "#25C2A0"
+      "colorPrimary": "#25C2A0",
+      "colorLink": "#25C2A0"
     },
     "components": {
       "Tag": {
