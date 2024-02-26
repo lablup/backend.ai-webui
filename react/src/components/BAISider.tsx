@@ -68,6 +68,7 @@ const BAISider: React.FC<BAISiderProps> = ({
           borderRight: '1px solid',
           borderColor: token.colorBorder,
           paddingTop: token.paddingContentVerticalSM,
+          scrollbarColor: 'auto'
         }}
         {...otherProps}
         collapsedWidth={
