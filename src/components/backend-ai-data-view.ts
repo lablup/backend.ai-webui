@@ -189,15 +189,16 @@ export default class BackendAIData extends BackendAIPage {
         #automount-folder-lists > div,
         #data-folder-lists > div,
         #model-folder-lists > div {
-          background-color: white;
-          color: var(--general-textfield-selected-color);
-          border-bottom: 0.5px solid var(--general-textfield-selected-color);
+          background-color: var(--general-colorInfoBg, white);
+          color: var(--general-colorText, --general-textfield-selected-color);
+          border-bottom: 0.5px solid
+            var(--general-colorInfoBg, --general-textfield-selected-color);
         }
 
         #automount-folder-lists > div > p,
         #data-folder-lists > div > p,
         #model-folder-lists > div > p {
-          color: var(--general-sidebar-color);
+          color: var(--general-colorText, --general-sidebar-color);
           margin-left: 10px;
         }
 
