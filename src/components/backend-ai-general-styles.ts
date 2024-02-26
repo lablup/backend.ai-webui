@@ -322,7 +322,7 @@ export const BackendAiStyles = [
 
     div.card {
       display: block;
-      background: white;
+      background: var(--general-background-color);
       box-sizing: border-box;
       padding: 0;
       border-radius: 2px;
