@@ -18,7 +18,8 @@
         "headerBorderRadius": 0
       },
       "Layout": {
-        "lightSiderBg": "#F4F7FD"
+        "lightSiderBg": "#F4F7FD",
+        "siderBg": "#2A2C30"
       }
     }
   },
@@ -33,6 +34,10 @@
       },
       "Table": {
         "headerBorderRadius": 0
+      },
+      "Layout": {
+        "lightSiderBg": "#F4F7FD",
+        "siderBg": "#2A2C30"
       }
     }
   },
@@ -45,5 +50,7 @@
     "logoTitleCollapsed": "WebUI",
     "alt": "Backend.AI Logo",
     "href": "/summary"
+  },
+  "sider": {
   }
 }

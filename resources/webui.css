@@ -13,8 +13,8 @@ body {
 }
 
 body.dark-theme {
-  background-color: #3E3E3E;
-  --theme-image-filter: brightness(0.25);
+  background-color: #191919;
+  --theme-image-filter: brightness(0.15);
 }
 
 body::before {
@@ -32,7 +32,7 @@ body::before {
 }
 
 body.dark-theme::before {
-  filter: brightness(0.25);
+  filter: var(--theme-image-filter)
 }
 
 .splash {
@@ -48,7 +48,7 @@ body.dark-theme::before {
 }
 
 body.dark-theme .splash {
-  background-color: #141414;
+  background-color: #191919;
   border: 1px solid #444;
   color: #DCDCDC;
 }
