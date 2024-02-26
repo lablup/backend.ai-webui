@@ -500,12 +500,17 @@ export const BackendAiStyles = [
       --mdc-switch-disabled-selected-track-color: var(
         --general-switch-on-color
       ) !important;
+      --mdc-switch-disabled-unselected-track-color: var(--general-colorText);
     }
 
     mwc-checkbox,
     mwc-check-list-item {
       --mdc-theme-secondary: var(--general-colorPrimary);
       --mdc-checkbox-unchecked-color: var(--general-colorBorder);
+    }
+
+    mwc-slider {
+      --mdc-theme-on-surface: var(--general-colorTextDisabled);
     }
 
     div.card p {
@@ -694,6 +699,13 @@ export const BackendAiStyles = [
       --mdc-text-field-ink-color: var(--general-colorText);
       --mdc-text-field-disabled-fill-color: var(--general-colorBgContainer);
       --mdc-text-field-disabled-ink-color: var(--general-colorTextDisabled);
+      --mdc-text-field-disabled-line-color: var(--general-colorTextDisabled);
+      --mdc-text-field-outlined-disabled-border-color: var(
+        --general-colorTextDisabled
+      );
+      --mdc-text-field-disabled-fill-color: var(
+        --general-colorBgContainerDisabled
+      );
     }
 
     mwc-textarea {
@@ -714,6 +726,9 @@ export const BackendAiStyles = [
       --mdc-typography-subtitle1-line-height: 16px;
       --mdc-text-field-label-ink-color: var(--general-colorText);
       --mdc-text-field-ink-color: var(--general-colorText);
+      --mdc-text-area-outlined-disabled-border-color: var(
+        --general-colorTextDisabled
+      );
     }
 
     mwc-formfield {
