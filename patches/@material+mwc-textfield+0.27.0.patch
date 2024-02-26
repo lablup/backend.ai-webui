@@ -1,5 +1,5 @@
 diff --git a/node_modules/@material/mwc-textfield/mwc-textfield-base.js b/node_modules/@material/mwc-textfield/mwc-textfield-base.js
-index 5d17fac..8687864 100644
+index 5d17fac..f827a0e 100644
 --- a/node_modules/@material/mwc-textfield/mwc-textfield-base.js
 +++ b/node_modules/@material/mwc-textfield/mwc-textfield-base.js
 @@ -208,7 +208,7 @@ export class TextFieldBase extends FormElement {
@@ -11,3 +11,12 @@ index 5d17fac..8687864 100644
      }
      /** @soyTemplate */
      renderPrefix() {
+@@ -225,7 +225,7 @@ export class TextFieldBase extends FormElement {
+             'mdc-text-field__affix--prefix': !isSuffix,
+             'mdc-text-field__affix--suffix': isSuffix
+         };
+-        return html `<span class="mdc-text-field__affix ${classMap(classes)}">
++        return html `<span class="mdc-text-field__affix ${classMap(classes)}" style="${this.disabled?"color:var(--general-colorTextDisabled);":"color:var(--general-colorTextSecondary);"}">
+         ${content}</span>`;
+     }
+     /** @soyTemplate */
