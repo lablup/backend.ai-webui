@@ -136,7 +136,6 @@ export default class BackendAIData extends BackendAIPage {
 
         mwc-textfield {
           width: 100%;
-          --mdc-theme-primary: #242424;
           --mdc-text-field-fill-color: transparent;
         }
 

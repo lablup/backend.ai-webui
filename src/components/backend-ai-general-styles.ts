@@ -796,6 +796,11 @@ export const BackendAiStyles = [
       );
     }
 
+    mwc-radio {
+      --mdc-theme-secondary: var(--general-colorPrimary);
+      --mdc-radio-unchecked-color: var(--general-colorBorder);
+    }
+
     h3.tab {
       background-color: var(--general-tabbar-background-color);
       border-radius: 5px 5px 0px 0px;

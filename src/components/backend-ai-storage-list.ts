@@ -285,6 +285,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           font-size: 10px;
         }
 
+        span[slot='secondary'] {
+          color: var(--general-colorTextSecondary);
+        }
+
         .info-indicator {
           min-width: 90px;
           padding: 0 10px;
@@ -378,7 +382,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           transition: color ease-in 0.2s;
           border: solid;
           border-width: 0 2px 2px 0;
-          border-color: #242424;
+          border-color: var(--general-colorBorder, #242424);
           margin-right: 10px;
           content: '';
           display: inline-block;
@@ -396,6 +400,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-textfield {
           width: 100%;
+          /* --mdc-text-field-label-ink-color: var(--general-colorText); */
         }
 
         mwc-textfield.red {
@@ -479,10 +484,6 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-select.fixed-position > mwc-list-item {
           width: 147px; // default width
-        }
-
-        mwc-radio {
-          --mdc-theme-secondary: var(--general-textfield-selected-color);
         }
 
         #modify-permission-dialog {
