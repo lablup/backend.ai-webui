@@ -39,7 +39,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const { token } = theme.useToken();
   const themeConfig = useCustomThemeConfig();
   const { isDarkMode } = useThemeMode();
-  const mergedSiderTheme = themeConfig.sider?.theme
+  const mergedSiderTheme = themeConfig?.sider?.theme
     ? themeConfig.sider.theme
     : isDarkMode
       ? 'dark'
