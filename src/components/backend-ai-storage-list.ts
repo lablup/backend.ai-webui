@@ -2942,9 +2942,9 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    * @param {Event} e - click the delete icon button
    * */
-  async _deleteFolderDialog(e) {
-    this.deleteFolderName = this._getControlName(e);
-    // const deleteFolderId = this._getControlId(e);
+  _deleteFolderDialog(e) {
+    this.deleteFolderID = this._getControlID(e);
+    this.deleteFolderName = this._getControlName(e) || '';
     this.deleteFolderNameInput.value = '';
     // let isDelible = await this._checkVfolderMounted(deleteFolderId);
     // if (isDelible) {
@@ -2978,16 +2978,16 @@ export default class BackendAiStorageList extends BackendAIPage {
       return;
     }
     this.closeDialog('delete-folder-dialog');
-    this._deleteFolder(this.deleteFolderName);
+    this._deleteFolder(this.deleteFolderID);
   }
 
   /**
    * Delete folder and notice.
    *
-   * @param {string} folderName
+   * @param {string} folderID
    * */
-  _deleteFolder(folderName) {
-    const job = globalThis.backendaiclient.vfolder.delete(folderName);
+  _deleteFolder(folderID) {
+    const job = globalThis.backendaiclient.vfolder.delete_by_id(folderID);
     job
       .then(async (resp) => {
         // console.log(resp);
