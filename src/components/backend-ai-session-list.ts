@@ -477,6 +477,7 @@ export default class BackendAISessionList extends BackendAIPage {
           padding: 0;
           outline-style: none;
           font-family: var(--general-fontFamily);
+          color: var(--general-colorText);
         }
 
         .no-mount {

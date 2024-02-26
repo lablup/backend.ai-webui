@@ -125,10 +125,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           --mdc-typography-font-family: var(--general-fontFamily);
         }
 
-        mwc-icon-button {
-          color: var(--general-button-background-color);
-        }
-
         mwc-icon-button.sftp-session-connection-copy {
           --mdc-icon-size: 20px;
         }
@@ -183,6 +179,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           height: 450px;
           padding: 0 30px;
           margin: 0 10px;
+        }
+
+        macro-carousel macro-carousel-nav-button {
+          --macro-carousel-navigation-color: var(--general-colorText);
+          --macro-carousel-navigation-color-background-focus: var(
+            --general-colorBgTextHover
+          );
         }
 
         #collapsible-btn {
@@ -250,6 +253,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           background-color: var(--paper-grey-200);
           border-radius: 10px;
           margin: 0px 10px;
+          color: var(--paper-grey-800);
         }
 
         span.invert {

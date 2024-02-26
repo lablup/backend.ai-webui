@@ -1179,6 +1179,11 @@ export const BackendAiStyles = [
         background-color: var(--general-colorBgElevated);
       }
 
+      mwc-icon,
+      mwc-icon-button {
+        color: var(--general-colorTextSecondary);
+      }
+
       mwc-select {
         --mdc-select-fill-color: var(--general-colorBgElevated, transparent);
         --mdc-select-disabled-fill-color: var(
