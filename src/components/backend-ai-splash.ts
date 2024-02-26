@@ -44,11 +44,11 @@ export default class BackendAISplash extends LitElement {
 
         a,
         a:visited {
-          color: #222222;
+          color: var(--general-colorLink, #222222);
         }
 
         a:hover {
-          color: #3e872d;
+          color: var(--general-colorLinkHover, #3e872d);
         }
 
         #splash-panel {

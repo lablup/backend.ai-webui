@@ -198,9 +198,15 @@ export const BackendAiStyles = [
       padding: 5px 0;
     }
 
-    a {
+    a,
+    a:visited {
       text-decoration: none;
       cursor: pointer;
+      color: var(--general-colorLink);
+    }
+
+    a:hover {
+      color: var(--general-colorLinkHover, #3e872d);
     }
 
     fieldset {
