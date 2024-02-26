@@ -82,17 +82,17 @@ function MainLayout() {
           * {
             scrollbar-width: 2px;
             scrollbar-color: var(--general-colorBorderSecondary, #464646)
-              var(--general-colorBgContainer, transparent);
+              var(--general-colorBgElevated, transparent);
           }
 
           /* Works on Chrome, Edge, and Safari */
           *::-webkit-scrollbar {
             max-width: 2px;
-            background-color: var(--general-colorBgContainer, transparent);
+            background-color: var(--general-colorBgElevated, transparent);
           }
 
           *::-webkit-scrollbar-track {
-            background: var(--general-colorBgContainer, transparent);
+            background: var(--general-colorBgElevated, transparent);
           }
 
           *::-webkit-scrollbar-thumb {
