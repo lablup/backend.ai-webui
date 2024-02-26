@@ -148,24 +148,6 @@ export default class BackendAISummary extends BackendAIPage {
           font-size: 48px;
         }
 
-        a,
-        a:visited {
-          color: #222222;
-        }
-
-        a:hover {
-          color: #3e872d;
-        }
-
-        mwc-button,
-        mwc-button[unelevated],
-        mwc-button[outlined] {
-          background-image: none;
-          --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-theme-on-primary: var(--general-button-color);
-          --mdc-typography-font-family: var(--general-fontFamily);
-        }
-
         #session-launcher {
           --component-width: 284px;
         }
@@ -239,7 +221,6 @@ export default class BackendAISummary extends BackendAIPage {
         #download-app-os-select-box {
           height: 80px;
           padding-top: 20px;
-          padding-left: 20px;
           background-color: var(--general-colorBgContainer, #f6f6f6);
           margin-bottom: var(--general-marginSM);
         }
@@ -262,7 +243,7 @@ export default class BackendAISummary extends BackendAIPage {
 
         button.link-button {
           background: none;
-          color: inherit;
+          color: var(--general-colorTextSecondary);
           border: none;
           padding: 0;
           font: inherit;
@@ -270,15 +251,15 @@ export default class BackendAISummary extends BackendAIPage {
           outline: inherit;
         }
         button.link-button > i {
-          color: #5b5b5b;
+          color: var(--general-colorTextSecondary, #5b5b5b);
           margin: 10px;
         }
         button.link-button > span {
           max-width: 70px;
-          color: #838383;
+          color: var(--general-colorTextSecondary, #838383);
         }
         button.link-button:hover {
-          color: #3e872d;
+          color: var(--general-colorPrimary, #3e872d);
         }
       `,
     ];
