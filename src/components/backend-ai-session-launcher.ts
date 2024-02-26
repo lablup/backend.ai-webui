@@ -291,6 +291,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
+        h5,
+        p,
+        span {
+          color: var(--general-colorText);
+        }
+
         .slider-list-item {
           padding: 0;
         }
@@ -319,6 +325,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         vaadin-grid {
           max-height: 335px;
+          margin-left: 20px;
+        }
+
+        .alias {
+          max-width: 145px;
         }
 
         .progress {
@@ -373,9 +384,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         div.vfolder-mounted-list,
         #mounted-folders-container,
         .environment-variables-container,
-        .preopen-ports-container {
+        .preopen-ports-container,
+        mwc-select h5 {
           background-color: var(
-            --general-colorBgContainer,
+            --general-colorBgElevated,
             rgba(244, 244, 244, 1)
           );
           color: var(--general-colorText);
@@ -397,6 +409,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         .preopen-ports-container mwc-textfield input {
           overflow: hidden;
           text-overflow: ellipsis;
+        }
+
+        .environment-variables-container mwc-textfield,
+        .preopen-ports-container mwc-textfield {
+          --mdc-text-field-fill-color: var(--general-colorBgElevated);
+          --mdc-text-field-disabled-fill-color: var(--general-colorBgElevated);
+          --mdc-text-field-disabled-line-color: var(--general-colorBorder);
         }
 
         .resources.horizontal .monitor.session {
@@ -486,6 +505,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           line-height: 1.2em;
         }
 
+        .cluster-allocated {
+          p,
+          span {
+            color: var(--general-colorWhite);
+          }
+        }
+
         .resource-allocated > span,
         .cluster-allocated > div.horizontal > span {
           font-weight: bolder;
@@ -496,7 +522,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         .resource-allocated-box {
-          background-color: var(--general-colorBgContainer, --paper-grey-300);
+          background-color: var(--general-colorBgElevated, --paper-grey-300);
           border-radius: 5px;
           margin: 5px;
           z-index: 10;
@@ -550,6 +576,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             --general-colorText,
             rgb(64, 64, 64)
           );
+          --expansion-background-color: var(--general-colorBgElevated);
+          --expansion-header-background-color: var(--general-colorBgElevated);
         }
 
         lablup-expansion.vfolder,
@@ -645,10 +673,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           width: 100%;
         }
 
-        #vfolder mwc-list-item[disabled] {
-          background-color: rgba(255, 0, 0, 0.04) !important;
-        }
-
         #vfolder-header-title {
           text-align: center;
           font-size: 16px;
@@ -673,6 +697,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         mwc-icon-button.info {
           --mdc-icon-button-size: 30px;
+          color: var(--general-colorTextSecondary);
         }
 
         mwc-icon {
@@ -799,10 +824,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-typography-button-font-size: 0.5vw;
         }
 
-        h5,
-        p,
-        span {
-          color: var(--general-colorText);
+        #launch-button-msg {
+          color: var(--general-colorWhite);
         }
 
         [name='resource-group'] mwc-list-item {
@@ -4789,7 +4812,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <span slot="title">${_t('session.launcher.FolderToMount')}</span>
               <div class="vfolder-list">
                 <vaadin-grid
-                  theme="row-stripes column-borders compact ${localStorage.getItem(
+                  theme="no-border row-stripes column-borders compact ${localStorage.getItem(
                     'backendaiwebui.settings.isDarkMode',
                   )
                     ? 'dark'
@@ -4843,7 +4866,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               </span>
               <div class="vfolder-list">
                 <vaadin-grid
-                  theme="row-stripes column-borders compact ${localStorage.getItem(
+                  theme="no-border row-stripes column-borders compact ${localStorage.getItem(
                     'backendaiwebui.settings.isDarkMode',
                   )
                     ? 'dark'
@@ -5620,7 +5643,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             ${this.mode !== 'inference'
               ? html`
                   <p class="title">${_t('session.launcher.MountedFolders')}</p>
-                  <div id="mounted-folders-container">
+                  <div
+                    id="mounted-folders-container"
+                    class="cluster-total-allocation-container"
+                  >
                     ${this.selectedVfolders.length > 0 ||
                     this.autoMountedVfolders.length > 0
                       ? html`
@@ -5670,7 +5696,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <p class="title">
               ${_t('session.launcher.EnvironmentVariablePaneTitle')}
             </p>
-            <div class="environment-variables-container">
+            <div
+              class="environment-variables-container cluster-total-allocation-container"
+            >
               ${this.environ.length > 0
                 ? html`
                     <div
@@ -5716,7 +5744,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <p class="title">
                     ${_t('session.launcher.PreOpenPortPanelTitle')}
                   </p>
-                  <div class="preopen-ports-container">
+                  <div
+                    class="preopen-ports-container cluster-total-allocation-container"
+                  >
                     ${this.preOpenPorts.length > 0
                       ? html`
                           <div

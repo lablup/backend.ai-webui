@@ -284,7 +284,11 @@ export const BackendAiStyles = [
       );
       --select-secondary-theme: var(--general-checkbox-color);
       --select-color: var(--general-colorText);
-      --select-background-color: var(--general-background-color, #efefef);
+      --select-background-color: var(
+        --general-colorBgElevated,
+        --general-background-color,
+        #efefef
+      );
       --select-background-border-radius: 5px;
       --select-box-shadow: 0 1px 3px -1px rgba(0, 0, 0, 60%),
         0 3px 12px -1px rgb(200, 200, 200, 80%);
@@ -367,13 +371,10 @@ export const BackendAiStyles = [
       border-radius: 5px;
       background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
       --mdc-theme-primary: var(
-        --general-colorTextLightSolid,
+        --general-colorWhite,
         --general-button-color
       ); /* gradient-color doesn't work in mwc-button styling */
-      --mdc-theme-on-primary: var(
-        --general-colorTextLightSolid,
-        --general-button-color
-      );
+      --mdc-theme-on-primary: var(--general-colorWhite, --general-button-color);
     }
 
     mwc-button.primary-action[disabled] {
@@ -384,17 +385,18 @@ export const BackendAiStyles = [
         rgba(56, 189, 115, 0.2) 100%
       );
       --mdc-theme-primary: var(
-        --general-colorTextLightSolid,
+        --general-colorWhite,
         --general-button-color
       ); /* gradient-color doesn't work in mwc-button styling */
-      --mdc-theme-on-primary: var(
-        --general-colorTextLightSolid,
-        --general-button-color
-      );
+      --mdc-theme-on-primary: var(--general-colorWhite, --general-button-color);
     }
 
     mwc-button.operation {
       margin: 0px 5px;
+    }
+
+    mwc-icon {
+      color: var(--general-colorText);
     }
 
     mwc-icon-button.pagination {
@@ -647,10 +649,7 @@ export const BackendAiStyles = [
         --general-colorPrimary,
         --general-button-background-color
       );
-      --mdc-theme-on-primary: var(
-        --general-colorTextLightSolid,
-        --general-button-color
-      );
+      --mdc-theme-on-primary: var(--general-colorWhite, --general-button-color);
       --mdc-typography-font-family: var(--general-fontFamily);
     }
 
@@ -1146,6 +1145,34 @@ export const BackendAiStyles = [
       padding: 20px;
       /* Fix the color for readability */
       color: #222222;
+    }
+
+    backend-ai-dialog {
+      mwc-list-item,
+      mwc-icon,
+      mwc-icon-button,
+      div.card {
+        background-color: var(--general-colorBgElevated);
+      }
+
+      mwc-select {
+        --mdc-select-fill-color: var(--general-colorBgElevated, transparent);
+        --mdc-select-disabled-fill-color: var(
+          --general-colorBgElevated,
+          transparent
+        );
+        --mdc-theme-surface: var(--general-colorBgElevated, #f1f1f1);
+      }
+
+      mwc-textfield,
+      mwc-textarea {
+        --mdc-text-field-fill-color: var(--general-colorBgElevated);
+        --mdc-typography-font-family: var(--general-fontFamily);
+      }
+
+      vaadin-grid[theme~='dark'] {
+        --lumo-base-color: var(--general-colorBgElevated) !important;
+      }
     }
   `,
 ];

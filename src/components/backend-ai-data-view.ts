@@ -565,7 +565,7 @@ export default class BackendAIData extends BackendAIPage {
                   class="horizontal layout flex wrap center justified"
                   style="display:none;"
                 >
-                  <p style="color:rgba(0, 0, 0, 0.6);margin-left:10px;">
+                  <p style="margin-left:10px;">
                     ${_t('data.folders.Cloneable')}
                   </p>
                   <mwc-switch

@@ -396,8 +396,6 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-textfield {
           width: 100%;
-          --mdc-theme-primary: #242424;
-          --mdc-text-field-fill-color: transparent;
         }
 
         mwc-textfield.red {
@@ -452,8 +450,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         backend-ai-dialog mwc-textfield,
         backend-ai-dialog mwc-select {
-          --mdc-typography-font-family: var(--general-fontFamily);
-          --mdc-typography-label-font-size: 12px;
+          --mdc-typography-label-font-size: var(--general-fontSizeSM, 12px);
         }
 
         mwc-select#modify-folder-quota-unit {
