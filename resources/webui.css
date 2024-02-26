@@ -81,7 +81,7 @@ body.dark-theme .splash-header .logo{
 }
 
 body.dark-theme .splash-header {
-  background-color: #141414;
+  background-color: var(--general-colorBgContainer, #141414);
 }
 
 ul {
