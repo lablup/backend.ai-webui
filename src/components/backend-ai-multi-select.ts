@@ -134,7 +134,10 @@ export default class BackendAIMultiSelect extends LitElement {
         .selected-area {
           background-color: var(--select-background-color, #efefef);
           border-radius: var(--selected-area-border-radius, 5px);
-          border: var(--selected-area-border, 1px solid rgba(0, 0, 0, 1));
+          border: var(
+            --selected-area-border,
+            1px solid var(--general-colorBorder, rgba(0, 0, 0, 1))
+          );
           padding: var(--selected-area-padding, 10px);
           min-height: var(--selected-area-min-height, 24px);
           height: var(--selected-area-height, auto);

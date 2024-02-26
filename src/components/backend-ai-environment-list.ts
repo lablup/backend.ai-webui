@@ -193,6 +193,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           display: grid;
           grid-template-columns: 4fr 4fr 4fr 1fr;
           margin-bottom: 10px;
+          gap: 10px;
         }
         mwc-button.operation {
           margin: auto 10px;

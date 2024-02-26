@@ -296,13 +296,16 @@ export const BackendAiStyles = [
         #efefef
       );
       --select-background-border-radius: 5px;
-      --select-box-shadow: 0 1px 3px -1px rgba(0, 0, 0, 60%),
-        0 3px 12px -1px rgb(200, 200, 200, 80%);
+      --select-box-shadow: var(
+        --general-boxShadow,
+        0 1px 3px -1px rgba(0, 0, 0, 60%),
+        0 3px 12px -1px rgb(200, 200, 200, 80%)
+      );
       --selected-item-disabled-text-color: var(--general-colorTextDisabled);
 
       /* override for selected-area */
       --select-title-font-size: 10px;
-      --selected-area-border-radius: 5px;
+      --selected-area-border-radius: var(--general-borderRadius, 5px);
       --selected-area-border: none;
       --selected-area-padding: 5px;
       --selected-area-min-height: 24px;
