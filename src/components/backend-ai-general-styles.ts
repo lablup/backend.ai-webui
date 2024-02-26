@@ -1150,32 +1150,6 @@ export const BackendAiStyles = [
       color: #999999;
     }
 
-    div.note-container {
-      background-color: var(--paper-green-100);
-    }
-
-    div.note-title {
-      background-color: var(--paper-green-400);
-      padding: 5px 10px;
-      color: #ffffff;
-      display: -ms-flexbox;
-      display: -webkit-flex;
-      display: flex;
-      -ms-flex-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-    }
-
-    div.note-title mwc-icon {
-      margin-right: 6px;
-    }
-
-    div.note-contents {
-      padding: 20px;
-      /* Fix the color for readability */
-      color: #222222;
-    }
-
     backend-ai-dialog {
       mwc-list-item,
       mwc-icon,
@@ -1207,6 +1181,33 @@ export const BackendAiStyles = [
       vaadin-grid[theme~='dark'] {
         --lumo-base-color: var(--general-colorBgElevated) !important;
       }
+    }
+
+    div.note-container {
+      background-color: var(--paper-green-100);
+    }
+
+    div.note-title {
+      background-color: var(--paper-green-400);
+      padding: 5px 10px;
+      color: #ffffff;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      -ms-flex-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+
+    div.note-title mwc-icon {
+      margin-right: 6px;
+      background-color: var(--paper-green-400);
+    }
+
+    div.note-contents {
+      padding: 20px;
+      /* Fix the color for readability */
+      color: #222222;
     }
   `,
 ];

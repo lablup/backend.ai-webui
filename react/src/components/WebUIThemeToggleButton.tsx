@@ -1,6 +1,6 @@
 import { useThemeMode } from '../hooks/useThemeMode';
 import { MoonOutlined, SunOutlined } from '@ant-design/icons';
-import { Button, ButtonProps, theme } from 'antd';
+import { Button, ButtonProps } from 'antd';
 import React from 'react';
 
 interface WebUIThemeToggleButtonProps extends ButtonProps {}
@@ -9,7 +9,6 @@ const WebUIThemeToggleButton: React.FC<WebUIThemeToggleButtonProps> = ({
   ...props
 }) => {
   const { isDarkMode, themeMode, setThemeMode } = useThemeMode();
-  const { token } = theme.useToken();
 
   return (
     <Button
