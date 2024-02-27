@@ -3,7 +3,7 @@ import { RelayEnvironment } from '../RelayEnvironment';
 import rawFixAntCss from '../fix_antd.css?raw';
 import { useCustomThemeConfig } from '../helper/customThemeConfig';
 import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
-import { useThemeMode } from '../hooks/useThemeMode';
+import { ThemeModeProvider, useThemeMode } from '../hooks/useThemeMode';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { App, ConfigProvider, theme } from 'antd';
 import en_US from 'antd/locale/en_US';
@@ -121,7 +121,7 @@ export const useCurrentLanguage = () => {
   return [lang] as const;
 };
 
-const DefaultProviders: React.FC<DefaultProvidersProps> = ({
+const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
   children,
   value,
   styles,
@@ -153,45 +153,47 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
             </style>
             <QueryClientProvider client={queryClient}>
               <ShadowRootContext.Provider value={shadowRoot}>
-                <WebComponentContext.Provider value={componentValues}>
-                  <ConfigProvider
-                    // @ts-ignore
-                    getPopupContainer={(triggerNode) => {
-                      return triggerNode?.parentNode || shadowRoot;
-                    }}
-                    //TODO: apply other supported locales
-                    locale={'ko' === lang ? ko_KR : en_US}
-                    theme={{
-                      ...(isDarkMode
-                        ? { ...themeConfig?.dark }
-                        : { ...themeConfig?.light }),
-                      algorithm: isDarkMode
-                        ? theme.darkAlgorithm
-                        : theme.defaultAlgorithm,
-                    }}
-                  >
-                    <App>
-                      <StyleProvider container={shadowRoot} cache={cache}>
-                        <Suspense fallback="">
-                          <BrowserRouter>
-                            <QueryParamProvider
-                              adapter={ReactRouter6Adapter}
-                              options={
-                                {
-                                  // searchStringToObject: queryString.parse,
-                                  // objectToSearchString: queryString.stringify,
+                <ThemeModeProvider>
+                  <WebComponentContext.Provider value={componentValues}>
+                    <ConfigProvider
+                      // @ts-ignore
+                      getPopupContainer={(triggerNode) => {
+                        return triggerNode?.parentNode || shadowRoot;
+                      }}
+                      //TODO: apply other supported locales
+                      locale={'ko' === lang ? ko_KR : en_US}
+                      theme={{
+                        ...(isDarkMode
+                          ? { ...themeConfig?.dark }
+                          : { ...themeConfig?.light }),
+                        algorithm: isDarkMode
+                          ? theme.darkAlgorithm
+                          : theme.defaultAlgorithm,
+                      }}
+                    >
+                      <App>
+                        <StyleProvider container={shadowRoot} cache={cache}>
+                          <Suspense fallback="">
+                            <BrowserRouter>
+                              <QueryParamProvider
+                                adapter={ReactRouter6Adapter}
+                                options={
+                                  {
+                                    // searchStringToObject: queryString.parse,
+                                    // objectToSearchString: queryString.stringify,
+                                  }
                                 }
-                              }
-                            >
-                              <RoutingEventHandler />
-                              {children}
-                            </QueryParamProvider>
-                          </BrowserRouter>
-                        </Suspense>
-                      </StyleProvider>
-                    </App>
-                  </ConfigProvider>
-                </WebComponentContext.Provider>
+                              >
+                                <RoutingEventHandler />
+                                {children}
+                              </QueryParamProvider>
+                            </BrowserRouter>
+                          </Suspense>
+                        </StyleProvider>
+                      </App>
+                    </ConfigProvider>
+                  </WebComponentContext.Provider>
+                </ThemeModeProvider>
               </ShadowRootContext.Provider>
             </QueryClientProvider>
           </React.StrictMode>
@@ -220,6 +222,14 @@ export const RoutingEventHandler = () => {
   }, [navigate]);
 
   return null;
+};
+
+const DefaultProviders: React.FC<DefaultProvidersProps> = (props) => {
+  return (
+    <ThemeModeProvider>
+      <DefaultProvidersForWebComponent {...props} />
+    </ThemeModeProvider>
+  );
 };
 
 export default DefaultProviders;

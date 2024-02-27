@@ -1,5 +1,11 @@
 import { useLocalStorageGlobalState } from './useLocalStorageGlobalState';
-import { useEffect } from 'react';
+import {
+  PropsWithChildren,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+} from 'react';
 
 type themeModeValue = 'system' | 'dark' | 'light';
 
@@ -13,7 +19,19 @@ type themeModeValue = 'system' | 'dark' | 'light';
  * and a function to set the theme mode.
  */
 
-export const useThemeMode = () => {
+type ThemeModeContextType = {
+  themeMode: themeModeValue;
+  isDarkMode: boolean;
+  setThemeMode: (value: themeModeValue) => void;
+};
+
+const ThemeModeContext = createContext<ThemeModeContextType | undefined>(
+  undefined,
+);
+
+export const ThemeModeProvider: React.FC<PropsWithChildren> = ({
+  children,
+}) => {
   const [themeMode, setThemeMode] = useLocalStorageGlobalState<themeModeValue>(
     'backendaiwebui.settings.themeMode',
     'system',
@@ -48,11 +66,28 @@ export const useThemeMode = () => {
     }
   }, [themeMode, setIsDarkMode]);
 
-  return {
-    themeMode,
-    isDarkMode,
-    setThemeMode: (value: themeModeValue) => {
-      setThemeMode(value);
-    },
-  };
+  const value = useMemo(() => {
+    return {
+      themeMode,
+      isDarkMode,
+      setThemeMode: (value: themeModeValue) => {
+        setThemeMode(value);
+      },
+    } as ThemeModeContextType;
+  }, [themeMode, isDarkMode, setThemeMode]);
+  return (
+    <ThemeModeContext.Provider value={value}>
+      {children}
+    </ThemeModeContext.Provider>
+  );
+};
+
+export const useThemeMode = () => {
+  const context = useContext(ThemeModeContext);
+  if (context === undefined) {
+    throw new Error(
+      'useThemeModeContext must be used within a ThemeModeProvider',
+    );
+  }
+  return context;
 };
