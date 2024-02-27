@@ -73,8 +73,8 @@ export default class LablupProgressBar extends LitElement {
           align-items: center;
           left: 0;
           right: 0;
-          top: 0;
-          bottom: 0;
+          top: -1px;
+          bottom: -1px;
           background: var(--general-progress-bar-bg, #e8e8e8);
           color: var(--progress-bar-font-color, black);
           clip-path: inset(0 0 0 100%);
