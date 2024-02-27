@@ -37,9 +37,13 @@ export const useThemeMode = () => {
       if (themeMode === 'dark') {
         setIsDarkMode(true);
         document.body.classList.add('dark-theme');
+        // @ts-ignore
+        globalThis.isDarkMode = true;
       } else {
         setIsDarkMode(false);
         document.body.classList.remove('dark-theme');
+        // @ts-ignore
+        globalThis.isDarkMode = false;
       }
     }
   }, [themeMode, setIsDarkMode]);
