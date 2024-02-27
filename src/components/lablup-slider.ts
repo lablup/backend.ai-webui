@@ -60,14 +60,14 @@ export default class LablupSlider extends LitElement {
 
         mwc-slider {
           width: var(--slider-width, 100px);
-          --mdc-theme-primary: var(--general-colorPrimary);
+          --mdc-theme-primary: var(--token-colorPrimary);
           --mdc-theme-secondary: var(
-            --general-colorPrimary,
+            --token-colorPrimary,
             --slider-color,
             '#018786'
           );
           --mdc-theme-on-surface: var(--paper-grey-100);
-          color: var(--general-colorTextSecondary, --paper-grey-700);
+          color: var(--token-colorTextSecondary, --paper-grey-700);
         }
       `,
     ];

@@ -210,7 +210,7 @@ export default class BackendAILogin extends BackendAIPage {
 
         mwc-icon-button {
           /*color: rgba(0, 0, 0, 0.54); Matched color with above icons*/
-          color: var(--general-colorText);
+          color: var(--token-colorText);
           --mdc-icon-size: 24px;
         }
 
@@ -221,7 +221,7 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         mwc-menu {
-          font-family: var(--general-fontFamily);
+          font-family: var(--token-fontFamily);
           --mdc-menu-min-width: 400px;
           --mdc-menu-max-width: 400px;
         }
@@ -276,7 +276,7 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         #endpoint-button {
-          color: var(--general-colorInfo);
+          color: var(--token-colorInfo);
           margin-top: 4px;
         }
 

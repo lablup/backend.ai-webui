@@ -1,11 +1,11 @@
 body {
   margin: 0;
- --general-fontFamily: 'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-  font-family: var(--general-fontFamily);
-  --lumo-font-family: var(--general-fontFamily);
-  --lumo-primary-text-color: var(--general-colorPrimary, #27824F);
-  --lumo-primary-color-50pct: var(--general-colorPrimary, #27824F);
-  background-color: var(--general-colorBgBase, rgba(247, 247, 246, 1));
+ --token-fontFamily: 'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+  font-family: var(--token-fontFamily);
+  --lumo-font-family: var(--token-fontFamily);
+  --lumo-primary-text-color: var(--token-colorPrimary, #27824F);
+  --lumo-primary-color-50pct: var(--token-colorPrimary, #27824F);
+  background-color: var(--token-colorBgBase, rgba(247, 247, 246, 1));
   /* background-image: url("images/loading-background-large.jpg");
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -49,7 +49,7 @@ body.dark-theme::before {
 
 body.dark-theme .splash {
   background-color: #191919;
-  border: 1px solid var(--general-colorBorder, #444);
+  border: 1px solid var(--token-colorBorder, #444);
   color: #DCDCDC;
 }
 
@@ -81,7 +81,7 @@ body.dark-theme .splash-header .logo{
 }
 
 body.dark-theme .splash-header {
-  background-color: var(--general-colorBgContainer, #141414);
+  background-color: var(--token-colorBgContainer, #141414);
 }
 
 ul {

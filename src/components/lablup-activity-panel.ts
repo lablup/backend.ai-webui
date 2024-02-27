@@ -56,7 +56,7 @@ export default class LablupActivityPanel extends LitElement {
         div.card {
           display: block;
           background: var(
-            --general-colorBgContainer,
+            --token-colorBgContainer,
             --general-background-color,
             #ffffff
           );
@@ -66,20 +66,20 @@ export default class LablupActivityPanel extends LitElement {
           border-radius: 5px;
           width: 280px;
           line-height: 1.1;
-          color: var(--general-colorText);
-          border: 1px solid var(--general-colorBorder, #424242);
+          color: var(--token-colorText);
+          border: 1px solid var(--token-colorBorder, #424242);
         }
 
         div.card > h4 {
-          background-color: var(--general-colorBgContainer, #ffffff);
-          color: var(--general-colorText, #000000);
-          font-size: var(--general-fontSize, 14px);
+          background-color: var(--token-colorBgContainer, #ffffff);
+          color: var(--token-colorText, #000000);
+          font-size: var(--token-fontSize, 14px);
           font-weight: 400;
           height: 48px;
           padding: 5px 15px 5px 20px;
           margin: 0 0 10px 0;
           border-radius: 5px 5px 0 0;
-          border-bottom: 1px solid var(--general-colorBorder, #ddd);
+          border-bottom: 1px solid var(--token-colorBorder, #ddd);
           display: flex;
           white-space: nowrap;
           text-overflow: ellipsis;
@@ -88,7 +88,7 @@ export default class LablupActivityPanel extends LitElement {
 
         div.card[disabled] {
           background-color: var(
-            --general-colorBgContainerDisabled,
+            --token-colorBgContainerDisabled,
             rgba(0, 0, 0, 0.1)
           );
         }

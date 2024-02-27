@@ -54,9 +54,9 @@ export default class LablupExpansion extends LitElement {
           margin: 0;
           background-color: var(
             --expansion-background-color,
-            --general-colorBgContainer
+            --token-colorBgContainer
           );
-          color: var(--general-colorText);
+          color: var(--token-colorText);
         }
 
         #accordion > div.card > h3 {
@@ -68,7 +68,7 @@ export default class LablupExpansion extends LitElement {
           padding: var(--expansion-header-padding, 0);
           font-size: var(--expansion-header-font-size, 12px);
           font-weight: var(--expansion-header-font-weight, 600);
-          font-family: var(--general-fontFamily);
+          font-family: var(--token-fontFamily);
           transition: all 0.35s;
         }
         #accordion > div.card > h3 > mwc-icon-button {

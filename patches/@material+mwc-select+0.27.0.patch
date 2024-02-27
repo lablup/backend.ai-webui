@@ -7,7 +7,7 @@ index 66a2c20..bee6b8b 100644
              return nothing;
          }
 -        return html `<mwc-icon class="mdc-select__icon"><div>${this.icon}</div></mwc-icon>`;
-+        return html `<mwc-icon class="mdc-select__icon" style="color:var(--general-colorTextSecondary);"><div>${this.icon}</div></mwc-icon>`;
++        return html `<mwc-icon class="mdc-select__icon" style="color:var(--token-colorTextSecondary);"><div>${this.icon}</div></mwc-icon>`;
      }
      renderLineRipple() {
          if (this.outlined) {

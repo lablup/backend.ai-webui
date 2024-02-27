@@ -39,16 +39,16 @@ export default class BackendAISplash extends LitElement {
       css`
         :host > *,
         html {
-          font-family: var(--general-fontFamily);
+          font-family: var(--token-fontFamily);
         }
 
         a,
         a:visited {
-          color: var(--general-colorLink, #222222);
+          color: var(--token-colorLink, #222222);
         }
 
         a:hover {
-          color: var(--general-colorLinkHover, #3e872d);
+          color: var(--token-colorLinkHover, #3e872d);
         }
 
         #splash-panel {

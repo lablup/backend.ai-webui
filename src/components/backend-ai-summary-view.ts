@@ -221,8 +221,8 @@ export default class BackendAISummary extends BackendAIPage {
         #download-app-os-select-box {
           height: 80px;
           padding-top: 20px;
-          background-color: var(--general-colorBgContainer, #f6f6f6);
-          margin-bottom: var(--general-marginSM);
+          background-color: var(--token-colorBgContainer, #f6f6f6);
+          margin-bottom: var(--token-marginSM);
         }
 
         #download-app-os-select-box mwc-select {
@@ -243,7 +243,7 @@ export default class BackendAISummary extends BackendAIPage {
 
         button.link-button {
           background: none;
-          color: var(--general-colorTextSecondary);
+          color: var(--token-colorTextSecondary);
           border: none;
           padding: 0;
           font: inherit;
@@ -251,15 +251,15 @@ export default class BackendAISummary extends BackendAIPage {
           outline: inherit;
         }
         button.link-button > i {
-          color: var(--general-colorTextSecondary, #5b5b5b);
+          color: var(--token-colorTextSecondary, #5b5b5b);
           margin: 10px;
         }
         button.link-button > span {
           max-width: 70px;
-          color: var(--general-colorTextSecondary, #838383);
+          color: var(--token-colorTextSecondary, #838383);
         }
         button.link-button:hover {
-          color: var(--general-colorPrimary, #3e872d);
+          color: var(--token-colorPrimary, #3e872d);
         }
       `,
     ];

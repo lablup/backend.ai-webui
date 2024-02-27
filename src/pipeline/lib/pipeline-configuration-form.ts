@@ -183,13 +183,13 @@ export default class PipelineConfigurationForm extends LitElement {
         #vfolder-header-title {
           text-align: center;
           font-size: 16px;
-          font-family: var(--general-fontFamily);
+          font-family: var(--token-fontFamily);
           font-weight: 500;
         }
 
         #codemirror-validation-message {
           font-size: 12px;
-          font-family: var(--general-fontFamily);
+          font-family: var(--token-fontFamily);
           margin-left: 15px;
           color: var(--paper-red-400);
         }
@@ -209,7 +209,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
         mwc-select.full-width {
           width: 100%;
-          font-family: var(--general-fontFamily);
+          font-family: var(--token-fontFamily);
           background-color: var(--mdc-text-field-fill-color, whitesmoke);
           --mdc-theme-primary: var(--general-sidebar-color);
           --mdc-menu-item-height: auto;

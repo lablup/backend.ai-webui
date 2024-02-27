@@ -601,7 +601,7 @@ export default class BackendAISessionView extends BackendAIPage {
                             @click="${() => this._openExportToCsvDialog()}"
                           >
                             <mwc-icon
-                              style="color:var(--general-colorTextSecondary);padding-right:10px;"
+                              style="color:var(--token-colorTextSecondary);padding-right:10px;"
                             >
                               get_app
                             </mwc-icon>

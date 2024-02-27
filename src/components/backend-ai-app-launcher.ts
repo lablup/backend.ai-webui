@@ -122,7 +122,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-fontFamily);
+          --mdc-typography-font-family: var(--token-fontFamily);
         }
 
         mwc-icon-button.sftp-session-connection-copy {
@@ -182,9 +182,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
 
         macro-carousel macro-carousel-nav-button {
-          --macro-carousel-navigation-color: var(--general-colorText);
+          --macro-carousel-navigation-color: var(--token-colorText);
           --macro-carousel-navigation-color-background-focus: var(
-            --general-colorBgTextHover
+            --token-colorBgTextHover
           );
         }
 

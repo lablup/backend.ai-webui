@@ -225,7 +225,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
 
         mwc-icon-button {
-          color: var(--general-colorPrimary);
+          color: var(--token-colorPrimary);
         }
 
         ::-webkit-scrollbar {

@@ -126,7 +126,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-          border-bottom: 1px solid var(--general-colorBorder, #ddd);
+          border-bottom: 1px solid var(--token-colorBorder, #ddd);
         }
       `,
     ];

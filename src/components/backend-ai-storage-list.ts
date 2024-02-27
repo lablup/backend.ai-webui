@@ -286,7 +286,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         span[slot='secondary'] {
-          color: var(--general-colorTextSecondary);
+          color: var(--token-colorTextSecondary);
         }
 
         .info-indicator {
@@ -382,7 +382,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           transition: color ease-in 0.2s;
           border: solid;
           border-width: 0 2px 2px 0;
-          border-color: var(--general-colorBorder, #242424);
+          border-color: var(--token-colorBorder, #242424);
           margin-right: 10px;
           content: '';
           display: inline-block;
@@ -400,7 +400,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-textfield {
           width: 100%;
-          /* --mdc-text-field-label-ink-color: var(--general-colorText); */
+          /* --mdc-text-field-label-ink-color: var(--token-colorText); */
         }
 
         mwc-textfield.red {
@@ -455,7 +455,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         backend-ai-dialog mwc-textfield,
         backend-ai-dialog mwc-select {
-          --mdc-typography-label-font-size: var(--general-fontSizeSM, 12px);
+          --mdc-typography-label-font-size: var(--token-fontSizeSM, 12px);
         }
 
         mwc-select#modify-folder-quota-unit {

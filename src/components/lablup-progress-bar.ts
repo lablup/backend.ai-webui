@@ -50,10 +50,7 @@ export default class LablupProgressBar extends LitElement {
           border: var(--progress-bar-border, 0px);
           border-radius: var(--progress-bar-border-radius, 5px);
           font-size: var(--progress-bar-font-size, 10px);
-          font-family: var(
-            --progress-bar-font-family,
-            var(--general-fontFamily)
-          );
+          font-family: var(--progress-bar-font-family, var(--token-fontFamily));
           overflow: hidden;
         }
 

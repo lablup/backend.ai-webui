@@ -247,8 +247,8 @@ export default class BackendAIChart extends LitElement {
       IronFlexAlignment,
       css`
         .chart-container {
-          color: var(--general-colorText);
-          background-color: var(--general-colorBgContainer);
+          color: var(--token-colorText);
+          background-color: var(--token-colorBgContainer);
         }
       `,
     ];

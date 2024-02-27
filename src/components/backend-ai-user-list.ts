@@ -151,11 +151,11 @@ export default class BackendAIUserList extends BackendAIPage {
         }
 
         mwc-textfield.display-textfield {
-          --mdc-text-field-disabled-ink-color: var(--general-colorText);
+          --mdc-text-field-disabled-ink-color: var(--token-colorText);
         }
 
         backend-ai-dialog li {
-          font-family: var(--general-fontFamily);
+          font-family: var(--token-fontFamily);
           font-size: 16px;
         }
 
@@ -165,7 +165,7 @@ export default class BackendAIUserList extends BackendAIPage {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-theme-on-primary: var(--general-button-color);
-          --mdc-typography-font-family: var(--general-fontFamily);
+          --mdc-typography-font-family: var(--token-fontFamily);
         }
 
         mwc-select.full-width {
@@ -178,7 +178,7 @@ export default class BackendAIUserList extends BackendAIPage {
         mwc-textfield,
         mwc-textarea {
           width: 100%;
-          --mdc-typography-font-family: var(--general-fontFamily);
+          --mdc-typography-font-family: var(--token-fontFamily);
           --mdc-typography-textfield-font-size: 14px;
           --mdc-typography-textarea-font-size: 14px;
           --mdc-text-field-fill-color: transparent;
@@ -187,7 +187,7 @@ export default class BackendAIUserList extends BackendAIPage {
 
         p.label {
           font-size: 16px;
-          font-family: var(--general-fontFamily);
+          font-family: var(--token-fontFamily);
           color: var(--general-sidebar-color);
           width: 270px;
         }

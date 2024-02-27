@@ -108,7 +108,7 @@ export default class BackendAIMultiSelect extends LitElement {
         }
 
         mwc-list {
-          font-family: var(--general-fontFamily);
+          font-family: var(--token-fontFamily);
           width: 100%;
           position: absolute;
           left: 0;
@@ -136,7 +136,7 @@ export default class BackendAIMultiSelect extends LitElement {
           border-radius: var(--selected-area-border-radius, 5px);
           border: var(
             --selected-area-border,
-            1px solid var(--general-colorBorder, rgba(0, 0, 0, 1))
+            1px solid var(--token-colorBorder, rgba(0, 0, 0, 1))
           );
           padding: var(--selected-area-padding, 10px);
           min-height: var(--selected-area-min-height, 24px);

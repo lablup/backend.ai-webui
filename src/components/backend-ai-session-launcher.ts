@@ -294,7 +294,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         h5,
         p,
         span {
-          color: var(--general-colorText);
+          color: var(--token-colorText);
         }
 
         .slider-list-item {
@@ -302,7 +302,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         hr.separator {
-          border-top: 1px solid var(--general-colorBorder, #ddd);
+          border-top: 1px solid var(--token-colorBorder, #ddd);
         }
 
         lablup-slider {
@@ -387,10 +387,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         .preopen-ports-container,
         mwc-select h5 {
           background-color: var(
-            --general-colorBgElevated,
+            --token-colorBgElevated,
             rgba(244, 244, 244, 1)
           );
-          color: var(--general-colorText);
+          color: var(--token-colorText);
           overflow-y: scroll;
         }
 
@@ -413,9 +413,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         .environment-variables-container mwc-textfield,
         .preopen-ports-container mwc-textfield {
-          --mdc-text-field-fill-color: var(--general-colorBgElevated);
-          --mdc-text-field-disabled-fill-color: var(--general-colorBgElevated);
-          --mdc-text-field-disabled-line-color: var(--general-colorBorder);
+          --mdc-text-field-fill-color: var(--token-colorBgElevated);
+          --mdc-text-field-disabled-fill-color: var(--token-colorBgElevated);
+          --mdc-text-field-disabled-line-color: var(--token-colorBorder);
         }
 
         .resources.horizontal .monitor.session {
@@ -438,7 +438,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         .cluster-total-allocation-container {
           border-radius: 10px;
           border: 1px dotted
-            var(--general-colorBorder, --general-button-background-color);
+            var(--token-colorBorder, --general-button-background-color);
           padding-top: 10px;
           margin-left: 15px;
           margin-right: 15px;
@@ -508,7 +508,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         .cluster-allocated {
           p,
           span {
-            color: var(--general-colorWhite);
+            color: var(--token-colorWhite);
           }
         }
 
@@ -522,7 +522,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         .resource-allocated-box {
-          background-color: var(--general-colorBgElevated, --paper-grey-300);
+          background-color: var(--token-colorBgElevated, --paper-grey-300);
           border-radius: 5px;
           margin: 5px;
           z-index: 10;
@@ -573,11 +573,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --expansion-header-font-weight: normal;
           --expansion-header-font-size: 14px;
           --expansion-header-font-color: var(
-            --general-colorText,
+            --token-colorText,
             rgb(64, 64, 64)
           );
-          --expansion-background-color: var(--general-colorBgElevated);
-          --expansion-header-background-color: var(--general-colorBgElevated);
+          --expansion-background-color: var(--token-colorBgElevated);
+          --expansion-header-background-color: var(--token-colorBgElevated);
         }
 
         lablup-expansion.vfolder,
@@ -657,7 +657,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         #prev-button,
         #next-button {
-          color: var(--general-colorPrimary, #27824f);
+          color: var(--token-colorPrimary, #27824f);
         }
 
         #environment {
@@ -676,7 +676,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         #vfolder-header-title {
           text-align: center;
           font-size: 16px;
-          font-family: var(--general-fontFamily);
+          font-family: var(--token-fontFamily);
           font-weight: 500;
         }
 
@@ -697,7 +697,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         mwc-icon-button.info {
           --mdc-icon-button-size: 30px;
-          color: var(--general-colorTextSecondary);
+          color: var(--token-colorTextSecondary);
         }
 
         mwc-icon {
@@ -735,7 +735,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           margin-top: 0;
           font-size: 12px;
           font-weight: 200;
-          color: var(--general-colorTextTertiary, #404040);
+          color: var(--token-colorTextTertiary, #404040);
         }
 
         #progress-04 p.title {
@@ -744,8 +744,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         #batch-mode-config-section {
           width: 100%;
-          border-bottom: solid 1px
-            var(--general-colorBorder, rgba(0, 0, 0, 0.42));
+          border-bottom: solid 1px var(--token-colorBorder, rgba(0, 0, 0, 0.42));
           margin-bottom: 15px;
         }
 
@@ -755,7 +754,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           position: absolute;
           top: -5px;
           left: 5px;
-          border: 1px solid var(--general-colorBorder, #ccc);
+          border: 1px solid var(--token-colorBorder, #ccc);
         }
 
         #modify-env-dialog,
@@ -801,7 +800,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         .minus-btn {
           --mdc-icon-size: 20px;
-          color: var(--general-colorPrimary, #27824f);
+          color: var(--token-colorPrimary, #27824f);
         }
 
         .environment-variables-container h4,
@@ -811,8 +810,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         .environment-variables-container mwc-textfield,
         .preopen-ports-container mwc-textfield {
-          --mdc-typography-subtitle1-font-family: var(--general-fontFamily);
-          --mdc-text-field-disabled-ink-color: var(--general-colorText);
+          --mdc-typography-subtitle1-font-family: var(--token-fontFamily);
+          --mdc-text-field-disabled-ink-color: var(--token-colorText);
         }
 
         .optional-buttons {
@@ -825,7 +824,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         #launch-button-msg {
-          color: var(--general-colorWhite);
+          color: var(--token-colorWhite);
         }
 
         [name='resource-group'] mwc-list-item {
@@ -4445,7 +4444,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ${item.clickable === false
                     ? html`
                         <h5
-                          style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid var(--general-colorBorder, #ccc);"
+                          style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid var(--token-colorBorder, #ccc);"
                           role="separator"
                           disabled="true"
                         >
@@ -4514,7 +4513,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 ? html``
                 : html`
                     <h5
-                      style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid var(--general-colorBorder, #ccc);"
+                      style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid var(--token-colorBorder, #ccc);"
                       role="separator"
                       disabled="true"
                       class="horizontal layout"
@@ -4979,7 +4978,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   style="display:none!important;"
                 ></mwc-list-item>
                 <h5
-                  style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid var(--general-colorBorder, #ccc);"
+                  style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid var(--token-colorBorder, #ccc);"
                   role="separator"
                   disabled="true"
                   class="horizontal layout center"

@@ -93,7 +93,7 @@ export default class BackendAIUsageList extends BackendAIPage {
 
         vaadin-select-item {
           font-size: 14px;
-          --lumo-font-family: var(--general-fontFamily) !important;
+          --lumo-font-family: var(--token-fontFamily) !important;
         }
 
         #select-period {
@@ -110,8 +110,8 @@ export default class BackendAIUsageList extends BackendAIPage {
 
         .card > div,
         .usage-title {
-          color: var(--general-colorText);
-          background-color: var(--general-colorBgContainer);
+          color: var(--token-colorText);
+          background-color: var(--token-colorBgContainer);
         }
       `,
     ];

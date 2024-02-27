@@ -473,7 +473,7 @@ export default class PipelineJobList extends BackendAIPage {
         mountedFolderItem.style.height = '25px';
         mountedFolderItem.style.fontWeight = '400';
         mountedFolderItem.style.fontSize = '14px';
-        mountedFolderItem.style.fontFamily = 'var(--general-fontFamily)';
+        mountedFolderItem.style.fontFamily = 'var(--token-fontFamily)';
         mountedFolderItem.innerHTML =
           mounts.length > 1 ? key : _text('session.OnlyOneFolderAttached');
 

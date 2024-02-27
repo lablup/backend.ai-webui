@@ -7,7 +7,7 @@ index 5d17fac..f827a0e 100644
              'mdc-text-field__icon--trailing': isTrailingIcon
          };
 -        return html `<i class="material-icons mdc-text-field__icon ${classMap(classes)}">${icon}</i>`;
-+        return html `<i class="material-icons mdc-text-field__icon ${classMap(classes)}" style="color:var(--general-colorTextSecondary);">${icon}</i>`;
++        return html `<i class="material-icons mdc-text-field__icon ${classMap(classes)}" style="color:var(--token-colorTextSecondary);">${icon}</i>`;
      }
      /** @soyTemplate */
      renderPrefix() {
@@ -16,7 +16,7 @@ index 5d17fac..f827a0e 100644
              'mdc-text-field__affix--suffix': isSuffix
          };
 -        return html `<span class="mdc-text-field__affix ${classMap(classes)}">
-+        return html `<span class="mdc-text-field__affix ${classMap(classes)}" style="${this.disabled?"color:var(--general-colorTextDisabled);":"color:var(--general-colorTextSecondary);"}">
++        return html `<span class="mdc-text-field__affix ${classMap(classes)}" style="${this.disabled?"color:var(--token-colorTextDisabled);":"color:var(--token-colorTextSecondary);"}">
          ${content}</span>`;
      }
      /** @soyTemplate */

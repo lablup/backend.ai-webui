@@ -115,7 +115,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         backend-ai-dialog mwc-textarea {
           width: 100%;
           margin: 5px auto 5px auto;
-          --mdc-typography-font-family: var(--general-fontFamily);
+          --mdc-typography-font-family: var(--token-fontFamily);
           --mdc-theme-primary: var(--general-textfield-selected-color);
         }
 
@@ -159,7 +159,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-          border-bottom: 1px solid var(--general-colorBorder, #ddd);
+          border-bottom: 1px solid var(--token-colorBorder, #ddd);
         }
 
         vaadin-grid {

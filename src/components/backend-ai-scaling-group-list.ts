@@ -99,7 +99,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         backend-ai-dialog mwc-textarea {
           width: 100%;
           margin: 10px auto 20px auto;
-          --mdc-typography-font-family: var(--general-fontFamily);
+          --mdc-typography-font-family: var(--token-fontFamily);
           --mdc-theme-primary: var(--general-textfield-selected-color);
         }
 

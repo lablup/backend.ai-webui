@@ -64,7 +64,7 @@ export default class LablupNotification extends LitElement {
             --general-sidebar-selected-color,
             #38bd73
           );
-          --mdc-typography-body2-font-family: var(--general-fontFamily);
+          --mdc-typography-body2-font-family: var(--token-fontFamily);
           position: fixed;
           right: 20px;
         }

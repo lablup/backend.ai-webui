@@ -126,7 +126,7 @@ class BackendAIRegistryList extends BackendAIPage {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-theme-on-primary: var(--general-button-color);
-          --mdc-typography-font-family: var(--general-fontFamily);
+          --mdc-typography-font-family: var(--token-fontFamily);
         }
       `,
     ];
