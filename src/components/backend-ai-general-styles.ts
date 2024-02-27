@@ -1180,6 +1180,7 @@ export const BackendAiStyles = [
       mwc-textarea {
         --mdc-text-field-fill-color: var(--general-colorBgElevated);
         --mdc-typography-font-family: var(--general-fontFamily);
+        --mdc-theme-primary: var(--general-colorPrimary);
       }
 
       vaadin-grid[theme~='dark'] {
