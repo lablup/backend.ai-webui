@@ -137,6 +137,10 @@ export const BackendAiStyles = [
       --lumo-font-family: var(--token-fontFamily);
       --general-warning-text: var(--paper-red-400);
 
+      /**
+      * NOTE: For rendering dark theme of vaadin components, we need to set "theme='dark'" attribute to the vaadin components.
+      *       e.g) <vaadin-grid theme="dark"></vaadin-grid> 
+      */
       [theme~='dark'] {
         --lumo-primary-color: var(--token-colorPrimary);
         --lumo-secondary-text-color: var(--token-colorTextSecondary);
