@@ -224,11 +224,9 @@ export const RoutingEventHandler = () => {
 
 export default DefaultProviders;
 
-export const DefaultProviders2: React.FC<Partial<DefaultProvidersProps>> = ({
-  children,
-  value,
-  styles,
-}) => {
+export const DefaultProvidersForReactRoot: React.FC<
+  Partial<DefaultProvidersProps>
+> = ({ children, value, styles }) => {
   const [lang] = useCurrentLanguage();
   const themeConfig = useCustomThemeConfig();
   const { isDarkMode } = useThemeMode();
