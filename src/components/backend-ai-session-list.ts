@@ -4001,7 +4001,6 @@ ${rowData.item[this.sessionNameField]}</pre
   }
 
   render() {
-    console.log('##session render', this.isDarkMode);
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css">
