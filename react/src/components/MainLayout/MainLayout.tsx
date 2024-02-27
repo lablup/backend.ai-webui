@@ -1,3 +1,4 @@
+import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
@@ -42,6 +43,8 @@ function MainLayout() {
     WebUIPluginType | undefined
   >();
 
+  const { isDarkMode } = useThemeMode();
+
   useEffect(() => {
     const handler = () => {
       // @ts-ignore
@@ -65,16 +68,9 @@ function MainLayout() {
     };
   }, [navigate]);
 
-  // Add antd token styles to react root for web components
-  _.forEach(token, (value, key) => {
-    document.documentElement.style.setProperty(
-      `--general-${key}`,
-      value?.toString() ?? '',
-    );
-  });
-
   return (
     <Layout>
+      <CSSTokenVariables />
       <style>
         {`
           /* Scrollbar stylings */
@@ -217,6 +213,23 @@ const NotificationForAnonymous = () => {
     };
   }, [app.notification]);
   return null;
+};
+
+export const CSSTokenVariables = () => {
+  const { token } = theme.useToken();
+  useThemeMode(); // This is to make sure the theme mode is updated
+
+  return (
+    <style>
+      {`
+:root {
+${Object.entries(token)
+  .map(([key, value]) => `--general-${key}: ${value?.toString() ?? ''};`)
+  .join('\n')}
+}
+      `}
+    </style>
+  );
 };
 
 export default MainLayout;
