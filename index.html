@@ -45,7 +45,7 @@
     //To avoid flickering when first loading the page, we add a class to the body to indicate the theme.
     const userPrefersDark = localStorage.getItem('backendaiwebui.settings.isDarkMode');
     const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    globalThis.isDarkMode = userPrefersDark === null ? systemPrefersDark : userPrefersDark === 'true';
+    globalThis.isDarkMode = userPrefersDark === null || userPrefersDark === undefined ? systemPrefersDark : userPrefersDark === 'true';
     if (globalThis.isDarkMode) {
       document.body.classList.add('dark-theme');
     }
