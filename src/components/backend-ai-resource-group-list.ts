@@ -721,9 +721,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       </h4>
       <div class="list-wrapper">
         <vaadin-grid
-          theme="row-stripes column-borders compact ${globalThis.isDarkMode
-            ? 'dark'
-            : ''}"
+          theme="row-stripes column-borders compact dark"
           aria-label="Job list"
           .items="${this.resourceGroups}"
         >

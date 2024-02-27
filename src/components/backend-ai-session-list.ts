@@ -4001,6 +4001,7 @@ ${rowData.item[this.sessionNameField]}</pre
   }
 
   render() {
+    console.log('##session render', this.isDarkMode);
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css">
@@ -4027,9 +4028,7 @@ ${rowData.item[this.sessionNameField]}</pre
         </div>
       </div>
       <div class="list-wrapper">
-        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact ${
-          globalThis.isDarkMode ? 'dark' : ''
-        }" aria-label="Session list"
+        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact dark" aria-label="Session list"
           .items="${this.compute_sessions}" height-by-rows>
           ${
             this._isRunning

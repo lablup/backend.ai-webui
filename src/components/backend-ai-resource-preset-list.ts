@@ -248,9 +248,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         </h4>
         <div class="list-wrapper">
           <vaadin-grid
-            theme="row-stripes column-borders compact ${globalThis.isDarkMode
-              ? 'dark'
-              : ''}"
+            theme="row-stripes column-borders compact dark"
             height-by-rows
             aria-label="Resource Policy list"
             .items="${this.resourcePresets}"

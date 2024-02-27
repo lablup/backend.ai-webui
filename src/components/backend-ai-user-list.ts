@@ -619,9 +619,7 @@ export default class BackendAIUserList extends BackendAIPage {
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="list-wrapper">
         <vaadin-grid
-          theme="row-stripes column-borders compact ${globalThis.isDarkMode
-            ? 'dark'
-            : ''}"
+          theme="row-stripes column-borders compact dark"
           aria-label="User list"
           id="user-grid"
           .items="${this.users}"

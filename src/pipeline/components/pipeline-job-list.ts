@@ -802,9 +802,7 @@ export default class PipelineJobList extends BackendAIPage {
     return html`
       <vaadin-grid
         id="pipeline-job-list"
-        theme="row-stripes column-borders compact ${globalThis.isDarkMode
-          ? 'dark'
-          : ''}"
+        theme="row-stripes column-borders compact dark"
         aria-label="Pipeline Job List"
         .items="${this.pipelineJobs}"
       >

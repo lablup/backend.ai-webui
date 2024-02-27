@@ -506,9 +506,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       </h4>
       <div class="list-wrapper">
         <vaadin-grid
-          theme="row-stripes column-borders compact ${globalThis.isDarkMode
-            ? 'dark'
-            : ''}"
+          theme="row-stripes column-borders compact dark"
           height-by-rows
           aria-label="Job list"
           .items="${this.scalingGroups}"

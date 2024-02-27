@@ -381,7 +381,7 @@ export default class BackendAIUsageList extends BackendAIPage {
           <p id="select-period">${_t('statistics.SelectPeriod')}</p>
           <vaadin-select
             id="period-selector"
-            theme="${globalThis.isDarkMode ? 'dark' : ''}"
+            theme="dark"
             .items="${this.periodSelectItems}"
             @change="${(e) => this.pulldownChange(e)}"
           ></vaadin-select>

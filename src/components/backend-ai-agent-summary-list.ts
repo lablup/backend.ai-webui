@@ -755,9 +755,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
       <div class="list-wrapper">
         <vaadin-grid
           class="${this.condition}"
-          theme="row-stripes column-borders compact ${globalThis.isDarkMode
-            ? 'dark'
-            : ''}"
+          theme="row-stripes column-borders compact dark"
           aria-label="Job list"
           .items="${this.agents}"
         >
