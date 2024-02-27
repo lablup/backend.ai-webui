@@ -285,10 +285,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           font-size: 10px;
         }
 
-        span[slot='secondary'] {
-          color: var(--token-colorTextSecondary);
-        }
-
         .info-indicator {
           min-width: 90px;
           padding: 0 10px;

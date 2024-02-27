@@ -171,6 +171,10 @@ export const BackendAiStyles = [
       pointer-events: none;
     }
 
+    span[slot='secondary'] {
+      color: var(--token-colorTextDescription);
+    }
+
     body,
     .fonts-loaded body {
       font-family:

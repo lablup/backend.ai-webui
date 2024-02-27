@@ -418,7 +418,7 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         span.subheading {
-          color: #666;
+          color: var(--token-colorTextSecondary, #666);
           font-weight: bold;
           font-size: 15px;
         }
@@ -2002,7 +2002,9 @@ export default class BackendAISessionList extends BackendAIPage {
     const statusDialogContent: Array<TemplateResult> = [];
     statusDialogContent.push(html`
       <div class="vertical layout justified start">
-        <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">
+        <h3
+          style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
+        >
           ${_text('session.Status')}
         </h3>
         <lablup-shields
@@ -2022,7 +2024,7 @@ export default class BackendAISessionList extends BackendAIPage {
         <div class="vertical layout start flex" style="width:100%;">
           <div style="width:100%;">
             <h3
-              style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;"
+              style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
             >
               ${_text('session.StatusDetail')}
             </h3>
@@ -2078,7 +2080,7 @@ export default class BackendAISessionList extends BackendAIPage {
         <div class="vertical layout start flex" style="width:100%;">
           <div style="width:100%;">
             <h3
-              style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;margin-bottom:0px;"
+              style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);margin-bottom:0px;"
             >
               ${_text('session.StatusDetail')}
             </h3>
@@ -2239,7 +2241,7 @@ export default class BackendAISessionList extends BackendAIPage {
         <div class="vertical layout start flex" style="width:100%;">
           <div style="width:100%;">
             <h3
-              style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;"
+              style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
             >
               ${_text('session.StatusDetail')}
             </h3>
@@ -2292,7 +2294,7 @@ ${item.traceback}</pre
       statusDialogContent.push(html`
         <div class="vertical layout start flex" style="width:100%;">
           <h3
-            style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;"
+            style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
           >
             Detail
           </h3>
