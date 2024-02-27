@@ -113,14 +113,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
           --mdc-theme-primary: var(--paper-yellow-600) !important;
         }
 
-        mwc-button,
-        mwc-button[unelevated] {
-          background-image: none;
-          --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-theme-on-primary: var(--general-button-color);
-          --mdc-typography-font-family: var(--general-fontFamily);
-        }
-
         h4 {
           font-weight: 200;
           font-size: 14px;

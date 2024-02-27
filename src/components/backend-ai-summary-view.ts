@@ -641,7 +641,7 @@ export default class BackendAISummary extends BackendAIPage {
                   <div slot="message">
                     <div
                       id="download-app-os-select-box"
-                      class="horizontal layout start-justified"
+                      class="horizontal layout center-justified"
                     >
                       <mwc-select
                         outlined
