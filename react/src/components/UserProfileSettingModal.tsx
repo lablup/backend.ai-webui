@@ -13,7 +13,7 @@ import { UserProfileQuery } from './UserProfileSettingModalQuery';
 import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
 import { ExclamationCircleFilled, LoadingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Modal, ModalProps, Input, Form, message, Switch, Spin } from 'antd';
+import { ModalProps, Input, Form, Switch, Spin, App } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PreloadedQuery, usePreloadedQuery } from 'react-relay';
@@ -44,8 +44,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const [form] = Form.useForm<UserProfileFormValues>();
-  const [messageApi, contextHolder] = message.useMessage();
-  const [modal, modalContextHolder] = Modal.useModal();
+  const { message, modal } = App.useApp();
   const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
     useToggle(false);
   const baiClient = useSuspendedBackendaiClient();
@@ -79,7 +78,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
         userMutations.updateFullName(values.full_name, {
           onSuccess: (newFullName) => {
             if (newFullName !== userInfo.full_name) {
-              messageApi.open({
+              message.open({
                 type: 'success',
                 content: t('webui.menu.FullnameUpdated'),
               });
@@ -98,14 +97,14 @@ const UserProfileSettingModal: React.FC<Props> = ({
                 },
                 {
                   onSuccess: () => {
-                    messageApi.open({
+                    message.open({
                       type: 'success',
                       content: t('webui.menu.PasswordUpdated'),
                     });
                     onRequestClose(true);
                   },
                   onError: (e) => {
-                    messageApi.open({
+                    message.open({
                       type: 'error',
                       content: e.message,
                     });
@@ -117,7 +116,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
             }
           },
           onError: (e) => {
-            messageApi.open({
+            message.open({
               type: 'error',
               content: e.message,
             });
@@ -290,8 +289,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
           />
         )}
       </BAIModal>
-      {contextHolder}
-      {modalContextHolder}
     </>
   );
 };
