@@ -1049,7 +1049,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             class="layout horizontal center end-justified"
             id="resource-gauge-toggle"
           >
-            <p style="font-size:12px;color:#242424;margin-right:10px;">
+            <p style="font-size:12px;margin-right:10px;">
               ${_t('session.launcher.ResourceMonitorToggle')}
             </p>
             <mwc-switch
