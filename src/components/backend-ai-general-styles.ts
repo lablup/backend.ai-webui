@@ -153,6 +153,28 @@ export const BackendAiStyles = [
       }
     }
 
+    /* Scrollbar stylings */
+    /* Works on Firefox */
+    * {
+      scrollbar-width: 2px;
+      scrollbar-color: var(--token-colorBorderSecondary, #464646)
+        var(--token-colorBgElevated, transparent);
+    }
+
+    /* Works on Chrome, Edge, and Safari */
+    *::-webkit-scrollbar {
+      max-width: 2px;
+      background-color: var(--token-colorBgElevated, transparent);
+    }
+
+    *::-webkit-scrollbar-track {
+      background: var(--token-colorBgElevated, transparent);
+    }
+
+    *::-webkit-scrollbar-thumb {
+      background-color: var(--token-colorBorderSecondary, #464646);
+    }
+
     body {
       background-color: var(--general-background-color, #fafafa);
       font-family: var(--token-fontFamily);
