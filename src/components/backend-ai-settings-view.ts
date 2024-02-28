@@ -213,30 +213,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
           --component-width: 400px;
         }
 
-        lablup-activity-panel {
-          color: #000;
-        }
-
         mwc-select {
-          font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-theme-primary: var(--general-sidebar-color);
-          --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-focused-dropdown-icon-color: var(
-            --general-sidebar-color
-          );
-          --mdc-select-disabled-dropdown-icon-color: var(
-            --general-sidebar-color
-          );
-          --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
-          --mdc-select-hover-line-color: var(--general-sidebar-color);
-          --mdc-select-outlined-idle-border-color: var(--general-sidebar-color);
-          --mdc-select-outlined-hover-border-color: var(
-            --general-sidebar-color
-          );
-          --mdc-theme-surface: white;
-          --mdc-list-vertical-padding: 5px;
           --mdc-list-side-padding: 25px;
           --mdc-list-item__primary-text: {
             height: 20px;
@@ -278,7 +255,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css" />
-      <div class="horizontal layout wrap">
+      <div class="horizontal layout wrap" style="gap:24px">
         <lablup-activity-panel title="${_t('settings.Image')}" autowidth>
           <div slot="message" class="horizontal wrap layout">
             <div class="horizontal layout setting-item">
@@ -364,7 +341,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
           <div slot="message" class="vertical wrap layout">
             <div
               class="horizontal wrap layout note"
-              style="background-color:#FFFBE7;width:100%;padding:10px 0px;"
+              style="background-color:var(--token-colorInfoBg,#FFFBE7);width:100%;padding:10px 0px;color:var(--token-colorText,rgba(0,0,0,0.88));"
             >
               <p style="margin:auto 10px;">
                 ${_t('settings.NoteAboutFixedSetup')}

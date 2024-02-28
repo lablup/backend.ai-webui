@@ -853,7 +853,12 @@
     "BootstrapScriptDescription": "Bootstrap 脚本只会在会话创建后执行一次",
     "SSHKeypairEnterManually": "SSH 密钥对",
     "MyKeypairInfo": "我的密钥对信息",
-    "DescMyKeypairInfo": "查看我的密钥对信息"
+    "DescMyKeypairInfo": "查看我的密钥对信息",
+    "DarkMode": "深色模式",
+    "LightMode": "灯光模式",
+    "UseSystemSetting": "使用系统设置",
+    "DescThemeMode": "自定义 Backend.AI WebUI 在您设备上的外观。",
+    "ThemeMode": "主题模式"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高级 Web 终端使用：复制终端内容",

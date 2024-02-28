@@ -131,7 +131,6 @@ export default class PipelineJobView extends BackendAIPage {
           left: 0px;
           top: 40px;
           --mdc-menu-item-height: auto;
-          --mdc-theme-surface: #f1f1f1;
           --mdc-menu-item-height: auto;
         }
 
@@ -711,7 +710,7 @@ export default class PipelineJobView extends BackendAIPage {
             <pipeline-flow id="pipeline-job-flow"></pipeline-flow>
             <vaadin-grid
               id="pipeline-task-instance-list"
-              theme="row-stripes column-borders compact wrap-cell-content"
+              theme="row-stripes column-borders compact wrap-cell-content dark"
               aria-label="Pipeline Task List"
               .items="${this.taskInstanceList}"
             >

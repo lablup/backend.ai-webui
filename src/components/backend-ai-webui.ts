@@ -388,6 +388,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     document.addEventListener('show-about-backendai', () => {
       this._showSplash();
     });
+    document.addEventListener('language-changed', async (e) => {
+      await setLanguage((e as CustomEvent).detail.language);
+    });
   }
 
   async connectedCallback() {

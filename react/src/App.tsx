@@ -1,7 +1,7 @@
 import AnnouncementAlert from './components/AnnouncementAlert';
 import BAIErrorBoundary from './components/BAIErrorBoundary';
 import {
-  DefaultProviders2,
+  DefaultProvidersForReactRoot,
   RoutingEventHandler,
 } from './components/DefaultProviders';
 import MainLayout from './components/MainLayout/MainLayout';
@@ -180,9 +180,9 @@ const router = createBrowserRouter([
 const App: FC = () => {
   return (
     <RecoilRoot>
-      <DefaultProviders2>
+      <DefaultProvidersForReactRoot>
         <RouterProvider router={router} />
-      </DefaultProviders2>
+      </DefaultProvidersForReactRoot>
     </RecoilRoot>
   );
 };

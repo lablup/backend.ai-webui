@@ -65,7 +65,6 @@ const Flex = React.forwardRef<HTMLDivElement, FlexProps>(
         ref={ref}
         style={{
           alignItems: 'stretch',
-          backgroundColor: 'transparent',
           border: '0 solid black',
           boxSizing: 'border-box',
           display: 'flex',
