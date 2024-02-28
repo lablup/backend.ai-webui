@@ -44,7 +44,6 @@ export default class BackendAISplash extends LitElement {
   };
   connectedCallback(): void {
     super.connectedCallback();
-    // const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     document.addEventListener(
       'change:backendaiwebui.setting.isDarkMode',
       this.themeHandler,
@@ -52,7 +51,6 @@ export default class BackendAISplash extends LitElement {
   }
   disconnectedCallback(): void {
     super.disconnectedCallback();
-    // const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     document.removeEventListener(
       'change:backendaiwebui.setting.isDarkMode',
       this.themeHandler,
