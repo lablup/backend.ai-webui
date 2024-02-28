@@ -74,22 +74,22 @@ function MainLayout() {
           /* Works on Firefox */
           * {
             scrollbar-width: 2px;
-            scrollbar-color: var(--token-colorBorderSecondary, #464646)
+            scrollbar-color: var(--token-colorBorderSecondary, ${token.colorBorderSecondary},  #464646)
               var(--token-colorBgElevated, transparent);
           }
 
           /* Works on Chrome, Edge, and Safari */
           *::-webkit-scrollbar {
             max-width: 2px;
-            background-color: var(--token-colorBgElevated, transparent);
+            background-color: var(--token-colorBgElevated, ${token.colorBgElevated}, transparent);
           }
 
           *::-webkit-scrollbar-track {
-            background: var(--token-colorBgElevated, transparent);
+            background: var(--token-colorBgElevated, ${token.colorBgElevated}, transparent);
           }
 
           *::-webkit-scrollbar-thumb {
-            background-color: var(--token-colorBorderSecondary, #464646);
+            background-color: var(--token-colorBorderSecondary, ${token.colorBorderSecondary}, #464646);
           }
         `}
       </style>
