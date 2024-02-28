@@ -300,15 +300,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
               height: screen.lg ? 'calc(100vh - 243px)' : undefined,
               minHeight: 200,
             }}
-            // styles={{
-            //   body: {
-            //     padding: token.paddingLG,
-            //     overflow: 'auto',
-            //     height: screen.lg ? 'calc(100vh - 243px)' : undefined,
-            //     minHeight: 200,
-            //     // maxHeight: 650
-            //   },
-            // }}
           >
             <Markdown>{model_card?.readme || ''}</Markdown>
           </Card>
