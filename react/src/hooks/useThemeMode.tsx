@@ -77,7 +77,7 @@ export const ThemeModeProvider: React.FC<PropsWithChildren> = ({
       const nextIsDarkMode = themeMode === 'dark';
       setIsDarkMode(nextIsDarkMode);
     }
-  }, [themeMode, setIsDarkMode, isDarkMode]);
+  }, [themeMode, setIsDarkMode]);
 
   const value = useMemo(() => {
     return {
