@@ -4,6 +4,7 @@ import FlexActivityIndicator from './components/FlexActivityIndicator';
 import ResourceGroupSelect from './components/ResourceGroupSelect';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
+import { ThemeModeProvider } from './hooks/useThemeMode';
 import ModelStoreListPage from './pages/ModelStoreListPage';
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
@@ -53,6 +54,10 @@ const KeypairInfoModal = React.lazy(
 const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
 
 const ErrorLogList = React.lazy(() => import('./components/ErrorLogList'));
+
+const BatchSessionScheduledTimeSetting = React.lazy(
+  () => import('./components/BatchSessionScheduledTimeSetting'),
+);
 
 customElements.define(
   'backend-ai-react-session-list',
@@ -162,7 +167,7 @@ customElements.define(
           direction="column"
           gap="sm"
           align="stretch"
-          style={{ minWidth: 200 }}
+          style={{ minWidth: 200, maxWidth: 310 }}
         >
           {t('session.launcher.ResourceGroup')}
           <ResourceGroupSelect
@@ -245,7 +250,9 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <ThemeModeProvider>
+      <App />
+    </ThemeModeProvider>
   </React.StrictMode>,
 );
 
@@ -255,6 +262,21 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <ErrorLogList />
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-batch-session-scheduled-time-setting',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <BatchSessionScheduledTimeSetting
+          onChange={(value) => {
+            props.dispatchEvent('change', value);
+          }}
+        />
       </DefaultProviders>
     );
   }),

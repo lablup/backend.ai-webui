@@ -88,7 +88,7 @@ export default class BackendAIImport extends BackendAIPage {
       css`
         div.description {
           font-size: 14px;
-          color: var(--general-sidebar-color);
+          color: var(--token-colorTextSecondary, --general-sidebar-color);
         }
 
         #session-launcher {
@@ -97,7 +97,6 @@ export default class BackendAIImport extends BackendAIPage {
 
         mwc-textfield,
         mwc-textarea {
-          --mdc-theme-primary: var(--general-textfield-selected-color);
           width: 100%;
           margin: 5px auto;
         }
@@ -127,31 +126,11 @@ export default class BackendAIImport extends BackendAIPage {
           margin: auto;
           width: 35%;
           margin-bottom: 10px;
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: var(
-            --general-textfield-selected-color
-          );
-          --mdc-select-hover-line-color: var(
-            --general-textfield-selected-color
-          );
-          --mdc-list-vertical-padding: 5px;
         }
         mwc-select.github-select {
           margin: inherit;
           width: 440px;
           margin-bottom: 10px;
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: var(
-            --general-textfield-selected-color
-          );
-          --mdc-select-hover-line-color: var(
-            --general-textfield-selected-color
-          );
-          --mdc-list-vertical-padding: 5px;
         }
 
         @media screen and (max-width: 1015px) {
@@ -708,40 +687,42 @@ export default class BackendAIImport extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css" />
-      <lablup-activity-panel
-        title="${_t('import.ImportNotebook')}"
-        elevation="1"
-        horizontalsize="2x"
-      >
-        <div slot="message">
-          <div class="horizontal wrap layout center">
-            <mwc-textfield
-              id="notebook-url"
-              label="${_t('import.NotebookURL')}"
-              autoValidate
-              validationMessage="${_text('import.WrongURLType')}"
-              pattern="^(https?)://([\\w./-]{1,}).ipynb$"
-              maxLength="2048"
-              placeholder="${_t('maxLength.2048chars')}"
-              @change="${(e) =>
-                this.urlTextfieldChanged(
-                  e,
-                  'import-notebook-button',
-                  'importNotebookMessage',
-                )}"
-            ></mwc-textfield>
-            <mwc-button
-              id="import-notebook-button"
-              disabled
-              icon="cloud_download"
-              @click="${() => this.getNotebookFromURL()}"
-            >
-              <span>${_t('import.GetAndRunNotebook')}</span>
-            </mwc-button>
+      <div class="horizontal wrap layout" style="margin-bottom:24px;">
+        <lablup-activity-panel
+          title="${_t('import.ImportNotebook')}"
+          elevation="1"
+          horizontalsize="2x"
+        >
+          <div slot="message">
+            <div class="horizontal wrap layout center">
+              <mwc-textfield
+                id="notebook-url"
+                label="${_t('import.NotebookURL')}"
+                autoValidate
+                validationMessage="${_text('import.WrongURLType')}"
+                pattern="^(https?)://([\\w./-]{1,}).ipynb$"
+                maxLength="2048"
+                placeholder="${_t('maxLength.2048chars')}"
+                @change="${(e) =>
+                  this.urlTextfieldChanged(
+                    e,
+                    'import-notebook-button',
+                    'importNotebookMessage',
+                  )}"
+              ></mwc-textfield>
+              <mwc-button
+                id="import-notebook-button"
+                disabled
+                icon="cloud_download"
+                @click="${() => this.getNotebookFromURL()}"
+              >
+                <span>${_t('import.GetAndRunNotebook')}</span>
+              </mwc-button>
+            </div>
+            ${this.importNotebookMessage}
           </div>
-          ${this.importNotebookMessage}
-        </div>
-      </lablup-activity-panel>
+        </lablup-activity-panel>
+      </div>
       <backend-ai-session-launcher
         mode="import"
         location="import"
@@ -872,7 +853,7 @@ export default class BackendAIImport extends BackendAIPage {
           </div>
         </lablup-activity-panel>
       </div>
-      <div class="horizontal wrap layout">
+      <div class="horizontal wrap layout" style="margin-top:24px;">
         <lablup-activity-panel
           title="${_t('import.ImportGitlabRepo')}"
           elevation="1"

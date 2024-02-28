@@ -256,7 +256,10 @@
       "EnvironmentVariableNamePatternError": "변수 이름은 문자 또는 밑줄로 시작해야 하며 문자, 숫자, 밑줄만 포함할 수 있습니다.",
       "EnvironmentVariableDuplicateName": "이미 존재하는 변수명입니다.",
       "EnableAutomaticShmem": "자동 공유메모리 설정",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "클러스터 크기가 2 이상인 경우 정수만 허용됩니다.",
+      "StartAfter": "다음 이후에 시작:",
+      "StartTimeDoesNotApply": "시작 시간을 설정하지 않으면 적용되지 않습니다."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -424,7 +427,11 @@
     "Image": "이미지",
     "Owner": "소유자",
     "ServiceDelegatedFrom": "모델 서비스는 {{ createdUser }}에 의해 생성되지만 세션 소유권은 {{ sessionOwner }}에 위임됩니다.",
-    "FailedToTerminateService": "서비스 삭제 요청이 실패하였습니다."
+    "FailedToTerminateService": "서비스 삭제 요청이 실패하였습니다.",
+    "FailedToUpdateService": "서비스를 업데이트하지 못했습니다.",
+    "ServiceCreated": "모델 서비스 {{ name }}이(가) 성공적으로 생성되었습니다.",
+    "ServiceUpdated": "모델 서비스 {{ name }}이(가) 성공적으로 업데이트되었습니다.",
+    "ServiceTerminated": "모델 서비스 {{ name }}이(가) 성공적으로 종료되었습니다."
   },
   "button": {
     "Cancel": "취소",
@@ -935,7 +942,12 @@
     "DescAutoLogout": "세션 내 앱을 실행하기 위해 생성된 페이지를 제외한 모든 Backend.AI 웹 UI 페이지가 닫힐 경우 자동으로 로그아웃됩니다.",
     "SSHKeypairEnterManuallyFinished": "SSH 키페어 등록이 성공적으로 완료되었습니다.",
     "MyKeypairInfo": "내 키페어 정보",
-    "DescMyKeypairInfo": "내 키페어 정보 보기"
+    "DescMyKeypairInfo": "내 키페어 정보 보기",
+    "DarkMode": "다크 모드",
+    "LightMode": "라이트 모드",
+    "UseSystemSetting": "시스템 설정 사용",
+    "DescThemeMode": "Backend.AI WebUI가 장치에서 어떻게 보이는지 설정합니다.",
+    "ThemeMode": "화면 모드"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",

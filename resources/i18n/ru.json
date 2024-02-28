@@ -258,7 +258,10 @@
       "EnableAutomaticShmem": "Автоматическая разделяемая память",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Допускается только целое число, если размер кластера не меньше 2.",
+      "StartAfter": "Начать после:",
+      "StartTimeDoesNotApply": "Если время начала не установлено, оно не применяется."
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -852,7 +855,12 @@
     "SSHKeypairEnterManually": "Пара ключей SSH",
     "SSHKeypairEnterManuallyFinished": "Пара ключей SSH успешно зарегистрирована.",
     "MyKeypairInfo": "Информация о моей паре ключей",
-    "DescMyKeypairInfo": "Посмотреть информацию о моей паре ключей"
+    "DescMyKeypairInfo": "Посмотреть информацию о моей паре ключей",
+    "DarkMode": "Темный режим",
+    "LightMode": "Светлый режим",
+    "UseSystemSetting": "Использовать настройки системы",
+    "DescThemeMode": "Настройте внешний вид Backend.AI WebUI на вашем устройстве.",
+    "ThemeMode": "Тематический режим"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Расширенное использование веб-терминала: копирование содержимого терминала",
@@ -1464,7 +1472,11 @@
     "Image": "Изображение",
     "Owner": "Владелец",
     "ServiceDelegatedFrom": "Сервис модели создается {{ createdUser }}, но право владения сессией будет передано {{ sessionOwner }}.",
-    "FailedToTerminateService": "Запрос на завершение службы завершился неудачно."
+    "FailedToTerminateService": "Запрос на завершение службы завершился неудачно.",
+    "FailedToUpdateService": "Не удалось обновить службу.",
+    "ServiceCreated": "Сервис модели {{ name }} успешно создан.",
+    "ServiceUpdated": "Сервис модели {{ name }} успешно обновлен.",
+    "ServiceTerminated": "Служба модели {{ name }} успешно прекращена."
   },
   "ErrorBoundary": {
     "title": "Произошла ошибка.",

@@ -256,7 +256,10 @@
       "EnvironmentVariableDuplicateName": "Un nom de variable qui existe déjà.",
       "Template": "Modèle de session",
       "EnableAutomaticShmem": "Mémoire partagée automatique",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Seul un nombre entier est autorisé lorsque la taille du cluster n'est pas inférieure à 2.",
+      "StartAfter": "Commencez après :",
+      "StartTimeDoesNotApply": "Si l'heure de début n'est pas définie, elle ne s'applique pas."
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -850,7 +853,12 @@
     "SSHKeypairEnterManually": "Couple de clés SSH",
     "SSHKeypairEnterManuallyFinished": "La paire de clés SSH a été enregistrée avec succès.",
     "MyKeypairInfo": "Informations sur ma paire de clés",
-    "DescMyKeypairInfo": "Voir les informations de ma paire de clés"
+    "DescMyKeypairInfo": "Voir les informations de ma paire de clés",
+    "DarkMode": "Mode sombre",
+    "LightMode": "Mode lumière",
+    "UseSystemSetting": "Utiliser les paramètres du système",
+    "DescThemeMode": "Personnalisez l'apparence de Backend.AI WebUI sur votre appareil.",
+    "ThemeMode": "Mode Thème"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilisation avancée du terminal Web : copier le contenu du terminal",
@@ -1462,7 +1470,11 @@
     "Image": "Image",
     "Owner": "Propriétaire",
     "ServiceDelegatedFrom": "Le service modèle est créé par {{ createdUser }} mais la propriété de la session sera déléguée à {{ sessionOwner }}.",
-    "FailedToTerminateService": "La demande d'arrêt du service a échoué."
+    "FailedToTerminateService": "La demande d'arrêt du service a échoué.",
+    "FailedToUpdateService": "Échec de la mise à jour du service.",
+    "ServiceCreated": "Le service modèle {{ name }} a été créé avec succès.",
+    "ServiceUpdated": "Le service modèle {{ name }} a été mis à jour avec succès.",
+    "ServiceTerminated": "Le service modèle {{ name }} a été terminé avec succès."
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",

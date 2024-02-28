@@ -50,10 +50,7 @@ export default class LablupProgressBar extends LitElement {
           border: var(--progress-bar-border, 0px);
           border-radius: var(--progress-bar-border-radius, 5px);
           font-size: var(--progress-bar-font-size, 10px);
-          font-family: var(
-            --progress-bar-font-family,
-            var(--general-font-family)
-          );
+          font-family: var(--progress-bar-font-family, var(--token-fontFamily));
           overflow: hidden;
         }
 
@@ -73,8 +70,8 @@ export default class LablupProgressBar extends LitElement {
           align-items: center;
           left: 0;
           right: 0;
-          top: 0;
-          bottom: 0;
+          top: -1px;
+          bottom: -1px;
           background: var(--general-progress-bar-bg, #e8e8e8);
           color: var(--progress-bar-font-color, black);
           clip-path: inset(0 0 0 100%);

@@ -256,7 +256,10 @@
       "EnvironmentVariableDuplicateName": "已经存在的变量名。",
       "Template": "会议模板",
       "EnableAutomaticShmem": "自动共享内存",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "当簇大小不小于 2 时，只允许使用整数。",
+      "StartAfter": "之后开始：",
+      "StartTimeDoesNotApply": "如果未设置开始时间，则不适用。"
     },
     "Preparing": "正在准备...",
     "PreparingSession": "正在准备会议...",
@@ -850,7 +853,12 @@
     "BootstrapScriptDescription": "Bootstrap 脚本只会在会话创建后执行一次",
     "SSHKeypairEnterManually": "SSH 密钥对",
     "MyKeypairInfo": "我的密钥对信息",
-    "DescMyKeypairInfo": "查看我的密钥对信息"
+    "DescMyKeypairInfo": "查看我的密钥对信息",
+    "DarkMode": "深色模式",
+    "LightMode": "灯光模式",
+    "UseSystemSetting": "使用系统设置",
+    "DescThemeMode": "自定义 Backend.AI WebUI 在您设备上的外观。",
+    "ThemeMode": "主题模式"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高级 Web 终端使用：复制终端内容",
@@ -1451,7 +1459,11 @@
     "Image": "图片",
     "Owner": "所有者",
     "ServiceDelegatedFrom": "模型服务由 {{ createdUser }} 创建，但会话所有权将委托给 {{ sessionOwner }}",
-    "FailedToTerminateService": "终止服务的请求失败。"
+    "FailedToTerminateService": "终止服务的请求失败。",
+    "FailedToUpdateService": "更新服务失败。",
+    "ServiceCreated": "模型服务 {{ name }} 已成功创建。",
+    "ServiceUpdated": "模型服务 {{ name }} 已成功更新。",
+    "ServiceTerminated": "模型服务 {{ name }} 已成功终止。"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

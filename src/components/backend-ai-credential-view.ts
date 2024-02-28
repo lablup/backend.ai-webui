@@ -132,6 +132,7 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         div.card > h4 {
           margin-bottom: 0px;
+          background-color: var(--token-colorBgContainer);
         }
 
         div.card h3 {
@@ -151,29 +152,13 @@ export default class BackendAICredentialView extends BackendAIPage {
           margin-bottom: 10px;
         }
 
-        h3.tab {
-          background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0 0;
-          margin: 0 auto;
-        }
-
         #user-lists > h4,
         #credential-lists > h4 {
           padding-top: 0 !important;
           padding-bottom: 0 !important;
         }
 
-        mwc-tab-bar {
-          --mdc-theme-primary: var(--general-sidebar-selected-color);
-          --mdc-text-transform: none;
-          --mdc-tab-color-default: var(--general-tabbar-background-color);
-          --mdc-tab-text-label-color-default: var(
-            --general-tabbar-tab-disabled-color
-          );
-        }
-
         mwc-tab-bar.sub-bar mwc-tab {
-          --mdc-theme-primary: var(--general-tabbar-button-color);
           --mdc-tab-height: 46px;
           --mdc-text-transform: none;
         }
@@ -200,7 +185,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-font-family: var(--token-fontFamily);
         }
 
         mwc-textfield.resource-input {
@@ -216,7 +201,6 @@ export default class BackendAICredentialView extends BackendAIPage {
         }
 
         mwc-menu {
-          --mdc-theme-surface: #f1f1f1;
           --mdc-menu-item-height: auto;
         }
 
@@ -224,10 +208,6 @@ export default class BackendAICredentialView extends BackendAIPage {
           position: relative;
           left: -10px;
           top: 50px;
-        }
-
-        mwc-list-item {
-          font-size: 14px;
         }
 
         mwc-icon-button {
@@ -1177,15 +1157,17 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   async _runAction() {
-    if (location.search.includes('add')) {
-      await this._launchKeyPairDialog();
+    if (location.search.includes('action')) {
+      if (location.search.includes('add')) {
+        await this._launchKeyPairDialog();
+      }
+      this._showTab(
+        this.shadowRoot?.querySelector('mwc-tab[title=credential-lists]'),
+      );
+      this.shadowRoot
+        ?.querySelector('mwc-tab-bar.main-bar')
+        ?.setAttribute('activeindex', '1');
     }
-    this._showTab(
-      this.shadowRoot?.querySelector('mwc-tab[title=credential-lists]'),
-    );
-    this.shadowRoot
-      ?.querySelector('mwc-tab-bar.main-bar')
-      ?.setAttribute('activeindex', '1');
   }
 
   render() {
@@ -1221,10 +1203,12 @@ export default class BackendAICredentialView extends BackendAIPage {
                       <mwc-menu id="dropdown-menu">
                         <mwc-list-item>
                           <a
-                            class="horizontal layout start center"
+                            class="horizontal layout start center export-csv"
                             @click="${this._openExportToCsvDialog}"
                           >
-                            <mwc-icon style="color:#242424;padding-right:10px;">
+                            <mwc-icon
+                              style="color:var(--token-colorTextSecondary);padding-right:10px;"
+                            >
                               get_app
                             </mwc-icon>
                             ${_t('credential.exportCSV')}
@@ -1619,6 +1603,7 @@ export default class BackendAICredentialView extends BackendAIPage {
               fullwidth
               icon="get_app"
               label="${_t('credential.ExportCSVFile')}"
+              class="export-csv"
               @click="${this._exportToCSV}"></mwc-button>
         </div>
       </backend-ai-dialog>

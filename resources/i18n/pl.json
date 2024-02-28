@@ -258,7 +258,10 @@
       "EnableAutomaticShmem": "Automatyczna pamięć współdzielona",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Jeśli rozmiar klastra jest nie mniejszy niż 2, dozwolona jest tylko liczba całkowita.",
+      "StartAfter": "Rozpocznij po:",
+      "StartTimeDoesNotApply": "Jeśli godzina rozpoczęcia nie jest ustawiona, nie ma ona zastosowania."
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",
@@ -852,7 +855,12 @@
     "BootstrapScriptDescription": "Skrypt Bootstrap zostanie wykonany tylko raz po utworzeniu sesji.",
     "SSHKeypairEnterManually": "Para kluczy SSH",
     "MyKeypairInfo": "Informacje o mojej parze kluczy",
-    "DescMyKeypairInfo": "Zobacz informacje o mojej parze kluczy"
+    "DescMyKeypairInfo": "Zobacz informacje o mojej parze kluczy",
+    "DarkMode": "Tryb ciemny",
+    "LightMode": "Tryb światła",
+    "UseSystemSetting": "Użyj ustawień systemowych",
+    "DescThemeMode": "Dostosuj wygląd Backend.AI WebUI na swoim urządzeniu.",
+    "ThemeMode": "Tryb tematyczny"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Zaawansowane korzystanie z terminala internetowego: Skopiuj zawartość terminala",
@@ -1413,7 +1421,11 @@
     "YouAreAboutToTerminate": "Zamierzasz zakończyć",
     "Owner": "Właściciel",
     "ServiceDelegatedFrom": "Usługa modelu jest tworzona przez {{ createdUser }}, ale własność sesji będzie delegowana do {{ sessionOwner }}.",
-    "FailedToTerminateService": "Żądanie zakończenia usługi nie powiodło się."
+    "FailedToTerminateService": "Żądanie zakończenia usługi nie powiodło się.",
+    "FailedToUpdateService": "Nie udało się zaktualizować usługi.",
+    "ServiceCreated": "Usługa modelowa {{ name }} została pomyślnie utworzona.",
+    "ServiceUpdated": "Usługa modelowa {{ name }} została pomyślnie zaktualizowana.",
+    "ServiceTerminated": "Usługa modelowa {{ name }} została pomyślnie zakończona."
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",
