@@ -859,7 +859,12 @@
     "BootstrapScriptDescription": "Das Bootstrap-Skript wird nur einmal nach der Erstellung der Sitzung ausgeführt",
     "SSHKeypairEnterManually": "SSH-Schlüsselpaar",
     "MyKeypairInfo": "Meine Schlüsselpaarinformationen",
-    "DescMyKeypairInfo": "Siehe meine Schlüsselpaarinformationen"
+    "DescMyKeypairInfo": "Siehe meine Schlüsselpaarinformationen",
+    "DarkMode": "Dunkler Modus",
+    "LightMode": "Lichtmodus",
+    "UseSystemSetting": "Verwenden Sie die Systemeinstellungen",
+    "DescThemeMode": "Passen Sie an, wie die Backend.AI-WebUI auf Ihrem Gerät aussieht.",
+    "ThemeMode": "Themenmodus"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Erweiterte Web-Terminal-Nutzung: Terminal-Inhalte kopieren",

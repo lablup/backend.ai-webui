@@ -859,7 +859,12 @@
     "BootstrapScriptDescription": "Bootstrap 脚本只会在会话创建后执行一次",
     "SSHKeypairEnterManually": "SSH 密钥对",
     "MyKeypairInfo": "我的密鑰對訊息",
-    "DescMyKeypairInfo": "查看我的密鑰對訊息"
+    "DescMyKeypairInfo": "查看我的密鑰對訊息",
+    "DarkMode": "深色模式",
+    "LightMode": "燈光模式",
+    "UseSystemSetting": "使用系統設定",
+    "DescThemeMode": "自訂 Backend.AI WebUI 在您裝置上的外觀。",
+    "ThemeMode": "主題模式"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高級 Web 終端使用：複製終端內容",

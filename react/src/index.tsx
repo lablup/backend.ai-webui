@@ -4,6 +4,7 @@ import FlexActivityIndicator from './components/FlexActivityIndicator';
 import ResourceGroupSelect from './components/ResourceGroupSelect';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
+import { ThemeModeProvider } from './hooks/useThemeMode';
 import ModelStoreListPage from './pages/ModelStoreListPage';
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
@@ -249,7 +250,9 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <ThemeModeProvider>
+      <App />
+    </ThemeModeProvider>
   </React.StrictMode>,
 );
 

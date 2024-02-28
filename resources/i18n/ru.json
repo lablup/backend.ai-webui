@@ -861,7 +861,12 @@
     "SSHKeypairEnterManually": "Пара ключей SSH",
     "SSHKeypairEnterManuallyFinished": "Пара ключей SSH успешно зарегистрирована.",
     "MyKeypairInfo": "Информация о моей паре ключей",
-    "DescMyKeypairInfo": "Посмотреть информацию о моей паре ключей"
+    "DescMyKeypairInfo": "Посмотреть информацию о моей паре ключей",
+    "DarkMode": "Темный режим",
+    "LightMode": "Светлый режим",
+    "UseSystemSetting": "Использовать настройки системы",
+    "DescThemeMode": "Настройте внешний вид Backend.AI WebUI на вашем устройстве.",
+    "ThemeMode": "Тематический режим"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Расширенное использование веб-терминала: копирование содержимого терминала",

@@ -859,7 +859,12 @@
     "SSHKeypairEnterManually": "Couple de clés SSH",
     "SSHKeypairEnterManuallyFinished": "La paire de clés SSH a été enregistrée avec succès.",
     "MyKeypairInfo": "Informations sur ma paire de clés",
-    "DescMyKeypairInfo": "Voir les informations de ma paire de clés"
+    "DescMyKeypairInfo": "Voir les informations de ma paire de clés",
+    "DarkMode": "Mode sombre",
+    "LightMode": "Mode lumière",
+    "UseSystemSetting": "Utiliser les paramètres du système",
+    "DescThemeMode": "Personnalisez l'apparence de Backend.AI WebUI sur votre appareil.",
+    "ThemeMode": "Mode Thème"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilisation avancée du terminal Web : copier le contenu du terminal",

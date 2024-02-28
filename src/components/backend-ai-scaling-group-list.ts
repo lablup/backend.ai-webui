@@ -99,7 +99,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         backend-ai-dialog mwc-textarea {
           width: 100%;
           margin: 10px auto 20px auto;
-          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-font-family: var(--token-fontFamily);
           --mdc-theme-primary: var(--general-textfield-selected-color);
         }
 
@@ -118,9 +118,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
 
         mwc-select {
           width: 100%;
-          --mdc-typography-font-family: var(--general-font-family);
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-select-fill-color: transparent;
         }
 
         backend-ai-dialog {
@@ -509,7 +506,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       </h4>
       <div class="list-wrapper">
         <vaadin-grid
-          theme="row-stripes column-borders compact"
+          theme="row-stripes column-borders compact dark"
           height-by-rows
           aria-label="Job list"
           .items="${this.scalingGroups}"

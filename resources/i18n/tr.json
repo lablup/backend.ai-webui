@@ -859,7 +859,12 @@
     "BootstrapScriptDescription": "Bootstrap komut dosyası oturum oluşturulduktan sonra yalnızca bir kez çalıştırılacaktır",
     "SSHKeypairEnterManually": "SSH Anahtar Çifti",
     "MyKeypairInfo": "Anahtar Çifti Bilgilerim",
-    "DescMyKeypairInfo": "Anahtar çifti bilgilerimi görün"
+    "DescMyKeypairInfo": "Anahtar çifti bilgilerimi görün",
+    "DarkMode": "Karanlık Mod",
+    "LightMode": "Işık Modu",
+    "UseSystemSetting": "Sistem Ayarını Kullan",
+    "DescThemeMode": "Backend.AI WebUI'nin cihazınızda nasıl görüneceğini özelleştirin.",
+    "ThemeMode": "Tema Modu"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Gelişmiş Web Terminali Kullanımı: Terminal içeriğini kopyalayın",

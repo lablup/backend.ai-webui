@@ -14,7 +14,6 @@ const BAIMenu: React.FC<MenuProps> = ({ ...props }) => {
           .bai-menu li.ant-menu-item.ant-menu-item-selected {
             overflow: visible;
             font-weight: 600;
-            background-color: #fff;
           }
           
           .bai-menu li.ant-menu-item.ant-menu-item-selected::before {

@@ -394,7 +394,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           transition: color ease-in 0.2s;
           border: solid;
           border-width: 0 2px 2px 0;
-          border-color: #242424;
+          border-color: var(--token-colorBorder, #242424);
           margin-right: 10px;
           content: '';
           display: inline-block;
@@ -412,8 +412,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-textfield {
           width: 100%;
-          --mdc-theme-primary: #242424;
-          --mdc-text-field-fill-color: transparent;
+          /* --mdc-text-field-label-ink-color: var(--token-colorText); */
         }
 
         mwc-textfield.red {
@@ -468,9 +467,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         backend-ai-dialog mwc-textfield,
         backend-ai-dialog mwc-select {
-          --mdc-typography-font-family: var(--general-font-family);
-          --mdc-typography-label-font-size: 12px;
-          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-typography-label-font-size: var(--token-fontSizeSM, 12px);
         }
 
         mwc-select#modify-folder-quota-unit {
@@ -499,10 +496,6 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-select.fixed-position > mwc-list-item {
           width: 147px; // default width
-        }
-
-        mwc-radio {
-          --mdc-theme-secondary: var(--general-textfield-selected-color);
         }
 
         #modify-permission-dialog {
@@ -641,7 +634,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         <vaadin-grid
           class="folderlist"
           id="folder-list-grid"
-          theme="row-stripes column-borders wrap-cell-content compact"
+          theme="row-stripes column-borders wrap-cell-content compact dark"
           column-reordering-allowed
           aria-label="Folder list"
           .items="${this.folders}"
@@ -1269,7 +1262,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <vaadin-grid
             id="file-list-grid"
             class="explorer"
-            theme="row-stripes compact"
+            theme="row-stripes compact dark"
             aria-label="Explorer"
             .items="${this.explorerFiles}"
           >
@@ -1406,7 +1399,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t('data.explorer.ModifyPermissions')}</span>
         <div slot="content" role="listbox" style="margin: 0; padding: 10px;">
           <vaadin-grid
-            theme="row-stripes column-borders compact"
+            theme="row-stripes column-borders compact dark"
             .items="${this.invitees}"
           >
             <vaadin-grid-column

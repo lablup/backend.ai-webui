@@ -512,7 +512,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       <div class="list-wrapper">
         <vaadin-grid
           class="${this.condition}"
-          theme="row-stripes column-borders compact"
+          theme="row-stripes column-borders compact dark"
           aria-label="Job list"
           .items="${this.storages}"
         >
