@@ -14,7 +14,6 @@ if (isDev()) { // Dev mode from Makefile
   process.env.serveMode = 'prod'; // Prod OR debug
   debugMode = false;
 }
-process.env.liveDebugMode = false; // Special flag for live server debug.
 const url = require('url');
 const path = require('path');
 const toml = require('markty-toml');
@@ -340,14 +339,12 @@ function createWindow() {
     }
   });
   // and load the index.html of the app.
-  if (process.env.liveDebugMode === true) {
+  if (process.env.LIVE_DEBUG === '1') {
+    const endpoint = process.env.LIVE_DEBUG_ENDPOINT || 'http://127.0.0.1:9081';
+
     // Load HTML into new Window (dynamic serving for develop)
-    console.log("Running on live debug mode...");
-    mainWindow.loadURL(url.format({
-      pathname: '127.0.0.1:9081',
-      protocol: 'http',
-      slashes: true
-    }));
+    console.log(`Running on live debug(${endpoint}) mode...`);
+    mainWindow.loadURL(endpoint);
   } else {
     // Load HTML into new Window (file-based serving)
     nfs.readFile(path.join(es6Path, 'config.toml'), 'utf-8', (err, data) => {
