@@ -58,22 +58,14 @@ const SettingList: React.FC<SettingPageProps> = ({
         paddingRight: isLeftTab ? 0 : token.paddingContentHorizontal,
       }}
     >
-      <Flex
-        direction="row"
-        justify="start"
-        wrap="wrap"
-        gap={'xs'}
-        style={{
-          paddingLeft: isLeftTab ? token.paddingContentHorizontal : undefined,
-          paddingRight: isLeftTab ? token.paddingContentHorizontal : undefined,
-        }}
-      >
+      <Flex direction="row" justify="start" wrap="wrap" gap={'xs'}>
         <Typography.Title
           level={4}
           style={{
             margin: 0,
+            marginLeft: isLeftTab ? token.marginMD : 0,
             padding: 0,
-            width: isLeftTab ? leftTabWidth : undefined,
+            width: isLeftTab ? leftTabWidth - token.marginXS : undefined,
           }}
         >
           {t('settings.Config')}
