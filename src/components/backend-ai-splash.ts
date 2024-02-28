@@ -32,6 +32,32 @@ export default class BackendAISplash extends LitElement {
   @property({ type: String }) version = '';
   @property({ type: String }) managerVersion = '';
   @query('backend-ai-dialog') dialog!: BackendAIDialog;
+  @property({ type: Boolean }) isDarkMode;
+
+  constructor() {
+    super();
+    this.isDarkMode = globalThis.isDarkMode;
+  }
+
+  themeHandler = (event: any) => {
+    this.isDarkMode = event.detail;
+  };
+  connectedCallback(): void {
+    super.connectedCallback();
+    // const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    document.addEventListener(
+      'change:backendaiwebui.setting.isDarkMode',
+      this.themeHandler,
+    );
+  }
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    // const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    document.removeEventListener(
+      'change:backendaiwebui.setting.isDarkMode',
+      this.themeHandler,
+    );
+  }
 
   static get styles(): CSSResultGroup {
     return [
@@ -115,7 +141,7 @@ export default class BackendAISplash extends LitElement {
       <backend-ai-dialog id="splash-panel" fixed backdrop blockscrolling persistent narrowLayout hideActions>
         <div class="splash-header" slot="title"
           style="background-image:url(${
-            globalThis.isDarkMode
+            this.isDarkMode
               ? 'manifest/backend.ai-text-bgdark.svg'
               : 'manifest/backend.ai-text.svg'
           });"

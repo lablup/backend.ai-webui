@@ -33,11 +33,13 @@ export class BackendAIPage extends LitElement {
   @property({ type: Boolean }) hasLoadedStrings = false;
   @property({ type: String }) permission; // Reserved for plugin pages
   @property({ type: String }) menuitem; // Reserved for plugin pages
+  @property({ type: Boolean }) isDarkMode;
 
   constructor() {
     super();
     this.active = false;
     this.tasker = globalThis.tasker;
+    this.isDarkMode = globalThis.isDarkMode;
   }
 
   get activeConnected() {
@@ -61,6 +63,26 @@ export class BackendAIPage extends LitElement {
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   public _viewStateChanged(param) {}
+
+  themeHandler = (event: any) => {
+    this.isDarkMode = event.detail;
+  };
+  connectedCallback(): void {
+    super.connectedCallback();
+    // const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    document.addEventListener(
+      'change:backendaiwebui.setting.isDarkMode',
+      this.themeHandler,
+    );
+  }
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    // const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    document.removeEventListener(
+      'change:backendaiwebui.setting.isDarkMode',
+      this.themeHandler,
+    );
+  }
 
   shouldUpdate(): boolean {
     return this.active;

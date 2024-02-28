@@ -1997,7 +1997,7 @@ export default class BackendAILogin extends BackendAIPage {
         <div slot="title">
           <div id="login-title-area"></div>
           <div class="horizontal center layout">
-            ${globalThis.isDarkMode
+            ${this.isDarkMode
               ? html`
                   <img
                     class="title-img"
