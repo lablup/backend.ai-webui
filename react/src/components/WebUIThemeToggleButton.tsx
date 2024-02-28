@@ -8,7 +8,7 @@ interface WebUIThemeToggleButtonProps extends ButtonProps {}
 const WebUIThemeToggleButton: React.FC<WebUIThemeToggleButtonProps> = ({
   ...props
 }) => {
-  const { isDarkMode, themeMode, setThemeMode } = useThemeMode();
+  const { isDarkMode, setIsDarkMode } = useThemeMode();
 
   return (
     <Button
@@ -16,7 +16,7 @@ const WebUIThemeToggleButton: React.FC<WebUIThemeToggleButtonProps> = ({
       type="text"
       icon={isDarkMode ? <SunOutlined /> : <MoonOutlined />}
       onClick={() => {
-        setThemeMode(themeMode === 'dark' ? 'light' : 'dark');
+        setIsDarkMode(!isDarkMode);
       }}
       {...props}
     />

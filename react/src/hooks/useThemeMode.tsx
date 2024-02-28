@@ -1,7 +1,9 @@
 import { useLocalStorageGlobalState } from './useLocalStorageGlobalState';
+import _ from 'lodash';
 import {
   PropsWithChildren,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -22,6 +24,7 @@ type themeModeValue = 'system' | 'dark' | 'light';
 type ThemeModeContextType = {
   themeMode: themeModeValue;
   isDarkMode: boolean;
+  setIsDarkMode: (value: boolean) => void;
   setThemeMode: (value: themeModeValue) => void;
 };
 
@@ -37,44 +40,54 @@ export const ThemeModeProvider: React.FC<PropsWithChildren> = ({
     'system',
   );
 
-  const [isDarkMode, setIsDarkMode] = useLocalStorageGlobalState<boolean>(
+  const [isDarkMode, _setIsDarkMode] = useLocalStorageGlobalState<boolean>(
     'backendaiwebui.settings.isDarkMode',
     window.matchMedia('(prefers-color-scheme: dark)').matches,
   );
 
+  const setIsDarkMode = useCallback(
+    (value: boolean) => {
+      _setIsDarkMode(value);
+      if (value) {
+        document.body.classList.add('dark-theme');
+      } else {
+        document.body.classList.remove('dark-theme');
+      }
+      // @ts-ignore
+      globalThis.isDarkMode = value;
+
+      document.dispatchEvent(
+        new CustomEvent('change:backendaiwebui.setting.isDarkMode', {
+          detail: value,
+        }),
+      );
+    },
+    [_setIsDarkMode],
+  );
   useEffect(() => {
     if (themeMode === 'system') {
+      // set current system theme mode if isDarkMode is not set
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      setIsDarkMode(mediaQuery.matches);
+      // listen for changes
       const handler = (event: any) => {
         setIsDarkMode(event.matches);
       };
       mediaQuery.addEventListener('change', handler);
       return () => mediaQuery.removeEventListener('change', handler);
     } else {
-      if (themeMode === 'dark') {
-        setIsDarkMode(true);
-        document.body.classList.add('dark-theme');
-        // @ts-ignore
-        globalThis.isDarkMode = true;
-      } else {
-        setIsDarkMode(false);
-        document.body.classList.remove('dark-theme');
-        // @ts-ignore
-        globalThis.isDarkMode = false;
-      }
+      const nextIsDarkMode = themeMode === 'dark';
+      setIsDarkMode(nextIsDarkMode);
     }
-  }, [themeMode, setIsDarkMode]);
+  }, [themeMode, setIsDarkMode, isDarkMode]);
 
   const value = useMemo(() => {
     return {
       themeMode,
+      setThemeMode,
       isDarkMode,
-      setThemeMode: (value: themeModeValue) => {
-        setThemeMode(value);
-      },
+      setIsDarkMode,
     } as ThemeModeContextType;
-  }, [themeMode, isDarkMode, setThemeMode]);
+  }, [themeMode, setThemeMode, isDarkMode, setIsDarkMode]);
   return (
     <ThemeModeContext.Provider value={value}>
       {children}
