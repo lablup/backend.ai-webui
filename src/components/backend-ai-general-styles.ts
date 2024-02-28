@@ -154,6 +154,7 @@ export const BackendAiStyles = [
     }
 
     /* Scrollbar stylings */
+    /* Define both web components and react for supporting electron mode */
     /* Works on Firefox */
     * {
       scrollbar-width: 2px;
