@@ -1,5 +1,4 @@
 import { useLocalStorageGlobalState } from './useLocalStorageGlobalState';
-import _ from 'lodash';
 import {
   PropsWithChildren,
   createContext,
