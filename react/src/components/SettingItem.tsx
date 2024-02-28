@@ -14,6 +14,7 @@ export interface SettingItemProps {
   selectOptions?: { label: string; value: any }[];
   onChange?: (value: any) => void;
   onClick?: () => void;
+  style?: React.CSSProperties;
 }
 
 const useStyles = createStyles(({ css }) => ({
@@ -36,18 +37,14 @@ const SettingItem: React.FC<SettingItemProps> = ({
   children,
   onChange,
   onClick,
+  style,
 }) => {
   const { token } = theme.useToken();
   const { styles } = useStyles();
 
   return (
-    <Flex
-      direction="column"
-      align="stretch"
-      gap={'xxs'}
-      style={{ maxWidth: 600 }}
-    >
-      <Badge dot={defaultValue !== value} status="warning">
+    <Flex direction="column" align="start" gap={'xxs'} style={style}>
+      <Flex direction="row" gap={'xxs'}>
         <Typography.Text
           strong={true}
           style={{
@@ -56,7 +53,8 @@ const SettingItem: React.FC<SettingItemProps> = ({
         >
           {title}
         </Typography.Text>
-      </Badge>
+        {defaultValue !== value && <Badge dot status="warning" />}
+      </Flex>
       {type === 'checkbox' ? (
         <Checkbox
           checked={value}

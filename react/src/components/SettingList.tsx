@@ -1,8 +1,9 @@
 import Flex from './Flex';
 import SettingItem from './SettingItem';
 import { SettingItemProps } from './SettingItem';
-import { RedoOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Input, Tabs, Typography, theme } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { Checkbox, Input, Tabs, Typography, theme } from 'antd';
+import { useResponsive } from 'antd-style';
 import _ from 'lodash';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +21,8 @@ const SettingList: React.FC<SettingPageProps> = ({
   const { token } = theme.useToken();
   const [searchValue, setSearchValue] = useState('');
   const [changedOptionFilter, setChangedOptionFilter] = useState(false);
+
+  const { mobile } = useResponsive();
 
   const appendedSettingGroup = [
     {
@@ -39,47 +42,54 @@ const SettingList: React.FC<SettingPageProps> = ({
     return item.value !== item.defaultValue;
   };
 
+  const itemMaxWidth = 600;
+  const isLeftTab = !mobile;
+  const leftTabWidth = 200;
+
   return (
     <Flex
       direction="column"
       gap={'md'}
-      align="start"
-      style={{ maxWidth: 1100 }}
+      align="stretch"
+      style={{
+        flex: 1,
+        padding: token.paddingContentHorizontal,
+        paddingLeft: isLeftTab ? 0 : token.paddingContentHorizontal,
+        paddingRight: isLeftTab ? 0 : token.paddingContentHorizontal,
+      }}
     >
       <Flex
         direction="row"
-        justify="between"
+        justify="start"
         wrap="wrap"
         gap={'xs'}
         style={{
-          width: '100%',
-          padding: token.paddingContentVertical,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
+          paddingLeft: isLeftTab ? token.paddingContentHorizontal : undefined,
+          paddingRight: isLeftTab ? token.paddingContentHorizontal : undefined,
         }}
       >
-        <Typography.Title level={4} style={{ margin: 0, padding: 0 }}>
+        <Typography.Title
+          level={4}
+          style={{
+            margin: 0,
+            padding: 0,
+            width: isLeftTab ? leftTabWidth : undefined,
+          }}
+        >
           {t('settings.Config')}
         </Typography.Title>
-        <Flex direction="row" gap={'xs'} wrap="wrap" style={{ flexShrink: 1 }}>
-          <Flex gap={'xs'}>
-            {/* 
-            Todo: apply debounce or throttle later if needed
-            */}
-            <Input
-              prefix={<SearchOutlined />}
-              placeholder={placeholder || t('setting.SearchPlaceholder')}
-              onChange={(e) => setSearchValue(e.target.value)}
-              value={searchValue}
-              style={{ width: 300 }}
-            />
-            <Checkbox
-              onChange={(e) => setChangedOptionFilter(e.target.checked)}
-            >
-              {t('settings.ShowOnlyChanged')}
-            </Checkbox>
-          </Flex>
-          <Button
+        <Input
+          prefix={<SearchOutlined />}
+          placeholder={placeholder || t('setting.SearchPlaceholder')}
+          onChange={(e) => setSearchValue(e.target.value)}
+          value={searchValue}
+          style={{ flex: 1, maxWidth: itemMaxWidth, minWidth: 50 }}
+        />
+        <Checkbox onChange={(e) => setChangedOptionFilter(e.target.checked)}>
+          {t('settings.ShowOnlyChanged')}
+        </Checkbox>
+
+        {/* <Button
             icon={<RedoOutlined />}
             onClick={() => {
               _.flatMap(settingGroup, (item) => item.settingItems).forEach(
@@ -90,15 +100,13 @@ const SettingList: React.FC<SettingPageProps> = ({
             }}
           >
             {t('button.Reset')}
-          </Button>
-        </Flex>
+          </Button> */}
       </Flex>
       <Tabs
-        tabPosition="left"
+        tabPosition={isLeftTab ? 'left' : 'top'}
         tabBarStyle={{
-          width: 200,
+          width: isLeftTab ? leftTabWidth : undefined,
         }}
-        style={{ width: '100%' }}
         items={appendedSettingGroup.map((settingGroup) => {
           const filteredItems = settingGroup.settingItems.filter((item) => {
             return (
@@ -114,9 +122,9 @@ const SettingList: React.FC<SettingPageProps> = ({
                 ? ` (${filteredItems.length})`
                 : ''),
             children: (
-              <Flex direction="column" gap={'md'} align="start">
+              <Flex direction="column" gap={'lg'} align="start">
                 {filteredItems.map((item) => (
-                  <SettingItem {...item} />
+                  <SettingItem {...item} style={{ maxWidth: itemMaxWidth }} />
                 ))}
               </Flex>
             ),

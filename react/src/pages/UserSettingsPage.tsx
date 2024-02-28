@@ -5,7 +5,7 @@ import SettingList from '../components/SettingList';
 import { useLocalStorageGlobalState } from '../hooks/useLocalStorageGlobalState';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Button, theme } from 'antd';
+import { Button } from 'antd';
 import Card from 'antd/es/card/Card';
 import { useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -17,7 +17,6 @@ const tabParam = withDefault(StringParam, 'general');
 
 const UserPreferencesPage = () => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
   const [compactSidebar, setCompactSidebar] =
     useLocalStorageGlobalState<boolean>(
@@ -42,8 +41,8 @@ const UserPreferencesPage = () => {
     'backendaiwebui.settings.user.auto_logout',
     false,
   );
-  const [isOpenSSHKeypairInfoModal, { toggle: toggleSSHKeypairInfoModal }] =
-    useToggle(false);
+  // const [isOpenSSHKeypairInfoModal, { toggle: toggleSSHKeypairInfoModal }] =
+  const [, { toggle: toggleSSHKeypairInfoModal }] = useToggle(false);
   const settingGroup: { title: string; settingItems: SettingItemProps[] }[] = [
     {
       title: t('usersettings.Preferences'),
@@ -102,7 +101,7 @@ const UserPreferencesPage = () => {
           ],
           value: language,
           setValue: setLanguage,
-          defaultValue: 'ko',
+          defaultValue: 'default',
           onChange: (value) => {
             setLanguage(value);
             const currentLanguage =
@@ -151,29 +150,13 @@ const UserPreferencesPage = () => {
           type: 'custom',
           title: t('usersettings.EditBootstrapScript'),
           description: '',
-          children: (
-            <Button
-              type="primary"
-              icon={<SettingOutlined />}
-              style={{ width: 120 }}
-            >
-              custom
-            </Button>
-          ),
+          children: <Button icon={<SettingOutlined />}>custom</Button>,
         },
         {
           type: 'custom',
           title: t('usersettings.EditUserConfigScript'),
           description: '',
-          children: (
-            <Button
-              type="primary"
-              icon={<SettingOutlined />}
-              style={{ width: 120 }}
-            >
-              custom
-            </Button>
-          ),
+          children: <Button icon={<SettingOutlined />}>custom</Button>,
         },
       ],
     },
@@ -197,17 +180,12 @@ const UserPreferencesPage = () => {
         padding: 0,
       }}
     >
-      <Flex
-        style={{
-          display: curTabKey === 'general' ? 'block' : 'none',
-          paddingTop: token.paddingContentVerticalLG,
-          paddingBottom: token.paddingContentVerticalLG,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
-        }}
-      >
-        <SettingList settingGroup={settingGroup} />
-      </Flex>
+      {curTabKey === 'general' && (
+        <Flex>
+          <SettingList settingGroup={settingGroup} />
+        </Flex>
+      )}
+
       {curTabKey === 'logs' && <ErrorLogList />}
     </Card>
   );
