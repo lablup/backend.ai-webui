@@ -10,3 +10,8 @@ type ArrayElement<ArrayType extends readonly unknown[]> =
 type ArgumentTypes<F extends Function> = F extends (...args: infer A) => any
   ? A
   : never;
+
+//TODO: fix this declaration for globalThis. It's not working.
+declare global {
+  var isDarkMode: boolean;
+}

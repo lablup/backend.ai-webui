@@ -1390,7 +1390,12 @@
     "ShellEnvironments": "Entornos de conchas",
     "UseCompactSidebar": "Utilizar la barra lateral compacta por defecto",
     "MyKeypairInfo": "Información de mi par de claves",
-    "DescMyKeypairInfo": "Ver la información de mi par de claves"
+    "DescMyKeypairInfo": "Ver la información de mi par de claves",
+    "DarkMode": "Modo oscuro",
+    "LightMode": "Modo de luz",
+    "UseSystemSetting": "Usar configuración del sistema",
+    "DescThemeMode": "Personalice el aspecto de Backend.AI WebUI en su dispositivo.",
+    "ThemeMode": "Modo temático"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avanzado del terminal web: Copiar el contenido del terminal",

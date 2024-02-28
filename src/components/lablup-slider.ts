@@ -56,15 +56,18 @@ export default class LablupSlider extends LitElement {
           width: var(--textfield-min-width, 65px);
           height: 40px;
           margin-left: 10px;
-          // --mdc-theme-primary: transparent;
-          --mdc-text-field-hover-line-color: transparent;
-          --mdc-text-field-idle-line-color: transparent;
         }
 
         mwc-slider {
           width: var(--slider-width, 100px);
-          --mdc-theme-secondary: var(--slider-color, '#018786');
-          color: var(--paper-grey-700);
+          --mdc-theme-primary: var(--token-colorPrimary);
+          --mdc-theme-secondary: var(
+            --token-colorPrimary,
+            --slider-color,
+            '#018786'
+          );
+          --mdc-theme-on-surface: var(--paper-grey-100);
+          color: var(--token-colorTextSecondary, --paper-grey-700);
         }
       `,
     ];

@@ -42,6 +42,13 @@ const EnvironmentPage = () => {
         paddingTop: 1,
         overflow: 'hidden',
       }}
+      // styles={{
+      //   body: {
+      //     padding: 0,
+      //     paddingTop: 1,
+      //     overflow: 'hidden',
+      //   },
+      // }}
     >
       <Flex
         style={{

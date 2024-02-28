@@ -149,7 +149,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-font-family: var(--token-fontFamily);
         }
 
         mwc-textfield.resource-input {
@@ -192,7 +192,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     return html`
       <div class="list-wrapper">
         <vaadin-grid
-          theme="row-stripes column-borders compact"
+          theme="row-stripes column-borders compact dark"
           aria-label="Resource Policy list"
           .items="${this.resourcePolicy}"
         >

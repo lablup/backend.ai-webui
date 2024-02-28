@@ -203,26 +203,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
         mwc-select {
           width: 160px;
-          font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-size: 11px;
-          --mdc-theme-primary: var(--general-sidebar-color);
-          --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-focused-dropdown-icon-color: var(
-            --general-sidebar-color
-          );
-          --mdc-select-disabled-dropdown-icon-color: var(
-            --general-sidebar-color
-          );
-          --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
-          --mdc-select-hover-line-color: var(--general-sidebar-color);
-          --mdc-select-outlined-idle-border-color: var(--general-sidebar-color);
-          --mdc-select-outlined-hover-border-color: var(
-            --general-sidebar-color
-          );
-          --mdc-theme-surface: white;
-          --mdc-list-vertical-padding: 5px;
           --mdc-list-side-padding: 25px;
         }
 
@@ -235,42 +215,17 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           width: 250px;
         }
 
-        mwc-textarea {
-          --mdc-theme-primary: var(--general-sidebar-color);
-        }
-
-        mwc-icon-button {
-          color: #27824f;
-        }
-
-        mwc-button[outlined] {
-          background-image: none;
-          --mdc-button-outline-width: 2px;
-          --mdc-button-disabled-outline-color: var(
-            --general-button-background-color
-          );
-          --mdc-button-disabled-ink-color: var(
-            --general-button-background-color
-          );
-          --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-theme-on-primary: var(--general-button-color);
-        }
-
         mwc-button {
           margin: auto 10px;
-          background-image: none;
-          --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-theme-on-primary: var(--general-button-color);
-        }
-
-        mwc-button[unelevated] {
-          --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         mwc-button.shell-button {
           margin: 5px;
           width: 260px;
+        }
+
+        mwc-icon-button {
+          color: var(--token-colorPrimary);
         }
 
         ::-webkit-scrollbar {
@@ -1498,9 +1453,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                 @click="${() => this._copySSHKey('#ssh-private-key')}"
               ></mwc-icon-button>
             </div>
-            <div style="color:crimson">
-              ${_t('usersettings.SSHKeypairGenerationWarning')}
-            </div>
+            <div>${_t('usersettings.SSHKeypairGenerationWarning')}</div>
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">

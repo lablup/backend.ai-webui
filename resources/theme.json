@@ -16,12 +16,18 @@
       },
       "Table": {
         "headerBorderRadius": 0
+      },
+      "Layout": {
+        "lightSiderBg": "#F4F7FD",
+        "siderBg": "#2A2C30"
       }
     }
   },
   "dark": {
     "token": {
-      "colorPrimary": "#37B076"
+      "fontFamily": "'Ubuntu', Roboto, sans-serif",
+      "colorPrimary": "#25C2A0",
+      "colorLink": "#25C2A0"
     },
     "components": {
       "Tag": {
@@ -29,15 +35,23 @@
       },
       "Table": {
         "headerBorderRadius": 0
+      },
+      "Layout": {
+        "lightSiderBg": "#F4F7FD",
+        "siderBg": "#2A2C30"
       }
     }
   },
   "logo": {
     "src": "/manifest/backend.ai-text.svg",
     "srcCollapsed": "/manifest/backend.ai-brand-simple.svg",
+    "srcDark": "/manifest/backend.ai-text-bgdark.svg",
+    "srcCollapsedDark": "/manifest/backend.ai-brand-simple-bgdark.svg",
     "logoTitle": "WebUI",
     "logoTitleCollapsed": "WebUI",
     "alt": "Backend.AI Logo",
     "href": "/summary"
+  },
+  "sider": {
   }
 }

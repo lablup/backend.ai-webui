@@ -853,7 +853,12 @@
     "BootstrapScriptDescription": "Tập lệnh Bootstrap sẽ chỉ được thực thi một lần sau khi tạo phiên",
     "SSHKeypairEnterManually": "Cặp khóa SSH",
     "MyKeypairInfo": "Thông tin về cặp khóa của tôi",
-    "DescMyKeypairInfo": "Xem thông tin cặp khóa của tôi"
+    "DescMyKeypairInfo": "Xem thông tin cặp khóa của tôi",
+    "DarkMode": "Chế độ tối",
+    "LightMode": "Chế độ sáng",
+    "UseSystemSetting": "Sử dụng cài đặt hệ thống",
+    "DescThemeMode": "Tùy chỉnh giao diện Backend.AI WebUI trên thiết bị của bạn.",
+    "ThemeMode": "Chế độ chủ đề"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Sử dụng đầu cuối web nâng cao: Sao chép nội dung đầu cuối",
