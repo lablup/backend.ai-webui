@@ -410,7 +410,8 @@
     "Commit": "コミットする",
     "EnterManually": "直接入力する",
     "Download": "ダウンロード",
-    "Clone": "クローン"
+    "Clone": "クローン",
+    "Config": "コンフィグ"
   },
   "agent": {
     "Endpoint": "終点",

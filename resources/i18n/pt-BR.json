@@ -410,7 +410,8 @@
     "Commit": "Compromisso",
     "EnterManually": "Introduzir manualmente",
     "Download": "Descarregar",
-    "Clone": "Clone"
+    "Clone": "Clone",
+    "Config": "Configuração"
   },
   "agent": {
     "Endpoint": "Endpoint",

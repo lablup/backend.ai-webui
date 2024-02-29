@@ -410,7 +410,8 @@
     "Commit": "承诺",
     "EnterManually": "手动输入",
     "Download": "下载",
-    "Clone": "克隆"
+    "Clone": "克隆",
+    "Config": "配置"
   },
   "agent": {
     "Endpoint": "端點",

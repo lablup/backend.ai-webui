@@ -55,11 +55,20 @@ const SettingList: React.FC<SettingPageProps> = ({
         flex: 1,
         padding: token.paddingContentHorizontal,
         paddingLeft: isLeftTab ? 0 : token.paddingContentHorizontal,
-        paddingRight: isLeftTab ? 0 : token.paddingContentHorizontal,
+        paddingRight: token.paddingContentHorizontal,
+        maxWidth: itemMaxWidth + leftTabWidth + token.marginLG,
       }}
     >
-      <Flex direction="row" justify="start" wrap="wrap" gap={'xs'}>
-        <Typography.Title
+      <Flex
+        direction="row"
+        justify="start"
+        wrap="wrap"
+        gap={'xs'}
+        style={{
+          paddingLeft: isLeftTab ? token.paddingContentHorizontal : 0,
+        }}
+      >
+        {/* <Typography.Title
           level={4}
           style={{
             margin: 0,
@@ -69,13 +78,13 @@ const SettingList: React.FC<SettingPageProps> = ({
           }}
         >
           {t('settings.Config')}
-        </Typography.Title>
+        </Typography.Title> */}
         <Input
           prefix={<SearchOutlined />}
           placeholder={placeholder || t('setting.SearchPlaceholder')}
           onChange={(e) => setSearchValue(e.target.value)}
           value={searchValue}
-          style={{ flex: 1, maxWidth: itemMaxWidth, minWidth: 50 }}
+          style={{ flex: 1, minWidth: 50 }}
         />
         <Checkbox onChange={(e) => setChangedOptionFilter(e.target.checked)}>
           {t('settings.ShowOnlyChanged')}
@@ -116,7 +125,7 @@ const SettingList: React.FC<SettingPageProps> = ({
             children: (
               <Flex direction="column" gap={'lg'} align="start">
                 {filteredItems.map((item) => (
-                  <SettingItem {...item} style={{ maxWidth: itemMaxWidth }} />
+                  <SettingItem {...item} />
                 ))}
               </Flex>
             ),

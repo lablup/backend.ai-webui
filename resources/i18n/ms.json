@@ -410,7 +410,8 @@
     "Commit": "komited",
     "EnterManually": "Masukkan Secara Manual",
     "Download": "Muat turun",
-    "Clone": "Klon"
+    "Clone": "Klon",
+    "Config": "Konfigurasi"
   },
   "agent": {
     "Endpoint": "Titik Akhir",

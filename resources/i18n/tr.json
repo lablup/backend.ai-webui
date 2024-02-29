@@ -410,7 +410,8 @@
     "Commit": "Taahhüt",
     "EnterManually": "Manuel Olarak Girin",
     "Download": "İndir",
-    "Clone": "Klon"
+    "Clone": "Klon",
+    "Config": "Konfigürasyon"
   },
   "agent": {
     "Endpoint": "uç nokta",
