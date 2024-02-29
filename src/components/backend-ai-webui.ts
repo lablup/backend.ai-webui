@@ -523,8 +523,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         const pluginLoaderQueue: object[] = [];
         for (const page of config.plugin.page.split(',')) {
           const pluginUrl =
-            globalThis.isElectron && config.general?.apiEndpoint
-              ? `${config.general.apiEndpoint}/dist/plugins/${page}.js`
+            globalThis.isElectron && this.loginPanel.api_endpoint
+              ? `${this.loginPanel.api_endpoint}/dist/plugins/${page}.js`
               : `../plugins/${page}.js`;
 
           pluginLoaderQueue.push(
