@@ -129,7 +129,8 @@
     "Update": "Päivitys",
     "Yes": "Kyllä",
     "Clone": "Klooni",
-    "Download": "ladata"
+    "Download": "ladata",
+    "Config": "Config"
   },
   "credential": {
     "AccessKeyOptional": "Pääsyavain (valinnainen)",

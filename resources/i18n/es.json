@@ -129,7 +129,8 @@
     "Update": "Actualización",
     "Yes": "Sí",
     "Download": "Descargar",
-    "Clone": "Clon"
+    "Clone": "Clon",
+    "Config": "Configurar"
   },
   "credential": {
     "AccessKeyOptional": "Clave de acceso (opcional)",

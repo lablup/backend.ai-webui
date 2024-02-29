@@ -1,5 +1,5 @@
 import Flex from './Flex';
-import { Badge, Checkbox, Select, Typography, theme } from 'antd';
+import { Badge, Checkbox, Select, SelectProps, Typography, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { ReactElement, ReactNode } from 'react';
 
@@ -11,7 +11,8 @@ export interface SettingItemProps {
   defaultValue?: any;
   value?: any;
   setValue?: (value: any) => void;
-  selectOptions?: { label: string; value: any }[];
+  // selectOptions?: { label: string; value: any }[];
+  selectProps?: Omit<SelectProps, 'value' | 'onChange' | 'defaultValue'>;
   onChange?: (value: any) => void;
   onClick?: () => void;
   style?: React.CSSProperties;
@@ -33,7 +34,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
   value,
   setValue,
   defaultValue,
-  selectOptions,
+  selectProps,
   children,
   onChange,
   onClick,
@@ -74,10 +75,11 @@ const SettingItem: React.FC<SettingItemProps> = ({
       {type === 'select' && (
         <Select
           value={value}
-          style={{ width: 120 }}
-          options={selectOptions}
+          style={{ minWidth: 150 }}
+          popupMatchSelectWidth={false}
           onChange={onChange}
           onClick={onClick}
+          {...selectProps}
         />
       )}
     </Flex>

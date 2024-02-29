@@ -464,7 +464,8 @@
     "Unset": "초기화",
     "OK": "확인",
     "Download": "다운로드",
-    "Clone": "복사"
+    "Clone": "복사",
+    "Config": "설정"
   },
   "agent": {
     "Endpoint": "엔드포인트",

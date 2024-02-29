@@ -410,7 +410,8 @@
     "Unset": "Tidak diatur",
     "OK": "BAIKLAH.",
     "Download": "Unduh",
-    "Clone": "Clone"
+    "Clone": "Clone",
+    "Config": "Konfigurasi"
   },
   "agent": {
     "Endpoint": "Titik akhir",

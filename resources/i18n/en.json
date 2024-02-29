@@ -477,7 +477,8 @@
     "EnterManually": "Enter Manually",
     "Unset": "Unset",
     "Download": "Download",
-    "Clone": "Clone"
+    "Clone": "Clone",
+    "Config": "Config"
   },
   "agent": {
     "Endpoint": "Endpoint",

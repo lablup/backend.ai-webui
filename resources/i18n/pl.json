@@ -412,7 +412,8 @@
     "Commit": "Zobowiązanie",
     "EnterManually": "Wprowadź ręcznie",
     "Download": "Pobierz",
-    "Clone": "Klon"
+    "Clone": "Klon",
+    "Config": "Konfiguracja"
   },
   "agent": {
     "Endpoint": "Punkt końcowy",

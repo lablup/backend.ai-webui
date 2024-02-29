@@ -410,7 +410,8 @@
     "Unset": "Non défini",
     "OK": "OK",
     "Download": "Télécharger",
-    "Clone": "Clone"
+    "Clone": "Clone",
+    "Config": "Config"
   },
   "agent": {
     "Endpoint": "Point de terminaison",

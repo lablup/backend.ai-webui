@@ -412,7 +412,8 @@
     "Unset": "Unset",
     "OK": "OK",
     "Download": "Скачать",
-    "Clone": "Клон"
+    "Clone": "Клон",
+    "Config": "Конфигурация"
   },
   "agent": {
     "Endpoint": "Конечная точка",
