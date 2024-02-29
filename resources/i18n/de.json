@@ -1136,7 +1136,8 @@
     "MTUDescription": "Maximale Übertragungseinheit, die Größe des größten Pakets, das ein Netzprotokoll übertragen kann.",
     "OutOfRange": "Außerhalb der Reichweite.",
     "Plugins": "Plugins",
-    "OpenSourceCUDAGPUsupport": "Open Source CUDA GPU Unterstützung"
+    "OpenSourceCUDAGPUsupport": "Open Source CUDA GPU Unterstützung",
+    "ShowOnlyChanged": "Nur Änderungen anzeigen"
   },
   "notification": {
     "SuccessfullyUpdated": "Erfolgreich aktualisiert",
@@ -1513,5 +1514,8 @@
     "SettingTable": "Sitzordnung bei Tisch",
     "SelectColumnToDisplay": "Wählen Sie die anzuzeigenden Spalten aus",
     "SearchTableColumn": "Tabellenspalten durchsuchen"
+  },
+  "setting": {
+    "SearchPlaceholder": "Geben Sie einen Suchbegriff ein"
   }
 }

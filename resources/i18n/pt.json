@@ -1136,7 +1136,8 @@
     "MTUDescription": "Unidade máxima de transmissão, o tamanho do maior pacote que um protocolo de rede pode transmitir.",
     "OutOfRange": "Fora de alcance.",
     "Plugins": "Plug-ins",
-    "OpenSourceCUDAGPUsupport": "Suporte para GPU CUDA de código aberto"
+    "OpenSourceCUDAGPUsupport": "Suporte para GPU CUDA de código aberto",
+    "ShowOnlyChanged": "Exibir apenas alterações"
   },
   "notification": {
     "SuccessfullyUpdated": "Atualizado com sucesso",
@@ -1513,5 +1514,8 @@
     "SettingTable": "Configuração de mesa",
     "SelectColumnToDisplay": "Selecione as colunas a serem exibidas",
     "SearchTableColumn": "Pesquisar colunas da tabela"
+  },
+  "setting": {
+    "SearchPlaceholder": "Insira o termo de pesquisa"
   }
 }

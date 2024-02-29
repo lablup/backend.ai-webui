@@ -1136,7 +1136,8 @@
     "DescWarboysupport": "Gunakan dukungan Furiosa Warboy",
     "RequireWarboyPlugin": "Membutuhkan Plugin Backend.AI Warboy.",
     "Plugins": "Plugin",
-    "OpenSourceCUDAGPUsupport": "Dukungan GPU CUDA Sumber Terbuka"
+    "OpenSourceCUDAGPUsupport": "Dukungan GPU CUDA Sumber Terbuka",
+    "ShowOnlyChanged": "Hanya Tampilan yang Berubah"
   },
   "notification": {
     "SuccessfullyUpdated": "Berhasil Diperbarui",
@@ -1513,5 +1514,8 @@
     "SettingTable": "Penataan meja",
     "SelectColumnToDisplay": "Pilih kolom yang akan ditampilkan",
     "SearchTableColumn": "Cari kolom tabel"
+  },
+  "setting": {
+    "SearchPlaceholder": "Masukkan Istilah Pencarian"
   }
 }

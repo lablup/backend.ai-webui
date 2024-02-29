@@ -1136,7 +1136,8 @@
     "MTUDescription": "Unit penghantaran maksimum, saiz paket terbesar yang boleh dihantar oleh protokol rangkaian.",
     "OutOfRange": "Luar kawasan.",
     "Plugins": "Pemalam",
-    "OpenSourceCUDAGPUsupport": "Sokongan GPU CUDA Sumber Terbuka"
+    "OpenSourceCUDAGPUsupport": "Sokongan GPU CUDA Sumber Terbuka",
+    "ShowOnlyChanged": "Paparkan Perubahan Sahaja"
   },
   "notification": {
     "SuccessfullyUpdated": "Berjaya Dikemas kini",
@@ -1513,5 +1514,8 @@
     "SelectColumnToDisplay": "Pilih untuk lajur untuk dipaparkan",
     "SettingTable": "Tetapan Meja",
     "SearchTableColumn": "Cari lajur jadual"
+  },
+  "setting": {
+    "SearchPlaceholder": "Masukkan Istilah Carian"
   }
 }

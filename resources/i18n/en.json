@@ -1237,7 +1237,8 @@
     "DescWarboysupport": "Use Furiosa Warboy support",
     "RequireWarboyPlugin": "Requires Backend.AI Warboy Plugin.",
     "Plugins": "Plugins",
-    "OpenSourceCUDAGPUsupport": "Open Source CUDA GPU support"
+    "OpenSourceCUDAGPUsupport": "Open Source CUDA GPU support",
+    "ShowOnlyChanged": "Display Only Changes"
   },
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",
@@ -1514,5 +1515,8 @@
     "CloneSuccess": "The clone request has been sent successfully.",
     "CloneInfo": "It will be cloned as your user type folder.",
     "category": "Category"
+  },
+  "setting": {
+    "SearchPlaceholder": "Enter Search Term"
   }
 }

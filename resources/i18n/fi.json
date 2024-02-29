@@ -1222,7 +1222,8 @@
       "none": "Ei ole",
       "tag": "Tag"
     },
-    "OpenSourceCUDAGPUsupport": "Avoimen lähdekoodin CUDA GPU-tuki"
+    "OpenSourceCUDAGPUsupport": "Avoimen lähdekoodin CUDA GPU-tuki",
+    "ShowOnlyChanged": "Vain näyttö muuttuu"
   },
   "sidepanel": {
     "BackgroundTasks": "Tehtävien suorittaminen",
@@ -1513,5 +1514,8 @@
     "SettingTable": "Kattaus",
     "SelectColumnToDisplay": "Valitse näytettävät sarakkeet",
     "SearchTableColumn": "Hae taulukon sarakkeita"
+  },
+  "setting": {
+    "SearchPlaceholder": "Kirjoita hakutermi"
   }
 }
