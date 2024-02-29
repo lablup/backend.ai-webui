@@ -2,7 +2,7 @@ import Flex from './Flex';
 import SettingItem from './SettingItem';
 import { SettingItemProps } from './SettingItem';
 import { SearchOutlined } from '@ant-design/icons';
-import { Checkbox, Input, Tabs, Typography, theme } from 'antd';
+import { Checkbox, Input, Tabs, theme } from 'antd';
 import { useResponsive } from 'antd-style';
 import _ from 'lodash';
 import { useState } from 'react';
