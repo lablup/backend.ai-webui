@@ -60,25 +60,28 @@ const ProjectSelector: React.FC<Props> = ({
     }
   });
   return (
-    <Select
-      onChange={(value, option) => {
-        setValue(value);
-        onSelectProject?.(option as ProjectInfo);
-      }}
-      placeholder={t('storageHost.quotaSettings.SelectProject')}
-      {...selectProps}
-      value={value}
-      optionFilterProp="projectName"
-      options={_.map(_.sortBy(projects, 'name'), (project) => {
-        return {
-          label: project?.name,
-          value: project?.id,
-          projectId: project?.id,
-          projectResourcePolicy: project?.resource_policy,
-          projectName: project?.name,
-        };
-      })}
-    />
+    <div data-testid="projectSelect">
+      <Select
+        onChange={(value, option) => {
+          setValue(value);
+          onSelectProject?.(option as ProjectInfo);
+        }}
+        placeholder={t('storageHost.quotaSettings.SelectProject')}
+        {...selectProps}
+        value={value}
+        optionFilterProp="projectName"
+        options={_.map(_.sortBy(projects, 'name'), (project) => {
+          return {
+            label: project?.name,
+            value: project?.id,
+            projectId: project?.id,
+            id: project?.name,
+            projectResourcePolicy: project?.resource_policy,
+            projectName: project?.name,
+          };
+        })}
+      />
+    </div>
   );
 };
 

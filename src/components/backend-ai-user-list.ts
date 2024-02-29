@@ -516,6 +516,7 @@ export default class BackendAIUserList extends BackendAIPage {
                 <mwc-icon-button
                   class="fg red controls-running"
                   icon="delete_forever"
+                  data-testid="${rowData.item.email}"
                   @click="${(e) => this._signoutUserDialog(e)}"
                 ></mwc-icon-button>
               `
@@ -709,6 +710,7 @@ export default class BackendAIUserList extends BackendAIPage {
           ></mwc-button>
           <mwc-button
             unelevated
+            data-testid="deleteUser"
             label="${_t('button.Okay')}"
             @click="${() => this._signoutUser()}"
           ></mwc-button>

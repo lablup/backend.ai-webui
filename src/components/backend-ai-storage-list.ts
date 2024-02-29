@@ -1666,6 +1666,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         <div
           id="controls"
+          data-testid="vfolder"
           class="layout flex horizontal start-justified center wrap"
           folder-id="${rowData.item.id}"
           folder-name="${rowData.item.name}"
@@ -1811,6 +1812,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         <lablup-shields
           app=""
           color="${color}"
+          data-testid="${rowData.item.name}"
           description="${rowData.item.status}"
           ui="flat"
         ></lablup-shields>

@@ -2,5 +2,6 @@
 src/lib/
 !/src
 !/react
+!/playwright
 **/__generated__/*.graphql.ts
 *.graphql

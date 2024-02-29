@@ -66,7 +66,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'summary',
     },
     {
-      label: t('webui.menu.Sessions'),
+      label: <div data-testid="session">{t('webui.menu.Sessions')}</div>,
       icon: <BarsOutlined />,
       key: 'job',
     },
@@ -81,7 +81,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'import',
     },
     {
-      label: t('webui.menu.Data&Storage'),
+      label: <div data-testid="data">{t('webui.menu.Data&Storage')}</div>,
       icon: <CloudUploadOutlined />,
       key: 'data',
     },
@@ -107,7 +107,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   const adminMenu: MenuProps['items'] = [
     {
-      label: t('webui.menu.Users'),
+      label: <div data-testid="credential">{t('webui.menu.Users')}</div>,
       icon: <UserOutlined />,
       key: 'credential',
     },

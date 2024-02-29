@@ -491,6 +491,7 @@ export default class BackendAIData extends BackendAIPage {
                 ? html`
                     <mwc-list-item
                       value="group"
+                      data-testid="group"
                       ?selected="${!this.allowed_folder_type.includes('user')}"
                     >
                       ${_t('data.Project')}
@@ -510,6 +511,7 @@ export default class BackendAIData extends BackendAIPage {
                     ${this.groupListByUsage.map(
                       (item, idx) => html`
                         <mwc-list-item
+                          data-testid="${item.name}"
                           value="${item.name}"
                           ?selected="${this.currentGroupIdx === idx}"
                         >
