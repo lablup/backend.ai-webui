@@ -5,7 +5,6 @@ import {
   RoutingEventHandler,
 } from './components/DefaultProviders';
 import MainLayout from './components/MainLayout/MainLayout';
-import PasswordChangeRequestAlert from './components/PasswordChangeRequestAlert';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
 import { theme } from 'antd';
@@ -67,22 +66,13 @@ const router = createBrowserRouter([
         Component: () => {
           const { token } = theme.useToken();
           return (
-            <>
-              <PasswordChangeRequestAlert
-                showIcon
-                icon={undefined}
-                banner={false}
-                style={{ marginBottom: token.paddingContentVerticalLG }}
-                closable
-              />
-              <AnnouncementAlert
-                showIcon
-                icon={undefined}
-                banner={false}
-                style={{ marginBottom: token.paddingContentVerticalLG }}
-                closable
-              />
-            </>
+            <AnnouncementAlert
+              showIcon
+              icon={undefined}
+              banner={false}
+              style={{ marginBottom: token.paddingContentVerticalLG }}
+              closable
+            />
           );
         },
         handle: { labelKey: 'webui.menu.Summary' },

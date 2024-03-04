@@ -2,6 +2,7 @@ import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
+import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
@@ -181,6 +182,13 @@ function MainLayout() {
             />
           )} */}
             <Suspense>
+              <PasswordChangeRequestAlert
+                showIcon
+                icon={undefined}
+                banner={false}
+                style={{ marginBottom: token.paddingContentVerticalLG }}
+                closable
+              />
               <Outlet />
             </Suspense>
             {/* To match paddig to 16 (2+14) */}
