@@ -3,7 +3,8 @@ import replace from '@rollup/plugin-replace';
 import typescript from '@rollup/plugin-typescript';
 import { generateSW } from 'rollup-plugin-workbox';
 import terser from '@rollup/plugin-terser';
-import { globSync } from 'glob';
+import glob from 'glob';
+
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 //import babel from 'rollup-plugin-babel'; // To support legacy browsers. Disabled by default.
@@ -16,6 +17,7 @@ const plugins = (outDir) =>  [
   }),
   replace({
     'process.env.NODE_ENV': JSON.stringify('production'),
+    preventAssignment: true
   }),
   terser(),
   generateSW( {
@@ -34,7 +36,7 @@ export default [
   {
     // ref: https://rollupjs.org/configuration-options/#input
     input: Object.fromEntries(
-      globSync('src/plugins/**/*.ts').map(file => [
+      glob.sync('src/plugins/**/*.ts').map(file => [
         // This remove `src/` as well as the file extension from each
         // file, so e.g. src/nested/foo.js becomes nested/foo
         path.relative(

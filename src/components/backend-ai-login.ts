@@ -1132,7 +1132,7 @@ export default class BackendAILogin extends BackendAIPage {
 
   /**
    * Load configuration file from the WebServer when using Session mode.
-   *
+   * @return {Promise<any> | void}
    * */
   private _loadConfigFromWebServer() {
     if (!window.location.href.startsWith(this.api_endpoint)) {
@@ -1164,6 +1164,7 @@ export default class BackendAILogin extends BackendAIPage {
         });
       }
     }
+    return Promise.resolve(undefined);
   }
 
   /**
