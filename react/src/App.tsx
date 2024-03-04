@@ -8,6 +8,7 @@ import MainLayout from './components/MainLayout/MainLayout';
 import PasswordChangeRequestAlert from './components/PasswordChangeRequestAlert';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
+import { theme } from 'antd';
 import React from 'react';
 import { FC } from 'react';
 import {
@@ -63,24 +64,27 @@ const router = createBrowserRouter([
       },
       {
         path: '/summary',
-        Component: () => (
-          <>
-            <PasswordChangeRequestAlert
-              showIcon
-              icon={undefined}
-              banner={false}
-              style={{ marginBottom: 16 }}
-              closable
-            />
-            <AnnouncementAlert
-              showIcon
-              icon={undefined}
-              banner={false}
-              style={{ marginBottom: 16 }}
-              closable
-            />
-          </>
-        ),
+        Component: () => {
+          const { token } = theme.useToken();
+          return (
+            <>
+              <PasswordChangeRequestAlert
+                showIcon
+                icon={undefined}
+                banner={false}
+                style={{ marginBottom: token.paddingContentVerticalLG }}
+                closable
+              />
+              <AnnouncementAlert
+                showIcon
+                icon={undefined}
+                banner={false}
+                style={{ marginBottom: token.paddingContentVerticalLG }}
+                closable
+              />
+            </>
+          );
+        },
         handle: { labelKey: 'webui.menu.Summary' },
       },
       {
