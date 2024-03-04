@@ -5,6 +5,7 @@ import {
   RoutingEventHandler,
 } from './components/DefaultProviders';
 import MainLayout from './components/MainLayout/MainLayout';
+import PasswordChangeRequestAlert from './components/PasswordChangeRequestAlert';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
 import React from 'react';
@@ -63,13 +64,22 @@ const router = createBrowserRouter([
       {
         path: '/summary',
         Component: () => (
-          <AnnouncementAlert
-            showIcon
-            icon={undefined}
-            banner={false}
-            style={{ marginBottom: 16 }}
-            closable
-          />
+          <>
+            <PasswordChangeRequestAlert
+              showIcon
+              icon={undefined}
+              banner={false}
+              style={{ marginBottom: 16 }}
+              closable
+            />
+            <AnnouncementAlert
+              showIcon
+              icon={undefined}
+              banner={false}
+              style={{ marginBottom: 16 }}
+              closable
+            />
+          </>
         ),
         handle: { labelKey: 'webui.menu.Summary' },
       },
