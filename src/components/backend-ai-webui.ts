@@ -522,8 +522,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this.plugins['menuitem-superadmin'] = [];
         const pluginLoaderQueue: object[] = [];
         for (const page of config.plugin.page.split(',')) {
+          const pluginUrl =
+            globalThis.isElectron && this.loginPanel.api_endpoint
+              ? `${this.loginPanel.api_endpoint}/dist/plugins/${page}.js`
+              : `../plugins/${page}.js`;
+
           pluginLoaderQueue.push(
-            import('../plugins/' + page + '.js').then(() => {
+            import(pluginUrl).then(() => {
               const pageItem = document.createElement(page) as BackendAIPage;
               pageItem.classList.add('page');
               pageItem.setAttribute('name', page);

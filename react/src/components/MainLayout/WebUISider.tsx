@@ -8,13 +8,13 @@ import Flex from '../Flex';
 import SignoutModal from '../SignoutModal';
 import { PluginPage, WebUIPluginType } from './MainLayout';
 import {
+  ApiOutlined,
   BarChartOutlined,
   BarsOutlined,
   CaretRightOutlined,
   CloudUploadOutlined,
   ControlOutlined,
   DashboardOutlined,
-  ExperimentOutlined,
   ExportOutlined,
   FileDoneOutlined,
   HddOutlined,
@@ -160,7 +160,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         if (page) {
           const menuItem = {
             label: page?.menuitem,
-            icon: <ExperimentOutlined />,
+            // eslint-disable-next-line react/jsx-no-undef
+            icon: <ApiOutlined />,
             key: page?.url,
           };
           menu.push(menuItem);
