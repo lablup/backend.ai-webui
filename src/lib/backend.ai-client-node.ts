@@ -3715,8 +3715,8 @@ class Maintenance {
    * @param {string} task_id - background task id.
    */
   attach_background_task(task_id: string) {
-    var urlStr = '/events/background-task?task_id=' + task_id;
-    let req = this.client.newSignedRequest('GET', urlStr, null);
+    const urlStr = '/events/background-task?task_id=' + task_id;
+    const req = this.client.newSignedRequest('GET', urlStr, null);
     return new EventSource(req.uri, { withCredentials: true });
   }
 
