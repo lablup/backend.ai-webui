@@ -1,0 +1,47 @@
+name: Build & Commit static files
+on:
+  release:
+    types: [published]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ "main" ]
+
+jobs:
+  build_static:
+    runs-on: ubuntu-latest
+    environment: app-packaging
+    steps:
+      - name: Check out backend.ai-app repository
+        uses: actions/checkout@v3
+        with:
+          repository: lablup/backend.ai-app
+          ref: main
+      - name: Check out webui repository
+        uses: actions/checkout@v3
+        with:
+          path: webui
+      - name: Install Node.js and NPM
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: Install Dependencies and Build
+        run: |
+          cd webui
+          npm install
+          make dep && make compile
+          cd ..
+      - name: Copy Build Output
+        run: cp -r webui/build/rollup/* .
+      - name: Delete webui Repository from Filesystem
+        run: rm -rf webui
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: Update to ${{ github.ref_name }}
+          committer: LablupBot <devops@lablup.com>
+          author: LablupBot <devops@lablup.com>
+          branch: feature/${{ github.ref_name }}
+          delete-branch: true
+          title: "feat: update to ${{ github.ref_name }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # reviewers: inureyes
