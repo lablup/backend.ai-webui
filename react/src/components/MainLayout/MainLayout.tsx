@@ -189,6 +189,8 @@ function MainLayout() {
                 style={{ marginBottom: token.paddingContentVerticalLG }}
                 closable
               />
+            </Suspense>
+            <Suspense>
               <Outlet />
             </Suspense>
             {/* To match paddig to 16 (2+14) */}
