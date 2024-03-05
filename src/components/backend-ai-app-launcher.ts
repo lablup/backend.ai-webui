@@ -430,8 +430,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   async _getWSProxyVersion(sessionUuid) {
     if (globalThis.backendaiwebui.debug === true) {
-      if (this.forceUseV1Proxy.checked) return 'v1';
-      else if (this.forceUseV2Proxy.checked) return 'v2';
+      if (this.forceUseV1Proxy?.checked) return 'v1';
+      else if (this.forceUseV2Proxy?.checked) return 'v2';
     }
 
     const kInfo = await globalThis.backendaiclient.computeSession.get(

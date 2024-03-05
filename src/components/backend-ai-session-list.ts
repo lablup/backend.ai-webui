@@ -1912,7 +1912,7 @@ export default class BackendAISessionList extends BackendAIPage {
     this.terminationQueue.push(sessionId);
     return this._terminateApp(sessionId)
       .then(() => {
-        this._requestDestroySession(sessionId, accessKey, forced);
+        return this._requestDestroySession(sessionId, accessKey, forced);
       })
       .catch((err) => {
         if (err && err.message) {
