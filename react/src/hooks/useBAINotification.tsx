@@ -68,7 +68,6 @@ export const useBAINotification = () => {
 
   const upsertNotification = useCallback(
     (params: Partial<Omit<NotificationState, 'created'>>) => {
-      console.log('##3', params);
       let currentKey: React.Key | undefined;
       setNotifications((prevNotifications: NotificationState[]) => {
         let nextNotifications: NotificationState[];
