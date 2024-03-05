@@ -1,6 +1,8 @@
+import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
+import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
@@ -65,11 +67,33 @@ function MainLayout() {
   }, [navigate]);
 
   return (
-    <Layout
-      style={{
-        backgroundColor: 'transparent',
-      }}
-    >
+    <Layout>
+      <CSSTokenVariables />
+      <style>
+        {`
+          /* Scrollbar stylings */
+          /* Works on Firefox */
+          * {
+            scrollbar-width: 2px;
+            scrollbar-color: var(--token-colorBorderSecondary, ${token.colorBorderSecondary},  #464646)
+              var(--token-colorBgElevated, transparent);
+          }
+
+          /* Works on Chrome, Edge, and Safari */
+          *::-webkit-scrollbar {
+            max-width: 2px;
+            background-color: var(--token-colorBgElevated, ${token.colorBgElevated}, transparent);
+          }
+
+          *::-webkit-scrollbar-track {
+            background: var(--token-colorBgElevated, ${token.colorBgElevated}, transparent);
+          }
+
+          *::-webkit-scrollbar-thumb {
+            background-color: var(--token-colorBorderSecondary, ${token.colorBorderSecondary}, #464646);
+          }
+        `}
+      </style>
       <Suspense
         fallback={
           <>
@@ -157,6 +181,15 @@ function MainLayout() {
             />
           )} */}
             <Suspense>
+              <PasswordChangeRequestAlert
+                showIcon
+                icon={undefined}
+                banner={false}
+                style={{ marginBottom: token.paddingContentVerticalLG }}
+                closable
+              />
+            </Suspense>
+            <Suspense>
               <Outlet />
             </Suspense>
             {/* To match paddig to 16 (2+14) */}
@@ -186,6 +219,23 @@ const NotificationForAnonymous = () => {
     };
   }, [app.notification]);
   return null;
+};
+
+export const CSSTokenVariables = () => {
+  const { token } = theme.useToken();
+  useThemeMode(); // This is to make sure the theme mode is updated
+
+  return (
+    <style>
+      {`
+:root {
+${Object.entries(token)
+  .map(([key, value]) => `--token-${key}: ${value?.toString() ?? ''};`)
+  .join('\n')}
+}
+      `}
+    </style>
+  );
 };
 
 export default MainLayout;

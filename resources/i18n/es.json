@@ -129,7 +129,8 @@
     "Update": "Actualización",
     "Yes": "Sí",
     "Download": "Descargar",
-    "Clone": "Clon"
+    "Clone": "Clon",
+    "Config": "Configurar"
   },
   "credential": {
     "AccessKeyOptional": "Clave de acceso (opcional)",
@@ -1224,7 +1225,8 @@
       "tag": "Etiqueta"
     },
     "Plugins": "Complementos",
-    "OpenSourceCUDAGPUsupport": "Compatibilidad con GPU CUDA de código abierto"
+    "OpenSourceCUDAGPUsupport": "Compatibilidad con GPU CUDA de código abierto",
+    "ShowOnlyChanged": "Mostrar solo cambios"
   },
   "sidepanel": {
     "BackgroundTasks": "Tareas en curso",
@@ -1392,7 +1394,12 @@
     "ShellEnvironments": "Entornos de conchas",
     "UseCompactSidebar": "Utilizar la barra lateral compacta por defecto",
     "MyKeypairInfo": "Información de mi par de claves",
-    "DescMyKeypairInfo": "Ver la información de mi par de claves"
+    "DescMyKeypairInfo": "Ver la información de mi par de claves",
+    "DarkMode": "Modo oscuro",
+    "LightMode": "Modo de luz",
+    "UseSystemSetting": "Usar configuración del sistema",
+    "DescThemeMode": "Personalice el aspecto de Backend.AI WebUI en su dispositivo.",
+    "ThemeMode": "Modo temático"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avanzado del terminal web: Copiar el contenido del terminal",
@@ -1510,5 +1517,8 @@
     "SettingTable": "Ajuste de la tabla",
     "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
     "SearchTableColumn": "Buscar columnas de la tabla"
+  },
+  "setting": {
+    "SearchPlaceholder": "Ingrese el término de búsqueda"
   }
 }

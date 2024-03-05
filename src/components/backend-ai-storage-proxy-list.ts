@@ -207,7 +207,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       .then((response) => {
         const storage_volumes = response.storage_volume_list.items;
         const storages: Array<any> = [];
-        if (storage_volumes !== undefined && storage_volumes.length != 0) {
+        if (storage_volumes !== undefined && storage_volumes.length > 0) {
           Object.keys(storage_volumes).map((objectKey, index) => {
             const storage: any = storage_volumes[objectKey];
             if (this.filter !== '') {
@@ -512,7 +512,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       <div class="list-wrapper">
         <vaadin-grid
           class="${this.condition}"
-          theme="row-stripes column-borders compact"
+          theme="row-stripes column-borders compact dark"
           aria-label="Job list"
           .items="${this.storages}"
         >

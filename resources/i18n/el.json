@@ -412,7 +412,8 @@
     "Commit": "Δέσμευση",
     "EnterManually": "Εισάγετε χειροκίνητα",
     "Download": "Λήψη",
-    "Clone": "Κλώνος"
+    "Clone": "Κλώνος",
+    "Config": "Διαμόρφωση"
   },
   "agent": {
     "Endpoint": "Τελικό σημείο",
@@ -855,7 +856,12 @@
     "BootstrapScriptDescription": "Το σενάριο Bootstrap θα εκτελεστεί μόνο μία φορά μετά τη δημιουργία συνεδρίας",
     "SSHKeypairEnterManually": "Ζεύγος κλειδιών SSH",
     "MyKeypairInfo": "Πληροφορίες για το ζεύγος κλειδιών μου",
-    "DescMyKeypairInfo": "Δείτε τις πληροφορίες του ζεύγους κλειδιών μου"
+    "DescMyKeypairInfo": "Δείτε τις πληροφορίες του ζεύγους κλειδιών μου",
+    "DarkMode": "Σκοτεινή λειτουργία",
+    "LightMode": "Λειτουργία φωτός",
+    "UseSystemSetting": "Χρησιμοποιήστε τη ρύθμιση συστήματος",
+    "DescThemeMode": "Προσαρμόστε την εμφάνιση του Backend.AI WebUI στη συσκευή σας.",
+    "ThemeMode": "Λειτουργία θέματος"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Σύνθετη χρήση τερματικού Web: Αντιγραφή περιεχομένου τερματικού",
@@ -1133,7 +1139,8 @@
     "MTUDescription": "Μέγιστη μονάδα μετάδοσης, το μέγεθος του μεγαλύτερου πακέτου που μπορεί να μεταδώσει ένα πρωτόκολλο δικτύου.",
     "OutOfRange": "Εκτός εμβέλειας.",
     "Plugins": "Πρόσθετα",
-    "OpenSourceCUDAGPUsupport": "Υποστήριξη ανοιχτού κώδικα CUDA GPU"
+    "OpenSourceCUDAGPUsupport": "Υποστήριξη ανοιχτού κώδικα CUDA GPU",
+    "ShowOnlyChanged": "Εμφάνιση μόνο αλλαγών"
   },
   "notification": {
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
@@ -1506,5 +1513,8 @@
     "SettingTable": "Ρύθμιση πίνακα",
     "SelectColumnToDisplay": "Επιλέξτε για εμφάνιση στηλών",
     "SearchTableColumn": "Αναζήτηση στηλών πίνακα"
+  },
+  "setting": {
+    "SearchPlaceholder": "Εισαγάγετε τον όρο αναζήτησης"
   }
 }

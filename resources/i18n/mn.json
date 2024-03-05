@@ -412,7 +412,8 @@
     "Unset": "Тохируулаагүй",
     "OK": "БОЛЖ БАЙНА УУ",
     "Download": "Татаж авах",
-    "Clone": "Клон"
+    "Clone": "Клон",
+    "Config": "Тохиргоо"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -855,7 +856,12 @@
     "SSHKeypairEnterManually": "SSH товчлуурын хослол",
     "SSHKeypairEnterManuallyFinished": "SSH Keypair амжилттай бүртгэгдлээ.",
     "MyKeypairInfo": "Миний товчлуурын мэдээлэл",
-    "DescMyKeypairInfo": "Миний товчлуурын мэдээллийг харна уу"
+    "DescMyKeypairInfo": "Миний товчлуурын мэдээллийг харна уу",
+    "DarkMode": "Харанхуй горим",
+    "LightMode": "Гэрэл горим",
+    "UseSystemSetting": "Системийн тохиргоог ашиглана уу",
+    "DescThemeMode": "Backend.AI WebUI төхөөрөмж дээрээ хэрхэн харагдахыг тохируулна уу.",
+    "ThemeMode": "Загварын горим"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Дэвшилтэт вэб терминалын хэрэглээ: Терминалын агуулгыг хуулах",
@@ -1133,7 +1139,8 @@
     "DescWarboysupport": "Furiosa Warboy дэмжлэгийг ашигла",
     "RequireWarboyPlugin": "Backend.AI Warboy Plugin шаардлагатай.",
     "Plugins": "Plugins",
-    "OpenSourceCUDAGPUsupport": "Нээлттэй эхийн CUDA GPU дэмжлэг"
+    "OpenSourceCUDAGPUsupport": "Нээлттэй эхийн CUDA GPU дэмжлэг",
+    "ShowOnlyChanged": "Зөвхөн өөрчлөлтүүдийг харуулах"
   },
   "notification": {
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
@@ -1510,5 +1517,8 @@
     "SettingTable": "Хүснэгтийн тохиргоо",
     "SelectColumnToDisplay": "Харуулах багануудыг сонгоно уу",
     "SearchTableColumn": "Хүснэгтийн багануудыг хайх"
+  },
+  "setting": {
+    "SearchPlaceholder": "Хайлтын нэр томъёог оруулна уу"
   }
 }

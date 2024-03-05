@@ -412,7 +412,8 @@
     "Commit": "Impegno",
     "EnterManually": "Inserire manualmente",
     "Download": "Scarica",
-    "Clone": "Clone"
+    "Clone": "Clone",
+    "Config": "Configurazione"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -855,7 +856,12 @@
     "BootstrapScriptDescription": "Lo script Bootstrap verrà eseguito solo una volta dopo la creazione della sessione.",
     "SSHKeypairEnterManually": "Coppia di chiavi SSH",
     "MyKeypairInfo": "Informazioni sulla mia coppia di chiavi",
-    "DescMyKeypairInfo": "Vedi le informazioni sulla mia coppia di chiavi"
+    "DescMyKeypairInfo": "Vedi le informazioni sulla mia coppia di chiavi",
+    "DarkMode": "Modalità scura",
+    "LightMode": "Modalità luce",
+    "UseSystemSetting": "Utilizza Impostazioni di sistema",
+    "DescThemeMode": "Personalizza l'aspetto di Backend.AI WebUI sul tuo dispositivo.",
+    "ThemeMode": "Modalità tema"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilizzo avanzato del terminale Web: copia il contenuto del terminale",
@@ -1133,7 +1139,8 @@
     "MTUDescription": "Unità di trasmissione massima, la dimensione del pacchetto più grande che un protocollo di rete può trasmettere.",
     "OutOfRange": "Fuori portata.",
     "Plugins": "Plugin",
-    "OpenSourceCUDAGPUsupport": "Supporto GPU CUDA open source"
+    "OpenSourceCUDAGPUsupport": "Supporto GPU CUDA open source",
+    "ShowOnlyChanged": "Visualizza solo modifiche"
   },
   "notification": {
     "SuccessfullyUpdated": "Aggiornato con successo",
@@ -1510,5 +1517,8 @@
     "SettingTable": "Impostazione della tabella",
     "SelectColumnToDisplay": "Seleziona le colonne da visualizzare",
     "SearchTableColumn": "Cerca colonne della tabella"
+  },
+  "setting": {
+    "SearchPlaceholder": "Inserisci il termine di ricerca"
   }
 }

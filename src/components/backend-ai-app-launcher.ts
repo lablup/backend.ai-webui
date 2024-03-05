@@ -122,11 +122,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-font-family);
-        }
-
-        mwc-icon-button {
-          color: var(--general-button-background-color);
+          --mdc-typography-font-family: var(--token-fontFamily);
         }
 
         mwc-icon-button.sftp-session-connection-copy {
@@ -183,6 +179,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           height: 450px;
           padding: 0 30px;
           margin: 0 10px;
+        }
+
+        macro-carousel macro-carousel-nav-button {
+          --macro-carousel-navigation-color: var(--token-colorText);
+          --macro-carousel-navigation-color-background-focus: var(
+            --token-colorBgTextHover
+          );
         }
 
         #collapsible-btn {
@@ -250,6 +253,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           background-color: var(--paper-grey-200);
           border-radius: 10px;
           margin: 0px 10px;
+          color: var(--paper-grey-800);
         }
 
         span.invert {
@@ -426,8 +430,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   async _getWSProxyVersion(sessionUuid) {
     if (globalThis.backendaiwebui.debug === true) {
-      if (this.forceUseV1Proxy.checked) return 'v1';
-      else if (this.forceUseV2Proxy.checked) return 'v2';
+      if (this.forceUseV1Proxy?.checked) return 'v1';
+      else if (this.forceUseV2Proxy?.checked) return 'v2';
     }
 
     const kInfo = await globalThis.backendaiclient.computeSession.get(

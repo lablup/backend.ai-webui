@@ -412,7 +412,8 @@
     "Commit": "承诺",
     "EnterManually": "手动输入",
     "Download": "下载",
-    "Clone": "克隆"
+    "Clone": "克隆",
+    "Config": "配置"
   },
   "agent": {
     "Endpoint": "端点",
@@ -855,7 +856,12 @@
     "BootstrapScriptDescription": "Bootstrap 脚本只会在会话创建后执行一次",
     "SSHKeypairEnterManually": "SSH 密钥对",
     "MyKeypairInfo": "我的密钥对信息",
-    "DescMyKeypairInfo": "查看我的密钥对信息"
+    "DescMyKeypairInfo": "查看我的密钥对信息",
+    "DarkMode": "深色模式",
+    "LightMode": "灯光模式",
+    "UseSystemSetting": "使用系统设置",
+    "DescThemeMode": "自定义 Backend.AI WebUI 在您设备上的外观。",
+    "ThemeMode": "主题模式"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高级 Web 终端使用：复制终端内容",
@@ -1133,7 +1139,8 @@
     "MTUDescription": "最大传输单位，网络协议可传输的最大数据包的大小。",
     "OutOfRange": "超出范围。",
     "Plugins": "插件",
-    "OpenSourceCUDAGPUsupport": "开源 CUDA GPU 支持"
+    "OpenSourceCUDAGPUsupport": "开源 CUDA GPU 支持",
+    "ShowOnlyChanged": "仅显示更改"
   },
   "notification": {
     "SuccessfullyUpdated": "成功更新",
@@ -1510,5 +1517,8 @@
     "SettingTable": "桌面设置",
     "SelectColumnToDisplay": "选择要显示的列",
     "SearchTableColumn": "搜索表格列"
+  },
+  "setting": {
+    "SearchPlaceholder": "输入搜索词"
   }
 }
