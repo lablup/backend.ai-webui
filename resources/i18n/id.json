@@ -410,7 +410,8 @@
     "Unset": "Tidak diatur",
     "OK": "BAIKLAH.",
     "Download": "Unduh",
-    "Clone": "Clone"
+    "Clone": "Clone",
+    "Config": "Konfigurasi"
   },
   "agent": {
     "Endpoint": "Titik akhir",
@@ -853,7 +854,12 @@
     "SSHKeypairEnterManually": "SSH Keypair",
     "SSHKeypairEnterManuallyFinished": "SSH Keypair telah berhasil didaftarkan.",
     "MyKeypairInfo": "Informasi Pasangan Kunci Saya",
-    "DescMyKeypairInfo": "Lihat informasi keypair saya"
+    "DescMyKeypairInfo": "Lihat informasi keypair saya",
+    "DarkMode": "Mode Gelap",
+    "LightMode": "Modus Cahaya",
+    "UseSystemSetting": "Gunakan Pengaturan Sistem",
+    "DescThemeMode": "Sesuaikan tampilan Backend.AI WebUI di perangkat Anda.",
+    "ThemeMode": "Modus Tema"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Tingkat Lanjut: Salin konten terminal",
@@ -1131,7 +1137,8 @@
     "DescWarboysupport": "Gunakan dukungan Furiosa Warboy",
     "RequireWarboyPlugin": "Membutuhkan Plugin Backend.AI Warboy.",
     "Plugins": "Plugin",
-    "OpenSourceCUDAGPUsupport": "Dukungan GPU CUDA Sumber Terbuka"
+    "OpenSourceCUDAGPUsupport": "Dukungan GPU CUDA Sumber Terbuka",
+    "ShowOnlyChanged": "Hanya Tampilan yang Berubah"
   },
   "notification": {
     "SuccessfullyUpdated": "Berhasil Diperbarui",
@@ -1508,5 +1515,8 @@
     "SettingTable": "Penataan meja",
     "SelectColumnToDisplay": "Pilih kolom yang akan ditampilkan",
     "SearchTableColumn": "Cari kolom tabel"
+  },
+  "setting": {
+    "SearchPlaceholder": "Masukkan Istilah Pencarian"
   }
 }

@@ -1,12 +1,13 @@
 import AnnouncementAlert from './components/AnnouncementAlert';
 import BAIErrorBoundary from './components/BAIErrorBoundary';
 import {
-  DefaultProviders2,
+  DefaultProvidersForReactRoot,
   RoutingEventHandler,
 } from './components/DefaultProviders';
 import MainLayout from './components/MainLayout/MainLayout';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
+import { theme } from 'antd';
 import React from 'react';
 import { FC } from 'react';
 import {
@@ -62,15 +63,18 @@ const router = createBrowserRouter([
       },
       {
         path: '/summary',
-        Component: () => (
-          <AnnouncementAlert
-            showIcon
-            icon={undefined}
-            banner={false}
-            style={{ marginBottom: 16 }}
-            closable
-          />
-        ),
+        Component: () => {
+          const { token } = theme.useToken();
+          return (
+            <AnnouncementAlert
+              showIcon
+              icon={undefined}
+              banner={false}
+              style={{ marginBottom: token.paddingContentVerticalLG }}
+              closable
+            />
+          );
+        },
         handle: { labelKey: 'webui.menu.Summary' },
       },
       {
@@ -180,9 +184,9 @@ const router = createBrowserRouter([
 const App: FC = () => {
   return (
     <RecoilRoot>
-      <DefaultProviders2>
+      <DefaultProvidersForReactRoot>
         <RouterProvider router={router} />
-      </DefaultProviders2>
+      </DefaultProvidersForReactRoot>
     </RecoilRoot>
   );
 };

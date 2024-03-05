@@ -119,7 +119,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         #scaling-group-select-box.vertical {
           padding: 10px 20px;
           min-height: 83px; /* 103px-20px */
-          background-color: #f6f6f6;
         }
 
         #scaling-group-select-box.horizontal mwc-select {
@@ -242,36 +241,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           z-index: 100;
         }
 
-        #scaling-group-select-box mwc-select {
-          border: 0.1em solid #ccc;
-          font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-size: 14px;
-          --mdc-typography-subtitle1-font-color: rgb(24, 24, 24);
-          --mdc-typography-subtitle1-font-weight: 400;
-          --mdc-typography-subtitle1-line-height: 16px;
-          --mdc-select-fill-color: rgba(255, 255, 255, 1);
-          --mdc-select-label-ink-color: rgba(24, 24, 24, 1);
-          --mdc-select-disabled-ink-color: rgba(24, 24, 24, 1);
-          --mdc-select-dropdown-icon-color: rgba(24, 24, 24, 1);
-          --mdc-select-focused-dropdown-icon-color: rgba(24, 24, 24, 0.87);
-          --mdc-select-disabled-dropdown-icon-color: rgba(24, 24, 24, 0.87);
-          --mdc-select-idle-line-color: transparent;
-          --mdc-select-hover-line-color: transparent;
-          --mdc-select-ink-color: rgb(24, 24, 24);
-          --mdc-select-outlined-idle-border-color: rgba(24, 24, 24, 0.42);
-          --mdc-select-outlined-hover-border-color: rgba(24, 24, 24, 0.87);
-          --mdc-theme-surface: white;
-          --mdc-list-vertical-padding: 5px;
-          --mdc-list-side-padding: 10px;
-          --mdc-menu-item-height: 28px;
-          --mdc-list-item__primary-text: {
-            height: 20px;
-            color: #222222;
-          };
-          margin-bottom: 5px;
-        }
-
         #scaling-group-select {
           width: 305px;
           height: 55px;
@@ -303,24 +272,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
         mwc-select {
           width: 100%;
-          font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-theme-primary: var(--general-sidebar-color);
-          --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: rgba(255, 0, 0, 0.87);
-          --mdc-select-focused-dropdown-icon-color: rgba(255, 0, 0, 0.42);
-          --mdc-select-disabled-dropdown-icon-color: rgba(255, 0, 0, 0.87);
-          --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
-          --mdc-select-hover-line-color: rgba(255, 0, 0, 0.87);
-          --mdc-select-outlined-idle-border-color: rgba(255, 0, 0, 0.42);
-          --mdc-select-outlined-hover-border-color: rgba(255, 0, 0, 0.87);
-          --mdc-theme-surface: white;
-          --mdc-list-vertical-padding: 5px;
-          --mdc-list-side-padding: 25px;
-          --mdc-list-item__primary-text: {
-            height: 20px;
-          };
         }
 
         div.mdc-select__anchor {
@@ -1098,7 +1049,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             class="layout horizontal center end-justified"
             id="resource-gauge-toggle"
           >
-            <p style="font-size:12px;color:#242424;margin-right:10px;">
+            <p style="font-size:12px;margin-right:10px;">
               ${_t('session.launcher.ResourceMonitorToggle')}
             </p>
             <mwc-switch

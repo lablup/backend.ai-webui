@@ -1,11 +1,11 @@
 import { newLineToBrElement } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
+import DescriptionLabel from './DescriptionLabel';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import { CheckOutlined, WarningOutlined } from '@ant-design/icons';
 import {
   Descriptions,
-  Typography,
   Tag,
   Card,
   theme,
@@ -14,24 +14,8 @@ import {
   Row,
   Col,
 } from 'antd';
-import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
-
-const DescriptionLabel: React.FC<{
-  title: string;
-  subtitle?: ReactNode | string | null;
-}> = ({ title, subtitle }) => {
-  // const { token } = theme.useToken();
-  return (
-    <Flex direction="column" align="start">
-      <Typography.Text strong>{title}</Typography.Text>
-      {subtitle && (
-        <Typography.Text type="secondary">{subtitle}</Typography.Text>
-      )}
-    </Flex>
-  );
-};
 
 interface InformationProps {}
 const Information: React.FC<InformationProps> = () => {

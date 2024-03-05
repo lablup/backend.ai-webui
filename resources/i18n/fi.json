@@ -129,7 +129,8 @@
     "Update": "Päivitys",
     "Yes": "Kyllä",
     "Clone": "Klooni",
-    "Download": "ladata"
+    "Download": "ladata",
+    "Config": "Config"
   },
   "credential": {
     "AccessKeyOptional": "Pääsyavain (valinnainen)",
@@ -1222,7 +1223,8 @@
       "none": "Ei ole",
       "tag": "Tag"
     },
-    "OpenSourceCUDAGPUsupport": "Avoimen lähdekoodin CUDA GPU-tuki"
+    "OpenSourceCUDAGPUsupport": "Avoimen lähdekoodin CUDA GPU-tuki",
+    "ShowOnlyChanged": "Vain näyttö muuttuu"
   },
   "sidepanel": {
     "BackgroundTasks": "Tehtävien suorittaminen",
@@ -1390,7 +1392,12 @@
     "ShellEnvironments": "Shell-ympäristöt",
     "UseCompactSidebar": "Käytä kompakti sivupalkki oletusarvoisesti",
     "DescMyKeypairInfo": "Katso avainparini tiedot",
-    "MyKeypairInfo": "Avainparini tiedot"
+    "MyKeypairInfo": "Avainparini tiedot",
+    "DarkMode": "Tumma tila",
+    "LightMode": "Valotila",
+    "UseSystemSetting": "Käytä järjestelmäasetuksia",
+    "DescThemeMode": "Mukauta miltä Backend.AI WebUI näyttää laitteessasi.",
+    "ThemeMode": "Teematila"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Edistynyt verkkopäätteen käyttö: Kopioi terminaalin sisältö",
@@ -1508,5 +1515,8 @@
     "SettingTable": "Kattaus",
     "SelectColumnToDisplay": "Valitse näytettävät sarakkeet",
     "SearchTableColumn": "Hae taulukon sarakkeita"
+  },
+  "setting": {
+    "SearchPlaceholder": "Kirjoita hakutermi"
   }
 }

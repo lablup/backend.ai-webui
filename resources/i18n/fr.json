@@ -410,7 +410,8 @@
     "Unset": "Non défini",
     "OK": "OK",
     "Download": "Télécharger",
-    "Clone": "Clone"
+    "Clone": "Clone",
+    "Config": "Config"
   },
   "agent": {
     "Endpoint": "Point de terminaison",
@@ -853,7 +854,12 @@
     "SSHKeypairEnterManually": "Couple de clés SSH",
     "SSHKeypairEnterManuallyFinished": "La paire de clés SSH a été enregistrée avec succès.",
     "MyKeypairInfo": "Informations sur ma paire de clés",
-    "DescMyKeypairInfo": "Voir les informations de ma paire de clés"
+    "DescMyKeypairInfo": "Voir les informations de ma paire de clés",
+    "DarkMode": "Mode sombre",
+    "LightMode": "Mode lumière",
+    "UseSystemSetting": "Utiliser les paramètres du système",
+    "DescThemeMode": "Personnalisez l'apparence de Backend.AI WebUI sur votre appareil.",
+    "ThemeMode": "Mode Thème"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilisation avancée du terminal Web : copier le contenu du terminal",
@@ -1131,7 +1137,8 @@
     "DescWarboysupport": "Utiliser le support Furiosa Warboy",
     "RequireWarboyPlugin": "Requiert le plugin Backend.AI Warboy.",
     "Plugins": "Plugins",
-    "OpenSourceCUDAGPUsupport": "Prise en charge des GPU CUDA Open Source"
+    "OpenSourceCUDAGPUsupport": "Prise en charge des GPU CUDA Open Source",
+    "ShowOnlyChanged": "Afficher uniquement les modifications"
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",
@@ -1508,5 +1515,8 @@
     "SettingTable": "Paramètre de table",
     "SelectColumnToDisplay": "Sélectionnez les colonnes à afficher",
     "SearchTableColumn": "Rechercher des colonnes dans un tableau"
+  },
+  "setting": {
+    "SearchPlaceholder": "Entrez le terme de recherche"
   }
 }

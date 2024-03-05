@@ -1,19 +1,20 @@
 import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
+import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
 import Flex from '../Flex';
 import SignoutModal from '../SignoutModal';
 import { PluginPage, WebUIPluginType } from './MainLayout';
 import {
+  ApiOutlined,
   BarChartOutlined,
   BarsOutlined,
   CaretRightOutlined,
   CloudUploadOutlined,
   ControlOutlined,
   DashboardOutlined,
-  ExperimentOutlined,
   ExportOutlined,
   FileDoneOutlined,
   HddOutlined,
@@ -36,11 +37,18 @@ interface WebUISiderProps
 const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const themeConfig = useCustomThemeConfig();
+  const { isDarkMode } = useThemeMode();
+  const mergedSiderTheme = themeConfig?.sider?.theme
+    ? themeConfig.sider.theme
+    : isDarkMode
+      ? 'dark'
+      : 'light';
+
   const currentUserRole = useCurrentUserRole();
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
   const baiClient = useSuspendedBackendaiClient();
-  const themeConfig = useCustomThemeConfig();
 
   const isHideAgents = baiClient?._config?.hideAgents ?? true;
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
@@ -152,7 +160,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         if (page) {
           const menuItem = {
             label: page?.menuitem,
-            icon: <ExperimentOutlined />,
+            // eslint-disable-next-line react/jsx-no-undef
+            icon: <ApiOutlined />,
             key: page?.url,
           };
           menu.push(menuItem);
@@ -178,18 +187,27 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         <img
           className="logo-wide"
           alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
-          src={themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'}
+          src={
+            mergedSiderTheme === 'dark' && themeConfig?.logo?.srcDark
+              ? themeConfig?.logo?.srcDark ||
+                '/manifest/backend.ai-text-bgdark.svg'
+              : themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'
+          }
           style={{ width: 191, height: 32, cursor: 'pointer' }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
         />
       }
+      theme={mergedSiderTheme}
       logoCollapsed={
         <img
           className="logo-collapsed"
           alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
           src={
-            themeConfig?.logo?.srcCollapsed ||
-            '/manifest/backend.ai-brand-simple.svg'
+            mergedSiderTheme === 'dark' && themeConfig?.logo?.srcCollapsedDark
+              ? themeConfig?.logo?.srcCollapsedDark ||
+                '/manifest/backend.ai-brand-simple-bgdark.svg'
+              : themeConfig?.logo?.srcCollapsed ||
+                '/manifest/backend.ai-brand-simple.svg'
           }
           style={{ width: 48, height: 32, cursor: 'pointer' }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}

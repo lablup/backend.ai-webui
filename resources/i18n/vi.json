@@ -410,7 +410,8 @@
     "Commit": "Làm",
     "EnterManually": "Nhập thủ công",
     "Download": "Tải xuống",
-    "Clone": "Dòng vô tính"
+    "Clone": "Dòng vô tính",
+    "Config": "Cấu hình"
   },
   "agent": {
     "Endpoint": "Điểm cuối",
@@ -853,7 +854,12 @@
     "BootstrapScriptDescription": "Tập lệnh Bootstrap sẽ chỉ được thực thi một lần sau khi tạo phiên",
     "SSHKeypairEnterManually": "Cặp khóa SSH",
     "MyKeypairInfo": "Thông tin về cặp khóa của tôi",
-    "DescMyKeypairInfo": "Xem thông tin cặp khóa của tôi"
+    "DescMyKeypairInfo": "Xem thông tin cặp khóa của tôi",
+    "DarkMode": "Chế độ tối",
+    "LightMode": "Chế độ sáng",
+    "UseSystemSetting": "Sử dụng cài đặt hệ thống",
+    "DescThemeMode": "Tùy chỉnh giao diện Backend.AI WebUI trên thiết bị của bạn.",
+    "ThemeMode": "Chế độ chủ đề"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Sử dụng đầu cuối web nâng cao: Sao chép nội dung đầu cuối",
@@ -1131,7 +1137,8 @@
     "MTUDescription": "Đơn vị truyền tối đa, kích thước của gói lớn nhất mà giao thức mạng có thể truyền.",
     "OutOfRange": "Ngoài phạm vi.",
     "Plugins": "bổ sung",
-    "OpenSourceCUDAGPUsupport": "Hỗ trợ GPU CUDA mã nguồn mở"
+    "OpenSourceCUDAGPUsupport": "Hỗ trợ GPU CUDA mã nguồn mở",
+    "ShowOnlyChanged": "Chỉ hiển thị các thay đổi"
   },
   "notification": {
     "SuccessfullyUpdated": "Cập nhật thành công",
@@ -1508,5 +1515,8 @@
     "SettingTable": "Cài đặt bảng",
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
     "SearchTableColumn": "Tìm kiếm các cột trong bảng"
+  },
+  "setting": {
+    "SearchPlaceholder": "Nhập cụm từ tìm kiếm"
   }
 }

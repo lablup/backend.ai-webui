@@ -410,7 +410,8 @@
     "Commit": "komited",
     "EnterManually": "Masukkan Secara Manual",
     "Download": "Muat turun",
-    "Clone": "Klon"
+    "Clone": "Klon",
+    "Config": "Konfigurasi"
   },
   "agent": {
     "Endpoint": "Titik Akhir",
@@ -853,7 +854,12 @@
     "BootstrapScriptDescription": "Skrip Bootstrap akan dilaksanakan sekali sahaja selepas penciptaan sesi",
     "SSHKeypairEnterManually": "SSH Keypair",
     "MyKeypairInfo": "Maklumat Pasangan Kunci Saya",
-    "DescMyKeypairInfo": "Lihat maklumat pasangan kunci saya"
+    "DescMyKeypairInfo": "Lihat maklumat pasangan kunci saya",
+    "DarkMode": "Mod Gelap",
+    "LightMode": "Mod Cahaya",
+    "UseSystemSetting": "Gunakan Tetapan Sistem",
+    "DescThemeMode": "Sesuaikan rupa Backend.AI WebUI pada peranti anda.",
+    "ThemeMode": "Mod Tema"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Lanjutan: Salin kandungan terminal",
@@ -1131,7 +1137,8 @@
     "MTUDescription": "Unit penghantaran maksimum, saiz paket terbesar yang boleh dihantar oleh protokol rangkaian.",
     "OutOfRange": "Luar kawasan.",
     "Plugins": "Pemalam",
-    "OpenSourceCUDAGPUsupport": "Sokongan GPU CUDA Sumber Terbuka"
+    "OpenSourceCUDAGPUsupport": "Sokongan GPU CUDA Sumber Terbuka",
+    "ShowOnlyChanged": "Paparkan Perubahan Sahaja"
   },
   "notification": {
     "SuccessfullyUpdated": "Berjaya Dikemas kini",
@@ -1508,5 +1515,8 @@
     "SelectColumnToDisplay": "Pilih untuk lajur untuk dipaparkan",
     "SettingTable": "Tetapan Meja",
     "SearchTableColumn": "Cari lajur jadual"
+  },
+  "setting": {
+    "SearchPlaceholder": "Masukkan Istilah Carian"
   }
 }
