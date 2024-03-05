@@ -3296,7 +3296,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.ownerFeatureInitialized = true;
     }
     const email = this.ownerEmailInput.value;
-    if (!this.ownerEmailInput.checkValidity()) {
+    if (
+      !this.ownerEmailInput.checkValidity() ||
+      email === '' ||
+      email === undefined
+    ) {
       this.notification.text = _text(
         'credential.validation.InvalidEmailAddress',
       );
@@ -3341,6 +3345,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } catch (e) {
       this.notification.text = _text('session.launcher.NotEnoughOwnershipInfo');
       this.notification.show();
+      return;
     }
 
     if (this.ownerGroups.length) {
