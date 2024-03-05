@@ -1184,7 +1184,7 @@ const SessionLauncherPage = () => {
                           return (
                             form.getFieldError(['resource', key]).length > 0
                           );
-                        })
+                        }) || form.getFieldError(['num_of_sessions']).length > 0
                           ? 'error'
                           : // : _.some(form.getFieldValue('resource'), (v, key) => {
                             //     //                         console.log(form.getFieldError(['resource', 'shmem']));
