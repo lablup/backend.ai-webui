@@ -1,7 +1,6 @@
 import BAICard from '../BAICard';
 import BAIIntervalText from '../components/BAIIntervalText';
 import DatePickerISO from '../components/DatePickerISO';
-import { useWebComponentInfo } from '../components/DefaultProviders';
 import EnvVarFormList, {
   EnvVarFormListValue,
 } from '../components/EnvVarFormList';
@@ -34,13 +33,12 @@ import {
 // @ts-ignore
 import customCSS from './SessionLauncherPage.css?raw';
 import {
-  BlockOutlined,
+  FastForwardOutlined,
   LeftOutlined,
   PlayCircleFilled,
   PlayCircleOutlined,
   QuestionCircleOutlined,
   RightOutlined,
-  SaveOutlined,
 } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
 import {
@@ -85,7 +83,6 @@ import {
   useQueryParams,
   withDefault,
 } from 'use-query-params';
-import { validate } from 'uuid';
 
 const INITIAL_FORM_VALUES: SessionLauncherValue = {
   sessionType: 'interactive',
@@ -486,7 +483,7 @@ const SessionLauncherPage = () => {
                 globalThis.appLauncher.showLauncher(appOptions);
               }
             }
-            webuiNavigate('/session');
+            webuiNavigate(redirectTo || '/session');
           })
           .catch(() => {
             // this.metadata_updating = false;
@@ -1490,9 +1487,6 @@ const SessionLauncherPage = () => {
                     )} */}
                   </Flex>
                   <Flex direction="row" gap="sm">
-                    {currentStep !== steps.length - 1 && (
-                      <Button onClick={moveToPreview}>Skip to Review</Button>
-                    )}
                     {currentStep > 0 && (
                       <Button
                         onClick={() => {
@@ -1523,6 +1517,11 @@ const SessionLauncherPage = () => {
                         }}
                       >
                         Next <RightOutlined />
+                      </Button>
+                    )}
+                    {currentStep !== steps.length - 1 && (
+                      <Button onClick={moveToPreview}>
+                        Skip to Review <FastForwardOutlined />
                       </Button>
                     )}
                   </Flex>
