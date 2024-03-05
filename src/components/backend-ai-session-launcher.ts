@@ -3331,13 +3331,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     });
 
     /* Fetch domain / group information */
-    const userInfo = await globalThis.backendaiclient.user.get(email, [
-      'domain_name',
-      'groups {id name}',
-    ]);
-    this.ownerDomain = userInfo.user.domain_name;
-    this.ownerGroups = userInfo.user.groups;
-    if (this.ownerGroups) {
+    try {
+      const userInfo = await globalThis.backendaiclient.user.get(email, [
+        'domain_name',
+        'groups {id name}',
+      ]);
+      this.ownerDomain = userInfo.user.domain_name;
+      this.ownerGroups = userInfo.user.groups;
+    } catch (e) {
+      this.notification.text = _text('session.launcher.NotEnoughOwnershipInfo');
+      this.notification.show();
+    }
+
+    if (this.ownerGroups.length) {
       this.ownerGroupSelect.layout(true).then(() => {
         this.ownerGroupSelect.select(0);
         // remove protected property usage
