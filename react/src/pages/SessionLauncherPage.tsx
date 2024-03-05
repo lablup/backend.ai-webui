@@ -1,4 +1,5 @@
 import BAICard from '../BAICard';
+import BAIIntervalText from '../components/BAIIntervalText';
 import DatePickerISO from '../components/DatePickerISO';
 import { useWebComponentInfo } from '../components/DefaultProviders';
 import EnvVarFormList, {
@@ -84,6 +85,7 @@ import {
   useQueryParams,
   withDefault,
 } from 'use-query-params';
+import { validate } from 'uuid';
 
 const INITIAL_FORM_VALUES: SessionLauncherValue = {
   sessionType: 'interactive',
@@ -697,7 +699,37 @@ const SessionLauncherPage = () => {
                     >
                       <Input.TextArea autoSize />
                     </Form.Item>
-                    <Form.Item label={t('session.launcher.SessionStartTime')}>
+                    <Form.Item
+                      label={t('session.launcher.SessionStartTime')}
+                      extra={
+                        <BAIIntervalText
+                          delay={2000}
+                          callback={() => {
+                            const scheduleDate = form.getFieldValue([
+                              'batch',
+                              'scheduleDate',
+                            ]);
+                            if (scheduleDate) {
+                              if (dayjs(scheduleDate).isBefore(dayjs())) {
+                                if (
+                                  form.getFieldError(['batch', 'scheduleDate'])
+                                    .length === 0
+                                ) {
+                                  form.validateFields([
+                                    ['batch', 'scheduleDate'],
+                                  ]);
+                                }
+                                return undefined;
+                              } else {
+                                return dayjs(scheduleDate).fromNow();
+                              }
+                            } else {
+                              return undefined;
+                            }
+                          }}
+                        />
+                      }
+                    >
                       <Flex direction="row" gap={'xs'}>
                         <Form.Item
                           noStyle
@@ -722,6 +754,7 @@ const SessionLauncherPage = () => {
                                   undefined,
                                 );
                               }
+                              form.validateFields([['batch', 'scheduleDate']]);
                             }}
                           >
                             {t('session.launcher.Enable')}
