@@ -30,6 +30,7 @@ import {
   useSuspendedBackendaiClient,
   useWebUINavigate,
 } from '../hooks';
+import { useSetBAINotification } from '../hooks/useBAINotification';
 // @ts-ignore
 import customCSS from './SessionLauncherPage.css?raw';
 import {
@@ -176,6 +177,8 @@ const SessionLauncherPage = () => {
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
 
+  const { upsertNotification } = useSetBAINotification();
+
   const { run: syncFormToURLWithDebounce } = useDebounceFn(
     () => {
       console.log('syncFormToURLWithDebounce', form.getFieldsValue());
@@ -319,13 +322,14 @@ const SessionLauncherPage = () => {
       .then(async (values) => {
         const [kernelName, architecture] =
           values.environments.version.split('@');
+        const sessionName = _.isEmpty(values.sessionName)
+          ? generateSessionId()
+          : values.sessionName;
         const sessionInfo: CreateSessionInfo = {
           // TODO: allow_manual_image_name_for_session
           kernelName,
           architecture,
-          sessionName: _.isEmpty(values.sessionName)
-            ? generateSessionId()
-            : values.sessionName,
+          sessionName: sessionName,
           config: {
             type: values.sessionType,
 
@@ -393,11 +397,8 @@ const SessionLauncherPage = () => {
                 // // is 200, but the response body has 'created' field as false. For better
                 // // user experience, we show the notification message.
                 if (!res?.created) {
-                  message.warning(t('session.launcher.SessionAlreadyExists'));
-                  // this.notification.text = _text(
-                  //   'session.launcher.SessionAlreadyExists',
-                  // );
-                  // this.notification.show();
+                  // message.warning(t('session.launcher.SessionAlreadyExists'));
+                  throw new Error(t('session.launcher.SessionAlreadyExists'));
                 }
                 return res;
               })
@@ -428,7 +429,20 @@ const SessionLauncherPage = () => {
         );
         // console.log('##', values.mounts);
         // console.log(sessionInfo);
-
+        webuiNavigate(redirectTo || '/job');
+        upsertNotification({
+          key: 'session-launcher:' + sessionName,
+          backgroundTask: {
+            promise: Promise.all(sessionPromises),
+            status: 'pending',
+            statusDescriptions: {
+              pending: t('session.PreparingSession'),
+              resolved: t('eduapi.ComputeSessionPrepared'),
+            },
+          },
+          message: t('general.Session') + ': ' + sessionName,
+          open: true,
+        });
         await Promise.all(sessionPromises)
           .then(([firstSession]) => {
             // console.log('##sessionPromises', firstSession);
@@ -483,7 +497,6 @@ const SessionLauncherPage = () => {
                 globalThis.appLauncher.showLauncher(appOptions);
               }
             }
-            webuiNavigate(redirectTo || '/session');
           })
           .catch(() => {
             // this.metadata_updating = false;

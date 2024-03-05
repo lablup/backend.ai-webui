@@ -38,23 +38,72 @@ export const notificationListState = atom<NotificationState[]>({
 
 export const CLOSING_DURATION = 1; //second
 
-export const useBAINotification = () => {
+/**
+ * Custom hook that returns the BAI notification state.
+ * @returns A tuple containing the notifications and a function to set the BAI notification.
+ */
+export const useBAINotificationState = () => {
+  const _notifications = useRecoilValue(notificationListState);
+
+  return [_notifications, useSetBAINotification()] as const;
+};
+
+/**
+ * Custom hook that listens to background tasks and updates notifications accordingly.
+ */
+export const useBAINotificationEffect = () => {
   const _notifications = useRecoilValue(notificationListState);
 
   const listeningTaskIdsRef = useRef<(string | undefined)[]>([]);
   // const closedNotificationKeysRef = useRef<(React.Key | undefined)[]>([]);
+  const listeningPromiseKeysRef = useRef<NotificationState['key'][]>([]);
 
   const baiClient = useSuspendedBackendaiClient();
-
-  const {
-    upsertNotification,
-    clearAllNotifications,
-    destroyNotification,
-    destroyAllNotifications,
-  } = useSetBAINotification();
+  const { upsertNotification } = useSetBAINotification();
   // listen to background task if a notification has a background task
   // and not already listening
   useEffect(() => {
+    _.each(_notifications, (notification) => {
+      if (
+        notification.backgroundTask?.promise &&
+        !_.includes(listeningPromiseKeysRef.current, notification.key)
+      ) {
+        listeningPromiseKeysRef.current.push(notification.key);
+        notification.backgroundTask?.promise
+          .then(() => {
+            upsertNotification({
+              key: notification.key,
+              // message: notification.message,
+              description:
+                notification.backgroundTask?.statusDescriptions?.resolved,
+              backgroundTask: {
+                status: 'resolved',
+              },
+              duration: CLOSING_DURATION,
+            });
+          })
+          .catch((e) => {
+            upsertNotification({
+              key: notification.key,
+              description:
+                e?.message ||
+                notification.backgroundTask?.statusDescriptions?.rejected,
+              backgroundTask: {
+                status: 'rejected',
+              },
+              // extraDescription: e?.message,
+              duration: CLOSING_DURATION,
+            });
+          })
+          .finally(() => {
+            listeningPromiseKeysRef.current = _.without(
+              listeningPromiseKeysRef.current,
+              notification.key,
+            );
+          });
+      }
+    });
+
     _.each(_notifications, (notification) => {
       if (
         notification.backgroundTask?.taskId &&
@@ -171,17 +220,12 @@ export const useBAINotification = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_notifications, upsertNotification]);
-
-  return [
-    _notifications,
-    {
-      upsertNotification,
-      clearAllNotifications,
-      destroyNotification,
-      destroyAllNotifications,
-    },
-  ] as const;
 };
+
+/**
+ * Custom hook for managing BAI notifications.
+ * @returns An object containing functions for manipulating notifications.
+ */
 export const useSetBAINotification = () => {
   // Don't use _notifications carefully when you need to mutate it.
   const setNotifications = useSetRecoilState(notificationListState);
