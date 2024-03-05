@@ -7,6 +7,7 @@
     "@ai-sdk/react": "^0.0.22",
     "@ant-design/cssinjs": "^1.21.0",
     "@ant-design/icons": "^5.4.0",
+    "@antv/g2": "^5.1.15",
     "@cloudscape-design/board-components": "3.0.60",
     "@codemirror/language": "^6.10.2",
     "@storybook/test": "^8.2.8",
