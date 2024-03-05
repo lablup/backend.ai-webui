@@ -3,7 +3,7 @@ import replace from '@rollup/plugin-replace';
 import typescript from '@rollup/plugin-typescript';
 import { generateSW } from 'rollup-plugin-workbox';
 import terser from '@rollup/plugin-terser';
-import glob from 'glob';
+import { glob } from 'glob';
 
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
