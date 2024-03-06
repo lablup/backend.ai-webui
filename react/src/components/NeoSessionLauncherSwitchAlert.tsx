@@ -2,6 +2,7 @@ import { useWebUIUserSettingState } from '../hooks/useWebUISetting';
 import Flex from './Flex';
 import { ThunderboltTwoTone } from '@ant-design/icons';
 import { Alert, AlertProps, Segmented, Typography, theme } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { atom, useRecoilState } from 'recoil';
 
 interface NeoSessionLauncherSwitchAlertProps extends AlertProps {
@@ -20,6 +21,7 @@ const NeoSessionLauncherSwitchAlert: React.FC<
     'use_2409_session_launcher',
   );
   const { token } = theme.useToken();
+  const { t } = useTranslation();
 
   const [isClosed, setIsClosed] = useRecoilState(isClosedState);
   return (
@@ -28,13 +30,16 @@ const NeoSessionLauncherSwitchAlert: React.FC<
         message={
           <Flex gap={'md'}>
             <Typography.Text>
-              You are using {is2409Launcher ? 'previous' : 'NEO'} session
-              launcher. you can switch anytime.
+              {t('session.launcher.NeoSwitchDescription', {
+                launcher: is2409Launcher
+                  ? t('session.launcher.PreviousLauncher')
+                  : t('session.launcher.NeoLauncher'),
+              })}
             </Typography.Text>
             <Segmented
               options={[
                 {
-                  label: 'Previous',
+                  label: t('session.launcher.PreviousLauncher'),
                   value: 'current',
                 },
                 {
@@ -44,7 +49,7 @@ const NeoSessionLauncherSwitchAlert: React.FC<
                         color: !is2409Launcher ? token.colorPrimary : undefined,
                       }}
                     >
-                      NEO
+                      {t('session.launcher.NeoLauncher')}
                     </Typography.Text>
                   ),
                   value: 'neo',

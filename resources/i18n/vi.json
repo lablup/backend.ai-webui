@@ -261,7 +261,10 @@
       "StartAfter": "Bắt đầu sau:",
       "StartTimeDoesNotApply": "Nếu thời gian bắt đầu không được đặt, nó sẽ không được áp dụng.",
       "MiniumAllocation": "Yêu cầu tối thiểu",
-      "MiniumAllocationTooltip": "Chọn làm yêu cầu tối thiểu cho môi trường chạy đã chọn"
+      "MiniumAllocationTooltip": "Chọn làm yêu cầu tối thiểu cho môi trường chạy đã chọn",
+      "PreviousLauncher": "Trước",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Bạn đang sử dụng trình khởi chạy phiên \"{{launcher}}\"."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",

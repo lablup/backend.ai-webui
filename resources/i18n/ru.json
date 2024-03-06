@@ -263,7 +263,10 @@
       "StartAfter": "Начать после:",
       "StartTimeDoesNotApply": "Если время начала не установлено, оно не применяется.",
       "MiniumAllocation": "Минимальные требования",
-      "MiniumAllocationTooltip": "Выберите минимальное требование для выбранной среды выполнения"
+      "MiniumAllocationTooltip": "Выберите минимальное требование для выбранной среды выполнения",
+      "PreviousLauncher": "Предыдущий",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Вы используете программу запуска сессии \"{{launcher}}\"."
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",

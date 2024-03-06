@@ -263,7 +263,10 @@
       "StartAfter": "Rozpocznij po:",
       "StartTimeDoesNotApply": "Jeśli godzina rozpoczęcia nie jest ustawiona, nie ma ona zastosowania.",
       "MiniumAllocation": "Minimalne wymagania",
-      "MiniumAllocationTooltip": "Wybierz jako minimalne wymaganie dla wybranego środowiska uruchomieniowego"
+      "MiniumAllocationTooltip": "Wybierz jako minimalne wymaganie dla wybranego środowiska uruchomieniowego",
+      "PreviousLauncher": "Poprzedni",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Używasz programu uruchamiającego sesję \"{{launcher}}\"."
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",

@@ -261,7 +261,10 @@
       "StartAfter": "Дараа нь эхлэх:",
       "StartTimeDoesNotApply": "Хэрэв эхлэх цагийг тохируулаагүй бол энэ нь хамаарахгүй.",
       "MiniumAllocation": "Хамгийн бага шаардлага",
-      "MiniumAllocationTooltip": "Сонгосон ажиллах орчны хамгийн бага шаардлагыг сонгоно уу"
+      "MiniumAllocationTooltip": "Сонгосон ажиллах орчны хамгийн бага шаардлагыг сонгоно уу",
+      "PreviousLauncher": "Өмнөх",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Та \"{{launcher}}\" сесс эхлүүлэгч ашиглаж байна."
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",

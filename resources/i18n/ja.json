@@ -261,7 +261,10 @@
       "StartAfter": "次の後に開始します:",
       "StartTimeDoesNotApply": "開始時間が設定されていない場合は適用されません。",
       "MiniumAllocation": "最低条件",
-      "MiniumAllocationTooltip": "選択した実行環境の最小要件として選択する。"
+      "MiniumAllocationTooltip": "選択した実行環境の最小要件として選択する。",
+      "PreviousLauncher": "前へ",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "あなたは「{{launcher}}」セッション・ランチャーを使用しています。"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",

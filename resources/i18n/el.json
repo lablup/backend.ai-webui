@@ -261,7 +261,10 @@
       "StartTimeDoesNotApply": "Εάν δεν έχει οριστεί η ώρα έναρξης, δεν ισχύει.",
       "OnlyAllowsDiscreteNumberByClusterSize": "Μόνο ακέραιος επιτρέπεται όταν το μέγεθος του συμπλέγματος δεν είναι μικρότερο από 2.",
       "MiniumAllocation": "Ελάχιστες απαιτήσεις",
-      "MiniumAllocationTooltip": "Επιλέξτε ως ελάχιστη απαίτηση για το επιλεγμένο περιβάλλον λειτουργίας"
+      "MiniumAllocationTooltip": "Επιλέξτε ως ελάχιστη απαίτηση για το επιλεγμένο περιβάλλον λειτουργίας",
+      "PreviousLauncher": "Προηγούμενο",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Χρησιμοποιείτε τον εκκινητή συνόδου \"{{launcher}}\"."
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",

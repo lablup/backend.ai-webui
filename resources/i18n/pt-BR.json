@@ -261,7 +261,10 @@
       "StartAfter": "Comece depois:",
       "StartTimeDoesNotApply": "Se a hora de início não estiver definida, ela não se aplica.",
       "MiniumAllocation": "Requisitos mínimos",
-      "MiniumAllocationTooltip": "Selecionar como requisito mínimo para o ambiente de execução selecionado"
+      "MiniumAllocationTooltip": "Selecionar como requisito mínimo para o ambiente de execução selecionado",
+      "PreviousLauncher": "Anterior",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Está a utilizar o iniciador de sessão \"{{launcher}}\"."
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",

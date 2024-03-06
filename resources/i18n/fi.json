@@ -1155,7 +1155,10 @@
       "StartAfter": "Aloita sen jälkeen:",
       "StartTimeDoesNotApply": "Jos aloitusaikaa ei ole asetettu, se ei ole voimassa.",
       "MiniumAllocation": "Vähimmäisvaatimukset",
-      "MiniumAllocationTooltip": "Valitse valitun käyttöympäristön vähimmäisvaatimukseksi seuraavat tiedot"
+      "MiniumAllocationTooltip": "Valitse valitun käyttöympäristön vähimmäisvaatimukseksi seuraavat tiedot",
+      "PreviousLauncher": "Edellinen",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Käytät \"{{launcher}}\"-istunnon käynnistintä."
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

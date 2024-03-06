@@ -261,7 +261,10 @@
       "StartAfter": "之後開始：",
       "StartTimeDoesNotApply": "如果未設定開始時間，則不適用。",
       "MiniumAllocation": "最低要求",
-      "MiniumAllocationTooltip": "选择所选运行环境的最低要求"
+      "MiniumAllocationTooltip": "选择所选运行环境的最低要求",
+      "PreviousLauncher": "上一页",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "您正在使用\"{{launcher}}\"会话启动器。"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",

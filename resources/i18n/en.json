@@ -274,7 +274,10 @@
       "StartAfter": "Start after: ",
       "StartTimeDoesNotApply": "If the start time is not set, it doesn't apply.",
       "MiniumAllocation": "Minimum requirements",
-      "MiniumAllocationTooltip": "Select as the minimum requirement for the selected running environment"
+      "MiniumAllocationTooltip": "Select as the minimum requirement for the selected running environment",
+      "PreviousLauncher": "Previous",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "You are using the \"{{launcher}}\" session launcher."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
