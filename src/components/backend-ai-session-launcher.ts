@@ -1456,7 +1456,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
 
     if (this.allowNEOSessionLauncher === true && shouldNeo) {
-      const url = '/session/start';
+      const url =
+        '/session/start?formValues=' +
+        encodeURIComponent(
+          JSON.stringify({
+            resourceGroup: this.resourceBroker.scaling_group,
+          }),
+        );
       store.dispatch(navigate(decodeURIComponent(url), {}));
 
       document.dispatchEvent(
