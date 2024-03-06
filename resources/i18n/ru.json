@@ -267,7 +267,10 @@
       "PreviousLauncher": "Предыдущий",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "Вы используете программу запуска сессии \"{{launcher}}\".",
-      "SkipToConfirmAndLaunch": "Перейти к обзору"
+      "SkipToConfirmAndLaunch": "Перейти к обзору",
+      "InteractiveModeDesc": "позволяет создавать, тестировать и запускать код в интерактивном режиме через jupyter notebook, visual studio code и т.д.",
+      "BatchModeDesc": "Вы можете запускать свой код на нескольких узлах и кластерах, чтобы масштабировать свою идею.",
+      "AddEnvironmentVariable": "Добавьте переменные окружения"
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",

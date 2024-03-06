@@ -265,7 +265,10 @@
       "PreviousLauncher": "Vorherige",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "Sie verwenden den \"{{launcher}}\"-Sitzungsstarter.",
-      "SkipToConfirmAndLaunch": "Zur Bewertung springen"
+      "SkipToConfirmAndLaunch": "Zur Bewertung springen",
+      "InteractiveModeDesc": "ermöglicht das interaktive Erstellen, Testen und Ausführen von Code über Jupyter Notebook, Visual Studio Code usw.",
+      "BatchModeDesc": "Sie können Ihren Code mit mehreren Knoten und Clustern ausführen, um Ihre Idee zu skalieren",
+      "AddEnvironmentVariable": "Umgebungsvariablen hinzufügen"
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",

@@ -265,7 +265,10 @@
       "PreviousLauncher": "Өмнөх",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "Та \"{{launcher}}\" сесс эхлүүлэгч ашиглаж байна.",
-      "SkipToConfirmAndLaunch": "Шүүмж рүү алгасах"
+      "SkipToConfirmAndLaunch": "Шүүмж рүү алгасах",
+      "InteractiveModeDesc": "jupyter notebook, visual studio код гэх мэтээр дамжуулан интерактив код үүсгэх, турших, ажиллуулах боломжийг танд олгоно.",
+      "BatchModeDesc": "Та өөрийн кодыг олон цэгээр ажиллуулж болно",
+      "AddEnvironmentVariable": "Орчны хувьсагчдыг нэмнэ үү"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",

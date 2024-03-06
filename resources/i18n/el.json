@@ -265,7 +265,10 @@
       "PreviousLauncher": "Προηγούμενο",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "Χρησιμοποιείτε τον εκκινητή συνόδου \"{{launcher}}\".",
-      "SkipToConfirmAndLaunch": "Skip to review"
+      "SkipToConfirmAndLaunch": "Skip to review",
+      "InteractiveModeDesc": "σας επιτρέπει να δημιουργείτε, να δοκιμάζετε και να εκτελείτε κώδικα διαδραστικά μέσω του σημειωματάριου jupyter, του κώδικα του visual studio κ.λπ.",
+      "BatchModeDesc": "Μπορείτε να εκτελέσετε τον κώδικά σας με πολλαπλούς κόμβους & συστάδες για να κλιμακώσετε την ιδέα σας",
+      "AddEnvironmentVariable": "Προσθήκη μεταβλητών περιβάλλοντος"
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",

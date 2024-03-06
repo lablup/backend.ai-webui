@@ -622,40 +622,27 @@ const SessionLauncherPage = () => {
                       options={[
                         {
                           label: (
-                            <Flex
-                              direction="column"
-                              align="start"
-                              style={{ marginBottom: token.marginXS }}
-                            >
-                              <Typography.Text strong>
-                                🏃‍♀️ Make, test and run
-                              </Typography.Text>
+                            <>
+                              <Typography.Text code>
+                                {t('session.launcher.InteractiveMode')}
+                              </Typography.Text>{' '}
                               <Typography.Text type="secondary">
-                                <Typography.Text code>
-                                  Interactive mode
-                                </Typography.Text>{' '}
-                                allows you to create, test and run code
-                                interactively via jupyter notebook, visual
-                                studio code, etc.
+                                {t('session.launcher.InteractiveModeDesc')}
                               </Typography.Text>
-                            </Flex>
+                            </>
                           ),
                           value: 'interactive',
                         },
                         {
                           label: (
-                            <Flex direction="column" align="start">
-                              <Typography.Text strong>
-                                ⌚️ Start an long-running task
-                              </Typography.Text>
+                            <>
+                              <Typography.Text code>
+                                {t('session.launcher.BatchMode')}
+                              </Typography.Text>{' '}
                               <Typography.Text type="secondary">
-                                <Typography.Text code>
-                                  Batch mode
-                                </Typography.Text>{' '}
-                                runs your code with multiple node & clusters to
-                                scale your idea
+                                {t('session.launcher.BatchModeDesc')}
                               </Typography.Text>
-                            </Flex>
+                            </>
                           ),
                           value: 'batch',
                         },
@@ -877,7 +864,7 @@ const SessionLauncherPage = () => {
                   >
                     <ImageEnvironmentSelectFormItems />
                   </ErrorBoundary>
-                  <Form.Item label="Environment Variables">
+                  <Form.Item label={t('session.launcher.EnvironmentVariable')}>
                     <EnvVarFormList
                       name={'envvars'}
                       formItemProps={{

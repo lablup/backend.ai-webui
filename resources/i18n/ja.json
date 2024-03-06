@@ -265,7 +265,10 @@
       "PreviousLauncher": "前へ",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "あなたは「{{launcher}}」セッション・ランチャーを使用しています。",
-      "SkipToConfirmAndLaunch": "レビューへスキップ"
+      "SkipToConfirmAndLaunch": "レビューへスキップ",
+      "InteractiveModeDesc": "jupyterノートブックやビジュアル・スタジオ・コードなどを使って、インタラクティブにコードを作成、テスト、実行できる。",
+      "BatchModeDesc": "複数のノードやクラスタでコードを実行し、アイデアをスケールさせることができます。",
+      "AddEnvironmentVariable": "環境変数の追加"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",

@@ -265,7 +265,10 @@
       "PreviousLauncher": "上一页",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "您正在使用\"{{launcher}}\"会话启动器。",
-      "SkipToConfirmAndLaunch": "跳过评论"
+      "SkipToConfirmAndLaunch": "跳过评论",
+      "InteractiveModeDesc": "允许您通过 jupyter notebook、visual studio code 等交互式创建、测试和运行代码。",
+      "BatchModeDesc": "您可以使用多个节点和集群运行代码，以扩展您的想法",
+      "AddEnvironmentVariable": "添加环境变量"
     },
     "Preparing": "正在准备...",
     "PreparingSession": "正在准备会议...",

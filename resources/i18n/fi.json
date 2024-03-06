@@ -1161,7 +1161,10 @@
       "PreviousLauncher": "Edellinen",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "Käytät \"{{launcher}}\"-istunnon käynnistintä.",
-      "SkipToConfirmAndLaunch": "Siirry arvosteluun"
+      "SkipToConfirmAndLaunch": "Siirry arvosteluun",
+      "InteractiveModeDesc": "voit luoda, testata ja ajaa koodia vuorovaikutteisesti jupyter notebookin, visual studio code -ohjelman jne. avulla.",
+      "BatchModeDesc": "Voit ajaa koodisi useiden solmujen ja klustereiden kanssa ideasi skaalaamiseksi.",
+      "AddEnvironmentVariable": "Lisää ympäristömuuttujia"
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

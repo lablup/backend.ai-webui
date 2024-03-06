@@ -265,7 +265,10 @@
       "PreviousLauncher": "Sebelumnya",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "Anda menggunakan pelancar sesi \"{{launcher}}\".",
-      "SkipToConfirmAndLaunch": "Langkau ke semakan"
+      "SkipToConfirmAndLaunch": "Langkau ke semakan",
+      "InteractiveModeDesc": "membolehkan anda membuat, menguji dan menjalankan kod secara interaktif melalui buku nota jupyter, kod studio visual, dsb.",
+      "BatchModeDesc": "Anda boleh menjalankan kod anda dengan berbilang nod",
+      "AddEnvironmentVariable": "Tambah pembolehubah persekitaran"
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",

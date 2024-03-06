@@ -265,7 +265,10 @@
       "PreviousLauncher": "Trước",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "Bạn đang sử dụng trình khởi chạy phiên \"{{launcher}}\".",
-      "SkipToConfirmAndLaunch": "Bỏ qua để xem xét"
+      "SkipToConfirmAndLaunch": "Bỏ qua để xem xét",
+      "InteractiveModeDesc": "cho phép bạn tạo, kiểm tra và chạy mã tương tác thông qua sổ ghi chép jupyter, mã studio trực quan, v.v.",
+      "BatchModeDesc": "Bạn có thể chạy mã của mình với nhiều nút",
+      "AddEnvironmentVariable": "Thêm biến môi trường"
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",

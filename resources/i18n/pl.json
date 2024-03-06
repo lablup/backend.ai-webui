@@ -267,7 +267,10 @@
       "PreviousLauncher": "Poprzedni",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "Używasz programu uruchamiającego sesję \"{{launcher}}\".",
-      "SkipToConfirmAndLaunch": "Przejdź do recenzji"
+      "SkipToConfirmAndLaunch": "Przejdź do recenzji",
+      "InteractiveModeDesc": "umożliwia interaktywne tworzenie, testowanie i uruchamianie kodu za pomocą notatnika jupyter, kodu visual studio itp.",
+      "BatchModeDesc": "Możesz uruchomić swój kod z wieloma węzłami i klastrami, aby skalować swój pomysł",
+      "AddEnvironmentVariable": "Dodaj zmienne środowiskowe"
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",

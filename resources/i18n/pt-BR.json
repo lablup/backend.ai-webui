@@ -265,7 +265,10 @@
       "PreviousLauncher": "Anterior",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "Está a utilizar o iniciador de sessão \"{{launcher}}\".",
-      "SkipToConfirmAndLaunch": "Saltar para a revisão"
+      "SkipToConfirmAndLaunch": "Saltar para a revisão",
+      "InteractiveModeDesc": "permite-lhe criar, testar e executar código de forma interactiva através do jupyter notebook, visual studio code, etc.",
+      "BatchModeDesc": "Pode executar o seu código com vários nós e clusters para escalar a sua ideia",
+      "AddEnvironmentVariable": "Adicionar variáveis de ambiente"
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",

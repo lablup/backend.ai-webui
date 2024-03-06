@@ -109,7 +109,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                 icon={<PlusOutlined />}
                 block
               >
-                Add variable
+                {t('session.launcher.AddEnvironmentVariable')}
               </Button>
             </Form.Item>
           </Flex>

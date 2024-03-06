@@ -278,7 +278,10 @@
       "PreviousLauncher": "Previous",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "You are using the \"{{launcher}}\" session launcher.",
-      "SkipToConfirmAndLaunch": "Skip to review"
+      "SkipToConfirmAndLaunch": "Skip to review",
+      "BatchModeDesc": "runs your code with multiple node & clusters to scale your idea",
+      "InteractiveModeDesc": "allows you to create, test and run code interactively via jupyter notebook, visual studio code, etc.",
+      "AddEnvironmentVariable": "Add environment variables"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
