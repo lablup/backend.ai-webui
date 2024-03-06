@@ -223,7 +223,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     return color;
   };
 
-  const fullImageString = `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}-${endpoint?.image_object?.architecture}`;
+  const fullImageString = `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`;
 
   const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
   return (

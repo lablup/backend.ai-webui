@@ -1530,12 +1530,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       kernel = nameFragments.join(':');
       // extract architecture if exists
       architecture = ['x86_64', 'aarch64'].includes(
-        this.manualImageName.value.split('-').pop(),
+        this.manualImageName.value.split('@').pop(),
       )
-        ? this.manualImageName.value.split('-').pop()
+        ? this.manualImageName.value.split('@').pop()
         : undefined;
       if (architecture) {
-        kernel = this.manualImageName.value.split('-').slice(0, -1).join('-');
+        kernel = this.manualImageName.value.split('@')[0];
       }
       // TODO: Add support for selecting image architecture when starting kernel with manual image name
     } else {
