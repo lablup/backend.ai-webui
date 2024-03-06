@@ -66,7 +66,8 @@ export const useBAINotificationEffect = () => {
     _.each(_notifications, (notification) => {
       if (
         notification.backgroundTask?.promise &&
-        !_.includes(listeningPromiseKeysRef.current, notification.key)
+        !_.includes(listeningPromiseKeysRef.current, notification.key) &&
+        notification.backgroundTask.status === 'pending'
       ) {
         listeningPromiseKeysRef.current.push(notification.key);
         notification.backgroundTask?.promise
@@ -110,7 +111,8 @@ export const useBAINotificationEffect = () => {
         !_.includes(
           listeningTaskIdsRef.current,
           notification.backgroundTask?.taskId,
-        )
+        ) &&
+        notification.backgroundTask.status === 'pending'
       ) {
         // sse and update progress
         listeningTaskIdsRef.current.push(notification.backgroundTask?.taskId);
