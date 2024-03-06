@@ -6,7 +6,7 @@ import ResourceAvailableGageBar from './ResourceAvailableGageBar';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import { QuestionCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Card, Tooltip } from 'antd';
-import React, { useDeferredValue, useState, useTransition } from 'react';
+import React, { useDeferredValue, useState } from 'react';
 
 const AvailableResourcesCard = () => {
   const currentProject = useCurrentProjectValue();

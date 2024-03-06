@@ -67,7 +67,6 @@ import {
   Table,
   Tag,
   Typography,
-  message,
   theme,
 } from 'antd';
 import dayjs from 'dayjs';

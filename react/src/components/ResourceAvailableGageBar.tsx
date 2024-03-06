@@ -1,8 +1,5 @@
 import Flex from './Flex';
-import {
-  ExclamationCircleOutlined,
-  InfoCircleOutlined,
-} from '@ant-design/icons';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip, Typography, theme } from 'antd';
 import React from 'react';
 

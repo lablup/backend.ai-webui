@@ -10,7 +10,6 @@ import { SessionListQuery } from './__generated__/SessionListQuery.graphql';
 import { FolderOutlined, GroupOutlined } from '@ant-design/icons';
 import { Table, TableProps, Tag, Typography, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';

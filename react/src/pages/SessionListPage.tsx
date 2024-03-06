@@ -1,7 +1,5 @@
 import AvailableResourcesCard from '../components/AvailableResourcesCard';
 import Flex from '../components/Flex';
-import ResourceAvailableGageBar from '../components/ResourceAvailableGageBar';
-import ResourceGroupSelect from '../components/ResourceGroupSelect';
 import SessionList from '../components/SessionList';
 import {
   useCurrentProjectValue,
@@ -9,24 +7,8 @@ import {
   useWebUINavigate,
 } from '../hooks';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
-import {
-  InfoCircleOutlined,
-  PoweroffOutlined,
-  QuestionCircleOutlined,
-  ReloadOutlined,
-  ThunderboltTwoTone,
-} from '@ant-design/icons';
-import {
-  Alert,
-  Button,
-  Card,
-  Progress,
-  Segmented,
-  Tabs,
-  Tooltip,
-  Typography,
-  theme,
-} from 'antd';
+import { PoweroffOutlined, ThunderboltTwoTone } from '@ant-design/icons';
+import { Alert, Button, Card, Segmented, Typography, theme } from 'antd';
 import React, { PropsWithChildren, Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
