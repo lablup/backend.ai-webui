@@ -272,27 +272,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             items {
               name
               endpoint_id
-              image
-              image_object @since(version: "23.09.9") {
-                name
-                humanized_name
-                tag
-                registry
-                architecture
-                is_local
-                digest
-                resource_limits {
-                  key
-                  min
-                  max
-                }
-                labels {
-                  key
-                  value
-                }
-                size_bytes
-                supported_accelerators
-              }
               model
               domain
               status
