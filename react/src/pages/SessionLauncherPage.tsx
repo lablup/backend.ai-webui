@@ -46,6 +46,7 @@ import { useDebounceFn } from 'ahooks';
 import {
   Affix,
   Alert,
+  App,
   Breadcrumb,
   Button,
   Card,
@@ -159,6 +160,7 @@ type SessionLauncherFormValue = SessionLauncherValue &
 
 type SessionMode = 'normal' | 'inference' | 'import';
 const SessionLauncherPage = () => {
+  const app = App.useApp();
   let sessionMode: SessionMode = 'normal';
 
   const [isStartingSession, setIsStartingSession] = useState(false);
@@ -181,7 +183,7 @@ const SessionLauncherPage = () => {
 
   const { run: syncFormToURLWithDebounce } = useDebounceFn(
     () => {
-      console.log('syncFormToURLWithDebounce', form.getFieldsValue());
+      // console.log('syncFormToURLWithDebounce', form.getFieldsValue());
       // To sync the latest form values to URL,
       // 'trailing' is set to true, and get the form values here."
       setQuery(
@@ -320,6 +322,34 @@ const SessionLauncherPage = () => {
     form
       .validateFields()
       .then(async (values) => {
+        if (_.isEmpty(values.mounts) || values.mounts.length === 0) {
+          const isConformed = await new Promise((resolve) => {
+            app.modal.confirm({
+              title: t('session.launcher.NoFolderMounted'),
+              content: (
+                <>
+                  {t('session.launcher.HomeDirectoryDeletionDialog')}
+                  <br />
+                  <br />
+                  {t('session.launcher.LaunchConfirmationDialog')}
+                  <br />
+                  <br />
+                  {t('dialog.ask.DoYouWantToProceed')}
+                </>
+              ),
+              onOk: () => {
+                resolve(true);
+              },
+              okText: t('session.launcher.Start'),
+              onCancel: () => {
+                resolve(false);
+              },
+              closable: true,
+            });
+          });
+          console.log(isConformed);
+          if (!isConformed) return;
+        }
         const [kernelName, architecture] =
           values.environments.version.split('@');
         const sessionName = _.isEmpty(values.sessionName)
