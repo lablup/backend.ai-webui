@@ -304,7 +304,6 @@ const SessionLauncherPage = () => {
   // console.log(form.getFieldValue(['resource']));
 
   const moveToPreview = () => {
-    // TODO: if handling more async validations, required fetch, use `useTransition`
     form
       .validateFields()
       .catch((e) => {})
@@ -314,9 +313,7 @@ const SessionLauncherPage = () => {
   };
 
   const startSession = () => {
-    // TODO: support inference mode
-    // TODO: support import mode
-    // TODO: session number
+    // TODO: support inference mode, support import mode
 
     setIsStartingSession(true);
     form
@@ -388,7 +385,6 @@ const SessionLauncherPage = () => {
             maxWaitSeconds: 15,
             cpu: values.resource.cpu,
             mem: values.resource.mem,
-            // TODO: CHECK: Convert to rule??? Automatically increase shared memory to 1GiB
             shmem:
               compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
               compareNumberWithUnits(values.resource.shmem, '1g') < 0
