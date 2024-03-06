@@ -5,6 +5,7 @@ import {
   RoutingEventHandler,
 } from './components/DefaultProviders';
 import MainLayout from './components/MainLayout/MainLayout';
+import { useSuspendedBackendaiClient } from './hooks';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
 import { theme } from 'antd';
@@ -30,6 +31,9 @@ const UserSettingsPage = React.lazy(() => import('./pages/UserSettingsPage'));
 const SessionListPage = React.lazy(() => import('./pages/SessionListPage'));
 const SessionLauncherPage = React.lazy(
   () => import('./pages/SessionLauncherPage'),
+);
+const NeoSessionLauncherSwitchAlert = React.lazy(
+  () => import('./components/NeoSessionLauncherSwitchAlert'),
 );
 
 const router = createBrowserRouter([
@@ -84,6 +88,15 @@ const router = createBrowserRouter([
       {
         path: '/job',
         handle: { labelKey: 'webui.menu.Sessions' },
+        Component: () => {
+          const { token } = theme.useToken();
+          useSuspendedBackendaiClient(); // make sure the client is ready
+          return (
+            <NeoSessionLauncherSwitchAlert
+              style={{ marginBottom: token.paddingContentVerticalLG }}
+            />
+          );
+        },
       },
       {
         path: '/serving',

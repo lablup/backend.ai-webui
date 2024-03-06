@@ -9,6 +9,7 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from '../components/ImageEnvironmentSelectFormItems';
 import ImageMetaIcon from '../components/ImageMetaIcon';
+import NeoSessionLauncherSwitchAlert from '../components/NeoSessionLauncherSwitchAlert';
 import PortSelectFormItem, {
   PortSelectFormValues,
   PortTag,
@@ -539,6 +540,7 @@ const SessionLauncherPage = () => {
         // height: 500,
         // overflow: 'scroll',
       }}
+      gap={'md'}
     >
       <style>{customCSS}</style>
       {redirectTo && (
@@ -558,6 +560,13 @@ const SessionLauncherPage = () => {
           ]}
         />
       )}
+      <NeoSessionLauncherSwitchAlert
+        onChange={(value) => {
+          if (value === 'current') {
+            webuiNavigate('/job');
+          }
+        }}
+      />
       <Flex direction="row" gap="md" align="start">
         <Flex
           direction="column"
