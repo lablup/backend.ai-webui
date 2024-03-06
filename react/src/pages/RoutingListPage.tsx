@@ -224,7 +224,11 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     return color;
   };
 
-  const fullImageString = `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`;
+  const fullImageString: string = (
+    baiClient.supports('modify-endpoint')
+      ? `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`
+      : endpoint?.image
+  ) as string;
 
   const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
   return (
@@ -387,7 +391,9 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             },
             {
               label: t('modelService.Image'),
-              children: endpoint?.image_object && (
+              children: (baiClient.supports('modify-endpoint')
+                ? endpoint?.image_object
+                : endpoint?.image) && (
                 <Flex direction="row" gap={'xs'}>
                   <ImageMetaIcon image={fullImageString} />
                   <CopyableCodeText>{fullImageString}</CopyableCodeText>
