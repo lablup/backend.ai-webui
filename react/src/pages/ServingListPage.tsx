@@ -272,7 +272,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             items {
               name
               endpoint_id
-              image
               model
               domain
               status

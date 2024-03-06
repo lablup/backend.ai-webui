@@ -113,7 +113,27 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             name
             status
             endpoint_id
-            image
+            image @deprecatedSince(version: "23.09.9")
+            image_object @since(version: "23.09.9") {
+              name
+              humanized_name
+              tag
+              registry
+              architecture
+              is_local
+              digest
+              resource_limits {
+                key
+                min
+                max
+              }
+              labels {
+                key
+                value
+              }
+              size_bytes
+              supported_accelerators
+            }
             desired_session_count
             url
             open_to_public
@@ -203,6 +223,12 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     }
     return color;
   };
+
+  const fullImageString: string = (
+    baiClient.supports('modify-endpoint')
+      ? `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`
+      : endpoint?.image
+  ) as string;
 
   const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
   return (
@@ -365,10 +391,12 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             },
             {
               label: t('modelService.Image'),
-              children: endpoint?.image && (
+              children: (baiClient.supports('modify-endpoint')
+                ? endpoint?.image_object
+                : endpoint?.image) && (
                 <Flex direction="row" gap={'xs'}>
-                  <ImageMetaIcon image={endpoint.image} />
-                  <CopyableCodeText>{endpoint.image}</CopyableCodeText>
+                  <ImageMetaIcon image={fullImageString} />
+                  <CopyableCodeText>{fullImageString}</CopyableCodeText>
                 </Flex>
               ),
               span: {

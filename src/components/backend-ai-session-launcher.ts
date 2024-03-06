@@ -1528,6 +1528,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const nameFragments = this.manualImageName.value.split(':');
       version = nameFragments.splice(-1, 1)[0];
       kernel = nameFragments.join(':');
+      // extract architecture if exists
+      architecture = ['x86_64', 'aarch64'].includes(
+        this.manualImageName.value.split('@').pop(),
+      )
+        ? this.manualImageName.value.split('@').pop()
+        : undefined;
+      if (architecture) {
+        kernel = this.manualImageName.value.split('@')[0];
+      }
       // TODO: Add support for selecting image architecture when starting kernel with manual image name
     } else {
       // When the "Environment" dropdown is disabled after typing the image name manually,
@@ -1664,7 +1673,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       (this._debug && this.manualImageName.value !== '') ||
       (this.manualImageName && this.manualImageName.value !== '')
     ) {
-      kernelName = this.manualImageName.value;
+      kernelName = architecture ? kernel : this.manualImageName.value;
     } else {
       kernelName = this._generateKernelIndex(kernel, version);
     }
