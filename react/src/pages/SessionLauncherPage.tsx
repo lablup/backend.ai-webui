@@ -9,6 +9,7 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from '../components/ImageEnvironmentSelectFormItems';
 import ImageMetaIcon from '../components/ImageMetaIcon';
+import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
 import NeoSessionLauncherSwitchAlert from '../components/NeoSessionLauncherSwitchAlert';
 import PortSelectFormItem, {
   PortSelectFormValues,
@@ -78,6 +79,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { darcula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { useRecoilValue } from 'recoil';
 import {
   JsonParam,
   NumberParam,
@@ -163,6 +165,8 @@ const SessionLauncherPage = () => {
   const app = App.useApp();
   let sessionMode: SessionMode = 'normal';
 
+  const mainContentDivRef = useRecoilValue(mainContentDivRefState);
+
   const [isStartingSession, setIsStartingSession] = useState(false);
   const [
     { step: currentStep, formValues: formValuesFromQueryParams, redirectTo },
@@ -230,8 +234,10 @@ const SessionLauncherPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // ScrollTo top when step is changed
   useEffect(() => {
-    // TODO: scroll to top
+    mainContentDivRef.current?.scrollTo(0, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
   // before initialFormValues is set, use getFieldValue and useWatch will return undefined

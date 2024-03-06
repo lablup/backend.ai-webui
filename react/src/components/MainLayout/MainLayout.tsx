@@ -10,6 +10,7 @@ import { useLocalStorageState } from 'ahooks';
 import { App, Layout, theme } from 'antd';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
+import { atom, useRecoilState, useSetRecoilState } from 'recoil';
 
 export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 5;
 export type PluginPage = {
@@ -26,6 +27,10 @@ export type WebUIPluginType = {
   'menuitem-superadmin': string[];
 };
 
+export const mainContentDivRefState = atom<React.RefObject<HTMLElement>>({
+  key: 'MainLayout.mainContentDivRefState',
+});
+
 function MainLayout() {
   const navigate = useNavigate();
 
@@ -39,6 +44,11 @@ function MainLayout() {
   const { token } = theme.useToken();
   const webUIRef = useRef<HTMLElement>(null);
   const contentScrollFlexRef = useRef<HTMLDivElement>(null);
+  const setMainContentDivRefState = useSetRecoilState(mainContentDivRefState);
+  useEffect(() => {
+    setMainContentDivRefState(contentScrollFlexRef);
+  }, [contentScrollFlexRef, setMainContentDivRefState]);
+
   const [webUIPlugins, setWebUIPlugins] = useState<
     WebUIPluginType | undefined
   >();
