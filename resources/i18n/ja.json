@@ -264,7 +264,8 @@
       "MiniumAllocationTooltip": "選択した実行環境の最小要件として選択する。",
       "PreviousLauncher": "前へ",
       "NeoLauncher": "NEO",
-      "NeoSwitchDescription": "あなたは「{{launcher}}」セッション・ランチャーを使用しています。"
+      "NeoSwitchDescription": "あなたは「{{launcher}}」セッション・ランチャーを使用しています。",
+      "SkipToConfirmAndLaunch": "レビューへスキップ"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -416,7 +417,9 @@
     "EnterManually": "直接入力する",
     "Download": "ダウンロード",
     "Clone": "クローン",
-    "Config": "コンフィグ"
+    "Config": "コンフィグ",
+    "Next": "次のページ",
+    "Previous": "前へ"
   },
   "agent": {
     "Endpoint": "終点",

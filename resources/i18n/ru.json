@@ -266,7 +266,8 @@
       "MiniumAllocationTooltip": "Выберите минимальное требование для выбранной среды выполнения",
       "PreviousLauncher": "Предыдущий",
       "NeoLauncher": "NEO",
-      "NeoSwitchDescription": "Вы используете программу запуска сессии \"{{launcher}}\"."
+      "NeoSwitchDescription": "Вы используете программу запуска сессии \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Перейти к обзору"
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -418,7 +419,9 @@
     "OK": "OK",
     "Download": "Скачать",
     "Clone": "Клон",
-    "Config": "Конфигурация"
+    "Config": "Конфигурация",
+    "Next": "Следующий",
+    "Previous": "Предыдущий"
   },
   "agent": {
     "Endpoint": "Конечная точка",

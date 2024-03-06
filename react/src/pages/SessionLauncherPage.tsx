@@ -35,7 +35,7 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 // @ts-ignore
 import customCSS from './SessionLauncherPage.css?raw';
 import {
-  FastForwardOutlined,
+  DoubleRightOutlined,
   LeftOutlined,
   PlayCircleFilled,
   PlayCircleOutlined,
@@ -1516,7 +1516,7 @@ const SessionLauncherPage = () => {
                         icon={<LeftOutlined />}
                         disabled={isStartingSession}
                       >
-                        Previous
+                        {t('button.Previous')}
                       </Button>
                     )}
                     {currentStep === steps.length - 1 ? (
@@ -1537,12 +1537,13 @@ const SessionLauncherPage = () => {
                           setCurrentStep(currentStep + 1);
                         }}
                       >
-                        Next <RightOutlined />
+                        {t('button.Next')} <RightOutlined />
                       </Button>
                     )}
                     {currentStep !== steps.length - 1 && (
                       <Button onClick={moveToPreview}>
-                        Skip to Review <FastForwardOutlined />
+                        {t('session.launcher.SkipToConfirmAndLaunch')}
+                        <DoubleRightOutlined />
                       </Button>
                     )}
                   </Flex>

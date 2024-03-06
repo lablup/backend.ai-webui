@@ -130,7 +130,9 @@
     "Yes": "Kyllä",
     "Clone": "Klooni",
     "Download": "ladata",
-    "Config": "Config"
+    "Config": "Config",
+    "Next": "Seuraava",
+    "Previous": "Edellinen"
   },
   "credential": {
     "AccessKeyOptional": "Pääsyavain (valinnainen)",
@@ -1158,7 +1160,8 @@
       "MiniumAllocationTooltip": "Valitse valitun käyttöympäristön vähimmäisvaatimukseksi seuraavat tiedot",
       "PreviousLauncher": "Edellinen",
       "NeoLauncher": "NEO",
-      "NeoSwitchDescription": "Käytät \"{{launcher}}\"-istunnon käynnistintä."
+      "NeoSwitchDescription": "Käytät \"{{launcher}}\"-istunnon käynnistintä.",
+      "SkipToConfirmAndLaunch": "Siirry arvosteluun"
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

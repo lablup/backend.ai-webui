@@ -264,7 +264,8 @@
       "MiniumAllocationTooltip": "选择所选运行环境的最低要求",
       "PreviousLauncher": "上一页",
       "NeoLauncher": "NEO",
-      "NeoSwitchDescription": "您正在使用\"{{launcher}}\"会话启动器。"
+      "NeoSwitchDescription": "您正在使用\"{{launcher}}\"会话启动器。",
+      "SkipToConfirmAndLaunch": "跳过评论"
     },
     "Preparing": "正在准备...",
     "PreparingSession": "正在准备会议...",
@@ -416,7 +417,9 @@
     "EnterManually": "手动输入",
     "Download": "下载",
     "Clone": "克隆",
-    "Config": "配置"
+    "Config": "配置",
+    "Next": "下一页",
+    "Previous": "上一页"
   },
   "agent": {
     "Endpoint": "端点",

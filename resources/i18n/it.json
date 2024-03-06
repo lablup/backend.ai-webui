@@ -264,7 +264,8 @@
       "MiniumAllocationTooltip": "Selezionare come requisito minimo per l'ambiente di esecuzione selezionato",
       "PreviousLauncher": "Precedente",
       "NeoLauncher": "NEO",
-      "NeoSwitchDescription": "Si sta utilizzando il lanciatore di sessione \"{{launcher}}\"."
+      "NeoSwitchDescription": "Si sta utilizzando il lanciatore di sessione \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Vai alla recensione"
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",
@@ -416,7 +417,9 @@
     "EnterManually": "Inserire manualmente",
     "Download": "Scarica",
     "Clone": "Clone",
-    "Config": "Configurazione"
+    "Config": "Configurazione",
+    "Next": "Avanti",
+    "Previous": "Precedente"
   },
   "agent": {
     "Endpoint": "Endpoint",

@@ -264,7 +264,8 @@
       "MiniumAllocationTooltip": "Επιλέξτε ως ελάχιστη απαίτηση για το επιλεγμένο περιβάλλον λειτουργίας",
       "PreviousLauncher": "Προηγούμενο",
       "NeoLauncher": "NEO",
-      "NeoSwitchDescription": "Χρησιμοποιείτε τον εκκινητή συνόδου \"{{launcher}}\"."
+      "NeoSwitchDescription": "Χρησιμοποιείτε τον εκκινητή συνόδου \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Skip to review"
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",
@@ -416,7 +417,9 @@
     "EnterManually": "Εισάγετε χειροκίνητα",
     "Download": "Λήψη",
     "Clone": "Κλώνος",
-    "Config": "Διαμόρφωση"
+    "Config": "Διαμόρφωση",
+    "Next": "Επόμενο",
+    "Previous": "Προηγούμενο"
   },
   "agent": {
     "Endpoint": "Τελικό σημείο",

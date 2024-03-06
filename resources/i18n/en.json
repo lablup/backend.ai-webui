@@ -277,7 +277,8 @@
       "MiniumAllocationTooltip": "Select as the minimum requirement for the selected running environment",
       "PreviousLauncher": "Previous",
       "NeoLauncher": "NEO",
-      "NeoSwitchDescription": "You are using the \"{{launcher}}\" session launcher."
+      "NeoSwitchDescription": "You are using the \"{{launcher}}\" session launcher.",
+      "SkipToConfirmAndLaunch": "Skip to review"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -483,7 +484,9 @@
     "Unset": "Unset",
     "Download": "Download",
     "Clone": "Clone",
-    "Config": "Config"
+    "Config": "Config",
+    "Next": "Next",
+    "Previous": "Previous"
   },
   "agent": {
     "Endpoint": "Endpoint",

@@ -264,7 +264,8 @@
       "MiniumAllocationTooltip": "Chọn làm yêu cầu tối thiểu cho môi trường chạy đã chọn",
       "PreviousLauncher": "Trước",
       "NeoLauncher": "NEO",
-      "NeoSwitchDescription": "Bạn đang sử dụng trình khởi chạy phiên \"{{launcher}}\"."
+      "NeoSwitchDescription": "Bạn đang sử dụng trình khởi chạy phiên \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Bỏ qua để xem xét"
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",
@@ -416,7 +417,9 @@
     "EnterManually": "Nhập thủ công",
     "Download": "Tải xuống",
     "Clone": "Dòng vô tính",
-    "Config": "Cấu hình"
+    "Config": "Cấu hình",
+    "Next": "Kế tiếp",
+    "Previous": "Trước"
   },
   "agent": {
     "Endpoint": "Điểm cuối",

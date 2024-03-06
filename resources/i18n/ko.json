@@ -187,6 +187,7 @@
       "LaunchConfirmationDialog": "코드 및 데이터를 계속 유지하거나 다른 공동 작업자들과 공유하기 위해서는 데이터 & 폴더 메뉴에서 스토리지 폴더를 생성하신 후, 자원을 시작할 때 해당 폴더를 마운트하고 그 안에 보관하시면 됩니다.",
       "Launch": "시작",
       "ConfirmAndLaunch": "검토 및 시작",
+      "SkipToConfirmAndLaunch": "검토로 건너뛰기",
       "Accelerator": "가속기",
       "CustomResourceApplied": "사용자 설정 자원이 할당됨",
       "StartImportedNotebook": "가져온 노트북 열기",
@@ -470,7 +471,9 @@
     "OK": "확인",
     "Download": "다운로드",
     "Clone": "복사",
-    "Config": "설정"
+    "Config": "설정",
+    "Next": "다음",
+    "Previous": "이전"
   },
   "agent": {
     "Endpoint": "엔드포인트",

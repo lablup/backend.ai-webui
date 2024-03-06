@@ -130,7 +130,9 @@
     "Yes": "Sí",
     "Download": "Descargar",
     "Clone": "Clon",
-    "Config": "Configurar"
+    "Config": "Configurar",
+    "Next": "Siguiente",
+    "Previous": "Anterior"
   },
   "credential": {
     "AccessKeyOptional": "Clave de acceso (opcional)",
@@ -1158,7 +1160,8 @@
       "MiniumAllocationTooltip": "Seleccione como requisito mínimo para el entorno de ejecución seleccionado",
       "PreviousLauncher": "Anterior",
       "NeoLauncher": "NEO",
-      "NeoSwitchDescription": "Estás utilizando el lanzador de sesiones \"{{launcher}}\"."
+      "NeoSwitchDescription": "Estás utilizando el lanzador de sesiones \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Ir a la reseña"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

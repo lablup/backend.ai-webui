@@ -264,7 +264,8 @@
       "MiniumAllocationTooltip": "Wählen Sie als Mindestanforderung für die ausgewählte Betriebsumgebung",
       "PreviousLauncher": "Vorherige",
       "NeoLauncher": "NEO",
-      "NeoSwitchDescription": "Sie verwenden den \"{{launcher}}\"-Sitzungsstarter."
+      "NeoSwitchDescription": "Sie verwenden den \"{{launcher}}\"-Sitzungsstarter.",
+      "SkipToConfirmAndLaunch": "Zur Bewertung springen"
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",
@@ -416,7 +417,9 @@
     "EnterManually": "Manuell eingeben",
     "Download": "Herunterladen",
     "Clone": "Klonen",
-    "Config": "Konfigurieren Sie"
+    "Config": "Konfigurieren Sie",
+    "Next": "Weiter",
+    "Previous": "Vorherige"
   },
   "agent": {
     "Endpoint": "Endpunkt",

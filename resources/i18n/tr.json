@@ -264,7 +264,8 @@
       "MiniumAllocationTooltip": "Seçilen çalışma ortamı için minimum gereksinim olarak seçin",
       "PreviousLauncher": "Önceki",
       "NeoLauncher": "NEO",
-      "NeoSwitchDescription": "\"{{launcher}}\" oturum başlatıcısını kullanıyorsunuz."
+      "NeoSwitchDescription": "\"{{launcher}}\" oturum başlatıcısını kullanıyorsunuz.",
+      "SkipToConfirmAndLaunch": "İncelemeye geç"
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -416,7 +417,9 @@
     "EnterManually": "Manuel Olarak Girin",
     "Download": "İndir",
     "Clone": "Klon",
-    "Config": "Konfigürasyon"
+    "Config": "Konfigürasyon",
+    "Next": "Sonraki",
+    "Previous": "Önceki"
   },
   "agent": {
     "Endpoint": "uç nokta",

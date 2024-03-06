@@ -266,7 +266,8 @@
       "MiniumAllocationTooltip": "Wybierz jako minimalne wymaganie dla wybranego środowiska uruchomieniowego",
       "PreviousLauncher": "Poprzedni",
       "NeoLauncher": "NEO",
-      "NeoSwitchDescription": "Używasz programu uruchamiającego sesję \"{{launcher}}\"."
+      "NeoSwitchDescription": "Używasz programu uruchamiającego sesję \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Przejdź do recenzji"
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",
@@ -418,7 +419,9 @@
     "EnterManually": "Wprowadź ręcznie",
     "Download": "Pobierz",
     "Clone": "Klon",
-    "Config": "Konfiguracja"
+    "Config": "Konfiguracja",
+    "Next": "Następny",
+    "Previous": "Poprzedni"
   },
   "agent": {
     "Endpoint": "Punkt końcowy",

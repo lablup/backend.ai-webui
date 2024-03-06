@@ -264,7 +264,8 @@
       "MiniumAllocationTooltip": "Сонгосон ажиллах орчны хамгийн бага шаардлагыг сонгоно уу",
       "PreviousLauncher": "Өмнөх",
       "NeoLauncher": "NEO",
-      "NeoSwitchDescription": "Та \"{{launcher}}\" сесс эхлүүлэгч ашиглаж байна."
+      "NeoSwitchDescription": "Та \"{{launcher}}\" сесс эхлүүлэгч ашиглаж байна.",
+      "SkipToConfirmAndLaunch": "Шүүмж рүү алгасах"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -416,7 +417,9 @@
     "OK": "БОЛЖ БАЙНА УУ",
     "Download": "Татаж авах",
     "Clone": "Клон",
-    "Config": "Тохиргоо"
+    "Config": "Тохиргоо",
+    "Next": "Дараачийн",
+    "Previous": "Өмнөх"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",

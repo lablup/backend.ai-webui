@@ -2,7 +2,12 @@
   "session": {
     "launcher": {
       "NeoLauncher": "NEO",
-      "NeoSwitchDescription": "Anda menggunakan peluncur sesi \"{{launcher}}\"."
+      "NeoSwitchDescription": "Anda menggunakan peluncur sesi \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Loncat ke ulasan"
     }
+  },
+  "button": {
+    "Next": "Berikutnya",
+    "Previous": "Sebelumnya"
   }
 }

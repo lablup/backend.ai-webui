@@ -264,7 +264,8 @@
       "MiniumAllocationTooltip": "Pilih sebagai keperluan minimum untuk persekitaran berjalan yang dipilih",
       "PreviousLauncher": "Sebelumnya",
       "NeoLauncher": "NEO",
-      "NeoSwitchDescription": "Anda menggunakan pelancar sesi \"{{launcher}}\"."
+      "NeoSwitchDescription": "Anda menggunakan pelancar sesi \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Langkau ke semakan"
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",
@@ -416,7 +417,9 @@
     "EnterManually": "Masukkan Secara Manual",
     "Download": "Muat turun",
     "Clone": "Klon",
-    "Config": "Konfigurasi"
+    "Config": "Konfigurasi",
+    "Next": "Seterusnya",
+    "Previous": "Sebelumnya"
   },
   "agent": {
     "Endpoint": "Titik Akhir",
