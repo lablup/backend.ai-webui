@@ -272,6 +272,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             items {
               name
               endpoint_id
+              image
               image_object @since(version: "23.09.9") {
                 name
                 humanized_name
