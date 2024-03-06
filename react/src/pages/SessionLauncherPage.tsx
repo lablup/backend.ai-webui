@@ -347,16 +347,21 @@ const SessionLauncherPage = () => {
               closable: true,
             });
           });
-          console.log(isConformed);
           if (!isConformed) return;
         }
-        const [kernelName, architecture] =
-          values.environments.version.split('@');
+
+        // If manual image is selected, use it as kernelName
+        const imageFullName =
+          values.environments.manual || values.environments.version;
+        let [kernelName, architecture] = imageFullName
+          ? imageFullName.split('@')
+          : ['', ''];
+
         const sessionName = _.isEmpty(values.sessionName)
           ? generateSessionId()
           : values.sessionName;
+
         const sessionInfo: CreateSessionInfo = {
-          // TODO: allow_manual_image_name_for_session
           kernelName,
           architecture,
           sessionName: sessionName,
@@ -1171,12 +1176,14 @@ const SessionLauncherPage = () => {
                           <Flex direction="row" gap="xs" style={{ flex: 1 }}>
                             <ImageMetaIcon
                               image={
-                                form.getFieldValue('environments')?.version
+                                form.getFieldValue('environments')?.version ||
+                                form.getFieldValue('environments')?.manual
                               }
                             />
                             {/* {form.getFieldValue('environments').image} */}
                             <Typography.Text copyable code>
-                              {form.getFieldValue('environments')?.version}
+                              {form.getFieldValue('environments')?.version ||
+                                form.getFieldValue('environments')?.manual}
                             </Typography.Text>
                           </Flex>
                         </Descriptions.Item>
