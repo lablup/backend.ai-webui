@@ -1,4 +1,4 @@
-import { useWebUIUserSettingState } from '../hooks/useWebUISetting';
+import { useBAIUserSettingState } from '../hooks/useBAISetting';
 import Flex from './Flex';
 import { ThunderboltTwoTone } from '@ant-design/icons';
 import { Alert, AlertProps, Segmented, Typography, theme } from 'antd';
@@ -17,7 +17,7 @@ const isClosedState = atom<boolean>({
 const NeoSessionLauncherSwitchAlert: React.FC<
   NeoSessionLauncherSwitchAlertProps
 > = ({ onChange, afterClose, ...props }) => {
-  const [is2409Launcher, setIs2409Launcher] = useWebUIUserSettingState(
+  const [is2409Launcher, setIs2409Launcher] = useBAIUserSettingState(
     'use_2409_session_launcher',
   );
   const { token } = theme.useToken();

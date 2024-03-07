@@ -5,6 +5,7 @@ import {
   atom,
   selector,
   selectorFamily,
+  useRecoilState,
   useRecoilValue,
   useSetRecoilState,
 } from 'recoil';
@@ -33,6 +34,11 @@ interface UserSettings {
   // 'custom_ssh_port': string;
   // 'beta_feature': boolean;
 }
+
+const DEFAULT_USER_SETTINGS: UserSettings = {
+  use_2409_session_launcher: false,
+};
+
 const _userSettingsState = atom<UserSettings>({
   key: 'webui/userSettingsState',
   default: selector({
@@ -40,7 +46,7 @@ const _userSettingsState = atom<UserSettings>({
     get: () => {
       const settings = localStorage.getItem('backendaiwebui.settings.user');
       return {
-        use_2409_session_launcher: false,
+        ...DEFAULT_USER_SETTINGS,
         ...(settings ? JSON.parse(settings) : {}),
       };
     },
@@ -57,7 +63,7 @@ const _userSetting = selectorFamily({
     },
 });
 
-const _useSetWebUISetting = (namespace: 'user') => {
+const _useSetBAISetting = (namespace: 'user') => {
   const setUserSettings = useSetRecoilState(_userSettingsState);
 
   const set = useCallback(
@@ -93,16 +99,13 @@ const _useSetWebUISetting = (namespace: 'user') => {
  * Custom hook that returns the user settings state and a function to set the web UI setting for the user.
  * @returns An array containing the user settings state and the function to set the web UI setting for the user.
  */
-export const useWebUIAllUserSettingsState = () => {
-  return [
-    useRecoilValue(_userSettingsState),
-    _useSetWebUISetting('user'),
-  ] as const;
+export const useBAIUserNameSpaceSettingsState = () => {
+  return useRecoilState(_userSettingsState);
 };
 
-export const useWebUIUserSettingState = (name: keyof UserSettings) => {
-  const { set } = useSetWebUIUserSetting(name);
-  return [useWebUIUserSettingValue(name), set] as const;
+export const useBAIUserSettingState = (name: keyof UserSettings) => {
+  const { set } = useSetBAIUserSetting(name);
+  return [useBAIUserSettingValue(name), set] as const;
 };
 
 /**
@@ -110,8 +113,8 @@ export const useWebUIUserSettingState = (name: keyof UserSettings) => {
  * @param name - The name of the user setting.
  * @returns An object containing the `set` and `deleteItem` functions.
  */
-export const useSetWebUIUserSetting = (name: keyof UserSettings) => {
-  const { set, deleteItem } = _useSetWebUISetting('user');
+export const useSetBAIUserSetting = (name: keyof UserSettings) => {
+  const { set, deleteItem } = _useSetBAISetting('user');
 
   return {
     set: useCallback((value: any) => set(name, value), [set, name]),
@@ -125,6 +128,6 @@ export const useSetWebUIUserSetting = (name: keyof UserSettings) => {
  * @param name - The name of the user setting.
  * @returns The value of the user setting.
  */
-export const useWebUIUserSettingValue = (name: keyof UserSettings) => {
+export const useBAIUserSettingValue = (name: keyof UserSettings) => {
   return useRecoilValue(_userSetting(name));
 };
