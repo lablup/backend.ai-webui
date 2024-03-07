@@ -10,7 +10,7 @@ import { useLocalStorageState } from 'ahooks';
 import { App, Layout, theme } from 'antd';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
-import { atom, useRecoilState, useSetRecoilState } from 'recoil';
+import { atom, useSetRecoilState } from 'recoil';
 
 export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 5;
 export type PluginPage = {
