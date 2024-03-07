@@ -103,10 +103,7 @@ export const BackendAiStyles = [
         --general-background-color,
         #ffffff
       );
-      --general-button-disabled-background-color: var(
-        --token-colorPrimary,
-        #27824f
-      );
+      --general-button-disabled-background-color: var(--token-colorSuccess);
       --general-button-disabled-color: var(--general-background-color, #ffffff);
       --general-switch-off-color: var(--token-colorBorder, #aaa);
       --general-switch-on-color: var(--token-colorPrimary, #27824f);
@@ -127,13 +124,8 @@ export const BackendAiStyles = [
       --general-monospace-font-family: 'Ubuntu Mono', Menlo, Courier,
         'Courier New', RobotoMono, sans-serif;
       --general-progress-bar-bg: var(--token-colorBorderSecondary, #e8e8e8);
-      --general-progress-bar-reserved: linear-gradient(
-        to left,
-        #722cd7,
-        #5c7cfa
-      );
-      --general-progress-bar-using: linear-gradient(to left, #18aa7c, #60bb43),
-        linear-gradient(to left, #722cd7, #5c7cfa);
+      --general-progress-bar-reserved: var(--token-colorInfo);
+      --general-progress-bar-using: var(--token-colorPrimary);
       --lumo-font-family: var(--token-fontFamily);
       --general-warning-text: var(--paper-red-400);
 
@@ -413,7 +405,10 @@ export const BackendAiStyles = [
     mwc-button.primary-action[raised],
     mwc-button.primary-action[unelevated] {
       border-radius: 5px;
-      background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
+      background-color: var(
+        --token-colorPrimary,
+        --general-button-background-color
+      );
       --mdc-theme-primary: var(
         --token-colorWhite,
         --general-button-color
@@ -422,11 +417,11 @@ export const BackendAiStyles = [
     }
 
     mwc-button.primary-action[disabled] {
+      border: 1px solid var(--token-colorBorder, #424242);
       border-radius: 5px;
-      background-image: linear-gradient(
-        to bottom,
-        rgba(105, 224, 224, 0.08) 0%,
-        rgba(56, 189, 115, 0.2) 100%
+      background-color: var(
+        --token-colorDisabled,
+        --var-color-bg-container-disabled
       );
       --mdc-theme-primary: var(
         --token-colorWhite,
@@ -1102,11 +1097,11 @@ export const BackendAiStyles = [
     }
 
     .resource-legend-icon.start {
-      background-color: rgba(103, 82, 232, 1);
+      background-color: var(--token-colorInfo);
     }
 
     .resource-legend-icon.end {
-      background-color: rgba(58, 178, 97, 1);
+      background-color: var(--token-colorPrimary);
     }
 
     .resource-legend-icon.total {
