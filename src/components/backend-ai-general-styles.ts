@@ -424,10 +424,7 @@ export const BackendAiStyles = [
     mwc-button.primary-action[disabled] {
       border: 1px solid var(--token-colorBorder, #424242);
       border-radius: 5px;
-      background-color: var(
-        --token-colorDisabled,
-        --var-color-bg-container-disabled
-      );
+      background-color: var(--token-colorBgContainerDisabled,);
       --mdc-theme-primary: var(
         --token-colorWhite,
         --general-button-color

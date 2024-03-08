@@ -9,8 +9,7 @@
       "colorSuccess": "#37B076",
       "colorBorder": "#DEE1E7",
       "colorBorderSecondary": "#E1E1E2",
-      "colorWarning": "#f1a239",
-      "colorDisabled": "rgba(255, 255, 255, 0.04)"
+      "colorWarning": "#f1a239"
     },
     "components": {
       "Tag": {
@@ -29,8 +28,7 @@
     "token": {
       "fontFamily": "'Ubuntu', Roboto, sans-serif",
       "colorPrimary": "#25C2A0",
-      "colorLink": "#25C2A0",
-      "colorDisabled": "rgba(255, 255, 255, 0.08)"
+      "colorLink": "#25C2A0"
     },
     "components": {
       "Tag": {
