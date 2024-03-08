@@ -33,6 +33,7 @@ import { useLocation } from 'react-router-dom';
 interface WebUISiderProps
   extends Pick<BAISiderProps, 'collapsed' | 'collapsedWidth' | 'onBreakpoint'> {
   webuiplugins?: WebUIPluginType;
+  onClickMenuItem?: MenuProps['onClick'];
 }
 const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const { t } = useTranslation();
@@ -354,8 +355,10 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         //   key: '404',
         // },
         // ]}
-        onClick={({ key, keyPath }) => {
-          webuiNavigate('/' + keyPath.join('/'));
+        onClick={(menuInfo) => {
+          webuiNavigate('/' + menuInfo.keyPath.join('/'));
+          _.isFunction(props.onClickMenuItem) &&
+            props.onClickMenuItem(menuInfo);
         }}
       />
     </BAISider>

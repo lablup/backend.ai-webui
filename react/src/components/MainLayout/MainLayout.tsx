@@ -7,7 +7,7 @@ import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { useLocalStorageState } from 'ahooks';
-import { App, Layout, theme } from 'antd';
+import { App, Grid, Layout, theme } from 'antd';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 
@@ -42,6 +42,8 @@ function MainLayout() {
   const [webUIPlugins, setWebUIPlugins] = useState<
     WebUIPluginType | undefined
   >();
+
+  const gridBreakpoints = Grid.useBreakpoint();
 
   useEffect(() => {
     const handler = () => {
@@ -112,6 +114,9 @@ function MainLayout() {
             }
           }}
           webuiplugins={webUIPlugins}
+          onClickMenuItem={() => {
+            !gridBreakpoints.sm && setSideCollapsed(true);
+          }}
         />
       </Suspense>
       <Layout
@@ -131,6 +136,7 @@ function MainLayout() {
               height: '100vh',
               // height: `calc(100vh - ${HEADER_HEIGHT}px)`,
               overflow: 'auto',
+              minWidth: 320,
             }}
           >
             <Suspense
