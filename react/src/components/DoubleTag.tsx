@@ -1,6 +1,5 @@
 import Flex from './Flex';
 import { Tag } from 'antd';
-import { theme } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 
@@ -13,7 +12,6 @@ type ValueType = string | React.ReactNode;
 const DoubleTag: React.FC<{
   values?: ValueType[] | DoubleTagObjectValue[];
 }> = ({ values = [] }) => {
-  const { token } = theme.useToken();
   if (values.length === 0) return null;
   let objectValues: DoubleTagObjectValue[];
   if (
@@ -24,7 +22,7 @@ const DoubleTag: React.FC<{
       (value) =>
         ({
           label: value,
-          color: token.colorInfo,
+          color: 'blue',
         }) as DoubleTagObjectValue,
     );
   } else {
