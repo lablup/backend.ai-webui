@@ -290,12 +290,12 @@ const ErrorLogList: React.FC<{
               })
             : (filteredLogData as LogType[])
         }
-        columns={columns.filter(
-          (column) => displayedColumnKeys?.includes(_.toString(column.key)),
+        columns={columns.filter((column) =>
+          displayedColumnKeys?.includes(_.toString(column.key)),
         )}
         onRow={(record) => {
           return {
-            style: { color: record.isError ? 'red' : '' },
+            style: { color: record.isError ? token.colorError : '' },
           };
         }}
       />
