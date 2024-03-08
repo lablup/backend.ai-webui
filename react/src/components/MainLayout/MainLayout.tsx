@@ -234,6 +234,7 @@ export const CSSTokenVariables = () => {
 :root {
 ${Object.entries(token)
   .map(([key, value]) => {
+    // Skip Component specific tokens
     if (key.charAt(0) === key.charAt(0).toUpperCase()) {
       return '';
     } else {
