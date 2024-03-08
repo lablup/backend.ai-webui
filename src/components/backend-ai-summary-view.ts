@@ -226,7 +226,7 @@ export default class BackendAISummary extends BackendAIPage {
         }
 
         #download-app-os-select-box mwc-select {
-          width: 305px;
+          width: 100%;
           height: 58px;
         }
 
@@ -636,7 +636,6 @@ export default class BackendAISummary extends BackendAIPage {
                   title="${_t('summary.DownloadWebUIApp')}"
                   elevation="1"
                   height="245"
-                  narrow
                 >
                   <div slot="message">
                     <div
@@ -660,7 +659,10 @@ export default class BackendAISummary extends BackendAIPage {
                         )}
                       </mwc-select>
                     </div>
-                    <div class="horizontal layout center center-justified">
+                    <div
+                      class="horizontal layout center-justified"
+                      style="gap:20px"
+                    >
                       ${this.downloadAppOS &&
                       this.appDownloadMap[this.downloadAppOS][
                         'architecture'
@@ -669,7 +671,7 @@ export default class BackendAISummary extends BackendAIPage {
                           <mwc-button
                             icon="cloud_download"
                             outlined
-                            style="margin:10px;flex-basis:50%;"
+                            style="margin:10px 0 10px 0;flex-basis:50%;"
                             @click="${(e) => this._downloadApplication(e)}"
                           >
                             ${arch}
