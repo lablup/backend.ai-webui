@@ -2553,9 +2553,9 @@ ${item.traceback}</pre
     thresholds_check_operator: string | null = null,
   ) => {
     const colorMap = {
-      green: '#527A42',
-      yellow: '#D8B541',
-      red: '#e05d44',
+      green: 'var(--token-colorSuccess)',
+      yellow: 'var(--token-colorWarning)',
+      red: 'var(--token-colorError)',
     };
     if (!thresholds_check_operator) {
       const [utilization, threshold] = resources as [number, number];
@@ -3639,11 +3639,11 @@ ${rowData.item[this.sessionNameField]}</pre
         const remainingTimeType = checkerInfo?.remaining_time_type;
 
         // Determine color based on remaining time.
-        let remainingColor = '#527A42';
+        let remainingColor = 'var(--token-colorSuccess';
         if (!remainingSeconds || remainingSeconds < 3600) {
-          remainingColor = '#e05d44';
+          remainingColor = 'var(--token-colorError)';
         } else if (remainingSeconds < 3600 * 4) {
-          remainingColor = '#D8B541';
+          remainingColor = 'var(--token-colorWarning)';
         }
 
         // Determine color based on resource utilization.

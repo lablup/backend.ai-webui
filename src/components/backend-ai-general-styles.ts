@@ -106,7 +106,7 @@ export const BackendAiStyles = [
       --general-button-disabled-background-color: var(--token-colorSuccess);
       --general-button-disabled-color: var(--general-background-color, #ffffff);
       --general-switch-off-color: var(--token-colorBorder, #aaa);
-      --general-switch-on-color: var(--token-colorPrimary, #27824f);
+      --general-switch-on-color: var(--token-colorPrimary);
       --general-switch-on-background-color: var(--general-primaryBg, #e3e7d8);
       --general-slider-color: var(
         --token-colorPrimary,
@@ -124,8 +124,16 @@ export const BackendAiStyles = [
       --general-monospace-font-family: 'Ubuntu Mono', Menlo, Courier,
         'Courier New', RobotoMono, sans-serif;
       --general-progress-bar-bg: var(--token-colorBorderSecondary, #e8e8e8);
-      --general-progress-bar-reserved: var(--token-colorInfo);
-      --general-progress-bar-using: var(--token-colorPrimary);
+      --general-progress-bar-reserved: linear-gradient(
+        to left,
+        var(--token-blue-8) 0%,
+        var(--token-blue-7) 100%
+      );
+      --general-progress-bar-using: linear-gradient(
+        to left,
+        var(--token-green-8) 0%,
+        var(--token-green-7) 100%
+      );
       --lumo-font-family: var(--token-fontFamily);
       --general-warning-text: var(--paper-red-400);
 
@@ -405,10 +413,7 @@ export const BackendAiStyles = [
     mwc-button.primary-action[raised],
     mwc-button.primary-action[unelevated] {
       border-radius: 5px;
-      background-color: var(
-        --token-colorPrimary,
-        --general-button-background-color
-      );
+      background-color: var(--token-colorPrimary);
       --mdc-theme-primary: var(
         --token-colorWhite,
         --general-button-color
@@ -1097,11 +1102,11 @@ export const BackendAiStyles = [
     }
 
     .resource-legend-icon.start {
-      background-color: var(--token-colorInfo);
+      background-color: var(--token-blue-7);
     }
 
     .resource-legend-icon.end {
-      background-color: var(--token-colorPrimary);
+      background-color: var(--token-green-7);
     }
 
     .resource-legend-icon.total {
