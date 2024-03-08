@@ -635,8 +635,8 @@ export default class BackendAISummary extends BackendAIPage {
                 <lablup-activity-panel
                   title="${_t('summary.DownloadWebUIApp')}"
                   elevation="1"
-                  narrow
                   height="245"
+                  narrow
                 >
                   <div slot="message">
                     <div
@@ -667,7 +667,8 @@ export default class BackendAISummary extends BackendAIPage {
                       ].map(
                         (arch) => html`
                           <mwc-button
-                            raised
+                            icon="cloud_download"
+                            outlined
                             style="margin:10px;flex-basis:50%;"
                             @click="${(e) => this._downloadApplication(e)}"
                           >
