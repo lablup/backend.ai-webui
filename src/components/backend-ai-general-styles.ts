@@ -124,16 +124,8 @@ export const BackendAiStyles = [
       --general-monospace-font-family: 'Ubuntu Mono', Menlo, Courier,
         'Courier New', RobotoMono, sans-serif;
       --general-progress-bar-bg: var(--token-colorBorderSecondary, #e8e8e8);
-      --general-progress-bar-reserved: linear-gradient(
-        to left,
-        var(--token-blue-8) 0%,
-        var(--token-blue-7) 100%
-      );
-      --general-progress-bar-using: linear-gradient(
-        to left,
-        var(--token-green-8) 0%,
-        var(--token-green-7) 100%
-      );
+      --general-progress-bar-reserved: var(--token-blue-7);
+      --general-progress-bar-using: var(--token-green-7);
       --lumo-font-family: var(--token-fontFamily);
       --general-warning-text: var(--paper-red-400);
 
