@@ -10,10 +10,10 @@ export type DoubleTagObjectValue = {
 };
 
 type ValueType = string | React.ReactNode;
-const { token } = theme.useToken();
 const DoubleTag: React.FC<{
   values?: ValueType[] | DoubleTagObjectValue[];
 }> = ({ values = [] }) => {
+  const { token } = theme.useToken();
   if (values.length === 0) return null;
   let objectValues: DoubleTagObjectValue[];
   if (
