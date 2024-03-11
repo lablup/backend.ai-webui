@@ -3581,7 +3581,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const container = this.shadowRoot?.querySelector(
         '#resource-allocated-box-shadow',
       ) as HTMLDivElement;
-      for (let i = 0; i < Math.min(6, cluster_size - 1); i = i + 1) {
+      for (let i = 0; i <= Math.min(5, cluster_size - 1); i = i + 1) {
         const item = document.createElement('div');
         item.classList.add(
           'horizontal',
