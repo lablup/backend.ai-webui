@@ -5508,7 +5508,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </div>
             <p class="title">${_t('session.launcher.TotalAllocation')}</p>
             <div
-              class="vertical layout center center-justified cluster-total-allocation-container"
+              class="horizontal layout center center-justified cluster-total-allocation-container"
             >
               <div
                 id="cluster-allocation-pane"
@@ -5516,7 +5516,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ? 'display:none;'
                   : ''}"
               >
-                <div class="horizontal layout">
+                <div class="horizontal layout resource-allocated-box">
                   <div
                     class="vertical layout center center-justified resource-allocated"
                   >
@@ -5582,7 +5582,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 id="total-allocation-container"
                 class="horizontal layout center center-justified allocation-check"
               >
-                <div id="total-allocation-pane" style="position:relative;">
+                <div
+                  id="total-allocation-pane"
+                  style="position:relative;${this.cluster_size <= 1
+                    ? ''
+                    : 'display:none;'}"
+                >
                   <div class="horizontal layout resource-allocated-box">
                     <div
                       class="vertical layout center center-justified resource-allocated"
