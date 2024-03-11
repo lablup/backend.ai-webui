@@ -4301,6 +4301,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._resetEnvironmentVariables();
     this._resetPreOpenPorts();
     this._unselectAllSelectedFolder();
+    this._deleteAllocationPaneShadow();
   }
 
   /**
@@ -5516,7 +5517,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ? 'display:none;'
                   : ''}"
               >
-                <div class="horizontal layout">
+                <div class="horizontal layout resource-allocated-box">
                   <div
                     class="vertical layout center center-justified resource-allocated"
                   >
