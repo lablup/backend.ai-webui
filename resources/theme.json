@@ -21,6 +21,9 @@
       "Layout": {
         "lightSiderBg": "#F4F7FD",
         "siderBg": "#2A2C30"
+      },
+      "Statistic": {
+        "contentFontSize": 50
       }
     }
   },
@@ -40,6 +43,9 @@
       "Layout": {
         "lightSiderBg": "#F4F7FD",
         "siderBg": "#2A2C30"
+      },
+      "Statistic": {
+        "contentFontSize": 50
       }
     }
   },
