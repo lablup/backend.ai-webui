@@ -522,7 +522,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         .resource-allocated-box {
-          background-color: var(--token-colorBgElevated, --paper-grey-300);
           border-radius: 5px;
           margin: 5px;
           z-index: 10;
@@ -5583,7 +5582,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 class="horizontal layout center center-justified allocation-check"
               >
                 <div id="total-allocation-pane" style="position:relative;">
-                  <div class="horizontal layout resource-allocated-box">
+                  <div class="horizontal layout">
                     <div
                       class="vertical layout center center-justified resource-allocated"
                     >
