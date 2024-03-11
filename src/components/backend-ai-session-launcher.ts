@@ -3594,17 +3594,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         item.style.position = 'absolute';
         item.style.top = '-' + (5 + 5 * i) + 'px';
         item.style.left = 5 + 5 * i + 'px';
-        const intensity = 245 + i * 2;
+        const intensity = this.isDarkMode ? 88 - i * 2 : 245 + i * 2;
         item.style.backgroundColor =
           'rgb(' + intensity + ',' + intensity + ',' + intensity + ')';
-        item.style.borderColor =
-          'rgb(' +
-          (intensity - 10) +
-          ',' +
-          (intensity - 10) +
-          ',' +
-          (intensity - 10) +
-          ')';
+        item.style.borderColor = this.isDarkMode
+          ? 'none'
+          : 'rgb(' +
+            (intensity - 10) +
+            ',' +
+            (intensity - 10) +
+            ',' +
+            (intensity - 10) +
+            ')';
         item.style.zIndex = (6 - i).toString();
         container.appendChild(item);
       }
@@ -4300,6 +4301,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._resetEnvironmentVariables();
     this._resetPreOpenPorts();
     this._unselectAllSelectedFolder();
+    this._deleteAllocationPaneShadow();
   }
 
   /**
@@ -5515,7 +5517,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ? 'display:none;'
                   : ''}"
               >
-                <div class="horizontal layout">
+                <div class="horizontal layout resource-allocated-box">
                   <div
                     class="vertical layout center center-justified resource-allocated"
                   >
