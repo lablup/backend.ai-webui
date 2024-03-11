@@ -6017,7 +6017,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             icon="rowing"
             @click="${() => this._newSession()}"
           >
-            <span>${_t('session.launcher.Launch')}</span>
+            ${_t('session.launcher.Launch')}
           </mwc-button>
         </div>
       </backend-ai-dialog>
