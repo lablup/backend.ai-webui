@@ -285,7 +285,7 @@
     "Running": "En cours",
     "Finished": "Terminé",
     "Others": "Autres",
-    "exportCSV": "exporter CSV",
+    "exportCSV": "exporter au format CSV",
     "Terminate": "Mettre fin",
     "SessionInfo": "Informations sur la session",
     "Status": "Statut",

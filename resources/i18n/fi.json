@@ -1102,7 +1102,7 @@
       "ConnectUrlIsNotValid": "Yhteyden URL-osoite ei kelpaa."
     },
     "core": "ydin",
-    "exportCSV": "viedä CSV",
+    "exportCSV": "viedä CSV-muotoon",
     "launcher": {
       "AIAccelerator": "AI-kiihdyttämö",
       "Accelerator": "Kiihdytin",

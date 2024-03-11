@@ -285,7 +285,7 @@
     "Running": "Laufen",
     "Finished": "Fertig",
     "Others": "Andere",
-    "exportCSV": "CSV-Datei exportieren",
+    "exportCSV": "Export nach CSV",
     "Terminate": "Beenden",
     "SessionInfo": "Sitzungsinfo",
     "Status": "Status",
