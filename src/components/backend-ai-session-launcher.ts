@@ -867,6 +867,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             opacity: 1;
           }
         }
+        #launch-button {
+          font-size: 14px;
+        }
       `,
     ];
   }
