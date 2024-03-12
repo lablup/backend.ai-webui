@@ -43,8 +43,8 @@ const StorageStatusPanel: React.FC<{
   const deferredFetchKey = useDeferredValue(fetchKey);
 
   const columnSetting: DescriptionsProps['column'] = {
-    xxl: 4,
-    xl: 4,
+    xxl: 2,
+    xl: 2,
     lg: 2,
     md: 1,
     sm: 1,
@@ -280,6 +280,11 @@ const StorageStatusPanel: React.FC<{
             />
           )}
         </Descriptions.Item>
+        {user?.id && (
+          <Descriptions.Item label="User ID" span={4}>
+            <Typography.Text copyable>{user?.id}</Typography.Text>
+          </Descriptions.Item>
+        )}
       </Descriptions>
     </Card>
   );
