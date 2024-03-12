@@ -127,6 +127,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         mwc-icon-button.sftp-session-connection-copy {
           --mdc-icon-size: 20px;
+          background-color: transparent;
         }
 
         #ssh-dialog {
