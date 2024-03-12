@@ -1164,10 +1164,6 @@ export const BackendAiStyles = [
       mwc-list-item,
       mwc-icon,
       mwc-icon-button,
-      div.card {
-        background-color: var(--token-colorBgElevated);
-      }
-
       mwc-icon,
       mwc-icon-button {
         color: var(--token-colorTextSecondary);
