@@ -170,9 +170,9 @@ const StorageStatusPanel: React.FC<{
       ? ((createdCount / maxVfolderCount) * 100)?.toFixed(2)
       : 0
   ) as number;
-  const descriptionItem: DescriptionsProps['items'] = [
+  const descriptionItems: DescriptionsProps['items'] = [
     {
-      key: '1',
+      key: 'totalFolders',
       label: t('data.NumberOfFolders'),
       children: (
         <>
@@ -213,7 +213,7 @@ const StorageStatusPanel: React.FC<{
       ),
     },
     {
-      key: '2',
+      key: 'quotaPerStorageVolume',
       label: (
         <div>
           {t('data.QuotaPerStorageVolume')}
@@ -288,9 +288,13 @@ const StorageStatusPanel: React.FC<{
       ),
     },
     {
-      key: '3',
+      key: 'userQuotaScopeId',
       label: t('data.userQuotaScopeId'),
-      children: <Typography.Text copyable>{user?.id}</Typography.Text>,
+      children: (
+        <Typography.Text>
+          {addQuotaScopeTypePrefix('user', user?.id || '')}
+        </Typography.Text>
+      ),
     },
   ];
 
@@ -300,7 +304,7 @@ const StorageStatusPanel: React.FC<{
         bordered
         column={columnSetting}
         size="small"
-        items={descriptionItem}
+        items={descriptionItems}
       />
     </Card>
   );
