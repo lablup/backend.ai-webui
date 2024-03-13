@@ -1,4 +1,5 @@
 import { Form, FormItemProps, Input } from 'antd';
+import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -28,7 +29,10 @@ const SessionNameFormItem: React.FC<SessionNameFormItemProps> = ({
           message: t('session.Validation.SessionNameTooLong64'),
         },
         {
-          validator(_, value) {
+          validator(f, value) {
+            if (_.isEmpty(value)) {
+              return Promise.resolve();
+            }
             if (!/^\w/.test(value)) {
               return Promise.reject(
                 t('session.Validation.SessionNameShouldStartWith'),
