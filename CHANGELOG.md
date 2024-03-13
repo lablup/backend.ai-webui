@@ -1,6 +1,8 @@
 # Changelog
-## v23.09.10-rc (06/03/2024)
+## v23.09.10-rc.3 (13/03/2024)
 ## What's Changed
+* fix:  FastTrack menu key to `pipeline` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2245
+* hotfix: regression of image info display in serving page by @lizable in https://github.com/lablup/backend.ai-webui/pull/2244
 * fix: @typescript-eslint/typescript-estree dependency warning by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2225
 * feat: support dark theme by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2193
 * feat: add JSON schema files for theme.json by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2232
@@ -15,7 +17,7 @@
 * fix: optional chaining and  handle `_requestDestroySession` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2242
 * fix: owner info error handling in session launcher by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2243
 
-**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.9...v23.09.10-rc.1
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.9...v23.09.10-rc.3
 
 
 ## v23.09.9 (22/02/2024)

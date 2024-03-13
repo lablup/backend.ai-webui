@@ -1,3 +1,4 @@
+import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAISider from '../BAISider';
@@ -224,16 +225,25 @@ const NotificationForAnonymous = () => {
 
 export const CSSTokenVariables = () => {
   const { token } = theme.useToken();
-  useThemeMode(); // This is to make sure the theme mode is updated
+  const { isDarkMode } = useThemeMode(); // This is to make sure the theme mode is updated
 
+  const themeConfig = useCustomThemeConfig();
   return (
     <style>
       {`
 :root {
 ${Object.entries(token)
-  .map(([key, value]) => `--token-${key}: ${value?.toString() ?? ''};`)
+  .map(([key, value]) => {
+    // Skip Component specific tokens
+    if (key.charAt(0) === key.charAt(0).toUpperCase()) {
+      return '';
+    } else {
+      return `--token-${key}: ${value?.toString() ?? ''};`;
+    }
+  })
   .join('\n')}
-}
+
+  --theme-logo-url: url("${isDarkMode ? themeConfig?.logo.srcDark : themeConfig?.logo.src}");
       `}
     </style>
   );

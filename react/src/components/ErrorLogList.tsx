@@ -295,7 +295,7 @@ const ErrorLogList: React.FC<{
         )}
         onRow={(record) => {
           return {
-            style: { color: record.isError ? 'red' : '' },
+            style: { color: record.isError ? token.colorError : '' },
           };
         }}
       />

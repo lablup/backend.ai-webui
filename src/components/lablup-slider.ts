@@ -66,7 +66,6 @@ export default class LablupSlider extends LitElement {
             --slider-color,
             '#018786'
           );
-          --mdc-theme-on-surface: var(--paper-grey-100);
           color: var(--token-colorTextSecondary, --paper-grey-700);
         }
       `,
