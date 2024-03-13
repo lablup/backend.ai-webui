@@ -707,7 +707,8 @@
     "ModelStore": "Загварын дэлгүүр",
     "New": "Шинэ",
     "Add": "Нэмэх",
-    "CloningIsOnlyPossibleSameHost": "Одоогоор зөвхөн нэг хост дээр клон хийх боломжтой."
+    "CloningIsOnlyPossibleSameHost": "Одоогоор зөвхөн нэг хост дээр клон хийх боломжтой.",
+    "userQuotaScopeId": "Хэрэглэгч UUID"
   },
   "dialog": {
     "warning": {

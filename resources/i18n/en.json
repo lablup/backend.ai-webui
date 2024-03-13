@@ -808,7 +808,8 @@
     "ModelStore": "Model Store",
     "New": "New",
     "Add": "Add",
-    "CloningIsOnlyPossibleSameHost": "Currently, cloning is only possible on the same host."
+    "CloningIsOnlyPossibleSameHost": "Currently, cloning is only possible on the same host.",
+    "userQuotaScopeId": "User UUID"
   },
   "dialog": {
     "warning": {

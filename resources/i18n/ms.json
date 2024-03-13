@@ -707,7 +707,8 @@
     "ModelStore": "Kedai Model",
     "New": "Baru",
     "Add": "Tambah",
-    "CloningIsOnlyPossibleSameHost": "Pada masa ini, pengklonan hanya boleh dilakukan pada hos yang sama."
+    "CloningIsOnlyPossibleSameHost": "Pada masa ini, pengklonan hanya boleh dilakukan pada hos yang sama.",
+    "userQuotaScopeId": "UUID pengguna"
   },
   "dialog": {
     "warning": {

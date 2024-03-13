@@ -707,7 +707,8 @@
     "ModelStore": "Cửa hàng mô hình",
     "New": "Mới",
     "Add": "Thêm vào",
-    "CloningIsOnlyPossibleSameHost": "Hiện tại, việc nhân bản chỉ có thể thực hiện được trên cùng một máy chủ."
+    "CloningIsOnlyPossibleSameHost": "Hiện tại, việc nhân bản chỉ có thể thực hiện được trên cùng một máy chủ.",
+    "userQuotaScopeId": "UUID người dùng"
   },
   "dialog": {
     "warning": {
