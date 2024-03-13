@@ -250,7 +250,7 @@ app.once('ready', function() {
                 protocol: 'file',
                 slashes: true
               }));
-              mainContent.executeJavaScript(`window.__local_proxy = '${proxyUrl}'`);
+              mainContent.executeJavaScript(`window.__local_proxy = {}; window.__local_proxy.url = '${proxyUrl}';`);
               console.log('Re-connected to proxy: ' + proxyUrl);
             }
           },

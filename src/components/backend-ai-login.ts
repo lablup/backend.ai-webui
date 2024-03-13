@@ -1132,7 +1132,7 @@ export default class BackendAILogin extends BackendAIPage {
 
   /**
    * Load configuration file from the WebServer when using Session mode.
-   *
+   * @return {Promise<any> | void}
    * */
   private _loadConfigFromWebServer() {
     if (!window.location.href.startsWith(this.api_endpoint)) {
@@ -1147,7 +1147,7 @@ export default class BackendAILogin extends BackendAIPage {
         ];
         const webserverConfigURL = new URL('./config.toml', this.api_endpoint)
           .href;
-        webuiEl._parseConfig(webserverConfigURL, true).then((config) => {
+        return webuiEl._parseConfig(webserverConfigURL, true).then((config) => {
           // Monkey patch for backwards compatibility.
           // From 24.04, we use `logoTitle` and `logoTitleCollapsed` of /resources/theme.json instead of `general.siteDescription`.
           this.siteDescription =
@@ -1164,6 +1164,7 @@ export default class BackendAILogin extends BackendAIPage {
         });
       }
     }
+    return Promise.resolve(undefined);
   }
 
   /**
@@ -1204,7 +1205,10 @@ export default class BackendAILogin extends BackendAIPage {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === ('SESSION' as ConnectionMode)) {
       if (globalThis.isElectron) {
-        this._loadConfigFromWebServer();
+        this._loadConfigFromWebServer()?.then(() => {
+          const webuiEl = document.querySelector('backend-ai-webui');
+          webuiEl && webuiEl.loadConfig(webuiEl.config);
+        });
       }
       return this._checkLoginUsingSession();
     } else if (this.connection_mode === ('API' as ConnectionMode)) {

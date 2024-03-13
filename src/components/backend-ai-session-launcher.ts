@@ -522,7 +522,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         .resource-allocated-box {
-          background-color: var(--token-colorBgElevated, --paper-grey-300);
           border-radius: 5px;
           margin: 5px;
           z-index: 10;
@@ -867,6 +866,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           to {
             opacity: 1;
           }
+        }
+        #launch-button {
+          font-size: 14px;
         }
       `,
     ];
@@ -1528,6 +1530,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const nameFragments = this.manualImageName.value.split(':');
       version = nameFragments.splice(-1, 1)[0];
       kernel = nameFragments.join(':');
+      // extract architecture if exists
+      architecture = ['x86_64', 'aarch64'].includes(
+        this.manualImageName.value.split('@').pop(),
+      )
+        ? this.manualImageName.value.split('@').pop()
+        : undefined;
+      if (architecture) {
+        kernel = this.manualImageName.value.split('@')[0];
+      }
       // TODO: Add support for selecting image architecture when starting kernel with manual image name
     } else {
       // When the "Environment" dropdown is disabled after typing the image name manually,
@@ -1664,7 +1675,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       (this._debug && this.manualImageName.value !== '') ||
       (this.manualImageName && this.manualImageName.value !== '')
     ) {
-      kernelName = this.manualImageName.value;
+      kernelName = architecture ? kernel : this.manualImageName.value;
     } else {
       kernelName = this._generateKernelIndex(kernel, version);
     }
@@ -3296,7 +3307,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.ownerFeatureInitialized = true;
     }
     const email = this.ownerEmailInput.value;
-    if (!this.ownerEmailInput.checkValidity()) {
+    if (
+      !this.ownerEmailInput.checkValidity() ||
+      email === '' ||
+      email === undefined
+    ) {
       this.notification.text = _text(
         'credential.validation.InvalidEmailAddress',
       );
@@ -3331,13 +3346,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     });
 
     /* Fetch domain / group information */
-    const userInfo = await globalThis.backendaiclient.user.get(email, [
-      'domain_name',
-      'groups {id name}',
-    ]);
-    this.ownerDomain = userInfo.user.domain_name;
-    this.ownerGroups = userInfo.user.groups;
-    if (this.ownerGroups) {
+    try {
+      const userInfo = await globalThis.backendaiclient.user.get(email, [
+        'domain_name',
+        'groups {id name}',
+      ]);
+      this.ownerDomain = userInfo.user.domain_name;
+      this.ownerGroups = userInfo.user.groups;
+    } catch (e) {
+      this.notification.text = _text('session.launcher.NotEnoughOwnershipInfo');
+      this.notification.show();
+      return;
+    }
+
+    if (this.ownerGroups.length) {
       this.ownerGroupSelect.layout(true).then(() => {
         this.ownerGroupSelect.select(0);
         // remove protected property usage
@@ -3562,7 +3584,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const container = this.shadowRoot?.querySelector(
         '#resource-allocated-box-shadow',
       ) as HTMLDivElement;
-      for (let i = 0; i < Math.min(6, cluster_size - 1); i = i + 1) {
+      for (let i = 0; i <= Math.min(5, cluster_size - 1); i = i + 1) {
         const item = document.createElement('div');
         item.classList.add(
           'horizontal',
@@ -3575,17 +3597,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         item.style.position = 'absolute';
         item.style.top = '-' + (5 + 5 * i) + 'px';
         item.style.left = 5 + 5 * i + 'px';
-        const intensity = 245 + i * 2;
+        const intensity = this.isDarkMode ? 88 - i * 2 : 245 + i * 2;
         item.style.backgroundColor =
           'rgb(' + intensity + ',' + intensity + ',' + intensity + ')';
-        item.style.borderColor =
-          'rgb(' +
-          (intensity - 10) +
-          ',' +
-          (intensity - 10) +
-          ',' +
-          (intensity - 10) +
-          ')';
+        item.style.borderColor = this.isDarkMode
+          ? 'none'
+          : 'rgb(' +
+            (intensity - 10) +
+            ',' +
+            (intensity - 10) +
+            ',' +
+            (intensity - 10) +
+            ')';
         item.style.zIndex = (6 - i).toString();
         container.appendChild(item);
       }
@@ -4281,6 +4304,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._resetEnvironmentVariables();
     this._resetPreOpenPorts();
     this._unselectAllSelectedFolder();
+    this._deleteAllocationPaneShadow();
   }
 
   /**
@@ -5496,7 +5520,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ? 'display:none;'
                   : ''}"
               >
-                <div class="horizontal layout">
+                <div class="horizontal layout resource-allocated-box">
                   <div
                     class="vertical layout center center-justified resource-allocated"
                   >
@@ -5563,7 +5587,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 class="horizontal layout center center-justified allocation-check"
               >
                 <div id="total-allocation-pane" style="position:relative;">
-                  <div class="horizontal layout resource-allocated-box">
+                  <div class="horizontal layout">
                     <div
                       class="vertical layout center center-justified resource-allocated"
                     >
@@ -5992,7 +6016,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             icon="rowing"
             @click="${() => this._newSession()}"
           >
-            <span>${_t('session.launcher.Launch')}</span>
+            ${_t('session.launcher.Launch')}
           </mwc-button>
         </div>
       </backend-ai-dialog>

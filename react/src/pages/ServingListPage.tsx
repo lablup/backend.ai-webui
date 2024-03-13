@@ -129,7 +129,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               row.status?.toLowerCase() === 'destroying'
                 ? undefined
                 : {
-                    color: '#29b6f6',
+                    color: token.colorInfo,
                   }
             }
             disabled={
@@ -272,7 +272,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             items {
               name
               endpoint_id
-              image
               model
               domain
               status

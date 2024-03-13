@@ -3,6 +3,10 @@ import replace from '@rollup/plugin-replace';
 import typescript from '@rollup/plugin-typescript';
 import { generateSW } from 'rollup-plugin-workbox';
 import terser from '@rollup/plugin-terser';
+import { glob } from 'glob';
+
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 //import babel from 'rollup-plugin-babel'; // To support legacy browsers. Disabled by default.
 
 const plugins = (outDir) =>  [
@@ -13,6 +17,7 @@ const plugins = (outDir) =>  [
   }),
   replace({
     'process.env.NODE_ENV': JSON.stringify('production'),
+    preventAssignment: true
   }),
   terser(),
   generateSW( {
@@ -29,12 +34,25 @@ const plugins = (outDir) =>  [
 
 export default [
   {
-    input: ['src/components/backend-ai-webui.ts'],
+    // ref: https://rollupjs.org/configuration-options/#input
+    input: Object.fromEntries(
+      glob.sync('src/plugins/**/*.ts').map(file => [
+        // This remove `src/` as well as the file extension from each
+        // file, so e.g. src/nested/foo.js becomes nested/foo
+        path.relative(
+          'src/plugins',
+          file.slice(0, file.length - path.extname(file).length)
+        ),
+        // This expands the relative paths to absolute paths, so e.g.
+        // src/nested/foo becomes /project/src/nested/foo.js
+        fileURLToPath(new URL(file, import.meta.url))
+      ])
+    ),
     output: {
-      dir: 'build/rollup/dist/components',
+      dir: 'build/rollup/dist/plugins',
       format: 'es',
       sourcemap: false
     },
-    plugins: plugins('build/rollup/dist/components')
-  },
+    plugins: plugins('build/rollup/dist/plugins')
+  }
 ];

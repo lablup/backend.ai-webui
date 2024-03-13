@@ -410,7 +410,8 @@
     "Commit": "Taahhüt",
     "EnterManually": "Manuel Olarak Girin",
     "Download": "İndir",
-    "Clone": "Klon"
+    "Clone": "Klon",
+    "Config": "Konfigürasyon"
   },
   "agent": {
     "Endpoint": "uç nokta",
@@ -1142,7 +1143,8 @@
     "MTUDescription": "Maksimum iletim birimi, bir ağ protokolünün iletebileceği en büyük paketin boyutu.",
     "OutOfRange": "Menzil dışında.",
     "Plugins": "Eklentiler",
-    "OpenSourceCUDAGPUsupport": "Açık Kaynak CUDA GPU desteği"
+    "OpenSourceCUDAGPUsupport": "Açık Kaynak CUDA GPU desteği",
+    "ShowOnlyChanged": "Yalnızca Değişiklikleri Görüntüle"
   },
   "notification": {
     "SuccessfullyUpdated": "Başarıyla güncellendi",
@@ -1520,5 +1522,8 @@
     "SettingTable": "Tablo Ayarı",
     "SelectColumnToDisplay": "Görüntülenecek sütunları seçin",
     "SearchTableColumn": "Tablo sütunlarında arama yapın"
+  },
+  "setting": {
+    "SearchPlaceholder": "Arama terimini gir"
   }
 }

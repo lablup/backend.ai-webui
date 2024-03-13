@@ -412,7 +412,8 @@
     "Unset": "Unset",
     "OK": "OK",
     "Download": "Скачать",
-    "Clone": "Клон"
+    "Clone": "Клон",
+    "Config": "Конфигурация"
   },
   "agent": {
     "Endpoint": "Конечная точка",
@@ -1144,7 +1145,8 @@
     "DescWarboysupport": "Используйте поддержку Furiosa Warboy",
     "RequireWarboyPlugin": "Требуется плагин Backend.AI Warboy Plugin.",
     "Plugins": "Плагины",
-    "OpenSourceCUDAGPUsupport": "Поддержка графического процессора CUDA с открытым исходным кодом"
+    "OpenSourceCUDAGPUsupport": "Поддержка графического процессора CUDA с открытым исходным кодом",
+    "ShowOnlyChanged": "Отображать только изменения"
   },
   "notification": {
     "SuccessfullyUpdated": "Успешно обновлено",
@@ -1522,5 +1524,8 @@
     "SettingTable": "Сервировка стола",
     "SelectColumnToDisplay": "Выберите столбцы для отображения",
     "SearchTableColumn": "Поиск по столбцам таблицы"
+  },
+  "setting": {
+    "SearchPlaceholder": "Введите поисковый запрос"
   }
 }

@@ -43,10 +43,10 @@ const BAICard: React.FC<BAICardProps> = ({
           status === 'error'
             ? token.colorError
             : status === 'warning'
-            ? token.colorWarning
-            : status === 'success'
-            ? token.colorSuccess
-            : style?.borderColor, // default
+              ? token.colorWarning
+              : status === 'success'
+                ? token.colorSuccess
+                : style?.borderColor, // default
       })}
       extra={_extra}
       {...cardProps}

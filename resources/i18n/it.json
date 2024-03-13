@@ -410,7 +410,8 @@
     "Commit": "Impegno",
     "EnterManually": "Inserire manualmente",
     "Download": "Scarica",
-    "Clone": "Clone"
+    "Clone": "Clone",
+    "Config": "Configurazione"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -1142,7 +1143,8 @@
     "MTUDescription": "Unità di trasmissione massima, la dimensione del pacchetto più grande che un protocollo di rete può trasmettere.",
     "OutOfRange": "Fuori portata.",
     "Plugins": "Plugin",
-    "OpenSourceCUDAGPUsupport": "Supporto GPU CUDA open source"
+    "OpenSourceCUDAGPUsupport": "Supporto GPU CUDA open source",
+    "ShowOnlyChanged": "Visualizza solo modifiche"
   },
   "notification": {
     "SuccessfullyUpdated": "Aggiornato con successo",
@@ -1520,5 +1522,8 @@
     "SettingTable": "Impostazione della tabella",
     "SelectColumnToDisplay": "Seleziona le colonne da visualizzare",
     "SearchTableColumn": "Cerca colonne della tabella"
+  },
+  "setting": {
+    "SearchPlaceholder": "Inserisci il termine di ricerca"
   }
 }
