@@ -127,7 +127,10 @@ const Information: React.FC<InformationProps> = () => {
                 {true ? (
                   <CheckOutlined title="Yes" />
                 ) : (
-                  <WarningOutlined style={{ color: 'red' }} title="No" />
+                  <WarningOutlined
+                    style={{ color: token.colorWarning }}
+                    title="No"
+                  />
                 )}
               </Descriptions.Item>
               <Descriptions.Item
@@ -141,7 +144,10 @@ const Information: React.FC<InformationProps> = () => {
                 {baiClient?._config.endpoint.startsWith('https:') ? (
                   <CheckOutlined title="Yes" />
                 ) : (
-                  <WarningOutlined style={{ color: 'red' }} title="No" />
+                  <WarningOutlined
+                    style={{ color: token.colorWarning }}
+                    title="No"
+                  />
                 )}
               </Descriptions.Item>
             </Descriptions>
@@ -222,7 +228,7 @@ const Information: React.FC<InformationProps> = () => {
               {licenseInfo.valid ? (
                 <CheckOutlined />
               ) : (
-                <WarningOutlined style={{ color: 'red' }} />
+                <WarningOutlined style={{ color: token.colorWarning }} />
               )}
             </Descriptions.Item>
             <Descriptions.Item

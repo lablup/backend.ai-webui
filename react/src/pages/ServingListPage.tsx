@@ -129,7 +129,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               row.status?.toLowerCase() === 'destroying'
                 ? undefined
                 : {
-                    color: '#29b6f6',
+                    color: token.colorInfo,
                   }
             }
             disabled={

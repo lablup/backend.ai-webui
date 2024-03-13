@@ -226,7 +226,7 @@ export default class BackendAISummary extends BackendAIPage {
         }
 
         #download-app-os-select-box mwc-select {
-          width: 305px;
+          width: 100%;
           height: 58px;
         }
 
@@ -636,7 +636,6 @@ export default class BackendAISummary extends BackendAIPage {
                 <lablup-activity-panel
                   title="${_t('summary.DownloadWebUIApp')}"
                   elevation="1"
-                  narrow
                   height="245"
                 >
                   <div slot="message">
@@ -661,15 +660,19 @@ export default class BackendAISummary extends BackendAIPage {
                         )}
                       </mwc-select>
                     </div>
-                    <div class="horizontal layout center center-justified">
+                    <div
+                      class="horizontal layout center-justified"
+                      style="gap:20px"
+                    >
                       ${this.downloadAppOS &&
                       this.appDownloadMap[this.downloadAppOS][
                         'architecture'
                       ].map(
                         (arch) => html`
                           <mwc-button
-                            raised
-                            style="margin:10px;flex-basis:50%;"
+                            icon="cloud_download"
+                            outlined
+                            style="margin:10px 0 10px 0;flex-basis:50%;"
                             @click="${(e) => this._downloadApplication(e)}"
                           >
                             ${arch}

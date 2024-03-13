@@ -347,6 +347,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         #folder-explorer-dialog vaadin-grid mwc-icon-button {
           --mdc-icon-size: 24px;
           --mdc-icon-button-size: 28px;
+          background-color: transparent;
         }
 
         #filebrowser-notification-dialog {

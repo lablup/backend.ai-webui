@@ -127,6 +127,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         mwc-icon-button.sftp-session-connection-copy {
           --mdc-icon-size: 20px;
+          background-color: transparent;
         }
 
         #ssh-dialog {
@@ -274,7 +275,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         .ssh-connection-example {
           display: flex;
-          background-color: rgba(230, 230, 230, 1);
+          background-color: var(--token-colorBorder, rgba(230, 230, 230, 1));
           padding: 10px;
           border-radius: 5px;
           margin-bottom: 5px;
@@ -644,7 +645,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       param['secret_key'] = globalThis.backendaiclient._config.secretKey;
     }
     param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
-    if (globalThis.isElectron && globalThis.__local_proxy.url === undefined) {
+    if (globalThis.isElectron && window.__local_proxy.url === undefined) {
       this.indicator.end();
       this.notification.text = _text('session.launcher.ProxyNotReady');
       this.notification.show();
