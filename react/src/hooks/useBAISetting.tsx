@@ -16,7 +16,7 @@ export const localStorageEffect =
   ): AtomEffect<any> =>
   ({ setSelf, onSet }) => {
     const savedValue = localStorage.getItem(key);
-    setSelf(onInitialize(savedValue != null ? JSON.parse(savedValue) : null));
+    setSelf(onInitialize(savedValue !== null ? JSON.parse(savedValue) : null));
     onSet((newValue, _, isReset) => {
       isReset
         ? localStorage.removeItem(key)
