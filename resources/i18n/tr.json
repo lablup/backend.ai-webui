@@ -326,7 +326,11 @@
       "SluggedStrings": "Kesikli dizeler (>3 karakter)",
       "SessionNameAlreadyExist": "Oturum adı zaten mevcut",
       "SessionNameTooLong64": "Lütfen 64 veya daha az karakter girin.",
-      "PleaseFollowSessionNameRule": "Lütfen en az 4 harf, rakam, '.', '_' ve '-' kombinasyonunu girin."
+      "PleaseFollowSessionNameRule": "Lütfen en az 4 harf, rakam, '.', '_' ve '-' kombinasyonunu girin.",
+      "SessionNameTooShort": "Lütfen en az 4 karakter giriniz.",
+      "SessionNameShouldStartWith": "Bir alfabe harfi, bir sayı veya '_' ile başlamalıdır.",
+      "SessionNameShouldEndWith": "Bir alfabe harfi, bir sayı veya '_' ile bitmelidir.",
+      "SessionNameInvalidCharacter": "Bir adın ortasında yalnızca alfabe harfleri, sayılar ve '_' bulunabilir."
     },
     "Interactive": "İnteraktif",
     "Batch": "Toplu İş",

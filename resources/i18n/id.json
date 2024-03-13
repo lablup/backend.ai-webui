@@ -7,6 +7,12 @@
       "InteractiveModeDesc": "memungkinkan Anda untuk membuat, menguji, dan menjalankan kode secara interaktif melalui jupyter notebook, kode visual studio, dll.",
       "BatchModeDesc": "Anda dapat menjalankan kode Anda dengan beberapa node & cluster untuk menskalakan ide Anda",
       "AddEnvironmentVariable": "Menambahkan variabel lingkungan"
+    },
+    "Validation": {
+      "SessionNameTooShort": "Masukkan setidaknya 4 karakter.",
+      "SessionNameShouldStartWith": "Nama tersebut harus dimulai dengan huruf alfabet, angka, atau '_'.",
+      "SessionNameShouldEndWith": "Nama tersebut harus diakhiri dengan huruf alfabet, angka, atau '_'.",
+      "SessionNameInvalidCharacter": "Bagian tengah nama hanya boleh berisi huruf alfabet, angka, dan '_'."
     }
   },
   "button": {

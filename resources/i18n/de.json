@@ -326,7 +326,11 @@
       "SluggedStrings": "Geschliffene Zeichenfolgen (>3 Zeichen)",
       "SessionNameAlreadyExist": "Sitzungsname existiert bereits",
       "SessionNameTooLong64": "Bitte geben Sie maximal 64 Zeichen ein.",
-      "PleaseFollowSessionNameRule": "Bitte geben Sie eine Kombination aus mindestens 4 Buchstaben, Zahlen, „.“, „_“ und „-“ ein."
+      "PleaseFollowSessionNameRule": "Bitte geben Sie eine Kombination aus mindestens 4 Buchstaben, Zahlen, „.“, „_“ und „-“ ein.",
+      "SessionNameTooShort": "Bitte geben Sie mindestens 4 Zeichen ein.",
+      "SessionNameShouldStartWith": "Er muss mit einem Buchstaben des Alphabets, einer Zahl oder '_' beginnen.",
+      "SessionNameShouldEndWith": "Er muss mit einem Buchstaben des Alphabets, einer Zahl oder '_' enden.",
+      "SessionNameInvalidCharacter": "Die Mitte eines Namens darf nur Buchstaben des Alphabets, Zahlen und '_' enthalten."
     },
     "Interactive": "Interaktiv",
     "Batch": "Stapel",

@@ -326,7 +326,11 @@
       "SluggedStrings": "Cadeias de caracteres com slugged (>3 caracteres)",
       "SessionNameAlreadyExist": "O nome da sessão já existe",
       "SessionNameTooLong64": "Insira 64 caracteres ou menos.",
-      "PleaseFollowSessionNameRule": "Insira uma combinação de pelo menos 4 letras, números, '.', '_' e '-'."
+      "PleaseFollowSessionNameRule": "Insira uma combinação de pelo menos 4 letras, números, '.', '_' e '-'.",
+      "SessionNameTooShort": "Introduza pelo menos 4 caracteres.",
+      "SessionNameShouldStartWith": "Deve começar por uma letra do alfabeto, um número ou \"_\".",
+      "SessionNameShouldEndWith": "Deve terminar com uma letra do alfabeto, um número ou \"_\".",
+      "SessionNameInvalidCharacter": "O meio de um nome só pode conter letras do alfabeto, números e '_'."
     },
     "Interactive": "Interativo",
     "Batch": "Lote",

@@ -16,16 +16,38 @@ const SessionNameFormItem: React.FC<SessionNameFormItemProps> = ({
     <Form.Item
       label={t('session.launcher.SessionName')}
       name="sessionName"
+      // Original rule : /^(?=.{4,64}$)\w[\w.-]*\w$/
+      // https://github.com/lablup/backend.ai/blob/main/src/ai/backend/manager/api/session.py#L355-L356
       rules={[
+        {
+          min: 4,
+          message: t('session.Validation.SessionNameTooShort'),
+        },
         {
           max: 64,
           message: t('session.Validation.SessionNameTooLong64'),
         },
         {
-          pattern: /^(?:[a-zA-Z0-9][-a-zA-Z0-9._]{2,}[a-zA-Z0-9])?$/,
-          message: t(
-            'session.Validation.PleaseFollowSessionNameRule',
-          ).toString(),
+          validator(_, value) {
+            if (!/^\w/.test(value)) {
+              return Promise.reject(
+                t('session.Validation.SessionNameShouldStartWith'),
+              );
+            }
+
+            if (!/^[\w.-]*$/.test(value)) {
+              return Promise.reject(
+                t('session.Validation.SessionNameInvalidCharacter'),
+              );
+            }
+
+            if (!/\w$/.test(value) && value.length >= 4) {
+              return Promise.reject(
+                t('session.Validation.SessionNameShouldEndWith'),
+              );
+            }
+            return Promise.resolve();
+          },
         },
       ]}
       {...formItemProps}

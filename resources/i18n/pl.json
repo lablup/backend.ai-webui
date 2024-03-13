@@ -328,7 +328,11 @@
       "SluggedStrings": "Ucięte ciągi znaków (>3 znaki)",
       "SessionNameAlreadyExist": "Nazwa sesji już istnieje",
       "SessionNameTooLong64": "Wprowadź maksymalnie 64 znaki.",
-      "PleaseFollowSessionNameRule": "Wprowadź kombinację co najmniej 4 liter, cyfr, „.”, „_” i „-”."
+      "PleaseFollowSessionNameRule": "Wprowadź kombinację co najmniej 4 liter, cyfr, „.”, „_” i „-”.",
+      "SessionNameTooShort": "Wprowadź co najmniej 4 znaki.",
+      "SessionNameShouldStartWith": "Musi zaczynać się od litery alfabetu, cyfry lub znaku \"_\".",
+      "SessionNameShouldEndWith": "Musi kończyć się literą alfabetu, cyfrą lub znakiem \"_\".",
+      "SessionNameInvalidCharacter": "Środek nazwy może zawierać tylko litery alfabetu, cyfry i \"_\"."
     },
     "Interactive": "Interaktywny",
     "Batch": "Partia",

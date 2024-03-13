@@ -326,7 +326,11 @@
       "SluggedStrings": "Rentetan slugged (>3 aksara)",
       "SessionNameAlreadyExist": "Nama sesi sudah wujud",
       "SessionNameTooLong64": "Sila masukkan 64 aksara atau kurang.",
-      "PleaseFollowSessionNameRule": "Sila masukkan gabungan sekurang-kurangnya 4 huruf, nombor, '.', '_' dan '-'."
+      "PleaseFollowSessionNameRule": "Sila masukkan gabungan sekurang-kurangnya 4 huruf, nombor, '.', '_' dan '-'.",
+      "SessionNameTooShort": "Sila masukkan sekurang-kurangnya 4 aksara.",
+      "SessionNameShouldStartWith": "Ia mesti bermula dengan huruf abjad, nombor atau '_'.",
+      "SessionNameShouldEndWith": "Ia mesti berakhir dengan huruf abjad, nombor atau '_'.",
+      "SessionNameInvalidCharacter": "Bahagian tengah nama hanya boleh mengandungi huruf abjad, nombor dan '_'."
     },
     "Interactive": "Interaktif",
     "Batch": "Kumpulan",

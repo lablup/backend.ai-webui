@@ -326,7 +326,11 @@
       "SluggedStrings": "最低4文字以上の固有の文字列で入力してください。",
       "SessionNameAlreadyExist": "同じ名前のセッションが既にあります",
       "SessionNameTooLong64": "64文字以下で入力してください。",
-      "PleaseFollowSessionNameRule": "少なくとも4文字以上の文字、数字、「.」、「_」、「-」の組み合わせで入力してください。"
+      "PleaseFollowSessionNameRule": "少なくとも4文字以上の文字、数字、「.」、「_」、「-」の組み合わせで入力してください。",
+      "SessionNameTooShort": "4文字以上入力してください。",
+      "SessionNameShouldStartWith": "アルファベット、数字、または'_'で始まっていなければならない。",
+      "SessionNameShouldEndWith": "アルファベット、数字、または'_'で終わっていなければならない。",
+      "SessionNameInvalidCharacter": "名前の真ん中にはアルファベット、数字、'_'しか入れられません。"
     },
     "Interactive": "インタラクティブ",
     "Batch": "バッチ",

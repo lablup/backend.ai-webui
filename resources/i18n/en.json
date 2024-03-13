@@ -360,7 +360,11 @@
       "EnterValidSessionName": "Enter valid session name",
       "SessionNameAlreadyExist": "Session name already exists",
       "SessionNameTooLong64": "Please enter 64 characters or less.",
-      "PleaseFollowSessionNameRule": "Please enter a combination of at least 4 letters, numbers, '.', '_', and '-'."
+      "PleaseFollowSessionNameRule": "Please enter a combination of at least 4 letters, numbers, '.', '_', and '-'.",
+      "SessionNameTooShort": "Please enter at least 4 characters.",
+      "SessionNameShouldStartWith": "It must start with an alphabet letter, a number, or '_'.",
+      "SessionNameShouldEndWith": "It must end with an alphabet letter, a number, or '_'.",
+      "SessionNameInvalidCharacter": "The middle of a name can only contain alphabet letters, numbers, and '_'."
     },
     "EnvironmentInfo": "Environment Info",
     "DownloadingSessionLogs": "Downloading session logs.",

@@ -998,7 +998,11 @@
       "SessionNameRequired": "Istunnon nimi vaaditaan",
       "SluggedStrings": "Slugged-merkkijonot (>3 merkkiä)",
       "SessionNameTooLong64": "Anna enintään 64 merkkiä.",
-      "PleaseFollowSessionNameRule": "Kirjoita vähintään 4 kirjaimen, numeroiden, '.', '_' ja '-' yhdistelmä."
+      "PleaseFollowSessionNameRule": "Kirjoita vähintään 4 kirjaimen, numeroiden, '.', '_' ja '-' yhdistelmä.",
+      "SessionNameTooShort": "Kirjoita vähintään 4 merkkiä.",
+      "SessionNameShouldStartWith": "Sen on alettava aakkosilla, numerolla tai '_'.",
+      "SessionNameShouldEndWith": "Sen on päätyttävä aakkosiin, numeroon tai '_'.",
+      "SessionNameInvalidCharacter": "Nimen keskellä voi olla vain aakkosia, numeroita ja '_'."
     },
     "XRDPconnection": "RDP-yhteys",
     "applauncher": {
