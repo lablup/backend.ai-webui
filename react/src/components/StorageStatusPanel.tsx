@@ -170,11 +170,12 @@ const StorageStatusPanel: React.FC<{
       ? ((createdCount / maxVfolderCount) * 100)?.toFixed(2)
       : 0
   ) as number;
-
-  return (
-    <Card size="small" title={t('data.StorageStatus')}>
-      <Descriptions bordered column={columnSetting} size="small">
-        <Descriptions.Item label={t('data.NumberOfFolders')}>
+  const descriptionItem: DescriptionsProps['items'] = [
+    {
+      key: '1',
+      label: t('data.NumberOfFolders'),
+      children: (
+        <>
           <Progress
             size={[200, 15]}
             percent={numberOfFolderPercent}
@@ -208,17 +209,21 @@ const StorageStatusPanel: React.FC<{
               {invitedCount}
             </Flex>
           </Flex>
-        </Descriptions.Item>
-        <Descriptions.Item
-          label={
-            <div>
-              {t('data.QuotaPerStorageVolume')}
-              <Tooltip title={t('data.HostDetails')}>
-                <Button type="link" icon={<InfoCircleOutlined />} />
-              </Tooltip>
-            </div>
-          }
-        >
+        </>
+      ),
+    },
+    {
+      key: '2',
+      label: (
+        <div>
+          {t('data.QuotaPerStorageVolume')}
+          <Tooltip title={t('data.HostDetails')}>
+            <Button type="link" icon={<InfoCircleOutlined />} />
+          </Tooltip>
+        </div>
+      ),
+      children: (
+        <>
           <Flex
             wrap="wrap"
             justify="between"
@@ -279,13 +284,24 @@ const StorageStatusPanel: React.FC<{
               style={{ margin: '25px auto' }}
             />
           )}
-        </Descriptions.Item>
-        {user?.id && (
-          <Descriptions.Item label="User ID" span={4}>
-            <Typography.Text copyable>{user?.id}</Typography.Text>
-          </Descriptions.Item>
-        )}
-      </Descriptions>
+        </>
+      ),
+    },
+    {
+      key: '3',
+      label: t('data.userQuotaScopeId'),
+      children: <Typography.Text copyable>{user?.id}</Typography.Text>,
+    },
+  ];
+
+  return (
+    <Card size="small" title={t('data.StorageStatus')}>
+      <Descriptions
+        bordered
+        column={columnSetting}
+        size="small"
+        items={descriptionItem}
+      />
     </Card>
   );
 };
