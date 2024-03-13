@@ -708,7 +708,7 @@
     "New": "Neu",
     "Add": "hinzufügen",
     "CloningIsOnlyPossibleSameHost": "Derzeit ist das Klonen nur auf demselben Host möglich.",
-    "userQuotaScopeId": "Benutzer-UUID"
+    "userQuotaScopeId": "Kontingentumfang-ID"
   },
   "dialog": {
     "warning": {

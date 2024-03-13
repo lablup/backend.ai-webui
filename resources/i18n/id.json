@@ -708,7 +708,7 @@
     "New": "Baru",
     "Add": "Menambahkan",
     "CloningIsOnlyPossibleSameHost": "Saat ini, kloning hanya dapat dilakukan pada host yang sama.",
-    "userQuotaScopeId": "UUID pengguna"
+    "userQuotaScopeId": "ID Cakupan Kuota"
   },
   "dialog": {
     "warning": {

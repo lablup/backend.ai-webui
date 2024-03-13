@@ -710,7 +710,7 @@
     "New": "Nowy",
     "Add": "Dodaj",
     "CloningIsOnlyPossibleSameHost": "Obecnie klonowanie jest możliwe tylko na tym samym hoście.",
-    "userQuotaScopeId": "UUID użytkownika"
+    "userQuotaScopeId": "Identyfikator zakresu przydziału"
   },
   "dialog": {
     "warning": {

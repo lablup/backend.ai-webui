@@ -380,7 +380,7 @@
     "New": "Nuevo",
     "Add": "Añadir",
     "CloningIsOnlyPossibleSameHost": "Actualmente, la clonación sólo es posible en el mismo host.",
-    "userQuotaScopeId": "UUID de usuario"
+    "userQuotaScopeId": "ID de alcance de cuota"
   },
   "dialog": {
     "ErrorOccurred": "Se ha producido un error",

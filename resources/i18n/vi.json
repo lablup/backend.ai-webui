@@ -708,7 +708,7 @@
     "New": "Mới",
     "Add": "Thêm vào",
     "CloningIsOnlyPossibleSameHost": "Hiện tại, việc nhân bản chỉ có thể thực hiện được trên cùng một máy chủ.",
-    "userQuotaScopeId": "UUID người dùng"
+    "userQuotaScopeId": "ID phạm vi hạn ngạch"
   },
   "dialog": {
     "warning": {

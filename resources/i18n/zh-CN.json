@@ -708,7 +708,7 @@
     "New": "新的",
     "Add": "添加",
     "CloningIsOnlyPossibleSameHost": "目前，克隆只能在同一主机上进行。",
-    "userQuotaScopeId": "用户UUID"
+    "userQuotaScopeId": "配额范围 ID"
   },
   "dialog": {
     "warning": {

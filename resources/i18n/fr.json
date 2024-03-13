@@ -708,7 +708,7 @@
     "New": "Nouveau",
     "Add": "Ajouter",
     "CloningIsOnlyPossibleSameHost": "Actuellement, le clonage n'est possible que sur le même hôte.",
-    "userQuotaScopeId": "UUID de l'utilisateur"
+    "userQuotaScopeId": "ID de portée du quota"
   },
   "dialog": {
     "warning": {

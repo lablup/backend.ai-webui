@@ -708,7 +708,7 @@
     "New": "Yeni",
     "Add": "Ekle",
     "CloningIsOnlyPossibleSameHost": "Şu anda klonlama yalnızca aynı ana bilgisayarda mümkündür.",
-    "userQuotaScopeId": "Kullanıcı UUID'si"
+    "userQuotaScopeId": "Kota Kapsam Kimliği"
   },
   "dialog": {
     "warning": {
