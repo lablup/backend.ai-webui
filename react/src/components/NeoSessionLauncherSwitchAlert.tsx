@@ -39,7 +39,15 @@ const NeoSessionLauncherSwitchAlert: React.FC<
             <Segmented
               options={[
                 {
-                  label: t('session.launcher.PreviousLauncher'),
+                  label: (
+                    <Typography.Text
+                      style={{
+                        color: !is2409Launcher ? undefined : token.colorPrimary,
+                      }}
+                    >
+                      {t('session.launcher.PreviousLauncher')}
+                    </Typography.Text>
+                  ),
                   value: 'current',
                 },
                 {
