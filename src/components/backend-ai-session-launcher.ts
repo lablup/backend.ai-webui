@@ -3261,6 +3261,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else if (typeof atom_device !== 'undefined' && Number(atom_device) > 0) {
       gpu_type = 'atom.device';
       gpu_value = atom_device;
+    } else if (
+      typeof warboy_device !== 'undefined' &&
+      Number(warboy_device) > 0
+    ) {
+      gpu_type = 'warboy.device';
+      gpu_value = warboy_device;
     } else if (typeof lpu_device !== 'undefined' && Number(lpu_device) > 0) {
       gpu_type = 'lpu.device';
       gpu_value = lpu_device;
