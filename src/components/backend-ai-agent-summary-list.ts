@@ -744,7 +744,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   <div class="layout horizontal start resource-indicator">
                     <img
                       class="indicator-icon fg green"
-                      src="/resources/icons/lpu.svg"
+                      src="/resources/icons/npu_generic.svg"
                     />
                     <span class="monospace" style="padding-left:5px;">
                       ${rowData.item.used_lpu_slots}/${rowData.item.lpu_slots}

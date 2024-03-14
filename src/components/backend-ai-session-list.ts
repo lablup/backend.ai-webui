@@ -3250,7 +3250,7 @@ ${rowData.item[this.sessionNameField]}</pre
                 ? html`
                     <img
                       class="indicator-icon fg green"
-                      src="/resources/icons/lpu.svg"
+                      src="/resources/icons/npu_generic.svg"
                     />
                     <span>${rowData.item.lpu_slot}</span>
                     <span class="indicator">LPU</span>
