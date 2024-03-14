@@ -142,7 +142,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     'ipu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'IPU'],
     'atom.device': ['/resources/icons/rebel.svg', 'ATOM'],
     'warboy.device': ['/resources/icons/furiosa.svg', 'Warboy'],
-    'lpu.device': ['/resources/icons/furiosa.svg', 'LPU'],
+    'lpu.device': ['/resources/icons/lpu.svg', 'LPU'],
   };
 
   const content =

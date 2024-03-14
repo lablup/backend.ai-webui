@@ -2709,14 +2709,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               lpu_device_metric.max = Math.min(
                 parseInt(lpu_device_metric.max),
                 parseInt(this.userResourceLimit['lpu.device']),
-                available_slot['cuda_device'],
-                this.max_cuda_device_per_container,
+                available_slot['lpu_device'],
+                this.max_lpu_device_per_container,
               );
             } else {
               lpu_device_metric.max = Math.min(
                 parseInt(this.userResourceLimit['lpu.device']),
-                parseInt(available_slot['cuda_device']),
-                this.max_cuda_device_per_container,
+                parseInt(available_slot['lpu_device']),
+                this.max_lpu_device_per_container,
               );
             }
           } else {
