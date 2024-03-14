@@ -52,8 +52,8 @@ const KeypairInfoModal = React.lazy(
   () => import('./components/KeypairInfoModal'),
 );
 const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
-
 const ErrorLogList = React.lazy(() => import('./components/ErrorLogList'));
+const UserList = React.lazy(() => import('./components/UserList'));
 
 const BatchSessionScheduledTimeSetting = React.lazy(
   () => import('./components/BatchSessionScheduledTimeSetting'),
@@ -111,7 +111,12 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <UserInfoModal draggable />
+        <UserInfoModal
+          draggable
+          onRequestClose={() => {
+            props.dispatchEvent('close', null);
+          }}
+        />
       </DefaultProviders>
     );
   }),
@@ -122,7 +127,15 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <UserSettingsModal draggable />
+        <UserSettingsModal
+          draggable
+          onRequestOk={() => {
+            props.dispatchEvent('ok', null);
+          }}
+          onRequestClose={() => {
+            props.dispatchEvent('close', null);
+          }}
+        />
       </DefaultProviders>
     );
   }),
@@ -277,6 +290,17 @@ customElements.define(
             props.dispatchEvent('change', value);
           }}
         />
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-user-list',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <UserList />
       </DefaultProviders>
     );
   }),

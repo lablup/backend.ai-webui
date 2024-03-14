@@ -537,7 +537,8 @@
     "Status": "现状",
     "NoUserToDisplay": "无用户显示",
     "EnableSudoSession": "啟用 sudo 會話",
-    "MainAccessKey": "主存取密鑰"
+    "MainAccessKey": "主存取密鑰",
+    "ConfirmSignoutUser": "您正在停用該使用者："
   },
   "data": {
     "Folders": "文件夾",

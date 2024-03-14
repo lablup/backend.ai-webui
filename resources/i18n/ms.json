@@ -537,7 +537,8 @@
     "Status": "Status",
     "NoUserToDisplay": "Tiada Pengguna untuk dipaparkan",
     "EnableSudoSession": "Dayakan sesi sudo",
-    "MainAccessKey": "Kunci Akses Utama"
+    "MainAccessKey": "Kunci Akses Utama",
+    "ConfirmSignoutUser": "Anda sedang menyahaktifkan pengguna ini:"
   },
   "data": {
     "Folders": "Folder",

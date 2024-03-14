@@ -83,6 +83,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({ type: Boolean }) enableParsingStoragePermissions = false;
   @property({ type: String }) activeUserInnerTab = 'active';
   @property({ type: String }) activeCredentialInnerTab = 'active';
+  @property({ type: Boolean }) isSupportReactUserNode = false;
   @query('#active-credential-list')
   activeCredentialList!: BackendAICredentialList;
   @query('#inactive-credential-list')
@@ -284,6 +285,8 @@ export default class BackendAICredentialView extends BackendAIPage {
         this.isSuperAdmin = true;
       }
     }
+    this.isSupportReactUserNode =
+      globalThis.backendaiclient?.supports('user_nodes');
     this._activeTab = 'user-lists';
     this._addValidatorToPolicyInput();
     this._getResourceInfo();
@@ -312,12 +315,16 @@ export default class BackendAICredentialView extends BackendAIPage {
     await this.updateComplete;
     if (active === false) {
       this.resourcePolicyList.active = false;
-      this.activeUserList.active = false;
+      !this.isSupportReactUserNode
+        ? (this.activeUserList.active = false)
+        : undefined;
       this._status = 'inactive';
       return;
     }
     this.resourcePolicyList.active = true;
-    this.activeUserList.active = true;
+    !this.isSupportReactUserNode
+      ? (this.activeUserList.active = true)
+      : undefined;
     this._status = 'active';
     if (
       typeof globalThis.backendaiclient === 'undefined' ||
@@ -740,18 +747,21 @@ export default class BackendAICredentialView extends BackendAIPage {
       els[x].style.display = 'none';
     }
     this._activeTab = tab.title;
-    (
-      this.shadowRoot?.querySelector('#' + tab.title) as HTMLElement
-    ).style.display = 'block';
+    const displayedList = this.shadowRoot?.querySelector(
+      '#' + tab.title,
+    ) as HTMLElement;
+    displayedList ? (displayedList.style.display = 'block') : undefined;
     const tabKeyword = this._activeTab.substring(0, this._activeTab.length - 1); // to remove '-s'.
     let innerTab;
     // show inner tab(active) after selecting outer tab
     switch (this._activeTab) {
       case 'user-lists':
-        innerTab = this.shadowRoot?.querySelector(
-          'mwc-tab[title=' + this.activeUserInnerTab + '-' + tabKeyword + ']',
-        );
-        this._showList(innerTab);
+        if (!this.isSupportReactUserNode) {
+          innerTab = this.shadowRoot?.querySelector(
+            'mwc-tab[title=' + this.activeUserInnerTab + '-' + tabKeyword + ']',
+          );
+          this._showList(innerTab);
+        }
         break;
       case 'credential-lists':
         innerTab = this.shadowRoot?.querySelector(
@@ -1220,33 +1230,62 @@ export default class BackendAICredentialView extends BackendAIPage {
                 : html``
             }
           </h3>
-          <div id="user-lists" class="admin item tab-content card">
-            <h4 class="horizontal flex center center-justified layout">
-              <mwc-tab-bar class="sub-bar">
-                <mwc-tab title="active-user-list" label="${_t(
-                  'credential.Active',
-                )}"
-                    @click="${(e) => this._showList(e.target)}"></mwc-tab>
-                <mwc-tab title="inactive-user-list" label="${_t(
-                  'credential.Inactive',
-                )}"
-                    @click="${(e) => this._showList(e.target)}"></mwc-tab>
-              </mwc-tab-bar>
-              <span class="flex"></span>
-              <mwc-button raised id="add-user" icon="add" label="${_t(
-                'credential.CreateUser',
-              )}"
-                  @click="${this._launchUserAddDialog}"></mwc-button>
-            </h4>
-            <div>
-              <backend-ai-user-list class="list-content" id="active-user-list" condition="active" ?active="${
-                this._activeTab === 'user-lists'
-              }"></backend-ai-user-list>
-              <backend-ai-user-list class="list-content" id="inactive-user-list" style="display:none;" ?active="${
-                this._activeTab === 'user-lists'
-              }"></backend-ai-user-list>
-            </div>
-          </div>
+          ${
+            this.isSupportReactUserNode
+              ? html`
+                  <backend-ai-react-user-list
+                    style="display: ${this._activeTab === 'user-lists'
+                      ? 'block'
+                      : 'none'};"
+                  ></backend-ai-react-user-list>
+                `
+              : html`
+                  <div
+                    id="user-lists"
+                    class="admin item tab-content card"
+                    style="display: ${this._activeTab === 'user-lists'
+                      ? 'block'
+                      : 'none'};"
+                  >
+                    <h4 class="horizontal flex center center-justified layout">
+                      <mwc-tab-bar class="sub-bar">
+                        <mwc-tab
+                          title="active-user-list"
+                          label="${_t('credential.Active')}"
+                          @click="${(e) => this._showList(e.target)}"
+                        ></mwc-tab>
+                        <mwc-tab
+                          title="inactive-user-list"
+                          label="${_t('credential.Inactive')}"
+                          @click="${(e) => this._showList(e.target)}"
+                        ></mwc-tab>
+                      </mwc-tab-bar>
+                      <span class="flex"></span>
+                      <mwc-button
+                        raised
+                        id="add-user"
+                        icon="add"
+                        label="${_t('credential.CreateUser')}"
+                        @click="${this._launchUserAddDialog}"
+                      ></mwc-button>
+                    </h4>
+                    <div>
+                      <backend-ai-user-list
+                        class="list-content"
+                        id="active-user-list"
+                        condition="active"
+                        ?active="${this._activeTab === 'user-lists'}"
+                      ></backend-ai-user-list>
+                      <backend-ai-user-list
+                        class="list-content"
+                        id="inactive-user-list"
+                        style="display:none;"
+                        ?active="${this._activeTab === 'user-lists'}"
+                      ></backend-ai-user-list>
+                    </div>
+                  </div>
+                `
+          }
           <div id="credential-lists" class="item tab-content card" style="display:none;">
             <h4 class="horizontal flex center center-justified layout">
               <mwc-tab-bar class="sub-bar">

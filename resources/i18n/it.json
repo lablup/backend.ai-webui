@@ -537,7 +537,8 @@
     "Status": "Stato",
     "NoUserToDisplay": "Nessun utente da visualizzare",
     "EnableSudoSession": "Abilita la sessione sudo",
-    "MainAccessKey": "Chiave di accesso principale"
+    "MainAccessKey": "Chiave di accesso principale",
+    "ConfirmSignoutUser": "Stai disattivando questo utente:"
   },
   "data": {
     "Folders": "cartelle",

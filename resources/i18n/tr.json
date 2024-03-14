@@ -537,7 +537,8 @@
     "Status": "Durum",
     "NoUserToDisplay": "Görüntülenecek Kullanıcı Yok",
     "EnableSudoSession": "Sudo oturumunu etkinleştir",
-    "MainAccessKey": "Ana Erişim Anahtarı"
+    "MainAccessKey": "Ana Erişim Anahtarı",
+    "ConfirmSignoutUser": "Bu kullanıcıyı devre dışı bırakıyorsunuz:"
   },
   "data": {
     "Folders": "klasörler",

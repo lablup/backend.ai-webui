@@ -537,7 +537,8 @@
     "Status": "状態",
     "NoUserToDisplay": "ユーザー情報がありません。",
     "EnableSudoSession": "sudoセッションを有効にする",
-    "MainAccessKey": "メインアクセスキー"
+    "MainAccessKey": "メインアクセスキー",
+    "ConfirmSignoutUser": "このユーザーを非アクティブ化しています:"
   },
   "data": {
     "Folders": "フォルダー",

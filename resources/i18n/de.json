@@ -537,7 +537,8 @@
     "Status": "Status",
     "NoUserToDisplay": "Keine Benutzer zum Anzeigen",
     "EnableSudoSession": "Sudo-Sitzung aktivieren",
-    "MainAccessKey": "Hauptzugangsschlüssel"
+    "MainAccessKey": "Hauptzugangsschlüssel",
+    "ConfirmSignoutUser": "Sie inaktivieren diesen Benutzer:"
   },
   "data": {
     "Folders": "Ordner",

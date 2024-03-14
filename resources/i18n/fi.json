@@ -209,7 +209,8 @@
       "ValidationFailed": "Validointi epäonnistui"
     },
     "EnableSudoSession": "Ota sudo-istunto käyttöön",
-    "MainAccessKey": "Pääkäyttöavain"
+    "MainAccessKey": "Pääkäyttöavain",
+    "ConfirmSignoutUser": "Olet inaktivoimassa tätä käyttäjää:"
   },
   "data": {
     "Allowslettersnumbersand-_": "Sallii kirjaimet, numerot ja -_",
