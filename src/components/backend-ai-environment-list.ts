@@ -1616,7 +1616,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="cpu"
                 step="1"
                 markers
-                max="8"
+                max=${this._range['cpu'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1631,7 +1631,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="mem"
                 markers
                 step="1"
-                max="12"
+                max=${this._range['mem'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1647,7 +1647,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="cuda-gpu"
                 markers
                 step="1"
-                max="8"
+                max=${this._range['cuda-gpu'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1663,7 +1663,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="cuda-fgpu"
                 markers
                 step="1"
-                max="8"
+                max=${this._range['cuda-fgpu'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1679,7 +1679,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="rocm-gpu"
                 markers
                 step="1"
-                max="8"
+                max=${this._range['rocm-gpu'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1695,7 +1695,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="tpu"
                 markers
                 step="1"
-                max="5"
+                max=${this._range['tpu'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1711,7 +1711,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="ipu"
                 markers
                 step="1"
-                max="5"
+                max=${this._range['ipu'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1727,7 +1727,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="atom"
                 markers
                 step="1"
-                max="5"
+                max=${this._range['atom'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1743,7 +1743,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="warboy"
                 markers
                 step="1"
-                max="5"
+                max=${this._range['warboy'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
