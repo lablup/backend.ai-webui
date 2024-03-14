@@ -151,6 +151,7 @@ export function iSizeToSize(
   sizeWithUnit: string | undefined,
   targetSizeUnit?: SizeUnit,
   fixed: number = 2,
+  round: boolean = false,
 ):
   | {
       number: number;
@@ -174,7 +175,9 @@ export function iSizeToSize(
     : sizeIndex;
   const targetBytes = bytes / Math.pow(1024, targetIndex);
   // const numberFixed = targetBytes.toFixed(fixed);
-  const numberFixed = toFixedFloorWithoutTrailingZeros(targetBytes, fixed);
+  const numberFixed = round
+    ? targetBytes.toFixed(fixed)
+    : toFixedFloorWithoutTrailingZeros(targetBytes, fixed);
   return {
     number: targetBytes,
     numberFixed,

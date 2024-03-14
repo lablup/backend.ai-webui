@@ -727,7 +727,7 @@ export default class PipelineList extends BackendAIPage {
       </div>
       <vaadin-grid
         id="pipeline-list"
-        theme="row-stripes column-borders compact wrap-cell-content"
+        theme="row-stripes column-borders compact wrap-cell-content dark"
         aria-label="Pipeline List"
         .items="${this.pipelines}"
       >

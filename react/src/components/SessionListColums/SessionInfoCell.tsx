@@ -4,13 +4,11 @@ import {
 } from '../../hooks';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import Flex from '../Flex';
-import ImageMetaIcon from '../ImageMetaIcon';
-import SessionKernelTag from '../SessionKernelTag';
 import { SessionInfoCellFragment$key } from './__generated__/SessionInfoCellFragment.graphql';
 import { EditOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Typography, theme } from 'antd';
+import { Button, Form, FormInstance, Input, Typography, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
@@ -32,8 +30,9 @@ const isPreparing = (status: string = '') => {
 
 const SessionInfoCell: React.FC<{
   sessionFrgmt: SessionInfoCellFragment$key;
+  sessionNameList: string[];
   onRename?: () => void;
-}> = ({ sessionFrgmt, onRename }) => {
+}> = ({ sessionFrgmt, sessionNameList, onRename }) => {
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
   const session = useFragment(
@@ -60,7 +59,7 @@ const SessionInfoCell: React.FC<{
     },
   });
 
-  const [form] = Form.useForm();
+  const formRef = useRef<FormInstance>(null);
   const { t } = useTranslation();
 
   const [editing, setEditing] = useState(false);
@@ -71,18 +70,21 @@ const SessionInfoCell: React.FC<{
     baiClient.email === session.user_email;
 
   const save = () => {
-    form.validateFields().then(({ name }) => {
-      setEditing(false);
-      setOptimisticName(name);
-      mutation.mutate(name, {
-        onSuccess: (result) => {
-          onRename && onRename();
-        },
-        onError: (error) => {
-          setOptimisticName(session.name);
-        },
-      });
-    });
+    formRef.current
+      ?.validateFields()
+      .then(({ name }) => {
+        setEditing(false);
+        setOptimisticName(name);
+        mutation.mutate(name, {
+          onSuccess: (result) => {
+            onRename && onRename();
+          },
+          onError: (error) => {
+            setOptimisticName(session.name);
+          },
+        });
+      })
+      .catch(() => {});
   };
 
   const isPendingRename = mutation.isLoading || optimisticName !== session.name;
@@ -90,62 +92,69 @@ const SessionInfoCell: React.FC<{
   // sessions[objectKey].icon = this._getKernelIcon(session.image);
   //         sessions[objectKey].sessionTags = this._getKernelInfo(session.image);
   return (
-    <Flex direction="column">
-      <Flex direction="row">
-        <Form form={form}>
-          {editing ? (
-            <Form.Item
-              style={{ margin: 0 }}
-              name={'name'}
-              rules={[
-                {
-                  required: true,
-                },
-                {
-                  max: 64,
-                },
-                {
-                  pattern: /^(?:[a-zA-Z0-9][-a-zA-Z0-9._]{2,}[a-zA-Z0-9])?$/,
-                  message: t(
-                    'session.Validation.EnterValidSessionName',
-                  ).toString(),
-                },
-              ]}
-            >
-              <Input
-                autoFocus
-                onPressEnter={() => save()}
-                onKeyUp={(e) => {
-                  if (e.key === 'Escape') setEditing(false);
-                }}
-              />
-            </Form.Item>
-          ) : (
-            <>
-              <Typography.Text style={{ opacity: isPendingRename ? 0.5 : 1 }}>
-                {optimisticName}
-              </Typography.Text>
-              {editable && (
-                <Button
-                  loading={isPendingRename}
-                  type="text"
-                  icon={<EditOutlined />}
-                  style={{ color: token.colorLink }}
-                  onClick={() => {
-                    form.setFieldsValue({
-                      name: session.name,
-                    });
-                    setEditing(true);
-                  }}
-                ></Button>
-              )}
-            </>
+    <Form ref={formRef}>
+      {editing ? (
+        <Form.Item
+          style={{ margin: 0 }}
+          name={'name'}
+          rules={[
+            {
+              required: true,
+            },
+            {
+              max: 64,
+            },
+            {
+              pattern: /^(?:[a-zA-Z0-9][-a-zA-Z0-9._]{2,}[a-zA-Z0-9])?$/,
+              message: t('session.Validation.EnterValidSessionName'),
+            },
+            () => ({
+              validator(_, value) {
+                if (sessionNameList.includes(String(value))) {
+                  return Promise.reject(
+                    new Error(t('session.Validation.SessionNameAlreadyExist')),
+                  );
+                }
+                return Promise.resolve();
+              },
+            }),
+          ]}
+        >
+          <Input
+            autoFocus
+            onPressEnter={() => save()}
+            onKeyUp={(e) => {
+              if (e.key === 'Escape') setEditing(false);
+            }}
+          />
+        </Form.Item>
+      ) : (
+        <Flex style={{ maxWidth: 250 }}>
+          <Typography.Text
+            ellipsis={{
+              tooltip: { overlayInnerStyle: { width: 'max-content' } },
+            }}
+            style={{ opacity: isPendingRename ? 0.5 : 1 }}
+          >
+            {optimisticName}
+          </Typography.Text>
+          {editable && (
+            <Button
+              loading={isPendingRename}
+              type="text"
+              icon={<EditOutlined />}
+              style={{ color: token.colorLink }}
+              onClick={() => {
+                formRef.current?.setFieldsValue({
+                  name: session.name,
+                });
+                setEditing(true);
+              }}
+            ></Button>
           )}
-        </Form>
-      </Flex>
-      <ImageMetaIcon image={session.image} />
-      <SessionKernelTag image={session.image} />
-    </Flex>
+        </Flex>
+      )}
+    </Form>
   );
 };
 

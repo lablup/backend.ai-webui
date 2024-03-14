@@ -147,7 +147,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 229px);
+          height: calc(100vh - 199px);
+          /* height: calc(100vh - 229px); */
         }
         h4 {
           font-weight: 200;
@@ -170,7 +171,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         }
         span.resource-limit-title {
           font-size: 14px;
-          font-family: var(--general-font-family);
+          font-family: var(--token-fontFamily);
           text-align: left;
           width: 70px;
         }
@@ -195,6 +196,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           display: grid;
           grid-template-columns: 4fr 4fr 4fr 1fr;
           margin-bottom: 10px;
+          gap: 10px;
         }
         mwc-button.operation {
           margin: auto 10px;
@@ -205,16 +207,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           margin: 10px auto;
           background-image: none;
           --mdc-button-outline-width: 2px;
-          --mdc-button-disabled-outline-color: var(--general-sidebar-color);
-          --mdc-button-disabled-ink-color: var(--general-sidebar-color);
-          --mdc-theme-primary: #38bd73;
-          --mdc-theme-on-primary: #38bd73;
-        }
-        mwc-button,
-        mwc-button[unelevated] {
-          background-image: none;
-          --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-theme-on-primary: var(--general-button-color);
         }
         mwc-button[disabled] {
           background-image: var(--general-sidebar-color);
@@ -223,14 +215,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           --mdc-button-disabled-ink-color: var(--general-sidebar-color);
         }
         mwc-select {
-          --mdc-theme-primary: var(--general-sidebar-color);
           --mdc-menu-item-height: auto;
         }
         mwc-textfield {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-font-family: var(--token-fontFamily);
         }
         mwc-slider {
           width: 150px;
@@ -1291,7 +1282,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 <div class="layout horizontal configuration">
                   <img
                     class="indicator-icon fg green"
-                    src="/resources/icons/ROCm.png"
+                    src="/resources/icons/rocm.svg"
                   />
                   <span>${rowData.item.rocm_device_limit_min}</span>
                   ~
@@ -1570,7 +1561,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       </h4>
       <div class="list-wrapper">
         <vaadin-grid
-          theme="row-stripes column-borders compact"
+          theme="row-stripes column-borders compact dark"
           aria-label="Environments"
           id="testgrid"
           .items="${this.images}"
@@ -1839,7 +1830,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             <div>${_t('environment.Port')}</div>
             <div>${_t('environment.Action')}</div>
           </div>
-          ${this.servicePorts.map(
+          ${this.servicePorts?.map(
             (item, index) => html`
               <div class="row">
                 <mwc-textfield type="text" value=${item.app}></mwc-textfield>

@@ -1,4 +1,8 @@
-import { useBackendAIImageMetaData } from '../hooks';
+import {
+  useBackendAIImageMetaData,
+  useSuspendedBackendaiClient,
+} from '../hooks';
+import { useThemeMode } from '../hooks/useThemeMode';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 // @ts-ignore
@@ -35,6 +39,7 @@ export type ImageEnvironmentFormInput = {
     environment: string;
     version: string;
     image: Image | undefined;
+    manual?: string;
   };
 };
 
@@ -80,13 +85,15 @@ const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
 > = ({ filter, showPrivate }) => {
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
-  Form.useWatch('environments', { form, preserve: true });
+  const environments = Form.useWatch('environments', { form, preserve: true });
+  const baiClient = useSuspendedBackendaiClient();
 
   const [environmentSearch, setEnvironmentSearch] = useState('');
   const [versionSearch, setVersionSearch] = useState('');
   const { t } = useTranslation();
   const [metadata, { getImageMeta }] = useBackendAIImageMetaData();
   const { token } = theme.useToken();
+  const { isDarkMode } = useThemeMode();
 
   const envSelectRef = useRef<RefSelectProps>(null);
   const versionSelectRef = useRef<RefSelectProps>(null);
@@ -122,50 +129,85 @@ const ImageEnvironmentSelectFormItems: React.FC<
     },
   );
 
-  // console.log('nextEnvironmentName form', form.getFieldValue('environments'));
-  // console.log('nextEnvironmentName form', currentEnvironmentsFormData);
   // If not initial value, select first value
   // auto select when relative field is changed
   useEffect(() => {
-    // if not initial value, select first value
-    const nextEnvironmentName =
-      form.getFieldValue('environments')?.environment ||
-      imageGroups[0]?.environmentGroups[0]?.environmentName;
-
-    let nextEnvironmentGroup: ImageGroup['environmentGroups'][0] | undefined;
-    _.find(imageGroups, (group) => {
-      return _.find(group.environmentGroups, (environment) => {
-        if (environment.environmentName === nextEnvironmentName) {
-          nextEnvironmentGroup = environment;
-          return true;
-        } else {
-          return false;
-        }
-      });
-    });
-
-    // if current version does'nt exist in next environment group, select a version of the first image of next environment group
-    if (
-      !_.find(
-        nextEnvironmentGroup?.images,
-        (image) =>
-          form.getFieldValue('environments')?.version ===
-          getImageFullName(image),
-      )
-    ) {
-      const nextNewImage = nextEnvironmentGroup?.images[0];
-      if (nextNewImage) {
+    if (!_.isEmpty(environments?.manual)) {
+      // set undefined fields related to environments when manual is set
+      if (environments.environment || environments.version) {
         form.setFieldsValue({
           environments: {
-            environment: nextEnvironmentName,
-            version: getImageFullName(nextNewImage),
-            image: nextNewImage,
+            environment: undefined,
+            version: undefined,
+            image: undefined,
           },
         });
       }
+      return;
     }
+
+    let matchedEnvironmentByVersion:
+      | ImageGroup['environmentGroups'][0]
+      | undefined;
+    let matchedImageByVersion: Image | undefined;
+    const version = form.getFieldValue('environments')?.version;
+
+    version &&
+      _.find(imageGroups, (group) => {
+        matchedEnvironmentByVersion = _.find(
+          group.environmentGroups,
+          (environment) => {
+            matchedImageByVersion = _.find(
+              environment.images,
+              (image) => getImageFullName(image) === version,
+            );
+            return !!matchedImageByVersion; // break iteration
+          },
+        );
+        return !!matchedEnvironmentByVersion; // break iteration
+      });
+
+    // if matchedEnvironmentByVersion is not existed, select first values
+    let nextEnvironment: ImageGroup['environmentGroups'][0] | undefined;
+    let nextImage: Image | undefined;
+    if (matchedEnvironmentByVersion) {
+      nextEnvironment = matchedEnvironmentByVersion;
+      nextImage = matchedImageByVersion;
+    } else {
+      nextEnvironment = imageGroups[0]?.environmentGroups[0];
+      nextImage = nextEnvironment?.images[0];
+    }
+
+    if (nextImage) {
+      if (
+        !matchedEnvironmentByVersion &&
+        baiClient._config.allow_manual_image_name_for_session &&
+        version
+      ) {
+        form.setFieldsValue({
+          environments: {
+            environment: undefined,
+            version: undefined,
+            image: undefined,
+            manual: version,
+          },
+        });
+      } else {
+        form.setFieldsValue({
+          environments: {
+            environment: nextEnvironment.environmentName,
+            version: getImageFullName(nextImage),
+            image: nextImage,
+          },
+        });
+      }
+    } else if (baiClient._config.allow_manual_image_name_for_session) {
+      // if no image is available, only set manual if it's allowed
+      form.setFieldValue(['environments', 'manual'], version);
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.getFieldValue('environments')?.environment]);
+  }, [environments?.version, environments?.manual]); // environments?.environment,
 
   const imageGroups: ImageGroup[] = useMemo(
     () =>
@@ -265,7 +307,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         label={`${t('session.launcher.Environments')} / ${t(
           'session.launcher.Version',
         )}`}
-        rules={[{ required: true }]}
+        rules={[{ required: _.isEmpty(environments?.manual) }]}
         style={{ marginBottom: 10 }}
       >
         <Select
@@ -288,7 +330,25 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 },
               });
             }
+            // NOTE: when user set environment only then set the version to the first item
+            else {
+              const firstInListImage: Image = imageGroups
+                .flatMap((group) => group.environmentGroups)
+                .filter((envGroup) => envGroup.environmentName === value)[0]
+                .images[0];
+              form.setFieldsValue({
+                environments: {
+                  environment: firstInListImage?.name || '',
+                  version: getImageFullName(firstInListImage),
+                  image: firstInListImage,
+                },
+              });
+            }
           }}
+          disabled={
+            baiClient._config.allow_manual_image_name_for_session &&
+            !_.isEmpty(environments?.manual)
+          }
         >
           {fullNameMatchedImage ? (
             <Select.Option
@@ -389,7 +449,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           <Flex
                             direction="row"
                             // set specific class name to handle flex wrap using css
-                            className="tag-wrap"
+                            className={
+                              isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
+                            }
                             // style={{ flex: 1 }}
                             style={{
                               marginLeft: token.marginXS,
@@ -436,7 +498,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
             <Form.Item
               className="image-environment-select-form-item"
               name={['environments', 'version']}
-              rules={[{ required: true }]}
+              rules={[{ required: _.isEmpty(environments?.manual) }]}
             >
               <Select
                 ref={versionSelectRef}
@@ -472,6 +534,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     {menu}
                   </>
                 )}
+                disabled={
+                  baiClient._config.allow_manual_image_name_for_session &&
+                  !_.isEmpty(environments?.manual)
+                }
               >
                 {_.map(
                   _.uniqBy(selectedEnvironmentGroup?.images, 'digest'),
@@ -547,7 +613,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           <Flex
                             direction="row"
                             // set specific class name to handle flex wrap using css
-                            className="tag-wrap"
+                            className={
+                              isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
+                            }
                             style={{
                               marginLeft: token.marginXS,
                               flexShrink: 1,
@@ -564,6 +632,31 @@ const ImageEnvironmentSelectFormItems: React.FC<
             </Form.Item>
           );
         }}
+      </Form.Item>
+      <Form.Item
+        label={t('session.launcher.ManualImageName')}
+        name={['environments', 'manual']}
+        style={{
+          display: baiClient._config.allow_manual_image_name_for_session
+            ? 'block'
+            : 'none',
+        }}
+      >
+        <Input
+          allowClear
+          onChange={(value) => {
+            if (!_.isEmpty(value)) {
+              form.setFieldsValue({
+                environments: {
+                  environment: undefined,
+                  version: undefined,
+                  image: undefined,
+                },
+              });
+            } else {
+            }
+          }}
+        />
       </Form.Item>
       <Form.Item noStyle hidden name={['environments', 'image']}>
         <Input />

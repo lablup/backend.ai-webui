@@ -227,7 +227,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                           );
                           const imageInfo = _.find(
                             metadata?.imageInfo,
-                            (imageInfo) => imageInfo.name === targetImageKey,
+                            (imageInfo) => imageInfo?.name === targetImageKey,
                           );
                           return imageInfo?.icon ? (
                             <Flex gap={'xxs'}>
@@ -299,7 +299,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
               overflow: 'auto',
               height: screen.lg ? 'calc(100vh - 243px)' : undefined,
               minHeight: 200,
-              // maxHeight: 650
             }}
           >
             <Markdown>{model_card?.readme || ''}</Markdown>

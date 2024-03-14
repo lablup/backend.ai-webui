@@ -2,6 +2,7 @@ import Flex from './Flex';
 import { useControllableValue } from 'ahooks';
 import { InputNumber, Slider, InputNumberProps, SliderSingleProps } from 'antd';
 import { SliderRangeProps } from 'antd/es/slider';
+import _ from 'lodash';
 import React, { useEffect } from 'react';
 
 type OmitControlledProps<T> = Omit<T, 'value' | 'onChange'>;
@@ -28,6 +29,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   ...otherProps
 }) => {
   const [value, setValue] = useControllableValue(otherProps);
+  const inputRef = React.useRef<HTMLInputElement>(null);
   useEffect(() => {
     // when step is 1, make sure the value is integer
     if (step === 1 && value % 1 !== 0) {
@@ -43,12 +45,27 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
         direction="column"
       >
         <InputNumber
+          ref={inputRef}
           max={max}
           min={min}
           step={step}
           disabled={disabled}
           value={value}
           onChange={setValue}
+          onBlur={() => {
+            if (_.isNumber(step) && step > 0) {
+              const decimalCount = step.toString().split('.')[1]?.length || 0;
+              setValue(
+                _.toNumber(
+                  (
+                    Math.round(
+                      _.toNumber(inputRef.current?.value || '0') / step,
+                    ) * step
+                  ).toFixed(decimalCount),
+                ),
+              );
+            }
+          }}
           {...inputNumberProps}
         />
       </Flex>
@@ -67,6 +84,10 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
             }
           }}
           {...sliderProps}
+          // remove marks that are greater than max
+          marks={_.omitBy(sliderProps?.marks, (option, key) => {
+            return _.isNumber(max) ? _.parseInt(key) > max : false;
+          })}
         />
       </Flex>
     </Flex>

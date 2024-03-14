@@ -69,6 +69,16 @@ interface fileData {
   complete: boolean;
 }
 
+type VFolderOperationStatus =
+  | 'ready'
+  | 'performing'
+  | 'cloning'
+  | 'mounted'
+  | 'error'
+  | 'delete-ongoing'
+  | 'deleted-complete'
+  | 'purge-ongoing';
+
 /**
  Backend AI Storage List
 
@@ -337,6 +347,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         #folder-explorer-dialog vaadin-grid mwc-icon-button {
           --mdc-icon-size: 24px;
           --mdc-icon-button-size: 28px;
+          background-color: transparent;
         }
 
         #filebrowser-notification-dialog {
@@ -345,6 +356,10 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         vaadin-text-field {
           --vaadin-text-field-default-width: auto;
+        }
+
+        vaadin-grid-cell-content {
+          overflow: visible;
         }
 
         div.breadcrumb {
@@ -364,7 +379,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           transition: color ease-in 0.2s;
           border: solid;
           border-width: 0 2px 2px 0;
-          border-color: #242424;
+          border-color: var(--token-colorBorder, #242424);
           margin-right: 10px;
           content: '';
           display: inline-block;
@@ -382,8 +397,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-textfield {
           width: 100%;
-          --mdc-theme-primary: #242424;
-          --mdc-text-field-fill-color: transparent;
+          /* --mdc-text-field-label-ink-color: var(--token-colorText); */
         }
 
         mwc-textfield.red {
@@ -438,9 +452,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         backend-ai-dialog mwc-textfield,
         backend-ai-dialog mwc-select {
-          --mdc-typography-font-family: var(--general-font-family);
-          --mdc-typography-label-font-size: 12px;
-          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-typography-label-font-size: var(--token-fontSizeSM, 12px);
         }
 
         mwc-select#modify-folder-quota-unit {
@@ -469,10 +481,6 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-select.fixed-position > mwc-list-item {
           width: 147px; // default width
-        }
-
-        mwc-radio {
-          --mdc-theme-secondary: var(--general-textfield-selected-color);
         }
 
         #modify-permission-dialog {
@@ -611,7 +619,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         <vaadin-grid
           class="folderlist"
           id="folder-list-grid"
-          theme="row-stripes column-borders wrap-cell-content compact"
+          theme="row-stripes column-borders wrap-cell-content compact dark"
           column-reordering-allowed
           aria-label="Folder list"
           .items="${this.folders}"
@@ -1228,7 +1236,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <vaadin-grid
             id="file-list-grid"
             class="explorer"
-            theme="row-stripes compact"
+            theme="row-stripes compact dark"
             aria-label="Explorer"
             .items="${this.explorerFiles}"
           >
@@ -1365,7 +1373,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t('data.explorer.ModifyPermissions')}</span>
         <div slot="content" role="listbox" style="margin: 0; padding: 10px;">
           <vaadin-grid
-            theme="row-stripes column-borders compact"
+            theme="row-stripes column-borders compact dark"
             .items="${this.invitees}"
           >
             <vaadin-grid-column
@@ -1600,8 +1608,16 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
-  _checkProcessingStatus(status) {
-    return ['performing', 'cloning', 'deleting', 'mounted'].includes(status);
+  _isUncontrollableStatus(status: VFolderOperationStatus) {
+    return [
+      'performing',
+      'cloning',
+      'mounted',
+      'error',
+      'delete-ongoing',
+      'deleted-complete',
+      'purge-ongoing',
+    ].includes(status);
   }
 
   /**
@@ -1614,20 +1630,20 @@ export default class BackendAiStorageList extends BackendAIPage {
   permissionRenderer(root, column?, rowData?) {
     render(
       html`
-        <div class="vertical layout">
-          <mwc-select label="${_t('data.folders.SelectPermission')}">
-            <option ?selected=${rowData.item.perm === 'ro'} value="ro">
-              ${_t('data.folders.View')}
-            </option>
-            <option ?selected=${rowData.item.perm === 'rw'} value="rw">
-              ${_t('data.folders.Edit')}
-            </option>
-            <option ?selected=${rowData.item.perm === 'wd'} value="wd">
-              ${_t('data.folders.EditDelete')}
-            </option>
-            <option value="kickout">${_t('data.folders.KickOut')}</option>
-          </mwc-select>
-        </div>
+        <mwc-select label="${_t('data.folders.SelectPermission')}">
+          <mwc-list-item value="ro" ?selected="${rowData.item.perm === 'ro'}">
+            ${_t('data.folders.View')}
+          </mwc-list-item>
+          <mwc-list-item value="rw" ?selected="${rowData.item.perm === 'rw'}">
+            ${_t('data.folders.Edit')}
+          </mwc-list-item>
+          <mwc-list-item value="wd" ?selected="${rowData.item.perm === 'wd'}">
+            ${_t('data.folders.EditDelete')}
+          </mwc-list-item>
+          <mwc-list-item value="kickout"">
+            ${_t('data.folders.KickOut')}
+          </mwc-list-item>
+        </mwc-select>
       `,
       root,
     );
@@ -1663,7 +1679,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                   icon="folder_open"
                   title=${_t('data.folders.OpenAFolder')}
                   @click="${(e) => this._folderExplorer(rowData)}"
-                  ?disabled="${this._checkProcessingStatus(
+                  ?disabled="${this._isUncontrollableStatus(
                     rowData.item.status,
                   )}"
                   .folder-id="${rowData.item.name}"
@@ -1671,9 +1687,13 @@ export default class BackendAiStorageList extends BackendAIPage {
               `
             : html``}
           <div
-            @click="${(e) => this._folderExplorer(rowData)}"
+            @click="${(e) =>
+              !this._isUncontrollableStatus(rowData.item.status) &&
+              this._folderExplorer(rowData)}"
             .folder-id="${rowData.item.name}"
-            style="cursor:pointer;"
+            style="cursor:${this._isUncontrollableStatus(rowData.item.status)
+              ? 'default'
+              : 'pointer'};"
           >
             ${rowData.item.name}
           </div>
@@ -1780,7 +1800,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       case 'mounted':
         color = 'blue';
         break;
-      case 'deleting':
+      case 'delete-ongoing':
         color = 'yellow';
         break;
       default:
@@ -1864,7 +1884,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                   class="fg green controls-running"
                   icon="play_arrow"
                   @click="${(e) => this._inferModel(e)}"
-                  ?disabled="${this._checkProcessingStatus(
+                  ?disabled="${this._isUncontrollableStatus(
                     rowData.item.status,
                   )}"
                   id="${rowData.item.id + '-serve'}"
@@ -1880,7 +1900,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             class="fg green controls-running"
             icon="info"
             @click="${(e) => this._infoFolder(e)}"
-            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
+            ?disabled="${this._isUncontrollableStatus(rowData.item.status)}"
             id="${rowData.item.id + '-folderinfo'}"
           ></mwc-icon-button>
           <vaadin-tooltip
@@ -1915,7 +1935,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                     : 'green'} controls-running"
                   icon="share"
                   @click="${(e) => this._shareFolderDialog(e)}"
-                  ?disabled="${this._checkProcessingStatus(
+                  ?disabled="${this._isUncontrollableStatus(
                     rowData.item.status,
                   )}"
                   style="display: ${isSharingAllowed ? '' : 'none'}"
@@ -1930,7 +1950,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                   class="fg cyan controls-running"
                   icon="perm_identity"
                   @click=${(e) => this._modifyPermissionDialog(rowData.item.id)}
-                  ?disabled="${this._checkProcessingStatus(
+                  ?disabled="${this._isUncontrollableStatus(
                     rowData.item.status,
                   )}"
                   style="display: ${isSharingAllowed ? '' : 'none'}"
@@ -1947,7 +1967,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                     : 'green'} controls-running"
                   icon="create"
                   @click="${(e) => this._renameFolderDialog(e)}"
-                  ?disabled="${this._checkProcessingStatus(
+                  ?disabled="${this._isUncontrollableStatus(
                     rowData.item.status,
                   )}"
                   id="${rowData.item.id + '-rename'}"
@@ -1961,7 +1981,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                   class="fg blue controls-running"
                   icon="settings"
                   @click="${(e) => this._modifyFolderOptionDialog(e)}"
-                  ?disabled="${this._checkProcessingStatus(
+                  ?disabled="${this._isUncontrollableStatus(
                     rowData.item.status,
                   )}"
                   id="${rowData.item.id + '-optionupdate'}"
@@ -1981,7 +2001,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                   class="fg red controls-running"
                   icon="delete"
                   @click="${(e) => this._deleteFolderDialog(e)}"
-                  ?disabled="${this._checkProcessingStatus(
+                  ?disabled="${this._isUncontrollableStatus(
                     rowData.item.status,
                   )}"
                   id="${rowData.item.id + '-delete'}"
@@ -1999,7 +2019,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                   class="fg red controls-running"
                   icon="remove_circle"
                   @click="${(e) => this._leaveInvitedFolderDialog(e)}"
-                  ?disabled="${this._checkProcessingStatus(
+                  ?disabled="${this._isUncontrollableStatus(
                     rowData.item.status,
                   )}"
                   id="${rowData.item.id + '-leavefolder'}"

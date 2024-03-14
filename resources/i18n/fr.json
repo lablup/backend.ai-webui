@@ -255,7 +255,11 @@
       "EnvironmentVariableNamePatternError": "Le nom de la variable doit commencer par une lettre ou un trait de soulignement et ne peut contenir que des lettres, des chiffres et des traits de soulignement.",
       "EnvironmentVariableDuplicateName": "Un nom de variable qui existe déjà.",
       "Template": "Modèle de session",
-      "EnableAutomaticShmem": "Mémoire partagée automatique"
+      "EnableAutomaticShmem": "Mémoire partagée automatique",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Seul un nombre entier est autorisé lorsque la taille du cluster n'est pas inférieure à 2.",
+      "StartAfter": "Commencez après :",
+      "StartTimeDoesNotApply": "Si l'heure de début n'est pas définie, elle ne s'applique pas."
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -406,7 +410,8 @@
     "Unset": "Non défini",
     "OK": "OK",
     "Download": "Télécharger",
-    "Clone": "Clone"
+    "Clone": "Clone",
+    "Config": "Config"
   },
   "agent": {
     "Endpoint": "Point de terminaison",
@@ -450,7 +455,10 @@
     "Enabled": "Activée",
     "StorageProxies": "Stockages",
     "None": "Aucun",
-    "Image": "Image"
+    "Image": "Image",
+    "All": "Tous",
+    "InProgress": "En cours",
+    "Session": "Session"
   },
   "credential": {
     "Permission": "Autorisation",
@@ -846,7 +854,12 @@
     "SSHKeypairEnterManually": "Couple de clés SSH",
     "SSHKeypairEnterManuallyFinished": "La paire de clés SSH a été enregistrée avec succès.",
     "MyKeypairInfo": "Informations sur ma paire de clés",
-    "DescMyKeypairInfo": "Voir les informations de ma paire de clés"
+    "DescMyKeypairInfo": "Voir les informations de ma paire de clés",
+    "DarkMode": "Mode sombre",
+    "LightMode": "Mode lumière",
+    "UseSystemSetting": "Utiliser les paramètres du système",
+    "DescThemeMode": "Personnalisez l'apparence de Backend.AI WebUI sur votre appareil.",
+    "ThemeMode": "Mode Thème"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilisation avancée du terminal Web : copier le contenu du terminal",
@@ -868,7 +881,9 @@
     "Parameters": "Paramètres",
     "ErrorType": "Type d'erreur",
     "LogMessageRemoved": "Les messages de journal ont été supprimés.",
-    "NoLogToDisplay": "Aucun journal à afficher"
+    "NoLogToDisplay": "Aucun journal à afficher",
+    "ShowOnlyError": "Afficher uniquement l'erreur",
+    "SearchLogs": "Journaux de recherche"
   },
   "resourcePolicy": {
     "Resources": "Ressources",
@@ -930,7 +945,8 @@
     "RegistrySuccessfullyModified": "Registre modifié avec succès.",
     "ModifyRegistry": "Modifier le registre",
     "NoRegistryToDisplay": "Aucun registre à afficher",
-    "ConfirmNoUserName": "L'utilisateur et le mot de passe ne sont pas spécifiés, voulez-vous sauvegarder ?"
+    "ConfirmNoUserName": "L'utilisateur et le mot de passe ne sont pas spécifiés, voulez-vous sauvegarder ?",
+    "DescURLFormat": "Type d'URL invalide"
   },
   "resourceGroup": {
     "ResourceGroups": "Groupes de ressources",
@@ -1121,13 +1137,18 @@
     "DescWarboysupport": "Utiliser le support Furiosa Warboy",
     "RequireWarboyPlugin": "Requiert le plugin Backend.AI Warboy.",
     "Plugins": "Plugins",
-    "OpenSourceCUDAGPUsupport": "Prise en charge des GPU CUDA Open Source"
+    "OpenSourceCUDAGPUsupport": "Prise en charge des GPU CUDA Open Source",
+    "ShowOnlyChanged": "Afficher uniquement les modifications"
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",
     "Visit": "Visite",
     "SeeDetail": "Voir le détail",
-    "Initializing": "Initialisation..."
+    "Initializing": "Initialisation...",
+    "NoNotification": "Aucune notification.",
+    "Notifications": "Notifications",
+    "ClearNotifications": "Effacer les notifications",
+    "AreYouSureToClearAllNotifications": "Êtes-vous sûr d'avoir effacé toutes les notifications ?"
   },
   "information": {
     "Core": "Cœur",
@@ -1361,7 +1382,9 @@
     "ConfirmTotpRemovalBody": "Êtes-vous sûr de ne pas utiliser l'authentification à deux facteurs ?",
     "TotpSetupNotAvailable": "L'authentification à deux facteurs ne peut pas être configurée.",
     "TurnOffTotp": "Désactiver l'authentification à deux facteurs",
-    "RemoveTotpSetupCompleted": "2FA désactivé"
+    "RemoveTotpSetupCompleted": "2FA désactivé",
+    "EnterConfirmationCode": "Entrez maintenant l'OTP généré par l'authentificateur pour vérifier.",
+    "RequireOTP": "Écrivez OTP."
   },
   "inputLimit": {
     "4to64chars": "(4~64 caractères)"
@@ -1446,7 +1469,13 @@
     "ServiceNameRule": "Seuls 4 à 24 caractères alphanumériques, le trait de soulignement (_), le trait d'union (-) et le point (.) sont autorisés et le texte doit se terminer par un caractère alphanumérique.",
     "resources": "Ressources",
     "Image": "Image",
-    "Owner": "Propriétaire"
+    "Owner": "Propriétaire",
+    "ServiceDelegatedFrom": "Le service modèle est créé par {{ createdUser }} mais la propriété de la session sera déléguée à {{ sessionOwner }}.",
+    "FailedToTerminateService": "La demande d'arrêt du service a échoué.",
+    "FailedToUpdateService": "Échec de la mise à jour du service.",
+    "ServiceCreated": "Le service modèle {{ name }} a été créé avec succès.",
+    "ServiceUpdated": "Le service modèle {{ name }} a été mis à jour avec succès.",
+    "ServiceTerminated": "Le service modèle {{ name }} a été terminé avec succès."
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",
@@ -1486,5 +1515,8 @@
     "SettingTable": "Paramètre de table",
     "SelectColumnToDisplay": "Sélectionnez les colonnes à afficher",
     "SearchTableColumn": "Rechercher des colonnes dans un tableau"
+  },
+  "setting": {
+    "SearchPlaceholder": "Entrez le terme de recherche"
   }
 }

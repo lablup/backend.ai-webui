@@ -3,8 +3,9 @@ import { RelayEnvironment } from '../RelayEnvironment';
 import rawFixAntCss from '../fix_antd.css?raw';
 import { useCustomThemeConfig } from '../helper/customThemeConfig';
 import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
+import { ThemeModeProvider, useThemeMode } from '../hooks/useThemeMode';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
-import { App, ConfigProvider } from 'antd';
+import { App, ConfigProvider, theme } from 'antd';
 import en_US from 'antd/locale/en_US';
 import ko_KR from 'antd/locale/ko_KR';
 import dayjs from 'dayjs';
@@ -88,7 +89,7 @@ i18n
     },
   });
 
-const useCurrentLanguage = () => {
+export const useCurrentLanguage = () => {
   const [lang, _setLang] = useState(
     //@ts-ignore
     globalThis?.backendaioptions?.get('current_language'),
@@ -120,7 +121,7 @@ const useCurrentLanguage = () => {
   return [lang] as const;
 };
 
-const DefaultProviders: React.FC<DefaultProvidersProps> = ({
+const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
   children,
   value,
   styles,
@@ -130,6 +131,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   const cache = useMemo(() => createCache(), []);
   const [lang] = useCurrentLanguage();
   const themeConfig = useCustomThemeConfig();
+  const { isDarkMode } = useThemeMode();
 
   const componentValues = useMemo(() => {
     return {
@@ -151,38 +153,47 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
             </style>
             <QueryClientProvider client={queryClient}>
               <ShadowRootContext.Provider value={shadowRoot}>
-                <WebComponentContext.Provider value={componentValues}>
-                  <ConfigProvider
-                    // @ts-ignore
-                    getPopupContainer={(triggerNode) => {
-                      return triggerNode?.parentNode || shadowRoot;
-                    }}
-                    //TODO: apply other supported locales
-                    locale={'ko' === lang ? ko_KR : en_US}
-                    theme={themeConfig}
-                  >
-                    <App>
-                      <StyleProvider container={shadowRoot} cache={cache}>
-                        <Suspense fallback="">
-                          <BrowserRouter>
-                            <QueryParamProvider
-                              adapter={ReactRouter6Adapter}
-                              options={
-                                {
-                                  // searchStringToObject: queryString.parse,
-                                  // objectToSearchString: queryString.stringify,
+                <ThemeModeProvider>
+                  <WebComponentContext.Provider value={componentValues}>
+                    <ConfigProvider
+                      // @ts-ignore
+                      getPopupContainer={(triggerNode) => {
+                        return triggerNode?.parentNode || shadowRoot;
+                      }}
+                      //TODO: apply other supported locales
+                      locale={'ko' === lang ? ko_KR : en_US}
+                      theme={{
+                        ...(isDarkMode
+                          ? { ...themeConfig?.dark }
+                          : { ...themeConfig?.light }),
+                        algorithm: isDarkMode
+                          ? theme.darkAlgorithm
+                          : theme.defaultAlgorithm,
+                      }}
+                    >
+                      <App>
+                        <StyleProvider container={shadowRoot} cache={cache}>
+                          <Suspense fallback="">
+                            <BrowserRouter>
+                              <QueryParamProvider
+                                adapter={ReactRouter6Adapter}
+                                options={
+                                  {
+                                    // searchStringToObject: queryString.parse,
+                                    // objectToSearchString: queryString.stringify,
+                                  }
                                 }
-                              }
-                            >
-                              <RoutingEventHandler />
-                              {children}
-                            </QueryParamProvider>
-                          </BrowserRouter>
-                        </Suspense>
-                      </StyleProvider>
-                    </App>
-                  </ConfigProvider>
-                </WebComponentContext.Provider>
+                              >
+                                <RoutingEventHandler />
+                                {children}
+                              </QueryParamProvider>
+                            </BrowserRouter>
+                          </Suspense>
+                        </StyleProvider>
+                      </App>
+                    </ConfigProvider>
+                  </WebComponentContext.Provider>
+                </ThemeModeProvider>
               </ShadowRootContext.Provider>
             </QueryClientProvider>
           </React.StrictMode>
@@ -192,7 +203,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   );
 };
 
-const RoutingEventHandler = () => {
+export const RoutingEventHandler = () => {
   const navigate = useNavigate();
   useLayoutEffect(() => {
     const handleNavigate = (e: any) => {
@@ -213,4 +224,58 @@ const RoutingEventHandler = () => {
   return null;
 };
 
+const DefaultProviders: React.FC<DefaultProvidersProps> = (props) => {
+  return (
+    <ThemeModeProvider>
+      <DefaultProvidersForWebComponent {...props} />
+    </ThemeModeProvider>
+  );
+};
+
 export default DefaultProviders;
+
+export const DefaultProvidersForReactRoot: React.FC<
+  Partial<DefaultProvidersProps>
+> = ({ children, value, styles }) => {
+  const [lang] = useCurrentLanguage();
+  const themeConfig = useCustomThemeConfig();
+  const { isDarkMode } = useThemeMode();
+
+  return (
+    <>
+      {RelayEnvironment && (
+        <RelayEnvironmentProvider environment={RelayEnvironment}>
+          <QueryClientProvider client={queryClient}>
+            <ConfigProvider
+              // @ts-ignore
+              // getPopupContainer={(triggerNode) => {
+              //   return triggerNode?.parentNode || shadowRoot;
+              // }}
+              //TODO: apply other supported locales
+              locale={'ko' === lang ? ko_KR : en_US}
+              theme={{
+                ...(isDarkMode
+                  ? { ...themeConfig?.dark }
+                  : { ...themeConfig?.light }),
+                algorithm: isDarkMode
+                  ? theme.darkAlgorithm
+                  : theme.defaultAlgorithm,
+              }}
+            >
+              <App>
+                {/* <StyleProvider container={shadowRoot} cache={cache}> */}
+                <Suspense>
+                  {/* <BrowserRouter> */}
+                  {/* <RoutingEventHandler /> */}
+                  {children}
+                  {/* </BrowserRouter> */}
+                </Suspense>
+                {/* </StyleProvider> */}
+              </App>
+            </ConfigProvider>
+          </QueryClientProvider>
+        </RelayEnvironmentProvider>
+      )}
+    </>
+  );
+};

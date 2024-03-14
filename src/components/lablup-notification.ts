@@ -2,9 +2,7 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { navigate } from '../backend-ai-app';
 import '../plastics/mwc/mwc-snackbar';
-import { store } from '../store';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import '@material/mwc-icon-button';
 import { css, CSSResultGroup, html, LitElement } from 'lit';
@@ -66,7 +64,7 @@ export default class LablupNotification extends LitElement {
             --general-sidebar-selected-color,
             #38bd73
           );
-          --mdc-typography-body2-font-family: var(--general-font-family);
+          --mdc-typography-body2-font-family: var(--token-fontFamily);
           position: fixed;
           right: 20px;
         }
@@ -134,135 +132,164 @@ export default class LablupNotification extends LitElement {
     }
   }
 
-  /**
-   * When click the close_button, hide dialog(mwc-snackbar).
-   *
-   * @param {Event} e - Click the close_button
-   * */
-  _hideNotification(e) {
-    const hideButton = e.target;
-    const dialog = hideButton.closest('mwc-snackbar');
-    dialog.close();
-  }
+  // /**
+  //  * When click the close_button, hide dialog(mwc-snackbar).
+  //  *
+  //  * @param {Event} e - Click the close_button
+  //  * */
+  // _hideNotification(e) {
+  //   const hideButton = e.target;
+  //   const dialog = hideButton.closest('mwc-snackbar');
+  //   dialog.close();
+  // }
+
+  // /**
+  //  * When click the more_button, dispatch 'backend-ai-usersettings-logs' event.
+  //  *
+  //  * @param {Event} e - Click the more_button
+  //  * */
+  // _moreNotification(e) {
+  //   this._hideNotification(e);
+  //   const currentPage = globalThis.location.toString().split(/[/]+/).pop();
+  //   globalThis.history.pushState({}, '', '/usersettings');
+  //   store.dispatch(navigate(decodeURIComponent('/usersettings?tab=logs')));
+  //   if (currentPage && currentPage === 'usersettings') {
+  //     const event = new CustomEvent('backend-ai-usersettings-logs', {});
+  //     document.dispatchEvent(event);
+  //   }
+  // }
+
+  // /**
+  //  * Create close_button that bind with function '_hideNotification(e)'
+  //  *
+  //  * @param{HTMLElement} notification - Notification webcomponent
+  //  * */
+  // _createCloseButton(notification) {
+  //   const button = document.createElement('mwc-icon-button');
+  //   button.setAttribute('icon', 'close');
+  //   button.setAttribute('slot', 'dismiss');
+  //   button.addEventListener('click', this._hideNotification.bind(this));
+  //   notification.appendChild(button);
+  // }
 
   /**
-   * When click the more_button, dispatch 'backend-ai-usersettings-logs' event.
-   *
-   * @param {Event} e - Click the more_button
-   * */
-  _moreNotification(e) {
-    this._hideNotification(e);
-    const currentPage = globalThis.location.toString().split(/[/]+/).pop();
-    globalThis.history.pushState({}, '', '/usersettings');
-    store.dispatch(
-      navigate(decodeURIComponent('/usersettings'), { tab: 'logs' }),
-    );
-    if (currentPage && currentPage === 'usersettings') {
-      const event = new CustomEvent('backend-ai-usersettings-logs', {});
-      document.dispatchEvent(event);
-    }
-  }
-
-  /**
-   * Create close_button that bind with function '_hideNotification(e)'
-   *
-   * @param{HTMLElement} notification - Notification webcomponent
-   * */
-  _createCloseButton(notification) {
-    const button = document.createElement('mwc-icon-button');
-    button.setAttribute('icon', 'close');
-    button.setAttribute('slot', 'dismiss');
-    button.addEventListener('click', this._hideNotification.bind(this));
-    notification.appendChild(button);
-  }
-
-  /**
-   * Show notifications
+   * Dispatch 'show-bai-notification' event that handled by `BAINotificationButton` component.
    *
    * @param {boolean} persistent - if persistent is false, the snackbar is hidden automatically after 3000ms
    * @param {object} log - Log object that contains detail information
    * */
-  async show(persistent = false, log: Record<string, unknown> = Object()) {
+  show(persistent = false, log: Record<string, unknown> = Object()) {
     if (this.text === '_DISCONNECTED') {
       return;
     }
-    const snackbar = document.querySelector("mwc-snackbar[persistent='true']");
-    if (snackbar) {
-      this.notifications = []; // Reset notifications
-      document.body.removeChild(snackbar);
-    }
-    this.gc();
-    const notification = document.createElement('mwc-snackbar');
-    notification.labelText = this.text;
-    if (this.detail != '') {
-      notification.innerHTML =
-        notification.innerHTML +
-        '<div style="display:none;"> : ' +
-        this.detail +
-        '</div>';
-    }
-    if (Object.keys(log).length !== 0) {
+    const shouldSaveLog = Object.keys(log).length !== 0;
+    if (shouldSaveLog) {
       console.log(log);
       this._saveToLocalStorage('backendaiwebui.logs', log);
     }
 
-    if (this.detail !== '') {
-      const more_button = document.createElement('mwc-button');
-      // more_button.style.fontSize = 12 + 'px';
-      more_button.setAttribute('slot', 'action');
-      more_button.setAttribute(
-        'style',
-        '--mdc-theme-primary: var(--general-sidebar-selected-color, #38bd73);',
-      );
-      if (this.url != '') {
-        more_button.label = _text('notification.Visit');
-        //more_button.innerHTML = _text('notification.Visit');
-        more_button.addEventListener(
-          'click',
-          this._openURL.bind(this, this.url),
-        );
-      } else {
-        more_button.label = _text('notification.SeeDetail');
-        // more_button.textContent = _text('notification.SeeDetail');
-        more_button.addEventListener(
-          'click',
-          this._moreNotification.bind(this),
-        );
-      }
-      notification.appendChild(more_button);
-    }
-    this.detail = ''; // Reset the temporary detail scripts
-    this.url = '';
-    if (persistent === false) {
-      notification.setAttribute('timeoutMs', '4000');
-    } else {
-      notification.setAttribute('timeoutMs', '-1');
-      notification.setAttribute('persistent', 'true');
-      this._createCloseButton(notification);
-    }
-    // notification.setAttribute('backdrop', '');
-    notification.style.setProperty(
-      '--mdc-snackbar-bottom',
-      20 + 55 * this.step + 'px',
-    );
-    //notification.style.position = 'fixed';
-    //(notification.querySelector('span') as HTMLElement).style.overflowX = 'hidden';
-    //(notification.querySelector('span') as HTMLElement).style.maxWidth = '70vw';
-    notification.style.right = '20px';
-    notification.style.fontSize = '16px';
-    notification.style.fontWeight = '400';
-    notification.style.fontFamily = "'Ubuntu', Roboto, sans-serif";
-    notification.style.zIndex = '12345678';
-    const d = new Date();
-    notification.setAttribute('created', d.toLocaleString());
-    document.body.appendChild(notification);
-    this.notifications.push(notification);
-    await this.updateComplete;
-    notification.show();
-    const event = new CustomEvent('backend-ai-notification-changed', {});
+    const event: CustomEvent = new CustomEvent('add-bai-notification', {
+      detail: {
+        open: true,
+        type: shouldSaveLog ? 'error' : null,
+        message: this.text,
+        description: this.text ? undefined : this.detail,
+        to: shouldSaveLog ? '/usersettings?tab=logs' : this.url,
+        duration: persistent ? 0 : undefined,
+        // closeIcon: persistent,
+      },
+    });
     document.dispatchEvent(event);
     this._spawnDesktopNotification('Backend.AI', this.text, '');
   }
+
+  // /**
+  //  * Show notifications
+  //  *
+  //  * @param {boolean} persistent - if persistent is false, the snackbar is hidden automatically after 3000ms
+  //  * @param {object} log - Log object that contains detail information
+  //  * */
+  // async show(persistent = false, log: Record<string, unknown> = Object()) {
+  //   if (this.text === '_DISCONNECTED') {
+  //     return;
+  //   }
+  //   const snackbar = document.querySelector("mwc-snackbar[persistent='true']");
+  //   if (snackbar) {
+  //     this.notifications = []; // Reset notifications
+  //     document.body.removeChild(snackbar);
+  //   }
+  //   this.gc();
+  //   const notification = document.createElement('mwc-snackbar');
+  //   notification.labelText = this.text;
+  //   if (this.detail != '') {
+  //     notification.innerHTML =
+  //       notification.innerHTML +
+  //       '<div style="display:none;"> : ' +
+  //       this.detail +
+  //       '</div>';
+  //   }
+  //   if (Object.keys(log).length !== 0) {
+  //     console.log(log);
+  //     this._saveToLocalStorage('backendaiwebui.logs', log);
+  //   }
+
+  //   if (this.detail !== '') {
+  //     const more_button = document.createElement('mwc-button');
+  //     // more_button.style.fontSize = 12 + 'px';
+  //     more_button.setAttribute('slot', 'action');
+  //     more_button.setAttribute(
+  //       'style',
+  //       '--mdc-theme-primary: var(--general-sidebar-selected-color, #38bd73);',
+  //     );
+  //     if (this.url != '') {
+  //       more_button.label = _text('notification.Visit');
+  //       //more_button.innerHTML = _text('notification.Visit');
+  //       more_button.addEventListener(
+  //         'click',
+  //         this._openURL.bind(this, this.url),
+  //       );
+  //     } else {
+  //       more_button.label = _text('notification.SeeDetail');
+  //       // more_button.textContent = _text('notification.SeeDetail');
+  //       more_button.addEventListener(
+  //         'click',
+  //         this._moreNotification.bind(this),
+  //       );
+  //     }
+  //     notification.appendChild(more_button);
+  //   }
+  //   this.detail = ''; // Reset the temporary detail scripts
+  //   this.url = '';
+  //   if (persistent === false) {
+  //     notification.setAttribute('timeoutMs', '4000');
+  //   } else {
+  //     notification.setAttribute('timeoutMs', '-1');
+  //     notification.setAttribute('persistent', 'true');
+  //     this._createCloseButton(notification);
+  //   }
+  //   // notification.setAttribute('backdrop', '');
+  //   notification.style.setProperty(
+  //     '--mdc-snackbar-bottom',
+  //     20 + 55 * this.step + 'px',
+  //   );
+  //   //notification.style.position = 'fixed';
+  //   //(notification.querySelector('span') as HTMLElement).style.overflowX = 'hidden';
+  //   //(notification.querySelector('span') as HTMLElement).style.maxWidth = '70vw';
+  //   notification.style.right = '20px';
+  //   notification.style.fontSize = '16px';
+  //   notification.style.fontWeight = '400';
+  //   notification.style.fontFamily = "'Ubuntu', Roboto, sans-serif";
+  //   notification.style.zIndex = '12345678';
+  //   const d = new Date();
+  //   notification.setAttribute('created', d.toLocaleString());
+  //   document.body.appendChild(notification);
+  //   this.notifications.push(notification);
+  //   await this.updateComplete;
+  //   notification.show();
+  //   const event = new CustomEvent('backend-ai-notification-changed', {});
+  //   document.dispatchEvent(event);
+  //   this._spawnDesktopNotification('Backend.AI', this.text, '');
+  // }
 
   /**
    * Spawn new desktop notification that is used to configure and display desktop notifications to the user.

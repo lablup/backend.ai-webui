@@ -418,8 +418,9 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         span.subheading {
-          color: #666;
+          color: var(--token-colorTextSecondary, #666);
           font-weight: bold;
+          font-size: 15px;
         }
 
         mwc-list-item.commit-session-info {
@@ -432,7 +433,8 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         .predicate-check-comment {
-          white-space: pre-wrap;
+          white-space: normal;
+          font-size: 14px;
         }
 
         .error-description {
@@ -446,10 +448,10 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         div.pagination-label {
-          background-color: var(--paper-grey-100);
+          background-color: var(--token-colorBgContainer, --paper-grey-100);
           min-width: 60px;
           font-size: 12px;
-          font-family: var(--general-font-family);
+          font-family: var(--token-fontFamily);
           padding-top: 5px;
           width: auto;
           text-align: center;
@@ -464,7 +466,7 @@ export default class BackendAISessionList extends BackendAIPage {
         div.filters #access-key-filter {
           --input-font-size: small;
           --input-label-font-size: small;
-          --input-font-family: var(--general-font-family);
+          --input-font-family: var(--token-fontFamily);
         }
 
         .mount-button,
@@ -474,7 +476,8 @@ export default class BackendAISessionList extends BackendAIPage {
           background: none;
           padding: 0;
           outline-style: none;
-          font-family: var(--general-font-family);
+          font-family: var(--token-fontFamily);
+          color: var(--token-colorText);
         }
 
         .no-mount {
@@ -932,16 +935,18 @@ export default class BackendAISessionList extends BackendAIPage {
                       statKey === 'io_scratch_size' ||
                       statKey === 'net_rx' ||
                       statKey === 'net_tx'
-                    )
+                    ) {
                       return;
+                    }
                     if (statKey.includes('_util')) {
                       // core utilization
-                      if (!liveStat[statKey])
+                      if (!liveStat[statKey]) {
                         liveStat[statKey] = {
                           capacity: 0,
                           current: 0,
                           ratio: 0,
                         };
+                      }
                       liveStat[statKey].current += parseFloat(
                         parsedLiveStat[statKey].current,
                       );
@@ -952,12 +957,13 @@ export default class BackendAISessionList extends BackendAIPage {
                       // memory utilization
                       // Currently, the addition logic of memory utilization is the same as that of core utilization.
                       // But, we may want to change this in the future.
-                      if (!liveStat[statKey])
+                      if (!liveStat[statKey]) {
                         liveStat[statKey] = {
                           capacity: 0,
                           current: 0,
                           ratio: 0,
                         };
+                      }
                       liveStat[statKey].current += parseFloat(
                         parsedLiveStat[statKey].current,
                       );
@@ -1668,6 +1674,7 @@ export default class BackendAISessionList extends BackendAIPage {
       commitSessionInfo.taskId ?? '',
       'commit',
       'remove-later',
+      _text('session.CommitSession') + commitSessionInfo.session.name,
     );
   }
 
@@ -1910,7 +1917,7 @@ export default class BackendAISessionList extends BackendAIPage {
     this.terminationQueue.push(sessionId);
     return this._terminateApp(sessionId)
       .then(() => {
-        this._requestDestroySession(sessionId, accessKey, forced);
+        return this._requestDestroySession(sessionId, accessKey, forced);
       })
       .catch((err) => {
         if (err && err.message) {
@@ -1971,7 +1978,7 @@ export default class BackendAISessionList extends BackendAIPage {
         mountedFolderItem.style.height = '25px';
         mountedFolderItem.style.fontWeight = '400';
         mountedFolderItem.style.fontSize = '14px';
-        mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
+        mountedFolderItem.style.fontFamily = 'var(--token-fontFamily)';
         mountedFolderItem.innerHTML =
           mounts.length > 1 ? key : _text('session.OnlyOneFolderAttached');
 
@@ -2000,14 +2007,16 @@ export default class BackendAISessionList extends BackendAIPage {
     const statusDialogContent: Array<TemplateResult> = [];
     statusDialogContent.push(html`
       <div class="vertical layout justified start">
-        <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">
+        <h3
+          style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
+        >
           ${_text('session.Status')}
         </h3>
         <lablup-shields
           color="${this.statusColorTable[this.selectedSessionStatus.info]}"
           description="${this.selectedSessionStatus.info}"
           ui="round"
-          style="padding-left:10px;padding-right:10px;"
+          style="padding-left:15px;"
         ></lablup-shields>
       </div>
     `);
@@ -2020,32 +2029,48 @@ export default class BackendAISessionList extends BackendAIPage {
         <div class="vertical layout start flex" style="width:100%;">
           <div style="width:100%;">
             <h3
-              style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;"
+              style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
             >
               ${_text('session.StatusDetail')}
             </h3>
             <div class="vertical layout flex" style="width:100%;">
               <mwc-list>
-                <mwc-list-item twoline noninteractive class="predicate-check">
-                  <span class="subheading">
-                    <strong>Kernel Exit Code</strong>
-                  </span>
-                  <span
-                    class="monospace predicate-check-comment"
-                    slot="secondary"
-                  >
-                    ${tmpSessionStatus.kernel?.exit_code ?? 'null'}
-                  </span>
-                </mwc-list-item>
-                <mwc-list-item twoline noninteractive class="predicate-check">
-                  <span class="subheading">Session Status</span>
-                  <span
-                    class="monospace predicate-check-comment"
-                    slot="secondary"
-                  >
-                    ${tmpSessionStatus.session?.status}
-                  </span>
-                </mwc-list-item>
+                ${tmpSessionStatus.kernel?.exit_code
+                  ? html`
+                      <mwc-list-item
+                        twoline
+                        noninteractive
+                        class="predicate-check"
+                      >
+                        <span class="subheading">
+                          <strong>Kernel Exit Code</strong>
+                        </span>
+                        <span
+                          class="monospace predicate-check-comment"
+                          slot="secondary"
+                        >
+                          ${tmpSessionStatus.kernel?.exit_code}
+                        </span>
+                      </mwc-list-item>
+                    `
+                  : html``}
+                ${tmpSessionStatus.session?.status
+                  ? html`
+                      <mwc-list-item
+                        twoline
+                        noninteractive
+                        class="predicate-check"
+                      >
+                        <span class="subheading">Session Status</span>
+                        <span
+                          class="monospace predicate-check-comment"
+                          slot="secondary"
+                        >
+                          ${tmpSessionStatus.session?.status}
+                        </span>
+                      </mwc-list-item>
+                    `
+                  : html``}
               </mwc-list>
             </div>
           </div>
@@ -2060,47 +2085,75 @@ export default class BackendAISessionList extends BackendAIPage {
         <div class="vertical layout start flex" style="width:100%;">
           <div style="width:100%;">
             <h3
-              style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;"
+              style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);margin-bottom:0px;"
             >
               ${_text('session.StatusDetail')}
             </h3>
             <div class="vertical layout flex" style="width:100%;">
               <mwc-list>
-                <mwc-list-item twoline noninteractive class="predicate-check">
-                  <span class="subheading">${_text('session.Message')}</span>
-                  <span
-                    class="monospace predicate-check-comment"
-                    slot="secondary"
-                  >
-                    ${tmpSessionStatus.scheduler.msg}
-                  </span>
-                </mwc-list-item>
-                <mwc-list-item twoline noninteractive class="predicate-check">
-                  <span class="subheading">
-                    ${_text('session.TotalRetries')}
-                  </span>
-                  <span
-                    class="monospace predicate-check-comment"
-                    slot="secondary"
-                  >
-                    ${tmpSessionStatus.scheduler.retries}
-                  </span>
-                </mwc-list-item>
-                <mwc-list-item twoline noninteractive class="predicate-check">
-                  <span class="subheading">${_text('session.LastTry')}</span>
-                  <span
-                    class="monospace predicate-check-comment"
-                    slot="secondary"
-                  >
-                    ${this._humanReadableTime(
-                      tmpSessionStatus.scheduler.last_try,
-                    )}
-                  </span>
-                </mwc-list-item>
+                ${tmpSessionStatus.scheduler.msg
+                  ? html`
+                      <mwc-list-item
+                        twoline
+                        noninteractive
+                        class="predicate-check"
+                      >
+                        <span class="subheading">
+                          ${_text('session.Message')}
+                        </span>
+                        <span
+                          class="monospace predicate-check-comment"
+                          slot="secondary"
+                        >
+                          ${tmpSessionStatus.scheduler.msg}
+                        </span>
+                      </mwc-list-item>
+                    `
+                  : html``}
+                ${tmpSessionStatus.scheduler.retries
+                  ? html`
+                      <mwc-list-item
+                        twoline
+                        noninteractive
+                        class="predicate-check"
+                      >
+                        <span class="subheading">
+                          ${_text('session.TotalRetries')}
+                        </span>
+                        <span
+                          class="monospace predicate-check-comment"
+                          slot="secondary"
+                        >
+                          ${tmpSessionStatus.scheduler.retries}
+                        </span>
+                      </mwc-list-item>
+                    `
+                  : html``}
+                ${tmpSessionStatus.scheduler.last_try
+                  ? html`
+                      <mwc-list-item
+                        twoline
+                        noninteractive
+                        class="predicate-check"
+                      >
+                        <span class="subheading">
+                          ${_text('session.LastTry')}
+                        </span>
+                        <span
+                          class="monospace predicate-check-comment"
+                          slot="secondary"
+                        >
+                          ${this._humanReadableTime(
+                            tmpSessionStatus.scheduler.last_try,
+                          )}
+                        </span>
+                      </mwc-list-item>
+                    `
+                  : html``}
               </mwc-list>
             </div>
           </div>
-          <lablup-expansion summary="Predicates">
+          <lablup-expansion summary="Predicates" open="true">
             <div slot="title" class="horizontal layout center start-justified">
               ${failedCount > 0
                 ? html`
@@ -2169,7 +2222,7 @@ export default class BackendAISessionList extends BackendAIPage {
               ${tmpSessionStatus.scheduler.passed_predicates.map((item) => {
                 return html`
                   <mwc-list-item graphic="icon" noninteractive>
-                    <span style="padding-left:3px;">${item.name}</span>
+                    <span>${item.name}</span>
                     <mwc-icon
                       slot="graphic"
                       class="fg green inverted status-check"
@@ -2193,7 +2246,7 @@ export default class BackendAISessionList extends BackendAIPage {
         <div class="vertical layout start flex" style="width:100%;">
           <div style="width:100%;">
             <h3
-              style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;"
+              style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
             >
               ${_text('session.StatusDetail')}
             </h3>
@@ -2246,7 +2299,7 @@ ${item.traceback}</pre
       statusDialogContent.push(html`
         <div class="vertical layout start flex" style="width:100%;">
           <h3
-            style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;"
+            style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
           >
             Detail
           </h3>
@@ -2505,9 +2558,9 @@ ${item.traceback}</pre
     thresholds_check_operator: string | null = null,
   ) => {
     const colorMap = {
-      green: '#527A42',
-      yellow: '#D8B541',
-      red: '#e05d44',
+      green: 'var(--token-colorSuccess)',
+      yellow: 'var(--token-colorWarning)',
+      red: 'var(--token-colorError)',
     };
     if (!thresholds_check_operator) {
       const [utilization, threshold] = resources as [number, number];
@@ -2582,7 +2635,7 @@ ${item.traceback}</pre
           }
           .util-detail-menu-header > div {
             font-size: 13px;
-            font-family: var(--general-font-family);
+            font-family: var(--token-fontFamily);
             font-weight: 600;
           }
           .util-detail-menu-content {
@@ -2596,7 +2649,7 @@ ${item.traceback}</pre
             justify-content: center;
             justify-content: space-between;
             font-size: 12px;
-            font-family: var(--general-font-family);
+            font-family: var(--token-fontFamily);
             font-weight: 400;
             min-width: 155px;
           }
@@ -2743,7 +2796,8 @@ ${rowData.item[this.sessionNameField]}</pre
                       id="session-rename-field"
                       required
                       autoValidate
-                      pattern="^(?:[a-zA-Z0-9][a-zA-Z0-9._-]{2,}[a-zA-Z0-9])?$"
+                      pattern="^[a-zA-Z0-9]([a-zA-Z0-9\\-_\\.]{2,})[a-zA-Z0-9]$"
+                      minLength="4"
                       maxLength="64"
                       validationMessage="${_text(
                         'session.Validation.EnterValidSessionName',
@@ -3152,7 +3206,7 @@ ${rowData.item[this.sessionNameField]}</pre
                 ? html`
                     <img
                       class="indicator-icon fg green"
-                      src="/resources/icons/ROCm.png"
+                      src="/resources/icons/rocm.svg"
                     />
                     <span>${rowData.item.rocm_gpu_slot}</span>
                     <span class="indicator">GPU</span>
@@ -3601,11 +3655,11 @@ ${rowData.item[this.sessionNameField]}</pre
         const remainingTimeType = checkerInfo?.remaining_time_type;
 
         // Determine color based on remaining time.
-        let remainingColor = '#527A42';
+        let remainingColor = 'var(--token-colorSuccess';
         if (!remainingSeconds || remainingSeconds < 3600) {
-          remainingColor = '#e05d44';
+          remainingColor = 'var(--token-colorError)';
         } else if (remainingSeconds < 3600 * 4) {
-          remainingColor = '#D8B541';
+          remainingColor = 'var(--token-colorWarning)';
         }
 
         // Determine color based on resource utilization.
@@ -3991,7 +4045,7 @@ ${rowData.item[this.sessionNameField]}</pre
         </div>
       </div>
       <div class="list-wrapper">
-        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
+        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact dark" aria-label="Session list"
           .items="${this.compute_sessions}" height-by-rows>
           ${
             this._isRunning

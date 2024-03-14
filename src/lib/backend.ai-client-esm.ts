@@ -8,7 +8,7 @@ Licensed under MIT
 /*jshint esnext: true */
 import CryptoES from 'crypto-es';
 //var CryptoES = require("crypto-js"); /* Exclude for ES6 */
-
+import { comparePEP440Versions } from './pep440';
 type requestInfo = {
   method: string;
   headers: Headers;
@@ -669,6 +669,12 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.09.7')) {
       this._features['main-access-key'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('23.09.8')) {
+      this._features['model-serving-endpoint-user-info'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.9')) {
+      this._features['modify-endpoint'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('24.03.0')) {
       this._features['max-vfolder-count-in-user-resource-policy'] = true;
       this._features['model-store'] = true;
@@ -680,15 +686,7 @@ class Client {
    */
   isManagerVersionCompatibleWith(version) {
     let managerVersion = this._managerVersion;
-    managerVersion = managerVersion
-      .split('.')
-      .map((s) => s.padStart(10))
-      .join('.');
-    version = version
-      .split('.')
-      .map((s) => s.padStart(10))
-      .join('.');
-    return version <= managerVersion;
+    return comparePEP440Versions(managerVersion, version) >= 0;
   }
 
   /**

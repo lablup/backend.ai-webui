@@ -1,7 +1,6 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useCurrentProjectValue } from '../hooks';
+import { useCurrentProjectValue, useWebUINavigate } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { useWebComponentInfo } from './DefaultProviders';
 import { VFolder } from './VFolderSelect';
 import { FolderOutlined } from '@ant-design/icons';
 import { Typography } from 'antd';
@@ -18,7 +17,7 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
   const currentProject = useCurrentProjectValue();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
 
-  const { moveTo } = useWebComponentInfo();
+  const webuiNavigate = useWebUINavigate();
   const { data: vFolders } = useTanQuery({
     queryKey: ['VFolderSelectQuery'],
     queryFn: () => {
@@ -39,7 +38,10 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
     (clickable ? (
       <Typography.Link
         onClick={() => {
-          moveTo('/data', { folder: vFolder.name });
+          webuiNavigate({
+            pathname: '/data',
+            search: `?folder=${vFolder.name}`,
+          });
         }}
       >
         <FolderOutlined /> {vFolder.name}

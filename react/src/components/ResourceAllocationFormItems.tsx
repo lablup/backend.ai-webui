@@ -65,11 +65,16 @@ type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
 interface ResourceAllocationFormItemsProps {
   enableNumOfSessions?: boolean;
   enableResourcePresets?: boolean;
+  forceImageMinValues?: boolean;
 }
 
 const ResourceAllocationFormItems: React.FC<
   ResourceAllocationFormItemsProps
-> = ({ enableNumOfSessions, enableResourcePresets }) => {
+> = ({
+  enableNumOfSessions,
+  enableResourcePresets,
+  forceImageMinValues = false,
+}) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -82,12 +87,6 @@ const ResourceAllocationFormItems: React.FC<
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
 
   const currentProject = useCurrentProjectValue();
-
-  // Form watch
-  // const currentResourceGroup = Form.useWatch('resourceGroup', {
-  //   form,
-  //   preserve: true,
-  // });
 
   // use `useState` instead of `Form.useWatch` for handling `resourcePreset.check` pending state
   const [currentResourceGroup, setCurrentResourceGroup] = useState<string>(
@@ -123,21 +122,19 @@ const ResourceAllocationFormItems: React.FC<
   };
 
   useEffect(() => {
-    // when image changed, set value of resources to min value
+    // when image changed, set value of resources to min value only if it's larger than current value
+    const minimumResources: Partial<ResourceAllocationFormValue['resource']> = {
+      cpu: resourceLimits.cpu?.min,
+      mem:
+        iSizeToSize(
+          (iSizeToSize(resourceLimits.shmem?.min, 'm')?.number || 0) +
+            (iSizeToSize(resourceLimits.mem?.min, 'm')?.number || 0) +
+            'm',
+          'g',
+        )?.number + 'g', //to prevent loosing precision
+    };
 
-    form.setFieldsValue({
-      resource: {
-        cpu: resourceLimits.cpu?.min,
-        mem:
-          iSizeToSize(
-            (iSizeToSize(resourceLimits.shmem?.min, 'm')?.number || 0) +
-              (iSizeToSize(resourceLimits.mem?.min, 'm')?.number || 0) +
-              'm',
-            'g',
-          )?.number + 'g', //to prevent loosing precision
-      },
-    });
-
+    // NOTE: accelerator value setting is done inside the conditional statement
     if (currentImageAcceleratorLimits.length > 0) {
       if (
         _.find(
@@ -147,12 +144,14 @@ const ResourceAllocationFormItems: React.FC<
         )
       ) {
         // if current selected accelerator type is supported in the selected image,
-        form.setFieldValue(
-          ['resource', 'accelerator'],
+        minimumResources.acceleratorType = form.getFieldValue([
+          'resource',
+          'acceleratorType',
+        ]);
+        minimumResources.accelerator =
           resourceLimits.accelerators[
             form.getFieldValue(['resource', 'acceleratorType'])
-          ]?.min,
-        );
+          ]?.min;
       } else {
         // if current selected accelerator type is not supported in the selected image,
         // change accelerator type to the first supported accelerator type.
@@ -165,17 +164,48 @@ const ResourceAllocationFormItems: React.FC<
           )[0]?.key;
 
         if (nextImageSelectorType) {
-          form.setFieldValue(
-            ['resource', 'accelerator'],
-            resourceLimits.accelerators[nextImageSelectorType]?.min,
-          );
-          form.setFieldValue(
-            ['resource', 'acceleratorType'],
-            nextImageSelectorType,
-          );
+          minimumResources.accelerator =
+            resourceLimits.accelerators[nextImageSelectorType]?.min;
+          minimumResources.acceleratorType = nextImageSelectorType;
         }
       }
     } else {
+      minimumResources.accelerator = 0;
+    }
+
+    if (forceImageMinValues !== true) {
+      // delete keys that is not less than current value
+      (['cpu', 'accelerator'] as const).forEach((key) => {
+        const minNum = minimumResources[key];
+        if (
+          _.isNumber(minNum) &&
+          minNum < form.getFieldValue(['resource', key])
+        ) {
+          delete minimumResources[key];
+        }
+      });
+      (['mem', 'shmem'] as const).forEach((key) => {
+        const minNumStr = minimumResources[key];
+        if (
+          _.isString(minNumStr) &&
+          compareNumberWithUnits(
+            minNumStr,
+            form.getFieldValue(['resource', key]),
+          ) < 0
+        ) {
+          delete minimumResources[key];
+        }
+      });
+    }
+
+    form.setFieldsValue({
+      resource: {
+        ...minimumResources,
+      },
+    });
+
+    // set to 0 when currentImage doesn't support any AI accelerator
+    if (currentImage && currentImageAcceleratorLimits.length === 0) {
       form.setFieldValue(['resource', 'accelerator'], 0);
     }
 
@@ -188,6 +218,9 @@ const ResourceAllocationFormItems: React.FC<
         ['resource', 'acceleratorType'],
       ])
       .catch(() => {});
+    if (form.getFieldValue('enabledAutomaticShmem')) {
+      runShmemAutomationRule(form.getFieldValue(['resource', 'mem']) || '0g');
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImage]);
 
@@ -356,6 +389,7 @@ const ResourceAllocationFormItems: React.FC<
                       }}
                       min={resourceLimits.cpu?.min}
                       max={resourceLimits.cpu?.max}
+                      step={1}
                     />
                   </Form.Item>
                 )}
@@ -678,6 +712,26 @@ const ResourceAllocationFormItems: React.FC<
                               resourceLimits.accelerators[
                                 currentAcceleratorType
                               ]?.min || 0,
+                            max: resourceLimits.accelerators[
+                              currentAcceleratorType
+                            ]?.max,
+                          },
+                          {
+                            validator: async (rule: any, value: number) => {
+                              if (
+                                _.endsWith(currentAcceleratorType, 'shares') &&
+                                form.getFieldValue('cluster_size') >= 2 &&
+                                value % 1 !== 0
+                              ) {
+                                return Promise.reject(
+                                  t(
+                                    'session.launcher.OnlyAllowsDiscreteNumberByClusterSize',
+                                  ),
+                                );
+                              } else {
+                                return Promise.resolve();
+                              }
+                            },
                           },
                           {
                             warningOnly:
@@ -755,7 +809,12 @@ const ResourceAllocationFormItems: React.FC<
                                   : undefined,
                             },
                           }}
-                          disabled={currentImageAcceleratorLimits.length === 0}
+                          disabled={
+                            currentImageAcceleratorLimits.length === 0 &&
+                            _.isEmpty(
+                              form.getFieldValue(['environments', 'manual']),
+                            )
+                          }
                           min={0}
                           max={
                             resourceLimits.accelerators[currentAcceleratorType]
@@ -777,7 +836,14 @@ const ResourceAllocationFormItems: React.FC<
                                 <Select
                                   tabIndex={-1}
                                   disabled={
-                                    currentImageAcceleratorLimits.length <= 0
+                                    currentImageAcceleratorLimits.length ===
+                                      0 &&
+                                    _.isEmpty(
+                                      form.getFieldValue([
+                                        'environments',
+                                        'manual',
+                                      ]),
+                                    )
                                   }
                                   suffixIcon={
                                     _.size(acceleratorSlots) > 1
@@ -986,6 +1052,7 @@ const ResourceAllocationFormItems: React.FC<
                       >
                         <InputNumberWithSlider
                           min={1}
+                          step={1}
                           // TODO: max cluster size
                           max={
                             _.isNumber(derivedClusterSizeMaxLimit)

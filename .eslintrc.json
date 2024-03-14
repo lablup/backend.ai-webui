@@ -23,19 +23,37 @@
   "plugins": [
     "@typescript-eslint",
     "lit-a11y",
-    "wc"
+    "wc",
+    "react-hooks"
   ],
   "rules": {
-    "comma-dangle": 0,
-    "require-jsdoc": 0,
-    "max-len": 0,
-    "new-cap": 0,
-    "indent": ["error", 2],
+    "object-curly-spacing": "off",
+    "operator-linebreak": "off",
+    "indent": "off",
+    "no-unused-vars": "off",
+    "no-undef": "off",
+    "no-constant-condition": "off",
+    "no-inner-declarations": "off",
+    "no-irregular-whitespace": "off",
+    "max-len":"off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "require-jsdoc": "off",
     "camelcase": "off",
     "no-empty": "off",
     "no-empty-function": "off",
     "no-invalid-this": "off",
     "wc/guard-super-call": "off",
-    "lit-a11y/alt-text": "off"
+    "lit-a11y/alt-text": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": [
+      "warn",
+      {
+        "additionalHooks": "useRecoilCallback"
+      }
+    ],
+    "spaced-comment": "off",
+    "quotes": "off",
+    "quote-props": "off",
+    "space-before-function-paren": "off"
   }
 }

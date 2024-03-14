@@ -12,11 +12,27 @@ export const BackendAIWebUIStyles = [
       left: 0;
       width: 100%;
       height: 100%;
+      /* background-image: url('/resources/images/loading-background-large.jpg'); */
+      /* background-repeat: no-repeat; */
+      /* background-attachment: fixed; */
+      /* background-position: top left; */
+      -webkit-user-select: none !important;
+      z-index: 1;
+    }
+
+    .loading-background::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
       background-image: url('/resources/images/loading-background-large.jpg');
+      z-index: -1;
       background-repeat: no-repeat;
       background-attachment: fixed;
       background-position: top left;
-      -webkit-user-select: none !important;
+      filter: var(--theme-image-filter);
     }
 
     .loading-background-drag-area {
@@ -42,8 +58,8 @@ export const BackendAIWebUIStyles = [
     }
 
     mwc-top-app-bar-fixed {
-      --mdc-typography-headline6-font-family: var(--general-font-family);
-      --mdc-typography-font-family: var(--general-font-family);
+      --mdc-typography-headline6-font-family: var(--token-fontFamily);
+      --mdc-typography-font-family: var(--token-fontFamily);
     }
 
     .site-name {
@@ -54,7 +70,7 @@ export const BackendAIWebUIStyles = [
       font-size: 16px;
       font-weight: 100;
       color: var(--general-sidebar-topbar-color, #efefef);
-      font-family: var(--general-font-family);
+      font-family: var(--token-fontFamily);
     }
 
     .site-name > .bold {
@@ -80,7 +96,7 @@ export const BackendAIWebUIStyles = [
       overflow: -moz-scrollbars-none;
       -ms-overflow-style: none;
       will-change: transform;
-      background-color: var(--general-sidebar-background-color, #fafafa);
+      background-color: var(--general-background-color, #fafafa);
       scrollbar-width: none;
     }
 
@@ -166,10 +182,7 @@ export const BackendAIWebUIStyles = [
     }
 
     #app-body {
-      --mdc-drawer-background-color: var(
-        --sidebar-background-color,
-        var(--general-sidebar-background-color, #fafafa)
-      );
+      --mdc-drawer-background-color: var(--general-background-color, #fafafa);
       --mdc-drawer-border-left: 0;
       --mdc-drawer-border-right: 0;
     }
@@ -182,7 +195,7 @@ export const BackendAIWebUIStyles = [
     footer#short-height {
       bottom: 0;
       color: var(--general-sidebar-footer-color, #aaaaaa);
-      background-color: var(--general-sidebar-background-color);
+      background-color: var(--general-background-color);
       margin: 0;
       padding-bottom: 5px;
       line-height: 1;
@@ -226,8 +239,8 @@ export const BackendAIWebUIStyles = [
     }
 
     mwc-button[unelevated] {
-      --mdc-theme-primary: var(--general-button-background-color);
-      --mdc-theme-on-primary: var(--general-button-color);
+      --mdc-theme-primary: var(--token-colorPrimary);
+      --mdc-theme-on-primary: var(--token-colorWhite, --general-button-color);
     }
 
     mwc-button.full {
@@ -305,16 +318,16 @@ export const BackendAIWebUIStyles = [
     }
 
     mwc-tab {
-      color: #ffffff;
+      color: var(--token-colorPrimary, #ffffff);
     }
 
     mwc-menu {
-      font-family: var(--general-font-family);
-      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+      font-family: var(--token-fontFamily);
+      --mdc-typography-subtitle1-font-family: var(--token-fontFamily);
     }
 
     mwc-formfield {
-      --mdc-typography-body2-font-family: var(--general-font-family);
+      --mdc-typography-body2-font-family: var(--token-fontFamily);
     }
 
     span.full_name,
@@ -325,8 +338,8 @@ export const BackendAIWebUIStyles = [
     mwc-multi-select {
       width: 135px;
       min-width: 135px;
-      font-family: var(--general-font-family);
-      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+      font-family: var(--token-fontFamily);
+      --mdc-typography-subtitle1-font-family: var(--token-fontFamily);
       --mdc-typography-subtitle1-font-size: 14px;
       --mdc-typography-subtitle1-font-color: white;
       --mdc-typography-subtitle1-font-weight: 400;
@@ -347,7 +360,6 @@ export const BackendAIWebUIStyles = [
       --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
       --mdc-select-disabled-dropdown-icon-color: rgba(255, 255, 255, 0.87);
       --mdc-theme-surface: white;
-      --mdc-list-vertical-padding: 5px;
       --mdc-list-side-padding: 10px;
       --mdc-menu-item-height: 28px;
       --mdc-list-item__primary-text: {
@@ -385,9 +397,9 @@ export const BackendAIWebUIStyles = [
     }
 
     mwc-list-item {
-      font-family: var(--general-font-family);
-      --mdc-typography-subtitle1-font-family: var(--general-font-family);
-      --mdc-typography-body2-font-family: var(--general-font-family);
+      font-family: var(--token-fontFamily);
+      --mdc-typography-subtitle1-font-family: var(--token-fontFamily);
+      --mdc-typography-body2-font-family: var(--token-fontFamily);
       font-weight: 400;
     }
 
@@ -396,7 +408,6 @@ export const BackendAIWebUIStyles = [
     }
 
     mwc-menu.user-menu {
-      --mdc-theme-surface: #f1f1f1;
       --mdc-menu-item-height: 28px;
       --mdc-menu-min-width: 200px;
       box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
@@ -440,7 +451,7 @@ export const BackendAIWebUIStyles = [
       line-height: 16px;
       font-size: 12px;
       font-weight: 100;
-      font-family: var(--general-font-family);
+      font-family: var(--token-fontFamily);
     }
 
     .portrait-canvas {
@@ -584,7 +595,7 @@ export const BackendAIWebUIStyles = [
 
     @media screen and (min-width: 450px) {
       #sidebar-navbar-footer {
-        background-color: var(--general-sidebar-background-color);
+        background-color: var(--general-background-color);
         color: var(--general-sidebar-color);
       }
     }

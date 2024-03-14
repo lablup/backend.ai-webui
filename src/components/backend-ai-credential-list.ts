@@ -176,11 +176,7 @@ export default class BackendAICredentialList extends BackendAIPage {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-theme-on-primary: var(--general-button-color);
-          --mdc-typography-font-family: var(--general-font-family);
-        }
-
-        mwc-select {
-          --mdc-theme-primary: var(--general-sidebar-color);
+          --mdc-typography-font-family: var(--token-fontFamily);
         }
       `,
     ];
@@ -1173,7 +1169,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     return html`
       <div class="list-wrapper">
         <vaadin-grid
-          theme="row-stripes column-borders compact"
+          theme="row-stripes column-borders compact dark"
           aria-label="Credential list"
           id="keypair-grid"
           .items="${this.keypairs}"

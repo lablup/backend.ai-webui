@@ -2,9 +2,9 @@ import { GBToBytes, bytesToGB } from '../helper';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { QuotaSettingModalFragment$key } from './__generated__/QuotaSettingModalFragment.graphql';
 import { QuotaSettingModalSetMutation } from './__generated__/QuotaSettingModalSetMutation.graphql';
-import { Form, Input, message } from 'antd';
+import { Form, FormInstance, Input, message } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
 
@@ -20,7 +20,7 @@ const QuotaSettingModal: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
 
-  const [form] = Form.useForm();
+  const formRef = useRef<FormInstance>(null);
 
   const quotaScope = useFragment(
     graphql`
@@ -61,7 +61,7 @@ const QuotaSettingModal: React.FC<Props> = ({
     `);
 
   const _onOk = (e: React.MouseEvent<HTMLElement>) => {
-    form.validateFields().then((values) => {
+    formRef.current?.validateFields().then((values) => {
       commitSetQuotaScope({
         variables: {
           quota_scope_id: quotaScope?.quota_scope_id || '',
@@ -91,9 +91,6 @@ const QuotaSettingModal: React.FC<Props> = ({
   return (
     <BAIModal
       {...baiModalProps}
-      style={{
-        zIndex: 10000,
-      }}
       destroyOnClose
       onOk={_onOk}
       confirmLoading={isInFlightCommitSetQuotaScope}
@@ -101,7 +98,7 @@ const QuotaSettingModal: React.FC<Props> = ({
       title={t('storageHost.quotaSettings.QuotaSettings')}
     >
       <Form
-        form={form}
+        ref={formRef}
         preserve={false}
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 20 }}
