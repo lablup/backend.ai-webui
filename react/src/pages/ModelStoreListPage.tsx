@@ -185,8 +185,8 @@ const ModelStoreListPage: React.FC = () => {
                 info?.title?.toLowerCase().includes(searchLower) ||
                 info?.task?.toLowerCase().includes(searchLower) ||
                 info?.category?.toLowerCase().includes(searchLower) ||
-                info?.label?.some((label) =>
-                  label?.toLowerCase().includes(searchLower),
+                info?.label?.some(
+                  (label) => label?.toLowerCase().includes(searchLower),
                 ) ||
                 false;
             }

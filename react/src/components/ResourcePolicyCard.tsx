@@ -208,11 +208,11 @@ const ResourcePolicyCard: React.FC<Props> = ({
                     )
                   : '-'
                 : user_resource_policy &&
-                    user_resource_policy?.max_quota_scope_size !== -1
-                  ? humanReadableDecimalSize(
-                      user_resource_policy?.max_quota_scope_size,
-                    )
-                  : '-'}
+                  user_resource_policy?.max_quota_scope_size !== -1
+                ? humanReadableDecimalSize(
+                    user_resource_policy?.max_quota_scope_size,
+                  )
+                : '-'}
             </Descriptions.Item>
           </Descriptions>
         ) : null}
