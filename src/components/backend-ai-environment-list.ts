@@ -187,12 +187,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           flex-direction: column;
           padding: 0px 30px;
         }
-        div.row {
-          display: grid;
-          grid-template-columns: 4fr 4fr 4fr 1fr;
-          margin-bottom: 10px;
-          gap: 10px;
-        }
         mwc-button.operation {
           margin: auto 10px;
           padding: auto 10px;
@@ -1022,113 +1016,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Validate backend.ai service ports.
-   *
-   * @return {boolean} Whether the port is valid or not
-   */
-  _isServicePortValid() {
-    const container = this.shadowRoot?.querySelector(
-      '#modify-app-container',
-    ) as HTMLDivElement;
-    const rows = container.querySelectorAll('.row:not(.header)');
-    const ports = new Set();
-    for (const row of Array.from(rows)) {
-      const textFields = row.querySelectorAll('mwc-textfield');
-      if (
-        Array.prototype.every.call(textFields, (field) => field.value === '')
-      ) {
-        continue;
-      }
-
-      const appName = textFields[0].value;
-      const protocol = textFields[1].value;
-      const port = parseInt(textFields[2].value);
-      if (appName === '') {
-        this.servicePortsMsg = _text('environment.AppNameMustNotBeEmpty');
-        return false;
-      }
-      if (!['http', 'tcp', 'pty', 'preopen'].includes(protocol)) {
-        this.servicePortsMsg = _text(
-          'environment.ProtocolMustBeOneOfSupported',
-        );
-        return false;
-      }
-      if (ports.has(port)) {
-        this.servicePortsMsg = _text('environment.PortMustBeUnique');
-        return false;
-      }
-      if (port >= 66535 || port < 0) {
-        this.servicePortsMsg = _text('environment.PortMustBeInRange');
-        return false;
-      }
-      if ([2000, 2001, 2002, 2003, 2200, 7681].includes(port)) {
-        this.servicePortsMsg = _text('environment.PortReservedForInternalUse');
-        return false;
-      }
-      ports.add(port);
-    }
-    return true;
-  }
-
-  /**
-   * Parse backend.ai service ports.
-   *
-   * @return {string} Service ports separated with comma
-   */
-  _parseServicePort() {
-    const container = this.shadowRoot?.querySelector(
-      '#modify-app-container',
-    ) as HTMLDivElement;
-    const rows = container.querySelectorAll('.row:not(.header)');
-    const nonempty = (row) =>
-      Array.prototype.filter.call(
-        row.querySelectorAll('mwc-textfield'),
-        (tf, idx) => tf.value === '',
-      ).length === 0;
-    const encodeRow = (row) =>
-      Array.prototype.map
-        .call(row.querySelectorAll('mwc-textfield'), (tf) => tf.value)
-        .join(':');
-
-    return Array.prototype.filter
-      .call(rows, (row) => nonempty(row))
-      .map((row) => encodeRow(row))
-      .join(',');
-  }
-
-  /**
-   * Modify backend.ai service ports.
-   */
-  modifyServicePort() {
-    if (this._isServicePortValid()) {
-      const value = this._parseServicePort();
-      const image = this.images[this.selectedIndex];
-      this.servicePortsMsg = '';
-      globalThis.backendaiclient.image
-        .modifyLabel(
-          image.registry,
-          image.name,
-          image.tag,
-          'ai.backend.service-ports',
-          value,
-        )
-        .then(({ result }) => {
-          if (result === 'ok') {
-            this.notification.text = _text(
-              'environment.DescServicePortModified',
-            );
-          } else {
-            this.notification.text = _text('dialog.ErrorOccurred');
-          }
-          this._getImages();
-          this.requestUpdate();
-          this.notification.show();
-          this._hideDialogById('#modify-app-dialog');
-        });
-    }
-  }
-
-  /**
    * Render requirments such as cpu limit, memoty limit
    * cuda share limit, rocm device limit and tpu limit.
    *
@@ -1303,7 +1190,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             @click=${() => {
               this.selectedIndex = rowData.index;
               this._decodeServicePort();
-              console.log(this.servicePorts);
               this.openManageAppModal = true;
               this.requestUpdate();
             }}
