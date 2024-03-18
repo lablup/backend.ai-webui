@@ -64,6 +64,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({ type: Array }) deleteImageNameList;
   @property({ type: Object }) deleteAppInfo = Object();
   @property({ type: Object }) deleteAppRow = Object();
+  @property({ type: Boolean }) openManageAppModal = false;
   @property({ type: Object }) installImageResource = Object();
   @property({ type: Object }) selectedCheckbox = Object();
   @property({ type: Object }) _grid = Object();
@@ -175,9 +176,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         backend-ai-dialog {
           --component-min-width: 350px;
         }
-        #modify-app-dialog {
-          --component-max-height: 550px;
-        }
         backend-ai-dialog vaadin-grid {
           margin: 0px 20px;
         }
@@ -281,49 +279,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Add a row to the environment list.
-   */
-  _addRow() {
-    const lastChild =
-      this.modifyAppContainer.children[
-        this.modifyAppContainer.children.length - 1
-      ];
-    const div = this._createRow();
-    this.modifyAppContainer.insertBefore(div, lastChild);
-  }
-
-  /**
-   * Create a row in the environment list.
-   *
-   * @return {HTMLElement} Generated div element
-   */
-  _createRow() {
-    const div = document.createElement('div');
-    div.setAttribute('class', 'row extra');
-
-    const app = document.createElement('mwc-textfield');
-    app.setAttribute('type', 'text');
-
-    const protocol = document.createElement('mwc-textfield');
-    app.setAttribute('type', 'text');
-
-    const port = document.createElement('mwc-textfield');
-    app.setAttribute('type', 'number');
-
-    const button = document.createElement('mwc-icon-button');
-    button.setAttribute('class', 'fg pink');
-    button.setAttribute('icon', 'remove');
-    button.addEventListener('click', (e) => this._checkDeleteAppInfo(e));
-
-    div.appendChild(port);
-    div.appendChild(protocol);
-    div.appendChild(app);
-    div.appendChild(button);
-
-    return div;
-  }
-
-  /**
    * Check whether delete operation will proceed or not.
    *
    * @param {any} e - Dispatches from the native input event each time the input changes.
@@ -343,21 +298,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this.deleteAppInfo = appInfo;
       this.deleteAppInfoDialog.show();
     }
-  }
-
-  /**
-   * Clear rows from the environment list.
-   */
-  _clearRows() {
-    const rows = this.modifyAppContainer.querySelectorAll('.row');
-    const lastRow = rows[rows.length - 1];
-
-    lastRow.querySelectorAll('mwc-textfield').forEach((tf) => {
-      tf.value = '';
-    });
-    this.modifyAppContainer.querySelectorAll('.row.extra').forEach((e) => {
-      e.remove();
-    });
   }
 
   /**
@@ -1182,7 +1122,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           }
           this._getImages();
           this.requestUpdate();
-          this._clearRows();
           this.notification.show();
           this._hideDialogById('#modify-app-dialog');
         });
@@ -1362,12 +1301,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             class="fg controls-running pink"
             icon="apps"
             @click=${() => {
-              if (this.selectedIndex !== rowData.index) {
-                this._clearRows();
-              }
               this.selectedIndex = rowData.index;
               this._decodeServicePort();
-              this._launchDialogById('#modify-app-dialog');
+              console.log(this.servicePorts);
+              this.openManageAppModal = true;
               this.requestUpdate();
             }}
           ></mwc-icon-button>
@@ -1764,54 +1701,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="modify-app-dialog" fixed backdrop>
-        <span slot="title">${_t('environment.ManageApps')}</span>
-        <div slot="content" id="modify-app-container">
-          <div class="row header">
-            <div>${_t('environment.AppName')}</div>
-            <div>${_t('environment.Protocol')}</div>
-            <div>${_t('environment.Port')}</div>
-            <div>${_t('environment.Action')}</div>
-          </div>
-          ${this.servicePorts?.map(
-            (item, index) => html`
-              <div class="row">
-                <mwc-textfield type="text" value=${item.app}></mwc-textfield>
-                <mwc-textfield
-                  type="text"
-                  value=${item.protocol}
-                ></mwc-textfield>
-                <mwc-textfield type="number" value=${item.port}></mwc-textfield>
-                <mwc-icon-button
-                  class="fg pink"
-                  icon="remove"
-                  @click=${(e) => this._checkDeleteAppInfo(e)}
-                ></mwc-icon-button>
-              </div>
-            `,
-          )}
-          <div class="row">
-            <mwc-textfield type="text"></mwc-textfield>
-            <mwc-textfield type="text"></mwc-textfield>
-            <mwc-textfield type="number"></mwc-textfield>
-            <mwc-icon-button
-              class="fg pink"
-              icon="add"
-              @click=${() => this._addRow()}
-            ></mwc-icon-button>
-          </div>
-          <span style="color:red;">${this.servicePortsMsg}</span>
-        </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button
-            unelevated
-            slot="footer"
-            icon="check"
-            label="${_t('button.Finish')}"
-            @click="${this.modifyServicePort}"
-          ></mwc-button>
-        </div>
-      </backend-ai-dialog>
       <backend-ai-dialog id="install-image-dialog" fixed backdrop persistent>
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
@@ -1916,6 +1805,18 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ></mwc-button>
         </div>
       </backend-ai-dialog>
+      ${this.openManageAppModal
+        ? html`
+            <backend-ai-react-manage-app-dialog
+              value="${JSON.stringify({
+                image: this.images[this.selectedIndex],
+                servicePorts: this.servicePorts,
+              })}"
+              @cancel="${() => (this.openManageAppModal = false)}"
+              @ok="${() => (this.openManageAppModal = false)}"
+            ></backend-ai-react-manage-app-dialog>
+          `
+        : html``}
     `;
   }
 }
