@@ -10,8 +10,8 @@
     "lint": "npx eslint src -c ./.eslintrc.json --quiet --ext .js,.ts; exit 0",
     "lint-fix": "npx eslint src -c ./.eslintrc.json  --quiet --ext .js,.ts --fix;exit 0",
     "format": "npx prettier --check 'src/**/*.{js, ts}'",
-    "format-fix": "npx prettier --write 'src/**/*.{js, ts}'",
-    "format-fix-all": "prettier --write 'src/**/*.{js, ts}' 'react/src/**/*.{js,jsx,ts,tsx}'",
+    "format-fix": "npx prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
+    "format-fix:all": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}' 'react/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
     "test": "npx testcafe chrome ./tests/*.js",
     "jest": "jest",
     "test:react": "npm test --prefix ./react test",
@@ -171,9 +171,17 @@
   "vaadin": {
     "disableUsageStatistics": true
   },
+  "lint-staged": {
+    "react/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ],
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ]
+  },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run format-fix-all"
+      "pre-commit": "lint-staged"
     }
   },
   "jest": {

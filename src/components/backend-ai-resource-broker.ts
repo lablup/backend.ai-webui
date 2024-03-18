@@ -261,8 +261,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     const hosts = await globalThis.backendaiclient?.vfolder?.list_hosts(
       globalThis.backendaiclient?.current_group_id(),
     );
-    return Object.values(hosts.volume_info).map(
-      (item: any) => item?.sftp_scaling_groups.join(', '),
+    return Object.values(hosts.volume_info).map((item: any) =>
+      item?.sftp_scaling_groups.join(', '),
     );
   }
 
