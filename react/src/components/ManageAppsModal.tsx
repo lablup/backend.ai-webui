@@ -8,7 +8,8 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
-  const [validateDetail, setValidateDetail] = useState('');
+  const [open, setOpen] = useState<boolean>(true);
+  const [validateDetail, setValidateDetail] = useState<string>('');
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const { value, dispatchEvent } = useWebComponentInfo();
@@ -34,7 +35,7 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
 
       const values = form
         .getFieldValue('apps')
-        .map((item: { app: string; protocol: string; port: string }) => {
+        .map((item: { app: string; protocol: string; port: number }) => {
           return `${item.app}:${item.protocol}:${item.port}`;
         })
         .join(',');
@@ -62,37 +63,22 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
   return (
     <BAIModal
       destroyOnClose
-      open={true}
-      onCancel={() => {
-        dispatchEvent('cancel', null);
-      }}
+      open={open}
+      onOk={handleOnclick}
+      onCancel={() => setOpen(false)}
+      afterClose={() => dispatchEvent('cancel', null)}
       centered
       title={t('environment.ManageApps')}
       {...baiModalProps}
-      footer={
+      footer={(_, { OkBtn, CancelBtn }) => (
         <Flex justify="between">
           <Typography.Text type="danger">{validateDetail}</Typography.Text>
-          <Flex direction="row" justify="end">
-            <Button
-              type="text"
-              danger
-              onClick={() => {
-                form.resetFields();
-                setValidateDetail('');
-              }}
-            >
-              {t('button.Reset')}
-            </Button>
-            <Button
-              type="primary"
-              icon={<CheckOutlined />}
-              onClick={handleOnclick}
-            >
-              {t('button.Save')}
-            </Button>
+          <Flex gap={'xs'}>
+            <CancelBtn />
+            <OkBtn />
           </Flex>
         </Flex>
-      }
+      )}
     >
       <Form
         form={form}
