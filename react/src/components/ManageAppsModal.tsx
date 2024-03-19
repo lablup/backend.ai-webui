@@ -28,36 +28,35 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
   }
   const { image, servicePorts } = parsedValue;
 
-  const handleOnclick = () => {
-    form
-      .validateFields()
-      .then(async (values) => {
-        const value = form
-          .getFieldValue('apps')
-          .map((item: any) => {
-            return `${item.app}:${item.protocol}:${item.port}`;
-          })
-          .join(',');
-        baiClient.image
-          .modifyLabel(
-            image.registry,
-            image.name,
-            image.tag,
-            'ai.backend.service-ports',
-            value,
-          )
-          .then(({ result }: any) => {
-            if (result === 'ok') {
-              message.success(t('environment.DescServicePortModified'));
-            } else {
-              message.error(t('dialog.ErrorOccurred'));
-            }
-          });
+  const handleOnclick = async () => {
+    try {
+      await form.validateFields();
+
+      const values = form
+        .getFieldValue('apps')
+        .map((item: { app: string; protocol: string; port: string }) => {
+          return `${item.app}:${item.protocol}:${item.port}`;
+        })
+        .join(',');
+
+      const { result } = await baiClient.image.modifyLabel(
+        image.registry,
+        image.name,
+        image.tag,
+        'service-ports',
+        values,
+      );
+
+      if (result === 'ok') {
+        message.success(t('environment.DescServicePortModified'));
         dispatchEvent('ok', null);
-      })
-      .catch((info) => {
-        setValidateDetail(info.errorFields[0].errors[0]);
-      });
+        return;
+      }
+      message.error(t('dialog.ErrorOccurred'));
+    } catch (info: any) {
+      setValidateDetail(info.errorFields[0].errors[0]);
+      return;
+    }
   };
 
   return (
@@ -177,7 +176,6 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
                                   itemIndex !== index && item?.port === value,
                               )
                             ) {
-                              console.log(index);
                               return Promise.reject(
                                 t('environment.PortMustBeUnique'),
                               );
