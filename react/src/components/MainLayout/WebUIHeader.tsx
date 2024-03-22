@@ -8,6 +8,7 @@ import BAINotificationButton from '../BAINotificationButton';
 import Flex, { FlexProps } from '../Flex';
 import ProjectSelect from '../ProjectSelect';
 import UserDropdownMenu from '../UserDropdownMenu';
+import WEBUIGuideButton from '../WEBUIGuideButton';
 import WEBUIHelpButton from '../WEBUIHelpButton';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 // @ts-ignore
@@ -100,6 +101,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
           <BAINotificationButton />
           <WebUIThemeToggleButton />
           <WEBUIHelpButton />
+          <WEBUIGuideButton />
           <UserDropdownMenu />
         </Flex>
       </Flex>
