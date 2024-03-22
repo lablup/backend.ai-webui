@@ -1,7 +1,7 @@
 import Flex from './Flex';
 import { CloseOutlined } from '@ant-design/icons';
 import { MaskStylesObj } from '@reactour/mask';
-import { PopoverStylesObj } from '@reactour/popover';
+import Popover, { PopoverStylesObj } from '@reactour/popover';
 import { StylesObj, TourProvider } from '@reactour/tour';
 import { Button, Typography, theme } from 'antd';
 import React from 'react';
@@ -14,6 +14,7 @@ const TourHeader: React.FC = (props) => {
         type="text"
         icon={<CloseOutlined />}
         style={{ color: token.colorIcon }}
+        size="small"
         onClick={() => {
           // @ts-ignore
           props.setIsOpen(false);
@@ -27,12 +28,12 @@ const TourContent: React.FC = (props) => {
   return (
     <Flex
       direction="column"
-      style={{ minWidth: 250, padding: token.paddingXS }}
+      style={{ minWidth: 350, padding: token.paddingXXS }}
       align="start"
     >
       <TourHeader {...props} />
       <Typography.Text
-        style={{ paddingLeft: token.paddingXS, paddingRight: token.paddingXS }}
+        style={{ paddingTop: token.paddingXS, paddingBottom: token.paddingXS }}
       >
         {
           // @ts-ignore
@@ -46,11 +47,7 @@ const TourContent: React.FC = (props) => {
 const TourFooter: React.FC = (props) => {
   const { token } = theme.useToken();
   return (
-    <Flex
-      justify="between"
-      align="end"
-      style={{ width: '100%', padding: token.paddingXS }}
-    >
+    <Flex justify="between" align="end" style={{ width: '100%' }}>
       <Typography.Text>
         {`${
           // @ts-ignore
@@ -119,7 +116,7 @@ const BAITourProvider: React.FC<BAITourProviderProps> = ({ children }) => {
     popover: (base) => ({
       ...base,
       borderRadius: token.borderRadius,
-      padding: 0,
+      padding: 10,
     }),
   };
 
