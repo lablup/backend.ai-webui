@@ -299,7 +299,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   }, [environmentSearch, imageGroups]);
 
   return (
-    <>
+    <div className="environment-form-item">
       <style>{cssRaw}</style>
       <Form.Item
         className="image-environment-select-form-item"
@@ -661,7 +661,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
       <Form.Item noStyle hidden name={['environments', 'image']}>
         <Input />
       </Form.Item>
-    </>
+    </div>
   );
 };
 

@@ -43,6 +43,7 @@ import {
   QuestionCircleOutlined,
   RightOutlined,
 } from '@ant-design/icons';
+import { StepType, useTour } from '@reactour/tour';
 import { useDebounceFn } from 'ahooks';
 import {
   Affix,
@@ -162,6 +163,12 @@ type SessionLauncherFormValue = SessionLauncherValue &
 
 type SessionMode = 'normal' | 'inference' | 'import';
 const SessionLauncherPage = () => {
+  const {
+    setSteps: setTourSteps,
+    setIsOpen: setTourIsOpen,
+    setCurrentStep: setTourCurrentStep,
+  } = useTour();
+
   const app = App.useApp();
   let sessionMode: SessionMode = 'normal';
 
@@ -231,6 +238,12 @@ const SessionLauncherPage = () => {
       form.setFieldsValue(formValuesFromQueryParams);
       form.validateFields().catch((e) => {});
     }
+
+    // set tour to initial state
+    setTourCurrentStep?.(0);
+    return () => {
+      setTourSteps?.([]);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -300,6 +313,46 @@ const SessionLauncherPage = () => {
     | 'network'
     // @ts-ignore
     | 'review' = steps[currentStep]?.key;
+
+  const tourSteps: { [key: string]: StepType[] } = {
+    sessionType: [
+      {
+        selector: '.session-launcher-steps',
+        content: 'This is the main content',
+      },
+      {
+        selector: '.session-type-radio-group',
+        content: 'This is the session type radio group',
+      },
+      {
+        selector: '.navigate-button',
+        content: 'This is the next button',
+      },
+    ],
+    environment: [
+      {
+        selector: '.environment-card',
+        content: 'This is the environment card',
+      },
+      {
+        selector: '.environment-form-item',
+        content: 'This is the environment form',
+      },
+      {
+        selector: '.resource-card',
+        content: 'This is the resource card',
+      },
+    ],
+    storage: [],
+    network: [],
+    review: [],
+  };
+
+  useEffect(() => {
+    setTourSteps?.(tourSteps[currentStepKey] || []);
+    setTourCurrentStep?.(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStepKey]);
 
   const hasError = _.some(
     form.getFieldsError(),
@@ -566,7 +619,10 @@ const SessionLauncherPage = () => {
       .finally(() => {
         setIsStartingSession(false);
       });
+    // set tour status to close for using confirm dialog
+    setTourIsOpen?.(false);
   };
+
   return (
     <Flex
       direction="column"
@@ -653,7 +709,10 @@ const SessionLauncherPage = () => {
                       currentStepKey === 'sessionType' ? 'block' : 'none',
                   }}
                 >
-                  <Form.Item name="sessionType">
+                  <Form.Item
+                    className="session-type-radio-group"
+                    name="sessionType"
+                  >
                     <Radio.Group
                       className="session-type-radio-group"
                       options={[
@@ -887,6 +946,7 @@ const SessionLauncherPage = () => {
 
                 {/* Step Start*/}
                 <Card
+                  className="environment-card"
                   title={t('session.launcher.Environments')}
                   style={{
                     display:
@@ -911,6 +971,7 @@ const SessionLauncherPage = () => {
                   </Form.Item>
                 </Card>
                 <Card
+                  className="resource-card"
                   title={t('session.launcher.ResourceAllocation')}
                   style={{
                     display:
@@ -1533,7 +1594,7 @@ const SessionLauncherPage = () => {
                       </Button>
                     )} */}
                   </Flex>
-                  <Flex direction="row" gap="sm">
+                  <Flex className="navigate-button" direction="row" gap="sm">
                     {currentStep > 0 && (
                       <Button
                         onClick={() => {
@@ -1586,6 +1647,7 @@ const SessionLauncherPage = () => {
             style={{ zIndex: 2 }}
           >
             <Steps
+              className="session-launcher-steps"
               size="small"
               direction="vertical"
               current={currentStep}
