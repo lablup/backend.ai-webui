@@ -153,6 +153,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     this.icons = globalThis.backendaimetadata.icons;
     this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
     this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+    this.imageInfo = globalThis.backendaimetadata.imageInfo;
     document.addEventListener(
       'backend-ai-metadata-image-loaded',
       () => {
@@ -160,6 +161,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         this.icons = globalThis.backendaimetadata.icons;
         this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
         this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+        this.imageInfo = globalThis.backendaimetadata.imageInfo;
       },
       { once: true },
     );
