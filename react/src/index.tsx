@@ -1,4 +1,5 @@
 import App from './App';
+import BAITourProvider from './components/BAITourProvider';
 import Flex from './components/Flex';
 import FlexActivityIndicator from './components/FlexActivityIndicator';
 import ResourceGroupSelect from './components/ResourceGroupSelect';
@@ -6,7 +7,6 @@ import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
 import { ThemeModeProvider } from './hooks/useThemeMode';
 import ModelStoreListPage from './pages/ModelStoreListPage';
-import { TourProvider } from '@reactour/tour';
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
@@ -250,13 +250,13 @@ const root = ReactDOM.createRoot(
   document.getElementById('react-root') as HTMLElement,
 );
 root.render(
-  <TourProvider steps={[]}>
+  <BAITourProvider>
     <React.StrictMode>
       <ThemeModeProvider>
         <App />
       </ThemeModeProvider>
     </React.StrictMode>
-  </TourProvider>,
+  </BAITourProvider>,
 );
 
 customElements.define(
