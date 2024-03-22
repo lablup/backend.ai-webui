@@ -1,10 +1,9 @@
 import Flex from './Flex';
-import { CloseOutlined, LogoutOutlined } from '@ant-design/icons';
+import { CloseOutlined } from '@ant-design/icons';
 import { MaskStylesObj } from '@reactour/mask';
 import { PopoverStylesObj } from '@reactour/popover';
 import { StylesObj, TourProvider } from '@reactour/tour';
 import { Button, Typography, theme } from 'antd';
-import { toLength } from 'lodash';
 import React from 'react';
 
 const TourHeader: React.FC = (props) => {
@@ -28,12 +27,13 @@ const TourContent: React.FC = (props) => {
   return (
     <Flex
       direction="column"
-      gap={token.paddingXS}
       style={{ minWidth: 250, padding: token.paddingXS }}
       align="start"
     >
       <TourHeader {...props} />
-      <Typography.Text style={{ paddingLeft: token.paddingXS }}>
+      <Typography.Text
+        style={{ paddingLeft: token.paddingXS, paddingRight: token.paddingXS }}
+      >
         {
           // @ts-ignore
           props.steps[props.currentStep].content
@@ -60,7 +60,7 @@ const TourFooter: React.FC = (props) => {
           props.steps.length
         }`}
       </Typography.Text>
-      <Flex gap={'xxs'}>
+      <Flex gap={'xs'}>
         {
           // @ts-ignore
           props.currentStep !== 0 && (
@@ -81,34 +81,32 @@ const TourFooter: React.FC = (props) => {
             </Button>
           )
         }
-        {
-          // @ts-ignore
-          props.currentStep !== props.steps.length - 1 && (
-            <Button
-              style={{
-                backgroundColor: 'var(--token-colorPrimary)',
-                color: token.colorWhite,
-                border: 'none',
-                boxShadow: token.boxShadowTertiary,
-                height: token.controlHeightSM,
-                padding: 4,
-                borderRadius: token.borderRadiusSM,
-                lineHeight: 'var(--ant-button-content-line-height-sm)',
-              }}
-              onClick={() => {
-                // @ts-ignore.ant-btn-sm {}
-                props.setCurrentStep((prev) => prev + 1);
-                // @ts-ignore
-                if (props.steps.length === props.currentStep + 1) {
-                  // @ts-ignore
-                  props.setIsOpen(false);
-                }
-              }}
-            >
-              Next
-            </Button>
-          )
-        }
+        <Button
+          style={{
+            backgroundColor: 'var(--token-colorPrimary)',
+            color: token.colorWhite,
+            border: 'none',
+            boxShadow: token.boxShadowTertiary,
+            height: token.controlHeightSM,
+            padding: 4,
+            borderRadius: token.borderRadiusSM,
+            lineHeight: 'var(--ant-button-content-line-height-sm)',
+          }}
+          onClick={() => {
+            // @ts-ignore.ant-btn-sm {}
+            props.setCurrentStep((prev) => prev + 1);
+            // @ts-ignore
+            if (props.steps.length === props.currentStep + 1) {
+              // @ts-ignore
+              props.setIsOpen(false);
+            }
+          }}
+        >
+          {
+            // @ts-ignore
+            props.currentStep === props.steps.length - 1 ? 'Finish' : 'Next'
+          }
+        </Button>
       </Flex>
     </Flex>
   );
