@@ -207,4 +207,4 @@ i18n:
 clean:
 	@cd app;	rm -rf ./backend*; rm -rf ./Backend*
 	@cd build;rm -rf ./unbundle ./bundle ./rollup ./electron-app
-	@cd react/build; rm -rf ./*
+	@rm -rf ./react/build
