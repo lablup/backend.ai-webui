@@ -153,6 +153,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
       >
         <Spin spinning={isRefreshModalPending} indicator={<LoadingOutlined />}>
           <Form
+            ref={formRef}
             layout="vertical"
             labelCol={{ span: 8 }}
             initialValues={{

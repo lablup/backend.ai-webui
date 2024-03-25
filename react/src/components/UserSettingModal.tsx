@@ -243,6 +243,7 @@ const UserSettingModal: React.FC<Props> = ({
       {...baiModalProps}
     >
       <Form
+        ref={formRef}
         preserve={false}
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 20 }}

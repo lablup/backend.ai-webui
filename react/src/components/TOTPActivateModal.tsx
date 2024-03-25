@@ -129,7 +129,11 @@ const TOTPActivateModal: React.FC<Props> = ({
             </Typography.Text>
           </Flex>
           {t('totp.EnterConfirmationCode')}
-          <Form preserve={false} validateTrigger={['onChange', 'onBlur']}>
+          <Form
+            ref={formRef}
+            preserve={false}
+            validateTrigger={['onChange', 'onBlur']}
+          >
             <Flex
               justify="center"
               style={{ margin: token.marginSM, gap: token.margin }}

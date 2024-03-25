@@ -475,6 +475,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     >
       <Suspense fallback={<FlexActivityIndicator />}>
         <Form
+          ref={formRef}
           disabled={mutationToCreateService.isLoading}
           preserve={false}
           layout="vertical"
