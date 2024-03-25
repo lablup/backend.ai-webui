@@ -7,10 +7,11 @@
 
 .ant-modal.bai-modal .ant-modal-footer {
   padding: var(--general-modal-footer-padding, 0 20px 24px 20px);
+  text-align: start;
 }
 
 .ant-modal.bai-modal .ant-modal-header {
-  border-bottom: 1px solid rgb(221, 221, 221);
+  border-bottom: 1px solid var(--token-colorBorder);
   border-width: 100%;
   justify-content: space-between;
   display: flex;

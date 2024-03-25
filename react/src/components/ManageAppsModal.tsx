@@ -1,101 +1,196 @@
+import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
-import { DeleteOutlined, PlusOutlined, CheckOutlined } from '@ant-design/icons';
-import { Input, Typography, Space, Button, Form } from 'antd';
-import React from 'react';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { Input, Button, Form, message, Typography } from 'antd';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface Props extends BAIModalProps {}
-const { Text } = Typography;
-const ManageAppsModal: React.FC<Props> = ({ ...baiModalProps }) => {
+const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
+  const [open, setOpen] = useState<boolean>(true);
+  const [validateDetail, setValidateDetail] = useState<string>('');
   const { t } = useTranslation();
+  const [form] = Form.useForm();
   const { value, dispatchEvent } = useWebComponentInfo();
+  const baiClient = useSuspendedBackendaiClient();
+
   let parsedValue: {
-    open: boolean;
+    image: any;
     servicePorts: any;
   };
   try {
     parsedValue = JSON.parse(value || '');
   } catch (error) {
     parsedValue = {
-      open: false,
+      image: {},
       servicePorts: [],
     };
   }
-  const { open, servicePorts } = parsedValue;
-  const onFinish = (values: any) => {
-    console.log('Saved settings. ', values);
+  const { image, servicePorts } = parsedValue;
+
+  const handleOnclick = async () => {
+    try {
+      await form.validateFields();
+
+      const values = form
+        .getFieldValue('apps')
+        .map((item: { app: string; protocol: string; port: number }) => {
+          return `${item.app}:${item.protocol}:${item.port}`;
+        })
+        .join(',');
+
+      const { result } = await baiClient.image.modifyLabel(
+        image.registry,
+        image.name,
+        image.tag,
+        'service-ports',
+        values,
+      );
+
+      if (result === 'ok') {
+        message.success(t('environment.DescServicePortModified'));
+        dispatchEvent('ok', null);
+        return;
+      }
+      message.error(t('dialog.ErrorOccurred'));
+    } catch (info: any) {
+      setValidateDetail(info.errorFields[0].errors[0]);
+      return;
+    }
   };
 
   return (
     <BAIModal
+      destroyOnClose
       open={open}
-      onCancel={() => {
-        dispatchEvent('cancel', null);
-      }}
+      onOk={handleOnclick}
+      onCancel={() => setOpen(false)}
+      afterClose={() => dispatchEvent('cancel', null)}
       centered
       title={t('environment.ManageApps')}
       {...baiModalProps}
-      footer={[
-        <Flex direction="row" justify="between">
-          <Button type="text" danger>
-            {t('button.Reset')}
-          </Button>
-          <Button type="primary" icon={<CheckOutlined />}>
-            {t('button.Save')}
-          </Button>
-        </Flex>,
-      ]}
+      footer={(_, { OkBtn, CancelBtn }) => (
+        <Flex justify="between">
+          <Typography.Text type="danger">{validateDetail}</Typography.Text>
+          <Flex gap={'xs'}>
+            <CancelBtn />
+            <OkBtn />
+          </Flex>
+        </Flex>
+      )}
     >
       <Form
-        initialValues={{ apps: servicePorts }}
-        onFinish={onFinish}
+        form={form}
+        layout="vertical"
         autoComplete="off"
+        initialValues={{ apps: servicePorts }}
+        requiredMark={false}
+        onChange={() => {
+          setValidateDetail('');
+        }}
       >
-        <Flex direction="column" gap={'xs'}>
-          <Space.Compact block>
-            <Text style={{ width: '30%' }}>{t('environment.AppName')}</Text>
-            <Text style={{ width: '30%' }}>{t('environment.Protocol')}</Text>
-            <Text style={{ width: '30%' }}>{t('environment.Port')}</Text>
-            <Text style={{ width: '10%', textAlign: 'center' }}>
-              {/* {t("environment.Action")} */}
-            </Text>
-          </Space.Compact>
+        <Flex direction="column">
           <Form.List name="apps">
             {(fields, { add, remove }) => (
-              <Flex direction="column" gap="sm">
-                {fields.map((field) => (
-                  <Flex direction="row" gap={'xs'}>
-                    <Space.Compact block key={field.key}>
-                      <Form.Item
-                        {...field}
-                        name={[field.name, 'app']}
-                        rules={[
-                          {
-                            required: true,
-                            message: t('environment.AppNameMustNotBeEmpty'),
+              <Flex direction="column" style={{ width: '100%' }}>
+                {fields.map((field, index) => (
+                  <Flex
+                    direction="row"
+                    key={field.key}
+                    gap={'xs'}
+                    align={index === 0 ? undefined : 'start'}
+                  >
+                    <Form.Item
+                      label={index === 0 && t('environment.AppName')}
+                      {...field}
+                      name={[field.name, 'app']}
+                      help=""
+                      rules={[
+                        {
+                          required: true,
+                          message: t('environment.AppNameMustNotBeEmpty'),
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      label={index === 0 && t('environment.Protocol')}
+                      {...field}
+                      name={[field.name, 'protocol']}
+                      help=""
+                      rules={[
+                        {
+                          pattern: /^(http|tcp|pty|preopen)$/,
+                          required: true,
+                          message: t(
+                            'environment.ProtocolMustBeOneOfSupported',
+                          ),
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      label={index === 0 && t('environment.Port')}
+                      {...field}
+                      name={[field.name, 'port']}
+                      help=""
+                      rules={[
+                        {
+                          required: true,
+                          validator: (_, value) => {
+                            if (
+                              isNaN(Number(value)) ||
+                              value < 0 ||
+                              value >= 65535
+                            ) {
+                              return Promise.reject(
+                                t('environment.PortMustBeInRange'),
+                              );
+                            }
+                            return Promise.resolve();
                           },
-                        ]}
-                        noStyle
-                      >
-                        <Input />
-                      </Form.Item>
-                      <Form.Item
-                        {...field}
-                        name={[field.name, 'protocol']}
-                        noStyle
-                      >
-                        <Input />
-                      </Form.Item>
-                      <Form.Item {...field} name={[field.name, 'port']} noStyle>
-                        <Input />
-                      </Form.Item>
-                    </Space.Compact>
+                        },
+                        {
+                          validator: (_, value) => {
+                            const apps = form.getFieldValue('apps');
+                            if (
+                              apps.some(
+                                (item: any, itemIndex: number) =>
+                                  itemIndex !== index && item?.port === value,
+                              )
+                            ) {
+                              return Promise.reject(
+                                t('environment.PortMustBeUnique'),
+                              );
+                            }
+                            if (
+                              [2000, 2001, 2002, 2003, 2200, 7681].includes(
+                                Number(value),
+                              )
+                            ) {
+                              return Promise.reject(
+                                t('environment.PortReservedForInternalUse'),
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
                     <Button
                       type="text"
+                      danger
                       onClick={() => remove(field.name)}
-                      style={{ width: '10%' }}
+                      style={
+                        index === 0
+                          ? { width: '10%', marginTop: 8 }
+                          : { width: '10%' }
+                      }
                       icon={<DeleteOutlined />}
                     />
                   </Flex>
@@ -113,25 +208,6 @@ const ManageAppsModal: React.FC<Props> = ({ ...baiModalProps }) => {
           </Form.List>
         </Flex>
       </Form>
-      {/* <Space direction="vertical">
-                <Space.Compact block>
-                    <Text style={{ width: '30%' }}>{t('environment.AppName')}</Text>
-                    <Text style={{ width: '30%' }}>{t('environment.Protocol')}</Text>
-                    <Text style={{ width: '30%' }}>{t('environment.Port')}</Text>
-                    <Text style={{ width: '10%' }}>{t('environment.Action')}</Text>
-                </Space.Compact>
-                {servicePorts?.map((item: any, index: number) => {
-                    return (
-                        <Space.Compact block key={index}>
-                            <Input style={{ width: '30%' }} defaultValue={item.app}/>
-                            <Input style={{ width: '30%' }} defaultValue={item.protocol}/>
-                            <Input style={{ width: '30%' }} defaultValue={item.port}/>
-                            <Button style={{ width: '10%' }} icon={<DeleteOutlined />}/>
-                        </Space.Compact>
-                    )
-                })}
-                <Button block icon={<PlusOutlined />}>{t('general.Add')}</Button>
-            </Space> */}
     </BAIModal>
   );
 };

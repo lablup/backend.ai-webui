@@ -64,6 +64,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({ type: Array }) deleteImageNameList;
   @property({ type: Object }) deleteAppInfo = Object();
   @property({ type: Object }) deleteAppRow = Object();
+  @property({ type: Boolean }) openManageAppModal = false;
   @property({ type: Object }) installImageResource = Object();
   @property({ type: Object }) selectedCheckbox = Object();
   @property({ type: Object }) _grid = Object();
@@ -175,9 +176,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         backend-ai-dialog {
           --component-min-width: 350px;
         }
-        #modify-app-dialog {
-          --component-max-height: 550px;
-        }
         backend-ai-dialog vaadin-grid {
           margin: 0px 20px;
         }
@@ -188,12 +186,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           display: flex;
           flex-direction: column;
           padding: 0px 30px;
-        }
-        div.row {
-          display: grid;
-          grid-template-columns: 4fr 4fr 4fr 1fr;
-          margin-bottom: 10px;
-          gap: 10px;
         }
         mwc-button.operation {
           margin: auto 10px;
@@ -281,49 +273,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Add a row to the environment list.
-   */
-  _addRow() {
-    const lastChild =
-      this.modifyAppContainer.children[
-        this.modifyAppContainer.children.length - 1
-      ];
-    const div = this._createRow();
-    this.modifyAppContainer.insertBefore(div, lastChild);
-  }
-
-  /**
-   * Create a row in the environment list.
-   *
-   * @return {HTMLElement} Generated div element
-   */
-  _createRow() {
-    const div = document.createElement('div');
-    div.setAttribute('class', 'row extra');
-
-    const app = document.createElement('mwc-textfield');
-    app.setAttribute('type', 'text');
-
-    const protocol = document.createElement('mwc-textfield');
-    app.setAttribute('type', 'text');
-
-    const port = document.createElement('mwc-textfield');
-    app.setAttribute('type', 'number');
-
-    const button = document.createElement('mwc-icon-button');
-    button.setAttribute('class', 'fg pink');
-    button.setAttribute('icon', 'remove');
-    button.addEventListener('click', (e) => this._checkDeleteAppInfo(e));
-
-    div.appendChild(port);
-    div.appendChild(protocol);
-    div.appendChild(app);
-    div.appendChild(button);
-
-    return div;
-  }
-
-  /**
    * Check whether delete operation will proceed or not.
    *
    * @param {any} e - Dispatches from the native input event each time the input changes.
@@ -343,21 +292,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this.deleteAppInfo = appInfo;
       this.deleteAppInfoDialog.show();
     }
-  }
-
-  /**
-   * Clear rows from the environment list.
-   */
-  _clearRows() {
-    const rows = this.modifyAppContainer.querySelectorAll('.row');
-    const lastRow = rows[rows.length - 1];
-
-    lastRow.querySelectorAll('mwc-textfield').forEach((tf) => {
-      tf.value = '';
-    });
-    this.modifyAppContainer.querySelectorAll('.row.extra').forEach((e) => {
-      e.remove();
-    });
   }
 
   /**
@@ -1082,114 +1016,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Validate backend.ai service ports.
-   *
-   * @return {boolean} Whether the port is valid or not
-   */
-  _isServicePortValid() {
-    const container = this.shadowRoot?.querySelector(
-      '#modify-app-container',
-    ) as HTMLDivElement;
-    const rows = container.querySelectorAll('.row:not(.header)');
-    const ports = new Set();
-    for (const row of Array.from(rows)) {
-      const textFields = row.querySelectorAll('mwc-textfield');
-      if (
-        Array.prototype.every.call(textFields, (field) => field.value === '')
-      ) {
-        continue;
-      }
-
-      const appName = textFields[0].value;
-      const protocol = textFields[1].value;
-      const port = parseInt(textFields[2].value);
-      if (appName === '') {
-        this.servicePortsMsg = _text('environment.AppNameMustNotBeEmpty');
-        return false;
-      }
-      if (!['http', 'tcp', 'pty', 'preopen'].includes(protocol)) {
-        this.servicePortsMsg = _text(
-          'environment.ProtocolMustBeOneOfSupported',
-        );
-        return false;
-      }
-      if (ports.has(port)) {
-        this.servicePortsMsg = _text('environment.PortMustBeUnique');
-        return false;
-      }
-      if (port >= 66535 || port < 0) {
-        this.servicePortsMsg = _text('environment.PortMustBeInRange');
-        return false;
-      }
-      if ([2000, 2001, 2002, 2003, 2200, 7681].includes(port)) {
-        this.servicePortsMsg = _text('environment.PortReservedForInternalUse');
-        return false;
-      }
-      ports.add(port);
-    }
-    return true;
-  }
-
-  /**
-   * Parse backend.ai service ports.
-   *
-   * @return {string} Service ports separated with comma
-   */
-  _parseServicePort() {
-    const container = this.shadowRoot?.querySelector(
-      '#modify-app-container',
-    ) as HTMLDivElement;
-    const rows = container.querySelectorAll('.row:not(.header)');
-    const nonempty = (row) =>
-      Array.prototype.filter.call(
-        row.querySelectorAll('mwc-textfield'),
-        (tf, idx) => tf.value === '',
-      ).length === 0;
-    const encodeRow = (row) =>
-      Array.prototype.map
-        .call(row.querySelectorAll('mwc-textfield'), (tf) => tf.value)
-        .join(':');
-
-    return Array.prototype.filter
-      .call(rows, (row) => nonempty(row))
-      .map((row) => encodeRow(row))
-      .join(',');
-  }
-
-  /**
-   * Modify backend.ai service ports.
-   */
-  modifyServicePort() {
-    if (this._isServicePortValid()) {
-      const value = this._parseServicePort();
-      const image = this.images[this.selectedIndex];
-      this.servicePortsMsg = '';
-      globalThis.backendaiclient.image
-        .modifyLabel(
-          image.registry,
-          image.name,
-          image.tag,
-          'ai.backend.service-ports',
-          value,
-        )
-        .then(({ result }) => {
-          if (result === 'ok') {
-            this.notification.text = _text(
-              'environment.DescServicePortModified',
-            );
-          } else {
-            this.notification.text = _text('dialog.ErrorOccurred');
-          }
-          this._getImages();
-          this.requestUpdate();
-          this._clearRows();
-          this.notification.show();
-          this._hideDialogById('#modify-app-dialog');
-        });
-    }
-  }
-
-  /**
    * Render requirments such as cpu limit, memoty limit
    * cuda share limit, rocm device limit and tpu limit.
    *
@@ -1362,12 +1188,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             class="fg controls-running pink"
             icon="apps"
             @click=${() => {
-              if (this.selectedIndex !== rowData.index) {
-                this._clearRows();
-              }
               this.selectedIndex = rowData.index;
               this._decodeServicePort();
-              this._launchDialogById('#modify-app-dialog');
+              this.openManageAppModal = true;
               this.requestUpdate();
             }}
           ></mwc-icon-button>
@@ -1616,7 +1439,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="cpu"
                 step="1"
                 markers
-                max="8"
+                max=${this._range['cpu'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1631,7 +1454,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="mem"
                 markers
                 step="1"
-                max="12"
+                max=${this._range['mem'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1647,7 +1470,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="cuda-gpu"
                 markers
                 step="1"
-                max="8"
+                max=${this._range['cuda-gpu'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1663,7 +1486,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="cuda-fgpu"
                 markers
                 step="1"
-                max="8"
+                max=${this._range['cuda-fgpu'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1679,7 +1502,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="rocm-gpu"
                 markers
                 step="1"
-                max="8"
+                max=${this._range['rocm-gpu'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1695,7 +1518,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="tpu"
                 markers
                 step="1"
-                max="5"
+                max=${this._range['tpu'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1711,7 +1534,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="ipu"
                 markers
                 step="1"
-                max="5"
+                max=${this._range['ipu'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1727,7 +1550,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="atom"
                 markers
                 step="1"
-                max="5"
+                max=${this._range['atom'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1743,7 +1566,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 id="warboy"
                 markers
                 step="1"
-                max="5"
+                max=${this._range['warboy'].length - 1}
                 @change="${(e) => this._changeSliderValue(e.target)}"
               ></mwc-slider>
               <mwc-button
@@ -1761,54 +1584,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             icon="check"
             label="${_t('button.SaveChanges')}"
             @click="${() => this.modifyImage()}"
-          ></mwc-button>
-        </div>
-      </backend-ai-dialog>
-      <backend-ai-dialog id="modify-app-dialog" fixed backdrop>
-        <span slot="title">${_t('environment.ManageApps')}</span>
-        <div slot="content" id="modify-app-container">
-          <div class="row header">
-            <div>${_t('environment.AppName')}</div>
-            <div>${_t('environment.Protocol')}</div>
-            <div>${_t('environment.Port')}</div>
-            <div>${_t('environment.Action')}</div>
-          </div>
-          ${this.servicePorts?.map(
-            (item, index) => html`
-              <div class="row">
-                <mwc-textfield type="text" value=${item.app}></mwc-textfield>
-                <mwc-textfield
-                  type="text"
-                  value=${item.protocol}
-                ></mwc-textfield>
-                <mwc-textfield type="number" value=${item.port}></mwc-textfield>
-                <mwc-icon-button
-                  class="fg pink"
-                  icon="remove"
-                  @click=${(e) => this._checkDeleteAppInfo(e)}
-                ></mwc-icon-button>
-              </div>
-            `,
-          )}
-          <div class="row">
-            <mwc-textfield type="text"></mwc-textfield>
-            <mwc-textfield type="text"></mwc-textfield>
-            <mwc-textfield type="number"></mwc-textfield>
-            <mwc-icon-button
-              class="fg pink"
-              icon="add"
-              @click=${() => this._addRow()}
-            ></mwc-icon-button>
-          </div>
-          <span style="color:red;">${this.servicePortsMsg}</span>
-        </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button
-            unelevated
-            slot="footer"
-            icon="check"
-            label="${_t('button.Finish')}"
-            @click="${this.modifyServicePort}"
           ></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -1916,6 +1691,18 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ></mwc-button>
         </div>
       </backend-ai-dialog>
+      ${this.openManageAppModal
+        ? html`
+            <backend-ai-react-manage-app-dialog
+              value="${JSON.stringify({
+                image: this.images[this.selectedIndex],
+                servicePorts: this.servicePorts,
+              })}"
+              @cancel="${() => (this.openManageAppModal = false)}"
+              @ok="${() => (this.openManageAppModal = false)}"
+            ></backend-ai-react-manage-app-dialog>
+          `
+        : html``}
     `;
   }
 }
