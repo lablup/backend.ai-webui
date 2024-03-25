@@ -21,10 +21,20 @@ import InputNumberWithSlider from './InputNumberWithSlider';
 import VFolderSelect from './VFolderSelect';
 import { ServiceLauncherModalFragment$key } from './__generated__/ServiceLauncherModalFragment.graphql';
 import { ServiceLauncherModalModifyMutation } from './__generated__/ServiceLauncherModalModifyMutation.graphql';
-import { Card, Form, Input, theme, Switch, message, Button, Space } from 'antd';
+import {
+  Card,
+  Form,
+  Input,
+  theme,
+  Switch,
+  message,
+  Button,
+  Space,
+  FormInstance,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { Suspense } from 'react';
+import React, { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
 
@@ -97,7 +107,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
-  const [form] = Form.useForm<ServiceLauncherFormValue>();
+  const formRef = useRef<FormInstance<ServiceLauncherFormValue>>(null);
   const endpoint = useFragment(
     graphql`
       fragment ServiceLauncherModalFragment on Endpoint {
@@ -297,8 +307,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
   // Apply any operation after clicking OK button
   const handleOk = () => {
-    form
-      .validateFields()
+    formRef.current
+      ?.validateFields()
       .then((values) => {
         if (endpoint) {
           if (baiClient.supports('modify-endpoint')) {
@@ -420,7 +430,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
   // Apply any operation after clicking Cancel button
   const handleCancel = () => {
-    form.resetFields();
+    formRef.current?.resetFields();
     onRequestClose();
   };
 
@@ -466,7 +476,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       <Suspense fallback={<FlexActivityIndicator />}>
         <Form
           disabled={mutationToCreateService.isLoading}
-          form={form}
           preserve={false}
           layout="vertical"
           labelCol={{ span: 12 }}

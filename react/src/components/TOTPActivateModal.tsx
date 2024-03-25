@@ -3,9 +3,18 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
 import { TOTPActivateModalFragment$key } from './__generated__/TOTPActivateModalFragment.graphql';
-import { QRCode, Typography, Input, theme, Form, message, Spin } from 'antd';
+import {
+  QRCode,
+  Typography,
+  Input,
+  theme,
+  Form,
+  message,
+  Spin,
+  FormInstance,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useFragment } from 'react-relay';
@@ -26,7 +35,7 @@ const TOTPActivateModal: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [form] = Form.useForm<TOTPActivateFormInput>();
+  const formRef = useRef<FormInstance<TOTPActivateFormInput>>(null);
 
   const user = useFragment(
     graphql`
@@ -63,8 +72,8 @@ const TOTPActivateModal: React.FC<Props> = ({
   });
 
   const _onOk = () => {
-    form
-      .validateFields()
+    formRef.current
+      ?.validateFields()
       .then((values) => {
         mutationToActivateTotp.mutate(values, {
           onSuccess: () => {
@@ -120,11 +129,7 @@ const TOTPActivateModal: React.FC<Props> = ({
             </Typography.Text>
           </Flex>
           {t('totp.EnterConfirmationCode')}
-          <Form
-            preserve={false}
-            form={form}
-            validateTrigger={['onChange', 'onBlur']}
-          >
+          <Form preserve={false} validateTrigger={['onChange', 'onBlur']}>
             <Flex
               justify="center"
               style={{ margin: token.marginSM, gap: token.margin }}
