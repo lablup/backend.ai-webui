@@ -1009,7 +1009,7 @@
       "SSHConnectionExampleClipboardCopy": "El ejemplo de conexión SSH se ha copiado en el portapapeles."
     },
     "core": "núcleo",
-    "exportCSV": "exportar CSV",
+    "exportCSV": "exportar a CSV",
     "launcher": {
       "AIAccelerator": "Acelerador de IA",
       "Accelerator": "Acelerador",

@@ -1369,9 +1369,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         <backend-ai-maintenance-view class="page" name="maintenance" ?active="${
           this._page === 'maintenance'
         }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-maintenance-view>
-        <backend-ai-statistics-view class="page" name="statistics" ?active="${
+        <!-- <backend-ai-statistics-view class="page" name="statistics" ?active="${
           this._page === 'statistics'
-        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-statistics-view>
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-statistics-view> -->
         <backend-ai-email-verification-view class="page" name="email-verification" ?active="${
           this._page === 'verify-email'
         }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-email-verification-view>

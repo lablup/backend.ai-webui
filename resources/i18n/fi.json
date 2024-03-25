@@ -1009,7 +1009,7 @@
       "SSHConnectionExampleClipboardCopy": "SSH-yhteys Esimerkki on kopioitu leikepöydälle."
     },
     "core": "ydin",
-    "exportCSV": "viedä CSV",
+    "exportCSV": "viedä CSV-muotoon",
     "launcher": {
       "AIAccelerator": "AI-kiihdyttämö",
       "Accelerator": "Kiihdytin",
