@@ -1,7 +1,4 @@
 import '../lib/backend.ai-client-es6';
-import '../plastics/mwc/mwc-drawer';
-import '../plastics/mwc/mwc-multi-select';
-import '../plastics/mwc/mwc-top-app-bar-fixed';
 import './backend-ai-app-launcher';
 import './backend-ai-dialog';
 import './backend-ai-help-button';
