@@ -596,13 +596,6 @@ const SessionLauncherPage = () => {
           ]}
         />
       )}
-      <NeoSessionLauncherSwitchAlert
-        onChange={(value) => {
-          if (value === 'current') {
-            webuiNavigate('/job');
-          }
-        }}
-      />
       <Flex direction="row" gap="md" align="start">
         <Flex
           direction="column"
@@ -744,32 +737,52 @@ const SessionLauncherPage = () => {
                     <Form.Item
                       label={t('session.launcher.SessionStartTime')}
                       extra={
-                        <BAIIntervalText
-                          delay={2000}
-                          callback={() => {
+                        <Form.Item
+                          noStyle
+                          shouldUpdate={(prev, next) =>
+                            prev.batch.scheduleDate !== next.batch.scheduleDate
+                          }
+                        >
+                          {() => {
                             const scheduleDate = form.getFieldValue([
                               'batch',
                               'scheduleDate',
                             ]);
-                            if (scheduleDate) {
-                              if (dayjs(scheduleDate).isBefore(dayjs())) {
-                                if (
-                                  form.getFieldError(['batch', 'scheduleDate'])
-                                    .length === 0
-                                ) {
-                                  form.validateFields([
-                                    ['batch', 'scheduleDate'],
+                            return (
+                              <BAIIntervalText
+                                delay={1000}
+                                callback={() => {
+                                  const scheduleDate = form.getFieldValue([
+                                    'batch',
+                                    'scheduleDate',
                                   ]);
+                                  if (scheduleDate) {
+                                    if (dayjs(scheduleDate).isBefore(dayjs())) {
+                                      if (
+                                        form.getFieldError([
+                                          'batch',
+                                          'scheduleDate',
+                                        ]).length === 0
+                                      ) {
+                                        form.validateFields([
+                                          ['batch', 'scheduleDate'],
+                                        ]);
+                                      }
+                                      return undefined;
+                                    } else {
+                                      return dayjs(scheduleDate).fromNow();
+                                    }
+                                  } else {
+                                    return undefined;
+                                  }
+                                }}
+                                triggerKey={
+                                  scheduleDate ? scheduleDate : 'none'
                                 }
-                                return undefined;
-                              } else {
-                                return dayjs(scheduleDate).fromNow();
-                              }
-                            } else {
-                              return undefined;
-                            }
+                              />
+                            );
                           }}
-                        />
+                        </Form.Item>
                       }
                     >
                       <Flex direction="row" gap={'xs'}>
