@@ -32,6 +32,7 @@ import {
   useWebUINavigate,
 } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useThemeMode } from '../hooks/useThemeMode';
 // @ts-ignore
 import customCSS from './SessionLauncherPage.css?raw';
 import {
@@ -77,7 +78,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { darcula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { dark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { useRecoilValue } from 'recoil';
 import {
   JsonParam,
@@ -176,6 +177,7 @@ const SessionLauncherPage = () => {
     redirectTo: StringParam,
   });
 
+  const { isDarkMode } = useThemeMode();
   const navigate = useNavigate();
   // const { moveTo } = useWebComponentInfo();
   const webuiNavigate = useWebUINavigate();
@@ -1136,11 +1138,16 @@ const SessionLauncherPage = () => {
                               label={t('session.launcher.StartUpCommand')}
                               span={24}
                             >
-                              <Input.TextArea
-                                readOnly
-                                autoSize
-                                value={form.getFieldValue(['batch', 'command'])}
-                              ></Input.TextArea>
+                              <SyntaxHighlighter
+                                style={isDarkMode ? dark : undefined}
+                                language="shell"
+                                customStyle={{
+                                  margin: 0,
+                                  width: '100%',
+                                }}
+                              >
+                                {form.getFieldValue(['batch', 'command'])}
+                              </SyntaxHighlighter>
                             </Descriptions.Item>
                             <Descriptions.Item
                               label={t('session.launcher.ScheduleTimeSimple')}
@@ -1207,7 +1214,7 @@ const SessionLauncherPage = () => {
                           >
                             {form.getFieldValue('envvars')?.length ? (
                               <SyntaxHighlighter
-                                style={darcula}
+                                style={isDarkMode ? dark : undefined}
                                 codeTagProps={{
                                   style: {
                                     // fontFamily: 'monospace',
