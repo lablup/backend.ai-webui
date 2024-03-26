@@ -707,7 +707,8 @@
     "ModelStore": "Loja de modelos",
     "New": "Novo",
     "Add": "Adicionar",
-    "CloningIsOnlyPossibleSameHost": "Atualmente, a clonagem só é possível no mesmo host."
+    "CloningIsOnlyPossibleSameHost": "Atualmente, a clonagem só é possível no mesmo host.",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
