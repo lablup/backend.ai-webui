@@ -1662,15 +1662,16 @@ const FormResourceNumbers: React.FC<{
           );
         },
       )}
-      {_.isNumber(form.getFieldValue(['resource', 'accelerator'])) && (
-        <ResourceNumber
-          // @ts-ignore
-          type={form.getFieldValue(['resource', 'acceleratorType'])}
-          value={_.toString(
-            form.getFieldValue(['resource', 'accelerator']) * containerCount,
-          )}
-        />
-      )}
+      {_.isNumber(form.getFieldValue(['resource', 'accelerator'])) &&
+        form.getFieldValue(['resource', 'acceleratorType']) && (
+          <ResourceNumber
+            // @ts-ignore
+            type={form.getFieldValue(['resource', 'acceleratorType'])}
+            value={_.toString(
+              form.getFieldValue(['resource', 'accelerator']) * containerCount,
+            )}
+          />
+        )}
     </>
   );
 };
