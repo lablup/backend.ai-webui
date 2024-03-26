@@ -710,7 +710,7 @@
     "New": "Новый",
     "Add": "Добавить",
     "CloningIsOnlyPossibleSameHost": "В настоящее время клонирование возможно только на том же хосте.",
-    "userQuotaScopeId": "Идентификатор области квоты"
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {

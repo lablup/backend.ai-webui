@@ -797,7 +797,7 @@
     "New": "새로운",
     "Add": "추가",
     "CloningIsOnlyPossibleSameHost": "현재 폴더 복사는 동일한 호스트간에만 가능합니다.",
-    "userQuotaScopeId": "할당량 범위 ID"
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {

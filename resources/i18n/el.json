@@ -708,7 +708,7 @@
     "New": "Νέος",
     "Add": "Προσθέστε",
     "CloningIsOnlyPossibleSameHost": "Προς το παρόν, η κλωνοποίηση είναι δυνατή μόνο στον ίδιο κεντρικό υπολογιστή.",
-    "userQuotaScopeId": "Αναγνωριστικό πεδίου ποσοστώσεων"
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {

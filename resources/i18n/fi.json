@@ -380,7 +380,7 @@
     "Add": "Lisätä",
     "CloningIsOnlyPossibleSameHost": "Tällä hetkellä kloonaus on mahdollista vain samassa isännässä.",
     "New": "Uusi",
-    "userQuotaScopeId": "Kiintiön laajuuden tunnus"
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "ErrorOccurred": "Tapahtunut virhe",

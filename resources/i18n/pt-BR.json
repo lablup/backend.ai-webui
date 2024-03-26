@@ -708,7 +708,7 @@
     "New": "Novo",
     "Add": "Adicionar",
     "CloningIsOnlyPossibleSameHost": "Atualmente, a clonagem só é possível no mesmo host.",
-    "userQuotaScopeId": "ID do escopo da cota"
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {

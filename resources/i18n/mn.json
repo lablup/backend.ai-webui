@@ -708,7 +708,7 @@
     "New": "Шинэ",
     "Add": "Нэмэх",
     "CloningIsOnlyPossibleSameHost": "Одоогоор зөвхөн нэг хост дээр клон хийх боломжтой.",
-    "userQuotaScopeId": "Квотын хамрах хүрээ ID"
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
