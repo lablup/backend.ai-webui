@@ -11,9 +11,6 @@ import {
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import { Drawer } from '../plastics/mwc/mwc-drawer';
-import '../plastics/mwc/mwc-multi-select';
-import '../plastics/mwc/mwc-top-app-bar-fixed';
 import { store } from '../store';
 import './backend-ai-app-launcher';
 import './backend-ai-common-utils';
@@ -36,6 +33,7 @@ import './lablup-notification';
 import LablupTermsOfService from './lablup-terms-of-service';
 import '@material/mwc-button';
 import '@material/mwc-circular-progress';
+import { Drawer } from '@material/mwc-drawer';
 import '@material/mwc-icon';
 import { IconButton } from '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
@@ -44,6 +42,7 @@ import '@material/mwc-list/mwc-list-item';
 import { Menu } from '@material/mwc-menu';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
+import '@material/mwc-top-app-bar-fixed';
 import '@vaadin/tooltip';
 import { LitElement, html, CSSResultGroup } from 'lit';
 import {
@@ -1861,7 +1860,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">24.03.0-alpha.4.5862</small>
+                <small class="sidebar-footer" style="font-size:9px;">24.03.0-beta.1.5927</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1903,7 +1902,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">24.03.0-alpha.4.5862</small>
+              <small class="sidebar-footer" style="font-size:9px;">24.03.0-beta.1.5927</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>

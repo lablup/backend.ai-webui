@@ -724,7 +724,8 @@
     "ModelStore": "Sklep modelarski",
     "New": "Nowy",
     "Add": "Dodaj",
-    "CloningIsOnlyPossibleSameHost": "Obecnie klonowanie jest możliwe tylko na tym samym hoście."
+    "CloningIsOnlyPossibleSameHost": "Obecnie klonowanie jest możliwe tylko na tym samym hoście.",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {

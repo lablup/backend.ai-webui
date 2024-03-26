@@ -724,7 +724,8 @@
     "ModelStore": "Модельный магазин",
     "New": "Новый",
     "Add": "Добавить",
-    "CloningIsOnlyPossibleSameHost": "В настоящее время клонирование возможно только на том же хосте."
+    "CloningIsOnlyPossibleSameHost": "В настоящее время клонирование возможно только на том же хосте.",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {

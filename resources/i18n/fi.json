@@ -381,7 +381,8 @@
     "ModelStore": "Mallikauppa",
     "Add": "Lisätä",
     "CloningIsOnlyPossibleSameHost": "Tällä hetkellä kloonaus on mahdollista vain samassa isännässä.",
-    "New": "Uusi"
+    "New": "Uusi",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "ErrorOccurred": "Tapahtunut virhe",
