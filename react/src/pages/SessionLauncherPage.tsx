@@ -10,7 +10,6 @@ import ImageEnvironmentSelectFormItems, {
 } from '../components/ImageEnvironmentSelectFormItems';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
-import NeoSessionLauncherSwitchAlert from '../components/NeoSessionLauncherSwitchAlert';
 import PortSelectFormItem, {
   PortSelectFormValues,
   PortTag,

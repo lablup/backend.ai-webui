@@ -4,8 +4,9 @@ import {
   DefaultProvidersForReactRoot,
   RoutingEventHandler,
 } from './components/DefaultProviders';
+import Flex from './components/Flex';
 import MainLayout from './components/MainLayout/MainLayout';
-import { useSuspendedBackendaiClient } from './hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from './hooks';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
 import { theme } from 'antd';
@@ -189,7 +190,26 @@ const router = createBrowserRouter([
       {
         path: '/session/start',
         handle: { labelKey: 'session.launcher.StartNewSession' },
-        Component: SessionLauncherPage,
+        Component: () => {
+          const webuiNavigate = useWebUINavigate();
+          const { token } = theme.useToken();
+          return (
+            <Flex
+              direction="column"
+              gap={token.paddingContentVerticalLG}
+              align="stretch"
+            >
+              <NeoSessionLauncherSwitchAlert
+                onChange={(value) => {
+                  if (value === 'current') {
+                    webuiNavigate('/job');
+                  }
+                }}
+              />
+              <SessionLauncherPage />
+            </Flex>
+          );
+        },
       },
       // Leave empty tag for plugin pages.
       {
