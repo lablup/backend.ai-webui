@@ -4621,7 +4621,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               id="batch-mode-config-section"
               style="display:none;gap:3px;"
             >
-              <span class="launcher-item-title" style="width:386px;">
+              <span
+                class="launcher-item-title"
+                style="width:386px;padding-left:16px;"
+              >
                 ${_t('session.launcher.BatchModeConfig')}
               </span>
               <div class="horizontal layout start-justified">

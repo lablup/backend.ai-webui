@@ -7,8 +7,8 @@ import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
-import '../plastics/mwc/mwc-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
+import '@material/mwc-dialog';
 import '@material/mwc-icon-button';
 import { css, CSSResultGroup, html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
