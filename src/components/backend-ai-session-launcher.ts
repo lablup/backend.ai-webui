@@ -1448,14 +1448,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Else, launch session dialog.
    * */
   async _launchSessionDialog() {
-    let shouldNeo = false;
-    try {
-      shouldNeo = !JSON.parse(
-        localStorage.getItem('backendaiwebui.settings.user') || '{}',
-      )['use_2409_session_launcher'];
-    } catch (e) {
-      // console.error(e);
-    }
+    const shouldNeo = !globalThis.backendaioptions.get(
+      'use_2409_session_launcher',
+      false,
+    );
 
     if (this.allowNEOSessionLauncher === true && shouldNeo) {
       const url =
