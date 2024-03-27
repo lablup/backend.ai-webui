@@ -1,4 +1,5 @@
 import { useCustomThemeConfig } from '../../helper/customThemeConfig';
+import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAISider from '../BAISider';
@@ -7,7 +8,6 @@ import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import { useLocalStorageState } from 'ahooks';
 import { App, Layout, theme } from 'antd';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
@@ -35,11 +35,16 @@ export const mainContentDivRefState = atom<React.RefObject<HTMLElement>>({
 function MainLayout() {
   const navigate = useNavigate();
 
-  const [compactSidebarActive] = useLocalStorageState<boolean | undefined>(
-    'backendaiwebui.settings.user.compact_sidebar',
-  );
+  const [compactSidebarActive] = useBAISettingUserState('compact_sidebar');
   const [sideCollapsed, setSideCollapsed] =
     useState<boolean>(!!compactSidebarActive);
+
+  useEffect(() => {
+    if (sideCollapsed !== compactSidebarActive) {
+      setSideCollapsed(!!compactSidebarActive);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [compactSidebarActive]);
 
   // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();
