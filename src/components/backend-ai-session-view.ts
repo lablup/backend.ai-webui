@@ -197,20 +197,6 @@ export default class BackendAISessionView extends BackendAIPage {
     }
   }
 
-  /**
-   * Toggle dateFrom and dateTo checkbox
-   *
-   * @param {Event} e - click the export-csv-checkbox switch
-   * */
-  _toggleDialogCheckbox(e) {
-    const checkbox = e.target;
-    const dateFrom = this.dateFromInput;
-    const dateTo = this.dateToInput;
-
-    dateFrom.disabled = checkbox.checked;
-    dateTo.disabled = checkbox.checked;
-  }
-
   _triggerClearTimeout() {
     const event = new CustomEvent('backend-ai-clear-timeout');
     document.dispatchEvent(event);
@@ -559,24 +545,28 @@ export default class BackendAISessionView extends BackendAIPage {
                       label="${_t('session.Batch')}"
                       @click="${(e) => this._showTab(e.target)}"
                     ></mwc-tab>
-                    ${this.enableInferenceWorkload
-                      ? html`
-                          <mwc-tab
-                            title="inference"
-                            label="${_t('session.Inference')}"
-                            @click="${(e) => this._showTab(e.target)}"
-                          ></mwc-tab>
-                        `
-                      : html``}
-                    ${this.enableSFTPSession
-                      ? html`
-                          <mwc-tab
-                            title="system"
-                            label="${_t('session.System')}"
-                            @click="${(e) => this._showTab(e.target)}"
-                          ></mwc-tab>
-                        `
-                      : html``}
+                    ${
+                      this.enableInferenceWorkload
+                        ? html`
+                            <mwc-tab
+                              title="inference"
+                              label="${_t('session.Inference')}"
+                              @click="${(e) => this._showTab(e.target)}"
+                            ></mwc-tab>
+                          `
+                        : html``
+                    }
+                    ${
+                      this.enableSFTPSession
+                        ? html`
+                            <mwc-tab
+                              title="system"
+                              label="${_t('session.System')}"
+                              @click="${(e) => this._showTab(e.target)}"
+                            ></mwc-tab>
+                          `
+                        : html``
+                    }
                     <mwc-tab
                       title="finished"
                       label="${_t('session.Finished')}"
@@ -585,33 +575,35 @@ export default class BackendAISessionView extends BackendAIPage {
                   </mwc-tab-bar>
                 </div>
               </div>
-              ${this.is_admin
-                ? html`
-                    <div style="position: relative;">
-                      <mwc-icon-button
-                        id="dropdown-menu-button"
-                        icon="more_horiz"
-                        raised
-                        @click="${(e) => this._toggleDropdown(e)}"
-                      ></mwc-icon-button>
-                      <mwc-menu id="dropdown-menu">
-                        <mwc-list-item>
-                          <a
-                            class="horizontal layout start center export-csv"
-                            @click="${() => this._openExportToCsvDialog()}"
-                          >
-                            <mwc-icon
-                              style="color:var(--token-colorTextSecondary);padding-right:10px;"
+              ${
+                this.is_admin
+                  ? html`
+                      <div style="position: relative;">
+                        <mwc-icon-button
+                          id="dropdown-menu-button"
+                          icon="more_horiz"
+                          raised
+                          @click="${(e) => this._toggleDropdown(e)}"
+                        ></mwc-icon-button>
+                        <mwc-menu id="dropdown-menu">
+                          <mwc-list-item>
+                            <a
+                              class="horizontal layout start center export-csv"
+                              @click="${() => this._openExportToCsvDialog()}"
                             >
-                              get_app
-                            </mwc-icon>
-                            ${_t('session.exportCSV')}
-                          </a>
-                        </mwc-list-item>
-                      </mwc-menu>
-                    </div>
-                  `
-                : html``}
+                              <mwc-icon
+                                style="color:var(--token-colorTextSecondary);padding-right:10px;"
+                              >
+                                get_app
+                              </mwc-icon>
+                              ${_t('session.exportCSV')}
+                            </a>
+                          </mwc-list-item>
+                        </mwc-menu>
+                      </div>
+                    `
+                  : html``
+              }
               <div
                 class="horizontal layout flex end-justified"
                 style="margin-right:20px;"
@@ -645,34 +637,38 @@ export default class BackendAISessionView extends BackendAIPage {
                 condition="batch"
               ></backend-ai-session-list>
             </div>
-            ${this.enableInferenceWorkload
-              ? html`
-                  <div
-                    id="inference-lists"
-                    class="tab-content"
-                    style="display:none;"
-                  >
-                    <backend-ai-session-list
-                      id="inference-jobs"
-                      condition="inference"
-                    ></backend-ai-session-list>
-                  </div>
-                `
-              : html``}
-            ${this.enableSFTPSession
-              ? html`
-                  <div
-                    id="system-lists"
-                    class="tab-content"
-                    style="display:none;"
-                  >
-                    <backend-ai-session-list
-                      id="system-jobs"
-                      condition="system"
-                    ></backend-ai-session-list>
-                  </div>
-                `
-              : html``}
+            ${
+              this.enableInferenceWorkload
+                ? html`
+                    <div
+                      id="inference-lists"
+                      class="tab-content"
+                      style="display:none;"
+                    >
+                      <backend-ai-session-list
+                        id="inference-jobs"
+                        condition="inference"
+                      ></backend-ai-session-list>
+                    </div>
+                  `
+                : html``
+            }
+            ${
+              this.enableSFTPSession
+                ? html`
+                    <div
+                      id="system-lists"
+                      class="tab-content"
+                      style="display:none;"
+                    >
+                      <backend-ai-session-list
+                        id="system-jobs"
+                        condition="system"
+                      ></backend-ai-session-list>
+                    </div>
+                  `
+                : html``
+            }
             <div id="finished-lists" class="tab-content" style="display:none;">
               <backend-ai-session-list
                 id="finished-jobs"
@@ -699,34 +695,6 @@ export default class BackendAISessionView extends BackendAIPage {
             required
             style="margin-bottom:10px;"
           ></mwc-textfield>
-          <div class="horizontal center layout" style="display:none;">
-            <mwc-textfield
-              id="date-from"
-              label="From"
-              type="date"
-              style="margin-right:10px;"
-              value="${this._getFirstDateOfMonth()}"
-              required
-              @change="${this._validateDateRange}"
-            ></mwc-textfield>
-            <mwc-textfield
-              id="date-to"
-              label="To"
-              type="date"
-              value="${new Date().toISOString().substring(0, 10)}"
-              required
-              @change="${this._validateDateRange}"
-            ></mwc-textfield>
-          </div>
-          <div class="horizontal center layout">
-            <mwc-formfield label="Export All-time data">
-              <mwc-checkbox
-                id="export-csv-checkbox"
-                @change="${(e) => this._toggleDialogCheckbox(e)}"
-              ></mwc-checkbox>
-            </mwc-formfield>
-          </div>
-        </div>
         <div slot="footer" class="horizontal flex layout">
           <mwc-button
             unelevated
