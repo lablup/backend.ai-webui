@@ -68,12 +68,14 @@ const settingToRaw = (settingValue: any) => {
 
 const SettingStateFamily = atomFamily({
   key: 'useBAISetting/UserSettingStateFamily',
-  // default: null,
   effects: (param: string) => [
     ({ onSet, setSelf }) => {
+      // initial value from localStorage
       setSelf(
         rawToSetting(localStorage.getItem('backendaiwebui.settings.' + param)),
       );
+
+      // sync with localStorage
       onSet((newValue, oldValue, isReset) => {
         isReset
           ? localStorage.removeItem('backendaiwebui.settings.' + param)
@@ -81,7 +83,46 @@ const SettingStateFamily = atomFamily({
               'backendaiwebui.settings.' + param,
               settingToRaw(newValue),
             );
+        // TODO: remove below two lines after backend-ai-setting-store.ts is removed
+        const [namespace, name] = param.split('.', 2);
+        // @ts-ignore
+        globalThis.backendaioptions?.set?.(name, newValue, namespace);
       });
+    },
+    // TODO: remove below effect function after backend-ai-setting-store.ts is removed
+    ({ setSelf }) => {
+      const handler = (e: any) => {
+        const { detail } = e;
+        if (detail.namespace && detail.name) {
+          if (detail.namespace + '.' + detail.name === param) {
+            setSelf(detail.value);
+          }
+        }
+      };
+
+      const deleteHandler = (e: any) => {
+        const { detail } = e;
+        if (detail.namespace && detail.name) {
+          if (detail.namespace + '.' + detail.name === param) {
+            localStorage.removeItem('backendaiwebui.settings.' + param);
+            setSelf(null);
+          }
+        }
+      };
+
+      document.addEventListener('backendaiwebui.settings:set', handler);
+      document.addEventListener(
+        'backendaiwebui.settings:delete',
+        deleteHandler,
+      );
+
+      return () => {
+        document.removeEventListener('backendaiwebui.settings:set', handler);
+        document.removeEventListener(
+          'backendaiwebui.settings:delete',
+          deleteHandler,
+        );
+      };
     },
   ],
 });
