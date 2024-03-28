@@ -75,8 +75,8 @@ const BAISider: React.FC<BAISiderProps> = ({
           xs
             ? 0
             : _.isNumber(otherProps.collapsedWidth)
-            ? otherProps.collapsedWidth
-            : DEFAULT_COLLAPSED_WIDTH
+              ? otherProps.collapsedWidth
+              : DEFAULT_COLLAPSED_WIDTH
         }
         theme={siderTheme}
         className="bai-sider"

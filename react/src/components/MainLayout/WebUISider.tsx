@@ -42,8 +42,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const mergedSiderTheme = themeConfig?.sider?.theme
     ? themeConfig.sider.theme
     : isDarkMode
-    ? 'dark'
-    : 'light';
+      ? 'dark'
+      : 'light';
 
   const currentUserRole = useCurrentUserRole();
   const webuiNavigate = useWebUINavigate();
@@ -323,27 +323,27 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 },
               ]
             : currentUserRole === 'admin'
-            ? [
-                ...generalMenu,
-                {
-                  type: 'group',
-                  label: (
-                    <Flex
-                      style={{
-                        borderBottom: `1px solid ${token.colorBorder}`,
-                      }}
-                    >
-                      {!props.collapsed && (
-                        <Typography.Text type="secondary" ellipsis>
-                          {t('webui.menu.Administration')}
-                        </Typography.Text>
-                      )}
-                    </Flex>
-                  ),
-                  children: [...adminMenu],
-                },
-              ]
-            : [...generalMenu]
+              ? [
+                  ...generalMenu,
+                  {
+                    type: 'group',
+                    label: (
+                      <Flex
+                        style={{
+                          borderBottom: `1px solid ${token.colorBorder}`,
+                        }}
+                      >
+                        {!props.collapsed && (
+                          <Typography.Text type="secondary" ellipsis>
+                            {t('webui.menu.Administration')}
+                          </Typography.Text>
+                        )}
+                      </Flex>
+                    ),
+                    children: [...adminMenu],
+                  },
+                ]
+              : [...generalMenu]
         }
         /**
          * Etc menu

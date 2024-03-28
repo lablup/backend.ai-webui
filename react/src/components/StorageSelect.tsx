@@ -113,8 +113,8 @@ const StorageSelect: React.FC<Props> = ({
                   vhostInfo?.volume_info[host]?.usage?.percentage < 70
                     ? t('data.usage.Adequate')
                     : vhostInfo?.volume_info[host]?.usage?.percentage < 90
-                    ? t('data.usage.Caution')
-                    : t('data.usage.Insufficient')
+                      ? t('data.usage.Caution')
+                      : t('data.usage.Insufficient')
                 }`}
                 // @ts-ignore
                 getPopupContainer={() => shadowRoot}
