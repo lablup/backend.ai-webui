@@ -113,7 +113,8 @@
     "ATOMEnabled": "ATOM NPU Etkin",
     "WarboyEnabled": "Warboy NPU Etkinleştirildi",
     "DownloadWebUIApp": "Backend.AI Web UI Uygulamasını İndirin",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "LPUEnabled": "LPU NPU Etkin."
   },
   "session": {
     "launcher": {
@@ -1139,7 +1140,10 @@
     "OutOfRange": "Menzil dışında.",
     "Plugins": "Eklentiler",
     "OpenSourceCUDAGPUsupport": "Açık Kaynak CUDA GPU desteği",
-    "ShowOnlyChanged": "Yalnızca Değişiklikleri Görüntüle"
+    "ShowOnlyChanged": "Yalnızca Değişiklikleri Görüntüle",
+    "LPUsupport": "LPU",
+    "DescLPUsupport": "Hyperaccel LPU hızlandırıcısını kullanın.",
+    "RequireLPUPlugin": "Backend.AI LPU Eklentisi gerektirir."
   },
   "notification": {
     "SuccessfullyUpdated": "Başarıyla güncellendi",

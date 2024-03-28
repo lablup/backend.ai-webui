@@ -37,7 +37,8 @@
     "Using": "Utilizando",
     "WarboyEnabled": "Warboy NPU Activado",
     "connectingToCluster": "Conectando al Cluster Backend.AI...",
-    "reserved": "reservado"
+    "reserved": "reservado",
+    "LPUEnabled": "LPU NPU habilitado."
   },
   "error": {
     "WrongAPIServerAddress": "Dirección del servidor API incorrecta.",
@@ -1225,7 +1226,10 @@
     },
     "Plugins": "Complementos",
     "OpenSourceCUDAGPUsupport": "Compatibilidad con GPU CUDA de código abierto",
-    "ShowOnlyChanged": "Mostrar solo cambios"
+    "ShowOnlyChanged": "Mostrar solo cambios",
+    "LPUsupport": "LPU",
+    "DescLPUsupport": "Utilice el acelerador Hyperaccel LPU.",
+    "RequireLPUPlugin": "Requiere el complemento Backend.AI LPU."
   },
   "sidepanel": {
     "BackgroundTasks": "Tareas en curso",

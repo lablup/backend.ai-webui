@@ -113,7 +113,8 @@
     "ATOMEnabled": "ATOM NPU Enabled",
     "WarboyEnabled": "Warboy NPU Enabled",
     "DownloadWebUIApp": "Pobierz aplikację Backend.AI Web UI",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "LPUEnabled": "Włączono LPU NPU."
   },
   "session": {
     "launcher": {
@@ -1141,7 +1142,10 @@
     "OutOfRange": "Poza zasięgiem.",
     "Plugins": "Wtyczki",
     "OpenSourceCUDAGPUsupport": "Obsługa procesorów graficznych Open Source CUDA",
-    "ShowOnlyChanged": "Wyświetl tylko zmiany"
+    "ShowOnlyChanged": "Wyświetl tylko zmiany",
+    "LPUsupport": "LPU",
+    "DescLPUsupport": "Użyj akceleratora Hyperaccel LPU.",
+    "RequireLPUPlugin": "Wymagaj wtyczki Backend.AI LPU."
   },
   "notification": {
     "SuccessfullyUpdated": "Pomyślnie zaktualizowano",

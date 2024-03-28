@@ -113,7 +113,8 @@
     "IPUEnabled": "IPU NPU идэвхжүүлсэн",
     "ATOMEnabled": "ATOM NPU-г идэвхжүүлсэн",
     "WarboyEnabled": "Warboy NPU идэвхжүүлсэн",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "LPUEnabled": "LPU NPU идэвхжүүлсэн."
   },
   "session": {
     "launcher": {
@@ -1139,7 +1140,10 @@
     "RequireWarboyPlugin": "Backend.AI Warboy Plugin шаардлагатай.",
     "Plugins": "Plugins",
     "OpenSourceCUDAGPUsupport": "Нээлттэй эхийн CUDA GPU дэмжлэг",
-    "ShowOnlyChanged": "Зөвхөн өөрчлөлтүүдийг харуулах"
+    "ShowOnlyChanged": "Зөвхөн өөрчлөлтүүдийг харуулах",
+    "LPUsupport": "LPU",
+    "DescLPUsupport": "Hyperaccel LPU хурдасгуурыг ашигла.",
+    "RequireLPUPlugin": "Backend.AI LPU Plugin шаардлагатай."
   },
   "notification": {
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",

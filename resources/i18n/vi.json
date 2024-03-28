@@ -113,7 +113,8 @@
     "ATOMEnabled": "Đã bật NPU ATOM",
     "WarboyEnabled": "NPU Warboy đã được kích hoạt",
     "DownloadWebUIApp": "Tải xuống ứng dụng giao diện người dùng web Backend.AI",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "LPUEnabled": "Đã bật NPU LPU."
   },
   "session": {
     "launcher": {
@@ -1139,7 +1140,10 @@
     "OutOfRange": "Ngoài phạm vi.",
     "Plugins": "bổ sung",
     "OpenSourceCUDAGPUsupport": "Hỗ trợ GPU CUDA mã nguồn mở",
-    "ShowOnlyChanged": "Chỉ hiển thị các thay đổi"
+    "ShowOnlyChanged": "Chỉ hiển thị các thay đổi",
+    "LPUsupport": "LPU",
+    "DescLPUsupport": "Sử dụng bộ tăng tốc LPU Hyperaccel.",
+    "RequireLPUPlugin": "Yêu cầu Plugin LPU Backend.AI."
   },
   "notification": {
     "SuccessfullyUpdated": "Cập nhật thành công",

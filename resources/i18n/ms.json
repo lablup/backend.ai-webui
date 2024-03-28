@@ -113,7 +113,8 @@
     "ATOMEnabled": "ATOM NPU Didayakan",
     "WarboyEnabled": "Warboy NPU Didayakan",
     "DownloadWebUIApp": "Muat turun Apl UI Web Backend.AI",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "LPUEnabled": "LPU NPU Didayakan."
   },
   "session": {
     "launcher": {
@@ -1139,7 +1140,10 @@
     "OutOfRange": "Luar kawasan.",
     "Plugins": "Pemalam",
     "OpenSourceCUDAGPUsupport": "Sokongan GPU CUDA Sumber Terbuka",
-    "ShowOnlyChanged": "Paparkan Perubahan Sahaja"
+    "ShowOnlyChanged": "Paparkan Perubahan Sahaja",
+    "LPUsupport": "LPU",
+    "DescLPUsupport": "Gunakan pemecut LPU Hyperaccel.",
+    "RequireLPUPlugin": "Memerlukan Pemalam LPU Backend.AI."
   },
   "notification": {
     "SuccessfullyUpdated": "Berjaya Dikemas kini",

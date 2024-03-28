@@ -37,7 +37,8 @@
     "Using": "Käyttämällä",
     "WarboyEnabled": "Warboy NPU käytössä",
     "connectingToCluster": "Yhteyden muodostaminen Backend.AI-klusteriin...",
-    "reserved": "varattu"
+    "reserved": "varattu",
+    "LPUEnabled": "LPU NPU käytössä."
   },
   "error": {
     "WrongAPIServerAddress": "Väärä API-palvelimen osoite.",
@@ -1225,7 +1226,10 @@
       "tag": "Tag"
     },
     "OpenSourceCUDAGPUsupport": "Avoimen lähdekoodin CUDA GPU-tuki",
-    "ShowOnlyChanged": "Vain näyttö muuttuu"
+    "ShowOnlyChanged": "Vain näyttö muuttuu",
+    "LPUsupport": "LPU",
+    "DescLPUsupport": "Käytä Hyperaccel LPU -kiihdytintä.",
+    "RequireLPUPlugin": "Vaadi Backend.AI LPU -laajennus."
   },
   "sidepanel": {
     "BackgroundTasks": "Tehtävien suorittaminen",

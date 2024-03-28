@@ -113,7 +113,8 @@
     "IPUEnabled": "IPU NPU Activé",
     "ATOMEnabled": "ATOM NPU Activé",
     "WarboyEnabled": "Warboy NPU activé",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "LPUEnabled": "LPU NPU activé."
   },
   "session": {
     "launcher": {
@@ -1139,7 +1140,10 @@
     "RequireWarboyPlugin": "Requiert le plugin Backend.AI Warboy.",
     "Plugins": "Plugins",
     "OpenSourceCUDAGPUsupport": "Prise en charge des GPU CUDA Open Source",
-    "ShowOnlyChanged": "Afficher uniquement les modifications"
+    "ShowOnlyChanged": "Afficher uniquement les modifications",
+    "LPUsupport": "LPU",
+    "DescLPUsupport": "Utilisez l'accélérateur Hyperaccel LPU.",
+    "RequireLPUPlugin": "Nécessite le plugin Backend.AI LPU."
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",
