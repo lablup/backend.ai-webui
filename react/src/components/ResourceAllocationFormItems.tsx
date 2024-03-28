@@ -344,8 +344,8 @@ const ResourceAllocationFormItems: React.FC<
             required: true,
           },
         ]}
-        // Set the trigger to a non-existent value to manually handle updates for the granular pending status management.
-        trigger="_this_is_non_existent_trigger"
+        // Set the trigger to something not used event to manually handle updates for the granular pending status management.
+        trigger={'onSubmit'}
       >
         <ResourceGroupSelect
           autoSelectDefault
