@@ -60,6 +60,7 @@ export default class BackendAISessionView extends BackendAIPage {
   @property({ type: String }) filterAccessKey = '';
   @property({ type: String }) _connectionMode = 'API';
   @property({ type: Object }) _defaultFileName = '';
+  @property({ type: Object }) resourceBroker;
   @queryAll('backend-ai-session-list')
   sessionList!: NodeListOf<BackendAISessionList>;
   @query('#running-jobs') runningJobs!: BackendAISessionList;
@@ -140,6 +141,7 @@ export default class BackendAISessionView extends BackendAIPage {
     document.addEventListener('backend-ai-session-list-refreshed', () => {
       this.runningJobs.refreshList(true, false);
     });
+    this.resourceBroker = globalThis.resourceBroker;
     if (
       typeof globalThis.backendaiclient === 'undefined' ||
       globalThis.backendaiclient === null ||
@@ -378,6 +380,19 @@ export default class BackendAISessionView extends BackendAIPage {
     }
     const groupId = globalThis.backendaiclient.current_group_id();
     const limit = 100;
+
+    const supportedAIAccelerators = Object.keys(
+      this.resourceBroker.total_slot,
+    ).filter((key) => !['cpu', 'mem'].includes(key));
+    const acceleratorDeviceList = {
+      cuda_device: 'cuda.device',
+      cuda_shares: 'cuda.shares',
+      rocm_device: 'rocm.device',
+      tpu_device: 'tpu.device',
+      ipu_device: 'ipu.device',
+      atom_device: 'atom.device',
+      warboy_device: 'warboy.device',
+    };
 
     // Get session list and export to csv file
     globalThis.backendaiclient.computeSession
