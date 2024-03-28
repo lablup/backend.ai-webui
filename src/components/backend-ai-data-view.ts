@@ -158,6 +158,8 @@ export default class BackendAIData extends BackendAIPage {
           /* Need to be set when fixedMenuPosition attribute is enabled */
           --mdc-menu-max-width: 345px;
           --mdc-menu-min-width: 172.5px;
+          --mdc-select-max-width: 345px;
+          --mdc-select-min-width: 172.5px;
         }
 
         mwc-select.full-width.fixed-position {
@@ -165,12 +167,16 @@ export default class BackendAIData extends BackendAIPage {
           /* Need to be set when fixedMenuPosition attribute is enabled */
           --mdc-menu-max-width: 345px;
           --mdc-menu-min-width: 345px;
+          --mdc-select-max-width: 345px;
+          --mdc-select-min-width: 345px;
         }
 
         mwc-select.fixed-position {
           /* Need to be set when fixedMenuPosition attribute is enabled */
           --mdc-menu-max-width: 172.5px;
           --mdc-menu-min-width: 172.5px;
+          --mdc-select-max-width: 172.5px;
+          --mdc-select-min-width: 172.5px;
         }
 
         mwc-select mwc-icon-button {
