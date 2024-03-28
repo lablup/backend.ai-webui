@@ -1244,7 +1244,7 @@
     "ShowOnlyChanged": "Display Only Changes",
     "LPUsupport": "LPU",
     "DescLPUsupport": "Use Hyperaccel LPU accelerator.",
-    "RequireLPUPlugin": "Require Backend.AI LPU Plugin."
+    "RequireLPUPlugin": "Requires Backend.AI LPU Plugin."
   },
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",

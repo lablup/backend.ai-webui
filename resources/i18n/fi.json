@@ -1229,7 +1229,7 @@
     "ShowOnlyChanged": "Vain näyttö muuttuu",
     "LPUsupport": "LPU",
     "DescLPUsupport": "Käytä Hyperaccel LPU -kiihdytintä.",
-    "RequireLPUPlugin": "Vaadi Backend.AI LPU -laajennus."
+    "RequireLPUPlugin": "Vaatii Backend.AI LPU -laajennuksen."
   },
   "sidepanel": {
     "BackgroundTasks": "Tehtävien suorittaminen",

@@ -1143,7 +1143,7 @@
     "ShowOnlyChanged": "Hanya Tampilan yang Berubah",
     "LPUsupport": "LPU",
     "DescLPUsupport": "Gunakan akselerator Hyperaccel LPU.",
-    "RequireLPUPlugin": "Memerlukan Plugin LPU Backend.AI."
+    "RequireLPUPlugin": "Membutuhkan Plugin LPU Backend.AI."
   },
   "notification": {
     "SuccessfullyUpdated": "Berhasil Diperbarui",

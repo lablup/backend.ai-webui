@@ -114,7 +114,8 @@
     "WarboyEnabled": "Warboy NPU Aktiviert",
     "DownloadWebUIApp": "Backend.AI Web UI App herunterladen",
     "FastTrack": "FastTrack",
-    "LPUEnabled": "LPU NPU aktiviert."  },
+    "LPUEnabled": "LPU NPU aktiviert."
+  },
   "session": {
     "launcher": {
       "Sessions": "Sitzungen",
@@ -1142,7 +1143,7 @@
     "ShowOnlyChanged": "Nur Änderungen anzeigen",
     "LPUsupport": "LPU",
     "DescLPUsupport": "Verwenden Sie den Hyperaccel LPU-Beschleuniger.",
-    "RequireLPUPlugin": "Backend.AI LPU-Plugin erforderlich."
+    "RequireLPUPlugin": "Erfordert das Backend.AI LPU-Plugin."
   },
   "notification": {
     "SuccessfullyUpdated": "Erfolgreich aktualisiert",

@@ -1229,7 +1229,7 @@
     "ShowOnlyChanged": "Mostrar solo cambios",
     "LPUsupport": "LPU",
     "DescLPUsupport": "Utilice el acelerador Hyperaccel LPU.",
-    "RequireLPUPlugin": "Requiere el complemento Backend.AI LPU."
+    "RequireLPUPlugin": "Requiere el complemento LPU Backend.AI."
   },
   "sidepanel": {
     "BackgroundTasks": "Tareas en curso",

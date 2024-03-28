@@ -1,5 +1,6 @@
 {
-  "summary": {
-    
+  "summary": {},
+  "settings": {
+    "RequireLPUPlugin": "Requer plug-in Backend.AI LPU."
   }
 }

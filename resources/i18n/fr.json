@@ -1143,7 +1143,7 @@
     "ShowOnlyChanged": "Afficher uniquement les modifications",
     "LPUsupport": "LPU",
     "DescLPUsupport": "Utilisez l'accélérateur Hyperaccel LPU.",
-    "RequireLPUPlugin": "Nécessite le plugin Backend.AI LPU."
+    "RequireLPUPlugin": "Nécessite le plug-in Backend.AI LPU."
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",
