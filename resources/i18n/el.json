@@ -268,7 +268,8 @@
       "SkipToConfirmAndLaunch": "Skip to review",
       "InteractiveModeDesc": "σας επιτρέπει να δημιουργείτε, να δοκιμάζετε και να εκτελείτε κώδικα διαδραστικά μέσω του σημειωματάριου jupyter, του κώδικα του visual studio κ.λπ.",
       "BatchModeDesc": "Μπορείτε να εκτελέσετε τον κώδικά σας με πολλαπλούς κόμβους & συστάδες για να κλιμακώσετε την ιδέα σας",
-      "AddEnvironmentVariable": "Προσθήκη μεταβλητών περιβάλλοντος"
+      "AddEnvironmentVariable": "Προσθήκη μεταβλητών περιβάλλοντος",
+      "EnvironmentVariableValueRequired": "Παρακαλώ εισάγετε μια τιμή."
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",

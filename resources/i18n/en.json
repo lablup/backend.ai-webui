@@ -281,7 +281,8 @@
       "SkipToConfirmAndLaunch": "Skip to review",
       "BatchModeDesc": "runs your code with multiple node & clusters to scale your idea",
       "InteractiveModeDesc": "allows you to create, test and run code interactively via jupyter notebook, visual studio code, etc.",
-      "AddEnvironmentVariable": "Add environment variables"
+      "AddEnvironmentVariable": "Add environment variables",
+      "EnvironmentVariableValueRequired": "Please enter a value."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

@@ -88,7 +88,14 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                   {...restField}
                   name={[name, 'value']}
                   style={{ marginBottom: 0, flex: 1 }}
-                  rules={[{ required: true, message: 'Enter value' }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: t(
+                        'session.launcher.EnvironmentVariableValueRequired',
+                      ),
+                    },
+                  ]}
                 >
                   <Input placeholder="Value" />
                 </Form.Item>

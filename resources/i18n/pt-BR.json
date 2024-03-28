@@ -268,7 +268,8 @@
       "SkipToConfirmAndLaunch": "Saltar para a revisão",
       "InteractiveModeDesc": "permite-lhe criar, testar e executar código de forma interactiva através do jupyter notebook, visual studio code, etc.",
       "BatchModeDesc": "Pode executar o seu código com vários nós e clusters para escalar a sua ideia",
-      "AddEnvironmentVariable": "Adicionar variáveis de ambiente"
+      "AddEnvironmentVariable": "Adicionar variáveis de ambiente",
+      "EnvironmentVariableValueRequired": "Introduzir um valor."
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",

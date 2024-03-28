@@ -270,7 +270,8 @@
       "SkipToConfirmAndLaunch": "Przejdź do recenzji",
       "InteractiveModeDesc": "umożliwia interaktywne tworzenie, testowanie i uruchamianie kodu za pomocą notatnika jupyter, kodu visual studio itp.",
       "BatchModeDesc": "Możesz uruchomić swój kod z wieloma węzłami i klastrami, aby skalować swój pomysł",
-      "AddEnvironmentVariable": "Dodaj zmienne środowiskowe"
+      "AddEnvironmentVariable": "Dodaj zmienne środowiskowe",
+      "EnvironmentVariableValueRequired": "Wprowadź wartość."
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",

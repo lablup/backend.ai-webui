@@ -268,7 +268,8 @@
       "SkipToConfirmAndLaunch": "Bỏ qua để xem xét",
       "InteractiveModeDesc": "cho phép bạn tạo, kiểm tra và chạy mã tương tác thông qua sổ ghi chép jupyter, mã studio trực quan, v.v.",
       "BatchModeDesc": "Bạn có thể chạy mã của mình với nhiều nút",
-      "AddEnvironmentVariable": "Thêm biến môi trường"
+      "AddEnvironmentVariable": "Thêm biến môi trường",
+      "EnvironmentVariableValueRequired": "Vui lòng nhập một giá trị."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",
