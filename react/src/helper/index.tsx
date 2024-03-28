@@ -231,8 +231,8 @@ export const usageIndicatorColor = (percentage: number) => {
   return percentage < 70
     ? 'rgba(58, 178, 97, 1)'
     : percentage < 90
-    ? 'rgb(223, 179, 23)'
-    : '#ef5350';
+      ? 'rgb(223, 179, 23)'
+      : '#ef5350';
 };
 
 export const maskString = (

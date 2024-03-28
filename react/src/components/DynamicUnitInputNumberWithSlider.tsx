@@ -168,8 +168,8 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                       minGiB.number === 0
                         ? minGiB.number
                         : minGiB.number >= 1
-                        ? minGiB.number + 'g'
-                        : minGiB.number * 1024 + 'm',
+                          ? minGiB.number + 'g'
+                          : minGiB.number * 1024 + 'm',
                   },
                 }),
               // extra: remaining mark code should be located before max mark code to prevent overlapping when it is same value
@@ -187,8 +187,8 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                     maxGiB.number === 0
                       ? maxGiB.number
                       : maxGiB.number >= 1
-                      ? maxGiB.number + 'g'
-                      : maxGiB.number * 1024 + 'm',
+                        ? maxGiB.number + 'g'
+                        : maxGiB.number * 1024 + 'm',
                 },
               }),
             }}

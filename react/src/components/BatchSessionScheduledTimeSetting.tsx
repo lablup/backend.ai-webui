@@ -64,8 +64,8 @@ const BatchSessionScheduledTimeSetting: React.FC<Props> = ({
               isChecked && !scheduleTime
                 ? 'warning'
                 : dayjs(scheduleTime).isBefore(dayjs())
-                ? 'error'
-                : undefined
+                  ? 'error'
+                  : undefined
             }
           />
           {isChecked && scheduleTime && (

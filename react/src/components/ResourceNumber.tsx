@@ -73,8 +73,8 @@ const ResourceNumber: React.FC<Props> = ({
         {units[type] === 'GiB'
           ? Number(iSizeToSize(amount, 'g', 3, true)?.numberFixed).toString()
           : units[type] === 'FGPU'
-          ? parseFloat(amount).toFixed(2)
-          : amount}
+            ? parseFloat(amount).toFixed(2)
+            : amount}
       </Typography.Text>
       <Typography.Text type="secondary">{units[type]}</Typography.Text>
       {type === 'mem' && opts?.shmem && opts?.shmem > 0 ? (

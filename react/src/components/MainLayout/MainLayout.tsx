@@ -33,9 +33,8 @@ function MainLayout() {
   const [compactSidebarActive] = useLocalStorageState<boolean | undefined>(
     'backendaiwebui.settings.user.compact_sidebar',
   );
-  const [sideCollapsed, setSideCollapsed] = useState<boolean>(
-    !!compactSidebarActive,
-  );
+  const [sideCollapsed, setSideCollapsed] =
+    useState<boolean>(!!compactSidebarActive);
 
   // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();
