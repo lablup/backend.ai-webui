@@ -344,21 +344,22 @@ const ResourceAllocationFormItems: React.FC<
             required: true,
           },
         ]}
-        // Set the trigger to a non-existent value to manually handle updates for the granular pending status management.
-        trigger="_this_is_non_existent_trigger"
       >
-        <ResourceGroupSelect
-          autoSelectDefault
-          showSearch
-          loading={isPendingCheckResets}
-          onChange={(v) => {
-            startCheckRestsTransition(() => {
-              // update manually to handle granular pending status management
-              form.setFieldValue('resourceGroup', v);
-              updateAllocationPresetBasedOnResourceGroup();
-            });
-          }}
-        />
+        {/* Wrap empty div to manually handle updates for the granular pending status management. */}
+        <div>
+          <ResourceGroupSelect
+            autoSelectDefault
+            showSearch
+            loading={isPendingCheckResets}
+            onChange={(v) => {
+              startCheckRestsTransition(() => {
+                // update manually to handle granular pending status management
+                form.setFieldValue('resourceGroup', v);
+                updateAllocationPresetBasedOnResourceGroup();
+              });
+            }}
+          />
+        </div>
       </Form.Item>
 
       {enableResourcePresets ? (
