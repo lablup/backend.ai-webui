@@ -1295,7 +1295,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ? html`
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green indicator">apps</mwc-icon>
+                  <mwc-icon class="fg green indicator">view_module</mwc-icon>
                   <span>${rowData.item.tpu_device_limit_min}</span>
                   ~
                   <span>
@@ -1310,7 +1310,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ? html`
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green indicator">apps</mwc-icon>
+                  <mwc-icon class="fg green indicator">view_module</mwc-icon>
                   <span>${rowData.item.ipu_device_limit_min}</span>
                   ~
                   <span>
@@ -1325,7 +1325,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ? html`
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green indicator">apps</mwc-icon>
+                  <img
+                    class="indicator-icon fg green"
+                    src="/resources/icons/rebel.svg"
+                  />
                   <span>${rowData.item.atom_device_limit_min}</span>
                   ~
                   <span>
@@ -1340,7 +1343,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ? html`
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green indicator">apps</mwc-icon>
+                  <img
+                    class="indicator-icon fg green"
+                    src="/resources/icons/furiosa.svg"
+                  />
                   <span>${rowData.item.warboy_device_limit_min}</span>
                   ~
                   <span>
@@ -1357,7 +1363,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ? html`
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green indicator">apps</mwc-icon>
+                  <img
+                    class="indicator-icon fg green"
+                    src="/resources/icons/npu_generic.svg"
+                  />
                   <span>${rowData.item.lpu_device_limit_min}</span>
                   ~
                   <span>
