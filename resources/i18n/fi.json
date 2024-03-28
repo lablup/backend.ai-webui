@@ -383,25 +383,8 @@
     "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
-    "ErrorOccurred": "Tapahtunut virhe",
-    "ask": {
-      "DoYouWantToProceed": "Haluatteko jatkaa?"
-    },
-    "error": {
-      "Error": "Virhe"
-    },
-    "hide": {
-      "DonotShowThisAgain": "Älä näytä tätä enää."
-    },
-    "title": {
-      "LetsDouble-Check": "Tupla-tarkistetaan",
-      "Notice": "Ilmoitus"
-    },
     "warning": {
-      "CannotBeUndone": "VAROITUS: tätä ei voi perua!",
-      "LogDeletion": "Haluatko varmasti poistaa kaikki lokiviestit?",
-      "Required": "Vaadittu",
-      "WillBeAppliedToNewSessions": "Tätä päivitystä sovelletaan uusiin istuntoihin."
+      "DeleteForeverDesc": "VAROITUS: valitut kohteet poistetaan pysyvästi, etkä voi palauttaa niitä."
     }
   },
   "eduapi": {

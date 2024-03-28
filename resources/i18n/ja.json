@@ -617,7 +617,11 @@
       "CloneFolder": "フォルダクローン",
       "ShareFolder": "フォルダの共有",
       "ModifyPermissions": "権限修正",
-      "LeaveFolder": "招待されたフォルダを出る"
+      "LeaveFolder": "招待されたフォルダを出る",
+      "Restore": "復元する",
+      "DeleteForever": "永久に削除",
+      "FolderRestored": "フォルダが復元されました",
+      "FolderDeletedForever": "フォルダーが永久に削除されました"
     },
     "explorer": {
       "Delete": "削除...",
@@ -715,14 +719,16 @@
       "CannotBeUndone": "警告：これは元に戻せません！",
       "LogDeletion": "すべてのログメッセージを削除してもよろしいですか？",
       "WillBeAppliedToNewSessions": "このアップデートは、新しいセッションに適用されます。",
-      "Required": "必須入力です。"
+      "Required": "必須入力です。",
+      "DeleteForeverDesc": "警告: 選択したアイテムは完全に削除され、復元することはできません。"
     },
     "ask": {
       "DoYouWantToProceed": "続行しますか？"
     },
     "title": {
       "LetsDouble-Check": "再確認しましょう",
-      "Notice": "ご案内"
+      "Notice": "ご案内",
+      "DeleteForever": "永久に削除しますか?"
     },
     "ErrorOccurred": "エラーが発生しました",
     "error": {
@@ -1465,7 +1471,8 @@
     "ForUser": "ユーザー",
     "ForProject": "プロジェクト",
     "QuotaDoesNotSupported": "このストレージバックエンドは可用量設定をサポートしていません。",
-    "BeCarefulToSetUserResourcePolicy": "リソースポリシーを変更すると、そのリソースポリシーを使用しているすべてのユーザーに影響を与える可能性がありますので、慎重に使用してください。"
+    "BeCarefulToSetUserResourcePolicy": "リソースポリシーを変更すると、そのリソースポリシーを使用しているすべてのユーザーに影響を与える可能性がありますので、慎重に使用してください。",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "totp": {
     "TotpSetupCompleted": "二要素認証が有効になりました。",

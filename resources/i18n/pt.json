@@ -617,7 +617,11 @@
       "CloneFolder": "Clonar pasta",
       "ShareFolder": "Partilhar pasta",
       "ModifyPermissions": "Modificar permissões",
-      "LeaveFolder": "Pasta de saída"
+      "LeaveFolder": "Pasta de saída",
+      "Restore": "Restaurar",
+      "DeleteForever": "Apagar para sempre",
+      "FolderRestored": "Pasta restaurada",
+      "FolderDeletedForever": "Pasta excluída para sempre"
     },
     "explorer": {
       "Delete": "Excluir...",
@@ -715,14 +719,16 @@
       "CannotBeUndone": "AVISO: isso não pode ser desfeito!",
       "LogDeletion": "Tem certeza de que deseja excluir todas as mensagens de log?",
       "WillBeAppliedToNewSessions": "Esta atualização será aplicada a novas sessões.",
-      "Required": "Necessário"
+      "Required": "Necessário",
+      "DeleteForeverDesc": "AVISO: os itens selecionados serão excluídos para sempre e você não poderá restaurá-los."
     },
     "ask": {
       "DoYouWantToProceed": "Você quer prosseguir?"
     },
     "title": {
       "LetsDouble-Check": "Vamos verificar novamente",
-      "Notice": "Aviso"
+      "Notice": "Aviso",
+      "DeleteForever": "Apagar para sempre?"
     },
     "ErrorOccurred": "Ocorreu um erro",
     "error": {
@@ -1411,7 +1417,8 @@
     "ForUser": "Para o utilizador",
     "ForProject": "Para o projeto",
     "QuotaDoesNotSupported": "Este backend de armazenamento não suporta quotas.",
-    "BeCarefulToSetUserResourcePolicy": "A alteração de uma política de recursos pode afetar todos os utilizadores que utilizam essa política de recursos do utilizador, pelo que deve ser utilizada com cuidado."
+    "BeCarefulToSetUserResourcePolicy": "A alteração de uma política de recursos pode afetar todos os utilizadores que utilizam essa política de recursos do utilizador, pelo que deve ser utilizada com cuidado.",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "modelService": {
     "TokenGenerated": "Token gerado",

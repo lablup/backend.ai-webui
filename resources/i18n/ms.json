@@ -712,24 +712,7 @@
   },
   "dialog": {
     "warning": {
-      "CannotBeUndone": "PERINGATAN: ini tidak boleh dibuat asal!",
-      "LogDeletion": "Adakah anda pasti mahu memadamkan semua mesej log?",
-      "WillBeAppliedToNewSessions": "Kemas kini ini akan digunakan untuk sesi baru.",
-      "Required": "Diperlukan"
-    },
-    "ask": {
-      "DoYouWantToProceed": "Adakah anda mahu meneruskan?"
-    },
-    "title": {
-      "LetsDouble-Check": "Mari Periksa Semula",
-      "Notice": "Notis"
-    },
-    "ErrorOccurred": "Ralat Berlaku",
-    "error": {
-      "Error": "Ralat"
-    },
-    "hide": {
-      "DonotShowThisAgain": "Jangan tunjukkan ini lagi."
+      "DeleteForeverDesc": "AMARAN: item yang dipilih akan dipadamkan selama-lamanya dan anda tidak akan dapat memulihkannya."
     }
   },
   "environment": {

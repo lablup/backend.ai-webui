@@ -383,25 +383,8 @@
     "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
-    "ErrorOccurred": "Se ha producido un error",
-    "ask": {
-      "DoYouWantToProceed": "¿Quieres continuar?"
-    },
-    "error": {
-      "Error": "Error"
-    },
-    "hide": {
-      "DonotShowThisAgain": "No vuelvas a mostrar esto."
-    },
-    "title": {
-      "LetsDouble-Check": "Doble comprobación",
-      "Notice": "Aviso"
-    },
     "warning": {
-      "CannotBeUndone": "ATENCIÓN: ¡esto no se puede deshacer!",
-      "LogDeletion": "¿Estás seguro de que quieres borrar todos los mensajes de registro?",
-      "Required": "Requerido",
-      "WillBeAppliedToNewSessions": "Esta actualización se aplicará a las nuevas sesiones."
+      "DeleteForeverDesc": "ADVERTENCIA: los elementos seleccionados se eliminarán para siempre y no podrás restaurarlos."
     }
   },
   "eduapi": {
