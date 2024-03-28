@@ -563,28 +563,77 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     }
 
                     const extraFilterValues: string[] = [];
-                    const requirementTags =
-                      requirements.length > 0
-                        ? _.map(requirements, (requirement, idx) => (
-                            <DoubleTag
-                              key={idx}
-                              values={_.split(
-                                metadata?.tagAlias[requirement] || requirement,
-                                ':',
-                              ).map((str) => {
-                                extraFilterValues.push(str);
-                                return (
+                    let requirementTags = _.chain(requirements)
+                      .filter(
+                        (requirement) => !requirement.startsWith('peruser_'),
+                      )
+                      .map((requirement, idx) => (
+                        <DoubleTag
+                          key={idx}
+                          values={_.split(
+                            metadata?.tagAlias[requirement] || requirement,
+                            ':',
+                          ).map((str) => {
+                            extraFilterValues.push(str);
+                            return (
+                              <TextHighlighter
+                                keyword={versionSearch}
+                                key={str}
+                              >
+                                {str}
+                              </TextHighlighter>
+                            );
+                          })}
+                        />
+                      ))
+                      .value();
+                    const imageLabels = image?.labels;
+                    if (imageLabels) {
+                      const perUserImageNameLabelIdx = _.findIndex(
+                        imageLabels,
+                        (item) =>
+                          item !== null &&
+                          item?.key === 'ai.backend.personalized-image-name',
+                      );
+                      if (
+                        perUserImageNameLabelIdx &&
+                        imageLabels[perUserImageNameLabelIdx]
+                      ) {
+                        const tag =
+                          imageLabels[perUserImageNameLabelIdx]?.value || '';
+                        extraFilterValues.push('Personalized');
+                        extraFilterValues.push(tag);
+                        requirementTags.push(
+                          <DoubleTag
+                            key={requirementTags.length + 1}
+                            values={[
+                              {
+                                label: (
                                   <TextHighlighter
                                     keyword={versionSearch}
-                                    key={str}
+                                    key="Personalized"
                                   >
-                                    {str}
+                                    Personalized
                                   </TextHighlighter>
-                                );
-                              })}
-                            />
-                          ))
-                        : '-';
+                                ),
+                                color: 'cyan',
+                              },
+                              {
+                                label: (
+                                  <TextHighlighter
+                                    keyword={versionSearch}
+                                    key={tag}
+                                  >
+                                    {tag}
+                                  </TextHighlighter>
+                                ),
+                                color: 'cyan',
+                              },
+                            ]}
+                          />,
+                        );
+                      }
+                    }
                     return (
                       <Select.Option
                         key={image?.digest}
@@ -621,7 +670,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                               flexShrink: 1,
                             }}
                           >
-                            {requirementTags}
+                            {requirementTags || '-'}
                           </Flex>
                         </Flex>
                       </Select.Option>

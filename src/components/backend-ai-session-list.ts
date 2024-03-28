@@ -763,23 +763,29 @@ export default class BackendAISessionList extends BackendAIPage {
     if (this._connectionMode === 'SESSION') {
       fields.push('user_email');
     }
-    if (globalThis.backendaiclient.is_superadmin) {
-      fields.push(
-        'containers {container_id agent occupied_slots live_stat last_stat}',
-      );
-    } else {
-      fields.push(
-        'containers {container_id occupied_slots live_stat last_stat}',
-      );
-    }
     if (!globalThis.backendaiclient._config.hideAgents) {
       fields.push('containers {agent}');
     }
     const group_id = globalThis.backendaiclient.current_group_id();
+    const containerFields: string[] = [
+      'container_id',
+      'occupied_slots',
+      'live_stat',
+      'last_stat',
+    ];
+    if (globalThis.backendaiclient.is_superadmin) {
+      containerFields.push('agent');
+    }
+    containerFields.push('image_object { labels { key value } }');
+    // if (globalThis.backendaiclient.supports('per-user-image')) {
+    //   containerFields.push('image_object { labels { key value } }')
+    // }
 
     if (this._isContainerCommitEnabled && status.includes('RUNNING')) {
-      fields.push('commit_status');
+      containerFields.push('commit_status');
     }
+
+    fields.push(`containers { ${containerFields.join(' ')} }`);
 
     globalThis.backendaiclient.computeSession
       .list(
@@ -1123,7 +1129,27 @@ export default class BackendAISessionList extends BackendAIPage {
               sessions[objectKey].baseimage = tags[1];
               sessions[objectKey].additional_reqs = tags
                 .slice(1, tags.length)
+                .filter((tag) => tag.indexOf('peruser_') < 0)
                 .map((tag) => tag.toUpperCase());
+              console.log(
+                sessions[objectKey].containers[0].image_object.labels,
+              );
+              console.log(
+                sessions[objectKey].containers[0].image_object.labels.indexOf(
+                  ({ key }) => key === 'ai.backend.personalized-image-name',
+                ),
+              );
+              const perUserImageNameLabel = sessions[
+                objectKey
+              ].containers[0].image_object.labels.find(
+                ({ key }) => key === 'ai.backend.personalized-image-name',
+              );
+              if (perUserImageNameLabel) {
+                sessions[objectKey].additional_reqs = [
+                  ...sessions[objectKey].additional_reqs,
+                  `Personalized-${perUserImageNameLabel.value}`,
+                ];
+              }
             } else if (sessions[objectKey].tag !== undefined) {
               sessions[objectKey].baseversion = sessions[objectKey].tag;
             } else {
