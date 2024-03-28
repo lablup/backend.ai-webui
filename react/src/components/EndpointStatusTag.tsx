@@ -5,7 +5,7 @@ import React from 'react';
 import { useFragment } from 'react-relay';
 
 interface EndpointStatusTagProps {
-  endpointFrgmt: EndpointStatusTagFragment$key | null;
+  endpointFrgmt: EndpointStatusTagFragment$key | null | undefined;
 }
 const EndpointStatusTag: React.FC<EndpointStatusTagProps> = ({
   endpointFrgmt,

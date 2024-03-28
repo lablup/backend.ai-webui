@@ -5,7 +5,7 @@
 import app from './reducers/app';
 import { lazyReducerEnhancer } from 'pwa-helpers/lazy-reducer-enhancer';
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 
 declare global {
   interface Window {

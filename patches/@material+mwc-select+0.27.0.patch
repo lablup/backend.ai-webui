@@ -1,8 +1,23 @@
 diff --git a/node_modules/@material/mwc-select/mwc-select-base.js b/node_modules/@material/mwc-select/mwc-select-base.js
-index 66a2c20..bee6b8b 100644
+index 66a2c20..6914121 100644
 --- a/node_modules/@material/mwc-select/mwc-select-base.js
 +++ b/node_modules/@material/mwc-select/mwc-select-base.js
-@@ -247,7 +247,7 @@ export class SelectBase extends FormElement {
+@@ -128,6 +128,14 @@ export class SelectBase extends FormElement {
+         const labelledby = !!this.label ? 'label' : undefined;
+         const describedby = this.shouldRenderHelperText ? 'helper-text' : undefined;
+         return html `
++      <style>
++        .mdc-select__anchor {
++            min-width: var(--mdc-select-min-width, 200px);
++        }
++        .mdc-select--filled {
++            min-width: var(--mdc-select-min-width, 200px);
++        }
++      </style>
+       <div
+           class="mdc-select ${classMap(classes)}">
+         <input
+@@ -247,7 +255,7 @@ export class SelectBase extends FormElement {
          if (!this.icon) {
              return nothing;
          }

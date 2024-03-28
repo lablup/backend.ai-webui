@@ -153,6 +153,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     this.icons = globalThis.backendaimetadata.icons;
     this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
     this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+    this.imageInfo = globalThis.backendaimetadata.imageInfo;
     document.addEventListener(
       'backend-ai-metadata-image-loaded',
       () => {
@@ -160,6 +161,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         this.icons = globalThis.backendaimetadata.icons;
         this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
         this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+        this.imageInfo = globalThis.backendaimetadata.imageInfo;
       },
       { once: true },
     );
@@ -261,8 +263,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     const hosts = await globalThis.backendaiclient?.vfolder?.list_hosts(
       globalThis.backendaiclient?.current_group_id(),
     );
-    return Object.values(hosts.volume_info).map(
-      (item: any) => item?.sftp_scaling_groups.join(', '),
+    return Object.values(hosts.volume_info).map((item: any) =>
+      item?.sftp_scaling_groups.join(', '),
     );
   }
 

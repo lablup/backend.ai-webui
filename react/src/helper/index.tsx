@@ -256,7 +256,7 @@ export const offset_to_cursor = (offset: number): string => {
 };
 
 export function filterNonNullItems<T extends { [key: string]: any }>(
-  arr: ReadonlyArray<T | null> | null | undefined,
+  arr: ReadonlyArray<T | null | undefined> | null | undefined,
 ): T[] {
   if (arr === null || arr === undefined) {
     return [];

@@ -199,8 +199,8 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
   });
   const openSessionErrorModal = (session: string) => {
     if (endpoint === null) return;
-    const { errors } = endpoint;
-    const firstMatchedSessionError = errors.find(
+    const { errors } = endpoint || {};
+    const firstMatchedSessionError = errors?.find(
       ({ session_id }) => session === session_id,
     );
     setSelectedSessionErrorForModal(firstMatchedSessionError || null);
