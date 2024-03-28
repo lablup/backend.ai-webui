@@ -45,7 +45,6 @@ import {
 } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
 import {
-  Affix,
   Alert,
   App,
   Breadcrumb,
@@ -1605,11 +1604,7 @@ const SessionLauncherPage = () => {
           {/* </Suspense> */}
         </Flex>
         {screens.lg && (
-          <Affix
-            offsetTop={80}
-            // direction="column"
-            style={{ zIndex: 2 }}
-          >
+          <Flex style={{ position: 'sticky', top: 80 }}>
             <Steps
               size="small"
               direction="vertical"
@@ -1627,7 +1622,7 @@ const SessionLauncherPage = () => {
                 status: idx === currentStep ? 'process' : 'wait',
               }))}
             />
-          </Affix>
+          </Flex>
         )}
       </Flex>
       {/* <FolderExplorer

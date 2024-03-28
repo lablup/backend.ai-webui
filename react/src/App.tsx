@@ -198,6 +198,7 @@ const router = createBrowserRouter([
               direction="column"
               gap={token.paddingContentVerticalLG}
               align="stretch"
+              style={{ paddingBottom: token.paddingContentVerticalLG }}
             >
               <NeoSessionLauncherSwitchAlert
                 onChange={(value) => {
