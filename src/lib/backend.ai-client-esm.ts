@@ -1025,6 +1025,9 @@ class Client {
       if (resources['warboy.device']) {
         config['warboy.device'] = parseInt(resources['warboy.device']);
       }
+      if (resources['lpu.device']) {
+        config['lpu.device'] = parseInt(resources['lpu.device']);
+      }
       if (resources['cluster_size']) {
         params['cluster_size'] = resources['cluster_size'];
       }
@@ -3851,6 +3854,9 @@ class Resources {
     this.resources['warboy.device'] = {};
     this.resources['warboy.device'].total = 0;
     this.resources['warboy.device'].used = 0;
+    this.resources['lpu.device'] = {};
+    this.resources['lpu.device'].total = 0;
+    this.resources['lpu.device'].used = 0;
 
     this.resources.agents = {};
     this.resources.agents.total = 0;
@@ -3985,6 +3991,16 @@ class Resources {
               this.resources['warboy.device'].used =
                 parseInt(this.resources['warboy.device'].used) +
                 Math.floor(Number(occupied_slots['warboy.device']));
+            }
+            if ('lpu.device' in available_slots) {
+              this.resources['lpu.device'].total =
+                parseInt(this.resources['lpu.device'].total) +
+                Math.floor(Number(available_slots['lpu.device']));
+            }
+            if ('lpu.device' in occupied_slots) {
+              this.resources['lpu.device'].used =
+                parseInt(this.resources['lpu.device'].used) +
+                Math.floor(Number(occupied_slots['lpu.device']));
             }
 
             if (isNaN(this.resources.cpu.used)) {

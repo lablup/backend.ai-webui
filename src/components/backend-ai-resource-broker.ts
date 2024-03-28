@@ -405,6 +405,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'ipu.device': 'ipu_device',
         'atom.device': 'atom_device',
         'warboy.device': 'warboy_device',
+        'lpu.device': 'lpu_device',
       };
       for (const [k, v] of Object.entries(deviceList)) {
         // Set gpu_modes
@@ -559,6 +560,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'ipu.device': 'ipu_device',
         'atom.device': 'atom_device',
         'warboy.device': 'warboy_device',
+        'lpu.device': 'lpu_device',
       };
       const slotList = {
         cpu: 'cpu',
@@ -570,6 +572,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'ipu.device': 'ipu_device',
         'atom.device': 'atom_device',
         'warboy.device': 'warboy_device',
+        'lpu.device': 'lpu_device',
       };
       if (this.scaling_group === '' && this.scaling_groups.length > 0) {
         // no scaling group in the current project

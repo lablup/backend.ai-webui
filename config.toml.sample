@@ -55,6 +55,7 @@ maxTPUDevicesPerContainer = 8       # Maximum TPU devices per container.
 maxIPUDevicesPerContainer = 8       # Maximum IPU devices per container.
 maxATOMDevicesPerContainer = 8      # Maximum ATOM devices per container.
 maxWarboyDevicesPerContainer = 8    # Maximum Warboy devices per container.
+maxLPUDevicesPerContainer = 8       # Maximum LPU devices per container.
 maxShmPerContainer = 16             # Maximum shared memory per container.
 maxFileUploadSize = 4294967296      # Maximum size of single file upload. Set to -1 for unlimited upload.
 

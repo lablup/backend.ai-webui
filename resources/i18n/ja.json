@@ -113,7 +113,8 @@
     "ATOMEnabled": "ATOM NPU使用中",
     "WarboyEnabled": "Warboy NPU使用中",
     "DownloadWebUIApp": "Backend.AI Web UIアプリのダウンロード",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "LPUEnabled": "LPU NPU が有効です。"
   },
   "session": {
     "launcher": {
@@ -1139,7 +1140,10 @@
     "OutOfRange": "入力範囲外です。",
     "Plugins": "プラグイン",
     "OpenSourceCUDAGPUsupport": "オープンソースのCUDA GPUのサポート",
-    "ShowOnlyChanged": "表示のみの変更"
+    "ShowOnlyChanged": "表示のみの変更",
+    "LPUsupport": "LPU",
+    "DescLPUsupport": "Hyperaccel LPU アクセラレータを使用します。",
+    "RequireLPUPlugin": "Backend.AI LPU プラグインが必要です。"
   },
   "notification": {
     "SuccessfullyUpdated": "正常に更新されました",

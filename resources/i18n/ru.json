@@ -113,7 +113,8 @@
     "IPUEnabled": "IPU NPU Включено",
     "ATOMEnabled": "ATOM NPU Включено",
     "WarboyEnabled": "Warboy NPU Enabled",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "LPUEnabled": "LPU NPU включен."
   },
   "session": {
     "launcher": {
@@ -1141,7 +1142,10 @@
     "RequireWarboyPlugin": "Требуется плагин Backend.AI Warboy Plugin.",
     "Plugins": "Плагины",
     "OpenSourceCUDAGPUsupport": "Поддержка графического процессора CUDA с открытым исходным кодом",
-    "ShowOnlyChanged": "Отображать только изменения"
+    "ShowOnlyChanged": "Отображать только изменения",
+    "LPUsupport": "ЛПУ",
+    "DescLPUsupport": "Используйте ускоритель Hyperaccel LPU.",
+    "RequireLPUPlugin": "Требуется плагин Backend.AI LPU."
   },
   "notification": {
     "SuccessfullyUpdated": "Успешно обновлено",

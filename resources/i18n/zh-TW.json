@@ -113,7 +113,8 @@
     "ATOMEnabled": "已启用 ATOM NPU",
     "WarboyEnabled": "启用 Warboy NPU",
     "DownloadWebUIApp": "下载 Backend.AI Web UI 应用程序",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "LPUEnabled": "LPU NPU 啟用。"
   },
   "session": {
     "launcher": {
@@ -1139,7 +1140,10 @@
     "OutOfRange": "超出范围。",
     "Plugins": "外掛",
     "OpenSourceCUDAGPUsupport": "開源 CUDA GPU 支援",
-    "ShowOnlyChanged": "僅顯示更改"
+    "ShowOnlyChanged": "僅顯示更改",
+    "LPUsupport": "線路板",
+    "DescLPUsupport": "使用Hyperaccel LPU加速器。",
+    "RequireLPUPlugin": "需要Backend.AI LPU插件。"
   },
   "notification": {
     "SuccessfullyUpdated": "成功更新",
