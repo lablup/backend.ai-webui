@@ -1138,24 +1138,36 @@ const SessionLauncherPage = () => {
                               label={t('session.launcher.StartUpCommand')}
                               span={24}
                             >
-                              <SyntaxHighlighter
-                                style={isDarkMode ? dark : undefined}
-                                language="shell"
-                                customStyle={{
-                                  margin: 0,
-                                  width: '100%',
-                                }}
-                              >
-                                {form.getFieldValue(['batch', 'command'])}
-                              </SyntaxHighlighter>
+                              {form.getFieldValue(['batch', 'command']) ? (
+                                <SyntaxHighlighter
+                                  style={isDarkMode ? dark : undefined}
+                                  language="shell"
+                                  customStyle={{
+                                    margin: 0,
+                                    width: '100%',
+                                  }}
+                                >
+                                  {form.getFieldValue(['batch', 'command'])}
+                                </SyntaxHighlighter>
+                              ) : (
+                                <Typography.Text type="secondary">
+                                  {t('general.None')}
+                                </Typography.Text>
+                              )}
                             </Descriptions.Item>
                             <Descriptions.Item
                               label={t('session.launcher.ScheduleTimeSimple')}
                               span={24}
                             >
-                              {dayjs(
-                                form.getFieldValue(['batch', 'scheduleDate']),
-                              ).format('LLL (Z)')}
+                              {form.getFieldValue(['batch', 'scheduleDate']) ? (
+                                dayjs(
+                                  form.getFieldValue(['batch', 'scheduleDate']),
+                                ).format('LLL (Z)')
+                              ) : (
+                                <Typography.Text type="secondary">
+                                  {t('general.None')}
+                                </Typography.Text>
+                              )}
                             </Descriptions.Item>
                           </>
                         )}
