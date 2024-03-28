@@ -1413,7 +1413,7 @@
     "ForProject": "Para o projeto",
     "QuotaDoesNotSupported": "Este backend de armazenamento não suporta quotas.",
     "BeCarefulToSetUserResourcePolicy": "A alteração de uma política de recursos pode afetar todos os utilizadores que utilizam essa política de recursos do utilizador, pelo que deve ser utilizada com cuidado.",
-    "StorageSetting": ""
+    "StorageSetting": "Configuração de armazenamento"
   },
   "modelService": {
     "TokenGenerated": "Token gerado",

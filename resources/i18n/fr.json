@@ -1423,7 +1423,8 @@
     "ForUser": "Pour l'utilisateur",
     "ForProject": "Pour le projet",
     "QuotaDoesNotSupported": "Ce backend de stockage ne prend pas en charge les quotas.",
-    "BeCarefulToSetUserResourcePolicy": "La modification d'une politique de ressources peut affecter tous les utilisateurs qui utilisent cette politique de ressources, il convient donc de l'utiliser avec précaution."
+    "BeCarefulToSetUserResourcePolicy": "La modification d'une politique de ressources peut affecter tous les utilisateurs qui utilisent cette politique de ressources, il convient donc de l'utiliser avec précaution.",
+    "StorageSetting": "Paramètres de stockage"
   },
   "modelService": {
     "EditModelService": "Modifier le modèle de service",

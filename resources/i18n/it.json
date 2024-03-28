@@ -1466,7 +1466,8 @@
     "ForUser": "Per l'utente",
     "ForProject": "Per il progetto",
     "QuotaDoesNotSupported": "Questo backend di archiviazione non supporta le quote.",
-    "BeCarefulToSetUserResourcePolicy": "La modifica di un criterio di risorse può influire su tutti gli utenti che utilizzano quel criterio di risorse utente, quindi va usata con cautela."
+    "BeCarefulToSetUserResourcePolicy": "La modifica di un criterio di risorse può influire su tutti gli utenti che utilizzano quel criterio di risorse utente, quindi va usata con cautela.",
+    "StorageSetting": "Impostazione di archiviazione"
   },
   "totp": {
     "TotpSetupCompleted": "Abilitato 2FA",

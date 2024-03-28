@@ -1314,7 +1314,8 @@
       "SelectProject": "Seleccionar proyecto",
       "SelectUser": "Buscar y seleccionar Usuario",
       "UnsetCustomSettings": "Desactivar la configuración personalizada"
-    }
+    },
+    "StorageSetting": "Configuración de almacenamiento"
   },
   "totp": {
     "ConfirmTotpRemovalBody": "¿Está seguro de que no desea utilizar la autenticación de dos factores?",

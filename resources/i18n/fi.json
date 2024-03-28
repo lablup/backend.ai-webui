@@ -1314,7 +1314,8 @@
       "SelectProject": "Valitse projekti",
       "SelectUser": "Etsi ja valitse Käyttäjä",
       "UnsetCustomSettings": "Mukautettujen asetusten poistaminen"
-    }
+    },
+    "StorageSetting": "Tallennusasetus"
   },
   "totp": {
     "ConfirmTotpRemovalBody": "Oletko varma, ettet halua käyttää kaksitekijätodennusta?",
