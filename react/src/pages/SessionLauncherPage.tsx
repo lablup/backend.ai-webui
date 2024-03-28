@@ -1117,17 +1117,13 @@ const SessionLauncherPage = () => {
                       //   </Button>
                       // }
                     >
-                      <Descriptions size="small">
-                        <Descriptions.Item
-                          label={t('session.SessionType')}
-                          span={24}
-                        >
+                      <Descriptions size="small" column={1}>
+                        <Descriptions.Item label={t('session.SessionType')}>
                           {form.getFieldValue('sessionType')}
                         </Descriptions.Item>
                         {!_.isEmpty(form.getFieldValue('sessionName')) && (
                           <Descriptions.Item
                             label={t('session.launcher.SessionName')}
-                            span={24}
                           >
                             {form.getFieldValue('sessionName')}
                           </Descriptions.Item>
@@ -1136,7 +1132,6 @@ const SessionLauncherPage = () => {
                           <>
                             <Descriptions.Item
                               label={t('session.launcher.StartUpCommand')}
-                              span={24}
                             >
                               {form.getFieldValue(['batch', 'command']) ? (
                                 <SyntaxHighlighter
@@ -1157,7 +1152,6 @@ const SessionLauncherPage = () => {
                             </Descriptions.Item>
                             <Descriptions.Item
                               label={t('session.launcher.ScheduleTimeSimple')}
-                              span={24}
                             >
                               {form.getFieldValue(['batch', 'scheduleDate']) ? (
                                 dayjs(
