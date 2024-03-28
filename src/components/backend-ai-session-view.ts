@@ -620,6 +620,7 @@ export default class BackendAISessionView extends BackendAIPage {
                   location="session"
                   id="session-launcher"
                   ?active="${this.active === true}"
+                  ?allowNEOSessionLauncher="${true}"
                 ></backend-ai-session-launcher>
               </div>
             </h3>

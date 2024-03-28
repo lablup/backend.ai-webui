@@ -1,6 +1,6 @@
 import { filterNonNullItems } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import { useBAINotification } from '../hooks/useBAINotification';
+import { useSetBAINotification } from '../hooks/useBAINotification';
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal from './BAIModal';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
@@ -51,7 +51,7 @@ const ContainerRegistryList: React.FC<{
   const [isPendingReload, startReloadTransition] = useTransition();
   const painKiller = usePainKiller();
   const [messageAPI, contextHolder] = message.useMessage();
-  const [, { upsertNotification }] = useBAINotification();
+  const { upsertNotification } = useSetBAINotification();
   const { container_registries, domain } =
     useLazyLoadQuery<ContainerRegistryListQuery>(
       graphql`

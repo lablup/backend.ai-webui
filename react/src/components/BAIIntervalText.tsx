@@ -4,8 +4,9 @@ import React from 'react';
 const BAIIntervalText: React.FC<{
   callback: () => any;
   delay: number;
-}> = ({ callback, delay }) => {
-  const value = useIntervalValue(callback, delay);
+  triggerKey?: string;
+}> = ({ callback, delay, triggerKey }) => {
+  const value = useIntervalValue(callback, delay, triggerKey);
   return value;
 };
 

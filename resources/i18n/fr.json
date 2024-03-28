@@ -255,11 +255,21 @@
       "EnvironmentVariableNamePatternError": "Le nom de la variable doit commencer par une lettre ou un trait de soulignement et ne peut contenir que des lettres, des chiffres et des traits de soulignement.",
       "EnvironmentVariableDuplicateName": "Un nom de variable qui existe déjà.",
       "Template": "Modèle de session",
-      "EnableAutomaticShmem": "Mémoire partagée automatique",
+      "EnableAutomaticMiniumShmem": "Définir la mémoire partagée minimale",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Seul un nombre entier est autorisé lorsque la taille du cluster n'est pas inférieure à 2.",
       "StartAfter": "Commencez après :",
-      "StartTimeDoesNotApply": "Si l'heure de début n'est pas définie, elle ne s'applique pas."
+      "StartTimeDoesNotApply": "Si l'heure de début n'est pas définie, elle ne s'applique pas.",
+      "MiniumAllocation": "Exigences minimales",
+      "MiniumAllocationTooltip": "Choisir comme exigence minimale pour l'environnement d'exécution sélectionné",
+      "PreviousLauncher": "Précédent",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Vous utilisez le lanceur de session \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Sauter à l'examen",
+      "InteractiveModeDesc": "vous permet de créer, de tester et d'exécuter du code de manière interactive via jupyter notebook, visual studio code, etc.",
+      "BatchModeDesc": "Vous pouvez exécuter votre code avec plusieurs nœuds et clusters pour faire évoluer votre idée.",
+      "AddEnvironmentVariable": "Ajouter des variables d'environnement",
+      "EnvironmentVariableValueRequired": "Veuillez saisir une valeur."
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -327,7 +337,11 @@
       "SessionNameAlreadyExist": "Le nom de la session existe déjà",
       "SluggedStrings": "Chaînes de caractères tronquées (>3 chars)",
       "SessionNameTooLong64": "Veuillez saisir 64 caractères ou moins.",
-      "PleaseFollowSessionNameRule": "Veuillez saisir une combinaison d'au moins 4 lettres, chiffres, '.', '_' et '-'."
+      "PleaseFollowSessionNameRule": "Veuillez saisir une combinaison d'au moins 4 lettres, chiffres, '.', '_' et '-'.",
+      "SessionNameTooShort": "Veuillez saisir au moins 4 caractères.",
+      "SessionNameShouldStartWith": "Il doit commencer par une lettre de l'alphabet, un chiffre ou \"_\".",
+      "SessionNameShouldEndWith": "Il doit se terminer par une lettre de l'alphabet, un chiffre ou \"_\".",
+      "SessionNameInvalidCharacter": "Le milieu d'un nom ne peut contenir que des lettres de l'alphabet, des chiffres et des \"_\"."
     },
     "AlreadyTerminatingSession": "La session est déjà terminée.",
     "NoSessionToDisplay": "Aucune session à afficher",
@@ -411,7 +425,9 @@
     "OK": "OK",
     "Download": "Télécharger",
     "Clone": "Clone",
-    "Config": "Config"
+    "Config": "Config",
+    "Next": "Suivant",
+    "Previous": "Précédent"
   },
   "agent": {
     "Endpoint": "Point de terminaison",

@@ -255,11 +255,21 @@
       "EnvironmentVariableNamePatternError": "Il nome della variabile deve iniziare con una lettera o un trattino basso e può contenere solo lettere, numeri e trattini bassi.",
       "EnvironmentVariableDuplicateName": "Un nome di variabile già esistente.",
       "Template": "Modello di sessione",
-      "EnableAutomaticShmem": "Memoria condivisa automatica",
+      "EnableAutomaticMiniumShmem": "Impostare la memoria condivisa minima",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "È consentito solo un numero intero quando la dimensione del cluster non è inferiore a 2.",
       "StartAfter": "Inizia dopo:",
-      "StartTimeDoesNotApply": "Se l'ora di inizio non è impostata, non si applica."
+      "StartTimeDoesNotApply": "Se l'ora di inizio non è impostata, non si applica.",
+      "MiniumAllocation": "Requisiti minimi",
+      "MiniumAllocationTooltip": "Selezionare come requisito minimo per l'ambiente di esecuzione selezionato",
+      "PreviousLauncher": "Precedente",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Si sta utilizzando il lanciatore di sessione \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Vai alla recensione",
+      "InteractiveModeDesc": "permette di creare, testare ed eseguire codice in modo interattivo tramite jupyter notebook, visual studio code, ecc.",
+      "BatchModeDesc": "È possibile eseguire il codice con più nodi e cluster per scalare la propria idea.",
+      "AddEnvironmentVariable": "Aggiungere le variabili d'ambiente",
+      "EnvironmentVariableValueRequired": "Inserire un valore."
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",
@@ -317,7 +327,11 @@
       "SluggedStrings": "Stringhe con slugged (>3 caratteri)",
       "SessionNameAlreadyExist": "Il nome della sessione esiste già",
       "SessionNameTooLong64": "Inserisci 64 caratteri o meno.",
-      "PleaseFollowSessionNameRule": "Inserisci una combinazione di almeno 4 lettere, numeri, \".\", \"_\" e \"-\"."
+      "PleaseFollowSessionNameRule": "Inserisci una combinazione di almeno 4 lettere, numeri, \".\", \"_\" e \"-\".",
+      "SessionNameTooShort": "Inserire almeno 4 caratteri.",
+      "SessionNameShouldStartWith": "Deve iniziare con una lettera dell'alfabeto, un numero o '_'.",
+      "SessionNameShouldEndWith": "Deve terminare con una lettera dell'alfabeto, un numero o '_'.",
+      "SessionNameInvalidCharacter": "Il centro di un nome può contenere solo lettere dell'alfabeto, numeri e '_'."
     },
     "Interactive": "Interattivo",
     "Batch": "Lotto",
@@ -411,7 +425,9 @@
     "EnterManually": "Inserire manualmente",
     "Download": "Scarica",
     "Clone": "Clone",
-    "Config": "Configurazione"
+    "Config": "Configurazione",
+    "Next": "Avanti",
+    "Previous": "Precedente"
   },
   "agent": {
     "Endpoint": "Endpoint",

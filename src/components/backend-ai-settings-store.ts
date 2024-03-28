@@ -64,10 +64,25 @@ export default class BackendAiSettingsStore extends BackendAIPage {
   }
 
   set(name, value, namespace = 'user') {
+    const event = new CustomEvent('backendaiwebui.settings:set', {
+      detail: {
+        name: name,
+        value: value,
+        namespace: namespace,
+      },
+    });
+    document.dispatchEvent(event);
     return this._writeUserSetting(name, value, namespace);
   }
 
   delete(name, namespace = 'user') {
+    const event = new CustomEvent('backendaiwebui.settings:delete', {
+      detail: {
+        name: name,
+        namespace: namespace,
+      },
+    });
+    document.dispatchEvent(event);
     return this._deleteUserSetting(name, namespace);
   }
 

@@ -501,6 +501,7 @@ export default class BackendAISummary extends BackendAIPage {
                   location="summary"
                   id="session-launcher"
                   ?active="${this.active === true}"
+                  ?allowNEOSessionLauncher="${true}"
                 ></backend-ai-session-launcher>
               </div>
               <div class="horizontal center-justified layout wrap">

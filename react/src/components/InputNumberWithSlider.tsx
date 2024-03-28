@@ -33,7 +33,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   useEffect(() => {
     // when step is 1, make sure the value is integer
     if (step === 1 && value % 1 !== 0) {
-      setValue(Math.round(value));
+      setValue(_.max([Math.round(value), min]));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
@@ -56,13 +56,16 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
             if (_.isNumber(step) && step > 0) {
               const decimalCount = step.toString().split('.')[1]?.length || 0;
               setValue(
-                _.toNumber(
-                  (
-                    Math.round(
-                      _.toNumber(inputRef.current?.value || '0') / step,
-                    ) * step
-                  ).toFixed(decimalCount),
-                ),
+                _.max([
+                  _.toNumber(
+                    (
+                      Math.round(
+                        _.toNumber(inputRef.current?.value || '0') / step,
+                      ) * step
+                    ).toFixed(decimalCount),
+                  ),
+                  min,
+                ]),
               );
             }
           }}

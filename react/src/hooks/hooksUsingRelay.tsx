@@ -2,6 +2,7 @@ import { useSuspendedBackendaiClient, useUpdatableState } from '.';
 import { hooksUsingRelay_KeyPairQuery } from './__generated__/hooksUsingRelay_KeyPairQuery.graphql';
 import { hooksUsingRelay_KeyPairResourcePolicyQuery } from './__generated__/hooksUsingRelay_KeyPairResourcePolicyQuery.graphql';
 import graphql from 'babel-plugin-relay/macro';
+import _ from 'lodash';
 import { useCallback } from 'react';
 import { FetchPolicy, useLazyLoadQuery } from 'react-relay';
 
@@ -80,6 +81,15 @@ export const useCurrentKeyPairResourcePolicyLazyLoadQuery = (
         typeof keypair_resource_policy
       >,
       keypair: (keypair || {}) as NonNullable<typeof keypair>,
+      sessionLimitAndRemaining: {
+        max: _.min([
+          (keypair_resource_policy || {}).max_concurrent_sessions,
+          3, //BackendAiResourceBroker.DEFAULT_CONCURRENT_SESSION_COUNT
+        ]) as number,
+        remaining:
+          ((keypair_resource_policy || {}).max_concurrent_sessions || 3) -
+          ((keypair || {}).concurrency_used || 0),
+      },
     },
     { refresh },
   ] as const;

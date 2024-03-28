@@ -131,16 +131,15 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     staleTime: 0,
   });
   const [searchKey, setSearchKey] = useState('');
-  const displayingFolders = _.filter(allFolderList, (vf) => {
-    // keep selected folders
-    if (selectedRowKeys.includes(getRowKey(vf))) {
-      return true;
-    }
-    // filter by search key
-    return (
-      (!filter || filter(vf)) && (!searchKey || vf.name.includes(searchKey))
-    );
-  });
+  const displayingFolders = _.chain(allFolderList)
+    .filter((vf) => (filter ? filter(vf) : true))
+    .filter((vf) => {
+      if (selectedRowKeys.includes(getRowKey(vf))) {
+        return true;
+      }
+      return !searchKey || vf.name.includes(searchKey);
+    })
+    .value();
   // const { token } = theme.useToken();
   // const searchInput = useRef<InputRef>(null);
 
@@ -217,7 +216,9 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
             style={
               showAliasInput && isCurrentRowSelected
                 ? { display: 'inline-flex', height: 70, width: '100%' }
-                : undefined
+                : {
+                    maxWidth: 200,
+                  }
             }
           >
             <TextHighlighter keyword={searchKey}>{value}</TextHighlighter>

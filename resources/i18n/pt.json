@@ -255,11 +255,21 @@
       "EnvironmentVariableNamePatternError": "O nome da variável deve começar com uma letra ou um sublinhado e só pode conter letras, números e sublinhados.",
       "EnvironmentVariableDuplicateName": "Um nome de variável que já existe.",
       "Template": "Modelo de sessão",
-      "EnableAutomaticShmem": "Memória partilhada automática",
+      "EnableAutomaticMiniumShmem": "Definir a memória partilhada mínima",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Somente números inteiros são permitidos quando o tamanho do cluster não é menor que 2.",
       "StartAfter": "Comece depois:",
-      "StartTimeDoesNotApply": "Se a hora de início não estiver definida, ela não se aplica."
+      "StartTimeDoesNotApply": "Se a hora de início não estiver definida, ela não se aplica.",
+      "MiniumAllocation": "Requisitos mínimos",
+      "MiniumAllocationTooltip": "Selecionar como requisito mínimo para o ambiente de execução selecionado",
+      "PreviousLauncher": "Anterior",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Está a utilizar o iniciador de sessão \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Saltar para a revisão",
+      "InteractiveModeDesc": "permite-lhe criar, testar e executar código de forma interactiva através do jupyter notebook, visual studio code, etc.",
+      "BatchModeDesc": "Pode executar o seu código com vários nós e clusters para escalar a sua ideia",
+      "AddEnvironmentVariable": "Adicionar variáveis de ambiente",
+      "EnvironmentVariableValueRequired": "Introduzir um valor."
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",
@@ -317,7 +327,11 @@
       "SluggedStrings": "Cadeias de caracteres com slugged (>3 caracteres)",
       "SessionNameAlreadyExist": "O nome da sessão já existe",
       "SessionNameTooLong64": "Insira 64 caracteres ou menos.",
-      "PleaseFollowSessionNameRule": "Insira uma combinação de pelo menos 4 letras, números, '.', '_' e '-'."
+      "PleaseFollowSessionNameRule": "Insira uma combinação de pelo menos 4 letras, números, '.', '_' e '-'.",
+      "SessionNameTooShort": "Introduza pelo menos 4 caracteres.",
+      "SessionNameShouldStartWith": "Deve começar por uma letra do alfabeto, um número ou \"_\".",
+      "SessionNameShouldEndWith": "Deve terminar com uma letra do alfabeto, um número ou \"_\".",
+      "SessionNameInvalidCharacter": "O meio de um nome só pode conter letras do alfabeto, números e '_'."
     },
     "Interactive": "Interativo",
     "Batch": "Lote",
@@ -411,7 +425,9 @@
     "EnterManually": "Introduzir manualmente",
     "Download": "Descarregar",
     "Clone": "Clone",
-    "Config": "Configuração"
+    "Config": "Configuração",
+    "Next": "Seguinte",
+    "Previous": "Anterior"
   },
   "agent": {
     "Endpoint": "Endpoint",

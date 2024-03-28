@@ -255,11 +255,21 @@
       "EnvironmentVariableNamePatternError": "变量名必须以字母或下划线开头，且只能包含字母、数字和下划线。",
       "EnvironmentVariableDuplicateName": "已经存在的变量名。",
       "Template": "会议模板",
-      "EnableAutomaticShmem": "自动共享内存",
+      "EnableAutomaticMiniumShmem": "设置最小共享内存",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "當簇大小不小於 2 時，只允許使用整數。",
       "StartAfter": "之後開始：",
-      "StartTimeDoesNotApply": "如果未設定開始時間，則不適用。"
+      "StartTimeDoesNotApply": "如果未設定開始時間，則不適用。",
+      "MiniumAllocation": "最低要求",
+      "MiniumAllocationTooltip": "选择所选运行环境的最低要求",
+      "PreviousLauncher": "上一页",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "您正在使用\"{{launcher}}\"会话启动器。",
+      "SkipToConfirmAndLaunch": "跳过评论",
+      "InteractiveModeDesc": "允许您通过 jupyter notebook、visual studio code 等交互式创建、测试和运行代码。",
+      "BatchModeDesc": "您可以使用多个节点和集群运行代码，以扩展您的想法",
+      "AddEnvironmentVariable": "添加环境变量",
+      "EnvironmentVariableValueRequired": "请输入数值。"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",
@@ -317,7 +327,11 @@
       "SluggedStrings": "多字符串（>3 字符）",
       "SessionNameAlreadyExist": "会话名称已存在",
       "SessionNameTooLong64": "請輸入不超過 64 個字元。",
-      "PleaseFollowSessionNameRule": "請輸入至少 4 個字母、數字、「.」、「_」和「-」的組合字元。"
+      "PleaseFollowSessionNameRule": "請輸入至少 4 個字母、數字、「.」、「_」和「-」的組合字元。",
+      "SessionNameTooShort": "请输入至少 4 个字符。",
+      "SessionNameShouldStartWith": "",
+      "SessionNameShouldEndWith": "必须以字母、数字或\"_\"结尾。",
+      "SessionNameInvalidCharacter": "名字中间只能包含字母、数字和\"_\"。"
     },
     "Interactive": "交互式",
     "Batch": "批次",
@@ -411,7 +425,9 @@
     "EnterManually": "手动输入",
     "Download": "下载",
     "Clone": "克隆",
-    "Config": "配置"
+    "Config": "配置",
+    "Next": "下一页",
+    "Previous": "上一页"
   },
   "agent": {
     "Endpoint": "端點",

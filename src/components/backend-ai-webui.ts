@@ -1323,9 +1323,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         <backend-ai-session-view class="page" name="job" ?active="${
           this._page === 'job'
         }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
-        <backend-ai-session-view-next class="page" name="session" ?active="${
+        <!-- <backend-ai-session-view-next class="page" name="session" ?active="${
           this._page === 'session'
-        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view-next>
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view-next> -->
         <!-- <backend-ai-serving-view class="page" name="serving" ?active="${
           this._page === 'serving'
         }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-serving-view> -->

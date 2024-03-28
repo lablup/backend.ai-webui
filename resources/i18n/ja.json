@@ -255,11 +255,21 @@
       "EnvironmentVariableNamePatternError": "変数名は文字またはアンダースコアで始まり、文字、数字、アンダースコアのみを含むことができます。",
       "EnvironmentVariableDuplicateName": "既に存在する変数名です。",
       "Template": "セッションテンプレート",
-      "EnableAutomaticShmem": "自動共有メモリー",
+      "EnableAutomaticMiniumShmem": "最小共有メモリの設定",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "クラスター サイズが 2 以上の場合は、整数のみが許可されます。",
       "StartAfter": "次の後に開始します:",
-      "StartTimeDoesNotApply": "開始時間が設定されていない場合は適用されません。"
+      "StartTimeDoesNotApply": "開始時間が設定されていない場合は適用されません。",
+      "MiniumAllocation": "最低条件",
+      "MiniumAllocationTooltip": "選択した実行環境の最小要件として選択する。",
+      "PreviousLauncher": "前へ",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "あなたは「{{launcher}}」セッション・ランチャーを使用しています。",
+      "SkipToConfirmAndLaunch": "レビューへスキップ",
+      "InteractiveModeDesc": "jupyterノートブックやビジュアル・スタジオ・コードなどを使って、インタラクティブにコードを作成、テスト、実行できる。",
+      "BatchModeDesc": "複数のノードやクラスタでコードを実行し、アイデアをスケールさせることができます。",
+      "AddEnvironmentVariable": "環境変数の追加",
+      "EnvironmentVariableValueRequired": "値を入力してください。"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -317,7 +327,11 @@
       "SluggedStrings": "最低4文字以上の固有の文字列で入力してください。",
       "SessionNameAlreadyExist": "同じ名前のセッションが既にあります",
       "SessionNameTooLong64": "64文字以下で入力してください。",
-      "PleaseFollowSessionNameRule": "少なくとも4文字以上の文字、数字、「.」、「_」、「-」の組み合わせで入力してください。"
+      "PleaseFollowSessionNameRule": "少なくとも4文字以上の文字、数字、「.」、「_」、「-」の組み合わせで入力してください。",
+      "SessionNameTooShort": "4文字以上入力してください。",
+      "SessionNameShouldStartWith": "アルファベット、数字、または'_'で始まっていなければならない。",
+      "SessionNameShouldEndWith": "アルファベット、数字、または'_'で終わっていなければならない。",
+      "SessionNameInvalidCharacter": "名前の真ん中にはアルファベット、数字、'_'しか入れられません。"
     },
     "Interactive": "インタラクティブ",
     "Batch": "バッチ",
@@ -411,7 +425,9 @@
     "EnterManually": "直接入力する",
     "Download": "ダウンロード",
     "Clone": "クローン",
-    "Config": "コンフィグ"
+    "Config": "コンフィグ",
+    "Next": "次のページ",
+    "Previous": "前へ"
   },
   "agent": {
     "Endpoint": "終点",
