@@ -282,7 +282,7 @@ export default class BackendAISessionView extends BackendAIPage {
    * @param {number} value - time to want to scale
    * @return {Record<string, unknown>} result - data containing the scaled time
    * */
-  _automaticScaledTime(value: number) {
+  static _automaticScaledTime(value: number) {
     // number: msec.
     let result = Object();
     const unitText = ['D', 'H', 'M', 'S'];
@@ -359,12 +359,15 @@ export default class BackendAISessionView extends BackendAIPage {
     const fields = [
       'id',
       'name',
+      'user_email',
       'image',
       'created_at',
       'terminated_at',
       'status',
       'status_info',
       'access_key',
+      'cluster_mode',
+      'occupying_slots',
     ];
     if (this._connectionMode === 'SESSION') {
       fields.push('user_email');
@@ -405,81 +408,88 @@ export default class BackendAISessionView extends BackendAIPage {
           this.exportToCsvDialog.hide();
           return;
         }
+        const occupyingSlots = JSON.parse(session.occupying_slots);
         sessions.forEach((session) => {
           const exportListItem: any = {};
           exportListItem.id = session.id;
           exportListItem.name = session.name;
           exportListItem.image =
             session.image.split('/')[2] || session.image.split('/')[1];
+          exportListItem.cluster_mode = session.cluster_mode;
+          exportListItem.user_id = session.user_id;
           exportListItem.status = session.status;
           exportListItem.status_info = session.status_info;
           exportListItem.access_key = session.access_key;
+          exportListItem.cpu_slot = parseInt(occupyingSlots.cpu);
+          exportListItem.mem_slot = parseFloat(
+            globalThis.backendaiclient.utils.changeBinaryUnit(
+              occupyingSlots.mem,
+              'g',
+            ),
+          ).toFixed(2);
+          // add supported AI accelerator item according to total slot
+          supportedAIAccelerators.forEach((key) => {
+            exportListItem[key] =
+              occupyingSlots[acceleratorDeviceList[key]] ?? 0;
+          });
+
           exportListItem.created_at = session.created_at;
           exportListItem.terminated_at = session.terminated_at;
           if (session.containers && session.containers.length > 0) {
-            // Assume a session has only one container (no consideration on multi-container bundling)
-            const container = session.containers[0];
-            exportListItem.container_id = container.container_id;
-            const occupiedSlots = container.occupied_slots
-              ? JSON.parse(container.occupied_slots)
-              : null;
-            if (occupiedSlots) {
-              exportListItem.cpu_slot = parseInt(occupiedSlots.cpu);
-              exportListItem.mem_slot = parseFloat(
-                globalThis.backendaiclient.utils.changeBinaryUnit(
-                  occupiedSlots.mem,
-                  'g',
-                ),
-              ).toFixed(2);
-              if (occupiedSlots['cuda.shares']) {
-                exportListItem.cuda_shares = occupiedSlots['cuda.shares'];
+            // only show useful metrics
+            let cpu_used_time: number = 0;
+            let cpu_util: number = 0;
+            let cuda_util: number = 0;
+            let cuda_mem: number = 0;
+            let io_read: number = 0;
+            let io_write: number = 0;
+            let agents: Array<string> = [];
+
+            // In order to get session-based metrics
+            // we will get average value of per-container based metrics
+            session.containers.forEach((container) => {
+              agents.push(container.agent);
+              const liveStat = container.live_stat
+                ? JSON.parse(container.live_stat)
+                : null;
+              if (liveStat) {
+                if (liveStat.cpu_used && liveStat.cpu_used.current) {
+                  cpu_used_time += parseFloat(liveStat.cpu_used.current);
+                }
+                if (liveStat.cpu_util && liveStat.cpu_util.pct) {
+                  cpu_util += parseFloat(liveStat.cpu_util.pct);
+                }
+                if (liveStat.cuda_util && liveStat.cuda_util.pct) {
+                  cuda_util += parseFloat(liveStat.cuda_util.pct);
+                }
+                if (liveStat.cuda_mem && liveStat.cuda_mem.current) {
+                  cuda_mem += parseFloat(liveStat.cuda_mem.current);
+                }
+                if (liveStat.io_read) {
+                  io_read += parseFloat(liveStat.io_read.current);
+                }
+                if (liveStat.io_write) {
+                  io_write += parseFloat(liveStat.io_write.current);
+                }
               }
-              if (occupiedSlots['cuda.device']) {
-                exportListItem.cuda_device = occupiedSlots['cuda.device'];
-              }
-              if (occupiedSlots['tpu.device']) {
-                exportListItem.tpu_device = occupiedSlots['tpu.device'];
-              }
-              if (occupiedSlots['rocm.device']) {
-                exportListItem.rocm_device = occupiedSlots['rocm.device'];
-              }
-              if (occupiedSlots['ipu.device']) {
-                exportListItem.ipu_device = occupiedSlots['ipu.device'];
-              }
-              if (occupiedSlots['atom.device']) {
-                exportListItem.atom_device = occupiedSlots['atom.device'];
-              }
-              if (occupiedSlots['warboy.device']) {
-                exportListItem.warboy_device = occupiedSlots['warboy.device'];
-              }
-            }
-            const liveStat = container.live_stat
-              ? JSON.parse(container.live_stat)
-              : null;
-            if (liveStat) {
-              if (liveStat.cpu_used && liveStat.cpu_used.current) {
-                exportListItem.cpu_used_time = this._automaticScaledTime(
-                  liveStat.cpu_used.current,
-                );
-              } else {
-                exportListItem.cpu_used_time = 0;
-              }
-              if (liveStat.io_read) {
-                exportListItem.io_read_bytes_mb =
-                  BackendAISessionView.bytesToMiB(liveStat.io_read.current);
-              } else {
-                exportListItem.io_read_bytes_mb = 0;
-              }
-              if (liveStat.io_write) {
-                exportListItem.io_write_bytes_mb =
-                  BackendAISessionView.bytesToMiB(liveStat.io_write.current);
-              } else {
-                exportListItem.io_write_bytes_mb = 0;
-              }
-            }
-            if (container.agent) {
-              exportListItem.agent = container.agent;
-            }
+            });
+
+            exportListItem.agents = agents;
+            exportListItem.cpu_used_time =
+              BackendAISessionView._automaticScaledTime(
+                cpu_used_time / session.containers.length,
+              );
+            exportListItem.cpu_util = cpu_util / session.containers.length;
+            exportListItem.cuda_util = cuda_util / session.containers.length;
+            exportListItem.cuda_mem_bytes_mb = BackendAISessionView.bytesToMiB(
+              cuda_mem / session.containers.length,
+            );
+            exportListItem.io_read_bytes_mb = BackendAISessionView.bytesToMiB(
+              io_read / session.containers.length,
+            );
+            exportListItem.io_write_bytes_mb = BackendAISessionView.bytesToMiB(
+              io_write / session.containers.length,
+            );
           }
           exportList.push(exportListItem);
         });
@@ -489,24 +499,6 @@ export default class BackendAISessionView extends BackendAIPage {
         this.notification.show();
         this.exportToCsvDialog.hide();
       });
-
-    // let isUnlimited = this.shadowRoot.querySelector('#export-csv-checkbox').checked;
-    // if (isUnlimited) {
-    //   globalThis.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
-    //     // let total_count = response.compute_sessions.length;
-    //     let sessions = response.compute_sessions;
-    //     // console.log("total_count : ",total_count);
-    //   JsonToCsv.exportToCsv(fileNameEl.value, sessions);
-    //   });
-    // } else {
-    //   let dateTo = this.shadowRoot.querySelector('#date-to');
-    //   let dateFrom = this.shadowRoot.querySelector('#date-from');
-
-    //   if(dateTo.validity.valid && dateFrom.validity.valid) {
-    //      TODO : new backendaiclient.computeSession query will be added (date range)
-    //     console.log('Session between ' , dateFrom.value, ' ~ ', dateTo.value, " will be downloaded.");
-    //   }
-    // }
   }
 
   render() {
