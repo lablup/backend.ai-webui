@@ -6,6 +6,7 @@ import {
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
+import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import Flex from './Flex';
@@ -168,7 +169,7 @@ const ResourceAllocationFormItems: React.FC<
     resourceLimits.mem?.max,
   ]);
 
-  const updateAllocationPresetBasedOnResourceGroup = () => {
+  const updateAllocationPresetBasedOnResourceGroup = useEventNotStable(() => {
     if (
       _.includes(
         ['custom', 'minimum-required'],
@@ -192,7 +193,12 @@ const ResourceAllocationFormItems: React.FC<
     setTimeout(() => {
       form.validateFields().catch(() => {});
     }, 200);
-  };
+  });
+
+  // update allocation preset based on resource group
+  useEffect(() => {
+    currentResourceGroup && updateAllocationPresetBasedOnResourceGroup();
+  }, [currentResourceGroup, updateAllocationPresetBasedOnResourceGroup]);
 
   const updateResourceFieldsBasedOnImage = (force?: boolean) => {
     // when image changed, set value of resources to min value only if it's larger than current value
@@ -348,14 +354,12 @@ const ResourceAllocationFormItems: React.FC<
         trigger={'onSubmit'}
       >
         <ResourceGroupSelect
-          autoSelectDefault
           showSearch
           loading={isPendingCheckResets}
           onChange={(v) => {
             startCheckRestsTransition(() => {
               // update manually to handle granular pending status management
               form.setFieldValue('resourceGroup', v);
-              updateAllocationPresetBasedOnResourceGroup();
             });
           }}
         />

@@ -89,7 +89,8 @@ import {
 
 const INITIAL_FORM_VALUES: SessionLauncherValue = {
   sessionType: 'interactive',
-  allocationPreset: 'custom',
+  // If you set `allocationPreset` to 'custom', `allocationPreset` is not changed automatically any more.
+  allocationPreset: 'auto-preset',
   hpcOptimization: {
     autoEnabled: true,
     OMP_NUM_THREADS: '1',
