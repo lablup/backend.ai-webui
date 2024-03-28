@@ -196,7 +196,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           cursor: pointer;
           font-size: 0.9rem;
           font-family: Ubuntu;
-          color: #0000ee;
+          color: var(--token-colorLink, #0000ee);
           font-weight: 500;
         }
 

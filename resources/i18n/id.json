@@ -537,7 +537,8 @@
     "SignoutSeccessfullyFinished": "Keluar dengan aman selesai",
     "ModifyUserDetail": "Ubah Detail Pengguna",
     "EnableSudoSession": "Aktifkan sesi sudo",
-    "MainAccessKey": "Kunci Akses Utama"
+    "MainAccessKey": "Kunci Akses Utama",
+    "InactivateTheFollowingUsers": "Nonaktifkan pengguna berikut."
   },
   "data": {
     "Folders": "Folder",
@@ -1422,7 +1423,8 @@
     "ForUser": "Untuk Pengguna",
     "ForProject": "Untuk Proyek",
     "QuotaDoesNotSupported": "Backend penyimpanan ini tidak mendukung kuota.",
-    "BeCarefulToSetUserResourcePolicy": "Mengubah kebijakan sumber daya dapat memengaruhi semua pengguna yang menggunakan kebijakan sumber daya pengguna tersebut, jadi gunakanlah dengan hati-hati."
+    "BeCarefulToSetUserResourcePolicy": "Mengubah kebijakan sumber daya dapat memengaruhi semua pengguna yang menggunakan kebijakan sumber daya pengguna tersebut, jadi gunakanlah dengan hati-hati.",
+    "StorageSetting": "Pengaturan Penyimpanan"
   },
   "modelService": {
     "EditModelService": "Layanan Edit Model",
