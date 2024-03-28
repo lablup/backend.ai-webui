@@ -638,7 +638,8 @@
     "KeySeccessfullyDeleted": "KeyPair is seccessfully deleted.",
     "SignoutSeccessfullyFinished": "Signout is seccessfully finished",
     "EnableSudoSession": "Enable sudo session",
-    "MainAccessKey": "Main Access Key"
+    "MainAccessKey": "Main Access Key",
+    "InactivateTheFollowingUsers": "Inactivate the following users."
   },
   "data": {
     "Folders": "Folders",

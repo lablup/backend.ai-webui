@@ -537,7 +537,8 @@
     "Status": "Estado",
     "NoUserToDisplay": "Nenhum utilizador a apresentar",
     "EnableSudoSession": "Habilitar sessão sudo",
-    "MainAccessKey": "Chave de acesso principal"
+    "MainAccessKey": "Chave de acesso principal",
+    "InactivateTheFollowingUsers": "Inative os seguintes usuários."
   },
   "data": {
     "Folders": "Pastas",

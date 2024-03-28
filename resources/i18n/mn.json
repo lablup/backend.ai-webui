@@ -537,7 +537,8 @@
     "SignoutSeccessfullyFinished": "Гарах ажиллагаа амжилттай дууслаа",
     "ModifyUserDetail": "Хэрэглэгчийн мэдээллийг өөрчлөх",
     "EnableSudoSession": "Sudo сессийг идэвхжүүлэх",
-    "MainAccessKey": "Үндсэн хандалтын түлхүүр"
+    "MainAccessKey": "Үндсэн хандалтын түлхүүр",
+    "InactivateTheFollowingUsers": "Дараах хэрэглэгчдийг идэвхгүй болго."
   },
   "data": {
     "Folders": "Фолдерууд",

@@ -537,7 +537,8 @@
     "Status": "Durum",
     "NoUserToDisplay": "Görüntülenecek Kullanıcı Yok",
     "EnableSudoSession": "Sudo oturumunu etkinleştir",
-    "MainAccessKey": "Ana Erişim Anahtarı"
+    "MainAccessKey": "Ana Erişim Anahtarı",
+    "InactivateTheFollowingUsers": "Aşağıdaki kullanıcıları devre dışı bırakın."
   },
   "data": {
     "Folders": "klasörler",

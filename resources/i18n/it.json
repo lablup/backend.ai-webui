@@ -537,7 +537,8 @@
     "Status": "Stato",
     "NoUserToDisplay": "Nessun utente da visualizzare",
     "EnableSudoSession": "Abilita la sessione sudo",
-    "MainAccessKey": "Chiave di accesso principale"
+    "MainAccessKey": "Chiave di accesso principale",
+    "InactivateTheFollowingUsers": "Disattiva i seguenti utenti."
   },
   "data": {
     "Folders": "cartelle",

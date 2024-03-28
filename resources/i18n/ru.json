@@ -539,7 +539,8 @@
     "SignoutSeccessfullyFinished": "Выход из системы завершен",
     "ModifyUserDetail": "Изменение сведений о пользователе",
     "EnableSudoSession": "Включить сеанс sudo",
-    "MainAccessKey": "Главный ключ доступа"
+    "MainAccessKey": "Главный ключ доступа",
+    "InactivateTheFollowingUsers": "Деактивируйте следующих пользователей."
   },
   "data": {
     "Folders": "Папки",

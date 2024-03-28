@@ -537,7 +537,8 @@
     "Status": "Status",
     "NoUserToDisplay": "Keine Benutzer zum Anzeigen",
     "EnableSudoSession": "Sudo-Sitzung aktivieren",
-    "MainAccessKey": "Hauptzugangsschlüssel"
+    "MainAccessKey": "Hauptzugangsschlüssel",
+    "InactivateTheFollowingUsers": "Deaktivieren Sie die folgenden Benutzer."
   },
   "data": {
     "Folders": "Ordner",

@@ -537,7 +537,8 @@
     "Status": "Trạng thái",
     "NoUserToDisplay": "Không có người dùng để hiển thị",
     "EnableSudoSession": "Kích hoạt phiên sudo",
-    "MainAccessKey": "Khóa truy cập chính"
+    "MainAccessKey": "Khóa truy cập chính",
+    "InactivateTheFollowingUsers": "Vô hiệu hóa những người dùng sau."
   },
   "data": {
     "Folders": "Thư mục",

@@ -537,7 +537,8 @@
     "SignoutSeccessfullyFinished": "La signature est terminée en toute sécurité",
     "ModifyUserDetail": "Modifier les détails de l'utilisateur",
     "EnableSudoSession": "Activer la session sudo",
-    "MainAccessKey": "Clé d'accès principale"
+    "MainAccessKey": "Clé d'accès principale",
+    "InactivateTheFollowingUsers": "Désactivez les utilisateurs suivants."
   },
   "data": {
     "Folders": "Dossiers",

@@ -147,10 +147,6 @@ export default class BackendAICredentialList extends BackendAIPage {
           padding-right: 5px;
         }
 
-        #keypair-modify-save {
-          --mdc-theme-on-primary: var(--token-colorWhite);
-        }
-
         #policy-list {
           width: 100%;
         }

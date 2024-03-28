@@ -537,7 +537,8 @@
     "Status": "现状",
     "NoUserToDisplay": "无用户显示",
     "EnableSudoSession": "启用 sudo 会话",
-    "MainAccessKey": "主访问密钥"
+    "MainAccessKey": "主访问密钥",
+    "InactivateTheFollowingUsers": "停用以下用户。"
   },
   "data": {
     "Folders": "文件夹",

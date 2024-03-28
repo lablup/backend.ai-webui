@@ -209,7 +209,8 @@
       "ValidationFailed": "Validación fallida"
     },
     "EnableSudoSession": "Habilitar sesión sudo",
-    "MainAccessKey": "Clave de acceso principal"
+    "MainAccessKey": "Clave de acceso principal",
+    "InactivateTheFollowingUsers": "Desactivar los siguientes usuarios."
   },
   "data": {
     "Allowslettersnumbersand-_": "Permite letras, números y -_",

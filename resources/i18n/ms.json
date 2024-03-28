@@ -537,7 +537,8 @@
     "Status": "Status",
     "NoUserToDisplay": "Tiada Pengguna untuk dipaparkan",
     "EnableSudoSession": "Dayakan sesi sudo",
-    "MainAccessKey": "Kunci Akses Utama"
+    "MainAccessKey": "Kunci Akses Utama",
+    "InactivateTheFollowingUsers": "Nyahaktifkan pengguna berikut."
   },
   "data": {
     "Folders": "Folder",

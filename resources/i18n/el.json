@@ -537,7 +537,8 @@
     "Status": "Κατάσταση",
     "NoUserToDisplay": "Δεν υπάρχουν χρήστες για εμφάνιση",
     "EnableSudoSession": "Ενεργοποίηση συνεδρίας sudo",
-    "MainAccessKey": "Κύριο κλειδί πρόσβασης"
+    "MainAccessKey": "Κύριο κλειδί πρόσβασης",
+    "InactivateTheFollowingUsers": "Απενεργοποιήστε τους παρακάτω χρήστες."
   },
   "data": {
     "Folders": "Φάκελοι",
