@@ -96,8 +96,19 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                       ),
                     },
                   ]}
+                  validateTrigger={['onChange', 'onBlur']}
                 >
-                  <Input placeholder="Value" />
+                  <Input
+                    placeholder="Value"
+                    // onChange={() => {
+                    //   const valueFields = fields.map((field, index) => [
+                    //     props.name,
+                    //     index,
+                    //     'value',
+                    //   ]);
+                    //   form.validateFields(valueFields);
+                    // }}
+                  />
                 </Form.Item>
                 <MinusCircleOutlined onClick={() => remove(name)} />
               </Flex>
