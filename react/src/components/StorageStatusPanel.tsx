@@ -43,8 +43,8 @@ const StorageStatusPanel: React.FC<{
   const deferredFetchKey = useDeferredValue(fetchKey);
 
   const columnSetting: DescriptionsProps['column'] = {
-    xxl: 4,
-    xl: 4,
+    xxl: 2,
+    xl: 2,
     lg: 2,
     md: 1,
     sm: 1,
@@ -170,11 +170,12 @@ const StorageStatusPanel: React.FC<{
       ? ((createdCount / maxVfolderCount) * 100)?.toFixed(2)
       : 0
   ) as number;
-
-  return (
-    <Card size="small" title={t('data.StorageStatus')}>
-      <Descriptions bordered column={columnSetting} size="small">
-        <Descriptions.Item label={t('data.NumberOfFolders')}>
+  const descriptionItems: DescriptionsProps['items'] = [
+    {
+      key: 'totalFolders',
+      label: t('data.NumberOfFolders'),
+      children: (
+        <>
           <Progress
             size={[200, 15]}
             percent={numberOfFolderPercent}
@@ -208,17 +209,21 @@ const StorageStatusPanel: React.FC<{
               {invitedCount}
             </Flex>
           </Flex>
-        </Descriptions.Item>
-        <Descriptions.Item
-          label={
-            <div>
-              {t('data.QuotaPerStorageVolume')}
-              <Tooltip title={t('data.HostDetails')}>
-                <Button type="link" icon={<InfoCircleOutlined />} />
-              </Tooltip>
-            </div>
-          }
-        >
+        </>
+      ),
+    },
+    {
+      key: 'quotaPerStorageVolume',
+      label: (
+        <div>
+          {t('data.QuotaPerStorageVolume')}
+          <Tooltip title={t('data.HostDetails')}>
+            <Button type="link" icon={<InfoCircleOutlined />} />
+          </Tooltip>
+        </div>
+      ),
+      children: (
+        <>
           <Flex
             wrap="wrap"
             justify="between"
@@ -279,8 +284,28 @@ const StorageStatusPanel: React.FC<{
               style={{ margin: '25px auto' }}
             />
           )}
-        </Descriptions.Item>
-      </Descriptions>
+        </>
+      ),
+    },
+    {
+      key: 'userQuotaScopeId',
+      label: t('data.userQuotaScopeId'),
+      children: (
+        <Typography.Text copyable>
+          {addQuotaScopeTypePrefix('user', user?.id || '')}
+        </Typography.Text>
+      ),
+    },
+  ];
+
+  return (
+    <Card size="small" title={t('data.StorageStatus')}>
+      <Descriptions
+        bordered
+        column={columnSetting}
+        size="small"
+        items={descriptionItems}
+      />
     </Card>
   );
 };
