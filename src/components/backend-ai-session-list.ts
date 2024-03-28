@@ -738,6 +738,7 @@ export default class BackendAISessionList extends BackendAIPage {
       'access_key',
       'starts_at',
       'type',
+      'agents',
     ];
     if (globalThis.backendaiclient.supports('multi-container')) {
       fields.push('cluster_size');
@@ -3719,7 +3720,11 @@ ${rowData.item[this.sessionNameField]}</pre
       // language=HTML
       html`
         <div class="layout vertical">
-          <span>${rowData.item.agent}</span>
+          ${rowData.item.agents?.map(
+            (agent) => html`
+              <span>${agent}</span>
+            `,
+          )}
         </div>
       `,
       root,
