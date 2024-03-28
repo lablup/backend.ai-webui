@@ -148,9 +148,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         }
 
         #keypair-modify-save {
-          --button-bg: var(--paper-light-green-50);
-          --button-bg-hover: var(--paper-green-100);
-          --button-bg-active: var(--paper-green-600);
+          --mdc-theme-on-primary: var(--token-colorWhite);
         }
 
         #policy-list {
