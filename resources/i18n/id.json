@@ -707,7 +707,8 @@
     "ModelStore": "Toko Model",
     "New": "Baru",
     "Add": "Menambahkan",
-    "CloningIsOnlyPossibleSameHost": "Saat ini, kloning hanya dapat dilakukan pada host yang sama."
+    "CloningIsOnlyPossibleSameHost": "Saat ini, kloning hanya dapat dilakukan pada host yang sama.",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {

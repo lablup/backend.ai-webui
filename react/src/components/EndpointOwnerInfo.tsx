@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
 interface EndpointOwnerInfoProps {
-  endpointFrgmt: EndpointOwnerInfoFragment$key | null;
+  endpointFrgmt: EndpointOwnerInfoFragment$key | null | undefined;
 }
 const EndpointOwnerInfo: React.FC<EndpointOwnerInfoProps> = ({
   endpointFrgmt,

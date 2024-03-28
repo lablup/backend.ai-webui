@@ -8,7 +8,7 @@ import {
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
 import { BackendAiStyles } from './backend-ai-general-styles';
-import format from 'date-fns/esm/format';
+import { format } from 'date-fns';
 import { css, CSSResultGroup, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
