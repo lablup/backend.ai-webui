@@ -118,7 +118,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @query('#modify-image-ipu') modifyImageIpu!: Button;
   @query('#modify-image-atom') modifyImageAtom!: Button;
   @query('#modify-image-warboy') modifyImageWarboy!: Button;
-  @query('#modify-image-lpu') modifyImageHyperaccelLPU!: Button;
+  @query('#modify-image-hyperaccel-lpu') modifyImageHyperaccelLPU!: Button;
   @query('#delete-app-info-dialog') deleteAppInfoDialog!: BackendAIDialog;
   @query('#delete-image-dialog') deleteImageDialog!: BackendAIDialog;
   @query('#install-image-dialog') installImageDialog!: BackendAIDialog;
@@ -684,7 +684,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const ipu = this.modifyImageIpu.label;
     const atom = this.modifyImageAtom.label;
     const warboy = this.modifyImageWarboy.label;
-    const lpu = this.modifyImageHyperaccelLPU.label;
+    const hyperaccel_lpu = this.modifyImageHyperaccelLPU.label;
 
     const { resource_limits } = this.images[this.selectedIndex];
 
@@ -716,8 +716,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       input['atom.device'] = { min: atom };
     if (!this._warboy_disabled && warboy !== resource_limits[6].min)
       input['warboy.device'] = { min: warboy };
-    if (!this._hyperaccel_lpu_disabled && lpu !== resource_limits[6].min)
-      input['hyperaccel-lpu.device'] = { min: lpu };
+    if (
+      !this._hyperaccel_lpu_disabled &&
+      hyperaccel_lpu !== resource_limits[6].min
+    )
+      input['hyperaccel-lpu.device'] = { min: hyperaccel_lpu };
 
     const image = this.images[this.selectedIndex];
 
@@ -1809,7 +1812,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               ></mwc-button>
             </div>
             <div class="horizontal layout flex center">
-              <span class="resource-limit-title">Hyperaccle LPU</span>
+              <span class="resource-limit-title">Hyperaccel LPU</span>
               <mwc-slider
                 ?disabled="${this._hyperaccel_lpu_disabled}"
                 id="hyperaccel-lpu"

@@ -56,7 +56,7 @@ export const useResourceSlotsByResourceGroup = (name?: string) => {
     'ipu.device': string;
     'atom.device': string;
     'warboy.device': string;
-    'lpu.device': string;
+    'hyperaccel-lpu.device': string;
     [key: string]: string;
   }>({
     queryKey: ['useResourceSlots', name, key],

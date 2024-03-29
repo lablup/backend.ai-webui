@@ -427,7 +427,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                 agents[objectKey].used_hyperaccel_lpu_slots_ratio =
                   agents[objectKey].used_hyperaccel_lpu_slots /
                   agents[objectKey].hyperaccel_lpu_slots;
-                agents[objectKey].total_lpu_percent = (
+                agents[objectKey].total_hyperaccel_lpu_percent = (
                   agents[objectKey].used_hyperaccel_lpu_slots_ratio * 100
                 )?.toFixed(2);
               }

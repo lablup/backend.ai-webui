@@ -400,9 +400,9 @@ export default class BackendAICredentialList extends BackendAIPage {
             ) {
               keypair['total_resource_slots'].warboy_device = '-';
             }
-            if ('lpu.device' in keypair['total_resource_slots']) {
+            if ('hyperaccel-lpu.device' in keypair['total_resource_slots']) {
               keypair['total_resource_slots'].hyperaccel_lpu_device =
-                keypair['total_resource_slots']['lpu.device'];
+                keypair['total_resource_slots']['hyperaccel-lpu.device'];
             }
             if (
               'hyperaccel_lpu_device' in keypair['total_resource_slots'] ===

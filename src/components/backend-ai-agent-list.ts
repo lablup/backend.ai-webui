@@ -545,7 +545,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                 agents[objectKey].used_hyperaccel_lpu_slots_ratio =
                   agents[objectKey].used_hyperaccel_lpu_slots /
                   agents[objectKey].hyperaccel_lpu_slots;
-                agents[objectKey].total_lpu_percent = (
+                agents[objectKey].total_hyperaccel_lpu_percent = (
                   agents[objectKey].used_hyperaccel_lpu_slots_ratio * 100
                 ).toFixed(2);
               }
@@ -1224,7 +1224,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                   </div>
                   <span class="flex"></span>
                   <lablup-progress-bar
-                    id="lpu-bar"
+                    id="hyperaccel-lpu-bar"
                     progress="${rowData.item.used_hyperaccel_lpu_slots_ratio}"
                     description="${rowData.item.used_hyperaccel_lpu_slots}"
                   ></lablup-progress-bar>
