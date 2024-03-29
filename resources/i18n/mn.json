@@ -114,7 +114,7 @@
     "ATOMEnabled": "ATOM NPU-г идэвхжүүлсэн",
     "WarboyEnabled": "Warboy NPU идэвхжүүлсэн",
     "FastTrack": "FastTrack",
-    "LPUEnabled": "LPU NPU идэвхжүүлсэн."
+    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -1141,9 +1141,9 @@
     "Plugins": "Plugins",
     "OpenSourceCUDAGPUsupport": "Нээлттэй эхийн CUDA GPU дэмжлэг",
     "ShowOnlyChanged": "Зөвхөн өөрчлөлтүүдийг харуулах",
-    "LPUsupport": "LPU",
-    "DescLPUsupport": "Hyperaccel LPU хурдасгуурыг ашигла.",
-    "RequireLPUPlugin": "Backend.AI LPU Plugin шаардлагатай."
+    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
@@ -1426,7 +1426,8 @@
     "ForUser": "Хэрэглэгчийн хувьд",
     "ForProject": "Төслийн хувьд",
     "QuotaDoesNotSupported": "Энэ хадгалах сан нь квотыг дэмждэггүй.",
-    "BeCarefulToSetUserResourcePolicy": "Нөөцийн бодлогыг өөрчлөх нь тухайн хэрэглэгчийн нөөцийн бодлогыг ашигладаг бүх хэрэглэгчдэд нөлөөлж болзошгүй тул үүнийг болгоомжтой ашиглаарай."
+    "BeCarefulToSetUserResourcePolicy": "Нөөцийн бодлогыг өөрчлөх нь тухайн хэрэглэгчийн нөөцийн бодлогыг ашигладаг бүх хэрэглэгчдэд нөлөөлж болзошгүй тул үүнийг болгоомжтой ашиглаарай.",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "modelService": {
     "EditModelService": "Загварын үйлчилгээг засах",

@@ -114,7 +114,7 @@
     "WarboyEnabled": "启用 Warboy NPU",
     "DownloadWebUIApp": "下载 Backend.AI Web UI 应用程序",
     "FastTrack": "FastTrack",
-    "LPUEnabled": "LPU NPU 启用。"
+    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -1141,9 +1141,9 @@
     "Plugins": "插件",
     "OpenSourceCUDAGPUsupport": "开源 CUDA GPU 支持",
     "ShowOnlyChanged": "仅显示更改",
-    "LPUsupport": "线路板",
-    "DescLPUsupport": "使用Hyperaccel LPU加速器。",
-    "RequireLPUPlugin": "需要Backend.AI LPU插件。"
+    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "成功更新",
@@ -1415,7 +1415,8 @@
     "ForUser": "用户",
     "ForProject": "项目",
     "QuotaDoesNotSupported": "该存储后端不支持配额。",
-    "BeCarefulToSetUserResourcePolicy": "更改资源策略会影响使用该用户资源策略的所有用户，因此请谨慎使用。"
+    "BeCarefulToSetUserResourcePolicy": "更改资源策略会影响使用该用户资源策略的所有用户，因此请谨慎使用。",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "modelService": {
     "TokenGenerated": "生成的令牌",

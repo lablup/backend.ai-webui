@@ -114,7 +114,7 @@
     "WarboyEnabled": "NPU Warboy đã được kích hoạt",
     "DownloadWebUIApp": "Tải xuống ứng dụng giao diện người dùng web Backend.AI",
     "FastTrack": "FastTrack",
-    "LPUEnabled": "Đã bật NPU LPU."
+    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -1141,9 +1141,9 @@
     "Plugins": "bổ sung",
     "OpenSourceCUDAGPUsupport": "Hỗ trợ GPU CUDA mã nguồn mở",
     "ShowOnlyChanged": "Chỉ hiển thị các thay đổi",
-    "LPUsupport": "LPU",
-    "DescLPUsupport": "Sử dụng bộ tăng tốc LPU Hyperaccel.",
-    "RequireLPUPlugin": "Yêu cầu Plugin LPU Backend.AI."
+    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Cập nhật thành công",
@@ -1415,7 +1415,8 @@
     "ForUser": "Dành cho người dùng",
     "ForProject": "Dành cho dự án",
     "QuotaDoesNotSupported": "Phần phụ trợ lưu trữ này không hỗ trợ hạn ngạch.",
-    "BeCarefulToSetUserResourcePolicy": "Việc thay đổi chính sách tài nguyên có thể ảnh hưởng đến tất cả người dùng sử dụng chính sách tài nguyên người dùng đó, vì vậy hãy cẩn thận khi sử dụng chính sách đó."
+    "BeCarefulToSetUserResourcePolicy": "Việc thay đổi chính sách tài nguyên có thể ảnh hưởng đến tất cả người dùng sử dụng chính sách tài nguyên người dùng đó, vì vậy hãy cẩn thận khi sử dụng chính sách đó.",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "modelService": {
     "TokenGenerated": "Mã thông báo được tạo",

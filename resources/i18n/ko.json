@@ -114,7 +114,7 @@
     "ATOMEnabled": "ATOM NPU 사용중",
     "WarboyEnabled": "Warboy NPU 사용중",
     "FastTrack": "FastTrack",
-    "LPUEnabled": "LPU NPU 사용중"
+    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -1230,9 +1230,9 @@
     "RequireWarboyPlugin": "Backend.AI Warboy 플러그인이 필요합니다.",
     "OpenSourceCUDAGPUsupport": "오픈소스 CUDA GPU 지원",
     "ShowOnlyChanged": "수정 사항만 표시",
-    "LPUsupport": "LPU 지원",
-    "DescLPUsupport": "Hyperaccel LPU 가속기를 사용합니다.",
-    "RequireLPUPlugin": "Backend.AI LPU 플러그인이 필요합니다."
+    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "성공적으로 수정되었습니다.",

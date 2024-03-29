@@ -114,7 +114,7 @@
     "WarboyEnabled": "Ενεργοποιημένη NPU Warboy",
     "DownloadWebUIApp": "Κατεβάστε την εφαρμογή Backend.AI Web UI App",
     "FastTrack": "FastTrack",
-    "LPUEnabled": "LPU NPU Ενεργοποιημένο."
+    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -1141,9 +1141,9 @@
     "Plugins": "Πρόσθετα",
     "OpenSourceCUDAGPUsupport": "Υποστήριξη ανοιχτού κώδικα CUDA GPU",
     "ShowOnlyChanged": "Εμφάνιση μόνο αλλαγών",
-    "LPUsupport": "LPU",
-    "DescLPUsupport": "Χρησιμοποιήστε τον επιταχυντή Hyperaccel LPU.",
-    "RequireLPUPlugin": "Απαιτείται πρόσθετο Backend.AI LPU."
+    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
@@ -1425,7 +1425,11 @@
     "YouAreAboutToTerminate": "Πρόκειται να τερματίσετε",
     "Owner": "Ιδιοκτήτης",
     "ServiceDelegatedFrom": "Το μοντέλο υπηρεσίας δημιουργείται από τον {{ createdUser }}, αλλά η ιδιοκτησία της συνεδρίας θα ανατεθεί στον {{ sessionOwner }}",
-    "FailedToTerminateService": "Η αίτηση τερματισμού της υπηρεσίας απέτυχε."
+    "FailedToTerminateService": "Η αίτηση τερματισμού της υπηρεσίας απέτυχε.",
+    "ServiceUpdated": "__NOT_TRANSLATED__",
+    "FailedToUpdateService": "__NOT_TRANSLATED__",
+    "ServiceCreated": "__NOT_TRANSLATED__",
+    "ServiceTerminated": "__NOT_TRANSLATED__"
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",
@@ -1465,7 +1469,8 @@
     "ForUser": "Για τον χρήστη",
     "ForProject": "Για το έργο",
     "QuotaDoesNotSupported": "Αυτό το backend αποθήκευσης δεν υποστηρίζει ποσόστωση.",
-    "BeCarefulToSetUserResourcePolicy": "Η αλλαγή μιας πολιτικής πόρων μπορεί να επηρεάσει όλους τους χρήστες που χρησιμοποιούν αυτή την πολιτική πόρων χρήστη, γι' αυτό χρησιμοποιήστε την με προσοχή."
+    "BeCarefulToSetUserResourcePolicy": "Η αλλαγή μιας πολιτικής πόρων μπορεί να επηρεάσει όλους τους χρήστες που χρησιμοποιούν αυτή την πολιτική πόρων χρήστη, γι' αυτό χρησιμοποιήστε την με προσοχή.",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "totp": {
     "TotpSetupCompleted": "Ενεργοποιημένο 2FA",

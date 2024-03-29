@@ -58,7 +58,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({ type: Boolean }) _ipu_disabled = false;
   @property({ type: Boolean }) _atom_disabled = false;
   @property({ type: Boolean }) _warboy_disabled = false;
-  @property({ type: Boolean }) _lpu_disabled = false;
+  @property({ type: Boolean }) _hyperaccel_lpu_disabled = false;
   @property({ type: Object }) alias = Object();
   @property({ type: Object }) indicator = Object();
   @property({ type: Array }) installImageNameList;
@@ -92,7 +92,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     ipu: ['0', '1', '2', '3', '4'],
     atom: ['0', '1', '2', '3', '4'],
     warboy: ['0', '1', '2', '3', '4'],
-    lpu: ['0', '1', '2', '3', '4'],
+    hyperaccel_lpu: ['0', '1', '2', '3', '4'],
   };
   @property({ type: Number }) cpuValue = 0;
   @property({ type: String }) listCondition: StatusCondition = 'loading';
@@ -118,7 +118,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @query('#modify-image-ipu') modifyImageIpu!: Button;
   @query('#modify-image-atom') modifyImageAtom!: Button;
   @query('#modify-image-warboy') modifyImageWarboy!: Button;
-  @query('#modify-image-lpu') modifyImageLPU!: Button;
+  @query('#modify-image-lpu') modifyImageHyperaccelLPU!: Button;
   @query('#delete-app-info-dialog') deleteAppInfoDialog!: BackendAIDialog;
   @query('#delete-image-dialog') deleteImageDialog!: BackendAIDialog;
   @query('#install-image-dialog') installImageDialog!: BackendAIDialog;
@@ -510,8 +510,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               if (resource.key == 'warboy.device') {
                 resource.key = 'warboy_device';
               }
-              if (resource.key == 'lpu.device') {
-                resource.key = 'lpu_device';
+              if (resource.key == 'hyperaccel-lpu.device') {
+                resource.key = 'hyperaccl_lpu_device';
               }
               if (resource.min !== null && resource.min !== undefined) {
                 image[resource.key + '_limit_min'] = this._addUnit(
@@ -684,7 +684,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const ipu = this.modifyImageIpu.label;
     const atom = this.modifyImageAtom.label;
     const warboy = this.modifyImageWarboy.label;
-    const lpu = this.modifyImageLPU.label;
+    const lpu = this.modifyImageHyperaccelLPU.label;
 
     const { resource_limits } = this.images[this.selectedIndex];
 
@@ -716,8 +716,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       input['atom.device'] = { min: atom };
     if (!this._warboy_disabled && warboy !== resource_limits[6].min)
       input['warboy.device'] = { min: warboy };
-    if (!this._lpu_disabled && lpu !== resource_limits[6].min)
-      input['lpu.device'] = { min: lpu };
+    if (!this._hyperaccel_lpu_disabled && lpu !== resource_limits[6].min)
+      input['hyperaccel-lpu.device'] = { min: lpu };
 
     const image = this.images[this.selectedIndex];
 
@@ -947,8 +947,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       resource_limits.filter((e) => e.key === 'atom_device').length === 0;
     this._warboy_disabled =
       resource_limits.filter((e) => e.key === 'warboy_device').length === 0;
-    this._lpu_disabled =
-      resource_limits.filter((e) => e.key === 'lpu_device').length === 0;
+    this._hyperaccel_lpu_disabled =
+      resource_limits.filter((e) => e.key === 'hyperaccel_lpu_device')
+        .length === 0;
     const resources = resource_limits.reduce((result, item) => {
       const { key, ...rest } = item;
       const value = rest;
@@ -1043,17 +1044,23 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this.modifyImageWarboy.label = _t('environment.Disabled') as string;
       (this.shadowRoot?.querySelector('mwc-slider#warboy') as Slider).value = 0;
     }
-    if (!this._lpu_disabled) {
-      this.modifyImageLPU.label = resources['lpu_device'].min;
-      (this.shadowRoot?.querySelector('mwc-slider#lpu') as Slider).value =
-        this._range['lpu'].indexOf(
-          this._range['lpu'].filter((value) => {
-            return value === resources['lpu_device'].min;
-          })[0],
-        );
+    if (!this._hyperaccel_lpu_disabled) {
+      this.modifyImageHyperaccelLPU.label =
+        resources['hyperaccel_lpu_device'].min;
+      (
+        this.shadowRoot?.querySelector('mwc-slider#hyperaccel-lpu') as Slider
+      ).value = this._range['hyperaccel-lpu'].indexOf(
+        this._range['hyperaccel-lpu'].filter((value) => {
+          return value === resources['hyperaccel_lpu_device'].min;
+        })[0],
+      );
     } else {
-      this.modifyImageLPU.label = _t('environment.Disabled') as string;
-      (this.shadowRoot?.querySelector('mwc-slider#lpu') as Slider).value = 0;
+      this.modifyImageHyperaccelLPU.label = _t(
+        'environment.Disabled',
+      ) as string;
+      (
+        this.shadowRoot?.querySelector('mwc-slider#hyperaccel-lpu') as Slider
+      ).value = 0;
     }
 
     this.modifyImageMemory.label = this._addUnit(resources['mem'].min);
@@ -1359,7 +1366,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               </div>
             `
           : html``}
-        ${rowData.item.lpu_device_limit_min
+        ${rowData.item.hyperaccel_lpu_device_limit_min
           ? html`
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
@@ -1367,12 +1374,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                     class="indicator-icon fg green"
                     src="/resources/icons/npu_generic.svg"
                   />
-                  <span>${rowData.item.lpu_device_limit_min}</span>
+                  <span>${rowData.item.hyperaccel_lpu_device_limit_min}</span>
                   ~
                   <span>
-                    ${this._markIfUnlimited(rowData.item.lpu_device_limit_max)}
+                    ${this._markIfUnlimited(
+                      rowData.item.hyperaccel_lpu_device_limit_max,
+                    )}
                   </span>
-                  <span class="indicator">LPU</span>
+                  <span class="indicator">Hyperaccel LPU</span>
                 </div>
               </div>
             `
@@ -1800,10 +1809,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               ></mwc-button>
             </div>
             <div class="horizontal layout flex center">
-              <span class="resource-limit-title">LPU</span>
+              <span class="resource-limit-title">Hyperaccle LPU</span>
               <mwc-slider
-                ?disabled="${this._lpu_disabled}"
-                id="lpu"
+                ?disabled="${this._hyperaccel_lpu_disabled}"
+                id="hyperaccel-lpu"
                 markers
                 step="1"
                 max="5"
@@ -1811,7 +1820,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               ></mwc-slider>
               <mwc-button
                 class="range-value"
-                id="modify-image-lpu"
+                id="modify-image-hyperaccel-lpu"
                 disabled
               ></mwc-button>
             </div>

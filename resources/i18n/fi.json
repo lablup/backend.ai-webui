@@ -38,7 +38,7 @@
     "WarboyEnabled": "Warboy NPU käytössä",
     "connectingToCluster": "Yhteyden muodostaminen Backend.AI-klusteriin...",
     "reserved": "varattu",
-    "LPUEnabled": "LPU NPU käytössä."
+    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
   },
   "error": {
     "WrongAPIServerAddress": "Väärä API-palvelimen osoite.",
@@ -1227,9 +1227,9 @@
     },
     "OpenSourceCUDAGPUsupport": "Avoimen lähdekoodin CUDA GPU-tuki",
     "ShowOnlyChanged": "Vain näyttö muuttuu",
-    "LPUsupport": "LPU",
-    "DescLPUsupport": "Käytä Hyperaccel LPU -kiihdytintä.",
-    "RequireLPUPlugin": "Vaatii Backend.AI LPU -laajennuksen."
+    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
   },
   "sidepanel": {
     "BackgroundTasks": "Tehtävien suorittaminen",
@@ -1317,7 +1317,8 @@
       "SelectProject": "Valitse projekti",
       "SelectUser": "Etsi ja valitse Käyttäjä",
       "UnsetCustomSettings": "Mukautettujen asetusten poistaminen"
-    }
+    },
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "totp": {
     "ConfirmTotpRemovalBody": "Oletko varma, ettet halua käyttää kaksitekijätodennusta?",

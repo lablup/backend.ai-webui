@@ -531,22 +531,22 @@ export default class BackendAIAgentList extends BackendAIPage {
                   agents[objectKey].used_warboy_slots_ratio * 100
                 ).toFixed(2);
               }
-              if ('lpu.device' in available_slots) {
-                agents[objectKey].lpu_slots = parseInt(
-                  available_slots['lpu.device'],
+              if ('hyperaccel-lpu.device' in available_slots) {
+                agents[objectKey].hyperaccel_lpu_slots = parseInt(
+                  available_slots['hyperaccel-lpu.device'],
                 );
-                if ('lpu.device' in occupied_slots) {
-                  agents[objectKey].used_lpu_slots = parseInt(
-                    occupied_slots['lpu.device'],
+                if ('hyperaccel-lpu.device' in occupied_slots) {
+                  agents[objectKey].used_hyperaccel_lpu_slots = parseInt(
+                    occupied_slots['hyperaccel-lpu.device'],
                   );
                 } else {
-                  agents[objectKey].used_lpu_slots = 0;
+                  agents[objectKey].used_hyperaccel_lpu_slots = 0;
                 }
-                agents[objectKey].used_lpu_slots_ratio =
-                  agents[objectKey].used_lpu_slots /
-                  agents[objectKey].lpu_slots;
+                agents[objectKey].used_hyperaccel_lpu_slots_ratio =
+                  agents[objectKey].used_hyperaccel_lpu_slots /
+                  agents[objectKey].hyperaccel_lpu_slots;
                 agents[objectKey].total_lpu_percent = (
-                  agents[objectKey].used_lpu_slots_ratio * 100
+                  agents[objectKey].used_hyperaccel_lpu_slots_ratio * 100
                 ).toFixed(2);
               }
 
@@ -1206,7 +1206,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                 </div>
               `
             : html``}
-          ${rowData.item.lpu_slots
+          ${rowData.item.hyperaccel_lpu_slots
             ? html`
                 <div
                   class="layout horizontal center-justified flex progress-bar-section"
@@ -1217,15 +1217,16 @@ export default class BackendAIAgentList extends BackendAIPage {
                       src="/resources/icons/npu_generic.svg"
                     />
                     <span class="monospace" style="padding-left:5px;">
-                      ${rowData.item.used_lpu_slots}/${rowData.item.lpu_slots}
+                      ${rowData.item.used_hyperaccel_lpu_slots}/${rowData.item
+                        .hyperaccel_lpu_slots}
                     </span>
-                    <span class="indicator">LPU</span>
+                    <span class="indicator">Hyperaccel LPU</span>
                   </div>
                   <span class="flex"></span>
                   <lablup-progress-bar
                     id="lpu-bar"
-                    progress="${rowData.item.used_lpu_slots_ratio}"
-                    description="${rowData.item.used_lpu_slots}"
+                    progress="${rowData.item.used_hyperaccel_lpu_slots_ratio}"
+                    description="${rowData.item.used_hyperaccel_lpu_slots}"
                   ></lablup-progress-bar>
                 </div>
               `

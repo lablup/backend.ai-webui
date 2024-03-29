@@ -114,7 +114,7 @@
     "WarboyEnabled": "Warboy NPU使用中",
     "DownloadWebUIApp": "Backend.AI Web UIアプリのダウンロード",
     "FastTrack": "FastTrack",
-    "LPUEnabled": "LPU NPU が有効です。"
+    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -1141,9 +1141,9 @@
     "Plugins": "プラグイン",
     "OpenSourceCUDAGPUsupport": "オープンソースのCUDA GPUのサポート",
     "ShowOnlyChanged": "表示のみの変更",
-    "LPUsupport": "LPU",
-    "DescLPUsupport": "Hyperaccel LPU アクセラレータを使用します。",
-    "RequireLPUPlugin": "Backend.AI LPU プラグインが必要です。"
+    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "正常に更新されました",
@@ -1469,7 +1469,8 @@
     "ForUser": "ユーザー",
     "ForProject": "プロジェクト",
     "QuotaDoesNotSupported": "このストレージバックエンドは可用量設定をサポートしていません。",
-    "BeCarefulToSetUserResourcePolicy": "リソースポリシーを変更すると、そのリソースポリシーを使用しているすべてのユーザーに影響を与える可能性がありますので、慎重に使用してください。"
+    "BeCarefulToSetUserResourcePolicy": "リソースポリシーを変更すると、そのリソースポリシーを使用しているすべてのユーザーに影響を与える可能性がありますので、慎重に使用してください。",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "totp": {
     "TotpSetupCompleted": "二要素認証が有効になりました。",

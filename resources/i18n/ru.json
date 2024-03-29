@@ -114,7 +114,7 @@
     "ATOMEnabled": "ATOM NPU Включено",
     "WarboyEnabled": "Warboy NPU Enabled",
     "FastTrack": "FastTrack",
-    "LPUEnabled": "LPU NPU включен."
+    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -1143,9 +1143,9 @@
     "Plugins": "Плагины",
     "OpenSourceCUDAGPUsupport": "Поддержка графического процессора CUDA с открытым исходным кодом",
     "ShowOnlyChanged": "Отображать только изменения",
-    "LPUsupport": "ЛПУ",
-    "DescLPUsupport": "Используйте ускоритель Hyperaccel LPU.",
-    "RequireLPUPlugin": "Требуется плагин Backend.AI LPU."
+    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Успешно обновлено",
@@ -1428,7 +1428,8 @@
     "ForUser": "Для пользователя",
     "ForProject": "Для проекта",
     "QuotaDoesNotSupported": "Данный бэкэнд хранилища не поддерживает квотирование.",
-    "BeCarefulToSetUserResourcePolicy": "Изменение политики ресурсов может повлиять на всех пользователей, использующих данную политику ресурсов, поэтому использовать ее следует с осторожностью."
+    "BeCarefulToSetUserResourcePolicy": "Изменение политики ресурсов может повлиять на всех пользователей, использующих данную политику ресурсов, поэтому использовать ее следует с осторожностью.",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "modelService": {
     "EditModelService": "Редактирование модели сервиса",

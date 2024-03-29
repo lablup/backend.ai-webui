@@ -114,7 +114,7 @@
     "WarboyEnabled": "Warboy NPU Didayakan",
     "DownloadWebUIApp": "Muat turun Apl UI Web Backend.AI",
     "FastTrack": "FastTrack",
-    "LPUEnabled": "LPU NPU Didayakan."
+    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -1141,9 +1141,9 @@
     "Plugins": "Pemalam",
     "OpenSourceCUDAGPUsupport": "Sokongan GPU CUDA Sumber Terbuka",
     "ShowOnlyChanged": "Paparkan Perubahan Sahaja",
-    "LPUsupport": "LPU",
-    "DescLPUsupport": "Gunakan pemecut LPU Hyperaccel.",
-    "RequireLPUPlugin": "Memerlukan Pemalam LPU Backend.AI."
+    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Berjaya Dikemas kini",
@@ -1415,7 +1415,8 @@
     "ForUser": "Untuk Pengguna",
     "ForProject": "Untuk Projek",
     "QuotaDoesNotSupported": "Bahagian belakang storan ini tidak menyokong kuota.",
-    "BeCarefulToSetUserResourcePolicy": "Menukar dasar sumber boleh menjejaskan semua pengguna yang menggunakan dasar sumber pengguna itu, jadi gunakannya dengan berhati-hati."
+    "BeCarefulToSetUserResourcePolicy": "Menukar dasar sumber boleh menjejaskan semua pengguna yang menggunakan dasar sumber pengguna itu, jadi gunakannya dengan berhati-hati.",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "modelService": {
     "TokenGenerated": "Token dijana",

@@ -114,7 +114,7 @@
     "WarboyEnabled": "Warboy NPU Aktiviert",
     "DownloadWebUIApp": "Backend.AI Web UI App herunterladen",
     "FastTrack": "FastTrack",
-    "LPUEnabled": "LPU NPU aktiviert."
+    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -1141,9 +1141,9 @@
     "Plugins": "Plugins",
     "OpenSourceCUDAGPUsupport": "Open Source CUDA GPU Unterstützung",
     "ShowOnlyChanged": "Nur Änderungen anzeigen",
-    "LPUsupport": "LPU",
-    "DescLPUsupport": "Verwenden Sie den Hyperaccel LPU-Beschleuniger.",
-    "RequireLPUPlugin": "Erfordert das Backend.AI LPU-Plugin."
+    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Erfolgreich aktualisiert",
@@ -1469,7 +1469,8 @@
     "ForUser": "Für Benutzer",
     "ForProject": "Für Projekt",
     "QuotaDoesNotSupported": "Dieses Speicher-Backend unterstützt keine Quoten.",
-    "BeCarefulToSetUserResourcePolicy": "Die Änderung einer Ressourcenrichtlinie kann sich auf alle Benutzer auswirken, die diese Benutzer-Ressourcenrichtlinie verwenden, daher ist sie mit Vorsicht zu genießen."
+    "BeCarefulToSetUserResourcePolicy": "Die Änderung einer Ressourcenrichtlinie kann sich auf alle Benutzer auswirken, die diese Benutzer-Ressourcenrichtlinie verwenden, daher ist sie mit Vorsicht zu genießen.",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "totp": {
     "TotpSetupCompleted": "Aktivierte 2FA",

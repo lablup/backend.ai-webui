@@ -114,7 +114,7 @@
     "WarboyEnabled": "NPU Warboy abilitata",
     "DownloadWebUIApp": "Scarica l'applicazione Backend.AI Web UI",
     "FastTrack": "FastTrack",
-    "LPUEnabled": "LPU NPU abilitato."
+    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -1141,9 +1141,9 @@
     "Plugins": "Plugin",
     "OpenSourceCUDAGPUsupport": "Supporto GPU CUDA open source",
     "ShowOnlyChanged": "Visualizza solo modifiche",
-    "LPUsupport": "LPU",
-    "DescLPUsupport": "Utilizzare l'acceleratore Hyperaccel LPU.",
-    "RequireLPUPlugin": "Richiede il plugin Backend.AI LPU."
+    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Aggiornato con successo",
@@ -1469,7 +1469,8 @@
     "ForUser": "Per l'utente",
     "ForProject": "Per il progetto",
     "QuotaDoesNotSupported": "Questo backend di archiviazione non supporta le quote.",
-    "BeCarefulToSetUserResourcePolicy": "La modifica di un criterio di risorse può influire su tutti gli utenti che utilizzano quel criterio di risorse utente, quindi va usata con cautela."
+    "BeCarefulToSetUserResourcePolicy": "La modifica di un criterio di risorse può influire su tutti gli utenti che utilizzano quel criterio di risorse utente, quindi va usata con cautela.",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "totp": {
     "TotpSetupCompleted": "Abilitato 2FA",

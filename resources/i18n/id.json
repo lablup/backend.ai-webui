@@ -114,7 +114,7 @@
     "ATOMEnabled": "ATOM NPU Diaktifkan",
     "WarboyEnabled": "Warboy NPU Diaktifkan",
     "FastTrack": "FastTrack",
-    "LPUEnabled": "LPU NPU Diaktifkan."
+    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -1141,9 +1141,9 @@
     "Plugins": "Plugin",
     "OpenSourceCUDAGPUsupport": "Dukungan GPU CUDA Sumber Terbuka",
     "ShowOnlyChanged": "Hanya Tampilan yang Berubah",
-    "LPUsupport": "LPU",
-    "DescLPUsupport": "Gunakan akselerator Hyperaccel LPU.",
-    "RequireLPUPlugin": "Membutuhkan Plugin LPU Backend.AI."
+    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Berhasil Diperbarui",
@@ -1426,7 +1426,8 @@
     "ForUser": "Untuk Pengguna",
     "ForProject": "Untuk Proyek",
     "QuotaDoesNotSupported": "Backend penyimpanan ini tidak mendukung kuota.",
-    "BeCarefulToSetUserResourcePolicy": "Mengubah kebijakan sumber daya dapat memengaruhi semua pengguna yang menggunakan kebijakan sumber daya pengguna tersebut, jadi gunakanlah dengan hati-hati."
+    "BeCarefulToSetUserResourcePolicy": "Mengubah kebijakan sumber daya dapat memengaruhi semua pengguna yang menggunakan kebijakan sumber daya pengguna tersebut, jadi gunakanlah dengan hati-hati.",
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "modelService": {
     "EditModelService": "Layanan Edit Model",

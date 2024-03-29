@@ -38,7 +38,7 @@
     "WarboyEnabled": "Warboy NPU Activado",
     "connectingToCluster": "Conectando al Cluster Backend.AI...",
     "reserved": "reservado",
-    "LPUEnabled": "LPU NPU habilitado."
+    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
   },
   "error": {
     "WrongAPIServerAddress": "Dirección del servidor API incorrecta.",
@@ -1227,9 +1227,9 @@
     "Plugins": "Complementos",
     "OpenSourceCUDAGPUsupport": "Compatibilidad con GPU CUDA de código abierto",
     "ShowOnlyChanged": "Mostrar solo cambios",
-    "LPUsupport": "LPU",
-    "DescLPUsupport": "Utilice el acelerador Hyperaccel LPU.",
-    "RequireLPUPlugin": "Requiere el complemento LPU Backend.AI."
+    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
   },
   "sidepanel": {
     "BackgroundTasks": "Tareas en curso",
@@ -1317,7 +1317,8 @@
       "SelectProject": "Seleccionar proyecto",
       "SelectUser": "Buscar y seleccionar Usuario",
       "UnsetCustomSettings": "Desactivar la configuración personalizada"
-    }
+    },
+    "StorageSetting": "__NOT_TRANSLATED__"
   },
   "totp": {
     "ConfirmTotpRemovalBody": "¿Está seguro de que no desea utilizar la autenticación de dos factores?",

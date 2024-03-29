@@ -267,7 +267,7 @@ export const useResourceLimitAndRemaining = ({
             'ipu.device': 'maxIPUDevicesPerContainer',
             'atom.device': 'maxATOMDevicesPerContainer',
             'warboy.device': 'maxWarboyDevicesPerContainer',
-            'lpu.device': 'maxLPUDevicesPerContainer', // FIXME: add maxLPUDevicesPerContainer to config
+            'hyperaccel-lpu.device': 'maxLPUDevicesPerContainer', // FIXME: add maxLPUDevicesPerContainer to config
           }[key] || 'cuda.device'; // FIXME: temporally `cuda.device` config, when undefined
         result[key] = {
           min: parseInt(
