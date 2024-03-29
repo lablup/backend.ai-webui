@@ -3706,6 +3706,20 @@ class ComputeSession {
   }
 
   /**
+   * Request container commit for corresponding session in agent node
+   *
+   * @param sessionName - name of the session
+   */
+  async convertSessionToImage(sessionName: string, newImageName: string): Promise<any> {
+    const rqst = this.client.newSignedRequest(
+      'POST',
+      `/session/${sessionName}/imagify`,
+      { image_name: newImageName },
+    );
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
    * Get status of requested container commit on agent node (ongoing / finished / failed)
    *
    * @param sessionName - name of the session
