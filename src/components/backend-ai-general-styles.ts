@@ -822,7 +822,10 @@ export const BackendAiStyles = [
       background-color: var(--general-tabbar-background-color);
       --mdc-theme-primary: var(--general-sidebar-selected-color);
       --mdc-text-transform: none;
-      --mdc-tab-color-default: var(--general-tabbar-background-color);
+      --mdc-tab-color-default: var(
+        --token-colorTextSecondary,
+        --general-tabbar-background-color
+      );
       --mdc-tab-text-label-color-default: var(--token-colorText);
       font-family: var(--token-fontFamily);
     }

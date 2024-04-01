@@ -720,7 +720,7 @@
       "FolderRenamed": "Folder renamed",
       "FolderNameMismatched": "Folder name mismatched. Please Check whether space character in the input field or not.",
       "SameFileName": "The input value is same as the filename to update. Please change it to a different name.",
-      "FolderDeleted": "Folder deleted",
+      "FolderDeleted": "The {{ folderName }} folder has been deleted.",
       "FolderUpdated": "Folder option(s) updated",
       "FolderDisconnected": "Folder has been disconnected.",
       "FileRenamed": "File Renamed",
@@ -744,7 +744,13 @@
       "CloneFolder": "Clone folder",
       "LeaveFolder": "Leave folder",
       "ShareFolder": "Share folder",
-      "ModifyPermissions": "Modify permissions"
+      "ModifyPermissions": "Modify permissions",
+      "Restore": "Restore",
+      "DeleteForever": "Delete forever",
+      "FolderRestored": "The {{ folderName }} folder has been restored.",
+      "FolderDeletedForever": "The {{ folderName }} folder has been deleted forever.",
+      "MovedToTrashBin": "The {{ folderName }} folder has been moved to the trash bin.",
+      "MoveToTrashBin": "Move to trash bin"
     },
     "explorer": {
       "Delete": "Delete",
@@ -834,14 +840,16 @@
       "CannotBeUndone": "WARNING: this cannot be undone!",
       "LogDeletion": "Are you sure you want to delete all of the log messages?",
       "WillBeAppliedToNewSessions": "This update will be applied to new sessions.",
-      "Required": "Required"
+      "Required": "Required",
+      "DeleteForeverDesc": "WARNING: selected items will be deleted forever and you won't be able to restore them."
     },
     "ask": {
       "DoYouWantToProceed": "Do you want to proceed?"
     },
     "title": {
       "Notice": "Notice",
-      "LetsDouble-Check": "Let's Double-check"
+      "LetsDouble-Check": "Let's Double-check",
+      "DeleteForever": "Delete Forever?"
     },
     "ErrorOccurred": "Error Occurred",
     "error": {

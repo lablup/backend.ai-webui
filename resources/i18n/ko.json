@@ -708,7 +708,7 @@
       "FolderRenamed": "폴더 이름이 변경되었습니다",
       "FolderNameMismatched": "폴더 이름을 정확하게 입력하세요. 입력 칸에 공백문자가 있는지 확인해주세요.",
       "SameFileName": "입력한 파일 명이 기존 파일 명과 같습니다. 다른 이름으로 변경해주세요.",
-      "FolderDeleted": "폴더가 삭제되었습니다",
+      "FolderDeleted": "{{ folderName }} 폴더가 삭제되었습니다.",
       "FolderUpdated": "폴더 정보가 갱신되었습니다",
       "FolderDisconnected": "초대된 폴더와의 연결이 해제되었습니다.",
       "FileRenamed": "파일명이 변경되었습니다",
@@ -732,7 +732,13 @@
       "CloneFolder": "폴더 클론",
       "LeaveFolder": "초대된 폴더 나가기",
       "ShareFolder": "폴더 공유하기",
-      "ModifyPermissions": "권한 수정"
+      "ModifyPermissions": "권한 수정",
+      "Restore": "복원",
+      "DeleteForever": "영구 삭제",
+      "FolderRestored": "{{ folderName }} 폴더가 복원되었습니다.",
+      "FolderDeletedForever": "{{ folderName }} 폴더가 완전히 삭제되었습니다.",
+      "MoveToTrashBin": "휴지통으로 이동",
+      "MovedToTrashBin": "{{ folderName }} 폴더가 휴지통으로 이동되었습니다."
     },
     "explorer": {
       "Delete": "삭제",
@@ -821,14 +827,16 @@
       "CannotBeUndone": "주의: 이 동작은 취소할 수 없습니다!",
       "LogDeletion": "정말로 모든 로그를 삭제하시겠습니까?",
       "WillBeAppliedToNewSessions": "이 변경사항은 새 세션부터 적용됩니다.",
-      "Required": "필수 입력입니다."
+      "Required": "필수 입력입니다.",
+      "DeleteForeverDesc": "경고: 선택한 항목은 완전히 삭제되며 복원할 수 없습니다."
     },
     "ask": {
       "DoYouWantToProceed": "계속 진행하시겠습니까?"
     },
     "title": {
       "LetsDouble-Check": "한 번 더 확인합시다",
-      "Notice": "안내"
+      "Notice": "안내",
+      "DeleteForever": "완전히 삭제하시겠습니까?"
     },
     "ErrorOccurred": "문제가 발생했습니다",
     "error": {

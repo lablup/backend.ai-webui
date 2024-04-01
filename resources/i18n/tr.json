@@ -607,7 +607,7 @@
       "FolderRenamed": "Klasör yeniden adlandırıldı",
       "FolderNameMismatched": "Klasör adı eşleşmiyor. Lütfen giriş alanında boşluk karakteri olup olmadığını kontrol edin.",
       "SameFileName": "Giriş değeri, güncellenecek dosya adıyla aynıdır. Lütfen farklı bir adla değiştirin.",
-      "FolderDeleted": "klasör silindi",
+      "FolderDeleted": "{{ folderName }} klasörü silindi.",
       "FolderUpdated": "Klasör seçenekleri güncellendi",
       "FolderDisconnected": "Klasörün bağlantısı kesildi.",
       "FileRenamed": "Dosya Yeniden Adlandırıldı",
@@ -634,7 +634,13 @@
       "CloneFolder": "Klasör klonlama",
       "ShareFolder": "Paylaşım klasörü",
       "ModifyPermissions": "İzinleri değiştirme",
-      "LeaveFolder": "Klasörden ayrıl"
+      "LeaveFolder": "Klasörden ayrıl",
+      "Restore": "Eski haline getirmek",
+      "DeleteForever": "Tamamen sil",
+      "FolderRestored": "{{ klasörAdı }} klasörü geri yüklendi.",
+      "FolderDeletedForever": "{{ folderName }} klasörü kalıcı olarak silindi.",
+      "MoveToTrashBin": "Çöp kutusuna taşı",
+      "MovedToTrashBin": "{{ folderName }} klasörü çöp kutusuna taşındı."
     },
     "explorer": {
       "Delete": "Sil...",
@@ -732,14 +738,16 @@
       "CannotBeUndone": "UYARI: bu geri alınamaz!",
       "LogDeletion": "Tüm günlük mesajlarını silmek istediğinizden emin misiniz?",
       "WillBeAppliedToNewSessions": "Bu güncelleme yeni oturumlara uygulanacaktır.",
-      "Required": "Gerekli"
+      "Required": "Gerekli",
+      "DeleteForeverDesc": "UYARI: seçilen öğeler kalıcı olarak silinecek ve bunları geri yükleyemeyeceksiniz."
     },
     "ask": {
       "DoYouWantToProceed": "Devam etmek istiyor musunuz?"
     },
     "title": {
       "LetsDouble-Check": "İki kez kontrol edelim",
-      "Notice": "Uyarı"
+      "Notice": "Uyarı",
+      "DeleteForever": "Sonsuza Kadar Silinsin mi?"
     },
     "ErrorOccurred": "Hata oluştu",
     "error": {

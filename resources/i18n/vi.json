@@ -607,7 +607,7 @@
       "FolderRenamed": "Thư mục đã được đổi tên",
       "FolderNameMismatched": "Tên thư mục không khớp. Vui lòng kiểm tra xem có ký tự khoảng trắng trong trường nhập hay không.",
       "SameFileName": "Giá trị đầu vào giống với tên tệp cần cập nhật. Vui lòng thay đổi nó thành một tên khác.",
-      "FolderDeleted": "Thư mục đã bị xóa",
+      "FolderDeleted": "Thư mục {{ folderName }} đã bị xóa.",
       "FolderUpdated": "Đã cập nhật (các) tùy chọn thư mục",
       "FolderDisconnected": "Thư mục đã bị ngắt kết nối.",
       "FileRenamed": "Tệp được đổi tên",
@@ -634,7 +634,13 @@
       "CloneFolder": "Sao chép thư mục",
       "ShareFolder": "Chia sẻ thư mục",
       "ModifyPermissions": "Sửa đổi quyền",
-      "LeaveFolder": "Rời khỏi thư mục"
+      "LeaveFolder": "Rời khỏi thư mục",
+      "Restore": "Khôi phục",
+      "DeleteForever": "Xóa vĩnh viễn",
+      "FolderRestored": "Thư mục {{ folderName }} đã được khôi phục.",
+      "FolderDeletedForever": "Thư mục {{ folderName }} đã bị xóa vĩnh viễn.",
+      "MoveToTrashBin": "Di chuyển vào thùng rác",
+      "MovedToTrashBin": "Thư mục {{ folderName }} đã được chuyển vào thùng rác."
     },
     "explorer": {
       "Delete": "Xóa bỏ...",
@@ -732,14 +738,16 @@
       "CannotBeUndone": "CẢNH BÁO: không thể hoàn tác thao tác này!",
       "LogDeletion": "Bạn có chắc chắn muốn xóa tất cả các thông báo nhật ký không?",
       "WillBeAppliedToNewSessions": "Bản cập nhật này sẽ được áp dụng cho các phiên mới.",
-      "Required": "Yêu cầu"
+      "Required": "Yêu cầu",
+      "DeleteForeverDesc": "CẢNH BÁO: các mục đã chọn sẽ bị xóa vĩnh viễn và bạn sẽ không thể khôi phục chúng."
     },
     "ask": {
       "DoYouWantToProceed": "Bạn có muốn tiếp tục?"
     },
     "title": {
       "LetsDouble-Check": "Hãy kiểm tra kỹ",
-      "Notice": "Để ý"
+      "Notice": "Để ý",
+      "DeleteForever": "Xóa vĩnh viễn?"
     },
     "ErrorOccurred": "Xảy ra lỗi",
     "error": {

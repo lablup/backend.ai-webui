@@ -603,7 +603,7 @@
       "FolderRenamed": "Folder telah diganti nama",
       "FolderNameMismatched": "Nama folder tidak cocok. Silakan periksa apakah ada karakter spasi di bidang input atau tidak.",
       "SameFileName": "Nilai input sama dengan nama file yang akan diperbarui. Silakan ganti dengan nama lain.",
-      "FolderDeleted": "Folder dihapus",
+      "FolderDeleted": "Folder {{ folderName }} telah dihapus.",
       "FolderUpdated": "Opsi folder diperbarui",
       "FolderDisconnected": "Koneksi folder telah terputus.",
       "FileRenamed": "File sudah diganti nama",
@@ -630,7 +630,12 @@
       "CloneFolder": "Folder klon",
       "LeaveFolder": "Tinggalkan folder",
       "ShareFolder": "Folder berbagi",
-      "ModifyPermissions": "Memodifikasi izin"
+      "ModifyPermissions": "Memodifikasi izin",
+      "Restore": "Memulihkan",
+      "DeleteForever": "Hapus selamanya",
+      "FolderRestored": "Folder {{ folderName }} telah dipulihkan.",
+      "FolderDeletedForever": "Folder {{ folderName }} telah dihapus selamanya.",
+      "MovedToTrashBin": "Folder {{ folderName }} telah dipindahkan ke tempat sampah."
     },
     "explorer": {
       "Delete": "Menghapus...",
@@ -728,14 +733,16 @@
       "CannotBeUndone": "PERINGATAN: ini tidak dapat dibatalkan!",
       "LogDeletion": "Anda yakin ingin menghapus semua pesan log?",
       "WillBeAppliedToNewSessions": "Pembaruan ini akan diterapkan ke sesi baru.",
-      "Required": "Diperlukan"
+      "Required": "Diperlukan",
+      "DeleteForeverDesc": "PERINGATAN: item yang dipilih akan dihapus selamanya dan Anda tidak dapat memulihkannya."
     },
     "ask": {
       "DoYouWantToProceed": "Apakah Anda ingin lanjut?"
     },
     "title": {
       "LetsDouble-Check": "Mari Periksa Kembali",
-      "Notice": "Pemberitahuan"
+      "Notice": "Pemberitahuan",
+      "DeleteForever": "Hapus selamanya?"
     },
     "ErrorOccurred": "Terjadi Galat",
     "error": {

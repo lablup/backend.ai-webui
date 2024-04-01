@@ -318,7 +318,7 @@
       "FileRenamed": "Tiedosto nimetty uudelleen",
       "FolderCloned": "Kloonattu kansio",
       "FolderCreated": "Kansio luotu",
-      "FolderDeleted": "Kansio poistettu",
+      "FolderDeleted": "Kansio {{ folderName }} on poistettu.",
       "FolderDisconnected": "Kansio on katkaistu.",
       "FolderInfo": "Info",
       "FolderNameMismatched": "Kansion nimi ei täsmää. Tarkista, onko syöttökentässä välilyönti vai ei.",
@@ -354,7 +354,13 @@
       "TypeFolderNameToDelete": "Kirjoita poistettavan kansion nimi",
       "TypeFolderNameToLeave": "Kirjoita poistuvan kansion nimi",
       "TypeNewFolderName": "Kirjoita uuden kansion nimi",
-      "View": "Näytä"
+      "View": "Näytä",
+      "MoveToTrashBin": "Siirrä roskakoriin",
+      "MovedToTrashBin": "Kansio {{ folderName }} on siirretty roskakoriin.",
+      "DeleteForever": "Poista ikuisesti",
+      "Restore": "Palauttaa",
+      "FolderRestored": "Kansio {{ folderName }} on palautettu.",
+      "FolderDeletedForever": "Kansio {{ folderName }} on poistettu pysyvästi."
     },
     "invitation": {
       "FolderSharingNotAvailableToUser": "Kansioiden jakaminen ei ole käytettävissä pyydetyille käyttäjille:",
@@ -386,25 +392,8 @@
     "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
-    "ErrorOccurred": "Tapahtunut virhe",
-    "ask": {
-      "DoYouWantToProceed": "Haluatteko jatkaa?"
-    },
-    "error": {
-      "Error": "Virhe"
-    },
-    "hide": {
-      "DonotShowThisAgain": "Älä näytä tätä enää."
-    },
-    "title": {
-      "LetsDouble-Check": "Tupla-tarkistetaan",
-      "Notice": "Ilmoitus"
-    },
     "warning": {
-      "CannotBeUndone": "VAROITUS: tätä ei voi perua!",
-      "LogDeletion": "Haluatko varmasti poistaa kaikki lokiviestit?",
-      "Required": "Vaadittu",
-      "WillBeAppliedToNewSessions": "Tätä päivitystä sovelletaan uusiin istuntoihin."
+      "DeleteForeverDesc": "VAROITUS: valitut kohteet poistetaan pysyvästi, etkä voi palauttaa niitä."
     }
   },
   "eduapi": {

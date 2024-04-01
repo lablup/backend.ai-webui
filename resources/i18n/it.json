@@ -607,7 +607,7 @@
       "FolderRenamed": "Cartella rinominata",
       "FolderNameMismatched": "Il nome della cartella non corrisponde. Si prega di verificare se il carattere spazio nel campo di input o meno.",
       "SameFileName": "Il valore di input è lo stesso del nome del file da aggiornare. Si prega di cambiarlo con un nome diverso.",
-      "FolderDeleted": "Cartella eliminata",
+      "FolderDeleted": "La cartella {{ folderName }} è stata eliminata.",
       "FolderUpdated": "Opzioni cartella aggiornate",
       "FolderDisconnected": "La cartella è stata disconnessa.",
       "FileRenamed": "File rinominato",
@@ -634,7 +634,13 @@
       "CloneFolder": "Clona la cartella",
       "ShareFolder": "Cartella di condivisione",
       "ModifyPermissions": "Modificare le autorizzazioni",
-      "LeaveFolder": "Lasciare la cartella"
+      "LeaveFolder": "Lasciare la cartella",
+      "Restore": "Ristabilire",
+      "DeleteForever": "Elimina per sempre",
+      "FolderRestored": "La cartella {{ folderName }} è stata ripristinata.",
+      "FolderDeletedForever": "La cartella {{ folderName }} è stata eliminata per sempre.",
+      "MoveToTrashBin": "Sposta nel cestino",
+      "MovedToTrashBin": "La cartella {{ folderName }} è stata spostata nel cestino."
     },
     "explorer": {
       "Delete": "Elimina...",
@@ -732,14 +738,16 @@
       "CannotBeUndone": "ATTENZIONE: questa operazione non può essere annullata!",
       "LogDeletion": "Sei sicuro di voler eliminare tutti i messaggi di registro?",
       "WillBeAppliedToNewSessions": "Questo aggiornamento verrà applicato alle nuove sessioni.",
-      "Required": "Richiesto"
+      "Required": "Richiesto",
+      "DeleteForeverDesc": "ATTENZIONE: gli elementi selezionati verranno eliminati per sempre e non potrai ripristinarli."
     },
     "ask": {
       "DoYouWantToProceed": "Vuoi procedere?"
     },
     "title": {
       "LetsDouble-Check": "Ricontrolliamo",
-      "Notice": "Avviso"
+      "Notice": "Avviso",
+      "DeleteForever": "Elimina per sempre?"
     },
     "ErrorOccurred": "Errore",
     "error": {

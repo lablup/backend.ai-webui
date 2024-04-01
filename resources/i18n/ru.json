@@ -609,7 +609,7 @@
       "FolderRenamed": "Папка переименована",
       "FolderNameMismatched": "Несоответствующее имя папки. Пожалуйста, проверьте, есть ли пробел в поле ввода или нет.",
       "SameFileName": "Входное значение совпадает с именем файла для обновления. Пожалуйста, измените его на другое имя.",
-      "FolderDeleted": "Папка удалена",
+      "FolderDeleted": "Папка {{ folderName }} удалена.",
       "FolderUpdated": "Параметры папки обновлены",
       "FolderDisconnected": "Папка отключена.",
       "FileRenamed": "Файл переименован",
@@ -636,7 +636,13 @@
       "CloneFolder": "Клонировать папку",
       "LeaveFolder": "Папка-скоросшиватель",
       "ShareFolder": "Папка общего доступа",
-      "ModifyPermissions": "Изменение прав доступа"
+      "ModifyPermissions": "Изменение прав доступа",
+      "Restore": "Восстановить",
+      "DeleteForever": "Удалить навсегда",
+      "FolderRestored": "Папка {{ folderName }} восстановлена.",
+      "FolderDeletedForever": "Папка {{ folderName}} удалена навсегда.",
+      "MoveToTrashBin": "Переместить в мусорное ведро",
+      "MovedToTrashBin": "Папка {{ folderName }} была перемещена в корзину."
     },
     "explorer": {
       "Delete": "Удалить...",
@@ -734,14 +740,16 @@
       "CannotBeUndone": "ВНИМАНИЕ: это нельзя отменить!",
       "LogDeletion": "Вы уверены, что хотите удалить все сообщения журнала?",
       "WillBeAppliedToNewSessions": "Это обновление будет применено к новым сеансам.",
-      "Required": "Требуется"
+      "Required": "Требуется",
+      "DeleteForeverDesc": "ВНИМАНИЕ: выбранные элементы будут удалены навсегда, и вы не сможете их восстановить."
     },
     "ask": {
       "DoYouWantToProceed": "Вы хотите продолжить?"
     },
     "title": {
       "LetsDouble-Check": "Давайте дважды проверим",
-      "Notice": "Уведомление"
+      "Notice": "Уведомление",
+      "DeleteForever": "Удалить навсегда?"
     },
     "ErrorOccurred": "Возникла ошибка",
     "error": {

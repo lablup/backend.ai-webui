@@ -609,7 +609,7 @@
       "FolderRenamed": "Zmieniono nazwę folderu",
       "FolderNameMismatched": "Niezgodna nazwa folderu. Sprawdź, czy znak spacji w polu wejściowym, czy nie.",
       "SameFileName": "Wartość wejściowa jest taka sama jak nazwa pliku do aktualizacji. Zmień go na inną nazwę.",
-      "FolderDeleted": "Folder usunięty",
+      "FolderDeleted": "Folder {{ folderName }} został usunięty.",
       "FolderUpdated": "Zaktualizowano opcje folderów",
       "FolderDisconnected": "Folder został odłączony.",
       "FileRenamed": "Zmieniono nazwę pliku",
@@ -636,7 +636,13 @@
       "CloneFolder": "Klonowanie folderu",
       "ShareFolder": "Folder udostępniony",
       "ModifyPermissions": "Modyfikowanie uprawnień",
-      "LeaveFolder": "Zostaw folder"
+      "LeaveFolder": "Zostaw folder",
+      "Restore": "Przywrócić",
+      "DeleteForever": "Usuń na zawsze",
+      "FolderRestored": "Folder {{ folderName }} został przywrócony.",
+      "FolderDeletedForever": "Folder {{ folderName }} został usunięty na zawsze.",
+      "MoveToTrashBin": "Przenieś do kosza",
+      "MovedToTrashBin": "Folder {{ folderName }} został przeniesiony do kosza."
     },
     "explorer": {
       "Delete": "Kasować...",
@@ -734,14 +740,16 @@
       "CannotBeUndone": "UWAGA: nie można tego cofnąć!",
       "LogDeletion": "Czy na pewno chcesz usunąć wszystkie komunikaty dziennika?",
       "WillBeAppliedToNewSessions": "Ta aktualizacja zostanie zastosowana do nowych sesji.",
-      "Required": "Wymagane"
+      "Required": "Wymagane",
+      "DeleteForeverDesc": "UWAGA: wybrane elementy zostaną usunięte na zawsze i nie będzie można ich przywrócić."
     },
     "ask": {
       "DoYouWantToProceed": "Czy chcesz kontynuować?"
     },
     "title": {
       "LetsDouble-Check": "Sprawdźmy dokładnie",
-      "Notice": "Zawiadomienie"
+      "Notice": "Zawiadomienie",
+      "DeleteForever": "Usuń na zawsze?"
     },
     "ErrorOccurred": "Wystąpił błąd",
     "error": {

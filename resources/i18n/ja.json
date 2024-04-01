@@ -607,7 +607,7 @@
       "FolderRenamed": "フォルダの名前が変更されました",
       "FolderNameMismatched": "フォルダ名が一致しません。入力フィールドにスペース文字があるかどうかを確認してください。",
       "SameFileName": "入力値は、更新するファイル名と同じです。別の名前に変更してください。",
-      "FolderDeleted": "フォルダが削除されました",
+      "FolderDeleted": "{{ folderName }} フォルダが削除されました。",
       "FolderUpdated": "フォルダオプションが更新されました",
       "FolderDisconnected": "フォルダが切断されました。",
       "FileRenamed": "ファイルの名前が変更されました",
@@ -634,7 +634,13 @@
       "CloneFolder": "フォルダクローン",
       "ShareFolder": "フォルダの共有",
       "ModifyPermissions": "権限修正",
-      "LeaveFolder": "招待されたフォルダを出る"
+      "LeaveFolder": "招待されたフォルダを出る",
+      "Restore": "復元する",
+      "DeleteForever": "永久に削除",
+      "FolderRestored": "{{ folderName }} フォルダが復元されました。",
+      "FolderDeletedForever": "{{ folderName }} フォルダは完全に削除されました。",
+      "MoveToTrashBin": "ゴミ箱に移動",
+      "MovedToTrashBin": "{{ folderName }} フォルダーはゴミ箱に移動されました。"
     },
     "explorer": {
       "Delete": "削除...",
@@ -732,14 +738,16 @@
       "CannotBeUndone": "警告：これは元に戻せません！",
       "LogDeletion": "すべてのログメッセージを削除してもよろしいですか？",
       "WillBeAppliedToNewSessions": "このアップデートは、新しいセッションに適用されます。",
-      "Required": "必須入力です。"
+      "Required": "必須入力です。",
+      "DeleteForeverDesc": "警告: 選択したアイテムは完全に削除され、復元することはできません。"
     },
     "ask": {
       "DoYouWantToProceed": "続行しますか？"
     },
     "title": {
       "LetsDouble-Check": "再確認しましょう",
-      "Notice": "ご案内"
+      "Notice": "ご案内",
+      "DeleteForever": "永久に削除しますか?"
     },
     "ErrorOccurred": "エラーが発生しました",
     "error": {
