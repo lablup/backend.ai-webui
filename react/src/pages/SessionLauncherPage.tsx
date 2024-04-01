@@ -592,8 +592,10 @@ const SessionLauncherPage = () => {
         title: '세션 런처 타입 선택',
         description:
           '여기서 세션런처 버전을 선택할 수 있습니다. 투어는 NEO 세션 런처의 기능을 안내합니다.',
-        // @ts-ignore
-        target: () => document.querySelector('.session-launcher-switch-alert'),
+        target: () =>
+          document.querySelector(
+            '.session-launcher-switch-alert',
+          ) as HTMLElement,
       },
       {
         title: '세션 실행 단계',
@@ -632,22 +634,22 @@ const SessionLauncherPage = () => {
       {
         title: '자원 할당 단계',
         description: '생성할 연산 세션이 할당할 자원을 설정합니다.',
-        // @ts-ignore
-        target: () => document.querySelector('.resource-group-select'),
+        target: () =>
+          document.querySelector('.resource-group-select') as HTMLElement,
       },
       {
         title: '자원 할당 단계',
         description:
           '자원 그룹을 선택하면, 해당 자원 그룹에 정의된 템플릿을 사용할 수 있습니다.',
-        // @ts-ignore
-        target: () => document.querySelector('.resource-preset-select'),
+        target: () =>
+          document.querySelector('.resource-preset-select') as HTMLElement,
       },
       {
         title: '자원 할당 단계',
         description:
           '정의된 템플릿 이외의 자원을 사용자가 직접 할당할 수도 있습니다.',
-        // @ts-ignore
-        target: () => document.querySelector('.resource-allocation-card'),
+        target: () =>
+          document.querySelector('.resource-allocation-card') as HTMLElement,
         // Todo: fix me
         onNext: async () => {
           mainContentDivRef.current?.scrollTo({
@@ -661,9 +663,6 @@ const SessionLauncherPage = () => {
       {
         title: '다음 단계로 이동하세요!',
         target: () => tourRef.current[3],
-        nextButtonProps: {
-          style: { display: 'none' },
-        },
       },
     ],
     storage: [
@@ -710,8 +709,8 @@ const SessionLauncherPage = () => {
       {
         title: '설정 확인 및 세션 시작 단계',
         description: '각 단계의 Edit 버튼을 통하여 설정을 변경할 수 있습니다.',
-        //@ts-ignore
-        target: () => document.getElementsByClassName('ant-card-extra')[0],
+        target: () =>
+          document.getElementsByClassName('ant-card-extra')[0] as HTMLElement,
       },
       {
         title: '설정 확인 및 세션 시작 단계',
