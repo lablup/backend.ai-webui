@@ -257,7 +257,7 @@ const StorageStatusPanel: React.FC<{
             <StorageSelect
               value={selectedVolumeInfo?.id}
               onChange={(__, vInfo) => {
-                setSelectedVolumeInfo(vInfo as VolumeInfo | undefined);
+                setSelectedVolumeInfo(vInfo);
               }}
               autoSelectType="usage"
               showUsageStatus
