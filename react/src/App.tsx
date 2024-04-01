@@ -201,6 +201,7 @@ const router = createBrowserRouter([
               style={{ paddingBottom: token.paddingContentVerticalLG }}
             >
               <NeoSessionLauncherSwitchAlert
+                className="session-launcher-switch-alert"
                 onChange={(value) => {
                   if (value === 'current') {
                     webuiNavigate('/job');
