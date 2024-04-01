@@ -391,7 +391,8 @@
     "CPU": "CPU",
     "MEM": "メモリ",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU(メモリ)"
+    "GPU(MEM)": "GPU(メモリ)",
+    "Agents": "エージェント"
   },
   "button": {
     "Cancel": "キャンセル",

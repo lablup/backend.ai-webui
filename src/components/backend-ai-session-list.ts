@@ -4144,12 +4144,11 @@ ${rowData.item[this.sessionNameField]}</pre
             this.is_superadmin || !globalThis.backendaiclient._config.hideAgents
               ? html`
                   <lablup-grid-sort-filter-column
-                    path="agent"
                     auto-width
                     flex-grow="0"
                     resizable
-                    header="${_t('session.Agent')}"
-                    .renderer="${this._boundAgentRenderer}"
+                    header="${_t('session.Agents')}"
+                    .renderer="${this._boundAgentListRenderer}"
                   ></lablup-grid-sort-filter-column>
                 `
               : html``

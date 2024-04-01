@@ -380,7 +380,8 @@
     "CPU": "CPU",
     "MEM": "Санах ой",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (санах ой)"
+    "GPU(MEM)": "GPU (санах ой)",
+    "Agents": "Агентууд"
   },
   "button": {
     "Cancel": "Цуцлах",

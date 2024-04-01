@@ -391,7 +391,8 @@
     "CPU": "CPU",
     "MEM": "Ingatan",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (memori)"
+    "GPU(MEM)": "GPU (memori)",
+    "Agents": "ejen"
   },
   "button": {
     "Cancel": "Batal",
