@@ -579,6 +579,28 @@ const SessionLauncherPage = () => {
   const onTourPrev = () => {
     setCurrentTourStep((prev) => prev - 1);
   };
+  const scrollToTourElement = (
+    targetElement: HTMLElement | number,
+    direction: 'next' | 'prev',
+    time?: number,
+  ) => {
+    if (typeof targetElement === 'number') {
+      mainContentDivRef.current?.scrollTo({
+        top: targetElement,
+        behavior: 'smooth',
+      });
+    }
+    if (targetElement instanceof HTMLElement) {
+      targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    _.delay(
+      () =>
+        direction === 'next'
+          ? setCurrentTourStep((prev) => prev + 1)
+          : setCurrentTourStep((prev) => prev - 1),
+      time || 500,
+    );
+  };
 
   const sectionSteps: { [key: string]: TourStepProps[] } = {
     sessionType: [
@@ -622,13 +644,7 @@ const SessionLauncherPage = () => {
           '연산 세션의 기본 환경과 해당 환경의 버전을 설정합니다. 실행환경을 선택하면 환경에 맵핑되는 버전이 제공됩니다.',
         target: () => tourRef.current[4],
         onNext: () => {
-          mainContentDivRef.current?.scrollTo({
-            top: 450,
-            behavior: 'smooth',
-          });
-          _.delay(() => {
-            setCurrentTourStep((prev) => prev + 1);
-          }, 500);
+          scrollToTourElement(tourRef.current[5].offsetTop, 'next');
         },
       },
       {
@@ -636,6 +652,9 @@ const SessionLauncherPage = () => {
         description: '생성할 연산 세션이 할당할 자원을 설정합니다.',
         target: () =>
           document.querySelector('.resource-group-select') as HTMLElement,
+        onPrev: () => {
+          scrollToTourElement(tourRef.current[4].offsetTop, 'prev');
+        },
       },
       {
         title: '자원 할당 단계',
@@ -643,6 +662,12 @@ const SessionLauncherPage = () => {
           '자원 그룹을 선택하면, 해당 자원 그룹에 정의된 템플릿을 사용할 수 있습니다.',
         target: () =>
           document.querySelector('.resource-preset-select') as HTMLElement,
+        onNext: () => {
+          const targetElement = document.querySelector(
+            '.resource-allocation-card',
+          ) as HTMLElement;
+          scrollToTourElement(targetElement, 'next');
+        },
       },
       {
         title: '자원 할당 단계',
@@ -651,18 +676,24 @@ const SessionLauncherPage = () => {
         target: () =>
           document.querySelector('.resource-allocation-card') as HTMLElement,
         onNext: () => {
-          mainContentDivRef.current?.scrollTo({
-            top: 9999,
-            behavior: 'smooth',
-          });
-          _.delay(() => {
-            setCurrentTourStep((prev) => prev + 1);
-          }, 500);
+          scrollToTourElement(tourRef.current[3], 'next', 600);
+        },
+        onPrev: () => {
+          const targetElement = document.querySelector(
+            '.resource-group-select',
+          ) as HTMLElement;
+          scrollToTourElement(targetElement, 'prev');
         },
       },
       {
         title: '다음 단계로 이동하세요!',
         target: () => tourRef.current[3],
+        onPrev: () => {
+          const targetElement = document.querySelector(
+            '.resource-allocation-card',
+          ) as HTMLElement;
+          scrollToTourElement(targetElement, 'prev', 600);
+        },
       },
     ],
     storage: [
@@ -711,12 +742,21 @@ const SessionLauncherPage = () => {
         description: '각 단계의 Edit 버튼을 통하여 설정을 변경할 수 있습니다.',
         target: () =>
           document.getElementsByClassName('ant-card-extra')[0] as HTMLElement,
+        onNext: () => {
+          scrollToTourElement(tourRef.current[9], 'next');
+        },
       },
       {
         title: '설정 확인 및 세션 시작 단계',
         description:
           '하단의 Reset 버튼을 통하여 모든 단계를 초기화 할 수 있습니다.',
         target: () => tourRef.current[9],
+        onPrev: () => {
+          const targetElement = document.getElementsByClassName(
+            'ant-card-extra',
+          )[0] as HTMLElement;
+          scrollToTourElement(targetElement, 'prev');
+        },
       },
       {
         title: '세션 시작',
@@ -744,7 +784,7 @@ const SessionLauncherPage = () => {
             nextButtonProps: !step.onNext && {
               onClick: onTourNext,
             },
-            prevButtonProps: {
+            prevButtonProps: !step.onPrev && {
               onClick: onTourPrev,
             },
           };
