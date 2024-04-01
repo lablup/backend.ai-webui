@@ -553,7 +553,8 @@
     "Status": "Durum",
     "NoUserToDisplay": "Görüntülenecek Kullanıcı Yok",
     "EnableSudoSession": "Sudo oturumunu etkinleştir",
-    "MainAccessKey": "Ana Erişim Anahtarı"
+    "MainAccessKey": "Ana Erişim Anahtarı",
+    "InactivateTheFollowingUsers": "Aşağıdaki kullanıcıları devre dışı bırakın."
   },
   "data": {
     "Folders": "klasörler",
@@ -606,7 +607,7 @@
       "FolderRenamed": "Klasör yeniden adlandırıldı",
       "FolderNameMismatched": "Klasör adı eşleşmiyor. Lütfen giriş alanında boşluk karakteri olup olmadığını kontrol edin.",
       "SameFileName": "Giriş değeri, güncellenecek dosya adıyla aynıdır. Lütfen farklı bir adla değiştirin.",
-      "FolderDeleted": "klasör silindi",
+      "FolderDeleted": "{{ folderName }} klasörü silindi.",
       "FolderUpdated": "Klasör seçenekleri güncellendi",
       "FolderDisconnected": "Klasörün bağlantısı kesildi.",
       "FileRenamed": "Dosya Yeniden Adlandırıldı",
@@ -633,7 +634,13 @@
       "CloneFolder": "Klasör klonlama",
       "ShareFolder": "Paylaşım klasörü",
       "ModifyPermissions": "İzinleri değiştirme",
-      "LeaveFolder": "Klasörden ayrıl"
+      "LeaveFolder": "Klasörden ayrıl",
+      "Restore": "Eski haline getirmek",
+      "DeleteForever": "Tamamen sil",
+      "FolderRestored": "{{ klasörAdı }} klasörü geri yüklendi.",
+      "FolderDeletedForever": "{{ folderName }} klasörü kalıcı olarak silindi.",
+      "MoveToTrashBin": "Çöp kutusuna taşı",
+      "MovedToTrashBin": "{{ folderName }} klasörü çöp kutusuna taşındı."
     },
     "explorer": {
       "Delete": "Sil...",
@@ -731,14 +738,16 @@
       "CannotBeUndone": "UYARI: bu geri alınamaz!",
       "LogDeletion": "Tüm günlük mesajlarını silmek istediğinizden emin misiniz?",
       "WillBeAppliedToNewSessions": "Bu güncelleme yeni oturumlara uygulanacaktır.",
-      "Required": "Gerekli"
+      "Required": "Gerekli",
+      "DeleteForeverDesc": "UYARI: seçilen öğeler kalıcı olarak silinecek ve bunları geri yükleyemeyeceksiniz."
     },
     "ask": {
       "DoYouWantToProceed": "Devam etmek istiyor musunuz?"
     },
     "title": {
       "LetsDouble-Check": "İki kez kontrol edelim",
-      "Notice": "Uyarı"
+      "Notice": "Uyarı",
+      "DeleteForever": "Sonsuza Kadar Silinsin mi?"
     },
     "ErrorOccurred": "Hata oluştu",
     "error": {
@@ -1481,7 +1490,8 @@
     "ForUser": "Kullanıcı için",
     "ForProject": "Proje için",
     "QuotaDoesNotSupported": "Bu depolama arka ucu kotayı desteklemez.",
-    "BeCarefulToSetUserResourcePolicy": "Bir kaynak ilkesinin değiştirilmesi, o kullanıcı kaynak ilkesini kullanan tüm kullanıcıları etkileyebilir, bu nedenle dikkatli kullanın."
+    "BeCarefulToSetUserResourcePolicy": "Bir kaynak ilkesinin değiştirilmesi, o kullanıcı kaynak ilkesini kullanan tüm kullanıcıları etkileyebilir, bu nedenle dikkatli kullanın.",
+    "StorageSetting": "Depolama Ayarı"
   },
   "totp": {
     "TotpSetupCompleted": "Etkinleştirilmiş 2FA",

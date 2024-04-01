@@ -553,7 +553,8 @@
     "Status": "Estado",
     "NoUserToDisplay": "Nenhum utilizador a apresentar",
     "EnableSudoSession": "Habilitar sessão sudo",
-    "MainAccessKey": "Chave de acesso principal"
+    "MainAccessKey": "Chave de acesso principal",
+    "InactivateTheFollowingUsers": "Inative os seguintes usuários."
   },
   "data": {
     "Folders": "Pastas",
@@ -606,7 +607,7 @@
       "FolderRenamed": "Pasta renomeada",
       "FolderNameMismatched": "Nome da pasta incompatível. Verifique se o caractere de espaço no campo de entrada ou não.",
       "SameFileName": "O valor de entrada é igual ao nome do arquivo a ser atualizado. Por favor, mude para um nome diferente.",
-      "FolderDeleted": "Pasta excluída",
+      "FolderDeleted": "A pasta {{ folderName }} foi excluída.",
       "FolderUpdated": "Opção (ões) de pasta atualizada (s)",
       "FolderDisconnected": "A pasta foi desconectada.",
       "FileRenamed": "Arquivo renomeado",
@@ -633,7 +634,13 @@
       "CloneFolder": "Clonar pasta",
       "ShareFolder": "Partilhar pasta",
       "ModifyPermissions": "Modificar permissões",
-      "LeaveFolder": "Pasta de saída"
+      "LeaveFolder": "Pasta de saída",
+      "DeleteForever": "Apagar para sempre",
+      "Restore": "Restaurar",
+      "FolderRestored": "A pasta {{ folderName }} foi restaurada.",
+      "FolderDeletedForever": "A pasta {{ folderName }} foi excluída definitivamente.",
+      "MoveToTrashBin": "Mover para a lixeira",
+      "MovedToTrashBin": "A pasta {{ folderName }} foi movida para a lixeira."
     },
     "explorer": {
       "Delete": "Excluir...",
@@ -731,14 +738,16 @@
       "CannotBeUndone": "AVISO: isso não pode ser desfeito!",
       "LogDeletion": "Tem certeza de que deseja excluir todas as mensagens de log?",
       "WillBeAppliedToNewSessions": "Esta atualização será aplicada a novas sessões.",
-      "Required": "Necessário"
+      "Required": "Necessário",
+      "DeleteForeverDesc": "AVISO: os itens selecionados serão excluídos para sempre e você não poderá restaurá-los."
     },
     "ask": {
       "DoYouWantToProceed": "Você quer prosseguir?"
     },
     "title": {
       "LetsDouble-Check": "Vamos verificar novamente",
-      "Notice": "Aviso"
+      "Notice": "Aviso",
+      "DeleteForever": "Apagar para sempre?"
     },
     "ErrorOccurred": "Ocorreu um erro",
     "error": {
@@ -1428,7 +1437,7 @@
     "ForProject": "Para o projeto",
     "QuotaDoesNotSupported": "Este backend de armazenamento não suporta quotas.",
     "BeCarefulToSetUserResourcePolicy": "A alteração de uma política de recursos pode afetar todos os utilizadores que utilizam essa política de recursos do utilizador, pelo que deve ser utilizada com cuidado.",
-    "StorageSetting": ""
+    "StorageSetting": "Configuração de armazenamento"
   },
   "modelService": {
     "TokenGenerated": "Token gerado",

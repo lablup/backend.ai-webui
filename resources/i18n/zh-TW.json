@@ -553,7 +553,8 @@
     "Status": "现状",
     "NoUserToDisplay": "无用户显示",
     "EnableSudoSession": "啟用 sudo 會話",
-    "MainAccessKey": "主存取密鑰"
+    "MainAccessKey": "主存取密鑰",
+    "InactivateTheFollowingUsers": "停用以下用户。"
   },
   "data": {
     "Folders": "文件夾",
@@ -606,7 +607,7 @@
       "FolderRenamed": "文件夾重命名",
       "FolderNameMismatched": "文件夾名稱不匹配。請檢查輸入字段中是否有空格字符。",
       "SameFileName": "輸入值與要更新的文件名相同。請將其更改為其他名稱。",
-      "FolderDeleted": "文件夾已刪除",
+      "FolderDeleted": "{{ folderName }} 資料夾已被刪除。",
       "FolderUpdated": "文件夾選項已更新",
       "FolderDisconnected": "文件夾已斷開連接。",
       "FileRenamed": "文件重命名",
@@ -633,7 +634,13 @@
       "CloneFolder": "克隆文件夹",
       "ShareFolder": "共享文件夹",
       "ModifyPermissions": "修改权限",
-      "LeaveFolder": "离开文件夹"
+      "LeaveFolder": "离开文件夹",
+      "Restore": "恢復",
+      "DeleteForever": "永久刪除",
+      "FolderRestored": "{{ folderName }} 資料夾已恢復。",
+      "FolderDeletedForever": "{{ folderName }} 資料夾已永久刪除。",
+      "MoveToTrashBin": "移至垃圾箱",
+      "MovedToTrashBin": "{{ folderName }} 資料夾已移至垃圾箱。"
     },
     "explorer": {
       "Delete": "刪除...",
@@ -731,14 +738,16 @@
       "CannotBeUndone": "警告：這無法撤消！",
       "LogDeletion": "您確定要刪除所有日誌消息嗎？",
       "WillBeAppliedToNewSessions": "此更新將應用於新會話。",
-      "Required": "需要"
+      "Required": "需要",
+      "DeleteForeverDesc": "警告：所選項目將永久刪除，並且您將無法恢復它們。"
     },
     "ask": {
       "DoYouWantToProceed": "您要繼續嗎？"
     },
     "title": {
       "LetsDouble-Check": "讓我們仔細檢查",
-      "Notice": "通知"
+      "Notice": "通知",
+      "DeleteForever": "永久刪除？"
     },
     "ErrorOccurred": "錯誤發生",
     "error": {
@@ -1427,7 +1436,8 @@
     "ForUser": "用户",
     "ForProject": "项目",
     "QuotaDoesNotSupported": "该存储后端不支持配额。",
-    "BeCarefulToSetUserResourcePolicy": "更改资源策略会影响使用该用户资源策略的所有用户，因此请谨慎使用。"
+    "BeCarefulToSetUserResourcePolicy": "更改资源策略会影响使用该用户资源策略的所有用户，因此请谨慎使用。",
+    "StorageSetting": "儲存設定"
   },
   "modelService": {
     "TokenGenerated": "生成的令牌",

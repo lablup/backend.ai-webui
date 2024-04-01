@@ -553,7 +553,8 @@
     "SignoutSeccessfullyFinished": "La signature est terminée en toute sécurité",
     "ModifyUserDetail": "Modifier les détails de l'utilisateur",
     "EnableSudoSession": "Activer la session sudo",
-    "MainAccessKey": "Clé d'accès principale"
+    "MainAccessKey": "Clé d'accès principale",
+    "InactivateTheFollowingUsers": "Désactivez les utilisateurs suivants."
   },
   "data": {
     "Folders": "Dossiers",
@@ -606,7 +607,7 @@
       "FolderRenamed": "Dossier renommé",
       "FolderNameMismatched": "Le nom du dossier ne correspond pas. Veuillez vérifier s'il y a un espace dans le champ de saisie ou non.",
       "SameFileName": "La valeur d'entrée est la même que le nom de fichier à mettre à jour. Veuillez le changer pour un nom différent.",
-      "FolderDeleted": "Dossier supprimé",
+      "FolderDeleted": "Le dossier {{ folderName }} a été supprimé.",
       "FolderUpdated": "Option(s) de dossier mise à jour",
       "FolderDisconnected": "Le dossier a été déconnecté.",
       "FileRenamed": "Fichier renommé",
@@ -633,7 +634,13 @@
       "CloneFolder": "Cloner un dossier",
       "LeaveFolder": "Dossier de sortie",
       "ShareFolder": "Dossier de partage",
-      "ModifyPermissions": "Modifier les autorisations"
+      "ModifyPermissions": "Modifier les autorisations",
+      "Restore": "Restaurer",
+      "DeleteForever": "Supprimer pour toujours",
+      "FolderRestored": "Le dossier {{ folderName }} a été restauré.",
+      "FolderDeletedForever": "Le dossier {{ folderName }} a été supprimé définitivement.",
+      "MoveToTrashBin": "Déplacer vers la poubelle",
+      "MovedToTrashBin": "Le dossier {{ folderName }} a été déplacé vers la corbeille."
     },
     "explorer": {
       "Delete": "Effacer...",
@@ -731,14 +738,16 @@
       "CannotBeUndone": "ATTENTION : cela ne peut pas être annulé !",
       "LogDeletion": "Voulez-vous vraiment supprimer tous les messages du journal ?",
       "WillBeAppliedToNewSessions": "Cette mise à jour sera appliquée aux nouvelles sessions.",
-      "Required": "Exigée"
+      "Required": "Exigée",
+      "DeleteForeverDesc": "ATTENTION : les éléments sélectionnés seront supprimés définitivement et vous ne pourrez pas les restaurer."
     },
     "ask": {
       "DoYouWantToProceed": "Voulez-vous poursuivre?"
     },
     "title": {
       "LetsDouble-Check": "Vérifions deux fois",
-      "Notice": "Avis"
+      "Notice": "Avis",
+      "DeleteForever": "Supprimer pour toujours?"
     },
     "ErrorOccurred": "Erreur est survenue",
     "error": {
@@ -1438,7 +1447,8 @@
     "ForUser": "Pour l'utilisateur",
     "ForProject": "Pour le projet",
     "QuotaDoesNotSupported": "Ce backend de stockage ne prend pas en charge les quotas.",
-    "BeCarefulToSetUserResourcePolicy": "La modification d'une politique de ressources peut affecter tous les utilisateurs qui utilisent cette politique de ressources, il convient donc de l'utiliser avec précaution."
+    "BeCarefulToSetUserResourcePolicy": "La modification d'une politique de ressources peut affecter tous les utilisateurs qui utilisent cette politique de ressources, il convient donc de l'utiliser avec précaution.",
+    "StorageSetting": "Paramètres de stockage"
   },
   "modelService": {
     "EditModelService": "Modifier le modèle de service",
