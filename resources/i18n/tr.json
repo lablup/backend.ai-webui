@@ -114,7 +114,7 @@
     "WarboyEnabled": "Warboy NPU Etkinleştirildi",
     "DownloadWebUIApp": "Backend.AI Web UI Uygulamasını İndirin",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU Etkin"
   },
   "session": {
     "launcher": {
@@ -1157,9 +1157,9 @@
     "Plugins": "Eklentiler",
     "OpenSourceCUDAGPUsupport": "Açık Kaynak CUDA GPU desteği",
     "ShowOnlyChanged": "Yalnızca Değişiklikleri Görüntüle",
-    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
-    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
-    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Hyperaccel LPU hızlandırıcısını kullanın.",
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Eklentisi gerektirir."
   },
   "notification": {
     "SuccessfullyUpdated": "Başarıyla güncellendi",

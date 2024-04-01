@@ -114,7 +114,7 @@
     "WarboyEnabled": "Warboy NPU使用中",
     "DownloadWebUIApp": "Backend.AI Web UIアプリのダウンロード",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
+    "HyperaccelLPUEnabled": "ハイパーアクセル LPU が有効になりました"
   },
   "session": {
     "launcher": {
@@ -1157,9 +1157,9 @@
     "Plugins": "プラグイン",
     "OpenSourceCUDAGPUsupport": "オープンソースのCUDA GPUのサポート",
     "ShowOnlyChanged": "表示のみの変更",
-    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
-    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
-    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Hyperaccel LPU アクセラレータを使用します。",
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU プラグインが必要です。"
   },
   "notification": {
     "SuccessfullyUpdated": "正常に更新されました",

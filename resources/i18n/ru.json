@@ -114,7 +114,7 @@
     "ATOMEnabled": "ATOM NPU Включено",
     "WarboyEnabled": "Warboy NPU Enabled",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU включен"
   },
   "session": {
     "launcher": {
@@ -1159,9 +1159,9 @@
     "Plugins": "Плагины",
     "OpenSourceCUDAGPUsupport": "Поддержка графического процессора CUDA с открытым исходным кодом",
     "ShowOnlyChanged": "Отображать только изменения",
-    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
-    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
-    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Используйте ускоритель Hyperaccel LPU.",
+    "RequireHyperaccelLPUPlugin": "Требуется плагин Backend.AI Hyperaccel LPU."
   },
   "notification": {
     "SuccessfullyUpdated": "Успешно обновлено",

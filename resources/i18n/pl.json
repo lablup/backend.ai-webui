@@ -114,7 +114,7 @@
     "WarboyEnabled": "Warboy NPU Enabled",
     "DownloadWebUIApp": "Pobierz aplikację Backend.AI Web UI",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
+    "HyperaccelLPUEnabled": "Włączono funkcję Hyperaccel LPU"
   },
   "session": {
     "launcher": {
@@ -1159,9 +1159,9 @@
     "Plugins": "Wtyczki",
     "OpenSourceCUDAGPUsupport": "Obsługa procesorów graficznych Open Source CUDA",
     "ShowOnlyChanged": "Wyświetl tylko zmiany",
-    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
-    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
-    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Użyj akceleratora Hyperaccel LPU.",
+    "RequireHyperaccelLPUPlugin": "Wymaga wtyczki Backend.AI Hyperaccel LPU."
   },
   "notification": {
     "SuccessfullyUpdated": "Pomyślnie zaktualizowano",

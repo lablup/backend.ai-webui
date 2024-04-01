@@ -38,7 +38,7 @@
     "WarboyEnabled": "Warboy NPU käytössä",
     "connectingToCluster": "Yhteyden muodostaminen Backend.AI-klusteriin...",
     "reserved": "varattu",
-    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU käytössä"
   },
   "error": {
     "WrongAPIServerAddress": "Väärä API-palvelimen osoite.",
@@ -1243,9 +1243,9 @@
     },
     "OpenSourceCUDAGPUsupport": "Avoimen lähdekoodin CUDA GPU-tuki",
     "ShowOnlyChanged": "Vain näyttö muuttuu",
-    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
-    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
-    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Käytä Hyperaccel LPU -kiihdytintä.",
+    "RequireHyperaccelLPUPlugin": "Vaatii Backend.AI Hyperaccel LPU -laajennuksen."
   },
   "sidepanel": {
     "BackgroundTasks": "Tehtävien suorittaminen",

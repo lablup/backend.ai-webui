@@ -114,7 +114,7 @@
     "ATOMEnabled": "ATOM NPU Activé",
     "WarboyEnabled": "Warboy NPU activé",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU activé"
   },
   "session": {
     "launcher": {
@@ -1157,9 +1157,9 @@
     "Plugins": "Plugins",
     "OpenSourceCUDAGPUsupport": "Prise en charge des GPU CUDA Open Source",
     "ShowOnlyChanged": "Afficher uniquement les modifications",
-    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
-    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
-    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Utilisez l'accélérateur Hyperaccel LPU.",
+    "RequireHyperaccelLPUPlugin": "Nécessite le plugin LPU Backend.AI Hyperaccel."
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",

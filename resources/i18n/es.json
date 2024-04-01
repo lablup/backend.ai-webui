@@ -38,7 +38,7 @@
     "WarboyEnabled": "Warboy NPU Activado",
     "connectingToCluster": "Conectando al Cluster Backend.AI...",
     "reserved": "reservado",
-    "HyperaccelLPUEnabled": "__NOT_TRANSLATED__"
+    "HyperaccelLPUEnabled": "LPU de hiperaccel habilitada"
   },
   "error": {
     "WrongAPIServerAddress": "Dirección del servidor API incorrecta.",
@@ -1243,9 +1243,9 @@
     "Plugins": "Complementos",
     "OpenSourceCUDAGPUsupport": "Compatibilidad con GPU CUDA de código abierto",
     "ShowOnlyChanged": "Mostrar solo cambios",
-    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
-    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
-    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Utilice el acelerador Hyperaccel LPU.",
+    "RequireHyperaccelLPUPlugin": "Requiere el complemento LPU Backend.AI Hyperaccel."
   },
   "sidepanel": {
     "BackgroundTasks": "Tareas en curso",
