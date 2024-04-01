@@ -603,7 +603,7 @@
       "FolderRenamed": "Folder telah diganti nama",
       "FolderNameMismatched": "Nama folder tidak cocok. Silakan periksa apakah ada karakter spasi di bidang input atau tidak.",
       "SameFileName": "Nilai input sama dengan nama file yang akan diperbarui. Silakan ganti dengan nama lain.",
-      "FolderDeleted": "Folder dihapus",
+      "FolderDeleted": "Folder {{ folderName }} telah dihapus.",
       "FolderUpdated": "Opsi folder diperbarui",
       "FolderDisconnected": "Koneksi folder telah terputus.",
       "FileRenamed": "File sudah diganti nama",
@@ -633,8 +633,9 @@
       "ModifyPermissions": "Memodifikasi izin",
       "Restore": "Memulihkan",
       "DeleteForever": "Hapus selamanya",
-      "FolderRestored": "Folder dipulihkan",
-      "FolderDeletedForever": "Folder dihapus selamanya"
+      "FolderRestored": "Folder {{ folderName }} telah dipulihkan.",
+      "FolderDeletedForever": "Folder {{ folderName }} telah dihapus selamanya.",
+      "MovedToTrashBin": "Folder {{ folderName }} telah dipindahkan ke tempat sampah."
     },
     "explorer": {
       "Delete": "Menghapus...",

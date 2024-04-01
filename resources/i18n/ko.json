@@ -735,7 +735,7 @@
       "ModifyPermissions": "권한 수정",
       "Restore": "복원",
       "DeleteForever": "영구 삭제",
-      "FolderRestored": "폴더가 복원되었습니다.",
+      "FolderRestored": "{{ folderName }} 폴더가 복원되었습니다.",
       "FolderDeletedForever": "{{ folderName }} 폴더가 완전히 삭제되었습니다.",
       "MoveToTrashBin": "휴지통으로 이동",
       "MovedToTrashBin": "{{ folderName }} 폴더가 휴지통으로 이동되었습니다."

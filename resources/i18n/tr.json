@@ -637,7 +637,7 @@
       "LeaveFolder": "Klasörden ayrıl",
       "Restore": "Eski haline getirmek",
       "DeleteForever": "Tamamen sil",
-      "FolderRestored": "Klasör geri yüklendi",
+      "FolderRestored": "{{ klasörAdı }} klasörü geri yüklendi.",
       "FolderDeletedForever": "{{ folderName }} klasörü kalıcı olarak silindi.",
       "MoveToTrashBin": "Çöp kutusuna taşı",
       "MovedToTrashBin": "{{ folderName }} klasörü çöp kutusuna taşındı."

@@ -594,7 +594,7 @@
       "FolderRenamed": "Фолдерын нэрийг өөрчилсөн",
       "FolderNameMismatched": "Фолдерын нэр тохирохгүй байна. Оролтын талбарт зайны тэмдэгт байгаа эсэхийг шалгана уу.",
       "SameFileName": "Оруулах утга нь шинэчлэх файлын нэртэй ижил байна. Үүнийг өөр нэрээр солино уу.",
-      "FolderDeleted": "Фолдерыг устгасан",
+      "FolderDeleted": "{{ folderName }} хавтас устгагдсан.",
       "FolderUpdated": "Фолдерын сонголтууд шинэчлэгдсэн",
       "FolderDisconnected": "Фолдерыг салгасан.",
       "FileRenamed": "Файлын нэрийг өөрчилсөн",
@@ -624,8 +624,9 @@
       "ModifyPermissions": "Зөвшөөрлийг өөрчлөх",
       "Restore": "Сэргээх",
       "DeleteForever": "Бүрмөсөн устгах",
-      "FolderRestored": "Фолдер сэргээгдсэн",
-      "FolderDeletedForever": "Фолдер бүрмөсөн устгагдсан"
+      "FolderRestored": "{{ folderName }} хавтас сэргээгдсэн.",
+      "FolderDeletedForever": "{{ folderName }} хавтас бүрмөсөн устгагдсан.",
+      "MovedToTrashBin": "{{ folderName }} фолдерыг хогийн сав руу зөөв."
     },
     "explorer": {
       "Delete": "Устгах ...",
