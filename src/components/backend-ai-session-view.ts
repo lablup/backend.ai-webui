@@ -408,8 +408,8 @@ export default class BackendAISessionView extends BackendAIPage {
           this.exportToCsvDialog.hide();
           return;
         }
-        const occupyingSlots = JSON.parse(session.occupying_slots);
         sessions.forEach((session) => {
+          const occupyingSlots = JSON.parse(session.occupying_slots);
           const exportListItem: any = {};
           exportListItem.id = session.id;
           exportListItem.name = session.name;
@@ -479,8 +479,12 @@ export default class BackendAISessionView extends BackendAIPage {
               BackendAISessionView._automaticScaledTime(
                 cpu_used_time / session.containers.length,
               );
-            exportListItem.cpu_util = cpu_util / session.containers.length;
-            exportListItem.cuda_util = cuda_util / session.containers.length;
+            exportListItem.cpu_util = (
+              cpu_util / session.containers.length
+            ).toFixed(2);
+            exportListItem.cuda_util = (
+              cuda_util / session.containers.length
+            ).toFixed(2);
             exportListItem.cuda_mem_bytes_mb = BackendAISessionView.bytesToMiB(
               cuda_mem / session.containers.length,
             );
