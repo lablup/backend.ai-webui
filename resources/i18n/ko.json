@@ -642,7 +642,8 @@
     "SignoutSeccessfullyFinished": "사용자 계정이 성공적으로 삭제되었습니다.",
     "ModifyUserDetail": "사용자 상세 정보 수정",
     "EnableSudoSession": "sudo 세션 허용",
-    "MainAccessKey": "기본 액세스 키"
+    "MainAccessKey": "기본 액세스 키",
+    "InactivateTheFollowingUsers": "다음 사용자를 비활성화합니다."
   },
   "data": {
     "Folders": "폴더",

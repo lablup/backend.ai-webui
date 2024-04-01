@@ -1195,6 +1195,16 @@ export const BackendAiStyles = [
       vaadin-grid[theme~='dark'] {
         --lumo-base-color: var(--token-colorBgElevated) !important;
       }
+
+      div[slot='footer'] {
+        mwc-button[unelevated],
+        mwc-button[raised] {
+          --mdc-theme-on-primary: var(
+            --token-colorWhite,
+            --general-button-color
+          );
+        }
+      }
     }
 
     div.note-container {

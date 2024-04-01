@@ -555,7 +555,8 @@
     "SignoutSeccessfullyFinished": "Выход из системы завершен",
     "ModifyUserDetail": "Изменение сведений о пользователе",
     "EnableSudoSession": "Включить сеанс sudo",
-    "MainAccessKey": "Главный ключ доступа"
+    "MainAccessKey": "Главный ключ доступа",
+    "InactivateTheFollowingUsers": "Деактивируйте следующих пользователей."
   },
   "data": {
     "Folders": "Папки",
@@ -1449,7 +1450,7 @@
     "ForProject": "Для проекта",
     "QuotaDoesNotSupported": "Данный бэкэнд хранилища не поддерживает квотирование.",
     "BeCarefulToSetUserResourcePolicy": "Изменение политики ресурсов может повлиять на всех пользователей, использующих данную политику ресурсов, поэтому использовать ее следует с осторожностью.",
-    "StorageSetting": "__NOT_TRANSLATED__"
+    "StorageSetting": "Настройки хранения"
   },
   "modelService": {
     "EditModelService": "Редактирование модели сервиса",

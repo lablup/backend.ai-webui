@@ -211,7 +211,8 @@
       "ValidationFailed": "Validointi epäonnistui"
     },
     "EnableSudoSession": "Ota sudo-istunto käyttöön",
-    "MainAccessKey": "Pääkäyttöavain"
+    "MainAccessKey": "Pääkäyttöavain",
+    "InactivateTheFollowingUsers": "Poista seuraavat käyttäjät käytöstä."
   },
   "data": {
     "Allowslettersnumbersand-_": "Sallii kirjaimet, numerot ja -_",
@@ -1318,7 +1319,8 @@
       "SelectProject": "Valitse projekti",
       "SelectUser": "Etsi ja valitse Käyttäjä",
       "UnsetCustomSettings": "Mukautettujen asetusten poistaminen"
-    }
+    },
+    "StorageSetting": "Tallennusasetus"
   },
   "totp": {
     "ConfirmTotpRemovalBody": "Oletko varma, ettet halua käyttää kaksitekijätodennusta?",

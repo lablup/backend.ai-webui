@@ -553,7 +553,8 @@
     "Status": "状態",
     "NoUserToDisplay": "ユーザー情報がありません。",
     "EnableSudoSession": "sudoセッションを有効にする",
-    "MainAccessKey": "メインアクセスキー"
+    "MainAccessKey": "メインアクセスキー",
+    "InactivateTheFollowingUsers": "以下のユーザーを無効化します。"
   },
   "data": {
     "Folders": "フォルダー",
@@ -1490,7 +1491,7 @@
     "ForProject": "プロジェクト",
     "QuotaDoesNotSupported": "このストレージバックエンドは可用量設定をサポートしていません。",
     "BeCarefulToSetUserResourcePolicy": "リソースポリシーを変更すると、そのリソースポリシーを使用しているすべてのユーザーに影響を与える可能性がありますので、慎重に使用してください。",
-    "StorageSetting": "__NOT_TRANSLATED__"
+    "StorageSetting": "ストレージ設定"
   },
   "totp": {
     "TotpSetupCompleted": "二要素認証が有効になりました。",
