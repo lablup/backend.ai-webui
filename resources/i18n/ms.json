@@ -633,7 +633,9 @@
       "CloneFolder": "Klon folder",
       "ShareFolder": "Kongsi folder",
       "ModifyPermissions": "Ubah suai kebenaran",
-      "LeaveFolder": "Tinggalkan folder"
+      "LeaveFolder": "Tinggalkan folder",
+      "MoveToTrashBin": "Pindah ke tong sampah",
+      "MovedToTrashBin": "Dialihkan ke tong sampah"
     },
     "explorer": {
       "Delete": "Padamkan ...",

@@ -637,7 +637,9 @@
       "Restore": "Eski haline getirmek",
       "DeleteForever": "Tamamen sil",
       "FolderRestored": "Klasör geri yüklendi",
-      "FolderDeletedForever": "Klasör kalıcı olarak silindi"
+      "FolderDeletedForever": "Klasör kalıcı olarak silindi",
+      "MoveToTrashBin": "Çöp kutusuna taşı",
+      "MovedToTrashBin": "Çöp kutusuna taşındı"
     },
     "explorer": {
       "Delete": "Sil...",

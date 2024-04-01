@@ -747,7 +747,9 @@
       "Restore": "Restore",
       "DeleteForever": "Delete forever",
       "FolderRestored": "Folder restored",
-      "FolderDeletedForever": "Folder deleted forever"
+      "FolderDeletedForever": "Folder deleted forever",
+      "MoveToTrashBin": "Move to trash bin",
+      "MovedToTrashBin": "Moved to trash bin"
     },
     "explorer": {
       "Delete": "Delete",

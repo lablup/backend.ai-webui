@@ -637,7 +637,9 @@
       "Restore": "Ristabilire",
       "DeleteForever": "Elimina per sempre",
       "FolderRestored": "Cartella ripristinata",
-      "FolderDeletedForever": "Cartella eliminata per sempre"
+      "FolderDeletedForever": "Cartella eliminata per sempre",
+      "MoveToTrashBin": "Sposta nel cestino",
+      "MovedToTrashBin": "Spostato nel cestino"
     },
     "explorer": {
       "Delete": "Elimina...",

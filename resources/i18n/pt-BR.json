@@ -637,7 +637,9 @@
       "DeleteForever": "",
       "Restore": "",
       "FolderRestored": "",
-      "FolderDeletedForever": ""
+      "FolderDeletedForever": "",
+      "MoveToTrashBin": "Mover para a lixeira",
+      "MovedToTrashBin": "Movido para a lixeira"
     },
     "explorer": {
       "Delete": "Excluir...",

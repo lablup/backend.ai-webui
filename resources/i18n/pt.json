@@ -637,7 +637,9 @@
       "Restore": "Restaurar",
       "DeleteForever": "Apagar para sempre",
       "FolderRestored": "Pasta restaurada",
-      "FolderDeletedForever": "Pasta excluída para sempre"
+      "FolderDeletedForever": "Pasta excluída para sempre",
+      "MoveToTrashBin": "Mover para a lixeira",
+      "MovedToTrashBin": "Movido para a lixeira"
     },
     "explorer": {
       "Delete": "Excluir...",

@@ -353,7 +353,9 @@
       "TypeFolderNameToDelete": "Kirjoita poistettavan kansion nimi",
       "TypeFolderNameToLeave": "Kirjoita poistuvan kansion nimi",
       "TypeNewFolderName": "Kirjoita uuden kansion nimi",
-      "View": "Näytä"
+      "View": "Näytä",
+      "MoveToTrashBin": "Siirrä roskakoriin",
+      "MovedToTrashBin": "Siirretty roskakoriin"
     },
     "invitation": {
       "FolderSharingNotAvailableToUser": "Kansioiden jakaminen ei ole käytettävissä pyydetyille käyttäjille:",

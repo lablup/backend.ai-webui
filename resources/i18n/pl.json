@@ -639,7 +639,9 @@
       "Restore": "Przywrócić",
       "DeleteForever": "Usuń na zawsze",
       "FolderRestored": "Folder przywrócony",
-      "FolderDeletedForever": "Folder usunięty na zawsze"
+      "FolderDeletedForever": "Folder usunięty na zawsze",
+      "MoveToTrashBin": "Przenieś do kosza",
+      "MovedToTrashBin": "Przeniesiono do kosza"
     },
     "explorer": {
       "Delete": "Kasować...",

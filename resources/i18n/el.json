@@ -637,7 +637,9 @@
       "Restore": "Επαναφέρω",
       "DeleteForever": "Διαγραφή για πάντα",
       "FolderRestored": "Ο φάκελος αποκαταστάθηκε",
-      "FolderDeletedForever": "Ο φάκελος διαγράφηκε οριστικά"
+      "FolderDeletedForever": "Ο φάκελος διαγράφηκε οριστικά",
+      "MoveToTrashBin": "Μετακίνηση στον κάδο απορριμμάτων",
+      "MovedToTrashBin": "Μεταφέρθηκε στον κάδο απορριμμάτων"
     },
     "explorer": {
       "Delete": "Διαγράφω...",

@@ -637,7 +637,9 @@
       "Restore": "Restaurer",
       "DeleteForever": "Supprimer pour toujours",
       "FolderRestored": "Dossier restauré",
-      "FolderDeletedForever": "Dossier supprimé définitivement"
+      "FolderDeletedForever": "Dossier supprimé définitivement",
+      "MoveToTrashBin": "Déplacer vers la poubelle",
+      "MovedToTrashBin": "Déplacé vers la poubelle"
     },
     "explorer": {
       "Delete": "Effacer...",

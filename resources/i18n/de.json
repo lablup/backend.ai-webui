@@ -637,7 +637,9 @@
       "Restore": "Wiederherstellen",
       "DeleteForever": "Unwiederuflich löschen",
       "FolderRestored": "Ordner wiederhergestellt",
-      "FolderDeletedForever": "Ordner für immer gelöscht"
+      "FolderDeletedForever": "Ordner für immer gelöscht",
+      "MoveToTrashBin": "In den Papierkorb verschieben",
+      "MovedToTrashBin": "In den Papierkorb verschoben"
     },
     "explorer": {
       "Delete": "Löschen...",

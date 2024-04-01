@@ -637,7 +637,9 @@
       "Restore": "Khôi phục",
       "DeleteForever": "Xóa vĩnh viễn",
       "FolderRestored": "Đã khôi phục thư mục",
-      "FolderDeletedForever": "Thư mục bị xóa vĩnh viễn"
+      "FolderDeletedForever": "Thư mục bị xóa vĩnh viễn",
+      "MoveToTrashBin": "Di chuyển vào thùng rác",
+      "MovedToTrashBin": "Đã chuyển vào thùng rác"
     },
     "explorer": {
       "Delete": "Xóa bỏ...",

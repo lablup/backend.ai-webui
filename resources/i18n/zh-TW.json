@@ -637,7 +637,9 @@
       "Restore": "恢復",
       "DeleteForever": "永久刪除",
       "FolderRestored": "資料夾已恢復",
-      "FolderDeletedForever": "資料夾永久刪除"
+      "FolderDeletedForever": "資料夾永久刪除",
+      "MoveToTrashBin": "移至垃圾箱",
+      "MovedToTrashBin": "已移至垃圾桶"
     },
     "explorer": {
       "Delete": "刪除...",

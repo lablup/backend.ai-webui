@@ -637,7 +637,9 @@
       "Restore": "復元する",
       "DeleteForever": "永久に削除",
       "FolderRestored": "フォルダが復元されました",
-      "FolderDeletedForever": "フォルダーが永久に削除されました"
+      "FolderDeletedForever": "フォルダーが永久に削除されました",
+      "MoveToTrashBin": "ゴミ箱に移動",
+      "MovedToTrashBin": "ゴミ箱に移動しました"
     },
     "explorer": {
       "Delete": "削除...",

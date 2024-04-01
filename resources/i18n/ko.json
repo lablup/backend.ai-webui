@@ -735,7 +735,9 @@
       "Restore": "복원",
       "DeleteForever": "영구 삭제",
       "FolderRestored": "폴더가 복원되었습니다.",
-      "FolderDeletedForever": "폴더가 완전히 삭제되었습니다."
+      "FolderDeletedForever": "폴더가 완전히 삭제되었습니다.",
+      "MoveToTrashBin": "휴지통으로 이동",
+      "MovedToTrashBin": "휴지통으로 이동되었습니다"
     },
     "explorer": {
       "Delete": "삭제",

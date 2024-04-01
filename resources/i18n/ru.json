@@ -639,7 +639,9 @@
       "Restore": "Восстановить",
       "DeleteForever": "Удалить навсегда",
       "FolderRestored": "Папка восстановлена",
-      "FolderDeletedForever": "Папка удалена навсегда"
+      "FolderDeletedForever": "Папка удалена навсегда",
+      "MoveToTrashBin": "Переместить в мусорное ведро",
+      "MovedToTrashBin": "Перенесено в мусорное ведро"
     },
     "explorer": {
       "Delete": "Удалить...",
