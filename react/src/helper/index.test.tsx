@@ -2,6 +2,8 @@ import {
   addNumberWithUnits,
   compareNumberWithUnits,
   iSizeToSize,
+  isOutsideRange,
+  isOutsideRangeWithUnits,
 } from './index';
 
 describe('iSizeToSize', () => {
@@ -125,5 +127,76 @@ describe('addNumberWithUnits', () => {
     expect(addNumberWithUnits('1M', '1G', 'M')).toBe('1025M');
     expect(addNumberWithUnits('1G', '1T', 'G')).toBe('1025G');
     expect(addNumberWithUnits('1T', '1P', 'T')).toBe('1025T');
+  });
+});
+
+describe('isOutsideRange', () => {
+  it('should return true if the value is less than the minimum', () => {
+    expect(isOutsideRange(1, 2, 3)).toBe(true);
+  });
+
+  it('should return true if the value is greater than the maximum', () => {
+    expect(isOutsideRange(4, 2, 3)).toBe(true);
+  });
+  it('should return false if the value is within the range', () => {
+    expect(isOutsideRange(2, 1, 3)).toBe(false);
+  });
+  it('should return false if the value is within the range (==min)', () => {
+    expect(isOutsideRange(1, 1, 3)).toBe(false);
+  });
+  it('should return false if the value is within the range (==max)', () => {
+    expect(isOutsideRange(3, 1, 3)).toBe(false);
+  });
+
+  it('should treat "undefined" as no upper or lower limit', () => {
+    expect(isOutsideRange(3, 1, undefined)).toBe(false);
+    expect(isOutsideRange(1, 1, undefined)).toBe(false);
+    expect(isOutsideRange(0.9, 1, undefined)).toBe(true);
+    expect(isOutsideRange(3, undefined, 4)).toBe(false);
+    expect(isOutsideRange(4.1, undefined, 4)).toBe(true);
+    expect(isOutsideRange(4.1, undefined, undefined)).toBe(false);
+  });
+});
+
+describe('isOutsideRangeWithUnits', () => {
+  it('should return true if the value is less than the minimum', () => {
+    expect(isOutsideRangeWithUnits('1G', '2G', '3G')).toBe(true);
+    expect(isOutsideRangeWithUnits('1000M', '2G', '3G')).toBe(true);
+    expect(isOutsideRangeWithUnits('2.5B', '2M', '3M')).toBe(true);
+  });
+
+  it('should return true if the value is greater than the maximum', () => {
+    expect(isOutsideRangeWithUnits('4G', '2G', '3G')).toBe(true);
+    expect(isOutsideRangeWithUnits('4000M', '2G', '3G')).toBe(true);
+    expect(isOutsideRangeWithUnits('4B', '2M', '3M')).toBe(true);
+  });
+
+  it('should return false if the value is within the range', () => {
+    expect(isOutsideRangeWithUnits('2.5G', '2G', '3G')).toBe(false);
+    expect(isOutsideRangeWithUnits('2050M', '2G', '3G')).toBe(false);
+    expect(isOutsideRangeWithUnits('2100000B', '2M', '3M')).toBe(false);
+  });
+
+  it('should return false if the value is within the range (==min)', () => {
+    expect(isOutsideRangeWithUnits('2G', '2G', '3G')).toBe(false);
+    expect(isOutsideRangeWithUnits('2048M', '2G', '3G')).toBe(false);
+    expect(isOutsideRangeWithUnits('2097152B', '2M', '3M')).toBe(false);
+    expect(isOutsideRangeWithUnits('2097151B', '2M', '3M')).toBe(true);
+  });
+
+  it('should return false if the value is within the range (==max)', () => {
+    expect(isOutsideRangeWithUnits('3G', '2G', '3G')).toBe(false);
+    expect(isOutsideRangeWithUnits('3072K', '2M', '3M')).toBe(false);
+    expect(isOutsideRangeWithUnits('3145728B', '2M', '3M')).toBe(false);
+    expect(isOutsideRangeWithUnits('3145729B', '2M', '3M')).toBe(true);
+  });
+
+  it('should treat "undefined" as no upper or lower limit', () => {
+    expect(isOutsideRangeWithUnits('3', '1', undefined)).toBe(false);
+    expect(isOutsideRangeWithUnits('1', '1', undefined)).toBe(false);
+    expect(isOutsideRangeWithUnits('0.9', '1', undefined)).toBe(true);
+    expect(isOutsideRangeWithUnits('3', undefined, '4')).toBe(false);
+    expect(isOutsideRangeWithUnits('4.1', undefined, '4')).toBe(true);
+    expect(isOutsideRangeWithUnits('4.1', undefined, undefined)).toBe(false);
   });
 });

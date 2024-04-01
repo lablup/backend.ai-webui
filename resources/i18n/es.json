@@ -130,7 +130,9 @@
     "Yes": "Sí",
     "Download": "Descargar",
     "Clone": "Clon",
-    "Config": "Configurar"
+    "Config": "Configurar",
+    "Next": "Siguiente",
+    "Previous": "Anterior"
   },
   "credential": {
     "AccessKeyOptional": "Clave de acceso (opcional)",
@@ -998,7 +1000,11 @@
       "SessionNameRequired": "El nombre de la sesión es obligatorio",
       "SluggedStrings": "Cadenas babosas (>3 caracteres)",
       "SessionNameTooLong64": "Introduzca 64 caracteres o menos.",
-      "PleaseFollowSessionNameRule": "Ingrese una combinación de al menos 4 letras, números, '.', '_' y '-'."
+      "PleaseFollowSessionNameRule": "Ingrese una combinación de al menos 4 letras, números, '.', '_' y '-'.",
+      "SessionNameTooShort": "Introduzca al menos 4 caracteres.",
+      "SessionNameShouldStartWith": "Debe empezar por una letra del alfabeto, un número o '_'.",
+      "SessionNameShouldEndWith": "Debe terminar con una letra del alfabeto, un número o '_'.",
+      "SessionNameInvalidCharacter": "El centro de un nombre sólo puede contener letras del alfabeto, números y \"_\"."
     },
     "XRDPconnection": "Conexión RDP",
     "applauncher": {
@@ -1151,11 +1157,21 @@
       "EnvironmentVariableNamePatternError": "El nombre de la variable debe empezar por una letra o un guión bajo, y sólo puede contener letras, números y guiones bajos.",
       "EnvironmentVariableDuplicateName": "Un nombre de variable que ya existe.",
       "Template": "Plantilla de sesión",
-      "EnableAutomaticShmem": "Memoria compartida automática",
+      "EnableAutomaticMiniumShmem": "Establecer la memoria compartida mínima",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Solo se permiten números enteros cuando el tamaño del clúster no es inferior a 2.",
       "StartAfter": "Empezar después:",
-      "StartTimeDoesNotApply": "Si no se establece la hora de inicio, no se aplica."
+      "StartTimeDoesNotApply": "Si no se establece la hora de inicio, no se aplica.",
+      "MiniumAllocation": "Requisitos mínimos",
+      "MiniumAllocationTooltip": "Seleccione como requisito mínimo para el entorno de ejecución seleccionado",
+      "PreviousLauncher": "Anterior",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Estás utilizando el lanzador de sesiones \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Ir a la reseña",
+      "InteractiveModeDesc": "permite crear, probar y ejecutar código de forma interactiva a través de jupyter notebook, visual studio code, etc.",
+      "BatchModeDesc": "Puedes ejecutar tu código con múltiples nodos y clusters para escalar tu idea",
+      "AddEnvironmentVariable": "Añadir variables de entorno",
+      "EnvironmentVariableValueRequired": "Por favor, introduzca un valor."
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",
