@@ -743,7 +743,7 @@ const SessionLauncherPage = () => {
         target: () =>
           document.getElementsByClassName('ant-card-extra')[0] as HTMLElement,
         onNext: () => {
-          scrollToTourElement(tourRef.current[9], 'next');
+          scrollToTourElement(tourRef.current[9], 'next', 300);
         },
       },
       {
@@ -755,7 +755,7 @@ const SessionLauncherPage = () => {
           const targetElement = document.getElementsByClassName(
             'ant-card-extra',
           )[0] as HTMLElement;
-          scrollToTourElement(targetElement, 'prev');
+          scrollToTourElement(targetElement, 'prev', 300);
         },
       },
       {
