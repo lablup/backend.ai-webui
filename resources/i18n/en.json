@@ -719,7 +719,7 @@
       "FolderRenamed": "Folder renamed",
       "FolderNameMismatched": "Folder name mismatched. Please Check whether space character in the input field or not.",
       "SameFileName": "The input value is same as the filename to update. Please change it to a different name.",
-      "FolderDeleted": "Folder deleted",
+      "FolderDeleted": "The {{ folderName }} folder has been deleted.",
       "FolderUpdated": "Folder option(s) updated",
       "FolderDisconnected": "Folder has been disconnected.",
       "FileRenamed": "File Renamed",
@@ -746,10 +746,10 @@
       "ModifyPermissions": "Modify permissions",
       "Restore": "Restore",
       "DeleteForever": "Delete forever",
-      "FolderRestored": "Folder restored",
-      "FolderDeletedForever": "Folder deleted forever",
-      "MoveToTrashBin": "Move to trash bin",
-      "MovedToTrashBin": "Moved to trash bin"
+      "FolderRestored": "The {{ folderName }} folder has been restored.",
+      "FolderDeletedForever": "The {{ folderName }} folder has been deleted forever.",
+      "MovedToTrashBin": "The {{ folderName }} folder has been moved to the trash bin.",
+      "MoveToTrashBin": "Move to trash bin"
     },
     "explorer": {
       "Delete": "Delete",

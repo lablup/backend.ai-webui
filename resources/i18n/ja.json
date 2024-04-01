@@ -606,7 +606,7 @@
       "FolderRenamed": "フォルダの名前が変更されました",
       "FolderNameMismatched": "フォルダ名が一致しません。入力フィールドにスペース文字があるかどうかを確認してください。",
       "SameFileName": "入力値は、更新するファイル名と同じです。別の名前に変更してください。",
-      "FolderDeleted": "フォルダが削除されました",
+      "FolderDeleted": "{{ folderName }} フォルダが削除されました。",
       "FolderUpdated": "フォルダオプションが更新されました",
       "FolderDisconnected": "フォルダが切断されました。",
       "FileRenamed": "ファイルの名前が変更されました",
@@ -636,10 +636,10 @@
       "LeaveFolder": "招待されたフォルダを出る",
       "Restore": "復元する",
       "DeleteForever": "永久に削除",
-      "FolderRestored": "フォルダが復元されました",
-      "FolderDeletedForever": "フォルダーが永久に削除されました",
+      "FolderRestored": "{{ folderName }} フォルダが復元されました。",
+      "FolderDeletedForever": "{{ folderName }} フォルダは完全に削除されました。",
       "MoveToTrashBin": "ゴミ箱に移動",
-      "MovedToTrashBin": "ゴミ箱に移動しました"
+      "MovedToTrashBin": "{{ folderName }} フォルダーはゴミ箱に移動されました。"
     },
     "explorer": {
       "Delete": "削除...",

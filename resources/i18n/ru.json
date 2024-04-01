@@ -608,7 +608,7 @@
       "FolderRenamed": "Папка переименована",
       "FolderNameMismatched": "Несоответствующее имя папки. Пожалуйста, проверьте, есть ли пробел в поле ввода или нет.",
       "SameFileName": "Входное значение совпадает с именем файла для обновления. Пожалуйста, измените его на другое имя.",
-      "FolderDeleted": "Папка удалена",
+      "FolderDeleted": "Папка {{ folderName }} удалена.",
       "FolderUpdated": "Параметры папки обновлены",
       "FolderDisconnected": "Папка отключена.",
       "FileRenamed": "Файл переименован",
@@ -638,10 +638,10 @@
       "ModifyPermissions": "Изменение прав доступа",
       "Restore": "Восстановить",
       "DeleteForever": "Удалить навсегда",
-      "FolderRestored": "Папка восстановлена",
-      "FolderDeletedForever": "Папка удалена навсегда",
+      "FolderRestored": "Папка {{ folderName }} восстановлена.",
+      "FolderDeletedForever": "Папка {{ folderName}} удалена навсегда.",
       "MoveToTrashBin": "Переместить в мусорное ведро",
-      "MovedToTrashBin": "Перенесено в мусорное ведро"
+      "MovedToTrashBin": "Папка {{ folderName }} была перемещена в корзину."
     },
     "explorer": {
       "Delete": "Удалить...",

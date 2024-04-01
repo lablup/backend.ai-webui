@@ -606,7 +606,7 @@
       "FolderRenamed": "文件夹重命名",
       "FolderNameMismatched": "文件夹名称不匹配。请检查输入字段中是否有空格字符。",
       "SameFileName": "输入值与要更新的文件名相同。请将其更改为其他名称。",
-      "FolderDeleted": "文件夹已删除",
+      "FolderDeleted": "{{ folderName }} 文件夹已被删除。",
       "FolderUpdated": "文件夹选项已更新",
       "FolderDisconnected": "文件夹已断开连接。",
       "FileRenamed": "文件重命名",
@@ -636,10 +636,10 @@
       "LeaveFolder": "离开文件夹",
       "Restore": "恢复",
       "DeleteForever": "永久删除",
-      "FolderRestored": "文件夹已恢复",
-      "FolderDeletedForever": "文件夹永久删除",
+      "FolderRestored": "{{ folderName }} 文件夹已恢复。",
+      "FolderDeletedForever": "{{ folderName }} 文件夹已被永久删除。",
       "MoveToTrashBin": "移至垃圾箱",
-      "MovedToTrashBin": "已移至垃圾桶"
+      "MovedToTrashBin": "{{ folderName }} 文件夹已移至垃圾箱。"
     },
     "explorer": {
       "Delete": "删除...",

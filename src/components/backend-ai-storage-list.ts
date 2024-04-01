@@ -3005,8 +3005,12 @@ export default class BackendAiStorageList extends BackendAIPage {
           this.notification.show(true);
         } else {
           this.notification.text = this.enableVfolderTrashBin
-            ? _text('data.folders.MovedToTrashBin')
-            : _text('data.folders.FolderDeleted');
+            ? _text('data.folders.MovedToTrashBin', {
+                folderName: this.deleteFolderName || '',
+              })
+            : _text('data.folders.FolderDeleted', {
+                folderName: this.deleteFolderName || '',
+              });
           this.notification.show();
           await this.refreshFolderList();
         }
@@ -4542,7 +4546,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     globalThis.backendaiclient.vfolder
       .restore_from_trash_bin(folderID)
       .then(async (resp) => {
-        this.notification.text = _text('data.folders.FolderRestored');
+        this.notification.text = _text('data.folders.FolderRestored', {
+          folderName: this.deleteFolderName || '',
+        });
         this.notification.show();
         await this.refreshFolderList();
       })
@@ -4568,7 +4574,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     globalThis.backendaiclient.vfolder
       .delete_from_trash_bin(this.deleteFolderID)
       .then(async (resp) => {
-        this.notification.text = _text('data.folders.FolderDeletedForever');
+        this.notification.text = _text('data.folders.FolderDeletedForever', {
+          folderName: this.deleteFolderName || '',
+        });
         this.notification.show();
         await this.refreshFolderList();
       })

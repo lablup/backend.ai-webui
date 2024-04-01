@@ -606,7 +606,7 @@
       "FolderRenamed": "Pasta renomeada",
       "FolderNameMismatched": "Nome da pasta incompatível. Verifique se o caractere de espaço no campo de entrada ou não.",
       "SameFileName": "O valor de entrada é igual ao nome do arquivo a ser atualizado. Por favor, mude para um nome diferente.",
-      "FolderDeleted": "Pasta excluída",
+      "FolderDeleted": "A pasta {{ folderName }} foi excluída.",
       "FolderUpdated": "Opção (ões) de pasta atualizada (s)",
       "FolderDisconnected": "A pasta foi desconectada.",
       "FileRenamed": "Arquivo renomeado",
@@ -636,10 +636,10 @@
       "LeaveFolder": "Pasta de saída",
       "Restore": "Restaurar",
       "DeleteForever": "Apagar para sempre",
-      "FolderRestored": "Pasta restaurada",
-      "FolderDeletedForever": "Pasta excluída para sempre",
+      "FolderRestored": "A pasta {{ folderName }} foi restaurada.",
+      "FolderDeletedForever": "A pasta {{ folderName }} foi excluída definitivamente.",
       "MoveToTrashBin": "Mover para a lixeira",
-      "MovedToTrashBin": "Movido para a lixeira"
+      "MovedToTrashBin": "A pasta {{ folderName }} foi movida para a lixeira."
     },
     "explorer": {
       "Delete": "Excluir...",

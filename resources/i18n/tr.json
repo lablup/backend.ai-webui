@@ -606,7 +606,7 @@
       "FolderRenamed": "Klasör yeniden adlandırıldı",
       "FolderNameMismatched": "Klasör adı eşleşmiyor. Lütfen giriş alanında boşluk karakteri olup olmadığını kontrol edin.",
       "SameFileName": "Giriş değeri, güncellenecek dosya adıyla aynıdır. Lütfen farklı bir adla değiştirin.",
-      "FolderDeleted": "klasör silindi",
+      "FolderDeleted": "{{ folderName }} klasörü silindi.",
       "FolderUpdated": "Klasör seçenekleri güncellendi",
       "FolderDisconnected": "Klasörün bağlantısı kesildi.",
       "FileRenamed": "Dosya Yeniden Adlandırıldı",
@@ -637,9 +637,9 @@
       "Restore": "Eski haline getirmek",
       "DeleteForever": "Tamamen sil",
       "FolderRestored": "Klasör geri yüklendi",
-      "FolderDeletedForever": "Klasör kalıcı olarak silindi",
+      "FolderDeletedForever": "{{ folderName }} klasörü kalıcı olarak silindi.",
       "MoveToTrashBin": "Çöp kutusuna taşı",
-      "MovedToTrashBin": "Çöp kutusuna taşındı"
+      "MovedToTrashBin": "{{ folderName }} klasörü çöp kutusuna taşındı."
     },
     "explorer": {
       "Delete": "Sil...",

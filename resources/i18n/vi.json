@@ -606,7 +606,7 @@
       "FolderRenamed": "Thư mục đã được đổi tên",
       "FolderNameMismatched": "Tên thư mục không khớp. Vui lòng kiểm tra xem có ký tự khoảng trắng trong trường nhập hay không.",
       "SameFileName": "Giá trị đầu vào giống với tên tệp cần cập nhật. Vui lòng thay đổi nó thành một tên khác.",
-      "FolderDeleted": "Thư mục đã bị xóa",
+      "FolderDeleted": "Thư mục {{ folderName }} đã bị xóa.",
       "FolderUpdated": "Đã cập nhật (các) tùy chọn thư mục",
       "FolderDisconnected": "Thư mục đã bị ngắt kết nối.",
       "FileRenamed": "Tệp được đổi tên",
@@ -636,10 +636,10 @@
       "LeaveFolder": "Rời khỏi thư mục",
       "Restore": "Khôi phục",
       "DeleteForever": "Xóa vĩnh viễn",
-      "FolderRestored": "Đã khôi phục thư mục",
-      "FolderDeletedForever": "Thư mục bị xóa vĩnh viễn",
+      "FolderRestored": "Thư mục {{ folderName }} đã được khôi phục.",
+      "FolderDeletedForever": "Thư mục {{ folderName }} đã bị xóa vĩnh viễn.",
       "MoveToTrashBin": "Di chuyển vào thùng rác",
-      "MovedToTrashBin": "Đã chuyển vào thùng rác"
+      "MovedToTrashBin": "Thư mục {{ folderName }} đã được chuyển vào thùng rác."
     },
     "explorer": {
       "Delete": "Xóa bỏ...",

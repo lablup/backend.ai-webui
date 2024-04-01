@@ -707,7 +707,7 @@
       "FolderRenamed": "폴더 이름이 변경되었습니다",
       "FolderNameMismatched": "폴더 이름을 정확하게 입력하세요. 입력 칸에 공백문자가 있는지 확인해주세요.",
       "SameFileName": "입력한 파일 명이 기존 파일 명과 같습니다. 다른 이름으로 변경해주세요.",
-      "FolderDeleted": "폴더가 삭제되었습니다",
+      "FolderDeleted": "{{ folderName }} 폴더가 삭제되었습니다.",
       "FolderUpdated": "폴더 정보가 갱신되었습니다",
       "FolderDisconnected": "초대된 폴더와의 연결이 해제되었습니다.",
       "FileRenamed": "파일명이 변경되었습니다",
@@ -735,9 +735,9 @@
       "Restore": "복원",
       "DeleteForever": "영구 삭제",
       "FolderRestored": "폴더가 복원되었습니다.",
-      "FolderDeletedForever": "폴더가 완전히 삭제되었습니다.",
+      "FolderDeletedForever": "{{ folderName }} 폴더가 완전히 삭제되었습니다.",
       "MoveToTrashBin": "휴지통으로 이동",
-      "MovedToTrashBin": "휴지통으로 이동되었습니다"
+      "MovedToTrashBin": "{{ folderName }} 폴더가 휴지통으로 이동되었습니다."
     },
     "explorer": {
       "Delete": "삭제",

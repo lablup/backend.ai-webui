@@ -317,7 +317,7 @@
       "FileRenamed": "Archivo renombrado",
       "FolderCloned": "Carpeta clonada",
       "FolderCreated": "Carpeta creada",
-      "FolderDeleted": "Carpeta eliminada",
+      "FolderDeleted": "La carpeta {{ folderName }} ha sido eliminada.",
       "FolderDisconnected": "Se ha desconectado la carpeta.",
       "FolderInfo": "Información",
       "FolderNameMismatched": "El nombre de la carpeta no coincide. Compruebe si hay espacios en blanco en el campo de entrada.",
@@ -355,7 +355,11 @@
       "TypeNewFolderName": "Escriba el nombre de la nueva carpeta",
       "View": "Ver",
       "MoveToTrashBin": "Mover a la papelera",
-      "MovedToTrashBin": "Movido a la papelera"
+      "MovedToTrashBin": "La carpeta {{ folderName }} se ha movido a la papelera.",
+      "DeleteForever": "Borrar para siempre",
+      "Restore": "Restaurar",
+      "FolderRestored": "La carpeta {{ folderName }} ha sido restaurada.",
+      "FolderDeletedForever": "La carpeta {{ folderName }} se ha eliminado para siempre."
     },
     "invitation": {
       "FolderSharingNotAvailableToUser": "El uso compartido de carpetas no está disponible para los usuarios solicitados:",

@@ -606,7 +606,7 @@
       "FolderRenamed": "Folder dinamakan semula",
       "FolderNameMismatched": "Nama folder tidak sesuai. Sila Periksa sama ada watak ruang di ruang input atau tidak.",
       "SameFileName": "Nilai input adalah sama dengan nama fail yang akan dikemas kini. Tolong ubah ke nama lain.",
-      "FolderDeleted": "Folder dipadamkan",
+      "FolderDeleted": "Folder {{ folderName }} telah dipadamkan.",
       "FolderUpdated": "Pilihan folder dikemas kini",
       "FolderDisconnected": "Folder telah terputus.",
       "FileRenamed": "Fail Dinamakan Semula",
@@ -635,7 +635,11 @@
       "ModifyPermissions": "Ubah suai kebenaran",
       "LeaveFolder": "Tinggalkan folder",
       "MoveToTrashBin": "Pindah ke tong sampah",
-      "MovedToTrashBin": "Dialihkan ke tong sampah"
+      "MovedToTrashBin": "Folder {{ folderName }} telah dialihkan ke tong sampah.",
+      "DeleteForever": "Padam selama-lamanya",
+      "Restore": "Pulihkan",
+      "FolderRestored": "Folder {{ folderName }} telah dipulihkan.",
+      "FolderDeletedForever": "Folder {{ folderName }} telah dipadamkan selama-lamanya."
     },
     "explorer": {
       "Delete": "Padamkan ...",

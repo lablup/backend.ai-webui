@@ -608,7 +608,7 @@
       "FolderRenamed": "Zmieniono nazwę folderu",
       "FolderNameMismatched": "Niezgodna nazwa folderu. Sprawdź, czy znak spacji w polu wejściowym, czy nie.",
       "SameFileName": "Wartość wejściowa jest taka sama jak nazwa pliku do aktualizacji. Zmień go na inną nazwę.",
-      "FolderDeleted": "Folder usunięty",
+      "FolderDeleted": "Folder {{ folderName }} został usunięty.",
       "FolderUpdated": "Zaktualizowano opcje folderów",
       "FolderDisconnected": "Folder został odłączony.",
       "FileRenamed": "Zmieniono nazwę pliku",
@@ -638,10 +638,10 @@
       "LeaveFolder": "Zostaw folder",
       "Restore": "Przywrócić",
       "DeleteForever": "Usuń na zawsze",
-      "FolderRestored": "Folder przywrócony",
-      "FolderDeletedForever": "Folder usunięty na zawsze",
+      "FolderRestored": "Folder {{ folderName }} został przywrócony.",
+      "FolderDeletedForever": "Folder {{ folderName }} został usunięty na zawsze.",
       "MoveToTrashBin": "Przenieś do kosza",
-      "MovedToTrashBin": "Przeniesiono do kosza"
+      "MovedToTrashBin": "Folder {{ folderName }} został przeniesiony do kosza."
     },
     "explorer": {
       "Delete": "Kasować...",
