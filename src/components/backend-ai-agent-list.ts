@@ -1225,7 +1225,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         cpu_util: { capacity: 0, current: 0, ratio: 0 },
         mem_util: { capacity: 0, current: 0, ratio: 0 },
       };
-      if (rowData.item.live_stat.node.cuda_util) {
+      if (rowData.item.live_stat?.node?.cuda_util) {
         liveStat = Object.assign(liveStat, {
           cuda_util: { capacity: 0, current: 0, ratio: 0 },
         });
@@ -1247,7 +1247,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         // liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / cudaUtilCapacity) || 0;
         liveStat.cuda_util!.ratio = liveStat.cuda_util!.current / 100 || 0;
       }
-      if (rowData.item.live_stat.node.cuda_mem) {
+      if (rowData.item.live_stat?.node?.cuda_mem) {
         liveStat = Object.assign(liveStat, {
           cuda_mem: { capacity: 0, current: 0, ratio: 0 },
         });
