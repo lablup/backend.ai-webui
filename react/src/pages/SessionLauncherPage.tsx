@@ -43,7 +43,7 @@ import {
   QuestionCircleOutlined,
   RightOutlined,
 } from '@ant-design/icons';
-import { useDebounceFn } from 'ahooks';
+import { useDebounceFn, useLocalStorageState } from 'ahooks';
 import {
   Alert,
   App,
@@ -323,7 +323,7 @@ const SessionLauncherPage = () => {
 
   const startSession = () => {
     // TODO: support inference mode, support import mode
-
+    setTourOpen(false);
     setIsStartingSession(true);
     form
       .validateFields()
@@ -725,10 +725,17 @@ const SessionLauncherPage = () => {
     ],
   };
   const [tourSteps, setTourSteps] = useState<TourStepProps[]>([]);
-  const [tourVisible, setTourVisible] = useState(true);
   const [currentTourStep, setCurrentTourStep] = useState(0);
+
+  const [tourOpen, setTourOpen] = useLocalStorageState(
+    'backendaiwebui.setting.user.NeoSessionLauncherTourGuide',
+    {
+      defaultValue: true,
+    },
+  );
+
   useEffect(() => {
-    if (tourVisible) {
+    if (tourOpen) {
       setTourSteps(
         // @ts-ignore
         sectionSteps[currentStepKey].map((step) => {
@@ -743,7 +750,7 @@ const SessionLauncherPage = () => {
           };
         }),
       );
-      setTourVisible(true);
+      setTourOpen(true);
       setCurrentTourStep(0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1858,8 +1865,8 @@ const SessionLauncherPage = () => {
       /> */}
       </Flex>
       <Tour
-        open={tourVisible}
-        onClose={() => setTourVisible(false)}
+        open={tourOpen}
+        onClose={() => setTourOpen(false)}
         steps={tourSteps}
         current={currentTourStep}
       />
