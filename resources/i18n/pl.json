@@ -555,7 +555,8 @@
     "Status": "Status",
     "NoUserToDisplay": "Brak użytkowników do wyświetlenia",
     "EnableSudoSession": "Włącz sesję sudo",
-    "MainAccessKey": "Główny klucz dostępu"
+    "MainAccessKey": "Główny klucz dostępu",
+    "InactivateTheFollowingUsers": "Dezaktywuj następujących użytkowników."
   },
   "data": {
     "Folders": "Lornetka składana",
@@ -1483,7 +1484,8 @@
     "ForUser": "Dla użytkownika",
     "ForProject": "Dla projektu",
     "QuotaDoesNotSupported": "Ten backend pamięci masowej nie obsługuje limitów.",
-    "BeCarefulToSetUserResourcePolicy": "Zmiana polityki zasobów może mieć wpływ na wszystkich użytkowników korzystających z tej polityki zasobów użytkownika, więc należy jej używać ostrożnie."
+    "BeCarefulToSetUserResourcePolicy": "Zmiana polityki zasobów może mieć wpływ na wszystkich użytkowników korzystających z tej polityki zasobów użytkownika, więc należy jej używać ostrożnie.",
+    "StorageSetting": "Ustawienie przechowywania"
   },
   "totp": {
     "TotpSetupCompleted": "Włączone 2FA",

@@ -553,7 +553,8 @@
     "Status": "Trạng thái",
     "NoUserToDisplay": "Không có người dùng để hiển thị",
     "EnableSudoSession": "Kích hoạt phiên sudo",
-    "MainAccessKey": "Khóa truy cập chính"
+    "MainAccessKey": "Khóa truy cập chính",
+    "InactivateTheFollowingUsers": "Vô hiệu hóa những người dùng sau."
   },
   "data": {
     "Folders": "Thư mục",
@@ -1427,7 +1428,8 @@
     "ForUser": "Dành cho người dùng",
     "ForProject": "Dành cho dự án",
     "QuotaDoesNotSupported": "Phần phụ trợ lưu trữ này không hỗ trợ hạn ngạch.",
-    "BeCarefulToSetUserResourcePolicy": "Việc thay đổi chính sách tài nguyên có thể ảnh hưởng đến tất cả người dùng sử dụng chính sách tài nguyên người dùng đó, vì vậy hãy cẩn thận khi sử dụng chính sách đó."
+    "BeCarefulToSetUserResourcePolicy": "Việc thay đổi chính sách tài nguyên có thể ảnh hưởng đến tất cả người dùng sử dụng chính sách tài nguyên người dùng đó, vì vậy hãy cẩn thận khi sử dụng chính sách đó.",
+    "StorageSetting": "Cài đặt lưu trữ"
   },
   "modelService": {
     "TokenGenerated": "Mã thông báo được tạo",
