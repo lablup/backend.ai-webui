@@ -347,7 +347,7 @@ class Client {
       }
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
-      if (!rawFile && contentType === null) {
+      if (!rawFile && (contentType === null || resp.status === 204 )) {
         body = await resp.blob();
       } else if (
         !rawFile &&
