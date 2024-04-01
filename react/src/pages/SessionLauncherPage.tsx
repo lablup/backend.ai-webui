@@ -74,7 +74,6 @@ import {
 } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { any } from 'prop-types';
 import React, { useEffect, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
