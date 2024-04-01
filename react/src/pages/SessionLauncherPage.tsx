@@ -585,7 +585,7 @@ const SessionLauncherPage = () => {
       {
         title: 'Welcome!',
         description: '새로운 NEO 세션 런처에 오신걸 환영합니다!.',
-        target: () => tourRef.current[0],
+        target: null,
       },
       {
         title: '세션 런처 타입 선택',
