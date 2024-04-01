@@ -255,12 +255,22 @@
       "EnvironmentVariableNamePatternError": "Tên biến phải bắt đầu bằng một chữ cái hoặc dấu gạch dưới và chỉ có thể chứa các chữ cái, số và dấu gạch dưới.",
       "EnvironmentVariableDuplicateName": "Tên biến này đã tồn tại.",
       "Template": "Mẫu phiên",
-      "EnableAutomaticShmem": "Bộ nhớ chia sẻ tự động",
+      "EnableAutomaticMiniumShmem": "Đặt bộ nhớ chia sẻ tối thiểu",
       "PreOpenPortMaxCountLimit": "Bạn có thể thiết lập tối đa {{count}} cổng mở trước.",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Chỉ cho phép số nguyên khi kích thước cụm không nhỏ hơn 2.",
       "StartAfter": "Bắt đầu sau:",
-      "StartTimeDoesNotApply": "Nếu thời gian bắt đầu không được đặt, nó sẽ không được áp dụng."
+      "StartTimeDoesNotApply": "Nếu thời gian bắt đầu không được đặt, nó sẽ không được áp dụng.",
+      "MiniumAllocation": "Yêu cầu tối thiểu",
+      "MiniumAllocationTooltip": "Chọn làm yêu cầu tối thiểu cho môi trường chạy đã chọn",
+      "PreviousLauncher": "Trước",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Bạn đang sử dụng trình khởi chạy phiên \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Bỏ qua để xem xét",
+      "InteractiveModeDesc": "cho phép bạn tạo, kiểm tra và chạy mã tương tác thông qua sổ ghi chép jupyter, mã studio trực quan, v.v.",
+      "BatchModeDesc": "Bạn có thể chạy mã của mình với nhiều nút",
+      "AddEnvironmentVariable": "Thêm biến môi trường",
+      "EnvironmentVariableValueRequired": "Vui lòng nhập một giá trị."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",
@@ -318,7 +328,11 @@
       "SluggedStrings": "Chuỗi bị trượt (>3 ký tự)",
       "SessionNameAlreadyExist": "Tên phiên đã tồn tại",
       "SessionNameTooLong64": "Vui lòng nhập 64 ký tự trở xuống.",
-      "PleaseFollowSessionNameRule": "Vui lòng nhập kết hợp ít nhất 4 chữ cái, số, '.', '_' và '-'."
+      "PleaseFollowSessionNameRule": "Vui lòng nhập kết hợp ít nhất 4 chữ cái, số, '.', '_' và '-'.",
+      "SessionNameTooShort": "Vui lòng nhập ít nhất 4 ký tự.",
+      "SessionNameShouldStartWith": "Nó phải bắt đầu bằng một chữ cái trong bảng chữ cái, một số hoặc '_'.",
+      "SessionNameShouldEndWith": "Nó phải kết thúc bằng một chữ cái trong bảng chữ cái, một số hoặc '_'.",
+      "SessionNameInvalidCharacter": "Phần giữa của tên chỉ được chứa các chữ cái trong bảng chữ cái, số và '_'."
     },
     "Interactive": "Tương tác",
     "Batch": "Lô hàng",
@@ -412,7 +426,9 @@
     "EnterManually": "Nhập thủ công",
     "Download": "Tải xuống",
     "Clone": "Dòng vô tính",
-    "Config": "Cấu hình"
+    "Config": "Cấu hình",
+    "Next": "Kế tiếp",
+    "Previous": "Trước"
   },
   "agent": {
     "Endpoint": "Điểm cuối",

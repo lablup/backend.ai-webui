@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { navigate } from '../backend-ai-app';
 import '../plastics/lablup-piechart/lablup-piechart';
@@ -501,6 +501,7 @@ export default class BackendAISummary extends BackendAIPage {
                   location="summary"
                   id="session-launcher"
                   ?active="${this.active === true}"
+                  ?allowNEOSessionLauncher="${true}"
                 ></backend-ai-session-launcher>
               </div>
               <div class="horizontal center-justified layout wrap">

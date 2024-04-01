@@ -115,11 +115,21 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault]);
 
+  const searchProps: Pick<
+    SelectProps,
+    'onSearch' | 'searchValue' | 'showSearch'
+  > = selectProps.showSearch
+    ? {
+        onSearch: setControllableSearchValue,
+        searchValue: controllableSearchValue,
+        showSearch: true,
+      }
+    : {};
+
   return (
     <Select
       defaultActiveFirstOption
-      onSearch={setControllableSearchValue}
-      searchValue={controllableSearchValue}
+      {...searchProps}
       defaultValue={autoSelectDefault ? autoSelectedOption : undefined}
       onDropdownVisibleChange={(open) => {
         if (open) {

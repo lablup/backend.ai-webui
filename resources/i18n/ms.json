@@ -255,12 +255,22 @@
       "EnvironmentVariableNamePatternError": "Nama pembolehubah mesti bermula dengan huruf atau garis bawah, dan hanya boleh mengandungi huruf, nombor dan garis bawah.",
       "EnvironmentVariableDuplicateName": "Nama pembolehubah ini sudah wujud.",
       "Template": "Templat Sesi",
-      "EnableAutomaticShmem": "Memori dikongsi automatik",
+      "EnableAutomaticMiniumShmem": "Tetapkan memori kongsi minimum",
       "PreOpenPortMaxCountLimit": "Anda boleh menyediakan kepada {{count}} port pra-buka.",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Hanya integer dibenarkan apabila saiz kelompok tidak kurang daripada 2.",
       "StartAfter": "Mulakan selepas:",
-      "StartTimeDoesNotApply": "Jika masa mula tidak ditetapkan, ia tidak terpakai."
+      "StartTimeDoesNotApply": "Jika masa mula tidak ditetapkan, ia tidak terpakai.",
+      "MiniumAllocation": "Keperluan minimum",
+      "MiniumAllocationTooltip": "Pilih sebagai keperluan minimum untuk persekitaran berjalan yang dipilih",
+      "PreviousLauncher": "Sebelumnya",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Anda menggunakan pelancar sesi \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Langkau ke semakan",
+      "InteractiveModeDesc": "membolehkan anda membuat, menguji dan menjalankan kod secara interaktif melalui buku nota jupyter, kod studio visual, dsb.",
+      "BatchModeDesc": "Anda boleh menjalankan kod anda dengan berbilang nod",
+      "AddEnvironmentVariable": "Tambah pembolehubah persekitaran",
+      "EnvironmentVariableValueRequired": "Sila masukkan nilai."
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",
@@ -318,7 +328,11 @@
       "SluggedStrings": "Rentetan slugged (>3 aksara)",
       "SessionNameAlreadyExist": "Nama sesi sudah wujud",
       "SessionNameTooLong64": "Sila masukkan 64 aksara atau kurang.",
-      "PleaseFollowSessionNameRule": "Sila masukkan gabungan sekurang-kurangnya 4 huruf, nombor, '.', '_' dan '-'."
+      "PleaseFollowSessionNameRule": "Sila masukkan gabungan sekurang-kurangnya 4 huruf, nombor, '.', '_' dan '-'.",
+      "SessionNameTooShort": "Sila masukkan sekurang-kurangnya 4 aksara.",
+      "SessionNameShouldStartWith": "Ia mesti bermula dengan huruf abjad, nombor atau '_'.",
+      "SessionNameShouldEndWith": "Ia mesti berakhir dengan huruf abjad, nombor atau '_'.",
+      "SessionNameInvalidCharacter": "Bahagian tengah nama hanya boleh mengandungi huruf abjad, nombor dan '_'."
     },
     "Interactive": "Interaktif",
     "Batch": "Kumpulan",
@@ -412,7 +426,9 @@
     "EnterManually": "Masukkan Secara Manual",
     "Download": "Muat turun",
     "Clone": "Klon",
-    "Config": "Konfigurasi"
+    "Config": "Konfigurasi",
+    "Next": "Seterusnya",
+    "Previous": "Sebelumnya"
   },
   "agent": {
     "Endpoint": "Titik Akhir",

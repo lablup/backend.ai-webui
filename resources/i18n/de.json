@@ -256,11 +256,21 @@
       "EnvironmentVariableNamePatternError": "Der Variablenname muss mit einem Buchstaben oder Unterstrich beginnen und darf nur Buchstaben, Zahlen und Unterstriche enthalten.",
       "EnvironmentVariableDuplicateName": "Ein Variablenname, der bereits existiert.",
       "Template": "Sitzungsvorlage",
-      "EnableAutomaticShmem": "Automatischer gemeinsamer Speicher",
+      "EnableAutomaticMiniumShmem": "Minimalen gemeinsamen Speicher festlegen",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Nur Ganzzahlen sind zulässig, wenn die Clustergröße nicht weniger als 2 beträgt.",
       "StartAfter": "Beginnen Sie nach:",
-      "StartTimeDoesNotApply": "Wenn die Startzeit nicht festgelegt ist, gilt sie nicht."
+      "StartTimeDoesNotApply": "Wenn die Startzeit nicht festgelegt ist, gilt sie nicht.",
+      "MiniumAllocation": "Mindestanforderungen",
+      "MiniumAllocationTooltip": "Wählen Sie als Mindestanforderung für die ausgewählte Betriebsumgebung",
+      "PreviousLauncher": "Vorherige",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Sie verwenden den \"{{launcher}}\"-Sitzungsstarter.",
+      "SkipToConfirmAndLaunch": "Zur Bewertung springen",
+      "InteractiveModeDesc": "ermöglicht das interaktive Erstellen, Testen und Ausführen von Code über Jupyter Notebook, Visual Studio Code usw.",
+      "BatchModeDesc": "Sie können Ihren Code mit mehreren Knoten und Clustern ausführen, um Ihre Idee zu skalieren",
+      "AddEnvironmentVariable": "Umgebungsvariablen hinzufügen",
+      "EnvironmentVariableValueRequired": "Bitte geben Sie einen Wert ein."
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",
@@ -318,7 +328,11 @@
       "SluggedStrings": "Geschliffene Zeichenfolgen (>3 Zeichen)",
       "SessionNameAlreadyExist": "Sitzungsname existiert bereits",
       "SessionNameTooLong64": "Bitte geben Sie maximal 64 Zeichen ein.",
-      "PleaseFollowSessionNameRule": "Bitte geben Sie eine Kombination aus mindestens 4 Buchstaben, Zahlen, „.“, „_“ und „-“ ein."
+      "PleaseFollowSessionNameRule": "Bitte geben Sie eine Kombination aus mindestens 4 Buchstaben, Zahlen, „.“, „_“ und „-“ ein.",
+      "SessionNameTooShort": "Bitte geben Sie mindestens 4 Zeichen ein.",
+      "SessionNameShouldStartWith": "Er muss mit einem Buchstaben des Alphabets, einer Zahl oder '_' beginnen.",
+      "SessionNameShouldEndWith": "Er muss mit einem Buchstaben des Alphabets, einer Zahl oder '_' enden.",
+      "SessionNameInvalidCharacter": "Die Mitte eines Namens darf nur Buchstaben des Alphabets, Zahlen und '_' enthalten."
     },
     "Interactive": "Interaktiv",
     "Batch": "Stapel",
@@ -412,7 +426,9 @@
     "EnterManually": "Manuell eingeben",
     "Download": "Herunterladen",
     "Clone": "Klonen",
-    "Config": "Konfigurieren Sie"
+    "Config": "Konfigurieren Sie",
+    "Next": "Weiter",
+    "Previous": "Vorherige"
   },
   "agent": {
     "Endpoint": "Endpunkt",
