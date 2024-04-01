@@ -1,5 +1,5 @@
 import { useWebUINavigate } from '../hooks';
-import { useBAINotification } from '../hooks/useBAINotification';
+import { useBAINotificationState } from '../hooks/useBAINotification';
 import BAINotificationItem from './BAINotificationItem';
 import { MoreOutlined } from '@ant-design/icons';
 import {
@@ -26,7 +26,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
 
   const webuiNavigate = useWebUINavigate();
 
-  const [notifications, { clearAllNotifications }] = useBAINotification();
+  const [notifications, { clearAllNotifications }] = useBAINotificationState();
   const [selectedCategory, setSelectedCategory] =
     useState<NotificationCategory>('all');
 

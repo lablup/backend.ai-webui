@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import JsonToCsv from '../lib/json_to_csv';
 import {
@@ -619,6 +619,7 @@ export default class BackendAISessionView extends BackendAIPage {
                   location="session"
                   id="session-launcher"
                   ?active="${this.active === true}"
+                  ?allowNEOSessionLauncher="${true}"
                 ></backend-ai-session-launcher>
               </div>
             </h3>

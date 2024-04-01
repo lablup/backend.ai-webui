@@ -1,4 +1,7 @@
-import { useBAINotification } from '../hooks/useBAINotification';
+import {
+  useBAINotificationEffect,
+  useBAINotificationState,
+} from '../hooks/useBAINotification';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
 import { BellOutlined } from '@ant-design/icons';
 import { Badge, Button } from 'antd';
@@ -14,7 +17,8 @@ export const isOpenDrawerState = atom({
 });
 
 const BAINotificationButton: React.FC<Props> = ({ ...props }) => {
-  const [notifications, { upsertNotification }] = useBAINotification();
+  const [notifications, { upsertNotification }] = useBAINotificationState();
+  useBAINotificationEffect();
 
   const [isOpenDrawer, setIsOpenDrawer] = useRecoilState(isOpenDrawerState);
   useEffect(() => {

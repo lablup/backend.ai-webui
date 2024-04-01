@@ -255,11 +255,21 @@
       "EnvironmentVariableNamePatternError": "O nome da variável deve começar com uma letra ou um sublinhado e só pode conter letras, números e sublinhados.",
       "EnvironmentVariableDuplicateName": "Um nome de variável que já existe.",
       "Template": "Modelo de sessão",
-      "EnableAutomaticShmem": "Memória partilhada automática",
+      "EnableAutomaticMiniumShmem": "Definir a memória partilhada mínima",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Somente números inteiros são permitidos quando o tamanho do cluster não é menor que 2.",
       "StartAfter": "Comece depois:",
-      "StartTimeDoesNotApply": "Se a hora de início não estiver definida, ela não se aplica."
+      "StartTimeDoesNotApply": "Se a hora de início não estiver definida, ela não se aplica.",
+      "MiniumAllocation": "Requisitos mínimos",
+      "MiniumAllocationTooltip": "Selecionar como requisito mínimo para o ambiente de execução selecionado",
+      "PreviousLauncher": "Anterior",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Está a utilizar o iniciador de sessão \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Saltar para a revisão",
+      "InteractiveModeDesc": "permite-lhe criar, testar e executar código de forma interactiva através do jupyter notebook, visual studio code, etc.",
+      "BatchModeDesc": "Pode executar o seu código com vários nós e clusters para escalar a sua ideia",
+      "AddEnvironmentVariable": "Adicionar variáveis de ambiente",
+      "EnvironmentVariableValueRequired": "Introduzir um valor."
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",
@@ -317,7 +327,11 @@
       "SluggedStrings": "Cadeias de caracteres com slugged (>3 caracteres)",
       "SessionNameAlreadyExist": "O nome da sessão já existe",
       "SessionNameTooLong64": "Insira 64 caracteres ou menos.",
-      "PleaseFollowSessionNameRule": "Insira uma combinação de pelo menos 4 letras, números, '.', '_' e '-'."
+      "PleaseFollowSessionNameRule": "Insira uma combinação de pelo menos 4 letras, números, '.', '_' e '-'.",
+      "SessionNameTooShort": "Introduza pelo menos 4 caracteres.",
+      "SessionNameShouldStartWith": "Deve começar por uma letra do alfabeto, um número ou \"_\".",
+      "SessionNameShouldEndWith": "Deve terminar com uma letra do alfabeto, um número ou \"_\".",
+      "SessionNameInvalidCharacter": "O meio de um nome só pode conter letras do alfabeto, números e '_'."
     },
     "Interactive": "Interativo",
     "Batch": "Lote",
@@ -411,7 +425,9 @@
     "EnterManually": "Introduzir manualmente",
     "Download": "Descarregar",
     "Clone": "Clone",
-    "Config": "Configuração"
+    "Config": "Configuração",
+    "Next": "Seguinte",
+    "Previous": "Anterior"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -537,7 +553,8 @@
     "Status": "Estado",
     "NoUserToDisplay": "Nenhum utilizador a apresentar",
     "EnableSudoSession": "Habilitar sessão sudo",
-    "MainAccessKey": "Chave de acesso principal"
+    "MainAccessKey": "Chave de acesso principal",
+    "InactivateTheFollowingUsers": "Inative os seguintes usuários."
   },
   "data": {
     "Folders": "Pastas",
@@ -590,7 +607,7 @@
       "FolderRenamed": "Pasta renomeada",
       "FolderNameMismatched": "Nome da pasta incompatível. Verifique se o caractere de espaço no campo de entrada ou não.",
       "SameFileName": "O valor de entrada é igual ao nome do arquivo a ser atualizado. Por favor, mude para um nome diferente.",
-      "FolderDeleted": "Pasta excluída",
+      "FolderDeleted": "A pasta {{ folderName }} foi excluída.",
       "FolderUpdated": "Opção (ões) de pasta atualizada (s)",
       "FolderDisconnected": "A pasta foi desconectada.",
       "FileRenamed": "Arquivo renomeado",
@@ -617,7 +634,13 @@
       "CloneFolder": "Clonar pasta",
       "ShareFolder": "Partilhar pasta",
       "ModifyPermissions": "Modificar permissões",
-      "LeaveFolder": "Pasta de saída"
+      "LeaveFolder": "Pasta de saída",
+      "DeleteForever": "Apagar para sempre",
+      "Restore": "Restaurar",
+      "FolderRestored": "A pasta {{ folderName }} foi restaurada.",
+      "FolderDeletedForever": "A pasta {{ folderName }} foi excluída definitivamente.",
+      "MoveToTrashBin": "Mover para a lixeira",
+      "MovedToTrashBin": "A pasta {{ folderName }} foi movida para a lixeira."
     },
     "explorer": {
       "Delete": "Excluir...",
@@ -715,14 +738,16 @@
       "CannotBeUndone": "AVISO: isso não pode ser desfeito!",
       "LogDeletion": "Tem certeza de que deseja excluir todas as mensagens de log?",
       "WillBeAppliedToNewSessions": "Esta atualização será aplicada a novas sessões.",
-      "Required": "Necessário"
+      "Required": "Necessário",
+      "DeleteForeverDesc": "AVISO: os itens selecionados serão excluídos para sempre e você não poderá restaurá-los."
     },
     "ask": {
       "DoYouWantToProceed": "Você quer prosseguir?"
     },
     "title": {
       "LetsDouble-Check": "Vamos verificar novamente",
-      "Notice": "Aviso"
+      "Notice": "Aviso",
+      "DeleteForever": "Apagar para sempre?"
     },
     "ErrorOccurred": "Ocorreu um erro",
     "error": {
@@ -1412,7 +1437,7 @@
     "ForProject": "Para o projeto",
     "QuotaDoesNotSupported": "Este backend de armazenamento não suporta quotas.",
     "BeCarefulToSetUserResourcePolicy": "A alteração de uma política de recursos pode afetar todos os utilizadores que utilizam essa política de recursos do utilizador, pelo que deve ser utilizada com cuidado.",
-    "StorageSetting": ""
+    "StorageSetting": "Configuração de armazenamento"
   },
   "modelService": {
     "TokenGenerated": "Token gerado",
