@@ -255,13 +255,23 @@
       "EnvironmentVariableNamePatternError": "Nazwa zmiennej musi zaczynać się od litery lub podkreślenia i może zawierać tylko litery, cyfry i podkreślenia.",
       "EnvironmentVariableDuplicateName": "Nazwa zmiennej, która już istnieje.",
       "Template": "Szablon sesji",
-      "EnableAutomaticShmem": "Automatyczna pamięć współdzielona",
+      "EnableAutomaticMiniumShmem": "Ustawienie minimalnej ilości pamięci współdzielonej",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
       "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Jeśli rozmiar klastra jest nie mniejszy niż 2, dozwolona jest tylko liczba całkowita.",
       "StartAfter": "Rozpocznij po:",
-      "StartTimeDoesNotApply": "Jeśli godzina rozpoczęcia nie jest ustawiona, nie ma ona zastosowania."
+      "StartTimeDoesNotApply": "Jeśli godzina rozpoczęcia nie jest ustawiona, nie ma ona zastosowania.",
+      "MiniumAllocation": "Minimalne wymagania",
+      "MiniumAllocationTooltip": "Wybierz jako minimalne wymaganie dla wybranego środowiska uruchomieniowego",
+      "PreviousLauncher": "Poprzedni",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Używasz programu uruchamiającego sesję \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Przejdź do recenzji",
+      "InteractiveModeDesc": "umożliwia interaktywne tworzenie, testowanie i uruchamianie kodu za pomocą notatnika jupyter, kodu visual studio itp.",
+      "BatchModeDesc": "Możesz uruchomić swój kod z wieloma węzłami i klastrami, aby skalować swój pomysł",
+      "AddEnvironmentVariable": "Dodaj zmienne środowiskowe",
+      "EnvironmentVariableValueRequired": "Wprowadź wartość."
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",
@@ -319,7 +329,11 @@
       "SluggedStrings": "Ucięte ciągi znaków (>3 znaki)",
       "SessionNameAlreadyExist": "Nazwa sesji już istnieje",
       "SessionNameTooLong64": "Wprowadź maksymalnie 64 znaki.",
-      "PleaseFollowSessionNameRule": "Wprowadź kombinację co najmniej 4 liter, cyfr, „.”, „_” i „-”."
+      "PleaseFollowSessionNameRule": "Wprowadź kombinację co najmniej 4 liter, cyfr, „.”, „_” i „-”.",
+      "SessionNameTooShort": "Wprowadź co najmniej 4 znaki.",
+      "SessionNameShouldStartWith": "Musi zaczynać się od litery alfabetu, cyfry lub znaku \"_\".",
+      "SessionNameShouldEndWith": "Musi kończyć się literą alfabetu, cyfrą lub znakiem \"_\".",
+      "SessionNameInvalidCharacter": "Środek nazwy może zawierać tylko litery alfabetu, cyfry i \"_\"."
     },
     "Interactive": "Interaktywny",
     "Batch": "Partia",
@@ -413,7 +427,9 @@
     "EnterManually": "Wprowadź ręcznie",
     "Download": "Pobierz",
     "Clone": "Klon",
-    "Config": "Konfiguracja"
+    "Config": "Konfiguracja",
+    "Next": "Następny",
+    "Previous": "Poprzedni"
   },
   "agent": {
     "Endpoint": "Punkt końcowy",

@@ -269,10 +269,20 @@
       "EnvironmentVariableNamePatternError": "Variable name must start with a letter or underscore, and can only contain letters, numbers, and underscores.",
       "EnvironmentVariableDuplicateName": "A variable name that already exists.",
       "Template": "Session Template",
-      "EnableAutomaticShmem": "Automatic shared memory",
+      "EnableAutomaticMiniumShmem": "Set minimum shared memory",
       "PreOpenPortMaxCountLimit_plural": "PreOpenPortMaxCountLimit",
       "StartAfter": "Start after: ",
-      "StartTimeDoesNotApply": "If the start time is not set, it doesn't apply."
+      "StartTimeDoesNotApply": "If the start time is not set, it doesn't apply.",
+      "MiniumAllocation": "Minimum requirements",
+      "MiniumAllocationTooltip": "Select as the minimum requirement for the selected running environment",
+      "PreviousLauncher": "Previous",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "You are using the \"{{launcher}}\" session launcher.",
+      "SkipToConfirmAndLaunch": "Skip to review",
+      "BatchModeDesc": "runs your code with multiple node & clusters to scale your idea",
+      "InteractiveModeDesc": "allows you to create, test and run code interactively via jupyter notebook, visual studio code, etc.",
+      "AddEnvironmentVariable": "Add environment variables",
+      "EnvironmentVariableValueRequired": "Please enter a value."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -351,7 +361,11 @@
       "EnterValidSessionName": "Enter valid session name",
       "SessionNameAlreadyExist": "Session name already exists",
       "SessionNameTooLong64": "Please enter 64 characters or less.",
-      "PleaseFollowSessionNameRule": "Please enter a combination of at least 4 letters, numbers, '.', '_', and '-'."
+      "PleaseFollowSessionNameRule": "Please enter a combination of at least 4 letters, numbers, '.', '_', and '-'.",
+      "SessionNameTooShort": "Please enter at least 4 characters.",
+      "SessionNameShouldStartWith": "It must start with an alphabet letter, a number, or '_'.",
+      "SessionNameShouldEndWith": "It must end with an alphabet letter, a number, or '_'.",
+      "SessionNameInvalidCharacter": "The middle of a name can only contain alphabet letters, numbers, and '_'."
     },
     "EnvironmentInfo": "Environment Info",
     "DownloadingSessionLogs": "Downloading session logs.",
@@ -478,7 +492,9 @@
     "Unset": "Unset",
     "Download": "Download",
     "Clone": "Clone",
-    "Config": "Config"
+    "Config": "Config",
+    "Next": "Next",
+    "Previous": "Previous"
   },
   "agent": {
     "Endpoint": "Endpoint",

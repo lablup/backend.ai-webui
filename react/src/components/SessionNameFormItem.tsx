@@ -1,11 +1,12 @@
 import { Form, FormItemProps, Input } from 'antd';
+import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface SessionNameFormItemProps extends FormItemProps {}
 
 export interface SessionNameFormItemValue {
-  name: string;
+  sessionName: string;
 }
 const SessionNameFormItem: React.FC<SessionNameFormItemProps> = ({
   ...formItemProps
@@ -15,22 +16,47 @@ const SessionNameFormItem: React.FC<SessionNameFormItemProps> = ({
   return (
     <Form.Item
       label={t('session.launcher.SessionName')}
-      name="name"
+      name="sessionName"
+      // Original rule : /^(?=.{4,64}$)\w[\w.-]*\w$/
+      // https://github.com/lablup/backend.ai/blob/main/src/ai/backend/manager/api/session.py#L355-L356
       rules={[
+        {
+          min: 4,
+          message: t('session.Validation.SessionNameTooShort'),
+        },
         {
           max: 64,
           message: t('session.Validation.SessionNameTooLong64'),
         },
         {
-          pattern: /^(?:[a-zA-Z0-9][-a-zA-Z0-9._]{2,}[a-zA-Z0-9])?$/,
-          message: t(
-            'session.Validation.PleaseFollowSessionNameRule',
-          ).toString(),
+          validator(f, value) {
+            if (_.isEmpty(value)) {
+              return Promise.resolve();
+            }
+            if (!/^\w/.test(value)) {
+              return Promise.reject(
+                t('session.Validation.SessionNameShouldStartWith'),
+              );
+            }
+
+            if (!/^[\w.-]*$/.test(value)) {
+              return Promise.reject(
+                t('session.Validation.SessionNameInvalidCharacter'),
+              );
+            }
+
+            if (!/\w$/.test(value) && value.length >= 4) {
+              return Promise.reject(
+                t('session.Validation.SessionNameShouldEndWith'),
+              );
+            }
+            return Promise.resolve();
+          },
         },
       ]}
       {...formItemProps}
     >
-      <Input allowClear />
+      <Input allowClear autoComplete="off" />
     </Form.Item>
   );
 };
