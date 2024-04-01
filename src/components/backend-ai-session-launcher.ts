@@ -1,7 +1,8 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
+import { navigate } from '../backend-ai-app';
 import '../plastics/lablup-shields/lablup-shields';
 import {
   IronFlex,
@@ -9,6 +10,7 @@ import {
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { store } from '../store';
 import './backend-ai-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
@@ -228,6 +230,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({ type: Boolean }) isExceedMaxCountForPreopenPorts = false;
   @property({ type: Number }) maxCountForPreopenPorts = 10;
   @property({ type: Boolean }) allowCustomResourceAllocation = true;
+  @property({ type: Boolean }) allowNEOSessionLauncher = false;
 
   @query('#image-name') manualImageName;
   @query('#version') version_selector!: Select;
@@ -1445,6 +1448,29 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Else, launch session dialog.
    * */
   async _launchSessionDialog() {
+    const shouldNeo = !globalThis.backendaioptions.get(
+      'use_2409_session_launcher',
+      false,
+    );
+
+    if (this.allowNEOSessionLauncher === true && shouldNeo) {
+      const url =
+        '/session/start?formValues=' +
+        encodeURIComponent(
+          JSON.stringify({
+            resourceGroup: this.resourceBroker.scaling_group,
+          }),
+        );
+      store.dispatch(navigate(decodeURIComponent(url), {}));
+
+      document.dispatchEvent(
+        new CustomEvent('react-navigate', {
+          detail: url,
+        }),
+      );
+      return;
+    }
+
     if (
       typeof globalThis.backendaiclient === 'undefined' ||
       globalThis.backendaiclient === null ||

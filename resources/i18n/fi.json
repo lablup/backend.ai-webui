@@ -130,7 +130,9 @@
     "Yes": "Kyllä",
     "Clone": "Klooni",
     "Download": "ladata",
-    "Config": "Config"
+    "Config": "Config",
+    "Next": "Seuraava",
+    "Previous": "Edellinen"
   },
   "credential": {
     "AccessKeyOptional": "Pääsyavain (valinnainen)",
@@ -997,7 +999,11 @@
       "SessionNameRequired": "Istunnon nimi vaaditaan",
       "SluggedStrings": "Slugged-merkkijonot (>3 merkkiä)",
       "SessionNameTooLong64": "Anna enintään 64 merkkiä.",
-      "PleaseFollowSessionNameRule": "Kirjoita vähintään 4 kirjaimen, numeroiden, '.', '_' ja '-' yhdistelmä."
+      "PleaseFollowSessionNameRule": "Kirjoita vähintään 4 kirjaimen, numeroiden, '.', '_' ja '-' yhdistelmä.",
+      "SessionNameTooShort": "Kirjoita vähintään 4 merkkiä.",
+      "SessionNameShouldStartWith": "Sen on alettava aakkosilla, numerolla tai '_'.",
+      "SessionNameShouldEndWith": "Sen on päätyttävä aakkosiin, numeroon tai '_'.",
+      "SessionNameInvalidCharacter": "Nimen keskellä voi olla vain aakkosia, numeroita ja '_'."
     },
     "XRDPconnection": "RDP-yhteys",
     "applauncher": {
@@ -1149,12 +1155,22 @@
       "EnvironmentVariableNamePatternError": "Muuttujan nimen on alettava kirjaimella tai alleviivauksella, ja se voi sisältää vain kirjaimia, numeroita ja alleviivauksia.",
       "EnvironmentVariableDuplicateName": "Muuttujan nimi, joka on jo olemassa.",
       "ErrorCanNotExceedRemaining": "Ei voida asettaa suuremmaksi kuin jäljellä olevat resurssit ({{amount}}).",
-      "EnableAutomaticShmem": "Automaattinen jaettu muisti",
+      "EnableAutomaticMiniumShmem": "Aseta jaetun muistin vähimmäismäärä",
       "Template": "Istuntomalli",
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Vain kokonaisluku on sallittu, kun klusterin koko on vähintään 2.",
       "StartAfter": "Aloita sen jälkeen:",
-      "StartTimeDoesNotApply": "Jos aloitusaikaa ei ole asetettu, se ei ole voimassa."
+      "StartTimeDoesNotApply": "Jos aloitusaikaa ei ole asetettu, se ei ole voimassa.",
+      "MiniumAllocation": "Vähimmäisvaatimukset",
+      "MiniumAllocationTooltip": "Valitse valitun käyttöympäristön vähimmäisvaatimukseksi seuraavat tiedot",
+      "PreviousLauncher": "Edellinen",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Käytät \"{{launcher}}\"-istunnon käynnistintä.",
+      "SkipToConfirmAndLaunch": "Siirry arvosteluun",
+      "InteractiveModeDesc": "voit luoda, testata ja ajaa koodia vuorovaikutteisesti jupyter notebookin, visual studio code -ohjelman jne. avulla.",
+      "BatchModeDesc": "Voit ajaa koodisi useiden solmujen ja klustereiden kanssa ideasi skaalaamiseksi.",
+      "AddEnvironmentVariable": "Lisää ympäristömuuttujia",
+      "EnvironmentVariableValueRequired": "Anna arvo."
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",
