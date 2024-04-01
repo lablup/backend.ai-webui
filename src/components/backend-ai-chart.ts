@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../plastics/chart-js';
 import {
@@ -8,8 +8,8 @@ import {
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
 import { BackendAiStyles } from './backend-ai-general-styles';
-import format from 'date-fns/esm/format';
-import { CSSResultGroup, html, LitElement } from 'lit';
+import { format } from 'date-fns';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 const ByteConverter = {
@@ -199,7 +199,7 @@ export default class BackendAIChart extends LitElement {
   render() {
     // language=HTML
     return html`
-      <div class="layout vertical center">
+      <div class="layout vertical center chart-container">
         <div id="ctn-chartjs${this.idx}">
           ${this.type == 'bar'
             ? html`
@@ -241,7 +241,17 @@ export default class BackendAIChart extends LitElement {
   }
 
   static get styles(): CSSResultGroup {
-    return [BackendAiStyles, IronFlex, IronFlexAlignment];
+    return [
+      BackendAiStyles,
+      IronFlex,
+      IronFlexAlignment,
+      css`
+        .chart-container {
+          color: var(--token-colorText);
+          background-color: var(--token-colorBgContainer);
+        }
+      `,
+    ];
   }
 
   updated(changedProps) {

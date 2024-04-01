@@ -1,7 +1,8 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
+import { navigate } from '../backend-ai-app';
 import '../plastics/lablup-piechart/lablup-piechart';
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -9,6 +10,7 @@ import {
   IronFlexAlignment,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { store } from '../store';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import { default as PainKiller } from './backend-ai-painkiller';
@@ -146,24 +148,6 @@ export default class BackendAISummary extends BackendAIPage {
           font-size: 48px;
         }
 
-        a,
-        a:visited {
-          color: #222222;
-        }
-
-        a:hover {
-          color: #3e872d;
-        }
-
-        mwc-button,
-        mwc-button[unelevated],
-        mwc-button[outlined] {
-          background-image: none;
-          --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-theme-on-primary: var(--general-button-color);
-          --mdc-typography-font-family: var(--general-font-family);
-        }
-
         #session-launcher {
           --component-width: 284px;
         }
@@ -237,45 +221,17 @@ export default class BackendAISummary extends BackendAIPage {
         #download-app-os-select-box {
           height: 80px;
           padding-top: 20px;
-          padding-left: 20px;
-          background-color: #f6f6f6;
-          margin-bottom: 15px;
+          background-color: var(--token-colorBgContainer, #f6f6f6);
+          margin-bottom: var(--token-marginSM);
         }
 
         #download-app-os-select-box mwc-select {
-          width: 305px;
+          width: 100%;
           height: 58px;
-          border: 0.1em solid #ccc;
-          font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-size: 14px;
-          --mdc-typography-subtitle1-font-color: rgb(24, 24, 24);
-          --mdc-typography-subtitle1-font-weight: 400;
-          --mdc-typography-subtitle1-line-height: 16px;
-          --mdc-select-fill-color: rgba(255, 255, 255, 1);
-          --mdc-select-label-ink-color: rgba(24, 24, 24, 1);
-          --mdc-select-disabled-ink-color: rgba(24, 24, 24, 1);
-          --mdc-select-dropdown-icon-color: rgba(24, 24, 24, 1);
-          --mdc-select-focused-dropdown-icon-color: rgba(24, 24, 24, 0.87);
-          --mdc-select-disabled-dropdown-icon-color: rgba(24, 24, 24, 0.87);
-          --mdc-select-idle-line-color: transparent;
-          --mdc-select-hover-line-color: transparent;
-          --mdc-select-ink-color: rgb(24, 24, 24);
-          --mdc-select-outlined-idle-border-color: rgba(24, 24, 24, 0.42);
-          --mdc-select-outlined-hover-border-color: rgba(24, 24, 24, 0.87);
-          --mdc-theme-surface: white;
-          --mdc-list-vertical-padding: 5px;
-          --mdc-list-side-padding: 10px;
-          --mdc-menu-item-height: 28px;
-          --mdc-list-item__primary-text: {
-            height: 20px;
-            color: #222222;
-          };
-          margin-bottom: 5px;
         }
 
         lablup-activity-panel.inner-panel:hover {
-          --card-background-color: var(--general-sidepanel-color);
+          --card-background-color: var(--general-background-color);
         }
 
         @media screen and (max-width: 750px) {
@@ -283,6 +239,27 @@ export default class BackendAISummary extends BackendAIPage {
             text-align: left;
             width: 250px;
           }
+        }
+
+        button.link-button {
+          background: none;
+          color: var(--token-colorTextSecondary);
+          border: none;
+          padding: 0;
+          font: inherit;
+          cursor: pointer;
+          outline: inherit;
+        }
+        button.link-button > i {
+          color: var(--token-colorTextSecondary, #5b5b5b);
+          margin: 10px;
+        }
+        button.link-button > span {
+          max-width: 70px;
+          color: var(--token-colorTextSecondary, #838383);
+        }
+        button.link-button:hover {
+          color: var(--token-colorPrimary, #3e872d);
         }
       `,
     ];
@@ -482,16 +459,33 @@ export default class BackendAISummary extends BackendAIPage {
     window.open(downloadLink, '_blank');
   }
 
+  /**
+   *
+   * @param {string} url - page to redirect from the current page.
+   * @param {string} search
+   */
+  _moveTo(url = '', search: string | undefined = undefined) {
+    const page = url !== '' ? url : 'summary';
+    // globalThis.history.pushState({}, '', page);
+    store.dispatch(navigate(decodeURIComponent(page), {}));
+
+    document.dispatchEvent(
+      new CustomEvent('react-navigate', {
+        detail: {
+          pathname: url,
+          search: search,
+        },
+      }),
+    );
+  }
+
   render() {
     // language=HTML
     return html`
       <link rel="stylesheet" href="/resources/fonts/font-awesome-all.min.css" />
       <link rel="stylesheet" href="resources/custom.css" />
-      <div style="margin:-14px;margin-bottom:0px;">
-        <backend-ai-react-announcement-alert></backend-ai-react-announcement-alert>
-      </div>
       <div class="item" elevation="1" class="vertical layout center wrap flex">
-        <div class="horizontal wrap layout">
+        <div class="horizontal wrap layout" style="gap:24px;">
           <lablup-activity-panel
             title="${_t('summary.StartMenu')}"
             elevation="1"
@@ -507,34 +501,41 @@ export default class BackendAISummary extends BackendAIPage {
                   location="summary"
                   id="session-launcher"
                   ?active="${this.active === true}"
+                  ?allowNEOSessionLauncher="${true}"
                 ></backend-ai-session-launcher>
               </div>
               <div class="horizontal center-justified layout wrap">
-                <a
-                  href="/data"
-                  class="vertical center center-justified layout start-menu-items"
+                <button
+                  @click="${() => {
+                    this._moveTo('/data');
+                  }}"
+                  class="vertical center center-justified layout start-menu-items link-button"
                 >
                   <i class="fas fa-upload fa-2x"></i>
                   <span>${_t('summary.UploadFiles')}</span>
-                </a>
+                </button>
                 ${this.is_admin
                   ? html`
-                      <a
-                        href="/credential?action=add"
-                        class="vertical center center-justified layout start-menu-items"
+                      <button
+                        @click="${() => {
+                          this._moveTo('/credential', '?action=add');
+                        }}"
+                        class="vertical center center-justified layout start-menu-items link-button"
                         style="border-left:1px solid #ccc;"
                       >
                         <i class="fas fa-key fa-2x"></i>
                         <span>${_t('summary.CreateANewKeypair')}</span>
-                      </a>
-                      <a
-                        href="/credential"
-                        class="vertical center center-justified layout start-menu-items"
+                      </button>
+                      <button
+                        @click="${() => {
+                          this._moveTo('/credential', '?action=manage');
+                        }}"
+                        class="vertical center center-justified layout start-menu-items link-button"
                         style="border-left:1px solid #ccc;"
                       >
                         <i class="fas fa-cogs fa-2x"></i>
                         <span>${_t('summary.MaintainKeypairs')}</span>
-                      </a>
+                      </button>
                     `
                   : html``}
               </div>
@@ -635,15 +636,15 @@ export default class BackendAISummary extends BackendAIPage {
                 <lablup-activity-panel
                   title="${_t('summary.DownloadWebUIApp')}"
                   elevation="1"
-                  narrow
                   height="245"
                 >
                   <div slot="message">
                     <div
                       id="download-app-os-select-box"
-                      class="horizontal layout start-justified"
+                      class="horizontal layout center-justified"
                     >
                       <mwc-select
+                        outlined
                         @selected="${(e) =>
                           this._updateSelectedDownloadAppOS(e)}"
                       >
@@ -659,15 +660,19 @@ export default class BackendAISummary extends BackendAIPage {
                         )}
                       </mwc-select>
                     </div>
-                    <div class="horizontal layout center center-justified">
+                    <div
+                      class="horizontal layout center-justified"
+                      style="gap:20px"
+                    >
                       ${this.downloadAppOS &&
                       this.appDownloadMap[this.downloadAppOS][
                         'architecture'
                       ].map(
                         (arch) => html`
                           <mwc-button
-                            raised
-                            style="margin:10px;flex-basis:50%;"
+                            icon="cloud_download"
+                            outlined
+                            style="margin:10px 0 10px 0;flex-basis:50%;"
                             @click="${(e) => this._downloadApplication(e)}"
                           >
                             ${arch}
@@ -686,7 +691,7 @@ export default class BackendAISummary extends BackendAIPage {
               <div class="horizontal layout wrap">
                 <div class="vertical layout">
                   <div class="line"></div>
-                  <div class="horizontal layout flex wrap center-justified">
+                  <div class="horizontal layout flex wrap center-justified" style="gap:24px;">
                     <lablup-activity-panel class="footer-menu" noheader autowidth style="display: none;">
                       <div slot="message" class="vertical layout center start-justified flex upper-lower-space">
                         <h3 style="margin-top:0px;">${_t(
@@ -744,7 +749,9 @@ export default class BackendAISummary extends BackendAIPage {
                     </lablup-activity-panel>
                     <lablup-activity-panel class="footer-menu" noheader autowidth>
                       <div slot="message" class="layout horizontal center center-justified flex upper-lower-space">
-                          <a href="/environment">
+                          <button class="link-button" @click="${() => {
+                            this._moveTo('/environment');
+                          }}" >
                             <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
                               <i class="fas fa-sync-alt larger left-end-icon"></i>
                               <span>${_t(
@@ -752,7 +759,7 @@ export default class BackendAISummary extends BackendAIPage {
                               )}</span>
                               <i class="fas fa-chevron-right right-end-icon"></i>
                             </div>
-                          </a>
+                          </button>
                       </div>
                     </lablup-activity-panel>
                     ${
@@ -767,7 +774,10 @@ export default class BackendAISummary extends BackendAIPage {
                                 slot="message"
                                 class="layout horizontal center center-justified flex upper-lower-space"
                               >
-                                <a href="/agent">
+                                <button
+                                  class="link-button"
+                                  @click="${() => this._moveTo('/agent')}"
+                                >
                                   <div
                                     class="layout horizontal center center-justified flex"
                                     style="font-size:14px;"
@@ -780,7 +790,7 @@ export default class BackendAISummary extends BackendAIPage {
                                       class="fas fa-chevron-right right-end-icon"
                                     ></i>
                                   </div>
-                                </a>
+                                </button>
                               </div>
                             </lablup-activity-panel>
                             <lablup-activity-panel
@@ -792,7 +802,10 @@ export default class BackendAISummary extends BackendAIPage {
                                 slot="message"
                                 class="layout horizontal center center-justified flex upper-lower-space"
                               >
-                                <a href="/settings">
+                                <button
+                                  class="link-button"
+                                  @click="${() => this._moveTo('settings')}"
+                                >
                                   <div
                                     class="layout horizontal center center-justified flex"
                                     style="font-size:14px;"
@@ -807,24 +820,48 @@ export default class BackendAISummary extends BackendAIPage {
                                       class="fas fa-chevron-right right-end-icon"
                                     ></i>
                                   </div>
-                                </a>
+                                </button>
                               </div>
                             </lablup-activity-panel>
                           `
                         : html``
                     }
-
-                    <lablup-activity-panel class="footer-menu" noheader autowidth>
-                      <div slot="message" class="layout horizontal center center-justified flex upper-lower-space">
-                          <a href="/maintenance">
-                            <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
-                              <i class="fas fa-tools larger left-end-icon"></i>
-                              <span>${_t('summary.SystemMaintenance')}</span>
-                              <i class="fas fa-chevron-right right-end-icon"></i>
-                            </div>
-                          </a>
-                      </div>
-                    </lablup-activity-panel>
+                    ${
+                      this.is_superadmin
+                        ? html`
+                            <lablup-activity-panel
+                              class="footer-menu"
+                              noheader
+                              autowidth
+                            >
+                              <div
+                                slot="message"
+                                class="layout horizontal center center-justified flex upper-lower-space"
+                              >
+                                <button
+                                  class="link-button"
+                                  @click="${() => this._moveTo('/maintenance')}"
+                                >
+                                  <div
+                                    class="layout horizontal center center-justified flex"
+                                    style="font-size:14px;"
+                                  >
+                                    <i
+                                      class="fas fa-tools larger left-end-icon"
+                                    ></i>
+                                    <span>
+                                      ${_t('summary.SystemMaintenance')}
+                                    </span>
+                                    <i
+                                      class="fas fa-chevron-right right-end-icon"
+                                    ></i>
+                                  </div>
+                                </button>
+                              </div>
+                            </lablup-activity-panel>
+                          `
+                        : html``
+                    }
                   </div>
                 </div>
               </div>

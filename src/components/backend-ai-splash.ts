@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import './backend-ai-dialog';
 import BackendAIDialog from './backend-ai-dialog';
@@ -32,6 +32,30 @@ export default class BackendAISplash extends LitElement {
   @property({ type: String }) version = '';
   @property({ type: String }) managerVersion = '';
   @query('backend-ai-dialog') dialog!: BackendAIDialog;
+  @property({ type: Boolean }) isDarkMode;
+
+  constructor() {
+    super();
+    this.isDarkMode = globalThis.isDarkMode;
+  }
+
+  themeHandler = (event: any) => {
+    this.isDarkMode = event.detail;
+  };
+  connectedCallback(): void {
+    super.connectedCallback();
+    document.addEventListener(
+      'change:backendaiwebui.setting.isDarkMode',
+      this.themeHandler,
+    );
+  }
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    document.removeEventListener(
+      'change:backendaiwebui.setting.isDarkMode',
+      this.themeHandler,
+    );
+  }
 
   static get styles(): CSSResultGroup {
     return [
@@ -39,16 +63,16 @@ export default class BackendAISplash extends LitElement {
       css`
         :host > *,
         html {
-          font-family: var(--general-font-family);
+          font-family: var(--token-fontFamily);
         }
 
         a,
         a:visited {
-          color: #222222;
+          color: var(--token-colorLink, #222222);
         }
 
         a:hover {
-          color: #3e872d;
+          color: var(--token-colorLinkHover, #3e872d);
         }
 
         #splash-panel {
@@ -62,7 +86,6 @@ export default class BackendAISplash extends LitElement {
           background-size: contain;
           background-repeat: no-repeat;
           background-position: left top;
-          background-image: url('/manifest/backend.ai-text.svg');
         }
 
         ul {
@@ -114,7 +137,13 @@ export default class BackendAISplash extends LitElement {
     // language=HTML
     return html`
       <backend-ai-dialog id="splash-panel" fixed backdrop blockscrolling persistent narrowLayout hideActions>
-        <div class="splash-header" slot="title">
+        <div class="splash-header" slot="title"
+          style="background-image:url(${
+            this.isDarkMode
+              ? 'manifest/backend.ai-text-bgdark.svg'
+              : 'manifest/backend.ai-text.svg'
+          });"
+        >
         </div>
         <div class="splash-information" slot="content">
           <ul>
@@ -149,7 +178,7 @@ export default class BackendAISplash extends LitElement {
           </ul>
           <ul>
             <li>Powered by <a target="_blank" href="https://github.com/lablup/backend.ai/blob/main/LICENSE">open-source software</a></li>
-            <li class="copyright">Copyright &copy; 2015-2023 Lablup Inc.</li>
+            <li class="copyright">Copyright &copy; 2015-2024 Lablup Inc.</li>
             <li class="release-note">
               <a target="_blank" href="https://github.com/lablup/backend.ai-webui/releases/tag/v${
                 this.version

@@ -6,7 +6,7 @@ import {
 } from '../hooks';
 import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
-import StorageSelector, { VolumeInfo } from './StorageSelector';
+import StorageSelect, { VolumeInfo } from './StorageSelect';
 import UsageProgress from './UsageProgress';
 import { StorageStatusPanelKeypairQuery } from './__generated__/StorageStatusPanelKeypairQuery.graphql';
 import { StorageStatusPanelQuery } from './__generated__/StorageStatusPanelQuery.graphql';
@@ -43,8 +43,8 @@ const StorageStatusPanel: React.FC<{
   const deferredFetchKey = useDeferredValue(fetchKey);
 
   const columnSetting: DescriptionsProps['column'] = {
-    xxl: 4,
-    xl: 4,
+    xxl: 2,
+    xl: 2,
     lg: 2,
     md: 1,
     sm: 1,
@@ -170,15 +170,12 @@ const StorageStatusPanel: React.FC<{
       ? ((createdCount / maxVfolderCount) * 100)?.toFixed(2)
       : 0
   ) as number;
-
-  return (
-    <Card
-      size="small"
-      title={t('data.StorageStatus')}
-      style={{ margin: '3px 14px' }}
-    >
-      <Descriptions bordered column={columnSetting} size="small">
-        <Descriptions.Item label={t('data.NumberOfFolders')}>
+  const descriptionItems: DescriptionsProps['items'] = [
+    {
+      key: 'totalFolders',
+      label: t('data.NumberOfFolders'),
+      children: (
+        <>
           <Progress
             size={[200, 15]}
             percent={numberOfFolderPercent}
@@ -212,17 +209,21 @@ const StorageStatusPanel: React.FC<{
               {invitedCount}
             </Flex>
           </Flex>
-        </Descriptions.Item>
-        <Descriptions.Item
-          label={
-            <div>
-              {t('data.QuotaPerStorageVolume')}
-              <Tooltip title={t('data.HostDetails')}>
-                <Button type="link" icon={<InfoCircleOutlined />} />
-              </Tooltip>
-            </div>
-          }
-        >
+        </>
+      ),
+    },
+    {
+      key: 'quotaPerStorageVolume',
+      label: (
+        <div>
+          {t('data.QuotaPerStorageVolume')}
+          <Tooltip title={t('data.HostDetails')}>
+            <Button type="link" icon={<InfoCircleOutlined />} />
+          </Tooltip>
+        </div>
+      ),
+      children: (
+        <>
           <Flex
             wrap="wrap"
             justify="between"
@@ -230,12 +231,13 @@ const StorageStatusPanel: React.FC<{
             style={{ minWidth: '25vw' }}
           >
             <Typography.Text type="secondary">{t('data.Host')}</Typography.Text>
-            <StorageSelector
-              onChange={(value, info) => {
-                setSelectedVolumeInfo(info);
-              }}
-              value={selectedVolumeInfo}
-              autoSelectDefault
+            <StorageSelect
+              value={selectedVolumeInfo?.id}
+              onChange={setSelectedVolumeInfo}
+              autoSelectType="usage"
+              showUsageStatus
+              showSearch
+              allowClear
             />
           </Flex>
           {selectedVolumeInfo !== deferredSelectedVolumeInfo ? (
@@ -282,8 +284,28 @@ const StorageStatusPanel: React.FC<{
               style={{ margin: '25px auto' }}
             />
           )}
-        </Descriptions.Item>
-      </Descriptions>
+        </>
+      ),
+    },
+    {
+      key: 'userQuotaScopeId',
+      label: t('data.userQuotaScopeId'),
+      children: (
+        <Typography.Text copyable>
+          {addQuotaScopeTypePrefix('user', user?.id || '')}
+        </Typography.Text>
+      ),
+    },
+  ];
+
+  return (
+    <Card size="small" title={t('data.StorageStatus')}>
+      <Descriptions
+        bordered
+        column={columnSetting}
+        size="small"
+        items={descriptionItems}
+      />
     </Card>
   );
 };
@@ -291,11 +313,7 @@ const StorageStatusPanel: React.FC<{
 export const StorageStatusPanelFallback = () => {
   const { t } = useTranslation();
   return (
-    <Card
-      size="small"
-      title={t('data.StorageStatus')}
-      style={{ margin: '3px 14px' }}
-    >
+    <Card size="small" title={t('data.StorageStatus')}>
       <Skeleton active />
     </Card>
   );

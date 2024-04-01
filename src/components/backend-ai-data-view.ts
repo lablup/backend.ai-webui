@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -136,27 +136,11 @@ export default class BackendAIData extends BackendAIPage {
 
         mwc-textfield {
           width: 100%;
-          --mdc-theme-primary: #242424;
           --mdc-text-field-fill-color: transparent;
         }
 
         mwc-textfield.red {
           --mdc-theme-primary: var(--paper-red-400) !important;
-        }
-
-        h3.tab {
-          background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0px 0px;
-          margin: 0px auto;
-        }
-
-        mwc-tab-bar {
-          --mdc-theme-primary: var(--general-sidebar-selected-color);
-          --mdc-text-transform: none;
-          --mdc-tab-color-default: var(--general-tabbar-background-color);
-          --mdc-tab-text-label-color-default: var(
-            --general-tabbar-tab-disabled-color
-          );
         }
 
         #add-folder-dialog,
@@ -171,20 +155,9 @@ export default class BackendAIData extends BackendAIPage {
         mwc-select {
           width: 50%;
           margin-bottom: 10px;
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: var(
-            --general-textfield-selected-color
-          );
-          --mdc-select-hover-line-color: var(
-            --general-textfield-selected-color
-          );
-          --mdc-list-vertical-padding: 5px;
           /* Need to be set when fixedMenuPosition attribute is enabled */
           --mdc-menu-max-width: 345px;
           --mdc-menu-min-width: 172.5px;
-          --mdc-select-disabled-ink-color: #cccccc;
         }
 
         mwc-select.full-width.fixed-position {
@@ -216,15 +189,16 @@ export default class BackendAIData extends BackendAIPage {
         #automount-folder-lists > div,
         #data-folder-lists > div,
         #model-folder-lists > div {
-          background-color: white;
-          color: var(--general-textfield-selected-color);
-          border-bottom: 0.5px solid var(--general-textfield-selected-color);
+          background-color: var(--token-colorInfoBg, white);
+          color: var(--token-colorText, --general-textfield-selected-color);
+          border-bottom: 0.5px solid
+            var(--token-colorInfoBg, --general-textfield-selected-color);
         }
 
         #automount-folder-lists > div > p,
         #data-folder-lists > div > p,
         #model-folder-lists > div > p {
-          color: var(--general-sidebar-color);
+          color: var(--token-colorText, --general-sidebar-color);
           margin-left: 10px;
         }
 
@@ -302,7 +276,7 @@ export default class BackendAIData extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css" />
-      <div class="vertical layout">
+      <div class="vertical layout" style="gap:24px">
         <backend-ai-react-storage-status-panel
           .value="${this.folderListFetchKey}"
         ></backend-ai-react-storage-status-panel>
@@ -591,7 +565,7 @@ export default class BackendAIData extends BackendAIPage {
                   class="horizontal layout flex wrap center justified"
                   style="display:none;"
                 >
-                  <p style="color:rgba(0, 0, 0, 0.6);margin-left:10px;">
+                  <p style="margin-left:10px;">
                     ${_t('data.folders.Cloneable')}
                   </p>
                   <mwc-switch

@@ -255,8 +255,21 @@
       "EnvironmentVariableNamePatternError": "Το όνομα της μεταβλητής πρέπει να αρχίζει με γράμμα ή υπογράμμιση και μπορεί να περιέχει μόνο γράμματα, αριθμούς και υπογράμμιση.",
       "EnvironmentVariableDuplicateName": "Ένα όνομα μεταβλητής που υπάρχει ήδη.",
       "Template": "Πρότυπο συνεδρίας",
-      "EnableAutomaticShmem": "Αυτόματη κοινή μνήμη",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "EnableAutomaticMiniumShmem": "Ορισμός ελάχιστης κοινόχρηστης μνήμης",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "StartAfter": "Έναρξη μετά:",
+      "StartTimeDoesNotApply": "Εάν δεν έχει οριστεί η ώρα έναρξης, δεν ισχύει.",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Μόνο ακέραιος επιτρέπεται όταν το μέγεθος του συμπλέγματος δεν είναι μικρότερο από 2.",
+      "MiniumAllocation": "Ελάχιστες απαιτήσεις",
+      "MiniumAllocationTooltip": "Επιλέξτε ως ελάχιστη απαίτηση για το επιλεγμένο περιβάλλον λειτουργίας",
+      "PreviousLauncher": "Προηγούμενο",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Χρησιμοποιείτε τον εκκινητή συνόδου \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Skip to review",
+      "InteractiveModeDesc": "σας επιτρέπει να δημιουργείτε, να δοκιμάζετε και να εκτελείτε κώδικα διαδραστικά μέσω του σημειωματάριου jupyter, του κώδικα του visual studio κ.λπ.",
+      "BatchModeDesc": "Μπορείτε να εκτελέσετε τον κώδικά σας με πολλαπλούς κόμβους & συστάδες για να κλιμακώσετε την ιδέα σας",
+      "AddEnvironmentVariable": "Προσθήκη μεταβλητών περιβάλλοντος",
+      "EnvironmentVariableValueRequired": "Παρακαλώ εισάγετε μια τιμή."
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",
@@ -314,7 +327,11 @@
       "SluggedStrings": "Στιγμιότυπα αλφαριθμητικά (>3 χαρακτήρες)",
       "SessionNameAlreadyExist": "Το όνομα συνεδρίας υπάρχει ήδη",
       "SessionNameTooLong64": "Εισαγάγετε 64 χαρακτήρες ή λιγότερους.",
-      "PleaseFollowSessionNameRule": "Εισαγάγετε έναν συνδυασμό τουλάχιστον 4 γραμμάτων, αριθμών, '.', '_' και '-'."
+      "PleaseFollowSessionNameRule": "Εισαγάγετε έναν συνδυασμό τουλάχιστον 4 γραμμάτων, αριθμών, '.', '_' και '-'.",
+      "SessionNameTooShort": "Παρακαλούμε εισάγετε τουλάχιστον 4 χαρακτήρες.",
+      "SessionNameShouldStartWith": "Πρέπει να αρχίζει με ένα γράμμα του αλφαβήτου, έναν αριθμό ή το '_'.",
+      "SessionNameShouldEndWith": "Πρέπει να τελειώνει με ένα γράμμα του αλφαβήτου, έναν αριθμό ή '_'.",
+      "SessionNameInvalidCharacter": "Η μέση ενός ονόματος μπορεί να περιέχει μόνο γράμματα αλφαβήτου, αριθμούς και '_'."
     },
     "Interactive": "Διαδραστικό",
     "Batch": "Παρτίδα",
@@ -407,7 +424,10 @@
     "Commit": "Δέσμευση",
     "EnterManually": "Εισάγετε χειροκίνητα",
     "Download": "Λήψη",
-    "Clone": "Κλώνος"
+    "Clone": "Κλώνος",
+    "Config": "Διαμόρφωση",
+    "Next": "Επόμενο",
+    "Previous": "Προηγούμενο"
   },
   "agent": {
     "Endpoint": "Τελικό σημείο",
@@ -451,7 +471,10 @@
     "Enabled": "Ενεργοποιήθηκε",
     "StorageProxies": "Αποθήκες",
     "None": "Κανένα",
-    "Image": "Εικόνα"
+    "Image": "Εικόνα",
+    "All": "Όλα",
+    "InProgress": "Σε εξέλιξη",
+    "Session": "Σύνοδος"
   },
   "credential": {
     "Permission": "Αδεια",
@@ -700,7 +723,8 @@
     "ModelStore": "Κατάστημα μοντέλων",
     "New": "Νέος",
     "Add": "Προσθέστε",
-    "CloningIsOnlyPossibleSameHost": "Προς το παρόν, η κλωνοποίηση είναι δυνατή μόνο στον ίδιο κεντρικό υπολογιστή."
+    "CloningIsOnlyPossibleSameHost": "Προς το παρόν, η κλωνοποίηση είναι δυνατή μόνο στον ίδιο κεντρικό υπολογιστή.",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -847,7 +871,12 @@
     "BootstrapScriptDescription": "Το σενάριο Bootstrap θα εκτελεστεί μόνο μία φορά μετά τη δημιουργία συνεδρίας",
     "SSHKeypairEnterManually": "Ζεύγος κλειδιών SSH",
     "MyKeypairInfo": "Πληροφορίες για το ζεύγος κλειδιών μου",
-    "DescMyKeypairInfo": "Δείτε τις πληροφορίες του ζεύγους κλειδιών μου"
+    "DescMyKeypairInfo": "Δείτε τις πληροφορίες του ζεύγους κλειδιών μου",
+    "DarkMode": "Σκοτεινή λειτουργία",
+    "LightMode": "Λειτουργία φωτός",
+    "UseSystemSetting": "Χρησιμοποιήστε τη ρύθμιση συστήματος",
+    "DescThemeMode": "Προσαρμόστε την εμφάνιση του Backend.AI WebUI στη συσκευή σας.",
+    "ThemeMode": "Λειτουργία θέματος"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Σύνθετη χρήση τερματικού Web: Αντιγραφή περιεχομένου τερματικού",
@@ -933,7 +962,8 @@
     "RegistrySuccessfullyModified": "Το μητρώο τροποποιήθηκε επιτυχώς.",
     "NoRegistryToDisplay": "Δεν εμφανίζονται μητρώα",
     "ModifyRegistry": "Τροποποίηση μητρώου",
-    "ConfirmNoUserName": "Ο χρήστης και ο κωδικός πρόσβασης δεν έχουν καθοριστεί, θέλετε να αποθηκεύσετε;"
+    "ConfirmNoUserName": "Ο χρήστης και ο κωδικός πρόσβασης δεν έχουν καθοριστεί, θέλετε να αποθηκεύσετε;",
+    "DescURLFormat": "Μη έγκυρος τύπος URL"
   },
   "resourceGroup": {
     "ResourceGroups": "Ομάδες πόρων",
@@ -1124,13 +1154,18 @@
     "MTUDescription": "Μέγιστη μονάδα μετάδοσης, το μέγεθος του μεγαλύτερου πακέτου που μπορεί να μεταδώσει ένα πρωτόκολλο δικτύου.",
     "OutOfRange": "Εκτός εμβέλειας.",
     "Plugins": "Πρόσθετα",
-    "OpenSourceCUDAGPUsupport": "Υποστήριξη ανοιχτού κώδικα CUDA GPU"
+    "OpenSourceCUDAGPUsupport": "Υποστήριξη ανοιχτού κώδικα CUDA GPU",
+    "ShowOnlyChanged": "Εμφάνιση μόνο αλλαγών"
   },
   "notification": {
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
     "Visit": "Επίσκεψη",
     "SeeDetail": "Δείτε Λεπτομέρεια",
-    "Initializing": "Αρχικοποίηση ..."
+    "Initializing": "Αρχικοποίηση ...",
+    "NoNotification": "Καμία ειδοποίηση.",
+    "Notifications": "Ειδοποιήσεις",
+    "ClearNotifications": "Εκκαθάριση ειδοποιήσεων",
+    "AreYouSureToClearAllNotifications": "Είστε βέβαιοι ότι θα διαγράψετε όλες τις ειδοποιήσεις;"
   },
   "information": {
     "Core": "Πυρήνας",
@@ -1463,7 +1498,9 @@
     "TurnOffTotp": "Απενεργοποιήστε τον έλεγχο ταυτότητας δύο παραγόντων",
     "ConfirmTotpRemovalBody": "Είστε σίγουροι ότι δεν θέλετε να χρησιμοποιείτε έλεγχο ταυτότητας δύο παραγόντων;",
     "RemoveTotpSetupCompleted": "Απενεργοποιημένο 2FA",
-    "OTP": "Κωδικός πρόσβασης μίας χρήσης"
+    "OTP": "Κωδικός πρόσβασης μίας χρήσης",
+    "EnterConfirmationCode": "Τώρα εισαγάγετε το OTP που δημιουργήθηκε από τον έλεγχο ταυτότητας για επαλήθευση.",
+    "RequireOTP": "Γράψτε OTP."
   },
   "OpenVSCodeRemote": "Ανοίξτε τον τοπικό κώδικα του Visual Studio",
   "inputLimit": {
@@ -1501,5 +1538,8 @@
     "SettingTable": "Ρύθμιση πίνακα",
     "SelectColumnToDisplay": "Επιλέξτε για εμφάνιση στηλών",
     "SearchTableColumn": "Αναζήτηση στηλών πίνακα"
+  },
+  "setting": {
+    "SearchPlaceholder": "Εισαγάγετε τον όρο αναζήτησης"
   }
 }

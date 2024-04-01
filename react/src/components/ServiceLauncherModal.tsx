@@ -1,8 +1,13 @@
 import ResourceAllocationFormItems, {
   ResourceAllocationFormValue,
+  AUTOMATIC_DEFAULT_SHMEM,
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
 } from '../components/ResourceAllocationFormItems';
-import { baiSignedRequestWithPromise, compareNumberWithUnits } from '../helper';
+import {
+  baiSignedRequestWithPromise,
+  compareNumberWithUnits,
+  iSizeToSize,
+} from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentDomainValue } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -12,31 +17,33 @@ import FlexActivityIndicator from './FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
-import ResourceGroupSelect from './ResourceGroupSelect';
-import SliderInputFormItem from './SliderInputFormItem';
+import InputNumberWithSlider from './InputNumberWithSlider';
 import VFolderSelect from './VFolderSelect';
 import ValidationStatusTag from './ValidationStatusTag';
+import { ServiceLauncherModalFragment$key } from './__generated__/ServiceLauncherModalFragment.graphql';
+import { ServiceLauncherModalModifyMutation } from './__generated__/ServiceLauncherModalModifyMutation.graphql';
 import { AnsiUp } from 'ansi_up';
 import type { CollapseProps } from 'antd';
 import {
   Button,
-  Card,
   Collapse,
   Descriptions,
+  Card,
   Form,
   Input,
   theme,
   Switch,
   Tag,
   message,
+  Space,
+  FormInstance,
 } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import exp from 'constants';
 import _ from 'lodash';
-import React, { useState, Suspense } from 'react';
+import React, { useState, Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-
-// TODO: set initial form values for later use
-// const INITIAL_FORM_VALUES: ServiceLauncherFormValue = {
-// }
+import { useFragment, useMutation } from 'react-relay';
 
 type ClusterMode = 'single-node' | 'multi-node';
 
@@ -69,7 +76,7 @@ interface ServiceCreateType {
   name: string;
   desired_session_count: number;
   image: string;
-  arch: string;
+  architecture: string;
   group: string;
   domain: string;
   cluster_size: number;
@@ -82,8 +89,8 @@ interface ServiceCreateType {
   config: ServiceCreateConfigType;
 }
 
-interface ServiceLauncherProps
-  extends Omit<BAIModalProps, 'onOK' | 'onCancel'> {
+interface ServiceLauncherProps extends Omit<BAIModalProps, 'onOK'> {
+  endpointFrgmt?: ServiceLauncherModalFragment$key | null;
   extraP?: boolean;
   onRequestClose: (success?: boolean) => void;
 }
@@ -100,6 +107,7 @@ type ServiceLauncherFormValue = ServiceLauncherInput &
 
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   extraP,
+  endpointFrgmt = null,
   onRequestClose,
   ...modalProps
 }) => {
@@ -110,7 +118,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
-  const [form] = Form.useForm<ServiceLauncherFormValue>();
   const mutationsToValidateService = useTanMutation<
     unknown,
     {
@@ -124,7 +131,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         name: values.serviceName,
         desired_session_count: values.desiredRoutingCount,
         image: image,
-        arch: values.environments.image?.architecture as string,
+        architecture: values.environments.image?.architecture as string,
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
         cluster_size: values.cluster_size,
@@ -164,6 +171,100 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     },
   });
 
+  const formRef = useRef<FormInstance<ServiceLauncherFormValue>>(null);
+  const endpoint = useFragment(
+    graphql`
+      fragment ServiceLauncherModalFragment on Endpoint {
+        endpoint_id
+        desired_session_count
+        resource_group
+        resource_slots
+        resource_opts
+        cluster_mode
+        cluster_size
+        open_to_public
+        image_object @since(version: "23.09.9") {
+          name
+          humanized_name
+          tag
+          registry
+          architecture
+          is_local
+          digest
+          resource_limits {
+            key
+            min
+            max
+          }
+          labels {
+            key
+            value
+          }
+          size_bytes
+          supported_accelerators
+        }
+        name
+      }
+    `,
+    endpointFrgmt,
+  );
+
+  const checkManualImageAllowed = (
+    isConfigAllowed = false,
+    manualImageInput = '',
+  ): boolean => {
+    return (isConfigAllowed &&
+      manualImageInput &&
+      !_.isEmpty(manualImageInput)) as boolean;
+  };
+
+  const getImageInfoFromInputInEditing = (
+    isManualImageEnabled = false,
+    formInput: ServiceLauncherInput,
+  ) => {
+    return {
+      image: {
+        name: (isManualImageEnabled
+          ? formInput.environments.manual?.split('@')[0]
+          : formInput.environments.version.split('@')[0]) as string,
+        architecture: (isManualImageEnabled
+          ? formInput.environments.manual?.split('@')[1]
+          : formInput.environments.image?.architecture) as string,
+        registry: (isManualImageEnabled
+          ? formInput.environments.manual?.split('/')[0]
+          : formInput.environments.image?.registry) as string,
+      },
+    };
+  };
+
+  const getImageInfoFromInputInCreating = (
+    isManualImageEnabled = false,
+    formInput: ServiceLauncherInput,
+  ) => {
+    return {
+      image: (isManualImageEnabled
+        ? formInput.environments.manual?.split('@')[0]
+        : `${formInput.environments.image?.registry}/${formInput.environments.image?.name}:${formInput.environments.image?.tag}`) as string,
+      architecture: (isManualImageEnabled
+        ? formInput.environments.manual?.split('@')[1]
+        : formInput.environments.image?.architecture) as string,
+    };
+  };
+
+  const legacyMutationToUpdateService = useTanMutation({
+    mutationFn: (values: ServiceLauncherFormValue) => {
+      const body = {
+        to: values.desiredRoutingCount,
+      };
+      return baiSignedRequestWithPromise({
+        method: 'POST',
+        url: `/services/${endpoint?.endpoint_id}/scale`,
+        body,
+        client: baiClient,
+      });
+    },
+  });
+
   const mutationToCreateService = useTanMutation<
     unknown,
     {
@@ -172,17 +273,16 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     ServiceLauncherFormValue
   >({
     mutationFn: (values) => {
-      const image: string =
-        baiClient._config.allow_manual_image_name_for_session &&
-        values.environments?.manual &&
-        !_.isEmpty(values.environments.manual)
-          ? values.environments.manual
-          : `${values.environments.image?.registry}/${values.environments.image?.name}:${values.environments.image?.tag}`;
       const body: ServiceCreateType = {
         name: values.serviceName,
         desired_session_count: values.desiredRoutingCount,
-        image: image,
-        arch: values.environments.image?.architecture as string,
+        ...getImageInfoFromInputInCreating(
+          checkManualImageAllowed(
+            baiClient._config.allow_manual_image_name_for_session,
+            values.environments?.manual,
+          ),
+          values,
+        ),
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
         cluster_size: values.cluster_size,
@@ -200,7 +300,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             ...(values.resource.accelerator > 0
               ? {
                   [values.resource.acceleratorType]:
-                    values.resource.accelerator,
+                    // FIXME: manually convert to string since server-side only allows [str,str] tuple
+                    values.resource.accelerator.toString(),
                 }
               : undefined),
           },
@@ -230,39 +331,75 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     </Flex>
   );
 
+  const [
+    commitModifyEndpoint,
+    // inInFlightCommitModifyEndpoint
+  ] = useMutation<ServiceLauncherModalModifyMutation>(graphql`
+    mutation ServiceLauncherModalModifyMutation(
+      $endpoint_id: UUID!
+      $props: ModifyEndpointInput!
+    ) {
+      modify_endpoint(endpoint_id: $endpoint_id, props: $props) {
+        ok
+        msg
+        endpoint {
+          endpoint_id
+          desired_session_count
+          resource_group
+          resource_slots
+          resource_opts
+          cluster_mode
+          cluster_size
+          open_to_public
+          image_object @since(version: "23.09.9") {
+            name
+            humanized_name
+            tag
+            registry
+            architecture
+            is_local
+            digest
+            resource_limits {
+              key
+              min
+              max
+            }
+            labels {
+              key
+              value
+            }
+            size_bytes
+            supported_accelerators
+          }
+          name
+        }
+      }
+    }
+  `);
+
   // Apply any operation after clicking OK button
   const handleOk = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        mutationToCreateService.mutate(values, {
-          onSuccess: (resp) => {
-            onRequestClose(true);
-          },
-          onError: (error) => {
-            if (error?.message) {
-              message.error(
-                _.truncate(error?.message, {
-                  length: 200,
-                }),
-              );
-            } else {
-              message.error(t('modelService.FailedToStartService'));
-            }
-          },
-        });
-      })
-      .catch((err) => {
-        if (err.errorFields?.[0].errors?.[0]) {
-          message.error(err.errorFields?.[0].errors?.[0]);
-        } else {
-          message.error(t('modelService.FormValidationFailed'));
-        }
+    formRef.current?.validateFields().then((values) => {
+      mutationToCreateService.mutate(values, {
+        onSuccess: (resp) => {
+          onRequestClose(true);
+        },
+        onError: (error) => {
+          if (error?.message) {
+            message.error(
+              _.truncate(error?.message, {
+                length: 200,
+              }),
+            );
+          }
+        },
       });
+    });
   };
 
   // Apply any operation after clicking Cancel or close button button
   const handleCancel = () => {
+    formRef.current?.resetFields();
     onRequestClose();
   };
 
@@ -279,8 +416,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   // Apply any operation after clicking Validate button
   const handleValidate = (event: any) => {
     const validationDateTime = new Date().toUTCString();
-    form
-      .validateFields()
+    formRef.current
+      ?.validateFields()
       .then((values) => {
         mutationsToValidateService.mutate(values, {
           onSuccess: (data: any) => {
@@ -349,97 +486,143 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       label: t('modelService.ServiceInfo'),
       children: (
         <Form
+          ref={formRef}
           disabled={mutationToCreateService.isLoading}
-          form={form}
           preserve={false}
           layout="vertical"
           labelCol={{ span: 12 }}
-          initialValues={{
-            desiredRoutingCount: 1,
-            ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
-          }}
+          initialValues={
+            endpoint
+              ? {
+                  serviceName: endpoint?.name,
+                  resourceGroup: endpoint?.resource_group,
+                  desiredRoutingCount: endpoint?.desired_session_count || 0,
+                  // FIXME: memory doesn't applied to resource allocation
+                  resource: {
+                    cpu: parseInt(JSON.parse(endpoint?.resource_slots)?.cpu),
+                    mem: iSizeToSize(
+                      JSON.parse(endpoint?.resource_slots)?.mem + 'b',
+                      'g',
+                      3,
+                      true,
+                    )?.numberUnit,
+                    shmem: iSizeToSize(
+                      JSON.parse(endpoint?.resource_opts)?.shmem ||
+                        AUTOMATIC_DEFAULT_SHMEM,
+                      'g',
+                      3,
+                      true,
+                    )?.numberUnit,
+                    ...getAIAcceleratorWithStringifiedKey(
+                      _.omit(JSON.parse(endpoint?.resource_slots), [
+                        'cpu',
+                        'mem',
+                      ]),
+                    ),
+                  },
+                  cluster_mode:
+                    endpoint?.cluster_mode === 'MULTI_NODE'
+                      ? 'multi-node'
+                      : 'single-node',
+                  cluster_size: endpoint?.cluster_size,
+                  openToPublic: endpoint?.open_to_public,
+                  environments: {
+                    environment: endpoint?.image_object?.name,
+                    version: `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`,
+                    image: endpoint?.image_object,
+                  },
+                }
+              : {
+                  desiredRoutingCount: 1,
+                  ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+                }
+          }
           requiredMark="optional"
         >
+          {(baiClient.supports('modify-endpoint') || !endpoint) && (
+            <>
+              <Form.Item
+                label={t('modelService.ServiceName')}
+                name="serviceName"
+                rules={[
+                  {
+                    pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
+                    message: t('modelService.ServiceNameRule'),
+                  },
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input disabled={endpoint ? true : false} />
+              </Form.Item>
+              <Form.Item
+                name="openToPublic"
+                label={t('modelService.OpenToPublic')}
+                valuePropName="checked"
+              >
+                <Switch disabled={endpoint ? true : false}></Switch>
+              </Form.Item>
+              {/* <VFolderTableFromItem /> */}
+              <Form.Item
+                name={'vFolderName'}
+                label={t('session.launcher.ModelStorageToMount')}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <VFolderSelect
+                  filter={(vf) => vf.usage_mode === 'model'}
+                  autoSelectDefault
+                  disabled={endpoint ? true : false}
+                />
+              </Form.Item>
+            </>
+          )}
           <Form.Item
-            label={t('modelService.ServiceName')}
-            name="serviceName"
-            rules={[
-              {
-                pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
-                message: t('modelService.ServiceNameRule'),
-              },
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="resourceGroup"
-            label={t('session.ResourceGroup')}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <ResourceGroupSelect autoSelectDefault />
-          </Form.Item>
-          <Form.Item
-            name="openToPublic"
-            label={t('modelService.OpenToPublic')}
-            valuePropName="checked"
-          >
-            <Switch></Switch>
-          </Form.Item>
-          {/* <VFolderTableFromItem /> */}
-          <Form.Item
-            name={'vFolderName'}
-            label={t('session.launcher.ModelStorageToMount')}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <VFolderSelect
-              filter={(vf) => vf.usage_mode === 'model'}
-              autoSelectDefault
-            />
-          </Form.Item>
-          <SliderInputFormItem
             label={t('modelService.DesiredRoutingCount')}
             name="desiredRoutingCount"
             rules={[
               {
                 required: true,
+                min: 0,
+                max: 10,
+                type: 'number',
               },
             ]}
-            inputNumberProps={{
-              //TODO: change unit based on resource limit
-              addonAfter: '#',
-            }}
-            required
-          />
-          <Card
-            style={{
-              marginBottom: token.margin,
-            }}
           >
-            <ImageEnvironmentSelectFormItems
-            // //TODO: test with real inference images
-            // filter={(image) => {
-            //   return !!_.find(image?.labels, (label) => {
-            //     return (
-            //       label?.key === "ai.backend.role" &&
-            //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
-            //     );
-            //   });
-            // }}
+            <InputNumberWithSlider
+              min={0}
+              max={10}
+              inputNumberProps={{
+                //TODO: change unit based on resource limit
+                addonAfter: '#',
+              }}
+              step={1}
             />
-            <ResourceAllocationFormItems />
-          </Card>
+          </Form.Item>
+          {(baiClient.supports('modify-endpoint') || !endpoint) && (
+            <Card
+              style={{
+                marginBottom: token.margin,
+              }}
+            >
+              <ImageEnvironmentSelectFormItems
+              // //TODO: test with real inference images
+              // filter={(image) => {
+              //   return !!_.find(image?.labels, (label) => {
+              //     return (
+              //       label?.key === "ai.backend.role" &&
+              //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
+              //     );
+              //   });
+              // }}
+              />
+              <ResourceAllocationFormItems />
+            </Card>
+          )}
         </Form>
       ),
     },
@@ -478,6 +661,23 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       ),
     },
   ];
+
+  const getAIAcceleratorWithStringifiedKey = (resourceSlot: any) => {
+    if (Object.keys(resourceSlot).length <= 0) {
+      return undefined;
+    }
+    const keyName: string = Object.keys(resourceSlot)[0];
+    return {
+      acceleratorType: keyName,
+      // FIXME: temporally convert to number if the typeof accelerator is string
+      accelerator:
+        typeof resourceSlot[keyName] === 'string'
+          ? keyName === 'cuda.shares'
+            ? parseFloat(resourceSlot[keyName])
+            : parseInt(resourceSlot[keyName])
+          : resourceSlot[keyName],
+    };
+  };
 
   return (
     <BAIModal

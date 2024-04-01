@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -78,45 +78,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         span.spinner {
           font-size: 9px;
           margin-right: 5px;
-        }
-
-        h3.tab {
-          background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0px 0px;
-          margin: 0px auto;
-        }
-
-        mwc-tab-bar {
-          --mdc-theme-primary: var(--general-sidebar-selected-color);
-          --mdc-text-transform: none;
-          --mdc-tab-color-default: var(--general-tabbar-background-color);
-          --mdc-tab-text-label-color-default: var(
-            --general-tabbar-tab-disabled-color
-          );
-        }
-
-        mwc-button {
-          background-image: none;
-          --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-theme-on-primary: var(--general-button-color);
-        }
-
-        mwc-button[unelevated] {
-          background-image: none;
-          --mdc-theme-primary: var(--general-button-background-color);
-        }
-
-        mwc-button[outlined] {
-          background-image: none;
-          --mdc-button-outline-width: 2px;
-          --mdc-button-disabled-outline-color: var(
-            --general-button-background-color
-          );
-          --mdc-button-disabled-ink-color: var(
-            --general-button-background-color
-          );
-          --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         mwc-button.log {

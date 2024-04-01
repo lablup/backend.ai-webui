@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../../components/backend-ai-dialog';
 import { BackendAiStyles } from '../../components/backend-ai-general-styles';

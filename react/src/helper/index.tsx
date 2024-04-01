@@ -1,4 +1,5 @@
 import { useSuspendedBackendaiClient } from '../hooks';
+import _ from 'lodash';
 
 export const newLineToBrElement = (
   text: string,
@@ -151,6 +152,7 @@ export function iSizeToSize(
   sizeWithUnit: string | undefined,
   targetSizeUnit?: SizeUnit,
   fixed: number = 2,
+  round: boolean = false,
 ):
   | {
       number: number;
@@ -174,7 +176,9 @@ export function iSizeToSize(
     : sizeIndex;
   const targetBytes = bytes / Math.pow(1024, targetIndex);
   // const numberFixed = targetBytes.toFixed(fixed);
-  const numberFixed = toFixedFloorWithoutTrailingZeros(targetBytes, fixed);
+  const numberFixed = round
+    ? targetBytes.toFixed(fixed)
+    : toFixedFloorWithoutTrailingZeros(targetBytes, fixed);
   return {
     number: targetBytes,
     numberFixed,
@@ -228,8 +232,8 @@ export const usageIndicatorColor = (percentage: number) => {
   return percentage < 70
     ? 'rgba(58, 178, 97, 1)'
     : percentage < 90
-    ? 'rgb(223, 179, 23)'
-    : '#ef5350';
+      ? 'rgb(223, 179, 23)'
+      : '#ef5350';
 };
 
 export const maskString = (
@@ -253,7 +257,7 @@ export const offset_to_cursor = (offset: number): string => {
 };
 
 export function filterNonNullItems<T extends { [key: string]: any }>(
-  arr: ReadonlyArray<T | null> | null | undefined,
+  arr: ReadonlyArray<T | null | undefined> | null | undefined,
 ): T[] {
   if (arr === null || arr === undefined) {
     return [];
@@ -271,3 +275,25 @@ export function parseUnit(str: string): [number, string] {
   const unit = match[2];
   return [num, unit.toLowerCase() || 'b'];
 }
+
+export const isOutsideRange = (
+  value?: number | string,
+  min?: number | string,
+  max?: number | string,
+) => {
+  if (value === undefined) return false;
+  value = _.toNumber(value);
+  if (min !== undefined && value < _.toNumber(min)) return true;
+  if (max !== undefined && value > _.toNumber(max)) return true;
+  return false;
+};
+export const isOutsideRangeWithUnits = (
+  value: string,
+  min?: string,
+  max?: string,
+) => {
+  if (value === undefined) return false;
+  if (min !== undefined && compareNumberWithUnits(value, min) < 0) return true;
+  if (max !== undefined && compareNumberWithUnits(value, max) > 0) return true;
+  return false;
+};

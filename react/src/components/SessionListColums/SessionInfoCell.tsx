@@ -6,9 +6,10 @@ import { useTanMutation } from '../../hooks/reactQueryAlias';
 import Flex from '../Flex';
 import { SessionInfoCellFragment$key } from './__generated__/SessionInfoCellFragment.graphql';
 import { EditOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Typography, theme } from 'antd';
+import { Button, Form, FormInstance, Input, Typography, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import React, { useState } from 'react';
+import _ from 'lodash';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
@@ -59,7 +60,7 @@ const SessionInfoCell: React.FC<{
     },
   });
 
-  const [form] = Form.useForm();
+  const formRef = useRef<FormInstance>(null);
   const { t } = useTranslation();
 
   const [editing, setEditing] = useState(false);
@@ -70,10 +71,11 @@ const SessionInfoCell: React.FC<{
     baiClient.email === session.user_email;
 
   const save = () => {
-    form
-      .validateFields()
+    formRef.current
+      ?.validateFields()
       .then(({ name }) => {
         setEditing(false);
+        if (session.name === name) return;
         setOptimisticName(name);
         mutation.mutate(name, {
           onSuccess: (result) => {
@@ -92,7 +94,7 @@ const SessionInfoCell: React.FC<{
   // sessions[objectKey].icon = this._getKernelIcon(session.image);
   //         sessions[objectKey].sessionTags = this._getKernelInfo(session.image);
   return (
-    <Form form={form}>
+    <Form ref={formRef}>
       {editing ? (
         <Form.Item
           style={{ margin: 0 }}
@@ -109,8 +111,12 @@ const SessionInfoCell: React.FC<{
               message: t('session.Validation.EnterValidSessionName'),
             },
             () => ({
-              validator(_, value) {
-                if (sessionNameList.includes(String(value))) {
+              validator(form, value) {
+                if (
+                  _.without(sessionNameList, session.name).includes(
+                    String(value),
+                  )
+                ) {
                   return Promise.reject(
                     new Error(t('session.Validation.SessionNameAlreadyExist')),
                   );
@@ -145,7 +151,7 @@ const SessionInfoCell: React.FC<{
               icon={<EditOutlined />}
               style={{ color: token.colorLink }}
               onClick={() => {
-                form.setFieldsValue({
+                formRef.current?.setFieldsValue({
                   name: session.name,
                 });
                 setEditing(true);

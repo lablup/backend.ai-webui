@@ -3,9 +3,9 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import { UserResourcePolicySettingModalFragment$key } from './__generated__/UserResourcePolicySettingModalFragment.graphql';
 // import { UserResourcePolicySettingModalCreateMutation } from "./__generated__/UserResourcePolicySettingModalCreateMutation.graphql";
 import { UserResourcePolicySettingModalModifyMutation } from './__generated__/UserResourcePolicySettingModalModifyMutation.graphql';
-import { Form, Input, message, Alert } from 'antd';
+import { Form, Input, message, Alert, FormInstance } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
 
@@ -22,7 +22,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
 
-  const [form] = Form.useForm();
+  const formRef = useRef<FormInstance>(null);
 
   const userResourcePolicyInfo = useFragment(
     graphql`
@@ -72,7 +72,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
   `);
 
   const _onOk = (e: React.MouseEvent<HTMLElement>) => {
-    form.validateFields().then((values) => {
+    formRef.current?.validateFields().then((values) => {
       if (userResourcePolicyInfo?.name) {
         commitModifyUserResourcePolicy({
           variables: {
@@ -130,9 +130,6 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
   return (
     <BAIModal
       {...baiModalProps}
-      style={{
-        zIndex: 10000,
-      }}
       destroyOnClose
       title={t('storageHost.ResourcePolicySettings')}
       onOk={_onOk}
@@ -144,7 +141,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
         style={{ marginTop: 20, marginBottom: 25 }}
       />
       <Form
-        form={form}
+        ref={formRef}
         preserve={false}
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 20 }}

@@ -129,7 +129,10 @@
     "Update": "Actualización",
     "Yes": "Sí",
     "Download": "Descargar",
-    "Clone": "Clon"
+    "Clone": "Clon",
+    "Config": "Configurar",
+    "Next": "Siguiente",
+    "Previous": "Anterior"
   },
   "credential": {
     "AccessKeyOptional": "Clave de acceso (opcional)",
@@ -378,7 +381,8 @@
     "ModelStore": "Tienda de modelos",
     "New": "Nuevo",
     "Add": "Añadir",
-    "CloningIsOnlyPossibleSameHost": "Actualmente, la clonación sólo es posible en el mismo host."
+    "CloningIsOnlyPossibleSameHost": "Actualmente, la clonación sólo es posible en el mismo host.",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "ErrorOccurred": "Se ha producido un error",
@@ -483,7 +487,10 @@
     "Username": "Nombre de usuario",
     "cores": "núcleos",
     "None": "Ninguno",
-    "Image": "Imagen"
+    "Image": "Imagen",
+    "All": "Todos",
+    "InProgress": "En curso",
+    "Session": "Sesión"
   },
   "import": {
     "CleanUpImportTask": "Tarea de importación de limpieza...",
@@ -731,13 +738,21 @@
     "Result": "Resultado",
     "Finished": "Finalizado",
     "ServiceDelegatedFrom": "El servicio modelo es creado por {{ createdUser }} pero la propiedad de la sesión será delegada a {{ sessionOwner }}",
-    "FailedToTerminateService": "La solicitud para finalizar el servicio ha fallado."
+    "FailedToTerminateService": "La solicitud para finalizar el servicio ha fallado.",
+    "FailedToUpdateService": "No se pudo actualizar el servicio.",
+    "ServiceCreated": "El servicio modelo {{ name }} se ha creado correctamente.",
+    "ServiceUpdated": "El servicio de modelo {{ name }} se ha actualizado correctamente.",
+    "ServiceTerminated": "El servicio de modelo {{ name }} se ha finalizado correctamente."
   },
   "notification": {
     "Initializing": "Inicializando...",
     "SeeDetail": "Ver detalle",
     "SuccessfullyUpdated": "Actualizado con éxito",
-    "Visit": "Visite"
+    "Visit": "Visite",
+    "NoNotification": "Sin notificación.",
+    "Notifications": "Notificaciones",
+    "ClearNotifications": "Borrar notificaciones",
+    "AreYouSureToClearAllNotifications": "¿Estás seguro de borrar todas las notificaciones?"
   },
   "pipeline": {
     "Component": {
@@ -809,7 +824,8 @@
     "UpdatingRegistryInfo": "Actualización de la información del registro...",
     "Username": "Nombre de usuario",
     "UsernameOptional": "Nombre de usuario (opcional)",
-    "ConfirmNoUserName": "Usuario y contraseña no especificados, ¿desea guardar?"
+    "ConfirmNoUserName": "Usuario y contraseña no especificados, ¿desea guardar?",
+    "DescURLFormat": "Tipo de URL no válido"
   },
   "resourceGroup": {
     "Active": "Activo",
@@ -993,7 +1009,11 @@
       "SessionNameRequired": "El nombre de la sesión es obligatorio",
       "SluggedStrings": "Cadenas babosas (>3 caracteres)",
       "SessionNameTooLong64": "Introduzca 64 caracteres o menos.",
-      "PleaseFollowSessionNameRule": "Ingrese una combinación de al menos 4 letras, números, '.', '_' y '-'."
+      "PleaseFollowSessionNameRule": "Ingrese una combinación de al menos 4 letras, números, '.', '_' y '-'.",
+      "SessionNameTooShort": "Introduzca al menos 4 caracteres.",
+      "SessionNameShouldStartWith": "Debe empezar por una letra del alfabeto, un número o '_'.",
+      "SessionNameShouldEndWith": "Debe terminar con una letra del alfabeto, un número o '_'.",
+      "SessionNameInvalidCharacter": "El centro de un nombre sólo puede contener letras del alfabeto, números y \"_\"."
     },
     "XRDPconnection": "Conexión RDP",
     "applauncher": {
@@ -1146,8 +1166,21 @@
       "EnvironmentVariableNamePatternError": "El nombre de la variable debe empezar por una letra o un guión bajo, y sólo puede contener letras, números y guiones bajos.",
       "EnvironmentVariableDuplicateName": "Un nombre de variable que ya existe.",
       "Template": "Plantilla de sesión",
-      "EnableAutomaticShmem": "Memoria compartida automática",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "EnableAutomaticMiniumShmem": "Establecer la memoria compartida mínima",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Solo se permiten números enteros cuando el tamaño del clúster no es inferior a 2.",
+      "StartAfter": "Empezar después:",
+      "StartTimeDoesNotApply": "Si no se establece la hora de inicio, no se aplica.",
+      "MiniumAllocation": "Requisitos mínimos",
+      "MiniumAllocationTooltip": "Seleccione como requisito mínimo para el entorno de ejecución seleccionado",
+      "PreviousLauncher": "Anterior",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Estás utilizando el lanzador de sesiones \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Ir a la reseña",
+      "InteractiveModeDesc": "permite crear, probar y ejecutar código de forma interactiva a través de jupyter notebook, visual studio code, etc.",
+      "BatchModeDesc": "Puedes ejecutar tu código con múltiples nodos y clusters para escalar tu idea",
+      "AddEnvironmentVariable": "Añadir variables de entorno",
+      "EnvironmentVariableValueRequired": "Por favor, introduzca un valor."
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",
@@ -1217,7 +1250,8 @@
       "tag": "Etiqueta"
     },
     "Plugins": "Complementos",
-    "OpenSourceCUDAGPUsupport": "Compatibilidad con GPU CUDA de código abierto"
+    "OpenSourceCUDAGPUsupport": "Compatibilidad con GPU CUDA de código abierto",
+    "ShowOnlyChanged": "Mostrar solo cambios"
   },
   "sidepanel": {
     "BackgroundTasks": "Tareas en curso",
@@ -1316,7 +1350,9 @@
     "TotpSetupCompleted": "2FA activado",
     "TotpSetupNotAvailable": "No se puede configurar la autenticación de dos factores.",
     "TurnOffTotp": "Desactivar la autenticación de dos factores",
-    "TypeInAuthKey": "También puede introducir manualmente el código de autenticación."
+    "TypeInAuthKey": "También puede introducir manualmente el código de autenticación.",
+    "EnterConfirmationCode": "Ahora ingrese la OTP generada por el autenticador para verificar.",
+    "RequireOTP": "Escribe OTP."
   },
   "update": {
     "NewWebUIVersionAvailable": "Nueva versión disponible:"
@@ -1383,7 +1419,12 @@
     "ShellEnvironments": "Entornos de conchas",
     "UseCompactSidebar": "Utilizar la barra lateral compacta por defecto",
     "MyKeypairInfo": "Información de mi par de claves",
-    "DescMyKeypairInfo": "Ver la información de mi par de claves"
+    "DescMyKeypairInfo": "Ver la información de mi par de claves",
+    "DarkMode": "Modo oscuro",
+    "LightMode": "Modo de luz",
+    "UseSystemSetting": "Usar configuración del sistema",
+    "DescThemeMode": "Personalice el aspecto de Backend.AI WebUI en su dispositivo.",
+    "ThemeMode": "Modo temático"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avanzado del terminal web: Copiar el contenido del terminal",
@@ -1501,5 +1542,8 @@
     "SettingTable": "Ajuste de la tabla",
     "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
     "SearchTableColumn": "Buscar columnas de la tabla"
+  },
+  "setting": {
+    "SearchPlaceholder": "Ingrese el término de búsqueda"
   }
 }

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { BackendAIPage } from './backend-ai-page';
 import { CSSResultGroup, html } from 'lit';
@@ -153,6 +153,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     this.icons = globalThis.backendaimetadata.icons;
     this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
     this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+    this.imageInfo = globalThis.backendaimetadata.imageInfo;
     document.addEventListener(
       'backend-ai-metadata-image-loaded',
       () => {
@@ -160,6 +161,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         this.icons = globalThis.backendaimetadata.icons;
         this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
         this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+        this.imageInfo = globalThis.backendaimetadata.imageInfo;
       },
       { once: true },
     );
@@ -261,8 +263,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     const hosts = await globalThis.backendaiclient?.vfolder?.list_hosts(
       globalThis.backendaiclient?.current_group_id(),
     );
-    return Object.values(hosts.volume_info).map(
-      (item: any) => item?.sftp_scaling_groups.join(', '),
+    return Object.values(hosts.volume_info).map((item: any) =>
+      item?.sftp_scaling_groups.join(', '),
     );
   }
 
@@ -786,7 +788,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             timeout,
           );
         // resourceGroupSlots will have three fields: available, occupied, and remaining.
-        const resourceGroupSlots = agentSummaryList.agent_summary_list.items
+        const resourceGroupSlots = agentSummaryList.agent_summary_list?.items
           .filter(
             (agent) =>
               agent.scaling_group == this.scaling_group && agent.schedulable,

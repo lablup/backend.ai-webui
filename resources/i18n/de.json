@@ -255,8 +255,21 @@
       "EnvironmentVariableNamePatternError": "Der Variablenname muss mit einem Buchstaben oder Unterstrich beginnen und darf nur Buchstaben, Zahlen und Unterstriche enthalten.",
       "EnvironmentVariableDuplicateName": "Ein Variablenname, der bereits existiert.",
       "Template": "Sitzungsvorlage",
-      "EnableAutomaticShmem": "Automatischer gemeinsamer Speicher",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "EnableAutomaticMiniumShmem": "Minimalen gemeinsamen Speicher festlegen",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Nur Ganzzahlen sind zulässig, wenn die Clustergröße nicht weniger als 2 beträgt.",
+      "StartAfter": "Beginnen Sie nach:",
+      "StartTimeDoesNotApply": "Wenn die Startzeit nicht festgelegt ist, gilt sie nicht.",
+      "MiniumAllocation": "Mindestanforderungen",
+      "MiniumAllocationTooltip": "Wählen Sie als Mindestanforderung für die ausgewählte Betriebsumgebung",
+      "PreviousLauncher": "Vorherige",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Sie verwenden den \"{{launcher}}\"-Sitzungsstarter.",
+      "SkipToConfirmAndLaunch": "Zur Bewertung springen",
+      "InteractiveModeDesc": "ermöglicht das interaktive Erstellen, Testen und Ausführen von Code über Jupyter Notebook, Visual Studio Code usw.",
+      "BatchModeDesc": "Sie können Ihren Code mit mehreren Knoten und Clustern ausführen, um Ihre Idee zu skalieren",
+      "AddEnvironmentVariable": "Umgebungsvariablen hinzufügen",
+      "EnvironmentVariableValueRequired": "Bitte geben Sie einen Wert ein."
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",
@@ -314,7 +327,11 @@
       "SluggedStrings": "Geschliffene Zeichenfolgen (>3 Zeichen)",
       "SessionNameAlreadyExist": "Sitzungsname existiert bereits",
       "SessionNameTooLong64": "Bitte geben Sie maximal 64 Zeichen ein.",
-      "PleaseFollowSessionNameRule": "Bitte geben Sie eine Kombination aus mindestens 4 Buchstaben, Zahlen, „.“, „_“ und „-“ ein."
+      "PleaseFollowSessionNameRule": "Bitte geben Sie eine Kombination aus mindestens 4 Buchstaben, Zahlen, „.“, „_“ und „-“ ein.",
+      "SessionNameTooShort": "Bitte geben Sie mindestens 4 Zeichen ein.",
+      "SessionNameShouldStartWith": "Er muss mit einem Buchstaben des Alphabets, einer Zahl oder '_' beginnen.",
+      "SessionNameShouldEndWith": "Er muss mit einem Buchstaben des Alphabets, einer Zahl oder '_' enden.",
+      "SessionNameInvalidCharacter": "Die Mitte eines Namens darf nur Buchstaben des Alphabets, Zahlen und '_' enthalten."
     },
     "Interactive": "Interaktiv",
     "Batch": "Stapel",
@@ -407,7 +424,10 @@
     "Commit": "Commit",
     "EnterManually": "Manuell eingeben",
     "Download": "Herunterladen",
-    "Clone": "Klonen"
+    "Clone": "Klonen",
+    "Config": "Konfigurieren Sie",
+    "Next": "Weiter",
+    "Previous": "Vorherige"
   },
   "agent": {
     "Endpoint": "Endpunkt",
@@ -451,7 +471,10 @@
     "Enabled": "aktiviert",
     "StorageProxies": "Speicher",
     "None": "Keine",
-    "Image": "Bild"
+    "Image": "Bild",
+    "All": "Alle",
+    "InProgress": "In Arbeit",
+    "Session": "Sitzung"
   },
   "credential": {
     "Permission": "Genehmigung",
@@ -700,7 +723,8 @@
     "ModelStore": "Modellladen",
     "New": "Neu",
     "Add": "hinzufügen",
-    "CloningIsOnlyPossibleSameHost": "Derzeit ist das Klonen nur auf demselben Host möglich."
+    "CloningIsOnlyPossibleSameHost": "Derzeit ist das Klonen nur auf demselben Host möglich.",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -847,7 +871,12 @@
     "BootstrapScriptDescription": "Das Bootstrap-Skript wird nur einmal nach der Erstellung der Sitzung ausgeführt",
     "SSHKeypairEnterManually": "SSH-Schlüsselpaar",
     "MyKeypairInfo": "Meine Schlüsselpaarinformationen",
-    "DescMyKeypairInfo": "Siehe meine Schlüsselpaarinformationen"
+    "DescMyKeypairInfo": "Siehe meine Schlüsselpaarinformationen",
+    "DarkMode": "Dunkler Modus",
+    "LightMode": "Lichtmodus",
+    "UseSystemSetting": "Verwenden Sie die Systemeinstellungen",
+    "DescThemeMode": "Passen Sie an, wie die Backend.AI-WebUI auf Ihrem Gerät aussieht.",
+    "ThemeMode": "Themenmodus"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Erweiterte Web-Terminal-Nutzung: Terminal-Inhalte kopieren",
@@ -933,7 +962,8 @@
     "RegistrySuccessfullyModified": "Registry erfolgreich geändert.",
     "NoRegistryToDisplay": "Keine Registrierungen anzeigen",
     "ModifyRegistry": "Registry ändern",
-    "ConfirmNoUserName": "Benutzer und Passwort nicht angegeben, möchten Sie speichern?"
+    "ConfirmNoUserName": "Benutzer und Passwort nicht angegeben, möchten Sie speichern?",
+    "DescURLFormat": "Ungültiger URL-Typ"
   },
   "resourceGroup": {
     "ResourceGroups": "Ressourcengruppen",
@@ -1124,13 +1154,18 @@
     "MTUDescription": "Maximale Übertragungseinheit, die Größe des größten Pakets, das ein Netzprotokoll übertragen kann.",
     "OutOfRange": "Außerhalb der Reichweite.",
     "Plugins": "Plugins",
-    "OpenSourceCUDAGPUsupport": "Open Source CUDA GPU Unterstützung"
+    "OpenSourceCUDAGPUsupport": "Open Source CUDA GPU Unterstützung",
+    "ShowOnlyChanged": "Nur Änderungen anzeigen"
   },
   "notification": {
     "SuccessfullyUpdated": "Erfolgreich aktualisiert",
     "Visit": "Besuch",
     "SeeDetail": "Siehe Detail",
-    "Initializing": "Initialisieren..."
+    "Initializing": "Initialisieren...",
+    "NoNotification": "Keine Benachrichtigung.",
+    "Notifications": "Benachrichtigungen",
+    "ClearNotifications": "Klare Benachrichtigungen",
+    "AreYouSureToClearAllNotifications": "Sind Sie sicher, dass Sie alle Benachrichtigungen gelöscht haben?"
   },
   "information": {
     "Core": "Ader",
@@ -1412,7 +1447,11 @@
     "Result": "Ergebnis",
     "Finished": "Fertig",
     "ServiceDelegatedFrom": "Der Modelldienst wird von {{ createdUser }} erstellt, aber das Eigentum an der Sitzung wird an {{ sessionOwner }} delegiert.",
-    "FailedToTerminateService": "Die Anfrage zur Beendigung des Dienstes ist fehlgeschlagen."
+    "FailedToTerminateService": "Die Anfrage zur Beendigung des Dienstes ist fehlgeschlagen.",
+    "FailedToUpdateService": "Der Dienst konnte nicht aktualisiert werden.",
+    "ServiceCreated": "Der Modelldienst {{ name }} wurde erfolgreich erstellt.",
+    "ServiceUpdated": "Der Modelldienst {{ name }} wurde erfolgreich aktualisiert.",
+    "ServiceTerminated": "Der Modelldienst {{ name }} wurde erfolgreich beendet."
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",
@@ -1463,7 +1502,9 @@
     "TurnOffTotp": "Deaktivieren Sie die Zwei-Faktor-Authentifizierung",
     "ConfirmTotpRemovalBody": "Sind Sie sicher, dass Sie die Zwei-Faktor-Authentifizierung nicht verwenden möchten?",
     "RemoveTotpSetupCompleted": "Deaktivierte 2FA",
-    "OTP": "Einmaliges Passwort"
+    "OTP": "Einmaliges Passwort",
+    "EnterConfirmationCode": "Geben Sie nun zur Überprüfung das vom Authentifikator generierte OTP ein.",
+    "RequireOTP": "Schreiben Sie OTP."
   },
   "OpenVSCodeRemote": "Lokalen Visual Studio Code öffnen",
   "inputLimit": {
@@ -1501,5 +1542,8 @@
     "SettingTable": "Sitzordnung bei Tisch",
     "SelectColumnToDisplay": "Wählen Sie die anzuzeigenden Spalten aus",
     "SearchTableColumn": "Tabellenspalten durchsuchen"
+  },
+  "setting": {
+    "SearchPlaceholder": "Geben Sie einen Suchbegriff ein"
   }
 }

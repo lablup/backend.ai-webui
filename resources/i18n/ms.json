@@ -254,9 +254,22 @@
       "EnvironmentVariableNamePatternError": "Nama pembolehubah mesti bermula dengan huruf atau garis bawah, dan hanya boleh mengandungi huruf, nombor dan garis bawah.",
       "EnvironmentVariableDuplicateName": "Nama pembolehubah ini sudah wujud.",
       "Template": "Templat Sesi",
-      "EnableAutomaticShmem": "Memori dikongsi automatik",
+      "EnableAutomaticMiniumShmem": "Tetapkan memori kongsi minimum",
       "PreOpenPortMaxCountLimit": "Anda boleh menyediakan kepada {{count}} port pra-buka.",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Hanya integer dibenarkan apabila saiz kelompok tidak kurang daripada 2.",
+      "StartAfter": "Mulakan selepas:",
+      "StartTimeDoesNotApply": "Jika masa mula tidak ditetapkan, ia tidak terpakai.",
+      "MiniumAllocation": "Keperluan minimum",
+      "MiniumAllocationTooltip": "Pilih sebagai keperluan minimum untuk persekitaran berjalan yang dipilih",
+      "PreviousLauncher": "Sebelumnya",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Anda menggunakan pelancar sesi \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Langkau ke semakan",
+      "InteractiveModeDesc": "membolehkan anda membuat, menguji dan menjalankan kod secara interaktif melalui buku nota jupyter, kod studio visual, dsb.",
+      "BatchModeDesc": "Anda boleh menjalankan kod anda dengan berbilang nod",
+      "AddEnvironmentVariable": "Tambah pembolehubah persekitaran",
+      "EnvironmentVariableValueRequired": "Sila masukkan nilai."
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",
@@ -314,7 +327,11 @@
       "SluggedStrings": "Rentetan slugged (>3 aksara)",
       "SessionNameAlreadyExist": "Nama sesi sudah wujud",
       "SessionNameTooLong64": "Sila masukkan 64 aksara atau kurang.",
-      "PleaseFollowSessionNameRule": "Sila masukkan gabungan sekurang-kurangnya 4 huruf, nombor, '.', '_' dan '-'."
+      "PleaseFollowSessionNameRule": "Sila masukkan gabungan sekurang-kurangnya 4 huruf, nombor, '.', '_' dan '-'.",
+      "SessionNameTooShort": "Sila masukkan sekurang-kurangnya 4 aksara.",
+      "SessionNameShouldStartWith": "Ia mesti bermula dengan huruf abjad, nombor atau '_'.",
+      "SessionNameShouldEndWith": "Ia mesti berakhir dengan huruf abjad, nombor atau '_'.",
+      "SessionNameInvalidCharacter": "Bahagian tengah nama hanya boleh mengandungi huruf abjad, nombor dan '_'."
     },
     "Interactive": "Interaktif",
     "Batch": "Kumpulan",
@@ -407,7 +424,10 @@
     "Commit": "komited",
     "EnterManually": "Masukkan Secara Manual",
     "Download": "Muat turun",
-    "Clone": "Klon"
+    "Clone": "Klon",
+    "Config": "Konfigurasi",
+    "Next": "Seterusnya",
+    "Previous": "Sebelumnya"
   },
   "agent": {
     "Endpoint": "Titik Akhir",
@@ -451,7 +471,10 @@
     "Enabled": "Diaktifkan",
     "StorageProxies": "Stor",
     "None": "tiada",
-    "Image": "Gambar"
+    "Image": "Gambar",
+    "All": "keseluruhan",
+    "InProgress": "Prosiding",
+    "Session": "Sesi"
   },
   "credential": {
     "Permission": "Kebenaran",
@@ -700,7 +723,8 @@
     "ModelStore": "Kedai Model",
     "New": "Baru",
     "Add": "Tambah",
-    "CloningIsOnlyPossibleSameHost": "Pada masa ini, pengklonan hanya boleh dilakukan pada hos yang sama."
+    "CloningIsOnlyPossibleSameHost": "Pada masa ini, pengklonan hanya boleh dilakukan pada hos yang sama.",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -847,7 +871,12 @@
     "BootstrapScriptDescription": "Skrip Bootstrap akan dilaksanakan sekali sahaja selepas penciptaan sesi",
     "SSHKeypairEnterManually": "SSH Keypair",
     "MyKeypairInfo": "Maklumat Pasangan Kunci Saya",
-    "DescMyKeypairInfo": "Lihat maklumat pasangan kunci saya"
+    "DescMyKeypairInfo": "Lihat maklumat pasangan kunci saya",
+    "DarkMode": "Mod Gelap",
+    "LightMode": "Mod Cahaya",
+    "UseSystemSetting": "Gunakan Tetapan Sistem",
+    "DescThemeMode": "Sesuaikan rupa Backend.AI WebUI pada peranti anda.",
+    "ThemeMode": "Mod Tema"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Lanjutan: Salin kandungan terminal",
@@ -933,7 +962,8 @@
     "RegistrySuccessfullyModified": "Pendaftaran berjaya diubah suai.",
     "NoRegistryToDisplay": "Tiada Pendaftaran untuk dipaparkan",
     "ModifyRegistry": "Ubah suai Pendaftaran",
-    "ConfirmNoUserName": "Pengguna dan kata laluan tidak dinyatakan, adakah anda ingin menyimpan?"
+    "ConfirmNoUserName": "Pengguna dan kata laluan tidak dinyatakan, adakah anda ingin menyimpan?",
+    "DescURLFormat": "Jenis URL tidak sah"
   },
   "resourceGroup": {
     "ResourceGroups": "Kumpulan Sumber",
@@ -1124,13 +1154,18 @@
     "MTUDescription": "Unit penghantaran maksimum, saiz paket terbesar yang boleh dihantar oleh protokol rangkaian.",
     "OutOfRange": "Luar kawasan.",
     "Plugins": "Pemalam",
-    "OpenSourceCUDAGPUsupport": "Sokongan GPU CUDA Sumber Terbuka"
+    "OpenSourceCUDAGPUsupport": "Sokongan GPU CUDA Sumber Terbuka",
+    "ShowOnlyChanged": "Paparkan Perubahan Sahaja"
   },
   "notification": {
     "SuccessfullyUpdated": "Berjaya Dikemas kini",
     "Visit": "Lawati",
     "SeeDetail": "Lihat Perincian",
-    "Initializing": "Memulakan ..."
+    "Initializing": "Memulakan ...",
+    "NoNotification": "Tiada Pemberitahuan.",
+    "Notifications": "Pemberitahuan",
+    "ClearNotifications": "Kosongkan Pemberitahuan",
+    "AreYouSureToClearAllNotifications": "Adakah anda pasti mengosongkan semua pemberitahuan?"
   },
   "information": {
     "Core": "Teras",
@@ -1452,7 +1487,11 @@
     "Result": "Hasilnya",
     "Finished": "Selesai",
     "ServiceDelegatedFrom": "Perkhidmatan model dicipta oleh {{ createdUser }} tetapi pemilikan sesi akan diwakilkan kepada {{ sessionOwner }}",
-    "FailedToTerminateService": "Permintaan untuk menamatkan perkhidmatan gagal."
+    "FailedToTerminateService": "Permintaan untuk menamatkan perkhidmatan gagal.",
+    "FailedToUpdateService": "Gagal mengemas kini perkhidmatan.",
+    "ServiceCreated": "Perkhidmatan model {{ name }} telah berjaya dibuat.",
+    "ServiceUpdated": "Perkhidmatan model {{ name }} telah berjaya dikemas kini.",
+    "ServiceTerminated": "Perkhidmatan model {{ name }} telah berjaya ditamatkan."
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",
@@ -1463,7 +1502,9 @@
     "TurnOffTotp": "Matikan pengesahan dua faktor",
     "ConfirmTotpRemovalBody": "Adakah anda pasti untuk menarik diri daripada menggunakan pengesahan dua faktor?",
     "RemoveTotpSetupCompleted": "Dilumpuhkan 2FA",
-    "OTP": "Kata laluan sekali sahaja"
+    "OTP": "Kata laluan sekali sahaja",
+    "EnterConfirmationCode": "Sekarang masukkan OTP yang dijana oleh pengesah untuk mengesahkan.",
+    "RequireOTP": "Tulis OTP."
   },
   "OpenVSCodeRemote": "Buka Kod Visual Studio tempatan",
   "inputLimit": {
@@ -1501,5 +1542,8 @@
     "SelectColumnToDisplay": "Pilih untuk lajur untuk dipaparkan",
     "SettingTable": "Tetapan Meja",
     "SearchTableColumn": "Cari lajur jadual"
+  },
+  "setting": {
+    "SearchPlaceholder": "Masukkan Istilah Carian"
   }
 }

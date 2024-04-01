@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { navigate } from '../backend-ai-app';
 import {
@@ -73,6 +73,11 @@ export default class BackendAIErrorView extends BackendAIPage {
     const page = url !== '' ? url : 'summary';
     globalThis.history.pushState({}, '', '/summary');
     store.dispatch(navigate(decodeURIComponent('/' + page), {}));
+    document.dispatchEvent(
+      new CustomEvent('react-navigate', {
+        detail: url,
+      }),
+    );
   }
 
   render() {

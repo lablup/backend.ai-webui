@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -84,14 +84,6 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
           margin: 10px auto;
           background-image: none;
           --mdc-button-outline-width: 2px;
-          --mdc-button-disabled-outline-color: var(--general-sidebar-color);
-          --mdc-button-disabled-ink-color: var(--general-sidebar-color);
-          --mdc-theme-primary: #38bd73;
-          --mdc-theme-on-primary: #38bd73;
-        }
-
-        lablup-activity-panel {
-          color: #000;
         }
       `,
     ];
@@ -101,7 +93,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css" />
-      <div class="horizontal wrap layout">
+      <div class="horizontal wrap layout" style="gap:24px;">
         <lablup-activity-panel title="${_t('maintenance.Fix')}">
           <div slot="message" class="vertical flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
@@ -190,61 +182,187 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
    * rescan the image
    */
   async rescan_images() {
-    this.rescanImageButton.label = _text('maintenance.RescanImageScanning');
     this.scanning = true;
-    // this.notification.text = 'Rescan image started.';
-    // this.notification.show();
-    const indicator = await this.indicator.start('indeterminate');
-    indicator.set(0, _text('maintenance.Scanning'));
-    globalThis.tasker.add(
-      _text('maintenance.RescanImages'),
-      globalThis.backendaiclient.maintenance
-        .rescan_images()
-        .then(({ rescan_images }) => {
-          const sse: EventSource =
-            globalThis.backendaiclient.maintenance.attach_background_task(
-              rescan_images.task_id,
-            );
-          sse.addEventListener('bgtask_updated', (e) => {
-            const data = JSON.parse(e['data']);
-            const ratio = data.current_progress / data.total_progress;
-            indicator.set(100 * ratio, _text('maintenance.Scanning'));
-          });
-          sse.addEventListener('bgtask_done', (e) => {
-            const event = new CustomEvent('image-rescanned');
-            document.dispatchEvent(event);
-            indicator.set(100, _text('maintenance.RescanImageFinished'));
-            sse.close();
-          });
-          sse.addEventListener('bgtask_failed', (e) => {
-            console.log('task_failed', e['data']);
-            sse.close();
-            throw new Error('Background Image scanning task has failed');
-          });
-          sse.addEventListener('bgtask_cancelled', (e) => {
-            sse.close();
-            throw new Error(
-              'Background Image scanning task has been cancelled',
-            );
-          });
-          this.rescanImageButton.label = _text('maintenance.RescanImages');
-          this.scanning = false;
-        })
-        .catch((err) => {
-          this.scanning = false;
-          this.rescanImageButton.label = _text('maintenance.RescanImages');
-          console.log(err);
-          indicator.set(50, _text('maintenance.RescanFailed'));
-          indicator.end(1000);
-          if (err && err.message) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true, err);
-          }
-        }),
-      '',
-      'image',
-    );
+    // let taskId;
+
+    const notiKey = 'image-rescan:' + new Date().getTime();
+
+    const event: CustomEvent = new CustomEvent('add-bai-notification', {
+      detail: {
+        key: notiKey,
+        message: _text('maintenance.RescanImages'),
+        description: _text('maintenance.RescanImageScanning'),
+        backgroundTask: {
+          percent: 0,
+          status: 'pending',
+        },
+        duration: 0,
+        open: true,
+      },
+    });
+    document.dispatchEvent(event);
+
+    globalThis.backendaiclient.maintenance
+      .rescan_images()
+      .then(({ rescan_images }) => {
+        const event: CustomEvent = new CustomEvent('add-bai-notification', {
+          detail: {
+            key: notiKey,
+            description: _text('maintenance.RescanImageScanning'),
+            backgroundTask: {
+              taskId: rescan_images.task_id,
+              statusDescriptions: {
+                pending: _text('maintenance.RescanImageScanning'),
+                resolved: _text('maintenance.RescanImageFinished'),
+                rejected: _text('maintenance.RescanFailed'),
+              },
+              status: 'pending',
+              percent: 0,
+            },
+            duration: 0,
+          },
+        });
+        document.dispatchEvent(event);
+      })
+      .finally(() => {
+        this.scanning = false; // This means that the scanning request is sent. Not the scanning is finished.
+      });
+
+    //   this.tasker.add(
+    //     _text('maintenance.RescanImages'),
+    //     globalThis.backendaiclient.maintenance
+    //       .rescan_images()
+    //       .then(({ rescan_images }) => {
+    //         const sse: EventSource =
+    //           globalThis.backendaiclient.maintenance.attach_background_task(
+    //             rescan_images.task_id,
+    //           );
+    //         taskId = rescan_images.task_id;
+
+    //         const event: CustomEvent = new CustomEvent('add-bai-notification', {
+    //           detail: {
+    //             key: taskId,
+    //             taskId,
+    //             description: _text('maintenance.RescanImageScanning'),
+    //             progressPercent: 0,
+    //             progressStatus: 'active',
+    //             duration: 0,
+    //             open: true,
+    //           },
+    //         });
+    //         document.dispatchEvent(event);
+
+    //         sse.addEventListener('bgtask_updated', (e) => {
+    //           // TODO: update progress bar
+    //           const data = JSON.parse(e['data']);
+    //           const ratio = data.current_progress / data.total_progress;
+
+    //           const event: CustomEvent = new CustomEvent('add-bai-notification', {
+    //             detail: {
+    //               key: taskId,
+    //               taskId,
+    //               description: _text('maintenance.RescanImageScanning'),
+    //               progressPercent: ratio * 100,
+    //               progressStatus: 'active',
+    //             },
+    //           });
+    //           document.dispatchEvent(event);
+    //           console.log('####', {
+    //             detail: {
+    //               key: taskId,
+    //               taskId,
+    //               description: _text('maintenance.RescanImageFinished'),
+    //               progressPercent: ratio * 100,
+    //               progressStatus: 'active',
+    //             },
+    //           });
+    //         });
+    //         sse.addEventListener('bgtask_done', (e) => {
+    //           const event = new CustomEvent('image-rescanned');
+    //           document.dispatchEvent(event);
+    //           sse.close();
+    //           const event2: CustomEvent = new CustomEvent(
+    //             'add-bai-notification',
+    //             {
+    //               detail: {
+    //                 key: taskId,
+    //                 taskId,
+    //                 description: _text('maintenance.RescanImageFinished'),
+    //                 progressPercent: 100,
+    //                 progressStatus: 'success',
+    //                 duration: 1000,
+    //               },
+    //             },
+    //           );
+    //           document.dispatchEvent(event2);
+    //         });
+    //         sse.addEventListener('bgtask_failed', (e) => {
+    //           console.log('task_failed', e['data']);
+    //           sse.close();
+    //           const data = JSON.parse(e['data']);
+    //           const ratio = data.current_progress / data.total_progress;
+    //           const event: CustomEvent = new CustomEvent('add-bai-notification', {
+    //             detail: {
+    //               key: taskId,
+    //               taskId,
+    //               description: _text('maintenance.RescanFailed'),
+    //               progressPercent: ratio * 100,
+    //               progressStatus: 'exception',
+    //               duration: 1000,
+    //             },
+    //           });
+    //           document.dispatchEvent(event);
+    //           throw new Error('Background Image scanning task has failed');
+    //         });
+    //         sse.addEventListener('bgtask_cancelled', (e) => {
+    //           sse.close();
+    //           const data = JSON.parse(e['data']);
+    //           const ratio = data.current_progress / data.total_progress;
+    //           const event: CustomEvent = new CustomEvent('add-bai-notification', {
+    //             detail: {
+    //               key: taskId,
+    //               taskId,
+    //               description: _text('maintenance.RescanFailed'),
+    //               progressPercent: ratio * 100,
+    //               progressStatus: 'exception',
+    //               duration: 1000,
+    //             },
+    //           });
+    //           document.dispatchEvent(event);
+    //           throw new Error(
+    //             'Background Image scanning task has been cancelled',
+    //           );
+    //         });
+    //         this.scanning = false;
+    //       })
+    //       .catch((err) => {
+    //         // this.scanning = false;
+    //         // console.log(err);
+    //         // let message = _text('maintenance.RescanFailed');
+    //         // let description;
+    //         // if (err && err.message) {
+    //         //   message = PainKiller.relieve(err.title);
+    //         //   description = err.message;
+    //         // }
+    //         // const event: CustomEvent = new CustomEvent('add-bai-notification', {
+    //         //   detail: {
+    //         //     taskId,
+    //         //     message: message,
+    //         //     description: description,
+    //         //     progressPercent: 50,
+    //         //     progressStatus: 'exception',
+    //         //     duration: 1000,
+    //         //   },
+    //         // });
+    //         // document.dispatchEvent(event);
+    //       }),
+    //     taskId,
+    //     'image',
+    //     '',
+    //     _text('maintenance.Scanning'),
+    //     '',
+    //     true,
+    //   );
   }
 
   /**
@@ -253,35 +371,51 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
   async recalculate_usage() {
     this.recalculateUsageButton.label = _text('maintenance.Recalculating');
     this.recalculating = true;
-    const indicator = await this.indicator.start('indeterminate');
-    indicator.set(10, _text('maintenance.Recalculating'));
     this.tasker.add(
       _text('maintenance.RecalculateUsage'),
-      globalThis.backendaiclient.maintenance
-        .recalculate_usage()
-        .then((response) => {
-          this.recalculateUsageButton.label = _text(
-            'maintenance.RecalculateUsage',
-          );
-          this.recalculating = false;
-          indicator.set(100, _text('maintenance.RecalculationFinished'));
-        })
-        .catch((err) => {
-          this.recalculating = false;
-          this.recalculateUsageButton.label = _text(
-            'maintenance.RecalculateUsage',
-          );
-          console.log(err);
-          indicator.set(50, _text('maintenance.RecalculationFailed'));
-          indicator.end(1000);
-          if (err && err.message) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true, err);
-          }
-        }),
+      new Promise((resolve, reject) => {
+        return globalThis.backendaiclient.maintenance
+          .recalculate_usage()
+          .then((response) => {
+            this.recalculateUsageButton.label = _text(
+              'maintenance.RecalculateUsage',
+            );
+            this.recalculating = false;
+            resolve({
+              description: _text('maintenance.RecalculationFinished'),
+              progress: {
+                percent: 100,
+                status: 'success',
+              },
+            });
+          })
+          .catch((err) => {
+            this.recalculating = false;
+            this.recalculateUsageButton.label = _text(
+              'maintenance.RecalculateUsage',
+            );
+            console.log(err);
+            let message = _text('maintenance.RecalculationFailed');
+            let description;
+            if (err && err.message) {
+              message = PainKiller.relieve(err.title);
+              description = err.message;
+            }
+            reject({
+              message: message,
+              description: description,
+              progress: {
+                percent: 50,
+                status: 'exception',
+              },
+            });
+          });
+      }),
       '',
       'database',
+      '',
+      _text('maintenance.Recalculating'),
+      _text('maintenance.RecalculationFinished'),
     );
   }
 }

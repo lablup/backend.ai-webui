@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -28,11 +28,17 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
   const { data: keypairs } = useTanQuery({
     queryKey: ['baiClient.keypair.list', baiModalProps.open], // refetch on open state
     queryFn: () => {
-      return baiClient.keypair
-        .list(userInfo.email, ['access_key', 'secret_key', 'is_active'], true)
-        .then((res: any) => res.keypairs);
+      return baiModalProps.open
+        ? baiClient.keypair
+            .list(
+              userInfo.email,
+              ['access_key', 'secret_key', 'is_active'],
+              true,
+            )
+            .then((res: any) => res.keypairs)
+        : null;
     },
-    suspense: true,
+    suspense: false,
     staleTime: 0,
     cacheTime: 0,
   });
@@ -63,6 +69,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
       width={'auto'}
       footer={[
         <Button
+          key="keypairInfoClose"
           onClick={() => {
             onRequestClose();
           }}
@@ -88,6 +95,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
           },
           {
             title: t('general.AccessKey'),
+            key: 'accessKey',
             dataIndex: 'access_key',
             fixed: 'left',
             render: (value) => (
@@ -103,6 +111,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
           },
           {
             title: t('general.SecretKey'),
+            key: 'secretKey',
             dataIndex: 'secret_key',
             fixed: 'left',
             render: (value) => (
@@ -112,7 +121,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
             ),
           },
         ]}
-      ></Table>
+      />
     </BAIModal>
   );
 };

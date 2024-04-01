@@ -2,14 +2,32 @@ import { ThemeConfig } from 'antd';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 
-let _customTheme: { light: ThemeConfig; dark: ThemeConfig };
+type LogoConfig = {
+  src: string;
+  srcCollapsed: string;
+  srcDark?: string;
+  srcCollapsedDark?: string;
+  logoTitle?: string;
+  logoTitleCollapsed?: string;
+  alt?: string;
+  href?: string;
+};
+type SiderConfig = {
+  theme?: 'light' | 'dark';
+};
+let _customTheme: {
+  light: ThemeConfig;
+  dark: ThemeConfig;
+  logo: LogoConfig;
+  sider?: SiderConfig;
+};
 
 export const loadCustomThemeConfig = () => {
   fetch('resources/theme.json')
     .then((response) => response.json())
     .then((theme) => {
       if (_.isUndefined(theme.light)) {
-        _customTheme = { light: theme, dark: theme };
+        _customTheme = { light: theme, dark: theme, logo: theme.logo };
       } else {
         _customTheme = theme;
       }

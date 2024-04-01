@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { default as AnsiUp } from '../lib/ansiup';
 import '../plastics/lablup-shields/lablup-shields';
@@ -418,7 +418,7 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         span.subheading {
-          color: #666;
+          color: var(--token-colorTextSecondary, #666);
           font-weight: bold;
           font-size: 15px;
         }
@@ -448,10 +448,10 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         div.pagination-label {
-          background-color: var(--paper-grey-100);
+          background-color: var(--token-colorBgContainer, --paper-grey-100);
           min-width: 60px;
           font-size: 12px;
-          font-family: var(--general-font-family);
+          font-family: var(--token-fontFamily);
           padding-top: 5px;
           width: auto;
           text-align: center;
@@ -466,7 +466,7 @@ export default class BackendAISessionList extends BackendAIPage {
         div.filters #access-key-filter {
           --input-font-size: small;
           --input-label-font-size: small;
-          --input-font-family: var(--general-font-family);
+          --input-font-family: var(--token-fontFamily);
         }
 
         .mount-button,
@@ -476,7 +476,8 @@ export default class BackendAISessionList extends BackendAIPage {
           background: none;
           padding: 0;
           outline-style: none;
-          font-family: var(--general-font-family);
+          font-family: var(--token-fontFamily);
+          color: var(--token-colorText);
         }
 
         .no-mount {
@@ -1668,6 +1669,7 @@ export default class BackendAISessionList extends BackendAIPage {
       commitSessionInfo.taskId ?? '',
       'commit',
       'remove-later',
+      _text('session.CommitSession') + commitSessionInfo.session.name,
     );
   }
 
@@ -1910,7 +1912,7 @@ export default class BackendAISessionList extends BackendAIPage {
     this.terminationQueue.push(sessionId);
     return this._terminateApp(sessionId)
       .then(() => {
-        this._requestDestroySession(sessionId, accessKey, forced);
+        return this._requestDestroySession(sessionId, accessKey, forced);
       })
       .catch((err) => {
         if (err && err.message) {
@@ -1971,7 +1973,7 @@ export default class BackendAISessionList extends BackendAIPage {
         mountedFolderItem.style.height = '25px';
         mountedFolderItem.style.fontWeight = '400';
         mountedFolderItem.style.fontSize = '14px';
-        mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
+        mountedFolderItem.style.fontFamily = 'var(--token-fontFamily)';
         mountedFolderItem.innerHTML =
           mounts.length > 1 ? key : _text('session.OnlyOneFolderAttached');
 
@@ -2000,7 +2002,9 @@ export default class BackendAISessionList extends BackendAIPage {
     const statusDialogContent: Array<TemplateResult> = [];
     statusDialogContent.push(html`
       <div class="vertical layout justified start">
-        <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">
+        <h3
+          style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
+        >
           ${_text('session.Status')}
         </h3>
         <lablup-shields
@@ -2020,7 +2024,7 @@ export default class BackendAISessionList extends BackendAIPage {
         <div class="vertical layout start flex" style="width:100%;">
           <div style="width:100%;">
             <h3
-              style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;"
+              style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
             >
               ${_text('session.StatusDetail')}
             </h3>
@@ -2076,7 +2080,7 @@ export default class BackendAISessionList extends BackendAIPage {
         <div class="vertical layout start flex" style="width:100%;">
           <div style="width:100%;">
             <h3
-              style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;margin-bottom:0px;"
+              style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);margin-bottom:0px;"
             >
               ${_text('session.StatusDetail')}
             </h3>
@@ -2237,7 +2241,7 @@ export default class BackendAISessionList extends BackendAIPage {
         <div class="vertical layout start flex" style="width:100%;">
           <div style="width:100%;">
             <h3
-              style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;"
+              style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
             >
               ${_text('session.StatusDetail')}
             </h3>
@@ -2290,7 +2294,7 @@ ${item.traceback}</pre
       statusDialogContent.push(html`
         <div class="vertical layout start flex" style="width:100%;">
           <h3
-            style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;"
+            style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
           >
             Detail
           </h3>
@@ -2549,9 +2553,9 @@ ${item.traceback}</pre
     thresholds_check_operator: string | null = null,
   ) => {
     const colorMap = {
-      green: '#527A42',
-      yellow: '#D8B541',
-      red: '#e05d44',
+      green: 'var(--token-colorSuccess)',
+      yellow: 'var(--token-colorWarning)',
+      red: 'var(--token-colorError)',
     };
     if (!thresholds_check_operator) {
       const [utilization, threshold] = resources as [number, number];
@@ -2626,7 +2630,7 @@ ${item.traceback}</pre
           }
           .util-detail-menu-header > div {
             font-size: 13px;
-            font-family: var(--general-font-family);
+            font-family: var(--token-fontFamily);
             font-weight: 600;
           }
           .util-detail-menu-content {
@@ -2640,7 +2644,7 @@ ${item.traceback}</pre
             justify-content: center;
             justify-content: space-between;
             font-size: 12px;
-            font-family: var(--general-font-family);
+            font-family: var(--token-fontFamily);
             font-weight: 400;
             min-width: 155px;
           }
@@ -3197,7 +3201,7 @@ ${rowData.item[this.sessionNameField]}</pre
                 ? html`
                     <img
                       class="indicator-icon fg green"
-                      src="/resources/icons/ROCm.png"
+                      src="/resources/icons/rocm.svg"
                     />
                     <span>${rowData.item.rocm_gpu_slot}</span>
                     <span class="indicator">GPU</span>
@@ -3635,11 +3639,11 @@ ${rowData.item[this.sessionNameField]}</pre
         const remainingTimeType = checkerInfo?.remaining_time_type;
 
         // Determine color based on remaining time.
-        let remainingColor = '#527A42';
+        let remainingColor = 'var(--token-colorSuccess';
         if (!remainingSeconds || remainingSeconds < 3600) {
-          remainingColor = '#e05d44';
+          remainingColor = 'var(--token-colorError)';
         } else if (remainingSeconds < 3600 * 4) {
-          remainingColor = '#D8B541';
+          remainingColor = 'var(--token-colorWarning)';
         }
 
         // Determine color based on resource utilization.
@@ -4025,7 +4029,7 @@ ${rowData.item[this.sessionNameField]}</pre
         </div>
       </div>
       <div class="list-wrapper">
-        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
+        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact dark" aria-label="Session list"
           .items="${this.compute_sessions}" height-by-rows>
           ${
             this._isRunning

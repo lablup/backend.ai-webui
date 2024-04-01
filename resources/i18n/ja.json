@@ -255,8 +255,21 @@
       "EnvironmentVariableNamePatternError": "変数名は文字またはアンダースコアで始まり、文字、数字、アンダースコアのみを含むことができます。",
       "EnvironmentVariableDuplicateName": "既に存在する変数名です。",
       "Template": "セッションテンプレート",
-      "EnableAutomaticShmem": "自動共有メモリー",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "EnableAutomaticMiniumShmem": "最小共有メモリの設定",
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "クラスター サイズが 2 以上の場合は、整数のみが許可されます。",
+      "StartAfter": "次の後に開始します:",
+      "StartTimeDoesNotApply": "開始時間が設定されていない場合は適用されません。",
+      "MiniumAllocation": "最低条件",
+      "MiniumAllocationTooltip": "選択した実行環境の最小要件として選択する。",
+      "PreviousLauncher": "前へ",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "あなたは「{{launcher}}」セッション・ランチャーを使用しています。",
+      "SkipToConfirmAndLaunch": "レビューへスキップ",
+      "InteractiveModeDesc": "jupyterノートブックやビジュアル・スタジオ・コードなどを使って、インタラクティブにコードを作成、テスト、実行できる。",
+      "BatchModeDesc": "複数のノードやクラスタでコードを実行し、アイデアをスケールさせることができます。",
+      "AddEnvironmentVariable": "環境変数の追加",
+      "EnvironmentVariableValueRequired": "値を入力してください。"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -314,7 +327,11 @@
       "SluggedStrings": "最低4文字以上の固有の文字列で入力してください。",
       "SessionNameAlreadyExist": "同じ名前のセッションが既にあります",
       "SessionNameTooLong64": "64文字以下で入力してください。",
-      "PleaseFollowSessionNameRule": "少なくとも4文字以上の文字、数字、「.」、「_」、「-」の組み合わせで入力してください。"
+      "PleaseFollowSessionNameRule": "少なくとも4文字以上の文字、数字、「.」、「_」、「-」の組み合わせで入力してください。",
+      "SessionNameTooShort": "4文字以上入力してください。",
+      "SessionNameShouldStartWith": "アルファベット、数字、または'_'で始まっていなければならない。",
+      "SessionNameShouldEndWith": "アルファベット、数字、または'_'で終わっていなければならない。",
+      "SessionNameInvalidCharacter": "名前の真ん中にはアルファベット、数字、'_'しか入れられません。"
     },
     "Interactive": "インタラクティブ",
     "Batch": "バッチ",
@@ -407,7 +424,10 @@
     "Commit": "コミットする",
     "EnterManually": "直接入力する",
     "Download": "ダウンロード",
-    "Clone": "クローン"
+    "Clone": "クローン",
+    "Config": "コンフィグ",
+    "Next": "次のページ",
+    "Previous": "前へ"
   },
   "agent": {
     "Endpoint": "終点",
@@ -451,7 +471,10 @@
     "Enabled": "有効",
     "StorageProxies": "ストレージ",
     "None": "なし",
-    "Image": "画像"
+    "Image": "画像",
+    "All": "全体",
+    "InProgress": "進行中",
+    "Session": "セッション"
   },
   "credential": {
     "Permission": "許可",
@@ -700,7 +723,8 @@
     "ModelStore": "模型店",
     "New": "新しい",
     "Add": "追加",
-    "CloningIsOnlyPossibleSameHost": "現在、クローン作成は同じホスト上でのみ可能です。"
+    "CloningIsOnlyPossibleSameHost": "現在、クローン作成は同じホスト上でのみ可能です。",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -847,7 +871,12 @@
     "BootstrapScriptDescription": "ブートストラップスクリプトはセッション作成後一度だけ実行されます。",
     "SSHKeypairEnterManually": "SSHキーペア入力",
     "MyKeypairInfo": "私のキーペア情報",
-    "DescMyKeypairInfo": "私のキーペア情報を参照してください"
+    "DescMyKeypairInfo": "私のキーペア情報を参照してください",
+    "DarkMode": "ダークモード",
+    "LightMode": "ライトモード",
+    "UseSystemSetting": "システム設定を使用する",
+    "DescThemeMode": "Backend.AI WebUI がデバイス上でどのように見えるかをカスタマイズします。",
+    "ThemeMode": "テーマモード"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高度なWeb端末の使用法：端末の内容をコピーする",
@@ -933,7 +962,8 @@
     "RegistrySuccessfullyModified": "レジストリが正常に修正されました。",
     "NoRegistryToDisplay": "レジストリ情報がありません。",
     "ModifyRegistry": "レジストリの修正",
-    "ConfirmNoUserName": "ユーザーとパスワードが指定されていません。"
+    "ConfirmNoUserName": "ユーザーとパスワードが指定されていません。",
+    "DescURLFormat": "無効な URL タイプ"
   },
   "resourceGroup": {
     "ResourceGroups": "リソースグループ",
@@ -1124,13 +1154,18 @@
     "MTUDescription": "最大送信単位 - 当該レイヤーが送信できる最大プロトコルデータ単位のサイズです。",
     "OutOfRange": "入力範囲外です。",
     "Plugins": "プラグイン",
-    "OpenSourceCUDAGPUsupport": "オープンソースのCUDA GPUのサポート"
+    "OpenSourceCUDAGPUsupport": "オープンソースのCUDA GPUのサポート",
+    "ShowOnlyChanged": "表示のみの変更"
   },
   "notification": {
     "SuccessfullyUpdated": "正常に更新されました",
     "Visit": "訪問",
     "SeeDetail": "詳細を見る",
-    "Initializing": "初期化中..."
+    "Initializing": "初期化中...",
+    "NoNotification": "通知はありません。",
+    "Notifications": "通知",
+    "ClearNotifications": "通知をクリアする",
+    "AreYouSureToClearAllNotifications": "すべての通知をクリアしてもよろしいですか?"
   },
   "information": {
     "Core": "芯",
@@ -1412,7 +1447,11 @@
     "Result": "結果",
     "Finished": "終了した",
     "ServiceDelegatedFrom": "モデルサービスは{{ createdUser }}によって作成されますが、セッションの所有権は{{ sessionOwner }}に委譲されます。",
-    "FailedToTerminateService": "サービス終了のリクエストに失敗しました。"
+    "FailedToTerminateService": "サービス終了のリクエストに失敗しました。",
+    "FailedToUpdateService": "サービスの更新に失敗しました。",
+    "ServiceCreated": "モデル サービス {{ name }} が正常に作成されました。",
+    "ServiceUpdated": "モデル サービス {{ name }} は正常に更新されました。",
+    "ServiceTerminated": "モデル サービス {{ name }} は正常に終了しました。"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",
@@ -1463,7 +1502,9 @@
     "TurnOffTotp": "二要素認証を無効にする",
     "ConfirmTotpRemovalBody": "本当に二要素認証を無効にしますか？",
     "RemoveTotpSetupCompleted": "二要素認証が無効になりました。",
-    "OTP": "二要素認証"
+    "OTP": "二要素認証",
+    "EnterConfirmationCode": "次に、認証システムによって生成された OTP を入力して確認します。",
+    "RequireOTP": "OTPを書き込みます。"
   },
   "OpenVSCodeRemote": "ローカルVisual Studio Codeを開く",
   "inputLimit": {
@@ -1501,5 +1542,8 @@
     "SettingTable": "テーブルセッティング",
     "SelectColumnToDisplay": "表示する列を選択します",
     "SearchTableColumn": "テーブルの列を検索する"
+  },
+  "setting": {
+    "SearchPlaceholder": "検索用語を入力してください"
   }
 }

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -108,7 +108,7 @@ export default class BackendAIMultiSelect extends LitElement {
         }
 
         mwc-list {
-          font-family: var(--general-font-family);
+          font-family: var(--token-fontFamily);
           width: 100%;
           position: absolute;
           left: 0;
@@ -118,11 +118,13 @@ export default class BackendAIMultiSelect extends LitElement {
           background-color: var(--select-background-color, #efefef);
           --mdc-theme-primary: var(--select-primary-theme);
           --mdc-theme-secondary: var(--select-secondary-theme);
+          --mdc-theme-on-surface: var(--selected-item-disabled-text-color);
           box-shadow: var(--select-box-shadow);
         }
 
         mwc-list > mwc-check-list-item {
           background-color: var(--select-background-color, #efefef);
+          color: var(--select-color);
         }
 
         div.invalid {
@@ -132,7 +134,10 @@ export default class BackendAIMultiSelect extends LitElement {
         .selected-area {
           background-color: var(--select-background-color, #efefef);
           border-radius: var(--selected-area-border-radius, 5px);
-          border: var(--selected-area-border, 1px solid rgba(0, 0, 0, 1));
+          border: var(
+            --selected-area-border,
+            1px solid var(--token-colorBorder, rgba(0, 0, 0, 1))
+          );
           padding: var(--selected-area-padding, 10px);
           min-height: var(--selected-area-min-height, 24px);
           height: var(--selected-area-height, auto);

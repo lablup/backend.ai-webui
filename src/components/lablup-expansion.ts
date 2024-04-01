@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -52,14 +52,23 @@ export default class LablupExpansion extends LitElement {
         div.card {
           padding: 0;
           margin: 0;
+          background-color: var(
+            --expansion-background-color,
+            --token-colorBgContainer
+          );
+          color: var(--token-colorText);
         }
 
         #accordion > div.card > h3 {
-          background-color: var(--general-dialog-background-color, #ffffff);
+          background-color: var(
+            --expansion-header-background-color,
+            --general-dialog-background-color,
+            #ffffff
+          );
           padding: var(--expansion-header-padding, 0);
           font-size: var(--expansion-header-font-size, 12px);
           font-weight: var(--expansion-header-font-weight, 600);
-          font-family: var(--general-font-family);
+          font-family: var(--token-fontFamily);
           transition: all 0.35s;
         }
         #accordion > div.card > h3 > mwc-icon-button {

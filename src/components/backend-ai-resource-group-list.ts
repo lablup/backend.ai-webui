@@ -115,7 +115,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         backend-ai-dialog mwc-textarea {
           width: 100%;
           margin: 5px auto 5px auto;
-          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-font-family: var(--token-fontFamily);
           --mdc-theme-primary: var(--general-textfield-selected-color);
         }
 
@@ -124,8 +124,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           margin: 10px auto;
           background-image: none;
           --mdc-button-outline-width: 2px;
-          --mdc-theme-primary: #38bd73;
-          --mdc-theme-on-primary: #38bd73;
         }
 
         mwc-textarea {
@@ -134,9 +132,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
 
         mwc-select {
           width: 100%;
-          --mdc-typography-font-family: var(--general-font-family);
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-select-fill-color: transparent;
         }
 
         mwc-list-item {
@@ -164,7 +159,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-          border-bottom: 1px solid #ddd;
+          border-bottom: 1px solid var(--token-colorBorder, #ddd);
         }
 
         vaadin-grid {
@@ -724,73 +719,75 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           @click=${this._launchCreateDialog}
         ></mwc-button>
       </h4>
-      <vaadin-grid
-        theme="row-stripes column-borders compact"
-        aria-label="Job list"
-        .items="${this.resourceGroups}"
-      >
-        <vaadin-grid-column
-          frozen
-          flex-grow="0"
-          header="#"
-          width="40px"
-          .renderer=${this._indexRenderer}
-        ></vaadin-grid-column>
-        <vaadin-grid-column
-          frozen
-          flex-grow="1"
-          header="${_t('resourceGroup.Name')}"
-          path="name"
-          resizable
-        ></vaadin-grid-column>
-        <vaadin-grid-column
-          flex-grow="1"
-          header="${_t('resourceGroup.Description')}"
-          path="description"
-          resizable
-        ></vaadin-grid-column>
-        <vaadin-grid-column
-          flex-grow="1"
-          header="${_t('resourceGroup.ActiveStatus')}"
-          resizable
-          .renderer=${this._activeStatusRenderer}
-        ></vaadin-grid-column>
-        <vaadin-grid-column
-          flex-grow="1"
-          header="${_t('resourceGroup.PublicStatus')}"
-          resizable
-          .renderer=${this._isPublicRenderer}
-        ></vaadin-grid-column>
-        <vaadin-grid-column
-          flex-grow="1"
-          header="${_t('resourceGroup.Driver')}"
-          path="driver"
-          resizable
-        ></vaadin-grid-column>
-        <vaadin-grid-column
-          flex-grow="1"
-          header="${_t('resourceGroup.Scheduler')}"
-          path="scheduler"
-          resizable
-        ></vaadin-grid-column>
-        ${this.enableWSProxyAddr
-          ? html`
-              <vaadin-grid-column
-                resizable
-                header="${_t('resourceGroup.WsproxyAddress')}"
-                path="wsproxy_addr"
-                resizable
-              ></vaadin-grid-column>
-            `
-          : html``}
-        <vaadin-grid-column
-          frozen-to-end
-          resizable
-          width="150px"
-          header="${_t('general.Control')}"
-          .renderer=${this._boundControlRenderer}
-        ></vaadin-grid-column>
-      </vaadin-grid>
+      <div class="list-wrapper">
+        <vaadin-grid
+          theme="row-stripes column-borders compact dark"
+          aria-label="Job list"
+          .items="${this.resourceGroups}"
+        >
+          <vaadin-grid-column
+            frozen
+            flex-grow="0"
+            header="#"
+            width="40px"
+            .renderer=${this._indexRenderer}
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            frozen
+            flex-grow="1"
+            header="${_t('resourceGroup.Name')}"
+            path="name"
+            resizable
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="1"
+            header="${_t('resourceGroup.Description')}"
+            path="description"
+            resizable
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="1"
+            header="${_t('resourceGroup.ActiveStatus')}"
+            resizable
+            .renderer=${this._activeStatusRenderer}
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="1"
+            header="${_t('resourceGroup.PublicStatus')}"
+            resizable
+            .renderer=${this._isPublicRenderer}
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="1"
+            header="${_t('resourceGroup.Driver')}"
+            path="driver"
+            resizable
+          ></vaadin-grid-column>
+          <vaadin-grid-column
+            flex-grow="1"
+            header="${_t('resourceGroup.Scheduler')}"
+            path="scheduler"
+            resizable
+          ></vaadin-grid-column>
+          ${this.enableWSProxyAddr
+            ? html`
+                <vaadin-grid-column
+                  resizable
+                  header="${_t('resourceGroup.WsproxyAddress')}"
+                  path="wsproxy_addr"
+                  resizable
+                ></vaadin-grid-column>
+              `
+            : html``}
+          <vaadin-grid-column
+            frozen-to-end
+            resizable
+            width="150px"
+            header="${_t('general.Control')}"
+            .renderer=${this._boundControlRenderer}
+          ></vaadin-grid-column>
+        </vaadin-grid>
+      </div>
       <backend-ai-dialog
         id="resource-group-dialog"
         fixed
@@ -885,9 +882,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               `
             : html``}
           <div class="horizontal layout flex wrap center justified">
-            <p style="margin-left: 18px;color:rgba(0, 0, 0, 0.6);">
-              ${_t('resourceGroup.Active')}
-            </p>
+            <p style="margin-left: 18px;">${_t('resourceGroup.Active')}</p>
             <mwc-switch
               id="resource-group-active"
               style="margin-right:10px;"
@@ -897,7 +892,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
             ></mwc-switch>
             ${this.enableIsPublic
               ? html`
-                  <p style="margin-left: 18px;color:rgba(0, 0, 0, 0.6);">
+                  <p style="margin-left: 18px;">
                     ${_t('resourceGroup.Public')}
                   </p>
                   <mwc-switch

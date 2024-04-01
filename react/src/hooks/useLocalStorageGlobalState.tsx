@@ -1,5 +1,5 @@
 import { useLocalStorageState } from 'ahooks';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 export const useLocalStorageGlobalState = <T extends unknown>(
   key: string,
@@ -20,12 +20,15 @@ export const useLocalStorageGlobalState = <T extends unknown>(
 
   return [
     storageValue,
-    (value: T) => {
-      document.dispatchEvent(
-        new CustomEvent(eventName, {
-          detail: value,
-        }),
-      );
-    },
+    useCallback(
+      (value: T) => {
+        document.dispatchEvent(
+          new CustomEvent(eventName, {
+            detail: value,
+          }),
+        );
+      },
+      [eventName],
+    ),
   ] as const;
 };

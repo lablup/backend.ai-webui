@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -77,7 +77,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 229px);
+          height: calc(100vh - 199px);
+          /* height: calc(100vh - 229px); */
         }
 
         mwc-icon {
@@ -106,20 +107,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
         mwc-textfield {
           width: 100%;
-          --mdc-theme-primary: #242424;
-          --mdc-text-field-fill-color: transparent;
         }
 
         mwc-textfield.yellow {
           --mdc-theme-primary: var(--paper-yellow-600) !important;
-        }
-
-        mwc-button,
-        mwc-button[unelevated] {
-          background-image: none;
-          --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-theme-on-primary: var(--general-button-color);
-          --mdc-typography-font-family: var(--general-font-family);
         }
 
         h4 {
@@ -135,7 +126,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-          border-bottom: 1px solid #ddd;
+          border-bottom: 1px solid var(--token-colorBorder, #ddd);
         }
       `,
     ];
@@ -257,7 +248,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         </h4>
         <div class="list-wrapper">
           <vaadin-grid
-            theme="row-stripes column-borders compact"
+            theme="row-stripes column-borders compact dark"
             height-by-rows
             aria-label="Resource Policy list"
             .items="${this.resourcePresets}"

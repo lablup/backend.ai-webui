@@ -254,9 +254,22 @@
       "EnvironmentVariableNamePatternError": "Tên biến phải bắt đầu bằng một chữ cái hoặc dấu gạch dưới và chỉ có thể chứa các chữ cái, số và dấu gạch dưới.",
       "EnvironmentVariableDuplicateName": "Tên biến này đã tồn tại.",
       "Template": "Mẫu phiên",
-      "EnableAutomaticShmem": "Bộ nhớ chia sẻ tự động",
+      "EnableAutomaticMiniumShmem": "Đặt bộ nhớ chia sẻ tối thiểu",
       "PreOpenPortMaxCountLimit": "Bạn có thể thiết lập tối đa {{count}} cổng mở trước.",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Chỉ cho phép số nguyên khi kích thước cụm không nhỏ hơn 2.",
+      "StartAfter": "Bắt đầu sau:",
+      "StartTimeDoesNotApply": "Nếu thời gian bắt đầu không được đặt, nó sẽ không được áp dụng.",
+      "MiniumAllocation": "Yêu cầu tối thiểu",
+      "MiniumAllocationTooltip": "Chọn làm yêu cầu tối thiểu cho môi trường chạy đã chọn",
+      "PreviousLauncher": "Trước",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Bạn đang sử dụng trình khởi chạy phiên \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Bỏ qua để xem xét",
+      "InteractiveModeDesc": "cho phép bạn tạo, kiểm tra và chạy mã tương tác thông qua sổ ghi chép jupyter, mã studio trực quan, v.v.",
+      "BatchModeDesc": "Bạn có thể chạy mã của mình với nhiều nút",
+      "AddEnvironmentVariable": "Thêm biến môi trường",
+      "EnvironmentVariableValueRequired": "Vui lòng nhập một giá trị."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",
@@ -314,7 +327,11 @@
       "SluggedStrings": "Chuỗi bị trượt (>3 ký tự)",
       "SessionNameAlreadyExist": "Tên phiên đã tồn tại",
       "SessionNameTooLong64": "Vui lòng nhập 64 ký tự trở xuống.",
-      "PleaseFollowSessionNameRule": "Vui lòng nhập kết hợp ít nhất 4 chữ cái, số, '.', '_' và '-'."
+      "PleaseFollowSessionNameRule": "Vui lòng nhập kết hợp ít nhất 4 chữ cái, số, '.', '_' và '-'.",
+      "SessionNameTooShort": "Vui lòng nhập ít nhất 4 ký tự.",
+      "SessionNameShouldStartWith": "Nó phải bắt đầu bằng một chữ cái trong bảng chữ cái, một số hoặc '_'.",
+      "SessionNameShouldEndWith": "Nó phải kết thúc bằng một chữ cái trong bảng chữ cái, một số hoặc '_'.",
+      "SessionNameInvalidCharacter": "Phần giữa của tên chỉ được chứa các chữ cái trong bảng chữ cái, số và '_'."
     },
     "Interactive": "Tương tác",
     "Batch": "Lô hàng",
@@ -407,7 +424,10 @@
     "Commit": "Làm",
     "EnterManually": "Nhập thủ công",
     "Download": "Tải xuống",
-    "Clone": "Dòng vô tính"
+    "Clone": "Dòng vô tính",
+    "Config": "Cấu hình",
+    "Next": "Kế tiếp",
+    "Previous": "Trước"
   },
   "agent": {
     "Endpoint": "Điểm cuối",
@@ -451,7 +471,10 @@
     "Enabled": "Đã bật",
     "StorageProxies": "Kho lưu trữ",
     "None": "Không có",
-    "Image": "Hình ảnh"
+    "Image": "Hình ảnh",
+    "All": "toàn bộ",
+    "InProgress": "Đang tiến hành",
+    "Session": "Phiên họp"
   },
   "credential": {
     "Permission": "Sự cho phép",
@@ -700,7 +723,8 @@
     "ModelStore": "Cửa hàng mô hình",
     "New": "Mới",
     "Add": "Thêm vào",
-    "CloningIsOnlyPossibleSameHost": "Hiện tại, việc nhân bản chỉ có thể thực hiện được trên cùng một máy chủ."
+    "CloningIsOnlyPossibleSameHost": "Hiện tại, việc nhân bản chỉ có thể thực hiện được trên cùng một máy chủ.",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
@@ -847,7 +871,12 @@
     "BootstrapScriptDescription": "Tập lệnh Bootstrap sẽ chỉ được thực thi một lần sau khi tạo phiên",
     "SSHKeypairEnterManually": "Cặp khóa SSH",
     "MyKeypairInfo": "Thông tin về cặp khóa của tôi",
-    "DescMyKeypairInfo": "Xem thông tin cặp khóa của tôi"
+    "DescMyKeypairInfo": "Xem thông tin cặp khóa của tôi",
+    "DarkMode": "Chế độ tối",
+    "LightMode": "Chế độ sáng",
+    "UseSystemSetting": "Sử dụng cài đặt hệ thống",
+    "DescThemeMode": "Tùy chỉnh giao diện Backend.AI WebUI trên thiết bị của bạn.",
+    "ThemeMode": "Chế độ chủ đề"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Sử dụng đầu cuối web nâng cao: Sao chép nội dung đầu cuối",
@@ -933,7 +962,8 @@
     "RegistrySuccessfullyModified": "Đã sửa đổi sổ đăng ký thành công.",
     "NoRegistryToDisplay": "Không có đăng ký để hiển thị",
     "ModifyRegistry": "Sửa đổi sổ đăng ký",
-    "ConfirmNoUserName": "Người dùng và mật khẩu không được chỉ định, bạn có muốn lưu không?"
+    "ConfirmNoUserName": "Người dùng và mật khẩu không được chỉ định, bạn có muốn lưu không?",
+    "DescURLFormat": "Loại URL không hợp lệ"
   },
   "resourceGroup": {
     "ResourceGroups": "Nhóm tài nguyên",
@@ -1124,13 +1154,18 @@
     "MTUDescription": "Đơn vị truyền tối đa, kích thước của gói lớn nhất mà giao thức mạng có thể truyền.",
     "OutOfRange": "Ngoài phạm vi.",
     "Plugins": "bổ sung",
-    "OpenSourceCUDAGPUsupport": "Hỗ trợ GPU CUDA mã nguồn mở"
+    "OpenSourceCUDAGPUsupport": "Hỗ trợ GPU CUDA mã nguồn mở",
+    "ShowOnlyChanged": "Chỉ hiển thị các thay đổi"
   },
   "notification": {
     "SuccessfullyUpdated": "Cập nhật thành công",
     "Visit": "Chuyến thăm",
     "SeeDetail": "Xem chi tiết",
-    "Initializing": "Đang khởi tạo ..."
+    "Initializing": "Đang khởi tạo ...",
+    "NoNotification": "Không có thông báo.",
+    "Notifications": "Thông báo",
+    "ClearNotifications": "Xóa thông báo",
+    "AreYouSureToClearAllNotifications": "Bạn có chắc chắn xóa tất cả thông báo không?"
   },
   "information": {
     "Core": "Cốt lõi",
@@ -1452,7 +1487,11 @@
     "Result": "Kết quả",
     "Finished": "Hoàn thành",
     "ServiceDelegatedFrom": "Dịch vụ mô hình được tạo bởi {{ createUser }} nhưng quyền sở hữu phiên sẽ được ủy quyền cho {{ sessionOwner }}",
-    "FailedToTerminateService": "Yêu cầu chấm dứt dịch vụ không thành công."
+    "FailedToTerminateService": "Yêu cầu chấm dứt dịch vụ không thành công.",
+    "FailedToUpdateService": "Không thể cập nhật dịch vụ.",
+    "ServiceCreated": "Dịch vụ mẫu {{ name }} đã được tạo thành công.",
+    "ServiceUpdated": "Dịch vụ mẫu {{ name }} đã được cập nhật thành công.",
+    "ServiceTerminated": "Dịch vụ mẫu {{ name }} đã được chấm dứt thành công."
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",
@@ -1463,7 +1502,9 @@
     "TurnOffTotp": "Tắt xác thực hai yếu tố",
     "ConfirmTotpRemovalBody": "Bạn có chắc chắn chọn không sử dụng xác thực hai yếu tố không?",
     "RemoveTotpSetupCompleted": "2FA bị vô hiệu hóa",
-    "OTP": "Mật khẩu một lần"
+    "OTP": "Mật khẩu một lần",
+    "EnterConfirmationCode": "Bây giờ hãy nhập OTP do trình xác thực tạo ra để xác minh.",
+    "RequireOTP": "Viết OTP."
   },
   "OpenVSCodeRemote": "Mở mã Visual Studio cục bộ",
   "inputLimit": {
@@ -1501,5 +1542,8 @@
     "SettingTable": "Cài đặt bảng",
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
     "SearchTableColumn": "Tìm kiếm các cột trong bảng"
+  },
+  "setting": {
+    "SearchPlaceholder": "Nhập cụm từ tìm kiếm"
   }
 }

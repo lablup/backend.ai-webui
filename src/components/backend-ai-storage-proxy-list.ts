@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { navigate } from '../backend-ai-app';
 import '../plastics/lablup-shields/lablup-shields';
@@ -207,7 +207,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       .then((response) => {
         const storage_volumes = response.storage_volume_list.items;
         const storages: Array<any> = [];
-        if (storage_volumes !== undefined && storage_volumes.length != 0) {
+        if (storage_volumes !== undefined && storage_volumes.length > 0) {
           Object.keys(storage_volumes).map((objectKey, index) => {
             const storage: any = storage_volumes[objectKey];
             if (this.filter !== '') {
@@ -250,8 +250,14 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
    */
   _moveTo(url = '') {
     const page = url !== '' ? url : 'summary';
-    globalThis.history.pushState({}, '', page);
+    // globalThis.history.pushState({}, '', page);
     store.dispatch(navigate(decodeURIComponent(page), {}));
+
+    document.dispatchEvent(
+      new CustomEvent('react-navigate', {
+        detail: url,
+      }),
+    );
   }
 
   /**
@@ -506,7 +512,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       <div class="list-wrapper">
         <vaadin-grid
           class="${this.condition}"
-          theme="row-stripes column-borders compact"
+          theme="row-stripes column-borders compact dark"
           aria-label="Job list"
           .items="${this.storages}"
         >

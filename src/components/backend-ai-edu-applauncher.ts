@@ -1,6 +1,6 @@
 /**
 @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { Client, ClientConfig } from '../lib/backend.ai-client-esm';
 import {
@@ -367,7 +367,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         const _sess = sessions.compute_session_list.items[i];
         const sessionImage = _sess.image;
         const servicePorts = JSON.parse(_sess.service_ports || '{}');
-        const services = Object.keys(servicePorts).map((s) => s.name) || [];
+        const services =
+          Object.keys(servicePorts).map((s) => servicePorts[s].name) || [];
         const sessionStatus = _sess.status;
         if (
           sessionImage != requestedSessionTemplate.template.spec.kernel.image

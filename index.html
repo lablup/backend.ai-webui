@@ -22,6 +22,9 @@
   <script src="./src/lib/web-animations-js/web-animations-next-lite.min.js"></script>
   <script>
     globalThis.isElectron = isElectron();
+    if (isElectron) {
+      globalThis.electronInitialHref = window.location.href;
+    }
     globalThis.enableSW = true;
 
     globalThis.process = {
@@ -29,68 +32,83 @@
         NODE_ENV: 'production'
       }
     };
-    globalThis.packageVersion = "24.03.0-alpha.4";
-    globalThis.buildNumber = "5862";
-</script>
+    globalThis.packageVersion = "24.03.0-beta.1";
+    globalThis.buildNumber = "5927";
+
+  </script>
   <!-- DO NOT CHANGE BELOW LINE -->
   <!-- REACT_BUNDLE_INJECTING FOR DEV-->
 </head>
 
 <body>
-<backend-ai-webui id="webui-shell" style="background-color:#222222;">
-  <div class="splash">
-    <div class="splash-header">
-      <img src="manifest/backend.ai-text.svg" style="height:50px;padding:35px 20px;">
-    </div>
-    <div class="splash-information">
-      <ul>
-        <li>Backend.AI Web UI <span id="version-detail" class="detail"></span></li>
-        <li><span id="license-detail"></span></li>
-        <li><span id="mode-detail" class="detail"></span> <span id="build-detail" class="detail"></span></li>
-      </ul>
-      <ul>
-        <li>Powered by open-source software</li>
-        <li class="copyright">Copyright &copy; 2015-2023 Lablup Inc.</li>
-      </ul>
-    </div>
-    <div class="sk-folding-cube">
-      <div class="sk-cube1 sk-cube"></div>
-      <div class="sk-cube2 sk-cube"></div>
-      <div class="sk-cube4 sk-cube"></div>
-      <div class="sk-cube3 sk-cube"></div>
-    </div>
-    <div id="loading-message" class="loading-message">Loading components...</div>
-  </div>
-</backend-ai-webui>
-<noscript>
-  <p>Could not render Backend.AI Web UI. Check that JavaScript is enabled.</p>
-</noscript>
-<script src="./dist/components/backend-ai-webui.js" type="module"></script>
-<script>
-  document.getElementById('version-detail').innerText = globalThis.packageVersion;
-  document.getElementById('build-detail').innerText = ' Build ' + globalThis.buildVersion;
-  document.getElementById('license-detail').innerText = '';
-  if (globalThis.isElectron) {
-    document.getElementById('mode-detail').innerText = 'App';
-  } else {
-    document.getElementById('mode-detail').innerText = 'WebServer';
-  }
-  if (globalThis.isIE) {
-    alert('Internet Explorer is not supported. Please visit with modern browsers.');
-    document.getElementById('loading-message').innerText = 'Not supported browser.';
-    document.getElementById('loading-message').style.color = 'red';
-  }
-  if (!['127.0.0.1', 'localhost'].includes(window.location.hostname) &&
-    'enableSW' in globalThis &&
-    globalThis.enableSW === true) {
-    // Service worker routine.
-    if ('serviceWorker' in navigator && globalThis.isElectron === false) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js');
-      });
+  <script>
+    //To avoid flickering when first loading the page, we add a class to the body to indicate the theme.
+    const userPrefersDark = localStorage.getItem('backendaiwebui.settings.isDarkMode');
+    const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    globalThis.isDarkMode = userPrefersDark === null || userPrefersDark === undefined ? systemPrefersDark : userPrefersDark === 'true';
+    if (globalThis.isDarkMode) {
+      document.body.classList.add('dark-theme');
     }
-  }
-</script>
+  </script>
+  <div>
+    <div id="react-root">
+      <div class="splash">
+        <div class="splash-header">
+          <!-- <img src="manifest/backend.ai-text.svg" style="height:50px;padding:35px 20px;"> -->
+          <div class="logo"></div>
+        </div>
+        <div class="splash-information">
+          <ul>
+            <li>Backend.AI Web UI <span id="version-detail" class="detail"></span></li>
+            <li><span id="license-detail"></span></li>
+            <li><span id="mode-detail" class="detail"></span> <span id="build-detail" class="detail"></span></li>
+          </ul>
+          <ul>
+            <li>Powered by open-source software</li>
+            <li class="copyright">Copyright &copy; 2015-2024 Lablup Inc.</li>
+          </ul>
+        </div>
+        <div class="sk-folding-cube">
+          <div class="sk-cube1 sk-cube"></div>
+          <div class="sk-cube2 sk-cube"></div>
+          <div class="sk-cube4 sk-cube"></div>
+          <div class="sk-cube3 sk-cube"></div>
+        </div>
+        <div id="loading-message" class="loading-message">Loading components...</div>
+      </div>
+    </div>
+    <!-- <backend-ai-webui id="webui-shell" style="background-color:#222222;"> -->
+
+    <!-- </backend-ai-webui> -->
+    <noscript>
+      <p>Could not render Backend.AI Web UI. Check that JavaScript is enabled.</p>
+    </noscript>
+    <script src="./dist/components/backend-ai-webui.js" type="module"></script>
+    <script>
+      document.getElementById('version-detail').innerText = globalThis.packageVersion;
+      document.getElementById('build-detail').innerText = ' Build ' + globalThis.buildVersion;
+      document.getElementById('license-detail').innerText = '';
+      if (globalThis.isElectron) {
+        document.getElementById('mode-detail').innerText = 'App';
+      } else {
+        document.getElementById('mode-detail').innerText = 'WebServer';
+      }
+      if (globalThis.isIE) {
+        alert('Internet Explorer is not supported. Please visit with modern browsers.');
+        document.getElementById('loading-message').innerText = 'Not supported browser.';
+        document.getElementById('loading-message').style.color = 'red';
+      }
+      if (!['127.0.0.1', 'localhost'].includes(window.location.hostname) &&
+        'enableSW' in globalThis &&
+        globalThis.enableSW === true) {
+        // Service worker routine.
+        if ('serviceWorker' in navigator && globalThis.isElectron === false) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js');
+          });
+        }
+      }
+    </script>
 </body>
 
 </html>

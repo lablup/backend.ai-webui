@@ -129,7 +129,10 @@
     "Update": "Päivitys",
     "Yes": "Kyllä",
     "Clone": "Klooni",
-    "Download": "ladata"
+    "Download": "ladata",
+    "Config": "Config",
+    "Next": "Seuraava",
+    "Previous": "Edellinen"
   },
   "credential": {
     "AccessKeyOptional": "Pääsyavain (valinnainen)",
@@ -378,7 +381,8 @@
     "ModelStore": "Mallikauppa",
     "Add": "Lisätä",
     "CloningIsOnlyPossibleSameHost": "Tällä hetkellä kloonaus on mahdollista vain samassa isännässä.",
-    "New": "Uusi"
+    "New": "Uusi",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "ErrorOccurred": "Tapahtunut virhe",
@@ -483,7 +487,10 @@
     "Username": "Käyttäjätunnus",
     "cores": "ytimet",
     "None": "Ei ole",
-    "Image": "Kuva"
+    "Image": "Kuva",
+    "All": "Kaikki",
+    "InProgress": "Käynnissä",
+    "Session": "Istunto"
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",
@@ -731,13 +738,21 @@
     "Result": "Tulos",
     "Finished": "Valmis",
     "ServiceDelegatedFrom": "Mallipalvelun luo {{ createdUser }}, mutta istunnon omistusoikeus siirretään {{ sessionOwner }}:lle.",
-    "FailedToTerminateService": "Palvelun lopettamispyyntö epäonnistui."
+    "FailedToTerminateService": "Palvelun lopettamispyyntö epäonnistui.",
+    "FailedToUpdateService": "Palvelun päivittäminen epäonnistui.",
+    "ServiceCreated": "Mallipalvelun {{ name }} luominen onnistui.",
+    "ServiceUpdated": "Mallipalvelun {{ name }} päivitys onnistui.",
+    "ServiceTerminated": "Mallipalvelu {{ name }} on lopetettu onnistuneesti."
   },
   "notification": {
     "Initializing": "Aloitetaan...",
     "SeeDetail": "Katso lisätietoja",
     "SuccessfullyUpdated": "Päivitetty onnistuneesti",
-    "Visit": "Käy osoitteessa"
+    "Visit": "Käy osoitteessa",
+    "NoNotification": "Ei ilmoitusta.",
+    "Notifications": "Ilmoitukset",
+    "ClearNotifications": "Tyhjennä ilmoitukset",
+    "AreYouSureToClearAllNotifications": "Oletko varma, että tyhjennät kaikki ilmoitukset?"
   },
   "pipeline": {
     "Component": {
@@ -809,7 +824,8 @@
     "UpdatingRegistryInfo": "Rekisteritietojen päivittäminen...",
     "Username": "Käyttäjätunnus",
     "UsernameOptional": "Käyttäjätunnus (valinnainen)",
-    "ConfirmNoUserName": "Käyttäjää ja salasanaa ei ole määritetty, haluatko tallentaa?"
+    "ConfirmNoUserName": "Käyttäjää ja salasanaa ei ole määritetty, haluatko tallentaa?",
+    "DescURLFormat": "Virheellinen URL-tyyppi"
   },
   "resourceGroup": {
     "Active": "Aktiivinen",
@@ -993,7 +1009,11 @@
       "SessionNameRequired": "Istunnon nimi vaaditaan",
       "SluggedStrings": "Slugged-merkkijonot (>3 merkkiä)",
       "SessionNameTooLong64": "Anna enintään 64 merkkiä.",
-      "PleaseFollowSessionNameRule": "Kirjoita vähintään 4 kirjaimen, numeroiden, '.', '_' ja '-' yhdistelmä."
+      "PleaseFollowSessionNameRule": "Kirjoita vähintään 4 kirjaimen, numeroiden, '.', '_' ja '-' yhdistelmä.",
+      "SessionNameTooShort": "Kirjoita vähintään 4 merkkiä.",
+      "SessionNameShouldStartWith": "Sen on alettava aakkosilla, numerolla tai '_'.",
+      "SessionNameShouldEndWith": "Sen on päätyttävä aakkosiin, numeroon tai '_'.",
+      "SessionNameInvalidCharacter": "Nimen keskellä voi olla vain aakkosia, numeroita ja '_'."
     },
     "XRDPconnection": "RDP-yhteys",
     "applauncher": {
@@ -1145,9 +1165,22 @@
       "EnvironmentVariableNamePatternError": "Muuttujan nimen on alettava kirjaimella tai alleviivauksella, ja se voi sisältää vain kirjaimia, numeroita ja alleviivauksia.",
       "EnvironmentVariableDuplicateName": "Muuttujan nimi, joka on jo olemassa.",
       "ErrorCanNotExceedRemaining": "Ei voida asettaa suuremmaksi kuin jäljellä olevat resurssit ({{amount}}).",
-      "EnableAutomaticShmem": "Automaattinen jaettu muisti",
+      "EnableAutomaticMiniumShmem": "Aseta jaetun muistin vähimmäismäärä",
       "Template": "Istuntomalli",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Vain kokonaisluku on sallittu, kun klusterin koko on vähintään 2.",
+      "StartAfter": "Aloita sen jälkeen:",
+      "StartTimeDoesNotApply": "Jos aloitusaikaa ei ole asetettu, se ei ole voimassa.",
+      "MiniumAllocation": "Vähimmäisvaatimukset",
+      "MiniumAllocationTooltip": "Valitse valitun käyttöympäristön vähimmäisvaatimukseksi seuraavat tiedot",
+      "PreviousLauncher": "Edellinen",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Käytät \"{{launcher}}\"-istunnon käynnistintä.",
+      "SkipToConfirmAndLaunch": "Siirry arvosteluun",
+      "InteractiveModeDesc": "voit luoda, testata ja ajaa koodia vuorovaikutteisesti jupyter notebookin, visual studio code -ohjelman jne. avulla.",
+      "BatchModeDesc": "Voit ajaa koodisi useiden solmujen ja klustereiden kanssa ideasi skaalaamiseksi.",
+      "AddEnvironmentVariable": "Lisää ympäristömuuttujia",
+      "EnvironmentVariableValueRequired": "Anna arvo."
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",
@@ -1217,7 +1250,8 @@
       "none": "Ei ole",
       "tag": "Tag"
     },
-    "OpenSourceCUDAGPUsupport": "Avoimen lähdekoodin CUDA GPU-tuki"
+    "OpenSourceCUDAGPUsupport": "Avoimen lähdekoodin CUDA GPU-tuki",
+    "ShowOnlyChanged": "Vain näyttö muuttuu"
   },
   "sidepanel": {
     "BackgroundTasks": "Tehtävien suorittaminen",
@@ -1316,7 +1350,9 @@
     "TotpSetupCompleted": "Käytössä 2FA",
     "TotpSetupNotAvailable": "Kaksitekijätodennusta ei voi ottaa käyttöön.",
     "TurnOffTotp": "Ota kaksitekijätodennus pois käytöstä",
-    "TypeInAuthKey": "Vaihtoehtoisesti voit kirjoittaa alla olevan todennuskoodin manuaalisesti."
+    "TypeInAuthKey": "Vaihtoehtoisesti voit kirjoittaa alla olevan todennuskoodin manuaalisesti.",
+    "EnterConfirmationCode": "Anna nyt autentikaattorin luoma OTP vahvistaaksesi.",
+    "RequireOTP": "Kirjoita OTP."
   },
   "update": {
     "NewWebUIVersionAvailable": "Uusi versio on saatavilla:"
@@ -1383,7 +1419,12 @@
     "ShellEnvironments": "Shell-ympäristöt",
     "UseCompactSidebar": "Käytä kompakti sivupalkki oletusarvoisesti",
     "DescMyKeypairInfo": "Katso avainparini tiedot",
-    "MyKeypairInfo": "Avainparini tiedot"
+    "MyKeypairInfo": "Avainparini tiedot",
+    "DarkMode": "Tumma tila",
+    "LightMode": "Valotila",
+    "UseSystemSetting": "Käytä järjestelmäasetuksia",
+    "DescThemeMode": "Mukauta miltä Backend.AI WebUI näyttää laitteessasi.",
+    "ThemeMode": "Teematila"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Edistynyt verkkopäätteen käyttö: Kopioi terminaalin sisältö",
@@ -1501,5 +1542,8 @@
     "SettingTable": "Kattaus",
     "SelectColumnToDisplay": "Valitse näytettävät sarakkeet",
     "SearchTableColumn": "Hae taulukon sarakkeita"
+  },
+  "setting": {
+    "SearchPlaceholder": "Kirjoita hakutermi"
   }
 }

@@ -1,7 +1,8 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
+import { navigate } from '../backend-ai-app';
 import '../plastics/lablup-shields/lablup-shields';
 import {
   IronFlex,
@@ -9,6 +10,7 @@ import {
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { store } from '../store';
 import './backend-ai-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
@@ -30,7 +32,6 @@ import { Select } from '@material/mwc-select';
 import '@material/mwc-slider';
 import { Switch } from '@material/mwc-switch';
 import { TextField } from '@material/mwc-textfield/mwc-textfield';
-import '@vaadin/date-time-picker/vaadin-date-time-picker';
 import '@vaadin/grid/vaadin-grid';
 import '@vaadin/grid/vaadin-grid-filter-column';
 import '@vaadin/grid/vaadin-grid-selection-column';
@@ -44,7 +45,6 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type VaadinTextField = HTMLElementTagNameMap['vaadin-text-field'];
-type VaadinDateTimePicker = HTMLElementTagNameMap['vaadin-date-time-picker'];
 type LablupSlider = HTMLElementTagNameMap['lablup-slider'];
 type LablupCodemirror = HTMLElementTagNameMap['lablup-codemirror'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
@@ -218,7 +218,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.folderMapRenderer.bind(this);
   @property({ type: Object }) _boundPathRenderer =
     this.infoHeaderRenderer.bind(this);
-  @property({ type: Boolean }) useScheduledTime = false;
+  @property({ type: String }) scheduledTime = '';
   @property({ type: Object }) schedulerTimer;
   @property({ type: Object }) sessionInfoObj = {
     environment: '',
@@ -230,6 +230,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({ type: Boolean }) isExceedMaxCountForPreopenPorts = false;
   @property({ type: Number }) maxCountForPreopenPorts = 10;
   @property({ type: Boolean }) allowCustomResourceAllocation = true;
+  @property({ type: Boolean }) allowNEOSessionLauncher = false;
 
   @query('#image-name') manualImageName;
   @query('#version') version_selector!: Select;
@@ -241,7 +242,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#owner-accesskey') ownerAccesskeySelect!: Select;
   @query('#owner-email') ownerEmailInput!: TextField;
   @query('#vfolder-mount-preview') vfolderMountPreview!: LablupExpansion;
-  @query('#use-scheduled-time') useScheduledTimeSwitch!: Switch;
   @query('#launch-button') launchButton!: Button;
   @query('#prev-button') prevButton!: IconButton;
   @query('#next-button') nextButton!: IconButton;
@@ -253,7 +253,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#session-resource') sessionResouceSlider!: LablupSlider;
   @query('#cluster-size') clusterSizeSlider!: LablupSlider;
   @query('#launch-button-msg') launchButtonMessage!: HTMLSpanElement;
-  @query('vaadin-date-time-picker') dateTimePicker!: VaadinDateTimePicker;
   @query('#new-session-dialog') newSessionDialog!: BackendAIDialog;
   @query('#modify-env-dialog') modifyEnvDialog!: BackendAIDialog;
   @query('#modify-env-container') modifyEnvContainer!: HTMLDivElement;
@@ -266,6 +265,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
   @query('#command-editor') commandEditor!: LablupCodemirror;
   @query('#session-name') sessionName!: TextField;
+  @query('backend-ai-react-batch-session-scheduled-time-setting')
+  batchSessionDatePicker!: HTMLElement;
 
   constructor() {
     super();
@@ -293,19 +294,24 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
+        h5,
+        p,
+        span {
+          color: var(--token-colorText);
+        }
+
         .slider-list-item {
           padding: 0;
         }
 
         hr.separator {
-          border-top: 1px solid #ddd;
+          border-top: 1px solid var(--token-colorBorder, #ddd);
         }
 
         lablup-slider {
           width: 350px !important;
           --textfield-min-width: 135px;
           --slider-width: 210px;
-          --mdc-theme-primary: var(--paper-green-400);
         }
 
         lablup-progress-bar {
@@ -322,6 +328,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         vaadin-grid {
           max-height: 335px;
+          margin-left: 20px;
+        }
+
+        .alias {
+          max-width: 145px;
         }
 
         .progress {
@@ -362,7 +373,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         mwc-list-item.resource-type {
-          color: #040716;
           font-size: 14px;
           font-weight: 500;
           height: 20px;
@@ -377,8 +387,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         div.vfolder-mounted-list,
         #mounted-folders-container,
         .environment-variables-container,
-        .preopen-ports-container {
-          background-color: rgba(244, 244, 244, 1);
+        .preopen-ports-container,
+        mwc-select h5 {
+          background-color: var(
+            --token-colorBgElevated,
+            rgba(244, 244, 244, 1)
+          );
+          color: var(--token-colorText);
           overflow-y: scroll;
         }
 
@@ -397,6 +412,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         .preopen-ports-container mwc-textfield input {
           overflow: hidden;
           text-overflow: ellipsis;
+        }
+
+        .environment-variables-container mwc-textfield,
+        .preopen-ports-container mwc-textfield {
+          --mdc-text-field-fill-color: var(--token-colorBgElevated);
+          --mdc-text-field-disabled-fill-color: var(--token-colorBgElevated);
+          --mdc-text-field-disabled-line-color: var(--token-colorBorder);
         }
 
         .resources.horizontal .monitor.session {
@@ -418,7 +440,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
         .cluster-total-allocation-container {
           border-radius: 10px;
-          border: 1px dotted var(--general-button-background-color);
+          border: 1px dotted
+            var(--token-colorBorder, --general-button-background-color);
           padding-top: 10px;
           margin-left: 15px;
           margin-right: 15px;
@@ -468,7 +491,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           margin: 5px;
           padding: 0px 5px;
           background-color: var(--general-button-background-color);
-          color: white;
           line-height: 1.2em;
         }
 
@@ -486,6 +508,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           line-height: 1.2em;
         }
 
+        .cluster-allocated {
+          p,
+          span {
+            color: var(--token-colorWhite);
+          }
+        }
+
         .resource-allocated > span,
         .cluster-allocated > div.horizontal > span {
           font-weight: bolder;
@@ -496,7 +525,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         .resource-allocated-box {
-          background-color: var(--paper-grey-300);
           border-radius: 5px;
           margin: 5px;
           z-index: 10;
@@ -546,7 +574,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --expansion-margin-open: 0;
           --expansion-header-font-weight: normal;
           --expansion-header-font-size: 14px;
-          --expansion-header-font-color: rgb(64, 64, 64);
+          --expansion-header-font-color: var(
+            --token-colorText,
+            rgb(64, 64, 64)
+          );
+          --expansion-background-color: var(--token-colorBgElevated);
+          --expansion-header-background-color: var(--token-colorBgElevated);
         }
 
         lablup-expansion.vfolder,
@@ -582,22 +615,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         mwc-select {
           width: 100%;
-          font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-theme-primary: var(--paper-red-600);
-          --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: rgba(255, 0, 0, 0.87);
-          --mdc-select-focused-dropdown-icon-color: rgba(255, 0, 0, 0.42);
-          --mdc-select-disabled-ink-color: rgba(0, 0, 0, 0.64);
-          --mdc-select-disabled-dropdown-icon-color: rgba(255, 0, 0, 0.87);
-          --mdc-select-disabled-fill-color: rgba(244, 244, 244, 1);
-          --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
-          --mdc-select-hover-line-color: rgba(255, 0, 0, 0.87);
-          --mdc-select-outlined-idle-border-color: rgba(255, 0, 0, 0.42);
-          --mdc-select-outlined-hover-border-color: rgba(255, 0, 0, 0.87);
-          --mdc-theme-surface: white;
-          --mdc-list-vertical-padding: 5px;
           --mdc-list-side-padding: 15px;
           --mdc-list-item__primary-text: {
             height: 20px;
@@ -619,12 +636,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         mwc-textfield {
           width: 100%;
-          font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-text-field-idle-line-color: rgba(0, 0, 0, 0.42);
-          --mdc-text-field-hover-line-color: rgba(255, 0, 0, 0.87);
-          --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--paper-red-600);
         }
 
         mwc-textfield#session-name {
@@ -638,14 +649,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           width: 100%;
         }
 
-        mwc-button[disabled] {
-          background-image: none;
-          --mdc-theme-primary: #ddd;
-          --mdc-theme-on-primary: var(
-            --general-sidebar-topbar-background-color
-          );
-        }
-
         mwc-checkbox {
           --mdc-theme-secondary: var(--general-checkbox-color);
         }
@@ -656,7 +659,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         #prev-button,
         #next-button {
-          color: #27824f;
+          color: var(--token-colorPrimary, #27824f);
         }
 
         #environment {
@@ -672,14 +675,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           width: 100%;
         }
 
-        #vfolder mwc-list-item[disabled] {
-          background-color: rgba(255, 0, 0, 0.04) !important;
-        }
-
         #vfolder-header-title {
           text-align: center;
           font-size: 16px;
-          font-family: var(--general-font-family);
+          font-family: var(--token-fontFamily);
           font-weight: 500;
         }
 
@@ -700,6 +699,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         mwc-icon-button.info {
           --mdc-icon-button-size: 30px;
+          color: var(--token-colorTextSecondary);
         }
 
         mwc-icon {
@@ -737,7 +737,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           margin-top: 0;
           font-size: 12px;
           font-weight: 200;
-          color: #404040;
+          color: var(--token-colorTextTertiary, #404040);
         }
 
         #progress-04 p.title {
@@ -746,16 +746,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         #batch-mode-config-section {
           width: 100%;
-          border-bottom: solid 1px rgba(0, 0, 0, 0.42);
+          border-bottom: solid 1px var(--token-colorBorder, rgba(0, 0, 0, 0.42));
           margin-bottom: 15px;
-        }
-
-        .launcher-item-title {
-          font-size: 14px;
-          color: #404040;
-          font-weight: 400;
-          padding-left: 16px;
-          width: 100%;
         }
 
         .allocation-shadow {
@@ -764,7 +756,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           position: absolute;
           top: -5px;
           left: 5px;
-          border: 1px solid #ccc;
+          border: 1px solid var(--token-colorBorder, #ccc);
         }
 
         #modify-env-dialog,
@@ -797,9 +789,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         #modify-preopen-ports-dialog mwc-textfield {
           width: 90%;
           margin: auto 5px;
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-text-field-hover-line-color: transparent;
-          --mdc-text-field-idle-line-color: var(--general-textfield-idle-color);
         }
 
         #env-add-btn,
@@ -813,7 +802,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         .minus-btn {
           --mdc-icon-size: 20px;
-          color: #27824f;
+          color: var(--token-colorPrimary, #27824f);
         }
 
         .environment-variables-container h4,
@@ -823,8 +812,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         .environment-variables-container mwc-textfield,
         .preopen-ports-container mwc-textfield {
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-text-field-disabled-ink-color: #222;
+          --mdc-typography-subtitle1-font-family: var(--token-fontFamily);
+          --mdc-text-field-disabled-ink-color: var(--token-colorText);
         }
 
         .optional-buttons {
@@ -834,6 +823,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         .optional-buttons mwc-button {
           width: 50%;
           --mdc-typography-button-font-size: 0.5vw;
+        }
+
+        #launch-button-msg {
+          color: var(--token-colorWhite);
         }
 
         [name='resource-group'] mwc-list-item {
@@ -876,6 +869,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           to {
             opacity: 1;
           }
+        }
+        #launch-button {
+          font-size: 14px;
         }
       `,
     ];
@@ -1452,6 +1448,29 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Else, launch session dialog.
    * */
   async _launchSessionDialog() {
+    const shouldNeo = !globalThis.backendaioptions.get(
+      'use_2409_session_launcher',
+      false,
+    );
+
+    if (this.allowNEOSessionLauncher === true && shouldNeo) {
+      const url =
+        '/session/start?formValues=' +
+        encodeURIComponent(
+          JSON.stringify({
+            resourceGroup: this.resourceBroker.scaling_group,
+          }),
+        );
+      store.dispatch(navigate(decodeURIComponent(url), {}));
+
+      document.dispatchEvent(
+        new CustomEvent('react-navigate', {
+          detail: url,
+        }),
+      );
+      return;
+    }
+
     if (
       typeof globalThis.backendaiclient === 'undefined' ||
       globalThis.backendaiclient === null ||
@@ -1480,7 +1499,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       /* To reflect current resource policy */
       await this._refreshResourcePolicy();
       this.requestUpdate();
-      this._toggleScheduleTime(!this.useScheduledTime);
       this.newSessionDialog.show();
     }
   }
@@ -1538,6 +1556,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const nameFragments = this.manualImageName.value.split(':');
       version = nameFragments.splice(-1, 1)[0];
       kernel = nameFragments.join(':');
+      // extract architecture if exists
+      architecture = ['x86_64', 'aarch64'].includes(
+        this.manualImageName.value.split('@').pop(),
+      )
+        ? this.manualImageName.value.split('@').pop()
+        : undefined;
+      if (architecture) {
+        kernel = this.manualImageName.value.split('@')[0];
+      }
       // TODO: Add support for selecting image architecture when starting kernel with manual image name
     } else {
       // When the "Environment" dropdown is disabled after typing the image name manually,
@@ -1674,7 +1701,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       (this._debug && this.manualImageName.value !== '') ||
       (this.manualImageName && this.manualImageName.value !== '')
     ) {
-      kernelName = this.manualImageName.value;
+      kernelName = architecture ? kernel : this.manualImageName.value;
     } else {
       kernelName = this._generateKernelIndex(kernel, version);
     }
@@ -1721,22 +1748,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.sessionType === 'batch') {
       config['startupCommand'] = this.commandEditor.getValue();
 
-      const scheduledTime = this.dateTimePicker.value;
-      const useScheduledTime = this.useScheduledTimeSwitch.selected;
-      if (scheduledTime && useScheduledTime) {
-        // modify client timezone offset
-        const getClientTimezoneOffset = () => {
-          let offset = new Date().getTimezoneOffset();
-          const sign = offset < 0 ? '+' : '-';
-          offset = Math.abs(offset);
-          return (
-            sign +
-            ((offset / 60) | 0).toString().padStart(2, '0') +
-            ':' +
-            (offset % 60).toString().padStart(2, '0')
-          );
-        };
-        config['startsAt'] = scheduledTime + getClientTimezoneOffset();
+      if (this.scheduledTime) {
+        config['startsAt'] = this.scheduledTime;
       }
     }
     if (this.environ_values && Object.keys(this.environ_values).length !== 0) {
@@ -1790,7 +1803,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
     const createSessionQueue = sessions.map((item) => {
       return this.tasker.add(
-        'Creating ' + item.sessionName,
+        _text('general.Session') + ': ' + item.sessionName,
         this._createKernel(
           item.kernelName,
           item.sessionName,
@@ -1799,6 +1812,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         ),
         '',
         'session',
+        '',
+        _text('eduapi.CreatingComputeSession'),
+        _text('eduapi.ComputeSessionPrepared'),
+        true,
       );
     });
     Promise.all(createSessionQueue)
@@ -1820,7 +1837,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         document.dispatchEvent(event);
         // only open appLauncher when session type is 'interactive' or 'inference'.
         if (res.length === 1 && this.sessionType !== 'batch') {
-          res[0].taskobj
+          res[0]?.taskobj
             .then((res) => {
               let appOptions;
               if ('kernelId' in res) {
@@ -2057,8 +2074,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   async _updateVirtualFolderList() {
+    // Set to a list of vfolders that can only be mounted if the status is 'ready'
     return this.resourceBroker.updateVirtualFolderList().then(() => {
-      this.vfolders = this.resourceBroker.vfolders;
+      this.vfolders = this.resourceBroker.vfolders.filter(
+        (vf) => vf.status === 'ready',
+      );
     });
   }
 
@@ -3313,7 +3333,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.ownerFeatureInitialized = true;
     }
     const email = this.ownerEmailInput.value;
-    if (!this.ownerEmailInput.checkValidity()) {
+    if (
+      !this.ownerEmailInput.checkValidity() ||
+      email === '' ||
+      email === undefined
+    ) {
       this.notification.text = _text(
         'credential.validation.InvalidEmailAddress',
       );
@@ -3348,13 +3372,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     });
 
     /* Fetch domain / group information */
-    const userInfo = await globalThis.backendaiclient.user.get(email, [
-      'domain_name',
-      'groups {id name}',
-    ]);
-    this.ownerDomain = userInfo.user.domain_name;
-    this.ownerGroups = userInfo.user.groups;
-    if (this.ownerGroups) {
+    try {
+      const userInfo = await globalThis.backendaiclient.user.get(email, [
+        'domain_name',
+        'groups {id name}',
+      ]);
+      this.ownerDomain = userInfo.user.domain_name;
+      this.ownerGroups = userInfo.user.groups;
+    } catch (e) {
+      this.notification.text = _text('session.launcher.NotEnoughOwnershipInfo');
+      this.notification.show();
+      return;
+    }
+
+    if (this.ownerGroups.length) {
       this.ownerGroupSelect.layout(true).then(() => {
         this.ownerGroupSelect.select(0);
         // remove protected property usage
@@ -3579,7 +3610,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const container = this.shadowRoot?.querySelector(
         '#resource-allocated-box-shadow',
       ) as HTMLDivElement;
-      for (let i = 0; i < Math.min(6, cluster_size - 1); i = i + 1) {
+      for (let i = 0; i <= Math.min(5, cluster_size - 1); i = i + 1) {
         const item = document.createElement('div');
         item.classList.add(
           'horizontal',
@@ -3592,17 +3623,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         item.style.position = 'absolute';
         item.style.top = '-' + (5 + 5 * i) + 'px';
         item.style.left = 5 + 5 * i + 'px';
-        const intensity = 245 + i * 2;
+        const intensity = this.isDarkMode ? 88 - i * 2 : 245 + i * 2;
         item.style.backgroundColor =
           'rgb(' + intensity + ',' + intensity + ',' + intensity + ')';
-        item.style.borderColor =
-          'rgb(' +
-          (intensity - 10) +
-          ',' +
-          (intensity - 10) +
-          ',' +
-          (intensity - 10) +
-          ')';
+        item.style.borderColor = this.isDarkMode
+          ? 'none'
+          : 'rgb(' +
+            (intensity - 10) +
+            ',' +
+            (intensity - 10) +
+            ',' +
+            (intensity - 10) +
+            ')';
         item.style.zIndex = (6 - i).toString();
         container.appendChild(item);
       }
@@ -4216,9 +4248,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.sessionType === 'batch'
           ? this.commandEditor._validateInput()
           : true;
+      const isBatchScheduledTimeValid =
+        this.sessionType === 'batch' && this.scheduledTime
+          ? new Date(this.scheduledTime).getTime() > new Date().getTime()
+          : true;
       const isSessionNameValid = this.sessionName.checkValidity();
 
-      if (!isBatchModeValid || !isSessionNameValid) {
+      if (
+        !isBatchModeValid ||
+        !isBatchScheduledTimeValid ||
+        !isSessionNameValid
+      ) {
         return false;
       }
     }
@@ -4290,6 +4330,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._resetEnvironmentVariables();
     this._resetPreOpenPorts();
     this._unselectAllSelectedFolder();
+    this._deleteAllocationPaneShadow();
   }
 
   /**
@@ -4367,114 +4408,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
   }
 
-  /**
-   * Toggle scheduling time UI when session type is in batch
-   *
-   */
-  _toggleScheduleTimeDisplay() {
-    this.useScheduledTime = this.useScheduledTimeSwitch.selected;
-    this.dateTimePicker.style.display = this.useScheduledTime
-      ? 'block'
-      : 'none';
-    this._toggleScheduleTime(!this.useScheduledTime);
-  }
-
-  /**
-   * Toggle scheduling time interval according to `isActive` parameter
-   *
-   * @param {Boolean} isActive
-   */
-
-  _toggleScheduleTime(isActive = false) {
-    if (isActive) {
-      clearInterval(this.schedulerTimer);
-    } else {
-      this.schedulerTimer = setInterval(() => {
-        // interval every 1 sec.
-        this._getSchedulableTime();
-      }, 1000);
-    }
-  }
-
-  /**
-   * Returns schedulable time according to current time (default: 2min after current time)
-   *
-   * @return {string}
-   */
-  _getSchedulableTime() {
-    const getFormattedTime = (date) => {
-      // YYYY-MM-DD`T`hh:mm:ss
-      return (
-        date.getFullYear() +
-        '-' +
-        (date.getMonth() + 1) +
-        '-' +
-        date.getDate() +
-        'T' +
-        date.getHours() +
-        ':' +
-        date.getMinutes() +
-        ':' +
-        date.getSeconds()
-      );
-    };
-    let currentTime = new Date();
-    const extraMinutes = 60 * 2 * 1000;
-    // add 2min
-    let futureTime = new Date(currentTime.getTime() + extraMinutes);
-    // disable scheduling in past
-    this.dateTimePicker.min = getFormattedTime(currentTime);
-    // schedulerEl.value = getFormattedTime(futureTime);
-
-    if (this.dateTimePicker.value && this.dateTimePicker.value !== '') {
-      const scheduledTime = new Date(this.dateTimePicker.value).getTime();
-      currentTime = new Date();
-      if (scheduledTime <= currentTime.getTime()) {
-        futureTime = new Date(currentTime.getTime() + extraMinutes);
-        this.dateTimePicker.value = getFormattedTime(futureTime);
-      }
-    } else {
-      this.dateTimePicker.value = getFormattedTime(futureTime);
-    }
-    this._setRelativeTimeStamp();
-  }
-
-  _setRelativeTimeStamp() {
-    // in miliseconds
-    const units = {
-      year: 24 * 60 * 60 * 1000 * 365,
-      month: (24 * 60 * 60 * 1000 * 365) / 12,
-      day: 24 * 60 * 60 * 1000,
-      hour: 60 * 60 * 1000,
-      minute: 60 * 1000,
-      second: 1000,
-    };
-    const i18n = globalThis.backendaioptions.get('current_language') ?? 'en';
-    const rtf = new Intl.RelativeTimeFormat(i18n, { numeric: 'auto' });
-
-    const getRelativeTime = (d1: number, d2 = +new Date()) => {
-      const elapsed = d1 - d2;
-      for (const u in units) {
-        // "Math.abs" accounts for both "past" & "future" scenarios
-        if (Math.abs(elapsed) > units[u] || u == 'second') {
-          // type casting
-          const formatString: Intl.RelativeTimeFormatUnit = <
-            Intl.RelativeTimeFormatUnit
-          >u;
-          return rtf.format(Math.round(elapsed / units[u]), formatString);
-        }
-      }
-      return _text('session.launcher.InfiniteTime');
-    };
-    if (this.dateTimePicker?.invalid) {
-      this.dateTimePicker.helperText = _text('session.launcher.ResetStartTime');
-    } else {
-      this.dateTimePicker.helperText =
-        _text('session.launcher.SessionStartTime') +
-        getRelativeTime(+new Date(this.dateTimePicker.value));
-    }
-  }
-
   _updateisExceedMaxCountForPreopenPorts() {
     const currentRowCount =
       this.modifyPreOpenPortContainer?.querySelectorAll('mwc-textfield')
@@ -4503,7 +4436,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         fixed
         backdrop
         persistent
-        @dialog-closed="${() => this._toggleScheduleTime(true)}"
+        style="position:relative;"
       >
         <span slot="title">
           ${this.newSessionDialogTitle
@@ -4561,7 +4494,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ${item.clickable === false
                     ? html`
                         <h5
-                          style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;"
+                          style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid var(--token-colorBorder, #ccc);"
                           role="separator"
                           disabled="true"
                         >
@@ -4630,7 +4563,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 ? html``
                 : html`
                     <h5
-                      style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
+                      style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid var(--token-colorBorder, #ccc);"
                       role="separator"
                       disabled="true"
                       class="horizontal layout"
@@ -4712,9 +4645,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <div
               class="vertical layout center flex"
               id="batch-mode-config-section"
-              style="display:none;"
+              style="display:none;gap:3px;"
             >
-              <span class="launcher-item-title" style="width:386px;">
+              <span
+                class="launcher-item-title"
+                style="width:386px;padding-left:16px;"
+              >
                 ${_t('session.launcher.BatchModeConfig')}
               </span>
               <div class="horizontal layout start-justified">
@@ -4728,26 +4664,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 required
                 validationMessage="${_t('dialog.warning.Required')}"
               ></lablup-codemirror>
-              <div
-                class="horizontal center layout justified"
-                style="margin: 10px auto;"
-              >
-                <div style="width:330px;font-size:12px;">
-                  ${_t('session.launcher.ScheduleTime')}
-                </div>
-                <mwc-switch
-                  id="use-scheduled-time"
-                  @click="${() => this._toggleScheduleTimeDisplay()}"
-                ></mwc-switch>
-              </div>
-              <vaadin-date-time-picker
-                step="1"
-                date-placeholder="DD/MM/YYYY"
-                time-placeholder="hh:mm:ss"
-                ?required="${this.useScheduledTime}"
-                @change="${this._getSchedulableTime}"
-                style="display:none;"
-              ></vaadin-date-time-picker>
+              <backend-ai-react-batch-session-scheduled-time-setting
+                @change=${({ detail: value }) => {
+                  this.scheduledTime = value;
+                }}
+                style="align-self:start;margin-left:15px;margin-bottom:10px;"
+              ></backend-ai-react-batch-session-scheduled-time-setting>
             </div>
             <lablup-expansion
               leftIconName="expand_more"
@@ -4928,9 +4850,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
                 <div class="horizontal layout start-justified center">
                   <mwc-checkbox id="owner-enabled"></mwc-checkbox>
-                  <p style="color: rgba(0,0,0,0.6);">
-                    ${_t('session.launcher.LaunchSessionWithAccessKey')}
-                  </p>
+                  <p>${_t('session.launcher.LaunchSessionWithAccessKey')}</p>
                 </div>
               </div>
             </lablup-expansion>
@@ -4944,7 +4864,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <span slot="title">${_t('session.launcher.FolderToMount')}</span>
               <div class="vfolder-list">
                 <vaadin-grid
-                  theme="row-stripes column-borders compact"
+                  theme="no-border row-stripes column-borders compact dark"
                   id="non-auto-mounted-folder-grid"
                   aria-label="vfolder list"
                   height-by-rows
@@ -4994,7 +4914,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               </span>
               <div class="vfolder-list">
                 <vaadin-grid
-                  theme="row-stripes column-borders compact"
+                  theme="no-border row-stripes column-borders compact dark"
                   id="model-folder-grid"
                   aria-label="model storage vfolder list"
                   height-by-rows
@@ -5111,7 +5031,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   style="display:none!important;"
                 ></mwc-list-item>
                 <h5
-                  style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
+                  style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid var(--token-colorBorder, #ccc);"
                   role="separator"
                   disabled="true"
                   class="horizontal layout center"
@@ -5629,7 +5549,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ? 'display:none;'
                   : ''}"
               >
-                <div class="horizontal layout">
+                <div class="horizontal layout resource-allocated-box">
                   <div
                     class="vertical layout center center-justified resource-allocated"
                   >
@@ -5696,7 +5616,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 class="horizontal layout center center-justified allocation-check"
               >
                 <div id="total-allocation-pane" style="position:relative;">
-                  <div class="horizontal layout resource-allocated-box">
+                  <div class="horizontal layout">
                     <div
                       class="vertical layout center center-justified resource-allocated"
                     >
@@ -5767,7 +5687,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             ${this.mode !== 'inference'
               ? html`
                   <p class="title">${_t('session.launcher.MountedFolders')}</p>
-                  <div id="mounted-folders-container">
+                  <div
+                    id="mounted-folders-container"
+                    class="cluster-total-allocation-container"
+                  >
                     ${this.selectedVfolders.length > 0 ||
                     this.autoMountedVfolders.length > 0
                       ? html`
@@ -5817,7 +5740,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <p class="title">
               ${_t('session.launcher.EnvironmentVariablePaneTitle')}
             </p>
-            <div class="environment-variables-container">
+            <div
+              class="environment-variables-container cluster-total-allocation-container"
+            >
               ${this.environ.length > 0
                 ? html`
                     <div
@@ -5863,7 +5788,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <p class="title">
                     ${_t('session.launcher.PreOpenPortPanelTitle')}
                   </p>
-                  <div class="preopen-ports-container">
+                  <div
+                    class="preopen-ports-container cluster-total-allocation-container"
+                  >
                     ${this.preOpenPorts.length > 0
                       ? html`
                           <div
@@ -6118,7 +6045,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             icon="rowing"
             @click="${() => this._newSession()}"
           >
-            <span>${_t('session.launcher.Launch')}</span>
+            ${_t('session.launcher.Launch')}
           </mwc-button>
         </div>
       </backend-ai-dialog>

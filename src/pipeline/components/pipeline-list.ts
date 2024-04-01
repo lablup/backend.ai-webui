@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../../components/backend-ai-dialog';
 import { BackendAiStyles } from '../../components/backend-ai-general-styles';
@@ -727,7 +727,7 @@ export default class PipelineList extends BackendAIPage {
       </div>
       <vaadin-grid
         id="pipeline-list"
-        theme="row-stripes column-borders compact wrap-cell-content"
+        theme="row-stripes column-borders compact wrap-cell-content dark"
         aria-label="Pipeline List"
         .items="${this.pipelines}"
       >

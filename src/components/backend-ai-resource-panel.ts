@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../plastics/lablup-piechart/lablup-piechart';
 import '../plastics/lablup-shields/lablup-shields';
@@ -133,7 +133,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         }
 
         a:hover {
-          color: #3e872d;
+          color: var(--token-colorPrimary, #3e872d);
         }
 
         mwc-linear-progress {
@@ -174,9 +174,9 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         }
 
         div.indicators {
-          min-height: 80px;
-          padding: 15px 20px 5px 20px;
-          background-color: #f6f6f6;
+          min-height: 83px;
+          padding: 10px 20px;
+          background-color: var(--token-colorBgContainer, #f6f6f6);
         }
 
         .system-health-indicator {
