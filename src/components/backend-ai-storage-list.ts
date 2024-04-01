@@ -181,6 +181,10 @@ export default class BackendAiStorageList extends BackendAIPage {
     'xfs',
     'weka',
     'spectrumscale',
+    'netapp',
+    'vast',
+    'cephfs',
+    'ddn',
   ];
   @property({ type: Object }) quotaUnit = {
     MB: Math.pow(10, 6),
