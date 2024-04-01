@@ -74,6 +74,7 @@ import {
 } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
+import { any } from 'prop-types';
 import React, { useEffect, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
@@ -571,16 +572,7 @@ const SessionLauncherPage = () => {
       });
   };
 
-  const ref1 = useRef(null);
-  const ref2 = useRef(null);
-  const ref3 = useRef(null);
-  const ref4 = useRef(null);
-  const ref5 = useRef(null);
-  const ref6 = useRef(null);
-  const ref7 = useRef(null);
-  const ref8 = useRef(null);
-  const ref9 = useRef(null);
-  const ref10 = useRef(null);
+  const tourRef = useRef([] as HTMLElement[]);
 
   const onTourNext = () => {
     setCurrentTourStep((prev) => prev + 1);
@@ -594,7 +586,7 @@ const SessionLauncherPage = () => {
       {
         title: 'Welcome!',
         description: '새로운 NEO 세션 런처에 오신걸 환영합니다!.',
-        target: () => ref1.current,
+        target: () => tourRef.current[0],
       },
       {
         title: '세션 런처 타입 선택',
@@ -607,19 +599,19 @@ const SessionLauncherPage = () => {
         title: '세션 실행 단계',
         description:
           '우측의 단계 표시를 통해 현재 단계를 확인할 수 있습니다. 특정 단계를 클릭하여 이동할 수 있습니다.',
-        target: () => ref2.current,
+        target: () => tourRef.current[1],
       },
       {
         title: '세션 타입 선택 단계',
         description:
           '세션 형태와 이름을 결정합니다. 세션 형태는 Interactive, Batch로 나뉩니다. 이름 설정은 선택 사항입니다.',
-        target: () => ref3.current,
+        target: () => tourRef.current[2],
       },
       {
         title: '단계 이동',
         description:
           'Next 버튼을 통하여 다음 단계로 이동하거나 review 단계로 건너뛸 수 있습니다.',
-        target: () => ref4.current,
+        target: () => tourRef.current[3],
       },
     ],
     environment: [
@@ -627,7 +619,7 @@ const SessionLauncherPage = () => {
         title: '실행 환경 설정 단계',
         description:
           '연산 세션의 기본 환경과 해당 환경의 버전을 설정합니다. 실행환경을 선택하면 환경에 맵핑되는 버전이 제공됩니다.',
-        target: () => ref5.current,
+        target: () => tourRef.current[4],
         onNext: async () => {
           mainContentDivRef.current?.scrollTo({
             top: 450,
@@ -656,6 +648,7 @@ const SessionLauncherPage = () => {
           '정의된 템플릿 이외의 자원을 사용자가 직접 할당할 수도 있습니다.',
         // @ts-ignore
         target: () => document.querySelector('.resource-allocation-card'),
+        // Todo: fix me
         onNext: async () => {
           mainContentDivRef.current?.scrollTo({
             top: 9999,
@@ -667,7 +660,7 @@ const SessionLauncherPage = () => {
       },
       {
         title: '다음 단계로 이동하세요!',
-        target: () => ref4.current,
+        target: () => tourRef.current[3],
         nextButtonProps: {
           style: { display: 'none' },
         },
@@ -677,34 +670,34 @@ const SessionLauncherPage = () => {
       {
         title: '데이터 및 폴더 선택 단계',
         description: '연산 세션에 마운트 할 데이터 폴더를 지정할 수 있습니다.',
-        target: () => ref7.current,
+        target: () => tourRef.current[6],
       },
       {
         title: '데이터 및 폴더 선택 단계',
         description:
           '연산 세션이 삭제되면 기본적으로 모든 데이터가 함께 삭제되지만, 여기서 마운트 한 폴더에 저장된 데이터는 삭제되지 않습니다.',
-        target: () => ref7.current,
+        target: () => tourRef.current[6],
       },
       {
         title: '다음 단계로 이동하세요!',
-        target: () => ref4.current,
+        target: () => tourRef.current[3],
       },
     ],
     network: [
       {
         title: '네트워크 설정 단계',
         description: '연산 세션에 사전 개방 포트를 설정할 수 있습니다. ',
-        target: () => ref8.current,
+        target: () => tourRef.current[7],
       },
       {
         title: '네트워크 설정 단계',
         description:
           '이 기능을 사용하면 서빙 포트를 노출하기 위해 별도의 이미지를 추가로 빌드할 필요가 없습니다.',
-        target: () => ref8.current,
+        target: () => tourRef.current[7],
       },
       {
         title: '다음 단계로 이동하세요!',
-        target: () => ref4.current,
+        target: () => tourRef.current[3],
       },
     ],
     review: [
@@ -712,7 +705,7 @@ const SessionLauncherPage = () => {
         title: '설정 확인 및 세션 시작 단계',
         description:
           '모든 설정을 확인하고 세션을 시작할 수 있습니다. 이 단계에서 세션 실행 요건에 대한 검증이 이루어 집니다.',
-        target: () => ref9.current,
+        target: () => tourRef.current[8],
       },
       {
         title: '설정 확인 및 세션 시작 단계',
@@ -724,12 +717,12 @@ const SessionLauncherPage = () => {
         title: '설정 확인 및 세션 시작 단계',
         description:
           '하단의 Reset 버튼을 통하여 모든 단계를 초기화 할 수 있습니다.',
-        target: () => ref10.current,
+        target: () => tourRef.current[9],
       },
       {
         title: '세션 시작',
         description: '모든 준비가 완료되었다면 세션을 시작하세요!',
-        target: () => ref4.current,
+        target: () => tourRef.current[3],
       },
     ],
   };
@@ -761,7 +754,7 @@ const SessionLauncherPage = () => {
   return (
     <>
       <Flex
-        ref={ref1}
+        ref={(el) => (tourRef.current[0] = el as HTMLElement)}
         direction="column"
         align="stretch"
         style={{
@@ -833,7 +826,7 @@ const SessionLauncherPage = () => {
                 >
                   {/* Step 0 fields */}
                   <Card
-                    ref={ref3}
+                    ref={(el) => (tourRef.current[2] = el as HTMLElement)}
                     title={t('session.launcher.SessionType')}
                     style={{
                       display:
@@ -1102,7 +1095,7 @@ const SessionLauncherPage = () => {
 
                   {/* Step Start*/}
                   <Card
-                    ref={ref5}
+                    ref={(el) => (tourRef.current[4] = el as HTMLElement)}
                     title={t('session.launcher.Environments')}
                     style={{
                       display:
@@ -1129,7 +1122,7 @@ const SessionLauncherPage = () => {
                     </Form.Item>
                   </Card>
                   <Card
-                    ref={ref6}
+                    ref={(el) => (tourRef.current[5] = el as HTMLElement)}
                     title={t('session.launcher.ResourceAllocation')}
                     style={{
                       display:
@@ -1261,7 +1254,7 @@ const SessionLauncherPage = () => {
 
                   {/* Step Start*/}
                   <Card
-                    ref={ref7}
+                    ref={(el) => (tourRef.current[6] = el as HTMLElement)}
                     title={t('webui.menu.Data&Storage')}
                     style={{
                       display: currentStepKey === 'storage' ? 'block' : 'none',
@@ -1277,7 +1270,7 @@ const SessionLauncherPage = () => {
 
                   {/* Step Start*/}
                   <Card
-                    ref={ref8}
+                    ref={(el) => (tourRef.current[7] = el as HTMLElement)}
                     title={t('session.launcher.Network')}
                     style={{
                       display: currentStepKey === 'network' ? 'block' : 'none',
@@ -1290,7 +1283,7 @@ const SessionLauncherPage = () => {
                   {currentStepKey === 'review' && (
                     <>
                       <BAICard
-                        ref={ref9}
+                        ref={(el) => (tourRef.current[8] = el as HTMLElement)}
                         title={t('session.launcher.SessionType')}
                         size="small"
                         status={
@@ -1721,7 +1714,10 @@ const SessionLauncherPage = () => {
                   )}
 
                   <Flex direction="row" justify="between">
-                    <Flex gap={'sm'} ref={ref10}>
+                    <Flex
+                      gap={'sm'}
+                      ref={(el) => (tourRef.current[9] = el as HTMLElement)}
+                    >
                       {/* <Popconfirm
                     title={t('session.CheckAgainDialog')}
                     placement="topLeft"
@@ -1780,7 +1776,11 @@ const SessionLauncherPage = () => {
                       </Button>
                     )} */}
                     </Flex>
-                    <Flex direction="row" gap="sm" ref={ref4}>
+                    <Flex
+                      direction="row"
+                      gap="sm"
+                      ref={(el) => (tourRef.current[3] = el as HTMLElement)}
+                    >
                       {currentStep > 0 && (
                         <Button
                           onClick={() => {
@@ -1827,7 +1827,10 @@ const SessionLauncherPage = () => {
             {/* </Suspense> */}
           </Flex>
           {screens.lg && (
-            <Flex style={{ position: 'sticky', top: 80 }} ref={ref2}>
+            <Flex
+              style={{ position: 'sticky', top: 80 }}
+              ref={(el) => (tourRef.current[1] = el as HTMLElement)}
+            >
               <Steps
                 size="small"
                 direction="vertical"
