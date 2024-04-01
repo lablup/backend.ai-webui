@@ -621,13 +621,14 @@ const SessionLauncherPage = () => {
         description:
           '연산 세션의 기본 환경과 해당 환경의 버전을 설정합니다. 실행환경을 선택하면 환경에 맵핑되는 버전이 제공됩니다.',
         target: () => tourRef.current[4],
-        onNext: async () => {
+        onNext: () => {
           mainContentDivRef.current?.scrollTo({
             top: 450,
             behavior: 'smooth',
           });
-          await new Promise((resolve) => setTimeout(resolve, 500));
-          setCurrentTourStep((prev) => prev + 1);
+          _.delay(() => {
+            setCurrentTourStep((prev) => prev + 1);
+          }, 500);
         },
       },
       {
@@ -649,14 +650,14 @@ const SessionLauncherPage = () => {
           '정의된 템플릿 이외의 자원을 사용자가 직접 할당할 수도 있습니다.',
         target: () =>
           document.querySelector('.resource-allocation-card') as HTMLElement,
-        // Todo: fix me
-        onNext: async () => {
+        onNext: () => {
           mainContentDivRef.current?.scrollTo({
             top: 9999,
             behavior: 'smooth',
           });
-          await new Promise((resolve) => setTimeout(resolve, 500));
-          setCurrentTourStep((prev) => prev + 1);
+          _.delay(() => {
+            setCurrentTourStep((prev) => prev + 1);
+          }, 500);
         },
       },
       {
@@ -726,7 +727,6 @@ const SessionLauncherPage = () => {
   };
   const [tourSteps, setTourSteps] = useState<TourStepProps[]>([]);
   const [currentTourStep, setCurrentTourStep] = useState(0);
-
   const [tourOpen, setTourOpen] = useLocalStorageState(
     'backendaiwebui.setting.user.NeoSessionLauncherTourGuide',
     {
