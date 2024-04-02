@@ -666,6 +666,12 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.09.2')) {
       this._features['container-registry-gql'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('23.09.1')) {
+      this._features['deprecated-max-vfolder-size-in-user-and-project-resource-policy'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.4')) {
+      this._features['deprecated-quota-support-in-keypair-resource-policy'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('23.09.7')) {
       this._features['main-access-key'] = true;
     }
@@ -675,13 +681,13 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.09.9')) {
       this._features['modify-endpoint'] = true;
     }
-    // TODO: remove this after 24.03.0 release
-    if (this.isManagerVersionCompatibleWith('24.03.0.*')) {
-      this._features['vfolder-trash-bin'] = true;
-    }
     if (this.isManagerVersionCompatibleWith('24.03.0')) {
-      this._features['max-vfolder-count-in-user-resource-policy'] = true;
+      this._features['vfolder-trash-bin'] = true;
       this._features['model-store'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('24.03.1')) {
+      this._features['max-vfolder-count-in-user-and-project-resource-policy'] = true;
+      this._features['max-quota-scope-size-in-user-and-project-resource-policy'] = true;
     }
   }
 

@@ -81,7 +81,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @state() private allowed_vfolder_hosts;
   @state() private is_super_admin = false;
   @state() private vfolderPermissions;
-  @state() private isSupportMaxVfolderCountInUserResourcePolicy = false;
+  @state() private isDeprecatedQuotaSupportInKeypairResourcePolicy = false;
 
   constructor() {
     super();
@@ -448,7 +448,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             ></backend-ai-multi-select>
             <div
               class="horizontal layout justified"
-              style=${this.isSupportMaxVfolderCountInUserResourcePolicy
+              style=${this.isDeprecatedQuotaSupportInKeypairResourcePolicy
                 ? 'display:none;'
                 : 'width:100%;'}
             >
@@ -619,7 +619,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               `
             : html``}
         </div>
-        ${this.isSupportMaxVfolderCountInUserResourcePolicy
+        ${this.isDeprecatedQuotaSupportInKeypairResourcePolicy
           ? html``
           : html`
               <div class="layout horizontal wrap center">
@@ -798,9 +798,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             globalThis.backendaiclient.supports(
               'fine-grained-storage-permissions',
             );
-          this.isSupportMaxVfolderCountInUserResourcePolicy =
+          this.isDeprecatedQuotaSupportInKeypairResourcePolicy =
             globalThis.backendaiclient.supports(
-              'max-vfolder-count-in-user-resource-policy',
+              'deprecated-quota-support-in-keypair-resource-policy',
             );
           this.is_super_admin = globalThis.backendaiclient.is_superadmin;
           this._refreshPolicyData();
@@ -816,9 +816,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         globalThis.backendaiclient.supports('session-lifetime');
       this.enableParsingStoragePermissions =
         globalThis.backendaiclient.supports('fine-grained-storage-permissions');
-      this.isSupportMaxVfolderCountInUserResourcePolicy =
+      this.isDeprecatedQuotaSupportInKeypairResourcePolicy =
         globalThis.backendaiclient.supports(
-          'max-vfolder-count-in-user-resource-policy',
+          'deprecated-quota-support-in-keypair-resource-policy',
         );
       this.is_super_admin = globalThis.backendaiclient.is_superadmin;
       this._refreshPolicyData();
@@ -1101,7 +1101,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       allowed_vfolder_hosts: vfolder_hosts,
     };
 
-    if (!this.isSupportMaxVfolderCountInUserResourcePolicy) {
+    if (!this.isDeprecatedQuotaSupportInKeypairResourcePolicy) {
       input.max_vfolder_count = parseInt(this.vfolderCountLimitInput.value);
     }
 
