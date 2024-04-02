@@ -1693,6 +1693,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       'deleted-complete',
       'delete-error',
       'purge-ongoing', // Deprecated since 24.03.0
+      'deleting', // deprecated since 24.03.0;
     ].includes(status);
   }
 
@@ -1702,6 +1703,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       'delete-ongoing',
       'delete-complete',
       'delete-error',
+      'deleting', // deprecated since 24.03.0;
     ].includes(status);
   }
 

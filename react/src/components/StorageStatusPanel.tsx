@@ -35,7 +35,8 @@ export type DeadVFolderStatus =
   | 'delete-pending'
   | 'delete-ongoing'
   | 'delete-complete'
-  | 'delete-error';
+  | 'delete-error'
+  | 'deleting'; // deprecated since 24.03.0;
 
 const StorageStatusPanel: React.FC<{
   fetchKey: string;
@@ -62,6 +63,7 @@ const StorageStatusPanel: React.FC<{
     'delete-ongoing',
     'delete-complete',
     'delete-error',
+    'deleting', // deprecated since 24.03.0;
   ];
   const isDeadVFolderStatus = (status: string) => {
     return _.includes(deadVFolderStatuses, status);
