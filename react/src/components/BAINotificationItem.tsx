@@ -5,7 +5,7 @@ import {
   ClockCircleOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
-import { Card, List, Progress, Typography, theme } from 'antd';
+import { Button, Card, List, Progress, Typography, theme } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState } from 'react';
@@ -18,7 +18,8 @@ const BAINotificationItem: React.FC<{
     notification: NotificationState,
   ) => void;
   showDate?: boolean;
-}> = ({ notification, onClickAction, showDate }) => {
+  destroyAll?: () => void | undefined;
+}> = ({ notification, onClickAction, showDate, destroyAll }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [showExtraDescription, setShowExtraDescription] = useState(false);
@@ -61,38 +62,56 @@ const BAINotificationItem: React.FC<{
             {notification.message}
           </Typography.Paragraph>
         </Flex>
-
-        <Flex direction="row" align="end" gap={'xxs'} justify="between">
-          <Typography.Paragraph ellipsis={{ rows: 3, expandable: true }}>
-            {notification.description}
-          </Typography.Paragraph>
-          {notification.to ? (
-            <Flex>
+        <Flex direction="column" align="start" gap={'xxs'} justify="between">
+          {notification.description ? (
+            <Typography.Paragraph ellipsis={{ rows: 3, expandable: true }}>
+              {notification.description}
+            </Typography.Paragraph>
+          ) : null}
+          <Flex
+            direction="row-reverse"
+            justify="between"
+            style={{ width: '100%' }}
+            gap={'xxs'}
+          >
+            {notification.to ? (
+              <Flex>
+                <Typography.Link
+                  onClick={(e) => {
+                    onClickAction && onClickAction(e, notification);
+                  }}
+                >
+                  {notification.toTextKey
+                    ? t(notification.toTextKey)
+                    : t('notification.SeeDetail')}
+                </Typography.Link>
+              </Flex>
+            ) : null}
+            {notification.extraDescription ? (
+              <Flex>
+                <Typography.Link
+                  onClick={(e) => {
+                    // onClickAction && onClickAction(e, notification);
+                    setShowExtraDescription(!showExtraDescription);
+                  }}
+                >
+                  {notification.toTextKey
+                    ? t(notification.toTextKey)
+                    : t('notification.SeeDetail')}
+                </Typography.Link>
+              </Flex>
+            ) : null}
+            {destroyAll ? (
               <Typography.Link
-                onClick={(e) => {
-                  onClickAction && onClickAction(e, notification);
+                type="danger"
+                onClick={() => {
+                  destroyAll();
                 }}
               >
-                {notification.toTextKey
-                  ? t(notification.toTextKey)
-                  : t('notification.SeeDetail')}
+                {'Destroy All'}
               </Typography.Link>
-            </Flex>
-          ) : null}
-          {notification.extraDescription ? (
-            <Flex>
-              <Typography.Link
-                onClick={(e) => {
-                  // onClickAction && onClickAction(e, notification);
-                  setShowExtraDescription(!showExtraDescription);
-                }}
-              >
-                {notification.toTextKey
-                  ? t(notification.toTextKey)
-                  : t('notification.SeeDetail')}
-              </Typography.Link>
-            </Flex>
-          ) : null}
+            ) : null}
+          </Flex>
         </Flex>
         {notification.extraDescription && showExtraDescription ? (
           <Card size="small">

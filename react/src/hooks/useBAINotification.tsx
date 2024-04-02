@@ -231,6 +231,7 @@ export const useBAINotificationEffect = () => {
 export const useSetBAINotification = () => {
   // Don't use _notifications carefully when you need to mutate it.
   const setNotifications = useSetRecoilState(notificationListState);
+
   const app = App.useApp();
 
   const webuiNavigate = useWebUINavigate();
@@ -247,6 +248,7 @@ export const useSetBAINotification = () => {
   );
 
   const destroyAllNotifications = useCallback(() => {
+    _activeNotificationKeys.splice(0, _activeNotificationKeys.length);
     app.notification.destroy();
   }, [app.notification]);
 
@@ -258,7 +260,6 @@ export const useSetBAINotification = () => {
         const existingIndex = params.key
           ? _.findIndex(prevNotifications, { key: params.key })
           : -1;
-
         const newNotification: NotificationState = _.merge(
           {}, // start with empty object
           prevNotifications[existingIndex],
@@ -268,7 +269,6 @@ export const useSetBAINotification = () => {
             created: new Date().toISOString(),
           },
         );
-
         // This is to check if the notification should be updated using ant.d notification
         const shouldUpdateUsingAPI =
           (_.isEmpty(params.key) && params.open) ||
@@ -301,7 +301,6 @@ export const useSetBAINotification = () => {
             );
           }
         }
-
         if (shouldUpdateUsingAPI) {
           if (
             newNotification.key &&
@@ -310,7 +309,6 @@ export const useSetBAINotification = () => {
           ) {
             _activeNotificationKeys.push(newNotification.key);
           }
-
           app.notification.open({
             ...newNotification,
             type: undefined, // override type to remove default icon from notification, icon displayed in BAINotificationItem
@@ -319,6 +317,11 @@ export const useSetBAINotification = () => {
             description: (
               <BAINotificationItem
                 notification={newNotification}
+                destroyAll={
+                  _activeNotificationKeys.length > 3
+                    ? () => destroyAllNotifications()
+                    : undefined
+                }
                 onClickAction={() => {
                   if (newNotification.to) {
                     webuiNavigate(newNotification.to);
