@@ -1166,7 +1166,8 @@
     "CPU": "CPU",
     "MEM": "Memoria",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (memoria)"
+    "GPU(MEM)": "GPU (memoria)",
+    "Agents": "Agentes"
   },
   "settings": {
     "ATOMsupport": "ATOM",

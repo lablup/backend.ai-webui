@@ -1166,7 +1166,8 @@
     "CPU": "CPU",
     "MEM": "Muisti",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (muisti)"
+    "GPU(MEM)": "GPU (muisti)",
+    "Agents": "Agentit"
   },
   "settings": {
     "ATOMsupport": "ATOM",

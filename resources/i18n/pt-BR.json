@@ -391,7 +391,8 @@
     "CPU": "CPU",
     "MEM": "Memória",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (memória)"
+    "GPU(MEM)": "GPU (memória)",
+    "Agents": "Agentes"
   },
   "button": {
     "Cancel": "Cancelar",

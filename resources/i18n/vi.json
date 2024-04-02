@@ -391,7 +391,8 @@
     "CPU": "CPU",
     "MEM": "Ký ức",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (bộ nhớ)"
+    "GPU(MEM)": "GPU (bộ nhớ)",
+    "Agents": "Đại lý"
   },
   "button": {
     "Cancel": "Huỷ bỏ",
