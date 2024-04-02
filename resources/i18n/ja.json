@@ -1174,7 +1174,8 @@
     "NoNotification": "通知はありません。",
     "Notifications": "通知",
     "ClearNotifications": "通知をクリアする",
-    "AreYouSureToClearAllNotifications": "すべての通知をクリアしてもよろしいですか?"
+    "AreYouSureToClearAllNotifications": "すべての通知をクリアしてもよろしいですか?",
+    "DestroyAll": "すべてを破壊する"
   },
   "information": {
     "Core": "芯",

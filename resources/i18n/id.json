@@ -1169,7 +1169,8 @@
     "NoNotification": "Tidak Ada Pemberitahuan.",
     "Notifications": "Pemberitahuan",
     "ClearNotifications": "Hapus Notifikasi",
-    "AreYouSureToClearAllNotifications": "Apakah Anda yakin untuk menghapus semua notifikasi?"
+    "AreYouSureToClearAllNotifications": "Apakah Anda yakin untuk menghapus semua notifikasi?",
+    "DestroyAll": "Hancurkan Semua"
   },
   "information": {
     "Core": "Core",

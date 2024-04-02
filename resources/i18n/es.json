@@ -732,7 +732,8 @@
     "NoNotification": "Sin notificación.",
     "Notifications": "Notificaciones",
     "ClearNotifications": "Borrar notificaciones",
-    "AreYouSureToClearAllNotifications": "¿Estás seguro de borrar todas las notificaciones?"
+    "AreYouSureToClearAllNotifications": "¿Estás seguro de borrar todas las notificaciones?",
+    "DestroyAll": "Destruye todo"
   },
   "pipeline": {
     "Component": {

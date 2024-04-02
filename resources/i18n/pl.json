@@ -1176,7 +1176,8 @@
     "NoNotification": "Brak powiadomienia.",
     "Notifications": "Powiadomienia",
     "ClearNotifications": "Wyczyść powiadomienia",
-    "AreYouSureToClearAllNotifications": "Czy na pewno wyczyścić wszystkie powiadomienia?"
+    "AreYouSureToClearAllNotifications": "Czy na pewno wyczyścić wszystkie powiadomienia?",
+    "DestroyAll": "Zniszcz wszystko"
   },
   "information": {
     "Core": "Rdzeń",

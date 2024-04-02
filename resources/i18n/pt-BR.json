@@ -1174,7 +1174,8 @@
     "NoNotification": "Nenhuma notificação.",
     "Notifications": "Notificações",
     "ClearNotifications": "Limpar notificações",
-    "AreYouSureToClearAllNotifications": "Tem certeza de que deseja limpar todas as notificações?"
+    "AreYouSureToClearAllNotifications": "Tem certeza de que deseja limpar todas as notificações?",
+    "DestroyAll": "Destrua tudo"
   },
   "information": {
     "Core": "Testemunho",

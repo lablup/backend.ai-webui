@@ -1174,7 +1174,8 @@
     "NoNotification": "Bildirim yok.",
     "Notifications": "Bildirimler",
     "ClearNotifications": "Bildirimleri Temizle",
-    "AreYouSureToClearAllNotifications": "Tüm bildirimleri temizlediğinizden emin misiniz?"
+    "AreYouSureToClearAllNotifications": "Tüm bildirimleri temizlediğinizden emin misiniz?",
+    "DestroyAll": "Hepsini yok et"
   },
   "information": {
     "Core": "çekirdek",
