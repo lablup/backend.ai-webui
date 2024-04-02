@@ -439,6 +439,7 @@ export default class BackendAISessionView extends BackendAIPage {
             // only show useful metrics
             let cpu_used_time: number = 0;
             let cpu_util: number = 0;
+            let mem_util: number = 0;
             let cuda_util: number = 0;
             let cuda_mem: number = 0;
             let io_read: number = 0;
@@ -458,6 +459,9 @@ export default class BackendAISessionView extends BackendAIPage {
                 }
                 if (liveStat.cpu_util && liveStat.cpu_util.pct) {
                   cpu_util += parseFloat(liveStat.cpu_util.pct);
+                }
+                if (liveStat.mem && liveStat.mem.pct) {
+                  mem_util += parseFloat(liveStat.mem.pct);
                 }
                 if (liveStat.cuda_util && liveStat.cuda_util.pct) {
                   cuda_util += parseFloat(liveStat.cuda_util.pct);
@@ -481,6 +485,9 @@ export default class BackendAISessionView extends BackendAIPage {
               );
             exportListItem.cpu_util = (
               cpu_util / session.containers.length
+            ).toFixed(2);
+            exportListItem.mem_util = (
+              mem_util / session.containers.length
             ).toFixed(2);
             exportListItem.cuda_util = (
               cuda_util / session.containers.length
