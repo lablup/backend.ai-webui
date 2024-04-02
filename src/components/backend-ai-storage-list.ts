@@ -79,13 +79,15 @@ type VFolderOperationStatus =
   | 'delete-ongoing'
   | 'delete-complete'
   | 'delete-error'
+  | 'deleting' // Deprecated since 24.03.0
   | 'purge-ongoing'; // Deprecated since 24.03.0
 
 type DeadVFolderStatus =
   | 'delete-pending'
   | 'delete-ongoing'
   | 'delete-complete'
-  | 'delete-error';
+  | 'delete-error'
+  | 'deleting'; // Deprecated since 24.03.0
 
 /**
  Backend AI Storage List
