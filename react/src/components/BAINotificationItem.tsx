@@ -5,7 +5,7 @@ import {
   ClockCircleOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
-import { Button, Card, List, Progress, Typography, theme } from 'antd';
+import { Card, List, Progress, Typography, theme } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState } from 'react';
@@ -62,7 +62,7 @@ const BAINotificationItem: React.FC<{
             {notification.message}
           </Typography.Paragraph>
         </Flex>
-        <Flex direction="column" align="start" gap={'xxs'} justify="between">
+        <Flex direction="column" align="start" gap={'xxs'}>
           {notification.description ? (
             <Typography.Paragraph ellipsis={{ rows: 3, expandable: true }}>
               {notification.description}
