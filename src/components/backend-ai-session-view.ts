@@ -416,7 +416,7 @@ export default class BackendAISessionView extends BackendAIPage {
           exportListItem.image =
             session.image.split('/')[2] || session.image.split('/')[1];
           exportListItem.cluster_mode = session.cluster_mode;
-          exportListItem.user_id = session.user_id;
+          exportListItem.user_email = session.user_email;
           exportListItem.status = session.status;
           exportListItem.status_info = session.status_info;
           exportListItem.access_key = session.access_key;
