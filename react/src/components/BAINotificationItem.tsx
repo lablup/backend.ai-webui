@@ -68,12 +68,15 @@ const BAINotificationItem: React.FC<{
               {notification.description}
             </Typography.Paragraph>
           ) : null}
-          <Flex
-            direction="row-reverse"
-            justify="between"
-            style={{ width: '100%' }}
-            gap={'xxs'}
-          >
+          <Flex justify="between" style={{ width: '100%' }} gap={'xxs'}>
+            <Typography.Link
+              type="danger"
+              onClick={() => {
+                destroyAll && destroyAll();
+              }}
+            >
+              {destroyAll && t('notification.DestroyAll')}
+            </Typography.Link>
             {notification.to ? (
               <Flex>
                 <Typography.Link
@@ -100,16 +103,6 @@ const BAINotificationItem: React.FC<{
                     : t('notification.SeeDetail')}
                 </Typography.Link>
               </Flex>
-            ) : null}
-            {destroyAll ? (
-              <Typography.Link
-                type="danger"
-                onClick={() => {
-                  destroyAll();
-                }}
-              >
-                {'Destroy All'}
-              </Typography.Link>
             ) : null}
           </Flex>
         </Flex>
