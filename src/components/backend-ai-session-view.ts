@@ -478,7 +478,7 @@ export default class BackendAISessionView extends BackendAIPage {
               }
             });
 
-            exportListItem.agents = agents;
+            exportListItem.agents = [...new Set(agents)];
             exportListItem.cpu_used_time =
               BackendAISessionView._automaticScaledTime(
                 cpu_used_time / session.containers.length,
