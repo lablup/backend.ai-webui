@@ -1174,8 +1174,7 @@
     "NoNotification": "Không có thông báo.",
     "Notifications": "Thông báo",
     "ClearNotifications": "Xóa thông báo",
-    "AreYouSureToClearAllNotifications": "Bạn có chắc chắn xóa tất cả thông báo không?",
-    "CloseAll": "Đóng tất cả"
+    "AreYouSureToClearAllNotifications": "Bạn có chắc chắn xóa tất cả thông báo không?"
   },
   "information": {
     "Core": "Cốt lõi",

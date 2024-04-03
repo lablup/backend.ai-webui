@@ -1174,8 +1174,7 @@
     "NoNotification": "Keine Benachrichtigung.",
     "Notifications": "Benachrichtigungen",
     "ClearNotifications": "Klare Benachrichtigungen",
-    "AreYouSureToClearAllNotifications": "Sind Sie sicher, dass Sie alle Benachrichtigungen gelöscht haben?",
-    "CloseAll": "Alle schließen"
+    "AreYouSureToClearAllNotifications": "Sind Sie sicher, dass Sie alle Benachrichtigungen gelöscht haben?"
   },
   "information": {
     "Core": "Ader",

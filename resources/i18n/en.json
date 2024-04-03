@@ -1276,8 +1276,7 @@
     "Notifications": "Notifications",
     "NoNotification": "No Notification.",
     "ClearNotifications": "Clear Notifications",
-    "AreYouSureToClearAllNotifications": "Are you sure to clear all notifications?",
-    "CloseAll": "Close All"
+    "AreYouSureToClearAllNotifications": "Are you sure to clear all notifications?"
   },
   "information": {
     "Core": "Core",

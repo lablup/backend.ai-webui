@@ -1174,8 +1174,7 @@
     "NoNotification": "Aucune notification.",
     "Notifications": "Notifications",
     "ClearNotifications": "Effacer les notifications",
-    "AreYouSureToClearAllNotifications": "Êtes-vous sûr d'avoir effacé toutes les notifications ?",
-    "CloseAll": "Ferme tout"
+    "AreYouSureToClearAllNotifications": "Êtes-vous sûr d'avoir effacé toutes les notifications ?"
   },
   "information": {
     "Core": "Cœur",

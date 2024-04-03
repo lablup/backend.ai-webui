@@ -1174,8 +1174,7 @@
     "NoNotification": "Nessuna notifica.",
     "Notifications": "Notifiche",
     "ClearNotifications": "Notifiche chiare",
-    "AreYouSureToClearAllNotifications": "Sei sicuro di cancellare tutte le notifiche?",
-    "CloseAll": "Chiudi tutto"
+    "AreYouSureToClearAllNotifications": "Sei sicuro di cancellare tutte le notifiche?"
   },
   "information": {
     "Core": "Nucleo",

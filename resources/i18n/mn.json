@@ -1160,8 +1160,7 @@
     "NoNotification": "Мэдэгдэл байхгүй.",
     "Notifications": "Мэдэгдэл",
     "ClearNotifications": "Мэдэгдлийг арилгах",
-    "AreYouSureToClearAllNotifications": "Та бүх мэдэгдлийг арилгахдаа итгэлтэй байна уу?",
-    "CloseAll": "Бүгдийг хаах"
+    "AreYouSureToClearAllNotifications": "Та бүх мэдэгдлийг арилгахдаа итгэлтэй байна уу?"
   },
   "information": {
     "Core": "Гол",

@@ -1176,8 +1176,7 @@
     "NoNotification": "Нет уведомлений.",
     "Notifications": "Уведомления",
     "ClearNotifications": "Очистить уведомления",
-    "AreYouSureToClearAllNotifications": "Вы уверены, что удалите все уведомления?",
-    "CloseAll": "Закрыть все"
+    "AreYouSureToClearAllNotifications": "Вы уверены, что удалите все уведомления?"
   },
   "information": {
     "Core": "Основной",

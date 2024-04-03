@@ -732,8 +732,7 @@
     "NoNotification": "Ei ilmoitusta.",
     "Notifications": "Ilmoitukset",
     "ClearNotifications": "Tyhjennä ilmoitukset",
-    "AreYouSureToClearAllNotifications": "Oletko varma, että tyhjennät kaikki ilmoitukset?",
-    "CloseAll": "Sulje kaikki"
+    "AreYouSureToClearAllNotifications": "Oletko varma, että tyhjennät kaikki ilmoitukset?"
   },
   "pipeline": {
     "Component": {

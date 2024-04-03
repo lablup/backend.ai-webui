@@ -1155,8 +1155,7 @@
     "NoNotification": "Tiada Pemberitahuan.",
     "Notifications": "Pemberitahuan",
     "ClearNotifications": "Kosongkan Pemberitahuan",
-    "AreYouSureToClearAllNotifications": "Adakah anda pasti mengosongkan semua pemberitahuan?",
-    "CloseAll": "Tutup semua"
+    "AreYouSureToClearAllNotifications": "Adakah anda pasti mengosongkan semua pemberitahuan?"
   },
   "information": {
     "Core": "Teras",

@@ -1263,8 +1263,7 @@
     "NoNotification": "알림이 없습니다.",
     "Notifications": "알림",
     "ClearNotifications": "모든 알림 삭제",
-    "AreYouSureToClearAllNotifications": "모든 알림을 삭제하시겠습니까?",
-    "CloseAll": "모두 삭제"
+    "AreYouSureToClearAllNotifications": "모든 알림을 삭제하시겠습니까?"
   },
   "information": {
     "Core": "핵심 구성 요소",
