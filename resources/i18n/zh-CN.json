@@ -391,8 +391,10 @@
     "CPU": "中央处理器",
     "MEM": "内存",
     "GPU": "GPU",
-    "GPU(MEM)": "图形处理器（内存）",
-    "Agents": "代理商"
+    "GPU(MEM)": "GPU（内存）",
+    "Agents": "代理商",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU（内存）"
   },
   "button": {
     "Cancel": "取消",

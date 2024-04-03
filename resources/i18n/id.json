@@ -387,7 +387,9 @@
     "CPU": "CPU",
     "MEM": "Memori",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (memori)"
+    "GPU(MEM)": "GPU (memori)",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (memori)"
   },
   "button": {
     "Cancel": "Batalkan",

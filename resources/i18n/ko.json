@@ -392,7 +392,9 @@
     "MEM": "메모리",
     "GPU": "GPU",
     "GPU(MEM)": "GPU(메모리)",
-    "Agents": "실행노드"
+    "Agents": "실행노드",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU(메모리)"
   },
   "modelService": {
     "Services": "모델 서비스",

@@ -405,7 +405,9 @@
     "CPU": "CPU",
     "MEM": "MEM",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU(Memory)"
+    "GPU(MEM)": "GPU(Memory)",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU(Memory)"
   },
   "modelService": {
     "Services": "Services",

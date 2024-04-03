@@ -392,7 +392,9 @@
     "MEM": "Speicher",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (Speicher)",
-    "Agents": "Agenten"
+    "Agents": "Agenten",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (Speicher)"
   },
   "button": {
     "Cancel": "Stornieren",

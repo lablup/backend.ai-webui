@@ -1167,7 +1167,9 @@
     "MEM": "Muisti",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (muisti)",
-    "Agents": "Agentit"
+    "Agents": "Agentit",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (muisti)"
   },
   "settings": {
     "ATOMsupport": "ATOM",

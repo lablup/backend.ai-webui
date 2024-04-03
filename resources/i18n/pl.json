@@ -394,7 +394,9 @@
     "MEM": "Pamięć",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (pamięć)",
-    "Agents": "Agenci"
+    "Agents": "Agenci",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (pamięć)"
   },
   "button": {
     "Cancel": "Anuluj",

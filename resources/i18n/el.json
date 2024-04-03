@@ -392,7 +392,9 @@
     "MEM": "Μνήμη",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (μνήμη)",
-    "Agents": "Πράκτορες"
+    "Agents": "Πράκτορες",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (μνήμη)"
   },
   "button": {
     "Cancel": "Ματαίωση",
