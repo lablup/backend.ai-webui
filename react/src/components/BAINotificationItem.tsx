@@ -68,42 +68,48 @@ const BAINotificationItem: React.FC<{
               {notification.description}
             </Typography.Paragraph>
           ) : null}
-          <Flex justify="between" style={{ width: '100%' }} gap={'xxs'}>
-            <Typography.Link
-              type="danger"
-              onClick={() => {
-                destroyAll && destroyAll();
-              }}
-            >
-              {destroyAll && t('notification.DestroyAll')}
-            </Typography.Link>
-            {notification.to ? (
-              <Flex>
+          <Flex justify="between" style={{ width: '100%' }}>
+            <Flex>
+              {destroyAll && (
                 <Typography.Link
-                  onClick={(e) => {
-                    onClickAction && onClickAction(e, notification);
+                  type="danger"
+                  onClick={() => {
+                    destroyAll();
                   }}
                 >
-                  {notification.toTextKey
-                    ? t(notification.toTextKey)
-                    : t('notification.SeeDetail')}
+                  {t('notification.DestroyAll')}
                 </Typography.Link>
-              </Flex>
-            ) : null}
-            {notification.extraDescription ? (
-              <Flex>
-                <Typography.Link
-                  onClick={(e) => {
-                    // onClickAction && onClickAction(e, notification);
-                    setShowExtraDescription(!showExtraDescription);
-                  }}
-                >
-                  {notification.toTextKey
-                    ? t(notification.toTextKey)
-                    : t('notification.SeeDetail')}
-                </Typography.Link>
-              </Flex>
-            ) : null}
+              )}
+            </Flex>
+            <Flex>
+              {notification.to ? (
+                <Flex>
+                  <Typography.Link
+                    onClick={(e) => {
+                      onClickAction && onClickAction(e, notification);
+                    }}
+                  >
+                    {notification.toTextKey
+                      ? t(notification.toTextKey)
+                      : t('notification.SeeDetail')}
+                  </Typography.Link>
+                </Flex>
+              ) : null}
+              {notification.extraDescription ? (
+                <Flex>
+                  <Typography.Link
+                    onClick={(e) => {
+                      // onClickAction && onClickAction(e, notification);
+                      setShowExtraDescription(!showExtraDescription);
+                    }}
+                  >
+                    {notification.toTextKey
+                      ? t(notification.toTextKey)
+                      : t('notification.SeeDetail')}
+                  </Typography.Link>
+                </Flex>
+              ) : null}
+            </Flex>
           </Flex>
         </Flex>
         {notification.extraDescription && showExtraDescription ? (
