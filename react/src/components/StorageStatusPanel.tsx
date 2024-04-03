@@ -204,18 +204,19 @@ const StorageStatusPanel: React.FC<{
     maxVfolderCount = keypair_resource_policy?.max_vfolder_count || 0;
   }
 
-  const numberOfFolderPercent = maxVfolderCount
-    ? ((maxVfolderCount > 0
-        ? ((createdCount / maxVfolderCount) * 100)?.toFixed(2)
-        : 0) as number)
-    : null;
+  const numberOfFolderPercent =
+    maxVfolderCount || maxVfolderCount === 0
+      ? ((maxVfolderCount > 0
+          ? ((createdCount / maxVfolderCount) * 100)?.toFixed(2)
+          : 100) as number)
+      : null;
   const descriptionItems: DescriptionsProps['items'] = [
     {
       key: 'totalFolders',
       label: t('data.NumberOfFolders'),
       children: (
         <>
-          {numberOfFolderPercent && (
+          {numberOfFolderPercent || numberOfFolderPercent === 0 ? (
             <Progress
               size={[200, 15]}
               percent={numberOfFolderPercent}
@@ -223,13 +224,13 @@ const StorageStatusPanel: React.FC<{
               style={{ width: '95%' }}
               status={numberOfFolderPercent >= 100 ? 'exception' : 'normal'}
             />
-          )}
+          ) : null}
           <Flex direction="row" gap={token.marginXXS} wrap="wrap">
             <Typography.Text type="secondary">
               {t('data.Created')}:
             </Typography.Text>
             {createdCount}
-            {maxVfolderCount && (
+            {maxVfolderCount || maxVfolderCount === 0 ? (
               <>
                 <Typography.Text type="secondary">{' / '}</Typography.Text>
                 <Typography.Text type="secondary">
@@ -237,7 +238,7 @@ const StorageStatusPanel: React.FC<{
                 </Typography.Text>
                 {maxVfolderCount}
               </>
-            )}
+            ) : null}
           </Flex>
           <Divider style={{ margin: '12px auto' }} />
           <Flex direction="row" wrap="wrap" justify="between">
