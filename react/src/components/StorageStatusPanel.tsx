@@ -143,10 +143,10 @@ const StorageStatusPanel: React.FC<{
         $storage_host_name: String!
         $skipQuotaScope: Boolean!
       ) {
-        user_resource_policy(name: $user_RP_name) @since(version: "24.03.1") {
+        user_resource_policy(name: $user_RP_name) @since(version: "23.09.1") {
           max_vfolder_count
         }
-        # project_resource_policy(name: $project_RP_name) @since(version: "24.03.1") {
+        # project_resource_policy(name: $project_RP_name) @since(version: "23.09.1") {
         #   max_vfolder_count
         # }
         keypair_resource_policy(name: $keypair_resource_policy_name)
@@ -187,20 +187,14 @@ const StorageStatusPanel: React.FC<{
 
   // Support version:
   // keypair resource policy < 23.09.4
-  // user resource policy, project resource policy >= 24.03.1
+  // user resource policy, project resource policy >= 23.09.1
   let maxVfolderCount;
   if (
-    // manager version >= 24.03.1
+    // manager version >= 23.09.1
     baiClient?.supports('max-vfolder-count-in-user-and-project-resource-policy')
   ) {
     maxVfolderCount = user_resource_policy?.max_vfolder_count || 0;
-  } else if (
-    // 23.09.4 <= manager version < 24.03.1
-    baiClient?.supports('deprecated-quota-support-in-keypair-resource-policy')
-  ) {
-    maxVfolderCount = null;
   } else {
-    // manager version < 23.09.4
     maxVfolderCount = keypair_resource_policy?.max_vfolder_count || 0;
   }
 
