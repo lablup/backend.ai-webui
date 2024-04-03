@@ -70,7 +70,7 @@ const BAINotificationItem: React.FC<{
           ) : null}
           <Flex justify="between" style={{ width: '100%' }}>
             <Flex>
-              {destroyAll && (
+              {destroyAll ? (
                 <Typography.Link
                   type="danger"
                   onClick={() => {
@@ -79,7 +79,7 @@ const BAINotificationItem: React.FC<{
                 >
                   {t('notification.DestroyAll')}
                 </Typography.Link>
-              )}
+              ) : null}
             </Flex>
             <Flex>
               {notification.to ? (
