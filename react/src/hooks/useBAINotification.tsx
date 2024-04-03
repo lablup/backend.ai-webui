@@ -236,9 +236,15 @@ export const useSetBAINotification = () => {
 
   const webuiNavigate = useWebUINavigate();
 
+  const destroyAllNotifications = useCallback(() => {
+    _activeNotificationKeys.splice(0, _activeNotificationKeys.length);
+    app.notification.destroy();
+  }, [app.notification]);
+
   const clearAllNotifications = useCallback(() => {
     setNotifications([]);
-  }, [setNotifications]);
+    destroyAllNotifications();
+  }, [setNotifications, destroyAllNotifications]);
 
   const destroyNotification = useCallback(
     (key: React.Key) => {
@@ -246,11 +252,6 @@ export const useSetBAINotification = () => {
     },
     [app.notification],
   );
-
-  const destroyAllNotifications = useCallback(() => {
-    _activeNotificationKeys.splice(0, _activeNotificationKeys.length);
-    app.notification.destroy();
-  }, [app.notification]);
 
   const upsertNotification = useCallback(
     (params: Partial<Omit<NotificationState, 'created'>>) => {
@@ -317,11 +318,6 @@ export const useSetBAINotification = () => {
             description: (
               <BAINotificationItem
                 notification={newNotification}
-                onClickDestroyAll={
-                  _activeNotificationKeys.length > 3
-                    ? () => destroyAllNotifications()
-                    : undefined
-                }
                 onClickAction={() => {
                   if (newNotification.to) {
                     webuiNavigate(newNotification.to);
