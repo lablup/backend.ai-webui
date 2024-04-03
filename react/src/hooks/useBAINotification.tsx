@@ -317,7 +317,7 @@ export const useSetBAINotification = () => {
             description: (
               <BAINotificationItem
                 notification={newNotification}
-                destroyAll={
+                onClickDestroyAll={
                   _activeNotificationKeys.length > 3
                     ? () => destroyAllNotifications()
                     : undefined

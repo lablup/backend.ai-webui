@@ -18,8 +18,8 @@ const BAINotificationItem: React.FC<{
     notification: NotificationState,
   ) => void;
   showDate?: boolean;
-  destroyAll?: () => void | undefined;
-}> = ({ notification, onClickAction, showDate, destroyAll }) => {
+  onClickDestroyAll?: () => void | undefined;
+}> = ({ notification, onClickAction, showDate, onClickDestroyAll }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [showExtraDescription, setShowExtraDescription] = useState(false);
@@ -70,11 +70,11 @@ const BAINotificationItem: React.FC<{
           ) : null}
           <Flex justify="between" style={{ width: '100%' }}>
             <Flex>
-              {destroyAll ? (
+              {onClickDestroyAll ? (
                 <Typography.Link
                   type="danger"
                   onClick={() => {
-                    destroyAll();
+                    onClickDestroyAll();
                   }}
                 >
                   {t('notification.DestroyAll')}
