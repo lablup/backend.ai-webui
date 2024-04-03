@@ -1175,7 +1175,7 @@
     "Notifications": "通知",
     "ClearNotifications": "通知をクリアする",
     "AreYouSureToClearAllNotifications": "すべての通知をクリアしてもよろしいですか?",
-    "DestroyAll": "すべてを破壊する"
+    "CloseAll": "すべて閉じる"
   },
   "information": {
     "Core": "芯",

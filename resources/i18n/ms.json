@@ -1156,7 +1156,7 @@
     "Notifications": "Pemberitahuan",
     "ClearNotifications": "Kosongkan Pemberitahuan",
     "AreYouSureToClearAllNotifications": "Adakah anda pasti mengosongkan semua pemberitahuan?",
-    "DestroyAll": "Musnahkan Semua"
+    "CloseAll": "Tutup semua"
   },
   "information": {
     "Core": "Teras",

@@ -77,7 +77,7 @@ const BAINotificationItem: React.FC<{
                     onClickDestroyAll();
                   }}
                 >
-                  {t('notification.DestroyAll')}
+                  {t('notification.CloseAll')}
                 </Typography.Link>
               ) : null}
             </Flex>

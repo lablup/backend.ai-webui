@@ -1175,7 +1175,7 @@
     "Notifications": "Thông báo",
     "ClearNotifications": "Xóa thông báo",
     "AreYouSureToClearAllNotifications": "Bạn có chắc chắn xóa tất cả thông báo không?",
-    "DestroyAll": "Tiêu diệt tất cả"
+    "CloseAll": "Đóng tất cả"
   },
   "information": {
     "Core": "Cốt lõi",

@@ -1175,7 +1175,7 @@
     "Notifications": "通知",
     "ClearNotifications": "清除通知",
     "AreYouSureToClearAllNotifications": "您確定清除所有通知嗎？",
-    "DestroyAll": "摧毀全部"
+    "CloseAll": "關閉所有"
   },
   "information": {
     "Core": "核",

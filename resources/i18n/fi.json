@@ -733,7 +733,7 @@
     "Notifications": "Ilmoitukset",
     "ClearNotifications": "Tyhjennä ilmoitukset",
     "AreYouSureToClearAllNotifications": "Oletko varma, että tyhjennät kaikki ilmoitukset?",
-    "DestroyAll": "Tuhoa kaikki"
+    "CloseAll": "Sulje kaikki"
   },
   "pipeline": {
     "Component": {

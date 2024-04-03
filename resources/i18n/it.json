@@ -1175,7 +1175,7 @@
     "Notifications": "Notifiche",
     "ClearNotifications": "Notifiche chiare",
     "AreYouSureToClearAllNotifications": "Sei sicuro di cancellare tutte le notifiche?",
-    "DestroyAll": "Distruggi tutto"
+    "CloseAll": "Chiudi tutto"
   },
   "information": {
     "Core": "Nucleo",

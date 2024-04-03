@@ -1177,7 +1177,7 @@
     "Notifications": "Powiadomienia",
     "ClearNotifications": "Wyczyść powiadomienia",
     "AreYouSureToClearAllNotifications": "Czy na pewno wyczyścić wszystkie powiadomienia?",
-    "DestroyAll": "Zniszcz wszystko"
+    "CloseAll": "Zamknij wszystko"
   },
   "information": {
     "Core": "Rdzeń",

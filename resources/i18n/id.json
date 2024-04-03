@@ -1170,7 +1170,7 @@
     "Notifications": "Pemberitahuan",
     "ClearNotifications": "Hapus Notifikasi",
     "AreYouSureToClearAllNotifications": "Apakah Anda yakin untuk menghapus semua notifikasi?",
-    "DestroyAll": "Hancurkan Semua"
+    "CloseAll": "Tutup semua"
   },
   "information": {
     "Core": "Core",

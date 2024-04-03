@@ -1161,7 +1161,7 @@
     "Notifications": "Мэдэгдэл",
     "ClearNotifications": "Мэдэгдлийг арилгах",
     "AreYouSureToClearAllNotifications": "Та бүх мэдэгдлийг арилгахдаа итгэлтэй байна уу?",
-    "DestroyAll": "Бүгдийг устгах"
+    "CloseAll": "Бүгдийг хаах"
   },
   "information": {
     "Core": "Гол",

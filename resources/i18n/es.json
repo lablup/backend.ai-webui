@@ -733,7 +733,7 @@
     "Notifications": "Notificaciones",
     "ClearNotifications": "Borrar notificaciones",
     "AreYouSureToClearAllNotifications": "¿Estás seguro de borrar todas las notificaciones?",
-    "DestroyAll": "Destruye todo"
+    "CloseAll": "Cierra todo"
   },
   "pipeline": {
     "Component": {

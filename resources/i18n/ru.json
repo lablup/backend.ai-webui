@@ -1177,7 +1177,7 @@
     "Notifications": "Уведомления",
     "ClearNotifications": "Очистить уведомления",
     "AreYouSureToClearAllNotifications": "Вы уверены, что удалите все уведомления?",
-    "DestroyAll": "Уничтожить все"
+    "CloseAll": "Закрыть все"
   },
   "information": {
     "Core": "Основной",

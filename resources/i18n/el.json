@@ -1175,7 +1175,7 @@
     "Notifications": "Ειδοποιήσεις",
     "ClearNotifications": "Εκκαθάριση ειδοποιήσεων",
     "AreYouSureToClearAllNotifications": "Είστε βέβαιοι ότι θα διαγράψετε όλες τις ειδοποιήσεις;",
-    "DestroyAll": "Καταστρέψτε Όλους"
+    "CloseAll": "Κλείσ'τα όλα"
   },
   "information": {
     "Core": "Πυρήνας",
