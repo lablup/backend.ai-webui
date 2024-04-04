@@ -1168,7 +1168,12 @@
     "MEM": "Memoria",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (memoria)",
-    "Agents": "Agentes"
+    "Agents": "Agentes",
+    "ConvertSessionToImage": "Convertir sesión en imagen",
+    "SessionName": "Nombre de la sesión",
+    "SessionId": "ID de sesión",
+    "EnvironmentAndVersion": "Entorno y versión",
+    "Tags": "Etiquetas"
   },
   "settings": {
     "ATOMsupport": "ATOM",

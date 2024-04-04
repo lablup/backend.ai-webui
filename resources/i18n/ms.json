@@ -392,7 +392,12 @@
     "MEM": "Ingatan",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (memori)",
-    "Agents": "ejen"
+    "Agents": "ejen",
+    "ConvertSessionToImage": "Tukar Sesi kepada Imej",
+    "SessionName": "Nama Sesi",
+    "SessionId": "Id Sesi",
+    "EnvironmentAndVersion": "Persekitaran dan Versi",
+    "Tags": "Tag"
   },
   "button": {
     "Cancel": "Batal",

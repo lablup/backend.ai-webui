@@ -84,6 +84,13 @@ type CommitSessionInfo = {
 };
 
 /**
+ * Type of commit session info
+ */
+type SessionToImageInfo = CommitSessionInfo & {
+  name: string;
+};
+
+/**
  * Type of commit session status
  * - ready: no container commit operation is on-going
  * - ongoing: container commit operation is proceeding now
@@ -218,6 +225,9 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({ type: Number }) _APIMajorVersion = 5;
   @property({ type: Object }) selectedSessionStatus = Object();
   @property({ type: Boolean }) isUserInfoMaskEnabled = false;
+  @property({ type: Boolean }) pushImageInsteadOfCommiting = false;
+  @property({ type: Boolean }) canStartImagifying = false;
+  @property({ type: String }) newImageName = '';
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#list-grid') _grid!: VaadinGrid;
   @query('#access-key-filter') accessKeyFilterInput!: TextField;
@@ -764,23 +774,29 @@ export default class BackendAISessionList extends BackendAIPage {
     if (this._connectionMode === 'SESSION') {
       fields.push('user_email');
     }
-    if (globalThis.backendaiclient.is_superadmin) {
-      fields.push(
-        'containers {container_id agent occupied_slots live_stat last_stat}',
-      );
-    } else {
-      fields.push(
-        'containers {container_id occupied_slots live_stat last_stat}',
-      );
-    }
     if (!globalThis.backendaiclient._config.hideAgents) {
       fields.push('containers {agent}');
     }
     const group_id = globalThis.backendaiclient.current_group_id();
+    const containerFields: string[] = [
+      'container_id',
+      'occupied_slots',
+      'live_stat',
+      'last_stat',
+    ];
+    if (globalThis.backendaiclient.is_superadmin) {
+      containerFields.push('agent');
+    }
+    containerFields.push('image_object { labels { key value } }');
+    // if (globalThis.backendaiclient.supports('per-user-image')) {
+    //   containerFields.push('image_object { labels { key value } }')
+    // }
 
     if (this._isContainerCommitEnabled && status.includes('RUNNING')) {
       fields.push('commit_status');
     }
+
+    fields.push(`containers { ${containerFields.join(' ')} }`);
 
     globalThis.backendaiclient.computeSession
       .list(
@@ -1124,7 +1140,21 @@ export default class BackendAISessionList extends BackendAIPage {
               sessions[objectKey].baseimage = tags[1];
               sessions[objectKey].additional_reqs = tags
                 .slice(1, tags.length)
+                .filter((tag) => tag.indexOf('customized_') < 0)
                 .map((tag) => tag.toUpperCase());
+              if (sessions[objectKey].containers[0].image_object) {
+                const customizedImageNameLabel = sessions[
+                  objectKey
+                ].containers[0].image_object.labels.find(
+                  ({ key }) => key === 'ai.backend.customized-image.name',
+                );
+                if (customizedImageNameLabel) {
+                  sessions[objectKey].additional_reqs = [
+                    ...sessions[objectKey].additional_reqs,
+                    `Customized-${customizedImageNameLabel.value}`,
+                  ];
+                }
+              }
             } else if (sessions[objectKey].tag !== undefined) {
               sessions[objectKey].baseversion = sessions[objectKey].tag;
             } else {
@@ -1603,10 +1633,60 @@ export default class BackendAISessionList extends BackendAIPage {
           taskId: commitSession.bgtask_id,
         },
       ) as CommitSessionInfo;
+      this._showCommitStatus(commitSession, newCommitSessionTask);
+    } catch (err) {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    } finally {
+      this.commitSessionDialog.hide();
+    }
+  }
+
+  /**
+   * Request commit session
+   */
+  async _showCommitStatus(
+    commitSession: CommitSessionInfo,
+    newCommitSessionTask: CommitSessionInfo,
+  ) {
+    try {
       this._addCommitSessionToTasker(commitSession, newCommitSessionTask);
       this._applyContainerCommitAsBackgroundTask(newCommitSessionTask);
       this.notification.text = _text('session.CommitOnGoing');
       this.notification.show();
+    } catch (err) {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    } finally {
+      this.commitSessionDialog.hide();
+    }
+  }
+
+  /**
+   * Request commit session
+   */
+  async _requestConvertSessionToimage(commitSessionInfo: CommitSessionInfo) {
+    try {
+      const commitSession =
+        await globalThis.backendaiclient.computeSession.convertSessionToImage(
+          commitSessionInfo.session.name,
+          this.newImageName,
+        );
+      const newCommitSessionTask: CommitSessionInfo = Object.assign(
+        commitSessionInfo,
+        {
+          taskId: commitSession.task_id,
+        },
+      ) as CommitSessionInfo;
+      this._showCommitStatus(commitSession, newCommitSessionTask);
     } catch (err) {
       console.log(err);
       if (err && err.message) {
@@ -3907,7 +3987,7 @@ ${rowData.item[this.sessionNameField]}</pre
           </span>
           <mwc-list style="width:100%">
             <mwc-list-item twoline noninteractive class="commit-session-info">
-              <span class="subheading">Session Name</span>
+              <span class="subheading">${_t('session.SessionName')}</span>
               <span class="monospace" slot="secondary">
                 ${commitSessionInfo?.session?.name
                   ? commitSessionInfo.session.name
@@ -3915,7 +3995,7 @@ ${rowData.item[this.sessionNameField]}</pre
               </span>
             </mwc-list-item>
             <mwc-list-item twoline noninteractive class="commit-session-info">
-              <span class="subheading">Session Id</span>
+              <span class="subheading">${_t('session.SessionId')}</span>
               <span class="monospace" slot="secondary">
                 ${commitSessionInfo?.session?.id
                   ? commitSessionInfo.session.id
@@ -3924,7 +4004,7 @@ ${rowData.item[this.sessionNameField]}</pre
             </mwc-list-item>
             <mwc-list-item twoline noninteractive class="commit-session-info">
               <span class="subheading">
-                <strong>Environment and Version</strong>
+                <strong>${_t('session.EnvironmentAndVersion')}</strong>
               </span>
               <span class="monospace" slot="secondary">
                 ${commitSessionInfo
@@ -3945,7 +4025,7 @@ ${rowData.item[this.sessionNameField]}</pre
               </span>
             </mwc-list-item>
             <mwc-list-item twoline noninteractive class="commit-session-info">
-              <span class="subheading">Tags</span>
+              <span class="subheading">${_t('session.Tags')}</span>
               <span class="monospace horizontal layout" slot="secondary">
                 ${commitSessionInfo
                   ? commitSessionInfo?.tags?.map(
@@ -3970,14 +4050,49 @@ ${rowData.item[this.sessionNameField]}</pre
                     `}
               </span>
             </mwc-list-item>
+            <mwc-list-item twoline class="commit-session-info">
+              <span class="subheading">
+                ${_t('session.ConvertSessionToImage')}
+              </span>
+              <div class="horizontal layout center">
+                <mwc-checkbox
+                  class="list-check"
+                  ?checked="${this.pushImageInsteadOfCommiting}"
+                  @click="${() =>
+                    (this.pushImageInsteadOfCommiting =
+                      !this.pushImageInsteadOfCommiting)}"
+                ></mwc-checkbox>
+                <mwc-textfield
+                  id="new-image-name-field"
+                  required
+                  autoValidate
+                  pattern="^[a-zA-Z0-9.-_]+$"
+                  minLength="4"
+                  maxLength="32"
+                  ?disabled="${!this.pushImageInsteadOfCommiting}"
+                  validationMessage="${_text(
+                    'session.Validation.EnterValidSessionName',
+                  )}"
+                  style="margin-top:8px;"
+                  @change="${this._updateImagifyAvailabilityStatus}"
+                ></mwc-textfield>
+              </div>
+            </mwc-list-item>
           </mwc-list>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
             unelevated
             class="ok"
-            ?disabled="${commitSessionInfo?.environment === ''}"
-            @click=${() => this._requestCommitSession(commitSessionInfo)}
+            ?disabled="${commitSessionInfo?.environment === '' ||
+            (this.pushImageInsteadOfCommiting && !this.canStartImagifying)}"
+            @click=${(e) => {
+              if (this.pushImageInsteadOfCommiting) {
+                this._requestConvertSessionToimage(commitSessionInfo);
+              } else {
+                this._requestCommitSession(commitSessionInfo);
+              }
+            }}
             label="${_t('button.Commit')}"
           ></mwc-button>
         </div>
@@ -4280,6 +4395,11 @@ ${rowData.item[this.sessionNameField]}</pre
       this.current_page += 1;
     }
     this.refreshList();
+  }
+
+  _updateImagifyAvailabilityStatus(e) {
+    this.canStartImagifying = e.target._validity.valid;
+    this.newImageName = e.target.value;
   }
 }
 

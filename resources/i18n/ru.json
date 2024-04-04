@@ -394,7 +394,12 @@
     "MEM": "Память",
     "GPU": "GPU",
     "GPU(MEM)": "Графический процессор (память)",
-    "Agents": "Агенты"
+    "Agents": "Агенты",
+    "ConvertSessionToImage": "Преобразование сеанса в изображение",
+    "SessionName": "Имя сеанса",
+    "SessionId": "Идентификатор сессии",
+    "EnvironmentAndVersion": "Окружающая среда и версия",
+    "Tags": "Теги"
   },
   "button": {
     "Cancel": "Отмена",

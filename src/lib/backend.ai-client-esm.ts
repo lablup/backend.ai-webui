@@ -682,6 +682,7 @@ class Client {
     if (this.isManagerVersionCompatibleWith('24.03.0')) {
       this._features['max-vfolder-count-in-user-resource-policy'] = true;
       this._features['model-store'] = true;
+      this._features['per-user-image'] = true;
     }
   }
 
@@ -3752,6 +3753,20 @@ class ComputeSession {
       'POST',
       `/session/${sessionName}/commit`,
       null,
+    );
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Request container commit for corresponding session in agent node
+   *
+   * @param sessionName - name of the session
+   */
+  async convertSessionToImage(sessionName: string, newImageName: string): Promise<any> {
+    const rqst = this.client.newSignedRequest(
+      'POST',
+      `/session/${sessionName}/imagify`,
+      { image_name: newImageName },
     );
     return this.client._wrapWithPromise(rqst);
   }

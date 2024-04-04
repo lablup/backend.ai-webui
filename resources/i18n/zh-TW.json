@@ -392,7 +392,12 @@
     "MEM": "内存",
     "GPU": "GPU",
     "GPU(MEM)": "图形处理器（内存）",
-    "Agents": "代理商"
+    "Agents": "代理商",
+    "ConvertSessionToImage": "將會話轉換為圖像",
+    "SessionName": "會話名稱",
+    "SessionId": "會話 ID",
+    "EnvironmentAndVersion": "環境及版本",
+    "Tags": "標籤"
   },
   "button": {
     "Cancel": "取消",
