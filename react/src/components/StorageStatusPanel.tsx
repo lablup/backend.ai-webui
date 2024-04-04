@@ -187,10 +187,10 @@ const StorageStatusPanel: React.FC<{
 
   // Support version:
   // keypair resource policy < 23.09.4
-  // user resource policy, project resource policy >= 23.09.1
+  // user resource policy, project resource policy >= 23.09.6
   let maxVfolderCount;
   if (
-    // manager version >= 23.09.1
+    // manager version >= 23.09.6
     baiClient?.supports('max-vfolder-count-in-user-and-project-resource-policy')
   ) {
     maxVfolderCount = user_resource_policy?.max_vfolder_count || 0;
