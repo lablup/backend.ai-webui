@@ -565,7 +565,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     const extraFilterValues: string[] = [];
                     let requirementTags = _.chain(requirements)
                       .filter(
-                        (requirement) => !requirement.startsWith('peruser_'),
+                        (requirement) => !requirement.startsWith('customized_'),
                       )
                       .map((requirement, idx) => (
                         <DoubleTag
@@ -589,19 +589,19 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       .value();
                     const imageLabels = image?.labels;
                     if (imageLabels) {
-                      const perUserImageNameLabelIdx = _.findIndex(
+                      const customizedImageNameLabelIdx = _.findIndex(
                         imageLabels,
                         (item) =>
                           item !== null &&
-                          item?.key === 'ai.backend.personalized-image-name',
+                          item?.key === 'ai.backend.customized-image.name',
                       );
                       if (
-                        perUserImageNameLabelIdx &&
-                        imageLabels[perUserImageNameLabelIdx]
+                        customizedImageNameLabelIdx &&
+                        imageLabels[customizedImageNameLabelIdx]
                       ) {
                         const tag =
-                          imageLabels[perUserImageNameLabelIdx]?.value || '';
-                        extraFilterValues.push('Personalized');
+                          imageLabels[customizedImageNameLabelIdx]?.value || '';
+                        extraFilterValues.push('Customized');
                         extraFilterValues.push(tag);
                         requirementTags.push(
                           <DoubleTag

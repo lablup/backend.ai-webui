@@ -1139,18 +1139,18 @@ export default class BackendAISessionList extends BackendAIPage {
               sessions[objectKey].baseimage = tags[1];
               sessions[objectKey].additional_reqs = tags
                 .slice(1, tags.length)
-                .filter((tag) => tag.indexOf('peruser_') < 0)
+                .filter((tag) => tag.indexOf('customized_') < 0)
                 .map((tag) => tag.toUpperCase());
               if (sessions[objectKey].containers[0].image_object) {
-                const perUserImageNameLabel = sessions[
+                const CustomizedImageNameLabel = sessions[
                   objectKey
                 ].containers[0].image_object.labels.find(
-                  ({ key }) => key === 'ai.backend.personalized-image-name',
+                  ({ key }) => key === 'ai.backend.customized-image.name',
                 );
-                if (perUserImageNameLabel) {
+                if (CustomizedImageNameLabel) {
                   sessions[objectKey].additional_reqs = [
                     ...sessions[objectKey].additional_reqs,
-                    `Personalized-${perUserImageNameLabel.value}`,
+                    `Customized-${CustomizedImageNameLabel.value}`,
                   ];
                 }
               }
