@@ -7,8 +7,7 @@ import graphql from 'babel-plugin-relay/macro';
 import { useLazyLoadQuery } from 'react-relay';
 
 const ForceTOTPChecker = () => {
-  const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
-    useToggle(false);
+  const [, { toggle: toggleTOTPActivateModal }] = useToggle(false);
   const { isTOTPSupported } = useTOTPSupported();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const baiClient = useSuspendedBackendaiClient();

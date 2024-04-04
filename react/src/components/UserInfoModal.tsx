@@ -8,7 +8,6 @@ import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from 'react-query';
 import { useLazyLoadQuery } from 'react-relay';
 
 interface Props extends BAIModalProps {}
