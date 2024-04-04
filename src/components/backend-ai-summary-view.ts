@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { navigate } from '../backend-ai-app';
 import '../plastics/lablup-piechart/lablup-piechart';
@@ -148,24 +148,6 @@ export default class BackendAISummary extends BackendAIPage {
           font-size: 48px;
         }
 
-        a,
-        a:visited {
-          color: #222222;
-        }
-
-        a:hover {
-          color: #3e872d;
-        }
-
-        mwc-button,
-        mwc-button[unelevated],
-        mwc-button[outlined] {
-          background-image: none;
-          --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-theme-on-primary: var(--general-button-color);
-          --mdc-typography-font-family: var(--general-font-family);
-        }
-
         #session-launcher {
           --component-width: 284px;
         }
@@ -239,45 +221,17 @@ export default class BackendAISummary extends BackendAIPage {
         #download-app-os-select-box {
           height: 80px;
           padding-top: 20px;
-          padding-left: 20px;
-          background-color: #f6f6f6;
-          margin-bottom: 15px;
+          background-color: var(--token-colorBgContainer, #f6f6f6);
+          margin-bottom: var(--token-marginSM);
         }
 
         #download-app-os-select-box mwc-select {
-          width: 305px;
+          width: 100%;
           height: 58px;
-          border: 0.1em solid #ccc;
-          font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-size: 14px;
-          --mdc-typography-subtitle1-font-color: rgb(24, 24, 24);
-          --mdc-typography-subtitle1-font-weight: 400;
-          --mdc-typography-subtitle1-line-height: 16px;
-          --mdc-select-fill-color: rgba(255, 255, 255, 1);
-          --mdc-select-label-ink-color: rgba(24, 24, 24, 1);
-          --mdc-select-disabled-ink-color: rgba(24, 24, 24, 1);
-          --mdc-select-dropdown-icon-color: rgba(24, 24, 24, 1);
-          --mdc-select-focused-dropdown-icon-color: rgba(24, 24, 24, 0.87);
-          --mdc-select-disabled-dropdown-icon-color: rgba(24, 24, 24, 0.87);
-          --mdc-select-idle-line-color: transparent;
-          --mdc-select-hover-line-color: transparent;
-          --mdc-select-ink-color: rgb(24, 24, 24);
-          --mdc-select-outlined-idle-border-color: rgba(24, 24, 24, 0.42);
-          --mdc-select-outlined-hover-border-color: rgba(24, 24, 24, 0.87);
-          --mdc-theme-surface: white;
-          --mdc-list-vertical-padding: 5px;
-          --mdc-list-side-padding: 10px;
-          --mdc-menu-item-height: 28px;
-          --mdc-list-item__primary-text: {
-            height: 20px;
-            color: #222222;
-          };
-          margin-bottom: 5px;
         }
 
         lablup-activity-panel.inner-panel:hover {
-          --card-background-color: var(--general-sidepanel-color);
+          --card-background-color: var(--general-background-color);
         }
 
         @media screen and (max-width: 750px) {
@@ -289,7 +243,7 @@ export default class BackendAISummary extends BackendAIPage {
 
         button.link-button {
           background: none;
-          color: inherit;
+          color: var(--token-colorTextSecondary);
           border: none;
           padding: 0;
           font: inherit;
@@ -297,15 +251,15 @@ export default class BackendAISummary extends BackendAIPage {
           outline: inherit;
         }
         button.link-button > i {
-          color: #5b5b5b;
+          color: var(--token-colorTextSecondary, #5b5b5b);
           margin: 10px;
         }
         button.link-button > span {
           max-width: 70px;
-          color: #838383;
+          color: var(--token-colorTextSecondary, #838383);
         }
         button.link-button:hover {
-          color: #3e872d;
+          color: var(--token-colorPrimary, #3e872d);
         }
       `,
     ];
@@ -547,6 +501,7 @@ export default class BackendAISummary extends BackendAIPage {
                   location="summary"
                   id="session-launcher"
                   ?active="${this.active === true}"
+                  ?allowNEOSessionLauncher="${true}"
                 ></backend-ai-session-launcher>
               </div>
               <div class="horizontal center-justified layout wrap">
@@ -573,7 +528,7 @@ export default class BackendAISummary extends BackendAIPage {
                       </button>
                       <button
                         @click="${() => {
-                          this._moveTo('/credential');
+                          this._moveTo('/credential', '?action=manage');
                         }}"
                         class="vertical center center-justified layout start-menu-items link-button"
                         style="border-left:1px solid #ccc;"
@@ -681,15 +636,15 @@ export default class BackendAISummary extends BackendAIPage {
                 <lablup-activity-panel
                   title="${_t('summary.DownloadWebUIApp')}"
                   elevation="1"
-                  narrow
                   height="245"
                 >
                   <div slot="message">
                     <div
                       id="download-app-os-select-box"
-                      class="horizontal layout start-justified"
+                      class="horizontal layout center-justified"
                     >
                       <mwc-select
+                        outlined
                         @selected="${(e) =>
                           this._updateSelectedDownloadAppOS(e)}"
                       >
@@ -705,15 +660,19 @@ export default class BackendAISummary extends BackendAIPage {
                         )}
                       </mwc-select>
                     </div>
-                    <div class="horizontal layout center center-justified">
+                    <div
+                      class="horizontal layout center-justified"
+                      style="gap:20px"
+                    >
                       ${this.downloadAppOS &&
                       this.appDownloadMap[this.downloadAppOS][
                         'architecture'
                       ].map(
                         (arch) => html`
                           <mwc-button
-                            raised
-                            style="margin:10px;flex-basis:50%;"
+                            icon="cloud_download"
+                            outlined
+                            style="margin:10px 0 10px 0;flex-basis:50%;"
                             @click="${(e) => this._downloadApplication(e)}"
                           >
                             ${arch}

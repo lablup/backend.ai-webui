@@ -3,7 +3,7 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import Flex from './Flex';
-import StorageSelector from './StorageSelector';
+import StorageSelect from './StorageSelect';
 import {
   Alert,
   Form,
@@ -122,7 +122,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
               },
             ]}
           >
-            <StorageSelector disabled />
+            <StorageSelect disabled />
           </Form.Item>
           {/* <Form.Item
           name="type"

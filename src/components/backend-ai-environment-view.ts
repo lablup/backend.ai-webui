@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -47,21 +47,6 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-        h3.tab {
-          background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0px 0px;
-          margin: 0px auto;
-        }
-
-        mwc-tab-bar {
-          --mdc-theme-primary: var(--general-sidebar-selected-color);
-          --mdc-text-transform: none;
-          --mdc-tab-color-default: var(--general-tabbar-background-color);
-          --mdc-tab-text-label-color-default: var(
-            --general-tabbar-tab-disabled-color
-          );
-        }
-
         div h4 {
           margin: 0;
           font-weight: 100;

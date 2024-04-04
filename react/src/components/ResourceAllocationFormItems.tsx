@@ -6,6 +6,7 @@ import {
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
+import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import Flex from './Flex';
@@ -27,7 +28,7 @@ import {
   theme,
 } from 'antd';
 import _ from 'lodash';
-import React, { useEffect, useState, useTransition } from 'react';
+import React, { useEffect, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 export const AUTOMATIC_DEFAULT_SHMEM = '64m';
@@ -57,6 +58,7 @@ export interface ResourceAllocationFormValue {
   cluster_mode: 'single-node' | 'multi-node';
   cluster_size: number;
   enabledAutomaticShmem: boolean;
+  allocationPreset?: string;
 }
 
 type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
@@ -65,11 +67,16 @@ type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
 interface ResourceAllocationFormItemsProps {
   enableNumOfSessions?: boolean;
   enableResourcePresets?: boolean;
+  forceImageMinValues?: boolean;
 }
 
 const ResourceAllocationFormItems: React.FC<
   ResourceAllocationFormItemsProps
-> = ({ enableNumOfSessions, enableResourcePresets }) => {
+> = ({
+  enableNumOfSessions,
+  enableResourcePresets,
+  forceImageMinValues = false,
+}) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -78,27 +85,21 @@ const ResourceAllocationFormItems: React.FC<
   const [resourceSlots] = useResourceSlots();
   const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
 
-  const [{ keypair, keypairResourcePolicy }] =
+  const [{ keypairResourcePolicy, sessionLimitAndRemaining }] =
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
 
   const currentProject = useCurrentProjectValue();
 
-  // Form watch
-  // const currentResourceGroup = Form.useWatch('resourceGroup', {
-  //   form,
-  //   preserve: true,
-  // });
-
-  // use `useState` instead of `Form.useWatch` for handling `resourcePreset.check` pending state
-  const [currentResourceGroup, setCurrentResourceGroup] = useState<string>(
-    form.getFieldValue('resourceGroup'),
-  );
   const [isPendingCheckResets, startCheckRestsTransition] = useTransition();
   const currentImage = Form.useWatch(['environments', 'image'], {
     form,
     preserve: true,
   });
-  const [{ currentImageMinM, remaining, resourceLimits }] =
+  const currentResourceGroup = Form.useWatch('resourceGroup', {
+    form,
+    preserve: true,
+  });
+  const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
     useResourceLimitAndRemaining({
       currentProjectName: currentProject.name,
       currentResourceGroup: currentResourceGroup,
@@ -113,31 +114,106 @@ const ResourceAllocationFormItems: React.FC<
 
   const sessionSliderLimitAndRemaining = {
     min: 1,
-    max: _.min([
-      keypairResourcePolicy.max_concurrent_sessions,
-      3, //BackendAiResourceBroker.DEFAULT_CONCURRENT_SESSION_COUNT
-    ]) as number,
-    remaining:
-      (keypairResourcePolicy.max_concurrent_sessions || 3) -
-      (keypair.concurrency_used || 0),
+    max: sessionLimitAndRemaining.max,
+    remaining: sessionLimitAndRemaining.remaining,
   };
 
+  const allocatablePresetNames = useMemo(() => {
+    const byPresetInfo = _.filter(checkPresetInfo?.presets, (preset) => {
+      return preset.allocatable;
+    }).map((preset) => preset.name);
+
+    const bySliderLimit = _.filter(checkPresetInfo?.presets, (preset) => {
+      if (
+        typeof preset.resource_slots.mem === 'string' &&
+        typeof resourceLimits.mem?.max === 'string' &&
+        compareNumberWithUnits(
+          preset.resource_slots.mem,
+          resourceLimits.mem?.max,
+        ) > 0
+      ) {
+        return false;
+      }
+      if (
+        typeof preset.resource_slots.cpu === 'number' &&
+        typeof resourceLimits.cpu?.max === 'number' &&
+        preset.resource_slots.cpu > resourceLimits.cpu?.max
+      ) {
+        return false;
+      }
+      const acceleratorKeys = _.keys(
+        _.omit(preset.resource_slots, ['mem', 'cpu']),
+      );
+      const isAvailable = _.every(acceleratorKeys, (key) => {
+        if (
+          key &&
+          typeof preset.resource_slots[key] === 'string' &&
+          typeof resourceLimits.accelerators[key]?.max === 'number' &&
+          _.toNumber(preset.resource_slots[key]) >
+            _.toNumber(resourceLimits.accelerators[key]?.max)
+        ) {
+          return false;
+        }
+        return true;
+      });
+      return isAvailable;
+    }).map((preset) => preset.name);
+    return baiClient._config?.always_enqueue_compute_session
+      ? bySliderLimit
+      : byPresetInfo;
+  }, [
+    baiClient._config?.always_enqueue_compute_session,
+    checkPresetInfo?.presets,
+    resourceLimits.accelerators,
+    resourceLimits.cpu?.max,
+    resourceLimits.mem?.max,
+  ]);
+
+  const updateAllocationPresetBasedOnResourceGroup = useEventNotStable(() => {
+    if (
+      _.includes(
+        ['custom', 'minimum-required'],
+        form.getFieldValue('allocationPreset'),
+      )
+    ) {
+    } else {
+      if (allocatablePresetNames[0]) {
+        const autoSelectedPreset = _.sortBy(allocatablePresetNames, 'name')[0];
+        form.setFieldsValue({
+          allocationPreset: autoSelectedPreset,
+        });
+        updateResourceFieldsBasedOnPreset(autoSelectedPreset);
+      } else {
+        form.setFieldsValue({
+          allocationPreset: 'custom',
+        });
+      }
+    }
+    // monkey patch for the issue that the validation result is not updated when the resource group is changed.
+    setTimeout(() => {
+      form.validateFields().catch(() => {});
+    }, 200);
+  });
+
+  // update allocation preset based on resource group
   useEffect(() => {
-    // when image changed, set value of resources to min value
+    currentResourceGroup && updateAllocationPresetBasedOnResourceGroup();
+  }, [currentResourceGroup, updateAllocationPresetBasedOnResourceGroup]);
 
-    form.setFieldsValue({
-      resource: {
-        cpu: resourceLimits.cpu?.min,
-        mem:
-          iSizeToSize(
-            (iSizeToSize(resourceLimits.shmem?.min, 'm')?.number || 0) +
-              (iSizeToSize(resourceLimits.mem?.min, 'm')?.number || 0) +
-              'm',
-            'g',
-          )?.number + 'g', //to prevent loosing precision
-      },
-    });
+  const updateResourceFieldsBasedOnImage = (force?: boolean) => {
+    // when image changed, set value of resources to min value only if it's larger than current value
+    const minimumResources: Partial<ResourceAllocationFormValue['resource']> = {
+      cpu: resourceLimits.cpu?.min,
+      mem:
+        iSizeToSize(
+          (iSizeToSize(resourceLimits.shmem?.min, 'm')?.number || 0) +
+            (iSizeToSize(resourceLimits.mem?.min, 'm')?.number || 0) +
+            'm',
+          'g',
+        )?.number + 'g', //to prevent loosing precision
+    };
 
+    // NOTE: accelerator value setting is done inside the conditional statement
     if (currentImageAcceleratorLimits.length > 0) {
       if (
         _.find(
@@ -147,12 +223,14 @@ const ResourceAllocationFormItems: React.FC<
         )
       ) {
         // if current selected accelerator type is supported in the selected image,
-        form.setFieldValue(
-          ['resource', 'accelerator'],
+        minimumResources.acceleratorType = form.getFieldValue([
+          'resource',
+          'acceleratorType',
+        ]);
+        minimumResources.accelerator =
           resourceLimits.accelerators[
             form.getFieldValue(['resource', 'acceleratorType'])
-          ]?.min,
-        );
+          ]?.min;
       } else {
         // if current selected accelerator type is not supported in the selected image,
         // change accelerator type to the first supported accelerator type.
@@ -165,31 +243,83 @@ const ResourceAllocationFormItems: React.FC<
           )[0]?.key;
 
         if (nextImageSelectorType) {
-          form.setFieldValue(
-            ['resource', 'accelerator'],
-            resourceLimits.accelerators[nextImageSelectorType]?.min,
-          );
-          form.setFieldValue(
-            ['resource', 'acceleratorType'],
-            nextImageSelectorType,
-          );
+          minimumResources.accelerator =
+            resourceLimits.accelerators[nextImageSelectorType]?.min;
+          minimumResources.acceleratorType = nextImageSelectorType;
         }
       }
     } else {
+      minimumResources.accelerator = 0;
+    }
+
+    if (!forceImageMinValues && !force) {
+      // delete keys that is not less than current value
+      (['cpu', 'accelerator'] as const).forEach((key) => {
+        const minNum = minimumResources[key];
+        if (
+          _.isNumber(minNum) &&
+          minNum < form.getFieldValue(['resource', key])
+        ) {
+          delete minimumResources[key];
+        }
+      });
+      (['mem', 'shmem'] as const).forEach((key) => {
+        const minNumStr = minimumResources[key];
+        if (
+          _.isString(minNumStr) &&
+          compareNumberWithUnits(
+            minNumStr,
+            form.getFieldValue(['resource', key]),
+          ) < 0
+        ) {
+          delete minimumResources[key];
+        }
+      });
+    }
+
+    form.setFieldsValue({
+      resource: {
+        ...minimumResources,
+      },
+    });
+
+    // set to 0 when currentImage doesn't support any AI accelerator
+    if (currentImage && currentImageAcceleratorLimits.length === 0) {
       form.setFieldValue(['resource', 'accelerator'], 0);
     }
 
-    form
-      .validateFields([
-        ['resource', 'cpu'],
-        ['resource', 'mem'],
-        ['resource', 'shmem'],
-        ['resource', 'accelerator'],
-        ['resource', 'acceleratorType'],
-      ])
-      .catch(() => {});
+    if (form.getFieldValue('enabledAutomaticShmem')) {
+      runShmemAutomationRule(form.getFieldValue(['resource', 'mem']) || '0g');
+    }
+    form.validateFields(['resource']).catch(() => {});
+  };
+
+  useEffect(() => {
+    updateResourceFieldsBasedOnImage();
+    // When the currentImage is changed, execute the latest updateResourceFieldsBasedOnImage function.
+    // So we don't need to add `updateResourceFieldsBasedOnImage` to the dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImage]);
+
+  const updateResourceFieldsBasedOnPreset = (name: string) => {
+    const preset = _.find(
+      checkPresetInfo?.presets,
+      (preset) => preset.name === name,
+    );
+    const slots = _.pick(preset?.resource_slots, _.keys(resourceSlots));
+    const mem = iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.numberUnit;
+    form.setFieldsValue({
+      resource: {
+        ...slots,
+        // transform to GB based on preset values
+        mem,
+        shmem: iSizeToSize((preset?.shared_memory || 0) + 'b', 'g', 2)
+          ?.numberUnit,
+        cpu: parseInt(slots?.cpu || '0') || 0,
+      },
+    });
+    runShmemAutomationRule(mem || '0g');
+  };
 
   const runShmemAutomationRule = (M_plus_S: string) => {
     // if M+S > 4G, S can be 1G regard to current image's minimum mem(M)
@@ -220,18 +350,21 @@ const ResourceAllocationFormItems: React.FC<
             required: true,
           },
         ]}
+        // Set the trigger to something not used event to manually handle updates for the granular pending status management.
+        trigger={'onSubmit'}
       >
         <ResourceGroupSelect
-          autoSelectDefault
           showSearch
           loading={isPendingCheckResets}
           onChange={(v) => {
             startCheckRestsTransition(() => {
-              setCurrentResourceGroup(v);
+              // update manually to handle granular pending status management
+              form.setFieldValue('resourceGroup', v);
             });
           }}
         />
       </Form.Item>
+
       {enableResourcePresets ? (
         <Form.Item
           label={t('resourcePreset.ResourcePresets')}
@@ -240,24 +373,23 @@ const ResourceAllocationFormItems: React.FC<
           style={{ marginBottom: token.marginXS }}
         >
           <ResourcePresetSelect
+            showCustom
+            showMiniumRequired
             onChange={(value, options) => {
-              const slots = _.pick(
-                JSON.parse(options?.preset?.resource_slots || '{}'),
-                _.keys(resourceSlots),
-              );
-              form.setFieldsValue({
-                resource: {
-                  ...slots,
-                  // transform to GB based on preset values
-                  mem: iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.numberUnit,
-                  shmem: iSizeToSize(
-                    (options?.preset?.shared_memory || 0) + 'b',
-                    'g',
-                    2,
-                  )?.numberUnit,
-                },
-              });
+              switch (value) {
+                case 'custom':
+                  break;
+                case 'minimum-required':
+                  form.setFieldValue('enabledAutomaticShmem', true);
+                  updateResourceFieldsBasedOnImage(true);
+                  break;
+                default:
+                  form.setFieldValue('enabledAutomaticShmem', true);
+                  updateResourceFieldsBasedOnPreset(value);
+                  break;
+              }
             }}
+            allocatablePresetNames={allocatablePresetNames}
           />
         </Form.Item>
       ) : null}
@@ -307,6 +439,9 @@ const ResourceAllocationFormItems: React.FC<
                               baiClient._config?.always_enqueue_compute_session
                                 ? t(
                                     'session.launcher.EnqueueComputeSessionWarning',
+                                    {
+                                      amount: remaining.cpu,
+                                    },
                                   )
                                 : t(
                                     'session.launcher.ErrorCanNotExceedRemaining',
@@ -356,6 +491,10 @@ const ResourceAllocationFormItems: React.FC<
                       }}
                       min={resourceLimits.cpu?.min}
                       max={resourceLimits.cpu?.max}
+                      step={1}
+                      onChange={() => {
+                        form.setFieldValue('allocationPreset', 'custom');
+                      }}
                     />
                   </Form.Item>
                 )}
@@ -450,6 +589,14 @@ const ResourceAllocationFormItems: React.FC<
                                         ?.always_enqueue_compute_session
                                         ? t(
                                             'session.launcher.EnqueueComputeSessionWarning',
+                                            {
+                                              amount:
+                                                iSizeToSize(
+                                                  remaining.mem + 'b',
+                                                  'g',
+                                                  3,
+                                                )?.numberUnit + 'iB',
+                                            },
                                           )
                                         : t(
                                             'session.launcher.ErrorCanNotExceedRemaining',
@@ -542,6 +689,11 @@ const ResourceAllocationFormItems: React.FC<
                                 )
                                   return;
                                 runShmemAutomationRule(M_plus_S);
+
+                                form.setFieldValue(
+                                  'allocationPreset',
+                                  'custom',
+                                );
                               }}
                             />
                           </Form.Item>
@@ -551,7 +703,7 @@ const ResourceAllocationFormItems: React.FC<
 
                     <Flex direction="column" gap={'xxs'} align="start">
                       <Flex direction="row" gap={'xs'}>
-                        {t('session.launcher.EnableAutomaticShmem')}{' '}
+                        {t('session.launcher.EnableAutomaticMiniumShmem')}{' '}
                         <Form.Item
                           noStyle
                           name={'enabledAutomaticShmem'}
@@ -560,11 +712,13 @@ const ResourceAllocationFormItems: React.FC<
                           <Switch
                             size="small"
                             onChange={(checked) => {
-                              if (checked)
+                              if (checked) {
                                 runShmemAutomationRule(
                                   form.getFieldValue(['resource', 'mem']) ||
                                     '0g',
                                 );
+                              }
+                              form.setFieldValue('allocationPreset', 'custom');
                             }}
                           />
                         </Form.Item>
@@ -631,6 +785,12 @@ const ResourceAllocationFormItems: React.FC<
                                   '0g'
                                 }
                                 hideSlider
+                                onChange={() => {
+                                  form.setFieldValue(
+                                    'allocationPreset',
+                                    'custom',
+                                  );
+                                }}
                               />
                             </Form.Item>
                           );
@@ -678,6 +838,26 @@ const ResourceAllocationFormItems: React.FC<
                               resourceLimits.accelerators[
                                 currentAcceleratorType
                               ]?.min || 0,
+                            max: resourceLimits.accelerators[
+                              currentAcceleratorType
+                            ]?.max,
+                          },
+                          {
+                            validator: async (rule: any, value: number) => {
+                              if (
+                                _.endsWith(currentAcceleratorType, 'shares') &&
+                                form.getFieldValue('cluster_size') >= 2 &&
+                                value % 1 !== 0
+                              ) {
+                                return Promise.reject(
+                                  t(
+                                    'session.launcher.OnlyAllowsDiscreteNumberByClusterSize',
+                                  ),
+                                );
+                              } else {
+                                return Promise.resolve();
+                              }
+                            },
                           },
                           {
                             warningOnly:
@@ -697,6 +877,12 @@ const ResourceAllocationFormItems: React.FC<
                                     ?.always_enqueue_compute_session
                                     ? t(
                                         'session.launcher.EnqueueComputeSessionWarning',
+                                        {
+                                          amount:
+                                            remaining.accelerators[
+                                              currentAcceleratorType
+                                            ],
+                                        },
                                       )
                                     : t(
                                         'session.launcher.ErrorCanNotExceedRemaining',
@@ -772,6 +958,9 @@ const ResourceAllocationFormItems: React.FC<
                               ? 0.1
                               : 1
                           }
+                          onChange={() => {
+                            form.setFieldValue('allocationPreset', 'custom');
+                          }}
                           inputNumberProps={{
                             addonAfter: (
                               <Form.Item
@@ -868,6 +1057,10 @@ const ResourceAllocationFormItems: React.FC<
                             baiClient._config?.always_enqueue_compute_session
                               ? t(
                                   'session.launcher.EnqueueComputeSessionWarning',
+                                  {
+                                    amount:
+                                      sessionSliderLimitAndRemaining.remaining,
+                                  },
                                 )
                               : t(
                                   'session.launcher.ErrorCanNotExceedRemaining',
@@ -987,6 +1180,9 @@ const ResourceAllocationFormItems: React.FC<
                                 return Promise.reject(
                                   t(
                                     'session.launcher.EnqueueComputeSessionWarning',
+                                    {
+                                      amount: minCPU,
+                                    },
                                   ),
                                 );
                               } else {
@@ -998,6 +1194,7 @@ const ResourceAllocationFormItems: React.FC<
                       >
                         <InputNumberWithSlider
                           min={1}
+                          step={1}
                           // TODO: max cluster size
                           max={
                             _.isNumber(derivedClusterSizeMaxLimit)

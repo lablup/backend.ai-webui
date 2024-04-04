@@ -255,8 +255,21 @@
       "EnvironmentVariableNamePatternError": "Der Variablenname muss mit einem Buchstaben oder Unterstrich beginnen und darf nur Buchstaben, Zahlen und Unterstriche enthalten.",
       "EnvironmentVariableDuplicateName": "Ein Variablenname, der bereits existiert.",
       "Template": "Sitzungsvorlage",
-      "EnableAutomaticShmem": "Automatischer gemeinsamer Speicher",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "EnableAutomaticMiniumShmem": "Minimalen gemeinsamen Speicher festlegen",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Nur Ganzzahlen sind zulässig, wenn die Clustergröße nicht weniger als 2 beträgt.",
+      "StartAfter": "Beginnen Sie nach:",
+      "StartTimeDoesNotApply": "Wenn die Startzeit nicht festgelegt ist, gilt sie nicht.",
+      "MiniumAllocation": "Mindestanforderungen",
+      "MiniumAllocationTooltip": "Wählen Sie als Mindestanforderung für die ausgewählte Betriebsumgebung",
+      "PreviousLauncher": "Vorherige",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Sie verwenden den \"{{launcher}}\"-Sitzungsstarter.",
+      "SkipToConfirmAndLaunch": "Zur Bewertung springen",
+      "InteractiveModeDesc": "ermöglicht das interaktive Erstellen, Testen und Ausführen von Code über Jupyter Notebook, Visual Studio Code usw.",
+      "BatchModeDesc": "Sie können Ihren Code mit mehreren Knoten und Clustern ausführen, um Ihre Idee zu skalieren",
+      "AddEnvironmentVariable": "Umgebungsvariablen hinzufügen",
+      "EnvironmentVariableValueRequired": "Bitte geben Sie einen Wert ein."
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",
@@ -314,7 +327,11 @@
       "SluggedStrings": "Geschliffene Zeichenfolgen (>3 Zeichen)",
       "SessionNameAlreadyExist": "Sitzungsname existiert bereits",
       "SessionNameTooLong64": "Bitte geben Sie maximal 64 Zeichen ein.",
-      "PleaseFollowSessionNameRule": "Bitte geben Sie eine Kombination aus mindestens 4 Buchstaben, Zahlen, „.“, „_“ und „-“ ein."
+      "PleaseFollowSessionNameRule": "Bitte geben Sie eine Kombination aus mindestens 4 Buchstaben, Zahlen, „.“, „_“ und „-“ ein.",
+      "SessionNameTooShort": "Bitte geben Sie mindestens 4 Zeichen ein.",
+      "SessionNameShouldStartWith": "Er muss mit einem Buchstaben des Alphabets, einer Zahl oder '_' beginnen.",
+      "SessionNameShouldEndWith": "Er muss mit einem Buchstaben des Alphabets, einer Zahl oder '_' enden.",
+      "SessionNameInvalidCharacter": "Die Mitte eines Namens darf nur Buchstaben des Alphabets, Zahlen und '_' enthalten."
     },
     "Interactive": "Interaktiv",
     "Batch": "Stapel",
@@ -374,7 +391,8 @@
     "CPU": "CPU",
     "MEM": "Speicher",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (Speicher)"
+    "GPU(MEM)": "GPU (Speicher)",
+    "Agents": "Agenten"
   },
   "button": {
     "Cancel": "Stornieren",
@@ -407,7 +425,10 @@
     "Commit": "Commit",
     "EnterManually": "Manuell eingeben",
     "Download": "Herunterladen",
-    "Clone": "Klonen"
+    "Clone": "Klonen",
+    "Config": "Konfigurieren Sie",
+    "Next": "Weiter",
+    "Previous": "Vorherige"
   },
   "agent": {
     "Endpoint": "Endpunkt",
@@ -533,7 +554,8 @@
     "Status": "Status",
     "NoUserToDisplay": "Keine Benutzer zum Anzeigen",
     "EnableSudoSession": "Sudo-Sitzung aktivieren",
-    "MainAccessKey": "Hauptzugangsschlüssel"
+    "MainAccessKey": "Hauptzugangsschlüssel",
+    "InactivateTheFollowingUsers": "Deaktivieren Sie die folgenden Benutzer."
   },
   "data": {
     "Folders": "Ordner",
@@ -586,7 +608,7 @@
       "FolderRenamed": "Ordner umbenannt",
       "FolderNameMismatched": "Ordnername stimmt nicht überein. Bitte prüfen Sie, ob Leerzeichen im Eingabefeld vorhanden sind oder nicht.",
       "SameFileName": "Der Eingabewert ist mit dem zu aktualisierenden Dateinamen identisch. Bitte ändern Sie es in einen anderen Namen.",
-      "FolderDeleted": "Ordner gelöscht",
+      "FolderDeleted": "Der Ordner {{ FolderName }} wurde gelöscht.",
       "FolderUpdated": "Ordneroption(en) aktualisiert",
       "FolderDisconnected": "Ordner wurde getrennt.",
       "FileRenamed": "Datei umbenannt",
@@ -613,7 +635,13 @@
       "CloneFolder": "Ordner klonen",
       "ShareFolder": "Ordner teilen",
       "ModifyPermissions": "Berechtigungen ändern",
-      "LeaveFolder": "Ordner verlassen"
+      "LeaveFolder": "Ordner verlassen",
+      "Restore": "Wiederherstellen",
+      "DeleteForever": "Unwiederuflich löschen",
+      "FolderRestored": "Der Ordner {{ folderName }} wurde wiederhergestellt.",
+      "FolderDeletedForever": "Der Ordner {{ folderName }} wurde endgültig gelöscht.",
+      "MoveToTrashBin": "In den Papierkorb verschieben",
+      "MovedToTrashBin": "Der Ordner {{ folderName }} wurde in den Papierkorb verschoben."
     },
     "explorer": {
       "Delete": "Löschen...",
@@ -703,21 +731,24 @@
     "ModelStore": "Modellladen",
     "New": "Neu",
     "Add": "hinzufügen",
-    "CloningIsOnlyPossibleSameHost": "Derzeit ist das Klonen nur auf demselben Host möglich."
+    "CloningIsOnlyPossibleSameHost": "Derzeit ist das Klonen nur auf demselben Host möglich.",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
       "CannotBeUndone": "ACHTUNG: Dies kann nicht rückgängig gemacht werden!",
       "LogDeletion": "Möchten Sie wirklich alle Protokollnachrichten löschen?",
       "WillBeAppliedToNewSessions": "Dieses Update wird auf neue Sitzungen angewendet.",
-      "Required": "Erforderlich"
+      "Required": "Erforderlich",
+      "DeleteForeverDesc": "ACHTUNG: Ausgewählte Elemente werden für immer gelöscht und Sie können sie nicht wiederherstellen."
     },
     "ask": {
       "DoYouWantToProceed": "Willst du fortfahren?"
     },
     "title": {
       "LetsDouble-Check": "Lass uns das überprüfen",
-      "Notice": "Hinweis"
+      "Notice": "Hinweis",
+      "DeleteForever": "Unwiederuflich löschen?"
     },
     "ErrorOccurred": "Ein Fehler ist aufgetreten",
     "error": {
@@ -850,7 +881,12 @@
     "BootstrapScriptDescription": "Das Bootstrap-Skript wird nur einmal nach der Erstellung der Sitzung ausgeführt",
     "SSHKeypairEnterManually": "SSH-Schlüsselpaar",
     "MyKeypairInfo": "Meine Schlüsselpaarinformationen",
-    "DescMyKeypairInfo": "Siehe meine Schlüsselpaarinformationen"
+    "DescMyKeypairInfo": "Siehe meine Schlüsselpaarinformationen",
+    "DarkMode": "Dunkler Modus",
+    "LightMode": "Lichtmodus",
+    "UseSystemSetting": "Verwenden Sie die Systemeinstellungen",
+    "DescThemeMode": "Passen Sie an, wie die Backend.AI-WebUI auf Ihrem Gerät aussieht.",
+    "ThemeMode": "Themenmodus"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Erweiterte Web-Terminal-Nutzung: Terminal-Inhalte kopieren",
@@ -936,7 +972,8 @@
     "RegistrySuccessfullyModified": "Registry erfolgreich geändert.",
     "NoRegistryToDisplay": "Keine Registrierungen anzeigen",
     "ModifyRegistry": "Registry ändern",
-    "ConfirmNoUserName": "Benutzer und Passwort nicht angegeben, möchten Sie speichern?"
+    "ConfirmNoUserName": "Benutzer und Passwort nicht angegeben, möchten Sie speichern?",
+    "DescURLFormat": "Ungültiger URL-Typ"
   },
   "resourceGroup": {
     "ResourceGroups": "Ressourcengruppen",
@@ -1127,7 +1164,8 @@
     "MTUDescription": "Maximale Übertragungseinheit, die Größe des größten Pakets, das ein Netzprotokoll übertragen kann.",
     "OutOfRange": "Außerhalb der Reichweite.",
     "Plugins": "Plugins",
-    "OpenSourceCUDAGPUsupport": "Open Source CUDA GPU Unterstützung"
+    "OpenSourceCUDAGPUsupport": "Open Source CUDA GPU Unterstützung",
+    "ShowOnlyChanged": "Nur Änderungen anzeigen"
   },
   "notification": {
     "SuccessfullyUpdated": "Erfolgreich aktualisiert",
@@ -1409,7 +1447,11 @@
     "YouAreAboutToTerminate": "Sie stehen kurz vor der Beendigung",
     "Owner": "Eigentümer",
     "ServiceDelegatedFrom": "Der Modelldienst wird von {{ createdUser }} erstellt, aber das Eigentum an der Sitzung wird an {{ sessionOwner }} delegiert.",
-    "FailedToTerminateService": "Die Anfrage zur Beendigung des Dienstes ist fehlgeschlagen."
+    "FailedToTerminateService": "Die Anfrage zur Beendigung des Dienstes ist fehlgeschlagen.",
+    "FailedToUpdateService": "Der Dienst konnte nicht aktualisiert werden.",
+    "ServiceCreated": "Der Modelldienst {{ name }} wurde erfolgreich erstellt.",
+    "ServiceUpdated": "Der Modelldienst {{ name }} wurde erfolgreich aktualisiert.",
+    "ServiceTerminated": "Der Modelldienst {{ name }} wurde erfolgreich beendet."
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",
@@ -1449,7 +1491,8 @@
     "ForUser": "Für Benutzer",
     "ForProject": "Für Projekt",
     "QuotaDoesNotSupported": "Dieses Speicher-Backend unterstützt keine Quoten.",
-    "BeCarefulToSetUserResourcePolicy": "Die Änderung einer Ressourcenrichtlinie kann sich auf alle Benutzer auswirken, die diese Benutzer-Ressourcenrichtlinie verwenden, daher ist sie mit Vorsicht zu genießen."
+    "BeCarefulToSetUserResourcePolicy": "Die Änderung einer Ressourcenrichtlinie kann sich auf alle Benutzer auswirken, die diese Benutzer-Ressourcenrichtlinie verwenden, daher ist sie mit Vorsicht zu genießen.",
+    "StorageSetting": "Speichereinstellung"
   },
   "totp": {
     "TotpSetupCompleted": "Aktivierte 2FA",
@@ -1460,7 +1503,9 @@
     "TurnOffTotp": "Deaktivieren Sie die Zwei-Faktor-Authentifizierung",
     "ConfirmTotpRemovalBody": "Sind Sie sicher, dass Sie die Zwei-Faktor-Authentifizierung nicht verwenden möchten?",
     "RemoveTotpSetupCompleted": "Deaktivierte 2FA",
-    "OTP": "Einmaliges Passwort"
+    "OTP": "Einmaliges Passwort",
+    "EnterConfirmationCode": "Geben Sie nun zur Überprüfung das vom Authentifikator generierte OTP ein.",
+    "RequireOTP": "Schreiben Sie OTP."
   },
   "OpenVSCodeRemote": "Lokalen Visual Studio Code öffnen",
   "inputLimit": {
@@ -1498,5 +1543,8 @@
     "SettingTable": "Sitzordnung bei Tisch",
     "SelectColumnToDisplay": "Wählen Sie die anzuzeigenden Spalten aus",
     "SearchTableColumn": "Tabellenspalten durchsuchen"
+  },
+  "setting": {
+    "SearchPlaceholder": "Geben Sie einen Suchbegriff ein"
   }
 }

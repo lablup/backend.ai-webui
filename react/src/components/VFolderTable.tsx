@@ -121,7 +121,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const { data: allFolderList } = useTanQuery({
-    queryKey: ['VFolderSelectQuery', fetchKey],
+    queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id],
     queryFn: () => {
       return baiRequestWithPromise({
         method: 'GET',
@@ -131,16 +131,15 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     staleTime: 0,
   });
   const [searchKey, setSearchKey] = useState('');
-  const displayingFolders = _.filter(allFolderList, (vf) => {
-    // keep selected folders
-    if (selectedRowKeys.includes(getRowKey(vf))) {
-      return true;
-    }
-    // filter by search key
-    return (
-      (!filter || filter(vf)) && (!searchKey || vf.name.includes(searchKey))
-    );
-  });
+  const displayingFolders = _.chain(allFolderList)
+    .filter((vf) => (filter ? filter(vf) : true))
+    .filter((vf) => {
+      if (selectedRowKeys.includes(getRowKey(vf))) {
+        return true;
+      }
+      return !searchKey || vf.name.includes(searchKey);
+    })
+    .value();
   // const { token } = theme.useToken();
   // const searchInput = useRef<InputRef>(null);
 
@@ -191,9 +190,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                 ({t('session.launcher.FolderAlias')}{' '}
                 <Tooltip
                   title={<Trans i18nKey={'session.launcher.DescFolderAlias'} />}
-                  style={{
-                    zIndex: 10000,
-                  }}
                   // @ts-ignore
                   getPopupContainer={() => shadowRoot}
                 >
@@ -220,7 +216,9 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
             style={
               showAliasInput && isCurrentRowSelected
                 ? { display: 'inline-flex', height: 70, width: '100%' }
-                : undefined
+                : {
+                    maxWidth: 200,
+                  }
             }
           >
             <TextHighlighter keyword={searchKey}>{value}</TextHighlighter>
@@ -298,7 +296,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           </Flex>
         );
       },
-      fixed: 'left',
       // ...getColumnSearchProps('name'),
     },
     {

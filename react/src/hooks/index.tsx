@@ -90,6 +90,19 @@ export const useCurrentProjectValue = () => {
   return project;
 };
 
+export const useSetCurrentProject = () => {
+  const baiClient = useSuspendedBackendaiClient();
+  return (projectInfo: { projectName: string; projectId: string }) => {
+    baiClient.current_group = projectInfo.projectName;
+    // @ts-ignore
+    globalThis.backendaiutils._writeRecentProjectGroup(baiClient.current_group);
+    const event: CustomEvent = new CustomEvent('backend-ai-group-changed', {
+      detail: projectInfo.projectName,
+    });
+    document.dispatchEvent(event);
+  };
+};
+
 export const useAnonymousBackendaiClient = ({
   api_endpoint,
 }: {
@@ -174,7 +187,7 @@ export const useBackendAIImageMetaData = () => {
         .then(
           (json: {
             imageInfo: {
-              [key: string]: ImageMetadata;
+              [key: string]: ImageMetadata | undefined;
             };
             tagAlias: {
               [key: string]: string;
@@ -225,7 +238,7 @@ export const useBackendAIImageMetaData = () => {
     {
       getImageAliasName: (imageName: string) => {
         const { key } = getImageMeta(imageName);
-        return metadata?.imageInfo[key].name || key;
+        return metadata?.imageInfo[key]?.name || key;
       },
       getImageIcon: (imageName?: string | null, path = 'resources/icons/') => {
         if (!imageName) return 'default.png';

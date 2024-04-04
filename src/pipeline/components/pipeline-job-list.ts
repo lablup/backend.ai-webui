@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../../components/backend-ai-dialog';
 import { BackendAiStyles } from '../../components/backend-ai-general-styles';
@@ -473,7 +473,7 @@ export default class PipelineJobList extends BackendAIPage {
         mountedFolderItem.style.height = '25px';
         mountedFolderItem.style.fontWeight = '400';
         mountedFolderItem.style.fontSize = '14px';
-        mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
+        mountedFolderItem.style.fontFamily = 'var(--token-fontFamily)';
         mountedFolderItem.innerHTML =
           mounts.length > 1 ? key : _text('session.OnlyOneFolderAttached');
 
@@ -802,7 +802,7 @@ export default class PipelineJobList extends BackendAIPage {
     return html`
       <vaadin-grid
         id="pipeline-job-list"
-        theme="row-stripes column-borders compact"
+        theme="row-stripes column-borders compact dark"
         aria-label="Pipeline Job List"
         .items="${this.pipelineJobs}"
       >

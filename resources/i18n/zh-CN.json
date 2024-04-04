@@ -255,8 +255,21 @@
       "EnvironmentVariableNamePatternError": "变量名必须以字母或下划线开头，且只能包含字母、数字和下划线。",
       "EnvironmentVariableDuplicateName": "已经存在的变量名。",
       "Template": "会议模板",
-      "EnableAutomaticShmem": "自动共享内存",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__"
+      "EnableAutomaticMiniumShmem": "设置最小共享内存",
+      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "当簇大小不小于 2 时，只允许使用整数。",
+      "StartAfter": "之后开始：",
+      "StartTimeDoesNotApply": "如果未设置开始时间，则不适用。",
+      "MiniumAllocation": "最低要求",
+      "MiniumAllocationTooltip": "选择所选运行环境的最低要求",
+      "PreviousLauncher": "上一页",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "您正在使用\"{{launcher}}\"会话启动器。",
+      "SkipToConfirmAndLaunch": "跳过评论",
+      "InteractiveModeDesc": "允许您通过 jupyter notebook、visual studio code 等交互式创建、测试和运行代码。",
+      "BatchModeDesc": "您可以使用多个节点和集群运行代码，以扩展您的想法",
+      "AddEnvironmentVariable": "添加环境变量",
+      "EnvironmentVariableValueRequired": "请输入数值。"
     },
     "Preparing": "正在准备...",
     "PreparingSession": "正在准备会议...",
@@ -314,7 +327,11 @@
       "SluggedStrings": "多字符串（>3 字符）",
       "SessionNameAlreadyExist": "会话名称已存在",
       "SessionNameTooLong64": "请输入不超过 64 个字符。",
-      "PleaseFollowSessionNameRule": "请输入至少 4 个字母、数字、“.”、“_”和“-”的组合字符。"
+      "PleaseFollowSessionNameRule": "请输入至少 4 个字母、数字、“.”、“_”和“-”的组合字符。",
+      "SessionNameTooShort": "请输入至少 4 个字符。",
+      "SessionNameShouldStartWith": "必须以字母、数字或\"_\"开头。",
+      "SessionNameShouldEndWith": "必须以字母、数字或\"_\"结尾。",
+      "SessionNameInvalidCharacter": "名字中间只能包含字母、数字和\"_\"。"
     },
     "Interactive": "交互式",
     "Batch": "批次",
@@ -374,7 +391,8 @@
     "CPU": "中央处理器",
     "MEM": "内存",
     "GPU": "GPU",
-    "GPU(MEM)": "图形处理器（内存）"
+    "GPU(MEM)": "图形处理器（内存）",
+    "Agents": "代理商"
   },
   "button": {
     "Cancel": "取消",
@@ -407,7 +425,10 @@
     "Commit": "承诺",
     "EnterManually": "手动输入",
     "Download": "下载",
-    "Clone": "克隆"
+    "Clone": "克隆",
+    "Config": "配置",
+    "Next": "下一页",
+    "Previous": "上一页"
   },
   "agent": {
     "Endpoint": "端点",
@@ -533,7 +554,8 @@
     "Status": "现状",
     "NoUserToDisplay": "无用户显示",
     "EnableSudoSession": "启用 sudo 会话",
-    "MainAccessKey": "主访问密钥"
+    "MainAccessKey": "主访问密钥",
+    "InactivateTheFollowingUsers": "停用以下用户。"
   },
   "data": {
     "Folders": "文件夹",
@@ -586,7 +608,7 @@
       "FolderRenamed": "文件夹重命名",
       "FolderNameMismatched": "文件夹名称不匹配。请检查输入字段中是否有空格字符。",
       "SameFileName": "输入值与要更新的文件名相同。请将其更改为其他名称。",
-      "FolderDeleted": "文件夹已删除",
+      "FolderDeleted": "{{ folderName }} 文件夹已被删除。",
       "FolderUpdated": "文件夹选项已更新",
       "FolderDisconnected": "文件夹已断开连接。",
       "FileRenamed": "文件重命名",
@@ -613,7 +635,13 @@
       "CloneFolder": "克隆文件夹",
       "ShareFolder": "共享文件夹",
       "ModifyPermissions": "修改权限",
-      "LeaveFolder": "离开文件夹"
+      "LeaveFolder": "离开文件夹",
+      "Restore": "恢复",
+      "DeleteForever": "永久删除",
+      "FolderRestored": "{{ folderName }} 文件夹已恢复。",
+      "FolderDeletedForever": "{{ folderName }} 文件夹已被永久删除。",
+      "MoveToTrashBin": "移至垃圾箱",
+      "MovedToTrashBin": "{{ folderName }} 文件夹已移至垃圾箱。"
     },
     "explorer": {
       "Delete": "删除...",
@@ -703,21 +731,24 @@
     "ModelStore": "模型店",
     "New": "新的",
     "Add": "添加",
-    "CloningIsOnlyPossibleSameHost": "目前，克隆只能在同一主机上进行。"
+    "CloningIsOnlyPossibleSameHost": "目前，克隆只能在同一主机上进行。",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
       "CannotBeUndone": "警告：这无法撤消！",
       "LogDeletion": "您确定要删除所有日志消息吗？",
       "WillBeAppliedToNewSessions": "此更新将应用于新会话。",
-      "Required": "需要"
+      "Required": "需要",
+      "DeleteForeverDesc": "警告：所选项目将被永久删除，并且您将无法恢复它们。"
     },
     "ask": {
       "DoYouWantToProceed": "您要继续吗？"
     },
     "title": {
       "LetsDouble-Check": "让我们仔细检查",
-      "Notice": "通知"
+      "Notice": "通知",
+      "DeleteForever": "永久删除？"
     },
     "ErrorOccurred": "错误发生",
     "error": {
@@ -850,7 +881,12 @@
     "BootstrapScriptDescription": "Bootstrap 脚本只会在会话创建后执行一次",
     "SSHKeypairEnterManually": "SSH 密钥对",
     "MyKeypairInfo": "我的密钥对信息",
-    "DescMyKeypairInfo": "查看我的密钥对信息"
+    "DescMyKeypairInfo": "查看我的密钥对信息",
+    "DarkMode": "深色模式",
+    "LightMode": "灯光模式",
+    "UseSystemSetting": "使用系统设置",
+    "DescThemeMode": "自定义 Backend.AI WebUI 在您设备上的外观。",
+    "ThemeMode": "主题模式"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高级 Web 终端使用：复制终端内容",
@@ -936,7 +972,8 @@
     "RegistrySuccessfullyModified": "注册表已成功修改。",
     "NoRegistryToDisplay": "无注册表显示",
     "ModifyRegistry": "修改注册表",
-    "ConfirmNoUserName": "未指定用户和密码，要保存吗？"
+    "ConfirmNoUserName": "未指定用户和密码，要保存吗？",
+    "DescURLFormat": "无效的 URL 类型"
   },
   "resourceGroup": {
     "ResourceGroups": "资源组",
@@ -1127,7 +1164,8 @@
     "MTUDescription": "最大传输单位，网络协议可传输的最大数据包的大小。",
     "OutOfRange": "超出范围。",
     "Plugins": "插件",
-    "OpenSourceCUDAGPUsupport": "开源 CUDA GPU 支持"
+    "OpenSourceCUDAGPUsupport": "开源 CUDA GPU 支持",
+    "ShowOnlyChanged": "仅显示更改"
   },
   "notification": {
     "SuccessfullyUpdated": "成功更新",
@@ -1399,7 +1437,8 @@
     "ForUser": "用户",
     "ForProject": "项目",
     "QuotaDoesNotSupported": "该存储后端不支持配额。",
-    "BeCarefulToSetUserResourcePolicy": "更改资源策略会影响使用该用户资源策略的所有用户，因此请谨慎使用。"
+    "BeCarefulToSetUserResourcePolicy": "更改资源策略会影响使用该用户资源策略的所有用户，因此请谨慎使用。",
+    "StorageSetting": "存储设置"
   },
   "modelService": {
     "TokenGenerated": "生成的令牌",
@@ -1449,7 +1488,11 @@
     "Image": "图片",
     "Owner": "所有者",
     "ServiceDelegatedFrom": "模型服务由 {{ createdUser }} 创建，但会话所有权将委托给 {{ sessionOwner }}",
-    "FailedToTerminateService": "终止服务的请求失败。"
+    "FailedToTerminateService": "终止服务的请求失败。",
+    "FailedToUpdateService": "更新服务失败。",
+    "ServiceCreated": "模型服务 {{ name }} 已成功创建。",
+    "ServiceUpdated": "模型服务 {{ name }} 已成功更新。",
+    "ServiceTerminated": "模型服务 {{ name }} 已成功终止。"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",
@@ -1460,7 +1503,9 @@
     "TurnOffTotp": "关闭双因素身份验证",
     "ConfirmTotpRemovalBody": "您确定不使用双因素身份验证吗？",
     "RemoveTotpSetupCompleted": "禁用 2FA",
-    "OTP": "一次性密码"
+    "OTP": "一次性密码",
+    "EnterConfirmationCode": "现在输入验证器生成的 OTP 进行验证。",
+    "RequireOTP": "写入一次性密码。"
   },
   "OpenVSCodeRemote": "打开本地 Visual Studio 代码",
   "inputLimit": {
@@ -1498,5 +1543,8 @@
     "SettingTable": "桌面设置",
     "SelectColumnToDisplay": "选择要显示的列",
     "SearchTableColumn": "搜索表格列"
+  },
+  "setting": {
+    "SearchPlaceholder": "输入搜索词"
   }
 }

@@ -1,6 +1,8 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useCurrentProjectValue, useUpdatableState } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import TextHighlighter from './TextHighlighter';
+import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useTransition } from 'react';
@@ -15,12 +17,24 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   projectId,
   autoSelectDefault,
   filter,
+  searchValue,
+  onSearch,
   loading,
   ...selectProps
 }) => {
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
   const [key, checkUpdate] = useUpdatableState('first');
+  const [controllableSearchValue, setControllableSearchValue] =
+    useControllableValue<string>(
+      _.omitBy(
+        {
+          value: searchValue,
+          onChange: onSearch,
+        },
+        _.isUndefined,
+      ),
+    );
 
   const [isPendingLoading, startLoadingTransition] = useTransition();
   const { data: resourceGroupSelectQueryResult } = useTanQuery<
@@ -100,9 +114,22 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault]);
+
+  const searchProps: Pick<
+    SelectProps,
+    'onSearch' | 'searchValue' | 'showSearch'
+  > = selectProps.showSearch
+    ? {
+        onSearch: setControllableSearchValue,
+        searchValue: controllableSearchValue,
+        showSearch: true,
+      }
+    : {};
+
   return (
     <Select
       defaultActiveFirstOption
+      {...searchProps}
       defaultValue={autoSelectDefault ? autoSelectedOption : undefined}
       onDropdownVisibleChange={(open) => {
         if (open) {
@@ -112,16 +139,18 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
         }
       }}
       loading={isPendingLoading || loading}
-      {...selectProps}
-    >
-      {_.map(resourceGroups, (resourceGroup, idx) => {
-        return (
-          <Select.Option key={resourceGroup?.name} value={resourceGroup?.name}>
-            {resourceGroup?.name}
-          </Select.Option>
-        );
+      options={_.map(resourceGroups, (resourceGroup) => {
+        return { value: resourceGroup.name, label: resourceGroup.name };
       })}
-    </Select>
+      optionRender={(option) => {
+        return (
+          <TextHighlighter keyword={controllableSearchValue}>
+            {option.data.value}
+          </TextHighlighter>
+        );
+      }}
+      {...selectProps}
+    />
   );
 };
 

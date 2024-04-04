@@ -255,8 +255,21 @@
       "EnvironmentVariableNamePatternError": "Il nome della variabile deve iniziare con una lettera o un trattino basso e può contenere solo lettere, numeri e trattini bassi.",
       "EnvironmentVariableDuplicateName": "Un nome di variabile già esistente.",
       "Template": "Modello di sessione",
-      "EnableAutomaticShmem": "Memoria condivisa automatica",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "EnableAutomaticMiniumShmem": "Impostare la memoria condivisa minima",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "È consentito solo un numero intero quando la dimensione del cluster non è inferiore a 2.",
+      "StartAfter": "Inizia dopo:",
+      "StartTimeDoesNotApply": "Se l'ora di inizio non è impostata, non si applica.",
+      "MiniumAllocation": "Requisiti minimi",
+      "MiniumAllocationTooltip": "Selezionare come requisito minimo per l'ambiente di esecuzione selezionato",
+      "PreviousLauncher": "Precedente",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Si sta utilizzando il lanciatore di sessione \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Vai alla recensione",
+      "InteractiveModeDesc": "permette di creare, testare ed eseguire codice in modo interattivo tramite jupyter notebook, visual studio code, ecc.",
+      "BatchModeDesc": "È possibile eseguire il codice con più nodi e cluster per scalare la propria idea.",
+      "AddEnvironmentVariable": "Aggiungere le variabili d'ambiente",
+      "EnvironmentVariableValueRequired": "Inserire un valore."
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",
@@ -314,7 +327,11 @@
       "SluggedStrings": "Stringhe con slugged (>3 caratteri)",
       "SessionNameAlreadyExist": "Il nome della sessione esiste già",
       "SessionNameTooLong64": "Inserisci 64 caratteri o meno.",
-      "PleaseFollowSessionNameRule": "Inserisci una combinazione di almeno 4 lettere, numeri, \".\", \"_\" e \"-\"."
+      "PleaseFollowSessionNameRule": "Inserisci una combinazione di almeno 4 lettere, numeri, \".\", \"_\" e \"-\".",
+      "SessionNameTooShort": "Inserire almeno 4 caratteri.",
+      "SessionNameShouldStartWith": "Deve iniziare con una lettera dell'alfabeto, un numero o '_'.",
+      "SessionNameShouldEndWith": "Deve terminare con una lettera dell'alfabeto, un numero o '_'.",
+      "SessionNameInvalidCharacter": "Il centro di un nome può contenere solo lettere dell'alfabeto, numeri e '_'."
     },
     "Interactive": "Interattivo",
     "Batch": "Lotto",
@@ -374,7 +391,8 @@
     "CPU": "CPU",
     "MEM": "Memoria",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (memoria)"
+    "GPU(MEM)": "GPU (memoria)",
+    "Agents": "Agenti"
   },
   "button": {
     "Cancel": "Annulla",
@@ -407,7 +425,10 @@
     "Commit": "Impegno",
     "EnterManually": "Inserire manualmente",
     "Download": "Scarica",
-    "Clone": "Clone"
+    "Clone": "Clone",
+    "Config": "Configurazione",
+    "Next": "Avanti",
+    "Previous": "Precedente"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -533,7 +554,8 @@
     "Status": "Stato",
     "NoUserToDisplay": "Nessun utente da visualizzare",
     "EnableSudoSession": "Abilita la sessione sudo",
-    "MainAccessKey": "Chiave di accesso principale"
+    "MainAccessKey": "Chiave di accesso principale",
+    "InactivateTheFollowingUsers": "Disattiva i seguenti utenti."
   },
   "data": {
     "Folders": "cartelle",
@@ -586,7 +608,7 @@
       "FolderRenamed": "Cartella rinominata",
       "FolderNameMismatched": "Il nome della cartella non corrisponde. Si prega di verificare se il carattere spazio nel campo di input o meno.",
       "SameFileName": "Il valore di input è lo stesso del nome del file da aggiornare. Si prega di cambiarlo con un nome diverso.",
-      "FolderDeleted": "Cartella eliminata",
+      "FolderDeleted": "La cartella {{ folderName }} è stata eliminata.",
       "FolderUpdated": "Opzioni cartella aggiornate",
       "FolderDisconnected": "La cartella è stata disconnessa.",
       "FileRenamed": "File rinominato",
@@ -613,7 +635,13 @@
       "CloneFolder": "Clona la cartella",
       "ShareFolder": "Cartella di condivisione",
       "ModifyPermissions": "Modificare le autorizzazioni",
-      "LeaveFolder": "Lasciare la cartella"
+      "LeaveFolder": "Lasciare la cartella",
+      "Restore": "Ristabilire",
+      "DeleteForever": "Elimina per sempre",
+      "FolderRestored": "La cartella {{ folderName }} è stata ripristinata.",
+      "FolderDeletedForever": "La cartella {{ folderName }} è stata eliminata per sempre.",
+      "MoveToTrashBin": "Sposta nel cestino",
+      "MovedToTrashBin": "La cartella {{ folderName }} è stata spostata nel cestino."
     },
     "explorer": {
       "Delete": "Elimina...",
@@ -703,21 +731,24 @@
     "ModelStore": "Negozio di modelli",
     "New": "Nuovo",
     "Add": "Aggiungi",
-    "CloningIsOnlyPossibleSameHost": "Attualmente la clonazione è possibile solo sullo stesso host."
+    "CloningIsOnlyPossibleSameHost": "Attualmente la clonazione è possibile solo sullo stesso host.",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
       "CannotBeUndone": "ATTENZIONE: questa operazione non può essere annullata!",
       "LogDeletion": "Sei sicuro di voler eliminare tutti i messaggi di registro?",
       "WillBeAppliedToNewSessions": "Questo aggiornamento verrà applicato alle nuove sessioni.",
-      "Required": "Richiesto"
+      "Required": "Richiesto",
+      "DeleteForeverDesc": "ATTENZIONE: gli elementi selezionati verranno eliminati per sempre e non potrai ripristinarli."
     },
     "ask": {
       "DoYouWantToProceed": "Vuoi procedere?"
     },
     "title": {
       "LetsDouble-Check": "Ricontrolliamo",
-      "Notice": "Avviso"
+      "Notice": "Avviso",
+      "DeleteForever": "Elimina per sempre?"
     },
     "ErrorOccurred": "Errore",
     "error": {
@@ -850,7 +881,12 @@
     "BootstrapScriptDescription": "Lo script Bootstrap verrà eseguito solo una volta dopo la creazione della sessione.",
     "SSHKeypairEnterManually": "Coppia di chiavi SSH",
     "MyKeypairInfo": "Informazioni sulla mia coppia di chiavi",
-    "DescMyKeypairInfo": "Vedi le informazioni sulla mia coppia di chiavi"
+    "DescMyKeypairInfo": "Vedi le informazioni sulla mia coppia di chiavi",
+    "DarkMode": "Modalità scura",
+    "LightMode": "Modalità luce",
+    "UseSystemSetting": "Utilizza Impostazioni di sistema",
+    "DescThemeMode": "Personalizza l'aspetto di Backend.AI WebUI sul tuo dispositivo.",
+    "ThemeMode": "Modalità tema"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilizzo avanzato del terminale Web: copia il contenuto del terminale",
@@ -936,7 +972,8 @@
     "RegistrySuccessfullyModified": "Registro modificato con successo.",
     "NoRegistryToDisplay": "Nessun registro da visualizzare",
     "ModifyRegistry": "Modificare il registro",
-    "ConfirmNoUserName": "Utente e password non specificati, si desidera salvare?"
+    "ConfirmNoUserName": "Utente e password non specificati, si desidera salvare?",
+    "DescURLFormat": "Tipo di URL non valido"
   },
   "resourceGroup": {
     "ResourceGroups": "Gruppi di risorse",
@@ -1127,7 +1164,8 @@
     "MTUDescription": "Unità di trasmissione massima, la dimensione del pacchetto più grande che un protocollo di rete può trasmettere.",
     "OutOfRange": "Fuori portata.",
     "Plugins": "Plugin",
-    "OpenSourceCUDAGPUsupport": "Supporto GPU CUDA open source"
+    "OpenSourceCUDAGPUsupport": "Supporto GPU CUDA open source",
+    "ShowOnlyChanged": "Visualizza solo modifiche"
   },
   "notification": {
     "SuccessfullyUpdated": "Aggiornato con successo",
@@ -1409,7 +1447,11 @@
     "YouAreAboutToTerminate": "State per terminare",
     "Owner": "Proprietario",
     "ServiceDelegatedFrom": "Il servizio modello è creato da {{ createdUser }}, ma la proprietà della sessione sarà delegata a {{ sessionOwner }}.",
-    "FailedToTerminateService": "La richiesta di terminare il servizio è fallita."
+    "FailedToTerminateService": "La richiesta di terminare il servizio è fallita.",
+    "FailedToUpdateService": "Impossibile aggiornare il servizio.",
+    "ServiceCreated": "Il servizio modello {{ name }} è stato creato correttamente.",
+    "ServiceUpdated": "Il servizio modello {{ name }} è stato aggiornato correttamente.",
+    "ServiceTerminated": "Il servizio modello {{ name }} è stato terminato correttamente."
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",
@@ -1449,7 +1491,8 @@
     "ForUser": "Per l'utente",
     "ForProject": "Per il progetto",
     "QuotaDoesNotSupported": "Questo backend di archiviazione non supporta le quote.",
-    "BeCarefulToSetUserResourcePolicy": "La modifica di un criterio di risorse può influire su tutti gli utenti che utilizzano quel criterio di risorse utente, quindi va usata con cautela."
+    "BeCarefulToSetUserResourcePolicy": "La modifica di un criterio di risorse può influire su tutti gli utenti che utilizzano quel criterio di risorse utente, quindi va usata con cautela.",
+    "StorageSetting": "Impostazione di archiviazione"
   },
   "totp": {
     "TotpSetupCompleted": "Abilitato 2FA",
@@ -1460,7 +1503,9 @@
     "TurnOffTotp": "Disattivare l'autenticazione a due fattori",
     "ConfirmTotpRemovalBody": "Siete sicuri di non voler utilizzare l'autenticazione a due fattori?",
     "RemoveTotpSetupCompleted": "2FA disabilitato",
-    "OTP": "Password unica"
+    "OTP": "Password unica",
+    "EnterConfirmationCode": "Ora inserisci l'OTP generato dall'autenticatore per verificare.",
+    "RequireOTP": "Scrivi OTP."
   },
   "OpenVSCodeRemote": "Aprire il codice locale di Visual Studio",
   "inputLimit": {
@@ -1498,5 +1543,8 @@
     "SettingTable": "Impostazione della tabella",
     "SelectColumnToDisplay": "Seleziona le colonne da visualizzare",
     "SearchTableColumn": "Cerca colonne della tabella"
+  },
+  "setting": {
+    "SearchPlaceholder": "Inserisci il termine di ricerca"
   }
 }

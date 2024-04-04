@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -168,7 +168,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         }
         span.resource-limit-title {
           font-size: 14px;
-          font-family: var(--general-font-family);
+          font-family: var(--token-fontFamily);
           text-align: left;
           width: 70px;
         }
@@ -193,6 +193,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           display: grid;
           grid-template-columns: 4fr 4fr 4fr 1fr;
           margin-bottom: 10px;
+          gap: 10px;
         }
         mwc-button.operation {
           margin: auto 10px;
@@ -203,38 +204,33 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           margin: 10px auto;
           background-image: none;
           --mdc-button-outline-width: 2px;
-          --mdc-button-disabled-outline-color: var(--general-sidebar-color);
-          --mdc-button-disabled-ink-color: var(--general-sidebar-color);
-          --mdc-theme-primary: #38bd73;
-          --mdc-theme-on-primary: #38bd73;
-        }
-        mwc-button,
-        mwc-button[unelevated] {
-          background-image: none;
-          --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-theme-on-primary: var(--general-button-color);
         }
         mwc-button[disabled] {
           background-image: var(--general-sidebar-color);
         }
         mwc-button[disabled].range-value {
-          --mdc-button-disabled-ink-color: var(--general-sidebar-color);
+          --mdc-button-disabled-ink-color: var(
+            --token-colorTextDisabled,
+            --general-sidebar-color
+          );
         }
         mwc-select {
-          --mdc-theme-primary: var(--general-sidebar-color);
           --mdc-menu-item-height: auto;
         }
         mwc-textfield {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-font-family: var(--token-fontFamily);
         }
         mwc-slider {
           width: 150px;
           margin: auto 10px;
           --mdc-theme-primary: var(--general-slider-color);
-          --mdc-theme-text-primary-on-dark: #ffffff;
+          --mdc-theme-text-primary-on-dark: var(
+            --token-colorSecondary,
+            #ffffff
+          );
         }
       `,
     ];
@@ -392,16 +388,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           return a[sorterPath] < b[sorterPath]
             ? -1
             : a[sorterPath] > b[sorterPath]
-            ? 1
-            : 0;
+              ? 1
+              : 0;
         });
       } else {
         this._grid.items.sort((a, b) => {
           return a[sorterPath] > b[sorterPath]
             ? -1
             : a[sorterPath] < b[sorterPath]
-            ? 1
-            : 0;
+              ? 1
+              : 0;
         });
       }
     }
@@ -699,8 +695,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ? 1
         : 2
       : this._cuda_fgpu_disabled
-      ? 2
-      : 3;
+        ? 2
+        : 3;
     if (cpu !== resource_limits[0].min) input['cpu'] = { min: cpu };
     const memory = this._symbolicUnit(mem);
     if (memory !== resource_limits[mem_idx].min) input['mem'] = { min: memory };
@@ -965,9 +961,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         );
     } else {
       this.modifyImageCudaGpu.label = _t('environment.Disabled') as string;
-      (
-        this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as Slider
-      ).value = 0;
+      (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as Slider).value =
+        0;
     }
     if (!this._cuda_fgpu_disabled) {
       this.modifyImageCudaFGpu.label = resources['cuda_shares'].min;
@@ -979,9 +974,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         );
     } else {
       this.modifyImageCudaFGpu.label = _t('environment.Disabled') as string;
-      (
-        this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as Slider
-      ).value = 0;
+      (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as Slider).value =
+        0;
     }
     if (!this._rocm_gpu_disabled) {
       this.modifyImageRocmGpu.label = resources['rocm_device'].min;
@@ -993,9 +987,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         );
     } else {
       this.modifyImageRocmGpu.label = _t('environment.Disabled') as string;
-      (
-        this.shadowRoot?.querySelector('mwc-slider#rocm-gpu') as Slider
-      ).value = 0;
+      (this.shadowRoot?.querySelector('mwc-slider#rocm-gpu') as Slider).value =
+        0;
     }
     if (!this._tpu_disabled) {
       this.modifyImageTpu.label = resources['tpu_device'].min;
@@ -1269,7 +1262,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 <div class="layout horizontal configuration">
                   <img
                     class="indicator-icon fg green"
-                    src="/resources/icons/ROCm.png"
+                    src="/resources/icons/rocm.svg"
                   />
                   <span>${rowData.item.rocm_device_limit_min}</span>
                   ~
@@ -1533,7 +1526,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       </h4>
       <div class="list-wrapper">
         <vaadin-grid
-          theme="row-stripes column-borders compact"
+          theme="row-stripes column-borders compact dark"
           aria-label="Environments"
           id="testgrid"
           .items="${this.images}"

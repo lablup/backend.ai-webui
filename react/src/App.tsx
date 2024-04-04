@@ -1,12 +1,15 @@
 import AnnouncementAlert from './components/AnnouncementAlert';
 import BAIErrorBoundary from './components/BAIErrorBoundary';
 import {
-  DefaultProviders2,
+  DefaultProvidersForReactRoot,
   RoutingEventHandler,
 } from './components/DefaultProviders';
+import Flex from './components/Flex';
 import MainLayout from './components/MainLayout/MainLayout';
+import { useSuspendedBackendaiClient, useWebUINavigate } from './hooks';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
+import { theme } from 'antd';
 import React from 'react';
 import { FC } from 'react';
 import {
@@ -26,6 +29,13 @@ const StorageHostSettingPage = React.lazy(
 );
 const RoutingListPage = React.lazy(() => import('./pages/RoutingListPage'));
 const UserSettingsPage = React.lazy(() => import('./pages/UserSettingsPage'));
+const SessionListPage = React.lazy(() => import('./pages/SessionListPage'));
+const SessionLauncherPage = React.lazy(
+  () => import('./pages/SessionLauncherPage'),
+);
+const NeoSessionLauncherSwitchAlert = React.lazy(
+  () => import('./components/NeoSessionLauncherSwitchAlert'),
+);
 
 const router = createBrowserRouter([
   {
@@ -62,20 +72,32 @@ const router = createBrowserRouter([
       },
       {
         path: '/summary',
-        Component: () => (
-          <AnnouncementAlert
-            showIcon
-            icon={undefined}
-            banner={false}
-            style={{ marginBottom: 16 }}
-            closable
-          />
-        ),
+        Component: () => {
+          const { token } = theme.useToken();
+          return (
+            <AnnouncementAlert
+              showIcon
+              icon={undefined}
+              banner={false}
+              style={{ marginBottom: token.paddingContentVerticalLG }}
+              closable
+            />
+          );
+        },
         handle: { labelKey: 'webui.menu.Summary' },
       },
       {
         path: '/job',
         handle: { labelKey: 'webui.menu.Sessions' },
+        Component: () => {
+          const { token } = theme.useToken();
+          useSuspendedBackendaiClient(); // make sure the client is ready
+          return (
+            <NeoSessionLauncherSwitchAlert
+              style={{ marginBottom: token.paddingContentVerticalLG }}
+            />
+          );
+        },
       },
       {
         path: '/serving',
@@ -163,10 +185,32 @@ const router = createBrowserRouter([
       {
         path: '/session',
         handle: { labelKey: 'webui.menu.Sessions' },
+        Component: SessionListPage,
       },
       {
         path: '/session/start',
         handle: { labelKey: 'session.launcher.StartNewSession' },
+        Component: () => {
+          const webuiNavigate = useWebUINavigate();
+          const { token } = theme.useToken();
+          return (
+            <Flex
+              direction="column"
+              gap={token.paddingContentVerticalLG}
+              align="stretch"
+              style={{ paddingBottom: token.paddingContentVerticalLG }}
+            >
+              <NeoSessionLauncherSwitchAlert
+                onChange={(value) => {
+                  if (value === 'current') {
+                    webuiNavigate('/job');
+                  }
+                }}
+              />
+              <SessionLauncherPage />
+            </Flex>
+          );
+        },
       },
       // Leave empty tag for plugin pages.
       {
@@ -180,9 +224,9 @@ const router = createBrowserRouter([
 const App: FC = () => {
   return (
     <RecoilRoot>
-      <DefaultProviders2>
+      <DefaultProvidersForReactRoot>
         <RouterProvider router={router} />
-      </DefaultProviders2>
+      </DefaultProvidersForReactRoot>
     </RecoilRoot>
   );
 };

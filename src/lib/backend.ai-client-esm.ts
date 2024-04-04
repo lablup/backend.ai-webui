@@ -347,7 +347,7 @@ class Client {
       }
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
-      if (!rawFile && contentType === null) {
+      if (!rawFile && (contentType === null || resp.status === 204 )) {
         body = await resp.blob();
       } else if (
         !rawFile &&
@@ -671,6 +671,13 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('23.09.8')) {
       this._features['model-serving-endpoint-user-info'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.9')) {
+      this._features['modify-endpoint'] = true;
+    }
+    // TODO: remove this after 24.03.0 release
+    if (this.isManagerVersionCompatibleWith('24.03.0.*')) {
+      this._features['vfolder-trash-bin'] = true;
     }
     if (this.isManagerVersionCompatibleWith('24.03.0')) {
       this._features['max-vfolder-count-in-user-resource-policy'] = true;
@@ -2194,6 +2201,23 @@ class VFolder {
   }
 
   /**
+   * Delete a Virtual folder by id.
+   *
+   * @param {string} id - Virtual folder id.
+   */
+  async delete_by_id(id): Promise<any> {
+    let body = {
+      vfolder_id: id,
+    };
+    let rqst = this.client.newSignedRequest(
+      'DELETE',
+      `${this.urlPrefix}`,
+      body,
+    );
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
    * Leave an invited Virtual folder.
    *
    * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
@@ -2656,6 +2680,37 @@ class VFolder {
     const rqst = this.client.newSignedRequest(
       'POST',
       `${this.urlPrefix}/_/quota`,
+      body,
+    );
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Restore vfolder from trash bin, by changing status.
+   * 
+   * @param {string} vfolder_id - id of the vfolder.
+   */
+  async restore_from_trash_bin(vfolder_id): Promise<any> {
+    const body = {vfolder_id};
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/restore-from-trash-bin`,
+      body,
+    );
+    return this.client._wrapWithPromise(rqst);
+  }
+
+
+  /**
+   * Delete `delete-pending` vfolders in storage proxy
+   *
+   * @param {string} vfolder_id - id of the vfolder.
+   */
+  async delete_from_trash_bin(vfolder_id): Promise<any> {
+    const body = {vfolder_id};
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/delete-from-trash-bin`,
       body,
     );
     return this.client._wrapWithPromise(rqst);

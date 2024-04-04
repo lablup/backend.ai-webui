@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -122,15 +122,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-font-family);
-        }
-
-        mwc-icon-button {
-          color: var(--general-button-background-color);
+          --mdc-typography-font-family: var(--token-fontFamily);
         }
 
         mwc-icon-button.sftp-session-connection-copy {
           --mdc-icon-size: 20px;
+          background-color: transparent;
         }
 
         #ssh-dialog {
@@ -185,6 +182,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           margin: 0 10px;
         }
 
+        macro-carousel macro-carousel-nav-button {
+          --macro-carousel-navigation-color: var(--token-colorText);
+          --macro-carousel-navigation-color-background-focus: var(
+            --token-colorBgTextHover
+          );
+        }
+
         #collapsible-btn {
           background: none;
           border: none;
@@ -192,7 +196,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           cursor: pointer;
           font-size: 0.9rem;
           font-family: Ubuntu;
-          color: #0000ee;
+          color: var(--token-colorLink, #0000ee);
           font-weight: 500;
         }
 
@@ -250,6 +254,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           background-color: var(--paper-grey-200);
           border-radius: 10px;
           margin: 0px 10px;
+          color: var(--paper-grey-800);
         }
 
         span.invert {
@@ -270,7 +275,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         .ssh-connection-example {
           display: flex;
-          background-color: rgba(230, 230, 230, 1);
+          background-color: var(--token-colorBorder, rgba(230, 230, 230, 1));
           padding: 10px;
           border-radius: 5px;
           margin-bottom: 5px;
@@ -426,8 +431,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   async _getWSProxyVersion(sessionUuid) {
     if (globalThis.backendaiwebui.debug === true) {
-      if (this.forceUseV1Proxy.checked) return 'v1';
-      else if (this.forceUseV2Proxy.checked) return 'v2';
+      if (this.forceUseV1Proxy?.checked) return 'v1';
+      else if (this.forceUseV2Proxy?.checked) return 'v2';
     }
 
     const kInfo = await globalThis.backendaiclient.computeSession.get(
@@ -644,7 +649,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       param['secret_key'] = globalThis.backendaiclient._config.secretKey;
     }
     param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
-    if (globalThis.isElectron && globalThis.__local_proxy.url === undefined) {
+    if (globalThis.isElectron && window.__local_proxy.url === undefined) {
       this.indicator.end();
       this.notification.text = _text('session.launcher.ProxyNotReady');
       this.notification.show();

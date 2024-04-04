@@ -29,10 +29,11 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   ...otherProps
 }) => {
   const [value, setValue] = useControllableValue(otherProps);
+  const inputRef = React.useRef<HTMLInputElement>(null);
   useEffect(() => {
     // when step is 1, make sure the value is integer
     if (step === 1 && value % 1 !== 0) {
-      setValue(Math.round(value));
+      setValue(_.max([Math.round(value), min]));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
@@ -44,12 +45,30 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
         direction="column"
       >
         <InputNumber
+          ref={inputRef}
           max={max}
           min={min}
           step={step}
           disabled={disabled}
           value={value}
           onChange={setValue}
+          onBlur={() => {
+            if (_.isNumber(step) && step > 0) {
+              const decimalCount = step.toString().split('.')[1]?.length || 0;
+              setValue(
+                _.max([
+                  _.toNumber(
+                    (
+                      Math.round(
+                        _.toNumber(inputRef.current?.value || '0') / step,
+                      ) * step
+                    ).toFixed(decimalCount),
+                  ),
+                  min,
+                ]),
+              );
+            }
+          }}
           {...inputNumberProps}
         />
       </Flex>

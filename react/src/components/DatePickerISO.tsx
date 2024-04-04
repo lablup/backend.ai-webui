@@ -1,11 +1,12 @@
 import { useControllableValue } from 'ahooks';
 import { DatePicker } from 'antd';
-import { PickerDateProps } from 'antd/es/date-picker/generatePicker';
+import { PickerProps } from 'antd/es/date-picker/generatePicker';
 import dayjs, { Dayjs } from 'dayjs';
+import _ from 'lodash';
 import React from 'react';
 
-interface DatePickerISOProps
-  extends Omit<PickerDateProps<Dayjs>, 'value' | 'onChange'> {
+export interface DatePickerISOProps
+  extends Omit<PickerProps<Dayjs>, 'value' | 'onChange'> {
   value?: string | undefined | null;
   onChange?: (value: string | undefined) => void;
   localFormat?: boolean;
@@ -25,6 +26,9 @@ const DatePickerISO: React.FC<DatePickerISOProps> = ({
     <DatePicker
       value={value ? dayjs(value) : undefined}
       onChange={(value) => {
+        if (_.isArray(value)) {
+          value = value[0];
+        }
         const newValue = localFormat
           ? value?.format()
           : value?.tz()?.toISOString();

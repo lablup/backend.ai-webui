@@ -256,7 +256,10 @@
       "EnvironmentVariableDuplicateName": "Энэ хувьсагчийн нэр аль хэдийн байна.",
       "Template": "Сеанс загвар",
       "EnableAutomaticShmem": "Автомат хуваалцсан санах ой",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Кластерын хэмжээ 2-оос багагүй тохиолдолд зөвхөн бүхэл тоог зөвшөөрнө.",
+      "StartAfter": "Дараа нь эхлэх:",
+      "StartTimeDoesNotApply": "Хэрэв эхлэх цагийг тохируулаагүй бол энэ нь хамаарахгүй."
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -324,7 +327,10 @@
       "SessionNameAlreadyExist": "Сешн нэр аль хэдийн байна",
       "SluggedStrings": "Залгисан мөрүүд (>3 тэмдэгт)",
       "SessionNameTooLong64": "64 ба түүнээс бага тэмдэгт оруулна уу.",
-      "PleaseFollowSessionNameRule": "Дор хаяж 4 үсэг, тоо, '.', '_', '-' гэсэн хослолыг оруулна уу."
+      "PleaseFollowSessionNameRule": "Дор хаяж 4 үсэг, тоо, '.', '_', '-' гэсэн хослолыг оруулна уу.",
+      "SessionNameShouldStartWith": "Энэ нь цагаан толгойн үсэг, тоо эсвэл \"_\" -ээр эхлэх ёстой.",
+      "SessionNameShouldEndWith": "Энэ нь цагаан толгойн үсэг, тоо эсвэл '_'-ээр төгссөн байх ёстой.",
+      "SessionNameInvalidCharacter": "Нэрийн дунд хэсэгт зөвхөн цагаан толгойн үсэг, тоо, '_' байж болно."
     },
     "AlreadyTerminatingSession": "Сессийг аль хэдийн дуусгаж байна.",
     "NoSessionToDisplay": "Харуулах сесс алга",
@@ -374,7 +380,8 @@
     "CPU": "CPU",
     "MEM": "Санах ой",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (санах ой)"
+    "GPU(MEM)": "GPU (санах ой)",
+    "Agents": "Агентууд"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -407,7 +414,8 @@
     "Unset": "Тохируулаагүй",
     "OK": "БОЛЖ БАЙНА УУ",
     "Download": "Татаж авах",
-    "Clone": "Клон"
+    "Clone": "Клон",
+    "Config": "Тохиргоо"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -533,7 +541,8 @@
     "SignoutSeccessfullyFinished": "Гарах ажиллагаа амжилттай дууслаа",
     "ModifyUserDetail": "Хэрэглэгчийн мэдээллийг өөрчлөх",
     "EnableSudoSession": "Sudo сессийг идэвхжүүлэх",
-    "MainAccessKey": "Үндсэн хандалтын түлхүүр"
+    "MainAccessKey": "Үндсэн хандалтын түлхүүр",
+    "InactivateTheFollowingUsers": "Дараах хэрэглэгчдийг идэвхгүй болго."
   },
   "data": {
     "Folders": "Фолдерууд",
@@ -586,7 +595,7 @@
       "FolderRenamed": "Фолдерын нэрийг өөрчилсөн",
       "FolderNameMismatched": "Фолдерын нэр тохирохгүй байна. Оролтын талбарт зайны тэмдэгт байгаа эсэхийг шалгана уу.",
       "SameFileName": "Оруулах утга нь шинэчлэх файлын нэртэй ижил байна. Үүнийг өөр нэрээр солино уу.",
-      "FolderDeleted": "Фолдерыг устгасан",
+      "FolderDeleted": "{{ folderName }} хавтас устгагдсан.",
       "FolderUpdated": "Фолдерын сонголтууд шинэчлэгдсэн",
       "FolderDisconnected": "Фолдерыг салгасан.",
       "FileRenamed": "Файлын нэрийг өөрчилсөн",
@@ -613,7 +622,12 @@
       "CloneFolder": "Фолдерыг хувилах",
       "LeaveFolder": "Фолдерыг орхи",
       "ShareFolder": "Фолдер хуваалцах",
-      "ModifyPermissions": "Зөвшөөрлийг өөрчлөх"
+      "ModifyPermissions": "Зөвшөөрлийг өөрчлөх",
+      "Restore": "Сэргээх",
+      "DeleteForever": "Бүрмөсөн устгах",
+      "FolderRestored": "{{ folderName }} хавтас сэргээгдсэн.",
+      "FolderDeletedForever": "{{ folderName }} хавтас бүрмөсөн устгагдсан.",
+      "MovedToTrashBin": "{{ folderName }} фолдерыг хогийн сав руу зөөв."
     },
     "explorer": {
       "Delete": "Устгах ...",
@@ -703,21 +717,24 @@
     "ModelStore": "Загварын дэлгүүр",
     "New": "Шинэ",
     "Add": "Нэмэх",
-    "CloningIsOnlyPossibleSameHost": "Одоогоор зөвхөн нэг хост дээр клон хийх боломжтой."
+    "CloningIsOnlyPossibleSameHost": "Одоогоор зөвхөн нэг хост дээр клон хийх боломжтой.",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
       "CannotBeUndone": "АНХААРУУЛГА: үүнийг буцаах боломжгүй!",
       "LogDeletion": "Бүртгэлийн бүх мессежийг устгахдаа итгэлтэй байна уу?",
       "WillBeAppliedToNewSessions": "Энэхүү шинэчлэлтийг шинэ Sessionүүдэд ашиглах болно.",
-      "Required": "Шаардлагатай"
+      "Required": "Шаардлагатай",
+      "DeleteForeverDesc": "АНХААРУУЛГА: сонгосон зүйлс үүрд устах бөгөөд та тэдгээрийг сэргээх боломжгүй болно."
     },
     "ask": {
       "DoYouWantToProceed": "Та үргэлжлүүлэхийг хүсч байна уу?"
     },
     "title": {
       "LetsDouble-Check": "Давхар шалгуулъя",
-      "Notice": "Анхаар"
+      "Notice": "Анхаар",
+      "DeleteForever": "Бүрмөсөн устгах уу?"
     },
     "ErrorOccurred": "Алдаа гарлаа",
     "error": {
@@ -850,7 +867,12 @@
     "SSHKeypairEnterManually": "SSH товчлуурын хослол",
     "SSHKeypairEnterManuallyFinished": "SSH Keypair амжилттай бүртгэгдлээ.",
     "MyKeypairInfo": "Миний товчлуурын мэдээлэл",
-    "DescMyKeypairInfo": "Миний товчлуурын мэдээллийг харна уу"
+    "DescMyKeypairInfo": "Миний товчлуурын мэдээллийг харна уу",
+    "DarkMode": "Харанхуй горим",
+    "LightMode": "Гэрэл горим",
+    "UseSystemSetting": "Системийн тохиргоог ашиглана уу",
+    "DescThemeMode": "Backend.AI WebUI төхөөрөмж дээрээ хэрхэн харагдахыг тохируулна уу.",
+    "ThemeMode": "Загварын горим"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Дэвшилтэт вэб терминалын хэрэглээ: Терминалын агуулгыг хуулах",
@@ -936,7 +958,8 @@
     "RegistrySuccessfullyModified": "Бүртгэл амжилттай өөрчлөгдсөн.",
     "ModifyRegistry": "Бүртгэлийг өөрчлөх",
     "NoRegistryToDisplay": "Харуулах бүртгэл байхгүй",
-    "ConfirmNoUserName": "Хэрэглэгч болон нууц үгийг заагаагүй тул хадгалах уу?"
+    "ConfirmNoUserName": "Хэрэглэгч болон нууц үгийг заагаагүй тул хадгалах уу?",
+    "DescURLFormat": "Хүчингүй URL төрөл"
   },
   "resourceGroup": {
     "ResourceGroups": "Нөөцийн бүлгүүд",
@@ -1127,7 +1150,8 @@
     "DescWarboysupport": "Furiosa Warboy дэмжлэгийг ашигла",
     "RequireWarboyPlugin": "Backend.AI Warboy Plugin шаардлагатай.",
     "Plugins": "Plugins",
-    "OpenSourceCUDAGPUsupport": "Нээлттэй эхийн CUDA GPU дэмжлэг"
+    "OpenSourceCUDAGPUsupport": "Нээлттэй эхийн CUDA GPU дэмжлэг",
+    "ShowOnlyChanged": "Зөвхөн өөрчлөлтүүдийг харуулах"
   },
   "notification": {
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
@@ -1371,7 +1395,9 @@
     "ConfirmTotpRemovalBody": "Та хоёр хүчин зүйлийн баталгаажуулалтыг ашиглахаас татгалзахдаа итгэлтэй байна уу?",
     "TotpSetupNotAvailable": "Хоёр хүчин зүйлийн баталгаажуулалтыг тохируулах боломжгүй.",
     "TurnOffTotp": "Хоёр хүчин зүйлийн баталгаажуулалтыг унтраа",
-    "RemoveTotpSetupCompleted": "2FA-г идэвхгүй болгосон"
+    "RemoveTotpSetupCompleted": "2FA-г идэвхгүй болгосон",
+    "EnterConfirmationCode": "Одоо баталгаажуулахын тулд баталгаажуулагчийн үүсгэсэн OTP-г оруулна уу.",
+    "RequireOTP": "OTP бичнэ үү."
   },
   "inputLimit": {
     "4to64chars": "(4~64 тэмдэгт)"
@@ -1408,7 +1434,8 @@
     "ForUser": "Хэрэглэгчийн хувьд",
     "ForProject": "Төслийн хувьд",
     "QuotaDoesNotSupported": "Энэ хадгалах сан нь квотыг дэмждэггүй.",
-    "BeCarefulToSetUserResourcePolicy": "Нөөцийн бодлогыг өөрчлөх нь тухайн хэрэглэгчийн нөөцийн бодлогыг ашигладаг бүх хэрэглэгчдэд нөлөөлж болзошгүй тул үүнийг болгоомжтой ашиглаарай."
+    "BeCarefulToSetUserResourcePolicy": "Нөөцийн бодлогыг өөрчлөх нь тухайн хэрэглэгчийн нөөцийн бодлогыг ашигладаг бүх хэрэглэгчдэд нөлөөлж болзошгүй тул үүнийг болгоомжтой ашиглаарай.",
+    "StorageSetting": "Хадгалах тохиргоо"
   },
   "modelService": {
     "EditModelService": "Загварын үйлчилгээг засах",
@@ -1458,7 +1485,11 @@
     "Image": "Зураг",
     "Owner": "Эзэмшигч",
     "ServiceDelegatedFrom": "Загвар үйлчилгээг {{ createdUser }} үүсгэсэн боловч сессийн эрхийг {{ sessionOwner }}-д шилжүүлнэ.",
-    "FailedToTerminateService": "Үйлчилгээг цуцлах хүсэлт амжилтгүй боллоо."
+    "FailedToTerminateService": "Үйлчилгээг цуцлах хүсэлт амжилтгүй боллоо.",
+    "FailedToUpdateService": "Үйлчилгээг шинэчилж чадсангүй.",
+    "ServiceCreated": "Загвар үйлчилгээ {{ name }} амжилттай үүсгэгдсэн.",
+    "ServiceUpdated": "Загвар үйлчилгээ {{ name }} амжилттай шинэчлэгдсэн.",
+    "ServiceTerminated": "Загварын үйлчилгээ {{ name }} амжилттай хаагдсан."
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",
@@ -1498,5 +1529,8 @@
     "SettingTable": "Хүснэгтийн тохиргоо",
     "SelectColumnToDisplay": "Харуулах багануудыг сонгоно уу",
     "SearchTableColumn": "Хүснэгтийн багануудыг хайх"
+  },
+  "setting": {
+    "SearchPlaceholder": "Хайлтын нэр томъёог оруулна уу"
   }
 }

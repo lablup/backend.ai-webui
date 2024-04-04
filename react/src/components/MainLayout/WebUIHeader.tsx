@@ -1,10 +1,15 @@
-import { useCurrentDomainValue, useCurrentProjectValue } from '../../hooks';
+import {
+  useCurrentDomainValue,
+  useCurrentProjectValue,
+  useSetCurrentProject,
+} from '../../hooks';
 import { useScrollBreakPoint } from '../../hooks/useScrollBreackPoint';
 import BAINotificationButton from '../BAINotificationButton';
 import Flex, { FlexProps } from '../Flex';
 import ProjectSelect from '../ProjectSelect';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
+import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 // @ts-ignore
 import rawCss from './WebUIHeader.css?raw';
 import { MenuOutlined } from '@ant-design/icons';
@@ -28,6 +33,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
   const { t } = useTranslation();
   const currentDomainName = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
+  const setCurrentProject = useSetCurrentProject();
   const matches = useMatches();
   const { y: scrolled } = useScrollBreakPoint(
     {
@@ -48,8 +54,8 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
         height: HEADER_HEIGHT,
         paddingRight: token.marginMD,
         paddingLeft: token.marginMD,
-        backgroundColor: scrolled ? token.colorBgContainer : 'transparent',
-        boxShadow: scrolled ? '0 5px 6px -6px rgba(0, 0, 0, 0.1)' : 'none',
+        backgroundColor: scrolled ? token.colorBgElevated : 'transparent',
+        boxShadow: scrolled ? `0 5px 6px -6px ${token.colorBorder}` : 'none',
         transition: 'background-color 0.2s ease-in-out',
       }}
       className={'webui-header-container'}
@@ -86,18 +92,13 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
             size={gridBreakpoint.lg ? 'large' : 'middle'}
             value={currentProject?.id}
             onSelectProject={(projectInfo) => {
-              const event: CustomEvent = new CustomEvent(
-                'backend-ai-group-changed',
-                {
-                  detail: projectInfo.projectName,
-                },
-              );
-              document.dispatchEvent(event);
+              setCurrentProject(projectInfo);
             }}
           />
         </Suspense>
         <Flex direction="row" className="non-draggable">
           <BAINotificationButton />
+          <WebUIThemeToggleButton />
           <WEBUIHelpButton />
           <UserDropdownMenu />
         </Flex>

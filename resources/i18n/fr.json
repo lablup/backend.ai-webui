@@ -255,8 +255,21 @@
       "EnvironmentVariableNamePatternError": "Le nom de la variable doit commencer par une lettre ou un trait de soulignement et ne peut contenir que des lettres, des chiffres et des traits de soulignement.",
       "EnvironmentVariableDuplicateName": "Un nom de variable qui existe déjà.",
       "Template": "Modèle de session",
-      "EnableAutomaticShmem": "Mémoire partagée automatique",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "EnableAutomaticMiniumShmem": "Définir la mémoire partagée minimale",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Seul un nombre entier est autorisé lorsque la taille du cluster n'est pas inférieure à 2.",
+      "StartAfter": "Commencez après :",
+      "StartTimeDoesNotApply": "Si l'heure de début n'est pas définie, elle ne s'applique pas.",
+      "MiniumAllocation": "Exigences minimales",
+      "MiniumAllocationTooltip": "Choisir comme exigence minimale pour l'environnement d'exécution sélectionné",
+      "PreviousLauncher": "Précédent",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Vous utilisez le lanceur de session \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Sauter à l'examen",
+      "InteractiveModeDesc": "vous permet de créer, de tester et d'exécuter du code de manière interactive via jupyter notebook, visual studio code, etc.",
+      "BatchModeDesc": "Vous pouvez exécuter votre code avec plusieurs nœuds et clusters pour faire évoluer votre idée.",
+      "AddEnvironmentVariable": "Ajouter des variables d'environnement",
+      "EnvironmentVariableValueRequired": "Veuillez saisir une valeur."
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -324,7 +337,11 @@
       "SessionNameAlreadyExist": "Le nom de la session existe déjà",
       "SluggedStrings": "Chaînes de caractères tronquées (>3 chars)",
       "SessionNameTooLong64": "Veuillez saisir 64 caractères ou moins.",
-      "PleaseFollowSessionNameRule": "Veuillez saisir une combinaison d'au moins 4 lettres, chiffres, '.', '_' et '-'."
+      "PleaseFollowSessionNameRule": "Veuillez saisir une combinaison d'au moins 4 lettres, chiffres, '.', '_' et '-'.",
+      "SessionNameTooShort": "Veuillez saisir au moins 4 caractères.",
+      "SessionNameShouldStartWith": "Il doit commencer par une lettre de l'alphabet, un chiffre ou \"_\".",
+      "SessionNameShouldEndWith": "Il doit se terminer par une lettre de l'alphabet, un chiffre ou \"_\".",
+      "SessionNameInvalidCharacter": "Le milieu d'un nom ne peut contenir que des lettres de l'alphabet, des chiffres et des \"_\"."
     },
     "AlreadyTerminatingSession": "La session est déjà terminée.",
     "NoSessionToDisplay": "Aucune session à afficher",
@@ -374,7 +391,8 @@
     "CPU": "UNITÉ CENTRALE",
     "MEM": "Mémoire",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (mémoire)"
+    "GPU(MEM)": "GPU (mémoire)",
+    "Agents": "Agents"
   },
   "button": {
     "Cancel": "Annuler",
@@ -407,7 +425,10 @@
     "Unset": "Non défini",
     "OK": "OK",
     "Download": "Télécharger",
-    "Clone": "Clone"
+    "Clone": "Clone",
+    "Config": "Config",
+    "Next": "Suivant",
+    "Previous": "Précédent"
   },
   "agent": {
     "Endpoint": "Point de terminaison",
@@ -533,7 +554,8 @@
     "SignoutSeccessfullyFinished": "La signature est terminée en toute sécurité",
     "ModifyUserDetail": "Modifier les détails de l'utilisateur",
     "EnableSudoSession": "Activer la session sudo",
-    "MainAccessKey": "Clé d'accès principale"
+    "MainAccessKey": "Clé d'accès principale",
+    "InactivateTheFollowingUsers": "Désactivez les utilisateurs suivants."
   },
   "data": {
     "Folders": "Dossiers",
@@ -586,7 +608,7 @@
       "FolderRenamed": "Dossier renommé",
       "FolderNameMismatched": "Le nom du dossier ne correspond pas. Veuillez vérifier s'il y a un espace dans le champ de saisie ou non.",
       "SameFileName": "La valeur d'entrée est la même que le nom de fichier à mettre à jour. Veuillez le changer pour un nom différent.",
-      "FolderDeleted": "Dossier supprimé",
+      "FolderDeleted": "Le dossier {{ folderName }} a été supprimé.",
       "FolderUpdated": "Option(s) de dossier mise à jour",
       "FolderDisconnected": "Le dossier a été déconnecté.",
       "FileRenamed": "Fichier renommé",
@@ -613,7 +635,13 @@
       "CloneFolder": "Cloner un dossier",
       "LeaveFolder": "Dossier de sortie",
       "ShareFolder": "Dossier de partage",
-      "ModifyPermissions": "Modifier les autorisations"
+      "ModifyPermissions": "Modifier les autorisations",
+      "Restore": "Restaurer",
+      "DeleteForever": "Supprimer pour toujours",
+      "FolderRestored": "Le dossier {{ folderName }} a été restauré.",
+      "FolderDeletedForever": "Le dossier {{ folderName }} a été supprimé définitivement.",
+      "MoveToTrashBin": "Déplacer vers la poubelle",
+      "MovedToTrashBin": "Le dossier {{ folderName }} a été déplacé vers la corbeille."
     },
     "explorer": {
       "Delete": "Effacer...",
@@ -703,21 +731,24 @@
     "ModelStore": "Magasin de modèles",
     "New": "Nouveau",
     "Add": "Ajouter",
-    "CloningIsOnlyPossibleSameHost": "Actuellement, le clonage n'est possible que sur le même hôte."
+    "CloningIsOnlyPossibleSameHost": "Actuellement, le clonage n'est possible que sur le même hôte.",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
       "CannotBeUndone": "ATTENTION : cela ne peut pas être annulé !",
       "LogDeletion": "Voulez-vous vraiment supprimer tous les messages du journal ?",
       "WillBeAppliedToNewSessions": "Cette mise à jour sera appliquée aux nouvelles sessions.",
-      "Required": "Exigée"
+      "Required": "Exigée",
+      "DeleteForeverDesc": "ATTENTION : les éléments sélectionnés seront supprimés définitivement et vous ne pourrez pas les restaurer."
     },
     "ask": {
       "DoYouWantToProceed": "Voulez-vous poursuivre?"
     },
     "title": {
       "LetsDouble-Check": "Vérifions deux fois",
-      "Notice": "Avis"
+      "Notice": "Avis",
+      "DeleteForever": "Supprimer pour toujours?"
     },
     "ErrorOccurred": "Erreur est survenue",
     "error": {
@@ -850,7 +881,12 @@
     "SSHKeypairEnterManually": "Couple de clés SSH",
     "SSHKeypairEnterManuallyFinished": "La paire de clés SSH a été enregistrée avec succès.",
     "MyKeypairInfo": "Informations sur ma paire de clés",
-    "DescMyKeypairInfo": "Voir les informations de ma paire de clés"
+    "DescMyKeypairInfo": "Voir les informations de ma paire de clés",
+    "DarkMode": "Mode sombre",
+    "LightMode": "Mode lumière",
+    "UseSystemSetting": "Utiliser les paramètres du système",
+    "DescThemeMode": "Personnalisez l'apparence de Backend.AI WebUI sur votre appareil.",
+    "ThemeMode": "Mode Thème"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilisation avancée du terminal Web : copier le contenu du terminal",
@@ -936,7 +972,8 @@
     "RegistrySuccessfullyModified": "Registre modifié avec succès.",
     "ModifyRegistry": "Modifier le registre",
     "NoRegistryToDisplay": "Aucun registre à afficher",
-    "ConfirmNoUserName": "L'utilisateur et le mot de passe ne sont pas spécifiés, voulez-vous sauvegarder ?"
+    "ConfirmNoUserName": "L'utilisateur et le mot de passe ne sont pas spécifiés, voulez-vous sauvegarder ?",
+    "DescURLFormat": "Type d'URL invalide"
   },
   "resourceGroup": {
     "ResourceGroups": "Groupes de ressources",
@@ -1127,7 +1164,8 @@
     "DescWarboysupport": "Utiliser le support Furiosa Warboy",
     "RequireWarboyPlugin": "Requiert le plugin Backend.AI Warboy.",
     "Plugins": "Plugins",
-    "OpenSourceCUDAGPUsupport": "Prise en charge des GPU CUDA Open Source"
+    "OpenSourceCUDAGPUsupport": "Prise en charge des GPU CUDA Open Source",
+    "ShowOnlyChanged": "Afficher uniquement les modifications"
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",
@@ -1371,7 +1409,9 @@
     "ConfirmTotpRemovalBody": "Êtes-vous sûr de ne pas utiliser l'authentification à deux facteurs ?",
     "TotpSetupNotAvailable": "L'authentification à deux facteurs ne peut pas être configurée.",
     "TurnOffTotp": "Désactiver l'authentification à deux facteurs",
-    "RemoveTotpSetupCompleted": "2FA désactivé"
+    "RemoveTotpSetupCompleted": "2FA désactivé",
+    "EnterConfirmationCode": "Entrez maintenant l'OTP généré par l'authentificateur pour vérifier.",
+    "RequireOTP": "Écrivez OTP."
   },
   "inputLimit": {
     "4to64chars": "(4~64 caractères)"
@@ -1408,7 +1448,8 @@
     "ForUser": "Pour l'utilisateur",
     "ForProject": "Pour le projet",
     "QuotaDoesNotSupported": "Ce backend de stockage ne prend pas en charge les quotas.",
-    "BeCarefulToSetUserResourcePolicy": "La modification d'une politique de ressources peut affecter tous les utilisateurs qui utilisent cette politique de ressources, il convient donc de l'utiliser avec précaution."
+    "BeCarefulToSetUserResourcePolicy": "La modification d'une politique de ressources peut affecter tous les utilisateurs qui utilisent cette politique de ressources, il convient donc de l'utiliser avec précaution.",
+    "StorageSetting": "Paramètres de stockage"
   },
   "modelService": {
     "EditModelService": "Modifier le modèle de service",
@@ -1458,7 +1499,11 @@
     "Image": "Image",
     "Owner": "Propriétaire",
     "ServiceDelegatedFrom": "Le service modèle est créé par {{ createdUser }} mais la propriété de la session sera déléguée à {{ sessionOwner }}.",
-    "FailedToTerminateService": "La demande d'arrêt du service a échoué."
+    "FailedToTerminateService": "La demande d'arrêt du service a échoué.",
+    "FailedToUpdateService": "Échec de la mise à jour du service.",
+    "ServiceCreated": "Le service modèle {{ name }} a été créé avec succès.",
+    "ServiceUpdated": "Le service modèle {{ name }} a été mis à jour avec succès.",
+    "ServiceTerminated": "Le service modèle {{ name }} a été terminé avec succès."
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",
@@ -1498,5 +1543,8 @@
     "SettingTable": "Paramètre de table",
     "SelectColumnToDisplay": "Sélectionnez les colonnes à afficher",
     "SearchTableColumn": "Rechercher des colonnes dans un tableau"
+  },
+  "setting": {
+    "SearchPlaceholder": "Entrez le terme de recherche"
   }
 }

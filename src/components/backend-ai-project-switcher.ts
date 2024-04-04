@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -46,7 +46,7 @@ export default class BackendAIProjectSwitcher extends LitElement {
       css`
         vaadin-combo-box {
           font-size: 14px;
-          --lumo-font-family: var(--general-font-family) !important;
+          --lumo-font-family: var(--token-fontFamily) !important;
         }
       `,
     ];

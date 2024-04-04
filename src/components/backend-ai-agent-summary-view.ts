@@ -1,6 +1,6 @@
 /**
  @license
-Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
 */
 import './backend-ai-agent-summary-list';
 import { BackendAiStyles } from './backend-ai-general-styles';
@@ -47,21 +47,6 @@ export default class BackendAIAgentSummaryView extends BackendAIPage {
       BackendAiStyles,
       // language=CSS
       css`
-        h3.tab {
-          background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0 0;
-          margin: 0 auto;
-        }
-
-        mwc-tab-bar {
-          --mdc-theme-primary: var(--general-sidebar-selected-color);
-          --mdc-text-transform: none;
-          --mdc-tab-color-default: var(--general-tabbar-background-color);
-          --mdc-tab-text-label-color-default: var(
-            --general-tabbar-tab-disabled-color
-          );
-        }
-
         @media screen and (max-width: 805px) {
           mwc-tab {
             --mdc-typography-button-font-size: 10px;

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -13,8 +13,17 @@ import { UserProfileQuery } from './UserProfileSettingModalQuery';
 import { UserProfileSettingModalQuery } from './__generated__/UserProfileSettingModalQuery.graphql';
 import { ExclamationCircleFilled, LoadingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Modal, ModalProps, Input, Form, message, Switch, Spin } from 'antd';
-import React from 'react';
+import {
+  Modal,
+  ModalProps,
+  Input,
+  Form,
+  message,
+  Switch,
+  Spin,
+  FormInstance,
+} from 'antd';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PreloadedQuery, usePreloadedQuery } from 'react-relay';
 
@@ -43,7 +52,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
-  const [form] = Form.useForm<UserProfileFormValues>();
+  const formRef = useRef<FormInstance<UserProfileFormValues>>(null);
   const [messageApi, contextHolder] = message.useMessage();
   const [modal, modalContextHolder] = Modal.useModal();
   const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
@@ -73,8 +82,8 @@ const UserProfileSettingModal: React.FC<Props> = ({
   });
 
   const onSubmit = () => {
-    form
-      .validateFields()
+    formRef.current
+      ?.validateFields()
       .then((values) => {
         userMutations.updateFullName(values.full_name, {
           onSuccess: (newFullName) => {
@@ -144,9 +153,9 @@ const UserProfileSettingModal: React.FC<Props> = ({
       >
         <Spin spinning={isRefreshModalPending} indicator={<LoadingOutlined />}>
           <Form
+            ref={formRef}
             layout="vertical"
             labelCol={{ span: 8 }}
-            form={form}
             initialValues={{
               full_name: userInfo.full_name,
               totp_activated: user?.totp_activated || false,
@@ -238,7 +247,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
                       toggleTOTPActivateModal();
                     } else {
                       if (user?.totp_activated) {
-                        form.setFieldValue('totp_activated', true);
+                        formRef.current?.setFieldValue('totp_activated', true);
                         modal.confirm({
                           title: t('totp.TurnOffTotp'),
                           icon: <ExclamationCircleFilled />,
@@ -255,7 +264,10 @@ const UserProfileSettingModal: React.FC<Props> = ({
                                 // updateFetchKey();
                                 onRequestRefresh();
 
-                                form.setFieldValue('totp_activated', false);
+                                formRef.current?.setFieldValue(
+                                  'totp_activated',
+                                  false,
+                                );
                               },
                               onError: (error: any) => {
                                 message.error(error.message);
@@ -263,7 +275,10 @@ const UserProfileSettingModal: React.FC<Props> = ({
                             });
                           },
                           onCancel() {
-                            form.setFieldValue('totp_activated', true);
+                            formRef.current?.setFieldValue(
+                              'totp_activated',
+                              true,
+                            );
                           },
                         });
                       }
@@ -283,7 +298,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
                 // updateFetchKey();
                 onRequestRefresh();
               } else {
-                form.setFieldValue('totp_activated', false);
+                formRef.current?.setFieldValue('totp_activated', false);
               }
               toggleTOTPActivateModal();
             }}

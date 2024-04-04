@@ -129,7 +129,10 @@
     "Update": "Päivitys",
     "Yes": "Kyllä",
     "Clone": "Klooni",
-    "Download": "ladata"
+    "Download": "ladata",
+    "Config": "Config",
+    "Next": "Seuraava",
+    "Previous": "Edellinen"
   },
   "credential": {
     "AccessKeyOptional": "Pääsyavain (valinnainen)",
@@ -208,7 +211,8 @@
       "ValidationFailed": "Validointi epäonnistui"
     },
     "EnableSudoSession": "Ota sudo-istunto käyttöön",
-    "MainAccessKey": "Pääkäyttöavain"
+    "MainAccessKey": "Pääkäyttöavain",
+    "InactivateTheFollowingUsers": "Poista seuraavat käyttäjät käytöstä."
   },
   "data": {
     "Allowslettersnumbersand-_": "Sallii kirjaimet, numerot ja -_",
@@ -314,7 +318,7 @@
       "FileRenamed": "Tiedosto nimetty uudelleen",
       "FolderCloned": "Kloonattu kansio",
       "FolderCreated": "Kansio luotu",
-      "FolderDeleted": "Kansio poistettu",
+      "FolderDeleted": "Kansio {{ folderName }} on poistettu.",
       "FolderDisconnected": "Kansio on katkaistu.",
       "FolderInfo": "Info",
       "FolderNameMismatched": "Kansion nimi ei täsmää. Tarkista, onko syöttökentässä välilyönti vai ei.",
@@ -350,7 +354,13 @@
       "TypeFolderNameToDelete": "Kirjoita poistettavan kansion nimi",
       "TypeFolderNameToLeave": "Kirjoita poistuvan kansion nimi",
       "TypeNewFolderName": "Kirjoita uuden kansion nimi",
-      "View": "Näytä"
+      "View": "Näytä",
+      "MoveToTrashBin": "Siirrä roskakoriin",
+      "MovedToTrashBin": "Kansio {{ folderName }} on siirretty roskakoriin.",
+      "DeleteForever": "Poista ikuisesti",
+      "Restore": "Palauttaa",
+      "FolderRestored": "Kansio {{ folderName }} on palautettu.",
+      "FolderDeletedForever": "Kansio {{ folderName }} on poistettu pysyvästi."
     },
     "invitation": {
       "FolderSharingNotAvailableToUser": "Kansioiden jakaminen ei ole käytettävissä pyydetyille käyttäjille:",
@@ -378,28 +388,12 @@
     "ModelStore": "Mallikauppa",
     "Add": "Lisätä",
     "CloningIsOnlyPossibleSameHost": "Tällä hetkellä kloonaus on mahdollista vain samassa isännässä.",
-    "New": "Uusi"
+    "New": "Uusi",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
-    "ErrorOccurred": "Tapahtunut virhe",
-    "ask": {
-      "DoYouWantToProceed": "Haluatteko jatkaa?"
-    },
-    "error": {
-      "Error": "Virhe"
-    },
-    "hide": {
-      "DonotShowThisAgain": "Älä näytä tätä enää."
-    },
-    "title": {
-      "LetsDouble-Check": "Tupla-tarkistetaan",
-      "Notice": "Ilmoitus"
-    },
     "warning": {
-      "CannotBeUndone": "VAROITUS: tätä ei voi perua!",
-      "LogDeletion": "Haluatko varmasti poistaa kaikki lokiviestit?",
-      "Required": "Vaadittu",
-      "WillBeAppliedToNewSessions": "Tätä päivitystä sovelletaan uusiin istuntoihin."
+      "DeleteForeverDesc": "VAROITUS: valitut kohteet poistetaan pysyvästi, etkä voi palauttaa niitä."
     }
   },
   "eduapi": {
@@ -724,7 +718,11 @@
     "resources": "Resurssit",
     "Owner": "Omistaja",
     "ServiceDelegatedFrom": "Mallipalvelun luo {{ createdUser }}, mutta istunnon omistusoikeus siirretään {{ sessionOwner }}:lle.",
-    "FailedToTerminateService": "Palvelun lopettamispyyntö epäonnistui."
+    "FailedToTerminateService": "Palvelun lopettamispyyntö epäonnistui.",
+    "FailedToUpdateService": "Palvelun päivittäminen epäonnistui.",
+    "ServiceCreated": "Mallipalvelun {{ name }} luominen onnistui.",
+    "ServiceUpdated": "Mallipalvelun {{ name }} päivitys onnistui.",
+    "ServiceTerminated": "Mallipalvelu {{ name }} on lopetettu onnistuneesti."
   },
   "notification": {
     "Initializing": "Aloitetaan...",
@@ -806,7 +804,8 @@
     "UpdatingRegistryInfo": "Rekisteritietojen päivittäminen...",
     "Username": "Käyttäjätunnus",
     "UsernameOptional": "Käyttäjätunnus (valinnainen)",
-    "ConfirmNoUserName": "Käyttäjää ja salasanaa ei ole määritetty, haluatko tallentaa?"
+    "ConfirmNoUserName": "Käyttäjää ja salasanaa ei ole määritetty, haluatko tallentaa?",
+    "DescURLFormat": "Virheellinen URL-tyyppi"
   },
   "resourceGroup": {
     "Active": "Aktiivinen",
@@ -990,7 +989,11 @@
       "SessionNameRequired": "Istunnon nimi vaaditaan",
       "SluggedStrings": "Slugged-merkkijonot (>3 merkkiä)",
       "SessionNameTooLong64": "Anna enintään 64 merkkiä.",
-      "PleaseFollowSessionNameRule": "Kirjoita vähintään 4 kirjaimen, numeroiden, '.', '_' ja '-' yhdistelmä."
+      "PleaseFollowSessionNameRule": "Kirjoita vähintään 4 kirjaimen, numeroiden, '.', '_' ja '-' yhdistelmä.",
+      "SessionNameTooShort": "Kirjoita vähintään 4 merkkiä.",
+      "SessionNameShouldStartWith": "Sen on alettava aakkosilla, numerolla tai '_'.",
+      "SessionNameShouldEndWith": "Sen on päätyttävä aakkosiin, numeroon tai '_'.",
+      "SessionNameInvalidCharacter": "Nimen keskellä voi olla vain aakkosia, numeroita ja '_'."
     },
     "XRDPconnection": "RDP-yhteys",
     "applauncher": {
@@ -1142,15 +1145,29 @@
       "EnvironmentVariableNamePatternError": "Muuttujan nimen on alettava kirjaimella tai alleviivauksella, ja se voi sisältää vain kirjaimia, numeroita ja alleviivauksia.",
       "EnvironmentVariableDuplicateName": "Muuttujan nimi, joka on jo olemassa.",
       "ErrorCanNotExceedRemaining": "Ei voida asettaa suuremmaksi kuin jäljellä olevat resurssit ({{amount}}).",
-      "EnableAutomaticShmem": "Automaattinen jaettu muisti",
+      "EnableAutomaticMiniumShmem": "Aseta jaetun muistin vähimmäismäärä",
       "Template": "Istuntomalli",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Vain kokonaisluku on sallittu, kun klusterin koko on vähintään 2.",
+      "StartAfter": "Aloita sen jälkeen:",
+      "StartTimeDoesNotApply": "Jos aloitusaikaa ei ole asetettu, se ei ole voimassa.",
+      "MiniumAllocation": "Vähimmäisvaatimukset",
+      "MiniumAllocationTooltip": "Valitse valitun käyttöympäristön vähimmäisvaatimukseksi seuraavat tiedot",
+      "PreviousLauncher": "Edellinen",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Käytät \"{{launcher}}\"-istunnon käynnistintä.",
+      "SkipToConfirmAndLaunch": "Siirry arvosteluun",
+      "InteractiveModeDesc": "voit luoda, testata ja ajaa koodia vuorovaikutteisesti jupyter notebookin, visual studio code -ohjelman jne. avulla.",
+      "BatchModeDesc": "Voit ajaa koodisi useiden solmujen ja klustereiden kanssa ideasi skaalaamiseksi.",
+      "AddEnvironmentVariable": "Lisää ympäristömuuttujia",
+      "EnvironmentVariableValueRequired": "Anna arvo."
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",
     "MEM": "Muisti",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (muisti)"
+    "GPU(MEM)": "GPU (muisti)",
+    "Agents": "Agentit"
   },
   "settings": {
     "ATOMsupport": "ATOM",
@@ -1214,7 +1231,8 @@
       "none": "Ei ole",
       "tag": "Tag"
     },
-    "OpenSourceCUDAGPUsupport": "Avoimen lähdekoodin CUDA GPU-tuki"
+    "OpenSourceCUDAGPUsupport": "Avoimen lähdekoodin CUDA GPU-tuki",
+    "ShowOnlyChanged": "Vain näyttö muuttuu"
   },
   "sidepanel": {
     "BackgroundTasks": "Tehtävien suorittaminen",
@@ -1302,7 +1320,8 @@
       "SelectProject": "Valitse projekti",
       "SelectUser": "Etsi ja valitse Käyttäjä",
       "UnsetCustomSettings": "Mukautettujen asetusten poistaminen"
-    }
+    },
+    "StorageSetting": "Tallennusasetus"
   },
   "totp": {
     "ConfirmTotpRemovalBody": "Oletko varma, ettet halua käyttää kaksitekijätodennusta?",
@@ -1313,7 +1332,9 @@
     "TotpSetupCompleted": "Käytössä 2FA",
     "TotpSetupNotAvailable": "Kaksitekijätodennusta ei voi ottaa käyttöön.",
     "TurnOffTotp": "Ota kaksitekijätodennus pois käytöstä",
-    "TypeInAuthKey": "Vaihtoehtoisesti voit kirjoittaa alla olevan todennuskoodin manuaalisesti."
+    "TypeInAuthKey": "Vaihtoehtoisesti voit kirjoittaa alla olevan todennuskoodin manuaalisesti.",
+    "EnterConfirmationCode": "Anna nyt autentikaattorin luoma OTP vahvistaaksesi.",
+    "RequireOTP": "Kirjoita OTP."
   },
   "update": {
     "NewWebUIVersionAvailable": "Uusi versio on saatavilla:"
@@ -1380,7 +1401,12 @@
     "ShellEnvironments": "Shell-ympäristöt",
     "UseCompactSidebar": "Käytä kompakti sivupalkki oletusarvoisesti",
     "DescMyKeypairInfo": "Katso avainparini tiedot",
-    "MyKeypairInfo": "Avainparini tiedot"
+    "MyKeypairInfo": "Avainparini tiedot",
+    "DarkMode": "Tumma tila",
+    "LightMode": "Valotila",
+    "UseSystemSetting": "Käytä järjestelmäasetuksia",
+    "DescThemeMode": "Mukauta miltä Backend.AI WebUI näyttää laitteessasi.",
+    "ThemeMode": "Teematila"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Edistynyt verkkopäätteen käyttö: Kopioi terminaalin sisältö",
@@ -1498,5 +1524,8 @@
     "SettingTable": "Kattaus",
     "SelectColumnToDisplay": "Valitse näytettävät sarakkeet",
     "SearchTableColumn": "Hae taulukon sarakkeita"
+  },
+  "setting": {
+    "SearchPlaceholder": "Kirjoita hakutermi"
   }
 }

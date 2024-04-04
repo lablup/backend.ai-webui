@@ -52,17 +52,20 @@ const BAINotificationItem: React.FC<{
               <CheckCircleOutlined style={{ color: token.colorSuccess }} />
             ) : null}
           </Flex>
-          <Typography.Text
+          <Typography.Paragraph
             style={{
               fontWeight: 500,
             }}
+            ellipsis={{ rows: 3 }}
           >
             {notification.message}
-          </Typography.Text>
+          </Typography.Paragraph>
         </Flex>
 
         <Flex direction="row" align="end" gap={'xxs'} justify="between">
-          <Typography.Text>{notification.description}</Typography.Text>
+          <Typography.Paragraph ellipsis={{ rows: 3, expandable: true }}>
+            {notification.description}
+          </Typography.Paragraph>
           {notification.to ? (
             <Flex>
               <Typography.Link

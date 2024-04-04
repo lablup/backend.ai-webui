@@ -255,8 +255,21 @@
       "EnvironmentVariableNamePatternError": "Το όνομα της μεταβλητής πρέπει να αρχίζει με γράμμα ή υπογράμμιση και μπορεί να περιέχει μόνο γράμματα, αριθμούς και υπογράμμιση.",
       "EnvironmentVariableDuplicateName": "Ένα όνομα μεταβλητής που υπάρχει ήδη.",
       "Template": "Πρότυπο συνεδρίας",
-      "EnableAutomaticShmem": "Αυτόματη κοινή μνήμη",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__"
+      "EnableAutomaticMiniumShmem": "Ορισμός ελάχιστης κοινόχρηστης μνήμης",
+      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
+      "StartAfter": "Έναρξη μετά:",
+      "StartTimeDoesNotApply": "Εάν δεν έχει οριστεί η ώρα έναρξης, δεν ισχύει.",
+      "OnlyAllowsDiscreteNumberByClusterSize": "Μόνο ακέραιος επιτρέπεται όταν το μέγεθος του συμπλέγματος δεν είναι μικρότερο από 2.",
+      "MiniumAllocation": "Ελάχιστες απαιτήσεις",
+      "MiniumAllocationTooltip": "Επιλέξτε ως ελάχιστη απαίτηση για το επιλεγμένο περιβάλλον λειτουργίας",
+      "PreviousLauncher": "Προηγούμενο",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Χρησιμοποιείτε τον εκκινητή συνόδου \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Skip to review",
+      "InteractiveModeDesc": "σας επιτρέπει να δημιουργείτε, να δοκιμάζετε και να εκτελείτε κώδικα διαδραστικά μέσω του σημειωματάριου jupyter, του κώδικα του visual studio κ.λπ.",
+      "BatchModeDesc": "Μπορείτε να εκτελέσετε τον κώδικά σας με πολλαπλούς κόμβους & συστάδες για να κλιμακώσετε την ιδέα σας",
+      "AddEnvironmentVariable": "Προσθήκη μεταβλητών περιβάλλοντος",
+      "EnvironmentVariableValueRequired": "Παρακαλώ εισάγετε μια τιμή."
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",
@@ -314,7 +327,11 @@
       "SluggedStrings": "Στιγμιότυπα αλφαριθμητικά (>3 χαρακτήρες)",
       "SessionNameAlreadyExist": "Το όνομα συνεδρίας υπάρχει ήδη",
       "SessionNameTooLong64": "Εισαγάγετε 64 χαρακτήρες ή λιγότερους.",
-      "PleaseFollowSessionNameRule": "Εισαγάγετε έναν συνδυασμό τουλάχιστον 4 γραμμάτων, αριθμών, '.', '_' και '-'."
+      "PleaseFollowSessionNameRule": "Εισαγάγετε έναν συνδυασμό τουλάχιστον 4 γραμμάτων, αριθμών, '.', '_' και '-'.",
+      "SessionNameTooShort": "Παρακαλούμε εισάγετε τουλάχιστον 4 χαρακτήρες.",
+      "SessionNameShouldStartWith": "Πρέπει να αρχίζει με ένα γράμμα του αλφαβήτου, έναν αριθμό ή το '_'.",
+      "SessionNameShouldEndWith": "Πρέπει να τελειώνει με ένα γράμμα του αλφαβήτου, έναν αριθμό ή '_'.",
+      "SessionNameInvalidCharacter": "Η μέση ενός ονόματος μπορεί να περιέχει μόνο γράμματα αλφαβήτου, αριθμούς και '_'."
     },
     "Interactive": "Διαδραστικό",
     "Batch": "Παρτίδα",
@@ -374,7 +391,8 @@
     "CPU": "CPU",
     "MEM": "Μνήμη",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (μνήμη)"
+    "GPU(MEM)": "GPU (μνήμη)",
+    "Agents": "Πράκτορες"
   },
   "button": {
     "Cancel": "Ματαίωση",
@@ -407,7 +425,10 @@
     "Commit": "Δέσμευση",
     "EnterManually": "Εισάγετε χειροκίνητα",
     "Download": "Λήψη",
-    "Clone": "Κλώνος"
+    "Clone": "Κλώνος",
+    "Config": "Διαμόρφωση",
+    "Next": "Επόμενο",
+    "Previous": "Προηγούμενο"
   },
   "agent": {
     "Endpoint": "Τελικό σημείο",
@@ -533,7 +554,8 @@
     "Status": "Κατάσταση",
     "NoUserToDisplay": "Δεν υπάρχουν χρήστες για εμφάνιση",
     "EnableSudoSession": "Ενεργοποίηση συνεδρίας sudo",
-    "MainAccessKey": "Κύριο κλειδί πρόσβασης"
+    "MainAccessKey": "Κύριο κλειδί πρόσβασης",
+    "InactivateTheFollowingUsers": "Απενεργοποιήστε τους παρακάτω χρήστες."
   },
   "data": {
     "Folders": "Φάκελοι",
@@ -586,7 +608,7 @@
       "FolderRenamed": "Ο φάκελος μετονομάστηκε",
       "FolderNameMismatched": "Το όνομα φακέλου δεν ταιριάζει. Ελέγξτε αν ο χαρακτήρας διαστήματος στο πεδίο εισαγωγής ή όχι.",
       "SameFileName": "Η τιμή εισαγωγής είναι ίδια με το όνομα αρχείου που θέλετε να ενημερώσετε. Αλλάξτε το σε διαφορετικό όνομα.",
-      "FolderDeleted": "Ο φάκελος διαγράφηκε",
+      "FolderDeleted": "Ο φάκελος {{ folderName }} έχει διαγραφεί.",
       "FolderUpdated": "Ενημερώθηκαν οι επιλογές φακέλων",
       "FolderDisconnected": "Ο φάκελος αποσυνδέθηκε.",
       "FileRenamed": "Το αρχείο μετονομάστηκε",
@@ -613,7 +635,13 @@
       "CloneFolder": "Φάκελος κλωνοποίησης",
       "ShareFolder": "Φάκελος κοινής χρήσης",
       "ModifyPermissions": "Τροποποίηση δικαιωμάτων",
-      "LeaveFolder": "Αφήστε το φάκελο"
+      "LeaveFolder": "Αφήστε το φάκελο",
+      "Restore": "Επαναφέρω",
+      "DeleteForever": "Διαγραφή για πάντα",
+      "FolderRestored": "Ο φάκελος {{ folderName }} έχει αποκατασταθεί.",
+      "FolderDeletedForever": "Ο φάκελος {{ folderName }} έχει διαγραφεί οριστικά.",
+      "MovedToTrashBin": "Ο φάκελος {{ folderName }} έχει μετακινηθεί στον κάδο απορριμμάτων.",
+      "MoveToTrashBin": "Μετακίνηση στον κάδο απορριμμάτων"
     },
     "explorer": {
       "Delete": "Διαγράφω...",
@@ -703,21 +731,24 @@
     "ModelStore": "Κατάστημα μοντέλων",
     "New": "Νέος",
     "Add": "Προσθέστε",
-    "CloningIsOnlyPossibleSameHost": "Προς το παρόν, η κλωνοποίηση είναι δυνατή μόνο στον ίδιο κεντρικό υπολογιστή."
+    "CloningIsOnlyPossibleSameHost": "Προς το παρόν, η κλωνοποίηση είναι δυνατή μόνο στον ίδιο κεντρικό υπολογιστή.",
+    "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
     "warning": {
       "CannotBeUndone": "ΠΡΟΕΙΔΟΠΟΙΗΣΗ: αυτό δεν μπορεί να αναιρεθεί!",
       "LogDeletion": "Είστε βέβαιοι ότι θέλετε να διαγράψετε όλα τα μηνύματα καταγραφής;",
       "WillBeAppliedToNewSessions": "Αυτή η ενημέρωση θα εφαρμοστεί σε νέες περιόδους σύνδεσης.",
-      "Required": "Απαιτούμενο"
+      "Required": "Απαιτούμενο",
+      "DeleteForeverDesc": "ΠΡΟΕΙΔΟΠΟΙΗΣΗ: επιλεγμένα στοιχεία θα διαγραφούν οριστικά και δεν θα μπορείτε να τα επαναφέρετε."
     },
     "ask": {
       "DoYouWantToProceed": "Θέλετε να συνεχίσετε?"
     },
     "title": {
       "LetsDouble-Check": "Ας ελέγξουμε ξανά",
-      "Notice": "Ανακοίνωση"
+      "Notice": "Ανακοίνωση",
+      "DeleteForever": "Διαγραφή για πάντα;"
     },
     "ErrorOccurred": "Προέκυψε σφάλμα",
     "error": {
@@ -850,7 +881,12 @@
     "BootstrapScriptDescription": "Το σενάριο Bootstrap θα εκτελεστεί μόνο μία φορά μετά τη δημιουργία συνεδρίας",
     "SSHKeypairEnterManually": "Ζεύγος κλειδιών SSH",
     "MyKeypairInfo": "Πληροφορίες για το ζεύγος κλειδιών μου",
-    "DescMyKeypairInfo": "Δείτε τις πληροφορίες του ζεύγους κλειδιών μου"
+    "DescMyKeypairInfo": "Δείτε τις πληροφορίες του ζεύγους κλειδιών μου",
+    "DarkMode": "Σκοτεινή λειτουργία",
+    "LightMode": "Λειτουργία φωτός",
+    "UseSystemSetting": "Χρησιμοποιήστε τη ρύθμιση συστήματος",
+    "DescThemeMode": "Προσαρμόστε την εμφάνιση του Backend.AI WebUI στη συσκευή σας.",
+    "ThemeMode": "Λειτουργία θέματος"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Σύνθετη χρήση τερματικού Web: Αντιγραφή περιεχομένου τερματικού",
@@ -936,7 +972,8 @@
     "RegistrySuccessfullyModified": "Το μητρώο τροποποιήθηκε επιτυχώς.",
     "NoRegistryToDisplay": "Δεν εμφανίζονται μητρώα",
     "ModifyRegistry": "Τροποποίηση μητρώου",
-    "ConfirmNoUserName": "Ο χρήστης και ο κωδικός πρόσβασης δεν έχουν καθοριστεί, θέλετε να αποθηκεύσετε;"
+    "ConfirmNoUserName": "Ο χρήστης και ο κωδικός πρόσβασης δεν έχουν καθοριστεί, θέλετε να αποθηκεύσετε;",
+    "DescURLFormat": "Μη έγκυρος τύπος URL"
   },
   "resourceGroup": {
     "ResourceGroups": "Ομάδες πόρων",
@@ -1127,7 +1164,8 @@
     "MTUDescription": "Μέγιστη μονάδα μετάδοσης, το μέγεθος του μεγαλύτερου πακέτου που μπορεί να μεταδώσει ένα πρωτόκολλο δικτύου.",
     "OutOfRange": "Εκτός εμβέλειας.",
     "Plugins": "Πρόσθετα",
-    "OpenSourceCUDAGPUsupport": "Υποστήριξη ανοιχτού κώδικα CUDA GPU"
+    "OpenSourceCUDAGPUsupport": "Υποστήριξη ανοιχτού κώδικα CUDA GPU",
+    "ShowOnlyChanged": "Εμφάνιση μόνο αλλαγών"
   },
   "notification": {
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
@@ -1409,7 +1447,11 @@
     "YouAreAboutToTerminate": "Πρόκειται να τερματίσετε",
     "Owner": "Ιδιοκτήτης",
     "ServiceDelegatedFrom": "Το μοντέλο υπηρεσίας δημιουργείται από τον {{ createdUser }}, αλλά η ιδιοκτησία της συνεδρίας θα ανατεθεί στον {{ sessionOwner }}",
-    "FailedToTerminateService": "Η αίτηση τερματισμού της υπηρεσίας απέτυχε."
+    "FailedToTerminateService": "Η αίτηση τερματισμού της υπηρεσίας απέτυχε.",
+    "ServiceUpdated": "Η υπηρεσία μοντέλου {{ όνομα }} ενημερώθηκε με επιτυχία.",
+    "FailedToUpdateService": "Η ενημέρωση της υπηρεσίας απέτυχε.",
+    "ServiceCreated": "Η υπηρεσία μοντέλου {{ όνομα }} δημιουργήθηκε με επιτυχία.",
+    "ServiceTerminated": "Η υπηρεσία μοντέλου {{ όνομα }} τερματίστηκε με επιτυχία."
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",
@@ -1449,7 +1491,8 @@
     "ForUser": "Για τον χρήστη",
     "ForProject": "Για το έργο",
     "QuotaDoesNotSupported": "Αυτό το backend αποθήκευσης δεν υποστηρίζει ποσόστωση.",
-    "BeCarefulToSetUserResourcePolicy": "Η αλλαγή μιας πολιτικής πόρων μπορεί να επηρεάσει όλους τους χρήστες που χρησιμοποιούν αυτή την πολιτική πόρων χρήστη, γι' αυτό χρησιμοποιήστε την με προσοχή."
+    "BeCarefulToSetUserResourcePolicy": "Η αλλαγή μιας πολιτικής πόρων μπορεί να επηρεάσει όλους τους χρήστες που χρησιμοποιούν αυτή την πολιτική πόρων χρήστη, γι' αυτό χρησιμοποιήστε την με προσοχή.",
+    "StorageSetting": "Ρύθμιση αποθήκευσης"
   },
   "totp": {
     "TotpSetupCompleted": "Ενεργοποιημένο 2FA",
@@ -1460,7 +1503,9 @@
     "TurnOffTotp": "Απενεργοποιήστε τον έλεγχο ταυτότητας δύο παραγόντων",
     "ConfirmTotpRemovalBody": "Είστε σίγουροι ότι δεν θέλετε να χρησιμοποιείτε έλεγχο ταυτότητας δύο παραγόντων;",
     "RemoveTotpSetupCompleted": "Απενεργοποιημένο 2FA",
-    "OTP": "Κωδικός πρόσβασης μίας χρήσης"
+    "OTP": "Κωδικός πρόσβασης μίας χρήσης",
+    "EnterConfirmationCode": "Τώρα εισαγάγετε το OTP που δημιουργήθηκε από τον έλεγχο ταυτότητας για επαλήθευση.",
+    "RequireOTP": "Γράψτε OTP."
   },
   "OpenVSCodeRemote": "Ανοίξτε τον τοπικό κώδικα του Visual Studio",
   "inputLimit": {
@@ -1498,5 +1543,8 @@
     "SettingTable": "Ρύθμιση πίνακα",
     "SelectColumnToDisplay": "Επιλέξτε για εμφάνιση στηλών",
     "SearchTableColumn": "Αναζήτηση στηλών πίνακα"
+  },
+  "setting": {
+    "SearchPlaceholder": "Εισαγάγετε τον όρο αναζήτησης"
   }
 }

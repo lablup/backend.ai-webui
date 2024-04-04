@@ -1,6 +1,6 @@
 /**
  @license
-Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
 */
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -604,7 +604,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   <div class="layout horizontal start resource-indicator">
                     <img
                       class="indicator-icon fg green"
-                      src="/resources/icons/ROCm.png"
+                      src="/resources/icons/rocm.svg"
                     />
                     <span class="monospace" style="padding-left:5px;">
                       ${rowData.item.used_rocm_gpu_slots}/${rowData.item
@@ -755,7 +755,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
       <div class="list-wrapper">
         <vaadin-grid
           class="${this.condition}"
-          theme="row-stripes column-borders compact"
+          theme="row-stripes column-borders compact dark"
           aria-label="Job list"
           .items="${this.agents}"
         >

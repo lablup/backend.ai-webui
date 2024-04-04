@@ -1,6 +1,6 @@
 /**
  @license
-Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
 */
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -149,7 +149,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-font-family: var(--token-fontFamily);
         }
 
         mwc-textfield.resource-input {
@@ -192,7 +192,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     return html`
       <div class="list-wrapper">
         <vaadin-grid
-          theme="row-stripes column-borders compact"
+          theme="row-stripes column-borders compact dark"
           aria-label="Resource Policy list"
           .items="${this.resourcePolicy}"
         >
@@ -487,7 +487,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
           <p>${_t('resourcePolicy.AboutToDeleteResourcePolicy')}</p>
-          <p style="text-align:center;color:blue;">
+          <p style="text-align:center;color:var(--token-colorLink,blue);">
             ${this.current_policy_name}
           </p>
           <p>

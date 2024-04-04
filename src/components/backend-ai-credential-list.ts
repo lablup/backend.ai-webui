@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -147,12 +147,6 @@ export default class BackendAICredentialList extends BackendAIPage {
           padding-right: 5px;
         }
 
-        #keypair-modify-save {
-          --button-bg: var(--paper-light-green-50);
-          --button-bg-hover: var(--paper-green-100);
-          --button-bg-active: var(--paper-green-600);
-        }
-
         #policy-list {
           width: 100%;
         }
@@ -176,11 +170,7 @@ export default class BackendAICredentialList extends BackendAIPage {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-theme-on-primary: var(--general-button-color);
-          --mdc-typography-font-family: var(--general-font-family);
-        }
-
-        mwc-select {
-          --mdc-theme-primary: var(--general-sidebar-color);
+          --mdc-typography-font-family: var(--token-fontFamily);
         }
       `,
     ];
@@ -1162,7 +1152,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     return html`
       <div class="list-wrapper">
         <vaadin-grid
-          theme="row-stripes column-borders compact"
+          theme="row-stripes column-borders compact dark"
           aria-label="Credential list"
           id="keypair-grid"
           .items="${this.keypairs}"

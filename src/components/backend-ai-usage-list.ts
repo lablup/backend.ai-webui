@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -93,7 +93,7 @@ export default class BackendAIUsageList extends BackendAIPage {
 
         vaadin-select-item {
           font-size: 14px;
-          --lumo-font-family: var(--general-font-family) !important;
+          --lumo-font-family: var(--token-fontFamily) !important;
         }
 
         #select-period {
@@ -106,6 +106,12 @@ export default class BackendAIUsageList extends BackendAIPage {
         #help-description {
           --component-width: 70vw;
           --component-padding: 20px 40px;
+        }
+
+        .card > div,
+        .usage-title {
+          color: var(--token-colorText);
+          background-color: var(--token-colorBgContainer);
         }
       `,
     ];
@@ -375,6 +381,7 @@ export default class BackendAIUsageList extends BackendAIPage {
           <p id="select-period">${_t('statistics.SelectPeriod')}</p>
           <vaadin-select
             id="period-selector"
+            theme="dark"
             .items="${this.periodSelectItems}"
             @change="${(e) => this.pulldownChange(e)}"
           ></vaadin-select>
@@ -387,8 +394,8 @@ export default class BackendAIUsageList extends BackendAIPage {
         ${Object.keys(this.collection).length > 0
           ? Object.keys(this._map).map(
               (key, idx) => html`
-                <h3 class="horizontal center layout">
-                  <span style="color:#222222;">${this._map[key]}</span>
+                <h3 class="horizontal center layout usage-title">
+                  <span>${this._map[key]}</span>
                   <span class="flex"></span>
                 </h3>
                 <div style="width:100%;min-height:180px;">

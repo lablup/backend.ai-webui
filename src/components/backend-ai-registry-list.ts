@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -126,7 +126,7 @@ class BackendAIRegistryList extends BackendAIPage {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-theme-on-primary: var(--general-button-color);
-          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-font-family: var(--token-fontFamily);
         }
       `,
     ];
@@ -733,7 +733,7 @@ class BackendAIRegistryList extends BackendAIPage {
       </h4>
       <div class="list-wrapper">
         <vaadin-grid
-          theme="row-stripes column-borders compact"
+          theme="row-stripes column-borders compact dark"
           aria-label="Registry list"
           .items="${this._registryList}"
         >

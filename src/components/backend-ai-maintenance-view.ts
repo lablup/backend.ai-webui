@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -84,14 +84,6 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
           margin: 10px auto;
           background-image: none;
           --mdc-button-outline-width: 2px;
-          --mdc-button-disabled-outline-color: var(--general-sidebar-color);
-          --mdc-button-disabled-ink-color: var(--general-sidebar-color);
-          --mdc-theme-primary: #38bd73;
-          --mdc-theme-on-primary: #38bd73;
-        }
-
-        lablup-activity-panel {
-          color: #000;
         }
       `,
     ];

@@ -4,8 +4,8 @@ import FlexActivityIndicator from './components/FlexActivityIndicator';
 import ResourceGroupSelect from './components/ResourceGroupSelect';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
+import { ThemeModeProvider } from './hooks/useThemeMode';
 import ModelStoreListPage from './pages/ModelStoreListPage';
-import { Form } from 'antd';
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
@@ -54,6 +54,10 @@ const KeypairInfoModal = React.lazy(
 const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
 
 const ErrorLogList = React.lazy(() => import('./components/ErrorLogList'));
+
+const BatchSessionScheduledTimeSetting = React.lazy(
+  () => import('./components/BatchSessionScheduledTimeSetting'),
+);
 
 customElements.define(
   'backend-ai-react-session-list',
@@ -107,7 +111,7 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <UserInfoModal />
+        <UserInfoModal draggable />
       </DefaultProviders>
     );
   }),
@@ -118,7 +122,7 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <UserSettingsModal />
+        <UserSettingsModal draggable />
       </DefaultProviders>
     );
   }),
@@ -159,23 +163,24 @@ customElements.define(
 
     return (
       <DefaultProviders {...props}>
-        <Flex direction="column" align="stretch" style={{ minWidth: 200 }}>
-          <Form layout="vertical">
-            <Form.Item
-              label={t('session.launcher.ResourceGroup')}
-              style={{ margin: 0 }}
-            >
-              <ResourceGroupSelect
-                size="large"
-                value={value}
-                loading={value !== props.value || value === ''}
-                onChange={(value) => {
-                  setValue(value);
-                  props.dispatchEvent('change', value);
-                }}
-              />
-            </Form.Item>
-          </Form>
+        <Flex
+          direction="column"
+          gap="sm"
+          align="stretch"
+          style={{ minWidth: 200, maxWidth: 310 }}
+        >
+          {t('session.launcher.ResourceGroup')}
+          <ResourceGroupSelect
+            size="large"
+            showSearch
+            value={value}
+            loading={value !== props.value || value === ''}
+            onChange={(value) => {
+              setValue(value);
+              props.dispatchEvent('change', value);
+            }}
+            popupMatchSelectWidth={false}
+          />
         </Flex>
       </DefaultProviders>
     );
@@ -245,7 +250,9 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <ThemeModeProvider>
+      <App />
+    </ThemeModeProvider>
   </React.StrictMode>,
 );
 
@@ -255,6 +262,21 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <ErrorLogList />
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-batch-session-scheduled-time-setting',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <BatchSessionScheduledTimeSetting
+          onChange={(value) => {
+            props.dispatchEvent('change', value);
+          }}
+        />
       </DefaultProviders>
     );
   }),
