@@ -232,16 +232,17 @@ export const useCurrentUserRole = () => {
 
 export const useTOTPSupported = () => {
   const baiClient = useSuspendedBackendaiClient();
-  const { data: isManagerSupportingTOTP } = useTanQuery<boolean>(
+  const { data: isManagerSupportingTOTP, isLoading } = useTanQuery<boolean>(
     'isManagerSupportingTOTP',
     () => {
       return baiClient.isManagerSupportingTOTP();
     },
     {
       suspense: false,
+      staleTime: 1000,
     },
   );
-  const isSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
+  const isTOTPSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
 
-  return isSupported;
+  return { isTOTPSupported, isLoading };
 };

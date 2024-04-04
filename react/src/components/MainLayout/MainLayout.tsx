@@ -4,6 +4,7 @@ import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
+import ForceTOTPChecker from '../ForceTOTPChecker';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIHeader from './WebUIHeader';
@@ -204,6 +205,9 @@ function MainLayout() {
                 style={{ marginBottom: token.paddingContentVerticalLG }}
                 closable
               />
+            </Suspense>
+            <Suspense>
+              <ForceTOTPChecker />
             </Suspense>
             <Suspense>
               <Outlet />

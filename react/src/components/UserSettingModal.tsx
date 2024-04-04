@@ -1,4 +1,5 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
@@ -24,7 +25,6 @@ import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useDeferredValue, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from 'react-query';
 import { useMutation } from 'react-relay';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -85,22 +85,8 @@ const UserSettingModal: React.FC<Props> = ({
   const sudoSessionEnabledSupported = baiClient?.supports(
     'sudo-session-enabled',
   );
-  let totpSupported = false;
-  let {
-    data: isManagerSupportingTOTP,
-    isLoading: isLoadingManagerSupportingTOTP,
-  } = useQuery(
-    'isManagerSupportingTOTP',
-    () => {
-      return baiClient.isManagerSupportingTOTP();
-    },
-    {
-      // for to render even this fail query failed
-      suspense: false,
-    },
-  );
-  totpSupported = baiClient?.supports('2FA') && isManagerSupportingTOTP;
-
+  const { isTOTPSupported, isLoading: isLoadingManagerSupportingTOTP } =
+    useTOTPSupported();
   const { user, loggedInUser } = useLazyLoadQuery<UserSettingModalQuery>(
     graphql`
       query UserSettingModalQuery(
@@ -138,7 +124,7 @@ const UserSettingModal: React.FC<Props> = ({
     {
       email: userEmail,
       isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
-      isNotSupportTotp: !totpSupported,
+      isNotSupportTotp: !isTOTPSupported,
       loggedInUserEmail: baiClient?.email ?? '',
     },
     {
@@ -203,7 +189,7 @@ const UserSettingModal: React.FC<Props> = ({
         delete input?.sudo_session_enabled;
       }
       // TOTP setting
-      if (!totpSupported) {
+      if (!isTOTPSupported) {
         delete input?.totp_activated;
       }
 
@@ -212,7 +198,7 @@ const UserSettingModal: React.FC<Props> = ({
           email: values?.email || '',
           props: input,
           isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
-          isNotSupportTotp: !totpSupported,
+          isNotSupportTotp: !isTOTPSupported,
         },
         onCompleted(res) {
           if (res?.modify_user?.ok) {
@@ -342,7 +328,7 @@ const UserSettingModal: React.FC<Props> = ({
             <Switch />
           </Form.Item>
         )}
-        {!!totpSupported && (
+        {!!isTOTPSupported && (
           <Form.Item
             name="totp_activated"
             label={t('webui.menu.TotpActivated')}
@@ -401,7 +387,7 @@ const UserSettingModal: React.FC<Props> = ({
           </Form.Item>
         )}
       </Form>
-      {!!totpSupported && (
+      {!!isTOTPSupported && (
         <TOTPActivateModal
           userFrgmt={user}
           open={isOpenTOTPActivateModal}
