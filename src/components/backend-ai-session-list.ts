@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { default as AnsiUp } from '../lib/ansiup';
 import '../plastics/lablup-shields/lablup-shields';
@@ -130,8 +130,8 @@ export default class BackendAISessionList extends BackendAIPage {
     this.idleChecksHeaderRenderer.bind(this);
   @property({ type: Object }) _boundIdleChecksRenderer =
     this.idleChecksRenderer.bind(this);
-  @property({ type: Object }) _boundAgentRenderer =
-    this.agentRenderer.bind(this);
+  @property({ type: Object }) _boundAgentListRenderer =
+    this.agentListRenderer.bind(this);
   @property({ type: Object }) _boundSessionInfoRenderer =
     this.sessionInfoRenderer.bind(this);
   @property({ type: Object }) _boundArchitectureRenderer =
@@ -748,6 +748,7 @@ export default class BackendAISessionList extends BackendAIPage {
       'access_key',
       'starts_at',
       'type',
+      'agents',
     ];
     if (globalThis.backendaiclient.supports('multi-container')) {
       fields.push('cluster_size');
@@ -3788,18 +3789,23 @@ ${rowData.item[this.sessionNameField]}</pre
   }
 
   /**
-   * Render agent name
+   * Render list of agent name
    *
    * @param {Element} root - the row details content DOM element
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-  agentRenderer(root, column?, rowData?) {
+  agentListRenderer(root, column?, rowData?) {
     render(
       // language=HTML
+      // FIXME: temporally show allocated agent only, not in session-agent pair
       html`
         <div class="layout vertical">
-          <span>${rowData.item.agent}</span>
+          ${[...new Set(rowData.item.agents)]?.map(
+            (agent) => html`
+              <span>${agent}</span>
+            `,
+          )}
         </div>
       `,
       root,
@@ -4254,12 +4260,11 @@ ${rowData.item[this.sessionNameField]}</pre
             this.is_superadmin || !globalThis.backendaiclient._config.hideAgents
               ? html`
                   <lablup-grid-sort-filter-column
-                    path="agent"
                     auto-width
                     flex-grow="0"
                     resizable
-                    header="${_t('session.Agent')}"
-                    .renderer="${this._boundAgentRenderer}"
+                    header="${_t('session.Agents')}"
+                    .renderer="${this._boundAgentListRenderer}"
                   ></lablup-grid-sort-filter-column>
                 `
               : html``

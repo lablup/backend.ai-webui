@@ -254,12 +254,22 @@
       "EnvironmentVariableNamePatternError": "Nama pembolehubah mesti bermula dengan huruf atau garis bawah, dan hanya boleh mengandungi huruf, nombor dan garis bawah.",
       "EnvironmentVariableDuplicateName": "Nama pembolehubah ini sudah wujud.",
       "Template": "Templat Sesi",
-      "EnableAutomaticShmem": "Memori dikongsi automatik",
+      "EnableAutomaticMiniumShmem": "Tetapkan memori kongsi minimum",
       "PreOpenPortMaxCountLimit": "Anda boleh menyediakan kepada {{count}} port pra-buka.",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Hanya integer dibenarkan apabila saiz kelompok tidak kurang daripada 2.",
       "StartAfter": "Mulakan selepas:",
-      "StartTimeDoesNotApply": "Jika masa mula tidak ditetapkan, ia tidak terpakai."
+      "StartTimeDoesNotApply": "Jika masa mula tidak ditetapkan, ia tidak terpakai.",
+      "MiniumAllocation": "Keperluan minimum",
+      "MiniumAllocationTooltip": "Pilih sebagai keperluan minimum untuk persekitaran berjalan yang dipilih",
+      "PreviousLauncher": "Sebelumnya",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Anda menggunakan pelancar sesi \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Langkau ke semakan",
+      "InteractiveModeDesc": "membolehkan anda membuat, menguji dan menjalankan kod secara interaktif melalui buku nota jupyter, kod studio visual, dsb.",
+      "BatchModeDesc": "Anda boleh menjalankan kod anda dengan berbilang nod",
+      "AddEnvironmentVariable": "Tambah pembolehubah persekitaran",
+      "EnvironmentVariableValueRequired": "Sila masukkan nilai."
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",
@@ -317,7 +327,11 @@
       "SluggedStrings": "Rentetan slugged (>3 aksara)",
       "SessionNameAlreadyExist": "Nama sesi sudah wujud",
       "SessionNameTooLong64": "Sila masukkan 64 aksara atau kurang.",
-      "PleaseFollowSessionNameRule": "Sila masukkan gabungan sekurang-kurangnya 4 huruf, nombor, '.', '_' dan '-'."
+      "PleaseFollowSessionNameRule": "Sila masukkan gabungan sekurang-kurangnya 4 huruf, nombor, '.', '_' dan '-'.",
+      "SessionNameTooShort": "Sila masukkan sekurang-kurangnya 4 aksara.",
+      "SessionNameShouldStartWith": "Ia mesti bermula dengan huruf abjad, nombor atau '_'.",
+      "SessionNameShouldEndWith": "Ia mesti berakhir dengan huruf abjad, nombor atau '_'.",
+      "SessionNameInvalidCharacter": "Bahagian tengah nama hanya boleh mengandungi huruf abjad, nombor dan '_'."
     },
     "Interactive": "Interaktif",
     "Batch": "Kumpulan",
@@ -377,7 +391,8 @@
     "CPU": "CPU",
     "MEM": "Ingatan",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (memori)"
+    "GPU(MEM)": "GPU (memori)",
+    "Agents": "ejen"
   },
   "button": {
     "Cancel": "Batal",
@@ -411,7 +426,9 @@
     "EnterManually": "Masukkan Secara Manual",
     "Download": "Muat turun",
     "Clone": "Klon",
-    "Config": "Konfigurasi"
+    "Config": "Konfigurasi",
+    "Next": "Seterusnya",
+    "Previous": "Sebelumnya"
   },
   "agent": {
     "Endpoint": "Titik Akhir",
@@ -537,7 +554,8 @@
     "Status": "Status",
     "NoUserToDisplay": "Tiada Pengguna untuk dipaparkan",
     "EnableSudoSession": "Dayakan sesi sudo",
-    "MainAccessKey": "Kunci Akses Utama"
+    "MainAccessKey": "Kunci Akses Utama",
+    "InactivateTheFollowingUsers": "Nyahaktifkan pengguna berikut."
   },
   "data": {
     "Folders": "Folder",
@@ -590,7 +608,7 @@
       "FolderRenamed": "Folder dinamakan semula",
       "FolderNameMismatched": "Nama folder tidak sesuai. Sila Periksa sama ada watak ruang di ruang input atau tidak.",
       "SameFileName": "Nilai input adalah sama dengan nama fail yang akan dikemas kini. Tolong ubah ke nama lain.",
-      "FolderDeleted": "Folder dipadamkan",
+      "FolderDeleted": "Folder {{ folderName }} telah dipadamkan.",
       "FolderUpdated": "Pilihan folder dikemas kini",
       "FolderDisconnected": "Folder telah terputus.",
       "FileRenamed": "Fail Dinamakan Semula",
@@ -617,7 +635,13 @@
       "CloneFolder": "Klon folder",
       "ShareFolder": "Kongsi folder",
       "ModifyPermissions": "Ubah suai kebenaran",
-      "LeaveFolder": "Tinggalkan folder"
+      "LeaveFolder": "Tinggalkan folder",
+      "MoveToTrashBin": "Pindah ke tong sampah",
+      "MovedToTrashBin": "Folder {{ folderName }} telah dialihkan ke tong sampah.",
+      "DeleteForever": "Padam selama-lamanya",
+      "Restore": "Pulihkan",
+      "FolderRestored": "Folder {{ folderName }} telah dipulihkan.",
+      "FolderDeletedForever": "Folder {{ folderName }} telah dipadamkan selama-lamanya."
     },
     "explorer": {
       "Delete": "Padamkan ...",
@@ -668,7 +692,8 @@
       "SFTPSessionNotAvailable": "Sesi SFTP tidak tersedia sekarang",
       "StartingSSH/SFTPSession": "Memulakan sesi SFTP...",
       "NumberOfSFTPSessionsExceededTitle": "Had capaian untuk menjalankan kiraan sesi muat naik",
-      "NumberOfSFTPSessionsExceededBody": "Anda menjalankan semua sesi muat naik tersedia yang anda dibenarkan buat. \nSila tamatkan sesi muat naik yang tidak digunakan sebelum memulakan sesi baharu."
+      "NumberOfSFTPSessionsExceededBody": "Anda menjalankan semua sesi muat naik tersedia yang anda dibenarkan buat. \nSila tamatkan sesi muat naik yang tidak digunakan sebelum memulakan sesi baharu.",
+      "DownloadNotAllowed": "Memuat turun fail/folder tidak dibenarkan dalam folder ini."
     },
     "invitation": {
       "NoValidEmails": "Tidak ada e-mel yang sah dimasukkan",
@@ -712,24 +737,7 @@
   },
   "dialog": {
     "warning": {
-      "CannotBeUndone": "PERINGATAN: ini tidak boleh dibuat asal!",
-      "LogDeletion": "Adakah anda pasti mahu memadamkan semua mesej log?",
-      "WillBeAppliedToNewSessions": "Kemas kini ini akan digunakan untuk sesi baru.",
-      "Required": "Diperlukan"
-    },
-    "ask": {
-      "DoYouWantToProceed": "Adakah anda mahu meneruskan?"
-    },
-    "title": {
-      "LetsDouble-Check": "Mari Periksa Semula",
-      "Notice": "Notis"
-    },
-    "ErrorOccurred": "Ralat Berlaku",
-    "error": {
-      "Error": "Ralat"
-    },
-    "hide": {
-      "DonotShowThisAgain": "Jangan tunjukkan ini lagi."
+      "DeleteForeverDesc": "AMARAN: item yang dipilih akan dipadamkan selama-lamanya dan anda tidak akan dapat memulihkannya."
     }
   },
   "environment": {
@@ -1411,7 +1419,8 @@
     "ForUser": "Untuk Pengguna",
     "ForProject": "Untuk Projek",
     "QuotaDoesNotSupported": "Bahagian belakang storan ini tidak menyokong kuota.",
-    "BeCarefulToSetUserResourcePolicy": "Menukar dasar sumber boleh menjejaskan semua pengguna yang menggunakan dasar sumber pengguna itu, jadi gunakannya dengan berhati-hati."
+    "BeCarefulToSetUserResourcePolicy": "Menukar dasar sumber boleh menjejaskan semua pengguna yang menggunakan dasar sumber pengguna itu, jadi gunakannya dengan berhati-hati.",
+    "StorageSetting": "Tetapan Storan"
   },
   "modelService": {
     "TokenGenerated": "Token dijana",

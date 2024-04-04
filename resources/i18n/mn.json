@@ -327,7 +327,10 @@
       "SessionNameAlreadyExist": "Сешн нэр аль хэдийн байна",
       "SluggedStrings": "Залгисан мөрүүд (>3 тэмдэгт)",
       "SessionNameTooLong64": "64 ба түүнээс бага тэмдэгт оруулна уу.",
-      "PleaseFollowSessionNameRule": "Дор хаяж 4 үсэг, тоо, '.', '_', '-' гэсэн хослолыг оруулна уу."
+      "PleaseFollowSessionNameRule": "Дор хаяж 4 үсэг, тоо, '.', '_', '-' гэсэн хослолыг оруулна уу.",
+      "SessionNameShouldStartWith": "Энэ нь цагаан толгойн үсэг, тоо эсвэл \"_\" -ээр эхлэх ёстой.",
+      "SessionNameShouldEndWith": "Энэ нь цагаан толгойн үсэг, тоо эсвэл '_'-ээр төгссөн байх ёстой.",
+      "SessionNameInvalidCharacter": "Нэрийн дунд хэсэгт зөвхөн цагаан толгойн үсэг, тоо, '_' байж болно."
     },
     "AlreadyTerminatingSession": "Сессийг аль хэдийн дуусгаж байна.",
     "NoSessionToDisplay": "Харуулах сесс алга",
@@ -377,7 +380,8 @@
     "CPU": "CPU",
     "MEM": "Санах ой",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (санах ой)"
+    "GPU(MEM)": "GPU (санах ой)",
+    "Agents": "Агентууд"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -537,7 +541,8 @@
     "SignoutSeccessfullyFinished": "Гарах ажиллагаа амжилттай дууслаа",
     "ModifyUserDetail": "Хэрэглэгчийн мэдээллийг өөрчлөх",
     "EnableSudoSession": "Sudo сессийг идэвхжүүлэх",
-    "MainAccessKey": "Үндсэн хандалтын түлхүүр"
+    "MainAccessKey": "Үндсэн хандалтын түлхүүр",
+    "InactivateTheFollowingUsers": "Дараах хэрэглэгчдийг идэвхгүй болго."
   },
   "data": {
     "Folders": "Фолдерууд",
@@ -590,7 +595,7 @@
       "FolderRenamed": "Фолдерын нэрийг өөрчилсөн",
       "FolderNameMismatched": "Фолдерын нэр тохирохгүй байна. Оролтын талбарт зайны тэмдэгт байгаа эсэхийг шалгана уу.",
       "SameFileName": "Оруулах утга нь шинэчлэх файлын нэртэй ижил байна. Үүнийг өөр нэрээр солино уу.",
-      "FolderDeleted": "Фолдерыг устгасан",
+      "FolderDeleted": "{{ folderName }} хавтас устгагдсан.",
       "FolderUpdated": "Фолдерын сонголтууд шинэчлэгдсэн",
       "FolderDisconnected": "Фолдерыг салгасан.",
       "FileRenamed": "Файлын нэрийг өөрчилсөн",
@@ -617,7 +622,12 @@
       "CloneFolder": "Фолдерыг хувилах",
       "LeaveFolder": "Фолдерыг орхи",
       "ShareFolder": "Фолдер хуваалцах",
-      "ModifyPermissions": "Зөвшөөрлийг өөрчлөх"
+      "ModifyPermissions": "Зөвшөөрлийг өөрчлөх",
+      "Restore": "Сэргээх",
+      "DeleteForever": "Бүрмөсөн устгах",
+      "FolderRestored": "{{ folderName }} хавтас сэргээгдсэн.",
+      "FolderDeletedForever": "{{ folderName }} хавтас бүрмөсөн устгагдсан.",
+      "MovedToTrashBin": "{{ folderName }} фолдерыг хогийн сав руу зөөв."
     },
     "explorer": {
       "Delete": "Устгах ...",
@@ -668,7 +678,8 @@
       "EmptyFilesAndFoldersAreNotUploaded": "Хоосон файлууд болон хоосон фолдеруудыг байршуулаагүй",
       "FolderAlreadyExists": "Байршуулах гэж буй фолдер аль хэдийн байна.",
       "NumberOfSFTPSessionsExceededTitle": "Байршуулах сеанс тоолох хязгаарт хүрсэн",
-      "NumberOfSFTPSessionsExceededBody": "Та үүсгэх боломжтой бүх байршуулах сешнүүдийг ажиллуулж байна. \nШинэ сесс эхлэхээс өмнө ашиглагдаагүй байршуулах сешнүүдийг дуусгана уу."
+      "NumberOfSFTPSessionsExceededBody": "Та үүсгэх боломжтой бүх байршуулах сешнүүдийг ажиллуулж байна. \nШинэ сесс эхлэхээс өмнө ашиглагдаагүй байршуулах сешнүүдийг дуусгана уу.",
+      "DownloadNotAllowed": "Энэ фолдерт файл/хавтас татаж авахыг хориглоно."
     },
     "invitation": {
       "NoValidEmails": "Хүчинтэй имэйл оруулаагүй болно",
@@ -715,14 +726,16 @@
       "CannotBeUndone": "АНХААРУУЛГА: үүнийг буцаах боломжгүй!",
       "LogDeletion": "Бүртгэлийн бүх мессежийг устгахдаа итгэлтэй байна уу?",
       "WillBeAppliedToNewSessions": "Энэхүү шинэчлэлтийг шинэ Sessionүүдэд ашиглах болно.",
-      "Required": "Шаардлагатай"
+      "Required": "Шаардлагатай",
+      "DeleteForeverDesc": "АНХААРУУЛГА: сонгосон зүйлс үүрд устах бөгөөд та тэдгээрийг сэргээх боломжгүй болно."
     },
     "ask": {
       "DoYouWantToProceed": "Та үргэлжлүүлэхийг хүсч байна уу?"
     },
     "title": {
       "LetsDouble-Check": "Давхар шалгуулъя",
-      "Notice": "Анхаар"
+      "Notice": "Анхаар",
+      "DeleteForever": "Бүрмөсөн устгах уу?"
     },
     "ErrorOccurred": "Алдаа гарлаа",
     "error": {
@@ -1422,7 +1435,8 @@
     "ForUser": "Хэрэглэгчийн хувьд",
     "ForProject": "Төслийн хувьд",
     "QuotaDoesNotSupported": "Энэ хадгалах сан нь квотыг дэмждэггүй.",
-    "BeCarefulToSetUserResourcePolicy": "Нөөцийн бодлогыг өөрчлөх нь тухайн хэрэглэгчийн нөөцийн бодлогыг ашигладаг бүх хэрэглэгчдэд нөлөөлж болзошгүй тул үүнийг болгоомжтой ашиглаарай."
+    "BeCarefulToSetUserResourcePolicy": "Нөөцийн бодлогыг өөрчлөх нь тухайн хэрэглэгчийн нөөцийн бодлогыг ашигладаг бүх хэрэглэгчдэд нөлөөлж болзошгүй тул үүнийг болгоомжтой ашиглаарай.",
+    "StorageSetting": "Хадгалах тохиргоо"
   },
   "modelService": {
     "EditModelService": "Загварын үйлчилгээг засах",

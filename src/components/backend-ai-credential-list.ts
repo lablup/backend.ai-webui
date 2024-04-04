@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -145,12 +145,6 @@ export default class BackendAICredentialList extends BackendAIPage {
 
         div.configuration mwc-icon {
           padding-right: 5px;
-        }
-
-        #keypair-modify-save {
-          --button-bg: var(--paper-light-green-50);
-          --button-bg-hover: var(--paper-green-100);
-          --button-bg-active: var(--paper-green-600);
         }
 
         #policy-list {

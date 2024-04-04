@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -209,7 +209,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           background-image: var(--general-sidebar-color);
         }
         mwc-button[disabled].range-value {
-          --mdc-button-disabled-ink-color: var(--general-sidebar-color);
+          --mdc-button-disabled-ink-color: var(
+            --token-colorTextDisabled,
+            --general-sidebar-color
+          );
         }
         mwc-select {
           --mdc-menu-item-height: auto;
@@ -224,7 +227,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           width: 150px;
           margin: auto 10px;
           --mdc-theme-primary: var(--general-slider-color);
-          --mdc-theme-text-primary-on-dark: #ffffff;
+          --mdc-theme-text-primary-on-dark: var(
+            --token-colorSecondary,
+            #ffffff
+          );
         }
       `,
     ];

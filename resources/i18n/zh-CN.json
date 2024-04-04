@@ -255,11 +255,21 @@
       "EnvironmentVariableNamePatternError": "变量名必须以字母或下划线开头，且只能包含字母、数字和下划线。",
       "EnvironmentVariableDuplicateName": "已经存在的变量名。",
       "Template": "会议模板",
-      "EnableAutomaticShmem": "自动共享内存",
+      "EnableAutomaticMiniumShmem": "设置最小共享内存",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "当簇大小不小于 2 时，只允许使用整数。",
       "StartAfter": "之后开始：",
-      "StartTimeDoesNotApply": "如果未设置开始时间，则不适用。"
+      "StartTimeDoesNotApply": "如果未设置开始时间，则不适用。",
+      "MiniumAllocation": "最低要求",
+      "MiniumAllocationTooltip": "选择所选运行环境的最低要求",
+      "PreviousLauncher": "上一页",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "您正在使用\"{{launcher}}\"会话启动器。",
+      "SkipToConfirmAndLaunch": "跳过评论",
+      "InteractiveModeDesc": "允许您通过 jupyter notebook、visual studio code 等交互式创建、测试和运行代码。",
+      "BatchModeDesc": "您可以使用多个节点和集群运行代码，以扩展您的想法",
+      "AddEnvironmentVariable": "添加环境变量",
+      "EnvironmentVariableValueRequired": "请输入数值。"
     },
     "Preparing": "正在准备...",
     "PreparingSession": "正在准备会议...",
@@ -317,7 +327,11 @@
       "SluggedStrings": "多字符串（>3 字符）",
       "SessionNameAlreadyExist": "会话名称已存在",
       "SessionNameTooLong64": "请输入不超过 64 个字符。",
-      "PleaseFollowSessionNameRule": "请输入至少 4 个字母、数字、“.”、“_”和“-”的组合字符。"
+      "PleaseFollowSessionNameRule": "请输入至少 4 个字母、数字、“.”、“_”和“-”的组合字符。",
+      "SessionNameTooShort": "请输入至少 4 个字符。",
+      "SessionNameShouldStartWith": "必须以字母、数字或\"_\"开头。",
+      "SessionNameShouldEndWith": "必须以字母、数字或\"_\"结尾。",
+      "SessionNameInvalidCharacter": "名字中间只能包含字母、数字和\"_\"。"
     },
     "Interactive": "交互式",
     "Batch": "批次",
@@ -377,7 +391,8 @@
     "CPU": "中央处理器",
     "MEM": "内存",
     "GPU": "GPU",
-    "GPU(MEM)": "图形处理器（内存）"
+    "GPU(MEM)": "图形处理器（内存）",
+    "Agents": "代理商"
   },
   "button": {
     "Cancel": "取消",
@@ -411,7 +426,9 @@
     "EnterManually": "手动输入",
     "Download": "下载",
     "Clone": "克隆",
-    "Config": "配置"
+    "Config": "配置",
+    "Next": "下一页",
+    "Previous": "上一页"
   },
   "agent": {
     "Endpoint": "端点",
@@ -537,7 +554,8 @@
     "Status": "现状",
     "NoUserToDisplay": "无用户显示",
     "EnableSudoSession": "启用 sudo 会话",
-    "MainAccessKey": "主访问密钥"
+    "MainAccessKey": "主访问密钥",
+    "InactivateTheFollowingUsers": "停用以下用户。"
   },
   "data": {
     "Folders": "文件夹",
@@ -590,7 +608,7 @@
       "FolderRenamed": "文件夹重命名",
       "FolderNameMismatched": "文件夹名称不匹配。请检查输入字段中是否有空格字符。",
       "SameFileName": "输入值与要更新的文件名相同。请将其更改为其他名称。",
-      "FolderDeleted": "文件夹已删除",
+      "FolderDeleted": "{{ folderName }} 文件夹已被删除。",
       "FolderUpdated": "文件夹选项已更新",
       "FolderDisconnected": "文件夹已断开连接。",
       "FileRenamed": "文件重命名",
@@ -617,7 +635,13 @@
       "CloneFolder": "克隆文件夹",
       "ShareFolder": "共享文件夹",
       "ModifyPermissions": "修改权限",
-      "LeaveFolder": "离开文件夹"
+      "LeaveFolder": "离开文件夹",
+      "Restore": "恢复",
+      "DeleteForever": "永久删除",
+      "FolderRestored": "{{ folderName }} 文件夹已恢复。",
+      "FolderDeletedForever": "{{ folderName }} 文件夹已被永久删除。",
+      "MoveToTrashBin": "移至垃圾箱",
+      "MovedToTrashBin": "{{ folderName }} 文件夹已移至垃圾箱。"
     },
     "explorer": {
       "Delete": "删除...",
@@ -668,7 +692,8 @@
       "SFTPSessionNotAvailable": "SFTP 会话现在不可用",
       "StartingSSH/SFTPSession": "开始 SFTP 会话...",
       "NumberOfSFTPSessionsExceededTitle": "运行中的上传会话次数已达上限",
-      "NumberOfSFTPSessionsExceededBody": "您正在运行允许创建的所有可用上传会话。请在启动新会话前终止未使用的上传会话。"
+      "NumberOfSFTPSessionsExceededBody": "您正在运行允许创建的所有可用上传会话。请在启动新会话前终止未使用的上传会话。",
+      "DownloadNotAllowed": "不允许在此文件夹中下载文件/文件夹。"
     },
     "invitation": {
       "NoValidEmails": "没有输入有效的电子邮件",
@@ -715,14 +740,16 @@
       "CannotBeUndone": "警告：这无法撤消！",
       "LogDeletion": "您确定要删除所有日志消息吗？",
       "WillBeAppliedToNewSessions": "此更新将应用于新会话。",
-      "Required": "需要"
+      "Required": "需要",
+      "DeleteForeverDesc": "警告：所选项目将被永久删除，并且您将无法恢复它们。"
     },
     "ask": {
       "DoYouWantToProceed": "您要继续吗？"
     },
     "title": {
       "LetsDouble-Check": "让我们仔细检查",
-      "Notice": "通知"
+      "Notice": "通知",
+      "DeleteForever": "永久删除？"
     },
     "ErrorOccurred": "错误发生",
     "error": {
@@ -1411,7 +1438,8 @@
     "ForUser": "用户",
     "ForProject": "项目",
     "QuotaDoesNotSupported": "该存储后端不支持配额。",
-    "BeCarefulToSetUserResourcePolicy": "更改资源策略会影响使用该用户资源策略的所有用户，因此请谨慎使用。"
+    "BeCarefulToSetUserResourcePolicy": "更改资源策略会影响使用该用户资源策略的所有用户，因此请谨慎使用。",
+    "StorageSetting": "存储设置"
   },
   "modelService": {
     "TokenGenerated": "生成的令牌",

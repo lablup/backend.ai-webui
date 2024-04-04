@@ -255,13 +255,23 @@
       "EnvironmentVariableNamePatternError": "Имя переменной должно начинаться с буквы или символа подчеркивания и может содержать только буквы, цифры и символы подчеркивания.",
       "EnvironmentVariableDuplicateName": "Имя переменной, которая уже существует.",
       "Template": "Шаблон сессии",
-      "EnableAutomaticShmem": "Автоматическая разделяемая память",
+      "EnableAutomaticMiniumShmem": "Установите минимальный объем общей памяти",
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
       "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Допускается только целое число, если размер кластера не меньше 2.",
       "StartAfter": "Начать после:",
-      "StartTimeDoesNotApply": "Если время начала не установлено, оно не применяется."
+      "StartTimeDoesNotApply": "Если время начала не установлено, оно не применяется.",
+      "MiniumAllocation": "Минимальные требования",
+      "MiniumAllocationTooltip": "Выберите минимальное требование для выбранной среды выполнения",
+      "PreviousLauncher": "Предыдущий",
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Вы используете программу запуска сессии \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Перейти к обзору",
+      "InteractiveModeDesc": "позволяет создавать, тестировать и запускать код в интерактивном режиме через jupyter notebook, visual studio code и т.д.",
+      "BatchModeDesc": "Вы можете запускать свой код на нескольких узлах и кластерах, чтобы масштабировать свою идею.",
+      "AddEnvironmentVariable": "Добавьте переменные окружения",
+      "EnvironmentVariableValueRequired": "Пожалуйста, введите значение."
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -329,7 +339,11 @@
       "SessionNameAlreadyExist": "Имя сессии уже существует",
       "SluggedStrings": "Строки с засечками (>3 символов)",
       "SessionNameTooLong64": "Введите не более 64 символов.",
-      "PleaseFollowSessionNameRule": "Введите комбинацию как минимум из 4 букв, цифр, «.», «_» и «-»."
+      "PleaseFollowSessionNameRule": "Введите комбинацию как минимум из 4 букв, цифр, «.», «_» и «-».",
+      "SessionNameTooShort": "Пожалуйста, введите не менее 4 символов.",
+      "SessionNameShouldStartWith": "Он должен начинаться с буквы алфавита, цифры или '_'.",
+      "SessionNameShouldEndWith": "Он должен заканчиваться буквой алфавита, цифрой или '_'.",
+      "SessionNameInvalidCharacter": "В середине имени могут быть только буквы алфавита, цифры и '_'."
     },
     "AlreadyTerminatingSession": "Уже завершаю сессию.",
     "NoSessionToDisplay": "Нет сеансов для отображения",
@@ -379,7 +393,8 @@
     "CPU": "CPU",
     "MEM": "Память",
     "GPU": "GPU",
-    "GPU(MEM)": "Графический процессор (память)"
+    "GPU(MEM)": "Графический процессор (память)",
+    "Agents": "Агенты"
   },
   "button": {
     "Cancel": "Отмена",
@@ -413,7 +428,9 @@
     "OK": "OK",
     "Download": "Скачать",
     "Clone": "Клон",
-    "Config": "Конфигурация"
+    "Config": "Конфигурация",
+    "Next": "Следующий",
+    "Previous": "Предыдущий"
   },
   "agent": {
     "Endpoint": "Конечная точка",
@@ -539,7 +556,8 @@
     "SignoutSeccessfullyFinished": "Выход из системы завершен",
     "ModifyUserDetail": "Изменение сведений о пользователе",
     "EnableSudoSession": "Включить сеанс sudo",
-    "MainAccessKey": "Главный ключ доступа"
+    "MainAccessKey": "Главный ключ доступа",
+    "InactivateTheFollowingUsers": "Деактивируйте следующих пользователей."
   },
   "data": {
     "Folders": "Папки",
@@ -592,7 +610,7 @@
       "FolderRenamed": "Папка переименована",
       "FolderNameMismatched": "Несоответствующее имя папки. Пожалуйста, проверьте, есть ли пробел в поле ввода или нет.",
       "SameFileName": "Входное значение совпадает с именем файла для обновления. Пожалуйста, измените его на другое имя.",
-      "FolderDeleted": "Папка удалена",
+      "FolderDeleted": "Папка {{ folderName }} удалена.",
       "FolderUpdated": "Параметры папки обновлены",
       "FolderDisconnected": "Папка отключена.",
       "FileRenamed": "Файл переименован",
@@ -619,7 +637,13 @@
       "CloneFolder": "Клонировать папку",
       "LeaveFolder": "Папка-скоросшиватель",
       "ShareFolder": "Папка общего доступа",
-      "ModifyPermissions": "Изменение прав доступа"
+      "ModifyPermissions": "Изменение прав доступа",
+      "Restore": "Восстановить",
+      "DeleteForever": "Удалить навсегда",
+      "FolderRestored": "Папка {{ folderName }} восстановлена.",
+      "FolderDeletedForever": "Папка {{ folderName}} удалена навсегда.",
+      "MoveToTrashBin": "Переместить в мусорное ведро",
+      "MovedToTrashBin": "Папка {{ folderName }} была перемещена в корзину."
     },
     "explorer": {
       "Delete": "Удалить...",
@@ -670,7 +694,8 @@
       "EmptyFilesAndFoldersAreNotUploaded": "Пустые файлы и пустые папки не загружаются",
       "FolderAlreadyExists": "Папка, которую планируется загрузить, уже существует.",
       "NumberOfSFTPSessionsExceededTitle": "Достигнут предел количества запущенных сеансов выгрузки",
-      "NumberOfSFTPSessionsExceededBody": "У вас запущены все доступные сессии выгрузки, которые вы можете создать. Перед началом нового сеанса завершите неиспользованные сеансы выгрузки."
+      "NumberOfSFTPSessionsExceededBody": "У вас запущены все доступные сессии выгрузки, которые вы можете создать. Перед началом нового сеанса завершите неиспользованные сеансы выгрузки.",
+      "DownloadNotAllowed": "Загрузка файла/папки в этой папке запрещена."
     },
     "invitation": {
       "NoValidEmails": "Не введены действительные адреса электронной почты",
@@ -717,14 +742,16 @@
       "CannotBeUndone": "ВНИМАНИЕ: это нельзя отменить!",
       "LogDeletion": "Вы уверены, что хотите удалить все сообщения журнала?",
       "WillBeAppliedToNewSessions": "Это обновление будет применено к новым сеансам.",
-      "Required": "Требуется"
+      "Required": "Требуется",
+      "DeleteForeverDesc": "ВНИМАНИЕ: выбранные элементы будут удалены навсегда, и вы не сможете их восстановить."
     },
     "ask": {
       "DoYouWantToProceed": "Вы хотите продолжить?"
     },
     "title": {
       "LetsDouble-Check": "Давайте дважды проверим",
-      "Notice": "Уведомление"
+      "Notice": "Уведомление",
+      "DeleteForever": "Удалить навсегда?"
     },
     "ErrorOccurred": "Возникла ошибка",
     "error": {
@@ -1424,7 +1451,8 @@
     "ForUser": "Для пользователя",
     "ForProject": "Для проекта",
     "QuotaDoesNotSupported": "Данный бэкэнд хранилища не поддерживает квотирование.",
-    "BeCarefulToSetUserResourcePolicy": "Изменение политики ресурсов может повлиять на всех пользователей, использующих данную политику ресурсов, поэтому использовать ее следует с осторожностью."
+    "BeCarefulToSetUserResourcePolicy": "Изменение политики ресурсов может повлиять на всех пользователей, использующих данную политику ресурсов, поэтому использовать ее следует с осторожностью.",
+    "StorageSetting": "Настройки хранения"
   },
   "modelService": {
     "EditModelService": "Редактирование модели сервиса",

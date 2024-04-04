@@ -117,6 +117,12 @@
   },
   "session": {
     "launcher": {
+      "NeoLauncher": "NEO",
+      "NeoSwitchDescription": "Anda menggunakan peluncur sesi \"{{launcher}}\".",
+      "SkipToConfirmAndLaunch": "Loncat ke ulasan",
+      "InteractiveModeDesc": "memungkinkan Anda untuk membuat, menguji, dan menjalankan kode secara interaktif melalui jupyter notebook, kode visual studio, dll.",
+      "BatchModeDesc": "Anda dapat menjalankan kode Anda dengan beberapa node & cluster untuk menskalakan ide Anda",
+      "AddEnvironmentVariable": "Menambahkan variabel lingkungan",
       "Sessions": "Sesi",
       "Project": "Proyek",
       "UserResourceLimit": "Batas Sumber Daya Pengguna",
@@ -322,6 +328,10 @@
     "Batch": "Batch",
     "Architecture": "Arsitektur",
     "Validation": {
+      "SessionNameTooShort": "Masukkan setidaknya 4 karakter.",
+      "SessionNameShouldStartWith": "Nama tersebut harus dimulai dengan huruf alfabet, angka, atau '_'.",
+      "SessionNameShouldEndWith": "Nama tersebut harus diakhiri dengan huruf alfabet, angka, atau '_'.",
+      "SessionNameInvalidCharacter": "Bagian tengah nama hanya boleh berisi huruf alfabet, angka, dan '_'.",
       "SessionNameRequired": "Nama sesi harus diisi",
       "EnterValidSessionName": "Masukkan nama sesi yang valid",
       "SessionNameAlreadyExist": "Nama sesi sudah ada",
@@ -411,7 +421,9 @@
     "OK": "BAIKLAH.",
     "Download": "Unduh",
     "Clone": "Clone",
-    "Config": "Konfigurasi"
+    "Config": "Konfigurasi",
+    "Next": "Berikutnya",
+    "Previous": "Sebelumnya"
   },
   "agent": {
     "Endpoint": "Titik akhir",
@@ -537,7 +549,8 @@
     "SignoutSeccessfullyFinished": "Keluar dengan aman selesai",
     "ModifyUserDetail": "Ubah Detail Pengguna",
     "EnableSudoSession": "Aktifkan sesi sudo",
-    "MainAccessKey": "Kunci Akses Utama"
+    "MainAccessKey": "Kunci Akses Utama",
+    "InactivateTheFollowingUsers": "Nonaktifkan pengguna berikut."
   },
   "data": {
     "Folders": "Folder",
@@ -590,7 +603,7 @@
       "FolderRenamed": "Folder telah diganti nama",
       "FolderNameMismatched": "Nama folder tidak cocok. Silakan periksa apakah ada karakter spasi di bidang input atau tidak.",
       "SameFileName": "Nilai input sama dengan nama file yang akan diperbarui. Silakan ganti dengan nama lain.",
-      "FolderDeleted": "Folder dihapus",
+      "FolderDeleted": "Folder {{ folderName }} telah dihapus.",
       "FolderUpdated": "Opsi folder diperbarui",
       "FolderDisconnected": "Koneksi folder telah terputus.",
       "FileRenamed": "File sudah diganti nama",
@@ -617,7 +630,12 @@
       "CloneFolder": "Folder klon",
       "LeaveFolder": "Tinggalkan folder",
       "ShareFolder": "Folder berbagi",
-      "ModifyPermissions": "Memodifikasi izin"
+      "ModifyPermissions": "Memodifikasi izin",
+      "Restore": "Memulihkan",
+      "DeleteForever": "Hapus selamanya",
+      "FolderRestored": "Folder {{ folderName }} telah dipulihkan.",
+      "FolderDeletedForever": "Folder {{ folderName }} telah dihapus selamanya.",
+      "MovedToTrashBin": "Folder {{ folderName }} telah dipindahkan ke tempat sampah."
     },
     "explorer": {
       "Delete": "Menghapus...",
@@ -715,14 +733,16 @@
       "CannotBeUndone": "PERINGATAN: ini tidak dapat dibatalkan!",
       "LogDeletion": "Anda yakin ingin menghapus semua pesan log?",
       "WillBeAppliedToNewSessions": "Pembaruan ini akan diterapkan ke sesi baru.",
-      "Required": "Diperlukan"
+      "Required": "Diperlukan",
+      "DeleteForeverDesc": "PERINGATAN: item yang dipilih akan dihapus selamanya dan Anda tidak dapat memulihkannya."
     },
     "ask": {
       "DoYouWantToProceed": "Apakah Anda ingin lanjut?"
     },
     "title": {
       "LetsDouble-Check": "Mari Periksa Kembali",
-      "Notice": "Pemberitahuan"
+      "Notice": "Pemberitahuan",
+      "DeleteForever": "Hapus selamanya?"
     },
     "ErrorOccurred": "Terjadi Galat",
     "error": {
@@ -1422,7 +1442,8 @@
     "ForUser": "Untuk Pengguna",
     "ForProject": "Untuk Proyek",
     "QuotaDoesNotSupported": "Backend penyimpanan ini tidak mendukung kuota.",
-    "BeCarefulToSetUserResourcePolicy": "Mengubah kebijakan sumber daya dapat memengaruhi semua pengguna yang menggunakan kebijakan sumber daya pengguna tersebut, jadi gunakanlah dengan hati-hati."
+    "BeCarefulToSetUserResourcePolicy": "Mengubah kebijakan sumber daya dapat memengaruhi semua pengguna yang menggunakan kebijakan sumber daya pengguna tersebut, jadi gunakanlah dengan hati-hati.",
+    "StorageSetting": "Pengaturan Penyimpanan"
   },
   "modelService": {
     "EditModelService": "Layanan Edit Model",
