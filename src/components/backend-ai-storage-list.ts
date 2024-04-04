@@ -2181,13 +2181,23 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         <div class="flex layout wrap">
           <mwc-icon-button
-            id="download-btn"
+            id="${rowData.item.filename + '-download-btn'}"
             class="tiny fg blue"
             icon="cloud_download"
+            style="pointer-events: auto !important;"
             ?disabled="${!this._isDownloadable(this.vhost)}"
             filename="${rowData.item.filename}"
             @click="${(e) => this._downloadFile(e, this._isDir(rowData.item))}"
           ></mwc-icon-button>
+          ${!this._isDownloadable(this.vhost)
+            ? html`
+                <vaadin-tooltip
+                  for="${rowData.item.filename + '-download-btn'}"
+                  text="${_t('data.explorer.DownloadNotAllowed')}"
+                  position="top-start"
+                ></vaadin-tooltip>
+              `
+            : html``}
           <mwc-icon-button
             id="rename-btn"
             ?disabled="${!this.isWritable}"
