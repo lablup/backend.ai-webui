@@ -1168,7 +1168,12 @@
     "MEM": "Muisti",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (muisti)",
-    "Agents": "Agentit"
+    "Agents": "Agentit",
+    "ConvertSessionToImage": "Muunna istunto kuvaksi",
+    "SessionName": "Istunnon nimi",
+    "SessionId": "Istunnon tunniste",
+    "EnvironmentAndVersion": "Ympäristö ja versio",
+    "Tags": "Tunnisteet"
   },
   "settings": {
     "ATOMsupport": "ATOM",

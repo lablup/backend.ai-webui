@@ -394,7 +394,12 @@
     "MEM": "Pamięć",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (pamięć)",
-    "Agents": "Agenci"
+    "Agents": "Agenci",
+    "ConvertSessionToImage": "Konwertuj sesję na obraz",
+    "SessionName": "Nazwa sesji",
+    "SessionId": "Identyfikator sesji",
+    "EnvironmentAndVersion": "Środowisko i wersja",
+    "Tags": "Tagi"
   },
   "button": {
     "Cancel": "Anuluj",

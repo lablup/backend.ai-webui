@@ -392,7 +392,12 @@
     "MEM": "メモリ",
     "GPU": "GPU",
     "GPU(MEM)": "GPU(メモリ)",
-    "Agents": "エージェント"
+    "Agents": "エージェント",
+    "ConvertSessionToImage": "セッションをイメージに変換",
+    "SessionName": "セッション名",
+    "SessionId": "セッションID",
+    "EnvironmentAndVersion": "環境とバージョン",
+    "Tags": "タグ"
   },
   "button": {
     "Cancel": "キャンセル",

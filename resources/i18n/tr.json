@@ -392,7 +392,12 @@
     "MEM": "Hafıza",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (bellek)",
-    "Agents": "Temsilciler"
+    "Agents": "Temsilciler",
+    "ConvertSessionToImage": "Oturumu Resme Dönüştür",
+    "SessionName": "Oturum Adı",
+    "SessionId": "Oturum kimliği",
+    "EnvironmentAndVersion": "Ortam ve Sürüm",
+    "Tags": "Etiketler"
   },
   "button": {
     "Cancel": "İptal etmek",

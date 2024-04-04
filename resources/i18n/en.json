@@ -405,7 +405,12 @@
     "CPU": "CPU",
     "MEM": "MEM",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU(Memory)"
+    "GPU(MEM)": "GPU(Memory)",
+    "ConvertSessionToImage": "Convert Session to Image",
+    "SessionName": "Session Name",
+    "SessionId": "Session ID",
+    "EnvironmentAndVersion": "Environment and Version",
+    "Tags": "Tags"
   },
   "modelService": {
     "Services": "Services",

@@ -563,7 +563,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     }
 
                     const extraFilterValues: string[] = [];
-                    let requirementTags = _.chain(requirements)
+                    const requirementTags = _.chain(requirements)
                       .filter(
                         (requirement) => !requirement.startsWith('customized_'),
                       )

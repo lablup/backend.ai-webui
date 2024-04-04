@@ -392,7 +392,12 @@
     "MEM": "Μνήμη",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (μνήμη)",
-    "Agents": "Πράκτορες"
+    "Agents": "Πράκτορες",
+    "ConvertSessionToImage": "Μετατροπή συνεδρίας σε εικόνα",
+    "SessionName": "Όνομα συνεδρίας",
+    "SessionId": "Αναγνωριστικό συνεδρίας",
+    "EnvironmentAndVersion": "Περιβάλλον και Έκδοση",
+    "Tags": "Ετικέτες"
   },
   "button": {
     "Cancel": "Ματαίωση",

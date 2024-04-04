@@ -387,7 +387,12 @@
     "CPU": "CPU",
     "MEM": "Memori",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (memori)"
+    "GPU(MEM)": "GPU (memori)",
+    "ConvertSessionToImage": "Ubah Sesi menjadi Gambar",
+    "SessionName": "Nama Sesi",
+    "SessionId": "Id Sesi",
+    "EnvironmentAndVersion": "Lingkungan dan Versi",
+    "Tags": "Tag"
   },
   "button": {
     "Cancel": "Batalkan",

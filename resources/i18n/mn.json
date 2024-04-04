@@ -381,7 +381,12 @@
     "MEM": "Санах ой",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (санах ой)",
-    "Agents": "Агентууд"
+    "Agents": "Агентууд",
+    "ConvertSessionToImage": "Сессийг зураг болгон хөрвүүлэх",
+    "SessionName": "Сеанс нэр",
+    "SessionId": "Сешн Id",
+    "EnvironmentAndVersion": "Хүрээлэн буй орчин ба хувилбар",
+    "Tags": "Шошго"
   },
   "button": {
     "Cancel": "Цуцлах",
