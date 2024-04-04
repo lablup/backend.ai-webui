@@ -239,6 +239,7 @@ export const useTOTPSupported = () => {
     },
     {
       suspense: false,
+      staleTime: 1000,
     },
   );
   const isSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
