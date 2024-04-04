@@ -878,7 +878,7 @@ export default class BackendAICredentialList extends BackendAIPage {
             : html``}
         </div>
         ${!globalThis.backendaiclient.supports(
-          'deprecated-quota-support-in-keypair-resource-policy',
+          'deprecated-max-vfolder-count-in-keypair-resource-policy',
         )
           ? html`
               <div class="layout horizontal wrap center">

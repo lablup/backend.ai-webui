@@ -108,7 +108,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   @state() private all_vfolder_hosts;
   @state() private default_vfolder_host = '';
   @state() private vfolderPermissions;
-  @state() private isDeprecatedQuotaSupportInKeypairResourcePolicy = false;
+  @state() private isDeprecatedMaxVfolderCountInKeypairResourcePolicy = false;
 
   constructor() {
     super();
@@ -331,9 +331,9 @@ export default class BackendAICredentialView extends BackendAIPage {
           globalThis.backendaiclient.supports(
             'fine-grained-storage-permissions',
           );
-        this.isDeprecatedQuotaSupportInKeypairResourcePolicy =
+        this.isDeprecatedMaxVfolderCountInKeypairResourcePolicy =
           globalThis.backendaiclient.supports(
-            'deprecated-quota-support-in-keypair-resource-policy',
+            'deprecated-max-vfolder-count-in-keypair-resource-policy',
           );
         this._preparePage();
         if (this.enableParsingStoragePermissions) {
@@ -346,9 +346,9 @@ export default class BackendAICredentialView extends BackendAIPage {
         globalThis.backendaiclient.supports('session-lifetime');
       this.enableParsingStoragePermissions =
         globalThis.backendaiclient.supports('fine-grained-storage-permissions');
-      this.isDeprecatedQuotaSupportInKeypairResourcePolicy =
+      this.isDeprecatedMaxVfolderCountInKeypairResourcePolicy =
         globalThis.backendaiclient.supports(
-          'deprecated-quota-support-in-keypair-resource-policy',
+          'deprecated-max-vfolder-count-in-keypair-resource-policy',
         );
       this._preparePage();
       if (this.enableParsingStoragePermissions) {
@@ -1484,7 +1484,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             <div
               class="horizontal layout justified"
               style=${
-                this.isDeprecatedQuotaSupportInKeypairResourcePolicy
+                this.isDeprecatedMaxVfolderCountInKeypairResourcePolicy
                   ? 'display:none;'
                   : 'width:100%;'
               }

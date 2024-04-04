@@ -2507,7 +2507,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     if (
       !host ||
       globalThis.backendaiclient.supports(
-        'deprecated-quota-support-in-keypair-resource-policy',
+        'deprecated-max-quota-scope-in-keypair-resource-policy',
       )
     ) {
       return false;
@@ -2693,7 +2693,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           this.directoryBasedUsage =
             globalThis.backendaiclient._config.directoryBasedUsage &&
             !globalThis.backendaiclient.supports(
-              'deprecated-quota-support-in-keypair-resource-policy',
+              'deprecated-max-quota-scope-in-keypair-resource-policy',
             );
           this._isDirectorySizeVisible =
             globalThis.backendaiclient._config.isDirectorySizeVisible;
@@ -2719,7 +2719,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       this.directoryBasedUsage =
         globalThis.backendaiclient._config.directoryBasedUsage &&
         !globalThis.backendaiclient.supports(
-          'deprecated-quota-support-in-keypair-resource-policy',
+          'deprecated-max-quota-scope-in-keypair-resource-policy',
         );
       this._isDirectorySizeVisible =
         globalThis.backendaiclient._config.isDirectorySizeVisible;
