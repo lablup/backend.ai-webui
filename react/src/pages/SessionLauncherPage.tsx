@@ -68,7 +68,6 @@ import {
   Switch,
   Table,
   Tag,
-  Tooltip,
   Typography,
   theme,
 } from 'antd';

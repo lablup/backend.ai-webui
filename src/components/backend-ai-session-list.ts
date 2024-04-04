@@ -4087,7 +4087,6 @@ ${rowData.item[this.sessionNameField]}</pre
             ?disabled="${commitSessionInfo?.environment === '' ||
             (this.pushImageInsteadOfCommiting && !this.canStartImagifying)}"
             @click=${(e) => {
-              console.log(e);
               if (this.pushImageInsteadOfCommiting) {
                 this._requestConvertSessionToimage(commitSessionInfo);
               } else {
