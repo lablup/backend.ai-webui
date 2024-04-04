@@ -694,7 +694,8 @@
       "SFTPSessionNotAvailable": "Sesja SFTP nie jest obecnie dostępna",
       "StartingSSH/SFTPSession": "Rozpoczęcie sesji SFTP...",
       "NumberOfSFTPSessionsExceededTitle": "Osiągnięto limit liczby uruchomionych sesji przesyłania",
-      "NumberOfSFTPSessionsExceededBody": "Uruchomiono wszystkie dostępne sesje przesyłania, które można utworzyć. Przed rozpoczęciem nowej sesji zakończ nieużywane sesje przesyłania."
+      "NumberOfSFTPSessionsExceededBody": "Uruchomiono wszystkie dostępne sesje przesyłania, które można utworzyć. Przed rozpoczęciem nowej sesji zakończ nieużywane sesje przesyłania.",
+      "DownloadNotAllowed": "Pobieranie pliku/folderu w tym folderze jest niedozwolone."
     },
     "invitation": {
       "NoValidEmails": "Nie wprowadzono poprawnych adresów e-mail",

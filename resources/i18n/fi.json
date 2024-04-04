@@ -301,7 +301,8 @@
       "UseNewFileExtension": "Käytä",
       "ValueRequired": "Arvo vaaditaan",
       "ValueShouldBeStarted": "Polun tulee alkaa kirjaimella .(piste) tai vain kirjaimilla ja numeroilla.",
-      "WritePermissionRequiredInUploadFiles": "Tiedoston (tiedostojen) lataaminen edellyttää kirjoitusoikeutta."
+      "WritePermissionRequiredInUploadFiles": "Tiedoston (tiedostojen) lataaminen edellyttää kirjoitusoikeutta.",
+      "DownloadNotAllowed": "Tiedoston/kansion lataaminen ei ole sallittua tässä kansiossa."
     },
     "folders": {
       "CannotDeleteFolder": "Yhdessä tai useammassa istunnossa asennettua kansiota ei voi poistaa. Lopeta istunto ensin.",

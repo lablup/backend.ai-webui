@@ -692,7 +692,8 @@
       "SFTPSessionNotAvailable": "A sessão SFTP não está disponível neste momento",
       "StartingSSH/SFTPSession": "Iniciando a sessão SFTP...",
       "NumberOfSFTPSessionsExceededTitle": "Atingiu o limite da contagem de sessões de carregamento em execução",
-      "NumberOfSFTPSessionsExceededBody": "Está a executar todas as sessões de carregamento disponíveis que tem permissão para criar. Termine as sessões de carregamento não utilizadas antes de iniciar uma nova sessão."
+      "NumberOfSFTPSessionsExceededBody": "Está a executar todas as sessões de carregamento disponíveis que tem permissão para criar. Termine as sessões de carregamento não utilizadas antes de iniciar uma nova sessão.",
+      "DownloadNotAllowed": "O download de arquivo/pasta não é permitido nesta pasta."
     },
     "invitation": {
       "NoValidEmails": "Nenhum e-mail válido foi inserido",

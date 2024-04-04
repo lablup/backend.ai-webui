@@ -692,7 +692,8 @@
       "SFTPSessionNotAvailable": "SFTP Oturumu şu anda mevcut değil",
       "StartingSSH/SFTPSession": "SFTP oturumu başlatılıyor...",
       "NumberOfSFTPSessionsExceededTitle": "Çalışan yükleme oturumu sayısı sınırına ulaşıldı",
-      "NumberOfSFTPSessionsExceededBody": "Oluşturmanıza izin verilen tüm mevcut yükleme oturumlarını çalıştırıyorsunuz. Lütfen yeni bir oturum başlatmadan önce kullanılmayan yükleme oturumlarını sonlandırın."
+      "NumberOfSFTPSessionsExceededBody": "Oluşturmanıza izin verilen tüm mevcut yükleme oturumlarını çalıştırıyorsunuz. Lütfen yeni bir oturum başlatmadan önce kullanılmayan yükleme oturumlarını sonlandırın.",
+      "DownloadNotAllowed": "Bu klasörde dosya/klasör indirmeye izin verilmiyor."
     },
     "invitation": {
       "NoValidEmails": "Geçerli e-posta girilmedi",

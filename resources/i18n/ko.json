@@ -790,7 +790,8 @@
       "StartingSSH/SFTPSession": "SFTP 서버 시작",
       "EmptyFilesAndFoldersAreNotUploaded": "빈 파일과 빈 폴더들은 업로드되지 않습니다.",
       "NumberOfSFTPSessionsExceededTitle": "생성 가능한 업로드 세션 갯수 한도에 도달했습니다.",
-      "NumberOfSFTPSessionsExceededBody": "설정된 업로드 세션 갯수를 초과하여 세션 생성을 시도하고 있습니다. 계속하기 전에 사용하지 않는 업로드 세션을 중지시키세요."
+      "NumberOfSFTPSessionsExceededBody": "설정된 업로드 세션 갯수를 초과하여 세션 생성을 시도하고 있습니다. 계속하기 전에 사용하지 않는 업로드 세션을 중지시키세요.",
+      "DownloadNotAllowed": "이 폴더에서는 파일/폴더 다운로드가 허용되지 않습니다. "
     },
     "invitation": {
       "NoValidEmails": "정상적인 이메일을 입력해주세요",
