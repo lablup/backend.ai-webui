@@ -692,7 +692,8 @@
       "SFTPSessionNotAvailable": "Phiên SFTP hiện không khả dụng",
       "StartingSSH/SFTPSession": "Đang bắt đầu phiên SFTP...",
       "NumberOfSFTPSessionsExceededTitle": "Đã đạt đến giới hạn số phiên tải lên đang chạy",
-      "NumberOfSFTPSessionsExceededBody": "Bạn đang chạy tất cả các phiên tải lên có sẵn mà bạn được phép tạo. \nVui lòng chấm dứt các phiên tải lên không sử dụng trước khi bắt đầu phiên mới."
+      "NumberOfSFTPSessionsExceededBody": "Bạn đang chạy tất cả các phiên tải lên có sẵn mà bạn được phép tạo. \nVui lòng chấm dứt các phiên tải lên không sử dụng trước khi bắt đầu phiên mới.",
+      "DownloadNotAllowed": "Không được phép tải xuống tập tin/thư mục trong thư mục này."
     },
     "invitation": {
       "NoValidEmails": "Không có email hợp lệ nào được nhập",
