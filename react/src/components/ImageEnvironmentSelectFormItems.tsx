@@ -40,6 +40,7 @@ export type ImageEnvironmentFormInput = {
     version: string;
     image: Image | undefined;
     manual?: string;
+    customizedTag?: string;
   };
 };
 
@@ -611,9 +612,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                                 label: (
                                   <TextHighlighter
                                     keyword={versionSearch}
-                                    key="Personalized"
+                                    key="Customized"
                                   >
-                                    Personalized
+                                    Customized
                                   </TextHighlighter>
                                 ),
                                 color: 'cyan',
@@ -631,6 +632,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
                               },
                             ]}
                           />,
+                        );
+                        form.setFieldValue(
+                          ['environments', 'customizedTag'],
+                          tag,
                         );
                       }
                     }

@@ -1,6 +1,7 @@
 import BAICard from '../BAICard';
 import BAIIntervalText from '../components/BAIIntervalText';
 import DatePickerISO from '../components/DatePickerISO';
+import DoubleTag from '../components/DoubleTag';
 import EnvVarFormList, {
   EnvVarFormListValue,
 } from '../components/EnvVarFormList';
@@ -67,6 +68,7 @@ import {
   Switch,
   Table,
   Tag,
+  Tooltip,
   Typography,
   theme,
 } from 'antd';
@@ -194,7 +196,11 @@ const SessionLauncherPage = () => {
       setQuery(
         {
           // formValues: form.getFieldsValue(),
-          formValues: _.omit(form.getFieldsValue(), ['environments.image']),
+          formValues: _.omit(
+            form.getFieldsValue(),
+            ['environments.image'],
+            ['environments.customizedTag'],
+          ),
         },
         'replaceIn',
       );
@@ -1208,10 +1214,29 @@ const SessionLauncherPage = () => {
                               }
                             />
                             {/* {form.getFieldValue('environments').image} */}
-                            <Typography.Text copyable code>
-                              {form.getFieldValue('environments')?.version ||
-                                form.getFieldValue('environments')?.manual}
-                            </Typography.Text>
+                            <div>
+                              <Typography.Text copyable code>
+                                {form.getFieldValue('environments')?.version ||
+                                  form.getFieldValue('environments')?.manual}
+                              </Typography.Text>
+                              {form.getFieldValue('environments')
+                                ?.customizedTag ? (
+                                <DoubleTag
+                                  values={[
+                                    {
+                                      label: 'Customized',
+                                      color: 'cyan',
+                                    },
+                                    {
+                                      label:
+                                        form.getFieldValue('environments')
+                                          ?.customizedTag,
+                                      color: 'cyan',
+                                    },
+                                  ]}
+                                />
+                              ) : null}
+                            </div>
                           </Flex>
                         </Descriptions.Item>
                         {form.getFieldValue('envvars')?.length > 0 && (
