@@ -202,7 +202,7 @@ const StorageStatusPanel: React.FC<{
     maxVfolderCount || maxVfolderCount === 0
       ? ((maxVfolderCount > 0
           ? ((createdCount / maxVfolderCount) * 100)?.toFixed(2)
-          : 100) as number)
+          : 0) as number)
       : null;
   const descriptionItems: DescriptionsProps['items'] = [
     {
@@ -230,7 +230,7 @@ const StorageStatusPanel: React.FC<{
                 <Typography.Text type="secondary">
                   {t('data.Limit')}:
                 </Typography.Text>
-                {maxVfolderCount}
+                {maxVfolderCount === 0 ? '∞' : maxVfolderCount}
               </>
             ) : null}
           </Flex>
