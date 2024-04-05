@@ -58,7 +58,7 @@ interface GroupData {
 @customElement('backend-ai-data-view')
 export default class BackendAIData extends BackendAIPage {
   @property({ type: String }) apiMajorVersion = '';
-  @property({ type: Date }) folderListFetchKey = new Date();
+  @property({ type: String }) folderListFetchKey = 'first';
   @property({ type: Boolean }) is_admin = false;
   @property({ type: Boolean }) enableStorageProxy = false;
   @property({ type: Boolean }) enableInferenceWorkload = false;
@@ -280,7 +280,7 @@ export default class BackendAIData extends BackendAIPage {
       <link rel="stylesheet" href="resources/custom.css" />
       <div class="vertical layout" style="gap:24px">
         <backend-ai-react-storage-status-panel
-          .value="${this.folderListFetchKey}"
+          value="${this.folderListFetchKey}"
         ></backend-ai-react-storage-status-panel>
         <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">
@@ -887,7 +887,7 @@ export default class BackendAIData extends BackendAIPage {
       this._getStorageProxyInformation();
     }
     document.addEventListener('backend-ai-folder-list-changed', () => {
-      this.folderListFetchKey = new Date();
+      this.folderListFetchKey = new Date().toISOString();
     });
     document.addEventListener('backend-ai-vfolder-cloning', (e: any) => {
       if (e.detail) {
