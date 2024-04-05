@@ -31,12 +31,6 @@ import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useLazyLoadQuery } from 'react-relay';
 
-export type DeadVFolderStatus =
-  | 'delete-pending'
-  | 'delete-ongoing'
-  | 'delete-complete'
-  | 'delete-error';
-
 const StorageStatusPanel: React.FC<{
   fetchKey: string;
 }> = ({ fetchKey }) => {
@@ -57,14 +51,12 @@ const StorageStatusPanel: React.FC<{
     sm: 1,
     xs: 1,
   };
-  const deadVFolderStatuses: DeadVFolderStatus[] = [
-    'delete-pending',
-    'delete-ongoing',
-    'delete-complete',
-    'delete-error',
-  ];
-  const isDeadVFolderStatus = (status: string) => {
-    return _.includes(deadVFolderStatuses, status);
+
+  const isExcludedCount = (status: string) => {
+    return _.includes(
+      ['delete-ongoing', 'delete-complete', 'delete-error'],
+      status,
+    );
   };
 
   const { data: vfolders } = useQuery(
@@ -77,17 +69,17 @@ const StorageStatusPanel: React.FC<{
     (item: any) =>
       item.is_owner &&
       item.ownership_type === 'user' &&
-      !isDeadVFolderStatus(item.status),
+      !isExcludedCount(item.status),
   ).length;
   const projectFolderCount = vfolders?.filter(
     (item: any) =>
-      item.ownership_type === 'group' && !isDeadVFolderStatus(item.status),
+      item.ownership_type === 'group' && !isExcludedCount(item.status),
   ).length;
   const invitedCount = vfolders?.filter(
     (item: any) =>
       !item.is_owner &&
       item.ownership_type === 'user' &&
-      !isDeadVFolderStatus(item.status),
+      !isExcludedCount(item.status),
   ).length;
 
   // TODO: Add resolver to enable subquery and modify to call useLazyLoadQuery only once.
