@@ -84,7 +84,6 @@ export default class LablupShields extends LitElement {
         }
         .app,
         .desc {
-          word-break: break-all;
           white-space: normal;
           height: fit-content;
           width: var(--lablup-shield-component-width, auto);
