@@ -61,7 +61,6 @@ const BAINotificationItem: React.FC<{
             {notification.message}
           </Typography.Paragraph>
         </Flex>
-
         <Flex direction="row" align="end" gap={'xxs'} justify="between">
           <Typography.Paragraph ellipsis={{ rows: 3, expandable: true }}>
             {notification.description}

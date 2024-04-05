@@ -113,7 +113,8 @@
     "ATOMEnabled": "Đã bật NPU ATOM",
     "WarboyEnabled": "NPU Warboy đã được kích hoạt",
     "DownloadWebUIApp": "Tải xuống ứng dụng giao diện người dùng web Backend.AI",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Đã bật LPU Hyperaccel"
   },
   "session": {
     "launcher": {
@@ -391,7 +392,13 @@
     "CPU": "CPU",
     "MEM": "Ký ức",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (bộ nhớ)"
+    "GPU(MEM)": "GPU (bộ nhớ)",
+    "Agents": "Đại lý",
+    "ConvertSessionToImage": "Chuyển đổi phiên thành hình ảnh",
+    "SessionName": "Tên phiên",
+    "SessionId": "Id phiên",
+    "EnvironmentAndVersion": "Môi trường và phiên bản",
+    "Tags": "Thẻ"
   },
   "button": {
     "Cancel": "Huỷ bỏ",
@@ -691,7 +698,8 @@
       "SFTPSessionNotAvailable": "Phiên SFTP hiện không khả dụng",
       "StartingSSH/SFTPSession": "Đang bắt đầu phiên SFTP...",
       "NumberOfSFTPSessionsExceededTitle": "Đã đạt đến giới hạn số phiên tải lên đang chạy",
-      "NumberOfSFTPSessionsExceededBody": "Bạn đang chạy tất cả các phiên tải lên có sẵn mà bạn được phép tạo. \nVui lòng chấm dứt các phiên tải lên không sử dụng trước khi bắt đầu phiên mới."
+      "NumberOfSFTPSessionsExceededBody": "Bạn đang chạy tất cả các phiên tải lên có sẵn mà bạn được phép tạo. \nVui lòng chấm dứt các phiên tải lên không sử dụng trước khi bắt đầu phiên mới.",
+      "DownloadNotAllowed": "Không được phép tải xuống tập tin/thư mục trong thư mục này."
     },
     "invitation": {
       "NoValidEmails": "Không có email hợp lệ nào được nhập",
@@ -1164,7 +1172,10 @@
     "OutOfRange": "Ngoài phạm vi.",
     "Plugins": "bổ sung",
     "OpenSourceCUDAGPUsupport": "Hỗ trợ GPU CUDA mã nguồn mở",
-    "ShowOnlyChanged": "Chỉ hiển thị các thay đổi"
+    "ShowOnlyChanged": "Chỉ hiển thị các thay đổi",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Sử dụng bộ tăng tốc LPU Hyperaccel.",
+    "RequireHyperaccelLPUPlugin": "Yêu cầu Plugin LPU Backend.AI Hyperaccel."
   },
   "notification": {
     "SuccessfullyUpdated": "Cập nhật thành công",
@@ -1217,14 +1228,12 @@
     "LeaveService": "Rời khỏi dịch vụ",
     "DescConfirmLeave": "Để xác nhận, vui lòng nhập lại E-mail và mật khẩu của bạn.",
     "Password": "Mật khẩu",
-    "E-mail": "E-mail",
     "APIKey": "Mã API",
     "SecretKey": "Chìa khoá bí mật",
     "Endpoint": "Điểm cuối",
     "NotAUser": "Không phải là người dùng?",
     "LoginAnotherway": "Bạn muốn đăng nhập theo cách khác?",
     "SignUp": "Đăng ký",
-    "LoginWithE-mail": "Đăng nhập bằng E-mail",
     "LoginWithIAM": "Đăng nhập bằng IAM",
     "ClickToUseIAM": "Nhấp để sử dụng IAM",
     "ClickToUseID": "Nhấp để sử dụng ID",
@@ -1252,7 +1261,9 @@
     "SingleSignOn": {
       "LoginWithSAML": "Đăng nhập bằng SAML",
       "LoginWithRealm": "Đăng nhập bằng {{realmName }}"
-    }
+    },
+    "LoginWithE-mailorUsername": "Đăng nhập bằng E-mail hoặc tên người dùng",
+    "E-mailorUsername": "Thư điện tử hoặc tên người dùng"
   },
   "signup": {
     "SignupBETA": "Đăng ký (chỉ dành cho lời mời thử nghiệm)",

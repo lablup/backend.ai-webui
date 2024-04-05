@@ -113,7 +113,8 @@
     "ATOMEnabled": "已启用 ATOM NPU",
     "WarboyEnabled": "启用 Warboy NPU",
     "DownloadWebUIApp": "下载 Backend.AI Web UI 应用程序",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU 已启用"
   },
   "session": {
     "launcher": {
@@ -391,7 +392,13 @@
     "CPU": "中央处理器",
     "MEM": "内存",
     "GPU": "GPU",
-    "GPU(MEM)": "图形处理器（内存）"
+    "GPU(MEM)": "图形处理器（内存）",
+    "Agents": "代理商",
+    "ConvertSessionToImage": "将会话转换为图像",
+    "SessionName": "会话名称",
+    "SessionId": "会话 ID",
+    "EnvironmentAndVersion": "环境及版本",
+    "Tags": "标签"
   },
   "button": {
     "Cancel": "取消",
@@ -691,7 +698,8 @@
       "SFTPSessionNotAvailable": "SFTP 会话现在不可用",
       "StartingSSH/SFTPSession": "开始 SFTP 会话...",
       "NumberOfSFTPSessionsExceededTitle": "运行中的上传会话次数已达上限",
-      "NumberOfSFTPSessionsExceededBody": "您正在运行允许创建的所有可用上传会话。请在启动新会话前终止未使用的上传会话。"
+      "NumberOfSFTPSessionsExceededBody": "您正在运行允许创建的所有可用上传会话。请在启动新会话前终止未使用的上传会话。",
+      "DownloadNotAllowed": "不允许在此文件夹中下载文件/文件夹。"
     },
     "invitation": {
       "NoValidEmails": "没有输入有效的电子邮件",
@@ -1164,7 +1172,10 @@
     "OutOfRange": "超出范围。",
     "Plugins": "插件",
     "OpenSourceCUDAGPUsupport": "开源 CUDA GPU 支持",
-    "ShowOnlyChanged": "仅显示更改"
+    "ShowOnlyChanged": "仅显示更改",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "使用Hyperaccel LPU加速器。",
+    "RequireHyperaccelLPUPlugin": "需要 Backend.AI Hyperaccel LPU 插件。"
   },
   "notification": {
     "SuccessfullyUpdated": "成功更新",
@@ -1217,14 +1228,12 @@
     "LeaveService": "离开服务",
     "DescConfirmLeave": "要确认，请再次输入您的电子邮件和密码。",
     "Password": "密码",
-    "E-mail": "电子邮件",
     "APIKey": "API 密钥",
     "SecretKey": "密钥",
     "Endpoint": "端点",
     "NotAUser": "不是用户？",
     "LoginAnotherway": "想以其他方式登录？",
     "SignUp": "注册",
-    "LoginWithE-mail": "使用电子邮件登录",
     "LoginWithIAM": "使用 IAM 登录",
     "ClickToUseIAM": "单击以使用 IAM",
     "ClickToUseID": "单击以使用 ID",
@@ -1252,7 +1261,9 @@
     "SingleSignOn": {
       "LoginWithSAML": "使用 SAML 登录",
       "LoginWithRealm": "使用 {{ realmName }} 登录"
-    }
+    },
+    "LoginWithE-mailorUsername": "使用电子邮件或用户名登录",
+    "E-mailorUsername": "电子邮件或用户名"
   },
   "signup": {
     "SignupBETA": "注册（仅限 Beta 版邀请）",

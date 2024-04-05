@@ -4,6 +4,7 @@ import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
+import ForceTOTPChecker from '../ForceTOTPChecker';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIHeader from './WebUIHeader';
@@ -206,6 +207,9 @@ function MainLayout() {
               />
             </Suspense>
             <Suspense>
+              <ForceTOTPChecker />
+            </Suspense>
+            <Suspense>
               <Outlet />
             </Suspense>
             {/* To match paddig to 16 (2+14) */}
@@ -257,7 +261,9 @@ ${Object.entries(token)
   })
   .join('\n')}
 
-  --theme-logo-url: url("${isDarkMode ? themeConfig?.logo.srcDark : themeConfig?.logo.src}");
+  --theme-logo-url: url("${
+    isDarkMode ? themeConfig?.logo.srcDark : themeConfig?.logo.src
+  }");
       `}
     </style>
   );

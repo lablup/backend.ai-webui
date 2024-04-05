@@ -126,7 +126,8 @@
     "IPUEnabled": "IPU NPU Enabled",
     "ATOMEnabled": "ATOM NPU Enabled",
     "WarboyEnabled": "Warboy NPU Enabled",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU Enabled"
   },
   "session": {
     "launcher": {
@@ -309,6 +310,7 @@
     "core": "core",
     "Reservation": "Reservation",
     "Agent": "Agent",
+    "Agents": "Agents",
     "Architecture": "Architecture",
     "Usage": "Usage",
     "OpenToPublic": "Open app to public",
@@ -404,7 +406,12 @@
     "CPU": "CPU",
     "MEM": "MEM",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU(Memory)"
+    "GPU(MEM)": "GPU(Memory)",
+    "ConvertSessionToImage": "Convert Session to Image",
+    "SessionName": "Session Name",
+    "SessionId": "Session ID",
+    "EnvironmentAndVersion": "Environment and Version",
+    "Tags": "Tags"
   },
   "modelService": {
     "Services": "Services",
@@ -801,7 +808,8 @@
       "StartingSSH/SFTPSession": "Starting SFTP session...",
       "EmptyFilesAndFoldersAreNotUploaded": "Empty files and empty folders are not uploaded",
       "NumberOfSFTPSessionsExceededTitle": "Reached limit of running upload session count",
-      "NumberOfSFTPSessionsExceededBody": "You are running all available upload sessions you are allowed to create. Please terminated unused upload sessions before starting a new session."
+      "NumberOfSFTPSessionsExceededBody": "You are running all available upload sessions you are allowed to create. Please terminated unused upload sessions before starting a new session.",
+      "DownloadNotAllowed": "Downloading file/folder is not allowed in this folder."
     },
     "invitation": {
       "NoValidEmails": "No valid emails were entered",
@@ -1266,7 +1274,10 @@
     "RequireWarboyPlugin": "Requires Backend.AI Warboy Plugin.",
     "Plugins": "Plugins",
     "OpenSourceCUDAGPUsupport": "Open Source CUDA GPU support",
-    "ShowOnlyChanged": "Display Only Changes"
+    "ShowOnlyChanged": "Display Only Changes",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Use Hyperaccel LPU accelerator.",
+    "RequireHyperaccelLPUPlugin": "Requires Backend.AI Hyperaccel LPU Plugin."
   },
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",
@@ -1319,14 +1330,12 @@
     "LeaveService": "Leave Service",
     "DescConfirmLeave": "To confirm, please type your E-mail and password again.",
     "Password": "Password",
-    "E-mail": "E-mail",
     "APIKey": "API Key",
     "SecretKey": "Secret Key",
     "Endpoint": "Endpoint",
     "NotAUser": "Not a user?",
     "LoginAnotherway": "Want to login another way?",
     "SignUp": "Sign up",
-    "LoginWithE-mail": "Login With E-mail",
     "LoginWithIAM": "Login With IAM",
     "ClickToUseIAM": "Click To Use IAM",
     "ClickToUseID": "Click To Use ID",
@@ -1354,7 +1363,9 @@
       "LoginWithSAML": "Login with SAML",
       "LoginWithRealm": "Login with {{ realmName }}"
     },
-    "EndpointStartWith": "Endpoint must start with http:// or https://."
+    "EndpointStartWith": "Endpoint must start with http:// or https://.",
+    "LoginWithE-mailorUsername": "Login With E-mail or Username",
+    "E-mailorUsername": "E-mail or Username"
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",
