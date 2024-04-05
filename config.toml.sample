@@ -31,7 +31,7 @@ isDirectorySizeVisible = true           # If false, directory size in folder exp
 maxCountForPreopenPorts = 10            # The maximum allowed number of preopen ports. If you set this option to 0, the feature of preopen ports is disabled.
 allowCustomResourceAllocation = true    # If true, display the custom allocation on the session launcher.
 eduAppNamePrefix = ""                   # The prefix of edu applauncher's app name. If the app name starts with this prefix, split it by '-' and use the tail as the name of image.
-supportModelStore = false		            # Enable model store feature. (From Backend.AI 24.03)
+supportModelStore = false		        # Enable model store feature. (From Backend.AI 24.03)
 
 [wsproxy]
 proxyURL = "[Proxy URL]"
@@ -44,20 +44,21 @@ proxyListenIP = "[Websocket proxy configuration IP.]"
 #inactivelist = "summary,import,statistics" # Disable menus on the list which are separated by comma.
 
 [resources]
-openPortToPublic = false                      # Show option to open app proxy port to anyone.
-allowPreferredPort = false                    # Preferred web service port number. Backend.AI try to assign the entered port number first for the web service.
-maxCPUCoresPerContainer = 256                 # Maximum CPU per container.
-maxMemoryPerContainer = 64                    # Maximum memory per container.
-maxCUDADevicesPerContainer = 8                # Maximum CUDA devices per container.
-maxCUDASharesPerContainer = 8                 # Maximum CUDA shares per container.
-maxROCMDevicesPerContainer = 10               # Maximum ROCm devices per container.
-maxTPUDevicesPerContainer = 8                 # Maximum TPU devices per container.
-maxIPUDevicesPerContainer = 8                 # Maximum IPU devices per container.
-maxATOMDevicesPerContainer = 8                # Maximum ATOM devices per container.
-maxWarboyDevicesPerContainer = 8              # Maximum Warboy devices per container.
+openPortToPublic = false            # Show option to open app proxy port to anyone.
+allowPreferredPort = false          # Preferred web service port number. Backend.AI try to assign the entered port number first for the web service.
+maxCPUCoresPerContainer = 256       # Maximum CPU per container.
+maxMemoryPerContainer = 64          # Maximum memory per container.
+maxCUDADevicesPerContainer = 8      # Maximum CUDA devices per container.
+maxCUDASharesPerContainer = 8       # Maximum CUDA shares per container.
+maxROCMDevicesPerContainer = 10     # Maximum ROCm devices per container.
+maxTPUDevicesPerContainer = 8       # Maximum TPU devices per container.
+maxIPUDevicesPerContainer = 8       # Maximum IPU devices per container.
+maxATOMDevicesPerContainer = 8      # Maximum ATOM devices per container.
+maxWarboyDevicesPerContainer = 8    # Maximum Warboy devices per container.
 maxHyperaccelLPUDevicesPerContainer = 8       # Maximum Hyperaccel LPU devices per container.
-maxShmPerContainer = 16                       # Maximum shared memory per container.
-maxFileUploadSize = 4294967296                # Maximum size of single file upload. Set to -1 for unlimited upload.
+maxShmPerContainer = 16             # Maximum shared memory per container.
+maxFileUploadSize = 4294967296      # Maximum size of single file upload. Set to -1 for unlimited upload.
+allowNonAuthTCP = false             # Expose TCP apps to be executable in web browser when set to true 
 
 [environments]
 #allowlist = "" # Comma-separated image name. Image name should contain the repository (registry path and image name) part of the full image URL, excluding the protocol and tag

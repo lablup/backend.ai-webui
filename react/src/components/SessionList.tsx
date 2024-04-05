@@ -318,7 +318,7 @@ const SessionList: React.FC<SessionListProps> = ({
           ...(baiClient.is_admin || !!baiClient._config.hideAgents
             ? [
                 {
-                  title: t('session.Agent'),
+                  title: t('session.Agents'),
                   dataIndex: 'agents',
                   render(value: string[]) {
                     return _.map(value, (agent) => {

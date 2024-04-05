@@ -212,7 +212,8 @@
       "ValidationFailed": "Validación fallida"
     },
     "EnableSudoSession": "Habilitar sesión sudo",
-    "MainAccessKey": "Clave de acceso principal"
+    "MainAccessKey": "Clave de acceso principal",
+    "InactivateTheFollowingUsers": "Desactivar los siguientes usuarios."
   },
   "data": {
     "Allowslettersnumbersand-_": "Permite letras, números y -_",
@@ -301,7 +302,8 @@
       "UseNewFileExtension": "Utilice",
       "ValueRequired": "Se requiere valor",
       "ValueShouldBeStarted": "La ruta debe empezar por .(punto) o letras, sólo números.",
-      "WritePermissionRequiredInUploadFiles": "Se requiere permiso de escritura para cargar archivos."
+      "WritePermissionRequiredInUploadFiles": "Se requiere permiso de escritura para cargar archivos.",
+      "DownloadNotAllowed": "No se permite descargar archivos/carpetas en esta carpeta."
     },
     "folders": {
       "CannotDeleteFolder": "No se puede eliminar la carpeta montada en una o más sesiones. Por favor, termine la sesión primero.",
@@ -318,7 +320,7 @@
       "FileRenamed": "Archivo renombrado",
       "FolderCloned": "Carpeta clonada",
       "FolderCreated": "Carpeta creada",
-      "FolderDeleted": "Carpeta eliminada",
+      "FolderDeleted": "La carpeta {{ folderName }} ha sido eliminada.",
       "FolderDisconnected": "Se ha desconectado la carpeta.",
       "FolderInfo": "Información",
       "FolderNameMismatched": "El nombre de la carpeta no coincide. Compruebe si hay espacios en blanco en el campo de entrada.",
@@ -354,7 +356,13 @@
       "TypeFolderNameToDelete": "Escriba el nombre de la carpeta que desea eliminar",
       "TypeFolderNameToLeave": "Escriba el nombre de la carpeta que desea abandonar",
       "TypeNewFolderName": "Escriba el nombre de la nueva carpeta",
-      "View": "Ver"
+      "View": "Ver",
+      "MoveToTrashBin": "Mover a la papelera",
+      "MovedToTrashBin": "La carpeta {{ folderName }} se ha movido a la papelera.",
+      "DeleteForever": "Borrar para siempre",
+      "Restore": "Restaurar",
+      "FolderRestored": "La carpeta {{ folderName }} ha sido restaurada.",
+      "FolderDeletedForever": "La carpeta {{ folderName }} se ha eliminado para siempre."
     },
     "invitation": {
       "FolderSharingNotAvailableToUser": "El uso compartido de carpetas no está disponible para los usuarios solicitados:",
@@ -386,25 +394,8 @@
     "userQuotaScopeId": "Quota Scope ID"
   },
   "dialog": {
-    "ErrorOccurred": "Se ha producido un error",
-    "ask": {
-      "DoYouWantToProceed": "¿Quieres continuar?"
-    },
-    "error": {
-      "Error": "Error"
-    },
-    "hide": {
-      "DonotShowThisAgain": "No vuelvas a mostrar esto."
-    },
-    "title": {
-      "LetsDouble-Check": "Doble comprobación",
-      "Notice": "Aviso"
-    },
     "warning": {
-      "CannotBeUndone": "ATENCIÓN: ¡esto no se puede deshacer!",
-      "LogDeletion": "¿Estás seguro de que quieres borrar todos los mensajes de registro?",
-      "Required": "Requerido",
-      "WillBeAppliedToNewSessions": "Esta actualización se aplicará a las nuevas sesiones."
+      "DeleteForeverDesc": "ADVERTENCIA: los elementos seleccionados se eliminarán para siempre y no podrás restaurarlos."
     }
   },
   "eduapi": {
@@ -1177,7 +1168,13 @@
     "CPU": "CPU",
     "MEM": "Memoria",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (memoria)"
+    "GPU(MEM)": "GPU (memoria)",
+    "Agents": "Agentes",
+    "ConvertSessionToImage": "Convertir sesión en imagen",
+    "SessionName": "Nombre de la sesión",
+    "SessionId": "ID de sesión",
+    "EnvironmentAndVersion": "Entorno y versión",
+    "Tags": "Etiquetas"
   },
   "settings": {
     "ATOMsupport": "ATOM",
@@ -1334,7 +1331,7 @@
       "SelectUser": "Buscar y seleccionar Usuario",
       "UnsetCustomSettings": "Desactivar la configuración personalizada"
     },
-    "StorageSetting": "__NOT_TRANSLATED__"
+    "StorageSetting": "Configuración de almacenamiento"
   },
   "totp": {
     "ConfirmTotpRemovalBody": "¿Está seguro de que no desea utilizar la autenticación de dos factores?",

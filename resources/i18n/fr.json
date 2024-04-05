@@ -392,7 +392,13 @@
     "CPU": "UNITÉ CENTRALE",
     "MEM": "Mémoire",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (mémoire)"
+    "GPU(MEM)": "GPU (mémoire)",
+    "Agents": "Agents",
+    "ConvertSessionToImage": "Convertir une session en image",
+    "SessionName": "Nom de la session",
+    "SessionId": "ID de session",
+    "EnvironmentAndVersion": "Environnement et version",
+    "Tags": "Mots clés"
   },
   "button": {
     "Cancel": "Annuler",
@@ -554,7 +560,8 @@
     "SignoutSeccessfullyFinished": "La signature est terminée en toute sécurité",
     "ModifyUserDetail": "Modifier les détails de l'utilisateur",
     "EnableSudoSession": "Activer la session sudo",
-    "MainAccessKey": "Clé d'accès principale"
+    "MainAccessKey": "Clé d'accès principale",
+    "InactivateTheFollowingUsers": "Désactivez les utilisateurs suivants."
   },
   "data": {
     "Folders": "Dossiers",
@@ -607,7 +614,7 @@
       "FolderRenamed": "Dossier renommé",
       "FolderNameMismatched": "Le nom du dossier ne correspond pas. Veuillez vérifier s'il y a un espace dans le champ de saisie ou non.",
       "SameFileName": "La valeur d'entrée est la même que le nom de fichier à mettre à jour. Veuillez le changer pour un nom différent.",
-      "FolderDeleted": "Dossier supprimé",
+      "FolderDeleted": "Le dossier {{ folderName }} a été supprimé.",
       "FolderUpdated": "Option(s) de dossier mise à jour",
       "FolderDisconnected": "Le dossier a été déconnecté.",
       "FileRenamed": "Fichier renommé",
@@ -634,7 +641,13 @@
       "CloneFolder": "Cloner un dossier",
       "LeaveFolder": "Dossier de sortie",
       "ShareFolder": "Dossier de partage",
-      "ModifyPermissions": "Modifier les autorisations"
+      "ModifyPermissions": "Modifier les autorisations",
+      "Restore": "Restaurer",
+      "DeleteForever": "Supprimer pour toujours",
+      "FolderRestored": "Le dossier {{ folderName }} a été restauré.",
+      "FolderDeletedForever": "Le dossier {{ folderName }} a été supprimé définitivement.",
+      "MoveToTrashBin": "Déplacer vers la poubelle",
+      "MovedToTrashBin": "Le dossier {{ folderName }} a été déplacé vers la corbeille."
     },
     "explorer": {
       "Delete": "Effacer...",
@@ -685,7 +698,8 @@
       "EmptyFilesAndFoldersAreNotUploaded": "Les fichiers et dossiers vides ne sont pas téléchargés.",
       "FolderAlreadyExists": "Le dossier sur le point d'être téléchargé existe déjà.",
       "NumberOfSFTPSessionsExceededTitle": "Limite atteinte pour le nombre de sessions de téléchargement en cours",
-      "NumberOfSFTPSessionsExceededBody": "Vous exécutez toutes les sessions de téléchargement que vous êtes autorisé à créer. Veuillez mettre fin aux sessions de téléchargement inutilisées avant de commencer une nouvelle session."
+      "NumberOfSFTPSessionsExceededBody": "Vous exécutez toutes les sessions de téléchargement que vous êtes autorisé à créer. Veuillez mettre fin aux sessions de téléchargement inutilisées avant de commencer une nouvelle session.",
+      "DownloadNotAllowed": "Le téléchargement de fichiers/dossiers n'est pas autorisé dans ce dossier."
     },
     "invitation": {
       "NoValidEmails": "Aucun e-mail valide n'a été saisi",
@@ -732,14 +746,16 @@
       "CannotBeUndone": "ATTENTION : cela ne peut pas être annulé !",
       "LogDeletion": "Voulez-vous vraiment supprimer tous les messages du journal ?",
       "WillBeAppliedToNewSessions": "Cette mise à jour sera appliquée aux nouvelles sessions.",
-      "Required": "Exigée"
+      "Required": "Exigée",
+      "DeleteForeverDesc": "ATTENTION : les éléments sélectionnés seront supprimés définitivement et vous ne pourrez pas les restaurer."
     },
     "ask": {
       "DoYouWantToProceed": "Voulez-vous poursuivre?"
     },
     "title": {
       "LetsDouble-Check": "Vérifions deux fois",
-      "Notice": "Avis"
+      "Notice": "Avis",
+      "DeleteForever": "Supprimer pour toujours?"
     },
     "ErrorOccurred": "Erreur est survenue",
     "error": {
@@ -1443,7 +1459,7 @@
     "ForProject": "Pour le projet",
     "QuotaDoesNotSupported": "Ce backend de stockage ne prend pas en charge les quotas.",
     "BeCarefulToSetUserResourcePolicy": "La modification d'une politique de ressources peut affecter tous les utilisateurs qui utilisent cette politique de ressources, il convient donc de l'utiliser avec précaution.",
-    "StorageSetting": "__NOT_TRANSLATED__"
+    "StorageSetting": "Paramètres de stockage"
   },
   "modelService": {
     "EditModelService": "Modifier le modèle de service",

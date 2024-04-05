@@ -392,7 +392,13 @@
     "CPU": "CPU",
     "MEM": "Ingatan",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (memori)"
+    "GPU(MEM)": "GPU (memori)",
+    "Agents": "ejen",
+    "ConvertSessionToImage": "Tukar Sesi kepada Imej",
+    "SessionName": "Nama Sesi",
+    "SessionId": "Id Sesi",
+    "EnvironmentAndVersion": "Persekitaran dan Versi",
+    "Tags": "Tag"
   },
   "button": {
     "Cancel": "Batal",
@@ -554,7 +560,8 @@
     "Status": "Status",
     "NoUserToDisplay": "Tiada Pengguna untuk dipaparkan",
     "EnableSudoSession": "Dayakan sesi sudo",
-    "MainAccessKey": "Kunci Akses Utama"
+    "MainAccessKey": "Kunci Akses Utama",
+    "InactivateTheFollowingUsers": "Nyahaktifkan pengguna berikut."
   },
   "data": {
     "Folders": "Folder",
@@ -607,7 +614,7 @@
       "FolderRenamed": "Folder dinamakan semula",
       "FolderNameMismatched": "Nama folder tidak sesuai. Sila Periksa sama ada watak ruang di ruang input atau tidak.",
       "SameFileName": "Nilai input adalah sama dengan nama fail yang akan dikemas kini. Tolong ubah ke nama lain.",
-      "FolderDeleted": "Folder dipadamkan",
+      "FolderDeleted": "Folder {{ folderName }} telah dipadamkan.",
       "FolderUpdated": "Pilihan folder dikemas kini",
       "FolderDisconnected": "Folder telah terputus.",
       "FileRenamed": "Fail Dinamakan Semula",
@@ -634,7 +641,13 @@
       "CloneFolder": "Klon folder",
       "ShareFolder": "Kongsi folder",
       "ModifyPermissions": "Ubah suai kebenaran",
-      "LeaveFolder": "Tinggalkan folder"
+      "LeaveFolder": "Tinggalkan folder",
+      "MoveToTrashBin": "Pindah ke tong sampah",
+      "MovedToTrashBin": "Folder {{ folderName }} telah dialihkan ke tong sampah.",
+      "DeleteForever": "Padam selama-lamanya",
+      "Restore": "Pulihkan",
+      "FolderRestored": "Folder {{ folderName }} telah dipulihkan.",
+      "FolderDeletedForever": "Folder {{ folderName }} telah dipadamkan selama-lamanya."
     },
     "explorer": {
       "Delete": "Padamkan ...",
@@ -685,7 +698,8 @@
       "SFTPSessionNotAvailable": "Sesi SFTP tidak tersedia sekarang",
       "StartingSSH/SFTPSession": "Memulakan sesi SFTP...",
       "NumberOfSFTPSessionsExceededTitle": "Had capaian untuk menjalankan kiraan sesi muat naik",
-      "NumberOfSFTPSessionsExceededBody": "Anda menjalankan semua sesi muat naik tersedia yang anda dibenarkan buat. \nSila tamatkan sesi muat naik yang tidak digunakan sebelum memulakan sesi baharu."
+      "NumberOfSFTPSessionsExceededBody": "Anda menjalankan semua sesi muat naik tersedia yang anda dibenarkan buat. \nSila tamatkan sesi muat naik yang tidak digunakan sebelum memulakan sesi baharu.",
+      "DownloadNotAllowed": "Memuat turun fail/folder tidak dibenarkan dalam folder ini."
     },
     "invitation": {
       "NoValidEmails": "Tidak ada e-mel yang sah dimasukkan",
@@ -729,24 +743,7 @@
   },
   "dialog": {
     "warning": {
-      "CannotBeUndone": "PERINGATAN: ini tidak boleh dibuat asal!",
-      "LogDeletion": "Adakah anda pasti mahu memadamkan semua mesej log?",
-      "WillBeAppliedToNewSessions": "Kemas kini ini akan digunakan untuk sesi baru.",
-      "Required": "Diperlukan"
-    },
-    "ask": {
-      "DoYouWantToProceed": "Adakah anda mahu meneruskan?"
-    },
-    "title": {
-      "LetsDouble-Check": "Mari Periksa Semula",
-      "Notice": "Notis"
-    },
-    "ErrorOccurred": "Ralat Berlaku",
-    "error": {
-      "Error": "Ralat"
-    },
-    "hide": {
-      "DonotShowThisAgain": "Jangan tunjukkan ini lagi."
+      "DeleteForeverDesc": "AMARAN: item yang dipilih akan dipadamkan selama-lamanya dan anda tidak akan dapat memulihkannya."
     }
   },
   "environment": {
@@ -1432,7 +1429,7 @@
     "ForProject": "Untuk Projek",
     "QuotaDoesNotSupported": "Bahagian belakang storan ini tidak menyokong kuota.",
     "BeCarefulToSetUserResourcePolicy": "Menukar dasar sumber boleh menjejaskan semua pengguna yang menggunakan dasar sumber pengguna itu, jadi gunakannya dengan berhati-hati.",
-    "StorageSetting": "__NOT_TRANSLATED__"
+    "StorageSetting": "Tetapan Storan"
   },
   "modelService": {
     "TokenGenerated": "Token dijana",

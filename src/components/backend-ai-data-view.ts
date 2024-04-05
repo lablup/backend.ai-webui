@@ -63,6 +63,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({ type: Boolean }) enableStorageProxy = false;
   @property({ type: Boolean }) enableInferenceWorkload = false;
   @property({ type: Boolean }) supportModelStore = false;
+  @property({ type: Boolean }) supportVFolderTrashBin = false;
   @property({ type: Boolean }) authenticated = false;
   @property({ type: String }) vhost = '';
   @property({ type: String }) selectedVhost = '';
@@ -92,11 +93,6 @@ export default class BackendAIData extends BackendAIPage {
   @property({ type: Object }) options;
   @property({ type: Number }) capacity;
   @property({ type: String }) cloneFolderName = '';
-  @property({ type: Array }) quotaSupportStorageBackends = [
-    'xfs',
-    'weka',
-    'spectrumscale',
-  ];
   @property({ type: Object }) storageProxyInfo = Object();
   @property({ type: String }) folderType = 'user';
   @property({ type: Number }) currentGroupIdx = 0;
@@ -158,6 +154,8 @@ export default class BackendAIData extends BackendAIPage {
           /* Need to be set when fixedMenuPosition attribute is enabled */
           --mdc-menu-max-width: 345px;
           --mdc-menu-min-width: 172.5px;
+          --mdc-select-max-width: 345px;
+          --mdc-select-min-width: 172.5px;
         }
 
         mwc-select.full-width.fixed-position {
@@ -165,12 +163,16 @@ export default class BackendAIData extends BackendAIPage {
           /* Need to be set when fixedMenuPosition attribute is enabled */
           --mdc-menu-max-width: 345px;
           --mdc-menu-min-width: 345px;
+          --mdc-select-max-width: 345px;
+          --mdc-select-min-width: 345px;
         }
 
         mwc-select.fixed-position {
           /* Need to be set when fixedMenuPosition attribute is enabled */
           --mdc-menu-max-width: 172.5px;
           --mdc-menu-min-width: 172.5px;
+          --mdc-select-max-width: 172.5px;
+          --mdc-select-min-width: 172.5px;
         }
 
         mwc-select mwc-icon-button {
@@ -317,6 +319,15 @@ export default class BackendAIData extends BackendAIPage {
                       ></mwc-tab>
                     `
                   : html``}
+                ${this.supportVFolderTrashBin
+                  ? html`
+                      <mwc-tab
+                        title="trash-bin"
+                        icon="delete"
+                        @click="${(e) => this._showTab(e.target)}"
+                      ></mwc-tab>
+                    `
+                  : html``}
               </mwc-tab-bar>
               <span class="flex"></span>
               <mwc-button
@@ -395,6 +406,22 @@ export default class BackendAIData extends BackendAIPage {
                     ?active="${this.active === true &&
                     this._activeTab === 'modelStore'}"
                   ></backend-ai-react-model-store-list>
+                `
+              : html``}
+            ${this.supportVFolderTrashBin
+              ? html`
+                  <div
+                    id="trash-bin-folder-lists"
+                    class="tab-content"
+                    style="display:none;"
+                  >
+                    <backend-ai-storage-list
+                      id="trash-bin-folder-storage"
+                      storageType="deadVFolderStatus"
+                      ?active="${this.active === true &&
+                      this._activeTab === 'trash-bin'}"
+                    ></backend-ai-storage-list>
+                  </div>
                 `
               : html``}
           </div>
@@ -892,6 +919,8 @@ export default class BackendAIData extends BackendAIPage {
       this.supportModelStore =
         globalThis.backendaiclient.supports('model-store') &&
         globalThis.backendaiclient._config.supportModelStore;
+      this.supportVFolderTrashBin =
+        globalThis.backendaiclient.supports('vfolder-trash-bin');
       if (this.enableInferenceWorkload && !this.usageModes.includes('Model')) {
         this.usageModes.push('Model');
       }

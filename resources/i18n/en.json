@@ -310,6 +310,7 @@
     "core": "core",
     "Reservation": "Reservation",
     "Agent": "Agent",
+    "Agents": "Agents",
     "Architecture": "Architecture",
     "Usage": "Usage",
     "OpenToPublic": "Open app to public",
@@ -405,7 +406,12 @@
     "CPU": "CPU",
     "MEM": "MEM",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU(Memory)"
+    "GPU(MEM)": "GPU(Memory)",
+    "ConvertSessionToImage": "Convert Session to Image",
+    "SessionName": "Session Name",
+    "SessionId": "Session ID",
+    "EnvironmentAndVersion": "Environment and Version",
+    "Tags": "Tags"
   },
   "modelService": {
     "Services": "Services",
@@ -555,7 +561,7 @@
       "QuotaScopeSuccessfullyUpdated": "Quota Scope successfully updated",
       "AllowNumberAndDot": "Allows positive numbers and .(dot) only"
     },
-    "StorageSetting": "StorageSetting"
+    "StorageSetting": "Storage Setting"
   },
   "general": {
     "cores": "cores",
@@ -656,7 +662,8 @@
     "KeySeccessfullyDeleted": "KeyPair is seccessfully deleted.",
     "SignoutSeccessfullyFinished": "Signout is seccessfully finished",
     "EnableSudoSession": "Enable sudo session",
-    "MainAccessKey": "Main Access Key"
+    "MainAccessKey": "Main Access Key",
+    "InactivateTheFollowingUsers": "Inactivate the following users."
   },
   "data": {
     "Folders": "Folders",
@@ -720,7 +727,7 @@
       "FolderRenamed": "Folder renamed",
       "FolderNameMismatched": "Folder name mismatched. Please Check whether space character in the input field or not.",
       "SameFileName": "The input value is same as the filename to update. Please change it to a different name.",
-      "FolderDeleted": "Folder deleted",
+      "FolderDeleted": "The {{ folderName }} folder has been deleted.",
       "FolderUpdated": "Folder option(s) updated",
       "FolderDisconnected": "Folder has been disconnected.",
       "FileRenamed": "File Renamed",
@@ -744,7 +751,13 @@
       "CloneFolder": "Clone folder",
       "LeaveFolder": "Leave folder",
       "ShareFolder": "Share folder",
-      "ModifyPermissions": "Modify permissions"
+      "ModifyPermissions": "Modify permissions",
+      "Restore": "Restore",
+      "DeleteForever": "Delete forever",
+      "FolderRestored": "The {{ folderName }} folder has been restored.",
+      "FolderDeletedForever": "The {{ folderName }} folder has been deleted forever.",
+      "MovedToTrashBin": "The {{ folderName }} folder has been moved to the trash bin.",
+      "MoveToTrashBin": "Move to trash bin"
     },
     "explorer": {
       "Delete": "Delete",
@@ -795,7 +808,8 @@
       "StartingSSH/SFTPSession": "Starting SFTP session...",
       "EmptyFilesAndFoldersAreNotUploaded": "Empty files and empty folders are not uploaded",
       "NumberOfSFTPSessionsExceededTitle": "Reached limit of running upload session count",
-      "NumberOfSFTPSessionsExceededBody": "You are running all available upload sessions you are allowed to create. Please terminated unused upload sessions before starting a new session."
+      "NumberOfSFTPSessionsExceededBody": "You are running all available upload sessions you are allowed to create. Please terminated unused upload sessions before starting a new session.",
+      "DownloadNotAllowed": "Downloading file/folder is not allowed in this folder."
     },
     "invitation": {
       "NoValidEmails": "No valid emails were entered",
@@ -834,14 +848,16 @@
       "CannotBeUndone": "WARNING: this cannot be undone!",
       "LogDeletion": "Are you sure you want to delete all of the log messages?",
       "WillBeAppliedToNewSessions": "This update will be applied to new sessions.",
-      "Required": "Required"
+      "Required": "Required",
+      "DeleteForeverDesc": "WARNING: selected items will be deleted forever and you won't be able to restore them."
     },
     "ask": {
       "DoYouWantToProceed": "Do you want to proceed?"
     },
     "title": {
       "Notice": "Notice",
-      "LetsDouble-Check": "Let's Double-check"
+      "LetsDouble-Check": "Let's Double-check",
+      "DeleteForever": "Delete Forever?"
     },
     "ErrorOccurred": "Error Occurred",
     "error": {

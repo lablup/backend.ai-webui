@@ -392,7 +392,13 @@
     "CPU": "CPU",
     "MEM": "Speicher",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (Speicher)"
+    "GPU(MEM)": "GPU (Speicher)",
+    "Agents": "Agenten",
+    "ConvertSessionToImage": "Konvertieren Sie die Sitzung in ein Bild",
+    "SessionName": "Sitzungsname",
+    "SessionId": "Session-ID",
+    "EnvironmentAndVersion": "Umgebung und Version",
+    "Tags": "Stichworte"
   },
   "button": {
     "Cancel": "Stornieren",
@@ -554,7 +560,8 @@
     "Status": "Status",
     "NoUserToDisplay": "Keine Benutzer zum Anzeigen",
     "EnableSudoSession": "Sudo-Sitzung aktivieren",
-    "MainAccessKey": "Hauptzugangsschlüssel"
+    "MainAccessKey": "Hauptzugangsschlüssel",
+    "InactivateTheFollowingUsers": "Deaktivieren Sie die folgenden Benutzer."
   },
   "data": {
     "Folders": "Ordner",
@@ -607,7 +614,7 @@
       "FolderRenamed": "Ordner umbenannt",
       "FolderNameMismatched": "Ordnername stimmt nicht überein. Bitte prüfen Sie, ob Leerzeichen im Eingabefeld vorhanden sind oder nicht.",
       "SameFileName": "Der Eingabewert ist mit dem zu aktualisierenden Dateinamen identisch. Bitte ändern Sie es in einen anderen Namen.",
-      "FolderDeleted": "Ordner gelöscht",
+      "FolderDeleted": "Der Ordner {{ FolderName }} wurde gelöscht.",
       "FolderUpdated": "Ordneroption(en) aktualisiert",
       "FolderDisconnected": "Ordner wurde getrennt.",
       "FileRenamed": "Datei umbenannt",
@@ -634,7 +641,13 @@
       "CloneFolder": "Ordner klonen",
       "ShareFolder": "Ordner teilen",
       "ModifyPermissions": "Berechtigungen ändern",
-      "LeaveFolder": "Ordner verlassen"
+      "LeaveFolder": "Ordner verlassen",
+      "Restore": "Wiederherstellen",
+      "DeleteForever": "Unwiederuflich löschen",
+      "FolderRestored": "Der Ordner {{ folderName }} wurde wiederhergestellt.",
+      "FolderDeletedForever": "Der Ordner {{ folderName }} wurde endgültig gelöscht.",
+      "MoveToTrashBin": "In den Papierkorb verschieben",
+      "MovedToTrashBin": "Der Ordner {{ folderName }} wurde in den Papierkorb verschoben."
     },
     "explorer": {
       "Delete": "Löschen...",
@@ -685,7 +698,8 @@
       "SFTPSessionNotAvailable": "SFTP Session ist jetzt nicht verfügbar",
       "StartingSSH/SFTPSession": "SFTP-Sitzung starten...",
       "NumberOfSFTPSessionsExceededTitle": "Limit der laufenden Upload-Session erreicht",
-      "NumberOfSFTPSessionsExceededBody": "Sie führen alle verfügbaren Upload-Sitzungen aus, die Sie erstellen können. Bitte beenden Sie ungenutzte Upload-Sitzungen, bevor Sie eine neue Sitzung starten."
+      "NumberOfSFTPSessionsExceededBody": "Sie führen alle verfügbaren Upload-Sitzungen aus, die Sie erstellen können. Bitte beenden Sie ungenutzte Upload-Sitzungen, bevor Sie eine neue Sitzung starten.",
+      "DownloadNotAllowed": "Das Herunterladen von Dateien/Ordnern ist in diesem Ordner nicht gestattet."
     },
     "invitation": {
       "NoValidEmails": "Es wurden keine gültigen E-Mails eingegeben",
@@ -732,14 +746,16 @@
       "CannotBeUndone": "ACHTUNG: Dies kann nicht rückgängig gemacht werden!",
       "LogDeletion": "Möchten Sie wirklich alle Protokollnachrichten löschen?",
       "WillBeAppliedToNewSessions": "Dieses Update wird auf neue Sitzungen angewendet.",
-      "Required": "Erforderlich"
+      "Required": "Erforderlich",
+      "DeleteForeverDesc": "ACHTUNG: Ausgewählte Elemente werden für immer gelöscht und Sie können sie nicht wiederherstellen."
     },
     "ask": {
       "DoYouWantToProceed": "Willst du fortfahren?"
     },
     "title": {
       "LetsDouble-Check": "Lass uns das überprüfen",
-      "Notice": "Hinweis"
+      "Notice": "Hinweis",
+      "DeleteForever": "Unwiederuflich löschen?"
     },
     "ErrorOccurred": "Ein Fehler ist aufgetreten",
     "error": {
@@ -1486,7 +1502,7 @@
     "ForProject": "Für Projekt",
     "QuotaDoesNotSupported": "Dieses Speicher-Backend unterstützt keine Quoten.",
     "BeCarefulToSetUserResourcePolicy": "Die Änderung einer Ressourcenrichtlinie kann sich auf alle Benutzer auswirken, die diese Benutzer-Ressourcenrichtlinie verwenden, daher ist sie mit Vorsicht zu genießen.",
-    "StorageSetting": "__NOT_TRANSLATED__"
+    "StorageSetting": "Speichereinstellung"
   },
   "totp": {
     "TotpSetupCompleted": "Aktivierte 2FA",

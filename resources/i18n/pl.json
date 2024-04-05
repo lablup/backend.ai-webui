@@ -394,7 +394,13 @@
     "CPU": "CPU",
     "MEM": "Pamięć",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (pamięć)"
+    "GPU(MEM)": "GPU (pamięć)",
+    "Agents": "Agenci",
+    "ConvertSessionToImage": "Konwertuj sesję na obraz",
+    "SessionName": "Nazwa sesji",
+    "SessionId": "Identyfikator sesji",
+    "EnvironmentAndVersion": "Środowisko i wersja",
+    "Tags": "Tagi"
   },
   "button": {
     "Cancel": "Anuluj",
@@ -556,7 +562,8 @@
     "Status": "Status",
     "NoUserToDisplay": "Brak użytkowników do wyświetlenia",
     "EnableSudoSession": "Włącz sesję sudo",
-    "MainAccessKey": "Główny klucz dostępu"
+    "MainAccessKey": "Główny klucz dostępu",
+    "InactivateTheFollowingUsers": "Dezaktywuj następujących użytkowników."
   },
   "data": {
     "Folders": "Lornetka składana",
@@ -609,7 +616,7 @@
       "FolderRenamed": "Zmieniono nazwę folderu",
       "FolderNameMismatched": "Niezgodna nazwa folderu. Sprawdź, czy znak spacji w polu wejściowym, czy nie.",
       "SameFileName": "Wartość wejściowa jest taka sama jak nazwa pliku do aktualizacji. Zmień go na inną nazwę.",
-      "FolderDeleted": "Folder usunięty",
+      "FolderDeleted": "Folder {{ folderName }} został usunięty.",
       "FolderUpdated": "Zaktualizowano opcje folderów",
       "FolderDisconnected": "Folder został odłączony.",
       "FileRenamed": "Zmieniono nazwę pliku",
@@ -636,7 +643,13 @@
       "CloneFolder": "Klonowanie folderu",
       "ShareFolder": "Folder udostępniony",
       "ModifyPermissions": "Modyfikowanie uprawnień",
-      "LeaveFolder": "Zostaw folder"
+      "LeaveFolder": "Zostaw folder",
+      "Restore": "Przywrócić",
+      "DeleteForever": "Usuń na zawsze",
+      "FolderRestored": "Folder {{ folderName }} został przywrócony.",
+      "FolderDeletedForever": "Folder {{ folderName }} został usunięty na zawsze.",
+      "MoveToTrashBin": "Przenieś do kosza",
+      "MovedToTrashBin": "Folder {{ folderName }} został przeniesiony do kosza."
     },
     "explorer": {
       "Delete": "Kasować...",
@@ -687,7 +700,8 @@
       "SFTPSessionNotAvailable": "Sesja SFTP nie jest obecnie dostępna",
       "StartingSSH/SFTPSession": "Rozpoczęcie sesji SFTP...",
       "NumberOfSFTPSessionsExceededTitle": "Osiągnięto limit liczby uruchomionych sesji przesyłania",
-      "NumberOfSFTPSessionsExceededBody": "Uruchomiono wszystkie dostępne sesje przesyłania, które można utworzyć. Przed rozpoczęciem nowej sesji zakończ nieużywane sesje przesyłania."
+      "NumberOfSFTPSessionsExceededBody": "Uruchomiono wszystkie dostępne sesje przesyłania, które można utworzyć. Przed rozpoczęciem nowej sesji zakończ nieużywane sesje przesyłania.",
+      "DownloadNotAllowed": "Pobieranie pliku/folderu w tym folderze jest niedozwolone."
     },
     "invitation": {
       "NoValidEmails": "Nie wprowadzono poprawnych adresów e-mail",
@@ -734,14 +748,16 @@
       "CannotBeUndone": "UWAGA: nie można tego cofnąć!",
       "LogDeletion": "Czy na pewno chcesz usunąć wszystkie komunikaty dziennika?",
       "WillBeAppliedToNewSessions": "Ta aktualizacja zostanie zastosowana do nowych sesji.",
-      "Required": "Wymagane"
+      "Required": "Wymagane",
+      "DeleteForeverDesc": "UWAGA: wybrane elementy zostaną usunięte na zawsze i nie będzie można ich przywrócić."
     },
     "ask": {
       "DoYouWantToProceed": "Czy chcesz kontynuować?"
     },
     "title": {
       "LetsDouble-Check": "Sprawdźmy dokładnie",
-      "Notice": "Zawiadomienie"
+      "Notice": "Zawiadomienie",
+      "DeleteForever": "Usuń na zawsze?"
     },
     "ErrorOccurred": "Wystąpił błąd",
     "error": {
@@ -1488,7 +1504,7 @@
     "ForProject": "Dla projektu",
     "QuotaDoesNotSupported": "Ten backend pamięci masowej nie obsługuje limitów.",
     "BeCarefulToSetUserResourcePolicy": "Zmiana polityki zasobów może mieć wpływ na wszystkich użytkowników korzystających z tej polityki zasobów użytkownika, więc należy jej używać ostrożnie.",
-    "StorageSetting": "__NOT_TRANSLATED__"
+    "StorageSetting": "Ustawienie przechowywania"
   },
   "totp": {
     "TotpSetupCompleted": "Włączone 2FA",

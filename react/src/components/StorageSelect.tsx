@@ -23,7 +23,7 @@ interface Props extends Omit<SelectProps, 'value' | 'onChange'> {
   autoSelectType?: 'usage' | 'default';
   showUsageStatus?: boolean;
   value?: string;
-  onChange?: React.Dispatch<React.SetStateAction<VolumeInfo | undefined>>;
+  onChange?: (v?: string, vInfo?: VolumeInfo) => void;
 }
 // TODO: use React.forwardRef
 const StorageSelect: React.FC<Props> = ({

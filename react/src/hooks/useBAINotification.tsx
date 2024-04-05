@@ -231,13 +231,20 @@ export const useBAINotificationEffect = () => {
 export const useSetBAINotification = () => {
   // Don't use _notifications carefully when you need to mutate it.
   const setNotifications = useSetRecoilState(notificationListState);
+
   const app = App.useApp();
 
   const webuiNavigate = useWebUINavigate();
 
+  const destroyAllNotifications = useCallback(() => {
+    _activeNotificationKeys.splice(0, _activeNotificationKeys.length);
+    app.notification.destroy();
+  }, [app.notification]);
+
   const clearAllNotifications = useCallback(() => {
     setNotifications([]);
-  }, [setNotifications]);
+    destroyAllNotifications();
+  }, [setNotifications, destroyAllNotifications]);
 
   const destroyNotification = useCallback(
     (key: React.Key) => {
@@ -245,10 +252,6 @@ export const useSetBAINotification = () => {
     },
     [app.notification],
   );
-
-  const destroyAllNotifications = useCallback(() => {
-    app.notification.destroy();
-  }, [app.notification]);
 
   const upsertNotification = useCallback(
     (params: Partial<Omit<NotificationState, 'created'>>) => {
@@ -258,7 +261,6 @@ export const useSetBAINotification = () => {
         const existingIndex = params.key
           ? _.findIndex(prevNotifications, { key: params.key })
           : -1;
-
         const newNotification: NotificationState = _.merge(
           {}, // start with empty object
           prevNotifications[existingIndex],
@@ -268,7 +270,6 @@ export const useSetBAINotification = () => {
             created: new Date().toISOString(),
           },
         );
-
         // This is to check if the notification should be updated using ant.d notification
         const shouldUpdateUsingAPI =
           (_.isEmpty(params.key) && params.open) ||
@@ -301,7 +302,6 @@ export const useSetBAINotification = () => {
             );
           }
         }
-
         if (shouldUpdateUsingAPI) {
           if (
             newNotification.key &&
@@ -310,7 +310,6 @@ export const useSetBAINotification = () => {
           ) {
             _activeNotificationKeys.push(newNotification.key);
           }
-
           app.notification.open({
             ...newNotification,
             type: undefined, // override type to remove default icon from notification, icon displayed in BAINotificationItem

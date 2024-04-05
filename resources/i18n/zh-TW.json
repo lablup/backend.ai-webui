@@ -392,7 +392,13 @@
     "CPU": "中央处理器",
     "MEM": "内存",
     "GPU": "GPU",
-    "GPU(MEM)": "图形处理器（内存）"
+    "GPU(MEM)": "图形处理器（内存）",
+    "Agents": "代理商",
+    "ConvertSessionToImage": "將會話轉換為圖像",
+    "SessionName": "會話名稱",
+    "SessionId": "會話 ID",
+    "EnvironmentAndVersion": "環境及版本",
+    "Tags": "標籤"
   },
   "button": {
     "Cancel": "取消",
@@ -554,7 +560,8 @@
     "Status": "现状",
     "NoUserToDisplay": "无用户显示",
     "EnableSudoSession": "啟用 sudo 會話",
-    "MainAccessKey": "主存取密鑰"
+    "MainAccessKey": "主存取密鑰",
+    "InactivateTheFollowingUsers": "停用以下用户。"
   },
   "data": {
     "Folders": "文件夾",
@@ -607,7 +614,7 @@
       "FolderRenamed": "文件夾重命名",
       "FolderNameMismatched": "文件夾名稱不匹配。請檢查輸入字段中是否有空格字符。",
       "SameFileName": "輸入值與要更新的文件名相同。請將其更改為其他名稱。",
-      "FolderDeleted": "文件夾已刪除",
+      "FolderDeleted": "{{ folderName }} 資料夾已被刪除。",
       "FolderUpdated": "文件夾選項已更新",
       "FolderDisconnected": "文件夾已斷開連接。",
       "FileRenamed": "文件重命名",
@@ -634,7 +641,13 @@
       "CloneFolder": "克隆文件夹",
       "ShareFolder": "共享文件夹",
       "ModifyPermissions": "修改权限",
-      "LeaveFolder": "离开文件夹"
+      "LeaveFolder": "离开文件夹",
+      "Restore": "恢復",
+      "DeleteForever": "永久刪除",
+      "FolderRestored": "{{ folderName }} 資料夾已恢復。",
+      "FolderDeletedForever": "{{ folderName }} 資料夾已永久刪除。",
+      "MoveToTrashBin": "移至垃圾箱",
+      "MovedToTrashBin": "{{ folderName }} 資料夾已移至垃圾箱。"
     },
     "explorer": {
       "Delete": "刪除...",
@@ -685,7 +698,8 @@
       "SFTPSessionNotAvailable": "SFTP 会话现在不可用",
       "StartingSSH/SFTPSession": "开始 SFTP 会话...",
       "NumberOfSFTPSessionsExceededTitle": "运行中的上传会话次数已达上限",
-      "NumberOfSFTPSessionsExceededBody": "您正在运行允许创建的所有可用上传会话。请在启动新会话前终止未使用的上传会话。"
+      "NumberOfSFTPSessionsExceededBody": "您正在运行允许创建的所有可用上传会话。请在启动新会话前终止未使用的上传会话。",
+      "DownloadNotAllowed": "不允許在此資料夾中下載檔案/資料夾。"
     },
     "invitation": {
       "NoValidEmails": "沒有輸入有效的電子郵件",
@@ -732,14 +746,16 @@
       "CannotBeUndone": "警告：這無法撤消！",
       "LogDeletion": "您確定要刪除所有日誌消息嗎？",
       "WillBeAppliedToNewSessions": "此更新將應用於新會話。",
-      "Required": "需要"
+      "Required": "需要",
+      "DeleteForeverDesc": "警告：所選項目將永久刪除，並且您將無法恢復它們。"
     },
     "ask": {
       "DoYouWantToProceed": "您要繼續嗎？"
     },
     "title": {
       "LetsDouble-Check": "讓我們仔細檢查",
-      "Notice": "通知"
+      "Notice": "通知",
+      "DeleteForever": "永久刪除？"
     },
     "ErrorOccurred": "錯誤發生",
     "error": {
@@ -1432,7 +1448,7 @@
     "ForProject": "项目",
     "QuotaDoesNotSupported": "该存储后端不支持配额。",
     "BeCarefulToSetUserResourcePolicy": "更改资源策略会影响使用该用户资源策略的所有用户，因此请谨慎使用。",
-    "StorageSetting": "__NOT_TRANSLATED__"
+    "StorageSetting": "儲存設定"
   },
   "modelService": {
     "TokenGenerated": "生成的令牌",

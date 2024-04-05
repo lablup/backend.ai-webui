@@ -696,8 +696,10 @@ export default class BackendAIUserList extends BackendAIPage {
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
           <p>
-            You are inactivating the user
-            <span style="color:red">${this.signoutUserName}</span>
+            ${_t('credential.InactivateTheFollowingUsers')}
+            <span style="color:var(--token-red, red)">
+              ${this.signoutUserName}
+            </span>
             .
           </p>
           <p>${_t('dialog.ask.DoYouWantToProceed')}</p>

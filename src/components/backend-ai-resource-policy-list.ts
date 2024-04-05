@@ -487,7 +487,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
           <p>${_t('resourcePolicy.AboutToDeleteResourcePolicy')}</p>
-          <p style="text-align:center;color:blue;">
+          <p style="text-align:center;color:var(--token-colorLink,blue);">
             ${this.current_policy_name}
           </p>
           <p>
