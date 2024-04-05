@@ -20,6 +20,7 @@ import ResourceAllocationFormItems, {
   ResourceAllocationFormValue,
 } from '../components/ResourceAllocationFormItems';
 import ResourceNumber from '../components/ResourceNumber';
+import SessionKernelTag from '../components/SessionKernelTag';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
@@ -1213,11 +1214,28 @@ const SessionLauncherPage = () => {
                               }
                             />
                             {/* {form.getFieldValue('environments').image} */}
-                            <div>
-                              <Typography.Text copyable code>
-                                {form.getFieldValue('environments')?.version ||
-                                  form.getFieldValue('environments')?.manual}
-                              </Typography.Text>
+                            <Flex direction="row">
+                              {form.getFieldValue('environments')?.manual ? (
+                                <Typography.Text copyable code>
+                                  form.getFieldValue('environments')?.manual
+                                </Typography.Text>
+                              ) : (
+                                <>
+                                  <SessionKernelTag
+                                    image={
+                                      form.getFieldValue('environments')
+                                        ?.version
+                                    }
+                                  />
+                                  <Typography.Text
+                                    copyable={{
+                                      text: form.getFieldValue('environments')
+                                        ?.version,
+                                    }}
+                                  />
+                                </>
+                              )}
+
                               {form.getFieldValue('environments')
                                 ?.customizedTag ? (
                                 <DoubleTag
@@ -1235,7 +1253,7 @@ const SessionLauncherPage = () => {
                                   ]}
                                 />
                               ) : null}
-                            </div>
+                            </Flex>
                           </Flex>
                         </Descriptions.Item>
                         {form.getFieldValue('envvars')?.length > 0 && (
