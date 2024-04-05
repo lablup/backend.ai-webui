@@ -83,7 +83,6 @@ const ResourceAllocationFormItems: React.FC<
 
   const baiClient = useSuspendedBackendaiClient();
   const [resourceSlots] = useResourceSlots();
-  const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
 
   const [{ keypairResourcePolicy, sessionLimitAndRemaining }] =
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
@@ -105,6 +104,17 @@ const ResourceAllocationFormItems: React.FC<
       currentResourceGroup: currentResourceGroup,
       currentImage: currentImage,
     });
+
+  const acceleratorSlots = _.omitBy(resourceSlots, (value, key) => {
+    if (['cpu', 'mem', 'shmem'].includes(key)) return true;
+
+    if (
+      !resourceLimits.accelerators[key]?.max ||
+      resourceLimits.accelerators[key]?.max === 0
+    )
+      return true;
+    return false;
+  });
 
   const currentImageAcceleratorLimits = _.filter(
     currentImage?.resource_limits,
