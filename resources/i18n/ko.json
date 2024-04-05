@@ -268,7 +268,7 @@
       "MiniumAllocation": "최소 요구사항 할당",
       "MiniumAllocationTooltip": "선택한 실행환경에서 요구되는 최소 요구사항으로 선택",
       "NeoSwitchDescription": "현재 \"{{launcher}}\" 세션 런처를 사용중입니다.",
-      "PreviousLauncher": "기존",
+      "PreviousLauncher": "Classic",
       "NeoLauncher": "NEO",
       "EnvironmentVariableValueRequired": "값을 입력해주세요."
     },

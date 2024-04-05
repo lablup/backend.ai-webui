@@ -263,7 +263,7 @@
       "StartTimeDoesNotApply": "Başlangıç ​​zamanı ayarlanmamışsa geçerli değildir.",
       "MiniumAllocation": "Minimum gereksinimler",
       "MiniumAllocationTooltip": "Seçilen çalışma ortamı için minimum gereksinim olarak seçin",
-      "PreviousLauncher": "Önceki",
+      "PreviousLauncher": "Classic",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "\"{{launcher}}\" oturum başlatıcısını kullanıyorsunuz.",
       "SkipToConfirmAndLaunch": "İncelemeye geç",

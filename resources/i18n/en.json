@@ -276,7 +276,7 @@
       "StartTimeDoesNotApply": "If the start time is not set, it doesn't apply.",
       "MiniumAllocation": "Minimum requirements",
       "MiniumAllocationTooltip": "Select as the minimum requirement for the selected running environment",
-      "PreviousLauncher": "Previous",
+      "PreviousLauncher": "Classic",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "You are using the \"{{launcher}}\" session launcher.",
       "SkipToConfirmAndLaunch": "Skip to review",

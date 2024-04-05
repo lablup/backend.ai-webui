@@ -266,7 +266,8 @@
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Hanya bilangan bulat yang diperbolehkan jika ukuran cluster tidak kurang dari 2.",
       "StartAfter": "Mulai setelah:",
-      "StartTimeDoesNotApply": "Jika waktu mulai tidak ditetapkan, maka tidak berlaku."
+      "StartTimeDoesNotApply": "Jika waktu mulai tidak ditetapkan, maka tidak berlaku.",
+      "PreviousLauncher": "Classic"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",

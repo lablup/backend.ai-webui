@@ -1155,7 +1155,7 @@
       "StartTimeDoesNotApply": "Jos aloitusaikaa ei ole asetettu, se ei ole voimassa.",
       "MiniumAllocation": "Vähimmäisvaatimukset",
       "MiniumAllocationTooltip": "Valitse valitun käyttöympäristön vähimmäisvaatimukseksi seuraavat tiedot",
-      "PreviousLauncher": "Edellinen",
+      "PreviousLauncher": "Classic",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "Käytät \"{{launcher}}\"-istunnon käynnistintä.",
       "SkipToConfirmAndLaunch": "Siirry arvosteluun",
