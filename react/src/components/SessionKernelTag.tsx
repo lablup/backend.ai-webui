@@ -1,6 +1,5 @@
 import { useBackendAIImageMetaData } from '../hooks';
 import DoubleTag from './DoubleTag';
-import Flex from './Flex';
 import { Tag } from 'antd';
 import React from 'react';
 

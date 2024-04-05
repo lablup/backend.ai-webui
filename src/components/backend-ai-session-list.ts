@@ -86,9 +86,9 @@ type CommitSessionInfo = {
 /**
  * Type of commit session info
  */
-type SessionToImageInfo = CommitSessionInfo & {
-  name: string;
-};
+// type SessionToImageInfo = CommitSessionInfo & {
+//   name: string;
+// };
 
 /**
  * Type of commit session status
