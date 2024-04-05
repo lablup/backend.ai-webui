@@ -308,9 +308,13 @@ const ResourceAllocationFormItems: React.FC<
     );
     const slots = _.pick(preset?.resource_slots, _.keys(resourceSlots));
     const mem = iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.numberUnit;
+    const acceleratorObj = _.omit(slots, ['cpu', 'mem', 'shmem']);
     form.setFieldsValue({
       resource: {
-        ...slots,
+        // ...slots,
+        // FIXME: temporary apply the first AI accelerator type and value
+        acceleratorType: Object.keys(acceleratorObj)[0],
+        accelerator: Number(Object.values(acceleratorObj)[0]),
         // transform to GB based on preset values
         mem,
         shmem: iSizeToSize((preset?.shared_memory || 0) + 'b', 'g', 2)
