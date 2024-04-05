@@ -1669,7 +1669,7 @@ const FormResourceNumbers: React.FC<{
     <>
       {_.map(
         _.omit(
-          form.getFieldValue('resource'),
+          form.getFieldsValue().resource,
           'shmem',
           'accelerator',
           'acceleratorType',
