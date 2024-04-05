@@ -889,18 +889,25 @@ export default class BackendAICredentialList extends BackendAIPage {
               `
             : html``}
         </div>
-        <div class="layout horizontal wrap center">
-          <div class="layout horizontal configuration">
-            <mwc-icon class="fg green">cloud_queue</mwc-icon>
-            <span>${rowData.item.max_vfolder_size}</span>
-            <span class="indicator">GB</span>
-          </div>
-        </div>
-        <div class="layout horizontal configuration">
-          <mwc-icon class="fg green">folder</mwc-icon>
-          <span>${rowData.item.max_vfolder_count}</span>
-          <span class="indicator">${_t('general.Folders')}</span>
-        </div>
+        ${!globalThis.backendaiclient.supports(
+          'deprecated-max-vfolder-count-in-keypair-resource-policy',
+        )
+          ? html`
+              <div class="layout horizontal wrap center">
+                <div class="layout horizontal configuration">
+                  <mwc-icon class="fg green">cloud_queue</mwc-icon>
+                  <span>${rowData.item.max_vfolder_size}</span>
+                  <span class="indicator">GB</span>
+                </div>
+              </div>
+              <div class="layout horizontal configuration">
+                <mwc-icon class="fg green">folder</mwc-icon>
+                <span>${rowData.item.max_vfolder_count}</span>
+                <span class="indicator">${_t('general.Folders')}</span>
+              </div>
+            `
+          : html``}
+        <!-- TODO: Display max_vfolder_count in user resource policy -->
       `,
       root,
     );

@@ -665,6 +665,16 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('23.09.2')) {
       this._features['container-registry-gql'] = true;
+      this._features['max-quota-scope-size-in-user-and-project-resource-policy'] = true;
+      this._features['deprecated-max-vfolder-size-in-user-and-project-resource-policy'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.4')) {
+      this._features['deprecated-max-vfolder-count-in-keypair-resource-policy'] = true;
+      this._features['deprecated-max-vfolder-size-in-keypair-resource-policy'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.6')) {
+      this._features['max-vfolder-count-in-user-and-project-resource-policy'] = true;
+      this._features['deprecated-max-quota-scope-in-keypair-resource-policy'] = true;
     }
     if (this.isManagerVersionCompatibleWith('23.09.7')) {
       this._features['main-access-key'] = true;
@@ -676,7 +686,7 @@ class Client {
       this._features['modify-endpoint'] = true;
     }
     if (this.isManagerVersionCompatibleWith('24.03.0')) {
-      this._features['max-vfolder-count-in-user-resource-policy'] = true;
+      this._features['vfolder-trash-bin'] = true;
       this._features['model-store'] = true;
       this._features['vfolder-trash-bin'] = true;
       this._features['per-user-image'] = true;
