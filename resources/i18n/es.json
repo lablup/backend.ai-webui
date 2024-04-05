@@ -626,7 +626,9 @@
       "LoginWithSAML": "Inicio de sesión con SAML"
     },
     "TooManyAttempt": "Ha habido demasiados intentos de inicio de sesión. Los intentos de inicio de sesión se han bloqueado durante un tiempo.",
-    "UpdatePasswordMessage": "Escribe tu correo electrónico y una nueva contraseña, y pulsa el botón Actualizar."
+    "UpdatePasswordMessage": "Escribe tu correo electrónico y una nueva contraseña, y pulsa el botón Actualizar.",
+    "LoginWithE-mailorUsername": "Iniciar sesión con correo electrónico o nombre de usuario",
+    "E-mailorUsername": "Correo electrónico o nombre de usuario"
   },
   "logs": {
     "ErrorMessage": "Mensaje de error",

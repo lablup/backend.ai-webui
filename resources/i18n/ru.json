@@ -1230,14 +1230,12 @@
     "LeaveService": "Оставить службу",
     "DescConfirmLeave": "Для подтверждения, пожалуйста, введите свой E-mail и пароль еще раз.",
     "Password": "Пароль",
-    "E-mail": "Электронная почта",
     "APIKey": "Ключ API",
     "SecretKey": "Секретный ключ",
     "Endpoint": "Конечная точка",
     "NotAUser": "Не пользователь?",
     "LoginAnotherway": "Хотите войти другим способом?",
     "SignUp": "Зарегистрироваться",
-    "LoginWithE-mail": "Войти по электронной почте",
     "LoginWithIAM": "Войти через IAM",
     "ClickToUseIAM": "Нажмите, чтобы использовать IAM",
     "ClickToUseID": "Нажмите, чтобы использовать идентификатор",
@@ -1265,7 +1263,9 @@
     },
     "EndpointInfo": "О компании Endpoint",
     "DescEndpoint": "<p>В API ENDPOINT необходимо ввести URL веб-сервера Backend.AI, который передает запрос Менеджеру.</p><p>например, http://127.0.0.1:8090/</p>.",
-    "EndpointStartWith": "Конечная точка должна начинаться с http:// или https://."
+    "EndpointStartWith": "Конечная точка должна начинаться с http:// или https://.",
+    "LoginWithE-mailorUsername": "Войти по электронной почте или имени пользователя",
+    "E-mailorUsername": "Электронная почта или имя пользователя"
   },
   "signup": {
     "SignupBETA": "Регистрация (только приглашение в бета-версию)",

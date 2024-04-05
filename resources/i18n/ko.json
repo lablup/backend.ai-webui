@@ -1317,14 +1317,12 @@
     "LeaveService": "서비스 탈퇴",
     "DescConfirmLeave": "확인을 위해 E-mail 및 비밀번호를 다시 입력해주세요.",
     "Password": "비밀번호",
-    "E-mail": "E-mail",
     "APIKey": "접근키",
     "SecretKey": "비밀키",
     "Endpoint": "엔드포인트",
     "NotAUser": "아직 가입 전이면",
     "LoginAnotherway": "다른 방식으로 로그인하기",
     "SignUp": "가입하기",
-    "LoginWithE-mail": "E-mail로 로그인",
     "LoginWithIAM": "IAM으로 로그인",
     "ClickToUseIAM": "IAM 사용",
     "ClickToUseID": "ID 사용",
@@ -1352,7 +1350,9 @@
       "LoginWithSAML": "SAML 로그인",
       "LoginWithRealm": "{{ realmName }} 로그인"
     },
-    "EndpointStartWith": "http:// 혹은 https:// 로 시작해야 합니다."
+    "EndpointStartWith": "http:// 혹은 https:// 로 시작해야 합니다.",
+    "LoginWithE-mailorUsername": "이메일 또는 사용자 이름으로 로그인",
+    "E-mailorUsername": "이메일 또는 사용자 이름"
   },
   "signup": {
     "SignupBETA": "가입 (베타 초대 대상)",
