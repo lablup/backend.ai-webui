@@ -790,10 +790,9 @@ export default class BackendAISessionList extends BackendAIPage {
     if (globalThis.backendaiclient.is_superadmin) {
       containerFields.push('agent');
     }
-    containerFields.push('image_object { labels { key value } }');
-    // if (globalThis.backendaiclient.supports('per-user-image')) {
-    //   containerFields.push('image_object { labels { key value } }')
-    // }
+    if (globalThis.backendaiclient.supports('per-user-image')) {
+      containerFields.push('image_object { labels { key value } }');
+    }
 
     if (this._isContainerCommitEnabled && status.includes('RUNNING')) {
       fields.push('commit_status');
@@ -812,8 +811,9 @@ export default class BackendAISessionList extends BackendAIPage {
         10 * 1000,
       )
       .then((response) => {
-        this.total_session_count = response.compute_session_list.total_count;
-        let sessions = response.compute_session_list.items;
+        this.total_session_count =
+          response?.compute_session_list?.total_count || 0;
+        let sessions = response?.compute_session_list?.items;
         if (this.total_session_count === 0) {
           this.listCondition = 'no-data';
           this._listStatus?.show();
