@@ -179,6 +179,12 @@ const ImageEnvironmentSelectFormItems: React.FC<
       nextImage = nextEnvironment?.images[0];
     }
 
+    const customizedImageTag = _.find(
+      nextImage?.labels,
+      (item) =>
+        item !== null && item?.key === 'ai.backend.customized-image.name',
+    )?.value;
+
     if (nextImage) {
       if (
         !matchedEnvironmentByVersion &&
@@ -191,6 +197,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
             version: undefined,
             image: undefined,
             manual: version,
+            customizedTag: customizedImageTag ?? undefined,
           },
         });
       } else {
@@ -199,6 +206,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
             environment: nextEnvironment.environmentName,
             version: getImageFullName(nextImage),
             image: nextImage,
+            customizedTag: customizedImageTag ?? undefined,
           },
         });
       }
@@ -632,10 +640,6 @@ const ImageEnvironmentSelectFormItems: React.FC<
                               },
                             ]}
                           />,
-                        );
-                        form.setFieldValue(
-                          ['environments', 'customizedTag'],
-                          tag,
                         );
                       }
                     }
