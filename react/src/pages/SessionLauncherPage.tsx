@@ -1227,6 +1227,23 @@ const SessionLauncherPage = () => {
                                         ?.version
                                     }
                                   />
+                                  {form.getFieldValue('environments')
+                                    ?.customizedTag ? (
+                                    <DoubleTag
+                                      values={[
+                                        {
+                                          label: 'Customized',
+                                          color: 'cyan',
+                                        },
+                                        {
+                                          label:
+                                            form.getFieldValue('environments')
+                                              ?.customizedTag,
+                                          color: 'cyan',
+                                        },
+                                      ]}
+                                    />
+                                  ) : null}
                                   <Typography.Text
                                     copyable={{
                                       text: form.getFieldValue('environments')
@@ -1235,24 +1252,6 @@ const SessionLauncherPage = () => {
                                   />
                                 </>
                               )}
-
-                              {form.getFieldValue('environments')
-                                ?.customizedTag ? (
-                                <DoubleTag
-                                  values={[
-                                    {
-                                      label: 'Customized',
-                                      color: 'cyan',
-                                    },
-                                    {
-                                      label:
-                                        form.getFieldValue('environments')
-                                          ?.customizedTag,
-                                      color: 'cyan',
-                                    },
-                                  ]}
-                                />
-                              ) : null}
                             </Flex>
                           </Flex>
                         </Descriptions.Item>
