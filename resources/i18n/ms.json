@@ -1205,7 +1205,6 @@
     "LeaveService": "Tinggalkan Perkhidmatan",
     "DescConfirmLeave": "Untuk mengesahkan, sila taipkan E-mel dan kata laluan anda sekali lagi.",
     "Password": "Kata Laluan",
-    "E-mail": "E-mel",
     "APIKey": "Kunci API",
     "SecretKey": "Kunci Rahsia",
     "Endpoint": "Titik Akhir",
@@ -1240,7 +1239,8 @@
       "LoginWithSAML": "Log masuk dengan SAML",
       "LoginWithRealm": "Log masuk dengan {{ realmName }}"
     },
-    "LoginWithE-mailorUsername": "Log masuk Dengan E-mel atau Nama Pengguna"
+    "LoginWithE-mailorUsername": "Log masuk Dengan E-mel atau Nama Pengguna",
+    "E-mailorUsername": "E-mel atau Nama pengguna"
   },
   "signup": {
     "SignupBETA": "Pendaftaran (Jemputan beta sahaja)",

@@ -2084,7 +2084,7 @@ export default class BackendAILogin extends BackendAIPage {
                     id="id_user_id"
                     maxlength="64"
                     autocomplete="username"
-                    label="${_t('login.E-mail')}"
+                    label="${_t('login.E-mailorUsername')}"
                     value="${this.user_id}"
                     @keyup="${this._submitIfEnter}"
                   ></mwc-textfield>

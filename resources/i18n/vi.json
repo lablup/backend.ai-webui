@@ -1224,7 +1224,6 @@
     "LeaveService": "Rời khỏi dịch vụ",
     "DescConfirmLeave": "Để xác nhận, vui lòng nhập lại E-mail và mật khẩu của bạn.",
     "Password": "Mật khẩu",
-    "E-mail": "E-mail",
     "APIKey": "Mã API",
     "SecretKey": "Chìa khoá bí mật",
     "Endpoint": "Điểm cuối",
@@ -1259,7 +1258,8 @@
       "LoginWithSAML": "Đăng nhập bằng SAML",
       "LoginWithRealm": "Đăng nhập bằng {{realmName }}"
     },
-    "LoginWithE-mailorUsername": "Đăng nhập bằng E-mail hoặc tên người dùng"
+    "LoginWithE-mailorUsername": "Đăng nhập bằng E-mail hoặc tên người dùng",
+    "E-mailorUsername": "Thư điện tử hoặc tên người dùng"
   },
   "signup": {
     "SignupBETA": "Đăng ký (chỉ dành cho lời mời thử nghiệm)",

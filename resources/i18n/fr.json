@@ -1224,7 +1224,6 @@
     "LeaveService": "Quitter le service",
     "DescConfirmLeave": "Pour confirmer, veuillez saisir à nouveau votre e-mail et votre mot de passe.",
     "Password": "Mot de passe",
-    "E-mail": "E-mail",
     "APIKey": "clé API",
     "SecretKey": "Clef secrète",
     "Endpoint": "Point de terminaison",
@@ -1259,7 +1258,8 @@
     "EndpointInfo": "À propos d'Endpoint",
     "DescEndpoint": "Dans API ENDPOINT, l'URL du serveur web Backend.AI, qui transmet la demande au gestionnaire, doit être saisie. </p><p>par exemple, http://127.0.0.1:8090/</p> <p>L'URL du serveur web Backend.AI, qui transmet la demande au gestionnaire, doit être saisie.",
     "EndpointStartWith": "Le point d'arrivée doit commencer par http:// ou https://.",
-    "LoginWithE-mailorUsername": "Connectez-vous avec e-mail ou nom d'utilisateur"
+    "LoginWithE-mailorUsername": "Connectez-vous avec e-mail ou nom d'utilisateur",
+    "E-mailorUsername": "E-mail ou nom d'utilisateur"
   },
   "signup": {
     "SignupBETA": "Inscription (invitation bêta uniquement)",

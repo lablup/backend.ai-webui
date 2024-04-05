@@ -1224,7 +1224,6 @@
     "LeaveService": "Dienst verlassen",
     "DescConfirmLeave": "Bitte geben Sie zur Bestätigung Ihre E-Mail und Ihr Passwort erneut ein.",
     "Password": "Passwort",
-    "E-mail": "Email",
     "APIKey": "API-Schlüssel",
     "SecretKey": "Geheimer Schlüssel",
     "Endpoint": "Endpunkt",
@@ -1259,7 +1258,8 @@
       "LoginWithSAML": "Anmeldung mit SAML",
       "LoginWithRealm": "Anmeldung mit {{ realmName }}"
     },
-    "LoginWithE-mailorUsername": "Melden Sie sich mit E-Mail oder Benutzernamen an"
+    "LoginWithE-mailorUsername": "Melden Sie sich mit E-Mail oder Benutzernamen an",
+    "E-mailorUsername": "E-Mail Adresse oder Benutzername"
   },
   "signup": {
     "SignupBETA": "Anmeldung (nur Beta-Einladung)",

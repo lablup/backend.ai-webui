@@ -1217,7 +1217,6 @@
     "LeaveService": "Tinggalkan Layanan",
     "DescConfirmLeave": "Untuk konfirmasi, silakan ketik kembali e-mail dan password Anda.",
     "Password": "Kata sandi",
-    "E-mail": "E-mail",
     "APIKey": "Kunci API",
     "SecretKey": "Kunci rahasia",
     "Endpoint": "Titik akhir",
@@ -1252,7 +1251,8 @@
     "EndpointInfo": "Tentang Endpoint",
     "DescEndpoint": "<p>Dalam API ENDPOINT, URL server Web Backend.AI, yang meneruskan permintaan ke Manajer, harus dimasukkan.</p> <p>misalnya, http://127.0.0.1:8090/</p> <p>",
     "EndpointStartWith": "Titik akhir harus dimulai dengan http:// atau https://.",
-    "LoginWithE-mailorUsername": "Masuk Dengan Email atau Nama Pengguna"
+    "LoginWithE-mailorUsername": "Masuk Dengan Email atau Nama Pengguna",
+    "E-mailorUsername": "Email atau nama pengguna"
   },
   "signup": {
     "SignupBETA": "Pendaftaran (khusus undangan Beta)",

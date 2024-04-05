@@ -1,5 +1,6 @@
 {
   "login": {
-    "LoginWithE-mailorUsername": "Iniciar sesión con correo electrónico o nombre de usuario"
+    "LoginWithE-mailorUsername": "Iniciar sesión con correo electrónico o nombre de usuario",
+    "E-mailorUsername": "Correo electrónico o nombre de usuario"
   }
 }

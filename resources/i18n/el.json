@@ -1224,7 +1224,6 @@
     "LeaveService": "Αποχώρηση από την υπηρεσία",
     "DescConfirmLeave": "Για επιβεβαίωση, πληκτρολογήστε ξανά το E-mail και τον κωδικό πρόσβασής σας.",
     "Password": "Κωδικός πρόσβασης",
-    "E-mail": "ΗΛΕΚΤΡΟΝΙΚΗ ΔΙΕΥΘΥΝΣΗ",
     "APIKey": "Κλειδί API",
     "SecretKey": "Μυστικό κλειδί",
     "Endpoint": "Τελικό σημείο",
@@ -1259,7 +1258,8 @@
       "LoginWithSAML": "Σύνδεση με SAML",
       "LoginWithRealm": "Σύνδεση με {{ realmName }}"
     },
-    "LoginWithE-mailorUsername": "Είσοδος με e-mail ή όνομα χρήστη"
+    "LoginWithE-mailorUsername": "Είσοδος με e-mail ή όνομα χρήστη",
+    "E-mailorUsername": "E-mail ή το όνομα χρήστη"
   },
   "signup": {
     "SignupBETA": "Εγγραφή (μόνο πρόσκληση Beta)",

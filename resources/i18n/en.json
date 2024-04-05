@@ -1326,7 +1326,6 @@
     "LeaveService": "Leave Service",
     "DescConfirmLeave": "To confirm, please type your E-mail and password again.",
     "Password": "Password",
-    "E-mail": "E-mail",
     "APIKey": "API Key",
     "SecretKey": "Secret Key",
     "Endpoint": "Endpoint",
@@ -1361,7 +1360,8 @@
       "LoginWithRealm": "Login with {{ realmName }}"
     },
     "EndpointStartWith": "Endpoint must start with http:// or https://.",
-    "LoginWithE-mailorUsername": "Login With E-mail or Username"
+    "LoginWithE-mailorUsername": "Login With E-mail or Username",
+    "E-mailorUsername": "E-mail or Username"
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",

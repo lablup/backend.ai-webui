@@ -1210,7 +1210,6 @@
     "LeaveService": "Үйлчилгээг орхих",
     "DescConfirmLeave": "Баталгаажуулахын тулд имэйл, нууц үгээ дахин оруулна уу.",
     "Password": "Нууц үг",
-    "E-mail": "И-мэйл",
     "APIKey": "API түлхүүр",
     "SecretKey": "Нууц түлхүүр",
     "Endpoint": "Төгсгөлийн цэг",
@@ -1245,7 +1244,8 @@
     "EndpointInfo": "Төгсгөлийн цэгийн тухай",
     "DescEndpoint": "<p>API ENDPOINT-д хүсэлтийг Менежер рүү дамжуулдаг Backend.AI вэб серверийн URL-г оруулах ёстой.</p><p>жишээ нь, http://127.0.0.1:8090/</p>",
     "EndpointStartWith": "Төгсгөлийн цэг нь http:// эсвэл https://-ээр эхлэх ёстой.",
-    "LoginWithE-mailorUsername": "Имэйл эсвэл хэрэглэгчийн нэрээр нэвтэрнэ үү"
+    "LoginWithE-mailorUsername": "Имэйл эсвэл хэрэглэгчийн нэрээр нэвтэрнэ үү",
+    "E-mailorUsername": "И-мэйл эсвэл Хэрэглэгчийн нэр"
   },
   "signup": {
     "SignupBETA": "Бүртгүүлэх (зөвхөн бета урилга)",
