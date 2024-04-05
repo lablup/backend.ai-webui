@@ -152,7 +152,7 @@ const ResourceAllocationFormItems: React.FC<
         return false;
       }
       const acceleratorKeys = _.keys(
-        _.omit(preset.resource_slots, ['mem', 'cpu']),
+        _.omit(preset.resource_slots, ['mem', 'cpu', 'shmem']),
       );
       const isAvailable = _.every(acceleratorKeys, (key) => {
         if (
@@ -168,15 +168,48 @@ const ResourceAllocationFormItems: React.FC<
       });
       return isAvailable;
     }).map((preset) => preset.name);
-    return baiClient._config?.always_enqueue_compute_session
-      ? bySliderLimit
-      : byPresetInfo;
+
+    const byImageAcceleratorLimits = _.filter(
+      checkPresetInfo?.presets,
+      (preset) => {
+        const acceleratorResourceOfPreset = _.omitBy(
+          preset.resource_slots,
+          (value, key) => {
+            if (['mem', 'cpu', 'shmem'].includes(key) || value === '0')
+              return true;
+          },
+        );
+        if (currentImageAcceleratorLimits.length === 0) {
+          if (_.isEmpty(acceleratorResourceOfPreset)) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+
+        return _.some(currentImageAcceleratorLimits, (limit) => {
+          return _.some(acceleratorResourceOfPreset, (value, key) => {
+            return (
+              limit?.key === key && _.toNumber(value) >= _.toNumber(limit?.min)
+            );
+          });
+        });
+      },
+    ).map((preset) => preset.name);
+
+    return _.intersection(
+      baiClient._config?.always_enqueue_compute_session
+        ? bySliderLimit
+        : byPresetInfo,
+      byImageAcceleratorLimits,
+    );
   }, [
     baiClient._config?.always_enqueue_compute_session,
     checkPresetInfo?.presets,
     resourceLimits.accelerators,
     resourceLimits.cpu?.max,
     resourceLimits.mem?.max,
+    currentImageAcceleratorLimits,
   ]);
 
   const updateAllocationPresetBasedOnResourceGroup = useEventNotStable(() => {
@@ -205,10 +238,14 @@ const ResourceAllocationFormItems: React.FC<
     }, 200);
   });
 
-  // update allocation preset based on resource group
+  // update allocation preset based on resource group and current image
   useEffect(() => {
     currentResourceGroup && updateAllocationPresetBasedOnResourceGroup();
-  }, [currentResourceGroup, updateAllocationPresetBasedOnResourceGroup]);
+  }, [
+    currentResourceGroup,
+    updateAllocationPresetBasedOnResourceGroup,
+    currentImage,
+  ]);
 
   const updateResourceFieldsBasedOnImage = (force?: boolean) => {
     // when image changed, set value of resources to min value only if it's larger than current value
