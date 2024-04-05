@@ -1304,9 +1304,8 @@ const SessionLauncherPage = () => {
                     >
                       <Flex direction="column" align="stretch">
                         {_.some(
-                          form.getFieldValue('resource').resource,
+                          form.getFieldValue('resource')?.resource,
                           (v, key) => {
-                            //                         console.log(form.getFieldError(['resource', 'shmem']));
                             return (
                               form.getFieldWarning(['resource', key]).length > 0
                             );
