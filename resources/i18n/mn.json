@@ -1,4 +1,4 @@
-
+{
   "webui": {
     "menu": {
       "WelcomeMessage": "Тавтай морилно уу, {{ userName }}.",
@@ -113,7 +113,8 @@
     "IPUEnabled": "IPU NPU идэвхжүүлсэн",
     "ATOMEnabled": "ATOM NPU-г идэвхжүүлсэн",
     "WarboyEnabled": "Warboy NPU идэвхжүүлсэн",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU идэвхжүүлсэн"
   },
   "session": {
     "launcher": {
@@ -1538,12 +1539,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Хайлтын нэр томъёог оруулна уу"
-  "settings": {
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Hyperaccel LPU хурдасгуурыг ашигла.",
     "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Plugin шаардлагатай."
-  },
-  "summary": {
-    "HyperaccelLPUEnabled": "Hyperaccel LPU идэвхжүүлсэн"
   }
 }
