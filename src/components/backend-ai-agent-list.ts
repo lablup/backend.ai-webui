@@ -203,6 +203,17 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   /**
+   * re-bind the renderer function when the them(light, dark) is changed
+   */
+
+  updated(changedProperties) {
+    if (changedProperties.has('isDarkMode')) {
+      this._boundRegionRenderer = this.regionRenderer.bind(this);
+      this.requestUpdate();
+    }
+  }
+
+  /**
    * Change state to 'ALIVE' when backend.ai client connected.
    *
    * @param {Boolean} active - The component will work if active is true.
@@ -890,8 +901,11 @@ export default class BackendAIAgentList extends BackendAIPage {
       html`
         <div class="horizontal start-justified center layout wrap">
           <img
+            class="platform-icon"
             src="/resources/icons/${icon}.png"
-            style="width:32px;height:32px;"
+            style="width:32px;height:32px;${this.isDarkMode && icon === 'local'
+              ? 'filter:invert(1);'
+              : ''}"
           />
           <lablup-shields
             app="${location}"
