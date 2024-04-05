@@ -383,6 +383,8 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU (санах ой)",
     "Agents": "Агентууд",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (санах ой)",
     "ConvertSessionToImage": "Сессийг зураг болгон хөрвүүлэх",
     "SessionName": "Сеанс нэр",
     "SessionId": "Сешн Id",

@@ -394,6 +394,8 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU(메모리)",
     "Agents": "실행노드",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU(메모리)",
     "ConvertSessionToImage": "세션을 이미지로 변환",
     "SessionName": "세션 이름",
     "SessionId": "세션 ID",

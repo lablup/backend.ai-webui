@@ -394,6 +394,8 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU (Speicher)",
     "Agents": "Agenten",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (Speicher)",
     "ConvertSessionToImage": "Konvertieren Sie die Sitzung in ein Bild",
     "SessionName": "Sitzungsname",
     "SessionId": "Session-ID",

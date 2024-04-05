@@ -394,6 +394,8 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU (bellek)",
     "Agents": "Temsilciler",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (bellek)",
     "ConvertSessionToImage": "Oturumu Resme Dönüştür",
     "SessionName": "Oturum Adı",
     "SessionId": "Oturum kimliği",

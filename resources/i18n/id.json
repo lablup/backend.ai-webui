@@ -389,6 +389,8 @@
     "MEM": "Memori",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (memori)",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (memori)",
     "ConvertSessionToImage": "Ubah Sesi menjadi Gambar",
     "SessionName": "Nama Sesi",
     "SessionId": "Id Sesi",

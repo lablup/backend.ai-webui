@@ -407,6 +407,8 @@
     "MEM": "MEM",
     "GPU": "GPU",
     "GPU(MEM)": "GPU(Memory)",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU(Memory)",
     "ConvertSessionToImage": "Convert Session to Image",
     "SessionName": "Session Name",
     "SessionId": "Session ID",

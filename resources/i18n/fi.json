@@ -1170,6 +1170,8 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU (muisti)",
     "Agents": "Agentit",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (muisti)",
     "ConvertSessionToImage": "Muunna istunto kuvaksi",
     "SessionName": "Istunnon nimi",
     "SessionId": "Istunnon tunniste",

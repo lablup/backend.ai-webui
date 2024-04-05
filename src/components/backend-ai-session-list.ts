@@ -196,11 +196,14 @@ export default class BackendAISessionList extends BackendAIPage {
       // _t('session.GPU'),
       cuda_mem: 'GPU(MEM)',
       // _t('session.GPU(MEM)'),
+      ipu_util: 'IPU',
+      // _t('session.IPU'),
+      ipu_mem: 'IPU(MEM)',
+      // _t('session.IPU(MEM)'),
     },
     {
       get: (obj, prop) => {
-        // eslint-disable-next-line no-prototype-builtins
-        return obj.hasOwnProperty(prop) ? obj[prop] : '';
+        return obj.hasOwnProperty(prop) ? obj[prop] : prop;
       },
     },
   );

@@ -394,6 +394,8 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU(メモリ)",
     "Agents": "エージェント",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU(メモリ)",
     "ConvertSessionToImage": "セッションをイメージに変換",
     "SessionName": "セッション名",
     "SessionId": "セッションID",

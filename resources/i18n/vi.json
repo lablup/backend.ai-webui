@@ -394,6 +394,8 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU (bộ nhớ)",
     "Agents": "Đại lý",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (bộ nhớ)",
     "ConvertSessionToImage": "Chuyển đổi phiên thành hình ảnh",
     "SessionName": "Tên phiên",
     "SessionId": "Id phiên",

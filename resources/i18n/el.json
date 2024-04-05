@@ -394,6 +394,8 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU (μνήμη)",
     "Agents": "Πράκτορες",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (μνήμη)",
     "ConvertSessionToImage": "Μετατροπή συνεδρίας σε εικόνα",
     "SessionName": "Όνομα συνεδρίας",
     "SessionId": "Αναγνωριστικό συνεδρίας",

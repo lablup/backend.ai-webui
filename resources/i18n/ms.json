@@ -394,6 +394,8 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU (memori)",
     "Agents": "ejen",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (memori)",
     "ConvertSessionToImage": "Tukar Sesi kepada Imej",
     "SessionName": "Nama Sesi",
     "SessionId": "Id Sesi",
