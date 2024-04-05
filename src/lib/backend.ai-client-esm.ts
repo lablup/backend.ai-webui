@@ -688,6 +688,7 @@ class Client {
     if (this.isManagerVersionCompatibleWith('24.03.0')) {
       this._features['vfolder-trash-bin'] = true;
       this._features['model-store'] = true;
+      this._features['vfolder-trash-bin'] = true;
       this._features['per-user-image'] = true;
     }
   }
