@@ -1231,7 +1231,6 @@
     "NotAUser": "Kein Benutzer?",
     "LoginAnotherway": "Möchten Sie sich auf andere Weise anmelden?",
     "SignUp": "Anmelden",
-    "LoginWithE-mail": "Mit E-Mail anmelden",
     "LoginWithIAM": "Mit IAM anmelden",
     "ClickToUseIAM": "Klicken Sie hier, um IAM zu verwenden",
     "ClickToUseID": "Klicken Sie hier, um die ID zu verwenden",
@@ -1259,7 +1258,8 @@
     "SingleSignOn": {
       "LoginWithSAML": "Anmeldung mit SAML",
       "LoginWithRealm": "Anmeldung mit {{ realmName }}"
-    }
+    },
+    "LoginWithE-mailorUsername": "Melden Sie sich mit E-Mail oder Benutzernamen an"
   },
   "signup": {
     "SignupBETA": "Anmeldung (nur Beta-Einladung)",

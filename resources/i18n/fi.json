@@ -608,7 +608,6 @@
     "LeaveService": "Jätä palvelu",
     "Login": "Kirjaudu sisään",
     "LoginAnotherway": "Haluatko kirjautua sisään toisella tavalla?",
-    "LoginWithE-mail": "Kirjaudu sisään sähköpostilla",
     "LoginWithIAM": "Kirjaudu sisään IAM:n avulla",
     "NoEndpointSaved": "Päätepistettä ei ole tallennettu.",
     "NotAUser": "Etkö ole käyttäjä?",
@@ -625,7 +624,8 @@
       "LoginWithSAML": "Kirjautuminen SAML:llä"
     },
     "TooManyAttempt": "Kirjautumisyrityksiä oli liikaa. Kirjautumisyritykset on estetty jonkin aikaa.",
-    "UpdatePasswordMessage": "Kirjoita sähköpostiosoitteesi ja uusi salasana ja paina sitten Päivitä-painiketta."
+    "UpdatePasswordMessage": "Kirjoita sähköpostiosoitteesi ja uusi salasana ja paina sitten Päivitä-painiketta.",
+    "LoginWithE-mailorUsername": "Kirjaudu sisään sähköpostilla tai käyttäjätunnuksella"
   },
   "logs": {
     "ErrorMessage": "Virheilmoitus",

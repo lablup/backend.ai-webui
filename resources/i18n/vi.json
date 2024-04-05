@@ -1231,7 +1231,6 @@
     "NotAUser": "Không phải là người dùng?",
     "LoginAnotherway": "Bạn muốn đăng nhập theo cách khác?",
     "SignUp": "Đăng ký",
-    "LoginWithE-mail": "Đăng nhập bằng E-mail",
     "LoginWithIAM": "Đăng nhập bằng IAM",
     "ClickToUseIAM": "Nhấp để sử dụng IAM",
     "ClickToUseID": "Nhấp để sử dụng ID",
@@ -1259,7 +1258,8 @@
     "SingleSignOn": {
       "LoginWithSAML": "Đăng nhập bằng SAML",
       "LoginWithRealm": "Đăng nhập bằng {{realmName }}"
-    }
+    },
+    "LoginWithE-mailorUsername": "Đăng nhập bằng E-mail hoặc tên người dùng"
   },
   "signup": {
     "SignupBETA": "Đăng ký (chỉ dành cho lời mời thử nghiệm)",

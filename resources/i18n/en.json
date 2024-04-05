@@ -1333,7 +1333,6 @@
     "NotAUser": "Not a user?",
     "LoginAnotherway": "Want to login another way?",
     "SignUp": "Sign up",
-    "LoginWithE-mail": "Login With E-mail",
     "LoginWithIAM": "Login With IAM",
     "ClickToUseIAM": "Click To Use IAM",
     "ClickToUseID": "Click To Use ID",
@@ -1361,7 +1360,8 @@
       "LoginWithSAML": "Login with SAML",
       "LoginWithRealm": "Login with {{ realmName }}"
     },
-    "EndpointStartWith": "Endpoint must start with http:// or https://."
+    "EndpointStartWith": "Endpoint must start with http:// or https://.",
+    "LoginWithE-mailorUsername": "Login With E-mail or Username"
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",

@@ -1231,7 +1231,6 @@
     "NotAUser": "ユーザーではありませんか？",
     "LoginAnotherway": "別の方法でログインしたいですか？",
     "SignUp": "サインアップ",
-    "LoginWithE-mail": "電子メールでログイン",
     "LoginWithIAM": "IAMでログイン",
     "ClickToUseIAM": "クリックしてIAMを使用する",
     "ClickToUseID": "クリックしてIDを使用",
@@ -1259,7 +1258,8 @@
     "SingleSignOn": {
       "LoginWithSAML": "SAMLログイン",
       "LoginWithRealm": "{{ realmName }}ログイン"
-    }
+    },
+    "LoginWithE-mailorUsername": "電子メールまたはユーザー名でログイン"
   },
   "signup": {
     "SignupBETA": "サインアップ（ベータ版の招待のみ）",

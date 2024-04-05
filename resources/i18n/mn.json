@@ -1217,7 +1217,6 @@
     "NotAUser": "Хэрэглэгч биш үү?",
     "LoginAnotherway": "Өөр аргаар нэвтрэхийг хүсч байна уу?",
     "SignUp": "Бүртгүүлэх",
-    "LoginWithE-mail": "И-мэйлээр нэвтрэх",
     "LoginWithIAM": "IAM-тэй нэвтрэх",
     "ClickToUseIAM": "IAM ашиглахын тулд товшино уу",
     "ClickToUseID": "ID ашиглахын тулд товшино уу",
@@ -1245,7 +1244,8 @@
     },
     "EndpointInfo": "Төгсгөлийн цэгийн тухай",
     "DescEndpoint": "<p>API ENDPOINT-д хүсэлтийг Менежер рүү дамжуулдаг Backend.AI вэб серверийн URL-г оруулах ёстой.</p><p>жишээ нь, http://127.0.0.1:8090/</p>",
-    "EndpointStartWith": "Төгсгөлийн цэг нь http:// эсвэл https://-ээр эхлэх ёстой."
+    "EndpointStartWith": "Төгсгөлийн цэг нь http:// эсвэл https://-ээр эхлэх ёстой.",
+    "LoginWithE-mailorUsername": "Имэйл эсвэл хэрэглэгчийн нэрээр нэвтэрнэ үү"
   },
   "signup": {
     "SignupBETA": "Бүртгүүлэх (зөвхөн бета урилга)",

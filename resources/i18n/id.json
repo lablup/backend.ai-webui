@@ -1224,7 +1224,6 @@
     "NotAUser": "Bukan pengguna?",
     "LoginAnotherway": "Ingin login dengan cara lain?",
     "SignUp": "Daftar",
-    "LoginWithE-mail": "Masuk dengan E-mail",
     "LoginWithIAM": "Masuk dengan IAM",
     "ClickToUseIAM": "Klik untuk Menggunakan IAM",
     "ClickToUseID": "Klik untuk Menggunakan ID",
@@ -1252,7 +1251,8 @@
     },
     "EndpointInfo": "Tentang Endpoint",
     "DescEndpoint": "<p>Dalam API ENDPOINT, URL server Web Backend.AI, yang meneruskan permintaan ke Manajer, harus dimasukkan.</p> <p>misalnya, http://127.0.0.1:8090/</p> <p>",
-    "EndpointStartWith": "Titik akhir harus dimulai dengan http:// atau https://."
+    "EndpointStartWith": "Titik akhir harus dimulai dengan http:// atau https://.",
+    "LoginWithE-mailorUsername": "Masuk Dengan Email atau Nama Pengguna"
   },
   "signup": {
     "SignupBETA": "Pendaftaran (khusus undangan Beta)",

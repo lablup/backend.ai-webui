@@ -1231,7 +1231,6 @@
     "NotAUser": "Δεν είστε χρήστης;",
     "LoginAnotherway": "Θέλετε να συνδεθείτε με άλλο τρόπο;",
     "SignUp": "Εγγραφείτε",
-    "LoginWithE-mail": "Σύνδεση με E-mail",
     "LoginWithIAM": "Σύνδεση με IAM",
     "ClickToUseIAM": "Κάντε κλικ για να χρησιμοποιήσετε το IAM",
     "ClickToUseID": "Κάντε κλικ για να χρησιμοποιήσετε το αναγνωριστικό",
@@ -1259,7 +1258,8 @@
     "SingleSignOn": {
       "LoginWithSAML": "Σύνδεση με SAML",
       "LoginWithRealm": "Σύνδεση με {{ realmName }}"
-    }
+    },
+    "LoginWithE-mailorUsername": "Είσοδος με e-mail ή όνομα χρήστη"
   },
   "signup": {
     "SignupBETA": "Εγγραφή (μόνο πρόσκληση Beta)",

@@ -2028,17 +2028,13 @@ export default class BackendAILogin extends BackendAIPage {
                 `}
           </div>
         </div>
-        <div slot="content" class="login-panel intro centered">
-          <h3
-            class="horizontal center layout"
-            style="margin: 0 25px;font-weight:700;min-height:40px; padding-bottom:10px;"
-          >
-            <div>
+        <div slot="content">
+          <div class="horizontal flex center around-justified layout wrap">
+            <h3 style="width:150px;">
               ${this.connection_mode === 'SESSION'
-                ? _t('login.LoginWithE-mail')
+                ? _t('login.LoginWithE-mailorUsername')
                 : _t('login.LoginWithIAM')}
-            </div>
-            <div class="flex"></div>
+            </h3>
             ${this.change_signin_support
               ? html`
                   <div
@@ -2059,7 +2055,7 @@ export default class BackendAILogin extends BackendAIPage {
                   </div>
                 `
               : html``}
-          </h3>
+          </div>
           <div class="login-form">
             <div id="waiting-animation" class="horizontal layout wrap">
               <div class="sk-folding-cube">

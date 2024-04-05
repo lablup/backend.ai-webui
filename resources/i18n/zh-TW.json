@@ -1231,7 +1231,6 @@
     "NotAUser": "不是用戶？",
     "LoginAnotherway": "想以其他方式登錄？",
     "SignUp": "註冊",
-    "LoginWithE-mail": "使用電子郵件登錄",
     "LoginWithIAM": "使用 IAM 登錄",
     "ClickToUseIAM": "單擊以使用 IAM",
     "ClickToUseID": "單擊以使用 ID",
@@ -1259,7 +1258,8 @@
     "SingleSignOn": {
       "LoginWithSAML": "使用 SAML 登录",
       "LoginWithRealm": "使用 {{ realmName }} 登录"
-    }
+    },
+    "LoginWithE-mailorUsername": "使用電子郵件或使用者名稱登入"
   },
   "signup": {
     "SignupBETA": "註冊（僅限 Beta 版邀請）",
