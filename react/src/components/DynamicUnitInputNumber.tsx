@@ -73,7 +73,10 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
         if (_.isNumber(roundStep) && roundStep > 0) {
           const decimalCount = roundStep.toString().split('.')[1]?.length || 0;
           setValue(
-            `${(Math.round(_.toNumber(ref.current?.value || '0') / roundStep) * roundStep).toFixed(decimalCount)}${unit}`,
+            `${(
+              Math.round(_.toNumber(ref.current?.value || '0') / roundStep) *
+              roundStep
+            ).toFixed(decimalCount)}${unit}`,
           );
         }
       }}

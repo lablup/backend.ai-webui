@@ -261,7 +261,9 @@ ${Object.entries(token)
   })
   .join('\n')}
 
-  --theme-logo-url: url("${isDarkMode ? themeConfig?.logo.srcDark : themeConfig?.logo.src}");
+  --theme-logo-url: url("${
+    isDarkMode ? themeConfig?.logo.srcDark : themeConfig?.logo.src
+  }");
       `}
     </style>
   );

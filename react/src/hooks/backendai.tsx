@@ -28,6 +28,7 @@ export const useResourceSlots = () => {
     'ipu.device'?: string;
     'atom.device'?: string;
     'warboy.device'?: string;
+    'hyperaccel-lpu.device'?: string;
   }>({
     queryKey: ['useResourceSlots', key],
     queryFn: () => {
@@ -55,6 +56,7 @@ export const useResourceSlotsByResourceGroup = (name?: string) => {
     'ipu.device': string;
     'atom.device': string;
     'warboy.device': string;
+    'hyperaccel-lpu.device': string;
     [key: string]: string;
   }>({
     queryKey: ['useResourceSlots', name, key],

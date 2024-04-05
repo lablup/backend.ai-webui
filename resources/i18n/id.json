@@ -113,7 +113,8 @@
     "IPUEnabled": "IPU NPU Diaktifkan",
     "ATOMEnabled": "ATOM NPU Diaktifkan",
     "WarboyEnabled": "Warboy NPU Diaktifkan",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "LPU Hyperaccel Diaktifkan"
   },
   "session": {
     "launcher": {
@@ -1164,7 +1165,10 @@
     "RequireWarboyPlugin": "Membutuhkan Plugin Backend.AI Warboy.",
     "Plugins": "Plugin",
     "OpenSourceCUDAGPUsupport": "Dukungan GPU CUDA Sumber Terbuka",
-    "ShowOnlyChanged": "Hanya Tampilan yang Berubah"
+    "ShowOnlyChanged": "Hanya Tampilan yang Berubah",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Gunakan akselerator Hyperaccel LPU.",
+    "RequireHyperaccelLPUPlugin": "Memerlukan Plugin LPU Backend.AI Hyperaccel."
   },
   "notification": {
     "SuccessfullyUpdated": "Berhasil Diperbarui",

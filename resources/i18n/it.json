@@ -113,7 +113,8 @@
     "ATOMEnabled": "NPU ATOM abilitata",
     "WarboyEnabled": "NPU Warboy abilitata",
     "DownloadWebUIApp": "Scarica l'applicazione Backend.AI Web UI",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "LPU Hyperaccel abilitato"
   },
   "session": {
     "launcher": {
@@ -1171,7 +1172,10 @@
     "OutOfRange": "Fuori portata.",
     "Plugins": "Plugin",
     "OpenSourceCUDAGPUsupport": "Supporto GPU CUDA open source",
-    "ShowOnlyChanged": "Visualizza solo modifiche"
+    "ShowOnlyChanged": "Visualizza solo modifiche",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Utilizzare l'acceleratore Hyperaccel LPU.",
+    "RequireHyperaccelLPUPlugin": "Richiede il plugin Backend.AI Hyperaccel LPU."
   },
   "notification": {
     "SuccessfullyUpdated": "Aggiornato con successo",
