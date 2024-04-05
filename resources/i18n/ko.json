@@ -113,7 +113,8 @@
     "IPUEnabled": "IPU NPU 사용중",
     "ATOMEnabled": "ATOM NPU 사용중",
     "WarboyEnabled": "Warboy NPU 사용중",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU 사용중"
   },
   "session": {
     "launcher": {
@@ -394,7 +395,12 @@
     "GPU(MEM)": "GPU(메모리)",
     "Agents": "실행노드",
     "IPU": "IPU",
-    "IPU(MEM)": "IPU(메모리)"
+    "IPU(MEM)": "IPU(메모리)",
+    "ConvertSessionToImage": "세션을 이미지로 변환",
+    "SessionName": "세션 이름",
+    "SessionId": "세션 ID",
+    "EnvironmentAndVersion": "환경 및 버전",
+    "Tags": "태그"
   },
   "modelService": {
     "Services": "모델 서비스",
@@ -792,7 +798,8 @@
       "StartingSSH/SFTPSession": "SFTP 서버 시작",
       "EmptyFilesAndFoldersAreNotUploaded": "빈 파일과 빈 폴더들은 업로드되지 않습니다.",
       "NumberOfSFTPSessionsExceededTitle": "생성 가능한 업로드 세션 갯수 한도에 도달했습니다.",
-      "NumberOfSFTPSessionsExceededBody": "설정된 업로드 세션 갯수를 초과하여 세션 생성을 시도하고 있습니다. 계속하기 전에 사용하지 않는 업로드 세션을 중지시키세요."
+      "NumberOfSFTPSessionsExceededBody": "설정된 업로드 세션 갯수를 초과하여 세션 생성을 시도하고 있습니다. 계속하기 전에 사용하지 않는 업로드 세션을 중지시키세요.",
+      "DownloadNotAllowed": "이 폴더에서는 파일/폴더 다운로드가 허용되지 않습니다. "
     },
     "invitation": {
       "NoValidEmails": "정상적인 이메일을 입력해주세요",
@@ -1253,10 +1260,13 @@
     "RequireIPUPlugin": "Backend.AI IPU 플러그인이 필요합니다.",
     "RequireATOMPlugin": "Backend.AI ATOM 플러그인이 필요합니다.",
     "Warboysupport": "Warboy 지원",
-    "DescWarboysupport": "Backend.AI Warboy 플러그인이 필요합니다.",
+    "DescWarboysupport": "Furiosa Warboy 가속기를 사용합니다.",
     "RequireWarboyPlugin": "Backend.AI Warboy 플러그인이 필요합니다.",
     "OpenSourceCUDAGPUsupport": "오픈소스 CUDA GPU 지원",
-    "ShowOnlyChanged": "수정 사항만 표시"
+    "ShowOnlyChanged": "수정 사항만 표시",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Hyperaccel LPU 가속기를 사용합니다.",
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU 플러그인이 필요합니다."
   },
   "notification": {
     "SuccessfullyUpdated": "성공적으로 수정되었습니다.",
@@ -1309,14 +1319,12 @@
     "LeaveService": "서비스 탈퇴",
     "DescConfirmLeave": "확인을 위해 E-mail 및 비밀번호를 다시 입력해주세요.",
     "Password": "비밀번호",
-    "E-mail": "E-mail",
     "APIKey": "접근키",
     "SecretKey": "비밀키",
     "Endpoint": "엔드포인트",
     "NotAUser": "아직 가입 전이면",
     "LoginAnotherway": "다른 방식으로 로그인하기",
     "SignUp": "가입하기",
-    "LoginWithE-mail": "E-mail로 로그인",
     "LoginWithIAM": "IAM으로 로그인",
     "ClickToUseIAM": "IAM 사용",
     "ClickToUseID": "ID 사용",
@@ -1344,7 +1352,9 @@
       "LoginWithSAML": "SAML 로그인",
       "LoginWithRealm": "{{ realmName }} 로그인"
     },
-    "EndpointStartWith": "http:// 혹은 https:// 로 시작해야 합니다."
+    "EndpointStartWith": "http:// 혹은 https:// 로 시작해야 합니다.",
+    "LoginWithE-mailorUsername": "이메일 또는 사용자 이름으로 로그인",
+    "E-mailorUsername": "이메일 또는 사용자 이름"
   },
   "signup": {
     "SignupBETA": "가입 (베타 초대 대상)",

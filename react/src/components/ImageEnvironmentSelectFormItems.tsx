@@ -40,6 +40,7 @@ export type ImageEnvironmentFormInput = {
     version: string;
     image: Image | undefined;
     manual?: string;
+    customizedTag?: string;
   };
 };
 
@@ -563,28 +564,81 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     }
 
                     const extraFilterValues: string[] = [];
-                    const requirementTags =
-                      requirements.length > 0
-                        ? _.map(requirements, (requirement, idx) => (
-                            <DoubleTag
-                              key={idx}
-                              values={_.split(
-                                metadata?.tagAlias[requirement] || requirement,
-                                ':',
-                              ).map((str) => {
-                                extraFilterValues.push(str);
-                                return (
+                    const requirementTags = _.chain(requirements)
+                      .filter(
+                        (requirement) => !requirement.startsWith('customized_'),
+                      )
+                      .map((requirement, idx) => (
+                        <DoubleTag
+                          key={idx}
+                          values={_.split(
+                            metadata?.tagAlias[requirement] || requirement,
+                            ':',
+                          ).map((str) => {
+                            extraFilterValues.push(str);
+                            return (
+                              <TextHighlighter
+                                keyword={versionSearch}
+                                key={str}
+                              >
+                                {str}
+                              </TextHighlighter>
+                            );
+                          })}
+                        />
+                      ))
+                      .value();
+                    const imageLabels = image?.labels;
+                    if (imageLabels) {
+                      const customizedImageNameLabelIdx = _.findIndex(
+                        imageLabels,
+                        (item) =>
+                          item !== null &&
+                          item?.key === 'ai.backend.customized-image.name',
+                      );
+                      if (
+                        customizedImageNameLabelIdx &&
+                        imageLabels[customizedImageNameLabelIdx]
+                      ) {
+                        const tag =
+                          imageLabels[customizedImageNameLabelIdx]?.value || '';
+                        extraFilterValues.push('Customized');
+                        extraFilterValues.push(tag);
+                        requirementTags.push(
+                          <DoubleTag
+                            key={requirementTags.length + 1}
+                            values={[
+                              {
+                                label: (
                                   <TextHighlighter
                                     keyword={versionSearch}
-                                    key={str}
+                                    key="Customized"
                                   >
-                                    {str}
+                                    Customized
                                   </TextHighlighter>
-                                );
-                              })}
-                            />
-                          ))
-                        : '-';
+                                ),
+                                color: 'cyan',
+                              },
+                              {
+                                label: (
+                                  <TextHighlighter
+                                    keyword={versionSearch}
+                                    key={tag}
+                                  >
+                                    {tag}
+                                  </TextHighlighter>
+                                ),
+                                color: 'cyan',
+                              },
+                            ]}
+                          />,
+                        );
+                        form.setFieldValue(
+                          ['environments', 'customizedTag'],
+                          tag,
+                        );
+                      }
+                    }
                     return (
                       <Select.Option
                         key={image?.digest}
@@ -621,7 +675,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                               flexShrink: 1,
                             }}
                           >
-                            {requirementTags}
+                            {requirementTags || '-'}
                           </Flex>
                         </Flex>
                       </Select.Option>

@@ -53,6 +53,7 @@ interface ServiceCreateConfigResourceType {
   'ipu.device'?: number | string;
   'atom.device'?: number | string;
   'warboy.device'?: number | string;
+  'hyperaccel-lpu.device'?: number | string;
 }
 
 interface ServiceCreateConfigType {

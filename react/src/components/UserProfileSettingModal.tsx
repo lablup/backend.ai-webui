@@ -58,18 +58,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
   const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
     useToggle(false);
   const baiClient = useSuspendedBackendaiClient();
-
-  // const { data: isManagerSupportingTOTP } = useTanQuery(
-  //   'isManagerSupportingTOTP',
-  //   () => {
-  //     return baiClient.isManagerSupportingTOTP();
-  //   },
-  //   {
-  //     suspense: true,
-  //   },
-  // );
-  // const totpSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
-
   const [userInfo, userMutations] = useCurrentUserInfo();
   // const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
 

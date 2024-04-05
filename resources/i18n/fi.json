@@ -37,7 +37,8 @@
     "Using": "Käyttämällä",
     "WarboyEnabled": "Warboy NPU käytössä",
     "connectingToCluster": "Yhteyden muodostaminen Backend.AI-klusteriin...",
-    "reserved": "varattu"
+    "reserved": "varattu",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU käytössä"
   },
   "error": {
     "WrongAPIServerAddress": "Väärä API-palvelimen osoite.",
@@ -301,7 +302,8 @@
       "UseNewFileExtension": "Käytä",
       "ValueRequired": "Arvo vaaditaan",
       "ValueShouldBeStarted": "Polun tulee alkaa kirjaimella .(piste) tai vain kirjaimilla ja numeroilla.",
-      "WritePermissionRequiredInUploadFiles": "Tiedoston (tiedostojen) lataaminen edellyttää kirjoitusoikeutta."
+      "WritePermissionRequiredInUploadFiles": "Tiedoston (tiedostojen) lataaminen edellyttää kirjoitusoikeutta.",
+      "DownloadNotAllowed": "Tiedoston/kansion lataaminen ei ole sallittua tässä kansiossa."
     },
     "folders": {
       "CannotDeleteFolder": "Yhdessä tai useammassa istunnossa asennettua kansiota ei voi poistaa. Lopeta istunto ensin.",
@@ -595,7 +597,6 @@
     "DescChangePasswordEmail": "Jos haluat lähettää sähköpostiviestin salasanasi vaihtamiseksi, kirjoita sähköpostiosoitteesi ja paina SEND-painiketta.",
     "DescConfirmLeave": "Vahvistaaksesi, kirjoita sähköpostiosoitteesi ja salasanasi uudelleen.",
     "DescEndpoint": "<p>API ENDPOINT -kenttään tulee syöttää Backend.AI-verkkopalvelimen URL-osoite, joka välittää pyynnön Managerille.</p><p>esim. http://127.0.0.1:8090/</p>",
-    "E-mail": "Sähköposti",
     "EmailSendButton": "Lähetä",
     "Endpoint": "Loppupiste",
     "EndpointHistory": "Loppupisteen historia",
@@ -607,7 +608,6 @@
     "LeaveService": "Jätä palvelu",
     "Login": "Kirjaudu sisään",
     "LoginAnotherway": "Haluatko kirjautua sisään toisella tavalla?",
-    "LoginWithE-mail": "Kirjaudu sisään sähköpostilla",
     "LoginWithIAM": "Kirjaudu sisään IAM:n avulla",
     "NoEndpointSaved": "Päätepistettä ei ole tallennettu.",
     "NotAUser": "Etkö ole käyttäjä?",
@@ -624,7 +624,9 @@
       "LoginWithSAML": "Kirjautuminen SAML:llä"
     },
     "TooManyAttempt": "Kirjautumisyrityksiä oli liikaa. Kirjautumisyritykset on estetty jonkin aikaa.",
-    "UpdatePasswordMessage": "Kirjoita sähköpostiosoitteesi ja uusi salasana ja paina sitten Päivitä-painiketta."
+    "UpdatePasswordMessage": "Kirjoita sähköpostiosoitteesi ja uusi salasana ja paina sitten Päivitä-painiketta.",
+    "LoginWithE-mailorUsername": "Kirjaudu sisään sähköpostilla tai käyttäjätunnuksella",
+    "E-mailorUsername": "Sähköpostiosoite tai käyttäjätunnus"
   },
   "logs": {
     "ErrorMessage": "Virheilmoitus",
@@ -1169,7 +1171,12 @@
     "GPU(MEM)": "GPU (muisti)",
     "Agents": "Agentit",
     "IPU": "IPU",
-    "IPU(MEM)": "IPU (muisti)"
+    "IPU(MEM)": "IPU (muisti)",
+    "ConvertSessionToImage": "Muunna istunto kuvaksi",
+    "SessionName": "Istunnon nimi",
+    "SessionId": "Istunnon tunniste",
+    "EnvironmentAndVersion": "Ympäristö ja versio",
+    "Tags": "Tunnisteet"
   },
   "settings": {
     "ATOMsupport": "ATOM",
@@ -1234,7 +1241,10 @@
       "tag": "Tag"
     },
     "OpenSourceCUDAGPUsupport": "Avoimen lähdekoodin CUDA GPU-tuki",
-    "ShowOnlyChanged": "Vain näyttö muuttuu"
+    "ShowOnlyChanged": "Vain näyttö muuttuu",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Käytä Hyperaccel LPU -kiihdytintä.",
+    "RequireHyperaccelLPUPlugin": "Vaatii Backend.AI Hyperaccel LPU -laajennuksen."
   },
   "sidepanel": {
     "BackgroundTasks": "Tehtävien suorittaminen",

@@ -665,6 +665,16 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('23.09.2')) {
       this._features['container-registry-gql'] = true;
+      this._features['max-quota-scope-size-in-user-and-project-resource-policy'] = true;
+      this._features['deprecated-max-vfolder-size-in-user-and-project-resource-policy'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.4')) {
+      this._features['deprecated-max-vfolder-count-in-keypair-resource-policy'] = true;
+      this._features['deprecated-max-vfolder-size-in-keypair-resource-policy'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.6')) {
+      this._features['max-vfolder-count-in-user-and-project-resource-policy'] = true;
+      this._features['deprecated-max-quota-scope-in-keypair-resource-policy'] = true;
     }
     if (this.isManagerVersionCompatibleWith('23.09.7')) {
       this._features['main-access-key'] = true;
@@ -675,13 +685,11 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.09.9')) {
       this._features['modify-endpoint'] = true;
     }
-    // TODO: remove this after 24.03.0 release
-    if (this.isManagerVersionCompatibleWith('24.03.0.*')) {
-      this._features['vfolder-trash-bin'] = true;
-    }
     if (this.isManagerVersionCompatibleWith('24.03.0')) {
-      this._features['max-vfolder-count-in-user-resource-policy'] = true;
+      this._features['vfolder-trash-bin'] = true;
       this._features['model-store'] = true;
+      this._features['vfolder-trash-bin'] = true;
+      this._features['per-user-image'] = true;
     }
   }
 
@@ -1028,6 +1036,9 @@ class Client {
       }
       if (resources['warboy.device']) {
         config['warboy.device'] = parseInt(resources['warboy.device']);
+      }
+      if (resources['hyperaccel-lpu.device']) {
+        config['hyperaccel-lpu.device'] = parseInt(resources['hyperaccel-lpu.device']);
       }
       if (resources['cluster_size']) {
         params['cluster_size'] = resources['cluster_size'];
@@ -3757,6 +3768,20 @@ class ComputeSession {
   }
 
   /**
+   * Request container commit for corresponding session in agent node
+   *
+   * @param sessionName - name of the session
+   */
+  async convertSessionToImage(sessionName: string, newImageName: string): Promise<any> {
+    const rqst = this.client.newSignedRequest(
+      'POST',
+      `/session/${sessionName}/imagify`,
+      { image_name: newImageName },
+    );
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
    * Get status of requested container commit on agent node (ongoing / finished / failed)
    *
    * @param sessionName - name of the session
@@ -3903,6 +3928,9 @@ class Resources {
     this.resources['warboy.device'] = {};
     this.resources['warboy.device'].total = 0;
     this.resources['warboy.device'].used = 0;
+    this.resources['hyperaccel-lpu.device'] = {};
+    this.resources['hyperaccel-lpu.device'].total = 0;
+    this.resources['hyperaccel-lpu.device'].used = 0;
 
     this.resources.agents = {};
     this.resources.agents.total = 0;
@@ -4037,6 +4065,16 @@ class Resources {
               this.resources['warboy.device'].used =
                 parseInt(this.resources['warboy.device'].used) +
                 Math.floor(Number(occupied_slots['warboy.device']));
+            }
+            if ('hyperaccel-lpu.device' in available_slots) {
+              this.resources['hyperaccel-lpu.device'].total =
+                parseInt(this.resources['hyperaccel-lpu.device'].total) +
+                Math.floor(Number(available_slots['hyperaccel-lpu.device']));
+            }
+            if ('hyperaccel-lpu.device' in occupied_slots) {
+              this.resources['hyperaccel-lpu.device'].used =
+                parseInt(this.resources['hyperaccel-lpu.device'].used) +
+                Math.floor(Number(occupied_slots['hyperaccel-lpu.device']));
             }
 
             if (isNaN(this.resources.cpu.used)) {

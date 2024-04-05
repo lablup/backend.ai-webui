@@ -79,13 +79,15 @@ type VFolderOperationStatus =
   | 'delete-ongoing'
   | 'delete-complete'
   | 'delete-error'
+  | 'deleting' // Deprecated since 24.03.0
   | 'purge-ongoing'; // Deprecated since 24.03.0
 
 type DeadVFolderStatus =
   | 'delete-pending'
   | 'delete-ongoing'
   | 'delete-complete'
-  | 'delete-error';
+  | 'delete-error'
+  | 'deleting'; // Deprecated since 24.03.0
 
 /**
  Backend AI Storage List
@@ -761,7 +763,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             class="vertical layout"
             id="modify-quota-controls"
             style="display:${this.directoryBasedUsage &&
-            this._checkFolderSupportSizeQuota(this.folderInfo.host)
+            this._checkFolderSupportDirectoryBasedUsage(this.folderInfo.host)
               ? 'flex'
               : 'none'}"
           >
@@ -1051,7 +1053,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 `
               : html``}
             ${this.directoryBasedUsage &&
-            this._checkFolderSupportSizeQuota(this.folderInfo.host)
+            this._checkFolderSupportDirectoryBasedUsage(this.folderInfo.host)
               ? html`
                   <mwc-list-item twoline>
                     <span>
@@ -1083,7 +1085,21 @@ export default class BackendAiStorageList extends BackendAIPage {
                     </span>
                   </mwc-list-item>
                 `
-              : html``}
+              : html`
+                  <mwc-list-item twoline>
+                    <span>
+                      <strong>${_t('data.folders.FolderUsage')}</strong>
+                    </span>
+                    <span class="monospace" slot="secondary">
+                      ${_t('data.folders.FolderUsing')}:
+                      ${this.folderInfo.used_bytes >= 0
+                        ? globalThis.backendaiutils._humanReadableFileSize(
+                            this.folderInfo.used_bytes,
+                          )
+                        : 'Undefined'}
+                    </span>
+                  </mwc-list-item>
+                `}
           </mwc-list>
         </div>
       </backend-ai-dialog>
@@ -1679,6 +1695,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       'deleted-complete',
       'delete-error',
       'purge-ongoing', // Deprecated since 24.03.0
+      'deleting', // deprecated since 24.03.0;
     ].includes(status);
   }
 
@@ -1688,6 +1705,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       'delete-ongoing',
       'delete-complete',
       'delete-error',
+      'deleting', // deprecated since 24.03.0;
     ].includes(status);
   }
 
@@ -1776,7 +1794,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   quotaRenderer(root, column?, rowData?) {
     let quotaIndicator = '-';
     if (
-      this._checkFolderSupportSizeQuota(rowData.item.host) &&
+      this._checkFolderSupportDirectoryBasedUsage(rowData.item.host) &&
       rowData.item.max_size
     ) {
       // `max_size` is in MiB. Convert this to SI unit
@@ -2180,25 +2198,24 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         <div class="flex layout wrap">
-          ${this._isDir(rowData.item)
+          <mwc-icon-button
+            id="${rowData.item.filename + '-download-btn'}"
+            class="tiny fg blue"
+            icon="cloud_download"
+            style="pointer-events: auto !important;"
+            ?disabled="${!this._isDownloadable(this.vhost)}"
+            filename="${rowData.item.filename}"
+            @click="${(e) => this._downloadFile(e, this._isDir(rowData.item))}"
+          ></mwc-icon-button>
+          ${!this._isDownloadable(this.vhost)
             ? html`
-                <mwc-icon-button
-                  id="download-btn"
-                  class="tiny fg blue"
-                  icon="cloud_download"
-                  filename="${rowData.item.filename}"
-                  @click="${(e) => this._downloadFile(e, true)}"
-                ></mwc-icon-button>
+                <vaadin-tooltip
+                  for="${rowData.item.filename + '-download-btn'}"
+                  text="${_t('data.explorer.DownloadNotAllowed')}"
+                  position="top-start"
+                ></vaadin-tooltip>
               `
-            : html`
-                <mwc-icon-button
-                  id="download-btn"
-                  class="tiny fg blue"
-                  icon="cloud_download"
-                  filename="${rowData.item.filename}"
-                  @click="${(e) => this._downloadFile(e)}"
-                ></mwc-icon-button>
-              `}
+            : html``}
           <mwc-icon-button
             id="rename-btn"
             ?disabled="${!this.isWritable}"
@@ -2485,12 +2502,17 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.folderListGrid.clearCache();
   }
 
-  _checkFolderSupportSizeQuota(host: string) {
-    if (!host) {
+  _checkFolderSupportDirectoryBasedUsage(host: string) {
+    if (
+      !host ||
+      globalThis.backendaiclient.supports(
+        'deprecated-max-quota-scope-in-keypair-resource-policy',
+      )
+    ) {
       return false;
     }
     const backend = this.volumeInfo[host]?.backend;
-    return this.quotaSupportStorageBackends.includes(backend) ? true : false;
+    return this.quotaSupportStorageBackends.includes(backend);
   }
 
   async refreshFolderList() {
@@ -2668,7 +2690,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           this._maxFileUploadSize =
             globalThis.backendaiclient._config.maxFileUploadSize;
           this.directoryBasedUsage =
-            globalThis.backendaiclient._config.directoryBasedUsage;
+            globalThis.backendaiclient._config.directoryBasedUsage &&
+            !globalThis.backendaiclient.supports(
+              'deprecated-max-quota-scope-in-keypair-resource-policy',
+            );
           this._isDirectorySizeVisible =
             globalThis.backendaiclient._config.isDirectorySizeVisible;
           this._getAllowedVFolderHostsByCurrentUserInfo();
@@ -2691,7 +2716,10 @@ export default class BackendAiStorageList extends BackendAIPage {
       this._maxFileUploadSize =
         globalThis.backendaiclient._config.maxFileUploadSize;
       this.directoryBasedUsage =
-        globalThis.backendaiclient._config.directoryBasedUsage;
+        globalThis.backendaiclient._config.directoryBasedUsage &&
+        !globalThis.backendaiclient.supports(
+          'deprecated-max-quota-scope-in-keypair-resource-policy',
+        );
       this._isDirectorySizeVisible =
         globalThis.backendaiclient._config.isDirectorySizeVisible;
       this._getAllowedVFolderHostsByCurrentUserInfo();
@@ -2808,7 +2836,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         // get quota if host storage support per folder quota
         if (
           this.directoryBasedUsage &&
-          this._checkFolderSupportSizeQuota(this.folderInfo.host)
+          this._checkFolderSupportDirectoryBasedUsage(this.folderInfo.host)
         ) {
           [this.quota.value, this.quota.unit] = globalThis.backendaiutils
             ._humanReadableFileSize(
@@ -2864,7 +2892,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
     if (
       this.directoryBasedUsage &&
-      this._checkFolderSupportSizeQuota(this.folderInfo.host)
+      this._checkFolderSupportDirectoryBasedUsage(this.folderInfo.host)
     ) {
       const quota = this.modifyFolderQuotaInput.value
         ? BigInt(
@@ -3350,13 +3378,12 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {boolean} isWritable - check whether write operation is allowed or not
    * */
   _folderExplorer(rowData) {
+    this.vhost = rowData.item.host;
     const folderName = rowData.item.name;
     const isWritable =
       this._hasPermission(rowData.item, 'w') ||
       rowData.item.is_owner ||
       (rowData.item.type === 'group' && this.is_admin);
-    this.vhost = rowData.item.host;
-
     const explorer = {
       id: folderName,
       uuid: rowData.item.id,
@@ -3817,6 +3844,11 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {boolean} archive - whether archive or not
    * */
   _downloadFile(e, archive = false) {
+    if (!this._isDownloadable(this.vhost)) {
+      this.notification.text = _text('data.explorer.DownloadNotAllowed');
+      this.notification.show();
+      return;
+    }
     const fn = e.target.getAttribute('filename');
     const path = this.explorer.breadcrumb.concat(fn).join('/');
     const job = globalThis.backendaiclient.vfolder.request_download_token(
@@ -4340,13 +4372,16 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
-   * Return whether file is downloadable. (LEGACY FUNCTION)
+   * Return whether file is downloadable.
+   * NOTE: For now, It's handled by storage host, not file itself.
    *
-   * @param {Object} file
+   * @param {Object} host
    * @return {boolean} true
    * */
-  _isDownloadable(file) {
-    return true;
+  _isDownloadable(host) {
+    return (this._unionedAllowedPermissionByVolume[host] ?? []).includes(
+      'download-file',
+    );
   }
 
   /**

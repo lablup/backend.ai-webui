@@ -317,5 +317,6 @@ type BackendAIConfig = {
   blockList: string[];
   inactiveList: string[];
   allowSignout: boolean;
+  allowNonAuthTCP: boolean;
   [key: string]: any;
 };

@@ -113,7 +113,8 @@
     "IPUEnabled": "IPU NPU Включено",
     "ATOMEnabled": "ATOM NPU Включено",
     "WarboyEnabled": "Warboy NPU Enabled",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU включен"
   },
   "session": {
     "launcher": {
@@ -396,7 +397,12 @@
     "GPU(MEM)": "GPU (память)",
     "Agents": "Агенты",
     "IPU": "IPU",
-    "IPU(MEM)": "IPU (память)"
+    "IPU(MEM)": "IPU (память)",
+    "ConvertSessionToImage": "Преобразование сеанса в изображение",
+    "SessionName": "Имя сеанса",
+    "SessionId": "Идентификатор сессии",
+    "EnvironmentAndVersion": "Окружающая среда и версия",
+    "Tags": "Теги"
   },
   "button": {
     "Cancel": "Отмена",
@@ -696,7 +702,8 @@
       "EmptyFilesAndFoldersAreNotUploaded": "Пустые файлы и пустые папки не загружаются",
       "FolderAlreadyExists": "Папка, которую планируется загрузить, уже существует.",
       "NumberOfSFTPSessionsExceededTitle": "Достигнут предел количества запущенных сеансов выгрузки",
-      "NumberOfSFTPSessionsExceededBody": "У вас запущены все доступные сессии выгрузки, которые вы можете создать. Перед началом нового сеанса завершите неиспользованные сеансы выгрузки."
+      "NumberOfSFTPSessionsExceededBody": "У вас запущены все доступные сессии выгрузки, которые вы можете создать. Перед началом нового сеанса завершите неиспользованные сеансы выгрузки.",
+      "DownloadNotAllowed": "Загрузка файла/папки в этой папке запрещена."
     },
     "invitation": {
       "NoValidEmails": "Не введены действительные адреса электронной почты",
@@ -1169,7 +1176,10 @@
     "RequireWarboyPlugin": "Требуется плагин Backend.AI Warboy Plugin.",
     "Plugins": "Плагины",
     "OpenSourceCUDAGPUsupport": "Поддержка графического процессора CUDA с открытым исходным кодом",
-    "ShowOnlyChanged": "Отображать только изменения"
+    "ShowOnlyChanged": "Отображать только изменения",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Используйте ускоритель Hyperaccel LPU.",
+    "RequireHyperaccelLPUPlugin": "Требуется плагин Backend.AI Hyperaccel LPU."
   },
   "notification": {
     "SuccessfullyUpdated": "Успешно обновлено",
@@ -1222,14 +1232,12 @@
     "LeaveService": "Оставить службу",
     "DescConfirmLeave": "Для подтверждения, пожалуйста, введите свой E-mail и пароль еще раз.",
     "Password": "Пароль",
-    "E-mail": "Электронная почта",
     "APIKey": "Ключ API",
     "SecretKey": "Секретный ключ",
     "Endpoint": "Конечная точка",
     "NotAUser": "Не пользователь?",
     "LoginAnotherway": "Хотите войти другим способом?",
     "SignUp": "Зарегистрироваться",
-    "LoginWithE-mail": "Войти по электронной почте",
     "LoginWithIAM": "Войти через IAM",
     "ClickToUseIAM": "Нажмите, чтобы использовать IAM",
     "ClickToUseID": "Нажмите, чтобы использовать идентификатор",
@@ -1257,7 +1265,9 @@
     },
     "EndpointInfo": "О компании Endpoint",
     "DescEndpoint": "<p>В API ENDPOINT необходимо ввести URL веб-сервера Backend.AI, который передает запрос Менеджеру.</p><p>например, http://127.0.0.1:8090/</p>.",
-    "EndpointStartWith": "Конечная точка должна начинаться с http:// или https://."
+    "EndpointStartWith": "Конечная точка должна начинаться с http:// или https://.",
+    "LoginWithE-mailorUsername": "Войти по электронной почте или имени пользователя",
+    "E-mailorUsername": "Электронная почта или имя пользователя"
   },
   "signup": {
     "SignupBETA": "Регистрация (только приглашение в бета-версию)",

@@ -113,7 +113,8 @@
     "ATOMEnabled": "ATOM NPU Etkin",
     "WarboyEnabled": "Warboy NPU Etkinleştirildi",
     "DownloadWebUIApp": "Backend.AI Web UI Uygulamasını İndirin",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU Etkin"
   },
   "session": {
     "launcher": {
@@ -394,7 +395,12 @@
     "GPU(MEM)": "GPU (bellek)",
     "Agents": "Temsilciler",
     "IPU": "IPU",
-    "IPU(MEM)": "IPU (bellek)"
+    "IPU(MEM)": "IPU (bellek)",
+    "ConvertSessionToImage": "Oturumu Resme Dönüştür",
+    "SessionName": "Oturum Adı",
+    "SessionId": "Oturum kimliği",
+    "EnvironmentAndVersion": "Ortam ve Sürüm",
+    "Tags": "Etiketler"
   },
   "button": {
     "Cancel": "İptal etmek",
@@ -694,7 +700,8 @@
       "SFTPSessionNotAvailable": "SFTP Oturumu şu anda mevcut değil",
       "StartingSSH/SFTPSession": "SFTP oturumu başlatılıyor...",
       "NumberOfSFTPSessionsExceededTitle": "Çalışan yükleme oturumu sayısı sınırına ulaşıldı",
-      "NumberOfSFTPSessionsExceededBody": "Oluşturmanıza izin verilen tüm mevcut yükleme oturumlarını çalıştırıyorsunuz. Lütfen yeni bir oturum başlatmadan önce kullanılmayan yükleme oturumlarını sonlandırın."
+      "NumberOfSFTPSessionsExceededBody": "Oluşturmanıza izin verilen tüm mevcut yükleme oturumlarını çalıştırıyorsunuz. Lütfen yeni bir oturum başlatmadan önce kullanılmayan yükleme oturumlarını sonlandırın.",
+      "DownloadNotAllowed": "Bu klasörde dosya/klasör indirmeye izin verilmiyor."
     },
     "invitation": {
       "NoValidEmails": "Geçerli e-posta girilmedi",
@@ -1167,7 +1174,10 @@
     "OutOfRange": "Menzil dışında.",
     "Plugins": "Eklentiler",
     "OpenSourceCUDAGPUsupport": "Açık Kaynak CUDA GPU desteği",
-    "ShowOnlyChanged": "Yalnızca Değişiklikleri Görüntüle"
+    "ShowOnlyChanged": "Yalnızca Değişiklikleri Görüntüle",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Hyperaccel LPU hızlandırıcısını kullanın.",
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Eklentisi gerektirir."
   },
   "notification": {
     "SuccessfullyUpdated": "Başarıyla güncellendi",
@@ -1220,14 +1230,12 @@
     "LeaveService": "Hizmetten Ayrıl",
     "DescConfirmLeave": "Onaylamak için lütfen E-posta adresinizi ve şifrenizi tekrar giriniz.",
     "Password": "Parola",
-    "E-mail": "e-posta",
     "APIKey": "API Anahtarı",
     "SecretKey": "Gizli anahtar",
     "Endpoint": "uç nokta",
     "NotAUser": "Kullanıcı değil misiniz?",
     "LoginAnotherway": "Başka bir şekilde giriş yapmak ister misiniz?",
     "SignUp": "kaydol",
-    "LoginWithE-mail": "E-posta ile Giriş",
     "LoginWithIAM": "IAM ile Giriş Yap",
     "ClickToUseIAM": "IAM'yi Kullanmak İçin Tıklayın",
     "ClickToUseID": "Kimliği Kullanmak İçin Tıklayın",
@@ -1255,7 +1263,9 @@
     "SingleSignOn": {
       "LoginWithSAML": "SAML ile Oturum Açma",
       "LoginWithRealm": "{{realmName }} ile giriş yapın"
-    }
+    },
+    "LoginWithE-mailorUsername": "E-posta veya Kullanıcı Adıyla Giriş Yapın",
+    "E-mailorUsername": "E-posta ya da kullanıcı adı"
   },
   "signup": {
     "SignupBETA": "Kaydolma (yalnızca Beta davetiyesi)",

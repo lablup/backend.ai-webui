@@ -113,7 +113,8 @@
     "IPUEnabled": "IPU NPU идэвхжүүлсэн",
     "ATOMEnabled": "ATOM NPU-г идэвхжүүлсэн",
     "WarboyEnabled": "Warboy NPU идэвхжүүлсэн",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU идэвхжүүлсэн"
   },
   "session": {
     "launcher": {
@@ -383,7 +384,12 @@
     "GPU(MEM)": "GPU (санах ой)",
     "Agents": "Агентууд",
     "IPU": "IPU",
-    "IPU(MEM)": "IPU (санах ой)"
+    "IPU(MEM)": "IPU (санах ой)",
+    "ConvertSessionToImage": "Сессийг зураг болгон хөрвүүлэх",
+    "SessionName": "Сеанс нэр",
+    "SessionId": "Сешн Id",
+    "EnvironmentAndVersion": "Хүрээлэн буй орчин ба хувилбар",
+    "Tags": "Шошго"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -680,7 +686,8 @@
       "EmptyFilesAndFoldersAreNotUploaded": "Хоосон файлууд болон хоосон фолдеруудыг байршуулаагүй",
       "FolderAlreadyExists": "Байршуулах гэж буй фолдер аль хэдийн байна.",
       "NumberOfSFTPSessionsExceededTitle": "Байршуулах сеанс тоолох хязгаарт хүрсэн",
-      "NumberOfSFTPSessionsExceededBody": "Та үүсгэх боломжтой бүх байршуулах сешнүүдийг ажиллуулж байна. \nШинэ сесс эхлэхээс өмнө ашиглагдаагүй байршуулах сешнүүдийг дуусгана уу."
+      "NumberOfSFTPSessionsExceededBody": "Та үүсгэх боломжтой бүх байршуулах сешнүүдийг ажиллуулж байна. \nШинэ сесс эхлэхээс өмнө ашиглагдаагүй байршуулах сешнүүдийг дуусгана уу.",
+      "DownloadNotAllowed": "Энэ фолдерт файл/хавтас татаж авахыг хориглоно."
     },
     "invitation": {
       "NoValidEmails": "Хүчинтэй имэйл оруулаагүй болно",
@@ -1206,14 +1213,12 @@
     "LeaveService": "Үйлчилгээг орхих",
     "DescConfirmLeave": "Баталгаажуулахын тулд имэйл, нууц үгээ дахин оруулна уу.",
     "Password": "Нууц үг",
-    "E-mail": "И-мэйл",
     "APIKey": "API түлхүүр",
     "SecretKey": "Нууц түлхүүр",
     "Endpoint": "Төгсгөлийн цэг",
     "NotAUser": "Хэрэглэгч биш үү?",
     "LoginAnotherway": "Өөр аргаар нэвтрэхийг хүсч байна уу?",
     "SignUp": "Бүртгүүлэх",
-    "LoginWithE-mail": "И-мэйлээр нэвтрэх",
     "LoginWithIAM": "IAM-тэй нэвтрэх",
     "ClickToUseIAM": "IAM ашиглахын тулд товшино уу",
     "ClickToUseID": "ID ашиглахын тулд товшино уу",
@@ -1241,7 +1246,9 @@
     },
     "EndpointInfo": "Төгсгөлийн цэгийн тухай",
     "DescEndpoint": "<p>API ENDPOINT-д хүсэлтийг Менежер рүү дамжуулдаг Backend.AI вэб серверийн URL-г оруулах ёстой.</p><p>жишээ нь, http://127.0.0.1:8090/</p>",
-    "EndpointStartWith": "Төгсгөлийн цэг нь http:// эсвэл https://-ээр эхлэх ёстой."
+    "EndpointStartWith": "Төгсгөлийн цэг нь http:// эсвэл https://-ээр эхлэх ёстой.",
+    "LoginWithE-mailorUsername": "Имэйл эсвэл хэрэглэгчийн нэрээр нэвтэрнэ үү",
+    "E-mailorUsername": "И-мэйл эсвэл Хэрэглэгчийн нэр"
   },
   "signup": {
     "SignupBETA": "Бүртгүүлэх (зөвхөн бета урилга)",
@@ -1534,5 +1541,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Хайлтын нэр томъёог оруулна уу"
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Hyperaccel LPU хурдасгуурыг ашигла.",
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Plugin шаардлагатай."
   }
 }

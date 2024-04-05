@@ -113,7 +113,8 @@
     "ATOMEnabled": "ATOM NPU Didayakan",
     "WarboyEnabled": "Warboy NPU Didayakan",
     "DownloadWebUIApp": "Muat turun Apl UI Web Backend.AI",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "LPU Hyperaccel Didayakan"
   },
   "session": {
     "launcher": {
@@ -394,7 +395,12 @@
     "GPU(MEM)": "GPU (memori)",
     "Agents": "ejen",
     "IPU": "IPU",
-    "IPU(MEM)": "IPU (memori)"
+    "IPU(MEM)": "IPU (memori)",
+    "ConvertSessionToImage": "Tukar Sesi kepada Imej",
+    "SessionName": "Nama Sesi",
+    "SessionId": "Id Sesi",
+    "EnvironmentAndVersion": "Persekitaran dan Versi",
+    "Tags": "Tag"
   },
   "button": {
     "Cancel": "Batal",
@@ -694,7 +700,8 @@
       "SFTPSessionNotAvailable": "Sesi SFTP tidak tersedia sekarang",
       "StartingSSH/SFTPSession": "Memulakan sesi SFTP...",
       "NumberOfSFTPSessionsExceededTitle": "Had capaian untuk menjalankan kiraan sesi muat naik",
-      "NumberOfSFTPSessionsExceededBody": "Anda menjalankan semua sesi muat naik tersedia yang anda dibenarkan buat. \nSila tamatkan sesi muat naik yang tidak digunakan sebelum memulakan sesi baharu."
+      "NumberOfSFTPSessionsExceededBody": "Anda menjalankan semua sesi muat naik tersedia yang anda dibenarkan buat. \nSila tamatkan sesi muat naik yang tidak digunakan sebelum memulakan sesi baharu.",
+      "DownloadNotAllowed": "Memuat turun fail/folder tidak dibenarkan dalam folder ini."
     },
     "invitation": {
       "NoValidEmails": "Tidak ada e-mel yang sah dimasukkan",
@@ -1148,7 +1155,10 @@
     "OutOfRange": "Luar kawasan.",
     "Plugins": "Pemalam",
     "OpenSourceCUDAGPUsupport": "Sokongan GPU CUDA Sumber Terbuka",
-    "ShowOnlyChanged": "Paparkan Perubahan Sahaja"
+    "ShowOnlyChanged": "Paparkan Perubahan Sahaja",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Gunakan pemecut LPU Hyperaccel.",
+    "RequireHyperaccelLPUPlugin": "Memerlukan Backend.AI Hyperaccel LPU Plugin."
   },
   "notification": {
     "SuccessfullyUpdated": "Berjaya Dikemas kini",
@@ -1201,14 +1211,12 @@
     "LeaveService": "Tinggalkan Perkhidmatan",
     "DescConfirmLeave": "Untuk mengesahkan, sila taipkan E-mel dan kata laluan anda sekali lagi.",
     "Password": "Kata Laluan",
-    "E-mail": "E-mel",
     "APIKey": "Kunci API",
     "SecretKey": "Kunci Rahsia",
     "Endpoint": "Titik Akhir",
     "NotAUser": "Bukan pengguna?",
     "LoginAnotherway": "Mahu log masuk dengan cara lain?",
     "SignUp": "Mendaftar",
-    "LoginWithE-mail": "Log Masuk Dengan E-mel",
     "LoginWithIAM": "Log Masuk Dengan IAM",
     "ClickToUseIAM": "Klik Untuk Menggunakan IAM",
     "ClickToUseID": "Klik Untuk Menggunakan ID",
@@ -1236,7 +1244,9 @@
     "SingleSignOn": {
       "LoginWithSAML": "Log masuk dengan SAML",
       "LoginWithRealm": "Log masuk dengan {{ realmName }}"
-    }
+    },
+    "LoginWithE-mailorUsername": "Log masuk Dengan E-mel atau Nama Pengguna",
+    "E-mailorUsername": "E-mel atau Nama pengguna"
   },
   "signup": {
     "SignupBETA": "Pendaftaran (Jemputan beta sahaja)",
