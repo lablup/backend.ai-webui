@@ -596,7 +596,6 @@
     "DescChangePasswordEmail": "Jos haluat lähettää sähköpostiviestin salasanasi vaihtamiseksi, kirjoita sähköpostiosoitteesi ja paina SEND-painiketta.",
     "DescConfirmLeave": "Vahvistaaksesi, kirjoita sähköpostiosoitteesi ja salasanasi uudelleen.",
     "DescEndpoint": "<p>API ENDPOINT -kenttään tulee syöttää Backend.AI-verkkopalvelimen URL-osoite, joka välittää pyynnön Managerille.</p><p>esim. http://127.0.0.1:8090/</p>",
-    "E-mail": "Sähköposti",
     "EmailSendButton": "Lähetä",
     "Endpoint": "Loppupiste",
     "EndpointHistory": "Loppupisteen historia",
@@ -608,7 +607,6 @@
     "LeaveService": "Jätä palvelu",
     "Login": "Kirjaudu sisään",
     "LoginAnotherway": "Haluatko kirjautua sisään toisella tavalla?",
-    "LoginWithE-mail": "Kirjaudu sisään sähköpostilla",
     "LoginWithIAM": "Kirjaudu sisään IAM:n avulla",
     "NoEndpointSaved": "Päätepistettä ei ole tallennettu.",
     "NotAUser": "Etkö ole käyttäjä?",
@@ -625,7 +623,9 @@
       "LoginWithSAML": "Kirjautuminen SAML:llä"
     },
     "TooManyAttempt": "Kirjautumisyrityksiä oli liikaa. Kirjautumisyritykset on estetty jonkin aikaa.",
-    "UpdatePasswordMessage": "Kirjoita sähköpostiosoitteesi ja uusi salasana ja paina sitten Päivitä-painiketta."
+    "UpdatePasswordMessage": "Kirjoita sähköpostiosoitteesi ja uusi salasana ja paina sitten Päivitä-painiketta.",
+    "LoginWithE-mailorUsername": "Kirjaudu sisään sähköpostilla tai käyttäjätunnuksella",
+    "E-mailorUsername": "Sähköpostiosoite tai käyttäjätunnus"
   },
   "logs": {
     "ErrorMessage": "Virheilmoitus",

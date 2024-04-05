@@ -1226,14 +1226,12 @@
     "LeaveService": "Opuść usługę",
     "DescConfirmLeave": "Aby potwierdzić, wpisz ponownie swój adres e-mail i hasło.",
     "Password": "Hasło",
-    "E-mail": "E-mail",
     "APIKey": "Klucz API",
     "SecretKey": "Sekretny klucz",
     "Endpoint": "Punkt końcowy",
     "NotAUser": "Nie jesteś użytkownikiem?",
     "LoginAnotherway": "Chcesz się zalogować w inny sposób?",
     "SignUp": "Zapisz się",
-    "LoginWithE-mail": "Zaloguj się przez e-mail",
     "LoginWithIAM": "Zaloguj się przez IAM",
     "ClickToUseIAM": "Kliknij, aby użyć uprawnień",
     "ClickToUseID": "Kliknij, aby użyć identyfikatora",
@@ -1261,7 +1259,9 @@
     "SingleSignOn": {
       "LoginWithSAML": "Logowanie za pomocą SAML",
       "LoginWithRealm": "Zaloguj się za pomocą {{ realmName }}."
-    }
+    },
+    "LoginWithE-mailorUsername": "Zaloguj się za pomocą adresu e-mail lub nazwy użytkownika",
+    "E-mailorUsername": "Email lub nazwa użytkownika"
   },
   "signup": {
     "SignupBETA": "Rejestracja (tylko zaproszenie do wersji beta)",

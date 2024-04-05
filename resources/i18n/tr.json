@@ -1224,14 +1224,12 @@
     "LeaveService": "Hizmetten Ayrıl",
     "DescConfirmLeave": "Onaylamak için lütfen E-posta adresinizi ve şifrenizi tekrar giriniz.",
     "Password": "Parola",
-    "E-mail": "e-posta",
     "APIKey": "API Anahtarı",
     "SecretKey": "Gizli anahtar",
     "Endpoint": "uç nokta",
     "NotAUser": "Kullanıcı değil misiniz?",
     "LoginAnotherway": "Başka bir şekilde giriş yapmak ister misiniz?",
     "SignUp": "kaydol",
-    "LoginWithE-mail": "E-posta ile Giriş",
     "LoginWithIAM": "IAM ile Giriş Yap",
     "ClickToUseIAM": "IAM'yi Kullanmak İçin Tıklayın",
     "ClickToUseID": "Kimliği Kullanmak İçin Tıklayın",
@@ -1259,7 +1257,9 @@
     "SingleSignOn": {
       "LoginWithSAML": "SAML ile Oturum Açma",
       "LoginWithRealm": "{{realmName }} ile giriş yapın"
-    }
+    },
+    "LoginWithE-mailorUsername": "E-posta veya Kullanıcı Adıyla Giriş Yapın",
+    "E-mailorUsername": "E-posta ya da kullanıcı adı"
   },
   "signup": {
     "SignupBETA": "Kaydolma (yalnızca Beta davetiyesi)",

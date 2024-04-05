@@ -1224,14 +1224,12 @@
     "LeaveService": "离开服务",
     "DescConfirmLeave": "要确认，请再次输入您的电子邮件和密码。",
     "Password": "密码",
-    "E-mail": "电子邮件",
     "APIKey": "API 密钥",
     "SecretKey": "密钥",
     "Endpoint": "端点",
     "NotAUser": "不是用户？",
     "LoginAnotherway": "想以其他方式登录？",
     "SignUp": "注册",
-    "LoginWithE-mail": "使用电子邮件登录",
     "LoginWithIAM": "使用 IAM 登录",
     "ClickToUseIAM": "单击以使用 IAM",
     "ClickToUseID": "单击以使用 ID",
@@ -1259,7 +1257,9 @@
     "SingleSignOn": {
       "LoginWithSAML": "使用 SAML 登录",
       "LoginWithRealm": "使用 {{ realmName }} 登录"
-    }
+    },
+    "LoginWithE-mailorUsername": "使用电子邮件或用户名登录",
+    "E-mailorUsername": "电子邮件或用户名"
   },
   "signup": {
     "SignupBETA": "注册（仅限 Beta 版邀请）",
