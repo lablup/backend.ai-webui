@@ -113,7 +113,8 @@
     "ATOMEnabled": "ATOM NPU使用中",
     "WarboyEnabled": "Warboy NPU使用中",
     "DownloadWebUIApp": "Backend.AI Web UIアプリのダウンロード",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "ハイパーアクセル LPU が有効になりました"
   },
   "session": {
     "launcher": {
@@ -391,7 +392,13 @@
     "CPU": "CPU",
     "MEM": "メモリ",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU(メモリ)"
+    "GPU(MEM)": "GPU(メモリ)",
+    "Agents": "エージェント",
+    "ConvertSessionToImage": "セッションをイメージに変換",
+    "SessionName": "セッション名",
+    "SessionId": "セッションID",
+    "EnvironmentAndVersion": "環境とバージョン",
+    "Tags": "タグ"
   },
   "button": {
     "Cancel": "キャンセル",
@@ -691,7 +698,8 @@
       "SFTPSessionNotAvailable": "現在、SFTPセッションの使用ができません。",
       "StartingSSH/SFTPSession": "SFTPサーバー起動",
       "NumberOfSFTPSessionsExceededTitle": "生成可能なアップロードセッション数の制限に達しました。",
-      "NumberOfSFTPSessionsExceededBody": "設定されたアップロードセッション数を超えてセッションを作成しようとしています。続行する前に未使用のアップロードセッションを停止してください。"
+      "NumberOfSFTPSessionsExceededBody": "設定されたアップロードセッション数を超えてセッションを作成しようとしています。続行する前に未使用のアップロードセッションを停止してください。",
+      "DownloadNotAllowed": "このフォルダーではファイル/フォルダーのダウンロードは許可されていません。"
     },
     "invitation": {
       "NoValidEmails": "有効なメールが入力されていません",
@@ -1164,7 +1172,10 @@
     "OutOfRange": "入力範囲外です。",
     "Plugins": "プラグイン",
     "OpenSourceCUDAGPUsupport": "オープンソースのCUDA GPUのサポート",
-    "ShowOnlyChanged": "表示のみの変更"
+    "ShowOnlyChanged": "表示のみの変更",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Hyperaccel LPU アクセラレータを使用します。",
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU プラグインが必要です。"
   },
   "notification": {
     "SuccessfullyUpdated": "正常に更新されました",
@@ -1217,14 +1228,12 @@
     "LeaveService": "サービスを終了する",
     "DescConfirmLeave": "確認するには、メールアドレスとパスワードをもう一度入力してください。",
     "Password": "パスワード",
-    "E-mail": "Eメール",
     "APIKey": "APIキー",
     "SecretKey": "シークレットキー",
     "Endpoint": "終点",
     "NotAUser": "ユーザーではありませんか？",
     "LoginAnotherway": "別の方法でログインしたいですか？",
     "SignUp": "サインアップ",
-    "LoginWithE-mail": "電子メールでログイン",
     "LoginWithIAM": "IAMでログイン",
     "ClickToUseIAM": "クリックしてIAMを使用する",
     "ClickToUseID": "クリックしてIDを使用",
@@ -1252,7 +1261,9 @@
     "SingleSignOn": {
       "LoginWithSAML": "SAMLログイン",
       "LoginWithRealm": "{{ realmName }}ログイン"
-    }
+    },
+    "LoginWithE-mailorUsername": "電子メールまたはユーザー名でログイン",
+    "E-mailorUsername": "メールアドレスまたはユーザ名"
   },
   "signup": {
     "SignupBETA": "サインアップ（ベータ版の招待のみ）",

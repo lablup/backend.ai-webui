@@ -113,7 +113,8 @@
     "ATOMEnabled": "ATOM NPU Enabled",
     "WarboyEnabled": "Warboy NPU Enabled",
     "DownloadWebUIApp": "Pobierz aplikację Backend.AI Web UI",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Włączono funkcję Hyperaccel LPU"
   },
   "session": {
     "launcher": {
@@ -393,7 +394,13 @@
     "CPU": "CPU",
     "MEM": "Pamięć",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (pamięć)"
+    "GPU(MEM)": "GPU (pamięć)",
+    "Agents": "Agenci",
+    "ConvertSessionToImage": "Konwertuj sesję na obraz",
+    "SessionName": "Nazwa sesji",
+    "SessionId": "Identyfikator sesji",
+    "EnvironmentAndVersion": "Środowisko i wersja",
+    "Tags": "Tagi"
   },
   "button": {
     "Cancel": "Anuluj",
@@ -693,7 +700,8 @@
       "SFTPSessionNotAvailable": "Sesja SFTP nie jest obecnie dostępna",
       "StartingSSH/SFTPSession": "Rozpoczęcie sesji SFTP...",
       "NumberOfSFTPSessionsExceededTitle": "Osiągnięto limit liczby uruchomionych sesji przesyłania",
-      "NumberOfSFTPSessionsExceededBody": "Uruchomiono wszystkie dostępne sesje przesyłania, które można utworzyć. Przed rozpoczęciem nowej sesji zakończ nieużywane sesje przesyłania."
+      "NumberOfSFTPSessionsExceededBody": "Uruchomiono wszystkie dostępne sesje przesyłania, które można utworzyć. Przed rozpoczęciem nowej sesji zakończ nieużywane sesje przesyłania.",
+      "DownloadNotAllowed": "Pobieranie pliku/folderu w tym folderze jest niedozwolone."
     },
     "invitation": {
       "NoValidEmails": "Nie wprowadzono poprawnych adresów e-mail",
@@ -1166,7 +1174,10 @@
     "OutOfRange": "Poza zasięgiem.",
     "Plugins": "Wtyczki",
     "OpenSourceCUDAGPUsupport": "Obsługa procesorów graficznych Open Source CUDA",
-    "ShowOnlyChanged": "Wyświetl tylko zmiany"
+    "ShowOnlyChanged": "Wyświetl tylko zmiany",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Użyj akceleratora Hyperaccel LPU.",
+    "RequireHyperaccelLPUPlugin": "Wymaga wtyczki Backend.AI Hyperaccel LPU."
   },
   "notification": {
     "SuccessfullyUpdated": "Pomyślnie zaktualizowano",
@@ -1219,14 +1230,12 @@
     "LeaveService": "Opuść usługę",
     "DescConfirmLeave": "Aby potwierdzić, wpisz ponownie swój adres e-mail i hasło.",
     "Password": "Hasło",
-    "E-mail": "E-mail",
     "APIKey": "Klucz API",
     "SecretKey": "Sekretny klucz",
     "Endpoint": "Punkt końcowy",
     "NotAUser": "Nie jesteś użytkownikiem?",
     "LoginAnotherway": "Chcesz się zalogować w inny sposób?",
     "SignUp": "Zapisz się",
-    "LoginWithE-mail": "Zaloguj się przez e-mail",
     "LoginWithIAM": "Zaloguj się przez IAM",
     "ClickToUseIAM": "Kliknij, aby użyć uprawnień",
     "ClickToUseID": "Kliknij, aby użyć identyfikatora",
@@ -1254,7 +1263,9 @@
     "SingleSignOn": {
       "LoginWithSAML": "Logowanie za pomocą SAML",
       "LoginWithRealm": "Zaloguj się za pomocą {{ realmName }}."
-    }
+    },
+    "LoginWithE-mailorUsername": "Zaloguj się za pomocą adresu e-mail lub nazwy użytkownika",
+    "E-mailorUsername": "Email lub nazwa użytkownika"
   },
   "signup": {
     "SignupBETA": "Rejestracja (tylko zaproszenie do wersji beta)",

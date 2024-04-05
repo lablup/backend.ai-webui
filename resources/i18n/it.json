@@ -113,7 +113,8 @@
     "ATOMEnabled": "NPU ATOM abilitata",
     "WarboyEnabled": "NPU Warboy abilitata",
     "DownloadWebUIApp": "Scarica l'applicazione Backend.AI Web UI",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "LPU Hyperaccel abilitato"
   },
   "session": {
     "launcher": {
@@ -391,7 +392,13 @@
     "CPU": "CPU",
     "MEM": "Memoria",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (memoria)"
+    "GPU(MEM)": "GPU (memoria)",
+    "Agents": "Agenti",
+    "ConvertSessionToImage": "Converti sessione in immagine",
+    "SessionName": "Nome della sessione",
+    "SessionId": "ID sessione",
+    "EnvironmentAndVersion": "Ambiente e versione",
+    "Tags": "Tag"
   },
   "button": {
     "Cancel": "Annulla",
@@ -691,7 +698,8 @@
       "SFTPSessionNotAvailable": "SFTP Session non è disponibile ora",
       "StartingSSH/SFTPSession": "Avvio della sessione SFTP...",
       "NumberOfSFTPSessionsExceededTitle": "Raggiunto il limite del conteggio della sessione di caricamento in corso",
-      "NumberOfSFTPSessionsExceededBody": "Si stanno eseguendo tutte le sessioni di caricamento disponibili che si possono creare. Chiudere le sessioni di caricamento inutilizzate prima di avviare una nuova sessione."
+      "NumberOfSFTPSessionsExceededBody": "Si stanno eseguendo tutte le sessioni di caricamento disponibili che si possono creare. Chiudere le sessioni di caricamento inutilizzate prima di avviare una nuova sessione.",
+      "DownloadNotAllowed": "Il download di file/cartelle non è consentito in questa cartella."
     },
     "invitation": {
       "NoValidEmails": "Non sono state inserite email valide",
@@ -1164,7 +1172,10 @@
     "OutOfRange": "Fuori portata.",
     "Plugins": "Plugin",
     "OpenSourceCUDAGPUsupport": "Supporto GPU CUDA open source",
-    "ShowOnlyChanged": "Visualizza solo modifiche"
+    "ShowOnlyChanged": "Visualizza solo modifiche",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Utilizzare l'acceleratore Hyperaccel LPU.",
+    "RequireHyperaccelLPUPlugin": "Richiede il plugin Backend.AI Hyperaccel LPU."
   },
   "notification": {
     "SuccessfullyUpdated": "Aggiornato con successo",
@@ -1217,14 +1228,12 @@
     "LeaveService": "Lascia il servizio",
     "DescConfirmLeave": "Per confermare, digita nuovamente la tua e-mail e la password.",
     "Password": "Parola d'ordine",
-    "E-mail": "E-mail",
     "APIKey": "Chiave API",
     "SecretKey": "Chiave segreta",
     "Endpoint": "Endpoint",
     "NotAUser": "Non sei un utente?",
     "LoginAnotherway": "Vuoi accedere in un altro modo?",
     "SignUp": "Iscriviti",
-    "LoginWithE-mail": "Accedi con e-mail",
     "LoginWithIAM": "Accedi con IAM",
     "ClickToUseIAM": "Fai clic per utilizzare IAM",
     "ClickToUseID": "Fare clic per utilizzare l'ID",
@@ -1252,7 +1261,9 @@
     "SingleSignOn": {
       "LoginWithSAML": "Accesso con SAML",
       "LoginWithRealm": "Accesso con {{ realmName }}"
-    }
+    },
+    "LoginWithE-mailorUsername": "Accedi con e-mail o nome utente",
+    "E-mailorUsername": "Email o nome utente"
   },
   "signup": {
     "SignupBETA": "Registrazione (solo su invito beta)",

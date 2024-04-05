@@ -113,7 +113,8 @@
     "IPUEnabled": "IPU NPU Activé",
     "ATOMEnabled": "ATOM NPU Activé",
     "WarboyEnabled": "Warboy NPU activé",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU activé"
   },
   "session": {
     "launcher": {
@@ -391,7 +392,13 @@
     "CPU": "UNITÉ CENTRALE",
     "MEM": "Mémoire",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (mémoire)"
+    "GPU(MEM)": "GPU (mémoire)",
+    "Agents": "Agents",
+    "ConvertSessionToImage": "Convertir une session en image",
+    "SessionName": "Nom de la session",
+    "SessionId": "ID de session",
+    "EnvironmentAndVersion": "Environnement et version",
+    "Tags": "Mots clés"
   },
   "button": {
     "Cancel": "Annuler",
@@ -691,7 +698,8 @@
       "EmptyFilesAndFoldersAreNotUploaded": "Les fichiers et dossiers vides ne sont pas téléchargés.",
       "FolderAlreadyExists": "Le dossier sur le point d'être téléchargé existe déjà.",
       "NumberOfSFTPSessionsExceededTitle": "Limite atteinte pour le nombre de sessions de téléchargement en cours",
-      "NumberOfSFTPSessionsExceededBody": "Vous exécutez toutes les sessions de téléchargement que vous êtes autorisé à créer. Veuillez mettre fin aux sessions de téléchargement inutilisées avant de commencer une nouvelle session."
+      "NumberOfSFTPSessionsExceededBody": "Vous exécutez toutes les sessions de téléchargement que vous êtes autorisé à créer. Veuillez mettre fin aux sessions de téléchargement inutilisées avant de commencer une nouvelle session.",
+      "DownloadNotAllowed": "Le téléchargement de fichiers/dossiers n'est pas autorisé dans ce dossier."
     },
     "invitation": {
       "NoValidEmails": "Aucun e-mail valide n'a été saisi",
@@ -1164,7 +1172,10 @@
     "RequireWarboyPlugin": "Requiert le plugin Backend.AI Warboy.",
     "Plugins": "Plugins",
     "OpenSourceCUDAGPUsupport": "Prise en charge des GPU CUDA Open Source",
-    "ShowOnlyChanged": "Afficher uniquement les modifications"
+    "ShowOnlyChanged": "Afficher uniquement les modifications",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Utilisez l'accélérateur Hyperaccel LPU.",
+    "RequireHyperaccelLPUPlugin": "Nécessite le plugin LPU Backend.AI Hyperaccel."
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",
@@ -1217,14 +1228,12 @@
     "LeaveService": "Quitter le service",
     "DescConfirmLeave": "Pour confirmer, veuillez saisir à nouveau votre e-mail et votre mot de passe.",
     "Password": "Mot de passe",
-    "E-mail": "E-mail",
     "APIKey": "clé API",
     "SecretKey": "Clef secrète",
     "Endpoint": "Point de terminaison",
     "NotAUser": "Vous n'êtes pas utilisateur ?",
     "LoginAnotherway": "Vous voulez vous connecter autrement ?",
     "SignUp": "S'inscrire",
-    "LoginWithE-mail": "Connectez-vous avec e-mail",
     "LoginWithIAM": "Connectez-vous avec IAM",
     "ClickToUseIAM": "Cliquez pour utiliser IAM",
     "ClickToUseID": "Cliquez pour utiliser l'identifiant",
@@ -1252,7 +1261,9 @@
     },
     "EndpointInfo": "À propos d'Endpoint",
     "DescEndpoint": "Dans API ENDPOINT, l'URL du serveur web Backend.AI, qui transmet la demande au gestionnaire, doit être saisie. </p><p>par exemple, http://127.0.0.1:8090/</p> <p>L'URL du serveur web Backend.AI, qui transmet la demande au gestionnaire, doit être saisie.",
-    "EndpointStartWith": "Le point d'arrivée doit commencer par http:// ou https://."
+    "EndpointStartWith": "Le point d'arrivée doit commencer par http:// ou https://.",
+    "LoginWithE-mailorUsername": "Connectez-vous avec e-mail ou nom d'utilisateur",
+    "E-mailorUsername": "E-mail ou nom d'utilisateur"
   },
   "signup": {
     "SignupBETA": "Inscription (invitation bêta uniquement)",

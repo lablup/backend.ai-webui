@@ -113,7 +113,8 @@
     "ATOMEnabled": "ATOM NPU Ενεργοποιημένη",
     "WarboyEnabled": "Ενεργοποιημένη NPU Warboy",
     "DownloadWebUIApp": "Κατεβάστε την εφαρμογή Backend.AI Web UI App",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU Enabled"
   },
   "session": {
     "launcher": {
@@ -391,7 +392,13 @@
     "CPU": "CPU",
     "MEM": "Μνήμη",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (μνήμη)"
+    "GPU(MEM)": "GPU (μνήμη)",
+    "Agents": "Πράκτορες",
+    "ConvertSessionToImage": "Μετατροπή συνεδρίας σε εικόνα",
+    "SessionName": "Όνομα συνεδρίας",
+    "SessionId": "Αναγνωριστικό συνεδρίας",
+    "EnvironmentAndVersion": "Περιβάλλον και Έκδοση",
+    "Tags": "Ετικέτες"
   },
   "button": {
     "Cancel": "Ματαίωση",
@@ -691,7 +698,8 @@
       "SFTPSessionNotAvailable": "Το SFTP Session δεν είναι διαθέσιμο τώρα",
       "StartingSSH/SFTPSession": "Έναρξη συνεδρίας SFTP...",
       "NumberOfSFTPSessionsExceededTitle": "Έφθασε το όριο του αριθμού των τρεχουσών συνόδων μεταφόρτωσης",
-      "NumberOfSFTPSessionsExceededBody": "Εκτελείτε όλες τις διαθέσιμες συνεδρίες μεταφόρτωσης που επιτρέπεται να δημιουργήσετε. Παρακαλούμε τερματίστε τις αχρησιμοποίητες συνεδρίες μεταφόρτωσης πριν ξεκινήσετε μια νέα συνεδρία."
+      "NumberOfSFTPSessionsExceededBody": "Εκτελείτε όλες τις διαθέσιμες συνεδρίες μεταφόρτωσης που επιτρέπεται να δημιουργήσετε. Παρακαλούμε τερματίστε τις αχρησιμοποίητες συνεδρίες μεταφόρτωσης πριν ξεκινήσετε μια νέα συνεδρία.",
+      "DownloadNotAllowed": "Η λήψη αρχείου/φακέλου δεν επιτρέπεται σε αυτόν τον φάκελο."
     },
     "invitation": {
       "NoValidEmails": "Δεν καταχωρήθηκαν έγκυρα μηνύματα ηλεκτρονικού ταχυδρομείου",
@@ -1164,7 +1172,10 @@
     "OutOfRange": "Εκτός εμβέλειας.",
     "Plugins": "Πρόσθετα",
     "OpenSourceCUDAGPUsupport": "Υποστήριξη ανοιχτού κώδικα CUDA GPU",
-    "ShowOnlyChanged": "Εμφάνιση μόνο αλλαγών"
+    "ShowOnlyChanged": "Εμφάνιση μόνο αλλαγών",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Χρησιμοποιήστε τον επιταχυντή Hyperaccel LPU.",
+    "RequireHyperaccelLPUPlugin": "Απαιτεί το πρόσθετο Backend.AI Hyperaccel LPU."
   },
   "notification": {
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
@@ -1217,14 +1228,12 @@
     "LeaveService": "Αποχώρηση από την υπηρεσία",
     "DescConfirmLeave": "Για επιβεβαίωση, πληκτρολογήστε ξανά το E-mail και τον κωδικό πρόσβασής σας.",
     "Password": "Κωδικός πρόσβασης",
-    "E-mail": "ΗΛΕΚΤΡΟΝΙΚΗ ΔΙΕΥΘΥΝΣΗ",
     "APIKey": "Κλειδί API",
     "SecretKey": "Μυστικό κλειδί",
     "Endpoint": "Τελικό σημείο",
     "NotAUser": "Δεν είστε χρήστης;",
     "LoginAnotherway": "Θέλετε να συνδεθείτε με άλλο τρόπο;",
     "SignUp": "Εγγραφείτε",
-    "LoginWithE-mail": "Σύνδεση με E-mail",
     "LoginWithIAM": "Σύνδεση με IAM",
     "ClickToUseIAM": "Κάντε κλικ για να χρησιμοποιήσετε το IAM",
     "ClickToUseID": "Κάντε κλικ για να χρησιμοποιήσετε το αναγνωριστικό",
@@ -1252,7 +1261,9 @@
     "SingleSignOn": {
       "LoginWithSAML": "Σύνδεση με SAML",
       "LoginWithRealm": "Σύνδεση με {{ realmName }}"
-    }
+    },
+    "LoginWithE-mailorUsername": "Είσοδος με e-mail ή όνομα χρήστη",
+    "E-mailorUsername": "E-mail ή το όνομα χρήστη"
   },
   "signup": {
     "SignupBETA": "Εγγραφή (μόνο πρόσκληση Beta)",

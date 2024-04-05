@@ -37,7 +37,8 @@
     "Using": "Utilizando",
     "WarboyEnabled": "Warboy NPU Activado",
     "connectingToCluster": "Conectando al Cluster Backend.AI...",
-    "reserved": "reservado"
+    "reserved": "reservado",
+    "HyperaccelLPUEnabled": "LPU de hiperaccel habilitada"
   },
   "error": {
     "WrongAPIServerAddress": "Dirección del servidor API incorrecta.",
@@ -301,7 +302,8 @@
       "UseNewFileExtension": "Utilice",
       "ValueRequired": "Se requiere valor",
       "ValueShouldBeStarted": "La ruta debe empezar por .(punto) o letras, sólo números.",
-      "WritePermissionRequiredInUploadFiles": "Se requiere permiso de escritura para cargar archivos."
+      "WritePermissionRequiredInUploadFiles": "Se requiere permiso de escritura para cargar archivos.",
+      "DownloadNotAllowed": "No se permite descargar archivos/carpetas en esta carpeta."
     },
     "folders": {
       "CannotDeleteFolder": "No se puede eliminar la carpeta montada en una o más sesiones. Por favor, termine la sesión primero.",
@@ -624,7 +626,9 @@
       "LoginWithSAML": "Inicio de sesión con SAML"
     },
     "TooManyAttempt": "Ha habido demasiados intentos de inicio de sesión. Los intentos de inicio de sesión se han bloqueado durante un tiempo.",
-    "UpdatePasswordMessage": "Escribe tu correo electrónico y una nueva contraseña, y pulsa el botón Actualizar."
+    "UpdatePasswordMessage": "Escribe tu correo electrónico y una nueva contraseña, y pulsa el botón Actualizar.",
+    "LoginWithE-mailorUsername": "Iniciar sesión con correo electrónico o nombre de usuario",
+    "E-mailorUsername": "Correo electrónico o nombre de usuario"
   },
   "logs": {
     "ErrorMessage": "Mensaje de error",
@@ -1166,7 +1170,13 @@
     "CPU": "CPU",
     "MEM": "Memoria",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (memoria)"
+    "GPU(MEM)": "GPU (memoria)",
+    "Agents": "Agentes",
+    "ConvertSessionToImage": "Convertir sesión en imagen",
+    "SessionName": "Nombre de la sesión",
+    "SessionId": "ID de sesión",
+    "EnvironmentAndVersion": "Entorno y versión",
+    "Tags": "Etiquetas"
   },
   "settings": {
     "ATOMsupport": "ATOM",
@@ -1231,7 +1241,10 @@
     },
     "Plugins": "Complementos",
     "OpenSourceCUDAGPUsupport": "Compatibilidad con GPU CUDA de código abierto",
-    "ShowOnlyChanged": "Mostrar solo cambios"
+    "ShowOnlyChanged": "Mostrar solo cambios",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Utilice el acelerador Hyperaccel LPU.",
+    "RequireHyperaccelLPUPlugin": "Requiere el complemento LPU Backend.AI Hyperaccel."
   },
   "sidepanel": {
     "BackgroundTasks": "Tareas en curso",

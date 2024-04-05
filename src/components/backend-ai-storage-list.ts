@@ -2198,25 +2198,24 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         <div class="flex layout wrap">
-          ${this._isDir(rowData.item)
+          <mwc-icon-button
+            id="${rowData.item.filename + '-download-btn'}"
+            class="tiny fg blue"
+            icon="cloud_download"
+            style="pointer-events: auto !important;"
+            ?disabled="${!this._isDownloadable(this.vhost)}"
+            filename="${rowData.item.filename}"
+            @click="${(e) => this._downloadFile(e, this._isDir(rowData.item))}"
+          ></mwc-icon-button>
+          ${!this._isDownloadable(this.vhost)
             ? html`
-                <mwc-icon-button
-                  id="download-btn"
-                  class="tiny fg blue"
-                  icon="cloud_download"
-                  filename="${rowData.item.filename}"
-                  @click="${(e) => this._downloadFile(e, true)}"
-                ></mwc-icon-button>
+                <vaadin-tooltip
+                  for="${rowData.item.filename + '-download-btn'}"
+                  text="${_t('data.explorer.DownloadNotAllowed')}"
+                  position="top-start"
+                ></vaadin-tooltip>
               `
-            : html`
-                <mwc-icon-button
-                  id="download-btn"
-                  class="tiny fg blue"
-                  icon="cloud_download"
-                  filename="${rowData.item.filename}"
-                  @click="${(e) => this._downloadFile(e)}"
-                ></mwc-icon-button>
-              `}
+            : html``}
           <mwc-icon-button
             id="rename-btn"
             ?disabled="${!this.isWritable}"
@@ -3379,13 +3378,12 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {boolean} isWritable - check whether write operation is allowed or not
    * */
   _folderExplorer(rowData) {
+    this.vhost = rowData.item.host;
     const folderName = rowData.item.name;
     const isWritable =
       this._hasPermission(rowData.item, 'w') ||
       rowData.item.is_owner ||
       (rowData.item.type === 'group' && this.is_admin);
-    this.vhost = rowData.item.host;
-
     const explorer = {
       id: folderName,
       uuid: rowData.item.id,
@@ -3846,6 +3844,11 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {boolean} archive - whether archive or not
    * */
   _downloadFile(e, archive = false) {
+    if (!this._isDownloadable(this.vhost)) {
+      this.notification.text = _text('data.explorer.DownloadNotAllowed');
+      this.notification.show();
+      return;
+    }
     const fn = e.target.getAttribute('filename');
     const path = this.explorer.breadcrumb.concat(fn).join('/');
     const job = globalThis.backendaiclient.vfolder.request_download_token(
@@ -4369,13 +4372,16 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
-   * Return whether file is downloadable. (LEGACY FUNCTION)
+   * Return whether file is downloadable.
+   * NOTE: For now, It's handled by storage host, not file itself.
    *
-   * @param {Object} file
+   * @param {Object} host
    * @return {boolean} true
    * */
-  _isDownloadable(file) {
-    return true;
+  _isDownloadable(host) {
+    return (this._unionedAllowedPermissionByVolume[host] ?? []).includes(
+      'download-file',
+    );
   }
 
   /**

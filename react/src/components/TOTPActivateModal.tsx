@@ -61,8 +61,7 @@ const TOTPActivateModal: React.FC<Props> = ({
         : null;
     },
     suspense: false,
-    staleTime: 0,
-    cacheTime: 0,
+    staleTime: 1000,
   });
 
   const mutationToActivateTotp = useTanMutation({
