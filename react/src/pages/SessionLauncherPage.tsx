@@ -1303,13 +1303,15 @@ const SessionLauncherPage = () => {
                       }}
                     >
                       <Flex direction="column" align="stretch">
-                        {_.some(form.getFieldValue('resource'), (v, key) => {
-                          //                         console.log(form.getFieldError(['resource', 'shmem']));
-                          // console.log(form.getFieldValue(['resource']));
-                          return (
-                            form.getFieldWarning(['resource', key]).length > 0
-                          );
-                        }) && (
+                        {_.some(
+                          form.getFieldValue('resource').resource,
+                          (v, key) => {
+                            //                         console.log(form.getFieldError(['resource', 'shmem']));
+                            return (
+                              form.getFieldWarning(['resource', key]).length > 0
+                            );
+                          },
+                        ) && (
                           <Alert
                             type="warning"
                             showIcon

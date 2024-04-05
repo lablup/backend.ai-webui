@@ -83,7 +83,6 @@ const ResourceAllocationFormItems: React.FC<
 
   const baiClient = useSuspendedBackendaiClient();
   const [resourceSlots] = useResourceSlots();
-  const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
 
   const [{ keypairResourcePolicy, sessionLimitAndRemaining }] =
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
@@ -105,6 +104,17 @@ const ResourceAllocationFormItems: React.FC<
       currentResourceGroup: currentResourceGroup,
       currentImage: currentImage,
     });
+
+  const acceleratorSlots = _.omitBy(resourceSlots, (value, key) => {
+    if (['cpu', 'mem', 'shmem'].includes(key)) return true;
+
+    if (
+      !resourceLimits.accelerators[key]?.max ||
+      resourceLimits.accelerators[key]?.max === 0
+    )
+      return true;
+    return false;
+  });
 
   const currentImageAcceleratorLimits = _.filter(
     currentImage?.resource_limits,
@@ -308,9 +318,30 @@ const ResourceAllocationFormItems: React.FC<
     );
     const slots = _.pick(preset?.resource_slots, _.keys(resourceSlots));
     const mem = iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.numberUnit;
+    const acceleratorObj = _.omit(slots, ['cpu', 'mem', 'shmem']);
+
+    // Select the first matched AI accelerator type and value
+    const firstMatchedAcceleratorType = _.find(
+      _.keys(acceleratorSlots),
+      (value) => acceleratorObj[value] !== undefined,
+    );
+
+    let acceleratorSetting: {
+      acceleratorType?: string;
+      accelerator: number;
+    } = {
+      accelerator: 0,
+    };
+    if (firstMatchedAcceleratorType) {
+      acceleratorSetting = {
+        acceleratorType: firstMatchedAcceleratorType,
+        accelerator: Number(acceleratorObj[firstMatchedAcceleratorType] || 0),
+      };
+    }
     form.setFieldsValue({
       resource: {
-        ...slots,
+        // ...slots,
+        ...acceleratorSetting,
         // transform to GB based on preset values
         mem,
         shmem: iSizeToSize((preset?.shared_memory || 0) + 'b', 'g', 2)
