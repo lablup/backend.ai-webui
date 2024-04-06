@@ -1157,7 +1157,7 @@
       "StartTimeDoesNotApply": "Si no se establece la hora de inicio, no se aplica.",
       "MiniumAllocation": "Requisitos mínimos",
       "MiniumAllocationTooltip": "Seleccione como requisito mínimo para el entorno de ejecución seleccionado",
-      "PreviousLauncher": "Anterior",
+      "PreviousLauncher": "Classic",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "Estás utilizando el lanzador de sesiones \"{{launcher}}\".",
       "SkipToConfirmAndLaunch": "Ir a la reseña",

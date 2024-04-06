@@ -263,7 +263,7 @@
       "StartTimeDoesNotApply": "Nếu thời gian bắt đầu không được đặt, nó sẽ không được áp dụng.",
       "MiniumAllocation": "Yêu cầu tối thiểu",
       "MiniumAllocationTooltip": "Chọn làm yêu cầu tối thiểu cho môi trường chạy đã chọn",
-      "PreviousLauncher": "Trước",
+      "PreviousLauncher": "Classic",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "Bạn đang sử dụng trình khởi chạy phiên \"{{launcher}}\".",
       "SkipToConfirmAndLaunch": "Bỏ qua để xem xét",

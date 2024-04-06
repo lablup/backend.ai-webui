@@ -20,6 +20,7 @@ import ResourceAllocationFormItems, {
   ResourceAllocationFormValue,
 } from '../components/ResourceAllocationFormItems';
 import ResourceNumber from '../components/ResourceNumber';
+import SessionKernelTag from '../components/SessionKernelTag';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
@@ -1213,29 +1214,45 @@ const SessionLauncherPage = () => {
                               }
                             />
                             {/* {form.getFieldValue('environments').image} */}
-                            <div>
-                              <Typography.Text copyable code>
-                                {form.getFieldValue('environments')?.version ||
-                                  form.getFieldValue('environments')?.manual}
-                              </Typography.Text>
-                              {form.getFieldValue('environments')
-                                ?.customizedTag ? (
-                                <DoubleTag
-                                  values={[
-                                    {
-                                      label: 'Customized',
-                                      color: 'cyan',
-                                    },
-                                    {
-                                      label:
-                                        form.getFieldValue('environments')
-                                          ?.customizedTag,
-                                      color: 'cyan',
-                                    },
-                                  ]}
-                                />
-                              ) : null}
-                            </div>
+                            <Flex direction="row">
+                              {form.getFieldValue('environments')?.manual ? (
+                                <Typography.Text copyable code>
+                                  form.getFieldValue('environments')?.manual
+                                </Typography.Text>
+                              ) : (
+                                <>
+                                  <SessionKernelTag
+                                    image={
+                                      form.getFieldValue('environments')
+                                        ?.version
+                                    }
+                                  />
+                                  {form.getFieldValue('environments')
+                                    ?.customizedTag ? (
+                                    <DoubleTag
+                                      values={[
+                                        {
+                                          label: 'Customized',
+                                          color: 'cyan',
+                                        },
+                                        {
+                                          label:
+                                            form.getFieldValue('environments')
+                                              ?.customizedTag,
+                                          color: 'cyan',
+                                        },
+                                      ]}
+                                    />
+                                  ) : null}
+                                  <Typography.Text
+                                    copyable={{
+                                      text: form.getFieldValue('environments')
+                                        ?.version,
+                                    }}
+                                  />
+                                </>
+                              )}
+                            </Flex>
                           </Flex>
                         </Descriptions.Item>
                         {form.getFieldValue('envvars')?.length > 0 && (
@@ -1304,9 +1321,8 @@ const SessionLauncherPage = () => {
                     >
                       <Flex direction="column" align="stretch">
                         {_.some(
-                          form.getFieldValue('resource').resource,
+                          form.getFieldValue('resource')?.resource,
                           (v, key) => {
-                            //                         console.log(form.getFieldError(['resource', 'shmem']));
                             return (
                               form.getFieldWarning(['resource', key]).length > 0
                             );

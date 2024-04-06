@@ -263,7 +263,7 @@
       "StartTimeDoesNotApply": "如果未設定開始時間，則不適用。",
       "MiniumAllocation": "最低要求",
       "MiniumAllocationTooltip": "选择所选运行环境的最低要求",
-      "PreviousLauncher": "上一页",
+      "PreviousLauncher": "Classic",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "您正在使用\"{{launcher}}\"会话启动器。",
       "SkipToConfirmAndLaunch": "跳过评论",
