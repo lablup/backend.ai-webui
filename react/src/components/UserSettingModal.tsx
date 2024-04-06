@@ -1,4 +1,5 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
@@ -10,12 +11,20 @@ import {
 } from './__generated__/UserSettingModalQuery.graphql';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Form, Input, Select, Switch, message, Typography, Modal } from 'antd';
+import {
+  Form,
+  Input,
+  Select,
+  Switch,
+  message,
+  Typography,
+  Modal,
+  FormInstance,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useDeferredValue } from 'react';
+import React, { useDeferredValue, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from 'react-query';
 import { useMutation } from 'react-relay';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -55,7 +64,7 @@ const UserSettingModal: React.FC<Props> = ({
 
   const [modal, contextHolder] = Modal.useModal();
 
-  const [form] = Form.useForm<User>();
+  const formRef = useRef<FormInstance<User>>(null);
 
   const userStatus: UserStatus = {
     active: 'Active',
@@ -76,22 +85,8 @@ const UserSettingModal: React.FC<Props> = ({
   const sudoSessionEnabledSupported = baiClient?.supports(
     'sudo-session-enabled',
   );
-  let totpSupported = false;
-  let {
-    data: isManagerSupportingTOTP,
-    isLoading: isLoadingManagerSupportingTOTP,
-  } = useQuery(
-    'isManagerSupportingTOTP',
-    () => {
-      return baiClient.isManagerSupportingTOTP();
-    },
-    {
-      // for to render even this fail query failed
-      suspense: false,
-    },
-  );
-  totpSupported = baiClient?.supports('2FA') && isManagerSupportingTOTP;
-
+  const { isTOTPSupported, isLoading: isLoadingManagerSupportingTOTP } =
+    useTOTPSupported();
   const { user, loggedInUser } = useLazyLoadQuery<UserSettingModalQuery>(
     graphql`
       query UserSettingModalQuery(
@@ -129,7 +124,7 @@ const UserSettingModal: React.FC<Props> = ({
     {
       email: userEmail,
       isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
-      isNotSupportTotp: !totpSupported,
+      isNotSupportTotp: !isTOTPSupported,
       loggedInUserEmail: baiClient?.email ?? '',
     },
     {
@@ -185,7 +180,7 @@ const UserSettingModal: React.FC<Props> = ({
     useToggle(false);
 
   const _onOk = () => {
-    form.validateFields().then(async (values) => {
+    formRef.current?.validateFields().then(async (values) => {
       let input = { ...values };
       delete input.email;
       input = _.omit(input, ['password_confirm']);
@@ -194,7 +189,7 @@ const UserSettingModal: React.FC<Props> = ({
         delete input?.sudo_session_enabled;
       }
       // TOTP setting
-      if (!totpSupported) {
+      if (!isTOTPSupported) {
         delete input?.totp_activated;
       }
 
@@ -203,7 +198,7 @@ const UserSettingModal: React.FC<Props> = ({
           email: values?.email || '',
           props: input,
           isNotSupportSudoSessionEnabled: !sudoSessionEnabledSupported,
-          isNotSupportTotp: !totpSupported,
+          isNotSupportTotp: !isTOTPSupported,
         },
         onCompleted(res) {
           if (res?.modify_user?.ok) {
@@ -234,8 +229,8 @@ const UserSettingModal: React.FC<Props> = ({
       {...baiModalProps}
     >
       <Form
+        ref={formRef}
         preserve={false}
-        form={form}
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 20 }}
         validateTrigger={['onChange', 'onBlur']}
@@ -333,7 +328,7 @@ const UserSettingModal: React.FC<Props> = ({
             <Switch />
           </Form.Item>
         )}
-        {!!totpSupported && (
+        {!!isTOTPSupported && (
           <Form.Item
             name="totp_activated"
             label={t('webui.menu.TotpActivated')}
@@ -358,7 +353,7 @@ const UserSettingModal: React.FC<Props> = ({
                   toggleTOTPActivateModal();
                 } else {
                   if (user?.totp_activated) {
-                    form.setFieldValue('totp_activated', true);
+                    formRef.current?.setFieldValue('totp_activated', true);
                     modal.confirm({
                       title: t('totp.TurnOffTotp'),
                       icon: <ExclamationCircleFilled />,
@@ -371,7 +366,10 @@ const UserSettingModal: React.FC<Props> = ({
                           onSuccess: () => {
                             message.success(t('totp.RemoveTotpSetupCompleted'));
                             updateFetchKey();
-                            form.setFieldValue('totp_activated', false);
+                            formRef.current?.setFieldValue(
+                              'totp_activated',
+                              false,
+                            );
                           },
                           onError: (err) => {
                             console.log(err);
@@ -379,7 +377,7 @@ const UserSettingModal: React.FC<Props> = ({
                         });
                       },
                       onCancel() {
-                        form.setFieldValue('totp_activated', true);
+                        formRef.current?.setFieldValue('totp_activated', true);
                       },
                     });
                   }
@@ -389,7 +387,7 @@ const UserSettingModal: React.FC<Props> = ({
           </Form.Item>
         )}
       </Form>
-      {!!totpSupported && (
+      {!!isTOTPSupported && (
         <TOTPActivateModal
           userFrgmt={user}
           open={isOpenTOTPActivateModal}
@@ -397,7 +395,7 @@ const UserSettingModal: React.FC<Props> = ({
             if (success) {
               updateFetchKey();
             } else {
-              form.setFieldValue('totp_activated', false);
+              formRef.current?.setFieldValue('totp_activated', false);
             }
             toggleTOTPActivateModal();
           }}

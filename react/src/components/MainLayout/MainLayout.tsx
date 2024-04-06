@@ -1,16 +1,18 @@
 import { useCustomThemeConfig } from '../../helper/customThemeConfig';
+import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
+import ForceTOTPChecker from '../ForceTOTPChecker';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import { useLocalStorageState } from 'ahooks';
 import { App, Layout, theme } from 'antd';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
+import { atom, useSetRecoilState } from 'recoil';
 
 export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 5;
 export type PluginPage = {
@@ -27,19 +29,33 @@ export type WebUIPluginType = {
   'menuitem-superadmin': string[];
 };
 
+export const mainContentDivRefState = atom<React.RefObject<HTMLElement>>({
+  key: 'MainLayout.mainContentDivRefState',
+});
+
 function MainLayout() {
   const navigate = useNavigate();
 
-  const [compactSidebarActive] = useLocalStorageState<boolean | undefined>(
-    'backendaiwebui.settings.user.compact_sidebar',
-  );
+  const [compactSidebarActive] = useBAISettingUserState('compact_sidebar');
   const [sideCollapsed, setSideCollapsed] =
     useState<boolean>(!!compactSidebarActive);
+
+  useEffect(() => {
+    if (sideCollapsed !== compactSidebarActive) {
+      setSideCollapsed(!!compactSidebarActive);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [compactSidebarActive]);
 
   // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();
   const webUIRef = useRef<HTMLElement>(null);
   const contentScrollFlexRef = useRef<HTMLDivElement>(null);
+  const setMainContentDivRefState = useSetRecoilState(mainContentDivRefState);
+  useEffect(() => {
+    setMainContentDivRefState(contentScrollFlexRef);
+  }, [contentScrollFlexRef, setMainContentDivRefState]);
+
   const [webUIPlugins, setWebUIPlugins] = useState<
     WebUIPluginType | undefined
   >();
@@ -130,7 +146,6 @@ function MainLayout() {
               paddingRight: token.paddingContentHorizontalLG,
               paddingBottom: token.paddingContentVertical,
               height: '100vh',
-              // height: `calc(100vh - ${HEADER_HEIGHT}px)`,
               overflow: 'auto',
             }}
           >
@@ -192,6 +207,9 @@ function MainLayout() {
               />
             </Suspense>
             <Suspense>
+              <ForceTOTPChecker />
+            </Suspense>
+            <Suspense>
               <Outlet />
             </Suspense>
             {/* To match paddig to 16 (2+14) */}
@@ -243,7 +261,9 @@ ${Object.entries(token)
   })
   .join('\n')}
 
-  --theme-logo-url: url("${isDarkMode ? themeConfig?.logo.srcDark : themeConfig?.logo.src}");
+  --theme-logo-url: url("${
+    isDarkMode ? themeConfig?.logo.srcDark : themeConfig?.logo.src
+  }");
       `}
     </style>
   );

@@ -347,7 +347,7 @@ class Client {
       }
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
-      if (!rawFile && contentType === null) {
+      if (!rawFile && (contentType === null || resp.status === 204 )) {
         body = await resp.blob();
       } else if (
         !rawFile &&
@@ -665,6 +665,16 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('23.09.2')) {
       this._features['container-registry-gql'] = true;
+      this._features['max-quota-scope-size-in-user-and-project-resource-policy'] = true;
+      this._features['deprecated-max-vfolder-size-in-user-and-project-resource-policy'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.4')) {
+      this._features['deprecated-max-vfolder-count-in-keypair-resource-policy'] = true;
+      this._features['deprecated-max-vfolder-size-in-keypair-resource-policy'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.6')) {
+      this._features['max-vfolder-count-in-user-and-project-resource-policy'] = true;
+      this._features['deprecated-max-quota-scope-in-keypair-resource-policy'] = true;
     }
     if (this.isManagerVersionCompatibleWith('23.09.7')) {
       this._features['main-access-key'] = true;
@@ -676,8 +686,9 @@ class Client {
       this._features['modify-endpoint'] = true;
     }
     if (this.isManagerVersionCompatibleWith('24.03.0')) {
-      this._features['max-vfolder-count-in-user-resource-policy'] = true;
+      this._features['vfolder-trash-bin'] = true;
       this._features['model-store'] = true;
+      this._features['per-user-image'] = true;
     }
   }
 
@@ -1024,6 +1035,9 @@ class Client {
       }
       if (resources['warboy.device']) {
         config['warboy.device'] = parseInt(resources['warboy.device']);
+      }
+      if (resources['hyperaccel-lpu.device']) {
+        config['hyperaccel-lpu.device'] = parseInt(resources['hyperaccel-lpu.device']);
       }
       if (resources['cluster_size']) {
         params['cluster_size'] = resources['cluster_size'];
@@ -2197,6 +2211,23 @@ class VFolder {
   }
 
   /**
+   * Delete a Virtual folder by id.
+   *
+   * @param {string} id - Virtual folder id.
+   */
+  async delete_by_id(id): Promise<any> {
+    let body = {
+      vfolder_id: id,
+    };
+    let rqst = this.client.newSignedRequest(
+      'DELETE',
+      `${this.urlPrefix}`,
+      body,
+    );
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
    * Leave an invited Virtual folder.
    *
    * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
@@ -2659,6 +2690,37 @@ class VFolder {
     const rqst = this.client.newSignedRequest(
       'POST',
       `${this.urlPrefix}/_/quota`,
+      body,
+    );
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Restore vfolder from trash bin, by changing status.
+   * 
+   * @param {string} vfolder_id - id of the vfolder.
+   */
+  async restore_from_trash_bin(vfolder_id): Promise<any> {
+    const body = {vfolder_id};
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/restore-from-trash-bin`,
+      body,
+    );
+    return this.client._wrapWithPromise(rqst);
+  }
+
+
+  /**
+   * Delete `delete-pending` vfolders in storage proxy
+   *
+   * @param {string} vfolder_id - id of the vfolder.
+   */
+  async delete_from_trash_bin(vfolder_id): Promise<any> {
+    const body = {vfolder_id};
+    let rqst = this.client.newSignedRequest(
+      'POST',
+      `${this.urlPrefix}/delete-from-trash-bin`,
       body,
     );
     return this.client._wrapWithPromise(rqst);
@@ -3705,6 +3767,20 @@ class ComputeSession {
   }
 
   /**
+   * Request container commit for corresponding session in agent node
+   *
+   * @param sessionName - name of the session
+   */
+  async convertSessionToImage(sessionName: string, newImageName: string): Promise<any> {
+    const rqst = this.client.newSignedRequest(
+      'POST',
+      `/session/${sessionName}/imagify`,
+      { image_name: newImageName },
+    );
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
    * Get status of requested container commit on agent node (ongoing / finished / failed)
    *
    * @param sessionName - name of the session
@@ -3851,6 +3927,9 @@ class Resources {
     this.resources['warboy.device'] = {};
     this.resources['warboy.device'].total = 0;
     this.resources['warboy.device'].used = 0;
+    this.resources['hyperaccel-lpu.device'] = {};
+    this.resources['hyperaccel-lpu.device'].total = 0;
+    this.resources['hyperaccel-lpu.device'].used = 0;
 
     this.resources.agents = {};
     this.resources.agents.total = 0;
@@ -3985,6 +4064,16 @@ class Resources {
               this.resources['warboy.device'].used =
                 parseInt(this.resources['warboy.device'].used) +
                 Math.floor(Number(occupied_slots['warboy.device']));
+            }
+            if ('hyperaccel-lpu.device' in available_slots) {
+              this.resources['hyperaccel-lpu.device'].total =
+                parseInt(this.resources['hyperaccel-lpu.device'].total) +
+                Math.floor(Number(available_slots['hyperaccel-lpu.device']));
+            }
+            if ('hyperaccel-lpu.device' in occupied_slots) {
+              this.resources['hyperaccel-lpu.device'].used =
+                parseInt(this.resources['hyperaccel-lpu.device'].used) +
+                Math.floor(Number(occupied_slots['hyperaccel-lpu.device']));
             }
 
             if (isNaN(this.resources.cpu.used)) {

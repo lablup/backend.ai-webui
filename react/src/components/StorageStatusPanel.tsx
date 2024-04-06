@@ -25,6 +25,7 @@ import {
   Button,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
+import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
@@ -43,12 +44,19 @@ const StorageStatusPanel: React.FC<{
   const deferredFetchKey = useDeferredValue(fetchKey);
 
   const columnSetting: DescriptionsProps['column'] = {
-    xxl: 4,
-    xl: 4,
+    xxl: 2,
+    xl: 2,
     lg: 2,
     md: 1,
     sm: 1,
     xs: 1,
+  };
+
+  const isExcludedCount = (status: string) => {
+    return _.includes(
+      ['delete-ongoing', 'delete-complete', 'delete-error'],
+      status,
+    );
   };
 
   const { data: vfolders } = useQuery(
@@ -58,13 +66,20 @@ const StorageStatusPanel: React.FC<{
     },
   );
   const createdCount = vfolders?.filter(
-    (item: any) => item.is_owner && item.ownership_type === 'user',
+    (item: any) =>
+      item.is_owner &&
+      item.ownership_type === 'user' &&
+      !isExcludedCount(item.status),
   ).length;
   const projectFolderCount = vfolders?.filter(
-    (item: any) => item.ownership_type === 'group',
+    (item: any) =>
+      item.ownership_type === 'group' && !isExcludedCount(item.status),
   ).length;
   const invitedCount = vfolders?.filter(
-    (item: any) => !item.is_owner && item.ownership_type === 'user',
+    (item: any) =>
+      !item.is_owner &&
+      item.ownership_type === 'user' &&
+      !isExcludedCount(item.status),
   ).length;
 
   // TODO: Add resolver to enable subquery and modify to call useLazyLoadQuery only once.
@@ -89,9 +104,8 @@ const StorageStatusPanel: React.FC<{
         # }
         user(domain_name: $domain_name, email: $email) {
           id
-          # 23.03.7 https://github.com/lablup/backend.ai/releases/tag/23.03.7
           # https://github.com/lablup/backend.ai/pull/1354
-          resource_policy @since(version: "23.03.7")
+          resource_policy @since(version: "23.09.0")
         }
       }
     `,
@@ -119,15 +133,15 @@ const StorageStatusPanel: React.FC<{
         $storage_host_name: String!
         $skipQuotaScope: Boolean!
       ) {
-        user_resource_policy(name: $user_RP_name) @since(version: "24.03.1") {
+        user_resource_policy(name: $user_RP_name) @since(version: "23.09.6") {
           max_vfolder_count
         }
-        # project_resource_policy(name: $project_RP_name) @since(version: "24.03.0") {
+        # project_resource_policy(name: $project_RP_name) @since(version: "23.09.1") {
         #   max_vfolder_count
         # }
         keypair_resource_policy(name: $keypair_resource_policy_name)
           # use max_vfolder_count in keypair_resource_policy before adding max_vfolder_count in user_resource_policy
-          @deprecatedSince(version: "24.03.1") {
+          @deprecatedSince(version: "23.09.4") {
           max_vfolder_count
         }
         project_quota_scope: quota_scope(
@@ -161,37 +175,54 @@ const StorageStatusPanel: React.FC<{
     },
   );
 
-  const maxVfolderCount =
-    user_resource_policy?.max_vfolder_count ||
-    keypair_resource_policy?.max_vfolder_count ||
-    0;
-  const numberOfFolderPercent = (
-    maxVfolderCount > 0
-      ? ((createdCount / maxVfolderCount) * 100)?.toFixed(2)
-      : 0
-  ) as number;
+  // Support version:
+  // keypair resource policy < 23.09.4
+  // user resource policy, project resource policy >= 23.09.6
+  let maxVfolderCount;
+  if (
+    // manager version >= 23.09.6
+    baiClient?.supports('max-vfolder-count-in-user-and-project-resource-policy')
+  ) {
+    maxVfolderCount = user_resource_policy?.max_vfolder_count || 0;
+  } else {
+    maxVfolderCount = keypair_resource_policy?.max_vfolder_count || 0;
+  }
 
-  return (
-    <Card size="small" title={t('data.StorageStatus')}>
-      <Descriptions bordered column={columnSetting} size="small">
-        <Descriptions.Item label={t('data.NumberOfFolders')}>
-          <Progress
-            size={[200, 15]}
-            percent={numberOfFolderPercent}
-            strokeColor={usageIndicatorColor(numberOfFolderPercent)}
-            style={{ width: '95%' }}
-            status={numberOfFolderPercent >= 100 ? 'exception' : 'normal'}
-          ></Progress>
+  const numberOfFolderPercent =
+    maxVfolderCount || maxVfolderCount === 0
+      ? ((maxVfolderCount > 0
+          ? ((createdCount / maxVfolderCount) * 100)?.toFixed(2)
+          : 0) as number)
+      : null;
+  const descriptionItems: DescriptionsProps['items'] = [
+    {
+      key: 'totalFolders',
+      label: t('data.NumberOfFolders'),
+      children: (
+        <>
+          {numberOfFolderPercent || numberOfFolderPercent === 0 ? (
+            <Progress
+              size={[200, 15]}
+              percent={numberOfFolderPercent}
+              strokeColor={usageIndicatorColor(numberOfFolderPercent)}
+              style={{ width: '95%' }}
+              status={numberOfFolderPercent >= 100 ? 'exception' : 'normal'}
+            />
+          ) : null}
           <Flex direction="row" gap={token.marginXXS} wrap="wrap">
             <Typography.Text type="secondary">
               {t('data.Created')}:
             </Typography.Text>
             {createdCount}
-            <Typography.Text type="secondary">{' / '}</Typography.Text>
-            <Typography.Text type="secondary">
-              {t('data.Limit')}:
-            </Typography.Text>
-            {maxVfolderCount === 0 ? '-' : maxVfolderCount}
+            {maxVfolderCount || maxVfolderCount === 0 ? (
+              <>
+                <Typography.Text type="secondary">{' / '}</Typography.Text>
+                <Typography.Text type="secondary">
+                  {t('data.Limit')}:
+                </Typography.Text>
+                {maxVfolderCount === 0 ? '∞' : maxVfolderCount}
+              </>
+            ) : null}
           </Flex>
           <Divider style={{ margin: '12px auto' }} />
           <Flex direction="row" wrap="wrap" justify="between">
@@ -208,17 +239,21 @@ const StorageStatusPanel: React.FC<{
               {invitedCount}
             </Flex>
           </Flex>
-        </Descriptions.Item>
-        <Descriptions.Item
-          label={
-            <div>
-              {t('data.QuotaPerStorageVolume')}
-              <Tooltip title={t('data.HostDetails')}>
-                <Button type="link" icon={<InfoCircleOutlined />} />
-              </Tooltip>
-            </div>
-          }
-        >
+        </>
+      ),
+    },
+    {
+      key: 'quotaPerStorageVolume',
+      label: (
+        <div>
+          {t('data.QuotaPerStorageVolume')}
+          <Tooltip title={t('data.HostDetails')}>
+            <Button type="link" icon={<InfoCircleOutlined />} />
+          </Tooltip>
+        </div>
+      ),
+      children: (
+        <>
           <Flex
             wrap="wrap"
             justify="between"
@@ -228,7 +263,9 @@ const StorageStatusPanel: React.FC<{
             <Typography.Text type="secondary">{t('data.Host')}</Typography.Text>
             <StorageSelect
               value={selectedVolumeInfo?.id}
-              onChange={setSelectedVolumeInfo}
+              onChange={(__, vInfo) => {
+                setSelectedVolumeInfo(vInfo);
+              }}
               autoSelectType="usage"
               showUsageStatus
               showSearch
@@ -279,8 +316,28 @@ const StorageStatusPanel: React.FC<{
               style={{ margin: '25px auto' }}
             />
           )}
-        </Descriptions.Item>
-      </Descriptions>
+        </>
+      ),
+    },
+    {
+      key: 'userQuotaScopeId',
+      label: t('data.userQuotaScopeId'),
+      children: (
+        <Typography.Text copyable>
+          {addQuotaScopeTypePrefix('user', user?.id || '')}
+        </Typography.Text>
+      ),
+    },
+  ];
+
+  return (
+    <Card size="small" title={t('data.StorageStatus')}>
+      <Descriptions
+        bordered
+        column={columnSetting}
+        size="small"
+        items={descriptionItems}
+      />
     </Card>
   );
 };

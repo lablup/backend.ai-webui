@@ -1,14 +1,14 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 // import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
-import '../plastics/mwc/mwc-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
+import '@material/mwc-dialog';
 import '@material/mwc-icon-button';
 import { css, CSSResultGroup, html, LitElement } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';

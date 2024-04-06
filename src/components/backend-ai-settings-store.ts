@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { BackendAIPage } from './backend-ai-page';
 import { html } from 'lit';
@@ -64,10 +64,25 @@ export default class BackendAiSettingsStore extends BackendAIPage {
   }
 
   set(name, value, namespace = 'user') {
+    const event = new CustomEvent('backendaiwebui.settings:set', {
+      detail: {
+        name: name,
+        value: value,
+        namespace: namespace,
+      },
+    });
+    document.dispatchEvent(event);
     return this._writeUserSetting(name, value, namespace);
   }
 
   delete(name, namespace = 'user') {
+    const event = new CustomEvent('backendaiwebui.settings:delete', {
+      detail: {
+        name: name,
+        namespace: namespace,
+      },
+    });
+    document.dispatchEvent(event);
     return this._deleteUserSetting(name, namespace);
   }
 

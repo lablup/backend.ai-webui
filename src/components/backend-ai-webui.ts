@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { navigate, updateOffline } from '../backend-ai-app';
 // import '../lib/backend.ai-client-esm';
@@ -11,9 +11,6 @@ import {
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import { Drawer } from '../plastics/mwc/mwc-drawer';
-import '../plastics/mwc/mwc-multi-select';
-import '../plastics/mwc/mwc-top-app-bar-fixed';
 import { store } from '../store';
 import './backend-ai-app-launcher';
 import './backend-ai-common-utils';
@@ -36,6 +33,7 @@ import './lablup-notification';
 import LablupTermsOfService from './lablup-terms-of-service';
 import '@material/mwc-button';
 import '@material/mwc-circular-progress';
+import { Drawer } from '@material/mwc-drawer';
 import '@material/mwc-icon';
 import { IconButton } from '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
@@ -44,6 +42,7 @@ import '@material/mwc-list/mwc-list-item';
 import { Menu } from '@material/mwc-menu';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
+import '@material/mwc-top-app-bar-fixed';
 import '@vaadin/tooltip';
 import { LitElement, html, CSSResultGroup } from 'lit';
 import {
@@ -1324,9 +1323,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         <backend-ai-session-view class="page" name="job" ?active="${
           this._page === 'job'
         }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
-        <backend-ai-session-view-next class="page" name="session" ?active="${
+        <!-- <backend-ai-session-view-next class="page" name="session" ?active="${
           this._page === 'session'
-        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view-next>
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view-next> -->
         <!-- <backend-ai-serving-view class="page" name="serving" ?active="${
           this._page === 'serving'
         }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-serving-view> -->

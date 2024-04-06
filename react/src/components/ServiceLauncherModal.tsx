@@ -18,13 +18,25 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
+import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
 import { ServiceLauncherModalFragment$key } from './__generated__/ServiceLauncherModalFragment.graphql';
 import { ServiceLauncherModalModifyMutation } from './__generated__/ServiceLauncherModalModifyMutation.graphql';
-import { Card, Form, Input, theme, Switch, message, Button, Space } from 'antd';
+import {
+  Card,
+  Form,
+  Input,
+  theme,
+  Switch,
+  message,
+  Button,
+  Space,
+  FormInstance,
+  Skeleton,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { Suspense } from 'react';
+import React, { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
 
@@ -43,6 +55,7 @@ interface ServiceCreateConfigResourceType {
   'ipu.device'?: number | string;
   'atom.device'?: number | string;
   'warboy.device'?: number | string;
+  'hyperaccel-lpu.device'?: number | string;
 }
 
 interface ServiceCreateConfigType {
@@ -97,7 +110,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
-  const [form] = Form.useForm<ServiceLauncherFormValue>();
+  const formRef = useRef<FormInstance<ServiceLauncherFormValue>>(null);
   const endpoint = useFragment(
     graphql`
       fragment ServiceLauncherModalFragment on Endpoint {
@@ -109,6 +122,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         cluster_mode
         cluster_size
         open_to_public
+        model
         image_object @since(version: "23.09.9") {
           name
           humanized_name
@@ -269,6 +283,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           cluster_mode
           cluster_size
           open_to_public
+          model
           image_object @since(version: "23.09.9") {
             name
             humanized_name
@@ -297,8 +312,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
   // Apply any operation after clicking OK button
   const handleOk = () => {
-    form
-      .validateFields()
+    formRef.current
+      ?.validateFields()
       .then((values) => {
         if (endpoint) {
           if (baiClient.supports('modify-endpoint')) {
@@ -420,7 +435,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
   // Apply any operation after clicking Cancel button
   const handleCancel = () => {
-    form.resetFields();
+    formRef.current?.resetFields();
     onRequestClose();
   };
 
@@ -465,8 +480,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     >
       <Suspense fallback={<FlexActivityIndicator />}>
         <Form
+          ref={formRef}
           disabled={mutationToCreateService.isLoading}
-          form={form}
           preserve={false}
           layout="vertical"
           labelCol={{ span: 12 }}
@@ -543,21 +558,34 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                 <Switch disabled={endpoint ? true : false}></Switch>
               </Form.Item>
               {/* <VFolderTableFromItem /> */}
-              <Form.Item
-                name={'vFolderName'}
-                label={t('session.launcher.ModelStorageToMount')}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <VFolderSelect
-                  filter={(vf) => vf.usage_mode === 'model'}
-                  autoSelectDefault
-                  disabled={endpoint ? true : false}
-                />
-              </Form.Item>
+              {!endpoint ? (
+                <Form.Item
+                  name={'vFolderName'}
+                  label={t('session.launcher.ModelStorageToMount')}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <VFolderSelect
+                    filter={(vf) => vf.usage_mode === 'model'}
+                    autoSelectDefault
+                    disabled={endpoint ? true : false}
+                  />
+                </Form.Item>
+              ) : (
+                endpoint?.model && (
+                  <Form.Item
+                    label={t('session.launcher.ModelStorageToMount')}
+                    required
+                  >
+                    <Suspense fallback={<Skeleton.Input active />}>
+                      <VFolderLazyView uuid={endpoint?.model} />
+                    </Suspense>
+                  </Form.Item>
+                )
+              )}
             </>
           )}
           <Form.Item

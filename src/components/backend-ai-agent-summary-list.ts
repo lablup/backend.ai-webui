@@ -1,6 +1,6 @@
 /**
  @license
-Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
 */
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -413,6 +413,24 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                   agents[objectKey].used_warboy_slots_ratio * 100
                 )?.toFixed(2);
               }
+              if ('hyperaccel-lpu.device' in available_slots) {
+                agents[objectKey].hyperaccel_lpu_slots = parseInt(
+                  available_slots['hyperaccel-lpu.device'],
+                );
+                if ('hyperaccel-lpu.device' in occupied_slots) {
+                  agents[objectKey].used_hyperaccel_lpu_slots = parseInt(
+                    occupied_slots['hyperaccel-lpu.device'],
+                  );
+                } else {
+                  agents[objectKey].used_hyperaccel_lpu_slots = 0;
+                }
+                agents[objectKey].used_hyperaccel_lpu_slots_ratio =
+                  agents[objectKey].used_hyperaccel_lpu_slots /
+                  agents[objectKey].hyperaccel_lpu_slots;
+                agents[objectKey].total_hyperaccel_lpu_percent = (
+                  agents[objectKey].used_hyperaccel_lpu_slots_ratio * 100
+                )?.toFixed(2);
+              }
               if ('schedulable' in agent) {
                 agents[objectKey].schedulable = agent.schedulable;
               }
@@ -714,6 +732,31 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
                     id="warboy-bar"
                     progress="${rowData.item.used_warboy_slots_ratio}"
                     description="${rowData.item.used_warboy_slots}"
+                  ></lablup-progress-bar>
+                </div>
+              `
+            : html``}
+          ${rowData.item.hyperaccel_lpu_slots
+            ? html`
+                <div
+                  class="layout horizontal center-justified flex progress-bar-section"
+                >
+                  <div class="layout horizontal start resource-indicator">
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/npu_generic.svg"
+                    />
+                    <span class="monospace" style="padding-left:5px;">
+                      ${rowData.item.used_hyperaccel_lpu_slots}/${rowData.item
+                        .hyperaccel_lpu_slots}
+                    </span>
+                    <span class="indicator">Hyperaccel LPU</span>
+                  </div>
+                  <span class="flex"></span>
+                  <lablup-progress-bar
+                    id="hyperaccel-lpu-bar"
+                    progress="${rowData.item.used_hyperaccel_lpu_slots_ratio}"
+                    description="${rowData.item.used_hyperaccel_lpu_slots}"
                   ></lablup-progress-bar>
                 </div>
               `

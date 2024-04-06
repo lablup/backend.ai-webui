@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { BackendAIPage } from './backend-ai-page';
 import { CSSResultGroup, html } from 'lit';
@@ -153,6 +153,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     this.icons = globalThis.backendaimetadata.icons;
     this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
     this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+    this.imageInfo = globalThis.backendaimetadata.imageInfo;
     document.addEventListener(
       'backend-ai-metadata-image-loaded',
       () => {
@@ -160,6 +161,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         this.icons = globalThis.backendaimetadata.icons;
         this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
         this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+        this.imageInfo = globalThis.backendaimetadata.imageInfo;
       },
       { once: true },
     );
@@ -403,6 +405,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'ipu.device': 'ipu_device',
         'atom.device': 'atom_device',
         'warboy.device': 'warboy_device',
+        'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
       };
       for (const [k, v] of Object.entries(deviceList)) {
         // Set gpu_modes
@@ -557,6 +560,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'ipu.device': 'ipu_device',
         'atom.device': 'atom_device',
         'warboy.device': 'warboy_device',
+        'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
       };
       const slotList = {
         cpu: 'cpu',
@@ -568,6 +572,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'ipu.device': 'ipu_device',
         'atom.device': 'atom_device',
         'warboy.device': 'warboy_device',
+        'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
       };
       if (this.scaling_group === '' && this.scaling_groups.length > 0) {
         // no scaling group in the current project
