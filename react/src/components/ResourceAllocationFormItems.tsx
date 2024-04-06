@@ -1114,29 +1114,16 @@ const ResourceAllocationFormItems: React.FC<
                       required: true,
                     },
                     {
-                      warningOnly:
-                        baiClient._config?.always_enqueue_compute_session,
+                      warningOnly: true,
                       validator: async (rule, value: number) => {
                         if (
                           sessionSliderLimitAndRemaining &&
                           value > sessionSliderLimitAndRemaining.remaining
                         ) {
                           return Promise.reject(
-                            baiClient._config?.always_enqueue_compute_session
-                              ? t(
-                                  'session.launcher.EnqueueComputeSessionWarning',
-                                  {
-                                    amount:
-                                      sessionSliderLimitAndRemaining.remaining,
-                                  },
-                                )
-                              : t(
-                                  'session.launcher.ErrorCanNotExceedRemaining',
-                                  {
-                                    amount:
-                                      sessionSliderLimitAndRemaining.remaining,
-                                  },
-                                ),
+                            t('session.launcher.EnqueueComputeSessionWarning', {
+                              amount: sessionSliderLimitAndRemaining.remaining,
+                            }),
                           );
                         } else {
                           return Promise.resolve();

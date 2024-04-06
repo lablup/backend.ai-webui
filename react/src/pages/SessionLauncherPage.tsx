@@ -485,6 +485,7 @@ const SessionLauncherPage = () => {
               resolved: t('eduapi.ComputeSessionPrepared'),
             },
           },
+          duration: 0,
           message: t('general.Session') + ': ' + sessionName,
           open: true,
         });
