@@ -270,7 +270,8 @@
       "InteractiveModeDesc": "permette di creare, testare ed eseguire codice in modo interattivo tramite jupyter notebook, visual studio code, ecc.",
       "BatchModeDesc": "È possibile eseguire il codice con più nodi e cluster per scalare la propria idea.",
       "AddEnvironmentVariable": "Aggiungere le variabili d'ambiente",
-      "EnvironmentVariableValueRequired": "Inserire un valore."
+      "EnvironmentVariableValueRequired": "Inserire un valore.",
+      "PleaseCompleteForm": "Il modulo è incompleto o contiene errori. Si prega di controllare i dati inseriti."
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",

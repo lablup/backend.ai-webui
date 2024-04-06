@@ -270,7 +270,8 @@
       "InteractiveModeDesc": "jupyterノートブックやビジュアル・スタジオ・コードなどを使って、インタラクティブにコードを作成、テスト、実行できる。",
       "BatchModeDesc": "複数のノードやクラスタでコードを実行し、アイデアをスケールさせることができます。",
       "AddEnvironmentVariable": "環境変数の追加",
-      "EnvironmentVariableValueRequired": "値を入力してください。"
+      "EnvironmentVariableValueRequired": "値を入力してください。",
+      "PleaseCompleteForm": "フォームに不備またはエラーがあります。入力内容をご確認ください。"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",

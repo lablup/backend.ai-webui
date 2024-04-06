@@ -270,7 +270,8 @@
       "InteractiveModeDesc": "membolehkan anda membuat, menguji dan menjalankan kod secara interaktif melalui buku nota jupyter, kod studio visual, dsb.",
       "BatchModeDesc": "Anda boleh menjalankan kod anda dengan berbilang nod",
       "AddEnvironmentVariable": "Tambah pembolehubah persekitaran",
-      "EnvironmentVariableValueRequired": "Sila masukkan nilai."
+      "EnvironmentVariableValueRequired": "Sila masukkan nilai.",
+      "PleaseCompleteForm": "Borang tidak lengkap atau mengandungi ralat. \nSila semak input anda."
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",

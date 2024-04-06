@@ -272,7 +272,8 @@
       "InteractiveModeDesc": "позволяет создавать, тестировать и запускать код в интерактивном режиме через jupyter notebook, visual studio code и т.д.",
       "BatchModeDesc": "Вы можете запускать свой код на нескольких узлах и кластерах, чтобы масштабировать свою идею.",
       "AddEnvironmentVariable": "Добавьте переменные окружения",
-      "EnvironmentVariableValueRequired": "Пожалуйста, введите значение."
+      "EnvironmentVariableValueRequired": "Пожалуйста, введите значение.",
+      "PleaseCompleteForm": "Форма не заполнена или содержит ошибки. Пожалуйста, проверьте введенные данные."
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
