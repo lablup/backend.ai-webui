@@ -4115,7 +4115,7 @@ ${rowData.item[this.sessionNameField]}</pre
                   'session.Validation.EnterValidSessionName',
                 )}"
                 style="margin-top:8px;width:100%;"
-                @change="${this._updateImagifyAvailabilityStatus}"
+                @input="${this._updateImagifyAvailabilityStatus}"
               ></mwc-textfield>
             </div>
           </div>
