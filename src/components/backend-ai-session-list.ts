@@ -3188,7 +3188,10 @@ ${rowData.item[this.sessionNameField]}</pre
                   this._isFinished(rowData.item.status) ||
                   (rowData.item.type as SessionType) === 'BATCH' ||
                   (rowData.item.commit_status as CommitSessionStatus) ===
-                    'ongoing'}
+                    'ongoing' ||
+                  // FIXME: temporally disable container commit feature
+                  // when the session is not created by logined user
+                  rowData.item.user_email !== globalThis.backendaiclient.email}
                   icon="archive"
                   @click="${(e) => this._openCommitSessionDialog(e)}"
                 ></mwc-icon-button>
