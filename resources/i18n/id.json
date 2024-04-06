@@ -336,7 +336,7 @@
       "SessionNameShouldEndWith": "Nama tersebut harus diakhiri dengan huruf alfabet, angka, atau '_'.",
       "SessionNameInvalidCharacter": "Bagian tengah nama hanya boleh berisi huruf alfabet, angka, dan '_'.",
       "SessionNameRequired": "Nama sesi harus diisi",
-      "EnterValidSessionName": "Masukkan nama sesi yang valid",
+      "EnterValidSessionName": "Silakan masukkan kombinasi minimal 4 huruf alfabet, atau angka, atau tanda hubung, atau garis bawah.",
       "SessionNameAlreadyExist": "Nama sesi sudah ada",
       "SluggedStrings": "String yang disumbat (>3 karakter)",
       "SessionNameTooLong64": "Silakan masukkan 64 karakter atau kurang.",
@@ -433,7 +433,8 @@
     "Clone": "Clone",
     "Config": "Konfigurasi",
     "Next": "Berikutnya",
-    "Previous": "Sebelumnya"
+    "Previous": "Sebelumnya",
+    "PushToImage": "Sesi dorong ke gambar yang disesuaikan"
   },
   "agent": {
     "Endpoint": "Titik akhir",
@@ -1421,7 +1422,8 @@
     "RequireOTP": "Tulis OTP."
   },
   "inputLimit": {
-    "4to64chars": "(4 ~ 64 karakter)"
+    "4to64chars": "(4 ~ 64 karakter)",
+    "4to32chars": "(4~32 karakter)"
   },
   "storageHost": {
     "quotaSettings": {

@@ -335,7 +335,7 @@
     "Architecture": "Architecture",
     "Validation": {
       "SessionNameRequired": "Le nom de la session est obligatoire",
-      "EnterValidSessionName": "Saisir un nom de session valide",
+      "EnterValidSessionName": "Veuillez saisir une combinaison d'au moins 4 lettres de l'alphabet, ou chiffres, ou trait d'union, ou trait de soulignement.",
       "SessionNameAlreadyExist": "Le nom de la session existe déjà",
       "SluggedStrings": "Chaînes de caractères tronquées (>3 chars)",
       "SessionNameTooLong64": "Veuillez saisir 64 caractères ou moins.",
@@ -437,7 +437,8 @@
     "Clone": "Clone",
     "Config": "Config",
     "Next": "Suivant",
-    "Previous": "Précédent"
+    "Previous": "Précédent",
+    "PushToImage": "Pousser la session vers une image personnalisée"
   },
   "agent": {
     "Endpoint": "Point de terminaison",
@@ -1427,7 +1428,8 @@
     "RequireOTP": "Écrivez OTP."
   },
   "inputLimit": {
-    "4to64chars": "(4~64 caractères)"
+    "4to64chars": "(4~64 caractères)",
+    "4to32chars": "(4 ~ 32 caractères)"
   },
   "storageHost": {
     "quotaSettings": {

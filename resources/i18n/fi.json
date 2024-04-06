@@ -133,7 +133,8 @@
     "Download": "ladata",
     "Config": "Config",
     "Next": "Seuraava",
-    "Previous": "Edellinen"
+    "Previous": "Edellinen",
+    "PushToImage": "Työnnä istunto mukautettuun kuvaan"
   },
   "credential": {
     "AccessKeyOptional": "Pääsyavain (valinnainen)",
@@ -556,7 +557,8 @@
     "UsesSSL": "Käyttää SSL:ää"
   },
   "inputLimit": {
-    "4to64chars": "(4~64 merkkiä)"
+    "4to64chars": "(4~64 merkkiä)",
+    "4to32chars": "(4-32 merkkiä)"
   },
   "language": {
     "English": "English",
@@ -986,7 +988,7 @@
     "VSCodeRemoteNoticeSSHConfig": "Jos haluat luoda saumattoman yhteyden Visual Studio Code -ohjelmistolle etälaskentaistuntoon, luo tai muokkaa $HOME/.ssh/config-tiedostoa ja lisää seuraava lohko.",
     "VSCodeRemotePasswordTitle": "Visual Studio Code SSH-etäsalasana",
     "Validation": {
-      "EnterValidSessionName": "Syötä kelvollinen istunnon nimi",
+      "EnterValidSessionName": "Anna vähintään neljän aakkosten kirjaimen tai numeron tai yhdysviivan tai alaviivan yhdistelmä.",
       "SessionNameAlreadyExist": "Istunnon nimi on jo olemassa",
       "SessionNameRequired": "Istunnon nimi vaaditaan",
       "SluggedStrings": "Slugged-merkkijonot (>3 merkkiä)",

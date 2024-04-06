@@ -337,7 +337,7 @@
     "Architecture": "Архитектура",
     "Validation": {
       "SessionNameRequired": "Имя сессии является обязательным",
-      "EnterValidSessionName": "Введите действительное имя сессии",
+      "EnterValidSessionName": "Введите комбинацию как минимум из 4 букв алфавита, цифр, дефиса или подчеркивания.",
       "SessionNameAlreadyExist": "Имя сессии уже существует",
       "SluggedStrings": "Строки с засечками (>3 символов)",
       "SessionNameTooLong64": "Введите не более 64 символов.",
@@ -439,7 +439,8 @@
     "Clone": "Клон",
     "Config": "Конфигурация",
     "Next": "Следующий",
-    "Previous": "Предыдущий"
+    "Previous": "Предыдущий",
+    "PushToImage": "Отправить сеанс на настроенное изображение"
   },
   "agent": {
     "Endpoint": "Конечная точка",
@@ -1429,7 +1430,8 @@
     "RequireOTP": "Напишите ОТП."
   },
   "inputLimit": {
-    "4to64chars": "(4~64 символа)"
+    "4to64chars": "(4~64 символа)",
+    "4to32chars": "(4~32 символа)"
   },
   "storageHost": {
     "quotaSettings": {

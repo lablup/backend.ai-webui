@@ -133,7 +133,8 @@
     "Clone": "Clon",
     "Config": "Configurar",
     "Next": "Siguiente",
-    "Previous": "Anterior"
+    "Previous": "Anterior",
+    "PushToImage": "Enviar sesión a una imagen personalizada"
   },
   "credential": {
     "AccessKeyOptional": "Clave de acceso (opcional)",
@@ -556,7 +557,8 @@
     "UsesSSL": "Utiliza SSL"
   },
   "inputLimit": {
-    "4to64chars": "(4~64 caracteres)"
+    "4to64chars": "(4~64 caracteres)",
+    "4to32chars": "(4~32 caracteres)"
   },
   "language": {
     "English": "English",
@@ -988,7 +990,7 @@
     "VSCodeRemoteNoticeSSHConfig": "Para configurar una conexión transparente para Visual Studio Code con la sesión de computación remota, cree o edite el archivo $HOME/.ssh/config y añada el siguiente bloque.",
     "VSCodeRemotePasswordTitle": "Contraseña SSH remota de Visual Studio Code",
     "Validation": {
-      "EnterValidSessionName": "Introduzca un nombre de sesión válido",
+      "EnterValidSessionName": "Ingrese una combinación de al menos 4 letras del alfabeto, números, guiones o guiones bajos.",
       "SessionNameAlreadyExist": "El nombre de la sesión ya existe",
       "SessionNameRequired": "El nombre de la sesión es obligatorio",
       "SluggedStrings": "Cadenas babosas (>3 caracteres)",

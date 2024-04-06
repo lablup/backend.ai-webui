@@ -324,7 +324,7 @@
     "Architecture": "アーキテクチャ",
     "SessionType": "セッションタイプ",
     "Validation": {
-      "EnterValidSessionName": "正しいセッション名を入力してください",
+      "EnterValidSessionName": "アルファベット、数字、ハイフン、アンダースコアを 4 文字以上組み合わせて入力してください。",
       "SessionNameRequired": "セッション名を入力してください",
       "SluggedStrings": "最低4文字以上の固有の文字列で入力してください。",
       "SessionNameAlreadyExist": "同じ名前のセッションが既にあります",
@@ -437,7 +437,8 @@
     "Clone": "クローン",
     "Config": "コンフィグ",
     "Next": "次のページ",
-    "Previous": "前へ"
+    "Previous": "前へ",
+    "PushToImage": "セッションをカスタマイズされたイメージにプッシュする"
   },
   "agent": {
     "Endpoint": "終点",
@@ -1522,7 +1523,8 @@
   },
   "OpenVSCodeRemote": "ローカルVisual Studio Codeを開く",
   "inputLimit": {
-    "4to64chars": "(4～64文字)"
+    "4to64chars": "(4～64文字)",
+    "4to32chars": "(4~32文字)"
   },
   "modelStore": {
     "Description": "説明",

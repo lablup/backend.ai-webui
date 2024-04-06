@@ -311,6 +311,10 @@ export default class BackendAISessionList extends BackendAIPage {
           padding: 0;
         }
 
+        mwc-checkbox.list-check {
+          margin: 6px 0 0 0;
+        }
+
         mwc-icon {
           margin-right: 5px;
         }
@@ -453,6 +457,16 @@ export default class BackendAISessionList extends BackendAIPage {
         .error-description {
           font-size: 0.8rem;
           word-break: break-word;
+        }
+
+        h4.commit-session-title {
+          margin-bottom: 0;
+        }
+
+        span.commit-session-subheading {
+          font-size: smaller;
+          font-family: monospace;
+          color: rgba(0, 0, 0, 0.6);
         }
 
         mwc-button.multiple-action-button {
@@ -1818,6 +1832,10 @@ export default class BackendAISessionList extends BackendAIPage {
     this.commitSessionDialog.sessionName = sessionName;
     this.commitSessionDialog.sessionId = sessionId;
     this.commitSessionDialog.kernelImage = kernelImage;
+    // Reset image name field;
+    (
+      this.shadowRoot?.querySelector('#new-image-name-field') as TextField
+    ).value = '';
     this.commitSessionDialog.show();
   }
 
@@ -3170,7 +3188,10 @@ ${rowData.item[this.sessionNameField]}</pre
                   this._isFinished(rowData.item.status) ||
                   (rowData.item.type as SessionType) === 'BATCH' ||
                   (rowData.item.commit_status as CommitSessionStatus) ===
-                    'ongoing'}
+                    'ongoing' ||
+                  // FIXME: temporally disable container commit feature
+                  // when the session is not created by logined user
+                  rowData.item.user_email !== globalThis.backendaiclient.email}
                   icon="archive"
                   @click="${(e) => this._openCommitSessionDialog(e)}"
                 ></mwc-icon-button>
@@ -4001,108 +4022,111 @@ ${rowData.item[this.sessionNameField]}</pre
       <backend-ai-dialog id="commit-session-dialog" fixed backdrop>
         <span slot="title">${_t('session.CommitSession')}</span>
         <div slot="content" class="vertical layout center flex">
-          <span style="font-size:14px;margin:auto 20px;">
+          <span style="font-size:14px;">
             ${_t('session.DescCommitSession')}
           </span>
-          <mwc-list style="width:100%">
-            <mwc-list-item twoline noninteractive class="commit-session-info">
-              <span class="subheading">${_t('session.SessionName')}</span>
-              <span class="monospace" slot="secondary">
-                ${commitSessionInfo?.session?.name
-                  ? commitSessionInfo.session.name
-                  : '-'}
-              </span>
-            </mwc-list-item>
-            <mwc-list-item twoline noninteractive class="commit-session-info">
-              <span class="subheading">${_t('session.SessionId')}</span>
-              <span class="monospace" slot="secondary">
-                ${commitSessionInfo?.session?.id
-                  ? commitSessionInfo.session.id
-                  : '-'}
-              </span>
-            </mwc-list-item>
-            <mwc-list-item twoline noninteractive class="commit-session-info">
-              <span class="subheading">
-                <strong>${_t('session.EnvironmentAndVersion')}</strong>
-              </span>
-              <span class="monospace" slot="secondary">
-                ${commitSessionInfo
-                  ? html`
-                      <lablup-shields
-                        app="${commitSessionInfo.environment === ''
-                          ? '-'
-                          : commitSessionInfo.environment}"
-                        color="blue"
-                        description="${commitSessionInfo.version === ''
-                          ? '-'
-                          : commitSessionInfo.version}"
-                        ui="round"
-                        class="right-below-margin"
-                      ></lablup-shields>
-                    `
-                  : html``}
-              </span>
-            </mwc-list-item>
-            <mwc-list-item twoline noninteractive class="commit-session-info">
-              <span class="subheading">${_t('session.Tags')}</span>
-              <span class="monospace horizontal layout" slot="secondary">
-                ${commitSessionInfo
-                  ? commitSessionInfo?.tags?.map(
-                      (tag) => html`
-                        <lablup-shields
-                          app=""
-                          color="green"
-                          description="${tag}"
-                          ui="round"
-                          class="right-below-margin"
-                        ></lablup-shields>
-                      `,
-                    )
-                  : html`
+          <div class="vertical flex start layout" style="width:100%;">
+            <h4 class="commit-session-title">${_t('session.SessionName')}</h4>
+            <span class="commit-session-subheading">
+              ${commitSessionInfo?.session?.name
+                ? commitSessionInfo.session.name
+                : '-'}
+            </span>
+          </div>
+          <div class="vertical flex start layout" style="width:100%;">
+            <h4 class="commit-session-title">${_t('session.SessionId')}</h4>
+            <span class="commit-session-subheading">
+              ${commitSessionInfo?.session?.id
+                ? commitSessionInfo.session.id
+                : '-'}
+            </span>
+          </div>
+          <div class="vertical flex start layout" style="width:100%;">
+            <h4 class="commit-session-title">
+              ${_t('session.EnvironmentAndVersion')}
+            </h4>
+            <span class="commit-session-subheading">
+              ${commitSessionInfo
+                ? html`
+                    <lablup-shields
+                      app="${commitSessionInfo.environment === ''
+                        ? '-'
+                        : commitSessionInfo.environment}"
+                      color="blue"
+                      description="${commitSessionInfo.version === ''
+                        ? '-'
+                        : commitSessionInfo.version}"
+                      ui="round"
+                      class="right-below-margin"
+                    ></lablup-shields>
+                  `
+                : html``}
+            </span>
+          </div>
+          <div class="vertical flex start layout" style="width:100%;">
+            <h4 class="commit-session-title">${_t('session.Tags')}</h4>
+            <div class="horizontal wrap layout">
+              ${commitSessionInfo
+                ? commitSessionInfo?.tags?.map(
+                    (tag) => html`
                       <lablup-shields
                         app=""
                         color="green"
-                        description="-"
+                        description="${tag}"
                         ui="round"
-                        style="right-below-margin"
+                        class="right-below-margin"
                       ></lablup-shields>
-                    `}
-              </span>
-            </mwc-list-item>
-            <mwc-list-item twoline class="commit-session-info">
-              <span class="subheading">
-                ${_t('session.ConvertSessionToImage')}
-              </span>
-              <div class="horizontal layout center">
-                <mwc-checkbox
-                  class="list-check"
-                  ?checked="${this.pushImageInsteadOfCommiting}"
-                  @click="${() =>
-                    (this.pushImageInsteadOfCommiting =
-                      !this.pushImageInsteadOfCommiting)}"
-                ></mwc-checkbox>
-                <mwc-textfield
-                  id="new-image-name-field"
-                  required
-                  autoValidate
-                  pattern="^[a-zA-Z0-9.-_]+$"
-                  minLength="4"
-                  maxLength="32"
-                  ?disabled="${!this.pushImageInsteadOfCommiting}"
-                  validationMessage="${_text(
-                    'session.Validation.EnterValidSessionName',
-                  )}"
-                  style="margin-top:8px;"
-                  @change="${this._updateImagifyAvailabilityStatus}"
-                ></mwc-textfield>
-              </div>
-            </mwc-list-item>
-          </mwc-list>
+                    `,
+                  )
+                : html`
+                    <lablup-shields
+                      app=""
+                      color="green"
+                      description="-"
+                      ui="round"
+                      style="right-below-margin"
+                    ></lablup-shields>
+                  `}
+            </div>
+          </div>
+          <div class="vertical flex start layout" style="width:100%;">
+            <h4 class="commit-session-title">
+              ${_t('session.ConvertSessionToImage')}
+            </h4>
+            <div class="horizontal layout flex" style="width:100%">
+              <mwc-checkbox
+                class="list-check"
+                ?checked="${this.pushImageInsteadOfCommiting}"
+                @click="${() => {
+                  this.pushImageInsteadOfCommiting =
+                    !this.pushImageInsteadOfCommiting;
+                }}"
+              ></mwc-checkbox>
+              <mwc-textfield
+                id="new-image-name-field"
+                required
+                autoValidate
+                pattern="^[a-zA-Z0-9-_]+$"
+                minLength="4"
+                maxLength="32"
+                placeholder="${_t('inputLimit.4to32chars')}"
+                ?disabled="${!this.pushImageInsteadOfCommiting}"
+                validationMessage="${_text(
+                  'session.Validation.EnterValidSessionName',
+                )}"
+                style="margin-top:8px;width:100%;"
+                @change="${this._updateImagifyAvailabilityStatus}"
+              ></mwc-textfield>
+            </div>
+          </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
             unelevated
             class="ok"
+            style="font-size: ${this.pushImageInsteadOfCommiting
+              ? 'smaller'
+              : 'inherit'}"
             ?disabled="${commitSessionInfo?.environment === '' ||
             (this.pushImageInsteadOfCommiting && !this.canStartImagifying)}"
             @click=${(e) => {
@@ -4112,7 +4136,9 @@ ${rowData.item[this.sessionNameField]}</pre
                 this._requestCommitSession(commitSessionInfo);
               }
             }}
-            label="${_t('button.Commit')}"
+            label="${this.pushImageInsteadOfCommiting
+              ? _t('button.PushToImage')
+              : _t('button.Commit')}"
           ></mwc-button>
         </div>
       </backend-ai-dialog>

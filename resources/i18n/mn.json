@@ -324,7 +324,7 @@
     "Architecture": "Архитектур",
     "Validation": {
       "SessionNameRequired": "Сеансын нэрийг оруулах шаардлагатай",
-      "EnterValidSessionName": "Хүчинтэй сессийн нэрийг оруулна уу",
+      "EnterValidSessionName": "Дор хаяж 4 цагаан толгойн үсэг, тоо, зураас, доогуур зураасын хослолыг оруулна уу.",
       "SessionNameAlreadyExist": "Сешн нэр аль хэдийн байна",
       "SluggedStrings": "Залгисан мөрүүд (>3 тэмдэгт)",
       "SessionNameTooLong64": "64 ба түүнээс бага тэмдэгт оруулна уу.",
@@ -1540,7 +1540,7 @@
     "SearchTableColumn": "Хүснэгтийн багануудыг хайх"
   },
   "setting": {
-    "SearchPlaceholder": "Хайлтын нэр томъёог оруулна уу"
+    "SearchPlaceholder": "Хайлтын нэр томъёог оруулна уу",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Hyperaccel LPU хурдасгуурыг ашигла.",
     "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Plugin шаардлагатай."

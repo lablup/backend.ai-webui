@@ -324,7 +324,7 @@
     "Architecture": "Mimarlık",
     "SessionType": "OturumTürü",
     "Validation": {
-      "EnterValidSessionName": "Geçerli oturum adını girin",
+      "EnterValidSessionName": "Lütfen en az 4 alfabe harfi veya rakamı, kısa çizgi veya alt çizgiden oluşan bir kombinasyon girin.",
       "SessionNameRequired": "Oturum adı gereklidir",
       "SluggedStrings": "Kesikli dizeler (>3 karakter)",
       "SessionNameAlreadyExist": "Oturum adı zaten mevcut",
@@ -437,7 +437,8 @@
     "Clone": "Klon",
     "Config": "Konfigürasyon",
     "Next": "Sonraki",
-    "Previous": "Önceki"
+    "Previous": "Önceki",
+    "PushToImage": "Oturumu özelleştirilmiş resme aktarın"
   },
   "agent": {
     "Endpoint": "uç nokta",
@@ -1522,7 +1523,8 @@
   },
   "OpenVSCodeRemote": "Yerel Visual Studio Kodunu açın",
   "inputLimit": {
-    "4to64chars": "(4~64 karakter)"
+    "4to64chars": "(4~64 karakter)",
+    "4to32chars": "(4~32 karakter)"
   },
   "modelStore": {
     "Description": "Tanım",

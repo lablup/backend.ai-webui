@@ -324,7 +324,7 @@
     "Architecture": "Αρχιτεκτονική",
     "SessionType": "SessionType",
     "Validation": {
-      "EnterValidSessionName": "Εισάγετε έγκυρο όνομα συνεδρίας",
+      "EnterValidSessionName": "Εισαγάγετε έναν συνδυασμό τουλάχιστον 4 γραμμάτων αλφαβήτου ή αριθμών ή παύλας ή υπογράμμισης.",
       "SessionNameRequired": "Το όνομα συνεδρίας είναι υποχρεωτικό",
       "SluggedStrings": "Στιγμιότυπα αλφαριθμητικά (>3 χαρακτήρες)",
       "SessionNameAlreadyExist": "Το όνομα συνεδρίας υπάρχει ήδη",
@@ -437,7 +437,8 @@
     "Clone": "Κλώνος",
     "Config": "Διαμόρφωση",
     "Next": "Επόμενο",
-    "Previous": "Προηγούμενο"
+    "Previous": "Προηγούμενο",
+    "PushToImage": "Σπρώξτε τη συνεδρία σε προσαρμοσμένη εικόνα"
   },
   "agent": {
     "Endpoint": "Τελικό σημείο",
@@ -1522,7 +1523,8 @@
   },
   "OpenVSCodeRemote": "Ανοίξτε τον τοπικό κώδικα του Visual Studio",
   "inputLimit": {
-    "4to64chars": "(4~64 χαρακτήρες)"
+    "4to64chars": "(4~64 χαρακτήρες)",
+    "4to32chars": "(4~32 χαρακτήρες)"
   },
   "modelStore": {
     "Description": "Περιγραφή",
