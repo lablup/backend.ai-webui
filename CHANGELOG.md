@@ -1,8 +1,5 @@
 # Changelog
-<<<<<<< HEAD
-## v23.09.10-rc.3 (13/03/2024)
-=======
-## v24.03.0 (06/04/2024)
+## v23.09.10 (06/04/2024)
 ## What's Changed
 * fix: @typescript-eslint/typescript-estree dependency warning by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2225
 * feat: support dark theme by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2193
@@ -66,29 +63,7 @@
 * hotfix: touchup container commit feature by @lizable in https://github.com/lablup/backend.ai-webui/pull/2314
 * fix: update imageify availability status on `input` event by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2315
 
-**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.9...v24.03.0
-
-
-## v23.09.10-rc.1 (06/03/2024)
->>>>>>> main
-## What's Changed
-* fix:  FastTrack menu key to `pipeline` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2245
-* hotfix: regression of image info display in serving page by @lizable in https://github.com/lablup/backend.ai-webui/pull/2244
-* fix: @typescript-eslint/typescript-estree dependency warning by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2225
-* feat: support dark theme by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2193
-* feat: add JSON schema files for theme.json by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2232
-* fix: Electron live debug mode using `LIVE_DEBUG` and `LIVE_DEBUG_ENDPOINT` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2233
-* feat: Introduce `SettingList` component for setting page UI by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2212
-* fix: missing commit of UserSettingsPage to rollback by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2234
-* feat: add password change request alert to summary page by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2238
-* feat: build plugin pages and update electron ver. by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2226
-* docs: Update outdated Makefile command for building macOS apps by @rapsealk in https://github.com/lablup/backend.ai-webui/pull/2237
-* feat: display announcement alert to every page. by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2239
-* fix: unintended console log and import `glob` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2241
-* fix: optional chaining and  handle `_requestDestroySession` by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2242
-* fix: owner info error handling in session launcher by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2243
-
-**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.9...v23.09.10-rc.3
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.09.9...v23.09.10
 
 
 ## v23.09.9 (22/02/2024)
