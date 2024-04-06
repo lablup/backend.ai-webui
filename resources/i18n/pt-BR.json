@@ -324,7 +324,7 @@
     "Architecture": "Arquitetura",
     "SessionType": "Tipo de sessão",
     "Validation": {
-      "EnterValidSessionName": "Introduzir um nome de sessão válido",
+      "EnterValidSessionName": "Insira uma combinação de pelo menos quatro letras do alfabeto, ou números, ou hífen, ou sublinhado.",
       "SessionNameRequired": "O nome da sessão é obrigatório",
       "SluggedStrings": "Cadeias de caracteres com slugged (>3 caracteres)",
       "SessionNameAlreadyExist": "O nome da sessão já existe",
@@ -437,7 +437,8 @@
     "Clone": "Clone",
     "Config": "Configuração",
     "Next": "Seguinte",
-    "Previous": "Anterior"
+    "Previous": "Anterior",
+    "PushToImage": "Enviar sessão para imagem personalizada"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -1522,7 +1523,8 @@
   },
   "OpenVSCodeRemote": "Abrir o código local do Visual Studio",
   "inputLimit": {
-    "4to64chars": "(4~64 caracteres)"
+    "4to64chars": "(4~64 caracteres)",
+    "4to32chars": "(4~32 caracteres)"
   },
   "modelStore": {
     "Description": "Descrição",

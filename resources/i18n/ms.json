@@ -324,7 +324,7 @@
     "Architecture": "Seni bina",
     "SessionType": "Jenis Sesi",
     "Validation": {
-      "EnterValidSessionName": "Masukkan nama sesi yang sah",
+      "EnterValidSessionName": "Sila masukkan gabungan sekurang-kurangnya 4 huruf abjad, atau nombor, atau sempang, atau garis bawah.",
       "SessionNameRequired": "Nama sesi diperlukan",
       "SluggedStrings": "Rentetan slugged (>3 aksara)",
       "SessionNameAlreadyExist": "Nama sesi sudah wujud",
@@ -437,7 +437,8 @@
     "Clone": "Klon",
     "Config": "Konfigurasi",
     "Next": "Seterusnya",
-    "Previous": "Sebelumnya"
+    "Previous": "Sebelumnya",
+    "PushToImage": "Sesi tolak ke imej tersuai"
   },
   "agent": {
     "Endpoint": "Titik Akhir",
@@ -1503,7 +1504,8 @@
   },
   "OpenVSCodeRemote": "Buka Kod Visual Studio tempatan",
   "inputLimit": {
-    "4to64chars": "(4~64 aksara)"
+    "4to64chars": "(4~64 aksara)",
+    "4to32chars": "(4~32 aksara)"
   },
   "modelStore": {
     "Description": "Penerangan",

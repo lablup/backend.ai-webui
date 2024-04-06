@@ -324,7 +324,7 @@
     "Architecture": "Architektur",
     "SessionType": "SessionType",
     "Validation": {
-      "EnterValidSessionName": "Gültigen Sitzungsnamen eingeben",
+      "EnterValidSessionName": "Bitte geben Sie eine Kombination aus mindestens 4 Buchstaben, Zahlen, Bindestrichen oder Unterstrichen ein.",
       "SessionNameRequired": "Sitzungsname ist erforderlich",
       "SluggedStrings": "Geschliffene Zeichenfolgen (>3 Zeichen)",
       "SessionNameAlreadyExist": "Sitzungsname existiert bereits",
@@ -437,7 +437,8 @@
     "Clone": "Klonen",
     "Config": "Konfigurieren Sie",
     "Next": "Weiter",
-    "Previous": "Vorherige"
+    "Previous": "Vorherige",
+    "PushToImage": "Push-Sitzung auf benutzerdefiniertes Bild"
   },
   "agent": {
     "Endpoint": "Endpunkt",
@@ -1522,7 +1523,8 @@
   },
   "OpenVSCodeRemote": "Lokalen Visual Studio Code öffnen",
   "inputLimit": {
-    "4to64chars": "(4~64 Zeichen)"
+    "4to64chars": "(4~64 Zeichen)",
+    "4to32chars": "(4~32 Zeichen)"
   },
   "modelStore": {
     "Description": "Beschreibung",

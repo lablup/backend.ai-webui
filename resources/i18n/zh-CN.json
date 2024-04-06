@@ -324,7 +324,7 @@
     "Architecture": "建筑学",
     "SessionType": "会话类型",
     "Validation": {
-      "EnterValidSessionName": "输入有效的会话名称",
+      "EnterValidSessionName": "请输入至少 4 个字母、数字、连字符或下划线的组合。",
       "SessionNameRequired": "会话名称为必填项",
       "SluggedStrings": "多字符串（>3 字符）",
       "SessionNameAlreadyExist": "会话名称已存在",
@@ -437,7 +437,8 @@
     "Clone": "克隆",
     "Config": "配置",
     "Next": "下一页",
-    "Previous": "上一页"
+    "Previous": "上一页",
+    "PushToImage": "将会话推送到自定义镜像"
   },
   "agent": {
     "Endpoint": "端点",
@@ -1522,7 +1523,8 @@
   },
   "OpenVSCodeRemote": "打开本地 Visual Studio 代码",
   "inputLimit": {
-    "4to64chars": "（4 至 64 个字符）"
+    "4to64chars": "（4 至 64 个字符）",
+    "4to32chars": "(4~32个字符)"
   },
   "modelStore": {
     "Description": "描述",

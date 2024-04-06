@@ -324,7 +324,7 @@
     "Architecture": "Ngành kiến ​​​​trúc",
     "SessionType": "Loại phiên",
     "Validation": {
-      "EnterValidSessionName": "Nhập tên phiên hợp lệ",
+      "EnterValidSessionName": "Vui lòng nhập kết hợp ít nhất 4 chữ cái trong bảng chữ cái, hoặc số, hoặc dấu gạch ngang hoặc dấu gạch dưới.",
       "SessionNameRequired": "Tên phiên là bắt buộc",
       "SluggedStrings": "Chuỗi bị trượt (>3 ký tự)",
       "SessionNameAlreadyExist": "Tên phiên đã tồn tại",
@@ -437,7 +437,8 @@
     "Clone": "Dòng vô tính",
     "Config": "Cấu hình",
     "Next": "Kế tiếp",
-    "Previous": "Trước"
+    "Previous": "Trước",
+    "PushToImage": "Đẩy phiên sang hình ảnh tùy chỉnh"
   },
   "agent": {
     "Endpoint": "Điểm cuối",
@@ -1522,7 +1523,8 @@
   },
   "OpenVSCodeRemote": "Mở mã Visual Studio cục bộ",
   "inputLimit": {
-    "4to64chars": "(4~64 ký tự)"
+    "4to64chars": "(4~64 ký tự)",
+    "4to32chars": "(4~32 ký tự)"
   },
   "modelStore": {
     "Description": "Sự miêu tả",
