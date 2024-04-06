@@ -1832,6 +1832,10 @@ export default class BackendAISessionList extends BackendAIPage {
     this.commitSessionDialog.sessionName = sessionName;
     this.commitSessionDialog.sessionId = sessionId;
     this.commitSessionDialog.kernelImage = kernelImage;
+    // Reset image name field;
+    (
+      this.shadowRoot?.querySelector('#new-image-name-field') as TextField
+    ).value = '';
     this.commitSessionDialog.show();
   }
 
