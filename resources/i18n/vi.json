@@ -270,7 +270,8 @@
       "InteractiveModeDesc": "cho phép bạn tạo, kiểm tra và chạy mã tương tác thông qua sổ ghi chép jupyter, mã studio trực quan, v.v.",
       "BatchModeDesc": "Bạn có thể chạy mã của mình với nhiều nút",
       "AddEnvironmentVariable": "Thêm biến môi trường",
-      "EnvironmentVariableValueRequired": "Vui lòng nhập một giá trị."
+      "EnvironmentVariableValueRequired": "Vui lòng nhập một giá trị.",
+      "PleaseCompleteForm": "Biểu mẫu không đầy đủ hoặc có lỗi. \nVui lòng kiểm tra đầu vào của bạn."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",

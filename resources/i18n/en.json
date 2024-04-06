@@ -283,7 +283,8 @@
       "BatchModeDesc": "runs your code with multiple node & clusters to scale your idea",
       "InteractiveModeDesc": "allows you to create, test and run code interactively via jupyter notebook, visual studio code, etc.",
       "AddEnvironmentVariable": "Add environment variables",
-      "EnvironmentVariableValueRequired": "Please enter a value."
+      "EnvironmentVariableValueRequired": "Please enter a value.",
+      "PleaseCompleteForm": "Form is incomplete or contains errors. Please check your inputs."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

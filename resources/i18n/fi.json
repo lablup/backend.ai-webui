@@ -1162,7 +1162,8 @@
       "InteractiveModeDesc": "voit luoda, testata ja ajaa koodia vuorovaikutteisesti jupyter notebookin, visual studio code -ohjelman jne. avulla.",
       "BatchModeDesc": "Voit ajaa koodisi useiden solmujen ja klustereiden kanssa ideasi skaalaamiseksi.",
       "AddEnvironmentVariable": "Lisää ympäristömuuttujia",
-      "EnvironmentVariableValueRequired": "Anna arvo."
+      "EnvironmentVariableValueRequired": "Anna arvo.",
+      "PleaseCompleteForm": "Lomake on puutteellinen tai sisältää virheitä. Tarkista syöttämäsi tiedot."
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

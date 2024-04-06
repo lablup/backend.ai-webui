@@ -270,7 +270,9 @@
       "NeoSwitchDescription": "현재 \"{{launcher}}\" 세션 런처를 사용중입니다.",
       "PreviousLauncher": "Classic",
       "NeoLauncher": "NEO",
-      "EnvironmentVariableValueRequired": "값을 입력해주세요."
+      "EnvironmentVariableValueRequired": "값을 입력해주세요.",
+      "PleaseCompleteForm": "양식이 완성되지 않았거나 오류가 포함되어 있습니다. 입력 내용을 확인해주세요.",
+      "NeedToCorrectForm": "수정 버튼을 눌러 입력하신 내용을 확인해주세요."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

@@ -1164,7 +1164,8 @@
       "InteractiveModeDesc": "permite crear, probar y ejecutar código de forma interactiva a través de jupyter notebook, visual studio code, etc.",
       "BatchModeDesc": "Puedes ejecutar tu código con múltiples nodos y clusters para escalar tu idea",
       "AddEnvironmentVariable": "Añadir variables de entorno",
-      "EnvironmentVariableValueRequired": "Por favor, introduzca un valor."
+      "EnvironmentVariableValueRequired": "Por favor, introduzca un valor.",
+      "PleaseCompleteForm": "El formulario está incompleto o contiene errores. Compruebe los datos introducidos."
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

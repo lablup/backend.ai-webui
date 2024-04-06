@@ -69,6 +69,7 @@ import {
   Switch,
   Table,
   Tag,
+  Tooltip,
   Typography,
   theme,
 } from 'antd';
@@ -1613,15 +1614,23 @@ const SessionLauncherPage = () => {
                       </Button>
                     )}
                     {currentStep === steps.length - 1 ? (
-                      <Button
-                        type="primary"
-                        icon={<PlayCircleOutlined />}
-                        disabled={hasError}
-                        onClick={startSession}
-                        loading={isStartingSession}
+                      <Tooltip
+                        title={
+                          hasError
+                            ? t('session.launcher.PleaseCompleteForm')
+                            : undefined
+                        }
                       >
-                        {t('session.launcher.Launch')}
-                      </Button>
+                        <Button
+                          type="primary"
+                          icon={<PlayCircleOutlined />}
+                          disabled={hasError}
+                          onClick={startSession}
+                          loading={isStartingSession}
+                        >
+                          {t('session.launcher.Launch')}
+                        </Button>
+                      </Tooltip>
                     ) : (
                       <Button
                         type="primary"
