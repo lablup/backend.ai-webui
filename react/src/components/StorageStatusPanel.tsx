@@ -133,7 +133,7 @@ const StorageStatusPanel: React.FC<{
         $storage_host_name: String!
         $skipQuotaScope: Boolean!
       ) {
-        user_resource_policy(name: $user_RP_name) @since(version: "23.09.4") {
+        user_resource_policy(name: $user_RP_name) @since(version: "23.09.6") {
           max_vfolder_count
         }
         # project_resource_policy(name: $project_RP_name) @since(version: "23.09.1") {
