@@ -1,4 +1,4 @@
-const packager = require('electron-packager');
+const packager = require('@electron/packager');
 const clc = require("cli-color");
 const { program, Option } = require('commander');
 
@@ -22,7 +22,7 @@ let baseOptions = {
   ignore: [
     '.git',
     '.git(ignore|modules)',
-    'node_modules/electron-packager'
+    'node_modules/@electron/packager'
   ],
   platform: 'darwin',
   arch: 'arm64',
@@ -89,7 +89,7 @@ if (selectedOptions.doSign === true && (args[0] === 'mas' || args[0] === 'darwin
     appleId: selectedOptions.signAppleId,
     appleIdPassword: selectedOptions.signAppleIdPassword,
   }
-  
+
   console.log(clc.blue('\n[BUILD]') + ` Signing package with identity ${clc.yellow(options.osxSign.identity)}`);
   if (selectedOptions.signKeychain) {
     console.log(clc.blue('\n[BUILD]') + ` Using keychain ${clc.yellow(selectedOptions.signKeychain)} instead of default`);
