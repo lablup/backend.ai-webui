@@ -1,4 +1,11 @@
 # Changelog
+## v24.03.1 (07/04/2024)
+## What's Changed
+* fix: Electron packaging stuck due to apple app signing changes (#2319)
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v24.03.0...v24.03.1
+
+
 ## v24.03.0 (06/04/2024)
 ## What's Changed
 * fix: @typescript-eslint/typescript-estree dependency warning by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2225
