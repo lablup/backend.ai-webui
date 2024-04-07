@@ -123,6 +123,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) hideAgents = true;
   @property({ type: Boolean }) enable2FA = false;
   @property({ type: Boolean }) force2FA = false;
+  @property({ type: Boolean }) allowNonAuthTCP = false;
   @property({ type: Array }) singleSignOnVendors: string[] = [];
   @property({ type: String }) ssoRealmName = '';
   @property({ type: Array }) allow_image_list;
@@ -894,6 +895,13 @@ export default class BackendAILogin extends BackendAIPage {
       valueType: 'boolean',
       defaultValue: false,
       value: resourcesConfig?.allowPreferredPort,
+    } as ConfigValueObject) as boolean;
+
+    // Preferred port flag
+    this.allowNonAuthTCP = this._getConfigValueByExists(resourcesConfig, {
+      valueType: 'boolean',
+      defaultValue: false,
+      value: resourcesConfig?.allowNonAuthTCP,
     } as ConfigValueObject) as boolean;
 
     // Max CPU cores per container number
@@ -1796,6 +1804,8 @@ export default class BackendAILogin extends BackendAIPage {
           this.openPortToPublic;
         globalThis.backendaiclient._config.allowPreferredPort =
           this.allowPreferredPort;
+        globalThis.backendaiclient._config.allowNonAuthTCP =
+          this.allowNonAuthTCP;
         globalThis.backendaiclient._config.maxCPUCoresPerContainer =
           this.maxCPUCoresPerContainer;
         globalThis.backendaiclient._config.maxMemoryPerContainer =
@@ -2025,7 +2035,7 @@ export default class BackendAILogin extends BackendAIPage {
           >
             <div>
               ${this.connection_mode === 'SESSION'
-                ? _t('login.LoginWithE-mail')
+                ? _t('login.LoginWithE-mailorUsername')
                 : _t('login.LoginWithIAM')}
             </div>
             <div class="flex"></div>
@@ -2078,7 +2088,7 @@ export default class BackendAILogin extends BackendAIPage {
                     id="id_user_id"
                     maxlength="64"
                     autocomplete="username"
-                    label="${_t('login.E-mail')}"
+                    label="${_t('login.E-mailorUsername')}"
                     value="${this.user_id}"
                     @keyup="${this._submitIfEnter}"
                   ></mwc-textfield>

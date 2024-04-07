@@ -58,6 +58,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({ type: Boolean }) _ipu_disabled = false;
   @property({ type: Boolean }) _atom_disabled = false;
   @property({ type: Boolean }) _warboy_disabled = false;
+  @property({ type: Boolean }) _hyperaccel_lpu_disabled = false;
   @property({ type: Object }) alias = Object();
   @property({ type: Object }) indicator = Object();
   @property({ type: Array }) installImageNameList;
@@ -91,6 +92,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     ipu: ['0', '1', '2', '3', '4'],
     atom: ['0', '1', '2', '3', '4'],
     warboy: ['0', '1', '2', '3', '4'],
+    hyperaccel_lpu: ['0', '1', '2', '3', '4'],
   };
   @property({ type: Number }) cpuValue = 0;
   @property({ type: String }) listCondition: StatusCondition = 'loading';
@@ -116,6 +118,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @query('#modify-image-ipu') modifyImageIpu!: Button;
   @query('#modify-image-atom') modifyImageAtom!: Button;
   @query('#modify-image-warboy') modifyImageWarboy!: Button;
+  @query('#modify-image-hyperaccel-lpu') modifyImageHyperaccelLPU!: Button;
   @query('#delete-app-info-dialog') deleteAppInfoDialog!: BackendAIDialog;
   @query('#delete-image-dialog') deleteImageDialog!: BackendAIDialog;
   @query('#install-image-dialog') installImageDialog!: BackendAIDialog;
@@ -209,7 +212,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           background-image: var(--general-sidebar-color);
         }
         mwc-button[disabled].range-value {
-          --mdc-button-disabled-ink-color: var(--general-sidebar-color);
+          --mdc-button-disabled-ink-color: var(
+            --token-colorTextDisabled,
+            --general-sidebar-color
+          );
         }
         mwc-select {
           --mdc-menu-item-height: auto;
@@ -224,7 +230,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           width: 150px;
           margin: auto 10px;
           --mdc-theme-primary: var(--general-slider-color);
-          --mdc-theme-text-primary-on-dark: #ffffff;
+          --mdc-theme-text-primary-on-dark: var(
+            --token-colorSecondary,
+            #ffffff
+          );
         }
       `,
     ];
@@ -507,6 +516,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               if (resource.key == 'warboy.device') {
                 resource.key = 'warboy_device';
               }
+              if (resource.key == 'hyperaccel-lpu.device') {
+                resource.key = 'hyperaccl_lpu_device';
+              }
               if (resource.min !== null && resource.min !== undefined) {
                 image[resource.key + '_limit_min'] = this._addUnit(
                   resource.min,
@@ -678,6 +690,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const ipu = this.modifyImageIpu.label;
     const atom = this.modifyImageAtom.label;
     const warboy = this.modifyImageWarboy.label;
+    const hyperaccel_lpu = this.modifyImageHyperaccelLPU.label;
 
     const { resource_limits } = this.images[this.selectedIndex];
 
@@ -709,6 +722,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       input['atom.device'] = { min: atom };
     if (!this._warboy_disabled && warboy !== resource_limits[6].min)
       input['warboy.device'] = { min: warboy };
+    if (
+      !this._hyperaccel_lpu_disabled &&
+      hyperaccel_lpu !== resource_limits[6].min
+    )
+      input['hyperaccel-lpu.device'] = { min: hyperaccel_lpu };
 
     const image = this.images[this.selectedIndex];
 
@@ -938,6 +956,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       resource_limits.filter((e) => e.key === 'atom_device').length === 0;
     this._warboy_disabled =
       resource_limits.filter((e) => e.key === 'warboy_device').length === 0;
+    this._hyperaccel_lpu_disabled =
+      resource_limits.filter((e) => e.key === 'hyperaccel_lpu_device')
+        .length === 0;
     const resources = resource_limits.reduce((result, item) => {
       const { key, ...rest } = item;
       const value = rest;
@@ -1031,6 +1052,24 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     } else {
       this.modifyImageWarboy.label = _t('environment.Disabled') as string;
       (this.shadowRoot?.querySelector('mwc-slider#warboy') as Slider).value = 0;
+    }
+    if (!this._hyperaccel_lpu_disabled) {
+      this.modifyImageHyperaccelLPU.label =
+        resources['hyperaccel_lpu_device'].min;
+      (
+        this.shadowRoot?.querySelector('mwc-slider#hyperaccel-lpu') as Slider
+      ).value = this._range['hyperaccel-lpu'].indexOf(
+        this._range['hyperaccel-lpu'].filter((value) => {
+          return value === resources['hyperaccel_lpu_device'].min;
+        })[0],
+      );
+    } else {
+      this.modifyImageHyperaccelLPU.label = _t(
+        'environment.Disabled',
+      ) as string;
+      (
+        this.shadowRoot?.querySelector('mwc-slider#hyperaccel-lpu') as Slider
+      ).value = 0;
     }
 
     this.modifyImageMemory.label = this._addUnit(resources['mem'].min);
@@ -1272,7 +1311,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ? html`
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green indicator">apps</mwc-icon>
+                  <mwc-icon class="fg green indicator">view_module</mwc-icon>
                   <span>${rowData.item.tpu_device_limit_min}</span>
                   ~
                   <span>
@@ -1287,7 +1326,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ? html`
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green indicator">apps</mwc-icon>
+                  <mwc-icon class="fg green indicator">view_module</mwc-icon>
                   <span>${rowData.item.ipu_device_limit_min}</span>
                   ~
                   <span>
@@ -1302,7 +1341,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ? html`
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green indicator">apps</mwc-icon>
+                  <img
+                    class="indicator-icon fg green"
+                    src="/resources/icons/rebel.svg"
+                  />
                   <span>${rowData.item.atom_device_limit_min}</span>
                   ~
                   <span>
@@ -1317,7 +1359,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ? html`
               <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green indicator">apps</mwc-icon>
+                  <img
+                    class="indicator-icon fg green"
+                    src="/resources/icons/furiosa.svg"
+                  />
                   <span>${rowData.item.warboy_device_limit_min}</span>
                   ~
                   <span>
@@ -1326,6 +1371,26 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                     )}
                   </span>
                   <span class="indicator">Warboy</span>
+                </div>
+              </div>
+            `
+          : html``}
+        ${rowData.item.hyperaccel_lpu_device_limit_min
+          ? html`
+              <div class="layout horizontal center flex">
+                <div class="layout horizontal configuration">
+                  <img
+                    class="indicator-icon fg green"
+                    src="/resources/icons/npu_generic.svg"
+                  />
+                  <span>${rowData.item.hyperaccel_lpu_device_limit_min}</span>
+                  ~
+                  <span>
+                    ${this._markIfUnlimited(
+                      rowData.item.hyperaccel_lpu_device_limit_max,
+                    )}
+                  </span>
+                  <span class="indicator">Hyperaccel LPU</span>
                 </div>
               </div>
             `
@@ -1749,6 +1814,22 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <mwc-button
                 class="range-value"
                 id="modify-image-warboy"
+                disabled
+              ></mwc-button>
+            </div>
+            <div class="horizontal layout flex center">
+              <span class="resource-limit-title">Hyperaccel LPU</span>
+              <mwc-slider
+                ?disabled="${this._hyperaccel_lpu_disabled}"
+                id="hyperaccel-lpu"
+                markers
+                step="1"
+                max="5"
+                @change="${(e) => this._changeSliderValue(e.target)}"
+              ></mwc-slider>
+              <mwc-button
+                class="range-value"
+                id="modify-image-hyperaccel-lpu"
                 disabled
               ></mwc-button>
             </div>

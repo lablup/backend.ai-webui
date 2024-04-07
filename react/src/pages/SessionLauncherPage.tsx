@@ -1,6 +1,7 @@
 import BAICard from '../BAICard';
 import BAIIntervalText from '../components/BAIIntervalText';
 import DatePickerISO from '../components/DatePickerISO';
+import DoubleTag from '../components/DoubleTag';
 import EnvVarFormList, {
   EnvVarFormListValue,
 } from '../components/EnvVarFormList';
@@ -19,6 +20,7 @@ import ResourceAllocationFormItems, {
   ResourceAllocationFormValue,
 } from '../components/ResourceAllocationFormItems';
 import ResourceNumber from '../components/ResourceNumber';
+import SessionKernelTag from '../components/SessionKernelTag';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
@@ -67,6 +69,7 @@ import {
   Switch,
   Table,
   Tag,
+  Tooltip,
   Typography,
   theme,
 } from 'antd';
@@ -194,7 +197,11 @@ const SessionLauncherPage = () => {
       setQuery(
         {
           // formValues: form.getFieldsValue(),
-          formValues: _.omit(form.getFieldsValue(), ['environments.image']),
+          formValues: _.omit(
+            form.getFieldsValue(),
+            ['environments.image'],
+            ['environments.customizedTag'],
+          ),
         },
         'replaceIn',
       );
@@ -478,6 +485,7 @@ const SessionLauncherPage = () => {
               resolved: t('eduapi.ComputeSessionPrepared'),
             },
           },
+          duration: 0,
           message: t('general.Session') + ': ' + sessionName,
           open: true,
         });
@@ -1208,10 +1216,45 @@ const SessionLauncherPage = () => {
                               }
                             />
                             {/* {form.getFieldValue('environments').image} */}
-                            <Typography.Text copyable code>
-                              {form.getFieldValue('environments')?.version ||
-                                form.getFieldValue('environments')?.manual}
-                            </Typography.Text>
+                            <Flex direction="row">
+                              {form.getFieldValue('environments')?.manual ? (
+                                <Typography.Text copyable code>
+                                  form.getFieldValue('environments')?.manual
+                                </Typography.Text>
+                              ) : (
+                                <>
+                                  <SessionKernelTag
+                                    image={
+                                      form.getFieldValue('environments')
+                                        ?.version
+                                    }
+                                  />
+                                  {form.getFieldValue('environments')
+                                    ?.customizedTag ? (
+                                    <DoubleTag
+                                      values={[
+                                        {
+                                          label: 'Customized',
+                                          color: 'cyan',
+                                        },
+                                        {
+                                          label:
+                                            form.getFieldValue('environments')
+                                              ?.customizedTag,
+                                          color: 'cyan',
+                                        },
+                                      ]}
+                                    />
+                                  ) : null}
+                                  <Typography.Text
+                                    copyable={{
+                                      text: form.getFieldValue('environments')
+                                        ?.version,
+                                    }}
+                                  />
+                                </>
+                              )}
+                            </Flex>
                           </Flex>
                         </Descriptions.Item>
                         {form.getFieldValue('envvars')?.length > 0 && (
@@ -1279,13 +1322,14 @@ const SessionLauncherPage = () => {
                       }}
                     >
                       <Flex direction="column" align="stretch">
-                        {_.some(form.getFieldValue('resource'), (v, key) => {
-                          //                         console.log(form.getFieldError(['resource', 'shmem']));
-                          // console.log(form.getFieldValue(['resource']));
-                          return (
-                            form.getFieldWarning(['resource', key]).length > 0
-                          );
-                        }) && (
+                        {_.some(
+                          form.getFieldValue('resource')?.resource,
+                          (v, key) => {
+                            return (
+                              form.getFieldWarning(['resource', key]).length > 0
+                            );
+                          },
+                        ) && (
                           <Alert
                             type="warning"
                             showIcon
@@ -1571,15 +1615,23 @@ const SessionLauncherPage = () => {
                       </Button>
                     )}
                     {currentStep === steps.length - 1 ? (
-                      <Button
-                        type="primary"
-                        icon={<PlayCircleOutlined />}
-                        disabled={hasError}
-                        onClick={startSession}
-                        loading={isStartingSession}
+                      <Tooltip
+                        title={
+                          hasError
+                            ? t('session.launcher.PleaseCompleteForm')
+                            : undefined
+                        }
                       >
-                        {t('session.launcher.Launch')}
-                      </Button>
+                        <Button
+                          type="primary"
+                          icon={<PlayCircleOutlined />}
+                          disabled={hasError}
+                          onClick={startSession}
+                          loading={isStartingSession}
+                        >
+                          {t('session.launcher.Launch')}
+                        </Button>
+                      </Tooltip>
                     ) : (
                       <Button
                         type="primary"
@@ -1645,7 +1697,7 @@ const FormResourceNumbers: React.FC<{
     <>
       {_.map(
         _.omit(
-          form.getFieldValue('resource'),
+          form.getFieldsValue().resource,
           'shmem',
           'accelerator',
           'acceleratorType',

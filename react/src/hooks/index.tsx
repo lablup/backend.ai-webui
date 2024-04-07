@@ -262,6 +262,13 @@ export const useBackendAIImageMetaData = () => {
         return tags[1];
       },
       getImageMeta,
+      getArchitecture: (imageName: string) => {
+        let [, architecture] = imageName ? imageName.split('@') : ['', ''];
+        return architecture;
+      },
+      tagAlias: (tag: string) => {
+        return metadata?.tagAlias[tag] || tag;
+      },
     },
   ] as const;
 };
@@ -317,5 +324,6 @@ type BackendAIConfig = {
   blockList: string[];
   inactiveList: string[];
   allowSignout: boolean;
+  allowNonAuthTCP: boolean;
   [key: string]: any;
 };

@@ -53,7 +53,7 @@ const UserDropdownMenu: React.FC = () => {
   const userRole = useCurrentUserRole();
 
   const webuiNavigate = useWebUINavigate();
-  const totpSupported = useTOTPSupported();
+  const { isTOTPSupported } = useTOTPSupported();
 
   const [isPendingRefreshModal, startRefreshModalTransition] = useTransition();
   const [
@@ -117,7 +117,7 @@ const UserDropdownMenu: React.FC = () => {
           loadUserProfileSettingQuery(
             {
               email: userInfo.email,
-              isNotSupportTotp: !totpSupported,
+              isNotSupportTotp: !isTOTPSupported,
             },
             {
               fetchPolicy: 'network-only',
@@ -213,7 +213,7 @@ const UserDropdownMenu: React.FC = () => {
       <Suspense>
         {userProfileSettingQueryRef && (
           <UserProfileSettingModal
-            totpSupported={totpSupported}
+            totpSupported={isTOTPSupported}
             queryRef={userProfileSettingQueryRef}
             open={isOpenUserSettingModal}
             onRequestClose={() => {
@@ -225,7 +225,7 @@ const UserDropdownMenu: React.FC = () => {
                 loadUserProfileSettingQuery(
                   {
                     email: userInfo.email,
-                    isNotSupportTotp: !totpSupported,
+                    isNotSupportTotp: !isTOTPSupported,
                   },
                   {
                     fetchPolicy: 'network-only',

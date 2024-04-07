@@ -83,7 +83,6 @@ const ResourceAllocationFormItems: React.FC<
 
   const baiClient = useSuspendedBackendaiClient();
   const [resourceSlots] = useResourceSlots();
-  const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
 
   const [{ keypairResourcePolicy, sessionLimitAndRemaining }] =
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
@@ -105,6 +104,17 @@ const ResourceAllocationFormItems: React.FC<
       currentResourceGroup: currentResourceGroup,
       currentImage: currentImage,
     });
+
+  const acceleratorSlots = _.omitBy(resourceSlots, (value, key) => {
+    if (['cpu', 'mem', 'shmem'].includes(key)) return true;
+
+    if (
+      !resourceLimits.accelerators[key]?.max ||
+      resourceLimits.accelerators[key]?.max === 0
+    )
+      return true;
+    return false;
+  });
 
   const currentImageAcceleratorLimits = _.filter(
     currentImage?.resource_limits,
@@ -142,7 +152,7 @@ const ResourceAllocationFormItems: React.FC<
         return false;
       }
       const acceleratorKeys = _.keys(
-        _.omit(preset.resource_slots, ['mem', 'cpu']),
+        _.omit(preset.resource_slots, ['mem', 'cpu', 'shmem']),
       );
       const isAvailable = _.every(acceleratorKeys, (key) => {
         if (
@@ -158,15 +168,48 @@ const ResourceAllocationFormItems: React.FC<
       });
       return isAvailable;
     }).map((preset) => preset.name);
-    return baiClient._config?.always_enqueue_compute_session
-      ? bySliderLimit
-      : byPresetInfo;
+
+    const byImageAcceleratorLimits = _.filter(
+      checkPresetInfo?.presets,
+      (preset) => {
+        const acceleratorResourceOfPreset = _.omitBy(
+          preset.resource_slots,
+          (value, key) => {
+            if (['mem', 'cpu', 'shmem'].includes(key) || value === '0')
+              return true;
+          },
+        );
+        if (currentImageAcceleratorLimits.length === 0) {
+          if (_.isEmpty(acceleratorResourceOfPreset)) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+
+        return _.some(currentImageAcceleratorLimits, (limit) => {
+          return _.some(acceleratorResourceOfPreset, (value, key) => {
+            return (
+              limit?.key === key && _.toNumber(value) >= _.toNumber(limit?.min)
+            );
+          });
+        });
+      },
+    ).map((preset) => preset.name);
+
+    return _.intersection(
+      baiClient._config?.always_enqueue_compute_session
+        ? bySliderLimit
+        : byPresetInfo,
+      byImageAcceleratorLimits,
+    );
   }, [
     baiClient._config?.always_enqueue_compute_session,
     checkPresetInfo?.presets,
     resourceLimits.accelerators,
     resourceLimits.cpu?.max,
     resourceLimits.mem?.max,
+    currentImageAcceleratorLimits,
   ]);
 
   const updateAllocationPresetBasedOnResourceGroup = useEventNotStable(() => {
@@ -195,10 +238,14 @@ const ResourceAllocationFormItems: React.FC<
     }, 200);
   });
 
-  // update allocation preset based on resource group
+  // update allocation preset based on resource group and current image
   useEffect(() => {
     currentResourceGroup && updateAllocationPresetBasedOnResourceGroup();
-  }, [currentResourceGroup, updateAllocationPresetBasedOnResourceGroup]);
+  }, [
+    currentResourceGroup,
+    updateAllocationPresetBasedOnResourceGroup,
+    currentImage,
+  ]);
 
   const updateResourceFieldsBasedOnImage = (force?: boolean) => {
     // when image changed, set value of resources to min value only if it's larger than current value
@@ -308,9 +355,30 @@ const ResourceAllocationFormItems: React.FC<
     );
     const slots = _.pick(preset?.resource_slots, _.keys(resourceSlots));
     const mem = iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.numberUnit;
+    const acceleratorObj = _.omit(slots, ['cpu', 'mem', 'shmem']);
+
+    // Select the first matched AI accelerator type and value
+    const firstMatchedAcceleratorType = _.find(
+      _.keys(acceleratorSlots),
+      (value) => acceleratorObj[value] !== undefined,
+    );
+
+    let acceleratorSetting: {
+      acceleratorType?: string;
+      accelerator: number;
+    } = {
+      accelerator: 0,
+    };
+    if (firstMatchedAcceleratorType) {
+      acceleratorSetting = {
+        acceleratorType: firstMatchedAcceleratorType,
+        accelerator: Number(acceleratorObj[firstMatchedAcceleratorType] || 0),
+      };
+    }
     form.setFieldsValue({
       resource: {
-        ...slots,
+        // ...slots,
+        ...acceleratorSetting,
         // transform to GB based on preset values
         mem,
         shmem: iSizeToSize((preset?.shared_memory || 0) + 'b', 'g', 2)
@@ -1046,29 +1114,16 @@ const ResourceAllocationFormItems: React.FC<
                       required: true,
                     },
                     {
-                      warningOnly:
-                        baiClient._config?.always_enqueue_compute_session,
+                      warningOnly: true,
                       validator: async (rule, value: number) => {
                         if (
                           sessionSliderLimitAndRemaining &&
                           value > sessionSliderLimitAndRemaining.remaining
                         ) {
                           return Promise.reject(
-                            baiClient._config?.always_enqueue_compute_session
-                              ? t(
-                                  'session.launcher.EnqueueComputeSessionWarning',
-                                  {
-                                    amount:
-                                      sessionSliderLimitAndRemaining.remaining,
-                                  },
-                                )
-                              : t(
-                                  'session.launcher.ErrorCanNotExceedRemaining',
-                                  {
-                                    amount:
-                                      sessionSliderLimitAndRemaining.remaining,
-                                  },
-                                ),
+                            t('session.launcher.EnqueueComputeSessionWarning', {
+                              amount: sessionSliderLimitAndRemaining.remaining,
+                            }),
                           );
                         } else {
                           return Promise.resolve();
