@@ -27,6 +27,7 @@ jobs:
         run: make all
         env:
           BAI_APP_SIGN: 1
+          BAI_APP_SIGN_APPLE_TEAM_ID: ${{ secrets.BAI_APP_SIGN_APPLE_TEAM_ID }}
           BAI_APP_SIGN_APPLE_ID: ${{ secrets.BAI_APP_SIGN_APPLE_ID }}
           BAI_APP_SIGN_APPLE_ID_PASSWORD: ${{ secrets.BAI_APP_SIGN_APPLE_ID_PASSWORD }}
           BAI_APP_SIGN_IDENTITY: ${{ secrets.BAI_APP_SIGN_IDENTITY }}
