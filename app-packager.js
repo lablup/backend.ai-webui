@@ -9,6 +9,7 @@ program
 program.addOption((new Option('--do-sign', 'Code sign created application with Apple Developer Identity.').env('BAI_APP_SIGN')))
 program.addOption((new Option('--sign-apple-id <john@example.com>')).env('BAI_APP_SIGN_APPLE_ID'))
 program.addOption((new Option('--sign-apple-id-password <aaaa-bbbb-cccc-dddd>')).env('BAI_APP_SIGN_APPLE_ID_PASSWORD'))
+program.addOption((new Option('--sign-apple-team-id <Name of Apple Developer Team ID>')).env('BAI_APP_SIGN_APPLE_TEAM_ID'))
 program.addOption((new Option('--sign-identity <Apple Distribution: Example Inc. (AAAAAAAAAA)>')).env('BAI_APP_SIGN_IDENTITY'))
 program.addOption((new Option('--sign-keychain <Name of keychain>')).env('BAI_APP_SIGN_KEYCHAIN'))
 
@@ -88,6 +89,7 @@ if (selectedOptions.doSign === true && (args[0] === 'mas' || args[0] === 'darwin
   options.osxNotarize = {
     appleId: selectedOptions.signAppleId,
     appleIdPassword: selectedOptions.signAppleIdPassword,
+    teamId: selectedOptions.signAppleTeamId,
   }
 
   console.log(clc.blue('\n[BUILD]') + ` Signing package with identity ${clc.yellow(options.osxSign.identity)}`);
