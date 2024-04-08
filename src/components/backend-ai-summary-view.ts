@@ -593,9 +593,12 @@ export default class BackendAISummary extends BackendAIPage {
                                   (c) => html`
                                     <lablup-shields
                                       app=""
-                                      color="${['green', 'blue', 'red'][
-                                        ['r', 'w', 'd'].indexOf(c)
-                                      ]}"
+                                      color="${[
+                                        'green',
+                                        'blue',
+                                        'red',
+                                        'yellow',
+                                      ][['r', 'w', 'd', 'o'].indexOf(c)]}"
                                       description="${c.toUpperCase()}"
                                       ui="flat"
                                     ></lablup-shields>
