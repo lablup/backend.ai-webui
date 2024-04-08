@@ -604,9 +604,6 @@ export default class BackendAISummary extends BackendAIPage {
                                     ></lablup-shields>
                                   `,
                                 )}
-                                ${[...invitation.perm].map((c) =>
-                                  console.log(c),
-                                )}
                               </div>
                               <div
                                 style="margin:15px auto;"
