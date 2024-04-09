@@ -83,7 +83,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 182px);
+          height: var(--list-height, calc(100vh - 182px));
         }
 
         mwc-icon {
