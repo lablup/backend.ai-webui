@@ -124,10 +124,24 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Array }) supportLanguageCodes = [
     'en',
     'ko',
-    'ru',
+    'de',
+    'el',
+    'es',
+    'fi',
     'fr',
-    'mn',
     'id',
+    'it',
+    'ja',
+    'mn',
+    'ms',
+    'pl',
+    'pt',
+    'pt-BR',
+    'ru',
+    'tr',
+    'vi',
+    'zh-CN',
+    'zh-TW',
   ];
   @property({ type: Array }) blockedMenuItem;
   @property({ type: Array }) inactiveMenuItem;
@@ -411,6 +425,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.lang = 'en';
     }
     globalThis.backendaioptions.set('current_language', this.lang);
+    globalThis.backendaioptions.set('language', this.lang);
     await setLanguage(this.lang);
     this.hasLoadedStrings = true;
     // this._initClient();
