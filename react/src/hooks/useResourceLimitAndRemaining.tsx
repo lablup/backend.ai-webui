@@ -101,10 +101,12 @@ export const useResourceLimitAndRemaining = ({
     queryKey: ['check-resets', currentProjectName, currentResourceGroup],
     queryFn: () => {
       if (currentResourceGroup) {
-        return baiClient.resourcePreset.check({
-          group: currentProjectName,
-          scaling_group: currentResourceGroup,
-        });
+        return baiClient.resourcePreset
+          .check({
+            group: currentProjectName,
+            scaling_group: currentResourceGroup,
+          })
+          .catch(() => {});
       } else {
         return;
       }
