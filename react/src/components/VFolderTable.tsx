@@ -59,6 +59,8 @@ export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
   rowKey: string | number;
 }
 
+export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/-]*$/;
+
 const VFolderTable: React.FC<VFolderTableProps> = ({
   filter,
   showAliasInput = false,
@@ -248,7 +250,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                         {
                           // required: true,
                           type: 'string',
-                          pattern: /^[a-zA-Z0-9_/-]*$/,
+                          pattern: vFolderAliasNameRegExp,
                           message: t('session.launcher.FolderAliasInvalid'),
                         },
                         {
