@@ -97,7 +97,7 @@ export const useResourceLimitAndRemaining = ({
     data: checkPresetInfo,
     refetch,
     isRefetching,
-  } = useTanQuery<ResourceAllocation>({
+  } = useTanQuery<ResourceAllocation | undefined>({
     queryKey: ['check-resets', currentProjectName, currentResourceGroup],
     queryFn: () => {
       if (currentResourceGroup) {

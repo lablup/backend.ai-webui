@@ -1,6 +1,8 @@
 import { useEventNotStable } from './useEventNotStable';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { atomWithDefault } from 'jotai/utils';
 import _ from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { NavigateOptions, To, useNavigate } from 'react-router-dom';
 
@@ -64,44 +66,47 @@ export const useCurrentDomainValue = () => {
   return baiClient._config.domainName;
 };
 
+const currentProjectAtom = atomWithDefault(() => {
+  return {
+    // @ts-ignore
+    name: globalThis?.backendaiclient?.current_group,
+    // @ts-ignore
+    id: globalThis?.backendaiclient?.current_group_id(),
+  };
+});
+
 export const useCurrentProjectValue = () => {
-  const baiClient = useSuspendedBackendaiClient();
-  const [project, _setProject] = useState<{
-    name: string;
-    id: string;
-  }>({
-    name: baiClient.current_group,
-    id: baiClient.groupIds[baiClient.current_group],
-  });
-
-  useEffect(() => {
-    const listener = (e: any) => {
-      const newProjectName = e.detail;
-      _setProject({
-        name: newProjectName,
-        id: baiClient.groupIds[newProjectName],
-      });
-    };
-    document.addEventListener('backend-ai-group-changed', listener);
-    return () => {
-      document.removeEventListener('backend-ai-group-changed', listener);
-    };
-  }, [baiClient.groupIds]);
-
-  return project;
+  useSuspendedBackendaiClient();
+  return useAtomValue(currentProjectAtom);
 };
 
 export const useSetCurrentProject = () => {
+  const set = useSetAtom(currentProjectAtom);
   const baiClient = useSuspendedBackendaiClient();
-  return (projectInfo: { projectName: string; projectId: string }) => {
-    baiClient.current_group = projectInfo.projectName;
-    // @ts-ignore
-    globalThis.backendaiutils._writeRecentProjectGroup(baiClient.current_group);
-    const event: CustomEvent = new CustomEvent('backend-ai-group-changed', {
-      detail: projectInfo.projectName,
-    });
-    document.dispatchEvent(event);
-  };
+  return useCallback(
+    ({
+      projectName,
+      projectId,
+    }: {
+      projectName: string;
+      projectId: string;
+    }) => {
+      set({
+        name: projectName,
+        id: projectId,
+      });
+
+      // To sync with baiClient
+      baiClient.current_group = projectName;
+      // @ts-ignore
+      globalThis.backendaiutils._writeRecentProjectGroup(projectName);
+      const event: CustomEvent = new CustomEvent('backend-ai-group-changed', {
+        detail: projectName,
+      });
+      document.dispatchEvent(event);
+    },
+    [set, baiClient],
+  );
 };
 
 export const useAnonymousBackendaiClient = ({
