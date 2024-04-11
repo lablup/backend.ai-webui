@@ -428,6 +428,7 @@ const ResourceAllocationFormItems: React.FC<
             startCheckRestsTransition(() => {
               // update manually to handle granular pending status management
               form.setFieldValue('resourceGroup', v);
+              form.validateFields(['resourceGroup']).catch(() => {});
             });
           }}
         />

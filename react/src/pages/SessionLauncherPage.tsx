@@ -1198,16 +1198,13 @@ const SessionLauncherPage = () => {
                         );
                       }}
                     >
-                      <Descriptions size="small" column={2}>
+                      <Descriptions size="small" column={1}>
                         <Descriptions.Item
                           label={t('session.launcher.Project')}
                         >
                           {currentProject.name}
                         </Descriptions.Item>
-                        <Descriptions.Item label={t('general.ResourceGroup')}>
-                          {form.getFieldValue('resourceGroup')}
-                        </Descriptions.Item>
-                        <Descriptions.Item label={t('general.Image')} span={2}>
+                        <Descriptions.Item label={t('general.Image')}>
                           <Flex direction="row" gap="xs" style={{ flex: 1 }}>
                             <ImageMetaIcon
                               image={
@@ -1299,7 +1296,9 @@ const SessionLauncherPage = () => {
                           return (
                             form.getFieldError(['resource', key]).length > 0
                           );
-                        }) || form.getFieldError(['num_of_sessions']).length > 0
+                        }) ||
+                        form.getFieldError(['num_of_sessions']).length > 0 ||
+                        form.getFieldError('resourceGroup').length > 0
                           ? 'error'
                           : // : _.some(form.getFieldValue('resource'), (v, key) => {
                             //     //                         console.log(form.getFieldError(['resource', 'shmem']));
@@ -1340,6 +1339,16 @@ const SessionLauncherPage = () => {
                         )}
 
                         <Descriptions column={2}>
+                          <Descriptions.Item
+                            label={t('general.ResourceGroup')}
+                            span={2}
+                          >
+                            {form.getFieldValue('resourceGroup') || (
+                              <Typography.Text type="secondary">
+                                {t('general.None')}
+                              </Typography.Text>
+                            )}
+                          </Descriptions.Item>
                           <Descriptions.Item
                             label={t(
                               'session.launcher.ResourceAllocationPerContainer',
