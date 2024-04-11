@@ -21,6 +21,7 @@ export const navigate =
         '/agent-summary',
         '/experiment',
         '/data',
+        '/my-environment',
         '/pipeline',
         '/pipeline-job',
         '/statistics',

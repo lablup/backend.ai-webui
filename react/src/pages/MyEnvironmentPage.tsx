@@ -2,13 +2,14 @@ import DoubleTag from '../components/DoubleTag';
 import Flex from '../components/Flex';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import { useBackendAIImageMetaData, useUpdatableState } from '../hooks';
+import { MyEnvironmentPageForgetMutation } from './__generated__/MyEnvironmentPageForgetMutation.graphql';
 import {
   MyEnvironmentPageQuery,
   MyEnvironmentPageQuery$data,
 } from './__generated__/MyEnvironmentPageQuery.graphql';
 import { MyEnvironmentPageUntagMutation } from './__generated__/MyEnvironmentPageUntagMutation.graphql';
 import { DeleteOutlined } from '@ant-design/icons';
-import { Button, Card, Table, Tag, theme } from 'antd';
+import { App, Button, Card, Popconfirm, Table, Tag, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -37,11 +38,10 @@ type CustomizedImages = NonNullable<
 const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { message } = App.useApp();
 
   const [selectedTab] = useState<TabKey>('images');
   const [isRefetchPending, startRefetchTransition] = useTransition();
-  const [servicesFetchKey, updateServicesFetchKey] =
-    useUpdatableState('initial-fetch');
   const [metadata] = useBackendAIImageMetaData();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const hasSelected = selectedRowKeys.length > 0;
@@ -54,6 +54,96 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
     selectedRowKeys,
     onChange: onSelectChange,
   };
+
+  const { customized_images } = useLazyLoadQuery<MyEnvironmentPageQuery>(
+    graphql`
+      query MyEnvironmentPageQuery {
+        customized_images {
+          id
+          name
+          humanized_name
+          tag
+          registry
+          architecture
+          digest
+          labels {
+            key
+            value
+          }
+          aliases
+          supported_accelerators
+        }
+      }
+    `,
+    {},
+    {
+      fetchPolicy: 'network-only',
+    },
+  );
+
+  const [commitForgetImageById, isInflightForgetImageById] =
+    useMutation<MyEnvironmentPageForgetMutation>(graphql`
+      mutation MyEnvironmentPageForgetMutation($image_id: String!) {
+        forget_image_by_id(image_id: $image_id) {
+          ok
+          msg
+        }
+      }
+    `);
+
+  const [commitUntagImageFromRegistry, isInflightUntagImageFromRegistry] =
+    useMutation<MyEnvironmentPageUntagMutation>(graphql`
+      mutation MyEnvironmentPageUntagMutation($id: String!) {
+        untag_image_from_registry(id: $id) {
+          ok
+          msg
+        }
+      }
+    `);
+
+  const _humanizeName = (value: string) => {
+    return metadata?.tagAlias[value] ?? value;
+  };
+
+  const processedImages = _.map(customized_images, (image) => {
+    const tags = image?.tag?.split('-');
+    const names = image?.name?.split('/');
+    const namespace = names?.[1] ? names[0] : '';
+    const baseversion = tags?.[0] ?? '';
+    const additionalReq = _humanizeName(
+      tags?.slice(2, _.indexOf(tags, 'customized_'))?.join('-') ?? '',
+    );
+    const customizedNameLabel = _.find(image?.labels, {
+      key: 'ai.backend.customized-image.name',
+    })?.value;
+    const constraint = [additionalReq, customizedNameLabel];
+
+    let langs =
+      (names?.[1] ? names.slice(1).join('') : names?.[0])?.split('-') ?? '';
+    let baseimage = tags?.[1] ? [_humanizeName(tags[1])] : [];
+    let lang = _humanizeName(langs[langs.length - 1]);
+
+    if (langs.length > 1) {
+      if (langs[0] === 'r') {
+        lang = _humanizeName(langs[0]);
+        baseimage.push(_humanizeName(langs[0]));
+      } else {
+        lang = _humanizeName(langs[1]);
+        baseimage.push(_humanizeName(langs[0]));
+      }
+    } else {
+      lang = _humanizeName(lang);
+    }
+
+    return {
+      ...image,
+      namespace,
+      lang,
+      baseversion,
+      baseimage,
+      constraint,
+    };
+  });
 
   const columns: ColumnsType<CustomizedImages> = [
     {
@@ -134,101 +224,46 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
       dataIndex: 'controls',
       key: 'control',
       fixed: 'right',
-      render: () => (
+      render: (text, row) => (
         <Flex direction="row" align="stretch">
-          <Button
-            type="text"
-            icon={<DeleteOutlined />}
-            style={{ color: token.colorError }}
-          />
+          <Popconfirm
+            title={t('dialog.ask.DoYouWantToProceed')}
+            description={t('dialog.warning.CannotBeUndone')}
+            okType="danger"
+            onConfirm={() => {
+              if (row?.id) {
+                commitForgetImageById({
+                  variables: {
+                    image_id: row.id,
+                  },
+                  onError(err) {
+                    message.error(err?.message);
+                  },
+                });
+                commitUntagImageFromRegistry({
+                  variables: {
+                    id: row.id,
+                  },
+                  onError(err) {
+                    message.error(err?.message);
+                  },
+                });
+              }
+            }}
+          >
+            <Button
+              type="text"
+              icon={<DeleteOutlined />}
+              danger
+              loading={
+                isInflightForgetImageById || isInflightUntagImageFromRegistry
+              }
+            />
+          </Popconfirm>
         </Flex>
       ),
     },
   ];
-
-  const { customized_images } = useLazyLoadQuery<MyEnvironmentPageQuery>(
-    graphql`
-      query MyEnvironmentPageQuery {
-        customized_images {
-          id
-          name
-          humanized_name
-          tag
-          registry
-          architecture
-          digest
-          labels {
-            key
-            value
-          }
-          aliases
-          supported_accelerators
-        }
-      }
-    `,
-    {},
-    {
-      fetchPolicy:
-        servicesFetchKey === 'initial-fetch'
-          ? 'store-and-network'
-          : 'network-only',
-      fetchKey: servicesFetchKey,
-    },
-  );
-
-  const [commitUntagImageFromRegistry, isInflightUntagImageFromRegistry] =
-    useMutation<MyEnvironmentPageUntagMutation>(graphql`
-      mutation MyEnvironmentPageUntagMutation($id: String!) {
-        untag_image_from_registry(id: $id) {
-          ok
-          msg
-        }
-      }
-    `);
-
-  const _humanizeName = (value: string) => {
-    return metadata?.tagAlias[value] ?? value;
-  };
-
-  const processedImages = _.map(customized_images, (image) => {
-    const tags = image?.tag?.split('-');
-    const names = image?.name?.split('/');
-    const namespace = names?.[1] ? names[0] : '';
-    const baseversion = tags?.[0] ?? '';
-    const additionalReq = _humanizeName(
-      tags?.slice(2, _.indexOf(tags, 'customized_'))?.join('-') ?? '',
-    );
-    const customizedNameLabel = _.find(image?.labels, {
-      key: 'ai.backend.customized-image.name',
-    })?.value;
-    const constraint = [additionalReq, customizedNameLabel];
-
-    let langs =
-      (names?.[1] ? names.slice(1).join('') : names?.[0])?.split('-') ?? '';
-    let baseimage = tags?.[1] ? [_humanizeName(tags[1])] : [];
-    let lang = _humanizeName(langs[langs.length - 1]);
-
-    if (langs.length > 1) {
-      if (langs[0] === 'r') {
-        lang = _humanizeName(langs[0]);
-        baseimage.push(_humanizeName(langs[0]));
-      } else {
-        lang = _humanizeName(langs[1]);
-        baseimage.push(_humanizeName(langs[0]));
-      }
-    } else {
-      lang = _humanizeName(lang);
-    }
-
-    return {
-      ...image,
-      namespace,
-      lang,
-      baseversion,
-      baseimage,
-      constraint,
-    };
-  });
 
   return (
     <Flex direction="column" align="stretch" gap={'xs'}>

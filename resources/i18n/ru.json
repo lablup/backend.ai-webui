@@ -64,7 +64,8 @@
       "Data&Model": "Данные",
       "InvalidBlankPassword": "Введите ваш пароль",
       "InvalidBlankEmail": "Введите адрес электронной почты",
-      "DisMatchUserEmail": "Электронная почта пользователя не совпадает"
+      "DisMatchUserEmail": "Электронная почта пользователя не совпадает",
+      "MyEnvironments": "Моя среда"
     },
     "YouAreOffline": "Вы сейчас не в сети",
     "YouAreOnline": "Вы сейчас в сети",

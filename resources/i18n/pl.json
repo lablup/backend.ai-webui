@@ -64,7 +64,8 @@
       "Data&Model": "Dane",
       "InvalidBlankPassword": "Wprowadź hasło",
       "InvalidBlankEmail": "Wprowadź swój email",
-      "DisMatchUserEmail": "Adres e-mail użytkownika nie jest zgodny"
+      "DisMatchUserEmail": "Adres e-mail użytkownika nie jest zgodny",
+      "MyEnvironments": "Moje Środowiska"
     },
     "YouAreOffline": "Jesteś teraz offline",
     "YouAreOnline": "Jesteś teraz online",

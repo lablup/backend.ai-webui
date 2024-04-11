@@ -1506,7 +1506,8 @@
       "Data&Model": "Datos",
       "InvalidBlankPassword": "Ingresa tu contraseña",
       "InvalidBlankEmail": "Introduce tu correo electrónico",
-      "DisMatchUserEmail": "El correo electrónico del usuario no coincide"
+      "DisMatchUserEmail": "El correo electrónico del usuario no coincide",
+      "MyEnvironments": "Mis ambientes"
     }
   },
   "modelStore": {

@@ -64,7 +64,8 @@
       "Data&Model": "데이터 & 모델",
       "InvalidBlankEmail": "E-mail을 입력하세요.",
       "InvalidBlankPassword": "패스워드를 입력하세요.",
-      "DisMatchUserEmail": "사용자 E-mail이 일치하지 않습니다."
+      "DisMatchUserEmail": "사용자 E-mail이 일치하지 않습니다.",
+      "MyEnvironments": "나의 실행 환경"
     },
     "YouAreOffline": "오프라인 상태가 되었습니다",
     "YouAreOnline": "온라인 상태가 되었습니다",

@@ -1504,7 +1504,8 @@
       "Data&Model": "Data",
       "InvalidBlankPassword": "Syötä salasanasi",
       "InvalidBlankEmail": "Syötä sähköpostiosoitteesi",
-      "DisMatchUserEmail": "Käyttäjän sähköpostiosoite ei täsmää"
+      "DisMatchUserEmail": "Käyttäjän sähköpostiosoite ei täsmää",
+      "MyEnvironments": "Omat ympäristöt"
     }
   },
   "modelStore": {

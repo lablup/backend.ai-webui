@@ -120,6 +120,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Boolean }) isUserInfoMaskEnabled;
   @property({ type: Boolean }) isHideAgents = true;
   @property({ type: Boolean }) supportServing = false;
+  @property({ type: Boolean }) supportPendingSessionCount = false;
   @property({ type: String }) lang = 'default';
   @property({ type: Array }) supportLanguageCodes = [
     'en',
@@ -155,6 +156,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'change-password',
     'job',
     'data',
+    'my-environment',
     'agent-summary',
     'statistics',
     'usersettings',
@@ -269,12 +271,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this._parseConfig(configPath)
       .then(() => {
         this.loadConfig(this.config);
-        this.optionalPages = [
-          {
-            page: 'agent-summary',
-            available: !this.isHideAgents,
-          },
-        ];
         // If disconnected
         if (
           typeof globalThis.backendaiclient === 'undefined' ||
@@ -379,14 +375,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this.full_name = input;
       }
     });
-    document.addEventListener(
-      'backend-ai-connected',
-      () => {
-        this.supportServing =
-          globalThis.backendaiclient.supports('model-serving');
-      },
-      { once: true },
-    );
     document.addEventListener('move-to-from-react', (e) => {
       const params = (e as CustomEvent).detail.params;
       const path = (e as CustomEvent).detail.path;
@@ -652,6 +640,25 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this._page = 'unauthorized';
       this._moveTo('/unauthorized');
     }
+
+    this.supportServing = globalThis.backendaiclient.supports('model-serving');
+    this.supportPendingSessionCount = globalThis.backendaiclient.supports(
+      'pending-session-count',
+    );
+    this.optionalPages = [
+      {
+        page: 'agent-summary',
+        available: !this.isHideAgents,
+      },
+      {
+        page: 'serving',
+        available: this.supportServing,
+      },
+      {
+        page: 'my-environment',
+        available: this.supportPendingSessionCount,
+      },
+    ];
 
     // redirect to error page when blocked by config option or the page is not available page.
     if (

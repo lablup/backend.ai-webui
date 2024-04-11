@@ -64,7 +64,8 @@
       "Data&Model": "Dữ liệu",
       "InvalidBlankPassword": "Nhập mật khẩu của bạn",
       "InvalidBlankEmail": "Nhập email của bạn",
-      "DisMatchUserEmail": "E-mail của người dùng không khớp"
+      "DisMatchUserEmail": "E-mail của người dùng không khớp",
+      "MyEnvironments": "Môi trường của tôi"
     },
     "YouAreOffline": "Bạn hiện đang ngoại tuyến",
     "YouAreOnline": "Bạn hiện đang trực tuyến",
