@@ -38,7 +38,8 @@
     "WarboyEnabled": "Warboy NPU käytössä",
     "connectingToCluster": "Yhteyden muodostaminen Backend.AI-klusteriin...",
     "reserved": "varattu",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU käytössä"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU käytössä",
+    "SapeonX220Enabled": "Sapeon X220 käytössä"
   },
   "error": {
     "WrongAPIServerAddress": "Väärä API-palvelimen osoite.",
@@ -396,7 +397,26 @@
   },
   "dialog": {
     "warning": {
-      "DeleteForeverDesc": "VAROITUS: valitut kohteet poistetaan pysyvästi, etkä voi palauttaa niitä."
+      "DeleteForeverDesc": "VAROITUS: valitut kohteet poistetaan pysyvästi, etkä voi palauttaa niitä.",
+      "CannotBeUndone": "__NOT_TRANSLATED__",
+      "LogDeletion": "__NOT_TRANSLATED__",
+      "Required": "__NOT_TRANSLATED__",
+      "WillBeAppliedToNewSessions": "__NOT_TRANSLATED__"
+    },
+    "ErrorOccurred": "__NOT_TRANSLATED__",
+    "error": {
+      "Error": "__NOT_TRANSLATED__"
+    },
+    "title": {
+      "LetsDouble-Check": "__NOT_TRANSLATED__",
+      "Notice": "__NOT_TRANSLATED__",
+      "DeleteForever": "__NOT_TRANSLATED__"
+    },
+    "ask": {
+      "DoYouWantToProceed": "__NOT_TRANSLATED__"
+    },
+    "hide": {
+      "DonotShowThisAgain": "__NOT_TRANSLATED__"
     }
   },
   "eduapi": {
@@ -1165,7 +1185,8 @@
       "BatchModeDesc": "Voit ajaa koodisi useiden solmujen ja klustereiden kanssa ideasi skaalaamiseksi.",
       "AddEnvironmentVariable": "Lisää ympäristömuuttujia",
       "EnvironmentVariableValueRequired": "Anna arvo.",
-      "PleaseCompleteForm": "Lomake on puutteellinen tai sisältää virheitä. Tarkista syöttämäsi tiedot."
+      "PleaseCompleteForm": "Lomake on puutteellinen tai sisältää virheitä. Tarkista syöttämäsi tiedot.",
+      "ProxyDirectTCPNotSupported": "__NOT_TRANSLATED__"
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",
@@ -1247,7 +1268,10 @@
     "ShowOnlyChanged": "Vain näyttö muuttuu",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Käytä Hyperaccel LPU -kiihdytintä.",
-    "RequireHyperaccelLPUPlugin": "Vaatii Backend.AI Hyperaccel LPU -laajennuksen."
+    "RequireHyperaccelLPUPlugin": "Vaatii Backend.AI Hyperaccel LPU -laajennuksen.",
+    "SapeonX220support": "Sapeon X220",
+    "DescSapeonX220support": "Käytä Sapeon X220 -kiihdytintä.",
+    "RequireSapeonX220Plugin": "Vaatii Backend.AI Sapeon X20 -liitännäisen."
   },
   "sidepanel": {
     "BackgroundTasks": "Tehtävien suorittaminen",

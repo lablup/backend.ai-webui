@@ -114,7 +114,8 @@
     "WarboyEnabled": "NPU do Warboy activada",
     "DownloadWebUIApp": "Descarregar a aplicação Backend.AI Web UI",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "LPU Hyperaccel habilitada"
+    "HyperaccelLPUEnabled": "LPU Hyperaccel habilitada",
+    "SapeonX220Enabled": "Sapeon X220 Ativado"
   },
   "session": {
     "launcher": {
@@ -271,7 +272,8 @@
       "BatchModeDesc": "Pode executar o seu código com vários nós e clusters para escalar a sua ideia",
       "AddEnvironmentVariable": "Adicionar variáveis de ambiente",
       "EnvironmentVariableValueRequired": "Introduzir um valor.",
-      "PleaseCompleteForm": "O formulário está incompleto ou contém erros. Por favor, verifique os seus dados."
+      "PleaseCompleteForm": "O formulário está incompleto ou contém erros. Por favor, verifique os seus dados.",
+      "ProxyDirectTCPNotSupported": "__NOT_TRANSLATED__"
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",
@@ -1179,7 +1181,10 @@
     "ShowOnlyChanged": "Exibir apenas alterações",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Use o acelerador Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Requer plug-in Backend.AI Hyperaccel LPU."
+    "RequireHyperaccelLPUPlugin": "Requer plug-in Backend.AI Hyperaccel LPU.",
+    "SapeonX220support": "Sapeon X220",
+    "DescSapeonX220support": "Utilizar o acelerador Sapeon X220.",
+    "RequireSapeonX220Plugin": "Requer o plug-in Backend.AI Sapeon X20."
   },
   "notification": {
     "SuccessfullyUpdated": "Atualizado com sucesso",

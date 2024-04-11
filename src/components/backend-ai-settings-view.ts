@@ -624,7 +624,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         ${_t('settings.SapeonX220support')}
                       </div>
                       <div class="description-shrink">
-                        ${_tr('settings.DescSapeonX220support')}
+                        ${_t('settings.DescSapeonX220support')}
                         <br />
                         ${_t('settings.RequireSapeonX220Plugin')}
                       </div>

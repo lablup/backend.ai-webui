@@ -114,7 +114,8 @@
     "WarboyEnabled": "Warboy NPU Didayakan",
     "DownloadWebUIApp": "Muat turun Apl UI Web Backend.AI",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "LPU Hyperaccel Didayakan"
+    "HyperaccelLPUEnabled": "LPU Hyperaccel Didayakan",
+    "SapeonX220Enabled": "Sapeon X220 Didayakan"
   },
   "session": {
     "launcher": {
@@ -271,7 +272,8 @@
       "BatchModeDesc": "Anda boleh menjalankan kod anda dengan berbilang nod",
       "AddEnvironmentVariable": "Tambah pembolehubah persekitaran",
       "EnvironmentVariableValueRequired": "Sila masukkan nilai.",
-      "PleaseCompleteForm": "Borang tidak lengkap atau mengandungi ralat. \nSila semak input anda."
+      "PleaseCompleteForm": "Borang tidak lengkap atau mengandungi ralat. \nSila semak input anda.",
+      "ProxyDirectTCPNotSupported": "__NOT_TRANSLATED__"
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",
@@ -747,7 +749,26 @@
   },
   "dialog": {
     "warning": {
-      "DeleteForeverDesc": "AMARAN: item yang dipilih akan dipadamkan selama-lamanya dan anda tidak akan dapat memulihkannya."
+      "DeleteForeverDesc": "AMARAN: item yang dipilih akan dipadamkan selama-lamanya dan anda tidak akan dapat memulihkannya.",
+      "CannotBeUndone": "__NOT_TRANSLATED__",
+      "LogDeletion": "__NOT_TRANSLATED__",
+      "Required": "__NOT_TRANSLATED__",
+      "WillBeAppliedToNewSessions": "__NOT_TRANSLATED__"
+    },
+    "ErrorOccurred": "__NOT_TRANSLATED__",
+    "error": {
+      "Error": "__NOT_TRANSLATED__"
+    },
+    "title": {
+      "LetsDouble-Check": "__NOT_TRANSLATED__",
+      "Notice": "__NOT_TRANSLATED__",
+      "DeleteForever": "__NOT_TRANSLATED__"
+    },
+    "ask": {
+      "DoYouWantToProceed": "__NOT_TRANSLATED__"
+    },
+    "hide": {
+      "DonotShowThisAgain": "__NOT_TRANSLATED__"
     }
   },
   "environment": {
@@ -1160,7 +1181,10 @@
     "ShowOnlyChanged": "Paparkan Perubahan Sahaja",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Gunakan pemecut LPU Hyperaccel.",
-    "RequireHyperaccelLPUPlugin": "Memerlukan Backend.AI Hyperaccel LPU Plugin."
+    "RequireHyperaccelLPUPlugin": "Memerlukan Backend.AI Hyperaccel LPU Plugin.",
+    "SapeonX220support": "Sapeon X220",
+    "DescSapeonX220support": "Gunakan pemecut Sapeon X220.",
+    "RequireSapeonX220Plugin": "Memerlukan Pemalam Backend.AI Sapeon X20."
   },
   "notification": {
     "SuccessfullyUpdated": "Berjaya Dikemas kini",

@@ -114,7 +114,8 @@
     "ATOMEnabled": "ATOM NPU 사용중",
     "WarboyEnabled": "Warboy NPU 사용중",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU 사용중"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU 사용중",
+    "SapeonX220Enabled": "Sapeon X220 사용"
   },
   "session": {
     "launcher": {
@@ -272,7 +273,8 @@
       "NeoLauncher": "NEO",
       "EnvironmentVariableValueRequired": "값을 입력해주세요.",
       "PleaseCompleteForm": "양식이 완성되지 않았거나 오류가 포함되어 있습니다. 입력 내용을 확인해주세요.",
-      "NeedToCorrectForm": "수정 버튼을 눌러 입력하신 내용을 확인해주세요."
+      "NeedToCorrectForm": "수정 버튼을 눌러 입력하신 내용을 확인해주세요.",
+      "ProxyDirectTCPNotSupported": "__NOT_TRANSLATED__"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -1269,7 +1271,10 @@
     "ShowOnlyChanged": "수정 사항만 표시",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Hyperaccel LPU 가속기를 사용합니다.",
-    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU 플러그인이 필요합니다."
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU 플러그인이 필요합니다.",
+    "SapeonX220support": "Sapeon X220",
+    "DescSapeonX220support": "Sapeon X220 가속기를 사용합니다.",
+    "RequireSapeonX220Plugin": "Backend.AI Sapeon X20 플러그인이 필요합니다."
   },
   "notification": {
     "SuccessfullyUpdated": "성공적으로 수정되었습니다.",

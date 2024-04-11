@@ -114,7 +114,8 @@
     "ATOMEnabled": "ATOM NPU-г идэвхжүүлсэн",
     "WarboyEnabled": "Warboy NPU идэвхжүүлсэн",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU идэвхжүүлсэн"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU идэвхжүүлсэн",
+    "SapeonX220Enabled": "Sapeon X220 идэвхжсэн"
   },
   "session": {
     "launcher": {
@@ -260,7 +261,20 @@
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Кластерын хэмжээ 2-оос багагүй тохиолдолд зөвхөн бүхэл тоог зөвшөөрнө.",
       "StartAfter": "Дараа нь эхлэх:",
-      "StartTimeDoesNotApply": "Хэрэв эхлэх цагийг тохируулаагүй бол энэ нь хамаарахгүй."
+      "StartTimeDoesNotApply": "Хэрэв эхлэх цагийг тохируулаагүй бол энэ нь хамаарахгүй.",
+      "EnvironmentVariableValueRequired": "__NOT_TRANSLATED__",
+      "AddEnvironmentVariable": "__NOT_TRANSLATED__",
+      "NeoSwitchDescription": "__NOT_TRANSLATED__",
+      "PreviousLauncher": "__NOT_TRANSLATED__",
+      "NeoLauncher": "__NOT_TRANSLATED__",
+      "EnableAutomaticMiniumShmem": "__NOT_TRANSLATED__",
+      "MiniumAllocation": "__NOT_TRANSLATED__",
+      "MiniumAllocationTooltip": "__NOT_TRANSLATED__",
+      "InteractiveModeDesc": "__NOT_TRANSLATED__",
+      "BatchModeDesc": "__NOT_TRANSLATED__",
+      "PleaseCompleteForm": "__NOT_TRANSLATED__",
+      "SkipToConfirmAndLaunch": "__NOT_TRANSLATED__",
+      "ProxyDirectTCPNotSupported": "__NOT_TRANSLATED__"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -331,7 +345,8 @@
       "PleaseFollowSessionNameRule": "Дор хаяж 4 үсэг, тоо, '.', '_', '-' гэсэн хослолыг оруулна уу.",
       "SessionNameShouldStartWith": "Энэ нь цагаан толгойн үсэг, тоо эсвэл \"_\" -ээр эхлэх ёстой.",
       "SessionNameShouldEndWith": "Энэ нь цагаан толгойн үсэг, тоо эсвэл '_'-ээр төгссөн байх ёстой.",
-      "SessionNameInvalidCharacter": "Нэрийн дунд хэсэгт зөвхөн цагаан толгойн үсэг, тоо, '_' байж болно."
+      "SessionNameInvalidCharacter": "Нэрийн дунд хэсэгт зөвхөн цагаан толгойн үсэг, тоо, '_' байж болно.",
+      "SessionNameTooShort": "__NOT_TRANSLATED__"
     },
     "AlreadyTerminatingSession": "Сессийг аль хэдийн дуусгаж байна.",
     "NoSessionToDisplay": "Харуулах сесс алга",
@@ -423,7 +438,10 @@
     "OK": "БОЛЖ БАЙНА УУ",
     "Download": "Татаж авах",
     "Clone": "Клон",
-    "Config": "Тохиргоо"
+    "Config": "Тохиргоо",
+    "Previous": "__NOT_TRANSLATED__",
+    "Next": "__NOT_TRANSLATED__",
+    "PushToImage": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -635,7 +653,8 @@
       "DeleteForever": "Бүрмөсөн устгах",
       "FolderRestored": "{{ folderName }} хавтас сэргээгдсэн.",
       "FolderDeletedForever": "{{ folderName }} хавтас бүрмөсөн устгагдсан.",
-      "MovedToTrashBin": "{{ folderName }} фолдерыг хогийн сав руу зөөв."
+      "MovedToTrashBin": "{{ folderName }} фолдерыг хогийн сав руу зөөв.",
+      "MoveToTrashBin": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Устгах ...",
@@ -1160,7 +1179,13 @@
     "RequireWarboyPlugin": "Backend.AI Warboy Plugin шаардлагатай.",
     "Plugins": "Plugins",
     "OpenSourceCUDAGPUsupport": "Нээлттэй эхийн CUDA GPU дэмжлэг",
-    "ShowOnlyChanged": "Зөвхөн өөрчлөлтүүдийг харуулах"
+    "ShowOnlyChanged": "Зөвхөн өөрчлөлтүүдийг харуулах",
+    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
+    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__",
+    "SapeonX220support": "Sapeon X220",
+    "DescSapeonX220support": "Sapeon X220 хурдасгуурыг ашигла.",
+    "RequireSapeonX220Plugin": "Backend.AI Sapeon X20 Plugin шаардлагатай."
   },
   "notification": {
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
@@ -1409,7 +1434,8 @@
     "RequireOTP": "OTP бичнэ үү."
   },
   "inputLimit": {
-    "4to64chars": "(4~64 тэмдэгт)"
+    "4to64chars": "(4~64 тэмдэгт)",
+    "4to32chars": "__NOT_TRANSLATED__"
   },
   "storageHost": {
     "quotaSettings": {

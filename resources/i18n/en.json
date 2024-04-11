@@ -127,7 +127,8 @@
     "ATOMEnabled": "ATOM NPU Enabled",
     "WarboyEnabled": "Warboy NPU Enabled",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU Enabled"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU Enabled",
+    "SapeonX220Enabled": "Sapeon X220 Enabled"
   },
   "session": {
     "launcher": {
@@ -284,7 +285,8 @@
       "InteractiveModeDesc": "allows you to create, test and run code interactively via jupyter notebook, visual studio code, etc.",
       "AddEnvironmentVariable": "Add environment variables",
       "EnvironmentVariableValueRequired": "Please enter a value.",
-      "PleaseCompleteForm": "Form is incomplete or contains errors. Please check your inputs."
+      "PleaseCompleteForm": "Form is incomplete or contains errors. Please check your inputs.",
+      "ProxyDirectTCPNotSupported": "ProxyDirectTCPNotSupported"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -1281,7 +1283,10 @@
     "ShowOnlyChanged": "Display Only Changes",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Use Hyperaccel LPU accelerator.",
-    "RequireHyperaccelLPUPlugin": "Requires Backend.AI Hyperaccel LPU Plugin."
+    "RequireHyperaccelLPUPlugin": "Requires Backend.AI Hyperaccel LPU Plugin.",
+    "SapeonX220support": "Sapeon X220",
+    "DescSapeonX220support": "Use Sapeon X220 accelerator.",
+    "RequireSapeonX220Plugin": "Requires Backend.AI Sapeon X20 Plugin."
   },
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",

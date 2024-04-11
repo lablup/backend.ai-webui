@@ -114,7 +114,8 @@
     "ATOMEnabled": "ATOM NPU Activé",
     "WarboyEnabled": "Warboy NPU activé",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU activé"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU activé",
+    "SapeonX220Enabled": "Sapeon X220 Activé"
   },
   "session": {
     "launcher": {
@@ -271,7 +272,8 @@
       "BatchModeDesc": "Vous pouvez exécuter votre code avec plusieurs nœuds et clusters pour faire évoluer votre idée.",
       "AddEnvironmentVariable": "Ajouter des variables d'environnement",
       "EnvironmentVariableValueRequired": "Veuillez saisir une valeur.",
-      "PleaseCompleteForm": "Le formulaire est incomplet ou contient des erreurs. Veuillez vérifier vos données."
+      "PleaseCompleteForm": "Le formulaire est incomplet ou contient des erreurs. Veuillez vérifier vos données.",
+      "ProxyDirectTCPNotSupported": "__NOT_TRANSLATED__"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -1179,7 +1181,10 @@
     "ShowOnlyChanged": "Afficher uniquement les modifications",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Utilisez l'accélérateur Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Nécessite le plugin LPU Backend.AI Hyperaccel."
+    "RequireHyperaccelLPUPlugin": "Nécessite le plugin LPU Backend.AI Hyperaccel.",
+    "SapeonX220support": "Sapeon X220",
+    "DescSapeonX220support": "Utiliser l'accélérateur Sapeon X220.",
+    "RequireSapeonX220Plugin": "Requiert le plugin Backend.AI Sapeon X20."
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",

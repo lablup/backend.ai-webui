@@ -114,7 +114,8 @@
     "WarboyEnabled": "Warboy NPU Etkinleştirildi",
     "DownloadWebUIApp": "Backend.AI Web UI Uygulamasını İndirin",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU Etkin"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU Etkin",
+    "SapeonX220Enabled": "Sapeon X220 Etkin"
   },
   "session": {
     "launcher": {
@@ -271,7 +272,8 @@
       "BatchModeDesc": "Fikrinizi ölçeklendirmek için kodunuzu birden fazla düğüm ve küme ile çalıştırabilirsiniz",
       "AddEnvironmentVariable": "Ortam değişkenleri ekleme",
       "EnvironmentVariableValueRequired": "Lütfen bir değer girin.",
-      "PleaseCompleteForm": "Form eksik veya hatalar içeriyor. Lütfen girdilerinizi kontrol edin."
+      "PleaseCompleteForm": "Form eksik veya hatalar içeriyor. Lütfen girdilerinizi kontrol edin.",
+      "ProxyDirectTCPNotSupported": "__NOT_TRANSLATED__"
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -1179,7 +1181,10 @@
     "ShowOnlyChanged": "Yalnızca Değişiklikleri Görüntüle",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Hyperaccel LPU hızlandırıcısını kullanın.",
-    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Eklentisi gerektirir."
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Eklentisi gerektirir.",
+    "SapeonX220support": "Sapeon X220",
+    "DescSapeonX220support": "Sapeon X220 hızlandırıcı kullanın.",
+    "RequireSapeonX220Plugin": "Backend.AI Sapeon X20 Eklentisi gerektirir."
   },
   "notification": {
     "SuccessfullyUpdated": "Başarıyla güncellendi",

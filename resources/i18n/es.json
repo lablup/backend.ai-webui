@@ -38,7 +38,8 @@
     "WarboyEnabled": "Warboy NPU Activado",
     "connectingToCluster": "Conectando al Cluster Backend.AI...",
     "reserved": "reservado",
-    "HyperaccelLPUEnabled": "LPU de hiperaccel habilitada"
+    "HyperaccelLPUEnabled": "LPU de hiperaccel habilitada",
+    "SapeonX220Enabled": "Sapeon X220 Activado"
   },
   "error": {
     "WrongAPIServerAddress": "Dirección del servidor API incorrecta.",
@@ -396,7 +397,26 @@
   },
   "dialog": {
     "warning": {
-      "DeleteForeverDesc": "ADVERTENCIA: los elementos seleccionados se eliminarán para siempre y no podrás restaurarlos."
+      "DeleteForeverDesc": "ADVERTENCIA: los elementos seleccionados se eliminarán para siempre y no podrás restaurarlos.",
+      "CannotBeUndone": "__NOT_TRANSLATED__",
+      "LogDeletion": "__NOT_TRANSLATED__",
+      "Required": "__NOT_TRANSLATED__",
+      "WillBeAppliedToNewSessions": "__NOT_TRANSLATED__"
+    },
+    "ErrorOccurred": "__NOT_TRANSLATED__",
+    "error": {
+      "Error": "__NOT_TRANSLATED__"
+    },
+    "title": {
+      "LetsDouble-Check": "__NOT_TRANSLATED__",
+      "Notice": "__NOT_TRANSLATED__",
+      "DeleteForever": "__NOT_TRANSLATED__"
+    },
+    "ask": {
+      "DoYouWantToProceed": "__NOT_TRANSLATED__"
+    },
+    "hide": {
+      "DonotShowThisAgain": "__NOT_TRANSLATED__"
     }
   },
   "eduapi": {
@@ -1167,7 +1187,8 @@
       "BatchModeDesc": "Puedes ejecutar tu código con múltiples nodos y clusters para escalar tu idea",
       "AddEnvironmentVariable": "Añadir variables de entorno",
       "EnvironmentVariableValueRequired": "Por favor, introduzca un valor.",
-      "PleaseCompleteForm": "El formulario está incompleto o contiene errores. Compruebe los datos introducidos."
+      "PleaseCompleteForm": "El formulario está incompleto o contiene errores. Compruebe los datos introducidos.",
+      "ProxyDirectTCPNotSupported": "__NOT_TRANSLATED__"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",
@@ -1249,7 +1270,10 @@
     "ShowOnlyChanged": "Mostrar solo cambios",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Utilice el acelerador Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Requiere el complemento LPU Backend.AI Hyperaccel."
+    "RequireHyperaccelLPUPlugin": "Requiere el complemento LPU Backend.AI Hyperaccel.",
+    "SapeonX220support": "Sapeon X220",
+    "DescSapeonX220support": "Utilice el acelerador Sapeon X220.",
+    "RequireSapeonX220Plugin": "Requiere Backend.AI Sapeon X20 Plugin."
   },
   "sidepanel": {
     "BackgroundTasks": "Tareas en curso",

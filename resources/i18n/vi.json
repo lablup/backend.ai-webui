@@ -114,7 +114,8 @@
     "WarboyEnabled": "NPU Warboy đã được kích hoạt",
     "DownloadWebUIApp": "Tải xuống ứng dụng giao diện người dùng web Backend.AI",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Đã bật LPU Hyperaccel"
+    "HyperaccelLPUEnabled": "Đã bật LPU Hyperaccel",
+    "SapeonX220Enabled": "Sapeon X220 đã kích hoạt"
   },
   "session": {
     "launcher": {
@@ -271,7 +272,8 @@
       "BatchModeDesc": "Bạn có thể chạy mã của mình với nhiều nút",
       "AddEnvironmentVariable": "Thêm biến môi trường",
       "EnvironmentVariableValueRequired": "Vui lòng nhập một giá trị.",
-      "PleaseCompleteForm": "Biểu mẫu không đầy đủ hoặc có lỗi. \nVui lòng kiểm tra đầu vào của bạn."
+      "PleaseCompleteForm": "Biểu mẫu không đầy đủ hoặc có lỗi. \nVui lòng kiểm tra đầu vào của bạn.",
+      "ProxyDirectTCPNotSupported": "__NOT_TRANSLATED__"
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",
@@ -1179,7 +1181,10 @@
     "ShowOnlyChanged": "Chỉ hiển thị các thay đổi",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Sử dụng bộ tăng tốc LPU Hyperaccel.",
-    "RequireHyperaccelLPUPlugin": "Yêu cầu Plugin LPU Backend.AI Hyperaccel."
+    "RequireHyperaccelLPUPlugin": "Yêu cầu Plugin LPU Backend.AI Hyperaccel.",
+    "SapeonX220support": "Sapeon X220",
+    "DescSapeonX220support": "Sử dụng máy gia tốc Sapeon X220.",
+    "RequireSapeonX220Plugin": "Yêu cầu Plugin Backend.AI Sapeon X20."
   },
   "notification": {
     "SuccessfullyUpdated": "Cập nhật thành công",

@@ -114,7 +114,8 @@
     "WarboyEnabled": "Warboy NPU使用中",
     "DownloadWebUIApp": "Backend.AI Web UIアプリのダウンロード",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "ハイパーアクセル LPU が有効になりました"
+    "HyperaccelLPUEnabled": "ハイパーアクセル LPU が有効になりました",
+    "SapeonX220Enabled": "サペオンX220使用可能"
   },
   "session": {
     "launcher": {
@@ -271,7 +272,8 @@
       "BatchModeDesc": "複数のノードやクラスタでコードを実行し、アイデアをスケールさせることができます。",
       "AddEnvironmentVariable": "環境変数の追加",
       "EnvironmentVariableValueRequired": "値を入力してください。",
-      "PleaseCompleteForm": "フォームに不備またはエラーがあります。入力内容をご確認ください。"
+      "PleaseCompleteForm": "フォームに不備またはエラーがあります。入力内容をご確認ください。",
+      "ProxyDirectTCPNotSupported": "__NOT_TRANSLATED__"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -1179,7 +1181,10 @@
     "ShowOnlyChanged": "表示のみの変更",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Hyperaccel LPU アクセラレータを使用します。",
-    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU プラグインが必要です。"
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU プラグインが必要です。",
+    "SapeonX220support": "サペオンX220",
+    "DescSapeonX220support": "サペオンX220アクセラレーターを使用。",
+    "RequireSapeonX220Plugin": "Backend.AI Sapeon X20プラグインが必要です。"
   },
   "notification": {
     "SuccessfullyUpdated": "正常に更新されました",

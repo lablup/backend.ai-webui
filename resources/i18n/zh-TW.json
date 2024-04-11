@@ -114,7 +114,8 @@
     "WarboyEnabled": "启用 Warboy NPU",
     "DownloadWebUIApp": "下载 Backend.AI Web UI 应用程序",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU 已啟用。"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU 已啟用。",
+    "SapeonX220Enabled": "启用 Sapeon X220"
   },
   "session": {
     "launcher": {
@@ -271,7 +272,8 @@
       "BatchModeDesc": "您可以使用多个节点和集群运行代码，以扩展您的想法",
       "AddEnvironmentVariable": "添加环境变量",
       "EnvironmentVariableValueRequired": "请输入数值。",
-      "PleaseCompleteForm": "表格不完整或包含错误。请检查输入内容。"
+      "PleaseCompleteForm": "表格不完整或包含错误。请检查输入内容。",
+      "ProxyDirectTCPNotSupported": "__NOT_TRANSLATED__"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",
@@ -1179,7 +1181,10 @@
     "ShowOnlyChanged": "僅顯示更改",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "使用Hyperaccel LPU加速器。",
-    "RequireHyperaccelLPUPlugin": "需要 Backend.AI Hyperaccel LPU 插件。"
+    "RequireHyperaccelLPUPlugin": "需要 Backend.AI Hyperaccel LPU 插件。",
+    "SapeonX220support": "Sapeon X220",
+    "DescSapeonX220support": "使用 Sapeon X220 加速器。",
+    "RequireSapeonX220Plugin": "需要 Backend.AI Sapeon X20 插件。"
   },
   "notification": {
     "SuccessfullyUpdated": "成功更新",
