@@ -104,7 +104,7 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
     ) {
       setControllableValue(undefined);
     }
-  }, [resourceGroups, selectProps.value]);
+  }, [resourceGroups, controllableValue, setControllableValue]);
   const autoSelectedResourceGroup =
     _.find(resourceGroups, (item) => item.name === 'default') ||
     resourceGroups[0];
