@@ -404,7 +404,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           }}
         />
       </Flex>
-      <Form form={internalForm}>
+      <Form form={internalForm} component={false}>
         <Table
           // size="small"
           scroll={{ x: 'max-content' }}
