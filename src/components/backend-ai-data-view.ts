@@ -1027,7 +1027,9 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   async _getAutoSelectedVhostIncludedList() {
-    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts(
+      globalThis.backendaiclient.current_group_id(),
+    );
     if (vhostInfo.allowed.length > 1) {
       vhostInfo.allowed.unshift(
         `auto (${this._getAutoSelectedVhostName(vhostInfo)})`,

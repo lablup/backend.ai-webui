@@ -506,7 +506,9 @@ export default class BackendAIImport extends BackendAIPage {
     const permission = 'rw';
     const usageMode = 'general';
     const group = ''; // user ownership
-    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
+    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts(
+      globalThis.backendaiclient.current_group_id(),
+    );
     let host = vhost_info.default;
     if (new URL(url).host === 'github.com') {
       host = (
@@ -655,7 +657,9 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   async _getFolderList() {
-    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
+    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts(
+      globalThis.backendaiclient.current_group_id(),
+    );
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
     if ((this.allowed_folder_type as string[]).includes('group')) {

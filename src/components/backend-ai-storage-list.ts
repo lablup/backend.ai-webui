@@ -2458,13 +2458,17 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   async _getVolumeInformation() {
-    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts(
+      globalThis.backendaiclient.current_group_id(),
+    );
     this.volumeInfo = vhostInfo.volume_info || {};
   }
 
   async _getAllowedVFolderHostsByCurrentUserInfo() {
     const [vhostInfo, currentKeypairResourcePolicy] = await Promise.all([
-      globalThis.backendaiclient.vfolder.list_hosts(),
+      globalThis.backendaiclient.vfolder.list_hosts(
+        globalThis.backendaiclient.current_group_id(),
+      ),
       this._getCurrentKeypairResourcePolicy(),
     ]);
     const currentDomain = globalThis.backendaiclient._config.domainName;
@@ -2606,14 +2610,16 @@ export default class BackendAiStorageList extends BackendAIPage {
       .catch(() => {
         this._folderRefreshing = false;
       });
-    globalThis.backendaiclient.vfolder.list_hosts().then((res) => {
-      // refresh folder list every 30sec
-      if (this.active && !refreshOnly) {
-        setTimeout(() => {
-          this._refreshFolderList(false, 'loop');
-        }, 30000);
-      }
-    });
+    globalThis.backendaiclient.vfolder
+      .list_hosts(globalThis.backendaiclient.current_group_id())
+      .then((res) => {
+        // refresh folder list every 30sec
+        if (this.active && !refreshOnly) {
+          setTimeout(() => {
+            this._refreshFolderList(false, 'loop');
+          }, 30000);
+        }
+      });
   }
 
   _refreshFolderUI(e) {
