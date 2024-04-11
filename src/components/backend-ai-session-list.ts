@@ -1140,6 +1140,11 @@ export default class BackendAISessionList extends BackendAIPage {
                 occupiedSlots['hyperaccel-lpu.device'],
               );
             }
+            if ('sapeon-x220.device' in occupiedSlots) {
+              sessions[objectKey].sapeon_x220_slot = parseInt(
+                occupiedSlots['sapeon-x220.device'],
+              );
+            }
             if ('cuda.shares' in occupiedSlots) {
               // sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
               sessions[objectKey].cuda_fgpu_slot = parseFloat(
@@ -3361,6 +3366,16 @@ ${rowData.item[this.sessionNameField]}</pre
                     <span class="indicator">Hyperaccel LPU</span>
                   `
                 : html``}
+              ${rowData.item.sapeon_x220_slot
+                ? html`
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/npu_generic.svg"
+                    />
+                    <span>${rowData.item.sapeon_x220_slot}</span>
+                    <span class="indicator">Sapeon X220</span>
+                  `
+                : html``}
               ${!rowData.item.cuda_gpu_slot &&
               !rowData.item.cuda_fgpu_slot &&
               !rowData.item.rocm_gpu_slot &&
@@ -3368,7 +3383,8 @@ ${rowData.item[this.sessionNameField]}</pre
               !rowData.item.ipu_slot &&
               !rowData.item.atom_slot &&
               !rowData.item.warboy_slot &&
-              !rowData.item.hyperaccel_lpu_slot
+              !rowData.item.hyperaccel_lpu_slot &&
+              !rowData.item.sapeon_x220_slot
                 ? html`
                     <mwc-icon class="fg green indicator">view_module</mwc-icon>
                     <span>-</span>

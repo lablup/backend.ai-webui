@@ -406,6 +406,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'atom.device': 'atom_device',
         'warboy.device': 'warboy_device',
         'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
+        'sapeon-x220.device': 'sapeon_x220_device',
       };
       for (const [k, v] of Object.entries(deviceList)) {
         // Set gpu_modes
@@ -561,6 +562,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'atom.device': 'atom_device',
         'warboy.device': 'warboy_device',
         'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
+        'sapeon-x220.device': 'sapeon_x220_device',
       };
       const slotList = {
         cpu: 'cpu',
@@ -573,6 +575,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'atom.device': 'atom_device',
         'warboy.device': 'warboy_device',
         'hyperaccel-lpu.device': 'hyperaccel_lpu_device',
+        'sapeon-x220.device': 'sapeon_x220_device',
       };
       if (this.scaling_group === '' && this.scaling_groups.length > 0) {
         // no scaling group in the current project

@@ -549,6 +549,24 @@ export default class BackendAIAgentList extends BackendAIPage {
                   agents[objectKey].used_hyperaccel_lpu_slots_ratio * 100
                 ).toFixed(2);
               }
+              if ('sapeon-x220.device' in available_slots) {
+                agents[objectKey].sapeon_x220_slots = parseInt(
+                  available_slots['sapeon-x220.device'],
+                );
+                if ('sapeon-x220.device' in occupied_slots) {
+                  agents[objectKey].used_sapeon_x220_slots = parseInt(
+                    occupied_slots['sapeon-x220.device'],
+                  );
+                } else {
+                  agents[objectKey].used_sapeon_x220_slots = 0;
+                }
+                agents[objectKey].used_sapeon_x220_slots_ratio =
+                  agents[objectKey].used_sapeon_x220_slots /
+                  agents[objectKey].sapeon_x220_slots;
+                agents[objectKey].total_sapeon_x220_percent = (
+                  agents[objectKey].used_sapeon_x220_slots_ratio * 100
+                ).toFixed(2);
+              }
 
               if ('cuda' in compute_plugins) {
                 const cuda_plugin = compute_plugins['cuda'];
@@ -1227,6 +1245,31 @@ export default class BackendAIAgentList extends BackendAIPage {
                     id="hyperaccel-lpu-bar"
                     progress="${rowData.item.used_hyperaccel_lpu_slots_ratio}"
                     description="${rowData.item.used_hyperaccel_lpu_slots}"
+                  ></lablup-progress-bar>
+                </div>
+              `
+            : html``}
+          ${rowData.item.sapeon_x220_slots
+            ? html`
+                <div
+                  class="layout horizontal center-justified flex progress-bar-section"
+                >
+                  <div class="layout horizontal start resource-indicator">
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/npu_generic.svg"
+                    />
+                    <span class="monospace" style="padding-left:5px;">
+                      ${rowData.item.used_sapeon_x220_slots}/${rowData.item
+                        .sapeon_x220_slots}
+                    </span>
+                    <span class="indicator">Sapeon X220</span>
+                  </div>
+                  <span class="flex"></span>
+                  <lablup-progress-bar
+                    id="sapeon-x220-bar"
+                    progress="${rowData.item.used_sapeon_x220_slots_ratio}"
+                    description="${rowData.item.used_sapeon_x220_slots}"
                   ></lablup-progress-bar>
                 </div>
               `

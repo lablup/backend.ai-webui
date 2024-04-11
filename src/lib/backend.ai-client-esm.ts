@@ -1039,6 +1039,9 @@ class Client {
       if (resources['hyperaccel-lpu.device']) {
         config['hyperaccel-lpu.device'] = parseInt(resources['hyperaccel-lpu.device']);
       }
+      if (resources['sapeon-x220.device']) {
+        config['sapeon-x220.device'] = parseInt(resources['sapeon-x220.device']);
+      }
       if (resources['cluster_size']) {
         params['cluster_size'] = resources['cluster_size'];
       }
@@ -3930,6 +3933,9 @@ class Resources {
     this.resources['hyperaccel-lpu.device'] = {};
     this.resources['hyperaccel-lpu.device'].total = 0;
     this.resources['hyperaccel-lpu.device'].used = 0;
+    this.resources['sapeon-x220.device'] = {};
+    this.resources['sapeon-x220.device'].total = 0;
+    this.resources['sapeon-x220.device'].used = 0;
 
     this.resources.agents = {};
     this.resources.agents.total = 0;
@@ -4074,6 +4080,16 @@ class Resources {
               this.resources['hyperaccel-lpu.device'].used =
                 parseInt(this.resources['hyperaccel-lpu.device'].used) +
                 Math.floor(Number(occupied_slots['hyperaccel-lpu.device']));
+            }
+            if ('sapeon-x220.device' in available_slots) {
+              this.resources['sapeon-x220.device'].total =
+                parseInt(this.resources['sapeon-x220.device'].total) +
+                Math.floor(Number(available_slots['sapeon-x220.device']));
+            }
+            if ('sapeon-x220.device' in occupied_slots) {
+              this.resources['sapeon-x220.device'].used =
+                parseInt(this.resources['sapeon-x220.device'].used) +
+                Math.floor(Number(occupied_slots['sapeon-x220.device']));
             }
 
             if (isNaN(this.resources.cpu.used)) {

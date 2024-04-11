@@ -1064,6 +1064,53 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   </div>
                 `
               : html``}
+            ${this.total_slot.sapeon_x220_device
+              ? html`
+                  <div class="layout horizontal center-justified monitor">
+                    <div
+                      class="layout vertical center center-justified resource-name"
+                    >
+                      <span class="gauge-name">Sapeon X220</span>
+                    </div>
+                    <div class="layout vertical center-justified wrap">
+                      <lablup-progress-bar
+                        id="sapeon-x220-usage-bar"
+                        class="start"
+                        progress="${this.used_resource_group_slot_percent
+                          .sapeon_x220_device / 100.0}"
+                        description="${this.used_resource_group_slot
+                          .sapeon_x220_device}/${this.total_resource_group_slot
+                          .sapeon_x220_device}"
+                      ></lablup-progress-bar>
+                      <lablup-progress-bar
+                        id="sapeon-x220-usage-bar-2"
+                        class="end"
+                        progress="${this.used_slot_percent.sapeon_x220_device /
+                        100.0}"
+                        buffer="${this.used_slot_percent.sapeon_x220_device /
+                        100.0}"
+                        description="${this.used_slot.sapeon_x220_device}/${this
+                          .total_slot.sapeon_x220_device}"
+                      ></lablup-progress-bar>
+                    </div>
+                    <div class="layout vertical center center-justified">
+                      <span class="percentage start-bar">
+                        ${this._numberWithPostfix(
+                          this.used_resource_group_slot_percent
+                            .sapeon_x220_device,
+                          '%',
+                        )}
+                      </span>
+                      <span class="percentage end-bar">
+                        ${this._numberWithPostfix(
+                          this.used_slot_percent.sapeon_x220_device,
+                          '%',
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                `
+              : html``}
             <div class="layout horizontal center-justified monitor">
               <div
                 class="layout vertical center center-justified resource-name"
@@ -1500,6 +1547,43 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                             <span class="percentage end-bar">
                               ${this._numberWithPostfix(
                                 this.total_project_slot.hyperaccel_lpu_device,
+                                '%',
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      `
+                    : html``}
+                  ${this.total_project_slot.sapeon_x220_device
+                    ? html`
+                        <div class="layout horizontal">
+                          <span
+                            style="width:35px;margin-left:5px; margin-right:5px;"
+                          >
+                            Sapeon X220
+                          </span>
+                          <lablup-progress-bar
+                            id="sapeon-x220-project-usage-bar"
+                            class="end"
+                            progress="${this.used_project_slot_percent
+                              .sapeon_x220_device / 100.0}"
+                            description="${this.used_project_slot
+                              .sapeon_x220_device}/${this.total_project_slot
+                              .sapeon_x220_device === 'Infinity'
+                              ? '∞'
+                              : this.total_project_slot.sapeon_x220_device}"
+                          ></lablup-progress-bar>
+                          <div class="layout vertical center center-justified">
+                            <span class="percentage start-bar">
+                              ${this._numberWithPostfix(
+                                this.used_project_slot_percent
+                                  .sapeon_x220_device,
+                                '%',
+                              )}
+                            </span>
+                            <span class="percentage end-bar">
+                              ${this._numberWithPostfix(
+                                this.total_project_slot.sapeon_x220_device,
                                 '%',
                               )}
                             </span>

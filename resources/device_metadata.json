@@ -109,6 +109,17 @@
         "round_length": 0
       },
       "display_icon": "lpu"
+    },
+    "sapeon-x220": {
+      "slot_name": "sapeon-x220.device",
+      "description": "Sapeon X220",
+      "human_readable_name": "Sapeon X220 Device",
+      "display_unit": "NPU",
+      "number_format": {
+        "binary": false,
+        "round_length": 0
+      },
+      "display_icon": "sapeon"
     }
   }
 }

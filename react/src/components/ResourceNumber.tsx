@@ -15,6 +15,7 @@ const resourceTypes = [
   'atom.device',
   'warboy.device',
   'hyperaccel-lpu.device',
+  'sapeon-x220.device',
 ] as const;
 
 export type ResourceTypeKey = (typeof resourceTypes)[number];
@@ -30,6 +31,7 @@ export const ACCELERATOR_UNIT_MAP: {
   'atom.device': 'ATOM',
   'warboy.device': 'Warboy',
   'hyperaccel-lpu.device': 'Hyperaccel LPU',
+  'sapeon-x220.device': 'Sapeon X220',
 };
 
 export type ResourceOpts = {
@@ -146,6 +148,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
       '/resources/icons/npu_generic.svg',
       'Hyperaccel LPU',
     ],
+    'sapeon-x220.device': ['/resources/icons/npu_generic.svg', 'Sapeon X220'],
   };
 
   const content =

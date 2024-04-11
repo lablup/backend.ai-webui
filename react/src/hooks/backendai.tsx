@@ -29,6 +29,7 @@ export const useResourceSlots = () => {
     'atom.device'?: string;
     'warboy.device'?: string;
     'hyperaccel-lpu.device'?: string;
+    'sapeon-x220.device'?: string;
   }>({
     queryKey: ['useResourceSlots', key],
     queryFn: () => {
@@ -57,6 +58,7 @@ export const useResourceSlotsByResourceGroup = (name?: string) => {
     'atom.device': string;
     'warboy.device': string;
     'hyperaccel-lpu.device': string;
+    'sapeon-x220.device': string;
     [key: string]: string;
   }>({
     queryKey: ['useResourceSlots', name, key],

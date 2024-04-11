@@ -405,6 +405,17 @@ export default class BackendAICredentialList extends BackendAIPage {
             ) {
               keypair['total_resource_slots'].hyperaccel_lpu_device = '-';
             }
+            if ('sapeon-x220.device' in keypair['total_resource_slots']) {
+              keypair['total_resource_slots'].sapeon_x220_device =
+                keypair['total_resource_slots']['sapeon-x220.device'];
+            }
+            if (
+              'sapeon_x220_device' in keypair['total_resource_slots'] ===
+                false &&
+              keypair['default_for_unspecified'] === 'UNLIMITED'
+            ) {
+              keypair['total_resource_slots'].sapeon_x220_device = '-';
+            }
 
             [
               'cpu',

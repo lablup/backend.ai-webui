@@ -56,6 +56,7 @@ interface ServiceCreateConfigResourceType {
   'atom.device'?: number | string;
   'warboy.device'?: number | string;
   'hyperaccel-lpu.device'?: number | string;
+  'sapeon-x220.device'?: number | string;
 }
 
 interface ServiceCreateConfigType {

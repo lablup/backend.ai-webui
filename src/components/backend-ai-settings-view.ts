@@ -46,6 +46,7 @@ interface Options {
   atom: boolean;
   warboy: boolean;
   hyperaccel_lpu: boolean;
+  sapeon_x220: boolean;
   schedulerType: string;
   scheduler: {
     num_retries_to_skip: string;
@@ -105,6 +106,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
       atom: false,
       warboy: false,
       hyperaccel_lpu: false,
+      sapeon_x220: false,
       schedulerType: 'fifo',
       scheduler: {
         num_retries_to_skip: '0',
@@ -614,6 +616,29 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       ></mwc-switch>
                     </div>
                   </div>
+                  <div class="horizontal layout setting-item">
+                    <div
+                      class="vertical center-justified layout setting-desc-shrink"
+                    >
+                      <div class="title">
+                        ${_t('settings.SapeonX220support')}
+                      </div>
+                      <div class="description-shrink">
+                        ${_tr('settings.DescSapeonX220support')}
+                        <br />
+                        ${_t('settings.RequireSapeonX220Plugin')}
+                      </div>
+                    </div>
+                    <div
+                      class="vertical center-justified layout setting-button"
+                    >
+                      <mwc-switch
+                        id="sapeon-x220-support-switch"
+                        ?selected="${this.options['sapeon_x220']}"
+                        disabled
+                      ></mwc-switch>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -933,6 +958,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       if ('hyperaccel-lpu.device' in response) {
         this.options['hyperaccel-lpu'] = true;
+      }
+      if ('sapeon-x220.device' in response) {
+        this.options['sapeon-x220'] = true;
       }
       // this.update(this.options);
       this.requestUpdate();

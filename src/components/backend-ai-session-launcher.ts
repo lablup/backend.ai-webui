@@ -129,6 +129,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     min: '0',
     max: '0',
   };
+  @property({ type: Object }) sapeon_x220_device_metric = {
+    min: '0',
+    max: '0',
+  };
 
   @property({ type: Object }) cluster_metric = {
     min: 1,
@@ -201,6 +205,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({ type: Number }) max_atom_device_per_container = 4;
   @property({ type: Number }) max_warboy_device_per_container = 4;
   @property({ type: Number }) max_hyperaccel_lpu_device_per_container = 4;
+  @property({ type: Number }) max_sapeon_x220_device_per_container = 4;
   @property({ type: Number }) max_shm_per_container = 8;
   @property({ type: Boolean }) allow_manual_image_name_for_session = false;
   @property({ type: Object }) resourceBroker;
@@ -992,6 +997,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.max_hyperaccel_lpu_device_per_container =
             globalThis.backendaiclient._config
               .maxHyperaccelLPUDevicesPerContainer || 8;
+          this.max_sapeon_x220_device_per_container =
+            globalThis.backendaiclient._config
+              .maxSapeonX220DevicesPerContainer || 8;
           this.max_shm_per_container =
             globalThis.backendaiclient._config.maxShmPerContainer || 8;
           if (
@@ -1042,6 +1050,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.max_hyperaccel_lpu_device_per_container =
         globalThis.backendaiclient._config
           .maxHyperaccelLPUDevicesPerContainer || 8;
+      this.max_sapeon_x220_device_per_container =
+        globalThis.backendaiclient._config.maxSapeonX220DevicesPerContainer ||
+        8;
       this.max_shm_per_container =
         globalThis.backendaiclient._config.maxShmPerContainer || 8;
       if (
@@ -1679,6 +1690,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         break;
       case 'hyperaccel-lpu.device':
         config['hyperaccel-lpu.device'] = this.gpu_request;
+        break;
+      case 'sapeon-x220.device':
+        config['sapeon-x220.device'] = this.gpu_request;
         break;
       default:
         // Fallback to current gpu mode if there is a gpu request, but without gpu type.
@@ -2326,6 +2340,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               'atom_device',
               'warboy_device',
               'hyperaccel_lpu_device',
+              'sapeon_x220_device',
             ].forEach((slot) => {
               if (slot in this.total_resource_group_slot) {
                 available_slot[slot] = this.total_resource_group_slot[slot];
@@ -2784,6 +2799,61 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           console.log(hyperaccel_lpu_device_metric);
           this._NPUDeviceNameOnSlider = 'Hyperaccel LPU';
           this.npu_device_metric = hyperaccel_lpu_device_metric;
+        }
+        if (item.key === 'sapeon-x220.device') {
+          const sapeon_x220_device_metric = { ...item };
+          sapeon_x220_device_metric.min = parseInt(
+            sapeon_x220_device_metric.min,
+          );
+          if ('sapeon-x220.device' in this.userResourceLimit) {
+            if (
+              parseInt(sapeon_x220_device_metric.max) !== 0 &&
+              sapeon_x220_device_metric.max !== 'Infinity' &&
+              !isNaN(sapeon_x220_device_metric.max) &&
+              sapeon_x220_device_metric.max != null
+            ) {
+              sapeon_x220_device_metric.max = Math.min(
+                parseInt(sapeon_x220_device_metric.max),
+                parseInt(this.userResourceLimit['sapeon-x220.device']),
+                available_slot['sapeon_x220_device'],
+                this.max_sapeon_x220_device_per_container,
+              );
+            } else {
+              sapeon_x220_device_metric.max = Math.min(
+                parseInt(this.userResourceLimit['sapeon-x220.device']),
+                parseInt(available_slot['sapeon_x220_device']),
+                this.max_sapeon_x220_device_per_container,
+              );
+            }
+          } else {
+            if (
+              parseInt(sapeon_x220_device_metric.max) !== 0 &&
+              sapeon_x220_device_metric.max !== 'Infinity' &&
+              !isNaN(sapeon_x220_device_metric.max) &&
+              sapeon_x220_device_metric.max != null
+            ) {
+              sapeon_x220_device_metric.max = Math.min(
+                parseInt(sapeon_x220_device_metric.max),
+                parseInt(available_slot['sapeon_x220_device']),
+                this.max_sapeon_x220_device_per_container,
+              );
+            } else {
+              sapeon_x220_device_metric.max = Math.min(
+                parseInt(this.available_slot['sapeon_x220_device']),
+                this.max_sapeon_x220_device_per_container,
+              );
+            }
+          }
+          if (sapeon_x220_device_metric.min >= sapeon_x220_device_metric.max) {
+            if (sapeon_x220_device_metric.min > sapeon_x220_device_metric.max) {
+              sapeon_x220_device_metric.min = sapeon_x220_device_metric.max;
+              disableLaunch = true;
+            }
+            this.npuResouceSlider.disabled = true;
+          }
+          console.log(sapeon_x220_device_metric);
+          this._NPUDeviceNameOnSlider = 'Sapeon X220';
+          this.npu_device_metric = sapeon_x220_device_metric;
         }
 
         if (item.key === 'mem') {
@@ -3271,6 +3341,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const atom_device = button.atom_device;
     const warboy_device = button.warboy_device;
     const hyperaccel_lpu_device = button.hyperaccel_lpu_device;
+    const sapeon_x220_device = button.sapeon_x220_device;
     let gpu_type;
     let gpu_value;
     if (
@@ -3309,6 +3380,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     ) {
       gpu_type = 'hyperaccel-lpu.device';
       gpu_value = hyperaccel_lpu_device;
+    } else if (
+      typeof sapeon_x220_device !== 'undefined' &&
+      Number(sapeon_x220_device) > 0
+    ) {
+      gpu_type = 'sapeon-x220.device';
+      gpu_value = sapeon_x220_device;
     } else {
       gpu_type = 'none';
       gpu_value = 0;
@@ -4441,6 +4518,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       'atom.device': 'ATOM',
       'warboy.device': 'Warboy',
       'hyperaccel-lpu.device': 'Hyperaccel LPU',
+      'sapeon-x220.device': 'Sapeon X220',
     };
     if (gpu_type in accelerator_names) {
       return accelerator_names[gpu_type];
@@ -5146,6 +5224,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       .atom_device="${item.atom_device}"
                       .warboy_device="${item.warboy_device}"
                       .hyperaccel_lpu_device="${item.hyperaccel_lpu_device}"
+                      .sapeon_x220_device="${item.sapeon_x220_device}"
                       .shmem="${item.shmem}"
                     >
                       <div class="horizontal layout end-justified">
@@ -5213,6 +5292,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                           item.hyperaccel_lpu_device > 0
                             ? html`
                                 ${item.hyperaccel_lpu_device} Hyperaccel LPU
+                              `
+                            : html``}
+                          ${item.sapeon_x220_device &&
+                          item.sapeon_x220_device > 0
+                            ? html`
+                                ${item.sapeon_x220_device} Sapeon X220
                               `
                             : html``}
                         </div>

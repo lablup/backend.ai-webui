@@ -396,6 +396,7 @@ export default class BackendAISessionView extends BackendAIPage {
       atom_device: 'atom.device',
       warboy_device: 'warboy.device',
       hyperaccel_lpu_device: 'hyperaccel-lpu.device',
+      sapeon_x220_device: 'sapeon-x220.device',
     };
 
     // Get session list and export to csv file

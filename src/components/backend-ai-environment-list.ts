@@ -59,6 +59,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({ type: Boolean }) _atom_disabled = false;
   @property({ type: Boolean }) _warboy_disabled = false;
   @property({ type: Boolean }) _hyperaccel_lpu_disabled = false;
+  @property({ type: Boolean }) _sapeon_x220_disabled = false;
   @property({ type: Object }) alias = Object();
   @property({ type: Object }) indicator = Object();
   @property({ type: Array }) installImageNameList;
@@ -93,6 +94,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     atom: ['0', '1', '2', '3', '4'],
     warboy: ['0', '1', '2', '3', '4'],
     hyperaccel_lpu: ['0', '1', '2', '3', '4'],
+    sapeon_x220: ['0', '1', '2', '3', '4'],
   };
   @property({ type: Number }) cpuValue = 0;
   @property({ type: String }) listCondition: StatusCondition = 'loading';
@@ -119,6 +121,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @query('#modify-image-atom') modifyImageAtom!: Button;
   @query('#modify-image-warboy') modifyImageWarboy!: Button;
   @query('#modify-image-hyperaccel-lpu') modifyImageHyperaccelLPU!: Button;
+  @query('#modify-image-sapeon-x220') modifyImageSapeonX220!: Button;
   @query('#delete-app-info-dialog') deleteAppInfoDialog!: BackendAIDialog;
   @query('#delete-image-dialog') deleteImageDialog!: BackendAIDialog;
   @query('#install-image-dialog') installImageDialog!: BackendAIDialog;
@@ -517,7 +520,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 resource.key = 'warboy_device';
               }
               if (resource.key == 'hyperaccel-lpu.device') {
-                resource.key = 'hyperaccl_lpu_device';
+                resource.key = 'hyperaccel_lpu_device';
+              }
+              if (resource.key == 'sapeon-x220.device') {
+                resource.key = 'sapeon_x220_device';
               }
               if (resource.min !== null && resource.min !== undefined) {
                 image[resource.key + '_limit_min'] = this._addUnit(
@@ -691,6 +697,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const atom = this.modifyImageAtom.label;
     const warboy = this.modifyImageWarboy.label;
     const hyperaccel_lpu = this.modifyImageHyperaccelLPU.label;
+    const sapeon_x220 = this.modifyImageSapeonX220.label;
 
     const { resource_limits } = this.images[this.selectedIndex];
 
@@ -727,6 +734,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       hyperaccel_lpu !== resource_limits[6].min
     )
       input['hyperaccel-lpu.device'] = { min: hyperaccel_lpu };
+    if (!this._sapeon_x220_disabled && sapeon_x220 !== resource_limits[6].min)
+      input['sapeon-x220.device'] = { min: sapeon_x220 };
 
     const image = this.images[this.selectedIndex];
 
@@ -959,6 +968,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this._hyperaccel_lpu_disabled =
       resource_limits.filter((e) => e.key === 'hyperaccel_lpu_device')
         .length === 0;
+    this._sapeon_x220_disabled =
+      resource_limits.filter((e) => e.key === 'sapeon_x220_device').length ===
+      0;
     const resources = resource_limits.reduce((result, item) => {
       const { key, ...rest } = item;
       const value = rest;
@@ -1069,6 +1081,21 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       ) as string;
       (
         this.shadowRoot?.querySelector('mwc-slider#hyperaccel-lpu') as Slider
+      ).value = 0;
+    }
+    if (!this._sapeon_x220_disabled) {
+      this.modifyImageSapeonX220.label = resources['sapeon_x220_device'].min;
+      (
+        this.shadowRoot?.querySelector('mwc-slider#sapeon-x220') as Slider
+      ).value = this._range['sapeon-x220'].indexOf(
+        this._range['sapeon-x220'].filter((value) => {
+          return value === resources['sapeon_x220_device'].min;
+        })[0],
+      );
+    } else {
+      this.modifyImageSapeonX220.label = _t('environment.Disabled') as string;
+      (
+        this.shadowRoot?.querySelector('mwc-slider#sapeon-x220') as Slider
       ).value = 0;
     }
 
@@ -1391,6 +1418,26 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                     )}
                   </span>
                   <span class="indicator">Hyperaccel LPU</span>
+                </div>
+              </div>
+            `
+          : html``}
+        ${rowData.item.sapeon_x220_device_limit_min
+          ? html`
+              <div class="layout horizontal center flex">
+                <div class="layout horizontal configuration">
+                  <img
+                    class="indicator-icon fg green"
+                    src="/resources/icons/npu_generic.svg"
+                  />
+                  <span>${rowData.item.sapeon_x220_device_limit_min}</span>
+                  ~
+                  <span>
+                    ${this._markIfUnlimited(
+                      rowData.item.sapeon_x220_device_limit_max,
+                    )}
+                  </span>
+                  <span class="indicator">Sapeon X220</span>
                 </div>
               </div>
             `
@@ -1830,6 +1877,22 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <mwc-button
                 class="range-value"
                 id="modify-image-hyperaccel-lpu"
+                disabled
+              ></mwc-button>
+            </div>
+            <div class="horizontal layout flex center">
+              <span class="resource-limit-title">Hyperaccel LPU</span>
+              <mwc-slider
+                ?disabled="${this._sapeon_x220_disabled}"
+                id="sapeon-x220"
+                markers
+                step="1"
+                max="5"
+                @change="${(e) => this._changeSliderValue(e.target)}"
+              ></mwc-slider>
+              <mwc-button
+                class="range-value"
+                id="modify-image-sapeon-x220"
                 disabled
               ></mwc-button>
             </div>
