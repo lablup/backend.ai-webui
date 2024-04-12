@@ -315,18 +315,6 @@ const SessionLauncherPage = () => {
     (item) => item.errors.length > 0,
   );
 
-  // console.log(form.getFieldError(['resource', 'shmem']));
-  // console.log(form.getFieldValue(['resource']));
-
-  const moveToPreview = () => {
-    form
-      .validateFields()
-      .catch((e) => {})
-      .finally(() => {
-        setCurrentStep(steps.length - 1);
-      });
-  };
-
   const [, setLastValidateErrorTime] = useUpdatableState('first'); // Force an update when a validation error occurs.
   useEffect(() => {
     if (currentStep === steps.length - 1) {
@@ -456,27 +444,7 @@ const SessionLauncherPage = () => {
                 return res;
               })
               .catch((err: any) => {
-                console.log(err);
                 throw err;
-                // console.log(err);
-                // if (err && err.message) {
-                //   if ('statusCode' in err && err.statusCode === 408) {
-                //     this.notification.text = _text(
-                //       'session.launcher.sessionStillPreparing',
-                //     );
-                //   } else {
-                //     if (err.description) {
-                //       this.notification.text = PainKiller.relieve(err.description);
-                //     } else {
-                //       this.notification.text = PainKiller.relieve(err.message);
-                //     }
-                //   }
-                //   this.notification.detail = err.message;
-                //   this.notification.show(true, err);
-                // } else if (err && err.title) {
-                //   this.notification.text = PainKiller.relieve(err.title);
-                //   this.notification.show(true, err);
-                // }
               });
           },
         );
