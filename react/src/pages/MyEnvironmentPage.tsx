@@ -26,6 +26,7 @@ import { useLazyLoadQuery, useMutation } from 'react-relay';
 
 type TabKey = 'images';
 type AdditionalImageColumnTypes = {
+  key: string;
   namespace: string;
   lang: string;
   baseversion: string;
@@ -45,6 +46,8 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const [selectedTab] = useState<TabKey>('images');
   const [isRefetchPending, startRefetchTransition] = useTransition();
+  const [myEnvironmentFetchKey, updateMyEnvironmentFetchKey] =
+    useUpdatableState('initial-fetch');
   const [metadata] = useBackendAIImageMetaData();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const hasSelected = selectedRowKeys.length > 0;
@@ -80,7 +83,11 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
     `,
     {},
     {
-      fetchPolicy: 'network-only',
+      fetchPolicy:
+        myEnvironmentFetchKey === 'initial-fetch'
+          ? 'store-and-network'
+          : 'network-only',
+      fetchKey: myEnvironmentFetchKey,
     },
   );
 
@@ -109,6 +116,7 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
   };
 
   const processedImages = _.map(customized_images, (image) => {
+    const key = image?.id;
     const tags = image?.tag?.split('-');
     const names = image?.name?.split('/');
     const namespace = names?.[1] ? names[0] : '';
@@ -140,6 +148,7 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
 
     return {
       ...image,
+      key,
       namespace,
       lang,
       baseversion,
@@ -233,24 +242,33 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
             title={t('dialog.ask.DoYouWantToProceed')}
             description={t('dialog.warning.CannotBeUndone')}
             okType="danger"
-            onConfirm={() => {
-              if (row?.id) {
-                commitForgetImageById({
-                  variables: {
-                    image_id: row.id,
-                  },
-                  onError(err) {
-                    message.error(err?.message);
-                  },
-                });
-                commitUntagImageFromRegistry({
-                  variables: {
-                    id: row.id,
-                  },
-                  onError(err) {
-                    message.error(err?.message);
-                  },
-                });
+            onConfirm={async () => {
+              try {
+                if (row?.id) {
+                  await Promise.all([
+                    commitForgetImageById({
+                      variables: {
+                        image_id: row.id,
+                      },
+                      onError(err) {
+                        message.error(err?.message);
+                      },
+                    }),
+                    commitUntagImageFromRegistry({
+                      variables: {
+                        id: row.id,
+                      },
+                      onError(err) {
+                        message.error(err?.message);
+                      },
+                    }),
+                  ]);
+                  startRefetchTransition(() => {
+                    updateMyEnvironmentFetchKey();
+                  });
+                }
+              } catch (err) {
+                console.error(err);
               }
             }}
           >
