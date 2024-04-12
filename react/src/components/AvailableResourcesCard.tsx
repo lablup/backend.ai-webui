@@ -1,5 +1,5 @@
 import { iSizeToSize } from '../helper';
-import { useCurrentProjectValue } from '../hooks';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import Flex from './Flex';
 import ResourceAvailableGageBar from './ResourceAvailableGageBar';

@@ -29,12 +29,12 @@ import VFolderTableFromItem, {
 } from '../components/VFolderTableFormItem';
 import { compareNumberWithUnits, iSizeToSize } from '../helper';
 import {
-  useCurrentProjectValue,
   useSuspendedBackendaiClient,
   useUpdatableState,
   useWebUINavigate,
 } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useThemeMode } from '../hooks/useThemeMode';
 // @ts-ignore
 import customCSS from './SessionLauncherPage.css?raw';

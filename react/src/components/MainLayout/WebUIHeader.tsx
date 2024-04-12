@@ -1,8 +1,8 @@
+import { useCurrentDomainValue } from '../../hooks';
 import {
-  useCurrentDomainValue,
   useCurrentProjectValue,
   useSetCurrentProject,
-} from '../../hooks';
+} from '../../hooks/useCurrentProject';
 import { useScrollBreakPoint } from '../../hooks/useScrollBreackPoint';
 import BAINotificationButton from '../BAINotificationButton';
 import Flex, { FlexProps } from '../Flex';
