@@ -56,8 +56,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const inactiveList = baiClient?._config?.inactiveList ?? null;
   const siteDescription = baiClient?._config?.siteDescription ?? null;
   const supportServing = baiClient?.supports('model-serving') ?? false;
-  const supportPendingSessionCount =
-    baiClient?.supports('pending-session-count') ?? false;
+  const supportUserCommittedImage =
+    baiClient?.supports('user-committed-image') ?? false;
 
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
 
@@ -87,7 +87,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <CloudUploadOutlined />,
       key: 'data',
     },
-    supportPendingSessionCount && {
+    supportUserCommittedImage && {
       label: t('webui.menu.MyEnvironments'),
       icon: <FileDoneOutlined />,
       key: 'my-environment',

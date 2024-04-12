@@ -120,7 +120,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Boolean }) isUserInfoMaskEnabled;
   @property({ type: Boolean }) isHideAgents = true;
   @property({ type: Boolean }) supportServing = false;
-  @property({ type: Boolean }) supportPendingSessionCount = false;
+  @property({ type: Boolean }) supportUserCommittedImage = false;
   @property({ type: String }) lang = 'default';
   @property({ type: Array }) supportLanguageCodes = [
     'en',
@@ -642,8 +642,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     }
 
     this.supportServing = globalThis.backendaiclient.supports('model-serving');
-    this.supportPendingSessionCount = globalThis.backendaiclient.supports(
-      'pending-session-count',
+    this.supportUserCommittedImage = globalThis.backendaiclient.supports(
+      'user-committed-image',
     );
     this.optionalPages = [
       {
@@ -656,7 +656,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       },
       {
         page: 'my-environment',
-        available: this.supportPendingSessionCount,
+        available: this.supportUserCommittedImage,
       },
     ];
 

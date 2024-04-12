@@ -689,7 +689,7 @@ class Client {
       this._features['vfolder-trash-bin'] = true;
       this._features['model-store'] = true;
       this._features['per-user-image'] = true;
-      this._features['pending-session-count'] = true;
+      this._features['user-committed-image'] = true;
     }
   }
 

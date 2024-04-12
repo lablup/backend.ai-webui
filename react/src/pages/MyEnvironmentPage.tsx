@@ -250,6 +250,7 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
             title={t('dialog.ask.DoYouWantToProceed')}
             description={t('dialog.warning.CannotBeUndone')}
             okType="danger"
+            okText={t('button.Delete')}
             onConfirm={() => {
               if (row?.id) {
                 commitForgetAndUntag({
@@ -320,6 +321,7 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
               )}
               dataSource={processedImages as CustomizedImages[]}
               scroll={{ x: 'max-content' }}
+              pagination={false}
             />
             <Flex
               justify="end"
