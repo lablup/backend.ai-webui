@@ -31,6 +31,7 @@ import { compareNumberWithUnits, iSizeToSize } from '../helper';
 import {
   useCurrentProjectValue,
   useSuspendedBackendaiClient,
+  useUpdatableState,
   useWebUINavigate,
 } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -1068,7 +1069,10 @@ const SessionLauncherPage = () => {
                 >
                   <VFolderTableFromItem
                     filter={(vfolder) => {
-                      return vfolder.status === 'ready';
+                      return (
+                        vfolder.status === 'ready' &&
+                        !vfolder.name?.startsWith('.')
+                      );
                     }}
                   />
                   {/* <VFolderTable /> */}
