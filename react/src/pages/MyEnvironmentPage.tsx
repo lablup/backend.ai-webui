@@ -1,8 +1,18 @@
-import DoubleTag from '../components/DoubleTag';
 import Flex from '../components/Flex';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
+import {
+  ArchitectureTags,
+  BaseImageTags,
+  BaseVersionTags,
+  ConstraintTags,
+  LangTags,
+} from '../components/ImageTags';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
-import { useBackendAIImageMetaData, useUpdatableState } from '../hooks';
+import {
+  getImageFullName,
+  useBackendAIImageMetaData,
+  useUpdatableState,
+} from '../hooks';
 import { MyEnvironmentPageForgetAndUntagMutation } from './__generated__/MyEnvironmentPageForgetAndUntagMutation.graphql';
 import {
   MyEnvironmentPageQuery,
@@ -10,7 +20,7 @@ import {
 } from './__generated__/MyEnvironmentPageQuery.graphql';
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
-import { App, Button, Card, Popconfirm, Table, Tag, theme } from 'antd';
+import { App, Button, Card, Popconfirm, Table, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -26,16 +36,19 @@ import { useLazyLoadQuery, useMutation } from 'react-relay';
 type TabKey = 'images';
 type AdditionalImageColumnTypes = {
   key: string;
+  imageFullName: string;
   namespace: string;
   lang: string;
   baseversion: string;
-  baseimage: string[];
+  baseimage: string;
   constraint: string[];
 };
-type CustomizedImages = NonNullable<
+
+export type CommittedImage = NonNullable<
   MyEnvironmentPageQuery$data['customized_images']
->[number] &
-  AdditionalImageColumnTypes;
+>[number];
+
+type CustomizedImages = CommittedImage & AdditionalImageColumnTypes;
 
 const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
@@ -47,7 +60,16 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [myEnvironmentFetchKey, updateMyEnvironmentFetchKey] =
     useUpdatableState('initial-fetch');
-  const [metadata] = useBackendAIImageMetaData();
+  const [
+    ,
+    {
+      getNamespace,
+      getImageLang,
+      getBaseVersion,
+      getBaseImage,
+      getFilteredRequirementsTags,
+    },
+  ] = useBackendAIImageMetaData();
 
   const { customized_images } = useLazyLoadQuery<MyEnvironmentPageQuery>(
     graphql`
@@ -96,44 +118,19 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
       }
     `);
 
-  const _humanizeName = (value: string) => {
-    return metadata?.tagAlias[value] ?? value;
-  };
-
   const processedImages = _.map(customized_images, (image) => {
     const key = image?.id;
-    const tags = image?.tag?.split('-');
-    const names = image?.name?.split('/');
-    const namespace = names?.[1] ? names[0] : '';
-    const baseversion = tags?.[0] ?? '';
-    const additionalReq = _humanizeName(
-      tags?.slice(2, _.indexOf(tags, 'customized_'))?.join('-') ?? '',
-    );
-    const customizedNameLabel = _.find(image?.labels, {
-      key: 'ai.backend.customized-image.name',
-    })?.value;
-    const constraint = [additionalReq, customizedNameLabel];
-
-    let langs =
-      (names?.[1] ? names.slice(1).join('') : names?.[0])?.split('-') ?? '';
-    let baseimage = tags?.[1] ? [_humanizeName(tags[1])] : [];
-    let lang = _humanizeName(langs[langs.length - 1]);
-
-    if (langs.length > 1) {
-      if (langs[0] === 'r') {
-        lang = _humanizeName(langs[0]);
-        baseimage.push(_humanizeName(langs[0]));
-      } else {
-        lang = _humanizeName(langs[1]);
-        baseimage.push(_humanizeName(langs[0]));
-      }
-    } else {
-      lang = _humanizeName(lang);
-    }
+    const imageFullName = getImageFullName(image) || '';
+    const namespace = getNamespace(imageFullName);
+    const lang = getImageLang(imageFullName);
+    const baseversion = getBaseVersion(imageFullName);
+    const baseimage = getBaseImage(imageFullName);
+    const constraint = getFilteredRequirementsTags(imageFullName);
 
     return {
       ...image,
       key,
+      imageFullName,
       namespace,
       lang,
       baseversion,
@@ -158,6 +155,9 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
         a.architecture && b.architecture
           ? a.architecture.localeCompare(b.architecture)
           : 0,
+      render: (text, row) => (
+        <ArchitectureTags image={row?.imageFullName} color="green" />
+      ),
     },
     {
       title: t('environment.Namespace'),
@@ -171,6 +171,9 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
       dataIndex: 'lang',
       key: 'lang',
       sorter: (a, b) => (a.lang && b.lang ? a.lang.localeCompare(b.lang) : 0),
+      render: (text, row) => (
+        <LangTags image={row?.imageFullName} color="green" />
+      ),
     },
     {
       title: t('environment.Version'),
@@ -180,53 +183,28 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
         a.baseversion && b.baseversion
           ? a.baseversion.localeCompare(b.baseversion)
           : 0,
+      render: (text, row) => (
+        <BaseVersionTags image={row?.imageFullName} color="green" />
+      ),
     },
     {
       title: t('environment.Base'),
       dataIndex: 'baseimage',
       key: 'baseimage',
-      render: (baseimages: string[]) => {
-        return (
-          <>
-            {_.map(baseimages, (baseimage) => (
-              <Tag key={baseimage} color="blue">
-                {baseimage}
-              </Tag>
-            ))}
-          </>
-        );
-      },
       sorter: (a, b) =>
-        a.baseimage && b.baseimage
-          ? a.baseimage.join('').localeCompare(b.baseimage.join(''))
-          : 0,
+        a.baseimage && b.baseimage ? a.baseimage.localeCompare(b.baseimage) : 0,
+      render: (text, row) => <BaseImageTags image={row?.imageFullName} />,
     },
     {
       title: t('environment.Constraint'),
       dataIndex: 'constraint',
       key: 'constraint',
-      render: (constraint: string[]) => {
-        return (
-          <Flex>
-            <Tag color="green">{constraint?.[0]}</Tag>
-            {constraint?.length > 1 ? (
-              <DoubleTag
-                key={constraint?.[1]}
-                values={[
-                  {
-                    label: 'Customized',
-                    color: 'cyan',
-                  },
-                  {
-                    label: constraint?.[1],
-                    color: 'cyan',
-                  },
-                ]}
-              />
-            ) : null}
-          </Flex>
-        );
-      },
+      render: (text, row) => (
+        <ConstraintTags
+          image={row?.imageFullName}
+          labels={row?.labels as { key: string; value: string }[]}
+        />
+      ),
       sorter: (a, b) =>
         a.constraint && b.constraint
           ? a.constraint.join('').localeCompare(b.constraint.join(''))
@@ -314,7 +292,7 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
               columns={columns.filter((column) =>
                 displayedColumnKeys?.includes(_.toString(column.key)),
               )}
-              dataSource={processedImages as CustomizedImages[]}
+              dataSource={processedImages as unknown as CustomizedImages[]}
               scroll={{ x: 'max-content' }}
               pagination={false}
             />
