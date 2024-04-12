@@ -54,6 +54,7 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
       query MyEnvironmentPageQuery {
         customized_images {
           id
+          ImageNode_id
           name
           humanized_name
           tag
@@ -251,11 +252,17 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
             okType="danger"
             okText={t('button.Delete')}
             onConfirm={() => {
-              if (row?.id) {
+              console.log(row.key);
+              if (row.key) {
+                console.log('hello');
+                // need to decode id encoded in base64
+                // ImageNode:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+                const decodedImageId = atob(row.key).split(':')[1];
+                console.log(decodedImageId);
                 commitForgetAndUntag({
                   variables: {
-                    image_id: row.id,
-                    id: row.id,
+                    image_id: decodedImageId,
+                    id: decodedImageId,
                   },
                   onCompleted(data) {
                     startRefetchTransition(() => {
