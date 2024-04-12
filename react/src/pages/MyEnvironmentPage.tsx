@@ -64,7 +64,6 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
             key
             value
           }
-          aliases
           supported_accelerators
         }
       }
