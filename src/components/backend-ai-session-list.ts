@@ -466,7 +466,6 @@ export default class BackendAISessionList extends BackendAIPage {
         span.commit-session-subheading {
           font-size: smaller;
           font-family: monospace;
-          color: rgba(0, 0, 0, 0.6);
         }
 
         mwc-button.multiple-action-button {
@@ -508,7 +507,7 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         .no-mount {
-          color: var(--paper-grey-400);
+          color: var(--token-colorTextDisabled, --paper-grey-400);
         }
 
         .idle-check-key {

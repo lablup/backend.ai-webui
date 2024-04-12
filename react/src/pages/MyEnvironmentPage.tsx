@@ -1,6 +1,7 @@
 import DoubleTag from '../components/DoubleTag';
 import Flex from '../components/Flex';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
+import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import { useBackendAIImageMetaData, useUpdatableState } from '../hooks';
 import { MyEnvironmentPageForgetMutation } from './__generated__/MyEnvironmentPageForgetMutation.graphql';
 import {
@@ -8,7 +9,8 @@ import {
   MyEnvironmentPageQuery$data,
 } from './__generated__/MyEnvironmentPageQuery.graphql';
 import { MyEnvironmentPageUntagMutation } from './__generated__/MyEnvironmentPageUntagMutation.graphql';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
+import { useLocalStorageState } from 'ahooks';
 import { App, Button, Card, Popconfirm, Table, Tag, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
@@ -40,6 +42,7 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { token } = theme.useToken();
   const { message } = App.useApp();
 
+  const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const [selectedTab] = useState<TabKey>('images');
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [metadata] = useBackendAIImageMetaData();
@@ -265,6 +268,13 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
     },
   ];
 
+  const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
+    'backendaiwebui.MyEnvironmentPage.displayedColumnKeys',
+    {
+      defaultValue: columns.map((column) => _.toString(column.key)),
+    },
+  );
+
   return (
     <Flex direction="column" align="stretch" gap={'xs'}>
       <Flex direction="column" align="stretch">
@@ -282,13 +292,39 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
             <Table
               loading={isRefetchPending}
               rowSelection={rowSelection}
-              columns={columns}
+              columns={columns.filter((column) =>
+                displayedColumnKeys?.includes(_.toString(column.key)),
+              )}
               dataSource={processedImages as CustomizedImages[]}
               scroll={{ x: 'max-content' }}
             />
+            <Flex
+              justify="end"
+              style={{
+                padding: token.paddingXXS,
+              }}
+            >
+              <Button
+                type="text"
+                icon={<SettingOutlined />}
+                onClick={() => {
+                  setIsOpenColumnsSetting(true);
+                }}
+              />
+            </Flex>
           </Suspense>
         </Card>
       </Flex>
+      <TableColumnsSettingModal
+        open={isOpenColumnsSetting}
+        onRequestClose={(values) => {
+          values?.selectedColumnKeys &&
+            setDisplayedColumnKeys(values?.selectedColumnKeys);
+          setIsOpenColumnsSetting(!isOpenColumnsSetting);
+        }}
+        columns={columns}
+        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
+      />
     </Flex>
   );
 };
