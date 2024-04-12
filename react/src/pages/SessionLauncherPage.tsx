@@ -327,6 +327,13 @@ const SessionLauncherPage = () => {
       });
   };
 
+  const [, setLastValidateErrorTime] = useUpdatableState('first'); // Force an update when a validation error occurs.
+  useEffect(() => {
+    if (currentStep === steps.length - 1) {
+      form.validateFields().catch((e) => setLastValidateErrorTime());
+    }
+  }, [currentStep, form, setLastValidateErrorTime, steps.length]);
+
   const startSession = () => {
     // TODO: support inference mode, support import mode
 
@@ -1657,7 +1664,11 @@ const SessionLauncherPage = () => {
                       </Button>
                     )}
                     {currentStep !== steps.length - 1 && (
-                      <Button onClick={moveToPreview}>
+                      <Button
+                        onClick={() => {
+                          setCurrentStep(steps.length - 1);
+                        }}
+                      >
                         {t('session.launcher.SkipToConfirmAndLaunch')}
                         <DoubleRightOutlined />
                       </Button>
@@ -1676,12 +1687,7 @@ const SessionLauncherPage = () => {
               direction="vertical"
               current={currentStep}
               onChange={(nextCurrent) => {
-                // handle "skip to review" step specifically, because validation
-                if (nextCurrent === steps.length - 1) {
-                  moveToPreview();
-                } else {
-                  setCurrentStep(nextCurrent);
-                }
+                setCurrentStep(nextCurrent);
               }}
               items={_.map(steps, (s, idx) => ({
                 ...s,
