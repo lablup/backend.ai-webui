@@ -1564,24 +1564,6 @@ const SessionLauncherPage = () => {
 
                 <Flex direction="row" justify="between">
                   <Flex gap={'sm'}>
-                    {/* <Popconfirm
-                    title={t('session.CheckAgainDialog')}
-                    placement="topLeft"
-                    okButtonProps={{
-                      danger: true,
-                    }}
-                    okText={t('button.Reset')}
-                    onConfirm={() => {
-                      // @ts-ignore
-                      form.resetFields({
-
-                      });
-                    }}
-                  >
-                    <Button ghost danger>
-                      {t('button.Reset')}
-                    </Button>
-                  </Popconfirm> */}
                     <Popconfirm
                       title={t('button.Reset')}
                       description={t('session.launcher.ResetFormConfirm')}
