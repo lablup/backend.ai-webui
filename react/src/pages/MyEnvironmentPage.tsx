@@ -151,26 +151,39 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
       title: t('environment.Registry'),
       dataIndex: 'registry',
       key: 'registry',
+      sorter: (a, b) =>
+        a.registry && b.registry ? a.registry.localeCompare(b.registry) : 0,
     },
     {
       title: t('environment.Architecture'),
       dataIndex: 'architecture',
       key: 'architecture',
+      sorter: (a, b) =>
+        a.architecture && b.architecture
+          ? a.architecture.localeCompare(b.architecture)
+          : 0,
     },
     {
       title: t('environment.Namespace'),
       dataIndex: 'namespace',
       key: 'namespace',
+      sorter: (a, b) =>
+        a.namespace && b.namespace ? a.namespace.localeCompare(b.namespace) : 0,
     },
     {
       title: t('environment.Language'),
       dataIndex: 'lang',
       key: 'lang',
+      sorter: (a, b) => (a.lang && b.lang ? a.lang.localeCompare(b.lang) : 0),
     },
     {
       title: t('environment.Version'),
       dataIndex: 'baseversion',
       key: 'baseversion',
+      sorter: (a, b) =>
+        a.baseversion && b.baseversion
+          ? a.baseversion.localeCompare(b.baseversion)
+          : 0,
     },
     {
       title: t('environment.Base'),
@@ -187,6 +200,10 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
           </>
         );
       },
+      sorter: (a, b) =>
+        a.baseimage && b.baseimage
+          ? a.baseimage.join('').localeCompare(b.baseimage.join(''))
+          : 0,
     },
     {
       title: t('environment.Constraint'),
@@ -214,11 +231,17 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
           </Flex>
         );
       },
+      sorter: (a, b) =>
+        a.constraint && b.constraint
+          ? a.constraint.join('').localeCompare(b.constraint.join(''))
+          : 0,
     },
     {
       title: t('environment.Digest'),
       dataIndex: 'digest',
       key: 'digest',
+      sorter: (a, b) =>
+        a.digest && b.digest ? a.digest.localeCompare(b.digest) : 0,
     },
     {
       title: t('general.Control'),
