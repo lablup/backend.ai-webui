@@ -49,17 +49,6 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
   const [myEnvironmentFetchKey, updateMyEnvironmentFetchKey] =
     useUpdatableState('initial-fetch');
   const [metadata] = useBackendAIImageMetaData();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const hasSelected = selectedRowKeys.length > 0;
-
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
 
   const { customized_images } = useLazyLoadQuery<MyEnvironmentPageQuery>(
     graphql`
@@ -309,7 +298,6 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
           <Suspense fallback={<FlexActivityIndicator />}>
             <Table
               loading={isRefetchPending}
-              rowSelection={rowSelection}
               columns={columns.filter((column) =>
                 displayedColumnKeys?.includes(_.toString(column.key)),
               )}
