@@ -259,20 +259,9 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
                     id: row.id,
                   },
                   onCompleted(data) {
-                    if (
-                      data.forget_image_by_id?.ok &&
-                      data.untag_image_from_registry?.ok
-                    ) {
-                      message.success(data.forget_image_by_id?.msg);
-                      startRefetchTransition(() => {
-                        updateMyEnvironmentFetchKey();
-                      });
-                    } else {
-                      message.error(
-                        data.forget_image_by_id?.msg ||
-                          data.untag_image_from_registry?.msg,
-                      );
-                    }
+                    startRefetchTransition(() => {
+                      updateMyEnvironmentFetchKey();
+                    });
                   },
                   onError(err) {
                     message.error(err?.message);
