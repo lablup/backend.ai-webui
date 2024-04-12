@@ -1,5 +1,6 @@
 import { useBackendAIImageMetaData } from '../hooks';
 import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
+import Flex from './Flex';
 import { Tag, TagProps } from 'antd';
 import _ from 'lodash';
 import React from 'react';
@@ -106,7 +107,7 @@ export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
   const [, { getFilteredRequirementsTags, getCustomTag, tagAlias }] =
     useBackendAIImageMetaData();
   return (
-    <>
+    <Flex>
       {_.map(getFilteredRequirementsTags(image), (tag, index) => (
         <Tag key={index} color="blue" {...props}>
           {tagAlias(tag || '')}
@@ -126,7 +127,7 @@ export const ConstraintTags: React.FC<ConstraintTagsProps> = ({
         ]}
         {...props}
       />
-    </>
+    </Flex>
   );
 };
 

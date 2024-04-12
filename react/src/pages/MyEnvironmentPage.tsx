@@ -1,7 +1,6 @@
 import Flex from '../components/Flex';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import {
-  ArchitectureTags,
   BaseImageTags,
   BaseVersionTags,
   ConstraintTags,
@@ -155,9 +154,6 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
         a.architecture && b.architecture
           ? a.architecture.localeCompare(b.architecture)
           : 0,
-      render: (text, row) => (
-        <ArchitectureTags image={row?.imageFullName} color="green" />
-      ),
     },
     {
       title: t('environment.Namespace'),
