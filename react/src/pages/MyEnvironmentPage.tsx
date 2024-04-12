@@ -3,12 +3,11 @@ import Flex from '../components/Flex';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import { useBackendAIImageMetaData, useUpdatableState } from '../hooks';
-import { MyEnvironmentPageForgetMutation } from './__generated__/MyEnvironmentPageForgetMutation.graphql';
+import { MyEnvironmentPageForgetAndUntagMutation } from './__generated__/MyEnvironmentPageForgetAndUntagMutation.graphql';
 import {
   MyEnvironmentPageQuery,
   MyEnvironmentPageQuery$data,
 } from './__generated__/MyEnvironmentPageQuery.graphql';
-import { MyEnvironmentPageUntagMutation } from './__generated__/MyEnvironmentPageUntagMutation.graphql';
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
 import { App, Button, Card, Popconfirm, Table, Tag, theme } from 'antd';
@@ -80,19 +79,16 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
     },
   );
 
-  const [commitForgetImageById, isInflightForgetImageById] =
-    useMutation<MyEnvironmentPageForgetMutation>(graphql`
-      mutation MyEnvironmentPageForgetMutation($image_id: String!) {
+  const [commitForgetAndUntag, isInflightForgetAndUntag] =
+    useMutation<MyEnvironmentPageForgetAndUntagMutation>(graphql`
+      mutation MyEnvironmentPageForgetAndUntagMutation(
+        $image_id: String!
+        $id: String!
+      ) {
         forget_image_by_id(image_id: $image_id) {
           ok
           msg
         }
-      }
-    `);
-
-  const [commitUntagImageFromRegistry, isInflightUntagImageFromRegistry] =
-    useMutation<MyEnvironmentPageUntagMutation>(graphql`
-      mutation MyEnvironmentPageUntagMutation($id: String!) {
         untag_image_from_registry(id: $id) {
           ok
           msg
@@ -254,33 +250,33 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
             title={t('dialog.ask.DoYouWantToProceed')}
             description={t('dialog.warning.CannotBeUndone')}
             okType="danger"
-            onConfirm={async () => {
-              try {
-                if (row?.id) {
-                  await Promise.all([
-                    commitForgetImageById({
-                      variables: {
-                        image_id: row.id,
-                      },
-                      onError(err) {
-                        message.error(err?.message);
-                      },
-                    }),
-                    commitUntagImageFromRegistry({
-                      variables: {
-                        id: row.id,
-                      },
-                      onError(err) {
-                        message.error(err?.message);
-                      },
-                    }),
-                  ]);
-                  startRefetchTransition(() => {
-                    updateMyEnvironmentFetchKey();
-                  });
-                }
-              } catch (err) {
-                console.error(err);
+            onConfirm={() => {
+              if (row?.id) {
+                commitForgetAndUntag({
+                  variables: {
+                    image_id: row.id,
+                    id: row.id,
+                  },
+                  onCompleted(data) {
+                    if (
+                      data.forget_image_by_id?.ok &&
+                      data.untag_image_from_registry?.ok
+                    ) {
+                      message.success(data.forget_image_by_id?.msg);
+                      startRefetchTransition(() => {
+                        updateMyEnvironmentFetchKey();
+                      });
+                    } else {
+                      message.error(
+                        data.forget_image_by_id?.msg ||
+                          data.untag_image_from_registry?.msg,
+                      );
+                    }
+                  },
+                  onError(err) {
+                    message.error(err?.message);
+                  },
+                });
               }
             }}
           >
@@ -288,9 +284,7 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
               type="text"
               icon={<DeleteOutlined />}
               danger
-              loading={
-                isInflightForgetImageById || isInflightUntagImageFromRegistry
-              }
+              loading={isInflightForgetAndUntag}
             />
           </Popconfirm>
         </Flex>
