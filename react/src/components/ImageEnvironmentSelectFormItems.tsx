@@ -151,8 +151,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
       | ImageGroup['environmentGroups'][0]
       | undefined;
     let matchedImageByVersion: Image | undefined;
-    const version = form.getFieldValue('environments')?.version;
-
+    let version = form.getFieldValue('environments')?.version;
+    // FIXME: manually add architecture based on amd64
+    if (version && version.indexOf('@') < 0) {
+      version += '@x86_64';
+    }
     version &&
       _.find(imageGroups, (group) => {
         matchedEnvironmentByVersion = _.find(

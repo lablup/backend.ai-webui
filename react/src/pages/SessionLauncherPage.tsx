@@ -639,7 +639,14 @@ const SessionLauncherPage = () => {
               form={form}
               layout="vertical"
               requiredMark="optional"
-              initialValues={INITIAL_FORM_VALUES}
+              initialValues={_.merge(
+                INITIAL_FORM_VALUES,
+                baiClient._config?.default_session_environment && {
+                  environments: {
+                    version: baiClient._config?.default_session_environment,
+                  },
+                },
+              )}
             >
               <Flex
                 direction="column"
