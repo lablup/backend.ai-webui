@@ -228,15 +228,10 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
             onConfirm={() => {
               console.log(row.key);
               if (row.key) {
-                console.log('hello');
-                // need to decode id encoded in base64
-                // ImageNode:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-                const decodedImageId = atob(row.key).split(':')[1];
-                console.log(decodedImageId);
                 commitForgetAndUntag({
                   variables: {
-                    image_id: decodedImageId,
-                    id: decodedImageId,
+                    image_id: row.key,
+                    id: row.key,
                   },
                   onCompleted(data) {
                     startRefetchTransition(() => {
