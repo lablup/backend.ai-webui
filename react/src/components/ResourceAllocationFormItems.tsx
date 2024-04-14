@@ -6,14 +6,17 @@ import {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import {
+  useCurrentProjectValue,
+  useCurrentResourceGroupValue,
+} from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import Flex from './Flex';
 import { ImageEnvironmentFormInput } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import ResourceGroupSelect from './ResourceGroupSelect';
+import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import ResourcePresetSelect from './ResourcePresetSelect';
 import { CaretDownOutlined } from '@ant-design/icons';
@@ -89,20 +92,17 @@ const ResourceAllocationFormItems: React.FC<
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
 
   const currentProject = useCurrentProjectValue();
+  const currentResourceGroup = useCurrentResourceGroupValue(); // use global state
 
   const [isPendingCheckResets, startCheckRestsTransition] = useTransition();
   const currentImage = Form.useWatch(['environments', 'image'], {
     form,
     preserve: true,
   });
-  const currentResourceGroup = Form.useWatch('resourceGroup', {
-    form,
-    preserve: true,
-  });
   const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
     useResourceLimitAndRemaining({
       currentProjectName: currentProject.name,
-      currentResourceGroup: currentResourceGroup,
+      currentResourceGroup: currentResourceGroup || undefined, // global currentResourceGroup can be null
       currentImage: currentImage,
     });
 
@@ -423,20 +423,9 @@ const ResourceAllocationFormItems: React.FC<
             required: true,
           },
         ]}
-        // Set the trigger to something not used event to manually handle updates for the granular pending status management.
-        trigger={'onSubmit'}
       >
-        <ResourceGroupSelect
-          showSearch
-          loading={isPendingCheckResets}
-          onChange={(v) => {
-            startCheckRestsTransition(() => {
-              // update manually to handle granular pending status management
-              form.setFieldValue('resourceGroup', v);
-              form.validateFields(['resourceGroup']).catch(() => {});
-            });
-          }}
-        />
+        {/* WARN: ResourceGroupSelectForCurrentProject component can not be controlled (no `value` props).  It uses global state */}
+        <ResourceGroupSelectForCurrentProject showSearch />
       </Form.Item>
 
       {enableResourcePresets ? (

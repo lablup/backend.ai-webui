@@ -80,13 +80,13 @@ type ResourceAllocation = {
 interface Props {
   currentProjectName: string;
   currentImage?: Image;
-  currentResourceGroup: string;
+  currentResourceGroup?: string;
 }
 
 // determine resource limits and remaining for current resource group and current image in current project
 export const useResourceLimitAndRemaining = ({
   currentImage,
-  currentResourceGroup,
+  currentResourceGroup = '',
   currentProjectName,
 }: Props) => {
   const baiClient = useSuspendedBackendaiClient();
