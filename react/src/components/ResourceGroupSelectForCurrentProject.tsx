@@ -49,10 +49,7 @@ const ResourceGroupSelectForCurrentProject: React.FC<
   });
 
   const [isPendingLoading, startLoadingTransition] = useTransition();
-
   const { resourceGroups } = useResourceGroupsForCurrentProject();
-  const currentPrject = useCurrentProjectValue();
-  console.log('#### 123123123', resourceGroups[0].name, currentPrject);
 
   const searchProps: Pick<
     SelectProps,
