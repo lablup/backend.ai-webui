@@ -1,4 +1,5 @@
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentUserInfo } from '../hooks/backendai';
 import { ProjectSelectorQuery } from './__generated__/ProjectSelectorQuery.graphql';
 import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
@@ -28,7 +29,7 @@ const ProjectSelector: React.FC<Props> = ({
   ...selectProps
 }) => {
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
+  const [currentUser] = useCurrentUserInfo();
 
   const [value, setValue] = useControllableValue(selectProps);
   const { projects, user } = useLazyLoadQuery<ProjectSelectorQuery>(
@@ -50,7 +51,7 @@ const ProjectSelector: React.FC<Props> = ({
     `,
     {
       domain_name: domain,
-      email: baiClient?.email, // use current user email
+      email: currentUser.email,
     },
     {
       fetchPolicy: 'store-and-network',
