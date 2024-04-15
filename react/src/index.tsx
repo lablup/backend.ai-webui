@@ -193,8 +193,8 @@ const ResourceGroupSelectInWebComponent = (props: ReactWebComponentProps) => {
       <ResourceGroupSelectForCurrentProject
         size="large"
         showSearch
-        // value={value}
-        // loading={value !== props.value || value === ''}
+        disabled={currentResourceGroupByProject !== props.value}
+        loading={currentResourceGroupByProject !== props.value}
         onChange={(value) => {
           // setValue(value);
           props.dispatchEvent('change', value);
