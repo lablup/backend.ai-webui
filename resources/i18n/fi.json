@@ -64,7 +64,8 @@
     "UpdateError": "Päivitysvirhe",
     "UserHasNoGroup": "Käyttäjällä ei ole ryhmää. Ota yhteyttä ylläpitäjään sen korjaamiseksi.",
     "UserNameAlreadyExist": "Käyttäjätunnus on jo olemassa. Sitä ei voi kopioida.",
-    "VirtualFolderAlreadyExist": "Samanniminen virtuaalikansio on jo olemassa. Poista oma kansiosi tai hylkää kutsu."
+    "VirtualFolderAlreadyExist": "Samanniminen virtuaalikansio on jo olemassa. Poista oma kansiosi tai hylkää kutsu.",
+    "ReachedAPIQueryRateLimit": "Olet saavuttanut API-kyselyjen määrän rajan."
   },
   "DownloadSSHKey": "Lataa SSH-avain",
   "ErrorBoundary": {

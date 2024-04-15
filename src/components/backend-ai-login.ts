@@ -1903,9 +1903,14 @@ export default class BackendAILogin extends BackendAIPage {
           this.notification.show(false, err);
           this.open();
         } else {
-          this.notification.text = PainKiller.relieve(
-            'Login failed. Check login information.',
-          );
+          if (typeof err.title !== 'undefined') {
+            this.notification.text = PainKiller.relieve(err.title);
+            // this.notification.detail = err.message;
+          } else {
+            this.notification.text = PainKiller.relieve(
+              'Login failed. Check login information.',
+            );
+          }
           this.notification.show(true);
         }
         if (err.statusCode === 401) {

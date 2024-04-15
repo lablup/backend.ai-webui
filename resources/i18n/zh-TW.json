@@ -1399,7 +1399,8 @@
     "ResourcePolicyStillReferenced": "存在引用该资源策略的密钥对。",
     "SmallerResourceThenImageRequires": "您的资源请求小于图像要求的最小值。尝试更多资源。",
     "APINotSupported": "不支持 API。需要最新版本的 Backend.AI 管理器。",
-    "WrongAPIServerAddress": "错误的 API 服务器地址。"
+    "WrongAPIServerAddress": "错误的 API 服务器地址。",
+    "ReachedAPIQueryRateLimit": "您已达到 API 查询率上限。"
   },
   "maxLength": {
     "64chars": "（最多 64 個字符）",

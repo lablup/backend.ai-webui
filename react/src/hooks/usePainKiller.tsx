@@ -36,6 +36,8 @@ const errorMessageTable: {
     'error.ReachedResourceLimit', //_t('error.ReachedResourceLimit')
   // User
   "Cannot read property 'split' of undefined": 'error.UserHasNoGroup', //_t('error.UserHasNoGroup')
+  '429  - You have reached your API query rate limit.':
+    'error.ReachedAPIQueryRateLimit', //_t('error.ReachedAPIQueryRateLimit')
 };
 const regexTable: {
   [key: string]: string;

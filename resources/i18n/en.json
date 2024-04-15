@@ -1503,7 +1503,8 @@
     "CannotSharePrivateAutomountFolder": "Cannot share automount vfolders in line with the policy.",
     "FolderSharingNotAvailableToUser": "Folder sharing is not available for requested user(s).",
     "APINotSupported": "API not supported. Requires latest version of Backend.AI manager.",
-    "ErrorFetchingExternalContent": "Error fetching external content:"
+    "ErrorFetchingExternalContent": "Error fetching external content:",
+    "ReachedAPIQueryRateLimit": "You have reached your API query rate limit."
   },
   "maxLength": {
     "64chars": "(maximum 64 chars)",

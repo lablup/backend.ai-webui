@@ -55,6 +55,8 @@ export default class BackendAIPainKiller {
       'error.ReachedResourceLimit', //_t('error.ReachedResourceLimit')
     // User
     "Cannot read property 'split' of undefined": 'error.UserHasNoGroup', //_t('error.UserHasNoGroup')
+    '429  - You have reached your API query rate limit.':
+      'error.ReachedAPIQueryRateLimit', //_t('error.ReachedAPIQueryRateLimit')
   };
   static regexTable = {
     '\\w*not found matched token with email\\w*': 'error.InvalidSignupToken', //_t('error.InvalidSignupToken')

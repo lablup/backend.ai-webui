@@ -1399,7 +1399,8 @@
     "ResourcePolicyStillReferenced": "Bu kaynak ilkesine referans veren anahtar çiftleri vardır.",
     "SmallerResourceThenImageRequires": "Kaynak isteğiniz görüntünün gerektirdiği minimum değerden daha küçük. Daha fazla kaynak deneyin.",
     "APINotSupported": "API desteklenmiyor. Backend.AI yöneticisinin en son sürümünü gerektirir.",
-    "WrongAPIServerAddress": "Yanlış API sunucu adresi."
+    "WrongAPIServerAddress": "Yanlış API sunucu adresi.",
+    "ReachedAPIQueryRateLimit": "API sorgu hızı sınırınıza ulaştınız."
   },
   "maxLength": {
     "64chars": "(maksimum 64 karakter)",

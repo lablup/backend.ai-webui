@@ -1399,7 +1399,8 @@
     "ResourcePolicyStillReferenced": "Es gibt Schlüsselpaare, die auf diese Ressourcenpolitik verweisen.",
     "SmallerResourceThenImageRequires": "Ihre Ressourcenanforderung ist kleiner als das für das Bild erforderliche Minimum. Versuchen Sie es mit mehr Ressourcen.",
     "APINotSupported": "API wird nicht unterstützt. Erfordert die neueste Version des Backend.AI-Managers.",
-    "WrongAPIServerAddress": "Falsche API-Serveradresse."
+    "WrongAPIServerAddress": "Falsche API-Serveradresse.",
+    "ReachedAPIQueryRateLimit": "Sie haben das Limit für die API-Abfragerate erreicht."
   },
   "maxLength": {
     "64chars": "(maximal 64 Zeichen)",

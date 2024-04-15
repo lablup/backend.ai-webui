@@ -1380,7 +1380,8 @@
     "UserHasNoGroup": "Pengguna tidak mempunyai kumpulan. \nSila hubungi pentadbir untuk membetulkannya.",
     "UserNameAlreadyExist": "Nama pengguna sudah wujud. \nIa tidak boleh ditiru.",
     "VirtualFolderAlreadyExist": "Folder maya dengan nama yang sama sudah wujud. \nPadamkan folder anda sendiri atau tolak jemputan.",
-    "WrongAPIServerAddress": "Alamat pelayan API salah."
+    "WrongAPIServerAddress": "Alamat pelayan API salah.",
+    "ReachedAPIQueryRateLimit": "Anda telah mencapai had kadar pertanyaan API anda."
   },
   "maxLength": {
     "64chars": "(maksimum 64 watak)",

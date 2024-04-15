@@ -1399,7 +1399,8 @@
     "UserHasNoGroup": "Người dùng không có nhóm. \nHãy liên hệ với quản trị viên để sửa nó.",
     "UserNameAlreadyExist": "Tên này đã có người dùng. \nNó không thể bị trùng lặp.",
     "VirtualFolderAlreadyExist": "Một thư mục ảo có cùng tên đã tồn tại. \nXóa thư mục của riêng bạn hoặc từ chối lời mời.",
-    "WrongAPIServerAddress": "Địa chỉ máy chủ API sai."
+    "WrongAPIServerAddress": "Địa chỉ máy chủ API sai.",
+    "ReachedAPIQueryRateLimit": "Bạn đã đạt đến giới hạn tốc độ truy vấn API của mình."
   },
   "maxLength": {
     "64chars": "(tối đa 64 ký tự)",

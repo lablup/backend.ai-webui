@@ -1401,7 +1401,8 @@
     "ResourcePolicyStillReferenced": "Существуют пары ключей, которые ссылаются на данную ресурсную политику.",
     "SmallerResourceThenImageRequires": "Ваш запрос ресурсов меньше, чем минимально требуется для изображения. Попробуйте использовать больше ресурсов.",
     "APINotSupported": "API не поддерживается. Требуется последняя версия менеджера Backend.AI.",
-    "WrongAPIServerAddress": "Неверный адрес сервера API."
+    "WrongAPIServerAddress": "Неверный адрес сервера API.",
+    "ReachedAPIQueryRateLimit": "Вы достигли предела скорости запросов к API."
   },
   "maxLength": {
     "64chars": "(максимум 64 символа)",
