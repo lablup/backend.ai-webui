@@ -242,6 +242,7 @@ export default class BackendAILogin extends BackendAIPage {
         mwc-button[outlined] {
           background-image: none;
           --mdc-button-outline-width: 2px;
+          --mdc-typography-button-font-size: 12px;
         }
 
         h3 small {
@@ -2029,21 +2030,23 @@ export default class BackendAILogin extends BackendAIPage {
           </div>
         </div>
         <div slot="content" class="login-panel intro centered">
-          <h3
+          <div
             class="horizontal center layout"
-            style="margin: 0 25px;font-weight:700;min-height:40px; padding-bottom:10px;"
+            style="margin: 0 25px;font-weight:700;min-height:40px; padding-bottom:10px; justify-content: space-between;"
           >
-            <div>
+            <h3
+              style="flex: 1; white-space: normal; overflow-wrap: break-word; word-break: break-word; margin-right: 10px;"
+            >
               ${this.connection_mode === 'SESSION'
                 ? _t('login.LoginWithE-mailorUsername')
                 : _t('login.LoginWithIAM')}
-            </div>
-            <div class="flex"></div>
+            </h3>
             ${this.change_signin_support
               ? html`
                   <div
                     id="change-signin-area"
                     class="vertical center-justified layout"
+                    style="flex: 1; text-align: right;"
                   >
                     <div id="change-signin-message">
                       ${_t('login.LoginAnotherway')}
@@ -2059,7 +2062,7 @@ export default class BackendAILogin extends BackendAIPage {
                   </div>
                 `
               : html``}
-          </h3>
+          </div>
           <div class="login-form">
             <div id="waiting-animation" class="horizontal layout wrap">
               <div class="sk-folding-cube">
@@ -2280,7 +2283,11 @@ export default class BackendAILogin extends BackendAIPage {
                       ></mwc-button>
                     `
                   : html``}
-                <div id="additional-action-area" class="layout horizontal">
+                <div
+                  id="additional-action-area"
+                  class="layout horizontal"
+                  style="align-items: flex-end;"
+                >
                   ${this.signup_support
                     ? html`
                         <div
