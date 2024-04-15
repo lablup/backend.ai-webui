@@ -15,7 +15,7 @@ import rawCss from './WebUIHeader.css?raw';
 import { MenuOutlined } from '@ant-design/icons';
 import { theme, Button, Typography, Grid } from 'antd';
 import _ from 'lodash';
-import { Suspense, useTransition } from 'react';
+import { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMatches } from 'react-router-dom';
 
@@ -47,6 +47,9 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
 
   const [isPendingProjectChanged, startProjectChangedTransition] =
     useTransition();
+  const [optimisticProjectId, setOptimisticProjectId] = useState(
+    currentProject.id,
+  );
   return (
     <Flex
       align="center"
@@ -89,12 +92,16 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
               maxWidth: gridBreakpoint.lg ? undefined : 100,
             }}
             loading={isPendingProjectChanged}
+            disabled={isPendingProjectChanged}
             className="non-draggable"
             showSearch
             domain={currentDomainName}
             size={gridBreakpoint.lg ? 'large' : 'middle'}
-            value={currentProject?.id}
+            value={
+              isPendingProjectChanged ? optimisticProjectId : currentProject?.id
+            }
             onSelectProject={(projectInfo) => {
+              setOptimisticProjectId(projectInfo.projectId);
               startProjectChangedTransition(() => {
                 setCurrentProject(projectInfo);
               });
