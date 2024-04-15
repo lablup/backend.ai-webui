@@ -32,7 +32,7 @@ import {
   theme,
 } from 'antd';
 import _ from 'lodash';
-import React, { useEffect, useMemo, useTransition } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 export const AUTOMATIC_DEFAULT_SHMEM = '64m';
@@ -94,7 +94,6 @@ const ResourceAllocationFormItems: React.FC<
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue(); // use global state
 
-  const [isPendingCheckResets, startCheckRestsTransition] = useTransition();
   const currentImage = Form.useWatch(['environments', 'image'], {
     form,
     preserve: true,
