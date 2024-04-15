@@ -43,7 +43,7 @@ const currentResourceGroupAtom = atom(async (get) => {
     return get(previousCurrentResourceGroupNameAtom);
   } else {
     const autoSelectedResourceGroup =
-      _.find(resourceGroups, (item) => item.name === 'default') ||
+      // _.find(resourceGroups, (item) => item.name === 'default') ||
       resourceGroups[0];
     return autoSelectedResourceGroup.name;
   }

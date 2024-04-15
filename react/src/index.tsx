@@ -181,7 +181,11 @@ const ResourceGroupSelectInWebComponent = (props: ReactWebComponentProps) => {
       props.dispatchEvent('change', currentResourceGroupByProject);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentResourceGroupByProject]);
+  }, [
+    currentResourceGroupByProject,
+    // @ts-ignore
+    globalThis.resourceBroker.scaling_group,
+  ]);
   return (
     <Flex
       direction="column"
