@@ -63,17 +63,6 @@ const ProjectSelector: React.FC<Props> = ({
     user?.groups?.map((group) => group?.id).includes(project?.id),
   );
 
-  useEffect(() => {
-    if (
-      autoClearSearchValue &&
-      !value &&
-      accessibleProjects?.length &&
-      accessibleProjects?.length > 0
-    ) {
-      alert(accessibleProjects[0]?.id);
-      setValue(accessibleProjects[0]?.id);
-    }
-  });
   return (
     <Select
       onChange={(value, option) => {
