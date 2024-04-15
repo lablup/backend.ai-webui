@@ -203,17 +203,6 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   /**
-   * re-bind the renderer function when the them(light, dark) is changed
-   */
-
-  updated(changedProperties) {
-    if (changedProperties.has('isDarkMode')) {
-      this._boundRegionRenderer = this.regionRenderer.bind(this);
-      this.requestUpdate();
-    }
-  }
-
-  /**
    * Change state to 'ALIVE' when backend.ai client connected.
    *
    * @param {Boolean} active - The component will work if active is true.
@@ -1886,7 +1875,9 @@ export default class BackendAIAgentList extends BackendAIPage {
             auto-width
             resizable
             header="${_t('agent.Region')}"
-            .renderer="${this._boundRegionRenderer}"
+            .renderer="${(root, column, rowData) => {
+              return this.regionRenderer(root, column, rowData);
+            }}"
           ></vaadin-grid-column>
           <vaadin-grid-sort-column
             auto-width
