@@ -258,7 +258,9 @@ ${Object.entries(token)
     } else if (typeof value === 'number') {
       return `--token-${key}: ${value}px;`;
     } else {
-      return `--token-${key}: ${value?.toString() ?? ''};`;
+      return typeof value === 'number'
+        ? `--token-${key}: ${value}px;`
+        : `--token-${key}: ${value?.toString() ?? ''};`;
     }
   })
   .join('\n')}
