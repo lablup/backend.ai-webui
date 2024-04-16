@@ -1221,7 +1221,7 @@ const SessionLauncherPage = () => {
                             <Flex direction="row">
                               {form.getFieldValue('environments')?.manual ? (
                                 <Typography.Text copyable code>
-                                  form.getFieldValue('environments')?.manual
+                                  {form.getFieldValue('environments')?.manual}
                                 </Typography.Text>
                               ) : (
                                 <>
