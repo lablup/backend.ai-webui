@@ -1004,7 +1004,7 @@ type Mutations {
   forget_image(architecture: String = "x86_64", reference: String!): ForgetImage
 
   """Added in 24.03.1"""
-  untag_image_from_registry(id: String!): UntagImageFromRegistry
+  untag_image_from_registry(image_id: String!): UntagImageFromRegistry
   alias_image(alias: String!, architecture: String = "x86_64", target: String!): AliasImage
   dealias_image(alias: String!): DealiasImage
   clear_images(registry: String): ClearImages

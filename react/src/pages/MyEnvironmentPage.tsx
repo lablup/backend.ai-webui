@@ -91,15 +91,12 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
 
   const [commitForgetAndUntag, isInflightForgetAndUntag] =
     useMutation<MyEnvironmentPageForgetAndUntagMutation>(graphql`
-      mutation MyEnvironmentPageForgetAndUntagMutation(
-        $image_id: String!
-        $id: String!
-      ) {
-        forget_image_by_id(image_id: $image_id) {
+      mutation MyEnvironmentPageForgetAndUntagMutation($id: String!) {
+        forget_image_by_id(image_id: $id) {
           ok
           msg
         }
-        untag_image_from_registry(id: $id) {
+        untag_image_from_registry(image_id: $id) {
           ok
           msg
         }
@@ -220,7 +217,6 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
               if (row?.id) {
                 commitForgetAndUntag({
                   variables: {
-                    image_id: row.id,
                     id: row.id,
                   },
                   onCompleted(data, errors) {
