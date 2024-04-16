@@ -1,5 +1,6 @@
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { CommittedImage } from '../pages/MyEnvironmentPage';
+import { useEventNotStable } from './useEventNotStable';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
@@ -50,9 +51,9 @@ export const useBackendAIConnectedState = () => {
 export const useDateISOState = (initialValue?: string) => {
   const [value, setValue] = useState(initialValue || new Date().toISOString());
 
-  const update = (newValue?: string) => {
+  const update = useEventNotStable((newValue?: string) => {
     setValue(newValue || new Date().toISOString());
-  };
+  });
   return [value, update] as const;
 };
 
