@@ -256,7 +256,9 @@ ${Object.entries(token)
     if (key.charAt(0) === key.charAt(0).toUpperCase()) {
       return '';
     } else {
-      return `--token-${key}: ${value?.toString() ?? ''};`;
+      return typeof value === 'number'
+        ? `--token-${key}: ${value?.toString() ?? ''}px;`
+        : `--token-${key}: ${value?.toString() ?? ''};`;
     }
   })
   .join('\n')}

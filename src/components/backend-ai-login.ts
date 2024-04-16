@@ -233,6 +233,7 @@ export default class BackendAILogin extends BackendAIPage {
 
         mwc-button {
           background-image: none;
+          --mdc-typography-button-font-size: var(--token-fontSizeSM, 12px);
         }
 
         mwc-button[unelevated] {
@@ -242,7 +243,6 @@ export default class BackendAILogin extends BackendAIPage {
         mwc-button[outlined] {
           background-image: none;
           --mdc-button-outline-width: 2px;
-          --mdc-typography-button-font-size: 12px;
         }
 
         .title-img {
