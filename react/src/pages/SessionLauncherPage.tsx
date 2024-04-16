@@ -91,26 +91,6 @@ import {
   withDefault,
 } from 'use-query-params';
 
-const INITIAL_FORM_VALUES: SessionLauncherValue = {
-  sessionType: 'interactive',
-  // If you set `allocationPreset` to 'custom', `allocationPreset` is not changed automatically any more.
-  allocationPreset: 'auto-preset',
-  hpcOptimization: {
-    autoEnabled: true,
-    OMP_NUM_THREADS: '1',
-    OPENBLAS_NUM_THREADS: '1',
-  },
-  batch: {
-    enabled: false,
-    command: undefined,
-    scheduleDate: undefined,
-  },
-  envvars: [],
-  ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
-};
-const stepParam = withDefault(NumberParam, 0);
-const formValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
-
 interface SessionConfig {
   group_name: string;
   domain: string;
@@ -170,8 +150,34 @@ const SessionLauncherPage = () => {
   let sessionMode: SessionMode = 'normal';
 
   const mainContentDivRef = useRecoilValue(mainContentDivRefState);
+  const baiClient = useSuspendedBackendaiClient();
 
   const [isStartingSession, setIsStartingSession] = useState(false);
+  const INITIAL_FORM_VALUES: SessionLauncherValue = {
+    sessionType: 'interactive',
+    // If you set `allocationPreset` to 'custom', `allocationPreset` is not changed automatically any more.
+    allocationPreset: 'auto-preset',
+    hpcOptimization: {
+      autoEnabled: true,
+      OMP_NUM_THREADS: '1',
+      OPENBLAS_NUM_THREADS: '1',
+    },
+    batch: {
+      enabled: false,
+      command: undefined,
+      scheduleDate: undefined,
+    },
+    envvars: [],
+    // set default_session_environment only if set
+    ...(baiClient._config?.default_session_environment && {
+      environments: {
+        version: baiClient._config?.default_session_environment,
+      },
+    }),
+    ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+  };
+  const stepParam = withDefault(NumberParam, 0);
+  const formValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
   const [
     { step: currentStep, formValues: formValuesFromQueryParams, redirectTo },
     setQuery,
@@ -185,7 +191,6 @@ const SessionLauncherPage = () => {
   const navigate = useNavigate();
   // const { moveTo } = useWebComponentInfo();
   const webuiNavigate = useWebUINavigate();
-  const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
 
   const { upsertNotification } = useSetBAINotification();
@@ -1195,7 +1200,7 @@ const SessionLauncherPage = () => {
                             <Flex direction="row">
                               {form.getFieldValue('environments')?.manual ? (
                                 <Typography.Text copyable code>
-                                  form.getFieldValue('environments')?.manual
+                                  {form.getFieldValue('environments')?.manual}
                                 </Typography.Text>
                               ) : (
                                 <>
