@@ -49,6 +49,7 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [myEnvironmentFetchKey, updateMyEnvironmentFetchKey] =
     useUpdatableState('initial-fetch');
+  const [inFlightImageId, setInFlightImageId] = useState<string>();
   const [
     ,
     {
@@ -215,6 +216,7 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
             okText={t('button.Delete')}
             onConfirm={() => {
               if (row?.id) {
+                setInFlightImageId(row.id + myEnvironmentFetchKey);
                 commitForgetAndUntag({
                   variables: {
                     id: row.id,
@@ -242,7 +244,11 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
               type="text"
               icon={<DeleteOutlined />}
               danger
-              loading={isInflightForgetAndUntag}
+              loading={inFlightImageId === row?.id + myEnvironmentFetchKey}
+              disabled={
+                isInflightForgetAndUntag &&
+                inFlightImageId !== row?.id + myEnvironmentFetchKey
+              }
             />
           </Popconfirm>
         </Flex>
