@@ -196,7 +196,10 @@ export const useBAINotificationEffect = () => {
             backgroundTask: {
               status: 'rejected',
             },
-            extraDescription: data?.message,
+            extraDescription:
+              notification?.backgroundTask?.renderDataMessage?.(
+                data?.message,
+              ) || data?.message,
             duration: CLOSING_DURATION,
           });
           sse.close();
