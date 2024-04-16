@@ -109,6 +109,7 @@ export default class LablupShields extends LitElement {
       gray: { colorB: '#555555', colorT: '#ffffff' },
       lightgrey: { colorB: '#9f9f9f', colorT: '#ffffff' },
       lightgray: { colorB: '#9f9f9f', colorT: '#ffffff' },
+      cyan: { colorB: '#87e8de', colorT: '#222222' },
     };
     if (
       this.customColorPalette &&

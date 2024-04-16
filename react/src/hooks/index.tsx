@@ -206,6 +206,7 @@ export const useBackendAIImageMetaData = () => {
   });
 
   const getImageMeta = (imageName: string) => {
+    // registry/name:tag@architecture
     // cr.backend.ai/multiarch/python:3.9-ubuntu20.04
     // key = python, tags = [3.9, ubuntu20.04]
     if (_.isEmpty(imageName)) {
@@ -251,8 +252,33 @@ export const useBackendAIImageMetaData = () => {
             : 'default.png')
         );
       },
+      getNamespace: (imageName: string) => {
+        const names = imageName.split('/');
+        return names.length < 2 ? names[0] : names[1] || '';
+      },
+      getImageLang: (imageName: string) => {
+        const names = imageName.split('/');
+        const langs =
+          names.length < 3 ? '' : names[2].split(':')[0]?.split('-') ?? '';
+        return langs[langs.length - 1];
+      },
       getImageTags: (imageName: string) => {
         // const { key, tags } = getImageMeta(imageName);
+      },
+      getFilteredRequirementsTags: (imageName: string) => {
+        const { tags } = getImageMeta(imageName);
+        const [, , ...requirements] = tags || ['', '', ''];
+        const filteredRequirements = _.filter(
+          requirements,
+          (req) => !_.includes(req, 'customized_'),
+        );
+        return filteredRequirements;
+      },
+      getCustomTag: (imageLabels: { key: string; value: string }[]) => {
+        const customizedNameLabel = _.find(imageLabels, {
+          key: 'ai.backend.customized-image.name',
+        })?.value;
+        return customizedNameLabel;
       },
       getBaseVersion: (imageName: string) => {
         const { tags } = getImageMeta(imageName);
@@ -268,7 +294,19 @@ export const useBackendAIImageMetaData = () => {
         return architecture;
       },
       tagAlias: (tag: string) => {
-        return metadata?.tagAlias[tag] || tag;
+        let metadataTagAlias = metadata?.tagAlias[tag];
+        if (!metadataTagAlias && metadata?.tagReplace) {
+          for (const [key, replaceString] of Object.entries(
+            metadata.tagReplace,
+          )) {
+            const pattern = new RegExp(key);
+            if (pattern.test(tag)) {
+              metadataTagAlias = tag.replace(pattern, replaceString);
+              break;
+            }
+          }
+        }
+        return metadataTagAlias || tag;
       },
     },
   ] as const;

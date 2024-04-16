@@ -10,6 +10,7 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from '../components/ImageEnvironmentSelectFormItems';
 import ImageMetaIcon from '../components/ImageMetaIcon';
+import SessionKernelTags from '../components/ImageTags';
 import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
 import PortSelectFormItem, {
   PortSelectFormValues,
@@ -20,7 +21,6 @@ import ResourceAllocationFormItems, {
   ResourceAllocationFormValue,
 } from '../components/ResourceAllocationFormItems';
 import ResourceNumber from '../components/ResourceNumber';
-import SessionKernelTag from '../components/SessionKernelTag';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
@@ -1204,7 +1204,7 @@ const SessionLauncherPage = () => {
                                 </Typography.Text>
                               ) : (
                                 <>
-                                  <SessionKernelTag
+                                  <SessionKernelTags
                                     image={
                                       form.getFieldValue('environments')
                                         ?.version

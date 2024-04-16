@@ -1,3 +1,4 @@
+import { getImageFullName } from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -48,12 +49,6 @@ interface ImageEnvironmentSelectFormItemsProps {
   filter?: (image: Image) => boolean;
   showPrivate?: boolean;
 }
-
-const getImageFullName = (image: Image) => {
-  return image
-    ? `${image.registry}/${image.name}:${image.tag}@${image.architecture}`
-    : undefined;
-};
 
 function compareVersions(version1: string, version2: string): number {
   const v1 = version1.split('.').map(Number);
