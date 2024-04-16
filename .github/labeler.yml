@@ -1,9 +1,4 @@
-maintenance:dependencies:
-  - changed-files:
-    - any-glob-to-any-file:
-      - scripts/**/*
-
-field:UI / UX:
+area:ux:
   - changed-files:
     - any-glob-to-any-file:
       - resources/fonts/*
@@ -12,14 +7,14 @@ field:UI / UX:
       - src/plastics/**/*
       - resources/i18n/*
 
-field:library / SDK:
+area:lib:
   - changed-files:
     - any-glob-to-any-file:
       - src/plastics/**/*
       - resources/lib/**/*
       - resources/wsproxy/**/*
 
-field:localization:
+area:i18n:
   - changed-files:
     - any-glob-to-any-file:
       - resources/i18n/*
