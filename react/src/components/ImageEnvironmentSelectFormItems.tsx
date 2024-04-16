@@ -1,5 +1,5 @@
+import { getImageFullName } from '../helper';
 import {
-  getImageFullName,
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';

@@ -1,5 +1,3 @@
-import { Image } from '../components/ImageEnvironmentSelectFormItems';
-import { CommittedImage } from '../pages/MyEnvironmentPage';
 import { useEventNotStable } from './useEventNotStable';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
@@ -180,12 +178,6 @@ interface ImageMetadata {
     color: string;
   }[];
 }
-
-export const getImageFullName = (image: Image | CommittedImage) => {
-  return image
-    ? `${image.registry}/${image.name}:${image.tag}@${image.architecture}`
-    : undefined;
-};
 
 export const useBackendAIImageMetaData = () => {
   const { data: metadata } = useQuery({

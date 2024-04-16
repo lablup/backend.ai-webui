@@ -7,11 +7,8 @@ import {
   LangTags,
 } from '../components/ImageTags';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
-import {
-  getImageFullName,
-  useBackendAIImageMetaData,
-  useUpdatableState,
-} from '../hooks';
+import { getImageFullName } from '../helper';
+import { useBackendAIImageMetaData, useUpdatableState } from '../hooks';
 import { MyEnvironmentPageForgetAndUntagMutation } from './__generated__/MyEnvironmentPageForgetAndUntagMutation.graphql';
 import {
   MyEnvironmentPageQuery,
@@ -57,6 +54,7 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
       getImageLang,
       getBaseVersion,
       getBaseImage,
+      getCustomTag,
       getFilteredRequirementsTags,
     },
   ] = useBackendAIImageMetaData();
@@ -179,12 +177,17 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
       title: t('environment.Constraint'),
       key: 'constraint',
       sorter: (a, b) => {
-        const constraintA = getFilteredRequirementsTags(
-          getImageFullName(a) || '',
-        ).join('');
-        const constraintB = getFilteredRequirementsTags(
-          getImageFullName(b) || '',
-        ).join('');
+        const getConstraint = (item: any) => {
+          const imageFullName = getImageFullName(item) || '';
+          const labels = _.get(item, 'labels', []);
+          return (
+            getFilteredRequirementsTags(imageFullName).join('') +
+            'Customized' +
+            getCustomTag(labels as { key: string; value: string }[])
+          );
+        };
+        const constraintA = getConstraint(a);
+        const constraintB = getConstraint(b);
         return constraintA && constraintB
           ? constraintA.localeCompare(constraintB)
           : 0;
