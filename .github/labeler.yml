@@ -10,9 +10,8 @@ area:ux:
 area:lib:
   - changed-files:
     - any-glob-to-any-file:
-      - src/plastics/**/*
-      - resources/lib/**/*
-      - resources/wsproxy/**/*
+      - src/lib/**/*
+      - src/wsproxy/**/*
 
 area:i18n:
   - changed-files:
