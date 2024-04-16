@@ -1,9 +1,10 @@
+import { useCurrentUserInfo } from '../hooks/backendai';
 import { ProjectSelectorQuery } from './__generated__/ProjectSelectorQuery.graphql';
 import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -27,38 +28,40 @@ const ProjectSelector: React.FC<Props> = ({
   ...selectProps
 }) => {
   const { t } = useTranslation();
+  const [currentUser] = useCurrentUserInfo();
 
   const [value, setValue] = useControllableValue(selectProps);
-  const { projects } = useLazyLoadQuery<ProjectSelectorQuery>(
+  const { projects, user } = useLazyLoadQuery<ProjectSelectorQuery>(
     graphql`
-      query ProjectSelectorQuery($domain_name: String) {
+      query ProjectSelectorQuery($domain_name: String, $email: String) {
         projects: groups(domain_name: $domain_name, is_active: true) {
           id
           is_active
           name
           resource_policy
         }
+        user(email: $email) {
+          groups {
+            id
+            name
+          }
+        }
       }
     `,
     {
       domain_name: domain,
+      email: currentUser.email,
     },
     {
       fetchPolicy: 'store-and-network',
     },
   );
 
-  useEffect(() => {
-    if (
-      autoClearSearchValue &&
-      !value &&
-      projects?.length &&
-      projects?.length > 0
-    ) {
-      alert(projects[0]?.id);
-      setValue(projects[0]?.id);
-    }
-  });
+  // temporary filtering groups by accessible groups according to user query
+  const accessibleProjects = projects?.filter((project) =>
+    user?.groups?.map((group) => group?.id).includes(project?.id),
+  );
+
   return (
     <Select
       onChange={(value, option) => {
@@ -69,7 +72,7 @@ const ProjectSelector: React.FC<Props> = ({
       {...selectProps}
       value={value}
       optionFilterProp="projectName"
-      options={_.map(_.sortBy(projects, 'name'), (project) => {
+      options={_.map(_.sortBy(accessibleProjects, 'name'), (project) => {
         return {
           label: project?.name,
           value: project?.id,
