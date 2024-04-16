@@ -1746,8 +1746,11 @@ export default class BackendAISessionList extends BackendAIPage {
               rejected: _text('session.CommitFailed'),
               resolved: _text('session.CommitFinished'),
             },
-            renderDataMessage: () =>
-              _text('error.ReachedResourceLimitPleaseContact'),
+            renderDataMessage: (message: string | undefined) => {
+              return message?.includes('QuotaExceeded')
+                ? _text('error.ReachedResourceLimitPleaseContact')
+                : message;
+            },
             status: 'pending',
             percent: 0,
           },
