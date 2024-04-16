@@ -270,6 +270,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     (_.last(environmentName.split('/')) as string),
                   prefix: _.chain(environmentName)
                     .split('/')
+                    .drop(1)
                     .dropRight(1)
                     .join('/')
                     .value(),
@@ -399,7 +400,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     const firstImage = environmentGroup.images[0];
                     const currentMetaImageInfo =
                       metadata?.imageInfo[
-                        environmentGroup.environmentName.split('/')?.[1]
+                        environmentGroup.environmentName.split('/')?.[2]
                       ];
 
                     const extraFilterValues: string[] = [];
