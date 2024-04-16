@@ -255,11 +255,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   // metadata?.imageInfo[
                   //   getImageMeta(getImageFullName(image) || "").key
                   // ]?.name || image?.name
-                  image?.registry + ':' + image?.name
+                  image?.registry + '/' + image?.name
                 );
               })
               .map((images, environmentName) => {
-                const imageKey = environmentName.split('/')?.[1];
+                const imageKey = environmentName.split('/')?.[2];
                 const displayName =
                   imageKey && metadata?.imageInfo[imageKey]?.name;
 
