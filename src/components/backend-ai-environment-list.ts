@@ -451,10 +451,19 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             if (tags[1] !== undefined) {
               image.baseversion = tags[0];
               image.baseimage = tags[1];
+              let additionalReq;
+              let customizedNameLabel;
               if (tags[2] !== undefined) {
-                image.additional_req = this._humanizeName(
-                  tags.slice(2).join('-'),
+                additionalReq = this._humanizeName(
+                  tags.slice(2, tags.indexOf('customized_')).join('-'),
                 );
+                customizedNameLabel = image.labels?.find(
+                  (label) => label.key === 'ai.backend.customized-image.name',
+                )?.value;
+                image.constraint = [
+                  additionalReq,
+                  customizedNameLabel ?? undefined,
+                ];
               }
             } else if (image.tag !== undefined) {
               image.baseversion = image.tag;
@@ -1525,14 +1534,24 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        ${rowData.item.additional_req
+        ${rowData.item.constraint
           ? html`
               <lablup-shields
                 app=""
                 color="green"
                 ui="round"
-                description="${rowData.item.additional_req}"
+                description="${rowData.item.constraint[0]}"
               ></lablup-shields>
+              ${rowData.item.constraint?.[1] !== undefined
+                ? html`
+                    <lablup-shields
+                      app="Customized"
+                      color="cyan"
+                      ui="round"
+                      description="${rowData.item.constraint[1]}"
+                    ></lablup-shields>
+                  `
+                : html``}
             `
           : html``}
       `,
@@ -1638,7 +1657,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             .renderer="${this._boundBaseImageRenderer}"
           ></lablup-grid-sort-filter-column>
           <lablup-grid-sort-filter-column
-            path="additional_req"
+            path="constraint"
             width="50px"
             resizable
             header="${_t('environment.Constraint')}"
