@@ -447,7 +447,7 @@ const ResourceAllocationFormItems: React.FC<
         >
           <ResourcePresetSelect
             showCustom
-            showMiniumRequired
+            showMinimumRequired
             onChange={(value, options) => {
               switch (value) {
                 case 'custom':
