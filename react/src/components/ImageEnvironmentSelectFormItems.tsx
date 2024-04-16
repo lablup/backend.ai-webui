@@ -216,6 +216,15 @@ const ImageEnvironmentSelectFormItems: React.FC<
     } else if (baiClient._config.allow_manual_image_name_for_session) {
       // if no image is available, only set manual if it's allowed
       form.setFieldValue(['environments', 'manual'], version);
+    } else {
+      form.setFieldsValue({
+        environments: {
+          environment: nextEnvironment.environmentName,
+          version: getImageFullName(nextImage),
+          image: nextImage,
+          customizedTag: customizedImageTag ?? undefined,
+        },
+      });
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
