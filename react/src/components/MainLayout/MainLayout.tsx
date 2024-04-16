@@ -255,8 +255,6 @@ ${Object.entries(token)
     // Skip Component specific tokens
     if (key.charAt(0) === key.charAt(0).toUpperCase()) {
       return '';
-    } else if (typeof value === 'number') {
-      return `--token-${key}: ${value}px;`;
     } else {
       return typeof value === 'number'
         ? `--token-${key}: ${value}px;`
