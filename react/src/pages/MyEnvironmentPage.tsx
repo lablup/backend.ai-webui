@@ -92,11 +92,11 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
   const [commitForgetAndUntag, isInflightForgetAndUntag] =
     useMutation<MyEnvironmentPageForgetAndUntagMutation>(graphql`
       mutation MyEnvironmentPageForgetAndUntagMutation($id: String!) {
-        forget_image_by_id(image_id: $id) {
+        untag_image_from_registry(image_id: $id) {
           ok
           msg
         }
-        untag_image_from_registry(image_id: $id) {
+        forget_image_by_id(image_id: $id) {
           ok
           msg
         }
