@@ -1,16 +1,25 @@
 maintenance:dependencies:
-  - scripts/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - scripts/**/*
 
 field:UI / UX:
-  - resources/fonts/*
-  - resources/icons/*
-  - resources/*.css
-  - src/plastics/**/*
-  - resources/i18n/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - resources/fonts/*
+      - resources/icons/*
+      - resources/*.css
+      - src/plastics/**/*
+      - resources/i18n/*
 
 field:library / SDK:
-  - resources/lib/**/*
-  - resources/wsproxy/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/plastics/**/*
+      - resources/lib/**/*
+      - resources/wsproxy/**/*
 
 field:localization:
-  - resources/i18n/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - resources/i18n/*
