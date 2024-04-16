@@ -245,10 +245,6 @@ export default class BackendAILogin extends BackendAIPage {
           --mdc-typography-button-font-size: 12px;
         }
 
-        h3 small {
-          --button-font-size: 12px;
-        }
-
         .title-img {
           height: 35px;
           padding: 15px 0 15px 5px;
@@ -256,7 +252,7 @@ export default class BackendAILogin extends BackendAIPage {
 
         #change-signin-area > #change-signin-message {
           font-size: 12px;
-          margin: 5px 10px;
+          margin: 5px 0px;
           text-align: center;
           font-weight: 400;
         }
