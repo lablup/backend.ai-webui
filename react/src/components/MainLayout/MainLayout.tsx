@@ -158,7 +158,7 @@ function MainLayout() {
             >
               <div
                 style={{
-                  margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
+                  margin: `0 -${token.paddingContentHorizontalLG} 0 -${token.paddingContentHorizontalLG}`,
                   position: 'sticky',
                   top: 0,
                   zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT,
@@ -255,6 +255,8 @@ ${Object.entries(token)
     // Skip Component specific tokens
     if (key.charAt(0) === key.charAt(0).toUpperCase()) {
       return '';
+    } else if (typeof value === 'number') {
+      return `--token-${key}: ${value}px;`;
     } else {
       return `--token-${key}: ${value?.toString() ?? ''};`;
     }
