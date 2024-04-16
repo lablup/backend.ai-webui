@@ -20,7 +20,8 @@ import {
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
 import { App, Button, Card, Popconfirm, Table, theme } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import { AnyObject } from 'antd/es/_util/type';
+import { ColumnsType, ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, {
@@ -33,21 +34,10 @@ import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery, useMutation } from 'react-relay';
 
 type TabKey = 'images';
-type AdditionalImageColumnTypes = {
-  key: string;
-  imageFullName: string;
-  namespace: string;
-  lang: string;
-  baseversion: string;
-  baseimage: string;
-  constraint: string[];
-};
 
 export type CommittedImage = NonNullable<
   MyEnvironmentPageQuery$data['customized_images']
 >[number];
-
-type CustomizedImages = CommittedImage & AdditionalImageColumnTypes;
 
 const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
@@ -75,7 +65,6 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
       query MyEnvironmentPageQuery {
         customized_images {
           id
-          ImageNode_id
           name
           humanized_name
           tag
@@ -117,105 +106,107 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
       }
     `);
 
-  const processedImages = _.map(customized_images, (image) => {
-    const key = image?.id;
-    const imageFullName = getImageFullName(image) || '';
-    const namespace = getNamespace(imageFullName);
-    const lang = getImageLang(imageFullName);
-    const baseversion = getBaseVersion(imageFullName);
-    const baseimage = getBaseImage(imageFullName);
-    const constraint = getFilteredRequirementsTags(imageFullName);
-
-    return {
-      ...image,
-      key,
-      imageFullName,
-      namespace,
-      lang,
-      baseversion,
-      baseimage,
-      constraint,
-    };
-  });
-
-  const columns: ColumnsType<CustomizedImages> = [
+  const columns: ColumnsType<CommittedImage> = [
     {
       title: t('environment.Registry'),
       dataIndex: 'registry',
       key: 'registry',
       sorter: (a, b) =>
-        a.registry && b.registry ? a.registry.localeCompare(b.registry) : 0,
+        a?.registry && b?.registry ? a.registry.localeCompare(b.registry) : 0,
     },
     {
       title: t('environment.Architecture'),
       dataIndex: 'architecture',
       key: 'architecture',
       sorter: (a, b) =>
-        a.architecture && b.architecture
+        a?.architecture && b?.architecture
           ? a.architecture.localeCompare(b.architecture)
           : 0,
     },
     {
       title: t('environment.Namespace'),
-      dataIndex: 'namespace',
       key: 'namespace',
-      sorter: (a, b) =>
-        a.namespace && b.namespace ? a.namespace.localeCompare(b.namespace) : 0,
+      sorter: (a, b) => {
+        const namespaceA = getNamespace(getImageFullName(a) || '');
+        const namespaceB = getNamespace(getImageFullName(b) || '');
+        return namespaceA && namespaceB
+          ? namespaceA.localeCompare(namespaceB)
+          : 0;
+      },
+      render: (text, row) => (
+        <span>{getNamespace(getImageFullName(row) || '')}</span>
+      ),
     },
     {
       title: t('environment.Language'),
-      dataIndex: 'lang',
       key: 'lang',
-      sorter: (a, b) => (a.lang && b.lang ? a.lang.localeCompare(b.lang) : 0),
+      sorter: (a, b) => {
+        const langA = getImageLang(getImageFullName(a) || '');
+        const langB = getImageLang(getImageFullName(b) || '');
+        return langA && langB ? langA.localeCompare(langB) : 0;
+      },
       render: (text, row) => (
-        <LangTags image={row?.imageFullName} color="green" />
+        <LangTags image={getImageFullName(row) || ''} color="green" />
       ),
     },
     {
       title: t('environment.Version'),
-      dataIndex: 'baseversion',
       key: 'baseversion',
-      sorter: (a, b) =>
-        a.baseversion && b.baseversion
-          ? a.baseversion.localeCompare(b.baseversion)
-          : 0,
+      sorter: (a, b) => {
+        const baseversionA = getBaseVersion(getImageFullName(a) || '');
+        const baseversionB = getBaseVersion(getImageFullName(b) || '');
+        return baseversionA && baseversionB
+          ? baseversionA.localeCompare(baseversionB)
+          : 0;
+      },
       render: (text, row) => (
-        <BaseVersionTags image={row?.imageFullName} color="green" />
+        <BaseVersionTags image={getImageFullName(row) || ''} color="green" />
       ),
     },
     {
       title: t('environment.Base'),
-      dataIndex: 'baseimage',
       key: 'baseimage',
-      sorter: (a, b) =>
-        a.baseimage && b.baseimage ? a.baseimage.localeCompare(b.baseimage) : 0,
-      render: (text, row) => <BaseImageTags image={row?.imageFullName} />,
+      sorter: (a, b) => {
+        const baseimageA = getBaseImage(getImageFullName(a) || '');
+        const baseimageB = getBaseImage(getImageFullName(b) || '');
+        return baseimageA && baseimageB
+          ? baseimageA.localeCompare(baseimageB)
+          : 0;
+      },
+      render: (text, row) => (
+        <BaseImageTags image={getImageFullName(row) || ''} />
+      ),
     },
     {
       title: t('environment.Constraint'),
-      dataIndex: 'constraint',
       key: 'constraint',
+      sorter: (a, b) => {
+        const constraintA = getFilteredRequirementsTags(
+          getImageFullName(a) || '',
+        ).join('');
+        const constraintB = getFilteredRequirementsTags(
+          getImageFullName(b) || '',
+        ).join('');
+        return constraintA && constraintB
+          ? constraintA.localeCompare(constraintB)
+          : 0;
+      },
       render: (text, row) => (
         <ConstraintTags
-          image={row?.imageFullName}
+          image={getImageFullName(row) || ''}
           labels={row?.labels as { key: string; value: string }[]}
         />
       ),
-      sorter: (a, b) =>
-        a.constraint && b.constraint
-          ? a.constraint.join('').localeCompare(b.constraint.join(''))
-          : 0,
     },
     {
       title: t('environment.Digest'),
       dataIndex: 'digest',
       key: 'digest',
       sorter: (a, b) =>
-        a.digest && b.digest ? a.digest.localeCompare(b.digest) : 0,
+        a?.digest && b?.digest ? a.digest.localeCompare(b.digest) : 0,
     },
     {
       title: t('general.Control'),
-      dataIndex: 'controls',
       key: 'control',
       fixed: 'right',
       render: (text, row) => (
@@ -226,14 +217,17 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
             okType="danger"
             okText={t('button.Delete')}
             onConfirm={() => {
-              console.log(row.key);
-              if (row.key) {
+              if (row?.id) {
                 commitForgetAndUntag({
                   variables: {
-                    image_id: row.key,
-                    id: row.key,
+                    image_id: row.id,
+                    id: row.id,
                   },
-                  onCompleted(data) {
+                  onCompleted(data, errors) {
+                    if (errors) {
+                      message.error(errors[0]?.message);
+                      return;
+                    }
                     startRefetchTransition(() => {
                       updateMyEnvironmentFetchKey();
                     });
@@ -280,10 +274,13 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
           <Suspense fallback={<FlexActivityIndicator />}>
             <Table
               loading={isRefetchPending}
-              columns={columns.filter((column) =>
-                displayedColumnKeys?.includes(_.toString(column.key)),
-              )}
-              dataSource={processedImages as unknown as CustomizedImages[]}
+              columns={
+                columns.filter((column) =>
+                  displayedColumnKeys?.includes(_.toString(column.key)),
+                ) as ColumnType<AnyObject>[]
+              }
+              dataSource={customized_images as readonly AnyObject[] | undefined}
+              rowKey="id"
               scroll={{ x: 'max-content' }}
               pagination={false}
             />
