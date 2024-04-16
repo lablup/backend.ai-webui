@@ -158,7 +158,7 @@ function MainLayout() {
             >
               <div
                 style={{
-                  margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
+                  margin: `0 -${token.paddingContentHorizontalLG} 0 -${token.paddingContentHorizontalLG}`,
                   position: 'sticky',
                   top: 0,
                   zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT,
