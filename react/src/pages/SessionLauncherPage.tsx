@@ -31,6 +31,7 @@ import { compareNumberWithUnits, iSizeToSize } from '../helper';
 import {
   useCurrentProjectValue,
   useSuspendedBackendaiClient,
+  useUpdatableState,
   useWebUINavigate,
 } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -314,17 +315,12 @@ const SessionLauncherPage = () => {
     (item) => item.errors.length > 0,
   );
 
-  // console.log(form.getFieldError(['resource', 'shmem']));
-  // console.log(form.getFieldValue(['resource']));
-
-  const moveToPreview = () => {
-    form
-      .validateFields()
-      .catch((e) => {})
-      .finally(() => {
-        setCurrentStep(steps.length - 1);
-      });
-  };
+  const [, setLastValidateErrorTime] = useUpdatableState('first'); // Force an update when a validation error occurs.
+  useEffect(() => {
+    if (currentStep === steps.length - 1) {
+      form.validateFields().catch((e) => setLastValidateErrorTime());
+    }
+  }, [currentStep, form, setLastValidateErrorTime, steps.length]);
 
   const startSession = () => {
     // TODO: support inference mode, support import mode
@@ -448,27 +444,7 @@ const SessionLauncherPage = () => {
                 return res;
               })
               .catch((err: any) => {
-                console.log(err);
                 throw err;
-                // console.log(err);
-                // if (err && err.message) {
-                //   if ('statusCode' in err && err.statusCode === 408) {
-                //     this.notification.text = _text(
-                //       'session.launcher.sessionStillPreparing',
-                //     );
-                //   } else {
-                //     if (err.description) {
-                //       this.notification.text = PainKiller.relieve(err.description);
-                //     } else {
-                //       this.notification.text = PainKiller.relieve(err.message);
-                //     }
-                //   }
-                //   this.notification.detail = err.message;
-                //   this.notification.show(true, err);
-                // } else if (err && err.title) {
-                //   this.notification.text = PainKiller.relieve(err.title);
-                //   this.notification.show(true, err);
-                // }
               });
           },
         );
@@ -1068,7 +1044,10 @@ const SessionLauncherPage = () => {
                 >
                   <VFolderTableFromItem
                     filter={(vfolder) => {
-                      return vfolder.status === 'ready';
+                      return (
+                        vfolder.status === 'ready' &&
+                        !vfolder.name?.startsWith('.')
+                      );
                     }}
                   />
                   {/* <VFolderTable /> */}
@@ -1553,24 +1532,6 @@ const SessionLauncherPage = () => {
 
                 <Flex direction="row" justify="between">
                   <Flex gap={'sm'}>
-                    {/* <Popconfirm
-                    title={t('session.CheckAgainDialog')}
-                    placement="topLeft"
-                    okButtonProps={{
-                      danger: true,
-                    }}
-                    okText={t('button.Reset')}
-                    onConfirm={() => {
-                      // @ts-ignore
-                      form.resetFields({
-
-                      });
-                    }}
-                  >
-                    <Button ghost danger>
-                      {t('button.Reset')}
-                    </Button>
-                  </Popconfirm> */}
                     <Popconfirm
                       title={t('button.Reset')}
                       description={t('session.launcher.ResetFormConfirm')}
@@ -1653,7 +1614,11 @@ const SessionLauncherPage = () => {
                       </Button>
                     )}
                     {currentStep !== steps.length - 1 && (
-                      <Button onClick={moveToPreview}>
+                      <Button
+                        onClick={() => {
+                          setCurrentStep(steps.length - 1);
+                        }}
+                      >
                         {t('session.launcher.SkipToConfirmAndLaunch')}
                         <DoubleRightOutlined />
                       </Button>
@@ -1672,12 +1637,7 @@ const SessionLauncherPage = () => {
               direction="vertical"
               current={currentStep}
               onChange={(nextCurrent) => {
-                // handle "skip to review" step specifically, because validation
-                if (nextCurrent === steps.length - 1) {
-                  moveToPreview();
-                } else {
-                  setCurrentStep(nextCurrent);
-                }
+                setCurrentStep(nextCurrent);
               }}
               items={_.map(steps, (s, idx) => ({
                 ...s,
