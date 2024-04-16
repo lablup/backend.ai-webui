@@ -26,7 +26,7 @@ export interface NotificationState
       resolved?: string;
       rejected?: string;
     };
-    parseDataMessage?: string;
+    renderDataMessage?: (message?: string) => React.ReactNode;
     promise?: Promise<any>;
   };
   extraDescription?: string;
@@ -181,7 +181,9 @@ export const useBAINotificationEffect = () => {
               percent: ratio * 100,
             },
             extraDescription:
-              notification?.backgroundTask?.parseDataMessage || data?.message,
+              notification?.backgroundTask?.renderDataMessage?.(
+                data?.message,
+              ) || data?.message,
             duration: CLOSING_DURATION,
           });
         };
