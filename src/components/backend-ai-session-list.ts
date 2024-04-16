@@ -1755,49 +1755,6 @@ export default class BackendAISessionList extends BackendAIPage {
       },
     );
     document.dispatchEvent(eventForUpdating);
-
-    // const sse: EventSource =
-    //   globalThis.backendaiclient.maintenance.attach_background_task(
-    //     commitSessionInfo.taskId,
-    //   );
-    // sse.onerror = () => {
-    //   sse.close();
-    //   this.notification.text = _text('session.CommitFailed');
-    //   this.notification.show();
-    //   this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
-    //   throw new Error(
-    //     'Commit session request has been failed. Please check user resource policy.',
-    //   );
-    // };
-    // // this._saveCurrentContainerCommitInfoToLocalStorage(commitSessionInfo);
-    // // sse.addEventListener('task_updated', (e) => {
-    // //   // FIXME: for now, there is no progress updates during this task
-    // //   // const ratio = data.current_progress/data.total_progress;
-    // //   // indicator.set(100 * ratio, _text('session.CommitOnGoing'));
-    // // });
-    // sse.addEventListener('bgtask_done', (e) => {
-    //   // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
-    //   this.notification.text = _text('session.CommitFinished');
-    //   this.notification.show();
-    //   this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
-    //   sse.close();
-    // });
-    // sse.addEventListener('bgtask_failed', (e) => {
-    //   // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
-    //   this.notification.text = _text('session.CommitFailed');
-    //   this.notification.show(true);
-    //   this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
-    //   sse.close();
-    //   throw new Error('Commit session request has been failed.');
-    // });
-    // sse.addEventListener('bgtask_cancelled', (e) => {
-    //   // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
-    //   this.notification.text = _text('session.CommitFailed');
-    //   this.notification.show(true);
-    //   this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
-    //   sse.close();
-    //   throw new Error('Commit session request has been cancelled.');
-    // });
   }
 
   _removeCommitSessionFromTasker(taskId = '') {
