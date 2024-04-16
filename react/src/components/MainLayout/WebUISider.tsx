@@ -287,7 +287,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               </Flex>
             </div>
             <address>
-              <small className="sidebar-footer">Lablup Inc.</small>
+              <small className="sidebar-footer">
+                {themeConfig?.branding?.companyName || 'Lablup Inc.'}
+              </small>
               &nbsp;
               <small
                 className="sidebar-footer"

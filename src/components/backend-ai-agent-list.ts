@@ -908,8 +908,11 @@ export default class BackendAIAgentList extends BackendAIPage {
       html`
         <div class="horizontal start-justified center layout wrap">
           <img
+            class="platform-icon"
             src="/resources/icons/${icon}.png"
-            style="width:32px;height:32px;"
+            style="width:32px;height:32px;${this.isDarkMode && icon === 'local'
+              ? 'filter:invert(1);'
+              : ''}"
           />
           <lablup-shields
             app="${location}"
@@ -1915,7 +1918,9 @@ export default class BackendAIAgentList extends BackendAIPage {
             auto-width
             resizable
             header="${_t('agent.Region')}"
-            .renderer="${this._boundRegionRenderer}"
+            .renderer="${(root, column, rowData) => {
+              return this.regionRenderer(root, column, rowData);
+            }}"
           ></vaadin-grid-column>
           <vaadin-grid-sort-column
             auto-width

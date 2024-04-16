@@ -34,7 +34,8 @@
     "update": "npx tsc",
     "postinstall": "npx concurrently -c \"auto\" --names \"react-dependencies,patch-package\" \"cd react && npm install\" \"patch-package\"",
     "patch:lit-translate": "unzip -o ./scripts/lit-translate.zip -d ./node_modules/lit-translate && cp -f ./scripts/lit-translate-index.js ./node_modules/lit-translate/index.js",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "theme-schema:update": "npx typescript-json-schema \"./react/node_modules/antd/es/config-provider/context.d.ts\" ThemeConfig -o ./resources/antdThemeConfig.schema.json --esModuleInterop"
   },
   "dependencies": {
     "@material/mwc-button": "^0.27.0",
