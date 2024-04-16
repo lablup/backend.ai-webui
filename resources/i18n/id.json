@@ -1395,7 +1395,8 @@
     "ResourcePolicyStillReferenced": "Ada pasangan kunci yang merujuk pada kebijakan sumber daya ini.",
     "SmallerResourceThenImageRequires": "Permintaan sumber daya Anda lebih kecil dari jumlah minimum yang dibutuhkan oleh gambar. Coba lebih banyak sumber daya.",
     "APINotSupported": "API tidak didukung. Memerlukan versi terbaru dari manajer Backend.AI.",
-    "WrongAPIServerAddress": "Alamat server API salah."
+    "WrongAPIServerAddress": "Alamat server API salah.",
+    "ReachedResourceLimitPleaseContact": "Mencapai batas sumber daya Anda. \nSilakan hubungi administrator."
   },
   "maxLength": {
     "64chars": "(maksimum 64 karakter)",

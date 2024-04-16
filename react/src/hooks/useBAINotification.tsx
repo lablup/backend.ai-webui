@@ -26,6 +26,7 @@ export interface NotificationState
       resolved?: string;
       rejected?: string;
     };
+    parseDataMessage?: string;
     promise?: Promise<any>;
   };
   extraDescription?: string;
@@ -179,7 +180,8 @@ export const useBAINotificationEffect = () => {
               status: 'rejected',
               percent: ratio * 100,
             },
-            extraDescription: data?.message,
+            extraDescription:
+              notification?.backgroundTask?.parseDataMessage || data?.message,
             duration: CLOSING_DURATION,
           });
         };

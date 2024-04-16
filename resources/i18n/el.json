@@ -1401,7 +1401,8 @@
     "ResourcePolicyStillReferenced": "Υπάρχουν ζεύγη κλειδιών που παραπέμπουν σε αυτή την πολιτική πόρων.",
     "SmallerResourceThenImageRequires": "Το αίτημα πόρων είναι μικρότερο από το ελάχιστο απαιτούμενο από την εικόνα. Δοκιμάστε περισσότερους πόρους.",
     "APINotSupported": "Το API δεν υποστηρίζεται. Απαιτείται η τελευταία έκδοση του διαχειριστή Backend.AI.",
-    "WrongAPIServerAddress": "Λάθος διεύθυνση διακομιστή API."
+    "WrongAPIServerAddress": "Λάθος διεύθυνση διακομιστή API.",
+    "ReachedResourceLimitPleaseContact": "Φτάσατε το όριο των πόρων σας. \nΕπικοινωνήστε με τον διαχειριστή."
   },
   "maxLength": {
     "64chars": "(έως 64 χαρακτήρες)",

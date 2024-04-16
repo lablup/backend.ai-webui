@@ -1401,7 +1401,8 @@
     "ResourcePolicyStillReferenced": "Esistono coppie di chiavi che fanno riferimento a questa politica delle risorse.",
     "SmallerResourceThenImageRequires": "La richiesta di risorse è inferiore al minimo richiesto dall'immagine. Provare con altre risorse.",
     "APINotSupported": "API non supportata. Richiede l'ultima versione del gestore Backend.AI.",
-    "WrongAPIServerAddress": "Indirizzo del server API errato."
+    "WrongAPIServerAddress": "Indirizzo del server API errato.",
+    "ReachedResourceLimitPleaseContact": "Raggiunto il limite delle risorse. \nSi prega di contattare l'amministratore."
   },
   "maxLength": {
     "64chars": "(massimo 64 caratteri)",

@@ -1746,6 +1746,7 @@ export default class BackendAISessionList extends BackendAIPage {
               rejected: _text('session.CommitFailed'),
               resolved: _text('session.CommitFinished'),
             },
+            parseDataMessage: _text('error.ReachedResourceLimitPleaseContact'),
             status: 'pending',
             percent: 0,
           },

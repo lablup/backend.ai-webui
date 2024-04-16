@@ -1401,7 +1401,8 @@
     "ResourcePolicyStillReferenced": "このリソース・ポリシーを参照するキー・ペアが存在する。",
     "SmallerResourceThenImageRequires": "リソース要求が画像に必要な最小値より小さい。より多くのリソースを試してください。",
     "APINotSupported": "APIはサポートされていません。最新バージョンのBackend.AIマネージャが必要です。",
-    "WrongAPIServerAddress": "APIサーバーのアドレスが間違っています。"
+    "WrongAPIServerAddress": "APIサーバーのアドレスが間違っています。",
+    "ReachedResourceLimitPleaseContact": "リソース制限に達しました。\n管理者にお問い合わせください。"
   },
   "maxLength": {
     "64chars": "（最大64文字）",

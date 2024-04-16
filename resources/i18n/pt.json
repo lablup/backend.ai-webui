@@ -1401,7 +1401,8 @@
     "ResourcePolicyStillReferenced": "Existem pares de chaves que fazem referência a esta política de recursos.",
     "SmallerResourceThenImageRequires": "O seu pedido de recursos é mais pequeno do que o mínimo exigido pela imagem. Tente mais recursos.",
     "APINotSupported": "API não suportada. Requer a versão mais recente do gestor Backend.AI.",
-    "WrongAPIServerAddress": "Endereço do servidor API incorreto."
+    "WrongAPIServerAddress": "Endereço do servidor API incorreto.",
+    "ReachedResourceLimitPleaseContact": "Atingiu seu limite de recursos. \nEntre em contato com o administrador."
   },
   "maxLength": {
     "64chars": "(máximo de 64 caracteres)",
