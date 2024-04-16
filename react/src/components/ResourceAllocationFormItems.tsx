@@ -197,12 +197,16 @@ const ResourceAllocationFormItems: React.FC<
       },
     ).map((preset) => preset.name);
 
-    return _.intersection(
-      baiClient._config?.always_enqueue_compute_session
+    return currentImageAcceleratorLimits.length > 0
+      ? baiClient._config?.always_enqueue_compute_session
         ? bySliderLimit
-        : byPresetInfo,
-      byImageAcceleratorLimits,
-    );
+        : byPresetInfo
+      : _.intersection(
+          baiClient._config?.always_enqueue_compute_session
+            ? bySliderLimit
+            : byPresetInfo,
+          byImageAcceleratorLimits,
+        );
   }, [
     baiClient._config?.always_enqueue_compute_session,
     checkPresetInfo?.presets,
