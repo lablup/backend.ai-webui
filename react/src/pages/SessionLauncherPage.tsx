@@ -171,7 +171,7 @@ const SessionLauncherPage = () => {
     // set default_session_environment only if set
     ...(baiClient._config?.default_session_environment && {
       environments: {
-        version: baiClient._config?.default_session_environment,
+        environment: baiClient._config?.default_session_environment,
       },
     }),
     ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,

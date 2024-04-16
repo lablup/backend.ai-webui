@@ -172,7 +172,20 @@ const ImageEnvironmentSelectFormItems: React.FC<
     if (matchedEnvironmentByVersion) {
       nextEnvironment = matchedEnvironmentByVersion;
       nextImage = matchedImageByVersion;
-    } else {
+    } else if (form.getFieldValue(['environments', 'environment'])) {
+      _.find(imageGroups, (group) => {
+        nextEnvironment = _.find(group.environmentGroups, (environment) => {
+          return (
+            environment.environmentName ===
+            form.getFieldValue(['environments', 'environment'])
+          );
+        });
+        nextImage = nextEnvironment?.images[0];
+        return !!nextEnvironment;
+      });
+    }
+
+    if (!nextEnvironment || !nextImage) {
       nextEnvironment = imageGroups[0]?.environmentGroups[0];
       nextImage = nextEnvironment?.images[0];
     }
@@ -242,7 +255,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   // metadata?.imageInfo[
                   //   getImageMeta(getImageFullName(image) || "").key
                   // ]?.name || image?.name
-                  image?.name
+                  image?.registry + ':' + image?.name
                 );
               })
               .map((images, environmentName) => {
