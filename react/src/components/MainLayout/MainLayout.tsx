@@ -257,7 +257,7 @@ ${Object.entries(token)
       return '';
     } else {
       return typeof value === 'number'
-        ? `--token-${key}: ${value?.toString() ?? ''}px;`
+        ? `--token-${key}: ${value}px;`
         : `--token-${key}: ${value?.toString() ?? ''};`;
     }
   })
