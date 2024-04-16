@@ -796,7 +796,8 @@
     "PasswordsDoNotMatch": "Kata Laluan dan Pengesahan tidak sepadan.",
     "NoChangeMade": "Tiada perubahan dibuat",
     "Architecture": "Seni bina",
-    "NoImageToDisplay": "Tiada Imej untuk dipaparkan"
+    "NoImageToDisplay": "Tiada Imej untuk dipaparkan",
+    "CustomizedImageSuccessfullyDeleted": "Imej tersuai berjaya dipadamkan."
   },
   "resourcePreset": {
     "ResourcePresets": "Pratetap Sumber",

@@ -457,7 +457,8 @@
     "Status": "Estado",
     "SuccessfullyModified": "Modificado con éxito",
     "TakesTime": ". Lleva tiempo, así que tómate un café.",
-    "Version": "Versión"
+    "Version": "Versión",
+    "CustomizedImageSuccessfullyDeleted": "Imagen personalizada eliminada correctamente."
   },
   "explorer": {
     "InputTooShort": "InputTooShort",

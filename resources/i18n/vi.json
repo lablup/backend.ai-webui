@@ -815,7 +815,8 @@
     "PasswordsDoNotMatch": "Mật khẩu và xác minh mật khẩu không trùng khớp.",
     "NoChangeMade": "Không có thay đổi nào được thực hiện",
     "Architecture": "Ngành kiến ​​​​trúc",
-    "NoImageToDisplay": "Không có hình ảnh để hiển thị"
+    "NoImageToDisplay": "Không có hình ảnh để hiển thị",
+    "CustomizedImageSuccessfullyDeleted": "Hình ảnh tùy chỉnh đã được xóa thành công."
   },
   "resourcePreset": {
     "ResourcePresets": "Cài đặt trước tài nguyên",

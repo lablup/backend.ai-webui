@@ -809,7 +809,8 @@
     "PasswordsDoNotMatch": "Password dan Konfirmasi tidak cocok.",
     "NoChangeMade": "Tidak ada perubahan yang dibuat",
     "Architecture": "Arsitektur",
-    "NoImageToDisplay": "Tidak ada gambar yang akan ditampilkan"
+    "NoImageToDisplay": "Tidak ada gambar yang akan ditampilkan",
+    "CustomizedImageSuccessfullyDeleted": "Gambar yang disesuaikan berhasil dihapus."
   },
   "resourcePreset": {
     "ResourcePresets": "Preset Sumber Daya",

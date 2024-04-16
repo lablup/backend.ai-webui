@@ -815,7 +815,8 @@
     "PasswordsDoNotMatch": "Ο κωδικός πρόσβασης και η επιβεβαίωση δεν ταιριάζουν.",
     "NoChangeMade": "Δεν έγιναν αλλαγές",
     "Architecture": "Αρχιτεκτονική",
-    "NoImageToDisplay": "Δεν εμφανίζονται εικόνες"
+    "NoImageToDisplay": "Δεν εμφανίζονται εικόνες",
+    "CustomizedImageSuccessfullyDeleted": "Η προσαρμοσμένη εικόνα διαγράφηκε επιτυχώς."
   },
   "resourcePreset": {
     "ResourcePresets": "Προεπιλογές πόρων",

@@ -815,7 +815,8 @@
     "PasswordsDoNotMatch": "Şifre ve Onaylama eşleşmiyor.",
     "NoChangeMade": "Herhangi bir değişiklik yapılmadı",
     "Architecture": "Mimarlık",
-    "NoImageToDisplay": "Görüntülenecek Görüntü Yok"
+    "NoImageToDisplay": "Görüntülenecek Görüntü Yok",
+    "CustomizedImageSuccessfullyDeleted": "Özelleştirilmiş resim başarıyla silindi."
   },
   "resourcePreset": {
     "ResourcePresets": "Kaynak Ön Ayarları",

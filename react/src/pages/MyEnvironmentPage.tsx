@@ -231,6 +231,9 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
                     startRefetchTransition(() => {
                       updateMyEnvironmentFetchKey();
                     });
+                    message.success(
+                      t('environment.CustomizedImageSuccessfullyDeleted'),
+                    );
                   },
                   onError(err) {
                     message.error(err?.message);

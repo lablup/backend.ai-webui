@@ -815,7 +815,8 @@
     "PasswordsDoNotMatch": "密碼和確認不匹配。",
     "NoChangeMade": "未作改动",
     "Architecture": "建筑学",
-    "NoImageToDisplay": "无图像显示"
+    "NoImageToDisplay": "无图像显示",
+    "CustomizedImageSuccessfullyDeleted": "自訂圖片已成功刪除。"
   },
   "resourcePreset": {
     "ResourcePresets": "資源預設",

@@ -815,7 +815,8 @@
     "PasswordsDoNotMatch": "Le mot de passe et la confirmation ne correspondent pas.",
     "NoChangeMade": "Aucune modification n'a été apportée",
     "Architecture": "Architecture",
-    "NoImageToDisplay": "Pas d'images à afficher"
+    "NoImageToDisplay": "Pas d'images à afficher",
+    "CustomizedImageSuccessfullyDeleted": "Image personnalisée supprimée avec succès."
   },
   "resourcePreset": {
     "ResourcePresets": "Préréglages de ressources",

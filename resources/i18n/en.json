@@ -917,7 +917,8 @@
     "NoChangeMade": "No changes were made",
     "SuccessfullyModified": "Successfully modified",
     "ProblemOccurred": "Problem occurred",
-    "PasswordsDoNotMatch": "Password and Confirmation do not match."
+    "PasswordsDoNotMatch": "Password and Confirmation do not match.",
+    "CustomizedImageSuccessfullyDeleted": "Customized image successfully deleted."
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",

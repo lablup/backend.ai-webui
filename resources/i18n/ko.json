@@ -905,7 +905,8 @@
     "ProblemOccurred": "문제가 발생했습니다.",
     "PasswordsDoNotMatch": "변경할 비밀번호와 비밀번호 확인란의 값이 일치해야 합니다.",
     "NoChangeMade": "변경된 부분이 없습니다.",
-    "Architecture": "아키텍쳐"
+    "Architecture": "아키텍쳐",
+    "CustomizedImageSuccessfullyDeleted": "사용자 정의된 이미지가 삭제되었습니다."
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",

@@ -457,7 +457,8 @@
     "Status": "Tila",
     "SuccessfullyModified": "Muutettu onnistuneesti",
     "TakesTime": ". Se vie aikaa, joten ota kuppi kahvia!",
-    "Version": "Versio"
+    "Version": "Versio",
+    "CustomizedImageSuccessfullyDeleted": "Muokattu kuva poistettu onnistuneesti."
   },
   "explorer": {
     "InputTooShort": "InputTooShort",

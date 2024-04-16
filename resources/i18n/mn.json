@@ -799,7 +799,8 @@
     "PasswordsDoNotMatch": "Нууц үг ба баталгаажуулалт таарахгүй байна.",
     "NoChangeMade": "Өөрчлөлт ороогүй",
     "Architecture": "Архитектур",
-    "NoImageToDisplay": "Үзүүлэх зураг байхгүй"
+    "NoImageToDisplay": "Үзүүлэх зураг байхгүй",
+    "CustomizedImageSuccessfullyDeleted": "Тохируулсан зургийг амжилттай устгалаа."
   },
   "resourcePreset": {
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",

@@ -817,7 +817,8 @@
     "PasswordsDoNotMatch": "Пароль и подтверждение не совпадают.",
     "NoChangeMade": "Изменения не вносились",
     "Architecture": "Архитектура",
-    "NoImageToDisplay": "Нет изображений для отображения"
+    "NoImageToDisplay": "Нет изображений для отображения",
+    "CustomizedImageSuccessfullyDeleted": "Персонализированное изображение успешно удалено."
   },
   "resourcePreset": {
     "ResourcePresets": "Предустановки ресурсов",

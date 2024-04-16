@@ -817,7 +817,8 @@
     "PasswordsDoNotMatch": "Hasło i Potwierdzenie nie pasują.",
     "NoChangeMade": "Nie wprowadzono żadnych zmian",
     "Architecture": "Architektura",
-    "NoImageToDisplay": "Brak obrazów do wyświetlenia"
+    "NoImageToDisplay": "Brak obrazów do wyświetlenia",
+    "CustomizedImageSuccessfullyDeleted": "Dostosowany obraz został pomyślnie usunięty."
   },
   "resourcePreset": {
     "ResourcePresets": "Predefiniowane ustawienia zasobów",
