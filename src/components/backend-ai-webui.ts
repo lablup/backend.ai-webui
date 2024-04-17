@@ -240,7 +240,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       configPath = './config.toml';
       document.addEventListener('backend-ai-logout', () => this.logout(false));
       document.addEventListener('backend-ai-app-close', () =>
-        this.close_app_window(true),
+        this.close_app_window(),
       );
       document.addEventListener('backend-ai-show-splash', () =>
         this._showSplash(),
@@ -252,7 +252,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this._showSplash(),
       );
     }
-    globalThis.addEventListener('beforeunload', function (event) {
+    globalThis.addEventListener('beforeunload', function () {
       globalThis.backendaioptions.set(
         'last_window_close_time',
         new Date().getTime() / 1000,
@@ -333,7 +333,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           }
         }
       })
-      .catch((err) => {
+      .catch(() => {
         console.log('Initialization failed.');
         if (
           typeof globalThis.backendaiclient === 'undefined' ||
@@ -534,7 +534,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             }),
           );
         }
-        Promise.all(pluginLoaderQueue).then((v) => {
+        Promise.all(pluginLoaderQueue).then(() => {
           globalThis.backendaiPages = this.plugins['page'];
           const event: CustomEvent = new CustomEvent(
             'backend-ai-plugin-loaded',
@@ -732,10 +732,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   /**
    * When user close the app window, delete login information.
-   *
-   * @param {Boolean} performClose
    */
-  async close_app_window(performClose = false) {
+  async close_app_window() {
     if (globalThis.backendaioptions.get('preserve_login') === false) {
       // Delete login information.
       this.notification.text = _text('webui.CleanUpLoginSession');
@@ -824,9 +822,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   /**
-   * Move to input url.
-   *
-   * @param {string} url
+   * Moves to the specified URL and updates the state of the web component.
+   * @param {string} url - The URL to navigate to.
+   * @param {object} params - Optional parameters for the URL.
+   * @param {boolean} fromReact - Indicates whether the navigation is triggered from React.
    */
   _moveTo(url, params = undefined, fromReact = false) {
     !fromReact && globalThis.history.pushState({}, '', url);
