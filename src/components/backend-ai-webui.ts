@@ -922,18 +922,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         >
           <mwc-circular-progress indeterminate></mwc-circular-progress>
         </backend-ai-session-view>
-        <!-- <backend-ai-session-view-next class="page" name="session" ?active="${this
-          ._page ===
-        'session'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view-next> -->
-        <!-- <backend-ai-serving-view class="page" name="serving" ?active="${this
-          ._page ===
-        'serving'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-serving-view> -->
-        <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${this
-          ._page ===
-        'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
-        <!-- <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this
-          ._page ===
-        'usersettings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view> -->
+
         <backend-ai-credential-view
           class="page"
           name="credential"
@@ -955,9 +944,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         >
           <mwc-circular-progress indeterminate></mwc-circular-progress>
         </backend-ai-agent-summary-view>
-        <!-- <backend-ai-storage-host-settings-view class="page" name="storage-settings" ?active="${this
-          ._page ===
-        'storage-settings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-storage-host-settings-view> -->
         <backend-ai-data-view
           class="page"
           name="data"
@@ -965,18 +951,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         >
           <mwc-circular-progress indeterminate></mwc-circular-progress>
         </backend-ai-data-view>
-        <!--<pipeline-view class="page" name="pipeline" ?active="${this
-          ._page ===
-        'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-view>-->
-        <!--<pipeline-job-view class="page" name="pipeline-job" ?active="${this
-          ._page ===
-        'pipeline-job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-job-view>-->
-        <!--<backend-ai-pipeline-view class="page" name="pipeline" ?active="${this
-          ._page ===
-        'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-pipeline-view>-->
-        <!-- <backend-ai-environment-view class="page" name="environment" ?active="${this
-          ._page ===
-        'environment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-environment-view> -->
         <backend-ai-settings-view
           class="page"
           name="settings"
@@ -1020,12 +994,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         >
           <mwc-circular-progress indeterminate></mwc-circular-progress>
         </backend-ai-edu-applauncher>
-        <!-- <backend-ai-error-view class="page" name="error" ?active="${this
-          ._page ===
-        'error'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-error-view> -->
-        <!-- <backend-ai-permission-denied-view class="page" name="unauthorized" ?active="${this
-          ._page ===
-        'unauthorized'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-permission-denied-view> -->
       </div>
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         ${this._offline ? _t('webui.YouAreOffline') : _t('webui.YouAreOnline')}.
