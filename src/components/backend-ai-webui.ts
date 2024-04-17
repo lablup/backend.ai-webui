@@ -199,6 +199,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @query('#app-page') appPage!: HTMLDivElement;
   // @query('#content-body') contentBody!: Drawer;
   // @query('#drawer-toggle-button') drawerToggleButton!: HTMLDivElement;
+  @property({ type: Object }) _refreshPage = this.refreshPage.bind(this);
   // TODO need investigation about class method undefined issue
   // This issue occurred when importing exported class
   @query('#login-panel') loginPanel: any;
@@ -384,7 +385,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   async connectedCallback() {
     super.connectedCallback();
-    document.addEventListener('backend-ai-connected', () => this.refreshPage());
+    document.addEventListener('backend-ai-connected', this._refreshPage);
     const defaultLang = globalThis.navigator.language.split('-')[0];
     if (
       globalThis.backendaioptions.get('language') === 'default' &&
@@ -408,9 +409,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   disconnectedCallback() {
-    document.removeEventListener('backend-ai-connected', () =>
-      this.refreshPage(),
-    );
+    document.removeEventListener('backend-ai-connected', this._refreshPage);
     super.disconnectedCallback();
   }
 
