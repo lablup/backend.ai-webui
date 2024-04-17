@@ -33,13 +33,10 @@ import './lablup-notification';
 import LablupTermsOfService from './lablup-terms-of-service';
 import '@material/mwc-button';
 import '@material/mwc-circular-progress';
-// import { Drawer } from '@material/mwc-drawer';
 import '@material/mwc-icon';
 import { IconButton } from '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
-// import { List } from '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
-// import { Menu } from '@material/mwc-menu';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
 import '@material/mwc-top-app-bar-fixed';
@@ -110,7 +107,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     | 'feedback'
     | 'notification'
     | 'task' = '';
-  // @property({ type: Boolean }) _drawerOpened = false;
   @property({ type: Boolean }) _offlineIndicatorOpened = false;
   @property({ type: Boolean }) _offline = false;
   @property({ type: Object }) config = Object();
@@ -188,23 +184,17 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   ];
   @property({ type: Array }) optionalPages;
   @property({ type: Number }) timeoutSec = 5;
-  private _useExperiment = false;
-  private _usePipeline = false; // temporally block pipeline menu
   @property({ type: Object }) loggedAccount = Object();
   @property({ type: Object }) roleInfo = Object();
   @property({ type: Object }) keyPairInfo = Object();
   @property({ type: Boolean }) isOpenUserProfileDialog = false;
   @property({ type: Boolean }) isOpenSignoutDialog = false;
-  // @query('#app-body') appBody!: Drawer;
   @query('#app-page') appPage!: HTMLDivElement;
-  // @query('#content-body') contentBody!: Drawer;
-  // @query('#drawer-toggle-button') drawerToggleButton!: HTMLDivElement;
   @property({ type: Object }) _refreshPage = this.refreshPage.bind(this);
   // TODO need investigation about class method undefined issue
   // This issue occurred when importing exported class
   @query('#login-panel') loginPanel: any;
   @query('#main-toolbar') mainToolbar: any;
-  // @query('#sidebar-menu') sidebarMenu!: List;
   @query('#terms-of-service') TOSdialog!: LablupTermsOfService;
   @query('backend-ai-splash') splash: any;
   @query('#dropdown-button') _dropdownMenuIcon!: IconButton;
@@ -235,7 +225,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     globalThis.currentPage = this._page;
     globalThis.currentPageParams = this._pageParams;
     this.notification = globalThis.lablupNotification;
-    // this.contentBody.type = 'dismissible';
     if (globalThis.isElectron && navigator.platform.indexOf('Mac') >= 0) {
       // For macOS
       (
