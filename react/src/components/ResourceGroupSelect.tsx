@@ -36,6 +36,9 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       ),
     );
 
+  const [controllableValue, setControllableValue] =
+    useControllableValue(selectProps);
+
   const [isPendingLoading, startLoadingTransition] = useTransition();
   const { data: resourceGroupSelectQueryResult } = useTanQuery<
     [
@@ -94,6 +97,14 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
     },
   );
 
+  useEffect(() => {
+    if (
+      controllableValue &&
+      !_.some(resourceGroups, (item) => item.name === controllableValue)
+    ) {
+      setControllableValue(undefined);
+    }
+  }, [resourceGroups, controllableValue, setControllableValue]);
   const autoSelectedResourceGroup =
     _.find(resourceGroups, (item) => item.name === 'default') ||
     resourceGroups[0];
@@ -110,16 +121,26 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       autoSelectedOption &&
       autoSelectedOption.value !== selectProps.value
     ) {
-      selectProps.onChange?.(autoSelectedOption.value, autoSelectedOption);
+      setControllableValue(autoSelectedOption.value, autoSelectedOption);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault]);
 
+  const searchProps: Pick<
+    SelectProps,
+    'onSearch' | 'searchValue' | 'showSearch'
+  > = selectProps.showSearch
+    ? {
+        onSearch: setControllableSearchValue,
+        searchValue: controllableSearchValue,
+        showSearch: true,
+      }
+    : {};
+
   return (
     <Select
       defaultActiveFirstOption
-      onSearch={setControllableSearchValue}
-      searchValue={controllableSearchValue}
+      {...searchProps}
       defaultValue={autoSelectDefault ? autoSelectedOption : undefined}
       onDropdownVisibleChange={(open) => {
         if (open) {
@@ -140,6 +161,8 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
         );
       }}
       {...selectProps}
+      value={controllableValue}
+      onChange={setControllableValue}
     />
   );
 };

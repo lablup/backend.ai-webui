@@ -56,7 +56,7 @@ type RemainingSlots = {
   };
 };
 
-type Preset = {
+export type ResourcePreset = {
   name: string;
   resource_slots: ResourceSlots;
   shared_memory: string | null;
@@ -71,7 +71,7 @@ type ResourceAllocation = {
   scaling_groups: {
     [key: string]: ScalingGroup;
   };
-  presets: Preset[];
+  presets: ResourcePreset[];
   group_limits: ResourceLimits;
   group_using: ResourceUsing;
   group_remaining: ResourceRemaining;
@@ -101,16 +101,19 @@ export const useResourceLimitAndRemaining = ({
     queryKey: ['check-resets', currentProjectName, currentResourceGroup],
     queryFn: () => {
       if (currentResourceGroup) {
-        return baiClient.resourcePreset.check({
-          group: currentProjectName,
-          scaling_group: currentResourceGroup,
-        });
+        return baiClient.resourcePreset
+          .check({
+            group: currentProjectName,
+            scaling_group: currentResourceGroup,
+          })
+          .catch(() => {});
       } else {
         return;
       }
     },
     staleTime: 0,
-    suspense: !_.isEmpty(currentResourceGroup), //prevent flicking
+    suspense: true,
+    // suspense: !_.isEmpty(currentResourceGroup), //prevent flicking
   });
 
   const currentImageMinM =
@@ -267,6 +270,7 @@ export const useResourceLimitAndRemaining = ({
             'ipu.device': 'maxIPUDevicesPerContainer',
             'atom.device': 'maxATOMDevicesPerContainer',
             'warboy.device': 'maxWarboyDevicesPerContainer',
+            'hyperaccel-lpu.device': 'maxHyperaccelLPUDevicesPerContainer', // FIXME: add maxLPUDevicesPerContainer to config
           }[key] || 'cuda.device'; // FIXME: temporally `cuda.device` config, when undefined
         result[key] = {
           min: parseInt(
@@ -326,6 +330,7 @@ export const useResourceLimitAndRemaining = ({
       remaining,
       currentImageMinM,
       isRefetching,
+      checkPresetInfo,
     },
     {
       refetch,

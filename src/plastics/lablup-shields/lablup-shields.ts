@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -84,7 +84,6 @@ export default class LablupShields extends LitElement {
         }
         .app,
         .desc {
-          word-break: break-all;
           white-space: normal;
           height: fit-content;
           width: var(--lablup-shield-component-width, auto);
@@ -110,6 +109,7 @@ export default class LablupShields extends LitElement {
       gray: { colorB: '#555555', colorT: '#ffffff' },
       lightgrey: { colorB: '#9f9f9f', colorT: '#ffffff' },
       lightgray: { colorB: '#9f9f9f', colorT: '#ffffff' },
+      cyan: { colorB: '#87e8de', colorT: '#222222' },
     };
     if (
       this.customColorPalette &&

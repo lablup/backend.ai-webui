@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { navigate, updateOffline } from '../backend-ai-app';
 // import '../lib/backend.ai-client-esm';
@@ -11,9 +11,6 @@ import {
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import { Drawer } from '../plastics/mwc/mwc-drawer';
-import '../plastics/mwc/mwc-multi-select';
-import '../plastics/mwc/mwc-top-app-bar-fixed';
 import { store } from '../store';
 import './backend-ai-app-launcher';
 import './backend-ai-common-utils';
@@ -36,6 +33,7 @@ import './lablup-notification';
 import LablupTermsOfService from './lablup-terms-of-service';
 import '@material/mwc-button';
 import '@material/mwc-circular-progress';
+import { Drawer } from '@material/mwc-drawer';
 import '@material/mwc-icon';
 import { IconButton } from '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
@@ -44,6 +42,7 @@ import '@material/mwc-list/mwc-list-item';
 import { Menu } from '@material/mwc-menu';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
+import '@material/mwc-top-app-bar-fixed';
 import '@vaadin/tooltip';
 import { LitElement, html, CSSResultGroup } from 'lit';
 import {
@@ -121,14 +120,29 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Boolean }) isUserInfoMaskEnabled;
   @property({ type: Boolean }) isHideAgents = true;
   @property({ type: Boolean }) supportServing = false;
+  @property({ type: Boolean }) supportUserCommittedImage = false;
   @property({ type: String }) lang = 'default';
   @property({ type: Array }) supportLanguageCodes = [
     'en',
     'ko',
-    'ru',
+    'de',
+    'el',
+    'es',
+    'fi',
     'fr',
-    'mn',
     'id',
+    'it',
+    'ja',
+    'mn',
+    'ms',
+    'pl',
+    'pt',
+    'pt-BR',
+    'ru',
+    'tr',
+    'vi',
+    'zh-CN',
+    'zh-TW',
   ];
   @property({ type: Array }) blockedMenuItem;
   @property({ type: Array }) inactiveMenuItem;
@@ -142,6 +156,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'change-password',
     'job',
     'data',
+    'my-environment',
     'agent-summary',
     'statistics',
     'usersettings',
@@ -256,12 +271,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this._parseConfig(configPath)
       .then(() => {
         this.loadConfig(this.config);
-        this.optionalPages = [
-          {
-            page: 'agent-summary',
-            available: !this.isHideAgents,
-          },
-        ];
         // If disconnected
         if (
           typeof globalThis.backendaiclient === 'undefined' ||
@@ -366,14 +375,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this.full_name = input;
       }
     });
-    document.addEventListener(
-      'backend-ai-connected',
-      () => {
-        this.supportServing =
-          globalThis.backendaiclient.supports('model-serving');
-      },
-      { once: true },
-    );
     document.addEventListener('move-to-from-react', (e) => {
       const params = (e as CustomEvent).detail.params;
       const path = (e as CustomEvent).detail.path;
@@ -412,6 +413,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.lang = 'en';
     }
     globalThis.backendaioptions.set('current_language', this.lang);
+    globalThis.backendaioptions.set('language', this.lang);
     await setLanguage(this.lang);
     this.hasLoadedStrings = true;
     // this._initClient();
@@ -638,6 +640,25 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this._page = 'unauthorized';
       this._moveTo('/unauthorized');
     }
+
+    this.supportServing = globalThis.backendaiclient.supports('model-serving');
+    this.supportUserCommittedImage = globalThis.backendaiclient.supports(
+      'user-committed-image',
+    );
+    this.optionalPages = [
+      {
+        page: 'agent-summary',
+        available: !this.isHideAgents,
+      },
+      {
+        page: 'serving',
+        available: this.supportServing,
+      },
+      {
+        page: 'my-environment',
+        available: this.supportUserCommittedImage,
+      },
+    ];
 
     // redirect to error page when blocked by config option or the page is not available page.
     if (
@@ -1324,9 +1345,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         <backend-ai-session-view class="page" name="job" ?active="${
           this._page === 'job'
         }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
-        <backend-ai-session-view-next class="page" name="session" ?active="${
+        <!-- <backend-ai-session-view-next class="page" name="session" ?active="${
           this._page === 'session'
-        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view-next>
+        }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view-next> -->
         <!-- <backend-ai-serving-view class="page" name="serving" ?active="${
           this._page === 'serving'
         }"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-serving-view> -->
@@ -1861,7 +1882,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">24.03.0-beta.1.5922</small>
+                <small class="sidebar-footer" style="font-size:9px;">24.09.0-alpha.1.5966</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1903,7 +1924,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">24.03.0-beta.1.5922</small>
+              <small class="sidebar-footer" style="font-size:9px;">24.09.0-alpha.1.5966</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>

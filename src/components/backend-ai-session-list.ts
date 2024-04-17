@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { default as AnsiUp } from '../lib/ansiup';
 import '../plastics/lablup-shields/lablup-shields';
@@ -84,6 +84,13 @@ type CommitSessionInfo = {
 };
 
 /**
+ * Type of commit session info
+ */
+// type SessionToImageInfo = CommitSessionInfo & {
+//   name: string;
+// };
+
+/**
  * Type of commit session status
  * - ready: no container commit operation is on-going
  * - ongoing: container commit operation is proceeding now
@@ -123,8 +130,8 @@ export default class BackendAISessionList extends BackendAIPage {
     this.idleChecksHeaderRenderer.bind(this);
   @property({ type: Object }) _boundIdleChecksRenderer =
     this.idleChecksRenderer.bind(this);
-  @property({ type: Object }) _boundAgentRenderer =
-    this.agentRenderer.bind(this);
+  @property({ type: Object }) _boundAgentListRenderer =
+    this.agentListRenderer.bind(this);
   @property({ type: Object }) _boundSessionInfoRenderer =
     this.sessionInfoRenderer.bind(this);
   @property({ type: Object }) _boundArchitectureRenderer =
@@ -189,11 +196,14 @@ export default class BackendAISessionList extends BackendAIPage {
       // _t('session.GPU'),
       cuda_mem: 'GPU(MEM)',
       // _t('session.GPU(MEM)'),
+      ipu_util: 'IPU',
+      // _t('session.IPU'),
+      ipu_mem: 'IPU(MEM)',
+      // _t('session.IPU(MEM)'),
     },
     {
       get: (obj, prop) => {
-        // eslint-disable-next-line no-prototype-builtins
-        return obj.hasOwnProperty(prop) ? obj[prop] : '';
+        return obj.hasOwnProperty(prop) ? obj[prop] : prop;
       },
     },
   );
@@ -218,6 +228,9 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({ type: Number }) _APIMajorVersion = 5;
   @property({ type: Object }) selectedSessionStatus = Object();
   @property({ type: Boolean }) isUserInfoMaskEnabled = false;
+  @property({ type: Boolean }) pushImageInsteadOfCommiting = false;
+  @property({ type: Boolean }) canStartImagifying = false;
+  @property({ type: String }) newImageName = '';
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#list-grid') _grid!: VaadinGrid;
   @query('#access-key-filter') accessKeyFilterInput!: TextField;
@@ -296,6 +309,10 @@ export default class BackendAISessionList extends BackendAIPage {
         mwc-checkbox {
           margin: 0 0 0 -6px;
           padding: 0;
+        }
+
+        mwc-checkbox.list-check {
+          margin: 6px 0 0 0;
         }
 
         mwc-icon {
@@ -442,6 +459,15 @@ export default class BackendAISessionList extends BackendAIPage {
           word-break: break-word;
         }
 
+        h4.commit-session-title {
+          margin-bottom: 0;
+        }
+
+        span.commit-session-subheading {
+          font-size: smaller;
+          font-family: monospace;
+        }
+
         mwc-button.multiple-action-button {
           --mdc-theme-primary: var(--paper-red-600);
           --mdc-theme-on-primary: white;
@@ -481,7 +507,7 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         .no-mount {
-          color: var(--paper-grey-400);
+          color: var(--token-colorTextDisabled, --paper-grey-400);
         }
 
         .idle-check-key {
@@ -738,6 +764,7 @@ export default class BackendAISessionList extends BackendAIPage {
       'access_key',
       'starts_at',
       'type',
+      'agents',
     ];
     if (globalThis.backendaiclient.supports('multi-container')) {
       fields.push('cluster_size');
@@ -763,23 +790,28 @@ export default class BackendAISessionList extends BackendAIPage {
     if (this._connectionMode === 'SESSION') {
       fields.push('user_email');
     }
-    if (globalThis.backendaiclient.is_superadmin) {
-      fields.push(
-        'containers {container_id agent occupied_slots live_stat last_stat}',
-      );
-    } else {
-      fields.push(
-        'containers {container_id occupied_slots live_stat last_stat}',
-      );
-    }
     if (!globalThis.backendaiclient._config.hideAgents) {
       fields.push('containers {agent}');
     }
     const group_id = globalThis.backendaiclient.current_group_id();
+    const containerFields: string[] = [
+      'container_id',
+      'occupied_slots',
+      'live_stat',
+      'last_stat',
+    ];
+    if (globalThis.backendaiclient.is_superadmin) {
+      containerFields.push('agent');
+    }
+    if (globalThis.backendaiclient.supports('per-user-image')) {
+      containerFields.push('image_object { labels { key value } }');
+    }
 
     if (this._isContainerCommitEnabled && status.includes('RUNNING')) {
       fields.push('commit_status');
     }
+
+    fields.push(`containers { ${containerFields.join(' ')} }`);
 
     globalThis.backendaiclient.computeSession
       .list(
@@ -792,8 +824,9 @@ export default class BackendAISessionList extends BackendAIPage {
         10 * 1000,
       )
       .then((response) => {
-        this.total_session_count = response.compute_session_list.total_count;
-        let sessions = response.compute_session_list.items;
+        this.total_session_count =
+          response?.compute_session_list?.total_count || 0;
+        let sessions = response?.compute_session_list?.items;
         if (this.total_session_count === 0) {
           this.listCondition = 'no-data';
           this._listStatus?.show();
@@ -1101,6 +1134,11 @@ export default class BackendAISessionList extends BackendAIPage {
                 occupiedSlots['warboy.device'],
               );
             }
+            if ('hyperaccel-lpu.device' in occupiedSlots) {
+              sessions[objectKey].hyperaccel_lpu_slot = parseInt(
+                occupiedSlots['hyperaccel-lpu.device'],
+              );
+            }
             if ('cuda.shares' in occupiedSlots) {
               // sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
               sessions[objectKey].cuda_fgpu_slot = parseFloat(
@@ -1123,7 +1161,21 @@ export default class BackendAISessionList extends BackendAIPage {
               sessions[objectKey].baseimage = tags[1];
               sessions[objectKey].additional_reqs = tags
                 .slice(1, tags.length)
+                .filter((tag) => tag.indexOf('customized_') < 0)
                 .map((tag) => tag.toUpperCase());
+              if (sessions[objectKey].containers[0].image_object) {
+                const customizedImageNameLabel = sessions[
+                  objectKey
+                ].containers[0].image_object.labels.find(
+                  ({ key }) => key === 'ai.backend.customized-image.name',
+                );
+                if (customizedImageNameLabel) {
+                  sessions[objectKey].additional_reqs = [
+                    ...sessions[objectKey].additional_reqs,
+                    `Customized-${customizedImageNameLabel.value}`,
+                  ];
+                }
+              }
             } else if (sessions[objectKey].tag !== undefined) {
               sessions[objectKey].baseversion = sessions[objectKey].tag;
             } else {
@@ -1602,10 +1654,57 @@ export default class BackendAISessionList extends BackendAIPage {
           taskId: commitSession.bgtask_id,
         },
       ) as CommitSessionInfo;
-      this._addCommitSessionToTasker(commitSession, newCommitSessionTask);
+      this._showCommitStatus(commitSession, newCommitSessionTask);
+    } catch (err) {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    } finally {
+      this.commitSessionDialog.hide();
+    }
+  }
+
+  /**
+   * Request commit session
+   */
+  async _showCommitStatus(
+    commitSession: CommitSessionInfo,
+    newCommitSessionTask: CommitSessionInfo,
+  ) {
+    try {
       this._applyContainerCommitAsBackgroundTask(newCommitSessionTask);
-      this.notification.text = _text('session.CommitOnGoing');
-      this.notification.show();
+    } catch (err) {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    } finally {
+      this.commitSessionDialog.hide();
+    }
+  }
+
+  /**
+   * Request commit session
+   */
+  async _requestConvertSessionToimage(commitSessionInfo: CommitSessionInfo) {
+    try {
+      const commitSession =
+        await globalThis.backendaiclient.computeSession.convertSessionToImage(
+          commitSessionInfo.session.name,
+          this.newImageName,
+        );
+      const newCommitSessionTask: CommitSessionInfo = Object.assign(
+        commitSessionInfo,
+        {
+          taskId: commitSession.task_id,
+        },
+      ) as CommitSessionInfo;
+      this._showCommitStatus(commitSession, newCommitSessionTask);
     } catch (err) {
       console.log(err);
       if (err && err.message) {
@@ -1619,58 +1718,47 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   _applyContainerCommitAsBackgroundTask(commitSessionInfo: CommitSessionInfo) {
-    const sse: EventSource =
-      globalThis.backendaiclient.maintenance.attach_background_task(
-        commitSessionInfo.taskId,
-      );
-    // this._saveCurrentContainerCommitInfoToLocalStorage(commitSessionInfo);
-    // sse.addEventListener('task_updated', (e) => {
-    //   // FIXME: for now, there is no progress updates during this task
-    //   // const ratio = data.current_progress/data.total_progress;
-    //   // indicator.set(100 * ratio, _text('session.CommitOnGoing'));
-    // });
-    sse.addEventListener('bgtask_done', (e) => {
-      // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
-      this.notification.text = _text('session.CommitFinished');
-      this.notification.show();
-      this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
-      sse.close();
+    const notiKey = 'commit-session:' + new Date().getTime();
+    const event: CustomEvent = new CustomEvent('add-bai-notification', {
+      detail: {
+        key: notiKey,
+        message: _text('session.CommitSession'),
+        description: _text('session.CommitOnGoing'),
+        backgroundTask: {
+          percent: 0,
+          status: 'pending',
+        },
+        duration: 0,
+        open: true,
+      },
     });
-    sse.addEventListener('bgtask_failed', (e) => {
-      // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
-      this.notification.text = _text('session.CommitFailed');
-      this.notification.show(true);
-      this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
-      sse.close();
-      throw new Error('Commit session request has been failed.');
-    });
-    sse.addEventListener('bgtask_cancelled', (e) => {
-      // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
-      this.notification.text = _text('session.CommitFailed');
-      this.notification.show(true);
-      this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
-      sse.close();
-      throw new Error('Commit session request has been cancelled.');
-    });
-  }
-
-  _addCommitSessionToTasker(
-    task: any = null,
-    commitSessionInfo: CommitSessionInfo,
-  ) {
-    /**
-     * TODO:
-     *    - Show progress of commit session operation
-     *    - Show task in tasker panel regardless of client interruption (e.g. page refresh, etc.)
-     */
-    globalThis.tasker.add(
-      _text('session.CommitSession') + commitSessionInfo.session.name,
-      task !== null && typeof task === 'function' ? task : null,
-      commitSessionInfo.taskId ?? '',
-      'commit',
-      'remove-later',
-      _text('session.CommitSession') + commitSessionInfo.session.name,
+    document.dispatchEvent(event);
+    const eventForUpdating: CustomEvent = new CustomEvent(
+      'add-bai-notification',
+      {
+        detail: {
+          key: notiKey,
+          description: _text('session.CommitSession'),
+          backgroundTask: {
+            taskId: commitSessionInfo.taskId,
+            statusDescriptions: {
+              pending: _text('session.CommitOnGoing'),
+              rejected: _text('session.CommitFailed'),
+              resolved: _text('session.CommitFinished'),
+            },
+            renderDataMessage: (message: string | undefined) => {
+              return message?.includes('QuotaExceeded')
+                ? _text('error.ReachedResourceLimitPleaseContact')
+                : message;
+            },
+            status: 'pending',
+            percent: 0,
+          },
+          duration: 0,
+        },
+      },
     );
+    document.dispatchEvent(eventForUpdating);
   }
 
   _removeCommitSessionFromTasker(taskId = '') {
@@ -1729,6 +1817,10 @@ export default class BackendAISessionList extends BackendAIPage {
     this.commitSessionDialog.sessionName = sessionName;
     this.commitSessionDialog.sessionId = sessionId;
     this.commitSessionDialog.kernelImage = kernelImage;
+    // Reset image name field;
+    (
+      this.shadowRoot?.querySelector('#new-image-name-field') as TextField
+    ).value = '';
     this.commitSessionDialog.show();
   }
 
@@ -3081,7 +3173,10 @@ ${rowData.item[this.sessionNameField]}</pre
                   this._isFinished(rowData.item.status) ||
                   (rowData.item.type as SessionType) === 'BATCH' ||
                   (rowData.item.commit_status as CommitSessionStatus) ===
-                    'ongoing'}
+                    'ongoing' ||
+                  // FIXME: temporally disable container commit feature
+                  // when the session is not created by logined user
+                  rowData.item.user_email !== globalThis.backendaiclient.email}
                   icon="archive"
                   @click="${(e) => this._openCommitSessionDialog(e)}"
                 ></mwc-icon-button>
@@ -3241,13 +3336,24 @@ ${rowData.item[this.sessionNameField]}</pre
                     <span class="indicator">Warboy</span>
                   `
                 : html``}
+              ${rowData.item.hyeraccel_lpu_slot
+                ? html`
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/npu_generic.svg"
+                    />
+                    <span>${rowData.item.hyeraccel_lpu_slot}</span>
+                    <span class="indicator">Hyperaccel LPU</span>
+                  `
+                : html``}
               ${!rowData.item.cuda_gpu_slot &&
               !rowData.item.cuda_fgpu_slot &&
               !rowData.item.rocm_gpu_slot &&
               !rowData.item.tpu_slot &&
               !rowData.item.ipu_slot &&
               !rowData.item.atom_slot &&
-              !rowData.item.warboy_slot
+              !rowData.item.warboy_slot &&
+              !rowData.item.hyperaccel_lpu_slot
                 ? html`
                     <mwc-icon class="fg green indicator">view_module</mwc-icon>
                     <span>-</span>
@@ -3708,18 +3814,23 @@ ${rowData.item[this.sessionNameField]}</pre
   }
 
   /**
-   * Render agent name
+   * Render list of agent name
    *
    * @param {Element} root - the row details content DOM element
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-  agentRenderer(root, column?, rowData?) {
+  agentListRenderer(root, column?, rowData?) {
     render(
       // language=HTML
+      // FIXME: temporally show allocated agent only, not in session-agent pair
       html`
         <div class="layout vertical">
-          <span>${rowData.item.agent}</span>
+          ${[...new Set(rowData.item.agents)]?.map(
+            (agent) => html`
+              <span>${agent}</span>
+            `,
+          )}
         </div>
       `,
       root,
@@ -3896,83 +4007,123 @@ ${rowData.item[this.sessionNameField]}</pre
       <backend-ai-dialog id="commit-session-dialog" fixed backdrop>
         <span slot="title">${_t('session.CommitSession')}</span>
         <div slot="content" class="vertical layout center flex">
-          <span style="font-size:14px;margin:auto 20px;">
+          <span style="font-size:14px;">
             ${_t('session.DescCommitSession')}
           </span>
-          <mwc-list style="width:100%">
-            <mwc-list-item twoline noninteractive class="commit-session-info">
-              <span class="subheading">Session Name</span>
-              <span class="monospace" slot="secondary">
-                ${commitSessionInfo?.session?.name
-                  ? commitSessionInfo.session.name
-                  : '-'}
-              </span>
-            </mwc-list-item>
-            <mwc-list-item twoline noninteractive class="commit-session-info">
-              <span class="subheading">Session Id</span>
-              <span class="monospace" slot="secondary">
-                ${commitSessionInfo?.session?.id
-                  ? commitSessionInfo.session.id
-                  : '-'}
-              </span>
-            </mwc-list-item>
-            <mwc-list-item twoline noninteractive class="commit-session-info">
-              <span class="subheading">
-                <strong>Environment and Version</strong>
-              </span>
-              <span class="monospace" slot="secondary">
-                ${commitSessionInfo
-                  ? html`
-                      <lablup-shields
-                        app="${commitSessionInfo.environment === ''
-                          ? '-'
-                          : commitSessionInfo.environment}"
-                        color="blue"
-                        description="${commitSessionInfo.version === ''
-                          ? '-'
-                          : commitSessionInfo.version}"
-                        ui="round"
-                        class="right-below-margin"
-                      ></lablup-shields>
-                    `
-                  : html``}
-              </span>
-            </mwc-list-item>
-            <mwc-list-item twoline noninteractive class="commit-session-info">
-              <span class="subheading">Tags</span>
-              <span class="monospace horizontal layout" slot="secondary">
-                ${commitSessionInfo
-                  ? commitSessionInfo?.tags?.map(
-                      (tag) => html`
-                        <lablup-shields
-                          app=""
-                          color="green"
-                          description="${tag}"
-                          ui="round"
-                          class="right-below-margin"
-                        ></lablup-shields>
-                      `,
-                    )
-                  : html`
+          <div class="vertical flex start layout" style="width:100%;">
+            <h4 class="commit-session-title">${_t('session.SessionName')}</h4>
+            <span class="commit-session-subheading">
+              ${commitSessionInfo?.session?.name
+                ? commitSessionInfo.session.name
+                : '-'}
+            </span>
+          </div>
+          <div class="vertical flex start layout" style="width:100%;">
+            <h4 class="commit-session-title">${_t('session.SessionId')}</h4>
+            <span class="commit-session-subheading">
+              ${commitSessionInfo?.session?.id
+                ? commitSessionInfo.session.id
+                : '-'}
+            </span>
+          </div>
+          <div class="vertical flex start layout" style="width:100%;">
+            <h4 class="commit-session-title">
+              ${_t('session.EnvironmentAndVersion')}
+            </h4>
+            <span class="commit-session-subheading">
+              ${commitSessionInfo
+                ? html`
+                    <lablup-shields
+                      app="${commitSessionInfo.environment === ''
+                        ? '-'
+                        : commitSessionInfo.environment}"
+                      color="blue"
+                      description="${commitSessionInfo.version === ''
+                        ? '-'
+                        : commitSessionInfo.version}"
+                      ui="round"
+                      class="right-below-margin"
+                    ></lablup-shields>
+                  `
+                : html``}
+            </span>
+          </div>
+          <div class="vertical flex start layout" style="width:100%;">
+            <h4 class="commit-session-title">${_t('session.Tags')}</h4>
+            <div class="horizontal wrap layout">
+              ${commitSessionInfo
+                ? commitSessionInfo?.tags?.map(
+                    (tag) => html`
                       <lablup-shields
                         app=""
                         color="green"
-                        description="-"
+                        description="${tag}"
                         ui="round"
-                        style="right-below-margin"
+                        class="right-below-margin"
                       ></lablup-shields>
-                    `}
-              </span>
-            </mwc-list-item>
-          </mwc-list>
+                    `,
+                  )
+                : html`
+                    <lablup-shields
+                      app=""
+                      color="green"
+                      description="-"
+                      ui="round"
+                      style="right-below-margin"
+                    ></lablup-shields>
+                  `}
+            </div>
+          </div>
+          <div class="vertical flex start layout" style="width:100%;">
+            <h4 class="commit-session-title">
+              ${_t('session.ConvertSessionToImage')}
+            </h4>
+            <div class="horizontal layout flex" style="width:100%">
+              <mwc-checkbox
+                class="list-check"
+                ?checked="${this.pushImageInsteadOfCommiting}"
+                @click="${() => {
+                  this.pushImageInsteadOfCommiting =
+                    !this.pushImageInsteadOfCommiting;
+                }}"
+              ></mwc-checkbox>
+              <mwc-textfield
+                id="new-image-name-field"
+                required
+                autoValidate
+                pattern="^[a-zA-Z0-9-_]+$"
+                minLength="4"
+                maxLength="32"
+                placeholder="${_t('inputLimit.4to32chars')}"
+                ?disabled="${!this.pushImageInsteadOfCommiting}"
+                validationMessage="${_text(
+                  'session.Validation.EnterValidSessionName',
+                )}"
+                style="margin-top:8px;width:100%;"
+                @input="${this._updateImagifyAvailabilityStatus}"
+              ></mwc-textfield>
+            </div>
+          </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
             unelevated
             class="ok"
-            ?disabled="${commitSessionInfo?.environment === ''}"
-            @click=${() => this._requestCommitSession(commitSessionInfo)}
-            label="${_t('button.Commit')}"
+            style="font-size: ${this.pushImageInsteadOfCommiting
+              ? 'smaller'
+              : 'inherit'}"
+            ?disabled="${commitSessionInfo?.environment === '' ||
+            (this.pushImageInsteadOfCommiting && !this.canStartImagifying)}"
+            @click=${(e) => {
+              if (this.pushImageInsteadOfCommiting) {
+                this._requestConvertSessionToimage(commitSessionInfo);
+              } else {
+                this._requestCommitSession(commitSessionInfo);
+              }
+            }}
+            label="${this.pushImageInsteadOfCommiting
+              ? _t('button.PushToImage')
+              : _t('button.Commit')}"
           ></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -4139,12 +4290,11 @@ ${rowData.item[this.sessionNameField]}</pre
             this.is_superadmin || !globalThis.backendaiclient._config.hideAgents
               ? html`
                   <lablup-grid-sort-filter-column
-                    path="agent"
                     auto-width
                     flex-grow="0"
                     resizable
-                    header="${_t('session.Agent')}"
-                    .renderer="${this._boundAgentRenderer}"
+                    header="${_t('session.Agents')}"
+                    .renderer="${this._boundAgentListRenderer}"
                   ></lablup-grid-sort-filter-column>
                 `
               : html``
@@ -4275,6 +4425,11 @@ ${rowData.item[this.sessionNameField]}</pre
       this.current_page += 1;
     }
     this.refreshList();
+  }
+
+  _updateImagifyAvailabilityStatus(e) {
+    this.canStartImagifying = e.target._validity.valid;
+    this.newImageName = e.target.value;
   }
 }
 

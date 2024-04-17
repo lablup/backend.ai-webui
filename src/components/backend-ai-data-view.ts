@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -58,11 +58,12 @@ interface GroupData {
 @customElement('backend-ai-data-view')
 export default class BackendAIData extends BackendAIPage {
   @property({ type: String }) apiMajorVersion = '';
-  @property({ type: Date }) folderListFetchKey = new Date();
+  @property({ type: String }) folderListFetchKey = 'first';
   @property({ type: Boolean }) is_admin = false;
   @property({ type: Boolean }) enableStorageProxy = false;
   @property({ type: Boolean }) enableInferenceWorkload = false;
   @property({ type: Boolean }) supportModelStore = false;
+  @property({ type: Boolean }) supportVFolderTrashBin = false;
   @property({ type: Boolean }) authenticated = false;
   @property({ type: String }) vhost = '';
   @property({ type: String }) selectedVhost = '';
@@ -92,11 +93,6 @@ export default class BackendAIData extends BackendAIPage {
   @property({ type: Object }) options;
   @property({ type: Number }) capacity;
   @property({ type: String }) cloneFolderName = '';
-  @property({ type: Array }) quotaSupportStorageBackends = [
-    'xfs',
-    'weka',
-    'spectrumscale',
-  ];
   @property({ type: Object }) storageProxyInfo = Object();
   @property({ type: String }) folderType = 'user';
   @property({ type: Number }) currentGroupIdx = 0;
@@ -158,6 +154,8 @@ export default class BackendAIData extends BackendAIPage {
           /* Need to be set when fixedMenuPosition attribute is enabled */
           --mdc-menu-max-width: 345px;
           --mdc-menu-min-width: 172.5px;
+          --mdc-select-max-width: 345px;
+          --mdc-select-min-width: 172.5px;
         }
 
         mwc-select.full-width.fixed-position {
@@ -165,12 +163,16 @@ export default class BackendAIData extends BackendAIPage {
           /* Need to be set when fixedMenuPosition attribute is enabled */
           --mdc-menu-max-width: 345px;
           --mdc-menu-min-width: 345px;
+          --mdc-select-max-width: 345px;
+          --mdc-select-min-width: 345px;
         }
 
         mwc-select.fixed-position {
           /* Need to be set when fixedMenuPosition attribute is enabled */
           --mdc-menu-max-width: 172.5px;
           --mdc-menu-min-width: 172.5px;
+          --mdc-select-max-width: 172.5px;
+          --mdc-select-min-width: 172.5px;
         }
 
         mwc-select mwc-icon-button {
@@ -278,7 +280,7 @@ export default class BackendAIData extends BackendAIPage {
       <link rel="stylesheet" href="resources/custom.css" />
       <div class="vertical layout" style="gap:24px">
         <backend-ai-react-storage-status-panel
-          .value="${this.folderListFetchKey}"
+          value="${this.folderListFetchKey}"
         ></backend-ai-react-storage-status-panel>
         <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">
@@ -313,6 +315,15 @@ export default class BackendAIData extends BackendAIPage {
                       <mwc-tab
                         title="model-store"
                         label="${_t('data.ModelStore')}"
+                        @click="${(e) => this._showTab(e.target)}"
+                      ></mwc-tab>
+                    `
+                  : html``}
+                ${this.supportVFolderTrashBin
+                  ? html`
+                      <mwc-tab
+                        title="trash-bin"
+                        icon="delete"
                         @click="${(e) => this._showTab(e.target)}"
                       ></mwc-tab>
                     `
@@ -395,6 +406,22 @@ export default class BackendAIData extends BackendAIPage {
                     ?active="${this.active === true &&
                     this._activeTab === 'modelStore'}"
                   ></backend-ai-react-model-store-list>
+                `
+              : html``}
+            ${this.supportVFolderTrashBin
+              ? html`
+                  <div
+                    id="trash-bin-folder-lists"
+                    class="tab-content"
+                    style="display:none;"
+                  >
+                    <backend-ai-storage-list
+                      id="trash-bin-folder-storage"
+                      storageType="deadVFolderStatus"
+                      ?active="${this.active === true &&
+                      this._activeTab === 'trash-bin'}"
+                    ></backend-ai-storage-list>
+                  </div>
                 `
               : html``}
           </div>
@@ -860,7 +887,7 @@ export default class BackendAIData extends BackendAIPage {
       this._getStorageProxyInformation();
     }
     document.addEventListener('backend-ai-folder-list-changed', () => {
-      this.folderListFetchKey = new Date();
+      this.folderListFetchKey = new Date().toISOString();
     });
     document.addEventListener('backend-ai-vfolder-cloning', (e: any) => {
       if (e.detail) {
@@ -892,6 +919,8 @@ export default class BackendAIData extends BackendAIPage {
       this.supportModelStore =
         globalThis.backendaiclient.supports('model-store') &&
         globalThis.backendaiclient._config.supportModelStore;
+      this.supportVFolderTrashBin =
+        globalThis.backendaiclient.supports('vfolder-trash-bin');
       if (this.enableInferenceWorkload && !this.usageModes.includes('Model')) {
         this.usageModes.push('Model');
       }

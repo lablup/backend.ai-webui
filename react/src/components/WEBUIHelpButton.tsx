@@ -8,7 +8,7 @@ interface WEBUIHelpButtonProps extends ButtonProps {}
 const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
   const [lang] = useCurrentLanguage();
   const location = useLocation();
-  const manualURL = `https://webui.docs.backend.ai/${lang}/latest/`;
+  const manualURL = `https://webui.docs.backend.ai/${['en', 'ko'].includes(lang) ? lang : 'en'}/latest/`;
   const matchingKey = location.pathname.split('/')[1] || '';
   const URLMatchingTable = {
     '': 'summary/summary.html',

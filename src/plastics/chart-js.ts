@@ -1,10 +1,11 @@
 /*
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 //import Chart from '../lib/Chart.min';
 import Chart from 'chart.js/auto';
-import { css, html, LitElement, property, TemplateResult } from 'lit-element';
+import { css, html, LitElement, TemplateResult } from 'lit';
+import { property } from 'lit/decorators.js';
 
 export default class ChartJs extends LitElement {
   @property({ type: Object }) data = {};

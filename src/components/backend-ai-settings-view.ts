@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import {
   IronFlex,
@@ -45,6 +45,7 @@ interface Options {
   ipu: boolean;
   atom: boolean;
   warboy: boolean;
+  hyperaccel_lpu: boolean;
   schedulerType: string;
   scheduler: {
     num_retries_to_skip: string;
@@ -103,6 +104,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
       ipu: false,
       atom: false,
       warboy: false,
+      hyperaccel_lpu: false,
       schedulerType: 'fifo',
       scheduler: {
         num_retries_to_skip: '0',
@@ -589,6 +591,29 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       ></mwc-switch>
                     </div>
                   </div>
+                  <div class="horizontal layout setting-item">
+                    <div
+                      class="vertical center-justified layout setting-desc-shrink"
+                    >
+                      <div class="title">
+                        ${_t('settings.HyperaccelLPUsupport')}
+                      </div>
+                      <div class="description-shrink">
+                        ${_tr('settings.DescHyperaccelLPUsupport')}
+                        <br />
+                        ${_t('settings.RequireHyperaccelLPUPlugin')}
+                      </div>
+                    </div>
+                    <div
+                      class="vertical center-justified layout setting-button"
+                    >
+                      <mwc-switch
+                        id="hyperaccel-lpu-support-switch"
+                        ?selected="${this.options['hyperaccel_lpu']}"
+                        disabled
+                      ></mwc-switch>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -905,6 +930,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       if ('warboy.device' in response) {
         this.options['warboy'] = true;
+      }
+      if ('hyperaccel-lpu.device' in response) {
+        this.options['hyperaccel-lpu'] = true;
       }
       // this.update(this.options);
       this.requestUpdate();

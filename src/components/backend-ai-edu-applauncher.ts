@@ -1,6 +1,6 @@
 /**
 @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { Client, ClientConfig } from '../lib/backend.ai-client-esm';
 import {
@@ -528,7 +528,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
             _text('session.applauncher.Prepared'),
           );
           setTimeout(() => {
-            globalThis.open(appConnectUrl || resp.url, '_self');
+            globalThis.open(String(appConnectUrl) || resp.url, '_self');
             // globalThis.open(resp.url);
           });
         } else {

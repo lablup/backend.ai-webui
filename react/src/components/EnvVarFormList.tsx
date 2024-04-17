@@ -88,9 +88,27 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                   {...restField}
                   name={[name, 'value']}
                   style={{ marginBottom: 0, flex: 1 }}
-                  rules={[{ required: true, message: 'Enter value' }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: t(
+                        'session.launcher.EnvironmentVariableValueRequired',
+                      ),
+                    },
+                  ]}
+                  validateTrigger={['onChange', 'onBlur']}
                 >
-                  <Input placeholder="Value" />
+                  <Input
+                    placeholder="Value"
+                    // onChange={() => {
+                    //   const valueFields = fields.map((field, index) => [
+                    //     props.name,
+                    //     index,
+                    //     'value',
+                    //   ]);
+                    //   form.validateFields(valueFields);
+                    // }}
+                  />
                 </Form.Item>
                 <MinusCircleOutlined onClick={() => remove(name)} />
               </Flex>
@@ -109,7 +127,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                 icon={<PlusOutlined />}
                 block
               >
-                Add variable
+                {t('session.launcher.AddEnvironmentVariable')}
               </Button>
             </Form.Item>
           </Flex>

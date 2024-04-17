@@ -1,6 +1,6 @@
 /**
  @license
- Copyright 2015-2023 Lablup Inc.
+ Copyright 2015-2024 Lablup Inc.
 
  Original code by 2018 Google Inc. All Rights Reserved.
 
@@ -16,7 +16,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import { BackendAiStyles } from '../../components/backend-ai-general-styles';
+import { BackendAiStyles } from '../../../components/backend-ai-general-styles';
 import { TopAppBarFixedBase } from '@material/mwc-top-app-bar-fixed/mwc-top-app-bar-fixed-base';
 import { styles } from '@material/mwc-top-app-bar/mwc-top-app-bar.css';
 import { css } from 'lit';
