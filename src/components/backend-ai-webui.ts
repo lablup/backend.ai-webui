@@ -225,12 +225,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     globalThis.currentPage = this._page;
     globalThis.currentPageParams = this._pageParams;
     this.notification = globalThis.lablupNotification;
-    if (globalThis.isElectron && navigator.platform.indexOf('Mac') >= 0) {
-      // For macOS
-      (
-        this.shadowRoot?.querySelector('.portrait-canvas') as HTMLElement
-      ).style.visibility = 'hidden';
-    }
+    // if (globalThis.isElectron && navigator.platform.indexOf('Mac') >= 0) {
+    //   // For macOS
+    //   (
+    //     this.shadowRoot?.querySelector('.portrait-canvas') as HTMLElement
+    //   ).style.visibility = 'hidden';
+    // }
     installRouter((location) =>
       store.dispatch(navigate(decodeURIComponent(location.pathname))),
     );
