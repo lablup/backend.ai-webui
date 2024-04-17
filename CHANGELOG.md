@@ -1,4 +1,28 @@
 # Changelog
+
+## v24.03.2 (17/04/2024)
+## What's Changed
+* feat: set color for text 'only' by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2322
+* fix: check isNaN before set value of DynamicUnitInputNumber by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2324
+* style: add css variable to vaadin grid for plugin page by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2325
+* fix: set supported language codes to allow all i18n languages by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2329
+* fix: unkown scailing group error when user change the project by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2330
+* feat: add branding config to theme.json by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2328
+* feat: apply filter to png icon when theme is darkmode by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2304
+* build(deps): bump actions/labeler from 4 to 5 by @dependabot in https://github.com/lablup/backend.ai-webui/pull/2091
+* fix: _viewStateChanged is called for same active value in attributeChangedCallback by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2339
+* hotfix: regression of showing project list according to allowed group in user info by @lizable in https://github.com/lablup/backend.ai-webui/pull/2340
+* fix: vFolder form item validation in Neo session launcher by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2334
+* fix: regression of applying default session environment by @lizable in https://github.com/lablup/backend.ai-webui/pull/2337
+* feat: add MyEnvironment page to manage per user commit images by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2332
+* style: label wrapping, font resizing and numeric token formatting in login panel by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2338
+* style: remove px when calculating margin of WebUIHeader wrapper by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2344
+* fix: use defaultSessionEnvironment as a initial environments.environment by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2345
+* hotfix: enable non-accelerator preset when accelerator image by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2346
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v24.03.1...v24.03.2
+
+
 ## v24.03.1 (07/04/2024)
 ## What's Changed
 * fix: Electron packaging stuck due to apple app signing changes (#2319)
