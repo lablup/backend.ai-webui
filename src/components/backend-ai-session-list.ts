@@ -3162,7 +3162,7 @@ ${rowData.item[this.sessionNameField]}</pre
                   position="top-start"
                 ></vaadin-tooltip>
               `}
-          ${this._isContainerCommitEnabled
+          ${this._isContainerCommitEnabled && this.condition !== 'system'
             ? html`
                 <mwc-icon-button
                   class="fg blue controls-running"
