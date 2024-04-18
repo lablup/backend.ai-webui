@@ -65,7 +65,8 @@
       "InvalidBlankPassword": "输入您的密码",
       "InvalidBlankEmail": "输入你的电子邮箱",
       "DisMatchUserEmail": "用户电子邮件不匹配",
-      "MyEnvironments": "我的环境"
+      "MyEnvironments": "我的环境",
+      "ResourcePolicy": "资源政策"
     },
     "YouAreOffline": "您现在离线",
     "YouAreOnline": "您现在在线",
@@ -955,8 +956,13 @@
     "SuccessfullyDeleted": "已成功删除资源策略。",
     "PolicyNameEmpty": "策略名称不应为空。",
     "AboutToDeleteResourcePolicy": "您即将删除此资源策略：",
-    "MaxSessionLifeTime": "会话寿命（秒）",
-    "NoResourcePolicyToDisplay": "无资源政策显示"
+    "MaxSessionLifetime": "会话寿命（秒）",
+    "NoResourcePolicyToDisplay": "无资源政策显示",
+    "Keypair": "密钥对",
+    "User": "用户",
+    "Project": "项目",
+    "KeypairResourcePolicy": "密钥对资源策略",
+    "IdleTimeout": "空闲超时"
   },
   "registry": {
     "Hostname": "主机名",

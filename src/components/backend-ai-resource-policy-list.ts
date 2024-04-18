@@ -420,7 +420,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               style="${this.enableSessionLifetime ? '' : 'display:none;'}"
             >
               <mwc-textfield
-                label="${_t('resourcePolicy.MaxSessionLifeTime')}"
+                label="${_t('resourcePolicy.MaxSessionLifetime')}"
                 class="discrete"
                 id="session-lifetime"
                 type="number"

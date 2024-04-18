@@ -65,7 +65,8 @@
       "InvalidBlankPassword": "Inserisci la tua password",
       "InvalidBlankEmail": "Inserisci il tuo indirizzo email",
       "DisMatchUserEmail": "L'e-mail dell'utente non corrisponde",
-      "MyEnvironments": "I miei ambienti"
+      "MyEnvironments": "I miei ambienti",
+      "ResourcePolicy": "Politica delle risorse"
     },
     "YouAreOffline": "Ora sei offline",
     "YouAreOnline": "Ora sei online",
@@ -955,8 +956,13 @@
     "SuccessfullyDeleted": "Criterio delle risorse eliminato con successo.",
     "PolicyNameEmpty": "Il nome del criterio non deve essere vuoto.",
     "AboutToDeleteResourcePolicy": "Stai per eliminare questa policy sulle risorse:",
-    "MaxSessionLifeTime": "Durata della sessione (sec.)",
-    "NoResourcePolicyToDisplay": "Nessuna politica delle risorse da visualizzare"
+    "MaxSessionLifetime": "Durata della sessione (sec.)",
+    "NoResourcePolicyToDisplay": "Nessuna politica delle risorse da visualizzare",
+    "Keypair": "Coppia di chiavi",
+    "User": "Utente",
+    "Project": "Progetto",
+    "KeypairResourcePolicy": "Politica delle risorse per la coppia di chiavi",
+    "IdleTimeout": "Timeout di inattività"
   },
   "registry": {
     "Hostname": "Nome host",

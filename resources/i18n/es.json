@@ -884,7 +884,7 @@
     "ContainerPerSession": "Contenedor por sesión",
     "Folders": "Carpetas",
     "IdleTimeoutSec": "Tiempo de espera (seg.)",
-    "MaxSessionLifeTime": "Duración de la sesión (seg.)",
+    "MaxSessionLifetime": "Duración de la sesión (seg.)",
     "Name": "Nombre",
     "NoResourcePolicyToDisplay": "No hay políticas de recursos que mostrar",
     "PolicyName": "Nombre de la póliza",
@@ -897,7 +897,12 @@
     "SuccessfullyDeleted": "Política de recursos eliminada correctamente.",
     "SuccessfullyUpdated": "Política de recursos actualizada correctamente.",
     "Unlimited": "Sin límites",
-    "UpdateResourcePolicy": "Actualizar la política de recursos"
+    "UpdateResourcePolicy": "Actualizar la política de recursos",
+    "Keypair": "Par de claves",
+    "User": "Usuario",
+    "Project": "Proyecto",
+    "KeypairResourcePolicy": "Política de recursos de par de claves",
+    "IdleTimeout": "Tiempo de inactividad"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Está a punto de borrar este preajuste:",
@@ -1536,7 +1541,8 @@
       "InvalidBlankPassword": "Ingresa tu contraseña",
       "InvalidBlankEmail": "Introduce tu correo electrónico",
       "DisMatchUserEmail": "El correo electrónico del usuario no coincide",
-      "MyEnvironments": "Mis ambientes"
+      "MyEnvironments": "Mis ambientes",
+      "ResourcePolicy": "Política de recursos"
     }
   },
   "modelStore": {

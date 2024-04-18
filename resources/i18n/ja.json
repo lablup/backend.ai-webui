@@ -65,7 +65,8 @@
       "InvalidBlankPassword": "パスワードを入力してください",
       "InvalidBlankEmail": "メールアドレスを入力",
       "DisMatchUserEmail": "ユーザーの電子メールが一致しません",
-      "MyEnvironments": "私の環境"
+      "MyEnvironments": "私の環境",
+      "ResourcePolicy": "リソースポリシー"
     },
     "YouAreOffline": "あなたは今オフラインです",
     "YouAreOnline": "あなたは今オンラインです",
@@ -955,8 +956,13 @@
     "SuccessfullyDeleted": "リソースポリシーが正常に削除されました。",
     "PolicyNameEmpty": "ポリシー名は空にしないでください。",
     "AboutToDeleteResourcePolicy": "このリソースポリシーを削除しようとしています。",
-    "MaxSessionLifeTime": "セッションの最大実行時間",
-    "NoResourcePolicyToDisplay": "リソースポリシー情報がありません。"
+    "MaxSessionLifetime": "セッションの最大実行時間",
+    "NoResourcePolicyToDisplay": "リソースポリシー情報がありません。",
+    "Keypair": "キーペア",
+    "User": "ユーザー",
+    "Project": "プロジェクト",
+    "KeypairResourcePolicy": "キーペアのリソースポリシー",
+    "IdleTimeout": "アイドルタイムアウト"
   },
   "registry": {
     "Hostname": "ホスト名",

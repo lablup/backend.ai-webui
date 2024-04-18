@@ -1464,7 +1464,7 @@ export default class BackendAICredentialView extends BackendAIPage {
               }"
                 style="${this.enableSessionLifetime ? '' : 'display:none;'}">
                 <mwc-textfield label="${_t(
-                  'resourcePolicy.MaxSessionLifeTime',
+                  'resourcePolicy.MaxSessionLifetime',
                 )}" class="discrete" id="session-lifetime" type="number" min="0" max="100"
                     @change="${(e) =>
                       this._validateResourceInput(e)}"></mwc-textfield>

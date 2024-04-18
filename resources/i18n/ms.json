@@ -65,7 +65,8 @@
       "InvalidBlankPassword": "Masukkan kata laluan anda",
       "InvalidBlankEmail": "Masukkan emel anda",
       "DisMatchUserEmail": "E-mel Pengguna tidak sepadan",
-      "MyEnvironments": "Persekitaran Saya"
+      "MyEnvironments": "Persekitaran Saya",
+      "ResourcePolicy": "Dasar Sumber"
     },
     "YouAreOffline": "Anda kini berada di luar talian",
     "YouAreOnline": "Anda kini dalam talian",
@@ -955,8 +956,13 @@
     "SuccessfullyDeleted": "Dasar sumber berjaya dipadamkan.",
     "PolicyNameEmpty": "Nama polisi tidak boleh kosong.",
     "AboutToDeleteResourcePolicy": "Anda akan memadamkan dasar sumber ini:",
-    "MaxSessionLifeTime": "Sepanjang Hayat Sesi (saat)",
-    "NoResourcePolicyToDisplay": "Tiada Dasar Sumber untuk dipaparkan"
+    "MaxSessionLifetime": "Sepanjang Hayat Sesi (saat)",
+    "NoResourcePolicyToDisplay": "Tiada Dasar Sumber untuk dipaparkan",
+    "Keypair": "Pasangan kekunci",
+    "User": "pengguna",
+    "Project": "Projek",
+    "KeypairResourcePolicy": "Dasar Sumber Pasangan Kunci",
+    "IdleTimeout": "Tamat Masa Terbiar"
   },
   "registry": {
     "Hostname": "Nama Hos",

@@ -65,7 +65,8 @@
       "InvalidBlankEmail": "E-mail을 입력하세요.",
       "InvalidBlankPassword": "패스워드를 입력하세요.",
       "DisMatchUserEmail": "사용자 E-mail이 일치하지 않습니다.",
-      "MyEnvironments": "나의 실행 환경"
+      "MyEnvironments": "나의 실행 환경",
+      "ResourcePolicy": "자원 정책"
     },
     "YouAreOffline": "오프라인 상태가 되었습니다",
     "YouAreOnline": "온라인 상태가 되었습니다",
@@ -1046,7 +1047,12 @@
     "PolicyNameEmpty": "자원 정책명은 필수 입력입니다.",
     "NoResourcePolicyToDisplay": "자원 정책 정보가 없습니다.",
     "AboutToDeleteResourcePolicy": "아래의 자원 정책을 삭제하려고 합니다: ",
-    "MaxSessionLifeTime": "세션 최대 실행시간"
+    "MaxSessionLifetime": "세션 최대 실행시간",
+    "Keypair": "키페어",
+    "User": "사용자",
+    "Project": "프로젝트",
+    "KeypairResourcePolicy": "키페어 자원 정책",
+    "IdleTimeout": "유휴 대기 시간"
   },
   "registry": {
     "Hostname": "호스트명",

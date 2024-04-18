@@ -65,7 +65,8 @@
       "InvalidBlankPassword": "Nhập mật khẩu của bạn",
       "InvalidBlankEmail": "Nhập email của bạn",
       "DisMatchUserEmail": "E-mail của người dùng không khớp",
-      "MyEnvironments": "Môi trường của tôi"
+      "MyEnvironments": "Môi trường của tôi",
+      "ResourcePolicy": "Chính sách tài nguyên"
     },
     "YouAreOffline": "Bạn hiện đang ngoại tuyến",
     "YouAreOnline": "Bạn hiện đang trực tuyến",
@@ -955,8 +956,13 @@
     "SuccessfullyDeleted": "Chính sách tài nguyên đã được xóa thành công.",
     "PolicyNameEmpty": "Tên chính sách không được để trống.",
     "AboutToDeleteResourcePolicy": "Bạn sắp xóa chính sách tài nguyên này:",
-    "MaxSessionLifeTime": "Thời gian tồn tại của phiên (giây)",
-    "NoResourcePolicyToDisplay": "Không có chính sách tài nguyên nào để hiển thị"
+    "MaxSessionLifetime": "Thời gian tồn tại của phiên (giây)",
+    "NoResourcePolicyToDisplay": "Không có chính sách tài nguyên nào để hiển thị",
+    "Keypair": "Cặp khóa",
+    "User": "Người dùng",
+    "Project": "Dự án",
+    "KeypairResourcePolicy": "Chính sách tài nguyên cặp khóa",
+    "IdleTimeout": "Hết thời gian chờ"
   },
   "registry": {
     "Hostname": "Tên máy chủ",

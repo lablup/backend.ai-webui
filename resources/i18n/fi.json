@@ -882,7 +882,7 @@
     "ContainerPerSession": "Säiliö istuntoa kohti",
     "Folders": "Kansiot",
     "IdleTimeoutSec": "Tyhjäkäynnin aikakatkaisu (sek.)",
-    "MaxSessionLifeTime": "Istunnon kesto (sek.)",
+    "MaxSessionLifetime": "Istunnon kesto (sek.)",
     "Name": "Nimi",
     "NoResourcePolicyToDisplay": "Ei näytettäviä resurssikäytäntöjä",
     "PolicyName": "Politiikan nimi",
@@ -895,7 +895,12 @@
     "SuccessfullyDeleted": "Resurssikäytäntö poistettu onnistuneesti.",
     "SuccessfullyUpdated": "Resurssikäytäntö päivitetty onnistuneesti.",
     "Unlimited": "Rajoittamaton",
-    "UpdateResourcePolicy": "Resurssipolitiikan päivittäminen"
+    "UpdateResourcePolicy": "Resurssipolitiikan päivittäminen",
+    "Keypair": "Avainpari",
+    "User": "Käyttäjä",
+    "Project": "Projekti",
+    "KeypairResourcePolicy": "Avainparin resurssikäytäntö",
+    "IdleTimeout": "Idle Timeout"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Olet poistamassa tätä esiasetusta:",
@@ -1534,7 +1539,8 @@
       "InvalidBlankPassword": "Syötä salasanasi",
       "InvalidBlankEmail": "Syötä sähköpostiosoitteesi",
       "DisMatchUserEmail": "Käyttäjän sähköpostiosoite ei täsmää",
-      "MyEnvironments": "Omat ympäristöt"
+      "MyEnvironments": "Omat ympäristöt",
+      "ResourcePolicy": "Resurssipolitiikka"
     }
   },
   "modelStore": {

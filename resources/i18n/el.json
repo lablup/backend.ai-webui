@@ -65,7 +65,8 @@
       "InvalidBlankPassword": "Εισάγετε τον κωδικό σας",
       "InvalidBlankEmail": "Συμπληρώστε το email σας",
       "DisMatchUserEmail": "Το email χρήστη δεν ταιριάζει",
-      "MyEnvironments": "Τα περιβάλλοντα μου"
+      "MyEnvironments": "Τα περιβάλλοντα μου",
+      "ResourcePolicy": "Πολιτική Πόρων"
     },
     "YouAreOffline": "Είστε πλέον εκτός σύνδεσης",
     "YouAreOnline": "Είστε πλέον συνδεδεμένοι",
@@ -955,8 +956,13 @@
     "SuccessfullyDeleted": "Η πολιτική πόρων διαγράφηκε με επιτυχία.",
     "PolicyNameEmpty": "Το όνομα πολιτικής δεν πρέπει να είναι κενό.",
     "AboutToDeleteResourcePolicy": "Πρόκειται να διαγράψετε αυτήν την πολιτική πόρων:",
-    "MaxSessionLifeTime": "Διάρκεια ζωής συνόδου (sec.)",
-    "NoResourcePolicyToDisplay": "Δεν εμφανίζονται πολιτικές πόρων"
+    "MaxSessionLifetime": "Διάρκεια ζωής συνόδου (sec.)",
+    "NoResourcePolicyToDisplay": "Δεν εμφανίζονται πολιτικές πόρων",
+    "Keypair": "Keypair",
+    "User": "Χρήστης",
+    "Project": "Εργο",
+    "KeypairResourcePolicy": "Πολιτική πόρων ζεύγους κλειδιών",
+    "IdleTimeout": "Χρονικό όριο αδράνειας"
   },
   "registry": {
     "Hostname": "Όνομα κεντρικού υπολογιστή",
