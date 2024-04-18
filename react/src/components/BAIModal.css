@@ -7,7 +7,6 @@
 
 .ant-modal.bai-modal .ant-modal-footer {
   padding: var(--general-modal-footer-padding, 0 20px 24px 20px);
-  text-align: start;
 }
 
 .ant-modal.bai-modal .ant-modal-header {
