@@ -65,7 +65,8 @@
       "InvalidBlankPassword": "Şifrenizi girin",
       "InvalidBlankEmail": "E-postanızı giriniz",
       "DisMatchUserEmail": "Kullanıcı E-postası eşleşmiyor",
-      "MyEnvironments": "Ortamlarım"
+      "MyEnvironments": "Ortamlarım",
+      "ResourcePolicy": "Kaynak Politikası"
     },
     "YouAreOffline": "Şu anda çevrimdışısın",
     "YouAreOnline": "artık çevrimiçisin",
@@ -956,8 +957,13 @@
     "SuccessfullyDeleted": "Kaynak ilkesi başarıyla silindi.",
     "PolicyNameEmpty": "İlke adı boş bırakılmamalıdır.",
     "AboutToDeleteResourcePolicy": "Bu kaynak politikasını silmek üzeresiniz:",
-    "MaxSessionLifeTime": "Oturum Ömrü (sn.)",
-    "NoResourcePolicyToDisplay": "Görüntülenecek Kaynak İlkesi yok"
+    "MaxSessionLifetime": "Oturum Ömrü (sn.)",
+    "NoResourcePolicyToDisplay": "Görüntülenecek Kaynak İlkesi yok",
+    "Keypair": "Anahtar çifti",
+    "User": "Kullanıcı",
+    "Project": "Proje",
+    "KeypairResourcePolicy": "Anahtar Çifti Kaynak Politikası",
+    "IdleTimeout": "Boşta Kalma Zaman Aşımı"
   },
   "registry": {
     "Hostname": "ana bilgisayar adı",

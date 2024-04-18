@@ -65,7 +65,8 @@
       "InvalidBlankPassword": "Wprowadź hasło",
       "InvalidBlankEmail": "Wprowadź swój email",
       "DisMatchUserEmail": "Adres e-mail użytkownika nie jest zgodny",
-      "MyEnvironments": "Moje Środowiska"
+      "MyEnvironments": "Moje Środowiska",
+      "ResourcePolicy": "Polityka zasobów"
     },
     "YouAreOffline": "Jesteś teraz offline",
     "YouAreOnline": "Jesteś teraz online",
@@ -956,8 +957,13 @@
     "SuccessfullyDeleted": "Pomyślnie usunięto zasadę zasobów.",
     "PolicyNameEmpty": "Nazwa zasady nie powinna być pusta.",
     "AboutToDeleteResourcePolicy": "Zamierzasz usunąć tę zasadę dotyczącą zasobów:",
-    "MaxSessionLifeTime": "Czas trwania sesji (sek.)",
-    "NoResourcePolicyToDisplay": "Brak zasad dotyczących zasobów do wyświetlenia"
+    "MaxSessionLifetime": "Czas trwania sesji (sek.)",
+    "NoResourcePolicyToDisplay": "Brak zasad dotyczących zasobów do wyświetlenia",
+    "Keypair": "Para kluczy",
+    "User": "Użytkownik",
+    "Project": "Projekt",
+    "KeypairResourcePolicy": "Polityka zasobów pary kluczy",
+    "IdleTimeout": "Limit czasu bezczynności"
   },
   "registry": {
     "Hostname": "Nazwa hosta",

@@ -20,6 +20,7 @@ import {
   HddOutlined,
   InfoCircleOutlined,
   RocketOutlined,
+  SolutionOutlined,
   ToolOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -127,6 +128,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       label: t('webui.menu.Environments'),
       icon: <FileDoneOutlined />,
       key: 'environment',
+    },
+    {
+      label: t('webui.menu.ResourcePolicy'),
+      icon: <SolutionOutlined />,
+      key: 'resource-policy',
     },
   ];
 

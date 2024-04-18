@@ -65,7 +65,8 @@
       "InvalidBlankPassword": "Coloque sua senha",
       "InvalidBlankEmail": "Digite seu e-mail",
       "DisMatchUserEmail": "E-mail do usuário não corresponde",
-      "MyEnvironments": "Meus ambientes"
+      "MyEnvironments": "Meus ambientes",
+      "ResourcePolicy": "Política de Recursos"
     },
     "YouAreOffline": "Agora você está offline",
     "YouAreOnline": "Agora você está online",
@@ -956,8 +957,13 @@
     "SuccessfullyDeleted": "Política de recursos excluída com sucesso.",
     "PolicyNameEmpty": "O nome da política não deve estar vazio.",
     "AboutToDeleteResourcePolicy": "Você está prestes a excluir esta política de recursos:",
-    "MaxSessionLifeTime": "Tempo de vida da sessão (seg.)",
-    "NoResourcePolicyToDisplay": "Não há políticas de recursos a apresentar"
+    "MaxSessionLifetime": "Tempo de vida da sessão (seg.)",
+    "NoResourcePolicyToDisplay": "Não há políticas de recursos a apresentar",
+    "Keypair": "Par de chaves",
+    "User": "Do utilizador",
+    "Project": "Projeto",
+    "KeypairResourcePolicy": "Política de recursos de par de chaves",
+    "IdleTimeout": "Tempo limite ocioso"
   },
   "registry": {
     "Hostname": "nome de anfitrião",
