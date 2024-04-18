@@ -103,7 +103,6 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
       onCancel={() => setOpen(false)}
       afterClose={() => dispatchEvent('cancel', null)}
       confirmLoading={isInFlightModifyImageInput}
-      centered
       title={t('environment.ManageApps')}
       {...baiModalProps}
       footer={(_, { OkBtn, CancelBtn }) => (
