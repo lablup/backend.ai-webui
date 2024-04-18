@@ -490,6 +490,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           (a, b) => b['installed'] - a['installed'],
         );
 
+        console.log(sortedImages);
+
         this.images = sortedImages;
         if (this.images.length == 0) {
           this.listCondition = 'no-data';
@@ -1799,7 +1801,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 servicePorts: this.servicePorts,
               })}"
               @cancel="${() => (this.openManageAppModal = false)}"
-              @ok="${() => (this.openManageAppModal = false)}"
+              @ok="${() => (
+                (this.openManageAppModal = false), this._getImages()
+              )}"
             ></backend-ai-react-manage-app-dialog>
           `
         : html``}

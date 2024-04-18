@@ -1,19 +1,42 @@
-import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
+import {
+  KVPairInput,
+  ManageAppsModalMutation,
+} from './__generated__/ManageAppsModalMutation.graphql';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { Input, Button, Form, message, Typography } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useMutation } from 'react-relay';
 
 const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
-  const [open, setOpen] = useState<boolean>(true);
-  const [validateDetail, setValidateDetail] = useState<string>('');
   const { t } = useTranslation();
   const [form] = Form.useForm();
+
+  const [open, setOpen] = useState<boolean>(true);
+  const [validateDetail, setValidateDetail] = useState<string>('');
   const { value, dispatchEvent } = useWebComponentInfo();
-  const baiClient = useSuspendedBackendaiClient();
+
+  const [commitModifyImageInput, isInFlightModifyImageInput] =
+    useMutation<ManageAppsModalMutation>(graphql`
+      mutation ManageAppsModalMutation(
+        $target: String!
+        $architecture: String
+        $props: ModifyImageInput!
+      ) {
+        modify_image(
+          target: $target
+          architecture: $architecture
+          props: $props
+        ) {
+          ok
+          msg
+        }
+      }
+    `);
 
   let parsedValue: {
     image: any;
@@ -40,20 +63,32 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
         })
         .join(',');
 
-      const { result } = await baiClient.image.modifyLabel(
-        image.registry,
-        image.name,
-        image.tag,
-        'service-ports',
-        values,
-      );
+      const INPUT: KVPairInput[] = [];
+      Object.entries(image.labels).forEach(([key, value]) => {
+        if (key.includes('service-ports')) {
+          INPUT.push({ key: key, value: values });
+        } else {
+          INPUT.push({ key: key, value: value?.toString() || '' });
+        }
+      });
 
-      if (result === 'ok') {
-        message.success(t('environment.DescServicePortModified'));
-        dispatchEvent('ok', null);
-        return;
-      }
-      message.error(t('dialog.ErrorOccurred'));
+      commitModifyImageInput({
+        variables: {
+          target: `${image.registry}/${image.name}:${image.tag}`,
+          architecture: image.architecture,
+          props: {
+            labels: INPUT,
+          },
+        },
+        onCompleted(res, err) {
+          message.success(t('environment.DescServicePortModified'));
+          dispatchEvent('ok', null);
+          return;
+        },
+        onError(err) {
+          message.error(t('dialog.ErrorOccurred'));
+        },
+      });
     } catch (info: any) {
       setValidateDetail(info.errorFields[0].errors[0]);
       return;
@@ -67,6 +102,7 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
       onOk={handleOnclick}
       onCancel={() => setOpen(false)}
       afterClose={() => dispatchEvent('cancel', null)}
+      confirmLoading={isInFlightModifyImageInput}
       centered
       title={t('environment.ManageApps')}
       {...baiModalProps}
