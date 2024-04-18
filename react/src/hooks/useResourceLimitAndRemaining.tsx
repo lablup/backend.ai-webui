@@ -4,6 +4,7 @@ import { AUTOMATIC_DEFAULT_SHMEM } from '../components/ResourceAllocationFormIte
 import { addNumberWithUnits, iSizeToSize } from '../helper';
 import { useResourceSlots } from '../hooks/backendai';
 import { useTanQuery } from './reactQueryAlias';
+import { useUpdateEffect } from 'ahooks';
 import _ from 'lodash';
 
 interface MergedResourceLimits {
@@ -81,6 +82,7 @@ interface Props {
   currentProjectName: string;
   currentImage?: Image;
   currentResourceGroup: string;
+  fetchKey?: string;
 }
 
 // determine resource limits and remaining for current resource group and current image in current project
@@ -88,6 +90,7 @@ export const useResourceLimitAndRemaining = ({
   currentImage,
   currentResourceGroup,
   currentProjectName,
+  fetchKey,
 }: Props) => {
   const baiClient = useSuspendedBackendaiClient();
   const [resourceSlots] = useResourceSlots();
@@ -115,6 +118,10 @@ export const useResourceLimitAndRemaining = ({
     suspense: true,
     // suspense: !_.isEmpty(currentResourceGroup), //prevent flicking
   });
+
+  useUpdateEffect(() => {
+    refetch();
+  }, [fetchKey]);
 
   const currentImageMinM =
     _.find(currentImage?.resource_limits, (i) => i?.key === 'mem')?.min || '0g';

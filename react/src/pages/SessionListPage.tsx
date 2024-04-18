@@ -1,5 +1,6 @@
 import AvailableResourcesCard from '../components/AvailableResourcesCard';
 import Flex from '../components/Flex';
+import MyUsageAndResourcePolicyCard from '../components/MyUsageAndResourcePolicyCard';
 import SessionList from '../components/SessionList';
 import {
   useCurrentProjectValue,
@@ -109,7 +110,11 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
         }}
         gap={'sm'}
       >
-        <AvailableResourcesCard />
+        <Flex direction="row" gap={'md'}>
+          <AvailableResourcesCard style={{ flex: 1 }} />
+          <MyUsageAndResourcePolicyCard style={{ flex: 1 }} />
+        </Flex>
+
         <Card
           bodyStyle={{
             padding: 0,

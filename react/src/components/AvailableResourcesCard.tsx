@@ -1,24 +1,46 @@
 import { iSizeToSize } from '../helper';
-import { useCurrentProjectValue } from '../hooks';
+import { useCurrentProjectValue, useUpdatableState } from '../hooks';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import Flex from './Flex';
 import ResourceAvailableGageBar from './ResourceAvailableGageBar';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import { QuestionCircleOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Button, Card, Tooltip } from 'antd';
+import {
+  Button,
+  Card,
+  CardProps,
+  Statistic,
+  StatisticProps,
+  Tooltip,
+  Typography,
+} from 'antd';
+import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
+import CountUp from 'react-countup';
 
-const AvailableResourcesCard = () => {
+const AvailableResourcesCard: React.FC<CardProps> = (props) => {
   const currentProject = useCurrentProjectValue();
   const [selectedResourceGroup, setSelectedResourceGroup] = useState();
   const deferredSelectedResourceGroup = useDeferredValue(selectedResourceGroup);
+  const [fetchKey, setFetchKey] = useUpdatableState('first');
   const [{ remaining, resourceLimits, resourceGroupResourceSize }] =
     useResourceLimitAndRemaining({
       currentProjectName: currentProject.name,
       currentResourceGroup: deferredSelectedResourceGroup || 'default',
+      fetchKey,
     });
 
-  console.log(typeof remaining.mem, remaining.mem);
+  const staticFormatter: (suffix: string) => StatisticProps['formatter'] =
+    // @ts-ignore
+    (suffix) => (value: number) => (
+      <Flex direction="row" align="end" gap={'xxs'}>
+        <CountUp end={value as number} />
+        <Typography.Text type="secondary" style={{ marginBottom: 4 }}>
+          {suffix}
+        </Typography.Text>
+      </Flex>
+    );
+
   return (
     <Card
       title={
@@ -42,10 +64,38 @@ const AvailableResourcesCard = () => {
           </Tooltip>
         </Flex>
       }
-      extra={[<Button icon={<ReloadOutlined />} type="text" />]}
+      extra={[
+        <Button
+          icon={<ReloadOutlined />}
+          type="text"
+          onClick={() => {
+            setFetchKey();
+          }}
+        />,
+      ]}
+      {...props}
     >
       <Flex gap={'md'}>
-        <ResourceAvailableGageBar
+        <Statistic
+          title="CPU"
+          value={remaining.cpu}
+          formatter={staticFormatter('Core')}
+        />
+        <Statistic
+          title="MEM"
+          value={iSizeToSize(remaining.mem + '', 'g', 2)?.numberFixed}
+          formatter={staticFormatter('GiB')}
+        />
+
+        {_.map(remaining.accelerators, (value, type) => (
+          <Statistic
+            key={type}
+            title={type}
+            value={value}
+            formatter={staticFormatter('GPU')}
+          />
+        ))}
+        {/* <ResourceAvailableGageBar
           title="CPU"
           percent={
             (remaining.cpu /
@@ -67,7 +117,7 @@ const AvailableResourcesCard = () => {
           valueLabel={
             iSizeToSize(remaining.mem + '', 'g', 2)?.numberFixed + ' GiB'
           }
-        />
+        /> */}
       </Flex>
     </Card>
   );
