@@ -569,7 +569,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   ]}
                 >
                   <VFolderSelect
-                    filter={(vf) => vf.usage_mode === 'model'}
+                    filter={(vf) =>
+                      vf.usage_mode === 'model' && vf.status === 'ready'
+                    }
                     autoSelectDefault
                     disabled={endpoint ? true : false}
                   />
