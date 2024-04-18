@@ -66,6 +66,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({ type: Object }) deleteAppInfo = Object();
   @property({ type: Object }) deleteAppRow = Object();
   @property({ type: Boolean }) openManageAppModal = false;
+  @property({ type: Boolean }) openManageImageResourceModal = false;
   @property({ type: Object }) installImageResource = Object();
   @property({ type: Object }) selectedCheckbox = Object();
   @property({ type: Object }) _grid = Object();
@@ -489,8 +490,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         const sortedImages = domainImages.sort(
           (a, b) => b['installed'] - a['installed'],
         );
-
-        console.log(sortedImages);
 
         this.images = sortedImages;
         if (this.images.length == 0) {
@@ -1256,7 +1255,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               this._setPulldownDefaults(
                 this.images[this.selectedIndex].resource_limits,
               );
-              this._launchDialogById('#modify-image-dialog');
+              this.openManageImageResourceModal = true;
+              console.log(this.images[this.selectedIndex].resource_limits);
+              // this._launchDialogById('#modify-image-dialog');
               this.requestUpdate();
             }}
           ></mwc-icon-button>
@@ -1805,6 +1806,19 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 (this.openManageAppModal = false), this._getImages()
               )}"
             ></backend-ai-react-manage-app-dialog>
+          `
+        : html``}
+      ${this.openManageImageResourceModal
+        ? html`
+            <backend-ai-react-manage-resource-dialog
+              value="${JSON.stringify({
+                image: this.images[this.selectedIndex],
+              })}"
+              @cancel="${() => (this.openManageImageResourceModal = false)}"
+              @ok="${() => (
+                (this.openManageImageResourceModal = false), this._getImages()
+              )}"
+            ></backend-ai-react-manage-resource-dialog>
           `
         : html``}
     `;
