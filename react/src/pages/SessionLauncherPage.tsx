@@ -320,12 +320,15 @@ const SessionLauncherPage = () => {
     (item) => item.errors.length > 0,
   );
 
-  const [, setLastValidateErrorTime] = useUpdatableState('first'); // Force an update when a validation error occurs.
+  const [, setFinalStepLastValidateTime] = useUpdatableState('first'); // Force re-render after validation in final step.
   useEffect(() => {
     if (currentStep === steps.length - 1) {
-      form.validateFields().catch((e) => setLastValidateErrorTime());
+      form
+        .validateFields()
+        .catch(() => {})
+        .finally(() => setFinalStepLastValidateTime());
     }
-  }, [currentStep, form, setLastValidateErrorTime, steps.length]);
+  }, [currentStep, form, setFinalStepLastValidateTime, steps.length]);
 
   const startSession = () => {
     // TODO: support inference mode, support import mode
