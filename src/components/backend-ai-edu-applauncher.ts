@@ -528,7 +528,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
             _text('session.applauncher.Prepared'),
           );
           setTimeout(() => {
-            globalThis.open(String(appConnectUrl) || resp.url, '_self');
+            globalThis.open(String(appConnectUrl.appConnectUrl) || resp.url, '_self');
             // globalThis.open(resp.url);
           });
         } else {
