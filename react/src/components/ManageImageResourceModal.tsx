@@ -1,25 +1,19 @@
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
-import Flex from './Flex';
 import ImageResourceFormItem from './ImageResourceFormItem';
 import { imageResourceProps } from './ImageResourceFormItem';
-import InputNumberWithSlider from './InputNumberWithSlider';
 import { ManageImageResourceModalMutation } from './__generated__/ManageImageResourceModalMutation.graphql';
-import { Form, Typography, theme } from 'antd';
+import { ResourceLimitInput } from './__generated__/ManageImageResourceModalMutation.graphql';
+import { Form, message } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React, { useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-relay';
-
-interface ComponentMap {
-  [key: string]: JSX.Element | undefined;
-}
 
 const ManageImageResourceModal: React.FC<BAIModalProps> = ({
   ...BAIModalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const [form] = Form.useForm();
 
   const [open, setOpen] = useState<boolean>(true);
@@ -55,7 +49,35 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
   }
   const { image } = parsedValue;
   const handleOnclick = async () => {
-    console.log(form.getFieldsValue());
+    const fieldsValue = await form.getFieldsValue();
+
+    const INPUT: ResourceLimitInput[] = Object.entries(fieldsValue).map(
+      ([key, value]: [string, any]) => ({
+        key,
+        min: value.toString() ?? '0',
+        max:
+          image.resource_limits.find(
+            (item: imageResourceProps) => item.key === key,
+          )?.max ?? null,
+      }),
+    );
+
+    commitModifyImageInput({
+      variables: {
+        target: `${image.registry}/${image.name}:${image.tag}`,
+        props: {
+          resource_limits: INPUT,
+        },
+      },
+      onCompleted: (res, err) => {
+        message.success(t('environment.DescServicePortModified'));
+        dispatchEvent('ok', null);
+        return;
+      },
+      onError: (err) => {
+        message.error(t('dialog.ErrorOccurred'));
+      },
+    });
   };
 
   return (
