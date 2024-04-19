@@ -58,10 +58,9 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
         max:
           image.resource_limits.find(
             (item: imageResourceProps) => item.key === key,
-          )?.max ?? null,
+          )?.max ?? undefined,
       }),
     );
-
     commitModifyImageInput({
       variables: {
         target: `${image.registry}/${image.name}:${image.tag}`,
@@ -70,6 +69,7 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
         },
       },
       onCompleted: (res, err) => {
+        console.log(res, err);
         message.success(t('environment.DescServicePortModified'));
         dispatchEvent('ok', null);
         return;
