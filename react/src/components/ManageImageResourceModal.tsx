@@ -89,11 +89,6 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
             <Trans
               i18nKey={'envrionment.ModifyImageResourceLimitReinstallRequired'}
             />
-
-            {/* {t('session.launcher.HomeDirectoryDeletionDialog')}
-            <br />
-            <br />
-            {t('dialog.ask.DoYouWantToProceed')} */}
           </>
         ),
         onOk: commitRequest,
