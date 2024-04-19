@@ -4,10 +4,10 @@ import ImageResourceFormItem from './ImageResourceFormItem';
 import { imageResourceProps } from './ImageResourceFormItem';
 import { ManageImageResourceModalMutation } from './__generated__/ManageImageResourceModalMutation.graphql';
 import { ResourceLimitInput } from './__generated__/ManageImageResourceModalMutation.graphql';
-import { Form, message } from 'antd';
+import { App, Form, message } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useMutation } from 'react-relay';
 
 const ManageImageResourceModal: React.FC<BAIModalProps> = ({
@@ -15,6 +15,7 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
+  const app = App.useApp();
 
   const [open, setOpen] = useState<boolean>(true);
   const { value, dispatchEvent } = useWebComponentInfo();
@@ -50,7 +51,6 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
   const { image } = parsedValue;
   const handleOnclick = async () => {
     const fieldsValue = await form.getFieldsValue();
-
     const INPUT: ResourceLimitInput[] = Object.entries(fieldsValue).map(
       ([key, value]: [string, any]) => ({
         key,
@@ -61,23 +61,48 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
           )?.max ?? undefined,
       }),
     );
-    commitModifyImageInput({
-      variables: {
-        target: `${image.registry}/${image.name}:${image.tag}`,
-        props: {
-          resource_limits: INPUT,
+    const commitRequest = () =>
+      commitModifyImageInput({
+        variables: {
+          target: `${image.registry}/${image.name}:${image.tag}`,
+          architecture: image.architecture,
+          props: {
+            resource_limits: INPUT,
+          },
         },
-      },
-      onCompleted: (res, err) => {
-        console.log(res, err);
-        message.success(t('environment.DescServicePortModified'));
-        dispatchEvent('ok', null);
-        return;
-      },
-      onError: (err) => {
-        message.error(t('dialog.ErrorOccurred'));
-      },
-    });
+        onCompleted: (res, err) => {
+          console.log(res, err);
+          message.success(t('environment.DescImageResourceModified'));
+          dispatchEvent('ok', null);
+          return;
+        },
+        onError: (err) => {
+          message.error(t('dialog.ErrorOccurred'));
+        },
+      });
+
+    if (image.installed) {
+      app.modal.confirm({
+        title: 'Image reinstallation required',
+        content: (
+          <>
+            <Trans
+              i18nKey={'envrionment.ModifyImageResourceLimitReinstallRequired'}
+            />
+
+            {/* {t('session.launcher.HomeDirectoryDeletionDialog')}
+            <br />
+            <br />
+            {t('dialog.ask.DoYouWantToProceed')} */}
+          </>
+        ),
+        onOk: commitRequest,
+        getContainer: () => document.body,
+        closable: true,
+      });
+    } else {
+      commitRequest();
+    }
   };
 
   return (
@@ -94,7 +119,7 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
     >
       <Form form={form} layout="vertical">
         {image.resource_limits.map(({ key, min, max }: imageResourceProps) => (
-          <ImageResourceFormItem name={key} min={min} max={max} />
+          <ImageResourceFormItem key={key} name={key} min={min} max={max} />
         ))}
       </Form>
     </BAIModal>

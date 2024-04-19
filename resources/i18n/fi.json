@@ -459,7 +459,8 @@
     "SuccessfullyModified": "Muutettu onnistuneesti",
     "TakesTime": ". Se vie aikaa, joten ota kuppi kahvia!",
     "Version": "Versio",
-    "CustomizedImageSuccessfullyDeleted": "Muokattu kuva poistettu onnistuneesti."
+    "CustomizedImageSuccessfullyDeleted": "Muokattu kuva poistettu onnistuneesti.",
+    "DescImageResourceModified": "Resurssirajan muokkaus onnistui"
   },
   "explorer": {
     "InputTooShort": "InputTooShort",
@@ -1545,5 +1546,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Kirjoita hakutermi"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>Jos muokkaat jo asennettua kuvaa, sinun on asennettava se uudelleen.</p><p>Muokkauksia ei tehdä ennen kuin kuva on asennettu uudelleen.\n\n</p>"
   }
 }

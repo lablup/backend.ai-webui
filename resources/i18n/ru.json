@@ -818,7 +818,8 @@
     "NoChangeMade": "Изменения не вносились",
     "Architecture": "Архитектура",
     "NoImageToDisplay": "Нет изображений для отображения",
-    "CustomizedImageSuccessfullyDeleted": "Персонализированное изображение успешно удалено."
+    "CustomizedImageSuccessfullyDeleted": "Персонализированное изображение успешно удалено.",
+    "DescImageResourceModified": "Лимит ресурсов успешно изменен"
   },
   "resourcePreset": {
     "ResourcePresets": "Предустановки ресурсов",
@@ -1566,5 +1567,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Введите поисковый запрос"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>Если вы измените уже установленный образ, вам придется переустановить его.</p><p>Изменения не будут применены до тех пор, пока образ не будет переустановлен.\n\n</p>"
   }
 }

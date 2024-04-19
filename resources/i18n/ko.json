@@ -906,7 +906,8 @@
     "PasswordsDoNotMatch": "변경할 비밀번호와 비밀번호 확인란의 값이 일치해야 합니다.",
     "NoChangeMade": "변경된 부분이 없습니다.",
     "Architecture": "아키텍쳐",
-    "CustomizedImageSuccessfullyDeleted": "사용자 정의된 이미지가 삭제되었습니다."
+    "CustomizedImageSuccessfullyDeleted": "사용자 정의된 이미지가 삭제되었습니다.",
+    "DescImageResourceModified": "리소스 제한이 수정되었습니다."
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
@@ -1565,5 +1566,8 @@
   },
   "setting": {
     "SearchPlaceholder": "검색어를 입력해 주세요"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>이미 설치된 이미지를 수정하는 경우, 이미지 재설치가 필요합니다.</p><<p>수정내용은 이미지가 재설치되기 전까지 적용되지 않습니다. </p>"
   }
 }

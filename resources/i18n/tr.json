@@ -816,7 +816,8 @@
     "NoChangeMade": "Herhangi bir değişiklik yapılmadı",
     "Architecture": "Mimarlık",
     "NoImageToDisplay": "Görüntülenecek Görüntü Yok",
-    "CustomizedImageSuccessfullyDeleted": "Özelleştirilmiş resim başarıyla silindi."
+    "CustomizedImageSuccessfullyDeleted": "Özelleştirilmiş resim başarıyla silindi.",
+    "DescImageResourceModified": "Kaynak sınırı başarıyla değiştirildi"
   },
   "resourcePreset": {
     "ResourcePresets": "Kaynak Ön Ayarları",
@@ -1564,5 +1565,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Arama terimini gir"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>Daha önceden yüklenmiş bir görseli değiştirirseniz görseli yeniden yüklemeniz gerekir.</p><p>Resim yeniden yüklenene kadar değişiklikler uygulanmayacaktır.\n\n</p>"
   }
 }

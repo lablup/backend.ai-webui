@@ -816,7 +816,8 @@
     "NoChangeMade": "Es wurden keine Änderungen vorgenommen.",
     "Architecture": "Architektur",
     "NoImageToDisplay": "Keine Bilder zum Anzeigen",
-    "CustomizedImageSuccessfullyDeleted": "Benutzerdefiniertes Bild erfolgreich gelöscht."
+    "CustomizedImageSuccessfullyDeleted": "Benutzerdefiniertes Bild erfolgreich gelöscht.",
+    "DescImageResourceModified": "Ressourcenlimit erfolgreich geändert"
   },
   "resourcePreset": {
     "ResourcePresets": "Ressourcenvoreinstellungen",
@@ -1564,5 +1565,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Geben Sie einen Suchbegriff ein"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>Wenn Sie ein bereits installiertes Image ändern, müssen Sie das Image neu installieren.</p><p>Änderungen werden erst übernommen, wenn das Image erneut installiert wird.\n\n</p>"
   }
 }
