@@ -317,7 +317,8 @@
       "Prepared": "준비되었습니다",
       "App": "앱",
       "NoExistingConnectionExample": "복사할 접속 예제가 없습니다.",
-      "SSHConnectionExampleClipboardCopy": "SSH 접속 예제가 클립보드에 복사되었습니다."
+      "SSHConnectionExampleClipboardCopy": "SSH 접속 예제가 클립보드에 복사되었습니다.",
+      "ConnectUrlIsNotValid": "연결 URL이 유효하지 않습니다."
     },
     "TensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로",
     "InputTensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로를 입력하세요. 로그 디렉토리는 자동으로 생성되지 않는다는 점에 주의하십시오.",

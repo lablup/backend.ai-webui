@@ -306,7 +306,8 @@
       "Prepared": "Préparé",
       "App": "Application",
       "NoExistingConnectionExample": "Aucun exemple de connexion à copier.",
-      "SSHConnectionExampleClipboardCopy": "L'exemple de connexion SSH a été copié dans le presse-papiers."
+      "SSHConnectionExampleClipboardCopy": "L'exemple de connexion SSH a été copié dans le presse-papiers.",
+      "ConnectUrlIsNotValid": "L'URL de connexion n'est pas valide."
     },
     "TensorboardPath": "Répertoire des journaux pour TensorBoard",
     "InputTensorboardPath": "Veuillez saisir le répertoire de journal auquel TensorBoard fera référence. Notez que le répertoire des journaux ne sera pas automatiquement créé.",

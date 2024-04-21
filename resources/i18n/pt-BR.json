@@ -306,7 +306,8 @@
       "Prepared": "Preparado",
       "NoExistingConnectionExample": "Não há exemplo de ligação a copiar.",
       "SSHConnectionExampleClipboardCopy": "O exemplo de ligação SSH foi copiado para a área de transferência.",
-      "App": "Aplicação"
+      "App": "Aplicação",
+      "ConnectUrlIsNotValid": "O URL de conexão não é válido."
     },
     "TensorboardPath": "Diretório de registro para TensorBoard",
     "InputTensorboardPath": "Insira o diretório de registro ao qual o TensorBoard se referirá. Observe que o diretório de log não será criado automaticamente.",

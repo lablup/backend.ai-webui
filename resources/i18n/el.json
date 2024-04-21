@@ -306,7 +306,8 @@
       "Prepared": "Ετοιμος",
       "NoExistingConnectionExample": "Δεν υπάρχει σύνδεση Παράδειγμα προς αντιγραφή.",
       "SSHConnectionExampleClipboardCopy": "Το παράδειγμα σύνδεσης SSH έχει αντιγραφεί στο πρόχειρο.",
-      "App": "Εφαρμογή"
+      "App": "Εφαρμογή",
+      "ConnectUrlIsNotValid": "Η διεύθυνση URL σύνδεσης δεν είναι έγκυρη."
     },
     "TensorboardPath": "Κατάλογος καταγραφής για TensorBoard",
     "InputTensorboardPath": "Εισαγάγετε τον κατάλογο καταγραφής στον οποίο αναφέρεται το TensorBoard. Σημειώστε ότι ο κατάλογος καταγραφής δεν θα δημιουργηθεί αυτόματα ..",

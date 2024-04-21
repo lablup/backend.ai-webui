@@ -306,7 +306,8 @@
       "Prepared": "Hazırlanmış",
       "NoExistingConnectionExample": "Kopyalanacak Bağlantı Örneği Yok.",
       "SSHConnectionExampleClipboardCopy": "SSH Bağlantı Örneği panoya kopyalandı.",
-      "App": "Uygulama"
+      "App": "Uygulama",
+      "ConnectUrlIsNotValid": "Bağlantı URL'si geçerli değil."
     },
     "TensorboardPath": "TensorBoard için günlük dizini",
     "InputTensorboardPath": "Lütfen TensorBoard'un başvuracağı günlük dizinini girin. Günlük dizininin otomatik olarak oluşturulmayacağını unutmayın..",

@@ -306,7 +306,8 @@
       "Prepared": "準備好了",
       "NoExistingConnectionExample": "无连接示例可复制。",
       "SSHConnectionExampleClipboardCopy": "SSH 连接示例已复制到剪贴板。",
-      "App": "应用程序"
+      "App": "应用程序",
+      "ConnectUrlIsNotValid": "連線 URL 無效。"
     },
     "TensorboardPath": "TensorBoard 的日誌目錄",
     "InputTensorboardPath": "請輸入 TensorBoard 將引用的日誌目錄。請注意，日誌目錄不會自動創建..",
