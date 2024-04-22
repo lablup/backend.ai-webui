@@ -6,15 +6,16 @@ import {
   ManageAppsModalMutation,
 } from './__generated__/ManageAppsModalMutation.graphql';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { Input, Button, Form, message, Typography } from 'antd';
+import { Input, Button, Form, message, Typography, App } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useMutation } from 'react-relay';
 
 const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
+  const app = App.useApp();
 
   const [open, setOpen] = useState<boolean>(true);
   const [validateDetail, setValidateDetail] = useState<string>('');
@@ -72,23 +73,45 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
         }
       });
 
-      commitModifyImageInput({
-        variables: {
-          target: `${image.registry}/${image.name}:${image.tag}`,
-          architecture: image.architecture,
-          props: {
-            labels: INPUT,
+      const commitRequest = () =>
+        commitModifyImageInput({
+          variables: {
+            target: `${image.registry}/${image.name}:${image.tag}`,
+            architecture: image.architecture,
+            props: {
+              resource_limits: INPUT,
+            },
           },
-        },
-        onCompleted(res, err) {
-          message.success(t('environment.DescServicePortModified'));
-          dispatchEvent('ok', null);
-          return;
-        },
-        onError(err) {
-          message.error(t('dialog.ErrorOccurred'));
-        },
-      });
+          onCompleted: (res, err) => {
+            console.log(res, err);
+            message.success(t('environment.DescImageResourceModified'));
+            dispatchEvent('ok', null);
+            return;
+          },
+          onError: (err) => {
+            message.error(t('dialog.ErrorOccurred'));
+          },
+        });
+
+      if (image.installed) {
+        app.modal.confirm({
+          title: 'Image reinstallation required',
+          content: (
+            <>
+              <Trans
+                i18nKey={
+                  'envrionment.ModifyImageResourceLimitReinstallRequired'
+                }
+              />
+            </>
+          ),
+          onOk: commitRequest,
+          getContainer: () => document.body,
+          closable: true,
+        });
+      } else {
+        commitRequest();
+      }
     } catch (info: any) {
       setValidateDetail(info.errorFields[0].errors[0]);
       return;
