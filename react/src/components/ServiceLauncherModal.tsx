@@ -529,6 +529,12 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               : {
                   desiredRoutingCount: 1,
                   ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+                  ...(baiClient._config?.default_session_environment && {
+                    environments: {
+                      environment:
+                        baiClient._config?.default_session_environment,
+                    },
+                  }),
                 }
           }
           requiredMark="optional"
