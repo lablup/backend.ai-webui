@@ -1009,7 +1009,8 @@
       "ConfirmAndRun": "Tarkistin ja aloitan",
       "NoExistingConnectionExample": "Ei yhteyttä Kopioitava esimerkki.",
       "Prepared": "Valmisteltu",
-      "SSHConnectionExampleClipboardCopy": "SSH-yhteys Esimerkki on kopioitu leikepöydälle."
+      "SSHConnectionExampleClipboardCopy": "SSH-yhteys Esimerkki on kopioitu leikepöydälle.",
+      "ConnectUrlIsNotValid": "Yhteyden URL-osoite ei kelpaa."
     },
     "core": "ydin",
     "exportCSV": "viedä CSV",

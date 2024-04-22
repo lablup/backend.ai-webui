@@ -306,7 +306,8 @@
       "Prepared": "Bersedia",
       "NoExistingConnectionExample": "Tiada Contoh Sambungan untuk disalin.",
       "SSHConnectionExampleClipboardCopy": "Contoh Sambungan SSH telah disalin ke papan keratan.",
-      "App": "Aplikasi"
+      "App": "Aplikasi",
+      "ConnectUrlIsNotValid": "URL Sambung tidak sah."
     },
     "TensorboardPath": "Direktori log untuk TensorBoard",
     "InputTensorboardPath": "Sila masukkan direktori log yang akan dirujuk oleh TensorBoard. Perhatikan bahawa direktori log tidak akan dibuat secara automatik ..",

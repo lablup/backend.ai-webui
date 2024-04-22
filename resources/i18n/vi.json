@@ -306,7 +306,8 @@
       "Prepared": "Chuẩn bị",
       "NoExistingConnectionExample": "Không có ví dụ kết nối nào được sao chép.",
       "SSHConnectionExampleClipboardCopy": "Ví dụ về kết nối SSH đã được sao chép vào bảng nhớ tạm.",
-      "App": "Ứng dụng"
+      "App": "Ứng dụng",
+      "ConnectUrlIsNotValid": "URL kết nối không hợp lệ."
     },
     "TensorboardPath": "Thư mục nhật ký cho TensorBoard",
     "InputTensorboardPath": "Vui lòng nhập thư mục nhật ký mà TensorBoard sẽ tham chiếu đến. Lưu ý rằng thư mục nhật ký sẽ không được tạo tự động ..",
