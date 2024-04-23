@@ -110,8 +110,8 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
         }}
         gap={'sm'}
       >
-        <Flex direction="row" gap={'md'}>
-          <AvailableResourcesCard style={{ flex: 1 }} />
+        <Flex direction="row" gap={'sm'} align="stretch">
+          <AvailableResourcesCard style={{}} />
           <MyUsageAndResourcePolicyCard style={{ flex: 1 }} />
         </Flex>
 

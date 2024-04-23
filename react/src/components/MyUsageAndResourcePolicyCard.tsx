@@ -26,7 +26,7 @@ const MyUsageAndResourcePolicyCard: React.FC<CardProps> = (props) => {
   const total_slot: any = globalThis.resourceBroker.total_slot;
 
   return (
-    <Card title="나의 사용량과 자원 제한" {...props}>
+    <Card size="small" title="나의 사용량과 자원 제한" {...props}>
       <Flex direction="column" gap={'xs'} align="stretch">
         <Flex direction="row" align="stretch" gap={'xs'}>
           <ResourceAvailableGageBar

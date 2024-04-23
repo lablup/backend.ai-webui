@@ -43,9 +43,11 @@ const AvailableResourcesCard: React.FC<CardProps> = (props) => {
 
   return (
     <Card
+      size="small"
       title={
         <Flex direction="row" gap={'xs'}>
           <ResourceGroupSelect
+            size="small"
             showSearch
             autoSelectDefault
             style={{ minWidth: 100 }}
