@@ -2154,7 +2154,9 @@ export default class BackendAiStorageList extends BackendAIPage {
             text="${_t('data.folders.FolderInfo')}"
             position="top-start"
           ></vaadin-tooltip>
-          ${rowData.item.is_owner || rowData.item.permission === 'wd'
+          ${rowData.item.is_owner ||
+          this._hasPermission(rowData.item, 'd') ||
+          (rowData.item.type === 'group' && this.is_admin)
             ? html`
                 <mwc-icon-button
                   class="fg blue controls-running"
