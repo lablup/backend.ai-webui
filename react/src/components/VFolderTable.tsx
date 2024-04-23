@@ -173,10 +173,10 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       },
     );
 
-  const allowedVFolderHostsByDomain = JSON.parse(domain?.allowed_vfolder_hosts);
-  const allowedVFolderHostsByGroup = JSON.parse(group?.allowed_vfolder_hosts);
+  const allowedVFolderHostsByDomain = JSON.parse(domain?.allowed_vfolder_hosts || '{}');
+  const allowedVFolderHostsByGroup = JSON.parse(group?.allowed_vfolder_hosts || '{}');
   const allowedVFolderHostsByKeypairResourcePolicy = JSON.parse(
-    keypair_resource_policy?.allowed_vfolder_hosts,
+    keypair_resource_policy?.allowed_vfolder_hosts || '{}',
   );
 
   const mergedVFolderPermissions = _.merge(
