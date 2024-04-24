@@ -470,7 +470,8 @@
     "FailedToTerminateService": "The request to terminate the service failed.",
     "ServiceCreated": "Model service {{ name }} has been created successfully.",
     "ServiceUpdated": "Model service {{ name }} has been updated successfully.",
-    "ServiceTerminated": "Model service {{ name }} has been terminated successfully."
+    "ServiceTerminated": "Model service {{ name }} has been terminated successfully.",
+    "ModelDefinitionFilename": "Model Definition File"
   },
   "button": {
     "Cancel": "Cancel",

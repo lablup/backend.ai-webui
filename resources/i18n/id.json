@@ -1516,7 +1516,8 @@
     "FailedToUpdateService": "Gagal memperbarui layanan.",
     "ServiceCreated": "Layanan model {{ name }} telah berhasil dibuat.",
     "ServiceUpdated": "Layanan model {{ name }} telah berhasil diperbarui.",
-    "ServiceTerminated": "Layanan model {{ name }} telah berhasil dihentikan."
+    "ServiceTerminated": "Layanan model {{ name }} telah berhasil dihentikan.",
+    "ModelDefinitionFilename": "File Definisi Model"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

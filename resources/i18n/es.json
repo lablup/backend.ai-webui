@@ -730,7 +730,8 @@
     "FailedToUpdateService": "No se pudo actualizar el servicio.",
     "ServiceCreated": "El servicio modelo {{ name }} se ha creado correctamente.",
     "ServiceUpdated": "El servicio de modelo {{ name }} se ha actualizado correctamente.",
-    "ServiceTerminated": "El servicio de modelo {{ name }} se ha finalizado correctamente."
+    "ServiceTerminated": "El servicio de modelo {{ name }} se ha finalizado correctamente.",
+    "ModelDefinitionFilename": "Archivo de definición del modelo"
   },
   "notification": {
     "Initializing": "Inicializando...",

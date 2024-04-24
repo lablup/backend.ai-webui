@@ -1510,7 +1510,8 @@
     "FailedToUpdateService": "Falha ao atualizar o serviço.",
     "ServiceCreated": "O serviço de modelo {{ name }} foi criado com sucesso.",
     "ServiceUpdated": "O serviço de modelo {{ name }} foi atualizado com sucesso.",
-    "ServiceTerminated": "O serviço de modelo {{ name }} foi encerrado com sucesso."
+    "ServiceTerminated": "O serviço de modelo {{ name }} foi encerrado com sucesso.",
+    "ModelDefinitionFilename": "Ficheiro de definição do modelo"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

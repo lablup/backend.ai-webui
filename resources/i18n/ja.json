@@ -1469,7 +1469,8 @@
     "FailedToUpdateService": "サービスの更新に失敗しました。",
     "ServiceCreated": "モデル サービス {{ name }} が正常に作成されました。",
     "ServiceUpdated": "モデル サービス {{ name }} は正常に更新されました。",
-    "ServiceTerminated": "モデル サービス {{ name }} は正常に終了しました。"
+    "ServiceTerminated": "モデル サービス {{ name }} は正常に終了しました。",
+    "ModelDefinitionFilename": "モデル定義ファイル"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

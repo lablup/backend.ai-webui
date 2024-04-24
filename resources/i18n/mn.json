@@ -1502,7 +1502,8 @@
     "FailedToUpdateService": "Үйлчилгээг шинэчилж чадсангүй.",
     "ServiceCreated": "Загвар үйлчилгээ {{ name }} амжилттай үүсгэгдсэн.",
     "ServiceUpdated": "Загвар үйлчилгээ {{ name }} амжилттай шинэчлэгдсэн.",
-    "ServiceTerminated": "Загварын үйлчилгээ {{ name }} амжилттай хаагдсан."
+    "ServiceTerminated": "Загварын үйлчилгээ {{ name }} амжилттай хаагдсан.",
+    "ModelDefinitionFilename": "Загварын тодорхойлолтын файл"
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",

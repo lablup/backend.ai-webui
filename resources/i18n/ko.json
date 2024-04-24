@@ -458,7 +458,8 @@
     "FailedToUpdateService": "서비스를 업데이트하지 못했습니다.",
     "ServiceCreated": "모델 서비스 {{ name }}이(가) 성공적으로 생성되었습니다.",
     "ServiceUpdated": "모델 서비스 {{ name }}이(가) 성공적으로 업데이트되었습니다.",
-    "ServiceTerminated": "모델 서비스 {{ name }}이(가) 성공적으로 종료되었습니다."
+    "ServiceTerminated": "모델 서비스 {{ name }}이(가) 성공적으로 종료되었습니다.",
+    "ModelDefinitionFilename": "모델 정의 파일명"
   },
   "button": {
     "Cancel": "취소",

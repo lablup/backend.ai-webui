@@ -1510,7 +1510,8 @@
     "FailedToUpdateService": "Không thể cập nhật dịch vụ.",
     "ServiceCreated": "Dịch vụ mẫu {{ name }} đã được tạo thành công.",
     "ServiceUpdated": "Dịch vụ mẫu {{ name }} đã được cập nhật thành công.",
-    "ServiceTerminated": "Dịch vụ mẫu {{ name }} đã được chấm dứt thành công."
+    "ServiceTerminated": "Dịch vụ mẫu {{ name }} đã được chấm dứt thành công.",
+    "ModelDefinitionFilename": "Tệp định nghĩa mô hình"
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",

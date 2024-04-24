@@ -614,7 +614,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                 },
               ]}
             >
-              <Input />
+              <Input placeholder="model-definition.yaml" />
             </Form.Item>
           )}
           <Form.Item

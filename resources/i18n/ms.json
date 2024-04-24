@@ -1491,7 +1491,8 @@
     "FailedToUpdateService": "Gagal mengemas kini perkhidmatan.",
     "ServiceCreated": "Perkhidmatan model {{ name }} telah berjaya dibuat.",
     "ServiceUpdated": "Perkhidmatan model {{ name }} telah berjaya dikemas kini.",
-    "ServiceTerminated": "Perkhidmatan model {{ name }} telah berjaya ditamatkan."
+    "ServiceTerminated": "Perkhidmatan model {{ name }} telah berjaya ditamatkan.",
+    "ModelDefinitionFilename": "Fail Definisi Model"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

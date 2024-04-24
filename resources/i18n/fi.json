@@ -728,7 +728,8 @@
     "FailedToUpdateService": "Palvelun päivittäminen epäonnistui.",
     "ServiceCreated": "Mallipalvelun {{ name }} luominen onnistui.",
     "ServiceUpdated": "Mallipalvelun {{ name }} päivitys onnistui.",
-    "ServiceTerminated": "Mallipalvelu {{ name }} on lopetettu onnistuneesti."
+    "ServiceTerminated": "Mallipalvelu {{ name }} on lopetettu onnistuneesti.",
+    "ModelDefinitionFilename": "Mallin määrittelytiedosto"
   },
   "notification": {
     "Initializing": "Aloitetaan...",

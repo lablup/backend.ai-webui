@@ -1469,7 +1469,8 @@
     "FailedToUpdateService": "Der Dienst konnte nicht aktualisiert werden.",
     "ServiceCreated": "Der Modelldienst {{ name }} wurde erfolgreich erstellt.",
     "ServiceUpdated": "Der Modelldienst {{ name }} wurde erfolgreich aktualisiert.",
-    "ServiceTerminated": "Der Modelldienst {{ name }} wurde erfolgreich beendet."
+    "ServiceTerminated": "Der Modelldienst {{ name }} wurde erfolgreich beendet.",
+    "ModelDefinitionFilename": "Modelldefinitionsdatei"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

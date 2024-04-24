@@ -1469,7 +1469,8 @@
     "FailedToUpdateService": "Impossibile aggiornare il servizio.",
     "ServiceCreated": "Il servizio modello {{ name }} è stato creato correttamente.",
     "ServiceUpdated": "Il servizio modello {{ name }} è stato aggiornato correttamente.",
-    "ServiceTerminated": "Il servizio modello {{ name }} è stato terminato correttamente."
+    "ServiceTerminated": "Il servizio modello {{ name }} è stato terminato correttamente.",
+    "ModelDefinitionFilename": "File di definizione del modello"
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",

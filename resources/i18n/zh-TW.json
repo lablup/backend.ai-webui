@@ -1510,7 +1510,8 @@
     "FailedToUpdateService": "更新服務失敗。",
     "ServiceCreated": "模型服務 {{ name }} 已成功建立。",
     "ServiceUpdated": "模型服務 {{ name }} 已成功更新。",
-    "ServiceTerminated": "模型服務 {{ name }} 已成功終止。"
+    "ServiceTerminated": "模型服務 {{ name }} 已成功終止。",
+    "ModelDefinitionFilename": "模型定义文件"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

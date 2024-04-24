@@ -1471,7 +1471,8 @@
     "FailedToUpdateService": "Nie udało się zaktualizować usługi.",
     "ServiceCreated": "Usługa modelowa {{ name }} została pomyślnie utworzona.",
     "ServiceUpdated": "Usługa modelowa {{ name }} została pomyślnie zaktualizowana.",
-    "ServiceTerminated": "Usługa modelowa {{ name }} została pomyślnie zakończona."
+    "ServiceTerminated": "Usługa modelowa {{ name }} została pomyślnie zakończona.",
+    "ModelDefinitionFilename": "Plik definicji modelu"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",
