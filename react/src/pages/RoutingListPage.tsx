@@ -409,7 +409,8 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
                   {
                     label: t('modelService.ModelDefinitionFilename'),
                     children: (
-                      <Typography.Text copyable>
+                      <Typography.Text code copyable>
+                        {endpoint?.model_mount_destiation || '/models'}/
                         {endpoint?.model_definition_path}
                       </Typography.Text>
                     ),
