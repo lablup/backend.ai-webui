@@ -61,7 +61,7 @@ interface ServiceCreateConfigResourceType {
 interface ServiceCreateConfigType {
   model: string;
   model_version?: string;
-  model_definition_filename?: string;
+  model_definition_path?: string;
   model_mount_destination: string; // default == "/models"
   environ: object; // environment variable
   scaling_group: string;
@@ -125,7 +125,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         cluster_size
         open_to_public
         model
-        model_definition_filename @since(version: "24.03.3")
+        model_definition_path @since(version: "24.03.3")
         image_object @since(version: "23.09.9") {
           name
           humanized_name
@@ -234,8 +234,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         config: {
           model: values.vFolderName,
           model_mount_destination: '/models', // FIXME: hardcoded. change it with option later
-          model_definition_filename:
-            values.modelDefinitionFilename || undefined,
+          model_definition_path: values.modelDefinitionFilename || undefined,
           environ: {}, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {
@@ -352,7 +351,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                 ),
                 name: values.serviceName,
                 resource_group: values.resourceGroup,
-                model_definition_filename:
+                model_definition_path:
                   values.modelDefinitionFilename || undefined,
               },
             };

@@ -143,7 +143,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             }
             retries
             model
-            model_definition_filename @since(version: "24.03.3")
+            model_definition_path @since(version: "24.03.3")
             model_mount_destiation
             resource_group
             resource_slots
@@ -410,7 +410,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
                     label: t('modelService.ModelDefinitionFilename'),
                     children: (
                       <Typography.Text copyable>
-                        {endpoint?.model_definition_filename}
+                        {endpoint?.model_definition_path}
                       </Typography.Text>
                     ),
                   },
