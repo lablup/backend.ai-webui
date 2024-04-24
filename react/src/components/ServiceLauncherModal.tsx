@@ -58,6 +58,7 @@ interface ServiceCreateConfigResourceType {
 interface ServiceCreateConfigType {
   model: string;
   model_version?: string;
+  model_definition_filename?: string;
   model_mount_destination: string; // default == "/models"
   environ: object; // environment variable
   scaling_group: string;
@@ -89,6 +90,7 @@ interface ServiceLauncherProps extends Omit<BAIModalProps, 'onOK'> {
 interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   serviceName: string;
   vFolderName: string;
+  modelDefinitionFilename: string;
   desiredRoutingCount: number;
   openToPublic: boolean;
 }
@@ -119,6 +121,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         cluster_mode
         cluster_size
         open_to_public
+        model_definition_filename @since(version: "24.03.3")
         image_object @since(version: "23.09.9") {
           name
           humanized_name
@@ -227,6 +230,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         config: {
           model: values.vFolderName,
           model_mount_destination: '/models', // FIXME: hardcoded. change it with option later
+          model_definition_filename:
+            values.modelDefinitionFilename || undefined,
           environ: {}, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {
@@ -342,6 +347,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                 ),
                 name: values.serviceName,
                 resource_group: values.resourceGroup,
+                model_definition_filename:
+                  values.modelDefinitionFilename || undefined,
               },
             };
             commitModifyEndpoint({
@@ -569,6 +576,20 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                 />
               </Form.Item>
             </>
+          )}
+          {(baiClient.supports('arbitrary-model-definition-file') ||
+            !endpoint) && (
+            <Form.Item
+              name={'modelDefinitionFilename'}
+              label={t('modelService.ModelDefinitionFilename')}
+              rules={[
+                {
+                  required: false,
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
           )}
           <Form.Item
             label={t('modelService.DesiredRoutingCount')}

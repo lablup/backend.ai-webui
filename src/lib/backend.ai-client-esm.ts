@@ -683,6 +683,9 @@ class Client {
       this._features['max-vfolder-count-in-user-resource-policy'] = true;
       this._features['model-store'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('24.03.3')) {
+      this._features['arbitrary-model-definition-file'] = true;
+    }
   }
 
   /**
