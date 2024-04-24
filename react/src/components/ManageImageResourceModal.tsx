@@ -1,3 +1,4 @@
+import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
 import ImageResourceFormItem from './ImageResourceFormItem';
@@ -13,6 +14,15 @@ import { useMutation } from 'react-relay';
 const ManageImageResourceModal: React.FC<BAIModalProps> = ({
   ...BAIModalProps
 }) => {
+  const baiClient = useSuspendedBackendaiClient();
+
+  // Differentiate default max value based on manager version.
+  // The difference between validating a variable type as undefined or none for an unsupplied field value.
+  // [Associated PR links] : https://github.com/lablup/backend.ai/pull/1941
+  const MAX_VALUE = baiClient.isManagerVersionCompatibleWith('23.09.11.*')
+    ? undefined
+    : null;
+
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const app = App.useApp();
@@ -49,6 +59,7 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
     };
   }
   const { image } = parsedValue;
+
   const handleOnclick = async () => {
     const fieldsValue = await form.getFieldsValue();
     const INPUT: ResourceLimitInput[] = Object.entries(fieldsValue).map(
@@ -58,9 +69,10 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
         max:
           image.resource_limits.find(
             (item: imageResourceProps) => item.key === key,
-          )?.max ?? undefined,
+          )?.max ?? MAX_VALUE,
       }),
     );
+
     const commitRequest = () =>
       commitModifyImageInput({
         variables: {
@@ -77,6 +89,7 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
           return;
         },
         onError: (err) => {
+          console.log(err);
           message.error(t('dialog.ErrorOccurred'));
         },
       });
