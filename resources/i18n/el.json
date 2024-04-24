@@ -817,7 +817,8 @@
     "Architecture": "Αρχιτεκτονική",
     "NoImageToDisplay": "Δεν εμφανίζονται εικόνες",
     "CustomizedImageSuccessfullyDeleted": "Η προσαρμοσμένη εικόνα διαγράφηκε επιτυχώς.",
-    "DescImageResourceModified": "Το όριο πόρων τροποποιήθηκε επιτυχώς"
+    "DescImageResourceModified": "Το όριο πόρων τροποποιήθηκε επιτυχώς",
+    "DescImagePortsModified": "Οι θύρες εικόνας τροποποιήθηκαν με επιτυχία"
   },
   "resourcePreset": {
     "ResourcePresets": "Προεπιλογές πόρων",

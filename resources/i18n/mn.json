@@ -801,7 +801,8 @@
     "Architecture": "Архитектур",
     "NoImageToDisplay": "Үзүүлэх зураг байхгүй",
     "CustomizedImageSuccessfullyDeleted": "Тохируулсан зургийг амжилттай устгалаа.",
-    "DescImageResourceModified": "Нөөцийн хязгаарыг амжилттай өөрчилсөн"
+    "DescImageResourceModified": "Нөөцийн хязгаарыг амжилттай өөрчилсөн",
+    "DescImagePortsModified": "Зургийн портуудыг амжилттай өөрчилсөн"
   },
   "resourcePreset": {
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",

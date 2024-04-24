@@ -817,7 +817,8 @@
     "Architecture": "Mimarlık",
     "NoImageToDisplay": "Görüntülenecek Görüntü Yok",
     "CustomizedImageSuccessfullyDeleted": "Özelleştirilmiş resim başarıyla silindi.",
-    "DescImageResourceModified": "Kaynak sınırı başarıyla değiştirildi"
+    "DescImageResourceModified": "Kaynak sınırı başarıyla değiştirildi",
+    "DescImagePortsModified": "Görüntü Bağlantı Noktaları başarıyla değiştirildi"
   },
   "resourcePreset": {
     "ResourcePresets": "Kaynak Ön Ayarları",

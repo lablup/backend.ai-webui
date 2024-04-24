@@ -919,7 +919,8 @@
     "ProblemOccurred": "Problem occurred",
     "PasswordsDoNotMatch": "Password and Confirmation do not match.",
     "CustomizedImageSuccessfullyDeleted": "Customized image successfully deleted.",
-    "DescImageResourceModified": "Resource limit successfully modified"
+    "DescImageResourceModified": "Resource limit successfully modified",
+    "DescImagePortsModified": "Image Ports successfully modified"
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",

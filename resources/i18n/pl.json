@@ -819,7 +819,8 @@
     "Architecture": "Architektura",
     "NoImageToDisplay": "Brak obrazów do wyświetlenia",
     "CustomizedImageSuccessfullyDeleted": "Dostosowany obraz został pomyślnie usunięty.",
-    "DescImageResourceModified": "Limit zasobów został pomyślnie zmodyfikowany"
+    "DescImageResourceModified": "Limit zasobów został pomyślnie zmodyfikowany",
+    "DescImagePortsModified": "Pomyślnie zmodyfikowano porty obrazu"
   },
   "resourcePreset": {
     "ResourcePresets": "Predefiniowane ustawienia zasobów",

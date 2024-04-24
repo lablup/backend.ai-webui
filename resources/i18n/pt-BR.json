@@ -817,7 +817,8 @@
     "Architecture": "Arquitetura",
     "NoImageToDisplay": "Não há imagens a apresentar",
     "CustomizedImageSuccessfullyDeleted": "Imagem personalizada excluída com sucesso.",
-    "DescImageResourceModified": "Limite de recursos modificado com sucesso"
+    "DescImageResourceModified": "Limite de recursos modificado com sucesso",
+    "DescImagePortsModified": "Portas de imagem modificadas com sucesso"
   },
   "resourcePreset": {
     "ResourcePresets": "Predefinições de recursos",

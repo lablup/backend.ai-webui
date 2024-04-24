@@ -817,7 +817,8 @@
     "Architecture": "Architektur",
     "NoImageToDisplay": "Keine Bilder zum Anzeigen",
     "CustomizedImageSuccessfullyDeleted": "Benutzerdefiniertes Bild erfolgreich gelöscht.",
-    "DescImageResourceModified": "Ressourcenlimit erfolgreich geändert"
+    "DescImageResourceModified": "Ressourcenlimit erfolgreich geändert",
+    "DescImagePortsModified": "Bildports erfolgreich geändert"
   },
   "resourcePreset": {
     "ResourcePresets": "Ressourcenvoreinstellungen",

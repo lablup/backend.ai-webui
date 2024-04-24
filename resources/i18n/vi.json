@@ -817,7 +817,8 @@
     "Architecture": "Ngành kiến ​​​​trúc",
     "NoImageToDisplay": "Không có hình ảnh để hiển thị",
     "CustomizedImageSuccessfullyDeleted": "Hình ảnh tùy chỉnh đã được xóa thành công.",
-    "DescImageResourceModified": "Đã sửa đổi giới hạn tài nguyên thành công"
+    "DescImageResourceModified": "Đã sửa đổi giới hạn tài nguyên thành công",
+    "DescImagePortsModified": "Cổng hình ảnh được sửa đổi thành công"
   },
   "resourcePreset": {
     "ResourcePresets": "Cài đặt trước tài nguyên",

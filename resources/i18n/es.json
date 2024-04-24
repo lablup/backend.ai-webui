@@ -460,7 +460,8 @@
     "TakesTime": ". Lleva tiempo, así que tómate un café.",
     "Version": "Versión",
     "CustomizedImageSuccessfullyDeleted": "Imagen personalizada eliminada correctamente.",
-    "DescImageResourceModified": "Límite de recursos modificado con éxito"
+    "DescImageResourceModified": "Límite de recursos modificado con éxito",
+    "DescImagePortsModified": "Puertos de imagen modificados exitosamente"
   },
   "explorer": {
     "InputTooShort": "InputTooShort",

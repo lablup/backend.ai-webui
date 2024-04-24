@@ -460,7 +460,8 @@
     "TakesTime": ". Se vie aikaa, joten ota kuppi kahvia!",
     "Version": "Versio",
     "CustomizedImageSuccessfullyDeleted": "Muokattu kuva poistettu onnistuneesti.",
-    "DescImageResourceModified": "Resurssirajan muokkaus onnistui"
+    "DescImageResourceModified": "Resurssirajan muokkaus onnistui",
+    "DescImagePortsModified": "Kuvaportteja on muokattu onnistuneesti"
   },
   "explorer": {
     "InputTooShort": "InputTooShort",

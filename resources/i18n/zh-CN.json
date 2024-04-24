@@ -817,7 +817,8 @@
     "Architecture": "建筑学",
     "NoImageToDisplay": "无图像显示",
     "CustomizedImageSuccessfullyDeleted": "自定义图片已成功删除。",
-    "DescImageResourceModified": "资源限制成功修改"
+    "DescImageResourceModified": "资源限制成功修改",
+    "DescImagePortsModified": "图像端口修改成功"
   },
   "resourcePreset": {
     "ResourcePresets": "资源预设",

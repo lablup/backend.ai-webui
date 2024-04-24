@@ -811,7 +811,8 @@
     "Architecture": "Arsitektur",
     "NoImageToDisplay": "Tidak ada gambar yang akan ditampilkan",
     "CustomizedImageSuccessfullyDeleted": "Gambar yang disesuaikan berhasil dihapus.",
-    "DescImageResourceModified": "Batas sumber daya berhasil diubah"
+    "DescImageResourceModified": "Batas sumber daya berhasil diubah",
+    "DescImagePortsModified": "Port Gambar berhasil dimodifikasi"
   },
   "resourcePreset": {
     "ResourcePresets": "Preset Sumber Daya",

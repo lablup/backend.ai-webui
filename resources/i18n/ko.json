@@ -907,7 +907,8 @@
     "NoChangeMade": "변경된 부분이 없습니다.",
     "Architecture": "아키텍쳐",
     "CustomizedImageSuccessfullyDeleted": "사용자 정의된 이미지가 삭제되었습니다.",
-    "DescImageResourceModified": "리소스 제한이 수정되었습니다."
+    "DescImageResourceModified": "리소스 제한이 수정되었습니다.",
+    "DescImagePortsModified": "이미지 포트가 수정되었습니다."
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",

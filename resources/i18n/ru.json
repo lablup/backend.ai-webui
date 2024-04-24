@@ -819,7 +819,8 @@
     "Architecture": "Архитектура",
     "NoImageToDisplay": "Нет изображений для отображения",
     "CustomizedImageSuccessfullyDeleted": "Персонализированное изображение успешно удалено.",
-    "DescImageResourceModified": "Лимит ресурсов успешно изменен"
+    "DescImageResourceModified": "Лимит ресурсов успешно изменен",
+    "DescImagePortsModified": "Порты изображений успешно изменены"
   },
   "resourcePreset": {
     "ResourcePresets": "Предустановки ресурсов",
