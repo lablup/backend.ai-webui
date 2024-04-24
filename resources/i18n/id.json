@@ -64,7 +64,8 @@
       "Data&Model": "Data",
       "InvalidBlankPassword": "Masukkan kata sandi Anda",
       "InvalidBlankEmail": "Masukkan email Anda",
-      "DisMatchUserEmail": "Email Pengguna tidak cocok"
+      "DisMatchUserEmail": "Email Pengguna tidak cocok",
+      "MyEnvironments": "Lingkungan Saya"
     },
     "YouAreOffline": "Anda sekarang offline",
     "YouAreOnline": "Anda sekarang online",
@@ -113,7 +114,8 @@
     "IPUEnabled": "IPU NPU Diaktifkan",
     "ATOMEnabled": "ATOM NPU Diaktifkan",
     "WarboyEnabled": "Warboy NPU Diaktifkan",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "LPU Hyperaccel Diaktifkan"
   },
   "session": {
     "launcher": {
@@ -265,7 +267,9 @@
       "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Hanya bilangan bulat yang diperbolehkan jika ukuran cluster tidak kurang dari 2.",
       "StartAfter": "Mulai setelah:",
-      "StartTimeDoesNotApply": "Jika waktu mulai tidak ditetapkan, maka tidak berlaku."
+      "StartTimeDoesNotApply": "Jika waktu mulai tidak ditetapkan, maka tidak berlaku.",
+      "PreviousLauncher": "Classic",
+      "PleaseCompleteForm": "Formulir tidak lengkap atau mengandung kesalahan. Silakan periksa masukan Anda."
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -299,7 +303,8 @@
       "Prepared": "Siap",
       "App": "Aplikasi",
       "NoExistingConnectionExample": "Tidak Ada Koneksi Contoh untuk disalin.",
-      "SSHConnectionExampleClipboardCopy": "Contoh Koneksi SSH telah disalin ke clipboard."
+      "SSHConnectionExampleClipboardCopy": "Contoh Koneksi SSH telah disalin ke clipboard.",
+      "ConnectUrlIsNotValid": "URL koneksi tidak valid."
     },
     "TensorboardPath": "Direktori log untuk TensorBoard",
     "InputTensorboardPath": "Harap masukkan direktori log yang akan dirujuk oleh TensorBoard. Perhatikan bahwa direktori log tidak akan dibuat secara otomatis..",
@@ -333,7 +338,7 @@
       "SessionNameShouldEndWith": "Nama tersebut harus diakhiri dengan huruf alfabet, angka, atau '_'.",
       "SessionNameInvalidCharacter": "Bagian tengah nama hanya boleh berisi huruf alfabet, angka, dan '_'.",
       "SessionNameRequired": "Nama sesi harus diisi",
-      "EnterValidSessionName": "Masukkan nama sesi yang valid",
+      "EnterValidSessionName": "Silakan masukkan kombinasi minimal 4 huruf alfabet, atau angka, atau tanda hubung, atau garis bawah.",
       "SessionNameAlreadyExist": "Nama sesi sudah ada",
       "SluggedStrings": "String yang disumbat (>3 karakter)",
       "SessionNameTooLong64": "Silakan masukkan 64 karakter atau kurang.",
@@ -387,7 +392,14 @@
     "CPU": "CPU",
     "MEM": "Memori",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU (memori)"
+    "GPU(MEM)": "GPU (memori)",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (memori)",
+    "ConvertSessionToImage": "Ubah Sesi menjadi Gambar",
+    "SessionName": "Nama Sesi",
+    "SessionId": "Id Sesi",
+    "EnvironmentAndVersion": "Lingkungan dan Versi",
+    "Tags": "Tag"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -423,7 +435,8 @@
     "Clone": "Clone",
     "Config": "Konfigurasi",
     "Next": "Berikutnya",
-    "Previous": "Sebelumnya"
+    "Previous": "Sebelumnya",
+    "PushToImage": "Sesi dorong ke gambar yang disesuaikan"
   },
   "agent": {
     "Endpoint": "Titik akhir",
@@ -797,7 +810,8 @@
     "PasswordsDoNotMatch": "Password dan Konfirmasi tidak cocok.",
     "NoChangeMade": "Tidak ada perubahan yang dibuat",
     "Architecture": "Arsitektur",
-    "NoImageToDisplay": "Tidak ada gambar yang akan ditampilkan"
+    "NoImageToDisplay": "Tidak ada gambar yang akan ditampilkan",
+    "CustomizedImageSuccessfullyDeleted": "Gambar yang disesuaikan berhasil dihapus."
   },
   "resourcePreset": {
     "ResourcePresets": "Preset Sumber Daya",
@@ -1159,7 +1173,10 @@
     "RequireWarboyPlugin": "Membutuhkan Plugin Backend.AI Warboy.",
     "Plugins": "Plugin",
     "OpenSourceCUDAGPUsupport": "Dukungan GPU CUDA Sumber Terbuka",
-    "ShowOnlyChanged": "Hanya Tampilan yang Berubah"
+    "ShowOnlyChanged": "Hanya Tampilan yang Berubah",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Gunakan akselerator Hyperaccel LPU.",
+    "RequireHyperaccelLPUPlugin": "Memerlukan Plugin LPU Backend.AI Hyperaccel."
   },
   "notification": {
     "SuccessfullyUpdated": "Berhasil Diperbarui",
@@ -1212,14 +1229,12 @@
     "LeaveService": "Tinggalkan Layanan",
     "DescConfirmLeave": "Untuk konfirmasi, silakan ketik kembali e-mail dan password Anda.",
     "Password": "Kata sandi",
-    "E-mail": "E-mail",
     "APIKey": "Kunci API",
     "SecretKey": "Kunci rahasia",
     "Endpoint": "Titik akhir",
     "NotAUser": "Bukan pengguna?",
     "LoginAnotherway": "Ingin login dengan cara lain?",
     "SignUp": "Daftar",
-    "LoginWithE-mail": "Masuk dengan E-mail",
     "LoginWithIAM": "Masuk dengan IAM",
     "ClickToUseIAM": "Klik untuk Menggunakan IAM",
     "ClickToUseID": "Klik untuk Menggunakan ID",
@@ -1247,7 +1262,9 @@
     },
     "EndpointInfo": "Tentang Endpoint",
     "DescEndpoint": "<p>Dalam API ENDPOINT, URL server Web Backend.AI, yang meneruskan permintaan ke Manajer, harus dimasukkan.</p> <p>misalnya, http://127.0.0.1:8090/</p> <p>",
-    "EndpointStartWith": "Titik akhir harus dimulai dengan http:// atau https://."
+    "EndpointStartWith": "Titik akhir harus dimulai dengan http:// atau https://.",
+    "LoginWithE-mailorUsername": "Masuk Dengan Email atau Nama Pengguna",
+    "E-mailorUsername": "Email atau nama pengguna"
   },
   "signup": {
     "SignupBETA": "Pendaftaran (khusus undangan Beta)",
@@ -1379,7 +1396,8 @@
     "ResourcePolicyStillReferenced": "Ada pasangan kunci yang merujuk pada kebijakan sumber daya ini.",
     "SmallerResourceThenImageRequires": "Permintaan sumber daya Anda lebih kecil dari jumlah minimum yang dibutuhkan oleh gambar. Coba lebih banyak sumber daya.",
     "APINotSupported": "API tidak didukung. Memerlukan versi terbaru dari manajer Backend.AI.",
-    "WrongAPIServerAddress": "Alamat server API salah."
+    "WrongAPIServerAddress": "Alamat server API salah.",
+    "ReachedResourceLimitPleaseContact": "Mencapai batas sumber daya Anda. \nSilakan hubungi administrator."
   },
   "maxLength": {
     "64chars": "(maksimum 64 karakter)",
@@ -1408,7 +1426,8 @@
     "RequireOTP": "Tulis OTP."
   },
   "inputLimit": {
-    "4to64chars": "(4 ~ 64 karakter)"
+    "4to64chars": "(4 ~ 64 karakter)",
+    "4to32chars": "(4~32 karakter)"
   },
   "storageHost": {
     "quotaSettings": {

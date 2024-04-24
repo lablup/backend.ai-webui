@@ -386,9 +386,11 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 {t('modelService.StartService')}
               </Button>
             }
-            bodyStyle={{
-              padding: 0,
-              paddingTop: 1,
+            styles={{
+              body: {
+                padding: 0,
+                paddingTop: 1,
+              },
             }}
             // tabProps={{
             //   size: 'middle',

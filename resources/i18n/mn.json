@@ -64,7 +64,8 @@
       "Data&Model": "Өгөгдөл",
       "InvalidBlankPassword": "Нууц үгээ оруулна уу",
       "InvalidBlankEmail": "Имэйлээ оруулна уу",
-      "DisMatchUserEmail": "Хэрэглэгчийн имэйл таарахгүй байна"
+      "DisMatchUserEmail": "Хэрэглэгчийн имэйл таарахгүй байна",
+      "MyEnvironments": "Миний орчин"
     },
     "YouAreOffline": "Та одоо офлайн байна",
     "YouAreOnline": "Та одоо онлайн байна",
@@ -113,7 +114,8 @@
     "IPUEnabled": "IPU NPU идэвхжүүлсэн",
     "ATOMEnabled": "ATOM NPU-г идэвхжүүлсэн",
     "WarboyEnabled": "Warboy NPU идэвхжүүлсэн",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU идэвхжүүлсэн"
   },
   "session": {
     "launcher": {
@@ -293,7 +295,8 @@
       "Prepared": "Бэлтгэсэн",
       "App": "Апп",
       "NoExistingConnectionExample": "Хуулбарлах холболтын жишээ байхгүй.",
-      "SSHConnectionExampleClipboardCopy": "SSH холболтын жишээг санах ой руу хуулсан."
+      "SSHConnectionExampleClipboardCopy": "SSH холболтын жишээг санах ой руу хуулсан.",
+      "ConnectUrlIsNotValid": "Холбох URL буруу байна."
     },
     "TensorboardPath": "TensorBoard-ийн бүртгэлийн лавлах",
     "InputTensorboardPath": "TensorBoard-ийн лавлах лавлах санг оруулна уу. Бүртгэлийн лавлах автоматаар үүсгэхгүй гэдгийг анхаарна уу.",
@@ -323,7 +326,7 @@
     "Architecture": "Архитектур",
     "Validation": {
       "SessionNameRequired": "Сеансын нэрийг оруулах шаардлагатай",
-      "EnterValidSessionName": "Хүчинтэй сессийн нэрийг оруулна уу",
+      "EnterValidSessionName": "Дор хаяж 4 цагаан толгойн үсэг, тоо, зураас, доогуур зураасын хослолыг оруулна уу.",
       "SessionNameAlreadyExist": "Сешн нэр аль хэдийн байна",
       "SluggedStrings": "Залгисан мөрүүд (>3 тэмдэгт)",
       "SessionNameTooLong64": "64 ба түүнээс бага тэмдэгт оруулна уу.",
@@ -381,7 +384,14 @@
     "MEM": "Санах ой",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (санах ой)",
-    "Agents": "Агентууд"
+    "Agents": "Агентууд",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (санах ой)",
+    "ConvertSessionToImage": "Сессийг зураг болгон хөрвүүлэх",
+    "SessionName": "Сеанс нэр",
+    "SessionId": "Сешн Id",
+    "EnvironmentAndVersion": "Хүрээлэн буй орчин ба хувилбар",
+    "Tags": "Шошго"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -790,7 +800,8 @@
     "PasswordsDoNotMatch": "Нууц үг ба баталгаажуулалт таарахгүй байна.",
     "NoChangeMade": "Өөрчлөлт ороогүй",
     "Architecture": "Архитектур",
-    "NoImageToDisplay": "Үзүүлэх зураг байхгүй"
+    "NoImageToDisplay": "Үзүүлэх зураг байхгүй",
+    "CustomizedImageSuccessfullyDeleted": "Тохируулсан зургийг амжилттай устгалаа."
   },
   "resourcePreset": {
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",
@@ -1205,14 +1216,12 @@
     "LeaveService": "Үйлчилгээг орхих",
     "DescConfirmLeave": "Баталгаажуулахын тулд имэйл, нууц үгээ дахин оруулна уу.",
     "Password": "Нууц үг",
-    "E-mail": "И-мэйл",
     "APIKey": "API түлхүүр",
     "SecretKey": "Нууц түлхүүр",
     "Endpoint": "Төгсгөлийн цэг",
     "NotAUser": "Хэрэглэгч биш үү?",
     "LoginAnotherway": "Өөр аргаар нэвтрэхийг хүсч байна уу?",
     "SignUp": "Бүртгүүлэх",
-    "LoginWithE-mail": "И-мэйлээр нэвтрэх",
     "LoginWithIAM": "IAM-тэй нэвтрэх",
     "ClickToUseIAM": "IAM ашиглахын тулд товшино уу",
     "ClickToUseID": "ID ашиглахын тулд товшино уу",
@@ -1240,7 +1249,9 @@
     },
     "EndpointInfo": "Төгсгөлийн цэгийн тухай",
     "DescEndpoint": "<p>API ENDPOINT-д хүсэлтийг Менежер рүү дамжуулдаг Backend.AI вэб серверийн URL-г оруулах ёстой.</p><p>жишээ нь, http://127.0.0.1:8090/</p>",
-    "EndpointStartWith": "Төгсгөлийн цэг нь http:// эсвэл https://-ээр эхлэх ёстой."
+    "EndpointStartWith": "Төгсгөлийн цэг нь http:// эсвэл https://-ээр эхлэх ёстой.",
+    "LoginWithE-mailorUsername": "Имэйл эсвэл хэрэглэгчийн нэрээр нэвтэрнэ үү",
+    "E-mailorUsername": "И-мэйл эсвэл Хэрэглэгчийн нэр"
   },
   "signup": {
     "SignupBETA": "Бүртгүүлэх (зөвхөн бета урилга)",
@@ -1372,7 +1383,8 @@
     "UserNameAlreadyExist": "Хэрэглэгчийн нэр аль хэдийн байна. \nҮүнийг хуулбарлах боломжгүй.",
     "VirtualFolderAlreadyExist": "Ижил нэртэй виртуал хавтас аль хэдийн байна. \nӨөрийн фолдерыг устгах эсвэл урилгаас татгалзаарай.",
     "WrongAPIServerAddress": "API серверийн хаяг буруу байна.",
-    "ResourceLimitExceed": "Нөөцийн хязгаар хэтэрсэн. \nБоломжтой нөөцийн хэмжээг шалгана уу."
+    "ResourceLimitExceed": "Нөөцийн хязгаар хэтэрсэн. \nБоломжтой нөөцийн хэмжээг шалгана уу.",
+    "ReachedResourceLimitPleaseContact": "Таны нөөцийн хязгаарт хүрсэн. \nАдминтай холбогдоно уу."
   },
   "maxLength": {
     "64chars": "(хамгийн ихдээ 64 тэмдэгт)",
@@ -1532,6 +1544,9 @@
     "SearchTableColumn": "Хүснэгтийн багануудыг хайх"
   },
   "setting": {
-    "SearchPlaceholder": "Хайлтын нэр томъёог оруулна уу"
+    "SearchPlaceholder": "Хайлтын нэр томъёог оруулна уу",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Hyperaccel LPU хурдасгуурыг ашигла.",
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Plugin шаардлагатай."
   }
 }

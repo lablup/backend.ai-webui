@@ -1,4 +1,6 @@
+import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { CommittedImage } from '../pages/MyEnvironmentPage';
 import _ from 'lodash';
 
 export const newLineToBrElement = (
@@ -296,4 +298,10 @@ export const isOutsideRangeWithUnits = (
   if (min !== undefined && compareNumberWithUnits(value, min) < 0) return true;
   if (max !== undefined && compareNumberWithUnits(value, max) > 0) return true;
   return false;
+};
+
+export const getImageFullName = (image: Image | CommittedImage) => {
+  return image
+    ? `${image.registry}/${image.name}:${image.tag}@${image.architecture}`
+    : undefined;
 };

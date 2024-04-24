@@ -64,7 +64,8 @@
       "Data&Model": "数据",
       "InvalidBlankPassword": "输入您的密码",
       "InvalidBlankEmail": "输入你的电子邮箱",
-      "DisMatchUserEmail": "用户电子邮件不匹配"
+      "DisMatchUserEmail": "用户电子邮件不匹配",
+      "MyEnvironments": "我的环境"
     },
     "YouAreOffline": "您现在离线",
     "YouAreOnline": "您现在在线",
@@ -113,7 +114,8 @@
     "ATOMEnabled": "已启用 ATOM NPU",
     "WarboyEnabled": "启用 Warboy NPU",
     "DownloadWebUIApp": "下载 Backend.AI Web UI 应用程序",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU 已启用"
   },
   "session": {
     "launcher": {
@@ -262,14 +264,15 @@
       "StartTimeDoesNotApply": "如果未设置开始时间，则不适用。",
       "MiniumAllocation": "最低要求",
       "MiniumAllocationTooltip": "选择所选运行环境的最低要求",
-      "PreviousLauncher": "上一页",
+      "PreviousLauncher": "Classic",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "您正在使用\"{{launcher}}\"会话启动器。",
       "SkipToConfirmAndLaunch": "跳过评论",
       "InteractiveModeDesc": "允许您通过 jupyter notebook、visual studio code 等交互式创建、测试和运行代码。",
       "BatchModeDesc": "您可以使用多个节点和集群运行代码，以扩展您的想法",
       "AddEnvironmentVariable": "添加环境变量",
-      "EnvironmentVariableValueRequired": "请输入数值。"
+      "EnvironmentVariableValueRequired": "请输入数值。",
+      "PleaseCompleteForm": "表格不完整或包含错误。请检查输入内容。"
     },
     "Preparing": "正在准备...",
     "PreparingSession": "正在准备会议...",
@@ -303,7 +306,8 @@
       "Prepared": "准备好了",
       "NoExistingConnectionExample": "无连接示例可复制。",
       "SSHConnectionExampleClipboardCopy": "SSH 连接示例已复制到剪贴板。",
-      "App": "应用程序"
+      "App": "应用程序",
+      "ConnectUrlIsNotValid": "连接 URL 无效。"
     },
     "TensorboardPath": "TensorBoard 的日志目录",
     "InputTensorboardPath": "请输入 TensorBoard 将引用的日志目录。请注意，日志目录不会自动创建..",
@@ -322,7 +326,7 @@
     "Architecture": "建筑学",
     "SessionType": "会话类型",
     "Validation": {
-      "EnterValidSessionName": "输入有效的会话名称",
+      "EnterValidSessionName": "请输入至少 4 个字母、数字、连字符或下划线的组合。",
       "SessionNameRequired": "会话名称为必填项",
       "SluggedStrings": "多字符串（>3 字符）",
       "SessionNameAlreadyExist": "会话名称已存在",
@@ -391,8 +395,15 @@
     "CPU": "中央处理器",
     "MEM": "内存",
     "GPU": "GPU",
-    "GPU(MEM)": "图形处理器（内存）",
-    "Agents": "代理商"
+    "GPU(MEM)": "GPU（内存）",
+    "Agents": "代理商",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU（内存）",
+    "ConvertSessionToImage": "将会话转换为图像",
+    "SessionName": "会话名称",
+    "SessionId": "会话 ID",
+    "EnvironmentAndVersion": "环境及版本",
+    "Tags": "标签"
   },
   "button": {
     "Cancel": "取消",
@@ -428,7 +439,8 @@
     "Clone": "克隆",
     "Config": "配置",
     "Next": "下一页",
-    "Previous": "上一页"
+    "Previous": "上一页",
+    "PushToImage": "将会话推送到自定义镜像"
   },
   "agent": {
     "Endpoint": "端点",
@@ -804,7 +816,8 @@
     "PasswordsDoNotMatch": "密码和确认不匹配。",
     "NoChangeMade": "未作改动",
     "Architecture": "建筑学",
-    "NoImageToDisplay": "无图像显示"
+    "NoImageToDisplay": "无图像显示",
+    "CustomizedImageSuccessfullyDeleted": "自定义图片已成功删除。"
   },
   "resourcePreset": {
     "ResourcePresets": "资源预设",
@@ -1166,7 +1179,10 @@
     "OutOfRange": "超出范围。",
     "Plugins": "插件",
     "OpenSourceCUDAGPUsupport": "开源 CUDA GPU 支持",
-    "ShowOnlyChanged": "仅显示更改"
+    "ShowOnlyChanged": "仅显示更改",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "使用Hyperaccel LPU加速器。",
+    "RequireHyperaccelLPUPlugin": "需要 Backend.AI Hyperaccel LPU 插件。"
   },
   "notification": {
     "SuccessfullyUpdated": "成功更新",
@@ -1219,14 +1235,12 @@
     "LeaveService": "离开服务",
     "DescConfirmLeave": "要确认，请再次输入您的电子邮件和密码。",
     "Password": "密码",
-    "E-mail": "电子邮件",
     "APIKey": "API 密钥",
     "SecretKey": "密钥",
     "Endpoint": "端点",
     "NotAUser": "不是用户？",
     "LoginAnotherway": "想以其他方式登录？",
     "SignUp": "注册",
-    "LoginWithE-mail": "使用电子邮件登录",
     "LoginWithIAM": "使用 IAM 登录",
     "ClickToUseIAM": "单击以使用 IAM",
     "ClickToUseID": "单击以使用 ID",
@@ -1254,7 +1268,9 @@
     "SingleSignOn": {
       "LoginWithSAML": "使用 SAML 登录",
       "LoginWithRealm": "使用 {{ realmName }} 登录"
-    }
+    },
+    "LoginWithE-mailorUsername": "使用电子邮件或用户名登录",
+    "E-mailorUsername": "电子邮件或用户名"
   },
   "signup": {
     "SignupBETA": "注册（仅限 Beta 版邀请）",
@@ -1386,7 +1402,8 @@
     "ResourcePolicyStillReferenced": "存在引用该资源策略的密钥对。",
     "SmallerResourceThenImageRequires": "您的资源请求小于图像要求的最小值。尝试更多资源。",
     "APINotSupported": "不支持 API。需要最新版本的 Backend.AI 管理器。",
-    "WrongAPIServerAddress": "错误的 API 服务器地址。"
+    "WrongAPIServerAddress": "错误的 API 服务器地址。",
+    "ReachedResourceLimitPleaseContact": "已达到您的资源限制。\n请联系管理员。"
   },
   "maxLength": {
     "64chars": "（最多 64 个字符）",
@@ -1510,7 +1527,8 @@
   },
   "OpenVSCodeRemote": "打开本地 Visual Studio 代码",
   "inputLimit": {
-    "4to64chars": "（4 至 64 个字符）"
+    "4to64chars": "（4 至 64 个字符）",
+    "4to32chars": "(4~32个字符)"
   },
   "modelStore": {
     "Description": "描述",

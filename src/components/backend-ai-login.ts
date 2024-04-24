@@ -123,6 +123,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) hideAgents = true;
   @property({ type: Boolean }) enable2FA = false;
   @property({ type: Boolean }) force2FA = false;
+  @property({ type: Boolean }) allowNonAuthTCP = false;
   @property({ type: Array }) singleSignOnVendors: string[] = [];
   @property({ type: String }) ssoRealmName = '';
   @property({ type: Array }) allow_image_list;
@@ -232,6 +233,7 @@ export default class BackendAILogin extends BackendAIPage {
 
         mwc-button {
           background-image: none;
+          --mdc-typography-button-font-size: var(--token-fontSizeSM, 12px);
         }
 
         mwc-button[unelevated] {
@@ -243,10 +245,6 @@ export default class BackendAILogin extends BackendAIPage {
           --mdc-button-outline-width: 2px;
         }
 
-        h3 small {
-          --button-font-size: 12px;
-        }
-
         .title-img {
           height: 35px;
           padding: 15px 0 15px 5px;
@@ -254,7 +252,7 @@ export default class BackendAILogin extends BackendAIPage {
 
         #change-signin-area > #change-signin-message {
           font-size: 12px;
-          margin: 5px 10px;
+          margin: 5px 0px;
           text-align: center;
           font-weight: 400;
         }
@@ -894,6 +892,13 @@ export default class BackendAILogin extends BackendAIPage {
       valueType: 'boolean',
       defaultValue: false,
       value: resourcesConfig?.allowPreferredPort,
+    } as ConfigValueObject) as boolean;
+
+    // Preferred port flag
+    this.allowNonAuthTCP = this._getConfigValueByExists(resourcesConfig, {
+      valueType: 'boolean',
+      defaultValue: false,
+      value: resourcesConfig?.allowNonAuthTCP,
     } as ConfigValueObject) as boolean;
 
     // Max CPU cores per container number
@@ -1796,6 +1801,8 @@ export default class BackendAILogin extends BackendAIPage {
           this.openPortToPublic;
         globalThis.backendaiclient._config.allowPreferredPort =
           this.allowPreferredPort;
+        globalThis.backendaiclient._config.allowNonAuthTCP =
+          this.allowNonAuthTCP;
         globalThis.backendaiclient._config.maxCPUCoresPerContainer =
           this.maxCPUCoresPerContainer;
         globalThis.backendaiclient._config.maxMemoryPerContainer =
@@ -2019,21 +2026,23 @@ export default class BackendAILogin extends BackendAIPage {
           </div>
         </div>
         <div slot="content" class="login-panel intro centered">
-          <h3
+          <div
             class="horizontal center layout"
-            style="margin: 0 25px;font-weight:700;min-height:40px; padding-bottom:10px;"
+            style="margin: 0 25px;font-weight:700;min-height:40px; padding-bottom:10px; justify-content: space-between;"
           >
-            <div>
+            <h3
+              style="flex: 1; white-space: normal; overflow-wrap: break-word; word-break: break-word; margin-right: 10px;"
+            >
               ${this.connection_mode === 'SESSION'
-                ? _t('login.LoginWithE-mail')
+                ? _t('login.LoginWithE-mailorUsername')
                 : _t('login.LoginWithIAM')}
-            </div>
-            <div class="flex"></div>
+            </h3>
             ${this.change_signin_support
               ? html`
                   <div
                     id="change-signin-area"
                     class="vertical center-justified layout"
+                    style="flex: 1; text-align: right;"
                   >
                     <div id="change-signin-message">
                       ${_t('login.LoginAnotherway')}
@@ -2049,7 +2058,7 @@ export default class BackendAILogin extends BackendAIPage {
                   </div>
                 `
               : html``}
-          </h3>
+          </div>
           <div class="login-form">
             <div id="waiting-animation" class="horizontal layout wrap">
               <div class="sk-folding-cube">
@@ -2078,7 +2087,7 @@ export default class BackendAILogin extends BackendAIPage {
                     id="id_user_id"
                     maxlength="64"
                     autocomplete="username"
-                    label="${_t('login.E-mail')}"
+                    label="${_t('login.E-mailorUsername')}"
                     value="${this.user_id}"
                     @keyup="${this._submitIfEnter}"
                   ></mwc-textfield>
@@ -2270,7 +2279,11 @@ export default class BackendAILogin extends BackendAIPage {
                       ></mwc-button>
                     `
                   : html``}
-                <div id="additional-action-area" class="layout horizontal">
+                <div
+                  id="additional-action-area"
+                  class="layout horizontal"
+                  style="align-items: flex-end;"
+                >
                   ${this.signup_support
                     ? html`
                         <div

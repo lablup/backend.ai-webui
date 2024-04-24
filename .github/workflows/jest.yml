@@ -35,3 +35,4 @@ jobs:
         package-manager: npm
         test-script: npm run test
         prnumber: ${{ steps.findPr.outputs.number }}
+        annotations: failed-tests

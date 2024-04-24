@@ -64,7 +64,8 @@
       "Data&Model": "Dữ liệu",
       "InvalidBlankPassword": "Nhập mật khẩu của bạn",
       "InvalidBlankEmail": "Nhập email của bạn",
-      "DisMatchUserEmail": "E-mail của người dùng không khớp"
+      "DisMatchUserEmail": "E-mail của người dùng không khớp",
+      "MyEnvironments": "Môi trường của tôi"
     },
     "YouAreOffline": "Bạn hiện đang ngoại tuyến",
     "YouAreOnline": "Bạn hiện đang trực tuyến",
@@ -113,7 +114,8 @@
     "ATOMEnabled": "Đã bật NPU ATOM",
     "WarboyEnabled": "NPU Warboy đã được kích hoạt",
     "DownloadWebUIApp": "Tải xuống ứng dụng giao diện người dùng web Backend.AI",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Đã bật LPU Hyperaccel"
   },
   "session": {
     "launcher": {
@@ -262,14 +264,15 @@
       "StartTimeDoesNotApply": "Nếu thời gian bắt đầu không được đặt, nó sẽ không được áp dụng.",
       "MiniumAllocation": "Yêu cầu tối thiểu",
       "MiniumAllocationTooltip": "Chọn làm yêu cầu tối thiểu cho môi trường chạy đã chọn",
-      "PreviousLauncher": "Trước",
+      "PreviousLauncher": "Classic",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "Bạn đang sử dụng trình khởi chạy phiên \"{{launcher}}\".",
       "SkipToConfirmAndLaunch": "Bỏ qua để xem xét",
       "InteractiveModeDesc": "cho phép bạn tạo, kiểm tra và chạy mã tương tác thông qua sổ ghi chép jupyter, mã studio trực quan, v.v.",
       "BatchModeDesc": "Bạn có thể chạy mã của mình với nhiều nút",
       "AddEnvironmentVariable": "Thêm biến môi trường",
-      "EnvironmentVariableValueRequired": "Vui lòng nhập một giá trị."
+      "EnvironmentVariableValueRequired": "Vui lòng nhập một giá trị.",
+      "PleaseCompleteForm": "Biểu mẫu không đầy đủ hoặc có lỗi. \nVui lòng kiểm tra đầu vào của bạn."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",
@@ -303,7 +306,8 @@
       "Prepared": "Chuẩn bị",
       "NoExistingConnectionExample": "Không có ví dụ kết nối nào được sao chép.",
       "SSHConnectionExampleClipboardCopy": "Ví dụ về kết nối SSH đã được sao chép vào bảng nhớ tạm.",
-      "App": "Ứng dụng"
+      "App": "Ứng dụng",
+      "ConnectUrlIsNotValid": "URL kết nối không hợp lệ."
     },
     "TensorboardPath": "Thư mục nhật ký cho TensorBoard",
     "InputTensorboardPath": "Vui lòng nhập thư mục nhật ký mà TensorBoard sẽ tham chiếu đến. Lưu ý rằng thư mục nhật ký sẽ không được tạo tự động ..",
@@ -322,7 +326,7 @@
     "Architecture": "Ngành kiến ​​​​trúc",
     "SessionType": "Loại phiên",
     "Validation": {
-      "EnterValidSessionName": "Nhập tên phiên hợp lệ",
+      "EnterValidSessionName": "Vui lòng nhập kết hợp ít nhất 4 chữ cái trong bảng chữ cái, hoặc số, hoặc dấu gạch ngang hoặc dấu gạch dưới.",
       "SessionNameRequired": "Tên phiên là bắt buộc",
       "SluggedStrings": "Chuỗi bị trượt (>3 ký tự)",
       "SessionNameAlreadyExist": "Tên phiên đã tồn tại",
@@ -392,7 +396,14 @@
     "MEM": "Ký ức",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (bộ nhớ)",
-    "Agents": "Đại lý"
+    "Agents": "Đại lý",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (bộ nhớ)",
+    "ConvertSessionToImage": "Chuyển đổi phiên thành hình ảnh",
+    "SessionName": "Tên phiên",
+    "SessionId": "Id phiên",
+    "EnvironmentAndVersion": "Môi trường và phiên bản",
+    "Tags": "Thẻ"
   },
   "button": {
     "Cancel": "Huỷ bỏ",
@@ -428,7 +439,8 @@
     "Clone": "Dòng vô tính",
     "Config": "Cấu hình",
     "Next": "Kế tiếp",
-    "Previous": "Trước"
+    "Previous": "Trước",
+    "PushToImage": "Đẩy phiên sang hình ảnh tùy chỉnh"
   },
   "agent": {
     "Endpoint": "Điểm cuối",
@@ -804,7 +816,8 @@
     "PasswordsDoNotMatch": "Mật khẩu và xác minh mật khẩu không trùng khớp.",
     "NoChangeMade": "Không có thay đổi nào được thực hiện",
     "Architecture": "Ngành kiến ​​​​trúc",
-    "NoImageToDisplay": "Không có hình ảnh để hiển thị"
+    "NoImageToDisplay": "Không có hình ảnh để hiển thị",
+    "CustomizedImageSuccessfullyDeleted": "Hình ảnh tùy chỉnh đã được xóa thành công."
   },
   "resourcePreset": {
     "ResourcePresets": "Cài đặt trước tài nguyên",
@@ -1166,7 +1179,10 @@
     "OutOfRange": "Ngoài phạm vi.",
     "Plugins": "bổ sung",
     "OpenSourceCUDAGPUsupport": "Hỗ trợ GPU CUDA mã nguồn mở",
-    "ShowOnlyChanged": "Chỉ hiển thị các thay đổi"
+    "ShowOnlyChanged": "Chỉ hiển thị các thay đổi",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Sử dụng bộ tăng tốc LPU Hyperaccel.",
+    "RequireHyperaccelLPUPlugin": "Yêu cầu Plugin LPU Backend.AI Hyperaccel."
   },
   "notification": {
     "SuccessfullyUpdated": "Cập nhật thành công",
@@ -1219,14 +1235,12 @@
     "LeaveService": "Rời khỏi dịch vụ",
     "DescConfirmLeave": "Để xác nhận, vui lòng nhập lại E-mail và mật khẩu của bạn.",
     "Password": "Mật khẩu",
-    "E-mail": "E-mail",
     "APIKey": "Mã API",
     "SecretKey": "Chìa khoá bí mật",
     "Endpoint": "Điểm cuối",
     "NotAUser": "Không phải là người dùng?",
     "LoginAnotherway": "Bạn muốn đăng nhập theo cách khác?",
     "SignUp": "Đăng ký",
-    "LoginWithE-mail": "Đăng nhập bằng E-mail",
     "LoginWithIAM": "Đăng nhập bằng IAM",
     "ClickToUseIAM": "Nhấp để sử dụng IAM",
     "ClickToUseID": "Nhấp để sử dụng ID",
@@ -1254,7 +1268,9 @@
     "SingleSignOn": {
       "LoginWithSAML": "Đăng nhập bằng SAML",
       "LoginWithRealm": "Đăng nhập bằng {{realmName }}"
-    }
+    },
+    "LoginWithE-mailorUsername": "Đăng nhập bằng E-mail hoặc tên người dùng",
+    "E-mailorUsername": "Thư điện tử hoặc tên người dùng"
   },
   "signup": {
     "SignupBETA": "Đăng ký (chỉ dành cho lời mời thử nghiệm)",
@@ -1386,7 +1402,8 @@
     "UserHasNoGroup": "Người dùng không có nhóm. \nHãy liên hệ với quản trị viên để sửa nó.",
     "UserNameAlreadyExist": "Tên này đã có người dùng. \nNó không thể bị trùng lặp.",
     "VirtualFolderAlreadyExist": "Một thư mục ảo có cùng tên đã tồn tại. \nXóa thư mục của riêng bạn hoặc từ chối lời mời.",
-    "WrongAPIServerAddress": "Địa chỉ máy chủ API sai."
+    "WrongAPIServerAddress": "Địa chỉ máy chủ API sai.",
+    "ReachedResourceLimitPleaseContact": "Đã đạt đến giới hạn tài nguyên của bạn. \nVui lòng liên hệ với quản trị viên."
   },
   "maxLength": {
     "64chars": "(tối đa 64 ký tự)",
@@ -1510,7 +1527,8 @@
   },
   "OpenVSCodeRemote": "Mở mã Visual Studio cục bộ",
   "inputLimit": {
-    "4to64chars": "(4~64 ký tự)"
+    "4to64chars": "(4~64 ký tự)",
+    "4to32chars": "(4~32 ký tự)"
   },
   "modelStore": {
     "Description": "Sự miêu tả",

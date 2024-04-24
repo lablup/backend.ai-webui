@@ -64,7 +64,8 @@
       "Data&Model": "데이터 & 모델",
       "InvalidBlankEmail": "E-mail을 입력하세요.",
       "InvalidBlankPassword": "패스워드를 입력하세요.",
-      "DisMatchUserEmail": "사용자 E-mail이 일치하지 않습니다."
+      "DisMatchUserEmail": "사용자 E-mail이 일치하지 않습니다.",
+      "MyEnvironments": "나의 실행 환경"
     },
     "YouAreOffline": "오프라인 상태가 되었습니다",
     "YouAreOnline": "온라인 상태가 되었습니다",
@@ -113,7 +114,8 @@
     "IPUEnabled": "IPU NPU 사용중",
     "ATOMEnabled": "ATOM NPU 사용중",
     "WarboyEnabled": "Warboy NPU 사용중",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU 사용중"
   },
   "session": {
     "launcher": {
@@ -267,9 +269,11 @@
       "MiniumAllocation": "최소 요구사항 할당",
       "MiniumAllocationTooltip": "선택한 실행환경에서 요구되는 최소 요구사항으로 선택",
       "NeoSwitchDescription": "현재 \"{{launcher}}\" 세션 런처를 사용중입니다.",
-      "PreviousLauncher": "기존",
+      "PreviousLauncher": "Classic",
       "NeoLauncher": "NEO",
-      "EnvironmentVariableValueRequired": "값을 입력해주세요."
+      "EnvironmentVariableValueRequired": "값을 입력해주세요.",
+      "PleaseCompleteForm": "양식이 완성되지 않았거나 오류가 포함되어 있습니다. 입력 내용을 확인해주세요.",
+      "NeedToCorrectForm": "수정 버튼을 눌러 입력하신 내용을 확인해주세요."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -313,7 +317,8 @@
       "Prepared": "준비되었습니다",
       "App": "앱",
       "NoExistingConnectionExample": "복사할 접속 예제가 없습니다.",
-      "SSHConnectionExampleClipboardCopy": "SSH 접속 예제가 클립보드에 복사되었습니다."
+      "SSHConnectionExampleClipboardCopy": "SSH 접속 예제가 클립보드에 복사되었습니다.",
+      "ConnectUrlIsNotValid": "연결 URL이 유효하지 않습니다."
     },
     "TensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로",
     "InputTensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로를 입력하세요. 로그 디렉토리는 자동으로 생성되지 않는다는 점에 주의하십시오.",
@@ -336,7 +341,7 @@
     "Validation": {
       "SessionNameRequired": "세션 이름을 입력해주세요",
       "SluggedStrings": "최소 4자 이상의 고유문자열로 입력해주세요",
-      "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
+      "EnterValidSessionName": "영문, 숫자, 하이픈, 밑줄 4자 이상 조합하여 입력해주세요.",
       "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다",
       "SessionNameTooLong64": "64자 이하로 입력해주세요.",
       "PleaseFollowSessionNameRule": "최소 4자 이상의 문자, 숫자, '.', '_', '-' 조합으로 입력해주세요.",
@@ -392,7 +397,14 @@
     "MEM": "메모리",
     "GPU": "GPU",
     "GPU(MEM)": "GPU(메모리)",
-    "Agents": "실행노드"
+    "Agents": "실행노드",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU(메모리)",
+    "ConvertSessionToImage": "세션을 이미지로 변환",
+    "SessionName": "세션 이름",
+    "SessionId": "세션 ID",
+    "EnvironmentAndVersion": "환경 및 버전",
+    "Tags": "태그"
   },
   "modelService": {
     "Services": "모델 서비스",
@@ -482,7 +494,8 @@
     "Clone": "복사",
     "Config": "설정",
     "Next": "다음",
-    "Previous": "이전"
+    "Previous": "이전",
+    "PushToImage": "세션을 사용자 정의된 이미지로 푸시"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -893,7 +906,8 @@
     "ProblemOccurred": "문제가 발생했습니다.",
     "PasswordsDoNotMatch": "변경할 비밀번호와 비밀번호 확인란의 값이 일치해야 합니다.",
     "NoChangeMade": "변경된 부분이 없습니다.",
-    "Architecture": "아키텍쳐"
+    "Architecture": "아키텍쳐",
+    "CustomizedImageSuccessfullyDeleted": "사용자 정의된 이미지가 삭제되었습니다."
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
@@ -1252,10 +1266,13 @@
     "RequireIPUPlugin": "Backend.AI IPU 플러그인이 필요합니다.",
     "RequireATOMPlugin": "Backend.AI ATOM 플러그인이 필요합니다.",
     "Warboysupport": "Warboy 지원",
-    "DescWarboysupport": "Backend.AI Warboy 플러그인이 필요합니다.",
+    "DescWarboysupport": "Furiosa Warboy 가속기를 사용합니다.",
     "RequireWarboyPlugin": "Backend.AI Warboy 플러그인이 필요합니다.",
     "OpenSourceCUDAGPUsupport": "오픈소스 CUDA GPU 지원",
-    "ShowOnlyChanged": "수정 사항만 표시"
+    "ShowOnlyChanged": "수정 사항만 표시",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Hyperaccel LPU 가속기를 사용합니다.",
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU 플러그인이 필요합니다."
   },
   "notification": {
     "SuccessfullyUpdated": "성공적으로 수정되었습니다.",
@@ -1308,14 +1325,12 @@
     "LeaveService": "서비스 탈퇴",
     "DescConfirmLeave": "확인을 위해 E-mail 및 비밀번호를 다시 입력해주세요.",
     "Password": "비밀번호",
-    "E-mail": "E-mail",
     "APIKey": "접근키",
     "SecretKey": "비밀키",
     "Endpoint": "엔드포인트",
     "NotAUser": "아직 가입 전이면",
     "LoginAnotherway": "다른 방식으로 로그인하기",
     "SignUp": "가입하기",
-    "LoginWithE-mail": "E-mail로 로그인",
     "LoginWithIAM": "IAM으로 로그인",
     "ClickToUseIAM": "IAM 사용",
     "ClickToUseID": "ID 사용",
@@ -1343,7 +1358,9 @@
       "LoginWithSAML": "SAML 로그인",
       "LoginWithRealm": "{{ realmName }} 로그인"
     },
-    "EndpointStartWith": "http:// 혹은 https:// 로 시작해야 합니다."
+    "EndpointStartWith": "http:// 혹은 https:// 로 시작해야 합니다.",
+    "LoginWithE-mailorUsername": "이메일 또는 사용자 이름으로 로그인",
+    "E-mailorUsername": "이메일 또는 사용자 이름"
   },
   "signup": {
     "SignupBETA": "가입 (베타 초대 대상)",
@@ -1475,7 +1492,8 @@
     "InvalidSignupToken": "잘못된 가입 토큰입니다",
     "CannotSharePrivateAutomountFolder": "정책에 따라 자동마운트 폴더는 공유할 수 없습니다.",
     "FolderSharingNotAvailableToUser": "요청한 사용자는 폴더 공유가 불가능한 상태입니다.",
-    "APINotSupported": "지원하지 않는 API입니다. 최신 버전의 Backend.AI 매니저가 필요합니다."
+    "APINotSupported": "지원하지 않는 API입니다. 최신 버전의 Backend.AI 매니저가 필요합니다.",
+    "ReachedResourceLimitPleaseContact": "자원 제한에 도달했습니다. 관리자에게 문의하세요."
   },
   "maxLength": {
     "64chars": "(최대 길이 64자)",
@@ -1486,7 +1504,8 @@
     "2048chars": "(최대 길이 2048자)"
   },
   "inputLimit": {
-    "4to64chars": "(4~64자)"
+    "4to64chars": "(4~64자)",
+    "4to32chars": "(4~32자)"
   },
   "explorer": {
     "ValueRequired": "값이 필요합니다.",

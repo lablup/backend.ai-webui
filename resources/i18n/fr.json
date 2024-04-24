@@ -64,7 +64,8 @@
       "Data&Model": "Données",
       "InvalidBlankPassword": "Tapez votre mot de passe",
       "InvalidBlankEmail": "Entrer votre Email",
-      "DisMatchUserEmail": "L'e-mail de l'utilisateur ne correspond pas"
+      "DisMatchUserEmail": "L'e-mail de l'utilisateur ne correspond pas",
+      "MyEnvironments": "Mes environnements"
     },
     "YouAreOffline": "Vous êtes maintenant hors ligne",
     "YouAreOnline": "Vous êtes maintenant en ligne",
@@ -113,7 +114,8 @@
     "IPUEnabled": "IPU NPU Activé",
     "ATOMEnabled": "ATOM NPU Activé",
     "WarboyEnabled": "Warboy NPU activé",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU activé"
   },
   "session": {
     "launcher": {
@@ -262,14 +264,15 @@
       "StartTimeDoesNotApply": "Si l'heure de début n'est pas définie, elle ne s'applique pas.",
       "MiniumAllocation": "Exigences minimales",
       "MiniumAllocationTooltip": "Choisir comme exigence minimale pour l'environnement d'exécution sélectionné",
-      "PreviousLauncher": "Précédent",
+      "PreviousLauncher": "Classic",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "Vous utilisez le lanceur de session \"{{launcher}}\".",
       "SkipToConfirmAndLaunch": "Sauter à l'examen",
       "InteractiveModeDesc": "vous permet de créer, de tester et d'exécuter du code de manière interactive via jupyter notebook, visual studio code, etc.",
       "BatchModeDesc": "Vous pouvez exécuter votre code avec plusieurs nœuds et clusters pour faire évoluer votre idée.",
       "AddEnvironmentVariable": "Ajouter des variables d'environnement",
-      "EnvironmentVariableValueRequired": "Veuillez saisir une valeur."
+      "EnvironmentVariableValueRequired": "Veuillez saisir une valeur.",
+      "PleaseCompleteForm": "Le formulaire est incomplet ou contient des erreurs. Veuillez vérifier vos données."
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -303,7 +306,8 @@
       "Prepared": "Préparé",
       "App": "Application",
       "NoExistingConnectionExample": "Aucun exemple de connexion à copier.",
-      "SSHConnectionExampleClipboardCopy": "L'exemple de connexion SSH a été copié dans le presse-papiers."
+      "SSHConnectionExampleClipboardCopy": "L'exemple de connexion SSH a été copié dans le presse-papiers.",
+      "ConnectUrlIsNotValid": "L'URL de connexion n'est pas valide."
     },
     "TensorboardPath": "Répertoire des journaux pour TensorBoard",
     "InputTensorboardPath": "Veuillez saisir le répertoire de journal auquel TensorBoard fera référence. Notez que le répertoire des journaux ne sera pas automatiquement créé.",
@@ -333,7 +337,7 @@
     "Architecture": "Architecture",
     "Validation": {
       "SessionNameRequired": "Le nom de la session est obligatoire",
-      "EnterValidSessionName": "Saisir un nom de session valide",
+      "EnterValidSessionName": "Veuillez saisir une combinaison d'au moins 4 lettres de l'alphabet, ou chiffres, ou trait d'union, ou trait de soulignement.",
       "SessionNameAlreadyExist": "Le nom de la session existe déjà",
       "SluggedStrings": "Chaînes de caractères tronquées (>3 chars)",
       "SessionNameTooLong64": "Veuillez saisir 64 caractères ou moins.",
@@ -392,7 +396,14 @@
     "MEM": "Mémoire",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (mémoire)",
-    "Agents": "Agents"
+    "Agents": "Agents",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (mémoire)",
+    "ConvertSessionToImage": "Convertir une session en image",
+    "SessionName": "Nom de la session",
+    "SessionId": "ID de session",
+    "EnvironmentAndVersion": "Environnement et version",
+    "Tags": "Mots clés"
   },
   "button": {
     "Cancel": "Annuler",
@@ -428,7 +439,8 @@
     "Clone": "Clone",
     "Config": "Config",
     "Next": "Suivant",
-    "Previous": "Précédent"
+    "Previous": "Précédent",
+    "PushToImage": "Pousser la session vers une image personnalisée"
   },
   "agent": {
     "Endpoint": "Point de terminaison",
@@ -804,7 +816,8 @@
     "PasswordsDoNotMatch": "Le mot de passe et la confirmation ne correspondent pas.",
     "NoChangeMade": "Aucune modification n'a été apportée",
     "Architecture": "Architecture",
-    "NoImageToDisplay": "Pas d'images à afficher"
+    "NoImageToDisplay": "Pas d'images à afficher",
+    "CustomizedImageSuccessfullyDeleted": "Image personnalisée supprimée avec succès."
   },
   "resourcePreset": {
     "ResourcePresets": "Préréglages de ressources",
@@ -1166,7 +1179,10 @@
     "RequireWarboyPlugin": "Requiert le plugin Backend.AI Warboy.",
     "Plugins": "Plugins",
     "OpenSourceCUDAGPUsupport": "Prise en charge des GPU CUDA Open Source",
-    "ShowOnlyChanged": "Afficher uniquement les modifications"
+    "ShowOnlyChanged": "Afficher uniquement les modifications",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Utilisez l'accélérateur Hyperaccel LPU.",
+    "RequireHyperaccelLPUPlugin": "Nécessite le plugin LPU Backend.AI Hyperaccel."
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",
@@ -1219,14 +1235,12 @@
     "LeaveService": "Quitter le service",
     "DescConfirmLeave": "Pour confirmer, veuillez saisir à nouveau votre e-mail et votre mot de passe.",
     "Password": "Mot de passe",
-    "E-mail": "E-mail",
     "APIKey": "clé API",
     "SecretKey": "Clef secrète",
     "Endpoint": "Point de terminaison",
     "NotAUser": "Vous n'êtes pas utilisateur ?",
     "LoginAnotherway": "Vous voulez vous connecter autrement ?",
     "SignUp": "S'inscrire",
-    "LoginWithE-mail": "Connectez-vous avec e-mail",
     "LoginWithIAM": "Connectez-vous avec IAM",
     "ClickToUseIAM": "Cliquez pour utiliser IAM",
     "ClickToUseID": "Cliquez pour utiliser l'identifiant",
@@ -1254,7 +1268,9 @@
     },
     "EndpointInfo": "À propos d'Endpoint",
     "DescEndpoint": "Dans API ENDPOINT, l'URL du serveur web Backend.AI, qui transmet la demande au gestionnaire, doit être saisie. </p><p>par exemple, http://127.0.0.1:8090/</p> <p>L'URL du serveur web Backend.AI, qui transmet la demande au gestionnaire, doit être saisie.",
-    "EndpointStartWith": "Le point d'arrivée doit commencer par http:// ou https://."
+    "EndpointStartWith": "Le point d'arrivée doit commencer par http:// ou https://.",
+    "LoginWithE-mailorUsername": "Connectez-vous avec e-mail ou nom d'utilisateur",
+    "E-mailorUsername": "E-mail ou nom d'utilisateur"
   },
   "signup": {
     "SignupBETA": "Inscription (invitation bêta uniquement)",
@@ -1386,7 +1402,8 @@
     "ResourcePolicyStillReferenced": "Il existe des paires de clés qui font référence à cette politique de ressources.",
     "SmallerResourceThenImageRequires": "Votre demande de ressources est inférieure au minimum requis par l'image. Essayez d'autres ressources.",
     "APINotSupported": "L'API n'est pas prise en charge. Nécessite la dernière version du gestionnaire Backend.AI.",
-    "WrongAPIServerAddress": "Mauvaise adresse du serveur API."
+    "WrongAPIServerAddress": "Mauvaise adresse du serveur API.",
+    "ReachedResourceLimitPleaseContact": "Vous avez atteint votre limite de ressources. \nVeuillez contacter l'administrateur."
   },
   "maxLength": {
     "64chars": "(maximum 64 caractères)",
@@ -1415,7 +1432,8 @@
     "RequireOTP": "Écrivez OTP."
   },
   "inputLimit": {
-    "4to64chars": "(4~64 caractères)"
+    "4to64chars": "(4~64 caractères)",
+    "4to32chars": "(4 ~ 32 caractères)"
   },
   "storageHost": {
     "quotaSettings": {

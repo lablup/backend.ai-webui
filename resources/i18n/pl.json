@@ -64,7 +64,8 @@
       "Data&Model": "Dane",
       "InvalidBlankPassword": "Wprowadź hasło",
       "InvalidBlankEmail": "Wprowadź swój email",
-      "DisMatchUserEmail": "Adres e-mail użytkownika nie jest zgodny"
+      "DisMatchUserEmail": "Adres e-mail użytkownika nie jest zgodny",
+      "MyEnvironments": "Moje Środowiska"
     },
     "YouAreOffline": "Jesteś teraz offline",
     "YouAreOnline": "Jesteś teraz online",
@@ -113,7 +114,8 @@
     "ATOMEnabled": "ATOM NPU Enabled",
     "WarboyEnabled": "Warboy NPU Enabled",
     "DownloadWebUIApp": "Pobierz aplikację Backend.AI Web UI",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Włączono funkcję Hyperaccel LPU"
   },
   "session": {
     "launcher": {
@@ -264,14 +266,15 @@
       "StartTimeDoesNotApply": "Jeśli godzina rozpoczęcia nie jest ustawiona, nie ma ona zastosowania.",
       "MiniumAllocation": "Minimalne wymagania",
       "MiniumAllocationTooltip": "Wybierz jako minimalne wymaganie dla wybranego środowiska uruchomieniowego",
-      "PreviousLauncher": "Poprzedni",
+      "PreviousLauncher": "Classic",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "Używasz programu uruchamiającego sesję \"{{launcher}}\".",
       "SkipToConfirmAndLaunch": "Przejdź do recenzji",
       "InteractiveModeDesc": "umożliwia interaktywne tworzenie, testowanie i uruchamianie kodu za pomocą notatnika jupyter, kodu visual studio itp.",
       "BatchModeDesc": "Możesz uruchomić swój kod z wieloma węzłami i klastrami, aby skalować swój pomysł",
       "AddEnvironmentVariable": "Dodaj zmienne środowiskowe",
-      "EnvironmentVariableValueRequired": "Wprowadź wartość."
+      "EnvironmentVariableValueRequired": "Wprowadź wartość.",
+      "PleaseCompleteForm": "Formularz jest niekompletny lub zawiera błędy. Sprawdź wprowadzone dane."
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",
@@ -305,7 +308,8 @@
       "Prepared": "Przygotowany",
       "NoExistingConnectionExample": "Brak przykładu połączenia do skopiowania.",
       "SSHConnectionExampleClipboardCopy": "Przykład połączenia SSH został skopiowany do schowka.",
-      "App": "Aplikacja"
+      "App": "Aplikacja",
+      "ConnectUrlIsNotValid": "Adres URL połączenia jest nieprawidłowy."
     },
     "TensorboardPath": "Katalog dziennika dla TensorBoard",
     "InputTensorboardPath": "Wprowadź katalog dziennika, do którego będzie się odwoływać TensorBoard. Pamiętaj, że katalog dziennika nie zostanie utworzony automatycznie.",
@@ -324,7 +328,7 @@
     "Architecture": "Architektura",
     "SessionType": "SessionType",
     "Validation": {
-      "EnterValidSessionName": "Wprowadź prawidłową nazwę sesji",
+      "EnterValidSessionName": "Wprowadź kombinację co najmniej 4 liter alfabetu, cyfr, łącznika lub podkreślenia.",
       "SessionNameRequired": "Nazwa sesji jest wymagana",
       "SluggedStrings": "Ucięte ciągi znaków (>3 znaki)",
       "SessionNameAlreadyExist": "Nazwa sesji już istnieje",
@@ -394,7 +398,14 @@
     "MEM": "Pamięć",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (pamięć)",
-    "Agents": "Agenci"
+    "Agents": "Agenci",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU (pamięć)",
+    "ConvertSessionToImage": "Konwertuj sesję na obraz",
+    "SessionName": "Nazwa sesji",
+    "SessionId": "Identyfikator sesji",
+    "EnvironmentAndVersion": "Środowisko i wersja",
+    "Tags": "Tagi"
   },
   "button": {
     "Cancel": "Anuluj",
@@ -430,7 +441,8 @@
     "Clone": "Klon",
     "Config": "Konfiguracja",
     "Next": "Następny",
-    "Previous": "Poprzedni"
+    "Previous": "Poprzedni",
+    "PushToImage": "Prześlij sesję do spersonalizowanego obrazu"
   },
   "agent": {
     "Endpoint": "Punkt końcowy",
@@ -806,7 +818,8 @@
     "PasswordsDoNotMatch": "Hasło i Potwierdzenie nie pasują.",
     "NoChangeMade": "Nie wprowadzono żadnych zmian",
     "Architecture": "Architektura",
-    "NoImageToDisplay": "Brak obrazów do wyświetlenia"
+    "NoImageToDisplay": "Brak obrazów do wyświetlenia",
+    "CustomizedImageSuccessfullyDeleted": "Dostosowany obraz został pomyślnie usunięty."
   },
   "resourcePreset": {
     "ResourcePresets": "Predefiniowane ustawienia zasobów",
@@ -1168,7 +1181,10 @@
     "OutOfRange": "Poza zasięgiem.",
     "Plugins": "Wtyczki",
     "OpenSourceCUDAGPUsupport": "Obsługa procesorów graficznych Open Source CUDA",
-    "ShowOnlyChanged": "Wyświetl tylko zmiany"
+    "ShowOnlyChanged": "Wyświetl tylko zmiany",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Użyj akceleratora Hyperaccel LPU.",
+    "RequireHyperaccelLPUPlugin": "Wymaga wtyczki Backend.AI Hyperaccel LPU."
   },
   "notification": {
     "SuccessfullyUpdated": "Pomyślnie zaktualizowano",
@@ -1221,14 +1237,12 @@
     "LeaveService": "Opuść usługę",
     "DescConfirmLeave": "Aby potwierdzić, wpisz ponownie swój adres e-mail i hasło.",
     "Password": "Hasło",
-    "E-mail": "E-mail",
     "APIKey": "Klucz API",
     "SecretKey": "Sekretny klucz",
     "Endpoint": "Punkt końcowy",
     "NotAUser": "Nie jesteś użytkownikiem?",
     "LoginAnotherway": "Chcesz się zalogować w inny sposób?",
     "SignUp": "Zapisz się",
-    "LoginWithE-mail": "Zaloguj się przez e-mail",
     "LoginWithIAM": "Zaloguj się przez IAM",
     "ClickToUseIAM": "Kliknij, aby użyć uprawnień",
     "ClickToUseID": "Kliknij, aby użyć identyfikatora",
@@ -1256,7 +1270,9 @@
     "SingleSignOn": {
       "LoginWithSAML": "Logowanie za pomocą SAML",
       "LoginWithRealm": "Zaloguj się za pomocą {{ realmName }}."
-    }
+    },
+    "LoginWithE-mailorUsername": "Zaloguj się za pomocą adresu e-mail lub nazwy użytkownika",
+    "E-mailorUsername": "Email lub nazwa użytkownika"
   },
   "signup": {
     "SignupBETA": "Rejestracja (tylko zaproszenie do wersji beta)",
@@ -1388,7 +1404,8 @@
     "ResourcePolicyStillReferenced": "Istnieją pary kluczy, które odwołują się do tej polityki zasobów.",
     "SmallerResourceThenImageRequires": "Żądanie zasobów jest mniejsze niż minimum wymagane przez obraz. Spróbuj użyć więcej zasobów.",
     "APINotSupported": "Interfejs API nie jest obsługiwany. Wymaga najnowszej wersji menedżera Backend.AI.",
-    "WrongAPIServerAddress": "Nieprawidłowy adres serwera API."
+    "WrongAPIServerAddress": "Nieprawidłowy adres serwera API.",
+    "ReachedResourceLimitPleaseContact": "Osiągnięto limit zasobów. \nSkontaktuj się z administratorem."
   },
   "maxLength": {
     "64chars": "(maksymalnie 64 znaki)",
@@ -1512,7 +1529,8 @@
   },
   "OpenVSCodeRemote": "Otwórz lokalny kod Visual Studio",
   "inputLimit": {
-    "4to64chars": "(4~64 znaki)"
+    "4to64chars": "(4~64 znaki)",
+    "4to32chars": "(4~32 znaki)"
   },
   "modelStore": {
     "Description": "Opis",
