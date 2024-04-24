@@ -408,11 +408,13 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               ? [
                   {
                     label: t('modelService.ModelDefinitionFilename'),
-                    children: (
+                    children: endpoint?.model_definition_path ? (
                       <Typography.Text code copyable>
-                        {endpoint?.model_mount_destiation || '/models'}/
-                        {endpoint?.model_definition_path}
+                        `${endpoint?.model_mount_destiation || '/models'}/$
+                        {endpoint?.model_definition_path}`
                       </Typography.Text>
+                    ) : (
+                      <Typography.Text disabled>default</Typography.Text>
                     ),
                   },
                 ]
