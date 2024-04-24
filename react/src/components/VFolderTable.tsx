@@ -169,12 +169,18 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
         keypair_resource_policy_name: keypair?.resource_policy || '',
       },
       {
-        fetchPolicy: 'store-and-network',
+        fetchPolicy: 'network-only',
       },
     );
 
-  const allowedVFolderHostsByDomain = JSON.parse(domain?.allowed_vfolder_hosts || '{}');
-  const allowedVFolderHostsByGroup = JSON.parse(group?.allowed_vfolder_hosts || '{}');
+  console.log(domain);
+
+  const allowedVFolderHostsByDomain = JSON.parse(
+    domain?.allowed_vfolder_hosts || '{}',
+  );
+  const allowedVFolderHostsByGroup = JSON.parse(
+    group?.allowed_vfolder_hosts || '{}',
+  );
   const allowedVFolderHostsByKeypairResourcePolicy = JSON.parse(
     keypair_resource_policy?.allowed_vfolder_hosts || '{}',
   );
@@ -185,12 +191,9 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     allowedVFolderHostsByKeypairResourcePolicy,
   );
   // only allow mount if volume permission has 'mount-in-session'
-  const mountAllowedVolumes = Object.keys(mergedVFolderPermissions)
-    .filter((volume) =>
-      mergedVFolderPermissions[volume].includes('mount-in-session'),
-    )
-    .map((volume) => volume);
-
+  const mountAllowedVolumes = Object.keys(mergedVFolderPermissions).filter(
+    (volume) => mergedVFolderPermissions[volume].includes('mount-in-session'),
+  );
   // Need to filter allFolderList from allowed vfolder
   const filteredFolderListByPermission = allFolderList?.filter((folder) =>
     mountAllowedVolumes.includes(folder.host),
