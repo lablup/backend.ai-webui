@@ -117,6 +117,7 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
     <BAIModal
       destroyOnClose
       open={open}
+      maskClosable={false}
       onOk={handleOnclick}
       onCancel={() => setOpen(false)}
       afterClose={() => dispatchEvent('cancel', null)}
