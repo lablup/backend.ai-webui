@@ -3,7 +3,6 @@ import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider
 import InputNumberWithSlider from './InputNumberWithSlider';
 import { Form, theme } from 'antd';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 export interface imageResourceProps {
   key: string;
@@ -16,7 +15,7 @@ interface Props extends Omit<imageResourceProps, 'key'> {
 
 interface resourceInfoType {
   [key: string]: {
-    label: string;
+    label?: string;
     inputNumberProps?: any;
     sliderProps?: any;
     min: string;
@@ -25,47 +24,45 @@ interface resourceInfoType {
     dynamicUnitChange?: boolean;
   };
 }
+const DEFAULT_PROCESS_UNIT = { min: '0', max: '8' };
+const MEMORY_UNIT = { min: '0m', max: '512g' };
+const ACCELATOR_UNIT = { min: '0', max: '4' };
 
 const ImageResourceFormItem: React.FC<Props> = ({ name, min, max }) => {
-  const { t } = useTranslation();
   const { token } = theme.useToken();
 
   const [resourceSlotsDetails] = useResourceSlotsDetails();
-  console.log(resourceSlotsDetails);
+
   const resourceInfo: resourceInfoType = {
     cpu: {
-      label: 'CPU',
+      label: resourceSlotsDetails?.cpu.description,
       inputNumberProps: {
-        addonAfter: t('session.launcher.Core'),
+        addonAfter: resourceSlotsDetails?.cpu.display_unit,
       },
       sliderProps: {
         marks: { 0: '0', 8: '8' },
       },
-      min: '0',
-      max: '8',
       step: 1,
+      ...DEFAULT_PROCESS_UNIT,
     },
     mem: {
-      label: 'MEM',
+      label: resourceSlotsDetails?.mem.description,
       inputNumberProps: {
-        addonBefore: 'Mem',
+        addonBefore: resourceSlotsDetails?.mem.human_readable_name,
       },
-      min: '0m',
-      max: '512g',
       dynamicUnitChange: true,
+      ...MEMORY_UNIT,
     },
     cuda_device: {
-      label: 'CUDA GPU',
-      min: '0',
-      max: '7',
+      label: resourceSlotsDetails?.['cuda.device'].description,
       sliderProps: {
-        marks: { 0: '0', 7: '7' },
+        marks: { 0: '0', 8: '8' },
       },
+      step: 1,
+      ...DEFAULT_PROCESS_UNIT,
     },
     cuda_shares: {
-      label: 'CUDA FGPU',
-      min: '0',
-      max: '8',
+      label: resourceSlotsDetails?.['cuda.shares'].description,
       sliderProps: {
         marks: {
           0.1: '0.1',
@@ -77,55 +74,55 @@ const ImageResourceFormItem: React.FC<Props> = ({ name, min, max }) => {
           8.0: '8.0',
         },
       },
-      step: null,
+      ...DEFAULT_PROCESS_UNIT,
     },
     rocm_devide: {
-      label: 'ROCm GPU',
-      min: '0',
-      max: '7',
+      label: resourceSlotsDetails?.['rocm.device'].description,
       sliderProps: {
         marks: { 0: '0', 4: '4' },
       },
+      step: 1,
+      ...ACCELATOR_UNIT,
     },
     tpu_device: {
-      label: 'TPU',
-      min: '0',
-      max: '4',
+      label: resourceSlotsDetails?.['tpu.device'].description,
       sliderProps: {
         marks: { 0: '0', 4: '4' },
       },
+      step: 1,
+      ...ACCELATOR_UNIT,
     },
     ipu_device: {
-      label: 'IPU',
-      min: '0',
-      max: '4',
+      label: resourceSlotsDetails?.['ipu.device'].description,
       sliderProps: {
         marks: { 0: '0', 4: '4' },
       },
+      step: 1,
+      ...ACCELATOR_UNIT,
     },
     atom_device: {
-      label: 'ATOM',
-      min: '0',
-      max: '4',
+      label: resourceSlotsDetails?.atom.description,
       sliderProps: {
         marks: { 0: '0', 4: '4' },
       },
+      step: 1,
+      ...ACCELATOR_UNIT,
     },
     warboy_device: {
-      label: 'Warboy',
-      min: '0',
-      max: '4',
+      label: resourceSlotsDetails?.warboy.description,
       sliderProps: {
         marks: { 0: '0', 4: '4' },
       },
+      step: 1,
+      ...ACCELATOR_UNIT,
     },
     hyperaccel_lpu_device: {
-      label: 'Hyperaccel LPU',
-      min: '0',
-      max: '5',
+      label: resourceSlotsDetails?.['hyperaccel-lpu'].description,
       sliderProps: {
-        marks: { 0: '0', 5: '5' },
+        marks: { 0: '0', 4: '4' },
       },
+      step: 1,
+      ...ACCELATOR_UNIT,
     },
   };
 
@@ -133,22 +130,21 @@ const ImageResourceFormItem: React.FC<Props> = ({ name, min, max }) => {
     <Form.Item
       name={[name]}
       //@ts-ignore
-      label={resourceInfo[name]?.label}
+      label={resourceInfo[name]?.label ?? name.toUpperCase()}
       initialValue={min}
       style={{ marginBottom: token.marginXXS }}
     >
       {/* @ts-ignore */}
       {resourceInfo[name]?.dynamicUnitChange ? (
         <DynamicUnitInputNumberWithSlider
-          max={'512g'}
-          min={'0m'}
-          addonBefore={'MEM'}
+          addonBefore={resourceInfo[name]?.inputNumberProps.addonBefore}
+          {...MEMORY_UNIT}
         />
       ) : (
         <InputNumberWithSlider
           min={parseFloat(resourceInfo[name]?.min)}
           max={parseFloat(resourceInfo[name]?.max)}
-          step={resourceInfo[name]?.step}
+          step={resourceInfo[name]?.step ?? null}
           inputNumberProps={resourceInfo[name]?.inputNumberProps}
           sliderProps={resourceInfo[name]?.sliderProps}
         />

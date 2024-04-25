@@ -74,7 +74,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({ type: Object }) _grid = Object();
   @property({ type: String }) servicePortsMsg = '';
   @property({ type: Object }) _range = {
-    cpu: ['1', '2', '3', '4', '5', '6', '7', '8'],
+    /** deprecated **/ cpu: ['1', '2', '3', '4', '5', '6', '7', '8'],
     mem: [
       '64MB',
       '128MB',
