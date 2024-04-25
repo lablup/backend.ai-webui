@@ -98,8 +98,6 @@ const ResourceAllocationFormItems: React.FC<
     form,
     preserve: true,
   });
-
-  useResourceSlotsDetails(currentResourceGroup);
   const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
     useResourceLimitAndRemaining({
       currentProjectName: currentProject.name,
