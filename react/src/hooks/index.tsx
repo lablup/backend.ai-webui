@@ -163,6 +163,7 @@ export const useSuspendedBackendaiClient = () => {
     };
     [key: string]: any;
     _config: BackendAIConfig;
+    isManagerVersionCompatibleWith: (version: string) => boolean;
   };
 };
 

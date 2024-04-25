@@ -4,7 +4,7 @@ import {
   iSizeToSize,
 } from '../helper';
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
-import { useResourceSlots } from '../hooks/backendai';
+import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
@@ -98,6 +98,8 @@ const ResourceAllocationFormItems: React.FC<
     form,
     preserve: true,
   });
+
+  useResourceSlotsDetails(currentResourceGroup);
   const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
     useResourceLimitAndRemaining({
       currentProjectName: currentProject.name,

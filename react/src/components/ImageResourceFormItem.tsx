@@ -1,3 +1,4 @@
+import { useResourceSlotsDetails } from '../hooks/backendai';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import InputNumberWithSlider from './InputNumberWithSlider';
 import { Form, theme } from 'antd';
@@ -29,6 +30,8 @@ const ImageResourceFormItem: React.FC<Props> = ({ name, min, max }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
+  const [resourceSlotsDetails] = useResourceSlotsDetails();
+  console.log(resourceSlotsDetails);
   const resourceInfo: resourceInfoType = {
     cpu: {
       label: 'CPU',
