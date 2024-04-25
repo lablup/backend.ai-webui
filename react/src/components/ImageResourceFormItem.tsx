@@ -63,56 +63,56 @@ const ImageResourceFormItem: React.FC<ImageResourceFormItemProps> = ({
     cuda_device: {
       label: resourceSlotsDetails?.['cuda.device'].description,
       inputNumberProps: {
-        addonAfter: resourceSlotsDetails?.cpu.display_unit,
+        addonAfter: resourceSlotsDetails?.['cuda.device'].display_unit,
       },
       steps: ['0', '1', '2', '3', '4', '5', '6', '7', '8'],
     },
     cuda_shares: {
       label: resourceSlotsDetails?.['cuda.shares'].description,
       inputNumberProps: {
-        addonAfter: resourceSlotsDetails?.cpu.display_unit,
+        addonAfter: resourceSlotsDetails?.['cuda.shares'].display_unit,
       },
       steps: ['0.1', '0.2', '0.5', '1.0', '2.0', '4.0', '8.0'],
     },
     rocm_devide: {
       label: resourceSlotsDetails?.['rocm.device'].description,
       inputNumberProps: {
-        addonAfter: resourceSlotsDetails?.cpu.display_unit,
+        addonAfter: resourceSlotsDetails?.['rocm.device'].display_unit,
       },
       steps: ['0', '1', '2', '3', '4', '5', '6', '7', '8'],
     },
     tpu_device: {
       label: resourceSlotsDetails?.['tpu.device'].description,
       inputNumberProps: {
-        addonAfter: resourceSlotsDetails?.cpu.display_unit,
+        addonAfter: resourceSlotsDetails?.['tpu.device'].display_unit,
       },
       steps: ['0', '1', '2', '3', '4'],
     },
     ipu_device: {
       label: resourceSlotsDetails?.['ipu.device'].description,
       inputNumberProps: {
-        addonAfter: resourceSlotsDetails?.cpu.display_unit,
+        addonAfter: resourceSlotsDetails?.['ipu.device'].display_unit,
       },
       steps: ['0', '1', '2', '3', '4'],
     },
     atom_device: {
       label: resourceSlotsDetails?.atom.description,
       inputNumberProps: {
-        addonAfter: resourceSlotsDetails?.cpu.display_unit,
+        addonAfter: resourceSlotsDetails?.atom.display_unit,
       },
       steps: ['0', '1', '2', '3', '4'],
     },
     warboy_device: {
       label: resourceSlotsDetails?.warboy.description,
       inputNumberProps: {
-        addonAfter: resourceSlotsDetails?.cpu.display_unit,
+        addonAfter: resourceSlotsDetails?.warboy.display_unit,
       },
       steps: ['0', '1', '2', '3', '4'],
     },
     hyperaccel_lpu_device: {
       label: resourceSlotsDetails?.['hyperaccel-lpu'].description,
       inputNumberProps: {
-        addonAfter: resourceSlotsDetails?.cpu.display_unit,
+        addonAfter: resourceSlotsDetails?.['hyperaccel-lpu'].display_unit,
       },
       steps: ['0', '1', '2', '3', '4'],
     },
