@@ -1,31 +1,31 @@
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import Flex from './Flex';
-import NonLinearSlider from './NonLinearSlider';
+import NonLinearSlider, { StepType } from './NonLinearSlider';
 import { Form, Input, theme } from 'antd';
 import React from 'react';
-
-export interface imageResourceProps {
-  key: string;
-  min: string | null;
-  max: string | null;
-}
-interface Props extends Omit<imageResourceProps, 'key'> {
-  name: string;
-}
 
 interface resourceInfoType {
   [key: string]: {
     label?: string;
     inputNumberProps?: any;
     sliderProps?: any;
-    min?: string;
-    max?: string;
-    steps?: any;
-    dynamicUnitChange?: boolean;
+    steps: StepType[];
   };
 }
+export interface imageResourceProps {
+  key: string;
+  min: string | null;
+  max: string | null;
+}
+interface ImageResourceFormItemProps extends Omit<imageResourceProps, 'key'> {
+  name: string;
+}
 
-const ImageResourceFormItem: React.FC<Props> = ({ name, min, max }) => {
+const ImageResourceFormItem: React.FC<ImageResourceFormItemProps> = ({
+  name,
+  min,
+  max,
+}) => {
   const { token } = theme.useToken();
 
   const [resourceSlotsDetails] = useResourceSlotsDetails();
@@ -59,7 +59,6 @@ const ImageResourceFormItem: React.FC<Props> = ({ name, min, max }) => {
         '256g',
         '512g',
       ],
-      dynamicUnitChange: true,
     },
     cuda_device: {
       label: resourceSlotsDetails?.['cuda.device'].description,
@@ -145,9 +144,7 @@ const ImageResourceFormItem: React.FC<Props> = ({ name, min, max }) => {
                 style={{ flex: 2 }}
                 steps={resourceInfo[name]?.steps}
                 value={getFieldValue([name])}
-                onChange={(value) =>
-                  setFieldsValue({ [name]: value.toString() })
-                }
+                onChange={(value) => setFieldsValue({ [name]: value })}
               />
             </>
           )}

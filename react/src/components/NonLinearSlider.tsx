@@ -3,7 +3,7 @@ import { Slider, SliderSingleProps } from 'antd';
 import _, { isNumber } from 'lodash';
 import React from 'react';
 
-type StepType =
+export type StepType =
   | {
       value: number | string;
       label: string;
