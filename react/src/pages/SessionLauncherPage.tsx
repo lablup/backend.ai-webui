@@ -330,10 +330,12 @@ const SessionLauncherPage = () => {
     }
   }, [currentStep, form, setFinalStepLastValidateTime, steps.length]);
 
-  const startSession = () => {
-    // TODO: support inference mode, support import mode
-
+  const launchButtonHandler = () => {
     setIsStartingSession(true);
+  };
+
+  const startSession = async () => {
+    // TODO: support inference mode, support import mode
     form
       .validateFields()
       .then(async (values) => {
@@ -560,6 +562,14 @@ const SessionLauncherPage = () => {
         setIsStartingSession(false);
       });
   };
+
+  useEffect(() => {
+    if (isStartingSession) {
+      startSession();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isStartingSession, form]);
+
   return (
     <Flex
       direction="column"
@@ -1604,7 +1614,7 @@ const SessionLauncherPage = () => {
                           type="primary"
                           icon={<PlayCircleOutlined />}
                           disabled={hasError}
-                          onClick={startSession}
+                          onClick={launchButtonHandler}
                           loading={isStartingSession}
                         >
                           {t('session.launcher.Launch')}
