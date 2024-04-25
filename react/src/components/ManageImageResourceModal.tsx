@@ -62,7 +62,6 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
 
   const handleOnclick = async () => {
     const fieldsValue = await form.getFieldsValue();
-    console.log(fieldsValue);
     const INPUT: ResourceLimitInput[] = Object.entries(fieldsValue).map(
       ([key, value]: [string, any]) => ({
         key,
