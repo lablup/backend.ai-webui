@@ -16,7 +16,7 @@ interface NonLinearSliderProps
   value?: number | string;
   defaultValue?: number | string;
   showAllMarkLabels?: boolean;
-  onChange?: (value: number | string) => void;
+  onChange?: (value: number | string, label: string) => void;
 }
 const NonLinearSlider: React.FC<NonLinearSliderProps> = ({
   value,
@@ -68,10 +68,14 @@ const NonLinearSlider: React.FC<NonLinearSliderProps> = ({
             return normalizedSteps[value]?.label;
           }
         },
+        ...sliderProps.tooltip,
       }}
       max={normalizedSteps.length - 1}
       onChange={(rawValue) => {
-        setControlledValue(normalizedSteps[rawValue]?.value);
+        setControlledValue(
+          normalizedSteps[rawValue]?.value,
+          normalizedSteps[rawValue]?.label,
+        );
       }}
     />
   );
