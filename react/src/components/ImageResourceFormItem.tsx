@@ -136,15 +136,16 @@ const ImageResourceFormItem: React.FC<ImageResourceFormItemProps> = ({
             <>
               <Input
                 style={{ flex: 1 }}
-                {...resourceInfo[name]?.inputNumberProps}
                 value={getFieldValue([name])}
                 onChange={(e) => setFieldsValue({ [name]: e.target.value })}
+                {...resourceInfo[name]?.inputNumberProps}
               />
               <NonLinearSlider
                 style={{ flex: 2 }}
                 steps={resourceInfo[name]?.steps}
                 value={getFieldValue([name])}
                 onChange={(value) => setFieldsValue({ [name]: value })}
+                {...resourceInfo[name]?.sliderProps}
               />
             </>
           )}
