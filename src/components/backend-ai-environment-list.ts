@@ -49,16 +49,18 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({ type: Object }) resourceBroker;
   @property({ type: Array }) allowed_registries;
   @property({ type: Array }) servicePorts;
-  @property({ type: Number }) selectedIndex = 0;
+  @property({ type: Number }) selectedIndex = 0; /** deprecated **/
   @property({ type: Array }) selectedImages = [];
-  @property({ type: Boolean }) _cuda_gpu_disabled = false;
-  @property({ type: Boolean }) _cuda_fgpu_disabled = false;
-  @property({ type: Boolean }) _rocm_gpu_disabled = false;
-  @property({ type: Boolean }) _tpu_disabled = false;
-  @property({ type: Boolean }) _ipu_disabled = false;
-  @property({ type: Boolean }) _atom_disabled = false;
-  @property({ type: Boolean }) _warboy_disabled = false;
-  @property({ type: Boolean }) _hyperaccel_lpu_disabled = false;
+  @property({ type: Object }) modifiedImage = Object();
+  @property({ type: Boolean }) _cuda_gpu_disabled = false; /** deprecated **/
+  @property({ type: Boolean }) _cuda_fgpu_disabled = false; /** deprecated **/
+  @property({ type: Boolean }) _rocm_gpu_disabled = false; /** deprecated **/
+  @property({ type: Boolean }) _tpu_disabled = false; /** deprecated **/
+  @property({ type: Boolean }) _ipu_disabled = false; /** deprecated **/
+  @property({ type: Boolean }) _atom_disabled = false; /** deprecated **/
+  @property({ type: Boolean }) _warboy_disabled = false; /** deprecated **/
+  @property({ type: Boolean }) _hyperaccel_lpu_disabled =
+    false; /** deprecated **/
   @property({ type: Object }) alias = Object();
   @property({ type: Object }) indicator = Object();
   @property({ type: Array }) installImageNameList;
@@ -134,6 +136,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.images = [];
     this.allowed_registries = [];
     this.servicePorts = [];
+    this.modifiedImage = {};
   }
 
   static get styles(): CSSResultGroup {
@@ -624,6 +627,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   /**
    * Modify images of cpu, memory, cuda-gpu, cuda-fgpu, rocm-gpu and tpu.
    */
+
+  /** deprecated **/
   modifyImage() {
     const cpu = this.modifyImageCpu.label;
     const mem = this.modifyImageMemory.label;
@@ -885,6 +890,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    *
    * @param {object} resource_limits
    */
+  /** deprecated **/
+
   _setPulldownDefaults(resource_limits) {
     this._cuda_gpu_disabled =
       resource_limits.filter((e) => e.key === 'cuda_device').length === 0;
@@ -1044,14 +1051,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Decode backend.ai service ports.
    */
   _decodeServicePort() {
-    if (
-      this.images[this.selectedIndex].labels['ai.backend.service-ports'] === ''
-    ) {
+    if (this.modifiedImage.labels['ai.backend.service-ports'] === '') {
       this.servicePorts = [];
     } else {
-      this.servicePorts = this.images[this.selectedIndex].labels[
-        'ai.backend.service-ports'
-      ]
+      this.servicePorts = this.modifiedImage.labels['ai.backend.service-ports']
         .split(',')
         .map((e): { app: string; protocol: string; port: number } => {
           const sp = e.split(':');
@@ -1251,13 +1254,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             class="fg controls-running blue"
             icon="settings"
             @click=${() => {
-              this.selectedIndex = rowData.index;
-              this._setPulldownDefaults(
-                this.images[this.selectedIndex].resource_limits,
-              );
+              this.modifiedImage = rowData.item;
               this.openManageImageResourceModal = true;
-              console.log(this.images[this.selectedIndex].resource_limits);
-              // this._launchDialogById('#modify-image-dialog');
               this.requestUpdate();
             }}
           ></mwc-icon-button>
@@ -1265,7 +1263,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             class="fg controls-running pink"
             icon="apps"
             @click=${() => {
-              this.selectedIndex = rowData.index;
+              this.modifiedImage = rowData.item;
               this._decodeServicePort();
               this.openManageAppModal = true;
               this.requestUpdate();
@@ -1516,6 +1514,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           message="${_text('environment.NoImageToDisplay')}"
         ></backend-ai-list-status>
       </div>
+      /** deprecated **/
       <backend-ai-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('environment.ModifyImageResourceLimit')}</span>
         <div slot="content">
@@ -1798,7 +1797,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ? html`
             <backend-ai-react-manage-app-dialog
               value="${JSON.stringify({
-                image: this.images[this.selectedIndex],
+                image: this.modifiedImage,
                 servicePorts: this.servicePorts,
               })}"
               @cancel="${() => (this.openManageAppModal = false)}"
@@ -1812,7 +1811,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ? html`
             <backend-ai-react-manage-resource-dialog
               value="${JSON.stringify({
-                image: this.images[this.selectedIndex],
+                image: this.modifiedImage,
               })}"
               @cancel="${() => (this.openManageImageResourceModal = false)}"
               @ok="${() => (
