@@ -1,6 +1,7 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useCurrentProjectValue, useUpdatableState } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useShadowRoot } from './DefaultProviders';
 import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
@@ -58,6 +59,8 @@ export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
   filter?: (vFolder: VFolder) => boolean;
   rowKey: string | number;
 }
+
+export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/-]*$/;
 
 const VFolderTable: React.FC<VFolderTableProps> = ({
   filter,
@@ -140,39 +143,32 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       return !searchKey || vf.name.includes(searchKey);
     })
     .value();
-  // const { token } = theme.useToken();
-  // const searchInput = useRef<InputRef>(null);
 
-  // TODO: set defaults
-  // useUpdateEffect(() => {
-  //   setSelectedRowKeys(defaultSelectedKeys || []);
-  // }, [defaultSelectedKeys]);
+  const mapAliasToPath = useEventNotStable(
+    (name: VFolderKey, input?: string) => {
+      if (_.isEmpty(input)) {
+        return `${aliasBasePath}${name}`;
+      } else if (input?.startsWith('/')) {
+        return input;
+      } else {
+        return `${aliasBasePath}${input}`;
+      }
+    },
+  );
 
-  const handleAliasUpdate = (e?: any) => {
-    e?.preventDefault();
-    internalForm
-      .validateFields()
-      .then((values) => {})
-      .catch(() => {})
-      .finally(() => {
-        setAliasMap(
-          _.mapValues(
-            _.pickBy(internalForm.getFieldsValue(), (v) => !!v), //remove empty
-            (v, k) => mapAliasToPath(k, v), // add alias base path
-          ),
-        );
-      });
-  };
+  const handleAliasUpdate = useEventNotStable(() => {
+    setAliasMap(
+      _.mapValues(
+        _.pickBy(internalForm.getFieldsValue(), (v) => !!v), //remove empty
+        (v, k) => mapAliasToPath(k, v), // add alias base path
+      ),
+    );
+    internalForm.validateFields().catch(() => {});
+  });
 
-  const mapAliasToPath = (name: VFolderKey, input?: string) => {
-    if (_.isEmpty(input)) {
-      return `${aliasBasePath}${name}`;
-    } else if (input?.startsWith('/')) {
-      return input;
-    } else {
-      return `${aliasBasePath}${input}`;
-    }
-  };
+  useEffect(() => {
+    handleAliasUpdate();
+  }, [selectedRowKeys, handleAliasUpdate]);
 
   const shadowRoot = useShadowRoot();
 
@@ -248,7 +244,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                         {
                           // required: true,
                           type: 'string',
-                          pattern: /^[a-zA-Z0-9_/-]*$/,
+                          pattern: vFolderAliasNameRegExp,
                           message: t('session.launcher.FolderAliasInvalid'),
                         },
                         {
@@ -283,10 +279,10 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                           e.stopPropagation();
                         }}
                         placeholder={t('session.launcher.FolderAlias')}
-                        // onPressEnter={handleAliasUpdate}
-                        // onBlur={handleAliasUpdate}
-                        onChange={handleAliasUpdate}
                         allowClear
+                        onChange={() => {
+                          handleAliasUpdate();
+                        }}
                       ></Input>
                     </Form.Item>
                   );
@@ -404,7 +400,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           }}
         />
       </Flex>
-      <Form form={internalForm}>
+      <Form form={internalForm} component={false}>
         <Table
           // size="small"
           scroll={{ x: 'max-content' }}
@@ -413,7 +409,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
             selectedRowKeys,
             onChange: (selectedRowKeys) => {
               setSelectedRowKeys(selectedRowKeys as VFolderKey[]);
-              handleAliasUpdate();
             },
           }}
           showSorterTooltip={false}

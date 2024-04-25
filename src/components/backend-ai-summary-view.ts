@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { navigate } from '../backend-ai-app';
 import '../plastics/lablup-piechart/lablup-piechart';
@@ -593,9 +593,12 @@ export default class BackendAISummary extends BackendAIPage {
                                   (c) => html`
                                     <lablup-shields
                                       app=""
-                                      color="${['green', 'blue', 'red'][
-                                        ['r', 'w', 'd'].indexOf(c)
-                                      ]}"
+                                      color="${[
+                                        'green',
+                                        'blue',
+                                        'red',
+                                        'yellow',
+                                      ][['r', 'w', 'd', 'o'].indexOf(c)]}"
                                       description="${c.toUpperCase()}"
                                       ui="flat"
                                     ></lablup-shields>

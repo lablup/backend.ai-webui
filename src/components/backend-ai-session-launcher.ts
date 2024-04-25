@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { navigate } from '../backend-ai-app';
 import '../plastics/lablup-shields/lablup-shields';
@@ -125,6 +125,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     min: '0',
     max: '0',
   };
+  @property({ type: Object }) hyperaccel_lpu_device_metric = {
+    min: '0',
+    max: '0',
+  };
 
   @property({ type: Object }) cluster_metric = {
     min: 1,
@@ -196,6 +200,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({ type: Number }) max_ipu_device_per_container = 8;
   @property({ type: Number }) max_atom_device_per_container = 4;
   @property({ type: Number }) max_warboy_device_per_container = 4;
+  @property({ type: Number }) max_hyperaccel_lpu_device_per_container = 4;
   @property({ type: Number }) max_shm_per_container = 8;
   @property({ type: Boolean }) allow_manual_image_name_for_session = false;
   @property({ type: Object }) resourceBroker;
@@ -984,6 +989,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.max_warboy_device_per_container =
             globalThis.backendaiclient._config.maxWarboyDevicesPerContainer ||
             8;
+          this.max_hyperaccel_lpu_device_per_container =
+            globalThis.backendaiclient._config
+              .maxHyperaccelLPUDevicesPerContainer || 8;
           this.max_shm_per_container =
             globalThis.backendaiclient._config.maxShmPerContainer || 8;
           if (
@@ -1031,6 +1039,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         globalThis.backendaiclient._config.maxATOMDevicesPerContainer || 8;
       this.max_warboy_device_per_container =
         globalThis.backendaiclient._config.maxWarboyDevicesPerContainer || 8;
+      this.max_hyperaccel_lpu_device_per_container =
+        globalThis.backendaiclient._config
+          .maxHyperaccelLPUDevicesPerContainer || 8;
       this.max_shm_per_container =
         globalThis.backendaiclient._config.maxShmPerContainer || 8;
       if (
@@ -1665,6 +1676,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         break;
       case 'warboy.device':
         config['warboy.device'] = this.gpu_request;
+        break;
+      case 'hyperaccel-lpu.device':
+        config['hyperaccel-lpu.device'] = this.gpu_request;
         break;
       default:
         // Fallback to current gpu mode if there is a gpu request, but without gpu type.
@@ -2311,6 +2325,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               'ipu_device',
               'atom_device',
               'warboy_device',
+              'hyperaccel_lpu_device',
             ].forEach((slot) => {
               if (slot in this.total_resource_group_slot) {
                 available_slot[slot] = this.total_resource_group_slot[slot];
@@ -2708,6 +2723,67 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           console.log(warboy_device_metric);
           this._NPUDeviceNameOnSlider = 'Warboy';
           this.npu_device_metric = warboy_device_metric;
+        }
+        if (item.key === 'hyperaccel-lpu.device') {
+          const hyperaccel_lpu_device_metric = { ...item };
+          hyperaccel_lpu_device_metric.min = parseInt(
+            hyperaccel_lpu_device_metric.min,
+          );
+          if ('hyperaccel-lpu.device' in this.userResourceLimit) {
+            if (
+              parseInt(hyperaccel_lpu_device_metric.max) !== 0 &&
+              hyperaccel_lpu_device_metric.max !== 'Infinity' &&
+              !isNaN(hyperaccel_lpu_device_metric.max) &&
+              hyperaccel_lpu_device_metric.max != null
+            ) {
+              hyperaccel_lpu_device_metric.max = Math.min(
+                parseInt(hyperaccel_lpu_device_metric.max),
+                parseInt(this.userResourceLimit['hyperaccel-lpu.device']),
+                available_slot['hyperaccel_lpu_device'],
+                this.max_hyperaccel_lpu_device_per_container,
+              );
+            } else {
+              hyperaccel_lpu_device_metric.max = Math.min(
+                parseInt(this.userResourceLimit['hyperaccel-lpu.device']),
+                parseInt(available_slot['hyperaccel_lpu_device']),
+                this.max_hyperaccel_lpu_device_per_container,
+              );
+            }
+          } else {
+            if (
+              parseInt(hyperaccel_lpu_device_metric.max) !== 0 &&
+              hyperaccel_lpu_device_metric.max !== 'Infinity' &&
+              !isNaN(hyperaccel_lpu_device_metric.max) &&
+              hyperaccel_lpu_device_metric.max != null
+            ) {
+              hyperaccel_lpu_device_metric.max = Math.min(
+                parseInt(hyperaccel_lpu_device_metric.max),
+                parseInt(available_slot['hyperaccel_lpu_device']),
+                this.max_hyperaccel_lpu_device_per_container,
+              );
+            } else {
+              hyperaccel_lpu_device_metric.max = Math.min(
+                parseInt(this.available_slot['hyperaccel_lpu_device']),
+                this.max_hyperaccel_lpu_device_per_container,
+              );
+            }
+          }
+          if (
+            hyperaccel_lpu_device_metric.min >= hyperaccel_lpu_device_metric.max
+          ) {
+            if (
+              hyperaccel_lpu_device_metric.min >
+              hyperaccel_lpu_device_metric.max
+            ) {
+              hyperaccel_lpu_device_metric.min =
+                hyperaccel_lpu_device_metric.max;
+              disableLaunch = true;
+            }
+            this.npuResouceSlider.disabled = true;
+          }
+          console.log(hyperaccel_lpu_device_metric);
+          this._NPUDeviceNameOnSlider = 'Hyperaccel LPU';
+          this.npu_device_metric = hyperaccel_lpu_device_metric;
         }
 
         if (item.key === 'mem') {
@@ -3194,6 +3270,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const ipu_device = button.ipu_device;
     const atom_device = button.atom_device;
     const warboy_device = button.warboy_device;
+    const hyperaccel_lpu_device = button.hyperaccel_lpu_device;
     let gpu_type;
     let gpu_value;
     if (
@@ -3226,6 +3303,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     ) {
       gpu_type = 'warboy.device';
       gpu_value = warboy_device;
+    } else if (
+      typeof hyperaccel_lpu_device !== 'undefined' &&
+      Number(hyperaccel_lpu_device) > 0
+    ) {
+      gpu_type = 'hyperaccel-lpu.device';
+      gpu_value = hyperaccel_lpu_device;
     } else {
       gpu_type = 'none';
       gpu_value = 0;
@@ -4357,6 +4440,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       'ipu.device': 'IPU',
       'atom.device': 'ATOM',
       'warboy.device': 'Warboy',
+      'hyperaccel-lpu.device': 'Hyperaccel LPU',
     };
     if (gpu_type in accelerator_names) {
       return accelerator_names[gpu_type];
@@ -5061,6 +5145,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       .ipu_device="${item.ipu_device}"
                       .atom_device="${item.atom_device}"
                       .warboy_device="${item.warboy_device}"
+                      .hyperaccel_lpu_device="${item.hyperaccel_lpu_device}"
                       .shmem="${item.shmem}"
                     >
                       <div class="horizontal layout end-justified">
@@ -5122,6 +5207,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                           ${item.warboy_device && item.warboy_device > 0
                             ? html`
                                 ${item.warboy_device} Warboy
+                              `
+                            : html``}
+                          ${item.hyperaccel_lpu_device &&
+                          item.hyperaccel_lpu_device > 0
+                            ? html`
+                                ${item.hyperaccel_lpu_device} Hyperaccel LPU
                               `
                             : html``}
                         </div>

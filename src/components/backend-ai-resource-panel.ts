@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import '../plastics/lablup-piechart/lablup-piechart';
 import '../plastics/lablup-shields/lablup-shields';
@@ -80,6 +80,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({ type: Number }) atom_used = 0;
   @property({ type: Number }) warboy_total = 0;
   @property({ type: Number }) warboy_used = 0;
+  @property({ type: Number }) hyperaccel_lpu_total = 0;
+  @property({ type: Number }) hyperaccel_lpu_used = 0;
   @property({ type: Object }) notification = Object();
   @property({ type: Object }) resourcePolicy;
   @property({ type: String }) announcement = '';
@@ -340,6 +342,9 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.resources.warboy = {};
     this.resources.warboy.total = 0;
     this.resources.warboy.used = 0;
+    this.resources.hyperaccel_lpu = {};
+    this.resources.hyperaccel_lpu.total = 0;
+    this.resources.hyperaccel_lpu.used = 0;
     this.resources.agents = {};
     this.resources.agents.total = 0;
     this.resources.agents.using = 0;
@@ -397,6 +402,11 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     } else {
       this.warboy_total = this.resources['warboy.device'].total;
     }
+    if (isNaN(this.resources['hyperaccel-lpu.device'].total)) {
+      this.hyperaccel_lpu_total = 0;
+    } else {
+      this.hyperaccel_lpu_total = this.resources['hyperaccel-lpu.device'].total;
+    }
     this.cpu_used = this.resources.cpu.used;
     this.cuda_gpu_used = this.resources['cuda.device'].used;
     this.cuda_fgpu_used = this.resources['cuda.shares'].used;
@@ -405,6 +415,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.ipu_used = this.resources['ipu.device'].used;
     this.atom_used = this.resources['atom.device'].used;
     this.warboy_used = this.resources['warboy.device'].used;
+    this.hyperaccel_lpu_used = this.resources['hyperaccel-lpu.device'].used;
 
     this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
     this.cpu_total_percent =
@@ -621,7 +632,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                   this.tpu_total ||
                   this.ipu_total ||
                   this.atom_total ||
-                  this.warboy_total
+                  this.warboy_total ||
+                  this.hyperaccel_lpu_total
                     ? html`
                         <div class="resource-line"></div>
                         <div class="layout horizontal center flex resource">
@@ -894,6 +906,44 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                     >
                                       <span class="percentage start-bar">
                                         ${this.warboy_used.toFixed(1) + '%'}
+                                      </span>
+                                      <span class="percentage end-bar"></span>
+                                    </div>
+                                  </div>
+                                `
+                              : html``}
+                            ${this.hyperaccel_lpu_total
+                              ? html`
+                                  <div class="layout horizontal">
+                                    <div
+                                      class="layout vertical start-justified wrap"
+                                    >
+                                      <lablup-progress-bar
+                                        id="hyperaccel-lpu-usage-bar"
+                                        class="start"
+                                        progress="${this.hyperaccel_lpu_used /
+                                        100.0}"
+                                        description="${this
+                                          .hyperaccel_lpu_used} / ${this
+                                          .hyperaccel_lpu_total} Hyperaccel LPUs ${_t(
+                                          'summary.reserved',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                      <lablup-progress-bar
+                                        id="hyperaccel-lpu-usage-bar-2"
+                                        class="end"
+                                        progress="0"
+                                        description="${_t(
+                                          'summary.HyperaccelLPUEnabled',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                    </div>
+                                    <div
+                                      class="layout vertical center center-justified"
+                                    >
+                                      <span class="percentage start-bar">
+                                        ${this.hyperaccel_lpu_used.toFixed(1) +
+                                        '%'}
                                       </span>
                                       <span class="percentage end-bar"></span>
                                     </div>

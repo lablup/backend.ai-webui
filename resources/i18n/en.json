@@ -64,7 +64,8 @@
       "Data&Model": "Data & Model",
       "InvalidBlankPassword": "Enter your password",
       "InvalidBlankEmail": "Enter your e-mail",
-      "DisMatchUserEmail": "User E-mail does not match"
+      "DisMatchUserEmail": "User E-mail does not match",
+      "MyEnvironments": "My Environments"
     },
     "YouAreOffline": "You are now offline",
     "YouAreOnline": "You are now online",
@@ -126,7 +127,8 @@
     "IPUEnabled": "IPU NPU Enabled",
     "ATOMEnabled": "ATOM NPU Enabled",
     "WarboyEnabled": "Warboy NPU Enabled",
-    "FastTrack": "FastTrack"
+    "FastTrack": "FastTrack",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU Enabled"
   },
   "session": {
     "launcher": {
@@ -275,14 +277,15 @@
       "StartTimeDoesNotApply": "If the start time is not set, it doesn't apply.",
       "MiniumAllocation": "Minimum requirements",
       "MiniumAllocationTooltip": "Select as the minimum requirement for the selected running environment",
-      "PreviousLauncher": "Previous",
+      "PreviousLauncher": "Classic",
       "NeoLauncher": "NEO",
       "NeoSwitchDescription": "You are using the \"{{launcher}}\" session launcher.",
       "SkipToConfirmAndLaunch": "Skip to review",
       "BatchModeDesc": "runs your code with multiple node & clusters to scale your idea",
       "InteractiveModeDesc": "allows you to create, test and run code interactively via jupyter notebook, visual studio code, etc.",
       "AddEnvironmentVariable": "Add environment variables",
-      "EnvironmentVariableValueRequired": "Please enter a value."
+      "EnvironmentVariableValueRequired": "Please enter a value.",
+      "PleaseCompleteForm": "Form is incomplete or contains errors. Please check your inputs."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -309,6 +312,7 @@
     "core": "core",
     "Reservation": "Reservation",
     "Agent": "Agent",
+    "Agents": "Agents",
     "Architecture": "Architecture",
     "Usage": "Usage",
     "OpenToPublic": "Open app to public",
@@ -335,7 +339,8 @@
       "Prepared": "Prepared",
       "App": "App",
       "NoExistingConnectionExample": "No Connection Example to be copied.",
-      "SSHConnectionExampleClipboardCopy": "SSH Connection Example has been copied to the clipboard."
+      "SSHConnectionExampleClipboardCopy": "SSH Connection Example has been copied to the clipboard.",
+      "ConnectUrlIsNotValid": "Connect URL is not valid."
     },
     "TensorboardPath": "Log directory for TensorBoard",
     "InputTensorboardPath": "Please input log directory that TensorBoard will refer to. Note that the log directory will not be automatically created..",
@@ -358,7 +363,7 @@
     "Validation": {
       "SessionNameRequired": "Session name is required",
       "SluggedStrings": "Slugged strings (>3 chars)",
-      "EnterValidSessionName": "Enter valid session name",
+      "EnterValidSessionName": "Please enter a combination of at least 4 alphabet letters, or numbers, or hyphen, or underscore.",
       "SessionNameAlreadyExist": "Session name already exists",
       "SessionNameTooLong64": "Please enter 64 characters or less.",
       "PleaseFollowSessionNameRule": "Please enter a combination of at least 4 letters, numbers, '.', '_', and '-'.",
@@ -404,7 +409,14 @@
     "CPU": "CPU",
     "MEM": "MEM",
     "GPU": "GPU",
-    "GPU(MEM)": "GPU(Memory)"
+    "GPU(MEM)": "GPU(Memory)",
+    "IPU": "IPU",
+    "IPU(MEM)": "IPU(Memory)",
+    "ConvertSessionToImage": "Convert Session to Image",
+    "SessionName": "Session Name",
+    "SessionId": "Session ID",
+    "EnvironmentAndVersion": "Environment and Version",
+    "Tags": "Tags"
   },
   "modelService": {
     "Services": "Services",
@@ -494,7 +506,8 @@
     "Clone": "Clone",
     "Config": "Config",
     "Next": "Next",
-    "Previous": "Previous"
+    "Previous": "Previous",
+    "PushToImage": "Push session to customized image"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -553,7 +566,8 @@
       "SelectUser": "Search and select User",
       "QuotaScopeSuccessfullyUpdated": "Quota Scope successfully updated",
       "AllowNumberAndDot": "Allows positive numbers and .(dot) only"
-    }
+    },
+    "StorageSetting": "Storage Setting"
   },
   "general": {
     "cores": "cores",
@@ -654,7 +668,8 @@
     "KeySeccessfullyDeleted": "KeyPair is seccessfully deleted.",
     "SignoutSeccessfullyFinished": "Signout is seccessfully finished",
     "EnableSudoSession": "Enable sudo session",
-    "MainAccessKey": "Main Access Key"
+    "MainAccessKey": "Main Access Key",
+    "InactivateTheFollowingUsers": "Inactivate the following users."
   },
   "data": {
     "Folders": "Folders",
@@ -718,7 +733,7 @@
       "FolderRenamed": "Folder renamed",
       "FolderNameMismatched": "Folder name mismatched. Please Check whether space character in the input field or not.",
       "SameFileName": "The input value is same as the filename to update. Please change it to a different name.",
-      "FolderDeleted": "Folder deleted",
+      "FolderDeleted": "The {{ folderName }} folder has been deleted.",
       "FolderUpdated": "Folder option(s) updated",
       "FolderDisconnected": "Folder has been disconnected.",
       "FileRenamed": "File Renamed",
@@ -742,7 +757,13 @@
       "CloneFolder": "Clone folder",
       "LeaveFolder": "Leave folder",
       "ShareFolder": "Share folder",
-      "ModifyPermissions": "Modify permissions"
+      "ModifyPermissions": "Modify permissions",
+      "Restore": "Restore",
+      "DeleteForever": "Delete forever",
+      "FolderRestored": "The {{ folderName }} folder has been restored.",
+      "FolderDeletedForever": "The {{ folderName }} folder has been deleted forever.",
+      "MovedToTrashBin": "The {{ folderName }} folder has been moved to the trash bin.",
+      "MoveToTrashBin": "Move to trash bin"
     },
     "explorer": {
       "Delete": "Delete",
@@ -793,7 +814,8 @@
       "StartingSSH/SFTPSession": "Starting SFTP session...",
       "EmptyFilesAndFoldersAreNotUploaded": "Empty files and empty folders are not uploaded",
       "NumberOfSFTPSessionsExceededTitle": "Reached limit of running upload session count",
-      "NumberOfSFTPSessionsExceededBody": "You are running all available upload sessions you are allowed to create. Please terminated unused upload sessions before starting a new session."
+      "NumberOfSFTPSessionsExceededBody": "You are running all available upload sessions you are allowed to create. Please terminated unused upload sessions before starting a new session.",
+      "DownloadNotAllowed": "Downloading file/folder is not allowed in this folder."
     },
     "invitation": {
       "NoValidEmails": "No valid emails were entered",
@@ -832,14 +854,16 @@
       "CannotBeUndone": "WARNING: this cannot be undone!",
       "LogDeletion": "Are you sure you want to delete all of the log messages?",
       "WillBeAppliedToNewSessions": "This update will be applied to new sessions.",
-      "Required": "Required"
+      "Required": "Required",
+      "DeleteForeverDesc": "WARNING: selected items will be deleted forever and you won't be able to restore them."
     },
     "ask": {
       "DoYouWantToProceed": "Do you want to proceed?"
     },
     "title": {
       "Notice": "Notice",
-      "LetsDouble-Check": "Let's Double-check"
+      "LetsDouble-Check": "Let's Double-check",
+      "DeleteForever": "Delete Forever?"
     },
     "ErrorOccurred": "Error Occurred",
     "error": {
@@ -894,7 +918,8 @@
     "NoChangeMade": "No changes were made",
     "SuccessfullyModified": "Successfully modified",
     "ProblemOccurred": "Problem occurred",
-    "PasswordsDoNotMatch": "Password and Confirmation do not match."
+    "PasswordsDoNotMatch": "Password and Confirmation do not match.",
+    "CustomizedImageSuccessfullyDeleted": "Customized image successfully deleted."
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",
@@ -1256,7 +1281,10 @@
     "RequireWarboyPlugin": "Requires Backend.AI Warboy Plugin.",
     "Plugins": "Plugins",
     "OpenSourceCUDAGPUsupport": "Open Source CUDA GPU support",
-    "ShowOnlyChanged": "Display Only Changes"
+    "ShowOnlyChanged": "Display Only Changes",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Use Hyperaccel LPU accelerator.",
+    "RequireHyperaccelLPUPlugin": "Requires Backend.AI Hyperaccel LPU Plugin."
   },
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",
@@ -1309,14 +1337,12 @@
     "LeaveService": "Leave Service",
     "DescConfirmLeave": "To confirm, please type your E-mail and password again.",
     "Password": "Password",
-    "E-mail": "E-mail",
     "APIKey": "API Key",
     "SecretKey": "Secret Key",
     "Endpoint": "Endpoint",
     "NotAUser": "Not a user?",
     "LoginAnotherway": "Want to login another way?",
     "SignUp": "Sign up",
-    "LoginWithE-mail": "Login With E-mail",
     "LoginWithIAM": "Login With IAM",
     "ClickToUseIAM": "Click To Use IAM",
     "ClickToUseID": "Click To Use ID",
@@ -1344,7 +1370,9 @@
       "LoginWithSAML": "Login with SAML",
       "LoginWithRealm": "Login with {{ realmName }}"
     },
-    "EndpointStartWith": "Endpoint must start with http:// or https://."
+    "EndpointStartWith": "Endpoint must start with http:// or https://.",
+    "LoginWithE-mailorUsername": "Login With E-mail or Username",
+    "E-mailorUsername": "E-mail or Username"
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",
@@ -1478,7 +1506,8 @@
     "CannotSharePrivateAutomountFolder": "Cannot share automount vfolders in line with the policy.",
     "FolderSharingNotAvailableToUser": "Folder sharing is not available for requested user(s).",
     "APINotSupported": "API not supported. Requires latest version of Backend.AI manager.",
-    "ErrorFetchingExternalContent": "Error fetching external content:"
+    "ErrorFetchingExternalContent": "Error fetching external content:",
+    "ReachedResourceLimitPleaseContact": "Reached your resource limit. Please contact the administrator."
   },
   "maxLength": {
     "64chars": "(maximum 64 chars)",
@@ -1489,6 +1518,7 @@
     "2048chars": "(maximum 2048 chars)"
   },
   "inputLimit": {
+    "4to32chars": "(4~32 chars)",
     "4to64chars": "(4~64 chars)"
   },
   "explorer": {

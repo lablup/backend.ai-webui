@@ -1,3 +1,4 @@
+import { useEventNotStable } from './useEventNotStable';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
@@ -48,9 +49,9 @@ export const useBackendAIConnectedState = () => {
 export const useDateISOState = (initialValue?: string) => {
   const [value, setValue] = useState(initialValue || new Date().toISOString());
 
-  const update = (newValue?: string) => {
+  const update = useEventNotStable((newValue?: string) => {
     setValue(newValue || new Date().toISOString());
-  };
+  });
   return [value, update] as const;
 };
 
@@ -205,6 +206,7 @@ export const useBackendAIImageMetaData = () => {
   });
 
   const getImageMeta = (imageName: string) => {
+    // registry/name:tag@architecture
     // cr.backend.ai/multiarch/python:3.9-ubuntu20.04
     // key = python, tags = [3.9, ubuntu20.04]
     if (_.isEmpty(imageName)) {
@@ -250,8 +252,33 @@ export const useBackendAIImageMetaData = () => {
             : 'default.png')
         );
       },
+      getNamespace: (imageName: string) => {
+        const names = imageName.split('/');
+        return names.length < 2 ? names[0] : names[1] || '';
+      },
+      getImageLang: (imageName: string) => {
+        const names = imageName.split('/');
+        const langs =
+          names.length < 3 ? '' : names[2].split(':')[0]?.split('-') ?? '';
+        return langs[langs.length - 1];
+      },
       getImageTags: (imageName: string) => {
         // const { key, tags } = getImageMeta(imageName);
+      },
+      getFilteredRequirementsTags: (imageName: string) => {
+        const { tags } = getImageMeta(imageName);
+        const [, , ...requirements] = tags || ['', '', ''];
+        const filteredRequirements = _.filter(
+          requirements,
+          (req) => !_.includes(req, 'customized_'),
+        );
+        return filteredRequirements;
+      },
+      getCustomTag: (imageLabels: { key: string; value: string }[]) => {
+        const customizedNameLabel = _.find(imageLabels, {
+          key: 'ai.backend.customized-image.name',
+        })?.value;
+        return customizedNameLabel;
       },
       getBaseVersion: (imageName: string) => {
         const { tags } = getImageMeta(imageName);
@@ -262,6 +289,25 @@ export const useBackendAIImageMetaData = () => {
         return tags[1];
       },
       getImageMeta,
+      getArchitecture: (imageName: string) => {
+        let [, architecture] = imageName ? imageName.split('@') : ['', ''];
+        return architecture;
+      },
+      tagAlias: (tag: string) => {
+        let metadataTagAlias = metadata?.tagAlias[tag];
+        if (!metadataTagAlias && metadata?.tagReplace) {
+          for (const [key, replaceString] of Object.entries(
+            metadata.tagReplace,
+          )) {
+            const pattern = new RegExp(key);
+            if (pattern.test(tag)) {
+              metadataTagAlias = tag.replace(pattern, replaceString);
+              break;
+            }
+          }
+        }
+        return metadataTagAlias || tag;
+      },
     },
   ] as const;
 };
@@ -317,5 +363,6 @@ type BackendAIConfig = {
   blockList: string[];
   inactiveList: string[];
   allowSignout: boolean;
+  allowNonAuthTCP: boolean;
   [key: string]: any;
 };

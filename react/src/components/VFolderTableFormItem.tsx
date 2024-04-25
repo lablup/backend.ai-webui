@@ -1,4 +1,8 @@
-import VFolderTable, { AliasMap, VFolderTableProps } from './VFolderTable';
+import VFolderTable, {
+  AliasMap,
+  VFolderTableProps,
+  vFolderAliasNameRegExp,
+} from './VFolderTable';
 import { Form, FormItemProps, Input } from 'antd';
 import _ from 'lodash';
 import React from 'react';
@@ -40,6 +44,9 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
                 return Promise.reject(
                   t('session.launcher.FolderAliasOverlapping'),
                 );
+              }
+              if (_.some(arr, (alias) => !vFolderAliasNameRegExp.test(alias))) {
+                return Promise.reject(t('session.launcher.FolderAliasInvalid'));
               }
               return Promise.resolve();
             },

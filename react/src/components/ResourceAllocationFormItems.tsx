@@ -88,7 +88,6 @@ const ResourceAllocationFormItems: React.FC<ResourceAllocationFormItemsProps> =
 
       const baiClient = useSuspendedBackendaiClient();
       const [resourceSlots] = useResourceSlots();
-      const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
 
       const [{ keypairResourcePolicy, sessionLimitAndRemaining }] =
         useCurrentKeyPairResourcePolicyLazyLoadQuery();
@@ -111,6 +110,17 @@ const ResourceAllocationFormItems: React.FC<ResourceAllocationFormItemsProps> =
           currentImage: currentImage,
         });
 
+      const acceleratorSlots = _.omitBy(resourceSlots, (value, key) => {
+        if (['cpu', 'mem', 'shmem'].includes(key)) return true;
+
+        if (
+          !resourceLimits.accelerators[key]?.max ||
+          resourceLimits.accelerators[key]?.max === 0
+        )
+          return true;
+        return false;
+      });
+
       const currentImageAcceleratorLimits = _.filter(
         currentImage?.resource_limits,
         (limit) =>
@@ -127,7 +137,6 @@ const ResourceAllocationFormItems: React.FC<ResourceAllocationFormItemsProps> =
         const byPresetInfo = _.filter(checkPresetInfo?.presets, (preset) => {
           return preset.allocatable;
         }).map((preset) => preset.name);
-
         const bySliderLimit = _.filter(checkPresetInfo?.presets, (preset) => {
           if (
             typeof preset.resource_slots.mem === 'string' &&
@@ -147,7 +156,7 @@ const ResourceAllocationFormItems: React.FC<ResourceAllocationFormItemsProps> =
             return false;
           }
           const acceleratorKeys = _.keys(
-            _.omit(preset.resource_slots, ['mem', 'cpu']),
+            _.omit(preset.resource_slots, ['mem', 'cpu', 'shmem']),
           );
           const isAvailable = _.every(acceleratorKeys, (key) => {
             if (
@@ -163,52 +172,92 @@ const ResourceAllocationFormItems: React.FC<ResourceAllocationFormItemsProps> =
           });
           return isAvailable;
         }).map((preset) => preset.name);
-        return baiClient._config?.always_enqueue_compute_session
-          ? bySliderLimit
-          : byPresetInfo;
+
+        const byImageAcceleratorLimits = _.filter(
+          checkPresetInfo?.presets,
+          (preset) => {
+            const acceleratorResourceOfPreset = _.omitBy(
+              preset.resource_slots,
+              (value, key) => {
+                if (['mem', 'cpu', 'shmem'].includes(key) || value === '0')
+                  return true;
+              },
+            );
+            if (currentImageAcceleratorLimits.length === 0) {
+              if (_.isEmpty(acceleratorResourceOfPreset)) {
+                return true;
+              } else {
+                return false;
+              }
+            }
+
+            return _.some(currentImageAcceleratorLimits, (limit) => {
+              return _.some(acceleratorResourceOfPreset, (value, key) => {
+                return (
+                  limit?.key === key && _.toNumber(value) >= _.toNumber(limit?.min)
+                );
+              });
+            });
+          },
+        ).map((preset) => preset.name);
+
+        return currentImageAcceleratorLimits.length > 0
+          ? baiClient._config?.always_enqueue_compute_session
+            ? bySliderLimit
+            : byPresetInfo
+          : _.intersection(
+              baiClient._config?.always_enqueue_compute_session
+                ? bySliderLimit
+                : byPresetInfo,
+              byImageAcceleratorLimits,
+            );
       }, [
         baiClient._config?.always_enqueue_compute_session,
         checkPresetInfo?.presets,
         resourceLimits.accelerators,
         resourceLimits.cpu?.max,
         resourceLimits.mem?.max,
+        currentImageAcceleratorLimits,
       ]);
 
-      const updateAllocationPresetBasedOnResourceGroup = useEventNotStable(
-        () => {
+      const updateAllocationPresetBasedOnResourceGroup = useEventNotStable(() => {
+        if (
+          _.includes(
+            ['custom', 'minimum-required'],
+            form.getFieldValue('allocationPreset'),
+          )
+        ) {
+        } else {
           if (
-            _.includes(
-              ['custom', 'minimum-required'],
-              form.getFieldValue('allocationPreset'),
-            )
+            allocatablePresetNames.includes(form.getFieldValue('allocationPreset'))
           ) {
+            // if the current preset is available in the current resource group, do nothing.
+          } else if (allocatablePresetNames[0]) {
+            const autoSelectedPreset = _.sortBy(allocatablePresetNames, 'name')[0];
+            form.setFieldsValue({
+              allocationPreset: autoSelectedPreset,
+            });
+            updateResourceFieldsBasedOnPreset(autoSelectedPreset);
           } else {
-            if (allocatablePresetNames[0]) {
-              const autoSelectedPreset = _.sortBy(
-                allocatablePresetNames,
-                'name',
-              )[0];
-              form.setFieldsValue({
-                allocationPreset: autoSelectedPreset,
-              });
-              updateResourceFieldsBasedOnPreset(autoSelectedPreset);
-            } else {
-              form.setFieldsValue({
-                allocationPreset: 'custom',
-              });
-            }
+            form.setFieldsValue({
+              allocationPreset: 'custom',
+            });
           }
-          // monkey patch for the issue that the validation result is not updated when the resource group is changed.
-          setTimeout(() => {
-            form.validateFields().catch(() => {});
-          }, 200);
-        },
-      );
+        }
+        // monkey patch for the issue that the validation result is not updated when the resource group is changed.
+        setTimeout(() => {
+          form.validateFields().catch(() => {});
+        }, 200);
+      });
 
-      // update allocation preset based on resource group
+      // update allocation preset based on resource group and current image
       useEffect(() => {
         currentResourceGroup && updateAllocationPresetBasedOnResourceGroup();
-      }, [currentResourceGroup, updateAllocationPresetBasedOnResourceGroup]);
+      }, [
+        currentResourceGroup,
+        updateAllocationPresetBasedOnResourceGroup,
+        currentImage,
+      ]);
 
       const updateResourceFieldsBasedOnImage = (force?: boolean) => {
         // when image changed, set value of resources to min value only if it's larger than current value
@@ -323,9 +372,30 @@ const ResourceAllocationFormItems: React.FC<ResourceAllocationFormItemsProps> =
         );
         const slots = _.pick(preset?.resource_slots, _.keys(resourceSlots));
         const mem = iSizeToSize((slots?.mem || 0) + 'b', 'g', 2)?.numberUnit;
+        const acceleratorObj = _.omit(slots, ['cpu', 'mem', 'shmem']);
+
+        // Select the first matched AI accelerator type and value
+        const firstMatchedAcceleratorType = _.find(
+          _.keys(acceleratorSlots),
+          (value) => acceleratorObj[value] !== undefined,
+        );
+
+        let acceleratorSetting: {
+          acceleratorType?: string;
+          accelerator: number;
+        } = {
+          accelerator: 0,
+        };
+        if (firstMatchedAcceleratorType) {
+          acceleratorSetting = {
+            acceleratorType: firstMatchedAcceleratorType,
+            accelerator: Number(acceleratorObj[firstMatchedAcceleratorType] || 0),
+          };
+        }
         form.setFieldsValue({
           resource: {
-            ...slots,
+            // ...slots,
+            ...acceleratorSetting,
             // transform to GB based on preset values
             mem,
             shmem: iSizeToSize((preset?.shared_memory || 0) + 'b', 'g', 2)
@@ -358,7 +428,6 @@ const ResourceAllocationFormItems: React.FC<ResourceAllocationFormItemsProps> =
       return (
         <>
           <Form.Item
-            className="resource-group-select"
             name="resourceGroup"
             label={t('session.ResourceGroup')}
             rules={[
@@ -376,11 +445,11 @@ const ResourceAllocationFormItems: React.FC<ResourceAllocationFormItemsProps> =
                 startCheckRestsTransition(() => {
                   // update manually to handle granular pending status management
                   form.setFieldValue('resourceGroup', v);
+                  form.validateFields(['resourceGroup']).catch(() => {});
                 });
               }}
             />
           </Form.Item>
-
           {enableResourcePresets ? (
             <Form.Item
               className="resource-preset-select"

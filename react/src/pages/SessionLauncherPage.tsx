@@ -1,6 +1,7 @@
 import BAICard from '../BAICard';
 import BAIIntervalText from '../components/BAIIntervalText';
 import DatePickerISO from '../components/DatePickerISO';
+import DoubleTag from '../components/DoubleTag';
 import EnvVarFormList, {
   EnvVarFormListValue,
 } from '../components/EnvVarFormList';
@@ -9,6 +10,7 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from '../components/ImageEnvironmentSelectFormItems';
 import ImageMetaIcon from '../components/ImageMetaIcon';
+import SessionKernelTags from '../components/ImageTags';
 import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
 import PortSelectFormItem, {
   PortSelectFormValues,
@@ -29,6 +31,7 @@ import { compareNumberWithUnits, iSizeToSize } from '../helper';
 import {
   useCurrentProjectValue,
   useSuspendedBackendaiClient,
+  useUpdatableState,
   useWebUINavigate,
 } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -69,6 +72,7 @@ import {
   Tag,
   Tour,
   TourStepProps,
+  Tooltip,
   Typography,
   theme,
 } from 'antd';
@@ -88,26 +92,6 @@ import {
   useQueryParams,
   withDefault,
 } from 'use-query-params';
-
-const INITIAL_FORM_VALUES: SessionLauncherValue = {
-  sessionType: 'interactive',
-  // If you set `allocationPreset` to 'custom', `allocationPreset` is not changed automatically any more.
-  allocationPreset: 'auto-preset',
-  hpcOptimization: {
-    autoEnabled: true,
-    OMP_NUM_THREADS: '1',
-    OPENBLAS_NUM_THREADS: '1',
-  },
-  batch: {
-    enabled: false,
-    command: undefined,
-    scheduleDate: undefined,
-  },
-  envvars: [],
-  ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
-};
-const stepParam = withDefault(NumberParam, 0);
-const formValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
 
 interface SessionConfig {
   group_name: string;
@@ -168,8 +152,34 @@ const SessionLauncherPage = () => {
   let sessionMode: SessionMode = 'normal';
 
   const mainContentDivRef = useRecoilValue(mainContentDivRefState);
+  const baiClient = useSuspendedBackendaiClient();
 
   const [isStartingSession, setIsStartingSession] = useState(false);
+  const INITIAL_FORM_VALUES: SessionLauncherValue = {
+    sessionType: 'interactive',
+    // If you set `allocationPreset` to 'custom', `allocationPreset` is not changed automatically any more.
+    allocationPreset: 'auto-preset',
+    hpcOptimization: {
+      autoEnabled: true,
+      OMP_NUM_THREADS: '1',
+      OPENBLAS_NUM_THREADS: '1',
+    },
+    batch: {
+      enabled: false,
+      command: undefined,
+      scheduleDate: undefined,
+    },
+    envvars: [],
+    // set default_session_environment only if set
+    ...(baiClient._config?.default_session_environment && {
+      environments: {
+        environment: baiClient._config?.default_session_environment,
+      },
+    }),
+    ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+  };
+  const stepParam = withDefault(NumberParam, 0);
+  const formValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
   const [
     { step: currentStep, formValues: formValuesFromQueryParams, redirectTo },
     setQuery,
@@ -183,7 +193,6 @@ const SessionLauncherPage = () => {
   const navigate = useNavigate();
   // const { moveTo } = useWebComponentInfo();
   const webuiNavigate = useWebUINavigate();
-  const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
 
   const { upsertNotification } = useSetBAINotification();
@@ -196,7 +205,11 @@ const SessionLauncherPage = () => {
       setQuery(
         {
           // formValues: form.getFieldsValue(),
-          formValues: _.omit(form.getFieldsValue(), ['environments.image']),
+          formValues: _.omit(
+            form.getFieldsValue(),
+            ['environments.image'],
+            ['environments.customizedTag'],
+          ),
         },
         'replaceIn',
       );
@@ -309,17 +322,15 @@ const SessionLauncherPage = () => {
     (item) => item.errors.length > 0,
   );
 
-  // console.log(form.getFieldError(['resource', 'shmem']));
-  // console.log(form.getFieldValue(['resource']));
-
-  const moveToPreview = () => {
-    form
-      .validateFields()
-      .catch((e) => {})
-      .finally(() => {
-        setCurrentStep(steps.length - 1);
-      });
-  };
+  const [, setFinalStepLastValidateTime] = useUpdatableState('first'); // Force re-render after validation in final step.
+  useEffect(() => {
+    if (currentStep === steps.length - 1) {
+      form
+        .validateFields()
+        .catch(() => {})
+        .finally(() => setFinalStepLastValidateTime());
+    }
+  }, [currentStep, form, setFinalStepLastValidateTime, steps.length]);
 
   const startSession = () => {
     // TODO: support inference mode, support import mode
@@ -443,27 +454,7 @@ const SessionLauncherPage = () => {
                 return res;
               })
               .catch((err: any) => {
-                console.log(err);
                 throw err;
-                // console.log(err);
-                // if (err && err.message) {
-                //   if ('statusCode' in err && err.statusCode === 408) {
-                //     this.notification.text = _text(
-                //       'session.launcher.sessionStillPreparing',
-                //     );
-                //   } else {
-                //     if (err.description) {
-                //       this.notification.text = PainKiller.relieve(err.description);
-                //     } else {
-                //       this.notification.text = PainKiller.relieve(err.message);
-                //     }
-                //   }
-                //   this.notification.detail = err.message;
-                //   this.notification.show(true, err);
-                // } else if (err && err.title) {
-                //   this.notification.text = PainKiller.relieve(err.title);
-                //   this.notification.show(true, err);
-                // }
               });
           },
         );
@@ -480,6 +471,7 @@ const SessionLauncherPage = () => {
               resolved: t('eduapi.ComputeSessionPrepared'),
             },
           },
+          duration: 0,
           message: t('general.Session') + ': ' + sessionName,
           open: true,
         });
@@ -1299,7 +1291,6 @@ const SessionLauncherPage = () => {
 
                   {/* Step Start*/}
                   <Card
-                    ref={(el) => (tourRef.current[6] = el as HTMLElement)}
                     title={t('webui.menu.Data&Storage')}
                     style={{
                       display: currentStepKey === 'storage' ? 'block' : 'none',
@@ -1307,9 +1298,11 @@ const SessionLauncherPage = () => {
                   >
                     <VFolderTableFromItem
                       filter={(vfolder) => {
-                        return vfolder.status === 'ready';
+                        return (
+                          vfolder.status === 'ready' &&
+                          !vfolder.name?.startsWith('.')
+                        );
                       }}
-                    />
                     {/* <VFolderTable /> */}
                   </Card>
 
@@ -1554,8 +1547,17 @@ const SessionLauncherPage = () => {
                               )}
                             />
                           )}
-
                           <Descriptions column={2}>
+                            <Descriptions.Item
+                              label={t('general.ResourceGroup')}
+                              span={2}
+                            >
+                              {form.getFieldValue('resourceGroup') || (
+                                <Typography.Text type="secondary">
+                                  {t('general.None')}
+                                </Typography.Text>
+                              )}
+                            </Descriptions.Item>
                             <Descriptions.Item
                               label={t(
                                 'session.launcher.ResourceAllocationPerContainer',
@@ -1578,7 +1580,6 @@ const SessionLauncherPage = () => {
                                     {form.getFieldValue('allocationPreset')}
                                   </Tag>
                                 )}
-
                                 <FormResourceNumbers form={form} />
                                 {/* {_.chain(
                               form.getFieldValue('allocationPreset') ===
@@ -1757,30 +1758,11 @@ const SessionLauncherPage = () => {
                       </BAICard>
                     </>
                   )}
-
                   <Flex direction="row" justify="between">
                     <Flex
                       gap={'sm'}
                       ref={(el) => (tourRef.current[9] = el as HTMLElement)}
                     >
-                      {/* <Popconfirm
-                    title={t('session.CheckAgainDialog')}
-                    placement="topLeft"
-                    okButtonProps={{
-                      danger: true,
-                    }}
-                    okText={t('button.Reset')}
-                    onConfirm={() => {
-                      // @ts-ignore
-                      form.resetFields({
-
-                      });
-                    }}
-                  >
-                    <Button ghost danger>
-                      {t('button.Reset')}
-                    </Button>
-                  </Popconfirm> */}
                       <Popconfirm
                         title={t('button.Reset')}
                         description={t('session.launcher.ResetFormConfirm')}
@@ -1838,15 +1820,23 @@ const SessionLauncherPage = () => {
                         </Button>
                       )}
                       {currentStep === steps.length - 1 ? (
-                        <Button
-                          type="primary"
-                          icon={<PlayCircleOutlined />}
-                          disabled={hasError}
-                          onClick={startSession}
-                          loading={isStartingSession}
+                        <Tooltip
+                          title={
+                            hasError
+                              ? t('session.launcher.PleaseCompleteForm')
+                              : undefined
+                          }
                         >
-                          {t('session.launcher.Launch')}
-                        </Button>
+                          <Button
+                            type="primary"
+                            icon={<PlayCircleOutlined />}
+                            disabled={hasError}
+                            onClick={startSession}
+                            loading={isStartingSession}
+                          >
+                            {t('session.launcher.Launch')}
+                          </Button>
+                        </Tooltip>
                       ) : (
                         <Button
                           type="primary"
@@ -1859,7 +1849,11 @@ const SessionLauncherPage = () => {
                         </Button>
                       )}
                       {currentStep !== steps.length - 1 && (
-                        <Button onClick={moveToPreview}>
+                        <Button
+                          onClick={() => {
+                            setCurrentStep(steps.length - 1);
+                          }}
+                        >
                           {t('session.launcher.SkipToConfirmAndLaunch')}
                           <DoubleRightOutlined />
                         </Button>
@@ -1922,7 +1916,7 @@ const FormResourceNumbers: React.FC<{
     <>
       {_.map(
         _.omit(
-          form.getFieldValue('resource'),
+          form.getFieldsValue().resource,
           'shmem',
           'accelerator',
           'acceleratorType',

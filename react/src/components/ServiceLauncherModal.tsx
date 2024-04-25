@@ -18,6 +18,7 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
+import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
 import { ServiceLauncherModalFragment$key } from './__generated__/ServiceLauncherModalFragment.graphql';
 import { ServiceLauncherModalModifyMutation } from './__generated__/ServiceLauncherModalModifyMutation.graphql';
@@ -31,6 +32,7 @@ import {
   Button,
   Space,
   FormInstance,
+  Skeleton,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -53,6 +55,7 @@ interface ServiceCreateConfigResourceType {
   'ipu.device'?: number | string;
   'atom.device'?: number | string;
   'warboy.device'?: number | string;
+  'hyperaccel-lpu.device'?: number | string;
 }
 
 interface ServiceCreateConfigType {
@@ -119,6 +122,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         cluster_mode
         cluster_size
         open_to_public
+        model
         image_object @since(version: "23.09.9") {
           name
           humanized_name
@@ -279,6 +283,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           cluster_mode
           cluster_size
           open_to_public
+          model
           image_object @since(version: "23.09.9") {
             name
             humanized_name
@@ -524,6 +529,12 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               : {
                   desiredRoutingCount: 1,
                   ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+                  ...(baiClient._config?.default_session_environment && {
+                    environments: {
+                      environment:
+                        baiClient._config?.default_session_environment,
+                    },
+                  }),
                 }
           }
           requiredMark="optional"
@@ -553,21 +564,36 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                 <Switch disabled={endpoint ? true : false}></Switch>
               </Form.Item>
               {/* <VFolderTableFromItem /> */}
-              <Form.Item
-                name={'vFolderName'}
-                label={t('session.launcher.ModelStorageToMount')}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <VFolderSelect
-                  filter={(vf) => vf.usage_mode === 'model'}
-                  autoSelectDefault
-                  disabled={endpoint ? true : false}
-                />
-              </Form.Item>
+              {!endpoint ? (
+                <Form.Item
+                  name={'vFolderName'}
+                  label={t('session.launcher.ModelStorageToMount')}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <VFolderSelect
+                    filter={(vf) =>
+                      vf.usage_mode === 'model' && vf.status === 'ready'
+                    }
+                    autoSelectDefault
+                    disabled={endpoint ? true : false}
+                  />
+                </Form.Item>
+              ) : (
+                endpoint?.model && (
+                  <Form.Item
+                    label={t('session.launcher.ModelStorageToMount')}
+                    required
+                  >
+                    <Suspense fallback={<Skeleton.Input active />}>
+                      <VFolderLazyView uuid={endpoint?.model} />
+                    </Suspense>
+                  </Form.Item>
+                )
+              )}
             </>
           )}
           <Form.Item

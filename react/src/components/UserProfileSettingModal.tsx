@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -58,18 +58,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
   const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
     useToggle(false);
   const baiClient = useSuspendedBackendaiClient();
-
-  // const { data: isManagerSupportingTOTP } = useTanQuery(
-  //   'isManagerSupportingTOTP',
-  //   () => {
-  //     return baiClient.isManagerSupportingTOTP();
-  //   },
-  //   {
-  //     suspense: true,
-  //   },
-  // );
-  // const totpSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
-
   const [userInfo, userMutations] = useCurrentUserInfo();
   // const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
 

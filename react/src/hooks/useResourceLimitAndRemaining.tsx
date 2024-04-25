@@ -101,10 +101,12 @@ export const useResourceLimitAndRemaining = ({
     queryKey: ['check-resets', currentProjectName, currentResourceGroup],
     queryFn: () => {
       if (currentResourceGroup) {
-        return baiClient.resourcePreset.check({
-          group: currentProjectName,
-          scaling_group: currentResourceGroup,
-        });
+        return baiClient.resourcePreset
+          .check({
+            group: currentProjectName,
+            scaling_group: currentResourceGroup,
+          })
+          .catch(() => {});
       } else {
         return;
       }
@@ -268,6 +270,7 @@ export const useResourceLimitAndRemaining = ({
             'ipu.device': 'maxIPUDevicesPerContainer',
             'atom.device': 'maxATOMDevicesPerContainer',
             'warboy.device': 'maxWarboyDevicesPerContainer',
+            'hyperaccel-lpu.device': 'maxHyperaccelLPUDevicesPerContainer', // FIXME: add maxLPUDevicesPerContainer to config
           }[key] || 'cuda.device'; // FIXME: temporally `cuda.device` config, when undefined
         result[key] = {
           min: parseInt(

@@ -24,6 +24,7 @@ import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 const Information = React.lazy(() => import('./components/Information'));
 const ServingListPage = React.lazy(() => import('./pages/ServingListPage'));
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
+const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
 const StorageHostSettingPage = React.lazy(
   () => import('./pages/StorageHostSettingPage'),
 );
@@ -124,6 +125,15 @@ const router = createBrowserRouter([
       {
         path: '/data',
         handle: { labelKey: 'webui.menu.Data&Storage' },
+      },
+      {
+        path: '/my-environment',
+        element: (
+          <BAIErrorBoundary>
+            <MyEnvironmentPage />
+          </BAIErrorBoundary>
+        ),
+        handle: { labelKey: 'webui.menu.MyEnvironments' },
       },
       {
         path: '/agent-summary',
