@@ -81,7 +81,6 @@ const ResourceAllocationFormItems: React.FC<ResourceAllocationFormItemsProps> =
       },
       ref,
     ) => {
-      // @ts-ignore
       const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
       const { t } = useTranslation();
       const { token } = theme.useToken();
@@ -137,6 +136,7 @@ const ResourceAllocationFormItems: React.FC<ResourceAllocationFormItemsProps> =
         const byPresetInfo = _.filter(checkPresetInfo?.presets, (preset) => {
           return preset.allocatable;
         }).map((preset) => preset.name);
+
         const bySliderLimit = _.filter(checkPresetInfo?.presets, (preset) => {
           if (
             typeof preset.resource_slots.mem === 'string' &&
@@ -194,7 +194,8 @@ const ResourceAllocationFormItems: React.FC<ResourceAllocationFormItemsProps> =
             return _.some(currentImageAcceleratorLimits, (limit) => {
               return _.some(acceleratorResourceOfPreset, (value, key) => {
                 return (
-                  limit?.key === key && _.toNumber(value) >= _.toNumber(limit?.min)
+                  limit?.key === key &&
+                  _.toNumber(value) >= _.toNumber(limit?.min)
                 );
               });
             });
@@ -220,35 +221,42 @@ const ResourceAllocationFormItems: React.FC<ResourceAllocationFormItemsProps> =
         currentImageAcceleratorLimits,
       ]);
 
-      const updateAllocationPresetBasedOnResourceGroup = useEventNotStable(() => {
-        if (
-          _.includes(
-            ['custom', 'minimum-required'],
-            form.getFieldValue('allocationPreset'),
-          )
-        ) {
-        } else {
+      const updateAllocationPresetBasedOnResourceGroup = useEventNotStable(
+        () => {
           if (
-            allocatablePresetNames.includes(form.getFieldValue('allocationPreset'))
+            _.includes(
+              ['custom', 'minimum-required'],
+              form.getFieldValue('allocationPreset'),
+            )
           ) {
-            // if the current preset is available in the current resource group, do nothing.
-          } else if (allocatablePresetNames[0]) {
-            const autoSelectedPreset = _.sortBy(allocatablePresetNames, 'name')[0];
-            form.setFieldsValue({
-              allocationPreset: autoSelectedPreset,
-            });
-            updateResourceFieldsBasedOnPreset(autoSelectedPreset);
           } else {
-            form.setFieldsValue({
-              allocationPreset: 'custom',
-            });
+            if (
+              allocatablePresetNames.includes(
+                form.getFieldValue('allocationPreset'),
+              )
+            ) {
+              // if the current preset is available in the current resource group, do nothing.
+            } else if (allocatablePresetNames[0]) {
+              const autoSelectedPreset = _.sortBy(
+                allocatablePresetNames,
+                'name',
+              )[0];
+              form.setFieldsValue({
+                allocationPreset: autoSelectedPreset,
+              });
+              updateResourceFieldsBasedOnPreset(autoSelectedPreset);
+            } else {
+              form.setFieldsValue({
+                allocationPreset: 'custom',
+              });
+            }
           }
-        }
-        // monkey patch for the issue that the validation result is not updated when the resource group is changed.
-        setTimeout(() => {
-          form.validateFields().catch(() => {});
-        }, 200);
-      });
+          // monkey patch for the issue that the validation result is not updated when the resource group is changed.
+          setTimeout(() => {
+            form.validateFields().catch(() => {});
+          }, 200);
+        },
+      );
 
       // update allocation preset based on resource group and current image
       useEffect(() => {
@@ -389,7 +397,9 @@ const ResourceAllocationFormItems: React.FC<ResourceAllocationFormItemsProps> =
         if (firstMatchedAcceleratorType) {
           acceleratorSetting = {
             acceleratorType: firstMatchedAcceleratorType,
-            accelerator: Number(acceleratorObj[firstMatchedAcceleratorType] || 0),
+            accelerator: Number(
+              acceleratorObj[firstMatchedAcceleratorType] || 0,
+            ),
           };
         }
         form.setFieldsValue({
@@ -428,6 +438,7 @@ const ResourceAllocationFormItems: React.FC<ResourceAllocationFormItemsProps> =
       return (
         <>
           <Form.Item
+            className="resource-group-select"
             name="resourceGroup"
             label={t('session.ResourceGroup')}
             rules={[
@@ -450,6 +461,7 @@ const ResourceAllocationFormItems: React.FC<ResourceAllocationFormItemsProps> =
               }}
             />
           </Form.Item>
+
           {enableResourcePresets ? (
             <Form.Item
               className="resource-preset-select"
@@ -1166,30 +1178,20 @@ const ResourceAllocationFormItems: React.FC<ResourceAllocationFormItemsProps> =
                           required: true,
                         },
                         {
-                          warningOnly:
-                            baiClient._config?.always_enqueue_compute_session,
+                          warningOnly: true,
                           validator: async (rule, value: number) => {
                             if (
                               sessionSliderLimitAndRemaining &&
                               value > sessionSliderLimitAndRemaining.remaining
                             ) {
                               return Promise.reject(
-                                baiClient._config
-                                  ?.always_enqueue_compute_session
-                                  ? t(
-                                      'session.launcher.EnqueueComputeSessionWarning',
-                                      {
-                                        amount:
-                                          sessionSliderLimitAndRemaining.remaining,
-                                      },
-                                    )
-                                  : t(
-                                      'session.launcher.ErrorCanNotExceedRemaining',
-                                      {
-                                        amount:
-                                          sessionSliderLimitAndRemaining.remaining,
-                                      },
-                                    ),
+                                t(
+                                  'session.launcher.EnqueueComputeSessionWarning',
+                                  {
+                                    amount:
+                                      sessionSliderLimitAndRemaining.remaining,
+                                  },
+                                ),
                               );
                             } else {
                               return Promise.resolve();
@@ -1387,7 +1389,6 @@ const RemainingMark: React.FC<{ title?: string }> = () => {
     </Flex>
   );
 };
-
 const MemoizedResourceAllocationFormItems = React.memo(
   ResourceAllocationFormItems,
 );
