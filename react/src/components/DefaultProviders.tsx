@@ -41,6 +41,7 @@ dayjs.extend(timezone);
 
 interface WebComponentContextType {
   value?: ReactWebComponentProps['value'];
+  parsedValue?: any;
   dispatchEvent: ReactWebComponentProps['dispatchEvent'];
   moveTo: (
     path: string,
@@ -53,7 +54,13 @@ interface WebComponentContextType {
 const WebComponentContext = React.createContext<WebComponentContextType>(null!);
 const ShadowRootContext = React.createContext<ShadowRoot>(null!);
 export const useShadowRoot = () => React.useContext(ShadowRootContext);
-export const useWebComponentInfo = () => React.useContext(WebComponentContext);
+export const useWebComponentInfo = <ParsedType extends any>() => {
+  const context = React.useContext(WebComponentContext);
+  return {
+    ...context,
+    parsedValue: context.parsedValue as ParsedType,
+  };
+};
 
 // Create a client
 const queryClient = new QueryClient({
@@ -134,8 +141,15 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
   const { isDarkMode } = useThemeMode();
 
   const componentValues = useMemo(() => {
+    let parsedValue: any;
+    try {
+      parsedValue = JSON.parse(value || '');
+    } catch (error) {
+      parsedValue = {};
+    }
     return {
       value,
+      parsedValue,
       dispatchEvent,
       moveTo: (path, params) => {
         dispatchEvent('moveTo', { path, params: params });
