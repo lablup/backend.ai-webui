@@ -1953,9 +1953,10 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   controlFolderListRenderer(root, column?, rowData?) {
-    const isSharingAllowed = (
-      this._unionedAllowedPermissionByVolume[rowData.item.host] ?? []
-    ).includes('invite-others');
+    const isSharingAllowed =
+      (
+        this._unionedAllowedPermissionByVolume[rowData.item.host] ?? []
+      ).includes('invite-others') && !rowData.item.name.startsWith('.');
     render(
       // language=HTML
       html`
