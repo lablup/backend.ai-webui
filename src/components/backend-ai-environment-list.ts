@@ -429,7 +429,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 resource.key = 'warboy_device';
               }
               if (resource.key == 'hyperaccel-lpu.device') {
-                resource.key = 'hyperaccl_lpu_device';
+                resource.key = 'hyperaccel_lpu_device';
               }
               if (resource.min !== null && resource.min !== undefined) {
                 image[resource.key + '_limit_min'] = this._addUnit(
