@@ -168,7 +168,9 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
 
   useEffect(() => {
     handleAliasUpdate();
-  }, [selectedRowKeys, handleAliasUpdate]);
+    // `selectedRowKeys` can be changed by parents at any time, so we need to check whether `selectedRowKeys` has changed using JSON.stringify
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(selectedRowKeys), handleAliasUpdate]);
 
   const shadowRoot = useShadowRoot();
 
