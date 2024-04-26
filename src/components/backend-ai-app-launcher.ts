@@ -1982,6 +1982,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               )}</p>
               <p style="margin:auto 10px;">
                 <pre style="white-space:pre-line; margin:10px 10px 0 10px">
+                  User work
                   Host ${this.tcpHost}
                   Port ${this.tcpPort}
                   &nbsp;&nbsp;StrictHostKeyChecking no
