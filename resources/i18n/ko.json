@@ -273,7 +273,8 @@
       "NeoLauncher": "NEO",
       "EnvironmentVariableValueRequired": "값을 입력해주세요.",
       "PleaseCompleteForm": "양식이 완성되지 않았거나 오류가 포함되어 있습니다. 입력 내용을 확인해주세요.",
-      "NeedToCorrectForm": "수정 버튼을 눌러 입력하신 내용을 확인해주세요."
+      "NeedToCorrectForm": "수정 버튼을 눌러 입력하신 내용을 확인해주세요.",
+      "FailedToStartNewSession": "세션 생성에 실패했습니다. 세션 페이지의 '종료' 탭을 확인해 주세요."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
