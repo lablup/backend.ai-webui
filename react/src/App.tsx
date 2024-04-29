@@ -51,8 +51,10 @@ const router = createBrowserRouter([
           }
         }
       >
-        <MainLayout />
-        <RoutingEventHandler />
+        <BAIErrorBoundary>
+          <MainLayout />
+          <RoutingEventHandler />
+        </BAIErrorBoundary>
       </QueryParamProvider>
     ),
     handle: { labelKey: 'webui.menu.Summary' },
