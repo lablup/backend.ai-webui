@@ -15,17 +15,19 @@ import {
 import { useControllableValue } from 'ahooks';
 import {
   Button,
+  Descriptions,
   Form,
   Input,
   Table,
   TableProps,
+  Tag,
   Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { useEffect, useState, useTransition } from 'react';
+import React, { useEffect, useMemo, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 export interface VFolderFile {
@@ -58,6 +60,8 @@ export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
   onChangeAliasMap?: (aliasMap: AliasMap) => void;
   filter?: (vFolder: VFolder) => boolean;
   rowKey: string | number;
+  onChangeAutoMountedFolders?: (names: Array<string>) => void;
+  showAutoMountedFoldersSection?: boolean;
 }
 
 export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/-]*$/;
@@ -71,6 +75,8 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   aliasMap: controlledAliasMap,
   onChangeAliasMap,
   rowKey = 'name',
+  onChangeAutoMountedFolders,
+  showAutoMountedFoldersSection,
   ...tableProps
 }) => {
   const getRowKey = React.useMemo(() => {
@@ -133,6 +139,23 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     },
     staleTime: 0,
   });
+
+  const autoMountedFolderNames = useMemo(
+    () =>
+      _.chain(allFolderList)
+        .filter((vf) => vf.status === 'ready' && vf.name?.startsWith('.'))
+        .map((vf) => vf.name)
+        .value(),
+    [allFolderList],
+  );
+
+  useEffect(() => {
+    _.isFunction(onChangeAutoMountedFolders) &&
+      onChangeAutoMountedFolders(autoMountedFolderNames);
+    // Do not need to run when `autoMountedFolderNames` changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoMountedFolderNames]);
+
   const [searchKey, setSearchKey] = useState('');
   const displayingFolders = _.chain(allFolderList)
     .filter((vf) => (filter ? filter(vf) : true))
@@ -438,6 +461,17 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           {...tableProps}
         />
       </Form>
+      {showAutoMountedFoldersSection && autoMountedFolderNames.length > 0 ? (
+        <>
+          <Descriptions size="small">
+            <Descriptions.Item label={t('data.AutomountFolders')}>
+              {_.map(autoMountedFolderNames, (name) => {
+                return <Tag>{name}</Tag>;
+              })}
+            </Descriptions.Item>
+          </Descriptions>
+        </>
+      ) : null}
     </Flex>
   );
 };

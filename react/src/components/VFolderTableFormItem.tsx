@@ -56,6 +56,7 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
         <Input />
         {/* <Flex>{form.getFieldValue('vfoldersAliasMap')}</Flex> */}
       </Form.Item>
+      <Form.Item hidden name="autoMountedFolderNames" />
       <Form.Item
         name={'mounts'}
         {...formItemProps}
@@ -73,6 +74,10 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
           // TODO: implement pagination
           pagination={false}
           filter={filter}
+          showAutoMountedFoldersSection
+          onChangeAutoMountedFolders={(names) => {
+            form.setFieldValue('autoMountedFolderNames', names);
+          }}
         />
       </Form.Item>
     </>
