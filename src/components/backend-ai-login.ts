@@ -467,13 +467,16 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   private _getConfigValueByExists(parentsKey, valueObj: ConfigValueObject) {
+    const uncommentedValue =
+      typeof valueObj.value === 'string' && valueObj.value.includes('#')
+        ? valueObj.value.split('#')[0].trim()
+        : '';
     const defaultConditions: boolean =
       parentsKey === undefined ||
       valueObj.value === undefined ||
       typeof valueObj.value === 'undefined' ||
-      valueObj.value === '' ||
-      valueObj.value === '""' ||
-      valueObj.value === null;
+      ['', '""', null].includes(uncommentedValue);
+
     let extraConditions;
     switch (typeof valueObj.defaultValue) {
       case 'number':
