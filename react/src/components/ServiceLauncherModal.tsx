@@ -84,7 +84,8 @@ interface ServiceCreateType {
   config: ServiceCreateConfigType;
 }
 
-interface ServiceLauncherProps extends Omit<BAIModalProps, 'onOK'> {
+interface ServiceLauncherProps
+  extends Omit<BAIModalProps, 'onOk' | 'onCancel'> {
   endpointFrgmt?: ServiceLauncherModalFragment$key | null;
   extraP?: boolean;
   onRequestClose: (success?: boolean) => void;
@@ -476,6 +477,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         </Flex>
       )}
       confirmLoading={mutationToCreateService.isLoading}
+      onCancel={handleCancel}
       {...modalProps}
     >
       <Suspense fallback={<FlexActivityIndicator />}>

@@ -557,11 +557,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       <ServiceLauncherModal
         open={isOpenServiceLauncher}
         endpointFrgmt={editingModelService || null}
-        onCancel={() => {
-          setEditingModelService(null);
-          setIsOpenServiceLauncher(!isOpenServiceLauncher);
-        }}
         onRequestClose={(success) => {
+          setEditingModelService(null);
           setIsOpenServiceLauncher(!isOpenServiceLauncher);
           if (success) {
             startRefetchTransition(() => {
