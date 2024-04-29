@@ -207,6 +207,7 @@ const SessionLauncherPage = () => {
             form.getFieldsValue(),
             ['environments.image'],
             ['environments.customizedTag'],
+            ['autoMountedFolderNames'],
           ),
         },
         'replaceIn',
@@ -1442,53 +1443,72 @@ const SessionLauncherPage = () => {
                         );
                       }}
                     >
-                      {form.getFieldValue('mounts')?.length > 0 ? (
-                        <Table
-                          rowKey="name"
-                          size="small"
-                          pagination={false}
-                          columns={[
-                            {
-                              dataIndex: 'name',
-                              title: t('data.folders.Name'),
-                            },
-                            {
-                              dataIndex: 'alias',
-                              title: t('session.launcher.FolderAlias'),
-                              render: (value, record) => {
-                                return _.isEmpty(value) ? (
-                                  <Typography.Text
-                                    type="secondary"
-                                    style={{
-                                      opacity: 0.7,
-                                    }}
-                                  >
-                                    {`/home/work/${record.name}`}
-                                  </Typography.Text>
-                                ) : (
-                                  value
-                                );
+                      {/* {console.log(_.sum([form.getFieldValue('mounts')?.length, form.getFieldValue('autoMountedFolderNames')]))} */}
+                      {/* {_.sum([form.getFieldValue('mounts')?.length, form.getFieldValue('autoMountedFolderNames').length]) > 0 ? ( */}
+                      <Flex direction="column" align="stretch" gap={'xs'}>
+                        {form.getFieldValue('mounts')?.length > 0 ? (
+                          <Table
+                            rowKey="name"
+                            size="small"
+                            pagination={false}
+                            columns={[
+                              {
+                                dataIndex: 'name',
+                                title: t('data.folders.Name'),
                               },
-                            },
-                          ]}
-                          dataSource={_.map(
-                            form.getFieldValue('mounts'),
-                            (v) => {
-                              return {
-                                name: v,
-                                alias:
-                                  form.getFieldValue('vfoldersAliasMap')?.[v],
-                              };
-                            },
-                          )}
-                        ></Table>
-                      ) : (
-                        <Alert
-                          type="warning"
-                          showIcon
-                          message={t('session.launcher.NoFolderMounted')}
-                        />
-                      )}
+                              {
+                                dataIndex: 'alias',
+                                title: t('session.launcher.FolderAlias'),
+                                render: (value, record) => {
+                                  return _.isEmpty(value) ? (
+                                    <Typography.Text
+                                      type="secondary"
+                                      style={{
+                                        opacity: 0.7,
+                                      }}
+                                    >
+                                      {`/home/work/${record.name}`}
+                                    </Typography.Text>
+                                  ) : (
+                                    value
+                                  );
+                                },
+                              },
+                            ]}
+                            dataSource={_.map(
+                              form.getFieldValue('mounts'),
+                              (v) => {
+                                return {
+                                  name: v,
+                                  alias:
+                                    form.getFieldValue('vfoldersAliasMap')?.[v],
+                                };
+                              },
+                            )}
+                          ></Table>
+                        ) : (
+                          <Alert
+                            type="warning"
+                            showIcon
+                            message={t('session.launcher.NoFolderMounted')}
+                          />
+                        )}
+                        {form.getFieldValue('autoMountedFolderNames')?.length >
+                        0 ? (
+                          <Descriptions size="small">
+                            <Descriptions.Item
+                              label={t('data.AutomountFolders')}
+                            >
+                              {_.map(
+                                form.getFieldValue('autoMountedFolderNames'),
+                                (name) => {
+                                  return <Tag>{name}</Tag>;
+                                },
+                              )}
+                            </Descriptions.Item>
+                          </Descriptions>
+                        ) : null}
+                      </Flex>
                     </BAICard>
                     <BAICard
                       title="Network"
