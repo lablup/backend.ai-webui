@@ -272,7 +272,8 @@
       "BatchModeDesc": "Anda boleh menjalankan kod anda dengan berbilang nod",
       "AddEnvironmentVariable": "Tambah pembolehubah persekitaran",
       "EnvironmentVariableValueRequired": "Sila masukkan nilai.",
-      "PleaseCompleteForm": "Borang tidak lengkap atau mengandungi ralat. \nSila semak input anda."
+      "PleaseCompleteForm": "Borang tidak lengkap atau mengandungi ralat. \nSila semak input anda.",
+      "FailedToStartNewSession": "Pembuatan sesi gagal. \nSila semak tab 'SELESAI' pada halaman sesi."
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",

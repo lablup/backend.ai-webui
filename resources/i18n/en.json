@@ -285,7 +285,8 @@
       "InteractiveModeDesc": "allows you to create, test and run code interactively via jupyter notebook, visual studio code, etc.",
       "AddEnvironmentVariable": "Add environment variables",
       "EnvironmentVariableValueRequired": "Please enter a value.",
-      "PleaseCompleteForm": "Form is incomplete or contains errors. Please check your inputs."
+      "PleaseCompleteForm": "Form is incomplete or contains errors. Please check your inputs.",
+      "FailedToStartNewSession": "Session creation failed. Please check the 'FINISHED' tab on the session page."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

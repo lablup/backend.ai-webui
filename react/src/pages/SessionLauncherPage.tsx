@@ -442,13 +442,19 @@ const SessionLauncherPage = () => {
                 20000,
                 sessionInfo.architecture,
               )
-              .then((res: { created: boolean }) => {
+              .then((res: { created: boolean; status: string }) => {
                 // // When session is already created with the same name, the status code
                 // // is 200, but the response body has 'created' field as false. For better
                 // // user experience, we show the notification message.
                 if (!res?.created) {
                   // message.warning(t('session.launcher.SessionAlreadyExists'));
                   throw new Error(t('session.launcher.SessionAlreadyExists'));
+                }
+                if (res?.status === 'CANCELLED') {
+                  // Case about failed to start new session kind of "docker image not found" or etc.
+                  throw new Error(
+                    t('session.launcher.FailedToStartNewSession'),
+                  );
                 }
                 return res;
               })
