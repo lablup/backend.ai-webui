@@ -2834,7 +2834,8 @@ ${item.traceback}</pre
           <div class="layout vertical start">
             <div class="horizontal center center-justified layout">
               <pre id="session-name-field">
-${rowData.item.mounts[0]} SFTP Session</pre
+                ${rowData.item.mounts[0]} SFTP Session
+              </pre
               >
             </div>
           </div>
@@ -4160,19 +4161,17 @@ ${rowData.item[this.sessionNameField]}</pre
       <div class="layout horizontal center filters">
         <div id="multiple-action-buttons" style="display:none;">
           <mwc-button icon="delete" class="multiple-action-button" raised style="margin:8px;"
-                           @click="${() =>
-                             this._openTerminateSelectedSessionsDialog()}">${_t(
-                             'session.Terminate',
-                           )}</mwc-button>
+            @click="${() =>
+              this._openTerminateSelectedSessionsDialog()}">${_t('session.Terminate')}
+          </mwc-button>
         </div>
         <span class="flex"></span>
         <div class="vertical layout" style="display:none">
           <mwc-textfield id="access-key-filter" type="search" maxLength="64"
-                      label="${_t(
-                        'general.AccessKey',
-                      )}" no-label-float .value="${this.filterAccessKey}"
-                      style="margin-right:20px;"
-                      @change="${(e) => this._updateFilterAccessKey(e)}">
+            label="${_t('general.AccessKey')}" 
+            no-label-float .value="${this.filterAccessKey}"
+            style="margin-right:20px;"
+            @change="${(e) => this._updateFilterAccessKey(e)}">
           </mwc-textfield>
           <span id="access-key-filter-helper-text">${_t(
             'maxLength.64chars',
@@ -4181,7 +4180,7 @@ ${rowData.item[this.sessionNameField]}</pre
       </div>
       <div class="list-wrapper">
         <vaadin-grid id="list-grid" theme="row-stripes column-borders compact dark" aria-label="Session list"
-          .items="${this.compute_sessions}" height-by-rows>
+          .items="${this.compute_sessions}" height-by-rows >
           ${
             this._isRunning
               ? html`
@@ -4215,17 +4214,16 @@ ${rowData.item[this.sessionNameField]}</pre
                 `
               : html``
           }
-          <lablup-grid-sort-filter-column frozen path="${
-            this.sessionNameField
-          }" auto-width header="${_t('session.SessionInfo')}" resizable
-                                     .renderer="${
-                                       this._boundSessionInfoRenderer
-                                     }">
+          <lablup-grid-sort-filter-column frozen path="${this.sessionNameField}" 
+            width="260px"
+            header="${_t('session.SessionInfo')}" 
+            resizable
+            .renderer="${this._boundSessionInfoRenderer}"
+          >
           </lablup-grid-sort-filter-column>
-          <lablup-grid-sort-filter-column width="120px" path="status" header="${_t(
-            'session.Status',
-          )}" resizable
-                                     .renderer="${this._boundStatusRenderer}">
+          <lablup-grid-sort-filter-column width="120px" path="status" header="${_t('session.Status')}" 
+            resizable
+            .renderer="${this._boundStatusRenderer}">
           </lablup-grid-sort-filter-column>
           <vaadin-grid-column width=${
             this._isContainerCommitEnabled ? '260px' : '210px'
@@ -4257,7 +4255,7 @@ ${rowData.item[this.sessionNameField]}</pre
               ? html`
                   <vaadin-grid-column
                     resizable
-                    auto-width
+                    width="180px"
                     flex-grow="0"
                     .headerRenderer="${this._boundIdleChecksHeaderderer}"
                     .renderer="${this._boundIdleChecksRenderer}"
@@ -4290,7 +4288,7 @@ ${rowData.item[this.sessionNameField]}</pre
             this.is_superadmin || !globalThis.backendaiclient._config.hideAgents
               ? html`
                   <lablup-grid-sort-filter-column
-                    auto-width
+                    width="140px"
                     flex-grow="0"
                     resizable
                     header="${_t('session.Agents')}"
