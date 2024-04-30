@@ -180,44 +180,47 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       },
     );
 
-  const allowedVFolderHostsByDomain = JSON.parse(
-    domain?.allowed_vfolder_hosts || '{}',
-  );
-  const allowedVFolderHostsByGroup = JSON.parse(
-    group?.allowed_vfolder_hosts || '{}',
-  );
-  const allowedVFolderHostsByKeypairResourcePolicy = JSON.parse(
-    keypair_resource_policy?.allowed_vfolder_hosts || '{}',
-  );
+  const filteredFolderListByPermission = useMemo(() => {
+    const allowedVFolderHostsByDomain = JSON.parse(
+      domain?.allowed_vfolder_hosts || '{}',
+    );
+    const allowedVFolderHostsByGroup = JSON.parse(
+      group?.allowed_vfolder_hosts || '{}',
+    );
+    const allowedVFolderHostsByKeypairResourcePolicy = JSON.parse(
+      keypair_resource_policy?.allowed_vfolder_hosts || '{}',
+    );
 
-  const mergedVFolderPermissions = _.merge(
-    allowedVFolderHostsByDomain,
-    allowedVFolderHostsByGroup,
-    allowedVFolderHostsByKeypairResourcePolicy,
-  );
-  // only allow mount if volume permission has 'mount-in-session'
-  const mountAllowedVolumes = Object.keys(mergedVFolderPermissions).filter(
-    (volume) => mergedVFolderPermissions[volume].includes('mount-in-session'),
-  );
-  // Need to filter allFolderList from allowed vfolder
-  const filteredFolderListByPermission = allFolderList?.filter((folder) =>
-    mountAllowedVolumes.includes(folder.host),
-  );
-  const autoMountedFolderNames = useMemo(
+    const mergedVFolderPermissions = _.merge(
+      allowedVFolderHostsByDomain,
+      allowedVFolderHostsByGroup,
+      allowedVFolderHostsByKeypairResourcePolicy,
+    );
+    // only allow mount if volume permission has 'mount-in-session'
+    const mountAllowedVolumes = Object.keys(mergedVFolderPermissions).filter(
+      (volume) => mergedVFolderPermissions[volume].includes('mount-in-session'),
+    );
+    // Need to filter allFolderList from allowed vfolder
+    return allFolderList?.filter((folder) =>
+      mountAllowedVolumes.includes(folder.host),
+    );
+  }, [domain, group, keypair_resource_policy, allFolderList]);
+
+  const autoMountedFolderNamesByPermission = useMemo(
     () =>
-      _.chain(allFolderList)
+      _.chain(filteredFolderListByPermission)
         .filter((vf) => vf.status === 'ready' && vf.name?.startsWith('.'))
         .map((vf) => vf.name)
         .value(),
-    [allFolderList],
+    [filteredFolderListByPermission],
   );
 
   useEffect(() => {
     _.isFunction(onChangeAutoMountedFolders) &&
-      onChangeAutoMountedFolders(autoMountedFolderNames);
+      onChangeAutoMountedFolders(autoMountedFolderNamesByPermission);
     // Do not need to run when `autoMountedFolderNames` changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoMountedFolderNames]);
+  }, [autoMountedFolderNamesByPermission]);
 
   const [searchKey, setSearchKey] = useState('');
   const displayingFolders = _.chain(filteredFolderListByPermission)
@@ -524,11 +527,12 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           {...tableProps}
         />
       </Form>
-      {showAutoMountedFoldersSection && autoMountedFolderNames.length > 0 ? (
+      {showAutoMountedFoldersSection &&
+      autoMountedFolderNamesByPermission.length > 0 ? (
         <>
           <Descriptions size="small">
             <Descriptions.Item label={t('data.AutomountFolders')}>
-              {_.map(autoMountedFolderNames, (name) => {
+              {_.map(autoMountedFolderNamesByPermission, (name) => {
                 return <Tag>{name}</Tag>;
               })}
             </Descriptions.Item>
