@@ -6,6 +6,7 @@ import {
 } from '../hooks';
 import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useShadowRoot } from './DefaultProviders';
 import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
@@ -20,10 +21,12 @@ import {
 import { useControllableValue } from 'ahooks';
 import {
   Button,
+  Descriptions,
   Form,
   Input,
   Table,
   TableProps,
+  Tag,
   Tooltip,
   Typography,
 } from 'antd';
@@ -31,7 +34,7 @@ import { ColumnsType } from 'antd/lib/table';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { useEffect, useState, useTransition } from 'react';
+import React, { useEffect, useMemo, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -65,6 +68,8 @@ export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
   onChangeAliasMap?: (aliasMap: AliasMap) => void;
   filter?: (vFolder: VFolder) => boolean;
   rowKey: string | number;
+  onChangeAutoMountedFolders?: (names: Array<string>) => void;
+  showAutoMountedFoldersSection?: boolean;
 }
 
 export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/-]*$/;
@@ -78,6 +83,8 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   aliasMap: controlledAliasMap,
   onChangeAliasMap,
   rowKey = 'name',
+  onChangeAutoMountedFolders,
+  showAutoMountedFoldersSection,
   ...tableProps
 }) => {
   const getRowKey = React.useMemo(() => {
@@ -173,8 +180,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       },
     );
 
-  console.log(domain);
-
   const allowedVFolderHostsByDomain = JSON.parse(
     domain?.allowed_vfolder_hosts || '{}',
   );
@@ -198,6 +203,21 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   const filteredFolderListByPermission = allFolderList?.filter((folder) =>
     mountAllowedVolumes.includes(folder.host),
   );
+  const autoMountedFolderNames = useMemo(
+    () =>
+      _.chain(allFolderList)
+        .filter((vf) => vf.status === 'ready' && vf.name?.startsWith('.'))
+        .map((vf) => vf.name)
+        .value(),
+    [allFolderList],
+  );
+
+  useEffect(() => {
+    _.isFunction(onChangeAutoMountedFolders) &&
+      onChangeAutoMountedFolders(autoMountedFolderNames);
+    // Do not need to run when `autoMountedFolderNames` changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoMountedFolderNames]);
 
   const [searchKey, setSearchKey] = useState('');
   const displayingFolders = _.chain(filteredFolderListByPermission)
@@ -209,39 +229,34 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       return !searchKey || vf.name.includes(searchKey);
     })
     .value();
-  // const { token } = theme.useToken();
-  // const searchInput = useRef<InputRef>(null);
 
-  // TODO: set defaults
-  // useUpdateEffect(() => {
-  //   setSelectedRowKeys(defaultSelectedKeys || []);
-  // }, [defaultSelectedKeys]);
+  const mapAliasToPath = useEventNotStable(
+    (name: VFolderKey, input?: string) => {
+      if (_.isEmpty(input)) {
+        return `${aliasBasePath}${name}`;
+      } else if (input?.startsWith('/')) {
+        return input;
+      } else {
+        return `${aliasBasePath}${input}`;
+      }
+    },
+  );
 
-  const handleAliasUpdate = (e?: any) => {
-    e?.preventDefault();
-    internalForm
-      .validateFields()
-      .then((values) => {})
-      .catch(() => {})
-      .finally(() => {
-        setAliasMap(
-          _.mapValues(
-            _.pickBy(internalForm.getFieldsValue(), (v) => !!v), //remove empty
-            (v, k) => mapAliasToPath(k, v), // add alias base path
-          ),
-        );
-      });
-  };
+  const handleAliasUpdate = useEventNotStable(() => {
+    setAliasMap(
+      _.mapValues(
+        _.pickBy(internalForm.getFieldsValue(), (v) => !!v), //remove empty
+        (v, k) => mapAliasToPath(k, v), // add alias base path
+      ),
+    );
+    internalForm.validateFields().catch(() => {});
+  });
 
-  const mapAliasToPath = (name: VFolderKey, input?: string) => {
-    if (_.isEmpty(input)) {
-      return `${aliasBasePath}${name}`;
-    } else if (input?.startsWith('/')) {
-      return input;
-    } else {
-      return `${aliasBasePath}${input}`;
-    }
-  };
+  useEffect(() => {
+    handleAliasUpdate();
+    // `selectedRowKeys` can be changed by parents at any time, so we need to check whether `selectedRowKeys` has changed using JSON.stringify
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(selectedRowKeys), handleAliasUpdate]);
 
   const shadowRoot = useShadowRoot();
 
@@ -352,10 +367,10 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                           e.stopPropagation();
                         }}
                         placeholder={t('session.launcher.FolderAlias')}
-                        // onPressEnter={handleAliasUpdate}
-                        // onBlur={handleAliasUpdate}
-                        onChange={handleAliasUpdate}
                         allowClear
+                        onChange={() => {
+                          handleAliasUpdate();
+                        }}
                       ></Input>
                     </Form.Item>
                   );
@@ -482,7 +497,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
             selectedRowKeys,
             onChange: (selectedRowKeys) => {
               setSelectedRowKeys(selectedRowKeys as VFolderKey[]);
-              handleAliasUpdate();
             },
           }}
           showSorterTooltip={false}
@@ -510,6 +524,17 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           {...tableProps}
         />
       </Form>
+      {showAutoMountedFoldersSection && autoMountedFolderNames.length > 0 ? (
+        <>
+          <Descriptions size="small">
+            <Descriptions.Item label={t('data.AutomountFolders')}>
+              {_.map(autoMountedFolderNames, (name) => {
+                return <Tag>{name}</Tag>;
+              })}
+            </Descriptions.Item>
+          </Descriptions>
+        </>
+      ) : null}
     </Flex>
   );
 };
