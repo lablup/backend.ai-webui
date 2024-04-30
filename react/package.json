@@ -102,7 +102,7 @@
     "webpack": "^5.91.0"
   },
   "overrides": {
-    "@typescript-eslint/typescript-estree": "^7.8.0",
+    "@typescript-eslint/typescript-estree": "^5.62.0",
     "typescript": "^5.4.5"
   },
   "proxy": "http://localhost:3081"
