@@ -1,5 +1,38 @@
 # Changelog
 
+## v24.03.3 (30/4/2024)
+## What's Changed
+* ci: display failed-tests annotation only in jest-coverage-report-action by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2347
+* hotfix: listup only ready status vfolder on service launcher by @lizable in https://github.com/lablup/backend.ai-webui/pull/2354
+* fix: remove container commit interaction button in `upload session` by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2356
+* fix: preserve the preset of session launcher using query parameters. by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2361
+* fix: parsing valid appConnectUrl by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2358
+* fix: default environment as a initial value of the service launcher by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2352
+* fix: wrong vFolder validation result occasionally. by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2359
+* fix: prevent delete in shared vfolder by permission by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2363
+* fix: `onChangeAliasMap` is triggered on every render by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2370
+* fix: Change '/session' path to be used as sider's selectedKey 'job' by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2376
+* feat: auto mounted vFolder in Neo session launcher by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2381
+* fix: include cancel handler in ServiceLauncherModal by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2379
+* Omit `onOk` from `BAIModalProps` instead of `onOK` by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2384
+* fix: preventing sharing of auto-mounted folders by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2374
+* feat: Show instructions for session creation failures by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2385
+* build(deps-dev): bump express from 4.19.1 to 4.19.2 by @dependabot in https://github.com/lablup/backend.ai-webui/pull/2273
+* build(deps): bump express from 4.18.2 to 4.19.2 in /react by @dependabot in https://github.com/lablup/backend.ai-webui/pull/2274
+* ci: Bump actions/labeler from 4 to 5 by @Yaminyam in https://github.com/lablup/backend.ai-webui/pull/2342
+* build(deps): bump follow-redirects from 1.15.2 to 1.15.6 in /react by @dependabot in https://github.com/lablup/backend.ai-webui/pull/2263
+* build(deps-dev): bump webpack-dev-middleware from 5.3.3 to 5.3.4 in /react by @dependabot in https://github.com/lablup/backend.ai-webui/pull/2266
+* hotfix: only show vfolder when mount in session perm is allowed by @lizable in https://github.com/lablup/backend.ai-webui/pull/2348
+* fix: add ErrorBoundary on main layout when error occurred during fetching TOTP checker by @lizable in https://github.com/lablup/backend.ai-webui/pull/2380
+* feat: add `User work` to VSCode remote connection info by @agatha197 in https://github.com/lablup/backend.ai-webui/pull/2375
+* feat: add `UserKnownHostsFile` to vs code app guide by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2391
+* bug: session list grid resized when data is refetched by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2390
+* fix: Modal header buttons are not clickable in the top area of Electron by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/2392
+* hotfix: set cuda share first as an ai accelerator when both cuda device and shares available by @lizable in https://github.com/lablup/backend.ai-webui/pull/2395
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v24.03.2...v24.03.3
+
+
 ## v24.03.2 (17/04/2024)
 ## What's Changed
 * feat: set color for text 'only' by @ironAiken2 in https://github.com/lablup/backend.ai-webui/pull/2322
