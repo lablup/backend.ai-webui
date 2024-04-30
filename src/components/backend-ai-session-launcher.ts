@@ -3271,19 +3271,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const atom_device = button.atom_device;
     const warboy_device = button.warboy_device;
     const hyperaccel_lpu_device = button.hyperaccel_lpu_device;
+
     let gpu_type;
     let gpu_value;
     if (
       (typeof cuda_device !== 'undefined' && Number(cuda_device) > 0) ||
       (typeof cuda_shares !== 'undefined' && Number(cuda_shares) > 0)
     ) {
-      if (typeof cuda_device === 'undefined') {
+      if (typeof cuda_shares === 'undefined') {
+        gpu_type = 'cuda.device';
+        gpu_value = cuda_device;
+      } else {
         // FGPU
         gpu_type = 'cuda.shares';
         gpu_value = cuda_shares;
-      } else {
-        gpu_type = 'cuda.device';
-        gpu_value = cuda_device;
       }
     } else if (typeof rocm_device !== 'undefined' && Number(rocm_device) > 0) {
       gpu_type = 'rocm.device';
