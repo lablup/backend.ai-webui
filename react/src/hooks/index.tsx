@@ -117,6 +117,7 @@ export const useSuspendedBackendaiClient = () => {
     vfolder: {
       list: (path: string) => Promise<any>;
       list_hosts: () => Promise<any>;
+      list_all_hosts: () => Promise<any>;
       list_files: (path: string, id: string) => Promise<any>;
       list_allowed_types: () => Promise<string[]>;
       clone: (input: any, name: string) => Promise<any>;

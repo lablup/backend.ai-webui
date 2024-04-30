@@ -405,7 +405,8 @@
     "SessionName": "Sitzungsname",
     "SessionId": "Session-ID",
     "EnvironmentAndVersion": "Umgebung und Version",
-    "Tags": "Stichworte"
+    "Tags": "Stichworte",
+    "fGPU": "fGPU"
   },
   "button": {
     "Cancel": "Stornieren",
@@ -962,7 +963,9 @@
     "User": "Benutzer",
     "Project": "Projekt",
     "KeypairResourcePolicy": "Schlüsselpaar-Ressourcenrichtlinie",
-    "IdleTimeout": "Leerlauf-Timeout"
+    "IdleTimeout": "Leerlauf-Timeout",
+    "CreateResourcePolicy": "Erstellen Sie eine Ressourcenrichtlinie",
+    "ResourcePolicyNameAlreadyExists": "Der Name der Ressourcenrichtlinie ist bereits vorhanden. \nBitte ändern Sie den hinzuzufügenden Namen."
   },
   "registry": {
     "Hostname": "Hostname",

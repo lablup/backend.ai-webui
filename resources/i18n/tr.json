@@ -405,7 +405,8 @@
     "SessionName": "Oturum Adı",
     "SessionId": "Oturum kimliği",
     "EnvironmentAndVersion": "Ortam ve Sürüm",
-    "Tags": "Etiketler"
+    "Tags": "Etiketler",
+    "fGPU": "fGPU"
   },
   "button": {
     "Cancel": "İptal etmek",
@@ -962,7 +963,9 @@
     "User": "Kullanıcı",
     "Project": "Proje",
     "KeypairResourcePolicy": "Anahtar Çifti Kaynak Politikası",
-    "IdleTimeout": "Boşta Kalma Zaman Aşımı"
+    "IdleTimeout": "Boşta Kalma Zaman Aşımı",
+    "CreateResourcePolicy": "Kaynak Politikası Oluşturun",
+    "ResourcePolicyNameAlreadyExists": "Kaynak politikası adı zaten mevcut. \nLütfen eklenecek adı değiştirin."
   },
   "registry": {
     "Hostname": "ana bilgisayar adı",

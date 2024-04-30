@@ -405,7 +405,8 @@
     "SessionName": "Nom de la session",
     "SessionId": "ID de session",
     "EnvironmentAndVersion": "Environnement et version",
-    "Tags": "Mots clés"
+    "Tags": "Mots clés",
+    "fGPU": "fGPU"
   },
   "button": {
     "Cancel": "Annuler",
@@ -962,7 +963,9 @@
     "User": "Utilisateur",
     "Project": "Projet",
     "KeypairResourcePolicy": "Politique de ressources de paires de clés",
-    "IdleTimeout": "Délai d'inactivité"
+    "IdleTimeout": "Délai d'inactivité",
+    "CreateResourcePolicy": "Créer une stratégie de ressources",
+    "ResourcePolicyNameAlreadyExists": "Le nom de la stratégie de ressources existe déjà. \nVeuillez modifier le nom à ajouter."
   },
   "registry": {
     "Hostname": "Nom d'hôte",

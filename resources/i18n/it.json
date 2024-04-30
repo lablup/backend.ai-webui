@@ -405,7 +405,8 @@
     "SessionName": "Nome della sessione",
     "SessionId": "ID sessione",
     "EnvironmentAndVersion": "Ambiente e versione",
-    "Tags": "Tag"
+    "Tags": "Tag",
+    "fGPU": "fGPU"
   },
   "button": {
     "Cancel": "Annulla",
@@ -962,7 +963,9 @@
     "User": "Utente",
     "Project": "Progetto",
     "KeypairResourcePolicy": "Politica delle risorse per la coppia di chiavi",
-    "IdleTimeout": "Timeout di inattività"
+    "IdleTimeout": "Timeout di inattività",
+    "CreateResourcePolicy": "Creare una politica delle risorse",
+    "ResourcePolicyNameAlreadyExists": "Il nome della policy delle risorse esiste già. \nSi prega di modificare il nome da aggiungere."
   },
   "registry": {
     "Hostname": "Nome host",

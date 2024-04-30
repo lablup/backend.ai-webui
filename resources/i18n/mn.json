@@ -406,7 +406,8 @@
     "SessionName": "Сеанс нэр",
     "SessionId": "Сешн Id",
     "EnvironmentAndVersion": "Хүрээлэн буй орчин ба хувилбар",
-    "Tags": "Шошго"
+    "Tags": "Шошго",
+    "fGPU": "fGPU"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -963,7 +964,9 @@
     "User": "Хэрэглэгч",
     "Project": "Төсөл",
     "KeypairResourcePolicy": "Түлхүүрийн нөөцийн бодлого",
-    "IdleTimeout": "Сул зогсолтын хугацаа"
+    "IdleTimeout": "Сул зогсолтын хугацаа",
+    "CreateResourcePolicy": "Нөөцийн бодлогыг бий болгох",
+    "ResourcePolicyNameAlreadyExists": "Нөөцийн бодлогын нэр аль хэдийн байна. \nНэмэх нэрээ өөрчилнө үү."
   },
   "registry": {
     "Hostname": "Хостын нэр",

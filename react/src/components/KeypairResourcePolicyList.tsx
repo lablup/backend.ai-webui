@@ -1,5 +1,6 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
+import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
 import ResourceNumber from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import { KeypairResourcePolicyListMutation } from './__generated__/KeypairResourcePolicyListMutation.graphql';
@@ -7,6 +8,7 @@ import {
   KeypairResourcePolicyListQuery,
   KeypairResourcePolicyListQuery$data,
 } from './__generated__/KeypairResourcePolicyListQuery.graphql';
+import { KeypairResourcePolicySettingModalFragment$key } from './__generated__/KeypairResourcePolicySettingModalFragment.graphql';
 import {
   DeleteOutlined,
   PlusOutlined,
@@ -40,10 +42,13 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
 
   const [keypairResourcePolicyFetchKey, updateKeypairResourcePolicyFetchKey] =
     useUpdatableState('initial-fetch');
-  const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const [isRefetchPending, startRefetchTransition] = useTransition();
+  const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
+  const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [inFlightResourcePolicyName, setInFlightResourcePolicyName] =
     useState<string>();
+  const [editingKeypairResourcePolicy, setEditingKeypairResourcePolicy] =
+    useState<KeypairResourcePolicySettingModalFragment$key | null>();
 
   const baiClient = useSuspendedBackendaiClient();
   const enableParsingStoragePermission =
@@ -66,6 +71,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             max_vfolder_count @deprecatedSince(version: "23.09.4")
             max_vfolder_size @deprecatedSince(version: "23.09.4")
             max_quota_scope_size @deprecatedSince(version: "23.09.4")
+            ...KeypairResourcePolicySettingModalFragment
           }
         }
       `,
@@ -187,7 +193,9 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             style={{
               color: token.colorInfo,
             }}
-            onClick={() => {}}
+            onClick={() => {
+              setEditingKeypairResourcePolicy(row);
+            }}
           />
           <Popconfirm
             title={t('dialog.ask.DoYouWantToProceed')}
@@ -229,7 +237,15 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
                   }}
                 />
               }
-              onClick={() => {}}
+              loading={
+                inFlightResourcePolicyName ===
+                row?.name + keypairResourcePolicyFetchKey
+              }
+              disabled={
+                isInflightDelete &&
+                inFlightResourcePolicyName !==
+                  row?.name + keypairResourcePolicyFetchKey
+              }
             />
           </Popconfirm>
         </Flex>
@@ -273,14 +289,19 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
                 );
               }}
             />
-            <Button type="primary" icon={<PlusOutlined />} onClick={() => {}}>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setIsCreatingPolicySetting(true);
+              }}
+            >
               {t('button.Create')}
             </Button>
           </Flex>
         </Flex>
       </Flex>
       <Table
-        loading={isRefetchPending}
         columns={
           columns.filter((column) =>
             displayedColumnKeys?.includes(_.toString(column.key)),
@@ -317,6 +338,23 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           }}
         />
       </Flex>
+      <KeypairResourcePolicySettingModal
+        existingPolicyNames={_.map(
+          keypair_resource_policies,
+          (policy) => policy?.name || '',
+        )}
+        open={!!editingKeypairResourcePolicy || isCreatingPolicySetting}
+        keypairResourcePolicyFrgmt={editingKeypairResourcePolicy || null}
+        onRequestClose={(success) => {
+          setEditingKeypairResourcePolicy(null);
+          setIsCreatingPolicySetting(false);
+          if (success) {
+            startRefetchTransition(() => {
+              updateKeypairResourcePolicyFetchKey();
+            });
+          }
+        }}
+      />
     </Flex>
   );
 };

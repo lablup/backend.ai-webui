@@ -405,7 +405,8 @@
     "SessionName": "Имя сеанса",
     "SessionId": "Идентификатор сессии",
     "EnvironmentAndVersion": "Окружающая среда и версия",
-    "Tags": "Теги"
+    "Tags": "Теги",
+    "fGPU": "фГПУ"
   },
   "button": {
     "Cancel": "Отмена",
@@ -962,7 +963,9 @@
     "User": "Пользователь",
     "Project": "Проект",
     "KeypairResourcePolicy": "Политика ресурсов пары ключей",
-    "IdleTimeout": "Тайм-аут простоя"
+    "IdleTimeout": "Тайм-аут простоя",
+    "CreateResourcePolicy": "Создать политику ресурсов",
+    "ResourcePolicyNameAlreadyExists": "Название политики ресурсов уже существует. \nПожалуйста, измените имя, чтобы добавить."
   },
   "registry": {
     "Hostname": "Имя хоста",

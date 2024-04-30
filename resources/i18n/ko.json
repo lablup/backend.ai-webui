@@ -406,7 +406,8 @@
     "SessionName": "세션 이름",
     "SessionId": "세션 ID",
     "EnvironmentAndVersion": "환경 및 버전",
-    "Tags": "태그"
+    "Tags": "태그",
+    "fGPU": "fGPU"
   },
   "modelService": {
     "Services": "모델 서비스",
@@ -1052,7 +1053,9 @@
     "User": "사용자",
     "Project": "프로젝트",
     "KeypairResourcePolicy": "키페어 자원 정책",
-    "IdleTimeout": "유휴 대기 시간"
+    "IdleTimeout": "유휴 대기 시간",
+    "CreateResourcePolicy": "자원 정책 만들기",
+    "ResourcePolicyNameAlreadyExists": "리소스 정책 이름이 이미 존재합니다. \n추가하려면 이름을 변경하세요."
   },
   "registry": {
     "Hostname": "호스트명",
