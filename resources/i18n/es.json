@@ -903,7 +903,9 @@
     "User": "Usuario",
     "Project": "Proyecto",
     "KeypairResourcePolicy": "Política de recursos de par de claves",
-    "IdleTimeout": "Tiempo de inactividad"
+    "IdleTimeout": "Tiempo de inactividad",
+    "CreateResourcePolicy": "Crear política de recursos",
+    "ResourcePolicyNameAlreadyExists": "El nombre de la política de recursos ya existe. \nCambie el nombre para agregarlo."
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Está a punto de borrar este preajuste:",
@@ -1215,7 +1217,8 @@
     "SessionName": "Nombre de la sesión",
     "SessionId": "ID de sesión",
     "EnvironmentAndVersion": "Entorno y versión",
-    "Tags": "Etiquetas"
+    "Tags": "Etiquetas",
+    "fGPU": "fGPU"
   },
   "settings": {
     "ATOMsupport": "ATOM",

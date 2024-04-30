@@ -406,7 +406,8 @@
     "SessionId": "Id Sesi",
     "EnvironmentAndVersion": "Lingkungan dan Versi",
     "Tags": "Tag",
-    "Agents": "Agen"
+    "Agents": "Agen",
+    "fGPU": "fGPU"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -964,7 +965,9 @@
     "User": "Pengguna",
     "Project": "Proyek",
     "KeypairResourcePolicy": "Kebijakan Sumber Daya Pasangan Kunci",
-    "IdleTimeout": "Batas Waktu Diam"
+    "IdleTimeout": "Batas Waktu Diam",
+    "CreateResourcePolicy": "Buat Kebijakan Sumber Daya",
+    "ResourcePolicyNameAlreadyExists": "Nama kebijakan sumber daya sudah ada. \nSilakan ubah nama untuk ditambahkan."
   },
   "registry": {
     "Hostname": "Nama host",

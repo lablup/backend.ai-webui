@@ -405,7 +405,8 @@
     "SessionName": "Tên phiên",
     "SessionId": "Id phiên",
     "EnvironmentAndVersion": "Môi trường và phiên bản",
-    "Tags": "Thẻ"
+    "Tags": "Thẻ",
+    "fGPU": "fGPU"
   },
   "button": {
     "Cancel": "Huỷ bỏ",
@@ -963,7 +964,9 @@
     "User": "Người dùng",
     "Project": "Dự án",
     "KeypairResourcePolicy": "Chính sách tài nguyên cặp khóa",
-    "IdleTimeout": "Hết thời gian chờ"
+    "IdleTimeout": "Hết thời gian chờ",
+    "CreateResourcePolicy": "Tạo chính sách tài nguyên",
+    "ResourcePolicyNameAlreadyExists": "Tên chính sách tài nguyên đã tồn tại. \nVui lòng thay đổi tên để thêm."
   },
   "registry": {
     "Hostname": "Tên máy chủ",

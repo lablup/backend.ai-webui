@@ -405,7 +405,8 @@
     "SessionName": "會話名稱",
     "SessionId": "會話 ID",
     "EnvironmentAndVersion": "環境及版本",
-    "Tags": "標籤"
+    "Tags": "標籤",
+    "fGPU": "GPU"
   },
   "button": {
     "Cancel": "取消",
@@ -963,7 +964,9 @@
     "User": "使用者",
     "Project": "專案",
     "KeypairResourcePolicy": "密鑰對資源策略",
-    "IdleTimeout": "空閒超時"
+    "IdleTimeout": "空閒超時",
+    "CreateResourcePolicy": "建立資源策略",
+    "ResourcePolicyNameAlreadyExists": "資源策略名稱已存在。\n請更改名稱以新增。"
   },
   "registry": {
     "Hostname": "主機名",

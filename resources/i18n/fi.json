@@ -901,7 +901,9 @@
     "User": "Käyttäjä",
     "Project": "Projekti",
     "KeypairResourcePolicy": "Avainparin resurssikäytäntö",
-    "IdleTimeout": "Idle Timeout"
+    "IdleTimeout": "Idle Timeout",
+    "CreateResourcePolicy": "Luo resurssikäytäntö",
+    "ResourcePolicyNameAlreadyExists": "Resurssikäytännön nimi on jo olemassa. \nMuuta lisättävä nimi."
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Olet poistamassa tätä esiasetusta:",
@@ -1213,7 +1215,8 @@
     "SessionName": "Istunnon nimi",
     "SessionId": "Istunnon tunniste",
     "EnvironmentAndVersion": "Ympäristö ja versio",
-    "Tags": "Tunnisteet"
+    "Tags": "Tunnisteet",
+    "fGPU": "fGPU"
   },
   "settings": {
     "ATOMsupport": "ATOM",

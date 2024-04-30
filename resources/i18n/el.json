@@ -405,7 +405,8 @@
     "SessionName": "Όνομα συνεδρίας",
     "SessionId": "Αναγνωριστικό συνεδρίας",
     "EnvironmentAndVersion": "Περιβάλλον και Έκδοση",
-    "Tags": "Ετικέτες"
+    "Tags": "Ετικέτες",
+    "fGPU": "fGPU"
   },
   "button": {
     "Cancel": "Ματαίωση",
@@ -963,7 +964,9 @@
     "User": "Χρήστης",
     "Project": "Εργο",
     "KeypairResourcePolicy": "Πολιτική πόρων ζεύγους κλειδιών",
-    "IdleTimeout": "Χρονικό όριο αδράνειας"
+    "IdleTimeout": "Χρονικό όριο αδράνειας",
+    "CreateResourcePolicy": "Δημιουργία Πολιτικής Πόρων",
+    "ResourcePolicyNameAlreadyExists": "Το όνομα της πολιτικής πόρων υπάρχει ήδη. \nΑλλάξτε το όνομα για προσθήκη."
   },
   "registry": {
     "Hostname": "Όνομα κεντρικού υπολογιστή",

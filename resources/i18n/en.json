@@ -419,7 +419,8 @@
     "SessionName": "Session Name",
     "SessionId": "Session ID",
     "EnvironmentAndVersion": "Environment and Version",
-    "Tags": "Tags"
+    "Tags": "Tags",
+    "fGPU": "fGPU"
   },
   "modelService": {
     "Services": "Services",
@@ -1066,7 +1067,9 @@
     "User": "User",
     "Project": "Project",
     "KeypairResourcePolicy": "Keypair Resource Policy",
-    "IdleTimeout": "Idle Timeout"
+    "IdleTimeout": "Idle Timeout",
+    "CreateResourcePolicy": "Create Resource Policy",
+    "ResourcePolicyNameAlreadyExists": "Resource policy name already exists. Please change the name to add."
   },
   "registry": {
     "Hostname": "Hostname",

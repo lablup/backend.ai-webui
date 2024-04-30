@@ -405,7 +405,8 @@
     "SessionName": "Nome da sessão",
     "SessionId": "Identificação de sessão",
     "EnvironmentAndVersion": "Ambiente e versão",
-    "Tags": "Tag"
+    "Tags": "Tag",
+    "fGPU": "fGPU"
   },
   "button": {
     "Cancel": "Cancelar",
@@ -963,7 +964,9 @@
     "User": "Do utilizador",
     "Project": "Projeto",
     "KeypairResourcePolicy": "Política de recursos de par de chaves",
-    "IdleTimeout": "Tempo limite ocioso"
+    "IdleTimeout": "Tempo limite ocioso",
+    "CreateResourcePolicy": "Criar Política de Recursos",
+    "ResourcePolicyNameAlreadyExists": "O nome da política de recursos já existe. \nPor favor, altere o nome para adicionar."
   },
   "registry": {
     "Hostname": "nome de anfitrião",
