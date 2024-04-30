@@ -1,5 +1,10 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useCurrentProjectValue, useUpdatableState } from '../hooks';
+import {
+  useCurrentProjectValue,
+  useSuspendedBackendaiClient,
+  useUpdatableState,
+} from '../hooks';
+import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useShadowRoot } from './DefaultProviders';
@@ -7,6 +12,7 @@ import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
 import VFolderPermissionTag from './VFolderPermissionTag';
 import { VFolder } from './VFolderSelect';
+import { VFolderTableProjectQuery } from './__generated__/VFolderTableProjectQuery.graphql';
 import {
   QuestionCircleOutlined,
   ReloadOutlined,
@@ -25,10 +31,12 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useEffect, useMemo, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
 
 export interface VFolderFile {
   name: string;
@@ -108,6 +116,9 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     },
   );
 
+  const baiClient = useSuspendedBackendaiClient();
+  const [keypair] = useKeyPairLazyLoadQuery(baiClient?._config.accessKey);
+
   const [internalForm] = Form.useForm<AliasMap>();
   useEffect(() => {
     // TODO: check setFieldsValue performance
@@ -137,27 +148,83 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
         url: `/folders?group_id=${currentProject.id}`,
       }) as Promise<VFolder[]>;
     },
-    staleTime: 0,
+    staleTime: 1000,
   });
 
-  const autoMountedFolderNames = useMemo(
+  const { domain, group, keypair_resource_policy } =
+    useLazyLoadQuery<VFolderTableProjectQuery>(
+      graphql`
+        query VFolderTableProjectQuery(
+          $domain_name: String!
+          $group_id: UUID!
+          $keypair_resource_policy_name: String!
+        ) {
+          domain(name: $domain_name) {
+            allowed_vfolder_hosts
+          }
+          group(id: $group_id, domain_name: $domain_name) {
+            allowed_vfolder_hosts
+          }
+          keypair_resource_policy(name: $keypair_resource_policy_name) {
+            allowed_vfolder_hosts
+          }
+        }
+      `,
+      {
+        domain_name: baiClient._config.domainName,
+        group_id: currentProject.id,
+        keypair_resource_policy_name: keypair?.resource_policy || '',
+      },
+      {
+        fetchPolicy: 'network-only',
+        fetchKey: fetchKey,
+      },
+    );
+
+  const filteredFolderListByPermission = useMemo(() => {
+    const allowedVFolderHostsByDomain = JSON.parse(
+      domain?.allowed_vfolder_hosts || '{}',
+    );
+    const allowedVFolderHostsByGroup = JSON.parse(
+      group?.allowed_vfolder_hosts || '{}',
+    );
+    const allowedVFolderHostsByKeypairResourcePolicy = JSON.parse(
+      keypair_resource_policy?.allowed_vfolder_hosts || '{}',
+    );
+
+    const mergedVFolderPermissions = _.merge(
+      allowedVFolderHostsByDomain,
+      allowedVFolderHostsByGroup,
+      allowedVFolderHostsByKeypairResourcePolicy,
+    );
+    // only allow mount if volume permission has 'mount-in-session'
+    const mountAllowedVolumes = Object.keys(mergedVFolderPermissions).filter(
+      (volume) => mergedVFolderPermissions[volume].includes('mount-in-session'),
+    );
+    // Need to filter allFolderList from allowed vfolder
+    return allFolderList?.filter((folder) =>
+      mountAllowedVolumes.includes(folder.host),
+    );
+  }, [domain, group, keypair_resource_policy, allFolderList]);
+
+  const autoMountedFolderNamesByPermission = useMemo(
     () =>
-      _.chain(allFolderList)
+      _.chain(filteredFolderListByPermission)
         .filter((vf) => vf.status === 'ready' && vf.name?.startsWith('.'))
         .map((vf) => vf.name)
         .value(),
-    [allFolderList],
+    [filteredFolderListByPermission],
   );
 
   useEffect(() => {
     _.isFunction(onChangeAutoMountedFolders) &&
-      onChangeAutoMountedFolders(autoMountedFolderNames);
+      onChangeAutoMountedFolders(autoMountedFolderNamesByPermission);
     // Do not need to run when `autoMountedFolderNames` changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoMountedFolderNames]);
+  }, [autoMountedFolderNamesByPermission]);
 
   const [searchKey, setSearchKey] = useState('');
-  const displayingFolders = _.chain(allFolderList)
+  const displayingFolders = _.chain(filteredFolderListByPermission)
     .filter((vf) => (filter ? filter(vf) : true))
     .filter((vf) => {
       if (selectedRowKeys.includes(getRowKey(vf))) {
@@ -461,12 +528,13 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           {...tableProps}
         />
       </Form>
-      {showAutoMountedFoldersSection && autoMountedFolderNames.length > 0 ? (
+      {showAutoMountedFoldersSection &&
+      autoMountedFolderNamesByPermission.length > 0 ? (
         <>
           <Descriptions size="small">
             <Descriptions.Item label={t('data.AutomountFolders')}>
-              {_.map(autoMountedFolderNames, (name) => {
-                return <Tag>{name}</Tag>;
+              {_.map(autoMountedFolderNamesByPermission, (name) => {
+                return <Tag key={name}>{name}</Tag>;
               })}
             </Descriptions.Item>
           </Descriptions>
