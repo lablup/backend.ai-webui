@@ -726,7 +726,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         }
       }
       this._page = view;
-      this._updateSidebar(view);
     }
   }
 
