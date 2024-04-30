@@ -59,6 +59,8 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
               style={{
                 cursor: modalProps.draggable ? 'move' : '',
                 display: !modalProps.draggable ? 'none' : '',
+                // @ts-ignore
+                '-webkit-app-region': 'no-drag',
               }}
               onMouseOver={() => {
                 if (disabled) {
