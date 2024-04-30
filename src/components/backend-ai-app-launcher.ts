@@ -2013,6 +2013,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 &nbsp;Hostname ${this.tcpHost}
                 &nbsp;Port ${this.tcpPort}
                 &nbsp;StrictHostKeyChecking no
+                &nbsp;UserKnownHostsFile /dev/null
               </pre
               >
             </div>
