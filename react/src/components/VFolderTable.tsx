@@ -148,7 +148,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
         url: `/folders?group_id=${currentProject.id}`,
       }) as Promise<VFolder[]>;
     },
-    staleTime: 0,
+    staleTime: 1000,
   });
 
   const { domain, group, keypair_resource_policy } =
@@ -177,6 +177,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       },
       {
         fetchPolicy: 'network-only',
+        fetchKey: fetchKey,
       },
     );
 
