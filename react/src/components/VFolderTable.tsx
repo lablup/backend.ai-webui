@@ -534,7 +534,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           <Descriptions size="small">
             <Descriptions.Item label={t('data.AutomountFolders')}>
               {_.map(autoMountedFolderNamesByPermission, (name) => {
-                return <Tag>{name}</Tag>;
+                return <Tag key={name}>{name}</Tag>;
               })}
             </Descriptions.Item>
           </Descriptions>
