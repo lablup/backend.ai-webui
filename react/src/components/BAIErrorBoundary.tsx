@@ -72,3 +72,27 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({ ...props }) => {
 };
 
 export default BAIErrorBoundary;
+
+export const ErrorView = () => {
+  const { t } = useTranslation();
+  return (
+    <Result
+      status="warning"
+      title={t('ErrorBoundary.title')}
+      extra={
+        <Flex direction="column" gap="md">
+          <Button
+            type="primary"
+            key="console"
+            onClick={() => {
+              window.location.reload();
+            }}
+            icon={<ReloadOutlined />}
+          >
+            {t('ErrorBoundary.reloadPage')}
+          </Button>
+        </Flex>
+      }
+    ></Result>
+  );
+};
