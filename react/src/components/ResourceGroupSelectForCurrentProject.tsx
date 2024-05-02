@@ -7,7 +7,7 @@ import TextHighlighter from './TextHighlighter';
 import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
-import React, { useTransition } from 'react';
+import React, { useEffect, useTransition } from 'react';
 
 interface ResourceGroupSelectForCurrentProjectProps
   extends Omit<
@@ -39,10 +39,19 @@ const ResourceGroupSelectForCurrentProject: React.FC<
   const [currentResourceGroup, setCurrentResourceGroup] =
     useCurrentResourceGroupState();
 
-  const [controllableValue, setControllableValue] = useControllableValue({
-    value: currentResourceGroup,
-    onChange: selectProps.onChange,
-  });
+  // onChange event should be triggered in useEffect because the value is controlled by global state
+  useEffect(
+    () => {
+      startLoadingTransition(() => {
+        selectProps.onChange?.(currentResourceGroup, {
+          value: currentResourceGroup,
+          label: currentResourceGroup,
+        });
+      });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [currentResourceGroup],
+  );
 
   const [isPendingLoading, startLoadingTransition] = useTransition();
   const { resourceGroups } = useResourceGroupsForCurrentProject();
@@ -61,14 +70,6 @@ const ResourceGroupSelectForCurrentProject: React.FC<
   return (
     <Select
       defaultActiveFirstOption
-      {...searchProps}
-      // onDropdownVisibleChange={(open) => {
-      //   if (open) {
-      //     startLoadingTransition(() => {
-      //       checkUpdate();
-      //     });
-      //   }
-      // }}
       loading={isPendingLoading}
       options={_.map(resourceGroups, (resourceGroup) => {
         return { value: resourceGroup.name, label: resourceGroup.name };
@@ -80,12 +81,12 @@ const ResourceGroupSelectForCurrentProject: React.FC<
           </TextHighlighter>
         );
       }}
+      {...searchProps}
       {...selectProps}
-      value={controllableValue}
+      value={currentResourceGroup}
       onChange={(value) => {
         startLoadingTransition(() => {
           setCurrentResourceGroup(value);
-          setControllableValue(value);
         });
       }}
     />
