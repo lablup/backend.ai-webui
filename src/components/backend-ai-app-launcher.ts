@@ -1573,7 +1573,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   _copySSHConnectionExample(divSelector) {
     const divElement = this.shadowRoot?.querySelector(divSelector);
     if (divElement) {
-      const textToCopy = divElement.textContent.trim();
+      const textToCopy = divElement.textContent
+        .replace(/[\r\n\t]+/g, ' ')
+        .replace(/\s\s+/g, ' ')
+        .trim();
 
       if (textToCopy.length === 0) {
         this.notification.text = _text(
