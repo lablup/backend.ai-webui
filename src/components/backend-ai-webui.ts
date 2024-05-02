@@ -580,7 +580,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     }
     this._refreshUserInfoPanel();
     document.body.style.backgroundImage = 'none';
-    // this.appBody.style.visibility = 'visible';
 
     const curtain = this.shadowRoot?.getElementById('loading-curtain');
     curtain?.classList.add('visuallyhidden');
@@ -596,8 +595,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         passive: false,
       },
     );
-    // this.sidebarMenu.style.minHeight =
-    //   this.is_admin || this.is_superadmin ? '600px' : '250px';
     // redirect to unauthorized page when user's role is neither admin nor superadmin
     if (!this.is_admin && !this.is_superadmin) {
       if (
