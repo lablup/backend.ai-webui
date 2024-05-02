@@ -30,9 +30,6 @@ const ManageImageResourceLimitModal: React.FC<BAIModalProps> = ({
   // Differentiate default max value based on manager version.
   // The difference between validating a variable type as undefined or none for an unsupplied field value.
   // [Associated PR links] : https://github.com/lablup/backend.ai/pull/1941
-  const MAX_VALUE = baiClient.isManagerVersionCompatibleWith('23.09.11.*')
-    ? undefined
-    : null;
 
   const { t } = useTranslation();
   const formRef = useRef<FormInstance>(null);
@@ -73,7 +70,9 @@ const ManageImageResourceLimitModal: React.FC<BAIModalProps> = ({
       min: value.toString() ?? '0',
       max:
         image.resource_limits?.find((item) => item?.key === key)?.max ??
-        MAX_VALUE,
+        baiClient.isManagerVersionCompatibleWith('23.09.11.*')
+          ? undefined
+          : null,
     }));
 
     const commitRequest = () =>
