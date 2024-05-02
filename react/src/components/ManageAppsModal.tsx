@@ -12,13 +12,11 @@ import {
   Typography,
   App,
   FormInstance,
-  Table,
-  Divider,
   theme,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useState } from 'react';
+import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useMutation } from 'react-relay';
 
@@ -29,7 +27,6 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
 
   const { token } = theme.useToken();
 
-  const [validateDetail, setValidateDetail] = useState<string>('');
   const {
     parsedValue: { open, image, servicePorts },
     dispatchEvent,
@@ -123,11 +120,7 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
           commitRequest();
         }
       })
-      .catch((e) => {
-        if (e?.errorFields?.length > 0) {
-          setValidateDetail(e.errorFields[0].errors[0]);
-        }
-      });
+      .catch((e) => {});
   };
 
   return (
@@ -139,15 +132,6 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
       confirmLoading={isInFlightModifyImageInput}
       title={t('environment.ManageApps')}
       {...baiModalProps}
-      footer={(_, { OkBtn, CancelBtn }) => (
-        <Flex justify="between">
-          <Typography.Text type="danger">{validateDetail}</Typography.Text>
-          <Flex gap={'xs'}>
-            <CancelBtn />
-            <OkBtn />
-          </Flex>
-        </Flex>
-      )}
     >
       <Flex
         direction="row"
@@ -170,9 +154,6 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
         autoComplete="off"
         initialValues={{ apps: servicePorts }}
         requiredMark={false}
-        onChange={() => {
-          setValidateDetail('');
-        }}
       >
         <Flex direction="column">
           <Form.List name="apps">
