@@ -4,7 +4,7 @@ import {
   iSizeToSize,
 } from '../helper';
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
-import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
+import { useResourceSlots } from '../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';

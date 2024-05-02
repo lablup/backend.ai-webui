@@ -1,17 +1,10 @@
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import Flex from './Flex';
-import NonLinearSlider, { StepType } from './NonLinearSlider';
+import NonLinearSlider from './NonLinearSlider';
 import { Divider, Form, Input, theme } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 
-interface resourceInfoType {
-  [key: string]: {
-    label?: string;
-    inputNumberProps?: any;
-    steps: StepType[];
-  };
-}
 export interface imageResourceProps {
   key: string;
   min: string | null;
