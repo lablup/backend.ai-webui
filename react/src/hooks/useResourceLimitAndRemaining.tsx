@@ -98,7 +98,7 @@ export const useResourceLimitAndRemaining = ({
     refetch,
     isRefetching,
   } = useTanQuery<ResourceAllocation | undefined>({
-    queryKey: ['check-resets', currentProjectName, currentResourceGroup],
+    queryKey: ['check-presets', currentProjectName, currentResourceGroup],
     queryFn: () => {
       if (currentResourceGroup) {
         return baiClient.resourcePreset
