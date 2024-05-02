@@ -1341,33 +1341,25 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ></mwc-button>
         </div>
       </backend-ai-dialog>
-      ${this.openManageAppModal
-        ? html`
-            <backend-ai-react-manage-app-dialog
-              value="${JSON.stringify({
-                image: this.modifiedImage,
-                servicePorts: this.servicePorts,
-              })}"
-              @cancel="${() => (this.openManageAppModal = false)}"
-              @ok="${() => (
-                (this.openManageAppModal = false), this._getImages()
-              )}"
-            ></backend-ai-react-manage-app-dialog>
-          `
-        : html``}
-      ${this.openManageImageResourceModal
-        ? html`
-            <backend-ai-react-manage-resource-dialog
-              value="${JSON.stringify({
-                image: this.modifiedImage,
-              })}"
-              @cancel="${() => (this.openManageImageResourceModal = false)}"
-              @ok="${() => (
-                (this.openManageImageResourceModal = false), this._getImages()
-              )}"
-            ></backend-ai-react-manage-resource-dialog>
-          `
-        : html``}
+      <backend-ai-react-manage-app-dialog
+        value="${JSON.stringify({
+          image: this.modifiedImage,
+          servicePorts: this.servicePorts,
+          open: this.openManageAppModal,
+        })}"
+        @cancel="${() => (this.openManageAppModal = false)}"
+        @ok="${() => ((this.openManageAppModal = false), this._getImages())}"
+      ></backend-ai-react-manage-app-dialog>
+      <backend-ai-react-manage-resource-dialog
+        value="${JSON.stringify({
+          image: this.modifiedImage,
+          open: this.openManageImageResourceModal,
+        })}"
+        @cancel="${() => (this.openManageImageResourceModal = false)}"
+        @ok="${() => (
+          (this.openManageImageResourceModal = false), this._getImages()
+        )}"
+      ></backend-ai-react-manage-resource-dialog>
     `;
   }
 }

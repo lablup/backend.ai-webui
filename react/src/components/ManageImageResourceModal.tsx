@@ -2,15 +2,27 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
 import ImageResourceFormItem from './ImageResourceFormItem';
-import { imageResourceProps } from './ImageResourceFormItem';
 import { ManageImageResourceModalMutation } from './__generated__/ManageImageResourceModalMutation.graphql';
 import { ResourceLimitInput } from './__generated__/ManageImageResourceModalMutation.graphql';
-import { App, Form, message } from 'antd';
+import { App, Form, FormInstance, message } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useMutation } from 'react-relay';
 
+// TODO: This is not 100% same with Image type of GraphQL.
+// This type is modified version based on backend-ai-environment-list.ts
+export type ImageFromEnvironment = {
+  resource_limits: ResourceLimitInput[];
+  registry: string;
+  name: string;
+  tag: string;
+  architecture: string;
+  installed: boolean;
+  labels: {
+    [key: string]: string;
+  };
+};
 const ManageImageResourceModal: React.FC<BAIModalProps> = ({
   ...BAIModalProps
 }) => {
@@ -24,11 +36,16 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
     : null;
 
   const { t } = useTranslation();
-  const [form] = Form.useForm();
+  const formRef = useRef<FormInstance>(null);
   const app = App.useApp();
 
-  const [open, setOpen] = useState<boolean>(true);
-  const { value, dispatchEvent } = useWebComponentInfo();
+  const {
+    parsedValue: { image, open },
+    dispatchEvent,
+  } = useWebComponentInfo<{
+    image: ImageFromEnvironment; //TODO: This is not 100% same with Image type, after implementing the image list with a relay query, the type should be changed.
+    open?: boolean;
+  }>();
 
   const [commitModifyImageInput, isInFlightModifyImageInput] =
     useMutation<ManageImageResourceModalMutation>(graphql`
@@ -48,30 +65,17 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
       }
     `);
 
-  let parsedValue: {
-    image: any;
-  };
-  try {
-    parsedValue = JSON.parse(value || '');
-  } catch (error) {
-    parsedValue = {
-      image: {},
-    };
-  }
-  const { image } = parsedValue;
-
   const handleOnclick = async () => {
-    const fieldsValue = await form.getFieldsValue();
-    const INPUT: ResourceLimitInput[] = Object.entries(fieldsValue).map(
-      ([key, value]: [string, any]) => ({
-        key,
-        min: value.toString() ?? '0',
-        max:
-          image.resource_limits.find(
-            (item: imageResourceProps) => item.key === key,
-          )?.max ?? MAX_VALUE,
-      }),
-    );
+    const fieldsValue = await formRef.current?.getFieldsValue();
+    const resource_limits: ResourceLimitInput[] = Object.entries(
+      fieldsValue,
+    ).map(([key, value]: [string, any]) => ({
+      key,
+      min: value.toString() ?? '0',
+      max:
+        image.resource_limits?.find((item) => item?.key === key)?.max ??
+        MAX_VALUE,
+    }));
 
     const commitRequest = () =>
       commitModifyImageInput({
@@ -79,22 +83,20 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
           target: `${image.registry}/${image.name}:${image.tag}`,
           architecture: image.architecture,
           props: {
-            resource_limits: INPUT,
+            resource_limits,
           },
         },
         onCompleted: (res, err) => {
-          console.log(res, err);
           message.success(t('environment.DescImageResourceModified'));
           dispatchEvent('ok', null);
           return;
         },
         onError: (err) => {
-          console.log(err);
           message.error(t('dialog.ErrorOccurred'));
         },
       });
 
-    if (image.installed) {
+    if (image?.installed) {
       app.modal.confirm({
         title: 'Image reinstallation required',
         content: (
@@ -119,17 +121,25 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
       open={open}
       maskClosable={false}
       onOk={handleOnclick}
-      onCancel={() => setOpen(false)}
-      afterClose={() => dispatchEvent('cancel', null)}
+      onCancel={() => dispatchEvent('cancel', null)}
       confirmLoading={isInFlightModifyImageInput}
       centered
       title={t('environment.ModifyImageResourceLimit')}
       {...BAIModalProps}
     >
-      <Form form={form} layout="vertical">
-        {image.resource_limits.map(({ key, min, max }: imageResourceProps) => (
-          <ImageResourceFormItem key={key} name={key} min={min} max={max} />
-        ))}
+      <Form ref={formRef} layout="vertical">
+        {image?.resource_limits?.map(({ key, min, max }) => {
+          // TODO: After implementing the image list with a relay query, the key transformation should not be needed.
+          const keyUsingDot = key?.replace(/_/g, '.');
+          return (
+            <ImageResourceFormItem
+              key={keyUsingDot}
+              name={keyUsingDot ?? ''}
+              min={min ?? ''}
+              max={max ?? ''}
+            />
+          );
+        })}
       </Form>
     </BAIModal>
   );

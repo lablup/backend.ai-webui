@@ -1,6 +1,7 @@
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
+import { ImageFromEnvironment } from './ManageImageResourceModal';
 import {
   KVPairInput,
   ManageAppsModalMutation,
@@ -8,6 +9,7 @@ import {
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { Input, Button, Form, message, Typography, App } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
+import _ from 'lodash';
 import React, { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useMutation } from 'react-relay';
@@ -17,9 +19,15 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
   const [form] = Form.useForm();
   const app = App.useApp();
 
-  const [open, setOpen] = useState<boolean>(true);
   const [validateDetail, setValidateDetail] = useState<string>('');
-  const { value, dispatchEvent } = useWebComponentInfo();
+  const {
+    parsedValue: { open, image, servicePorts },
+    dispatchEvent,
+  } = useWebComponentInfo<{
+    open?: boolean;
+    image: NonNullable<ImageFromEnvironment>; //TODO: This is not 100% same with Image type
+    servicePorts?: any;
+  }>();
 
   const [commitModifyImageInput, isInFlightModifyImageInput] =
     useMutation<ManageAppsModalMutation>(graphql`
@@ -39,20 +47,6 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
       }
     `);
 
-  let parsedValue: {
-    image: any;
-    servicePorts: any;
-  };
-  try {
-    parsedValue = JSON.parse(value || '');
-  } catch (error) {
-    parsedValue = {
-      image: {},
-      servicePorts: [],
-    };
-  }
-  const { image, servicePorts } = parsedValue;
-
   const handleOnclick = async () => {
     try {
       await form.validateFields();
@@ -65,7 +59,8 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
         .join(',');
 
       const INPUT: KVPairInput[] = [];
-      Object.entries(image.labels).forEach(([key, value]) => {
+      _.map(image.labels as { [key in string]: string }, (value, key) => {
+        // Object.entries(image.labels).forEach(([key, value]) => {
         if (key.includes('service-ports')) {
           INPUT.push({ key: key, value: values });
         } else {
@@ -125,8 +120,7 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
       destroyOnClose
       open={open}
       onOk={handleOnclick}
-      onCancel={() => setOpen(false)}
-      afterClose={() => dispatchEvent('cancel', null)}
+      onCancel={() => dispatchEvent('cancel', null)}
       confirmLoading={isInFlightModifyImageInput}
       title={t('environment.ManageApps')}
       {...baiModalProps}
