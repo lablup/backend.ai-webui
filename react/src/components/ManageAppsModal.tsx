@@ -80,13 +80,11 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
             },
           },
           onCompleted: (res, err) => {
-            console.log(res, err);
             message.success(t('environment.DescImagePortsModified'));
             dispatchEvent('ok', null);
             return;
           },
           onError: (err) => {
-            console.log(err);
             message.error(t('dialog.ErrorOccurred'));
           },
         });
