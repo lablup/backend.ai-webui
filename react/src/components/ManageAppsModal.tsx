@@ -58,15 +58,16 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
         })
         .join(',');
 
-      const INPUT: KVPairInput[] = [];
-      _.map(image.labels as { [key in string]: string }, (value, key) => {
-        // Object.entries(image.labels).forEach(([key, value]) => {
-        if (key.includes('service-ports')) {
-          INPUT.push({ key: key, value: values });
-        } else {
-          INPUT.push({ key: key, value: value?.toString() || '' });
-        }
-      });
+      const labels = _.map(
+        image.labels as { [key in string]: string },
+        (value, key) => {
+          if (key.includes('service-ports')) {
+            return { key: key, value: values };
+          } else {
+            return { key: key, value: value?.toString() || '' };
+          }
+        },
+      );
 
       const commitRequest = () =>
         commitModifyImageInput({
@@ -74,7 +75,7 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
             target: `${image.registry}/${image.name}:${image.tag}`,
             architecture: image.architecture,
             props: {
-              labels: INPUT,
+              labels: labels,
               resource_limits: null,
             },
           },
