@@ -2,7 +2,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
 import ImageResourceFormItem from './ImageResourceFormItem';
-import { ManageImageResourceModalMutation } from './__generated__/ManageImageResourceModalMutation.graphql';
+import { ManageImageResourceLimitModalMutation } from './__generated__/ManageImageResourceLimitModalMutation.graphql';
 import { ResourceLimitInput } from './__generated__/ManageImageResourceModalMutation.graphql';
 import { App, Form, FormInstance, message } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
@@ -27,7 +27,6 @@ const ManageImageResourceLimitModal: React.FC<BAIModalProps> = ({
   ...BAIModalProps
 }) => {
   const baiClient = useSuspendedBackendaiClient();
-
   // Differentiate default max value based on manager version.
   // The difference between validating a variable type as undefined or none for an unsupplied field value.
   // [Associated PR links] : https://github.com/lablup/backend.ai/pull/1941
@@ -48,8 +47,8 @@ const ManageImageResourceLimitModal: React.FC<BAIModalProps> = ({
   }>();
 
   const [commitModifyImageInput, isInFlightModifyImageInput] =
-    useMutation<ManageImageResourceModalMutation>(graphql`
-      mutation ManageImageResourceModalMutation(
+    useMutation<ManageImageResourceLimitModalMutation>(graphql`
+      mutation ManageImageResourceLimitModalMutation(
         $target: String!
         $architecture: String
         $props: ModifyImageInput!
