@@ -103,7 +103,8 @@
   },
   "overrides": {
     "@typescript-eslint/typescript-estree": "^5.62.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "react-refresh": "0.11.0"
   },
   "proxy": "http://localhost:3081"
 }
