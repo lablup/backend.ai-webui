@@ -84,7 +84,8 @@ interface ServiceCreateType {
   config: ServiceCreateConfigType;
 }
 
-interface ServiceLauncherProps extends Omit<BAIModalProps, 'onOK'> {
+interface ServiceLauncherProps
+  extends Omit<BAIModalProps, 'onOk' | 'onCancel'> {
   endpointFrgmt?: ServiceLauncherModalFragment$key | null;
   extraP?: boolean;
   onRequestClose: (success?: boolean) => void;
@@ -476,6 +477,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         </Flex>
       )}
       confirmLoading={mutationToCreateService.isLoading}
+      onCancel={handleCancel}
       {...modalProps}
     >
       <Suspense fallback={<FlexActivityIndicator />}>
@@ -529,6 +531,12 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               : {
                   desiredRoutingCount: 1,
                   ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+                  ...(baiClient._config?.default_session_environment && {
+                    environments: {
+                      environment:
+                        baiClient._config?.default_session_environment,
+                    },
+                  }),
                 }
           }
           requiredMark="optional"
@@ -569,7 +577,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   ]}
                 >
                   <VFolderSelect
-                    filter={(vf) => vf.usage_mode === 'model'}
+                    filter={(vf) =>
+                      vf.usage_mode === 'model' && vf.status === 'ready'
+                    }
                     autoSelectDefault
                     disabled={endpoint ? true : false}
                   />

@@ -548,9 +548,6 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       <ServiceLauncherModal
         endpointFrgmt={endpoint}
         open={isOpenServiceLauncherModal}
-        onCancel={() => {
-          setIsOpenServiceLauncherModal(!isOpenServiceLauncherModal);
-        }}
         onRequestClose={(success) => {
           setIsOpenServiceLauncherModal(!isOpenServiceLauncherModal);
           if (success) {

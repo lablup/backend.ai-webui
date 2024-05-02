@@ -1953,9 +1953,10 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   controlFolderListRenderer(root, column?, rowData?) {
-    const isSharingAllowed = (
-      this._unionedAllowedPermissionByVolume[rowData.item.host] ?? []
-    ).includes('invite-others');
+    const isSharingAllowed =
+      (
+        this._unionedAllowedPermissionByVolume[rowData.item.host] ?? []
+      ).includes('invite-others') && !rowData.item.name.startsWith('.');
     render(
       // language=HTML
       html`
@@ -2154,32 +2155,38 @@ export default class BackendAiStorageList extends BackendAIPage {
             text="${_t('data.folders.FolderInfo')}"
             position="top-start"
           ></vaadin-tooltip>
-          <mwc-icon-button
-            class="fg blue controls-running"
-            icon="redo"
-            ?disabled=${rowData.item.status !== 'delete-pending'}
-            @click="${(e) => this._restoreFolder(e)}"
-            id="${rowData.item.id + '-restore'}"
-          ></mwc-icon-button>
-          <vaadin-tooltip
-            for="${rowData.item.id + '-restore'}"
-            text="${_t('data.folders.Restore')}"
-            position="top-start"
-          ></vaadin-tooltip>
-          <mwc-icon-button
-            class="fg red controls-running"
-            icon="delete_forever"
-            ?disabled=${rowData.item.status !== 'delete-pending'}
-            @click="${(e) => {
-              this.openDeleteFromTrashBinDialog(e);
-            }}"
-            id="${rowData.item.id + '-delete-forever'}"
-          ></mwc-icon-button>
-          <vaadin-tooltip
-            for="${rowData.item.id + '-delete-forever'}"
-            text="${_t('data.folders.DeleteForever')}"
-            position="top-start"
-          ></vaadin-tooltip>
+          ${rowData.item.is_owner ||
+          this._hasPermission(rowData.item, 'd') ||
+          (rowData.item.type === 'group' && this.is_admin)
+            ? html`
+                <mwc-icon-button
+                  class="fg blue controls-running"
+                  icon="redo"
+                  ?disabled=${rowData.item.status !== 'delete-pending'}
+                  @click="${(e) => this._restoreFolder(e)}"
+                  id="${rowData.item.id + '-restore'}"
+                ></mwc-icon-button>
+                <vaadin-tooltip
+                  for="${rowData.item.id + '-restore'}"
+                  text="${_t('data.folders.Restore')}"
+                  position="top-start"
+                ></vaadin-tooltip>
+                <mwc-icon-button
+                  class="fg red controls-running"
+                  icon="delete_forever"
+                  ?disabled=${rowData.item.status !== 'delete-pending'}
+                  @click="${(e) => {
+                    this.openDeleteFromTrashBinDialog(e);
+                  }}"
+                  id="${rowData.item.id + '-delete-forever'}"
+                ></mwc-icon-button>
+                <vaadin-tooltip
+                  for="${rowData.item.id + '-delete-forever'}"
+                  text="${_t('data.folders.DeleteForever')}"
+                  position="top-start"
+                ></vaadin-tooltip>
+              `
+            : html``}
         </div>
       `,
       root,
