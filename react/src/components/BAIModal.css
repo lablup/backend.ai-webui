@@ -27,4 +27,5 @@ div > div.ant-modal-wrap.draggable.ant-modal-centered {
   width: var(--general-modal-header-width, 26px);
   height: var(--general-modal-header-height, 26px);
   top: 22px;
+  -webkit-app-region: no-drag;
 }

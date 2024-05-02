@@ -33,13 +33,13 @@ export interface ResourcePresetSelectProps
   extends Omit<SelectProps, 'onChange'> {
   onChange?: (value: string, options: PresetOptionType) => void;
   allocatablePresetNames?: string[];
-  showMiniumRequired?: boolean;
+  showMinimumRequired?: boolean;
   showCustom?: boolean;
 }
 const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   allocatablePresetNames,
   showCustom,
-  showMiniumRequired,
+  showMinimumRequired,
   ...selectProps
 }) => {
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
@@ -93,7 +93,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
               },
             ]
           : []),
-        ...(showMiniumRequired
+        ...(showMinimumRequired
           ? [
               {
                 value: 'minimum-required',

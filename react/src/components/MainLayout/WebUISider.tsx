@@ -309,6 +309,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           location.pathname.split('/')[1] || 'summary',
           // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
           location.pathname.split('/')[1] === 'storage-settings' ? 'agent' : '',
+          // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
+          //       and change 'job' key to 'session'
+          location.pathname.split('/')[1] === 'session' ? 'job' : '',
         ]}
         items={
           // TODO: add plugin menu
