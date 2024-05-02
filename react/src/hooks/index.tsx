@@ -1,6 +1,4 @@
 import { useEventNotStable } from './useEventNotStable';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { atomWithDefault } from 'jotai/utils';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
