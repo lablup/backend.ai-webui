@@ -39,8 +39,8 @@ const UserSettingsModal = React.lazy(
 const ManageAppsModal = React.lazy(
   () => import('./components/ManageAppsModal'),
 );
-const ManageImageResourceModal = React.lazy(
-  () => import('./components/ManageImageResourceModal'),
+const ManageImageResourceLimitModal = React.lazy(
+  () => import('./components/ManageImageResourceLimitModal'),
 );
 const UserDropdownMenu = React.lazy(
   () => import('./components/UserDropdownMenu'),
@@ -147,7 +147,7 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <ManageImageResourceModal />
+        <ManageImageResourceLimitModal />
       </DefaultProviders>
     );
   }),

@@ -1,7 +1,7 @@
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
-import { ImageFromEnvironment } from './ManageImageResourceModal';
+import { ImageFromEnvironment } from './ManageImageResourceLimitModal';
 import { ManageAppsModalMutation } from './__generated__/ManageAppsModalMutation.graphql';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import {

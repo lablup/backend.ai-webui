@@ -23,7 +23,7 @@ export type ImageFromEnvironment = {
     [key: string]: string;
   };
 };
-const ManageImageResourceModal: React.FC<BAIModalProps> = ({
+const ManageImageResourceLimitModal: React.FC<BAIModalProps> = ({
   ...BAIModalProps
 }) => {
   const baiClient = useSuspendedBackendaiClient();
@@ -148,4 +148,4 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
   );
 };
 
-export default ManageImageResourceModal;
+export default ManageImageResourceLimitModal;
