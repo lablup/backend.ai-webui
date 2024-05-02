@@ -87,9 +87,12 @@ const ManageImageResourceModal: React.FC<BAIModalProps> = ({
           },
         },
         onCompleted: (res, err) => {
-          message.success(t('environment.DescImageResourceModified'));
-          dispatchEvent('ok', null);
-          return;
+          if (err) {
+            message.error(t('dialog.ErrorOccurred'));
+          } else {
+            message.success(t('environment.DescImageResourceModified'));
+            dispatchEvent('ok', null);
+          }
         },
         onError: (err) => {
           message.error(t('dialog.ErrorOccurred'));

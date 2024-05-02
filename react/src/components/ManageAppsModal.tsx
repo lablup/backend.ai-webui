@@ -7,7 +7,15 @@ import {
   ManageAppsModalMutation,
 } from './__generated__/ManageAppsModalMutation.graphql';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { Input, Button, Form, message, Typography, App } from 'antd';
+import {
+  Input,
+  Button,
+  Form,
+  message,
+  Typography,
+  App,
+  FormInstance,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useState } from 'react';
@@ -16,7 +24,7 @@ import { useMutation } from 'react-relay';
 
 const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
   const { t } = useTranslation();
-  const [form] = Form.useForm();
+  const formRef = React.useRef<FormInstance>(null);
   const app = App.useApp();
 
   const [validateDetail, setValidateDetail] = useState<string>('');
@@ -49,10 +57,10 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
 
   const handleOnclick = async () => {
     try {
-      await form.validateFields();
+      await formRef.current?.validateFields();
 
-      const values = form
-        .getFieldValue('apps')
+      const values = formRef.current
+        ?.getFieldValue('apps')
         .map((item: { app: string; protocol: string; port: number }) => {
           return `${item.app}:${item.protocol}:${item.port}`;
         })
@@ -80,8 +88,12 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
             },
           },
           onCompleted: (res, err) => {
-            message.success(t('environment.DescImagePortsModified'));
-            dispatchEvent('ok', null);
+            if (err) {
+              message.error(t('dialog.ErrorOccurred'));
+            } else {
+              message.success(t('environment.DescImagePortsModified'));
+              dispatchEvent('ok', null);
+            }
             return;
           },
           onError: (err) => {
@@ -134,7 +146,7 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
       )}
     >
       <Form
-        form={form}
+        ref={formRef}
         layout="vertical"
         autoComplete="off"
         initialValues={{ apps: servicePorts }}
@@ -208,7 +220,7 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
                         },
                         {
                           validator: (_, value) => {
-                            const apps = form.getFieldValue('apps');
+                            const apps = formRef.current?.getFieldValue('apps');
                             if (
                               apps.some(
                                 (item: any, itemIndex: number) =>
