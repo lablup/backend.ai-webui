@@ -12,6 +12,9 @@ import {
   Typography,
   App,
   FormInstance,
+  Table,
+  Divider,
+  theme,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -23,6 +26,8 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
   const { t } = useTranslation();
   const formRef = React.useRef<FormInstance>(null);
   const app = App.useApp();
+
+  const { token } = theme.useToken();
 
   const [validateDetail, setValidateDetail] = useState<string>('');
   const {
@@ -144,6 +149,21 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
         </Flex>
       )}
     >
+      <Flex
+        direction="row"
+        style={{ width: '100%', marginBottom: token.marginXS }}
+      >
+        <Typography.Text strong style={{ width: '32%' }}>
+          {t('environment.AppName')}
+        </Typography.Text>
+        <Typography.Text strong style={{ width: '32%' }}>
+          {t('environment.Protocol')}
+        </Typography.Text>
+        <Typography.Text strong style={{ width: '32%' }}>
+          {t('environment.Port')}
+        </Typography.Text>
+        <Flex></Flex>
+      </Flex>
       <Form
         ref={formRef}
         layout="vertical"
