@@ -52,7 +52,7 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
       }
     `);
 
-  const handleOnclick = async () => {
+  const handleOnClick = async () => {
     try {
       await formRef.current?.validateFields();
 
@@ -127,7 +127,7 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
     <BAIModal
       destroyOnClose
       open={open}
-      onOk={handleOnclick}
+      onOk={handleOnClick}
       onCancel={() => dispatchEvent('cancel', null)}
       confirmLoading={isInFlightModifyImageInput}
       title={t('environment.ManageApps')}
@@ -156,7 +156,7 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
           <Form.List name="apps">
             {(fields, { add, remove }) => (
               <Flex direction="column" style={{ width: '100%' }}>
-                {fields.map((field, index) => (
+                {_.map(fields, (field, index) => (
                   <Flex
                     direction="row"
                     key={field.key}
