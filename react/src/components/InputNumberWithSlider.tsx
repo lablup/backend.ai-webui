@@ -10,7 +10,7 @@ type OmitControlledProps<T> = Omit<T, 'value' | 'onChange'>;
 interface InputNumberWithSliderProps {
   min?: number;
   max?: number;
-  step?: number;
+  step?: number | null;
   disabled?: boolean;
   value?: number;
   onChange?: (value: number) => void;
@@ -48,7 +48,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
           ref={inputRef}
           max={max}
           min={min}
-          step={step}
+          step={step ?? undefined}
           disabled={disabled}
           value={value}
           onChange={setValue}

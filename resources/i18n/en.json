@@ -920,7 +920,9 @@
     "SuccessfullyModified": "Successfully modified",
     "ProblemOccurred": "Problem occurred",
     "PasswordsDoNotMatch": "Password and Confirmation do not match.",
-    "CustomizedImageSuccessfullyDeleted": "Customized image successfully deleted."
+    "CustomizedImageSuccessfullyDeleted": "Customized image successfully deleted.",
+    "DescImageResourceModified": "Resource limit successfully modified",
+    "DescImagePortsModified": "Image Ports successfully modified"
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",
@@ -1567,5 +1569,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Enter Search Term"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>If you modify an image that has already been installed, you will need to reinstall the image.</p><p>Modifications will not be applied until the image is reinstalled. \n</p>"
   }
 }

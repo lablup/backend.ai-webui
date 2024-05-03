@@ -818,7 +818,9 @@
     "NoChangeMade": "Không có thay đổi nào được thực hiện",
     "Architecture": "Ngành kiến ​​​​trúc",
     "NoImageToDisplay": "Không có hình ảnh để hiển thị",
-    "CustomizedImageSuccessfullyDeleted": "Hình ảnh tùy chỉnh đã được xóa thành công."
+    "CustomizedImageSuccessfullyDeleted": "Hình ảnh tùy chỉnh đã được xóa thành công.",
+    "DescImageResourceModified": "Đã sửa đổi giới hạn tài nguyên thành công",
+    "DescImagePortsModified": "Cổng hình ảnh được sửa đổi thành công"
   },
   "resourcePreset": {
     "ResourcePresets": "Cài đặt trước tài nguyên",
@@ -1566,5 +1568,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Nhập cụm từ tìm kiếm"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>Nếu bạn sửa đổi một hình ảnh đã được cài đặt, bạn sẽ cần phải cài đặt lại hình ảnh đó.</p><p>Các sửa đổi sẽ không được áp dụng cho đến khi hình ảnh được cài đặt lại.\n\n</p>"
   }
 }
