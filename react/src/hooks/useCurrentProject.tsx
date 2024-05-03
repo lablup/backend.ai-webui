@@ -1,6 +1,5 @@
 import { useSuspendedBackendaiClient } from '.';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { atomEffect } from 'jotai-effect';
 import { atomWithDefault } from 'jotai/utils';
 import _ from 'lodash';
 import { useCallback, useEffect } from 'react';
