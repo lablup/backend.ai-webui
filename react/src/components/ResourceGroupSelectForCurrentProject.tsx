@@ -7,7 +7,7 @@ import TextHighlighter from './TextHighlighter';
 import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
-import React, { useEffect, useTransition } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 
 interface ResourceGroupSelectForCurrentProjectProps
   extends Omit<
@@ -39,14 +39,14 @@ const ResourceGroupSelectForCurrentProject: React.FC<
   const [currentResourceGroup, setCurrentResourceGroup] =
     useCurrentResourceGroupState();
 
-  // onChange event should be triggered in useEffect because the value is controlled by global state
+  // The onChange event should be triggered in useEffect
+  // because the value is controlled by global state,
+  // and the change of the value does not trigger the onChange event.
   useEffect(
     () => {
-      startLoadingTransition(() => {
-        selectProps.onChange?.(currentResourceGroup, {
-          value: currentResourceGroup,
-          label: currentResourceGroup,
-        });
+      selectProps.onChange?.(currentResourceGroup, {
+        value: currentResourceGroup,
+        label: currentResourceGroup,
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,6 +55,7 @@ const ResourceGroupSelectForCurrentProject: React.FC<
 
   const [isPendingLoading, startLoadingTransition] = useTransition();
   const { resourceGroups } = useResourceGroupsForCurrentProject();
+  const [optimisticValue, setOptimisticValue] = useState(currentResourceGroup);
 
   const searchProps: Pick<
     SelectProps,
@@ -83,8 +84,10 @@ const ResourceGroupSelectForCurrentProject: React.FC<
       }}
       {...searchProps}
       {...selectProps}
-      value={currentResourceGroup}
+      disabled={isPendingLoading}
+      value={isPendingLoading ? optimisticValue : currentResourceGroup}
       onChange={(value) => {
+        setOptimisticValue(value);
         startLoadingTransition(() => {
           setCurrentResourceGroup(value);
         });

@@ -1,9 +1,9 @@
 import { useSuspendedBackendaiClient } from '.';
-import { atom, useAtomValue, useSetAtom } from 'jotai';
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
 import { atomWithDefault } from 'jotai/utils';
 import _ from 'lodash';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 const currentProjectAtom = atomWithDefault(() => {
   return {
@@ -19,42 +19,41 @@ export const useCurrentProjectValue = () => {
   return useAtomValue(currentProjectAtom);
 };
 
-const syncPreviousCurrentResourceGroupNameEffect = atomEffect((get, set) => {
-  (async () => {
-    const currentResourceGroup = await get(currentResourceGroupAtom);
-    set(previousCurrentResourceGroupNameAtom, currentResourceGroup);
-  })();
-});
+const previousSelectedResourceGroupNameAtom = atom<string | null>(null);
 
-const previousCurrentResourceGroupNameAtom = atom<string | null>(null);
+export const useCurrentResourceGroupValue = () => {
+  const { resourceGroups } = useAtomValue(resourceGroupsForCurrentProjectAtom);
+  const [prevSelectedRGName, setPrevSelectedRGName] = useAtom(
+    previousSelectedResourceGroupNameAtom,
+  );
 
-const currentResourceGroupAtom = atom(async (get) => {
-  const { resourceGroups } = await get(resourceGroupsForCurrentProjectAtom);
-
-  get(syncPreviousCurrentResourceGroupNameEffect);
+  let nextResourceGroupName: string | null = null;
   if (resourceGroups.length === 0) {
-    return null;
+    nextResourceGroupName = null;
   } else if (
-    _.some(
-      resourceGroups,
-      (item) => item.name === get(previousCurrentResourceGroupNameAtom),
-    )
+    _.some(resourceGroups, (item) => item.name === prevSelectedRGName)
   ) {
-    return get(previousCurrentResourceGroupNameAtom);
+    nextResourceGroupName = prevSelectedRGName;
   } else {
     const autoSelectedResourceGroup =
       // _.find(resourceGroups, (item) => item.name === 'default') ||
       resourceGroups[0];
-    return autoSelectedResourceGroup.name;
+    nextResourceGroupName = autoSelectedResourceGroup.name;
   }
-});
 
-export const useCurrentResourceGroupValue = () => {
-  return useAtomValue(currentResourceGroupAtom);
+  useEffect(() => {
+    if (nextResourceGroupName && prevSelectedRGName !== nextResourceGroupName) {
+      setPrevSelectedRGName(nextResourceGroupName);
+    }
+    // do not need to consider the change of prevCurRGName
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nextResourceGroupName, setPrevSelectedRGName]);
+
+  return nextResourceGroupName;
 };
 
 export const useSetCurrentResourceGroup = () => {
-  return useSetAtom(previousCurrentResourceGroupNameAtom);
+  return useSetAtom(previousSelectedResourceGroupNameAtom);
 };
 
 export const useCurrentResourceGroupState = () => {
@@ -90,7 +89,6 @@ const resourceGroupsForCurrentProjectAtom = atom(async (get) => {
     },
   ]);
 
-  console.log('####', resourceGroups.scaling_groups);
   return {
     resourceGroups: resourceGroups.scaling_groups,
     vhostInfo,

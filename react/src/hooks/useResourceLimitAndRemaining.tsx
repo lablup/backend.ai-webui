@@ -111,7 +111,7 @@ export const useResourceLimitAndRemaining = ({
         return;
       }
     },
-    staleTime: 0,
+    staleTime: 1000,
     suspense: true,
     // suspense: !_.isEmpty(currentResourceGroup), //prevent flicking
   });
