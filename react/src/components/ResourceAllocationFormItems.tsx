@@ -67,6 +67,7 @@ type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
 interface ResourceAllocationFormItemsProps {
   enableNumOfSessions?: boolean;
   enableResourcePresets?: boolean;
+  enableAlwaysEnqueueComputeSession?: boolean;
   forceImageMinValues?: boolean;
 }
 
@@ -76,6 +77,7 @@ const ResourceAllocationFormItems: React.FC<
   enableNumOfSessions,
   enableResourcePresets,
   forceImageMinValues = false,
+  enableAlwaysEnqueueComputeSession,
 }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
   const { t } = useTranslation();
@@ -198,17 +200,15 @@ const ResourceAllocationFormItems: React.FC<
     ).map((preset) => preset.name);
 
     return currentImageAcceleratorLimits.length > 0
-      ? baiClient._config?.always_enqueue_compute_session
+      ? enableAlwaysEnqueueComputeSession
         ? bySliderLimit
         : byPresetInfo
       : _.intersection(
-          baiClient._config?.always_enqueue_compute_session
-            ? bySliderLimit
-            : byPresetInfo,
+          enableAlwaysEnqueueComputeSession ? bySliderLimit : byPresetInfo,
           byImageAcceleratorLimits,
         );
   }, [
-    baiClient._config?.always_enqueue_compute_session,
+    enableAlwaysEnqueueComputeSession,
     checkPresetInfo?.presets,
     resourceLimits.accelerators,
     resourceLimits.cpu?.max,
@@ -504,34 +504,34 @@ const ResourceAllocationFormItems: React.FC<
                         min: resourceLimits.cpu?.min,
                         // TODO: set message
                       },
-                      {
-                        warningOnly:
-                          baiClient._config?.always_enqueue_compute_session,
-                        validator: async (rule, value: number) => {
-                          if (
-                            _.isNumber(remaining.cpu) &&
-                            value > remaining.cpu
-                          ) {
-                            return Promise.reject(
-                              baiClient._config?.always_enqueue_compute_session
-                                ? t(
-                                    'session.launcher.EnqueueComputeSessionWarning',
-                                    {
-                                      amount: remaining.cpu,
-                                    },
-                                  )
-                                : t(
-                                    'session.launcher.ErrorCanNotExceedRemaining',
-                                    {
-                                      amount: remaining.cpu,
-                                    },
-                                  ),
-                            );
-                          } else {
-                            return Promise.resolve();
-                          }
-                        },
-                      },
+                      // {
+                      //   warningOnly:
+                      //     enableAlwaysEnqueueComputeSession,
+                      //   validator: async (rule, value: number) => {
+                      //     if (
+                      //       _.isNumber(remaining.cpu) &&
+                      //       value > remaining.cpu
+                      //     ) {
+                      //       return Promise.reject(
+                      //         enableAlwaysEnqueueComputeSession
+                      //           ? t(
+                      //               'session.launcher.EnqueueComputeSessionWarning',
+                      //               {
+                      //                 amount: remaining.cpu,
+                      //               },
+                      //             )
+                      //           : t(
+                      //               'session.launcher.ErrorCanNotExceedRemaining',
+                      //               {
+                      //                 amount: remaining.cpu,
+                      //               },
+                      //             ),
+                      //       );
+                      //     } else {
+                      //       return Promise.resolve();
+                      //     }
+                      //   },
+                      // },
                     ]}
                   >
                     <InputNumberWithSlider
@@ -648,50 +648,50 @@ const ResourceAllocationFormItems: React.FC<
                                   }
                                 },
                               },
-                              {
-                                warningOnly:
-                                  baiClient._config
-                                    ?.always_enqueue_compute_session,
-                                validator: async (rule, value: string) => {
-                                  if (
-                                    !_.isElement(value) &&
-                                    resourceLimits.mem &&
-                                    compareNumberWithUnits(
-                                      value,
-                                      remaining.mem + 'b',
-                                    ) > 0
-                                  ) {
-                                    return Promise.reject(
-                                      baiClient._config
-                                        ?.always_enqueue_compute_session
-                                        ? t(
-                                            'session.launcher.EnqueueComputeSessionWarning',
-                                            {
-                                              amount:
-                                                iSizeToSize(
-                                                  remaining.mem + 'b',
-                                                  'g',
-                                                  3,
-                                                )?.numberUnit + 'iB',
-                                            },
-                                          )
-                                        : t(
-                                            'session.launcher.ErrorCanNotExceedRemaining',
-                                            {
-                                              amount:
-                                                iSizeToSize(
-                                                  remaining.mem + 'b',
-                                                  'g',
-                                                  3,
-                                                )?.numberUnit + 'iB',
-                                            },
-                                          ),
-                                    );
-                                  } else {
-                                    return Promise.resolve();
-                                  }
-                                },
-                              },
+                              // {
+                              //   warningOnly:
+                              //     baiClient._config
+                              //       ?.always_enqueue_compute_session,
+                              //   validator: async (rule, value: string) => {
+                              //     if (
+                              //       !_.isElement(value) &&
+                              //       resourceLimits.mem &&
+                              //       compareNumberWithUnits(
+                              //         value,
+                              //         remaining.mem + 'b',
+                              //       ) > 0
+                              //     ) {
+                              //       return Promise.reject(
+                              //         baiClient._config
+                              //           ?.always_enqueue_compute_session
+                              //           ? t(
+                              //               'session.launcher.EnqueueComputeSessionWarning',
+                              //               {
+                              //                 amount:
+                              //                   iSizeToSize(
+                              //                     remaining.mem + 'b',
+                              //                     'g',
+                              //                     3,
+                              //                   )?.numberUnit + 'iB',
+                              //               },
+                              //             )
+                              //           : t(
+                              //               'session.launcher.ErrorCanNotExceedRemaining',
+                              //               {
+                              //                 amount:
+                              //                   iSizeToSize(
+                              //                     remaining.mem + 'b',
+                              //                     'g',
+                              //                     3,
+                              //                   )?.numberUnit + 'iB',
+                              //               },
+                              //             ),
+                              //       );
+                              //     } else {
+                              //       return Promise.resolve();
+                              //     }
+                              //   },
+                              // },
                             ]}
                           >
                             <DynamicUnitInputNumberWithSlider
@@ -936,46 +936,46 @@ const ResourceAllocationFormItems: React.FC<
                               }
                             },
                           },
-                          {
-                            warningOnly:
-                              baiClient._config?.always_enqueue_compute_session,
-                            validator: async (rule: any, value: number) => {
-                              if (
-                                _.isNumber(
-                                  remaining.accelerators[
-                                    currentAcceleratorType
-                                  ],
-                                ) &&
-                                value >
-                                  remaining.accelerators[currentAcceleratorType]
-                              ) {
-                                return Promise.reject(
-                                  baiClient._config
-                                    ?.always_enqueue_compute_session
-                                    ? t(
-                                        'session.launcher.EnqueueComputeSessionWarning',
-                                        {
-                                          amount:
-                                            remaining.accelerators[
-                                              currentAcceleratorType
-                                            ],
-                                        },
-                                      )
-                                    : t(
-                                        'session.launcher.ErrorCanNotExceedRemaining',
-                                        {
-                                          amount:
-                                            remaining.accelerators[
-                                              currentAcceleratorType
-                                            ],
-                                        },
-                                      ),
-                                );
-                              } else {
-                                return Promise.resolve();
-                              }
-                            },
-                          },
+                          // {
+                          //   warningOnly:
+                          //     enableAlwaysEnqueueComputeSession,
+                          //   validator: async (rule: any, value: number) => {
+                          //     if (
+                          //       _.isNumber(
+                          //         remaining.accelerators[
+                          //           currentAcceleratorType
+                          //         ],
+                          //       ) &&
+                          //       value >
+                          //         remaining.accelerators[currentAcceleratorType]
+                          //     ) {
+                          //       return Promise.reject(
+                          //         baiClient._config
+                          //           ?.always_enqueue_compute_session
+                          //           ? t(
+                          //               'session.launcher.EnqueueComputeSessionWarning',
+                          //               {
+                          //                 amount:
+                          //                   remaining.accelerators[
+                          //                     currentAcceleratorType
+                          //                   ],
+                          //               },
+                          //             )
+                          //           : t(
+                          //               'session.launcher.ErrorCanNotExceedRemaining',
+                          //               {
+                          //                 amount:
+                          //                   remaining.accelerators[
+                          //                     currentAcceleratorType
+                          //                   ],
+                          //               },
+                          //             ),
+                          //       );
+                          //     } else {
+                          //       return Promise.resolve();
+                          //     }
+                          //   },
+                          // },
                         ]}
                       >
                         <InputNumberWithSlider
@@ -1231,30 +1231,32 @@ const ResourceAllocationFormItems: React.FC<
                         name={'cluster_size'}
                         label={t('session.launcher.ClusterSize')}
                         required
-                        rules={[
-                          {
-                            warningOnly:
-                              baiClient._config?.always_enqueue_compute_session,
-                            validator: async (rule, value: number) => {
-                              const minCPU = _.min([
-                                remaining.cpu,
-                                keypairResourcePolicy.max_containers_per_session,
-                              ]);
-                              if (_.isNumber(minCPU) && value > minCPU) {
-                                return Promise.reject(
-                                  t(
-                                    'session.launcher.EnqueueComputeSessionWarning',
-                                    {
-                                      amount: minCPU,
-                                    },
-                                  ),
-                                );
-                              } else {
-                                return Promise.resolve();
-                              }
-                            },
-                          },
-                        ]}
+                        rules={
+                          [
+                            // {
+                            //   warningOnly:
+                            //     enableAlwaysEnqueueComputeSession,
+                            //   validator: async (rule, value: number) => {
+                            //     const minCPU = _.min([
+                            //       remaining.cpu,
+                            //       keypairResourcePolicy.max_containers_per_session,
+                            //     ]);
+                            //     if (_.isNumber(minCPU) && value > minCPU) {
+                            //       return Promise.reject(
+                            //         t(
+                            //           'session.launcher.EnqueueComputeSessionWarning',
+                            //           {
+                            //             amount: minCPU,
+                            //           },
+                            //         ),
+                            //       );
+                            //     } else {
+                            //       return Promise.resolve();
+                            //     }
+                            //   },
+                            // },
+                          ]
+                        }
                       >
                         <InputNumberWithSlider
                           min={1}

@@ -637,7 +637,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               //   });
               // }}
               />
-              <ResourceAllocationFormItems />
+              <ResourceAllocationFormItems enableAlwaysEnqueueComputeSession />
             </Card>
           )}
         </Form>
