@@ -1,9 +1,6 @@
 import { addQuotaScopeTypePrefix, usageIndicatorColor } from '../helper';
-import {
-  useCurrentDomainValue,
-  useCurrentProjectValue,
-  useSuspendedBackendaiClient,
-} from '../hooks';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import StorageSelect, { VolumeInfo } from './StorageSelect';

@@ -18,6 +18,7 @@ import utc from 'dayjs/plugin/utc';
 import weekday from 'dayjs/plugin/weekday';
 import i18n from 'i18next';
 import Backend from 'i18next-http-backend';
+import { createStore, Provider as JotaiProvider } from 'jotai';
 import React, {
   Suspense,
   useEffect,
@@ -32,6 +33,7 @@ import { BrowserRouter, useNavigate } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
+export const jotaiStore = createStore();
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 dayjs.extend(localizedFormat);
@@ -143,7 +145,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
     } as WebComponentContextType;
   }, [value, dispatchEvent]);
   return (
-    <>
+    <JotaiProvider store={jotaiStore}>
       {RelayEnvironment && (
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <React.StrictMode>
@@ -199,7 +201,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
           </React.StrictMode>
         </RelayEnvironmentProvider>
       )}
-    </>
+    </JotaiProvider>
   );
 };
 
