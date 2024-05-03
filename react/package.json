@@ -17,6 +17,8 @@
     "dayjs": "^1.11.10",
     "i18next": "^23.10.1",
     "i18next-http-backend": "^2.5.0",
+    "jotai": "^2.8.0",
+    "jotai-effect": "^1.0.0",
     "lodash": "^4.17.21",
     "markdown-to-jsx": "^7.4.5",
     "prettier": "^3.2.5",
