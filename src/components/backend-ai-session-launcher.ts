@@ -236,7 +236,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({ type: Number }) maxCountForPreopenPorts = 10;
   @property({ type: Boolean }) allowCustomResourceAllocation = true;
   @property({ type: Boolean }) allowNEOSessionLauncher = false;
-
   @query('#image-name') manualImageName;
   @query('#version') version_selector!: Select;
   @query('#environment') environment!: Select;
@@ -2232,13 +2231,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       );
     } else {
       this.metric_updating = true;
-      let enqueue_session = false;
-      if (
-        globalThis.backendaiclient._config.always_enqueue_compute_session ===
-        true
-      ) {
-        enqueue_session = true;
-      }
       await this._aggregateResourceUse('update-metric');
       await this._updateVirtualFolderList();
       this.autoMountedVfolders = this.vfolders.filter((item) =>
@@ -2314,24 +2306,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (item.key === 'cpu') {
           const cpu_metric = { ...item };
           cpu_metric.min = parseInt(cpu_metric.min);
-          if (enqueue_session) {
-            [
-              'cpu',
-              'mem',
-              'cuda_device',
-              'cuda_shares',
-              'rocm_device',
-              'tpu_device',
-              'ipu_device',
-              'atom_device',
-              'warboy_device',
-              'hyperaccel_lpu_device',
-            ].forEach((slot) => {
-              if (slot in this.total_resource_group_slot) {
-                available_slot[slot] = this.total_resource_group_slot[slot];
-              }
-            });
-          }
+
+          [
+            'cpu',
+            'mem',
+            'cuda_device',
+            'cuda_shares',
+            'rocm_device',
+            'tpu_device',
+            'ipu_device',
+            'atom_device',
+            'warboy_device',
+            'hyperaccel_lpu_device',
+          ].forEach((slot) => {
+            if (slot in this.total_resource_group_slot) {
+              available_slot[slot] = this.total_resource_group_slot[slot];
+            }
+          });
 
           if ('cpu' in this.userResourceLimit) {
             if (

@@ -71,7 +71,7 @@ type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
 interface ResourceAllocationFormItemsProps {
   enableNumOfSessions?: boolean;
   enableResourcePresets?: boolean;
-  enableAlwaysEnqueueComputeSession?: boolean;
+  showWarningMsg?: boolean;
   forceImageMinValues?: boolean;
 }
 
@@ -81,7 +81,7 @@ const ResourceAllocationFormItems: React.FC<
   enableNumOfSessions,
   enableResourcePresets,
   forceImageMinValues = false,
-  enableAlwaysEnqueueComputeSession,
+  showWarningMsg = false,
 }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
   const { t } = useTranslation();
@@ -200,15 +200,10 @@ const ResourceAllocationFormItems: React.FC<
     ).map((preset) => preset.name);
 
     return currentImageAcceleratorLimits.length > 0
-      ? enableAlwaysEnqueueComputeSession
-        ? bySliderLimit
-        : byPresetInfo
-      : _.intersection(
-          enableAlwaysEnqueueComputeSession ? bySliderLimit : byPresetInfo,
-          byImageAcceleratorLimits,
-        );
+      ? bySliderLimit
+      : _.intersection(bySliderLimit, byImageAcceleratorLimits);
   }, [
-    enableAlwaysEnqueueComputeSession,
+    showWarningMsg,
     checkPresetInfo?.presets,
     resourceLimits.accelerators,
     resourceLimits.cpu?.max,
