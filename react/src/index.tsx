@@ -1,8 +1,9 @@
 import App from './App';
-import { jotaiStore } from './components/DefaultProviders';
+import { jotaiStore, useWebComponentInfo } from './components/DefaultProviders';
 import Flex from './components/Flex';
 import FlexActivityIndicator from './components/FlexActivityIndicator';
 import ResourceGroupSelectForCurrentProject from './components/ResourceGroupSelectForCurrentProject';
+import SourceCodeViewer from './components/SourceCodeViewer';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent, {
   ReactWebComponentProps,
@@ -169,6 +170,36 @@ customElements.define(
     );
   }),
 );
+
+customElements.define(
+  'backend-ai-react-source-code-viewer',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <SourceCodeViewerInWebComponent {...props} />
+      </DefaultProviders>
+    );
+  }),
+);
+
+const SourceCodeViewerInWebComponent = (props: ReactWebComponentProps) => {
+  const {
+    parsedValue: { children, language, wordWrap } = {
+      children: '',
+      language: '',
+    },
+  } = useWebComponentInfo<{
+    children: string;
+    language: string;
+    wordWrap?: boolean;
+  }>();
+  return (
+    <SourceCodeViewer language={language} wordWrap={wordWrap ? true : false}>
+      {children}
+    </SourceCodeViewer>
+  );
+};
+
 customElements.define(
   'backend-ai-react-resource-group-select',
   reactToWebComponent((props) => {

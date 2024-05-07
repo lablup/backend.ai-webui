@@ -1569,5 +1569,9 @@
     "SettingTable": "Cài đặt bảng",
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
     "SearchTableColumn": "Tìm kiếm các cột trong bảng"
+  },
+  "sourceCodeViewer": {
+    "Copy": "Sao chép",
+    "Copied": "Đã sao chép"
   }
 }

@@ -1569,5 +1569,9 @@
     "SettingTable": "Nakrycie stołu",
     "SelectColumnToDisplay": "Wybierz, które kolumny mają być wyświetlane",
     "SearchTableColumn": "Przeszukaj kolumny tabeli"
+  },
+  "sourceCodeViewer": {
+    "Copy": "Kopiuj",
+    "Copied": "Skopiowano"
   }
 }

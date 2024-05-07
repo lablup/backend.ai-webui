@@ -1570,5 +1570,9 @@
     "SettingTable": "Хүснэгтийн тохиргоо",
     "SelectColumnToDisplay": "Харуулах багануудыг сонгоно уу",
     "SearchTableColumn": "Хүснэгтийн багануудыг хайх"
+  },
+  "sourceCodeViewer": {
+    "Copy": "Хуулбарлах",
+    "Copied": "Хуулсан"
   }
 }

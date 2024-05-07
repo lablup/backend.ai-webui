@@ -1569,5 +1569,9 @@
     "SettingTable": "Kattaus",
     "SelectColumnToDisplay": "Valitse näytettävät sarakkeet",
     "SearchTableColumn": "Hae taulukon sarakkeita"
+  },
+  "sourceCodeViewer": {
+    "Copy": "Kopio",
+    "Copied": "Kopioitu"
   }
 }

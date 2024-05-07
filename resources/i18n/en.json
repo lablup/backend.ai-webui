@@ -1571,5 +1571,9 @@
     "CloneSuccess": "The clone request has been sent successfully.",
     "CloneInfo": "It will be cloned as your user type folder.",
     "category": "Category"
+  },
+  "sourceCodeViewer": {
+    "Copy": "Copy",
+    "Copied": "Copied"
   }
 }
