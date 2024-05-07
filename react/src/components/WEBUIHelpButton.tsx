@@ -25,6 +25,7 @@ const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
     maintenance: 'admin_menu/admin_menu.html#server-management',
     information: 'admin_menu/admin_menu.html#detailed-information',
     usersettings: 'user_settings/user_settings.html',
+    'my-environment': 'my_environments/my_environments.html',
   };
   const URL =
     manualURL +

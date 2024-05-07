@@ -468,7 +468,8 @@
     "Utilization": "Утилизация",
     "NoAvailableLiveStat": "Нет доступной оперативной статистики",
     "Allocation": "Распределение",
-    "DiskPerc": "Диск %"
+    "DiskPerc": "Диск %",
+    "AutoRefreshEvery5s": "Автоматическое обновление каждые 5 секунд"
   },
   "general": {
     "cores": "ядра",

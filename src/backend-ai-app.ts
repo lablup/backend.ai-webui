@@ -120,10 +120,6 @@ const loadPage =
       case 'usersettings':
         import('./components/backend-ai-usersettings-general-list');
         break;
-      case 'agent':
-      case 'resource':
-        import('./components/backend-ai-agent-view.js');
-        break;
       case 'storage-settings':
         import('./components/backend-ai-storage-host-settings-view.js');
         break;

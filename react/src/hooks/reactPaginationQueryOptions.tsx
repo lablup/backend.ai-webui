@@ -12,6 +12,7 @@ import {
   ArrayParam,
   NumberParam,
   ObjectParam,
+  StringParam,
   useQueryParams,
 } from 'use-query-params';
 
@@ -169,6 +170,107 @@ export const useRelayPaginationQueryOptions = <
       variables,
       filter,
       //   after: page > 1 ? offset_to_cursor((page - 1) * pageSize - 1) : undefined,
+    },
+    {
+      refresh,
+    },
+  ] as const;
+};
+
+export const useBAIPaginationQueryOptions = ({
+  query,
+  defaultVariables,
+  getVariables = ({ page, pageSize, order, filter }) => {
+    return {
+      limit: pageSize,
+      offset: page > 1 ? (page - 1) * pageSize : 0,
+      filter: filter,
+      order: order,
+    };
+  },
+}: {
+  query: GraphQLTaggedNode;
+  defaultVariables: {
+    page: number;
+    pageSize: number;
+    order?: string;
+    filter?: string;
+  };
+  getVariables?: (params: {
+    page: number;
+    pageSize: number;
+    order?: string;
+    filter?: string;
+  }) => any;
+}) => {
+  const [params, setParams] = useQueryParams({
+    page: NumberParam,
+    pageSize: NumberParam,
+    filter: StringParam,
+    order: StringParam,
+  });
+  const page = params.page || defaultVariables.page;
+  const pageSize = params.pageSize || defaultVariables.pageSize;
+  const order = params.order || defaultVariables.order;
+  const filter = params.filter || defaultVariables.filter;
+
+  const relayEnvironment = useRelayEnvironment();
+
+  const [refreshedQueryOptions, setRefreshedQueryOptions] =
+    useState<LazyLoadQueryOptions>({
+      fetchKey: 0,
+      fetchPolicy: 'store-and-network',
+    });
+
+  const prevLocationRef = window.location.href;
+  const refresh = (
+    newPage: number = defaultVariables.page,
+    newPageSize: number = defaultVariables.pageSize,
+    newOrder: string | undefined = defaultVariables.order,
+    newFilter: string | undefined = defaultVariables.filter,
+  ) => {
+    fetchQuery<any>(
+      relayEnvironment,
+      query,
+      getVariables({
+        page: newPage,
+        pageSize: newPageSize,
+        order: newOrder,
+        filter: newFilter,
+      }),
+    ).subscribe({
+      complete: () => {
+        if (window.location.href !== prevLocationRef) return;
+        setParams({
+          page: newPage,
+          pageSize: newPageSize,
+          order: newOrder,
+          filter: newFilter,
+        });
+        setRefreshedQueryOptions((prev) => ({
+          ...prev,
+          fetchPolicy: 'store-only',
+          fetchKey: new Date().toISOString(),
+        }));
+      },
+    });
+  };
+
+  const variables = getVariables({
+    page,
+    pageSize,
+    order,
+    filter,
+  });
+
+  return [
+    {
+      refreshedQueryOptions,
+      page,
+      pageSize,
+      order,
+      variables,
+      filter,
     },
     {
       refresh,

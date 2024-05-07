@@ -466,7 +466,8 @@
     "Utilization": "Utilisation",
     "NoAvailableLiveStat": "Pas de statistiques en direct disponibles",
     "Allocation": "Allocation",
-    "DiskPerc": "% du disque"
+    "DiskPerc": "% du disque",
+    "AutoRefreshEvery5s": "Actualisation automatique toutes les 5 s"
   },
   "general": {
     "cores": "cœurs",

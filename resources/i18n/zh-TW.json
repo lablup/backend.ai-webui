@@ -466,7 +466,8 @@
     "Allocation": "分配",
     "Utilization": "利用率",
     "DiskPerc": "磁盘 %",
-    "NoAgentToDisplay": "无代理显示"
+    "NoAgentToDisplay": "无代理显示",
+    "AutoRefreshEvery5s": "每5秒自動刷新一次"
   },
   "general": {
     "cores": "核心",

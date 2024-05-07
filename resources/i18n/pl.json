@@ -468,7 +468,8 @@
     "Allocation": "Przydział",
     "Utilization": "Wykorzystanie",
     "DiskPerc": "Dysk %",
-    "NoAgentToDisplay": "Brak agentów do wyświetlenia"
+    "NoAgentToDisplay": "Brak agentów do wyświetlenia",
+    "AutoRefreshEvery5s": "Automatyczne odświeżanie co 5 sekund"
   },
   "general": {
     "cores": "rdzenie",

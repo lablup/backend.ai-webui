@@ -98,7 +98,8 @@
     "Starts": "Alkaa",
     "Status": "Tila",
     "Terminated": "Lopetettu",
-    "Utilization": "Käyttö"
+    "Utilization": "Käyttö",
+    "AutoRefreshEvery5s": "Automaattinen päivitys 5 sekunnin välein"
   },
   "button": {
     "Add": "Lisää",

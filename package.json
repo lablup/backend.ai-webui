@@ -92,6 +92,7 @@
     "patch-package": "^8.0.0",
     "tus-js-client": "^4.1.0",
     "utf-8-validate": "^6.0.3",
+    "uuid": "^9.0.1",
     "vis-data": "^7.1.9",
     "vis-network": "^9.1.9",
     "vis-util": "^5.0.7",

@@ -466,7 +466,8 @@
     "Allocation": "Κατανομή",
     "Utilization": "Χρήση",
     "DiskPerc": "Δίσκος %",
-    "NoAgentToDisplay": "Δεν υπάρχουν πράκτορες για εμφάνιση"
+    "NoAgentToDisplay": "Δεν υπάρχουν πράκτορες για εμφάνιση",
+    "AutoRefreshEvery5s": "Αυτόματη ανανέωση κάθε 5 δευτερόλεπτα"
   },
   "general": {
     "cores": "πυρήνες",
