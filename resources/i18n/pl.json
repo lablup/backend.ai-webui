@@ -820,7 +820,9 @@
     "NoChangeMade": "Nie wprowadzono żadnych zmian",
     "Architecture": "Architektura",
     "NoImageToDisplay": "Brak obrazów do wyświetlenia",
-    "CustomizedImageSuccessfullyDeleted": "Dostosowany obraz został pomyślnie usunięty."
+    "CustomizedImageSuccessfullyDeleted": "Dostosowany obraz został pomyślnie usunięty.",
+    "DescImageResourceModified": "Limit zasobów został pomyślnie zmodyfikowany",
+    "DescImagePortsModified": "Pomyślnie zmodyfikowano porty obrazu"
   },
   "resourcePreset": {
     "ResourcePresets": "Predefiniowane ustawienia zasobów",
@@ -1568,5 +1570,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Wprowadź wyszukiwane hasło"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>Jeśli zmodyfikujesz obraz, który został już zainstalowany, konieczne będzie jego ponowne zainstalowanie.</p><p>Modyfikacje nie zostaną zastosowane, dopóki obraz nie zostanie ponownie zainstalowany.\n\n</p>"
   }
 }

@@ -818,7 +818,9 @@
     "NoChangeMade": "Non sono state apportate modifiche",
     "Architecture": "Architettura",
     "NoImageToDisplay": "Nessuna immagine da visualizzare",
-    "CustomizedImageSuccessfullyDeleted": "Immagine personalizzata eliminata con successo."
+    "CustomizedImageSuccessfullyDeleted": "Immagine personalizzata eliminata con successo.",
+    "DescImageResourceModified": "Limite delle risorse modificato con successo",
+    "DescImagePortsModified": "Porte immagine modificate con successo"
   },
   "resourcePreset": {
     "ResourcePresets": "Preimpostazioni delle risorse",
@@ -1566,5 +1568,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Inserisci il termine di ricerca"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>Se modifichi un'immagine che è già stata installata, dovrai reinstallare l'immagine.</p><p>Le modifiche non verranno applicate finché l'immagine non verrà reinstallata.\n\n</p>"
   }
 }

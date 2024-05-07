@@ -818,7 +818,9 @@
     "NoChangeMade": "未作改动",
     "Architecture": "建筑学",
     "NoImageToDisplay": "无图像显示",
-    "CustomizedImageSuccessfullyDeleted": "自定义图片已成功删除。"
+    "CustomizedImageSuccessfullyDeleted": "自定义图片已成功删除。",
+    "DescImageResourceModified": "资源限制成功修改",
+    "DescImagePortsModified": "图像端口修改成功"
   },
   "resourcePreset": {
     "ResourcePresets": "资源预设",
@@ -1566,5 +1568,8 @@
   },
   "setting": {
     "SearchPlaceholder": "输入搜索词"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>如果修改已安装的映像，则需要重新安装该映像。</p><p>在重新安装映像之前，修改不会应用。\n\n</p>"
   }
 }

@@ -818,7 +818,9 @@
     "NoChangeMade": "変更された部分はありません。",
     "Architecture": "アーキテクチャ",
     "NoImageToDisplay": "画像情報がありません。",
-    "CustomizedImageSuccessfullyDeleted": "カスタマイズされたイメージは正常に削除されました。"
+    "CustomizedImageSuccessfullyDeleted": "カスタマイズされたイメージは正常に削除されました。",
+    "DescImageResourceModified": "リソース制限が正常に変更されました",
+    "DescImagePortsModified": "イメージポートが正常に変更されました"
   },
   "resourcePreset": {
     "ResourcePresets": "リソースプリセット",
@@ -1566,5 +1568,8 @@
   },
   "setting": {
     "SearchPlaceholder": "検索用語を入力してください"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>すでにインストールされているイメージを変更する場合は、イメージを再インストールする必要があります。</p><p>イメージが再インストールされるまで変更は適用されません。\n\n</p>"
   }
 }

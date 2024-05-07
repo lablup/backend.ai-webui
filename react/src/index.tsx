@@ -45,6 +45,9 @@ const UserSettingsModal = React.lazy(
 const ManageAppsModal = React.lazy(
   () => import('./components/ManageAppsModal'),
 );
+const ManageImageResourceLimitModal = React.lazy(
+  () => import('./components/ManageImageResourceLimitModal'),
+);
 const UserDropdownMenu = React.lazy(
   () => import('./components/UserDropdownMenu'),
 );
@@ -140,6 +143,17 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <ManageAppsModal />
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
+  'backend-ai-react-manage-resource-dialog',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <ManageImageResourceLimitModal />
       </DefaultProviders>
     );
   }),
