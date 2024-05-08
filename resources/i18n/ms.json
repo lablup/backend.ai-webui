@@ -1547,10 +1547,18 @@
     "SettingTable": "Tetapan Meja",
     "SearchTableColumn": "Cari lajur jadual"
   },
-  "setting": {
-    "SearchPlaceholder": "Masukkan Istilah Carian"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Jika anda mengubah suai imej yang telah dipasang, anda perlu memasang semula imej tersebut.</p><p>Pengubahsuaian tidak akan digunakan sehingga imej dipasang semula.\n\n</p>"
+  "tourguide": {
+    "NeoSessionLauncher": {
+      "WelcomeTitle": "Selamat datang!",
+      "WelcomeText": "Selamat datang ke Pelancar Sesi NEO baharu!",
+      "StepsTitle": "Langkah-langkah pelaksanaan sesi",
+      "StepsText": "Anda boleh menyemak peringkat semasa dalam paparan pentas di sebelah kanan. \nAnda boleh melompat ke langkah tertentu dengan mengklik padanya.",
+      "MoveToNextStepTitle": "Bergerak ke langkah seterusnya",
+      "MoveToNextStepText": "Anda boleh mengklik butang Seterusnya untuk beralih ke langkah seterusnya atau langkau ke Semakan.",
+      "ValidationErrorTitle": "Ralat pengesahan medan input",
+      "ValidationErrorText": "Jika anda tidak memasukkan nilai dalam medan yang diperlukan atau memasukkan nilai yang tidak sah, mesej ralat dipaparkan dalam medan tersebut.",
+      "FixErrorAndTryAgainText": "Jika terdapat medan ralat, butang Sesi Pelancaran dinyahdayakan. \nSila betulkan ralat dan cuba lagi.",
+      "FixErrorFieldbyModifyButton": "Untuk medan ralat itu, anda boleh pergi terus ke butang Edit di penjuru kanan sebelah atas untuk mengeditnya."
+    }
   }
 }

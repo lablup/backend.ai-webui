@@ -1566,10 +1566,18 @@
     "SelectColumnToDisplay": "選擇要顯示的列",
     "SearchTableColumn": "搜尋表格列"
   },
-  "setting": {
-    "SearchPlaceholder": "輸入搜尋詞"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>如果修改已安裝的映像，則需要重新安裝映像。\n\n</p>"
+  "tourguide": {
+    "NeoSessionLauncher": {
+      "WelcomeTitle": "歡迎！",
+      "WelcomeText": "歡迎使用新的 NEO 會話啟動器！",
+      "StepsTitle": "會話執行步驟",
+      "StepsText": "您可以在右側的階段顯示中查看目前階段。\n您可以透過點擊跳到特定步驟。",
+      "MoveToNextStepTitle": "移至下一步",
+      "MoveToNextStepText": "您可以按一下「下一步」按鈕移至下一步或跳至「檢視」。",
+      "ValidationErrorTitle": "輸入欄位驗證錯誤",
+      "ValidationErrorText": "如果您未在必填欄位中輸入值或輸入無效值，則該欄位中會顯示錯誤訊息。",
+      "FixErrorAndTryAgainText": "如果存在錯誤字段，則「啟動會話」按鈕將被停用。\n請更正錯誤並重試。",
+      "FixErrorFieldbyModifyButton": "對於該錯誤字段，您可以直接進入右上角的編輯按鈕進行編輯。"
+    }
   }
 }

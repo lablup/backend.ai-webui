@@ -1566,10 +1566,18 @@
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
     "SearchTableColumn": "Tìm kiếm các cột trong bảng"
   },
-  "setting": {
-    "SearchPlaceholder": "Nhập cụm từ tìm kiếm"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Nếu bạn sửa đổi một hình ảnh đã được cài đặt, bạn sẽ cần phải cài đặt lại hình ảnh đó.</p><p>Các sửa đổi sẽ không được áp dụng cho đến khi hình ảnh được cài đặt lại.\n\n</p>"
+  "tourguide": {
+    "NeoSessionLauncher": {
+      "WelcomeTitle": "Chào mừng!",
+      "WelcomeText": "Chào mừng bạn đến với Trình khởi chạy phiên NEO mới!",
+      "StepsTitle": "Các bước thực hiện phiên",
+      "StepsText": "Bạn có thể kiểm tra giai đoạn hiện tại trong màn hình giai đoạn bên phải. \nBạn có thể chuyển đến một bước cụ thể bằng cách nhấp vào nó.",
+      "MoveToNextStepTitle": "Chuyển sang bước tiếp theo",
+      "MoveToNextStepText": "Bạn có thể nhấp vào nút Tiếp theo để chuyển sang bước tiếp theo hoặc bỏ qua phần Xem lại.",
+      "ValidationErrorTitle": "Lỗi xác thực trường đầu vào",
+      "ValidationErrorText": "Nếu bạn không nhập giá trị vào trường bắt buộc hoặc nhập giá trị không hợp lệ, thông báo lỗi sẽ hiển thị trong trường đó.",
+      "FixErrorAndTryAgainText": "Nếu có trường lỗi, nút Khởi chạy phiên sẽ bị tắt. \nVui lòng sửa lỗi và thử lại.",
+      "FixErrorFieldbyModifyButton": "Đối với trường lỗi đó, bạn có thể vào thẳng nút Chỉnh sửa ở góc trên cùng bên phải để chỉnh sửa."
+    }
   }
 }

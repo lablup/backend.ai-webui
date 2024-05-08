@@ -1546,13 +1546,18 @@
     "SelectColumnToDisplay": "Харуулах багануудыг сонгоно уу",
     "SearchTableColumn": "Хүснэгтийн багануудыг хайх"
   },
-  "setting": {
-    "SearchPlaceholder": "Хайлтын нэр томъёог оруулна уу",
-    "HyperaccelLPUsupport": "Hyperaccel LPU",
-    "DescHyperaccelLPUsupport": "Hyperaccel LPU хурдасгуурыг ашигла.",
-    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Plugin шаардлагатай."
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Хэрэв та аль хэдийн суулгасан зургийг өөрчилбөл зургийг дахин суулгах шаардлагатай болно.</p><p>Зургийг дахин суулгах хүртэл өөрчлөлтийг хийхгүй.\n\n</p>"
+  "tourguide": {
+    "NeoSessionLauncher": {
+      "WelcomeTitle": "Тавтай морил!",
+      "WelcomeText": "Шинэ NEO Session Launcher-д тавтай морилно уу!",
+      "StepsTitle": "Сеанс гүйцэтгэх үе шатууд",
+      "StepsText": "Та баруун талд байгаа тайзны дэлгэцээс одоогийн үе шатыг шалгаж болно. \nТа үүн дээр дарснаар тодорхой алхам руу шилжих боломжтой.",
+      "MoveToNextStepTitle": "Дараагийн алхам руу шилжих",
+      "MoveToNextStepText": "Та \"Дараах\" товчийг дарж дараагийн алхам руу шилжих эсвэл \"Шүүмж\" рүү алгасаж болно.",
+      "ValidationErrorTitle": "Оролтын талбарын баталгаажуулалтын алдаа",
+      "ValidationErrorText": "Хэрэв та шаардлагатай талбарт утга оруулахгүй эсвэл буруу утга оруулбал тухайн талбарт алдааны мэдэгдэл гарч ирнэ.",
+      "FixErrorAndTryAgainText": "Хэрэв алдааны талбар байгаа бол \"Эхлүүлэх сесс\" товчлуур идэвхгүй болно. \nАлдааг засаад дахин оролдоно уу.",
+      "FixErrorFieldbyModifyButton": "Энэ алдааны талбарын хувьд та баруун дээд буланд байрлах Засварлах товчлуур руу шууд очиж засварлаж болно."
+    }
   }
 }

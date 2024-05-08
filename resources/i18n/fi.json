@@ -1547,10 +1547,18 @@
     "SelectColumnToDisplay": "Valitse näytettävät sarakkeet",
     "SearchTableColumn": "Hae taulukon sarakkeita"
   },
-  "setting": {
-    "SearchPlaceholder": "Kirjoita hakutermi"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Jos muokkaat jo asennettua kuvaa, sinun on asennettava se uudelleen.</p><p>Muokkauksia ei tehdä ennen kuin kuva on asennettu uudelleen.\n\n</p>"
+  "tourguide": {
+    "NeoSessionLauncher": {
+      "WelcomeTitle": "Tervetuloa!",
+      "WelcomeText": "Tervetuloa uuteen NEO Session Launcheriin!",
+      "StepsTitle": "Istunnon suoritusvaiheet",
+      "StepsText": "Voit tarkistaa nykyisen vaiheen oikealla olevasta vaihenäytöstä. \nVoit siirtyä tiettyyn vaiheeseen napsauttamalla sitä.",
+      "MoveToNextStepTitle": "Siirry seuraavaan vaiheeseen",
+      "MoveToNextStepText": "Voit siirtyä seuraavaan vaiheeseen napsauttamalla Seuraava-painiketta tai siirtyä tarkastelukohtaan.",
+      "ValidationErrorTitle": "Syöttökentän vahvistusvirheet",
+      "ValidationErrorText": "Jos et syötä arvoa pakolliseen kenttään tai kirjoitat virheellisen arvon, kenttään tulee virheilmoitus.",
+      "FixErrorAndTryAgainText": "Jos virhekenttä on, Launch session -painike ei ole käytössä. \nKorjaa virhe ja yritä uudelleen.",
+      "FixErrorFieldbyModifyButton": "Voit muokata virhekenttää suoraan oikeassa yläkulmassa olevasta Muokkaa-painikkeesta."
+    }
   }
 }

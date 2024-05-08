@@ -1566,10 +1566,18 @@
     "SelectColumnToDisplay": "Selecione as colunas a serem exibidas",
     "SearchTableColumn": "Pesquisar colunas da tabela"
   },
-  "setting": {
-    "SearchPlaceholder": "Insira o termo de pesquisa"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Se você modificar uma imagem que já foi instalada, será necessário reinstalá-la.</p><p>As modificações não serão aplicadas até que a imagem seja reinstalada.\n\n</p>"
+  "tourguide": {
+    "NeoSessionLauncher": {
+      "WelcomeTitle": "Bem-vindo!",
+      "WelcomeText": "Bem-vindo ao novo lançador de sessão NEO!",
+      "StepsTitle": "Etapas de execução da sessão",
+      "StepsText": "Você pode verificar o estágio atual na tela do palco à direita. \nVocê pode pular para uma etapa específica clicando nela.",
+      "MoveToNextStepTitle": "Passar para a próxima etapa",
+      "MoveToNextStepText": "Você pode clicar no botão Avançar para passar para a próxima etapa ou pular para Revisão.",
+      "ValidationErrorTitle": "Erros de validação de campo de entrada",
+      "ValidationErrorText": "Se você não inserir um valor em um campo obrigatório ou inserir um valor inválido, uma mensagem de erro será exibida nesse campo.",
+      "FixErrorAndTryAgainText": "Se houver um campo de erro, o botão Iniciar sessão estará desabilitado. \nCorrija o erro e tente novamente.",
+      "FixErrorFieldbyModifyButton": "Para esse campo de erro, você pode ir diretamente ao botão Editar no canto superior direito para editá-lo."
+    }
   }
 }

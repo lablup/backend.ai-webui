@@ -1568,10 +1568,18 @@
     "SelectColumnToDisplay": "Wybierz, które kolumny mają być wyświetlane",
     "SearchTableColumn": "Przeszukaj kolumny tabeli"
   },
-  "setting": {
-    "SearchPlaceholder": "Wprowadź wyszukiwane hasło"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Jeśli zmodyfikujesz obraz, który został już zainstalowany, konieczne będzie jego ponowne zainstalowanie.</p><p>Modyfikacje nie zostaną zastosowane, dopóki obraz nie zostanie ponownie zainstalowany.\n\n</p>"
+  "tourguide": {
+    "NeoSessionLauncher": {
+      "WelcomeTitle": "Powitanie!",
+      "WelcomeText": "Witamy w nowym programie uruchamiającym sesje NEO!",
+      "StepsTitle": "Kroki wykonania sesji",
+      "StepsText": "Bieżący etap można sprawdzić na ekranie etapu po prawej stronie. \nKlikając na niego, możesz przejść do konkretnego kroku.",
+      "MoveToNextStepTitle": "Przejdź do następnego kroku",
+      "MoveToNextStepText": "Możesz kliknąć przycisk Dalej, aby przejść do następnego kroku lub pominąć opcję Recenzja.",
+      "ValidationErrorTitle": "Błędy sprawdzania poprawności pola wejściowego",
+      "ValidationErrorText": "Jeśli nie wprowadzisz wartości w wymaganym polu lub wprowadzisz nieprawidłową wartość, w tym polu wyświetli się komunikat o błędzie.",
+      "FixErrorAndTryAgainText": "Jeśli występuje pole błędu, przycisk Uruchom sesję jest wyłączony. \nPopraw błąd i spróbuj ponownie.",
+      "FixErrorFieldbyModifyButton": "W przypadku tego pola błędu możesz przejść bezpośrednio do przycisku Edytuj w prawym górnym rogu, aby go edytować."
+    }
   }
 }

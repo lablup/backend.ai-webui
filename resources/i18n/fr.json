@@ -1566,10 +1566,18 @@
     "SelectColumnToDisplay": "Sélectionnez les colonnes à afficher",
     "SearchTableColumn": "Rechercher des colonnes dans un tableau"
   },
-  "setting": {
-    "SearchPlaceholder": "Entrez le terme de recherche"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Si vous modifiez une image qui a déjà été installée, vous devrez réinstaller l'image.</p><p>Les modifications ne seront appliquées qu'une fois l'image réinstallée.\n\n</p>"
+  "tourguide": {
+    "NeoSessionLauncher": {
+      "WelcomeTitle": "Accueillir!",
+      "WelcomeText": "Bienvenue dans le nouveau lanceur de session NEO !",
+      "StepsTitle": "Étapes d'exécution de la session",
+      "StepsText": "Vous pouvez vérifier l'étape en cours dans l'affichage de l'étape à droite. \nVous pouvez accéder à une étape spécifique en cliquant dessus.",
+      "MoveToNextStepTitle": "Passer à l'étape suivante",
+      "MoveToNextStepText": "Vous pouvez cliquer sur le bouton Suivant pour passer à l'étape suivante ou passer à Révision.",
+      "ValidationErrorTitle": "Erreurs de validation du champ de saisie",
+      "ValidationErrorText": "Si vous ne saisissez pas de valeur dans un champ obligatoire ou si vous saisissez une valeur non valide, un message d'erreur s'affiche dans ce champ.",
+      "FixErrorAndTryAgainText": "S'il y a un champ d'erreur, le bouton Lancer la session est désactivé. \nVeuillez corriger l'erreur et réessayer.",
+      "FixErrorFieldbyModifyButton": "Pour ce champ d'erreur, vous pouvez accéder directement au bouton Modifier dans le coin supérieur droit pour le modifier."
+    }
   }
 }

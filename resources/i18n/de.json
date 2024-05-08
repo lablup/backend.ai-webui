@@ -1566,10 +1566,18 @@
     "SelectColumnToDisplay": "Wählen Sie die anzuzeigenden Spalten aus",
     "SearchTableColumn": "Tabellenspalten durchsuchen"
   },
-  "setting": {
-    "SearchPlaceholder": "Geben Sie einen Suchbegriff ein"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Wenn Sie ein bereits installiertes Image ändern, müssen Sie das Image neu installieren.</p><p>Änderungen werden erst übernommen, wenn das Image erneut installiert wird.\n\n</p>"
+  "tourguide": {
+    "NeoSessionLauncher": {
+      "WelcomeTitle": "Willkommen!",
+      "WelcomeText": "Willkommen beim neuen NEO Session Launcher!",
+      "StepsTitle": "Schritte zur Sitzungsausführung",
+      "StepsText": "Die aktuelle Etappe können Sie in der Etappenanzeige rechts überprüfen. \nSie können zu einem bestimmten Schritt springen, indem Sie darauf klicken.",
+      "MoveToNextStepTitle": "Fahren Sie mit dem nächsten Schritt fort",
+      "MoveToNextStepText": "Sie können auf die Schaltfläche „Weiter“ klicken, um mit dem nächsten Schritt fortzufahren, oder mit „Überprüfen“ fortfahren.",
+      "ValidationErrorTitle": "Fehler bei der Validierung des Eingabefelds",
+      "ValidationErrorText": "Wenn Sie in einem Pflichtfeld keinen Wert eingeben oder einen ungültigen Wert eingeben, wird in diesem Feld eine Fehlermeldung angezeigt.",
+      "FixErrorAndTryAgainText": "Wenn ein Fehlerfeld vorhanden ist, ist die Schaltfläche „Sitzung starten“ deaktiviert. \nBitte beheben Sie den Fehler und versuchen Sie es erneut.",
+      "FixErrorFieldbyModifyButton": "Für dieses Fehlerfeld können Sie direkt auf die Schaltfläche „Bearbeiten“ in der oberen rechten Ecke gehen, um es zu bearbeiten."
+    }
   }
 }
