@@ -1,3 +1,4 @@
+import { getImageFullName } from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -48,12 +49,6 @@ interface ImageEnvironmentSelectFormItemsProps {
   filter?: (image: Image) => boolean;
   showPrivate?: boolean;
 }
-
-const getImageFullName = (image: Image) => {
-  return image
-    ? `${image.registry}/${image.name}:${image.tag}@${image.architecture}`
-    : undefined;
-};
 
 function compareVersions(version1: string, version2: string): number {
   const v1 = version1.split('.').map(Number);
@@ -151,8 +146,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
       | ImageGroup['environmentGroups'][0]
       | undefined;
     let matchedImageByVersion: Image | undefined;
-    const version = form.getFieldValue('environments')?.version;
-
+    let version = form.getFieldValue('environments')?.version;
+    // FIXME: manually add architecture based on amd64
+    if (version && version.indexOf('@') < 0) {
+      version += '@x86_64';
+    }
     version &&
       _.find(imageGroups, (group) => {
         matchedEnvironmentByVersion = _.find(
@@ -174,7 +172,20 @@ const ImageEnvironmentSelectFormItems: React.FC<
     if (matchedEnvironmentByVersion) {
       nextEnvironment = matchedEnvironmentByVersion;
       nextImage = matchedImageByVersion;
-    } else {
+    } else if (form.getFieldValue(['environments', 'environment'])) {
+      _.find(imageGroups, (group) => {
+        nextEnvironment = _.find(group.environmentGroups, (environment) => {
+          return (
+            environment.environmentName ===
+            form.getFieldValue(['environments', 'environment'])
+          );
+        });
+        nextImage = nextEnvironment?.images[0];
+        return !!nextEnvironment;
+      });
+    }
+
+    if (!nextEnvironment || !nextImage) {
       nextEnvironment = imageGroups[0]?.environmentGroups[0];
       nextImage = nextEnvironment?.images[0];
     }
@@ -244,11 +255,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   // metadata?.imageInfo[
                   //   getImageMeta(getImageFullName(image) || "").key
                   // ]?.name || image?.name
-                  image?.name
+                  image?.registry + '/' + image?.name
                 );
               })
               .map((images, environmentName) => {
-                const imageKey = environmentName.split('/')?.[1];
+                const imageKey = environmentName.split('/')?.[2];
                 const displayName =
                   imageKey && metadata?.imageInfo[imageKey]?.name;
 
@@ -259,6 +270,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     (_.last(environmentName.split('/')) as string),
                   prefix: _.chain(environmentName)
                     .split('/')
+                    .drop(1)
                     .dropRight(1)
                     .join('/')
                     .value(),
@@ -388,7 +400,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     const firstImage = environmentGroup.images[0];
                     const currentMetaImageInfo =
                       metadata?.imageInfo[
-                        environmentGroup.environmentName.split('/')?.[1]
+                        environmentGroup.environmentName.split('/')?.[2]
                       ];
 
                     const extraFilterValues: string[] = [];

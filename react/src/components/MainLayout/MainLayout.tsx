@@ -2,6 +2,7 @@ import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
+import BAIErrorBoundary from '../BAIErrorBoundary';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
 import ForceTOTPChecker from '../ForceTOTPChecker';
@@ -149,31 +150,34 @@ function MainLayout() {
               overflow: 'auto',
             }}
           >
-            <Suspense
-              fallback={
-                <div>
-                  <Layout.Header style={{ visibility: 'hidden', height: 62 }} />
-                </div>
-              }
-            >
-              <div
-                style={{
-                  margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT,
-                }}
+            <BAIErrorBoundary>
+              <Suspense
+                fallback={
+                  <div>
+                    <Layout.Header
+                      style={{ visibility: 'hidden', height: 62 }}
+                    />
+                  </div>
+                }
               >
-                <WebUIHeader
-                  onClickMenuIcon={() => setSideCollapsed((v) => !v)}
-                  containerElement={contentScrollFlexRef.current}
-                />
-              </div>
-            </Suspense>
-            {/* <Flex direction="column"> */}
+                <div
+                  style={{
+                    margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT,
+                  }}
+                >
+                  <WebUIHeader
+                    onClickMenuIcon={() => setSideCollapsed((v) => !v)}
+                    containerElement={contentScrollFlexRef.current}
+                  />
+                </div>
+              </Suspense>
+              {/* <Flex direction="column"> */}
 
-            {/* TODO: Breadcrumb */}
-            {/* {location.pathname.split("/").length > 3 && (
+              {/* TODO: Breadcrumb */}
+              {/* {location.pathname.split("/").length > 3 && (
             <Breadcrumb
               items={matches.map((match, index) => {
                 return {
@@ -197,25 +201,26 @@ function MainLayout() {
               })}
             />
           )} */}
-            <Suspense>
-              <PasswordChangeRequestAlert
-                showIcon
-                icon={undefined}
-                banner={false}
-                style={{ marginBottom: token.paddingContentVerticalLG }}
-                closable
-              />
-            </Suspense>
-            <Suspense>
-              <ForceTOTPChecker />
-            </Suspense>
-            <Suspense>
-              <Outlet />
-            </Suspense>
-            {/* To match paddig to 16 (2+14) */}
-            {/* </Flex> */}
-            {/* @ts-ignore */}
-            <backend-ai-webui id="webui-shell" ref={webUIRef} />
+              <Suspense>
+                <PasswordChangeRequestAlert
+                  showIcon
+                  icon={undefined}
+                  banner={false}
+                  style={{ marginBottom: token.paddingContentVerticalLG }}
+                  closable
+                />
+              </Suspense>
+              <Suspense>
+                <ForceTOTPChecker />
+              </Suspense>
+              <Suspense>
+                <Outlet />
+              </Suspense>
+              {/* To match paddig to 16 (2+14) */}
+              {/* </Flex> */}
+              {/* @ts-ignore */}
+              <backend-ai-webui id="webui-shell" ref={webUIRef} />
+            </BAIErrorBoundary>
           </Flex>
         </BAIContentWithDrawerArea>
       </Layout>
@@ -256,7 +261,9 @@ ${Object.entries(token)
     if (key.charAt(0) === key.charAt(0).toUpperCase()) {
       return '';
     } else {
-      return `--token-${key}: ${value?.toString() ?? ''};`;
+      return typeof value === 'number'
+        ? `--token-${key}: ${value}px;`
+        : `--token-${key}: ${value?.toString() ?? ''};`;
     }
   })
   .join('\n')}

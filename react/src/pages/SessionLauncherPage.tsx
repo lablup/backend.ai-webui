@@ -10,6 +10,7 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from '../components/ImageEnvironmentSelectFormItems';
 import ImageMetaIcon from '../components/ImageMetaIcon';
+import SessionKernelTags from '../components/ImageTags';
 import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
 import PortSelectFormItem, {
   PortSelectFormValues,
@@ -20,7 +21,6 @@ import ResourceAllocationFormItems, {
   ResourceAllocationFormValue,
 } from '../components/ResourceAllocationFormItems';
 import ResourceNumber from '../components/ResourceNumber';
-import SessionKernelTag from '../components/SessionKernelTag';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
@@ -29,11 +29,12 @@ import VFolderTableFromItem, {
 } from '../components/VFolderTableFormItem';
 import { compareNumberWithUnits, iSizeToSize } from '../helper';
 import {
-  useCurrentProjectValue,
   useSuspendedBackendaiClient,
+  useUpdatableState,
   useWebUINavigate,
 } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useThemeMode } from '../hooks/useThemeMode';
 // @ts-ignore
 import customCSS from './SessionLauncherPage.css?raw';
@@ -89,26 +90,6 @@ import {
   useQueryParams,
   withDefault,
 } from 'use-query-params';
-
-const INITIAL_FORM_VALUES: SessionLauncherValue = {
-  sessionType: 'interactive',
-  // If you set `allocationPreset` to 'custom', `allocationPreset` is not changed automatically any more.
-  allocationPreset: 'auto-preset',
-  hpcOptimization: {
-    autoEnabled: true,
-    OMP_NUM_THREADS: '1',
-    OPENBLAS_NUM_THREADS: '1',
-  },
-  batch: {
-    enabled: false,
-    command: undefined,
-    scheduleDate: undefined,
-  },
-  envvars: [],
-  ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
-};
-const stepParam = withDefault(NumberParam, 0);
-const formValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
 
 interface SessionConfig {
   group_name: string;
@@ -169,8 +150,34 @@ const SessionLauncherPage = () => {
   let sessionMode: SessionMode = 'normal';
 
   const mainContentDivRef = useRecoilValue(mainContentDivRefState);
+  const baiClient = useSuspendedBackendaiClient();
 
   const [isStartingSession, setIsStartingSession] = useState(false);
+  const INITIAL_FORM_VALUES: SessionLauncherValue = {
+    sessionType: 'interactive',
+    // If you set `allocationPreset` to 'custom', `allocationPreset` is not changed automatically any more.
+    allocationPreset: 'auto-preset',
+    hpcOptimization: {
+      autoEnabled: true,
+      OMP_NUM_THREADS: '1',
+      OPENBLAS_NUM_THREADS: '1',
+    },
+    batch: {
+      enabled: false,
+      command: undefined,
+      scheduleDate: undefined,
+    },
+    envvars: [],
+    // set default_session_environment only if set
+    ...(baiClient._config?.default_session_environment && {
+      environments: {
+        environment: baiClient._config?.default_session_environment,
+      },
+    }),
+    ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+  };
+  const stepParam = withDefault(NumberParam, 0);
+  const formValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
   const [
     { step: currentStep, formValues: formValuesFromQueryParams, redirectTo },
     setQuery,
@@ -184,7 +191,6 @@ const SessionLauncherPage = () => {
   const navigate = useNavigate();
   // const { moveTo } = useWebComponentInfo();
   const webuiNavigate = useWebUINavigate();
-  const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
 
   const { upsertNotification } = useSetBAINotification();
@@ -201,6 +207,7 @@ const SessionLauncherPage = () => {
             form.getFieldsValue(),
             ['environments.image'],
             ['environments.customizedTag'],
+            ['autoMountedFolderNames'],
           ),
         },
         'replaceIn',
@@ -314,17 +321,15 @@ const SessionLauncherPage = () => {
     (item) => item.errors.length > 0,
   );
 
-  // console.log(form.getFieldError(['resource', 'shmem']));
-  // console.log(form.getFieldValue(['resource']));
-
-  const moveToPreview = () => {
-    form
-      .validateFields()
-      .catch((e) => {})
-      .finally(() => {
-        setCurrentStep(steps.length - 1);
-      });
-  };
+  const [, setFinalStepLastValidateTime] = useUpdatableState('first'); // Force re-render after validation in final step.
+  useEffect(() => {
+    if (currentStep === steps.length - 1) {
+      form
+        .validateFields()
+        .catch(() => {})
+        .finally(() => setFinalStepLastValidateTime());
+    }
+  }, [currentStep, form, setFinalStepLastValidateTime, steps.length]);
 
   const startSession = () => {
     // TODO: support inference mode, support import mode
@@ -437,7 +442,7 @@ const SessionLauncherPage = () => {
                 20000,
                 sessionInfo.architecture,
               )
-              .then((res: { created: boolean }) => {
+              .then((res: { created: boolean; status: string }) => {
                 // // When session is already created with the same name, the status code
                 // // is 200, but the response body has 'created' field as false. For better
                 // // user experience, we show the notification message.
@@ -445,30 +450,16 @@ const SessionLauncherPage = () => {
                   // message.warning(t('session.launcher.SessionAlreadyExists'));
                   throw new Error(t('session.launcher.SessionAlreadyExists'));
                 }
+                if (res?.status === 'CANCELLED') {
+                  // Case about failed to start new session kind of "docker image not found" or etc.
+                  throw new Error(
+                    t('session.launcher.FailedToStartNewSession'),
+                  );
+                }
                 return res;
               })
               .catch((err: any) => {
-                console.log(err);
                 throw err;
-                // console.log(err);
-                // if (err && err.message) {
-                //   if ('statusCode' in err && err.statusCode === 408) {
-                //     this.notification.text = _text(
-                //       'session.launcher.sessionStillPreparing',
-                //     );
-                //   } else {
-                //     if (err.description) {
-                //       this.notification.text = PainKiller.relieve(err.description);
-                //     } else {
-                //       this.notification.text = PainKiller.relieve(err.message);
-                //     }
-                //   }
-                //   this.notification.detail = err.message;
-                //   this.notification.show(true, err);
-                // } else if (err && err.title) {
-                //   this.notification.text = PainKiller.relieve(err.title);
-                //   this.notification.show(true, err);
-                // }
               });
           },
         );
@@ -1068,7 +1059,10 @@ const SessionLauncherPage = () => {
                 >
                   <VFolderTableFromItem
                     filter={(vfolder) => {
-                      return vfolder.status === 'ready';
+                      return (
+                        vfolder.status === 'ready' &&
+                        !vfolder.name?.startsWith('.')
+                      );
                     }}
                   />
                   {/* <VFolderTable /> */}
@@ -1198,16 +1192,13 @@ const SessionLauncherPage = () => {
                         );
                       }}
                     >
-                      <Descriptions size="small" column={2}>
+                      <Descriptions size="small" column={1}>
                         <Descriptions.Item
                           label={t('session.launcher.Project')}
                         >
                           {currentProject.name}
                         </Descriptions.Item>
-                        <Descriptions.Item label={t('general.ResourceGroup')}>
-                          {form.getFieldValue('resourceGroup')}
-                        </Descriptions.Item>
-                        <Descriptions.Item label={t('general.Image')} span={2}>
+                        <Descriptions.Item label={t('general.Image')}>
                           <Flex direction="row" gap="xs" style={{ flex: 1 }}>
                             <ImageMetaIcon
                               image={
@@ -1219,11 +1210,11 @@ const SessionLauncherPage = () => {
                             <Flex direction="row">
                               {form.getFieldValue('environments')?.manual ? (
                                 <Typography.Text copyable code>
-                                  form.getFieldValue('environments')?.manual
+                                  {form.getFieldValue('environments')?.manual}
                                 </Typography.Text>
                               ) : (
                                 <>
-                                  <SessionKernelTag
+                                  <SessionKernelTags
                                     image={
                                       form.getFieldValue('environments')
                                         ?.version
@@ -1299,7 +1290,9 @@ const SessionLauncherPage = () => {
                           return (
                             form.getFieldError(['resource', key]).length > 0
                           );
-                        }) || form.getFieldError(['num_of_sessions']).length > 0
+                        }) ||
+                        form.getFieldError(['num_of_sessions']).length > 0 ||
+                        form.getFieldError('resourceGroup').length > 0
                           ? 'error'
                           : // : _.some(form.getFieldValue('resource'), (v, key) => {
                             //     //                         console.log(form.getFieldError(['resource', 'shmem']));
@@ -1340,6 +1333,16 @@ const SessionLauncherPage = () => {
                         )}
 
                         <Descriptions column={2}>
+                          <Descriptions.Item
+                            label={t('general.ResourceGroup')}
+                            span={2}
+                          >
+                            {form.getFieldValue('resourceGroup') || (
+                              <Typography.Text type="secondary">
+                                {t('general.None')}
+                              </Typography.Text>
+                            )}
+                          </Descriptions.Item>
                           <Descriptions.Item
                             label={t(
                               'session.launcher.ResourceAllocationPerContainer',
@@ -1446,53 +1449,72 @@ const SessionLauncherPage = () => {
                         );
                       }}
                     >
-                      {form.getFieldValue('mounts')?.length > 0 ? (
-                        <Table
-                          rowKey="name"
-                          size="small"
-                          pagination={false}
-                          columns={[
-                            {
-                              dataIndex: 'name',
-                              title: t('data.folders.Name'),
-                            },
-                            {
-                              dataIndex: 'alias',
-                              title: t('session.launcher.FolderAlias'),
-                              render: (value, record) => {
-                                return _.isEmpty(value) ? (
-                                  <Typography.Text
-                                    type="secondary"
-                                    style={{
-                                      opacity: 0.7,
-                                    }}
-                                  >
-                                    {`/home/work/${record.name}`}
-                                  </Typography.Text>
-                                ) : (
-                                  value
-                                );
+                      {/* {console.log(_.sum([form.getFieldValue('mounts')?.length, form.getFieldValue('autoMountedFolderNames')]))} */}
+                      {/* {_.sum([form.getFieldValue('mounts')?.length, form.getFieldValue('autoMountedFolderNames').length]) > 0 ? ( */}
+                      <Flex direction="column" align="stretch" gap={'xs'}>
+                        {form.getFieldValue('mounts')?.length > 0 ? (
+                          <Table
+                            rowKey="name"
+                            size="small"
+                            pagination={false}
+                            columns={[
+                              {
+                                dataIndex: 'name',
+                                title: t('data.folders.Name'),
                               },
-                            },
-                          ]}
-                          dataSource={_.map(
-                            form.getFieldValue('mounts'),
-                            (v) => {
-                              return {
-                                name: v,
-                                alias:
-                                  form.getFieldValue('vfoldersAliasMap')?.[v],
-                              };
-                            },
-                          )}
-                        ></Table>
-                      ) : (
-                        <Alert
-                          type="warning"
-                          showIcon
-                          message={t('session.launcher.NoFolderMounted')}
-                        />
-                      )}
+                              {
+                                dataIndex: 'alias',
+                                title: t('session.launcher.FolderAlias'),
+                                render: (value, record) => {
+                                  return _.isEmpty(value) ? (
+                                    <Typography.Text
+                                      type="secondary"
+                                      style={{
+                                        opacity: 0.7,
+                                      }}
+                                    >
+                                      {`/home/work/${record.name}`}
+                                    </Typography.Text>
+                                  ) : (
+                                    value
+                                  );
+                                },
+                              },
+                            ]}
+                            dataSource={_.map(
+                              form.getFieldValue('mounts'),
+                              (v) => {
+                                return {
+                                  name: v,
+                                  alias:
+                                    form.getFieldValue('vfoldersAliasMap')?.[v],
+                                };
+                              },
+                            )}
+                          ></Table>
+                        ) : (
+                          <Alert
+                            type="warning"
+                            showIcon
+                            message={t('session.launcher.NoFolderMounted')}
+                          />
+                        )}
+                        {form.getFieldValue('autoMountedFolderNames')?.length >
+                        0 ? (
+                          <Descriptions size="small">
+                            <Descriptions.Item
+                              label={t('data.AutomountFolders')}
+                            >
+                              {_.map(
+                                form.getFieldValue('autoMountedFolderNames'),
+                                (name) => {
+                                  return <Tag>{name}</Tag>;
+                                },
+                              )}
+                            </Descriptions.Item>
+                          </Descriptions>
+                        ) : null}
+                      </Flex>
                     </BAICard>
                     <BAICard
                       title="Network"
@@ -1544,24 +1566,6 @@ const SessionLauncherPage = () => {
 
                 <Flex direction="row" justify="between">
                   <Flex gap={'sm'}>
-                    {/* <Popconfirm
-                    title={t('session.CheckAgainDialog')}
-                    placement="topLeft"
-                    okButtonProps={{
-                      danger: true,
-                    }}
-                    okText={t('button.Reset')}
-                    onConfirm={() => {
-                      // @ts-ignore
-                      form.resetFields({
-
-                      });
-                    }}
-                  >
-                    <Button ghost danger>
-                      {t('button.Reset')}
-                    </Button>
-                  </Popconfirm> */}
                     <Popconfirm
                       title={t('button.Reset')}
                       description={t('session.launcher.ResetFormConfirm')}
@@ -1644,7 +1648,11 @@ const SessionLauncherPage = () => {
                       </Button>
                     )}
                     {currentStep !== steps.length - 1 && (
-                      <Button onClick={moveToPreview}>
+                      <Button
+                        onClick={() => {
+                          setCurrentStep(steps.length - 1);
+                        }}
+                      >
                         {t('session.launcher.SkipToConfirmAndLaunch')}
                         <DoubleRightOutlined />
                       </Button>
@@ -1663,12 +1671,7 @@ const SessionLauncherPage = () => {
               direction="vertical"
               current={currentStep}
               onChange={(nextCurrent) => {
-                // handle "skip to review" step specifically, because validation
-                if (nextCurrent === steps.length - 1) {
-                  moveToPreview();
-                } else {
-                  setCurrentStep(nextCurrent);
-                }
+                setCurrentStep(nextCurrent);
               }}
               items={_.map(steps, (s, idx) => ({
                 ...s,

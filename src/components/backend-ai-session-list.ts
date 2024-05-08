@@ -466,7 +466,6 @@ export default class BackendAISessionList extends BackendAIPage {
         span.commit-session-subheading {
           font-size: smaller;
           font-family: monospace;
-          color: rgba(0, 0, 0, 0.6);
         }
 
         mwc-button.multiple-action-button {
@@ -508,7 +507,7 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         .no-mount {
-          color: var(--paper-grey-400);
+          color: var(--token-colorTextDisabled, --paper-grey-400);
         }
 
         .idle-check-key {
@@ -1676,10 +1675,7 @@ export default class BackendAISessionList extends BackendAIPage {
     newCommitSessionTask: CommitSessionInfo,
   ) {
     try {
-      this._addCommitSessionToTasker(commitSession, newCommitSessionTask);
       this._applyContainerCommitAsBackgroundTask(newCommitSessionTask);
-      this.notification.text = _text('session.CommitOnGoing');
-      this.notification.show();
     } catch (err) {
       console.log(err);
       if (err && err.message) {
@@ -1722,58 +1718,47 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   _applyContainerCommitAsBackgroundTask(commitSessionInfo: CommitSessionInfo) {
-    const sse: EventSource =
-      globalThis.backendaiclient.maintenance.attach_background_task(
-        commitSessionInfo.taskId,
-      );
-    // this._saveCurrentContainerCommitInfoToLocalStorage(commitSessionInfo);
-    // sse.addEventListener('task_updated', (e) => {
-    //   // FIXME: for now, there is no progress updates during this task
-    //   // const ratio = data.current_progress/data.total_progress;
-    //   // indicator.set(100 * ratio, _text('session.CommitOnGoing'));
-    // });
-    sse.addEventListener('bgtask_done', (e) => {
-      // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
-      this.notification.text = _text('session.CommitFinished');
-      this.notification.show();
-      this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
-      sse.close();
+    const notiKey = 'commit-session:' + new Date().getTime();
+    const event: CustomEvent = new CustomEvent('add-bai-notification', {
+      detail: {
+        key: notiKey,
+        message: _text('session.CommitSession'),
+        description: _text('session.CommitOnGoing'),
+        backgroundTask: {
+          percent: 0,
+          status: 'pending',
+        },
+        duration: 0,
+        open: true,
+      },
     });
-    sse.addEventListener('bgtask_failed', (e) => {
-      // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
-      this.notification.text = _text('session.CommitFailed');
-      this.notification.show(true);
-      this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
-      sse.close();
-      throw new Error('Commit session request has been failed.');
-    });
-    sse.addEventListener('bgtask_cancelled', (e) => {
-      // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
-      this.notification.text = _text('session.CommitFailed');
-      this.notification.show(true);
-      this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
-      sse.close();
-      throw new Error('Commit session request has been cancelled.');
-    });
-  }
-
-  _addCommitSessionToTasker(
-    task: any = null,
-    commitSessionInfo: CommitSessionInfo,
-  ) {
-    /**
-     * TODO:
-     *    - Show progress of commit session operation
-     *    - Show task in tasker panel regardless of client interruption (e.g. page refresh, etc.)
-     */
-    globalThis.tasker.add(
-      _text('session.CommitSession') + commitSessionInfo.session.name,
-      task !== null && typeof task === 'function' ? task : null,
-      commitSessionInfo.taskId ?? '',
-      'commit',
-      'remove-later',
-      _text('session.CommitSession') + commitSessionInfo.session.name,
+    document.dispatchEvent(event);
+    const eventForUpdating: CustomEvent = new CustomEvent(
+      'add-bai-notification',
+      {
+        detail: {
+          key: notiKey,
+          description: _text('session.CommitSession'),
+          backgroundTask: {
+            taskId: commitSessionInfo.taskId,
+            statusDescriptions: {
+              pending: _text('session.CommitOnGoing'),
+              rejected: _text('session.CommitFailed'),
+              resolved: _text('session.CommitFinished'),
+            },
+            renderDataMessage: (message: string | undefined) => {
+              return message?.includes('QuotaExceeded')
+                ? _text('error.ReachedResourceLimitPleaseContact')
+                : message;
+            },
+            status: 'pending',
+            percent: 0,
+          },
+          duration: 0,
+        },
+      },
     );
+    document.dispatchEvent(eventForUpdating);
   }
 
   _removeCommitSessionFromTasker(taskId = '') {
@@ -2849,7 +2834,8 @@ ${item.traceback}</pre
           <div class="layout vertical start">
             <div class="horizontal center center-justified layout">
               <pre id="session-name-field">
-${rowData.item.mounts[0]} SFTP Session</pre
+                ${rowData.item.mounts[0]} SFTP Session
+              </pre
               >
             </div>
           </div>
@@ -3177,7 +3163,7 @@ ${rowData.item[this.sessionNameField]}</pre
                   position="top-start"
                 ></vaadin-tooltip>
               `}
-          ${this._isContainerCommitEnabled
+          ${this._isContainerCommitEnabled && this.condition !== 'system'
             ? html`
                 <mwc-icon-button
                   class="fg blue controls-running"
@@ -4175,19 +4161,17 @@ ${rowData.item[this.sessionNameField]}</pre
       <div class="layout horizontal center filters">
         <div id="multiple-action-buttons" style="display:none;">
           <mwc-button icon="delete" class="multiple-action-button" raised style="margin:8px;"
-                           @click="${() =>
-                             this._openTerminateSelectedSessionsDialog()}">${_t(
-                             'session.Terminate',
-                           )}</mwc-button>
+            @click="${() =>
+              this._openTerminateSelectedSessionsDialog()}">${_t('session.Terminate')}
+          </mwc-button>
         </div>
         <span class="flex"></span>
         <div class="vertical layout" style="display:none">
           <mwc-textfield id="access-key-filter" type="search" maxLength="64"
-                      label="${_t(
-                        'general.AccessKey',
-                      )}" no-label-float .value="${this.filterAccessKey}"
-                      style="margin-right:20px;"
-                      @change="${(e) => this._updateFilterAccessKey(e)}">
+            label="${_t('general.AccessKey')}" 
+            no-label-float .value="${this.filterAccessKey}"
+            style="margin-right:20px;"
+            @change="${(e) => this._updateFilterAccessKey(e)}">
           </mwc-textfield>
           <span id="access-key-filter-helper-text">${_t(
             'maxLength.64chars',
@@ -4196,7 +4180,7 @@ ${rowData.item[this.sessionNameField]}</pre
       </div>
       <div class="list-wrapper">
         <vaadin-grid id="list-grid" theme="row-stripes column-borders compact dark" aria-label="Session list"
-          .items="${this.compute_sessions}" height-by-rows>
+          .items="${this.compute_sessions}" height-by-rows >
           ${
             this._isRunning
               ? html`
@@ -4230,17 +4214,16 @@ ${rowData.item[this.sessionNameField]}</pre
                 `
               : html``
           }
-          <lablup-grid-sort-filter-column frozen path="${
-            this.sessionNameField
-          }" auto-width header="${_t('session.SessionInfo')}" resizable
-                                     .renderer="${
-                                       this._boundSessionInfoRenderer
-                                     }">
+          <lablup-grid-sort-filter-column frozen path="${this.sessionNameField}" 
+            width="260px"
+            header="${_t('session.SessionInfo')}" 
+            resizable
+            .renderer="${this._boundSessionInfoRenderer}"
+          >
           </lablup-grid-sort-filter-column>
-          <lablup-grid-sort-filter-column width="120px" path="status" header="${_t(
-            'session.Status',
-          )}" resizable
-                                     .renderer="${this._boundStatusRenderer}">
+          <lablup-grid-sort-filter-column width="120px" path="status" header="${_t('session.Status')}" 
+            resizable
+            .renderer="${this._boundStatusRenderer}">
           </lablup-grid-sort-filter-column>
           <vaadin-grid-column width=${
             this._isContainerCommitEnabled ? '260px' : '210px'
@@ -4272,7 +4255,7 @@ ${rowData.item[this.sessionNameField]}</pre
               ? html`
                   <vaadin-grid-column
                     resizable
-                    auto-width
+                    width="180px"
                     flex-grow="0"
                     .headerRenderer="${this._boundIdleChecksHeaderderer}"
                     .renderer="${this._boundIdleChecksRenderer}"
@@ -4305,7 +4288,7 @@ ${rowData.item[this.sessionNameField]}</pre
             this.is_superadmin || !globalThis.backendaiclient._config.hideAgents
               ? html`
                   <lablup-grid-sort-filter-column
-                    auto-width
+                    width="140px"
                     flex-grow="0"
                     resizable
                     header="${_t('session.Agents')}"

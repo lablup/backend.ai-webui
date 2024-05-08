@@ -1,4 +1,8 @@
-import VFolderTable, { AliasMap, VFolderTableProps } from './VFolderTable';
+import VFolderTable, {
+  AliasMap,
+  VFolderTableProps,
+  vFolderAliasNameRegExp,
+} from './VFolderTable';
 import { Form, FormItemProps, Input } from 'antd';
 import _ from 'lodash';
 import React from 'react';
@@ -41,6 +45,9 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
                   t('session.launcher.FolderAliasOverlapping'),
                 );
               }
+              if (_.some(arr, (alias) => !vFolderAliasNameRegExp.test(alias))) {
+                return Promise.reject(t('session.launcher.FolderAliasInvalid'));
+              }
               return Promise.resolve();
             },
           },
@@ -49,6 +56,7 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
         <Input />
         {/* <Flex>{form.getFieldValue('vfoldersAliasMap')}</Flex> */}
       </Form.Item>
+      <Form.Item hidden name="autoMountedFolderNames" />
       <Form.Item
         name={'mounts'}
         {...formItemProps}
@@ -66,6 +74,10 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
           // TODO: implement pagination
           pagination={false}
           filter={filter}
+          showAutoMountedFoldersSection
+          onChangeAutoMountedFolders={(names) => {
+            form.setFieldValue('autoMountedFolderNames', names);
+          }}
         />
       </Form.Item>
     </>

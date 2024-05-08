@@ -26,6 +26,7 @@ export interface NotificationState
       resolved?: string;
       rejected?: string;
     };
+    renderDataMessage?: (message?: string) => React.ReactNode;
     promise?: Promise<any>;
   };
   extraDescription?: string;
@@ -179,7 +180,10 @@ export const useBAINotificationEffect = () => {
               status: 'rejected',
               percent: ratio * 100,
             },
-            extraDescription: data?.message,
+            extraDescription:
+              notification?.backgroundTask?.renderDataMessage?.(
+                data?.message,
+              ) || data?.message,
             duration: CLOSING_DURATION,
           });
         };
@@ -192,7 +196,10 @@ export const useBAINotificationEffect = () => {
             backgroundTask: {
               status: 'rejected',
             },
-            extraDescription: data?.message,
+            extraDescription:
+              notification?.backgroundTask?.renderDataMessage?.(
+                data?.message,
+              ) || data?.message,
             duration: CLOSING_DURATION,
           });
           sse.close();

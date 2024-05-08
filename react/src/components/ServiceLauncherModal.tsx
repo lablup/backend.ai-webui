@@ -92,7 +92,8 @@ interface ServiceCreateType {
   config: ServiceCreateConfigType;
 }
 
-interface ServiceLauncherProps extends Omit<BAIModalProps, 'onOK'> {
+interface ServiceLauncherProps
+  extends Omit<BAIModalProps, 'onOk' | 'onCancel'> {
   endpointFrgmt?: ServiceLauncherModalFragment$key | null;
   extraP?: boolean;
   onRequestClose: (success?: boolean) => void;
@@ -490,158 +491,168 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       key: '1',
       label: t('modelService.ServiceInfo'),
       children: (
-        <Form
-          ref={formRef}
-          disabled={mutationToCreateService.isLoading}
-          preserve={false}
-          layout="vertical"
-          labelCol={{ span: 12 }}
-          initialValues={
-            endpoint
-              ? {
-                  serviceName: endpoint?.name,
-                  resourceGroup: endpoint?.resource_group,
-                  desiredRoutingCount: endpoint?.desired_session_count || 0,
-                  // FIXME: memory doesn't applied to resource allocation
-                  resource: {
-                    cpu: parseInt(JSON.parse(endpoint?.resource_slots)?.cpu),
-                    mem: iSizeToSize(
-                      JSON.parse(endpoint?.resource_slots)?.mem + 'b',
-                      'g',
-                      3,
-                      true,
-                    )?.numberUnit,
-                    shmem: iSizeToSize(
-                      JSON.parse(endpoint?.resource_opts)?.shmem ||
-                        AUTOMATIC_DEFAULT_SHMEM,
-                      'g',
-                      3,
-                      true,
-                    )?.numberUnit,
-                    ...getAIAcceleratorWithStringifiedKey(
-                      _.omit(JSON.parse(endpoint?.resource_slots), [
-                        'cpu',
-                        'mem',
-                      ]),
-                    ),
-                  },
-                  cluster_mode:
-                    endpoint?.cluster_mode === 'MULTI_NODE'
-                      ? 'multi-node'
-                      : 'single-node',
-                  cluster_size: endpoint?.cluster_size,
-                  openToPublic: endpoint?.open_to_public,
-                  environments: {
-                    environment: endpoint?.image_object?.name,
-                    version: `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`,
-                    image: endpoint?.image_object,
-                  },
-                }
-              : {
-                  desiredRoutingCount: 1,
-                  ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
-                }
-          }
-          requiredMark="optional"
-        >
-          {(baiClient.supports('modify-endpoint') || !endpoint) && (
-            <>
-              <Form.Item
-                label={t('modelService.ServiceName')}
-                name="serviceName"
-                rules={[
-                  {
-                    pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
-                    message: t('modelService.ServiceNameRule'),
-                  },
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input disabled={endpoint ? true : false} />
-              </Form.Item>
-              <Form.Item
-                name="openToPublic"
-                label={t('modelService.OpenToPublic')}
-                valuePropName="checked"
-              >
-                <Switch disabled={endpoint ? true : false}></Switch>
-              </Form.Item>
-              {/* <VFolderTableFromItem /> */}
-              {!endpoint ? (
+        <>
+          <Form
+            ref={formRef}
+            disabled={mutationToCreateService.isLoading}
+            preserve={false}
+            layout="vertical"
+            labelCol={{ span: 12 }}
+            initialValues={
+              endpoint
+                ? {
+                    serviceName: endpoint?.name,
+                    resourceGroup: endpoint?.resource_group,
+                    desiredRoutingCount: endpoint?.desired_session_count || 0,
+                    // FIXME: memory doesn't applied to resource allocation
+                    resource: {
+                      cpu: parseInt(JSON.parse(endpoint?.resource_slots)?.cpu),
+                      mem: iSizeToSize(
+                        JSON.parse(endpoint?.resource_slots)?.mem + 'b',
+                        'g',
+                        3,
+                        true,
+                      )?.numberUnit,
+                      shmem: iSizeToSize(
+                        JSON.parse(endpoint?.resource_opts)?.shmem ||
+                          AUTOMATIC_DEFAULT_SHMEM,
+                        'g',
+                        3,
+                        true,
+                      )?.numberUnit,
+                      ...getAIAcceleratorWithStringifiedKey(
+                        _.omit(JSON.parse(endpoint?.resource_slots), [
+                          'cpu',
+                          'mem',
+                        ]),
+                      ),
+                    },
+                    cluster_mode:
+                      endpoint?.cluster_mode === 'MULTI_NODE'
+                        ? 'multi-node'
+                        : 'single-node',
+                    cluster_size: endpoint?.cluster_size,
+                    openToPublic: endpoint?.open_to_public,
+                    environments: {
+                      environment: endpoint?.image_object?.name,
+                      version: `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`,
+                      image: endpoint?.image_object,
+                    },
+                  }
+                : {
+                    desiredRoutingCount: 1,
+                    ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+                    ...(baiClient._config?.default_session_environment && {
+                      environments: {
+                        environment:
+                          baiClient._config?.default_session_environment,
+                      },
+                    }),
+                  }
+            }
+            requiredMark="optional"
+          >
+            {(baiClient.supports('modify-endpoint') || !endpoint) && (
+              <>
                 <Form.Item
-                  name={'vFolderName'}
-                  label={t('session.launcher.ModelStorageToMount')}
+                  label={t('modelService.ServiceName')}
+                  name="serviceName"
                   rules={[
+                    {
+                      pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
+                      message: t('modelService.ServiceNameRule'),
+                    },
                     {
                       required: true,
                     },
                   ]}
                 >
-                  <VFolderSelect
-                    filter={(vf) => vf.usage_mode === 'model'}
-                    autoSelectDefault
-                    disabled={endpoint ? true : false}
-                  />
+                  <Input disabled={endpoint ? true : false} />
                 </Form.Item>
-              ) : (
-                endpoint?.model && (
+                <Form.Item
+                  name="openToPublic"
+                  label={t('modelService.OpenToPublic')}
+                  valuePropName="checked"
+                >
+                  <Switch disabled={endpoint ? true : false}></Switch>
+                </Form.Item>
+                {/* <VFolderTableFromItem /> */}
+                {!endpoint ? (
                   <Form.Item
+                    name={'vFolderName'}
                     label={t('session.launcher.ModelStorageToMount')}
-                    required
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
                   >
-                    <Suspense fallback={<Skeleton.Input active />}>
-                      <VFolderLazyView uuid={endpoint?.model} />
-                    </Suspense>
+                    <VFolderSelect
+                      filter={(vf) =>
+                        vf.usage_mode === 'model' && vf.status === 'ready'
+                      }
+                      autoSelectDefault
+                      disabled={endpoint ? true : false}
+                    />
                   </Form.Item>
-                )
-              )}
-            </>
-          )}
-          <Form.Item
-            label={t('modelService.DesiredRoutingCount')}
-            name="desiredRoutingCount"
-            rules={[
-              {
-                required: true,
-                min: 0,
-                max: 10,
-                type: 'number',
-              },
-            ]}
-          >
-            <InputNumberWithSlider
-              min={0}
-              max={10}
-              inputNumberProps={{
-                //TODO: change unit based on resource limit
-                addonAfter: '#',
-              }}
-              step={1}
-            />
-          </Form.Item>
-          {(baiClient.supports('modify-endpoint') || !endpoint) && (
-            <Card
-              style={{
-                marginBottom: token.margin,
-              }}
+                ) : (
+                  endpoint?.model && (
+                    <Form.Item
+                      label={t('session.launcher.ModelStorageToMount')}
+                      required
+                    >
+                      <Suspense fallback={<Skeleton.Input active />}>
+                        <VFolderLazyView uuid={endpoint?.model} />
+                      </Suspense>
+                    </Form.Item>
+                  )
+                )}
+              </>
+            )}
+            <Form.Item
+              label={t('modelService.DesiredRoutingCount')}
+              name="desiredRoutingCount"
+              rules={[
+                {
+                  required: true,
+                  min: 0,
+                  max: 10,
+                  type: 'number',
+                },
+              ]}
             >
-              <ImageEnvironmentSelectFormItems
-              // //TODO: test with real inference images
-              // filter={(image) => {
-              //   return !!_.find(image?.labels, (label) => {
-              //     return (
-              //       label?.key === "ai.backend.role" &&
-              //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
-              //     );
-              //   });
-              // }}
+              <InputNumberWithSlider
+                min={0}
+                max={10}
+                inputNumberProps={{
+                  //TODO: change unit based on resource limit
+                  addonAfter: '#',
+                }}
+                step={1}
               />
-              <ResourceAllocationFormItems />
-            </Card>
-          )}
-        </Form>
+            </Form.Item>
+            {(baiClient.supports('modify-endpoint') || !endpoint) && (
+              <Card
+                style={{
+                  marginBottom: token.margin,
+                }}
+              >
+                <ImageEnvironmentSelectFormItems
+                // //TODO: test with real inference images
+                // filter={(image) => {
+                //   return !!_.find(image?.labels, (label) => {
+                //     return (
+                //       label?.key === "ai.backend.role" &&
+                //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
+                //     );
+                //   });
+                // }}
+                />
+                <ResourceAllocationFormItems />
+              </Card>
+            )}
+          </Form>
+        </>
       ),
     },
     {
@@ -699,20 +710,26 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
   return (
     <BAIModal
-      title={t('modelService.StartNewServing')}
+      title={
+        endpoint
+          ? t('modelService.EditModelService')
+          : t('modelService.StartNewServing')
+      }
+      destroyOnClose
       onOk={handleOk}
       onCancel={handleCancel}
-      destroyOnClose={true}
       maskClosable={false}
       confirmLoading={mutationToCreateService.isLoading}
-      footer={[
-        <Button key="cancel" onClick={handleCancel}>
-          {t('modelService.Cancel')}
-        </Button>,
-        <Button key="ok" type="primary" onClick={handleOk}>
-          {t('modelService.StartService')}
-        </Button>,
-      ]}
+      footer={() => (
+        <Flex direction="row" justify="end" align="end">
+          <Space size="small">
+            <Button onClick={handleCancel}>{t('button.Cancel')}</Button>
+            <Button type="primary" onClick={handleOk}>
+              {endpoint ? t('button.Update') : t('button.Create')}
+            </Button>
+          </Space>
+        </Flex>
+      )}
       {...modalProps}
     >
       <Suspense fallback={<FlexActivityIndicator />}>

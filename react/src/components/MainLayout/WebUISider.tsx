@@ -56,6 +56,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const inactiveList = baiClient?._config?.inactiveList ?? null;
   const siteDescription = baiClient?._config?.siteDescription ?? null;
   const supportServing = baiClient?.supports('model-serving') ?? false;
+  const supportUserCommittedImage =
+    baiClient?.supports('user-committed-image') ?? false;
 
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
 
@@ -84,6 +86,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       label: t('webui.menu.Data&Storage'),
       icon: <CloudUploadOutlined />,
       key: 'data',
+    },
+    supportUserCommittedImage && {
+      label: t('webui.menu.MyEnvironments'),
+      icon: <FileDoneOutlined />,
+      key: 'my-environment',
     },
     !isHideAgents && {
       label: t('webui.menu.AgentSummary'),
@@ -280,7 +287,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               </Flex>
             </div>
             <address>
-              <small className="sidebar-footer">Lablup Inc.</small>
+              <small className="sidebar-footer">
+                {themeConfig?.branding?.companyName || 'Lablup Inc.'}
+              </small>
               &nbsp;
               <small
                 className="sidebar-footer"
@@ -300,6 +309,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           location.pathname.split('/')[1] || 'summary',
           // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
           location.pathname.split('/')[1] === 'storage-settings' ? 'agent' : '',
+          // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
+          //       and change 'job' key to 'session'
+          location.pathname.split('/')[1] === 'session' ? 'job' : '',
         ]}
         items={
           // TODO: add plugin menu

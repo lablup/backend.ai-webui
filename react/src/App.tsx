@@ -1,5 +1,5 @@
 import AnnouncementAlert from './components/AnnouncementAlert';
-import BAIErrorBoundary from './components/BAIErrorBoundary';
+import BAIErrorBoundary, { ErrorView } from './components/BAIErrorBoundary';
 import {
   DefaultProvidersForReactRoot,
   RoutingEventHandler,
@@ -24,6 +24,7 @@ import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 const Information = React.lazy(() => import('./components/Information'));
 const ServingListPage = React.lazy(() => import('./pages/ServingListPage'));
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
+const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
 const StorageHostSettingPage = React.lazy(
   () => import('./pages/StorageHostSettingPage'),
 );
@@ -40,6 +41,7 @@ const NeoSessionLauncherSwitchAlert = React.lazy(
 const router = createBrowserRouter([
   {
     path: '/',
+    errorElement: <ErrorView />,
     element: (
       <QueryParamProvider
         adapter={ReactRouter6Adapter}
@@ -124,6 +126,15 @@ const router = createBrowserRouter([
       {
         path: '/data',
         handle: { labelKey: 'webui.menu.Data&Storage' },
+      },
+      {
+        path: '/my-environment',
+        element: (
+          <BAIErrorBoundary>
+            <MyEnvironmentPage />
+          </BAIErrorBoundary>
+        ),
+        handle: { labelKey: 'webui.menu.MyEnvironments' },
       },
       {
         path: '/agent-summary',
