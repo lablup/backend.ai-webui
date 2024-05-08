@@ -29,12 +29,12 @@ import VFolderTableFromItem, {
 } from '../components/VFolderTableFormItem';
 import { compareNumberWithUnits, iSizeToSize } from '../helper';
 import {
-  useCurrentProjectValue,
   useSuspendedBackendaiClient,
   useUpdatableState,
   useWebUINavigate,
 } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useThemeMode } from '../hooks/useThemeMode';
 // @ts-ignore
 import customCSS from './SessionLauncherPage.css?raw';
@@ -209,6 +209,7 @@ const SessionLauncherPage = () => {
             form.getFieldsValue(),
             ['environments.image'],
             ['environments.customizedTag'],
+            ['autoMountedFolderNames'],
           ),
         },
         'replaceIn',
@@ -444,13 +445,19 @@ const SessionLauncherPage = () => {
                 20000,
                 sessionInfo.architecture,
               )
-              .then((res: { created: boolean }) => {
+              .then((res: { created: boolean; status: string }) => {
                 // // When session is already created with the same name, the status code
                 // // is 200, but the response body has 'created' field as false. For better
                 // // user experience, we show the notification message.
                 if (!res?.created) {
                   // message.warning(t('session.launcher.SessionAlreadyExists'));
                   throw new Error(t('session.launcher.SessionAlreadyExists'));
+                }
+                if (res?.status === 'CANCELLED') {
+                  // Case about failed to start new session kind of "docker image not found" or etc.
+                  throw new Error(
+                    t('session.launcher.FailedToStartNewSession'),
+                  );
                 }
                 return res;
               })
@@ -1679,53 +1686,72 @@ const SessionLauncherPage = () => {
                         );
                       }}
                     >
-                      {form.getFieldValue('mounts')?.length > 0 ? (
-                        <Table
-                          rowKey="name"
-                          size="small"
-                          pagination={false}
-                          columns={[
-                            {
-                              dataIndex: 'name',
-                              title: t('data.folders.Name'),
-                            },
-                            {
-                              dataIndex: 'alias',
-                              title: t('session.launcher.FolderAlias'),
-                              render: (value, record) => {
-                                return _.isEmpty(value) ? (
-                                  <Typography.Text
-                                    type="secondary"
-                                    style={{
-                                      opacity: 0.7,
-                                    }}
-                                  >
-                                    {`/home/work/${record.name}`}
-                                  </Typography.Text>
-                                ) : (
-                                  value
-                                );
+                      {/* {console.log(_.sum([form.getFieldValue('mounts')?.length, form.getFieldValue('autoMountedFolderNames')]))} */}
+                      {/* {_.sum([form.getFieldValue('mounts')?.length, form.getFieldValue('autoMountedFolderNames').length]) > 0 ? ( */}
+                      <Flex direction="column" align="stretch" gap={'xs'}>
+                        {form.getFieldValue('mounts')?.length > 0 ? (
+                          <Table
+                            rowKey="name"
+                            size="small"
+                            pagination={false}
+                            columns={[
+                              {
+                                dataIndex: 'name',
+                                title: t('data.folders.Name'),
                               },
-                            },
-                          ]}
-                          dataSource={_.map(
-                            form.getFieldValue('mounts'),
-                            (v) => {
-                              return {
-                                name: v,
-                                alias:
-                                  form.getFieldValue('vfoldersAliasMap')?.[v],
-                              };
-                            },
-                          )}
-                        ></Table>
-                      ) : (
-                        <Alert
-                          type="warning"
-                          showIcon
-                          message={t('session.launcher.NoFolderMounted')}
-                        />
-                      )}
+                              {
+                                dataIndex: 'alias',
+                                title: t('session.launcher.FolderAlias'),
+                                render: (value, record) => {
+                                  return _.isEmpty(value) ? (
+                                    <Typography.Text
+                                      type="secondary"
+                                      style={{
+                                        opacity: 0.7,
+                                      }}
+                                    >
+                                      {`/home/work/${record.name}`}
+                                    </Typography.Text>
+                                  ) : (
+                                    value
+                                  );
+                                },
+                              },
+                            ]}
+                            dataSource={_.map(
+                              form.getFieldValue('mounts'),
+                              (v) => {
+                                return {
+                                  name: v,
+                                  alias:
+                                    form.getFieldValue('vfoldersAliasMap')?.[v],
+                                };
+                              },
+                            )}
+                          ></Table>
+                        ) : (
+                          <Alert
+                            type="warning"
+                            showIcon
+                            message={t('session.launcher.NoFolderMounted')}
+                          />
+                        )}
+                        {form.getFieldValue('autoMountedFolderNames')?.length >
+                        0 ? (
+                          <Descriptions size="small">
+                            <Descriptions.Item
+                              label={t('data.AutomountFolders')}
+                            >
+                              {_.map(
+                                form.getFieldValue('autoMountedFolderNames'),
+                                (name) => {
+                                  return <Tag>{name}</Tag>;
+                                },
+                              )}
+                            </Descriptions.Item>
+                          </Descriptions>
+                        ) : null}
+                      </Flex>
                     </BAICard>
                     <BAICard
                       title="Network"

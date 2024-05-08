@@ -1,12 +1,9 @@
 import AvailableResourcesCard from '../components/AvailableResourcesCard';
 import Flex from '../components/Flex';
 import SessionList from '../components/SessionList';
-import {
-  useCurrentProjectValue,
-  useSuspendedBackendaiClient,
-  useWebUINavigate,
-} from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { PoweroffOutlined, ThunderboltTwoTone } from '@ant-design/icons';
 import { Alert, Button, Card, Segmented, Typography, theme } from 'antd';
 import React, { PropsWithChildren, Suspense, useState } from 'react';

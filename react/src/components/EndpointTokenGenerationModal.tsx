@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 // import { graphql, useFragment } from "react-relay";
 
 interface EndpointTokenGenerationModalProps
-  extends Omit<BAIModalProps, 'onOK' | 'onClose'> {
+  extends Omit<BAIModalProps, 'onOk' | 'onClose'> {
   endpoint_id: string;
   onRequestClose: (success?: boolean) => void;
 }

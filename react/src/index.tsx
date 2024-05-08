@@ -1,11 +1,17 @@
 import App from './App';
+import { jotaiStore } from './components/DefaultProviders';
 import Flex from './components/Flex';
 import FlexActivityIndicator from './components/FlexActivityIndicator';
-import ResourceGroupSelect from './components/ResourceGroupSelect';
+import ResourceGroupSelectForCurrentProject from './components/ResourceGroupSelectForCurrentProject';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
-import reactToWebComponent from './helper/react-to-webcomponent';
+import reactToWebComponent, {
+  ReactWebComponentProps,
+} from './helper/react-to-webcomponent';
+import { useSuspendedBackendaiClient } from './hooks';
+import { useCurrentResourceGroupValue } from './hooks/useCurrentProject';
 import { ThemeModeProvider } from './hooks/useThemeMode';
 import ModelStoreListPage from './pages/ModelStoreListPage';
+import { Provider as JotaiProvider } from 'jotai';
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +44,9 @@ const UserSettingsModal = React.lazy(
 );
 const ManageAppsModal = React.lazy(
   () => import('./components/ManageAppsModal'),
+);
+const ManageImageResourceLimitModal = React.lazy(
+  () => import('./components/ManageImageResourceLimitModal'),
 );
 const UserDropdownMenu = React.lazy(
   () => import('./components/UserDropdownMenu'),
@@ -140,6 +149,17 @@ customElements.define(
 );
 
 customElements.define(
+  'backend-ai-react-manage-resource-dialog',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <ManageImageResourceLimitModal />
+      </DefaultProviders>
+    );
+  }),
+);
+
+customElements.define(
   'backend-ai-react-user-dropdown-menu',
   reactToWebComponent((props) => {
     return (
@@ -152,40 +172,56 @@ customElements.define(
 customElements.define(
   'backend-ai-react-resource-group-select',
   reactToWebComponent((props) => {
-    const [value, setValue] = React.useState(props.value || '');
-    const { t } = useTranslation();
-    React.useEffect(() => {
-      if (props.value !== value) {
-        setValue(props.value || '');
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.value]);
-
     return (
       <DefaultProviders {...props}>
-        <Flex
-          direction="column"
-          gap="sm"
-          align="stretch"
-          style={{ minWidth: 200, maxWidth: 310 }}
-        >
-          {t('session.launcher.ResourceGroup')}
-          <ResourceGroupSelect
-            size="large"
-            showSearch
-            value={value}
-            loading={value !== props.value || value === ''}
-            onChange={(value) => {
-              setValue(value);
-              props.dispatchEvent('change', value);
-            }}
-            popupMatchSelectWidth={false}
-          />
-        </Flex>
+        <ResourceGroupSelectInWebComponent {...props} />
       </DefaultProviders>
     );
   }),
 );
+
+const ResourceGroupSelectInWebComponent = (props: ReactWebComponentProps) => {
+  const { t } = useTranslation();
+
+  useSuspendedBackendaiClient();
+
+  const currentResourceGroupByProject = useCurrentResourceGroupValue();
+
+  React.useEffect(() => {
+    if (
+      // @ts-ignore
+      currentResourceGroupByProject !== globalThis.resourceBroker.scaling_group
+    ) {
+      props.dispatchEvent('change', currentResourceGroupByProject);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    currentResourceGroupByProject,
+    // @ts-ignore
+    globalThis.resourceBroker.scaling_group,
+  ]);
+  return (
+    <Flex
+      direction="column"
+      gap="sm"
+      align="stretch"
+      style={{ minWidth: 200, maxWidth: 310 }}
+    >
+      {t('session.launcher.ResourceGroup')}
+      <ResourceGroupSelectForCurrentProject
+        size="large"
+        showSearch
+        disabled={currentResourceGroupByProject !== props.value}
+        loading={currentResourceGroupByProject !== props.value}
+        onChange={(value) => {
+          // setValue(value);
+          props.dispatchEvent('change', value);
+        }}
+        popupMatchSelectWidth={false}
+      />
+    </Flex>
+  );
+};
 
 customElements.define(
   'backend-ai-react-container-registry-list',
@@ -250,9 +286,11 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <ThemeModeProvider>
-      <App />
-    </ThemeModeProvider>
+    <JotaiProvider store={jotaiStore}>
+      <ThemeModeProvider>
+        <App />
+      </ThemeModeProvider>
+    </JotaiProvider>
   </React.StrictMode>,
 );
 

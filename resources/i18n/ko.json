@@ -273,7 +273,8 @@
       "NeoLauncher": "NEO",
       "EnvironmentVariableValueRequired": "값을 입력해주세요.",
       "PleaseCompleteForm": "양식이 완성되지 않았거나 오류가 포함되어 있습니다. 입력 내용을 확인해주세요.",
-      "NeedToCorrectForm": "수정 버튼을 눌러 입력하신 내용을 확인해주세요."
+      "NeedToCorrectForm": "수정 버튼을 눌러 입력하신 내용을 확인해주세요.",
+      "FailedToStartNewSession": "세션 생성에 실패했습니다. 세션 페이지의 '종료' 탭을 확인해 주세요."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -907,7 +908,9 @@
     "PasswordsDoNotMatch": "변경할 비밀번호와 비밀번호 확인란의 값이 일치해야 합니다.",
     "NoChangeMade": "변경된 부분이 없습니다.",
     "Architecture": "아키텍쳐",
-    "CustomizedImageSuccessfullyDeleted": "사용자 정의된 이미지가 삭제되었습니다."
+    "CustomizedImageSuccessfullyDeleted": "사용자 정의된 이미지가 삭제되었습니다.",
+    "DescImageResourceModified": "리소스 제한이 수정되었습니다.",
+    "DescImagePortsModified": "이미지 포트가 수정되었습니다."
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
@@ -1566,5 +1569,8 @@
   },
   "setting": {
     "SearchPlaceholder": "검색어를 입력해 주세요"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>이미 설치된 이미지를 수정하는 경우, 이미지 재설치가 필요합니다.</p><<p>수정내용은 이미지가 재설치되기 전까지 적용되지 않습니다. </p>"
   }
 }

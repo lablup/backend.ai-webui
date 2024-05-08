@@ -274,7 +274,8 @@
       "BatchModeDesc": "Вы можете запускать свой код на нескольких узлах и кластерах, чтобы масштабировать свою идею.",
       "AddEnvironmentVariable": "Добавьте переменные окружения",
       "EnvironmentVariableValueRequired": "Пожалуйста, введите значение.",
-      "PleaseCompleteForm": "Форма не заполнена или содержит ошибки. Пожалуйста, проверьте введенные данные."
+      "PleaseCompleteForm": "Форма не заполнена или содержит ошибки. Пожалуйста, проверьте введенные данные.",
+      "FailedToStartNewSession": "Создание сеанса не удалось. \nПожалуйста, проверьте вкладку «Законченный» на странице сеанса."
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -819,7 +820,9 @@
     "NoChangeMade": "Изменения не вносились",
     "Architecture": "Архитектура",
     "NoImageToDisplay": "Нет изображений для отображения",
-    "CustomizedImageSuccessfullyDeleted": "Персонализированное изображение успешно удалено."
+    "CustomizedImageSuccessfullyDeleted": "Персонализированное изображение успешно удалено.",
+    "DescImageResourceModified": "Лимит ресурсов успешно изменен",
+    "DescImagePortsModified": "Порты изображений успешно изменены"
   },
   "resourcePreset": {
     "ResourcePresets": "Предустановки ресурсов",
@@ -1567,5 +1570,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Введите поисковый запрос"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>Если вы измените уже установленный образ, вам придется переустановить его.</p><p>Изменения не будут применены до тех пор, пока образ не будет переустановлен.\n\n</p>"
   }
 }

@@ -269,7 +269,8 @@
       "StartAfter": "Mulai setelah:",
       "StartTimeDoesNotApply": "Jika waktu mulai tidak ditetapkan, maka tidak berlaku.",
       "PreviousLauncher": "Classic",
-      "PleaseCompleteForm": "Formulir tidak lengkap atau mengandung kesalahan. Silakan periksa masukan Anda."
+      "PleaseCompleteForm": "Formulir tidak lengkap atau mengandung kesalahan. Silakan periksa masukan Anda.",
+      "FailedToStartNewSession": "Pembuatan sesi gagal. \nSilakan periksa tab 'SELESAI' di halaman sesi."
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -811,7 +812,9 @@
     "NoChangeMade": "Tidak ada perubahan yang dibuat",
     "Architecture": "Arsitektur",
     "NoImageToDisplay": "Tidak ada gambar yang akan ditampilkan",
-    "CustomizedImageSuccessfullyDeleted": "Gambar yang disesuaikan berhasil dihapus."
+    "CustomizedImageSuccessfullyDeleted": "Gambar yang disesuaikan berhasil dihapus.",
+    "DescImageResourceModified": "Batas sumber daya berhasil diubah",
+    "DescImagePortsModified": "Port Gambar berhasil dimodifikasi"
   },
   "resourcePreset": {
     "ResourcePresets": "Preset Sumber Daya",
@@ -1559,5 +1562,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Masukkan Istilah Pencarian"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>Jika Anda memodifikasi gambar yang telah diinstal, Anda perlu menginstal ulang gambar tersebut.</p><p>Modifikasi tidak akan diterapkan sampai gambar tersebut diinstal ulang.\n\n</p>"
   }
 }

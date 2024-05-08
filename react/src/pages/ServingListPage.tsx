@@ -5,13 +5,10 @@ import Flex from '../components/Flex';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import { baiSignedRequestWithPromise } from '../helper';
-import {
-  useCurrentProjectValue,
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-} from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 // import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   ServingListPageQuery,
   ServingListPageQuery$data,
@@ -557,11 +554,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       <ServiceLauncherModal
         open={isOpenServiceLauncher}
         endpointFrgmt={editingModelService || null}
-        onCancel={() => {
-          setEditingModelService(null);
-          setIsOpenServiceLauncher(!isOpenServiceLauncher);
-        }}
         onRequestClose={(success) => {
+          setEditingModelService(null);
           setIsOpenServiceLauncher(!isOpenServiceLauncher);
           if (success) {
             startRefetchTransition(() => {

@@ -261,7 +261,8 @@
       "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Кластерын хэмжээ 2-оос багагүй тохиолдолд зөвхөн бүхэл тоог зөвшөөрнө.",
       "StartAfter": "Дараа нь эхлэх:",
-      "StartTimeDoesNotApply": "Хэрэв эхлэх цагийг тохируулаагүй бол энэ нь хамаарахгүй."
+      "StartTimeDoesNotApply": "Хэрэв эхлэх цагийг тохируулаагүй бол энэ нь хамаарахгүй.",
+      "FailedToStartNewSession": "Сеанс үүсгэж чадсангүй. \nСеанс хуудасны 'Дууссан' табыг шалгана уу."
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -801,7 +802,9 @@
     "NoChangeMade": "Өөрчлөлт ороогүй",
     "Architecture": "Архитектур",
     "NoImageToDisplay": "Үзүүлэх зураг байхгүй",
-    "CustomizedImageSuccessfullyDeleted": "Тохируулсан зургийг амжилттай устгалаа."
+    "CustomizedImageSuccessfullyDeleted": "Тохируулсан зургийг амжилттай устгалаа.",
+    "DescImageResourceModified": "Нөөцийн хязгаарыг амжилттай өөрчилсөн",
+    "DescImagePortsModified": "Зургийн портуудыг амжилттай өөрчилсөн"
   },
   "resourcePreset": {
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",
@@ -1548,5 +1551,8 @@
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Hyperaccel LPU хурдасгуурыг ашигла.",
     "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Plugin шаардлагатай."
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>Хэрэв та аль хэдийн суулгасан зургийг өөрчилбөл зургийг дахин суулгах шаардлагатай болно.</p><p>Зургийг дахин суулгах хүртэл өөрчлөлтийг хийхгүй.\n\n</p>"
   }
 }

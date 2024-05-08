@@ -272,7 +272,8 @@
       "BatchModeDesc": "Vous pouvez exécuter votre code avec plusieurs nœuds et clusters pour faire évoluer votre idée.",
       "AddEnvironmentVariable": "Ajouter des variables d'environnement",
       "EnvironmentVariableValueRequired": "Veuillez saisir une valeur.",
-      "PleaseCompleteForm": "Le formulaire est incomplet ou contient des erreurs. Veuillez vérifier vos données."
+      "PleaseCompleteForm": "Le formulaire est incomplet ou contient des erreurs. Veuillez vérifier vos données.",
+      "FailedToStartNewSession": "La création de la session a échoué. \nVeuillez vérifier l'onglet « TERMINÉ » sur la page de la session."
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -817,7 +818,9 @@
     "NoChangeMade": "Aucune modification n'a été apportée",
     "Architecture": "Architecture",
     "NoImageToDisplay": "Pas d'images à afficher",
-    "CustomizedImageSuccessfullyDeleted": "Image personnalisée supprimée avec succès."
+    "CustomizedImageSuccessfullyDeleted": "Image personnalisée supprimée avec succès.",
+    "DescImageResourceModified": "La limite de ressources a été modifiée avec succès",
+    "DescImagePortsModified": "Ports d'image modifiés avec succès"
   },
   "resourcePreset": {
     "ResourcePresets": "Préréglages de ressources",
@@ -1565,5 +1568,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Entrez le terme de recherche"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>Si vous modifiez une image qui a déjà été installée, vous devrez réinstaller l'image.</p><p>Les modifications ne seront appliquées qu'une fois l'image réinstallée.\n\n</p>"
   }
 }

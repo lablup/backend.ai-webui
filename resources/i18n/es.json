@@ -459,7 +459,9 @@
     "SuccessfullyModified": "Modificado con éxito",
     "TakesTime": ". Lleva tiempo, así que tómate un café.",
     "Version": "Versión",
-    "CustomizedImageSuccessfullyDeleted": "Imagen personalizada eliminada correctamente."
+    "CustomizedImageSuccessfullyDeleted": "Imagen personalizada eliminada correctamente.",
+    "DescImageResourceModified": "Límite de recursos modificado con éxito",
+    "DescImagePortsModified": "Puertos de imagen modificados exitosamente"
   },
   "explorer": {
     "InputTooShort": "InputTooShort",
@@ -1170,7 +1172,8 @@
       "BatchModeDesc": "Puedes ejecutar tu código con múltiples nodos y clusters para escalar tu idea",
       "AddEnvironmentVariable": "Añadir variables de entorno",
       "EnvironmentVariableValueRequired": "Por favor, introduzca un valor.",
-      "PleaseCompleteForm": "El formulario está incompleto o contiene errores. Compruebe los datos introducidos."
+      "PleaseCompleteForm": "El formulario está incompleto o contiene errores. Compruebe los datos introducidos.",
+      "FailedToStartNewSession": "Error al crear la sesión. \nPor favor marque la pestaña 'TERMINADO' en la página de la sesión."
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",
@@ -1548,5 +1551,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Ingrese el término de búsqueda"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>Si modifica una imagen que ya se ha instalado, deberá volver a instalarla.</p><p>Las modificaciones no se aplicarán hasta que se reinstale la imagen.\n\n</p>"
   }
 }

@@ -272,7 +272,8 @@
       "BatchModeDesc": "Fikrinizi ölçeklendirmek için kodunuzu birden fazla düğüm ve küme ile çalıştırabilirsiniz",
       "AddEnvironmentVariable": "Ortam değişkenleri ekleme",
       "EnvironmentVariableValueRequired": "Lütfen bir değer girin.",
-      "PleaseCompleteForm": "Form eksik veya hatalar içeriyor. Lütfen girdilerinizi kontrol edin."
+      "PleaseCompleteForm": "Form eksik veya hatalar içeriyor. Lütfen girdilerinizi kontrol edin.",
+      "FailedToStartNewSession": "Oturum oluşturulamadı. \nLütfen oturum sayfasındaki 'bitmiş' sekmesini kontrol edin."
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -817,7 +818,9 @@
     "NoChangeMade": "Herhangi bir değişiklik yapılmadı",
     "Architecture": "Mimarlık",
     "NoImageToDisplay": "Görüntülenecek Görüntü Yok",
-    "CustomizedImageSuccessfullyDeleted": "Özelleştirilmiş resim başarıyla silindi."
+    "CustomizedImageSuccessfullyDeleted": "Özelleştirilmiş resim başarıyla silindi.",
+    "DescImageResourceModified": "Kaynak sınırı başarıyla değiştirildi",
+    "DescImagePortsModified": "Görüntü Bağlantı Noktaları başarıyla değiştirildi"
   },
   "resourcePreset": {
     "ResourcePresets": "Kaynak Ön Ayarları",
@@ -1565,5 +1568,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Arama terimini gir"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>Daha önceden yüklenmiş bir görseli değiştirirseniz görseli yeniden yüklemeniz gerekir.</p><p>Resim yeniden yüklenene kadar değişiklikler uygulanmayacaktır.\n\n</p>"
   }
 }

@@ -80,13 +80,13 @@ type ResourceAllocation = {
 interface Props {
   currentProjectName: string;
   currentImage?: Image;
-  currentResourceGroup: string;
+  currentResourceGroup?: string;
 }
 
 // determine resource limits and remaining for current resource group and current image in current project
 export const useResourceLimitAndRemaining = ({
   currentImage,
-  currentResourceGroup,
+  currentResourceGroup = '',
   currentProjectName,
 }: Props) => {
   const baiClient = useSuspendedBackendaiClient();
@@ -97,8 +97,8 @@ export const useResourceLimitAndRemaining = ({
     data: checkPresetInfo,
     refetch,
     isRefetching,
-  } = useTanQuery<ResourceAllocation>({
-    queryKey: ['check-resets', currentProjectName, currentResourceGroup],
+  } = useTanQuery<ResourceAllocation | undefined>({
+    queryKey: ['check-presets', currentProjectName, currentResourceGroup],
     queryFn: () => {
       if (currentResourceGroup) {
         return baiClient.resourcePreset
@@ -111,7 +111,7 @@ export const useResourceLimitAndRemaining = ({
         return;
       }
     },
-    staleTime: 0,
+    staleTime: 1000,
     suspense: true,
     // suspense: !_.isEmpty(currentResourceGroup), //prevent flicking
   });

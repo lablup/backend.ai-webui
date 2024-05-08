@@ -272,7 +272,8 @@
       "BatchModeDesc": "È possibile eseguire il codice con più nodi e cluster per scalare la propria idea.",
       "AddEnvironmentVariable": "Aggiungere le variabili d'ambiente",
       "EnvironmentVariableValueRequired": "Inserire un valore.",
-      "PleaseCompleteForm": "Il modulo è incompleto o contiene errori. Si prega di controllare i dati inseriti."
+      "PleaseCompleteForm": "Il modulo è incompleto o contiene errori. Si prega di controllare i dati inseriti.",
+      "FailedToStartNewSession": "Creazione della sessione non riuscita. \nControlla la scheda \"FINITO\" nella pagina della sessione."
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",
@@ -817,7 +818,9 @@
     "NoChangeMade": "Non sono state apportate modifiche",
     "Architecture": "Architettura",
     "NoImageToDisplay": "Nessuna immagine da visualizzare",
-    "CustomizedImageSuccessfullyDeleted": "Immagine personalizzata eliminata con successo."
+    "CustomizedImageSuccessfullyDeleted": "Immagine personalizzata eliminata con successo.",
+    "DescImageResourceModified": "Limite delle risorse modificato con successo",
+    "DescImagePortsModified": "Porte immagine modificate con successo"
   },
   "resourcePreset": {
     "ResourcePresets": "Preimpostazioni delle risorse",
@@ -1565,5 +1568,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Inserisci il termine di ricerca"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>Se modifichi un'immagine che è già stata installata, dovrai reinstallare l'immagine.</p><p>Le modifiche non verranno applicate finché l'immagine non verrà reinstallata.\n\n</p>"
   }
 }

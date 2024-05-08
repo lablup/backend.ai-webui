@@ -459,7 +459,9 @@
     "SuccessfullyModified": "Muutettu onnistuneesti",
     "TakesTime": ". Se vie aikaa, joten ota kuppi kahvia!",
     "Version": "Versio",
-    "CustomizedImageSuccessfullyDeleted": "Muokattu kuva poistettu onnistuneesti."
+    "CustomizedImageSuccessfullyDeleted": "Muokattu kuva poistettu onnistuneesti.",
+    "DescImageResourceModified": "Resurssirajan muokkaus onnistui",
+    "DescImagePortsModified": "Kuvaportteja on muokattu onnistuneesti"
   },
   "explorer": {
     "InputTooShort": "InputTooShort",
@@ -1168,7 +1170,8 @@
       "BatchModeDesc": "Voit ajaa koodisi useiden solmujen ja klustereiden kanssa ideasi skaalaamiseksi.",
       "AddEnvironmentVariable": "Lisää ympäristömuuttujia",
       "EnvironmentVariableValueRequired": "Anna arvo.",
-      "PleaseCompleteForm": "Lomake on puutteellinen tai sisältää virheitä. Tarkista syöttämäsi tiedot."
+      "PleaseCompleteForm": "Lomake on puutteellinen tai sisältää virheitä. Tarkista syöttämäsi tiedot.",
+      "FailedToStartNewSession": "Istunnon luominen epäonnistui. \nTarkista istuntosivun VALMIS-välilehti."
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",
@@ -1546,5 +1549,8 @@
   },
   "setting": {
     "SearchPlaceholder": "Kirjoita hakutermi"
+  },
+  "envrionment": {
+    "ModifyImageResourceLimitReinstallRequired": "<p>Jos muokkaat jo asennettua kuvaa, sinun on asennettava se uudelleen.</p><p>Muokkauksia ei tehdä ennen kuin kuva on asennettu uudelleen.\n\n</p>"
   }
 }

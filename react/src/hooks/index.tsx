@@ -64,46 +64,6 @@ export const useCurrentDomainValue = () => {
   return baiClient._config.domainName;
 };
 
-export const useCurrentProjectValue = () => {
-  const baiClient = useSuspendedBackendaiClient();
-  const [project, _setProject] = useState<{
-    name: string;
-    id: string;
-  }>({
-    name: baiClient.current_group,
-    id: baiClient.groupIds[baiClient.current_group],
-  });
-
-  useEffect(() => {
-    const listener = (e: any) => {
-      const newProjectName = e.detail;
-      _setProject({
-        name: newProjectName,
-        id: baiClient.groupIds[newProjectName],
-      });
-    };
-    document.addEventListener('backend-ai-group-changed', listener);
-    return () => {
-      document.removeEventListener('backend-ai-group-changed', listener);
-    };
-  }, [baiClient.groupIds]);
-
-  return project;
-};
-
-export const useSetCurrentProject = () => {
-  const baiClient = useSuspendedBackendaiClient();
-  return (projectInfo: { projectName: string; projectId: string }) => {
-    baiClient.current_group = projectInfo.projectName;
-    // @ts-ignore
-    globalThis.backendaiutils._writeRecentProjectGroup(baiClient.current_group);
-    const event: CustomEvent = new CustomEvent('backend-ai-group-changed', {
-      detail: projectInfo.projectName,
-    });
-    document.dispatchEvent(event);
-  };
-};
-
 export const useAnonymousBackendaiClient = ({
   api_endpoint,
 }: {
@@ -163,6 +123,7 @@ export const useSuspendedBackendaiClient = () => {
     };
     [key: string]: any;
     _config: BackendAIConfig;
+    isManagerVersionCompatibleWith: (version: string) => boolean;
   };
 };
 

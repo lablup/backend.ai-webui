@@ -1,12 +1,15 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useCurrentProjectValue, useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useShadowRoot } from './DefaultProviders';
 import Flex from './Flex';
 import TextHighlighter from './TextHighlighter';
 import VFolderPermissionTag from './VFolderPermissionTag';
 import { VFolder } from './VFolderSelect';
+import { VFolderTableProjectQuery } from './__generated__/VFolderTableProjectQuery.graphql';
 import {
   QuestionCircleOutlined,
   ReloadOutlined,
@@ -15,18 +18,22 @@ import {
 import { useControllableValue } from 'ahooks';
 import {
   Button,
+  Descriptions,
   Form,
   Input,
   Table,
   TableProps,
+  Tag,
   Tooltip,
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { useEffect, useState, useTransition } from 'react';
+import React, { useEffect, useMemo, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
 
 export interface VFolderFile {
   name: string;
@@ -58,6 +65,8 @@ export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
   onChangeAliasMap?: (aliasMap: AliasMap) => void;
   filter?: (vFolder: VFolder) => boolean;
   rowKey: string | number;
+  onChangeAutoMountedFolders?: (names: Array<string>) => void;
+  showAutoMountedFoldersSection?: boolean;
 }
 
 export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/-]*$/;
@@ -71,6 +80,8 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   aliasMap: controlledAliasMap,
   onChangeAliasMap,
   rowKey = 'name',
+  onChangeAutoMountedFolders,
+  showAutoMountedFoldersSection,
   ...tableProps
 }) => {
   const getRowKey = React.useMemo(() => {
@@ -102,6 +113,9 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     },
   );
 
+  const baiClient = useSuspendedBackendaiClient();
+  const [keypair] = useKeyPairLazyLoadQuery(baiClient?._config.accessKey);
+
   const [internalForm] = Form.useForm<AliasMap>();
   useEffect(() => {
     // TODO: check setFieldsValue performance
@@ -131,10 +145,83 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
         url: `/folders?group_id=${currentProject.id}`,
       }) as Promise<VFolder[]>;
     },
-    staleTime: 0,
+    staleTime: 1000,
   });
+
+  const { domain, group, keypair_resource_policy } =
+    useLazyLoadQuery<VFolderTableProjectQuery>(
+      graphql`
+        query VFolderTableProjectQuery(
+          $domain_name: String!
+          $group_id: UUID!
+          $keypair_resource_policy_name: String!
+        ) {
+          domain(name: $domain_name) {
+            allowed_vfolder_hosts
+          }
+          group(id: $group_id, domain_name: $domain_name) {
+            allowed_vfolder_hosts
+          }
+          keypair_resource_policy(name: $keypair_resource_policy_name) {
+            allowed_vfolder_hosts
+          }
+        }
+      `,
+      {
+        domain_name: baiClient._config.domainName,
+        group_id: currentProject.id,
+        keypair_resource_policy_name: keypair?.resource_policy || '',
+      },
+      {
+        fetchPolicy: 'network-only',
+        fetchKey: fetchKey,
+      },
+    );
+
+  const filteredFolderListByPermission = useMemo(() => {
+    const allowedVFolderHostsByDomain = JSON.parse(
+      domain?.allowed_vfolder_hosts || '{}',
+    );
+    const allowedVFolderHostsByGroup = JSON.parse(
+      group?.allowed_vfolder_hosts || '{}',
+    );
+    const allowedVFolderHostsByKeypairResourcePolicy = JSON.parse(
+      keypair_resource_policy?.allowed_vfolder_hosts || '{}',
+    );
+
+    const mergedVFolderPermissions = _.merge(
+      allowedVFolderHostsByDomain,
+      allowedVFolderHostsByGroup,
+      allowedVFolderHostsByKeypairResourcePolicy,
+    );
+    // only allow mount if volume permission has 'mount-in-session'
+    const mountAllowedVolumes = Object.keys(mergedVFolderPermissions).filter(
+      (volume) => mergedVFolderPermissions[volume].includes('mount-in-session'),
+    );
+    // Need to filter allFolderList from allowed vfolder
+    return allFolderList?.filter((folder) =>
+      mountAllowedVolumes.includes(folder.host),
+    );
+  }, [domain, group, keypair_resource_policy, allFolderList]);
+
+  const autoMountedFolderNamesByPermission = useMemo(
+    () =>
+      _.chain(filteredFolderListByPermission)
+        .filter((vf) => vf.status === 'ready' && vf.name?.startsWith('.'))
+        .map((vf) => vf.name)
+        .value(),
+    [filteredFolderListByPermission],
+  );
+
+  useEffect(() => {
+    _.isFunction(onChangeAutoMountedFolders) &&
+      onChangeAutoMountedFolders(autoMountedFolderNamesByPermission);
+    // Do not need to run when `autoMountedFolderNames` changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoMountedFolderNamesByPermission]);
+
   const [searchKey, setSearchKey] = useState('');
-  const displayingFolders = _.chain(allFolderList)
+  const displayingFolders = _.chain(filteredFolderListByPermission)
     .filter((vf) => (filter ? filter(vf) : true))
     .filter((vf) => {
       if (selectedRowKeys.includes(getRowKey(vf))) {
@@ -168,7 +255,9 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
 
   useEffect(() => {
     handleAliasUpdate();
-  }, [selectedRowKeys, handleAliasUpdate]);
+    // `selectedRowKeys` can be changed by parents at any time, so we need to check whether `selectedRowKeys` has changed using JSON.stringify
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(selectedRowKeys), handleAliasUpdate]);
 
   const shadowRoot = useShadowRoot();
 
@@ -436,6 +525,18 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           {...tableProps}
         />
       </Form>
+      {showAutoMountedFoldersSection &&
+      autoMountedFolderNamesByPermission.length > 0 ? (
+        <>
+          <Descriptions size="small">
+            <Descriptions.Item label={t('data.AutomountFolders')}>
+              {_.map(autoMountedFolderNamesByPermission, (name) => {
+                return <Tag key={name}>{name}</Tag>;
+              })}
+            </Descriptions.Item>
+          </Descriptions>
+        </>
+      ) : null}
     </Flex>
   );
 };

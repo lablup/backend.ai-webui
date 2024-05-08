@@ -1,5 +1,5 @@
 import AnnouncementAlert from './components/AnnouncementAlert';
-import BAIErrorBoundary from './components/BAIErrorBoundary';
+import BAIErrorBoundary, { ErrorView } from './components/BAIErrorBoundary';
 import {
   DefaultProvidersForReactRoot,
   RoutingEventHandler,
@@ -41,6 +41,7 @@ const NeoSessionLauncherSwitchAlert = React.lazy(
 const router = createBrowserRouter([
   {
     path: '/',
+    errorElement: <ErrorView />,
     element: (
       <QueryParamProvider
         adapter={ReactRouter6Adapter}
