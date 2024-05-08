@@ -28,7 +28,6 @@ import type { CollapseProps } from 'antd';
 import {
   Button,
   Collapse,
-  Descriptions,
   Card,
   Form,
   Input,
@@ -425,6 +424,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     formRef.current
       ?.validateFields()
       .then((values) => {
+        // FIXME: temporally insert vfolderName when validation
+        values.vFolderName = endpoint?.model as string;
         mutationsToValidateService.mutate(values, {
           onSuccess: (data: any) => {
             setValidationTime(validationDateTime);
@@ -598,6 +599,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                 ) : (
                   endpoint?.model && (
                     <Form.Item
+                      name={'vFolderName'}
                       label={t('session.launcher.ModelStorageToMount')}
                       required
                     >
