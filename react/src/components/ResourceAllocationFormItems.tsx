@@ -131,10 +131,6 @@ const ResourceAllocationFormItems: React.FC<
   };
 
   const allocatablePresetNames = useMemo(() => {
-    const byPresetInfo = _.filter(checkPresetInfo?.presets, (preset) => {
-      return preset.allocatable;
-    }).map((preset) => preset.name);
-
     const bySliderLimit = _.filter(checkPresetInfo?.presets, (preset) => {
       if (
         typeof preset.resource_slots.mem === 'string' &&
@@ -203,7 +199,6 @@ const ResourceAllocationFormItems: React.FC<
       ? bySliderLimit
       : _.intersection(bySliderLimit, byImageAcceleratorLimits);
   }, [
-    showWarningMsg,
     checkPresetInfo?.presets,
     resourceLimits.accelerators,
     resourceLimits.cpu?.max,
