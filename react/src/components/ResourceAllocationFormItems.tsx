@@ -71,7 +71,7 @@ type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
 interface ResourceAllocationFormItemsProps {
   enableNumOfSessions?: boolean;
   enableResourcePresets?: boolean;
-  showWarningMsg?: boolean;
+  showRemainingWarning?: boolean;
   forceImageMinValues?: boolean;
 }
 
@@ -81,7 +81,7 @@ const ResourceAllocationFormItems: React.FC<
   enableNumOfSessions,
   enableResourcePresets,
   forceImageMinValues = false,
-  showWarningMsg = false,
+  showRemainingWarning = false,
 }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
   const { t } = useTranslation();
@@ -486,7 +486,7 @@ const ResourceAllocationFormItems: React.FC<
                       {
                         warningOnly: true,
                         validator: async (rule, value: number) => {
-                          if (showWarningMsg) {
+                          if (showRemainingWarning) {
                             if (
                               _.isNumber(remaining.cpu) &&
                               value > remaining.cpu
@@ -623,7 +623,7 @@ const ResourceAllocationFormItems: React.FC<
                               {
                                 warningOnly: true,
                                 validator: async (rule, value: string) => {
-                                  if (showWarningMsg) {
+                                  if (showRemainingWarning) {
                                     if (
                                       !_.isElement(value) &&
                                       resourceLimits.mem &&
@@ -897,7 +897,7 @@ const ResourceAllocationFormItems: React.FC<
                           {
                             warningOnly: true,
                             validator: async (rule: any, value: number) => {
-                              if (showWarningMsg) {
+                              if (showRemainingWarning) {
                                 if (
                                   _.isNumber(
                                     remaining.accelerators[
@@ -1074,7 +1074,7 @@ const ResourceAllocationFormItems: React.FC<
                     {
                       warningOnly: true,
                       validator: async (rule, value: number) => {
-                        if (showWarningMsg) {
+                        if (showRemainingWarning) {
                           if (
                             sessionSliderLimitAndRemaining &&
                             value > sessionSliderLimitAndRemaining.remaining
@@ -1189,7 +1189,7 @@ const ResourceAllocationFormItems: React.FC<
                           {
                             warningOnly: true,
                             validator: async (rule, value: number) => {
-                              if (showWarningMsg) {
+                              if (showRemainingWarning) {
                                 const minCPU = _.min([
                                   remaining.cpu,
                                   keypairResourcePolicy.max_containers_per_session,
