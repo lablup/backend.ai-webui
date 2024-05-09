@@ -26,6 +26,7 @@ import { ServiceLauncherModalModifyMutation } from './__generated__/ServiceLaunc
 import { AnsiUp } from 'ansi_up';
 import type { CollapseProps } from 'antd';
 import {
+  App,
   Button,
   Collapse,
   Card,
@@ -34,13 +35,11 @@ import {
   theme,
   Switch,
   Tag,
-  message,
   Space,
   FormInstance,
   Skeleton,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
-import exp from 'constants';
 import _ from 'lodash';
 import React, { useState, Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -115,6 +114,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
+  const app = App.useApp();
   const [validationStatus, setValidationStatus] = useState('');
   const [validationTime, setValidationTime] = useState('Before validation');
   const [containerLogSummary, setContainerLogSummary] = useState('loading...');
@@ -391,7 +391,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         },
         onError: (error) => {
           if (error?.message) {
-            message.error(
+            app.message.error(
               _.truncate(error?.message, {
                 length: 200,
               }),
@@ -469,21 +469,17 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             });
           },
           onError: (error) => {
-            if (error?.message) {
-              message.error(
-                _.truncate(error?.message, {
-                  length: 200,
-                }),
-              );
-            } else {
-              message.error(t('modelService.FormValidationFailed'));
-            }
+            app.message.error(
+              error?.message
+                ? _.truncate(error?.message, { length: 200 })
+                : t('modelService.FormValidationFailed'),
+            );
           },
         });
       })
       .catch((err) => {
         console.log(err.message);
-        message.error(t('modelService.FormValidationFailed'));
+        app.message.error(t('modelService.FormValidationFailed'));
       });
   };
 
