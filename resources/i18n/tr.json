@@ -1547,7 +1547,8 @@
     "ForProject": "Proje için",
     "QuotaDoesNotSupported": "Bu depolama arka ucu kotayı desteklemez.",
     "BeCarefulToSetUserResourcePolicy": "Bir kaynak ilkesinin değiştirilmesi, o kullanıcı kaynak ilkesini kullanan tüm kullanıcıları etkileyebilir, bu nedenle dikkatli kullanın.",
-    "StorageSetting": "Depolama Ayarı"
+    "StorageSetting": "Depolama Ayarı",
+    "HardLimitInodes": "Sert Limitli Düğümler"
   },
   "totp": {
     "TotpSetupCompleted": "Etkinleştirilmiş 2FA",

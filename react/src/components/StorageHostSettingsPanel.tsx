@@ -167,14 +167,14 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
             }
           />
         </Spin>
-        <QuotaSettingModal
-          open={isOpenQuotaSettingModal}
-          quotaScopeFrgmt={quota_scope || null}
-          onRequestClose={() => {
-            toggleQuotaSettingModal();
-          }}
-        />
       </Card>
+      <QuotaSettingModal
+        open={isOpenQuotaSettingModal}
+        quotaScopeFrgmt={quota_scope || null}
+        onRequestClose={() => {
+          toggleQuotaSettingModal();
+        }}
+      />
     </Flex>
   );
 };

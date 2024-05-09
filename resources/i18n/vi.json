@@ -1481,7 +1481,8 @@
     "ForProject": "Dành cho dự án",
     "QuotaDoesNotSupported": "Phần phụ trợ lưu trữ này không hỗ trợ hạn ngạch.",
     "BeCarefulToSetUserResourcePolicy": "Việc thay đổi chính sách tài nguyên có thể ảnh hưởng đến tất cả người dùng sử dụng chính sách tài nguyên người dùng đó, vì vậy hãy cẩn thận khi sử dụng chính sách đó.",
-    "StorageSetting": "Cài đặt lưu trữ"
+    "StorageSetting": "Cài đặt lưu trữ",
+    "HardLimitInodes": "Inode giới hạn cứng"
   },
   "modelService": {
     "TokenGenerated": "Mã thông báo được tạo",

@@ -1547,7 +1547,8 @@
     "ForProject": "プロジェクト",
     "QuotaDoesNotSupported": "このストレージバックエンドは可用量設定をサポートしていません。",
     "BeCarefulToSetUserResourcePolicy": "リソースポリシーを変更すると、そのリソースポリシーを使用しているすべてのユーザーに影響を与える可能性がありますので、慎重に使用してください。",
-    "StorageSetting": "ストレージ設定"
+    "StorageSetting": "ストレージ設定",
+    "HardLimitInodes": "ハードリミット i ノード"
   },
   "totp": {
     "TotpSetupCompleted": "二要素認証が有効になりました。",

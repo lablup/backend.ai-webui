@@ -1494,7 +1494,8 @@
     "ForProject": "Төслийн хувьд",
     "QuotaDoesNotSupported": "Энэ хадгалах сан нь квотыг дэмждэггүй.",
     "BeCarefulToSetUserResourcePolicy": "Нөөцийн бодлогыг өөрчлөх нь тухайн хэрэглэгчийн нөөцийн бодлогыг ашигладаг бүх хэрэглэгчдэд нөлөөлж болзошгүй тул үүнийг болгоомжтой ашиглаарай.",
-    "StorageSetting": "Хадгалах тохиргоо"
+    "StorageSetting": "Хадгалах тохиргоо",
+    "HardLimitInodes": "Hard Limit Inodes"
   },
   "modelService": {
     "EditModelService": "Загварын үйлчилгээг засах",

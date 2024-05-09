@@ -1481,7 +1481,8 @@
     "ForProject": "项目",
     "QuotaDoesNotSupported": "该存储后端不支持配额。",
     "BeCarefulToSetUserResourcePolicy": "更改资源策略会影响使用该用户资源策略的所有用户，因此请谨慎使用。",
-    "StorageSetting": "存储设置"
+    "StorageSetting": "存储设置",
+    "HardLimitInodes": "硬限制索引节点"
   },
   "modelService": {
     "TokenGenerated": "生成的令牌",

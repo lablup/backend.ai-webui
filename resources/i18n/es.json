@@ -1396,7 +1396,8 @@
       "SelectUser": "Buscar y seleccionar Usuario",
       "UnsetCustomSettings": "Desactivar la configuración personalizada"
     },
-    "StorageSetting": "Configuración de almacenamiento"
+    "StorageSetting": "Configuración de almacenamiento",
+    "HardLimitInodes": "Inodos de límite estricto"
   },
   "totp": {
     "ConfirmTotpRemovalBody": "¿Está seguro de que no desea utilizar la autenticación de dos factores?",

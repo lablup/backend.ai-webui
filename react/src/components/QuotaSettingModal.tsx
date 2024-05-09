@@ -2,7 +2,7 @@ import { GBToBytes, bytesToGB } from '../helper';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { QuotaSettingModalFragment$key } from './__generated__/QuotaSettingModalFragment.graphql';
 import { QuotaSettingModalSetMutation } from './__generated__/QuotaSettingModalSetMutation.graphql';
-import { Form, FormInstance, Input, message } from 'antd';
+import { Form, FormInstance, InputNumber, message } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +30,7 @@ const QuotaSettingModal: React.FC<Props> = ({
         storage_host_name
         details {
           hard_limit_bytes
+          hard_limit_inodes
         }
       }
     `,
@@ -54,6 +55,7 @@ const QuotaSettingModal: React.FC<Props> = ({
             storage_host_name
             details {
               hard_limit_bytes
+              hard_limit_inodes
             }
           }
         }
@@ -68,15 +70,16 @@ const QuotaSettingModal: React.FC<Props> = ({
           storage_host_name: quotaScope?.storage_host_name || '',
           props: {
             hard_limit_bytes: GBToBytes(values?.hard_limit_bytes),
+            hard_limit_inodes: values?.hard_limit_inodes,
           },
         },
-        onCompleted(response) {
-          if (response?.set_quota_scope?.quota_scope?.id) {
+        onCompleted(response, errors) {
+          if (!response?.set_quota_scope?.quota_scope?.id || errors) {
+            message.error(t('dialog.ErrorOccurred'));
+          } else {
             message.success(
               t('storageHost.quotaSettings.QuotaScopeSuccessfullyUpdated'),
             );
-          } else {
-            message.error(t('dialog.ErrorOccurred'));
           }
           onRequestClose();
         },
@@ -99,16 +102,19 @@ const QuotaSettingModal: React.FC<Props> = ({
     >
       <Form
         ref={formRef}
+        layout="vertical"
+        requiredMark="optional"
         preserve={false}
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 20 }}
-        validateTrigger={['onChange', 'onBlur']}
-        style={{ marginBottom: 40, marginTop: 20 }}
+        initialValues={{
+          hard_limit_bytes: quotaScope?.details?.hard_limit_bytes
+            ? bytesToGB(quotaScope?.details?.hard_limit_bytes)
+            : undefined,
+          hard_limit_inodes: quotaScope?.details?.hard_limit_inodes,
+        }}
       >
         <Form.Item
           name="hard_limit_bytes"
           label={t('storageHost.HardLimit')}
-          initialValue={bytesToGB(quotaScope?.details?.hard_limit_bytes)}
           rules={[
             {
               pattern: /^\d+(\.\d+)?$/,
@@ -118,12 +124,13 @@ const QuotaSettingModal: React.FC<Props> = ({
             },
           ]}
         >
-          <Input
-            addonAfter="GB"
-            type="number"
-            step={0.25}
-            style={{ width: '70%' }}
-          />
+          <InputNumber addonAfter="GB" step={0.25} style={{ width: '100%' }} />
+        </Form.Item>
+        <Form.Item
+          name="hard_limit_inodes"
+          label={t('storageHost.HardLimitInodes')}
+        >
+          <InputNumber style={{ width: '100%' }} />
         </Form.Item>
       </Form>
     </BAIModal>

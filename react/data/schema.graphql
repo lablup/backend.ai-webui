@@ -41,7 +41,7 @@ type Queries {
     """Added in 24.03.1"""
     id: String
     reference: String
-    architecture: String = "x86_64"
+    architecture: String = "aarch64"
   ): Image
   images(is_installed: Boolean, is_operation: Boolean): [Image]
 
@@ -881,6 +881,7 @@ type QuotaDetails {
   usage_bytes: BigInt
   usage_count: BigInt
   hard_limit_bytes: BigInt
+  hard_limit_inodes: BigInt
 }
 
 type ContainerRegistry implements Node {
@@ -1012,15 +1013,15 @@ type Mutations {
   rescan_images(registry: String): RescanImages
   preload_image(references: [String]!, target_agents: [String]!): PreloadImage
   unload_image(references: [String]!, target_agents: [String]!): UnloadImage
-  modify_image(architecture: String = "x86_64", props: ModifyImageInput!, target: String!): ModifyImage
+  modify_image(architecture: String = "aarch64", props: ModifyImageInput!, target: String!): ModifyImage
 
   """Added in 24.03.0"""
   forget_image_by_id(image_id: String!): ForgetImageById
-  forget_image(architecture: String = "x86_64", reference: String!): ForgetImage
+  forget_image(architecture: String = "aarch64", reference: String!): ForgetImage
 
   """Added in 24.03.1"""
   untag_image_from_registry(image_id: String!): UntagImageFromRegistry
-  alias_image(alias: String!, architecture: String = "x86_64", target: String!): AliasImage
+  alias_image(alias: String!, architecture: String = "aarch64", target: String!): AliasImage
   dealias_image(alias: String!): DealiasImage
   clear_images(registry: String): ClearImages
   create_keypair_resource_policy(name: String!, props: CreateKeyPairResourcePolicyInput!): CreateKeyPairResourcePolicy
@@ -1629,6 +1630,7 @@ type SetQuotaScope {
 
 input QuotaScopeInput {
   hard_limit_bytes: BigInt
+  hard_limit_inodes: BigInt
 }
 
 type UnsetQuotaScope {

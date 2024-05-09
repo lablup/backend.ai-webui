@@ -1481,7 +1481,8 @@
     "ForProject": "Untuk Projek",
     "QuotaDoesNotSupported": "Bahagian belakang storan ini tidak menyokong kuota.",
     "BeCarefulToSetUserResourcePolicy": "Menukar dasar sumber boleh menjejaskan semua pengguna yang menggunakan dasar sumber pengguna itu, jadi gunakannya dengan berhati-hati.",
-    "StorageSetting": "Tetapan Storan"
+    "StorageSetting": "Tetapan Storan",
+    "HardLimitInodes": "Inodes Had Keras"
   },
   "modelService": {
     "TokenGenerated": "Token dijana",

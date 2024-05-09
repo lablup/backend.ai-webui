@@ -1494,7 +1494,8 @@
     "ForProject": "Untuk Proyek",
     "QuotaDoesNotSupported": "Backend penyimpanan ini tidak mendukung kuota.",
     "BeCarefulToSetUserResourcePolicy": "Mengubah kebijakan sumber daya dapat memengaruhi semua pengguna yang menggunakan kebijakan sumber daya pengguna tersebut, jadi gunakanlah dengan hati-hati.",
-    "StorageSetting": "Pengaturan Penyimpanan"
+    "StorageSetting": "Pengaturan Penyimpanan",
+    "HardLimitInodes": "Inode Batas Keras"
   },
   "modelService": {
     "EditModelService": "Layanan Edit Model",

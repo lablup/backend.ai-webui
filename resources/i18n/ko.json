@@ -572,7 +572,8 @@
       "SelectUser": "사용자 검색 및 선택",
       "QuotaScopeSuccessfullyUpdated": "할당 범위가 성공적으로 수정되었습니다.",
       "AllowNumberAndDot": "숫자와 .(점)만 입력할 수 있습니다."
-    }
+    },
+    "HardLimitInodes": "Hard Limit Inodes"
   },
   "general": {
     "cores": "코어",
