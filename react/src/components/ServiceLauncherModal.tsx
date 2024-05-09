@@ -678,8 +678,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               overflowX: 'scroll',
               color: 'white',
               backgroundColor: 'black',
-              padding: 10,
-              borderRadius: 5,
+              padding: token.paddingSM,
+              borderRadius: token.borderRadius,
             }}
           >
             <pre dangerouslySetInnerHTML={{ __html: containerLogSummary }} />
