@@ -245,7 +245,7 @@
       "FolderAliasInvalid": "Dozwolone są tylko znaki alfanumeryczne, podkreślenie (_), ukośnik (/) i myślnik (-).",
       "PreOpenPortMaxCountLimit": "Można ustawić do {{count}} wstępnie otwartych portów.",
       "StartTimeMustBeInTheFuture": "Czas rozpoczęcia musi być po czasie bieżącym.",
-      "EnqueueComputeSessionWarning": "Jeśli ustawisz ją na większą niż aktualnie dostępne zasoby, utworzenie sesji zostanie opóźnione w kolejce do czasu, aż stanie się ona dostępna.",
+      "EnqueueComputeSessionWarning": "Niewystarczające zasoby. \nSesja może być w toku.",
       "SessionName": "Nazwa sesji",
       "ResetFormConfirm": "Czy chcesz zresetować wszystkie swoje wpisy?",
       "TemplateAndHistory": "Szablony",

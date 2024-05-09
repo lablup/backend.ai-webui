@@ -1145,7 +1145,7 @@
       "Network": "Red",
       "Enable": "Permitir",
       "StartTimeMustBeInTheFuture": "La hora de inicio debe ser posterior a la hora actual.",
-      "EnqueueComputeSessionWarning": "Si lo configura en un valor mayor que los recursos disponibles actualmente, la creación de la sesión se retrasará en la cola hasta que esté disponible.",
+      "EnqueueComputeSessionWarning": "Recursos insuficientes. \nLa sesión puede estar pendiente.",
       "SessionName": "Nombre de la sesión",
       "ResetFormConfirm": "¿Quieres restablecer todas tus entradas?",
       "TemplateAndHistory": "Plantillas",
