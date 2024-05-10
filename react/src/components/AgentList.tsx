@@ -40,11 +40,13 @@ import { NumberParam, StringParam, useQueryParams } from 'use-query-params';
 
 type Agent = NonNullable<AgentListQuery$data['agent_list']>['items'][number];
 
-interface AgentListProps extends Omit<TableProps, 'dataSource'> {
+interface AgentListProps {
   page?: number;
   pageSize?: number;
   filter?: string;
   order?: string;
+  containerStyle?: React.CSSProperties;
+  tableProps?: Omit<TableProps, 'dataSource'>;
 }
 
 const AgentList: React.FC<AgentListProps> = ({
@@ -52,7 +54,8 @@ const AgentList: React.FC<AgentListProps> = ({
   pageSize,
   filter,
   order,
-  ...tableProps
+  containerStyle,
+  tableProps,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -715,8 +718,8 @@ const AgentList: React.FC<AgentListProps> = ({
   );
 
   return (
-    <>
-      <Flex justify="end" gap="xs" style={{ margin: token.marginXS }}>
+    <Flex direction="column" align="stretch" style={containerStyle}>
+      <Flex justify="end" gap="xs" style={{ padding: token.paddingXS }}>
         <AutoRefreshSwitch
           onRefresh={() => {
             //refresh current
@@ -746,6 +749,7 @@ const AgentList: React.FC<AgentListProps> = ({
         </Button>
       </Flex>
       <Table
+        bordered
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
         dataSource={agent_list?.items}
@@ -813,7 +817,7 @@ const AgentList: React.FC<AgentListProps> = ({
         columns={columns}
         displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
       />
-    </>
+    </Flex>
   );
 };
 

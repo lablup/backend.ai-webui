@@ -46,10 +46,16 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
       }}
     >
       {curTabKey === 'connectedAgents' ? (
-        <AgentList filter={`status == "ALIVE"`} />
+        <AgentList
+          filter={`status == "ALIVE"`}
+          containerStyle={{ marginLeft: -1, marginRight: -1 }}
+        />
       ) : null}
       {curTabKey === 'disconnectedAgents' ? (
-        <AgentList filter={`status == "TERMINATED"`} />
+        <AgentList
+          filter={`status == "TERMINATED"`}
+          containerStyle={{ marginLeft: -1, marginRight: -1 }}
+        />
       ) : null}
       {curTabKey === 'storages' ? (
         // @ts-ignore

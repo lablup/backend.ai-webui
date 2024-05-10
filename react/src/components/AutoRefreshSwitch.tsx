@@ -1,3 +1,4 @@
+import Flex from './Flex';
 import { useRafInterval } from 'ahooks';
 import { Space, Switch, Typography } from 'antd';
 import React, { useState } from 'react';
@@ -23,10 +24,10 @@ const AutoRefreshSwitch: React.FC<Props> = ({
     on ? interval : undefined,
   );
   return (
-    <Space direction="horizontal">
+    <Flex direction="row" gap={'xs'}>
       <Switch size="small" checked={on} onChange={setOn} />
       <Text>{children}</Text>
-    </Space>
+    </Flex>
   );
 };
 
