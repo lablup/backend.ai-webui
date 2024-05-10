@@ -3,7 +3,6 @@ import {
   iSizeToSize,
   transformSorterToOrderString,
 } from '../helper';
-import { localeCompare } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
@@ -86,7 +85,7 @@ const AgentList: React.FC<AgentListProps> = ({
     setTablePaginationOption,
   } = useBAIPaginationOptionState({
     current: 1,
-    pageSize: 2,
+    pageSize: 20,
   });
   const [order, setOrder] = useState<string>();
 
@@ -178,7 +177,7 @@ const AgentList: React.FC<AgentListProps> = ({
           </Flex>
         );
       },
-      sorter: (a, b) => localeCompare(a?.id, b?.id),
+      sorter: true,
     },
     {
       title: t('agent.Region'),
@@ -236,7 +235,6 @@ const AgentList: React.FC<AgentListProps> = ({
       title: t('agent.Architecture'),
       key: 'architecture',
       dataIndex: 'architecture',
-      sorter: (a, b) => localeCompare(a?.architecture, b?.architecture),
     },
     {
       title: t('agent.Starts'),
@@ -260,7 +258,7 @@ const AgentList: React.FC<AgentListProps> = ({
           </Flex>
         );
       },
-      sorter: (a, b) => localeCompare(a?.first_contact, b?.first_contact),
+      sorter: true,
     },
     {
       title: t('agent.Allocation'),
@@ -608,9 +606,7 @@ const AgentList: React.FC<AgentListProps> = ({
       title: t('general.ResourceGroup'),
       key: 'resource_group',
       dataIndex: 'scaling_group',
-      sorter: (a, b) => {
-        return localeCompare(a?.scaling_group, b?.scaling_group);
-      },
+      sorter: true,
     },
     {
       title: t('agent.Status'),
@@ -697,8 +693,7 @@ const AgentList: React.FC<AgentListProps> = ({
           </Flex>
         );
       },
-      sorter: (a, b) =>
-        Number(a?.schedulable ?? false) - Number(b?.schedulable ?? false),
+      sorter: true,
     },
     {
       title: t('general.Control'),
@@ -810,8 +805,8 @@ const AgentList: React.FC<AgentListProps> = ({
             if (
               _.isNumber(current) &&
               _.isNumber(pageSize) &&
-              pageSize !== tablePaginationOption.pageSize &&
-              current !== tablePaginationOption.current
+              (pageSize !== tablePaginationOption.pageSize ||
+                current !== tablePaginationOption.current)
             ) {
               setTablePaginationOption({
                 current,
