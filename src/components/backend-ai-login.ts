@@ -623,16 +623,6 @@ export default class BackendAILogin extends BackendAIPage {
       } as ConfigValueObject,
     ) as boolean;
 
-    // Always enqueue compute session flag
-    // this.always_enqueue_compute_session = this._getConfigValueByExists(
-    //   generalConfig,
-    //   {
-    //     valueType: 'boolean',
-    //     defaultValue: false,
-    //     value: generalConfig?.alwaysEnqueueComputeSession,
-    //   } as ConfigValueObject,
-    // ) as boolean;
-
     // Allow Sign out flag
     this.allow_signout = this._getConfigValueByExists(generalConfig, {
       valueType: 'boolean',
@@ -1795,8 +1785,6 @@ export default class BackendAILogin extends BackendAIPage {
           this.allow_project_resource_monitor;
         globalThis.backendaiclient._config.allow_manual_image_name_for_session =
           this.allow_manual_image_name_for_session;
-        // globalThis.backendaiclient._config.always_enqueue_compute_session =
-        //   this.always_enqueue_compute_session;
         globalThis.backendaiclient._config.openPortToPublic =
           this.openPortToPublic;
         globalThis.backendaiclient._config.allowPreferredPort =
