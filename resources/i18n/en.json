@@ -534,7 +534,8 @@
     "NoAgentToDisplay": "No Agents to display",
     "NoNetworkSignal": "No network signals.",
     "DiskPerc": "Disk %",
-    "AutoRefreshEvery5s": "Auto refresh every 5s"
+    "AutoRefreshEvery5s": "Auto refresh every 5s",
+    "Agent": "Agent"
   },
   "storageHost": {
     "Usage": "Usage",

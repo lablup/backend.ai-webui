@@ -469,7 +469,8 @@
     "NoAvailableLiveStat": "Нет доступной оперативной статистики",
     "Allocation": "Распределение",
     "DiskPerc": "Диск %",
-    "AutoRefreshEvery5s": "Автоматическое обновление каждые 5 секунд"
+    "AutoRefreshEvery5s": "Автоматическое обновление каждые 5 секунд",
+    "Agent": "Агент"
   },
   "general": {
     "cores": "ядра",

@@ -467,7 +467,8 @@
     "NoAvailableLiveStat": "Pas de statistiques en direct disponibles",
     "Allocation": "Allocation",
     "DiskPerc": "% du disque",
-    "AutoRefreshEvery5s": "Actualisation automatique toutes les 5 s"
+    "AutoRefreshEvery5s": "Actualisation automatique toutes les 5 s",
+    "Agent": "Agent"
   },
   "general": {
     "cores": "cœurs",

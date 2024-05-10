@@ -1,6 +1,6 @@
 import Flex from './Flex';
 import { useRafInterval } from 'ahooks';
-import { Space, Switch, Typography } from 'antd';
+import { Switch, Typography } from 'antd';
 import React, { useState } from 'react';
 
 const { Text } = Typography;

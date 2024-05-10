@@ -99,7 +99,8 @@
     "Status": "Tila",
     "Terminated": "Lopetettu",
     "Utilization": "Käyttö",
-    "AutoRefreshEvery5s": "Automaattinen päivitys 5 sekunnin välein"
+    "AutoRefreshEvery5s": "Automaattinen päivitys 5 sekunnin välein",
+    "Agent": "Agentti"
   },
   "button": {
     "Add": "Lisää",

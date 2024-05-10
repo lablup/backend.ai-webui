@@ -99,7 +99,8 @@
     "Status": "Estado",
     "Terminated": "Terminado",
     "Utilization": "Utilización",
-    "AutoRefreshEvery5s": "Actualización automática cada 5 segundos"
+    "AutoRefreshEvery5s": "Actualización automática cada 5 segundos",
+    "Agent": "Agente"
   },
   "button": {
     "Add": "Añadir",

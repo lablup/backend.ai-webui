@@ -277,3 +277,45 @@ export const useBAIPaginationQueryOptions = ({
     },
   ] as const;
 };
+
+interface BAIPaginationOption {
+  limit: number;
+  offset: number;
+  // filter?: string;
+  // order?: string;
+}
+interface AntdBasicPaginationOption {
+  pageSize: number;
+  current: number;
+}
+
+interface InitialPaginationOption
+  extends AntdBasicPaginationOption,
+    Omit<BAIPaginationOption, 'limit' | 'offset'> {}
+export const useBAIPaginationOptionState = (
+  initialOptions: InitialPaginationOption,
+): {
+  baiPaginationOption: BAIPaginationOption;
+  tablePaginationOption: AntdBasicPaginationOption;
+  setTablePaginationOption: (pagination: AntdBasicPaginationOption) => void;
+} => {
+  const [options, setOptions] =
+    useState<AntdBasicPaginationOption>(initialOptions);
+  return {
+    baiPaginationOption: {
+      limit: options.pageSize,
+      offset:
+        options.current > 1 ? (options.current - 1) * options.pageSize : 0,
+    },
+    tablePaginationOption: {
+      pageSize: options.pageSize,
+      current: options.current,
+    },
+    setTablePaginationOption: (pagination) => {
+      setOptions((current) => ({
+        ...current,
+        ...pagination,
+      }));
+    },
+  };
+};

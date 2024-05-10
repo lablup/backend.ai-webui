@@ -1,8 +1,8 @@
 import { bytesToGB, iSizeToSize } from '../helper';
 import { localeCompare } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import { useBAIPaginationQueryOptions } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailModal from './AgentDetailModal';
 import AgentSettingModal from './AgentSettingModal';
@@ -22,38 +22,39 @@ import { AgentSettingModalFragment$key } from './__generated__/AgentSettingModal
 import {
   CheckCircleOutlined,
   InfoCircleOutlined,
+  LoadingOutlined,
   MinusCircleOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
-import { Button, Table, TableProps, Tag, theme, Typography } from 'antd';
+import {
+  Button,
+  Segmented,
+  Table,
+  TableProps,
+  Tag,
+  theme,
+  Tooltip,
+  Typography,
+} from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyLoadQuery } from 'react-relay';
-import { NumberParam, StringParam, useQueryParams } from 'use-query-params';
+import { FetchPolicy, useLazyLoadQuery } from 'react-relay';
 
 type Agent = NonNullable<AgentListQuery$data['agent_list']>['items'][number];
 
 interface AgentListProps {
-  page?: number;
-  pageSize?: number;
-  filter?: string;
-  order?: string;
   containerStyle?: React.CSSProperties;
   tableProps?: Omit<TableProps, 'dataSource'>;
 }
 
 const AgentList: React.FC<AgentListProps> = ({
-  page,
-  pageSize,
-  filter,
-  order,
   containerStyle,
   tableProps,
 }) => {
@@ -67,70 +68,79 @@ const AgentList: React.FC<AgentListProps> = ({
     useState<AgentSettingModalFragment$key | null>();
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const baiClient = useSuspendedBackendaiClient();
-  const [, setParams] = useQueryParams({
-    page: NumberParam,
-    pageSize: NumberParam,
-    filter: StringParam,
-    order: StringParam,
+  const [isPendingStatusFetch, startStatusFetchTransition] = useTransition();
+  const [isPendingRefresh, startRefreshTransition] = useTransition();
+  const [, startAutoRefreshTransition] = useTransition();
+  const [isPendingPageChange, startPageChangeTransition] = useTransition();
+  const [selectedStatus, setSelectedStatus] = useState('ALIVE');
+  const [optimisticSelectedStatus, setOptimisticSelectedStatus] =
+    useState(selectedStatus);
+
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionState({
+    current: 1,
+    pageSize: 2,
   });
 
-  useEffect(() => {
-    setParams({ filter: filter });
-  }, [filter, setParams]);
-
-  const agentListQuery = graphql`
-    query AgentListQuery(
-      $limit: Int!
-      $offset: Int!
-      $filter: String
-      $status: String
-    ) {
-      agent_list(
-        limit: $limit
-        offset: $offset
-        filter: $filter
-        status: $status
-      ) {
-        items {
-          id
-          status
-          version
-          addr
-          architecture
-          region
-          compute_plugins
-          first_contact
-          lost_at
-          status_changed
-          live_stat
-          cpu_cur_pct
-          mem_cur_bytes
-          available_slots
-          occupied_slots
-          scaling_group
-          schedulable
-          ...AgentDetailModalFragment
-          ...AgentSettingModalFragment
-        }
-        total_count
-      }
-    }
-  `;
-
-  const [paginationStates, { refresh }] = useBAIPaginationQueryOptions({
-    query: agentListQuery,
-    defaultVariables: {
-      page: page ?? 1,
-      pageSize: pageSize ?? 50,
-      filter,
-      order,
-    },
-  });
+  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchPolicy] = useState<FetchPolicy>('network-only');
+  const updateFetchKeyInTransition = () =>
+    startRefreshTransition(() => {
+      updateFetchKey();
+    });
 
   const { agent_list } = useLazyLoadQuery<AgentListQuery>(
-    agentListQuery,
-    paginationStates.variables,
-    paginationStates.refreshedQueryOptions,
+    graphql`
+      query AgentListQuery(
+        $limit: Int!
+        $offset: Int!
+        $filter: String
+        $status: String
+      ) {
+        agent_list(
+          limit: $limit
+          offset: $offset
+          filter: $filter
+          status: $status
+        ) {
+          items {
+            id
+            status
+            version
+            addr
+            architecture
+            region
+            compute_plugins
+            first_contact
+            lost_at
+            status_changed
+            live_stat
+            cpu_cur_pct
+            mem_cur_bytes
+            available_slots
+            occupied_slots
+            scaling_group
+            schedulable
+            ...AgentDetailModalFragment
+            ...AgentSettingModalFragment
+          }
+          total_count
+        }
+      }
+    `,
+    {
+      limit: baiPaginationOption.limit,
+      offset: baiPaginationOption.offset,
+      filter: `status == "${selectedStatus}"`,
+      status: selectedStatus,
+    },
+    {
+      fetchKey,
+      fetchPolicy,
+    },
   );
 
   const columns: ColumnsType<Agent> = [
@@ -139,7 +149,9 @@ const AgentList: React.FC<AgentListProps> = ({
       fixed: 'left',
       render: (id, record, index) => {
         return (
-          index + 1 + (paginationStates.page - 1) * paginationStates.pageSize
+          index +
+          1 +
+          (tablePaginationOption.current - 1) * tablePaginationOption.pageSize
         );
       },
       showSorterTooltip: false,
@@ -719,34 +731,50 @@ const AgentList: React.FC<AgentListProps> = ({
 
   return (
     <Flex direction="column" align="stretch" style={containerStyle}>
-      <Flex justify="end" gap="xs" style={{ padding: token.paddingXS }}>
-        <AutoRefreshSwitch
-          onRefresh={() => {
-            //refresh current
-            refresh(
-              paginationStates.page,
-              paginationStates.pageSize,
-              paginationStates.order,
-              paginationStates.filter,
-            );
-          }}
-          interval={5000}
-        >
-          {t('agent.AutoRefreshEvery5s')}
-        </AutoRefreshSwitch>
-        <Button
-          onClick={() =>
-            refresh(
-              paginationStates.page,
-              paginationStates.pageSize,
-              paginationStates.order,
-              paginationStates.filter,
-            )
-          }
-          icon={<ReloadOutlined />}
-        >
-          {t('button.Refresh')}
-        </Button>
+      <Flex justify="between" gap="xs" style={{ padding: token.paddingXS }}>
+        <Flex>
+          <Segmented
+            options={[
+              {
+                label: t('agent.Connected'),
+                value: 'ALIVE',
+              },
+              {
+                label: t('agent.Terminated'),
+                value: 'TERMINATED',
+              },
+            ]}
+            value={
+              isPendingStatusFetch ? optimisticSelectedStatus : selectedStatus
+            }
+            onChange={(value) => {
+              setOptimisticSelectedStatus(value);
+              startStatusFetchTransition(() => {
+                setSelectedStatus(value);
+              });
+            }}
+          />
+        </Flex>
+        <Flex gap="xs">
+          <AutoRefreshSwitch
+            onRefresh={() => {
+              //refresh current
+              startAutoRefreshTransition(() => {
+                updateFetchKey();
+              });
+            }}
+            interval={5000}
+          >
+            {t('agent.AutoRefreshEvery5s')}
+          </AutoRefreshSwitch>
+          <Tooltip title={t('button.Refresh')}>
+            <Button
+              loading={isPendingRefresh}
+              onClick={() => updateFetchKeyInTransition()}
+              icon={<ReloadOutlined />}
+            ></Button>
+          </Tooltip>
+        </Flex>
       </Flex>
       <Table
         bordered
@@ -759,17 +787,29 @@ const AgentList: React.FC<AgentListProps> = ({
           ) as ColumnType<AnyObject>[]
         }
         pagination={{
-          pageSize: paginationStates.pageSize,
+          pageSize: tablePaginationOption.pageSize,
           showSizeChanger: true,
           total: agent_list?.total_count,
-          current: paginationStates.page || 1,
+          current: tablePaginationOption.current,
           showTotal(total, range) {
             return `${range[0]}-${range[1]} of ${total} items`;
           },
+          pageSizeOptions: ['10', '20', '50'],
           style: { marginRight: token.marginXS },
         }}
-        onChange={({ pageSize: newPageSize, current: newPage }) => {
-          refresh(newPage, newPageSize, filter, order);
+        onChange={({ pageSize, current }) => {
+          if (_.isNumber(current) && _.isNumber(pageSize)) {
+            startPageChangeTransition(() => {
+              setTablePaginationOption({
+                current,
+                pageSize,
+              });
+            });
+          }
+        }}
+        loading={{
+          spinning: isPendingPageChange || isPendingStatusFetch,
+          indicator: <LoadingOutlined />,
         }}
         {...tableProps}
       />
@@ -797,12 +837,7 @@ const AgentList: React.FC<AgentListProps> = ({
         open={!!currentSettingAgent}
         onRequestClose={(success) => {
           if (success) {
-            refresh(
-              paginationStates.page,
-              paginationStates.pageSize,
-              paginationStates.order,
-              paginationStates.filter,
-            );
+            updateFetchKeyInTransition();
           }
           setCurrentSettingAgent(null);
         }}

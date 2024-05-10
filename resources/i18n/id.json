@@ -463,7 +463,8 @@
     "NoAvailableLiveStat": "Tidak ada statistik langsung yang tersedia",
     "Allocation": "Alokasi",
     "DiskPerc": "Disk %",
-    "AutoRefreshEvery5s": "Penyegaran otomatis setiap 5 detik"
+    "AutoRefreshEvery5s": "Penyegaran otomatis setiap 5 detik",
+    "Agent": "Agen"
   },
   "general": {
     "cores": "core",

@@ -469,7 +469,8 @@
     "Utilization": "Wykorzystanie",
     "DiskPerc": "Dysk %",
     "NoAgentToDisplay": "Brak agentów do wyświetlenia",
-    "AutoRefreshEvery5s": "Automatyczne odświeżanie co 5 sekund"
+    "AutoRefreshEvery5s": "Automatyczne odświeżanie co 5 sekund",
+    "Agent": "Agent"
   },
   "general": {
     "cores": "rdzenie",

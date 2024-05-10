@@ -1,19 +1,20 @@
 import AgentList from '../components/AgentList';
 import { Card } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
-type TabKey =
-  | 'connectedAgents'
-  | 'disconnectedAgents'
-  | 'storages'
-  | 'resourceGroup';
+type TabKey = 'agents' | 'storages' | 'resourceGroup';
 
 interface ResourcesPageProps {}
 
+const tabParam = withDefault(StringParam, 'agents');
+
 const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useState<TabKey>('connectedAgents');
+  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam, {
+    updateType: 'replace',
+  });
 
   return (
     <Card
@@ -21,12 +22,8 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
       onTabChange={(key) => setCurTabKey(key as TabKey)}
       tabList={[
         {
-          key: 'connectedAgents',
-          tab: t('agent.Connected'),
-        },
-        {
-          key: 'disconnectedAgents',
-          tab: t('agent.Terminated'),
+          key: 'agents',
+          tab: t('agent.Agent'),
         },
         {
           key: 'storages',
@@ -45,17 +42,9 @@ const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
         },
       }}
     >
-      {curTabKey === 'connectedAgents' ? (
-        <AgentList
-          filter={`status == "ALIVE"`}
-          containerStyle={{ marginLeft: -1, marginRight: -1 }}
-        />
-      ) : null}
-      {curTabKey === 'disconnectedAgents' ? (
-        <AgentList
-          filter={`status == "TERMINATED"`}
-          containerStyle={{ marginLeft: -1, marginRight: -1 }}
-        />
+      {curTabKey === 'agents' ? (
+        // To remove duplicated border in the bordered table, we need to remove margin of the container.
+        <AgentList containerStyle={{ marginLeft: -1, marginRight: -1 }} />
       ) : null}
       {curTabKey === 'storages' ? (
         // @ts-ignore
