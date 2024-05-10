@@ -1,4 +1,8 @@
-import { bytesToGB, iSizeToSize } from '../helper';
+import {
+  bytesToGB,
+  iSizeToSize,
+  transformSorterToOrderString,
+} from '../helper';
 import { localeCompare } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useResourceSlotsDetails } from '../hooks/backendai';
@@ -84,6 +88,7 @@ const AgentList: React.FC<AgentListProps> = ({
     current: 1,
     pageSize: 2,
   });
+  const [order, setOrder] = useState<string>();
 
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [fetchPolicy] = useState<FetchPolicy>('network-only');
@@ -99,12 +104,14 @@ const AgentList: React.FC<AgentListProps> = ({
         $offset: Int!
         $filter: String
         $status: String
+        $order: String
       ) {
         agent_list(
           limit: $limit
           offset: $offset
           filter: $filter
           status: $status
+          order: $order
         ) {
           items {
             id
@@ -135,6 +142,7 @@ const AgentList: React.FC<AgentListProps> = ({
       limit: baiPaginationOption.limit,
       offset: baiPaginationOption.offset,
       filter: `status == "${selectedStatus}"`,
+      order,
       status: selectedStatus,
     },
     {
@@ -797,15 +805,21 @@ const AgentList: React.FC<AgentListProps> = ({
           pageSizeOptions: ['10', '20', '50'],
           style: { marginRight: token.marginXS },
         }}
-        onChange={({ pageSize, current }) => {
-          if (_.isNumber(current) && _.isNumber(pageSize)) {
-            startPageChangeTransition(() => {
+        onChange={({ pageSize, current }, filters, sorter) => {
+          startPageChangeTransition(() => {
+            if (
+              _.isNumber(current) &&
+              _.isNumber(pageSize) &&
+              pageSize !== tablePaginationOption.pageSize &&
+              current !== tablePaginationOption.current
+            ) {
               setTablePaginationOption({
                 current,
                 pageSize,
               });
-            });
-          }
+            }
+            setOrder(transformSorterToOrderString(sorter));
+          });
         }}
         loading={{
           spinning: isPendingPageChange || isPendingStatusFetch,
