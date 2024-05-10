@@ -104,7 +104,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
                   {value}
                 </Typography.Text>
                 {supportMainAccessKey && value === user?.main_access_key && (
-                  <Tag color="red">{t('credential.MainAccessKey')}</Tag>
+                  <Tag color="#457b3b">{t('credential.MainAccessKey')}</Tag>
                 )}
               </Flex>
             ),
