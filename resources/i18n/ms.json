@@ -466,7 +466,9 @@
     "Allocation": "Peruntukan",
     "Utilization": "Penggunaan",
     "DiskPerc": "Cakera %",
-    "NoAgentToDisplay": "Tiada Ejen untuk dipaparkan"
+    "NoAgentToDisplay": "Tiada Ejen untuk dipaparkan",
+    "AutoRefreshEvery5s": "Muat semula automatik setiap 5s",
+    "Agent": "Ejen"
   },
   "general": {
     "cores": "teras",

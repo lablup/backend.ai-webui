@@ -466,7 +466,9 @@
     "Allocation": "Tahsis",
     "Utilization": "Kullanım",
     "DiskPerc": "Disk %",
-    "NoAgentToDisplay": "Görüntülenecek Temsilci Yok"
+    "NoAgentToDisplay": "Görüntülenecek Temsilci Yok",
+    "AutoRefreshEvery5s": "Her 5 saniyede bir otomatik yenile",
+    "Agent": "Ajan"
   },
   "general": {
     "cores": "çekirdek",

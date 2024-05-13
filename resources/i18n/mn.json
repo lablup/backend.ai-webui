@@ -451,7 +451,9 @@
     "Utilization": "Ашиглалт",
     "NoAvailableLiveStat": "Боломжтой шууд статистик байхгүй",
     "Allocation": "Хуваарилалт",
-    "DiskPerc": "Диск %"
+    "DiskPerc": "Диск %",
+    "AutoRefreshEvery5s": "5 секунд тутамд автоматаар сэргээнэ",
+    "Agent": "Агент"
   },
   "general": {
     "cores": "цөм",

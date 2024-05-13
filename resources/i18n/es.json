@@ -98,7 +98,9 @@
     "Starts": "Inicia",
     "Status": "Estado",
     "Terminated": "Terminado",
-    "Utilization": "Utilización"
+    "Utilization": "Utilización",
+    "AutoRefreshEvery5s": "Actualización automática cada 5 segundos",
+    "Agent": "Agente"
   },
   "button": {
     "Add": "Añadir",

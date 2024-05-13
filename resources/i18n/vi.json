@@ -466,7 +466,9 @@
     "Allocation": "Phân bổ",
     "Utilization": "Sử dụng",
     "DiskPerc": "Đĩa %",
-    "NoAgentToDisplay": "Không có đại lý để hiển thị"
+    "NoAgentToDisplay": "Không có đại lý để hiển thị",
+    "AutoRefreshEvery5s": "Tự động làm mới sau mỗi 5 giây",
+    "Agent": "Đại lý"
   },
   "general": {
     "cores": "lõi",

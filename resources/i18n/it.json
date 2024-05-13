@@ -466,7 +466,9 @@
     "Allocation": "Assegnazione",
     "Utilization": "Utilizzo",
     "DiskPerc": "Disco %",
-    "NoAgentToDisplay": "Nessun agente da visualizzare"
+    "NoAgentToDisplay": "Nessun agente da visualizzare",
+    "AutoRefreshEvery5s": "Aggiornamento automatico ogni 5 secondi",
+    "Agent": "Agente"
   },
   "general": {
     "cores": "core",

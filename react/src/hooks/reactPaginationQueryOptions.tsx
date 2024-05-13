@@ -12,6 +12,7 @@ import {
   ArrayParam,
   NumberParam,
   ObjectParam,
+  StringParam,
   useQueryParams,
 } from 'use-query-params';
 
@@ -174,4 +175,147 @@ export const useRelayPaginationQueryOptions = <
       refresh,
     },
   ] as const;
+};
+
+export const useBAIPaginationQueryOptions = ({
+  query,
+  defaultVariables,
+  getVariables = ({ page, pageSize, order, filter }) => {
+    return {
+      limit: pageSize,
+      offset: page > 1 ? (page - 1) * pageSize : 0,
+      filter: filter,
+      order: order,
+    };
+  },
+}: {
+  query: GraphQLTaggedNode;
+  defaultVariables: {
+    page: number;
+    pageSize: number;
+    order?: string;
+    filter?: string;
+  };
+  getVariables?: (params: {
+    page: number;
+    pageSize: number;
+    order?: string;
+    filter?: string;
+  }) => any;
+}) => {
+  const [params, setParams] = useQueryParams({
+    page: NumberParam,
+    pageSize: NumberParam,
+    filter: StringParam,
+    order: StringParam,
+  });
+  const page = params.page || defaultVariables.page;
+  const pageSize = params.pageSize || defaultVariables.pageSize;
+  const order = params.order || defaultVariables.order;
+  const filter = params.filter || defaultVariables.filter;
+
+  const relayEnvironment = useRelayEnvironment();
+
+  const [refreshedQueryOptions, setRefreshedQueryOptions] =
+    useState<LazyLoadQueryOptions>({
+      fetchKey: 0,
+      fetchPolicy: 'store-and-network',
+    });
+
+  const prevLocationRef = window.location.href;
+  const refresh = (
+    newPage: number = defaultVariables.page,
+    newPageSize: number = defaultVariables.pageSize,
+    newOrder: string | undefined = defaultVariables.order,
+    newFilter: string | undefined = defaultVariables.filter,
+  ) => {
+    fetchQuery<any>(
+      relayEnvironment,
+      query,
+      getVariables({
+        page: newPage,
+        pageSize: newPageSize,
+        order: newOrder,
+        filter: newFilter,
+      }),
+    ).subscribe({
+      complete: () => {
+        if (window.location.href !== prevLocationRef) return;
+        setParams({
+          page: newPage,
+          pageSize: newPageSize,
+          order: newOrder,
+          filter: newFilter,
+        });
+        setRefreshedQueryOptions((prev) => ({
+          ...prev,
+          fetchPolicy: 'store-only',
+          fetchKey: new Date().toISOString(),
+        }));
+      },
+    });
+  };
+
+  const variables = getVariables({
+    page,
+    pageSize,
+    order,
+    filter,
+  });
+
+  return [
+    {
+      refreshedQueryOptions,
+      page,
+      pageSize,
+      order,
+      variables,
+      filter,
+    },
+    {
+      refresh,
+    },
+  ] as const;
+};
+
+interface BAIPaginationOption {
+  limit: number;
+  offset: number;
+  // filter?: string;
+  // order?: string;
+}
+interface AntdBasicPaginationOption {
+  pageSize: number;
+  current: number;
+}
+
+interface InitialPaginationOption
+  extends AntdBasicPaginationOption,
+    Omit<BAIPaginationOption, 'limit' | 'offset'> {}
+export const useBAIPaginationOptionState = (
+  initialOptions: InitialPaginationOption,
+): {
+  baiPaginationOption: BAIPaginationOption;
+  tablePaginationOption: AntdBasicPaginationOption;
+  setTablePaginationOption: (pagination: AntdBasicPaginationOption) => void;
+} => {
+  const [options, setOptions] =
+    useState<AntdBasicPaginationOption>(initialOptions);
+  return {
+    baiPaginationOption: {
+      limit: options.pageSize,
+      offset:
+        options.current > 1 ? (options.current - 1) * options.pageSize : 0,
+    },
+    tablePaginationOption: {
+      pageSize: options.pageSize,
+      current: options.current,
+    },
+    setTablePaginationOption: (pagination) => {
+      setOptions((current) => ({
+        ...current,
+        ...pagination,
+      }));
+    },
+  };
 };
