@@ -11,7 +11,7 @@ import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
 import VFolderListPage from './pages/VFolderListPage';
 import { theme } from 'antd';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { FC } from 'react';
 import {
   Navigate,
@@ -47,8 +47,20 @@ const ResourcesPage = React.lazy(() => import('./pages/ResourcesPage'));
 const FolderExplorerOpener = React.lazy(
   () => import('./components/FolderExplorerOpener'),
 );
+const InteractiveLoginPage = React.lazy(
+  () => import('./pages/InteractiveLoginPage'),
+);
 
 const router = createBrowserRouter([
+  {
+    path: '/interactive-login',
+    errorElement: <ErrorView />,
+    element: (
+      <QueryParamProvider adapter={ReactRouter6Adapter}>
+        <InteractiveLoginPage />
+      </QueryParamProvider>
+    ),
+  },
   {
     path: '/',
     errorElement: <ErrorView />,

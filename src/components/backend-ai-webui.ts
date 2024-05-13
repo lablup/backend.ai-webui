@@ -167,6 +167,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'unauthorized',
     'session',
     'session/start',
+    'interactive-login',
   ]; // temporally block pipeline from available pages 'pipeline', 'pipeline-job'
   @property({ type: Array }) adminOnlyPages = [
     'experiment',
@@ -236,7 +237,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     let configPath;
     if (globalThis.isElectron) {
       configPath = './config.toml';
-      document.addEventListener('backend-ai-logout', () => this.logout(false));
+      document.addEventListener('backend-ai-logout', ((
+        e: CustomEvent<{ callbackURL: string }>,
+      ) => {
+        this.logout(false, e.detail?.callbackURL);
+      }) as EventListener);
       document.addEventListener('backend-ai-app-close', () =>
         this.close_app_window(),
       );
@@ -245,7 +250,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       );
     } else {
       configPath = '../../config.toml';
-      document.addEventListener('backend-ai-logout', () => this.logout(false));
+      document.addEventListener('backend-ai-logout', ((
+        e: CustomEvent<{ callbackURL: string }>,
+      ) => {
+        this.logout(false, e.detail?.callbackURL);
+      }) as EventListener);
       document.addEventListener('backend-ai-show-splash', () =>
         this._showSplash(),
       );
@@ -758,7 +767,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    *
    * @param {Boolean} performClose
    */
-  async logout(performClose = false) {
+  async logout(performClose = false, callbackURL: string = '/') {
     console.log('also close the app:', performClose);
     globalThis.backendaiutils._deleteRecentProjectGroupInfo();
     if (
@@ -787,7 +796,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       } else if (globalThis.isElectron) {
         globalThis.location.href = globalThis.electronInitialHref;
       } else {
-        this._moveTo('/');
+        this._moveTo(callbackURL);
         globalThis.location.reload();
       }
     }
