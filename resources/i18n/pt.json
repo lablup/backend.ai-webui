@@ -1563,7 +1563,7 @@
     "CloneAsFolder": "Clonar como Pasta",
     "CloneSuccess": "O pedido de clone foi enviado com sucesso.",
     "category": "Categoria",
-    "CloneInfo": "__NOT_TRANSLATED__"
+    "CloneInfo": "Ele será clonado como sua pasta de tipo de usuário."
   },
   "table": {
     "SettingTable": "Configuração de mesa",
