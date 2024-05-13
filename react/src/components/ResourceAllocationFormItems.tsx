@@ -494,9 +494,6 @@ const ResourceAllocationFormItems: React.FC<
                               return Promise.reject(
                                 t(
                                   'session.launcher.EnqueueComputeSessionWarning',
-                                  {
-                                    amount: remaining.cpu,
-                                  },
                                 ),
                               );
                             }
@@ -635,14 +632,6 @@ const ResourceAllocationFormItems: React.FC<
                                       return Promise.reject(
                                         t(
                                           'session.launcher.EnqueueComputeSessionWarning',
-                                          {
-                                            amount:
-                                              iSizeToSize(
-                                                remaining.mem + 'b',
-                                                'g',
-                                                3,
-                                              )?.numberUnit + 'iB',
-                                          },
                                         ),
                                       );
                                     }
@@ -912,12 +901,6 @@ const ResourceAllocationFormItems: React.FC<
                                   return Promise.reject(
                                     t(
                                       'session.launcher.EnqueueComputeSessionWarning',
-                                      {
-                                        amount:
-                                          remaining.accelerators[
-                                            currentAcceleratorType
-                                          ],
-                                      },
                                     ),
                                   );
                                 }
@@ -1082,10 +1065,6 @@ const ResourceAllocationFormItems: React.FC<
                             return Promise.reject(
                               t(
                                 'session.launcher.EnqueueComputeSessionWarning',
-                                {
-                                  amount:
-                                    sessionSliderLimitAndRemaining.remaining,
-                                },
                               ),
                             );
                           }
@@ -1198,9 +1177,6 @@ const ResourceAllocationFormItems: React.FC<
                                   return Promise.reject(
                                     t(
                                       'session.launcher.EnqueueComputeSessionWarning',
-                                      {
-                                        amount: minCPU,
-                                      },
                                     ),
                                   );
                                 }
