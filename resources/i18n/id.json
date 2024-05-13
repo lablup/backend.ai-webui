@@ -270,7 +270,12 @@
       "StartTimeDoesNotApply": "Jika waktu mulai tidak ditetapkan, maka tidak berlaku.",
       "PreviousLauncher": "Classic",
       "PleaseCompleteForm": "Formulir tidak lengkap atau mengandung kesalahan. Silakan periksa masukan Anda.",
-      "FailedToStartNewSession": "Pembuatan sesi gagal. \nSilakan periksa tab 'SELESAI' di halaman sesi."
+      "FailedToStartNewSession": "Pembuatan sesi gagal. \nSilakan periksa tab 'SELESAI' di halaman sesi.",
+      "EnvironmentVariableValueRequired": "__NOT_TRANSLATED__",
+      "EnableAutomaticMiniumShmem": "__NOT_TRANSLATED__",
+      "MiniumAllocation": "__NOT_TRANSLATED__",
+      "MiniumAllocationTooltip": "__NOT_TRANSLATED__",
+      "ProxyDirectTCPNotSupported": "Koneksi TCP langsung proxy belum didukung"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -400,7 +405,8 @@
     "SessionName": "Nama Sesi",
     "SessionId": "Id Sesi",
     "EnvironmentAndVersion": "Lingkungan dan Versi",
-    "Tags": "Tag"
+    "Tags": "Tag",
+    "Agents": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -649,7 +655,8 @@
       "DeleteForever": "Hapus selamanya",
       "FolderRestored": "Folder {{ folderName }} telah dipulihkan.",
       "FolderDeletedForever": "Folder {{ folderName }} telah dihapus selamanya.",
-      "MovedToTrashBin": "Folder {{ folderName }} telah dipindahkan ke tempat sampah."
+      "MovedToTrashBin": "Folder {{ folderName }} telah dipindahkan ke tempat sampah.",
+      "MoveToTrashBin": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Menghapus...",
@@ -700,7 +707,8 @@
       "EmptyFilesAndFoldersAreNotUploaded": "File kosong dan folder kosong tidak diunggah",
       "FolderAlreadyExists": "Folder yang akan diunggah sudah ada.",
       "NumberOfSFTPSessionsExceededTitle": "Mencapai batas jumlah sesi unggahan yang sedang berjalan",
-      "NumberOfSFTPSessionsExceededBody": "Anda menjalankan semua sesi unggahan yang tersedia yang diizinkan untuk Anda buat. Hentikan sesi unggahan yang tidak terpakai sebelum memulai sesi baru."
+      "NumberOfSFTPSessionsExceededBody": "Anda menjalankan semua sesi unggahan yang tersedia yang diizinkan untuk Anda buat. Hentikan sesi unggahan yang tidak terpakai sebelum memulai sesi baru.",
+      "DownloadNotAllowed": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "NoValidEmails": "Tidak ada email valid yang dimasukkan",

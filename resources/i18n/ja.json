@@ -273,7 +273,8 @@
       "AddEnvironmentVariable": "環境変数の追加",
       "EnvironmentVariableValueRequired": "値を入力してください。",
       "PleaseCompleteForm": "フォームに不備またはエラーがあります。入力内容をご確認ください。",
-      "FailedToStartNewSession": "セッションの作成に失敗しました。\nセッションページの「終了しました」タブをご確認ください。"
+      "FailedToStartNewSession": "セッションの作成に失敗しました。\nセッションページの「終了しました」タブをご確認ください。",
+      "ProxyDirectTCPNotSupported": "プロキシ直接 TCP 接続はまだサポートされていません"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",

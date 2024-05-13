@@ -397,7 +397,26 @@
   },
   "dialog": {
     "warning": {
-      "DeleteForeverDesc": "ADVERTENCIA: los elementos seleccionados se eliminarán para siempre y no podrás restaurarlos."
+      "DeleteForeverDesc": "ADVERTENCIA: los elementos seleccionados se eliminarán para siempre y no podrás restaurarlos.",
+      "CannotBeUndone": "__NOT_TRANSLATED__",
+      "LogDeletion": "__NOT_TRANSLATED__",
+      "Required": "__NOT_TRANSLATED__",
+      "WillBeAppliedToNewSessions": "__NOT_TRANSLATED__"
+    },
+    "ErrorOccurred": "__NOT_TRANSLATED__",
+    "error": {
+      "Error": "__NOT_TRANSLATED__"
+    },
+    "ask": {
+      "DoYouWantToProceed": "__NOT_TRANSLATED__"
+    },
+    "title": {
+      "LetsDouble-Check": "__NOT_TRANSLATED__",
+      "Notice": "__NOT_TRANSLATED__",
+      "DeleteForever": "__NOT_TRANSLATED__"
+    },
+    "hide": {
+      "DonotShowThisAgain": "__NOT_TRANSLATED__"
     }
   },
   "eduapi": {
@@ -1173,7 +1192,8 @@
       "AddEnvironmentVariable": "Añadir variables de entorno",
       "EnvironmentVariableValueRequired": "Por favor, introduzca un valor.",
       "PleaseCompleteForm": "El formulario está incompleto o contiene errores. Compruebe los datos introducidos.",
-      "FailedToStartNewSession": "Error al crear la sesión. \nPor favor marque la pestaña 'TERMINADO' en la página de la sesión."
+      "FailedToStartNewSession": "Error al crear la sesión. \nPor favor marque la pestaña 'TERMINADO' en la página de la sesión.",
+      "ProxyDirectTCPNotSupported": "La conexión TCP directa de proxy aún no es compatible"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

@@ -273,7 +273,8 @@
       "AddEnvironmentVariable": "Aggiungere le variabili d'ambiente",
       "EnvironmentVariableValueRequired": "Inserire un valore.",
       "PleaseCompleteForm": "Il modulo è incompleto o contiene errori. Si prega di controllare i dati inseriti.",
-      "FailedToStartNewSession": "Creazione della sessione non riuscita. \nControlla la scheda \"FINITO\" nella pagina della sessione."
+      "FailedToStartNewSession": "Creazione della sessione non riuscita. \nControlla la scheda \"FINITO\" nella pagina della sessione.",
+      "ProxyDirectTCPNotSupported": "La connessione TCP diretta proxy non è ancora supportata"
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",

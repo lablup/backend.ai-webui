@@ -273,7 +273,8 @@
       "AddEnvironmentVariable": "Tambah pembolehubah persekitaran",
       "EnvironmentVariableValueRequired": "Sila masukkan nilai.",
       "PleaseCompleteForm": "Borang tidak lengkap atau mengandungi ralat. \nSila semak input anda.",
-      "FailedToStartNewSession": "Pembuatan sesi gagal. \nSila semak tab 'SELESAI' pada halaman sesi."
+      "FailedToStartNewSession": "Pembuatan sesi gagal. \nSila semak tab 'SELESAI' pada halaman sesi.",
+      "ProxyDirectTCPNotSupported": "Sambungan TCP langsung proksi belum disokong lagi"
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",
@@ -750,7 +751,26 @@
   },
   "dialog": {
     "warning": {
-      "DeleteForeverDesc": "AMARAN: item yang dipilih akan dipadamkan selama-lamanya dan anda tidak akan dapat memulihkannya."
+      "DeleteForeverDesc": "AMARAN: item yang dipilih akan dipadamkan selama-lamanya dan anda tidak akan dapat memulihkannya.",
+      "CannotBeUndone": "__NOT_TRANSLATED__",
+      "LogDeletion": "__NOT_TRANSLATED__",
+      "Required": "__NOT_TRANSLATED__",
+      "WillBeAppliedToNewSessions": "__NOT_TRANSLATED__"
+    },
+    "ErrorOccurred": "__NOT_TRANSLATED__",
+    "error": {
+      "Error": "__NOT_TRANSLATED__"
+    },
+    "ask": {
+      "DoYouWantToProceed": "__NOT_TRANSLATED__"
+    },
+    "title": {
+      "LetsDouble-Check": "__NOT_TRANSLATED__",
+      "Notice": "__NOT_TRANSLATED__",
+      "DeleteForever": "__NOT_TRANSLATED__"
+    },
+    "hide": {
+      "DonotShowThisAgain": "__NOT_TRANSLATED__"
     }
   },
   "environment": {

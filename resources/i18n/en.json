@@ -286,7 +286,8 @@
       "AddEnvironmentVariable": "Add environment variables",
       "EnvironmentVariableValueRequired": "Please enter a value.",
       "PleaseCompleteForm": "Form is incomplete or contains errors. Please check your inputs.",
-      "FailedToStartNewSession": "Session creation failed. Please check the 'FINISHED' tab on the session page."
+      "FailedToStartNewSession": "Session creation failed. Please check the 'FINISHED' tab on the session page.",
+      "ProxyDirectTCPNotSupported": "Proxy direct TCP connection is not supported yet"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
