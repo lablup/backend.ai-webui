@@ -823,7 +823,8 @@
     "NoImageToDisplay": "Δεν εμφανίζονται εικόνες",
     "CustomizedImageSuccessfullyDeleted": "Η προσαρμοσμένη εικόνα διαγράφηκε επιτυχώς.",
     "DescImageResourceModified": "Το όριο πόρων τροποποιήθηκε επιτυχώς",
-    "DescImagePortsModified": "Οι θύρες εικόνας τροποποιήθηκαν με επιτυχία"
+    "DescImagePortsModified": "Οι θύρες εικόνας τροποποιήθηκαν με επιτυχία",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Εάν τροποποιήσετε μια εικόνα που έχει ήδη εγκατασταθεί, θα χρειαστεί να εγκαταστήσετε ξανά την εικόνα.</p><p>Οι τροποποιήσεις δεν θα εφαρμοστούν μέχρι να επανεγκατασταθεί η εικόνα.\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "Προεπιλογές πόρων",
@@ -1571,8 +1572,5 @@
   },
   "setting": {
     "SearchPlaceholder": "Εισαγάγετε τον όρο αναζήτησης"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Εάν τροποποιήσετε μια εικόνα που έχει ήδη εγκατασταθεί, θα χρειαστεί να εγκαταστήσετε ξανά την εικόνα.</p><p>Οι τροποποιήσεις δεν θα εφαρμοστούν μέχρι να επανεγκατασταθεί η εικόνα.\n\n</p>"
   }
 }

@@ -824,7 +824,8 @@
     "NoImageToDisplay": "Tidak ada gambar yang akan ditampilkan",
     "CustomizedImageSuccessfullyDeleted": "Gambar yang disesuaikan berhasil dihapus.",
     "DescImageResourceModified": "Batas sumber daya berhasil diubah",
-    "DescImagePortsModified": "Port Gambar berhasil dimodifikasi"
+    "DescImagePortsModified": "Port Gambar berhasil dimodifikasi",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Jika Anda memodifikasi gambar yang telah diinstal, Anda perlu menginstal ulang gambar tersebut.</p><p>Modifikasi tidak akan diterapkan sampai gambar tersebut diinstal ulang.\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "Preset Sumber Daya",
@@ -1572,8 +1573,5 @@
   },
   "setting": {
     "SearchPlaceholder": "Masukkan Istilah Pencarian"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Jika Anda memodifikasi gambar yang telah diinstal, Anda perlu menginstal ulang gambar tersebut.</p><p>Modifikasi tidak akan diterapkan sampai gambar tersebut diinstal ulang.\n\n</p>"
   }
 }

@@ -823,7 +823,8 @@
     "NoImageToDisplay": "Keine Bilder zum Anzeigen",
     "CustomizedImageSuccessfullyDeleted": "Benutzerdefiniertes Bild erfolgreich gelöscht.",
     "DescImageResourceModified": "Ressourcenlimit erfolgreich geändert",
-    "DescImagePortsModified": "Bildports erfolgreich geändert"
+    "DescImagePortsModified": "Bildports erfolgreich geändert",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Wenn Sie ein bereits installiertes Image ändern, müssen Sie das Image neu installieren.</p><p>Änderungen werden erst übernommen, wenn das Image erneut installiert wird.\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "Ressourcenvoreinstellungen",
@@ -1571,8 +1572,5 @@
   },
   "setting": {
     "SearchPlaceholder": "Geben Sie einen Suchbegriff ein"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Wenn Sie ein bereits installiertes Image ändern, müssen Sie das Image neu installieren.</p><p>Änderungen werden erst übernommen, wenn das Image erneut installiert wird.\n\n</p>"
   }
 }

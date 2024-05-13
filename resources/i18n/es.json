@@ -482,7 +482,8 @@
     "Version": "Versión",
     "CustomizedImageSuccessfullyDeleted": "Imagen personalizada eliminada correctamente.",
     "DescImageResourceModified": "Límite de recursos modificado con éxito",
-    "DescImagePortsModified": "Puertos de imagen modificados exitosamente"
+    "DescImagePortsModified": "Puertos de imagen modificados exitosamente",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Si modifica una imagen que ya se ha instalado, deberá volver a instalarla.</p><p>Las modificaciones no se aplicarán hasta que se reinstale la imagen.\n\n</p>"
   },
   "explorer": {
     "InputTooShort": "InputTooShort",
@@ -1573,8 +1574,5 @@
   },
   "setting": {
     "SearchPlaceholder": "Ingrese el término de búsqueda"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Si modifica una imagen que ya se ha instalado, deberá volver a instalarla.</p><p>Las modificaciones no se aplicarán hasta que se reinstale la imagen.\n\n</p>"
   }
 }

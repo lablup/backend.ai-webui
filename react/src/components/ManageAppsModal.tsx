@@ -107,7 +107,7 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
               <>
                 <Trans
                   i18nKey={
-                    'envrionment.ModifyImageResourceLimitReinstallRequired'
+                    'environment.ModifyImageResourceLimitReinstallRequired'
                   }
                 />
               </>
