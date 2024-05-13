@@ -60,17 +60,12 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         query KeypairResourcePolicyListQuery {
           keypair_resource_policies {
             name
-            created_at
-            default_for_unspecified
             total_resource_slots
             max_session_lifetime
             max_concurrent_sessions
             max_containers_per_session
             idle_timeout
             allowed_vfolder_hosts
-            max_vfolder_count @deprecatedSince(version: "23.09.4")
-            max_vfolder_size @deprecatedSince(version: "23.09.4")
-            max_quota_scope_size @deprecatedSince(version: "23.09.4")
             ...KeypairResourcePolicySettingModalFragment
           }
         }
@@ -314,16 +309,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         scroll={{ x: 'max-content' }}
         pagination={false}
       />
-      <TableColumnsSettingModal
-        open={isOpenColumnsSetting}
-        onRequestClose={(values) => {
-          values?.selectedColumnKeys &&
-            setDisplayedColumnKeys(values?.selectedColumnKeys);
-          setIsOpenColumnsSetting(false);
-        }}
-        columns={columns}
-        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
-      />
       <Flex
         justify="end"
         style={{
@@ -338,6 +323,16 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           }}
         />
       </Flex>
+      <TableColumnsSettingModal
+        open={isOpenColumnsSetting}
+        onRequestClose={(values) => {
+          values?.selectedColumnKeys &&
+            setDisplayedColumnKeys(values?.selectedColumnKeys);
+          setIsOpenColumnsSetting(false);
+        }}
+        columns={columns}
+        displayedColumnKeys={displayedColumnKeys ? displayedColumnKeys : []}
+      />
       <KeypairResourcePolicySettingModal
         existingPolicyNames={_.map(
           keypair_resource_policies,
