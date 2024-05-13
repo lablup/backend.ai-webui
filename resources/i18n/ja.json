@@ -467,7 +467,9 @@
     "Allocation": "割り当て情報",
     "Utilization": "使用量",
     "DiskPerc": "ディスク %の",
-    "NoAgentToDisplay": "エージェント情報がありません。"
+    "NoAgentToDisplay": "エージェント情報がありません。",
+    "AutoRefreshEvery5s": "5秒ごとに自動更新",
+    "Agent": "代理店"
   },
   "general": {
     "cores": "コア",

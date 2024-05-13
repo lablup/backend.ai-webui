@@ -913,13 +913,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         >
           <mwc-circular-progress indeterminate></mwc-circular-progress>
         </backend-ai-credential-view>
-        <backend-ai-agent-view
-          class="page"
-          name="agent"
-          ?active="${this._page === 'agent'}"
-        >
-          <mwc-circular-progress indeterminate></mwc-circular-progress>
-        </backend-ai-agent-view>
         <backend-ai-agent-summary-view
           class="page"
           name="agent-summary"

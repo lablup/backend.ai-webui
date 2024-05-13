@@ -467,7 +467,9 @@
     "Allocation": "Zuteilung",
     "Utilization": "Inanspruchnahme",
     "DiskPerc": "Platte %",
-    "NoAgentToDisplay": "Keine Agenten zum Anzeigen"
+    "NoAgentToDisplay": "Keine Agenten zum Anzeigen",
+    "AutoRefreshEvery5s": "Automatische Aktualisierung alle 5 Sekunden",
+    "Agent": "Agent"
   },
   "general": {
     "cores": "Kerne",

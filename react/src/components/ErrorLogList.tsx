@@ -40,9 +40,11 @@ const ErrorLogList: React.FC<{
   const [isOpenColumnsSetting, setIsOpenColumnsSetting] = useState(false);
   const [checkedShowOnlyError, setCheckedShowOnlyError] = useState(false);
   const [logSearch, setLogSearch] = useState('');
-  const [key, checkUpdate] = useUpdatableState('first');
+  const [updateKey, checkUpdateKey] = useUpdatableState('first');
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
+  const [isPendingReset, startResetTransition] = useTransition();
+
   useSuspendedBackendaiClient(); // TODO: remove this after react routing is stable. This is for remove flickering when browser reload
   const columns: ColumnsType<LogType> = [
     {
@@ -182,29 +184,23 @@ const ErrorLogList: React.FC<{
         formattedTimeStamp: dayjs(log.timestamp).format('ll LTS'),
       };
     });
-    // Add blow comment because eslint dependency
+    // Only update when updateKey is changed
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key]);
+  }, [updateKey]);
 
   const filteredLogData = useMemo(() => {
+    if (_.isEmpty(logSearch)) return storageLogData;
     const regExp = new RegExp(`${_.escapeRegExp(logSearch)}`, 'i');
     return _.filter(storageLogData, (log) => {
-      if (!logSearch) return true;
-      return !!_.find(log, (value, key) => {
+      return _.some(log, (value, key) => {
         if (key === 'timestamp') {
           // timestamp is not display in table, use formattedTimestamp instead
           return false;
         }
-        return _.toString(value).match(regExp);
+        return regExp.test(_.toString(value));
       });
     });
   }, [logSearch, storageLogData]);
-
-  const handleOk = () => {
-    localStorage.removeItem('backendaiwebui.logs');
-    checkUpdate();
-    setIsOpenClearLogsModal(false);
-  };
 
   return (
     <Flex direction="column" align="stretch">
@@ -251,7 +247,7 @@ const ErrorLogList: React.FC<{
               icon={<RedoOutlined />}
               loading={isPendingRefreshTransition}
               onClick={() => {
-                startRefreshTransition(() => checkUpdate());
+                startRefreshTransition(() => checkUpdateKey());
               }}
             >
               {t('button.Refresh')}
@@ -318,7 +314,14 @@ const ErrorLogList: React.FC<{
         title={t('dialog.warning.LogDeletion')}
         okText={t('button.Delete')}
         okButtonProps={{ danger: true }}
-        onOk={handleOk}
+        confirmLoading={isPendingReset}
+        onOk={() => {
+          startResetTransition(() => {
+            localStorage.removeItem('backendaiwebui.logs');
+            checkUpdateKey();
+            setIsOpenClearLogsModal(false);
+          });
+        }}
         cancelText={t('button.Cancel')}
         onCancel={() => setIsOpenClearLogsModal(false)}
       >

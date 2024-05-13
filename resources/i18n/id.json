@@ -468,7 +468,9 @@
     "Utilization": "Pemanfaatan",
     "NoAvailableLiveStat": "Tidak ada statistik langsung yang tersedia",
     "Allocation": "Alokasi",
-    "DiskPerc": "Disk %"
+    "DiskPerc": "Disk %",
+    "AutoRefreshEvery5s": "Penyegaran otomatis setiap 5 detik",
+    "Agent": "Agen"
   },
   "general": {
     "cores": "core",

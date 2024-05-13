@@ -15,7 +15,7 @@ const TextHighlighter: React.FC<TextHighlighterProps> = ({
 }) => {
   if (!children) return null;
 
-  if (keyword === undefined) {
+  if (_.isEmpty(keyword)) {
     return <span>{children}</span>;
   } else {
     const { token } = theme.useToken() || '#F1A239';
@@ -26,7 +26,7 @@ const TextHighlighter: React.FC<TextHighlighterProps> = ({
     return (
       <span>
         {parts.map((part, i) =>
-          part.toLowerCase() === keyword.toLowerCase() ? (
+          part.toLowerCase() === keyword?.toLowerCase() ? (
             <span
               key={i}
               style={{ backgroundColor: token.colorWarningHover, ...style }}
