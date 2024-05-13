@@ -9,7 +9,6 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailModal from './AgentDetailModal';
 import AgentSettingModal from './AgentSettingModal';
-import AutoRefreshSwitch from './AutoRefreshSwitch';
 import BAIIntervalText from './BAIIntervalText';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import DoubleTag from './DoubleTag';
@@ -73,7 +72,6 @@ const AgentList: React.FC<AgentListProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const [isPendingStatusFetch, startStatusFetchTransition] = useTransition();
   const [isPendingRefresh, startRefreshTransition] = useTransition();
-  const [, startAutoRefreshTransition] = useTransition();
   const [isPendingPageChange, startPageChangeTransition] = useTransition();
   const [selectedStatus, setSelectedStatus] = useState('ALIVE');
   const [optimisticSelectedStatus, setOptimisticSelectedStatus] =
@@ -759,17 +757,6 @@ const AgentList: React.FC<AgentListProps> = ({
           />
         </Flex>
         <Flex gap="xs">
-          <AutoRefreshSwitch
-            onRefresh={() => {
-              //refresh current
-              startAutoRefreshTransition(() => {
-                updateFetchKey();
-              });
-            }}
-            interval={5000}
-          >
-            {t('agent.AutoRefreshEvery5s')}
-          </AutoRefreshSwitch>
           <Tooltip title={t('button.Refresh')}>
             <Button
               loading={isPendingRefresh}
