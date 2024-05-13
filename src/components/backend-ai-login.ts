@@ -104,7 +104,6 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) allow_signout = false;
   @property({ type: Boolean }) allow_project_resource_monitor = false;
   @property({ type: Boolean }) allow_manual_image_name_for_session = false;
-  // @property({ type: Boolean }) always_enqueue_compute_session = false;
   @property({ type: Boolean }) allowSignupWithoutConfirmation = false;
   @property({ type: Boolean }) openPortToPublic = false;
   @property({ type: Boolean }) allowPreferredPort = false;

@@ -293,7 +293,6 @@ type BackendAIConfig = {
   default_import_environment: string;
   allow_project_resource_monitor: boolean;
   allow_manual_image_name_for_session: boolean;
-  always_enqueue_compute_session: boolean;
   openPortToPublic: boolean;
   allowPreferredPort: boolean;
   maxCPUCoresPerContainer: number;
