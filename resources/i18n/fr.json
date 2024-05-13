@@ -258,7 +258,6 @@
       "EnvironmentVariableDuplicateName": "Un nom de variable qui existe déjà.",
       "Template": "Modèle de session",
       "EnableAutomaticMiniumShmem": "Définir la mémoire partagée minimale",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Seul un nombre entier est autorisé lorsque la taille du cluster n'est pas inférieure à 2.",
       "StartAfter": "Commencez après :",
       "StartTimeDoesNotApply": "Si l'heure de début n'est pas définie, elle ne s'applique pas.",
@@ -1189,7 +1188,8 @@
     "ShowOnlyChanged": "Afficher uniquement les modifications",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Utilisez l'accélérateur Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Nécessite le plugin LPU Backend.AI Hyperaccel."
+    "RequireHyperaccelLPUPlugin": "Nécessite le plugin LPU Backend.AI Hyperaccel.",
+    "SearchPlaceholder": "Recherche"
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",
@@ -1569,8 +1569,5 @@
     "SettingTable": "Paramètre de table",
     "SelectColumnToDisplay": "Sélectionnez les colonnes à afficher",
     "SearchTableColumn": "Rechercher des colonnes dans un tableau"
-  },
-  "setting": {
-    "SearchPlaceholder": "Entrez le terme de recherche"
   }
 }

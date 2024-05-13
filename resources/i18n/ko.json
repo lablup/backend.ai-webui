@@ -262,7 +262,6 @@
       "EnvironmentVariableNamePatternError": "변수 이름은 문자 또는 밑줄로 시작해야 하며 문자, 숫자, 밑줄만 포함할 수 있습니다.",
       "EnvironmentVariableDuplicateName": "이미 존재하는 변수명입니다.",
       "EnableAutomaticMiniumShmem": "최소 공유메모리 설정",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "클러스터 크기가 2 이상인 경우 정수만 허용됩니다.",
       "StartAfter": "다음 이후에 시작:",
       "StartTimeDoesNotApply": "시작 시간을 설정하지 않으면 적용되지 않습니다.",
@@ -1279,7 +1278,8 @@
     "ShowOnlyChanged": "수정 사항만 표시",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Hyperaccel LPU 가속기를 사용합니다.",
-    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU 플러그인이 필요합니다."
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU 플러그인이 필요합니다.",
+    "SearchPlaceholder": "검색"
   },
   "notification": {
     "SuccessfullyUpdated": "성공적으로 수정되었습니다.",
@@ -1570,8 +1570,5 @@
     "SettingTable": "테이블 설정",
     "SearchTableColumn": "테이블 열 검색",
     "SelectColumnToDisplay": "표시할 열 선택"
-  },
-  "setting": {
-    "SearchPlaceholder": "검색어를 입력해 주세요"
   }
 }

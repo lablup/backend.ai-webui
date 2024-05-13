@@ -264,17 +264,16 @@
       "EnvironmentVariableDuplicateName": "Nama variabel yang sudah ada.",
       "Template": "Templat Sesi",
       "EnableAutomaticShmem": "Memori bersama otomatis",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Hanya bilangan bulat yang diperbolehkan jika ukuran cluster tidak kurang dari 2.",
       "StartAfter": "Mulai setelah:",
       "StartTimeDoesNotApply": "Jika waktu mulai tidak ditetapkan, maka tidak berlaku.",
       "PreviousLauncher": "Classic",
       "PleaseCompleteForm": "Formulir tidak lengkap atau mengandung kesalahan. Silakan periksa masukan Anda.",
       "FailedToStartNewSession": "Pembuatan sesi gagal. \nSilakan periksa tab 'SELESAI' di halaman sesi.",
-      "EnvironmentVariableValueRequired": "__NOT_TRANSLATED__",
-      "EnableAutomaticMiniumShmem": "__NOT_TRANSLATED__",
-      "MiniumAllocation": "__NOT_TRANSLATED__",
-      "MiniumAllocationTooltip": "__NOT_TRANSLATED__",
+      "EnvironmentVariableValueRequired": "Silakan masukkan nilai.",
+      "EnableAutomaticMiniumShmem": "Mengatur memori bersama minimum",
+      "MiniumAllocation": "Persyaratan minimum",
+      "MiniumAllocationTooltip": "Pilih sebagai persyaratan minimum untuk lingkungan berjalan yang dipilih",
       "ProxyDirectTCPNotSupported": "Koneksi TCP langsung proxy belum didukung"
     },
     "Preparing": "Mempersiapkan...",
@@ -406,7 +405,7 @@
     "SessionId": "Id Sesi",
     "EnvironmentAndVersion": "Lingkungan dan Versi",
     "Tags": "Tag",
-    "Agents": "__NOT_TRANSLATED__"
+    "Agents": "Agen"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -658,7 +657,7 @@
       "FolderRestored": "Folder {{ folderName }} telah dipulihkan.",
       "FolderDeletedForever": "Folder {{ folderName }} telah dihapus selamanya.",
       "MovedToTrashBin": "Folder {{ folderName }} telah dipindahkan ke tempat sampah.",
-      "MoveToTrashBin": "__NOT_TRANSLATED__"
+      "MoveToTrashBin": "Pindah ke tempat sampah"
     },
     "explorer": {
       "Delete": "Menghapus...",
@@ -710,7 +709,7 @@
       "FolderAlreadyExists": "Folder yang akan diunggah sudah ada.",
       "NumberOfSFTPSessionsExceededTitle": "Mencapai batas jumlah sesi unggahan yang sedang berjalan",
       "NumberOfSFTPSessionsExceededBody": "Anda menjalankan semua sesi unggahan yang tersedia yang diizinkan untuk Anda buat. Hentikan sesi unggahan yang tidak terpakai sebelum memulai sesi baru.",
-      "DownloadNotAllowed": "__NOT_TRANSLATED__"
+      "DownloadNotAllowed": "Mengunduh file/folder tidak diperbolehkan di folder ini."
     },
     "invitation": {
       "NoValidEmails": "Tidak ada email valid yang dimasukkan",
@@ -1190,7 +1189,8 @@
     "ShowOnlyChanged": "Hanya Tampilan yang Berubah",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Gunakan akselerator Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Memerlukan Plugin LPU Backend.AI Hyperaccel."
+    "RequireHyperaccelLPUPlugin": "Memerlukan Plugin LPU Backend.AI Hyperaccel.",
+    "SearchPlaceholder": "Pencarian"
   },
   "notification": {
     "SuccessfullyUpdated": "Berhasil Diperbarui",
@@ -1570,8 +1570,5 @@
     "SettingTable": "Penataan meja",
     "SelectColumnToDisplay": "Pilih kolom yang akan ditampilkan",
     "SearchTableColumn": "Cari kolom tabel"
-  },
-  "setting": {
-    "SearchPlaceholder": "Masukkan Istilah Pencarian"
   }
 }

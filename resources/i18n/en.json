@@ -256,7 +256,8 @@
       "PreOpenPortRangeGuide": "Enter multiple values separated by either a comma (,) or a space.",
       "preopen": "preopen",
       "FolderAliasInvalid": "Only alphanumeric characters, underscore (_), slash (/), and dash (-) are allowed.",
-      "PreOpenPortMaxCountLimit": "You can set up to {{count}} pre-open ports.",
+      "PreOpenPortMaxCountLimit": "You can set up to {{count}} pre-open port.",
+      "PreOpenPortMaxCountLimit_plural": "You can set up to {{count}} pre-open ports.",
       "EnqueueComputeSessionWarning": "Insufficient resources. Session may be pending.",
       "TemplateAndHistory": "Templates & history",
       "StartTimeMustBeInTheFuture": "The start time must be after the current time.",
@@ -272,7 +273,6 @@
       "EnvironmentVariableDuplicateName": "A variable name that already exists.",
       "Template": "Session Template",
       "EnableAutomaticMiniumShmem": "Set minimum shared memory",
-      "PreOpenPortMaxCountLimit_plural": "PreOpenPortMaxCountLimit",
       "StartAfter": "Start after: ",
       "StartTimeDoesNotApply": "If the start time is not set, it doesn't apply.",
       "MiniumAllocation": "Minimum requirements",
@@ -1291,7 +1291,8 @@
     "ShowOnlyChanged": "Display Only Changes",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Use Hyperaccel LPU accelerator.",
-    "RequireHyperaccelLPUPlugin": "Requires Backend.AI Hyperaccel LPU Plugin."
+    "RequireHyperaccelLPUPlugin": "Requires Backend.AI Hyperaccel LPU Plugin.",
+    "SearchPlaceholder": "Search"
   },
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",
@@ -1570,8 +1571,5 @@
     "CloneSuccess": "The clone request has been sent successfully.",
     "CloneInfo": "It will be cloned as your user type folder.",
     "category": "Category"
-  },
-  "setting": {
-    "SearchPlaceholder": "Enter Search Term"
   }
 }

@@ -258,7 +258,6 @@
       "Template": "Mẫu phiên",
       "EnableAutomaticMiniumShmem": "Đặt bộ nhớ chia sẻ tối thiểu",
       "PreOpenPortMaxCountLimit": "Bạn có thể thiết lập tối đa {{count}} cổng mở trước.",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Chỉ cho phép số nguyên khi kích thước cụm không nhỏ hơn 2.",
       "StartAfter": "Bắt đầu sau:",
       "StartTimeDoesNotApply": "Nếu thời gian bắt đầu không được đặt, nó sẽ không được áp dụng.",
@@ -1189,7 +1188,8 @@
     "ShowOnlyChanged": "Chỉ hiển thị các thay đổi",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Sử dụng bộ tăng tốc LPU Hyperaccel.",
-    "RequireHyperaccelLPUPlugin": "Yêu cầu Plugin LPU Backend.AI Hyperaccel."
+    "RequireHyperaccelLPUPlugin": "Yêu cầu Plugin LPU Backend.AI Hyperaccel.",
+    "SearchPlaceholder": "Tìm kiếm"
   },
   "notification": {
     "SuccessfullyUpdated": "Cập nhật thành công",
@@ -1569,8 +1569,5 @@
     "SettingTable": "Cài đặt bảng",
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
     "SearchTableColumn": "Tìm kiếm các cột trong bảng"
-  },
-  "setting": {
-    "SearchPlaceholder": "Nhập cụm từ tìm kiếm"
   }
 }

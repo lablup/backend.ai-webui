@@ -400,25 +400,25 @@
   "dialog": {
     "warning": {
       "DeleteForeverDesc": "ADVERTENCIA: los elementos seleccionados se eliminarán para siempre y no podrás restaurarlos.",
-      "CannotBeUndone": "__NOT_TRANSLATED__",
-      "LogDeletion": "__NOT_TRANSLATED__",
-      "Required": "__NOT_TRANSLATED__",
-      "WillBeAppliedToNewSessions": "__NOT_TRANSLATED__"
+      "CannotBeUndone": "ATENCIÓN: ¡esto no se puede deshacer!",
+      "LogDeletion": "¿Estás seguro de que quieres borrar todos los mensajes de registro?",
+      "Required": "Requerido",
+      "WillBeAppliedToNewSessions": "Esta actualización se aplicará a las nuevas sesiones."
     },
-    "ErrorOccurred": "__NOT_TRANSLATED__",
+    "ErrorOccurred": "Se ha producido un error",
     "error": {
-      "Error": "__NOT_TRANSLATED__"
+      "Error": "Error"
     },
     "ask": {
-      "DoYouWantToProceed": "__NOT_TRANSLATED__"
+      "DoYouWantToProceed": "¿Quieres continuar?"
     },
     "title": {
-      "LetsDouble-Check": "__NOT_TRANSLATED__",
-      "Notice": "__NOT_TRANSLATED__",
-      "DeleteForever": "__NOT_TRANSLATED__"
+      "LetsDouble-Check": "Doble comprobación",
+      "Notice": "Aviso",
+      "DeleteForever": "¿Borrar para siempre?"
     },
     "hide": {
-      "DonotShowThisAgain": "__NOT_TRANSLATED__"
+      "DonotShowThisAgain": "No vuelvas a mostrar esto."
     }
   },
   "eduapi": {
@@ -1180,7 +1180,6 @@
       "EnvironmentVariableDuplicateName": "Un nombre de variable que ya existe.",
       "Template": "Plantilla de sesión",
       "EnableAutomaticMiniumShmem": "Establecer la memoria compartida mínima",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Solo se permiten números enteros cuando el tamaño del clúster no es inferior a 2.",
       "StartAfter": "Empezar después:",
       "StartTimeDoesNotApply": "Si no se establece la hora de inicio, no se aplica.",
@@ -1278,7 +1277,8 @@
     "ShowOnlyChanged": "Mostrar solo cambios",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Utilice el acelerador Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Requiere el complemento LPU Backend.AI Hyperaccel."
+    "RequireHyperaccelLPUPlugin": "Requiere el complemento LPU Backend.AI Hyperaccel.",
+    "SearchPlaceholder": "Buscar en"
   },
   "sidepanel": {
     "BackgroundTasks": "Tareas en curso",
@@ -1571,8 +1571,5 @@
     "SettingTable": "Ajuste de la tabla",
     "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
     "SearchTableColumn": "Buscar columnas de la tabla"
-  },
-  "setting": {
-    "SearchPlaceholder": "Ingrese el término de búsqueda"
   }
 }

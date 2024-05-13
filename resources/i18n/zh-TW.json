@@ -258,7 +258,6 @@
       "EnvironmentVariableDuplicateName": "已经存在的变量名。",
       "Template": "会议模板",
       "EnableAutomaticMiniumShmem": "设置最小共享内存",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "當簇大小不小於 2 時，只允許使用整數。",
       "StartAfter": "之後開始：",
       "StartTimeDoesNotApply": "如果未設定開始時間，則不適用。",
@@ -1189,7 +1188,8 @@
     "ShowOnlyChanged": "僅顯示更改",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "使用Hyperaccel LPU加速器。",
-    "RequireHyperaccelLPUPlugin": "需要 Backend.AI Hyperaccel LPU 插件。"
+    "RequireHyperaccelLPUPlugin": "需要 Backend.AI Hyperaccel LPU 插件。",
+    "SearchPlaceholder": "搜索"
   },
   "notification": {
     "SuccessfullyUpdated": "成功更新",
@@ -1569,8 +1569,5 @@
     "SettingTable": "桌面設定",
     "SelectColumnToDisplay": "選擇要顯示的列",
     "SearchTableColumn": "搜尋表格列"
-  },
-  "setting": {
-    "SearchPlaceholder": "輸入搜尋詞"
   }
 }

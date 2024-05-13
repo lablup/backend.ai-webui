@@ -258,23 +258,22 @@
       "EnvironmentVariableDuplicateName": "Энэ хувьсагчийн нэр аль хэдийн байна.",
       "Template": "Сеанс загвар",
       "EnableAutomaticShmem": "Автомат хуваалцсан санах ой",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Кластерын хэмжээ 2-оос багагүй тохиолдолд зөвхөн бүхэл тоог зөвшөөрнө.",
       "StartAfter": "Дараа нь эхлэх:",
       "StartTimeDoesNotApply": "Хэрэв эхлэх цагийг тохируулаагүй бол энэ нь хамаарахгүй.",
       "FailedToStartNewSession": "Сеанс үүсгэж чадсангүй. \nСеанс хуудасны 'Дууссан' табыг шалгана уу.",
-      "EnvironmentVariableValueRequired": "__NOT_TRANSLATED__",
-      "AddEnvironmentVariable": "__NOT_TRANSLATED__",
-      "NeoSwitchDescription": "__NOT_TRANSLATED__",
-      "PreviousLauncher": "__NOT_TRANSLATED__",
-      "NeoLauncher": "__NOT_TRANSLATED__",
-      "EnableAutomaticMiniumShmem": "__NOT_TRANSLATED__",
-      "MiniumAllocation": "__NOT_TRANSLATED__",
-      "MiniumAllocationTooltip": "__NOT_TRANSLATED__",
-      "InteractiveModeDesc": "__NOT_TRANSLATED__",
-      "BatchModeDesc": "__NOT_TRANSLATED__",
-      "PleaseCompleteForm": "__NOT_TRANSLATED__",
-      "SkipToConfirmAndLaunch": "__NOT_TRANSLATED__",
+      "EnvironmentVariableValueRequired": "Утга оруулна уу.",
+      "AddEnvironmentVariable": "Орчны хувьсагчдыг нэмнэ үү",
+      "NeoSwitchDescription": "Та \"{{launcher}}\" сесс эхлүүлэгч ашиглаж байна.",
+      "PreviousLauncher": "Сонгодог",
+      "NeoLauncher": "NEO",
+      "EnableAutomaticMiniumShmem": "Хамгийн бага хуваалцсан санах ойг тохируулах",
+      "MiniumAllocation": "Хамгийн бага шаардлага",
+      "MiniumAllocationTooltip": "Сонгосон ажиллах орчны хамгийн бага шаардлагыг сонгоно уу",
+      "InteractiveModeDesc": "jupyter notebook, visual studio код гэх мэтээр интерактив код үүсгэх, турших, ажиллуулах боломжийг танд олгоно.",
+      "BatchModeDesc": "Кодоо олон зангилаатай кластераар ажиллуул.",
+      "PleaseCompleteForm": "Маягт дутуу эсвэл алдаатай байна. \nОруулсан мэдээллээ шалгана уу.",
+      "SkipToConfirmAndLaunch": "Шүүмж рүү алгасах",
       "ProxyDirectTCPNotSupported": "Прокси шууд TCP холболт хараахан дэмжигдээгүй байна"
     },
     "Preparing": "Бэлтгэж байна ...",
@@ -348,7 +347,7 @@
       "SessionNameShouldStartWith": "Энэ нь цагаан толгойн үсэг, тоо эсвэл \"_\" -ээр эхлэх ёстой.",
       "SessionNameShouldEndWith": "Энэ нь цагаан толгойн үсэг, тоо эсвэл '_'-ээр төгссөн байх ёстой.",
       "SessionNameInvalidCharacter": "Нэрийн дунд хэсэгт зөвхөн цагаан толгойн үсэг, тоо, '_' байж болно.",
-      "SessionNameTooShort": "__NOT_TRANSLATED__"
+      "SessionNameTooShort": "Дор хаяж 4 тэмдэгт оруулна уу."
     },
     "AlreadyTerminatingSession": "Сессийг аль хэдийн дуусгаж байна.",
     "NoSessionToDisplay": "Харуулах сесс алга",
@@ -441,9 +440,9 @@
     "Download": "Татаж авах",
     "Clone": "Клон",
     "Config": "Тохиргоо",
-    "Previous": "__NOT_TRANSLATED__",
-    "Next": "__NOT_TRANSLATED__",
-    "PushToImage": "__NOT_TRANSLATED__"
+    "Previous": "Өмнөх",
+    "Next": "Дараачийн",
+    "PushToImage": "Тохируулсан зураг руу түлхэх сесс"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -658,7 +657,7 @@
       "FolderRestored": "{{ folderName }} хавтас сэргээгдсэн.",
       "FolderDeletedForever": "{{ folderName }} хавтас бүрмөсөн устгагдсан.",
       "MovedToTrashBin": "{{ folderName }} фолдерыг хогийн сав руу зөөв.",
-      "MoveToTrashBin": "__NOT_TRANSLATED__"
+      "MoveToTrashBin": "Хогийн сав руу шилжүүлнэ үү"
     },
     "explorer": {
       "Delete": "Устгах ...",
@@ -1188,9 +1187,10 @@
     "Plugins": "Plugins",
     "OpenSourceCUDAGPUsupport": "Нээлттэй эхийн CUDA GPU дэмжлэг",
     "ShowOnlyChanged": "Зөвхөн өөрчлөлтүүдийг харуулах",
-    "HyperaccelLPUsupport": "__NOT_TRANSLATED__",
-    "DescHyperaccelLPUsupport": "__NOT_TRANSLATED__",
-    "RequireHyperaccelLPUPlugin": "__NOT_TRANSLATED__"
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Hyperaccel LPU хурдасгуурыг ашигла.",
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Plugin шаардлагатай.",
+    "SearchPlaceholder": "Хайх"
   },
   "notification": {
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
@@ -1441,7 +1441,7 @@
   },
   "inputLimit": {
     "4to64chars": "(4~64 тэмдэгт)",
-    "4to32chars": "__NOT_TRANSLATED__"
+    "4to32chars": "(4~32 тэмдэгт)"
   },
   "storageHost": {
     "quotaSettings": {
@@ -1570,11 +1570,5 @@
     "SettingTable": "Хүснэгтийн тохиргоо",
     "SelectColumnToDisplay": "Харуулах багануудыг сонгоно уу",
     "SearchTableColumn": "Хүснэгтийн багануудыг хайх"
-  },
-  "setting": {
-    "SearchPlaceholder": "Хайлтын нэр томъёог оруулна уу",
-    "HyperaccelLPUsupport": "Hyperaccel LPU",
-    "DescHyperaccelLPUsupport": "Hyperaccel LPU хурдасгуурыг ашигла.",
-    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Plugin шаардлагатай."
   }
 }

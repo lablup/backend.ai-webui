@@ -399,7 +399,26 @@
   },
   "dialog": {
     "warning": {
-      "DeleteForeverDesc": "VAROITUS: valitut kohteet poistetaan pysyvästi, etkä voi palauttaa niitä."
+      "DeleteForeverDesc": "VAROITUS: valitut kohteet poistetaan pysyvästi, etkä voi palauttaa niitä.",
+      "WillBeAppliedToNewSessions": "Tätä päivitystä sovelletaan uusiin istuntoihin.",
+      "CannotBeUndone": "VAROITUS: tätä ei voi perua!",
+      "LogDeletion": "Haluatko varmasti poistaa kaikki lokiviestit?",
+      "Required": "Vaadittu"
+    },
+    "ErrorOccurred": "Tapahtunut virhe",
+    "error": {
+      "Error": "Virhe"
+    },
+    "ask": {
+      "DoYouWantToProceed": "Haluatteko jatkaa?"
+    },
+    "title": {
+      "LetsDouble-Check": "Tupla-tarkistetaan",
+      "Notice": "Ilmoitus",
+      "DeleteForever": "Poista ikuisesti?"
+    },
+    "hide": {
+      "DonotShowThisAgain": "Älä näytä tätä enää."
     }
   },
   "eduapi": {
@@ -1159,7 +1178,6 @@
       "ErrorCanNotExceedRemaining": "Ei voida asettaa suuremmaksi kuin jäljellä olevat resurssit ({{amount}}).",
       "EnableAutomaticMiniumShmem": "Aseta jaetun muistin vähimmäismäärä",
       "Template": "Istuntomalli",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Vain kokonaisluku on sallittu, kun klusterin koko on vähintään 2.",
       "StartAfter": "Aloita sen jälkeen:",
       "StartTimeDoesNotApply": "Jos aloitusaikaa ei ole asetettu, se ei ole voimassa.",
@@ -1257,7 +1275,8 @@
     "ShowOnlyChanged": "Vain näyttö muuttuu",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Käytä Hyperaccel LPU -kiihdytintä.",
-    "RequireHyperaccelLPUPlugin": "Vaatii Backend.AI Hyperaccel LPU -laajennuksen."
+    "RequireHyperaccelLPUPlugin": "Vaatii Backend.AI Hyperaccel LPU -laajennuksen.",
+    "SearchPlaceholder": "Etsi"
   },
   "sidepanel": {
     "BackgroundTasks": "Tehtävien suorittaminen",
@@ -1550,8 +1569,5 @@
     "SettingTable": "Kattaus",
     "SelectColumnToDisplay": "Valitse näytettävät sarakkeet",
     "SearchTableColumn": "Hae taulukon sarakkeita"
-  },
-  "setting": {
-    "SearchPlaceholder": "Kirjoita hakutermi"
   }
 }

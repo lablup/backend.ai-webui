@@ -258,7 +258,6 @@
       "Template": "Templat Sesi",
       "EnableAutomaticMiniumShmem": "Tetapkan memori kongsi minimum",
       "PreOpenPortMaxCountLimit": "Anda boleh menyediakan kepada {{count}} port pra-buka.",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Hanya integer dibenarkan apabila saiz kelompok tidak kurang daripada 2.",
       "StartAfter": "Mulakan selepas:",
       "StartTimeDoesNotApply": "Jika masa mula tidak ditetapkan, ia tidak terpakai.",
@@ -754,25 +753,25 @@
   "dialog": {
     "warning": {
       "DeleteForeverDesc": "AMARAN: item yang dipilih akan dipadamkan selama-lamanya dan anda tidak akan dapat memulihkannya.",
-      "CannotBeUndone": "__NOT_TRANSLATED__",
-      "LogDeletion": "__NOT_TRANSLATED__",
-      "Required": "__NOT_TRANSLATED__",
-      "WillBeAppliedToNewSessions": "__NOT_TRANSLATED__"
+      "CannotBeUndone": "AMARAN: ini tidak boleh dibuat asal!",
+      "LogDeletion": "Adakah anda pasti mahu memadamkan semua mesej log?",
+      "Required": "Diperlukan",
+      "WillBeAppliedToNewSessions": "Kemas kini ini akan digunakan pada sesi baharu."
     },
-    "ErrorOccurred": "__NOT_TRANSLATED__",
+    "ErrorOccurred": "Ralat Berlaku",
     "error": {
-      "Error": "__NOT_TRANSLATED__"
+      "Error": "ralat"
     },
     "ask": {
-      "DoYouWantToProceed": "__NOT_TRANSLATED__"
+      "DoYouWantToProceed": "Adakah anda mahu meneruskan?"
     },
     "title": {
-      "LetsDouble-Check": "__NOT_TRANSLATED__",
-      "Notice": "__NOT_TRANSLATED__",
-      "DeleteForever": "__NOT_TRANSLATED__"
+      "LetsDouble-Check": "Mari semak semula",
+      "Notice": "Notis",
+      "DeleteForever": "Padam Selamanya?"
     },
     "hide": {
-      "DonotShowThisAgain": "__NOT_TRANSLATED__"
+      "DonotShowThisAgain": "Jangan tunjukkan ini lagi."
     }
   },
   "environment": {
@@ -1189,7 +1188,8 @@
     "ShowOnlyChanged": "Paparkan Perubahan Sahaja",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Gunakan pemecut LPU Hyperaccel.",
-    "RequireHyperaccelLPUPlugin": "Memerlukan Backend.AI Hyperaccel LPU Plugin."
+    "RequireHyperaccelLPUPlugin": "Memerlukan Backend.AI Hyperaccel LPU Plugin.",
+    "SearchPlaceholder": "Cari"
   },
   "notification": {
     "SuccessfullyUpdated": "Berjaya Dikemas kini",
@@ -1569,8 +1569,5 @@
     "SelectColumnToDisplay": "Pilih untuk lajur untuk dipaparkan",
     "SettingTable": "Tetapan Meja",
     "SearchTableColumn": "Cari lajur jadual"
-  },
-  "setting": {
-    "SearchPlaceholder": "Masukkan Istilah Carian"
   }
 }

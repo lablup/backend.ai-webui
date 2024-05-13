@@ -258,9 +258,6 @@
       "EnvironmentVariableDuplicateName": "Nazwa zmiennej, która już istnieje.",
       "Template": "Szablon sesji",
       "EnableAutomaticMiniumShmem": "Ustawienie minimalnej ilości pamięci współdzielonej",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Jeśli rozmiar klastra jest nie mniejszy niż 2, dozwolona jest tylko liczba całkowita.",
       "StartAfter": "Rozpocznij po:",
       "StartTimeDoesNotApply": "Jeśli godzina rozpoczęcia nie jest ustawiona, nie ma ona zastosowania.",
@@ -1191,7 +1188,8 @@
     "ShowOnlyChanged": "Wyświetl tylko zmiany",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Użyj akceleratora Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Wymaga wtyczki Backend.AI Hyperaccel LPU."
+    "RequireHyperaccelLPUPlugin": "Wymaga wtyczki Backend.AI Hyperaccel LPU.",
+    "SearchPlaceholder": "Wyszukiwanie"
   },
   "notification": {
     "SuccessfullyUpdated": "Pomyślnie zaktualizowano",
@@ -1571,8 +1569,5 @@
     "SettingTable": "Nakrycie stołu",
     "SelectColumnToDisplay": "Wybierz, które kolumny mają być wyświetlane",
     "SearchTableColumn": "Przeszukaj kolumny tabeli"
-  },
-  "setting": {
-    "SearchPlaceholder": "Wprowadź wyszukiwane hasło"
   }
 }

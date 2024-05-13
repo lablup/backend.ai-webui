@@ -258,9 +258,6 @@
       "EnvironmentVariableDuplicateName": "Имя переменной, которая уже существует.",
       "Template": "Шаблон сессии",
       "EnableAutomaticMiniumShmem": "Установите минимальный объем общей памяти",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Допускается только целое число, если размер кластера не меньше 2.",
       "StartAfter": "Начать после:",
       "StartTimeDoesNotApply": "Если время начала не установлено, оно не применяется.",
@@ -1191,7 +1188,8 @@
     "ShowOnlyChanged": "Отображать только изменения",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Используйте ускоритель Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Требуется плагин Backend.AI Hyperaccel LPU."
+    "RequireHyperaccelLPUPlugin": "Требуется плагин Backend.AI Hyperaccel LPU.",
+    "SearchPlaceholder": "Поиск"
   },
   "notification": {
     "SuccessfullyUpdated": "Успешно обновлено",
@@ -1571,8 +1569,5 @@
     "SettingTable": "Сервировка стола",
     "SelectColumnToDisplay": "Выберите столбцы для отображения",
     "SearchTableColumn": "Поиск по столбцам таблицы"
-  },
-  "setting": {
-    "SearchPlaceholder": "Введите поисковый запрос"
   }
 }

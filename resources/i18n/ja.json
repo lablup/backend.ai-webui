@@ -258,7 +258,6 @@
       "EnvironmentVariableDuplicateName": "既に存在する変数名です。",
       "Template": "セッションテンプレート",
       "EnableAutomaticMiniumShmem": "最小共有メモリの設定",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "クラスター サイズが 2 以上の場合は、整数のみが許可されます。",
       "StartAfter": "次の後に開始します:",
       "StartTimeDoesNotApply": "開始時間が設定されていない場合は適用されません。",
@@ -1189,7 +1188,8 @@
     "ShowOnlyChanged": "表示のみの変更",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Hyperaccel LPU アクセラレータを使用します。",
-    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU プラグインが必要です。"
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU プラグインが必要です。",
+    "SearchPlaceholder": "検索"
   },
   "notification": {
     "SuccessfullyUpdated": "正常に更新されました",
@@ -1569,8 +1569,5 @@
     "SettingTable": "テーブルセッティング",
     "SelectColumnToDisplay": "表示する列を選択します",
     "SearchTableColumn": "テーブルの列を検索する"
-  },
-  "setting": {
-    "SearchPlaceholder": "検索用語を入力してください"
   }
 }

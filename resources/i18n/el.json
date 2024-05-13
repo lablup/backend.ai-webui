@@ -258,7 +258,6 @@
       "EnvironmentVariableDuplicateName": "Ένα όνομα μεταβλητής που υπάρχει ήδη.",
       "Template": "Πρότυπο συνεδρίας",
       "EnableAutomaticMiniumShmem": "Ορισμός ελάχιστης κοινόχρηστης μνήμης",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "StartAfter": "Έναρξη μετά:",
       "StartTimeDoesNotApply": "Εάν δεν έχει οριστεί η ώρα έναρξης, δεν ισχύει.",
       "OnlyAllowsDiscreteNumberByClusterSize": "Μόνο ακέραιος επιτρέπεται όταν το μέγεθος του συμπλέγματος δεν είναι μικρότερο από 2.",
@@ -1189,7 +1188,8 @@
     "ShowOnlyChanged": "Εμφάνιση μόνο αλλαγών",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Χρησιμοποιήστε τον επιταχυντή Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Απαιτεί το πρόσθετο Backend.AI Hyperaccel LPU."
+    "RequireHyperaccelLPUPlugin": "Απαιτεί το πρόσθετο Backend.AI Hyperaccel LPU.",
+    "SearchPlaceholder": "Αναζήτηση"
   },
   "notification": {
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
@@ -1569,8 +1569,5 @@
     "SettingTable": "Ρύθμιση πίνακα",
     "SelectColumnToDisplay": "Επιλέξτε για εμφάνιση στηλών",
     "SearchTableColumn": "Αναζήτηση στηλών πίνακα"
-  },
-  "setting": {
-    "SearchPlaceholder": "Εισαγάγετε τον όρο αναζήτησης"
   }
 }

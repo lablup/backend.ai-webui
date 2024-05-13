@@ -258,7 +258,6 @@
       "EnvironmentVariableDuplicateName": "Ein Variablenname, der bereits existiert.",
       "Template": "Sitzungsvorlage",
       "EnableAutomaticMiniumShmem": "Minimalen gemeinsamen Speicher festlegen",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Nur Ganzzahlen sind zulässig, wenn die Clustergröße nicht weniger als 2 beträgt.",
       "StartAfter": "Beginnen Sie nach:",
       "StartTimeDoesNotApply": "Wenn die Startzeit nicht festgelegt ist, gilt sie nicht.",
@@ -1189,7 +1188,8 @@
     "ShowOnlyChanged": "Nur Änderungen anzeigen",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Verwenden Sie den Hyperaccel LPU-Beschleuniger.",
-    "RequireHyperaccelLPUPlugin": "Erfordert das Backend.AI Hyperaccel LPU-Plugin."
+    "RequireHyperaccelLPUPlugin": "Erfordert das Backend.AI Hyperaccel LPU-Plugin.",
+    "SearchPlaceholder": "Suche"
   },
   "notification": {
     "SuccessfullyUpdated": "Erfolgreich aktualisiert",
@@ -1569,8 +1569,5 @@
     "SettingTable": "Sitzordnung bei Tisch",
     "SelectColumnToDisplay": "Wählen Sie die anzuzeigenden Spalten aus",
     "SearchTableColumn": "Tabellenspalten durchsuchen"
-  },
-  "setting": {
-    "SearchPlaceholder": "Geben Sie einen Suchbegriff ein"
   }
 }
