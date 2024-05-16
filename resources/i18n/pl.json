@@ -245,7 +245,7 @@
       "FolderAliasInvalid": "Dozwolone są tylko znaki alfanumeryczne, podkreślenie (_), ukośnik (/) i myślnik (-).",
       "PreOpenPortMaxCountLimit": "Można ustawić do {{count}} wstępnie otwartych portów.",
       "StartTimeMustBeInTheFuture": "Czas rozpoczęcia musi być po czasie bieżącym.",
-      "EnqueueComputeSessionWarning": "Jeśli ustawisz ją na większą niż aktualnie dostępne zasoby, utworzenie sesji zostanie opóźnione w kolejce do czasu, aż stanie się ona dostępna.",
+      "EnqueueComputeSessionWarning": "Niewystarczające zasoby. \nSesja może być w toku.",
       "SessionName": "Nazwa sesji",
       "ResetFormConfirm": "Czy chcesz zresetować wszystkie swoje wpisy?",
       "TemplateAndHistory": "Szablony",
@@ -258,9 +258,6 @@
       "EnvironmentVariableDuplicateName": "Nazwa zmiennej, która już istnieje.",
       "Template": "Szablon sesji",
       "EnableAutomaticMiniumShmem": "Ustawienie minimalnej ilości pamięci współdzielonej",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Jeśli rozmiar klastra jest nie mniejszy niż 2, dozwolona jest tylko liczba całkowita.",
       "StartAfter": "Rozpocznij po:",
       "StartTimeDoesNotApply": "Jeśli godzina rozpoczęcia nie jest ustawiona, nie ma ona zastosowania.",
@@ -275,7 +272,8 @@
       "AddEnvironmentVariable": "Dodaj zmienne środowiskowe",
       "EnvironmentVariableValueRequired": "Wprowadź wartość.",
       "PleaseCompleteForm": "Formularz jest niekompletny lub zawiera błędy. Sprawdź wprowadzone dane.",
-      "FailedToStartNewSession": "Utworzenie sesji nie powiodło się. \nSprawdź zakładkę „Skończone” na stronie sesji."
+      "FailedToStartNewSession": "Utworzenie sesji nie powiodło się. \nSprawdź zakładkę „Skończone” na stronie sesji.",
+      "ProxyDirectTCPNotSupported": "Bezpośrednie połączenie proxy TCP nie jest jeszcze obsługiwane"
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",
@@ -824,7 +822,8 @@
     "NoImageToDisplay": "Brak obrazów do wyświetlenia",
     "CustomizedImageSuccessfullyDeleted": "Dostosowany obraz został pomyślnie usunięty.",
     "DescImageResourceModified": "Limit zasobów został pomyślnie zmodyfikowany",
-    "DescImagePortsModified": "Pomyślnie zmodyfikowano porty obrazu"
+    "DescImagePortsModified": "Pomyślnie zmodyfikowano porty obrazu",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Jeśli zmodyfikujesz obraz, który został już zainstalowany, konieczne będzie jego ponowne zainstalowanie.</p><p>Modyfikacje nie zostaną zastosowane, dopóki obraz nie zostanie ponownie zainstalowany.\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "Predefiniowane ustawienia zasobów",
@@ -1189,7 +1188,8 @@
     "ShowOnlyChanged": "Wyświetl tylko zmiany",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Użyj akceleratora Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Wymaga wtyczki Backend.AI Hyperaccel LPU."
+    "RequireHyperaccelLPUPlugin": "Wymaga wtyczki Backend.AI Hyperaccel LPU.",
+    "SearchPlaceholder": "Wyszukiwanie"
   },
   "notification": {
     "SuccessfullyUpdated": "Pomyślnie zaktualizowano",
@@ -1569,11 +1569,5 @@
     "SettingTable": "Nakrycie stołu",
     "SelectColumnToDisplay": "Wybierz, które kolumny mają być wyświetlane",
     "SearchTableColumn": "Przeszukaj kolumny tabeli"
-  },
-  "setting": {
-    "SearchPlaceholder": "Wprowadź wyszukiwane hasło"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Jeśli zmodyfikujesz obraz, który został już zainstalowany, konieczne będzie jego ponowne zainstalowanie.</p><p>Modyfikacje nie zostaną zastosowane, dopóki obraz nie zostanie ponownie zainstalowany.\n\n</p>"
   }
 }

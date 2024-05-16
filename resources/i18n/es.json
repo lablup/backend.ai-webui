@@ -399,7 +399,26 @@
   },
   "dialog": {
     "warning": {
-      "DeleteForeverDesc": "ADVERTENCIA: los elementos seleccionados se eliminarán para siempre y no podrás restaurarlos."
+      "DeleteForeverDesc": "ADVERTENCIA: los elementos seleccionados se eliminarán para siempre y no podrás restaurarlos.",
+      "CannotBeUndone": "ATENCIÓN: ¡esto no se puede deshacer!",
+      "LogDeletion": "¿Estás seguro de que quieres borrar todos los mensajes de registro?",
+      "Required": "Requerido",
+      "WillBeAppliedToNewSessions": "Esta actualización se aplicará a las nuevas sesiones."
+    },
+    "ErrorOccurred": "Se ha producido un error",
+    "error": {
+      "Error": "Error"
+    },
+    "ask": {
+      "DoYouWantToProceed": "¿Quieres continuar?"
+    },
+    "title": {
+      "LetsDouble-Check": "Doble comprobación",
+      "Notice": "Aviso",
+      "DeleteForever": "¿Borrar para siempre?"
+    },
+    "hide": {
+      "DonotShowThisAgain": "No vuelvas a mostrar esto."
     }
   },
   "eduapi": {
@@ -463,7 +482,8 @@
     "Version": "Versión",
     "CustomizedImageSuccessfullyDeleted": "Imagen personalizada eliminada correctamente.",
     "DescImageResourceModified": "Límite de recursos modificado con éxito",
-    "DescImagePortsModified": "Puertos de imagen modificados exitosamente"
+    "DescImagePortsModified": "Puertos de imagen modificados exitosamente",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Si modifica una imagen que ya se ha instalado, deberá volver a instalarla.</p><p>Las modificaciones no se aplicarán hasta que se reinstale la imagen.\n\n</p>"
   },
   "explorer": {
     "InputTooShort": "InputTooShort",
@@ -1147,7 +1167,7 @@
       "Network": "Red",
       "Enable": "Permitir",
       "StartTimeMustBeInTheFuture": "La hora de inicio debe ser posterior a la hora actual.",
-      "EnqueueComputeSessionWarning": "Si lo configura en un valor mayor que los recursos disponibles actualmente, la creación de la sesión se retrasará en la cola hasta que esté disponible.",
+      "EnqueueComputeSessionWarning": "Recursos insuficientes. \nLa sesión puede estar pendiente.",
       "SessionName": "Nombre de la sesión",
       "ResetFormConfirm": "¿Quieres restablecer todas tus entradas?",
       "TemplateAndHistory": "Plantillas",
@@ -1160,7 +1180,6 @@
       "EnvironmentVariableDuplicateName": "Un nombre de variable que ya existe.",
       "Template": "Plantilla de sesión",
       "EnableAutomaticMiniumShmem": "Establecer la memoria compartida mínima",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Solo se permiten números enteros cuando el tamaño del clúster no es inferior a 2.",
       "StartAfter": "Empezar después:",
       "StartTimeDoesNotApply": "Si no se establece la hora de inicio, no se aplica.",
@@ -1175,7 +1194,8 @@
       "AddEnvironmentVariable": "Añadir variables de entorno",
       "EnvironmentVariableValueRequired": "Por favor, introduzca un valor.",
       "PleaseCompleteForm": "El formulario está incompleto o contiene errores. Compruebe los datos introducidos.",
-      "FailedToStartNewSession": "Error al crear la sesión. \nPor favor marque la pestaña 'TERMINADO' en la página de la sesión."
+      "FailedToStartNewSession": "Error al crear la sesión. \nPor favor marque la pestaña 'TERMINADO' en la página de la sesión.",
+      "ProxyDirectTCPNotSupported": "La conexión TCP directa de proxy aún no es compatible"
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",
@@ -1257,7 +1277,8 @@
     "ShowOnlyChanged": "Mostrar solo cambios",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Utilice el acelerador Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Requiere el complemento LPU Backend.AI Hyperaccel."
+    "RequireHyperaccelLPUPlugin": "Requiere el complemento LPU Backend.AI Hyperaccel.",
+    "SearchPlaceholder": "Buscar en"
   },
   "sidepanel": {
     "BackgroundTasks": "Tareas en curso",
@@ -1550,11 +1571,5 @@
     "SettingTable": "Ajuste de la tabla",
     "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
     "SearchTableColumn": "Buscar columnas de la tabla"
-  },
-  "setting": {
-    "SearchPlaceholder": "Ingrese el término de búsqueda"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Si modifica una imagen que ya se ha instalado, deberá volver a instalarla.</p><p>Las modificaciones no se aplicarán hasta que se reinstale la imagen.\n\n</p>"
   }
 }

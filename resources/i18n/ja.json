@@ -245,7 +245,7 @@
       "FolderAliasInvalid": "英語の大文字と小文字、数字、アンダースコア（_）、スラッシュ（/）、ダッシュ（-）のみを入力できます。",
       "PreOpenPortMaxCountLimit": "count}}までプレオープンポートを設定できる。",
       "StartTimeMustBeInTheFuture": "開始時刻は現在時刻より後でなければならない。",
-      "EnqueueComputeSessionWarning": "現在利用可能なリソースよりも大きく設定すると、セッションの作成は利用可能になるまでキュー内で遅延します。",
+      "EnqueueComputeSessionWarning": "リソースが不十分です。\nセッションが保留中の可能性があります。",
       "SessionName": "セッション名",
       "ResetFormConfirm": "入力した内容をすべて初期化しますか？",
       "TemplateAndHistory": "テンプレート",
@@ -258,7 +258,6 @@
       "EnvironmentVariableDuplicateName": "既に存在する変数名です。",
       "Template": "セッションテンプレート",
       "EnableAutomaticMiniumShmem": "最小共有メモリの設定",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "クラスター サイズが 2 以上の場合は、整数のみが許可されます。",
       "StartAfter": "次の後に開始します:",
       "StartTimeDoesNotApply": "開始時間が設定されていない場合は適用されません。",
@@ -273,7 +272,8 @@
       "AddEnvironmentVariable": "環境変数の追加",
       "EnvironmentVariableValueRequired": "値を入力してください。",
       "PleaseCompleteForm": "フォームに不備またはエラーがあります。入力内容をご確認ください。",
-      "FailedToStartNewSession": "セッションの作成に失敗しました。\nセッションページの「終了しました」タブをご確認ください。"
+      "FailedToStartNewSession": "セッションの作成に失敗しました。\nセッションページの「終了しました」タブをご確認ください。",
+      "ProxyDirectTCPNotSupported": "プロキシ直接 TCP 接続はまだサポートされていません"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -822,7 +822,8 @@
     "NoImageToDisplay": "画像情報がありません。",
     "CustomizedImageSuccessfullyDeleted": "カスタマイズされたイメージは正常に削除されました。",
     "DescImageResourceModified": "リソース制限が正常に変更されました",
-    "DescImagePortsModified": "イメージポートが正常に変更されました"
+    "DescImagePortsModified": "イメージポートが正常に変更されました",
+    "ModifyImageResourceLimitReinstallRequired": "<p>すでにインストールされているイメージを変更する場合は、イメージを再インストールする必要があります。</p><p>イメージが再インストールされるまで変更は適用されません。\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "リソースプリセット",
@@ -1187,7 +1188,8 @@
     "ShowOnlyChanged": "表示のみの変更",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Hyperaccel LPU アクセラレータを使用します。",
-    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU プラグインが必要です。"
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU プラグインが必要です。",
+    "SearchPlaceholder": "検索"
   },
   "notification": {
     "SuccessfullyUpdated": "正常に更新されました",
@@ -1567,11 +1569,5 @@
     "SettingTable": "テーブルセッティング",
     "SelectColumnToDisplay": "表示する列を選択します",
     "SearchTableColumn": "テーブルの列を検索する"
-  },
-  "setting": {
-    "SearchPlaceholder": "検索用語を入力してください"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>すでにインストールされているイメージを変更する場合は、イメージを再インストールする必要があります。</p><p>イメージが再インストールされるまで変更は適用されません。\n\n</p>"
   }
 }

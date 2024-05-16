@@ -933,6 +933,7 @@ const SessionLauncherPage = () => {
                   <ResourceAllocationFormItems
                     enableNumOfSessions
                     enableResourcePresets
+                    showRemainingWarning
                   />
                 </Card>
                 <Card

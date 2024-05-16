@@ -71,6 +71,7 @@ type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
 interface ResourceAllocationFormItemsProps {
   enableNumOfSessions?: boolean;
   enableResourcePresets?: boolean;
+  showRemainingWarning?: boolean;
   forceImageMinValues?: boolean;
 }
 
@@ -80,6 +81,7 @@ const ResourceAllocationFormItems: React.FC<
   enableNumOfSessions,
   enableResourcePresets,
   forceImageMinValues = false,
+  showRemainingWarning = false,
 }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
   const { t } = useTranslation();
@@ -129,10 +131,6 @@ const ResourceAllocationFormItems: React.FC<
   };
 
   const allocatablePresetNames = useMemo(() => {
-    const byPresetInfo = _.filter(checkPresetInfo?.presets, (preset) => {
-      return preset.allocatable;
-    }).map((preset) => preset.name);
-
     const bySliderLimit = _.filter(checkPresetInfo?.presets, (preset) => {
       if (
         typeof preset.resource_slots.mem === 'string' &&
@@ -198,17 +196,9 @@ const ResourceAllocationFormItems: React.FC<
     ).map((preset) => preset.name);
 
     return currentImageAcceleratorLimits.length > 0
-      ? baiClient._config?.always_enqueue_compute_session
-        ? bySliderLimit
-        : byPresetInfo
-      : _.intersection(
-          baiClient._config?.always_enqueue_compute_session
-            ? bySliderLimit
-            : byPresetInfo,
-          byImageAcceleratorLimits,
-        );
+      ? bySliderLimit
+      : _.intersection(bySliderLimit, byImageAcceleratorLimits);
   }, [
-    baiClient._config?.always_enqueue_compute_session,
     checkPresetInfo?.presets,
     resourceLimits.accelerators,
     resourceLimits.cpu?.max,
@@ -494,31 +484,21 @@ const ResourceAllocationFormItems: React.FC<
                         // TODO: set message
                       },
                       {
-                        warningOnly:
-                          baiClient._config?.always_enqueue_compute_session,
+                        warningOnly: true,
                         validator: async (rule, value: number) => {
-                          if (
-                            _.isNumber(remaining.cpu) &&
-                            value > remaining.cpu
-                          ) {
-                            return Promise.reject(
-                              baiClient._config?.always_enqueue_compute_session
-                                ? t(
-                                    'session.launcher.EnqueueComputeSessionWarning',
-                                    {
-                                      amount: remaining.cpu,
-                                    },
-                                  )
-                                : t(
-                                    'session.launcher.ErrorCanNotExceedRemaining',
-                                    {
-                                      amount: remaining.cpu,
-                                    },
-                                  ),
-                            );
-                          } else {
-                            return Promise.resolve();
+                          if (showRemainingWarning) {
+                            if (
+                              _.isNumber(remaining.cpu) &&
+                              value > remaining.cpu
+                            ) {
+                              return Promise.reject(
+                                t(
+                                  'session.launcher.EnqueueComputeSessionWarning',
+                                ),
+                              );
+                            }
                           }
+                          return Promise.resolve();
                         },
                       },
                     ]}
@@ -638,47 +618,25 @@ const ResourceAllocationFormItems: React.FC<
                                 },
                               },
                               {
-                                warningOnly:
-                                  baiClient._config
-                                    ?.always_enqueue_compute_session,
+                                warningOnly: true,
                                 validator: async (rule, value: string) => {
-                                  if (
-                                    !_.isElement(value) &&
-                                    resourceLimits.mem &&
-                                    compareNumberWithUnits(
-                                      value,
-                                      remaining.mem + 'b',
-                                    ) > 0
-                                  ) {
-                                    return Promise.reject(
-                                      baiClient._config
-                                        ?.always_enqueue_compute_session
-                                        ? t(
-                                            'session.launcher.EnqueueComputeSessionWarning',
-                                            {
-                                              amount:
-                                                iSizeToSize(
-                                                  remaining.mem + 'b',
-                                                  'g',
-                                                  3,
-                                                )?.numberUnit + 'iB',
-                                            },
-                                          )
-                                        : t(
-                                            'session.launcher.ErrorCanNotExceedRemaining',
-                                            {
-                                              amount:
-                                                iSizeToSize(
-                                                  remaining.mem + 'b',
-                                                  'g',
-                                                  3,
-                                                )?.numberUnit + 'iB',
-                                            },
-                                          ),
-                                    );
-                                  } else {
-                                    return Promise.resolve();
+                                  if (showRemainingWarning) {
+                                    if (
+                                      !_.isElement(value) &&
+                                      resourceLimits.mem &&
+                                      compareNumberWithUnits(
+                                        value,
+                                        remaining.mem + 'b',
+                                      ) > 0
+                                    ) {
+                                      return Promise.reject(
+                                        t(
+                                          'session.launcher.EnqueueComputeSessionWarning',
+                                        ),
+                                      );
+                                    }
                                   }
+                                  return Promise.resolve();
                                 },
                               },
                             ]}
@@ -926,43 +884,28 @@ const ResourceAllocationFormItems: React.FC<
                             },
                           },
                           {
-                            warningOnly:
-                              baiClient._config?.always_enqueue_compute_session,
+                            warningOnly: true,
                             validator: async (rule: any, value: number) => {
-                              if (
-                                _.isNumber(
-                                  remaining.accelerators[
-                                    currentAcceleratorType
-                                  ],
-                                ) &&
-                                value >
-                                  remaining.accelerators[currentAcceleratorType]
-                              ) {
-                                return Promise.reject(
-                                  baiClient._config
-                                    ?.always_enqueue_compute_session
-                                    ? t(
-                                        'session.launcher.EnqueueComputeSessionWarning',
-                                        {
-                                          amount:
-                                            remaining.accelerators[
-                                              currentAcceleratorType
-                                            ],
-                                        },
-                                      )
-                                    : t(
-                                        'session.launcher.ErrorCanNotExceedRemaining',
-                                        {
-                                          amount:
-                                            remaining.accelerators[
-                                              currentAcceleratorType
-                                            ],
-                                        },
-                                      ),
-                                );
-                              } else {
-                                return Promise.resolve();
+                              if (showRemainingWarning) {
+                                if (
+                                  _.isNumber(
+                                    remaining.accelerators[
+                                      currentAcceleratorType
+                                    ],
+                                  ) &&
+                                  value >
+                                    remaining.accelerators[
+                                      currentAcceleratorType
+                                    ]
+                                ) {
+                                  return Promise.reject(
+                                    t(
+                                      'session.launcher.EnqueueComputeSessionWarning',
+                                    ),
+                                  );
+                                }
                               }
+                              return Promise.resolve();
                             },
                           },
                         ]}
@@ -1114,18 +1057,19 @@ const ResourceAllocationFormItems: React.FC<
                     {
                       warningOnly: true,
                       validator: async (rule, value: number) => {
-                        if (
-                          sessionSliderLimitAndRemaining &&
-                          value > sessionSliderLimitAndRemaining.remaining
-                        ) {
-                          return Promise.reject(
-                            t('session.launcher.EnqueueComputeSessionWarning', {
-                              amount: sessionSliderLimitAndRemaining.remaining,
-                            }),
-                          );
-                        } else {
-                          return Promise.resolve();
+                        if (showRemainingWarning) {
+                          if (
+                            sessionSliderLimitAndRemaining &&
+                            value > sessionSliderLimitAndRemaining.remaining
+                          ) {
+                            return Promise.reject(
+                              t(
+                                'session.launcher.EnqueueComputeSessionWarning',
+                              ),
+                            );
+                          }
                         }
+                        return Promise.resolve();
                       },
                     },
                   ]}
@@ -1222,25 +1166,22 @@ const ResourceAllocationFormItems: React.FC<
                         required
                         rules={[
                           {
-                            warningOnly:
-                              baiClient._config?.always_enqueue_compute_session,
+                            warningOnly: true,
                             validator: async (rule, value: number) => {
-                              const minCPU = _.min([
-                                remaining.cpu,
-                                keypairResourcePolicy.max_containers_per_session,
-                              ]);
-                              if (_.isNumber(minCPU) && value > minCPU) {
-                                return Promise.reject(
-                                  t(
-                                    'session.launcher.EnqueueComputeSessionWarning',
-                                    {
-                                      amount: minCPU,
-                                    },
-                                  ),
-                                );
-                              } else {
-                                return Promise.resolve();
+                              if (showRemainingWarning) {
+                                const minCPU = _.min([
+                                  remaining.cpu,
+                                  keypairResourcePolicy.max_containers_per_session,
+                                ]);
+                                if (_.isNumber(minCPU) && value > minCPU) {
+                                  return Promise.reject(
+                                    t(
+                                      'session.launcher.EnqueueComputeSessionWarning',
+                                    ),
+                                  );
+                                }
                               }
+                              return Promise.resolve();
                             },
                           },
                         ]}

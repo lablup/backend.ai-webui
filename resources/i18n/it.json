@@ -245,7 +245,7 @@
       "FolderAliasInvalid": "Sono consentiti solo caratteri alfanumerici, carattere di sottolineatura (_), barra (/) e trattino (-).",
       "PreOpenPortMaxCountLimit": "È possibile impostare fino a {{count}} porte pre-aperte.",
       "StartTimeMustBeInTheFuture": "L'ora di inizio deve essere successiva all'ora corrente.",
-      "EnqueueComputeSessionWarning": "Se lo imposti su un valore maggiore rispetto alle risorse attualmente disponibili, la creazione della sessione verrà ritardata nella coda finché non diventerà disponibile.",
+      "EnqueueComputeSessionWarning": "Risorse insufficienti. \nLa sessione potrebbe essere in sospeso.",
       "SessionName": "Nome della sessione",
       "ResetFormConfirm": "Vuoi reimpostare tutte le tue voci?",
       "TemplateAndHistory": "Modelli",
@@ -258,7 +258,6 @@
       "EnvironmentVariableDuplicateName": "Un nome di variabile già esistente.",
       "Template": "Modello di sessione",
       "EnableAutomaticMiniumShmem": "Impostare la memoria condivisa minima",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "È consentito solo un numero intero quando la dimensione del cluster non è inferiore a 2.",
       "StartAfter": "Inizia dopo:",
       "StartTimeDoesNotApply": "Se l'ora di inizio non è impostata, non si applica.",
@@ -273,7 +272,8 @@
       "AddEnvironmentVariable": "Aggiungere le variabili d'ambiente",
       "EnvironmentVariableValueRequired": "Inserire un valore.",
       "PleaseCompleteForm": "Il modulo è incompleto o contiene errori. Si prega di controllare i dati inseriti.",
-      "FailedToStartNewSession": "Creazione della sessione non riuscita. \nControlla la scheda \"FINITO\" nella pagina della sessione."
+      "FailedToStartNewSession": "Creazione della sessione non riuscita. \nControlla la scheda \"FINITO\" nella pagina della sessione.",
+      "ProxyDirectTCPNotSupported": "La connessione TCP diretta proxy non è ancora supportata"
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",
@@ -822,7 +822,8 @@
     "NoImageToDisplay": "Nessuna immagine da visualizzare",
     "CustomizedImageSuccessfullyDeleted": "Immagine personalizzata eliminata con successo.",
     "DescImageResourceModified": "Limite delle risorse modificato con successo",
-    "DescImagePortsModified": "Porte immagine modificate con successo"
+    "DescImagePortsModified": "Porte immagine modificate con successo",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Se modifichi un'immagine che è già stata installata, dovrai reinstallare l'immagine.</p><p>Le modifiche non verranno applicate finché l'immagine non verrà reinstallata.\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "Preimpostazioni delle risorse",
@@ -1187,7 +1188,8 @@
     "ShowOnlyChanged": "Visualizza solo modifiche",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Utilizzare l'acceleratore Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Richiede il plugin Backend.AI Hyperaccel LPU."
+    "RequireHyperaccelLPUPlugin": "Richiede il plugin Backend.AI Hyperaccel LPU.",
+    "SearchPlaceholder": "Ricerca"
   },
   "notification": {
     "SuccessfullyUpdated": "Aggiornato con successo",
@@ -1567,11 +1569,5 @@
     "SettingTable": "Impostazione della tabella",
     "SelectColumnToDisplay": "Seleziona le colonne da visualizzare",
     "SearchTableColumn": "Cerca colonne della tabella"
-  },
-  "setting": {
-    "SearchPlaceholder": "Inserisci il termine di ricerca"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Se modifichi un'immagine che è già stata installata, dovrai reinstallare l'immagine.</p><p>Le modifiche non verranno applicate finché l'immagine non verrà reinstallata.\n\n</p>"
   }
 }

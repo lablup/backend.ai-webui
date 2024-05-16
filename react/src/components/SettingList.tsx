@@ -81,7 +81,7 @@ const SettingList: React.FC<SettingPageProps> = ({
         </Typography.Title> */}
         <Input
           prefix={<SearchOutlined />}
-          placeholder={placeholder || t('setting.SearchPlaceholder')}
+          placeholder={placeholder || t('settings.SearchPlaceholder')}
           onChange={(e) => setSearchValue(e.target.value)}
           value={searchValue}
           style={{ flex: 1, minWidth: 50 }}

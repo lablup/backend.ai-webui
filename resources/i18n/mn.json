@@ -245,7 +245,7 @@
       "FolderAliasInvalid": "Зөвхөн үсэг, тоон тэмдэгт, доогуур зураас (_), ташуу зураас (/), зураас (-) ашиглахыг зөвшөөрнө.",
       "StartTimeMustBeInTheFuture": "Эхлэх цаг нь одоогийн цагаас хойш байх ёстой.",
       "PreOpenPortMaxCountLimit": "Та {{count}} хүртэл урьдчилан нээлттэй порт тохируулж болно.",
-      "EnqueueComputeSessionWarning": "Хэрэв та үүнийг одоо байгаа нөөцөөс том болговол сесс үүсгэх нь боломжтой болох хүртэл дараалалд саатах болно.",
+      "EnqueueComputeSessionWarning": "Хангалтгүй нөөц. \nХурал хүлээгдэж магадгүй.",
       "SessionName": "Сеанс нэр",
       "ResetFormConfirm": "Та бүх оруулгуудаа дахин тохируулахыг хүсэж байна уу?",
       "TemplateAndHistory": "Загварууд",
@@ -258,11 +258,23 @@
       "EnvironmentVariableDuplicateName": "Энэ хувьсагчийн нэр аль хэдийн байна.",
       "Template": "Сеанс загвар",
       "EnableAutomaticShmem": "Автомат хуваалцсан санах ой",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Кластерын хэмжээ 2-оос багагүй тохиолдолд зөвхөн бүхэл тоог зөвшөөрнө.",
       "StartAfter": "Дараа нь эхлэх:",
       "StartTimeDoesNotApply": "Хэрэв эхлэх цагийг тохируулаагүй бол энэ нь хамаарахгүй.",
-      "FailedToStartNewSession": "Сеанс үүсгэж чадсангүй. \nСеанс хуудасны 'Дууссан' табыг шалгана уу."
+      "FailedToStartNewSession": "Сеанс үүсгэж чадсангүй. \nСеанс хуудасны 'Дууссан' табыг шалгана уу.",
+      "EnvironmentVariableValueRequired": "Утга оруулна уу.",
+      "AddEnvironmentVariable": "Орчны хувьсагчдыг нэмнэ үү",
+      "NeoSwitchDescription": "Та \"{{launcher}}\" сесс эхлүүлэгч ашиглаж байна.",
+      "PreviousLauncher": "Сонгодог",
+      "NeoLauncher": "NEO",
+      "EnableAutomaticMiniumShmem": "Хамгийн бага хуваалцсан санах ойг тохируулах",
+      "MiniumAllocation": "Хамгийн бага шаардлага",
+      "MiniumAllocationTooltip": "Сонгосон ажиллах орчны хамгийн бага шаардлагыг сонгоно уу",
+      "InteractiveModeDesc": "jupyter notebook, visual studio код гэх мэтээр интерактив код үүсгэх, турших, ажиллуулах боломжийг танд олгоно.",
+      "BatchModeDesc": "Кодоо олон зангилаатай кластераар ажиллуул.",
+      "PleaseCompleteForm": "Маягт дутуу эсвэл алдаатай байна. \nОруулсан мэдээллээ шалгана уу.",
+      "SkipToConfirmAndLaunch": "Шүүмж рүү алгасах",
+      "ProxyDirectTCPNotSupported": "Прокси шууд TCP холболт хараахан дэмжигдээгүй байна"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -334,7 +346,8 @@
       "PleaseFollowSessionNameRule": "Дор хаяж 4 үсэг, тоо, '.', '_', '-' гэсэн хослолыг оруулна уу.",
       "SessionNameShouldStartWith": "Энэ нь цагаан толгойн үсэг, тоо эсвэл \"_\" -ээр эхлэх ёстой.",
       "SessionNameShouldEndWith": "Энэ нь цагаан толгойн үсэг, тоо эсвэл '_'-ээр төгссөн байх ёстой.",
-      "SessionNameInvalidCharacter": "Нэрийн дунд хэсэгт зөвхөн цагаан толгойн үсэг, тоо, '_' байж болно."
+      "SessionNameInvalidCharacter": "Нэрийн дунд хэсэгт зөвхөн цагаан толгойн үсэг, тоо, '_' байж болно.",
+      "SessionNameTooShort": "Дор хаяж 4 тэмдэгт оруулна уу."
     },
     "AlreadyTerminatingSession": "Сессийг аль хэдийн дуусгаж байна.",
     "NoSessionToDisplay": "Харуулах сесс алга",
@@ -426,7 +439,10 @@
     "OK": "БОЛЖ БАЙНА УУ",
     "Download": "Татаж авах",
     "Clone": "Клон",
-    "Config": "Тохиргоо"
+    "Config": "Тохиргоо",
+    "Previous": "Өмнөх",
+    "Next": "Дараачийн",
+    "PushToImage": "Тохируулсан зураг руу түлхэх сесс"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -640,7 +656,8 @@
       "DeleteForever": "Бүрмөсөн устгах",
       "FolderRestored": "{{ folderName }} хавтас сэргээгдсэн.",
       "FolderDeletedForever": "{{ folderName }} хавтас бүрмөсөн устгагдсан.",
-      "MovedToTrashBin": "{{ folderName }} фолдерыг хогийн сав руу зөөв."
+      "MovedToTrashBin": "{{ folderName }} фолдерыг хогийн сав руу зөөв.",
+      "MoveToTrashBin": "Хогийн сав руу шилжүүлнэ үү"
     },
     "explorer": {
       "Delete": "Устгах ...",
@@ -806,7 +823,8 @@
     "NoImageToDisplay": "Үзүүлэх зураг байхгүй",
     "CustomizedImageSuccessfullyDeleted": "Тохируулсан зургийг амжилттай устгалаа.",
     "DescImageResourceModified": "Нөөцийн хязгаарыг амжилттай өөрчилсөн",
-    "DescImagePortsModified": "Зургийн портуудыг амжилттай өөрчилсөн"
+    "DescImagePortsModified": "Зургийн портуудыг амжилттай өөрчилсөн",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Хэрэв та аль хэдийн суулгасан зургийг өөрчилбөл зургийг дахин суулгах шаардлагатай болно.</p><p>Зургийг дахин суулгах хүртэл өөрчлөлтийг хийхгүй.\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",
@@ -1168,7 +1186,11 @@
     "RequireWarboyPlugin": "Backend.AI Warboy Plugin шаардлагатай.",
     "Plugins": "Plugins",
     "OpenSourceCUDAGPUsupport": "Нээлттэй эхийн CUDA GPU дэмжлэг",
-    "ShowOnlyChanged": "Зөвхөн өөрчлөлтүүдийг харуулах"
+    "ShowOnlyChanged": "Зөвхөн өөрчлөлтүүдийг харуулах",
+    "HyperaccelLPUsupport": "Hyperaccel LPU",
+    "DescHyperaccelLPUsupport": "Hyperaccel LPU хурдасгуурыг ашигла.",
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Plugin шаардлагатай.",
+    "SearchPlaceholder": "Хайх"
   },
   "notification": {
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
@@ -1418,7 +1440,8 @@
     "RequireOTP": "OTP бичнэ үү."
   },
   "inputLimit": {
-    "4to64chars": "(4~64 тэмдэгт)"
+    "4to64chars": "(4~64 тэмдэгт)",
+    "4to32chars": "(4~32 тэмдэгт)"
   },
   "storageHost": {
     "quotaSettings": {
@@ -1547,14 +1570,5 @@
     "SettingTable": "Хүснэгтийн тохиргоо",
     "SelectColumnToDisplay": "Харуулах багануудыг сонгоно уу",
     "SearchTableColumn": "Хүснэгтийн багануудыг хайх"
-  },
-  "setting": {
-    "SearchPlaceholder": "Хайлтын нэр томъёог оруулна уу",
-    "HyperaccelLPUsupport": "Hyperaccel LPU",
-    "DescHyperaccelLPUsupport": "Hyperaccel LPU хурдасгуурыг ашигла.",
-    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Plugin шаардлагатай."
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Хэрэв та аль хэдийн суулгасан зургийг өөрчилбөл зургийг дахин суулгах шаардлагатай болно.</p><p>Зургийг дахин суулгах хүртэл өөрчлөлтийг хийхгүй.\n\n</p>"
   }
 }

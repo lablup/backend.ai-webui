@@ -245,7 +245,7 @@
       "FolderAliasInvalid": "只能输入大小写字母、数字、下划线 (_)、斜线 (/) 和破折号 (-)。",
       "PreOpenPortMaxCountLimit": "您最多可以设置 {{count}} 个预开放端口。",
       "StartTimeMustBeInTheFuture": "开始时间必须在当前时间之后。",
-      "EnqueueComputeSessionWarning": "如果将其设置为大于当前可用资源，则会话创建将在队列中延迟，直到可用。",
+      "EnqueueComputeSessionWarning": "资源不足。\n会话可能处于待处理状态。",
       "SessionName": "会话名称",
       "ResetFormConfirm": "您想重置所有条目吗？",
       "TemplateAndHistory": "模板",
@@ -258,7 +258,6 @@
       "EnvironmentVariableDuplicateName": "已经存在的变量名。",
       "Template": "会议模板",
       "EnableAutomaticMiniumShmem": "设置最小共享内存",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "当簇大小不小于 2 时，只允许使用整数。",
       "StartAfter": "之后开始：",
       "StartTimeDoesNotApply": "如果未设置开始时间，则不适用。",
@@ -273,7 +272,8 @@
       "AddEnvironmentVariable": "添加环境变量",
       "EnvironmentVariableValueRequired": "请输入数值。",
       "PleaseCompleteForm": "表格不完整或包含错误。请检查输入内容。",
-      "FailedToStartNewSession": "会话创建失败。\n请检查会话页面上的“已完成”选项卡。"
+      "FailedToStartNewSession": "会话创建失败。\n请检查会话页面上的“已完成”选项卡。",
+      "ProxyDirectTCPNotSupported": "尚不支持代理直接 TCP 连接"
     },
     "Preparing": "正在准备...",
     "PreparingSession": "正在准备会议...",
@@ -822,7 +822,8 @@
     "NoImageToDisplay": "无图像显示",
     "CustomizedImageSuccessfullyDeleted": "自定义图片已成功删除。",
     "DescImageResourceModified": "资源限制成功修改",
-    "DescImagePortsModified": "图像端口修改成功"
+    "DescImagePortsModified": "图像端口修改成功",
+    "ModifyImageResourceLimitReinstallRequired": "<p>如果修改已安装的映像，则需要重新安装该映像。</p><p>在重新安装映像之前，修改不会应用。\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "资源预设",
@@ -1187,7 +1188,8 @@
     "ShowOnlyChanged": "仅显示更改",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "使用Hyperaccel LPU加速器。",
-    "RequireHyperaccelLPUPlugin": "需要 Backend.AI Hyperaccel LPU 插件。"
+    "RequireHyperaccelLPUPlugin": "需要 Backend.AI Hyperaccel LPU 插件。",
+    "SearchPlaceholder": "搜索"
   },
   "notification": {
     "SuccessfullyUpdated": "成功更新",
@@ -1567,11 +1569,5 @@
     "SettingTable": "桌面设置",
     "SelectColumnToDisplay": "选择要显示的列",
     "SearchTableColumn": "搜索表格列"
-  },
-  "setting": {
-    "SearchPlaceholder": "输入搜索词"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>如果修改已安装的映像，则需要重新安装该映像。</p><p>在重新安装映像之前，修改不会应用。\n\n</p>"
   }
 }

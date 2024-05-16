@@ -251,7 +251,7 @@
       "FolderAliasInvalid": "Hanya karakter alfanumerik, garis bawah (_), garis miring (/), dan tanda hubung (-) yang diperbolehkan.",
       "PreOpenPortMaxCountLimit": "Anda dapat mengatur hingga {{count}} port yang telah dibuka sebelumnya.",
       "StartTimeMustBeInTheFuture": "Waktu mulai harus setelah waktu saat ini.",
-      "EnqueueComputeSessionWarning": "Jika Anda mengaturnya lebih besar dari sumber daya yang tersedia saat ini, pembuatan sesi akan tertunda dalam antrean hingga tersedia.",
+      "EnqueueComputeSessionWarning": "Sumber daya tidak mencukupi. \nSesi mungkin tertunda.",
       "SessionName": "Nama sesi",
       "ResetFormConfirm": "Apakah Anda ingin mengatur ulang semua entri Anda?",
       "TemplateAndHistory": "Templat",
@@ -264,13 +264,17 @@
       "EnvironmentVariableDuplicateName": "Nama variabel yang sudah ada.",
       "Template": "Templat Sesi",
       "EnableAutomaticShmem": "Memori bersama otomatis",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Hanya bilangan bulat yang diperbolehkan jika ukuran cluster tidak kurang dari 2.",
       "StartAfter": "Mulai setelah:",
       "StartTimeDoesNotApply": "Jika waktu mulai tidak ditetapkan, maka tidak berlaku.",
       "PreviousLauncher": "Classic",
       "PleaseCompleteForm": "Formulir tidak lengkap atau mengandung kesalahan. Silakan periksa masukan Anda.",
-      "FailedToStartNewSession": "Pembuatan sesi gagal. \nSilakan periksa tab 'SELESAI' di halaman sesi."
+      "FailedToStartNewSession": "Pembuatan sesi gagal. \nSilakan periksa tab 'SELESAI' di halaman sesi.",
+      "EnvironmentVariableValueRequired": "Silakan masukkan nilai.",
+      "EnableAutomaticMiniumShmem": "Mengatur memori bersama minimum",
+      "MiniumAllocation": "Persyaratan minimum",
+      "MiniumAllocationTooltip": "Pilih sebagai persyaratan minimum untuk lingkungan berjalan yang dipilih",
+      "ProxyDirectTCPNotSupported": "Koneksi TCP langsung proxy belum didukung"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -400,7 +404,8 @@
     "SessionName": "Nama Sesi",
     "SessionId": "Id Sesi",
     "EnvironmentAndVersion": "Lingkungan dan Versi",
-    "Tags": "Tag"
+    "Tags": "Tag",
+    "Agents": "Agen"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -651,7 +656,8 @@
       "DeleteForever": "Hapus selamanya",
       "FolderRestored": "Folder {{ folderName }} telah dipulihkan.",
       "FolderDeletedForever": "Folder {{ folderName }} telah dihapus selamanya.",
-      "MovedToTrashBin": "Folder {{ folderName }} telah dipindahkan ke tempat sampah."
+      "MovedToTrashBin": "Folder {{ folderName }} telah dipindahkan ke tempat sampah.",
+      "MoveToTrashBin": "Pindah ke tempat sampah"
     },
     "explorer": {
       "Delete": "Menghapus...",
@@ -702,7 +708,8 @@
       "EmptyFilesAndFoldersAreNotUploaded": "File kosong dan folder kosong tidak diunggah",
       "FolderAlreadyExists": "Folder yang akan diunggah sudah ada.",
       "NumberOfSFTPSessionsExceededTitle": "Mencapai batas jumlah sesi unggahan yang sedang berjalan",
-      "NumberOfSFTPSessionsExceededBody": "Anda menjalankan semua sesi unggahan yang tersedia yang diizinkan untuk Anda buat. Hentikan sesi unggahan yang tidak terpakai sebelum memulai sesi baru."
+      "NumberOfSFTPSessionsExceededBody": "Anda menjalankan semua sesi unggahan yang tersedia yang diizinkan untuk Anda buat. Hentikan sesi unggahan yang tidak terpakai sebelum memulai sesi baru.",
+      "DownloadNotAllowed": "Mengunduh file/folder tidak diperbolehkan di folder ini."
     },
     "invitation": {
       "NoValidEmails": "Tidak ada email valid yang dimasukkan",
@@ -816,7 +823,8 @@
     "NoImageToDisplay": "Tidak ada gambar yang akan ditampilkan",
     "CustomizedImageSuccessfullyDeleted": "Gambar yang disesuaikan berhasil dihapus.",
     "DescImageResourceModified": "Batas sumber daya berhasil diubah",
-    "DescImagePortsModified": "Port Gambar berhasil dimodifikasi"
+    "DescImagePortsModified": "Port Gambar berhasil dimodifikasi",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Jika Anda memodifikasi gambar yang telah diinstal, Anda perlu menginstal ulang gambar tersebut.</p><p>Modifikasi tidak akan diterapkan sampai gambar tersebut diinstal ulang.\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "Preset Sumber Daya",
@@ -1181,7 +1189,8 @@
     "ShowOnlyChanged": "Hanya Tampilan yang Berubah",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Gunakan akselerator Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Memerlukan Plugin LPU Backend.AI Hyperaccel."
+    "RequireHyperaccelLPUPlugin": "Memerlukan Plugin LPU Backend.AI Hyperaccel.",
+    "SearchPlaceholder": "Pencarian"
   },
   "notification": {
     "SuccessfullyUpdated": "Berhasil Diperbarui",
@@ -1561,11 +1570,5 @@
     "SettingTable": "Penataan meja",
     "SelectColumnToDisplay": "Pilih kolom yang akan ditampilkan",
     "SearchTableColumn": "Cari kolom tabel"
-  },
-  "setting": {
-    "SearchPlaceholder": "Masukkan Istilah Pencarian"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Jika Anda memodifikasi gambar yang telah diinstal, Anda perlu menginstal ulang gambar tersebut.</p><p>Modifikasi tidak akan diterapkan sampai gambar tersebut diinstal ulang.\n\n</p>"
   }
 }
