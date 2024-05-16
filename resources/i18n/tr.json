@@ -258,7 +258,6 @@
       "EnvironmentVariableDuplicateName": "Zaten var olan bir değişken adı.",
       "Template": "Oturum Şablonu",
       "EnableAutomaticMiniumShmem": "Minimum paylaşılan belleği ayarlama",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Küme boyutu 2'den az olmadığında yalnızca tam sayılara izin verilir.",
       "StartAfter": "Şundan sonra başla:",
       "StartTimeDoesNotApply": "Başlangıç ​​zamanı ayarlanmamışsa geçerli değildir.",
@@ -273,7 +272,8 @@
       "AddEnvironmentVariable": "Ortam değişkenleri ekleme",
       "EnvironmentVariableValueRequired": "Lütfen bir değer girin.",
       "PleaseCompleteForm": "Form eksik veya hatalar içeriyor. Lütfen girdilerinizi kontrol edin.",
-      "FailedToStartNewSession": "Oturum oluşturulamadı. \nLütfen oturum sayfasındaki 'bitmiş' sekmesini kontrol edin."
+      "FailedToStartNewSession": "Oturum oluşturulamadı. \nLütfen oturum sayfasındaki 'bitmiş' sekmesini kontrol edin.",
+      "ProxyDirectTCPNotSupported": "Proxy doğrudan TCP bağlantısı henüz desteklenmiyor"
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -466,7 +466,9 @@
     "Allocation": "Tahsis",
     "Utilization": "Kullanım",
     "DiskPerc": "Disk %",
-    "NoAgentToDisplay": "Görüntülenecek Temsilci Yok"
+    "NoAgentToDisplay": "Görüntülenecek Temsilci Yok",
+    "AutoRefreshEvery5s": "Her 5 saniyede bir otomatik yenile",
+    "Agent": "Ajan"
   },
   "general": {
     "cores": "çekirdek",
@@ -820,7 +822,8 @@
     "NoImageToDisplay": "Görüntülenecek Görüntü Yok",
     "CustomizedImageSuccessfullyDeleted": "Özelleştirilmiş resim başarıyla silindi.",
     "DescImageResourceModified": "Kaynak sınırı başarıyla değiştirildi",
-    "DescImagePortsModified": "Görüntü Bağlantı Noktaları başarıyla değiştirildi"
+    "DescImagePortsModified": "Görüntü Bağlantı Noktaları başarıyla değiştirildi",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Daha önceden yüklenmiş bir görseli değiştirirseniz görseli yeniden yüklemeniz gerekir.</p><p>Resim yeniden yüklenene kadar değişiklikler uygulanmayacaktır.\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "Kaynak Ön Ayarları",
@@ -1185,7 +1188,8 @@
     "ShowOnlyChanged": "Yalnızca Değişiklikleri Görüntüle",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Hyperaccel LPU hızlandırıcısını kullanın.",
-    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Eklentisi gerektirir."
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU Eklentisi gerektirir.",
+    "SearchPlaceholder": "Arama"
   },
   "notification": {
     "SuccessfullyUpdated": "Başarıyla güncellendi",
@@ -1575,11 +1579,5 @@
     "SettingTable": "Tablo Ayarı",
     "SelectColumnToDisplay": "Görüntülenecek sütunları seçin",
     "SearchTableColumn": "Tablo sütunlarında arama yapın"
-  },
-  "setting": {
-    "SearchPlaceholder": "Arama terimini gir"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Daha önceden yüklenmiş bir görseli değiştirirseniz görseli yeniden yüklemeniz gerekir.</p><p>Resim yeniden yüklenene kadar değişiklikler uygulanmayacaktır.\n\n</p>"
   }
 }

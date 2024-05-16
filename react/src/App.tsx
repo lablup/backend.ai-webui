@@ -37,6 +37,7 @@ const SessionLauncherPage = React.lazy(
 const NeoSessionLauncherSwitchAlert = React.lazy(
   () => import('./components/NeoSessionLauncherSwitchAlert'),
 );
+const ResourcesPage = React.lazy(() => import('./pages/ResourcesPage'));
 
 const router = createBrowserRouter([
   {
@@ -152,6 +153,7 @@ const router = createBrowserRouter([
       {
         path: '/agent',
         handle: { labelKey: 'webui.menu.ComputationResources' },
+        Component: ResourcesPage,
       },
       {
         path: '/settings',

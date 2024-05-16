@@ -105,7 +105,7 @@ const ManageImageResourceLimitModal: React.FC<BAIModalProps> = ({
         content: (
           <>
             <Trans
-              i18nKey={'envrionment.ModifyImageResourceLimitReinstallRequired'}
+              i18nKey={'environment.ModifyImageResourceLimitReinstallRequired'}
             />
           </>
         ),

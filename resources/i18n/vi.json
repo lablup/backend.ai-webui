@@ -244,7 +244,7 @@
       "Enable": "Cho phép",
       "FolderAliasInvalid": "Chỉ cho phép các ký tự chữ và số, dấu gạch dưới (_), dấu gạch chéo (/) và dấu gạch ngang (-).",
       "StartTimeMustBeInTheFuture": "Thời gian bắt đầu phải sau thời gian hiện tại.",
-      "EnqueueComputeSessionWarning": "Nếu bạn đặt nó lớn hơn tài nguyên hiện có, việc tạo phiên sẽ bị trì hoãn trong hàng đợi cho đến khi tài nguyên đó có sẵn.",
+      "EnqueueComputeSessionWarning": "Nguồn lực không đủ. \nPhiên có thể đang chờ xử lý.",
       "SessionName": "Tên phiên",
       "ResetFormConfirm": "Bạn có muốn đặt lại tất cả các mục nhập của mình không?",
       "TemplateAndHistory": "Mẫu",
@@ -258,7 +258,6 @@
       "Template": "Mẫu phiên",
       "EnableAutomaticMiniumShmem": "Đặt bộ nhớ chia sẻ tối thiểu",
       "PreOpenPortMaxCountLimit": "Bạn có thể thiết lập tối đa {{count}} cổng mở trước.",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Chỉ cho phép số nguyên khi kích thước cụm không nhỏ hơn 2.",
       "StartAfter": "Bắt đầu sau:",
       "StartTimeDoesNotApply": "Nếu thời gian bắt đầu không được đặt, nó sẽ không được áp dụng.",
@@ -273,7 +272,8 @@
       "AddEnvironmentVariable": "Thêm biến môi trường",
       "EnvironmentVariableValueRequired": "Vui lòng nhập một giá trị.",
       "PleaseCompleteForm": "Biểu mẫu không đầy đủ hoặc có lỗi. \nVui lòng kiểm tra đầu vào của bạn.",
-      "FailedToStartNewSession": "Tạo phiên không thành công. \nVui lòng kiểm tra tab 'Đã kết thúc' trên trang phiên."
+      "FailedToStartNewSession": "Tạo phiên không thành công. \nVui lòng kiểm tra tab 'Đã kết thúc' trên trang phiên.",
+      "ProxyDirectTCPNotSupported": "Kết nối TCP trực tiếp proxy chưa được hỗ trợ"
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",
@@ -466,7 +466,9 @@
     "Allocation": "Phân bổ",
     "Utilization": "Sử dụng",
     "DiskPerc": "Đĩa %",
-    "NoAgentToDisplay": "Không có đại lý để hiển thị"
+    "NoAgentToDisplay": "Không có đại lý để hiển thị",
+    "AutoRefreshEvery5s": "Tự động làm mới sau mỗi 5 giây",
+    "Agent": "Đại lý"
   },
   "general": {
     "cores": "lõi",
@@ -820,7 +822,8 @@
     "NoImageToDisplay": "Không có hình ảnh để hiển thị",
     "CustomizedImageSuccessfullyDeleted": "Hình ảnh tùy chỉnh đã được xóa thành công.",
     "DescImageResourceModified": "Đã sửa đổi giới hạn tài nguyên thành công",
-    "DescImagePortsModified": "Cổng hình ảnh được sửa đổi thành công"
+    "DescImagePortsModified": "Cổng hình ảnh được sửa đổi thành công",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Nếu bạn sửa đổi một hình ảnh đã được cài đặt, bạn sẽ cần phải cài đặt lại hình ảnh đó.</p><p>Các sửa đổi sẽ không được áp dụng cho đến khi hình ảnh được cài đặt lại.\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "Cài đặt trước tài nguyên",
@@ -1185,7 +1188,8 @@
     "ShowOnlyChanged": "Chỉ hiển thị các thay đổi",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Sử dụng bộ tăng tốc LPU Hyperaccel.",
-    "RequireHyperaccelLPUPlugin": "Yêu cầu Plugin LPU Backend.AI Hyperaccel."
+    "RequireHyperaccelLPUPlugin": "Yêu cầu Plugin LPU Backend.AI Hyperaccel.",
+    "SearchPlaceholder": "Tìm kiếm"
   },
   "notification": {
     "SuccessfullyUpdated": "Cập nhật thành công",
@@ -1575,11 +1579,5 @@
     "SettingTable": "Cài đặt bảng",
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
     "SearchTableColumn": "Tìm kiếm các cột trong bảng"
-  },
-  "setting": {
-    "SearchPlaceholder": "Nhập cụm từ tìm kiếm"
-  },
-  "envrionment": {
-    "ModifyImageResourceLimitReinstallRequired": "<p>Nếu bạn sửa đổi một hình ảnh đã được cài đặt, bạn sẽ cần phải cài đặt lại hình ảnh đó.</p><p>Các sửa đổi sẽ không được áp dụng cho đến khi hình ảnh được cài đặt lại.\n\n</p>"
   }
 }
