@@ -3,7 +3,7 @@ import {
   CloseCircleOutlined,
   LoadingOutlined,
 } from '@ant-design/icons';
-import { Spin, Tag, theme } from 'antd';
+import { Spin, Tag } from 'antd';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -14,7 +14,6 @@ interface ValidationStatusTagProps {
 const ValidationStatusTag: React.FC<ValidationStatusTagProps> = ({
   status = 'default',
 }) => {
-  const { token } = theme.useToken();
   const { t } = useTranslation();
 
   const getStatusColor = (status: string) => {
@@ -49,8 +48,8 @@ const ValidationStatusTag: React.FC<ValidationStatusTagProps> = ({
         {status === 'processing'
           ? t('modelService.Processing')
           : status === 'finished'
-          ? t('modelService.Finished')
-          : t('modelService.Error')}
+            ? t('modelService.Finished')
+            : t('modelService.Error')}
       </Tag>
     </Suspense>
   );
