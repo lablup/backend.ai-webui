@@ -24,11 +24,9 @@ import ValidationStatusTag from './ValidationStatusTag';
 import { ServiceLauncherModalFragment$key } from './__generated__/ServiceLauncherModalFragment.graphql';
 import { ServiceLauncherModalModifyMutation } from './__generated__/ServiceLauncherModalModifyMutation.graphql';
 import { AnsiUp } from 'ansi_up';
-import type { CollapseProps } from 'antd';
 import {
   App,
   Button,
-  Collapse,
   Card,
   Form,
   Input,
@@ -118,6 +116,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const [validationStatus, setValidationStatus] = useState('');
   const [validationTime, setValidationTime] = useState('Before validation');
   const [containerLogSummary, setContainerLogSummary] = useState('loading...');
+  const [isOpenServiceValidationModal, setIsOpenServiceValidationModal] =
+    useState(false);
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
@@ -327,14 +327,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     },
   });
 
-  const validateButtonInHeader = () => (
-    <Flex direction="row" justify="between" align="stretch">
-      <Button key="validate" type="primary" onClick={(e) => handleValidate(e)}>
-        {t('modelService.Validate')}
-      </Button>
-    </Flex>
-  );
-
   const [
     commitModifyEndpoint,
     // inInFlightCommitModifyEndpoint
@@ -384,22 +376,125 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
   // Apply any operation after clicking OK button
   const handleOk = () => {
-    formRef.current?.validateFields().then((values) => {
-      mutationToCreateService.mutate(values, {
-        onSuccess: (resp) => {
-          onRequestClose(true);
-        },
-        onError: (error) => {
-          if (error?.message) {
-            app.message.error(
-              _.truncate(error?.message, {
-                length: 200,
-              }),
-            );
+    formRef.current
+      ?.validateFields()
+      .then((values) => {
+        if (endpoint) {
+          if (baiClient.supports('modify-endpoint')) {
+            const mutationVariables = {
+              endpoint_id: endpoint?.endpoint_id || '',
+              props: {
+                resource_slots: JSON.stringify({
+                  cpu: values.resource.cpu,
+                  mem: values.resource.mem,
+                  ...(values.resource.accelerator > 0
+                    ? {
+                        [values.resource.acceleratorType]:
+                          values.resource.accelerator,
+                      }
+                    : undefined),
+                }),
+                resource_opts: JSON.stringify({ shmem: values.resource.shmem }),
+                // FIXME: temporally convert cluster mode string according to server-side type
+                cluster_mode:
+                  'single-node' === values.cluster_mode
+                    ? 'SINGLE_NODE'
+                    : 'MULTI_NODE',
+                cluster_size: values.cluster_size,
+                desired_session_count: values.desiredRoutingCount,
+                ...getImageInfoFromInputInEditing(
+                  checkManualImageAllowed(
+                    baiClient._config.allow_manual_image_name_for_session,
+                    values.environments?.manual,
+                  ),
+                  values,
+                ),
+                name: values.serviceName,
+                resource_group: values.resourceGroup,
+              },
+            };
+            commitModifyEndpoint({
+              variables: mutationVariables,
+              onCompleted: (res, errors) => {
+                if (errors && errors?.length > 0) {
+                  const errorMsgList = errors.map((error) => error.message);
+                  for (let error of errorMsgList) {
+                    app.message.error(error, 2.5);
+                  }
+                } else {
+                  const updatedEndpoint = res.modify_endpoint?.endpoint;
+                  app.message.success(
+                    t('modelService.ServiceUpdated', {
+                      name: updatedEndpoint?.name,
+                    }),
+                  );
+                  onRequestClose(true);
+                }
+              },
+              onError: (error) => {
+                if (error.message) {
+                  app.message.error(error.message);
+                } else {
+                  app.message.error(t('modelService.FailedToUpdateService'));
+                }
+              },
+            });
+          } else {
+            legacyMutationToUpdateService.mutate(values, {
+              onSuccess: () => {
+                app.message.success(
+                  t('modelService.ServiceUpdated', {
+                    name: endpoint.name, // FIXME: temporally get name from endpoint, not input value
+                  }),
+                );
+                onRequestClose(true);
+              },
+              onError: (error) => {
+                console.log(error);
+                app.message.error(t('modelService.FailedToUpdateService'));
+              },
+            });
           }
-        },
+        } else {
+          // create service
+          mutationToCreateService.mutate(values, {
+            onSuccess: () => {
+              // FIXME: temporally refer to mutate input to message
+              app.message.success(
+                t('modelService.ServiceCreated', { name: values.serviceName }),
+              );
+              onRequestClose(true);
+            },
+            onError: (error) => {
+              if (error?.message) {
+                app.message.error(
+                  _.truncate(error?.message, {
+                    length: 200,
+                  }),
+                );
+              } else {
+                if (endpoint) {
+                  app.message.error(t('modelService.FailedToUpdateService'));
+                } else {
+                  app.message.error(t('modelService.FailedToStartService'));
+                }
+              }
+            },
+          });
+        }
+      })
+      .catch((err: any) => {
+        // error on input
+        if (err.errorFields?.length > 0) {
+          err.errorFields.forEach((error: any) => {
+            app.message.error(error.errors);
+          });
+        } else if (err.message) {
+          app.message.error(err.message);
+        } else {
+          app.message.error(t('modelService.FormValidationFailed'));
+        }
       });
-    });
   };
 
   // Apply any operation after clicking Cancel or close button button
@@ -483,12 +578,62 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       });
   };
 
-  const getItems: () => CollapseProps['items'] = () => [
-    {
-      key: '1',
-      label: t('modelService.ServiceInfo'),
-      children: (
-        <>
+  const getAIAcceleratorWithStringifiedKey = (resourceSlot: any) => {
+    if (Object.keys(resourceSlot).length <= 0) {
+      return undefined;
+    }
+    const keyName: string = Object.keys(resourceSlot)[0];
+    return {
+      acceleratorType: keyName,
+      // FIXME: temporally convert to number if the typeof accelerator is string
+      accelerator:
+        typeof resourceSlot[keyName] === 'string'
+          ? keyName === 'cuda.shares'
+            ? parseFloat(resourceSlot[keyName])
+            : parseInt(resourceSlot[keyName])
+          : resourceSlot[keyName],
+    };
+  };
+
+  return (
+    <>
+      <BAIModal
+        title={
+          endpoint
+            ? t('modelService.EditModelService')
+            : t('modelService.StartNewServing')
+        }
+        destroyOnClose
+        onOk={handleOk}
+        onCancel={handleCancel}
+        maskClosable={false}
+        confirmLoading={mutationToCreateService.isLoading}
+        footer={() => (
+          <Flex direction="row" justify="end" align="end">
+            <Space size="small">
+              <Button type="text" onClick={handleCancel}>
+                {t('button.Cancel')}
+              </Button>
+              <Button
+                type="default"
+                onClick={(e) => {
+                  setIsOpenServiceValidationModal(
+                    !isOpenServiceValidationModal,
+                  );
+                  handleValidate(e);
+                }}
+              >
+                {t('modelService.Validate')}
+              </Button>
+              <Button type="primary" onClick={handleOk}>
+                {endpoint ? t('button.Update') : t('button.Create')}
+              </Button>
+            </Space>
+          </Flex>
+        )}
+        {...modalProps}
+      >
+        <Suspense fallback={<FlexActivityIndicator />}>
           <Form
             ref={formRef}
             disabled={mutationToCreateService.isLoading}
@@ -650,15 +795,20 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               </Card>
             )}
           </Form>
-        </>
-      ),
-    },
-    {
-      key: '2',
-      label: t('modelService.ValidationInfo'),
-      extra: validateButtonInHeader(),
-      children: (
-        <>
+        </Suspense>
+      </BAIModal>
+      <BAIModal
+        width={1000}
+        title={t('modelService.ValidationInfo')}
+        open={isOpenServiceValidationModal}
+        onOk={() => {
+          setIsOpenServiceValidationModal(false);
+        }}
+        onCancel={() => {
+          setIsOpenServiceValidationModal(false);
+        }}
+      >
+        <Suspense fallback={<FlexActivityIndicator />}>
           <Flex direction="row" justify="between" align="center">
             <h3>{t('modelService.Result')}</h3>
             <ValidationStatusTag
@@ -684,56 +834,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           >
             <pre dangerouslySetInnerHTML={{ __html: containerLogSummary }} />
           </Flex>
-        </>
-      ),
-    },
-  ];
-
-  const getAIAcceleratorWithStringifiedKey = (resourceSlot: any) => {
-    if (Object.keys(resourceSlot).length <= 0) {
-      return undefined;
-    }
-    const keyName: string = Object.keys(resourceSlot)[0];
-    return {
-      acceleratorType: keyName,
-      // FIXME: temporally convert to number if the typeof accelerator is string
-      accelerator:
-        typeof resourceSlot[keyName] === 'string'
-          ? keyName === 'cuda.shares'
-            ? parseFloat(resourceSlot[keyName])
-            : parseInt(resourceSlot[keyName])
-          : resourceSlot[keyName],
-    };
-  };
-
-  return (
-    <BAIModal
-      title={
-        endpoint
-          ? t('modelService.EditModelService')
-          : t('modelService.StartNewServing')
-      }
-      destroyOnClose
-      onOk={handleOk}
-      onCancel={handleCancel}
-      maskClosable={false}
-      confirmLoading={mutationToCreateService.isLoading}
-      footer={() => (
-        <Flex direction="row" justify="end" align="end">
-          <Space size="small">
-            <Button onClick={handleCancel}>{t('button.Cancel')}</Button>
-            <Button type="primary" onClick={handleOk}>
-              {endpoint ? t('button.Update') : t('button.Create')}
-            </Button>
-          </Space>
-        </Flex>
-      )}
-      {...modalProps}
-    >
-      <Suspense fallback={<FlexActivityIndicator />}>
-        <Collapse defaultActiveKey={'1'} items={getItems()} accordion />
-      </Suspense>
-    </BAIModal>
+        </Suspense>
+      </BAIModal>
+    </>
   );
 };
 
