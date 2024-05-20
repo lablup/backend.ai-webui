@@ -21,6 +21,7 @@ import ResourceAllocationFormItems, {
   ResourceAllocationFormValue,
 } from '../components/ResourceAllocationFormItems';
 import ResourceNumber from '../components/ResourceNumber';
+import SessionLauncherValidationTour from '../components/SessionLauncherErrorTourProps';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
@@ -34,7 +35,6 @@ import {
   useWebUINavigate,
 } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useThemeMode } from '../hooks/useThemeMode';
 // @ts-ignore
@@ -287,23 +287,7 @@ const SessionLauncherPage = () => {
       },
       {
         title: t('session.launcher.ConfirmAndLaunch'),
-        icon: (
-          <PlayCircleFilled />
-          // <Flex
-          //   align="center"
-          //   justify="center"
-          //   style={{
-          //     // border: '1px solid gray',
-          //     backgroundColor: '#E8E7E7',
-          //     width: 24,
-          //     height: 24,
-          //     borderRadius: 12,
-          //     fontSize: 16,
-          //   }}
-          // >
-          //   <CaretRightOutlined />
-          // </Flex>
-        ),
+        icon: <PlayCircleFilled />,
         // @ts-ignore
         key: 'review',
       },
@@ -324,39 +308,31 @@ const SessionLauncherPage = () => {
     (item) => item.errors.length > 0,
   );
 
-  const [, setFinalStepLastValidateTime] = useUpdatableState('first'); // Force re-render after validation in final step.
+  const [finalStepLastValidateTime, setFinalStepLastValidateTime] =
+    useUpdatableState('first'); // Force re-render after validation in final step.
+
   useEffect(() => {
     if (currentStep === steps.length - 1) {
       form
         .validateFields()
-        .catch((error) => {
-          if (hasOpenedValidationTour) return;
-          setTourSteps(
-            //@ts-ignore
-            dynamicallyAddedSectionSteps[currentStepKey].map((step) => {
-              return {
-                ...step,
-                nextButtonProps: !step.onNext && {
-                  onClick: onTourNext,
-                },
-                prevButtonProps: !step.onPrev && {
-                  onClick: onTourPrev,
-                },
-              };
-            }),
-          );
-          setHasOpenedValidationTour(true);
-          setHasOpenedTour(false);
-        })
+        .catch((error) => {})
         .finally(() => setFinalStepLastValidateTime());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep, form, setFinalStepLastValidateTime, steps.length]);
 
+  useEffect(() => {
+    if (finalStepLastValidateTime !== 'first') {
+      if (hasError) {
+        setValidationTourOpen(true);
+      } else {
+        setValidationTourOpen(false);
+      }
+    }
+  }, [finalStepLastValidateTime, hasError]);
+
   const startSession = () => {
     // TODO: support inference mode, support import mode
-    setHasOpenedTour(true);
-
     setIsStartingSession(true);
     form
       .validateFields()
@@ -591,85 +567,7 @@ const SessionLauncherPage = () => {
       });
   };
 
-  const onTourNext = () => {
-    setCurrentTourStep((prev) => prev + 1);
-  };
-  const onTourPrev = () => {
-    setCurrentTourStep((prev) => prev - 1);
-  };
-
-  const sectionSteps: { [key: string]: TourStepProps[] } = {
-    sessionType: [],
-    environment: [],
-    storage: [],
-    network: [],
-    review: [],
-  };
-  const dynamicallyAddedSectionSteps: { [key: string]: TourStepProps[] } = {
-    sessionType: [],
-    environment: [],
-    storage: [],
-    network: [],
-    review: [
-      {
-        title: t('tourguide.NeoSessionLauncher.ValidationErrorTitle'),
-        description: t('tourguide.NeoSessionLauncher.ValidationErrorText'),
-        target: () =>
-          document.getElementsByClassName(
-            'bai-card-validation-error',
-          )[0] as HTMLElement,
-      },
-      {
-        title: t('tourguide.NeoSessionLauncher.ValidationErrorTitle'),
-        description: t(
-          'tourguide.NeoSessionLauncher.FixErrorFieldbyModifyButton',
-        ),
-        target: () =>
-          (
-            document.getElementsByClassName(
-              'bai-card-validation-error',
-            )[0] as HTMLElement
-          ).querySelector('.ant-card-extra') as HTMLElement,
-      },
-      {
-        title: t('tourguide.NeoSessionLauncher.ValidationErrorTitle'),
-        description: t('tourguide.NeoSessionLauncher.FixErrorAndTryAgainText'),
-        target: () =>
-          document.querySelector(
-            '[data-test-id="neo-session-launcher-tour-step-navigation"]',
-          ) as HTMLElement,
-      },
-    ],
-  };
-  const [tourSteps, setTourSteps] = useState<TourStepProps[]>([]);
-  const [currentTourStep, setCurrentTourStep] = useState<number>(0);
-  const [hasOpenedTour, setHasOpenedTour] = useBAISettingUserState(
-    'has_opened_neo_session_launcher_tour_guide',
-  );
-  const [hasOpenedValidationTour, setHasOpenedValidationTour] =
-    useBAISettingUserState('has_opened_neo_session_validation_tour_guide');
-
-  useEffect(
-    () => {
-      setTourSteps(
-        // @ts-ignore
-        sectionSteps[currentStepKey].map((step) => {
-          return {
-            ...step,
-            nextButtonProps: !step.onNext && {
-              onClick: onTourNext,
-            },
-            prevButtonProps: !step.onPrev && {
-              onClick: onTourPrev,
-            },
-          };
-        }),
-      );
-      setCurrentTourStep(0);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentStepKey],
-  );
+  const [validationTourOpen, setValidationTourOpen] = useState(false);
 
   return (
     <Flex
@@ -1798,11 +1696,11 @@ const SessionLauncherPage = () => {
           setSelectedFolderName(undefined);
         }}
       /> */}
-      <Tour
-        open={!hasOpenedTour ?? true}
-        onClose={() => setHasOpenedTour(true)}
-        steps={tourSteps}
-        current={currentTourStep}
+      <SessionLauncherValidationTour
+        open={validationTourOpen}
+        onClose={() => {
+          setValidationTourOpen(false);
+        }}
         scrollIntoViewOptions
       />
     </Flex>
@@ -1856,37 +1754,6 @@ const FormResourceNumbers: React.FC<{
     </>
   );
 };
-// const SessionTypeItem: React.FC<{
-//   title: string;
-//   description?: string;
-// }> = ({ title, description }) => {
-//   const { token } = theme.useToken();
-//   return (
-//     <Flex
-//       direction="column"
-//       style={{ padding: token.paddingXS }}
-//       align="stretch"
-//     >
-//       <Typography.Title level={5}>{title}</Typography.Title>
-//       <Typography.Text
-//         type="secondary"
-//         // @ts-ignore
-//         style={{ textWrap: 'wrap' }}
-//       >
-//         {description}
-//       </Typography.Text>
-//     </Flex>
-//   );
-// };
-
-// interface StepContentProps extends FlexProps{
-
-// }
-// const StepContent: React.FC<{}> = () => {
-//   return <Flex>
-
-//   </Flex>
-// }
 
 const generateSessionId = () => {
   let text = '';
