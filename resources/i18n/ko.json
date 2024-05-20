@@ -251,7 +251,7 @@
       "Enable": "활성화",
       "Network": "네트워크",
       "preopen": "사전 개방 포트",
-      "EnqueueComputeSessionWarning": "현재 사용 가능한 자원({{amount}})보다 크게 설정하면 세션 생성이 가능해질 때까지 큐에서 실행 지연됩니다.",
+      "EnqueueComputeSessionWarning": "자원 한도를 초과합니다. 세션이 즉시 실행되지 않을 수 있습니다.",
       "ErrorCanNotExceedRemaining": "남아있는 자원({{amount}})보다 크게 설정할 수 없습니다.",
       "Template": "세션 템플릿",
       "TemplateAndHistory": "템플릿 및 최근기록",
@@ -262,7 +262,6 @@
       "EnvironmentVariableNamePatternError": "변수 이름은 문자 또는 밑줄로 시작해야 하며 문자, 숫자, 밑줄만 포함할 수 있습니다.",
       "EnvironmentVariableDuplicateName": "이미 존재하는 변수명입니다.",
       "EnableAutomaticMiniumShmem": "최소 공유메모리 설정",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "클러스터 크기가 2 이상인 경우 정수만 허용됩니다.",
       "StartAfter": "다음 이후에 시작:",
       "StartTimeDoesNotApply": "시작 시간을 설정하지 않으면 적용되지 않습니다.",
@@ -274,7 +273,8 @@
       "EnvironmentVariableValueRequired": "값을 입력해주세요.",
       "PleaseCompleteForm": "양식이 완성되지 않았거나 오류가 포함되어 있습니다. 입력 내용을 확인해주세요.",
       "NeedToCorrectForm": "수정 버튼을 눌러 입력하신 내용을 확인해주세요.",
-      "FailedToStartNewSession": "세션 생성에 실패했습니다. 세션 페이지의 '종료' 탭을 확인해 주세요."
+      "FailedToStartNewSession": "세션 생성에 실패했습니다. 세션 페이지의 '종료' 탭을 확인해 주세요.",
+      "ProxyDirectTCPNotSupported": "프록시 직접 TCP 연결은 아직 지원되지 않습니다."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -521,7 +521,9 @@
     "Utilization": "사용량",
     "NoAvailableLiveStat": "표시할 사용량 없음",
     "Allocation": "할당 정보",
-    "DiskPerc": "디스크 %"
+    "DiskPerc": "디스크 %",
+    "AutoRefreshEvery5s": "5초마다 자동 새로고침",
+    "Agent": "에이전트"
   },
   "storageHost": {
     "StorageSetting": "스토리지 설정",
@@ -910,7 +912,8 @@
     "Architecture": "아키텍쳐",
     "CustomizedImageSuccessfullyDeleted": "사용자 정의된 이미지가 삭제되었습니다.",
     "DescImageResourceModified": "리소스 제한이 수정되었습니다.",
-    "DescImagePortsModified": "이미지 포트가 수정되었습니다."
+    "DescImagePortsModified": "이미지 포트가 수정되었습니다.",
+    "ModifyImageResourceLimitReinstallRequired": "<p>이미 설치된 이미지를 수정하는 경우, 이미지 재설치가 필요합니다.</p><<p>수정내용은 이미지가 재설치되기 전까지 적용되지 않습니다. </p>"
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
@@ -1275,7 +1278,8 @@
     "ShowOnlyChanged": "수정 사항만 표시",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Hyperaccel LPU 가속기를 사용합니다.",
-    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU 플러그인이 필요합니다."
+    "RequireHyperaccelLPUPlugin": "Backend.AI Hyperaccel LPU 플러그인이 필요합니다.",
+    "SearchPlaceholder": "검색"
   },
   "notification": {
     "SuccessfullyUpdated": "성공적으로 수정되었습니다.",
@@ -1569,12 +1573,6 @@
   },
   "tourguide": {
     "NeoSessionLauncher": {
-      "WelcomeTitle": "환영합니다!",
-      "WelcomeText": "새로운 NEO 세션 런처에 오신 것을 환영합니다!",
-      "StepsTitle": "세션 실행 단계",
-      "StepsText": "우측에 있는 단계 표시에서 현재 단계를 확인할 수 있습니다. 특정 단계를 클릭하여 이동할 수 있습니다.",
-      "MoveToNextStepTitle": "단계 이동",
-      "MoveToNextStepText": "다음 버튼을 클릭하여 다음 단계로 이동하거나 검토로 건너뛸 수 있습니다.",
       "ValidationErrorTitle": "입력 필드 검증 오류",
       "ValidationErrorText": "필수 입력 필드에 값을 입력하지 않거나 잘못된 값을 입력한 경우, 해당 필드에 오류 메시지가 표시됩니다.",
       "FixErrorAndTryAgainText": "오류 필드가 있는 경우, 세션 실행 버튼이 비활성화 됩니다. 오류 수정 후 다시 시도해 주세요.",

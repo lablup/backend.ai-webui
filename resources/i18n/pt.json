@@ -245,7 +245,7 @@
       "FolderAliasInvalid": "Somente caracteres alfanuméricos, sublinhado (_), barra (/) e traço (-) são permitidos.",
       "PreOpenPortMaxCountLimit": "Pode definir até {{count}} portas pré-abertas.",
       "StartTimeMustBeInTheFuture": "A hora de início deve ser posterior à hora atual.",
-      "EnqueueComputeSessionWarning": "Se você definir um valor maior que os recursos atualmente disponíveis, a criação da sessão será atrasada na fila até que fique disponível.",
+      "EnqueueComputeSessionWarning": "Recursos insuficientes. \nA sessão pode estar pendente.",
       "SessionName": "Nome da sessão",
       "ResetFormConfirm": "Deseja redefinir todas as suas entradas?",
       "TemplateAndHistory": "Modelos",
@@ -258,7 +258,6 @@
       "EnvironmentVariableDuplicateName": "Um nome de variável que já existe.",
       "Template": "Modelo de sessão",
       "EnableAutomaticMiniumShmem": "Definir a memória partilhada mínima",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Somente números inteiros são permitidos quando o tamanho do cluster não é menor que 2.",
       "StartAfter": "Comece depois:",
       "StartTimeDoesNotApply": "Se a hora de início não estiver definida, ela não se aplica.",
@@ -273,7 +272,8 @@
       "AddEnvironmentVariable": "Adicionar variáveis de ambiente",
       "EnvironmentVariableValueRequired": "Introduzir um valor.",
       "PleaseCompleteForm": "O formulário está incompleto ou contém erros. Por favor, verifique os seus dados.",
-      "FailedToStartNewSession": "Falha na criação da sessão. \nPor favor, verifique a guia 'Finalizado' na página da sessão."
+      "FailedToStartNewSession": "Falha na criação da sessão. \nPor favor, verifique a guia 'Finalizado' na página da sessão.",
+      "ProxyDirectTCPNotSupported": "A conexão TCP direta do proxy ainda não é suportada"
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",
@@ -466,7 +466,9 @@
     "Allocation": "Atribuição",
     "Utilization": "Utilização",
     "DiskPerc": "Disco %",
-    "NoAgentToDisplay": "Nenhum agente a apresentar"
+    "NoAgentToDisplay": "Nenhum agente a apresentar",
+    "AutoRefreshEvery5s": "Atualização automática a cada 5s",
+    "Agent": "Agente"
   },
   "general": {
     "cores": "núcleos",
@@ -820,7 +822,8 @@
     "NoImageToDisplay": "Não há imagens a apresentar",
     "CustomizedImageSuccessfullyDeleted": "Imagem personalizada excluída com sucesso.",
     "DescImageResourceModified": "Limite de recursos modificado com sucesso",
-    "DescImagePortsModified": "Portas de imagem modificadas com sucesso"
+    "DescImagePortsModified": "Portas de imagem modificadas com sucesso",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Se você modificar uma imagem que já foi instalada, será necessário reinstalá-la.</p><p>As modificações não serão aplicadas até que a imagem seja reinstalada.\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "Predefinições de recursos",
@@ -1185,7 +1188,8 @@
     "ShowOnlyChanged": "Exibir apenas alterações",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Use o acelerador Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Requer plug-in Backend.AI Hyperaccel LPU."
+    "RequireHyperaccelLPUPlugin": "Requer plug-in Backend.AI Hyperaccel LPU.",
+    "SearchPlaceholder": "Pesquisar"
   },
   "notification": {
     "SuccessfullyUpdated": "Atualizado com sucesso",
@@ -1559,7 +1563,7 @@
     "CloneAsFolder": "Clonar como Pasta",
     "CloneSuccess": "O pedido de clone foi enviado com sucesso.",
     "category": "Categoria",
-    "CloneInfo": "__NOT_TRANSLATED__"
+    "CloneInfo": "Ele será clonado como sua pasta de tipo de usuário."
   },
   "table": {
     "SettingTable": "Configuração de mesa",
@@ -1568,12 +1572,6 @@
   },
   "tourguide": {
     "NeoSessionLauncher": {
-      "WelcomeTitle": "Bem-vindo!",
-      "WelcomeText": "Bem-vindo ao novo lançador de sessão NEO!",
-      "StepsTitle": "Etapas de execução da sessão",
-      "StepsText": "Você pode verificar o estágio atual na tela do palco à direita. \nVocê pode pular para uma etapa específica clicando nela.",
-      "MoveToNextStepTitle": "Passar para a próxima etapa",
-      "MoveToNextStepText": "Você pode clicar no botão Avançar para passar para a próxima etapa ou pular para Revisão.",
       "ValidationErrorTitle": "Erros de validação de campo de entrada",
       "ValidationErrorText": "Se você não inserir um valor em um campo obrigatório ou inserir um valor inválido, uma mensagem de erro será exibida nesse campo.",
       "FixErrorAndTryAgainText": "Se houver um campo de erro, o botão Iniciar sessão estará desabilitado. \nCorrija o erro e tente novamente.",

@@ -599,29 +599,7 @@ const SessionLauncherPage = () => {
   };
 
   const sectionSteps: { [key: string]: TourStepProps[] } = {
-    sessionType: [
-      {
-        title: t('tourguide.NeoSessionLauncher.WelcomeTitle'),
-        description: t('tourguide.NeoSessionLauncher.WelcomeText'),
-        target: null,
-      },
-      {
-        title: t('tourguide.NeoSessionLauncher.StepsTitle'),
-        description: t('tourguide.NeoSessionLauncher.StepsText'),
-        target: () =>
-          document.querySelector(
-            '[data-test-id="neo-session-launcher-tour-step"]',
-          ) as HTMLElement,
-      },
-      {
-        title: t('tourguide.NeoSessionLauncher.MoveToNextStepTitle'),
-        description: t('tourguide.NeoSessionLauncher.MoveToNextStepText'),
-        target: () =>
-          document.querySelector(
-            '[data-test-id="neo-session-launcher-tour-step-navigation"]',
-          ) as HTMLElement,
-      },
-    ],
+    sessionType: [],
     environment: [],
     storage: [],
     network: [],
@@ -1058,6 +1036,7 @@ const SessionLauncherPage = () => {
                   <ResourceAllocationFormItems
                     enableNumOfSessions
                     enableResourcePresets
+                    showRemainingWarning
                   />
                 </Card>
                 <Card
@@ -1824,7 +1803,6 @@ const SessionLauncherPage = () => {
         onClose={() => setHasOpenedTour(true)}
         steps={tourSteps}
         current={currentTourStep}
-        mask={{ color: isDarkMode ? token.colorBgTextHover : undefined }}
         scrollIntoViewOptions
       />
     </Flex>

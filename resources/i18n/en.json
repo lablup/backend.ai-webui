@@ -256,8 +256,9 @@
       "PreOpenPortRangeGuide": "Enter multiple values separated by either a comma (,) or a space.",
       "preopen": "preopen",
       "FolderAliasInvalid": "Only alphanumeric characters, underscore (_), slash (/), and dash (-) are allowed.",
-      "PreOpenPortMaxCountLimit": "You can set up to {{count}} pre-open ports.",
-      "EnqueueComputeSessionWarning": "If you set it larger than the currently available resources, the session creation will be delayed in the queue until it becomes available.",
+      "PreOpenPortMaxCountLimit": "You can set up to {{count}} pre-open port.",
+      "PreOpenPortMaxCountLimit_plural": "You can set up to {{count}} pre-open ports.",
+      "EnqueueComputeSessionWarning": "Insufficient resources. Session may be pending.",
       "TemplateAndHistory": "Templates & history",
       "StartTimeMustBeInTheFuture": "The start time must be after the current time.",
       "SessionName": "Session name",
@@ -272,7 +273,6 @@
       "EnvironmentVariableDuplicateName": "A variable name that already exists.",
       "Template": "Session Template",
       "EnableAutomaticMiniumShmem": "Set minimum shared memory",
-      "PreOpenPortMaxCountLimit_plural": "PreOpenPortMaxCountLimit",
       "StartAfter": "Start after: ",
       "StartTimeDoesNotApply": "If the start time is not set, it doesn't apply.",
       "MiniumAllocation": "Minimum requirements",
@@ -286,7 +286,8 @@
       "AddEnvironmentVariable": "Add environment variables",
       "EnvironmentVariableValueRequired": "Please enter a value.",
       "PleaseCompleteForm": "Form is incomplete or contains errors. Please check your inputs.",
-      "FailedToStartNewSession": "Session creation failed. Please check the 'FINISHED' tab on the session page."
+      "FailedToStartNewSession": "Session creation failed. Please check the 'FINISHED' tab on the session page.",
+      "ProxyDirectTCPNotSupported": "Proxy direct TCP connection is not supported yet"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -533,7 +534,9 @@
     "Capabilities": "Capabilities",
     "NoAgentToDisplay": "No Agents to display",
     "NoNetworkSignal": "No network signals.",
-    "DiskPerc": "Disk %"
+    "DiskPerc": "Disk %",
+    "AutoRefreshEvery5s": "Auto refresh every 5s",
+    "Agent": "Agent"
   },
   "storageHost": {
     "Usage": "Usage",
@@ -922,7 +925,8 @@
     "PasswordsDoNotMatch": "Password and Confirmation do not match.",
     "CustomizedImageSuccessfullyDeleted": "Customized image successfully deleted.",
     "DescImageResourceModified": "Resource limit successfully modified",
-    "DescImagePortsModified": "Image Ports successfully modified"
+    "DescImagePortsModified": "Image Ports successfully modified",
+    "ModifyImageResourceLimitReinstallRequired": "<p>If you modify an image that has already been installed, you will need to reinstall the image.</p><p>Modifications will not be applied until the image is reinstalled. \n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",
@@ -1287,7 +1291,8 @@
     "ShowOnlyChanged": "Display Only Changes",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Use Hyperaccel LPU accelerator.",
-    "RequireHyperaccelLPUPlugin": "Requires Backend.AI Hyperaccel LPU Plugin."
+    "RequireHyperaccelLPUPlugin": "Requires Backend.AI Hyperaccel LPU Plugin.",
+    "SearchPlaceholder": "Search"
   },
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",
@@ -1569,12 +1574,6 @@
   },
   "tourguide": {
     "NeoSessionLauncher": {
-      "WelcomeTitle": "Welcome!",
-      "WelcomeText": "Welcome to the new NEO Session Launcher!",
-      "StepsTitle": "Session execution steps",
-      "StepsText": "You can check the current step in the steps display on the right. \nYou can jump to a specific step by clicking on it.",
-      "MoveToNextStepTitle": "Move to next step",
-      "MoveToNextStepText": "You can click the Next button to move to the next step or skip to Review.",
       "ValidationErrorTitle": "Input field validation errors",
       "ValidationErrorText": "If you don't enter a value in a required field or enter an invalid value, an error message displays in that field.",
       "FixErrorAndTryAgainText": "If there is an error field, the Launch session button is disabled. Please correct the error and try again.",

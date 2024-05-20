@@ -245,7 +245,7 @@
       "FolderAliasInvalid": "Разрешены только буквенно-цифровые символы, подчеркивание (_), косая черта (/) и тире (-).",
       "PreOpenPortMaxCountLimit": "Можно задать до {{count}} предварительно открытых портов.",
       "StartTimeMustBeInTheFuture": "Время начала должно быть после текущего времени.",
-      "EnqueueComputeSessionWarning": "Если вы установите его больше, чем доступные на данный момент ресурсы, создание сеанса будет отложено в очереди до тех пор, пока он не станет доступным.",
+      "EnqueueComputeSessionWarning": "Недостаточно ресурсов. \nВозможно, сессия еще не завершена.",
       "SessionName": "Имя сеанса",
       "ResetFormConfirm": "Вы хотите сбросить все ваши записи?",
       "TemplateAndHistory": "Шаблоны",
@@ -258,9 +258,6 @@
       "EnvironmentVariableDuplicateName": "Имя переменной, которая уже существует.",
       "Template": "Шаблон сессии",
       "EnableAutomaticMiniumShmem": "Установите минимальный объем общей памяти",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Допускается только целое число, если размер кластера не меньше 2.",
       "StartAfter": "Начать после:",
       "StartTimeDoesNotApply": "Если время начала не установлено, оно не применяется.",
@@ -275,7 +272,8 @@
       "AddEnvironmentVariable": "Добавьте переменные окружения",
       "EnvironmentVariableValueRequired": "Пожалуйста, введите значение.",
       "PleaseCompleteForm": "Форма не заполнена или содержит ошибки. Пожалуйста, проверьте введенные данные.",
-      "FailedToStartNewSession": "Создание сеанса не удалось. \nПожалуйста, проверьте вкладку «Законченный» на странице сеанса."
+      "FailedToStartNewSession": "Создание сеанса не удалось. \nПожалуйста, проверьте вкладку «Законченный» на странице сеанса.",
+      "ProxyDirectTCPNotSupported": "Прямое TCP-соединение через прокси-сервер пока не поддерживается."
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -468,7 +466,9 @@
     "Utilization": "Утилизация",
     "NoAvailableLiveStat": "Нет доступной оперативной статистики",
     "Allocation": "Распределение",
-    "DiskPerc": "Диск %"
+    "DiskPerc": "Диск %",
+    "AutoRefreshEvery5s": "Автоматическое обновление каждые 5 секунд",
+    "Agent": "Агент"
   },
   "general": {
     "cores": "ядра",
@@ -822,7 +822,8 @@
     "NoImageToDisplay": "Нет изображений для отображения",
     "CustomizedImageSuccessfullyDeleted": "Персонализированное изображение успешно удалено.",
     "DescImageResourceModified": "Лимит ресурсов успешно изменен",
-    "DescImagePortsModified": "Порты изображений успешно изменены"
+    "DescImagePortsModified": "Порты изображений успешно изменены",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Если вы измените уже установленный образ, вам придется переустановить его.</p><p>Изменения не будут применены до тех пор, пока образ не будет переустановлен.\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "Предустановки ресурсов",
@@ -1187,7 +1188,8 @@
     "ShowOnlyChanged": "Отображать только изменения",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Используйте ускоритель Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Требуется плагин Backend.AI Hyperaccel LPU."
+    "RequireHyperaccelLPUPlugin": "Требуется плагин Backend.AI Hyperaccel LPU.",
+    "SearchPlaceholder": "Поиск"
   },
   "notification": {
     "SuccessfullyUpdated": "Успешно обновлено",
@@ -1570,12 +1572,6 @@
   },
   "tourguide": {
     "NeoSessionLauncher": {
-      "WelcomeTitle": "Добро пожаловать!",
-      "WelcomeText": "Добро пожаловать в новый лаунчер NEO Session Launcher!",
-      "StepsTitle": "Этапы выполнения сеанса",
-      "StepsText": "Вы можете проверить текущий этап на дисплее этапов справа. \nВы можете перейти к определенному шагу, нажав на него.",
-      "MoveToNextStepTitle": "Перейти к следующему шагу",
-      "MoveToNextStepText": "Вы можете нажать кнопку «Далее», чтобы перейти к следующему шагу, или перейти к обзору.",
       "ValidationErrorTitle": "Ошибки проверки поля ввода",
       "ValidationErrorText": "Если вы не введете значение в обязательное поле или введете неверное значение, в этом поле отобразится сообщение об ошибке.",
       "FixErrorAndTryAgainText": "Если есть поле с ошибкой, кнопка «Запустить сеанс» неактивна. \nПожалуйста, исправьте ошибку и повторите попытку.",

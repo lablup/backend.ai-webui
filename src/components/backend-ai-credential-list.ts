@@ -802,7 +802,7 @@ export default class BackendAICredentialList extends BackendAIPage {
             ? html`
                 <lablup-shields
                   app=""
-                  color="red"
+                  color="darkgreen"
                   description="${_t('credential.MainAccessKey')}"
                   ui="flat"
                 ></lablup-shields>

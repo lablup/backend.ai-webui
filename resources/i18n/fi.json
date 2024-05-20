@@ -98,7 +98,9 @@
     "Starts": "Alkaa",
     "Status": "Tila",
     "Terminated": "Lopetettu",
-    "Utilization": "Käyttö"
+    "Utilization": "Käyttö",
+    "AutoRefreshEvery5s": "Automaattinen päivitys 5 sekunnin välein",
+    "Agent": "Agentti"
   },
   "button": {
     "Add": "Lisää",
@@ -397,7 +399,26 @@
   },
   "dialog": {
     "warning": {
-      "DeleteForeverDesc": "VAROITUS: valitut kohteet poistetaan pysyvästi, etkä voi palauttaa niitä."
+      "DeleteForeverDesc": "VAROITUS: valitut kohteet poistetaan pysyvästi, etkä voi palauttaa niitä.",
+      "WillBeAppliedToNewSessions": "Tätä päivitystä sovelletaan uusiin istuntoihin.",
+      "CannotBeUndone": "VAROITUS: tätä ei voi perua!",
+      "LogDeletion": "Haluatko varmasti poistaa kaikki lokiviestit?",
+      "Required": "Vaadittu"
+    },
+    "ErrorOccurred": "Tapahtunut virhe",
+    "error": {
+      "Error": "Virhe"
+    },
+    "ask": {
+      "DoYouWantToProceed": "Haluatteko jatkaa?"
+    },
+    "title": {
+      "LetsDouble-Check": "Tupla-tarkistetaan",
+      "Notice": "Ilmoitus",
+      "DeleteForever": "Poista ikuisesti?"
+    },
+    "hide": {
+      "DonotShowThisAgain": "Älä näytä tätä enää."
     }
   },
   "eduapi": {
@@ -461,7 +482,8 @@
     "Version": "Versio",
     "CustomizedImageSuccessfullyDeleted": "Muokattu kuva poistettu onnistuneesti.",
     "DescImageResourceModified": "Resurssirajan muokkaus onnistui",
-    "DescImagePortsModified": "Kuvaportteja on muokattu onnistuneesti"
+    "DescImagePortsModified": "Kuvaportteja on muokattu onnistuneesti",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Jos muokkaat jo asennettua kuvaa, sinun on asennettava se uudelleen.</p><p>Muokkauksia ei tehdä ennen kuin kuva on asennettu uudelleen.\n\n</p>"
   },
   "explorer": {
     "InputTooShort": "InputTooShort",
@@ -1156,7 +1178,6 @@
       "ErrorCanNotExceedRemaining": "Ei voida asettaa suuremmaksi kuin jäljellä olevat resurssit ({{amount}}).",
       "EnableAutomaticMiniumShmem": "Aseta jaetun muistin vähimmäismäärä",
       "Template": "Istuntomalli",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Vain kokonaisluku on sallittu, kun klusterin koko on vähintään 2.",
       "StartAfter": "Aloita sen jälkeen:",
       "StartTimeDoesNotApply": "Jos aloitusaikaa ei ole asetettu, se ei ole voimassa.",
@@ -1171,7 +1192,8 @@
       "AddEnvironmentVariable": "Lisää ympäristömuuttujia",
       "EnvironmentVariableValueRequired": "Anna arvo.",
       "PleaseCompleteForm": "Lomake on puutteellinen tai sisältää virheitä. Tarkista syöttämäsi tiedot.",
-      "FailedToStartNewSession": "Istunnon luominen epäonnistui. \nTarkista istuntosivun VALMIS-välilehti."
+      "FailedToStartNewSession": "Istunnon luominen epäonnistui. \nTarkista istuntosivun VALMIS-välilehti.",
+      "ProxyDirectTCPNotSupported": "Välityspalvelimen suoraa TCP-yhteyttä ei tueta vielä"
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",
@@ -1253,7 +1275,8 @@
     "ShowOnlyChanged": "Vain näyttö muuttuu",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Käytä Hyperaccel LPU -kiihdytintä.",
-    "RequireHyperaccelLPUPlugin": "Vaatii Backend.AI Hyperaccel LPU -laajennuksen."
+    "RequireHyperaccelLPUPlugin": "Vaatii Backend.AI Hyperaccel LPU -laajennuksen.",
+    "SearchPlaceholder": "Etsi"
   },
   "sidepanel": {
     "BackgroundTasks": "Tehtävien suorittaminen",
@@ -1549,12 +1572,6 @@
   },
   "tourguide": {
     "NeoSessionLauncher": {
-      "WelcomeTitle": "Tervetuloa!",
-      "WelcomeText": "Tervetuloa uuteen NEO Session Launcheriin!",
-      "StepsTitle": "Istunnon suoritusvaiheet",
-      "StepsText": "Voit tarkistaa nykyisen vaiheen oikealla olevasta vaihenäytöstä. \nVoit siirtyä tiettyyn vaiheeseen napsauttamalla sitä.",
-      "MoveToNextStepTitle": "Siirry seuraavaan vaiheeseen",
-      "MoveToNextStepText": "Voit siirtyä seuraavaan vaiheeseen napsauttamalla Seuraava-painiketta tai siirtyä tarkastelukohtaan.",
       "ValidationErrorTitle": "Syöttökentän vahvistusvirheet",
       "ValidationErrorText": "Jos et syötä arvoa pakolliseen kenttään tai kirjoitat virheellisen arvon, kenttään tulee virheilmoitus.",
       "FixErrorAndTryAgainText": "Jos virhekenttä on, Launch session -painike ei ole käytössä. \nKorjaa virhe ja yritä uudelleen.",

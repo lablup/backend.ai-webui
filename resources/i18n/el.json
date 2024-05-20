@@ -245,7 +245,7 @@
       "FolderAliasInvalid": "Επιτρέπονται μόνο αλφαριθμητικοί χαρακτήρες, κάτω παύλα (_), κάθετος (/) και παύλα (-).",
       "PreOpenPortMaxCountLimit": "Μπορείτε να ορίσετε έως και {{count}} προ-ανοικτές θύρες.",
       "StartTimeMustBeInTheFuture": "Η ώρα έναρξης πρέπει να είναι μετά την τρέχουσα ώρα.",
-      "EnqueueComputeSessionWarning": "Εάν το ορίσετε μεγαλύτερο από τους διαθέσιμους πόρους, η δημιουργία συνεδρίας θα καθυστερήσει στην ουρά μέχρι να γίνει διαθέσιμη.",
+      "EnqueueComputeSessionWarning": "Ανεπαρκείς πόροι. \nΗ συνεδρία ενδέχεται να εκκρεμεί.",
       "SessionName": "Όνομα συνεδρίας",
       "ResetFormConfirm": "Θέλετε να επαναφέρετε όλες τις καταχωρήσεις σας;",
       "TemplateAndHistory": "Πρότυπα",
@@ -258,7 +258,6 @@
       "EnvironmentVariableDuplicateName": "Ένα όνομα μεταβλητής που υπάρχει ήδη.",
       "Template": "Πρότυπο συνεδρίας",
       "EnableAutomaticMiniumShmem": "Ορισμός ελάχιστης κοινόχρηστης μνήμης",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "StartAfter": "Έναρξη μετά:",
       "StartTimeDoesNotApply": "Εάν δεν έχει οριστεί η ώρα έναρξης, δεν ισχύει.",
       "OnlyAllowsDiscreteNumberByClusterSize": "Μόνο ακέραιος επιτρέπεται όταν το μέγεθος του συμπλέγματος δεν είναι μικρότερο από 2.",
@@ -273,7 +272,8 @@
       "AddEnvironmentVariable": "Προσθήκη μεταβλητών περιβάλλοντος",
       "EnvironmentVariableValueRequired": "Παρακαλώ εισάγετε μια τιμή.",
       "PleaseCompleteForm": "Το έντυπο είναι ελλιπές ή περιέχει σφάλματα. Παρακαλούμε ελέγξτε τα στοιχεία σας.",
-      "FailedToStartNewSession": "Η δημιουργία συνεδρίας απέτυχε. \nΕλέγξτε την καρτέλα \"Πεπερασμένος\" στη σελίδα της συνεδρίας."
+      "FailedToStartNewSession": "Η δημιουργία συνεδρίας απέτυχε. \nΕλέγξτε την καρτέλα \"Πεπερασμένος\" στη σελίδα της συνεδρίας.",
+      "ProxyDirectTCPNotSupported": "Η απευθείας σύνδεση TCP μεσολάβησης δεν υποστηρίζεται ακόμη"
     },
     "Preparing": "Προετοιμασία ...",
     "PreparingSession": "Προετοιμασία συνεδρίας ...",
@@ -466,7 +466,9 @@
     "Allocation": "Κατανομή",
     "Utilization": "Χρήση",
     "DiskPerc": "Δίσκος %",
-    "NoAgentToDisplay": "Δεν υπάρχουν πράκτορες για εμφάνιση"
+    "NoAgentToDisplay": "Δεν υπάρχουν πράκτορες για εμφάνιση",
+    "AutoRefreshEvery5s": "Αυτόματη ανανέωση κάθε 5 δευτερόλεπτα",
+    "Agent": "Πράκτορας"
   },
   "general": {
     "cores": "πυρήνες",
@@ -820,7 +822,8 @@
     "NoImageToDisplay": "Δεν εμφανίζονται εικόνες",
     "CustomizedImageSuccessfullyDeleted": "Η προσαρμοσμένη εικόνα διαγράφηκε επιτυχώς.",
     "DescImageResourceModified": "Το όριο πόρων τροποποιήθηκε επιτυχώς",
-    "DescImagePortsModified": "Οι θύρες εικόνας τροποποιήθηκαν με επιτυχία"
+    "DescImagePortsModified": "Οι θύρες εικόνας τροποποιήθηκαν με επιτυχία",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Εάν τροποποιήσετε μια εικόνα που έχει ήδη εγκατασταθεί, θα χρειαστεί να εγκαταστήσετε ξανά την εικόνα.</p><p>Οι τροποποιήσεις δεν θα εφαρμοστούν μέχρι να επανεγκατασταθεί η εικόνα.\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "Προεπιλογές πόρων",
@@ -1185,7 +1188,8 @@
     "ShowOnlyChanged": "Εμφάνιση μόνο αλλαγών",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Χρησιμοποιήστε τον επιταχυντή Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Απαιτεί το πρόσθετο Backend.AI Hyperaccel LPU."
+    "RequireHyperaccelLPUPlugin": "Απαιτεί το πρόσθετο Backend.AI Hyperaccel LPU.",
+    "SearchPlaceholder": "Αναζήτηση"
   },
   "notification": {
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
@@ -1568,12 +1572,6 @@
   },
   "tourguide": {
     "NeoSessionLauncher": {
-      "WelcomeTitle": "Καλως ΗΡΘΑΤΕ!",
-      "WelcomeText": "Καλώς ήρθατε στο νέο NEO Session Launcher!",
-      "StepsTitle": "Βήματα εκτέλεσης συνεδρίας",
-      "StepsText": "Μπορείτε να ελέγξετε το τρέχον στάδιο στην οθόνη της σκηνής στα δεξιά. \nΜπορείτε να μεταβείτε σε ένα συγκεκριμένο βήμα κάνοντας κλικ σε αυτό.",
-      "MoveToNextStepTitle": "Μεταβείτε στο επόμενο βήμα",
-      "MoveToNextStepText": "Μπορείτε να κάνετε κλικ στο κουμπί Επόμενο για να μεταβείτε στο επόμενο βήμα ή να μεταβείτε στην Αναθεώρηση.",
       "ValidationErrorTitle": "Σφάλματα επικύρωσης πεδίου εισαγωγής",
       "ValidationErrorText": "Εάν δεν εισαγάγετε μια τιμή σε ένα απαιτούμενο πεδίο ή εισαγάγετε μια μη έγκυρη τιμή, εμφανίζεται ένα μήνυμα σφάλματος σε αυτό το πεδίο.",
       "FixErrorAndTryAgainText": "Εάν υπάρχει πεδίο σφάλματος, το κουμπί Εκκίνηση συνεδρίας είναι απενεργοποιημένο. \nΔιορθώστε το σφάλμα και δοκιμάστε ξανά.",

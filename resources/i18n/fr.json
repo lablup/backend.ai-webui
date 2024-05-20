@@ -245,7 +245,7 @@
       "FolderAliasInvalid": "Seuls les caractères alphanumériques, le trait de soulignement (_), la barre oblique (/) et le tiret (-) sont autorisés.",
       "PreOpenPortMaxCountLimit": "Vous pouvez définir jusqu'à {{count}} ports pré-ouverts.",
       "StartTimeMustBeInTheFuture": "L'heure de début doit être postérieure à l'heure actuelle.",
-      "EnqueueComputeSessionWarning": "Si vous la définissez sur une taille supérieure aux ressources actuellement disponibles, la création de la session sera retardée dans la file d'attente jusqu'à ce qu'elle devienne disponible.",
+      "EnqueueComputeSessionWarning": "Ressources insuffisantes. \nLa session est peut-être en attente.",
       "SessionName": "Nom de la séance",
       "ResetFormConfirm": "Voulez-vous réinitialiser toutes vos entrées ?",
       "TemplateAndHistory": "Modèles",
@@ -258,7 +258,6 @@
       "EnvironmentVariableDuplicateName": "Un nom de variable qui existe déjà.",
       "Template": "Modèle de session",
       "EnableAutomaticMiniumShmem": "Définir la mémoire partagée minimale",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Seul un nombre entier est autorisé lorsque la taille du cluster n'est pas inférieure à 2.",
       "StartAfter": "Commencez après :",
       "StartTimeDoesNotApply": "Si l'heure de début n'est pas définie, elle ne s'applique pas.",
@@ -273,7 +272,8 @@
       "AddEnvironmentVariable": "Ajouter des variables d'environnement",
       "EnvironmentVariableValueRequired": "Veuillez saisir une valeur.",
       "PleaseCompleteForm": "Le formulaire est incomplet ou contient des erreurs. Veuillez vérifier vos données.",
-      "FailedToStartNewSession": "La création de la session a échoué. \nVeuillez vérifier l'onglet « TERMINÉ » sur la page de la session."
+      "FailedToStartNewSession": "La création de la session a échoué. \nVeuillez vérifier l'onglet « TERMINÉ » sur la page de la session.",
+      "ProxyDirectTCPNotSupported": "La connexion TCP directe par proxy n'est pas encore prise en charge"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -466,7 +466,9 @@
     "Utilization": "Utilisation",
     "NoAvailableLiveStat": "Pas de statistiques en direct disponibles",
     "Allocation": "Allocation",
-    "DiskPerc": "% du disque"
+    "DiskPerc": "% du disque",
+    "AutoRefreshEvery5s": "Actualisation automatique toutes les 5 s",
+    "Agent": "Agent"
   },
   "general": {
     "cores": "cœurs",
@@ -820,7 +822,8 @@
     "NoImageToDisplay": "Pas d'images à afficher",
     "CustomizedImageSuccessfullyDeleted": "Image personnalisée supprimée avec succès.",
     "DescImageResourceModified": "La limite de ressources a été modifiée avec succès",
-    "DescImagePortsModified": "Ports d'image modifiés avec succès"
+    "DescImagePortsModified": "Ports d'image modifiés avec succès",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Si vous modifiez une image qui a déjà été installée, vous devrez réinstaller l'image.</p><p>Les modifications ne seront appliquées qu'une fois l'image réinstallée.\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "Préréglages de ressources",
@@ -1185,7 +1188,8 @@
     "ShowOnlyChanged": "Afficher uniquement les modifications",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Utilisez l'accélérateur Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Nécessite le plugin LPU Backend.AI Hyperaccel."
+    "RequireHyperaccelLPUPlugin": "Nécessite le plugin LPU Backend.AI Hyperaccel.",
+    "SearchPlaceholder": "Recherche"
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",
@@ -1568,12 +1572,6 @@
   },
   "tourguide": {
     "NeoSessionLauncher": {
-      "WelcomeTitle": "Accueillir!",
-      "WelcomeText": "Bienvenue dans le nouveau lanceur de session NEO !",
-      "StepsTitle": "Étapes d'exécution de la session",
-      "StepsText": "Vous pouvez vérifier l'étape en cours dans l'affichage de l'étape à droite. \nVous pouvez accéder à une étape spécifique en cliquant dessus.",
-      "MoveToNextStepTitle": "Passer à l'étape suivante",
-      "MoveToNextStepText": "Vous pouvez cliquer sur le bouton Suivant pour passer à l'étape suivante ou passer à Révision.",
       "ValidationErrorTitle": "Erreurs de validation du champ de saisie",
       "ValidationErrorText": "Si vous ne saisissez pas de valeur dans un champ obligatoire ou si vous saisissez une valeur non valide, un message d'erreur s'affiche dans ce champ.",
       "FixErrorAndTryAgainText": "S'il y a un champ d'erreur, le bouton Lancer la session est désactivé. \nVeuillez corriger l'erreur et réessayer.",

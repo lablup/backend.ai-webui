@@ -245,7 +245,7 @@
       "FolderAliasInvalid": "Es sind nur alphanumerische Zeichen, Unterstrich (_), Schrägstrich (/) und Bindestrich (-) zulässig.",
       "PreOpenPortMaxCountLimit": "Sie können bis zu {{count}} vorgeöffnete Ports einstellen.",
       "StartTimeMustBeInTheFuture": "Die Startzeit muss nach der aktuellen Uhrzeit liegen.",
-      "EnqueueComputeSessionWarning": "Wenn Sie einen größeren Wert als die derzeit verfügbaren Ressourcen festlegen, wird die Sitzungserstellung in der Warteschlange verzögert, bis sie verfügbar wird.",
+      "EnqueueComputeSessionWarning": "Unzureichende Ressourcen. \nDie Sitzung steht möglicherweise noch aus.",
       "SessionName": "Sitzungsname",
       "ResetFormConfirm": "Möchten Sie alle Ihre Einträge zurücksetzen?",
       "TemplateAndHistory": "Vorlagen",
@@ -258,7 +258,6 @@
       "EnvironmentVariableDuplicateName": "Ein Variablenname, der bereits existiert.",
       "Template": "Sitzungsvorlage",
       "EnableAutomaticMiniumShmem": "Minimalen gemeinsamen Speicher festlegen",
-      "PreOpenPortMaxCountLimit_plural": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Nur Ganzzahlen sind zulässig, wenn die Clustergröße nicht weniger als 2 beträgt.",
       "StartAfter": "Beginnen Sie nach:",
       "StartTimeDoesNotApply": "Wenn die Startzeit nicht festgelegt ist, gilt sie nicht.",
@@ -273,7 +272,8 @@
       "AddEnvironmentVariable": "Umgebungsvariablen hinzufügen",
       "EnvironmentVariableValueRequired": "Bitte geben Sie einen Wert ein.",
       "PleaseCompleteForm": "Das Formular ist unvollständig oder enthält Fehler. Bitte überprüfen Sie Ihre Eingaben.",
-      "FailedToStartNewSession": "Die Sitzungserstellung ist fehlgeschlagen. \nBitte überprüfen Sie die Registerkarte „FERTIG“ auf der Sitzungsseite."
+      "FailedToStartNewSession": "Die Sitzungserstellung ist fehlgeschlagen. \nBitte überprüfen Sie die Registerkarte „FERTIG“ auf der Sitzungsseite.",
+      "ProxyDirectTCPNotSupported": "Eine direkte Proxy-TCP-Verbindung wird noch nicht unterstützt"
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",
@@ -466,7 +466,9 @@
     "Allocation": "Zuteilung",
     "Utilization": "Inanspruchnahme",
     "DiskPerc": "Platte %",
-    "NoAgentToDisplay": "Keine Agenten zum Anzeigen"
+    "NoAgentToDisplay": "Keine Agenten zum Anzeigen",
+    "AutoRefreshEvery5s": "Automatische Aktualisierung alle 5 Sekunden",
+    "Agent": "Agent"
   },
   "general": {
     "cores": "Kerne",
@@ -820,7 +822,8 @@
     "NoImageToDisplay": "Keine Bilder zum Anzeigen",
     "CustomizedImageSuccessfullyDeleted": "Benutzerdefiniertes Bild erfolgreich gelöscht.",
     "DescImageResourceModified": "Ressourcenlimit erfolgreich geändert",
-    "DescImagePortsModified": "Bildports erfolgreich geändert"
+    "DescImagePortsModified": "Bildports erfolgreich geändert",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Wenn Sie ein bereits installiertes Image ändern, müssen Sie das Image neu installieren.</p><p>Änderungen werden erst übernommen, wenn das Image erneut installiert wird.\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "Ressourcenvoreinstellungen",
@@ -1185,7 +1188,8 @@
     "ShowOnlyChanged": "Nur Änderungen anzeigen",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Verwenden Sie den Hyperaccel LPU-Beschleuniger.",
-    "RequireHyperaccelLPUPlugin": "Erfordert das Backend.AI Hyperaccel LPU-Plugin."
+    "RequireHyperaccelLPUPlugin": "Erfordert das Backend.AI Hyperaccel LPU-Plugin.",
+    "SearchPlaceholder": "Suche"
   },
   "notification": {
     "SuccessfullyUpdated": "Erfolgreich aktualisiert",
@@ -1568,12 +1572,6 @@
   },
   "tourguide": {
     "NeoSessionLauncher": {
-      "WelcomeTitle": "Willkommen!",
-      "WelcomeText": "Willkommen beim neuen NEO Session Launcher!",
-      "StepsTitle": "Schritte zur Sitzungsausführung",
-      "StepsText": "Die aktuelle Etappe können Sie in der Etappenanzeige rechts überprüfen. \nSie können zu einem bestimmten Schritt springen, indem Sie darauf klicken.",
-      "MoveToNextStepTitle": "Fahren Sie mit dem nächsten Schritt fort",
-      "MoveToNextStepText": "Sie können auf die Schaltfläche „Weiter“ klicken, um mit dem nächsten Schritt fortzufahren, oder mit „Überprüfen“ fortfahren.",
       "ValidationErrorTitle": "Fehler bei der Validierung des Eingabefelds",
       "ValidationErrorText": "Wenn Sie in einem Pflichtfeld keinen Wert eingeben oder einen ungültigen Wert eingeben, wird in diesem Feld eine Fehlermeldung angezeigt.",
       "FixErrorAndTryAgainText": "Wenn ein Fehlerfeld vorhanden ist, ist die Schaltfläche „Sitzung starten“ deaktiviert. \nBitte beheben Sie den Fehler und versuchen Sie es erneut.",
