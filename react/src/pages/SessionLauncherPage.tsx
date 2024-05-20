@@ -71,8 +71,6 @@ import {
   Switch,
   Table,
   Tag,
-  Tour,
-  TourStepProps,
   Tooltip,
   Typography,
   theme,

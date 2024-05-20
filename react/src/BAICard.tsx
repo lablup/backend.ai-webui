@@ -39,7 +39,7 @@ const BAICard: React.FC<BAICardProps> = ({
     undefined;
   return (
     <Card
-      className={status === 'error' ? 'bai-card-validation-error' : ''}
+      className={status === 'error' ? 'bai-card-error' : ''}
       style={_.extend(style, {
         borderColor:
           status === 'error'
