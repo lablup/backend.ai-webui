@@ -1569,5 +1569,9 @@
     "SettingTable": "Sitzordnung bei Tisch",
     "SelectColumnToDisplay": "Wählen Sie die anzuzeigenden Spalten aus",
     "SearchTableColumn": "Tabellenspalten durchsuchen"
+  },
+  "sourceCodeViewer": {
+    "Copy": "Kopieren",
+    "Copied": "Kopiert"
   }
 }

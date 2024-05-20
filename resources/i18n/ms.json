@@ -1569,5 +1569,9 @@
     "SelectColumnToDisplay": "Pilih untuk lajur untuk dipaparkan",
     "SettingTable": "Tetapan Meja",
     "SearchTableColumn": "Cari lajur jadual"
+  },
+  "sourceCodeViewer": {
+    "Copy": "Salinan",
+    "Copied": "disalin"
   }
 }

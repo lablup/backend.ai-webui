@@ -1569,5 +1569,9 @@
     "SettingTable": "Сервировка стола",
     "SelectColumnToDisplay": "Выберите столбцы для отображения",
     "SearchTableColumn": "Поиск по столбцам таблицы"
+  },
+  "sourceCodeViewer": {
+    "Copy": "Копировать",
+    "Copied": "Скопировано"
   }
 }

@@ -1569,5 +1569,9 @@
     "SettingTable": "桌面設定",
     "SelectColumnToDisplay": "選擇要顯示的列",
     "SearchTableColumn": "搜尋表格列"
+  },
+  "sourceCodeViewer": {
+    "Copy": "複製",
+    "Copied": "已複製"
   }
 }

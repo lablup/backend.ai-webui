@@ -1569,5 +1569,9 @@
     "SettingTable": "Configuração de mesa",
     "SelectColumnToDisplay": "Selecione as colunas a serem exibidas",
     "SearchTableColumn": "Pesquisar colunas da tabela"
+  },
+  "sourceCodeViewer": {
+    "Copy": "cópia de",
+    "Copied": "Copiado"
   }
 }
