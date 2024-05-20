@@ -29,9 +29,7 @@ type KeypairResourcePolicies = NonNullable<
   KeypairResourcePolicyListQuery$data['keypair_resource_policies']
 >[number];
 
-interface KeypairResourcePolicyListProps {
-  // Define your prop types here
-}
+interface KeypairResourcePolicyListProps {}
 
 const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   props,
