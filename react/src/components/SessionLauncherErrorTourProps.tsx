@@ -16,7 +16,7 @@ const SessionLauncherValidationTour: React.FC<
       title: t('tourguide.NeoSessionLauncher.ValidationErrorTitle'),
       description: t('tourguide.NeoSessionLauncher.ValidationErrorText'),
       target: () =>
-        document.getElementsByClassName('bai-card-error')[0] as HTMLElement,
+        document.getElementsByClassName('bai-card-error')?.[0] as HTMLElement,
     },
     {
       title: t('tourguide.NeoSessionLauncher.ValidationErrorTitle'),
@@ -25,7 +25,7 @@ const SessionLauncherValidationTour: React.FC<
       ),
       target: () =>
         (
-          document.getElementsByClassName('bai-card-error')[0] as HTMLElement
+          document.getElementsByClassName('bai-card-error')?.[0] as HTMLElement
         ).querySelector('.ant-card-extra') as HTMLElement,
     },
     {
