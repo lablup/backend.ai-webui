@@ -313,9 +313,9 @@ export const localeCompare = (a?: string | null, b?: string | null) => {
   return a.localeCompare(b);
 };
 
-export const transformSorterToOrderString = <T = any,>(
+export function transformSorterToOrderString<T = any>(
   sorter: SorterResult<T> | Array<SorterResult<T>>,
-) => {
+) {
   if (Array.isArray(sorter)) {
     return _.chain(sorter)
       .map((s) =>
@@ -329,4 +329,4 @@ export const transformSorterToOrderString = <T = any,>(
       ? `${sorter.order === 'descend' ? '-' : ''}${sorter.field}`
       : undefined;
   }
-};
+}

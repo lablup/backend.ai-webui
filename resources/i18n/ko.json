@@ -1582,5 +1582,9 @@
   "sourceCodeViewer": {
     "Copy": "복사",
     "Copied": "복사됨"
+  },
+  "propertyFilter": {
+    "ResetFilter": "필터 초기화",
+    "placeHolder": "검색"
   }
 }
