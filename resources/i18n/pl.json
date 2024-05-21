@@ -1577,5 +1577,9 @@
       "FixErrorAndTryAgainText": "Jeśli występuje pole błędu, przycisk Uruchom sesję jest wyłączony. \nPopraw błąd i spróbuj ponownie.",
       "FixErrorFieldbyModifyButton": "W przypadku tego pola błędu możesz przejść bezpośrednio do przycisku Edytuj w prawym górnym rogu, aby go edytować."
     }
+  },
+  "sourceCodeViewer": {
+    "Copy": "Kopiuj",
+    "Copied": "Skopiowano"
   }
 }

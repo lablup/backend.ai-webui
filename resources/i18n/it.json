@@ -1577,5 +1577,9 @@
       "FixErrorAndTryAgainText": "Se è presente un campo di errore, il pulsante Avvia sessione è disabilitato. \nCorreggi l'errore e riprova.",
       "FixErrorFieldbyModifyButton": "Per quel campo di errore, puoi andare direttamente al pulsante Modifica nell'angolo in alto a destra per modificarlo."
     }
+  },
+  "sourceCodeViewer": {
+    "Copy": "copia",
+    "Copied": "Copiato"
   }
 }

@@ -1579,5 +1579,9 @@
       "FixErrorAndTryAgainText": "Si hay un campo de error, el botón Iniciar sesión está deshabilitado. \nCorrija el error y vuelva a intentarlo.",
       "FixErrorFieldbyModifyButton": "Para ese campo de error, puede ir directamente al botón Editar en la esquina superior derecha para editarlo."
     }
+  },
+  "sourceCodeViewer": {
+    "Copy": "Copiar",
+    "Copied": "Copiado"
   }
 }

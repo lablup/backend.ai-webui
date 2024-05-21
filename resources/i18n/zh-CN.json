@@ -1577,5 +1577,9 @@
       "FixErrorAndTryAgainText": "如果存在错误字段，则“启动会话”按钮将被禁用。\n请更正错误并重试。",
       "FixErrorFieldbyModifyButton": "对于该错误字段，您可以直接进入右上角的编辑按钮进行编辑。"
     }
+  },
+  "sourceCodeViewer": {
+    "Copy": "复制",
+    "Copied": "已复制"
   }
 }

@@ -1577,5 +1577,9 @@
       "FixErrorAndTryAgainText": "Wenn ein Fehlerfeld vorhanden ist, ist die Schaltfläche „Sitzung starten“ deaktiviert. \nBitte beheben Sie den Fehler und versuchen Sie es erneut.",
       "FixErrorFieldbyModifyButton": "Für dieses Fehlerfeld können Sie direkt auf die Schaltfläche „Bearbeiten“ in der oberen rechten Ecke gehen, um es zu bearbeiten."
     }
+  },
+  "sourceCodeViewer": {
+    "Copy": "Kopieren",
+    "Copied": "Kopiert"
   }
 }

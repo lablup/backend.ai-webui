@@ -251,7 +251,7 @@
       "Enable": "활성화",
       "Network": "네트워크",
       "preopen": "사전 개방 포트",
-      "EnqueueComputeSessionWarning": "자원 한도를 초과합니다. 세션이 즉시 실행되지 않을 수 있습니다.",
+      "EnqueueComputeSessionWarning": "자원이 부족하여 세션이 즉시 실행되지 않을 수 있습니다.",
       "ErrorCanNotExceedRemaining": "남아있는 자원({{amount}})보다 크게 설정할 수 없습니다.",
       "Template": "세션 템플릿",
       "TemplateAndHistory": "템플릿 및 최근기록",
@@ -1578,5 +1578,9 @@
       "FixErrorAndTryAgainText": "오류 필드가 있는 경우, 세션 실행 버튼이 비활성화 됩니다. 오류 수정 후 다시 시도해 주세요.",
       "FixErrorFieldbyModifyButton": "해당 오류 필드에 대해, 우측 상단의 수정 버튼으로 바로 이동하여 수정할 수 있습니다."
     }
+  },
+  "sourceCodeViewer": {
+    "Copy": "복사",
+    "Copied": "복사됨"
   }
 }

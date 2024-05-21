@@ -1578,5 +1578,9 @@
       "FixErrorAndTryAgainText": "Jika ada bidang kesalahan, tombol Sesi peluncuran dinonaktifkan. \nHarap perbaiki kesalahannya dan coba lagi.",
       "FixErrorFieldbyModifyButton": "Untuk kolom error tersebut, Anda bisa langsung menuju tombol Edit di pojok kanan atas untuk mengeditnya."
     }
+  },
+  "sourceCodeViewer": {
+    "Copy": "Menyalin",
+    "Copied": "Disalin"
   }
 }

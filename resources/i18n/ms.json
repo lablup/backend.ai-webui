@@ -1577,5 +1577,9 @@
       "FixErrorAndTryAgainText": "Jika terdapat medan ralat, butang Sesi Pelancaran dinyahdayakan. \nSila betulkan ralat dan cuba lagi.",
       "FixErrorFieldbyModifyButton": "Untuk medan ralat itu, anda boleh pergi terus ke butang Edit di penjuru kanan sebelah atas untuk mengeditnya."
     }
+  },
+  "sourceCodeViewer": {
+    "Copy": "Salinan",
+    "Copied": "disalin"
   }
 }

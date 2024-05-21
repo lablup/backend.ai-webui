@@ -1577,5 +1577,9 @@
       "FixErrorAndTryAgainText": "Jos virhekenttä on, Launch session -painike ei ole käytössä. \nKorjaa virhe ja yritä uudelleen.",
       "FixErrorFieldbyModifyButton": "Voit muokata virhekenttää suoraan oikeassa yläkulmassa olevasta Muokkaa-painikkeesta."
     }
+  },
+  "sourceCodeViewer": {
+    "Copy": "Kopio",
+    "Copied": "Kopioitu"
   }
 }

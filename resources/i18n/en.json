@@ -1579,5 +1579,9 @@
       "FixErrorAndTryAgainText": "If there is an error field, the Launch session button is disabled. Please correct the error and try again.",
       "FixErrorFieldbyModifyButton": "For that error field, you can go directly to the Edit button in the top right corner to edit it."
     }
+  },
+  "sourceCodeViewer": {
+    "Copy": "Copy",
+    "Copied": "Copied"
   }
 }

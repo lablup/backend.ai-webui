@@ -1577,5 +1577,9 @@
       "FixErrorAndTryAgainText": "Bir hata alanı varsa Oturumu başlat düğmesi devre dışı bırakılır. \nLütfen hatayı düzeltip tekrar deneyin.",
       "FixErrorFieldbyModifyButton": "Bu hata alanını düzenlemek için doğrudan sağ üst köşedeki Düzenle düğmesine gidebilirsiniz."
     }
+  },
+  "sourceCodeViewer": {
+    "Copy": "Kopyala",
+    "Copied": "Kopyalandı"
   }
 }

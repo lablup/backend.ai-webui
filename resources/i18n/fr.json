@@ -1577,5 +1577,9 @@
       "FixErrorAndTryAgainText": "S'il y a un champ d'erreur, le bouton Lancer la session est désactivé. \nVeuillez corriger l'erreur et réessayer.",
       "FixErrorFieldbyModifyButton": "Pour ce champ d'erreur, vous pouvez accéder directement au bouton Modifier dans le coin supérieur droit pour le modifier."
     }
+  },
+  "sourceCodeViewer": {
+    "Copy": "Copie",
+    "Copied": "Copié"
   }
 }
