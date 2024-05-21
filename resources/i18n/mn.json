@@ -491,7 +491,8 @@
     "Image": "Зураг",
     "All": "бүхэлд нь",
     "InProgress": "Ажиллаж байна",
-    "Session": "Сессия"
+    "Session": "Сессия",
+    "General": "Генерал"
   },
   "credential": {
     "Permission": "Зөвшөөрөл",

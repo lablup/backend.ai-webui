@@ -255,6 +255,7 @@ export const useCurrentUserRole = () => {
     },
     {
       suspense: false,
+      staleTime: Infinity,
     },
   );
   const userRole = roleData?.user.role;

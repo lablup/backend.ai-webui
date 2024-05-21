@@ -491,7 +491,8 @@
     "Image": "Gambar",
     "All": "Semua",
     "InProgress": "Sedang Berlangsung",
-    "Session": "Sesi"
+    "Session": "Sesi",
+    "General": "Umum"
   },
   "credential": {
     "Permission": "Izin",

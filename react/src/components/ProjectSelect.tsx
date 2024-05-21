@@ -1,4 +1,5 @@
-import { useCurrentUserInfo } from '../hooks/backendai';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { ProjectSelectorQuery } from './__generated__/ProjectSelectorQuery.graphql';
 import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
@@ -29,38 +30,93 @@ const ProjectSelector: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const [currentUser] = useCurrentUserInfo();
+  const baiClient = useSuspendedBackendaiClient();
 
   const [value, setValue] = useControllableValue(selectProps);
-  const { projects, user } = useLazyLoadQuery<ProjectSelectorQuery>(
-    graphql`
-      query ProjectSelectorQuery($domain_name: String, $email: String) {
-        projects: groups(domain_name: $domain_name, is_active: true) {
-          id
-          is_active
-          name
-          resource_policy
-        }
-        user(email: $email) {
-          groups {
+  const userRole = useCurrentUserRole();
+  const { projectsSince2403, projectsBefore2403, user } =
+    useLazyLoadQuery<ProjectSelectorQuery>(
+      graphql`
+        query ProjectSelectorQuery(
+          $domain_name: String
+          $email: String
+          $type: [String]
+        ) {
+          projectsSince2403: groups(
+            domain_name: $domain_name
+            is_active: true
+            type: $type
+          ) @since(version: "24.03.0") {
             id
+            is_active
             name
+            resource_policy
+            type
+          }
+          projectsBefore2403: groups(
+            domain_name: $domain_name
+            is_active: true
+          ) @deprecatedSince(version: "24.03.0") {
+            id
+            is_active
+            name
+            resource_policy
+          }
+          user(email: $email) {
+            groups {
+              id
+              name
+            }
           }
         }
-      }
-    `,
-    {
-      domain_name: domain,
-      email: currentUser.email,
-    },
-    {
-      fetchPolicy: 'store-and-network',
-    },
-  );
+      `,
+      {
+        domain_name: domain,
+        email: currentUser.email,
+        type:
+          (userRole === 'admin' || userRole === 'superadmin') &&
+          baiClient._config.supportModelStore
+            ? ['GENERAL', 'MODEL_STORE']
+            : ['GENERAL'],
+      },
+      {
+        fetchPolicy: 'store-and-network',
+      },
+    );
+  const projects = projectsSince2403 || projectsBefore2403;
 
   // temporary filtering groups by accessible groups according to user query
   const accessibleProjects = projects?.filter((project) =>
     user?.groups?.map((group) => group?.id).includes(project?.id),
   );
+
+  const getLabel = (key: string) =>
+    ({
+      GENERAL: t('general.General'),
+      MODEL_STORE: t('data.ModelStore'),
+    })[key] || key;
+
+  const groupOptions = _.chain(accessibleProjects)
+    .groupBy('type')
+    .map((value, key) => {
+      return {
+        label: getLabel(key),
+        title: key,
+        options: _.chain(value)
+          .sortBy('name')
+          .map((project) => {
+            return {
+              label: project?.name,
+              value: project?.id,
+              projectId: project?.id,
+              projectResourcePolicy: project?.resource_policy,
+              projectName: project?.name,
+            };
+          })
+          .value(),
+      };
+    })
+    .value();
 
   return (
     <Select
@@ -72,15 +128,9 @@ const ProjectSelector: React.FC<Props> = ({
       {...selectProps}
       value={value}
       optionFilterProp="projectName"
-      options={_.map(_.sortBy(accessibleProjects, 'name'), (project) => {
-        return {
-          label: project?.name,
-          value: project?.id,
-          projectId: project?.id,
-          projectResourcePolicy: project?.resource_policy,
-          projectName: project?.name,
-        };
-      })}
+      options={
+        _.size(groupOptions) > 1 ? groupOptions : groupOptions[0]?.options
+      }
     />
   );
 };

@@ -490,7 +490,8 @@
     "Image": "Gambar",
     "All": "keseluruhan",
     "InProgress": "Prosiding",
-    "Session": "Sesi"
+    "Session": "Sesi",
+    "General": "Umum"
   },
   "credential": {
     "Permission": "Kebenaran",

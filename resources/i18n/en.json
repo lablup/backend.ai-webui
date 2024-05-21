@@ -593,7 +593,8 @@
     "Image": "Image",
     "All": "All",
     "InProgress": "In progress",
-    "Session": "Session"
+    "Session": "Session",
+    "General": "General"
   },
   "credential": {
     "Permission": "Permission",

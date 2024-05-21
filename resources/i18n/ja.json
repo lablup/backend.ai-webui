@@ -490,7 +490,8 @@
     "Image": "画像",
     "All": "全体",
     "InProgress": "進行中",
-    "Session": "セッション"
+    "Session": "セッション",
+    "General": "一般"
   },
   "credential": {
     "Permission": "許可",

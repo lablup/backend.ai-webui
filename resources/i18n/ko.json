@@ -580,7 +580,8 @@
     "Image": "이미지",
     "All": "전체",
     "InProgress": "진행중",
-    "Session": "세션"
+    "Session": "세션",
+    "General": "일반"
   },
   "credential": {
     "Permission": "권한",

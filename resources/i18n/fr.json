@@ -490,7 +490,8 @@
     "Image": "Image",
     "All": "Tous",
     "InProgress": "En cours",
-    "Session": "Session"
+    "Session": "Session",
+    "General": "Général"
   },
   "credential": {
     "Permission": "Autorisation",

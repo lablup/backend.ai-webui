@@ -490,7 +490,8 @@
     "Image": "Hình ảnh",
     "All": "toàn bộ",
     "InProgress": "Đang tiến hành",
-    "Session": "Phiên họp"
+    "Session": "Phiên họp",
+    "General": "Tổng quan"
   },
   "credential": {
     "Permission": "Sự cho phép",
