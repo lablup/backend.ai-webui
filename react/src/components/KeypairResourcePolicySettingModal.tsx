@@ -9,10 +9,7 @@ import {
   CreateKeyPairResourcePolicyInput,
   KeypairResourcePolicySettingModalCreateMutation,
 } from './__generated__/KeypairResourcePolicySettingModalCreateMutation.graphql';
-import {
-  KeypairResourcePolicySettingModalFragment$data,
-  KeypairResourcePolicySettingModalFragment$key,
-} from './__generated__/KeypairResourcePolicySettingModalFragment.graphql';
+import { KeypairResourcePolicySettingModalFragment$key } from './__generated__/KeypairResourcePolicySettingModalFragment.graphql';
 import {
   KeypairResourcePolicySettingModalModifyMutation,
   ModifyKeyPairResourcePolicyInput,
@@ -28,13 +25,8 @@ import {
   useMutation,
 } from 'react-relay';
 
-type TotalResourceSlots = {
-  cpu?: number;
-  mem?: number;
-  'cuda.device'?: number;
-  'cuda.shares'?: number;
-  [key: string]: number | undefined;
-};
+export const UNLIMITED_MAX_CONTAINERS_PER_SESSIONS = 1000000;
+export const UNLIMITED_MAX_CONCURRENT_SESSIONS = 1000000;
 
 interface KeypairResourcePolicySettingModalProps extends BAIModalProps {
   existingPolicyNames?: string[];
@@ -114,48 +106,14 @@ const KeypairResourcePolicySettingModal: React.FC<
       }
     `);
 
-  const parsedTotalResourceSlots = JSON.parse(
-    keypairResourcePolicy?.total_resource_slots || '{}',
-  );
-
-  const generateResourcePolicySettingUnlimitedFlags = (
-    policy: TotalResourceSlots,
-  ) => ({
-    totalResourceSlotsCPUUnlimited: _.isUndefined(policy?.cpu),
-    totalResourceSlotsMEMUnlimited: _.isUndefined(policy?.mem),
-    totalResourceSlotsGPUUnlimited: _.isUndefined(policy?.['cuda.device']),
-    totalResourceSlotsFGPUUnlimited: _.isUndefined(policy?.['cuda.shares']),
-  });
-
-  const isUndefinedOrEqualTo = (value: any, num: number) =>
-    _.isUndefined(value) || value === num;
-
-  const generateSessionSettingUnlimitedFlags = (
-    policy: KeypairResourcePolicySettingModalFragment$data | null | undefined,
-  ) => ({
-    maxContainersPerSessionUnlimited: isUndefinedOrEqualTo(
-      policy?.max_containers_per_session,
-      0,
-    ),
-    maxSessionLifetimeUnlimited: isUndefinedOrEqualTo(
-      policy?.max_session_lifetime,
-      0,
-    ),
-    maxConcurrentSessionsUnlimited: isUndefinedOrEqualTo(
-      policy?.max_concurrent_sessions,
-      0,
-    ),
-    idleTimeoutUnlimited: isUndefinedOrEqualTo(policy?.idle_timeout, 0),
-  });
-
   const initialValues = useMemo(() => {
-    const localParsedTotalResourceSlots = JSON.parse(
+    const parsedTotalResourceSlots = JSON.parse(
       keypairResourcePolicy?.total_resource_slots || '{}',
     );
 
-    if (localParsedTotalResourceSlots?.mem) {
-      localParsedTotalResourceSlots.mem = iSizeToSize(
-        localParsedTotalResourceSlots?.mem + 'b',
+    if (parsedTotalResourceSlots?.mem) {
+      parsedTotalResourceSlots.mem = iSizeToSize(
+        parsedTotalResourceSlots?.mem + 'b',
         'g',
         2,
         true,
@@ -163,18 +121,18 @@ const KeypairResourcePolicySettingModal: React.FC<
     }
 
     return {
-      parsedTotalResourceSlots: localParsedTotalResourceSlots,
+      parsedTotalResourceSlots,
       allowedVfolderHostNames: _.keys(
         JSON.parse(keypairResourcePolicy?.allowed_vfolder_hosts || '{}'),
       ),
       ...keypairResourcePolicy,
-      ...generateResourcePolicySettingUnlimitedFlags(
-        localParsedTotalResourceSlots,
-      ),
-      ...generateSessionSettingUnlimitedFlags(keypairResourcePolicy),
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [keypairResourcePolicy, keypairResourcePolicy?.total_resource_slots]);
+  }, [
+    keypairResourcePolicy,
+    keypairResourcePolicy?.total_resource_slots,
+    keypairResourcePolicy?.allowed_vfolder_hosts,
+  ]);
 
   const handleOk = () => {
     return form.validateFields().then((values) => {
@@ -216,14 +174,14 @@ const KeypairResourcePolicySettingModal: React.FC<
         | ModifyKeyPairResourcePolicyInput = {
         default_for_unspecified: 'UNLIMITED',
         total_resource_slots: JSON.stringify(totalResourceSlots || '{}'),
-        max_session_lifetime: values?.max_session_lifetime || 0,
-        max_concurrent_sessions: values?.max_concurrent_sessions || 0,
-        max_containers_per_session: values?.max_containers_per_session || 0,
-        idle_timeout: values?.idle_timeout || 0,
+        max_session_lifetime: values?.max_session_lifetime,
+        max_concurrent_sessions: values?.max_concurrent_sessions,
+        max_containers_per_session: values?.max_containers_per_session,
+        idle_timeout: values?.idle_timeout,
         allowed_vfolder_hosts: JSON.stringify(allowedVfolderHosts || '{}'),
       };
       if (!isDeprecatedMaxVfolderCountInKeypairResourcePolicy) {
-        props.max_vfolder_count = values?.max_vfolder_count || 0;
+        props.max_vfolder_count = values?.max_vfolder_count;
       }
 
       if (keypairResourcePolicy === null) {
@@ -324,72 +282,59 @@ const KeypairResourcePolicySettingModal: React.FC<
             <Row gutter={16}>
               <Col span={12}>
                 <FormItemWithUnlimited
-                  form={form}
-                  fieldName={['parsedTotalResourceSlots', 'cpu']}
-                  checkboxFieldName="totalResourceSlotsCPUUnlimited"
+                  name={['parsedTotalResourceSlots', 'cpu']}
+                  unlimitedValue={undefined}
                   label={resourceSlotsDetails?.cpu.description}
-                  fallbackValue={parsedTotalResourceSlots?.cpu}
-                  render={(disabled) => (
+                  children={
                     <InputNumber
                       min={0}
                       max={512}
-                      disabled={disabled}
                       addonAfter={resourceSlotsDetails?.cpu.display_unit}
                     />
-                  )}
+                  }
                 />
               </Col>
               <Col span={12}>
                 <FormItemWithUnlimited
-                  form={form}
-                  fieldName={['parsedTotalResourceSlots', 'mem']}
-                  checkboxFieldName="totalResourceSlotsMEMUnlimited"
+                  name={['parsedTotalResourceSlots', 'mem']}
+                  unlimitedValue={undefined}
                   label={resourceSlotsDetails?.mem.description}
-                  fallbackValue={parsedTotalResourceSlots?.mem}
-                  render={(disabled) => (
-                    <DynamicUnitInputNumber disabled={disabled} />
-                  )}
+                  children={<DynamicUnitInputNumber />}
                 />
               </Col>
             </Row>
             <Row gutter={16} align="bottom">
               <Col span={12}>
                 <FormItemWithUnlimited
-                  form={form}
-                  fieldName={['parsedTotalResourceSlots', 'cuda.device']}
-                  checkboxFieldName="totalResourceSlotsGPUUnlimited"
+                  name={['parsedTotalResourceSlots', 'cuda.device']}
+                  unlimitedValue={undefined}
                   label={resourceSlotsDetails?.['cuda.device'].description}
-                  fallbackValue={parsedTotalResourceSlots?.['cuda.device']}
-                  render={(disabled) => (
+                  children={
                     <InputNumber
                       min={0}
                       max={64}
-                      disabled={disabled}
                       addonAfter={
                         resourceSlotsDetails?.['cuda.device'].display_unit
                       }
                     />
-                  )}
+                  }
                 />
               </Col>
               <Col span={12}>
                 <FormItemWithUnlimited
-                  form={form}
-                  fieldName={['parsedTotalResourceSlots', 'cuda.shares']}
-                  checkboxFieldName="totalResourceSlotsFGPUUnlimited"
+                  name={['parsedTotalResourceSlots', 'cuda.shares']}
+                  unlimitedValue={undefined}
                   label={resourceSlotsDetails?.['cuda.shares'].description}
-                  fallbackValue={parsedTotalResourceSlots?.['cuda.shares']}
-                  render={(disabled) => (
+                  children={
                     <InputNumber
                       min={0}
                       max={256}
                       step={0.1}
-                      disabled={disabled}
                       addonAfter={
                         resourceSlotsDetails?.['cuda.shares'].display_unit
                       }
                     />
-                  )}
+                  }
                 />
               </Col>
             </Row>
@@ -400,74 +345,48 @@ const KeypairResourcePolicySettingModal: React.FC<
             <Row gutter={16}>
               <Col span={12}>
                 <FormItemWithUnlimited
-                  form={form}
-                  fieldName={'max_containers_per_session'}
-                  checkboxFieldName="maxContainersPerSessionUnlimited"
+                  name={'max_containers_per_session'}
+                  unlimitedValue={UNLIMITED_MAX_CONCURRENT_SESSIONS}
                   label={t('resourcePolicy.ContainerPerSession')}
-                  fallbackValue={
-                    keypairResourcePolicy?.max_containers_per_session
+                  children={
+                    <InputNumber min={0} max={100} style={{ width: '100%' }} />
                   }
-                  render={(disabled) => (
-                    <InputNumber
-                      min={0}
-                      max={100}
-                      disabled={disabled}
-                      style={{ width: '100%' }}
-                    />
-                  )}
                 />
               </Col>
               <Col span={12}>
                 <FormItemWithUnlimited
-                  form={form}
-                  fieldName={'max_session_lifetime'}
-                  checkboxFieldName="maxSessionLifetimeUnlimited"
+                  name={'max_session_lifetime'}
+                  unlimitedValue={0}
                   label={t('resourcePolicy.MaxSessionLifetime')}
-                  fallbackValue={keypairResourcePolicy?.max_session_lifetime}
-                  render={(disabled) => (
-                    <InputNumber
-                      min={0}
-                      max={100}
-                      disabled={disabled}
-                      style={{ width: '100%' }}
-                    />
-                  )}
+                  children={
+                    <InputNumber min={0} max={100} style={{ width: '100%' }} />
+                  }
                 />
               </Col>
             </Row>
             <Row gutter={16}>
               <Col span={12}>
                 <FormItemWithUnlimited
-                  form={form}
-                  fieldName={'max_concurrent_sessions'}
-                  checkboxFieldName="maxConcurrentSessionsUnlimited"
+                  name={'max_concurrent_sessions'}
+                  unlimitedValue={UNLIMITED_MAX_CONTAINERS_PER_SESSIONS}
                   label={t('resourcePolicy.ConcurrentJobs')}
-                  fallbackValue={keypairResourcePolicy?.max_concurrent_sessions}
-                  render={(disabled) => (
-                    <InputNumber
-                      min={0}
-                      max={100}
-                      disabled={disabled}
-                      style={{ width: '100%' }}
-                    />
-                  )}
+                  children={
+                    <InputNumber min={0} max={100} style={{ width: '100%' }} />
+                  }
                 />
               </Col>
               <Col span={12}>
                 <FormItemWithUnlimited
-                  form={form}
-                  fieldName={'idle_timeout'}
-                  checkboxFieldName="idleTimeoutUnlimited"
+                  name={'idle_timeout'}
+                  unlimitedValue={0}
                   label={t('resourcePolicy.IdleTimeoutSec')}
-                  fallbackValue={keypairResourcePolicy?.idle_timeout}
-                  render={(disabled) => (
+                  children={
                     <InputNumber
                       min={0}
                       max={15552000}
-                      disabled={disabled}
                       style={{ width: '100%' }}
                     />
-                  )}
+                  }
                 />
               </Col>
             </Row>

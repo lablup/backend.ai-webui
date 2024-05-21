@@ -1,64 +1,86 @@
 import Flex from './Flex';
-import { Form, FormInstance } from 'antd';
-import Checkbox, { CheckboxChangeEvent } from 'antd/es/checkbox';
-import React from 'react';
+import { Form, Checkbox } from 'antd';
+import { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { FormInstance } from 'antd/es/form';
+import { NamePath } from 'antd/es/form/interface';
+import _ from 'lodash';
+import React, { cloneElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface FormItemWithUnlimitedProps {
-  form: FormInstance;
-  fieldName: string | Array<string>;
-  checkboxFieldName: string;
+  name: NamePath;
+  unlimitedValue?: number | string;
   label?: string;
-  fallbackValue?: any;
-  render: (disabled: boolean) => React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
-  form,
-  fieldName,
-  checkboxFieldName,
+  name,
+  unlimitedValue,
   label,
-  fallbackValue,
-  render,
+  children,
 }) => {
   const { t } = useTranslation();
+  const [isUnlimited, setIsUnlimited] = useState<boolean>(false);
+  const form = Form.useFormInstance();
+  // // Reset unlimited fields to undefined when the form is initialized.
+  // useEffect(() => {
+  //   const fieldValue = form.getFieldValue(name);
+  //   if (fieldValue === unlimitedValue) {
+  //     form.setFieldValue(name, undefined);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+
+  // Detect changes in form value to update the isUnlimited state.
+  useEffect(() => {
+    const fieldValue = form.getFieldValue(name);
+    setIsUnlimited(fieldValue === unlimitedValue);
+  }, [form, name, unlimitedValue]);
+
+  // Disable children when isUnlimited is true.
+  const childrenWithProps = React.isValidElement(children)
+    ? cloneElement(children, {
+        disabled: isUnlimited,
+      } as React.Attributes & { disabled?: boolean })
+    : children;
+  const childrenWithUndefinedValue =
+    isUnlimited && React.isValidElement(children)
+      ? cloneElement(children, {
+          value: undefined,
+          disabled: isUnlimited,
+        } as React.Attributes & { value?: any })
+      : undefined;
 
   return (
     <Flex direction="column" align="start">
       <Form.Item
         style={{ margin: 0 }}
         label={label}
-        shouldUpdate={(prevValues, currentValues) => {
-          return (
-            prevValues[checkboxFieldName] !== currentValues[checkboxFieldName]
-          );
+        name={name}
+        hidden={isUnlimited}
+      >
+        {childrenWithProps}
+      </Form.Item>
+      {isUnlimited ? (
+        <Form.Item style={{ margin: 0 }} label={label}>
+          {childrenWithUndefinedValue}
+        </Form.Item>
+      ) : null}
+      <Checkbox
+        checked={isUnlimited}
+        onChange={(e: CheckboxChangeEvent) => {
+          const checked = e.target.checked;
+          setIsUnlimited(checked);
+          if (checked) {
+            form.setFieldValue(name, unlimitedValue);
+          } else {
+            form.resetFields([name]);
+          }
         }}
       >
-        {() => {
-          const disabled = form.getFieldValue(checkboxFieldName);
-          return (
-            <Form.Item noStyle name={fieldName}>
-              {render?.(disabled)}
-            </Form.Item>
-          );
-        }}
-      </Form.Item>
-      <Form.Item name={checkboxFieldName} valuePropName="checked">
-        <Checkbox
-          onChange={(e: CheckboxChangeEvent) => {
-            if (e.target.checked) {
-              form.setFieldValue(fieldName, null);
-            } else if (fallbackValue) {
-              form.setFieldValue(fieldName, fallbackValue);
-            }
-            form.validateFields(
-              typeof fieldName === 'string' ? [fieldName] : fieldName,
-            );
-          }}
-        >
-          {t('resourcePolicy.Unlimited')}
-        </Checkbox>
-      </Form.Item>
+        {t('resourcePolicy.Unlimited')}
+      </Checkbox>
     </Flex>
   );
 };

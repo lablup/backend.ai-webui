@@ -1,6 +1,9 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
-import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
+import KeypairResourcePolicySettingModal, {
+  UNLIMITED_MAX_CONCURRENT_SESSIONS,
+  UNLIMITED_MAX_CONTAINERS_PER_SESSIONS,
+} from './KeypairResourcePolicySettingModal';
 import ResourceNumber from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import { KeypairResourcePolicyListMutation } from './__generated__/KeypairResourcePolicyListMutation.graphql';
@@ -125,7 +128,8 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         a?.max_concurrent_sessions && b?.max_concurrent_sessions
           ? a.max_concurrent_sessions - b.max_concurrent_sessions
           : 1,
-      render: (text) => (text ? text : '∞'),
+      render: (text) =>
+        text === UNLIMITED_MAX_CONCURRENT_SESSIONS ? '∞' : text,
     },
     {
       title: t('resourcePolicy.ClusterSize'),
@@ -135,7 +139,8 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         a?.max_containers_per_session && b?.max_containers_per_session
           ? a.max_containers_per_session - b.max_containers_per_session
           : 1,
-      render: (text) => (text ? text : '∞'),
+      render: (text) =>
+        text === UNLIMITED_MAX_CONTAINERS_PER_SESSIONS ? '∞' : text,
     },
     {
       title: t('resourcePolicy.IdleTimeout'),
