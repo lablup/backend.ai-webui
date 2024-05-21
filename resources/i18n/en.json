@@ -1572,6 +1572,14 @@
     "CloneInfo": "It will be cloned as your user type folder.",
     "category": "Category"
   },
+  "tourguide": {
+    "NeoSessionLauncher": {
+      "ValidationErrorTitle": "Input field validation errors",
+      "ValidationErrorText": "If you don't enter a value in a required field or enter an invalid value, an error message displays in that field.",
+      "FixErrorAndTryAgainText": "If there is an error field, the Launch session button is disabled. Please correct the error and try again.",
+      "FixErrorFieldbyModifyButton": "For that error field, you can go directly to the Edit button in the top right corner to edit it."
+    }
+  },
   "sourceCodeViewer": {
     "Copy": "Copy",
     "Copied": "Copied"

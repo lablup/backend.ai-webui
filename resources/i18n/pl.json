@@ -1570,6 +1570,14 @@
     "SelectColumnToDisplay": "Wybierz, które kolumny mają być wyświetlane",
     "SearchTableColumn": "Przeszukaj kolumny tabeli"
   },
+  "tourguide": {
+    "NeoSessionLauncher": {
+      "ValidationErrorTitle": "Błędy sprawdzania poprawności pola wejściowego",
+      "ValidationErrorText": "Jeśli nie wprowadzisz wartości w wymaganym polu lub wprowadzisz nieprawidłową wartość, w tym polu wyświetli się komunikat o błędzie.",
+      "FixErrorAndTryAgainText": "Jeśli występuje pole błędu, przycisk Uruchom sesję jest wyłączony. \nPopraw błąd i spróbuj ponownie.",
+      "FixErrorFieldbyModifyButton": "W przypadku tego pola błędu możesz przejść bezpośrednio do przycisku Edytuj w prawym górnym rogu, aby go edytować."
+    }
+  },
   "sourceCodeViewer": {
     "Copy": "Kopiuj",
     "Copied": "Skopiowano"

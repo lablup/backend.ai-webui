@@ -21,6 +21,7 @@ import ResourceAllocationFormItems, {
   ResourceAllocationFormValue,
 } from '../components/ResourceAllocationFormItems';
 import ResourceNumber from '../components/ResourceNumber';
+import SessionLauncherValidationTour from '../components/SessionLauncherErrorTourProps';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
@@ -284,23 +285,7 @@ const SessionLauncherPage = () => {
       },
       {
         title: t('session.launcher.ConfirmAndLaunch'),
-        icon: (
-          <PlayCircleFilled />
-          // <Flex
-          //   align="center"
-          //   justify="center"
-          //   style={{
-          //     // border: '1px solid gray',
-          //     backgroundColor: '#E8E7E7',
-          //     width: 24,
-          //     height: 24,
-          //     borderRadius: 12,
-          //     fontSize: 16,
-          //   }}
-          // >
-          //   <CaretRightOutlined />
-          // </Flex>
-        ),
+        icon: <PlayCircleFilled />,
         // @ts-ignore
         key: 'review',
       },
@@ -321,19 +306,31 @@ const SessionLauncherPage = () => {
     (item) => item.errors.length > 0,
   );
 
-  const [, setFinalStepLastValidateTime] = useUpdatableState('first'); // Force re-render after validation in final step.
+  const [finalStepLastValidateTime, setFinalStepLastValidateTime] =
+    useUpdatableState('first'); // Force re-render after validation in final step.
+
   useEffect(() => {
     if (currentStep === steps.length - 1) {
       form
         .validateFields()
-        .catch(() => {})
+        .catch((error) => {})
         .finally(() => setFinalStepLastValidateTime());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep, form, setFinalStepLastValidateTime, steps.length]);
+
+  useEffect(() => {
+    if (finalStepLastValidateTime !== 'first') {
+      if (hasError) {
+        setValidationTourOpen(true);
+      } else {
+        setValidationTourOpen(false);
+      }
+    }
+  }, [finalStepLastValidateTime, hasError]);
 
   const startSession = () => {
     // TODO: support inference mode, support import mode
-
     setIsStartingSession(true);
     form
       .validateFields()
@@ -567,6 +564,9 @@ const SessionLauncherPage = () => {
         setIsStartingSession(false);
       });
   };
+
+  const [validationTourOpen, setValidationTourOpen] = useState(false);
+
   return (
     <Flex
       direction="column"
@@ -648,7 +648,6 @@ const SessionLauncherPage = () => {
                 >
                   <Form.Item name="sessionType">
                     <Radio.Group
-                      className="session-type-radio-group"
                       options={[
                         {
                           label: (
@@ -1050,7 +1049,6 @@ const SessionLauncherPage = () => {
                     }}
                   </Form.Item>
                 </Card>
-
                 {/* Step Start*/}
                 <Card
                   title={t('webui.menu.Data&Storage')}
@@ -1607,7 +1605,11 @@ const SessionLauncherPage = () => {
                       </Button>
                     )} */}
                   </Flex>
-                  <Flex direction="row" gap="sm">
+                  <Flex
+                    data-test-id="neo-session-launcher-tour-step-navigation"
+                    direction="row"
+                    gap="sm"
+                  >
                     {currentStep > 0 && (
                       <Button
                         onClick={() => {
@@ -1666,7 +1668,10 @@ const SessionLauncherPage = () => {
           {/* </Suspense> */}
         </Flex>
         {screens.lg && (
-          <Flex style={{ position: 'sticky', top: 80 }}>
+          <Flex
+            data-test-id="neo-session-launcher-tour-step"
+            style={{ position: 'sticky', top: 80 }}
+          >
             <Steps
               size="small"
               direction="vertical"
@@ -1689,6 +1694,13 @@ const SessionLauncherPage = () => {
           setSelectedFolderName(undefined);
         }}
       /> */}
+      <SessionLauncherValidationTour
+        open={validationTourOpen}
+        onClose={() => {
+          setValidationTourOpen(false);
+        }}
+        scrollIntoViewOptions
+      />
     </Flex>
   );
 };
@@ -1740,37 +1752,6 @@ const FormResourceNumbers: React.FC<{
     </>
   );
 };
-// const SessionTypeItem: React.FC<{
-//   title: string;
-//   description?: string;
-// }> = ({ title, description }) => {
-//   const { token } = theme.useToken();
-//   return (
-//     <Flex
-//       direction="column"
-//       style={{ padding: token.paddingXS }}
-//       align="stretch"
-//     >
-//       <Typography.Title level={5}>{title}</Typography.Title>
-//       <Typography.Text
-//         type="secondary"
-//         // @ts-ignore
-//         style={{ textWrap: 'wrap' }}
-//       >
-//         {description}
-//       </Typography.Text>
-//     </Flex>
-//   );
-// };
-
-// interface StepContentProps extends FlexProps{
-
-// }
-// const StepContent: React.FC<{}> = () => {
-//   return <Flex>
-
-//   </Flex>
-// }
 
 const generateSessionId = () => {
   let text = '';

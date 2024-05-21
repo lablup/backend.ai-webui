@@ -1570,6 +1570,14 @@
     "SettingTable": "Tetapan Meja",
     "SearchTableColumn": "Cari lajur jadual"
   },
+  "tourguide": {
+    "NeoSessionLauncher": {
+      "ValidationErrorTitle": "Ralat pengesahan medan input",
+      "ValidationErrorText": "Jika anda tidak memasukkan nilai dalam medan yang diperlukan atau memasukkan nilai yang tidak sah, mesej ralat dipaparkan dalam medan tersebut.",
+      "FixErrorAndTryAgainText": "Jika terdapat medan ralat, butang Sesi Pelancaran dinyahdayakan. \nSila betulkan ralat dan cuba lagi.",
+      "FixErrorFieldbyModifyButton": "Untuk medan ralat itu, anda boleh pergi terus ke butang Edit di penjuru kanan sebelah atas untuk mengeditnya."
+    }
+  },
   "sourceCodeViewer": {
     "Copy": "Salinan",
     "Copied": "disalin"

@@ -1570,6 +1570,14 @@
     "SelectColumnToDisplay": "选择要显示的列",
     "SearchTableColumn": "搜索表格列"
   },
+  "tourguide": {
+    "NeoSessionLauncher": {
+      "ValidationErrorTitle": "输入字段验证错误",
+      "ValidationErrorText": "如果您未在必填字段中输入值或输入无效值，则该字段中会显示一条错误消息。",
+      "FixErrorAndTryAgainText": "如果存在错误字段，则“启动会话”按钮将被禁用。\n请更正错误并重试。",
+      "FixErrorFieldbyModifyButton": "对于该错误字段，您可以直接进入右上角的编辑按钮进行编辑。"
+    }
+  },
   "sourceCodeViewer": {
     "Copy": "复制",
     "Copied": "已复制"

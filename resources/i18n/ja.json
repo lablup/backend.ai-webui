@@ -1570,6 +1570,14 @@
     "SelectColumnToDisplay": "表示する列を選択します",
     "SearchTableColumn": "テーブルの列を検索する"
   },
+  "tourguide": {
+    "NeoSessionLauncher": {
+      "ValidationErrorTitle": "入力フィールド検証エラー",
+      "ValidationErrorText": "必須フィールドに値を入力しなかったり、無効な値を入力したりすると、そのフィールドにエラー メッセージが表示されます。",
+      "FixErrorAndTryAgainText": "エラーフィールドがある場合、「セッションの起動」ボタンは無効になります。\nエラーを修正して再試行してください。",
+      "FixErrorFieldbyModifyButton": "そのエラー フィールドについては、右上隅にある [編集] ボタンに直接移動して編集できます。"
+    }
+  },
   "sourceCodeViewer": {
     "Copy": "コピー",
     "Copied": "コピーされました"

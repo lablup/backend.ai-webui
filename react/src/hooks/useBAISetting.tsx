@@ -1,6 +1,7 @@
 import { atomFamily, useRecoilState } from 'recoil';
 
 interface UserSettings {
+  has_opened_tour_neo_session_validation?: boolean;
   use_2409_session_launcher?: boolean;
   desktop_notification?: boolean;
   compact_sidebar?: boolean;

@@ -1571,6 +1571,14 @@
     "SearchTableColumn": "테이블 열 검색",
     "SelectColumnToDisplay": "표시할 열 선택"
   },
+  "tourguide": {
+    "NeoSessionLauncher": {
+      "ValidationErrorTitle": "입력 필드 검증 오류",
+      "ValidationErrorText": "필수 입력 필드에 값을 입력하지 않거나 잘못된 값을 입력한 경우, 해당 필드에 오류 메시지가 표시됩니다.",
+      "FixErrorAndTryAgainText": "오류 필드가 있는 경우, 세션 실행 버튼이 비활성화 됩니다. 오류 수정 후 다시 시도해 주세요.",
+      "FixErrorFieldbyModifyButton": "해당 오류 필드에 대해, 우측 상단의 수정 버튼으로 바로 이동하여 수정할 수 있습니다."
+    }
+  },
   "sourceCodeViewer": {
     "Copy": "복사",
     "Copied": "복사됨"
