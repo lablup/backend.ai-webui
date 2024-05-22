@@ -1,5 +1,6 @@
 import {
   CheckCircleOutlined,
+  ClockCircleOutlined,
   CloseCircleOutlined,
   LoadingOutlined,
 } from '@ant-design/icons';
@@ -40,8 +41,10 @@ const ValidationStatusTag: React.FC<ValidationStatusTagProps> = ({
             <LoadingOutlined spin />
           ) : status === 'finished' ? (
             <CheckCircleOutlined />
-          ) : (
+          ) : status == 'error' ? (
             <CloseCircleOutlined />
+          ) : (
+            <ClockCircleOutlined />
           )
         }
       >
@@ -49,7 +52,9 @@ const ValidationStatusTag: React.FC<ValidationStatusTagProps> = ({
           ? t('modelService.Processing')
           : status === 'finished'
             ? t('modelService.Finished')
-            : t('modelService.Error')}
+            : status === 'error'
+              ? t('modelService.Error')
+              : t('modelService.Ready')}
       </Tag>
     </Suspense>
   );
