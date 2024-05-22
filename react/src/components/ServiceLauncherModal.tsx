@@ -526,8 +526,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     formRef.current
       ?.validateFields()
       .then((values) => {
-        // FIXME: temporally insert vfolderName when validation
-        values.vFolderName = endpoint?.model as string;
+        // FIXME: manually insert vfolderName when validation
+        values.vFolderName = (endpoint?.model ??
+          formRef.current?.getFieldValue('vFolderName')) as string;
         mutationsToValidateService.mutate(values, {
           onSuccess: (data: any) => {
             setValidationTime(validationDateTime);
