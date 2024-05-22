@@ -117,6 +117,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const [containerLogSummary, setContainerLogSummary] = useState('loading...');
   const [isOpenServiceValidationModal, setIsOpenServiceValidationModal] =
     useState(false);
+  const [sseInstance, setSseInstance] = useState<EventSource | null>(null);
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
@@ -502,6 +503,13 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     onRequestClose();
   };
 
+  const closeSseInstance = () => {
+    if (sseInstance) {
+      sseInstance.close();
+      setSseInstance(null);
+    }
+  };
+
   async function getLogs(sessionId: string) {
     return baiClient
       .get_logs(sessionId, baiClient._config.accessKey, 0)
@@ -524,9 +532,11 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           onSuccess: (data: any) => {
             setValidationTime(validationDateTime);
             setContainerLogSummary('loading...');
+            setIsOpenServiceValidationModal(!isOpenServiceValidationModal);
             const response = data;
             const sse: EventSource =
               baiClient.maintenance.attach_background_task(response['task_id']);
+            setSseInstance(sse);
             sse.addEventListener('bgtask_updated', async (e) => {
               const data = JSON.parse(e['data']);
               const msg = JSON.parse(data.message);
@@ -616,9 +626,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               <Button
                 type="default"
                 onClick={(e) => {
-                  setIsOpenServiceValidationModal(
-                    !isOpenServiceValidationModal,
-                  );
                   handleValidate(e);
                 }}
               >
@@ -798,10 +805,12 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       </BAIModal>
       <ServiceValidationModal
         open={isOpenServiceValidationModal}
+        destroyOnClose
         validationStatus={validationStatus}
         validationTime={validationTime}
         containerLogSummary={containerLogSummary}
         onRequestClose={() => {
+          closeSseInstance();
           setIsOpenServiceValidationModal(!isOpenServiceValidationModal);
         }}
       ></ServiceValidationModal>
