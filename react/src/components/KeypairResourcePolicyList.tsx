@@ -1,3 +1,4 @@
+import { localeCompare } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
 import KeypairResourcePolicySettingModal, {
@@ -97,7 +98,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       dataIndex: 'name',
       key: 'name',
       fixed: 'left',
-      sorter: (a, b) => (a?.name && b?.name ? a.name.localeCompare(b.name) : 0),
+      sorter: (a, b) => localeCompare(a?.name, b?.name),
     },
     {
       title: t('resourcePolicy.Resources'),
@@ -311,6 +312,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         rowKey="name"
         scroll={{ x: 'max-content' }}
         pagination={false}
+        showSorterTooltip={false}
       />
       <Flex
         justify="end"
