@@ -537,6 +537,13 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             const sse: EventSource =
               baiClient.maintenance.attach_background_task(response['task_id']);
             setSseInstance(sse);
+            const timeoutId = setTimeout(() => {
+              closeSseInstance();
+              // something went wrong during validation
+              setValidationStatus('error');
+              app.message.error(t('modelService.CannotValidateNow'));
+            }, 5000);
+
             sse.addEventListener('bgtask_updated', async (e) => {
               const data = JSON.parse(e['data']);
               const msg = JSON.parse(data.message);
@@ -545,6 +552,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               ) {
                 const logs = await getLogs(msg.session_id);
                 setContainerLogSummary(logs);
+                clearTimeout(timeoutId);
                 // temporally close sse manually when session is terminated
                 if (msg.event === 'session_terminated') {
                   sse.close();
@@ -555,6 +563,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             });
             sse.addEventListener('bgtask_done', async (e) => {
               setValidationStatus('finished');
+              clearTimeout(timeoutId);
               sse.close();
             });
             sse.addEventListener('bgtask_failed', async (e) => {

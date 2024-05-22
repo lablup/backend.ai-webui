@@ -762,7 +762,9 @@
     "FailedToUpdateService": "Palvelun päivittäminen epäonnistui.",
     "ServiceCreated": "Mallipalvelun {{ name }} luominen onnistui.",
     "ServiceUpdated": "Mallipalvelun {{ name }} päivitys onnistui.",
-    "ServiceTerminated": "Mallipalvelu {{ name }} on lopetettu onnistuneesti."
+    "ServiceTerminated": "Mallipalvelu {{ name }} on lopetettu onnistuneesti.",
+    "CannotValidateNow": "Palvelua ei voi vahvistaa nyt. \nTarkista resurssien allokaatio tai muut asetukset.",
+    "Ready": "Valmis"
   },
   "notification": {
     "Initializing": "Aloitetaan...",

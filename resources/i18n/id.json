@@ -1537,7 +1537,9 @@
     "FailedToUpdateService": "Gagal memperbarui layanan.",
     "ServiceCreated": "Layanan model {{ name }} telah berhasil dibuat.",
     "ServiceUpdated": "Layanan model {{ name }} telah berhasil diperbarui.",
-    "ServiceTerminated": "Layanan model {{ name }} telah berhasil dihentikan."
+    "ServiceTerminated": "Layanan model {{ name }} telah berhasil dihentikan.",
+    "CannotValidateNow": "Tidak dapat memvalidasi layanan sekarang. \nSilakan periksa alokasi sumber daya atau konfigurasi lainnya.",
+    "Ready": "Siap"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

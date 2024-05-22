@@ -1527,7 +1527,9 @@
     "FailedToUpdateService": "Gagal mengemas kini perkhidmatan.",
     "ServiceCreated": "Perkhidmatan model {{ name }} telah berjaya dibuat.",
     "ServiceUpdated": "Perkhidmatan model {{ name }} telah berjaya dikemas kini.",
-    "ServiceTerminated": "Perkhidmatan model {{ name }} telah berjaya ditamatkan."
+    "ServiceTerminated": "Perkhidmatan model {{ name }} telah berjaya ditamatkan.",
+    "CannotValidateNow": "Tidak dapat mengesahkan perkhidmatan sekarang. \nSila semak peruntukan sumber atau konfigurasi lain.",
+    "Ready": "sedia"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

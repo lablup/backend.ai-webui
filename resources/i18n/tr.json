@@ -1486,7 +1486,9 @@
     "FailedToUpdateService": "Hizmet güncellenemedi.",
     "ServiceCreated": "Model hizmeti {{ name }} başarıyla oluşturuldu.",
     "ServiceUpdated": "Model hizmeti {{ name }} başarıyla güncellendi.",
-    "ServiceTerminated": "{{ name }} model hizmeti başarıyla sonlandırıldı."
+    "ServiceTerminated": "{{ name }} model hizmeti başarıyla sonlandırıldı.",
+    "CannotValidateNow": "Hizmet şu anda doğrulanamıyor. \nLütfen kaynak tahsisini veya diğer yapılandırmaları kontrol edin.",
+    "Ready": "Hazır"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

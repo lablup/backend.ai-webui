@@ -764,7 +764,9 @@
     "FailedToUpdateService": "No se pudo actualizar el servicio.",
     "ServiceCreated": "El servicio modelo {{ name }} se ha creado correctamente.",
     "ServiceUpdated": "El servicio de modelo {{ name }} se ha actualizado correctamente.",
-    "ServiceTerminated": "El servicio de modelo {{ name }} se ha finalizado correctamente."
+    "ServiceTerminated": "El servicio de modelo {{ name }} se ha finalizado correctamente.",
+    "CannotValidateNow": "No se puede validar el servicio ahora. \nVerifique la asignación de recursos u otras configuraciones.",
+    "Ready": "Listo"
   },
   "notification": {
     "Initializing": "Inicializando...",

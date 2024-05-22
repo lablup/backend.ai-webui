@@ -1527,7 +1527,9 @@
     "FailedToUpdateService": "Falha ao atualizar o serviço.",
     "ServiceCreated": "O serviço de modelo {{ name }} foi criado com sucesso.",
     "ServiceUpdated": "O serviço de modelo {{ name }} foi atualizado com sucesso.",
-    "ServiceTerminated": "O serviço de modelo {{ name }} foi encerrado com sucesso."
+    "ServiceTerminated": "O serviço de modelo {{ name }} foi encerrado com sucesso.",
+    "CannotValidateNow": "Não é possível validar o serviço agora. \nVerifique a alocação de recursos ou outras configurações.",
+    "Ready": "Preparar"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

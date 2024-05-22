@@ -1527,7 +1527,9 @@
     "FailedToUpdateService": "更新服務失敗。",
     "ServiceCreated": "模型服務 {{ name }} 已成功建立。",
     "ServiceUpdated": "模型服務 {{ name }} 已成功更新。",
-    "ServiceTerminated": "模型服務 {{ name }} 已成功終止。"
+    "ServiceTerminated": "模型服務 {{ name }} 已成功終止。",
+    "CannotValidateNow": "現在無法驗證服務。\n請檢查資源分配或其他配置。",
+    "Ready": "準備好"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

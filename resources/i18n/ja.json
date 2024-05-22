@@ -1486,7 +1486,9 @@
     "FailedToUpdateService": "サービスの更新に失敗しました。",
     "ServiceCreated": "モデル サービス {{ name }} が正常に作成されました。",
     "ServiceUpdated": "モデル サービス {{ name }} は正常に更新されました。",
-    "ServiceTerminated": "モデル サービス {{ name }} は正常に終了しました。"
+    "ServiceTerminated": "モデル サービス {{ name }} は正常に終了しました。",
+    "CannotValidateNow": "現在サービスを検証できません。\nリソース割り当てまたはその他の構成を確認してください。",
+    "Ready": "準備ができて"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",
