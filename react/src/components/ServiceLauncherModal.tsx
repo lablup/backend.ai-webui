@@ -18,9 +18,9 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
+import ServiceValidationModal from './ServiceValidationModal';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
-import ValidationStatusTag from './ValidationStatusTag';
 import { ServiceLauncherModalFragment$key } from './__generated__/ServiceLauncherModalFragment.graphql';
 import { ServiceLauncherModalModifyMutation } from './__generated__/ServiceLauncherModalModifyMutation.graphql';
 import { AnsiUp } from 'ansi_up';
@@ -32,7 +32,6 @@ import {
   Input,
   theme,
   Switch,
-  Tag,
   Space,
   FormInstance,
   Skeleton,
@@ -797,45 +796,15 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           </Form>
         </Suspense>
       </BAIModal>
-      <BAIModal
-        width={1000}
-        title={t('modelService.ValidationInfo')}
+      <ServiceValidationModal
         open={isOpenServiceValidationModal}
-        onOk={() => {
-          setIsOpenServiceValidationModal(false);
+        validationStatus={validationStatus}
+        validationTime={validationTime}
+        containerLogSummary={containerLogSummary}
+        onRequestClose={() => {
+          setIsOpenServiceValidationModal(!isOpenServiceValidationModal);
         }}
-        onCancel={() => {
-          setIsOpenServiceValidationModal(false);
-        }}
-      >
-        <Suspense fallback={<FlexActivityIndicator />}>
-          <Flex direction="row" justify="between" align="center">
-            <h3>{t('modelService.Result')}</h3>
-            <ValidationStatusTag
-              status={validationStatus}
-            ></ValidationStatusTag>
-          </Flex>
-          <Flex direction="row" justify="between" align="center">
-            <h3>{t('modelService.TimeStamp')}</h3>
-            <Tag>{validationTime}</Tag>
-          </Flex>
-          <h3>{t('modelService.SeeContainerLogs')}</h3>
-          <Flex
-            direction="column"
-            justify="start"
-            align="start"
-            style={{
-              overflowX: 'scroll',
-              color: 'white',
-              backgroundColor: 'black',
-              padding: token.paddingSM,
-              borderRadius: token.borderRadius,
-            }}
-          >
-            <pre dangerouslySetInnerHTML={{ __html: containerLogSummary }} />
-          </Flex>
-        </Suspense>
-      </BAIModal>
+      ></ServiceValidationModal>
     </>
   );
 };
