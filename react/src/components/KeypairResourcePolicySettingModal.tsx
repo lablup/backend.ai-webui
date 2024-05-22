@@ -120,11 +120,23 @@ const KeypairResourcePolicySettingModal: React.FC<
       )?.numberUnit;
     }
 
+    let unlimitedValues = {};
+    if (keypairResourcePolicy === null) {
+      // Initialize unlimited values as a default
+      unlimitedValues = {
+        max_session_lifetime: 0,
+        max_concurrent_sessions: UNLIMITED_MAX_CONCURRENT_SESSIONS,
+        max_containers_per_session: UNLIMITED_MAX_CONTAINERS_PER_SESSIONS,
+        idle_timeout: 0,
+      };
+    }
+
     return {
       parsedTotalResourceSlots,
       allowedVfolderHostNames: _.keys(
         JSON.parse(keypairResourcePolicy?.allowed_vfolder_hosts || '{}'),
       ),
+      ...unlimitedValues,
       ...keypairResourcePolicy,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

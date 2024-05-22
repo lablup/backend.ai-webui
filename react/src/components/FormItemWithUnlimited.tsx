@@ -1,7 +1,6 @@
 import Flex from './Flex';
 import { Form, Checkbox } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import { FormInstance } from 'antd/es/form';
 import { NamePath } from 'antd/es/form/interface';
 import _ from 'lodash';
 import React, { cloneElement, useEffect, useState } from 'react';
@@ -23,14 +22,6 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
   const { t } = useTranslation();
   const [isUnlimited, setIsUnlimited] = useState<boolean>(false);
   const form = Form.useFormInstance();
-  // // Reset unlimited fields to undefined when the form is initialized.
-  // useEffect(() => {
-  //   const fieldValue = form.getFieldValue(name);
-  //   if (fieldValue === unlimitedValue) {
-  //     form.setFieldValue(name, undefined);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
 
   // Detect changes in form value to update the isUnlimited state.
   useEffect(() => {
@@ -44,6 +35,7 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
         disabled: isUnlimited,
       } as React.Attributes & { disabled?: boolean })
     : children;
+
   const childrenWithUndefinedValue =
     isUnlimited && React.isValidElement(children)
       ? cloneElement(children, {
