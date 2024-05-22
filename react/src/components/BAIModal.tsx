@@ -49,8 +49,33 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
         styles={{
           ...styles,
           header: {
-            marginBottom: token.marginSM,
+            marginBottom: 0,
+            borderBottom: `1px solid var(--token-colorBorder, ${token.colorBorder})`,
+            borderWidth: '100%',
+            justifyContent: 'space-between',
+            display: 'flex',
+            alignItems: 'center',
+            height: 'var(--general-modal-header-height, 69px)',
+            padding: 'var(--general-modal-header-padding, 10px 20px)',
             ...styles?.header,
+          },
+          body: {
+            padding: `var(--general-modal-body-padding, 0 24px)`,
+            maxHeight: 'calc(100vh - 69px - 57px - 48px)',
+            overflow: 'auto',
+            paddingTop: token.paddingMD,
+            paddingBottom: token.paddingMD,
+          },
+          content: {
+            padding: `var(--general-modal-content-padding, 0)`,
+          },
+          footer: {
+            borderTop: '1px solid',
+            borderColor: token.colorBorder,
+            padding: token.paddingSM,
+            paddingLeft: token.paddingMD,
+            paddingRight: token.paddingMD,
+            marginTop: 0,
           },
         }}
         title={
