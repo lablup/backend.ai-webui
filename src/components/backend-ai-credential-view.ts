@@ -30,7 +30,7 @@ import '@material/mwc-tab-bar';
 import { TextField } from '@material/mwc-textfield';
 import { css, CSSResultGroup, html } from 'lit';
 import { get as _text, translate as _t } from 'lit-translate';
-import { customElement, property, query, state } from 'lit/decorators.js';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

@@ -967,7 +967,14 @@
     "KeypairResourcePolicy": "Түлхүүрийн нөөцийн бодлого",
     "IdleTimeout": "Сул зогсолтын хугацаа",
     "CreateResourcePolicy": "Нөөцийн бодлогыг бий болгох",
-    "ResourcePolicyNameAlreadyExists": "Нөөцийн бодлогын нэр аль хэдийн байна. \nНэмэх нэрээ өөрчилнө үү."
+    "ResourcePolicyNameAlreadyExists": "Нөөцийн бодлогын нэр аль хэдийн байна. \nНэмэх нэрээ өөрчилнө үү.",
+    "UserResourcePolicy": "Хэрэглэгчийн нөөцийн бодлого",
+    "MaxVFolderCount": "Хамгийн их хавтасны тоо",
+    "MaxSessionCountPerModelSession": "Загвар бүрийн хамгийн их сеанс тоо",
+    "MaxQuotaScopeSize": "Хамгийн их квот хамрах хүрээний хэмжээ (ГБ)",
+    "MaxCustomizedImageCount": "Хамгийн их тохируулсан зургийн тоо",
+    "CreatedAt": "Үүсгэсэн",
+    "MaxFolderCount": "Хамгийн их хавтасны тоо"
   },
   "registry": {
     "Hostname": "Хостын нэр",

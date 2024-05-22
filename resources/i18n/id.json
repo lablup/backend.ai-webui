@@ -967,7 +967,14 @@
     "KeypairResourcePolicy": "Kebijakan Sumber Daya Pasangan Kunci",
     "IdleTimeout": "Batas Waktu Diam",
     "CreateResourcePolicy": "Buat Kebijakan Sumber Daya",
-    "ResourcePolicyNameAlreadyExists": "Nama kebijakan sumber daya sudah ada. \nSilakan ubah nama untuk ditambahkan."
+    "ResourcePolicyNameAlreadyExists": "Nama kebijakan sumber daya sudah ada. \nSilakan ubah nama untuk ditambahkan.",
+    "UserResourcePolicy": "Kebijakan Sumber Daya Pengguna",
+    "MaxVFolderCount": "Jumlah Folder Maks",
+    "MaxSessionCountPerModelSession": "Jumlah Sesi Maks Per Sesi Model",
+    "MaxQuotaScopeSize": "Ukuran Cakupan Kuota Maks (GB)",
+    "MaxCustomizedImageCount": "Jumlah Gambar Khusus Maksimum",
+    "CreatedAt": "Dibuat di",
+    "MaxFolderCount": "Jumlah Folder Maks"
   },
   "registry": {
     "Hostname": "Nama host",

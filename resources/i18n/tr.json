@@ -966,7 +966,14 @@
     "KeypairResourcePolicy": "Anahtar Çifti Kaynak Politikası",
     "IdleTimeout": "Boşta Kalma Zaman Aşımı",
     "CreateResourcePolicy": "Kaynak Politikası Oluşturun",
-    "ResourcePolicyNameAlreadyExists": "Kaynak politikası adı zaten mevcut. \nLütfen eklenecek adı değiştirin."
+    "ResourcePolicyNameAlreadyExists": "Kaynak politikası adı zaten mevcut. \nLütfen eklenecek adı değiştirin.",
+    "UserResourcePolicy": "Kullanıcı Kaynağı Politikası",
+    "MaxVFolderCount": "Maksimum Klasör Sayısı",
+    "MaxSessionCountPerModelSession": "Model Oturumu Başına Maksimum Oturum Sayısı",
+    "MaxQuotaScopeSize": "Maksimum Kota Kapsamı Boyutu (GB)",
+    "MaxCustomizedImageCount": "Maksimum Özelleştirilmiş Görüntü Sayısı",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "MaxFolderCount": "Maksimum Klasör Sayısı"
   },
   "registry": {
     "Hostname": "ana bilgisayar adı",

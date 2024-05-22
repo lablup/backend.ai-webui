@@ -685,12 +685,19 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.09.9')) {
       this._features['modify-endpoint'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('23.09.10')) {
+      this._features['max-session-count-per-model-session'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('24.03.0')) {
       this._features['vfolder-trash-bin'] = true;
       this._features['model-store'] = true;
       this._features['per-user-image'] = true;
       this._features['user-committed-image'] = true;
       this._features['model-service-validation'] = true;
+      this._features['max-customized-image-count'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('24.03.1')) {
+      this._features['max-quota-scope-size'] = true;
     }
   }
 

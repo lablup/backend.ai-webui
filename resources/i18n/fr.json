@@ -966,7 +966,14 @@
     "KeypairResourcePolicy": "Politique de ressources de paires de clés",
     "IdleTimeout": "Délai d'inactivité",
     "CreateResourcePolicy": "Créer une stratégie de ressources",
-    "ResourcePolicyNameAlreadyExists": "Le nom de la stratégie de ressources existe déjà. \nVeuillez modifier le nom à ajouter."
+    "ResourcePolicyNameAlreadyExists": "Le nom de la stratégie de ressources existe déjà. \nVeuillez modifier le nom à ajouter.",
+    "UserResourcePolicy": "Politique des ressources utilisateur",
+    "MaxVFolderCount": "Nombre maximum de dossiers",
+    "MaxSessionCountPerModelSession": "Nombre maximum de sessions par session de modèle",
+    "MaxQuotaScopeSize": "Taille maximale de la portée du quota (Go)",
+    "MaxCustomizedImageCount": "Nombre maximal d'images personnalisées",
+    "CreatedAt": "Créé à",
+    "MaxFolderCount": "Nombre maximum de dossiers"
   },
   "registry": {
     "Hostname": "Nom d'hôte",

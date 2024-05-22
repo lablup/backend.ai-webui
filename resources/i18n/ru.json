@@ -966,7 +966,14 @@
     "KeypairResourcePolicy": "Политика ресурсов пары ключей",
     "IdleTimeout": "Тайм-аут простоя",
     "CreateResourcePolicy": "Создать политику ресурсов",
-    "ResourcePolicyNameAlreadyExists": "Название политики ресурсов уже существует. \nПожалуйста, измените имя, чтобы добавить."
+    "ResourcePolicyNameAlreadyExists": "Название политики ресурсов уже существует. \nПожалуйста, измените имя, чтобы добавить.",
+    "UserResourcePolicy": "Политика пользовательских ресурсов",
+    "MaxVFolderCount": "Максимальное количество папок",
+    "MaxSessionCountPerModelSession": "Максимальное количество сеансов на модельный сеанс",
+    "MaxQuotaScopeSize": "Максимальный размер квоты (ГБ)",
+    "MaxCustomizedImageCount": "Максимальное количество индивидуальных изображений",
+    "CreatedAt": "Создан в",
+    "MaxFolderCount": "Максимальное количество папок"
   },
   "registry": {
     "Hostname": "Имя хоста",

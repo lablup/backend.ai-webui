@@ -1,5 +1,5 @@
 import Flex from './Flex';
-import { Form, Checkbox } from 'antd';
+import { Form, Checkbox, FormItemProps } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { NamePath } from 'antd/es/form/interface';
 import React, {
@@ -14,12 +14,14 @@ interface FormItemWithUnlimitedProps extends PropsWithChildren {
   name: NamePath;
   unlimitedValue?: number | string;
   label?: string;
+  formItemProps?: FormItemProps;
 }
 
 const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
   name,
   unlimitedValue,
   label,
+  formItemProps,
   children,
 }) => {
   const { t } = useTranslation();
@@ -54,11 +56,12 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
         label={label}
         name={name}
         hidden={isUnlimited}
+        {...formItemProps}
       >
         {childrenWithProps}
       </Form.Item>
       {isUnlimited ? (
-        <Form.Item style={{ margin: 0 }} label={label}>
+        <Form.Item style={{ margin: 0 }} label={label} {...formItemProps}>
           {childrenWithUndefinedValue}
         </Form.Item>
       ) : null}

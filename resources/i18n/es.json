@@ -917,7 +917,14 @@
     "KeypairResourcePolicy": "Política de recursos de par de claves",
     "IdleTimeout": "Tiempo de inactividad",
     "CreateResourcePolicy": "Crear política de recursos",
-    "ResourcePolicyNameAlreadyExists": "El nombre de la política de recursos ya existe. \nCambie el nombre para agregarlo."
+    "ResourcePolicyNameAlreadyExists": "El nombre de la política de recursos ya existe. \nCambie el nombre para agregarlo.",
+    "UserResourcePolicy": "Política de recursos del usuario",
+    "MaxVFolderCount": "Número máximo de carpetas",
+    "MaxSessionCountPerModelSession": "Recuento máximo de sesiones por sesión de modelo",
+    "MaxQuotaScopeSize": "Tamaño máximo del alcance de la cuota (GB)",
+    "MaxCustomizedImageCount": "Número máximo de imágenes personalizadas",
+    "CreatedAt": "Creado en",
+    "MaxFolderCount": "Número máximo de carpetas"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Está a punto de borrar este preajuste:",

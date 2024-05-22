@@ -966,7 +966,14 @@
     "KeypairResourcePolicy": "密鑰對資源策略",
     "IdleTimeout": "空閒超時",
     "CreateResourcePolicy": "建立資源策略",
-    "ResourcePolicyNameAlreadyExists": "資源策略名稱已存在。\n請更改名稱以新增。"
+    "ResourcePolicyNameAlreadyExists": "資源策略名稱已存在。\n請更改名稱以新增。",
+    "UserResourcePolicy": "使用者資源策略",
+    "MaxVFolderCount": "最大資料夾數",
+    "MaxSessionCountPerModelSession": "每個模型會話的最大會話計數",
+    "MaxQuotaScopeSize": "最大配額範圍大小 (GB)",
+    "MaxCustomizedImageCount": "最大自訂圖像數量",
+    "CreatedAt": "創建於",
+    "MaxFolderCount": "最大資料夾數"
   },
   "registry": {
     "Hostname": "主機名",

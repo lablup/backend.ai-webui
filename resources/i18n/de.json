@@ -966,7 +966,14 @@
     "KeypairResourcePolicy": "Schlüsselpaar-Ressourcenrichtlinie",
     "IdleTimeout": "Leerlauf-Timeout",
     "CreateResourcePolicy": "Erstellen Sie eine Ressourcenrichtlinie",
-    "ResourcePolicyNameAlreadyExists": "Der Name der Ressourcenrichtlinie ist bereits vorhanden. \nBitte ändern Sie den hinzuzufügenden Namen."
+    "ResourcePolicyNameAlreadyExists": "Der Name der Ressourcenrichtlinie ist bereits vorhanden. \nBitte ändern Sie den hinzuzufügenden Namen.",
+    "UserResourcePolicy": "Benutzerressourcenrichtlinie",
+    "MaxVFolderCount": "Maximale Ordneranzahl",
+    "MaxSessionCountPerModelSession": "Maximale Sitzungsanzahl pro Modellsitzung",
+    "MaxQuotaScopeSize": "Maximale Kontingentumfangsgröße (GB)",
+    "MaxCustomizedImageCount": "Maximale Anzahl benutzerdefinierter Bilder",
+    "CreatedAt": "Hergestellt in",
+    "MaxFolderCount": "Maximale Ordneranzahl"
   },
   "registry": {
     "Hostname": "Hostname",
