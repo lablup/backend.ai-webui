@@ -595,14 +595,14 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     },
                   ]}
                 >
-                  <Input disabled={endpoint ? true : false} />
+                  <Input disabled={!!endpoint} />
                 </Form.Item>
                 <Form.Item
                   name="openToPublic"
                   label={t('modelService.OpenToPublic')}
                   valuePropName="checked"
                 >
-                  <Switch disabled={endpoint ? true : false}></Switch>
+                  <Switch disabled={!!endpoint}></Switch>
                 </Form.Item>
                 {/* <VFolderTableFromItem /> */}
                 {!endpoint ? (
