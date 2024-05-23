@@ -450,25 +450,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   };
 
   const [validateServiceData, setValidateServiceData] = useState<any>();
-  // Apply any operation after clicking Validate button
-  const handleValidate = (event: any) => {
-    // const validationDateTime = new Date().toUTCString();
-    formRef.current
-      ?.validateFields()
-      .then((values) => {
-        // FIXME: manually insert vfolderName when validation
-        setValidateServiceData({
-          ...values,
-          vFolderName: (endpoint?.model ??
-            formRef.current?.getFieldValue('vFolderName')) as string,
-        });
-        setIsOpenServiceValidationModal(true);
-      })
-      .catch((err) => {
-        console.log(err.message);
-        app.message.error(t('modelService.FormValidationFailed'));
-      });
-  };
 
   const getAIAcceleratorWithStringifiedKey = (resourceSlot: any) => {
     if (Object.keys(resourceSlot).length <= 0) {
@@ -508,8 +489,24 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               </Button>
               <Button
                 type="default"
-                onClick={(e) => {
-                  handleValidate(e);
+                onClick={() => {
+                  formRef.current
+                    ?.validateFields()
+                    .then((values) => {
+                      // FIXME: manually insert vfolderName when validation
+                      setValidateServiceData({
+                        ...values,
+                        vFolderName: (endpoint?.model ??
+                          formRef.current?.getFieldValue(
+                            'vFolderName',
+                          )) as string,
+                      });
+                      setIsOpenServiceValidationModal(true);
+                    })
+                    .catch((err) => {
+                      console.log(err.message);
+                      app.message.error(t('modelService.FormValidationFailed'));
+                    });
                 }}
               >
                 {t('modelService.Validate')}
@@ -692,7 +689,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         open={isOpenServiceValidationModal}
         destroyOnClose
         onCancel={() => {
-          // closeSseInstance();
           setIsOpenServiceValidationModal(!isOpenServiceValidationModal);
         }}
         okButtonProps={{
