@@ -37,14 +37,14 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
           key: 'keypair',
           label: t('resourcePolicy.Keypair'),
         },
-        {
-          key: 'user',
-          label: t('resourcePolicy.User'),
-        },
-        {
-          key: 'project',
-          label: t('resourcePolicy.Project'),
-        },
+        // {
+        //   key: 'user',
+        //   label: t('resourcePolicy.User'),
+        // },
+        // {
+        //   key: 'project',
+        //   label: t('resourcePolicy.Project'),
+        // },
       ]}
       styles={{
         body: {
