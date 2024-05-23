@@ -297,22 +297,22 @@ const KeypairResourcePolicySettingModal: React.FC<
                   name={['parsedTotalResourceSlots', 'cpu']}
                   unlimitedValue={undefined}
                   label={resourceSlotsDetails?.cpu.description}
-                  children={
-                    <InputNumber
-                      min={0}
-                      max={512}
-                      addonAfter={resourceSlotsDetails?.cpu.display_unit}
-                    />
-                  }
-                />
+                >
+                  <InputNumber
+                    min={0}
+                    max={512}
+                    addonAfter={resourceSlotsDetails?.cpu.display_unit}
+                  />
+                </FormItemWithUnlimited>
               </Col>
               <Col span={12}>
                 <FormItemWithUnlimited
                   name={['parsedTotalResourceSlots', 'mem']}
                   unlimitedValue={undefined}
                   label={resourceSlotsDetails?.mem.description}
-                  children={<DynamicUnitInputNumber />}
-                />
+                >
+                  <DynamicUnitInputNumber />
+                </FormItemWithUnlimited>
               </Col>
             </Row>
             <Row gutter={16} align="bottom">
@@ -321,33 +321,31 @@ const KeypairResourcePolicySettingModal: React.FC<
                   name={['parsedTotalResourceSlots', 'cuda.device']}
                   unlimitedValue={undefined}
                   label={resourceSlotsDetails?.['cuda.device'].description}
-                  children={
-                    <InputNumber
-                      min={0}
-                      max={64}
-                      addonAfter={
-                        resourceSlotsDetails?.['cuda.device'].display_unit
-                      }
-                    />
-                  }
-                />
+                >
+                  <InputNumber
+                    min={0}
+                    max={64}
+                    addonAfter={
+                      resourceSlotsDetails?.['cuda.device'].display_unit
+                    }
+                  />
+                </FormItemWithUnlimited>
               </Col>
               <Col span={12}>
                 <FormItemWithUnlimited
                   name={['parsedTotalResourceSlots', 'cuda.shares']}
                   unlimitedValue={undefined}
                   label={resourceSlotsDetails?.['cuda.shares'].description}
-                  children={
-                    <InputNumber
-                      min={0}
-                      max={256}
-                      step={0.1}
-                      addonAfter={
-                        resourceSlotsDetails?.['cuda.shares'].display_unit
-                      }
-                    />
-                  }
-                />
+                >
+                  <InputNumber
+                    min={0}
+                    max={256}
+                    step={0.1}
+                    addonAfter={
+                      resourceSlotsDetails?.['cuda.shares'].display_unit
+                    }
+                  />
+                </FormItemWithUnlimited>
               </Col>
             </Row>
           </Card>
@@ -360,20 +358,18 @@ const KeypairResourcePolicySettingModal: React.FC<
                   name={'max_containers_per_session'}
                   unlimitedValue={UNLIMITED_MAX_CONCURRENT_SESSIONS}
                   label={t('resourcePolicy.ContainerPerSession')}
-                  children={
-                    <InputNumber min={0} max={100} style={{ width: '100%' }} />
-                  }
-                />
+                >
+                  <InputNumber min={0} max={100} style={{ width: '100%' }} />
+                </FormItemWithUnlimited>
               </Col>
               <Col span={12}>
                 <FormItemWithUnlimited
                   name={'max_session_lifetime'}
                   unlimitedValue={0}
                   label={t('resourcePolicy.MaxSessionLifetime')}
-                  children={
-                    <InputNumber min={0} max={100} style={{ width: '100%' }} />
-                  }
-                />
+                >
+                  <InputNumber min={0} max={100} style={{ width: '100%' }} />
+                </FormItemWithUnlimited>
               </Col>
             </Row>
             <Row gutter={16}>
@@ -382,24 +378,22 @@ const KeypairResourcePolicySettingModal: React.FC<
                   name={'max_concurrent_sessions'}
                   unlimitedValue={UNLIMITED_MAX_CONTAINERS_PER_SESSIONS}
                   label={t('resourcePolicy.ConcurrentJobs')}
-                  children={
-                    <InputNumber min={0} max={100} style={{ width: '100%' }} />
-                  }
-                />
+                >
+                  <InputNumber min={0} max={100} style={{ width: '100%' }} />
+                </FormItemWithUnlimited>
               </Col>
               <Col span={12}>
                 <FormItemWithUnlimited
                   name={'idle_timeout'}
                   unlimitedValue={0}
                   label={t('resourcePolicy.IdleTimeoutSec')}
-                  children={
-                    <InputNumber
-                      min={0}
-                      max={15552000}
-                      style={{ width: '100%' }}
-                    />
-                  }
-                />
+                >
+                  <InputNumber
+                    min={0}
+                    max={15552000}
+                    style={{ width: '100%' }}
+                  />
+                </FormItemWithUnlimited>
               </Col>
             </Row>
           </Card>

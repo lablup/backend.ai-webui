@@ -3,14 +3,18 @@ import { Form, Checkbox } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { NamePath } from 'antd/es/form/interface';
 import _ from 'lodash';
-import React, { cloneElement, useEffect, useState } from 'react';
+import React, {
+  cloneElement,
+  PropsWithChildren,
+  useEffect,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface FormItemWithUnlimitedProps {
+interface FormItemWithUnlimitedProps extends PropsWithChildren {
   name: NamePath;
   unlimitedValue?: number | string;
   label?: string;
-  children?: React.ReactNode;
 }
 
 const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
