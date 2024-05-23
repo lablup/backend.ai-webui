@@ -490,7 +490,8 @@
     "Image": "Resim",
     "All": "Tümü",
     "InProgress": "Devam Ediyor",
-    "Session": "Oturum"
+    "Session": "Oturum",
+    "General": "Genel"
   },
   "credential": {
     "Permission": "izin",

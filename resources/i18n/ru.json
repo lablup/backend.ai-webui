@@ -490,7 +490,8 @@
     "Image": "Изображение",
     "All": "Все",
     "InProgress": "В процессе",
-    "Session": "Сессия"
+    "Session": "Сессия",
+    "General": "Общие сведения"
   },
   "credential": {
     "Permission": "Разрешение",

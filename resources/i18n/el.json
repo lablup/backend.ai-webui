@@ -490,7 +490,8 @@
     "Image": "Εικόνα",
     "All": "Όλα",
     "InProgress": "Σε εξέλιξη",
-    "Session": "Σύνοδος"
+    "Session": "Σύνοδος",
+    "General": "Γενικά"
   },
   "credential": {
     "Permission": "Αδεια",

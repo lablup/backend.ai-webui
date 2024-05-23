@@ -509,7 +509,8 @@
     "Image": "Kuva",
     "All": "Kaikki",
     "InProgress": "Käynnissä",
-    "Session": "Istunto"
+    "Session": "Istunto",
+    "General": "Yleistä"
   },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",

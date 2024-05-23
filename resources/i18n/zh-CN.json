@@ -490,7 +490,8 @@
     "Image": "图像",
     "All": "全部",
     "InProgress": "进行中",
-    "Session": "会话"
+    "Session": "会话",
+    "General": "一般情况"
   },
   "credential": {
     "Permission": "允许",
