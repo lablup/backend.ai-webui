@@ -18,12 +18,10 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import ServiceValidationModal from './ServiceValidationModal';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
 import { ServiceLauncherModalFragment$key } from './__generated__/ServiceLauncherModalFragment.graphql';
 import { ServiceLauncherModalModifyMutation } from './__generated__/ServiceLauncherModalModifyMutation.graphql';
-import { AnsiUp } from 'ansi_up';
 import {
   App,
   Button,
@@ -41,6 +39,10 @@ import _ from 'lodash';
 import React, { useState, Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
+
+const ServiceValidationView = React.lazy(
+  () => import('./ServiceValidationView'),
+);
 
 type ClusterMode = 'single-node' | 'multi-node';
 
@@ -70,7 +72,7 @@ interface ServiceCreateConfigType {
   resources: ServiceCreateConfigResourceType;
   resource_opts?: ServiceCreateConfigResourceOptsType;
 }
-interface ServiceCreateType {
+export interface ServiceCreateType {
   name: string;
   desired_session_count: number;
   image: string;
@@ -100,7 +102,7 @@ interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   openToPublic: boolean;
 }
 
-type ServiceLauncherFormValue = ServiceLauncherInput &
+export type ServiceLauncherFormValue = ServiceLauncherInput &
   ImageEnvironmentFormInput &
   ResourceAllocationFormValue;
 
@@ -112,67 +114,11 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 }) => {
   const { t } = useTranslation();
   const app = App.useApp();
-  const [validationStatus, setValidationStatus] = useState('');
-  const [validationTime, setValidationTime] = useState('Before validation');
-  const [containerLogSummary, setContainerLogSummary] = useState('loading...');
   const [isOpenServiceValidationModal, setIsOpenServiceValidationModal] =
     useState(false);
-  const [sseInstance, setSseInstance] = useState<EventSource | null>(null);
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
-  const mutationsToValidateService = useTanMutation<
-    unknown,
-    {
-      message?: string;
-    },
-    ServiceLauncherFormValue
-  >({
-    mutationFn: (values) => {
-      const image: string = `${values.environments.image?.registry}/${values.environments.image?.name}:${values.environments.image?.tag}`;
-      const body: ServiceCreateType = {
-        name: values.serviceName,
-        desired_session_count: values.desiredRoutingCount,
-        image: image,
-        architecture: values.environments.image?.architecture as string,
-        group: baiClient.current_group, // current Project Group,
-        domain: currentDomain, // current Domain Group,
-        cluster_size: values.cluster_size,
-        cluster_mode: values.cluster_mode,
-        open_to_public: values.openToPublic,
-        config: {
-          model: values.vFolderName,
-          model_mount_destination: '/models', // FIXME: hardcoded. change it with option later
-          environ: {}, // FIXME: hardcoded. change it with option later
-          scaling_group: values.resourceGroup,
-          resources: {
-            // FIXME: manually convert to string since server-side only allows [str,str] tuple
-            cpu: values.resource.cpu.toString(),
-            mem: values.resource.mem,
-            ...(values.resource.accelerator > 0
-              ? {
-                  [values.resource.acceleratorType]:
-                    values.resource.accelerator,
-                }
-              : undefined),
-          },
-          resource_opts: {
-            shmem:
-              compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
-              compareNumberWithUnits(values.resource.shmem, '1g') < 0
-                ? '1g'
-                : values.resource.shmem,
-          },
-        },
-      };
-      return baiSignedRequestWithPromise({
-        method: 'POST',
-        url: '/services/_/try',
-        body,
-        client: baiClient,
-      });
-    },
-  });
 
   const formRef = useRef<FormInstance<ServiceLauncherFormValue>>(null);
   const endpoint = useFragment(
@@ -503,93 +449,20 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     onRequestClose();
   };
 
-  const closeSseInstance = () => {
-    if (sseInstance) {
-      sseInstance.close();
-      setSseInstance(null);
-    }
-  };
-
-  async function getLogs(sessionId: string) {
-    return baiClient
-      .get_logs(sessionId, baiClient._config.accessKey, 0)
-      .then((req: any) => {
-        const ansi_up = new AnsiUp();
-        const logs = ansi_up.ansi_to_html(req.result.logs);
-        return logs;
-      });
-  }
-
+  const [validateServiceData, setValidateServiceData] = useState<any>();
   // Apply any operation after clicking Validate button
   const handleValidate = (event: any) => {
-    const validationDateTime = new Date().toUTCString();
+    // const validationDateTime = new Date().toUTCString();
     formRef.current
       ?.validateFields()
       .then((values) => {
         // FIXME: manually insert vfolderName when validation
-        values.vFolderName = (endpoint?.model ??
-          formRef.current?.getFieldValue('vFolderName')) as string;
-        mutationsToValidateService.mutate(values, {
-          onSuccess: (data: any) => {
-            setValidationTime(validationDateTime);
-            setContainerLogSummary('loading...');
-            setIsOpenServiceValidationModal(!isOpenServiceValidationModal);
-            const response = data;
-            const sse: EventSource =
-              baiClient.maintenance.attach_background_task(response['task_id']);
-            setSseInstance(sse);
-            const timeoutId = setTimeout(() => {
-              closeSseInstance();
-              // something went wrong during validation
-              setValidationStatus('error');
-              app.message.error(t('modelService.CannotValidateNow'));
-            }, 5000);
-
-            sse.addEventListener('bgtask_updated', async (e) => {
-              const data = JSON.parse(e['data']);
-              const msg = JSON.parse(data.message);
-              if (
-                ['session_started', 'session_terminated'].includes(msg.event)
-              ) {
-                const logs = await getLogs(msg.session_id);
-                setContainerLogSummary(logs);
-                clearTimeout(timeoutId);
-                // temporally close sse manually when session is terminated
-                if (msg.event === 'session_terminated') {
-                  sse.close();
-                  return;
-                }
-              }
-              setValidationStatus('processing');
-            });
-            sse.addEventListener('bgtask_done', async (e) => {
-              setValidationStatus('finished');
-              clearTimeout(timeoutId);
-              sse.close();
-            });
-            sse.addEventListener('bgtask_failed', async (e) => {
-              const data = JSON.parse(e['data']);
-              const msg = JSON.parse(data.message);
-              const logs = await getLogs(msg.session_id);
-              setContainerLogSummary(logs);
-              setValidationStatus('error');
-              sse.close();
-              throw new Error(e['data']);
-            });
-            sse.addEventListener('bgtask_cancelled', async (e) => {
-              setValidationStatus('error');
-              sse.close();
-              throw new Error(e['data']);
-            });
-          },
-          onError: (error) => {
-            app.message.error(
-              error?.message
-                ? _.truncate(error?.message, { length: 200 })
-                : t('modelService.FormValidationFailed'),
-            );
-          },
+        setValidateServiceData({
+          ...values,
+          vFolderName: (endpoint?.model ??
+            formRef.current?.getFieldValue('vFolderName')) as string,
         });
+        setIsOpenServiceValidationModal(true);
       })
       .catch((err) => {
         console.log(err.message);
@@ -813,17 +686,23 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           </Form>
         </Suspense>
       </BAIModal>
-      <ServiceValidationModal
+      <BAIModal
+        width={1000}
+        title={t('modelService.ValidationInfo')}
         open={isOpenServiceValidationModal}
         destroyOnClose
-        validationStatus={validationStatus}
-        validationTime={validationTime}
-        containerLogSummary={containerLogSummary}
-        onRequestClose={() => {
-          closeSseInstance();
+        onCancel={() => {
+          // closeSseInstance();
           setIsOpenServiceValidationModal(!isOpenServiceValidationModal);
         }}
-      ></ServiceValidationModal>
+        okButtonProps={{
+          style: { display: 'none' },
+        }}
+        cancelText={t('button.Close')}
+        maskClosable={false}
+      >
+        <ServiceValidationView serviceData={validateServiceData} />
+      </BAIModal>
     </>
   );
 };
