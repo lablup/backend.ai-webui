@@ -620,7 +620,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         vf.usage_mode === 'model' && vf.status === 'ready'
                       }
                       autoSelectDefault
-                      disabled={endpoint ? true : false}
+                      disabled={!!endpoint}
                     />
                   </Form.Item>
                 ) : (
