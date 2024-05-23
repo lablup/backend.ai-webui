@@ -4,11 +4,11 @@ import Flex from './Flex';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import TextHighlighter from './TextHighlighter';
 import {
-  RedoOutlined,
   DeleteOutlined,
   SearchOutlined,
   SettingOutlined,
   LoadingOutlined,
+  ReloadOutlined,
 } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
 import { Button, Typography, Table, Alert, Checkbox, Input, theme } from 'antd';
@@ -244,7 +244,7 @@ const ErrorLogList: React.FC<{
           </Flex>
           <Flex gap={'xs'}>
             <Button
-              icon={<RedoOutlined />}
+              icon={<ReloadOutlined />}
               loading={isPendingRefreshTransition}
               onClick={() => {
                 startRefreshTransition(() => checkUpdateKey());

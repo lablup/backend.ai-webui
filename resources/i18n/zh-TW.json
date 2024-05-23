@@ -65,7 +65,8 @@
       "InvalidBlankPassword": "輸入您的密碼",
       "InvalidBlankEmail": "輸入你的電子郵件信箱",
       "DisMatchUserEmail": "使用者電子郵件不符",
-      "MyEnvironments": "我的環境"
+      "MyEnvironments": "我的環境",
+      "ResourcePolicy": "資源政策"
     },
     "YouAreOffline": "您現在離線",
     "YouAreOnline": "您現在在線",
@@ -404,7 +405,8 @@
     "SessionName": "會話名稱",
     "SessionId": "會話 ID",
     "EnvironmentAndVersion": "環境及版本",
-    "Tags": "標籤"
+    "Tags": "標籤",
+    "fGPU": "GPU"
   },
   "button": {
     "Cancel": "取消",
@@ -956,8 +958,15 @@
     "SuccessfullyDeleted": "已成功刪除資源策略。",
     "PolicyNameEmpty": "策略名稱不應為空。",
     "AboutToDeleteResourcePolicy": "您即將刪除此資源策略：",
-    "MaxSessionLifeTime": "会话寿命（秒）",
-    "NoResourcePolicyToDisplay": "无资源政策显示"
+    "MaxSessionLifetime": "会话寿命（秒）",
+    "NoResourcePolicyToDisplay": "无资源政策显示",
+    "Keypair": "密鑰對",
+    "User": "使用者",
+    "Project": "專案",
+    "KeypairResourcePolicy": "密鑰對資源策略",
+    "IdleTimeout": "空閒超時",
+    "CreateResourcePolicy": "建立資源策略",
+    "ResourcePolicyNameAlreadyExists": "資源策略名稱已存在。\n請更改名稱以新增。"
   },
   "registry": {
     "Hostname": "主機名",

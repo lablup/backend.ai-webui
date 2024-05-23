@@ -65,7 +65,8 @@
       "InvalidBlankPassword": "Tapez votre mot de passe",
       "InvalidBlankEmail": "Entrer votre Email",
       "DisMatchUserEmail": "L'e-mail de l'utilisateur ne correspond pas",
-      "MyEnvironments": "Mes environnements"
+      "MyEnvironments": "Mes environnements",
+      "ResourcePolicy": "Politique des ressources"
     },
     "YouAreOffline": "Vous êtes maintenant hors ligne",
     "YouAreOnline": "Vous êtes maintenant en ligne",
@@ -404,7 +405,8 @@
     "SessionName": "Nom de la session",
     "SessionId": "ID de session",
     "EnvironmentAndVersion": "Environnement et version",
-    "Tags": "Mots clés"
+    "Tags": "Mots clés",
+    "fGPU": "fGPU"
   },
   "button": {
     "Cancel": "Annuler",
@@ -956,8 +958,15 @@
     "SuccessfullyDeleted": "La stratégie de ressources a bien été supprimée.",
     "PolicyNameEmpty": "Le nom de la stratégie ne doit pas être vide.",
     "AboutToDeleteResourcePolicy": "Vous êtes sur le point de supprimer cette stratégie de ressources :",
-    "MaxSessionLifeTime": "Durée de vie de la session (sec.)",
-    "NoResourcePolicyToDisplay": "Aucune politique de ressources à afficher"
+    "MaxSessionLifetime": "Durée de vie de la session (sec.)",
+    "NoResourcePolicyToDisplay": "Aucune politique de ressources à afficher",
+    "Keypair": "Paire de clés",
+    "User": "Utilisateur",
+    "Project": "Projet",
+    "KeypairResourcePolicy": "Politique de ressources de paires de clés",
+    "IdleTimeout": "Délai d'inactivité",
+    "CreateResourcePolicy": "Créer une stratégie de ressources",
+    "ResourcePolicyNameAlreadyExists": "Le nom de la stratégie de ressources existe déjà. \nVeuillez modifier le nom à ajouter."
   },
   "registry": {
     "Hostname": "Nom d'hôte",

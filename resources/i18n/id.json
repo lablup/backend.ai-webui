@@ -65,7 +65,8 @@
       "InvalidBlankPassword": "Masukkan kata sandi Anda",
       "InvalidBlankEmail": "Masukkan email Anda",
       "DisMatchUserEmail": "Email Pengguna tidak cocok",
-      "MyEnvironments": "Lingkungan Saya"
+      "MyEnvironments": "Lingkungan Saya",
+      "ResourcePolicy": "Kebijakan Sumber Daya"
     },
     "YouAreOffline": "Anda sekarang offline",
     "YouAreOnline": "Anda sekarang online",
@@ -405,7 +406,8 @@
     "SessionId": "Id Sesi",
     "EnvironmentAndVersion": "Lingkungan dan Versi",
     "Tags": "Tag",
-    "Agents": "Agen"
+    "Agents": "Agen",
+    "fGPU": "fGPU"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -957,8 +959,15 @@
     "SuccessfullyDeleted": "Kebijakan sumber daya berhasil dihapus.",
     "PolicyNameEmpty": "Nama kebijakan wajib diisi.",
     "AboutToDeleteResourcePolicy": "Anda akan menghapus kebijakan sumber daya ini:",
-    "MaxSessionLifeTime": "Sesi Seumur Hidup (detik)",
-    "NoResourcePolicyToDisplay": "Tidak ada Kebijakan Sumber Daya yang ditampilkan"
+    "MaxSessionLifetime": "Sesi Seumur Hidup (detik)",
+    "NoResourcePolicyToDisplay": "Tidak ada Kebijakan Sumber Daya yang ditampilkan",
+    "Keypair": "pasangan kunci",
+    "User": "Pengguna",
+    "Project": "Proyek",
+    "KeypairResourcePolicy": "Kebijakan Sumber Daya Pasangan Kunci",
+    "IdleTimeout": "Batas Waktu Diam",
+    "CreateResourcePolicy": "Buat Kebijakan Sumber Daya",
+    "ResourcePolicyNameAlreadyExists": "Nama kebijakan sumber daya sudah ada. \nSilakan ubah nama untuk ditambahkan."
   },
   "registry": {
     "Hostname": "Nama host",

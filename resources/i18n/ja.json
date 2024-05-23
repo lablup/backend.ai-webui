@@ -65,7 +65,8 @@
       "InvalidBlankPassword": "パスワードを入力してください",
       "InvalidBlankEmail": "メールアドレスを入力",
       "DisMatchUserEmail": "ユーザーの電子メールが一致しません",
-      "MyEnvironments": "私の環境"
+      "MyEnvironments": "私の環境",
+      "ResourcePolicy": "リソースポリシー"
     },
     "YouAreOffline": "あなたは今オフラインです",
     "YouAreOnline": "あなたは今オンラインです",
@@ -404,7 +405,8 @@
     "SessionName": "セッション名",
     "SessionId": "セッションID",
     "EnvironmentAndVersion": "環境とバージョン",
-    "Tags": "タグ"
+    "Tags": "タグ",
+    "fGPU": "fGPU"
   },
   "button": {
     "Cancel": "キャンセル",
@@ -956,8 +958,15 @@
     "SuccessfullyDeleted": "リソースポリシーが正常に削除されました。",
     "PolicyNameEmpty": "ポリシー名は空にしないでください。",
     "AboutToDeleteResourcePolicy": "このリソースポリシーを削除しようとしています。",
-    "MaxSessionLifeTime": "セッションの最大実行時間",
-    "NoResourcePolicyToDisplay": "リソースポリシー情報がありません。"
+    "MaxSessionLifetime": "セッションの最大実行時間",
+    "NoResourcePolicyToDisplay": "リソースポリシー情報がありません。",
+    "Keypair": "キーペア",
+    "User": "ユーザー",
+    "Project": "プロジェクト",
+    "KeypairResourcePolicy": "キーペアのリソースポリシー",
+    "IdleTimeout": "アイドルタイムアウト",
+    "CreateResourcePolicy": "リソースポリシーの作成",
+    "ResourcePolicyNameAlreadyExists": "リソースポリシー名はすでに存在します。\n追加する名前を変更してください。"
   },
   "registry": {
     "Hostname": "ホスト名",

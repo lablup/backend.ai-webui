@@ -65,7 +65,8 @@
       "InvalidBlankPassword": "Geben Sie Ihr Passwort ein",
       "InvalidBlankEmail": "Geben sie ihre E-Mail Adresse ein",
       "DisMatchUserEmail": "Die E-Mail-Adresse des Benutzers stimmt nicht überein",
-      "MyEnvironments": "Meine Umgebungen"
+      "MyEnvironments": "Meine Umgebungen",
+      "ResourcePolicy": "Ressourcenpolitik"
     },
     "YouAreOffline": "Du bist jetzt offline",
     "YouAreOnline": "Sie sind jetzt online",
@@ -404,7 +405,8 @@
     "SessionName": "Sitzungsname",
     "SessionId": "Session-ID",
     "EnvironmentAndVersion": "Umgebung und Version",
-    "Tags": "Stichworte"
+    "Tags": "Stichworte",
+    "fGPU": "fGPU"
   },
   "button": {
     "Cancel": "Stornieren",
@@ -956,8 +958,15 @@
     "SuccessfullyDeleted": "Ressourcenrichtlinie erfolgreich gelöscht.",
     "PolicyNameEmpty": "Der Richtlinienname darf nicht leer sein.",
     "AboutToDeleteResourcePolicy": "Sie sind im Begriff, diese Ressourcenrichtlinie zu löschen:",
-    "MaxSessionLifeTime": "Lebensdauer der Sitzung (Sek.)",
-    "NoResourcePolicyToDisplay": "Keine Ressourcenrichtlinien zum Anzeigen"
+    "MaxSessionLifetime": "Lebensdauer der Sitzung (Sek.)",
+    "NoResourcePolicyToDisplay": "Keine Ressourcenrichtlinien zum Anzeigen",
+    "Keypair": "Schlüsselpaar",
+    "User": "Benutzer",
+    "Project": "Projekt",
+    "KeypairResourcePolicy": "Schlüsselpaar-Ressourcenrichtlinie",
+    "IdleTimeout": "Leerlauf-Timeout",
+    "CreateResourcePolicy": "Erstellen Sie eine Ressourcenrichtlinie",
+    "ResourcePolicyNameAlreadyExists": "Der Name der Ressourcenrichtlinie ist bereits vorhanden. \nBitte ändern Sie den hinzuzufügenden Namen."
   },
   "registry": {
     "Hostname": "Hostname",

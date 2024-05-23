@@ -159,6 +159,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'credential',
     'environment',
     'agent',
+    'resource-policy',
     'storage-settings',
     'settings',
     'maintenance',
@@ -174,6 +175,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'experiment',
     'credential',
     'environment',
+    'resource-policy',
   ];
   @property({ type: Array }) superAdminOnlyPages = [
     'agent',

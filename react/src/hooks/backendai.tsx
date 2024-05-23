@@ -279,3 +279,13 @@ export const useTOTPSupported = () => {
 
   return { isTOTPSupported, isLoading };
 };
+
+export const useAllowedHostNames = () => {
+  const baiClient = useSuspendedBackendaiClient();
+  const { data: allowedHosts } = useTanQuery<{
+    allowed: Array<string>;
+  }>(['useAllowedHostNames'], () => {
+    return baiClient.vfolder.list_all_hosts();
+  });
+  return allowedHosts?.allowed;
+};
