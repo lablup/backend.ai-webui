@@ -973,7 +973,8 @@
     "MaxQuotaScopeSize": "Dimensione massima ambito quota (GB)",
     "MaxCustomizedImageCount": "Conteggio massimo di immagini personalizzate",
     "CreatedAt": "Creato a",
-    "MaxFolderCount": "Conteggio massimo cartelle"
+    "MaxFolderCount": "Conteggio massimo cartelle",
+    "ProjectResourcePolicy": "Politica delle risorse del progetto"
   },
   "registry": {
     "Hostname": "Nome host",

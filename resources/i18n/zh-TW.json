@@ -973,7 +973,8 @@
     "MaxQuotaScopeSize": "最大配額範圍大小 (GB)",
     "MaxCustomizedImageCount": "最大自訂圖像數量",
     "CreatedAt": "創建於",
-    "MaxFolderCount": "最大資料夾數"
+    "MaxFolderCount": "最大資料夾數",
+    "ProjectResourcePolicy": "專案資源政策"
   },
   "registry": {
     "Hostname": "主機名",

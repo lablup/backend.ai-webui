@@ -973,7 +973,8 @@
     "MaxQuotaScopeSize": "最大クォータ スコープ サイズ (GB)",
     "MaxCustomizedImageCount": "カスタマイズされた画像の最大数",
     "CreatedAt": "作成日",
-    "MaxFolderCount": "最大フォルダ数"
+    "MaxFolderCount": "最大フォルダ数",
+    "ProjectResourcePolicy": "プロジェクトリソースポリシー"
   },
   "registry": {
     "Hostname": "ホスト名",

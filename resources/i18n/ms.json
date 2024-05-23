@@ -973,7 +973,8 @@
     "MaxQuotaScopeSize": "Saiz Skop Kuota Maks (GB)",
     "MaxCustomizedImageCount": "Kiraan Imej Tersuai Maks",
     "CreatedAt": "Dicipta Pada",
-    "MaxFolderCount": "Kiraan Folder Maks"
+    "MaxFolderCount": "Kiraan Folder Maks",
+    "ProjectResourcePolicy": "Dasar Sumber Projek"
   },
   "registry": {
     "Hostname": "Nama Hos",

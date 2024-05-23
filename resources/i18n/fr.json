@@ -973,7 +973,8 @@
     "MaxQuotaScopeSize": "Taille maximale de la portée du quota (Go)",
     "MaxCustomizedImageCount": "Nombre maximal d'images personnalisées",
     "CreatedAt": "Créé à",
-    "MaxFolderCount": "Nombre maximum de dossiers"
+    "MaxFolderCount": "Nombre maximum de dossiers",
+    "ProjectResourcePolicy": "Politique des ressources du projet"
   },
   "registry": {
     "Hostname": "Nom d'hôte",

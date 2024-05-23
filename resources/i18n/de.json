@@ -973,7 +973,8 @@
     "MaxQuotaScopeSize": "Maximale Kontingentumfangsgröße (GB)",
     "MaxCustomizedImageCount": "Maximale Anzahl benutzerdefinierter Bilder",
     "CreatedAt": "Hergestellt in",
-    "MaxFolderCount": "Maximale Ordneranzahl"
+    "MaxFolderCount": "Maximale Ordneranzahl",
+    "ProjectResourcePolicy": "Projektressourcenrichtlinie"
   },
   "registry": {
     "Hostname": "Hostname",

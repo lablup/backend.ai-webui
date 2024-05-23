@@ -973,7 +973,8 @@
     "MaxQuotaScopeSize": "Tamanho máximo do escopo da cota (GB)",
     "MaxCustomizedImageCount": "Contagem máxima de imagens personalizadas",
     "CreatedAt": "Criado em",
-    "MaxFolderCount": "Contagem máxima de pastas"
+    "MaxFolderCount": "Contagem máxima de pastas",
+    "ProjectResourcePolicy": "Política de Recursos do Projeto"
   },
   "registry": {
     "Hostname": "nome de anfitrião",

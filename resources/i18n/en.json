@@ -1088,7 +1088,8 @@
     "MaxQuotaScopeSize": "Max Quota Scope Size (GB)",
     "MaxCustomizedImageCount": "Max Customized Image Count",
     "CreatedAt": "Created At",
-    "MaxFolderCount": "Max Folder Count"
+    "MaxFolderCount": "Max Folder Count",
+    "ProjectResourcePolicy": "Project Resource Policy"
   },
   "registry": {
     "Hostname": "Hostname",

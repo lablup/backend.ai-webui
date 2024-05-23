@@ -973,7 +973,8 @@
     "MaxQuotaScopeSize": "Maksimum Kota Kapsamı Boyutu (GB)",
     "MaxCustomizedImageCount": "Maksimum Özelleştirilmiş Görüntü Sayısı",
     "CreatedAt": "Oluşturulma Tarihi",
-    "MaxFolderCount": "Maksimum Klasör Sayısı"
+    "MaxFolderCount": "Maksimum Klasör Sayısı",
+    "ProjectResourcePolicy": "Proje Kaynak Politikası"
   },
   "registry": {
     "Hostname": "ana bilgisayar adı",
