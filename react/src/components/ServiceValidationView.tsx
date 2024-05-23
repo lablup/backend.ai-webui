@@ -24,7 +24,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const app = App.useApp();
+  const { message } = App.useApp();
   const [validationStatus, setValidationStatus] = useState('');
   const [containerLogSummary, setContainerLogSummary] = useState('');
   const [validationTime, setValidationTime] = useState('Before validation');
@@ -116,7 +116,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
           sse?.close();
           // something went wrong during validation
           setValidationStatus('error');
-          app.message.error(t('modelService.CannotValidateNow'));
+          message.error(t('modelService.CannotValidateNow'));
         }, 10000);
 
         sse?.addEventListener('bgtask_updated', async (e) => {
@@ -155,7 +155,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
         });
       })
       .catch((error) => {
-        app.message.error(
+        message.error(
           error?.message
             ? _.truncate(error?.message, { length: 200 })
             : t('modelService.FormValidationFailed'),

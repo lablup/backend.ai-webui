@@ -113,7 +113,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const app = App.useApp();
+  const { message } = App.useApp();
   const [isOpenServiceValidationModal, setIsOpenServiceValidationModal] =
     useState(false);
   const { token } = theme.useToken();
@@ -365,11 +365,11 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                 if (errors && errors?.length > 0) {
                   const errorMsgList = errors.map((error) => error.message);
                   for (let error of errorMsgList) {
-                    app.message.error(error, 2.5);
+                    message.error(error, 2.5);
                   }
                 } else {
                   const updatedEndpoint = res.modify_endpoint?.endpoint;
-                  app.message.success(
+                  message.success(
                     t('modelService.ServiceUpdated', {
                       name: updatedEndpoint?.name,
                     }),
@@ -379,16 +379,16 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               },
               onError: (error) => {
                 if (error.message) {
-                  app.message.error(error.message);
+                  message.error(error.message);
                 } else {
-                  app.message.error(t('modelService.FailedToUpdateService'));
+                  message.error(t('modelService.FailedToUpdateService'));
                 }
               },
             });
           } else {
             legacyMutationToUpdateService.mutate(values, {
               onSuccess: () => {
-                app.message.success(
+                message.success(
                   t('modelService.ServiceUpdated', {
                     name: endpoint.name, // FIXME: temporally get name from endpoint, not input value
                   }),
@@ -397,7 +397,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               },
               onError: (error) => {
                 console.log(error);
-                app.message.error(t('modelService.FailedToUpdateService'));
+                message.error(t('modelService.FailedToUpdateService'));
               },
             });
           }
@@ -406,23 +406,23 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           mutationToCreateService.mutate(values, {
             onSuccess: () => {
               // FIXME: temporally refer to mutate input to message
-              app.message.success(
+              message.success(
                 t('modelService.ServiceCreated', { name: values.serviceName }),
               );
               onRequestClose(true);
             },
             onError: (error) => {
               if (error?.message) {
-                app.message.error(
+                message.error(
                   _.truncate(error?.message, {
                     length: 200,
                   }),
                 );
               } else {
                 if (endpoint) {
-                  app.message.error(t('modelService.FailedToUpdateService'));
+                  message.error(t('modelService.FailedToUpdateService'));
                 } else {
-                  app.message.error(t('modelService.FailedToStartService'));
+                  message.error(t('modelService.FailedToStartService'));
                 }
               }
             },
@@ -433,12 +433,12 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         // error on input
         if (err.errorFields?.length > 0) {
           err.errorFields.forEach((error: any) => {
-            app.message.error(error.errors);
+            message.error(error.errors);
           });
         } else if (err.message) {
-          app.message.error(err.message);
+          message.error(err.message);
         } else {
-          app.message.error(t('modelService.FormValidationFailed'));
+          message.error(t('modelService.FormValidationFailed'));
         }
       });
   };
@@ -505,7 +505,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     })
                     .catch((err) => {
                       console.log(err.message);
-                      app.message.error(t('modelService.FormValidationFailed'));
+                      message.error(t('modelService.FormValidationFailed'));
                     });
                 }}
               >
