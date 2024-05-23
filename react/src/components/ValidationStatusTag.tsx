@@ -41,7 +41,7 @@ const ValidationStatusTag: React.FC<ValidationStatusTagProps> = ({
             <LoadingOutlined spin />
           ) : status === 'finished' ? (
             <CheckCircleOutlined />
-          ) : status == 'error' ? (
+          ) : status === 'error' ? (
             <CloseCircleOutlined />
           ) : (
             <ClockCircleOutlined />
