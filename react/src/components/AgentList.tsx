@@ -11,6 +11,7 @@ import AgentDetailModal from './AgentDetailModal';
 import AgentSettingModal from './AgentSettingModal';
 import BAIIntervalText from './BAIIntervalText';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
+import BAIPropertyFilter from './BAIPropertyFilter';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
 import { ResourceTypeIcon, ResourceTypeKey } from './ResourceNumber';
@@ -76,6 +77,9 @@ const AgentList: React.FC<AgentListProps> = ({
   const [selectedStatus, setSelectedStatus] = useState('ALIVE');
   const [optimisticSelectedStatus, setOptimisticSelectedStatus] =
     useState(selectedStatus);
+  const [isPendingFilter, startFilterTransition] = useTransition();
+
+  const [filterString, setFilterString] = useState<string>();
 
   const {
     baiPaginationOption,
@@ -138,7 +142,7 @@ const AgentList: React.FC<AgentListProps> = ({
     {
       limit: baiPaginationOption.limit,
       offset: baiPaginationOption.offset,
-      filter: `status == "${selectedStatus}"`,
+      filter: filterString,
       order,
       status: selectedStatus,
     },
@@ -163,7 +167,7 @@ const AgentList: React.FC<AgentListProps> = ({
       rowScope: 'row',
     },
     {
-      title: t('agent.Endpoint'),
+      title: `ID / ${t('agent.Endpoint')}`,
       key: 'id',
       dataIndex: 'id',
       fixed: 'left',
@@ -271,7 +275,7 @@ const AgentList: React.FC<AgentListProps> = ({
             {_.map(_.keys(parsedAvailableSlots), (key) => {
               if (key === 'cpu') {
                 return (
-                  <Flex justify="between" style={{ minWidth: 220 }}>
+                  <Flex key={key} justify="between" style={{ minWidth: 220 }}>
                     <Flex gap="xxs">
                       <ResourceTypeIcon key={key} type={key} />
                       <Typography.Text>
@@ -310,7 +314,7 @@ const AgentList: React.FC<AgentListProps> = ({
                 );
               } else if (key === 'mem') {
                 return (
-                  <Flex justify="between" style={{ minWidth: 220 }}>
+                  <Flex key={key} justify="between" style={{ minWidth: 220 }}>
                     <Flex gap="xxs">
                       <ResourceTypeIcon key={key} type={key} />
                       <Typography.Text>
@@ -355,7 +359,7 @@ const AgentList: React.FC<AgentListProps> = ({
                 parsedAvailableSlots[key]
               ) {
                 return (
-                  <Flex justify="between" style={{ minWidth: 220 }}>
+                  <Flex key={key} justify="between" style={{ minWidth: 220 }}>
                     <Flex gap="xxs">
                       <ResourceTypeIcon
                         key={key as ResourceTypeKey}
@@ -732,8 +736,20 @@ const AgentList: React.FC<AgentListProps> = ({
 
   return (
     <Flex direction="column" align="stretch" style={containerStyle}>
-      <Flex justify="between" gap="xs" style={{ padding: token.paddingXS }}>
-        <Flex>
+      <Flex
+        justify="between"
+        align="start"
+        gap="xs"
+        style={{ padding: token.paddingXS }}
+        wrap="wrap"
+      >
+        <Flex
+          direction="row"
+          gap={'sm'}
+          align="start"
+          style={{ flex: 1 }}
+          wrap="wrap"
+        >
           <Segmented
             options={[
               {
@@ -755,6 +771,25 @@ const AgentList: React.FC<AgentListProps> = ({
               });
             }}
           />
+          <BAIPropertyFilter
+            filterProperties={[
+              {
+                key: 'id',
+                propertyLabel: 'ID',
+              },
+              {
+                key: 'addr',
+                propertyLabel: t('agent.Endpoint'),
+              },
+            ]}
+            value={filterString}
+            // loading={isPendingFilter}
+            onChange={(value) => {
+              startFilterTransition(() => {
+                setFilterString(value);
+              });
+            }}
+          />
         </Flex>
         <Flex gap="xs">
           <Tooltip title={t('button.Refresh')}>
@@ -771,6 +806,7 @@ const AgentList: React.FC<AgentListProps> = ({
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
         dataSource={agent_list?.items}
+        showSorterTooltip={false}
         columns={
           _.filter(columns, (column) =>
             displayedColumnKeys?.includes(_.toString(column.key)),
@@ -792,8 +828,8 @@ const AgentList: React.FC<AgentListProps> = ({
             if (
               _.isNumber(current) &&
               _.isNumber(pageSize) &&
-              (pageSize !== tablePaginationOption.pageSize ||
-                current !== tablePaginationOption.current)
+              pageSize !== tablePaginationOption.pageSize &&
+              current !== tablePaginationOption.current
             ) {
               setTablePaginationOption({
                 current,
@@ -804,7 +840,8 @@ const AgentList: React.FC<AgentListProps> = ({
           });
         }}
         loading={{
-          spinning: isPendingPageChange || isPendingStatusFetch,
+          spinning:
+            isPendingPageChange || isPendingStatusFetch || isPendingFilter,
           indicator: <LoadingOutlined />,
         }}
         {...tableProps}
