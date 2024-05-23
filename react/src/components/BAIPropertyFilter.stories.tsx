@@ -2,7 +2,6 @@
 import BAIPropertyFilter from './BAIPropertyFilter';
 import { StoryObj, Meta } from '@storybook/react';
 import { fn } from '@storybook/test';
-import React from 'react';
 
 export default {
   title: 'Backend.AI UI/BAIPropertyFilter',

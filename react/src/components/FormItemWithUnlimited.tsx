@@ -2,7 +2,6 @@ import Flex from './Flex';
 import { Form, Checkbox } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { NamePath } from 'antd/es/form/interface';
-import _ from 'lodash';
 import React, {
   cloneElement,
   PropsWithChildren,
