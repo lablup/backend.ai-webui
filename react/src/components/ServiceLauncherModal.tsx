@@ -11,7 +11,7 @@ import {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentDomainValue } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import BAIModal, { BAIModalProps } from './BAIModal';
+import BAIModal, { BAIModalProps, DEFAULT_BAI_MODAL_Z_INDEX } from './BAIModal';
 import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems, {
@@ -687,6 +687,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       </BAIModal>
       {baiClient.supports('model-service-validation') ? (
         <BAIModal
+          zIndex={DEFAULT_BAI_MODAL_Z_INDEX + 1}
           width={1000}
           title={t('modelService.ValidationInfo')}
           open={isOpenServiceValidationModal}
