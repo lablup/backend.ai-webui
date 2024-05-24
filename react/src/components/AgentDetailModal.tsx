@@ -4,7 +4,7 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import Flex from './Flex';
 import { AgentDetailModalFragment$key } from './__generated__/AgentDetailModalFragment.graphql';
-import { Col, Row, Typography } from 'antd';
+import { Col, Row, theme, Typography } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React from 'react';
@@ -31,6 +31,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const [resourceSlotsDetails] = useResourceSlotsDetails();
   const agent = useFragment(
     graphql`
@@ -55,9 +56,9 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
       title={`${t('agent.DetailedInformation')}: ${agent?.id}`}
       onCancel={onRequestClose}
       destroyOnClose
-      footer={<></>}
+      footer={null}
     >
-      <Row gutter={[16, 16]}>
+      <Row gutter={[24, 24]}>
         <Col xs={{ flex: '100%' }} sm={{ flex: '50%' }}>
           {parsedLiveStat?.devices?.cpu_util ? (
             <Flex direction="column" gap="xxs" align="stretch">
@@ -132,7 +133,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
           ) : null}
         </Col>
       </Row>
-      <Row gutter={[16, 16]}>
+      <Row gutter={[24, 24]} style={{ marginBottom: token.marginLG }}>
         {_.map(_.keys(parsedLiveStat?.devices), (key) => {
           if (['cpu_util', 'mem', 'disk', 'net_rx', 'net_tx'].includes(key)) {
             return null;
