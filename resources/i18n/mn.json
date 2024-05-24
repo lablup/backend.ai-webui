@@ -1604,5 +1604,8 @@
   "sourceCodeViewer": {
     "Copy": "Хуулбарлах",
     "Copied": "Хуулсан"
+  },
+  "propertyFilter": {
+    "placeHolder": "Хайх"
   }
 }

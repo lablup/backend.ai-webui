@@ -1603,5 +1603,8 @@
   "sourceCodeViewer": {
     "Copy": "Salinan",
     "Copied": "disalin"
+  },
+  "propertyFilter": {
+    "placeHolder": "Cari"
   }
 }

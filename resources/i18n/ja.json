@@ -1603,5 +1603,8 @@
   "sourceCodeViewer": {
     "Copy": "コピー",
     "Copied": "コピーされました"
+  },
+  "propertyFilter": {
+    "placeHolder": "検索"
   }
 }

@@ -1603,5 +1603,8 @@
   "sourceCodeViewer": {
     "Copy": "αντίγραφο",
     "Copied": "Αντιγράφηκε"
+  },
+  "propertyFilter": {
+    "placeHolder": "Αναζήτηση"
   }
 }
