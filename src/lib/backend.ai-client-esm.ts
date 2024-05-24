@@ -690,6 +690,7 @@ class Client {
       this._features['model-store'] = true;
       this._features['per-user-image'] = true;
       this._features['user-committed-image'] = true;
+      this._features['model-service-validation'] = true;
     }
   }
 

@@ -1535,12 +1535,21 @@
     "resources": "Sumber daya",
     "Image": "Gambar",
     "Owner": "Pemilik",
+    "Processing": "Pengolahan...",
+    "Success": "Kesuksesan",
+    "Error": "Kesalahan",
+    "SeeContainerLogs": "Lihat Log Kontainer",
+    "TimeStamp": "Stempel waktu",
+    "Result": "Hasil",
+    "Finished": "Selesai",
     "ServiceDelegatedFrom": "Layanan model dibuat oleh {{ createdUser }} namun kepemilikan sesi akan didelegasikan ke {{ sessionOwner }}",
     "FailedToTerminateService": "Permintaan untuk menghentikan layanan gagal.",
     "FailedToUpdateService": "Gagal memperbarui layanan.",
     "ServiceCreated": "Layanan model {{ name }} telah berhasil dibuat.",
     "ServiceUpdated": "Layanan model {{ name }} telah berhasil diperbarui.",
-    "ServiceTerminated": "Layanan model {{ name }} telah berhasil dihentikan."
+    "ServiceTerminated": "Layanan model {{ name }} telah berhasil dihentikan.",
+    "CannotValidateNow": "Tidak dapat memvalidasi layanan sekarang. \nSilakan periksa alokasi sumber daya atau konfigurasi lainnya.",
+    "Ready": "Siap"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",
