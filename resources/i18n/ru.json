@@ -1603,5 +1603,8 @@
   "sourceCodeViewer": {
     "Copy": "Копировать",
     "Copied": "Скопировано"
+  },
+  "propertyFilter": {
+    "placeHolder": "Поиск"
   }
 }

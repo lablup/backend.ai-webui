@@ -1603,5 +1603,8 @@
   "sourceCodeViewer": {
     "Copy": "Sao chép",
     "Copied": "Đã sao chép"
+  },
+  "propertyFilter": {
+    "placeHolder": "Tìm kiếm"
   }
 }

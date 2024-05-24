@@ -1603,5 +1603,8 @@
   "sourceCodeViewer": {
     "Copy": "cópia de",
     "Copied": "Copiado"
+  },
+  "propertyFilter": {
+    "placeHolder": "Pesquisar"
   }
 }

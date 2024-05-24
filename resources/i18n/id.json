@@ -1601,5 +1601,8 @@
   "sourceCodeViewer": {
     "Copy": "Menyalin",
     "Copied": "Disalin"
+  },
+  "propertyFilter": {
+    "placeHolder": "Pencarian"
   }
 }

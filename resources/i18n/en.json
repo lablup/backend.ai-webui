@@ -451,7 +451,7 @@
     "GenerateNewToken": "Generate new token",
     "SessionOwner": "Session Owner",
     "ServiceEndpoint": "Service Endpoint",
-    "SeeContainerLogs":"See Container Logs",
+    "SeeContainerLogs": "See Container Logs",
     "NoServiceEndpoint": "No Service Endpoint",
     "RoutesInfo": "Routes Info",
     "GeneratedTokens": "Generated Tokens",
@@ -1605,5 +1605,8 @@
   "sourceCodeViewer": {
     "Copy": "Copy",
     "Copied": "Copied"
+  },
+  "propertyFilter": {
+    "placeHolder": "Search"
   }
 }
