@@ -250,9 +250,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
               name={'max_vfolder_count'}
               unlimitedValue={0}
               label={t('resourcePolicy.MaxFolderCount')}
-              formItemProps={{
-                style: { width: '100%', margin: 0 },
-              }}
+              style={{ width: '100%', margin: 0 }}
             >
               <InputNumber min={0} style={{ width: '100%' }} />
             </FormItemWithUnlimited>
@@ -262,9 +260,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
               name={'max_quota_scope_size'}
               unlimitedValue={-1}
               label={t('storageHost.MaxFolderSize')}
-              formItemProps={{
-                style: { width: '100%', margin: 0 },
-              }}
+              style={{ width: '100%', margin: 0 }}
             >
               <InputNumber min={0} addonAfter="GB" style={{ width: '100%' }} />
             </FormItemWithUnlimited>
