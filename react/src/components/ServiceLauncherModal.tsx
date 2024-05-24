@@ -482,39 +482,41 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         maskClosable={false}
         confirmLoading={mutationToCreateService.isLoading}
         footer={() => (
-          <Flex direction="row" justify="end" align="end">
-            <Space size="small">
-              <Button type="text" onClick={handleCancel}>
-                {t('button.Cancel')}
-              </Button>
-              <Button
-                type="default"
-                onClick={() => {
-                  formRef.current
-                    ?.validateFields()
-                    .then((values) => {
-                      // FIXME: manually insert vfolderName when validation
-                      setValidateServiceData({
-                        ...values,
-                        vFolderName: (endpoint?.model ??
-                          formRef.current?.getFieldValue(
-                            'vFolderName',
-                          )) as string,
+          <Flex direction="row" justify="between" align="end" gap={'xs'}>
+            <Flex>
+              {baiClient.supports('model-service-validation') ? (
+                <Button
+                  onClick={() => {
+                    formRef.current
+                      ?.validateFields()
+                      .then((values) => {
+                        // FIXME: manually insert vfolderName when validation
+                        setValidateServiceData({
+                          ...values,
+                          vFolderName: (endpoint?.model ??
+                            formRef.current?.getFieldValue(
+                              'vFolderName',
+                            )) as string,
+                        });
+                        setIsOpenServiceValidationModal(true);
+                      })
+                      .catch((err) => {
+                        console.log(err.message);
+                        message.error(t('modelService.FormValidationFailed'));
                       });
-                      setIsOpenServiceValidationModal(true);
-                    })
-                    .catch((err) => {
-                      console.log(err.message);
-                      message.error(t('modelService.FormValidationFailed'));
-                    });
-                }}
-              >
-                {t('modelService.Validate')}
-              </Button>
+                  }}
+                >
+                  {t('modelService.Validate')}
+                </Button>
+              ) : null}
+            </Flex>
+            <Flex gap={'sm'}>
+              <Button onClick={handleCancel}>{t('button.Cancel')}</Button>
+
               <Button type="primary" onClick={handleOk}>
                 {endpoint ? t('button.Update') : t('button.Create')}
               </Button>
-            </Space>
+            </Flex>
           </Flex>
         )}
         {...modalProps}
@@ -683,22 +685,24 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           </Form>
         </Suspense>
       </BAIModal>
-      <BAIModal
-        width={1000}
-        title={t('modelService.ValidationInfo')}
-        open={isOpenServiceValidationModal}
-        destroyOnClose
-        onCancel={() => {
-          setIsOpenServiceValidationModal(!isOpenServiceValidationModal);
-        }}
-        okButtonProps={{
-          style: { display: 'none' },
-        }}
-        cancelText={t('button.Close')}
-        maskClosable={false}
-      >
-        <ServiceValidationView serviceData={validateServiceData} />
-      </BAIModal>
+      {baiClient.supports('model-service-validation') ? (
+        <BAIModal
+          width={1000}
+          title={t('modelService.ValidationInfo')}
+          open={isOpenServiceValidationModal}
+          destroyOnClose
+          onCancel={() => {
+            setIsOpenServiceValidationModal(!isOpenServiceValidationModal);
+          }}
+          okButtonProps={{
+            style: { display: 'none' },
+          }}
+          cancelText={t('button.Close')}
+          maskClosable={false}
+        >
+          <ServiceValidationView serviceData={validateServiceData} />
+        </BAIModal>
+      ) : null}
     </>
   );
 };
