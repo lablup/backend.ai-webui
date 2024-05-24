@@ -667,6 +667,7 @@ class Client {
       this._features['container-registry-gql'] = true;
       this._features['max-quota-scope-size-in-user-and-project-resource-policy'] = true;
       this._features['deprecated-max-vfolder-size-in-user-and-project-resource-policy'] = true;
+      this._features['max-quota-scope-size'] = true;
     }
     if (this.isManagerVersionCompatibleWith('23.09.4')) {
       this._features['deprecated-max-vfolder-count-in-keypair-resource-policy'] = true;
@@ -695,9 +696,6 @@ class Client {
       this._features['user-committed-image'] = true;
       this._features['model-service-validation'] = true;
       this._features['max-customized-image-count'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('24.03.1')) {
-      this._features['max-quota-scope-size'] = true;
     }
   }
 

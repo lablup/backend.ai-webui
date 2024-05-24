@@ -18,7 +18,7 @@ import {
 import { useLocalStorageState } from 'ahooks';
 import { App, Button, Popconfirm, Table, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
-import { ColumnsType, ColumnType } from 'antd/es/table';
+import { ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -67,9 +67,12 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
             id
             name
             created_at
+            # follows version of https://github.com/lablup/backend.ai/pull/1993
+            # --------------- START --------------------
             max_vfolder_count @since(version: "23.09.6")
-            max_quota_scope_size @since(version: "24.03.1")
             max_session_count_per_model_session @since(version: "23.09.10")
+            max_quota_scope_size @since(version: "23.09.2")
+            # ---------------- END ---------------------
             max_customized_image_count @since(version: "24.03.0")
             ...UserResourcePolicySettingModalFragment
           }
@@ -95,56 +98,52 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
       }
     `);
 
-  const columns: ColumnsType<UserResourcePolicies> = _.filter([
+  const columns = _.filter<ColumnType<UserResourcePolicies>>([
     {
       title: t('resourcePolicy.Name'),
       dataIndex: 'name',
       key: 'name',
       fixed: 'left',
-      sorter: (a: UserResourcePolicies, b: UserResourcePolicies) =>
-        localeCompare(a?.name, b?.name),
+      sorter: (a, b) => localeCompare(a?.name, b?.name),
     },
     supportMaxVfolderCount && {
       title: t('resourcePolicy.MaxVFolderCount'),
       dataIndex: 'max_vfolder_count',
-      render: (text: UserResourcePolicies) =>
-        _.toNumber(text) === 0 ? '∞' : text,
-      sorter: (a: UserResourcePolicies, b: UserResourcePolicies) =>
+      render: (text) => (_.toNumber(text) === 0 ? '∞' : text),
+      sorter: (a, b) =>
         (a?.max_vfolder_count ?? 0) - (b?.max_vfolder_count ?? 0),
     },
     supportMaxSessionCountPerModelSession && {
       title: t('resourcePolicy.MaxSessionCountPerModelSession'),
       dataIndex: 'max_session_count_per_model_session',
-      sorter: (a: UserResourcePolicies, b: UserResourcePolicies) =>
+      sorter: (a, b) =>
         (a?.max_session_count_per_model_session ?? 0) -
         (b?.max_session_count_per_model_session ?? 0),
     },
     supportMaxQuotaScopeSize && {
       title: t('resourcePolicy.MaxQuotaScopeSize'),
       dataIndex: 'max_quota_scope_size',
-      render: (text: number) => (text === -1 ? '∞' : bytesToGB(text)),
-      sorter: (a: UserResourcePolicies, b: UserResourcePolicies) =>
+      render: (text) => (text === -1 ? '∞' : bytesToGB(text)),
+      sorter: (a, b) =>
         (a?.max_quota_scope_size ?? 0) - (b?.max_quota_scope_size ?? 0),
     },
     supportMaxCustomizedImageCount && {
       title: t('resourcePolicy.MaxCustomizedImageCount'),
       dataIndex: 'max_customized_image_count',
-      sorter: (a: UserResourcePolicies, b: UserResourcePolicies) =>
+      sorter: (a, b) =>
         (a?.max_customized_image_count ?? 0) -
         (b?.max_customized_image_count ?? 0),
     },
     {
       title: 'ID',
       dataIndex: 'id',
-      sorter: (a: UserResourcePolicies, b: UserResourcePolicies) =>
-        localeCompare(a?.id, b?.id),
+      sorter: (a, b) => localeCompare(a?.id, b?.id),
     },
     {
       title: t('resourcePolicy.CreatedAt'),
       dataIndex: 'created_at',
-      render: (text: string) => dayjs(text).format('lll'),
-      sorter: (a: UserResourcePolicies, b: UserResourcePolicies) =>
-        localeCompare(a?.created_at, b?.created_at),
+      render: (text) => dayjs(text).format('lll'),
+      sorter: (a, b) => localeCompare(a?.created_at, b?.created_at),
     },
     {
       title: t('general.Control'),
@@ -269,7 +268,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
         rowKey="id"
         showSorterTooltip={false}
         columns={
-          columns.filter((column) =>
+          _.filter(columns, (column) =>
             displayedColumnKeys?.includes(_.toString(column.key)),
           ) as ColumnType<AnyObject>[]
         }

@@ -12,10 +12,18 @@ import {
   ModifyUserResourcePolicyInput,
   UserResourcePolicySettingModalModifyMutation,
 } from './__generated__/UserResourcePolicySettingModalModifyMutation.graphql';
-import { Form, Input, Alert, App, InputNumber, theme } from 'antd';
+import {
+  Form,
+  Input,
+  Alert,
+  App,
+  InputNumber,
+  theme,
+  FormInstance,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
 
@@ -34,7 +42,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
-  const [form] = Form.useForm();
+  const formRef = useRef<FormInstance>(null);
 
   const baiClient = useSuspendedBackendaiClient();
   const supportMaxVfolderCount = baiClient?.supports(
@@ -53,9 +61,12 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
       fragment UserResourcePolicySettingModalFragment on UserResourcePolicy {
         id
         name
+        # follows version of https://github.com/lablup/backend.ai/pull/1993
+        # --------------- START --------------------
         max_vfolder_count @since(version: "23.09.6")
-        max_quota_scope_size @since(version: "24.03.1")
         max_session_count_per_model_session @since(version: "23.09.10")
+        max_quota_scope_size @since(version: "23.09.2")
+        # ---------------- END ---------------------
         max_customized_image_count @since(version: "24.03.0")
       }
     `,
@@ -119,8 +130,8 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
   ]);
 
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
-    return form
-      .validateFields()
+    return formRef?.current
+      ?.validateFields()
       .then((values) => {
         const props:
           | CreateUserResourcePolicyInput
@@ -134,6 +145,18 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
             values?.max_session_count_per_model_session,
           max_customized_image_count: values?.max_customized_image_count,
         };
+        if (!supportMaxVfolderCount) {
+          delete props.max_vfolder_count;
+        }
+        if (!supportMaxQuotaScopeSize) {
+          delete props.max_quota_scope_size;
+        }
+        if (!supportMaxSessionCountPerModelSession) {
+          delete props.max_session_count_per_model_session;
+        }
+        if (!supportMaxCustomizedImageCount) {
+          delete props.max_customized_image_count;
+        }
         if (userResourcePolicy === null) {
           commitCreateUserResourcePolicy({
             variables: {
@@ -201,10 +224,10 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
         message={t('storageHost.BeCarefulToSetUserResourcePolicy')}
         type="warning"
         showIcon
-        style={{ marginTop: token.marginMD, marginBottom: token.marginMD }}
+        style={{ marginBottom: token.marginMD }}
       />
       <Form
-        form={form}
+        ref={formRef}
         layout="vertical"
         requiredMark="optional"
         initialValues={initialValues}

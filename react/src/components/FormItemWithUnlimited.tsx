@@ -12,7 +12,7 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
   name,
   unlimitedValue,
   children,
-  ...formItemProps
+  ...formItemPropsWithoutNameAndChildren
 }) => {
   const { t } = useTranslation();
   const [isUnlimited, setIsUnlimited] = useState<boolean>(false);
@@ -45,12 +45,15 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
         style={{ margin: 0 }}
         name={name}
         hidden={isUnlimited}
-        {...formItemProps}
+        {...formItemPropsWithoutNameAndChildren}
       >
         {childrenWithProps}
       </Form.Item>
       {isUnlimited ? (
-        <Form.Item style={{ margin: 0 }} {...formItemProps}>
+        <Form.Item
+          style={{ margin: 0 }}
+          {...formItemPropsWithoutNameAndChildren}
+        >
           {childrenWithUndefinedValue}
         </Form.Item>
       ) : null}
