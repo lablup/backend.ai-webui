@@ -12,7 +12,7 @@ import { Select, Tooltip, theme } from 'antd';
 import { SelectProps } from 'antd/lib';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useTransition } from 'react';
+import React, { useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -76,6 +76,12 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     },
   );
 
+  const sortedResourcePresets = useMemo(() => {
+    return _.sortBy(resource_presets, (preset) =>
+      (preset?.name || '').toLowerCase(),
+    );
+  }, [resource_presets]);
+
   return (
     <Select
       loading={isPendingUpdate}
@@ -119,7 +125,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           // value: 'preset1',
           label: 'Preset',
           // @ts-ignore
-          options: _.map(resource_presets, (preset, index) => {
+          options: _.map(sortedResourcePresets, (preset, index) => {
             const slotsInfo: {
               [key in string]: string;
             } = JSON.parse(preset?.resource_slots);
