@@ -219,7 +219,7 @@ const ResourceAllocationFormItems: React.FC<
       ) {
         // if the current preset is available in the current resource group, do nothing.
       } else if (enableResourcePresets && allocatablePresetNames[0]) {
-        const autoSelectedPreset = _.sortBy(allocatablePresetNames, 'name')[0];
+        const autoSelectedPreset = _.sortBy(allocatablePresetNames)[0];
         form.setFieldsValue({
           allocationPreset: autoSelectedPreset,
         });
