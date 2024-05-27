@@ -1,4 +1,8 @@
-import { bytesToGB, localeCompare } from '../helper';
+import {
+  bytesToGB,
+  localeCompare,
+  numberSorterWithInfinityValue,
+} from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -111,7 +115,11 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
       dataIndex: 'max_vfolder_count',
       render: (text) => (_.toNumber(text) === 0 ? '∞' : text),
       sorter: (a, b) =>
-        (a?.max_vfolder_count ?? 0) - (b?.max_vfolder_count ?? 0),
+        numberSorterWithInfinityValue(
+          a?.max_vfolder_count,
+          b?.max_vfolder_count,
+          0,
+        ),
     },
     supportMaxSessionCountPerModelSession && {
       title: t('resourcePolicy.MaxSessionCountPerModelSession'),
@@ -125,7 +133,11 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
       dataIndex: 'max_quota_scope_size',
       render: (text) => (text === -1 ? '∞' : bytesToGB(text)),
       sorter: (a, b) =>
-        (a?.max_quota_scope_size ?? 0) - (b?.max_quota_scope_size ?? 0),
+        numberSorterWithInfinityValue(
+          a?.max_quota_scope_size,
+          b?.max_quota_scope_size,
+          -1,
+        ),
     },
     supportMaxCustomizedImageCount && {
       title: t('resourcePolicy.MaxCustomizedImageCount'),
