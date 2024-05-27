@@ -1,4 +1,5 @@
 import { compareNumberWithUnits, iSizeToSize } from '../helper';
+import { useUpdatableState } from '../hooks';
 import DynamicUnitInputNumber, {
   DynamicUnitInputNumberProps,
 } from './DynamicUnitInputNumber';
@@ -7,7 +8,7 @@ import { useControllableValue } from 'ahooks';
 import { Slider, theme } from 'antd';
 import { SliderMarks } from 'antd/es/slider';
 import _ from 'lodash';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 export interface DynamicUnitInputNumberWithSliderProps
   extends DynamicUnitInputNumberProps {
@@ -45,6 +46,16 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   //     : undefined;
   // }, [warn, maxGiB?.number]);
   // console.log('##marks', marks);
+
+  // FIXME: this is a workaround to fix the issue that the value is not updated when the value is controlled
+  const [key, updateKey] = useUpdatableState('first');
+  useEffect(() => {
+    setTimeout(() => {
+      updateKey(value);
+    }, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Flex direction="row" gap={'md'}>
       <Flex
@@ -54,6 +65,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
       >
         <DynamicUnitInputNumber
           {...otherProps}
+          key={key}
           min={min}
           max={max}
           units={units}
