@@ -2,7 +2,7 @@ import Flex from './Flex';
 import { useControllableValue } from 'ahooks';
 import { InputNumber, Slider, InputNumberProps, SliderSingleProps } from 'antd';
 import { SliderRangeProps } from 'antd/es/slider';
-import _ from 'lodash';
+import _, { set } from 'lodash';
 import React, { useEffect } from 'react';
 
 type OmitControlledProps<T> = Omit<T, 'value' | 'onChange'>;
@@ -37,6 +37,15 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
+
+  // FIXME: this is a workaround to fix the issue that the value is not updated when the value is controlled
+  useEffect(() => {
+    setTimeout(() => {
+      setValue(value);
+    }, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Flex direction="row" gap={'md'}>
       <Flex

@@ -7,7 +7,7 @@ import { useControllableValue } from 'ahooks';
 import { Slider, theme } from 'antd';
 import { SliderMarks } from 'antd/es/slider';
 import _ from 'lodash';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 export interface DynamicUnitInputNumberWithSliderProps
   extends DynamicUnitInputNumberProps {
@@ -45,6 +45,14 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   //     : undefined;
   // }, [warn, maxGiB?.number]);
   // console.log('##marks', marks);
+
+  // FIXME: this is a workaround to fix the issue that the value is not updated when the value is controlled
+  useEffect(() => {
+    setTimeout(() => {
+      setValue(value);
+    }, 0);
+  }, []);
+
   return (
     <Flex direction="row" gap={'md'}>
       <Flex
