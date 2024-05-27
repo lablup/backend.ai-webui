@@ -2830,10 +2830,11 @@ ${item.traceback}</pre
               display: block;
               white-space: pre-wrap;
               word-break: break-all;
+              white-space-collapse: collapse;
             }
           </style>
           <div class="layout vertical start">
-            <div class="horizontal center center-justified layout">
+            <div class="horizontal center start-justified layout">
               <pre id="session-name-field">
                 ${rowData.item.mounts[0]} SFTP Session
               </pre
@@ -2851,6 +2852,7 @@ ${item.traceback}</pre
               display: block;
               margin-left: 16px;
               white-space: pre-wrap;
+              white-space-collapse: collapse;
               word-break: break-all;
             }
             #session-rename-field {
