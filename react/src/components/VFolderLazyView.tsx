@@ -1,6 +1,7 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useCurrentProjectValue, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { VFolder } from './VFolderSelect';
 import { FolderOutlined } from '@ant-design/icons';
 import { Typography } from 'antd';

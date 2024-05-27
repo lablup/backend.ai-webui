@@ -122,7 +122,8 @@ const loadPage =
         break;
       case 'agent':
       case 'resource':
-        import('./components/backend-ai-agent-view.js');
+        import('./components/backend-ai-resource-group-list.js');
+        import('./components/backend-ai-storage-proxy-list.js');
         break;
       case 'storage-settings':
         import('./components/backend-ai-storage-host-settings-view.js');

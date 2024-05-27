@@ -1,11 +1,8 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
-import {
-  useCurrentProjectValue,
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-} from '../hooks';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useShadowRoot } from './DefaultProviders';
 import Flex from './Flex';

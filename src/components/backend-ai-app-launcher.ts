@@ -1573,7 +1573,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   _copySSHConnectionExample(divSelector) {
     const divElement = this.shadowRoot?.querySelector(divSelector);
     if (divElement) {
-      const textToCopy = divElement.textContent.trim();
+      const textToCopy = divElement.textContent
+        .replace(/[\r\n\t]+/g, ' ')
+        .replace(/\s\s+/g, ' ')
+        .trim();
 
       if (textToCopy.length === 0) {
         this.notification.text = _text(
@@ -1618,23 +1621,25 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <span>${_t('session.applauncher.App')}</span>
         </div>
         <div slot="content">
-          ${this.endpointURL !== ''
-            ? html`
-                <div
-                  style="padding:15px 0;"
-                  class="horizontal layout wrap center start-justified"
-                >
-                  <span
-                    style="font-weight:600;margin-left:20px;margin-right:15px;"
+          ${
+            this.endpointURL !== ''
+              ? html`
+                  <div
+                    style="padding:15px 0;"
+                    class="horizontal layout wrap center start-justified"
                   >
-                    Endpoint URL:
-                  </span>
-                  <span style="font-family:monospace;">
-                    ${this.endpointURL}
-                  </span>
-                </div>
-              `
-            : html``}
+                    <span
+                      style="font-weight:600;margin-left:20px;margin-right:15px;"
+                    >
+                      Endpoint URL:
+                    </span>
+                    <span style="font-family:monospace;">
+                      ${this.endpointURL}
+                    </span>
+                  </div>
+                `
+              : html``
+          }
           <div
             style="padding:15px 0;"
             class="horizontal layout wrap center start-justified"
@@ -1669,121 +1674,132 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               `,
             )}
           </div>
-          ${this.preOpenedPortList.length > 0
-            ? html`
-                <lablup-expansion id="preopen-ports-expansion" open>
-                  <span slot="title" class="horizontal layout">
-                    ${_t('session.launcher.PreOpenPortTitle')}
-                  </span>
-                  <div
-                    style="padding:15px 0;"
-                    class="horizontal layout wrap center start-justified"
-                  >
-                    ${this.preOpenedPortList.map(
-                      (item) => html`
-                        <div
-                          class="vertical layout center center-justified app-icon"
-                        >
-                          <mwc-icon-button
-                            class="fg apps green"
-                            .app="${item.name}"
-                            .app-name="${item.name}"
-                            @click="${(e) =>
-                              this._runThisAppWithConfirmationIfNeeded(e)}"
-                          >
-                            <img src="${item.src}" />
-                          </mwc-icon-button>
-                          <span class="label">${item.title}</span>
-                        </div>
-                      `,
-                    )}
-                  </div>
-                </lablup-expansion>
-              `
-            : html``}
-          <div style="padding:10px 20px 15px 20px">
-            ${globalThis.isElectron || !this.openPortToPublic
-              ? ``
-              : html`
-                  <div class="horizontal layout center">
-                    <mwc-checkbox
-                      id="chk-open-to-public"
-                      style="margin-right:0.5em;"
-                      @change="${this._toggleChkOpenToPublic}"
-                    ></mwc-checkbox>
-                    ${_t('session.OpenToPublic')}
-                  </div>
-                  <div
-                    class="horizontal layout center"
-                    id="allowed-client-ips-container"
-                  >
-                    ${_t('session.AllowedClientIps')}
-                    <mwc-textfield
-                      id="allowed-client-ips"
-                      style="margin-left:1em;"
-                      helperPersistent
-                      .helper="(${_t('session.CommaSeparated')})"
-                    ></mwc-textfield>
-                  </div>
-                `}
-            ${this.allowPreferredPort
+          ${
+            this.preOpenedPortList.length > 0
               ? html`
-                  <div
-                    id="preferred-app-port-config-box"
-                    class="horizontal layout center"
-                  >
-                    <mwc-checkbox
-                      id="chk-preferred-port"
-                      style="margin-right:0.5em;"
-                    ></mwc-checkbox>
-                    ${_t('session.TryPreferredPort')}
-                    <mwc-textfield
-                      id="app-port"
-                      type="number"
-                      no-label-float
-                      value="10250"
-                      min="1025"
-                      max="65534"
-                      style="margin-left:1em;width:90px;"
-                      @change="${(e) => this._adjustPreferredAppPortNumber(e)}"
-                    ></mwc-textfield>
-                  </div>
+                  <lablup-expansion id="preopen-ports-expansion" open>
+                    <span slot="title" class="horizontal layout">
+                      ${_t('session.launcher.PreOpenPortTitle')}
+                    </span>
+                    <div
+                      style="padding:15px 0;"
+                      class="horizontal layout wrap center start-justified"
+                    >
+                      ${this.preOpenedPortList.map(
+                        (item) => html`
+                          <div
+                            class="vertical layout center center-justified app-icon"
+                          >
+                            <mwc-icon-button
+                              class="fg apps green"
+                              .app="${item.name}"
+                              .app-name="${item.name}"
+                              @click="${(e) =>
+                                this._runThisAppWithConfirmationIfNeeded(e)}"
+                            >
+                              <img src="${item.src}" />
+                            </mwc-icon-button>
+                            <span class="label">${item.title}</span>
+                          </div>
+                        `,
+                      )}
+                    </div>
+                  </lablup-expansion>
                 `
-              : html``}
-            <div class="horizontal layout center">
-              ${globalThis.backendaiwebui.debug === true
-                ? html`
-                    <mwc-checkbox
-                      id="force-use-v1-proxy"
-                      style="margin-right:0.5em;"
-                    ></mwc-checkbox>
-                    Force use of V1
-                    <mwc-checkbox
-                      id="force-use-v2-proxy"
-                      style="margin-right:0.5em;"
-                    ></mwc-checkbox>
-                    Force use of V2
+              : html``
+          }
+          <div style="padding:10px 20px 15px 20px">
+            ${
+              globalThis.isElectron || !this.openPortToPublic
+                ? ``
+                : html`
+                    <div class="horizontal layout center">
+                      <mwc-checkbox
+                        id="chk-open-to-public"
+                        style="margin-right:0.5em;"
+                        @change="${this._toggleChkOpenToPublic}"
+                      ></mwc-checkbox>
+                      ${_t('session.OpenToPublic')}
+                    </div>
+                    <div
+                      class="horizontal layout center"
+                      id="allowed-client-ips-container"
+                    >
+                      ${_t('session.AllowedClientIps')}
+                      <mwc-textfield
+                        id="allowed-client-ips"
+                        style="margin-left:1em;"
+                        helperPersistent
+                        .helper="(${_t('session.CommaSeparated')})"
+                      ></mwc-textfield>
+                    </div>
                   `
-                : ``}
+            }
+            ${
+              this.allowPreferredPort
+                ? html`
+                    <div
+                      id="preferred-app-port-config-box"
+                      class="horizontal layout center"
+                    >
+                      <mwc-checkbox
+                        id="chk-preferred-port"
+                        style="margin-right:0.5em;"
+                      ></mwc-checkbox>
+                      ${_t('session.TryPreferredPort')}
+                      <mwc-textfield
+                        id="app-port"
+                        type="number"
+                        no-label-float
+                        value="10250"
+                        min="1025"
+                        max="65534"
+                        style="margin-left:1em;width:90px;"
+                        @change="${(e) =>
+                          this._adjustPreferredAppPortNumber(e)}"
+                      ></mwc-textfield>
+                    </div>
+                  `
+                : html``
+            }
+            <div class="horizontal layout center">
+              ${
+                globalThis.backendaiwebui.debug === true
+                  ? html`
+                      <mwc-checkbox
+                        id="force-use-v1-proxy"
+                        style="margin-right:0.5em;"
+                      ></mwc-checkbox>
+                      Force use of V1
+                      <mwc-checkbox
+                        id="force-use-v2-proxy"
+                        style="margin-right:0.5em;"
+                      ></mwc-checkbox>
+                      Force use of V2
+                    `
+                  : ``
+              }
             </div>
           </div>
           <div style="padding:10px 20px 15px 20px">
-            ${globalThis.backendaiwebui.debug === true
-              ? html`
-                  <div class="horizontal layout center">
-                    <mwc-checkbox
-                      id="chk-custom-subdomain"
-                      style="margin-right:0.5em;"
-                    ></mwc-checkbox>
-                    ${_t('session.UseSubdomain')}
-                    <mwc-textfield
-                      id="custom-subdomain"
-                      style="margin-left:1em;width:90px;"
-                      @change="${(e) => this._adjustCustomSubdomain(e)}"
-                    ></mwc-textfield>
-                  </div>
-                `
-              : ``}
+            ${
+              globalThis.backendaiwebui.debug === true
+                ? html`
+                    <div class="horizontal layout center">
+                      <mwc-checkbox
+                        id="chk-custom-subdomain"
+                        style="margin-right:0.5em;"
+                      ></mwc-checkbox>
+                      ${_t('session.UseSubdomain')}
+                      <mwc-textfield
+                        id="custom-subdomain"
+                        style="margin-left:1em;width:90px;"
+                        @change="${(e) => this._adjustCustomSubdomain(e)}"
+                      ></mwc-textfield>
+                    </div>
+                  `
+                : ``
+            }
           </div>
         </div>
       </backend-ai-dialog>
@@ -1836,50 +1852,31 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               ${this.tcpPort}
             </div>
             <h4>${_t('session.ConnectionExample')}</h4>
-            <div
-              class="horizontal layout flex monospace ssh-connection-example"
-            >
-              <span id="sftp-string">
-                sftp -i ./id_container -P ${this.tcpPort} -o
-                StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
-                work@${this.tcpHost}
-              </span>
-              <mwc-icon-button
-                class="sftp-session-connection-copy"
-                icon="content_copy"
-                @click="${() => this._copySSHConnectionExample('#sftp-string')}"
-              ></mwc-icon-button>
-            </div>
-            <div
-              class="horizontal layout flex monospace ssh-connection-example"
-            >
-              <span id="scp-string">
-                scp -i ./id_container -o StrictHostKeyChecking=no -o
-                UserKnownHostsFile=/dev/null -P ${this.tcpPort} -rp
-                /path/to/source
-                work@${this.tcpHost}:~/${this.mountedVfolderName}
-              </span>
-              <mwc-icon-button
-                class="sftp-session-connection-copy"
-                icon="content_copy"
-                @click="${() => this._copySSHConnectionExample('#scp-string')}"
-              ></mwc-icon-button>
-            </div>
-            <div
-              class="horizontal layout flex monospace ssh-connection-example"
-            >
-              <span id="rsync-string">
-                rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no
-                -o UserKnownHostsFile=/dev/null -p ${this.tcpPort}"
-                /path/to/source/
-                work@${this.tcpHost}:~/${this.mountedVfolderName}/
-              </span>
-              <mwc-icon-button
-                class="sftp-session-connection-copy"
-                icon="content_copy"
-                @click="${() =>
-                  this._copySSHConnectionExample('#rsync-string')}"
-              ></mwc-icon-button>
+            <div class="vertical layout flex" style="gap: var(--token-sizeXS); width: 100%;">
+              <backend-ai-react-source-code-viewer
+                key="ssh-connection-example"
+                value="${JSON.stringify({
+                  children: `sftp -i ./id_container -P ${this.tcpPort} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${this.tcpHost}`,
+                  language: 'shell',
+                  wordWrap: true,
+                })}"
+              ></backend-ai-react-source-code-viewer>
+              <backend-ai-react-source-code-viewer
+                key="ssh-connection-example2"
+                value="${JSON.stringify({
+                  children: `scp -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${this.tcpPort} -rp /path/to/source work@${this.tcpHost}:~/${this.mountedVfolderName}`,
+                  language: 'shell',
+                  wordWrap: true,
+                })}"
+              /></backend-ai-react-source-code-viewer>
+              <backend-ai-react-source-code-viewer
+                key="ssh-connection-example3"
+                value="${JSON.stringify({
+                  children: `rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${this.tcpPort}" /path/to/source/ work@${this.tcpHost}:~/${this.mountedVfolderName}/`,
+                  language: 'shell',
+                  wordWrap: true,
+                })}"
+              /></backend-ai-react-source-code-viewer>
             </div>
           </section>
         </div>
@@ -2023,8 +2020,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <a
             id="vscode-link"
             style="margin-top:15px;width:100%;"
-            href="vscode://vscode-remote/ssh-remote+work@${this
-              .tcpHost}%3A${this.tcpPort}/home/work"
+            href="vscode://vscode-remote/ssh-remote+work@${
+              this.tcpHost
+            }%3A${this.tcpPort}/home/work"
           >
             <mwc-button unelevated fullwidth>
               ${_t('OpenVSCodeRemote')}

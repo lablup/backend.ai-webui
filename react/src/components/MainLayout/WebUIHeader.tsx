@@ -1,8 +1,8 @@
+import { useCurrentDomainValue } from '../../hooks';
 import {
-  useCurrentDomainValue,
   useCurrentProjectValue,
   useSetCurrentProject,
-} from '../../hooks';
+} from '../../hooks/useCurrentProject';
 import { useScrollBreakPoint } from '../../hooks/useScrollBreackPoint';
 import BAINotificationButton from '../BAINotificationButton';
 import Flex, { FlexProps } from '../Flex';
@@ -15,7 +15,7 @@ import rawCss from './WebUIHeader.css?raw';
 import { MenuOutlined } from '@ant-design/icons';
 import { theme, Button, Typography, Grid } from 'antd';
 import _ from 'lodash';
-import { Suspense } from 'react';
+import { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMatches } from 'react-router-dom';
 
@@ -45,6 +45,11 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
 
   const { md } = Grid.useBreakpoint();
 
+  const [isPendingProjectChanged, startProjectChangedTransition] =
+    useTransition();
+  const [optimisticProjectId, setOptimisticProjectId] = useState(
+    currentProject.id,
+  );
   return (
     <Flex
       align="center"
@@ -86,13 +91,20 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
               minWidth: 100,
               maxWidth: gridBreakpoint.lg ? undefined : 100,
             }}
+            loading={isPendingProjectChanged}
+            disabled={isPendingProjectChanged}
             className="non-draggable"
             showSearch
             domain={currentDomainName}
             size={gridBreakpoint.lg ? 'large' : 'middle'}
-            value={currentProject?.id}
+            value={
+              isPendingProjectChanged ? optimisticProjectId : currentProject?.id
+            }
             onSelectProject={(projectInfo) => {
-              setCurrentProject(projectInfo);
+              setOptimisticProjectId(projectInfo.projectId);
+              startProjectChangedTransition(() => {
+                setCurrentProject(projectInfo);
+              });
             }}
           />
         </Suspense>

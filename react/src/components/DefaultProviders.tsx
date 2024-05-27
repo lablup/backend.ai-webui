@@ -18,6 +18,7 @@ import utc from 'dayjs/plugin/utc';
 import weekday from 'dayjs/plugin/weekday';
 import i18n from 'i18next';
 import Backend from 'i18next-http-backend';
+import { createStore, Provider as JotaiProvider } from 'jotai';
 import React, {
   Suspense,
   useEffect,
@@ -32,6 +33,7 @@ import { BrowserRouter, useNavigate } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
+export const jotaiStore = createStore();
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 dayjs.extend(localizedFormat);
@@ -41,6 +43,7 @@ dayjs.extend(timezone);
 
 interface WebComponentContextType {
   value?: ReactWebComponentProps['value'];
+  parsedValue?: any;
   dispatchEvent: ReactWebComponentProps['dispatchEvent'];
   moveTo: (
     path: string,
@@ -53,7 +56,13 @@ interface WebComponentContextType {
 const WebComponentContext = React.createContext<WebComponentContextType>(null!);
 const ShadowRootContext = React.createContext<ShadowRoot>(null!);
 export const useShadowRoot = () => React.useContext(ShadowRootContext);
-export const useWebComponentInfo = () => React.useContext(WebComponentContext);
+export const useWebComponentInfo = <ParsedType extends any>() => {
+  const context = React.useContext(WebComponentContext);
+  return {
+    ...context,
+    parsedValue: context.parsedValue as ParsedType,
+  };
+};
 
 // Create a client
 const queryClient = new QueryClient({
@@ -134,8 +143,15 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
   const { isDarkMode } = useThemeMode();
 
   const componentValues = useMemo(() => {
+    let parsedValue: any;
+    try {
+      parsedValue = JSON.parse(value || '');
+    } catch (error) {
+      parsedValue = {};
+    }
     return {
       value,
+      parsedValue,
       dispatchEvent,
       moveTo: (path, params) => {
         dispatchEvent('moveTo', { path, params: params });
@@ -143,7 +159,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
     } as WebComponentContextType;
   }, [value, dispatchEvent]);
   return (
-    <>
+    <JotaiProvider store={jotaiStore}>
       {RelayEnvironment && (
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <React.StrictMode>
@@ -199,7 +215,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
           </React.StrictMode>
         </RelayEnvironmentProvider>
       )}
-    </>
+    </JotaiProvider>
   );
 };
 

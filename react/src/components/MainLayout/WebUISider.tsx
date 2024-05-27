@@ -20,6 +20,7 @@ import {
   HddOutlined,
   InfoCircleOutlined,
   RocketOutlined,
+  SolutionOutlined,
   ToolOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -30,6 +31,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
+type MenuItem = {
+  label: string;
+  icon: React.ReactNode;
+  key: string;
+};
 interface WebUISiderProps
   extends Pick<BAISiderProps, 'collapsed' | 'collapsedWidth' | 'onBreakpoint'> {
   webuiplugins?: WebUIPluginType;
@@ -123,6 +129,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <FileDoneOutlined />,
       key: 'environment',
     },
+    {
+      label: t('webui.menu.ResourcePolicy'),
+      icon: <SolutionOutlined />,
+      key: 'resource-policy',
+    },
   ];
 
   const superAdminMenu: MenuProps['items'] = [
@@ -148,7 +159,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     },
   ];
 
-  const pluginMap = {
+  const pluginMap: Record<string, MenuProps['items']> = {
     'menuitem-user': generalMenu,
     'menuitem-admin': adminMenu,
     'menuitem-superadmin': superAdminMenu,
@@ -165,13 +176,12 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         // Find page item belonging to each of menuitem-user, menuitem-admin, menuitem-superadmin in webuiplugins.page
         const page = _.find(pluginPages, { name: name }) as PluginPage;
         if (page) {
-          const menuItem = {
+          const menuItem: MenuItem = {
             label: page?.menuitem,
-            // eslint-disable-next-line react/jsx-no-undef
             icon: <ApiOutlined />,
             key: page?.url,
           };
-          menu.push(menuItem);
+          menu?.push(menuItem);
         }
       });
     }

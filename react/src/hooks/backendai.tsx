@@ -44,35 +44,65 @@ export const useResourceSlots = () => {
   ] as const;
 };
 
-export const useResourceSlotsByResourceGroup = (name?: string) => {
+type ResourceSlotDetail = {
+  slot_name: string;
+  description: string;
+  human_readable_name: string;
+  display_unit: string;
+  number_format: {
+    binary: boolean;
+    round_length: number;
+  };
+  display_icon: string;
+};
+
+/**
+ * Custom hook to fetch resource slot details by resource group name.
+ * @param resourceGroupName - The name of the resource group. if not provided, it will fetch resource/device_metadata.json
+ * @returns An array containing the resource slots and a refresh function.
+ */
+export const useResourceSlotsDetails = (resourceGroupName?: string) => {
   const [key, checkUpdate] = useUpdatableState('first');
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
-  const { data: resourceSlots } = useTanQuery<{
-    cpu: string;
-    mem: string;
-    'cuda.shares': string;
-    'cuda.device': string;
-    'rocm.device': string;
-    'ipu.device': string;
-    'atom.device': string;
-    'warboy.device': string;
-    'hyperaccel-lpu.device': string;
-    [key: string]: string;
+  const baiClient = useSuspendedBackendaiClient();
+  let { data: resourceSlots } = useTanQuery<{
+    [key: string]: ResourceSlotDetail;
   }>({
-    queryKey: ['useResourceSlots', name, key],
+    queryKey: ['useResourceSlots', resourceGroupName, key],
     queryFn: () => {
       // return baiClient.get_resource_slots();
-      if (_.isEmpty(name)) {
-        return;
+      if (
+        _.isEmpty(resourceGroupName) ||
+        !baiClient.isManagerVersionCompatibleWith('23.09.0')
+      ) {
+        return undefined;
       } else {
+        // `/resource-slots/details` is available since 23.09
+        // https://github.com/lablup/backend.ai/issues/1589
         return baiRequestWithPromise({
           method: 'GET',
-          url: `/config/resource-slots/details?sgroup=${name}`,
+          url: `/config/resource-slots/details?sgroup=${resourceGroupName}`,
         });
       }
     },
     staleTime: 0,
   });
+
+  const { data: deviceMetadata } = useTanQuery<{
+    [key: string]: ResourceSlotDetail;
+  }>({
+    queryKey: ['backendai-metadata-device', key],
+    queryFn: () => {
+      return !resourceSlots
+        ? fetch('resources/device_metadata.json')
+            .then((response) => response.json())
+            .then((result) => result?.deviceInfo)
+        : {};
+    },
+    staleTime: 1000 * 60 * 60 * 24,
+  });
+  resourceSlots = resourceSlots || deviceMetadata;
+
   return [
     resourceSlots,
     {
@@ -225,6 +255,7 @@ export const useCurrentUserRole = () => {
     },
     {
       suspense: false,
+      staleTime: Infinity,
     },
   );
   const userRole = roleData?.user.role;
@@ -247,4 +278,14 @@ export const useTOTPSupported = () => {
   const isTOTPSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
 
   return { isTOTPSupported, isLoading };
+};
+
+export const useAllowedHostNames = () => {
+  const baiClient = useSuspendedBackendaiClient();
+  const { data: allowedHosts } = useTanQuery<{
+    allowed: Array<string>;
+  }>(['useAllowedHostNames'], () => {
+    return baiClient.vfolder.list_all_hosts();
+  });
+  return allowedHosts?.allowed;
 };

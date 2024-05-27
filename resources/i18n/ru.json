@@ -65,7 +65,8 @@
       "InvalidBlankPassword": "Введите ваш пароль",
       "InvalidBlankEmail": "Введите адрес электронной почты",
       "DisMatchUserEmail": "Электронная почта пользователя не совпадает",
-      "MyEnvironments": "Моя среда"
+      "MyEnvironments": "Моя среда",
+      "ResourcePolicy": "Ресурсная политика"
     },
     "YouAreOffline": "Вы сейчас не в сети",
     "YouAreOnline": "Вы сейчас в сети",
@@ -245,7 +246,7 @@
       "FolderAliasInvalid": "Разрешены только буквенно-цифровые символы, подчеркивание (_), косая черта (/) и тире (-).",
       "PreOpenPortMaxCountLimit": "Можно задать до {{count}} предварительно открытых портов.",
       "StartTimeMustBeInTheFuture": "Время начала должно быть после текущего времени.",
-      "EnqueueComputeSessionWarning": "Если вы установите его больше, чем доступные на данный момент ресурсы, создание сеанса будет отложено в очереди до тех пор, пока он не станет доступным.",
+      "EnqueueComputeSessionWarning": "Недостаточно ресурсов. \nВозможно, сессия еще не завершена.",
       "SessionName": "Имя сеанса",
       "ResetFormConfirm": "Вы хотите сбросить все ваши записи?",
       "TemplateAndHistory": "Шаблоны",
@@ -258,9 +259,6 @@
       "EnvironmentVariableDuplicateName": "Имя переменной, которая уже существует.",
       "Template": "Шаблон сессии",
       "EnableAutomaticMiniumShmem": "Установите минимальный объем общей памяти",
-      "PreOpenPortMaxCountLimit_0": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_1": "__NOT_TRANSLATED__",
-      "PreOpenPortMaxCountLimit_2": "__NOT_TRANSLATED__",
       "OnlyAllowsDiscreteNumberByClusterSize": "Допускается только целое число, если размер кластера не меньше 2.",
       "StartAfter": "Начать после:",
       "StartTimeDoesNotApply": "Если время начала не установлено, оно не применяется.",
@@ -275,7 +273,8 @@
       "AddEnvironmentVariable": "Добавьте переменные окружения",
       "EnvironmentVariableValueRequired": "Пожалуйста, введите значение.",
       "PleaseCompleteForm": "Форма не заполнена или содержит ошибки. Пожалуйста, проверьте введенные данные.",
-      "FailedToStartNewSession": "Создание сеанса не удалось. \nПожалуйста, проверьте вкладку «Законченный» на странице сеанса."
+      "FailedToStartNewSession": "Создание сеанса не удалось. \nПожалуйста, проверьте вкладку «Законченный» на странице сеанса.",
+      "ProxyDirectTCPNotSupported": "Прямое TCP-соединение через прокси-сервер пока не поддерживается."
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -406,7 +405,8 @@
     "SessionName": "Имя сеанса",
     "SessionId": "Идентификатор сессии",
     "EnvironmentAndVersion": "Окружающая среда и версия",
-    "Tags": "Теги"
+    "Tags": "Теги",
+    "fGPU": "фГПУ"
   },
   "button": {
     "Cancel": "Отмена",
@@ -468,7 +468,9 @@
     "Utilization": "Утилизация",
     "NoAvailableLiveStat": "Нет доступной оперативной статистики",
     "Allocation": "Распределение",
-    "DiskPerc": "Диск %"
+    "DiskPerc": "Диск %",
+    "AutoRefreshEvery5s": "Автоматическое обновление каждые 5 секунд",
+    "Agent": "Агент"
   },
   "general": {
     "cores": "ядра",
@@ -490,7 +492,8 @@
     "Image": "Изображение",
     "All": "Все",
     "InProgress": "В процессе",
-    "Session": "Сессия"
+    "Session": "Сессия",
+    "General": "Общие сведения"
   },
   "credential": {
     "Permission": "Разрешение",
@@ -820,7 +823,10 @@
     "NoChangeMade": "Изменения не вносились",
     "Architecture": "Архитектура",
     "NoImageToDisplay": "Нет изображений для отображения",
-    "CustomizedImageSuccessfullyDeleted": "Персонализированное изображение успешно удалено."
+    "CustomizedImageSuccessfullyDeleted": "Персонализированное изображение успешно удалено.",
+    "DescImageResourceModified": "Лимит ресурсов успешно изменен",
+    "DescImagePortsModified": "Порты изображений успешно изменены",
+    "ModifyImageResourceLimitReinstallRequired": "<p>Если вы измените уже установленный образ, вам придется переустановить его.</p><p>Изменения не будут применены до тех пор, пока образ не будет переустановлен.\n\n</p>"
   },
   "resourcePreset": {
     "ResourcePresets": "Предустановки ресурсов",
@@ -952,8 +958,15 @@
     "SuccessfullyDeleted": "Политика ресурсов успешно удалена.",
     "PolicyNameEmpty": "Имя политики не должно быть пустым.",
     "AboutToDeleteResourcePolicy": "Вы собираетесь удалить эту политику ресурсов:",
-    "MaxSessionLifeTime": "Время жизни сеанса (сек.)",
-    "NoResourcePolicyToDisplay": "Отсутствие отображения политик ресурсов"
+    "MaxSessionLifetime": "Время жизни сеанса (сек.)",
+    "NoResourcePolicyToDisplay": "Отсутствие отображения политик ресурсов",
+    "Keypair": "Ключевая пара",
+    "User": "Пользователь",
+    "Project": "Проект",
+    "KeypairResourcePolicy": "Политика ресурсов пары ключей",
+    "IdleTimeout": "Тайм-аут простоя",
+    "CreateResourcePolicy": "Создать политику ресурсов",
+    "ResourcePolicyNameAlreadyExists": "Название политики ресурсов уже существует. \nПожалуйста, измените имя, чтобы добавить."
   },
   "registry": {
     "Hostname": "Имя хоста",
@@ -1185,7 +1198,8 @@
     "ShowOnlyChanged": "Отображать только изменения",
     "HyperaccelLPUsupport": "Hyperaccel LPU",
     "DescHyperaccelLPUsupport": "Используйте ускоритель Hyperaccel LPU.",
-    "RequireHyperaccelLPUPlugin": "Требуется плагин Backend.AI Hyperaccel LPU."
+    "RequireHyperaccelLPUPlugin": "Требуется плагин Backend.AI Hyperaccel LPU.",
+    "SearchPlaceholder": "Поиск"
   },
   "notification": {
     "SuccessfullyUpdated": "Успешно обновлено",
@@ -1520,12 +1534,24 @@
     "resources": "Ресурсы",
     "Image": "Изображение",
     "Owner": "Владелец",
+    "Validate": "Подтвердить",
+    "Cancel": "Отмена",
+    "ValidationInfo": "Информация о проверке",
+    "Processing": "Обработка...",
+    "Success": "Успех",
+    "Error": "Ошибка",
+    "SeeContainerLogs": "См. журналы контейнеров",
+    "TimeStamp": "Временная метка",
+    "Result": "Результат",
+    "Finished": "Законченный",
     "ServiceDelegatedFrom": "Сервис модели создается {{ createdUser }}, но право владения сессией будет передано {{ sessionOwner }}.",
     "FailedToTerminateService": "Запрос на завершение службы завершился неудачно.",
     "FailedToUpdateService": "Не удалось обновить службу.",
     "ServiceCreated": "Сервис модели {{ name }} успешно создан.",
     "ServiceUpdated": "Сервис модели {{ name }} успешно обновлен.",
-    "ServiceTerminated": "Служба модели {{ name }} успешно прекращена."
+    "ServiceTerminated": "Служба модели {{ name }} успешно прекращена.",
+    "CannotValidateNow": "Невозможно проверить услугу сейчас. \nПожалуйста, проверьте распределение ресурсов или другие конфигурации.",
+    "Ready": "Готовый"
   },
   "ErrorBoundary": {
     "title": "Произошла ошибка.",
@@ -1566,7 +1592,19 @@
     "SelectColumnToDisplay": "Выберите столбцы для отображения",
     "SearchTableColumn": "Поиск по столбцам таблицы"
   },
-  "setting": {
-    "SearchPlaceholder": "Введите поисковый запрос"
+  "tourguide": {
+    "NeoSessionLauncher": {
+      "ValidationErrorTitle": "Ошибки проверки поля ввода",
+      "ValidationErrorText": "Если вы не введете значение в обязательное поле или введете неверное значение, в этом поле отобразится сообщение об ошибке.",
+      "FixErrorAndTryAgainText": "Если есть поле с ошибкой, кнопка «Запустить сеанс» неактивна. \nПожалуйста, исправьте ошибку и повторите попытку.",
+      "FixErrorFieldbyModifyButton": "Для этого поля ошибки вы можете перейти непосредственно к кнопке «Редактировать» в правом верхнем углу, чтобы отредактировать его."
+    }
+  },
+  "sourceCodeViewer": {
+    "Copy": "Копировать",
+    "Copied": "Скопировано"
+  },
+  "propertyFilter": {
+    "placeHolder": "Поиск"
   }
 }

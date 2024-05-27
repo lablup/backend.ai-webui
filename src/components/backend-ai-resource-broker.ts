@@ -935,9 +935,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         used_resource_group_slot_percent,
       );
 
-      const enqueueSession =
-        globalThis.backendaiclient._config.always_enqueue_compute_session ===
-        true;
       const availablePresets = resourcePresetInfo.presets
         .map((item) => {
           if (item.allocatable === true) {
@@ -946,8 +943,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
                 item[slotName] = item.resource_slots[slotKey];
               }
             }
-          } else if (enqueueSession) {
-            // Even if allocatable is false, if enqueueSession is true,
+          } else {
             // allocatable is determined based on when no resources are allocated.
             item.allocatable = true;
             for (const [slotKey, slotName] of Object.entries(slotList)) {

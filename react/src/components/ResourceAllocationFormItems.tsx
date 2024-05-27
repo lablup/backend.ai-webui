@@ -3,16 +3,20 @@ import {
   compareNumberWithUnits,
   iSizeToSize,
 } from '../helper';
-import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
+import {
+  useCurrentProjectValue,
+  useCurrentResourceGroupValue,
+} from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
 import Flex from './Flex';
 import { ImageEnvironmentFormInput } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import ResourceGroupSelect from './ResourceGroupSelect';
+import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
 import { ACCELERATOR_UNIT_MAP } from './ResourceNumber';
 import ResourcePresetSelect from './ResourcePresetSelect';
 import { CaretDownOutlined } from '@ant-design/icons';
@@ -28,7 +32,7 @@ import {
   theme,
 } from 'antd';
 import _ from 'lodash';
-import React, { useEffect, useMemo, useTransition } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 export const AUTOMATIC_DEFAULT_SHMEM = '64m';
@@ -67,6 +71,7 @@ type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
 interface ResourceAllocationFormItemsProps {
   enableNumOfSessions?: boolean;
   enableResourcePresets?: boolean;
+  showRemainingWarning?: boolean;
   forceImageMinValues?: boolean;
 }
 
@@ -76,6 +81,7 @@ const ResourceAllocationFormItems: React.FC<
   enableNumOfSessions,
   enableResourcePresets,
   forceImageMinValues = false,
+  showRemainingWarning = false,
 }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
   const { t } = useTranslation();
@@ -88,20 +94,16 @@ const ResourceAllocationFormItems: React.FC<
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
 
   const currentProject = useCurrentProjectValue();
+  const currentResourceGroup = useCurrentResourceGroupValue(); // use global state
 
-  const [isPendingCheckResets, startCheckRestsTransition] = useTransition();
   const currentImage = Form.useWatch(['environments', 'image'], {
-    form,
-    preserve: true,
-  });
-  const currentResourceGroup = Form.useWatch('resourceGroup', {
     form,
     preserve: true,
   });
   const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
     useResourceLimitAndRemaining({
       currentProjectName: currentProject.name,
-      currentResourceGroup: currentResourceGroup,
+      currentResourceGroup: currentResourceGroup || undefined, // global currentResourceGroup can be null
       currentImage: currentImage,
     });
 
@@ -129,10 +131,6 @@ const ResourceAllocationFormItems: React.FC<
   };
 
   const allocatablePresetNames = useMemo(() => {
-    const byPresetInfo = _.filter(checkPresetInfo?.presets, (preset) => {
-      return preset.allocatable;
-    }).map((preset) => preset.name);
-
     const bySliderLimit = _.filter(checkPresetInfo?.presets, (preset) => {
       if (
         typeof preset.resource_slots.mem === 'string' &&
@@ -198,17 +196,9 @@ const ResourceAllocationFormItems: React.FC<
     ).map((preset) => preset.name);
 
     return currentImageAcceleratorLimits.length > 0
-      ? baiClient._config?.always_enqueue_compute_session
-        ? bySliderLimit
-        : byPresetInfo
-      : _.intersection(
-          baiClient._config?.always_enqueue_compute_session
-            ? bySliderLimit
-            : byPresetInfo,
-          byImageAcceleratorLimits,
-        );
+      ? bySliderLimit
+      : _.intersection(bySliderLimit, byImageAcceleratorLimits);
   }, [
-    baiClient._config?.always_enqueue_compute_session,
     checkPresetInfo?.presets,
     resourceLimits.accelerators,
     resourceLimits.cpu?.max,
@@ -426,20 +416,9 @@ const ResourceAllocationFormItems: React.FC<
             required: true,
           },
         ]}
-        // Set the trigger to something not used event to manually handle updates for the granular pending status management.
-        trigger={'onSubmit'}
       >
-        <ResourceGroupSelect
-          showSearch
-          loading={isPendingCheckResets}
-          onChange={(v) => {
-            startCheckRestsTransition(() => {
-              // update manually to handle granular pending status management
-              form.setFieldValue('resourceGroup', v);
-              form.validateFields(['resourceGroup']).catch(() => {});
-            });
-          }}
-        />
+        {/* WARN: ResourceGroupSelectForCurrentProject component can not be controlled (no `value` props).  It uses global state */}
+        <ResourceGroupSelectForCurrentProject showSearch />
       </Form.Item>
 
       {enableResourcePresets ? (
@@ -505,31 +484,21 @@ const ResourceAllocationFormItems: React.FC<
                         // TODO: set message
                       },
                       {
-                        warningOnly:
-                          baiClient._config?.always_enqueue_compute_session,
+                        warningOnly: true,
                         validator: async (rule, value: number) => {
-                          if (
-                            _.isNumber(remaining.cpu) &&
-                            value > remaining.cpu
-                          ) {
-                            return Promise.reject(
-                              baiClient._config?.always_enqueue_compute_session
-                                ? t(
-                                    'session.launcher.EnqueueComputeSessionWarning',
-                                    {
-                                      amount: remaining.cpu,
-                                    },
-                                  )
-                                : t(
-                                    'session.launcher.ErrorCanNotExceedRemaining',
-                                    {
-                                      amount: remaining.cpu,
-                                    },
-                                  ),
-                            );
-                          } else {
-                            return Promise.resolve();
+                          if (showRemainingWarning) {
+                            if (
+                              _.isNumber(remaining.cpu) &&
+                              value > remaining.cpu
+                            ) {
+                              return Promise.reject(
+                                t(
+                                  'session.launcher.EnqueueComputeSessionWarning',
+                                ),
+                              );
+                            }
                           }
+                          return Promise.resolve();
                         },
                       },
                     ]}
@@ -649,47 +618,25 @@ const ResourceAllocationFormItems: React.FC<
                                 },
                               },
                               {
-                                warningOnly:
-                                  baiClient._config
-                                    ?.always_enqueue_compute_session,
+                                warningOnly: true,
                                 validator: async (rule, value: string) => {
-                                  if (
-                                    !_.isElement(value) &&
-                                    resourceLimits.mem &&
-                                    compareNumberWithUnits(
-                                      value,
-                                      remaining.mem + 'b',
-                                    ) > 0
-                                  ) {
-                                    return Promise.reject(
-                                      baiClient._config
-                                        ?.always_enqueue_compute_session
-                                        ? t(
-                                            'session.launcher.EnqueueComputeSessionWarning',
-                                            {
-                                              amount:
-                                                iSizeToSize(
-                                                  remaining.mem + 'b',
-                                                  'g',
-                                                  3,
-                                                )?.numberUnit + 'iB',
-                                            },
-                                          )
-                                        : t(
-                                            'session.launcher.ErrorCanNotExceedRemaining',
-                                            {
-                                              amount:
-                                                iSizeToSize(
-                                                  remaining.mem + 'b',
-                                                  'g',
-                                                  3,
-                                                )?.numberUnit + 'iB',
-                                            },
-                                          ),
-                                    );
-                                  } else {
-                                    return Promise.resolve();
+                                  if (showRemainingWarning) {
+                                    if (
+                                      !_.isElement(value) &&
+                                      resourceLimits.mem &&
+                                      compareNumberWithUnits(
+                                        value,
+                                        remaining.mem + 'b',
+                                      ) > 0
+                                    ) {
+                                      return Promise.reject(
+                                        t(
+                                          'session.launcher.EnqueueComputeSessionWarning',
+                                        ),
+                                      );
+                                    }
                                   }
+                                  return Promise.resolve();
                                 },
                               },
                             ]}
@@ -937,43 +884,28 @@ const ResourceAllocationFormItems: React.FC<
                             },
                           },
                           {
-                            warningOnly:
-                              baiClient._config?.always_enqueue_compute_session,
+                            warningOnly: true,
                             validator: async (rule: any, value: number) => {
-                              if (
-                                _.isNumber(
-                                  remaining.accelerators[
-                                    currentAcceleratorType
-                                  ],
-                                ) &&
-                                value >
-                                  remaining.accelerators[currentAcceleratorType]
-                              ) {
-                                return Promise.reject(
-                                  baiClient._config
-                                    ?.always_enqueue_compute_session
-                                    ? t(
-                                        'session.launcher.EnqueueComputeSessionWarning',
-                                        {
-                                          amount:
-                                            remaining.accelerators[
-                                              currentAcceleratorType
-                                            ],
-                                        },
-                                      )
-                                    : t(
-                                        'session.launcher.ErrorCanNotExceedRemaining',
-                                        {
-                                          amount:
-                                            remaining.accelerators[
-                                              currentAcceleratorType
-                                            ],
-                                        },
-                                      ),
-                                );
-                              } else {
-                                return Promise.resolve();
+                              if (showRemainingWarning) {
+                                if (
+                                  _.isNumber(
+                                    remaining.accelerators[
+                                      currentAcceleratorType
+                                    ],
+                                  ) &&
+                                  value >
+                                    remaining.accelerators[
+                                      currentAcceleratorType
+                                    ]
+                                ) {
+                                  return Promise.reject(
+                                    t(
+                                      'session.launcher.EnqueueComputeSessionWarning',
+                                    ),
+                                  );
+                                }
                               }
+                              return Promise.resolve();
                             },
                           },
                         ]}
@@ -1125,18 +1057,19 @@ const ResourceAllocationFormItems: React.FC<
                     {
                       warningOnly: true,
                       validator: async (rule, value: number) => {
-                        if (
-                          sessionSliderLimitAndRemaining &&
-                          value > sessionSliderLimitAndRemaining.remaining
-                        ) {
-                          return Promise.reject(
-                            t('session.launcher.EnqueueComputeSessionWarning', {
-                              amount: sessionSliderLimitAndRemaining.remaining,
-                            }),
-                          );
-                        } else {
-                          return Promise.resolve();
+                        if (showRemainingWarning) {
+                          if (
+                            sessionSliderLimitAndRemaining &&
+                            value > sessionSliderLimitAndRemaining.remaining
+                          ) {
+                            return Promise.reject(
+                              t(
+                                'session.launcher.EnqueueComputeSessionWarning',
+                              ),
+                            );
+                          }
                         }
+                        return Promise.resolve();
                       },
                     },
                   ]}
@@ -1233,25 +1166,22 @@ const ResourceAllocationFormItems: React.FC<
                         required
                         rules={[
                           {
-                            warningOnly:
-                              baiClient._config?.always_enqueue_compute_session,
+                            warningOnly: true,
                             validator: async (rule, value: number) => {
-                              const minCPU = _.min([
-                                remaining.cpu,
-                                keypairResourcePolicy.max_containers_per_session,
-                              ]);
-                              if (_.isNumber(minCPU) && value > minCPU) {
-                                return Promise.reject(
-                                  t(
-                                    'session.launcher.EnqueueComputeSessionWarning',
-                                    {
-                                      amount: minCPU,
-                                    },
-                                  ),
-                                );
-                              } else {
-                                return Promise.resolve();
+                              if (showRemainingWarning) {
+                                const minCPU = _.min([
+                                  remaining.cpu,
+                                  keypairResourcePolicy.max_containers_per_session,
+                                ]);
+                                if (_.isNumber(minCPU) && value > minCPU) {
+                                  return Promise.reject(
+                                    t(
+                                      'session.launcher.EnqueueComputeSessionWarning',
+                                    ),
+                                  );
+                                }
                               }
+                              return Promise.resolve();
                             },
                           },
                         ]}

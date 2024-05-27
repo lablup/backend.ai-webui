@@ -38,7 +38,8 @@ module.exports = {
     interpolation: {
       prefix: '{{',
       suffix: '}}'
-    }
+    },
+    plural: false
   },
   transform: function customTransform(file, enc, done) {
     'use strict';

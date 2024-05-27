@@ -7,6 +7,7 @@ interface BAICardProps extends CardProps {
   status?: 'success' | 'error' | 'warning' | 'default';
   extraButtonTitle?: string | ReactNode;
   onClickExtraButton?: () => void;
+  ref?: React.LegacyRef<HTMLDivElement> | undefined;
 }
 
 const BAICard: React.FC<BAICardProps> = ({
@@ -38,6 +39,7 @@ const BAICard: React.FC<BAICardProps> = ({
     undefined;
   return (
     <Card
+      className={status === 'error' ? 'bai-card-error' : ''}
       style={_.extend(style, {
         borderColor:
           status === 'error'

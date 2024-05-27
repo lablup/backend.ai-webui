@@ -1,8 +1,8 @@
 import { iSizeToSize } from '../helper';
-import { useCurrentProjectValue } from '../hooks';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
+import BAIProgressWithLabel from './BAIProgressWithLabel';
 import Flex from './Flex';
-import ResourceAvailableGageBar from './ResourceAvailableGageBar';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import { QuestionCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Card, Tooltip } from 'antd';
@@ -45,7 +45,7 @@ const AvailableResourcesCard = () => {
       extra={[<Button icon={<ReloadOutlined />} type="text" />]}
     >
       <Flex gap={'md'}>
-        <ResourceAvailableGageBar
+        <BAIProgressWithLabel
           title="CPU"
           percent={
             (remaining.cpu /
@@ -57,7 +57,7 @@ const AvailableResourcesCard = () => {
           }
           valueLabel={remaining.cpu + ' Core'}
         />
-        <ResourceAvailableGageBar
+        <BAIProgressWithLabel
           title="MEM"
           percent={
             ((iSizeToSize(remaining.mem + '', 'm')?.number || 0) /

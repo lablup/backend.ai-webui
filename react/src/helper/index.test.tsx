@@ -4,6 +4,8 @@ import {
   iSizeToSize,
   isOutsideRange,
   isOutsideRangeWithUnits,
+  localeCompare,
+  transformSorterToOrderString,
 } from './index';
 
 describe('iSizeToSize', () => {
@@ -198,5 +200,46 @@ describe('isOutsideRangeWithUnits', () => {
     expect(isOutsideRangeWithUnits('3', undefined, '4')).toBe(false);
     expect(isOutsideRangeWithUnits('4.1', undefined, '4')).toBe(true);
     expect(isOutsideRangeWithUnits('4.1', undefined, undefined)).toBe(false);
+  });
+});
+
+describe('transformSorterToOrderString', () => {
+  it('should correctly transform single sorter to order string', () => {
+    const sorter = { order: 'descend' as const, field: 'name' };
+    const result = transformSorterToOrderString(sorter);
+    expect(result).toEqual('-name');
+  });
+
+  it('should correctly transform array of sorters to order string', () => {
+    const sorter = [
+      { order: 'descend' as const, field: 'name' },
+      { order: 'ascend' as const, field: 'age' },
+    ];
+    const result = transformSorterToOrderString(sorter);
+    expect(result).toEqual('-name,age');
+  });
+
+  it('should return undefined for sorter without order', () => {
+    const sorter = { field: 'name' };
+    const result = transformSorterToOrderString(sorter);
+    expect(result).toBeUndefined();
+  });
+});
+
+describe('localeCompare', () => {
+  it('should return -1 if first argument is null or undefined', () => {
+    expect(localeCompare(null, 'test')).toEqual(-1);
+    expect(localeCompare(undefined, 'test')).toEqual(-1);
+  });
+
+  it('should return 1 if second argument is null or undefined', () => {
+    expect(localeCompare('test', null)).toEqual(1);
+    expect(localeCompare('test', undefined)).toEqual(1);
+  });
+
+  it('should correctly compare two strings', () => {
+    expect(localeCompare('apple', 'banana')).toEqual(-1);
+    expect(localeCompare('banana', 'apple')).toEqual(1);
+    expect(localeCompare('apple', 'apple')).toEqual(0);
   });
 });
