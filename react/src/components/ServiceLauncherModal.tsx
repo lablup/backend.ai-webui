@@ -361,6 +361,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             commitModifyEndpoint({
               variables: mutationVariables,
               onCompleted: (res, errors) => {
+                if (!res.modify_endpoint?.ok) {
+                  message.error(res.modify_endpoint?.msg);
+                  return;
+                }
                 if (errors && errors?.length > 0) {
                   const errorMsgList = errors.map((error) => error.message);
                   for (let error of errorMsgList) {
