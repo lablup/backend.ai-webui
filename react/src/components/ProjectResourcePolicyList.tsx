@@ -1,4 +1,8 @@
-import { bytesToGB, localeCompare } from '../helper';
+import {
+  bytesToGB,
+  localeCompare,
+  numberSorterWithInfinityValue,
+} from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
@@ -104,14 +108,22 @@ const ProjectResourcePolicyList: React.FC<
       render: (text: ProjectResourcePolicies) =>
         _.toNumber(text) === 0 ? '∞' : text,
       sorter: (a, b) =>
-        (a?.max_vfolder_count ?? 0) - (b?.max_vfolder_count ?? 0),
+        numberSorterWithInfinityValue(
+          a?.max_vfolder_count,
+          b?.max_vfolder_count,
+          0,
+        ),
     },
     supportMaxQuotaScopeSize && {
       title: t('resourcePolicy.MaxQuotaScopeSize'),
       dataIndex: 'max_quota_scope_size',
       render: (text) => (text === -1 ? '∞' : bytesToGB(text)),
       sorter: (a, b) =>
-        (a?.max_quota_scope_size ?? 0) - (b?.max_quota_scope_size ?? 0),
+        numberSorterWithInfinityValue(
+          a?.max_quota_scope_size,
+          b?.max_quota_scope_size,
+          -1,
+        ),
     },
     {
       title: 'ID',
