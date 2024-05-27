@@ -56,14 +56,21 @@ const BAINotificationItem: React.FC<{
             style={{
               fontWeight: 500,
             }}
-            ellipsis={{ rows: 3 }}
           >
-            {notification.message}
+            {_.isString(notification.message)
+              ? _.truncate(notification.message, {
+                  length: 200,
+                })
+              : notification.message}
           </Typography.Paragraph>
         </Flex>
         <Flex direction="row" align="end" gap={'xxs'} justify="between">
-          <Typography.Paragraph ellipsis={{ rows: 3, expandable: true }}>
-            {notification.description}
+          <Typography.Paragraph>
+            {_.isString(notification.description)
+              ? _.truncate(notification.description, {
+                  length: 300,
+                })
+              : notification.description}
           </Typography.Paragraph>
           {notification.to ? (
             <Flex>
