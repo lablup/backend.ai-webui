@@ -4015,17 +4015,13 @@ ${rowData.item[this.sessionNameField]}</pre
           <div class="vertical flex start layout" style="width:100%;">
             <h4 class="commit-session-title">${_t('session.SessionName')}</h4>
             <span class="commit-session-subheading">
-              ${commitSessionInfo?.session?.name
-                ? commitSessionInfo.session.name
-                : '-'}
+              ${commitSessionInfo?.session?.name ?? '-'}
             </span>
           </div>
           <div class="vertical flex start layout" style="width:100%;">
             <h4 class="commit-session-title">${_t('session.SessionId')}</h4>
             <span class="commit-session-subheading">
-              ${commitSessionInfo?.session?.id
-                ? commitSessionInfo.session.id
-                : '-'}
+              ${commitSessionInfo?.session?.id ?? '-'}
             </span>
           </div>
           <div class="vertical flex start layout" style="width:100%;">
@@ -4036,13 +4032,9 @@ ${rowData.item[this.sessionNameField]}</pre
               ${commitSessionInfo
                 ? html`
                     <lablup-shields
-                      app="${commitSessionInfo.environment === ''
-                        ? '-'
-                        : commitSessionInfo.environment}"
+                      app="${commitSessionInfo.environment ?? '-'}"
                       color="blue"
-                      description="${commitSessionInfo.version === ''
-                        ? '-'
-                        : commitSessionInfo.version}"
+                      description="${commitSessionInfo.version ?? '-'}"
                       ui="round"
                       class="right-below-margin"
                     ></lablup-shields>
@@ -4114,8 +4106,11 @@ ${rowData.item[this.sessionNameField]}</pre
             style="font-size: ${this.pushImageInsteadOfCommiting
               ? 'smaller'
               : 'inherit'}"
-            ?disabled="${commitSessionInfo?.environment === '' ||
-            (this.pushImageInsteadOfCommiting && !this.canStartImagifying)}"
+            ?disabled="${
+              !this.canStartImagifying || !this.pushImageInsteadOfCommiting
+              // FIXME: temporally disable commit feature
+              // || commitSessionInfo?.environment === ''
+            }"
             @click=${(e) => {
               if (this.pushImageInsteadOfCommiting) {
                 this._requestConvertSessionToimage(commitSessionInfo);
@@ -4427,7 +4422,7 @@ ${rowData.item[this.sessionNameField]}</pre
   }
 
   _updateImagifyAvailabilityStatus(e) {
-    this.canStartImagifying = e.target._validity.valid;
+    this.canStartImagifying = e.target.validity.valid;
     this.newImageName = e.target.value;
   }
 }
