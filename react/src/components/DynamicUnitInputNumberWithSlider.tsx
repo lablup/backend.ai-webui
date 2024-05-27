@@ -1,4 +1,5 @@
 import { compareNumberWithUnits, iSizeToSize } from '../helper';
+import { useUpdatableState } from '../hooks';
 import DynamicUnitInputNumber, {
   DynamicUnitInputNumberProps,
 } from './DynamicUnitInputNumber';
@@ -47,9 +48,10 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   // console.log('##marks', marks);
 
   // FIXME: this is a workaround to fix the issue that the value is not updated when the value is controlled
+  const [key, updateKey] = useUpdatableState('first');
   useEffect(() => {
     setTimeout(() => {
-      setValue(value);
+      updateKey(value);
     }, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -63,6 +65,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
       >
         <DynamicUnitInputNumber
           {...otherProps}
+          key={key}
           min={min}
           max={max}
           units={units}

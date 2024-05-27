@@ -1,3 +1,4 @@
+import { useUpdatableState } from '../hooks';
 import { useControllableValue } from 'ahooks';
 import { InputNumber, InputNumberProps } from 'antd';
 import _ from 'lodash';
@@ -25,9 +26,10 @@ const DynamicInputNumber: React.FC<DynamicInputNumberProps> = ({
   });
 
   // FIXME: this is a workaround to fix the issue that the value is not updated when the value is controlled
+  const [key, updateKey] = useUpdatableState('first');
   useEffect(() => {
     setTimeout(() => {
-      setValue(value);
+      updateKey(value);
     }, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -35,6 +37,7 @@ const DynamicInputNumber: React.FC<DynamicInputNumberProps> = ({
   return (
     <InputNumber
       {...inputNumberProps}
+      key={key}
       value={value}
       onChange={(newValue) => {
         // @ts-ignore

@@ -1,8 +1,9 @@
+import { useUpdatableState } from '../hooks';
 import Flex from './Flex';
 import { useControllableValue } from 'ahooks';
 import { InputNumber, Slider, InputNumberProps, SliderSingleProps } from 'antd';
 import { SliderRangeProps } from 'antd/es/slider';
-import _, { set } from 'lodash';
+import _ from 'lodash';
 import React, { useEffect } from 'react';
 
 type OmitControlledProps<T> = Omit<T, 'value' | 'onChange'>;
@@ -39,9 +40,10 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   }, [step]);
 
   // FIXME: this is a workaround to fix the issue that the value is not updated when the value is controlled
+  const [key, updateKey] = useUpdatableState('first');
   useEffect(() => {
     setTimeout(() => {
-      setValue(value);
+      updateKey(value);
     }, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -54,6 +56,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
         direction="column"
       >
         <InputNumber
+          key={key}
           ref={inputRef}
           max={max}
           min={min}
