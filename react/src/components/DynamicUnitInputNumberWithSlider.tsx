@@ -51,6 +51,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
     setTimeout(() => {
       setValue(value);
     }, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
