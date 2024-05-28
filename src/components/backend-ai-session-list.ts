@@ -1821,6 +1821,7 @@ export default class BackendAISessionList extends BackendAIPage {
     (
       this.shadowRoot?.querySelector('#new-image-name-field') as TextField
     ).value = '';
+    this.requestUpdate();
     this.commitSessionDialog.show();
   }
 
