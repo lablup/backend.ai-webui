@@ -1486,7 +1486,6 @@
     "RoutingsCount": "Güzergah Sayısı",
     "Active/Total": "Aktif/Toplam",
     "Public": "Kamu",
-    "YouAreAboutToTerminate": "Sonlandırmak üzeresiniz",
     "Owner": "Mal sahibi",
     "Validate": "Doğrula",
     "Cancel": "İptal etmek",
@@ -1503,9 +1502,9 @@
     "FailedToUpdateService": "Hizmet güncellenemedi.",
     "ServiceCreated": "Model hizmeti {{ name }} başarıyla oluşturuldu.",
     "ServiceUpdated": "Model hizmeti {{ name }} başarıyla güncellendi.",
-    "ServiceTerminated": "{{ name }} model hizmeti başarıyla sonlandırıldı.",
     "CannotValidateNow": "Hizmet şu anda doğrulanamıyor. \nLütfen kaynak tahsisini veya diğer yapılandırmaları kontrol edin.",
-    "Ready": "Hazır"
+    "Ready": "Hazır",
+    "ServiceTerminated": "'{{ name }}' model hizmeti için bir kapatma isteği gönderildi."
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

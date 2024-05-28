@@ -1,4 +1,3 @@
-import BAIModal from '../components/BAIModal';
 import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
@@ -21,7 +20,15 @@ import {
 } from '@ant-design/icons';
 import { useRafInterval } from 'ahooks';
 import { useLocalStorageState } from 'ahooks';
-import { Button, Card, Table, Typography, theme, message } from 'antd';
+import {
+  Button,
+  Card,
+  Table,
+  Typography,
+  theme,
+  message,
+  Popconfirm,
+} from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
@@ -70,8 +77,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   });
 
   const [isRefetchPending, startRefetchTransition] = useTransition();
-  const [isOpenModelServiceTerminatingModal, setIsOpenServiceTerminatingModal] =
-    useState(false);
   const [servicesFetchKey, updateServicesFetchKey] =
     useUpdatableState('initial-fetch');
   // FIXME: need to apply filtering type of service later
@@ -138,29 +143,59 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               setEditingModelService(row);
             }}
           />
-          <Button
-            type="text"
-            icon={
-              <DeleteOutlined
-                style={
-                  row.desired_session_count < 0 ||
-                  row.status?.toLowerCase() === 'destroying'
-                    ? undefined
-                    : {
-                        color: token.colorError,
-                      }
-                }
-              />
-            }
-            disabled={
-              row.desired_session_count < 0 ||
-              row.status?.toLowerCase() === 'destroying'
-            }
-            onClick={() => {
-              setIsOpenServiceTerminatingModal(true);
-              setTerminatingModelService(row);
+          <Popconfirm
+            title={t('dialog.ask.DoYouWantToProceed')}
+            description={t('dialog.warning.CannotBeUndone')}
+            okType="danger"
+            okText={t('button.Delete')}
+            onConfirm={() => {
+              // FIXME: any better idea for handling result?
+              terminateModelServiceMutation.mutate(
+                terminatingModelService?.endpoint_id || '',
+                {
+                  onSuccess: (res) => {
+                    startRefetchTransition(() => {
+                      updateServicesFetchKey();
+                    });
+                    // FIXME: temporally refer to mutate input to message
+                    message.success(
+                      t('modelService.ServiceTerminated', {
+                        name: terminatingModelService?.name,
+                      }),
+                    );
+                  },
+                  onError: (err) => {
+                    console.log(err);
+                    message.error(t('modelService.FailedToTerminateService'));
+                  },
+                },
+              );
             }}
-          />
+          >
+            <Button
+              type="text"
+              icon={
+                <DeleteOutlined
+                  style={
+                    row.desired_session_count < 0 ||
+                    row.status?.toLowerCase() === 'destroying'
+                      ? undefined
+                      : {
+                          color: token.colorError,
+                        }
+                  }
+                />
+              }
+              loading={terminateModelServiceMutation.isLoading}
+              disabled={
+                row.desired_session_count < 0 ||
+                row.status?.toLowerCase() === 'destroying'
+              }
+              onClick={() => {
+                setTerminatingModelService(row);
+              }}
+            />
+          </Popconfirm>
         </Flex>
       ),
     },
@@ -506,51 +541,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
           </Suspense> */}
         </Flex>
       </Flex>
-      <BAIModal
-        open={isOpenModelServiceTerminatingModal}
-        title={t('dialog.title.LetsDouble-Check')}
-        okButtonProps={{
-          loading: terminateModelServiceMutation.isLoading,
-        }}
-        onOk={() => {
-          // FIXME: any better idea for handling result?
-          terminateModelServiceMutation.mutate(
-            terminatingModelService?.endpoint_id || '',
-            {
-              onSuccess: (res) => {
-                startRefetchTransition(() => {
-                  updateServicesFetchKey();
-                });
-                setIsOpenServiceTerminatingModal(
-                  !isOpenModelServiceTerminatingModal,
-                );
-                // FIXME: temporally refer to mutate input to message
-                message.success(
-                  t('modelService.ServiceTerminated', {
-                    name: terminatingModelService?.name,
-                  }),
-                );
-              },
-              onError: (err) => {
-                console.log(err);
-                message.error(t('modelService.FailedToTerminateService'));
-              },
-            },
-          );
-        }}
-        onCancel={() => {
-          setIsOpenServiceTerminatingModal(!isOpenModelServiceTerminatingModal);
-        }}
-      >
-        <Flex direction="column" align="stretch" justify="center">
-          <p>
-            {t('modelService.YouAreAboutToTerminate') +
-              (terminatingModelService?.name || '') +
-              '.'}
-          </p>
-          <p>{t('dialog.ask.DoYouWantToProceed')}</p>
-        </Flex>
-      </BAIModal>
       <ServiceLauncherModal
         open={isOpenServiceLauncher}
         endpointFrgmt={editingModelService || null}

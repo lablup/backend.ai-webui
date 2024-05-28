@@ -1486,7 +1486,6 @@
     "RoutingsCount": "Routings zählen",
     "Active/Total": "Aktiv/Gesamt",
     "Public": "Öffentlich",
-    "YouAreAboutToTerminate": "Sie stehen kurz vor der Beendigung",
     "Owner": "Eigentümer",
     "Validate": "Bestätigen",
     "Cancel": "Stornieren",
@@ -1503,9 +1502,9 @@
     "FailedToUpdateService": "Der Dienst konnte nicht aktualisiert werden.",
     "ServiceCreated": "Der Modelldienst {{ name }} wurde erfolgreich erstellt.",
     "ServiceUpdated": "Der Modelldienst {{ name }} wurde erfolgreich aktualisiert.",
-    "ServiceTerminated": "Der Modelldienst {{ name }} wurde erfolgreich beendet.",
     "CannotValidateNow": "Der Dienst kann derzeit nicht validiert werden. \nBitte überprüfen Sie die Ressourcenzuweisung oder andere Konfigurationen.",
-    "Ready": "Bereit"
+    "Ready": "Bereit",
+    "ServiceTerminated": "Für den Modelldienst „{{ name }}“ wurde eine Anforderung zum Herunterfahren gesendet."
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

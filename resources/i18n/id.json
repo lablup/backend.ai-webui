@@ -1521,7 +1521,6 @@
     "RoutingsCount": "Jumlah Rute",
     "Active/Total": "Aktif/Total",
     "Public": "Publik",
-    "YouAreAboutToTerminate": "Anda akan mengakhiri",
     "FailedToStartService": "Gagal membuat layanan.",
     "ServingRouteErrorModalTitle": "Kesalahan Rute Penyajian",
     "ClearErrors": "Hapus kesalahan dan coba lagi",
@@ -1554,11 +1553,11 @@
     "FailedToUpdateService": "Gagal memperbarui layanan.",
     "ServiceCreated": "Layanan model {{ name }} telah berhasil dibuat.",
     "ServiceUpdated": "Layanan model {{ name }} telah berhasil diperbarui.",
-    "ServiceTerminated": "Layanan model {{ name }} telah berhasil dihentikan.",
     "CannotValidateNow": "Tidak dapat memvalidasi layanan sekarang. \nSilakan periksa alokasi sumber daya atau konfigurasi lainnya.",
     "Ready": "Siap",
     "Validate": "Mengesahkan",
-    "ValidationInfo": "Info Validasi"
+    "ValidationInfo": "Info Validasi",
+    "ServiceTerminated": "Permintaan penutupan dikirim untuk layanan model '{{ nama }}'."
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

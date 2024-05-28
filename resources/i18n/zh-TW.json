@@ -1526,7 +1526,6 @@
     "RoutingsCount": "路由计数",
     "Active/Total": "活动/总数",
     "Public": "公众",
-    "YouAreAboutToTerminate": "您即将终止",
     "Image": "图片",
     "Owner": "擁有者",
     "Validate": "證實",
@@ -1544,9 +1543,9 @@
     "FailedToUpdateService": "更新服務失敗。",
     "ServiceCreated": "模型服務 {{ name }} 已成功建立。",
     "ServiceUpdated": "模型服務 {{ name }} 已成功更新。",
-    "ServiceTerminated": "模型服務 {{ name }} 已成功終止。",
     "CannotValidateNow": "現在無法驗證服務。\n請檢查資源分配或其他配置。",
-    "Ready": "準備好"
+    "Ready": "準備好",
+    "ServiceTerminated": "已為模型服務“{{ name }}”發送關閉請求。"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

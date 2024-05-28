@@ -1520,7 +1520,6 @@
     "RoutingsCount": "Nombre d'itinéraires",
     "Active/Total": "Actif/Total",
     "Public": "Public",
-    "YouAreAboutToTerminate": "Vous êtes sur le point de terminer",
     "FailedToStartService": "Échec de la création du service.",
     "ServingRouteErrorModalTitle": "Erreur de route de desserte",
     "ClearErrors": "Effacer l'erreur et réessayer",
@@ -1556,9 +1555,9 @@
     "FailedToUpdateService": "Échec de la mise à jour du service.",
     "ServiceCreated": "Le service modèle {{ name }} a été créé avec succès.",
     "ServiceUpdated": "Le service modèle {{ name }} a été mis à jour avec succès.",
-    "ServiceTerminated": "Le service modèle {{ name }} a été terminé avec succès.",
     "CannotValidateNow": "Impossible de valider le service maintenant. \nVeuillez vérifier l'allocation des ressources ou d'autres configurations.",
-    "Ready": "Prêt"
+    "Ready": "Prêt",
+    "ServiceTerminated": "Une demande d'arrêt a été envoyée pour le service modèle '{{ name }}'."
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",

@@ -457,7 +457,6 @@
     "RouteId": "Route ID",
     "SessionId": "Session ID",
     "TrafficRatio": "Traffic Ratio",
-    "YouAreAboutToTerminate": "You are about to terminate ",
     "ClearErrors": "Clear error and retry",
     "ServingRouteErrorModalTitle": "Serving Route Error",
     "FailedToStartService": "Failed to create service.",
@@ -485,7 +484,7 @@
     "FailedToTerminateService": "The request to terminate the service failed.",
     "ServiceCreated": "Model service {{ name }} has been created successfully.",
     "ServiceUpdated": "Model service {{ name }} has been updated successfully.",
-    "ServiceTerminated": "Model service {{ name }} has been terminated successfully."
+    "ServiceTerminated": "A shutdown request was sent for model service '{{ name }}'."
   },
   "button": {
     "Cancel": "Cancel",

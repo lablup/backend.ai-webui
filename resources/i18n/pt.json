@@ -1526,7 +1526,6 @@
     "RoutingsCount": "Contagem de rotas",
     "Active/Total": "Ativo/Total",
     "Public": "Público",
-    "YouAreAboutToTerminate": "Está prestes a terminar",
     "Image": "Imagem",
     "Owner": "Proprietário",
     "Validate": "Validar",
@@ -1544,9 +1543,9 @@
     "FailedToUpdateService": "Falha ao atualizar o serviço.",
     "ServiceCreated": "O serviço de modelo {{ name }} foi criado com sucesso.",
     "ServiceUpdated": "O serviço de modelo {{ name }} foi atualizado com sucesso.",
-    "ServiceTerminated": "O serviço de modelo {{ name }} foi encerrado com sucesso.",
     "CannotValidateNow": "Não é possível validar o serviço agora. \nVerifique a alocação de recursos ou outras configurações.",
-    "Ready": "Preparar"
+    "Ready": "Preparar",
+    "ServiceTerminated": "Uma solicitação de encerramento foi enviada para o serviço de modelo '{{ name }}'."
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",
