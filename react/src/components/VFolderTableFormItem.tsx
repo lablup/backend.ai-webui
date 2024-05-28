@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 
 interface VFolderTableFromItemProps extends Omit<FormItemProps, 'name'> {
   filter?: VFolderTableProps['filter'];
+  tableProps?: Partial<VFolderTableProps>;
 }
 
 export interface VFolderTableFormValues {
@@ -19,6 +20,7 @@ export interface VFolderTableFormValues {
 
 const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
   filter,
+  tableProps,
   ...formItemProps
 }) => {
   const form = Form.useFormInstance();
@@ -78,6 +80,7 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
           onChangeAutoMountedFolders={(names) => {
             form.setFieldValue('autoMountedFolderNames', names);
           }}
+          {...tableProps}
         />
       </Form.Item>
     </>

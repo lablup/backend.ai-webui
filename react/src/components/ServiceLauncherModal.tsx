@@ -496,6 +496,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             ? t('modelService.EditModelService')
             : t('modelService.StartNewServing')
         }
+        width={700}
         destroyOnClose
         onOk={handleOk}
         onCancel={handleCancel}
@@ -670,6 +671,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       filter={(vf) =>
                         vf.name !== selectedModelFolder && vf.status === 'ready'
                       }
+                      tableProps={{
+                        size: 'small',
+                      }}
                     />
                   </>
                 ) : (
