@@ -1546,7 +1546,9 @@
     "ServiceUpdated": "Dịch vụ mẫu {{ name }} đã được cập nhật thành công.",
     "CannotValidateNow": "Không thể xác nhận dịch vụ bây giờ. \nVui lòng kiểm tra phân bổ tài nguyên hoặc các cấu hình khác.",
     "Ready": "Sẵn sàng",
-    "ServiceTerminated": "Yêu cầu tắt máy đã được gửi cho dịch vụ mẫu '{{ name }}'."
+    "ServiceTerminated": "Yêu cầu tắt máy đã được gửi cho dịch vụ mẫu '{{ name }}'.",
+    "ModelMountDestination": "Đường dẫn Model definition file",
+    "AdditionalMounts": "Gắn kết bổ sung"
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",

@@ -1546,7 +1546,9 @@
     "ServiceUpdated": "O serviço de modelo {{ name }} foi atualizado com sucesso.",
     "CannotValidateNow": "Não é possível validar o serviço agora. \nVerifique a alocação de recursos ou outras configurações.",
     "Ready": "Preparar",
-    "ServiceTerminated": "Uma solicitação de encerramento foi enviada para o serviço de modelo '{{ name }}'."
+    "ServiceTerminated": "Uma solicitação de encerramento foi enviada para o serviço de modelo '{{ name }}'.",
+    "ModelMountDestination": "Caminho do Model definition file",
+    "AdditionalMounts": "Montarias Adicionais"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

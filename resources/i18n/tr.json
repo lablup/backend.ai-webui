@@ -1505,7 +1505,9 @@
     "ServiceUpdated": "Model hizmeti {{ name }} başarıyla güncellendi.",
     "CannotValidateNow": "Hizmet şu anda doğrulanamıyor. \nLütfen kaynak tahsisini veya diğer yapılandırmaları kontrol edin.",
     "Ready": "Hazır",
-    "ServiceTerminated": "'{{ name }}' model hizmeti için bir kapatma isteği gönderildi."
+    "ServiceTerminated": "'{{ name }}' model hizmeti için bir kapatma isteği gönderildi.",
+    "ModelMountDestination": "Model definition file yolu",
+    "AdditionalMounts": "Ek Montajlar"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

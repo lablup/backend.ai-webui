@@ -1558,7 +1558,9 @@
     "ServiceUpdated": "Сервис модели {{ name }} успешно обновлен.",
     "CannotValidateNow": "Невозможно проверить услугу сейчас. \nПожалуйста, проверьте распределение ресурсов или другие конфигурации.",
     "Ready": "Готовый",
-    "ServiceTerminated": "Для службы модели «{{ name }}» отправлен запрос на завершение работы."
+    "ServiceTerminated": "Для службы модели «{{ name }}» отправлен запрос на завершение работы.",
+    "ModelMountDestination": "Путь Model definition file",
+    "AdditionalMounts": "Дополнительные крепления"
   },
   "ErrorBoundary": {
     "title": "Произошла ошибка.",

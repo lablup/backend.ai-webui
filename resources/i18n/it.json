@@ -1504,7 +1504,9 @@
     "Ready": "Pronto",
     "ValidationInfo": "Informazioni sulla convalida",
     "Validate": "Convalidare",
-    "ServiceTerminated": "È stata inviata una richiesta di arresto per il servizio modello '{{ name }}'."
+    "ServiceTerminated": "È stata inviata una richiesta di arresto per il servizio modello '{{ name }}'.",
+    "ModelMountDestination": "Percorso Model definition file.",
+    "AdditionalMounts": "Supporti aggiuntivi"
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",

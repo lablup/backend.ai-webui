@@ -767,7 +767,9 @@
     "ServiceUpdated": "El servicio de modelo {{ name }} se ha actualizado correctamente.",
     "CannotValidateNow": "No se puede validar el servicio ahora. \nVerifique la asignación de recursos u otras configuraciones.",
     "Ready": "Listo",
-    "ServiceTerminated": "Se envió una solicitud de cierre para el servicio modelo '{{ name }}'."
+    "ServiceTerminated": "Se envió una solicitud de cierre para el servicio modelo '{{ name }}'.",
+    "ModelMountDestination": "Ruta del Model definition file",
+    "AdditionalMounts": "Montajes adicionales"
   },
   "notification": {
     "Initializing": "Inicializando...",

@@ -20,6 +20,7 @@ import ImageEnvironmentSelectFormItems, {
 import InputNumberWithSlider from './InputNumberWithSlider';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
+import VFolderTableFromItem from './VFolderTableFormItem';
 import { ServiceLauncherModalFragment$key } from './__generated__/ServiceLauncherModalFragment.graphql';
 import { ServiceLauncherModalModifyMutation } from './__generated__/ServiceLauncherModalModifyMutation.graphql';
 import {
@@ -35,7 +36,13 @@ import {
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useState, Suspense, useRef } from 'react';
+import React, {
+  useState,
+  Suspense,
+  useRef,
+  useEffect,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
 
@@ -120,6 +127,14 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const currentDomain = useCurrentDomainValue();
 
   const formRef = useRef<FormInstance<ServiceLauncherFormValue>>(null);
+  const [selectedModelFolder, setSelectedModelFolder] = useState('');
+
+  useEffect(() => {
+    if (formRef.current?.getFieldValue('vFolderName')) {
+      setSelectedModelFolder(formRef.current?.getFieldValue('vFolderName'));
+    }
+  }, [formRef.current?.getFieldValue('vFolderName')]);
+
   const endpoint = useFragment(
     graphql`
       fragment ServiceLauncherModalFragment on Endpoint {
@@ -222,6 +237,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     ServiceLauncherFormValue
   >({
     mutationFn: (values) => {
+      console.log(values);
       const body: ServiceCreateType = {
         name: values.serviceName,
         desired_session_count: values.desiredRoutingCount,
@@ -263,6 +279,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           },
         },
       };
+      return;
       return baiSignedRequestWithPromise({
         method: 'POST',
         url: '/services',
@@ -609,26 +626,70 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                 >
                   <Switch disabled={!!endpoint}></Switch>
                 </Form.Item>
-                {/* <VFolderTableFromItem /> */}
                 {!endpoint ? (
-                  <Form.Item
-                    name={'vFolderName'}
-                    label={t('session.launcher.ModelStorageToMount')}
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  >
-                    <VFolderSelect
+                  <>
+                    <Flex
+                      direction="column"
+                      gap={'xxs'}
+                      align="stretch"
+                      justify="between"
+                    >
+                      <Form.Item
+                        name={'vFolderName'}
+                        label={t('session.launcher.ModelStorageToMount')}
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
+                      >
+                        <VFolderSelect
+                          filter={(vf) =>
+                            vf.usage_mode === 'model' && vf.status === 'ready'
+                          }
+                          autoSelectDefault
+                          disabled={!!endpoint}
+                          onSelect={(value) => {
+                            setSelectedModelFolder(value);
+                          }}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={'modelMountDestination'}
+                        label={t('modelService.ModelMountDestination')}
+                      >
+                        <Input
+                          allowClear
+                          placeholder={`${selectedModelFolder}/model-definition.yaml`}
+                        />
+                      </Form.Item>
+                    </Flex>
+                    {/* TODO:  */}
+                    <VFolderTableFromItem
+                      label={t('modelService.AdditionalMounts')}
                       filter={(vf) =>
-                        vf.usage_mode === 'model' && vf.status === 'ready'
+                        vf.name !== selectedModelFolder && vf.status === 'ready'
                       }
-                      autoSelectDefault
-                      disabled={!!endpoint}
                     />
-                  </Form.Item>
+                  </>
                 ) : (
+                  // <Form.Item
+                  //   name={'vFolderName'}
+                  //   label={t('session.launcher.ModelStorageToMount')}
+                  //   rules={[
+                  //     {
+                  //       required: true,
+                  //     },
+                  //   ]}
+                  // >
+                  //   <VFolderSelect
+                  //     filter={(vf) =>
+                  //       vf.usage_mode === 'model' && vf.status === 'ready'
+                  //     }
+                  //     autoSelectDefault
+                  //     disabled={!!endpoint}
+                  //   />
+                  // </Form.Item>
                   endpoint?.model && (
                     <Form.Item
                       name={'vFolderName'}

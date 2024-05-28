@@ -1546,7 +1546,9 @@
     "ServiceUpdated": "Perkhidmatan model {{ name }} telah berjaya dikemas kini.",
     "CannotValidateNow": "Tidak dapat mengesahkan perkhidmatan sekarang. \nSila semak peruntukan sumber atau konfigurasi lain.",
     "Ready": "sedia",
-    "ServiceTerminated": "Permintaan penutupan telah dihantar untuk perkhidmatan model '{{ name }}'."
+    "ServiceTerminated": "Permintaan penutupan telah dihantar untuk perkhidmatan model '{{ name }}'.",
+    "ModelMountDestination": "Laluan Model definition file.",
+    "AdditionalMounts": "Lekapan Tambahan"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

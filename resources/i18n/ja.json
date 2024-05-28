@@ -1505,7 +1505,9 @@
     "ServiceUpdated": "モデル サービス {{ name }} は正常に更新されました。",
     "CannotValidateNow": "現在サービスを検証できません。\nリソース割り当てまたはその他の構成を確認してください。",
     "Ready": "準備ができて",
-    "ServiceTerminated": "モデルサービス「{{name}}」の終了要求が送信されました。"
+    "ServiceTerminated": "モデルサービス「{{name}}」の終了要求が送信されました。",
+    "ModelMountDestination": "Model definition fileのパス",
+    "AdditionalMounts": "追加のマウント"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

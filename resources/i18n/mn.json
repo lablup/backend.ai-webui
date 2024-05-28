@@ -1559,7 +1559,9 @@
     "ServiceUpdated": "Загвар үйлчилгээ {{ name }} амжилттай шинэчлэгдсэн.",
     "CannotValidateNow": "Одоо үйлчилгээг баталгаажуулах боломжгүй байна. \nНөөцийн хуваарилалт эсвэл бусад тохиргоог шалгана уу.",
     "Ready": "Бэлэн",
-    "ServiceTerminated": "'{{ name }}' загварын үйлчилгээнд хаах хүсэлт илгээсэн."
+    "ServiceTerminated": "'{{ name }}' загварын үйлчилгээнд хаах хүсэлт илгээсэн.",
+    "ModelMountDestination": "Model definition file зам",
+    "AdditionalMounts": "Нэмэлт бэхэлгээ"
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",

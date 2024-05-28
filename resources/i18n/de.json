@@ -1505,7 +1505,9 @@
     "ServiceUpdated": "Der Modelldienst {{ name }} wurde erfolgreich aktualisiert.",
     "CannotValidateNow": "Der Dienst kann derzeit nicht validiert werden. \nBitte überprüfen Sie die Ressourcenzuweisung oder andere Konfigurationen.",
     "Ready": "Bereit",
-    "ServiceTerminated": "Für den Modelldienst „{{ name }}“ wurde eine Anforderung zum Herunterfahren gesendet."
+    "ServiceTerminated": "Für den Modelldienst „{{ name }}“ wurde eine Anforderung zum Herunterfahren gesendet.",
+    "ModelMountDestination": "Pfad Model definition file.",
+    "AdditionalMounts": "Zusätzliche Halterungen"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

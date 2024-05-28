@@ -1558,7 +1558,9 @@
     "ServiceUpdated": "Le service modèle {{ name }} a été mis à jour avec succès.",
     "CannotValidateNow": "Impossible de valider le service maintenant. \nVeuillez vérifier l'allocation des ressources ou d'autres configurations.",
     "Ready": "Prêt",
-    "ServiceTerminated": "Une demande d'arrêt a été envoyée pour le service modèle '{{ name }}'."
+    "ServiceTerminated": "Une demande d'arrêt a été envoyée pour le service modèle '{{ name }}'.",
+    "ModelMountDestination": "Chemin Model definition file",
+    "AdditionalMounts": "Supports supplémentaires"
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",

@@ -1505,7 +1505,9 @@
     "ServiceUpdated": "Usługa modelowa {{ name }} została pomyślnie zaktualizowana.",
     "CannotValidateNow": "Nie można teraz zweryfikować usługi. \nSprawdź alokację zasobów lub inne konfiguracje.",
     "Ready": "Gotowy",
-    "ServiceTerminated": "Wysłano żądanie zamknięcia usługi modelowej „{{ name }}”."
+    "ServiceTerminated": "Wysłano żądanie zamknięcia usługi modelowej „{{ name }}”.",
+    "ModelMountDestination": "Ścieżka Model definition file.",
+    "AdditionalMounts": "Dodatkowe mocowania"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",

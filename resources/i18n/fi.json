@@ -765,7 +765,9 @@
     "ServiceUpdated": "Mallipalvelun {{ name }} päivitys onnistui.",
     "CannotValidateNow": "Palvelua ei voi vahvistaa nyt. \nTarkista resurssien allokaatio tai muut asetukset.",
     "Ready": "Valmis",
-    "ServiceTerminated": "Mallipalvelun '{{ name }}' sammutuspyyntö lähetettiin."
+    "ServiceTerminated": "Mallipalvelun '{{ name }}' sammutuspyyntö lähetettiin.",
+    "ModelMountDestination": "Model definition file polku",
+    "AdditionalMounts": "Lisäkiinnikkeet"
   },
   "notification": {
     "Initializing": "Aloitetaan...",

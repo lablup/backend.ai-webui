@@ -1558,7 +1558,9 @@
     "Ready": "Siap",
     "Validate": "Mengesahkan",
     "ValidationInfo": "Info Validasi",
-    "ServiceTerminated": "Permintaan penutupan dikirim untuk layanan model '{{ nama }}'."
+    "ServiceTerminated": "Permintaan penutupan dikirim untuk layanan model '{{ nama }}'.",
+    "ModelMountDestination": "Jalur Model definition file.",
+    "AdditionalMounts": "Pemasangan Tambahan"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

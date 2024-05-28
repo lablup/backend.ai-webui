@@ -484,7 +484,9 @@
     "FailedToTerminateService": "The request to terminate the service failed.",
     "ServiceCreated": "Model service {{ name }} has been created successfully.",
     "ServiceUpdated": "Model service {{ name }} has been updated successfully.",
-    "ServiceTerminated": "A shutdown request was sent for model service '{{ name }}'."
+    "ServiceTerminated": "A shutdown request was sent for model service '{{ name }}'.",
+    "ModelMountDestination": "Model definition file path",
+    "AdditionalMounts": "Additional Mounts"
   },
   "button": {
     "Cancel": "Cancel",
