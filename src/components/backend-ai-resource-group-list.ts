@@ -123,6 +123,11 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           margin-left: var(--token-marginXXS);
         }
 
+        mwc-button.full-size,
+        mwc-button.full {
+          width: 100%;
+        }
+
         mwc-textarea {
           height: 135px;
         }
@@ -945,6 +950,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           ${Object.keys(this.resourceGroupInfo).length > 0
             ? html`
                 <mwc-button
+                  class="full"
                   unelevated
                   icon="save"
                   label="${_t('button.Save')}"
@@ -953,6 +959,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               `
             : html`
                 <mwc-button
+                  class="full"
                   unelevated
                   icon="add"
                   label="${_t('button.Create')}"
