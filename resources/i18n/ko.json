@@ -1075,7 +1075,8 @@
     "MaxQuotaScopeSize": "최대 할당량 범위 크기(GB)",
     "MaxCustomizedImageCount": "최대 사용자 정의 이미지 수",
     "CreatedAt": "생성 날짜",
-    "MaxFolderCount": "최대 폴더 수"
+    "MaxFolderCount": "최대 폴더 수",
+    "ProjectResourcePolicy": "프로젝트 자원 정책"
   },
   "registry": {
     "Hostname": "호스트명",

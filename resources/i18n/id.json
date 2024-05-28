@@ -974,7 +974,8 @@
     "MaxQuotaScopeSize": "Ukuran Cakupan Kuota Maks (GB)",
     "MaxCustomizedImageCount": "Jumlah Gambar Khusus Maksimum",
     "CreatedAt": "Dibuat di",
-    "MaxFolderCount": "Jumlah Folder Maks"
+    "MaxFolderCount": "Jumlah Folder Maks",
+    "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek"
   },
   "registry": {
     "Hostname": "Nama host",

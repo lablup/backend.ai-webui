@@ -973,7 +973,8 @@
     "MaxQuotaScopeSize": "Максимальный размер квоты (ГБ)",
     "MaxCustomizedImageCount": "Максимальное количество индивидуальных изображений",
     "CreatedAt": "Создан в",
-    "MaxFolderCount": "Максимальное количество папок"
+    "MaxFolderCount": "Максимальное количество папок",
+    "ProjectResourcePolicy": "Ресурсная политика проекта"
   },
   "registry": {
     "Hostname": "Имя хоста",

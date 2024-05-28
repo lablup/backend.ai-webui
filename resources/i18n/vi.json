@@ -973,7 +973,8 @@
     "MaxQuotaScopeSize": "Kích thước phạm vi hạn ngạch tối đa (GB)",
     "MaxCustomizedImageCount": "Số lượng hình ảnh tùy chỉnh tối đa",
     "CreatedAt": "Được tạo tại",
-    "MaxFolderCount": "Số lượng thư mục tối đa"
+    "MaxFolderCount": "Số lượng thư mục tối đa",
+    "ProjectResourcePolicy": "Chính sách tài nguyên dự án"
   },
   "registry": {
     "Hostname": "Tên máy chủ",

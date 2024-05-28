@@ -922,7 +922,8 @@
     "MaxQuotaScopeSize": "Kiintiön enimmäiskoko (GB)",
     "MaxCustomizedImageCount": "Suurin mukautettu kuvien määrä",
     "CreatedAt": "Luotu klo",
-    "MaxFolderCount": "Kansioiden enimmäismäärä"
+    "MaxFolderCount": "Kansioiden enimmäismäärä",
+    "ProjectResourcePolicy": "Projektin resurssipolitiikka"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Olet poistamassa tätä esiasetusta:",

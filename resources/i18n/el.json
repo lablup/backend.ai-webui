@@ -973,7 +973,8 @@
     "MaxQuotaScopeSize": "Μέγιστο μέγεθος εύρους ορίου (GB)",
     "MaxCustomizedImageCount": "Μέγιστος προσαρμοσμένος αριθμός εικόνων",
     "CreatedAt": "Δημιουργήθηκε στο",
-    "MaxFolderCount": "Μέγιστος αριθμός φακέλων"
+    "MaxFolderCount": "Μέγιστος αριθμός φακέλων",
+    "ProjectResourcePolicy": "Πολιτική πόρων έργου"
   },
   "registry": {
     "Hostname": "Όνομα κεντρικού υπολογιστή",

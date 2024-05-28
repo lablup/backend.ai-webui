@@ -973,7 +973,8 @@
     "MaxQuotaScopeSize": "最大配额范围大小 (GB)",
     "MaxCustomizedImageCount": "最大自定义图像数量",
     "CreatedAt": "创建于",
-    "MaxFolderCount": "最大文件夹数"
+    "MaxFolderCount": "最大文件夹数",
+    "ProjectResourcePolicy": "项目资源政策"
   },
   "registry": {
     "Hostname": "主机名",

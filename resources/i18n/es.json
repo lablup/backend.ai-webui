@@ -924,7 +924,8 @@
     "MaxQuotaScopeSize": "Tamaño máximo del alcance de la cuota (GB)",
     "MaxCustomizedImageCount": "Número máximo de imágenes personalizadas",
     "CreatedAt": "Creado en",
-    "MaxFolderCount": "Número máximo de carpetas"
+    "MaxFolderCount": "Número máximo de carpetas",
+    "ProjectResourcePolicy": "Política de recursos del proyecto"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Está a punto de borrar este preajuste:",

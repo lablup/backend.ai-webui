@@ -973,7 +973,8 @@
     "MaxQuotaScopeSize": "Maksymalny rozmiar zakresu przydziału (GB)",
     "MaxCustomizedImageCount": "Maksymalna dostosowana liczba obrazów",
     "CreatedAt": "Utworzono o godz",
-    "MaxFolderCount": "Maksymalna liczba folderów"
+    "MaxFolderCount": "Maksymalna liczba folderów",
+    "ProjectResourcePolicy": "Polityka zasobów projektu"
   },
   "registry": {
     "Hostname": "Nazwa hosta",
