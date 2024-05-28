@@ -519,7 +519,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     const name = this.resourceGroupInfo.name;
     if (this.deleteResourceGroupInput.value !== name) {
       this.notification.text = _text('resourceGroup.ResourceGroupNameNotMatch');
-      this._hideDialogById('#delete-resource-group-dialog');
       this.notification.show();
       return;
     }
@@ -674,6 +673,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    */
   _launchDeleteDialog(resourceGroup: object) {
     this.resourceGroupInfo = resourceGroup;
+    this.deleteResourceGroupInput.value = '';
     this._launchDialogById('#delete-resource-group-dialog');
   }
 
