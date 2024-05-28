@@ -4069,18 +4069,16 @@ ${rowData.item[this.sessionNameField]}</pre
             </div>
           </div>
           <div class="vertical flex start layout" style="width:100%;">
-            <h4 class="commit-session-title">
-              ${_t('session.ConvertSessionToImage')}
-            </h4>
+            <h4 class="commit-session-title">${_t('session.SessionName')}</h4>
             <div class="horizontal layout flex" style="width:100%">
-              <mwc-checkbox
+              <!--<mwc-checkbox
                 class="list-check"
                 ?checked="${this.pushImageInsteadOfCommiting}"
                 @click="${() => {
-                  this.pushImageInsteadOfCommiting =
-                    !this.pushImageInsteadOfCommiting;
-                }}"
-              ></mwc-checkbox>
+                this.pushImageInsteadOfCommiting =
+                  !this.pushImageInsteadOfCommiting;
+              }}"
+              ></mwc-checkbox>-->
               <mwc-textfield
                 id="new-image-name-field"
                 required
@@ -4089,7 +4087,6 @@ ${rowData.item[this.sessionNameField]}</pre
                 minLength="4"
                 maxLength="32"
                 placeholder="${_t('inputLimit.4to32chars')}"
-                ?disabled="${!this.pushImageInsteadOfCommiting}"
                 validationMessage="${_text(
                   'session.Validation.EnterValidSessionName',
                 )}"
@@ -4103,24 +4100,16 @@ ${rowData.item[this.sessionNameField]}</pre
           <mwc-button
             unelevated
             class="ok"
-            style="font-size: ${this.pushImageInsteadOfCommiting
-              ? 'smaller'
-              : 'inherit'}"
+            style="font-size:smaller"
             ?disabled="${
-              !this.canStartImagifying || !this.pushImageInsteadOfCommiting
+              !this.canStartImagifying
               // FIXME: temporally disable commit feature
               // || commitSessionInfo?.environment === ''
             }"
-            @click=${(e) => {
-              if (this.pushImageInsteadOfCommiting) {
-                this._requestConvertSessionToimage(commitSessionInfo);
-              } else {
-                this._requestCommitSession(commitSessionInfo);
-              }
+            @click=${() => {
+              this._requestConvertSessionToimage(commitSessionInfo);
             }}
-            label="${this.pushImageInsteadOfCommiting
-              ? _t('button.PushToImage')
-              : _t('button.Commit')}"
+            label="${_t('button.PushToImage')}"
           ></mwc-button>
         </div>
       </backend-ai-dialog>
