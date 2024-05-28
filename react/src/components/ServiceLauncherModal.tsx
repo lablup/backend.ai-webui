@@ -68,15 +68,21 @@ interface ServiceCreateConfigResourceType {
   'warboy.device'?: number | string;
   'hyperaccel-lpu.device'?: number | string;
 }
+interface MountOptionType {
+  mount_destination?: string;
+  type?: string;
+  permission?: string;
+}
 
 interface ServiceCreateConfigType {
   model: string;
-  model_version?: string;
+  model_version?: number;
   model_mount_destination: string; // default == "/models"
   environ: object; // environment variable
   scaling_group: string;
   resources: ServiceCreateConfigResourceType;
   resource_opts?: ServiceCreateConfigResourceOptsType;
+  extra_mounts?: Record<string, MountOptionType>;
 }
 export interface ServiceCreateType {
   name: string;
@@ -106,6 +112,9 @@ interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   vFolderName: string;
   desiredRoutingCount: number;
   openToPublic: boolean;
+  modelMountDestination: string;
+  vfoldersAliasMap: Record<string, string>;
+  mounts: Array<string>;
 }
 
 export type ServiceLauncherFormValue = ServiceLauncherInput &
@@ -147,6 +156,31 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         cluster_size
         open_to_public
         model
+        model_mount_destination @since(version: "24.03.4")
+        extra_mounts @since(version: "24.03.4") {
+          id
+          host
+          quota_scope_id
+          name
+          user
+          user_email
+          group
+          group_name
+          creator
+          unmanaged_path
+          usage_mode
+          permission
+          ownership_type
+          max_files
+          max_size
+          created_at
+          modified_at
+          last_used
+          num_files
+          cur_size
+          cloneable
+          status
+        }
         image_object @since(version: "23.09.9") {
           name
           humanized_name
@@ -172,6 +206,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     `,
     endpointFrgmt,
   );
+
+  console.log(endpoint);
 
   const checkManualImageAllowed = (
     isConfigAllowed = false,
@@ -255,7 +291,20 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         open_to_public: values.openToPublic,
         config: {
           model: values.vFolderName,
-          model_mount_destination: '/models', // FIXME: hardcoded. change it with option later
+          model_version: 1, // FIXME: hardcoded. change it with option later
+          model_mount_destination: values.modelMountDestination,
+          extra_mounts: values.mounts.reduce(
+            (acc, key: string) => {
+              acc[key] = {
+                ...(values.vfoldersAliasMap[key] && {
+                  mount_destination: values.vfoldersAliasMap[key],
+                }),
+                type: 'bind', // FIXME: hardcoded. change it with option later
+              };
+              return acc;
+            },
+            {} as Record<string, MountOptionType>,
+          ),
           environ: {}, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {
@@ -279,7 +328,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           },
         },
       };
-      return;
       return baiSignedRequestWithPromise({
         method: 'POST',
         url: '/services',
@@ -331,6 +379,30 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             supported_accelerators
           }
           name
+          extra_mounts @since(version: "24.03.4") {
+            id
+            host
+            quota_scope_id
+            name
+            user
+            user_email
+            group
+            group_name
+            creator
+            unmanaged_path
+            usage_mode
+            permission
+            ownership_type
+            max_files
+            max_size
+            created_at
+            modified_at
+            last_used
+            num_files
+            cur_size
+            cloneable
+            status
+          }
         }
       }
     }
@@ -371,6 +443,14 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   ),
                   values,
                 ),
+                extra_mounts: values.mounts.map((vfolder) => {
+                  return {
+                    vfolder_id: vfolder,
+                    ...(values.vfoldersAliasMap[vfolder] && {
+                      mount_destination: values.vfoldersAliasMap[vfolder],
+                    }),
+                  };
+                }),
                 name: values.serviceName,
                 resource_group: values.resourceGroup,
               },
@@ -665,35 +745,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         />
                       </Form.Item>
                     </Flex>
-                    {/* TODO:  */}
-                    <VFolderTableFromItem
-                      label={t('modelService.AdditionalMounts')}
-                      filter={(vf) =>
-                        vf.name !== selectedModelFolder && vf.status === 'ready'
-                      }
-                      tableProps={{
-                        size: 'small',
-                      }}
-                    />
                   </>
                 ) : (
-                  // <Form.Item
-                  //   name={'vFolderName'}
-                  //   label={t('session.launcher.ModelStorageToMount')}
-                  //   rules={[
-                  //     {
-                  //       required: true,
-                  //     },
-                  //   ]}
-                  // >
-                  //   <VFolderSelect
-                  //     filter={(vf) =>
-                  //       vf.usage_mode === 'model' && vf.status === 'ready'
-                  //     }
-                  //     autoSelectDefault
-                  //     disabled={!!endpoint}
-                  //   />
-                  // </Form.Item>
                   endpoint?.model && (
                     <Form.Item
                       name={'vFolderName'}

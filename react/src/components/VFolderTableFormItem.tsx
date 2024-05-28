@@ -68,7 +68,7 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
         trigger="onChangeSelectedRowKeys"
       >
         <VFolderTable
-          rowKey="name"
+          rowKey={rowKey}
           showAliasInput
           aliasMap={form.getFieldValue('vfoldersAliasMap')}
           onChangeAliasMap={(aliasMap) => {
