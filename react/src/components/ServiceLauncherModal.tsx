@@ -20,7 +20,7 @@ import ImageEnvironmentSelectFormItems, {
 import InputNumberWithSlider from './InputNumberWithSlider';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
-import VFolderTableFromItem from './VFolderTableFormItem';
+import VFolderTableFormItem from './VFolderTableFormItem';
 import { ServiceLauncherModalFragment$key } from './__generated__/ServiceLauncherModalFragment.graphql';
 import { ServiceLauncherModalModifyMutation } from './__generated__/ServiceLauncherModalModifyMutation.graphql';
 import {
@@ -706,6 +706,16 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     </Form.Item>
                   )
                 )}
+                <VFolderTableFormItem
+                  rowKey="id"
+                  label={t('modelService.AdditionalMounts')}
+                  filter={(vf) =>
+                    vf.name !== selectedModelFolder && vf.status === 'ready'
+                  }
+                  tableProps={{
+                    size: 'small',
+                  }}
+                />
               </>
             )}
             <Form.Item

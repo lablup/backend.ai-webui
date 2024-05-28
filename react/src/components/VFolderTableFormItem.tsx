@@ -8,8 +8,9 @@ import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface VFolderTableFromItemProps extends Omit<FormItemProps, 'name'> {
+interface VFolderTableFormItemProps extends Omit<FormItemProps, 'name'> {
   filter?: VFolderTableProps['filter'];
+  rowKey?: string;
   tableProps?: Partial<VFolderTableProps>;
 }
 
@@ -18,8 +19,9 @@ export interface VFolderTableFormValues {
   vfoldersAliasMap: AliasMap;
 }
 
-const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
+const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
   filter,
+  rowKey = 'name',
   tableProps,
   ...formItemProps
 }) => {
@@ -87,4 +89,4 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
   );
 };
 
-export default VFolderTableFromItem;
+export default VFolderTableFormItem;
