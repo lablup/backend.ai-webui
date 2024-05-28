@@ -5,6 +5,7 @@ import {
   isOutsideRange,
   isOutsideRangeWithUnits,
   localeCompare,
+  numberSorterWithInfinityValue,
   transformSorterToOrderString,
 } from './index';
 
@@ -241,5 +242,33 @@ describe('localeCompare', () => {
     expect(localeCompare('apple', 'banana')).toEqual(-1);
     expect(localeCompare('banana', 'apple')).toEqual(1);
     expect(localeCompare('apple', 'apple')).toEqual(0);
+  });
+});
+
+describe('numberSorterWithInfinityValue', () => {
+  it('should correctly sort when a is greater than b', () => {
+    expect(numberSorterWithInfinityValue(2, 1)).toBeGreaterThan(0);
+  });
+
+  it('should correctly sort when a is less than b', () => {
+    expect(numberSorterWithInfinityValue(1, 2)).toBeLessThan(0);
+  });
+
+  it('should return 0 when a and b are equal', () => {
+    expect(numberSorterWithInfinityValue(1, 1)).toBe(0);
+  });
+
+  it('should treat infiniteValue as infinity', () => {
+    expect(numberSorterWithInfinityValue(-1, 1, -1)).toBeGreaterThan(0);
+    expect(numberSorterWithInfinityValue(1, -1, -1)).toBeLessThan(0);
+  });
+
+  it('should use nullishFallbackValue for null or undefined values', () => {
+    expect(numberSorterWithInfinityValue(null, 1, -1, 0)).toBeLessThan(0);
+    expect(numberSorterWithInfinityValue(1, null, -1, 0)).toBeGreaterThan(0);
+    expect(numberSorterWithInfinityValue(undefined, 1, -1, 0)).toBeLessThan(0);
+    expect(numberSorterWithInfinityValue(1, undefined, -1, 0)).toBeGreaterThan(
+      0,
+    );
   });
 });

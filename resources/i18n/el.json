@@ -966,7 +966,14 @@
     "KeypairResourcePolicy": "Πολιτική πόρων ζεύγους κλειδιών",
     "IdleTimeout": "Χρονικό όριο αδράνειας",
     "CreateResourcePolicy": "Δημιουργία Πολιτικής Πόρων",
-    "ResourcePolicyNameAlreadyExists": "Το όνομα της πολιτικής πόρων υπάρχει ήδη. \nΑλλάξτε το όνομα για προσθήκη."
+    "ResourcePolicyNameAlreadyExists": "Το όνομα της πολιτικής πόρων υπάρχει ήδη. \nΑλλάξτε το όνομα για προσθήκη.",
+    "UserResourcePolicy": "Πολιτική πόρων χρήστη",
+    "MaxVFolderCount": "Μέγιστος αριθμός φακέλων",
+    "MaxSessionCountPerModelSession": "Μέγιστος αριθμός περιόδων σύνδεσης ανά περίοδο λειτουργίας μοντέλου",
+    "MaxQuotaScopeSize": "Μέγιστο μέγεθος εύρους ορίου (GB)",
+    "MaxCustomizedImageCount": "Μέγιστος προσαρμοσμένος αριθμός εικόνων",
+    "CreatedAt": "Δημιουργήθηκε στο",
+    "MaxFolderCount": "Μέγιστος αριθμός φακέλων"
   },
   "registry": {
     "Hostname": "Όνομα κεντρικού υπολογιστή",

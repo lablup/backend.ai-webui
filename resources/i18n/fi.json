@@ -915,7 +915,14 @@
     "KeypairResourcePolicy": "Avainparin resurssikäytäntö",
     "IdleTimeout": "Idle Timeout",
     "CreateResourcePolicy": "Luo resurssikäytäntö",
-    "ResourcePolicyNameAlreadyExists": "Resurssikäytännön nimi on jo olemassa. \nMuuta lisättävä nimi."
+    "ResourcePolicyNameAlreadyExists": "Resurssikäytännön nimi on jo olemassa. \nMuuta lisättävä nimi.",
+    "UserResourcePolicy": "Käyttäjäresurssikäytäntö",
+    "MaxVFolderCount": "Kansioiden enimmäismäärä",
+    "MaxSessionCountPerModelSession": "Maksimi istuntojen määrä malliistuntoa kohti",
+    "MaxQuotaScopeSize": "Kiintiön enimmäiskoko (GB)",
+    "MaxCustomizedImageCount": "Suurin mukautettu kuvien määrä",
+    "CreatedAt": "Luotu klo",
+    "MaxFolderCount": "Kansioiden enimmäismäärä"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Olet poistamassa tätä esiasetusta:",

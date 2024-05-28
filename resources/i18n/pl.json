@@ -966,7 +966,14 @@
     "KeypairResourcePolicy": "Polityka zasobów pary kluczy",
     "IdleTimeout": "Limit czasu bezczynności",
     "CreateResourcePolicy": "Utwórz politykę zasobów",
-    "ResourcePolicyNameAlreadyExists": "Nazwa zasady zasobów już istnieje. \nAby dodać, zmień nazwę."
+    "ResourcePolicyNameAlreadyExists": "Nazwa zasady zasobów już istnieje. \nAby dodać, zmień nazwę.",
+    "UserResourcePolicy": "Polityka zasobów użytkownika",
+    "MaxVFolderCount": "Maksymalna liczba folderów",
+    "MaxSessionCountPerModelSession": "Maksymalna liczba sesji na sesję modelu",
+    "MaxQuotaScopeSize": "Maksymalny rozmiar zakresu przydziału (GB)",
+    "MaxCustomizedImageCount": "Maksymalna dostosowana liczba obrazów",
+    "CreatedAt": "Utworzono o godz",
+    "MaxFolderCount": "Maksymalna liczba folderów"
   },
   "registry": {
     "Hostname": "Nazwa hosta",

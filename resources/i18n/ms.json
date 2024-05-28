@@ -966,7 +966,14 @@
     "KeypairResourcePolicy": "Dasar Sumber Pasangan Kunci",
     "IdleTimeout": "Tamat Masa Terbiar",
     "CreateResourcePolicy": "Buat Dasar Sumber",
-    "ResourcePolicyNameAlreadyExists": "Nama dasar sumber sudah wujud. \nSila tukar nama untuk ditambah."
+    "ResourcePolicyNameAlreadyExists": "Nama dasar sumber sudah wujud. \nSila tukar nama untuk ditambah.",
+    "UserResourcePolicy": "Dasar Sumber Pengguna",
+    "MaxVFolderCount": "Kiraan Folder Maks",
+    "MaxSessionCountPerModelSession": "Kiraan Sesi Maks Setiap Sesi Model",
+    "MaxQuotaScopeSize": "Saiz Skop Kuota Maks (GB)",
+    "MaxCustomizedImageCount": "Kiraan Imej Tersuai Maks",
+    "CreatedAt": "Dicipta Pada",
+    "MaxFolderCount": "Kiraan Folder Maks"
   },
   "registry": {
     "Hostname": "Nama Hos",

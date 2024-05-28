@@ -1,26 +1,18 @@
 import Flex from './Flex';
-import { Form, Checkbox } from 'antd';
+import { Form, Checkbox, FormItemProps } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import { NamePath } from 'antd/es/form/interface';
-import React, {
-  cloneElement,
-  PropsWithChildren,
-  useEffect,
-  useState,
-} from 'react';
+import React, { cloneElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface FormItemWithUnlimitedProps extends PropsWithChildren {
-  name: NamePath;
+interface FormItemWithUnlimitedProps extends FormItemProps {
   unlimitedValue?: number | string;
-  label?: string;
 }
 
 const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
   name,
   unlimitedValue,
-  label,
   children,
+  ...formItemPropsWithoutNameAndChildren
 }) => {
   const { t } = useTranslation();
   const [isUnlimited, setIsUnlimited] = useState<boolean>(false);
@@ -51,14 +43,17 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
     <Flex direction="column" align="start">
       <Form.Item
         style={{ margin: 0 }}
-        label={label}
         name={name}
         hidden={isUnlimited}
+        {...formItemPropsWithoutNameAndChildren}
       >
         {childrenWithProps}
       </Form.Item>
       {isUnlimited ? (
-        <Form.Item style={{ margin: 0 }} label={label}>
+        <Form.Item
+          style={{ margin: 0 }}
+          {...formItemPropsWithoutNameAndChildren}
+        >
           {childrenWithUndefinedValue}
         </Form.Item>
       ) : null}

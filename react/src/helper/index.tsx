@@ -330,3 +330,17 @@ export function transformSorterToOrderString<T = any>(
       : undefined;
   }
 }
+
+export const numberSorterWithInfinityValue = (
+  a?: number | null,
+  b?: number | null,
+  infiniteValue?: number | null,
+  nullishFallbackValue: number = 0,
+) => {
+  const transform = (value?: number | null) => {
+    if (value === infiniteValue) return Number.POSITIVE_INFINITY;
+    if (value === null || value === undefined) return nullishFallbackValue;
+    return value;
+  };
+  return transform(a) - transform(b);
+};

@@ -1068,7 +1068,14 @@
     "KeypairResourcePolicy": "키페어 자원 정책",
     "IdleTimeout": "유휴 대기 시간",
     "CreateResourcePolicy": "자원 정책 만들기",
-    "ResourcePolicyNameAlreadyExists": "리소스 정책 이름이 이미 존재합니다. \n추가하려면 이름을 변경하세요."
+    "ResourcePolicyNameAlreadyExists": "리소스 정책 이름이 이미 존재합니다. \n추가하려면 이름을 변경하세요.",
+    "UserResourcePolicy": "사용자 자원 정책",
+    "MaxVFolderCount": "최대 폴더 수",
+    "MaxSessionCountPerModelSession": "모델 세션당 최대 세션 수",
+    "MaxQuotaScopeSize": "최대 할당량 범위 크기(GB)",
+    "MaxCustomizedImageCount": "최대 사용자 정의 이미지 수",
+    "CreatedAt": "생성 날짜",
+    "MaxFolderCount": "최대 폴더 수"
   },
   "registry": {
     "Hostname": "호스트명",

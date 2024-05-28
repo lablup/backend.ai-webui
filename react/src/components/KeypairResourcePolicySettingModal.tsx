@@ -147,95 +147,98 @@ const KeypairResourcePolicySettingModal: React.FC<
   ]);
 
   const handleOk = () => {
-    return form.validateFields().then((values) => {
-      let totalResourceSlots = _.mapValues(
-        values?.parsedTotalResourceSlots,
-        (value, key) => {
-          if (key === 'mem') {
-            return iSizeToSize(value, 'b', 0)?.numberFixed;
-          }
-          return value;
-        },
-      );
-      // Remove undefined values
-      totalResourceSlots = _.pickBy(
-        totalResourceSlots,
-        _.negate(_.isUndefined),
-      );
-
-      const parsedAllowedVfolderHosts: Record<string, string[] | undefined> =
-        keypairResourcePolicy
-          ? JSON.parse(keypairResourcePolicy.allowed_vfolder_hosts || '{}')
-          : {};
-      const allowedVfolderHosts: Record<string, string[] | undefined> =
-        _.fromPairs(
-          _.map(values.allowedVfolderHostNames, (hostName) => {
-            const permissions = _.get(
-              parsedAllowedVfolderHosts,
-              hostName,
-              // TODO: Comment out if allow all permissions by default
-              // vfolder_host_permissions?.vfolder_host_permission_list,
-              [], // Default value if undefined
-            );
-            return [hostName, permissions];
-          }),
+    return form
+      .validateFields()
+      .then((values) => {
+        let totalResourceSlots = _.mapValues(
+          values?.parsedTotalResourceSlots,
+          (value, key) => {
+            if (key === 'mem') {
+              return iSizeToSize(value, 'b', 0)?.numberFixed;
+            }
+            return value;
+          },
+        );
+        // Remove undefined values
+        totalResourceSlots = _.pickBy(
+          totalResourceSlots,
+          _.negate(_.isUndefined),
         );
 
-      const props:
-        | CreateKeyPairResourcePolicyInput
-        | ModifyKeyPairResourcePolicyInput = {
-        default_for_unspecified: 'UNLIMITED',
-        total_resource_slots: JSON.stringify(totalResourceSlots || '{}'),
-        max_session_lifetime: values?.max_session_lifetime,
-        max_concurrent_sessions: values?.max_concurrent_sessions,
-        max_containers_per_session: values?.max_containers_per_session,
-        idle_timeout: values?.idle_timeout,
-        allowed_vfolder_hosts: JSON.stringify(allowedVfolderHosts || '{}'),
-      };
-      if (!isDeprecatedMaxVfolderCountInKeypairResourcePolicy) {
-        props.max_vfolder_count = values?.max_vfolder_count;
-      }
+        const parsedAllowedVfolderHosts: Record<string, string[] | undefined> =
+          keypairResourcePolicy
+            ? JSON.parse(keypairResourcePolicy.allowed_vfolder_hosts || '{}')
+            : {};
+        const allowedVfolderHosts: Record<string, string[] | undefined> =
+          _.fromPairs(
+            _.map(values.allowedVfolderHostNames, (hostName) => {
+              const permissions = _.get(
+                parsedAllowedVfolderHosts,
+                hostName,
+                // TODO: Comment out if allow all permissions by default
+                // vfolder_host_permissions?.vfolder_host_permission_list,
+                [], // Default value if undefined
+              );
+              return [hostName, permissions];
+            }),
+          );
 
-      if (keypairResourcePolicy === null) {
-        commitCreateKeypairResourcePolicy({
-          variables: {
-            name: values?.name,
-            props: props as CreateKeyPairResourcePolicyInput,
-          },
-          onCompleted: (res, errors) => {
-            if (!res?.create_keypair_resource_policy?.ok || errors) {
-              message.error(res?.create_keypair_resource_policy?.msg);
-              onRequestClose();
-            } else {
-              message.success(t('resourcePolicy.SuccessfullyCreated'));
-              onRequestClose(true);
-            }
-          },
-          onError(err) {
-            message.error(err.message);
-          },
-        });
-      } else {
-        commitModifyKeypairResourcePolicy({
-          variables: {
-            name: values?.name,
-            props: props as ModifyKeyPairResourcePolicyInput,
-          },
-          onCompleted: (res, errors) => {
-            if (!res?.modify_keypair_resource_policy?.ok || errors) {
-              message.error(res?.modify_keypair_resource_policy?.msg);
-              onRequestClose();
-            } else {
-              message.success(t('resourcePolicy.SuccessfullyUpdated'));
-              onRequestClose(true);
-            }
-          },
-          onError(err) {
-            message.error(err.message);
-          },
-        });
-      }
-    });
+        const props:
+          | CreateKeyPairResourcePolicyInput
+          | ModifyKeyPairResourcePolicyInput = {
+          default_for_unspecified: 'UNLIMITED',
+          total_resource_slots: JSON.stringify(totalResourceSlots || '{}'),
+          max_session_lifetime: values?.max_session_lifetime,
+          max_concurrent_sessions: values?.max_concurrent_sessions,
+          max_containers_per_session: values?.max_containers_per_session,
+          idle_timeout: values?.idle_timeout,
+          allowed_vfolder_hosts: JSON.stringify(allowedVfolderHosts || '{}'),
+        };
+        if (!isDeprecatedMaxVfolderCountInKeypairResourcePolicy) {
+          props.max_vfolder_count = values?.max_vfolder_count;
+        }
+
+        if (keypairResourcePolicy === null) {
+          commitCreateKeypairResourcePolicy({
+            variables: {
+              name: values?.name,
+              props: props as CreateKeyPairResourcePolicyInput,
+            },
+            onCompleted: (res, errors) => {
+              if (!res?.create_keypair_resource_policy?.ok || errors) {
+                message.error(res?.create_keypair_resource_policy?.msg);
+                onRequestClose();
+              } else {
+                message.success(t('resourcePolicy.SuccessfullyCreated'));
+                onRequestClose(true);
+              }
+            },
+            onError(err) {
+              message.error(err.message);
+            },
+          });
+        } else {
+          commitModifyKeypairResourcePolicy({
+            variables: {
+              name: values?.name,
+              props: props as ModifyKeyPairResourcePolicyInput,
+            },
+            onCompleted: (res, errors) => {
+              if (!res?.modify_keypair_resource_policy?.ok || errors) {
+                message.error(res?.modify_keypair_resource_policy?.msg);
+                onRequestClose();
+              } else {
+                message.success(t('resourcePolicy.SuccessfullyUpdated'));
+                onRequestClose(true);
+              }
+            },
+            onError(err) {
+              message.error(err.message);
+            },
+          });
+        }
+      })
+      .catch(() => {});
   };
 
   return (

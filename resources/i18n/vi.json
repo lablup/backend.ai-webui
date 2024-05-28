@@ -966,7 +966,14 @@
     "KeypairResourcePolicy": "Chính sách tài nguyên cặp khóa",
     "IdleTimeout": "Hết thời gian chờ",
     "CreateResourcePolicy": "Tạo chính sách tài nguyên",
-    "ResourcePolicyNameAlreadyExists": "Tên chính sách tài nguyên đã tồn tại. \nVui lòng thay đổi tên để thêm."
+    "ResourcePolicyNameAlreadyExists": "Tên chính sách tài nguyên đã tồn tại. \nVui lòng thay đổi tên để thêm.",
+    "UserResourcePolicy": "Chính sách tài nguyên người dùng",
+    "MaxVFolderCount": "Số lượng thư mục tối đa",
+    "MaxSessionCountPerModelSession": "Số phiên tối đa trên mỗi phiên mô hình",
+    "MaxQuotaScopeSize": "Kích thước phạm vi hạn ngạch tối đa (GB)",
+    "MaxCustomizedImageCount": "Số lượng hình ảnh tùy chỉnh tối đa",
+    "CreatedAt": "Được tạo tại",
+    "MaxFolderCount": "Số lượng thư mục tối đa"
   },
   "registry": {
     "Hostname": "Tên máy chủ",

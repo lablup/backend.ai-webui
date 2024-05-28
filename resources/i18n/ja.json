@@ -966,7 +966,14 @@
     "KeypairResourcePolicy": "キーペアのリソースポリシー",
     "IdleTimeout": "アイドルタイムアウト",
     "CreateResourcePolicy": "リソースポリシーの作成",
-    "ResourcePolicyNameAlreadyExists": "リソースポリシー名はすでに存在します。\n追加する名前を変更してください。"
+    "ResourcePolicyNameAlreadyExists": "リソースポリシー名はすでに存在します。\n追加する名前を変更してください。",
+    "UserResourcePolicy": "ユーザーリソースポリシー",
+    "MaxVFolderCount": "最大フォルダ数",
+    "MaxSessionCountPerModelSession": "モデルセッションごとの最大セッション数",
+    "MaxQuotaScopeSize": "最大クォータ スコープ サイズ (GB)",
+    "MaxCustomizedImageCount": "カスタマイズされた画像の最大数",
+    "CreatedAt": "作成日",
+    "MaxFolderCount": "最大フォルダ数"
   },
   "registry": {
     "Hostname": "ホスト名",
