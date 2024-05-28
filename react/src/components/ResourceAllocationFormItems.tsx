@@ -230,10 +230,12 @@ const ResourceAllocationFormItems: React.FC<
         });
       }
     }
-    // monkey patch for the issue that the validation result is not updated when the resource group is changed.
-    setTimeout(() => {
-      form.validateFields().catch(() => {});
-    }, 200);
+
+    form
+      .validateFields(['resource'], {
+        recursive: true,
+      })
+      .catch(() => {});
   });
 
   // update allocation preset based on resource group and current image
