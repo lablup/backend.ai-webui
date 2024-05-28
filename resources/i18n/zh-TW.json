@@ -401,7 +401,6 @@
     "Agents": "代理商",
     "IPU": "IPU",
     "IPU(MEM)": "IPU（内存）",
-    "ConvertSessionToImage": "將會話轉換為圖像",
     "SessionName": "會話名稱",
     "SessionId": "會話 ID",
     "EnvironmentAndVersion": "環境及版本",
@@ -1613,6 +1612,7 @@
     "Copied": "已複製"
   },
   "propertyFilter": {
-    "placeHolder": "搜索"
+    "placeHolder": "搜索",
+    "ResetFilter": "重置過濾器"
   }
 }

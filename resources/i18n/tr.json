@@ -401,7 +401,6 @@
     "Agents": "Temsilciler",
     "IPU": "IPU",
     "IPU(MEM)": "IPU (bellek)",
-    "ConvertSessionToImage": "Oturumu Resme Dönüştür",
     "SessionName": "Oturum Adı",
     "SessionId": "Oturum kimliği",
     "EnvironmentAndVersion": "Ortam ve Sürüm",
@@ -1613,6 +1612,7 @@
     "Copied": "Kopyalandı"
   },
   "propertyFilter": {
-    "placeHolder": "Arama"
+    "placeHolder": "Arama",
+    "ResetFilter": "Filtreyi Sıfırla"
   }
 }

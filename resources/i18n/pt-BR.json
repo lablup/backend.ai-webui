@@ -401,7 +401,6 @@
     "Agents": "Agentes",
     "IPU": "IPU",
     "IPU(MEM)": "IPU (memória)",
-    "ConvertSessionToImage": "Converter sessão em imagem",
     "SessionName": "Nome da sessão",
     "SessionId": "Identificação de sessão",
     "EnvironmentAndVersion": "Ambiente e versão",
@@ -1613,6 +1612,7 @@
     "Copied": "Copiado"
   },
   "propertyFilter": {
-    "placeHolder": "Pesquisar"
+    "placeHolder": "Pesquisar",
+    "ResetFilter": "RedefinirFiltro"
   }
 }

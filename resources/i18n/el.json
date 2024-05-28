@@ -401,7 +401,6 @@
     "Agents": "Πράκτορες",
     "IPU": "IPU",
     "IPU(MEM)": "IPU (μνήμη)",
-    "ConvertSessionToImage": "Μετατροπή συνεδρίας σε εικόνα",
     "SessionName": "Όνομα συνεδρίας",
     "SessionId": "Αναγνωριστικό συνεδρίας",
     "EnvironmentAndVersion": "Περιβάλλον και Έκδοση",
@@ -1613,6 +1612,7 @@
     "Copied": "Αντιγράφηκε"
   },
   "propertyFilter": {
-    "placeHolder": "Αναζήτηση"
+    "placeHolder": "Αναζήτηση",
+    "ResetFilter": "Επαναφορά φίλτρου"
   }
 }

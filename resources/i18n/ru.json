@@ -401,7 +401,6 @@
     "Agents": "Агенты",
     "IPU": "IPU",
     "IPU(MEM)": "IPU (память)",
-    "ConvertSessionToImage": "Преобразование сеанса в изображение",
     "SessionName": "Имя сеанса",
     "SessionId": "Идентификатор сессии",
     "EnvironmentAndVersion": "Окружающая среда и версия",
@@ -1613,6 +1612,7 @@
     "Copied": "Скопировано"
   },
   "propertyFilter": {
-    "placeHolder": "Поиск"
+    "placeHolder": "Поиск",
+    "ResetFilter": "СброситьФильтр"
   }
 }
