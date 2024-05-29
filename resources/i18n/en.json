@@ -415,7 +415,6 @@
     "GPU(MEM)": "GPU(Memory)",
     "IPU": "IPU",
     "IPU(MEM)": "IPU(Memory)",
-    "ConvertSessionToImage": "Convert Session to Image",
     "SessionName": "Session Name",
     "SessionId": "Session ID",
     "EnvironmentAndVersion": "Environment and Version",
@@ -1615,6 +1614,7 @@
     "Copied": "Copied"
   },
   "propertyFilter": {
-    "placeHolder": "Search"
+    "placeHolder": "Search",
+    "ResetFilter": "ResetFilter"
   }
 }

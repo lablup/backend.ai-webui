@@ -401,7 +401,6 @@
     "Agents": "ejen",
     "IPU": "IPU",
     "IPU(MEM)": "IPU (memori)",
-    "ConvertSessionToImage": "Tukar Sesi kepada Imej",
     "SessionName": "Nama Sesi",
     "SessionId": "Id Sesi",
     "EnvironmentAndVersion": "Persekitaran dan Versi",
@@ -1613,6 +1612,7 @@
     "Copied": "disalin"
   },
   "propertyFilter": {
-    "placeHolder": "Cari"
+    "placeHolder": "Cari",
+    "ResetFilter": "ResetFilter"
   }
 }

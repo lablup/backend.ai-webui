@@ -401,7 +401,6 @@
     "Agents": "エージェント",
     "IPU": "IPU",
     "IPU(MEM)": "IPU(メモリ)",
-    "ConvertSessionToImage": "セッションをイメージに変換",
     "SessionName": "セッション名",
     "SessionId": "セッションID",
     "EnvironmentAndVersion": "環境とバージョン",
@@ -1613,6 +1612,7 @@
     "Copied": "コピーされました"
   },
   "propertyFilter": {
-    "placeHolder": "検索"
+    "placeHolder": "検索",
+    "ResetFilter": "リセットフィルター"
   }
 }

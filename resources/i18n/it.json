@@ -973,8 +973,7 @@
     "MaxQuotaScopeSize": "Dimensione massima ambito quota (GB)",
     "MaxCustomizedImageCount": "Conteggio massimo di immagini personalizzate",
     "CreatedAt": "Creato a",
-    "MaxFolderCount": "Conteggio massimo cartelle",
-    "ProjectResourcePolicy": "Politica delle risorse del progetto"
+    "MaxFolderCount": "Conteggio massimo cartelle"
   },
   "registry": {
     "Hostname": "Nome host",
@@ -1503,7 +1502,9 @@
     "ServiceUpdated": "Il servizio modello {{ name }} è stato aggiornato correttamente.",
     "ServiceTerminated": "Il servizio modello {{ name }} è stato terminato correttamente.",
     "CannotValidateNow": "Impossibile convalidare il servizio adesso. \nControlla l'allocazione delle risorse o altre configurazioni.",
-    "Ready": "Pronto"
+    "Ready": "Pronto",
+    "ValidationInfo": "Informazioni sulla convalida",
+    "Validate": "Convalidare"
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",
@@ -1610,6 +1611,7 @@
     "Copied": "Copiato"
   },
   "propertyFilter": {
-    "placeHolder": "Ricerca"
+    "placeHolder": "Ricerca",
+    "ResetFilter": "Reimposta filtro"
   }
 }

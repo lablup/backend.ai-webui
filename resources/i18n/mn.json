@@ -974,8 +974,7 @@
     "MaxQuotaScopeSize": "Хамгийн их квот хамрах хүрээний хэмжээ (ГБ)",
     "MaxCustomizedImageCount": "Хамгийн их тохируулсан зургийн тоо",
     "CreatedAt": "Үүсгэсэн",
-    "MaxFolderCount": "Хамгийн их хавтасны тоо",
-    "ProjectResourcePolicy": "Төслийн нөөцийн бодлого"
+    "MaxFolderCount": "Хамгийн их хавтасны тоо"
   },
   "registry": {
     "Hostname": "Хостын нэр",
@@ -1614,6 +1613,7 @@
     "Copied": "Хуулсан"
   },
   "propertyFilter": {
-    "placeHolder": "Хайх"
+    "placeHolder": "Хайх",
+    "ResetFilter": "Reset Filter"
   }
 }

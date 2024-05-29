@@ -1231,7 +1231,6 @@
     "Agents": "Agentit",
     "IPU": "IPU",
     "IPU(MEM)": "IPU (muisti)",
-    "ConvertSessionToImage": "Muunna istunto kuvaksi",
     "SessionName": "Istunnon nimi",
     "SessionId": "Istunnon tunniste",
     "EnvironmentAndVersion": "Ympäristö ja versio",
@@ -1613,6 +1612,7 @@
     "Copied": "Kopioitu"
   },
   "propertyFilter": {
-    "placeHolder": "Etsi"
+    "placeHolder": "Etsi",
+    "ResetFilter": "ResetFilter"
   }
 }

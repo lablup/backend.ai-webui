@@ -401,7 +401,6 @@
     "GPU(MEM)": "GPU (memori)",
     "IPU": "IPU",
     "IPU(MEM)": "IPU (memori)",
-    "ConvertSessionToImage": "Ubah Sesi menjadi Gambar",
     "SessionName": "Nama Sesi",
     "SessionId": "Id Sesi",
     "EnvironmentAndVersion": "Lingkungan dan Versi",
@@ -1557,7 +1556,9 @@
     "ServiceUpdated": "Layanan model {{ name }} telah berhasil diperbarui.",
     "ServiceTerminated": "Layanan model {{ name }} telah berhasil dihentikan.",
     "CannotValidateNow": "Tidak dapat memvalidasi layanan sekarang. \nSilakan periksa alokasi sumber daya atau konfigurasi lainnya.",
-    "Ready": "Siap"
+    "Ready": "Siap",
+    "Validate": "Mengesahkan",
+    "ValidationInfo": "Info Validasi"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",
@@ -1611,6 +1612,7 @@
     "Copied": "Disalin"
   },
   "propertyFilter": {
-    "placeHolder": "Pencarian"
+    "placeHolder": "Pencarian",
+    "ResetFilter": "Filter Ulang"
   }
 }

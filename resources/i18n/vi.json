@@ -401,7 +401,6 @@
     "Agents": "Đại lý",
     "IPU": "IPU",
     "IPU(MEM)": "IPU (bộ nhớ)",
-    "ConvertSessionToImage": "Chuyển đổi phiên thành hình ảnh",
     "SessionName": "Tên phiên",
     "SessionId": "Id phiên",
     "EnvironmentAndVersion": "Môi trường và phiên bản",
@@ -1613,6 +1612,7 @@
     "Copied": "Đã sao chép"
   },
   "propertyFilter": {
-    "placeHolder": "Tìm kiếm"
+    "placeHolder": "Tìm kiếm",
+    "ResetFilter": "Đặt lại bộ lọc"
   }
 }
