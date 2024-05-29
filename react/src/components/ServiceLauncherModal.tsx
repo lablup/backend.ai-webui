@@ -388,7 +388,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             supported_accelerators
           }
           name
-          model_destination_path
+          model_definition_path
           model_mount_destination
           extra_mounts @since(version: "24.03.4") {
             id
