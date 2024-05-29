@@ -761,7 +761,8 @@
       "DeleteForeverDesc": "UWAGA: wybrane elementy zostaną usunięte na zawsze i nie będzie można ich przywrócić."
     },
     "ask": {
-      "DoYouWantToProceed": "Czy chcesz kontynuować?"
+      "DoYouWantToProceed": "Czy chcesz kontynuować?",
+      "DoYouWantToDeleteSomething": "Czy na pewno chcesz usunąć \"{{ name }}\"?"
     },
     "title": {
       "LetsDouble-Check": "Sprawdźmy dokładnie",
@@ -1486,7 +1487,6 @@
     "RoutingsCount": "Liczba tras",
     "Active/Total": "Aktywny/Ogółem",
     "Public": "Publiczny",
-    "YouAreAboutToTerminate": "Zamierzasz zakończyć",
     "Owner": "Właściciel",
     "Validate": "Uprawomocnić",
     "Cancel": "Anulować",
@@ -1503,9 +1503,9 @@
     "FailedToUpdateService": "Nie udało się zaktualizować usługi.",
     "ServiceCreated": "Usługa modelowa {{ name }} została pomyślnie utworzona.",
     "ServiceUpdated": "Usługa modelowa {{ name }} została pomyślnie zaktualizowana.",
-    "ServiceTerminated": "Usługa modelowa {{ name }} została pomyślnie zakończona.",
     "CannotValidateNow": "Nie można teraz zweryfikować usługi. \nSprawdź alokację zasobów lub inne konfiguracje.",
-    "Ready": "Gotowy"
+    "Ready": "Gotowy",
+    "ServiceTerminated": "Wysłano żądanie zamknięcia usługi modelowej „{{ name }}”."
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",

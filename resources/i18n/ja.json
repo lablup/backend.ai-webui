@@ -761,7 +761,8 @@
       "DeleteForeverDesc": "警告: 選択したアイテムは完全に削除され、復元することはできません。"
     },
     "ask": {
-      "DoYouWantToProceed": "続行しますか？"
+      "DoYouWantToProceed": "続行しますか？",
+      "DoYouWantToDeleteSomething": "本当に\"{{ name }}\"を削除しますか？"
     },
     "title": {
       "LetsDouble-Check": "再確認しましょう",
@@ -1485,7 +1486,6 @@
     "RoutingsCount": "ルーティング数",
     "Active/Total": "アクティブ/全体",
     "Public": "公開",
-    "YouAreAboutToTerminate": "以下のサービスを削除しようとします：",
     "Image": "イメージ",
     "Owner": "所有者",
     "Validate": "検証",
@@ -1503,9 +1503,9 @@
     "FailedToUpdateService": "サービスの更新に失敗しました。",
     "ServiceCreated": "モデル サービス {{ name }} が正常に作成されました。",
     "ServiceUpdated": "モデル サービス {{ name }} は正常に更新されました。",
-    "ServiceTerminated": "モデル サービス {{ name }} は正常に終了しました。",
     "CannotValidateNow": "現在サービスを検証できません。\nリソース割り当てまたはその他の構成を確認してください。",
-    "Ready": "準備ができて"
+    "Ready": "準備ができて",
+    "ServiceTerminated": "モデルサービス「{{name}}」の終了要求が送信されました。"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

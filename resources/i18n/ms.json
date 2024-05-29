@@ -765,7 +765,8 @@
       "Error": "ralat"
     },
     "ask": {
-      "DoYouWantToProceed": "Adakah anda mahu meneruskan?"
+      "DoYouWantToProceed": "Adakah anda mahu meneruskan?",
+      "DoYouWantToDeleteSomething": "Adakah anda pasti mahu memadamkan \"{{ name }}\"?"
     },
     "title": {
       "LetsDouble-Check": "Mari semak semula",
@@ -1527,7 +1528,6 @@
     "RoutingsCount": "Kiraan Laluan",
     "Active/Total": "Aktif/Jumlah",
     "Public": "Awam",
-    "YouAreAboutToTerminate": "Anda akan menamatkan perkhidmatan",
     "Owner": "Pemilik",
     "Validate": "Sahkan",
     "Cancel": "Batal",
@@ -1544,9 +1544,9 @@
     "FailedToUpdateService": "Gagal mengemas kini perkhidmatan.",
     "ServiceCreated": "Perkhidmatan model {{ name }} telah berjaya dibuat.",
     "ServiceUpdated": "Perkhidmatan model {{ name }} telah berjaya dikemas kini.",
-    "ServiceTerminated": "Perkhidmatan model {{ name }} telah berjaya ditamatkan.",
     "CannotValidateNow": "Tidak dapat mengesahkan perkhidmatan sekarang. \nSila semak peruntukan sumber atau konfigurasi lain.",
-    "Ready": "sedia"
+    "Ready": "sedia",
+    "ServiceTerminated": "Permintaan penutupan telah dihantar untuk perkhidmatan model '{{ name }}'."
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

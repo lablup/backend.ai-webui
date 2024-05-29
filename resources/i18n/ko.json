@@ -434,7 +434,6 @@
     "RouteId": "라우트 ID",
     "SessionId": "세션 ID",
     "TrafficRatio": "트래픽 비율",
-    "YouAreAboutToTerminate": "아래의 서비스를 삭제하려고 합니다: ",
     "ClearErrors": "오류 지우고 재시도",
     "ServingRouteErrorModalTitle": "서빙 라우트 에러",
     "FailedToStartService": "서비스를 생성하지 못했습니다.",
@@ -470,9 +469,9 @@
     "FailedToUpdateService": "서비스를 업데이트하지 못했습니다.",
     "ServiceCreated": "모델 서비스 {{ name }}이(가) 성공적으로 생성되었습니다.",
     "ServiceUpdated": "모델 서비스 {{ name }}이(가) 성공적으로 업데이트되었습니다.",
-    "ServiceTerminated": "모델 서비스 {{ name }}이(가) 성공적으로 종료되었습니다.",
     "CannotValidateNow": "지금은 서비스를 확인할 수 없습니다. \n리소스 할당이나 기타 구성을 확인하세요.",
-    "Ready": "준비"
+    "Ready": "준비",
+    "ServiceTerminated": "모델 서비스 '{{ name }}'에 대한 종료 요청이 전송되었습니다."
   },
   "button": {
     "Cancel": "취소",
@@ -863,7 +862,8 @@
       "DeleteForeverDesc": "경고: 선택한 항목은 완전히 삭제되며 복원할 수 없습니다."
     },
     "ask": {
-      "DoYouWantToProceed": "계속 진행하시겠습니까?"
+      "DoYouWantToProceed": "계속 진행하시겠습니까?",
+      "DoYouWantToDeleteSomething": "\"{{ name }}\"을(를) 삭제하시겠습니까?"
     },
     "title": {
       "LetsDouble-Check": "한 번 더 확인합시다",

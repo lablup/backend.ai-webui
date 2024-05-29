@@ -761,7 +761,8 @@
       "DeleteForeverDesc": "ACHTUNG: Ausgewählte Elemente werden für immer gelöscht und Sie können sie nicht wiederherstellen."
     },
     "ask": {
-      "DoYouWantToProceed": "Willst du fortfahren?"
+      "DoYouWantToProceed": "Willst du fortfahren?",
+      "DoYouWantToDeleteSomething": "Sind Sie sicher, dass Sie \"{{ Name }}\" löschen wollen?"
     },
     "title": {
       "LetsDouble-Check": "Lass uns das überprüfen",
@@ -1486,7 +1487,6 @@
     "RoutingsCount": "Routings zählen",
     "Active/Total": "Aktiv/Gesamt",
     "Public": "Öffentlich",
-    "YouAreAboutToTerminate": "Sie stehen kurz vor der Beendigung",
     "Owner": "Eigentümer",
     "Validate": "Bestätigen",
     "Cancel": "Stornieren",
@@ -1503,9 +1503,9 @@
     "FailedToUpdateService": "Der Dienst konnte nicht aktualisiert werden.",
     "ServiceCreated": "Der Modelldienst {{ name }} wurde erfolgreich erstellt.",
     "ServiceUpdated": "Der Modelldienst {{ name }} wurde erfolgreich aktualisiert.",
-    "ServiceTerminated": "Der Modelldienst {{ name }} wurde erfolgreich beendet.",
     "CannotValidateNow": "Der Dienst kann derzeit nicht validiert werden. \nBitte überprüfen Sie die Ressourcenzuweisung oder andere Konfigurationen.",
-    "Ready": "Bereit"
+    "Ready": "Bereit",
+    "ServiceTerminated": "Für den Modelldienst „{{ name }}“ wurde eine Anforderung zum Herunterfahren gesendet."
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

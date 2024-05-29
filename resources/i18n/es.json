@@ -410,7 +410,8 @@
       "Error": "Error"
     },
     "ask": {
-      "DoYouWantToProceed": "¿Quieres continuar?"
+      "DoYouWantToProceed": "¿Quieres continuar?",
+      "DoYouWantToDeleteSomething": "¿Estás seguro de que quieres borrar \"{{ name }}\"?"
     },
     "title": {
       "LetsDouble-Check": "Doble comprobación",
@@ -747,7 +748,6 @@
     "TokenGenerated": "Token generado",
     "TokenGenerationFailed": "Generación de token fallida. Por favor, inténtelo de nuevo.",
     "TrafficRatio": "Ratio de tráfico",
-    "YouAreAboutToTerminate": "Está a punto de terminar",
     "resources": "Recursos",
     "Owner": "Dueño",
     "Validate": "Validar",
@@ -765,9 +765,9 @@
     "FailedToUpdateService": "No se pudo actualizar el servicio.",
     "ServiceCreated": "El servicio modelo {{ name }} se ha creado correctamente.",
     "ServiceUpdated": "El servicio de modelo {{ name }} se ha actualizado correctamente.",
-    "ServiceTerminated": "El servicio de modelo {{ name }} se ha finalizado correctamente.",
     "CannotValidateNow": "No se puede validar el servicio ahora. \nVerifique la asignación de recursos u otras configuraciones.",
-    "Ready": "Listo"
+    "Ready": "Listo",
+    "ServiceTerminated": "Se envió una solicitud de cierre para el servicio modelo '{{ name }}'."
   },
   "notification": {
     "Initializing": "Inicializando...",

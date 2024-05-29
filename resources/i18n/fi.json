@@ -410,7 +410,8 @@
       "Error": "Virhe"
     },
     "ask": {
-      "DoYouWantToProceed": "Haluatteko jatkaa?"
+      "DoYouWantToProceed": "Haluatteko jatkaa?",
+      "DoYouWantToDeleteSomething": "Oletko varma, että haluat poistaa \"{{ name }}\"?\"?"
     },
     "title": {
       "LetsDouble-Check": "Tupla-tarkistetaan",
@@ -745,7 +746,6 @@
     "TokenGenerated": "Tuotettu merkki",
     "TokenGenerationFailed": "Tokenin luominen epäonnistui. yritä uudelleen.",
     "TrafficRatio": "Liikennesuhde",
-    "YouAreAboutToTerminate": "Olet lopettamassa",
     "resources": "Resurssit",
     "Owner": "Omistaja",
     "Validate": "Vahvista",
@@ -763,9 +763,9 @@
     "FailedToUpdateService": "Palvelun päivittäminen epäonnistui.",
     "ServiceCreated": "Mallipalvelun {{ name }} luominen onnistui.",
     "ServiceUpdated": "Mallipalvelun {{ name }} päivitys onnistui.",
-    "ServiceTerminated": "Mallipalvelu {{ name }} on lopetettu onnistuneesti.",
     "CannotValidateNow": "Palvelua ei voi vahvistaa nyt. \nTarkista resurssien allokaatio tai muut asetukset.",
-    "Ready": "Valmis"
+    "Ready": "Valmis",
+    "ServiceTerminated": "Mallipalvelun '{{ name }}' sammutuspyyntö lähetettiin."
   },
   "notification": {
     "Initializing": "Aloitetaan...",

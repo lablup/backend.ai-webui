@@ -761,7 +761,8 @@
       "DeleteForeverDesc": "警告：所选项目将被永久删除，并且您将无法恢复它们。"
     },
     "ask": {
-      "DoYouWantToProceed": "您要继续吗？"
+      "DoYouWantToProceed": "您要继续吗？",
+      "DoYouWantToDeleteSomething": "您确定要删除\"{{ 名称 }}}\"吗？"
     },
     "title": {
       "LetsDouble-Check": "让我们仔细检查",
@@ -1526,7 +1527,6 @@
     "RoutingsCount": "路由计数",
     "Active/Total": "活动/总数",
     "Public": "公众",
-    "YouAreAboutToTerminate": "您即将终止",
     "Image": "图片",
     "Owner": "所有者",
     "Validate": "证实",
@@ -1544,9 +1544,9 @@
     "FailedToUpdateService": "更新服务失败。",
     "ServiceCreated": "模型服务 {{ name }} 已成功创建。",
     "ServiceUpdated": "模型服务 {{ name }} 已成功更新。",
-    "ServiceTerminated": "模型服务 {{ name }} 已成功终止。",
     "CannotValidateNow": "现在无法验证服务。\n请检查资源分配或其他配置。",
-    "Ready": "准备好"
+    "Ready": "准备好",
+    "ServiceTerminated": "已为模型服务“{{ name }}”发送关闭请求。"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

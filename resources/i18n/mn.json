@@ -763,7 +763,8 @@
       "DeleteForeverDesc": "АНХААРУУЛГА: сонгосон зүйлс үүрд устах бөгөөд та тэдгээрийг сэргээх боломжгүй болно."
     },
     "ask": {
-      "DoYouWantToProceed": "Та үргэлжлүүлэхийг хүсч байна уу?"
+      "DoYouWantToProceed": "Та үргэлжлүүлэхийг хүсч байна уу?",
+      "DoYouWantToDeleteSomething": "Та \"{{ name }}\"-г устгахдаа итгэлтэй байна уу?"
     },
     "title": {
       "LetsDouble-Check": "Давхар шалгуулъя",
@@ -1521,7 +1522,6 @@
     "RoutingsCount": "Чиглүүлэлтийн тоо",
     "Active/Total": "Идэвхтэй/Нийт",
     "Public": "Олон нийтийн",
-    "YouAreAboutToTerminate": "Та дуусгавар болгох гэж байна",
     "FailedToStartService": "Үйлчилгээг үүсгэж чадсангүй.",
     "ServingRouteErrorModalTitle": "Үйлчилгээний маршрутын алдаа",
     "ClearErrors": "Алдааг арилгаад дахин оролдоно уу",
@@ -1557,9 +1557,9 @@
     "FailedToUpdateService": "Үйлчилгээг шинэчилж чадсангүй.",
     "ServiceCreated": "Загвар үйлчилгээ {{ name }} амжилттай үүсгэгдсэн.",
     "ServiceUpdated": "Загвар үйлчилгээ {{ name }} амжилттай шинэчлэгдсэн.",
-    "ServiceTerminated": "Загварын үйлчилгээ {{ name }} амжилттай хаагдсан.",
     "CannotValidateNow": "Одоо үйлчилгээг баталгаажуулах боломжгүй байна. \nНөөцийн хуваарилалт эсвэл бусад тохиргоог шалгана уу.",
-    "Ready": "Бэлэн"
+    "Ready": "Бэлэн",
+    "ServiceTerminated": "'{{ name }}' загварын үйлчилгээнд хаах хүсэлт илгээсэн."
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",
