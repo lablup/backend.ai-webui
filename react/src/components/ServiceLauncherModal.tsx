@@ -23,7 +23,7 @@ import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
 import { ServiceLauncherModalFragment$key } from './__generated__/ServiceLauncherModalFragment.graphql';
 import { ServiceLauncherModalModifyMutation } from './__generated__/ServiceLauncherModalModifyMutation.graphql';
-import MinusOutlined from '@ant-design/icons';
+import { MinusOutlined } from '@ant-design/icons';
 import {
   App,
   Button,
