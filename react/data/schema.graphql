@@ -603,6 +603,9 @@ type KeyPairResourcePolicy {
   max_vfolder_size: BigInt @deprecated(reason: "Deprecated since 23.09.4.")
   max_quota_scope_size: BigInt @deprecated(reason: "Deprecated since 23.09.6.")
 
+  """Added in 23.03.3."""
+  max_concurrent_sftp_sessions: Int
+
   """Added in 24.03.4."""
   max_pending_session_count: Int
 
@@ -697,9 +700,13 @@ type StorageVolumeList implements PaginatedList {
   total_count: Int!
 }
 
+"""Added in 24.03.4."""
 type VirtualFolderNode implements Node {
   """The ID of the object"""
   id: ID!
+
+  """Added in 24.03.4. UUID type id of DB vfolders row"""
+  row_id: UUID
   host: String
   quota_scope_id: String
   name: String
@@ -715,7 +722,6 @@ type VirtualFolderNode implements Node {
   max_files: Int
   max_size: BigInt
   created_at: DateTime
-  modified_at: DateTime
   last_used: DateTime
   num_files: Int
   cur_size: BigInt
@@ -847,6 +853,9 @@ type Endpoint implements Item {
   resource_slots: JSONString
   url: String
   model: UUID
+
+  """Added in 24.03.4."""
+  model_definition_path: String
   model_mount_destiation: String @deprecated(reason: "Deprecated since 24.03.4; use `model_mount_destination` instead")
 
   """Added in 24.03.4."""
@@ -1767,6 +1776,9 @@ input ModifyEndpointInput {
   image: ImageRefType
   name: String
   resource_group: String
+
+  """Added in 24.03.4."""
+  model_definition_path: String
   open_to_public: Boolean
 
   """Added in 24.03.4."""

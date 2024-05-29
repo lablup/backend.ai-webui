@@ -1,3 +1,4 @@
+import { VFolder } from './VFolderSelect';
 import VFolderTable, {
   AliasMap,
   VFolderTableProps,
@@ -10,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 interface VFolderTableFormItemProps extends Omit<FormItemProps, 'name'> {
   filter?: VFolderTableProps['filter'];
-  rowKey?: string;
+  rowKey?: keyof VFolder;
   tableProps?: Partial<VFolderTableProps>;
 }
 

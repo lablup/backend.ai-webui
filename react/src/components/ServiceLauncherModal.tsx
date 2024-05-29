@@ -158,7 +158,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         model
         model_mount_destination @since(version: "24.03.4")
         extra_mounts @since(version: "24.03.4") {
-          id
+          row_id
           host
           quota_scope_id
           name
@@ -174,7 +174,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           max_files
           max_size
           created_at
-          modified_at
           last_used
           num_files
           cur_size
@@ -207,7 +206,14 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     endpointFrgmt,
   );
 
-  console.log(endpoint);
+  // FIXME: temporally manipulate id value to row_id
+  //   const endpoint = { ...rawEndpoint,
+  //     extra_mounts: {
+  //       //@ts-ignore
+  //       id: rawEndpoint?.extra_mounts?.row_id,
+  //       ...rawEndpoint?.extra_mounts
+  //   }
+  // }
 
   const checkManualImageAllowed = (
     isConfigAllowed = false,
@@ -396,7 +402,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             max_files
             max_size
             created_at
-            modified_at
             last_used
             num_files
             cur_size
@@ -754,13 +759,17 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       required
                     >
                       <Suspense fallback={<Skeleton.Input active />}>
-                        <VFolderLazyView uuid={endpoint?.model} />
+                        <VFolderLazyView
+                          uuid={endpoint?.model}
+                          mountDestination={endpoint?.model_mount_destination}
+                        />
                       </Suspense>
                     </Form.Item>
                   )
                 )}
                 <VFolderTableFormItem
-                  rowKey="id"
+                  // initialValue={endpoint?.extra_mounts?.map((item) => item.row_id)}
+                  rowKey={'id'}
                   label={t('modelService.AdditionalMounts')}
                   filter={(vf) =>
                     vf.name !== selectedModelFolder && vf.status === 'ready'
