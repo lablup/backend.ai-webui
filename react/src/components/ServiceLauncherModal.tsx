@@ -36,13 +36,7 @@ import {
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, {
-  useState,
-  Suspense,
-  useRef,
-  useEffect,
-  useTransition,
-} from 'react';
+import React, { useState, Suspense, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
 
@@ -205,15 +199,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     `,
     endpointFrgmt,
   );
-
-  // FIXME: temporally manipulate id value to row_id
-  //   const endpoint = { ...rawEndpoint,
-  //     extra_mounts: {
-  //       //@ts-ignore
-  //       id: rawEndpoint?.extra_mounts?.row_id,
-  //       ...rawEndpoint?.extra_mounts
-  //   }
-  // }
 
   const checkManualImageAllowed = (
     isConfigAllowed = false,
@@ -674,6 +659,12 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       version: `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`,
                       image: endpoint?.image_object,
                     },
+                    vFolderName: endpoint?.model_mount_destination,
+                    mounts: _.map(
+                      endpoint?.extra_mounts,
+                      (item) => item?.row_id,
+                    ),
+                    // TODO: set mounts alias map according to extra_mounts if possible
                   }
                 : {
                     desiredRoutingCount: 1,
