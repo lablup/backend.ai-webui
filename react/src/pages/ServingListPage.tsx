@@ -81,6 +81,9 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     useUpdatableState('initial-fetch');
   // FIXME: need to apply filtering type of service later
   const [selectedTab] = useState<TabKey>('services');
+  const [optimisticDeletingId, setOptimisticDeletingId] = useState<
+    string | null
+  >();
   // const [selectedGeneration, setSelectedGeneration] = useState<
   //   "current" | "next"
   // >("next");
@@ -151,6 +154,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             okType="danger"
             okText={t('button.Delete')}
             onConfirm={() => {
+              setOptimisticDeletingId(row.endpoint_id);
               // FIXME: any better idea for handling result?
               terminateModelServiceMutation.mutate(
                 terminatingModelService?.endpoint_id || '',
@@ -188,7 +192,10 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   }
                 />
               }
-              loading={terminateModelServiceMutation.isLoading}
+              loading={
+                terminateModelServiceMutation.isLoading &&
+                optimisticDeletingId === row.endpoint_id
+              }
               disabled={
                 row.desired_session_count < 0 ||
                 row.status?.toLowerCase() === 'destroying'
