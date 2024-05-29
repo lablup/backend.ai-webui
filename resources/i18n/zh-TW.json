@@ -761,7 +761,8 @@
       "DeleteForeverDesc": "警告：所選項目將永久刪除，並且您將無法恢復它們。"
     },
     "ask": {
-      "DoYouWantToProceed": "您要繼續嗎？"
+      "DoYouWantToProceed": "您要繼續嗎？",
+      "DoYouWantToDeleteSomething": "您确定要删除\"{{ 名称 }}}\"吗？"
     },
     "title": {
       "LetsDouble-Check": "讓我們仔細檢查",

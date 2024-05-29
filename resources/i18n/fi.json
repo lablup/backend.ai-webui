@@ -410,7 +410,8 @@
       "Error": "Virhe"
     },
     "ask": {
-      "DoYouWantToProceed": "Haluatteko jatkaa?"
+      "DoYouWantToProceed": "Haluatteko jatkaa?",
+      "DoYouWantToDeleteSomething": "Oletko varma, että haluat poistaa \"{{ name }}\"?\"?"
     },
     "title": {
       "LetsDouble-Check": "Tupla-tarkistetaan",

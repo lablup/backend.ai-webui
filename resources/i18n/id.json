@@ -762,7 +762,8 @@
       "DeleteForeverDesc": "PERINGATAN: item yang dipilih akan dihapus selamanya dan Anda tidak dapat memulihkannya."
     },
     "ask": {
-      "DoYouWantToProceed": "Apakah Anda ingin lanjut?"
+      "DoYouWantToProceed": "Apakah Anda ingin lanjut?",
+      "DoYouWantToDeleteSomething": "Apakah Anda yakin ingin menghapus \"{{ nama }}\"?"
     },
     "title": {
       "LetsDouble-Check": "Mari Periksa Kembali",

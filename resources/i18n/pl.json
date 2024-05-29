@@ -761,7 +761,8 @@
       "DeleteForeverDesc": "UWAGA: wybrane elementy zostaną usunięte na zawsze i nie będzie można ich przywrócić."
     },
     "ask": {
-      "DoYouWantToProceed": "Czy chcesz kontynuować?"
+      "DoYouWantToProceed": "Czy chcesz kontynuować?",
+      "DoYouWantToDeleteSomething": "Czy na pewno chcesz usunąć \"{{ name }}\"?"
     },
     "title": {
       "LetsDouble-Check": "Sprawdźmy dokładnie",

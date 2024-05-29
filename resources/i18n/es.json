@@ -410,7 +410,8 @@
       "Error": "Error"
     },
     "ask": {
-      "DoYouWantToProceed": "¿Quieres continuar?"
+      "DoYouWantToProceed": "¿Quieres continuar?",
+      "DoYouWantToDeleteSomething": "¿Estás seguro de que quieres borrar \"{{ name }}\"?"
     },
     "title": {
       "LetsDouble-Check": "Doble comprobación",

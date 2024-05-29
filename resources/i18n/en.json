@@ -875,7 +875,8 @@
       "DeleteForeverDesc": "WARNING: selected items will be deleted forever and you won't be able to restore them."
     },
     "ask": {
-      "DoYouWantToProceed": "Do you want to proceed?"
+      "DoYouWantToProceed": "Do you want to proceed?",
+      "DoYouWantToDeleteSomething": "Are you sure you want to delete \"{{ name }}\"?"
     },
     "title": {
       "Notice": "Notice",

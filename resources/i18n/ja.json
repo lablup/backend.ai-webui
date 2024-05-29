@@ -761,7 +761,8 @@
       "DeleteForeverDesc": "警告: 選択したアイテムは完全に削除され、復元することはできません。"
     },
     "ask": {
-      "DoYouWantToProceed": "続行しますか？"
+      "DoYouWantToProceed": "続行しますか？",
+      "DoYouWantToDeleteSomething": "本当に\"{{ name }}\"を削除しますか？"
     },
     "title": {
       "LetsDouble-Check": "再確認しましょう",

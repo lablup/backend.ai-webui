@@ -144,7 +144,9 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             }}
           />
           <Popconfirm
-            title={t('dialog.ask.DoYouWantToProceed')}
+            title={t('dialog.ask.DoYouWantToDeleteSomething', {
+              name: row.name,
+            })}
             description={t('dialog.warning.CannotBeUndone')}
             okType="danger"
             okText={t('button.Delete')}

@@ -761,7 +761,8 @@
       "DeleteForeverDesc": "警告：所选项目将被永久删除，并且您将无法恢复它们。"
     },
     "ask": {
-      "DoYouWantToProceed": "您要继续吗？"
+      "DoYouWantToProceed": "您要继续吗？",
+      "DoYouWantToDeleteSomething": "您确定要删除\"{{ 名称 }}}\"吗？"
     },
     "title": {
       "LetsDouble-Check": "让我们仔细检查",

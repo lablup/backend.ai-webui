@@ -765,7 +765,8 @@
       "Error": "ralat"
     },
     "ask": {
-      "DoYouWantToProceed": "Adakah anda mahu meneruskan?"
+      "DoYouWantToProceed": "Adakah anda mahu meneruskan?",
+      "DoYouWantToDeleteSomething": "Adakah anda pasti mahu memadamkan \"{{ name }}\"?"
     },
     "title": {
       "LetsDouble-Check": "Mari semak semula",

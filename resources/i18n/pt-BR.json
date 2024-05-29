@@ -761,7 +761,8 @@
       "DeleteForeverDesc": "AVISO: os itens selecionados serão excluídos para sempre e você não poderá restaurá-los."
     },
     "ask": {
-      "DoYouWantToProceed": "Você quer prosseguir?"
+      "DoYouWantToProceed": "Você quer prosseguir?",
+      "DoYouWantToDeleteSomething": "Tem a certeza de que pretende eliminar \"{{ name }}\"?"
     },
     "title": {
       "LetsDouble-Check": "Vamos verificar novamente",

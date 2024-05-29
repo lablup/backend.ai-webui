@@ -761,7 +761,8 @@
       "DeleteForeverDesc": "UYARI: seçilen öğeler kalıcı olarak silinecek ve bunları geri yükleyemeyeceksiniz."
     },
     "ask": {
-      "DoYouWantToProceed": "Devam etmek istiyor musunuz?"
+      "DoYouWantToProceed": "Devam etmek istiyor musunuz?",
+      "DoYouWantToDeleteSomething": "\"{{ name }}\" silmek istediğinizden emin misiniz?"
     },
     "title": {
       "LetsDouble-Check": "İki kez kontrol edelim",
