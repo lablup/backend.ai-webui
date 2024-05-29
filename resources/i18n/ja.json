@@ -1506,7 +1506,7 @@
     "CannotValidateNow": "現在サービスを検証できません。\nリソース割り当てまたはその他の構成を確認してください。",
     "Ready": "準備ができて",
     "ServiceTerminated": "モデルサービス「{{name}}」の終了要求が送信されました。",
-    "ModelMountDestination": "Model definition fileのパス",
+    "ModelMountDestination": "モデルフォルダーのマウント先",
     "AdditionalMounts": "追加のマウント",
     "ModelDefinitionPath": "モデル定義パス"
   },

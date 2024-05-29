@@ -1559,7 +1559,7 @@
     "CannotValidateNow": "Невозможно проверить услугу сейчас. \nПожалуйста, проверьте распределение ресурсов или другие конфигурации.",
     "Ready": "Готовый",
     "ServiceTerminated": "Для службы модели «{{ name }}» отправлен запрос на завершение работы.",
-    "ModelMountDestination": "Путь Model definition file",
+    "ModelMountDestination": "Место монтирования для папки модели",
     "AdditionalMounts": "Дополнительные крепления",
     "ModelDefinitionPath": "Путь определения модели"
   },

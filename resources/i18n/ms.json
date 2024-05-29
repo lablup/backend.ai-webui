@@ -1547,7 +1547,7 @@
     "CannotValidateNow": "Tidak dapat mengesahkan perkhidmatan sekarang. \nSila semak peruntukan sumber atau konfigurasi lain.",
     "Ready": "sedia",
     "ServiceTerminated": "Permintaan penutupan telah dihantar untuk perkhidmatan model '{{ name }}'.",
-    "ModelMountDestination": "Laluan Model definition file.",
+    "ModelMountDestination": "destinasi lekap untuk folder model",
     "AdditionalMounts": "Lekapan Tambahan",
     "ModelDefinitionPath": "Laluan Definisi Model"
   },

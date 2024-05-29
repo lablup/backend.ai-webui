@@ -1506,7 +1506,7 @@
     "CannotValidateNow": "Nie można teraz zweryfikować usługi. \nSprawdź alokację zasobów lub inne konfiguracje.",
     "Ready": "Gotowy",
     "ServiceTerminated": "Wysłano żądanie zamknięcia usługi modelowej „{{ name }}”.",
-    "ModelMountDestination": "Ścieżka Model definition file.",
+    "ModelMountDestination": "miejsce docelowe montażu dla folderu modelu",
     "AdditionalMounts": "Dodatkowe mocowania",
     "ModelDefinitionPath": "Ścieżka definicji modelu"
   },

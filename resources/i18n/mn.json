@@ -1560,7 +1560,7 @@
     "CannotValidateNow": "Одоо үйлчилгээг баталгаажуулах боломжгүй байна. \nНөөцийн хуваарилалт эсвэл бусад тохиргоог шалгана уу.",
     "Ready": "Бэлэн",
     "ServiceTerminated": "'{{ name }}' загварын үйлчилгээнд хаах хүсэлт илгээсэн.",
-    "ModelMountDestination": "Model definition file зам",
+    "ModelMountDestination": "Загварын хавтсанд холбох очих газар",
     "AdditionalMounts": "Нэмэлт бэхэлгээ",
     "ModelDefinitionPath": "Загварын тодорхойлолтын зам"
   },

@@ -485,7 +485,7 @@
     "ServiceCreated": "Model service {{ name }} has been created successfully.",
     "ServiceUpdated": "Model service {{ name }} has been updated successfully.",
     "ServiceTerminated": "A shutdown request was sent for model service '{{ name }}'.",
-    "ModelMountDestination": "Model definition file path",
+    "ModelMountDestination": "mount destination for model folder",
     "AdditionalMounts": "Additional Mounts",
     "ModelDefinitionPath": "Model Definition path"
   },

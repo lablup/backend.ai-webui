@@ -1559,7 +1559,7 @@
     "CannotValidateNow": "Impossible de valider le service maintenant. \nVeuillez vérifier l'allocation des ressources ou d'autres configurations.",
     "Ready": "Prêt",
     "ServiceTerminated": "Une demande d'arrêt a été envoyée pour le service modèle '{{ name }}'.",
-    "ModelMountDestination": "Chemin Model definition file",
+    "ModelMountDestination": "destination de montage pour le dossier modèle",
     "AdditionalMounts": "Supports supplémentaires",
     "ModelDefinitionPath": "Chemin de définition du modèle"
   },

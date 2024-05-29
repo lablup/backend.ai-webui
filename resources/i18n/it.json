@@ -1505,7 +1505,7 @@
     "ValidationInfo": "Informazioni sulla convalida",
     "Validate": "Convalidare",
     "ServiceTerminated": "È stata inviata una richiesta di arresto per il servizio modello '{{ name }}'.",
-    "ModelMountDestination": "Percorso Model definition file.",
+    "ModelMountDestination": "destinazione di montaggio per la cartella del modello",
     "AdditionalMounts": "Supporti aggiuntivi",
     "ModelDefinitionPath": "Percorso di definizione del modello"
   },

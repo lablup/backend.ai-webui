@@ -768,7 +768,7 @@
     "CannotValidateNow": "No se puede validar el servicio ahora. \nVerifique la asignación de recursos u otras configuraciones.",
     "Ready": "Listo",
     "ServiceTerminated": "Se envió una solicitud de cierre para el servicio modelo '{{ name }}'.",
-    "ModelMountDestination": "Ruta del Model definition file",
+    "ModelMountDestination": "destino de montaje para la carpeta del modelo",
     "AdditionalMounts": "Montajes adicionales",
     "ModelDefinitionPath": "Ruta de definición del modelo"
   },

@@ -1506,7 +1506,7 @@
     "CannotValidateNow": "Δεν είναι δυνατή η επικύρωση της υπηρεσίας τώρα. \nΕλέγξτε την κατανομή πόρων ή άλλες διαμορφώσεις.",
     "Ready": "Ετοιμος",
     "ServiceTerminated": "Στάλθηκε ένα αίτημα τερματισμού λειτουργίας για την υπηρεσία μοντέλου \"{{ όνομα }}\".",
-    "ModelMountDestination": "Διαδρομή Model definition file.",
+    "ModelMountDestination": "προσάρτηση προορισμού για το φάκελο μοντέλου",
     "AdditionalMounts": "Πρόσθετες βάσεις",
     "ModelDefinitionPath": "Διαδρομή ορισμού μοντέλου"
   },

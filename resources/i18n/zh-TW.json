@@ -1547,7 +1547,7 @@
     "CannotValidateNow": "現在無法驗證服務。\n請檢查資源分配或其他配置。",
     "Ready": "準備好",
     "ServiceTerminated": "已為模型服務“{{ name }}”發送關閉請求。",
-    "ModelMountDestination": "Model definition file路徑",
+    "ModelMountDestination": "模型資料夾的掛載目標",
     "AdditionalMounts": "附加安裝座",
     "ModelDefinitionPath": "模型定義路徑"
   },

@@ -781,7 +781,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     name={'modelMountDestination'}
                     label={t('modelService.ModelMountDestination')}
                     style={{ width: '50%' }}
-                    labelCol={{ style: { width: 300 } }}
+                    labelCol={{ style: { width: 400 } }}
                   >
                     <Input
                       allowClear

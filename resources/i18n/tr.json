@@ -1506,7 +1506,7 @@
     "CannotValidateNow": "Hizmet şu anda doğrulanamıyor. \nLütfen kaynak tahsisini veya diğer yapılandırmaları kontrol edin.",
     "Ready": "Hazır",
     "ServiceTerminated": "'{{ name }}' model hizmeti için bir kapatma isteği gönderildi.",
-    "ModelMountDestination": "Model definition file yolu",
+    "ModelMountDestination": "model klasörü için montaj hedefi",
     "AdditionalMounts": "Ek Montajlar",
     "ModelDefinitionPath": "Model Tanımı yolu"
   },

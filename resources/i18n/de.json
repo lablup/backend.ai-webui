@@ -1506,7 +1506,7 @@
     "CannotValidateNow": "Der Dienst kann derzeit nicht validiert werden. \nBitte überprüfen Sie die Ressourcenzuweisung oder andere Konfigurationen.",
     "Ready": "Bereit",
     "ServiceTerminated": "Für den Modelldienst „{{ name }}“ wurde eine Anforderung zum Herunterfahren gesendet.",
-    "ModelMountDestination": "Pfad Model definition file.",
+    "ModelMountDestination": "Mount-Ziel für den Modellordner",
     "AdditionalMounts": "Zusätzliche Halterungen",
     "ModelDefinitionPath": "Modelldefinitionspfad"
   },

@@ -1547,7 +1547,7 @@
     "CannotValidateNow": "Não é possível validar o serviço agora. \nVerifique a alocação de recursos ou outras configurações.",
     "Ready": "Preparar",
     "ServiceTerminated": "Uma solicitação de encerramento foi enviada para o serviço de modelo '{{ name }}'.",
-    "ModelMountDestination": "Caminho do Model definition file",
+    "ModelMountDestination": "destino de montagem para pasta de modelo",
     "AdditionalMounts": "Montarias Adicionais",
     "ModelDefinitionPath": "Caminho de definição do modelo"
   },
