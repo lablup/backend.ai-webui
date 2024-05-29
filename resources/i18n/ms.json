@@ -1548,7 +1548,8 @@
     "Ready": "sedia",
     "ServiceTerminated": "Permintaan penutupan telah dihantar untuk perkhidmatan model '{{ name }}'.",
     "ModelMountDestination": "Laluan Model definition file.",
-    "AdditionalMounts": "Lekapan Tambahan"
+    "AdditionalMounts": "Lekapan Tambahan",
+    "ModelDefinitionPath": "Laluan Definisi Model"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

@@ -473,7 +473,8 @@
     "Ready": "준비",
     "ServiceTerminated": "모델 서비스 '{{ name }}'에 대한 종료 요청이 전송되었습니다.",
     "ModelMountDestination": "Model definition file 경로",
-    "AdditionalMounts": "추가 마운트"
+    "AdditionalMounts": "추가 마운트",
+    "ModelDefinitionPath": "모델 정의 경로"
   },
   "button": {
     "Cancel": "취소",

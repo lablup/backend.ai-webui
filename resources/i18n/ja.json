@@ -1507,7 +1507,8 @@
     "Ready": "準備ができて",
     "ServiceTerminated": "モデルサービス「{{name}}」の終了要求が送信されました。",
     "ModelMountDestination": "Model definition fileのパス",
-    "AdditionalMounts": "追加のマウント"
+    "AdditionalMounts": "追加のマウント",
+    "ModelDefinitionPath": "モデル定義パス"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

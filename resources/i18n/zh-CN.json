@@ -1548,7 +1548,8 @@
     "Ready": "准备好",
     "ServiceTerminated": "已为模型服务“{{ name }}”发送关闭请求。",
     "ModelMountDestination": "Model definition file路径",
-    "AdditionalMounts": "附加安装座"
+    "AdditionalMounts": "附加安装座",
+    "ModelDefinitionPath": "模型定义路径"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

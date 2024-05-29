@@ -767,7 +767,8 @@
     "Ready": "Valmis",
     "ServiceTerminated": "Mallipalvelun '{{ name }}' sammutuspyyntö lähetettiin.",
     "ModelMountDestination": "Model definition file polku",
-    "AdditionalMounts": "Lisäkiinnikkeet"
+    "AdditionalMounts": "Lisäkiinnikkeet",
+    "ModelDefinitionPath": "Mallin määrittelypolku"
   },
   "notification": {
     "Initializing": "Aloitetaan...",

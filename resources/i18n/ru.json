@@ -1560,7 +1560,8 @@
     "Ready": "Готовый",
     "ServiceTerminated": "Для службы модели «{{ name }}» отправлен запрос на завершение работы.",
     "ModelMountDestination": "Путь Model definition file",
-    "AdditionalMounts": "Дополнительные крепления"
+    "AdditionalMounts": "Дополнительные крепления",
+    "ModelDefinitionPath": "Путь определения модели"
   },
   "ErrorBoundary": {
     "title": "Произошла ошибка.",

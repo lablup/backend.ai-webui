@@ -49,11 +49,11 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
           });
         }}
       >
-        <FolderOutlined /> {`${vFolder.name}/${mountDestination}`}
+        <FolderOutlined /> {`${vFolder.name}`}
       </Typography.Link>
     ) : (
       <div>
-        <FolderOutlined /> {`${vFolder.name}/${mountDestination}`}
+        <FolderOutlined /> {`${vFolder.name}`}
       </div>
     ))
   );

@@ -1507,7 +1507,8 @@
     "Ready": "Hazır",
     "ServiceTerminated": "'{{ name }}' model hizmeti için bir kapatma isteği gönderildi.",
     "ModelMountDestination": "Model definition file yolu",
-    "AdditionalMounts": "Ek Montajlar"
+    "AdditionalMounts": "Ek Montajlar",
+    "ModelDefinitionPath": "Model Tanımı yolu"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

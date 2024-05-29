@@ -1560,7 +1560,8 @@
     "Ready": "Prêt",
     "ServiceTerminated": "Une demande d'arrêt a été envoyée pour le service modèle '{{ name }}'.",
     "ModelMountDestination": "Chemin Model definition file",
-    "AdditionalMounts": "Supports supplémentaires"
+    "AdditionalMounts": "Supports supplémentaires",
+    "ModelDefinitionPath": "Chemin de définition du modèle"
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",

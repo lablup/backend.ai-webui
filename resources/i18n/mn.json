@@ -1561,7 +1561,8 @@
     "Ready": "Бэлэн",
     "ServiceTerminated": "'{{ name }}' загварын үйлчилгээнд хаах хүсэлт илгээсэн.",
     "ModelMountDestination": "Model definition file зам",
-    "AdditionalMounts": "Нэмэлт бэхэлгээ"
+    "AdditionalMounts": "Нэмэлт бэхэлгээ",
+    "ModelDefinitionPath": "Загварын тодорхойлолтын зам"
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",

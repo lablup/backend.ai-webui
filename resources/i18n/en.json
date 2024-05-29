@@ -486,7 +486,8 @@
     "ServiceUpdated": "Model service {{ name }} has been updated successfully.",
     "ServiceTerminated": "A shutdown request was sent for model service '{{ name }}'.",
     "ModelMountDestination": "Model definition file path",
-    "AdditionalMounts": "Additional Mounts"
+    "AdditionalMounts": "Additional Mounts",
+    "ModelDefinitionPath": "Model Definition path"
   },
   "button": {
     "Cancel": "Cancel",

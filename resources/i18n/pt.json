@@ -1548,7 +1548,8 @@
     "Ready": "Preparar",
     "ServiceTerminated": "Uma solicitação de encerramento foi enviada para o serviço de modelo '{{ name }}'.",
     "ModelMountDestination": "Caminho do Model definition file",
-    "AdditionalMounts": "Montarias Adicionais"
+    "AdditionalMounts": "Montarias Adicionais",
+    "ModelDefinitionPath": "Caminho de definição do modelo"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

@@ -769,7 +769,8 @@
     "Ready": "Listo",
     "ServiceTerminated": "Se envió una solicitud de cierre para el servicio modelo '{{ name }}'.",
     "ModelMountDestination": "Ruta del Model definition file",
-    "AdditionalMounts": "Montajes adicionales"
+    "AdditionalMounts": "Montajes adicionales",
+    "ModelDefinitionPath": "Ruta de definición del modelo"
   },
   "notification": {
     "Initializing": "Inicializando...",

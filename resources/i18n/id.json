@@ -1560,7 +1560,8 @@
     "ValidationInfo": "Info Validasi",
     "ServiceTerminated": "Permintaan penutupan dikirim untuk layanan model '{{ nama }}'.",
     "ModelMountDestination": "Jalur Model definition file.",
-    "AdditionalMounts": "Pemasangan Tambahan"
+    "AdditionalMounts": "Pemasangan Tambahan",
+    "ModelDefinitionPath": "Jalur Definisi Model"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

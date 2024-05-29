@@ -9,6 +9,7 @@ import React, { startTransition, useEffect } from 'react';
 export type VFolder = {
   name: string;
   id: string;
+  row_id: string;
   quota_scope_id: string;
   host: string;
   status: string;

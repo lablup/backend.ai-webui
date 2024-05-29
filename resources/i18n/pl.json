@@ -1507,7 +1507,8 @@
     "Ready": "Gotowy",
     "ServiceTerminated": "Wysłano żądanie zamknięcia usługi modelowej „{{ name }}”.",
     "ModelMountDestination": "Ścieżka Model definition file.",
-    "AdditionalMounts": "Dodatkowe mocowania"
+    "AdditionalMounts": "Dodatkowe mocowania",
+    "ModelDefinitionPath": "Ścieżka definicji modelu"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",

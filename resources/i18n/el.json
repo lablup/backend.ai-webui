@@ -1507,7 +1507,8 @@
     "Ready": "Ετοιμος",
     "ServiceTerminated": "Στάλθηκε ένα αίτημα τερματισμού λειτουργίας για την υπηρεσία μοντέλου \"{{ όνομα }}\".",
     "ModelMountDestination": "Διαδρομή Model definition file.",
-    "AdditionalMounts": "Πρόσθετες βάσεις"
+    "AdditionalMounts": "Πρόσθετες βάσεις",
+    "ModelDefinitionPath": "Διαδρομή ορισμού μοντέλου"
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",

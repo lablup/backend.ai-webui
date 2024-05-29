@@ -23,6 +23,7 @@ import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
 import { ServiceLauncherModalFragment$key } from './__generated__/ServiceLauncherModalFragment.graphql';
 import { ServiceLauncherModalModifyMutation } from './__generated__/ServiceLauncherModalModifyMutation.graphql';
+import MinusOutlined from '@ant-design/icons';
 import {
   App,
   Button,
@@ -36,7 +37,13 @@ import {
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useState, Suspense, useRef, useEffect } from 'react';
+import React, {
+  useState,
+  Suspense,
+  useRef,
+  useEffect,
+  useCallback,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
 
@@ -71,7 +78,8 @@ interface MountOptionType {
 interface ServiceCreateConfigType {
   model: string;
   model_version?: number;
-  model_mount_destination: string; // default == "/models"
+  model_mount_destination?: string; // default == "/models"
+  model_definition_path?: string; // default == "model-definition.yaml"
   environ: object; // environment variable
   scaling_group: string;
   resources: ServiceCreateConfigResourceType;
@@ -107,6 +115,7 @@ interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   desiredRoutingCount: number;
   openToPublic: boolean;
   modelMountDestination: string;
+  modelDefinitionPath: string;
   vfoldersAliasMap: Record<string, string>;
   mounts: Array<string>;
 }
@@ -132,11 +141,16 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const formRef = useRef<FormInstance<ServiceLauncherFormValue>>(null);
   const [selectedModelFolder, setSelectedModelFolder] = useState('');
 
-  useEffect(() => {
-    if (formRef.current?.getFieldValue('vFolderName')) {
-      setSelectedModelFolder(formRef.current?.getFieldValue('vFolderName'));
+  const updateSelectedModelFolder = useCallback(() => {
+    const fieldValue = formRef.current?.getFieldValue('vFolderName');
+    if (fieldValue) {
+      setSelectedModelFolder(fieldValue);
     }
-  }, [formRef.current?.getFieldValue('vFolderName')]);
+  }, [formRef]);
+
+  useEffect(() => {
+    updateSelectedModelFolder();
+  }, [updateSelectedModelFolder]);
 
   const endpoint = useFragment(
     graphql`
@@ -151,6 +165,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         open_to_public
         model
         model_mount_destination @since(version: "24.03.4")
+        model_definition_path @since(version: "24.03.4")
         extra_mounts @since(version: "24.03.4") {
           row_id
           host
@@ -199,6 +214,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     `,
     endpointFrgmt,
   );
+
+  console.log(endpoint);
 
   const checkManualImageAllowed = (
     isConfigAllowed = false,
@@ -284,6 +301,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           model: values.vFolderName,
           model_version: 1, // FIXME: hardcoded. change it with option later
           model_mount_destination: values.modelMountDestination,
+          model_definition_path: values.modelDefinitionPath,
           extra_mounts: values.mounts.reduce(
             (acc, key: string) => {
               acc[key] = {
@@ -370,6 +388,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             supported_accelerators
           }
           name
+          model_destination_path
+          model_mount_destination
           extra_mounts @since(version: "24.03.4") {
             id
             host
@@ -443,6 +463,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                 }),
                 name: values.serviceName,
                 resource_group: values.resourceGroup,
+                model_definition_path: values.modelDefinitionPath,
               },
             };
             commitModifyEndpoint({
@@ -663,6 +684,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     mounts: _.map(endpoint?.extra_mounts, (item) =>
                       item?.row_id?.replaceAll('-', ''),
                     ),
+                    modelMountDestination: endpoint?.model_mount_destination,
+                    modelDefinitionPath: endpoint?.model_definition_path,
                     // TODO: set mounts alias map according to extra_mounts if possible
                   }
                 : {
@@ -730,15 +753,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                           }}
                         />
                       </Form.Item>
-                      <Form.Item
-                        name={'modelMountDestination'}
-                        label={t('modelService.ModelMountDestination')}
-                      >
-                        <Input
-                          allowClear
-                          placeholder={`${selectedModelFolder}/model-definition.yaml`}
-                        />
-                      </Form.Item>
                     </Flex>
                   </>
                 ) : (
@@ -757,12 +771,51 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     </Form.Item>
                   )
                 )}
+                <Flex
+                  direction="row"
+                  gap={'xxs'}
+                  align="stretch"
+                  justify="between"
+                >
+                  <Form.Item
+                    name={'modelMountDestination'}
+                    label={t('modelService.ModelMountDestination')}
+                    style={{ width: '50%' }}
+                    labelCol={{ style: { width: 300 } }}
+                  >
+                    <Input
+                      allowClear
+                      placeholder={'/models'}
+                      disabled={endpoint ? true : false}
+                    />
+                  </Form.Item>
+                  <MinusOutlined
+                    style={{ fontSize: token.fontSizeXL }}
+                    rotate={290}
+                  />
+                  <Form.Item
+                    name={'modelDefinitionPath'}
+                    label={t('modelService.ModelDefinitionPath')}
+                    style={{ width: '50%' }}
+                    labelCol={{ style: { width: 300 } }}
+                  >
+                    <Input
+                      allowClear
+                      placeholder={
+                        endpoint?.model_definition_path
+                          ? endpoint?.model_definition_path
+                          : 'model-definition.yaml'
+                      }
+                    />
+                  </Form.Item>
+                </Flex>
                 <VFolderTableFormItem
-                  // initialValue={endpoint?.extra_mounts?.map((item) => item.row_id)}
                   rowKey={'id'}
                   label={t('modelService.AdditionalMounts')}
                   filter={(vf) =>
-                    vf.name !== selectedModelFolder && vf.status === 'ready'
+                    vf.name !== selectedModelFolder &&
+                    vf.status === 'ready' &&
+                    vf.usage_mode !== 'model'
                   }
                   tableProps={{
                     size: 'small',
