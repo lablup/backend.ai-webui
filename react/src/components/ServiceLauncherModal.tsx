@@ -645,6 +645,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       image: endpoint?.image_object,
                     },
                     vFolderName: endpoint?.model_mount_destination,
+                    // TODO: add alias path for extra mounts
+                    // vfoldersAliasMap: [],
                     mounts: _.map(endpoint?.extra_mounts, (item) =>
                       item?.row_id?.replaceAll('-', ''),
                     ),
