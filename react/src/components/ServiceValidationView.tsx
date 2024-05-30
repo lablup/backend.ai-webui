@@ -4,6 +4,7 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import {
+  MountOptionType,
   ServiceCreateType,
   ServiceLauncherFormValue,
 } from './ServiceLauncherModal';
@@ -62,7 +63,26 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
         open_to_public: values.openToPublic,
         config: {
           model: values.vFolderName,
-          model_mount_destination: '/models', // FIXME: hardcoded. change it with option later
+          model_version: 1, // FIXME: hardcoded. change it with option later
+          ...(baiClient.supports('extra-mounts') && {
+            extra_mounts: _.reduce(
+              values.mounts,
+              (acc, key: string) => {
+                acc[key] = {
+                  ...(values.vfoldersAliasMap[key] && {
+                    mount_destination: values.vfoldersAliasMap[key],
+                  }),
+                  type: 'bind', // FIXME: hardcoded. change it with option later
+                };
+                return acc;
+              },
+              {} as Record<string, MountOptionType>,
+            ),
+          }),
+          model_definition_path: values.modelDefinitionPath,
+          model_mount_destination: baiClient.supports('extra-mounts')
+            ? values.modelMountDestination
+            : '/models',
           environ: {}, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {

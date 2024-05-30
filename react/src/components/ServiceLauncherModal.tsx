@@ -63,7 +63,7 @@ interface ServiceCreateConfigResourceType {
   'warboy.device'?: number | string;
   'hyperaccel-lpu.device'?: number | string;
 }
-interface MountOptionType {
+export interface MountOptionType {
   mount_destination?: string;
   type?: string;
   permission?: string;
@@ -259,21 +259,25 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         config: {
           model: values.vFolderName,
           model_version: 1, // FIXME: hardcoded. change it with option later
-          model_mount_destination: values.modelMountDestination,
-          model_definition_path: values.modelDefinitionPath,
-          extra_mounts: _.reduce(
-            values.mounts,
-            (acc, key: string) => {
-              acc[key] = {
-                ...(values.vfoldersAliasMap[key] && {
-                  mount_destination: values.vfoldersAliasMap[key],
-                }),
-                type: 'bind', // FIXME: hardcoded. change it with option later
-              };
-              return acc;
-            },
-            {} as Record<string, MountOptionType>,
-          ),
+          ...(baiClient.supports('extra-mounts') && {
+            extra_mounts: _.reduce(
+              values.mounts,
+              (acc, key: string) => {
+                acc[key] = {
+                  ...(values.vfoldersAliasMap[key] && {
+                    mount_destination: values.vfoldersAliasMap[key],
+                  }),
+                  type: 'bind', // FIXME: hardcoded. change it with option later
+                };
+                return acc;
+              },
+              {} as Record<string, MountOptionType>,
+            ),
+            model_definition_path: values.modelDefinitionPath,
+          }),
+          model_mount_destination: baiClient.supports('extra-mounts')
+            ? values.modelMountDestination
+            : '/models',
           environ: {}, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {
