@@ -275,9 +275,11 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             ),
             model_definition_path: values.modelDefinitionPath,
           }),
-          model_mount_destination: baiClient.supports('extra-mounts')
-            ? values.modelMountDestination
-            : '/models',
+          model_mount_destination:
+            baiClient.supports('extra-mounts') &&
+            values.modelMountDestination !== ''
+              ? values.modelMountDestination
+              : '/models',
           environ: {}, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {
