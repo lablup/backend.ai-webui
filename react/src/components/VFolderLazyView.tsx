@@ -9,12 +9,10 @@ import React from 'react';
 
 interface VFolderLazyViewProps {
   uuid: string;
-  mountDestination?: string | null;
   clickable?: boolean;
 }
 const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
   uuid,
-  mountDestination,
   clickable,
 }) => {
   const currentProject = useCurrentProjectValue();
@@ -49,11 +47,11 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
           });
         }}
       >
-        <FolderOutlined /> {`${vFolder.name}`}
+        <FolderOutlined /> {vFolder.name}
       </Typography.Link>
     ) : (
       <div>
-        <FolderOutlined /> {`${vFolder.name}`}
+        <FolderOutlined /> {vFolder.name}
       </div>
     ))
   );
