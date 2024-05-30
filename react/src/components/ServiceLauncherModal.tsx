@@ -780,18 +780,30 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     />
                   </Form.Item>
                 </Flex>
-                <VFolderTableFormItem
-                  rowKey={'id'}
-                  label={t('modelService.AdditionalMounts')}
-                  filter={(vf) =>
-                    vf.name !== formRef.current?.getFieldValue('vFolderName') &&
-                    vf.status === 'ready' &&
-                    vf.usage_mode !== 'model'
+                <Form.Item
+                  noStyle
+                  shouldUpdate={(prev, cur) =>
+                    prev.vFolderName !== cur.vFolderName
                   }
-                  tableProps={{
-                    size: 'small',
+                >
+                  {() => {
+                    return (
+                      <VFolderTableFormItem
+                        rowKey={'id'}
+                        label={t('modelService.AdditionalMounts')}
+                        filter={(vf) =>
+                          vf.name !==
+                            formRef.current?.getFieldValue('vFolderName') &&
+                          vf.status === 'ready' &&
+                          vf.usage_mode !== 'model'
+                        }
+                        tableProps={{
+                          size: 'small',
+                        }}
+                      />
+                    );
                   }}
-                />
+                </Form.Item>
               </>
             )}
             <Form.Item
