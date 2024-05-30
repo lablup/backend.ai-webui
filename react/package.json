@@ -9,12 +9,12 @@
     "@types/jest": "^29.5.12",
     "@types/lodash": "^4.17.0",
     "@types/node": "^20.12.7",
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "npm:types-react@rc",
+    "@types/react-dom": "npm:types-react-dom@rc",
     "ahooks": "^3.7.11",
+    "ansi_up": "^6.0.2",
     "antd": "5.16.5",
     "antd-style": "^3.6.2",
-    "ansi_up": "^6.0.2",
     "dayjs": "^1.11.11",
     "i18next": "^23.11.3",
     "i18next-http-backend": "^2.5.1",
@@ -24,9 +24,9 @@
     "markdown-to-jsx": "^7.4.7",
     "prettier": "^3.2.5",
     "prism-react-renderer": "^2.3.1",
-    "react": "^18.3.1",
+    "react": "^19.0.0-rc-38e3b23483-20240529",
     "react-copy-to-clipboard": "^5.1.0",
-    "react-dom": "^18.3.1",
+    "react-dom": "^19.0.0-rc-38e3b23483-20240529",
     "react-draggable": "^4.4.6",
     "react-error-boundary": "^4.0.13",
     "react-i18next": "^14.1.1",
@@ -108,7 +108,9 @@
   "overrides": {
     "@typescript-eslint/typescript-estree": "^5.62.0",
     "typescript": "^5.4.5",
-    "react-refresh": "0.11.0"
+    "react-refresh": "0.11.0",
+    "@types/react": "npm:types-react@rc",
+    "@types/react-dom": "npm:types-react-dom@rc"
   },
   "proxy": "http://localhost:3081"
 }
