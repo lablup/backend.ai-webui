@@ -197,7 +197,7 @@
       "SharedMemoryAbbr": "機械製造商",
       "GPUSlot": "投幣口",
       "Architecture": "建筑学",
-      "ModelStorageToMount": "型号存储安装",
+      "ModelStorageToMount": "要安裝的模型存儲",
       "MinMemory": "当前所选运行环境的最小内存容量为 {{size}}iB。",
       "AIAccelerator": "人工智能加速器",
       "FailedToConnectCoordinator": "连接应用程序管理失败。请检查网络连接和防火墙设置。",
@@ -1547,9 +1547,9 @@
     "CannotValidateNow": "現在無法驗證服務。\n請檢查資源分配或其他配置。",
     "Ready": "準備好",
     "ServiceTerminated": "已為模型服務“{{ name }}”發送關閉請求。",
-    "ModelMountDestination": "模型資料夾的掛載目標",
+    "ModelMountDestination": "模型資料夾的安裝目標",
     "AdditionalMounts": "附加安裝座",
-    "ModelDefinitionPath": "模型定義路徑"
+    "ModelDefinitionPath": "模型定義檔路徑"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

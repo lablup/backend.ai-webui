@@ -197,7 +197,7 @@
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "スロット",
       "Architecture": "アーキテクチャ",
-      "ModelStorageToMount": "マウントするモデルのストレージフォルダ",
+      "ModelStorageToMount": "マウントするモデルストレージ",
       "MinMemory": "現在選択した実行環境の最小メモリ容量は{{size}}iBです。",
       "AIAccelerator": "AIアクセラレータ",
       "FailedToConnectCoordinator": "アプリ接続マネージャーの接続に失敗しました。ネットワーク接続とファイアウォールの状態を確認してください。",
@@ -1508,7 +1508,7 @@
     "ServiceTerminated": "モデルサービス「{{name}}」の終了要求が送信されました。",
     "ModelMountDestination": "モデルフォルダーのマウント先",
     "AdditionalMounts": "追加のマウント",
-    "ModelDefinitionPath": "モデル定義パス"
+    "ModelDefinitionPath": "モデル定義ファイルのパス"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

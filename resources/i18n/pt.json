@@ -197,7 +197,7 @@
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "Slot",
       "Architecture": "Arquitetura",
-      "ModelStorageToMount": "Modelo de armazenamento para montagem",
+      "ModelStorageToMount": "Armazenamento de modelo para montar",
       "MinMemory": "A capacidade mínima de memória para o ambiente de tempo de execução atualmente selecionado é {{size}}iB.",
       "AIAccelerator": "Acelerador de IA",
       "FailedToConnectCoordinator": "Falha na ligação à administração da aplicação. Verifique a sua ligação de rede e as definições de firewall.",
@@ -1547,9 +1547,9 @@
     "CannotValidateNow": "Não é possível validar o serviço agora. \nVerifique a alocação de recursos ou outras configurações.",
     "Ready": "Preparar",
     "ServiceTerminated": "Uma solicitação de encerramento foi enviada para o serviço de modelo '{{ name }}'.",
-    "ModelMountDestination": "destino de montagem para pasta de modelo",
+    "ModelMountDestination": "Montar destino para pasta de modelo",
     "AdditionalMounts": "Montarias Adicionais",
-    "ModelDefinitionPath": "Caminho de definição do modelo"
+    "ModelDefinitionPath": "Caminho do arquivo de definição de modelo"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

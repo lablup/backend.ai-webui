@@ -224,7 +224,7 @@
       "StartModelServing": "Démarrer le modèle de service",
       "InferenceMode": "Inférence",
       "ImageDoesNotProvideModelPath": "L'image du conteneur ne fournit pas le chemin d'accès au modèle. Il doit être modifié.",
-      "ModelStorageToMount": "Modèle d'entrepôt à monter",
+      "ModelStorageToMount": "Stockage du modèle à monter",
       "AIAccelerator": "Accélérateur d'IA",
       "DescAIAccelerator": "<Les accélérateurs d'IA (GPU ou NPU) sont bien adaptés aux calculs matriciels/vectoriels impliqués dans l'apprentissage automatique. Les accélérateurs d'IA accélèrent les algorithmes d'apprentissage et d'inférence par des ordres de grandeur, réduisant les temps d'exécution de plusieurs semaines à quelques jours.",
       "SessionAlreadyExists": "Le nom de la session existe déjà",
@@ -1559,9 +1559,9 @@
     "CannotValidateNow": "Impossible de valider le service maintenant. \nVeuillez vérifier l'allocation des ressources ou d'autres configurations.",
     "Ready": "Prêt",
     "ServiceTerminated": "Une demande d'arrêt a été envoyée pour le service modèle '{{ name }}'.",
-    "ModelMountDestination": "destination de montage pour le dossier modèle",
+    "ModelMountDestination": "Destination de montage pour le dossier modèle",
     "AdditionalMounts": "Supports supplémentaires",
-    "ModelDefinitionPath": "Chemin de définition du modèle"
+    "ModelDefinitionPath": "Chemin du fichier de définition du modèle"
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",

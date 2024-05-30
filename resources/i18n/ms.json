@@ -197,7 +197,7 @@
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "Slot",
       "Architecture": "Seni bina",
-      "ModelStorageToMount": "Storan model untuk dipasang",
+      "ModelStorageToMount": "Penyimpanan Model Untuk Dilekapkan",
       "MinMemory": "Kapasiti memori minimum untuk persekitaran masa jalan yang dipilih pada masa ini ialah {{saiz}}iB.",
       "AIAccelerator": "Pemecut AI",
       "ModelStorage": "Storan Model",
@@ -1547,9 +1547,9 @@
     "CannotValidateNow": "Tidak dapat mengesahkan perkhidmatan sekarang. \nSila semak peruntukan sumber atau konfigurasi lain.",
     "Ready": "sedia",
     "ServiceTerminated": "Permintaan penutupan telah dihantar untuk perkhidmatan model '{{ name }}'.",
-    "ModelMountDestination": "destinasi lekap untuk folder model",
+    "ModelMountDestination": "Lekapkan Destinasi Untuk Folder Model",
     "AdditionalMounts": "Lekapan Tambahan",
-    "ModelDefinitionPath": "Laluan Definisi Model"
+    "ModelDefinitionPath": "Laluan Fail Definisi Model"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

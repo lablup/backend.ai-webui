@@ -1547,9 +1547,9 @@
     "CannotValidateNow": "Không thể xác nhận dịch vụ bây giờ. \nVui lòng kiểm tra phân bổ tài nguyên hoặc các cấu hình khác.",
     "Ready": "Sẵn sàng",
     "ServiceTerminated": "Yêu cầu tắt máy đã được gửi cho dịch vụ mẫu '{{ name }}'.",
-    "ModelMountDestination": "đích gắn kết cho thư mục mô hình",
+    "ModelMountDestination": "Mount đích cho thư mục mẫu",
     "AdditionalMounts": "Gắn kết bổ sung",
-    "ModelDefinitionPath": "Đường dẫn định nghĩa mô hình"
+    "ModelDefinitionPath": "Đường dẫn tệp định nghĩa mô hình"
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",
