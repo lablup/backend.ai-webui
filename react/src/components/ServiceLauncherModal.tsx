@@ -150,7 +150,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         model_definition_path @since(version: "24.03.4")
         extra_mounts @since(version: "24.03.4") {
           row_id
-          name
         }
         image_object @since(version: "23.09.9") {
           name
@@ -723,71 +722,75 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     </Form.Item>
                   )
                 )}
-                <Flex
-                  direction="row"
-                  gap={'xxs'}
-                  align="stretch"
-                  justify="between"
-                >
-                  <Form.Item
-                    name={'modelMountDestination'}
-                    label={t('modelService.ModelMountDestination')}
-                    style={{ width: '50%' }}
-                    labelCol={{ style: { width: 400 } }}
-                  >
-                    <Input
-                      allowClear
-                      placeholder={'/models'}
-                      disabled={!!endpoint}
-                    />
-                  </Form.Item>
-                  <MinusOutlined
-                    style={{
-                      fontSize: token.fontSizeXL,
-                      color: token.colorTextDisabled,
-                    }}
-                    rotate={290}
-                  />
-                  <Form.Item
-                    name={'modelDefinitionPath'}
-                    label={t('modelService.ModelDefinitionPath')}
-                    style={{ width: '50%' }}
-                    labelCol={{ style: { width: 300 } }}
-                  >
-                    <Input
-                      allowClear
-                      placeholder={
-                        endpoint?.model_definition_path
-                          ? endpoint?.model_definition_path
-                          : 'model-definition.yaml'
-                      }
-                    />
-                  </Form.Item>
-                </Flex>
-                <Form.Item
-                  noStyle
-                  shouldUpdate={(prev, cur) =>
-                    prev.vFolderName !== cur.vFolderName
-                  }
-                >
-                  {() => {
-                    return (
-                      <VFolderTableFormItem
-                        rowKey={'id'}
-                        label={t('modelService.AdditionalMounts')}
-                        filter={(vf) =>
-                          vf.name !==
-                            formRef.current?.getFieldValue('vFolderName') &&
-                          vf.status === 'ready' &&
-                          vf.usage_mode !== 'model'
-                        }
-                        tableProps={{
-                          size: 'small',
+                {baiClient.supports('endpoint-extra-mounts') ?? (
+                  <>
+                    <Flex
+                      direction="row"
+                      gap={'xxs'}
+                      align="stretch"
+                      justify="between"
+                    >
+                      <Form.Item
+                        name={'modelMountDestination'}
+                        label={t('modelService.ModelMountDestination')}
+                        style={{ width: '50%' }}
+                        labelCol={{ style: { width: 400 } }}
+                      >
+                        <Input
+                          allowClear
+                          placeholder={'/models'}
+                          disabled={!!endpoint}
+                        />
+                      </Form.Item>
+                      <MinusOutlined
+                        style={{
+                          fontSize: token.fontSizeXL,
+                          color: token.colorTextDisabled,
                         }}
+                        rotate={290}
                       />
-                    );
-                  }}
-                </Form.Item>
+                      <Form.Item
+                        name={'modelDefinitionPath'}
+                        label={t('modelService.ModelDefinitionPath')}
+                        style={{ width: '50%' }}
+                        labelCol={{ style: { width: 300 } }}
+                      >
+                        <Input
+                          allowClear
+                          placeholder={
+                            endpoint?.model_definition_path
+                              ? endpoint?.model_definition_path
+                              : 'model-definition.yaml'
+                          }
+                        />
+                      </Form.Item>
+                    </Flex>
+                    <Form.Item
+                      noStyle
+                      shouldUpdate={(prev, cur) =>
+                        prev.vFolderName !== cur.vFolderName
+                      }
+                    >
+                      {() => {
+                        return (
+                          <VFolderTableFormItem
+                            rowKey={'id'}
+                            label={t('modelService.AdditionalMounts')}
+                            filter={(vf) =>
+                              vf.name !==
+                                formRef.current?.getFieldValue('vFolderName') &&
+                              vf.status === 'ready' &&
+                              vf.usage_mode !== 'model'
+                            }
+                            tableProps={{
+                              size: 'small',
+                            }}
+                          />
+                        );
+                      }}
+                    </Form.Item>
+                  </>
+                )}
               </>
             )}
             <Form.Item

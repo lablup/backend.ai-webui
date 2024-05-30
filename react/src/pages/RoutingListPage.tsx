@@ -20,7 +20,6 @@ import {
   ArrowRightOutlined,
   CheckOutlined,
   CloseOutlined,
-  FolderOutlined,
   LoadingOutlined,
   PlusOutlined,
   QuestionCircleOutlined,
