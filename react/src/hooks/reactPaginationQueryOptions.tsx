@@ -297,7 +297,9 @@ export const useBAIPaginationOptionState = (
 ): {
   baiPaginationOption: BAIPaginationOption;
   tablePaginationOption: AntdBasicPaginationOption;
-  setTablePaginationOption: (pagination: AntdBasicPaginationOption) => void;
+  setTablePaginationOption: (
+    pagination: Partial<AntdBasicPaginationOption>,
+  ) => void;
 } => {
   const [options, setOptions] =
     useState<AntdBasicPaginationOption>(initialOptions);
@@ -312,6 +314,14 @@ export const useBAIPaginationOptionState = (
       current: options.current,
     },
     setTablePaginationOption: (pagination) => {
+      if (!_.isNumber(pagination.current || !_.isNumber(pagination.pageSize)))
+        return;
+      if (
+        options.current === pagination.current &&
+        options.pageSize === pagination.pageSize
+      )
+        return;
+
       setOptions((current) => ({
         ...current,
         ...pagination,

@@ -1,10 +1,15 @@
+import BAIPropertyFilter from '../components/BAIPropertyFilter';
 import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
-import { baiSignedRequestWithPromise } from '../helper';
+import {
+  baiSignedRequestWithPromise,
+  transformSorterToOrderString,
+} from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 // import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -16,6 +21,7 @@ import {
   CheckOutlined,
   CloseOutlined,
   DeleteOutlined,
+  ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useRafInterval } from 'ahooks';
@@ -66,17 +72,21 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     useState<Endpoint | null>(null);
   const [terminatingModelService, setTerminatingModelService] =
     useState<Endpoint | null>(null);
+  const [filterString, setFilterString] = useState<string>();
+  const [order, setOrder] = useState<string>();
 
   // const [paginationState, setPaginationState] = useState<{
-  const [paginationState] = useState<{
-    current: number;
-    pageSize: number;
-  }>({
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionState({
     current: 1,
-    pageSize: 100,
+    pageSize: 20,
   });
 
   const [isRefetchPending, startRefetchTransition] = useTransition();
+  const [isRefreshBtnPending, startRefreshBtnTransition] = useTransition();
   const [servicesFetchKey, updateServicesFetchKey] =
     useUpdatableState('initial-fetch');
   // FIXME: need to apply filtering type of service later
@@ -235,11 +245,12 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       },
       defaultSortOrder: 'descend',
       sortDirections: ['descend', 'ascend', 'descend'],
-      sorter: (a, b) => {
-        const date1 = dayjs(a.created_at);
-        const date2 = dayjs(b.created_at);
-        return date1.diff(date2);
-      },
+      // sorter: (a, b) => {
+      //   const date1 = dayjs(a.created_at);
+      //   const date2 = dayjs(b.created_at);
+      //   return date1.diff(date2);
+      // },
+      sorter: true,
     },
     {
       title: t('modelService.DesiredSessionCount'),
@@ -302,12 +313,16 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
           $offset: Int!
           $limit: Int!
           $projectID: UUID
+          $filter: String
+          $order: String
         ) {
           endpoint_list(
             offset: $offset
             limit: $limit
             project: $projectID
-            filter: "name != 'koalpaca-test'"
+            # filter: "name != 'koalpaca-test'"
+            filter: $filter
+            order: $order
           ) {
             total_count
             items {
@@ -338,15 +353,18 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         }
       `,
       {
-        offset: (paginationState.current - 1) * paginationState.pageSize,
-        limit: paginationState.pageSize,
+        offset: baiPaginationOption.offset,
+        limit: baiPaginationOption.limit,
         projectID: curProject.id,
+        filter: filterString,
+        order,
       },
       {
-        fetchPolicy:
-          servicesFetchKey === 'initial-fetch'
-            ? 'store-and-network'
-            : 'network-only',
+        // fetchPolicy:
+        //   servicesFetchKey === 'initial-fetch'
+        //     ? 'store-and-network'
+        //     : 'network-only',
+        fetchPolicy: 'network-only',
         fetchKey: servicesFetchKey,
       },
     );
@@ -430,40 +448,67 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             styles={{
               body: {
                 padding: 0,
-                paddingTop: 1,
+                paddingTop: 0,
               },
             }}
-            // tabProps={{
-            //   size: 'middle',
-            // }}
           >
+            <Flex
+              justify="between"
+              style={{
+                padding: `${token.paddingContentVertical}px ${token.paddingContentHorizontal}px`,
+              }}
+            >
+              <BAIPropertyFilter
+                filterProperties={[
+                  {
+                    key: 'name',
+                    propertyLabel: t('modelService.EndpointName'),
+                  },
+                ]}
+                value={filterString}
+                onChange={(filter) => {
+                  startRefetchTransition(() => {
+                    setFilterString(filter);
+                  });
+                }}
+              />
+              <Button
+                loading={isRefreshBtnPending}
+                icon={<ReloadOutlined />}
+                onClick={() => {
+                  startRefreshBtnTransition(() => {
+                    updateServicesFetchKey();
+                  });
+                }}
+              />
+            </Flex>
             <Suspense fallback={<div>loading..</div>}>
               <Table
                 loading={isRefetchPending}
                 scroll={{ x: 'max-content' }}
                 rowKey={'endpoint_id'}
                 dataSource={(sortedEndpointList || []) as Endpoint[]}
+                showSorterTooltip={false}
                 columns={columns.filter((column) =>
                   displayedColumnKeys?.includes(_.toString(column.key)),
                 )}
-
-                // pagination={{
-                //   pageSize: paginationState.pageSize,
-                //   current: paginationState.current,
-                //   total: modelServiceList?.total_count || 0,
-                //   showSizeChanger: true,
-                //   // showTotal(total, range) {
-                //   //   return `${range[0]}-${range[1]} of ${total}`;
-                //   // },
-                //   onChange(page, pageSize) {
-                //     startRefetchTransition(() => {
-                //       setPaginationState({
-                //         current: page,
-                //         pageSize: pageSize || 100,
-                //       });
-                //     });
-                //   },
-                // }}
+                pagination={{
+                  pageSize: tablePaginationOption.pageSize,
+                  showSizeChanger: false,
+                  total: modelServiceList?.total_count || 0,
+                  // showTotal: (total, range) => {
+                  //   return `${range[0]}-${range[1]} of ${total} items`;
+                  // },
+                }}
+                onChange={({ pageSize, current }, filters, sorter) => {
+                  startRefetchTransition(() => {
+                    setTablePaginationOption({
+                      current,
+                      pageSize,
+                    });
+                    setOrder(transformSorterToOrderString(sorter));
+                  });
+                }}
               />
               <Flex
                 justify="end"
