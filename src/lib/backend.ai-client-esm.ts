@@ -8,7 +8,7 @@ Licensed under MIT
 /*jshint esnext: true */
 import CryptoES from 'crypto-es';
 //var CryptoES = require("crypto-js"); /* Exclude for ES6 */
-import { comparePEP440Versions } from './pep440';
+import { comparePEP440Versions, isCompatibleMultipleConditions} from './pep440';
 type requestInfo = {
   method: string;
   headers: Headers;
@@ -705,9 +705,13 @@ class Client {
   /**
    * Return if manager is compatible with given version.
    */
-  isManagerVersionCompatibleWith(version) {
+  isManagerVersionCompatibleWith(version: string | Array<string>) {
     let managerVersion = this._managerVersion;
-    return comparePEP440Versions(managerVersion, version) >= 0;
+    if(Array.isArray(version)){
+      return isCompatibleMultipleConditions(managerVersion, version);
+    } else {
+      return comparePEP440Versions(managerVersion, version) >= 0;
+    }
   }
 
   /**

@@ -5,23 +5,40 @@ import { parse, print, visit } from 'graphql';
 export function manipulateGraphQLQueryWithClientDirectives(
   query: string,
   variables: any = {},
-  isCompatibleWith: (version: string) => boolean,
+  isNotCompatibleWith: (version: string | Array<string>) => boolean,
 ) {
   const ast = parse(query);
   let newAst = visit(ast, {
     Field: {
       enter(node) {
         if (
-          node?.directives?.find((directive) => {
+          // find any directive that should be skipped
+          node?.directives?.some((directive) => {
             const directiveName = directive.name.value;
             const firstArgName = directive.arguments?.[0].name.value;
-            // @ts-ignore
-            const firstArgValue = directive.arguments?.[0].value?.value;
             const arg = directive.arguments?.[0];
 
             if (directiveName === 'since' && firstArgName === 'version') {
-              if (isCompatibleWith(firstArgValue)) {
-                return true;
+              const version =
+                arg?.value.kind === 'StringValue'
+                  ? arg?.value.value
+                  : // @ts-ignore
+                    variables[arg?.value.name.value];
+              if (isNotCompatibleWith(version)) {
+                return true; // skip this field
+              }
+            } else if (
+              directiveName === 'sinceMultiple' &&
+              firstArgName === 'versions'
+            ) {
+              const versions =
+                arg?.value.kind === 'ListValue'
+                  ? // @ts-ignore
+                    arg?.value.values.map((v) => v.value)
+                  : // @ts-ignore
+                    variables[arg?.value.name.value];
+              if (isNotCompatibleWith(versions)) {
+                return true; // skip this field
               }
             } else if (
               directiveName === 'deprecatedSince' &&
@@ -32,26 +49,39 @@ export function manipulateGraphQLQueryWithClientDirectives(
                   ? arg?.value.value
                   : // @ts-ignore
                     variables[arg?.value.name.value];
-
-              if (!isCompatibleWith(version)) {
-                return true;
+              if (!isNotCompatibleWith(version)) {
+                return true; // skip this field
               }
+            } else if (
+              directiveName === 'deprecatedSinceMultiple' &&
+              firstArgName === 'versions'
+            ) {
+              const versions =
+                arg?.value.kind === 'ListValue'
+                  ? // @ts-ignore
+                    arg?.value.values.map((v) => v.value)
+                  : // @ts-ignore
+                    variables[arg?.value.name.value];
+              if (!isNotCompatibleWith(versions)) {
+                return true; // skip this field
+              }
+              return false;
             } else if (
               directiveName === 'skipOnClient' &&
               firstArgName === 'if'
             ) {
               if (arg?.value.kind === 'BooleanValue' && arg.value.value) {
-                return true;
+                return true; // skip this field
               }
 
               if (
                 arg?.value.kind === 'Variable' &&
                 variables[arg.value.name.value]
               ) {
-                return true;
+                return true; // skip this field
               }
             }
-            return false;
+            return false; // do not skip this field
           })
         ) {
           return null;
@@ -73,7 +103,13 @@ export function manipulateGraphQLQueryWithClientDirectives(
       leave(directive) {
         const directiveName = directive.name.value;
         if (
-          ['since', 'deprecatedSince', 'skipOnClient'].includes(directiveName)
+          [
+            'since',
+            'sinceMultiple',
+            'deprecatedSince',
+            'deprecatedSinceMultiple',
+            'skipOnClient',
+          ].includes(directiveName)
         ) {
           return null;
         }

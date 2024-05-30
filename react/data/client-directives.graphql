@@ -1,5 +1,7 @@
 # The client-only directives: These directives are handled by manipulateGraphQLQueryWithClientDirectives.
 
 directive @since(version: String!) on FIELD
+directive @sinceMultiple(versions: [String!]!) on FIELD
 directive @deprecatedSince(version: String!) on FIELD
+directive @deprecatedSinceMultiple(versions: [String!]!) on FIELD
 directive @skipOnClient(if: Boolean!) on FIELD

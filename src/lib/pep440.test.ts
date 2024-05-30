@@ -1,4 +1,4 @@
-import { comparePEP440Versions, normalizePEP440Version } from './pep440';
+import { comparePEP440Versions, isCompatibleMultipleConditions, normalizePEP440Version } from './pep440';
 
 describe('normalizePEP440Version', () => {
   test('should normalize versions correctly', () => {
@@ -64,3 +64,12 @@ describe('comparePEP440Versions', () => {
     }
   });
 });
+
+describe('isCompatibleMultipleConditions', ()=>{
+  it('should compare versions correctly', ()=>{
+    expect(isCompatibleMultipleConditions('23.03.3', ['24.3.1', '23.03.2'])).toBe(true)
+    expect(isCompatibleMultipleConditions('23.03.3', ['24.3.1', '23.03.4'])).toBe(false)
+    expect(isCompatibleMultipleConditions('25.03.3', ['24.3.1', '23.03.4'])).toBe(true)
+    expect(isCompatibleMultipleConditions('22.03.3', ['24.3.1', '23.03.4'])).toBe(false)
+  });
+})
