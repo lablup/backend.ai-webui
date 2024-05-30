@@ -139,18 +139,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const currentDomain = useCurrentDomainValue();
 
   const formRef = useRef<FormInstance<ServiceLauncherFormValue>>(null);
-  const [selectedModelFolder, setSelectedModelFolder] = useState('');
-
-  const updateSelectedModelFolder = useCallback(() => {
-    const fieldValue = formRef.current?.getFieldValue('vFolderName');
-    if (fieldValue) {
-      setSelectedModelFolder(fieldValue);
-    }
-  }, [formRef]);
-
-  useEffect(() => {
-    updateSelectedModelFolder();
-  }, [updateSelectedModelFolder]);
 
   const endpoint = useFragment(
     graphql`
@@ -726,35 +714,23 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   <Switch disabled={!!endpoint}></Switch>
                 </Form.Item>
                 {!endpoint ? (
-                  <>
-                    <Flex
-                      direction="column"
-                      gap={'xxs'}
-                      align="stretch"
-                      justify="between"
-                    >
-                      <Form.Item
-                        name={'vFolderName'}
-                        label={t('session.launcher.ModelStorageToMount')}
-                        rules={[
-                          {
-                            required: true,
-                          },
-                        ]}
-                      >
-                        <VFolderSelect
-                          filter={(vf) =>
-                            vf.usage_mode === 'model' && vf.status === 'ready'
-                          }
-                          autoSelectDefault
-                          disabled={!!endpoint}
-                          onSelect={(value) => {
-                            setSelectedModelFolder(value);
-                          }}
-                        />
-                      </Form.Item>
-                    </Flex>
-                  </>
+                  <Form.Item
+                    name={'vFolderName'}
+                    label={t('session.launcher.ModelStorageToMount')}
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  >
+                    <VFolderSelect
+                      filter={(vf) =>
+                        vf.usage_mode === 'model' && vf.status === 'ready'
+                      }
+                      autoSelectDefault
+                      disabled={!!endpoint}
+                    />
+                  </Form.Item>
                 ) : (
                   endpoint?.model && (
                     <Form.Item
@@ -763,10 +739,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       required
                     >
                       <Suspense fallback={<Skeleton.Input active />}>
-                        <VFolderLazyView
-                          uuid={endpoint?.model}
-                          mountDestination={endpoint?.model_mount_destination}
-                        />
+                        <VFolderLazyView uuid={endpoint?.model} />
                       </Suspense>
                     </Form.Item>
                   )
@@ -790,7 +763,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     />
                   </Form.Item>
                   <MinusOutlined
-                    style={{ fontSize: token.fontSizeXL }}
+                    style={{
+                      fontSize: token.fontSizeXL,
+                      color: token.colorTextDisabled,
+                    }}
                     rotate={290}
                   />
                   <Form.Item
@@ -813,7 +789,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   rowKey={'id'}
                   label={t('modelService.AdditionalMounts')}
                   filter={(vf) =>
-                    vf.name !== selectedModelFolder &&
+                    vf.name !== formRef.current?.getFieldValue('vFolderName') &&
                     vf.status === 'ready' &&
                     vf.usage_mode !== 'model'
                   }
