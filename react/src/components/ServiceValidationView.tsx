@@ -64,7 +64,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
         config: {
           model: values.vFolderName,
           model_version: 1, // FIXME: hardcoded. change it with option later
-          ...(baiClient.supports('extra-mounts') && {
+          ...(baiClient.supports('endpoint-extra-mounts') && {
             extra_mounts: _.reduce(
               values.mounts,
               (acc, key: string) => {
@@ -80,7 +80,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
             ),
           }),
           model_definition_path: values.modelDefinitionPath,
-          model_mount_destination: baiClient.supports('extra-mounts')
+          model_mount_destination: baiClient.supports('endpoint-extra-mounts')
             ? values.modelMountDestination
             : '/models',
           environ: {}, // FIXME: hardcoded. change it with option later

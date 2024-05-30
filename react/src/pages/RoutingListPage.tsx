@@ -335,7 +335,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               uuid={endpoint?.model as string}
               clickable={false}
             />
-            {baiClient.supports('extra-mounts') &&
+            {baiClient.supports('endpoint-extra-mounts') &&
               endpoint?.model_mount_destination && (
                 <Flex direction="row" align="center" gap={'xxs'}>
                   <ArrowRightOutlined type="secondary" />
@@ -350,7 +350,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     },
   ];
 
-  if (baiClient.supports('extra-mounts')) {
+  if (baiClient.supports('endpoint-extra-mounts')) {
     items.push({
       label: t('modelService.AdditionalMounts'),
       children:
