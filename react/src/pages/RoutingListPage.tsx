@@ -216,7 +216,6 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       },
     );
 
-  console.log(endpoint?.model);
   const mutationToClearError = useTanMutation(() => {
     if (!endpoint) return;
     return baiSignedRequestWithPromise({
@@ -418,12 +417,8 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
                     />
                     {endpoint?.model_mount_destination && (
                       <Flex direction="row" align="center" gap={'xxs'}>
-                        <ArrowRightOutlined
-                          style={{ color: token.colorTextLabel }}
-                        />
-                        <Typography.Text
-                          style={{ color: token.colorTextLabel }}
-                        >
+                        <ArrowRightOutlined type="secondary" />
+                        <Typography.Text type="secondary">
                           {endpoint?.model_mount_destination}
                         </Typography.Text>
                       </Flex>
@@ -434,27 +429,19 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             },
             {
               label: t('modelService.AdditionalMounts'),
-              children: (
-                <Suspense
-                  fallback={<Spin indicator={<LoadingOutlined spin />} />}
-                >
-                  {endpoint?.extra_mounts ? (
-                    _.map(endpoint?.extra_mounts, (vfolder) => {
-                      return (
-                        <VFolderLazyView
-                          uuid={vfolder?.row_id as string}
-                          clickable={false}
-                        />
-                      );
-                    })
-                  ) : (
+              children:
+                (endpoint?.extra_mounts?.length as number) > 0 ? (
+                  _.map(endpoint?.extra_mounts, (vfolder) => (
                     <VFolderLazyView
-                      uuid={endpoint?.model as string}
+                      uuid={vfolder?.row_id as string}
                       clickable={false}
                     />
-                  )}
-                </Suspense>
-              ),
+                  ))
+                ) : (
+                  <Typography.Text type="secondary">
+                    {t('modelService.NoExtraMounts')}
+                  </Typography.Text>
+                ),
             },
             {
               label: t('modelService.Image'),

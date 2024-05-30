@@ -1561,7 +1561,8 @@
     "ServiceTerminated": "Для службы модели «{{ name }}» отправлен запрос на завершение работы.",
     "ModelMountDestination": "Место установки папки модели",
     "AdditionalMounts": "Дополнительные крепления",
-    "ModelDefinitionPath": "Путь к файлу определения модели"
+    "ModelDefinitionPath": "Путь к файлу определения модели",
+    "NoExtraMounts": "Никаких дополнительных креплений"
   },
   "ErrorBoundary": {
     "title": "Произошла ошибка.",

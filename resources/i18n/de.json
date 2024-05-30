@@ -1508,7 +1508,8 @@
     "ServiceTerminated": "Für den Modelldienst „{{ name }}“ wurde eine Anforderung zum Herunterfahren gesendet.",
     "ModelMountDestination": "Mount-Ziel für Modellordner",
     "AdditionalMounts": "Zusätzliche Halterungen",
-    "ModelDefinitionPath": "Pfad der Modelldefinitionsdatei"
+    "ModelDefinitionPath": "Pfad der Modelldefinitionsdatei",
+    "NoExtraMounts": "Keine zusätzlichen Halterungen"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

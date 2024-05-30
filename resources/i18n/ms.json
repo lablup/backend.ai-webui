@@ -1549,7 +1549,8 @@
     "ServiceTerminated": "Permintaan penutupan telah dihantar untuk perkhidmatan model '{{ name }}'.",
     "ModelMountDestination": "Lekapkan Destinasi Untuk Folder Model",
     "AdditionalMounts": "Lekapan Tambahan",
-    "ModelDefinitionPath": "Laluan Fail Definisi Model"
+    "ModelDefinitionPath": "Laluan Fail Definisi Model",
+    "NoExtraMounts": "Tiada pelekap tambahan"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

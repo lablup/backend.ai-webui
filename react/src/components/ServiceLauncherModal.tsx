@@ -197,8 +197,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     endpointFrgmt,
   );
 
-  console.log(endpoint);
-
   const checkManualImageAllowed = (
     isConfigAllowed = false,
     manualImageInput = '',
@@ -263,7 +261,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     ServiceLauncherFormValue
   >({
     mutationFn: (values) => {
-      console.log(values);
       const body: ServiceCreateType = {
         name: values.serviceName,
         desired_session_count: values.desiredRoutingCount,

@@ -1507,7 +1507,8 @@
     "ServiceTerminated": "È stata inviata una richiesta di arresto per il servizio modello '{{ name }}'.",
     "ModelMountDestination": "Destinazione di montaggio per la cartella del modello",
     "AdditionalMounts": "Supporti aggiuntivi",
-    "ModelDefinitionPath": "Percorso del file di definizione del modello"
+    "ModelDefinitionPath": "Percorso del file di definizione del modello",
+    "NoExtraMounts": "Nessun supporto aggiuntivo"
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",
