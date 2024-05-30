@@ -151,6 +151,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             model_definition_path @since(version: "24.03.4")
             extra_mounts @since(version: "24.03.4") {
               row_id
+              name
             }
             resource_group
             resource_slots

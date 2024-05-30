@@ -150,6 +150,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         model_definition_path @since(version: "24.03.4")
         extra_mounts @since(version: "24.03.4") {
           row_id
+          name
         }
         image_object @since(version: "23.09.9") {
           name
