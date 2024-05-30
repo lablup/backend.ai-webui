@@ -284,7 +284,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           model_version: 1, // FIXME: hardcoded. change it with option later
           model_mount_destination: values.modelMountDestination,
           model_definition_path: values.modelDefinitionPath,
-          extra_mounts: values.mounts.reduce(
+          extra_mounts: _.reduce(
+            values.mounts,
             (acc, key: string) => {
               acc[key] = {
                 ...(values.vfoldersAliasMap[key] && {
@@ -753,7 +754,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     <Input
                       allowClear
                       placeholder={'/models'}
-                      disabled={endpoint ? true : false}
+                      disabled={!!endpoint}
                     />
                   </Form.Item>
                   <MinusOutlined
