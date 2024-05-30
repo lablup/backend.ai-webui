@@ -37,13 +37,7 @@ import {
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, {
-  useState,
-  Suspense,
-  useRef,
-  useEffect,
-  useCallback,
-} from 'react';
+import React, { useState, Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
 
