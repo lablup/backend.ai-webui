@@ -150,26 +150,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         model_definition_path @since(version: "24.03.4")
         extra_mounts @since(version: "24.03.4") {
           row_id
-          host
-          quota_scope_id
-          name
-          user
-          user_email
-          group
-          group_name
-          creator
-          unmanaged_path
-          usage_mode
-          permission
-          ownership_type
-          max_files
-          max_size
-          created_at
-          last_used
-          num_files
-          cur_size
-          cloneable
-          status
         }
         image_object @since(version: "23.09.9") {
           name

@@ -20,6 +20,7 @@ import {
   ArrowRightOutlined,
   CheckOutlined,
   CloseOutlined,
+  FolderOutlined,
   LoadingOutlined,
   PlusOutlined,
   QuestionCircleOutlined,
@@ -432,10 +433,10 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               children:
                 (endpoint?.extra_mounts?.length as number) > 0 ? (
                   _.map(endpoint?.extra_mounts, (vfolder) => (
-                    <VFolderLazyView
-                      uuid={vfolder?.row_id as string}
-                      clickable={false}
-                    />
+                    <Typography.Text>
+                      <FolderOutlined />
+                      {vfolder?.name}
+                    </Typography.Text>
                   ))
                 ) : (
                   <Typography.Text type="secondary">
