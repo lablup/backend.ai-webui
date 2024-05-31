@@ -770,7 +770,8 @@
     "ServiceTerminated": "Se envió una solicitud de cierre para el servicio modelo '{{ name }}'.",
     "ModelMountDestination": "Destino de montaje para carpeta de modelo",
     "AdditionalMounts": "Montajes adicionales",
-    "ModelDefinitionPath": "Ruta del archivo de definición del modelo"
+    "ModelDefinitionPath": "Ruta del archivo de definición del modelo",
+    "NoExtraMounts": "Sin soportes adicionales"
   },
   "notification": {
     "Initializing": "Inicializando...",

@@ -487,7 +487,8 @@
     "ServiceTerminated": "A shutdown request was sent for model service '{{ name }}'.",
     "ModelMountDestination": "Mount Destination For Model Folder",
     "AdditionalMounts": "Additional Mounts",
-    "ModelDefinitionPath": "Model Definition File Path"
+    "ModelDefinitionPath": "Model Definition File Path",
+    "NoExtraMounts": "No extra mounts"
   },
   "button": {
     "Cancel": "Cancel",

@@ -1508,7 +1508,8 @@
     "ServiceTerminated": "'{{ name }}' model hizmeti için bir kapatma isteği gönderildi.",
     "ModelMountDestination": "Model Klasörü İçin Montaj Hedefi",
     "AdditionalMounts": "Ek Montajlar",
-    "ModelDefinitionPath": "Model Tanımı Dosya Yolu"
+    "ModelDefinitionPath": "Model Tanımı Dosya Yolu",
+    "NoExtraMounts": "Ekstra montaj yok"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

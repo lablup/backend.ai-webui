@@ -1562,7 +1562,8 @@
     "ServiceTerminated": "'{{ name }}' загварын үйлчилгээнд хаах хүсэлт илгээсэн.",
     "ModelMountDestination": "Загварын хавтасыг холбох газар",
     "AdditionalMounts": "Нэмэлт бэхэлгээ",
-    "ModelDefinitionPath": "Загварын тодорхойлолтын файлын зам"
+    "ModelDefinitionPath": "Загварын тодорхойлолтын файлын зам",
+    "NoExtraMounts": "Нэмэлт бэхэлгээ байхгүй"
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",

@@ -1561,7 +1561,8 @@
     "ServiceTerminated": "Permintaan penutupan dikirim untuk layanan model '{{ nama }}'.",
     "ModelMountDestination": "Pasang Tujuan Untuk Folder Model",
     "AdditionalMounts": "Pemasangan Tambahan",
-    "ModelDefinitionPath": "Jalur File Definisi Model"
+    "ModelDefinitionPath": "Jalur File Definisi Model",
+    "NoExtraMounts": "Tidak ada tunggangan tambahan"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

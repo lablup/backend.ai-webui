@@ -17,8 +17,10 @@ import {
   RoutingListPageQuery$data,
 } from './__generated__/RoutingListPageQuery.graphql';
 import {
+  ArrowRightOutlined,
   CheckOutlined,
   CloseOutlined,
+  FolderOutlined,
   LoadingOutlined,
   PlusOutlined,
   QuestionCircleOutlined,
@@ -143,7 +145,32 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             }
             retries
             model
-            model_mount_destiation
+            model_mount_destiation @deprecatedSince(version: "24.03.4")
+            model_mount_destination @since(version: "24.03.4")
+            model_definition_path @since(version: "24.03.4")
+            extra_mounts @since(version: "24.03.4") {
+              row_id
+              host
+              quota_scope_id
+              name
+              user
+              user_email
+              group
+              group_name
+              creator
+              unmanaged_path
+              usage_mode
+              permission
+              ownership_type
+              max_files
+              max_size
+              created_at
+              last_used
+              num_files
+              cur_size
+              cloneable
+              status
+            }
             resource_group
             resource_slots
             resource_opts
@@ -189,6 +216,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         fetchKey,
       },
     );
+
   const mutationToClearError = useTanMutation(() => {
     if (!endpoint) return;
     return baiSignedRequestWithPromise({
@@ -383,11 +411,38 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
                 <Suspense
                   fallback={<Spin indicator={<LoadingOutlined spin />} />}
                 >
-                  {endpoint?.model && (
-                    <VFolderLazyView uuid={endpoint?.model} clickable={false} />
-                  )}
+                  <Flex direction="column" align="start">
+                    <VFolderLazyView
+                      uuid={endpoint?.model as string}
+                      clickable={false}
+                    />
+                    {endpoint?.model_mount_destination && (
+                      <Flex direction="row" align="center" gap={'xxs'}>
+                        <ArrowRightOutlined type="secondary" />
+                        <Typography.Text type="secondary">
+                          {endpoint?.model_mount_destination}
+                        </Typography.Text>
+                      </Flex>
+                    )}
+                  </Flex>
                 </Suspense>
               ),
+            },
+            {
+              label: t('modelService.AdditionalMounts'),
+              children:
+                (endpoint?.extra_mounts?.length as number) > 0 ? (
+                  _.map(endpoint?.extra_mounts, (vfolder) => (
+                    <Typography.Text>
+                      <FolderOutlined />
+                      {vfolder?.name}
+                    </Typography.Text>
+                  ))
+                ) : (
+                  <Typography.Text type="secondary">
+                    {t('modelService.NoExtraMounts')}
+                  </Typography.Text>
+                ),
             },
             {
               label: t('modelService.Image'),
@@ -400,7 +455,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
                 </Flex>
               ),
               span: {
-                xl: 2,
+                xl: 3,
               },
             },
           ]}

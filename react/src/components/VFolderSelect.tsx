@@ -68,7 +68,6 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   //     fetchPolicy: "store-and-network",
   //   }
   // );
-  // console.log("vfolder_list", vfolder_list);
   const [key, checkUpdate] = useUpdatableState('first');
 
   const { data } = useTanQuery({

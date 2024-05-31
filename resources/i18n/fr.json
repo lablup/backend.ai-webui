@@ -1561,7 +1561,8 @@
     "ServiceTerminated": "Une demande d'arrêt a été envoyée pour le service modèle '{{ name }}'.",
     "ModelMountDestination": "Destination de montage pour le dossier modèle",
     "AdditionalMounts": "Supports supplémentaires",
-    "ModelDefinitionPath": "Chemin du fichier de définition du modèle"
+    "ModelDefinitionPath": "Chemin du fichier de définition du modèle",
+    "NoExtraMounts": "Pas de montures supplémentaires"
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",

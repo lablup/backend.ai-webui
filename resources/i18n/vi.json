@@ -1549,7 +1549,8 @@
     "ServiceTerminated": "Yêu cầu tắt máy đã được gửi cho dịch vụ mẫu '{{ name }}'.",
     "ModelMountDestination": "Mount đích cho thư mục mẫu",
     "AdditionalMounts": "Gắn kết bổ sung",
-    "ModelDefinitionPath": "Đường dẫn tệp định nghĩa mô hình"
+    "ModelDefinitionPath": "Đường dẫn tệp định nghĩa mô hình",
+    "NoExtraMounts": "Không có gắn kết bổ sung"
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",

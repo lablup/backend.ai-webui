@@ -1508,7 +1508,8 @@
     "ServiceTerminated": "Wysłano żądanie zamknięcia usługi modelowej „{{ name }}”.",
     "ModelMountDestination": "Miejsce docelowe montażu dla folderu modelu",
     "AdditionalMounts": "Dodatkowe mocowania",
-    "ModelDefinitionPath": "Ścieżka pliku definicji modelu"
+    "ModelDefinitionPath": "Ścieżka pliku definicji modelu",
+    "NoExtraMounts": "Żadnych dodatkowych mocowań"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",
