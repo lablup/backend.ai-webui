@@ -8,7 +8,6 @@ import ResourceNumber, { ResourceTypeKey } from '../components/ResourceNumber';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
 import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
 import VFolderLazyView from '../components/VFolderLazyView';
-import { VFolder } from '../components/VFolderSelect';
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
 import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
@@ -243,7 +242,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
 
   const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
 
-  const items: DescriptionsItemType[] | undefined = [
+  const items: DescriptionsItemType[] = [
     {
       label: t('modelService.EndpointName'),
       children: <Typography.Text copyable>{endpoint?.name}</Typography.Text>,
@@ -337,10 +336,10 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       label: t('modelService.AdditionalMounts'),
       children: (
         <Flex direction="column" align="start">
-          {_.map(endpoint?.extra_mounts, (vfolder: VFolder) => {
+          {_.map(endpoint?.extra_mounts, (vfolder) => {
             return (
               <Flex direction="row" gap={'xxs'}>
-                <FolderOutlined /> {vfolder.name}
+                <FolderOutlined /> {vfolder?.name}
               </Flex>
             );
           })}
