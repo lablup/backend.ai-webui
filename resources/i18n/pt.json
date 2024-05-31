@@ -116,7 +116,8 @@
     "WarboyEnabled": "NPU do Warboy activada",
     "DownloadWebUIApp": "Descarregar a aplicação Backend.AI Web UI",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "LPU Hyperaccel habilitada"
+    "HyperaccelLPUEnabled": "LPU Hyperaccel habilitada",
+    "InvitatedFrom": "De:"
   },
   "session": {
     "launcher": {

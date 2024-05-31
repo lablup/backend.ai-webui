@@ -116,7 +116,8 @@
     "ATOMEnabled": "ATOM NPU 사용중",
     "WarboyEnabled": "Warboy NPU 사용중",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU 사용중"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU 사용중",
+    "InvitatedFrom": "수신: "
   },
   "session": {
     "launcher": {

@@ -116,7 +116,8 @@
     "WarboyEnabled": "启用 Warboy NPU",
     "DownloadWebUIApp": "下载 Backend.AI Web UI 应用程序",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU 已啟用。"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU 已啟用。",
+    "InvitatedFrom": "從："
   },
   "session": {
     "launcher": {

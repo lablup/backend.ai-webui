@@ -116,7 +116,8 @@
     "WarboyEnabled": "Warboy NPU使用中",
     "DownloadWebUIApp": "Backend.AI Web UIアプリのダウンロード",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "ハイパーアクセル LPU が有効になりました"
+    "HyperaccelLPUEnabled": "ハイパーアクセル LPU が有効になりました",
+    "InvitatedFrom": "から："
   },
   "session": {
     "launcher": {

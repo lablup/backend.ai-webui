@@ -38,7 +38,8 @@
     "WarboyEnabled": "Warboy NPU Activado",
     "connectingToCluster": "Conectando al Cluster Backend.AI...",
     "reserved": "reservado",
-    "HyperaccelLPUEnabled": "LPU de hiperaccel habilitada"
+    "HyperaccelLPUEnabled": "LPU de hiperaccel habilitada",
+    "InvitatedFrom": "De:"
   },
   "error": {
     "WrongAPIServerAddress": "Dirección del servidor API incorrecta.",

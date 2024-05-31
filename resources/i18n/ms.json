@@ -116,7 +116,8 @@
     "WarboyEnabled": "Warboy NPU Didayakan",
     "DownloadWebUIApp": "Muat turun Apl UI Web Backend.AI",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "LPU Hyperaccel Didayakan"
+    "HyperaccelLPUEnabled": "LPU Hyperaccel Didayakan",
+    "InvitatedFrom": "Daripada:"
   },
   "session": {
     "launcher": {

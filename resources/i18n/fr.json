@@ -116,7 +116,8 @@
     "ATOMEnabled": "ATOM NPU Activé",
     "WarboyEnabled": "Warboy NPU activé",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU activé"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU activé",
+    "InvitatedFrom": "Depuis:"
   },
   "session": {
     "launcher": {
