@@ -722,7 +722,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     </Form.Item>
                   )
                 )}
-                {baiClient.supports('endpoint-extra-mounts') ?? (
+                {baiClient.supports('endpoint-extra-mounts') ? (
                   <>
                     <Flex
                       direction="row"
@@ -790,7 +790,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       }}
                     </Form.Item>
                   </>
-                )}
+                ) : null}
               </>
             )}
             <Form.Item
