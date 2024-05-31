@@ -117,7 +117,8 @@
     "DownloadWebUIApp": "下载 Backend.AI Web UI 应用程序",
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Hyperaccel LPU 已启用",
-    "ATOMPlusEnabled": "ATOM+ NPU 启用"
+    "ATOMPlusEnabled": "ATOM+ NPU 启用",
+    "InvitatedFrom": "从："
   },
   "session": {
     "launcher": {

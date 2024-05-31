@@ -9,7 +9,7 @@ interface StartMenuProps {
   deactivate?: boolean;
   allowNeoSessionLauncher?: boolean;
 }
-type ImageSize = 'NONE' | 'SM' | 'LG';
+type ImageSize = 'NONE' | 'SM' | 'MD' | 'LG';
 
 export const SummaryItemStartMenu: React.FC<StartMenuProps> = ({
   deactivate,
@@ -29,13 +29,15 @@ export const SummaryItemStartMenu: React.FC<StartMenuProps> = ({
     const updateImageSize = () => {
       const containerHeight = container.clientHeight;
       const containerWidth = container.clientWidth;
-      if (containerHeight <= 300) {
+      if (containerHeight <= 180) {
         setImgSize('NONE');
-      } else if (containerHeight <= 420) {
+      } else if (containerHeight <= 300) {
         setImgSize('SM');
+      } else if (containerHeight <= 420) {
+        setImgSize('MD');
       } else {
         if (containerWidth <= 272) {
-          setImgSize('SM');
+          setImgSize('MD');
           return;
         }
         setImgSize('LG');
@@ -63,7 +65,7 @@ export const SummaryItemStartMenu: React.FC<StartMenuProps> = ({
         src="/resources/images/launcher-background.png"
         alt="launcher background"
         style={{
-          width: imgSize === 'LG' ? 400 : imgSize === 'SM' ? 250 : 0,
+          width: imgSize === 'LG' ? 400 : imgSize === 'MD' ? 250 : 0,
           marginBottom: token.marginMD,
           display: imgSize === 'NONE' ? 'none' : 'block',
         }}

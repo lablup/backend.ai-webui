@@ -130,7 +130,8 @@
     "WarboyEnabled": "Warboy NPU Enabled",
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Hyperaccel LPU Enabled",
-    "ATOMPlusEnabled": "ATOM+ NPU Enabled"
+    "ATOMPlusEnabled": "ATOM+ NPU Enabled",
+    "InvitatedFrom": "From: "
   },
   "session": {
     "launcher": {

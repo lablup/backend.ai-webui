@@ -117,7 +117,8 @@
     "DownloadWebUIApp": "Descarregar a aplicação Backend.AI Web UI",
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "LPU Hyperaccel habilitada",
-    "ATOMPlusEnabled": "ATOM+ NPU habilitado"
+    "ATOMPlusEnabled": "ATOM+ NPU habilitado",
+    "InvitatedFrom": "De:"
   },
   "session": {
     "launcher": {

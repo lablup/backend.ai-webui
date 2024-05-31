@@ -117,7 +117,8 @@
     "DownloadWebUIApp": "Tải xuống ứng dụng giao diện người dùng web Backend.AI",
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Đã bật LPU Hyperaccel",
-    "ATOMPlusEnabled": "Đã bật NPU ATOM+"
+    "ATOMPlusEnabled": "Đã bật NPU ATOM+",
+    "InvitatedFrom": "Từ:"
   },
   "session": {
     "launcher": {

@@ -117,7 +117,8 @@
     "WarboyEnabled": "Warboy NPU идэвхжүүлсэн",
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Hyperaccel LPU идэвхжүүлсэн",
-    "ATOMPlusEnabled": "ATOM+ NPU-г идэвхжүүлсэн"
+    "ATOMPlusEnabled": "ATOM+ NPU-г идэвхжүүлсэн",
+    "InvitatedFrom": "Хэнээс:"
   },
   "session": {
     "launcher": {

@@ -39,7 +39,8 @@
     "connectingToCluster": "Conectando al Cluster Backend.AI...",
     "reserved": "reservado",
     "HyperaccelLPUEnabled": "LPU de hiperaccel habilitada",
-    "ATOMPlusEnabled": "NPU ATOM+ habilitada"
+    "ATOMPlusEnabled": "NPU ATOM+ habilitada",
+    "InvitatedFrom": "De:"
   },
   "error": {
     "WrongAPIServerAddress": "Dirección del servidor API incorrecta.",

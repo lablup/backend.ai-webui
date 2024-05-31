@@ -117,7 +117,8 @@
     "DownloadWebUIApp": "Muat turun Apl UI Web Backend.AI",
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "LPU Hyperaccel Didayakan",
-    "ATOMPlusEnabled": "ATOM+ NPU Didayakan"
+    "ATOMPlusEnabled": "ATOM+ NPU Didayakan",
+    "InvitatedFrom": "Daripada:"
   },
   "session": {
     "launcher": {

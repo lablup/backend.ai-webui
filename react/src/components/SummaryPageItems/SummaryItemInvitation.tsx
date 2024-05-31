@@ -7,12 +7,49 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanMutation, useTanQuery } from '../../hooks/reactQueryAlias';
 import Flex from '../Flex';
 import { App, Button, Descriptions, Empty, Tag, Typography, theme } from 'antd';
+import { createStyles } from 'antd-style';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
+
+type Invitation = {
+  create_at: string;
+  id: string;
+  invitee: string;
+  inviter: string;
+  modified_at: string;
+  perm: string;
+  state: string;
+  vfolder_id: string;
+  vfolder_name: string;
+};
+
+const useStyles = createStyles(({ css }) => ({
+  card: css`
+    .ant-card-body {
+      padding: var(--token-paddingSM);
+    }
+  `,
+  description: css`
+    .ant-descriptions-header {
+      margin-bottom: var(--token-marginXS);
+    }
+    .ant-descriptions-item {
+      padding: 0 !important;
+    }
+  `,
+  empty: css`
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    height: inherit;
+    margin: 0;
+  `,
+}));
 
 const SummaryItemInvitation: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { styles } = useStyles();
   const app = App.useApp();
 
   const baiClient = useSuspendedBackendaiClient();
@@ -41,7 +78,6 @@ const SummaryItemInvitation: React.FC = () => {
       });
     },
   });
-
   const acceptInvitationsMutation = useTanMutation({
     mutationFn: (inv_id: string) => {
       return baiSignedRequestWithPromise({
@@ -75,91 +111,96 @@ const SummaryItemInvitation: React.FC = () => {
   };
 
   return (
-    <Flex
-      direction="column"
-      justify="center"
-      align="center"
-      //FIXME: This can modify dynamically by the layout
-      style={{ width: '100%' }}
-      gap={token.marginSM}
-    >
+    <Flex direction="column" gap={token.marginSM} style={{ height: '100%' }}>
       {invitations.length > 0 ? (
         <>
-          {invitations.map((invitation: any) => (
-            <BAICard style={{ width: '100%' }}>
-              <Descriptions title={`From: ${invitation.inviter}`} column={1}>
-                <Descriptions.Item
-                  label={t('summary.FolderName')}
-                  style={{ padding: 0 }}
+          {/* FIXME: change any type to specific type */}
+          {invitations.map((invitation: Invitation) => {
+            console.log(invitation);
+            return (
+              <BAICard className={styles.card}>
+                <Descriptions
+                  className={styles.description}
+                  title={`${t('summary.InvitatedFrom')} ${invitation.inviter}`}
+                  column={1}
                 >
-                  {invitation.vfolder_name}
-                </Descriptions.Item>
-                <Descriptions.Item label={t('summary.Permission')}>
-                  {permissionIndicator(invitation.perm)}
-                </Descriptions.Item>
-              </Descriptions>
-              <Flex gap={token.paddingXS} justify="end">
-                <Button
-                  type="default"
-                  onClick={() =>
-                    terminateInvitationsMutation.mutate(invitation.id, {
-                      onSuccess() {
-                        queryClient.invalidateQueries([
-                          'baiClient.invitation.list',
-                        ]);
-                        app.message.success(
-                          t('summary.DeclineSharedVFolder') +
-                            invitation.vfolder_name,
-                        );
-                      },
-                      onError(error: any) {
-                        app.message.error(
-                          error.message || t('dialog.ErrorOccurred'),
-                        );
-                      },
-                    })
-                  }
+                  <Descriptions.Item label={t('summary.FolderName')}>
+                    <Typography.Text strong>
+                      {invitation.vfolder_name}
+                    </Typography.Text>
+                  </Descriptions.Item>
+                  <Descriptions.Item label={t('summary.Permission')}>
+                    {permissionIndicator(invitation.perm)}
+                  </Descriptions.Item>
+                </Descriptions>
+                <Flex
+                  justify="end"
+                  gap={token.paddingXS}
+                  style={{ paddingTop: token.paddingXS }}
                 >
-                  <Typography.Text
-                    type="danger"
-                    style={{ fontSize: token.fontSizeSM }}
+                  <Button
+                    type="default"
+                    onClick={() =>
+                      terminateInvitationsMutation.mutate(invitation.id, {
+                        onSuccess() {
+                          queryClient.invalidateQueries([
+                            'baiClient.invitation.list',
+                          ]);
+                          app.message.success(
+                            t('summary.DeclineSharedVFolder') +
+                              invitation.vfolder_name,
+                          );
+                        },
+                        onError(error: any) {
+                          app.message.error(
+                            error.message || t('dialog.ErrorOccurred'),
+                          );
+                        },
+                      })
+                    }
                   >
-                    {t('summary.Decline')}
-                  </Typography.Text>
-                </Button>
-                <Button
-                  type="default"
-                  style={{
-                    fontSize: token.fontSizeSM,
-                    color: token.colorPrimary,
-                  }}
-                  onClick={() =>
-                    acceptInvitationsMutation.mutate(invitation.id, {
-                      onSuccess() {
-                        queryClient.invalidateQueries([
-                          'baiClient.invitation.list',
-                        ]);
-                        app.message.success(
-                          t('summary.AcceptSharedVFolder') +
-                            invitation.vfolder_name,
-                        );
-                      },
-                      onError(error: any) {
-                        app.message.error(
-                          error.message || t('dialog.ErrorOccurred'),
-                        );
-                      },
-                    })
-                  }
-                >
-                  {t('summary.Accept')}
-                </Button>
-              </Flex>
-            </BAICard>
-          ))}
+                    <Typography.Text
+                      type="danger"
+                      style={{ fontSize: token.fontSizeSM }}
+                    >
+                      {t('summary.Decline')}
+                    </Typography.Text>
+                  </Button>
+                  <Button
+                    type="default"
+                    style={{
+                      fontSize: token.fontSizeSM,
+                      color: token.colorPrimary,
+                    }}
+                    onClick={() =>
+                      acceptInvitationsMutation.mutate(invitation.id, {
+                        onSuccess() {
+                          queryClient.invalidateQueries([
+                            'baiClient.invitation.list',
+                          ]);
+                          app.message.success(
+                            t('summary.AcceptSharedVFolder') +
+                              invitation.vfolder_name,
+                          );
+                        },
+                        onError(error: any) {
+                          app.message.error(
+                            error.message || t('dialog.ErrorOccurred'),
+                          );
+                        },
+                      })
+                    }
+                  >
+                    {t('summary.Accept')}
+                  </Button>
+                </Flex>
+              </BAICard>
+            );
+          })}
         </>
       ) : (
         <Empty
+          className={styles.empty}
           image={Empty.PRESENTED_IMAGE_SIMPLE}
           description={t('summary.NoInvitations')}
         />
