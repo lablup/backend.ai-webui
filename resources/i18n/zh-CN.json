@@ -118,7 +118,16 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Hyperaccel LPU 已启用",
     "ATOMPlusEnabled": "ATOM+ NPU 启用",
-    "InvitatedFrom": "从："
+    "InvitatedFrom": "从：",
+    "ChangeSystemSettingDescription": "更改计算环境图像、图形环境、缩放和插件。",
+    "ChangeUserSetting": "更改用户设置",
+    "ChangeUserSettingDescription": "您可以更改您的个人设置来定制您的体验。",
+    "CheckResourcesDescription": "您可以查看和管理当前正在使用的资源。",
+    "ManageEnvironment": "管理运行环境镜像",
+    "ManageEnvironmentDescription": "安装运行环境映像或更改映像设置。",
+    "Maintenance": "系统维护",
+    "MaintenanceDescription": "提供系统维护功能。",
+    "shortCut": "快捷方式"
   },
   "session": {
     "launcher": {

@@ -118,7 +118,16 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Włączono funkcję Hyperaccel LPU",
     "ATOMPlusEnabled": "Włączono NPU ATOM+",
-    "InvitatedFrom": "Z:"
+    "InvitatedFrom": "Z:",
+    "ChangeSystemSettingDescription": "Zmień obrazy środowiska obliczeniowego, środowisko graficzne, skalowanie i wtyczki.",
+    "ChangeUserSetting": "Zmień ustawienia użytkownika",
+    "ChangeUserSettingDescription": "Możesz zmienić swoje ustawienia osobiste, aby dostosować swoje doświadczenie.",
+    "CheckResourcesDescription": "Możesz sprawdzić i zarządzać aktualnie używanymi zasobami.",
+    "ManageEnvironment": "Zarządzanie obrazami środowiska biegania",
+    "ManageEnvironmentDescription": "Zainstaluj działający obraz środowiska lub zmień ustawienia obrazu.",
+    "Maintenance": "Konserwacja systemu",
+    "MaintenanceDescription": "Zapewnia funkcjonalność do konserwacji systemu.",
+    "shortCut": "Skróty"
   },
   "session": {
     "launcher": {

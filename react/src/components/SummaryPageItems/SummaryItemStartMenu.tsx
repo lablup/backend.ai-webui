@@ -2,6 +2,7 @@ import { useWebUINavigate } from '../../hooks';
 import Flex from '../Flex';
 import { PoweroffOutlined } from '@ant-design/icons';
 import { Button, Typography, theme } from 'antd';
+import { useTheme } from 'antd-style';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -17,6 +18,7 @@ export const SummaryItemStartMenu: React.FC<StartMenuProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const customTheme = useTheme();
   const webuiNavigate = useWebUINavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const [imgSize, setImgSize] = useState<ImageSize>('LG');
@@ -29,14 +31,14 @@ export const SummaryItemStartMenu: React.FC<StartMenuProps> = ({
     const updateImageSize = () => {
       const containerHeight = container.clientHeight;
       const containerWidth = container.clientWidth;
-      if (containerHeight <= 180) {
+      if (containerHeight <= customTheme.containerHeightSM) {
         setImgSize('NONE');
-      } else if (containerHeight <= 300) {
+      } else if (containerHeight <= customTheme.containerHeightMD) {
         setImgSize('SM');
-      } else if (containerHeight <= 420) {
+      } else if (containerHeight <= customTheme.containerHeightLG) {
         setImgSize('MD');
       } else {
-        if (containerWidth <= 272) {
+        if (containerWidth <= customTheme.containerWidthSM) {
           setImgSize('MD');
           return;
         }
@@ -52,6 +54,7 @@ export const SummaryItemStartMenu: React.FC<StartMenuProps> = ({
     return () => {
       resizeObserver.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -65,7 +68,7 @@ export const SummaryItemStartMenu: React.FC<StartMenuProps> = ({
         src="/resources/images/launcher-background.png"
         alt="launcher background"
         style={{
-          width: imgSize === 'LG' ? 400 : imgSize === 'MD' ? 250 : 0,
+          width: imgSize === 'LG' ? 300 : imgSize === 'MD' ? 250 : 0,
           marginBottom: token.marginMD,
           display: imgSize === 'NONE' ? 'none' : 'block',
         }}

@@ -118,7 +118,16 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Hyperaccel LPU 사용중",
     "ATOMPlusEnabled": "ATOM+ NPU 사용중",
-    "InvitatedFrom": "수신: "
+    "InvitatedFrom": "수신: ",
+    "ChangeSystemSettingDescription": "계산환경 이미지, 그래픽 환경, 스케일링 및 플러그인을 변경합니다.",
+    "ChangeUserSetting": "사용자 설정 변경",
+    "ChangeUserSettingDescription": "개인 설정을 변경하여 사용자의 경험을 맞춤화할 수 있습니다.",
+    "CheckResourcesDescription": "현재 사용중인 자원을 확인하고 관리할 수 있습니다.",
+    "ManageEnvironment": "실행 환경 이미지 관리",
+    "ManageEnvironmentDescription": "실행 환경 이미지를 설치하거나 이미지 설정을 변경합니다.",
+    "Maintenance": "시스템 유지보수",
+    "MaintenanceDescription": "시스템 유지보수를 위한 기능을 제공합니다.",
+    "shortCut": "바로가기"
   },
   "session": {
     "launcher": {

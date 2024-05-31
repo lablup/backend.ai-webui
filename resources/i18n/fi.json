@@ -40,7 +40,16 @@
     "reserved": "varattu",
     "HyperaccelLPUEnabled": "Hyperaccel LPU käytössä",
     "ATOMPlusEnabled": "ATOM+ NPU käytössä",
-    "InvitatedFrom": "Lähettäjä:"
+    "InvitatedFrom": "Lähettäjä:",
+    "ChangeSystemSettingDescription": "Muuta laskentaympäristön kuvia, grafiikkaympäristöä, skaalausta ja laajennuksia.",
+    "ChangeUserSetting": "Muuta käyttäjäasetuksia",
+    "ChangeUserSettingDescription": "Voit mukauttaa käyttökokemustasi muuttamalla henkilökohtaisia ​​asetuksiasi.",
+    "CheckResourcesDescription": "Voit tarkistaa ja hallita tällä hetkellä käytössä olevia resursseja.",
+    "ManageEnvironment": "Käyttöympäristön kuvien hallinta",
+    "ManageEnvironmentDescription": "Asenna käyttöympäristön kuva tai muuta kuvan asetuksia.",
+    "Maintenance": "Järjestelmän ylläpito",
+    "MaintenanceDescription": "Tarjoaa toimintoja järjestelmän ylläpitoon.",
+    "shortCut": "Pikanäppäimet"
   },
   "error": {
     "WrongAPIServerAddress": "Väärä API-palvelimen osoite.",

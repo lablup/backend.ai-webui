@@ -35,7 +35,7 @@ const SummaryItemDownloadApp: React.FC = () => {
     },
   };
   const downloadApp = (architecture: string) => {
-    // @ts-ignore
+    //@ts-ignore
     const pkgVersion = globalThis.packageVersion;
     const os = appDownloadMap[OS].os;
     const extension = appDownloadMap[OS].extension;
@@ -44,7 +44,12 @@ const SummaryItemDownloadApp: React.FC = () => {
   };
 
   return (
-    <Flex direction="column" gap={token.paddingMD}>
+    <Flex
+      direction="column"
+      justify="between"
+      align="start"
+      style={{ gap: token.paddingMD }}
+    >
       <Select
         defaultValue={OS}
         options={[
@@ -54,7 +59,7 @@ const SummaryItemDownloadApp: React.FC = () => {
         ]}
         style={{
           width: '100%',
-          height: token.sizeXXL,
+          height: '50px',
         }}
         onChange={(value) => setOS(value)}
         dropdownRender={(menu) => (
@@ -63,13 +68,12 @@ const SummaryItemDownloadApp: React.FC = () => {
           </Typography.Text>
         )}
       />
-      <Flex gap={token.paddingXS} style={{ width: '100%' }}>
-        {appDownloadMap[OS].architecture.map((arch: string) => (
+      <Flex style={{ width: '100%', gap: token.paddingXS }}>
+        {appDownloadMap[OS].architecture.map((arch: any) => (
           <Button
             key={arch}
             size="large"
             style={{ flex: 1, color: token.colorPrimary }}
-            //FIXME : change any type to specific type
             onClick={(e: any) => {
               downloadApp(e.target.innerText.toLowerCase());
             }}

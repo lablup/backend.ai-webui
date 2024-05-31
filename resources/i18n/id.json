@@ -118,7 +118,16 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "LPU Hyperaccel Diaktifkan",
     "ATOMPlusEnabled": "ATOM+ NPU Diaktifkan",
-    "InvitatedFrom": "Dari:"
+    "InvitatedFrom": "Dari:",
+    "ChangeSystemSettingDescription": "Ubah gambar lingkungan komputasi, lingkungan grafis, penskalaan, dan plugin.",
+    "ChangeUserSetting": "Ubah pengaturan pengguna",
+    "ChangeUserSettingDescription": "Anda dapat mengubah pengaturan pribadi untuk menyesuaikan pengalaman Anda.",
+    "CheckResourcesDescription": "Anda dapat memeriksa dan mengelola sumber daya yang sedang digunakan.",
+    "ManageEnvironment": "Mengelola Gambar Lingkungan Berjalan",
+    "ManageEnvironmentDescription": "Instal gambar lingkungan yang sedang berjalan atau ubah pengaturan gambar.",
+    "Maintenance": "Perbaikan sistem",
+    "MaintenanceDescription": "Menyediakan fungsionalitas untuk pemeliharaan sistem.",
+    "shortCut": "Jalan pintas"
   },
   "session": {
     "launcher": {

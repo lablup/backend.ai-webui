@@ -118,7 +118,16 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Hyperaccel LPU Etkin",
     "ATOMPlusEnabled": "ATOM+ NPU Etkin",
-    "InvitatedFrom": "İtibaren:"
+    "InvitatedFrom": "İtibaren:",
+    "ChangeSystemSettingDescription": "Bilgi işlem ortamı görüntülerini, grafik ortamını, ölçeklendirmeyi ve eklentileri değiştirin.",
+    "ChangeUserSetting": "Kullanıcı ayarlarını değiştir",
+    "ChangeUserSettingDescription": "Deneyiminizi kişiselleştirmek için kişisel ayarlarınızı değiştirebilirsiniz.",
+    "CheckResourcesDescription": "Şu anda kullanımda olan kaynakları kontrol edebilir ve yönetebilirsiniz.",
+    "ManageEnvironment": "Koşu Ortamı Görüntülerini Yönetme",
+    "ManageEnvironmentDescription": "Çalışan bir ortam görüntüsü yükleyin veya görüntü ayarlarını değiştirin.",
+    "Maintenance": "Sistem bakımı",
+    "MaintenanceDescription": "Sistem bakımı için işlevsellik sağlar.",
+    "shortCut": "Kısayollar"
   },
   "session": {
     "launcher": {

@@ -40,7 +40,16 @@
     "reserved": "reservado",
     "HyperaccelLPUEnabled": "LPU de hiperaccel habilitada",
     "ATOMPlusEnabled": "NPU ATOM+ habilitada",
-    "InvitatedFrom": "De:"
+    "InvitatedFrom": "De:",
+    "ChangeSystemSettingDescription": "Cambie las imágenes del entorno informático, el entorno gráfico, el escalado y los complementos.",
+    "ChangeUserSetting": "Cambiar la configuración del usuario",
+    "ChangeUserSettingDescription": "Puede cambiar su configuración personal para personalizar su experiencia.",
+    "CheckResourcesDescription": "Puede comprobar y gestionar los recursos actualmente en uso.",
+    "ManageEnvironment": "Gestión de imágenes del entorno de ejecución",
+    "ManageEnvironmentDescription": "Instale una imagen del entorno en ejecución o cambie la configuración de la imagen.",
+    "Maintenance": "Mantenimiento del sistema",
+    "MaintenanceDescription": "Proporciona funcionalidad para el mantenimiento del sistema.",
+    "shortCut": "Atajos"
   },
   "error": {
     "WrongAPIServerAddress": "Dirección del servidor API incorrecta.",

@@ -118,7 +118,16 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Hyperaccel LPU включен",
     "ATOMPlusEnabled": "NPU ATOM+ включен",
-    "InvitatedFrom": "От:"
+    "InvitatedFrom": "От:",
+    "ChangeSystemSettingDescription": "Меняйте изображения вычислительной среды, графическую среду, масштабирование и плагины.",
+    "ChangeUserSetting": "Изменение настроек пользователя",
+    "ChangeUserSettingDescription": "Вы можете изменить свои личные настройки, чтобы персонализировать свой опыт.",
+    "CheckResourcesDescription": "Вы можете проверять и управлять ресурсами, которые используются в данный момент.",
+    "ManageEnvironment": "Управление изображениями рабочей среды",
+    "ManageEnvironmentDescription": "Установите образ работающей среды или измените настройки образа.",
+    "Maintenance": "Обслуживание системы",
+    "MaintenanceDescription": "Обеспечивает функциональные возможности для обслуживания системы.",
+    "shortCut": "Ярлыки"
   },
   "session": {
     "launcher": {

@@ -118,7 +118,16 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Hyperaccel LPU идэвхжүүлсэн",
     "ATOMPlusEnabled": "ATOM+ NPU-г идэвхжүүлсэн",
-    "InvitatedFrom": "Хэнээс:"
+    "InvitatedFrom": "Хэнээс:",
+    "ChangeSystemSettingDescription": "Тооцоолох орчны зураг, график орчин, масштаб болон залгаасуудыг өөрчлөх.",
+    "ChangeUserSetting": "Хэрэглэгчийн тохиргоог өөрчлөх",
+    "ChangeUserSettingDescription": "Та туршлагаа өөрчлөхийн тулд хувийн тохиргоогоо өөрчилж болно.",
+    "CheckResourcesDescription": "Та одоо ашиглаж байгаа нөөцүүдийг шалгаж, удирдах боломжтой.",
+    "ManageEnvironment": "Ажиллаж буй орчны зургийг удирдах",
+    "ManageEnvironmentDescription": "Ажиллаж буй орчны дүрсийг суулгах эсвэл зургийн тохиргоог өөрчлөх.",
+    "Maintenance": "Системийн засвар үйлчилгээ",
+    "MaintenanceDescription": "Системийн засвар үйлчилгээ хийх функцээр хангадаг.",
+    "shortCut": "Товчлолууд"
   },
   "session": {
     "launcher": {

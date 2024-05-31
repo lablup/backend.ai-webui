@@ -118,7 +118,16 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "LPU Hyperaccel Didayakan",
     "ATOMPlusEnabled": "ATOM+ NPU Didayakan",
-    "InvitatedFrom": "Daripada:"
+    "InvitatedFrom": "Daripada:",
+    "ChangeSystemSettingDescription": "Tukar imej persekitaran pengiraan, persekitaran grafik, penskalaan dan pemalam.",
+    "ChangeUserSetting": "Tukar tetapan pengguna",
+    "ChangeUserSettingDescription": "Anda boleh menukar tetapan peribadi anda untuk menyesuaikan pengalaman anda.",
+    "CheckResourcesDescription": "Anda boleh menyemak dan mengurus sumber yang sedang digunakan.",
+    "ManageEnvironment": "Mengurus Imej Persekitaran Berjalan",
+    "ManageEnvironmentDescription": "Pasang imej persekitaran yang sedang berjalan atau tukar tetapan imej.",
+    "Maintenance": "Penyelenggaraan sistem",
+    "MaintenanceDescription": "Menyediakan fungsi untuk penyelenggaraan sistem.",
+    "shortCut": "Jalan pintas"
   },
   "session": {
     "launcher": {

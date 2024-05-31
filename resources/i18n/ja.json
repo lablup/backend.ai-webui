@@ -118,7 +118,16 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "ハイパーアクセル LPU が有効になりました",
     "ATOMPlusEnabled": "ATOM+ NPU 有効",
-    "InvitatedFrom": "から："
+    "InvitatedFrom": "から：",
+    "ChangeSystemSettingDescription": "計算環境画像、グラフィック環境、スケーリング、プラグインを変更します。",
+    "ChangeUserSetting": "ユーザー設定を変更する",
+    "ChangeUserSettingDescription": "個人設定を変更して、ユーザーの経験をカスタマイズできます。",
+    "CheckResourcesDescription": "現在使用しているリソースを確認して管理できます。",
+    "ManageEnvironment": "実行環境イメージの管理",
+    "ManageEnvironmentDescription": "実行環境イメージをインストールするか、イメージ設定を変更します。",
+    "Maintenance": "システム・メンテナンス",
+    "MaintenanceDescription": "システムメンテナンスのための機能を提供します。",
+    "shortCut": "ショートカット"
   },
   "session": {
     "launcher": {

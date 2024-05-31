@@ -118,7 +118,16 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Đã bật LPU Hyperaccel",
     "ATOMPlusEnabled": "Đã bật NPU ATOM+",
-    "InvitatedFrom": "Từ:"
+    "InvitatedFrom": "Từ:",
+    "ChangeSystemSettingDescription": "Thay đổi hình ảnh môi trường điện toán, môi trường đồ họa, chia tỷ lệ và plugin.",
+    "ChangeUserSetting": "Thay đổi cài đặt người dùng",
+    "ChangeUserSettingDescription": "Bạn có thể thay đổi cài đặt cá nhân để tùy chỉnh trải nghiệm của mình.",
+    "CheckResourcesDescription": "Bạn có thể kiểm tra và quản lý các tài nguyên hiện đang được sử dụng.",
+    "ManageEnvironment": "Quản lý hình ảnh môi trường đang chạy",
+    "ManageEnvironmentDescription": "Cài đặt hình ảnh môi trường đang chạy hoặc thay đổi cài đặt hình ảnh.",
+    "Maintenance": "Bảo trì hệ thống",
+    "MaintenanceDescription": "Cung cấp chức năng bảo trì hệ thống.",
+    "shortCut": "Phím tắt"
   },
   "session": {
     "launcher": {

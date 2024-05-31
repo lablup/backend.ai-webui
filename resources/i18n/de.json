@@ -118,7 +118,16 @@
     "FastTrack": "FastTrack",
     "HyperaccelLPUEnabled": "Hyperaccel-LPU aktiviert",
     "ATOMPlusEnabled": "ATOM+ NPU aktiviert",
-    "InvitatedFrom": "Aus:"
+    "InvitatedFrom": "Aus:",
+    "ChangeSystemSettingDescription": "Ändern Sie Bilder der Rechenumgebung, Grafikumgebung, Skalierung und Plugins.",
+    "ChangeUserSetting": "Benutzereinstellungen ändern",
+    "ChangeUserSettingDescription": "Sie können Ihre persönlichen Einstellungen ändern, um Ihr Erlebnis individuell zu gestalten.",
+    "CheckResourcesDescription": "Sie können die aktuell verwendeten Ressourcen überprüfen und verwalten.",
+    "ManageEnvironment": "Verwalten laufender Umgebungsbilder",
+    "ManageEnvironmentDescription": "Installieren Sie ein laufendes Umgebungs-Image oder ändern Sie die Image-Einstellungen.",
+    "Maintenance": "Systemwartung",
+    "MaintenanceDescription": "Bietet Funktionalität für die Systemwartung.",
+    "shortCut": "Verknüpfungen"
   },
   "session": {
     "launcher": {
