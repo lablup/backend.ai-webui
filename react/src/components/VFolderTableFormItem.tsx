@@ -1,3 +1,4 @@
+import { VFolder } from './VFolderSelect';
 import VFolderTable, {
   AliasMap,
   VFolderTableProps,
@@ -8,8 +9,10 @@ import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface VFolderTableFromItemProps extends Omit<FormItemProps, 'name'> {
+interface VFolderTableFormItemProps extends Omit<FormItemProps, 'name'> {
   filter?: VFolderTableProps['filter'];
+  rowKey?: keyof VFolder;
+  tableProps?: Partial<VFolderTableProps>;
 }
 
 export interface VFolderTableFormValues {
@@ -17,8 +20,10 @@ export interface VFolderTableFormValues {
   vfoldersAliasMap: AliasMap;
 }
 
-const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
+const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
   filter,
+  rowKey = 'name',
+  tableProps,
   ...formItemProps
 }) => {
   const form = Form.useFormInstance();
@@ -64,7 +69,7 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
         trigger="onChangeSelectedRowKeys"
       >
         <VFolderTable
-          rowKey="name"
+          rowKey={rowKey}
           showAliasInput
           aliasMap={form.getFieldValue('vfoldersAliasMap')}
           onChangeAliasMap={(aliasMap) => {
@@ -78,10 +83,11 @@ const VFolderTableFromItem: React.FC<VFolderTableFromItemProps> = ({
           onChangeAutoMountedFolders={(names) => {
             form.setFieldValue('autoMountedFolderNames', names);
           }}
+          {...tableProps}
         />
       </Form.Item>
     </>
   );
 };
 
-export default VFolderTableFromItem;
+export default VFolderTableFormItem;

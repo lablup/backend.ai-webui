@@ -197,7 +197,7 @@
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "yuva",
       "Architecture": "Mimarlık",
-      "ModelStorageToMount": "Montaj için model depolama",
+      "ModelStorageToMount": "Monte Edilecek Model Depolama",
       "MinMemory": "Seçili çalışma zamanı ortamı için minimum bellek kapasitesi {{size}}iB'dir.",
       "AIAccelerator": "Yapay Zeka Hızlandırıcı",
       "ModelStorage": "Model Depolama",
@@ -1505,7 +1505,10 @@
     "ServiceUpdated": "Model hizmeti {{ name }} başarıyla güncellendi.",
     "CannotValidateNow": "Hizmet şu anda doğrulanamıyor. \nLütfen kaynak tahsisini veya diğer yapılandırmaları kontrol edin.",
     "Ready": "Hazır",
-    "ServiceTerminated": "'{{ name }}' model hizmeti için bir kapatma isteği gönderildi."
+    "ServiceTerminated": "'{{ name }}' model hizmeti için bir kapatma isteği gönderildi.",
+    "ModelMountDestination": "Model Klasörü İçin Montaj Hedefi",
+    "AdditionalMounts": "Ek Montajlar",
+    "ModelDefinitionPath": "Model Tanımı Dosya Yolu"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

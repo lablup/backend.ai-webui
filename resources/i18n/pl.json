@@ -197,7 +197,7 @@
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "Otwór",
       "Architecture": "Architektura",
-      "ModelStorageToMount": "Model przechowywania do zamontowania",
+      "ModelStorageToMount": "Przechowywanie modelu do montażu",
       "MinMemory": "Minimalna pojemność pamięci dla aktualnie wybranego środowiska uruchomieniowego wynosi {{size}}iB.",
       "AIAccelerator": "Akcelerator AI",
       "ModelStorage": "Model Storage",
@@ -1505,7 +1505,10 @@
     "ServiceUpdated": "Usługa modelowa {{ name }} została pomyślnie zaktualizowana.",
     "CannotValidateNow": "Nie można teraz zweryfikować usługi. \nSprawdź alokację zasobów lub inne konfiguracje.",
     "Ready": "Gotowy",
-    "ServiceTerminated": "Wysłano żądanie zamknięcia usługi modelowej „{{ name }}”."
+    "ServiceTerminated": "Wysłano żądanie zamknięcia usługi modelowej „{{ name }}”.",
+    "ModelMountDestination": "Miejsce docelowe montażu dla folderu modelu",
+    "AdditionalMounts": "Dodatkowe mocowania",
+    "ModelDefinitionPath": "Ścieżka pliku definicji modelu"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",

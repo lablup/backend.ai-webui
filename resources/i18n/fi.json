@@ -765,7 +765,10 @@
     "ServiceUpdated": "Mallipalvelun {{ name }} päivitys onnistui.",
     "CannotValidateNow": "Palvelua ei voi vahvistaa nyt. \nTarkista resurssien allokaatio tai muut asetukset.",
     "Ready": "Valmis",
-    "ServiceTerminated": "Mallipalvelun '{{ name }}' sammutuspyyntö lähetettiin."
+    "ServiceTerminated": "Mallipalvelun '{{ name }}' sammutuspyyntö lähetettiin.",
+    "AdditionalMounts": "Lisäkiinnikkeet",
+    "ModelDefinitionPath": "Mallin määritelmän tiedostopolku",
+    "ModelMountDestination": "Kiinnityskohde mallikansioon"
   },
   "notification": {
     "Initializing": "Aloitetaan...",
@@ -1123,7 +1126,7 @@
       "Memory": "Muisti",
       "MinMemory": "Tällä hetkellä valitun ajoympäristön vähimmäismuistikapasiteetti on {{size}}iB.",
       "ModelStorage": "Malli Varastointi",
-      "ModelStorageToMount": "Mallivarasto asennettavaksi",
+      "ModelStorageToMount": "Mallin säilytystila kiinnitettäväksi",
       "MountedFolders": "Asennetut kansiot",
       "MultiNode": "Multi Node",
       "MustSpecifyVersion": "Ympäristö ja versio on määritettävä.",

@@ -230,7 +230,7 @@
       "StartModelServing": "Memulai Penyajian Model",
       "InferenceMode": "Kesimpulan",
       "ImageDoesNotProvideModelPath": "Gambar kontainer tidak menyediakan jalur model. Ini harus dimodifikasi.",
-      "ModelStorageToMount": "Penyimpanan model untuk dipasang",
+      "ModelStorageToMount": "Penyimpanan Model Untuk Dipasang",
       "AIAccelerator": "Akselerator AI",
       "DescAIAccelerator": "</p> <p>Akselerator AI (GPU atau NPU) sangat cocok untuk komputasi matriks / vektor yang terlibat dalam pembelajaran mesin. Akselerator AI mempercepat algoritme pelatihan / inferensi dengan urutan besarnya, mengurangi waktu berjalan dari berminggu-minggu menjadi beberapa hari.",
       "SessionAlreadyExists": "Nama sesi sudah ada",
@@ -1558,7 +1558,10 @@
     "Ready": "Siap",
     "Validate": "Mengesahkan",
     "ValidationInfo": "Info Validasi",
-    "ServiceTerminated": "Permintaan penutupan dikirim untuk layanan model '{{ nama }}'."
+    "ServiceTerminated": "Permintaan penutupan dikirim untuk layanan model '{{ nama }}'.",
+    "ModelMountDestination": "Pasang Tujuan Untuk Folder Model",
+    "AdditionalMounts": "Pemasangan Tambahan",
+    "ModelDefinitionPath": "Jalur File Definisi Model"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

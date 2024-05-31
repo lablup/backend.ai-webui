@@ -197,7 +197,7 @@
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "Fessura",
       "Architecture": "Architettura",
-      "ModelStorageToMount": "Modello di magazzino da montare",
+      "ModelStorageToMount": "Conservazione del modello da montare",
       "MinMemory": "La capacità minima di memoria per l'ambiente di runtime attualmente selezionato è {{size}}iB.",
       "AIAccelerator": "Acceleratore AI",
       "ModelStorage": "Modello di stoccaggio",
@@ -1504,7 +1504,10 @@
     "Ready": "Pronto",
     "ValidationInfo": "Informazioni sulla convalida",
     "Validate": "Convalidare",
-    "ServiceTerminated": "È stata inviata una richiesta di arresto per il servizio modello '{{ name }}'."
+    "ServiceTerminated": "È stata inviata una richiesta di arresto per il servizio modello '{{ name }}'.",
+    "ModelMountDestination": "Destinazione di montaggio per la cartella del modello",
+    "AdditionalMounts": "Supporti aggiuntivi",
+    "ModelDefinitionPath": "Percorso del file di definizione del modello"
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",

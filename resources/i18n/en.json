@@ -160,7 +160,7 @@
       "Start": "Start",
       "FolderToMount": "Folder to mount",
       "FolderToMountList": "Folder to mount",
-      "ModelStorageToMount": "Model storage to mount",
+      "ModelStorageToMount": "Model Storage To Mount",
       "MountedFolders": "Mounted folders",
       "ResourceAllocation": "Resource allocation",
       "NoSuitablePreset": "No suitable preset",
@@ -484,7 +484,10 @@
     "FailedToTerminateService": "The request to terminate the service failed.",
     "ServiceCreated": "Model service {{ name }} has been created successfully.",
     "ServiceUpdated": "Model service {{ name }} has been updated successfully.",
-    "ServiceTerminated": "A shutdown request was sent for model service '{{ name }}'."
+    "ServiceTerminated": "A shutdown request was sent for model service '{{ name }}'.",
+    "ModelMountDestination": "Mount Destination For Model Folder",
+    "AdditionalMounts": "Additional Mounts",
+    "ModelDefinitionPath": "Model Definition File Path"
   },
   "button": {
     "Cancel": "Cancel",

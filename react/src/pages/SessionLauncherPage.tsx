@@ -25,7 +25,7 @@ import SessionLauncherValidationTour from '../components/SessionLauncherErrorTou
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
-import VFolderTableFromItem, {
+import VFolderTableFormItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
 import { compareNumberWithUnits, iSizeToSize } from '../helper';
@@ -1056,7 +1056,7 @@ const SessionLauncherPage = () => {
                     display: currentStepKey === 'storage' ? 'block' : 'none',
                   }}
                 >
-                  <VFolderTableFromItem
+                  <VFolderTableFormItem
                     filter={(vfolder) => {
                       return (
                         vfolder.status === 'ready' &&

@@ -197,7 +197,7 @@
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "Slot",
       "Architecture": "Arquitetura",
-      "ModelStorageToMount": "Modelo de armazenamento para montagem",
+      "ModelStorageToMount": "Armazenamento de modelo para montar",
       "MinMemory": "A capacidade mínima de memória para o ambiente de tempo de execução atualmente selecionado é {{size}}iB.",
       "AIAccelerator": "Acelerador de IA",
       "ModelStorage": "Modelo de armazenamento",
@@ -1546,7 +1546,10 @@
     "ServiceUpdated": "O serviço de modelo {{ name }} foi atualizado com sucesso.",
     "CannotValidateNow": "Não é possível validar o serviço agora. \nVerifique a alocação de recursos ou outras configurações.",
     "Ready": "Preparar",
-    "ServiceTerminated": "Uma solicitação de encerramento foi enviada para o serviço de modelo '{{ name }}'."
+    "ServiceTerminated": "Uma solicitação de encerramento foi enviada para o serviço de modelo '{{ name }}'.",
+    "ModelMountDestination": "Montar destino para pasta de modelo",
+    "AdditionalMounts": "Montarias Adicionais",
+    "ModelDefinitionPath": "Caminho do arquivo de definição de modelo"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

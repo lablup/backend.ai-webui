@@ -20,8 +20,10 @@ import ImageEnvironmentSelectFormItems, {
 import InputNumberWithSlider from './InputNumberWithSlider';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
+import VFolderTableFormItem from './VFolderTableFormItem';
 import { ServiceLauncherModalFragment$key } from './__generated__/ServiceLauncherModalFragment.graphql';
 import { ServiceLauncherModalModifyMutation } from './__generated__/ServiceLauncherModalModifyMutation.graphql';
+import { MinusOutlined } from '@ant-design/icons';
 import {
   App,
   Button,
@@ -61,15 +63,22 @@ interface ServiceCreateConfigResourceType {
   'warboy.device'?: number | string;
   'hyperaccel-lpu.device'?: number | string;
 }
+interface MountOptionType {
+  mount_destination?: string;
+  type?: string;
+  permission?: string;
+}
 
 interface ServiceCreateConfigType {
   model: string;
-  model_version?: string;
-  model_mount_destination: string; // default == "/models"
+  model_version?: number;
+  model_mount_destination?: string; // default == "/models"
+  model_definition_path?: string; // default == "model-definition.yaml"
   environ: object; // environment variable
   scaling_group: string;
   resources: ServiceCreateConfigResourceType;
   resource_opts?: ServiceCreateConfigResourceOptsType;
+  extra_mounts?: Record<string, MountOptionType>;
 }
 export interface ServiceCreateType {
   name: string;
@@ -99,6 +108,10 @@ interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   vFolderName: string;
   desiredRoutingCount: number;
   openToPublic: boolean;
+  modelMountDestination: string;
+  modelDefinitionPath: string;
+  vfoldersAliasMap: Record<string, string>;
+  mounts: Array<string>;
 }
 
 export type ServiceLauncherFormValue = ServiceLauncherInput &
@@ -120,6 +133,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const currentDomain = useCurrentDomainValue();
 
   const formRef = useRef<FormInstance<ServiceLauncherFormValue>>(null);
+
   const endpoint = useFragment(
     graphql`
       fragment ServiceLauncherModalFragment on Endpoint {
@@ -132,6 +146,31 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         cluster_size
         open_to_public
         model
+        model_mount_destination @since(version: "24.03.4")
+        model_definition_path @since(version: "24.03.4")
+        extra_mounts @since(version: "24.03.4") {
+          row_id
+          host
+          quota_scope_id
+          name
+          user
+          user_email
+          group
+          group_name
+          creator
+          unmanaged_path
+          usage_mode
+          permission
+          ownership_type
+          max_files
+          max_size
+          created_at
+          last_used
+          num_files
+          cur_size
+          cloneable
+          status
+        }
         image_object @since(version: "23.09.9") {
           name
           humanized_name
@@ -157,6 +196,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     `,
     endpointFrgmt,
   );
+
+  console.log(endpoint);
 
   const checkManualImageAllowed = (
     isConfigAllowed = false,
@@ -222,6 +263,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     ServiceLauncherFormValue
   >({
     mutationFn: (values) => {
+      console.log(values);
       const body: ServiceCreateType = {
         name: values.serviceName,
         desired_session_count: values.desiredRoutingCount,
@@ -239,7 +281,22 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         open_to_public: values.openToPublic,
         config: {
           model: values.vFolderName,
-          model_mount_destination: '/models', // FIXME: hardcoded. change it with option later
+          model_version: 1, // FIXME: hardcoded. change it with option later
+          model_mount_destination: values.modelMountDestination,
+          model_definition_path: values.modelDefinitionPath,
+          extra_mounts: _.reduce(
+            values.mounts,
+            (acc, key: string) => {
+              acc[key] = {
+                ...(values.vfoldersAliasMap[key] && {
+                  mount_destination: values.vfoldersAliasMap[key],
+                }),
+                type: 'bind', // FIXME: hardcoded. change it with option later
+              };
+              return acc;
+            },
+            {} as Record<string, MountOptionType>,
+          ),
           environ: {}, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {
@@ -314,6 +371,31 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             supported_accelerators
           }
           name
+          model_definition_path
+          model_mount_destination
+          extra_mounts @since(version: "24.03.4") {
+            id
+            host
+            quota_scope_id
+            name
+            user
+            user_email
+            group
+            group_name
+            creator
+            unmanaged_path
+            usage_mode
+            permission
+            ownership_type
+            max_files
+            max_size
+            created_at
+            last_used
+            num_files
+            cur_size
+            cloneable
+            status
+          }
         }
       }
     }
@@ -354,8 +436,17 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   ),
                   values,
                 ),
+                extra_mounts: values.mounts.map((vfolder) => {
+                  return {
+                    vfolder_id: vfolder,
+                    ...(values.vfoldersAliasMap[vfolder] && {
+                      mount_destination: values.vfoldersAliasMap[vfolder],
+                    }),
+                  };
+                }),
                 name: values.serviceName,
                 resource_group: values.resourceGroup,
+                model_definition_path: values.modelDefinitionPath,
               },
             };
             commitModifyEndpoint({
@@ -479,6 +570,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             ? t('modelService.EditModelService')
             : t('modelService.StartNewServing')
         }
+        width={700}
         destroyOnClose
         onOk={handleOk}
         onCancel={handleCancel}
@@ -571,6 +663,13 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       version: `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`,
                       image: endpoint?.image_object,
                     },
+                    vFolderName: endpoint?.model_mount_destination,
+                    mounts: _.map(endpoint?.extra_mounts, (item) =>
+                      item?.row_id?.replaceAll('-', ''),
+                    ),
+                    modelMountDestination: endpoint?.model_mount_destination,
+                    modelDefinitionPath: endpoint?.model_definition_path,
+                    // TODO: set mounts alias map according to extra_mounts if possible
                   }
                 : {
                     desiredRoutingCount: 1,
@@ -609,7 +708,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                 >
                   <Switch disabled={!!endpoint}></Switch>
                 </Form.Item>
-                {/* <VFolderTableFromItem /> */}
                 {!endpoint ? (
                   <Form.Item
                     name={'vFolderName'}
@@ -641,6 +739,71 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     </Form.Item>
                   )
                 )}
+                <Flex
+                  direction="row"
+                  gap={'xxs'}
+                  align="stretch"
+                  justify="between"
+                >
+                  <Form.Item
+                    name={'modelMountDestination'}
+                    label={t('modelService.ModelMountDestination')}
+                    style={{ width: '50%' }}
+                    labelCol={{ style: { width: 400 } }}
+                  >
+                    <Input
+                      allowClear
+                      placeholder={'/models'}
+                      disabled={!!endpoint}
+                    />
+                  </Form.Item>
+                  <MinusOutlined
+                    style={{
+                      fontSize: token.fontSizeXL,
+                      color: token.colorTextDisabled,
+                    }}
+                    rotate={290}
+                  />
+                  <Form.Item
+                    name={'modelDefinitionPath'}
+                    label={t('modelService.ModelDefinitionPath')}
+                    style={{ width: '50%' }}
+                    labelCol={{ style: { width: 300 } }}
+                  >
+                    <Input
+                      allowClear
+                      placeholder={
+                        endpoint?.model_definition_path
+                          ? endpoint?.model_definition_path
+                          : 'model-definition.yaml'
+                      }
+                    />
+                  </Form.Item>
+                </Flex>
+                <Form.Item
+                  noStyle
+                  shouldUpdate={(prev, cur) =>
+                    prev.vFolderName !== cur.vFolderName
+                  }
+                >
+                  {() => {
+                    return (
+                      <VFolderTableFormItem
+                        rowKey={'id'}
+                        label={t('modelService.AdditionalMounts')}
+                        filter={(vf) =>
+                          vf.name !==
+                            formRef.current?.getFieldValue('vFolderName') &&
+                          vf.status === 'ready' &&
+                          vf.usage_mode !== 'model'
+                        }
+                        tableProps={{
+                          size: 'small',
+                        }}
+                      />
+                    );
+                  }}
+                </Form.Item>
               </>
             )}
             <Form.Item

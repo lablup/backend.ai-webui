@@ -767,7 +767,10 @@
     "ServiceUpdated": "El servicio de modelo {{ name }} se ha actualizado correctamente.",
     "CannotValidateNow": "No se puede validar el servicio ahora. \nVerifique la asignación de recursos u otras configuraciones.",
     "Ready": "Listo",
-    "ServiceTerminated": "Se envió una solicitud de cierre para el servicio modelo '{{ name }}'."
+    "ServiceTerminated": "Se envió una solicitud de cierre para el servicio modelo '{{ name }}'.",
+    "ModelMountDestination": "Destino de montaje para carpeta de modelo",
+    "AdditionalMounts": "Montajes adicionales",
+    "ModelDefinitionPath": "Ruta del archivo de definición del modelo"
   },
   "notification": {
     "Initializing": "Inicializando...",
@@ -1125,7 +1128,7 @@
       "Memory": "Memoria",
       "MinMemory": "La capacidad mínima de memoria para el entorno de ejecución seleccionado actualmente es de {{size}}iB.",
       "ModelStorage": "Almacenamiento de modelos",
-      "ModelStorageToMount": "Modelo de almacenamiento para montar",
+      "ModelStorageToMount": "Almacenamiento de modelos para montar",
       "MountedFolders": "Carpetas montadas",
       "MultiNode": "Nodo múltiple",
       "MustSpecifyVersion": "Debe especificar Entorno y Versión.",

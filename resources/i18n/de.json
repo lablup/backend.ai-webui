@@ -197,7 +197,7 @@
       "SharedMemoryAbbr": "SCHMEM",
       "GPUSlot": "Slot",
       "Architecture": "Architektur",
-      "ModelStorageToMount": "Modellspeicher zu montieren",
+      "ModelStorageToMount": "Modellspeicher zum Montieren",
       "MinMemory": "Die minimale Speicherkapazität für die aktuell ausgewählte Laufzeitumgebung beträgt {{size}}iB.",
       "AIAccelerator": "KI-Beschleuniger",
       "ModelStorage": "Modell Lagerung",
@@ -1505,7 +1505,10 @@
     "ServiceUpdated": "Der Modelldienst {{ name }} wurde erfolgreich aktualisiert.",
     "CannotValidateNow": "Der Dienst kann derzeit nicht validiert werden. \nBitte überprüfen Sie die Ressourcenzuweisung oder andere Konfigurationen.",
     "Ready": "Bereit",
-    "ServiceTerminated": "Für den Modelldienst „{{ name }}“ wurde eine Anforderung zum Herunterfahren gesendet."
+    "ServiceTerminated": "Für den Modelldienst „{{ name }}“ wurde eine Anforderung zum Herunterfahren gesendet.",
+    "ModelMountDestination": "Mount-Ziel für Modellordner",
+    "AdditionalMounts": "Zusätzliche Halterungen",
+    "ModelDefinitionPath": "Pfad der Modelldefinitionsdatei"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",
