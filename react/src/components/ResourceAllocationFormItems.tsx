@@ -218,8 +218,8 @@ const ResourceAllocationFormItems: React.FC<
         allocatablePresetNames.includes(form.getFieldValue('allocationPreset'))
       ) {
         // if the current preset is available in the current resource group, do nothing.
-      } else if (allocatablePresetNames[0]) {
-        const autoSelectedPreset = _.sortBy(allocatablePresetNames, 'name')[0];
+      } else if (enableResourcePresets && allocatablePresetNames[0]) {
+        const autoSelectedPreset = _.sortBy(allocatablePresetNames)[0];
         form.setFieldsValue({
           allocationPreset: autoSelectedPreset,
         });
@@ -230,10 +230,12 @@ const ResourceAllocationFormItems: React.FC<
         });
       }
     }
-    // monkey patch for the issue that the validation result is not updated when the resource group is changed.
-    setTimeout(() => {
-      form.validateFields().catch(() => {});
-    }, 200);
+
+    form
+      .validateFields(['resource'], {
+        recursive: true,
+      })
+      .catch(() => {});
   });
 
   // update allocation preset based on resource group and current image

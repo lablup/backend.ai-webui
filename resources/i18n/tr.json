@@ -197,7 +197,7 @@
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "yuva",
       "Architecture": "Mimarlık",
-      "ModelStorageToMount": "Montaj için model depolama",
+      "ModelStorageToMount": "Monte Edilecek Model Depolama",
       "MinMemory": "Seçili çalışma zamanı ortamı için minimum bellek kapasitesi {{size}}iB'dir.",
       "AIAccelerator": "Yapay Zeka Hızlandırıcı",
       "ModelStorage": "Model Depolama",
@@ -401,7 +401,6 @@
     "Agents": "Temsilciler",
     "IPU": "IPU",
     "IPU(MEM)": "IPU (bellek)",
-    "ConvertSessionToImage": "Oturumu Resme Dönüştür",
     "SessionName": "Oturum Adı",
     "SessionId": "Oturum kimliği",
     "EnvironmentAndVersion": "Ortam ve Sürüm",
@@ -762,7 +761,8 @@
       "DeleteForeverDesc": "UYARI: seçilen öğeler kalıcı olarak silinecek ve bunları geri yükleyemeyeceksiniz."
     },
     "ask": {
-      "DoYouWantToProceed": "Devam etmek istiyor musunuz?"
+      "DoYouWantToProceed": "Devam etmek istiyor musunuz?",
+      "DoYouWantToDeleteSomething": "\"{{ name }}\" silmek istediğinizden emin misiniz?"
     },
     "title": {
       "LetsDouble-Check": "İki kez kontrol edelim",
@@ -966,7 +966,15 @@
     "KeypairResourcePolicy": "Anahtar Çifti Kaynak Politikası",
     "IdleTimeout": "Boşta Kalma Zaman Aşımı",
     "CreateResourcePolicy": "Kaynak Politikası Oluşturun",
-    "ResourcePolicyNameAlreadyExists": "Kaynak politikası adı zaten mevcut. \nLütfen eklenecek adı değiştirin."
+    "ResourcePolicyNameAlreadyExists": "Kaynak politikası adı zaten mevcut. \nLütfen eklenecek adı değiştirin.",
+    "UserResourcePolicy": "Kullanıcı Kaynağı Politikası",
+    "MaxVFolderCount": "Maksimum Klasör Sayısı",
+    "MaxSessionCountPerModelSession": "Model Oturumu Başına Maksimum Oturum Sayısı",
+    "MaxQuotaScopeSize": "Maksimum Kota Kapsamı Boyutu (GB)",
+    "MaxCustomizedImageCount": "Maksimum Özelleştirilmiş Görüntü Sayısı",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "MaxFolderCount": "Maksimum Klasör Sayısı",
+    "ProjectResourcePolicy": "Proje Kaynak Politikası"
   },
   "registry": {
     "Hostname": "ana bilgisayar adı",
@@ -1479,7 +1487,6 @@
     "RoutingsCount": "Güzergah Sayısı",
     "Active/Total": "Aktif/Toplam",
     "Public": "Kamu",
-    "YouAreAboutToTerminate": "Sonlandırmak üzeresiniz",
     "Owner": "Mal sahibi",
     "Validate": "Doğrula",
     "Cancel": "İptal etmek",
@@ -1496,9 +1503,13 @@
     "FailedToUpdateService": "Hizmet güncellenemedi.",
     "ServiceCreated": "Model hizmeti {{ name }} başarıyla oluşturuldu.",
     "ServiceUpdated": "Model hizmeti {{ name }} başarıyla güncellendi.",
-    "ServiceTerminated": "{{ name }} model hizmeti başarıyla sonlandırıldı.",
     "CannotValidateNow": "Hizmet şu anda doğrulanamıyor. \nLütfen kaynak tahsisini veya diğer yapılandırmaları kontrol edin.",
-    "Ready": "Hazır"
+    "Ready": "Hazır",
+    "ServiceTerminated": "'{{ name }}' model hizmeti için bir kapatma isteği gönderildi.",
+    "ModelMountDestination": "Model Klasörü İçin Montaj Hedefi",
+    "AdditionalMounts": "Ek Montajlar",
+    "ModelDefinitionPath": "Model Tanımı Dosya Yolu",
+    "NoExtraMounts": "Ekstra montaj yok"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",
@@ -1605,6 +1616,7 @@
     "Copied": "Kopyalandı"
   },
   "propertyFilter": {
-    "placeHolder": "Arama"
+    "placeHolder": "Arama",
+    "ResetFilter": "Filtreyi Sıfırla"
   }
 }

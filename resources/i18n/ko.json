@@ -402,7 +402,6 @@
     "Agents": "실행노드",
     "IPU": "IPU",
     "IPU(MEM)": "IPU(메모리)",
-    "ConvertSessionToImage": "세션을 이미지로 변환",
     "SessionName": "세션 이름",
     "SessionId": "세션 ID",
     "EnvironmentAndVersion": "환경 및 버전",
@@ -435,7 +434,6 @@
     "RouteId": "라우트 ID",
     "SessionId": "세션 ID",
     "TrafficRatio": "트래픽 비율",
-    "YouAreAboutToTerminate": "아래의 서비스를 삭제하려고 합니다: ",
     "ClearErrors": "오류 지우고 재시도",
     "ServingRouteErrorModalTitle": "서빙 라우트 에러",
     "FailedToStartService": "서비스를 생성하지 못했습니다.",
@@ -471,9 +469,13 @@
     "FailedToUpdateService": "서비스를 업데이트하지 못했습니다.",
     "ServiceCreated": "모델 서비스 {{ name }}이(가) 성공적으로 생성되었습니다.",
     "ServiceUpdated": "모델 서비스 {{ name }}이(가) 성공적으로 업데이트되었습니다.",
-    "ServiceTerminated": "모델 서비스 {{ name }}이(가) 성공적으로 종료되었습니다.",
     "CannotValidateNow": "지금은 서비스를 확인할 수 없습니다. \n리소스 할당이나 기타 구성을 확인하세요.",
-    "Ready": "준비"
+    "Ready": "준비",
+    "ServiceTerminated": "모델 서비스 '{{ name }}'에 대한 종료 요청이 전송되었습니다.",
+    "ModelMountDestination": "모델 폴더 마운트 할 경로",
+    "AdditionalMounts": "추가 마운트",
+    "ModelDefinitionPath": "모델 정의 파일 경로",
+    "NoExtraMounts": "추가 마운트 없음"
   },
   "button": {
     "Cancel": "취소",
@@ -864,7 +866,8 @@
       "DeleteForeverDesc": "경고: 선택한 항목은 완전히 삭제되며 복원할 수 없습니다."
     },
     "ask": {
-      "DoYouWantToProceed": "계속 진행하시겠습니까?"
+      "DoYouWantToProceed": "계속 진행하시겠습니까?",
+      "DoYouWantToDeleteSomething": "\"{{ name }}\"을(를) 삭제하시겠습니까?"
     },
     "title": {
       "LetsDouble-Check": "한 번 더 확인합시다",
@@ -1068,7 +1071,15 @@
     "KeypairResourcePolicy": "키페어 자원 정책",
     "IdleTimeout": "유휴 대기 시간",
     "CreateResourcePolicy": "자원 정책 만들기",
-    "ResourcePolicyNameAlreadyExists": "리소스 정책 이름이 이미 존재합니다. \n추가하려면 이름을 변경하세요."
+    "ResourcePolicyNameAlreadyExists": "리소스 정책 이름이 이미 존재합니다. \n추가하려면 이름을 변경하세요.",
+    "UserResourcePolicy": "사용자 자원 정책",
+    "MaxVFolderCount": "최대 폴더 수",
+    "MaxSessionCountPerModelSession": "모델 세션당 최대 세션 수",
+    "MaxQuotaScopeSize": "최대 할당량 범위 크기(GB)",
+    "MaxCustomizedImageCount": "최대 사용자 정의 이미지 수",
+    "CreatedAt": "생성 날짜",
+    "MaxFolderCount": "최대 폴더 수",
+    "ProjectResourcePolicy": "프로젝트 자원 정책"
   },
   "registry": {
     "Hostname": "호스트명",

@@ -401,7 +401,6 @@
     "Agents": "Đại lý",
     "IPU": "IPU",
     "IPU(MEM)": "IPU (bộ nhớ)",
-    "ConvertSessionToImage": "Chuyển đổi phiên thành hình ảnh",
     "SessionName": "Tên phiên",
     "SessionId": "Id phiên",
     "EnvironmentAndVersion": "Môi trường và phiên bản",
@@ -762,7 +761,8 @@
       "DeleteForeverDesc": "CẢNH BÁO: các mục đã chọn sẽ bị xóa vĩnh viễn và bạn sẽ không thể khôi phục chúng."
     },
     "ask": {
-      "DoYouWantToProceed": "Bạn có muốn tiếp tục?"
+      "DoYouWantToProceed": "Bạn có muốn tiếp tục?",
+      "DoYouWantToDeleteSomething": "Bạn có chắc chắn muốn xóa \"{{ name }}\" không?"
     },
     "title": {
       "LetsDouble-Check": "Hãy kiểm tra kỹ",
@@ -966,7 +966,15 @@
     "KeypairResourcePolicy": "Chính sách tài nguyên cặp khóa",
     "IdleTimeout": "Hết thời gian chờ",
     "CreateResourcePolicy": "Tạo chính sách tài nguyên",
-    "ResourcePolicyNameAlreadyExists": "Tên chính sách tài nguyên đã tồn tại. \nVui lòng thay đổi tên để thêm."
+    "ResourcePolicyNameAlreadyExists": "Tên chính sách tài nguyên đã tồn tại. \nVui lòng thay đổi tên để thêm.",
+    "UserResourcePolicy": "Chính sách tài nguyên người dùng",
+    "MaxVFolderCount": "Số lượng thư mục tối đa",
+    "MaxSessionCountPerModelSession": "Số phiên tối đa trên mỗi phiên mô hình",
+    "MaxQuotaScopeSize": "Kích thước phạm vi hạn ngạch tối đa (GB)",
+    "MaxCustomizedImageCount": "Số lượng hình ảnh tùy chỉnh tối đa",
+    "CreatedAt": "Được tạo tại",
+    "MaxFolderCount": "Số lượng thư mục tối đa",
+    "ProjectResourcePolicy": "Chính sách tài nguyên dự án"
   },
   "registry": {
     "Hostname": "Tên máy chủ",
@@ -1520,7 +1528,6 @@
     "RoutingsCount": "Số lượng định tuyến",
     "Active/Total": "Đang hoạt động/Tổng cộng",
     "Public": "Công cộng",
-    "YouAreAboutToTerminate": "Bạn sắp chấm dứt",
     "Owner": "Người sở hữu",
     "Validate": "Xác thực",
     "Cancel": "Hủy bỏ",
@@ -1537,9 +1544,13 @@
     "FailedToUpdateService": "Không thể cập nhật dịch vụ.",
     "ServiceCreated": "Dịch vụ mẫu {{ name }} đã được tạo thành công.",
     "ServiceUpdated": "Dịch vụ mẫu {{ name }} đã được cập nhật thành công.",
-    "ServiceTerminated": "Dịch vụ mẫu {{ name }} đã được chấm dứt thành công.",
     "CannotValidateNow": "Không thể xác nhận dịch vụ bây giờ. \nVui lòng kiểm tra phân bổ tài nguyên hoặc các cấu hình khác.",
-    "Ready": "Sẵn sàng"
+    "Ready": "Sẵn sàng",
+    "ServiceTerminated": "Yêu cầu tắt máy đã được gửi cho dịch vụ mẫu '{{ name }}'.",
+    "ModelMountDestination": "Mount đích cho thư mục mẫu",
+    "AdditionalMounts": "Gắn kết bổ sung",
+    "ModelDefinitionPath": "Đường dẫn tệp định nghĩa mô hình",
+    "NoExtraMounts": "Không có gắn kết bổ sung"
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",
@@ -1605,6 +1616,7 @@
     "Copied": "Đã sao chép"
   },
   "propertyFilter": {
-    "placeHolder": "Tìm kiếm"
+    "placeHolder": "Tìm kiếm",
+    "ResetFilter": "Đặt lại bộ lọc"
   }
 }

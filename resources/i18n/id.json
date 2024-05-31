@@ -230,7 +230,7 @@
       "StartModelServing": "Memulai Penyajian Model",
       "InferenceMode": "Kesimpulan",
       "ImageDoesNotProvideModelPath": "Gambar kontainer tidak menyediakan jalur model. Ini harus dimodifikasi.",
-      "ModelStorageToMount": "Penyimpanan model untuk dipasang",
+      "ModelStorageToMount": "Penyimpanan Model Untuk Dipasang",
       "AIAccelerator": "Akselerator AI",
       "DescAIAccelerator": "</p> <p>Akselerator AI (GPU atau NPU) sangat cocok untuk komputasi matriks / vektor yang terlibat dalam pembelajaran mesin. Akselerator AI mempercepat algoritme pelatihan / inferensi dengan urutan besarnya, mengurangi waktu berjalan dari berminggu-minggu menjadi beberapa hari.",
       "SessionAlreadyExists": "Nama sesi sudah ada",
@@ -401,7 +401,6 @@
     "GPU(MEM)": "GPU (memori)",
     "IPU": "IPU",
     "IPU(MEM)": "IPU (memori)",
-    "ConvertSessionToImage": "Ubah Sesi menjadi Gambar",
     "SessionName": "Nama Sesi",
     "SessionId": "Id Sesi",
     "EnvironmentAndVersion": "Lingkungan dan Versi",
@@ -763,7 +762,8 @@
       "DeleteForeverDesc": "PERINGATAN: item yang dipilih akan dihapus selamanya dan Anda tidak dapat memulihkannya."
     },
     "ask": {
-      "DoYouWantToProceed": "Apakah Anda ingin lanjut?"
+      "DoYouWantToProceed": "Apakah Anda ingin lanjut?",
+      "DoYouWantToDeleteSomething": "Apakah Anda yakin ingin menghapus \"{{ nama }}\"?"
     },
     "title": {
       "LetsDouble-Check": "Mari Periksa Kembali",
@@ -967,7 +967,15 @@
     "KeypairResourcePolicy": "Kebijakan Sumber Daya Pasangan Kunci",
     "IdleTimeout": "Batas Waktu Diam",
     "CreateResourcePolicy": "Buat Kebijakan Sumber Daya",
-    "ResourcePolicyNameAlreadyExists": "Nama kebijakan sumber daya sudah ada. \nSilakan ubah nama untuk ditambahkan."
+    "ResourcePolicyNameAlreadyExists": "Nama kebijakan sumber daya sudah ada. \nSilakan ubah nama untuk ditambahkan.",
+    "UserResourcePolicy": "Kebijakan Sumber Daya Pengguna",
+    "MaxVFolderCount": "Jumlah Folder Maks",
+    "MaxSessionCountPerModelSession": "Jumlah Sesi Maks Per Sesi Model",
+    "MaxQuotaScopeSize": "Ukuran Cakupan Kuota Maks (GB)",
+    "MaxCustomizedImageCount": "Jumlah Gambar Khusus Maksimum",
+    "CreatedAt": "Dibuat di",
+    "MaxFolderCount": "Jumlah Folder Maks",
+    "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek"
   },
   "registry": {
     "Hostname": "Nama host",
@@ -1514,7 +1522,6 @@
     "RoutingsCount": "Jumlah Rute",
     "Active/Total": "Aktif/Total",
     "Public": "Publik",
-    "YouAreAboutToTerminate": "Anda akan mengakhiri",
     "FailedToStartService": "Gagal membuat layanan.",
     "ServingRouteErrorModalTitle": "Kesalahan Rute Penyajian",
     "ClearErrors": "Hapus kesalahan dan coba lagi",
@@ -1547,9 +1554,15 @@
     "FailedToUpdateService": "Gagal memperbarui layanan.",
     "ServiceCreated": "Layanan model {{ name }} telah berhasil dibuat.",
     "ServiceUpdated": "Layanan model {{ name }} telah berhasil diperbarui.",
-    "ServiceTerminated": "Layanan model {{ name }} telah berhasil dihentikan.",
     "CannotValidateNow": "Tidak dapat memvalidasi layanan sekarang. \nSilakan periksa alokasi sumber daya atau konfigurasi lainnya.",
-    "Ready": "Siap"
+    "Ready": "Siap",
+    "Validate": "Mengesahkan",
+    "ValidationInfo": "Info Validasi",
+    "ServiceTerminated": "Permintaan penutupan dikirim untuk layanan model '{{ nama }}'.",
+    "ModelMountDestination": "Pasang Tujuan Untuk Folder Model",
+    "AdditionalMounts": "Pemasangan Tambahan",
+    "ModelDefinitionPath": "Jalur File Definisi Model",
+    "NoExtraMounts": "Tidak ada tunggangan tambahan"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",
@@ -1603,6 +1616,7 @@
     "Copied": "Disalin"
   },
   "propertyFilter": {
-    "placeHolder": "Pencarian"
+    "placeHolder": "Pencarian",
+    "ResetFilter": "Filter Ulang"
   }
 }

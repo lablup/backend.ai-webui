@@ -119,11 +119,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           --mdc-theme-primary: var(--general-textfield-selected-color);
         }
 
-        mwc-button[outlined] {
-          width: 100%;
-          margin: 10px auto;
-          background-image: none;
-          --mdc-button-outline-width: 2px;
+        mwc-button[raised] {
+          margin-left: var(--token-marginXXS);
         }
 
         mwc-textarea {
@@ -522,7 +519,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     const name = this.resourceGroupInfo.name;
     if (this.deleteResourceGroupInput.value !== name) {
       this.notification.text = _text('resourceGroup.ResourceGroupNameNotMatch');
-      this._hideDialogById('#delete-resource-group-dialog');
       this.notification.show();
       return;
     }
@@ -677,6 +673,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    */
   _launchDeleteDialog(resourceGroup: object) {
     this.resourceGroupInfo = resourceGroup;
+    this.deleteResourceGroupInput.value = '';
     this._launchDialogById('#delete-resource-group-dialog');
   }
 
@@ -983,9 +980,13 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
             outlined
-            icon="delete"
+            label="${_t('button.Cancel')}"
+            @click="${(e) => this._hideDialog(e)}"
+          ></mwc-button>
+          <mwc-button
+            raised
+            class="warning fg red"
             label="${_t('button.Delete')}"
-            style="box-sizing: border-box;"
             @click="${this._deleteResourceGroup}"
           ></mwc-button>
         </div>

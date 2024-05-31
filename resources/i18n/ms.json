@@ -197,7 +197,7 @@
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "Slot",
       "Architecture": "Seni bina",
-      "ModelStorageToMount": "Storan model untuk dipasang",
+      "ModelStorageToMount": "Penyimpanan Model Untuk Dilekapkan",
       "MinMemory": "Kapasiti memori minimum untuk persekitaran masa jalan yang dipilih pada masa ini ialah {{saiz}}iB.",
       "AIAccelerator": "Pemecut AI",
       "ModelStorage": "Storan Model",
@@ -401,7 +401,6 @@
     "Agents": "ejen",
     "IPU": "IPU",
     "IPU(MEM)": "IPU (memori)",
-    "ConvertSessionToImage": "Tukar Sesi kepada Imej",
     "SessionName": "Nama Sesi",
     "SessionId": "Id Sesi",
     "EnvironmentAndVersion": "Persekitaran dan Versi",
@@ -766,7 +765,8 @@
       "Error": "ralat"
     },
     "ask": {
-      "DoYouWantToProceed": "Adakah anda mahu meneruskan?"
+      "DoYouWantToProceed": "Adakah anda mahu meneruskan?",
+      "DoYouWantToDeleteSomething": "Adakah anda pasti mahu memadamkan \"{{ name }}\"?"
     },
     "title": {
       "LetsDouble-Check": "Mari semak semula",
@@ -966,7 +966,15 @@
     "KeypairResourcePolicy": "Dasar Sumber Pasangan Kunci",
     "IdleTimeout": "Tamat Masa Terbiar",
     "CreateResourcePolicy": "Buat Dasar Sumber",
-    "ResourcePolicyNameAlreadyExists": "Nama dasar sumber sudah wujud. \nSila tukar nama untuk ditambah."
+    "ResourcePolicyNameAlreadyExists": "Nama dasar sumber sudah wujud. \nSila tukar nama untuk ditambah.",
+    "UserResourcePolicy": "Dasar Sumber Pengguna",
+    "MaxVFolderCount": "Kiraan Folder Maks",
+    "MaxSessionCountPerModelSession": "Kiraan Sesi Maks Setiap Sesi Model",
+    "MaxQuotaScopeSize": "Saiz Skop Kuota Maks (GB)",
+    "MaxCustomizedImageCount": "Kiraan Imej Tersuai Maks",
+    "CreatedAt": "Dicipta Pada",
+    "MaxFolderCount": "Kiraan Folder Maks",
+    "ProjectResourcePolicy": "Dasar Sumber Projek"
   },
   "registry": {
     "Hostname": "Nama Hos",
@@ -1520,7 +1528,6 @@
     "RoutingsCount": "Kiraan Laluan",
     "Active/Total": "Aktif/Jumlah",
     "Public": "Awam",
-    "YouAreAboutToTerminate": "Anda akan menamatkan perkhidmatan",
     "Owner": "Pemilik",
     "Validate": "Sahkan",
     "Cancel": "Batal",
@@ -1537,9 +1544,13 @@
     "FailedToUpdateService": "Gagal mengemas kini perkhidmatan.",
     "ServiceCreated": "Perkhidmatan model {{ name }} telah berjaya dibuat.",
     "ServiceUpdated": "Perkhidmatan model {{ name }} telah berjaya dikemas kini.",
-    "ServiceTerminated": "Perkhidmatan model {{ name }} telah berjaya ditamatkan.",
     "CannotValidateNow": "Tidak dapat mengesahkan perkhidmatan sekarang. \nSila semak peruntukan sumber atau konfigurasi lain.",
-    "Ready": "sedia"
+    "Ready": "sedia",
+    "ServiceTerminated": "Permintaan penutupan telah dihantar untuk perkhidmatan model '{{ name }}'.",
+    "ModelMountDestination": "Lekapkan Destinasi Untuk Folder Model",
+    "AdditionalMounts": "Lekapan Tambahan",
+    "ModelDefinitionPath": "Laluan Fail Definisi Model",
+    "NoExtraMounts": "Tiada pelekap tambahan"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",
@@ -1605,6 +1616,7 @@
     "Copied": "disalin"
   },
   "propertyFilter": {
-    "placeHolder": "Cari"
+    "placeHolder": "Cari",
+    "ResetFilter": "ResetFilter"
   }
 }

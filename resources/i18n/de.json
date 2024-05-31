@@ -197,7 +197,7 @@
       "SharedMemoryAbbr": "SCHMEM",
       "GPUSlot": "Slot",
       "Architecture": "Architektur",
-      "ModelStorageToMount": "Modellspeicher zu montieren",
+      "ModelStorageToMount": "Modellspeicher zum Montieren",
       "MinMemory": "Die minimale Speicherkapazität für die aktuell ausgewählte Laufzeitumgebung beträgt {{size}}iB.",
       "AIAccelerator": "KI-Beschleuniger",
       "ModelStorage": "Modell Lagerung",
@@ -401,7 +401,6 @@
     "Agents": "Agenten",
     "IPU": "IPU",
     "IPU(MEM)": "IPU (Speicher)",
-    "ConvertSessionToImage": "Konvertieren Sie die Sitzung in ein Bild",
     "SessionName": "Sitzungsname",
     "SessionId": "Session-ID",
     "EnvironmentAndVersion": "Umgebung und Version",
@@ -762,7 +761,8 @@
       "DeleteForeverDesc": "ACHTUNG: Ausgewählte Elemente werden für immer gelöscht und Sie können sie nicht wiederherstellen."
     },
     "ask": {
-      "DoYouWantToProceed": "Willst du fortfahren?"
+      "DoYouWantToProceed": "Willst du fortfahren?",
+      "DoYouWantToDeleteSomething": "Sind Sie sicher, dass Sie \"{{ Name }}\" löschen wollen?"
     },
     "title": {
       "LetsDouble-Check": "Lass uns das überprüfen",
@@ -966,7 +966,15 @@
     "KeypairResourcePolicy": "Schlüsselpaar-Ressourcenrichtlinie",
     "IdleTimeout": "Leerlauf-Timeout",
     "CreateResourcePolicy": "Erstellen Sie eine Ressourcenrichtlinie",
-    "ResourcePolicyNameAlreadyExists": "Der Name der Ressourcenrichtlinie ist bereits vorhanden. \nBitte ändern Sie den hinzuzufügenden Namen."
+    "ResourcePolicyNameAlreadyExists": "Der Name der Ressourcenrichtlinie ist bereits vorhanden. \nBitte ändern Sie den hinzuzufügenden Namen.",
+    "UserResourcePolicy": "Benutzerressourcenrichtlinie",
+    "MaxVFolderCount": "Maximale Ordneranzahl",
+    "MaxSessionCountPerModelSession": "Maximale Sitzungsanzahl pro Modellsitzung",
+    "MaxQuotaScopeSize": "Maximale Kontingentumfangsgröße (GB)",
+    "MaxCustomizedImageCount": "Maximale Anzahl benutzerdefinierter Bilder",
+    "CreatedAt": "Hergestellt in",
+    "MaxFolderCount": "Maximale Ordneranzahl",
+    "ProjectResourcePolicy": "Projektressourcenrichtlinie"
   },
   "registry": {
     "Hostname": "Hostname",
@@ -1479,7 +1487,6 @@
     "RoutingsCount": "Routings zählen",
     "Active/Total": "Aktiv/Gesamt",
     "Public": "Öffentlich",
-    "YouAreAboutToTerminate": "Sie stehen kurz vor der Beendigung",
     "Owner": "Eigentümer",
     "Validate": "Bestätigen",
     "Cancel": "Stornieren",
@@ -1496,9 +1503,13 @@
     "FailedToUpdateService": "Der Dienst konnte nicht aktualisiert werden.",
     "ServiceCreated": "Der Modelldienst {{ name }} wurde erfolgreich erstellt.",
     "ServiceUpdated": "Der Modelldienst {{ name }} wurde erfolgreich aktualisiert.",
-    "ServiceTerminated": "Der Modelldienst {{ name }} wurde erfolgreich beendet.",
     "CannotValidateNow": "Der Dienst kann derzeit nicht validiert werden. \nBitte überprüfen Sie die Ressourcenzuweisung oder andere Konfigurationen.",
-    "Ready": "Bereit"
+    "Ready": "Bereit",
+    "ServiceTerminated": "Für den Modelldienst „{{ name }}“ wurde eine Anforderung zum Herunterfahren gesendet.",
+    "ModelMountDestination": "Mount-Ziel für Modellordner",
+    "AdditionalMounts": "Zusätzliche Halterungen",
+    "ModelDefinitionPath": "Pfad der Modelldefinitionsdatei",
+    "NoExtraMounts": "Keine zusätzlichen Halterungen"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",
@@ -1605,6 +1616,7 @@
     "Copied": "Kopiert"
   },
   "propertyFilter": {
-    "placeHolder": "Suche"
+    "placeHolder": "Suche",
+    "ResetFilter": "Filter zurücksetzen"
   }
 }

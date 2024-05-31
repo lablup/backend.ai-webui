@@ -1,4 +1,4 @@
-import { localeCompare } from '../helper';
+import { localeCompare, numberSorterWithInfinityValue } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import Flex from './Flex';
 import KeypairResourcePolicySettingModal, {
@@ -158,9 +158,11 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       dataIndex: 'max_session_lifetime',
       key: 'max_session_lifetime',
       sorter: (a, b) =>
-        a?.max_session_lifetime && b?.max_session_lifetime
-          ? a.max_session_lifetime - b.max_session_lifetime
-          : 1,
+        numberSorterWithInfinityValue(
+          a?.max_session_lifetime,
+          b?.max_session_lifetime,
+          0,
+        ),
       render: (text) => (text ? text : '∞'),
     },
     {

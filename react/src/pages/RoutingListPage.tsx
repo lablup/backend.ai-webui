@@ -11,14 +11,17 @@ import VFolderLazyView from '../components/VFolderLazyView';
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
 import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
   RoutingListPageQuery,
   RoutingListPageQuery$data,
 } from './__generated__/RoutingListPageQuery.graphql';
 import {
+  ArrowRightOutlined,
   CheckOutlined,
   CloseOutlined,
+  FolderOutlined,
   LoadingOutlined,
   PlusOutlined,
   QuestionCircleOutlined,
@@ -39,6 +42,7 @@ import {
   Typography,
   theme,
 } from 'antd';
+import { DescriptionsItemType } from 'antd/es/descriptions';
 import graphql from 'babel-plugin-relay/macro';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
@@ -93,6 +97,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     useState(false);
   const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
     useState(false);
+  const [currentUser] = useCurrentUserInfo();
   // const curProject = useCurrentProjectValue();
   const [paginationState] = useState<{
     current: number;
@@ -143,7 +148,13 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             }
             retries
             model
-            model_mount_destiation
+            model_mount_destiation @deprecatedSince(version: "24.03.4")
+            model_mount_destination @since(version: "24.03.4")
+            model_definition_path @since(version: "24.03.4")
+            extra_mounts @since(version: "24.03.4") {
+              row_id
+              name
+            }
             resource_group
             resource_slots
             resource_opts
@@ -154,6 +165,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               endpoint
               status
             }
+            created_user_email @since(version: "23.09.8")
             ...ServiceLauncherModalFragment
             ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
@@ -189,6 +201,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         fetchKey,
       },
     );
+
   const mutationToClearError = useTanMutation(() => {
     if (!endpoint) return;
     return baiSignedRequestWithPromise({
@@ -231,6 +244,128 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
   ) as string;
 
   const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
+
+  const items: DescriptionsItemType[] = [
+    {
+      label: t('modelService.EndpointName'),
+      children: <Typography.Text copyable>{endpoint?.name}</Typography.Text>,
+    },
+    {
+      label: t('modelService.Status'),
+      children: <EndpointStatusTag endpointFrgmt={endpoint} />,
+    },
+    {
+      label: t('modelService.EndpointId'),
+      children: endpoint?.endpoint_id,
+    },
+    {
+      label: t('modelService.SessionOwner'),
+      children: <EndpointOwnerInfo endpointFrgmt={endpoint} />,
+    },
+    {
+      label: t('modelService.DesiredSessionCount'),
+      children: endpoint?.desired_session_count,
+    },
+    {
+      label: t('modelService.ServiceEndpoint'),
+      children: endpoint?.url ? (
+        <Typography.Text copyable>{endpoint?.url}</Typography.Text>
+      ) : (
+        <Typography.Text type="secondary">
+          {t('modelService.NoServiceEndpoint')}
+        </Typography.Text>
+      ),
+    },
+    {
+      label: t('modelService.OpenToPublic'),
+      children: endpoint?.open_to_public ? (
+        <CheckOutlined />
+      ) : (
+        <CloseOutlined />
+      ),
+    },
+    {
+      label: t('modelService.resources'),
+      children: (
+        <Flex direction="row" wrap="wrap" gap={'md'}>
+          <Tooltip title={t('session.ResourceGroup')}>
+            <Tag>{endpoint?.resource_group}</Tag>
+          </Tooltip>
+          {_.map(
+            JSON.parse(endpoint?.resource_slots || '{}'),
+            (value: string, type: ResourceTypeKey) => {
+              return (
+                <ResourceNumber
+                  key={type}
+                  type={type}
+                  value={value}
+                  opts={resource_opts}
+                />
+              );
+            },
+          )}
+        </Flex>
+      ),
+      span: {
+        xl: 2,
+      },
+    },
+    {
+      label: t('session.launcher.ModelStorage'),
+      children: (
+        <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
+          <Flex direction="column" align="start">
+            <VFolderLazyView
+              uuid={endpoint?.model as string}
+              clickable={false}
+            />
+            {baiClient.supports('endpoint-extra-mounts') &&
+              endpoint?.model_mount_destination && (
+                <Flex direction="row" align="center" gap={'xxs'}>
+                  <ArrowRightOutlined type="secondary" />
+                  <Typography.Text type="secondary">
+                    {endpoint?.model_mount_destination}
+                  </Typography.Text>
+                </Flex>
+              )}
+          </Flex>
+        </Suspense>
+      ),
+    },
+  ];
+
+  if (baiClient.supports('endpoint-extra-mounts')) {
+    items.push({
+      label: t('modelService.AdditionalMounts'),
+      children: (
+        <Flex direction="column" align="start">
+          {_.map(endpoint?.extra_mounts, (vfolder) => {
+            return (
+              <Flex direction="row" gap={'xxs'}>
+                <FolderOutlined /> {vfolder?.name}
+              </Flex>
+            );
+          })}
+        </Flex>
+      ),
+    });
+  }
+
+  items.push({
+    label: t('modelService.Image'),
+    children: (baiClient.supports('modify-endpoint')
+      ? endpoint?.image_object
+      : endpoint?.image) && (
+      <Flex direction="row" gap={'xs'}>
+        <ImageMetaIcon image={fullImageString} />
+        <CopyableCodeText>{fullImageString}</CopyableCodeText>
+      </Flex>
+    ),
+    span: {
+      xl: 3,
+    },
+  });
+
   return (
     <Flex direction="column" align="stretch" gap="sm">
       <Breadcrumb
@@ -294,7 +429,9 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             icon={<SettingOutlined />}
             disabled={
               (endpoint?.desired_session_count || 0) < 0 ||
-              endpoint?.status === 'DESTROYING'
+              endpoint?.status === 'DESTROYING' ||
+              (!!endpoint?.created_user_email &&
+                endpoint?.created_user_email !== currentUser.email)
             }
             onClick={() => {
               setIsOpenServiceLauncherModal(true);
@@ -310,100 +447,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           style={{
             backgroundColor: token.colorBgBase,
           }}
-          items={[
-            {
-              label: t('modelService.EndpointName'),
-              children: (
-                <Typography.Text copyable>{endpoint?.name}</Typography.Text>
-              ),
-            },
-            {
-              label: t('modelService.Status'),
-              children: <EndpointStatusTag endpointFrgmt={endpoint} />,
-            },
-            {
-              label: t('modelService.EndpointId'),
-              children: endpoint?.endpoint_id,
-            },
-            {
-              label: t('modelService.SessionOwner'),
-              children: <EndpointOwnerInfo endpointFrgmt={endpoint} />,
-            },
-            {
-              label: t('modelService.DesiredSessionCount'),
-              children: endpoint?.desired_session_count,
-            },
-            {
-              label: t('modelService.ServiceEndpoint'),
-              children: endpoint?.url ? (
-                <Typography.Text copyable>{endpoint?.url}</Typography.Text>
-              ) : (
-                <Typography.Text type="secondary">
-                  {t('modelService.NoServiceEndpoint')}
-                </Typography.Text>
-              ),
-            },
-            {
-              label: t('modelService.OpenToPublic'),
-              children: endpoint?.open_to_public ? (
-                <CheckOutlined />
-              ) : (
-                <CloseOutlined />
-              ),
-            },
-            {
-              label: t('modelService.resources'),
-              children: (
-                <Flex direction="row" wrap="wrap" gap={'md'}>
-                  <Tooltip title={t('session.ResourceGroup')}>
-                    <Tag>{endpoint?.resource_group}</Tag>
-                  </Tooltip>
-                  {_.map(
-                    JSON.parse(endpoint?.resource_slots || '{}'),
-                    (value: string, type: ResourceTypeKey) => {
-                      return (
-                        <ResourceNumber
-                          key={type}
-                          type={type}
-                          value={value}
-                          opts={resource_opts}
-                        />
-                      );
-                    },
-                  )}
-                </Flex>
-              ),
-              span: {
-                xl: 2,
-              },
-            },
-            {
-              label: t('session.launcher.ModelStorage'),
-              children: (
-                <Suspense
-                  fallback={<Spin indicator={<LoadingOutlined spin />} />}
-                >
-                  {endpoint?.model && (
-                    <VFolderLazyView uuid={endpoint?.model} clickable={false} />
-                  )}
-                </Suspense>
-              ),
-            },
-            {
-              label: t('modelService.Image'),
-              children: (baiClient.supports('modify-endpoint')
-                ? endpoint?.image_object
-                : endpoint?.image) && (
-                <Flex direction="row" gap={'xs'}>
-                  <ImageMetaIcon image={fullImageString} />
-                  <CopyableCodeText>{fullImageString}</CopyableCodeText>
-                </Flex>
-              ),
-              span: {
-                xl: 2,
-              },
-            },
-          ]}
+          items={items}
         ></Descriptions>
       </Card>
       <Card

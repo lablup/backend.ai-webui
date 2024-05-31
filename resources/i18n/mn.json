@@ -763,7 +763,8 @@
       "DeleteForeverDesc": "АНХААРУУЛГА: сонгосон зүйлс үүрд устах бөгөөд та тэдгээрийг сэргээх боломжгүй болно."
     },
     "ask": {
-      "DoYouWantToProceed": "Та үргэлжлүүлэхийг хүсч байна уу?"
+      "DoYouWantToProceed": "Та үргэлжлүүлэхийг хүсч байна уу?",
+      "DoYouWantToDeleteSomething": "Та \"{{ name }}\"-г устгахдаа итгэлтэй байна уу?"
     },
     "title": {
       "LetsDouble-Check": "Давхар шалгуулъя",
@@ -967,7 +968,14 @@
     "KeypairResourcePolicy": "Түлхүүрийн нөөцийн бодлого",
     "IdleTimeout": "Сул зогсолтын хугацаа",
     "CreateResourcePolicy": "Нөөцийн бодлогыг бий болгох",
-    "ResourcePolicyNameAlreadyExists": "Нөөцийн бодлогын нэр аль хэдийн байна. \nНэмэх нэрээ өөрчилнө үү."
+    "ResourcePolicyNameAlreadyExists": "Нөөцийн бодлогын нэр аль хэдийн байна. \nНэмэх нэрээ өөрчилнө үү.",
+    "UserResourcePolicy": "Хэрэглэгчийн нөөцийн бодлого",
+    "MaxVFolderCount": "Хамгийн их хавтасны тоо",
+    "MaxSessionCountPerModelSession": "Загвар бүрийн хамгийн их сеанс тоо",
+    "MaxQuotaScopeSize": "Хамгийн их квот хамрах хүрээний хэмжээ (ГБ)",
+    "MaxCustomizedImageCount": "Хамгийн их тохируулсан зургийн тоо",
+    "CreatedAt": "Үүсгэсэн",
+    "MaxFolderCount": "Хамгийн их хавтасны тоо"
   },
   "registry": {
     "Hostname": "Хостын нэр",
@@ -1514,7 +1522,6 @@
     "RoutingsCount": "Чиглүүлэлтийн тоо",
     "Active/Total": "Идэвхтэй/Нийт",
     "Public": "Олон нийтийн",
-    "YouAreAboutToTerminate": "Та дуусгавар болгох гэж байна",
     "FailedToStartService": "Үйлчилгээг үүсгэж чадсангүй.",
     "ServingRouteErrorModalTitle": "Үйлчилгээний маршрутын алдаа",
     "ClearErrors": "Алдааг арилгаад дахин оролдоно уу",
@@ -1550,9 +1557,13 @@
     "FailedToUpdateService": "Үйлчилгээг шинэчилж чадсангүй.",
     "ServiceCreated": "Загвар үйлчилгээ {{ name }} амжилттай үүсгэгдсэн.",
     "ServiceUpdated": "Загвар үйлчилгээ {{ name }} амжилттай шинэчлэгдсэн.",
-    "ServiceTerminated": "Загварын үйлчилгээ {{ name }} амжилттай хаагдсан.",
     "CannotValidateNow": "Одоо үйлчилгээг баталгаажуулах боломжгүй байна. \nНөөцийн хуваарилалт эсвэл бусад тохиргоог шалгана уу.",
-    "Ready": "Бэлэн"
+    "Ready": "Бэлэн",
+    "ServiceTerminated": "'{{ name }}' загварын үйлчилгээнд хаах хүсэлт илгээсэн.",
+    "ModelMountDestination": "Загварын хавтасыг холбох газар",
+    "AdditionalMounts": "Нэмэлт бэхэлгээ",
+    "ModelDefinitionPath": "Загварын тодорхойлолтын файлын зам",
+    "NoExtraMounts": "Нэмэлт бэхэлгээ байхгүй"
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",
@@ -1606,6 +1617,7 @@
     "Copied": "Хуулсан"
   },
   "propertyFilter": {
-    "placeHolder": "Хайх"
+    "placeHolder": "Хайх",
+    "ResetFilter": "Reset Filter"
   }
 }

@@ -410,7 +410,8 @@
       "Error": "Virhe"
     },
     "ask": {
-      "DoYouWantToProceed": "Haluatteko jatkaa?"
+      "DoYouWantToProceed": "Haluatteko jatkaa?",
+      "DoYouWantToDeleteSomething": "Oletko varma, että haluat poistaa \"{{ name }}\"?\"?"
     },
     "title": {
       "LetsDouble-Check": "Tupla-tarkistetaan",
@@ -745,7 +746,6 @@
     "TokenGenerated": "Tuotettu merkki",
     "TokenGenerationFailed": "Tokenin luominen epäonnistui. yritä uudelleen.",
     "TrafficRatio": "Liikennesuhde",
-    "YouAreAboutToTerminate": "Olet lopettamassa",
     "resources": "Resurssit",
     "Owner": "Omistaja",
     "Validate": "Vahvista",
@@ -763,9 +763,13 @@
     "FailedToUpdateService": "Palvelun päivittäminen epäonnistui.",
     "ServiceCreated": "Mallipalvelun {{ name }} luominen onnistui.",
     "ServiceUpdated": "Mallipalvelun {{ name }} päivitys onnistui.",
-    "ServiceTerminated": "Mallipalvelu {{ name }} on lopetettu onnistuneesti.",
     "CannotValidateNow": "Palvelua ei voi vahvistaa nyt. \nTarkista resurssien allokaatio tai muut asetukset.",
-    "Ready": "Valmis"
+    "Ready": "Valmis",
+    "ServiceTerminated": "Mallipalvelun '{{ name }}' sammutuspyyntö lähetettiin.",
+    "AdditionalMounts": "Lisäkiinnikkeet",
+    "ModelDefinitionPath": "Mallin määritelmän tiedostopolku",
+    "ModelMountDestination": "Kiinnityskohde mallikansioon",
+    "NoExtraMounts": "Ei ylimääräisiä kiinnikkeitä"
   },
   "notification": {
     "Initializing": "Aloitetaan...",
@@ -915,7 +919,15 @@
     "KeypairResourcePolicy": "Avainparin resurssikäytäntö",
     "IdleTimeout": "Idle Timeout",
     "CreateResourcePolicy": "Luo resurssikäytäntö",
-    "ResourcePolicyNameAlreadyExists": "Resurssikäytännön nimi on jo olemassa. \nMuuta lisättävä nimi."
+    "ResourcePolicyNameAlreadyExists": "Resurssikäytännön nimi on jo olemassa. \nMuuta lisättävä nimi.",
+    "UserResourcePolicy": "Käyttäjäresurssikäytäntö",
+    "MaxVFolderCount": "Kansioiden enimmäismäärä",
+    "MaxSessionCountPerModelSession": "Maksimi istuntojen määrä malliistuntoa kohti",
+    "MaxQuotaScopeSize": "Kiintiön enimmäiskoko (GB)",
+    "MaxCustomizedImageCount": "Suurin mukautettu kuvien määrä",
+    "CreatedAt": "Luotu klo",
+    "MaxFolderCount": "Kansioiden enimmäismäärä",
+    "ProjectResourcePolicy": "Projektin resurssipolitiikka"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Olet poistamassa tätä esiasetusta:",
@@ -1115,7 +1127,7 @@
       "Memory": "Muisti",
       "MinMemory": "Tällä hetkellä valitun ajoympäristön vähimmäismuistikapasiteetti on {{size}}iB.",
       "ModelStorage": "Malli Varastointi",
-      "ModelStorageToMount": "Mallivarasto asennettavaksi",
+      "ModelStorageToMount": "Mallin säilytystila kiinnitettäväksi",
       "MountedFolders": "Asennetut kansiot",
       "MultiNode": "Multi Node",
       "MustSpecifyVersion": "Ympäristö ja versio on määritettävä.",
@@ -1223,7 +1235,6 @@
     "Agents": "Agentit",
     "IPU": "IPU",
     "IPU(MEM)": "IPU (muisti)",
-    "ConvertSessionToImage": "Muunna istunto kuvaksi",
     "SessionName": "Istunnon nimi",
     "SessionId": "Istunnon tunniste",
     "EnvironmentAndVersion": "Ympäristö ja versio",
@@ -1605,6 +1616,7 @@
     "Copied": "Kopioitu"
   },
   "propertyFilter": {
-    "placeHolder": "Etsi"
+    "placeHolder": "Etsi",
+    "ResetFilter": "ResetFilter"
   }
 }

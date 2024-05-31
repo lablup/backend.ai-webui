@@ -5,7 +5,7 @@ import { useCustomThemeConfig } from '../helper/customThemeConfig';
 import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
 import { ThemeModeProvider, useThemeMode } from '../hooks/useThemeMode';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
-import { App, ConfigProvider, theme } from 'antd';
+import { App, AppProps, ConfigProvider, theme } from 'antd';
 import en_US from 'antd/locale/en_US';
 import ko_KR from 'antd/locale/ko_KR';
 import dayjs from 'dayjs';
@@ -130,6 +130,12 @@ export const useCurrentLanguage = () => {
   return [lang] as const;
 };
 
+const commonAppProps: AppProps = {
+  message: {
+    duration: 4,
+  },
+};
+
 const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
   children,
   value,
@@ -187,7 +193,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                           : theme.defaultAlgorithm,
                       }}
                     >
-                      <App>
+                      <App {...commonAppProps}>
                         <StyleProvider container={shadowRoot} cache={cache}>
                           <Suspense fallback="">
                             <BrowserRouter>
@@ -278,7 +284,7 @@ export const DefaultProvidersForReactRoot: React.FC<
                   : theme.defaultAlgorithm,
               }}
             >
-              <App>
+              <App {...commonAppProps}>
                 {/* <StyleProvider container={shadowRoot} cache={cache}> */}
                 <Suspense>
                   {/* <BrowserRouter> */}

@@ -1,3 +1,4 @@
+import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
@@ -22,6 +23,7 @@ import { useMutation } from 'react-relay';
 
 const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
   const formRef = React.useRef<FormInstance>(null);
   const app = App.useApp();
 
@@ -83,7 +85,11 @@ const ManageAppsModal: React.FC<BAIModalProps> = ({ ...baiModalProps }) => {
               architecture: image.architecture,
               props: {
                 labels: labels,
-                resource_limits: null,
+                resource_limits: baiClient.isManagerVersionCompatibleWith(
+                  '24.03.4.*',
+                )
+                  ? undefined
+                  : null,
               },
             },
             onCompleted: (res, err) => {

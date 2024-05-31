@@ -197,7 +197,7 @@
       "SharedMemoryAbbr": "機械製造商",
       "GPUSlot": "投幣口",
       "Architecture": "建筑学",
-      "ModelStorageToMount": "型号存储安装",
+      "ModelStorageToMount": "要安裝的模型存儲",
       "MinMemory": "当前所选运行环境的最小内存容量为 {{size}}iB。",
       "AIAccelerator": "人工智能加速器",
       "FailedToConnectCoordinator": "连接应用程序管理失败。请检查网络连接和防火墙设置。",
@@ -401,7 +401,6 @@
     "Agents": "代理商",
     "IPU": "IPU",
     "IPU(MEM)": "IPU（内存）",
-    "ConvertSessionToImage": "將會話轉換為圖像",
     "SessionName": "會話名稱",
     "SessionId": "會話 ID",
     "EnvironmentAndVersion": "環境及版本",
@@ -762,7 +761,8 @@
       "DeleteForeverDesc": "警告：所選項目將永久刪除，並且您將無法恢復它們。"
     },
     "ask": {
-      "DoYouWantToProceed": "您要繼續嗎？"
+      "DoYouWantToProceed": "您要繼續嗎？",
+      "DoYouWantToDeleteSomething": "您确定要删除\"{{ 名称 }}}\"吗？"
     },
     "title": {
       "LetsDouble-Check": "讓我們仔細檢查",
@@ -966,7 +966,15 @@
     "KeypairResourcePolicy": "密鑰對資源策略",
     "IdleTimeout": "空閒超時",
     "CreateResourcePolicy": "建立資源策略",
-    "ResourcePolicyNameAlreadyExists": "資源策略名稱已存在。\n請更改名稱以新增。"
+    "ResourcePolicyNameAlreadyExists": "資源策略名稱已存在。\n請更改名稱以新增。",
+    "UserResourcePolicy": "使用者資源策略",
+    "MaxVFolderCount": "最大資料夾數",
+    "MaxSessionCountPerModelSession": "每個模型會話的最大會話計數",
+    "MaxQuotaScopeSize": "最大配額範圍大小 (GB)",
+    "MaxCustomizedImageCount": "最大自訂圖像數量",
+    "CreatedAt": "創建於",
+    "MaxFolderCount": "最大資料夾數",
+    "ProjectResourcePolicy": "專案資源政策"
   },
   "registry": {
     "Hostname": "主機名",
@@ -1519,7 +1527,6 @@
     "RoutingsCount": "路由计数",
     "Active/Total": "活动/总数",
     "Public": "公众",
-    "YouAreAboutToTerminate": "您即将终止",
     "Image": "图片",
     "Owner": "擁有者",
     "Validate": "證實",
@@ -1537,9 +1544,13 @@
     "FailedToUpdateService": "更新服務失敗。",
     "ServiceCreated": "模型服務 {{ name }} 已成功建立。",
     "ServiceUpdated": "模型服務 {{ name }} 已成功更新。",
-    "ServiceTerminated": "模型服務 {{ name }} 已成功終止。",
     "CannotValidateNow": "現在無法驗證服務。\n請檢查資源分配或其他配置。",
-    "Ready": "準備好"
+    "Ready": "準備好",
+    "ServiceTerminated": "已為模型服務“{{ name }}”發送關閉請求。",
+    "ModelMountDestination": "模型資料夾的安裝目標",
+    "AdditionalMounts": "附加安裝座",
+    "ModelDefinitionPath": "模型定義檔路徑",
+    "NoExtraMounts": "沒有額外的安裝座"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",
@@ -1605,6 +1616,7 @@
     "Copied": "已複製"
   },
   "propertyFilter": {
-    "placeHolder": "搜索"
+    "placeHolder": "搜索",
+    "ResetFilter": "重置過濾器"
   }
 }

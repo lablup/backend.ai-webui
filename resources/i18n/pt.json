@@ -197,7 +197,7 @@
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "Slot",
       "Architecture": "Arquitetura",
-      "ModelStorageToMount": "Modelo de armazenamento para montagem",
+      "ModelStorageToMount": "Armazenamento de modelo para montar",
       "MinMemory": "A capacidade mínima de memória para o ambiente de tempo de execução atualmente selecionado é {{size}}iB.",
       "AIAccelerator": "Acelerador de IA",
       "FailedToConnectCoordinator": "Falha na ligação à administração da aplicação. Verifique a sua ligação de rede e as definições de firewall.",
@@ -401,7 +401,6 @@
     "Agents": "Agentes",
     "IPU": "IPU",
     "IPU(MEM)": "IPU (memória)",
-    "ConvertSessionToImage": "Converter sessão em imagem",
     "SessionName": "Nome da sessão",
     "SessionId": "Identificação de sessão",
     "EnvironmentAndVersion": "Ambiente e versão",
@@ -762,7 +761,8 @@
       "DeleteForeverDesc": "AVISO: os itens selecionados serão excluídos para sempre e você não poderá restaurá-los."
     },
     "ask": {
-      "DoYouWantToProceed": "Você quer prosseguir?"
+      "DoYouWantToProceed": "Você quer prosseguir?",
+      "DoYouWantToDeleteSomething": "Tem a certeza de que pretende eliminar \"{{ name }}\"?"
     },
     "title": {
       "LetsDouble-Check": "Vamos verificar novamente",
@@ -966,7 +966,15 @@
     "KeypairResourcePolicy": "Política de recursos de par de chaves",
     "IdleTimeout": "Tempo limite ocioso",
     "CreateResourcePolicy": "Criar Política de Recursos",
-    "ResourcePolicyNameAlreadyExists": "O nome da política de recursos já existe. \nPor favor, altere o nome para adicionar."
+    "ResourcePolicyNameAlreadyExists": "O nome da política de recursos já existe. \nPor favor, altere o nome para adicionar.",
+    "UserResourcePolicy": "Política de Recursos do Usuário",
+    "MaxVFolderCount": "Contagem máxima de pastas",
+    "MaxSessionCountPerModelSession": "Contagem máxima de sessões por sessão de modelo",
+    "MaxQuotaScopeSize": "Tamanho máximo do escopo da cota (GB)",
+    "MaxCustomizedImageCount": "Contagem máxima de imagens personalizadas",
+    "CreatedAt": "Criado em",
+    "MaxFolderCount": "Contagem máxima de pastas",
+    "ProjectResourcePolicy": "Política de Recursos do Projeto"
   },
   "registry": {
     "Hostname": "nome de anfitrião",
@@ -1519,7 +1527,6 @@
     "RoutingsCount": "Contagem de rotas",
     "Active/Total": "Ativo/Total",
     "Public": "Público",
-    "YouAreAboutToTerminate": "Está prestes a terminar",
     "Image": "Imagem",
     "Owner": "Proprietário",
     "Validate": "Validar",
@@ -1537,9 +1544,13 @@
     "FailedToUpdateService": "Falha ao atualizar o serviço.",
     "ServiceCreated": "O serviço de modelo {{ name }} foi criado com sucesso.",
     "ServiceUpdated": "O serviço de modelo {{ name }} foi atualizado com sucesso.",
-    "ServiceTerminated": "O serviço de modelo {{ name }} foi encerrado com sucesso.",
     "CannotValidateNow": "Não é possível validar o serviço agora. \nVerifique a alocação de recursos ou outras configurações.",
-    "Ready": "Preparar"
+    "Ready": "Preparar",
+    "ServiceTerminated": "Uma solicitação de encerramento foi enviada para o serviço de modelo '{{ name }}'.",
+    "ModelMountDestination": "Montar destino para pasta de modelo",
+    "AdditionalMounts": "Montarias Adicionais",
+    "ModelDefinitionPath": "Caminho do arquivo de definição de modelo",
+    "NoExtraMounts": "Sem montagens extras"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",
@@ -1605,6 +1616,7 @@
     "Copied": "Copiado"
   },
   "propertyFilter": {
-    "placeHolder": "Pesquisar"
+    "placeHolder": "Pesquisar",
+    "ResetFilter": "RedefinirFiltro"
   }
 }

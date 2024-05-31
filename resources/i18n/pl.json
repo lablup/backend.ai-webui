@@ -197,7 +197,7 @@
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "Otwór",
       "Architecture": "Architektura",
-      "ModelStorageToMount": "Model przechowywania do zamontowania",
+      "ModelStorageToMount": "Przechowywanie modelu do montażu",
       "MinMemory": "Minimalna pojemność pamięci dla aktualnie wybranego środowiska uruchomieniowego wynosi {{size}}iB.",
       "AIAccelerator": "Akcelerator AI",
       "ModelStorage": "Model Storage",
@@ -401,7 +401,6 @@
     "Agents": "Agenci",
     "IPU": "IPU",
     "IPU(MEM)": "IPU (pamięć)",
-    "ConvertSessionToImage": "Konwertuj sesję na obraz",
     "SessionName": "Nazwa sesji",
     "SessionId": "Identyfikator sesji",
     "EnvironmentAndVersion": "Środowisko i wersja",
@@ -762,7 +761,8 @@
       "DeleteForeverDesc": "UWAGA: wybrane elementy zostaną usunięte na zawsze i nie będzie można ich przywrócić."
     },
     "ask": {
-      "DoYouWantToProceed": "Czy chcesz kontynuować?"
+      "DoYouWantToProceed": "Czy chcesz kontynuować?",
+      "DoYouWantToDeleteSomething": "Czy na pewno chcesz usunąć \"{{ name }}\"?"
     },
     "title": {
       "LetsDouble-Check": "Sprawdźmy dokładnie",
@@ -966,7 +966,15 @@
     "KeypairResourcePolicy": "Polityka zasobów pary kluczy",
     "IdleTimeout": "Limit czasu bezczynności",
     "CreateResourcePolicy": "Utwórz politykę zasobów",
-    "ResourcePolicyNameAlreadyExists": "Nazwa zasady zasobów już istnieje. \nAby dodać, zmień nazwę."
+    "ResourcePolicyNameAlreadyExists": "Nazwa zasady zasobów już istnieje. \nAby dodać, zmień nazwę.",
+    "UserResourcePolicy": "Polityka zasobów użytkownika",
+    "MaxVFolderCount": "Maksymalna liczba folderów",
+    "MaxSessionCountPerModelSession": "Maksymalna liczba sesji na sesję modelu",
+    "MaxQuotaScopeSize": "Maksymalny rozmiar zakresu przydziału (GB)",
+    "MaxCustomizedImageCount": "Maksymalna dostosowana liczba obrazów",
+    "CreatedAt": "Utworzono o godz",
+    "MaxFolderCount": "Maksymalna liczba folderów",
+    "ProjectResourcePolicy": "Polityka zasobów projektu"
   },
   "registry": {
     "Hostname": "Nazwa hosta",
@@ -1479,7 +1487,6 @@
     "RoutingsCount": "Liczba tras",
     "Active/Total": "Aktywny/Ogółem",
     "Public": "Publiczny",
-    "YouAreAboutToTerminate": "Zamierzasz zakończyć",
     "Owner": "Właściciel",
     "Validate": "Uprawomocnić",
     "Cancel": "Anulować",
@@ -1496,9 +1503,13 @@
     "FailedToUpdateService": "Nie udało się zaktualizować usługi.",
     "ServiceCreated": "Usługa modelowa {{ name }} została pomyślnie utworzona.",
     "ServiceUpdated": "Usługa modelowa {{ name }} została pomyślnie zaktualizowana.",
-    "ServiceTerminated": "Usługa modelowa {{ name }} została pomyślnie zakończona.",
     "CannotValidateNow": "Nie można teraz zweryfikować usługi. \nSprawdź alokację zasobów lub inne konfiguracje.",
-    "Ready": "Gotowy"
+    "Ready": "Gotowy",
+    "ServiceTerminated": "Wysłano żądanie zamknięcia usługi modelowej „{{ name }}”.",
+    "ModelMountDestination": "Miejsce docelowe montażu dla folderu modelu",
+    "AdditionalMounts": "Dodatkowe mocowania",
+    "ModelDefinitionPath": "Ścieżka pliku definicji modelu",
+    "NoExtraMounts": "Żadnych dodatkowych mocowań"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",
@@ -1605,6 +1616,7 @@
     "Copied": "Skopiowano"
   },
   "propertyFilter": {
-    "placeHolder": "Wyszukiwanie"
+    "placeHolder": "Wyszukiwanie",
+    "ResetFilter": "Zresetuj filtr"
   }
 }

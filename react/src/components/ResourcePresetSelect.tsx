@@ -1,3 +1,4 @@
+import { localeCompare } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
 import Flex from './Flex';
@@ -164,10 +165,14 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
               preset,
               disabled: disabled,
             };
-            // sort by disabled
-          }).sort((a, b) =>
-            a.disabled === b.disabled ? 0 : a.disabled ? 1 : -1,
-          ),
+          })
+            .sort(
+              (
+                a,
+                b, // by disabled
+              ) => (a.disabled === b.disabled ? 0 : a.disabled ? 1 : -1),
+            )
+            .sort((a, b) => localeCompare(a.value, b.value)), // by name
         },
       ]}
       showSearch

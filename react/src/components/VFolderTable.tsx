@@ -173,7 +173,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
         keypair_resource_policy_name: keypair?.resource_policy || '',
       },
       {
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'store-and-network',
         fetchKey: fetchKey,
       },
     );

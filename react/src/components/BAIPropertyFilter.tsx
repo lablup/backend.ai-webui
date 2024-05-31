@@ -149,43 +149,45 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
           {...otherProps}
         />
       </Flex>
-      <Flex
-        direction="row"
-        gap={'xs'}
-        wrap="wrap"
-        style={{ alignSelf: 'stretch' }}
-      >
-        {_.map(list, (item, index) => {
-          return (
-            <Tag
-              key={getKey(index)}
-              closable
-              onClose={() => {
-                remove(index);
-              }}
-              style={{ margin: 0 }}
-            >
-              {item.propertyLabel}: {trimFilterValue(item.value)}
-            </Tag>
-          );
-        })}
-        {list.length > 1 && (
-          <Tooltip title={t('propertyFilter.ResetFilter')}>
-            <Button
-              size="small"
-              icon={
-                <CloseCircleOutlined
-                  style={{ color: token.colorTextSecondary }}
-                />
-              }
-              type="text"
-              onClick={() => {
-                resetList([]);
-              }}
-            />
-          </Tooltip>
-        )}
-      </Flex>
+      {list.length > 0 && (
+        <Flex
+          direction="row"
+          gap={'xs'}
+          wrap="wrap"
+          style={{ alignSelf: 'stretch' }}
+        >
+          {_.map(list, (item, index) => {
+            return (
+              <Tag
+                key={getKey(index)}
+                closable
+                onClose={() => {
+                  remove(index);
+                }}
+                style={{ margin: 0 }}
+              >
+                {item.propertyLabel}: {trimFilterValue(item.value)}
+              </Tag>
+            );
+          })}
+          {list.length > 1 && (
+            <Tooltip title={t('propertyFilter.ResetFilter')}>
+              <Button
+                size="small"
+                icon={
+                  <CloseCircleOutlined
+                    style={{ color: token.colorTextSecondary }}
+                  />
+                }
+                type="text"
+                onClick={() => {
+                  resetList([]);
+                }}
+              />
+            </Tooltip>
+          )}
+        </Flex>
+      )}
     </Flex>
   );
 };

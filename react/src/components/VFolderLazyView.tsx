@@ -30,10 +30,12 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
     staleTime: 1000,
     suspense: true,
   });
+
   const vFolder = vFolders?.find(
     // `id` of `/folders` API is not UUID, but UUID without `-`
     (vFolder) => vFolder.id === uuid.replaceAll('-', ''),
   );
+
   return (
     vFolder &&
     (clickable ? (

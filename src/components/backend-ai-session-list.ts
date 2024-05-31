@@ -1821,6 +1821,7 @@ export default class BackendAISessionList extends BackendAIPage {
     (
       this.shadowRoot?.querySelector('#new-image-name-field') as TextField
     ).value = '';
+    this.requestUpdate();
     this.commitSessionDialog.show();
   }
 
@@ -2829,10 +2830,11 @@ ${item.traceback}</pre
               display: block;
               white-space: pre-wrap;
               word-break: break-all;
+              white-space-collapse: collapse;
             }
           </style>
           <div class="layout vertical start">
-            <div class="horizontal center center-justified layout">
+            <div class="horizontal center start-justified layout">
               <pre id="session-name-field">
                 ${rowData.item.mounts[0]} SFTP Session
               </pre
@@ -2850,6 +2852,7 @@ ${item.traceback}</pre
               display: block;
               margin-left: 16px;
               white-space: pre-wrap;
+              white-space-collapse: collapse;
               word-break: break-all;
             }
             #session-rename-field {
@@ -4014,17 +4017,13 @@ ${rowData.item[this.sessionNameField]}</pre
           <div class="vertical flex start layout" style="width:100%;">
             <h4 class="commit-session-title">${_t('session.SessionName')}</h4>
             <span class="commit-session-subheading">
-              ${commitSessionInfo?.session?.name
-                ? commitSessionInfo.session.name
-                : '-'}
+              ${commitSessionInfo?.session?.name ?? '-'}
             </span>
           </div>
           <div class="vertical flex start layout" style="width:100%;">
             <h4 class="commit-session-title">${_t('session.SessionId')}</h4>
             <span class="commit-session-subheading">
-              ${commitSessionInfo?.session?.id
-                ? commitSessionInfo.session.id
-                : '-'}
+              ${commitSessionInfo?.session?.id ?? '-'}
             </span>
           </div>
           <div class="vertical flex start layout" style="width:100%;">
@@ -4035,13 +4034,9 @@ ${rowData.item[this.sessionNameField]}</pre
               ${commitSessionInfo
                 ? html`
                     <lablup-shields
-                      app="${commitSessionInfo.environment === ''
-                        ? '-'
-                        : commitSessionInfo.environment}"
+                      app="${commitSessionInfo.environment ?? '-'}"
                       color="blue"
-                      description="${commitSessionInfo.version === ''
-                        ? '-'
-                        : commitSessionInfo.version}"
+                      description="${commitSessionInfo.version ?? '-'}"
                       ui="round"
                       class="right-below-margin"
                     ></lablup-shields>
@@ -4076,18 +4071,16 @@ ${rowData.item[this.sessionNameField]}</pre
             </div>
           </div>
           <div class="vertical flex start layout" style="width:100%;">
-            <h4 class="commit-session-title">
-              ${_t('session.ConvertSessionToImage')}
-            </h4>
+            <h4 class="commit-session-title">${_t('session.SessionName')}</h4>
             <div class="horizontal layout flex" style="width:100%">
-              <mwc-checkbox
+              <!--<mwc-checkbox
                 class="list-check"
                 ?checked="${this.pushImageInsteadOfCommiting}"
                 @click="${() => {
-                  this.pushImageInsteadOfCommiting =
-                    !this.pushImageInsteadOfCommiting;
-                }}"
-              ></mwc-checkbox>
+                this.pushImageInsteadOfCommiting =
+                  !this.pushImageInsteadOfCommiting;
+              }}"
+              ></mwc-checkbox>-->
               <mwc-textfield
                 id="new-image-name-field"
                 required
@@ -4096,7 +4089,6 @@ ${rowData.item[this.sessionNameField]}</pre
                 minLength="4"
                 maxLength="32"
                 placeholder="${_t('inputLimit.4to32chars')}"
-                ?disabled="${!this.pushImageInsteadOfCommiting}"
                 validationMessage="${_text(
                   'session.Validation.EnterValidSessionName',
                 )}"
@@ -4110,21 +4102,16 @@ ${rowData.item[this.sessionNameField]}</pre
           <mwc-button
             unelevated
             class="ok"
-            style="font-size: ${this.pushImageInsteadOfCommiting
-              ? 'smaller'
-              : 'inherit'}"
-            ?disabled="${commitSessionInfo?.environment === '' ||
-            (this.pushImageInsteadOfCommiting && !this.canStartImagifying)}"
-            @click=${(e) => {
-              if (this.pushImageInsteadOfCommiting) {
-                this._requestConvertSessionToimage(commitSessionInfo);
-              } else {
-                this._requestCommitSession(commitSessionInfo);
-              }
+            style="font-size:smaller"
+            ?disabled="${
+              !this.canStartImagifying
+              // FIXME: temporally disable commit feature
+              // || commitSessionInfo?.environment === ''
+            }"
+            @click=${() => {
+              this._requestConvertSessionToimage(commitSessionInfo);
             }}
-            label="${this.pushImageInsteadOfCommiting
-              ? _t('button.PushToImage')
-              : _t('button.Commit')}"
+            label="${_t('button.PushToImage')}"
           ></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -4426,7 +4413,7 @@ ${rowData.item[this.sessionNameField]}</pre
   }
 
   _updateImagifyAvailabilityStatus(e) {
-    this.canStartImagifying = e.target._validity.valid;
+    this.canStartImagifying = e.target.validity.valid;
     this.newImageName = e.target.value;
   }
 }
