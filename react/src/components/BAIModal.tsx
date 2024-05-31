@@ -43,6 +43,7 @@ const BAIModal: React.FC<BAIModalProps> = ({ styles, ...modalProps }) => {
     <>
       <style>{rawBAIModalCss}</style>
       <Modal
+        keyboard={false}
         {...modalProps}
         centered={modalProps.centered ?? true}
         className="bai-modal"
