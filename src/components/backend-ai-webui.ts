@@ -409,7 +409,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   loadConfig(config): void {
-    console.log('!');
     if (
       typeof config.general !== 'undefined' &&
       'siteDescription' in config.general

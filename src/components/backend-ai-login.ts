@@ -1129,7 +1129,6 @@ export default class BackendAILogin extends BackendAIPage {
    * @return {Promise<any> | void}
    * */
   private _loadConfigFromWebServer() {
-    console.log('!');
     if (!window.location.href.startsWith(this.api_endpoint)) {
       // Override configs with Webserver's config.
       const webuiEl = document.querySelector('backend-ai-webui');
