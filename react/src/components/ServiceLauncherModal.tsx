@@ -63,7 +63,7 @@ interface ServiceCreateConfigResourceType {
   'warboy.device'?: number | string;
   'hyperaccel-lpu.device'?: number | string;
 }
-interface MountOptionType {
+export interface MountOptionType {
   mount_destination?: string;
   type?: string;
   permission?: string;
@@ -259,21 +259,27 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         config: {
           model: values.vFolderName,
           model_version: 1, // FIXME: hardcoded. change it with option later
-          model_mount_destination: values.modelMountDestination,
-          model_definition_path: values.modelDefinitionPath,
-          extra_mounts: _.reduce(
-            values.mounts,
-            (acc, key: string) => {
-              acc[key] = {
-                ...(values.vfoldersAliasMap[key] && {
-                  mount_destination: values.vfoldersAliasMap[key],
-                }),
-                type: 'bind', // FIXME: hardcoded. change it with option later
-              };
-              return acc;
-            },
-            {} as Record<string, MountOptionType>,
-          ),
+          ...(baiClient.supports('endpoint-extra-mounts') && {
+            extra_mounts: _.reduce(
+              values.mounts,
+              (acc, key: string) => {
+                acc[key] = {
+                  ...(values.vfoldersAliasMap[key] && {
+                    mount_destination: values.vfoldersAliasMap[key],
+                  }),
+                  type: 'bind', // FIXME: hardcoded. change it with option later
+                };
+                return acc;
+              },
+              {} as Record<string, MountOptionType>,
+            ),
+            model_definition_path: values.modelDefinitionPath,
+          }),
+          model_mount_destination:
+            baiClient.supports('endpoint-extra-mounts') &&
+            values.modelMountDestination !== ''
+              ? values.modelMountDestination
+              : '/models',
           environ: {}, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {
@@ -516,7 +522,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
   // Apply any operation after clicking Cancel or close button button
   const handleCancel = () => {
-    formRef.current?.resetFields();
     onRequestClose();
   };
 
@@ -597,7 +602,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           <Form
             ref={formRef}
             disabled={mutationToCreateService.isLoading}
-            preserve={false}
             layout="vertical"
             labelCol={{ span: 12 }}
             initialValues={
@@ -716,71 +720,75 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     </Form.Item>
                   )
                 )}
-                <Flex
-                  direction="row"
-                  gap={'xxs'}
-                  align="stretch"
-                  justify="between"
-                >
-                  <Form.Item
-                    name={'modelMountDestination'}
-                    label={t('modelService.ModelMountDestination')}
-                    style={{ width: '50%' }}
-                    labelCol={{ style: { width: 400 } }}
-                  >
-                    <Input
-                      allowClear
-                      placeholder={'/models'}
-                      disabled={!!endpoint}
-                    />
-                  </Form.Item>
-                  <MinusOutlined
-                    style={{
-                      fontSize: token.fontSizeXL,
-                      color: token.colorTextDisabled,
-                    }}
-                    rotate={290}
-                  />
-                  <Form.Item
-                    name={'modelDefinitionPath'}
-                    label={t('modelService.ModelDefinitionPath')}
-                    style={{ width: '50%' }}
-                    labelCol={{ style: { width: 300 } }}
-                  >
-                    <Input
-                      allowClear
-                      placeholder={
-                        endpoint?.model_definition_path
-                          ? endpoint?.model_definition_path
-                          : 'model-definition.yaml'
-                      }
-                    />
-                  </Form.Item>
-                </Flex>
-                <Form.Item
-                  noStyle
-                  shouldUpdate={(prev, cur) =>
-                    prev.vFolderName !== cur.vFolderName
-                  }
-                >
-                  {() => {
-                    return (
-                      <VFolderTableFormItem
-                        rowKey={'id'}
-                        label={t('modelService.AdditionalMounts')}
-                        filter={(vf) =>
-                          vf.name !==
-                            formRef.current?.getFieldValue('vFolderName') &&
-                          vf.status === 'ready' &&
-                          vf.usage_mode !== 'model'
-                        }
-                        tableProps={{
-                          size: 'small',
+                {baiClient.supports('endpoint-extra-mounts') ? (
+                  <>
+                    <Flex
+                      direction="row"
+                      gap={'xxs'}
+                      align="stretch"
+                      justify="between"
+                    >
+                      <Form.Item
+                        name={'modelMountDestination'}
+                        label={t('modelService.ModelMountDestination')}
+                        style={{ width: '50%' }}
+                        labelCol={{ style: { width: 400 } }}
+                      >
+                        <Input
+                          allowClear
+                          placeholder={'/models'}
+                          disabled={!!endpoint}
+                        />
+                      </Form.Item>
+                      <MinusOutlined
+                        style={{
+                          fontSize: token.fontSizeXL,
+                          color: token.colorTextDisabled,
                         }}
+                        rotate={290}
                       />
-                    );
-                  }}
-                </Form.Item>
+                      <Form.Item
+                        name={'modelDefinitionPath'}
+                        label={t('modelService.ModelDefinitionPath')}
+                        style={{ width: '50%' }}
+                        labelCol={{ style: { width: 300 } }}
+                      >
+                        <Input
+                          allowClear
+                          placeholder={
+                            endpoint?.model_definition_path
+                              ? endpoint?.model_definition_path
+                              : 'model-definition.yaml'
+                          }
+                        />
+                      </Form.Item>
+                    </Flex>
+                    <Form.Item
+                      noStyle
+                      shouldUpdate={(prev, cur) =>
+                        prev.vFolderName !== cur.vFolderName
+                      }
+                    >
+                      {() => {
+                        return (
+                          <VFolderTableFormItem
+                            rowKey={'id'}
+                            label={t('modelService.AdditionalMounts')}
+                            filter={(vf) =>
+                              vf.name !==
+                                formRef.current?.getFieldValue('vFolderName') &&
+                              vf.status === 'ready' &&
+                              vf.usage_mode !== 'model'
+                            }
+                            tableProps={{
+                              size: 'small',
+                            }}
+                          />
+                        );
+                      }}
+                    </Form.Item>
+                  </>
+                ) : null}
               </>
             )}
             <Form.Item
