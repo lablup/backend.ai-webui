@@ -9,6 +9,7 @@ interface StartMenuProps {
   deactivate?: boolean;
   allowNeoSessionLauncher?: boolean;
 }
+type ImageSize = 'NONE' | 'SM' | 'LG';
 
 export const SummaryItemStartMenu: React.FC<StartMenuProps> = ({
   deactivate,
@@ -18,24 +19,54 @@ export const SummaryItemStartMenu: React.FC<StartMenuProps> = ({
   const { token } = theme.useToken();
   const webuiNavigate = useWebUINavigate();
   const containerRef = useRef<HTMLDivElement>(null);
-  const [imgSize, setImgSize] = useState<number>(400);
+  const [imgSize, setImgSize] = useState<ImageSize>('LG');
 
-  // useEffect(() => {
-  //   const updateImageSize = () => {
-  //     if (!containerRef.current) {
-  //       return;
-  //     }
-  //     const containerHeight = containerRef.current.clientHeight;
-  //     console.log(containerHeight);
-  //   };
-  // }, []);
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) {
+      return;
+    }
+    const updateImageSize = () => {
+      const containerHeight = container.clientHeight;
+      const containerWidth = container.clientWidth;
+      if (containerHeight <= 300) {
+        setImgSize('NONE');
+      } else if (containerHeight <= 420) {
+        setImgSize('SM');
+      } else {
+        if (containerWidth <= 272) {
+          setImgSize('SM');
+          return;
+        }
+        setImgSize('LG');
+      }
+    };
+    const resizeObserver = new ResizeObserver(() => {
+      updateImageSize();
+    });
+    resizeObserver.observe(container);
+    updateImageSize();
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   return (
-    <Flex direction="column" justify="around" style={{ height: '100%' }}>
+    <Flex
+      ref={containerRef}
+      direction="column"
+      justify="around"
+      style={{ height: '100%' }}
+    >
       <img
         src="/resources/images/launcher-background.png"
         alt="launcher background"
-        style={{ width: 400, marginBottom: token.marginMD }}
+        style={{
+          width: imgSize === 'LG' ? 400 : imgSize === 'SM' ? 250 : 0,
+          marginBottom: token.marginMD,
+          display: imgSize === 'NONE' ? 'none' : 'block',
+        }}
       />
       <Flex direction="column" style={{ width: '100%' }}>
         <Button
@@ -59,7 +90,7 @@ export const SummaryItemStartMenu: React.FC<StartMenuProps> = ({
         <Flex
           style={{
             width: 'inherit',
-            marginTop: token.marginMD,
+            marginTop: imgSize === 'NONE' ? 0 : token.marginMD,
             alignItems: 'start',
             cursor: 'pointer',
           }}
