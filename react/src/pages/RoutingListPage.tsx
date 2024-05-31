@@ -8,6 +8,7 @@ import ResourceNumber, { ResourceTypeKey } from '../components/ResourceNumber';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
 import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
 import VFolderLazyView from '../components/VFolderLazyView';
+import { VFolder } from '../components/VFolderSelect';
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
 import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
@@ -20,6 +21,7 @@ import {
   ArrowRightOutlined,
   CheckOutlined,
   CloseOutlined,
+  FolderOutlined,
   LoadingOutlined,
   PlusOutlined,
   QuestionCircleOutlined,
@@ -333,19 +335,17 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
   if (baiClient.supports('endpoint-extra-mounts')) {
     items.push({
       label: t('modelService.AdditionalMounts'),
-      children:
-        (endpoint?.extra_mounts?.length as number) > 0 ? (
-          _.map(endpoint?.extra_mounts, (vfolder) => (
-            <VFolderLazyView
-              uuid={vfolder?.row_id as string}
-              clickable={false}
-            />
-          ))
-        ) : (
-          <Typography.Text type="secondary">
-            {t('modelService.NoExtraMounts')}
-          </Typography.Text>
-        ),
+      children: (
+        <Flex direction="column" align="start">
+          {_.map(endpoint?.extra_mounts, (vfolder: VFolder) => {
+            return (
+              <Flex direction="row" gap={'xxs'}>
+                <FolderOutlined /> {vfolder.name}
+              </Flex>
+            );
+          })}
+        </Flex>
+      ),
     });
   }
 

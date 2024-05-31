@@ -698,7 +698,7 @@ class Client {
       this._features['max-customized-image-count'] = true;
     }
     if (this.isManagerVersionCompatibleWith('24.03.4')) {
-      this._features['extra-mounts'] = true;
+      this._features['endpoint-extra-mounts'] = true;
     }
   }
 
