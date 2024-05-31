@@ -7,6 +7,7 @@ import { ThemeModeProvider, useThemeMode } from '../hooks/useThemeMode';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { useUpdateEffect } from 'ahooks';
 import { App, AppProps, ConfigProvider, theme } from 'antd';
+import { CustomToken, ThemeProvider } from 'antd-style';
 import en_US from 'antd/locale/en_US';
 import ko_KR from 'antd/locale/ko_KR';
 import dayjs from 'dayjs';
@@ -262,6 +263,17 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = (props) => {
 
 export default DefaultProviders;
 
+declare module 'antd-style' {
+  export interface CustomToken {
+    containerHeightSM: number;
+    containerHeightMD: number;
+    containerHeightLG: number;
+    containerWidthSM: number;
+    containerWidthMD: number;
+    containerWidthLG: number;
+  }
+}
+
 export const DefaultProvidersForReactRoot: React.FC<
   Partial<DefaultProvidersProps>
 > = ({ children, value, styles }) => {
@@ -290,16 +302,27 @@ export const DefaultProvidersForReactRoot: React.FC<
                   : theme.defaultAlgorithm,
               }}
             >
-              <App {...commonAppProps}>
-                {/* <StyleProvider container={shadowRoot} cache={cache}> */}
-                <Suspense>
-                  {/* <BrowserRouter> */}
-                  {/* <RoutingEventHandler /> */}
-                  {children}
-                  {/* </BrowserRouter> */}
-                </Suspense>
-                {/* </StyleProvider> */}
-              </App>
+              <ThemeProvider<CustomToken>
+                customToken={{
+                  containerHeightSM: 180,
+                  containerHeightMD: 300,
+                  containerHeightLG: 420,
+                  containerWidthSM: 272,
+                  containerWidthMD: 410,
+                  containerWidthLG: 820,
+                }}
+              >
+                <App {...commonAppProps}>
+                  {/* <StyleProvider container={shadowRoot} cache={cache}> */}
+                  <Suspense>
+                    {/* <BrowserRouter> */}
+                    {/* <RoutingEventHandler /> */}
+                    {children}
+                    {/* </BrowserRouter> */}
+                  </Suspense>
+                  {/* </StyleProvider> */}
+                </App>
+              </ThemeProvider>
             </ConfigProvider>
           </QueryClientProvider>
         </RelayEnvironmentProvider>

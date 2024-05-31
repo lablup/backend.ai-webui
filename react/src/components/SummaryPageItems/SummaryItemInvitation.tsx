@@ -111,12 +111,10 @@ const SummaryItemInvitation: React.FC = () => {
   };
 
   return (
-    <Flex direction="column" gap={token.marginSM} style={{ height: '100%' }}>
+    <Flex direction="column" gap={token.marginSM}>
       {invitations.length > 0 ? (
         <>
-          {/* FIXME: change any type to specific type */}
           {invitations.map((invitation: Invitation) => {
-            console.log(invitation);
             return (
               <BAICard className={styles.card}>
                 <Descriptions
