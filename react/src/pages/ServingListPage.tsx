@@ -135,7 +135,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             style={
               row.desired_session_count < 0 ||
               row.status?.toLowerCase() === 'destroying' ||
-              row.created_user_email !== currentUser.email
+              (!!row.created_user_email &&
+                row.created_user_email !== currentUser.email)
                 ? {
                     color: token.colorTextDisabled,
                   }
@@ -146,7 +147,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             disabled={
               row.desired_session_count < 0 ||
               row.status?.toLowerCase() === 'destroying' ||
-              row.created_user_email !== currentUser.email
+              (!!row.created_user_email &&
+                row.created_user_email !== currentUser.email)
             }
             onClick={() => {
               setIsOpenServiceLauncher(!isOpenServiceLauncher);

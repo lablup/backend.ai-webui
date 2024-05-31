@@ -430,7 +430,8 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             disabled={
               (endpoint?.desired_session_count || 0) < 0 ||
               endpoint?.status === 'DESTROYING' ||
-              endpoint?.created_user_email !== currentUser.email
+              (!!endpoint?.created_user_email &&
+                endpoint?.created_user_email !== currentUser.email)
             }
             onClick={() => {
               setIsOpenServiceLauncherModal(true);
