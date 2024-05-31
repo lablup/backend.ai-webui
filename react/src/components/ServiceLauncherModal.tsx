@@ -522,7 +522,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
   // Apply any operation after clicking Cancel or close button button
   const handleCancel = () => {
-    formRef.current?.resetFields();
     onRequestClose();
   };
 
@@ -603,7 +602,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           <Form
             ref={formRef}
             disabled={mutationToCreateService.isLoading}
-            preserve={false}
             layout="vertical"
             labelCol={{ span: 12 }}
             initialValues={
