@@ -5,6 +5,7 @@ import ServiceLauncherModal from '../components/ServiceLauncherModal';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useCurrentUserInfo } from '../hooks/backendai';
 // import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -84,6 +85,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const [optimisticDeletingId, setOptimisticDeletingId] = useState<
     string | null
   >();
+  const [currentUser] = useCurrentUserInfo();
+
   // const [selectedGeneration, setSelectedGeneration] = useState<
   //   "current" | "next"
   // >("next");
@@ -131,15 +134,19 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             icon={<SettingOutlined />}
             style={
               row.desired_session_count < 0 ||
-              row.status?.toLowerCase() === 'destroying'
-                ? undefined
+              row.status?.toLowerCase() === 'destroying' ||
+              row.created_user_email !== currentUser.email
+                ? {
+                    color: token.colorTextDisabled,
+                  }
                 : {
                     color: token.colorInfo,
                   }
             }
             disabled={
               row.desired_session_count < 0 ||
-              row.status?.toLowerCase() === 'destroying'
+              row.status?.toLowerCase() === 'destroying' ||
+              row.created_user_email !== currentUser.email
             }
             onClick={() => {
               setIsOpenServiceLauncher(!isOpenServiceLauncher);
@@ -217,7 +224,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       ? [
           {
             title: t('modelService.Owner'),
-            // created_user_email is refered by EndpointOwnerInfoFragment
+            // created_user_email is referred by EndpointOwnerInfoFragment
             dataIndex: 'created_user_email',
             key: 'session_owner',
             render: (_: string, endpoint_info: Endpoint) => (
@@ -330,6 +337,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 traffic_ratio
                 status
               }
+              created_user_email @since(version: "23.09.8")
               ...ServiceLauncherModalFragment
               ...EndpointOwnerInfoFragment
               ...EndpointStatusTagFragment

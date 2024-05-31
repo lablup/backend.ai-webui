@@ -11,6 +11,7 @@ import VFolderLazyView from '../components/VFolderLazyView';
 import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
 import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
   RoutingListPageQuery,
@@ -96,6 +97,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     useState(false);
   const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
     useState(false);
+  const [currentUser] = useCurrentUserInfo();
   // const curProject = useCurrentProjectValue();
   const [paginationState] = useState<{
     current: number;
@@ -163,6 +165,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               endpoint
               status
             }
+            created_user_email @since(version: "23.09.8")
             ...ServiceLauncherModalFragment
             ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
@@ -426,7 +429,8 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             icon={<SettingOutlined />}
             disabled={
               (endpoint?.desired_session_count || 0) < 0 ||
-              endpoint?.status === 'DESTROYING'
+              endpoint?.status === 'DESTROYING' ||
+              endpoint?.created_user_email !== currentUser.email
             }
             onClick={() => {
               setIsOpenServiceLauncherModal(true);
