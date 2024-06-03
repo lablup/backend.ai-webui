@@ -688,6 +688,8 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('23.09.10')) {
       this._features['max-session-count-per-model-session'] = true;
+      // In versions 23.09.10 and earlier, it is not suitable to create and modify user resource policies.
+      this._features['configure-user-resource-policy'] = true;
     }
     if (this.isManagerVersionCompatibleWith('24.03.0')) {
       this._features['vfolder-trash-bin'] = true;
