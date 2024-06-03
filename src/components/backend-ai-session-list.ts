@@ -234,6 +234,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#list-grid') _grid!: VaadinGrid;
   @query('#access-key-filter') accessKeyFilterInput!: TextField;
+  @query('#new-image-name-field') newImageNameInput!: TextField;
   @query('#multiple-action-buttons') multipleActionButtons!: HTMLDivElement;
   @query('#access-key-filter-helper-text')
   accessKeyFilterHelperText!: HTMLSpanElement;
@@ -4084,8 +4085,7 @@ ${rowData.item[this.sessionNameField]}</pre
               <mwc-textfield
                 id="new-image-name-field"
                 required
-                autoValidate
-                pattern="^[a-zA-Z0-9-_]+$"
+                pattern="^[a-zA-Z0-9_\\-]{4,}$"
                 minLength="4"
                 maxLength="32"
                 placeholder="${_t('inputLimit.4to32chars')}"
@@ -4093,7 +4093,8 @@ ${rowData.item[this.sessionNameField]}</pre
                   'session.Validation.EnterValidSessionName',
                 )}"
                 style="margin-top:8px;width:100%;"
-                @input="${this._updateImagifyAvailabilityStatus}"
+                autoValidate
+                @input="${this._validateImageName}"
               ></mwc-textfield>
             </div>
           </div>
@@ -4103,11 +4104,7 @@ ${rowData.item[this.sessionNameField]}</pre
             unelevated
             class="ok"
             style="font-size:smaller"
-            ?disabled="${
-              !this.canStartImagifying
-              // FIXME: temporally disable commit feature
-              // || commitSessionInfo?.environment === ''
-            }"
+            ?disabled="${!this.canStartImagifying}"
             @click=${() => {
               this._requestConvertSessionToimage(commitSessionInfo);
             }}
@@ -4412,9 +4409,36 @@ ${rowData.item[this.sessionNameField]}</pre
     this.refreshList();
   }
 
-  _updateImagifyAvailabilityStatus(e) {
-    this.canStartImagifying = e.target.validity.valid;
-    this.newImageName = e.target.value;
+  _validateImageName() {
+    this.newImageNameInput.validityTransform = (value, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        this.canStartImagifying = false;
+        if (nativeValidity.patternMismatch) {
+          this.newImageNameInput.validationMessage = _text(
+            'session.Validation.EnterValidSessionName',
+          );
+          return {
+            valid: nativeValidity.valid,
+            patternMismatch: !nativeValidity.valid,
+          };
+        } else {
+          this.newImageNameInput.validationMessage = _text(
+            'session.Validation.EnterValidSessionName',
+          );
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid,
+          };
+        }
+      } else {
+        this.canStartImagifying = true;
+        this.newImageName = value;
+        return {
+          valid: nativeValidity.valid,
+          customError: !nativeValidity.valid,
+        };
+      }
+    };
   }
 }
 
