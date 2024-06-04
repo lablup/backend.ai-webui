@@ -1,4 +1,5 @@
 import Flex from './Flex';
+// @ts-ignore
 import { render, screen } from '@testing-library/react';
 
 describe('Flex', () => {
