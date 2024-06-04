@@ -7,7 +7,7 @@ interface BAICardProps extends CardProps {
   status?: 'success' | 'error' | 'warning' | 'default';
   extraButtonTitle?: string | ReactNode;
   onClickExtraButton?: () => void;
-  ref?: React.LegacyRef<HTMLDivElement> | undefined;
+  ref?: React.Ref<HTMLDivElement> | undefined;
 }
 
 const BAICard: React.FC<BAICardProps> = ({
