@@ -49,7 +49,9 @@ describe('DomainSelect', () => {
     });
 
     expect(await screen.findByText('Please select domain')).toBeInTheDocument();
-    await userEvent.click(await screen.findByRole('combobox'));
+    await act(async () => {
+      await userEvent.click(screen.getByRole('combobox'));
+    });
     expect(screen.getAllByText('abcd')[0]).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });
