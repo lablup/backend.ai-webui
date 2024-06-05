@@ -170,7 +170,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   _.forOwn(props.webuiplugins, (value, key) => {
     // Check if the `pluginMap` object has the current key using the `_.has` function.
     if (_.has(pluginMap, key)) {
-      const menu = pluginMap[key as keyof typeof pluginMap];
+      const menu = pluginMap[key as keyof typeof pluginMap] as MenuItem[];
       const pluginPages = props?.webuiplugins?.page;
       _.map(value, (name) => {
         // Find page item belonging to each of menuitem-user, menuitem-admin, menuitem-superadmin in webuiplugins.page
