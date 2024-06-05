@@ -17,7 +17,6 @@ import {
   RouterProvider,
   createBrowserRouter,
 } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
@@ -246,11 +245,9 @@ const router = createBrowserRouter([
 
 const App: FC = () => {
   return (
-    <RecoilRoot>
-      <DefaultProvidersForReactRoot>
-        <RouterProvider router={router} />
-      </DefaultProvidersForReactRoot>
-    </RecoilRoot>
+    <DefaultProvidersForReactRoot>
+      <RouterProvider router={router} />
+    </DefaultProvidersForReactRoot>
   );
 };
 
