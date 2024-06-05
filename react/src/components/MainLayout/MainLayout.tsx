@@ -11,9 +11,9 @@ import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { App, Layout, theme } from 'antd';
+import { atom, useSetAtom } from 'jotai';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
-import { atom, useSetRecoilState } from 'recoil';
 
 export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 5;
 export type PluginPage = {
@@ -30,13 +30,14 @@ export type WebUIPluginType = {
   'menuitem-superadmin': string[];
 };
 
-export const mainContentDivRefState = atom<React.RefObject<HTMLElement>>({
-  key: 'MainLayout.mainContentDivRefState',
-});
+export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
+  {
+    current: null,
+  },
+);
 
 function MainLayout() {
   const navigate = useNavigate();
-
   const [compactSidebarActive] = useBAISettingUserState('compact_sidebar');
   const [sideCollapsed, setSideCollapsed] =
     useState<boolean>(!!compactSidebarActive);
@@ -52,7 +53,7 @@ function MainLayout() {
   const { token } = theme.useToken();
   const webUIRef = useRef<HTMLElement>(null);
   const contentScrollFlexRef = useRef<HTMLDivElement>(null);
-  const setMainContentDivRefState = useSetRecoilState(mainContentDivRefState);
+  const setMainContentDivRefState = useSetAtom(mainContentDivRefState);
   useEffect(() => {
     setMainContentDivRefState(contentScrollFlexRef);
   }, [contentScrollFlexRef, setMainContentDivRefState]);

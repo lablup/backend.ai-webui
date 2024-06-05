@@ -1,8 +1,8 @@
 import { isOpenDrawerState } from './BAINotificationButton';
 import { Grid, Layout, theme } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
+import { useAtomValue } from 'jotai';
 import React from 'react';
-import { useRecoilValue } from 'recoil';
 
 interface Props extends BasicProps {
   drawerWidth?: number;
@@ -11,7 +11,7 @@ const BAIContentWithDrawerArea: React.FC<Props> = ({
   drawerWidth = 256,
   ...contextProps
 }) => {
-  const isOpenDrawer = useRecoilValue(isOpenDrawerState);
+  const isOpenDrawer = useAtomValue(isOpenDrawerState);
   const { xl } = Grid.useBreakpoint();
   const { token } = theme.useToken();
   const drawerStyle = xl && isOpenDrawer ? 'margin-style' : 'overlay-style';

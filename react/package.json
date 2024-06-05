@@ -36,7 +36,6 @@
     "react-router-dom": "^6.23.0",
     "react-scripts": "5.0.1",
     "react-syntax-highlighter": "^15.5.0",
-    "recoil": "^0.7.7",
     "typescript": "^5.4.5",
     "use-query-params": "^2.2.1",
     "uuid": "^9.0.1",

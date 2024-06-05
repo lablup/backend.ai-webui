@@ -6,21 +6,18 @@ import WEBUINotificationDrawer from './WEBUINotificationDrawer';
 import { BellOutlined } from '@ant-design/icons';
 import { Badge, Button } from 'antd';
 import type { ButtonProps } from 'antd';
+import { atom, useAtom } from 'jotai';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
-import { atom, useRecoilState } from 'recoil';
 
 interface Props extends ButtonProps {}
-export const isOpenDrawerState = atom({
-  key: 'is-open-bai-drawer',
-  default: false,
-});
+export const isOpenDrawerState = atom(false);
 
 const BAINotificationButton: React.FC<Props> = ({ ...props }) => {
   const [notifications, { upsertNotification }] = useBAINotificationState();
   useBAINotificationEffect();
 
-  const [isOpenDrawer, setIsOpenDrawer] = useRecoilState(isOpenDrawerState);
+  const [isOpenDrawer, setIsOpenDrawer] = useAtom(isOpenDrawerState);
   useEffect(() => {
     const handler = (e: any) => {
       upsertNotification(e.detail);
