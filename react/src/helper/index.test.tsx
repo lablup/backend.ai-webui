@@ -1,6 +1,7 @@
 import {
   addNumberWithUnits,
   compareNumberWithUnits,
+  filterEmptyItem,
   iSizeToSize,
   isOutsideRange,
   isOutsideRangeWithUnits,
@@ -270,5 +271,25 @@ describe('numberSorterWithInfinityValue', () => {
     expect(numberSorterWithInfinityValue(1, undefined, -1, 0)).toBeGreaterThan(
       0,
     );
+  });
+});
+
+describe('filterEmptyItem', () => {
+  it('should filter out undefined, null, empty string, false, empty array, and empty object', () => {
+    const input = [undefined, null, '', false, [], {}, 'item1', 'item2'];
+    const output = filterEmptyItem(input);
+    expect(output).toEqual(['item1', 'item2']);
+  });
+
+  it('should return an empty array when all items are empty', () => {
+    const input = [undefined, null, '', false, [], {}];
+    const output = filterEmptyItem(input);
+    expect(output).toEqual([]);
+  });
+
+  it('should return the same array when no items are empty', () => {
+    const input = ['item1', 'item2', 'item3'];
+    const output = filterEmptyItem(input);
+    expect(output).toEqual(['item1', 'item2', 'item3']);
   });
 });

@@ -1,3 +1,4 @@
+import { filterEmptyItem } from '../../helper';
 import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
@@ -26,6 +27,7 @@ import {
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { theme, MenuProps, Typography } from 'antd';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -67,7 +69,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
 
-  const generalMenu: MenuProps['items'] = [
+  const generalMenu = filterEmptyItem<ItemType>([
     {
       label: t('webui.menu.Summary'),
       icon: <DashboardOutlined />,
@@ -116,7 +118,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
       },
     },
-  ];
+  ]);
 
   const adminMenu: MenuProps['items'] = [
     {
