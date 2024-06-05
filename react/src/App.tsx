@@ -22,13 +22,15 @@ import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
 const Information = React.lazy(() => import('./components/Information'));
-const ServingListPage = React.lazy(() => import('./pages/ServingListPage'));
+const EndpointListPage = React.lazy(() => import('./pages/EndpointListPage'));
+const EndpointDetailPage = React.lazy(
+  () => import('./pages/EndpointDetailPage'),
+);
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
 const StorageHostSettingPage = React.lazy(
   () => import('./pages/StorageHostSettingPage'),
 );
-const RoutingListPage = React.lazy(() => import('./pages/RoutingListPage'));
 const UserSettingsPage = React.lazy(() => import('./pages/UserSettingsPage'));
 const SessionListPage = React.lazy(() => import('./pages/SessionListPage'));
 const SessionLauncherPage = React.lazy(
@@ -109,7 +111,7 @@ const router = createBrowserRouter([
         path: '/serving',
         element: (
           <BAIErrorBoundary>
-            <ServingListPage />
+            <EndpointListPage />
           </BAIErrorBoundary>
         ),
         handle: { labelKey: 'webui.menu.Serving' },
@@ -118,7 +120,7 @@ const router = createBrowserRouter([
         path: '/serving/:serviceId',
         element: (
           <BAIErrorBoundary>
-            <RoutingListPage />
+            <EndpointDetailPage />
           </BAIErrorBoundary>
         ),
         handle: { labelKey: 'modelService.RoutingInfo' },
