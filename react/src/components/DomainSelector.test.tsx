@@ -1,4 +1,5 @@
 import DomainSelector from './DomainSelector';
+// @ts-ignore
 import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Suspense } from 'react';
@@ -25,6 +26,7 @@ describe('DomainSelect', () => {
   test('default render', async () => {
     const environment = createMockEnvironment();
     const { asFragment } = render(
+      // @ts-ignore
       <RelayEnvironmentProvider environment={environment}>
         <Suspense fallback="loading...">
           <DomainSelector

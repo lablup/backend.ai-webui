@@ -20,7 +20,7 @@ const SourceCodeViewer: React.FC<SourceCodeViewerProps> = ({
   language,
   wordWrap,
 }) => {
-  const timerRef = useRef<number>();
+  const timerRef = useRef<number | undefined>(undefined);
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();

@@ -167,6 +167,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
   return (
     <JotaiProvider store={jotaiStore}>
       {RelayEnvironment && (
+        // @ts-ignore
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <React.StrictMode>
             <style>
@@ -266,6 +267,7 @@ export const DefaultProvidersForReactRoot: React.FC<
   return (
     <>
       {RelayEnvironment && (
+        // @ts-ignore
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <QueryClientProvider client={queryClient}>
             <ConfigProvider

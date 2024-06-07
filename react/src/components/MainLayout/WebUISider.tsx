@@ -183,6 +183,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             icon: <ApiOutlined />,
             key: page?.url,
           };
+          // @ts-ignore
           menu?.push(menuItem);
         }
       });

@@ -1135,6 +1135,7 @@ const SessionLauncherPage = () => {
                               label={t('session.launcher.StartUpCommand')}
                             >
                               {form.getFieldValue(['batch', 'command']) ? (
+                                // @ts-ignore
                                 <SyntaxHighlighter
                                   style={isDarkMode ? dark : undefined}
                                   language="shell"
@@ -1252,6 +1253,7 @@ const SessionLauncherPage = () => {
                             label={t('session.launcher.EnvironmentVariable')}
                           >
                             {form.getFieldValue('envvars')?.length ? (
+                              // @ts-ignore
                               <SyntaxHighlighter
                                 style={isDarkMode ? dark : undefined}
                                 codeTagProps={{
