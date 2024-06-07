@@ -27,7 +27,7 @@ import {
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { theme, MenuProps, Typography } from 'antd';
-import { ItemType } from 'antd/lib/menu/hooks/useItems';
+import { ItemType } from 'antd/lib/menu/interface';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
