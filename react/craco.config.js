@@ -20,7 +20,17 @@ module.exports = {
       '../resources/**/*',
     ],
   },
-
+  eslint: {
+    // enable: 
+    configure: (eslintConfig, { env, paths }) => {
+      eslintConfig.plugins =  [...(eslintConfig.plugins||[]), 'eslint-plugin-react-compiler'];
+      eslintConfig.rules = {
+        ...eslintConfig.rules,
+        'react-compiler/react-compiler': 'warn',
+      }
+      return eslintConfig;
+    }
+  },
   webpack: {
     // When you change the this value, you might need to clear cache restart the dev server.
     // you can use `rm -rf node_modules/.cache` to clear cache.
