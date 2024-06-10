@@ -15,3 +15,13 @@ type ArgumentTypes<F extends Function> = F extends (...args: infer A) => any
 declare global {
   var isDarkMode: boolean;
 }
+
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends Array<infer U>
+    ? Array<DeepPartial<U>>
+    : T[P] extends ReadonlyArray<infer U>
+      ? ReadonlyArray<DeepPartial<U>>
+      : T[P] extends object
+        ? DeepPartial<T[P]>
+        : T[P];
+};

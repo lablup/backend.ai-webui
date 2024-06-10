@@ -7,6 +7,7 @@ import {
 import Flex from './components/Flex';
 import MainLayout from './components/MainLayout/MainLayout';
 import { useSuspendedBackendaiClient, useWebUINavigate } from './hooks';
+import { useBAISettingUserState } from './hooks/useBAISetting';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
 import { theme } from 'antd';
@@ -42,6 +43,7 @@ const ResourcePolicyPage = React.lazy(
   () => import('./pages/ResourcePolicyPage'),
 );
 const ResourcesPage = React.lazy(() => import('./pages/ResourcesPage'));
+const ImportAndRunPage = React.lazy(() => import('./pages/ImportAndRunPage'));
 
 const router = createBrowserRouter([
   {
@@ -127,6 +129,27 @@ const router = createBrowserRouter([
       {
         path: '/import',
         handle: { labelKey: 'webui.menu.Import&Run' },
+        Component: () => {
+          const { token } = theme.useToken();
+          const [is2409Launcher] = useBAISettingUserState(
+            'use_2409_session_launcher',
+          );
+          return (
+            <BAIErrorBoundary>
+              <NeoSessionLauncherSwitchAlert
+                style={{ marginBottom: token.paddingContentVerticalLG }}
+              />
+              {is2409Launcher ? null : <ImportAndRunPage />}
+              {/* @ts-ignore */}
+              <backend-ai-import-view
+                active
+                class="page"
+                name="import"
+                sessionLauncherType={is2409Launcher ? 'classic' : 'neo'}
+              />
+            </BAIErrorBoundary>
+          );
+        },
       },
       {
         path: '/data',
