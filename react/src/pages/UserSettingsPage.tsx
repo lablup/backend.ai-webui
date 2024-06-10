@@ -3,17 +3,18 @@ import KeypairInfoModal from '../components/KeypairInfoModal';
 import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import { SettingItemProps } from '../components/SettingItem';
 import SettingList from '../components/SettingList';
+import ShellScriptEditModal from '../components/ShellScriptEditModal';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button } from 'antd';
 import Card from 'antd/es/card/Card';
-import { useRef } from 'react';
+import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TabKey = 'general' | 'logs';
-type ShellScriptType = 'bootstrap' | 'userconfig';
+export type ShellScriptType = 'bootstrap' | 'userconfig' | undefined;
 
 const tabParam = withDefault(StringParam, 'general');
 
@@ -38,17 +39,9 @@ const UserPreferencesPage = () => {
   ] = useToggle(false);
   const [preserveLogin, setPreserveLogin] =
     useBAISettingUserState('preserve_login');
-
-  // Use Lit Element's method to open modify shell script dialog in backend-ai-usersettings-general-list
-  const modifyShellScriptModal = useRef<any>(null);
-  const openModifyShellScriptModal = ({ type }: { type: ShellScriptType }) => {
-    if (type === 'bootstrap') {
-      modifyShellScriptModal.current._launchBootstrapScriptDialog();
-    }
-    if (type === 'userconfig') {
-      modifyShellScriptModal.current._launchUserConfigDialog();
-    }
-  };
+  const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
+  const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
+    useToggle(false);
 
   const settingGroup: { title: string; settingItems: SettingItemProps[] }[] = [
     {
@@ -196,7 +189,10 @@ const UserPreferencesPage = () => {
           children: (
             <Button
               icon={<SettingOutlined />}
-              onClick={() => openModifyShellScriptModal({ type: 'bootstrap' })}
+              onClick={() => {
+                setShellInfo('bootstrap');
+                toggleShellScriptEditModal();
+              }}
             >
               {t('button.Config')}
             </Button>
@@ -208,7 +204,10 @@ const UserPreferencesPage = () => {
           children: (
             <Button
               icon={<SettingOutlined />}
-              onClick={() => openModifyShellScriptModal({ type: 'userconfig' })}
+              onClick={() => {
+                setShellInfo('userconfig');
+                toggleShellScriptEditModal();
+              }}
             >
               {t('button.Config')}
             </Button>
@@ -248,12 +247,18 @@ const UserPreferencesPage = () => {
         open={isOpenSSHKeypairManagementModal}
         onRequestClose={toggleSSHKeypairManagementModal}
       />
-      {/* @ts-ignore */}
-      <backend-ai-usersettings-general-list
-        ref={modifyShellScriptModal}
-        id="backend-ai-general-list"
-        active="true"
-      />
+      {shellInfo && (
+        <ShellScriptEditModal
+          open={isOpenShellScriptEditModal}
+          shellInfo={shellInfo}
+          onRequestClose={() => {
+            toggleShellScriptEditModal();
+          }}
+          afterClose={() => {
+            setShellInfo(undefined);
+          }}
+        />
+      )}
     </>
   );
 };
