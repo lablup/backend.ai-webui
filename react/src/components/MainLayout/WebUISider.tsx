@@ -212,7 +212,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 '/manifest/backend.ai-text-bgdark.svg'
               : themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'
           }
-          style={{ width: 191, height: 32, cursor: 'pointer' }}
+          style={{
+            width: themeConfig?.logo?.size?.width || 191,
+            height: themeConfig?.logo?.size?.height || 32,
+            cursor: 'pointer',
+          }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
         />
       }
@@ -228,7 +232,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               : themeConfig?.logo?.srcCollapsed ||
                 '/manifest/backend.ai-brand-simple.svg'
           }
-          style={{ width: 48, height: 32, cursor: 'pointer' }}
+          style={{
+            width: themeConfig?.logo?.sizeCollapsed?.width || 48,
+            height: themeConfig?.logo?.sizeCollapsed?.height || 32,
+            cursor: 'pointer',
+          }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
         />
       }

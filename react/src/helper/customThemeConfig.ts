@@ -11,6 +11,14 @@ type LogoConfig = {
   logoTitleCollapsed?: string;
   alt?: string;
   href?: string;
+  size?: {
+    width?: number;
+    height?: number;
+  };
+  sizeCollapsed?: {
+    width?: number;
+    height?: number;
+  };
 };
 type SiderConfig = {
   theme?: 'light' | 'dark';
