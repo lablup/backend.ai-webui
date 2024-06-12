@@ -2,17 +2,14 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import Flex from './Flex';
 import { ThunderboltTwoTone } from '@ant-design/icons';
 import { Alert, AlertProps, Segmented, Typography, theme } from 'antd';
+import { atom, useAtom } from 'jotai';
 import { useTranslation } from 'react-i18next';
-import { atom, useRecoilState } from 'recoil';
 
 interface NeoSessionLauncherSwitchAlertProps extends AlertProps {
   onChange?: (value: 'current' | 'neo') => void;
 }
 
-const isClosedState = atom<boolean>({
-  key: 'NeoSessionLauncherSwitchAlert:isCloseState',
-  default: false,
-});
+const isClosedState = atom<boolean>(false);
 
 const NeoSessionLauncherSwitchAlert: React.FC<
   NeoSessionLauncherSwitchAlertProps
@@ -23,7 +20,7 @@ const NeoSessionLauncherSwitchAlert: React.FC<
   const { token } = theme.useToken();
   const { t } = useTranslation();
 
-  const [isClosed, setIsClosed] = useRecoilState(isClosedState);
+  const [isClosed, setIsClosed] = useAtom(isClosedState);
   return (
     isClosed || (
       <Alert

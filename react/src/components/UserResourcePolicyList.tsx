@@ -1,5 +1,6 @@
 import {
   bytesToGB,
+  filterEmptyItem,
   localeCompare,
   numberSorterWithInfinityValue,
 } from '../helper';
@@ -102,7 +103,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
       }
     `);
 
-  const columns = _.filter<ColumnType<UserResourcePolicies>>([
+  const columns = filterEmptyItem<ColumnType<UserResourcePolicies>>([
     {
       title: t('resourcePolicy.Name'),
       dataIndex: 'name',

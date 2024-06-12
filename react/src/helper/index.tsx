@@ -344,3 +344,14 @@ export const numberSorterWithInfinityValue = (
   };
   return transform(a) - transform(b);
 };
+
+/**
+ * Filters out empty items from an array.
+ *
+ * @template T - The type of items in the array.
+ * @param arr - The array to filter.
+ * @returns An array containing only non-empty items.
+ */
+export const filterEmptyItem = <T,>(
+  arr: Array<T | undefined | null | '' | false | any[] | object>,
+): Array<T> => _.filter(arr, (item) => !_.isEmpty(item)) as Array<T>;

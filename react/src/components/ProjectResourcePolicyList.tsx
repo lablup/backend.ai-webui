@@ -1,5 +1,6 @@
 import {
   bytesToGB,
+  filterEmptyItem,
   localeCompare,
   numberSorterWithInfinityValue,
 } from '../helper';
@@ -94,7 +95,7 @@ const ProjectResourcePolicyList: React.FC<
       }
     `);
 
-  const columns = _.filter<ColumnType<ProjectResourcePolicies>>([
+  const columns = filterEmptyItem<ColumnType<ProjectResourcePolicies>>([
     {
       title: t('resourcePolicy.Name'),
       dataIndex: 'name',

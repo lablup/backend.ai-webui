@@ -2,10 +2,10 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '.';
 import BAINotificationItem from '../components/BAINotificationItem';
 import { App } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
+import { atom, useAtomValue, useSetAtom } from 'jotai';
 import _ from 'lodash';
 import { Key, useCallback, useEffect, useRef } from 'react';
 import { To } from 'react-router-dom';
-import { atom, useRecoilValue, useSetRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
 const _activeNotificationKeys: Key[] = [];
@@ -32,10 +32,7 @@ export interface NotificationState
   extraDescription?: string;
 }
 
-export const notificationListState = atom<NotificationState[]>({
-  key: 'webui-notification',
-  default: [],
-});
+export const notificationListState = atom<NotificationState[]>([]);
 
 export const CLOSING_DURATION = 1; //second
 
@@ -44,7 +41,7 @@ export const CLOSING_DURATION = 1; //second
  * @returns A tuple containing the notifications and a function to set the BAI notification.
  */
 export const useBAINotificationState = () => {
-  const _notifications = useRecoilValue(notificationListState);
+  const _notifications = useAtomValue(notificationListState);
 
   return [_notifications, useSetBAINotification()] as const;
 };
@@ -53,7 +50,7 @@ export const useBAINotificationState = () => {
  * Custom hook that listens to background tasks and updates notifications accordingly.
  */
 export const useBAINotificationEffect = () => {
-  const _notifications = useRecoilValue(notificationListState);
+  const _notifications = useAtomValue(notificationListState);
 
   const listeningTaskIdsRef = useRef<(string | undefined)[]>([]);
   // const closedNotificationKeysRef = useRef<(React.Key | undefined)[]>([]);
@@ -237,7 +234,7 @@ export const useBAINotificationEffect = () => {
  */
 export const useSetBAINotification = () => {
   // Don't use _notifications carefully when you need to mutate it.
-  const setNotifications = useSetRecoilState(notificationListState);
+  const setNotifications = useSetAtom(notificationListState);
 
   const app = App.useApp();
 

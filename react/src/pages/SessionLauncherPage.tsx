@@ -76,6 +76,7 @@ import {
   theme,
 } from 'antd';
 import dayjs from 'dayjs';
+import { useAtomValue } from 'jotai';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -83,7 +84,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { useRecoilValue } from 'recoil';
 import {
   JsonParam,
   NumberParam,
@@ -150,7 +150,7 @@ const SessionLauncherPage = () => {
   const app = App.useApp();
   let sessionMode: SessionMode = 'normal';
 
-  const mainContentDivRef = useRecoilValue(mainContentDivRefState);
+  const mainContentDivRef = useAtomValue(mainContentDivRefState);
   const baiClient = useSuspendedBackendaiClient();
 
   const [isStartingSession, setIsStartingSession] = useState(false);
