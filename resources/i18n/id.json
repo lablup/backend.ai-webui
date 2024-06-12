@@ -1562,7 +1562,8 @@
     "ModelMountDestination": "Pasang Tujuan Untuk Folder Model",
     "AdditionalMounts": "Pemasangan Tambahan",
     "ModelDefinitionPath": "Jalur File Definisi Model",
-    "NoExtraMounts": "Tidak ada tunggangan tambahan"
+    "NoExtraMounts": "Tidak ada tunggangan tambahan",
+    "RuntimeVariant": "Varian Runtime Inferensi"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

@@ -1562,7 +1562,8 @@
     "ModelMountDestination": "Место установки папки модели",
     "AdditionalMounts": "Дополнительные крепления",
     "ModelDefinitionPath": "Путь к файлу определения модели",
-    "NoExtraMounts": "Никаких дополнительных креплений"
+    "NoExtraMounts": "Никаких дополнительных креплений",
+    "RuntimeVariant": "Вариант времени выполнения вывода"
   },
   "ErrorBoundary": {
     "title": "Произошла ошибка.",

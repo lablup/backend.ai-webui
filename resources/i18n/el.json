@@ -1509,7 +1509,8 @@
     "ModelMountDestination": "Προσάρτηση προορισμού για φάκελο μοντέλου",
     "AdditionalMounts": "Πρόσθετες βάσεις",
     "ModelDefinitionPath": "Διαδρομή αρχείου ορισμού μοντέλου",
-    "NoExtraMounts": "Χωρίς επιπλέον βάσεις"
+    "NoExtraMounts": "Χωρίς επιπλέον βάσεις",
+    "RuntimeVariant": "Παραλλαγή χρόνου εκτέλεσης εξαγωγής συμπερασμάτων"
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",

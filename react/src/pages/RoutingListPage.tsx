@@ -147,6 +147,9 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               ...ServingRouteErrorModalFragment
             }
             retries
+            runtime_variant @since(version: "24.03.5") {
+              human_readable_name
+            }
             model
             model_mount_destiation @deprecatedSince(version: "24.03.4")
             model_mount_destination @since(version: "24.03.4")
@@ -359,6 +362,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       <Flex direction="row" gap={'xs'}>
         <ImageMetaIcon image={fullImageString} />
         <CopyableCodeText>{fullImageString}</CopyableCodeText>
+        <Tag>{endpoint?.runtime_variant?.human_readable_name}</Tag>
       </Flex>
     ),
     span: {

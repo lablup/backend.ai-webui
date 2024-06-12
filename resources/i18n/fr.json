@@ -1562,7 +1562,8 @@
     "ModelMountDestination": "Destination de montage pour le dossier modèle",
     "AdditionalMounts": "Supports supplémentaires",
     "ModelDefinitionPath": "Chemin du fichier de définition du modèle",
-    "NoExtraMounts": "Pas de montures supplémentaires"
+    "NoExtraMounts": "Pas de montures supplémentaires",
+    "RuntimeVariant": "Variante d'exécution de l'inférence"
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",

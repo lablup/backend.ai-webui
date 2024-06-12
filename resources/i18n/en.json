@@ -488,7 +488,8 @@
     "ModelMountDestination": "Mount Destination For Model Folder",
     "AdditionalMounts": "Additional Mounts",
     "ModelDefinitionPath": "Model Definition File Path",
-    "NoExtraMounts": "No extra mounts"
+    "NoExtraMounts": "No extra mounts",
+    "RuntimeVariant": "Inference Runtime Variant"
   },
   "button": {
     "Cancel": "Cancel",

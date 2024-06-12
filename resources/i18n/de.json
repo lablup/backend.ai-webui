@@ -1509,7 +1509,8 @@
     "ModelMountDestination": "Mount-Ziel für Modellordner",
     "AdditionalMounts": "Zusätzliche Halterungen",
     "ModelDefinitionPath": "Pfad der Modelldefinitionsdatei",
-    "NoExtraMounts": "Keine zusätzlichen Halterungen"
+    "NoExtraMounts": "Keine zusätzlichen Halterungen",
+    "RuntimeVariant": "Inferenz Laufzeitvariante"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

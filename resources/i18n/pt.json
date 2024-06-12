@@ -1550,7 +1550,8 @@
     "ModelMountDestination": "Montar destino para pasta de modelo",
     "AdditionalMounts": "Montarias Adicionais",
     "ModelDefinitionPath": "Caminho do arquivo de definição de modelo",
-    "NoExtraMounts": "Sem montagens extras"
+    "NoExtraMounts": "Sem montagens extras",
+    "RuntimeVariant": "Variante de tempo de execução de inferência"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

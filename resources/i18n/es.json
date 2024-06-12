@@ -771,7 +771,8 @@
     "ModelMountDestination": "Destino de montaje para carpeta de modelo",
     "AdditionalMounts": "Montajes adicionales",
     "ModelDefinitionPath": "Ruta del archivo de definición del modelo",
-    "NoExtraMounts": "Sin soportes adicionales"
+    "NoExtraMounts": "Sin soportes adicionales",
+    "RuntimeVariant": "Variante de tiempo de ejecución de la inferencia"
   },
   "notification": {
     "Initializing": "Inicializando...",

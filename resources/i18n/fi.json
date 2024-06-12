@@ -769,7 +769,8 @@
     "AdditionalMounts": "Lisäkiinnikkeet",
     "ModelDefinitionPath": "Mallin määritelmän tiedostopolku",
     "ModelMountDestination": "Kiinnityskohde mallikansioon",
-    "NoExtraMounts": "Ei ylimääräisiä kiinnikkeitä"
+    "NoExtraMounts": "Ei ylimääräisiä kiinnikkeitä",
+    "RuntimeVariant": "Päättelyn suoritusaikamuunnos"
   },
   "notification": {
     "Initializing": "Aloitetaan...",

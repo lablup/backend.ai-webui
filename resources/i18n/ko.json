@@ -475,7 +475,8 @@
     "ModelMountDestination": "모델 폴더 마운트 할 경로",
     "AdditionalMounts": "추가 마운트",
     "ModelDefinitionPath": "모델 정의 파일 경로",
-    "NoExtraMounts": "추가 마운트 없음"
+    "NoExtraMounts": "추가 마운트 없음",
+    "RuntimeVariant": "인퍼런스 런타임 종류"
   },
   "button": {
     "Cancel": "취소",

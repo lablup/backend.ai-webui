@@ -1563,7 +1563,8 @@
     "ModelMountDestination": "Загварын хавтасыг холбох газар",
     "AdditionalMounts": "Нэмэлт бэхэлгээ",
     "ModelDefinitionPath": "Загварын тодорхойлолтын файлын зам",
-    "NoExtraMounts": "Нэмэлт бэхэлгээ байхгүй"
+    "NoExtraMounts": "Нэмэлт бэхэлгээ байхгүй",
+    "RuntimeVariant": "Дүгнэлт Runtime Variant"
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",

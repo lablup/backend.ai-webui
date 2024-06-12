@@ -1508,7 +1508,8 @@
     "ModelMountDestination": "Destinazione di montaggio per la cartella del modello",
     "AdditionalMounts": "Supporti aggiuntivi",
     "ModelDefinitionPath": "Percorso del file di definizione del modello",
-    "NoExtraMounts": "Nessun supporto aggiuntivo"
+    "NoExtraMounts": "Nessun supporto aggiuntivo",
+    "RuntimeVariant": "Variante di runtime dell'inferenza"
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",

@@ -7,17 +7,20 @@ import {
   baiSignedRequestWithPromise,
   compareNumberWithUnits,
   iSizeToSize,
+  useBaiSignedRequestWithPromise,
 } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentDomainValue } from '../hooks';
-import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps, DEFAULT_BAI_MODAL_Z_INDEX } from './BAIModal';
+import EnvVarFormList, { EnvVarFormListValue } from './EnvVarFormList';
 import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
+import TextHighlighter from './TextHighlighter';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
@@ -34,6 +37,7 @@ import {
   Switch,
   FormInstance,
   Skeleton,
+  Select,
 } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -84,6 +88,7 @@ export interface ServiceCreateType {
   name: string;
   desired_session_count: number;
   image: string;
+  runtime_variant: string;
   architecture: string;
   group: string;
   domain: string;
@@ -112,11 +117,17 @@ interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   modelDefinitionPath: string;
   vfoldersAliasMap: Record<string, string>;
   mounts: Array<string>;
+  envvars: EnvVarFormListValue[];
+  runtimeVariant: string;
 }
 
 export type ServiceLauncherFormValue = ServiceLauncherInput &
   ImageEnvironmentFormInput &
   ResourceAllocationFormValue;
+
+const STUB_RUNTIME_VARIANT = [
+  { name: 'CUSTOM', human_readable_name: 'Custom (Model Definition)' },
+];
 
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   extraP,
@@ -130,6 +141,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     useState(false);
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
+  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentDomain = useCurrentDomainValue();
 
   const formRef = useRef<FormInstance<ServiceLauncherFormValue>>(null);
@@ -148,6 +160,11 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         model
         model_mount_destination @since(version: "24.03.4")
         model_definition_path @since(version: "24.03.4")
+        environ
+        runtime_variant @since(version: "24.03.5") {
+          name
+          human_readable_name
+        }
         extra_mounts @since(version: "24.03.4") {
           row_id
         }
@@ -176,6 +193,20 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     `,
     endpointFrgmt,
   );
+
+  const { data: availableRuntimes } = useTanQuery({
+    queryKey: ['baiClient.modelService.runtime.list'],
+    queryFn: () => {
+      return baiRequestWithPromise({
+        method: 'GET',
+        url: `/services/_/runtimes`,
+      }) as Promise<{
+        runtimes: { name: string; human_readable_name: string }[];
+      }>;
+    },
+    staleTime: 1000,
+    suspense: true,
+  });
 
   const checkManualImageAllowed = (
     isConfigAllowed = false,
@@ -241,6 +272,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     ServiceLauncherFormValue
   >({
     mutationFn: (values) => {
+      const environ: { [key: string]: string } = {};
+      if (values.envvars) {
+        values.envvars.forEach((v) => (environ[v.variable] = v.value));
+      }
       const body: ServiceCreateType = {
         name: values.serviceName,
         desired_session_count: values.desiredRoutingCount,
@@ -251,6 +286,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           ),
           values,
         ),
+        runtime_variant: values.runtimeVariant,
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
         cluster_size: values.cluster_size,
@@ -280,7 +316,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             values.modelMountDestination !== ''
               ? values.modelMountDestination
               : '/models',
-          environ: {}, // FIXME: hardcoded. change it with option later
+          environ, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {
             // FIXME: manually convert to string since server-side only allows [str,str] tuple
@@ -391,7 +427,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       .then((values) => {
         if (endpoint) {
           if (baiClient.supports('modify-endpoint')) {
-            const mutationVariables = {
+            const mutationVariables: {
+              endpoint_id: string;
+              props: { [key: string]: any };
+            } = {
               endpoint_id: endpoint?.endpoint_id || '',
               props: {
                 resource_slots: JSON.stringify({
@@ -432,6 +471,13 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                 model_definition_path: values.modelDefinitionPath,
               },
             };
+            if (baiClient.supports('modify-endpoint-environ')) {
+              const newEnvirons: { [key: string]: string } = {};
+              values.envvars.forEach(
+                (v) => (newEnvirons[v.variable] = v.value),
+              );
+              mutationVariables.props.environ = JSON.stringify(newEnvirons);
+            }
             commitModifyEndpoint({
               variables: mutationVariables,
               onCompleted: (res, errors) => {
@@ -639,6 +685,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         : 'single-node',
                     cluster_size: endpoint?.cluster_size,
                     openToPublic: endpoint?.open_to_public,
+                    envvars: endpoint?.environ,
+                    runtimeVariant: endpoint?.runtime_variant?.name,
                     environments: {
                       environment: endpoint?.image_object?.name,
                       version: `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`,
@@ -819,6 +867,26 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   marginBottom: token.margin,
                 }}
               >
+                <Form.Item
+                  name={'runtimeVariant'}
+                  required
+                  label={t('modelService.RuntimeVariant')}
+                >
+                  <Select
+                    defaultActiveFirstOption
+                    showSearch
+                    options={_.map(
+                      availableRuntimes?.runtimes || STUB_RUNTIME_VARIANT,
+                      (runtime) => {
+                        return {
+                          value: runtime.name,
+                          label: runtime.human_readable_name,
+                        };
+                      },
+                    )}
+                    value={endpoint?.runtime_variant}
+                  />
+                </Form.Item>
                 <ImageEnvironmentSelectFormItems
                 // //TODO: test with real inference images
                 // filter={(image) => {
@@ -831,6 +899,17 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                 // }}
                 />
                 <ResourceAllocationFormItems />
+                <Form.Item
+                  name={'envvars'}
+                  label={t('session.launcher.EnvironmentVariable')}
+                >
+                  <EnvVarFormList
+                    name={'envvars'}
+                    formItemProps={{
+                      validateTrigger: ['onChange', 'onBlur'],
+                    }}
+                  />
+                </Form.Item>
               </Card>
             )}
           </Form>

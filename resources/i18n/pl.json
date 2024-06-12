@@ -1509,7 +1509,8 @@
     "ModelMountDestination": "Miejsce docelowe montażu dla folderu modelu",
     "AdditionalMounts": "Dodatkowe mocowania",
     "ModelDefinitionPath": "Ścieżka pliku definicji modelu",
-    "NoExtraMounts": "Żadnych dodatkowych mocowań"
+    "NoExtraMounts": "Żadnych dodatkowych mocowań",
+    "RuntimeVariant": "Inference Runtime Variant"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",
