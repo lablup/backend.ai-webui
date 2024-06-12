@@ -1511,7 +1511,8 @@
     "NoExtraMounts": "Nessun supporto aggiuntivo",
     "SyncRoutes": "Sincronizzazione dei percorsi",
     "SyncRoutesFailed": "La richiesta di sincronizzazione del percorso non è riuscita.",
-    "SyncRoutesSuccess": "La richiesta di sincronizzazione del percorso è andata a buon fine."
+    "SyncRoutesSuccess": "La richiesta di sincronizzazione del percorso è andata a buon fine.",
+    "SyncRoutesRequested": "È stata richiesta la sincronizzazione del percorso."
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",

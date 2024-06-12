@@ -1553,7 +1553,8 @@
     "NoExtraMounts": "没有额外的安装座",
     "SyncRoutes": "同步路线",
     "SyncRoutesFailed": "路由同步请求失败。",
-    "SyncRoutesSuccess": "路由同步请求成功。"
+    "SyncRoutesSuccess": "路由同步请求成功。",
+    "SyncRoutesRequested": "已请求路由同步。"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

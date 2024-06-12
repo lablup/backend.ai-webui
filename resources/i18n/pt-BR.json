@@ -1553,7 +1553,7 @@
     "NoExtraMounts": "Sem montagens extras",
     "SyncRoutes": "Sincronizar rotas",
     "SyncRoutesFailed": "O pedido de sincronização de rotas falhou.",
-    "SyncRoutesSuccess": "O pedido de sincronização de rotas foi bem sucedido."
+    "SyncRoutesRequested": "A sincronização de rota foi solicitada."
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

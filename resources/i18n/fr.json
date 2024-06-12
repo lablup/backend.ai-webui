@@ -1565,7 +1565,7 @@
     "NoExtraMounts": "Pas de montures supplémentaires",
     "SyncRoutes": "Synchroniser les itinéraires",
     "SyncRoutesFailed": "La demande de synchronisation des routes a échoué.",
-    "SyncRoutesSuccess": "La demande de synchronisation des itinéraires a abouti."
+    "SyncRoutesRequested": "La synchronisation de l'itinéraire a été demandée."
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",

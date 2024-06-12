@@ -560,7 +560,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                   mutationToSyncRoutes.mutateAsync(endpoint?.endpoint_id, {
                     onSuccess: (data) => {
                       if (data?.success) {
-                        message.success(t('modelService.SyncRoutesSuccess'));
+                        message.success(t('modelService.SyncRoutesRequested'));
                         startRefetchTransition(() => {
                           updateFetchKey();
                         });

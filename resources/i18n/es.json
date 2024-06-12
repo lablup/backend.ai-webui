@@ -774,7 +774,7 @@
     "NoExtraMounts": "Sin soportes adicionales",
     "SyncRoutes": "Rutas de sincronización",
     "SyncRoutesFailed": "La solicitud de sincronización de ruta ha fallado.",
-    "SyncRoutesSuccess": "La solicitud de sincronización de ruta se ha realizado correctamente."
+    "SyncRoutesRequested": "Se ha solicitado sincronización de ruta."
   },
   "notification": {
     "Initializing": "Inicializando...",

@@ -772,7 +772,7 @@
     "NoExtraMounts": "Ei ylimääräisiä kiinnikkeitä",
     "SyncRoutes": "Synkronoi reitit",
     "SyncRoutesFailed": "Reitin synkronointipyyntö epäonnistui.",
-    "SyncRoutesSuccess": "Reitin synkronointipyyntö onnistui."
+    "SyncRoutesRequested": "Reitin synkronointia on pyydetty."
   },
   "notification": {
     "Initializing": "Aloitetaan...",
