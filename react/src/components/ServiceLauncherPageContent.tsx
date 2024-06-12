@@ -2,14 +2,16 @@ import {
   baiSignedRequestWithPromise,
   compareNumberWithUnits,
   iSizeToSize,
+  useBaiSignedRequestWithPromise,
 } from '../helper';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
   useWebUINavigate,
 } from '../hooks';
-import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { DEFAULT_BAI_MODAL_Z_INDEX } from './BAIModal';
+import { EnvVarFormListValue } from './EnvVarFormList';
 import Flex from './Flex';
 import FlexActivityIndicator from './FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems, {
@@ -87,6 +89,7 @@ export interface ServiceCreateType {
   name: string;
   desired_session_count: number;
   image: string;
+  runtime_variant: string;
   architecture: string;
   group: string;
   domain: string;
@@ -108,6 +111,8 @@ interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   modelDefinitionPath: string;
   vfoldersAliasMap: Record<string, string>;
   mounts: Array<string>;
+  envvars: EnvVarFormListValue[];
+  runtimeVariant: string;
 }
 
 export type ServiceLauncherFormValue = ServiceLauncherInput &
@@ -128,6 +133,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
 
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
+  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentDomain = useCurrentDomainValue();
 
   const [isOpenServiceValidationModal, setIsOpenServiceValidationModal] =
@@ -149,6 +155,11 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         model
         model_mount_destination @since(version: "24.03.4")
         model_definition_path @since(version: "24.03.4")
+        environ
+        runtime_variant @since(version: "24.03.5") {
+          name
+          human_readable_name
+        }
         extra_mounts @since(version: "24.03.4") {
           row_id
         }
@@ -177,6 +188,20 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     `,
     endpointFrgmt,
   );
+
+  const { data: availableRuntimes } = useTanQuery({
+    queryKey: ['baiClient.modelService.runtime.list'],
+    queryFn: () => {
+      return baiRequestWithPromise({
+        method: 'GET',
+        url: `/services/_/runtimes`,
+      }) as Promise<{
+        runtimes: { name: string; human_readable_name: string }[];
+      }>;
+    },
+    staleTime: 1000,
+    suspense: true,
+  });
 
   const checkManualImageAllowed = (
     isConfigAllowed = false,
@@ -242,6 +267,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     ServiceLauncherFormValue
   >({
     mutationFn: (values) => {
+      const environ: { [key: string]: string } = {};
+      if (values.envvars) {
+        values.envvars.forEach((v) => (environ[v.variable] = v.value));
+      }
       const body: ServiceCreateType = {
         name: values.serviceName,
         desired_session_count: values.desiredRoutingCount,
@@ -252,6 +281,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           ),
           values,
         ),
+        runtime_variant: values.runtimeVariant,
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
         cluster_size: values.cluster_size,
@@ -281,7 +311,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             values.modelMountDestination !== ''
               ? values.modelMountDestination
               : '/models',
-          environ: {}, // FIXME: hardcoded. change it with option later
+          environ, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {
             // FIXME: manually convert to string since server-side only allows [str,str] tuple
@@ -392,7 +422,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
       .then((values) => {
         if (endpoint) {
           if (baiClient.supports('modify-endpoint')) {
-            const mutationVariables = {
+            const mutationVariables: {
+              endpoint_id: string;
+              props: { [key: string]: any };
+            } = {
               endpoint_id: endpoint?.endpoint_id || '',
               props: {
                 resource_slots: JSON.stringify({
@@ -433,6 +466,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 model_definition_path: values.modelDefinitionPath,
               },
             };
+            if (baiClient.supports('modify-endpoint-environ')) {
+              const newEnvirons: { [key: string]: string } = {};
+              values.envvars.forEach(
+                (v) => (newEnvirons[v.variable] = v.value),
+              );
+              mutationVariables.props.environ = JSON.stringify(newEnvirons);
+            }
             commitModifyEndpoint({
               variables: mutationVariables,
               onCompleted: (res, errors) => {
@@ -582,6 +622,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         ),
         modelMountDestination: endpoint?.model_mount_destination,
         modelDefinitionPath: endpoint?.model_definition_path,
+        envvar: Object.entries(JSON.parse(endpoint?.environ)).map(([variable, value]) => ({ variable, value })),
         // TODO: set mounts alias map according to extra_mounts if possible
       }
     : {

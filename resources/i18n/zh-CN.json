@@ -1571,7 +1571,8 @@
     "SyncRoutesSuccess": "路由同步请求成功。",
     "SyncRoutesRequested": "已请求路由同步。",
     "UpdateService": "更新服务",
-    "StartNewService": "开始新服务"
+    "StartNewService": "开始新服务",
+    "RuntimeVariant": "推理运行时变量"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

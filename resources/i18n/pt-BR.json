@@ -1570,7 +1570,8 @@
     "SyncRoutesFailed": "O pedido de sincronização de rotas falhou.",
     "SyncRoutesRequested": "A sincronização de rota foi solicitada.",
     "UpdateService": "Serviço de atualização",
-    "StartNewService": "Iniciar novo serviço"
+    "StartNewService": "Iniciar novo serviço",
+    "RuntimeVariant": "Variante de tempo de execução de inferência"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

@@ -1582,7 +1582,8 @@
     "SyncRoutesFailed": "Запрос на синхронизацию маршрута завершился неудачей.",
     "SyncRoutesRequested": "Запрошена синхронизация маршрутов.",
     "UpdateService": "Служба обновлений",
-    "StartNewService": "Запустить новую услугу"
+    "StartNewService": "Запустить новую услугу",
+    "RuntimeVariant": "Вариант времени выполнения вывода"
   },
   "ErrorBoundary": {
     "title": "Произошла ошибка.",

@@ -1529,7 +1529,8 @@
     "SyncRoutesFailed": "ルート同期要求に失敗しました。",
     "SyncRoutesRequested": "ルート同期をリクエストしました。",
     "UpdateService": "アップデートサービス",
-    "StartNewService": "新しいサービスを開始する"
+    "StartNewService": "新しいサービスを開始する",
+    "RuntimeVariant": "推論ランタイム・バリアント"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

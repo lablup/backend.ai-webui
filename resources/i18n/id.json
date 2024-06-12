@@ -1582,7 +1582,8 @@
     "SyncRoutesFailed": "Permintaan sinkronisasi rute gagal.",
     "SyncRoutesRequested": "Sinkronisasi rute telah diminta.",
     "UpdateService": "Layanan Pembaruan",
-    "StartNewService": "Mulai Layanan Baru"
+    "StartNewService": "Mulai Layanan Baru",
+    "RuntimeVariant": "Varian Runtime Inferensi"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

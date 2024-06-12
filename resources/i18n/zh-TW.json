@@ -1570,7 +1570,8 @@
     "SyncRoutesFailed": "路由同步请求失败。",
     "SyncRoutesRequested": "已請求路由同步。",
     "UpdateService": "更新服務",
-    "StartNewService": "開始新服務"
+    "StartNewService": "開始新服務",
+    "RuntimeVariant": "推理运行时变量"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",
