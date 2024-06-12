@@ -27,9 +27,11 @@ import {
   QuestionCircleOutlined,
   ReloadOutlined,
   SettingOutlined,
+  SyncOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
 import {
+  App,
   Breadcrumb,
   Button,
   Card,
@@ -106,6 +108,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     current: 1,
     pageSize: 100,
   });
+  const { message } = App.useApp();
   const { endpoint, endpoint_token_list } =
     useLazyLoadQuery<EndpointDetailPageQuery>(
       graphql`
@@ -207,6 +210,19 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     return baiSignedRequestWithPromise({
       method: 'POST',
       url: `/services/${endpoint.endpoint_id}/errors/clear`,
+      client: baiClient,
+    });
+  });
+  const mutationToSyncRoutes = useTanMutation<
+    {
+      success: boolean;
+    },
+    unknown,
+    string
+  >((endpoint_id) => {
+    return baiSignedRequestWithPromise({
+      method: 'POST',
+      url: `/services/${endpoint_id}/sync`,
       client: baiClient,
     });
   });
@@ -532,7 +548,37 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           bordered
         ></Table>
       </Card>
-      <Card title={t('modelService.RoutesInfo')}>
+      <Card
+        title={t('modelService.RoutesInfo')}
+        extra={
+          endpoint?.endpoint_id ? (
+            <Button
+              icon={<SyncOutlined />}
+              loading={mutationToSyncRoutes.isLoading}
+              onClick={() => {
+                endpoint?.endpoint_id &&
+                  mutationToSyncRoutes.mutateAsync(endpoint?.endpoint_id, {
+                    onSuccess: (data) => {
+                      if (data?.success) {
+                        message.success(t('modelService.SyncRoutesSuccess'));
+                        startRefetchTransition(() => {
+                          updateFetchKey();
+                        });
+                      } else {
+                        message.error(t('modelService.SyncRoutesFailed'));
+                      }
+                    },
+                    onError: (error) => {
+                      message.error(t('modelService.SyncRoutesFailed'));
+                    },
+                  });
+              }}
+            >
+              {t('modelService.SyncRoutes')}
+            </Button>
+          ) : null
+        }
+      >
         <Table
           scroll={{ x: 'max-content' }}
           columns={[

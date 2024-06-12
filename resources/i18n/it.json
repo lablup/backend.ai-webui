@@ -1508,7 +1508,10 @@
     "ModelMountDestination": "Destinazione di montaggio per la cartella del modello",
     "AdditionalMounts": "Supporti aggiuntivi",
     "ModelDefinitionPath": "Percorso del file di definizione del modello",
-    "NoExtraMounts": "Nessun supporto aggiuntivo"
+    "NoExtraMounts": "Nessun supporto aggiuntivo",
+    "SyncRoutes": "Sincronizzazione dei percorsi",
+    "SyncRoutesFailed": "La richiesta di sincronizzazione del percorso non è riuscita.",
+    "SyncRoutesSuccess": "La richiesta di sincronizzazione del percorso è andata a buon fine."
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",
