@@ -16,7 +16,7 @@ import {
 } from './__generated__/MyEnvironmentPageQuery.graphql';
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { useLocalStorageState } from 'ahooks';
-import { App, Button, Card, Popconfirm, Table, theme } from 'antd';
+import { App, Button, Card, Popconfirm, Table, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import graphql from 'babel-plugin-relay/macro';
@@ -211,7 +211,16 @@ const MyEnvironmentPage: React.FC<PropsWithChildren> = ({ children }) => {
       key: 'control',
       fixed: 'right',
       render: (text, row) => (
-        <Flex direction="row" align="stretch">
+        <Flex direction="row" align="stretch" justify="center" gap="xxs">
+          <Typography.Text
+            copyable={{
+              text: getImageFullName(row) || '',
+            }}
+            style={{
+              paddingTop: token.paddingXXS,
+              paddingBottom: token.paddingXXS,
+            }}
+          />
           <Popconfirm
             title={t('dialog.ask.DoYouWantToProceed')}
             description={t('dialog.warning.CannotBeUndone')}
