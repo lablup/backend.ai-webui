@@ -1,6 +1,6 @@
 import BAIModal, { BAIModalProps } from './BAIModal';
 import CopyableCodeText from './CopyableCodeText';
-import { ServingRouteErrorModalFragment$key } from './__generated__/ServingRouteErrorModalFragment.graphql';
+import { InferenceSessionErrorModalFragment$key } from './__generated__/InferenceSessionErrorModalFragment.graphql';
 import { Descriptions, DescriptionsProps, Button } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import React from 'react';
@@ -8,11 +8,11 @@ import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 
 interface Props extends Omit<BAIModalProps, 'onOk' | 'onClose'> {
-  inferenceSessionErrorFrgmt: ServingRouteErrorModalFragment$key | null;
+  inferenceSessionErrorFrgmt: InferenceSessionErrorModalFragment$key | null;
   onRequestClose: () => void;
 }
 
-const ServingRouteErrorModal: React.FC<Props> = ({
+const InferenceSessionErrorModal: React.FC<Props> = ({
   onRequestClose,
   onCancel,
   inferenceSessionErrorFrgmt,
@@ -22,7 +22,7 @@ const ServingRouteErrorModal: React.FC<Props> = ({
 
   const iSessionError = useFragment(
     graphql`
-      fragment ServingRouteErrorModalFragment on InferenceSessionError {
+      fragment InferenceSessionErrorModalFragment on InferenceSessionError {
         session_id
         errors {
           repr
@@ -84,4 +84,4 @@ const ServingRouteErrorModal: React.FC<Props> = ({
   );
 };
 
-export default ServingRouteErrorModal;
+export default InferenceSessionErrorModal;

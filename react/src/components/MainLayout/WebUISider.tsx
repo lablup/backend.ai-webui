@@ -1,3 +1,4 @@
+import { filterEmptyItem } from '../../helper';
 import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
@@ -26,6 +27,7 @@ import {
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { theme, MenuProps, Typography } from 'antd';
+import { ItemType } from 'antd/lib/menu/interface';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -67,7 +69,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
 
-  const generalMenu: MenuProps['items'] = [
+  const generalMenu = filterEmptyItem<ItemType>([
     {
       label: t('webui.menu.Summary'),
       icon: <DashboardOutlined />,
@@ -116,7 +118,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
       },
     },
-  ];
+  ]);
 
   const adminMenu: MenuProps['items'] = [
     {
@@ -170,7 +172,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   _.forOwn(props.webuiplugins, (value, key) => {
     // Check if the `pluginMap` object has the current key using the `_.has` function.
     if (_.has(pluginMap, key)) {
-      const menu = pluginMap[key as keyof typeof pluginMap];
+      const menu = pluginMap[key as keyof typeof pluginMap] as MenuItem[];
       const pluginPages = props?.webuiplugins?.page;
       _.map(value, (name) => {
         // Find page item belonging to each of menuitem-user, menuitem-admin, menuitem-superadmin in webuiplugins.page
@@ -210,7 +212,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 '/manifest/backend.ai-text-bgdark.svg'
               : themeConfig?.logo?.src || '/manifest/backend.ai-text.svg'
           }
-          style={{ width: 191, height: 32, cursor: 'pointer' }}
+          style={{
+            width: themeConfig?.logo?.size?.width || 191,
+            height: themeConfig?.logo?.size?.height || 32,
+            cursor: 'pointer',
+          }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
         />
       }
@@ -226,7 +232,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               : themeConfig?.logo?.srcCollapsed ||
                 '/manifest/backend.ai-brand-simple.svg'
           }
-          style={{ width: 48, height: 32, cursor: 'pointer' }}
+          style={{
+            width: themeConfig?.logo?.sizeCollapsed?.width || 48,
+            height: themeConfig?.logo?.sizeCollapsed?.height || 32,
+            cursor: 'pointer',
+          }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/summary')}
         />
       }

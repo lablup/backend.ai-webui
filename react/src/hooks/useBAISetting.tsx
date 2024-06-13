@@ -1,4 +1,6 @@
-import { atomFamily, useRecoilState } from 'recoil';
+import { jotaiStore } from '../components/DefaultProviders';
+import { atom, useAtom } from 'jotai';
+import { atomFamily } from 'jotai/utils';
 
 interface UserSettings {
   has_opened_tour_neo_session_validation?: boolean;
@@ -23,14 +25,12 @@ interface GeneralSettings {
 export const useBAISettingUserState = <K extends keyof UserSettings>(
   name: K,
 ): [UserSettings[K], (newValue: UserSettings[K]) => void] => {
-  // @ts-ignore
-  return useRecoilState(SettingStateFamily('user.' + name));
+  return useAtom(SettingAtomFamily('user.' + name));
 };
 export const useBAISettingGeneralState = <K extends keyof GeneralSettings>(
   name: K,
 ): [GeneralSettings[K], (newValue: GeneralSettings[K]) => void] => {
-  // @ts-ignore
-  return useRecoilState(SettingStateFamily('general.' + name));
+  return useAtom(SettingAtomFamily('general.' + name));
 };
 
 const isJson = (str: any) => {
@@ -41,6 +41,7 @@ const isJson = (str: any) => {
   }
   return true;
 };
+
 const rawToSetting = (value: string | null) => {
   if (value !== null && value !== '' && value !== '""') {
     if (value === 'false') {
@@ -67,63 +68,51 @@ const settingToRaw = (settingValue: any) => {
   }
 };
 
-const SettingStateFamily = atomFamily({
-  key: 'useBAISetting/UserSettingStateFamily',
-  effects: (param: string) => [
-    ({ onSet, setSelf }) => {
-      // initial value from localStorage
-      setSelf(
-        rawToSetting(localStorage.getItem('backendaiwebui.settings.' + param)),
-      );
+const settingAtom = atom<{
+  [key: string]: any;
+}>({});
+const SettingAtomFamily = atomFamily((param: string) => {
+  return atom(
+    (get) => {
+      const key = 'backendaiwebui.settings.' + param;
+      get(settingAtom); // only for the reactivity
+      return rawToSetting(localStorage.getItem(key));
+    },
+    (get, set, newValue: any) => {
+      // const prev = get(SettingAtomFamily(param));
+      const key = 'backendaiwebui.settings.' + param;
+      localStorage.setItem(key, settingToRaw(newValue));
+      const [namespace, name] = param.split('.', 2);
 
-      // sync with localStorage
-      onSet((newValue, oldValue, isReset) => {
-        isReset
-          ? localStorage.removeItem('backendaiwebui.settings.' + param)
-          : localStorage.setItem(
-              'backendaiwebui.settings.' + param,
-              settingToRaw(newValue),
-            );
-        // TODO: remove below two lines after backend-ai-setting-store.ts is removed
-        const [namespace, name] = param.split('.', 2);
-        // @ts-ignore
-        globalThis.backendaioptions?.set?.(name, newValue, namespace);
+      // only for the reactivity
+      const prev = get(settingAtom);
+      set(settingAtom, {
+        ...prev,
+        [key]: newValue,
       });
+      // @ts-ignore
+      globalThis.backendaioptions?.set?.(name, newValue, namespace, true);
     },
-    // TODO: remove below effect function after backend-ai-setting-store.ts is removed
-    ({ setSelf }) => {
-      const handler = (e: any) => {
-        const { detail } = e;
-        if (detail.namespace && detail.name) {
-          if (detail.namespace + '.' + detail.name === param) {
-            setSelf(detail.value);
-          }
-        }
-      };
+  );
+});
 
-      const deleteHandler = (e: any) => {
-        const { detail } = e;
-        if (detail.namespace && detail.name) {
-          if (detail.namespace + '.' + detail.name === param) {
-            localStorage.removeItem('backendaiwebui.settings.' + param);
-            setSelf(null);
-          }
-        }
-      };
+document?.addEventListener('backendaiwebui.settings:set', (e: any) => {
+  const { detail } = e;
+  if (detail.namespace && detail.name) {
+    console.log(detail);
+    jotaiStore.set(
+      SettingAtomFamily(detail.namespace + '.' + detail.name),
+      detail.value,
+    );
+  }
+});
 
-      document.addEventListener('backendaiwebui.settings:set', handler);
-      document.addEventListener(
-        'backendaiwebui.settings:delete',
-        deleteHandler,
-      );
-
-      return () => {
-        document.removeEventListener('backendaiwebui.settings:set', handler);
-        document.removeEventListener(
-          'backendaiwebui.settings:delete',
-          deleteHandler,
-        );
-      };
-    },
-  ],
+document?.addEventListener('backendaiwebui.settings:delete', (e: any) => {
+  const { detail } = e;
+  if (detail.namespace && detail.name) {
+    localStorage.removeItem(
+      'backendaiwebui.settings.' + detail.namespace + '.' + detail.name,
+    );
+    // jotaiStore.set(SettingAtomFamily(detail.namespace + '.' + detail.name), null);
+  }
 });

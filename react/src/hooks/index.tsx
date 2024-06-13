@@ -122,6 +122,7 @@ export const useSuspendedBackendaiClient = () => {
       list_allowed_types: () => Promise<string[]>;
       clone: (input: any, name: string) => Promise<any>;
     };
+    supports: (feature: string) => boolean;
     [key: string]: any;
     _config: BackendAIConfig;
     isManagerVersionCompatibleWith: (version: string) => boolean;

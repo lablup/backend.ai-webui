@@ -4,19 +4,19 @@ import EndpointStatusTag from '../components/EndpointStatusTag';
 import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
 import Flex from '../components/Flex';
 import ImageMetaIcon from '../components/ImageMetaIcon';
+import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
 import ResourceNumber, { ResourceTypeKey } from '../components/ResourceNumber';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
-import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
 import VFolderLazyView from '../components/VFolderLazyView';
-import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
+import { InferenceSessionErrorModalFragment$key } from '../components/__generated__/InferenceSessionErrorModalFragment.graphql';
 import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
-  RoutingListPageQuery,
-  RoutingListPageQuery$data,
-} from './__generated__/RoutingListPageQuery.graphql';
+  EndpointDetailPageQuery,
+  EndpointDetailPageQuery$data,
+} from './__generated__/EndpointDetailPageQuery.graphql';
 import {
   ArrowRightOutlined,
   CheckOutlined,
@@ -27,9 +27,11 @@ import {
   QuestionCircleOutlined,
   ReloadOutlined,
   SettingOutlined,
+  SyncOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
 import {
+  App,
   Breadcrumb,
   Button,
   Card,
@@ -68,9 +70,9 @@ export interface ModelServiceInfo {
 // TODO: display all of routings when API/GQL supports
 // type RoutingStatus = "HEALTHY" | "PROVISIONING" | "UNHEALTHY";
 
-interface RoutingListPageProps {}
+interface EndpointDetailPageProps {}
 
-type EndPoint = NonNullable<RoutingListPageQuery$data['endpoint']>;
+type EndPoint = NonNullable<EndpointDetailPageQuery$data['endpoint']>;
 type Routing = NonNullable<NonNullable<EndPoint['routings']>[0]>;
 
 const dayDiff = (a: any, b: any) => {
@@ -79,7 +81,7 @@ const dayDiff = (a: any, b: any) => {
   return date1.diff(date2);
 };
 
-const RoutingListPage: React.FC<RoutingListPageProps> = () => {
+const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
@@ -92,7 +94,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [isPendingClearError, startClearErrorTransition] = useTransition();
   const [selectedSessionErrorForModal, setSelectedSessionErrorForModal] =
-    useState<ServingRouteErrorModalFragment$key | null>(null);
+    useState<InferenceSessionErrorModalFragment$key | null>(null);
   const [isOpenServiceLauncherModal, setIsOpenServiceLauncherModal] =
     useState(false);
   const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
@@ -106,10 +108,11 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     current: 1,
     pageSize: 100,
   });
+  const { message } = App.useApp();
   const { endpoint, endpoint_token_list } =
-    useLazyLoadQuery<RoutingListPageQuery>(
+    useLazyLoadQuery<EndpointDetailPageQuery>(
       graphql`
-        query RoutingListPageQuery(
+        query EndpointDetailPageQuery(
           $endpointId: UUID!
           $tokenListOffset: Int!
           $tokenListLimit: Int!
@@ -144,7 +147,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             open_to_public
             errors {
               session_id
-              ...ServingRouteErrorModalFragment
+              ...InferenceSessionErrorModalFragment
             }
             retries
             model
@@ -207,6 +210,19 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     return baiSignedRequestWithPromise({
       method: 'POST',
       url: `/services/${endpoint.endpoint_id}/errors/clear`,
+      client: baiClient,
+    });
+  });
+  const mutationToSyncRoutes = useTanMutation<
+    {
+      success: boolean;
+    },
+    unknown,
+    string
+  >((endpoint_id) => {
+    return baiSignedRequestWithPromise({
+      method: 'POST',
+      url: `/services/${endpoint_id}/sync`,
       client: baiClient,
     });
   });
@@ -532,7 +548,37 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           bordered
         ></Table>
       </Card>
-      <Card title={t('modelService.RoutesInfo')}>
+      <Card
+        title={t('modelService.RoutesInfo')}
+        extra={
+          endpoint?.endpoint_id ? (
+            <Button
+              icon={<SyncOutlined />}
+              loading={mutationToSyncRoutes.isLoading}
+              onClick={() => {
+                endpoint?.endpoint_id &&
+                  mutationToSyncRoutes.mutateAsync(endpoint?.endpoint_id, {
+                    onSuccess: (data) => {
+                      if (data?.success) {
+                        message.success(t('modelService.SyncRoutesRequested'));
+                        startRefetchTransition(() => {
+                          updateFetchKey();
+                        });
+                      } else {
+                        message.error(t('modelService.SyncRoutesFailed'));
+                      }
+                    },
+                    onError: (error) => {
+                      message.error(t('modelService.SyncRoutesFailed'));
+                    },
+                  });
+              }}
+            >
+              {t('modelService.SyncRoutes')}
+            </Button>
+          ) : null
+        }
+      >
         <Table
           scroll={{ x: 'max-content' }}
           columns={[
@@ -584,7 +630,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           bordered
         />
       </Card>
-      <ServingRouteErrorModal
+      <InferenceSessionErrorModal
         open={!!selectedSessionErrorForModal}
         inferenceSessionErrorFrgmt={selectedSessionErrorForModal}
         onRequestClose={() => setSelectedSessionErrorForModal(null)}
@@ -617,4 +663,4 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
   );
 };
 
-export default RoutingListPage;
+export default EndpointDetailPage;

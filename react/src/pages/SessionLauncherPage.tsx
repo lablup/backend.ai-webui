@@ -76,6 +76,7 @@ import {
   theme,
 } from 'antd';
 import dayjs from 'dayjs';
+import { useAtomValue } from 'jotai';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -83,7 +84,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { useRecoilValue } from 'recoil';
 import {
   JsonParam,
   NumberParam,
@@ -150,7 +150,7 @@ const SessionLauncherPage = () => {
   const app = App.useApp();
   let sessionMode: SessionMode = 'normal';
 
-  const mainContentDivRef = useRecoilValue(mainContentDivRefState);
+  const mainContentDivRef = useAtomValue(mainContentDivRefState);
   const baiClient = useSuspendedBackendaiClient();
 
   const [isStartingSession, setIsStartingSession] = useState(false);
@@ -1198,54 +1198,67 @@ const SessionLauncherPage = () => {
                           {currentProject.name}
                         </Descriptions.Item>
                         <Descriptions.Item label={t('general.Image')}>
-                          <Flex direction="row" gap="xs" style={{ flex: 1 }}>
-                            <ImageMetaIcon
-                              image={
-                                form.getFieldValue('environments')?.version ||
-                                form.getFieldValue('environments')?.manual
-                              }
-                            />
-                            {/* {form.getFieldValue('environments').image} */}
-                            <Flex direction="row">
-                              {form.getFieldValue('environments')?.manual ? (
-                                <Typography.Text copyable code>
-                                  {form.getFieldValue('environments')?.manual}
-                                </Typography.Text>
-                              ) : (
-                                <>
-                                  <SessionKernelTags
-                                    image={
-                                      form.getFieldValue('environments')
-                                        ?.version
-                                    }
-                                  />
-                                  {form.getFieldValue('environments')
-                                    ?.customizedTag ? (
-                                    <DoubleTag
-                                      values={[
-                                        {
-                                          label: 'Customized',
-                                          color: 'cyan',
-                                        },
-                                        {
-                                          label:
-                                            form.getFieldValue('environments')
-                                              ?.customizedTag,
-                                          color: 'cyan',
-                                        },
-                                      ]}
-                                    />
-                                  ) : null}
+                          <Row
+                            style={{ flexFlow: 'nowrap', gap: token.sizeXS }}
+                          >
+                            <Col>
+                              <ImageMetaIcon
+                                image={
+                                  form.getFieldValue('environments')?.version ||
+                                  form.getFieldValue('environments')?.manual
+                                }
+                              />
+                            </Col>
+                            <Col>
+                              {/* {form.getFieldValue('environments').image} */}
+                              <Flex direction="row">
+                                {form.getFieldValue('environments')?.manual ? (
                                   <Typography.Text
+                                    code
+                                    style={{ wordBreak: 'break-all' }}
                                     copyable={{
                                       text: form.getFieldValue('environments')
-                                        ?.version,
+                                        ?.manual,
                                     }}
-                                  />
-                                </>
-                              )}
-                            </Flex>
-                          </Flex>
+                                  >
+                                    {form.getFieldValue('environments')?.manual}
+                                  </Typography.Text>
+                                ) : (
+                                  <>
+                                    <SessionKernelTags
+                                      image={
+                                        form.getFieldValue('environments')
+                                          ?.version
+                                      }
+                                    />
+                                    {form.getFieldValue('environments')
+                                      ?.customizedTag ? (
+                                      <DoubleTag
+                                        values={[
+                                          {
+                                            label: 'Customized',
+                                            color: 'cyan',
+                                          },
+                                          {
+                                            label:
+                                              form.getFieldValue('environments')
+                                                ?.customizedTag,
+                                            color: 'cyan',
+                                          },
+                                        ]}
+                                      />
+                                    ) : null}
+                                    <Typography.Text
+                                      copyable={{
+                                        text: form.getFieldValue('environments')
+                                          ?.version,
+                                      }}
+                                    />
+                                  </>
+                                )}
+                              </Flex>
+                            </Col>
+                          </Row>
                         </Descriptions.Item>
                         {form.getFieldValue('envvars')?.length > 0 && (
                           <Descriptions.Item

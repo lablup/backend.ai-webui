@@ -10,9 +10,9 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
-  ServingListPageQuery,
-  ServingListPageQuery$data,
-} from './__generated__/ServingListPageQuery.graphql';
+  EndpointListPageQuery,
+  EndpointListPageQuery$data,
+} from './__generated__/EndpointListPageQuery.graphql';
 import {
   CheckOutlined,
   CloseOutlined,
@@ -51,12 +51,12 @@ type TabKey = 'services'; //  "running" | "finished" | "others";
 export type Endpoint = NonNullable<
   NonNullable<
     NonNullable<
-      NonNullable<ServingListPageQuery$data>['endpoint_list']
+      NonNullable<EndpointListPageQuery$data>['endpoint_list']
     >['items']
   >[0]
 >;
 
-const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
+const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
@@ -291,7 +291,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     },
   ];
   const [displayedColumnKeys, setDisplayedColumnKeys] = useLocalStorageState(
-    'backendaiwebui.ServingListPage.displayedColumnKeys',
+    'backendaiwebui.EndpointListPage.displayedColumnKeys',
     {
       defaultValue: columns.map((column) => _.toString(column.key)),
     },
@@ -305,9 +305,9 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
 
   const { endpoint_list: modelServiceList } =
     // TODO: need to convert LazyLoadQuery to pagination query with option
-    useLazyLoadQuery<ServingListPageQuery>(
+    useLazyLoadQuery<EndpointListPageQuery>(
       graphql`
-        query ServingListPageQuery(
+        query EndpointListPageQuery(
           $offset: Int!
           $limit: Int!
           $projectID: UUID
@@ -587,4 +587,4 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-export default ServingListPage;
+export default EndpointListPage;
