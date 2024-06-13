@@ -55,7 +55,14 @@ function comparePEP440LocalVersions(
   // If all parts are equal, the local versions are the same
   return 0;
 }
+const getNormalizedSuffixesIndex = (suffix) => {
+  const normalized = {
+    'beta': 'b',
+    'alpha': 'a'
+  }[suffix] || suffix;
 
+  return ['dev', 'a', 'b', 'c', 'rc', undefined, 'post'].indexOf(normalized);
+}
 export function comparePEP440Versions(version1: string, version2: string) {
   // Normalize versions
   const normalizedVersion1 = normalizePEP440Version(version1);
@@ -69,7 +76,6 @@ export function comparePEP440Versions(version1: string, version2: string) {
   const parts1 = publicVersion1.split('.');
   const parts2 = publicVersion2.split('.');
 
-  const suffixes = ['dev', 'a', 'b', 'c', 'rc', undefined, 'post'];
   // Compare each part of the version
   for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
     const part1 = parts1[i];
@@ -87,8 +93,8 @@ export function comparePEP440Versions(version1: string, version2: string) {
     } else if (/^\d+$/.test(part1) && !/^\d+$/.test(part2)) {
       return 1;
     } else {
-      const suffix1 = suffixes.indexOf(part1);
-      const suffix2 = suffixes.indexOf(part2);
+      const suffix1 = getNormalizedSuffixesIndex(part1);
+      const suffix2 = getNormalizedSuffixesIndex(part2);
       if (suffix1 !== suffix2) {
         return suffix1 < suffix2 ? -1 : 1;
       }
