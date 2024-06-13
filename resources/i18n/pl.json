@@ -405,7 +405,11 @@
     "SessionId": "Identyfikator sesji",
     "EnvironmentAndVersion": "Środowisko i wersja",
     "Tags": "Tagi",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "AccessToBackendAIDB": "1. Dostęp do bazy danych Backend.AI.",
+    "DeleteSessionRecordCommand": "2. Usuń zapis sesji za pomocą poniższego polecenia:",
+    "AccessToAgent": "1. Dostęp do agenta, który utworzył kontener.",
+    "DeleteContainerCommand": "2. Usuń kontener za pomocą poniższego polecenia:"
   },
   "button": {
     "Cancel": "Anuluj",

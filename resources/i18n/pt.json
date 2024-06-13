@@ -405,7 +405,11 @@
     "SessionId": "Identificação de sessão",
     "EnvironmentAndVersion": "Ambiente e versão",
     "Tags": "Tag",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "AccessToBackendAIDB": "1. Acesso ao banco de dados Backend.AI.",
+    "DeleteSessionRecordCommand": "2. Exclua o registro da sessão seguindo o comando abaixo:",
+    "AccessToAgent": "1. Acesso ao agente que criou o container.",
+    "DeleteContainerCommand": "2. Exclua o contêiner seguindo o comando abaixo:"
   },
   "button": {
     "Cancel": "Cancelar",

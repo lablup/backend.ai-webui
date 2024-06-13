@@ -419,7 +419,11 @@
     "SessionId": "Session ID",
     "EnvironmentAndVersion": "Environment and Version",
     "Tags": "Tags",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "AccessToBackendAIDB": "1. Access to the Backend.AI DB.",
+    "DeleteSessionRecordCommand": "2. Delete session record by following command below:",
+    "AccessToAgent": "1. Access to the agent that created the container.",
+    "DeleteContainerCommand": "2. Delete container by following command below:"
   },
   "modelService": {
     "Services": "Services",

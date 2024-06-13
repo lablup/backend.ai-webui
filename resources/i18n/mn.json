@@ -407,7 +407,11 @@
     "SessionId": "Сешн Id",
     "EnvironmentAndVersion": "Хүрээлэн буй орчин ба хувилбар",
     "Tags": "Шошго",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "AccessToBackendAIDB": "1. Backend.AI DB руу нэвтрэх.",
+    "DeleteSessionRecordCommand": "2. Дараах тушаалыг ашиглан сессийн бичлэгийг устгана уу:",
+    "AccessToAgent": "1. Контейнерийг үүсгэсэн агент руу хандах.",
+    "DeleteContainerCommand": "2. Дараах тушаалыг ашиглан контейнерийг устгана уу:"
   },
   "button": {
     "Cancel": "Цуцлах",

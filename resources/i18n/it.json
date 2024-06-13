@@ -406,7 +406,11 @@
     "SessionId": "ID sessione",
     "EnvironmentAndVersion": "Ambiente e versione",
     "Tags": "Tag",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "AccessToBackendAIDB": "1. Accesso al DB Backend.AI.",
+    "DeleteSessionRecordCommand": "2. Elimina il record della sessione seguendo il comando seguente:",
+    "AccessToAgent": "1. Accesso all'agente che ha creato il contenitore.",
+    "DeleteContainerCommand": "2. Elimina il contenitore seguendo il comando seguente:"
   },
   "button": {
     "Cancel": "Annulla",

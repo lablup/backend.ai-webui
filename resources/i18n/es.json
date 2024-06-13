@@ -1244,7 +1244,11 @@
     "SessionId": "ID de sesión",
     "EnvironmentAndVersion": "Entorno y versión",
     "Tags": "Etiquetas",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "AccessToBackendAIDB": "1. Acceso a la BD Backend.AI.",
+    "DeleteSessionRecordCommand": "2. Elimine el registro de sesión siguiendo el siguiente comando:",
+    "AccessToAgent": "1. Acceso al agente que creó el contenedor.",
+    "DeleteContainerCommand": "2. Elimine el contenedor siguiendo el siguiente comando:"
   },
   "settings": {
     "ATOMsupport": "ATOM",

@@ -405,7 +405,11 @@
     "SessionId": "Идентификатор сессии",
     "EnvironmentAndVersion": "Окружающая среда и версия",
     "Tags": "Теги",
-    "fGPU": "фГПУ"
+    "fGPU": "фГПУ",
+    "AccessToBackendAIDB": "1. Доступ к базе данных Backend.AI.",
+    "DeleteSessionRecordCommand": "2. Удалите запись сеанса с помощью следующей команды:",
+    "AccessToAgent": "1. Доступ к агенту, создавшему контейнер.",
+    "DeleteContainerCommand": "2. Удалите контейнер с помощью следующей команды:"
   },
   "button": {
     "Cancel": "Отмена",

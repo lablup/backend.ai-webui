@@ -1242,7 +1242,11 @@
     "SessionId": "Istunnon tunniste",
     "EnvironmentAndVersion": "Ympäristö ja versio",
     "Tags": "Tunnisteet",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "AccessToBackendAIDB": "1. Pääsy Backend.AI DB:hen.",
+    "DeleteSessionRecordCommand": "2. Poista istunnon tietue seuraavalla komennolla:",
+    "AccessToAgent": "1. Pääsy agenttiin, joka loi säilön.",
+    "DeleteContainerCommand": "2. Poista säilö seuraavalla komennolla:"
   },
   "settings": {
     "ATOMsupport": "ATOM",

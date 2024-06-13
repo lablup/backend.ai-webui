@@ -405,7 +405,11 @@
     "SessionId": "セッションID",
     "EnvironmentAndVersion": "環境とバージョン",
     "Tags": "タグ",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "AccessToBackendAIDB": "1. Backend.AI DB にアクセスします。",
+    "DeleteSessionRecordCommand": "2. 以下のコマンドを実行して、セッション レコードを削除します。",
+    "AccessToAgent": "1. コンテナを作成したエージェントへのアクセス。",
+    "DeleteContainerCommand": "2. 以下のコマンドを実行してコンテナを削除します。"
   },
   "button": {
     "Cancel": "キャンセル",

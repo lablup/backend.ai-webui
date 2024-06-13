@@ -405,7 +405,11 @@
     "SessionId": "Oturum kimliği",
     "EnvironmentAndVersion": "Ortam ve Sürüm",
     "Tags": "Etiketler",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "AccessToBackendAIDB": "1. Backend.AI DB'ye erişim.",
+    "DeleteSessionRecordCommand": "2. Aşağıdaki komutu uygulayarak oturum kaydını silin:",
+    "AccessToAgent": "1. Kabı oluşturan aracıya erişim.",
+    "DeleteContainerCommand": "2. Aşağıdaki komutu izleyerek kapsayıcıyı silin:"
   },
   "button": {
     "Cancel": "İptal etmek",

@@ -405,7 +405,11 @@
     "SessionId": "Αναγνωριστικό συνεδρίας",
     "EnvironmentAndVersion": "Περιβάλλον και Έκδοση",
     "Tags": "Ετικέτες",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "AccessToBackendAIDB": "1. Πρόσβαση στο Backend.AI DB.",
+    "DeleteSessionRecordCommand": "2. Διαγράψτε την εγγραφή συνεδρίας ακολουθώντας την παρακάτω εντολή:",
+    "AccessToAgent": "1. Πρόσβαση στον πράκτορα που δημιούργησε το κοντέινερ.",
+    "DeleteContainerCommand": "2. Διαγράψτε το κοντέινερ ακολουθώντας την παρακάτω εντολή:"
   },
   "button": {
     "Cancel": "Ματαίωση",

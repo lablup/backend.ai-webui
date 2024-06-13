@@ -405,7 +405,11 @@
     "SessionId": "Session-ID",
     "EnvironmentAndVersion": "Umgebung und Version",
     "Tags": "Stichworte",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "AccessToBackendAIDB": "1. Zugriff auf die Backend.AI-Datenbank.",
+    "DeleteSessionRecordCommand": "2. Löschen Sie den Sitzungsdatensatz mit dem folgenden Befehl:",
+    "AccessToAgent": "1. Zugriff auf den Agenten, der den Container erstellt hat.",
+    "DeleteContainerCommand": "2. Löschen Sie den Container mit dem folgenden Befehl:"
   },
   "button": {
     "Cancel": "Stornieren",

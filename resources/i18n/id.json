@@ -406,7 +406,11 @@
     "EnvironmentAndVersion": "Lingkungan dan Versi",
     "Tags": "Tag",
     "Agents": "Agen",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "AccessToBackendAIDB": "1. Akses ke DB Backend.AI.",
+    "DeleteSessionRecordCommand": "2. Hapus rekaman sesi dengan mengikuti perintah di bawah ini:",
+    "AccessToAgent": "1. Akses ke agen yang membuat kontainer.",
+    "DeleteContainerCommand": "2. Hapus container dengan mengikuti perintah di bawah ini:"
   },
   "button": {
     "Cancel": "Batalkan",

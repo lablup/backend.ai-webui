@@ -405,7 +405,11 @@
     "SessionId": "会话 ID",
     "EnvironmentAndVersion": "环境及版本",
     "Tags": "标签",
-    "fGPU": "GPU"
+    "fGPU": "GPU",
+    "AccessToBackendAIDB": "1. 访问Backend.AI DB。",
+    "DeleteSessionRecordCommand": "2. 通过以下命令删除会话记录：",
+    "AccessToAgent": "1. 访问创建容器的代理。",
+    "DeleteContainerCommand": "2. 通过以下命令删除容器："
   },
   "button": {
     "Cancel": "取消",

@@ -76,6 +76,7 @@
     "chartjs-adapter-date-fns": "^3.0.0",
     "commander": "^12.1.0",
     "date-fns": "^3.6.0",
+    "dayjs": "^1.11.11",
     "dotenv": "^16.4.5",
     "drawflow": "^0.0.59",
     "glob": "^10.4.1",

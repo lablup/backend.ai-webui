@@ -405,7 +405,11 @@
     "SessionId": "Id phiên",
     "EnvironmentAndVersion": "Môi trường và phiên bản",
     "Tags": "Thẻ",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "AccessToBackendAIDB": "1. Truy cập vào Backend.AI DB.",
+    "DeleteSessionRecordCommand": "2. Xóa bản ghi phiên bằng lệnh sau:",
+    "AccessToAgent": "1. Truy cập vào tác nhân đã tạo vùng chứa.",
+    "DeleteContainerCommand": "2. Xóa vùng chứa bằng lệnh sau:"
   },
   "button": {
     "Cancel": "Huỷ bỏ",

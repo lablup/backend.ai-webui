@@ -406,7 +406,11 @@
     "SessionId": "세션 ID",
     "EnvironmentAndVersion": "환경 및 버전",
     "Tags": "태그",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "AccessToBackendAIDB": "1. Backend.AI DB에 접속합니다.",
+    "DeleteSessionRecordCommand": "2. 아래 명령을 사용하여 세션 기록을 삭제합니다.",
+    "AccessToAgent": "1. 컨테이너를 생성한 에이전트에 접근합니다.",
+    "DeleteContainerCommand": "2. 아래 명령을 사용하여 컨테이너를 삭제합니다."
   },
   "modelService": {
     "Services": "모델 서비스",

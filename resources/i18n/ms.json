@@ -405,7 +405,11 @@
     "SessionId": "Id Sesi",
     "EnvironmentAndVersion": "Persekitaran dan Versi",
     "Tags": "Tag",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "AccessToBackendAIDB": "1. Akses kepada DB Backend.AI.",
+    "DeleteSessionRecordCommand": "2. Padam rekod sesi dengan mengikut arahan di bawah:",
+    "AccessToAgent": "1. Akses kepada ejen yang mencipta bekas.",
+    "DeleteContainerCommand": "2. Padam bekas dengan mengikuti arahan di bawah:"
   },
   "button": {
     "Cancel": "Batal",

@@ -35,6 +35,7 @@ import '@vaadin/grid/vaadin-grid-sort-column';
 import '@vaadin/grid/vaadin-grid-tree-toggle';
 import '@vaadin/icons/vaadin-icons';
 import '@vaadin/tooltip';
+import dayjs from 'dayjs/esm';
 import { css, CSSResultGroup, TemplateResult, html, render } from 'lit';
 import {
   get as _text,
@@ -118,6 +119,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({ type: Object }) appTemplate = Object();
   @property({ type: Object }) imageInfo = Object();
   @property({ type: Array }) _selected_items;
+  @property({ type: Array }) _forcedToTerminateFromSelectedItems;
   @property({ type: Object }) _boundControlRenderer =
     this.controlRenderer.bind(this);
   @property({ type: Object }) _boundConfigRenderer =
@@ -253,6 +255,7 @@ export default class BackendAISessionList extends BackendAIPage {
   constructor() {
     super();
     this._selected_items = [];
+    this._forcedToTerminateFromSelectedItems = [];
     this.terminationQueue = [];
     this.activeIdleCheckList = new Set();
   }
@@ -369,9 +372,15 @@ export default class BackendAISessionList extends BackendAIPage {
           --component-width: 390px;
         }
 
-        #terminate-selected-sessions-dialog,
-        #terminate-session-dialog {
-          --component-width: 390px;
+        .black-bg-white-text {
+          background-color: black;
+          color: white;
+        }
+
+        .force-terminate-manually-text {
+          padding: 12px;
+          font-weight: bolder;
+          font-size: 1rem;
         }
 
         @media screen and (max-width: 899px) {
@@ -1893,8 +1902,27 @@ export default class BackendAISessionList extends BackendAIPage {
       });
   }
 
+  // check whether selected Items needs force terminate according to threshold
+  _filterForceTerminateNeededSessions(
+    status = ['PREPARING', 'TERMINATING', 'PULLING'],
+  ) {
+    return this._selected_items.filter((item) => {
+      const forceTerminateLimitHour = 1 * 3600;
+      const currentTime = dayjs();
+      const createdAtTime = dayjs(item.created_at);
+      const timeToForceTerminate = currentTime.diff(createdAtTime, 'second');
+      return (
+        status.includes(item.status) &&
+        timeToForceTerminate > forceTerminateLimitHour
+      );
+    });
+  }
+
   // Multiple sessions closing
-  _openTerminateSelectedSessionsDialog(e?) {
+  async _openTerminateSelectedSessionsDialog(e?) {
+    this._forcedToTerminateFromSelectedItems =
+      await this._filterForceTerminateNeededSessions();
+    console.log(this._forcedToTerminateFromSelectedItems);
     this.terminateSelectedSessionsDialog.show();
   }
 
@@ -2373,7 +2401,8 @@ export default class BackendAISessionList extends BackendAIPage {
                           <pre
                             style="display: block; overflow: auto; width: 100%; height: 400px;"
                           >
-${item.traceback}</pre
+                            ${item.traceback}
+                          </pre
                           >
                         </div>
                       `
@@ -4138,6 +4167,36 @@ ${rowData.item[this.sessionNameField]}</pre
     } as CommitSessionInfo;
   }
 
+  _copyCommand(componentId: string) {
+    if (componentId !== '') {
+      const copyText: string = (
+        this.shadowRoot?.querySelector(`#${componentId}`) as HTMLElement
+      ).innerText;
+      if (navigator.clipboard !== undefined) {
+        // for Chrome, Safari
+        navigator.clipboard.writeText(copyText).then(
+          () => {
+            this.notification.text = _text('usersettings.SSHKeyClipboardCopy');
+            this.notification.show();
+          },
+          (err) => {
+            console.error('Could not copy text: ', err);
+          },
+        );
+      } else {
+        // other browsers (not recommended but i.)
+        const tmpInputElement = document.createElement('input');
+        tmpInputElement.type = 'text';
+        tmpInputElement.value = copyText;
+
+        document.body.appendChild(tmpInputElement);
+        tmpInputElement.select();
+        document.execCommand('copy'); // copy operation
+        document.body.removeChild(tmpInputElement);
+      }
+    }
+  }
+
   render() {
     // language=HTML
     return html`
@@ -4347,7 +4406,120 @@ ${rowData.item[this.sessionNameField]}</pre
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
-        </div>
+          ${
+            this.is_superadmin
+              ? html`
+              <h3>Please follow the instruction by each session below:</h3>
+              ${this._forcedToTerminateFromSelectedItems.map((item) => {
+                return html`
+                  <div
+                    class="vertical layout flex start-justified"
+                    style="background-color:rgba(0,0,0,0.3);border:5px;border-radius:5px;padding:10px;margin-bottom:10px;"
+                  >
+                    <div class="horizontal layout center start-justified">
+                      <strong>Session ID: &nbsp;</strong>
+                      <span class="monospace">${item?.session_id}</span>
+                    </div>
+                    <div class="horizontal layout center start-justified">
+                      <strong>Container to terminate: &nbsp;</strong>
+                      ${item?.containers.filter(
+                        (container) => container.container_id,
+                      ).length}
+                    </div>
+                    ${item?.containers.filter(
+                      (container) => container.container_id,
+                    ).length > 0
+                      ? html`
+                          <span>${_t('session.AccessToAgent')}</span>
+                          <span>${_t('session.DeleteContainerCommand')}</span>
+                          ${item?.containers?.map((container) => {
+                            return html`
+                              ${container?.container_id
+                                ? html`
+                                    <div
+                                      class="horizontal layout center start-justified"
+                                    >
+                                      <strong>Agent ID: &nbsp;</strong>
+                                      <span class="monospace">
+                                        ${container?.agent}
+                                      </span>
+                                    </div>
+                                    <div
+                                      class="horizontal layout flex center around-justified"
+                                      style="background-color:black;"
+                                    >
+                                      <span
+                                        class="monospace black-bg-white-text force-terminate-manually-text"
+                                        id="${container?.container_id}"
+                                      >
+                                        docker kill ${container?.container_id}
+                                      </span>
+                                      <mwc-icon-button
+                                        class="black-bg-white-text"
+                                        icon="content_copy"
+                                        @click="${() =>
+                                          this._copyCommand(
+                                            container?.container_id,
+                                          )}"
+                                      ></mwc-icon-button>
+                                    </div>
+                                  `
+                                : html``}
+                            `;
+                          })}
+                        `
+                      : html`
+                          <span>${_t('session.AccessToBackendAIDB')}</span>
+                          <span>
+                            ${_t('session.DeleteSessionRecordCommand')}
+                          </span>
+                          <div
+                            class="horizontal layout flex center around-justified"
+                            style="background-color:black;"
+                          >
+                            <span
+                              class="monospace black-bg-white-text force-terminate-manually-text"
+                              id="${item?.session_id}-kernels"
+                            >
+                              DELETE FROM kernels WHERE session_id =
+                              '${item.session_id}';
+                            </span>
+                            <mwc-icon-button
+                              class="black-bg-white-text"
+                              icon="content_copy"
+                              @click="${() =>
+                                this._copyCommand(
+                                  `${item?.session_id}-kernels`,
+                                )}"
+                            ></mwc-icon-button>
+                          </div>
+                          <div
+                            class="horizontal layout flex center around-justified"
+                            style="background-color:black;"
+                          >
+                            <span
+                              class="monospace black-bg-white-text force-terminate-manually-text"
+                              id="${item?.session_id}-sessions"
+                            >
+                              DELETE FROM sessions WHERE session_id =
+                              '${item.session_id}';
+                            </span>
+                            <mwc-icon-button
+                              class="black-bg-white-text"
+                              icon="content_copy"
+                              @click="${() =>
+                                this._copyCommand(
+                                  `${item?.session_id}-sessions`,
+                                )}"
+                            ></mwc-icon-button>
+                          </div>
+                        `}
+                  </div>
+                `;
+              })}
+            </div>`
+              : html``
+          }
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button class="warning fg red"
                       @click="${() =>
