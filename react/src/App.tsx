@@ -42,6 +42,9 @@ const ResourcePolicyPage = React.lazy(
   () => import('./pages/ResourcePolicyPage'),
 );
 const ResourcesPage = React.lazy(() => import('./pages/ResourcesPage'));
+const FolderExplorerOpener = React.lazy(
+  () => import('./components/FolderExplorerOpener'),
+);
 
 const router = createBrowserRouter([
   {
@@ -131,6 +134,11 @@ const router = createBrowserRouter([
       {
         path: '/data',
         handle: { labelKey: 'webui.menu.Data&Storage' },
+        element: (
+          <BAIErrorBoundary>
+            <FolderExplorerOpener />
+          </BAIErrorBoundary>
+        ),
       },
       {
         path: '/my-environment',

@@ -32,6 +32,8 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+type BackendAIStorageList = HTMLElementTagNameMap['backend-ai-storage-list'];
+type MwcTabBar = HTMLElementTagNameMap['mwc-tab-bar'];
 interface GroupData {
   id: string;
   name: string;
@@ -102,6 +104,9 @@ export default class BackendAIData extends BackendAIPage {
   @query('#add-folder-group') addFolderGroupSelect!: Select;
   @query('#add-folder-type') addFolderTypeSelect!: Select;
   @query('#cloneable-container') cloneableContainer!: HTMLDivElement;
+  @query('#general-folder-storage')
+  generalFolderStorageListElement!: BackendAIStorageList;
+  @query('#data-tab-bar') dataTabBar!: MwcTabBar;
 
   static get styles(): CSSResultGroup {
     return [
@@ -285,7 +290,7 @@ export default class BackendAIData extends BackendAIPage {
         <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">
             <h3 class="horizontal center flex layout tab">
-              <mwc-tab-bar>
+              <mwc-tab-bar id="data-tab-bar">
                 <mwc-tab
                   title="general"
                   label="${_t('data.Folders')}"
@@ -898,6 +903,32 @@ export default class BackendAIData extends BackendAIPage {
     });
   }
 
+  openFolderExplorer = (e) => {
+    if (e?.detail?.vFolder) {
+      this.dataTabBar.activeIndex = 0;
+      this._showTab({ title: 'general' });
+      this.generalFolderStorageListElement._folderExplorer({
+        item: e?.detail?.vFolder,
+      });
+    }
+  };
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    document.addEventListener('folderExplorer:open', this.openFolderExplorer);
+    document.dispatchEvent(new CustomEvent('backend-ai-data-view:connected'));
+  }
+
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    document.removeEventListener(
+      'folderExplorer:open',
+      this.openFolderExplorer,
+    );
+    document.dispatchEvent(
+      new CustomEvent('backend-ai-data-view:disconnected'),
+    );
+  }
   /**
    * Initialize the admin.
    *

@@ -10,7 +10,11 @@ import ServiceLauncherModal from '../components/ServiceLauncherModal';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { InferenceSessionErrorModalFragment$key } from '../components/__generated__/InferenceSessionErrorModalFragment.graphql';
 import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import {
+  useSuspendedBackendaiClient,
+  useUpdatableState,
+  useWebUINavigate,
+} from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
@@ -109,6 +113,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     pageSize: 100,
   });
   const { message } = App.useApp();
+  const webuiNavigate = useWebUINavigate();
   const { endpoint, endpoint_token_list } =
     useLazyLoadQuery<EndpointDetailPageQuery>(
       graphql`
@@ -333,7 +338,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           <Flex direction="column" align="start">
             <VFolderLazyView
               uuid={endpoint?.model as string}
-              clickable={false}
+              clickable={true}
             />
             {baiClient.supports('endpoint-extra-mounts') &&
               endpoint?.model_mount_destination && (
@@ -357,8 +362,17 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         <Flex direction="column" align="start">
           {_.map(endpoint?.extra_mounts, (vfolder) => {
             return (
-              <Flex direction="row" gap={'xxs'}>
-                <FolderOutlined /> {vfolder?.name}
+              <Flex direction="row" gap={'xxs'} key={vfolder?.row_id}>
+                <Typography.Link
+                  onClick={() => {
+                    webuiNavigate({
+                      pathname: '/data',
+                      search: `?folder=${vfolder?.row_id}`,
+                    });
+                  }}
+                >
+                  <FolderOutlined /> {vfolder?.name}
+                </Typography.Link>
               </Flex>
             );
           })}

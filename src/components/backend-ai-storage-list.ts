@@ -1108,6 +1108,15 @@ export default class BackendAiStorageList extends BackendAIPage {
         class="folder-explorer"
         narrowLayout
         scrimClickAction
+        @dialog-closed=${() => {
+          const queryParams = new URLSearchParams(window.location.search);
+          queryParams.delete('folder');
+          window.history.replaceState(
+            {},
+            '',
+            `${location.pathname}${queryParams.toString().length == 0 ? '' : '?' + queryParams}`,
+          );
+        }}
       >
         <span slot="title" style="margin-right:1rem;">${this.explorer.id}</span>
         <div
@@ -1647,12 +1656,6 @@ export default class BackendAiStorageList extends BackendAIPage {
       this._refreshFolderUI(e),
     );
     this._refreshFolderUI({ detail: { 'mini-ui': globalThis.mini_ui } });
-    // @ts-ignore
-    const params = new URL(document.location).searchParams;
-    const folderName = params.get('folder');
-    if (folderName) {
-      // alert(folderName);
-    }
   }
 
   _modifySharedFolderPermissions() {
@@ -3398,7 +3401,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     };
 
     const queryParams = new URLSearchParams();
-    queryParams.set('folder', folderName);
+    queryParams.set('folder', rowData.item.id);
     window.history.replaceState({}, '', `${location.pathname}?${queryParams}`);
 
     /**
