@@ -15,7 +15,6 @@ import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps, DEFAULT_BAI_MODAL_Z_INDEX } from './BAIModal';
 import EnvVarFormList, { EnvVarFormListValue } from './EnvVarFormList';
 import Flex from './Flex';
-import FlexActivityIndicator from './FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
@@ -124,10 +123,6 @@ export type ServiceLauncherFormValue = ServiceLauncherInput &
   ImageEnvironmentFormInput &
   ResourceAllocationFormValue;
 
-const STUB_RUNTIME_VARIANT = [
-  { name: 'CUSTOM', human_readable_name: 'Custom (Model Definition)' },
-];
-
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   extraP,
   endpointFrgmt = null,
@@ -198,10 +193,19 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   }>({
     queryKey: ['baiClient.modelService.runtime.list'],
     queryFn: () => {
-      return baiRequestWithPromise({
-        method: 'GET',
-        url: `/services/_/runtimes`,
-      });
+      return baiClient.isManagerVersionCompatibleWith('24.03.5')
+        ? baiRequestWithPromise({
+            method: 'GET',
+            url: `/services/_/runtimes`,
+          })
+        : Promise.resolve({
+            runtimes: [
+              {
+                name: 'CUSTOM',
+                human_readable_name: 'Custom (Model Definition)',
+              },
+            ],
+          });
     },
     staleTime: 1000,
     suspense: true,
@@ -643,7 +647,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         )}
         {...modalProps}
       >
-        <Suspense fallback={<FlexActivityIndicator />}>
+        <Suspense fallback={<Skeleton active />}>
           <Form
             ref={formRef}
             disabled={mutationToCreateService.isLoading}
@@ -876,15 +880,12 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   <Select
                     defaultActiveFirstOption
                     showSearch
-                    options={_.map(
-                      availableRuntimes?.runtimes || STUB_RUNTIME_VARIANT,
-                      (runtime) => {
-                        return {
-                          value: runtime.name,
-                          label: runtime.human_readable_name,
-                        };
-                      },
-                    )}
+                    options={_.map(availableRuntimes?.runtimes, (runtime) => {
+                      return {
+                        value: runtime.name,
+                        label: runtime.human_readable_name,
+                      };
+                    })}
                   />
                 </Form.Item>
                 <ImageEnvironmentSelectFormItems
