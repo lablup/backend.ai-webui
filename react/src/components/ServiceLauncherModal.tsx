@@ -689,7 +689,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     cluster_size: endpoint?.cluster_size,
                     openToPublic: endpoint?.open_to_public,
                     envvars: endpoint?.environ,
-                    runtimeVariant: endpoint?.runtime_variant?.name,
+                    runtimeVariant: endpoint?.runtime_variant?.name || 'CUSTOM',
                     environments: {
                       environment: endpoint?.image_object?.name,
                       version: `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`,
