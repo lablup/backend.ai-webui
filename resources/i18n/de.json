@@ -1512,7 +1512,8 @@
     "NoExtraMounts": "Keine zusätzlichen Halterungen",
     "SyncRoutes": "Routen synchronisieren",
     "SyncRoutesFailed": "Die Anfrage zur Routensynchronisierung ist fehlgeschlagen.",
-    "SyncRoutesRequested": "Routensynchronisierung wurde angefordert."
+    "SyncRoutesRequested": "Routensynchronisierung wurde angefordert.",
+    "RuntimeVariant": "Inferenz Laufzeitvariante"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

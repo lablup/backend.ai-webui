@@ -1512,7 +1512,8 @@
     "NoExtraMounts": "Ekstra montaj yok",
     "SyncRoutes": "Rotaları senkronize et",
     "SyncRoutesFailed": "Rota senkronizasyon isteği başarısız oldu.",
-    "SyncRoutesRequested": "Rota senkronizasyonu talep edildi."
+    "SyncRoutesRequested": "Rota senkronizasyonu talep edildi.",
+    "RuntimeVariant": "Çıkarım Çalışma Zamanı Varyantı"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

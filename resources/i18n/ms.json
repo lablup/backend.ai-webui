@@ -1553,7 +1553,8 @@
     "NoExtraMounts": "Tiada pelekap tambahan",
     "SyncRoutes": "Segerakkan laluan",
     "SyncRoutesFailed": "Permintaan penyegerakan laluan gagal.",
-    "SyncRoutesRequested": "Penyegerakan laluan telah diminta."
+    "SyncRoutesRequested": "Penyegerakan laluan telah diminta.",
+    "RuntimeVariant": "Varian Masa Jalan Inferens"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

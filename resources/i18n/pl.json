@@ -1512,7 +1512,8 @@
     "NoExtraMounts": "Żadnych dodatkowych mocowań",
     "SyncRoutes": "Synchronizacja tras",
     "SyncRoutesFailed": "Żądanie synchronizacji trasy nie powiodło się.",
-    "SyncRoutesRequested": "Zażądano synchronizacji tras."
+    "SyncRoutesRequested": "Zażądano synchronizacji tras.",
+    "RuntimeVariant": "Inference Runtime Variant"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",
