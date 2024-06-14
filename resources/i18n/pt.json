@@ -405,7 +405,9 @@
     "SessionId": "Identificação de sessão",
     "EnvironmentAndVersion": "Ambiente e versão",
     "Tags": "Tag",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "Warning": "Aviso",
+    "ForceTerminateWarningMsg": "A execução deste comando removerá informações dessa sessão. \nComo a sessão pode estar em execução, recomendamos excluí-la somente se o status não mudar por um período de tempo excepcionalmente longo. \nIsso não exclui os contêineres reais do servidor, portanto, pode ser necessário encerrar manualmente os contêineres."
   },
   "button": {
     "Cancel": "Cancelar",

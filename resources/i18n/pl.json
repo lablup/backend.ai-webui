@@ -405,7 +405,9 @@
     "SessionId": "Identyfikator sesji",
     "EnvironmentAndVersion": "Środowisko i wersja",
     "Tags": "Tagi",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "Warning": "Ostrzeżenie",
+    "ForceTerminateWarningMsg": "Uruchomienie tego polecenia spowoduje usunięcie informacji z tej sesji. \nPonieważ sesja może być uruchomiona, zalecamy jej usunięcie tylko wtedy, gdy jej status nie zmienia się przez niezwykle długi okres czasu. \nNie powoduje to usunięcia rzeczywistych kontenerów na serwerze, dlatego może być konieczne ręczne zakończenie kontenerów."
   },
   "button": {
     "Cancel": "Anuluj",

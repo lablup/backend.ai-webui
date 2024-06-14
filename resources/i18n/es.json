@@ -1244,7 +1244,9 @@
     "SessionId": "ID de sesión",
     "EnvironmentAndVersion": "Entorno y versión",
     "Tags": "Etiquetas",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "Warning": "Advertencia",
+    "ForceTerminateWarningMsg": "La ejecución de este comando eliminará información de esa sesión. \nDado que es posible que la sesión se esté ejecutando, recomendamos eliminarla solo si el estado no cambia durante un período de tiempo inusualmente largo. \nEsto no elimina los contenedores reales en el servidor, por lo que puede ser necesaria la eliminación manual de los contenedores."
   },
   "settings": {
     "ATOMsupport": "ATOM",

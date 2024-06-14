@@ -406,7 +406,9 @@
     "SessionId": "ID sessione",
     "EnvironmentAndVersion": "Ambiente e versione",
     "Tags": "Tag",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "Warning": "Avvertimento",
+    "ForceTerminateWarningMsg": "L'esecuzione di questo comando rimuoverà le informazioni da quella sessione. \nPoiché la sessione potrebbe essere in corso, si consiglia di eliminarla solo se lo stato non cambia per un periodo di tempo insolitamente lungo. \nCiò non elimina i contenitori effettivi sul server, pertanto potrebbe essere necessaria la chiusura manuale dei contenitori."
   },
   "button": {
     "Cancel": "Annulla",

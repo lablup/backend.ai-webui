@@ -1242,7 +1242,9 @@
     "SessionId": "Istunnon tunniste",
     "EnvironmentAndVersion": "Ympäristö ja versio",
     "Tags": "Tunnisteet",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "Warning": "Varoitus",
+    "ForceTerminateWarningMsg": "Tämän komennon suorittaminen poistaa tiedot kyseisestä istunnosta. \nKoska istunto saattaa olla käynnissä, suosittelemme sen poistamista vain, jos tila ei muutu poikkeuksellisen pitkään aikaan. \nTämä ei poista varsinaisia ​​säilöjä palvelimelta, joten säilöjen manuaalinen lopettaminen voi olla tarpeen."
   },
   "settings": {
     "ATOMsupport": "ATOM",

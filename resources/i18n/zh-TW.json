@@ -405,7 +405,9 @@
     "SessionId": "會話 ID",
     "EnvironmentAndVersion": "環境及版本",
     "Tags": "標籤",
-    "fGPU": "GPU"
+    "fGPU": "GPU",
+    "Warning": "警告",
+    "ForceTerminateWarningMsg": "執行此命令將從該會話中刪除資訊。\n由於會話可能正在運行，因此我們建議僅當狀態在異常長時間內沒有更改時才將其刪除。\n這不會刪除伺服器上的實際容器，因此可能需要手動終止容器。"
   },
   "button": {
     "Cancel": "取消",

@@ -241,6 +241,8 @@ export default class BackendAISessionList extends BackendAIPage {
   @query('#terminate-session-dialog') terminateSessionDialog!: BackendAIDialog;
   @query('#terminate-selected-sessions-dialog')
   terminateSelectedSessionsDialog!: BackendAIDialog;
+  @query('#force-terminate-confirmation-dialog')
+  forceTerminateConfirmationDialog!: BackendAIDialog;
   @query('#status-detail-dialog') sessionStatusInfoDialog!: BackendAIDialog;
   @query('#work-dialog') workDialog!: BackendAIDialog;
   @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
@@ -372,6 +374,10 @@ export default class BackendAISessionList extends BackendAIPage {
         #terminate-selected-sessions-dialog,
         #terminate-session-dialog {
           --component-width: 390px;
+        }
+
+        #force-terminate-confirmation-dialog {
+          --component-width: 450px;
         }
 
         @media screen and (max-width: 899px) {
@@ -1891,6 +1897,10 @@ export default class BackendAISessionList extends BackendAIPage {
         });
         document.dispatchEvent(event);
       });
+  }
+
+  _openForceTerminateConfirmation() {
+    this.forceTerminateConfirmationDialog.show();
   }
 
   // Multiple sessions closing
@@ -4329,8 +4339,9 @@ ${rowData.item[this.sessionNameField]}</pre
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button class="warning fg red" @click="${() =>
-            this._terminateSessionWithCheck(true)}">
+          <mwc-button class="warning fg red" @click="${() => {
+            this._openForceTerminateConfirmation();
+          }}">
             ${_t('button.ForceTerminate')}
           </mwc-button>
           <span class="flex"></span>
@@ -4349,11 +4360,10 @@ ${rowData.item[this.sessionNameField]}</pre
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button class="warning fg red"
-                      @click="${() =>
-                        this._terminateSelectedSessionsWithCheck(true)}">${_t(
-                        'button.ForceTerminate',
-                      )}
+          <mwc-button
+            class="warning fg red"
+            @click="${() => this._openForceTerminateConfirmation()}">
+            ${_t('button.ForceTerminate')}
           </mwc-button>
           <span class="flex"></span>
           <mwc-button class="cancel" @click="${(e) =>
@@ -4362,6 +4372,32 @@ ${rowData.item[this.sessionNameField]}</pre
           <mwc-button class="ok" raised @click="${() =>
             this._terminateSelectedSessionsWithCheck()}">${_t('button.Okay')}
           </mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="force-terminate-confirmation-dialog" narrowLayout fixed backdrop>
+        <span slot="title">${_t('session.Warning')}</span>
+        <div slot="content">
+          <div class="horizontal layout start-justified" style="padding:10px;background-color:var(--paper-red-100);color:var(--paper-red-900);">
+            <span>${_t('session.ForceTerminateWarningMsg')}</span>
+          </div>
+        </div>
+        <div slot="footer" class="horizontal layout flex end-justified" style="margin:10px;">
+            <mwc-button
+              raised
+              class="warning fg red"
+              @click="${() => {
+                this.forceTerminateConfirmationDialog.hide();
+                // conditionally close dialog by opened dialog
+                if (this.terminateSessionDialog.open) {
+                  this.terminateSessionDialog.hide();
+                  this._terminateSessionWithCheck(true);
+                } else {
+                  this.terminateSelectedSessionsDialog.hide();
+                  this._terminateSelectedSessionsWithCheck(true);
+                }
+              }}">
+                ${_t('button.ForceTerminate')}
+            </mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="status-detail-dialog" narrowLayout fixed backdrop>

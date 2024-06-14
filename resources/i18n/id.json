@@ -406,7 +406,9 @@
     "EnvironmentAndVersion": "Lingkungan dan Versi",
     "Tags": "Tag",
     "Agents": "Agen",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "Warning": "Peringatan",
+    "ForceTerminateWarningMsg": "Menjalankan perintah ini akan menghapus informasi dari sesi itu. \nKarena sesi mungkin sedang berjalan, kami menyarankan untuk menghapusnya hanya jika statusnya tidak berubah dalam jangka waktu yang sangat lama. \nIni tidak menghapus container sebenarnya di server, sehingga penghentian container secara manual mungkin diperlukan."
   },
   "button": {
     "Cancel": "Batalkan",

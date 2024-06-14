@@ -405,7 +405,9 @@
     "SessionId": "Session-ID",
     "EnvironmentAndVersion": "Umgebung und Version",
     "Tags": "Stichworte",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "Warning": "Warnung",
+    "ForceTerminateWarningMsg": "Durch die Ausführung dieses Befehls werden Informationen aus dieser Sitzung entfernt. \nDa die Sitzung möglicherweise noch läuft, empfehlen wir, sie nur zu löschen, wenn sich der Status über einen ungewöhnlich langen Zeitraum nicht ändert. \nDadurch werden die eigentlichen Container auf dem Server nicht gelöscht, sodass eine manuelle Beendigung der Container erforderlich sein kann."
   },
   "button": {
     "Cancel": "Stornieren",

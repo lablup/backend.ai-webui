@@ -405,7 +405,9 @@
     "SessionId": "Oturum kimliği",
     "EnvironmentAndVersion": "Ortam ve Sürüm",
     "Tags": "Etiketler",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "Warning": "Uyarı",
+    "ForceTerminateWarningMsg": "Bu komutu çalıştırmak o oturumdaki bilgileri kaldıracaktır. \nOturum çalışıyor olabileceğinden, yalnızca durumun alışılmadık derecede uzun bir süre boyunca değişmemesi durumunda silmenizi öneririz. \nBu, sunucudaki gerçek kapsayıcıları silmez; dolayısıyla kapsayıcıların manuel olarak sonlandırılması gerekebilir."
   },
   "button": {
     "Cancel": "İptal etmek",

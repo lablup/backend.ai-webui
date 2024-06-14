@@ -405,7 +405,9 @@
     "SessionId": "Id phiên",
     "EnvironmentAndVersion": "Môi trường và phiên bản",
     "Tags": "Thẻ",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "Warning": "Cảnh báo",
+    "ForceTerminateWarningMsg": "Chạy lệnh này sẽ xóa thông tin khỏi phiên đó. \nVì phiên có thể đang chạy nên chúng tôi khuyên bạn chỉ nên xóa phiên này nếu trạng thái không thay đổi trong một khoảng thời gian dài bất thường. \nThao tác này không xóa các vùng chứa thực tế trên máy chủ, vì vậy việc chấm dứt thủ công các vùng chứa có thể là cần thiết."
   },
   "button": {
     "Cancel": "Huỷ bỏ",

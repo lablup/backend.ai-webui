@@ -405,7 +405,9 @@
     "SessionId": "Id Sesi",
     "EnvironmentAndVersion": "Persekitaran dan Versi",
     "Tags": "Tag",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "Warning": "Amaran",
+    "ForceTerminateWarningMsg": "Menjalankan arahan ini akan mengalih keluar maklumat daripada sesi itu. \nMemandangkan sesi mungkin sedang berjalan, kami mengesyorkan agar anda memadamnya hanya jika status tidak berubah untuk tempoh masa yang luar biasa. \nIni tidak memadamkan bekas sebenar pada pelayan, jadi penamatan manual bekas mungkin diperlukan."
   },
   "button": {
     "Cancel": "Batal",
