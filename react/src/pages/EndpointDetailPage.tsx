@@ -388,7 +388,9 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       <Flex direction="row" gap={'xs'}>
         <ImageMetaIcon image={fullImageString} />
         <CopyableCodeText>{fullImageString}</CopyableCodeText>
-        <Tag>{endpoint?.runtime_variant?.human_readable_name}</Tag>
+        {endpoint?.runtime_variant?.human_readable_name ? (
+          <Tag>{endpoint?.runtime_variant?.human_readable_name}</Tag>
+        ) : null}
       </Flex>
     ),
     span: {
