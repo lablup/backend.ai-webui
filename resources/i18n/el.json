@@ -1510,7 +1510,9 @@
     "AdditionalMounts": "Πρόσθετες βάσεις",
     "ModelDefinitionPath": "Διαδρομή αρχείου ορισμού μοντέλου",
     "NoExtraMounts": "Χωρίς επιπλέον βάσεις",
-    "RuntimeVariant": "Παραλλαγή χρόνου εκτέλεσης εξαγωγής συμπερασμάτων"
+    "SyncRoutes": "Διαδρομές συγχρονισμού",
+    "SyncRoutesFailed": "Το αίτημα συγχρονισμού διαδρομής απέτυχε.",
+    "SyncRoutesRequested": "Ζητήθηκε συγχρονισμός διαδρομής."
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",

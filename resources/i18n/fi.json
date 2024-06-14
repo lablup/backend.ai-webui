@@ -770,7 +770,9 @@
     "ModelDefinitionPath": "Mallin määritelmän tiedostopolku",
     "ModelMountDestination": "Kiinnityskohde mallikansioon",
     "NoExtraMounts": "Ei ylimääräisiä kiinnikkeitä",
-    "RuntimeVariant": "Päättelyn suoritusaikamuunnos"
+    "SyncRoutes": "Synkronoi reitit",
+    "SyncRoutesFailed": "Reitin synkronointipyyntö epäonnistui.",
+    "SyncRoutesRequested": "Reitin synkronointia on pyydetty."
   },
   "notification": {
     "Initializing": "Aloitetaan...",

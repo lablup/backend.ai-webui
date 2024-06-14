@@ -1509,7 +1509,10 @@
     "AdditionalMounts": "Supporti aggiuntivi",
     "ModelDefinitionPath": "Percorso del file di definizione del modello",
     "NoExtraMounts": "Nessun supporto aggiuntivo",
-    "RuntimeVariant": "Variante di runtime dell'inferenza"
+    "SyncRoutes": "Sincronizzazione dei percorsi",
+    "SyncRoutesFailed": "La richiesta di sincronizzazione del percorso non è riuscita.",
+    "SyncRoutesSuccess": "La richiesta di sincronizzazione del percorso è andata a buon fine.",
+    "SyncRoutesRequested": "È stata richiesta la sincronizzazione del percorso."
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",

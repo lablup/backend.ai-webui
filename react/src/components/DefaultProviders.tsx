@@ -5,6 +5,7 @@ import { useCustomThemeConfig } from '../helper/customThemeConfig';
 import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
 import { ThemeModeProvider, useThemeMode } from '../hooks/useThemeMode';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
+import { useUpdateEffect } from 'ahooks';
 import { App, AppProps, ConfigProvider, theme } from 'antd';
 import en_US from 'antd/locale/en_US';
 import ko_KR from 'antd/locale/ko_KR';
@@ -29,7 +30,7 @@ import React, {
 import { useTranslation, initReactI18next } from 'react-i18next';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { RelayEnvironmentProvider } from 'react-relay';
-import { BrowserRouter, useNavigate } from 'react-router-dom';
+import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
@@ -227,6 +228,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
 
 export const RoutingEventHandler = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   useLayoutEffect(() => {
     const handleNavigate = (e: any) => {
       const { detail } = e;
@@ -242,6 +244,10 @@ export const RoutingEventHandler = () => {
       document.removeEventListener('react-navigate', handleNavigate);
     };
   }, [navigate]);
+
+  useUpdateEffect(() => {
+    document.dispatchEvent(new CustomEvent('locationPath:changed'));
+  }, [location.pathname]);
 
   return null;
 };

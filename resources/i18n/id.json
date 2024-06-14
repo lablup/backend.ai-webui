@@ -1563,7 +1563,9 @@
     "AdditionalMounts": "Pemasangan Tambahan",
     "ModelDefinitionPath": "Jalur File Definisi Model",
     "NoExtraMounts": "Tidak ada tunggangan tambahan",
-    "RuntimeVariant": "Varian Runtime Inferensi"
+    "SyncRoutes": "Menyinkronkan rute",
+    "SyncRoutesFailed": "Permintaan sinkronisasi rute gagal.",
+    "SyncRoutesRequested": "Sinkronisasi rute telah diminta."
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

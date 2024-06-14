@@ -772,7 +772,9 @@
     "AdditionalMounts": "Montajes adicionales",
     "ModelDefinitionPath": "Ruta del archivo de definición del modelo",
     "NoExtraMounts": "Sin soportes adicionales",
-    "RuntimeVariant": "Variante de tiempo de ejecución de la inferencia"
+    "SyncRoutes": "Rutas de sincronización",
+    "SyncRoutesFailed": "La solicitud de sincronización de ruta ha fallado.",
+    "SyncRoutesRequested": "Se ha solicitado sincronización de ruta."
   },
   "notification": {
     "Initializing": "Inicializando...",

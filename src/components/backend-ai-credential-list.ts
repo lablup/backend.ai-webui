@@ -147,8 +147,8 @@ export default class BackendAICredentialList extends BackendAIPage {
           padding-right: 5px;
         }
 
-        #policy-list {
-          width: 100%;
+        mwc-list-item {
+          width: var(--token-mwc-select-item-width, 340px);
         }
 
         backend-ai-dialog {
@@ -1362,6 +1362,7 @@ export default class BackendAICredentialList extends BackendAIPage {
             <mwc-select
               id="policy-list"
               label="${_t('credential.SelectPolicy')}"
+              fixedMenuPosition
             >
               ${Object.keys(this.resourcePolicy).map(
                 (rp) => html`

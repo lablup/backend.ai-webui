@@ -1551,7 +1551,9 @@
     "AdditionalMounts": "Lekapan Tambahan",
     "ModelDefinitionPath": "Laluan Fail Definisi Model",
     "NoExtraMounts": "Tiada pelekap tambahan",
-    "RuntimeVariant": "Varian Masa Jalan Inferens"
+    "SyncRoutes": "Segerakkan laluan",
+    "SyncRoutesFailed": "Permintaan penyegerakan laluan gagal.",
+    "SyncRoutesRequested": "Penyegerakan laluan telah diminta."
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

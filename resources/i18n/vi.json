@@ -1551,7 +1551,9 @@
     "AdditionalMounts": "Gắn kết bổ sung",
     "ModelDefinitionPath": "Đường dẫn tệp định nghĩa mô hình",
     "NoExtraMounts": "Không có gắn kết bổ sung",
-    "RuntimeVariant": "Biến thể thời gian chạy suy luận"
+    "SyncRoutes": "Đồng bộ hóa tuyến đường",
+    "SyncRoutesFailed": "Yêu cầu đồng bộ hóa tuyến đường không thành công.",
+    "SyncRoutesRequested": "Đồng bộ hóa tuyến đường đã được yêu cầu."
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",

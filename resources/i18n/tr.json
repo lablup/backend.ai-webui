@@ -1510,7 +1510,9 @@
     "AdditionalMounts": "Ek Montajlar",
     "ModelDefinitionPath": "Model Tanımı Dosya Yolu",
     "NoExtraMounts": "Ekstra montaj yok",
-    "RuntimeVariant": "Çıkarım Çalışma Zamanı Varyantı"
+    "SyncRoutes": "Rotaları senkronize et",
+    "SyncRoutesFailed": "Rota senkronizasyon isteği başarısız oldu.",
+    "SyncRoutesRequested": "Rota senkronizasyonu talep edildi."
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

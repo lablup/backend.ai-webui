@@ -205,6 +205,12 @@ export default class BackendAIDialog extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
+    document.addEventListener('locationPath:changed', this.hide);
+  }
+
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    document.removeEventListener('locationPath:changed', this.hide);
   }
 
   /**
@@ -224,7 +230,7 @@ export default class BackendAIDialog extends LitElement {
   /**
    * Hide a dialog.
    */
-  hide() {
+  hide = () => {
     if (this.closeWithConfirmation) {
       const closeEvent = new CustomEvent('dialog-closing-confirm', {
         detail: '',
@@ -234,7 +240,7 @@ export default class BackendAIDialog extends LitElement {
       this.dialog.close();
       this._resetScroll();
     }
-  }
+  };
 
   /**
    * Move to top of the dialog.

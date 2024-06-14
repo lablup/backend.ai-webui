@@ -1510,7 +1510,9 @@
     "AdditionalMounts": "追加のマウント",
     "ModelDefinitionPath": "モデル定義ファイルのパス",
     "NoExtraMounts": "余分なマウントはありません",
-    "RuntimeVariant": "推論ランタイム・バリアント"
+    "SyncRoutes": "同期ルート",
+    "SyncRoutesFailed": "ルート同期要求に失敗しました。",
+    "SyncRoutesRequested": "ルート同期をリクエストしました。"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",
