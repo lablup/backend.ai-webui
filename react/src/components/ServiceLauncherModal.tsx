@@ -193,15 +193,15 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     endpointFrgmt,
   );
 
-  const { data: availableRuntimes } = useTanQuery({
+  const { data: availableRuntimes } = useTanQuery<{
+    runtimes: { name: string; human_readable_name: string }[];
+  }>({
     queryKey: ['baiClient.modelService.runtime.list'],
     queryFn: () => {
       return baiRequestWithPromise({
         method: 'GET',
         url: `/services/_/runtimes`,
-      }) as Promise<{
-        runtimes: { name: string; human_readable_name: string }[];
-      }>;
+      });
     },
     staleTime: 1000,
     suspense: true,
