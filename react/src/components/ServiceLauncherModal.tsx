@@ -20,7 +20,6 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import TextHighlighter from './TextHighlighter';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
