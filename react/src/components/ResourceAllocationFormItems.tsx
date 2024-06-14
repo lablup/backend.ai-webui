@@ -338,7 +338,11 @@ const ResourceAllocationFormItems: React.FC<
     if (form.getFieldValue('enabledAutomaticShmem')) {
       runShmemAutomationRule(form.getFieldValue(['resource', 'mem']) || '0g');
     }
-    form.validateFields(['resource']).catch(() => {});
+    form
+      .validateFields(['resource'], {
+        recursive: true,
+      })
+      .catch(() => {});
   };
 
   useEffect(() => {
@@ -387,6 +391,12 @@ const ResourceAllocationFormItems: React.FC<
       },
     });
     runShmemAutomationRule(mem || '0g');
+
+    form
+      .validateFields(['resource'], {
+        recursive: true,
+      })
+      .catch(() => {});
   };
 
   const runShmemAutomationRule = (M_plus_S: string) => {
