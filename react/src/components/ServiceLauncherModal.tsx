@@ -651,7 +651,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             labelCol={{ span: 12 }}
             initialValues={
               endpoint
-                ? {
+                ? ({
                     serviceName: endpoint?.name,
                     resourceGroup: endpoint?.resource_group,
                     desiredRoutingCount: endpoint?.desired_session_count || 0,
@@ -698,9 +698,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     modelMountDestination: endpoint?.model_mount_destination,
                     modelDefinitionPath: endpoint?.model_definition_path,
                     // TODO: set mounts alias map according to extra_mounts if possible
-                  }
-                : {
+                  } as ServiceLauncherFormValue)
+                : ({
                     desiredRoutingCount: 1,
+
                     ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
                     ...(baiClient._config?.default_session_environment && {
                       environments: {
@@ -708,7 +709,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                           baiClient._config?.default_session_environment,
                       },
                     }),
-                  }
+                    runtimeVariant: availableRuntimes?.runtimes?.[0]?.name,
+                  } as ServiceLauncherFormValue)
             }
             requiredMark="optional"
           >
@@ -883,7 +885,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         };
                       },
                     )}
-                    value={endpoint?.runtime_variant}
                   />
                 </Form.Item>
                 <ImageEnvironmentSelectFormItems
