@@ -709,7 +709,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                           baiClient._config?.default_session_environment,
                       },
                     }),
-                    runtimeVariant: availableRuntimes?.runtimes?.[0]?.name,
+                    runtimeVariant: 'CUSTOM',
                   } as ServiceLauncherFormValue)
             }
             requiredMark="optional"
