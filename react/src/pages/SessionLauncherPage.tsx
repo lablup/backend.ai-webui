@@ -28,7 +28,11 @@ import SessionNameFormItem, {
 import VFolderTableFormItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
-import { compareNumberWithUnits, iSizeToSize } from '../helper';
+import {
+  compareNumberWithUnits,
+  generateRandomString,
+  iSizeToSize,
+} from '../helper';
 import {
   useSuspendedBackendaiClient,
   useUpdatableState,
@@ -78,7 +82,7 @@ import {
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import _ from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -113,6 +117,7 @@ interface SessionConfig {
   preopen_ports: number[];
   startsAt?: string;
   startupCommand?: string;
+  bootstrap_script?: string;
 }
 
 interface CreateSessionInfo {
@@ -136,9 +141,10 @@ interface SessionLauncherValue {
     OMP_NUM_THREADS: string;
     OPENBLAS_NUM_THREADS: string;
   };
+  bootstrap_script?: string;
 }
 
-type SessionLauncherFormValue = SessionLauncherValue &
+export type SessionLauncherFormValue = SessionLauncherValue &
   SessionNameFormItemValue &
   ImageEnvironmentFormInput &
   ResourceAllocationFormValue &
@@ -146,6 +152,17 @@ type SessionLauncherFormValue = SessionLauncherValue &
   PortSelectFormValues;
 
 type SessionMode = 'normal' | 'inference' | 'import';
+
+export type AppOption = {
+  'session-name'?: string;
+  'session-uuid'?: string;
+  'access-key'?: string;
+  mode?: SessionMode;
+  'app-services'?: Array<string>;
+  runtime?: string;
+  filename?: string;
+  // [key in string]: any;
+};
 const SessionLauncherPage = () => {
   const app = App.useApp();
   let sessionMode: SessionMode = 'normal';
@@ -154,38 +171,48 @@ const SessionLauncherPage = () => {
   const baiClient = useSuspendedBackendaiClient();
 
   const [isStartingSession, setIsStartingSession] = useState(false);
-  const INITIAL_FORM_VALUES: SessionLauncherValue = {
-    sessionType: 'interactive',
-    // If you set `allocationPreset` to 'custom', `allocationPreset` is not changed automatically any more.
-    allocationPreset: 'auto-preset',
-    hpcOptimization: {
-      autoEnabled: true,
-      OMP_NUM_THREADS: '1',
-      OPENBLAS_NUM_THREADS: '1',
-    },
-    batch: {
-      enabled: false,
-      command: undefined,
-      scheduleDate: undefined,
-    },
-    envvars: [],
-    // set default_session_environment only if set
-    ...(baiClient._config?.default_session_environment && {
-      environments: {
-        environment: baiClient._config?.default_session_environment,
+  const INITIAL_FORM_VALUES: SessionLauncherValue = useMemo(
+    () => ({
+      sessionType: 'interactive',
+      // If you set `allocationPreset` to 'custom', `allocationPreset` is not changed automatically any more.
+      allocationPreset: 'auto-preset',
+      hpcOptimization: {
+        autoEnabled: true,
+        OMP_NUM_THREADS: '1',
+        OPENBLAS_NUM_THREADS: '1',
       },
+      batch: {
+        enabled: false,
+        command: undefined,
+        scheduleDate: undefined,
+      },
+      envvars: [],
+      // set default_session_environment only if set
+      ...(baiClient._config?.default_session_environment && {
+        environments: {
+          environment: baiClient._config?.default_session_environment,
+        },
+      }),
+      ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
     }),
-    ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
-  };
-  const stepParam = withDefault(NumberParam, 0);
-  const formValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
+    [baiClient._config?.default_session_environment],
+  );
+  const StepParam = withDefault(NumberParam, 0);
+  const FormValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
+  const AppOptionParam = withDefault(JsonParam, {});
   const [
-    { step: currentStep, formValues: formValuesFromQueryParams, redirectTo },
+    {
+      step: currentStep,
+      formValues: formValuesFromQueryParams,
+      redirectTo,
+      appOption: appOptionFromQueryParams,
+    },
     setQuery,
   ] = useQueryParams({
-    step: stepParam,
-    formValues: formValuesParam,
+    step: StepParam,
+    formValues: FormValuesParam,
     redirectTo: StringParam,
+    appOption: AppOptionParam,
   });
 
   const { isDarkMode } = useThemeMode();
@@ -237,18 +264,17 @@ const SessionLauncherPage = () => {
 
   const [form] = Form.useForm<SessionLauncherFormValue>();
 
-  // After first render, set fields value using query params if it is NOT same as initial values
   useEffect(() => {
-    if (
-      // if form is changed, validate it to show error on the first render
-      JSON.stringify(INITIAL_FORM_VALUES) !==
-      JSON.stringify(formValuesFromQueryParams)
-    ) {
-      form.setFieldsValue(formValuesFromQueryParams);
+    if (!_.isEmpty(formValuesFromQueryParams)) {
       form.validateFields().catch((e) => {});
     }
+    // Run this memo only for the first time
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const mergedInitialValues = useMemo(() => {
+    return _.merge(INITIAL_FORM_VALUES, formValuesFromQueryParams);
+  }, [INITIAL_FORM_VALUES, formValuesFromQueryParams]);
 
   // ScrollTo top when step is changed
   useEffect(() => {
@@ -380,7 +406,11 @@ const SessionLauncherPage = () => {
           sessionName: sessionName,
           config: {
             type: values.sessionType,
-
+            ...(_.isEmpty(values.bootstrap_script)
+              ? {}
+              : {
+                  bootstrap_script: values.bootstrap_script,
+                }),
             ...(values.sessionType === 'batch'
               ? {
                   startsAt: values.batch.enabled
@@ -485,26 +515,24 @@ const SessionLauncherPage = () => {
               values.sessionType !== 'batch'
             ) {
               const res = firstSession;
-              let appOptions: {
-                [key in string]: any;
-              };
+              let appOptions: AppOption = _.cloneDeep(appOptionFromQueryParams);
               if ('kernelId' in res) {
                 // API v4
-                appOptions = {
+                appOptions = _.extend(appOptions, {
                   'session-name': res.kernelId,
                   'access-key': '',
                   mode: sessionMode,
                   // mode: this.mode,
-                };
+                });
               } else {
                 // API >= v5
-                appOptions = {
+                appOptions = _.extend(appOptions, {
                   'session-uuid': res.sessionId,
                   'session-name': res.sessionName,
                   'access-key': '',
                   mode: sessionMode,
                   // mode: this.mode,
-                };
+                });
               }
               const service_info = res.servicePorts;
               if (Array.isArray(service_info) === true) {
@@ -630,7 +658,7 @@ const SessionLauncherPage = () => {
               form={form}
               layout="vertical"
               requiredMark="optional"
-              initialValues={INITIAL_FORM_VALUES}
+              initialValues={mergedInitialValues}
             >
               <Flex
                 direction="column"
@@ -711,6 +739,13 @@ const SessionLauncherPage = () => {
                     /> */}
                   </Form.Item>
                   <SessionNameFormItem />
+                  <Form.Item
+                    name="bootstrap_script"
+                    label="Bootstrap Script"
+                    hidden
+                  >
+                    <Input />
+                  </Form.Item>
                 </Card>
 
                 {sessionType === 'batch' && (
@@ -1774,24 +1809,6 @@ const generateSessionId = () => {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
   return text + '-session';
-};
-
-const generateRandomString = () => {
-  let randNum = Math.floor(Math.random() * 52 * 52 * 52);
-
-  const parseNum = (num: number) => {
-    if (num < 26) return String.fromCharCode(65 + num);
-    else return String.fromCharCode(97 + num - 26);
-  };
-
-  let randStr = '';
-
-  for (let i = 0; i < 3; i++) {
-    randStr += parseNum(randNum % 52);
-    randNum = Math.floor(randNum / 52);
-  }
-
-  return randStr;
 };
 
 export default SessionLauncherPage;
