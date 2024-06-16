@@ -12,6 +12,15 @@ on:
 
 jobs:
   build_mac:
+    permissions:
+      contents: write
+      checks: write
+      actions: read
+      issues: read
+      packages: write
+      pull-requests: read
+      repository-projects: read
+      statuses: read
     runs-on: [self-hosted, macOS, ARM64]
     environment: app-packaging
     steps:
