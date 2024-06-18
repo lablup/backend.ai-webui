@@ -43,7 +43,7 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
         onClick={() => {
           webuiNavigate({
             pathname: '/data',
-            search: `?folder=${vFolder.name}`,
+            search: `?folder=${vFolder.id}`,
           });
         }}
       >
