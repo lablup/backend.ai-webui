@@ -8,7 +8,7 @@ import React, { useEffect } from 'react';
 
 type OmitControlledProps<T> = Omit<T, 'value' | 'onChange'>;
 
-interface InputNumberWithSliderProps {
+export interface InputNumberWithSliderProps {
   min?: number;
   max?: number;
   step?: number | null;
@@ -29,7 +29,10 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   sliderProps,
   ...otherProps
 }) => {
-  const [value, setValue] = useControllableValue(otherProps);
+  const [value, setValue] = useControllableValue({
+    ...otherProps,
+    value: _.isNumber(otherProps.value) ? otherProps.value : min,
+  });
   const inputRef = React.useRef<HTMLInputElement>(null);
   useEffect(() => {
     // when step is 1, make sure the value is integer

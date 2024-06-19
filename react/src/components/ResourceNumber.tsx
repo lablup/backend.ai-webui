@@ -11,6 +11,7 @@ export const ACCELERATOR_UNIT_MAP: {
 } = {
   'cuda.device': 'GPU',
   'cuda.shares': 'FGPU',
+  'cuda.mem': 'GiB',
   'rocm.device': 'GPU',
   'tpu.device': 'TPU',
   'ipu.device': 'IPU',
@@ -124,6 +125,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     mem: [<MWCIconWrap size={size}>memory</MWCIconWrap>, 'GiB'],
     'cuda.device': ['/resources/icons/file_type_cuda.svg', 'GPU'],
     'cuda.shares': ['/resources/icons/file_type_cuda.svg', 'FGPU'],
+    'cuda.mem': ['/resources/icons/file_type_cuda.svg', 'MGPU'],
     'rocm.device': ['/resources/icons/rocm.svg', 'GPU'],
     'tpu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'TPU'],
     'ipu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'IPU'],
