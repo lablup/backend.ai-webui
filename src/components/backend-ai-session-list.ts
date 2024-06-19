@@ -36,11 +36,7 @@ import '@vaadin/grid/vaadin-grid-tree-toggle';
 import '@vaadin/icons/vaadin-icons';
 import '@vaadin/tooltip';
 import { css, CSSResultGroup, TemplateResult, html, render } from 'lit';
-import {
-  get as _text,
-  translate as _t,
-  translateUnsafeHTML as _tr,
-} from 'lit-translate';
+import { get as _text, translate as _t } from 'lit-translate';
 import { customElement, property, query } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
@@ -110,7 +106,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({ type: Boolean, reflect: true }) active = false;
   @property({ type: String }) condition = 'running';
   @property({ type: Object }) jobs = Object();
-  @property({ type: Array }) compute_sessions = [];
+  @property({ type: Array }) compute_sessions;
   @property({ type: Array }) terminationQueue;
   @property({ type: String }) filterAccessKey = '';
   @property({ type: String }) sessionNameField = 'name';
@@ -118,6 +114,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({ type: Object }) appTemplate = Object();
   @property({ type: Object }) imageInfo = Object();
   @property({ type: Array }) _selected_items;
+  @property({ type: Array }) _manualCleanUpNeededContainers;
   @property({ type: Object }) _boundControlRenderer =
     this.controlRenderer.bind(this);
   @property({ type: Object }) _boundConfigRenderer =
@@ -254,7 +251,9 @@ export default class BackendAISessionList extends BackendAIPage {
 
   constructor() {
     super();
+    this.compute_sessions = [];
     this._selected_items = [];
+    this._manualCleanUpNeededContainers = [];
     this.terminationQueue = [];
     this.activeIdleCheckList = new Set();
   }
@@ -378,6 +377,16 @@ export default class BackendAISessionList extends BackendAIPage {
 
         #force-terminate-confirmation-dialog {
           --component-width: 450px;
+        }
+
+        ul.force-terminate-confirmation {
+          padding-left: 1rem;
+        }
+
+        div.force-terminate-confirmation-container-list {
+          background-color: rgba(0, 0, 0, 0.2);
+          border-radius: 5px;
+          padding: 10px;
         }
 
         @media screen and (max-width: 899px) {
@@ -1899,11 +1908,66 @@ export default class BackendAISessionList extends BackendAIPage {
       });
   }
 
-  _openForceTerminateConfirmation() {
+  /**
+   * Returns agent-oriented array from session list by traversing
+   *
+   * @param sessionList
+   * @returns [{agent: '...', containers: ['...', '...']}]
+   */
+  static _parseAgentBasedContainers(sessionList) {
+    return Object.values(
+      sessionList.reduce(
+        (acc, item) => (
+          item.agents.forEach((agent) =>
+            item.containers.forEach((container) => {
+              if (container.container_id)
+                acc[agent] = {
+                  agent,
+                  containers: [
+                    ...new Set([
+                      ...(acc[agent]?.containers || []),
+                      container.container_id,
+                    ]),
+                  ],
+                };
+            }),
+          ),
+          acc
+        ),
+        {},
+      ),
+    );
+  }
+
+  /**
+   * Set manualCleanUpNeededContainers based on single-row or multiple-row session(s) termination
+   */
+  _getManualCleanUpNeededContainers() {
+    this._manualCleanUpNeededContainers =
+      BackendAISessionList._parseAgentBasedContainers(
+        this._selected_items.length > 0
+          ? this._selected_items
+          : this.compute_sessions.filter(
+              (item) =>
+                item?.session_id === this.terminateSessionDialog.sessionId,
+            ),
+      );
+  }
+
+  /**
+   * Open Force-terminate confirmation dialog
+   *
+   * @param {Event} e
+   */
+  _openForceTerminateConfirmationDialog(e?) {
     this.forceTerminateConfirmationDialog.show();
   }
 
-  // Multiple sessions closing
+  /**
+   * Open Multiple selected session to terminate dialog
+   *
+   * @param {Event} e
+   */
   _openTerminateSelectedSessionsDialog(e?) {
     this.terminateSelectedSessionsDialog.show();
   }
@@ -4340,7 +4404,8 @@ ${rowData.item[this.sessionNameField]}</pre
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button class="warning fg red" @click="${() => {
-            this._openForceTerminateConfirmation();
+            this._getManualCleanUpNeededContainers();
+            this._openForceTerminateConfirmationDialog();
           }}">
             ${_t('button.ForceTerminate')}
           </mwc-button>
@@ -4362,7 +4427,10 @@ ${rowData.item[this.sessionNameField]}</pre
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
             class="warning fg red"
-            @click="${() => this._openForceTerminateConfirmation()}">
+            @click="${() => {
+              this._getManualCleanUpNeededContainers();
+              this._openForceTerminateConfirmationDialog();
+            }}">
             ${_t('button.ForceTerminate')}
           </mwc-button>
           <span class="flex"></span>
@@ -4374,17 +4442,55 @@ ${rowData.item[this.sessionNameField]}</pre
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="force-terminate-confirmation-dialog" narrowLayout fixed backdrop>
-        <span slot="title">${_t('session.Warning')}</span>
+      <backend-ai-dialog id="force-terminate-confirmation-dialog" fixed backdrop>
+        <span slot="title">${_t('session.WarningForceTerminateSessions')}</span>
         <div slot="content">
-          <div class="horizontal layout start-justified" style="padding:10px;background-color:var(--paper-red-100);color:var(--paper-red-900);">
-            <span>${_t('session.ForceTerminateWarningMsg')}</span>
-          </div>
+          <span>${_t('session.ForceTerminateWarningMsg')}</span>
+          <ul class="force-terminate-confirmation">
+            <li>${_t('session.ForceTerminateWarningMsg2')}</li>
+            <li>${_t('session.ForceTerminateWarningMsg3')}</li>
+          </ul>
+          ${
+            this._manualCleanUpNeededContainers.length > 0 && this.is_superadmin
+              ? html`
+                  <div
+                    class="vertical layout flex start-justified force-terminate-confirmation-container-list"
+                  >
+                    <div class="horizontal layout center flex start-justified">
+                      <h3 style="margin:0px;">
+                        ${_t('session.ContainerToCleanUp')}:
+                      </h3>
+                    </div>
+                    ${this._manualCleanUpNeededContainers.map((item) => {
+                      return html`
+                        <ul class="force-terminate-confirmation">
+                          <li>Agent ID: ${item.agent}</li>
+                          <ul class="force-terminate-confirmation">
+                            ${item.containers.map((container) => {
+                              return html`
+                                <div>
+                                  <li>
+                                    Container ID:
+                                    <span class="monospace">${container}</span>
+                                  </li>
+                                </div>
+                              `;
+                            })}
+                          </ul>
+                          <ul></ul>
+                        </ul>
+                      `;
+                    })}
+                  </div>
+                `
+              : html``
+          }
         </div>
-        <div slot="footer" class="horizontal layout flex end-justified" style="margin:10px;">
+        <div slot="footer" class="horizontal layout flex cetner-justified">
             <mwc-button
               raised
               class="warning fg red"
+              style="width:100%;"
               @click="${() => {
                 this.forceTerminateConfirmationDialog.hide();
                 // conditionally close dialog by opened dialog
