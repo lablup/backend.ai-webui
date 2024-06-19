@@ -420,8 +420,11 @@
     "EnvironmentAndVersion": "Environment and Version",
     "Tags": "Tags",
     "fGPU": "fGPU",
-    "Warning": "Warning",
-    "ForceTerminateWarningMsg": "Running this command will remove information from that session. \nSince the session may be running, we recommend deleting it only if the status does not change for an unusually long period of time. \nThis does not delete the actual containers on the server, so manual termination of the containers may be necessary."
+    "ForceTerminateWarningMsg": "This action will terminate or cancel the session regardless of its current status. Are you sure?",
+    "WarningForceTerminateSessions": "Warning: Force Terminate Session(s)",
+    "ForceTerminateWarningMsg2": "Execute only when the state does not change for an unreasonably long period of time.",
+    "ForceTerminateWarningMsg3": "This action does not delete the actual containers on the agent(s). Manual cleanup may be required.",
+    "ContainerToCleanUp": "Container(s) to clean up"
   },
   "modelService": {
     "Services": "Services",

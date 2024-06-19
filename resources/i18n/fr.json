@@ -406,8 +406,11 @@
     "EnvironmentAndVersion": "Environnement et version",
     "Tags": "Mots clés",
     "fGPU": "fGPU",
-    "Warning": "Avertissement",
-    "ForceTerminateWarningMsg": "L'exécution de cette commande supprimera les informations de cette session. \nÉtant donné que la session peut être en cours d'exécution, nous vous recommandons de la supprimer uniquement si son statut ne change pas pendant une période de temps inhabituellement longue. \nCela ne supprime pas les conteneurs réels sur le serveur, une interruption manuelle des conteneurs peut donc être nécessaire."
+    "ForceTerminateWarningMsg": "Cette action mettra fin ou annulera la session quel que soit son statut actuel. \nEs-tu sûr?",
+    "WarningForceTerminateSessions": "Avertissement : Forcer la fin des sessions",
+    "ForceTerminateWarningMsg2": "Exécuter uniquement lorsque l’état ne change pas pendant une période de temps déraisonnablement longue.",
+    "ForceTerminateWarningMsg3": "Cette action ne supprime pas les conteneurs réels sur le ou les agents. \nUn nettoyage manuel peut être nécessaire.",
+    "ContainerToCleanUp": "Conteneur(s) à nettoyer"
   },
   "button": {
     "Cancel": "Annuler",

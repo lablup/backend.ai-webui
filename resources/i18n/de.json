@@ -406,8 +406,11 @@
     "EnvironmentAndVersion": "Umgebung und Version",
     "Tags": "Stichworte",
     "fGPU": "fGPU",
-    "Warning": "Warnung",
-    "ForceTerminateWarningMsg": "Durch die Ausführung dieses Befehls werden Informationen aus dieser Sitzung entfernt. \nDa die Sitzung möglicherweise noch läuft, empfehlen wir, sie nur zu löschen, wenn sich der Status über einen ungewöhnlich langen Zeitraum nicht ändert. \nDadurch werden die eigentlichen Container auf dem Server nicht gelöscht, sodass eine manuelle Beendigung der Container erforderlich sein kann."
+    "ForceTerminateWarningMsg": "Diese Aktion beendet oder bricht die Sitzung ab, unabhängig von ihrem aktuellen Status. \nBist du sicher?",
+    "WarningForceTerminateSessions": "Warnung: Beendigung der Sitzung(en) erzwingen",
+    "ForceTerminateWarningMsg2": "Nur ausführen, wenn sich der Zustand über einen unangemessen langen Zeitraum nicht ändert.",
+    "ForceTerminateWarningMsg3": "Durch diese Aktion werden die tatsächlichen Container auf dem/den Agent(en) nicht gelöscht. \nMöglicherweise ist eine manuelle Bereinigung erforderlich.",
+    "ContainerToCleanUp": "Behälter zum Aufräumen"
   },
   "button": {
     "Cancel": "Stornieren",

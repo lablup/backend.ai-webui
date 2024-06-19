@@ -406,8 +406,11 @@
     "EnvironmentAndVersion": "环境及版本",
     "Tags": "标签",
     "fGPU": "GPU",
-    "Warning": "警告",
-    "ForceTerminateWarningMsg": "运行此命令将从该会话中删除信息。\n由于会话可能正在运行，因此我们建议仅当状态在异常长时间内没有更改时才将其删除。\n这不会删除服务器上的实际容器，因此可能需要手动终止容器。"
+    "ForceTerminateWarningMsg": "无论会话当前状态如何，此操作都将终止或取消会话。\n你确定吗？",
+    "WarningForceTerminateSessions": "警告：强制终止会话",
+    "ForceTerminateWarningMsg2": "仅当状态在不合理的长时间内没有发生变化时才执行。",
+    "ForceTerminateWarningMsg3": "此操作不会删除代理上的实际容器。\n可能需要手动清理。",
+    "ContainerToCleanUp": "需要清理的容器"
   },
   "button": {
     "Cancel": "取消",

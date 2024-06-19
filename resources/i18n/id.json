@@ -407,8 +407,11 @@
     "Tags": "Tag",
     "Agents": "Agen",
     "fGPU": "fGPU",
-    "Warning": "Peringatan",
-    "ForceTerminateWarningMsg": "Menjalankan perintah ini akan menghapus informasi dari sesi itu. \nKarena sesi mungkin sedang berjalan, kami menyarankan untuk menghapusnya hanya jika statusnya tidak berubah dalam jangka waktu yang sangat lama. \nIni tidak menghapus container sebenarnya di server, sehingga penghentian container secara manual mungkin diperlukan."
+    "ForceTerminateWarningMsg": "Tindakan ini akan mengakhiri atau membatalkan sesi terlepas dari statusnya saat ini. \nApa kamu yakin?",
+    "WarningForceTerminateSessions": "Peringatan: Paksa Mengakhiri Sesi",
+    "ForceTerminateWarningMsg2": "Jalankan hanya ketika keadaan tidak berubah dalam jangka waktu yang terlalu lama.",
+    "ForceTerminateWarningMsg3": "Tindakan ini tidak menghapus penampung sebenarnya pada agen. \nPembersihan manual mungkin diperlukan.",
+    "ContainerToCleanUp": "Wadah yang harus dibersihkan"
   },
   "button": {
     "Cancel": "Batalkan",

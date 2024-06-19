@@ -1243,8 +1243,11 @@
     "EnvironmentAndVersion": "Ympäristö ja versio",
     "Tags": "Tunnisteet",
     "fGPU": "fGPU",
-    "Warning": "Varoitus",
-    "ForceTerminateWarningMsg": "Tämän komennon suorittaminen poistaa tiedot kyseisestä istunnosta. \nKoska istunto saattaa olla käynnissä, suosittelemme sen poistamista vain, jos tila ei muutu poikkeuksellisen pitkään aikaan. \nTämä ei poista varsinaisia ​​säilöjä palvelimelta, joten säilöjen manuaalinen lopettaminen voi olla tarpeen."
+    "ForceTerminateWarningMsg": "Tämä toiminto lopettaa tai peruuttaa istunnon riippumatta sen nykyisestä tilasta. \nOletko varma?",
+    "WarningForceTerminateSessions": "Varoitus: pakota lopettamaan istunnot",
+    "ForceTerminateWarningMsg2": "Suorita vain, kun tila ei muutu kohtuuttoman pitkään.",
+    "ForceTerminateWarningMsg3": "Tämä toiminto ei poista agenttien varsinaisia ​​säilöjä. \nManuaalinen puhdistus saattaa olla tarpeen.",
+    "ContainerToCleanUp": "Säiliö(t) puhdistettava(t)."
   },
   "settings": {
     "ATOMsupport": "ATOM",

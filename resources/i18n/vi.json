@@ -406,8 +406,11 @@
     "EnvironmentAndVersion": "Môi trường và phiên bản",
     "Tags": "Thẻ",
     "fGPU": "fGPU",
-    "Warning": "Cảnh báo",
-    "ForceTerminateWarningMsg": "Chạy lệnh này sẽ xóa thông tin khỏi phiên đó. \nVì phiên có thể đang chạy nên chúng tôi khuyên bạn chỉ nên xóa phiên này nếu trạng thái không thay đổi trong một khoảng thời gian dài bất thường. \nThao tác này không xóa các vùng chứa thực tế trên máy chủ, vì vậy việc chấm dứt thủ công các vùng chứa có thể là cần thiết."
+    "ForceTerminateWarningMsg": "Hành động này sẽ chấm dứt hoặc hủy phiên bất kể trạng thái hiện tại của nó. \nBạn có chắc không?",
+    "WarningForceTerminateSessions": "Cảnh báo: Buộc chấm dứt (các) phiên",
+    "ForceTerminateWarningMsg2": "Chỉ thực hiện khi trạng thái không thay đổi trong một khoảng thời gian dài không hợp lý.",
+    "ForceTerminateWarningMsg3": "Hành động này không xóa các vùng chứa thực tế trên (các) tác nhân. \nCó thể cần phải dọn dẹp thủ công.",
+    "ContainerToCleanUp": "(Các) thùng chứa để dọn dẹp"
   },
   "button": {
     "Cancel": "Huỷ bỏ",

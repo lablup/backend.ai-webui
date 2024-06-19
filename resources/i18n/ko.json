@@ -407,8 +407,11 @@
     "EnvironmentAndVersion": "환경 및 버전",
     "Tags": "태그",
     "fGPU": "fGPU",
-    "Warning": "경고",
-    "ForceTerminateWarningMsg": "이 명령을 실행하면 해당 세션의 정보를 제거합니다. 세션이 동작 중일 수 있으니 비상식적으로 긴 시간 동안 상태가 변하지 않는 경우에만 삭제하는 것을 권합니다. 서버에 있는 실제 컨테이너까지 삭제하지는 않으므로, 컨테이너 수동 종료가 필요할 수 있습니다."
+    "ForceTerminateWarningMsg": "실제 컨테이너 상태와 상관 없이 세션을 종료 또는 취소 처리합니다. 계속하시겠습니까?",
+    "WarningForceTerminateSessions": "경고: 세션 강제 종료",
+    "ForceTerminateWarningMsg2": "세션을 생성하거나 종료했는데 비정상적으로 오랫동안 상태가 변하지 않을 경우에만 사용하십시오.",
+    "ForceTerminateWarningMsg3": "연산노드에 컨테이너가 남아있는 경우 수동으로 컨테이너 삭제가 필요할 수 있습니다.",
+    "ContainerToCleanUp": "확인할 컨테이너 목록"
   },
   "modelService": {
     "Services": "모델 서비스",
