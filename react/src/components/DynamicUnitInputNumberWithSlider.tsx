@@ -30,7 +30,12 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   ...otherProps
 }) => {
   const [value, setValue] = useControllableValue<string | undefined | null>(
-    otherProps,
+    {
+      ...otherProps,
+      value: _.isNumber(otherProps.value)
+        ? String(otherProps.value) + units[0]
+        : otherProps.value,
+    },
     {
       defaultValue: '0g',
     },

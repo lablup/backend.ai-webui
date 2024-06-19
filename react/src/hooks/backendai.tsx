@@ -23,6 +23,7 @@ export const useResourceSlots = () => {
     mem?: string;
     'cuda.shares'?: string;
     'cuda.device'?: string;
+    'cuda.mem'?: string;
     'rocm.device'?: string;
     'tpu.device'?: string;
     'ipu.device'?: string;
@@ -36,8 +37,19 @@ export const useResourceSlots = () => {
     },
     staleTime: 0,
   });
-  return [
+
+  const modifiedResourceSlots = _.find(
     resourceSlots,
+    (unit, name) => name === 'cuda.shares',
+  )
+    ? {
+        ...resourceSlots,
+        'cuda.mem': 'bytes',
+      }
+    : resourceSlots;
+
+  return [
+    modifiedResourceSlots,
     {
       refresh: () => checkUpdate(),
     },
@@ -101,6 +113,24 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
   });
   resourceSlots = resourceSlots || deviceMetadata;
 
+  // TODO: only add to 'cuda.mem' when current manage version supports
+  if (
+    resourceSlots &&
+    _.some(resourceSlots, (value, key) => {
+      return key === 'cuda.shares';
+    }) &&
+    deviceMetadata?.['cuda.mem']
+  ) {
+    console.log('####slakdjflkasdjflkasjflkasj dlfk');
+    resourceSlots['cuda.mem'] = deviceMetadata['cuda.mem'];
+  }
+  console.log(
+    '#####1232131',
+    _.some(resourceSlots, (value, key) => {
+      return key === 'cuda.shares';
+    }),
+    deviceMetadata,
+  );
   return [
     resourceSlots,
     {
