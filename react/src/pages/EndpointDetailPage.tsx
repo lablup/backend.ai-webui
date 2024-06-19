@@ -5,7 +5,7 @@ import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationM
 import Flex from '../components/Flex';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
-import ResourceNumber, { ResourceTypeKey } from '../components/ResourceNumber';
+import ResourceNumber from '../components/ResourceNumber';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { InferenceSessionErrorModalFragment$key } from '../components/__generated__/InferenceSessionErrorModalFragment.graphql';
@@ -314,7 +314,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           </Tooltip>
           {_.map(
             JSON.parse(endpoint?.resource_slots || '{}'),
-            (value: string, type: ResourceTypeKey) => {
+            (value: string, type) => {
               return (
                 <ResourceNumber
                   key={type}

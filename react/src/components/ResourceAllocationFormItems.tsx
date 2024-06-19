@@ -4,7 +4,7 @@ import {
   iSizeToSize,
 } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useResourceSlots } from '../hooks/backendai';
+import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import {
   useCurrentProjectValue,
@@ -106,6 +106,10 @@ const ResourceAllocationFormItems: React.FC<
       currentResourceGroup: currentResourceGroup || undefined, // global currentResourceGroup can be null
       currentImage: currentImage,
     });
+
+  const [resourceSlotsDetails] = useResourceSlotsDetails(
+    currentResourceGroup || undefined,
+  );
 
   const acceleratorSlots = _.omitBy(resourceSlots, (value, key) => {
     if (['cpu', 'mem', 'shmem'].includes(key)) return true;
@@ -480,7 +484,9 @@ const ResourceAllocationFormItems: React.FC<
                   <Form.Item
                     name={['resource', 'cpu']}
                     // initialValue={0}
-                    label={t('session.launcher.CPU')}
+                    label={
+                      resourceSlotsDetails?.cpu.human_readable_name || 'CPU'
+                    }
                     tooltip={{
                       placement: 'right',
                       title: <Trans i18nKey={'session.launcher.DescCPU'} />,
@@ -517,7 +523,9 @@ const ResourceAllocationFormItems: React.FC<
                   >
                     <InputNumberWithSlider
                       inputNumberProps={{
-                        addonAfter: t('session.launcher.Core'),
+                        addonAfter:
+                          resourceSlotsDetails?.cpu.display_unit ||
+                          t('session.launcher.Core'),
                       }}
                       sliderProps={{
                         marks: {

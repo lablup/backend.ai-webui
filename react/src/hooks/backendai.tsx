@@ -58,7 +58,7 @@ type ResourceSlotDetail = {
 
 /**
  * Custom hook to fetch resource slot details by resource group name.
- * @param resourceGroupName - The name of the resource group. if not provided, it will fetch resource/device_metadata.json
+ * @param resourceGroupName - The name of the resource group. if not provided, it will use resource/device_metadata.json
  * @returns An array containing the resource slots and a refresh function.
  */
 export const useResourceSlotsDetails = (resourceGroupName?: string) => {
@@ -85,19 +85,18 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
         });
       }
     },
-    staleTime: 0,
+    staleTime: 3000,
   });
 
+  // TODO: improve waterfall loading
   const { data: deviceMetadata } = useTanQuery<{
     [key: string]: ResourceSlotDetail;
   }>({
     queryKey: ['backendai-metadata-device', key],
     queryFn: () => {
-      return !resourceSlots
-        ? fetch('resources/device_metadata.json')
-            .then((response) => response.json())
-            .then((result) => result?.deviceInfo)
-        : {};
+      return fetch('resources/device_metadata.json')
+        .then((response) => response.json())
+        .then((result) => result?.deviceInfo);
     },
     staleTime: 1000 * 60 * 60 * 24,
   });
