@@ -85,7 +85,7 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
         });
       }
     },
-    staleTime: 0,
+    staleTime: 3000,
   });
 
   const { data: deviceMetadata } = useTanQuery<{
@@ -93,11 +93,9 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
   }>({
     queryKey: ['backendai-metadata-device', key],
     queryFn: () => {
-      return !resourceSlots
-        ? fetch('resources/device_metadata.json')
-            .then((response) => response.json())
-            .then((result) => result?.deviceInfo)
-        : {};
+      return fetch('resources/device_metadata.json')
+        .then((response) => response.json())
+        .then((result) => result?.deviceInfo);
     },
     staleTime: 1000 * 60 * 60 * 24,
   });

@@ -1,4 +1,6 @@
 import { iSizeToSize } from '../helper';
+import { useResourceSlotsDetails } from '../hooks/backendai';
+import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import Flex from './Flex';
 import { Tooltip, Typography, theme } from 'antd';
 import React, { ReactElement } from 'react';
@@ -53,30 +55,30 @@ const ResourceNumber: React.FC<Props> = ({
   opts,
   hideTooltip = false,
 }) => {
-  const { t } = useTranslation();
   const { token } = theme.useToken();
-  const units: ResourceTypeInfo<string> = {
-    cpu: t('session.core'),
-    mem: 'GiB',
-    ...ACCELERATOR_UNIT_MAP,
-  };
+  const currentGroup = useCurrentResourceGroupValue();
+  const [resourceSlotsDetails] = useResourceSlotsDetails(
+    currentGroup || undefined,
+  );
 
   return (
     <Flex direction="row" gap="xxs">
-      {resourceTypes.includes(type) ? (
+      {resourceSlotsDetails?.[type] ? (
         <ResourceTypeIcon type={type} showTooltip={!hideTooltip} />
       ) : (
         type
       )}
 
       <Typography.Text>
-        {units[type] === 'GiB'
+        {resourceSlotsDetails?.[type].number_format.binary
           ? Number(iSizeToSize(amount, 'g', 3, true)?.numberFixed).toString()
-          : units[type] === 'FGPU'
+          : (resourceSlotsDetails?.[type].number_format.round_length || 0) > 0
             ? parseFloat(amount).toFixed(2)
             : amount}
       </Typography.Text>
-      <Typography.Text type="secondary">{units[type]}</Typography.Text>
+      <Typography.Text type="secondary">
+        {resourceSlotsDetails?.[type].display_unit || ''}
+      </Typography.Text>
       {type === 'mem' && opts?.shmem && opts?.shmem > 0 ? (
         <Typography.Text
           type="secondary"
