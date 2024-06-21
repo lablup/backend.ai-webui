@@ -1918,8 +1918,8 @@ export default class BackendAISessionList extends BackendAIPage {
     return Object.values(
       sessionList.reduce(
         (acc, item) => (
-          item.agents.forEach((agent) =>
-            item.containers.forEach((container) => {
+          item.agents?.forEach((agent) =>
+            item.containers?.forEach((container) => {
               if (container.container_id)
                 acc[agent] = {
                   agent,
@@ -4468,12 +4468,10 @@ ${rowData.item[this.sessionNameField]}</pre
                           <ul class="force-terminate-confirmation">
                             ${item.containers.map((container) => {
                               return html`
-                                <div>
-                                  <li>
-                                    Container ID:
-                                    <span class="monospace">${container}</span>
-                                  </li>
-                                </div>
+                                <li>
+                                  Container ID:
+                                  <span class="monospace">${container}</span>
+                                </li>
                               `;
                             })}
                           </ul>
