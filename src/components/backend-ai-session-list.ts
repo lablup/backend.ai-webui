@@ -1916,26 +1916,27 @@ export default class BackendAISessionList extends BackendAIPage {
    */
   static _parseAgentBasedContainers(sessionList) {
     return Object.values(
-      sessionList.reduce(
-        (acc, item) => (
-          item.agents?.forEach((agent) =>
-            item.containers?.forEach((container) => {
-              if (container.container_id)
-                acc[agent] = {
-                  agent,
-                  containers: [
-                    ...new Set([
-                      ...(acc[agent]?.containers || []),
-                      container.container_id,
-                    ]),
-                  ],
-                };
-            }),
-          ),
-          acc
-        ),
-        {},
-      ),
+      sessionList.reduce((acc, item) => {
+        item.containers?.forEach((container) => {
+          if (container.agent && container.container_id) {
+            if (!acc[container.agent]) {
+              acc[container.agent] = {
+                agent: container.agent,
+                containers: [container.container_id],
+              };
+            } else {
+              if (
+                !acc[container.agent].containers.includes(
+                  container.container_id,
+                )
+              ) {
+                acc[container.agent].containers.push(container.container_id);
+              }
+            }
+          }
+        });
+        return acc;
+      }, {}),
     );
   }
 
