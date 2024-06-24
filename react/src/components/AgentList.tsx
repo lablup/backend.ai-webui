@@ -14,7 +14,7 @@ import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import DoubleTag from './DoubleTag';
 import Flex from './Flex';
-import { ResourceTypeIcon, ResourceTypeKey } from './ResourceNumber';
+import { ResourceTypeIcon } from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import { AgentDetailModalFragment$key } from './__generated__/AgentDetailModalFragment.graphql';
 import {
@@ -361,10 +361,7 @@ const AgentList: React.FC<AgentListProps> = ({
                 return (
                   <Flex key={key} justify="between" style={{ minWidth: 220 }}>
                     <Flex gap="xxs">
-                      <ResourceTypeIcon
-                        key={key as ResourceTypeKey}
-                        type={key as ResourceTypeKey}
-                      />
+                      <ResourceTypeIcon key={key} type={key} />
                       <Typography.Text>
                         {parsedOccupiedSlots[key] ?? 0}/
                         {parsedAvailableSlots[key] ?? 0}
