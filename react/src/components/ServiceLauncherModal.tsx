@@ -461,7 +461,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                   ),
                   values,
                 ),
-                extra_mounts: values.mounts.map((vfolder) => {
+                extra_mounts: (values.mounts || []).map((vfolder) => {
                   return {
                     vfolder_id: vfolder,
                     ...(values.vfoldersAliasMap[vfolder] && {
@@ -688,8 +688,16 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         : 'single-node',
                     cluster_size: endpoint?.cluster_size,
                     openToPublic: endpoint?.open_to_public,
-                    envvars: endpoint?.environ,
-                    runtimeVariant: endpoint?.runtime_variant?.name || 'CUSTOM',
+                    envvars: (() => {
+                      const environs = JSON.parse(endpoint?.environ || '{}');
+                      return [
+                        ...Object.keys(environs).map((k) => ({
+                          variable: k,
+                          value: environs[k],
+                        })),
+                      ];
+                    })(),
+                    runtimeVariant: endpoint?.runtime_variant?.name || 'custom',
                     environments: {
                       environment: endpoint?.image_object?.name,
                       version: `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`,
