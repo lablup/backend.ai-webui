@@ -531,6 +531,13 @@ export default class BackendAISessionList extends BackendAIPage {
         div.usage-items {
           font-size: 10px;
         }
+
+        div.error-detail-panel {
+          border-radius: var(--token-borderRadiusSM, 4px);
+          background-color: var(--token-colorBgContainerDisabled);
+          padding: var(--token-paddingSM, 10px);
+          margin: var(--token-marginSM, 10px);
+        }
       `,
     ];
   }
@@ -2341,9 +2348,7 @@ export default class BackendAISessionList extends BackendAIPage {
             </h3>
             ${errorList.map((item) => {
               return html`
-                <div
-                  style="border-radius: 4px;background-color:var(--paper-grey-300);padding:10px;margin:10px;"
-                >
+                <div class="error-detail-panel">
                   <div class="vertical layout start">
                     <span class="subheading">Error</span>
                     <lablup-shields
@@ -2373,7 +2378,8 @@ export default class BackendAISessionList extends BackendAIPage {
                           <pre
                             style="display: block; overflow: auto; width: 100%; height: 400px;"
                           >
-${item.traceback}</pre
+                            ${item.traceback}
+                          </pre
                           >
                         </div>
                       `
