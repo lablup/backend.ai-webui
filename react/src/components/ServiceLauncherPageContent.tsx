@@ -634,7 +634,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         modelMountDestination: endpoint?.model_mount_destination,
         modelDefinitionPath: endpoint?.model_definition_path,
         runtimeVariant: endpoint?.runtime_variant?.name,
-        envvar: Object.entries(JSON.parse(endpoint?.environ)).map(([variable, value]) => ({ variable, value }))
+        envvars: Object.entries(JSON.parse(endpoint?.environ)).map(([variable, value]) => ({ variable, value })),
         // TODO: set mounts alias map according to extra_mounts if possible
       }
     : {
