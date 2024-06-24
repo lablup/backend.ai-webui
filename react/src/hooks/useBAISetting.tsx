@@ -15,6 +15,7 @@ interface UserSettings {
   beta_feature?: boolean;
   last_window_close_time?: number;
   endpoints?: string[];
+  auto_logout?: boolean;
 }
 
 interface GeneralSettings {

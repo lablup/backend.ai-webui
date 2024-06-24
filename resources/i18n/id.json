@@ -763,7 +763,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Apakah Anda ingin lanjut?",
-      "DoYouWantToDeleteSomething": "Apakah Anda yakin ingin menghapus \"{{ nama }}\"?"
+      "DoYouWantToDeleteSomething": "Apakah Anda yakin ingin menghapus \"{{ nama }}\"?",
+      "DoYouWantToResetChanges": "Apakah Anda ingin mengatur ulang perubahan Anda?"
     },
     "title": {
       "LetsDouble-Check": "Mari Periksa Kembali",

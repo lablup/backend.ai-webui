@@ -762,7 +762,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "您要继续吗？",
-      "DoYouWantToDeleteSomething": "您确定要删除\"{{ 名称 }}}\"吗？"
+      "DoYouWantToDeleteSomething": "您确定要删除\"{{ 名称 }}}\"吗？",
+      "DoYouWantToResetChanges": "您想重置您的更改吗？"
     },
     "title": {
       "LetsDouble-Check": "让我们仔细检查",

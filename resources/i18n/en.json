@@ -883,7 +883,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Do you want to proceed?",
-      "DoYouWantToDeleteSomething": "Are you sure you want to delete \"{{ name }}\"?"
+      "DoYouWantToDeleteSomething": "Are you sure you want to delete \"{{ name }}\"?",
+      "DoYouWantToResetChanges": "Do you want to reset your changes?"
     },
     "title": {
       "Notice": "Notice",

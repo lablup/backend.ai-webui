@@ -766,7 +766,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Adakah anda mahu meneruskan?",
-      "DoYouWantToDeleteSomething": "Adakah anda pasti mahu memadamkan \"{{ name }}\"?"
+      "DoYouWantToDeleteSomething": "Adakah anda pasti mahu memadamkan \"{{ name }}\"?",
+      "DoYouWantToResetChanges": "Adakah anda mahu menetapkan semula perubahan anda?"
     },
     "title": {
       "LetsDouble-Check": "Mari semak semula",

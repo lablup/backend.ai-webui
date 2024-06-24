@@ -762,7 +762,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Bạn có muốn tiếp tục?",
-      "DoYouWantToDeleteSomething": "Bạn có chắc chắn muốn xóa \"{{ name }}\" không?"
+      "DoYouWantToDeleteSomething": "Bạn có chắc chắn muốn xóa \"{{ name }}\" không?",
+      "DoYouWantToResetChanges": "Bạn có muốn đặt lại các thay đổi của mình không?"
     },
     "title": {
       "LetsDouble-Check": "Hãy kiểm tra kỹ",

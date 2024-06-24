@@ -411,7 +411,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Haluatteko jatkaa?",
-      "DoYouWantToDeleteSomething": "Oletko varma, että haluat poistaa \"{{ name }}\"?\"?"
+      "DoYouWantToDeleteSomething": "Oletko varma, että haluat poistaa \"{{ name }}\"?\"?",
+      "DoYouWantToResetChanges": "Haluatko nollata tekemäsi muutokset?"
     },
     "title": {
       "LetsDouble-Check": "Tupla-tarkistetaan",

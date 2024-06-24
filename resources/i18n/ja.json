@@ -762,7 +762,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "続行しますか？",
-      "DoYouWantToDeleteSomething": "本当に\"{{ name }}\"を削除しますか？"
+      "DoYouWantToDeleteSomething": "本当に\"{{ name }}\"を削除しますか？",
+      "DoYouWantToResetChanges": "変更をリセットしますか?"
     },
     "title": {
       "LetsDouble-Check": "再確認しましょう",

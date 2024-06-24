@@ -764,7 +764,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Та үргэлжлүүлэхийг хүсч байна уу?",
-      "DoYouWantToDeleteSomething": "Та \"{{ name }}\"-г устгахдаа итгэлтэй байна уу?"
+      "DoYouWantToDeleteSomething": "Та \"{{ name }}\"-г устгахдаа итгэлтэй байна уу?",
+      "DoYouWantToResetChanges": "Та өөрчлөлтөө дахин тохируулахыг хүсэж байна уу?"
     },
     "title": {
       "LetsDouble-Check": "Давхар шалгуулъя",

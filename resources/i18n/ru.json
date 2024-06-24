@@ -762,7 +762,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Вы хотите продолжить?",
-      "DoYouWantToDeleteSomething": "Вы уверены, что хотите удалить \"{{ имя }}\"?"
+      "DoYouWantToDeleteSomething": "Вы уверены, что хотите удалить \"{{ имя }}\"?",
+      "DoYouWantToResetChanges": "Вы хотите сбросить изменения?"
     },
     "title": {
       "LetsDouble-Check": "Давайте дважды проверим",

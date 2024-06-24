@@ -870,7 +870,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "계속 진행하시겠습니까?",
-      "DoYouWantToDeleteSomething": "\"{{ name }}\"을(를) 삭제하시겠습니까?"
+      "DoYouWantToDeleteSomething": "\"{{ name }}\"을(를) 삭제하시겠습니까?",
+      "DoYouWantToResetChanges": "변경사항을 초기화 하시겠습니까?"
     },
     "title": {
       "LetsDouble-Check": "한 번 더 확인합시다",

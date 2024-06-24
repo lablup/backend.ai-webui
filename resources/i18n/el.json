@@ -762,7 +762,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Θέλετε να συνεχίσετε?",
-      "DoYouWantToDeleteSomething": "Είστε σίγουροι ότι θέλετε να διαγράψετε το \"{{ name }}\";"
+      "DoYouWantToDeleteSomething": "Είστε σίγουροι ότι θέλετε να διαγράψετε το \"{{ name }}\";",
+      "DoYouWantToResetChanges": "Θέλετε να επαναφέρετε τις αλλαγές σας;"
     },
     "title": {
       "LetsDouble-Check": "Ας ελέγξουμε ξανά",

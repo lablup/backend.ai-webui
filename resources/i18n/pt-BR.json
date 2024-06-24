@@ -762,7 +762,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Você quer prosseguir?",
-      "DoYouWantToDeleteSomething": "Tem a certeza de que pretende eliminar \"{{ name }}\"?"
+      "DoYouWantToDeleteSomething": "Tem a certeza de que pretende eliminar \"{{ name }}\"?",
+      "DoYouWantToResetChanges": "Deseja redefinir suas alterações?"
     },
     "title": {
       "LetsDouble-Check": "Vamos verificar novamente",

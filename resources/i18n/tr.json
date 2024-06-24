@@ -762,7 +762,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Devam etmek istiyor musunuz?",
-      "DoYouWantToDeleteSomething": "\"{{ name }}\" silmek istediğinizden emin misiniz?"
+      "DoYouWantToDeleteSomething": "\"{{ name }}\" silmek istediğinizden emin misiniz?",
+      "DoYouWantToResetChanges": "Değişikliklerinizi sıfırlamak istiyor musunuz?"
     },
     "title": {
       "LetsDouble-Check": "İki kez kontrol edelim",
