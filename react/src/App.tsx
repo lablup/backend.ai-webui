@@ -25,6 +25,7 @@ const EndpointListPage = React.lazy(() => import('./pages/EndpointListPage'));
 const EndpointDetailPage = React.lazy(
   () => import('./pages/EndpointDetailPage'),
 );
+// const SummaryPage = React.lazy(() => import('./pages/SummaryPage'));
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
 const StorageHostSettingPage = React.lazy(
@@ -85,13 +86,16 @@ const router = createBrowserRouter([
         Component: () => {
           const { token } = theme.useToken();
           return (
-            <AnnouncementAlert
-              showIcon
-              icon={undefined}
-              banner={false}
-              style={{ marginBottom: token.paddingContentVerticalLG }}
-              closable
-            />
+            <>
+              <AnnouncementAlert
+                showIcon
+                icon={undefined}
+                banner={false}
+                style={{ marginBottom: token.paddingContentVerticalLG }}
+                closable
+              />
+              {/* <SummaryPage /> */}
+            </>
           );
         },
         handle: { labelKey: 'webui.menu.Summary' },
