@@ -258,7 +258,7 @@ class Client {
     this._features = {}; // feature support list
     this.abortController = new AbortController();
     this.abortSignal = this.abortController.signal;
-    this.requestTimeout = 5000;
+    this.requestTimeout = 15000;
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
     //}
