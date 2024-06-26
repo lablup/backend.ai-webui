@@ -9,6 +9,7 @@ import MainLayout from './components/MainLayout/MainLayout';
 import { useSuspendedBackendaiClient, useWebUINavigate } from './hooks';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
+import VFolderListPage from './pages/VFolderListPage';
 import { theme } from 'antd';
 import React from 'react';
 import { FC } from 'react';
@@ -141,6 +142,7 @@ const router = createBrowserRouter([
         element: (
           <BAIErrorBoundary>
             <FolderExplorerOpener />
+            <VFolderListPage />
           </BAIErrorBoundary>
         ),
       },
