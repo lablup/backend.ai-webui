@@ -5,8 +5,8 @@ import { Skeleton, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { Suspense } from 'react';
 
-const useStyles = createStyles(({ css }) => ({
-  board: css`
+const useStyles = createStyles(({ css }) => {
+  const defaultBoard = css`
     .bai_board_placeholder {
       border-radius: var(--token-borderRadius) !important;
     }
@@ -18,44 +18,63 @@ const useStyles = createStyles(({ css }) => ({
       // FIXME: global token doesn't exist, so opacity fits color
       opacity: 0.3;
     }
-  `,
-  boardItem: css`
-    & > div:first-child {
-      border: 1px solid var(--token-colorBorder) !important ;
-      border-radius: var(--token-borderRadius) !important ;
-      background-color: var(--token-colorBgContainer) !important ;
-    }
+  `;
+  return {
+    board: css`
+      ${defaultBoard}
+    `,
+    disableCustomize: css`
+      ${defaultBoard}
+      .bai_board_handle {
+        display: none !important;
+      }
+      .bai_board_resizer {
+        display: none !important;
+      }
+      .bai_board_header {
+        height: var(--token-boardHeaderHeight, 55px) !important;
+      }
+    `,
+    boardItems: css`
+      & > div:first-child {
+        border: 1px solid var(--token-colorBorder) !important ;
+        border-radius: var(--token-borderRadius) !important ;
+        background-color: var(--token-colorBgContainer) !important ;
+      }
 
-    & > div:first-child > div:first-child > div:first-child {
-      border-bottom: 1px solid var(--token-colorBorder) !important;
-      margin-bottom: var(--token-margin);
-      background-color: var(--token-colorBgContainer) !important ;
-    }
-  `,
-}));
+      & > div:first-child > div:first-child > div:first-child {
+        border-bottom: 1px solid var(--token-colorBorder) !important;
+        margin-bottom: var(--token-margin);
+        background-color: var(--token-colorBgContainer) !important ;
+      }
+    `,
+  };
+});
 
 interface BAICustomizableGridProps {
   items: Array<BoardProps.Item>;
   onItemsChange: (
     event: CustomEvent<BoardProps.ItemsChangeDetail<unknown>>,
   ) => void;
+  customizable?: boolean;
 }
 
 const BAIBoard: React.FC<BAICustomizableGridProps> = ({
   items: parsedItems,
+  customizable = false,
   ...BoardProps
 }) => {
   const { styles } = useStyles();
   return (
     <Board
       //@ts-ignore
-      className={styles.board}
+      className={customizable ? styles.board : styles.disableCustomize}
       empty
       renderItem={(item: any) => {
         return (
           <BoardItem
             //@ts-ignore
-            className={styles.boardItem}
+            className={styles.boardItems}
             key={item.id}
             i18nStrings={{
               dragHandleAriaLabel: '',

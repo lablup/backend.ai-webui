@@ -31,31 +31,55 @@ index 9ce96ef..cd0a89e 100644
  //# sourceMappingURL=internal.js.map
 \ No newline at end of file
 diff --git a/node_modules/@cloudscape-design/board-components/board-item/styles.css.js b/node_modules/@cloudscape-design/board-components/board-item/styles.css.js
-index 1dcaf7c..f794aaa 100644
+index 1dcaf7c..f1d982c 100644
 --- a/node_modules/@cloudscape-design/board-components/board-item/styles.css.js
 +++ b/node_modules/@cloudscape-design/board-components/board-item/styles.css.js
-@@ -2,7 +2,7 @@
+@@ -2,15 +2,15 @@
      import './styles.scoped.css';
      export default {
    "root": "awsui_root_9ckv7_1974t_1",
 -  "container-override": "awsui_container-override_9ckv7_1974t_6",
 +  "container-override": "awsui_container-override_9ckv7_1974t_6 bai_board_container-override",
    "active": "awsui_active_9ckv7_1974t_6",
-   "header": "awsui_header_9ckv7_1974t_28",
+-  "header": "awsui_header_9ckv7_1974t_28",
++  "header": "awsui_header_9ckv7_1974t_28 bai_board_header",
    "flexible": "awsui_flexible_9ckv7_1974t_34",
+-  "handle": "awsui_handle_9ckv7_1974t_38",
++  "handle": "awsui_handle_9ckv7_1974t_38 bai_board_handle",
+   "refresh": "awsui_refresh_9ckv7_1974t_41",
+   "header-content": "awsui_header-content_9ckv7_1974t_45",
+   "settings": "awsui_settings_9ckv7_1974t_49",
+   "fixed": "awsui_fixed_9ckv7_1974t_57",
+-  "resizer": "awsui_resizer_9ckv7_1974t_61"
++  "resizer": "awsui_resizer_9ckv7_1974t_61 bai_board_resizer",
+ };
+   
+\ No newline at end of file
 diff --git a/node_modules/@cloudscape-design/board-components/board-item/styles.selectors.js b/node_modules/@cloudscape-design/board-components/board-item/styles.selectors.js
-index 2acfd3b..4a35479 100644
+index 2acfd3b..beebd8d 100644
 --- a/node_modules/@cloudscape-design/board-components/board-item/styles.selectors.js
 +++ b/node_modules/@cloudscape-design/board-components/board-item/styles.selectors.js
-@@ -3,7 +3,7 @@
+@@ -3,15 +3,15 @@
      Object.defineProperty(exports, "__esModule", { value: true });
      module.exports.default = {
    "root": "awsui_root_9ckv7_1974t_1",
 -  "container-override": "awsui_container-override_9ckv7_1974t_6",
 +  "container-override": "awsui_container-override_9ckv7_1974t_6 bai_board_container-override",
    "active": "awsui_active_9ckv7_1974t_6",
-   "header": "awsui_header_9ckv7_1974t_28",
+-  "header": "awsui_header_9ckv7_1974t_28",
++  "header": "awsui_header_9ckv7_1974t_28 bai_board_header",
    "flexible": "awsui_flexible_9ckv7_1974t_34",
+-  "handle": "awsui_handle_9ckv7_1974t_38",
++  "handle": "awsui_handle_9ckv7_1974t_38 bai_board_handle",
+   "refresh": "awsui_refresh_9ckv7_1974t_41",
+   "header-content": "awsui_header-content_9ckv7_1974t_45",
+   "settings": "awsui_settings_9ckv7_1974t_49",
+   "fixed": "awsui_fixed_9ckv7_1974t_57",
+-  "resizer": "awsui_resizer_9ckv7_1974t_61"
++  "resizer": "awsui_resizer_9ckv7_1974t_61 bai_board_resizer"
+ };
+   
+\ No newline at end of file
 diff --git a/node_modules/@cloudscape-design/board-components/board/interfaces.d.ts b/node_modules/@cloudscape-design/board-components/board/interfaces.d.ts
 index 8833051..4c47c4d 100644
 --- a/node_modules/@cloudscape-design/board-components/board/interfaces.d.ts
