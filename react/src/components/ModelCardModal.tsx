@@ -4,12 +4,7 @@ import Flex from './Flex';
 import ModelCloneModal from './ModelCloneModal';
 import ResourceNumber from './ResourceNumber';
 import { ModelCardModalFragment$key } from './__generated__/ModelCardModalFragment.graphql';
-import {
-  BankOutlined,
-  CopyOutlined,
-  DownloadOutlined,
-  FileOutlined,
-} from '@ant-design/icons';
+import { BankOutlined, CopyOutlined, FileOutlined } from '@ant-design/icons';
 import {
   Button,
   Card,
@@ -69,9 +64,10 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
         architecture
         framework
         vfolder {
-          name
           cloneable
-          host
+        }
+        vfolder_node {
+          ...ModelCloneModalVFolderFragment
         }
       }
     `,
@@ -142,7 +138,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           )}
         </Flex>
         <Flex direction="row" justify="end" gap={'sm'}>
-          <Button
+          {/* <Button
             type="primary"
             ghost
             icon={<DownloadOutlined />}
@@ -150,7 +146,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             disabled
           >
             {t('button.Download')}
-          </Button>
+          </Button> */}
           <Button
             type="primary"
             ghost
@@ -169,7 +165,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
               setVisibleCloneModal(true);
             }}
           >
-            {t('button.Clone')}
+            {t('modelStore.CloneToFolder')}
           </Button>
         </Flex>
       </Flex>
@@ -307,8 +303,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       </Row>
       <Suspense>
         <ModelCloneModal
-          sourceFolderName={model_card?.vfolder?.name || ''}
-          sourceFolderHost={model_card?.vfolder?.host || ''}
+          vfolderNode={model_card?.vfolder_node || null}
           title={t('modelStore.CloneAsFolder')}
           open={visibleCloneModal}
           onOk={() => {

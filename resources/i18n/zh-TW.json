@@ -658,7 +658,9 @@
       "FolderRestored": "{{ folderName }} 資料夾已恢復。",
       "FolderDeletedForever": "{{ folderName }} 資料夾已永久刪除。",
       "MoveToTrashBin": "移至垃圾箱",
-      "MovedToTrashBin": "{{ folderName }} 資料夾已移至垃圾箱。"
+      "MovedToTrashBin": "{{ folderName }} 資料夾已移至垃圾箱。",
+      "FolderCloneFailed": "克隆文件夹失败。",
+      "FolderClonePending": "正在克隆文件夹。"
     },
     "explorer": {
       "Delete": "刪除...",
@@ -750,7 +752,8 @@
     "New": "新的",
     "Add": "添加",
     "CloningIsOnlyPossibleSameHost": "目前，克隆只能在同一主機上進行。",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "新文件夹名称"
   },
   "dialog": {
     "warning": {
@@ -1600,7 +1603,9 @@
     "CloneAsFolder": "克隆为文件夹",
     "CloneSuccess": "克隆请求已成功发送。",
     "CloneInfo": "它将被克隆为用户类型文件夹。",
-    "category": "類別"
+    "category": "類別",
+    "CloneToFolder": "克隆到文件夹",
+    "FolderAlreadyExists": "该名称的文件夹已经存在。"
   },
   "table": {
     "SettingTable": "桌面設定",

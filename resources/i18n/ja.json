@@ -658,7 +658,9 @@
       "FolderRestored": "{{ folderName }} フォルダが復元されました。",
       "FolderDeletedForever": "{{ folderName }} フォルダは完全に削除されました。",
       "MoveToTrashBin": "ゴミ箱に移動",
-      "MovedToTrashBin": "{{ folderName }} フォルダーはゴミ箱に移動されました。"
+      "MovedToTrashBin": "{{ folderName }} フォルダーはゴミ箱に移動されました。",
+      "FolderCloneFailed": "フォルダのクローンに失敗しました。",
+      "FolderClonePending": "フォルダのクローンを作成中です。"
     },
     "explorer": {
       "Delete": "削除...",
@@ -750,7 +752,8 @@
     "New": "新しい",
     "Add": "追加",
     "CloningIsOnlyPossibleSameHost": "現在、クローン作成は同じホスト上でのみ可能です。",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "新しいフォルダ名"
   },
   "dialog": {
     "warning": {
@@ -1600,7 +1603,9 @@
     "CloneAsFolder": "フォルダとしてクローン",
     "CloneSuccess": "クローン要求は正常に送信された。",
     "CloneInfo": "ユーザータイプのフォルダとしてクローンされます。",
-    "category": "カテゴリー"
+    "category": "カテゴリー",
+    "CloneToFolder": "フォルダへのクローン",
+    "FolderAlreadyExists": "この名前のフォルダはすでに存在する。"
   },
   "table": {
     "SettingTable": "テーブルセッティング",

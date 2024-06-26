@@ -658,7 +658,9 @@
       "FolderRestored": "Der Ordner {{ folderName }} wurde wiederhergestellt.",
       "FolderDeletedForever": "Der Ordner {{ folderName }} wurde endgültig gelöscht.",
       "MoveToTrashBin": "In den Papierkorb verschieben",
-      "MovedToTrashBin": "Der Ordner {{ folderName }} wurde in den Papierkorb verschoben."
+      "MovedToTrashBin": "Der Ordner {{ folderName }} wurde in den Papierkorb verschoben.",
+      "FolderCloneFailed": "Der Ordner konnte nicht geklont werden.",
+      "FolderClonePending": "Das Klonen des Ordners ist im Gange."
     },
     "explorer": {
       "Delete": "Löschen...",
@@ -750,7 +752,8 @@
     "New": "Neu",
     "Add": "hinzufügen",
     "CloningIsOnlyPossibleSameHost": "Derzeit ist das Klonen nur auf demselben Host möglich.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Neuer Ordnername"
   },
   "dialog": {
     "warning": {
@@ -1600,7 +1603,9 @@
     "CloneAsFolder": "Als Ordner klonen",
     "CloneSuccess": "Die Klonanfrage wurde erfolgreich gesendet.",
     "CloneInfo": "Er wird als Ihr Benutzertyp-Ordner geklont.",
-    "category": "Kategorie"
+    "category": "Kategorie",
+    "CloneToFolder": "In einen Ordner klonen",
+    "FolderAlreadyExists": "Ein Ordner mit diesem Namen existiert bereits."
   },
   "table": {
     "SettingTable": "Sitzordnung bei Tisch",
