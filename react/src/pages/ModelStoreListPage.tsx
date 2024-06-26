@@ -4,7 +4,7 @@ import TextHighlighter from '../components/TextHighlighter';
 import { ModelCardModalFragment$key } from '../components/__generated__/ModelCardModalFragment.graphql';
 import { useUpdatableState } from '../hooks';
 import { ModelStoreListPageQuery } from './__generated__/ModelStoreListPageQuery.graphql';
-import { ReloadOutlined } from '@ant-design/icons';
+import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Card, Input, List, Select, Tag, theme } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
@@ -30,7 +30,8 @@ const ModelStoreListPage: React.FC = () => {
   const { model_cards } = useLazyLoadQuery<ModelStoreListPageQuery>(
     graphql`
       query ModelStoreListPageQuery($filter: String) {
-        model_cards(filter: $filter) {
+        # TODO: Implement pagination for model_cards
+        model_cards(filter: $filter, first: 200) {
           edges {
             cursor
             node {
@@ -106,7 +107,8 @@ const ModelStoreListPage: React.FC = () => {
         gap={'xs'}
       >
         <Flex direction="row" gap={'md'}>
-          <Input.Search
+          <Input
+            prefix={<SearchOutlined />}
             placeholder={t('modelStore.SearchModels')}
             allowClear
             onChange={(e) => {

@@ -658,7 +658,9 @@
       "FolderRestored": "{{ klasörAdı }} klasörü geri yüklendi.",
       "FolderDeletedForever": "{{ folderName }} klasörü kalıcı olarak silindi.",
       "MoveToTrashBin": "Çöp kutusuna taşı",
-      "MovedToTrashBin": "{{ folderName }} klasörü çöp kutusuna taşındı."
+      "MovedToTrashBin": "{{ folderName }} klasörü çöp kutusuna taşındı.",
+      "FolderCloneFailed": "Klasör klonlanamadı.",
+      "FolderClonePending": "Klasörün klonlanması devam ediyor."
     },
     "explorer": {
       "Delete": "Sil...",
@@ -750,7 +752,8 @@
     "New": "Yeni",
     "Add": "Ekle",
     "CloningIsOnlyPossibleSameHost": "Şu anda klonlama yalnızca aynı ana bilgisayarda mümkündür.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Yeni klasör adı"
   },
   "dialog": {
     "warning": {
@@ -1600,7 +1603,8 @@
     "CloneAsFolder": "Klasör olarak klonla",
     "CloneSuccess": "Klonlama isteği başarıyla gönderildi.",
     "CloneInfo": "Kullanıcı tipi klasörünüz olarak klonlanacaktır.",
-    "category": "Kategori"
+    "category": "Kategori",
+    "CloneToFolder": "Bir klasöre klonlama"
   },
   "table": {
     "SettingTable": "Tablo Ayarı",

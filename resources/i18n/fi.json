@@ -366,7 +366,9 @@
       "DeleteForever": "Poista ikuisesti",
       "Restore": "Palauttaa",
       "FolderRestored": "Kansio {{ folderName }} on palautettu.",
-      "FolderDeletedForever": "Kansio {{ folderName }} on poistettu pysyvästi."
+      "FolderDeletedForever": "Kansio {{ folderName }} on poistettu pysyvästi.",
+      "FolderCloneFailed": "Kansiota ei onnistuttu kloonaamaan.",
+      "FolderClonePending": "Kansion kloonaus on käynnissä."
     },
     "invitation": {
       "FolderSharingNotAvailableToUser": "Kansioiden jakaminen ei ole käytettävissä pyydetyille käyttäjille:",
@@ -395,7 +397,8 @@
     "Add": "Lisätä",
     "CloningIsOnlyPossibleSameHost": "Tällä hetkellä kloonaus on mahdollista vain samassa isännässä.",
     "New": "Uusi",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Uusi kansion nimi"
   },
   "dialog": {
     "warning": {
@@ -1600,7 +1603,8 @@
     "ServiceDetails": "Palvelun tiedot",
     "StartCommand": "Käynnistä komento",
     "Task": "Tehtävä",
-    "Version": "Versio"
+    "Version": "Versio",
+    "CloneToFolder": "Kloonaa kansioon"
   },
   "table": {
     "SettingTable": "Kattaus",

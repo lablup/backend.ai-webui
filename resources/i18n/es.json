@@ -366,7 +366,9 @@
       "DeleteForever": "Borrar para siempre",
       "Restore": "Restaurar",
       "FolderRestored": "La carpeta {{ folderName }} ha sido restaurada.",
-      "FolderDeletedForever": "La carpeta {{ folderName }} se ha eliminado para siempre."
+      "FolderDeletedForever": "La carpeta {{ folderName }} se ha eliminado para siempre.",
+      "FolderCloneFailed": "Error al clonar la carpeta.",
+      "FolderClonePending": "La clonación de la carpeta está en curso."
     },
     "invitation": {
       "FolderSharingNotAvailableToUser": "El uso compartido de carpetas no está disponible para los usuarios solicitados:",
@@ -395,7 +397,8 @@
     "New": "Nuevo",
     "Add": "Añadir",
     "CloningIsOnlyPossibleSameHost": "Actualmente, la clonación sólo es posible en el mismo host.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Nuevo nombre de carpeta"
   },
   "dialog": {
     "warning": {
@@ -1602,7 +1605,8 @@
     "CloneAsFolder": "Clonar como carpeta",
     "CloneSuccess": "La solicitud de clonación se ha enviado correctamente.",
     "CloneInfo": "Se clonará como su carpeta de tipo de usuario.",
-    "category": "Categoría"
+    "category": "Categoría",
+    "CloneToFolder": "Clonar en una carpeta"
   },
   "table": {
     "SettingTable": "Ajuste de la tabla",

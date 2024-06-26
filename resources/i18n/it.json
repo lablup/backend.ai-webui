@@ -659,7 +659,9 @@
       "FolderRestored": "La cartella {{ folderName }} è stata ripristinata.",
       "FolderDeletedForever": "La cartella {{ folderName }} è stata eliminata per sempre.",
       "MoveToTrashBin": "Sposta nel cestino",
-      "MovedToTrashBin": "La cartella {{ folderName }} è stata spostata nel cestino."
+      "MovedToTrashBin": "La cartella {{ folderName }} è stata spostata nel cestino.",
+      "FolderCloneFailed": "Non è stato possibile clonare la cartella.",
+      "FolderClonePending": "La clonazione della cartella è in corso."
     },
     "explorer": {
       "Delete": "Elimina...",
@@ -751,7 +753,8 @@
     "New": "Nuovo",
     "Add": "Aggiungi",
     "CloningIsOnlyPossibleSameHost": "Attualmente la clonazione è possibile solo sullo stesso host.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Nuovo nome della cartella"
   },
   "dialog": {
     "warning": {
@@ -1600,7 +1603,8 @@
     "CloneAsFolder": "Clonare come cartella",
     "CloneSuccess": "La richiesta di clonazione è stata inviata con successo.",
     "CloneInfo": "Verrà clonata come cartella del tipo di utente.",
-    "category": "Categoria"
+    "category": "Categoria",
+    "CloneToFolder": "Clonare in una cartella"
   },
   "table": {
     "SettingTable": "Impostazione della tabella",

@@ -41,9 +41,20 @@ type Queries {
     """Added in 24.03.1"""
     id: String
     reference: String
-    architecture: String = "x86_64"
+    architecture: String = "aarch64"
   ): Image
-  images(is_installed: Boolean, is_operation: Boolean): [Image]
+  images(
+    """
+    Added in 19.09.0. If it is specified, fetch images installed on at least one agent.
+    """
+    is_installed: Boolean
+    is_operation: Boolean @deprecated(reason: "Deprecated since 24.03.4. This field is ignored if `image_filters` is specified and is not null.")
+
+    """
+    Added in 24.03.4. Allowed values are: [operational, customized]. When superuser queries with `customized` option set the resolver will return every customized images (including those not owned by callee). To resolve images owned by user only call `customized_images`.
+    """
+    image_filters: [String] = null
+  ): [Image]
 
   """Added in 24.03.1"""
   customized_images: [ImageNode]
@@ -96,7 +107,7 @@ type Queries {
   legacy_compute_session(sess_id: String!, domain_name: String, access_key: String): LegacyComputeSession
   vfolder_host_permissions: PredefinedAtomicPermission
   endpoint(endpoint_id: UUID!): Endpoint
-  endpoint_list(limit: Int!, offset: Int!, filter: String, order: String, domain_name: String, group_id: String, access_key: String, project: UUID): EndpointList
+  endpoint_list(limit: Int!, offset: Int!, filter: String, order: String, domain_name: String, group_id: String, user_uuid: String, project: UUID): EndpointList
   routing(routing_id: UUID!): Routing
   routing_list(limit: Int!, offset: Int!, filter: String, order: String, endpoint_id: UUID): RoutingList
   endpoint_token(token: String!): EndpointToken
@@ -222,6 +233,9 @@ scalar UUID
 type ImageNode implements Node {
   """The ID of the object"""
   id: ID!
+
+  """Added in 24.03.4. The undecoded id value stored in DB."""
+  row_id: UUID
   name: String
   humanized_name: String
   tag: String
@@ -233,6 +247,9 @@ type ImageNode implements Node {
   size_bytes: BigInt
   resource_limits: [ResourceLimit]
   supported_accelerators: [String]
+
+  """Added in 24.03.4. The array of image aliases."""
+  aliases: [String]
 }
 
 type KVPair {
@@ -888,6 +905,9 @@ type Endpoint implements Item {
   cluster_mode: String
   cluster_size: Int
   open_to_public: Boolean
+
+  """Added in 24.03.5."""
+  runtime_variant: RuntimeVariantInfo
   created_at: DateTime!
   destroyed_at: DateTime
   routings: [Routing]
@@ -895,6 +915,12 @@ type Endpoint implements Item {
   status: String
   lifecycle_stage: String
   errors: [InferenceSessionError!]!
+}
+
+"""Added in 24.03.5."""
+type RuntimeVariantInfo {
+  name: String
+  human_readable_name: String
 }
 
 type Routing implements Item {
@@ -978,7 +1004,7 @@ type ModelCard implements Node {
   """The ID of the object"""
   id: ID!
   name: String
-  vfolder: VirtualFolder
+  vfolder: VirtualFolderNode
   author: String
 
   """Human readable name of the model."""
@@ -1087,15 +1113,15 @@ type Mutations {
   rescan_images(registry: String): RescanImages
   preload_image(references: [String]!, target_agents: [String]!): PreloadImage
   unload_image(references: [String]!, target_agents: [String]!): UnloadImage
-  modify_image(architecture: String = "x86_64", props: ModifyImageInput!, target: String!): ModifyImage
+  modify_image(architecture: String = "aarch64", props: ModifyImageInput!, target: String!): ModifyImage
 
   """Added in 24.03.0"""
   forget_image_by_id(image_id: String!): ForgetImageById
-  forget_image(architecture: String = "x86_64", reference: String!): ForgetImage
+  forget_image(architecture: String = "aarch64", reference: String!): ForgetImage
 
   """Added in 24.03.1"""
   untag_image_from_registry(image_id: String!): UntagImageFromRegistry
-  alias_image(alias: String!, architecture: String = "x86_64", target: String!): AliasImage
+  alias_image(alias: String!, architecture: String = "aarch64", target: String!): AliasImage
   dealias_image(alias: String!): DealiasImage
   clear_images(registry: String): ClearImages
   create_keypair_resource_policy(name: String!, props: CreateKeyPairResourcePolicyInput!): CreateKeyPairResourcePolicy
@@ -1777,12 +1803,22 @@ input ModifyEndpointInput {
   name: String
   resource_group: String
 
-  """Added in 24.03.4."""
+  """
+  Added in 24.03.4. Must be set to `/models` when choosing `runtime_variant` other than `CUSTOM` or `CMD`.
+  """
   model_definition_path: String
   open_to_public: Boolean
 
-  """Added in 24.03.4."""
+  """
+  Added in 24.03.4. MODEL type VFolders are not allowed to be attached to model service session with this option.
+  """
   extra_mounts: [ExtraMountInput]
+
+  """Added in 24.03.5."""
+  environ: JSONString
+
+  """Added in 24.03.5."""
+  runtime_variant: String
 }
 
 input ImageRefType {
@@ -1795,4 +1831,14 @@ input ImageRefType {
 input ExtraMountInput {
   vfolder_id: String
   mount_destination: String
+
+  """
+  Added in 24.03.4. Set bind type of this mount. Shoud be one of (volume,bind,tmpfs,k8s-generic,k8s-hostpath). Default is 'bind'.
+  """
+  type: String
+
+  """
+  Added in 24.03.4. Set permission of this mount. Should be one of (ro,rw,wd). Default is null
+  """
+  permission: String
 }

@@ -659,7 +659,9 @@
       "FolderRestored": "Folder {{ folderName }} telah dipulihkan.",
       "FolderDeletedForever": "Folder {{ folderName }} telah dihapus selamanya.",
       "MovedToTrashBin": "Folder {{ folderName }} telah dipindahkan ke tempat sampah.",
-      "MoveToTrashBin": "Pindah ke tempat sampah"
+      "MoveToTrashBin": "Pindah ke tempat sampah",
+      "FolderCloneFailed": "Gagal mengkloning folder.",
+      "FolderClonePending": "Kloning folder sedang berlangsung."
     },
     "explorer": {
       "Delete": "Menghapus...",
@@ -751,7 +753,8 @@
     "New": "Baru",
     "Add": "Menambahkan",
     "CloningIsOnlyPossibleSameHost": "Saat ini, kloning hanya dapat dilakukan pada host yang sama.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Nama folder baru"
   },
   "dialog": {
     "warning": {
@@ -1600,7 +1603,8 @@
     "CloneAsFolder": "Mengkloning sebagai Folder",
     "CloneSuccess": "Permintaan kloning telah berhasil dikirim.",
     "CloneInfo": "Ini akan dikloning sebagai folder tipe pengguna Anda.",
-    "category": "Kategori"
+    "category": "Kategori",
+    "CloneToFolder": "Mengkloning ke folder"
   },
   "table": {
     "SettingTable": "Penataan meja",

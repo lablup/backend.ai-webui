@@ -658,7 +658,9 @@
       "FolderRestored": "Папка {{ folderName }} восстановлена.",
       "FolderDeletedForever": "Папка {{ folderName}} удалена навсегда.",
       "MoveToTrashBin": "Переместить в мусорное ведро",
-      "MovedToTrashBin": "Папка {{ folderName }} была перемещена в корзину."
+      "MovedToTrashBin": "Папка {{ folderName }} была перемещена в корзину.",
+      "FolderCloneFailed": "Не удалось клонировать папку.",
+      "FolderClonePending": "Выполняется клонирование папки."
     },
     "explorer": {
       "Delete": "Удалить...",
@@ -750,7 +752,8 @@
     "New": "Новый",
     "Add": "Добавить",
     "CloningIsOnlyPossibleSameHost": "В настоящее время клонирование возможно только на том же хосте.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Новое имя папки"
   },
   "dialog": {
     "warning": {
@@ -1600,7 +1603,8 @@
     "CloneAsFolder": "клонировать как папку",
     "CloneSuccess": "Запрос на клонирование успешно отправлен.",
     "CloneInfo": "Она будет клонирована как папка вашего типа пользователя.",
-    "category": "Категория"
+    "category": "Категория",
+    "CloneToFolder": "Клонирование в папку"
   },
   "table": {
     "SettingTable": "Сервировка стола",

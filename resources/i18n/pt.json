@@ -658,7 +658,9 @@
       "FolderRestored": "A pasta {{ folderName }} foi restaurada.",
       "FolderDeletedForever": "A pasta {{ folderName }} foi excluída definitivamente.",
       "MoveToTrashBin": "Mover para a lixeira",
-      "MovedToTrashBin": "A pasta {{ folderName }} foi movida para a lixeira."
+      "MovedToTrashBin": "A pasta {{ folderName }} foi movida para a lixeira.",
+      "FolderCloneFailed": "Falha ao clonar a pasta.",
+      "FolderClonePending": "A clonagem da pasta está a decorrer."
     },
     "explorer": {
       "Delete": "Excluir...",
@@ -750,7 +752,8 @@
     "New": "Novo",
     "Add": "Adicionar",
     "CloningIsOnlyPossibleSameHost": "Atualmente, a clonagem só é possível no mesmo host.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Novo nome da pasta"
   },
   "dialog": {
     "warning": {
@@ -1600,7 +1603,8 @@
     "CloneAsFolder": "Clonar como Pasta",
     "CloneSuccess": "O pedido de clone foi enviado com sucesso.",
     "category": "Categoria",
-    "CloneInfo": "Ele será clonado como sua pasta de tipo de usuário."
+    "CloneInfo": "Ele será clonado como sua pasta de tipo de usuário.",
+    "CloneToFolder": "Clonar para uma pasta"
   },
   "table": {
     "SettingTable": "Configuração de mesa",

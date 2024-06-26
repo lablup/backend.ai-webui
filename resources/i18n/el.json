@@ -658,7 +658,9 @@
       "FolderRestored": "Ο φάκελος {{ folderName }} έχει αποκατασταθεί.",
       "FolderDeletedForever": "Ο φάκελος {{ folderName }} έχει διαγραφεί οριστικά.",
       "MovedToTrashBin": "Ο φάκελος {{ folderName }} έχει μετακινηθεί στον κάδο απορριμμάτων.",
-      "MoveToTrashBin": "Μετακίνηση στον κάδο απορριμμάτων"
+      "MoveToTrashBin": "Μετακίνηση στον κάδο απορριμμάτων",
+      "FolderCloneFailed": "Απέτυχε η κλωνοποίηση του φακέλου.",
+      "FolderClonePending": "Η κλωνοποίηση του φακέλου βρίσκεται σε εξέλιξη."
     },
     "explorer": {
       "Delete": "Διαγράφω...",
@@ -750,7 +752,8 @@
     "New": "Νέος",
     "Add": "Προσθέστε",
     "CloningIsOnlyPossibleSameHost": "Προς το παρόν, η κλωνοποίηση είναι δυνατή μόνο στον ίδιο κεντρικό υπολογιστή.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Νέο όνομα φακέλου"
   },
   "dialog": {
     "warning": {
@@ -1600,7 +1603,8 @@
     "CloneAsFolder": "Clone as Folder",
     "CloneSuccess": "Η αίτηση κλωνοποίησης έχει σταλεί με επιτυχία.",
     "CloneInfo": "Θα κλωνοποιηθεί ως φάκελος τύπου χρήστη.",
-    "category": "Κατηγορία"
+    "category": "Κατηγορία",
+    "CloneToFolder": "Κλωνοποίηση σε φάκελο"
   },
   "table": {
     "SettingTable": "Ρύθμιση πίνακα",

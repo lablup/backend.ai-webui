@@ -658,7 +658,9 @@
       "DeleteForever": "Padam selama-lamanya",
       "Restore": "Pulihkan",
       "FolderRestored": "Folder {{ folderName }} telah dipulihkan.",
-      "FolderDeletedForever": "Folder {{ folderName }} telah dipadamkan selama-lamanya."
+      "FolderDeletedForever": "Folder {{ folderName }} telah dipadamkan selama-lamanya.",
+      "FolderCloneFailed": "Gagal mengklon folder.",
+      "FolderClonePending": "Pengklonan folder sedang dijalankan."
     },
     "explorer": {
       "Delete": "Padamkan ...",
@@ -750,7 +752,8 @@
     "New": "Baru",
     "Add": "Tambah",
     "CloningIsOnlyPossibleSameHost": "Pada masa ini, pengklonan hanya boleh dilakukan pada hos yang sama.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Nama folder baharu"
   },
   "dialog": {
     "warning": {
@@ -1600,7 +1603,8 @@
     "CloneAsFolder": "Klon sebagai Folder",
     "CloneSuccess": "Permintaan klon telah berjaya dihantar.",
     "CloneInfo": "Ia akan diklonkan sebagai folder jenis pengguna anda.",
-    "category": "kategori"
+    "category": "kategori",
+    "CloneToFolder": "Klon ke folder"
   },
   "table": {
     "SelectColumnToDisplay": "Pilih untuk lajur untuk dipaparkan",
