@@ -1,9 +1,9 @@
 import Flex from './Flex';
 import Board, { BoardProps } from '@cloudscape-design/board-components/board';
 import BoardItem from '@cloudscape-design/board-components/board-item';
-import { DataFallbackType } from '@cloudscape-design/board-components/internal/interfaces';
-import { Typography } from 'antd';
+import { Skeleton, Typography } from 'antd';
 import { createStyles } from 'antd-style';
+import { Suspense } from 'react';
 
 const useStyles = createStyles(({ css }) => ({
   board: css`
@@ -35,14 +35,14 @@ const useStyles = createStyles(({ css }) => ({
 }));
 
 interface BAICustomizableGridProps {
-  parsedItems: BoardProps.Item<DataFallbackType>[];
+  items: Array<BoardProps.Item>;
   onItemsChange: (
     event: CustomEvent<BoardProps.ItemsChangeDetail<unknown>>,
   ) => void;
 }
 
-const BAICustomizableGrid: React.FC<BAICustomizableGridProps> = ({
-  parsedItems,
+const BAIBoard: React.FC<BAICustomizableGridProps> = ({
+  items: parsedItems,
   ...BoardProps
 }) => {
   const { styles } = useStyles();
@@ -69,7 +69,9 @@ const BAICustomizableGrid: React.FC<BAICustomizableGridProps> = ({
               </Flex>
             }
           >
-            {item.data.content}
+            <Suspense fallback={<Skeleton active />}>
+              {item.data.content}
+            </Suspense>
           </BoardItem>
         );
       }}
@@ -158,4 +160,4 @@ const BAICustomizableGrid: React.FC<BAICustomizableGridProps> = ({
   );
 };
 
-export default BAICustomizableGrid;
+export default BAIBoard;

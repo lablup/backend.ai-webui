@@ -1,4 +1,5 @@
 import { jotaiStore } from '../components/DefaultProviders';
+import { SummaryItem } from '../pages/SummaryPage';
 import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 
@@ -16,6 +17,7 @@ interface UserSettings {
   last_window_close_time?: number;
   endpoints?: string[];
   auto_logout?: boolean;
+  summary_items?: Array<Omit<SummaryItem, 'data'>>;
 }
 
 interface GeneralSettings {
