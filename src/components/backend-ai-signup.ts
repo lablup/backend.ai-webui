@@ -186,7 +186,11 @@ export default class BackendAiSignup extends BackendAIPage {
   receiveTOSAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = '';
-      this.TOSdialog.tosLanguage = globalThis.backendaioptions.get('language');
+      this.TOSdialog.tosLanguage = globalThis.backendaioptions.get(
+        'language',
+        'default',
+        'general',
+      );
       this.TOSdialog.title = _t('webui.menu.TermsOfService') as string;
       this.TOSdialog.tosEntry = 'terms-of-service';
       this.TOSdialog.open();
@@ -196,7 +200,11 @@ export default class BackendAiSignup extends BackendAIPage {
   receivePPAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = '';
-      this.TOSdialog.tosLanguage = globalThis.backendaioptions.get('language');
+      this.TOSdialog.tosLanguage = globalThis.backendaioptions.get(
+        'language',
+        'default',
+        'general',
+      );
       this.TOSdialog.title = _t('webui.menu.PrivacyPolicy') as string;
       this.TOSdialog.tosEntry = 'privacy-policy';
       this.TOSdialog.open();

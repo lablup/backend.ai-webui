@@ -1533,7 +1533,11 @@ export default class BackendAiStorageList extends BackendAIPage {
             fullwidth
             @click="${(e) => this._keepFileExtension()}"
           >
-            ${globalThis.backendaioptions.get('language') !== 'ko'
+            ${globalThis.backendaioptions.get(
+              'language',
+              'default',
+              'general',
+            ) !== 'ko'
               ? html`
                   ${_text('data.explorer.KeepFileExtension') +
                   this.oldFileExtension}
@@ -1544,7 +1548,11 @@ export default class BackendAiStorageList extends BackendAIPage {
                 `}
           </mwc-button>
           <mwc-button unelevated fullwidth @click="${() => this._renameFile()}">
-            ${globalThis.backendaioptions.get('language') !== 'ko'
+            ${globalThis.backendaioptions.get(
+              'language',
+              'default',
+              'general',
+            ) !== 'ko'
               ? html`
                   ${this.newFileExtension
                     ? _text('data.explorer.UseNewFileExtension') +
