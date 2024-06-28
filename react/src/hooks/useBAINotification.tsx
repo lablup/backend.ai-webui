@@ -15,6 +15,7 @@ export interface NotificationState
   key: React.Key;
   created?: string;
   toTextKey?: string;
+  toText?: string;
   to?: string | To;
   open?: boolean;
   backgroundTask?: {

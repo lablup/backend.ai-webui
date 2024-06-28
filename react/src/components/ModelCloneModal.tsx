@@ -69,6 +69,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
   const mutationToClone = useTanMutation<
     {
       bgtask_id: string;
+      id: string;
     },
     { type?: string; title?: string; message?: string },
     {
@@ -113,8 +114,10 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
                           rejected: t('data.folders.FolderCloneFailed'),
                         },
                       },
+                      message: values.target_name,
+                      toText: t('data.folders.OpenAFolder'),
+                      to: `/data?tab=model&folder=${data.id}`,
                     });
-                    console.log(data);
                     props.onOk?.(e);
                   },
                   onError(error) {

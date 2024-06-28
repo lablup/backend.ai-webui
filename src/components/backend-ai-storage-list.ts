@@ -3400,7 +3400,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       breadcrumb: ['.'],
     };
 
-    const queryParams = new URLSearchParams();
+    const queryParams = new URLSearchParams(window.location.search);
     queryParams.set('folder', rowData.item.id);
     window.history.replaceState({}, '', `${location.pathname}?${queryParams}`);
 
