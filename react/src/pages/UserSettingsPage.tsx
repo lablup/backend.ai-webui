@@ -27,6 +27,7 @@ const UserPreferencesPage = () => {
   const [compactSidebar, setCompactSidebar] =
     useBAISettingUserState('compact_sidebar');
   const [language, setLanguage] = useBAISettingUserState('language');
+  const [, setCurrentLanguage] = useBAISettingUserState('current_language');
   const [autoAutomaticUpdateCheck, setAutoAutomaticUpdateCheck] =
     useBAISettingUserState('automatic_update_check');
   const [autoLogout, setAutoLogout] = useBAISettingUserState('auto_logout');
@@ -113,6 +114,7 @@ const UserPreferencesPage = () => {
           setValue: setLanguage,
           onChange: (value) => {
             setLanguage(value);
+            setCurrentLanguage(value);
             const event = new CustomEvent('language-changed', {
               detail: { language: value },
             });
