@@ -775,7 +775,8 @@
     "NoExtraMounts": "Sin soportes adicionales",
     "SyncRoutes": "Rutas de sincronización",
     "SyncRoutesFailed": "La solicitud de sincronización de ruta ha fallado.",
-    "SyncRoutesRequested": "Se ha solicitado sincronización de ruta."
+    "SyncRoutesRequested": "Se ha solicitado sincronización de ruta.",
+    "RuntimeVariant": "Variante de tiempo de ejecución de la inferencia"
   },
   "notification": {
     "Initializing": "Inicializando...",

@@ -1555,7 +1555,8 @@
     "SyncRoutes": "同步路线",
     "SyncRoutesFailed": "路由同步请求失败。",
     "SyncRoutesSuccess": "路由同步请求成功。",
-    "SyncRoutesRequested": "已请求路由同步。"
+    "SyncRoutesRequested": "已请求路由同步。",
+    "RuntimeVariant": "推理运行时变量"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

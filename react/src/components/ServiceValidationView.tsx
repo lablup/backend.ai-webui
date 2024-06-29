@@ -55,6 +55,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
         name: values.serviceName,
         desired_session_count: values.desiredRoutingCount,
         image: image,
+        runtime_variant: values.runtimeVariant,
         architecture: values.environments.image?.architecture as string,
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
