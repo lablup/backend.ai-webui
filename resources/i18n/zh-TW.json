@@ -405,7 +405,8 @@
     "SessionId": "會話 ID",
     "EnvironmentAndVersion": "環境及版本",
     "Tags": "標籤",
-    "fGPU": "GPU"
+    "fGPU": "GPU",
+    "ATOMPlusEnabled": "ATOM+ NPU 啟用"
   },
   "button": {
     "Cancel": "取消",

@@ -1248,7 +1248,8 @@
     "SessionId": "ID de sesión",
     "EnvironmentAndVersion": "Entorno y versión",
     "Tags": "Etiquetas",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU Activado"
   },
   "settings": {
     "ATOMsupport": "ATOM",

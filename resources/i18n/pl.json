@@ -405,7 +405,8 @@
     "SessionId": "Identyfikator sesji",
     "EnvironmentAndVersion": "Środowisko i wersja",
     "Tags": "Tagi",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU Włączony"
   },
   "button": {
     "Cancel": "Anuluj",

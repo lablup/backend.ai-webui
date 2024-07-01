@@ -27,6 +27,7 @@ export const useResourceSlots = () => {
     'tpu.device'?: string;
     'ipu.device'?: string;
     'atom.device'?: string;
+    'atom-plus.device'?: string;
     'warboy.device'?: string;
     'hyperaccel-lpu.device'?: string;
   }>({
