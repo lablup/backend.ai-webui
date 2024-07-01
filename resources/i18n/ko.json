@@ -511,7 +511,7 @@
     "Unset": "초기화",
     "OK": "확인",
     "Download": "다운로드",
-    "Clone": "복사",
+    "Clone": "복제",
     "Config": "설정",
     "Next": "다음",
     "Previous": "이전",
@@ -775,7 +775,9 @@
       "FolderRestored": "{{ folderName }} 폴더가 복원되었습니다.",
       "FolderDeletedForever": "{{ folderName }} 폴더가 완전히 삭제되었습니다.",
       "MoveToTrashBin": "휴지통으로 이동",
-      "MovedToTrashBin": "{{ folderName }} 폴더가 휴지통으로 이동되었습니다."
+      "MovedToTrashBin": "{{ folderName }} 폴더가 휴지통으로 이동되었습니다.",
+      "FolderCloneFailed": "폴더 복제에 실패하였습니다.",
+      "FolderClonePending": "폴더 복제가 진행중입니다."
     },
     "explorer": {
       "Delete": "삭제",
@@ -858,7 +860,8 @@
     "New": "새로운",
     "Add": "추가",
     "CloningIsOnlyPossibleSameHost": "현재 폴더 복사는 동일한 호스트간에만 가능합니다.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "새 폴더 이름"
   },
   "dialog": {
     "warning": {
@@ -1599,9 +1602,11 @@
     "Category": "카테고리",
     "Label": "레이블",
     "Task": "작업",
-    "CloneAsFolder": "새 폴더로 복사",
+    "CloneAsFolder": "새 폴더로 복제",
     "CloneSuccess": "복사 요청이 성공적으로 보내졌습니다.",
-    "CloneInfo": "새로운 사용자 폴더로 복사됩니다."
+    "CloneInfo": "새로운 사용자 폴더로 복제됩니다.",
+    "CloneToFolder": "폴더로 복제",
+    "FolderAlreadyExists": "같은 이름의 폴더가 존재합니다."
   },
   "table": {
     "SettingTable": "테이블 설정",

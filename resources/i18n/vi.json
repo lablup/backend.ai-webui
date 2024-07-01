@@ -658,7 +658,9 @@
       "FolderRestored": "Thư mục {{ folderName }} đã được khôi phục.",
       "FolderDeletedForever": "Thư mục {{ folderName }} đã bị xóa vĩnh viễn.",
       "MoveToTrashBin": "Di chuyển vào thùng rác",
-      "MovedToTrashBin": "Thư mục {{ folderName }} đã được chuyển vào thùng rác."
+      "MovedToTrashBin": "Thư mục {{ folderName }} đã được chuyển vào thùng rác.",
+      "FolderCloneFailed": "Không sao chép được thư mục.",
+      "FolderClonePending": "Đang nhân bản thư mục."
     },
     "explorer": {
       "Delete": "Xóa bỏ...",
@@ -750,7 +752,8 @@
     "New": "Mới",
     "Add": "Thêm vào",
     "CloningIsOnlyPossibleSameHost": "Hiện tại, việc nhân bản chỉ có thể thực hiện được trên cùng một máy chủ.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Tên thư mục mới"
   },
   "dialog": {
     "warning": {
@@ -1600,7 +1603,9 @@
     "CloneAsFolder": "Sao chép dưới dạng Thư mục",
     "CloneSuccess": "Yêu cầu nhân bản đã được gửi thành công.",
     "CloneInfo": "Nó sẽ được sao chép thành thư mục loại người dùng của bạn.",
-    "category": "Loại"
+    "category": "Loại",
+    "CloneToFolder": "Sao chép vào một thư mục",
+    "FolderAlreadyExists": "Một thư mục có tên này đã tồn tại."
   },
   "table": {
     "SettingTable": "Cài đặt bảng",
