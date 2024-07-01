@@ -1266,7 +1266,6 @@ export default class BackendAISessionList extends BackendAIPage {
           }, refreshTime);
         }
         this._listStatus?.hide();
-        console.log(err);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
