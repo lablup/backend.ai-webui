@@ -68,7 +68,7 @@
       "MyEnvironments": "私の環境",
       "ResourcePolicy": "リソースポリシー"
     },
-    "YouAreOffline": "あなたは今オフラインです",
+    "YouAreOffline": "オフライン：どのネットワークにも接続されていない。",
     "YouAreOnline": "あなたは今オンラインです",
     "NOTFOUND": " <p>おっと！ <br/>ページが見つかりません... </p>",
     "DescNOTFOUND": "申し訳ありませんが、お探しのページが見つかりませんでした。",

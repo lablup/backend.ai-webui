@@ -68,7 +68,7 @@
       "MyEnvironments": "Moje Środowiska",
       "ResourcePolicy": "Polityka zasobów"
     },
-    "YouAreOffline": "Jesteś teraz offline",
+    "YouAreOffline": "Offline: Brak połączenia z siecią.",
     "YouAreOnline": "Jesteś teraz online",
     "NOTFOUND": " <p> Ups! <br/> Nie znaleziono strony... </p>",
     "DescNOTFOUND": "Przepraszamy, nie można znaleźć strony, której szukasz.",

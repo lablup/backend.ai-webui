@@ -6,6 +6,7 @@ import BAIErrorBoundary from '../BAIErrorBoundary';
 import BAISider from '../BAISider';
 import Flex from '../Flex';
 import ForceTOTPChecker from '../ForceTOTPChecker';
+import NetworkStatusBanner from '../NetworkStatusBanner';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIHeader from './WebUIHeader';
@@ -169,6 +170,7 @@ function MainLayout() {
                     zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT,
                   }}
                 >
+                  <NetworkStatusBanner />
                   <WebUIHeader
                     onClickMenuIcon={() => setSideCollapsed((v) => !v)}
                     containerElement={contentScrollFlexRef.current}

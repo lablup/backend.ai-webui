@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
-import { navigate, updateOffline } from '../backend-ai-app';
+import { navigate } from '../backend-ai-app';
 // import '../lib/backend.ai-client-esm';
 import { default as TabCount } from '../lib/TabCounter';
 import {
@@ -19,7 +19,6 @@ import './backend-ai-help-button';
 import './backend-ai-indicator-pool';
 import './backend-ai-login';
 import BackendAIMetadataStore from './backend-ai-metadata-store';
-import './backend-ai-offline-indicator';
 import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-project-switcher';
 import './backend-ai-resource-broker';
@@ -52,7 +51,6 @@ import { customElement, property, query } from 'lit/decorators.js';
 import toml from 'markty-toml';
 // PWA components
 import { connect } from 'pwa-helpers/connect-mixin';
-import { installOfflineWatcher } from 'pwa-helpers/network';
 import { installRouter } from 'pwa-helpers/router';
 
 registerTranslateConfig({
@@ -107,7 +105,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     | 'feedback'
     | 'notification'
     | 'task' = '';
-  @property({ type: Boolean }) _offlineIndicatorOpened = false;
   @property({ type: Boolean }) _offline = false;
   @property({ type: Object }) config = Object();
   @property({ type: Object }) notification;
@@ -236,7 +233,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     installRouter((location) =>
       store.dispatch(navigate(decodeURIComponent(location.pathname))),
     );
-    installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
     let configPath;
     if (globalThis.isElectron) {
       configPath = './config.toml';
@@ -867,7 +863,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this._page = state.app.page;
     this._pageParams = state.app.params;
     this._offline = state.app.offline;
-    this._offlineIndicatorOpened = state.app.offlineIndicatorOpened;
     // this._drawerOpened = state.app.drawerOpened;
     globalThis.currentPage = this._page;
     globalThis.currentPageParams = this._pageParams;
@@ -966,9 +961,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           <mwc-circular-progress indeterminate></mwc-circular-progress>
         </backend-ai-edu-applauncher>
       </div>
-      <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
-        ${this._offline ? _t('webui.YouAreOffline') : _t('webui.YouAreOnline')}.
-      </backend-ai-offline-indicator>
+
       <backend-ai-login active id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-backendai-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>

@@ -68,7 +68,7 @@
       "MyEnvironments": "Lingkungan Saya",
       "ResourcePolicy": "Kebijakan Sumber Daya"
     },
-    "YouAreOffline": "Anda sekarang offline",
+    "YouAreOffline": "Offline: Tidak terhubung ke jaringan apa pun.",
     "YouAreOnline": "Anda sekarang online",
     "NOTFOUND": " <p> Ups! <br/> Halaman tidak ditemukan... </p>",
     "DescNOTFOUND": "Maaf, halaman yang anda cari tidak ditemukan.",

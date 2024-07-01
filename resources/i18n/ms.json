@@ -68,7 +68,7 @@
       "MyEnvironments": "Persekitaran Saya",
       "ResourcePolicy": "Dasar Sumber"
     },
-    "YouAreOffline": "Anda kini berada di luar talian",
+    "YouAreOffline": "Luar talian: Tidak disambungkan ke mana-mana rangkaian.",
     "YouAreOnline": "Anda kini dalam talian",
     "NOTFOUND": " <p> Alamak! <br/> Halaman tidak dijumpai ... </p>",
     "DescNOTFOUND": "Maaf, halaman yang anda cari tidak dapat dijumpai.",

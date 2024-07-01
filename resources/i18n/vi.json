@@ -68,7 +68,7 @@
       "MyEnvironments": "Môi trường của tôi",
       "ResourcePolicy": "Chính sách tài nguyên"
     },
-    "YouAreOffline": "Bạn hiện đang ngoại tuyến",
+    "YouAreOffline": "Ngoại tuyến: Không kết nối với bất kỳ mạng nào.",
     "YouAreOnline": "Bạn hiện đang trực tuyến",
     "NOTFOUND": " <p> Rất tiếc! <br/> Không tìm thấy trang ... </p>",
     "DescNOTFOUND": "Xin lỗi, không thể tìm thấy trang bạn đang tìm.",

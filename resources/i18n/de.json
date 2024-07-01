@@ -68,7 +68,7 @@
       "MyEnvironments": "Meine Umgebungen",
       "ResourcePolicy": "Ressourcenpolitik"
     },
-    "YouAreOffline": "Du bist jetzt offline",
+    "YouAreOffline": "Offline: Keine Verbindung zu einem Netzwerk.",
     "YouAreOnline": "Sie sind jetzt online",
     "NOTFOUND": " <p> Hoppla! <br/> Seite nicht gefunden... </p>",
     "DescNOTFOUND": "Die von Ihnen gesuchte Seite konnte leider nicht gefunden werden.",

@@ -68,7 +68,7 @@
       "MyEnvironments": "Ortamlarım",
       "ResourcePolicy": "Kaynak Politikası"
     },
-    "YouAreOffline": "Şu anda çevrimdışısın",
+    "YouAreOffline": "Çevrimdışı: Herhangi bir ağa bağlı değil.",
     "YouAreOnline": "artık çevrimiçisin",
     "NOTFOUND": " <p> Hata! <br/> Sayfa Bulunamadı... </p>",
     "DescNOTFOUND": "Üzgünüz, aradığınız sayfa bulunamadı.",

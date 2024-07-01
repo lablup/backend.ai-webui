@@ -1503,7 +1503,7 @@
     "DescNOTFOUND": "Valitettavasti etsimääsi sivua ei löytynyt.",
     "NOTFOUND": "<p>Oops!<br/>Sivua ei löydy...</p>",
     "UNAUTHORIZEDACCESS": "Luvaton pääsy",
-    "YouAreOffline": "Olet nyt offline-tilassa",
+    "YouAreOffline": "Offline: Ei yhteyttä mihinkään verkkoon.",
     "YouAreOnline": "Olet nyt verkossa",
     "menu": {
       "AIAccelerator": "AI-kiihdyttämö",

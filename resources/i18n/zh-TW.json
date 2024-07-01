@@ -68,7 +68,7 @@
       "MyEnvironments": "我的環境",
       "ResourcePolicy": "資源政策"
     },
-    "YouAreOffline": "您現在離線",
+    "YouAreOffline": "脱机：未连接任何网络。",
     "YouAreOnline": "您現在在線",
     "NOTFOUND": " <p> 糟糕！ <br/> 頁面未找到... </p>",
     "DescNOTFOUND": "抱歉，找不到您要找的頁面。",
