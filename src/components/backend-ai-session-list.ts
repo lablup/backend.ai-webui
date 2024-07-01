@@ -1873,7 +1873,7 @@ export default class BackendAISessionList extends BackendAIPage {
       this.terminateSessionDialog.accessKey,
       forced,
     )
-      .then((response) => {
+      .then(() => {
         this._selected_items = [];
         this._clearCheckboxes();
         this.terminateSessionDialog.hide();
@@ -1884,18 +1884,10 @@ export default class BackendAISessionList extends BackendAIPage {
         });
         document.dispatchEvent(event);
       })
-      .catch((err) => {
+      .catch(() => {
         this._selected_items = [];
         this._clearCheckboxes();
         this.terminateSessionDialog.hide();
-        this.notification.text = PainKiller.relieve(
-          'Problem occurred during termination.',
-        );
-        this.notification.show(true, err);
-        const event = new CustomEvent('backend-ai-resource-refreshed', {
-          detail: 'running',
-        });
-        document.dispatchEvent(event);
       });
   }
 
@@ -1926,20 +1918,16 @@ export default class BackendAISessionList extends BackendAIPage {
     });
     this._selected_items = [];
     return Promise.all(terminateSessionQueue)
-      .then((response) => {
+      .then(() => {
         this.terminateSelectedSessionsDialog.hide();
         this._clearCheckboxes();
         this.multipleActionButtons.style.display = 'none';
         this.notification.text = _text('session.SessionsTerminated');
         this.notification.show();
       })
-      .catch((err) => {
+      .catch(() => {
         this.terminateSelectedSessionsDialog.hide();
         this._clearCheckboxes();
-        this.notification.text = PainKiller.relieve(
-          'Problem occurred during termination.',
-        );
-        this.notification.show(true, err);
       });
   }
 
@@ -1955,25 +1943,17 @@ export default class BackendAISessionList extends BackendAIPage {
       return this._terminateKernel(item['session_id'], item.access_key);
     });
     return Promise.all(terminateSessionQueue)
-      .then((response) => {
+      .then(() => {
         this._selected_items = [];
         this._clearCheckboxes();
         this.multipleActionButtons.style.display = 'none';
         this.notification.text = _text('session.SessionsTerminated');
         this.notification.show();
       })
-      .catch((err) => {
+      .catch(() => {
         this._listStatus?.hide();
         this._selected_items = [];
         this._clearCheckboxes();
-        if ('description' in err) {
-          this.notification.text = PainKiller.relieve(err.description);
-        } else {
-          this.notification.text = PainKiller.relieve(
-            'Problem occurred during termination.',
-          );
-        }
-        this.notification.show(true, err);
       });
   }
 
@@ -2025,6 +2005,7 @@ export default class BackendAISessionList extends BackendAIPage {
             this.notification.show(true, err);
           }
         }
+        throw err;
       });
   }
 
