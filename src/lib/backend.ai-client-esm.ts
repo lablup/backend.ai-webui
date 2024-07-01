@@ -1049,6 +1049,9 @@ class Client {
       if (resources['atom.device']) {
         config['atom.device'] = parseInt(resources['atom.device']);
       }
+      if (resources['atom-plus.device']) {
+        config['atom-plus.device'] = parseInt(resources['atom-plus.device']);
+      }
       if (resources['warboy.device']) {
         config['warboy.device'] = parseInt(resources['warboy.device']);
       }
@@ -3940,6 +3943,9 @@ class Resources {
     this.resources['atom.device'] = {};
     this.resources['atom.device'].total = 0;
     this.resources['atom.device'].used = 0;
+    this.resources['atom-plus.device'] = {};
+    this.resources['atom-plus.device'].total = 0;
+    this.resources['atom-plus.device'].used = 0;
     this.resources['warboy.device'] = {};
     this.resources['warboy.device'].total = 0;
     this.resources['warboy.device'].used = 0;
@@ -4070,6 +4076,16 @@ class Resources {
               this.resources['atom.device'].used =
                 parseInt(this.resources['atom.device'].used) +
                 Math.floor(Number(occupied_slots['atom.device']));
+            }
+            if ('atom-plus.device' in available_slots) {
+              this.resources['atom-plus.device'].total =
+                parseInt(this.resources['atom-plus.device'].total) +
+                Math.floor(Number(available_slots['atom-plus.device']));
+            }
+            if ('atom-plus.device' in occupied_slots) {
+              this.resources['atom-plus.device'].used =
+                parseInt(this.resources['atom-plus.device'].used) +
+                Math.floor(Number(occupied_slots['atom-plus.device']));
             }
             if ('warboy.device' in available_slots) {
               this.resources['warboy.device'].total =

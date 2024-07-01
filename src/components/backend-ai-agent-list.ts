@@ -513,6 +513,24 @@ export default class BackendAIAgentList extends BackendAIPage {
                   agents[objectKey].used_atom_slots_ratio * 100
                 ).toFixed(2);
               }
+              if ('atom-plus.device' in available_slots) {
+                agents[objectKey].atom_plus_slots = parseInt(
+                  available_slots['atom-plus.device'],
+                );
+                if ('atom-plus.device' in occupied_slots) {
+                  agents[objectKey].used_atom_plus_slots = parseInt(
+                    occupied_slots['atom-plus.device'],
+                  );
+                } else {
+                  agents[objectKey].used_atom_plus_slots = 0;
+                }
+                agents[objectKey].used_atom_plus_slots_ratio =
+                  agents[objectKey].used_atom_plus_slots /
+                  agents[objectKey].atom_plus_slots;
+                agents[objectKey].total_atom_plus_percent = (
+                  agents[objectKey].used_atom_plus_slots_ratio * 100
+                ).toFixed(2);
+              }
               if ('warboy.device' in available_slots) {
                 agents[objectKey].warboy_slots = parseInt(
                   available_slots['warboy.device'],
@@ -1180,6 +1198,31 @@ export default class BackendAIAgentList extends BackendAIPage {
                     id="atom-bar"
                     progress="${rowData.item.used_atom_slots_ratio}"
                     description="${rowData.item.used_atom_slots}"
+                  ></lablup-progress-bar>
+                </div>
+              `
+            : html``}
+          ${rowData.item.atom_plus_slots
+            ? html`
+                <div
+                  class="layout horizontal center-justified flex progress-bar-section"
+                >
+                  <div class="layout horizontal start resource-indicator">
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/atom_plus.svg"
+                    />
+                    <span class="monospace" style="padding-left:5px;">
+                      ${rowData.item.used_atom_plus_slots}/${rowData.item
+                        .atom_plus_slots}
+                    </span>
+                    <span class="indicator">ATOM+</span>
+                  </div>
+                  <span class="flex"></span>
+                  <lablup-progress-bar
+                    id="atom-plus-bar"
+                    progress="${rowData.item.used_atom_plus_slots_ratio}"
+                    description="${rowData.item.used_atom_plus_slots}"
                   ></lablup-progress-bar>
                 </div>
               `

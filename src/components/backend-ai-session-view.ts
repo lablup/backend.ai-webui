@@ -394,6 +394,7 @@ export default class BackendAISessionView extends BackendAIPage {
       tpu_device: 'tpu.device',
       ipu_device: 'ipu.device',
       atom_device: 'atom.device',
+      atom_plus_device: 'atom-plus.device',
       warboy_device: 'warboy.device',
       hyperaccel_lpu_device: 'hyperaccel-lpu.device',
     };
@@ -445,7 +446,7 @@ export default class BackendAISessionView extends BackendAIPage {
             let cuda_mem: number = 0;
             let io_read: number = 0;
             let io_write: number = 0;
-            let agents: Array<string> = [];
+            const agents: Array<string> = [];
 
             // In order to get session-based metrics
             // we will get average value of per-container based metrics
