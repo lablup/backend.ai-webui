@@ -1517,7 +1517,9 @@
     "NoExtraMounts": "Keine zusätzlichen Halterungen",
     "SyncRoutes": "Routen synchronisieren",
     "SyncRoutesFailed": "Die Anfrage zur Routensynchronisierung ist fehlgeschlagen.",
-    "SyncRoutesRequested": "Routensynchronisierung wurde angefordert."
+    "SyncRoutesRequested": "Routensynchronisierung wurde angefordert.",
+    "UpdateService": "Update-Service",
+    "StartNewService": "Neuen Dienst starten"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

@@ -4,7 +4,11 @@ import Flex from '../components/Flex';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import { baiSignedRequestWithPromise } from '../helper';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import {
+  useSuspendedBackendaiClient,
+  useUpdatableState,
+  useWebUINavigate,
+} from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 // import { getSortOrderByName } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -59,6 +63,7 @@ export type Endpoint = NonNullable<
 const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
+  const webuiNavigate = useWebUINavigate();
   const { token } = theme.useToken();
   const curProject = useCurrentProjectValue();
   const [isOpenServiceLauncher, setIsOpenServiceLauncher] = useState(false);
@@ -151,8 +156,8 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 row.created_user_email !== currentUser.email)
             }
             onClick={() => {
-              setIsOpenServiceLauncher(!isOpenServiceLauncher);
               setEditingModelService(row);
+              webuiNavigate('/service/update/' + row.endpoint_id);
             }}
           />
           <Popconfirm
@@ -431,7 +436,7 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
               <Button
                 type="primary"
                 onClick={() => {
-                  setIsOpenServiceLauncher(true);
+                  webuiNavigate('/service/start');
                 }}
               >
                 {t('modelService.StartService')}

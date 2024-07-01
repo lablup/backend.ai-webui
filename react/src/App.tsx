@@ -47,6 +47,9 @@ const ResourcesPage = React.lazy(() => import('./pages/ResourcesPage'));
 const FolderExplorerOpener = React.lazy(
   () => import('./components/FolderExplorerOpener'),
 );
+const ServiceLauncherPage = React.lazy(
+  () => import('./pages/ServiceLauncherPage'),
+);
 
 const router = createBrowserRouter([
   {
@@ -122,6 +125,24 @@ const router = createBrowserRouter([
           </BAIErrorBoundary>
         ),
         handle: { labelKey: 'webui.menu.Serving' },
+      },
+      {
+        path: '/service/start',
+        handle: { labelKey: 'modelService.StartNewService' },
+        element: (
+          <BAIErrorBoundary>
+            <ServiceLauncherPage />
+          </BAIErrorBoundary>
+        ),
+      },
+      {
+        path: '/service/update/:endpointId',
+        handle: { labelKey: 'modelService.UpdateService' },
+        element: (
+          <BAIErrorBoundary>
+            <ServiceLauncherPage />
+          </BAIErrorBoundary>
+        ),
       },
       {
         path: '/serving/:serviceId',
