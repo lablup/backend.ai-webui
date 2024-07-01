@@ -49,7 +49,7 @@ const FolderExplorerOpener = () => {
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDataViewReady]); // don't need to watch `folderId` because this used only once right after the backend-ai-data-view is ready
+  }, [isDataViewReady, folderId]); // don't need to watch `folderId` because this used only once right after the backend-ai-data-view is ready
 
   return null;
 };

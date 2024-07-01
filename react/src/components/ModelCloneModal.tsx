@@ -23,25 +23,33 @@ import { useFragment } from 'react-relay';
 
 interface ModelCloneModalProps extends BAIModalProps {
   vfolderNode: ModelCloneModalVFolderFragment$key | null;
+  deprecatedVFolderInfo?: {
+    id: string;
+    name: string;
+    host: string;
+  };
 }
 const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
   // sourceFolderName,
   // sourceFolderHost,
   vfolderNode,
+  deprecatedVFolderInfo,
   ...props
 }) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const vfolder = useFragment(
-    graphql`
-      fragment ModelCloneModalVFolderFragment on VirtualFolderNode {
-        id
-        name
-        host
-      }
-    `,
-    vfolderNode,
-  );
+  const vfolder =
+    useFragment(
+      graphql`
+        fragment ModelCloneModalVFolderFragment on VirtualFolderNode {
+          id
+          name
+          host
+        }
+      `,
+      vfolderNode,
+    ) || deprecatedVFolderInfo;
+
   const formRef = useRef<
     FormInstance<{
       target_name: string;
@@ -55,13 +63,6 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
   const painKiller = usePainKiller();
   const { upsertNotification } = useSetBAINotification();
 
-  // const { data: allowed_vfolder_types } = useTanQuery({
-  //   queryKey: ['modelCloneModal', 'vfolder_allowed_types'],
-  //   queryFn: () => {
-  //     return baiClient.vfolder.list_allowed_types();
-  //   },
-  // });
-
   const [extraNameError, setExtraNameError] = useState<
     Pick<FormItemProps, 'validateStatus' | 'help'>
   >({});
@@ -69,6 +70,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
   const mutationToClone = useTanMutation<
     {
       bgtask_id: string;
+      id: string;
     },
     { type?: string; title?: string; message?: string },
     {
@@ -113,8 +115,10 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
                           rejected: t('data.folders.FolderCloneFailed'),
                         },
                       },
+                      message: values.target_name,
+                      toText: t('data.folders.OpenAFolder'),
+                      to: `/data?tab=model&folder=${data.id}`,
                     });
-                    console.log(data);
                     props.onOk?.(e);
                   },
                   onError(error) {

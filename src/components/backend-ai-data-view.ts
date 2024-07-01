@@ -105,6 +105,14 @@ export default class BackendAIData extends BackendAIPage {
   @query('#cloneable-container') cloneableContainer!: HTMLDivElement;
   @query('#general-folder-storage')
   generalFolderStorageListElement!: BackendAIStorageList;
+  @query('#data-folder-storage')
+  dataFolderStorageListElement!: BackendAIStorageList;
+  @query('#automount-folder-storage')
+  automountFolderStorageListElement!: BackendAIStorageList;
+  @query('#model-folder-storage')
+  modelFolderStorageListElement!: BackendAIStorageList;
+  @query('#trash-bin-folder-storage')
+  trashBinFolderStorageListElement!: BackendAIStorageList;
 
   static get styles(): CSSResultGroup {
     return [
@@ -820,7 +828,19 @@ export default class BackendAIData extends BackendAIPage {
 
   openFolderExplorer = (e) => {
     if (e?.detail?.vFolder) {
-      this.generalFolderStorageListElement._folderExplorer({
+      const activeStorageList =
+        this._activeTab === 'general'
+          ? this.generalFolderStorageListElement
+          : this._activeTab === 'model'
+            ? this.modelFolderStorageListElement
+            : this._activeTab === 'automount'
+              ? this.automountFolderStorageListElement
+              : this._activeTab === 'data'
+                ? this.dataFolderStorageListElement
+                : this._activeTab === 'trash-bin'
+                  ? this.trashBinFolderStorageListElement
+                  : null;
+      activeStorageList?._folderExplorer({
         item: e?.detail?.vFolder,
       });
     }

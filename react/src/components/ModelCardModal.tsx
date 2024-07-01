@@ -66,8 +66,13 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
         vfolder {
           cloneable
         }
-        vfolder_node {
+        vfolder_node @since(version: "24.09.*") {
           ...ModelCloneModalVFolderFragment
+        }
+        vfolder {
+          id
+          name
+          host
         }
       }
     `,
@@ -304,6 +309,11 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       <Suspense>
         <ModelCloneModal
           vfolderNode={model_card?.vfolder_node || null}
+          deprecatedVFolderInfo={{
+            id: model_card?.vfolder?.id || '',
+            host: model_card?.vfolder?.host || '',
+            name: model_card?.vfolder?.name || '',
+          }}
           title={t('modelStore.CloneAsFolder')}
           open={visibleCloneModal}
           onOk={() => {
