@@ -977,49 +977,46 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                     <div
                       class="layout vertical center center-justified resource-name"
                     >
-                      <span class="gauge-name
-                        >ATOM+
-                      </span>
+                      <span class="gauge-name">ATOM+</span>
                     </div>
                     <div class="layout vertical center-justified wrap">
                       <lablup-progress-bar
                         id="atom-plus-usage-bar"
                         class="start"
-                        progress="${
-                          this.used_resource_group_slot_percent
-                            .atom_plus_device / 100.0
-                        }"
-                        description="${
-                          this.used_resource_group_slot.atom_plus_device
-                        }/${this.total_resource_group_slot.atom_plus_device}"
+                        progress="${this.used_resource_group_slot_percent
+                          .atom_plus_device / 100.0}"
+                        description="${this.used_resource_group_slot
+                          .atom_plus_device}/${this.total_resource_group_slot
+                          .atom_plus_device}"
                       ></lablup-progress-bar>
                       <lablup-progress-bar
                         id="atom-plus-usage-bar-2"
                         class="end"
-                        progress="${
-                          this.used_slot_percent.atom_plus_device / 100.0
-                        }"
-                        buffer="${
-                          this.used_slot_percent.atom_plus_device / 100.0
-                        }"
-                        description="${this.used_slot.atom_plus_device}/${
-                          this.total_slot.atom_plus_device
-                        }"
+                        progress="${this.used_slot_percent.atom_plus_device /
+                        100.0}"
+                        buffer="${this.used_slot_percent.atom_plus_device /
+                        100.0}"
+                        description="${this.used_slot.atom_plus_device}/${this
+                          .total_slot.atom_plus_device}"
                       ></lablup-progress-bar>
                     </div>
                     <div class="layout vertical center center-justified">
-                      <span class="percentage
+                      <span
+                        class="percentage
                         start-bar
-                      ">
+                      "
+                      >
                         ${this._numberWithPostfix(
                           this.used_resource_group_slot_percent
                             .atom_plus_device,
                           '%',
                         )}
                       </span>
-                      <span class="percentage
+                      <span
+                        class="percentage
                         end-bar
-                      ">
+                      "
+                      >
                         ${this._numberWithPostfix(
                           this.used_slot_percent.atom_plus_device,
                           '%',
@@ -1027,7 +1024,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       </span>
                     </div>
                   </div>
-              `
+                `
               : html``}
             ${this.total_slot.warboy_device
               ? html`
