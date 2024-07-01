@@ -419,7 +419,8 @@
     "SessionId": "Session ID",
     "EnvironmentAndVersion": "Environment and Version",
     "Tags": "Tags",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU Enabled"
   },
   "modelService": {
     "Services": "Services",

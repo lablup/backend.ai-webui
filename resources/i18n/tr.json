@@ -405,7 +405,8 @@
     "SessionId": "Oturum kimliği",
     "EnvironmentAndVersion": "Ortam ve Sürüm",
     "Tags": "Etiketler",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU Etkinleştirilmiş"
   },
   "button": {
     "Cancel": "İptal etmek",

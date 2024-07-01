@@ -405,7 +405,8 @@
     "SessionId": "ID de session",
     "EnvironmentAndVersion": "Environnement et version",
     "Tags": "Mots clés",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU Activé"
   },
   "button": {
     "Cancel": "Annuler",

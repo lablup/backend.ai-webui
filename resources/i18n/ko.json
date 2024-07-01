@@ -406,7 +406,8 @@
     "SessionId": "세션 ID",
     "EnvironmentAndVersion": "환경 및 버전",
     "Tags": "태그",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU 사용중"
   },
   "modelService": {
     "Services": "모델 서비스",

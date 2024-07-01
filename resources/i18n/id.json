@@ -406,7 +406,8 @@
     "EnvironmentAndVersion": "Lingkungan dan Versi",
     "Tags": "Tag",
     "Agents": "Agen",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU Diaktifkan"
   },
   "button": {
     "Cancel": "Batalkan",

@@ -405,7 +405,8 @@
     "SessionId": "Идентификатор сессии",
     "EnvironmentAndVersion": "Окружающая среда и версия",
     "Tags": "Теги",
-    "fGPU": "фГПУ"
+    "fGPU": "фГПУ",
+    "ATOMPlusEnabled": "ATOM+ NPU Включено"
   },
   "button": {
     "Cancel": "Отмена",

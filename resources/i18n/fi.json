@@ -1246,7 +1246,8 @@
     "SessionId": "Istunnon tunniste",
     "EnvironmentAndVersion": "Ympäristö ja versio",
     "Tags": "Tunnisteet",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU Käytössä"
   },
   "settings": {
     "ATOMsupport": "ATOM",

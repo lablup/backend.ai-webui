@@ -405,7 +405,8 @@
     "SessionId": "セッションID",
     "EnvironmentAndVersion": "環境とバージョン",
     "Tags": "タグ",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU 有効"
   },
   "button": {
     "Cancel": "キャンセル",

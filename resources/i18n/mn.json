@@ -407,7 +407,8 @@
     "SessionId": "Сешн Id",
     "EnvironmentAndVersion": "Хүрээлэн буй орчин ба хувилбар",
     "Tags": "Шошго",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU Идэвхжүүлсэн"
   },
   "button": {
     "Cancel": "Цуцлах",

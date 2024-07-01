@@ -405,7 +405,8 @@
     "SessionId": "Id Sesi",
     "EnvironmentAndVersion": "Persekitaran dan Versi",
     "Tags": "Tag",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU Didayakan"
   },
   "button": {
     "Cancel": "Batal",
