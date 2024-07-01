@@ -1,6 +1,6 @@
 {
   "name": "backend-ai-webui-react",
-  "version": "24.03.5",
+  "version": "24.03.5-post.1",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.3.6",
