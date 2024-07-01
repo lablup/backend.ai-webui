@@ -36,16 +36,6 @@ const app = (state = INITIAL_STATE, action) => {
         ...state,
         drawerOpened: action.opened,
       };
-    case OPEN_SNACKBAR:
-      return {
-        ...state,
-        offlineIndicatorOpened: true,
-      };
-    case CLOSE_SNACKBAR:
-      return {
-        ...state,
-        offlineIndicatorOpened: false,
-      };
     default:
       return state;
   }

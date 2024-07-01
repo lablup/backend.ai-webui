@@ -68,7 +68,7 @@
       "MyEnvironments": "Moje Środowiska",
       "ResourcePolicy": "Polityka zasobów"
     },
-    "YouAreOffline": "Jesteś teraz offline",
+    "YouAreOffline": "Offline: Brak połączenia z siecią.",
     "YouAreOnline": "Jesteś teraz online",
     "NOTFOUND": " <p> Ups! <br/> Nie znaleziono strony... </p>",
     "DescNOTFOUND": "Przepraszamy, nie można znaleźć strony, której szukasz.",
@@ -405,7 +405,8 @@
     "SessionId": "Identyfikator sesji",
     "EnvironmentAndVersion": "Środowisko i wersja",
     "Tags": "Tagi",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU Włączony"
   },
   "button": {
     "Cancel": "Anuluj",
@@ -658,7 +659,9 @@
       "FolderRestored": "Folder {{ folderName }} został przywrócony.",
       "FolderDeletedForever": "Folder {{ folderName }} został usunięty na zawsze.",
       "MoveToTrashBin": "Przenieś do kosza",
-      "MovedToTrashBin": "Folder {{ folderName }} został przeniesiony do kosza."
+      "MovedToTrashBin": "Folder {{ folderName }} został przeniesiony do kosza.",
+      "FolderCloneFailed": "Nie udało się sklonować folderu.",
+      "FolderClonePending": "Klonowanie folderu jest w toku."
     },
     "explorer": {
       "Delete": "Kasować...",
@@ -750,7 +753,8 @@
     "New": "Nowy",
     "Add": "Dodaj",
     "CloningIsOnlyPossibleSameHost": "Obecnie klonowanie jest możliwe tylko na tym samym hoście.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Nowa nazwa folderu"
   },
   "dialog": {
     "warning": {
@@ -762,7 +766,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Czy chcesz kontynuować?",
-      "DoYouWantToDeleteSomething": "Czy na pewno chcesz usunąć \"{{ name }}\"?"
+      "DoYouWantToDeleteSomething": "Czy na pewno chcesz usunąć \"{{ name }}\"?",
+      "DoYouWantToResetChanges": "Czy chcesz zresetować zmiany?"
     },
     "title": {
       "LetsDouble-Check": "Sprawdźmy dokładnie",
@@ -1599,7 +1604,9 @@
     "CloneAsFolder": "Sklonuj jako Folder",
     "CloneSuccess": "Żądanie klonowania zostało wysłane pomyślnie.",
     "CloneInfo": "Zostanie on sklonowany jako folder typu użytkownika.",
-    "category": "Kategoria"
+    "category": "Kategoria",
+    "CloneToFolder": "Klonowanie do folderu",
+    "FolderAlreadyExists": "Folder o tej nazwie już istnieje."
   },
   "table": {
     "SettingTable": "Nakrycie stołu",

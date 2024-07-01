@@ -366,7 +366,9 @@
       "DeleteForever": "Poista ikuisesti",
       "Restore": "Palauttaa",
       "FolderRestored": "Kansio {{ folderName }} on palautettu.",
-      "FolderDeletedForever": "Kansio {{ folderName }} on poistettu pysyvästi."
+      "FolderDeletedForever": "Kansio {{ folderName }} on poistettu pysyvästi.",
+      "FolderCloneFailed": "Kansiota ei onnistuttu kloonaamaan.",
+      "FolderClonePending": "Kansion kloonaus on käynnissä."
     },
     "invitation": {
       "FolderSharingNotAvailableToUser": "Kansioiden jakaminen ei ole käytettävissä pyydetyille käyttäjille:",
@@ -395,7 +397,8 @@
     "Add": "Lisätä",
     "CloningIsOnlyPossibleSameHost": "Tällä hetkellä kloonaus on mahdollista vain samassa isännässä.",
     "New": "Uusi",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Uusi kansion nimi"
   },
   "dialog": {
     "warning": {
@@ -411,7 +414,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Haluatteko jatkaa?",
-      "DoYouWantToDeleteSomething": "Oletko varma, että haluat poistaa \"{{ name }}\"?\"?"
+      "DoYouWantToDeleteSomething": "Oletko varma, että haluat poistaa \"{{ name }}\"?\"?",
+      "DoYouWantToResetChanges": "Haluatko nollata tekemäsi muutokset?"
     },
     "title": {
       "LetsDouble-Check": "Tupla-tarkistetaan",
@@ -1242,7 +1246,8 @@
     "SessionId": "Istunnon tunniste",
     "EnvironmentAndVersion": "Ympäristö ja versio",
     "Tags": "Tunnisteet",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU Käytössä"
   },
   "settings": {
     "ATOMsupport": "ATOM",
@@ -1502,7 +1507,7 @@
     "DescNOTFOUND": "Valitettavasti etsimääsi sivua ei löytynyt.",
     "NOTFOUND": "<p>Oops!<br/>Sivua ei löydy...</p>",
     "UNAUTHORIZEDACCESS": "Luvaton pääsy",
-    "YouAreOffline": "Olet nyt offline-tilassa",
+    "YouAreOffline": "Offline: Ei yhteyttä mihinkään verkkoon.",
     "YouAreOnline": "Olet nyt verkossa",
     "menu": {
       "AIAccelerator": "AI-kiihdyttämö",
@@ -1599,7 +1604,9 @@
     "ServiceDetails": "Palvelun tiedot",
     "StartCommand": "Käynnistä komento",
     "Task": "Tehtävä",
-    "Version": "Versio"
+    "Version": "Versio",
+    "CloneToFolder": "Kloonaa kansioon",
+    "FolderAlreadyExists": "Tämän niminen kansio on jo olemassa."
   },
   "table": {
     "SettingTable": "Kattaus",

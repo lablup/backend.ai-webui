@@ -68,7 +68,7 @@
       "MyEnvironments": "Моя среда",
       "ResourcePolicy": "Ресурсная политика"
     },
-    "YouAreOffline": "Вы сейчас не в сети",
+    "YouAreOffline": "Не в сети: Не подключен ни к одной сети.",
     "YouAreOnline": "Вы сейчас в сети",
     "NOTFOUND": " <p> Ой! <br/> Страница не найдена ... </p>",
     "DescNOTFOUND": "Извините, страница, которую вы ищете, не может быть найдена.",
@@ -405,7 +405,8 @@
     "SessionId": "Идентификатор сессии",
     "EnvironmentAndVersion": "Окружающая среда и версия",
     "Tags": "Теги",
-    "fGPU": "фГПУ"
+    "fGPU": "фГПУ",
+    "ATOMPlusEnabled": "ATOM+ NPU Включено"
   },
   "button": {
     "Cancel": "Отмена",
@@ -658,7 +659,9 @@
       "FolderRestored": "Папка {{ folderName }} восстановлена.",
       "FolderDeletedForever": "Папка {{ folderName}} удалена навсегда.",
       "MoveToTrashBin": "Переместить в мусорное ведро",
-      "MovedToTrashBin": "Папка {{ folderName }} была перемещена в корзину."
+      "MovedToTrashBin": "Папка {{ folderName }} была перемещена в корзину.",
+      "FolderCloneFailed": "Не удалось клонировать папку.",
+      "FolderClonePending": "Выполняется клонирование папки."
     },
     "explorer": {
       "Delete": "Удалить...",
@@ -750,7 +753,8 @@
     "New": "Новый",
     "Add": "Добавить",
     "CloningIsOnlyPossibleSameHost": "В настоящее время клонирование возможно только на том же хосте.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Новое имя папки"
   },
   "dialog": {
     "warning": {
@@ -762,7 +766,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Вы хотите продолжить?",
-      "DoYouWantToDeleteSomething": "Вы уверены, что хотите удалить \"{{ имя }}\"?"
+      "DoYouWantToDeleteSomething": "Вы уверены, что хотите удалить \"{{ имя }}\"?",
+      "DoYouWantToResetChanges": "Вы хотите сбросить изменения?"
     },
     "title": {
       "LetsDouble-Check": "Давайте дважды проверим",
@@ -1599,7 +1604,9 @@
     "CloneAsFolder": "клонировать как папку",
     "CloneSuccess": "Запрос на клонирование успешно отправлен.",
     "CloneInfo": "Она будет клонирована как папка вашего типа пользователя.",
-    "category": "Категория"
+    "category": "Категория",
+    "CloneToFolder": "Клонирование в папку",
+    "FolderAlreadyExists": "Папка с таким именем уже существует."
   },
   "table": {
     "SettingTable": "Сервировка стола",

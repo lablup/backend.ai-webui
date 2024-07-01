@@ -68,7 +68,7 @@
       "MyEnvironments": "Mes environnements",
       "ResourcePolicy": "Politique des ressources"
     },
-    "YouAreOffline": "Vous êtes maintenant hors ligne",
+    "YouAreOffline": "Hors ligne : N'est connecté à aucun réseau.",
     "YouAreOnline": "Vous êtes maintenant en ligne",
     "NOTFOUND": " <p> Oups ! <br/> Page non trouvée... </p>",
     "DescNOTFOUND": "Désolé, la page que vous recherchez est introuvable.",
@@ -405,7 +405,8 @@
     "SessionId": "ID de session",
     "EnvironmentAndVersion": "Environnement et version",
     "Tags": "Mots clés",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU Activé"
   },
   "button": {
     "Cancel": "Annuler",
@@ -658,7 +659,9 @@
       "FolderRestored": "Le dossier {{ folderName }} a été restauré.",
       "FolderDeletedForever": "Le dossier {{ folderName }} a été supprimé définitivement.",
       "MoveToTrashBin": "Déplacer vers la poubelle",
-      "MovedToTrashBin": "Le dossier {{ folderName }} a été déplacé vers la corbeille."
+      "MovedToTrashBin": "Le dossier {{ folderName }} a été déplacé vers la corbeille.",
+      "FolderCloneFailed": "Échec du clonage du dossier.",
+      "FolderClonePending": "Le clonage du dossier est en cours."
     },
     "explorer": {
       "Delete": "Effacer...",
@@ -750,7 +753,8 @@
     "New": "Nouveau",
     "Add": "Ajouter",
     "CloningIsOnlyPossibleSameHost": "Actuellement, le clonage n'est possible que sur le même hôte.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Nouveau nom de dossier"
   },
   "dialog": {
     "warning": {
@@ -762,7 +766,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Voulez-vous poursuivre?",
-      "DoYouWantToDeleteSomething": "Êtes-vous sûr de vouloir supprimer \"{{ nom }}\" ?"
+      "DoYouWantToDeleteSomething": "Êtes-vous sûr de vouloir supprimer \"{{ nom }}\" ?",
+      "DoYouWantToResetChanges": "Voulez-vous réinitialiser vos modifications ?"
     },
     "title": {
       "LetsDouble-Check": "Vérifions deux fois",
@@ -1599,7 +1604,9 @@
     "CloneAsFolder": "Cloner en tant que dossier",
     "CloneSuccess": "La demande de clone a été envoyée avec succès.",
     "CloneInfo": "Il sera cloné en tant que dossier de votre type d'utilisateur.",
-    "category": "Catégorie"
+    "category": "Catégorie",
+    "CloneToFolder": "Cloner dans un dossier",
+    "FolderAlreadyExists": "Un dossier portant ce nom existe déjà."
   },
   "table": {
     "SettingTable": "Paramètre de table",

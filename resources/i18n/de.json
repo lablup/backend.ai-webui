@@ -68,7 +68,7 @@
       "MyEnvironments": "Meine Umgebungen",
       "ResourcePolicy": "Ressourcenpolitik"
     },
-    "YouAreOffline": "Du bist jetzt offline",
+    "YouAreOffline": "Offline: Keine Verbindung zu einem Netzwerk.",
     "YouAreOnline": "Sie sind jetzt online",
     "NOTFOUND": " <p> Hoppla! <br/> Seite nicht gefunden... </p>",
     "DescNOTFOUND": "Die von Ihnen gesuchte Seite konnte leider nicht gefunden werden.",
@@ -405,7 +405,8 @@
     "SessionId": "Session-ID",
     "EnvironmentAndVersion": "Umgebung und Version",
     "Tags": "Stichworte",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU Ermöglicht"
   },
   "button": {
     "Cancel": "Stornieren",
@@ -658,7 +659,9 @@
       "FolderRestored": "Der Ordner {{ folderName }} wurde wiederhergestellt.",
       "FolderDeletedForever": "Der Ordner {{ folderName }} wurde endgültig gelöscht.",
       "MoveToTrashBin": "In den Papierkorb verschieben",
-      "MovedToTrashBin": "Der Ordner {{ folderName }} wurde in den Papierkorb verschoben."
+      "MovedToTrashBin": "Der Ordner {{ folderName }} wurde in den Papierkorb verschoben.",
+      "FolderCloneFailed": "Der Ordner konnte nicht geklont werden.",
+      "FolderClonePending": "Das Klonen des Ordners ist im Gange."
     },
     "explorer": {
       "Delete": "Löschen...",
@@ -750,7 +753,8 @@
     "New": "Neu",
     "Add": "hinzufügen",
     "CloningIsOnlyPossibleSameHost": "Derzeit ist das Klonen nur auf demselben Host möglich.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Neuer Ordnername"
   },
   "dialog": {
     "warning": {
@@ -762,7 +766,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Willst du fortfahren?",
-      "DoYouWantToDeleteSomething": "Sind Sie sicher, dass Sie \"{{ Name }}\" löschen wollen?"
+      "DoYouWantToDeleteSomething": "Sind Sie sicher, dass Sie \"{{ Name }}\" löschen wollen?",
+      "DoYouWantToResetChanges": "Möchten Sie Ihre Änderungen zurücksetzen?"
     },
     "title": {
       "LetsDouble-Check": "Lass uns das überprüfen",
@@ -1599,7 +1604,9 @@
     "CloneAsFolder": "Als Ordner klonen",
     "CloneSuccess": "Die Klonanfrage wurde erfolgreich gesendet.",
     "CloneInfo": "Er wird als Ihr Benutzertyp-Ordner geklont.",
-    "category": "Kategorie"
+    "category": "Kategorie",
+    "CloneToFolder": "In einen Ordner klonen",
+    "FolderAlreadyExists": "Ein Ordner mit diesem Namen existiert bereits."
   },
   "table": {
     "SettingTable": "Sitzordnung bei Tisch",

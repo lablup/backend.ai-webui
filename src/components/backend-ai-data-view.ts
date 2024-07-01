@@ -13,7 +13,6 @@ import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import { default as PainKiller } from './backend-ai-painkiller';
 import './backend-ai-storage-list';
-import './lablup-activity-panel';
 import '@material/mwc-button';
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
@@ -32,6 +31,8 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+type BackendAIStorageList = HTMLElementTagNameMap['backend-ai-storage-list'];
+type MwcTabBar = HTMLElementTagNameMap['mwc-tab-bar'];
 interface GroupData {
   id: string;
   name: string;
@@ -102,6 +103,16 @@ export default class BackendAIData extends BackendAIPage {
   @query('#add-folder-group') addFolderGroupSelect!: Select;
   @query('#add-folder-type') addFolderTypeSelect!: Select;
   @query('#cloneable-container') cloneableContainer!: HTMLDivElement;
+  @query('#general-folder-storage')
+  generalFolderStorageListElement!: BackendAIStorageList;
+  @query('#data-folder-storage')
+  dataFolderStorageListElement!: BackendAIStorageList;
+  @query('#automount-folder-storage')
+  automountFolderStorageListElement!: BackendAIStorageList;
+  @query('#model-folder-storage')
+  modelFolderStorageListElement!: BackendAIStorageList;
+  @query('#trash-bin-folder-storage')
+  trashBinFolderStorageListElement!: BackendAIStorageList;
 
   static get styles(): CSSResultGroup {
     return [
@@ -188,22 +199,6 @@ export default class BackendAIData extends BackendAIPage {
           padding: 5px !important;
         }
 
-        #automount-folder-lists > div,
-        #data-folder-lists > div,
-        #model-folder-lists > div {
-          background-color: var(--token-colorInfoBg, white);
-          color: var(--token-colorText, --general-textfield-selected-color);
-          border-bottom: 0.5px solid
-            var(--token-colorInfoBg, --general-textfield-selected-color);
-        }
-
-        #automount-folder-lists > div > p,
-        #data-folder-lists > div > p,
-        #model-folder-lists > div > p {
-          color: var(--token-colorText, --general-sidebar-color);
-          margin-left: 10px;
-        }
-
         .storage-status-indicator {
           width: 90px;
           color: black;
@@ -278,70 +273,14 @@ export default class BackendAIData extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css" />
-      <div class="vertical layout" style="gap:24px">
-        <backend-ai-react-storage-status-panel
-          value="${this.folderListFetchKey}"
-        ></backend-ai-react-storage-status-panel>
-        <lablup-activity-panel elevation="1" noheader narrow autowidth>
+      <div class="vertical layout">
+        <div>
           <div slot="message">
-            <h3 class="horizontal center flex layout tab">
-              <mwc-tab-bar>
-                <mwc-tab
-                  title="general"
-                  label="${_t('data.Folders')}"
-                  @click="${(e) => this._showTab(e.target)}"
-                ></mwc-tab>
-                <mwc-tab
-                  title="data"
-                  label="${_t('data.Pipeline')}"
-                  @click="${(e) => this._showTab(e.target)}"
-                ></mwc-tab>
-                <mwc-tab
-                  title="automount"
-                  label="${_t('data.AutomountFolders')}"
-                  @click="${(e) => this._showTab(e.target)}"
-                ></mwc-tab>
-                ${this.enableInferenceWorkload
-                  ? html`
-                      <mwc-tab
-                        title="model"
-                        label="${_t('data.Models')}"
-                        @click="${(e) => this._showTab(e.target)}"
-                      ></mwc-tab>
-                    `
-                  : html``}
-                ${this.supportModelStore
-                  ? html`
-                      <mwc-tab
-                        title="model-store"
-                        label="${_t('data.ModelStore')}"
-                        @click="${(e) => this._showTab(e.target)}"
-                      ></mwc-tab>
-                    `
-                  : html``}
-                ${this.supportVFolderTrashBin
-                  ? html`
-                      <mwc-tab
-                        title="trash-bin"
-                        icon="delete"
-                        @click="${(e) => this._showTab(e.target)}"
-                      ></mwc-tab>
-                    `
-                  : html``}
-              </mwc-tab-bar>
-              <span class="flex"></span>
-              <mwc-button
-                dense
-                raised
-                id="add-folder"
-                icon="add"
-                @click="${() => this._addFolderDialog()}"
-                style="margin-right:15px;"
-              >
-                <span>${_t('data.Add')}</span>
-              </mwc-button>
-            </h3>
-            <div id="general-folder-lists" class="tab-content">
+            <div
+              style="display: ${this._activeTab === 'general'
+                ? 'block'
+                : 'none'};"
+            >
               <backend-ai-storage-list
                 id="general-folder-storage"
                 storageType="general"
@@ -350,13 +289,8 @@ export default class BackendAIData extends BackendAIPage {
               ></backend-ai-storage-list>
             </div>
             <div
-              id="data-folder-lists"
-              class="tab-content"
-              style="display:none;"
+              style="display: ${this._activeTab === 'data' ? 'block' : 'none'};"
             >
-              <div class="horizontal layout">
-                <p>${_t('data.DialogDataFolder')}</p>
-              </div>
               <backend-ai-storage-list
                 id="data-folder-storage"
                 storageType="data"
@@ -364,13 +298,10 @@ export default class BackendAIData extends BackendAIPage {
               ></backend-ai-storage-list>
             </div>
             <div
-              id="automount-folder-lists"
-              class="tab-content"
-              style="display:none;"
+              style="display: ${this._activeTab === 'automount'
+                ? 'block'
+                : 'none'};"
             >
-              <div class="horizontal layout">
-                <p>${_t('data.DialogFolderStartingWithDotAutomount')}</p>
-              </div>
               <backend-ai-storage-list
                 id="automount-folder-storage"
                 storageType="automount"
@@ -381,13 +312,10 @@ export default class BackendAIData extends BackendAIPage {
             ${this.enableInferenceWorkload
               ? html`
                   <div
-                    id="model-folder-lists"
-                    class="tab-content"
-                    style="display:none;"
+                    style="display: ${this._activeTab === 'model'
+                      ? 'block'
+                      : 'none'};"
                   >
-                    <div class="horizontal layout">
-                      <p>${_t('data.DialogModelFolder')}</p>
-                    </div>
                     <backend-ai-storage-list
                       id="model-folder-storage"
                       storageType="model"
@@ -411,9 +339,9 @@ export default class BackendAIData extends BackendAIPage {
             ${this.supportVFolderTrashBin
               ? html`
                   <div
-                    id="trash-bin-folder-lists"
-                    class="tab-content"
-                    style="display:none;"
+                    style="display: ${this._activeTab === 'trash-bin'
+                      ? 'block'
+                      : 'none'};"
                   >
                     <backend-ai-storage-list
                       id="trash-bin-folder-storage"
@@ -425,7 +353,7 @@ export default class BackendAIData extends BackendAIPage {
                 `
               : html``}
           </div>
-        </lablup-activity-panel>
+        </div>
       </div>
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.CreateANewStorageFolder')}</span>
@@ -898,6 +826,42 @@ export default class BackendAIData extends BackendAIPage {
     });
   }
 
+  openFolderExplorer = (e) => {
+    if (e?.detail?.vFolder) {
+      const activeStorageList =
+        this._activeTab === 'general'
+          ? this.generalFolderStorageListElement
+          : this._activeTab === 'model'
+            ? this.modelFolderStorageListElement
+            : this._activeTab === 'automount'
+              ? this.automountFolderStorageListElement
+              : this._activeTab === 'data'
+                ? this.dataFolderStorageListElement
+                : this._activeTab === 'trash-bin'
+                  ? this.trashBinFolderStorageListElement
+                  : null;
+      activeStorageList?._folderExplorer({
+        item: e?.detail?.vFolder,
+      });
+    }
+  };
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    document.addEventListener('folderExplorer:open', this.openFolderExplorer);
+    document.dispatchEvent(new CustomEvent('backend-ai-data-view:connected'));
+  }
+
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    document.removeEventListener(
+      'folderExplorer:open',
+      this.openFolderExplorer,
+    );
+    document.dispatchEvent(
+      new CustomEvent('backend-ai-data-view:disconnected'),
+    );
+  }
   /**
    * Initialize the admin.
    *
@@ -963,26 +927,6 @@ export default class BackendAIData extends BackendAIPage {
 */
   _toggleFolderTypeInput() {
     this.folderType = this.addFolderTypeSelect.value;
-  }
-
-  /**
-   * display tabs
-   *
-   * @param {object} tab
-   */
-  _showTab(tab) {
-    const els = this.shadowRoot?.querySelectorAll<HTMLDivElement>(
-      '.tab-content',
-    ) as NodeListOf<HTMLDivElement>;
-    for (let x = 0; x < els.length; x++) {
-      els[x].style.display = 'none';
-    }
-    (
-      this.shadowRoot?.querySelector(
-        '#' + tab.title + '-folder-lists',
-      ) as HTMLDivElement
-    ).style.display = 'block';
-    this._activeTab = tab.title;
   }
 
   /**
@@ -1062,6 +1006,11 @@ export default class BackendAIData extends BackendAIPage {
     );
     this.openDialog('clone-folder-dialog');
   }
+
+  // This property is meant to be accessed outside of component.
+  openAddFolderDialog = () => {
+    return this._addFolderDialog();
+  };
 
   /**
    * Add folder dialog.

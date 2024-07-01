@@ -79,9 +79,9 @@ const BAINotificationItem: React.FC<{
                   onClickAction && onClickAction(e, notification);
                 }}
               >
-                {notification.toTextKey
-                  ? t(notification.toTextKey)
-                  : t('notification.SeeDetail')}
+                {notification.toText ??
+                  notification.toTextKey ??
+                  t('notification.SeeDetail')}
               </Typography.Link>
             </Flex>
           ) : null}

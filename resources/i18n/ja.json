@@ -68,7 +68,7 @@
       "MyEnvironments": "私の環境",
       "ResourcePolicy": "リソースポリシー"
     },
-    "YouAreOffline": "あなたは今オフラインです",
+    "YouAreOffline": "オフライン：どのネットワークにも接続されていない。",
     "YouAreOnline": "あなたは今オンラインです",
     "NOTFOUND": " <p>おっと！ <br/>ページが見つかりません... </p>",
     "DescNOTFOUND": "申し訳ありませんが、お探しのページが見つかりませんでした。",
@@ -405,7 +405,8 @@
     "SessionId": "セッションID",
     "EnvironmentAndVersion": "環境とバージョン",
     "Tags": "タグ",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU 有効"
   },
   "button": {
     "Cancel": "キャンセル",
@@ -658,7 +659,9 @@
       "FolderRestored": "{{ folderName }} フォルダが復元されました。",
       "FolderDeletedForever": "{{ folderName }} フォルダは完全に削除されました。",
       "MoveToTrashBin": "ゴミ箱に移動",
-      "MovedToTrashBin": "{{ folderName }} フォルダーはゴミ箱に移動されました。"
+      "MovedToTrashBin": "{{ folderName }} フォルダーはゴミ箱に移動されました。",
+      "FolderCloneFailed": "フォルダのクローンに失敗しました。",
+      "FolderClonePending": "フォルダのクローンを作成中です。"
     },
     "explorer": {
       "Delete": "削除...",
@@ -750,7 +753,8 @@
     "New": "新しい",
     "Add": "追加",
     "CloningIsOnlyPossibleSameHost": "現在、クローン作成は同じホスト上でのみ可能です。",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "新しいフォルダ名"
   },
   "dialog": {
     "warning": {
@@ -762,7 +766,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "続行しますか？",
-      "DoYouWantToDeleteSomething": "本当に\"{{ name }}\"を削除しますか？"
+      "DoYouWantToDeleteSomething": "本当に\"{{ name }}\"を削除しますか？",
+      "DoYouWantToResetChanges": "変更をリセットしますか?"
     },
     "title": {
       "LetsDouble-Check": "再確認しましょう",
@@ -1599,7 +1604,9 @@
     "CloneAsFolder": "フォルダとしてクローン",
     "CloneSuccess": "クローン要求は正常に送信された。",
     "CloneInfo": "ユーザータイプのフォルダとしてクローンされます。",
-    "category": "カテゴリー"
+    "category": "カテゴリー",
+    "CloneToFolder": "フォルダへのクローン",
+    "FolderAlreadyExists": "この名前のフォルダはすでに存在する。"
   },
   "table": {
     "SettingTable": "テーブルセッティング",

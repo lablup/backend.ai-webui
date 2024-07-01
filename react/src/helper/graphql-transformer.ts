@@ -8,6 +8,7 @@ export function manipulateGraphQLQueryWithClientDirectives(
   isNotCompatibleWith: (version: string | Array<string>) => boolean,
 ) {
   const ast = parse(query);
+  const fragmentSpreadNames = new Set<string>();
   let newAst = visit(ast, {
     Field: {
       enter(node) {
@@ -111,6 +112,19 @@ export function manipulateGraphQLQueryWithClientDirectives(
             'skipOnClient',
           ].includes(directiveName)
         ) {
+          return null;
+        }
+      },
+    },
+    FragmentSpread: {
+      enter(node) {
+        fragmentSpreadNames.add(node.name.value);
+      },
+    },
+    // delete unused fragment definitions to prevent "Fragment 'OOOOFragment' is never used." error.
+    FragmentDefinition: {
+      leave(node) {
+        if (!fragmentSpreadNames.has(node.name.value)) {
           return null;
         }
       },

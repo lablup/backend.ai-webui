@@ -15,6 +15,7 @@ export interface NotificationState
   key: React.Key;
   created?: string;
   toTextKey?: string;
+  toText?: string;
   to?: string | To;
   open?: boolean;
   backgroundTask?: {
@@ -34,7 +35,7 @@ export interface NotificationState
 
 export const notificationListState = atom<NotificationState[]>([]);
 
-export const CLOSING_DURATION = 1; //second
+export const CLOSING_DURATION = 4; //second
 
 /**
  * Custom hook that returns the BAI notification state.

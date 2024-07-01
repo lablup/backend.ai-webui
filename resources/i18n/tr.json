@@ -68,7 +68,7 @@
       "MyEnvironments": "Ortamlarım",
       "ResourcePolicy": "Kaynak Politikası"
     },
-    "YouAreOffline": "Şu anda çevrimdışısın",
+    "YouAreOffline": "Çevrimdışı: Herhangi bir ağa bağlı değil.",
     "YouAreOnline": "artık çevrimiçisin",
     "NOTFOUND": " <p> Hata! <br/> Sayfa Bulunamadı... </p>",
     "DescNOTFOUND": "Üzgünüz, aradığınız sayfa bulunamadı.",
@@ -405,7 +405,8 @@
     "SessionId": "Oturum kimliği",
     "EnvironmentAndVersion": "Ortam ve Sürüm",
     "Tags": "Etiketler",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU Etkinleştirilmiş"
   },
   "button": {
     "Cancel": "İptal etmek",
@@ -658,7 +659,9 @@
       "FolderRestored": "{{ klasörAdı }} klasörü geri yüklendi.",
       "FolderDeletedForever": "{{ folderName }} klasörü kalıcı olarak silindi.",
       "MoveToTrashBin": "Çöp kutusuna taşı",
-      "MovedToTrashBin": "{{ folderName }} klasörü çöp kutusuna taşındı."
+      "MovedToTrashBin": "{{ folderName }} klasörü çöp kutusuna taşındı.",
+      "FolderCloneFailed": "Klasör klonlanamadı.",
+      "FolderClonePending": "Klasörün klonlanması devam ediyor."
     },
     "explorer": {
       "Delete": "Sil...",
@@ -750,7 +753,8 @@
     "New": "Yeni",
     "Add": "Ekle",
     "CloningIsOnlyPossibleSameHost": "Şu anda klonlama yalnızca aynı ana bilgisayarda mümkündür.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Yeni klasör adı"
   },
   "dialog": {
     "warning": {
@@ -762,7 +766,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Devam etmek istiyor musunuz?",
-      "DoYouWantToDeleteSomething": "\"{{ name }}\" silmek istediğinizden emin misiniz?"
+      "DoYouWantToDeleteSomething": "\"{{ name }}\" silmek istediğinizden emin misiniz?",
+      "DoYouWantToResetChanges": "Değişikliklerinizi sıfırlamak istiyor musunuz?"
     },
     "title": {
       "LetsDouble-Check": "İki kez kontrol edelim",
@@ -1599,7 +1604,9 @@
     "CloneAsFolder": "Klasör olarak klonla",
     "CloneSuccess": "Klonlama isteği başarıyla gönderildi.",
     "CloneInfo": "Kullanıcı tipi klasörünüz olarak klonlanacaktır.",
-    "category": "Kategori"
+    "category": "Kategori",
+    "CloneToFolder": "Bir klasöre klonlama",
+    "FolderAlreadyExists": "Bu isimde bir klasör zaten mevcut."
   },
   "table": {
     "SettingTable": "Tablo Ayarı",

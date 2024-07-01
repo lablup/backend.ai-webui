@@ -25,6 +25,7 @@ import SessionLauncherValidationTour from '../components/SessionLauncherErrorTou
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
+import SourceCodeViewer from '../components/SourceCodeViewer';
 import VFolderTableFormItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
@@ -1133,18 +1134,15 @@ const SessionLauncherPage = () => {
                           <>
                             <Descriptions.Item
                               label={t('session.launcher.StartUpCommand')}
+                              labelStyle={{ whiteSpace: 'nowrap' }}
+                              contentStyle={{
+                                overflow: 'auto',
+                              }}
                             >
                               {form.getFieldValue(['batch', 'command']) ? (
-                                <SyntaxHighlighter
-                                  style={isDarkMode ? dark : undefined}
-                                  language="shell"
-                                  customStyle={{
-                                    margin: 0,
-                                    width: '100%',
-                                  }}
-                                >
+                                <SourceCodeViewer language="shell">
                                   {form.getFieldValue(['batch', 'command'])}
-                                </SyntaxHighlighter>
+                                </SourceCodeViewer>
                               ) : (
                                 <Typography.Text type="secondary">
                                   {t('general.None')}

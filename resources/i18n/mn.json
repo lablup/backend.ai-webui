@@ -68,7 +68,7 @@
       "MyEnvironments": "Миний орчин",
       "ResourcePolicy": "Нөөцийн бодлого"
     },
-    "YouAreOffline": "Та одоо офлайн байна",
+    "YouAreOffline": "Офлайн: Ямар ч сүлжээнд холбогдоогүй.",
     "YouAreOnline": "Та одоо онлайн байна",
     "NOTFOUND": " <p> Өө! <br/> хуудас олдсонгүй ... </p>",
     "DescNOTFOUND": "Уучлаарай, таны хайж буй хуудас олдсонгүй.",
@@ -407,7 +407,8 @@
     "SessionId": "Сешн Id",
     "EnvironmentAndVersion": "Хүрээлэн буй орчин ба хувилбар",
     "Tags": "Шошго",
-    "fGPU": "fGPU"
+    "fGPU": "fGPU",
+    "ATOMPlusEnabled": "ATOM+ NPU Идэвхжүүлсэн"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -660,7 +661,9 @@
       "FolderRestored": "{{ folderName }} хавтас сэргээгдсэн.",
       "FolderDeletedForever": "{{ folderName }} хавтас бүрмөсөн устгагдсан.",
       "MovedToTrashBin": "{{ folderName }} фолдерыг хогийн сав руу зөөв.",
-      "MoveToTrashBin": "Хогийн сав руу шилжүүлнэ үү"
+      "MoveToTrashBin": "Хогийн сав руу шилжүүлнэ үү",
+      "FolderCloneFailed": "Фолдерыг хуулбарлаж чадсангүй.",
+      "FolderClonePending": "Фолдерыг хуулбарлаж байна."
     },
     "explorer": {
       "Delete": "Устгах ...",
@@ -752,7 +755,8 @@
     "New": "Шинэ",
     "Add": "Нэмэх",
     "CloningIsOnlyPossibleSameHost": "Одоогоор зөвхөн нэг хост дээр клон хийх боломжтой.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Шинэ фолдерын нэр"
   },
   "dialog": {
     "warning": {
@@ -764,7 +768,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Та үргэлжлүүлэхийг хүсч байна уу?",
-      "DoYouWantToDeleteSomething": "Та \"{{ name }}\"-г устгахдаа итгэлтэй байна уу?"
+      "DoYouWantToDeleteSomething": "Та \"{{ name }}\"-г устгахдаа итгэлтэй байна уу?",
+      "DoYouWantToResetChanges": "Та өөрчлөлтөө дахин тохируулахыг хүсэж байна уу?"
     },
     "title": {
       "LetsDouble-Check": "Давхар шалгуулъя",
@@ -1600,7 +1605,9 @@
     "CloneAsFolder": "Хавтас болгон хуваах",
     "CloneSuccess": "Хувилах хүсэлтийг амжилттай илгээлээ.",
     "CloneInfo": "Үүнийг таны хэрэглэгчийн төрлийн хавтас болгон хувилах болно.",
-    "category": "Ангилал"
+    "category": "Ангилал",
+    "CloneToFolder": "Хавтас руу клон хийх",
+    "FolderAlreadyExists": "Ийм нэртэй хавтас аль хэдийн байна."
   },
   "table": {
     "SettingTable": "Хүснэгтийн тохиргоо",

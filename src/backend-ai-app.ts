@@ -5,8 +5,6 @@
 export const UPDATE_PAGE = 'UPDATE_PAGE';
 export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';
 export const UPDATE_DRAWER_STATE = 'UPDATE_DRAWER_STATE';
-export const OPEN_SNACKBAR = 'OPEN_SNACKBAR';
-export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
 export const navigate =
   (path: any, params: Record<string, unknown> = {}) =>
@@ -190,30 +188,6 @@ const updatePage = (page, params) => {
     page,
     params,
   };
-};
-
-let offlineTimer;
-
-export const showOffline = () => (dispatch) => {
-  dispatch({
-    type: OPEN_SNACKBAR,
-  });
-  window.clearTimeout(offlineTimer);
-  offlineTimer = window.setTimeout(
-    () => dispatch({ type: CLOSE_SNACKBAR }),
-    3000,
-  );
-};
-
-export const updateOffline = (offline) => (dispatch, getState) => {
-  // Show the snackbar only if offline status changes.
-  if (offline !== getState().app.offline) {
-    dispatch(showOffline());
-  }
-  dispatch({
-    type: UPDATE_OFFLINE,
-    offline,
-  });
 };
 
 export const updateDrawerState = (opened) => {

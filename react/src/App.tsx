@@ -9,6 +9,7 @@ import MainLayout from './components/MainLayout/MainLayout';
 import { useSuspendedBackendaiClient, useWebUINavigate } from './hooks';
 import Page401 from './pages/Page401';
 import Page404 from './pages/Page404';
+import VFolderListPage from './pages/VFolderListPage';
 import { theme } from 'antd';
 import React from 'react';
 import { FC } from 'react';
@@ -25,6 +26,7 @@ const EndpointListPage = React.lazy(() => import('./pages/EndpointListPage'));
 const EndpointDetailPage = React.lazy(
   () => import('./pages/EndpointDetailPage'),
 );
+// const SummaryPage = React.lazy(() => import('./pages/SummaryPage'));
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
 const StorageHostSettingPage = React.lazy(
@@ -42,6 +44,9 @@ const ResourcePolicyPage = React.lazy(
   () => import('./pages/ResourcePolicyPage'),
 );
 const ResourcesPage = React.lazy(() => import('./pages/ResourcesPage'));
+const FolderExplorerOpener = React.lazy(
+  () => import('./components/FolderExplorerOpener'),
+);
 
 const router = createBrowserRouter([
   {
@@ -82,13 +87,16 @@ const router = createBrowserRouter([
         Component: () => {
           const { token } = theme.useToken();
           return (
-            <AnnouncementAlert
-              showIcon
-              icon={undefined}
-              banner={false}
-              style={{ marginBottom: token.paddingContentVerticalLG }}
-              closable
-            />
+            <>
+              <AnnouncementAlert
+                showIcon
+                icon={undefined}
+                banner={false}
+                style={{ marginBottom: token.paddingContentVerticalLG }}
+                closable
+              />
+              {/* <SummaryPage /> */}
+            </>
           );
         },
         handle: { labelKey: 'webui.menu.Summary' },
@@ -131,6 +139,12 @@ const router = createBrowserRouter([
       {
         path: '/data',
         handle: { labelKey: 'webui.menu.Data&Storage' },
+        element: (
+          <BAIErrorBoundary>
+            <FolderExplorerOpener />
+            <VFolderListPage />
+          </BAIErrorBoundary>
+        ),
       },
       {
         path: '/my-environment',
