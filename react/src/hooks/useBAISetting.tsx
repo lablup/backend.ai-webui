@@ -9,8 +9,6 @@ interface UserSettings {
   desktop_notification?: boolean;
   compact_sidebar?: boolean;
   preserve_login?: boolean;
-  language?: string;
-  current_language?: string;
   automatic_update_check?: boolean;
   custom_ssh_port?: string;
   beta_feature?: boolean;
@@ -18,11 +16,13 @@ interface UserSettings {
   endpoints?: string[];
   auto_logout?: boolean;
   summary_items?: Array<Omit<SummaryItem, 'data'>>;
+  selected_language?: string;
 }
 
 interface GeneralSettings {
   last_login?: number;
   login_attempt?: number;
+  language?: string;
 }
 
 export const useBAISettingUserState = <K extends keyof UserSettings>(

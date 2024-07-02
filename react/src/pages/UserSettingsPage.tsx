@@ -3,7 +3,10 @@ import KeypairInfoModal from '../components/KeypairInfoModal';
 import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import { SettingItemProps } from '../components/SettingItem';
 import SettingList from '../components/SettingList';
-import { useBAISettingUserState } from '../hooks/useBAISetting';
+import {
+  useBAISettingGeneralState,
+  useBAISettingUserState,
+} from '../hooks/useBAISetting';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button } from 'antd';
@@ -26,7 +29,9 @@ const UserPreferencesPage = () => {
   );
   const [compactSidebar, setCompactSidebar] =
     useBAISettingUserState('compact_sidebar');
-  const [language, setLanguage] = useBAISettingUserState('language');
+  const [selectedLanguage, setSelectedLanguage] =
+    useBAISettingUserState('selected_language');
+  const [, setLanguage] = useBAISettingGeneralState('language');
   const [autoAutomaticUpdateCheck, setAutoAutomaticUpdateCheck] =
     useBAISettingUserState('automatic_update_check');
   const [autoLogout, setAutoLogout] = useBAISettingUserState('auto_logout');
@@ -109,14 +114,20 @@ const UserPreferencesPage = () => {
             showSearch: true,
           },
           defaultValue: 'default',
-          value: language,
-          setValue: setLanguage,
+          value: selectedLanguage || 'default',
+          setValue: setSelectedLanguage,
           onChange: (value) => {
-            setLanguage(value);
+            setSelectedLanguage(value);
+            const defaultLanguage = globalThis.navigator.language.split('-')[0];
             const event = new CustomEvent('language-changed', {
-              detail: { language: value },
+              detail: {
+                language: value === 'default' ? defaultLanguage : value,
+              },
             });
+            setLanguage(value === 'default' ? defaultLanguage : value);
             document.dispatchEvent(event);
+            //@ts-ignore
+            console.log(globalThis.backendaioptions.get('selected_language'));
           },
         },
         ...[
