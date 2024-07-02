@@ -832,7 +832,7 @@ export default class BackendAISessionList extends BackendAIPage {
     }
     if (globalThis.backendaiclient.supports('per-user-image')) {
       containerFields.push(
-        'kernel_id role image_object { labels { key value } }',
+        'kernel_id role local_rank image_object { labels { key value } }',
       );
     }
 
@@ -1553,15 +1553,13 @@ export default class BackendAISessionList extends BackendAIPage {
     this.workDialog.sessionUuid = sessionUuid;
     this.workDialog.sessionName = sessionName;
     this.workDialog.accessKey = accessKey;
-    let subContainerLength = 0;
     this.selectedKernels = this.compute_sessions
       .find((session) => session.session_id === sessionUuid)
       ?.containers.map((container) => {
         if (container.role === 'main') {
           container.role = 'main1';
         } else {
-          subContainerLength++;
-          container.role = `sub${subContainerLength}`;
+          container.role = `sub${container.local_rank}`;
         }
         return container;
       })
