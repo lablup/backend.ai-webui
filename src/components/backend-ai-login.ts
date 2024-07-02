@@ -1979,6 +1979,25 @@ export default class BackendAILogin extends BackendAIPage {
       : password.setAttribute('type', 'password');
   }
 
+  private _validateInput() {
+    // Email validation pattern
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    // Username validation pattern
+    const usernamePattern = /^[a-zA-Z0-9._-]{3,20}$/;
+
+    this.userIdInput.validityTransform = (value) => {
+      if (
+        new RegExp(emailPattern).test(value) ||
+        new RegExp(usernamePattern).test(value)
+      ) {
+        return { valid: true };
+      }
+      return { valid: false };
+    };
+
+    this.userIdInput.reportValidity();
+  }
+
   protected render() {
     // language=HTML
     return html`
@@ -2070,13 +2089,14 @@ export default class BackendAILogin extends BackendAIPage {
                     disabled
                   ></mwc-icon-button>
                   <mwc-textfield
-                    type="email"
+                    required
                     id="id_user_id"
                     maxlength="64"
                     autocomplete="username"
                     label="${_t('login.E-mailorUsername')}"
                     value="${this.user_id}"
                     @keyup="${this._submitIfEnter}"
+                    @input="${this._validateInput}"
                   ></mwc-textfield>
                 </div>
                 <div class="horizontal flex layout">
