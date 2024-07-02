@@ -23,18 +23,45 @@ const PortSelectFormItem: React.FC<Props> = ({ ...formItemProps }) => {
       tooltip={<Trans i18nKey="session.launcher.DescSetPreOpenPort" />}
       extra={t('session.launcher.PreOpenPortRangeGuide')}
       rules={[
-        {
-          max: baiClient._config.maxCountForPreopenPorts,
-          type: 'array',
-          message: t('session.launcher.PreOpenPortMaxCountLimit', {
-            count: baiClient._config.maxCountForPreopenPorts,
-          }),
-        },
-        ({ getFieldValue }) => ({
+        () => ({
+          validator(rule, values) {
+            if (
+              transformPortValuesToNumbers(values).length <=
+              baiClient._config.maxCountForPreopenPorts
+            ) {
+              return Promise.resolve();
+            } else {
+              return Promise.reject(
+                new Error(
+                  t('session.launcher.PreOpenPortMaxCountLimit', {
+                    count: baiClient._config.maxCountForPreopenPorts,
+                  }),
+                ),
+              );
+            }
+          },
+        }),
+        () => ({
+          // To check if the port range is not start <= end
           validator(rule, values) {
             if (
               _.every(values, (v) => {
-                const port = parseInt(v);
+                return parseInt(v).toString() === v || isPortRangeStr(v);
+              })
+            ) {
+              return Promise.resolve();
+            } else {
+              return Promise.reject(
+                new Error(t('session.launcher.InvalidPortFormat')),
+              );
+            }
+          },
+        }),
+        () => ({
+          validator(rule, values) {
+            const allPorts = transformPortValuesToNumbers(values);
+            if (
+              _.every(allPorts, (port) => {
                 return port >= MIN_PORT && port <= MAX_PORT;
               })
             ) {
@@ -82,12 +109,50 @@ const PortSelectFormItem: React.FC<Props> = ({ ...formItemProps }) => {
 interface PortTagProps extends TagProps {
   value: string;
 }
+
 export const PortTag: React.FC<PortTagProps> = ({ value, ...tagProps }) => {
-  const port = parseInt(value);
-  const isValid = port >= MIN_PORT && port <= MAX_PORT;
-  return <Tag color={isValid ? undefined : 'red'} {...tagProps} />;
+  return (
+    <Tag color={isValidPortStr(value) ? undefined : 'red'} {...tagProps} />
+  );
 };
 
+export const isValidPortStr = (portStr: string) => {
+  // consider range as valid
+  if (isPortRangeStr(portStr)) {
+    return true;
+  } else if (
+    portStr === parseInt(portStr).toString() &&
+    parseInt(portStr) >= MIN_PORT &&
+    parseInt(portStr) <= MAX_PORT
+  ) {
+    return true;
+  }
+  return false;
+};
+
+export const isPortRangeStr = (portRange: string) => {
+  const splitPortRange = portRange.split(':');
+  if (splitPortRange.length === 2) {
+    const [start, end] = splitPortRange.map((v) => parseInt(v));
+    return start <= end;
+  }
+  return false;
+};
+
+export const parsePortRangeToNumbers = (portRange: string) => {
+  const [start, end] = portRange.split(':').map((v) => parseInt(v));
+  return _.range(start, end + 1);
+};
+
+export const transformPortValuesToNumbers = (
+  values: PortSelectFormValues['ports'],
+) => {
+  return _.flatten(
+    _.map(values, (v) =>
+      isPortRangeStr(v) ? parsePortRangeToNumbers(v) : parseInt(v),
+    ),
+  );
+};
 // const portGuides = {
 //   '5432': 'PostgreSQL',
 //   '3306': 'MySQL',
