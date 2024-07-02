@@ -116,7 +116,17 @@
     "WarboyEnabled": "Warboy NPU Enabled",
     "DownloadWebUIApp": "Pobierz aplikację Backend.AI Web UI",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Włączono funkcję Hyperaccel LPU"
+    "HyperaccelLPUEnabled": "Włączono funkcję Hyperaccel LPU",
+    "InvitatedFrom": "Z:",
+    "ChangeSystemSettingDescription": "Zmień obrazy środowiska obliczeniowego, środowisko graficzne, skalowanie i wtyczki.",
+    "ChangeUserSetting": "Zmień ustawienia użytkownika",
+    "ChangeUserSettingDescription": "Możesz zmienić swoje ustawienia osobiste, aby dostosować swoje doświadczenie.",
+    "CheckResourcesDescription": "Możesz sprawdzić i zarządzać aktualnie używanymi zasobami.",
+    "ManageEnvironment": "Zarządzanie obrazami środowiska biegania",
+    "ManageEnvironmentDescription": "Zainstaluj działający obraz środowiska lub zmień ustawienia obrazu.",
+    "Maintenance": "Konserwacja systemu",
+    "MaintenanceDescription": "Zapewnia funkcjonalność do konserwacji systemu.",
+    "shortCut": "Skróty"
   },
   "session": {
     "launcher": {

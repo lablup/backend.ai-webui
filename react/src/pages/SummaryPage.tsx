@@ -1,6 +1,7 @@
 import BAIBoard from '../components/BAIBoard';
 import SummaryItemDownloadApp from '../components/SummaryPageItems/SummaryItemDownloadApp';
 import SummaryItemInvitation from '../components/SummaryPageItems/SummaryItemInvitation';
+import SummaryItemShortCut from '../components/SummaryPageItems/SummaryItemShortCut';
 import SummaryItemStartMenu from '../components/SummaryPageItems/SummaryItemStartMenu';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { BoardProps } from '@cloudscape-design/board-components/board';
@@ -13,7 +14,7 @@ export interface SummaryItem
     title: string;
     content: JSX.Element;
   }> {
-  id: 'startMenu' | 'invitation' | 'downloadApp';
+  id: 'startMenu' | 'invitation' | 'downloadApp' | 'shortCut';
 }
 
 const SummaryPage: React.FC = () => {
@@ -34,6 +35,11 @@ const SummaryPage: React.FC = () => {
     downloadApp: {
       title: t('summary.DownloadWebUIApp'),
       content: <SummaryItemDownloadApp />,
+    },
+
+    shortCut: {
+      title: t('summary.shortCut'),
+      content: <SummaryItemShortCut />,
     },
   };
   const [summaryItemsSetting, setSummaryItemsSetting] =
@@ -65,6 +71,12 @@ const SummaryPage: React.FC = () => {
             rowSpan: 1,
             columnSpan: 1,
             data: defaultSummaryElements.downloadApp,
+          },
+          {
+            id: 'shortCut',
+            rowSpan: 1,
+            columnSpan: 1,
+            data: defaultSummaryElements.shortCut,
           },
         ],
   );
