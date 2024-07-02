@@ -21,8 +21,8 @@ const AnnouncementAlert: React.FC<Props> = ({ style, ...otherProps }) => {
     <Alert
       banner
       style={{
-        // alignItems: 'flex-start',
         // overflow: 'auto',
+        alignItems: 'center',
         ...style,
       }}
       // icon={
