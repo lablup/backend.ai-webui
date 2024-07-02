@@ -204,10 +204,12 @@ class Client {
   public abortController: any;
   public abortSignal: any;
   public requestTimeout: number;
+  public requestSoftTimeout: number;
   static ERR_REQUEST: any;
   static ERR_RESPONSE: any;
   static ERR_ABORT: any;
   static ERR_TIMEOUT: any;
+  static ERR_SOFT_TIMEOUT: any;
   static ERR_SERVER: any;
   static ERR_UNKNOWN: any;
 
@@ -267,6 +269,7 @@ class Client {
     this.abortController = new AbortController();
     this.abortSignal = this.abortController.signal;
     this.requestTimeout = 15000;
+    this.requestSoftTimeout = 10000;
     if (localStorage.getItem('backendaiwebui.sessionid')) {
       this._loginSessionId = localStorage.getItem('backendaiwebui.sessionid');
     } else {
@@ -313,7 +316,7 @@ class Client {
     let errorTitle = '';
     let errorMsg;
     let errorDesc = '';
-    let resp, body, requestTimer;
+    let resp, body, requestTimer, requestTimerForSoftTimeout;
     try {
       if (rqst.method === 'GET') {
         rqst.body = undefined;
@@ -336,11 +339,20 @@ class Client {
           },
           timeout === 0 ? this.requestTimeout : timeout,
         );
+        requestTimerForSoftTimeout = setTimeout(
+          () => {
+            document?.dispatchEvent(new CustomEvent('backendai.client.softtimeout'));
+          }
+        );
       }
       resp = await fetch(rqst.uri, rqst);
       if (typeof requestTimer !== 'undefined') {
         clearTimeout(requestTimer);
       }
+      if (typeof requestTimerForSoftTimeout !== 'undefined') {
+        clearTimeout(requestTimerForSoftTimeout);
+      }
+      
       let loginSessionId = resp.headers.get('X-BackendAI-SessionID'); // Login session ID handler
       if (loginSessionId) {
         this._loginSessionId = loginSessionId;
