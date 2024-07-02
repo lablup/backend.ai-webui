@@ -26,6 +26,7 @@ import '@material/mwc-icon-button-toggle';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import { Menu } from '@material/mwc-menu';
+import { Select } from '@material/mwc-select';
 import '@material/mwc-textfield';
 import { TextField } from '@material/mwc-textfield';
 import '@vaadin/grid/vaadin-grid';
@@ -157,6 +158,8 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({ type: String }) _helpDescriptionTitle = '';
   @property({ type: String }) _helpDescriptionIcon = '';
   @property({ type: Set }) activeIdleCheckList;
+  @property({ type: Array }) selectedKernels;
+  @property({ type: String }) selectedKernelId = '';
   @property({ type: Proxy }) statusColorTable = new Proxy(
     {
       'idle-timeout': 'green',
@@ -252,6 +255,7 @@ export default class BackendAISessionList extends BackendAIPage {
   constructor() {
     super();
     this.compute_sessions = [];
+    this.selectedKernels = [];
     this._selected_items = [];
     this._manualCleanUpNeededContainers = [];
     this.terminationQueue = [];
@@ -827,7 +831,9 @@ export default class BackendAISessionList extends BackendAIPage {
       containerFields.push('agent');
     }
     if (globalThis.backendaiclient.supports('per-user-image')) {
-      containerFields.push('image_object { labels { key value } }');
+      containerFields.push(
+        'kernel_id role image_object { labels { key value } }',
+      );
     }
 
     if (this._isContainerCommitEnabled && status.includes('RUNNING')) {
@@ -1535,49 +1541,78 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   /**
-   * Show logs - work title, session logs, session name, and access key.
+   * Set Selected component value by event
    *
-   * @param {Event} e - click the assignment button
-   * */
-  _showLogs(e) {
+   * @param {Event} e
+   */
+  _setSelectedSession(e) {
     const controls = e.target.closest('#controls');
     const sessionUuid = controls['session-uuid'];
     const sessionName = controls['session-name'];
-    const sessionId =
-      globalThis.backendaiclient.APIMajorVersion < 5
-        ? sessionName
-        : sessionUuid;
     const accessKey = controls['access-key'];
-
-    globalThis.backendaiclient
-      .get_logs(sessionId, accessKey, 15000)
-      .then((req) => {
-        const ansi_up = new AnsiUp();
-        const logs = ansi_up.ansi_to_html(req.result.logs);
-        setTimeout(() => {
-          (
-            this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement
-          ).innerHTML = `${sessionName} (${sessionUuid})`;
-          (
-            this.shadowRoot?.querySelector('#work-area') as HTMLDivElement
-          ).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
-          // TODO define extended type for custom properties
-          this.workDialog.sessionUuid = sessionUuid;
-          this.workDialog.sessionName = sessionName;
-          this.workDialog.accessKey = accessKey;
-          this.workDialog.show();
-        }, 100);
-      })
-      .catch((err) => {
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        } else if (err && err.title) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.show(true, err);
+    this.workDialog.sessionUuid = sessionUuid;
+    this.workDialog.sessionName = sessionName;
+    this.workDialog.accessKey = accessKey;
+    let subContainerLength = 0;
+    this.selectedKernels = this.compute_sessions
+      .find((session) => session.session_id === sessionUuid)
+      ?.containers.map((container) => {
+        if (container.role === 'main') {
+          container.role = 'main1';
+        } else {
+          subContainerLength++;
+          container.role = `sub${subContainerLength}`;
         }
-      });
+        return container;
+      })
+      .sort((a, b) => a.role.localeCompare(b.role));
+  }
+
+  _updateLogsByKernelId() {
+    this.selectedKernelId = (
+      this.shadowRoot?.querySelector('#kernel-id-select') as Select
+    ).value;
+  }
+
+  /**
+   * Show logs - work title, session logs, session name, and access key.
+   */
+  _showLogs() {
+    // workaround for this.selectedKernelId is empty
+    if (this.selectedKernelId !== '') {
+      globalThis.backendaiclient
+        .get_logs(
+          this.workDialog.sessionUuid,
+          this.workDialog.accessKey,
+          this.selectedKernelId,
+          15000,
+        )
+        .then((req) => {
+          const ansi_up = new AnsiUp();
+          const logs = ansi_up.ansi_to_html(req.result.logs);
+          setTimeout(() => {
+            (
+              this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement
+            ).innerHTML =
+              `${this.workDialog.sessionName} (${this.workDialog.sessionUuid})`;
+            (
+              this.shadowRoot?.querySelector('#work-area') as HTMLDivElement
+            ).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
+            // TODO define extended type for custom properties
+            this.workDialog.show();
+          }, 100);
+        })
+        .catch((err) => {
+          if (err && err.message) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+          } else if (err && err.title) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.show(true, err);
+          }
+        });
+    }
   }
 
   _downloadLogs() {
@@ -3209,7 +3244,11 @@ ${rowData.item[this.sessionNameField]}</pre
                   id="${rowData.index + '-assignment'}"
                   icon="assignment"
                   ?disabled="${rowData.item.status === 'CANCELLED'}"
-                  @click="${(e) => this._showLogs(e)}"
+                  @click="${async (e) => {
+                    this._setSelectedSession(e);
+                    this._updateLogsByKernelId();
+                    this._showLogs();
+                  }}"
                 ></mwc-icon-button>
                 <vaadin-tooltip
                   for="${rowData.index + '-assignment'}"
@@ -4241,7 +4280,7 @@ ${rowData.item[this.sessionNameField]}</pre
       </div>
       <div class="list-wrapper">
         <vaadin-grid id="list-grid" theme="row-stripes column-borders compact dark" aria-label="Session list"
-          .items="${this.compute_sessions}" height-by-rows >
+          .items="${this.compute_sessions}" height-by-rows>
           ${
             this._isRunning
               ? html`
@@ -4388,8 +4427,25 @@ ${rowData.item[this.sessionNameField]}</pre
           @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
       </div>
       <backend-ai-dialog id="work-dialog" narrowLayout scrollable fixed backdrop>
-        <span slot="title" id="work-title"></span>
+        <span slot="title" id="work-title">
+        </span>
         <div slot="action" class="horizontal layout center">
+          <mwc-select id="kernel-id-select" label="Kernel Role" @selected=${() => {
+            this._updateLogsByKernelId();
+            this._showLogs();
+          }}>
+            ${this.selectedKernels.map((item) => {
+              return html`
+                <mwc-list-item
+                  value=${item.kernel_id}
+                  label="${item.role}"
+                  ?selected=${item.role.includes('main')}
+                >
+                  ${item.role}
+                </mwc-list-item>
+              `;
+            })}
+          </mwc-select>
           <mwc-icon-button fab flat inverted icon="download" @click="${() =>
             this._downloadLogs()}">
           </mwc-icon-button>
