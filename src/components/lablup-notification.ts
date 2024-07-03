@@ -196,7 +196,7 @@ export default class LablupNotification extends LitElement {
       open: true,
       type: shouldSaveLog ? 'error' : null,
       message: this.text,
-      description: this.text ? undefined : this.detail,
+      description: this.text === this.detail ? undefined : this.detail,
       to: shouldSaveLog ? '/usersettings?tab=logs' : this.url,
       duration: persistent ? 0 : undefined,
       // closeIcon: persistent,
