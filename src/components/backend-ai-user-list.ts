@@ -723,7 +723,7 @@ export default class BackendAIUserList extends BackendAIPage {
                 open: this.openUserInfoModal,
                 userEmail: this.userEmail,
               })}"
-              @close="${() => (this.openUserInfoModal = false)}"
+              @cancel="${() => (this.openUserInfoModal = false)}"
             ></backend-ai-react-user-info-dialog>
           `
         : html``}
@@ -738,7 +738,7 @@ export default class BackendAIUserList extends BackendAIPage {
                 this.openUserSettingModal = false;
                 this.refresh();
               }}"
-              @close="${() => (this.openUserSettingModal = false)}"
+              @cancel="${() => (this.openUserSettingModal = false)}"
             ></backend-ai-react-user-setting-dialog>
           `
         : html``}

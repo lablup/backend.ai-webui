@@ -40,20 +40,14 @@ type UserRole = {
 
 interface Props extends BAIModalProps {
   extraFetchKey?: string;
-  email?: string;
-  onRequestOk: () => void;
-  onRequestClose: () => void;
 }
 
 const UserSettingModal: React.FC<Props> = ({
   extraFetchKey = '',
-  email,
-  onRequestOk,
-  onRequestClose,
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
-  const { value } = useWebComponentInfo();
+  const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
     open: boolean;
     userEmail: string;
@@ -63,7 +57,7 @@ const UserSettingModal: React.FC<Props> = ({
   } catch (error) {
     parsedValue = {
       open: false,
-      userEmail: email ?? '',
+      userEmail: '',
     };
   }
   const { open, userEmail } = parsedValue;
@@ -212,7 +206,7 @@ const UserSettingModal: React.FC<Props> = ({
           } else {
             message.error(res?.modify_user?.msg);
           }
-          onRequestOk();
+          dispatchEvent('ok', null);
         },
         onError(err) {
           message.error(err?.message);
@@ -224,7 +218,9 @@ const UserSettingModal: React.FC<Props> = ({
   return (
     <BAIModal
       open={open}
-      onCancel={onRequestClose}
+      onCancel={() => {
+        dispatchEvent('cancel', null);
+      }}
       centered
       title={t('credential.ModifyUserDetail')}
       destroyOnClose={true}

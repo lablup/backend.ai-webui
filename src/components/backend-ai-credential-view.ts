@@ -70,7 +70,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({ type: Boolean }) enableSessionLifetime = false;
   @property({ type: String }) activeUserInnerTab = 'active';
   @property({ type: String }) activeCredentialInnerTab = 'active';
-  @property({ type: Boolean }) isSupportReactUserNode = false;
   @query('#active-credential-list')
   activeCredentialList!: BackendAICredentialList;
   @query('#inactive-credential-list')
@@ -253,8 +252,6 @@ export default class BackendAICredentialView extends BackendAIPage {
         this.isSuperAdmin = true;
       }
     }
-    this.isSupportReactUserNode =
-      globalThis.backendaiclient?.supports('user_nodes');
     this._activeTab = 'user-lists';
     this.vfolder_max_limit['value'] = 10;
     this._defaultFileName = this._getDefaultCSVFileName();
@@ -491,21 +488,18 @@ export default class BackendAICredentialView extends BackendAIPage {
       els[x].style.display = 'none';
     }
     this._activeTab = tab.title;
-    const displayedList = this.shadowRoot?.querySelector(
-      '#' + tab.title,
-    ) as HTMLElement;
-    displayedList ? (displayedList.style.display = 'block') : undefined;
+    (
+      this.shadowRoot?.querySelector('#' + tab.title) as HTMLElement
+    ).style.display = 'block';
     const tabKeyword = this._activeTab.substring(0, this._activeTab.length - 1); // to remove '-s'.
     let innerTab;
     // show inner tab(active) after selecting outer tab
     switch (this._activeTab) {
       case 'user-lists':
-        if (!this.isSupportReactUserNode) {
-          innerTab = this.shadowRoot?.querySelector(
-            'mwc-tab[title=' + this.activeUserInnerTab + '-' + tabKeyword + ']',
-          );
-          this._showList(innerTab);
-        }
+        innerTab = this.shadowRoot?.querySelector(
+          'mwc-tab[title=' + this.activeUserInnerTab + '-' + tabKeyword + ']',
+        );
+        this._showList(innerTab);
         break;
       case 'credential-lists':
         innerTab = this.shadowRoot?.querySelector(
@@ -768,8 +762,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 `
               : html``}
           </h3>
-          <backend-ai-react-user-list style="display: ${this.isSupportReactUserNode && this._activeTab === 'user-lists' ? 'block' : 'none'};"></backend-ai-react-user-list>
-          <div id="user-lists" class="admin item tab-content card" style="display: ${!this.isSupportReactUserNode && this._activeTab === 'user-lists' ? 'block' : 'none'};">
+          <div id="user-lists" class="admin item tab-content card">
             <h4 class="horizontal flex center center-justified layout">
               <mwc-tab-bar class="sub-bar">
                 <mwc-tab
