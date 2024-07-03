@@ -68,7 +68,7 @@
       "MyEnvironments": "I miei ambienti",
       "ResourcePolicy": "Politica delle risorse"
     },
-    "YouAreOffline": "Ora sei offline",
+    "YouAreOffline": "Non in linea: Non è collegato ad alcuna rete.",
     "YouAreOnline": "Ora sei online",
     "NOTFOUND": " <p> Ops! <br/> Pagina non trovata... </p>",
     "DescNOTFOUND": "Siamo spiacenti, la pagina che stai cercando non è stata trovata.",
@@ -274,7 +274,9 @@
       "EnvironmentVariableValueRequired": "Inserire un valore.",
       "PleaseCompleteForm": "Il modulo è incompleto o contiene errori. Si prega di controllare i dati inseriti.",
       "FailedToStartNewSession": "Creazione della sessione non riuscita. \nControlla la scheda \"FINITO\" nella pagina della sessione.",
-      "ProxyDirectTCPNotSupported": "La connessione TCP diretta proxy non è ancora supportata"
+      "ProxyDirectTCPNotSupported": "La connessione TCP diretta proxy non è ancora supportata",
+      "InvalidPortFormat": "Il formato del numero di porta non è corretto.",
+      "DuplicatedPort": "Ci sono porte duplicate."
     },
     "Preparing": "Preparazione...",
     "PreparingSession": "Preparazione della sessione...",
@@ -411,7 +413,8 @@
     "WarningForceTerminateSessions": "Avviso: forza la chiusura delle sessioni",
     "ForceTerminateWarningMsg2": "Eseguire solo quando lo stato non cambia per un periodo di tempo irragionevolmente lungo.",
     "ForceTerminateWarningMsg3": "Questa azione non elimina i contenitori effettivi sugli agenti. \nPotrebbe essere necessaria la pulizia manuale.",
-    "ContainerToCleanUp": "Contenitori da pulire"
+    "ContainerToCleanUp": "Contenitori da pulire",
+    "ATOMPlusEnabled": "ATOM+ NPU Abilitato"
   },
   "button": {
     "Cancel": "Annulla",
@@ -664,7 +667,9 @@
       "FolderRestored": "La cartella {{ folderName }} è stata ripristinata.",
       "FolderDeletedForever": "La cartella {{ folderName }} è stata eliminata per sempre.",
       "MoveToTrashBin": "Sposta nel cestino",
-      "MovedToTrashBin": "La cartella {{ folderName }} è stata spostata nel cestino."
+      "MovedToTrashBin": "La cartella {{ folderName }} è stata spostata nel cestino.",
+      "FolderCloneFailed": "Non è stato possibile clonare la cartella.",
+      "FolderClonePending": "La clonazione della cartella è in corso."
     },
     "explorer": {
       "Delete": "Elimina...",
@@ -756,7 +761,8 @@
     "New": "Nuovo",
     "Add": "Aggiungi",
     "CloningIsOnlyPossibleSameHost": "Attualmente la clonazione è possibile solo sullo stesso host.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Nuovo nome della cartella"
   },
   "dialog": {
     "warning": {
@@ -768,7 +774,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Vuoi procedere?",
-      "DoYouWantToDeleteSomething": "Si è sicuri di voler eliminare \"{{ nome }}\"?"
+      "DoYouWantToDeleteSomething": "Si è sicuri di voler eliminare \"{{ nome }}\"?",
+      "DoYouWantToResetChanges": "Vuoi ripristinare le modifiche?"
     },
     "title": {
       "LetsDouble-Check": "Ricontrolliamo",
@@ -1604,7 +1611,9 @@
     "CloneAsFolder": "Clonare come cartella",
     "CloneSuccess": "La richiesta di clonazione è stata inviata con successo.",
     "CloneInfo": "Verrà clonata come cartella del tipo di utente.",
-    "category": "Categoria"
+    "category": "Categoria",
+    "CloneToFolder": "Clonare in una cartella",
+    "FolderAlreadyExists": "Una cartella con questo nome esiste già."
   },
   "table": {
     "SettingTable": "Impostazione della tabella",
@@ -1626,5 +1635,11 @@
   "propertyFilter": {
     "placeHolder": "Ricerca",
     "ResetFilter": "Reimposta filtro"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Accedere con il proprio account Backend.AI",
+    "confirmLoginMessage": "Vuoi accedere con l'account {{username}} ({{email}})?",
+    "ServiceName": "Nome del servizio",
+    "useAnotherAccount": "Accedere con un altro account"
   }
 }

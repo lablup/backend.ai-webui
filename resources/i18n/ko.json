@@ -68,7 +68,7 @@
       "MyEnvironments": "나의 실행 환경",
       "ResourcePolicy": "자원 정책"
     },
-    "YouAreOffline": "오프라인 상태가 되었습니다",
+    "YouAreOffline": "오프라인: 네트워크에 연결되어 있지 않습니다.",
     "YouAreOnline": "온라인 상태가 되었습니다",
     "NOTFOUND": "<p>요청하신 페이지를 찾을 수 없습니다.</p>",
     "DescNOTFOUND": "요청하신 페이지가 사라졌거나, 잘못된 경로를 입력하였습니다.",
@@ -275,7 +275,9 @@
       "PleaseCompleteForm": "양식이 완성되지 않았거나 오류가 포함되어 있습니다. 입력 내용을 확인해주세요.",
       "NeedToCorrectForm": "수정 버튼을 눌러 입력하신 내용을 확인해주세요.",
       "FailedToStartNewSession": "세션 생성에 실패했습니다. 세션 페이지의 '종료' 탭을 확인해 주세요.",
-      "ProxyDirectTCPNotSupported": "프록시 직접 TCP 연결은 아직 지원되지 않습니다."
+      "ProxyDirectTCPNotSupported": "프록시 직접 TCP 연결은 아직 지원되지 않습니다.",
+      "InvalidPortFormat": "포트 형식이 올바르지 않습니다.",
+      "DuplicatedPort": "중복된 포트가 있습니다."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -411,7 +413,8 @@
     "WarningForceTerminateSessions": "경고: 세션 강제 종료",
     "ForceTerminateWarningMsg2": "세션을 생성하거나 종료했는데 비정상적으로 오랫동안 상태가 변하지 않을 경우에만 사용하십시오.",
     "ForceTerminateWarningMsg3": "연산노드에 컨테이너가 남아있는 경우 수동으로 컨테이너 삭제가 필요할 수 있습니다.",
-    "ContainerToCleanUp": "확인할 컨테이너 목록"
+    "ContainerToCleanUp": "확인할 컨테이너 목록",
+    "ATOMPlusEnabled": "ATOM+ NPU 사용중"
   },
   "modelService": {
     "Services": "모델 서비스",
@@ -516,7 +519,7 @@
     "Unset": "초기화",
     "OK": "확인",
     "Download": "다운로드",
-    "Clone": "복사",
+    "Clone": "복제",
     "Config": "설정",
     "Next": "다음",
     "Previous": "이전",
@@ -780,7 +783,9 @@
       "FolderRestored": "{{ folderName }} 폴더가 복원되었습니다.",
       "FolderDeletedForever": "{{ folderName }} 폴더가 완전히 삭제되었습니다.",
       "MoveToTrashBin": "휴지통으로 이동",
-      "MovedToTrashBin": "{{ folderName }} 폴더가 휴지통으로 이동되었습니다."
+      "MovedToTrashBin": "{{ folderName }} 폴더가 휴지통으로 이동되었습니다.",
+      "FolderCloneFailed": "폴더 복제에 실패하였습니다.",
+      "FolderClonePending": "폴더 복제가 진행중입니다."
     },
     "explorer": {
       "Delete": "삭제",
@@ -863,7 +868,8 @@
     "New": "새로운",
     "Add": "추가",
     "CloningIsOnlyPossibleSameHost": "현재 폴더 복사는 동일한 호스트간에만 가능합니다.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "새 폴더 이름"
   },
   "dialog": {
     "warning": {
@@ -875,7 +881,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "계속 진행하시겠습니까?",
-      "DoYouWantToDeleteSomething": "\"{{ name }}\"을(를) 삭제하시겠습니까?"
+      "DoYouWantToDeleteSomething": "\"{{ name }}\"을(를) 삭제하시겠습니까?",
+      "DoYouWantToResetChanges": "변경사항을 초기화 하시겠습니까?"
     },
     "title": {
       "LetsDouble-Check": "한 번 더 확인합시다",
@@ -1603,9 +1610,11 @@
     "Category": "카테고리",
     "Label": "레이블",
     "Task": "작업",
-    "CloneAsFolder": "새 폴더로 복사",
+    "CloneAsFolder": "새 폴더로 복제",
     "CloneSuccess": "복사 요청이 성공적으로 보내졌습니다.",
-    "CloneInfo": "새로운 사용자 폴더로 복사됩니다."
+    "CloneInfo": "새로운 사용자 폴더로 복제됩니다.",
+    "CloneToFolder": "폴더로 복제",
+    "FolderAlreadyExists": "같은 이름의 폴더가 존재합니다."
   },
   "table": {
     "SettingTable": "테이블 설정",
@@ -1627,5 +1636,11 @@
   "propertyFilter": {
     "ResetFilter": "필터 초기화",
     "placeHolder": "검색"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Backend.AI 계정을 이용한 로그인",
+    "confirmLoginMessage": "{{username}} ({{email}}) 계정으로 로그인하시겠습니까?",
+    "ServiceName":"서비스 이름",
+    "useAnotherAccount": "다른 계정으로 로그인"
   }
 }

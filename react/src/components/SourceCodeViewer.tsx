@@ -35,39 +35,32 @@ const SourceCodeViewer: React.FC<SourceCodeViewerProps> = ({
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
         <pre
           style={{
-            ...style,
-            width: '100%',
             margin: 0,
             padding: token.padding,
             borderRadius: token.borderRadius,
             overflow: wordWrap ? undefined : 'overlay',
+            ...style,
           }}
         >
           <code
             style={{
-              whiteSpace: wordWrap ? 'pre-wrap' : undefined,
+              display: 'block',
+              whiteSpace: wordWrap ? 'pre-wrap' : 'scroll',
               overflowWrap: wordWrap ? 'anywhere' : undefined,
             }}
           >
             {_.map(tokens, (line, i) => {
               return (
-                <span key={i} {...getLineProps({ line })}>
+                <div key={i} {...getLineProps({ line })}>
                   {_.map(line, (token, key) => {
-                    /** The codes below fix some line wrapping errors during the conversion process. **/
-                    if (!token.content && key === line.length - 1) {
-                      return '\n';
-                    }
-                    if (line.length === 1 && token.content === ' ') {
-                      return '\n';
-                    }
-                    /** **/
                     return (
                       <span key={key} {...getTokenProps({ token })}>
                         {token.content}
                       </span>
                     );
                   })}
-                </span>
+                  {'\n'}
+                </div>
               );
             })}
           </code>
@@ -80,6 +73,7 @@ const SourceCodeViewer: React.FC<SourceCodeViewerProps> = ({
     <Flex
       onMouseEnter={() => setIsMouseEntered(true)}
       onMouseLeave={() => setIsMouseEntered(false)}
+      style={{ width: '100%' }}
     >
       <CopyToClipboard
         text={children}
@@ -91,26 +85,26 @@ const SourceCodeViewer: React.FC<SourceCodeViewerProps> = ({
           }, 2000);
         }}
       >
-        <Tooltip
-          title={
-            isCopied ? t('sourceCodeViewer.Copied') : t('sourceCodeViewer.Copy')
-          }
-        >
-          <Button
-            style={{
-              top: token.sizeSM,
-              right: token.sizeSM,
-              zIndex: token.zIndexBase + 1,
-              opacity: isMouseEntered ? 1 : 0,
-              backgroundColor: token.colorFillSecondary,
-              cursor: 'pointer',
-              position: 'absolute',
-              transition: 'opacity 0.2s ease-in-out',
-            }}
-            size="small"
-            icon={isCopied ? <CheckOutlined /> : <CopyOutlined />}
-          />
-        </Tooltip>
+        <Flex style={{ position: 'absolute', top: '10px', right: '10px' }}>
+          <Tooltip
+            title={
+              isCopied
+                ? t('sourceCodeViewer.Copied')
+                : t('sourceCodeViewer.Copy')
+            }
+          >
+            <Button
+              size="small"
+              icon={isCopied ? <CheckOutlined /> : <CopyOutlined />}
+              style={{
+                opacity: isMouseEntered ? 1 : 0,
+                cursor: 'pointer',
+                transition: 'opacity 0.2s ease-in-out',
+                position: 'sticky',
+              }}
+            />
+          </Tooltip>
+        </Flex>
       </CopyToClipboard>
       {HighLightedCode}
     </Flex>

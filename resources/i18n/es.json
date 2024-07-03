@@ -366,7 +366,9 @@
       "DeleteForever": "Borrar para siempre",
       "Restore": "Restaurar",
       "FolderRestored": "La carpeta {{ folderName }} ha sido restaurada.",
-      "FolderDeletedForever": "La carpeta {{ folderName }} se ha eliminado para siempre."
+      "FolderDeletedForever": "La carpeta {{ folderName }} se ha eliminado para siempre.",
+      "FolderCloneFailed": "Error al clonar la carpeta.",
+      "FolderClonePending": "La clonación de la carpeta está en curso."
     },
     "invitation": {
       "FolderSharingNotAvailableToUser": "El uso compartido de carpetas no está disponible para los usuarios solicitados:",
@@ -395,7 +397,8 @@
     "New": "Nuevo",
     "Add": "Añadir",
     "CloningIsOnlyPossibleSameHost": "Actualmente, la clonación sólo es posible en el mismo host.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Nuevo nombre de carpeta"
   },
   "dialog": {
     "warning": {
@@ -411,7 +414,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "¿Quieres continuar?",
-      "DoYouWantToDeleteSomething": "¿Estás seguro de que quieres borrar \"{{ name }}\"?"
+      "DoYouWantToDeleteSomething": "¿Estás seguro de que quieres borrar \"{{ name }}\"?",
+      "DoYouWantToResetChanges": "¿Quieres restablecer tus cambios?"
     },
     "title": {
       "LetsDouble-Check": "Doble comprobación",
@@ -1230,7 +1234,9 @@
       "EnvironmentVariableValueRequired": "Por favor, introduzca un valor.",
       "PleaseCompleteForm": "El formulario está incompleto o contiene errores. Compruebe los datos introducidos.",
       "FailedToStartNewSession": "Error al crear la sesión. \nPor favor marque la pestaña 'TERMINADO' en la página de la sesión.",
-      "ProxyDirectTCPNotSupported": "La conexión TCP directa de proxy aún no es compatible"
+      "ProxyDirectTCPNotSupported": "La conexión TCP directa de proxy aún no es compatible",
+      "InvalidPortFormat": "El formato del número de puerto es incorrecto.",
+      "DuplicatedPort": "Hay puertos duplicados."
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",
@@ -1249,7 +1255,8 @@
     "WarningForceTerminateSessions": "Advertencia: Forzar la finalización de sesiones",
     "ForceTerminateWarningMsg2": "Ejecutar solo cuando el estado no cambie durante un período de tiempo excesivamente largo.",
     "ForceTerminateWarningMsg3": "Esta acción no elimina los contenedores reales de los agentes. \nEs posible que se requiera una limpieza manual.",
-    "ContainerToCleanUp": "Contenedor(es) para limpiar"
+    "ContainerToCleanUp": "Contenedor(es) para limpiar",
+    "ATOMPlusEnabled": "ATOM+ NPU Activado"
   },
   "settings": {
     "ATOMsupport": "ATOM",
@@ -1509,7 +1516,7 @@
     "DescNOTFOUND": "Lo sentimos, no se ha encontrado la página que busca.",
     "NOTFOUND": "<p>¡Oops!<br/>Página no encontrada...</p>",
     "UNAUTHORIZEDACCESS": "Acceso no autorizado",
-    "YouAreOffline": "Ahora está desconectado",
+    "YouAreOffline": "Desconectado: No conectado a ninguna red.",
     "YouAreOnline": "Ya está en línea",
     "menu": {
       "AIAccelerator": "Acelerador de IA",
@@ -1606,7 +1613,9 @@
     "CloneAsFolder": "Clonar como carpeta",
     "CloneSuccess": "La solicitud de clonación se ha enviado correctamente.",
     "CloneInfo": "Se clonará como su carpeta de tipo de usuario.",
-    "category": "Categoría"
+    "category": "Categoría",
+    "CloneToFolder": "Clonar en una carpeta",
+    "FolderAlreadyExists": "Ya existe una carpeta con este nombre."
   },
   "table": {
     "SettingTable": "Ajuste de la tabla",
@@ -1628,5 +1637,11 @@
   "propertyFilter": {
     "placeHolder": "Buscar en",
     "ResetFilter": "Restablecer filtro"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Inicia sesión con tu cuenta de Backend.AI",
+    "confirmLoginMessage": "¿Desea iniciar sesión con {{username}} ({{email}}) cuenta?",
+    "ServiceName": "Nombre del servicio",
+    "useAnotherAccount": "Iniciar sesión con otra cuenta"
   }
 }

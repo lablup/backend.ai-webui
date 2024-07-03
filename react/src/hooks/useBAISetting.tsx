@@ -1,4 +1,5 @@
 import { jotaiStore } from '../components/DefaultProviders';
+import { SummaryItem } from '../pages/SummaryPage';
 import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 
@@ -8,18 +9,20 @@ interface UserSettings {
   desktop_notification?: boolean;
   compact_sidebar?: boolean;
   preserve_login?: boolean;
-  language?: string;
-  current_language?: string;
   automatic_update_check?: boolean;
   custom_ssh_port?: string;
   beta_feature?: boolean;
   last_window_close_time?: number;
   endpoints?: string[];
+  auto_logout?: boolean;
+  summary_items?: Array<Omit<SummaryItem, 'data'>>;
+  selected_language?: string;
 }
 
 interface GeneralSettings {
   last_login?: number;
   login_attempt?: number;
+  language?: string;
 }
 
 export const useBAISettingUserState = <K extends keyof UserSettings>(
@@ -99,7 +102,6 @@ const SettingAtomFamily = atomFamily((param: string) => {
 document?.addEventListener('backendaiwebui.settings:set', (e: any) => {
   const { detail } = e;
   if (detail.namespace && detail.name) {
-    console.log(detail);
     jotaiStore.set(
       SettingAtomFamily(detail.namespace + '.' + detail.name),
       detail.value,

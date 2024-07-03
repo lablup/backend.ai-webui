@@ -68,7 +68,7 @@
       "MyEnvironments": "My Environments",
       "ResourcePolicy": "Resource Policy"
     },
-    "YouAreOffline": "You are now offline",
+    "YouAreOffline": "Offline: Not connected to any networks.",
     "YouAreOnline": "You are now online",
     "NOTFOUND": "<p>Oops!<br/>Page not Found...</p>",
     "DescNOTFOUND": "Sorry, the page you are looking for could not be found.",
@@ -288,7 +288,9 @@
       "EnvironmentVariableValueRequired": "Please enter a value.",
       "PleaseCompleteForm": "Form is incomplete or contains errors. Please check your inputs.",
       "FailedToStartNewSession": "Session creation failed. Please check the 'FINISHED' tab on the session page.",
-      "ProxyDirectTCPNotSupported": "Proxy direct TCP connection is not supported yet"
+      "ProxyDirectTCPNotSupported": "Proxy direct TCP connection is not supported yet",
+      "InvalidPortFormat": "The port number format is incorrect.",
+      "DuplicatedPort": "There are duplicate ports."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -424,7 +426,8 @@
     "WarningForceTerminateSessions": "Warning: Force Terminate Session(s)",
     "ForceTerminateWarningMsg2": "Execute only when the state does not change for an unreasonably long period of time.",
     "ForceTerminateWarningMsg3": "This action does not delete the actual containers on the agent(s). Manual cleanup may be required.",
-    "ContainerToCleanUp": "Container(s) to clean up"
+    "ContainerToCleanUp": "Container(s) to clean up",
+    "ATOMPlusEnabled": "ATOM+ NPU Enabled"
   },
   "modelService": {
     "Services": "Services",
@@ -792,7 +795,9 @@
       "FolderRestored": "The {{ folderName }} folder has been restored.",
       "FolderDeletedForever": "The {{ folderName }} folder has been deleted forever.",
       "MovedToTrashBin": "The {{ folderName }} folder has been moved to the trash bin.",
-      "MoveToTrashBin": "Move to trash bin"
+      "MoveToTrashBin": "Move to trash bin",
+      "FolderCloneFailed": "Failed to clone the folder.",
+      "FolderClonePending": "Cloning the folder is in progress."
     },
     "explorer": {
       "Delete": "Delete",
@@ -876,7 +881,8 @@
     "New": "New",
     "Add": "Add",
     "CloningIsOnlyPossibleSameHost": "Currently, cloning is only possible on the same host.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "New folder name"
   },
   "dialog": {
     "warning": {
@@ -888,7 +894,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Do you want to proceed?",
-      "DoYouWantToDeleteSomething": "Are you sure you want to delete \"{{ name }}\"?"
+      "DoYouWantToDeleteSomething": "Are you sure you want to delete \"{{ name }}\"?",
+      "DoYouWantToResetChanges": "Do you want to reset your changes?"
     },
     "title": {
       "Notice": "Notice",
@@ -1611,7 +1618,9 @@
     "CloneAsFolder": "Clone as Folder",
     "CloneSuccess": "The clone request has been sent successfully.",
     "CloneInfo": "It will be cloned as your user type folder.",
-    "category": "Category"
+    "category": "Category",
+    "CloneToFolder": "Clone to a folder",
+    "FolderAlreadyExists": "A folder with this name already exists."
   },
   "tourguide": {
     "NeoSessionLauncher": {
@@ -1628,5 +1637,11 @@
   "propertyFilter": {
     "placeHolder": "Search",
     "ResetFilter": "ResetFilter"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Login with your Backend.AI account",
+    "confirmLoginMessage": "Would you like to sign in with {{username}} ({{email}}) account?",
+    "ServiceName": "Service name",
+    "useAnotherAccount": "Sign in with a different account"
   }
 }

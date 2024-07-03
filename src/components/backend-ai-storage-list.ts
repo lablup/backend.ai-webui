@@ -1109,13 +1109,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         narrowLayout
         scrimClickAction
         @dialog-closed=${() => {
-          const queryParams = new URLSearchParams(window.location.search);
-          queryParams.delete('folder');
-          window.history.replaceState(
-            {},
-            '',
-            `${location.pathname}${queryParams.toString().length == 0 ? '' : '?' + queryParams}`,
-          );
+          this.triggerCloseFilebrowserToReact();
         }}
       >
         <span slot="title" style="margin-right:1rem;">${this.explorer.id}</span>
@@ -1539,7 +1533,11 @@ export default class BackendAiStorageList extends BackendAIPage {
             fullwidth
             @click="${(e) => this._keepFileExtension()}"
           >
-            ${globalThis.backendaioptions.get('language') !== 'ko'
+            ${globalThis.backendaioptions.get(
+              'language',
+              'default',
+              'general',
+            ) !== 'ko'
               ? html`
                   ${_text('data.explorer.KeepFileExtension') +
                   this.oldFileExtension}
@@ -1550,7 +1548,11 @@ export default class BackendAiStorageList extends BackendAIPage {
                 `}
           </mwc-button>
           <mwc-button unelevated fullwidth @click="${() => this._renameFile()}">
-            ${globalThis.backendaioptions.get('language') !== 'ko'
+            ${globalThis.backendaioptions.get(
+              'language',
+              'default',
+              'general',
+            ) !== 'ko'
               ? html`
                   ${this.newFileExtension
                     ? _text('data.explorer.UseNewFileExtension') +
@@ -1769,7 +1771,9 @@ export default class BackendAiStorageList extends BackendAIPage {
                   class="fg blue controls-running"
                   icon="folder_open"
                   title=${_t('data.folders.OpenAFolder')}
-                  @click="${(e) => this._folderExplorer(rowData)}"
+                  @click="${() => {
+                    this.triggerOpenFilebrowserToReact(rowData);
+                  }}"
                   ?disabled="${this._isUncontrollableStatus(
                     rowData.item.status,
                   )}"
@@ -1780,7 +1784,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div
             @click="${(e) =>
               !this._isUncontrollableStatus(rowData.item.status) &&
-              this._folderExplorer(rowData)}"
+              this.triggerOpenFilebrowserToReact(rowData)}"
             .folder-id="${rowData.item.name}"
             style="cursor:${this._isUncontrollableStatus(rowData.item.status)
               ? 'default'
@@ -3381,6 +3385,32 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
   }
 
+  triggerOpenFilebrowserToReact(rowData) {
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.set('folder', rowData.item.id);
+    document.dispatchEvent(
+      new CustomEvent('react-navigate', {
+        detail: {
+          pathname: '/data',
+          search: queryParams.toString(),
+        },
+      }),
+    );
+  }
+
+  triggerCloseFilebrowserToReact() {
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.delete('folder');
+    document.dispatchEvent(
+      new CustomEvent('react-navigate', {
+        detail: {
+          pathname: window.location.pathname,
+          search: queryParams.toString(),
+        },
+      }),
+    );
+  }
+
   /**
    * Set up the explorer of the folder and call the _clearExplorer() function.
    *
@@ -3399,10 +3429,6 @@ export default class BackendAiStorageList extends BackendAIPage {
       uuid: rowData.item.id,
       breadcrumb: ['.'],
     };
-
-    const queryParams = new URLSearchParams();
-    queryParams.set('folder', rowData.item.id);
-    window.history.replaceState({}, '', `${location.pathname}?${queryParams}`);
 
     /**
      * NOTICE: If it's admin user and the folder type is group, It will have write permission.

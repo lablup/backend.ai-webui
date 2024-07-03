@@ -1,23 +1,10 @@
 import { iSizeToSize } from '../helper';
+import { useResourceSlotsDetails } from '../hooks/backendai';
+import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import Flex from './Flex';
 import { Tooltip, Typography, theme } from 'antd';
 import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-
-const resourceTypes = [
-  'cpu',
-  'mem',
-  'cuda.device',
-  'cuda.shares',
-  'rocm.device',
-  'tpu.device',
-  'ipu.device',
-  'atom.device',
-  'warboy.device',
-  'hyperaccel-lpu.device',
-] as const;
-
-export type ResourceTypeKey = (typeof resourceTypes)[number];
 
 export const ACCELERATOR_UNIT_MAP: {
   [key: string]: string;
@@ -28,6 +15,7 @@ export const ACCELERATOR_UNIT_MAP: {
   'tpu.device': 'TPU',
   'ipu.device': 'IPU',
   'atom.device': 'ATOM',
+  'atom-plus.device': 'ATOM+',
   'warboy.device': 'Warboy',
   'hyperaccel-lpu.device': 'Hyperaccel LPU',
 };
@@ -35,8 +23,8 @@ export const ACCELERATOR_UNIT_MAP: {
 export type ResourceOpts = {
   shmem?: number;
 };
-interface Props {
-  type: ResourceTypeKey;
+interface ResourceNumberProps {
+  type: string;
   extra?: ReactElement;
   opts?: ResourceOpts;
   value: string;
@@ -46,37 +34,37 @@ interface Props {
 type ResourceTypeInfo<V> = {
   [key in string]: V;
 };
-const ResourceNumber: React.FC<Props> = ({
+const ResourceNumber: React.FC<ResourceNumberProps> = ({
   type,
   value: amount,
   extra,
   opts,
   hideTooltip = false,
 }) => {
-  const { t } = useTranslation();
   const { token } = theme.useToken();
-  const units: ResourceTypeInfo<string> = {
-    cpu: t('session.core'),
-    mem: 'GiB',
-    ...ACCELERATOR_UNIT_MAP,
-  };
+  const currentGroup = useCurrentResourceGroupValue();
+  const [resourceSlotsDetails] = useResourceSlotsDetails(
+    currentGroup || undefined,
+  );
 
   return (
     <Flex direction="row" gap="xxs">
-      {resourceTypes.includes(type) ? (
+      {resourceSlotsDetails?.[type] ? (
         <ResourceTypeIcon type={type} showTooltip={!hideTooltip} />
       ) : (
         type
       )}
 
       <Typography.Text>
-        {units[type] === 'GiB'
+        {resourceSlotsDetails?.[type].number_format.binary
           ? Number(iSizeToSize(amount, 'g', 3, true)?.numberFixed).toString()
-          : units[type] === 'FGPU'
+          : (resourceSlotsDetails?.[type].number_format.round_length || 0) > 0
             ? parseFloat(amount).toFixed(2)
             : amount}
       </Typography.Text>
-      <Typography.Text type="secondary">{units[type]}</Typography.Text>
+      <Typography.Text type="secondary">
+        {resourceSlotsDetails?.[type].display_unit || ''}
+      </Typography.Text>
       {type === 'mem' && opts?.shmem && opts?.shmem > 0 ? (
         <Typography.Text
           type="secondary"
@@ -111,7 +99,7 @@ const MWCIconWrap: React.FC<{ size?: number; children: string }> = ({
 };
 interface AccTypeIconProps
   extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src'> {
-  type: ResourceTypeKey;
+  type: string;
   showIcon?: boolean;
   showUnit?: boolean;
   showTooltip?: boolean;
@@ -141,6 +129,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     'tpu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'TPU'],
     'ipu.device': [<MWCIconWrap size={size}>view_module</MWCIconWrap>, 'IPU'],
     'atom.device': ['/resources/icons/rebel.svg', 'ATOM'],
+    'atom-plus.device': ['/resources/icons/rebel.svg', 'ATOM'],
     'warboy.device': ['/resources/icons/furiosa.svg', 'Warboy'],
     'hyperaccel-lpu.device': [
       '/resources/icons/npu_generic.svg',

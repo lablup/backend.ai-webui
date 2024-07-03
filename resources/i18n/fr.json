@@ -68,7 +68,7 @@
       "MyEnvironments": "Mes environnements",
       "ResourcePolicy": "Politique des ressources"
     },
-    "YouAreOffline": "Vous êtes maintenant hors ligne",
+    "YouAreOffline": "Hors ligne : N'est connecté à aucun réseau.",
     "YouAreOnline": "Vous êtes maintenant en ligne",
     "NOTFOUND": " <p> Oups ! <br/> Page non trouvée... </p>",
     "DescNOTFOUND": "Désolé, la page que vous recherchez est introuvable.",
@@ -274,7 +274,9 @@
       "EnvironmentVariableValueRequired": "Veuillez saisir une valeur.",
       "PleaseCompleteForm": "Le formulaire est incomplet ou contient des erreurs. Veuillez vérifier vos données.",
       "FailedToStartNewSession": "La création de la session a échoué. \nVeuillez vérifier l'onglet « TERMINÉ » sur la page de la session.",
-      "ProxyDirectTCPNotSupported": "La connexion TCP directe par proxy n'est pas encore prise en charge"
+      "ProxyDirectTCPNotSupported": "La connexion TCP directe par proxy n'est pas encore prise en charge",
+      "InvalidPortFormat": "Le format du numéro de port est incorrect.",
+      "DuplicatedPort": "Il y a des ports en double."
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -410,7 +412,8 @@
     "WarningForceTerminateSessions": "Avertissement : Forcer la fin des sessions",
     "ForceTerminateWarningMsg2": "Exécuter uniquement lorsque l’état ne change pas pendant une période de temps déraisonnablement longue.",
     "ForceTerminateWarningMsg3": "Cette action ne supprime pas les conteneurs réels sur le ou les agents. \nUn nettoyage manuel peut être nécessaire.",
-    "ContainerToCleanUp": "Conteneur(s) à nettoyer"
+    "ContainerToCleanUp": "Conteneur(s) à nettoyer",
+    "ATOMPlusEnabled": "ATOM+ NPU Activé"
   },
   "button": {
     "Cancel": "Annuler",
@@ -663,7 +666,9 @@
       "FolderRestored": "Le dossier {{ folderName }} a été restauré.",
       "FolderDeletedForever": "Le dossier {{ folderName }} a été supprimé définitivement.",
       "MoveToTrashBin": "Déplacer vers la poubelle",
-      "MovedToTrashBin": "Le dossier {{ folderName }} a été déplacé vers la corbeille."
+      "MovedToTrashBin": "Le dossier {{ folderName }} a été déplacé vers la corbeille.",
+      "FolderCloneFailed": "Échec du clonage du dossier.",
+      "FolderClonePending": "Le clonage du dossier est en cours."
     },
     "explorer": {
       "Delete": "Effacer...",
@@ -755,7 +760,8 @@
     "New": "Nouveau",
     "Add": "Ajouter",
     "CloningIsOnlyPossibleSameHost": "Actuellement, le clonage n'est possible que sur le même hôte.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Nouveau nom de dossier"
   },
   "dialog": {
     "warning": {
@@ -767,7 +773,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Voulez-vous poursuivre?",
-      "DoYouWantToDeleteSomething": "Êtes-vous sûr de vouloir supprimer \"{{ nom }}\" ?"
+      "DoYouWantToDeleteSomething": "Êtes-vous sûr de vouloir supprimer \"{{ nom }}\" ?",
+      "DoYouWantToResetChanges": "Voulez-vous réinitialiser vos modifications ?"
     },
     "title": {
       "LetsDouble-Check": "Vérifions deux fois",
@@ -1604,7 +1611,9 @@
     "CloneAsFolder": "Cloner en tant que dossier",
     "CloneSuccess": "La demande de clone a été envoyée avec succès.",
     "CloneInfo": "Il sera cloné en tant que dossier de votre type d'utilisateur.",
-    "category": "Catégorie"
+    "category": "Catégorie",
+    "CloneToFolder": "Cloner dans un dossier",
+    "FolderAlreadyExists": "Un dossier portant ce nom existe déjà."
   },
   "table": {
     "SettingTable": "Paramètre de table",
@@ -1626,5 +1635,11 @@
   "propertyFilter": {
     "placeHolder": "Recherche",
     "ResetFilter": "Réinitialiser le filtre"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Connectez-vous avec votre compte Backend.AI",
+    "confirmLoginMessage": "Souhaitez-vous vous connecter avec le compte {{nom d'utilisateur}} ({{email}}) ?",
+    "ServiceName": "Nom du service",
+    "useAnotherAccount": "Se connecter avec un autre compte"
   }
 }

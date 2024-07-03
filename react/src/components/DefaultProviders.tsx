@@ -87,8 +87,10 @@ i18n
     backend: {
       loadPath: '/resources/i18n/{{lng}}.json',
     },
-    //@ts-ignore
-    lng: globalThis?.backendaioptions?.get('current_language') || 'en',
+    lng:
+      //@ts-ignore
+      globalThis?.backendaioptions?.get('language', 'default', 'general') ||
+      'en',
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
@@ -102,7 +104,7 @@ i18n
 export const useCurrentLanguage = () => {
   const [lang, _setLang] = useState(
     //@ts-ignore
-    globalThis?.backendaioptions?.get('current_language'),
+    globalThis?.backendaioptions?.get('language', 'default', 'general') || 'en',
   );
   const { i18n } = useTranslation();
 

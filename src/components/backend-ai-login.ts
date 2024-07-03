@@ -2070,7 +2070,7 @@ export default class BackendAILogin extends BackendAIPage {
                     disabled
                   ></mwc-icon-button>
                   <mwc-textfield
-                    type="email"
+                    required
                     id="id_user_id"
                     maxlength="64"
                     autocomplete="username"

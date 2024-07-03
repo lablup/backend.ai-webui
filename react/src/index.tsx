@@ -11,7 +11,6 @@ import reactToWebComponent, {
 import { useSuspendedBackendaiClient } from './hooks';
 import { useCurrentResourceGroupValue } from './hooks/useCurrentProject';
 import { ThemeModeProvider } from './hooks/useThemeMode';
-import ModelStoreListPage from './pages/ModelStoreListPage';
 import { Provider as JotaiProvider } from 'jotai';
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
@@ -27,14 +26,6 @@ const DefaultProviders = React.lazy(
 const SessionList = React.lazy(() => import('./pages/SessionListPage'));
 const ResetPasswordRequired = React.lazy(
   () => import('./components/ResetPasswordRequired'),
-);
-const StorageStatusPanel = React.lazy(
-  () => import('./components/StorageStatusPanel'),
-);
-const StorageStatusPanelFallback = React.lazy(() =>
-  import('./components/StorageStatusPanel').then((m) => ({
-    default: m.StorageStatusPanelFallback,
-  })),
 );
 const CopyableCodeText = React.lazy(
   () => import('./components/CopyableCodeText'),
@@ -90,19 +81,6 @@ customElements.define(
       <ResetPasswordRequired />
     </DefaultProviders>
   )),
-);
-
-customElements.define(
-  'backend-ai-react-storage-status-panel',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <Suspense fallback={<StorageStatusPanelFallback />}>
-          <StorageStatusPanel fetchKey={props.value || ''} />
-        </Suspense>
-      </DefaultProviders>
-    );
-  }),
 );
 
 customElements.define(
@@ -261,19 +239,6 @@ customElements.define(
       <DefaultProviders {...props}>
         <Suspense fallback={<FlexActivityIndicator />}>
           <ContainerRegistryList />
-        </Suspense>
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
-  'backend-ai-react-model-store-list',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <Suspense fallback={<FlexActivityIndicator />}>
-          <ModelStoreListPage />
         </Suspense>
       </DefaultProviders>
     );

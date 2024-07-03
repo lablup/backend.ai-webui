@@ -15,6 +15,7 @@ import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
 import PortSelectFormItem, {
   PortSelectFormValues,
   PortTag,
+  transformPortValuesToNumbers,
 } from '../components/PortSelectFormItem';
 import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
@@ -25,6 +26,7 @@ import SessionLauncherValidationTour from '../components/SessionLauncherErrorTou
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
+import SourceCodeViewer from '../components/SourceCodeViewer';
 import VFolderTableFormItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
@@ -420,7 +422,7 @@ const SessionLauncherPage = () => {
               // set hpcOptimization options: "OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS"
               ..._.omit(values.hpcOptimization, 'autoEnabled'),
             },
-            preopen_ports: _.map(values.ports, (v) => parseInt(v)),
+            preopen_ports: transformPortValuesToNumbers(values.ports),
           },
         };
 
@@ -1133,18 +1135,15 @@ const SessionLauncherPage = () => {
                           <>
                             <Descriptions.Item
                               label={t('session.launcher.StartUpCommand')}
+                              labelStyle={{ whiteSpace: 'nowrap' }}
+                              contentStyle={{
+                                overflow: 'auto',
+                              }}
                             >
                               {form.getFieldValue(['batch', 'command']) ? (
-                                <SyntaxHighlighter
-                                  style={isDarkMode ? dark : undefined}
-                                  language="shell"
-                                  customStyle={{
-                                    margin: 0,
-                                    width: '100%',
-                                  }}
-                                >
+                                <SourceCodeViewer language="shell">
                                   {form.getFieldValue(['batch', 'command'])}
-                                </SyntaxHighlighter>
+                                </SourceCodeViewer>
                               ) : (
                                 <Typography.Text type="secondary">
                                   {t('general.None')}

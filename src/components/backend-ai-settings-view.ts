@@ -44,6 +44,7 @@ interface Options {
   tpu: boolean;
   ipu: boolean;
   atom: boolean;
+  atom_plus: boolean;
   warboy: boolean;
   hyperaccel_lpu: boolean;
   schedulerType: string;
@@ -103,6 +104,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
       tpu: false,
       ipu: false,
       atom: false,
+      atom_plus: false,
       warboy: false,
       hyperaccel_lpu: false,
       schedulerType: 'fifo',
@@ -418,12 +420,14 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       </div>
                       <div class="description-shrink">
                         ${_tr('settings.DescCUDAGPUsupport')}
-                        ${this.options['cuda_fgpu']
-                          ? html`
-                              <br />
-                              ${_t('settings.CUDAGPUdisabledByFGPUsupport')}
-                            `
-                          : html``}
+                        ${
+                          this.options['cuda_fgpu']
+                            ? html`
+                                <br />
+                                ${_t('settings.CUDAGPUdisabledByFGPUsupport')}
+                              `
+                            : html``
+                        }
                       </div>
                     </div>
                     <div
@@ -569,6 +573,26 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         disabled
                       ></mwc-switch>
                     </div>
+                  </div>
+                  <div class="horizontal layout setting-item">
+                    <div
+                      class="vertical center-justified layout setting-desc-shrink"
+                    >
+                      <div class="title">${_t('settings.ATOMPlusSupport')}</div>
+                      <div class="description-shrink">
+                        ${_tr('settings.DescATOMPlusSupport')}
+                        <br />
+                        ${_t('settings.RequireATOMPlusPlugin')}
+                      </div>
+                    </div>
+                    <div
+                      class="vertical center-justified layout setting-button"
+                    >
+                      <mwc-switch
+                        id="atom-plus-support-switch"
+                        ?selected="${this.options['atom_plus']}"
+                        disabled
+                      ></mwc-switch>
                   </div>
                   <div class="horizontal layout setting-item">
                     <div
@@ -927,6 +951,12 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       if ('ipu.device' in response) {
         this.options['ipu'] = true;
+      }
+      if ('atom.device' in response) {
+        this.options['atom'] = true;
+      }
+      if ('atom-plus.device' in response) {
+        this.options['atom_plus'] = true;
       }
       if ('warboy.device' in response) {
         this.options['warboy'] = true;

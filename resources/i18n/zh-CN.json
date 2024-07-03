@@ -68,7 +68,7 @@
       "MyEnvironments": "我的环境",
       "ResourcePolicy": "资源政策"
     },
-    "YouAreOffline": "您现在离线",
+    "YouAreOffline": "脱机：未连接任何网络。",
     "YouAreOnline": "您现在在线",
     "NOTFOUND": " <p> 糟糕！ <br/> 页面未找到... </p>",
     "DescNOTFOUND": "抱歉，找不到您要找的页面。",
@@ -274,7 +274,9 @@
       "EnvironmentVariableValueRequired": "请输入数值。",
       "PleaseCompleteForm": "表格不完整或包含错误。请检查输入内容。",
       "FailedToStartNewSession": "会话创建失败。\n请检查会话页面上的“已完成”选项卡。",
-      "ProxyDirectTCPNotSupported": "尚不支持代理直接 TCP 连接"
+      "ProxyDirectTCPNotSupported": "尚不支持代理直接 TCP 连接",
+      "InvalidPortFormat": "端口号格式不正确。",
+      "DuplicatedPort": "有重复的端口。"
     },
     "Preparing": "正在准备...",
     "PreparingSession": "正在准备会议...",
@@ -410,7 +412,8 @@
     "WarningForceTerminateSessions": "警告：强制终止会话",
     "ForceTerminateWarningMsg2": "仅当状态在不合理的长时间内没有发生变化时才执行。",
     "ForceTerminateWarningMsg3": "此操作不会删除代理上的实际容器。\n可能需要手动清理。",
-    "ContainerToCleanUp": "需要清理的容器"
+    "ContainerToCleanUp": "需要清理的容器",
+    "ATOMPlusEnabled": "ATOM+ NPU 启用"
   },
   "button": {
     "Cancel": "取消",
@@ -663,7 +666,9 @@
       "FolderRestored": "{{ folderName }} 文件夹已恢复。",
       "FolderDeletedForever": "{{ folderName }} 文件夹已被永久删除。",
       "MoveToTrashBin": "移至垃圾箱",
-      "MovedToTrashBin": "{{ folderName }} 文件夹已移至垃圾箱。"
+      "MovedToTrashBin": "{{ folderName }} 文件夹已移至垃圾箱。",
+      "FolderCloneFailed": "克隆文件夹失败。",
+      "FolderClonePending": "正在克隆文件夹。"
     },
     "explorer": {
       "Delete": "删除...",
@@ -755,7 +760,8 @@
     "New": "新的",
     "Add": "添加",
     "CloningIsOnlyPossibleSameHost": "目前，克隆只能在同一主机上进行。",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "新文件夹名称"
   },
   "dialog": {
     "warning": {
@@ -767,7 +773,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "您要继续吗？",
-      "DoYouWantToDeleteSomething": "您确定要删除\"{{ 名称 }}}\"吗？"
+      "DoYouWantToDeleteSomething": "您确定要删除\"{{ 名称 }}}\"吗？",
+      "DoYouWantToResetChanges": "您想重置您的更改吗？"
     },
     "title": {
       "LetsDouble-Check": "让我们仔细检查",
@@ -1605,7 +1612,9 @@
     "CloneAsFolder": "克隆为文件夹",
     "CloneSuccess": "克隆请求已成功发送。",
     "CloneInfo": "它将被克隆为用户类型文件夹。",
-    "category": "类别"
+    "category": "类别",
+    "CloneToFolder": "克隆到文件夹",
+    "FolderAlreadyExists": "该名称的文件夹已经存在。"
   },
   "table": {
     "SettingTable": "桌面设置",
@@ -1627,5 +1636,11 @@
   "propertyFilter": {
     "placeHolder": "搜索",
     "ResetFilter": "重置过滤器"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "使用 Backend.AI 账户登录",
+    "confirmLoginMessage": "您想用 {{username}} 登录吗？({{email}})账户登录？",
+    "ServiceName": "服务名称",
+    "useAnotherAccount": "使用其他账户登录"
   }
 }

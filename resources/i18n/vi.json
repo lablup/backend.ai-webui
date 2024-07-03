@@ -68,7 +68,7 @@
       "MyEnvironments": "Môi trường của tôi",
       "ResourcePolicy": "Chính sách tài nguyên"
     },
-    "YouAreOffline": "Bạn hiện đang ngoại tuyến",
+    "YouAreOffline": "Ngoại tuyến: Không kết nối với bất kỳ mạng nào.",
     "YouAreOnline": "Bạn hiện đang trực tuyến",
     "NOTFOUND": " <p> Rất tiếc! <br/> Không tìm thấy trang ... </p>",
     "DescNOTFOUND": "Xin lỗi, không thể tìm thấy trang bạn đang tìm.",
@@ -274,7 +274,9 @@
       "EnvironmentVariableValueRequired": "Vui lòng nhập một giá trị.",
       "PleaseCompleteForm": "Biểu mẫu không đầy đủ hoặc có lỗi. \nVui lòng kiểm tra đầu vào của bạn.",
       "FailedToStartNewSession": "Tạo phiên không thành công. \nVui lòng kiểm tra tab 'Đã kết thúc' trên trang phiên.",
-      "ProxyDirectTCPNotSupported": "Kết nối TCP trực tiếp proxy chưa được hỗ trợ"
+      "ProxyDirectTCPNotSupported": "Kết nối TCP trực tiếp proxy chưa được hỗ trợ",
+      "InvalidPortFormat": "Định dạng số cổng không chính xác.",
+      "DuplicatedPort": "Có cổng trùng lặp."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",
@@ -410,7 +412,8 @@
     "WarningForceTerminateSessions": "Cảnh báo: Buộc chấm dứt (các) phiên",
     "ForceTerminateWarningMsg2": "Chỉ thực hiện khi trạng thái không thay đổi trong một khoảng thời gian dài không hợp lý.",
     "ForceTerminateWarningMsg3": "Hành động này không xóa các vùng chứa thực tế trên (các) tác nhân. \nCó thể cần phải dọn dẹp thủ công.",
-    "ContainerToCleanUp": "(Các) thùng chứa để dọn dẹp"
+    "ContainerToCleanUp": "(Các) thùng chứa để dọn dẹp",
+    "ATOMPlusEnabled": "ATOM+ NPU Đã bật"
   },
   "button": {
     "Cancel": "Huỷ bỏ",
@@ -663,7 +666,9 @@
       "FolderRestored": "Thư mục {{ folderName }} đã được khôi phục.",
       "FolderDeletedForever": "Thư mục {{ folderName }} đã bị xóa vĩnh viễn.",
       "MoveToTrashBin": "Di chuyển vào thùng rác",
-      "MovedToTrashBin": "Thư mục {{ folderName }} đã được chuyển vào thùng rác."
+      "MovedToTrashBin": "Thư mục {{ folderName }} đã được chuyển vào thùng rác.",
+      "FolderCloneFailed": "Không sao chép được thư mục.",
+      "FolderClonePending": "Đang nhân bản thư mục."
     },
     "explorer": {
       "Delete": "Xóa bỏ...",
@@ -755,7 +760,8 @@
     "New": "Mới",
     "Add": "Thêm vào",
     "CloningIsOnlyPossibleSameHost": "Hiện tại, việc nhân bản chỉ có thể thực hiện được trên cùng một máy chủ.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Tên thư mục mới"
   },
   "dialog": {
     "warning": {
@@ -767,7 +773,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Bạn có muốn tiếp tục?",
-      "DoYouWantToDeleteSomething": "Bạn có chắc chắn muốn xóa \"{{ name }}\" không?"
+      "DoYouWantToDeleteSomething": "Bạn có chắc chắn muốn xóa \"{{ name }}\" không?",
+      "DoYouWantToResetChanges": "Bạn có muốn đặt lại các thay đổi của mình không?"
     },
     "title": {
       "LetsDouble-Check": "Hãy kiểm tra kỹ",
@@ -1604,7 +1611,9 @@
     "CloneAsFolder": "Sao chép dưới dạng Thư mục",
     "CloneSuccess": "Yêu cầu nhân bản đã được gửi thành công.",
     "CloneInfo": "Nó sẽ được sao chép thành thư mục loại người dùng của bạn.",
-    "category": "Loại"
+    "category": "Loại",
+    "CloneToFolder": "Sao chép vào một thư mục",
+    "FolderAlreadyExists": "Một thư mục có tên này đã tồn tại."
   },
   "table": {
     "SettingTable": "Cài đặt bảng",
@@ -1626,5 +1635,11 @@
   "propertyFilter": {
     "placeHolder": "Tìm kiếm",
     "ResetFilter": "Đặt lại bộ lọc"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Đăng nhập bằng tài khoản Backend.AI của bạn",
+    "confirmLoginMessage": "Bạn có muốn đăng nhập bằng tài khoản {{username}} ({{email}}) không?",
+    "ServiceName": "Tên dịch vụ",
+    "useAnotherAccount": "Đăng nhập bằng tài khoản khác"
   }
 }

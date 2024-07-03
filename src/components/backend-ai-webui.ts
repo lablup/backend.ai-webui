@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
-import { navigate, updateOffline } from '../backend-ai-app';
+import { navigate } from '../backend-ai-app';
 // import '../lib/backend.ai-client-esm';
 import { default as TabCount } from '../lib/TabCounter';
 import {
@@ -15,11 +15,9 @@ import { store } from '../store';
 import './backend-ai-app-launcher';
 import './backend-ai-common-utils';
 import BackendAICommonUtils from './backend-ai-common-utils';
-import './backend-ai-help-button';
 import './backend-ai-indicator-pool';
 import './backend-ai-login';
 import BackendAIMetadataStore from './backend-ai-metadata-store';
-import './backend-ai-offline-indicator';
 import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-project-switcher';
 import './backend-ai-resource-broker';
@@ -52,7 +50,6 @@ import { customElement, property, query } from 'lit/decorators.js';
 import toml from 'markty-toml';
 // PWA components
 import { connect } from 'pwa-helpers/connect-mixin';
-import { installOfflineWatcher } from 'pwa-helpers/network';
 import { installRouter } from 'pwa-helpers/router';
 
 registerTranslateConfig({
@@ -107,7 +104,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     | 'feedback'
     | 'notification'
     | 'task' = '';
-  @property({ type: Boolean }) _offlineIndicatorOpened = false;
   @property({ type: Boolean }) _offline = false;
   @property({ type: Object }) config = Object();
   @property({ type: Object }) notification;
@@ -170,6 +166,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'unauthorized',
     'session',
     'session/start',
+    'interactive-login',
   ]; // temporally block pipeline from available pages 'pipeline', 'pipeline-job'
   @property({ type: Array }) adminOnlyPages = [
     'experiment',
@@ -236,11 +233,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     installRouter((location) =>
       store.dispatch(navigate(decodeURIComponent(location.pathname))),
     );
-    installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
     let configPath;
     if (globalThis.isElectron) {
       configPath = './config.toml';
-      document.addEventListener('backend-ai-logout', () => this.logout(false));
+      document.addEventListener('backend-ai-logout', ((
+        e: CustomEvent<{ callbackURL: string }>,
+      ) => {
+        this.logout(false, e.detail?.callbackURL);
+      }) as EventListener);
       document.addEventListener('backend-ai-app-close', () =>
         this.close_app_window(),
       );
@@ -249,7 +249,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       );
     } else {
       configPath = '../../config.toml';
-      document.addEventListener('backend-ai-logout', () => this.logout(false));
+      document.addEventListener('backend-ai-logout', ((
+        e: CustomEvent<{ callbackURL: string }>,
+      ) => {
+        this.logout(false, e.detail?.callbackURL);
+      }) as EventListener);
       document.addEventListener('backend-ai-show-splash', () =>
         this._showSplash(),
       );
@@ -377,23 +381,25 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   async connectedCallback() {
     super.connectedCallback();
     document.addEventListener('backend-ai-connected', this._refreshPage);
-    const defaultLang = globalThis.navigator.language.split('-')[0];
-    if (
-      globalThis.backendaioptions.get('language') === 'default' &&
-      this.supportLanguageCodes.includes(defaultLang)
-    ) {
+
+    const selectedLang = globalThis.backendaioptions.get('selected_language');
+    let defaultLang = globalThis.navigator.language.split('-')[0];
+    defaultLang = this.supportLanguageCodes.includes(defaultLang)
+      ? defaultLang
+      : 'en';
+
+    if (!selectedLang) {
       this.lang = defaultLang;
-    } else if (
-      this.supportLanguageCodes.includes(
-        globalThis.backendaioptions.get('language'),
-      )
-    ) {
-      this.lang = globalThis.backendaioptions.get('language');
     } else {
-      this.lang = 'en';
+      if (selectedLang === 'default') {
+        this.lang = defaultLang;
+      } else {
+        this.lang = this.supportLanguageCodes.includes(selectedLang)
+          ? selectedLang
+          : defaultLang;
+      }
     }
-    globalThis.backendaioptions.set('current_language', this.lang);
-    globalThis.backendaioptions.set('language', this.lang);
+    globalThis.backendaioptions.set('language', this.lang, 'general');
     await setLanguage(this.lang);
     this.hasLoadedStrings = true;
     // this._initClient();
@@ -762,7 +768,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    *
    * @param {Boolean} performClose
    */
-  async logout(performClose = false) {
+  async logout(performClose = false, callbackURL: string = '/') {
     console.log('also close the app:', performClose);
     globalThis.backendaiutils._deleteRecentProjectGroupInfo();
     if (
@@ -791,7 +797,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       } else if (globalThis.isElectron) {
         globalThis.location.href = globalThis.electronInitialHref;
       } else {
-        this._moveTo('/');
+        this._moveTo(callbackURL);
         globalThis.location.reload();
       }
     }
@@ -867,7 +873,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this._page = state.app.page;
     this._pageParams = state.app.params;
     this._offline = state.app.offline;
-    this._offlineIndicatorOpened = state.app.offlineIndicatorOpened;
     // this._drawerOpened = state.app.drawerOpened;
     globalThis.currentPage = this._page;
     globalThis.currentPageParams = this._pageParams;
@@ -922,13 +927,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         >
           <mwc-circular-progress indeterminate></mwc-circular-progress>
         </backend-ai-agent-summary-view>
-        <backend-ai-data-view
-          class="page"
-          name="data"
-          ?active="${this._page === 'data'}"
-        >
-          <mwc-circular-progress indeterminate></mwc-circular-progress>
-        </backend-ai-data-view>
         <backend-ai-settings-view
           class="page"
           name="settings"
@@ -973,9 +971,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           <mwc-circular-progress indeterminate></mwc-circular-progress>
         </backend-ai-edu-applauncher>
       </div>
-      <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
-        ${this._offline ? _t('webui.YouAreOffline') : _t('webui.YouAreOnline')}.
-      </backend-ai-offline-indicator>
+
       <backend-ai-login active id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-backendai-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>

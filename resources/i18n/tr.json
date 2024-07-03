@@ -68,7 +68,7 @@
       "MyEnvironments": "Ortamlarım",
       "ResourcePolicy": "Kaynak Politikası"
     },
-    "YouAreOffline": "Şu anda çevrimdışısın",
+    "YouAreOffline": "Çevrimdışı: Herhangi bir ağa bağlı değil.",
     "YouAreOnline": "artık çevrimiçisin",
     "NOTFOUND": " <p> Hata! <br/> Sayfa Bulunamadı... </p>",
     "DescNOTFOUND": "Üzgünüz, aradığınız sayfa bulunamadı.",
@@ -274,7 +274,9 @@
       "EnvironmentVariableValueRequired": "Lütfen bir değer girin.",
       "PleaseCompleteForm": "Form eksik veya hatalar içeriyor. Lütfen girdilerinizi kontrol edin.",
       "FailedToStartNewSession": "Oturum oluşturulamadı. \nLütfen oturum sayfasındaki 'bitmiş' sekmesini kontrol edin.",
-      "ProxyDirectTCPNotSupported": "Proxy doğrudan TCP bağlantısı henüz desteklenmiyor"
+      "ProxyDirectTCPNotSupported": "Proxy doğrudan TCP bağlantısı henüz desteklenmiyor",
+      "InvalidPortFormat": "Bağlantı noktası numarası biçimi yanlış.",
+      "DuplicatedPort": "Çift bağlantı noktaları var."
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -410,7 +412,8 @@
     "WarningForceTerminateSessions": "Uyarı: Oturumları Sonlandırmaya Zorla",
     "ForceTerminateWarningMsg2": "Yalnızca durum makul olmayan uzun bir süre boyunca değişmediğinde yürütün.",
     "ForceTerminateWarningMsg3": "Bu eylem, aracı(lar)daki gerçek kapsayıcıları silmez. \nManuel temizleme gerekebilir.",
-    "ContainerToCleanUp": "Temizlenecek konteyner(ler)"
+    "ContainerToCleanUp": "Temizlenecek konteyner(ler)",
+    "ATOMPlusEnabled": "ATOM+ NPU Etkinleştirilmiş"
   },
   "button": {
     "Cancel": "İptal etmek",
@@ -663,7 +666,9 @@
       "FolderRestored": "{{ klasörAdı }} klasörü geri yüklendi.",
       "FolderDeletedForever": "{{ folderName }} klasörü kalıcı olarak silindi.",
       "MoveToTrashBin": "Çöp kutusuna taşı",
-      "MovedToTrashBin": "{{ folderName }} klasörü çöp kutusuna taşındı."
+      "MovedToTrashBin": "{{ folderName }} klasörü çöp kutusuna taşındı.",
+      "FolderCloneFailed": "Klasör klonlanamadı.",
+      "FolderClonePending": "Klasörün klonlanması devam ediyor."
     },
     "explorer": {
       "Delete": "Sil...",
@@ -755,7 +760,8 @@
     "New": "Yeni",
     "Add": "Ekle",
     "CloningIsOnlyPossibleSameHost": "Şu anda klonlama yalnızca aynı ana bilgisayarda mümkündür.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Yeni klasör adı"
   },
   "dialog": {
     "warning": {
@@ -767,7 +773,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Devam etmek istiyor musunuz?",
-      "DoYouWantToDeleteSomething": "\"{{ name }}\" silmek istediğinizden emin misiniz?"
+      "DoYouWantToDeleteSomething": "\"{{ name }}\" silmek istediğinizden emin misiniz?",
+      "DoYouWantToResetChanges": "Değişikliklerinizi sıfırlamak istiyor musunuz?"
     },
     "title": {
       "LetsDouble-Check": "İki kez kontrol edelim",
@@ -1604,7 +1611,9 @@
     "CloneAsFolder": "Klasör olarak klonla",
     "CloneSuccess": "Klonlama isteği başarıyla gönderildi.",
     "CloneInfo": "Kullanıcı tipi klasörünüz olarak klonlanacaktır.",
-    "category": "Kategori"
+    "category": "Kategori",
+    "CloneToFolder": "Bir klasöre klonlama",
+    "FolderAlreadyExists": "Bu isimde bir klasör zaten mevcut."
   },
   "table": {
     "SettingTable": "Tablo Ayarı",
@@ -1626,5 +1635,11 @@
   "propertyFilter": {
     "placeHolder": "Arama",
     "ResetFilter": "Filtreyi Sıfırla"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Backend.AI hesabınızla giriş yapın",
+    "confirmLoginMessage": "{{kullanıcı adı}} ile giriş yapmak ister misiniz? ({{email}}) hesabınız var mı?",
+    "ServiceName": "Hizmet adı",
+    "useAnotherAccount": "Farklı bir hesapla oturum açın"
   }
 }

@@ -68,7 +68,7 @@
       "MyEnvironments": "Моя среда",
       "ResourcePolicy": "Ресурсная политика"
     },
-    "YouAreOffline": "Вы сейчас не в сети",
+    "YouAreOffline": "Не в сети: Не подключен ни к одной сети.",
     "YouAreOnline": "Вы сейчас в сети",
     "NOTFOUND": " <p> Ой! <br/> Страница не найдена ... </p>",
     "DescNOTFOUND": "Извините, страница, которую вы ищете, не может быть найдена.",
@@ -274,7 +274,9 @@
       "EnvironmentVariableValueRequired": "Пожалуйста, введите значение.",
       "PleaseCompleteForm": "Форма не заполнена или содержит ошибки. Пожалуйста, проверьте введенные данные.",
       "FailedToStartNewSession": "Создание сеанса не удалось. \nПожалуйста, проверьте вкладку «Законченный» на странице сеанса.",
-      "ProxyDirectTCPNotSupported": "Прямое TCP-соединение через прокси-сервер пока не поддерживается."
+      "ProxyDirectTCPNotSupported": "Прямое TCP-соединение через прокси-сервер пока не поддерживается.",
+      "InvalidPortFormat": "Неверный формат номера порта.",
+      "DuplicatedPort": "Имеются дублирующиеся порты."
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -410,7 +412,8 @@
     "WarningForceTerminateSessions": "Предупреждение: принудительно завершить сеанс(ы)",
     "ForceTerminateWarningMsg2": "Выполнять только тогда, когда состояние не меняется в течение неоправданно длительного периода времени.",
     "ForceTerminateWarningMsg3": "Это действие не удаляет фактические контейнеры на агенте(ах). \nМожет потребоваться ручная очистка.",
-    "ContainerToCleanUp": "Контейнер(ы) для очистки"
+    "ContainerToCleanUp": "Контейнер(ы) для очистки",
+    "ATOMPlusEnabled": "ATOM+ NPU Включено"
   },
   "button": {
     "Cancel": "Отмена",
@@ -663,7 +666,9 @@
       "FolderRestored": "Папка {{ folderName }} восстановлена.",
       "FolderDeletedForever": "Папка {{ folderName}} удалена навсегда.",
       "MoveToTrashBin": "Переместить в мусорное ведро",
-      "MovedToTrashBin": "Папка {{ folderName }} была перемещена в корзину."
+      "MovedToTrashBin": "Папка {{ folderName }} была перемещена в корзину.",
+      "FolderCloneFailed": "Не удалось клонировать папку.",
+      "FolderClonePending": "Выполняется клонирование папки."
     },
     "explorer": {
       "Delete": "Удалить...",
@@ -755,7 +760,8 @@
     "New": "Новый",
     "Add": "Добавить",
     "CloningIsOnlyPossibleSameHost": "В настоящее время клонирование возможно только на том же хосте.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Новое имя папки"
   },
   "dialog": {
     "warning": {
@@ -767,7 +773,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Вы хотите продолжить?",
-      "DoYouWantToDeleteSomething": "Вы уверены, что хотите удалить \"{{ имя }}\"?"
+      "DoYouWantToDeleteSomething": "Вы уверены, что хотите удалить \"{{ имя }}\"?",
+      "DoYouWantToResetChanges": "Вы хотите сбросить изменения?"
     },
     "title": {
       "LetsDouble-Check": "Давайте дважды проверим",
@@ -1604,7 +1611,9 @@
     "CloneAsFolder": "клонировать как папку",
     "CloneSuccess": "Запрос на клонирование успешно отправлен.",
     "CloneInfo": "Она будет клонирована как папка вашего типа пользователя.",
-    "category": "Категория"
+    "category": "Категория",
+    "CloneToFolder": "Клонирование в папку",
+    "FolderAlreadyExists": "Папка с таким именем уже существует."
   },
   "table": {
     "SettingTable": "Сервировка стола",
@@ -1626,5 +1635,11 @@
   "propertyFilter": {
     "placeHolder": "Поиск",
     "ResetFilter": "СброситьФильтр"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Войдите в систему под своей учетной записью Backend.AI",
+    "confirmLoginMessage": "Вы хотите войти в систему под {{имя пользователя}} ({{email}}) учетной записи?",
+    "ServiceName": "Название услуги",
+    "useAnotherAccount": "Войдите в систему под другой учетной записью"
   }
 }

@@ -68,7 +68,7 @@
       "MyEnvironments": "Миний орчин",
       "ResourcePolicy": "Нөөцийн бодлого"
     },
-    "YouAreOffline": "Та одоо офлайн байна",
+    "YouAreOffline": "Офлайн: Ямар ч сүлжээнд холбогдоогүй.",
     "YouAreOnline": "Та одоо онлайн байна",
     "NOTFOUND": " <p> Өө! <br/> хуудас олдсонгүй ... </p>",
     "DescNOTFOUND": "Уучлаарай, таны хайж буй хуудас олдсонгүй.",
@@ -275,7 +275,9 @@
       "BatchModeDesc": "Кодоо олон зангилаатай кластераар ажиллуул.",
       "PleaseCompleteForm": "Маягт дутуу эсвэл алдаатай байна. \nОруулсан мэдээллээ шалгана уу.",
       "SkipToConfirmAndLaunch": "Шүүмж рүү алгасах",
-      "ProxyDirectTCPNotSupported": "Прокси шууд TCP холболт хараахан дэмжигдээгүй байна"
+      "ProxyDirectTCPNotSupported": "Прокси шууд TCP холболт хараахан дэмжигдээгүй байна",
+      "InvalidPortFormat": "Портын дугаарын формат буруу байна.",
+      "DuplicatedPort": "Давхардсан портууд байна."
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -412,7 +414,8 @@
     "WarningForceTerminateSessions": "Анхааруулга: Сешн(үүд)-ийг хүчээр зогсоох",
     "ForceTerminateWarningMsg2": "Үндэслэлгүй удаан хугацаанд төр өөрчлөгдөөгүй үед л гүйцэтгэнэ.",
     "ForceTerminateWarningMsg3": "Энэ үйлдэл нь агент(үүд) дээрх бодит савыг устгахгүй. \nГараар цэвэрлэх шаардлагатай байж болно.",
-    "ContainerToCleanUp": "Цэвэрлэх сав(ууд)."
+    "ContainerToCleanUp": "Цэвэрлэх сав(ууд).",
+    "ATOMPlusEnabled": "ATOM+ NPU Идэвхжүүлсэн"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -665,7 +668,9 @@
       "FolderRestored": "{{ folderName }} хавтас сэргээгдсэн.",
       "FolderDeletedForever": "{{ folderName }} хавтас бүрмөсөн устгагдсан.",
       "MovedToTrashBin": "{{ folderName }} фолдерыг хогийн сав руу зөөв.",
-      "MoveToTrashBin": "Хогийн сав руу шилжүүлнэ үү"
+      "MoveToTrashBin": "Хогийн сав руу шилжүүлнэ үү",
+      "FolderCloneFailed": "Фолдерыг хуулбарлаж чадсангүй.",
+      "FolderClonePending": "Фолдерыг хуулбарлаж байна."
     },
     "explorer": {
       "Delete": "Устгах ...",
@@ -757,7 +762,8 @@
     "New": "Шинэ",
     "Add": "Нэмэх",
     "CloningIsOnlyPossibleSameHost": "Одоогоор зөвхөн нэг хост дээр клон хийх боломжтой.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Шинэ фолдерын нэр"
   },
   "dialog": {
     "warning": {
@@ -769,7 +775,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Та үргэлжлүүлэхийг хүсч байна уу?",
-      "DoYouWantToDeleteSomething": "Та \"{{ name }}\"-г устгахдаа итгэлтэй байна уу?"
+      "DoYouWantToDeleteSomething": "Та \"{{ name }}\"-г устгахдаа итгэлтэй байна уу?",
+      "DoYouWantToResetChanges": "Та өөрчлөлтөө дахин тохируулахыг хүсэж байна уу?"
     },
     "title": {
       "LetsDouble-Check": "Давхар шалгуулъя",
@@ -1605,7 +1612,9 @@
     "CloneAsFolder": "Хавтас болгон хуваах",
     "CloneSuccess": "Хувилах хүсэлтийг амжилттай илгээлээ.",
     "CloneInfo": "Үүнийг таны хэрэглэгчийн төрлийн хавтас болгон хувилах болно.",
-    "category": "Ангилал"
+    "category": "Ангилал",
+    "CloneToFolder": "Хавтас руу клон хийх",
+    "FolderAlreadyExists": "Ийм нэртэй хавтас аль хэдийн байна."
   },
   "table": {
     "SettingTable": "Хүснэгтийн тохиргоо",
@@ -1627,5 +1636,11 @@
   "propertyFilter": {
     "placeHolder": "Хайх",
     "ResetFilter": "Reset Filter"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Backend.AI бүртгэлээрээ нэвтэрнэ үү",
+    "confirmLoginMessage": "Та {{username}} ({{email}}) бүртгэлээр нэвтрэхийг хүсэж байна уу?",
+    "ServiceName": "Үйлчилгээний нэр",
+    "useAnotherAccount": "Өөр бүртгэлээр нэвтэрнэ үү"
   }
 }

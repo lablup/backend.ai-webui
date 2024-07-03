@@ -68,7 +68,7 @@
       "MyEnvironments": "Persekitaran Saya",
       "ResourcePolicy": "Dasar Sumber"
     },
-    "YouAreOffline": "Anda kini berada di luar talian",
+    "YouAreOffline": "Luar talian: Tidak disambungkan ke mana-mana rangkaian.",
     "YouAreOnline": "Anda kini dalam talian",
     "NOTFOUND": " <p> Alamak! <br/> Halaman tidak dijumpai ... </p>",
     "DescNOTFOUND": "Maaf, halaman yang anda cari tidak dapat dijumpai.",
@@ -274,7 +274,9 @@
       "EnvironmentVariableValueRequired": "Sila masukkan nilai.",
       "PleaseCompleteForm": "Borang tidak lengkap atau mengandungi ralat. \nSila semak input anda.",
       "FailedToStartNewSession": "Pembuatan sesi gagal. \nSila semak tab 'SELESAI' pada halaman sesi.",
-      "ProxyDirectTCPNotSupported": "Sambungan TCP langsung proksi belum disokong lagi"
+      "ProxyDirectTCPNotSupported": "Sambungan TCP langsung proksi belum disokong lagi",
+      "InvalidPortFormat": "Format nombor port tidak betul.",
+      "DuplicatedPort": "Terdapat port pendua."
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",
@@ -410,7 +412,8 @@
     "WarningForceTerminateSessions": "Amaran: Tamatkan Sesi Paksa",
     "ForceTerminateWarningMsg2": "Laksanakan hanya apabila keadaan tidak berubah untuk tempoh masa yang tidak munasabah.",
     "ForceTerminateWarningMsg3": "Tindakan ini tidak memadamkan bekas sebenar pada ejen. \nPembersihan manual mungkin diperlukan.",
-    "ContainerToCleanUp": "Bekas untuk dibersihkan"
+    "ContainerToCleanUp": "Bekas untuk dibersihkan",
+    "ATOMPlusEnabled": "ATOM+ NPU Didayakan"
   },
   "button": {
     "Cancel": "Batal",
@@ -663,7 +666,9 @@
       "DeleteForever": "Padam selama-lamanya",
       "Restore": "Pulihkan",
       "FolderRestored": "Folder {{ folderName }} telah dipulihkan.",
-      "FolderDeletedForever": "Folder {{ folderName }} telah dipadamkan selama-lamanya."
+      "FolderDeletedForever": "Folder {{ folderName }} telah dipadamkan selama-lamanya.",
+      "FolderCloneFailed": "Gagal mengklon folder.",
+      "FolderClonePending": "Pengklonan folder sedang dijalankan."
     },
     "explorer": {
       "Delete": "Padamkan ...",
@@ -755,7 +760,8 @@
     "New": "Baru",
     "Add": "Tambah",
     "CloningIsOnlyPossibleSameHost": "Pada masa ini, pengklonan hanya boleh dilakukan pada hos yang sama.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Nama folder baharu"
   },
   "dialog": {
     "warning": {
@@ -771,7 +777,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Adakah anda mahu meneruskan?",
-      "DoYouWantToDeleteSomething": "Adakah anda pasti mahu memadamkan \"{{ name }}\"?"
+      "DoYouWantToDeleteSomething": "Adakah anda pasti mahu memadamkan \"{{ name }}\"?",
+      "DoYouWantToResetChanges": "Adakah anda mahu menetapkan semula perubahan anda?"
     },
     "title": {
       "LetsDouble-Check": "Mari semak semula",
@@ -1604,7 +1611,9 @@
     "CloneAsFolder": "Klon sebagai Folder",
     "CloneSuccess": "Permintaan klon telah berjaya dihantar.",
     "CloneInfo": "Ia akan diklonkan sebagai folder jenis pengguna anda.",
-    "category": "kategori"
+    "category": "kategori",
+    "CloneToFolder": "Klon ke folder",
+    "FolderAlreadyExists": "Folder dengan nama ini sudah wujud."
   },
   "table": {
     "SelectColumnToDisplay": "Pilih untuk lajur untuk dipaparkan",
@@ -1626,5 +1635,11 @@
   "propertyFilter": {
     "placeHolder": "Cari",
     "ResetFilter": "ResetFilter"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Log masuk dengan akaun Backend.AI anda",
+    "confirmLoginMessage": "Adakah anda ingin melog masuk dengan akaun {{username}} ({{email}})?",
+    "ServiceName": "Nama perkhidmatan",
+    "useAnotherAccount": "Log masuk dengan akaun lain"
   }
 }

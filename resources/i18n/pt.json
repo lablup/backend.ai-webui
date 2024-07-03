@@ -68,7 +68,7 @@
       "MyEnvironments": "Meus ambientes",
       "ResourcePolicy": "Política de Recursos"
     },
-    "YouAreOffline": "Agora você está offline",
+    "YouAreOffline": "Desligado: Não está ligado a nenhuma rede.",
     "YouAreOnline": "Agora você está online",
     "NOTFOUND": " <p> Ops! <br/> Página não encontrada ... </p>",
     "DescNOTFOUND": "Desculpe, a página que você está procurando não foi encontrada.",
@@ -274,7 +274,9 @@
       "EnvironmentVariableValueRequired": "Introduzir um valor.",
       "PleaseCompleteForm": "O formulário está incompleto ou contém erros. Por favor, verifique os seus dados.",
       "FailedToStartNewSession": "Falha na criação da sessão. \nPor favor, verifique a guia 'Finalizado' na página da sessão.",
-      "ProxyDirectTCPNotSupported": "A conexão TCP direta do proxy ainda não é suportada"
+      "ProxyDirectTCPNotSupported": "A conexão TCP direta do proxy ainda não é suportada",
+      "InvalidPortFormat": "O formato do número da porta está incorreto.",
+      "DuplicatedPort": "Existem portas duplicadas."
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",
@@ -410,7 +412,8 @@
     "WarningForceTerminateSessions": "Aviso: forçar o encerramento de sessões",
     "ForceTerminateWarningMsg2": "Execute somente quando o estado não mudar por um período de tempo excessivamente longo.",
     "ForceTerminateWarningMsg3": "Esta ação não exclui os contêineres reais do(s) agente(s). \nA limpeza manual pode ser necessária.",
-    "ContainerToCleanUp": "Recipiente(s) para limpar"
+    "ContainerToCleanUp": "Recipiente(s) para limpar",
+    "ATOMPlusEnabled": "ATOM+ NPU Habilitado"
   },
   "button": {
     "Cancel": "Cancelar",
@@ -663,7 +666,9 @@
       "FolderRestored": "A pasta {{ folderName }} foi restaurada.",
       "FolderDeletedForever": "A pasta {{ folderName }} foi excluída definitivamente.",
       "MoveToTrashBin": "Mover para a lixeira",
-      "MovedToTrashBin": "A pasta {{ folderName }} foi movida para a lixeira."
+      "MovedToTrashBin": "A pasta {{ folderName }} foi movida para a lixeira.",
+      "FolderCloneFailed": "Falha ao clonar a pasta.",
+      "FolderClonePending": "A clonagem da pasta está a decorrer."
     },
     "explorer": {
       "Delete": "Excluir...",
@@ -755,7 +760,8 @@
     "New": "Novo",
     "Add": "Adicionar",
     "CloningIsOnlyPossibleSameHost": "Atualmente, a clonagem só é possível no mesmo host.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Novo nome da pasta"
   },
   "dialog": {
     "warning": {
@@ -767,7 +773,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Você quer prosseguir?",
-      "DoYouWantToDeleteSomething": "Tem a certeza de que pretende eliminar \"{{ name }}\"?"
+      "DoYouWantToDeleteSomething": "Tem a certeza de que pretende eliminar \"{{ name }}\"?",
+      "DoYouWantToResetChanges": "Deseja redefinir suas alterações?"
     },
     "title": {
       "LetsDouble-Check": "Vamos verificar novamente",
@@ -1604,7 +1611,9 @@
     "CloneAsFolder": "Clonar como Pasta",
     "CloneSuccess": "O pedido de clone foi enviado com sucesso.",
     "category": "Categoria",
-    "CloneInfo": "Ele será clonado como sua pasta de tipo de usuário."
+    "CloneInfo": "Ele será clonado como sua pasta de tipo de usuário.",
+    "CloneToFolder": "Clonar para uma pasta",
+    "FolderAlreadyExists": "Já existe uma pasta com este nome."
   },
   "table": {
     "SettingTable": "Configuração de mesa",
@@ -1626,5 +1635,11 @@
   "propertyFilter": {
     "placeHolder": "Pesquisar",
     "ResetFilter": "RedefinirFiltro"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Inicie sessão com a sua conta Backend.AI",
+    "confirmLoginMessage": "Gostaria de iniciar sessão com a conta {{username}} ({{email}})?",
+    "ServiceName": "Nome do serviço",
+    "useAnotherAccount": "Iniciar sessão com uma conta diferente"
   }
 }

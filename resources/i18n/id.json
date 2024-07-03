@@ -68,7 +68,7 @@
       "MyEnvironments": "Lingkungan Saya",
       "ResourcePolicy": "Kebijakan Sumber Daya"
     },
-    "YouAreOffline": "Anda sekarang offline",
+    "YouAreOffline": "Offline: Tidak terhubung ke jaringan apa pun.",
     "YouAreOnline": "Anda sekarang online",
     "NOTFOUND": " <p> Ups! <br/> Halaman tidak ditemukan... </p>",
     "DescNOTFOUND": "Maaf, halaman yang anda cari tidak ditemukan.",
@@ -275,7 +275,9 @@
       "EnableAutomaticMiniumShmem": "Mengatur memori bersama minimum",
       "MiniumAllocation": "Persyaratan minimum",
       "MiniumAllocationTooltip": "Pilih sebagai persyaratan minimum untuk lingkungan berjalan yang dipilih",
-      "ProxyDirectTCPNotSupported": "Koneksi TCP langsung proxy belum didukung"
+      "ProxyDirectTCPNotSupported": "Koneksi TCP langsung proxy belum didukung",
+      "InvalidPortFormat": "Format nomor port salah.",
+      "DuplicatedPort": "Terdapat port ganda."
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -411,7 +413,8 @@
     "WarningForceTerminateSessions": "Peringatan: Paksa Mengakhiri Sesi",
     "ForceTerminateWarningMsg2": "Jalankan hanya ketika keadaan tidak berubah dalam jangka waktu yang terlalu lama.",
     "ForceTerminateWarningMsg3": "Tindakan ini tidak menghapus penampung sebenarnya pada agen. \nPembersihan manual mungkin diperlukan.",
-    "ContainerToCleanUp": "Wadah yang harus dibersihkan"
+    "ContainerToCleanUp": "Wadah yang harus dibersihkan",
+    "ATOMPlusEnabled": "ATOM+ NPU Diaktifkan"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -664,7 +667,9 @@
       "FolderRestored": "Folder {{ folderName }} telah dipulihkan.",
       "FolderDeletedForever": "Folder {{ folderName }} telah dihapus selamanya.",
       "MovedToTrashBin": "Folder {{ folderName }} telah dipindahkan ke tempat sampah.",
-      "MoveToTrashBin": "Pindah ke tempat sampah"
+      "MoveToTrashBin": "Pindah ke tempat sampah",
+      "FolderCloneFailed": "Gagal mengkloning folder.",
+      "FolderClonePending": "Kloning folder sedang berlangsung."
     },
     "explorer": {
       "Delete": "Menghapus...",
@@ -756,7 +761,8 @@
     "New": "Baru",
     "Add": "Menambahkan",
     "CloningIsOnlyPossibleSameHost": "Saat ini, kloning hanya dapat dilakukan pada host yang sama.",
-    "userQuotaScopeId": "Quota Scope ID"
+    "userQuotaScopeId": "Quota Scope ID",
+    "NewFolderName": "Nama folder baru"
   },
   "dialog": {
     "warning": {
@@ -768,7 +774,8 @@
     },
     "ask": {
       "DoYouWantToProceed": "Apakah Anda ingin lanjut?",
-      "DoYouWantToDeleteSomething": "Apakah Anda yakin ingin menghapus \"{{ nama }}\"?"
+      "DoYouWantToDeleteSomething": "Apakah Anda yakin ingin menghapus \"{{ nama }}\"?",
+      "DoYouWantToResetChanges": "Apakah Anda ingin mengatur ulang perubahan Anda?"
     },
     "title": {
       "LetsDouble-Check": "Mari Periksa Kembali",
@@ -1604,7 +1611,9 @@
     "CloneAsFolder": "Mengkloning sebagai Folder",
     "CloneSuccess": "Permintaan kloning telah berhasil dikirim.",
     "CloneInfo": "Ini akan dikloning sebagai folder tipe pengguna Anda.",
-    "category": "Kategori"
+    "category": "Kategori",
+    "CloneToFolder": "Mengkloning ke folder",
+    "FolderAlreadyExists": "Folder dengan nama ini sudah ada."
   },
   "table": {
     "SettingTable": "Penataan meja",
@@ -1626,5 +1635,11 @@
   "propertyFilter": {
     "placeHolder": "Pencarian",
     "ResetFilter": "Filter Ulang"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Login dengan akun Backend.AI Anda",
+    "confirmLoginMessage": "Apakah Anda ingin masuk dengan akun {{nama pengguna}} ({{email}})?",
+    "ServiceName": "Nama layanan",
+    "useAnotherAccount": "Masuk dengan akun yang berbeda"
   }
 }
