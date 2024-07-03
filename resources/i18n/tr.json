@@ -274,7 +274,9 @@
       "EnvironmentVariableValueRequired": "Lütfen bir değer girin.",
       "PleaseCompleteForm": "Form eksik veya hatalar içeriyor. Lütfen girdilerinizi kontrol edin.",
       "FailedToStartNewSession": "Oturum oluşturulamadı. \nLütfen oturum sayfasındaki 'bitmiş' sekmesini kontrol edin.",
-      "ProxyDirectTCPNotSupported": "Proxy doğrudan TCP bağlantısı henüz desteklenmiyor"
+      "ProxyDirectTCPNotSupported": "Proxy doğrudan TCP bağlantısı henüz desteklenmiyor",
+      "InvalidPortFormat": "Bağlantı noktası numarası biçimi yanlış.",
+      "DuplicatedPort": "Çift bağlantı noktaları var."
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",

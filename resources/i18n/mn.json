@@ -275,7 +275,9 @@
       "BatchModeDesc": "Кодоо олон зангилаатай кластераар ажиллуул.",
       "PleaseCompleteForm": "Маягт дутуу эсвэл алдаатай байна. \nОруулсан мэдээллээ шалгана уу.",
       "SkipToConfirmAndLaunch": "Шүүмж рүү алгасах",
-      "ProxyDirectTCPNotSupported": "Прокси шууд TCP холболт хараахан дэмжигдээгүй байна"
+      "ProxyDirectTCPNotSupported": "Прокси шууд TCP холболт хараахан дэмжигдээгүй байна",
+      "InvalidPortFormat": "Портын дугаарын формат буруу байна.",
+      "DuplicatedPort": "Давхардсан портууд байна."
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",

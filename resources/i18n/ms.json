@@ -274,7 +274,9 @@
       "EnvironmentVariableValueRequired": "Sila masukkan nilai.",
       "PleaseCompleteForm": "Borang tidak lengkap atau mengandungi ralat. \nSila semak input anda.",
       "FailedToStartNewSession": "Pembuatan sesi gagal. \nSila semak tab 'SELESAI' pada halaman sesi.",
-      "ProxyDirectTCPNotSupported": "Sambungan TCP langsung proksi belum disokong lagi"
+      "ProxyDirectTCPNotSupported": "Sambungan TCP langsung proksi belum disokong lagi",
+      "InvalidPortFormat": "Format nombor port tidak betul.",
+      "DuplicatedPort": "Terdapat port pendua."
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",

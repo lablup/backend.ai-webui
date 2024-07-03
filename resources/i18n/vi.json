@@ -274,7 +274,9 @@
       "EnvironmentVariableValueRequired": "Vui lòng nhập một giá trị.",
       "PleaseCompleteForm": "Biểu mẫu không đầy đủ hoặc có lỗi. \nVui lòng kiểm tra đầu vào của bạn.",
       "FailedToStartNewSession": "Tạo phiên không thành công. \nVui lòng kiểm tra tab 'Đã kết thúc' trên trang phiên.",
-      "ProxyDirectTCPNotSupported": "Kết nối TCP trực tiếp proxy chưa được hỗ trợ"
+      "ProxyDirectTCPNotSupported": "Kết nối TCP trực tiếp proxy chưa được hỗ trợ",
+      "InvalidPortFormat": "Định dạng số cổng không chính xác.",
+      "DuplicatedPort": "Có cổng trùng lặp."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",

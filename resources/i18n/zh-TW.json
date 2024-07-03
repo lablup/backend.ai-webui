@@ -274,7 +274,9 @@
       "EnvironmentVariableValueRequired": "请输入数值。",
       "PleaseCompleteForm": "表格不完整或包含错误。请检查输入内容。",
       "FailedToStartNewSession": "會話創建失敗。\n請檢查會話頁面上的「已完成」標籤。",
-      "ProxyDirectTCPNotSupported": "尚不支援代理直接 TCP 連接"
+      "ProxyDirectTCPNotSupported": "尚不支援代理直接 TCP 連接",
+      "InvalidPortFormat": "端口号格式不正确。",
+      "DuplicatedPort": "有重复的端口。"
     },
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",

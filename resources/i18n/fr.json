@@ -274,7 +274,9 @@
       "EnvironmentVariableValueRequired": "Veuillez saisir une valeur.",
       "PleaseCompleteForm": "Le formulaire est incomplet ou contient des erreurs. Veuillez vérifier vos données.",
       "FailedToStartNewSession": "La création de la session a échoué. \nVeuillez vérifier l'onglet « TERMINÉ » sur la page de la session.",
-      "ProxyDirectTCPNotSupported": "La connexion TCP directe par proxy n'est pas encore prise en charge"
+      "ProxyDirectTCPNotSupported": "La connexion TCP directe par proxy n'est pas encore prise en charge",
+      "InvalidPortFormat": "Le format du numéro de port est incorrect.",
+      "DuplicatedPort": "Il y a des ports en double."
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",

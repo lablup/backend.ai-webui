@@ -274,7 +274,9 @@
       "EnvironmentVariableValueRequired": "Wprowadź wartość.",
       "PleaseCompleteForm": "Formularz jest niekompletny lub zawiera błędy. Sprawdź wprowadzone dane.",
       "FailedToStartNewSession": "Utworzenie sesji nie powiodło się. \nSprawdź zakładkę „Skończone” na stronie sesji.",
-      "ProxyDirectTCPNotSupported": "Bezpośrednie połączenie proxy TCP nie jest jeszcze obsługiwane"
+      "ProxyDirectTCPNotSupported": "Bezpośrednie połączenie proxy TCP nie jest jeszcze obsługiwane",
+      "InvalidPortFormat": "Format numeru portu jest nieprawidłowy.",
+      "DuplicatedPort": "Istnieją zduplikowane porty."
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",

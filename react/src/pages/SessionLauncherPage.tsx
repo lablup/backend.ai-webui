@@ -15,6 +15,7 @@ import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
 import PortSelectFormItem, {
   PortSelectFormValues,
   PortTag,
+  transformPortValuesToNumbers,
 } from '../components/PortSelectFormItem';
 import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
@@ -421,7 +422,7 @@ const SessionLauncherPage = () => {
               // set hpcOptimization options: "OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS"
               ..._.omit(values.hpcOptimization, 'autoEnabled'),
             },
-            preopen_ports: _.map(values.ports, (v) => parseInt(v)),
+            preopen_ports: transformPortValuesToNumbers(values.ports),
           },
         };
 

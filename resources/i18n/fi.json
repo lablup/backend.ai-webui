@@ -1232,7 +1232,9 @@
       "EnvironmentVariableValueRequired": "Anna arvo.",
       "PleaseCompleteForm": "Lomake on puutteellinen tai sisältää virheitä. Tarkista syöttämäsi tiedot.",
       "FailedToStartNewSession": "Istunnon luominen epäonnistui. \nTarkista istuntosivun VALMIS-välilehti.",
-      "ProxyDirectTCPNotSupported": "Välityspalvelimen suoraa TCP-yhteyttä ei tueta vielä"
+      "ProxyDirectTCPNotSupported": "Välityspalvelimen suoraa TCP-yhteyttä ei tueta vielä",
+      "InvalidPortFormat": "Porttinumeron muoto on virheellinen.",
+      "DuplicatedPort": "Portteja on päällekkäin."
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

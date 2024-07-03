@@ -274,7 +274,9 @@
       "EnvironmentVariableValueRequired": "Bitte geben Sie einen Wert ein.",
       "PleaseCompleteForm": "Das Formular ist unvollständig oder enthält Fehler. Bitte überprüfen Sie Ihre Eingaben.",
       "FailedToStartNewSession": "Die Sitzungserstellung ist fehlgeschlagen. \nBitte überprüfen Sie die Registerkarte „FERTIG“ auf der Sitzungsseite.",
-      "ProxyDirectTCPNotSupported": "Eine direkte Proxy-TCP-Verbindung wird noch nicht unterstützt"
+      "ProxyDirectTCPNotSupported": "Eine direkte Proxy-TCP-Verbindung wird noch nicht unterstützt",
+      "InvalidPortFormat": "Das Format der Anschlussnummer ist falsch.",
+      "DuplicatedPort": "Es gibt doppelte Anschlüsse."
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",
