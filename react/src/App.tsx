@@ -47,8 +47,20 @@ const ResourcesPage = React.lazy(() => import('./pages/ResourcesPage'));
 const FolderExplorerOpener = React.lazy(
   () => import('./components/FolderExplorerOpener'),
 );
+const InteractiveLoginPage = React.lazy(
+  () => import('./pages/InteractiveLoginPage'),
+);
 
 const router = createBrowserRouter([
+  {
+    path: '/interactive-login',
+    errorElement: <ErrorView />,
+    element: (
+      <QueryParamProvider adapter={ReactRouter6Adapter}>
+        <InteractiveLoginPage />
+      </QueryParamProvider>
+    ),
+  },
   {
     path: '/',
     errorElement: <ErrorView />,

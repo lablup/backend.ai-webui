@@ -1630,5 +1630,11 @@
   "propertyFilter": {
     "placeHolder": "Pencarian",
     "ResetFilter": "Filter Ulang"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Login dengan akun Backend.AI Anda",
+    "confirmLoginMessage": "Apakah Anda ingin masuk dengan akun {{nama pengguna}} ({{email}})?",
+    "ServiceName": "Nama layanan",
+    "useAnotherAccount": "Masuk dengan akun yang berbeda"
   }
 }

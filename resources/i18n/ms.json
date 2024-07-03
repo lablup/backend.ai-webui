@@ -1630,5 +1630,11 @@
   "propertyFilter": {
     "placeHolder": "Cari",
     "ResetFilter": "ResetFilter"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Log masuk dengan akaun Backend.AI anda",
+    "confirmLoginMessage": "Adakah anda ingin melog masuk dengan akaun {{username}} ({{email}})?",
+    "ServiceName": "Nama perkhidmatan",
+    "useAnotherAccount": "Log masuk dengan akaun lain"
   }
 }

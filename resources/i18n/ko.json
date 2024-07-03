@@ -1631,5 +1631,11 @@
   "propertyFilter": {
     "ResetFilter": "필터 초기화",
     "placeHolder": "검색"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Backend.AI 계정을 이용한 로그인",
+    "confirmLoginMessage": "{{username}} ({{email}}) 계정으로 로그인하시겠습니까?",
+    "ServiceName":"서비스 이름",
+    "useAnotherAccount": "다른 계정으로 로그인"
   }
 }

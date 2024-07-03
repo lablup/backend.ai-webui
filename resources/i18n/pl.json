@@ -1630,5 +1630,11 @@
   "propertyFilter": {
     "placeHolder": "Wyszukiwanie",
     "ResetFilter": "Zresetuj filtr"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Zaloguj się za pomocą konta Backend.AI",
+    "confirmLoginMessage": "Czy chcesz zalogować się przy użyciu konta {{username}} ({{email}})?",
+    "ServiceName": "Nazwa usługi",
+    "useAnotherAccount": "Zaloguj się przy użyciu innego konta"
   }
 }

@@ -102,7 +102,6 @@ const SettingAtomFamily = atomFamily((param: string) => {
 document?.addEventListener('backendaiwebui.settings:set', (e: any) => {
   const { detail } = e;
   if (detail.namespace && detail.name) {
-    console.log(detail);
     jotaiStore.set(
       SettingAtomFamily(detail.namespace + '.' + detail.name),
       detail.value,

@@ -1630,5 +1630,11 @@
   "propertyFilter": {
     "placeHolder": "Αναζήτηση",
     "ResetFilter": "Επαναφορά φίλτρου"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Συνδεθείτε με το λογαριασμό σας Backend.AI",
+    "confirmLoginMessage": "Θα θέλατε να συνδεθείτε με {{όνομα χρήστη}} ({{email}}) λογαριασμό?",
+    "ServiceName": "Όνομα υπηρεσίας",
+    "useAnotherAccount": "Συνδεθείτε με διαφορετικό λογαριασμό"
   }
 }

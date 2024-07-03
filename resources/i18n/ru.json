@@ -1630,5 +1630,11 @@
   "propertyFilter": {
     "placeHolder": "Поиск",
     "ResetFilter": "СброситьФильтр"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Войдите в систему под своей учетной записью Backend.AI",
+    "confirmLoginMessage": "Вы хотите войти в систему под {{имя пользователя}} ({{email}}) учетной записи?",
+    "ServiceName": "Название услуги",
+    "useAnotherAccount": "Войдите в систему под другой учетной записью"
   }
 }

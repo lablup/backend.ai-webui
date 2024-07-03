@@ -1630,5 +1630,11 @@
   "propertyFilter": {
     "placeHolder": "Tìm kiếm",
     "ResetFilter": "Đặt lại bộ lọc"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Đăng nhập bằng tài khoản Backend.AI của bạn",
+    "confirmLoginMessage": "Bạn có muốn đăng nhập bằng tài khoản {{username}} ({{email}}) không?",
+    "ServiceName": "Tên dịch vụ",
+    "useAnotherAccount": "Đăng nhập bằng tài khoản khác"
   }
 }

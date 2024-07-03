@@ -1630,5 +1630,11 @@
   "propertyFilter": {
     "placeHolder": "Arama",
     "ResetFilter": "Filtreyi Sıfırla"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Backend.AI hesabınızla giriş yapın",
+    "confirmLoginMessage": "{{kullanıcı adı}} ile giriş yapmak ister misiniz? ({{email}}) hesabınız var mı?",
+    "ServiceName": "Hizmet adı",
+    "useAnotherAccount": "Farklı bir hesapla oturum açın"
   }
 }

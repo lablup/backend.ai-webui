@@ -1631,5 +1631,11 @@
   "propertyFilter": {
     "placeHolder": "Хайх",
     "ResetFilter": "Reset Filter"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Backend.AI бүртгэлээрээ нэвтэрнэ үү",
+    "confirmLoginMessage": "Та {{username}} ({{email}}) бүртгэлээр нэвтрэхийг хүсэж байна уу?",
+    "ServiceName": "Үйлчилгээний нэр",
+    "useAnotherAccount": "Өөр бүртгэлээр нэвтэрнэ үү"
   }
 }

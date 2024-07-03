@@ -1630,5 +1630,11 @@
   "propertyFilter": {
     "placeHolder": "Etsi",
     "ResetFilter": "ResetFilter"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "Kirjaudu sisään Backend.AI-tililläsi",
+    "confirmLoginMessage": "Haluatko kirjautua sisään {{käyttäjätunnus}} ({{email}}) tilille?",
+    "ServiceName": "Palvelun nimi",
+    "useAnotherAccount": "Kirjaudu sisään eri tilillä"
   }
 }

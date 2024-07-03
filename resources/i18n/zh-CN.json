@@ -1631,5 +1631,11 @@
   "propertyFilter": {
     "placeHolder": "搜索",
     "ResetFilter": "重置过滤器"
+  },
+  "interactiveLogin": {
+    "InteractiveLoginWithBackendAI": "使用 Backend.AI 账户登录",
+    "confirmLoginMessage": "您想用 {{username}} 登录吗？({{email}})账户登录？",
+    "ServiceName": "服务名称",
+    "useAnotherAccount": "使用其他账户登录"
   }
 }
