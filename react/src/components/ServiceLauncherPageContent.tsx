@@ -203,7 +203,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             runtimes: [
               {
                 name: 'custom',
-                human_readable_name: 'Custom (Default)',
+                human_readable_name: 'Custom (Model Definition)',
               },
             ],
           });
@@ -655,25 +655,162 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         align="stretch"
         style={{ justifyContent: 'revert' }}
       >
-        <Flex direction="row" gap="md" align="start">
-          <Flex
-            direction="column"
-            align="stretch"
-            style={{ flex: 1, maxWidth: 700 }}
-            wrap="nowrap"
+        <Suspense fallback={<Skeleton active />}>
+          <Form
+            ref={formRef}
+            disabled={mutationToCreateService.isLoading}
+            layout="vertical"
+            labelCol={{ span: 12 }}
+            initialValues={
+              endpoint
+                ? ({
+                    serviceName: endpoint?.name,
+                    resourceGroup: endpoint?.resource_group,
+                    desiredRoutingCount: endpoint?.desired_session_count || 0,
+                    // FIXME: memory doesn't applied to resource allocation
+                    resource: {
+                      cpu: parseInt(JSON.parse(endpoint?.resource_slots)?.cpu),
+                      mem: iSizeToSize(
+                        JSON.parse(endpoint?.resource_slots)?.mem + 'b',
+                        'g',
+                        3,
+                        true,
+                      )?.numberUnit,
+                      shmem: iSizeToSize(
+                        JSON.parse(endpoint?.resource_opts)?.shmem ||
+                          AUTOMATIC_DEFAULT_SHMEM,
+                        'g',
+                        3,
+                        true,
+                      )?.numberUnit,
+                      ...getAIAcceleratorWithStringifiedKey(
+                        _.omit(JSON.parse(endpoint?.resource_slots), [
+                          'cpu',
+                          'mem',
+                        ]),
+                      ),
+                    },
+                    cluster_mode:
+                      endpoint?.cluster_mode === 'MULTI_NODE'
+                        ? 'multi-node'
+                        : 'single-node',
+                    cluster_size: endpoint?.cluster_size,
+                    openToPublic: endpoint?.open_to_public,
+                    envvars: (() => {
+                      const environs = JSON.parse(endpoint?.environ || '{}');
+                      return [
+                        ...Object.keys(environs).map((k) => ({
+                          variable: k,
+                          value: environs[k],
+                        })),
+                      ];
+                    })(),
+                    runtimeVariant: endpoint?.runtime_variant?.name || 'custom',
+                    environments: {
+                      environment: endpoint?.image_object?.name,
+                      version: `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`,
+                      image: endpoint?.image_object,
+                    },
+                    vFolderName: endpoint?.model_mount_destination,
+                    mounts: _.map(endpoint?.extra_mounts, (item) =>
+                      item?.row_id?.replaceAll('-', ''),
+                    ),
+                    modelMountDestination: endpoint?.model_mount_destination,
+                    modelDefinitionPath: endpoint?.model_definition_path,
+                    // TODO: set mounts alias map according to extra_mounts if possible
+                  } as ServiceLauncherFormValue)
+                : ({
+                    desiredRoutingCount: 1,
+
+                    ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+                    ...(baiClient._config?.default_session_environment && {
+                      environments: {
+                        environment:
+                          baiClient._config?.default_session_environment,
+                      },
+                    }),
+                    runtimeVariant: 'custom',
+                  } as ServiceLauncherFormValue)
+            }
+            requiredMark="optional"
           >
-            <Suspense fallback={<FlexActivityIndicator />}>
-              <Form
-                form={form}
-                disabled={mutationToCreateService.isLoading}
-                layout="vertical"
-                labelCol={{ span: 12 }}
-                initialValues={INITIAL_FORM_VALUES}
-                requiredMark="optional"
-              >
-                <Flex direction="column" gap={'md'} align="stretch">
-                  <Card>
-                    {(baiClient.supports('modify-endpoint') || !endpoint) && (
+            {(baiClient.supports('modify-endpoint') || !endpoint) && (
+              <>
+                <Form.Item
+                  label={t('modelService.ServiceName')}
+                  name="serviceName"
+                  rules={[
+                    {
+                      pattern: /^(?=.{4,24}$)\w[\w.-]*\w$/,
+                      message: t('modelService.ServiceNameRule'),
+                    },
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Input disabled={!!endpoint} />
+                </Form.Item>
+                <Form.Item
+                  name="openToPublic"
+                  label={t('modelService.OpenToPublic')}
+                  valuePropName="checked"
+                >
+                  <Switch disabled={!!endpoint}></Switch>
+                </Form.Item>
+                {!endpoint ? (
+                  <Form.Item
+                    name={'vFolderName'}
+                    label={t('session.launcher.ModelStorageToMount')}
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  >
+                    <VFolderSelect
+                      filter={(vf) =>
+                        vf.usage_mode === 'model' && vf.status === 'ready'
+                      }
+                      autoSelectDefault
+                      disabled={!!endpoint}
+                    />
+                  </Form.Item>
+                ) : (
+                  endpoint?.model && (
+                    <Form.Item
+                      name={'vFolderName'}
+                      label={t('session.launcher.ModelStorageToMount')}
+                      required
+                    >
+                      <Suspense fallback={<Skeleton.Input active />}>
+                        <VFolderLazyView uuid={endpoint?.model} />
+                      </Suspense>
+                    </Form.Item>
+                  )
+                )}
+                <Form.Item
+                  name={'runtimeVariant'}
+                  required
+                  label={t('modelService.RuntimeVariant')}
+                >
+                  <Select
+                    defaultActiveFirstOption
+                    showSearch
+                    options={_.map(availableRuntimes?.runtimes, (runtime) => {
+                      return {
+                        value: runtime.name,
+                        label: runtime.human_readable_name,
+                      };
+                    })}
+                  />
+                </Form.Item>
+
+                <Form.Item dependencies={['runtimeVariant']} noStyle>
+                  {() => {
+                    return formRef.current?.getFieldValue('runtimeVariant') ===
+                      'custom' &&
+                      baiClient.supports('endpoint-extra-mounts') ? (
                       <>
                         <Form.Item
                           label={t('modelService.ServiceName')}
