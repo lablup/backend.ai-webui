@@ -177,30 +177,46 @@ export default class LablupNotification extends LitElement {
    *
    * @param {boolean} persistent - if persistent is false, the snackbar is hidden automatically after 3000ms
    * @param {object} log - Log object that contains detail information
+   * @param {string} key - notification key. If it already exists, the notification will be updated.
    * */
-  show(persistent = false, log: Record<string, unknown> = Object()) {
+  show(
+    persistent = false,
+    log: Record<string, unknown> = Object(),
+    key: string,
+  ) {
     if (this.text === '_DISCONNECTED') {
       return;
     }
     const shouldSaveLog = Object.keys(log).length !== 0;
     if (shouldSaveLog) {
-      console.log(log);
       this._saveToLocalStorage('backendaiwebui.logs', log);
     }
 
+    const messageDetail = {
+      open: true,
+      type: shouldSaveLog ? 'error' : null,
+      message: this.text,
+      description: this.text ? undefined : this.detail,
+      to: shouldSaveLog ? '/usersettings?tab=logs' : this.url,
+      duration: persistent ? 0 : undefined,
+      // closeIcon: persistent,
+    };
+
     const event: CustomEvent = new CustomEvent('add-bai-notification', {
       detail: {
-        open: true,
-        type: shouldSaveLog ? 'error' : null,
-        message: this.text,
-        description: this.text ? undefined : this.detail,
-        to: shouldSaveLog ? '/usersettings?tab=logs' : this.url,
-        duration: persistent ? 0 : undefined,
-        // closeIcon: persistent,
+        key:
+          typeof key === 'undefined' && messageDetail.type === 'error'
+            ? `_no_key_from_lablup_notification:${JSON.stringify(messageDetail)}`
+            : key,
+        ...messageDetail,
       },
     });
-    document.dispatchEvent(event);
-    this._spawnDesktopNotification('Backend.AI', this.text, '');
+
+    // Ignore the event if the message is 'Network disconnected because it is handled by `NetworkStatusBanner` component.
+    if (messageDetail.message !== 'Network disconnected.') {
+      document.dispatchEvent(event);
+      this._spawnDesktopNotification('Backend.AI', this.text, '');
+    }
   }
 
   // /**
@@ -325,7 +341,6 @@ export default class LablupNotification extends LitElement {
    * @param {string} logMessages - Message to save
    * */
   _saveToLocalStorage(key, logMessages) {
-    console.log(logMessages);
     const previous_log = JSON.parse(localStorage.getItem(key) || '{}');
     let current_log: Array<any> = [];
 
