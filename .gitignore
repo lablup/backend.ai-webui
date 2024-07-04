@@ -128,3 +128,8 @@ src/plugins/*
 
 #
 !.vscode/i18n-ally-*
+
+
+# Ignore all other lock files
+package-lock.json
+yarn.lock
