@@ -408,7 +408,9 @@ const SessionLauncherPage = () => {
               compareNumberWithUnits(values.resource.shmem, '1g') < 0
                 ? '1g'
                 : values.resource.shmem,
-            ...(values.resource.accelerator > 0
+            ...(_.isString(
+              values.resource.accelerator && values.resource.accelerator > 0,
+            )
               ? {
                   [values.resource.acceleratorType]:
                     values.resource.accelerator,
@@ -416,7 +418,6 @@ const SessionLauncherPage = () => {
               : undefined),
             mounts: values.mounts,
             mount_map: values.vfoldersAliasMap,
-
             env: {
               ..._.fromPairs(values.envvars.map((v) => [v.variable, v.value])),
               // set hpcOptimization options: "OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS"
@@ -1759,6 +1760,20 @@ const FormResourceNumbers: React.FC<{
             value={_.toString(
               form.getFieldValue(['resource', 'accelerator']) * containerCount,
             )}
+          />
+        )}
+      {/* TODO: bytes 타입일 경우 위 mem과 같은 방식으로 iSizeToSize이용해서 container count에 곱해야 함 */}
+      {form.getFieldValue(['resource', 'acceleratorType']) === 'cuda.mem' &&
+        form.getFieldValue(['resource', 'acceleratorType']) && (
+          <ResourceNumber
+            // @ts-ignore
+            type={form.getFieldValue(['resource', 'acceleratorType'])}
+            value={
+              (iSizeToSize(form.getFieldValue(['resource', 'accelerator']), 'b')
+                ?.number || 0) *
+                containerCount +
+              ''
+            }
           />
         )}
     </>

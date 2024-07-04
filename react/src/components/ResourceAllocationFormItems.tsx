@@ -422,6 +422,53 @@ const ResourceAllocationFormItems: React.FC<
     }
   };
 
+  const acceleratorTypeSelectFormItem = (
+    <Form.Item
+      noStyle
+      name={['resource', 'acceleratorType']}
+      initialValue={_.keys(acceleratorSlots)[0]}
+    >
+      <Select
+        tabIndex={-1}
+        disabled={
+          currentImageAcceleratorLimits.length === 0 &&
+          _.isEmpty(form.getFieldValue(['environments', 'manual']))
+        }
+        suffixIcon={_.size(acceleratorSlots) > 1 ? undefined : null}
+        // open={
+        //   _.size(acceleratorSlots) > 1
+        //     ? undefined
+        //     : false
+        // }
+        popupMatchSelectWidth={false}
+        options={_.map(acceleratorSlots, (value, name) => {
+          return {
+            value: name,
+            label: resourceSlotsDetails?.[name].display_unit || name,
+            disabled:
+              name !== 'cuda.mem' &&
+              currentImageAcceleratorLimits.length > 0 &&
+              !_.find(
+                currentImageAcceleratorLimits,
+                (limit) => limit?.key === name,
+              ),
+          };
+        })}
+        onChange={() => {
+          const slotDetail =
+            resourceSlotsDetails?.[
+              form.getFieldValue(['resource', 'acceleratorType'])
+            ];
+          if (slotDetail?.number_format.binary) {
+            form.setFieldValue(['resource', 'accelerator'], '0');
+          } else {
+            form.setFieldValue(['resource', 'accelerator'], 0);
+          }
+        }}
+      />
+    </Form.Item>
+  );
+
   return (
     <>
       <Form.Item
@@ -845,15 +892,19 @@ const ResourceAllocationFormItems: React.FC<
                 )}
                 <Form.Item
                   noStyle
-                  shouldUpdate={(prev, next) => {
-                    return (
-                      prev.resource?.acceleratorType !==
-                        next.resource?.acceleratorType ||
-                      // ref: https://github.com/lablup/backend.ai-webui/issues/868
-                      // change gpu step to 1 when cluster_size > 1
-                      prev.cluster_size !== next.cluster_size
-                    );
-                  }}
+                  // shouldUpdate={(prev, next) => {
+                  //   return (
+                  //     prev.resource?.acceleratorType !==
+                  //       next.resource?.acceleratorType ||
+                  //     // ref: https://github.com/lablup/backend.ai-webui/issues/868
+                  //     // change gpu step to 1 when cluster_size > 1
+                  //     prev.cluster_size !== next.cluster_size
+                  //   );
+                  // }}
+                  dependencies={[
+                    ['resource', 'acceleratorType'],
+                    ['cluster_size'],
+                  ]}
                 >
                   {({ getFieldValue }) => {
                     const currentAcceleratorType = getFieldValue([
@@ -872,176 +923,195 @@ const ResourceAllocationFormItems: React.FC<
                             />
                           ),
                         }}
-                        rules={[
-                          {
-                            required: currentImageAcceleratorLimits.length > 0,
-                          },
-                          {
-                            type: 'number',
-                            min:
+                        rules={
+                          [
+                            // {
+                            //   required: currentImageAcceleratorLimits.length > 0,
+                            // },
+                            // {
+                            //   type: 'number',
+                            //   min:
+                            //     resourceLimits.accelerators[
+                            //       currentAcceleratorType
+                            //     ]?.min || 0,
+                            //   max: resourceLimits.accelerators[
+                            //     currentAcceleratorType
+                            //   ]?.max,
+                            // },
+                            // {
+                            //   validator: async (rule: any, value: number) => {
+                            //     if (
+                            //       _.endsWith(currentAcceleratorType, 'shares') &&
+                            //       form.getFieldValue('cluster_size') >= 2 &&
+                            //       value % 1 !== 0
+                            //     ) {
+                            //       return Promise.reject(
+                            //         t(
+                            //           'session.launcher.OnlyAllowsDiscreteNumberByClusterSize',
+                            //         ),
+                            //       );
+                            //     } else {
+                            //       return Promise.resolve();
+                            //     }
+                            //   },
+                            // },
+                            // {
+                            //   warningOnly: true,
+                            //   validator: async (rule: any, value: number) => {
+                            //     if (showRemainingWarning) {
+                            //       if (
+                            //         _.isNumber(
+                            //           remaining.accelerators[
+                            //             currentAcceleratorType
+                            //           ],
+                            //         ) &&
+                            //         value >
+                            //           remaining.accelerators[
+                            //             currentAcceleratorType
+                            //           ]
+                            //       ) {
+                            //         return Promise.reject(
+                            //           t(
+                            //             'session.launcher.EnqueueComputeSessionWarning',
+                            //           ),
+                            //         );
+                            //       }
+                            //     }
+                            //     return Promise.resolve();
+                            //   },
+                            // },
+                          ]
+                        }
+                      >
+                        {/* @ts-ignore */}
+                        {resourceSlots[
+                          getFieldValue(['resource', 'acceleratorType'])
+                        ] === 'bytes' ? (
+                          <DynamicUnitInputNumberWithSlider
+                            // sliderProps={{
+                            //   marks: {
+                            //     0: 0,
+                            //     // remaining mark code should be located before max mark code to prevent overlapping when it is same value
+                            //     ...(remaining.accelerators[
+                            //       currentAcceleratorType
+                            //     ]
+                            //       ? {
+                            //           [remaining.accelerators[
+                            //             currentAcceleratorType
+                            //           ]]: {
+                            //             label: <RemainingMark />,
+                            //           },
+                            //         }
+                            //       : {}),
+                            //     ...(_.isNumber(
+                            //       resourceLimits.accelerators[
+                            //         currentAcceleratorType
+                            //       ]?.max,
+                            //     )
+                            //       ? {
+                            //           // @ts-ignore
+                            //           [resourceLimits.accelerators[
+                            //             currentAcceleratorType
+                            //           ]?.max]:
+                            //             resourceLimits.accelerators[
+                            //               currentAcceleratorType
+                            //             ]?.max,
+                            //         }
+                            //       : {}),
+                            //   },
+                            //   tooltip: {
+                            //     formatter: (value = 0) => {
+                            //       return `${value} ${ACCELERATOR_UNIT_MAP[currentAcceleratorType]}`;
+                            //     },
+                            //     open:
+                            //       currentImageAcceleratorLimits.length <= 0
+                            //         ? false
+                            //         : undefined,
+                            //   },
+                            // }}
+                            disabled={
+                              currentImageAcceleratorLimits.length === 0 &&
+                              _.isEmpty(
+                                form.getFieldValue(['environments', 'manual']),
+                              )
+                            }
+                            min="0g"
+                            max="16g"
+                            step={0.1}
+                            onChange={() => {
+                              form.setFieldValue('allocationPreset', 'custom');
+                            }}
+                            addonBefore={acceleratorTypeSelectFormItem}
+                          />
+                        ) : (
+                          <InputNumberWithSlider
+                            sliderProps={{
+                              marks: {
+                                0: 0,
+                                // remaining mark code should be located before max mark code to prevent overlapping when it is same value
+                                ...(remaining.accelerators[
+                                  currentAcceleratorType
+                                ]
+                                  ? {
+                                      [remaining.accelerators[
+                                        currentAcceleratorType
+                                      ]]: {
+                                        label: <RemainingMark />,
+                                      },
+                                    }
+                                  : {}),
+                                ...(_.isNumber(
+                                  resourceLimits.accelerators[
+                                    currentAcceleratorType
+                                  ]?.max,
+                                )
+                                  ? {
+                                      // @ts-ignore
+                                      [resourceLimits.accelerators[
+                                        currentAcceleratorType
+                                      ]?.max]:
+                                        resourceLimits.accelerators[
+                                          currentAcceleratorType
+                                        ]?.max,
+                                    }
+                                  : {}),
+                              },
+                              tooltip: {
+                                formatter: (value = 0) => {
+                                  return `${value} ${ACCELERATOR_UNIT_MAP[currentAcceleratorType]}`;
+                                },
+                                open:
+                                  currentImageAcceleratorLimits.length <= 0
+                                    ? false
+                                    : undefined,
+                              },
+                            }}
+                            disabled={
+                              currentImageAcceleratorLimits.length === 0 &&
+                              _.isEmpty(
+                                form.getFieldValue(['environments', 'manual']),
+                              )
+                            }
+                            min={0}
+                            max={
                               resourceLimits.accelerators[
                                 currentAcceleratorType
-                              ]?.min || 0,
-                            max: resourceLimits.accelerators[
-                              currentAcceleratorType
-                            ]?.max,
-                          },
-                          {
-                            validator: async (rule: any, value: number) => {
-                              if (
-                                _.endsWith(currentAcceleratorType, 'shares') &&
-                                form.getFieldValue('cluster_size') >= 2 &&
-                                value % 1 !== 0
-                              ) {
-                                return Promise.reject(
-                                  t(
-                                    'session.launcher.OnlyAllowsDiscreteNumberByClusterSize',
-                                  ),
-                                );
-                              } else {
-                                return Promise.resolve();
-                              }
-                            },
-                          },
-                          {
-                            warningOnly: true,
-                            validator: async (rule: any, value: number) => {
-                              if (showRemainingWarning) {
-                                if (
-                                  _.isNumber(
-                                    remaining.accelerators[
-                                      currentAcceleratorType
-                                    ],
-                                  ) &&
-                                  value >
-                                    remaining.accelerators[
-                                      currentAcceleratorType
-                                    ]
-                                ) {
-                                  return Promise.reject(
-                                    t(
-                                      'session.launcher.EnqueueComputeSessionWarning',
-                                    ),
-                                  );
-                                }
-                              }
-                              return Promise.resolve();
-                            },
-                          },
-                        ]}
-                      >
-                        <InputNumberWithSlider
-                          sliderProps={{
-                            marks: {
-                              0: 0,
-                              // remaining mark code should be located before max mark code to prevent overlapping when it is same value
-                              ...(remaining.accelerators[currentAcceleratorType]
-                                ? {
-                                    [remaining.accelerators[
-                                      currentAcceleratorType
-                                    ]]: {
-                                      label: <RemainingMark />,
-                                    },
-                                  }
-                                : {}),
-                              ...(_.isNumber(
-                                resourceLimits.accelerators[
-                                  currentAcceleratorType
-                                ]?.max,
-                              )
-                                ? {
-                                    // @ts-ignore
-                                    [resourceLimits.accelerators[
-                                      currentAcceleratorType
-                                    ]?.max]:
-                                      resourceLimits.accelerators[
-                                        currentAcceleratorType
-                                      ]?.max,
-                                  }
-                                : {}),
-                            },
-                            tooltip: {
-                              formatter: (value = 0) => {
-                                return `${value} ${ACCELERATOR_UNIT_MAP[currentAcceleratorType]}`;
-                              },
-                              open:
-                                currentImageAcceleratorLimits.length <= 0
-                                  ? false
-                                  : undefined,
-                            },
-                          }}
-                          disabled={
-                            currentImageAcceleratorLimits.length === 0 &&
-                            _.isEmpty(
-                              form.getFieldValue(['environments', 'manual']),
-                            )
-                          }
-                          min={0}
-                          max={
-                            resourceLimits.accelerators[currentAcceleratorType]
-                              ?.max
-                          }
-                          step={
-                            _.endsWith(currentAcceleratorType, 'shares') &&
-                            form.getFieldValue('cluster_size') < 2
-                              ? 0.1
-                              : 1
-                          }
-                          onChange={() => {
-                            form.setFieldValue('allocationPreset', 'custom');
-                          }}
-                          inputNumberProps={{
-                            addonAfter: (
-                              <Form.Item
-                                noStyle
-                                name={['resource', 'acceleratorType']}
-                                initialValue={_.keys(acceleratorSlots)[0]}
-                              >
-                                <Select
-                                  tabIndex={-1}
-                                  disabled={
-                                    currentImageAcceleratorLimits.length ===
-                                      0 &&
-                                    _.isEmpty(
-                                      form.getFieldValue([
-                                        'environments',
-                                        'manual',
-                                      ]),
-                                    )
-                                  }
-                                  suffixIcon={
-                                    _.size(acceleratorSlots) > 1
-                                      ? undefined
-                                      : null
-                                  }
-                                  // open={
-                                  //   _.size(acceleratorSlots) > 1
-                                  //     ? undefined
-                                  //     : false
-                                  // }
-                                  popupMatchSelectWidth={false}
-                                  options={_.map(
-                                    acceleratorSlots,
-                                    (value, name) => {
-                                      return {
-                                        value: name,
-                                        label:
-                                          ACCELERATOR_UNIT_MAP[name] || 'UNIT',
-                                        disabled:
-                                          currentImageAcceleratorLimits.length >
-                                            0 &&
-                                          !_.find(
-                                            currentImageAcceleratorLimits,
-                                            (limit) => limit?.key === name,
-                                          ),
-                                      };
-                                    },
-                                  )}
-                                />
-                              </Form.Item>
-                            ),
-                          }}
-                        />
+                              ]?.max
+                            }
+                            step={
+                              _.endsWith(currentAcceleratorType, 'shares') &&
+                              form.getFieldValue('cluster_size') < 2
+                                ? 0.1
+                                : 1
+                            }
+                            onChange={() => {
+                              form.setFieldValue('allocationPreset', 'custom');
+                            }}
+                            inputNumberProps={{
+                              addonBefore: acceleratorTypeSelectFormItem,
+                            }}
+                          />
+                        )}
                       </Form.Item>
                     );
                   }}
