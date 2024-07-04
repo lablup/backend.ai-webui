@@ -761,7 +761,16 @@
     "Add": "Tambah",
     "CloningIsOnlyPossibleSameHost": "Pada masa ini, pengklonan hanya boleh dilakukan pada hos yang sama.",
     "userQuotaScopeId": "Quota Scope ID",
-    "NewFolderName": "Nama folder baharu"
+    "NewFolderName": "Nama folder baharu",
+    "modelStore": {
+      "ImportFromHuggingFace": "Import Dari Hugging Face",
+      "Import": "Import",
+      "StartService": "Mulakan Perkhidmatan",
+      "InferenceEngineVersion": "Versi Enjin Inferens",
+      "ReplicaNumber": "Nombor Replika",
+      "ImportAndStartService": "Import dan Mulakan Perkhidmatan",
+      "huggingFaceUrlPlaceholder": "Masukkan URL Hugging Face"
+    }
   },
   "dialog": {
     "warning": {

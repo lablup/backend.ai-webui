@@ -869,7 +869,16 @@
     "Add": "추가",
     "CloningIsOnlyPossibleSameHost": "현재 폴더 복사는 동일한 호스트간에만 가능합니다.",
     "userQuotaScopeId": "Quota Scope ID",
-    "NewFolderName": "새 폴더 이름"
+    "NewFolderName": "새 폴더 이름",
+    "modelStore": {
+      "ImportFromHuggingFace": "Hugging Face에서 가져오기",
+      "Import": "가져오기",
+      "StartService": "서비스 시작",
+      "InferenceEngineVersion": "추론 엔진 버전",
+      "ReplicaNumber": "복제 번호",
+      "ImportAndStartService": "가져오기 및 서비스 시작",
+      "huggingFaceUrlPlaceholder": "Hugging Face URL을 입력하세요."
+    }
   },
   "dialog": {
     "warning": {
@@ -1640,7 +1649,7 @@
   "interactiveLogin": {
     "InteractiveLoginWithBackendAI": "Backend.AI 계정을 이용한 로그인",
     "confirmLoginMessage": "{{username}} ({{email}}) 계정으로 로그인하시겠습니까?",
-    "ServiceName":"서비스 이름",
+    "ServiceName": "서비스 이름",
     "useAnotherAccount": "다른 계정으로 로그인"
   }
 }
