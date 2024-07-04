@@ -3584,8 +3584,8 @@ ${rowData.item[this.sessionNameField]}</pre
                 style="font-size:10px;margin-left:5px;"
                 class="horizontal start-justified center layout"
               >
-                R: ${rowData.item?.live_stat?.io_read?.current} MB / W:
-                ${rowData.item?.live_stat?.io_write?.current} MB
+                R: ${rowData.item?.live_stat?.io_read?.current.toFixed(1)} MB /
+                W: ${rowData.item?.live_stat?.io_write?.current.toFixed(1)} MB
               </div>
             </div>
           </div>
@@ -3664,14 +3664,14 @@ ${rowData.item[this.sessionNameField]}</pre
             </mwc-icon>
             <div class="vertical start layout">
               <span style="font-size:9px">
-                ${rowData.item.live_stat?.io_read?.current}
+                ${rowData.item.live_stat?.io_read?.current.toFixed(1)}
                 <span class="indicator">MB</span>
               </span>
               <span class="indicator">READ</span>
             </div>
             <div class="vertical start layout">
               <span style="font-size:8px">
-                ${rowData.item.live_stat?.io_write?.current}
+                ${rowData.item.live_stat?.io_write?.current.toFixed(1)}
                 <span class="indicator">MB</span>
               </span>
               <span class="indicator">WRITE</span>
