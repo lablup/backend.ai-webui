@@ -1251,6 +1251,11 @@
     "EnvironmentAndVersion": "Entorno y versión",
     "Tags": "Etiquetas",
     "fGPU": "fGPU",
+    "ForceTerminateWarningMsg": "Esta acción terminará o cancelará la sesión independientemente de su estado actual. \n¿Está seguro?",
+    "WarningForceTerminateSessions": "Advertencia: Forzar la finalización de sesiones",
+    "ForceTerminateWarningMsg2": "Ejecutar solo cuando el estado no cambie durante un período de tiempo excesivamente largo.",
+    "ForceTerminateWarningMsg3": "Esta acción no elimina los contenedores reales de los agentes. \nEs posible que se requiera una limpieza manual.",
+    "ContainerToCleanUp": "Contenedor(es) para limpiar",
     "ATOMPlusEnabled": "ATOM+ NPU Activado"
   },
   "settings": {

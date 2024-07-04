@@ -409,6 +409,11 @@
     "Tags": "Tag",
     "Agents": "Agen",
     "fGPU": "fGPU",
+    "ForceTerminateWarningMsg": "Tindakan ini akan mengakhiri atau membatalkan sesi terlepas dari statusnya saat ini. \nApa kamu yakin?",
+    "WarningForceTerminateSessions": "Peringatan: Paksa Mengakhiri Sesi",
+    "ForceTerminateWarningMsg2": "Jalankan hanya ketika keadaan tidak berubah dalam jangka waktu yang terlalu lama.",
+    "ForceTerminateWarningMsg3": "Tindakan ini tidak menghapus penampung sebenarnya pada agen. \nPembersihan manual mungkin diperlukan.",
+    "ContainerToCleanUp": "Wadah yang harus dibersihkan",
     "ATOMPlusEnabled": "ATOM+ NPU Diaktifkan"
   },
   "button": {

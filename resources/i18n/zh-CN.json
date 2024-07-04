@@ -408,6 +408,11 @@
     "EnvironmentAndVersion": "环境及版本",
     "Tags": "标签",
     "fGPU": "GPU",
+    "ForceTerminateWarningMsg": "无论会话当前状态如何，此操作都将终止或取消会话。\n你确定吗？",
+    "WarningForceTerminateSessions": "警告：强制终止会话",
+    "ForceTerminateWarningMsg2": "仅当状态在不合理的长时间内没有发生变化时才执行。",
+    "ForceTerminateWarningMsg3": "此操作不会删除代理上的实际容器。\n可能需要手动清理。",
+    "ContainerToCleanUp": "需要清理的容器",
     "ATOMPlusEnabled": "ATOM+ NPU 启用"
   },
   "button": {

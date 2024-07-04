@@ -409,6 +409,11 @@
     "EnvironmentAndVersion": "Ambiente e versione",
     "Tags": "Tag",
     "fGPU": "fGPU",
+    "ForceTerminateWarningMsg": "Questa azione terminerà o annullerà la sessione indipendentemente dal suo stato attuale. \nSei sicuro?",
+    "WarningForceTerminateSessions": "Avviso: forza la chiusura delle sessioni",
+    "ForceTerminateWarningMsg2": "Eseguire solo quando lo stato non cambia per un periodo di tempo irragionevolmente lungo.",
+    "ForceTerminateWarningMsg3": "Questa azione non elimina i contenitori effettivi sugli agenti. \nPotrebbe essere necessaria la pulizia manuale.",
+    "ContainerToCleanUp": "Contenitori da pulire",
     "ATOMPlusEnabled": "ATOM+ NPU Abilitato"
   },
   "button": {

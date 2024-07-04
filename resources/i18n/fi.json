@@ -1249,6 +1249,11 @@
     "EnvironmentAndVersion": "Ympäristö ja versio",
     "Tags": "Tunnisteet",
     "fGPU": "fGPU",
+    "ForceTerminateWarningMsg": "Tämä toiminto lopettaa tai peruuttaa istunnon riippumatta sen nykyisestä tilasta. \nOletko varma?",
+    "WarningForceTerminateSessions": "Varoitus: pakota lopettamaan istunnot",
+    "ForceTerminateWarningMsg2": "Suorita vain, kun tila ei muutu kohtuuttoman pitkään.",
+    "ForceTerminateWarningMsg3": "Tämä toiminto ei poista agenttien varsinaisia ​​säilöjä. \nManuaalinen puhdistus saattaa olla tarpeen.",
+    "ContainerToCleanUp": "Säiliö(t) puhdistettava(t).",
     "ATOMPlusEnabled": "ATOM+ NPU Käytössä"
   },
   "settings": {
