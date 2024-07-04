@@ -813,25 +813,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                       <lablup-progress-bar
                         id="rocm-gpu-usage-bar-2"
                         class="end"
-                        progress="${this.used_slot_percent.rocm_device_slot /
-                        100.0}"
-                        buffer="${this.used_slot_percent.rocm_device_slot /
-                        100.0}"
-                        description="${this.used_slot.rocm_device_slot}/${this
-                          .total_slot.rocm_device_slot}"
+                        progress="${this.used_slot_percent.rocm_device / 100.0}"
+                        buffer="${this.used_slot_percent.rocm_device / 100.0}"
+                        description="${this.used_slot.rocm_device}/${this
+                          .total_slot.rocm_device}"
                       ></lablup-progress-bar>
                     </div>
                     <div class="layout vertical center center-justified">
                       <span class="percentage start-bar">
                         ${this._numberWithPostfix(
-                          this.used_resource_group_slot_percent
-                            .rocm_device_slot,
+                          this.used_resource_group_slot_percent.rocm_device,
                           '%',
                         )}
                       </span>
                       <span class="percentage end-bar">
                         ${this._numberWithPostfix(
-                          this.used_slot_percent.rocm_device_slot,
+                          this.used_slot_percent.rocm_device,
                           '%',
                         )}
                       </span>
