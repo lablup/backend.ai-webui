@@ -704,6 +704,7 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('24.03.5')) {
       this._features['modify-endpoint-environ'] = true;
+      this._features['endpoint-runtime-variant'] = true;
     }
   }
 
