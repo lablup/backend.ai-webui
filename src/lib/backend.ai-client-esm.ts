@@ -1282,10 +1282,17 @@ class Client {
    * @param {string | null} ownerKey - owner key to access
    * @param {number} timeout - timeout to wait log query. Set to 0 to use default value.
    */
-  async get_logs(sessionId, ownerKey = null, timeout = 0): Promise<any> {
-    let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
+  async get_logs(sessionId, ownerKey = null, kernelId = null, timeout = 0): Promise<any> {
+    let queryParams: Array<string> = [];
     if (ownerKey != null) {
-      queryString = `${queryString}?owner_access_key=${ownerKey}`;
+      queryParams.push(`owner_access_key=${ownerKey}`);
+    }
+    if (kernelId != null) {
+      queryParams.push(`kernel_id=${kernelId}`);
+    }
+    let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
+    if (queryParams.length > 0) {
+      queryString += `?${queryParams.join('&')}`;
     }
     let rqst = this.newSignedRequest('GET', queryString, null, null);
     return this._wrapWithPromise(rqst, false, null, timeout);
