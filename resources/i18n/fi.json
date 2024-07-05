@@ -137,7 +137,8 @@
     "Config": "Config",
     "Next": "Seuraava",
     "Previous": "Edellinen",
-    "PushToImage": "Työnnä istunto mukautettuun kuvaan"
+    "PushToImage": "Työnnä istunto mukautettuun kuvaan",
+    "SaveWithoutClose": "Tallenna ilman sulkemista"
   },
   "credential": {
     "AccessKeyOptional": "Pääsyavain (valinnainen)",
@@ -1499,7 +1500,9 @@
     "LightMode": "Valotila",
     "UseSystemSetting": "Käytä järjestelmäasetuksia",
     "DescThemeMode": "Mukauta miltä Backend.AI WebUI näyttää laitteessasi.",
-    "ThemeMode": "Teematila"
+    "ThemeMode": "Teematila",
+    "BootstrapScriptEmpty": "Käsikirjoitus on tyhjä. \nAnna käsikirjoitus.",
+    "BootstrapScriptDeleted": "Bootstrap-skripti poistettu"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Edistynyt verkkopäätteen käyttö: Kopioi terminaalin sisältö",

@@ -451,7 +451,8 @@
     "Config": "Konfigurasi",
     "Next": "Berikutnya",
     "Previous": "Sebelumnya",
-    "PushToImage": "Sesi dorong ke gambar yang disesuaikan"
+    "PushToImage": "Sesi dorong ke gambar yang disesuaikan",
+    "SaveWithoutClose": "Simpan Tanpa Tutup"
   },
   "agent": {
     "Endpoint": "Titik akhir",
@@ -922,7 +923,9 @@
     "LightMode": "Modus Cahaya",
     "UseSystemSetting": "Gunakan Pengaturan Sistem",
     "DescThemeMode": "Sesuaikan tampilan Backend.AI WebUI di perangkat Anda.",
-    "ThemeMode": "Modus Tema"
+    "ThemeMode": "Modus Tema",
+    "BootstrapScriptEmpty": "Skripnya kosong. \nSilakan masukkan skripnya.",
+    "BootstrapScriptDeleted": "Skrip bootstrap dihapus"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Tingkat Lanjut: Salin konten terminal",

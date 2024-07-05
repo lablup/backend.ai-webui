@@ -450,7 +450,8 @@
     "Config": "Konfigurasi",
     "Next": "Seterusnya",
     "Previous": "Sebelumnya",
-    "PushToImage": "Sesi tolak ke imej tersuai"
+    "PushToImage": "Sesi tolak ke imej tersuai",
+    "SaveWithoutClose": "Simpan Tanpa Tutup"
   },
   "agent": {
     "Endpoint": "Titik Akhir",
@@ -921,7 +922,9 @@
     "LightMode": "Mod Cahaya",
     "UseSystemSetting": "Gunakan Tetapan Sistem",
     "DescThemeMode": "Sesuaikan rupa Backend.AI WebUI pada peranti anda.",
-    "ThemeMode": "Mod Tema"
+    "ThemeMode": "Mod Tema",
+    "BootstrapScriptEmpty": "Skripnya kosong. \nSila masukkan skrip.",
+    "BootstrapScriptDeleted": "Skrip Bootstrap dipadamkan"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Lanjutan: Salin kandungan terminal",

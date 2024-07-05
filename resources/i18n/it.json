@@ -451,7 +451,8 @@
     "Config": "Configurazione",
     "Next": "Avanti",
     "Previous": "Precedente",
-    "PushToImage": "Push della sessione all'immagine personalizzata"
+    "PushToImage": "Push della sessione all'immagine personalizzata",
+    "SaveWithoutClose": "Salva senza chiudere"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -922,7 +923,9 @@
     "LightMode": "Modalità luce",
     "UseSystemSetting": "Utilizza Impostazioni di sistema",
     "DescThemeMode": "Personalizza l'aspetto di Backend.AI WebUI sul tuo dispositivo.",
-    "ThemeMode": "Modalità tema"
+    "ThemeMode": "Modalità tema",
+    "BootstrapScriptEmpty": "La sceneggiatura è vuota. \nInserisci la sceneggiatura.",
+    "BootstrapScriptDeleted": "Script di bootstrap eliminato"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilizzo avanzato del terminale Web: copia il contenuto del terminale",

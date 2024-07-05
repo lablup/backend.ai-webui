@@ -450,7 +450,8 @@
     "Config": "配置",
     "Next": "下一页",
     "Previous": "上一页",
-    "PushToImage": "將會話推送到自訂鏡像"
+    "PushToImage": "將會話推送到自訂鏡像",
+    "SaveWithoutClose": "儲存而不關閉"
   },
   "agent": {
     "Endpoint": "端點",
@@ -921,7 +922,9 @@
     "LightMode": "燈光模式",
     "UseSystemSetting": "使用系統設定",
     "DescThemeMode": "自訂 Backend.AI WebUI 在您裝置上的外觀。",
-    "ThemeMode": "主題模式"
+    "ThemeMode": "主題模式",
+    "BootstrapScriptEmpty": "腳本是空的。\n請輸入腳本。",
+    "BootstrapScriptDeleted": "引導腳本已刪除"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高級 Web 終端使用：複製終端內容",

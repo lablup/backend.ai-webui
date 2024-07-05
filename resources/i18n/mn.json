@@ -452,7 +452,8 @@
     "Config": "Тохиргоо",
     "Previous": "Өмнөх",
     "Next": "Дараачийн",
-    "PushToImage": "Тохируулсан зураг руу түлхэх сесс"
+    "PushToImage": "Тохируулсан зураг руу түлхэх сесс",
+    "SaveWithoutClose": "Хаахгүйгээр хадгалах"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -923,7 +924,9 @@
     "LightMode": "Гэрэл горим",
     "UseSystemSetting": "Системийн тохиргоог ашиглана уу",
     "DescThemeMode": "Backend.AI WebUI төхөөрөмж дээрээ хэрхэн харагдахыг тохируулна уу.",
-    "ThemeMode": "Загварын горим"
+    "ThemeMode": "Загварын горим",
+    "BootstrapScriptEmpty": "Скрипт хоосон байна. \nСкриптийг оруулна уу.",
+    "BootstrapScriptDeleted": "Bootstrap скриптийг устгасан"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Дэвшилтэт вэб терминалын хэрэглээ: Терминалын агуулгыг хуулах",

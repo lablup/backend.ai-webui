@@ -538,7 +538,8 @@
     "Config": "Config",
     "Next": "Next",
     "Previous": "Previous",
-    "PushToImage": "Push session to customized image"
+    "PushToImage": "Push session to customized image",
+    "SaveWithoutClose": "Save Without Close"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -1044,7 +1045,9 @@
     "UseSystemSetting": "Use System Setting",
     "LightMode": "Light Mode",
     "DarkMode": "Dark Mode",
-    "DescThemeMode": "Customize how Backend.AI WebUI looks on your device."
+    "DescThemeMode": "Customize how Backend.AI WebUI looks on your device.",
+    "BootstrapScriptEmpty": "The script is empty. \nPlease enter the script.",
+    "BootstrapScriptDeleted": "Bootstrap script deleted"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",

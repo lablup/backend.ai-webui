@@ -450,7 +450,8 @@
     "Config": "Konfigürasyon",
     "Next": "Sonraki",
     "Previous": "Önceki",
-    "PushToImage": "Oturumu özelleştirilmiş resme aktarın"
+    "PushToImage": "Oturumu özelleştirilmiş resme aktarın",
+    "SaveWithoutClose": "Kapatmadan Kaydet"
   },
   "agent": {
     "Endpoint": "uç nokta",
@@ -921,7 +922,9 @@
     "LightMode": "Işık Modu",
     "UseSystemSetting": "Sistem Ayarını Kullan",
     "DescThemeMode": "Backend.AI WebUI'nin cihazınızda nasıl görüneceğini özelleştirin.",
-    "ThemeMode": "Tema Modu"
+    "ThemeMode": "Tema Modu",
+    "BootstrapScriptEmpty": "Senaryo boş. \nLütfen betiği girin.",
+    "BootstrapScriptDeleted": "Bootstrap komut dosyası silindi"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Gelişmiş Web Terminali Kullanımı: Terminal içeriğini kopyalayın",

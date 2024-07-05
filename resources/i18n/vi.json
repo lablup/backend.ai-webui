@@ -450,7 +450,8 @@
     "Config": "Cấu hình",
     "Next": "Kế tiếp",
     "Previous": "Trước",
-    "PushToImage": "Đẩy phiên sang hình ảnh tùy chỉnh"
+    "PushToImage": "Đẩy phiên sang hình ảnh tùy chỉnh",
+    "SaveWithoutClose": "Lưu mà không đóng"
   },
   "agent": {
     "Endpoint": "Điểm cuối",
@@ -921,7 +922,9 @@
     "LightMode": "Chế độ sáng",
     "UseSystemSetting": "Sử dụng cài đặt hệ thống",
     "DescThemeMode": "Tùy chỉnh giao diện Backend.AI WebUI trên thiết bị của bạn.",
-    "ThemeMode": "Chế độ chủ đề"
+    "ThemeMode": "Chế độ chủ đề",
+    "BootstrapScriptEmpty": "Kịch bản trống rỗng. \nVui lòng nhập kịch bản.",
+    "BootstrapScriptDeleted": "Tập lệnh Bootstrap đã bị xóa"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Sử dụng đầu cuối web nâng cao: Sao chép nội dung đầu cuối",

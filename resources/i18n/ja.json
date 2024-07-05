@@ -450,7 +450,8 @@
     "Config": "コンフィグ",
     "Next": "次のページ",
     "Previous": "前へ",
-    "PushToImage": "セッションをカスタマイズされたイメージにプッシュする"
+    "PushToImage": "セッションをカスタマイズされたイメージにプッシュする",
+    "SaveWithoutClose": "閉じずに保存"
   },
   "agent": {
     "Endpoint": "終点",
@@ -921,7 +922,9 @@
     "LightMode": "ライトモード",
     "UseSystemSetting": "システム設定を使用する",
     "DescThemeMode": "Backend.AI WebUI がデバイス上でどのように見えるかをカスタマイズします。",
-    "ThemeMode": "テーマモード"
+    "ThemeMode": "テーマモード",
+    "BootstrapScriptEmpty": "スクリプトが空です。\nスクリプトを入力してください。",
+    "BootstrapScriptDeleted": "ブートストラップ スクリプトが削除されました"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高度なWeb端末の使用法：端末の内容をコピーする",

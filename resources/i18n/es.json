@@ -137,7 +137,8 @@
     "Config": "Configurar",
     "Next": "Siguiente",
     "Previous": "Anterior",
-    "PushToImage": "Enviar sesión a una imagen personalizada"
+    "PushToImage": "Enviar sesión a una imagen personalizada",
+    "SaveWithoutClose": "Guardar sin cerrar"
   },
   "credential": {
     "AccessKeyOptional": "Clave de acceso (opcional)",
@@ -1501,7 +1502,9 @@
     "LightMode": "Modo de luz",
     "UseSystemSetting": "Usar configuración del sistema",
     "DescThemeMode": "Personalice el aspecto de Backend.AI WebUI en su dispositivo.",
-    "ThemeMode": "Modo temático"
+    "ThemeMode": "Modo temático",
+    "BootstrapScriptEmpty": "El guión está vacío. \nPor favor ingrese el guión.",
+    "BootstrapScriptDeleted": "Se eliminó el script de arranque"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avanzado del terminal web: Copiar el contenido del terminal",

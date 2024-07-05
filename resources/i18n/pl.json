@@ -450,7 +450,8 @@
     "Config": "Konfiguracja",
     "Next": "Następny",
     "Previous": "Poprzedni",
-    "PushToImage": "Prześlij sesję do spersonalizowanego obrazu"
+    "PushToImage": "Prześlij sesję do spersonalizowanego obrazu",
+    "SaveWithoutClose": "Zapisz bez zamykania"
   },
   "agent": {
     "Endpoint": "Punkt końcowy",
@@ -921,7 +922,9 @@
     "LightMode": "Tryb światła",
     "UseSystemSetting": "Użyj ustawień systemowych",
     "DescThemeMode": "Dostosuj wygląd Backend.AI WebUI na swoim urządzeniu.",
-    "ThemeMode": "Tryb tematyczny"
+    "ThemeMode": "Tryb tematyczny",
+    "BootstrapScriptEmpty": "Skrypt jest pusty. \nProszę wprowadzić skrypt.",
+    "BootstrapScriptDeleted": "Usunięto skrypt Bootstrap"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Zaawansowane korzystanie z terminala internetowego: Skopiuj zawartość terminala",

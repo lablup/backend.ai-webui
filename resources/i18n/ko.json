@@ -525,7 +525,8 @@
     "Config": "설정",
     "Next": "다음",
     "Previous": "이전",
-    "PushToImage": "세션을 사용자 정의된 이미지로 푸시"
+    "PushToImage": "세션을 사용자 정의된 이미지로 푸시",
+    "SaveWithoutClose": "저장 후 유지"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -1031,7 +1032,9 @@
     "LightMode": "라이트 모드",
     "UseSystemSetting": "시스템 설정 사용",
     "DescThemeMode": "Backend.AI WebUI가 장치에서 어떻게 보이는지 설정합니다.",
-    "ThemeMode": "화면 모드"
+    "ThemeMode": "화면 모드",
+    "BootstrapScriptEmpty": "스크립트가 비어있습니다. 스크립트를 입력해 주세요.",
+    "BootstrapScriptDeleted": "부트스트랩 스크립트가 삭제되었습니다."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",
