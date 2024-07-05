@@ -32,7 +32,6 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
  */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 type BackendAIStorageList = HTMLElementTagNameMap['backend-ai-storage-list'];
-type MwcTabBar = HTMLElementTagNameMap['mwc-tab-bar'];
 interface GroupData {
   id: string;
   name: string;
