@@ -1040,7 +1040,8 @@ export default class BackendAISessionList extends BackendAIPage {
                   //   - {capacity: 1000, current: 6952.082, slots: 16}
                   //     -> ratio: 6.95 | pct: 695% | progressbar: 0.43 (== ratio / 16)
                   liveStat.cpu_util.ratio =
-                    liveStat.cpu_util.current / liveStat.cpu_util.capacity || 0;
+                    (liveStat.cpu_util.current / liveStat.cpu_util.capacity) *
+                      sessions[objectKey].containers.length || 0;
                   liveStat.cpu_util.slots = occupiedSlots.cpu;
                   // Memory is simple. It's just a ratio of current memory utilization.
                   liveStat.mem.ratio =
