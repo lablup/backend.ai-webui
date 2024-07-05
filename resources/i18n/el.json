@@ -1524,7 +1524,9 @@
     "NoExtraMounts": "Χωρίς επιπλέον βάσεις",
     "SyncRoutes": "Διαδρομές συγχρονισμού",
     "SyncRoutesFailed": "Το αίτημα συγχρονισμού διαδρομής απέτυχε.",
-    "SyncRoutesRequested": "Ζητήθηκε συγχρονισμός διαδρομής."
+    "SyncRoutesRequested": "Ζητήθηκε συγχρονισμός διαδρομής.",
+    "UpdateService": "Υπηρεσία ενημέρωσης",
+    "StartNewService": "Ξεκινήστε τη Νέα Υπηρεσία"
   },
   "ErrorBoundary": {
     "title": "Εμφανίστηκε σφάλμα.",

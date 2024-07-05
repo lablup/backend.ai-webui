@@ -6,7 +6,6 @@ import Flex from '../components/Flex';
 import ImageMetaIcon from '../components/ImageMetaIcon';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
 import ResourceNumber from '../components/ResourceNumber';
-import ServiceLauncherModal from '../components/ServiceLauncherModal';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { InferenceSessionErrorModalFragment$key } from '../components/__generated__/InferenceSessionErrorModalFragment.graphql';
 import { baiSignedRequestWithPromise, filterNonNullItems } from '../helper';
@@ -99,8 +98,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const [isPendingClearError, startClearErrorTransition] = useTransition();
   const [selectedSessionErrorForModal, setSelectedSessionErrorForModal] =
     useState<InferenceSessionErrorModalFragment$key | null>(null);
-  const [isOpenServiceLauncherModal, setIsOpenServiceLauncherModal] =
-    useState(false);
   const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
     useState(false);
   const [currentUser] = useCurrentUserInfo();
@@ -174,7 +171,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               status
             }
             created_user_email @since(version: "23.09.8")
-            ...ServiceLauncherModalFragment
             ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
           }
@@ -464,7 +460,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                 endpoint?.created_user_email !== currentUser.email)
             }
             onClick={() => {
-              setIsOpenServiceLauncherModal(true);
+              webuiNavigate('/service/update/' + serviceId);
             }}
           >
             {t('button.Edit')}
@@ -649,18 +645,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         inferenceSessionErrorFrgmt={selectedSessionErrorForModal}
         onRequestClose={() => setSelectedSessionErrorForModal(null)}
       />
-      <ServiceLauncherModal
-        endpointFrgmt={endpoint}
-        open={isOpenServiceLauncherModal}
-        onRequestClose={(success) => {
-          setIsOpenServiceLauncherModal(!isOpenServiceLauncherModal);
-          if (success) {
-            startRefetchTransition(() => {
-              updateFetchKey();
-            });
-          }
-        }}
-      ></ServiceLauncherModal>
       <EndpointTokenGenerationModal
         open={isOpenTokenGenerationModal}
         onRequestClose={(success) => {

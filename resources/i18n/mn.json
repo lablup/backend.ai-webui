@@ -1578,7 +1578,9 @@
     "NoExtraMounts": "Нэмэлт бэхэлгээ байхгүй",
     "SyncRoutes": "Замуудыг синк хийх",
     "SyncRoutesFailed": "Маршрутын синхрончлолын хүсэлт амжилтгүй боллоо.",
-    "SyncRoutesRequested": "Маршрутыг синхрончлох хүсэлт тавьсан."
+    "SyncRoutesRequested": "Маршрутыг синхрончлох хүсэлт тавьсан.",
+    "UpdateService": "Үйлчилгээг шинэчлэх",
+    "StartNewService": "Шинэ үйлчилгээг эхлүүлэх"
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",

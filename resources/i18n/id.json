@@ -1577,7 +1577,9 @@
     "NoExtraMounts": "Tidak ada tunggangan tambahan",
     "SyncRoutes": "Menyinkronkan rute",
     "SyncRoutesFailed": "Permintaan sinkronisasi rute gagal.",
-    "SyncRoutesRequested": "Sinkronisasi rute telah diminta."
+    "SyncRoutesRequested": "Sinkronisasi rute telah diminta.",
+    "UpdateService": "Layanan Pembaruan",
+    "StartNewService": "Mulai Layanan Baru"
   },
   "ErrorBoundary": {
     "title": "Telah terjadi kesalahan.",

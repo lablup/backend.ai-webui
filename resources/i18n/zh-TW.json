@@ -1565,7 +1565,9 @@
     "NoExtraMounts": "沒有額外的安裝座",
     "SyncRoutes": "同步路线",
     "SyncRoutesFailed": "路由同步请求失败。",
-    "SyncRoutesRequested": "已請求路由同步。"
+    "SyncRoutesRequested": "已請求路由同步。",
+    "UpdateService": "更新服務",
+    "StartNewService": "開始新服務"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

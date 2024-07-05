@@ -1566,7 +1566,9 @@
     "SyncRoutes": "同步路线",
     "SyncRoutesFailed": "路由同步请求失败。",
     "SyncRoutesSuccess": "路由同步请求成功。",
-    "SyncRoutesRequested": "已请求路由同步。"
+    "SyncRoutesRequested": "已请求路由同步。",
+    "UpdateService": "更新服务",
+    "StartNewService": "开始新服务"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

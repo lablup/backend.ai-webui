@@ -1565,7 +1565,9 @@
     "NoExtraMounts": "Tiada pelekap tambahan",
     "SyncRoutes": "Segerakkan laluan",
     "SyncRoutesFailed": "Permintaan penyegerakan laluan gagal.",
-    "SyncRoutesRequested": "Penyegerakan laluan telah diminta."
+    "SyncRoutesRequested": "Penyegerakan laluan telah diminta.",
+    "UpdateService": "Perkhidmatan Kemas Kini",
+    "StartNewService": "Mulakan Perkhidmatan Baharu"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

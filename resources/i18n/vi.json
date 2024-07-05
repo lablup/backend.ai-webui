@@ -1565,7 +1565,9 @@
     "NoExtraMounts": "Không có gắn kết bổ sung",
     "SyncRoutes": "Đồng bộ hóa tuyến đường",
     "SyncRoutesFailed": "Yêu cầu đồng bộ hóa tuyến đường không thành công.",
-    "SyncRoutesRequested": "Đồng bộ hóa tuyến đường đã được yêu cầu."
+    "SyncRoutesRequested": "Đồng bộ hóa tuyến đường đã được yêu cầu.",
+    "UpdateService": "Dịch vụ cập nhật",
+    "StartNewService": "Bắt đầu dịch vụ mới"
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",

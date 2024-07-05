@@ -1524,7 +1524,9 @@
     "NoExtraMounts": "余分なマウントはありません",
     "SyncRoutes": "同期ルート",
     "SyncRoutesFailed": "ルート同期要求に失敗しました。",
-    "SyncRoutesRequested": "ルート同期をリクエストしました。"
+    "SyncRoutesRequested": "ルート同期をリクエストしました。",
+    "UpdateService": "アップデートサービス",
+    "StartNewService": "新しいサービスを開始する"
   },
   "ErrorBoundary": {
     "title": "エラーが発生しました。",

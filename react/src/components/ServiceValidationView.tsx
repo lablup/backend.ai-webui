@@ -7,7 +7,7 @@ import {
   MountOptionType,
   ServiceCreateType,
   ServiceLauncherFormValue,
-} from './ServiceLauncherModal';
+} from './ServiceLauncherPageContent';
 import ValidationStatusTag from './ValidationStatusTag';
 import { AnsiUp } from 'ansi_up';
 import { App, Tag, theme } from 'antd';

@@ -1565,7 +1565,9 @@
     "NoExtraMounts": "Sem montagens extras",
     "SyncRoutes": "Sincronizar rotas",
     "SyncRoutesFailed": "O pedido de sincronização de rotas falhou.",
-    "SyncRoutesRequested": "A sincronização de rota foi solicitada."
+    "SyncRoutesRequested": "A sincronização de rota foi solicitada.",
+    "UpdateService": "Serviço de atualização",
+    "StartNewService": "Iniciar novo serviço"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",
