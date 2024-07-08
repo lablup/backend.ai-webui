@@ -312,7 +312,7 @@ type BackendAIConfig = {
   maskUserInfo: boolean;
   singleSignOnVendors: string[];
   ssoRealmName: string;
-  supportModelStore: boolean;
+  enableModelStore: boolean;
   enableContainerCommit: boolean;
   appDownloadUrl: string;
   systemSSHImage: string;
