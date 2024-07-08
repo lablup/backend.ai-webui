@@ -159,7 +159,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({ type: String }) _helpDescriptionIcon = '';
   @property({ type: Set }) activeIdleCheckList;
   @property({ type: Array }) selectedKernels;
-  @property({ type: String }) selectedKernelId = '';
+  @property({ type: String }) selectedKernelId;
   @property({ type: Proxy }) statusColorTable = new Proxy(
     {
       'idle-timeout': 'green',
@@ -247,6 +247,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @query('#work-dialog') workDialog!: BackendAIDialog;
   @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
   private _isContainerCommitEnabled = false;
+  private _isPerKernelLogSupported = false;
 
   @query('#commit-session-dialog') commitSessionDialog;
   @query('#commit-current-session-path-input') commitSessionInput;
@@ -666,6 +667,9 @@ export default class BackendAISessionList extends BackendAIPage {
           this._isContainerCommitEnabled =
             globalThis.backendaiclient._config.enableContainerCommit &&
             globalThis.backendaiclient.supports('image-commit');
+          // check whether fetching per kernel log is available or not
+          this._isPerKernelLogSupported =
+            globalThis.backendaiclient.supports('per-kernel-logs');
           this._refreshJobData();
         },
         true,
@@ -700,6 +704,9 @@ export default class BackendAISessionList extends BackendAIPage {
       this._isContainerCommitEnabled =
         globalThis.backendaiclient._config.enableContainerCommit &&
         globalThis.backendaiclient.supports('image-commit');
+      // check whether fetching per kernel log is available or not
+      this._isPerKernelLogSupported =
+        globalThis.backendaiclient.supports('per-kernel-logs');
       this._refreshJobData();
     }
   }
@@ -1551,7 +1558,7 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   /**
-   * Set Selected component value by event
+   * Set selected session by event
    *
    * @param {Event} e
    */
@@ -1563,8 +1570,15 @@ export default class BackendAISessionList extends BackendAIPage {
     this.workDialog.sessionUuid = sessionUuid;
     this.workDialog.sessionName = sessionName;
     this.workDialog.accessKey = accessKey;
+  }
+
+  /**
+   * Set selected kernel from selected session
+   *
+   * */
+  _setSelectedKernel() {
     this.selectedKernels = this.compute_sessions
-      .find((session) => session.session_id === sessionUuid)
+      .find((session) => session.session_id === this.workDialog.sessionUuid)
       ?.containers.map((container) => {
         if (container.role === 'main') {
           container.role = 'main1';
@@ -1577,50 +1591,50 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   _updateLogsByKernelId() {
-    this.selectedKernelId = (
-      this.shadowRoot?.querySelector('#kernel-id-select') as Select
-    ).value;
+    this.selectedKernelId = this._isPerKernelLogSupported
+      ? (this.shadowRoot?.querySelector('#kernel-id-select') as Select)?.value
+      : null;
   }
 
   /**
    * Show logs - work title, session logs, session name, and access key.
    */
   _showLogs() {
-    // workaround for this.selectedKernelId is empty
-    if (this.selectedKernelId !== '') {
-      globalThis.backendaiclient
-        .get_logs(
-          this.workDialog.sessionUuid,
-          this.workDialog.accessKey,
-          this.selectedKernelId,
-          15000,
-        )
-        .then((req) => {
-          const ansi_up = new AnsiUp();
-          const logs = ansi_up.ansi_to_html(req.result.logs);
-          setTimeout(() => {
-            (
-              this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement
-            ).innerHTML =
-              `${this.workDialog.sessionName} (${this.workDialog.sessionUuid})`;
-            (
-              this.shadowRoot?.querySelector('#work-area') as HTMLDivElement
-            ).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
-            // TODO define extended type for custom properties
-            this.workDialog.show();
-          }, 100);
-        })
-        .catch((err) => {
-          if (err && err.message) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true, err);
-          } else if (err && err.title) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.show(true, err);
-          }
-        });
-    }
+    (
+      this.shadowRoot?.querySelector('#kernel-id-select') as Select
+    ).style.display = this._isPerKernelLogSupported ? 'block' : 'none';
+    globalThis.backendaiclient
+      .get_logs(
+        this.workDialog.sessionUuid,
+        this.workDialog.accessKey,
+        this.selectedKernelId !== '' ? this.selectedKernelId : null,
+        15000,
+      )
+      .then((req) => {
+        const ansi_up = new AnsiUp();
+        const logs = ansi_up.ansi_to_html(req.result.logs);
+        setTimeout(() => {
+          (
+            this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement
+          ).innerHTML =
+            `${this.workDialog.sessionName} (${this.workDialog.sessionUuid})`;
+          (
+            this.shadowRoot?.querySelector('#work-area') as HTMLDivElement
+          ).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
+          // TODO define extended type for custom properties
+          this.workDialog.show();
+        }, 100);
+      })
+      .catch((err) => {
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        } else if (err && err.title) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.show(true, err);
+        }
+      });
   }
 
   _downloadLogs() {
@@ -3252,8 +3266,9 @@ ${rowData.item[this.sessionNameField]}</pre
                   id="${rowData.index + '-assignment'}"
                   icon="assignment"
                   ?disabled="${rowData.item.status === 'CANCELLED'}"
-                  @click="${async (e) => {
+                  @click="${(e) => {
                     this._setSelectedSession(e);
+                    this._setSelectedKernel();
                     this._updateLogsByKernelId();
                     this._showLogs();
                   }}"
@@ -4431,10 +4446,14 @@ ${rowData.item[this.sessionNameField]}</pre
         <span slot="title" id="work-title">
         </span>
         <div slot="action" class="horizontal layout center">
-          <mwc-select id="kernel-id-select" label="Kernel Role" @selected=${() => {
-            this._updateLogsByKernelId();
-            this._showLogs();
-          }}>
+          <mwc-select
+            id="kernel-id-select"
+            label="Kernel Role"
+            @selected=${() => {
+              this._updateLogsByKernelId();
+              this._showLogs();
+            }}
+          >
             ${this.selectedKernels.map((item) => {
               return html`
                 <mwc-list-item

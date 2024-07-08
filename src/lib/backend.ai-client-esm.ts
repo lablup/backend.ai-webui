@@ -706,6 +706,9 @@ class Client {
       this._features['modify-endpoint-environ'] = true;
       this._features['endpoint-runtime-variant'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('24.03.7')) {
+      this._features['per-kernel-logs'] = true;
+    }
   }
 
   /**
@@ -1291,7 +1294,7 @@ class Client {
     if (ownerKey != null) {
       queryParams.push(`owner_access_key=${ownerKey}`);
     }
-    if (kernelId != null) {
+    if (this.supports('per-kernel-logs') && kernelId !== null) {
       queryParams.push(`kernel_id=${kernelId}`);
     }
     let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
