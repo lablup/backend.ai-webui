@@ -1086,6 +1086,15 @@ export default class BackendAISessionList extends BackendAIPage {
                 sessions[objectKey].cpu_used_time =
                   this._automaticScaledTime(0);
               }
+              if (this.is_superadmin) {
+                sessions[objectKey].agents_ids_with_container_ids = sessions[
+                  objectKey
+                ].containers?.map((c) => {
+                  const agentID = c.agent;
+                  const containerID = c.container_id.slice(0, 4);
+                  return `${agentID}(${containerID})`;
+                });
+              }
             }
 
             const service_info = JSON.parse(sessions[objectKey].service_ports);
@@ -3942,15 +3951,8 @@ ${rowData.item[this.sessionNameField]}</pre
   agentListRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      // FIXME: temporally show allocated agent only, not in session-agent pair
       html`
-        <div class="layout vertical">
-          ${[...new Set(rowData.item.agents)]?.map(
-            (agent) => html`
-              <span>${agent}</span>
-            `,
-          )}
-        </div>
+        <pre>${rowData.item.agents_ids_with_container_ids?.join('\n')}</pre>
       `,
       root,
     );
