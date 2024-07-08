@@ -1529,7 +1529,8 @@
     "SyncRoutesFailed": "Rota senkronizasyon isteği başarısız oldu.",
     "SyncRoutesRequested": "Rota senkronizasyonu talep edildi.",
     "UpdateService": "Güncelleme Hizmeti",
-    "StartNewService": "Yeni Hizmeti Başlat"
+    "StartNewService": "Yeni Hizmeti Başlat",
+    "RuntimeVariant": "Çıkarım Çalışma Zamanı Varyantı"
   },
   "ErrorBoundary": {
     "title": "Bir hata oluştu.",

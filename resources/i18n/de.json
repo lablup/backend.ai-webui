@@ -1529,7 +1529,8 @@
     "SyncRoutesFailed": "Die Anfrage zur Routensynchronisierung ist fehlgeschlagen.",
     "SyncRoutesRequested": "Routensynchronisierung wurde angefordert.",
     "UpdateService": "Update-Service",
-    "StartNewService": "Neuen Dienst starten"
+    "StartNewService": "Neuen Dienst starten",
+    "RuntimeVariant": "Inferenz Laufzeitvariante"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

@@ -781,7 +781,8 @@
     "SyncRoutesFailed": "La solicitud de sincronización de ruta ha fallado.",
     "SyncRoutesRequested": "Se ha solicitado sincronización de ruta.",
     "UpdateService": "Servicio de actualización",
-    "StartNewService": "Iniciar nuevo servicio"
+    "StartNewService": "Iniciar nuevo servicio",
+    "RuntimeVariant": "Variante de tiempo de ejecución de la inferencia"
   },
   "notification": {
     "Initializing": "Inicializando...",

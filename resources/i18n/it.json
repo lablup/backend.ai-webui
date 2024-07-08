@@ -1529,7 +1529,8 @@
     "SyncRoutesSuccess": "La richiesta di sincronizzazione del percorso è andata a buon fine.",
     "SyncRoutesRequested": "È stata richiesta la sincronizzazione del percorso.",
     "UpdateService": "Servizio di aggiornamento",
-    "StartNewService": "Avvia nuovo servizio"
+    "StartNewService": "Avvia nuovo servizio",
+    "RuntimeVariant": "Variante di runtime dell'inferenza"
   },
   "ErrorBoundary": {
     "title": "Si è verificato un errore.",

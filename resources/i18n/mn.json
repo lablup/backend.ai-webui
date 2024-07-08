@@ -1583,7 +1583,8 @@
     "SyncRoutesFailed": "Маршрутын синхрончлолын хүсэлт амжилтгүй боллоо.",
     "SyncRoutesRequested": "Маршрутыг синхрончлох хүсэлт тавьсан.",
     "UpdateService": "Үйлчилгээг шинэчлэх",
-    "StartNewService": "Шинэ үйлчилгээг эхлүүлэх"
+    "StartNewService": "Шинэ үйлчилгээг эхлүүлэх",
+    "RuntimeVariant": "Дүгнэлт Runtime Variant"
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",

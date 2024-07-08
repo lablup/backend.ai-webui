@@ -488,7 +488,8 @@
     "SyncRoutesFailed": "라우트 동기화 요청이 실패했습니다.",
     "SyncRoutesRequested": "라우트 동기화를 요청하였습니다.",
     "UpdateService": "서비스 업데이트",
-    "StartNewService": "새로운 서비스 시작"
+    "StartNewService": "새로운 서비스 시작",
+    "RuntimeVariant": "인퍼런스 런타임 종류"
   },
   "button": {
     "Cancel": "취소",

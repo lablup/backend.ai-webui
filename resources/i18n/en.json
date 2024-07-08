@@ -501,7 +501,8 @@
     "SyncRoutesFailed": "The route synchronization request failed.",
     "SyncRoutesRequested": "The route synchronization requested.",
     "StartNewService": "Start New Service",
-    "UpdateService": "Update Service"
+    "UpdateService": "Update Service",
+    "RuntimeVariant": "Inference Runtime Variant"
   },
   "button": {
     "Cancel": "Cancel",

@@ -1570,7 +1570,8 @@
     "SyncRoutesFailed": "Yêu cầu đồng bộ hóa tuyến đường không thành công.",
     "SyncRoutesRequested": "Đồng bộ hóa tuyến đường đã được yêu cầu.",
     "UpdateService": "Dịch vụ cập nhật",
-    "StartNewService": "Bắt đầu dịch vụ mới"
+    "StartNewService": "Bắt đầu dịch vụ mới",
+    "RuntimeVariant": "Biến thể thời gian chạy suy luận"
   },
   "totp": {
     "TotpSetupCompleted": "Đã bật 2FA",

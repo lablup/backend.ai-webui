@@ -1570,7 +1570,8 @@
     "SyncRoutesFailed": "Permintaan penyegerakan laluan gagal.",
     "SyncRoutesRequested": "Penyegerakan laluan telah diminta.",
     "UpdateService": "Perkhidmatan Kemas Kini",
-    "StartNewService": "Mulakan Perkhidmatan Baharu"
+    "StartNewService": "Mulakan Perkhidmatan Baharu",
+    "RuntimeVariant": "Varian Masa Jalan Inferens"
   },
   "totp": {
     "TotpSetupCompleted": "Didayakan 2FA",

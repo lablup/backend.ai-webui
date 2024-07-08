@@ -1529,7 +1529,8 @@
     "SyncRoutesFailed": "Żądanie synchronizacji trasy nie powiodło się.",
     "SyncRoutesRequested": "Zażądano synchronizacji tras.",
     "UpdateService": "Aktualizuj usługę",
-    "StartNewService": "Uruchom nową usługę"
+    "StartNewService": "Uruchom nową usługę",
+    "RuntimeVariant": "Inference Runtime Variant"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",
