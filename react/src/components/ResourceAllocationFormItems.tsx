@@ -445,8 +445,10 @@ const ResourceAllocationFormItems: React.FC<
           style={{ marginBottom: token.marginXS }}
         >
           <ResourcePresetSelect
-            showCustom
-            showMinimumRequired
+            showCustom={baiClient._config.allowCustomResourceAllocation}
+            showMinimumRequired={
+              baiClient._config.allowCustomResourceAllocation
+            }
             onChange={(value, options) => {
               switch (value) {
                 case 'custom':
