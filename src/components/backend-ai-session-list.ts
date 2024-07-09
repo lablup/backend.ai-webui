@@ -1099,7 +1099,7 @@ export default class BackendAISessionList extends BackendAIPage {
                   objectKey
                 ].containers?.map((c) => {
                   const agentID = c.agent;
-                  const containerID = c.container_id.slice(0, 4);
+                  const containerID = c.container_id?.slice(0, 4);
                   return `${agentID}(${containerID})`;
                 });
               }
@@ -1366,7 +1366,7 @@ export default class BackendAISessionList extends BackendAIPage {
         namespace = imageParts[1];
         langName = imageParts[2];
       } else if (imageParts.length > 3) {
-        namespace = imageParts.slice(2, imageParts.length - 1).join('/');
+        namespace = imageParts?.slice(2, imageParts.length - 1).join('/');
         langName = imageParts[imageParts.length - 1];
       } else {
         namespace = '';
