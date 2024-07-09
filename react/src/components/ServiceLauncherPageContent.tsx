@@ -45,6 +45,7 @@ import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, useMutation } from 'react-relay';
+import { StringParam, useQueryParams } from 'use-query-params';
 
 const ServiceValidationView = React.lazy(
   () => import('./ServiceValidationView'),
@@ -104,7 +105,7 @@ export interface ServiceCreateType {
 }
 interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   serviceName: string;
-  vFolderName: string;
+  vFolderID: string;
   desiredRoutingCount: number;
   openToPublic: boolean;
   modelMountDestination: string;
@@ -130,6 +131,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const { message } = App.useApp();
 
   const { t } = useTranslation();
+
+  const [{ model }] = useQueryParams({
+    model: StringParam,
+  });
 
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
@@ -297,7 +302,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         cluster_mode: values.cluster_mode,
         open_to_public: values.openToPublic,
         config: {
-          model: values.vFolderName,
+          model: values.vFolderID,
           model_version: 1, // FIXME: hardcoded. change it with option later
           ...(baiClient.supports('endpoint-extra-mounts') && {
             extra_mounts: _.reduce(
@@ -627,7 +632,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           version: `${endpoint?.image_object?.registry}/${endpoint?.image_object?.name}:${endpoint?.image_object?.tag}@${endpoint?.image_object?.architecture}`,
           image: endpoint?.image_object,
         },
-        vFolderName: endpoint?.model_mount_destination,
+        vFolderID: endpoint?.model,
         mounts: _.map(endpoint?.extra_mounts, (item) =>
           item?.row_id?.replaceAll('-', ''),
         ),
@@ -645,6 +650,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             environment: baiClient._config?.default_session_environment,
           },
         }),
+        vFolderID: model ? model : undefined,
       };
 
   return (
@@ -698,7 +704,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         </Form.Item>
                         {!endpoint ? (
                           <Form.Item
-                            name={'vFolderName'}
+                            name={'vFolderID'}
                             label={t('session.launcher.ModelStorageToMount')}
                             rules={[
                               {
@@ -711,28 +717,22 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                 vf.usage_mode === 'model' &&
                                 vf.status === 'ready'
                               }
-                              autoSelectDefault
+                              valuePropName="id"
+                              autoSelectDefault={!model}
                               disabled={!!endpoint}
                             />
                           </Form.Item>
                         ) : (
                           endpoint?.model && (
-                            <>
-                              <Form.Item hidden name="vFolderName">
-                                <Input />
-                              </Form.Item>
-                              {/* Display model folder name instead of mode folder id */}
-                              <Form.Item
-                                label={t(
-                                  'session.launcher.ModelStorageToMount',
-                                )}
-                                required
-                              >
-                                <Suspense fallback={<Skeleton.Input active />}>
-                                  <VFolderLazyView uuid={endpoint?.model} />
-                                </Suspense>
-                              </Form.Item>
-                            </>
+                            <Form.Item
+                              name={'vFolderID'}
+                              label={t('session.launcher.ModelStorageToMount')}
+                              required
+                            >
+                              <Suspense fallback={<Skeleton.Input active />}>
+                                <VFolderLazyView uuid={endpoint?.model} />
+                              </Suspense>
+                            </Form.Item>
                           )
                         )}
                         {baiClient.supports('endpoint-runtime-variant') ? (
@@ -812,15 +812,14 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         </Form.Item>
                         {baiClient.supports('endpoint-extra-mounts') ? (
                           <>
-                            <Form.Item noStyle dependencies={['vFolderName']}>
+                            <Form.Item noStyle dependencies={['vFolderID']}>
                               {({ getFieldValue }) => {
                                 return (
                                   <VFolderTableFormItem
                                     rowKey={'id'}
                                     label={t('modelService.AdditionalMounts')}
                                     filter={(vf) =>
-                                      vf.name !==
-                                        getFieldValue('vFolderName') &&
+                                      vf.name !== getFieldValue('vFolderID') &&
                                       vf.status === 'ready' &&
                                       vf.usage_mode !== 'model'
                                     }

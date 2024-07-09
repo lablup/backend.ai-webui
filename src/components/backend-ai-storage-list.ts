@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2024 Lablup Inc. All rights reserved.
  */
+import { navigate } from '../backend-ai-app';
 import tus from '../lib/tus';
 import '../plastics/lablup-shields/lablup-shields';
 import {
@@ -9,6 +10,7 @@ import {
   IronFlexAlignment,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { store } from '../store';
 import './backend-ai-dialog';
 import BackendAIDialog from './backend-ai-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
@@ -1715,6 +1717,22 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
+   *
+   * @param {string} url - page to redirect from the current page.
+   */
+  _moveTo(url = '') {
+    const page = url !== '' ? url : 'summary';
+    // globalThis.history.pushState({}, '', page);
+    store.dispatch(navigate(decodeURIComponent(page), {}));
+
+    document.dispatchEvent(
+      new CustomEvent('react-navigate', {
+        detail: url,
+      }),
+    );
+  }
+
+  /**
    * Render permission options - View, Edit, EditDelete, KickOut.
    *
    * @param {Element} root - the row details content DOM element
@@ -1978,7 +1996,8 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <mwc-icon-button
                   class="fg green controls-running"
                   icon="play_arrow"
-                  @click="${(e) => this._inferModel(e)}"
+                  @click="${(e) =>
+                    this._moveTo('/service/start?model=' + rowData.item.id)}"
                   ?disabled="${this._isUncontrollableStatus(
                     rowData.item.status,
                   )}"

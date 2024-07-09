@@ -63,7 +63,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
         cluster_mode: values.cluster_mode,
         open_to_public: values.openToPublic,
         config: {
-          model: values.vFolderName,
+          model: values.vFolderID,
           model_version: 1, // FIXME: hardcoded. change it with option later
           ...(baiClient.supports('endpoint-extra-mounts') && {
             extra_mounts: _.reduce(
