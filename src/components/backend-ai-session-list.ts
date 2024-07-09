@@ -26,6 +26,7 @@ import '@material/mwc-icon-button-toggle';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import { Menu } from '@material/mwc-menu';
+import { Select } from '@material/mwc-select';
 import '@material/mwc-textfield';
 import { TextField } from '@material/mwc-textfield';
 import '@vaadin/grid/vaadin-grid';
@@ -157,6 +158,8 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({ type: String }) _helpDescriptionTitle = '';
   @property({ type: String }) _helpDescriptionIcon = '';
   @property({ type: Set }) activeIdleCheckList;
+  @property({ type: Array }) selectedKernels;
+  @property({ type: String }) selectedKernelId;
   @property({ type: Proxy }) statusColorTable = new Proxy(
     {
       'idle-timeout': 'green',
@@ -244,6 +247,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @query('#work-dialog') workDialog!: BackendAIDialog;
   @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
   private _isContainerCommitEnabled = false;
+  private _isPerKernelLogSupported = false;
 
   @query('#commit-session-dialog') commitSessionDialog;
   @query('#commit-current-session-path-input') commitSessionInput;
@@ -252,6 +256,7 @@ export default class BackendAISessionList extends BackendAIPage {
   constructor() {
     super();
     this.compute_sessions = [];
+    this.selectedKernels = [];
     this._selected_items = [];
     this._manualCleanUpNeededContainers = [];
     this.terminationQueue = [];
@@ -662,6 +667,9 @@ export default class BackendAISessionList extends BackendAIPage {
           this._isContainerCommitEnabled =
             globalThis.backendaiclient._config.enableContainerCommit &&
             globalThis.backendaiclient.supports('image-commit');
+          // check whether fetching per kernel log is available or not
+          this._isPerKernelLogSupported =
+            globalThis.backendaiclient.supports('per-kernel-logs');
           this._refreshJobData();
         },
         true,
@@ -696,6 +704,9 @@ export default class BackendAISessionList extends BackendAIPage {
       this._isContainerCommitEnabled =
         globalThis.backendaiclient._config.enableContainerCommit &&
         globalThis.backendaiclient.supports('image-commit');
+      // check whether fetching per kernel log is available or not
+      this._isPerKernelLogSupported =
+        globalThis.backendaiclient.supports('per-kernel-logs');
       this._refreshJobData();
     }
   }
@@ -827,7 +838,9 @@ export default class BackendAISessionList extends BackendAIPage {
       containerFields.push('agent');
     }
     if (globalThis.backendaiclient.supports('per-user-image')) {
-      containerFields.push('image_object { labels { key value } }');
+      containerFields.push(
+        'kernel_id role local_rank image_object { labels { key value } }',
+      );
     }
 
     if (this._isContainerCommitEnabled && status.includes('RUNNING')) {
@@ -1034,7 +1047,8 @@ export default class BackendAISessionList extends BackendAIPage {
                   //   - {capacity: 1000, current: 6952.082, slots: 16}
                   //     -> ratio: 6.95 | pct: 695% | progressbar: 0.43 (== ratio / 16)
                   liveStat.cpu_util.ratio =
-                    liveStat.cpu_util.current / liveStat.cpu_util.capacity || 0;
+                    (liveStat.cpu_util.current / liveStat.cpu_util.capacity) *
+                      sessions[objectKey].containers.length || 0;
                   liveStat.cpu_util.slots = occupiedSlots.cpu;
                   // Memory is simple. It's just a ratio of current memory utilization.
                   liveStat.mem.ratio =
@@ -1079,6 +1093,15 @@ export default class BackendAISessionList extends BackendAIPage {
               } else {
                 sessions[objectKey].cpu_used_time =
                   this._automaticScaledTime(0);
+              }
+              if (this.is_superadmin) {
+                sessions[objectKey].agents_ids_with_container_ids = sessions[
+                  objectKey
+                ].containers?.map((c) => {
+                  const agentID = c.agent;
+                  const containerID = c.container_id.slice(0, 4);
+                  return `${agentID}(${containerID})`;
+                });
               }
             }
 
@@ -1535,36 +1558,70 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   /**
-   * Show logs - work title, session logs, session name, and access key.
+   * Set selected session by event
    *
-   * @param {Event} e - click the assignment button
-   * */
-  _showLogs(e) {
+   * @param {Event} e
+   */
+  _setSelectedSession(e) {
     const controls = e.target.closest('#controls');
     const sessionUuid = controls['session-uuid'];
     const sessionName = controls['session-name'];
-    const sessionId =
-      globalThis.backendaiclient.APIMajorVersion < 5
-        ? sessionName
-        : sessionUuid;
     const accessKey = controls['access-key'];
+    this.workDialog.sessionUuid = sessionUuid;
+    this.workDialog.sessionName = sessionName;
+    this.workDialog.accessKey = accessKey;
+  }
 
+  /**
+   * Set selected kernel from selected session
+   *
+   * */
+  _setSelectedKernel() {
+    this.selectedKernels = this.compute_sessions
+      .find((session) => session.session_id === this.workDialog.sessionUuid)
+      ?.containers.map((container) => {
+        if (container.role === 'main') {
+          container.role = 'main1';
+        } else {
+          container.role = `sub${container.local_rank}`;
+        }
+        return container;
+      })
+      .sort((a, b) => a.role.localeCompare(b.role));
+  }
+
+  _updateLogsByKernelId() {
+    this.selectedKernelId = this._isPerKernelLogSupported
+      ? (this.shadowRoot?.querySelector('#kernel-id-select') as Select)?.value
+      : null;
+  }
+
+  /**
+   * Show logs - work title, session logs, session name, and access key.
+   */
+  _showLogs() {
+    (
+      this.shadowRoot?.querySelector('#kernel-id-select') as Select
+    ).style.display = this._isPerKernelLogSupported ? 'block' : 'none';
     globalThis.backendaiclient
-      .get_logs(sessionId, accessKey, 15000)
+      .get_logs(
+        this.workDialog.sessionUuid,
+        this.workDialog.accessKey,
+        this.selectedKernelId !== '' ? this.selectedKernelId : null,
+        15000,
+      )
       .then((req) => {
         const ansi_up = new AnsiUp();
         const logs = ansi_up.ansi_to_html(req.result.logs);
         setTimeout(() => {
           (
             this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement
-          ).innerHTML = `${sessionName} (${sessionUuid})`;
+          ).innerHTML =
+            `${this.workDialog.sessionName} (${this.workDialog.sessionUuid})`;
           (
             this.shadowRoot?.querySelector('#work-area') as HTMLDivElement
           ).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
           // TODO define extended type for custom properties
-          this.workDialog.sessionUuid = sessionUuid;
-          this.workDialog.sessionName = sessionName;
-          this.workDialog.accessKey = accessKey;
           this.workDialog.show();
         }, 100);
       })
@@ -3209,7 +3266,12 @@ ${rowData.item[this.sessionNameField]}</pre
                   id="${rowData.index + '-assignment'}"
                   icon="assignment"
                   ?disabled="${rowData.item.status === 'CANCELLED'}"
-                  @click="${(e) => this._showLogs(e)}"
+                  @click="${(e) => {
+                    this._setSelectedSession(e);
+                    this._setSelectedKernel();
+                    this._updateLogsByKernelId();
+                    this._showLogs();
+                  }}"
                 ></mwc-icon-button>
                 <vaadin-tooltip
                   for="${rowData.index + '-assignment'}"
@@ -3905,15 +3967,8 @@ ${rowData.item[this.sessionNameField]}</pre
   agentListRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      // FIXME: temporally show allocated agent only, not in session-agent pair
       html`
-        <div class="layout vertical">
-          ${[...new Set(rowData.item.agents)]?.map(
-            (agent) => html`
-              <span>${agent}</span>
-            `,
-          )}
-        </div>
+        <pre>${rowData.item.agents_ids_with_container_ids?.join('\n')}</pre>
       `,
       root,
     );
@@ -4241,7 +4296,7 @@ ${rowData.item[this.sessionNameField]}</pre
       </div>
       <div class="list-wrapper">
         <vaadin-grid id="list-grid" theme="row-stripes column-borders compact dark" aria-label="Session list"
-          .items="${this.compute_sessions}" height-by-rows >
+          .items="${this.compute_sessions}" height-by-rows>
           ${
             this._isRunning
               ? html`
@@ -4388,8 +4443,29 @@ ${rowData.item[this.sessionNameField]}</pre
           @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
       </div>
       <backend-ai-dialog id="work-dialog" narrowLayout scrollable fixed backdrop>
-        <span slot="title" id="work-title"></span>
+        <span slot="title" id="work-title">
+        </span>
         <div slot="action" class="horizontal layout center">
+          <mwc-select
+            id="kernel-id-select"
+            label="Kernel Role"
+            @selected=${() => {
+              this._updateLogsByKernelId();
+              this._showLogs();
+            }}
+          >
+            ${this.selectedKernels.map((item) => {
+              return html`
+                <mwc-list-item
+                  value=${item.kernel_id}
+                  label="${item.role}"
+                  ?selected=${item.role.includes('main')}
+                >
+                  ${item.role}
+                </mwc-list-item>
+              `;
+            })}
+          </mwc-select>
           <mwc-icon-button fab flat inverted icon="download" @click="${() =>
             this._downloadLogs()}">
           </mwc-icon-button>

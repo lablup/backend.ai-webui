@@ -85,7 +85,7 @@ const VFolderListPage: React.FC<VFolderListPageProps> = (props) => {
       tab: t('data.Models'),
     },
     baiClient.supports('model-store') &&
-      baiClient._config.supportModelStore && {
+      baiClient._config.enableModelStore && {
         key: 'model-store',
         tab: t('data.ModelStore'),
       },

@@ -137,7 +137,8 @@
     "Config": "Config",
     "Next": "Seuraava",
     "Previous": "Edellinen",
-    "PushToImage": "Työnnä istunto mukautettuun kuvaan"
+    "PushToImage": "Työnnä istunto mukautettuun kuvaan",
+    "SaveWithoutClose": "Tallenna ilman sulkemista"
   },
   "credential": {
     "AccessKeyOptional": "Pääsyavain (valinnainen)",
@@ -785,7 +786,10 @@
     "NoExtraMounts": "Ei ylimääräisiä kiinnikkeitä",
     "SyncRoutes": "Synkronoi reitit",
     "SyncRoutesFailed": "Reitin synkronointipyyntö epäonnistui.",
-    "SyncRoutesRequested": "Reitin synkronointia on pyydetty."
+    "SyncRoutesRequested": "Reitin synkronointia on pyydetty.",
+    "UpdateService": "Päivityspalvelu",
+    "StartNewService": "Aloita uusi palvelu",
+    "RuntimeVariant": "Päättelyn suoritusaikamuunnos"
   },
   "notification": {
     "Initializing": "Aloitetaan...",
@@ -1506,7 +1510,9 @@
     "LightMode": "Valotila",
     "UseSystemSetting": "Käytä järjestelmäasetuksia",
     "DescThemeMode": "Mukauta miltä Backend.AI WebUI näyttää laitteessasi.",
-    "ThemeMode": "Teematila"
+    "ThemeMode": "Teematila",
+    "BootstrapScriptEmpty": "Käsikirjoitus on tyhjä. \nAnna käsikirjoitus.",
+    "BootstrapScriptDeleted": "Bootstrap-skripti poistettu"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Edistynyt verkkopäätteen käyttö: Kopioi terminaalin sisältö",

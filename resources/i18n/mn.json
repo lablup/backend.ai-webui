@@ -452,7 +452,8 @@
     "Config": "Тохиргоо",
     "Previous": "Өмнөх",
     "Next": "Дараачийн",
-    "PushToImage": "Тохируулсан зураг руу түлхэх сесс"
+    "PushToImage": "Тохируулсан зураг руу түлхэх сесс",
+    "SaveWithoutClose": "Хаахгүйгээр хадгалах"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -932,7 +933,9 @@
     "LightMode": "Гэрэл горим",
     "UseSystemSetting": "Системийн тохиргоог ашиглана уу",
     "DescThemeMode": "Backend.AI WebUI төхөөрөмж дээрээ хэрхэн харагдахыг тохируулна уу.",
-    "ThemeMode": "Загварын горим"
+    "ThemeMode": "Загварын горим",
+    "BootstrapScriptEmpty": "Скрипт хоосон байна. \nСкриптийг оруулна уу.",
+    "BootstrapScriptDeleted": "Bootstrap скриптийг устгасан"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Дэвшилтэт вэб терминалын хэрэглээ: Терминалын агуулгыг хуулах",
@@ -1587,7 +1590,10 @@
     "NoExtraMounts": "Нэмэлт бэхэлгээ байхгүй",
     "SyncRoutes": "Замуудыг синк хийх",
     "SyncRoutesFailed": "Маршрутын синхрончлолын хүсэлт амжилтгүй боллоо.",
-    "SyncRoutesRequested": "Маршрутыг синхрончлох хүсэлт тавьсан."
+    "SyncRoutesRequested": "Маршрутыг синхрончлох хүсэлт тавьсан.",
+    "UpdateService": "Үйлчилгээг шинэчлэх",
+    "StartNewService": "Шинэ үйлчилгээг эхлүүлэх",
+    "RuntimeVariant": "Дүгнэлт Runtime Variant"
   },
   "ErrorBoundary": {
     "title": "Алдаа гарсан байна.",

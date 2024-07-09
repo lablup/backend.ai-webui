@@ -63,7 +63,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({ type: Boolean }) is_admin = false;
   @property({ type: Boolean }) enableStorageProxy = false;
   @property({ type: Boolean }) enableInferenceWorkload = false;
-  @property({ type: Boolean }) supportModelStore = false;
+  @property({ type: Boolean }) enableModelStore = false;
   @property({ type: Boolean }) supportVFolderTrashBin = false;
   @property({ type: Boolean }) authenticated = false;
   @property({ type: String }) vhost = '';
@@ -325,7 +325,7 @@ export default class BackendAIData extends BackendAIPage {
                   </div>
                 `
               : html``}
-            ${this.supportModelStore
+            ${this.enableModelStore
               ? html`
                   <backend-ai-react-model-store-list
                     id="model-store-folder-lists"
@@ -880,9 +880,9 @@ export default class BackendAIData extends BackendAIPage {
         globalThis.backendaiclient.supports('storage-proxy');
       this.enableInferenceWorkload =
         globalThis.backendaiclient.supports('inference-workload');
-      this.supportModelStore =
+      this.enableModelStore =
         globalThis.backendaiclient.supports('model-store') &&
-        globalThis.backendaiclient._config.supportModelStore;
+        globalThis.backendaiclient._config.enableModelStore;
       this.supportVFolderTrashBin =
         globalThis.backendaiclient.supports('vfolder-trash-bin');
       if (this.enableInferenceWorkload && !this.usageModes.includes('Model')) {

@@ -486,7 +486,10 @@
     "NoExtraMounts": "추가 마운트 없음",
     "SyncRoutes": "라우트 동기화",
     "SyncRoutesFailed": "라우트 동기화 요청이 실패했습니다.",
-    "SyncRoutesRequested": "라우트 동기화를 요청하였습니다."
+    "SyncRoutesRequested": "라우트 동기화를 요청하였습니다.",
+    "UpdateService": "서비스 업데이트",
+    "StartNewService": "새로운 서비스 시작",
+    "RuntimeVariant": "인퍼런스 런타임 종류"
   },
   "button": {
     "Cancel": "취소",
@@ -523,7 +526,8 @@
     "Config": "설정",
     "Next": "다음",
     "Previous": "이전",
-    "PushToImage": "세션을 사용자 정의된 이미지로 푸시"
+    "PushToImage": "세션을 사용자 정의된 이미지로 푸시",
+    "SaveWithoutClose": "저장 후 유지"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -1038,7 +1042,9 @@
     "LightMode": "라이트 모드",
     "UseSystemSetting": "시스템 설정 사용",
     "DescThemeMode": "Backend.AI WebUI가 장치에서 어떻게 보이는지 설정합니다.",
-    "ThemeMode": "화면 모드"
+    "ThemeMode": "화면 모드",
+    "BootstrapScriptEmpty": "스크립트가 비어있습니다. 스크립트를 입력해 주세요.",
+    "BootstrapScriptDeleted": "부트스트랩 스크립트가 삭제되었습니다."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",

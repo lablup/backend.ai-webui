@@ -450,7 +450,8 @@
     "Config": "Konfiguracja",
     "Next": "Następny",
     "Previous": "Poprzedni",
-    "PushToImage": "Prześlij sesję do spersonalizowanego obrazu"
+    "PushToImage": "Prześlij sesję do spersonalizowanego obrazu",
+    "SaveWithoutClose": "Zapisz bez zamykania"
   },
   "agent": {
     "Endpoint": "Punkt końcowy",
@@ -930,7 +931,9 @@
     "LightMode": "Tryb światła",
     "UseSystemSetting": "Użyj ustawień systemowych",
     "DescThemeMode": "Dostosuj wygląd Backend.AI WebUI na swoim urządzeniu.",
-    "ThemeMode": "Tryb tematyczny"
+    "ThemeMode": "Tryb tematyczny",
+    "BootstrapScriptEmpty": "Skrypt jest pusty. \nProszę wprowadzić skrypt.",
+    "BootstrapScriptDeleted": "Usunięto skrypt Bootstrap"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Zaawansowane korzystanie z terminala internetowego: Skopiuj zawartość terminala",
@@ -1533,7 +1536,10 @@
     "NoExtraMounts": "Żadnych dodatkowych mocowań",
     "SyncRoutes": "Synchronizacja tras",
     "SyncRoutesFailed": "Żądanie synchronizacji trasy nie powiodło się.",
-    "SyncRoutesRequested": "Zażądano synchronizacji tras."
+    "SyncRoutesRequested": "Zażądano synchronizacji tras.",
+    "UpdateService": "Aktualizuj usługę",
+    "StartNewService": "Uruchom nową usługę",
+    "RuntimeVariant": "Inference Runtime Variant"
   },
   "ErrorBoundary": {
     "title": "Wystąpił błąd.",

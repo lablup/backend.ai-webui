@@ -31,12 +31,14 @@ export type VFolder = {
 
 interface VFolderSelectProps extends SelectProps {
   autoSelectDefault?: boolean;
+  valuePropName?: 'id' | 'name';
   filter?: (vFolder: VFolder) => boolean;
 }
 
 const VFolderSelect: React.FC<VFolderSelectProps> = ({
   filter,
   autoSelectDefault,
+  valuePropName = 'name',
   ...selectProps
 }) => {
   const currentProject = useCurrentProjectValue();
@@ -86,9 +88,10 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   const autoSelectedOption = _.first(filteredVFolders)
     ? {
         label: _.first(filteredVFolders)?.name,
-        value: _.first(filteredVFolders)?.name,
+        value: _.first(filteredVFolders)?.[valuePropName],
       }
     : undefined;
+  // TODO: use controllable value
   useEffect(() => {
     if (autoSelectDefault && autoSelectedOption) {
       selectProps.onChange?.(autoSelectedOption.value, autoSelectedOption);
@@ -106,15 +109,13 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
           });
         }
       }}
-    >
-      {_.map(filteredVFolders, (vfolder) => {
-        return (
-          <Select.Option key={vfolder?.id} value={vfolder?.name}>
-            {vfolder?.name}
-          </Select.Option>
-        );
+      options={_.map(filteredVFolders, (vfolder) => {
+        return {
+          label: vfolder?.name,
+          value: vfolder?.[valuePropName],
+        };
       })}
-    </Select>
+    />
   );
 };
 

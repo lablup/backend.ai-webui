@@ -445,8 +445,10 @@ const ResourceAllocationFormItems: React.FC<
           style={{ marginBottom: token.marginXS }}
         >
           <ResourcePresetSelect
-            showCustom
-            showMinimumRequired
+            showCustom={baiClient._config.allowCustomResourceAllocation}
+            showMinimumRequired={
+              baiClient._config.allowCustomResourceAllocation
+            }
             onChange={(value, options) => {
               switch (value) {
                 case 'custom':
@@ -485,7 +487,7 @@ const ResourceAllocationFormItems: React.FC<
                     name={['resource', 'cpu']}
                     // initialValue={0}
                     label={
-                      resourceSlotsDetails?.cpu.human_readable_name || 'CPU'
+                      resourceSlotsDetails?.cpu?.human_readable_name || 'CPU'
                     }
                     tooltip={{
                       placement: 'right',
@@ -524,7 +526,7 @@ const ResourceAllocationFormItems: React.FC<
                     <InputNumberWithSlider
                       inputNumberProps={{
                         addonAfter:
-                          resourceSlotsDetails?.cpu.display_unit ||
+                          resourceSlotsDetails?.cpu?.display_unit ||
                           t('session.launcher.Core'),
                       }}
                       sliderProps={{

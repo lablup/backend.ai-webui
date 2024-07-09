@@ -450,7 +450,8 @@
     "Config": "Config",
     "Next": "Suivant",
     "Previous": "Précédent",
-    "PushToImage": "Pousser la session vers une image personnalisée"
+    "PushToImage": "Pousser la session vers une image personnalisée",
+    "SaveWithoutClose": "Enregistrer sans fermer"
   },
   "agent": {
     "Endpoint": "Point de terminaison",
@@ -930,7 +931,9 @@
     "LightMode": "Mode lumière",
     "UseSystemSetting": "Utiliser les paramètres du système",
     "DescThemeMode": "Personnalisez l'apparence de Backend.AI WebUI sur votre appareil.",
-    "ThemeMode": "Mode Thème"
+    "ThemeMode": "Mode Thème",
+    "BootstrapScriptEmpty": "Le script est vide. \nVeuillez entrer le script.",
+    "BootstrapScriptDeleted": "Script d'amorçage supprimé"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilisation avancée du terminal Web : copier le contenu du terminal",
@@ -1586,7 +1589,10 @@
     "NoExtraMounts": "Pas de montures supplémentaires",
     "SyncRoutes": "Synchroniser les itinéraires",
     "SyncRoutesFailed": "La demande de synchronisation des routes a échoué.",
-    "SyncRoutesRequested": "La synchronisation de l'itinéraire a été demandée."
+    "SyncRoutesRequested": "La synchronisation de l'itinéraire a été demandée.",
+    "UpdateService": "Service de mise à jour",
+    "StartNewService": "Démarrer un nouveau service",
+    "RuntimeVariant": "Variante d'exécution de l'inférence"
   },
   "ErrorBoundary": {
     "title": "Une erreur s'est produite.",

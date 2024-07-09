@@ -450,7 +450,8 @@
     "Config": "Konfigurieren Sie",
     "Next": "Weiter",
     "Previous": "Vorherige",
-    "PushToImage": "Push-Sitzung auf benutzerdefiniertes Bild"
+    "PushToImage": "Push-Sitzung auf benutzerdefiniertes Bild",
+    "SaveWithoutClose": "Speichern ohne Schließen"
   },
   "agent": {
     "Endpoint": "Endpunkt",
@@ -930,7 +931,9 @@
     "LightMode": "Lichtmodus",
     "UseSystemSetting": "Verwenden Sie die Systemeinstellungen",
     "DescThemeMode": "Passen Sie an, wie die Backend.AI-WebUI auf Ihrem Gerät aussieht.",
-    "ThemeMode": "Themenmodus"
+    "ThemeMode": "Themenmodus",
+    "BootstrapScriptEmpty": "Das Skript ist leer. \nBitte geben Sie das Skript ein.",
+    "BootstrapScriptDeleted": "Bootstrap-Skript gelöscht"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Erweiterte Web-Terminal-Nutzung: Terminal-Inhalte kopieren",
@@ -1533,7 +1536,10 @@
     "NoExtraMounts": "Keine zusätzlichen Halterungen",
     "SyncRoutes": "Routen synchronisieren",
     "SyncRoutesFailed": "Die Anfrage zur Routensynchronisierung ist fehlgeschlagen.",
-    "SyncRoutesRequested": "Routensynchronisierung wurde angefordert."
+    "SyncRoutesRequested": "Routensynchronisierung wurde angefordert.",
+    "UpdateService": "Update-Service",
+    "StartNewService": "Neuen Dienst starten",
+    "RuntimeVariant": "Inferenz Laufzeitvariante"
   },
   "ErrorBoundary": {
     "title": "Es ist ein Fehler aufgetreten.",

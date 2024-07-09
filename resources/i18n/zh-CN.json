@@ -450,7 +450,8 @@
     "Config": "配置",
     "Next": "下一页",
     "Previous": "上一页",
-    "PushToImage": "将会话推送到自定义镜像"
+    "PushToImage": "将会话推送到自定义镜像",
+    "SaveWithoutClose": "保存而不关闭"
   },
   "agent": {
     "Endpoint": "端点",
@@ -930,7 +931,9 @@
     "LightMode": "灯光模式",
     "UseSystemSetting": "使用系统设置",
     "DescThemeMode": "自定义 Backend.AI WebUI 在您设备上的外观。",
-    "ThemeMode": "主题模式"
+    "ThemeMode": "主题模式",
+    "BootstrapScriptEmpty": "脚本是空的。\n请输入脚本。",
+    "BootstrapScriptDeleted": "引导脚本已删除"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高级 Web 终端使用：复制终端内容",
@@ -1575,7 +1578,10 @@
     "SyncRoutes": "同步路线",
     "SyncRoutesFailed": "路由同步请求失败。",
     "SyncRoutesSuccess": "路由同步请求成功。",
-    "SyncRoutesRequested": "已请求路由同步。"
+    "SyncRoutesRequested": "已请求路由同步。",
+    "UpdateService": "更新服务",
+    "StartNewService": "开始新服务",
+    "RuntimeVariant": "推理运行时变量"
   },
   "totp": {
     "TotpSetupCompleted": "已启用 2FA",

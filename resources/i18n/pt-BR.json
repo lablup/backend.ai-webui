@@ -450,7 +450,8 @@
     "Config": "Configuração",
     "Next": "Seguinte",
     "Previous": "Anterior",
-    "PushToImage": "Enviar sessão para imagem personalizada"
+    "PushToImage": "Enviar sessão para imagem personalizada",
+    "SaveWithoutClose": "Salvar sem fechar"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -930,7 +931,9 @@
     "LightMode": "Modo claro",
     "UseSystemSetting": "Usar configuração do sistema",
     "DescThemeMode": "Personalize a aparência do Backend.AI WebUI em seu dispositivo.",
-    "ThemeMode": "Modo Tema"
+    "ThemeMode": "Modo Tema",
+    "BootstrapScriptEmpty": "O script está vazio. \nPor favor insira o roteiro.",
+    "BootstrapScriptDeleted": "Script de inicialização excluído"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avançado do terminal da Web: Copiar o conteúdo do terminal",
@@ -1574,7 +1577,10 @@
     "NoExtraMounts": "Sem montagens extras",
     "SyncRoutes": "Sincronizar rotas",
     "SyncRoutesFailed": "O pedido de sincronização de rotas falhou.",
-    "SyncRoutesRequested": "A sincronização de rota foi solicitada."
+    "SyncRoutesRequested": "A sincronização de rota foi solicitada.",
+    "UpdateService": "Serviço de atualização",
+    "StartNewService": "Iniciar novo serviço",
+    "RuntimeVariant": "Variante de tempo de execução de inferência"
   },
   "totp": {
     "TotpSetupCompleted": "Ativado 2FA",

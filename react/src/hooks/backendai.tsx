@@ -67,7 +67,7 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const baiClient = useSuspendedBackendaiClient();
   let { data: resourceSlots } = useTanQuery<{
-    [key: string]: ResourceSlotDetail;
+    [key: string]: ResourceSlotDetail | undefined;
   }>({
     queryKey: ['useResourceSlots', resourceGroupName, key],
     queryFn: () => {
@@ -91,7 +91,7 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
 
   // TODO: improve waterfall loading
   const { data: deviceMetadata } = useTanQuery<{
-    [key: string]: ResourceSlotDetail;
+    [key: string]: ResourceSlotDetail | undefined;
   }>({
     queryKey: ['backendai-metadata-device', key],
     queryFn: () => {

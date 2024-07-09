@@ -7,7 +7,7 @@ import {
   MountOptionType,
   ServiceCreateType,
   ServiceLauncherFormValue,
-} from './ServiceLauncherModal';
+} from './ServiceLauncherPageContent';
 import ValidationStatusTag from './ValidationStatusTag';
 import { AnsiUp } from 'ansi_up';
 import { App, Tag, theme } from 'antd';
@@ -55,6 +55,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
         name: values.serviceName,
         desired_session_count: values.desiredRoutingCount,
         image: image,
+        runtime_variant: values.runtimeVariant,
         architecture: values.environments.image?.architecture as string,
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
@@ -62,7 +63,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
         cluster_mode: values.cluster_mode,
         open_to_public: values.openToPublic,
         config: {
-          model: values.vFolderName,
+          model: values.vFolderID,
           model_version: 1, // FIXME: hardcoded. change it with option later
           ...(baiClient.supports('endpoint-extra-mounts') && {
             extra_mounts: _.reduce(
