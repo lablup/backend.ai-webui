@@ -4,6 +4,8 @@ import rawFixAntCss from '../fix_antd.css?raw';
 import { useCustomThemeConfig } from '../helper/customThemeConfig';
 import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
 import { ThemeModeProvider, useThemeMode } from '../hooks/useThemeMode';
+// @ts-ignore
+import indexCss from '../index.css?raw';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { useUpdateEffect } from 'ahooks';
 import { App, AppProps, ConfigProvider, theme } from 'antd';
@@ -175,6 +177,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
             <style>
               {styles}
               {rawFixAntCss}
+              {indexCss}
             </style>
             <QueryClientProvider client={queryClient}>
               <ShadowRootContext.Provider value={shadowRoot}>
