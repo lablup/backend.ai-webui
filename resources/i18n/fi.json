@@ -297,7 +297,6 @@
       "Permissions": "Luvat",
       "ReadOnlyFolderOnFileBrowser": "Lukukansion avaaminen tiedostoselaimessa, vain tiedostojen/kansioiden lataaminen on sallittua.",
       "ReadonlyFolder": "Vain luku Kansio",
-      "RemoveFileExtension": "poista tiedostopääte",
       "RenameAFile": "Nimeä tiedosto uudelleen",
       "RunSSH/SFTPserver": "Käynnistä SFTP-palvelin",
       "SFTPSessionNotAvailable": "SFTP-istunto ei ole nyt käytettävissä",
@@ -312,7 +311,10 @@
       "ValueRequired": "Arvo vaaditaan",
       "ValueShouldBeStarted": "Polun tulee alkaa kirjaimella .(piste) tai vain kirjaimilla ja numeroilla.",
       "WritePermissionRequiredInUploadFiles": "Tiedoston (tiedostojen) lataaminen edellyttää kirjoitusoikeutta.",
-      "DownloadNotAllowed": "Tiedoston/kansion lataaminen ei ole sallittua tässä kansiossa."
+      "DownloadNotAllowed": "Tiedoston/kansion lataaminen ei ole sallittua tässä kansiossa.",
+      "RenameAFolder": "Nimeä kansio uudelleen",
+      "Filename": "Tiedoston nimi",
+      "RemoveFileExtension": "Poista "
     },
     "folders": {
       "CannotDeleteFolder": "Yhdessä tai useammassa istunnossa asennettua kansiota ei voi poistaa. Lopeta istunto ensin.",
@@ -355,7 +357,6 @@
       "Ownership": "Omistus",
       "Permission": "Lupa",
       "Rename": "Nimeä uudelleen",
-      "RenameAFolder": "Nimeä kansio uudelleen",
       "SameFileName": "Syöttöarvo on sama kuin päivitettävän tiedoston nimi. Vaihda se toiseen nimeen.",
       "SelectPermission": "Valitse lupa",
       "Serve": "Malli, joka palvelee",

@@ -631,7 +631,6 @@
       "Delete": "Padam",
       "FolderOptionUpdate": "Kemas kini pilihan folder",
       "Leave": "Tinggalkan",
-      "RenameAFolder": "Namakan semula folder",
       "TypeNewFolderName": "Taipkan nama folder baru",
       "FolderCreated": "Folder dibuat",
       "FolderCloned": "Folder diklon",
@@ -711,7 +710,6 @@
       "FileExtensionChanged": "Adakah anda ingin menukar peluasan fail?",
       "KeepFileExtension": "Jaga",
       "UseNewFileExtension": "Gunakan",
-      "RemoveFileExtension": "buang peluasan fail",
       "ExecutingFileBrowser": "Melaksanakan penyemak imbas ...",
       "ExecuteFileBrowser": "Laksanakan penyaring data",
       "NotEnoughResourceForFileBrowserSession": "Tidak ada sumber yang mencukupi (cpu: 1 Core, mem: 0.5GB) untuk membuat sesi untuk penyemak imbas fail. sila periksa sumber yang ada.",
@@ -727,7 +725,10 @@
       "StartingSSH/SFTPSession": "Memulakan sesi SFTP...",
       "NumberOfSFTPSessionsExceededTitle": "Had capaian untuk menjalankan kiraan sesi muat naik",
       "NumberOfSFTPSessionsExceededBody": "Anda menjalankan semua sesi muat naik tersedia yang anda dibenarkan buat. \nSila tamatkan sesi muat naik yang tidak digunakan sebelum memulakan sesi baharu.",
-      "DownloadNotAllowed": "Memuat turun fail/folder tidak dibenarkan dalam folder ini."
+      "DownloadNotAllowed": "Memuat turun fail/folder tidak dibenarkan dalam folder ini.",
+      "RenameAFolder": "Namakan semula Folder",
+      "Filename": "Nama fail",
+      "RemoveFileExtension": "Alih keluar "
     },
     "invitation": {
       "NoValidEmails": "Tidak ada e-mel yang sah dimasukkan",

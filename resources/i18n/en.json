@@ -767,7 +767,6 @@
       "Delete": "Delete",
       "FolderOptionUpdate": "Update folder option",
       "Leave": "Leave",
-      "RenameAFolder": "Rename a folder",
       "TypeNewFolderName": "Type new folder name",
       "FolderCreated": "Folder created",
       "FolderCloned": "Folder cloned",
@@ -846,7 +845,6 @@
       "FileExtensionChanged": "Would you like to change the file extension?",
       "KeepFileExtension": "Keep ",
       "UseNewFileExtension": "Use ",
-      "RemoveFileExtension": "remove file extension",
       "ExecutingFileBrowser": "Executing filebrowser...",
       "ExecuteFileBrowser": "Execute filebrowser",
       "NotEnoughResourceForFileBrowserSession": "No enough resources(cpu: 1 Core, mem: 0.5GB) to create the session for filebrowser. please check the available resources.",
@@ -860,7 +858,10 @@
       "EmptyFilesAndFoldersAreNotUploaded": "Empty files and empty folders are not uploaded",
       "NumberOfSFTPSessionsExceededTitle": "Reached limit of running upload session count",
       "NumberOfSFTPSessionsExceededBody": "You are running all available upload sessions you are allowed to create. Please terminated unused upload sessions before starting a new session.",
-      "DownloadNotAllowed": "Downloading file/folder is not allowed in this folder."
+      "DownloadNotAllowed": "Downloading file/folder is not allowed in this folder.",
+      "RenameAFolder": "Rename Folder",
+      "Filename": "File name",
+      "RemoveFileExtension": "Remove "
     },
     "invitation": {
       "NoValidEmails": "No valid emails were entered",

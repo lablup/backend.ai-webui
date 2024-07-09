@@ -631,7 +631,6 @@
       "Delete": "Удалить",
       "FolderOptionUpdate": "Опция обновления папки",
       "Leave": "Покинуть",
-      "RenameAFolder": "Переименовать папку",
       "TypeNewFolderName": "Введите новое имя папки",
       "FolderCreated": "Папка создана",
       "FolderCloned": "Папка клонирована",
@@ -711,7 +710,6 @@
       "FileExtensionChanged": "Вы хотите изменить расширение файла?",
       "KeepFileExtension": "Хранить",
       "UseNewFileExtension": "Использовать",
-      "RemoveFileExtension": "удалить расширение файла",
       "ExecutingFileBrowser": "Запуск файлового браузера ...",
       "ExecuteFileBrowser": "Запустить файловый браузер",
       "NotEnoughResourceForFileBrowserSession": "Недостаточно ресурсов (cpu: 1 Core, mem: 0,5GB) для создания сеанса для просмотра файлов. пожалуйста, проверьте доступные ресурсы.",
@@ -727,7 +725,10 @@
       "FolderAlreadyExists": "Папка, которую планируется загрузить, уже существует.",
       "NumberOfSFTPSessionsExceededTitle": "Достигнут предел количества запущенных сеансов выгрузки",
       "NumberOfSFTPSessionsExceededBody": "У вас запущены все доступные сессии выгрузки, которые вы можете создать. Перед началом нового сеанса завершите неиспользованные сеансы выгрузки.",
-      "DownloadNotAllowed": "Загрузка файла/папки в этой папке запрещена."
+      "DownloadNotAllowed": "Загрузка файла/папки в этой папке запрещена.",
+      "RenameAFolder": "Переименовать папку",
+      "Filename": "Имя файла",
+      "RemoveFileExtension": "Удалять "
     },
     "invitation": {
       "NoValidEmails": "Не введены действительные адреса электронной почты",

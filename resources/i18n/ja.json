@@ -631,7 +631,6 @@
       "Delete": "削除",
       "FolderOptionUpdate": "フォルダの更新オプション",
       "Leave": "去る",
-      "RenameAFolder": "フォルダの名前を変更する",
       "TypeNewFolderName": "新しいフォルダ名を入力します",
       "FolderCreated": "作成されたフォルダ",
       "FolderCloned": "クローンされたフォルダー",
@@ -711,7 +710,6 @@
       "FileExtensionChanged": "ファイル拡張子を変更しますか？",
       "KeepFileExtension": "保つ",
       "UseNewFileExtension": "使用する",
-      "RemoveFileExtension": "ファイル拡張子を削除します",
       "ExecutingFileBrowser": "filebrowserを実行しています...",
       "ExecuteFileBrowser": "ファイルブラウザを実行する",
       "NotEnoughResourceForFileBrowserSession": "ファイルブラウザのセッションを作成するのに十分なリソース（CPU：1コア、メモリ：0.5GB）がありません。利用可能なリソースを確認してください。",
@@ -727,7 +725,10 @@
       "StartingSSH/SFTPSession": "SFTPサーバー起動",
       "NumberOfSFTPSessionsExceededTitle": "生成可能なアップロードセッション数の制限に達しました。",
       "NumberOfSFTPSessionsExceededBody": "設定されたアップロードセッション数を超えてセッションを作成しようとしています。続行する前に未使用のアップロードセッションを停止してください。",
-      "DownloadNotAllowed": "このフォルダーではファイル/フォルダーのダウンロードは許可されていません。"
+      "DownloadNotAllowed": "このフォルダーではファイル/フォルダーのダウンロードは許可されていません。",
+      "RenameAFolder": "フォルダー名の変更",
+      "Filename": "ファイル名",
+      "RemoveFileExtension": "取り除く "
     },
     "invitation": {
       "NoValidEmails": "有効なメールが入力されていません",
