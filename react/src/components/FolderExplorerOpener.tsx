@@ -25,10 +25,12 @@ const FolderExplorerOpener = () => {
   const isDataViewReady = useAtomValue(isDataViewReadyAtom);
   useEffect(() => {
     if (isDataViewReady && folderId) {
+      const search = new URLSearchParams();
+      search.set('group_id', currentProject.id);
       (
         baiRequestWithPromise({
           method: 'GET',
-          url: `/folders?group_id=${currentProject.id}`,
+          url: `/folders?${search.toString()}`,
         }) as Promise<VFolder[]>
       )
         .then((vFolders) => {

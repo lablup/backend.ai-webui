@@ -22,9 +22,11 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
   const { data: vFolders } = useTanQuery({
     queryKey: ['VFolderSelectQuery'],
     queryFn: () => {
+      const search = new URLSearchParams();
+      search.set('group_id', currentProject.id);
       return baiRequestWithPromise({
         method: 'GET',
-        url: `/folders?group_id=${currentProject.id}`,
+        url: `/folders?${search.toString()}`,
       }) as Promise<VFolder[]>;
     },
     staleTime: 1000,
