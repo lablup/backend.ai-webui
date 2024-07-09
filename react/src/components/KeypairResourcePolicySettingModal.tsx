@@ -299,12 +299,12 @@ const KeypairResourcePolicySettingModal: React.FC<
                 <FormItemWithUnlimited
                   name={['parsedTotalResourceSlots', 'cpu']}
                   unlimitedValue={undefined}
-                  label={resourceSlotsDetails?.cpu.description}
+                  label={resourceSlotsDetails?.cpu?.description}
                 >
                   <InputNumber
                     min={0}
                     max={512}
-                    addonAfter={resourceSlotsDetails?.cpu.display_unit}
+                    addonAfter={resourceSlotsDetails?.cpu?.display_unit}
                   />
                 </FormItemWithUnlimited>
               </Col>
@@ -312,7 +312,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                 <FormItemWithUnlimited
                   name={['parsedTotalResourceSlots', 'mem']}
                   unlimitedValue={undefined}
-                  label={resourceSlotsDetails?.mem.description}
+                  label={resourceSlotsDetails?.mem?.description}
                 >
                   <DynamicUnitInputNumber />
                 </FormItemWithUnlimited>
@@ -323,13 +323,13 @@ const KeypairResourcePolicySettingModal: React.FC<
                 <FormItemWithUnlimited
                   name={['parsedTotalResourceSlots', 'cuda.device']}
                   unlimitedValue={undefined}
-                  label={resourceSlotsDetails?.['cuda.device'].description}
+                  label={resourceSlotsDetails?.['cuda.device']?.description}
                 >
                   <InputNumber
                     min={0}
                     max={64}
                     addonAfter={
-                      resourceSlotsDetails?.['cuda.device'].display_unit
+                      resourceSlotsDetails?.['cuda.device']?.display_unit
                     }
                   />
                 </FormItemWithUnlimited>
@@ -338,14 +338,14 @@ const KeypairResourcePolicySettingModal: React.FC<
                 <FormItemWithUnlimited
                   name={['parsedTotalResourceSlots', 'cuda.shares']}
                   unlimitedValue={undefined}
-                  label={resourceSlotsDetails?.['cuda.shares'].description}
+                  label={resourceSlotsDetails?.['cuda.shares']?.description}
                 >
                   <InputNumber
                     min={0}
                     max={256}
                     step={0.1}
                     addonAfter={
-                      resourceSlotsDetails?.['cuda.shares'].display_unit
+                      resourceSlotsDetails?.['cuda.shares']?.display_unit
                     }
                   />
                 </FormItemWithUnlimited>
