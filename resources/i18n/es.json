@@ -1207,7 +1207,7 @@
       "PreOpenPortMaxCountLimit": "Puede configurar hasta {{count}} puertos preabiertos.",
       "PreOpenPortRangeGuide": "Introduzca varios valores separados por una coma (,) o un espacio.",
       "preopen": "preabierto",
-      "FolderAliasInvalid": "Sólo se permiten caracteres alfanuméricos, guión bajo (_), barra (/) y guión (-).",
+      "FolderAliasInvalid": "Sólo se permiten caracteres alfanuméricos, guión bajo (_), barra (/), punto (.) y guión (-).",
       "Network": "Red",
       "Enable": "Permitir",
       "StartTimeMustBeInTheFuture": "La hora de inicio debe ser posterior a la hora actual.",

@@ -244,7 +244,7 @@
       "preopen": "preaperto",
       "Network": "Rete",
       "Enable": "Abilitare",
-      "FolderAliasInvalid": "Sono consentiti solo caratteri alfanumerici, carattere di sottolineatura (_), barra (/) e trattino (-).",
+      "FolderAliasInvalid": "Sono consentiti solo caratteri alfanumerici, carattere di sottolineatura (_), barra (/), punto (.) e trattino (-).",
       "PreOpenPortMaxCountLimit": "È possibile impostare fino a {{count}} porte pre-aperte.",
       "StartTimeMustBeInTheFuture": "L'ora di inizio deve essere successiva all'ora corrente.",
       "EnqueueComputeSessionWarning": "Risorse insufficienti. \nLa sessione potrebbe essere in sospeso.",

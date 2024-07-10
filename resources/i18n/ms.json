@@ -244,7 +244,7 @@
       "preopen": "prabuka",
       "Network": "Rangkaian",
       "Enable": "Dayakan",
-      "FolderAliasInvalid": "Hanya aksara abjad angka, garis bawah (_), garis miring (/), dan sempang (-) dibenarkan.",
+      "FolderAliasInvalid": "Hanya aksara abjad angka, garis bawah (_), garis miring (/), titik (.), dan sempang (-) dibenarkan.",
       "StartTimeMustBeInTheFuture": "Masa mula mestilah selepas masa semasa.",
       "EnqueueComputeSessionWarning": "Sumber yang tidak mencukupi. \nSesi mungkin belum selesai.",
       "SessionName": "Nama sesi",

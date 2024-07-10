@@ -1205,7 +1205,7 @@
       "PreOpenPortMaxCountLimit": "Voit määrittää enintään {{count}} ennalta avattuja portteja.",
       "PreOpenPortRangeGuide": "Syötä useita arvoja joko pilkulla (,) tai välilyönnillä erotettuina.",
       "preopen": "avataan etukäteen",
-      "FolderAliasInvalid": "Vain aakkosnumeeriset merkit, alaviiva (_), kauttaviiva (/) ja viiva (-) ovat sallittuja.",
+      "FolderAliasInvalid": "Vain aakkosnumeeriset merkit, alaviiva (_), kauttaviiva (/), piste (.) ja viiva (-) ovat sallittuja.",
       "Network": "Verkko",
       "Enable": "ota käyttöön",
       "StartTimeMustBeInTheFuture": "Alkamisajan on oltava nykyisen kellonajan jälkeen.",

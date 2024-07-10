@@ -69,7 +69,7 @@ export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
   showAutoMountedFoldersSection?: boolean;
 }
 
-export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/-]*$/;
+export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/.-]*$/;
 
 const VFolderTable: React.FC<VFolderTableProps> = ({
   filter,
@@ -341,13 +341,20 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                           validator: async (rule, value) => {
                             if (
                               value &&
-                              _.some(
-                                allAliasPathMap,
-                                (path, k) =>
-                                  k !== getRowKey(record) && // not current row
-                                  path ===
-                                    mapAliasToPath(getRowKey(record), value),
-                              )
+                              _.some(allAliasPathMap, (path, k) => {
+                                return (
+                                  (k !== getRowKey(record) && // not current row
+                                    path ===
+                                      mapAliasToPath(
+                                        getRowKey(record),
+                                        value,
+                                      )) ||
+                                  // not allow automount folder path
+                                  autoMountedFolderNamesByPermission
+                                    .map((item) => `${aliasBasePath}${item}`)
+                                    .includes(path)
+                                );
+                              })
                             ) {
                               return Promise.reject(
                                 t('session.launcher.FolderAliasOverlapping'),

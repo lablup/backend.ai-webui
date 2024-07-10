@@ -244,7 +244,7 @@
       "preopen": "預開放埠",
       "Network": "網路",
       "Enable": "啟用",
-      "FolderAliasInvalid": "只能輸入大小寫字母、數字、底線 (_)、斜線 (/) 和破折號 (-)。",
+      "FolderAliasInvalid": "僅允許使用字母數字字元、底線 (_)、斜線 (/)、點 (.) 和破折號 (-)。",
       "PreOpenPortMaxCountLimit": "您最多可以设置 {{count}} 个预开放端口。",
       "StartTimeMustBeInTheFuture": "开始时间必须在当前时间之后。",
       "EnqueueComputeSessionWarning": "資源不足。\n會話可能處於待處理狀態。",

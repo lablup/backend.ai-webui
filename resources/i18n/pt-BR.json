@@ -244,7 +244,7 @@
       "preopen": "pré-abrir",
       "Network": "Rede",
       "Enable": "Habilitar",
-      "FolderAliasInvalid": "Somente caracteres alfanuméricos, sublinhado (_), barra (/) e traço (-) são permitidos.",
+      "FolderAliasInvalid": "Somente caracteres alfanuméricos, sublinhado (_), barra (/), ponto (.) e traço (-) são permitidos.",
       "PreOpenPortMaxCountLimit": "Pode definir até {{count}} portas pré-abertas.",
       "StartTimeMustBeInTheFuture": "A hora de início deve ser posterior à hora atual.",
       "EnqueueComputeSessionWarning": "Recursos insuficientes. \nA sessão pode estar pendente.",

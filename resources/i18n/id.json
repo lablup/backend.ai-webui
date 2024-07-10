@@ -250,7 +250,7 @@
       "preopen": "pra-buka",
       "Network": "Jaringan",
       "Enable": "Memungkinkan",
-      "FolderAliasInvalid": "Hanya karakter alfanumerik, garis bawah (_), garis miring (/), dan tanda hubung (-) yang diperbolehkan.",
+      "FolderAliasInvalid": "Hanya karakter alfanumerik, garis bawah (_), garis miring (/), titik (.), dan tanda hubung (-) yang diperbolehkan.",
       "PreOpenPortMaxCountLimit": "Anda dapat mengatur hingga {{count}} port yang telah dibuka sebelumnya.",
       "StartTimeMustBeInTheFuture": "Waktu mulai harus setelah waktu saat ini.",
       "EnqueueComputeSessionWarning": "Sumber daya tidak mencukupi. \nSesi mungkin tertunda.",
