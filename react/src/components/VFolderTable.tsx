@@ -70,13 +70,13 @@ export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
 }
 
 export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/.-]*$/;
-
+export const DEFAULT_ALIAS_BASE_PATH = '/home/work/';
 const VFolderTable: React.FC<VFolderTableProps> = ({
   filter,
   showAliasInput = false,
   selectedRowKeys: controlledSelectedRowKeys = [],
   onChangeSelectedRowKeys,
-  aliasBasePath = '/home/work/',
+  aliasBasePath = DEFAULT_ALIAS_BASE_PATH,
   aliasMap: controlledAliasMap,
   onChangeAliasMap,
   rowKey = 'name',
