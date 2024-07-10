@@ -278,7 +278,8 @@
       "SkipToConfirmAndLaunch": "Шүүмж рүү алгасах",
       "ProxyDirectTCPNotSupported": "Прокси шууд TCP холболт хараахан дэмжигдээгүй байна",
       "InvalidPortFormat": "Портын дугаарын формат буруу байна.",
-      "DuplicatedPort": "Давхардсан портууд байна."
+      "DuplicatedPort": "Давхардсан портууд байна.",
+      "FolderAliasOverlappingToAutoMount": "Ижил нэртэй автоматаар холбох хавтас байна."
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",

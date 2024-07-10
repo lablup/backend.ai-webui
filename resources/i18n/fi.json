@@ -1239,7 +1239,8 @@
       "FailedToStartNewSession": "Istunnon luominen epäonnistui. \nTarkista istuntosivun VALMIS-välilehti.",
       "ProxyDirectTCPNotSupported": "Välityspalvelimen suoraa TCP-yhteyttä ei tueta vielä",
       "InvalidPortFormat": "Porttinumeron muoto on virheellinen.",
-      "DuplicatedPort": "Portteja on päällekkäin."
+      "DuplicatedPort": "Portteja on päällekkäin.",
+      "FolderAliasOverlappingToAutoMount": "Samanniminen automaattinen kiinnityskansio on olemassa."
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",

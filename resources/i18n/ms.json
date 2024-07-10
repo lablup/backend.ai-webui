@@ -277,7 +277,8 @@
       "FailedToStartNewSession": "Pembuatan sesi gagal. \nSila semak tab 'SELESAI' pada halaman sesi.",
       "ProxyDirectTCPNotSupported": "Sambungan TCP langsung proksi belum disokong lagi",
       "InvalidPortFormat": "Format nombor port tidak betul.",
-      "DuplicatedPort": "Terdapat port pendua."
+      "DuplicatedPort": "Terdapat port pendua.",
+      "FolderAliasOverlappingToAutoMount": "Folder auto-lekap dengan nama yang sama wujud."
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",

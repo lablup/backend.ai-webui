@@ -277,7 +277,8 @@
       "FailedToStartNewSession": "Создание сеанса не удалось. \nПожалуйста, проверьте вкладку «Законченный» на странице сеанса.",
       "ProxyDirectTCPNotSupported": "Прямое TCP-соединение через прокси-сервер пока не поддерживается.",
       "InvalidPortFormat": "Неверный формат номера порта.",
-      "DuplicatedPort": "Имеются дублирующиеся порты."
+      "DuplicatedPort": "Имеются дублирующиеся порты.",
+      "FolderAliasOverlappingToAutoMount": "Существует папка автомонтирования с таким же именем."
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",

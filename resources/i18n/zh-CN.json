@@ -277,7 +277,8 @@
       "FailedToStartNewSession": "会话创建失败。\n请检查会话页面上的“已完成”选项卡。",
       "ProxyDirectTCPNotSupported": "尚不支持代理直接 TCP 连接",
       "InvalidPortFormat": "端口号格式不正确。",
-      "DuplicatedPort": "有重复的端口。"
+      "DuplicatedPort": "有重复的端口。",
+      "FolderAliasOverlappingToAutoMount": "存在同名的自动挂载文件夹。"
     },
     "Preparing": "正在准备...",
     "PreparingSession": "正在准备会议...",

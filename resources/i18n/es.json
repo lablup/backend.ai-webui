@@ -1241,7 +1241,8 @@
       "FailedToStartNewSession": "Error al crear la sesión. \nPor favor marque la pestaña 'TERMINADO' en la página de la sesión.",
       "ProxyDirectTCPNotSupported": "La conexión TCP directa de proxy aún no es compatible",
       "InvalidPortFormat": "El formato del número de puerto es incorrecto.",
-      "DuplicatedPort": "Hay puertos duplicados."
+      "DuplicatedPort": "Hay puertos duplicados.",
+      "FolderAliasOverlappingToAutoMount": "Existe una carpeta de montaje automático con el mismo nombre."
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

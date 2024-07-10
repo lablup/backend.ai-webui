@@ -277,7 +277,8 @@
       "FailedToStartNewSession": "Oturum oluşturulamadı. \nLütfen oturum sayfasındaki 'bitmiş' sekmesini kontrol edin.",
       "ProxyDirectTCPNotSupported": "Proxy doğrudan TCP bağlantısı henüz desteklenmiyor",
       "InvalidPortFormat": "Bağlantı noktası numarası biçimi yanlış.",
-      "DuplicatedPort": "Çift bağlantı noktaları var."
+      "DuplicatedPort": "Çift bağlantı noktaları var.",
+      "FolderAliasOverlappingToAutoMount": "Aynı ada sahip bir otomatik montaj klasörü mevcut."
     },
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",

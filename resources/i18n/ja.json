@@ -277,7 +277,8 @@
       "FailedToStartNewSession": "セッションの作成に失敗しました。\nセッションページの「終了しました」タブをご確認ください。",
       "ProxyDirectTCPNotSupported": "プロキシ直接 TCP 接続はまだサポートされていません",
       "InvalidPortFormat": "ポート番号の形式が正しくない。",
-      "DuplicatedPort": "ポートが重複している。"
+      "DuplicatedPort": "ポートが重複している。",
+      "FolderAliasOverlappingToAutoMount": "同名の自動マウントフォルダが存在する。"
     },
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",

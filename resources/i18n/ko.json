@@ -278,7 +278,8 @@
       "FailedToStartNewSession": "세션 생성에 실패했습니다. 세션 페이지의 '종료' 탭을 확인해 주세요.",
       "ProxyDirectTCPNotSupported": "프록시 직접 TCP 연결은 아직 지원되지 않습니다.",
       "InvalidPortFormat": "포트 형식이 올바르지 않습니다.",
-      "DuplicatedPort": "중복된 포트가 있습니다."
+      "DuplicatedPort": "중복된 포트가 있습니다.",
+      "FolderAliasOverlappingToAutoMount": "동일한 이름의 자동 마운트 폴더가 존재합니다."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

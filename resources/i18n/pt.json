@@ -277,7 +277,8 @@
       "FailedToStartNewSession": "Falha na criação da sessão. \nPor favor, verifique a guia 'Finalizado' na página da sessão.",
       "ProxyDirectTCPNotSupported": "A conexão TCP direta do proxy ainda não é suportada",
       "InvalidPortFormat": "O formato do número da porta está incorreto.",
-      "DuplicatedPort": "Existem portas duplicadas."
+      "DuplicatedPort": "Existem portas duplicadas.",
+      "FolderAliasOverlappingToAutoMount": "Existe uma pasta de montagem automática com o mesmo nome."
     },
     "Preparing": "Preparando...",
     "PreparingSession": "Preparando sessão ...",

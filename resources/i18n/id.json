@@ -278,7 +278,8 @@
       "MiniumAllocationTooltip": "Pilih sebagai persyaratan minimum untuk lingkungan berjalan yang dipilih",
       "ProxyDirectTCPNotSupported": "Koneksi TCP langsung proxy belum didukung",
       "InvalidPortFormat": "Format nomor port salah.",
-      "DuplicatedPort": "Terdapat port ganda."
+      "DuplicatedPort": "Terdapat port ganda.",
+      "FolderAliasOverlappingToAutoMount": "Folder pemasangan otomatis dengan nama yang sama tersedia."
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",

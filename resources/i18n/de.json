@@ -277,7 +277,8 @@
       "FailedToStartNewSession": "Die Sitzungserstellung ist fehlgeschlagen. \nBitte überprüfen Sie die Registerkarte „FERTIG“ auf der Sitzungsseite.",
       "ProxyDirectTCPNotSupported": "Eine direkte Proxy-TCP-Verbindung wird noch nicht unterstützt",
       "InvalidPortFormat": "Das Format der Anschlussnummer ist falsch.",
-      "DuplicatedPort": "Es gibt doppelte Anschlüsse."
+      "DuplicatedPort": "Es gibt doppelte Anschlüsse.",
+      "FolderAliasOverlappingToAutoMount": "Es existiert ein Auto-Mount-Ordner mit demselben Namen."
     },
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",
