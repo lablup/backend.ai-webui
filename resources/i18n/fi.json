@@ -38,7 +38,8 @@
     "WarboyEnabled": "Warboy NPU käytössä",
     "connectingToCluster": "Yhteyden muodostaminen Backend.AI-klusteriin...",
     "reserved": "varattu",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU käytössä"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU käytössä",
+    "ATOMPlusEnabled": "ATOM+ NPU käytössä"
   },
   "error": {
     "WrongAPIServerAddress": "Väärä API-palvelimen osoite.",
@@ -1257,8 +1258,7 @@
     "WarningForceTerminateSessions": "Varoitus: pakota lopettamaan istunnot",
     "ForceTerminateWarningMsg2": "Suorita vain, kun tila ei muutu kohtuuttoman pitkään.",
     "ForceTerminateWarningMsg3": "Tämä toiminto ei poista agenttien varsinaisia ​​säilöjä. \nManuaalinen puhdistus saattaa olla tarpeen.",
-    "ContainerToCleanUp": "Säiliö(t) puhdistettava(t).",
-    "ATOMPlusEnabled": "ATOM+ NPU Käytössä"
+    "ContainerToCleanUp": "Säiliö(t) puhdistettava(t)."
   },
   "settings": {
     "ATOMsupport": "ATOM",

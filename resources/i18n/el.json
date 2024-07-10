@@ -116,7 +116,8 @@
     "WarboyEnabled": "Ενεργοποιημένη NPU Warboy",
     "DownloadWebUIApp": "Κατεβάστε την εφαρμογή Backend.AI Web UI App",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU Enabled"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU Enabled",
+    "ATOMPlusEnabled": "Ενεργοποιημένο ATOM+ NPU"
   },
   "session": {
     "launcher": {
@@ -412,8 +413,7 @@
     "WarningForceTerminateSessions": "Προειδοποίηση: Αναγκαστικός τερματισμός συνεδρίας",
     "ForceTerminateWarningMsg2": "Εκτελέστε μόνο όταν η κατάσταση δεν αλλάζει για αδικαιολόγητα μεγάλο χρονικό διάστημα.",
     "ForceTerminateWarningMsg3": "Αυτή η ενέργεια δεν διαγράφει τα πραγματικά κοντέινερ στους πράκτορες. \nΕνδέχεται να απαιτείται χειροκίνητος καθαρισμός.",
-    "ContainerToCleanUp": "Δοχείο(α) για καθαρισμό",
-    "ATOMPlusEnabled": "ATOM+ NPU Ενεργοποιημένο"
+    "ContainerToCleanUp": "Δοχείο(α) για καθαρισμό"
   },
   "button": {
     "Cancel": "Ματαίωση",

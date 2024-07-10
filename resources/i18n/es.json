@@ -38,7 +38,8 @@
     "WarboyEnabled": "Warboy NPU Activado",
     "connectingToCluster": "Conectando al Cluster Backend.AI...",
     "reserved": "reservado",
-    "HyperaccelLPUEnabled": "LPU de hiperaccel habilitada"
+    "HyperaccelLPUEnabled": "LPU de hiperaccel habilitada",
+    "ATOMPlusEnabled": "NPU ATOM+ habilitada"
   },
   "error": {
     "WrongAPIServerAddress": "Dirección del servidor API incorrecta.",
@@ -1259,8 +1260,7 @@
     "WarningForceTerminateSessions": "Advertencia: Forzar la finalización de sesiones",
     "ForceTerminateWarningMsg2": "Ejecutar solo cuando el estado no cambie durante un período de tiempo excesivamente largo.",
     "ForceTerminateWarningMsg3": "Esta acción no elimina los contenedores reales de los agentes. \nEs posible que se requiera una limpieza manual.",
-    "ContainerToCleanUp": "Contenedor(es) para limpiar",
-    "ATOMPlusEnabled": "ATOM+ NPU Activado"
+    "ContainerToCleanUp": "Contenedor(es) para limpiar"
   },
   "settings": {
     "ATOMsupport": "ATOM",

@@ -116,7 +116,8 @@
     "WarboyEnabled": "启用 Warboy NPU",
     "DownloadWebUIApp": "下载 Backend.AI Web UI 应用程序",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU 已启用"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU 已启用",
+    "ATOMPlusEnabled": "ATOM+ NPU 启用"
   },
   "session": {
     "launcher": {
@@ -412,8 +413,7 @@
     "WarningForceTerminateSessions": "警告：强制终止会话",
     "ForceTerminateWarningMsg2": "仅当状态在不合理的长时间内没有发生变化时才执行。",
     "ForceTerminateWarningMsg3": "此操作不会删除代理上的实际容器。\n可能需要手动清理。",
-    "ContainerToCleanUp": "需要清理的容器",
-    "ATOMPlusEnabled": "ATOM+ NPU 启用"
+    "ContainerToCleanUp": "需要清理的容器"
   },
   "button": {
     "Cancel": "取消",

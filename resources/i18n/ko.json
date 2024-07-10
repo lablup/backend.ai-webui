@@ -116,7 +116,8 @@
     "ATOMEnabled": "ATOM NPU 사용중",
     "WarboyEnabled": "Warboy NPU 사용중",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU 사용중"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU 사용중",
+    "ATOMPlusEnabled": "ATOM+ NPU 사용중"
   },
   "session": {
     "launcher": {
@@ -413,8 +414,7 @@
     "WarningForceTerminateSessions": "경고: 세션 강제 종료",
     "ForceTerminateWarningMsg2": "세션을 생성하거나 종료했는데 비정상적으로 오랫동안 상태가 변하지 않을 경우에만 사용하십시오.",
     "ForceTerminateWarningMsg3": "연산노드에 컨테이너가 남아있는 경우 수동으로 컨테이너 삭제가 필요할 수 있습니다.",
-    "ContainerToCleanUp": "확인할 컨테이너 목록",
-    "ATOMPlusEnabled": "ATOM+ NPU 사용중"
+    "ContainerToCleanUp": "확인할 컨테이너 목록"
   },
   "modelService": {
     "Services": "모델 서비스",
@@ -1646,7 +1646,7 @@
   "interactiveLogin": {
     "InteractiveLoginWithBackendAI": "Backend.AI 계정을 이용한 로그인",
     "confirmLoginMessage": "{{username}} ({{email}}) 계정으로 로그인하시겠습니까?",
-    "ServiceName":"서비스 이름",
+    "ServiceName": "서비스 이름",
     "useAnotherAccount": "다른 계정으로 로그인"
   }
 }

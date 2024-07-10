@@ -116,7 +116,8 @@
     "ATOMEnabled": "ATOM NPU Diaktifkan",
     "WarboyEnabled": "Warboy NPU Diaktifkan",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "LPU Hyperaccel Diaktifkan"
+    "HyperaccelLPUEnabled": "LPU Hyperaccel Diaktifkan",
+    "ATOMPlusEnabled": "ATOM+ NPU Diaktifkan"
   },
   "session": {
     "launcher": {
@@ -413,8 +414,7 @@
     "WarningForceTerminateSessions": "Peringatan: Paksa Mengakhiri Sesi",
     "ForceTerminateWarningMsg2": "Jalankan hanya ketika keadaan tidak berubah dalam jangka waktu yang terlalu lama.",
     "ForceTerminateWarningMsg3": "Tindakan ini tidak menghapus penampung sebenarnya pada agen. \nPembersihan manual mungkin diperlukan.",
-    "ContainerToCleanUp": "Wadah yang harus dibersihkan",
-    "ATOMPlusEnabled": "ATOM+ NPU Diaktifkan"
+    "ContainerToCleanUp": "Wadah yang harus dibersihkan"
   },
   "button": {
     "Cancel": "Batalkan",

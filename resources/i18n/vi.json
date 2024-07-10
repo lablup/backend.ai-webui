@@ -116,7 +116,8 @@
     "WarboyEnabled": "NPU Warboy đã được kích hoạt",
     "DownloadWebUIApp": "Tải xuống ứng dụng giao diện người dùng web Backend.AI",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Đã bật LPU Hyperaccel"
+    "HyperaccelLPUEnabled": "Đã bật LPU Hyperaccel",
+    "ATOMPlusEnabled": "Đã bật NPU ATOM+"
   },
   "session": {
     "launcher": {
@@ -412,8 +413,7 @@
     "WarningForceTerminateSessions": "Cảnh báo: Buộc chấm dứt (các) phiên",
     "ForceTerminateWarningMsg2": "Chỉ thực hiện khi trạng thái không thay đổi trong một khoảng thời gian dài không hợp lý.",
     "ForceTerminateWarningMsg3": "Hành động này không xóa các vùng chứa thực tế trên (các) tác nhân. \nCó thể cần phải dọn dẹp thủ công.",
-    "ContainerToCleanUp": "(Các) thùng chứa để dọn dẹp",
-    "ATOMPlusEnabled": "ATOM+ NPU Đã bật"
+    "ContainerToCleanUp": "(Các) thùng chứa để dọn dẹp"
   },
   "button": {
     "Cancel": "Huỷ bỏ",

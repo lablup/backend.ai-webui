@@ -116,7 +116,8 @@
     "ATOMEnabled": "ATOM NPU Activé",
     "WarboyEnabled": "Warboy NPU activé",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU activé"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU activé",
+    "ATOMPlusEnabled": "ATOM+ NPU activé"
   },
   "session": {
     "launcher": {
@@ -412,8 +413,7 @@
     "WarningForceTerminateSessions": "Avertissement : Forcer la fin des sessions",
     "ForceTerminateWarningMsg2": "Exécuter uniquement lorsque l’état ne change pas pendant une période de temps déraisonnablement longue.",
     "ForceTerminateWarningMsg3": "Cette action ne supprime pas les conteneurs réels sur le ou les agents. \nUn nettoyage manuel peut être nécessaire.",
-    "ContainerToCleanUp": "Conteneur(s) à nettoyer",
-    "ATOMPlusEnabled": "ATOM+ NPU Activé"
+    "ContainerToCleanUp": "Conteneur(s) à nettoyer"
   },
   "button": {
     "Cancel": "Annuler",

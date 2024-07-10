@@ -116,7 +116,8 @@
     "WarboyEnabled": "Warboy NPU Etkinleştirildi",
     "DownloadWebUIApp": "Backend.AI Web UI Uygulamasını İndirin",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU Etkin"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU Etkin",
+    "ATOMPlusEnabled": "ATOM+ NPU Etkin"
   },
   "session": {
     "launcher": {
@@ -412,8 +413,7 @@
     "WarningForceTerminateSessions": "Uyarı: Oturumları Sonlandırmaya Zorla",
     "ForceTerminateWarningMsg2": "Yalnızca durum makul olmayan uzun bir süre boyunca değişmediğinde yürütün.",
     "ForceTerminateWarningMsg3": "Bu eylem, aracı(lar)daki gerçek kapsayıcıları silmez. \nManuel temizleme gerekebilir.",
-    "ContainerToCleanUp": "Temizlenecek konteyner(ler)",
-    "ATOMPlusEnabled": "ATOM+ NPU Etkinleştirilmiş"
+    "ContainerToCleanUp": "Temizlenecek konteyner(ler)"
   },
   "button": {
     "Cancel": "İptal etmek",

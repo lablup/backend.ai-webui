@@ -116,7 +116,8 @@
     "ATOMEnabled": "ATOM NPU-г идэвхжүүлсэн",
     "WarboyEnabled": "Warboy NPU идэвхжүүлсэн",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU идэвхжүүлсэн"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU идэвхжүүлсэн",
+    "ATOMPlusEnabled": "ATOM+ NPU-г идэвхжүүлсэн"
   },
   "session": {
     "launcher": {
@@ -414,8 +415,7 @@
     "WarningForceTerminateSessions": "Анхааруулга: Сешн(үүд)-ийг хүчээр зогсоох",
     "ForceTerminateWarningMsg2": "Үндэслэлгүй удаан хугацаанд төр өөрчлөгдөөгүй үед л гүйцэтгэнэ.",
     "ForceTerminateWarningMsg3": "Энэ үйлдэл нь агент(үүд) дээрх бодит савыг устгахгүй. \nГараар цэвэрлэх шаардлагатай байж болно.",
-    "ContainerToCleanUp": "Цэвэрлэх сав(ууд).",
-    "ATOMPlusEnabled": "ATOM+ NPU Идэвхжүүлсэн"
+    "ContainerToCleanUp": "Цэвэрлэх сав(ууд)."
   },
   "button": {
     "Cancel": "Цуцлах",

@@ -129,7 +129,8 @@
     "ATOMEnabled": "ATOM NPU Enabled",
     "WarboyEnabled": "Warboy NPU Enabled",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU Enabled"
+    "HyperaccelLPUEnabled": "Hyperaccel LPU Enabled",
+    "ATOMPlusEnabled": "ATOM+ NPU Enabled"
   },
   "session": {
     "launcher": {
@@ -426,8 +427,7 @@
     "WarningForceTerminateSessions": "Warning: Force Terminate Session(s)",
     "ForceTerminateWarningMsg2": "Execute only when the state does not change for an unreasonably long period of time.",
     "ForceTerminateWarningMsg3": "This action does not delete the actual containers on the agent(s). Manual cleanup may be required.",
-    "ContainerToCleanUp": "Container(s) to clean up",
-    "ATOMPlusEnabled": "ATOM+ NPU Enabled"
+    "ContainerToCleanUp": "Container(s) to clean up"
   },
   "modelService": {
     "Services": "Services",

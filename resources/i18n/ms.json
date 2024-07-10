@@ -116,7 +116,8 @@
     "WarboyEnabled": "Warboy NPU Didayakan",
     "DownloadWebUIApp": "Muat turun Apl UI Web Backend.AI",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "LPU Hyperaccel Didayakan"
+    "HyperaccelLPUEnabled": "LPU Hyperaccel Didayakan",
+    "ATOMPlusEnabled": "ATOM+ NPU Didayakan"
   },
   "session": {
     "launcher": {
@@ -412,8 +413,7 @@
     "WarningForceTerminateSessions": "Amaran: Tamatkan Sesi Paksa",
     "ForceTerminateWarningMsg2": "Laksanakan hanya apabila keadaan tidak berubah untuk tempoh masa yang tidak munasabah.",
     "ForceTerminateWarningMsg3": "Tindakan ini tidak memadamkan bekas sebenar pada ejen. \nPembersihan manual mungkin diperlukan.",
-    "ContainerToCleanUp": "Bekas untuk dibersihkan",
-    "ATOMPlusEnabled": "ATOM+ NPU Didayakan"
+    "ContainerToCleanUp": "Bekas untuk dibersihkan"
   },
   "button": {
     "Cancel": "Batal",

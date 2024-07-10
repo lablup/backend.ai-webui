@@ -116,7 +116,8 @@
     "WarboyEnabled": "Warboy NPU Enabled",
     "DownloadWebUIApp": "Pobierz aplikację Backend.AI Web UI",
     "FastTrack": "FastTrack",
-    "HyperaccelLPUEnabled": "Włączono funkcję Hyperaccel LPU"
+    "HyperaccelLPUEnabled": "Włączono funkcję Hyperaccel LPU",
+    "ATOMPlusEnabled": "Włączono NPU ATOM+"
   },
   "session": {
     "launcher": {
@@ -412,8 +413,7 @@
     "WarningForceTerminateSessions": "Ostrzeżenie: wymuś zakończenie sesji",
     "ForceTerminateWarningMsg2": "Wykonaj tylko wtedy, gdy stan nie zmienia się przez nieracjonalnie długi okres czasu.",
     "ForceTerminateWarningMsg3": "Ta akcja nie usuwa rzeczywistych kontenerów agentów. \nMoże być konieczne ręczne czyszczenie.",
-    "ContainerToCleanUp": "Pojemnik(i) do oczyszczenia",
-    "ATOMPlusEnabled": "ATOM+ NPU Włączony"
+    "ContainerToCleanUp": "Pojemnik(i) do oczyszczenia"
   },
   "button": {
     "Cancel": "Anuluj",
