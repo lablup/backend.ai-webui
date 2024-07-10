@@ -73,16 +73,18 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
     queryFn: () => {
       // return baiClient.get_resource_slots();
       if (
-        _.isEmpty(resourceGroupName) ||
+        !resourceGroupName ||
         !baiClient.isManagerVersionCompatibleWith('23.09.0')
       ) {
         return undefined;
       } else {
         // `/resource-slots/details` is available since 23.09
         // https://github.com/lablup/backend.ai/issues/1589
+        const search = new URLSearchParams();
+        search.set('sgroup', resourceGroupName);
         return baiRequestWithPromise({
           method: 'GET',
-          url: `/config/resource-slots/details?sgroup=${resourceGroupName}`,
+          url: `/config/resource-slots/details?${search.toString()}`,
         });
       }
     },

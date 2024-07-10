@@ -140,9 +140,11 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   const { data: allFolderList } = useTanQuery({
     queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id],
     queryFn: () => {
+      const search = new URLSearchParams();
+      search.set('group_id', currentProject.id);
       return baiRequestWithPromise({
         method: 'GET',
-        url: `/folders?group_id=${currentProject.id}`,
+        url: `/folders?${search.toString()}`,
       }) as Promise<VFolder[]>;
     },
     staleTime: 1000,
