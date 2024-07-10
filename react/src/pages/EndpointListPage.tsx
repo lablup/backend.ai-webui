@@ -339,6 +339,10 @@ const EndpointListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 traffic_ratio
                 status
               }
+              runtime_variant @since(version: "24.03.5") {
+                name
+                human_readable_name
+              }
               created_user_email @since(version: "23.09.8")
               ...EndpointOwnerInfoFragment
               ...EndpointStatusTagFragment

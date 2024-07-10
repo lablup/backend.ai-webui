@@ -424,6 +424,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             cloneable
             status
           }
+          runtime_variant @since(version: "24.03.5") {
+            name
+            human_readable_name
+          }
         }
       }
     }
@@ -639,6 +643,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         modelMountDestination: endpoint?.model_mount_destination,
         modelDefinitionPath: endpoint?.model_definition_path,
         runtimeVariant: endpoint?.runtime_variant?.name,
+        envvars: _.map(
+          JSON.parse(endpoint?.environ || '{}'),
+          (value, variable) => ({ variable, value }),
+        ),
         // TODO: set mounts alias map according to extra_mounts if possible
       }
     : {

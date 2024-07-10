@@ -163,6 +163,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               row_id
               name
             }
+            environ
             resource_group
             resource_slots
             resource_opts
@@ -379,6 +380,18 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       ),
     });
   }
+
+  items.push({
+    label: t('session.launcher.EnvironmentVariable'),
+    children: (
+      <Typography.Text style={{ fontFamily: 'monospace' }}>
+        {_.isEmpty(JSON.parse(endpoint?.environ)) ? '-' : endpoint?.environ}
+      </Typography.Text>
+    ),
+    span: {
+      sm: 1,
+    },
+  });
 
   items.push({
     label: t('modelService.Image'),
