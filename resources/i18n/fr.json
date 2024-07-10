@@ -244,7 +244,7 @@
       "preopen": "préouverture",
       "Network": "Réseau",
       "Enable": "Activer",
-      "FolderAliasInvalid": "Seuls les caractères alphanumériques, le trait de soulignement (_), la barre oblique (/) et le tiret (-) sont autorisés.",
+      "FolderAliasInvalid": "Seuls les caractères alphanumériques, le trait de soulignement (_), la barre oblique (/), le point (.) et le tiret (-) sont autorisés.",
       "PreOpenPortMaxCountLimit": "Vous pouvez définir jusqu'à {{count}} ports pré-ouverts.",
       "StartTimeMustBeInTheFuture": "L'heure de début doit être postérieure à l'heure actuelle.",
       "EnqueueComputeSessionWarning": "Ressources insuffisantes. \nLa session est peut-être en attente.",
@@ -277,7 +277,8 @@
       "FailedToStartNewSession": "La création de la session a échoué. \nVeuillez vérifier l'onglet « TERMINÉ » sur la page de la session.",
       "ProxyDirectTCPNotSupported": "La connexion TCP directe par proxy n'est pas encore prise en charge",
       "InvalidPortFormat": "Le format du numéro de port est incorrect.",
-      "DuplicatedPort": "Il y a des ports en double."
+      "DuplicatedPort": "Il y a des ports en double.",
+      "FolderAliasOverlappingToAutoMount": "Il existe un dossier de montage automatique portant le même nom."
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",

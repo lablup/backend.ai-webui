@@ -244,7 +244,7 @@
       "preopen": "урьдчилан нээх",
       "Network": "Сүлжээ",
       "Enable": "Идэвхжүүлэх",
-      "FolderAliasInvalid": "Зөвхөн үсэг, тоон тэмдэгт, доогуур зураас (_), ташуу зураас (/), зураас (-) ашиглахыг зөвшөөрнө.",
+      "FolderAliasInvalid": "Зөвхөн үсэг, тоон тэмдэгт, доогуур зураас (_), ташуу зураас (/), цэг (.), зураас (-) зэргийг зөвшөөрнө.",
       "StartTimeMustBeInTheFuture": "Эхлэх цаг нь одоогийн цагаас хойш байх ёстой.",
       "PreOpenPortMaxCountLimit": "Та {{count}} хүртэл урьдчилан нээлттэй порт тохируулж болно.",
       "EnqueueComputeSessionWarning": "Хангалтгүй нөөц. \nХурал хүлээгдэж магадгүй.",
@@ -278,7 +278,8 @@
       "SkipToConfirmAndLaunch": "Шүүмж рүү алгасах",
       "ProxyDirectTCPNotSupported": "Прокси шууд TCP холболт хараахан дэмжигдээгүй байна",
       "InvalidPortFormat": "Портын дугаарын формат буруу байна.",
-      "DuplicatedPort": "Давхардсан портууд байна."
+      "DuplicatedPort": "Давхардсан портууд байна.",
+      "FolderAliasOverlappingToAutoMount": "Ижил нэртэй автоматаар холбох хавтас байна."
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",

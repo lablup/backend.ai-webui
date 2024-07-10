@@ -257,7 +257,7 @@
       "Network": "Network",
       "PreOpenPortRangeGuide": "Enter multiple values separated by either a comma (,) or a space.",
       "preopen": "preopen",
-      "FolderAliasInvalid": "Only alphanumeric characters, underscore (_), slash (/), and dash (-) are allowed.",
+      "FolderAliasInvalid": "Only alphanumeric characters, underscore (_), slash (/), dot (.), and dash (-) are allowed.",
       "PreOpenPortMaxCountLimit": "You can set up to {{count}} pre-open port.",
       "PreOpenPortMaxCountLimit_plural": "You can set up to {{count}} pre-open ports.",
       "EnqueueComputeSessionWarning": "Insufficient resources. Session may be pending.",
@@ -291,7 +291,8 @@
       "FailedToStartNewSession": "Session creation failed. Please check the 'FINISHED' tab on the session page.",
       "ProxyDirectTCPNotSupported": "Proxy direct TCP connection is not supported yet",
       "InvalidPortFormat": "The port number format is incorrect.",
-      "DuplicatedPort": "There are duplicate ports."
+      "DuplicatedPort": "There are duplicate ports.",
+      "FolderAliasOverlappingToAutoMount": "An auto-mount folder with the same name exists."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

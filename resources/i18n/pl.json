@@ -244,7 +244,7 @@
       "preopen": "wstępnie otwarte",
       "Network": "Sieć",
       "Enable": "Włączać",
-      "FolderAliasInvalid": "Dozwolone są tylko znaki alfanumeryczne, podkreślenie (_), ukośnik (/) i myślnik (-).",
+      "FolderAliasInvalid": "Dozwolone są tylko znaki alfanumeryczne, podkreślenie (_), ukośnik (/), kropka (.) i myślnik (-).",
       "PreOpenPortMaxCountLimit": "Można ustawić do {{count}} wstępnie otwartych portów.",
       "StartTimeMustBeInTheFuture": "Czas rozpoczęcia musi być po czasie bieżącym.",
       "EnqueueComputeSessionWarning": "Niewystarczające zasoby. \nSesja może być w toku.",
@@ -277,7 +277,8 @@
       "FailedToStartNewSession": "Utworzenie sesji nie powiodło się. \nSprawdź zakładkę „Skończone” na stronie sesji.",
       "ProxyDirectTCPNotSupported": "Bezpośrednie połączenie proxy TCP nie jest jeszcze obsługiwane",
       "InvalidPortFormat": "Format numeru portu jest nieprawidłowy.",
-      "DuplicatedPort": "Istnieją zduplikowane porty."
+      "DuplicatedPort": "Istnieją zduplikowane porty.",
+      "FolderAliasOverlappingToAutoMount": "Istnieje folder automatycznego montażu o tej samej nazwie."
     },
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",

@@ -244,7 +244,7 @@
       "preopen": "mở trước",
       "Network": "Mạng",
       "Enable": "Cho phép",
-      "FolderAliasInvalid": "Chỉ cho phép các ký tự chữ và số, dấu gạch dưới (_), dấu gạch chéo (/) và dấu gạch ngang (-).",
+      "FolderAliasInvalid": "Chỉ cho phép các ký tự chữ và số, dấu gạch dưới (_), dấu gạch chéo (/), dấu chấm (.) và dấu gạch ngang (-).",
       "StartTimeMustBeInTheFuture": "Thời gian bắt đầu phải sau thời gian hiện tại.",
       "EnqueueComputeSessionWarning": "Nguồn lực không đủ. \nPhiên có thể đang chờ xử lý.",
       "SessionName": "Tên phiên",
@@ -277,7 +277,8 @@
       "FailedToStartNewSession": "Tạo phiên không thành công. \nVui lòng kiểm tra tab 'Đã kết thúc' trên trang phiên.",
       "ProxyDirectTCPNotSupported": "Kết nối TCP trực tiếp proxy chưa được hỗ trợ",
       "InvalidPortFormat": "Định dạng số cổng không chính xác.",
-      "DuplicatedPort": "Có cổng trùng lặp."
+      "DuplicatedPort": "Có cổng trùng lặp.",
+      "FolderAliasOverlappingToAutoMount": "Đã tồn tại một thư mục tự động gắn kết có cùng tên."
     },
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",

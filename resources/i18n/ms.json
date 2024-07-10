@@ -244,7 +244,7 @@
       "preopen": "prabuka",
       "Network": "Rangkaian",
       "Enable": "Dayakan",
-      "FolderAliasInvalid": "Hanya aksara abjad angka, garis bawah (_), garis miring (/), dan sempang (-) dibenarkan.",
+      "FolderAliasInvalid": "Hanya aksara abjad angka, garis bawah (_), garis miring (/), titik (.), dan sempang (-) dibenarkan.",
       "StartTimeMustBeInTheFuture": "Masa mula mestilah selepas masa semasa.",
       "EnqueueComputeSessionWarning": "Sumber yang tidak mencukupi. \nSesi mungkin belum selesai.",
       "SessionName": "Nama sesi",
@@ -277,7 +277,8 @@
       "FailedToStartNewSession": "Pembuatan sesi gagal. \nSila semak tab 'SELESAI' pada halaman sesi.",
       "ProxyDirectTCPNotSupported": "Sambungan TCP langsung proksi belum disokong lagi",
       "InvalidPortFormat": "Format nombor port tidak betul.",
-      "DuplicatedPort": "Terdapat port pendua."
+      "DuplicatedPort": "Terdapat port pendua.",
+      "FolderAliasOverlappingToAutoMount": "Folder auto-lekap dengan nama yang sama wujud."
     },
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",

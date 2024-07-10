@@ -1207,7 +1207,7 @@
       "PreOpenPortMaxCountLimit": "Puede configurar hasta {{count}} puertos preabiertos.",
       "PreOpenPortRangeGuide": "Introduzca varios valores separados por una coma (,) o un espacio.",
       "preopen": "preabierto",
-      "FolderAliasInvalid": "Sólo se permiten caracteres alfanuméricos, guión bajo (_), barra (/) y guión (-).",
+      "FolderAliasInvalid": "Sólo se permiten caracteres alfanuméricos, guión bajo (_), barra (/), punto (.) y guión (-).",
       "Network": "Red",
       "Enable": "Permitir",
       "StartTimeMustBeInTheFuture": "La hora de inicio debe ser posterior a la hora actual.",
@@ -1241,7 +1241,8 @@
       "FailedToStartNewSession": "Error al crear la sesión. \nPor favor marque la pestaña 'TERMINADO' en la página de la sesión.",
       "ProxyDirectTCPNotSupported": "La conexión TCP directa de proxy aún no es compatible",
       "InvalidPortFormat": "El formato del número de puerto es incorrecto.",
-      "DuplicatedPort": "Hay puertos duplicados."
+      "DuplicatedPort": "Hay puertos duplicados.",
+      "FolderAliasOverlappingToAutoMount": "Existe una carpeta de montaje automático con el mismo nombre."
     },
     "ExpiresAfter": "Tiempo restante",
     "CPU": "CPU",

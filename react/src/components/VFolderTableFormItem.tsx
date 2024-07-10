@@ -1,6 +1,7 @@
 import { VFolder } from './VFolderSelect';
 import VFolderTable, {
   AliasMap,
+  DEFAULT_ALIAS_BASE_PATH,
   VFolderTableProps,
   vFolderAliasNameRegExp,
 } from './VFolderTable';
@@ -52,6 +53,18 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
               }
               if (_.some(arr, (alias) => !vFolderAliasNameRegExp.test(alias))) {
                 return Promise.reject(t('session.launcher.FolderAliasInvalid'));
+              }
+
+              if (
+                _.some(
+                  form.getFieldValue('autoMountedFolderNames'),
+                  (autoName) =>
+                    arr.includes(DEFAULT_ALIAS_BASE_PATH + autoName),
+                )
+              ) {
+                return Promise.reject(
+                  t('session.launcher.FolderAliasOverlappingToAutoMount'),
+                );
               }
               return Promise.resolve();
             },

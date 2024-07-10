@@ -1205,7 +1205,7 @@
       "PreOpenPortMaxCountLimit": "Voit määrittää enintään {{count}} ennalta avattuja portteja.",
       "PreOpenPortRangeGuide": "Syötä useita arvoja joko pilkulla (,) tai välilyönnillä erotettuina.",
       "preopen": "avataan etukäteen",
-      "FolderAliasInvalid": "Vain aakkosnumeeriset merkit, alaviiva (_), kauttaviiva (/) ja viiva (-) ovat sallittuja.",
+      "FolderAliasInvalid": "Vain aakkosnumeeriset merkit, alaviiva (_), kauttaviiva (/), piste (.) ja viiva (-) ovat sallittuja.",
       "Network": "Verkko",
       "Enable": "ota käyttöön",
       "StartTimeMustBeInTheFuture": "Alkamisajan on oltava nykyisen kellonajan jälkeen.",
@@ -1239,7 +1239,8 @@
       "FailedToStartNewSession": "Istunnon luominen epäonnistui. \nTarkista istuntosivun VALMIS-välilehti.",
       "ProxyDirectTCPNotSupported": "Välityspalvelimen suoraa TCP-yhteyttä ei tueta vielä",
       "InvalidPortFormat": "Porttinumeron muoto on virheellinen.",
-      "DuplicatedPort": "Portteja on päällekkäin."
+      "DuplicatedPort": "Portteja on päällekkäin.",
+      "FolderAliasOverlappingToAutoMount": "Samanniminen automaattinen kiinnityskansio on olemassa."
     },
     "ExpiresAfter": "Jäljellä oleva aika",
     "CPU": "CPU",
