@@ -139,7 +139,9 @@
     "Next": "Seuraava",
     "Previous": "Edellinen",
     "PushToImage": "Työnnä istunto mukautettuun kuvaan",
-    "SaveWithoutClose": "Tallenna ilman sulkemista"
+    "SaveWithoutClose": "Tallenna ilman sulkemista",
+    "Collapse": "Romahdus",
+    "Expand": "Laajentaa"
   },
   "credential": {
     "AccessKeyOptional": "Pääsyavain (valinnainen)",

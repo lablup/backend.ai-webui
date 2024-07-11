@@ -453,7 +453,9 @@
     "Next": "Avanti",
     "Previous": "Precedente",
     "PushToImage": "Push della sessione all'immagine personalizzata",
-    "SaveWithoutClose": "Salva senza chiudere"
+    "SaveWithoutClose": "Salva senza chiudere",
+    "Collapse": "Crollo",
+    "Expand": "Espandere"
   },
   "agent": {
     "Endpoint": "Endpoint",

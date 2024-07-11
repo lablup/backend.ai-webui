@@ -452,7 +452,9 @@
     "Next": "Weiter",
     "Previous": "Vorherige",
     "PushToImage": "Push-Sitzung auf benutzerdefiniertes Bild",
-    "SaveWithoutClose": "Speichern ohne Schließen"
+    "SaveWithoutClose": "Speichern ohne Schließen",
+    "Collapse": "Zusammenbruch",
+    "Expand": "Expandieren"
   },
   "agent": {
     "Endpoint": "Endpunkt",

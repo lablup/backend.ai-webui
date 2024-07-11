@@ -452,7 +452,9 @@
     "Next": "Następny",
     "Previous": "Poprzedni",
     "PushToImage": "Prześlij sesję do spersonalizowanego obrazu",
-    "SaveWithoutClose": "Zapisz bez zamykania"
+    "SaveWithoutClose": "Zapisz bez zamykania",
+    "Collapse": "Zawalić się",
+    "Expand": "Zwiększać"
   },
   "agent": {
     "Endpoint": "Punkt końcowy",

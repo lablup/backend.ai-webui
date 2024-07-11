@@ -541,7 +541,9 @@
     "Next": "Next",
     "Previous": "Previous",
     "PushToImage": "Push session to customized image",
-    "SaveWithoutClose": "Save Without Close"
+    "SaveWithoutClose": "Save Without Close",
+    "Collapse": "Collapse",
+    "Expand": "Expand"
   },
   "agent": {
     "Endpoint": "Endpoint",

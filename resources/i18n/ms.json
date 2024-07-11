@@ -452,7 +452,9 @@
     "Next": "Seterusnya",
     "Previous": "Sebelumnya",
     "PushToImage": "Sesi tolak ke imej tersuai",
-    "SaveWithoutClose": "Simpan Tanpa Tutup"
+    "SaveWithoutClose": "Simpan Tanpa Tutup",
+    "Collapse": "Runtuh",
+    "Expand": "Kembangkan"
   },
   "agent": {
     "Endpoint": "Titik Akhir",

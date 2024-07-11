@@ -139,7 +139,9 @@
     "Next": "Siguiente",
     "Previous": "Anterior",
     "PushToImage": "Enviar sesión a una imagen personalizada",
-    "SaveWithoutClose": "Guardar sin cerrar"
+    "SaveWithoutClose": "Guardar sin cerrar",
+    "Collapse": "Colapsar",
+    "Expand": "Expandir"
   },
   "credential": {
     "AccessKeyOptional": "Clave de acceso (opcional)",

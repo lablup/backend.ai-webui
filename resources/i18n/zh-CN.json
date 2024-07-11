@@ -452,7 +452,9 @@
     "Next": "下一页",
     "Previous": "上一页",
     "PushToImage": "将会话推送到自定义镜像",
-    "SaveWithoutClose": "保存而不关闭"
+    "SaveWithoutClose": "保存而不关闭",
+    "Collapse": "坍塌",
+    "Expand": "扩张"
   },
   "agent": {
     "Endpoint": "端点",

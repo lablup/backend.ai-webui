@@ -452,7 +452,9 @@
     "Next": "Kế tiếp",
     "Previous": "Trước",
     "PushToImage": "Đẩy phiên sang hình ảnh tùy chỉnh",
-    "SaveWithoutClose": "Lưu mà không đóng"
+    "SaveWithoutClose": "Lưu mà không đóng",
+    "Collapse": "Sụp đổ",
+    "Expand": "Mở rộng"
   },
   "agent": {
     "Endpoint": "Điểm cuối",

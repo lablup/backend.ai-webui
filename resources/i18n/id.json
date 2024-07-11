@@ -453,7 +453,9 @@
     "Next": "Berikutnya",
     "Previous": "Sebelumnya",
     "PushToImage": "Sesi dorong ke gambar yang disesuaikan",
-    "SaveWithoutClose": "Simpan Tanpa Tutup"
+    "SaveWithoutClose": "Simpan Tanpa Tutup",
+    "Collapse": "Runtuh",
+    "Expand": "Memperluas"
   },
   "agent": {
     "Endpoint": "Titik akhir",

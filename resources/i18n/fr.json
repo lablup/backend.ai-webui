@@ -452,7 +452,9 @@
     "Next": "Suivant",
     "Previous": "Précédent",
     "PushToImage": "Pousser la session vers une image personnalisée",
-    "SaveWithoutClose": "Enregistrer sans fermer"
+    "SaveWithoutClose": "Enregistrer sans fermer",
+    "Collapse": "Effondrement",
+    "Expand": "Développer"
   },
   "agent": {
     "Endpoint": "Point de terminaison",

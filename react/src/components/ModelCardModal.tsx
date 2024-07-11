@@ -178,7 +178,19 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       <Row gutter={[token.marginLG, token.marginLG]}>
         <Col xs={{ span: 24 }}>
           <Flex direction="column" align="stretch" gap={'xs'}>
-            {model_card?.description}
+            <Typography.Paragraph
+              ellipsis={{
+                rows: 3,
+                expandable: 'collapsible',
+                symbol: (expanded) => (
+                  <Button size="small" type="link">
+                    {expanded ? t('button.Collapse') : t('button.Expand')}
+                  </Button>
+                ),
+              }}
+            >
+              {model_card?.description}
+            </Typography.Paragraph>
             <Descriptions
               style={{ marginTop: token.marginMD }}
               // title={t('modelStore.Metadata')}

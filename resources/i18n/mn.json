@@ -454,7 +454,9 @@
     "Previous": "Өмнөх",
     "Next": "Дараачийн",
     "PushToImage": "Тохируулсан зураг руу түлхэх сесс",
-    "SaveWithoutClose": "Хаахгүйгээр хадгалах"
+    "SaveWithoutClose": "Хаахгүйгээр хадгалах",
+    "Collapse": "Нурах",
+    "Expand": "Өргөтгөх"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",

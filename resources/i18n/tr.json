@@ -452,7 +452,9 @@
     "Next": "Sonraki",
     "Previous": "Önceki",
     "PushToImage": "Oturumu özelleştirilmiş resme aktarın",
-    "SaveWithoutClose": "Kapatmadan Kaydet"
+    "SaveWithoutClose": "Kapatmadan Kaydet",
+    "Collapse": "Yıkılmak",
+    "Expand": "Genişletmek"
   },
   "agent": {
     "Endpoint": "uç nokta",

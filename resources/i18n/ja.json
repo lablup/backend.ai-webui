@@ -452,7 +452,9 @@
     "Next": "次のページ",
     "Previous": "前へ",
     "PushToImage": "セッションをカスタマイズされたイメージにプッシュする",
-    "SaveWithoutClose": "閉じずに保存"
+    "SaveWithoutClose": "閉じずに保存",
+    "Collapse": "崩壊",
+    "Expand": "拡大する"
   },
   "agent": {
     "Endpoint": "終点",
