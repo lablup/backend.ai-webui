@@ -6,11 +6,22 @@ import { useUpdatableState } from '../hooks';
 import { ModelStoreListPageQuery } from './__generated__/ModelStoreListPageQuery.graphql';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Card, Input, List, Select, Tag, theme } from 'antd';
+import { createStyles } from 'antd-style';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
 import React, { useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
+
+const useStyles = createStyles(({ css, token }) => {
+  return {
+    cardList: css`
+      .ant-col {
+        height: calc(100% - ${token.marginMD}px);
+      }
+    `,
+  };
+});
 
 const ModelStoreListPage: React.FC = () => {
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
@@ -21,6 +32,8 @@ const ModelStoreListPage: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
+
+  const { styles } = useStyles();
 
   const [currentModelInfo, setCurrentModelInfo] =
     useState<ModelCardModalFragment$key | null>();
@@ -176,6 +189,7 @@ const ModelStoreListPage: React.FC = () => {
         </Flex>
       </Flex>
       <List
+        className={styles.cardList}
         grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 3, xl: 4, xxl: 5 }}
         dataSource={model_cards?.edges
           ?.map((edge) => edge?.node)
@@ -208,6 +222,9 @@ const ModelStoreListPage: React.FC = () => {
             onClick={() => {
               setCurrentModelInfo(item);
             }}
+            style={{
+              height: '100%',
+            }}
           >
             <Card
               hoverable
@@ -216,6 +233,9 @@ const ModelStoreListPage: React.FC = () => {
                   {item?.title}
                 </TextHighlighter>
               }
+              style={{
+                height: '100%',
+              }}
               size="small"
             >
               <Flex direction="row" wrap="wrap" gap={'xs'}>

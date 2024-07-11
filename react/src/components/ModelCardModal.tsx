@@ -10,7 +10,6 @@ import {
   Card,
   Col,
   Descriptions,
-  Grid,
   Row,
   Tag,
   Typography,
@@ -23,8 +22,6 @@ import Markdown from 'markdown-to-jsx';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
-
-const { Title, Paragraph } = Typography;
 
 interface ModelCardModalProps extends BAIModalProps {
   modelCardModalFrgmt?: ModelCardModalFragment$key | null;
@@ -40,7 +37,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
 
   const [visibleCloneModal, setVisibleCloneModal] = useState(false);
 
-  const screen = Grid.useBreakpoint();
   const [metadata] = useBackendAIImageMetaData();
   const model_card = useFragment(
     graphql`
@@ -85,7 +81,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       centered
       onCancel={onRequestClose}
       destroyOnClose
-      width={screen.xxl ? '75%' : '90%'}
+      width={800}
       footer={[
         <Button
           onClick={() => {
@@ -175,26 +171,12 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
         </Flex>
       </Flex>
       <Row gutter={[token.marginLG, token.marginLG]}>
-        <Col xs={{ span: 24 }} lg={{ span: 12 }}>
+        <Col xs={{ span: 24 }}>
           <Flex direction="column" align="stretch" gap={'xs'}>
-            <Title level={5} style={{ marginTop: 0 }}>
-              {t('modelStore.Description')}
-            </Title>
-            <Card
-              size="small"
-              style={{
-                whiteSpace: 'pre-wrap',
-                minHeight: screen.lg ? 100 : undefined,
-                height: screen.lg ? 'calc(100vh - 590px)' : undefined,
-                maxHeight: 'calc(100vh - 590px)',
-                overflow: 'auto',
-              }}
-            >
-              <Paragraph>{model_card?.description}</Paragraph>
-            </Card>
+            {model_card?.description}
             <Descriptions
               style={{ marginTop: token.marginMD }}
-              title={t('modelStore.Metadata')}
+              // title={t('modelStore.Metadata')}
               column={1}
               size="small"
               bordered
@@ -286,25 +268,29 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             />
           </Flex>
         </Col>
-        <Col xs={{ span: 24 }} lg={{ span: 12 }}>
-          <Card
-            size="small"
-            title={
-              <Flex direction="row" gap={'xs'}>
-                <FileOutlined />
-                README.md
-              </Flex>
-            }
-            bodyStyle={{
-              padding: token.paddingLG,
-              overflow: 'auto',
-              height: screen.lg ? 'calc(100vh - 243px)' : undefined,
-              minHeight: 200,
-            }}
-          >
-            <Markdown>{model_card?.readme || ''}</Markdown>
-          </Card>
-        </Col>
+        {!!model_card?.readme ? (
+          <Col xs={{ span: 24 }}>
+            <Card
+              size="small"
+              title={
+                <Flex direction="row" gap={'xs'}>
+                  <FileOutlined />
+                  README.md
+                </Flex>
+              }
+              styles={{
+                body: {
+                  padding: token.paddingLG,
+                  overflow: 'auto',
+                  // height: screen.lg ? 'calc(100vh - 243px)' : undefined,
+                  minHeight: 200,
+                },
+              }}
+            >
+              <Markdown>{model_card?.readme || ''}</Markdown>
+            </Card>
+          </Col>
+        ) : null}
       </Row>
       <Suspense>
         <ModelCloneModal
