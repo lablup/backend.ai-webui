@@ -829,7 +829,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                     filter={(vf) =>
                                       vf.name !== getFieldValue('vFolderID') &&
                                       vf.status === 'ready' &&
-                                      vf.usage_mode !== 'model'
+                                      vf.usage_mode !== 'model' &&
+                                      !vf.name?.startsWith('.')
                                     }
                                     tableProps={{
                                       size: 'small',
