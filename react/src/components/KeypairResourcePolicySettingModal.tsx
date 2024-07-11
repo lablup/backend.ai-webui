@@ -15,10 +15,19 @@ import {
   ModifyKeyPairResourcePolicyInput,
 } from './__generated__/KeypairResourcePolicySettingModalModifyMutation.graphql';
 // import { KeypairResourcePolicySettingModalQuery } from './__generated__/KeypairResourcePolicySettingModalQuery.graphql';
-import { App, Card, Col, Form, Input, InputNumber, Row } from 'antd';
+import {
+  App,
+  Card,
+  Col,
+  Form,
+  FormInstance,
+  Input,
+  InputNumber,
+  Row,
+} from 'antd';
 import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   useFragment, // useLazyLoadQuery,
@@ -44,7 +53,7 @@ const KeypairResourcePolicySettingModal: React.FC<
 }) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const [form] = Form.useForm();
+  const formRef = useRef<FormInstance>(null);
   const [resourceSlotsDetails] = useResourceSlotsDetails();
   const baiClient = useSuspendedBackendaiClient();
   const isDeprecatedMaxVfolderCountInKeypairResourcePolicy =
@@ -147,8 +156,8 @@ const KeypairResourcePolicySettingModal: React.FC<
   ]);
 
   const handleOk = () => {
-    return form
-      .validateFields()
+    return formRef?.current
+      ?.validateFields()
       .then((values) => {
         let totalResourceSlots = _.mapValues(
           values?.parsedTotalResourceSlots,
@@ -257,7 +266,7 @@ const KeypairResourcePolicySettingModal: React.FC<
       {...props}
     >
       <Form
-        form={form}
+        ref={formRef}
         layout="vertical"
         requiredMark="optional"
         initialValues={initialValues}

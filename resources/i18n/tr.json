@@ -452,7 +452,9 @@
     "Next": "Sonraki",
     "Previous": "Önceki",
     "PushToImage": "Oturumu özelleştirilmiş resme aktarın",
-    "SaveWithoutClose": "Kapatmadan Kaydet"
+    "SaveWithoutClose": "Kapatmadan Kaydet",
+    "Collapse": "Yıkılmak",
+    "Expand": "Genişletmek"
   },
   "agent": {
     "Endpoint": "uç nokta",
@@ -1389,7 +1391,8 @@
     "ImportGitlabRepo": "Gitlab Deposunu İçe Aktarma",
     "GitlabRepoWillBeFolder": "İçe aktarılan Gitlab depoları klasörlere dönüştürülür ve oturum başladığında bağlanabilir.",
     "GitlabURL": "Gitlab URL'si",
-    "GitlabDefaultBranch": "Gitlab Şube Adı"
+    "GitlabDefaultBranch": "Gitlab Şube Adı",
+    "InvalidNotebookURL": "Geçersiz Not Defteri URL'si."
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Bu Ay İçin İstatistikler",

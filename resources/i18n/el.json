@@ -452,7 +452,9 @@
     "Next": "Επόμενο",
     "Previous": "Προηγούμενο",
     "PushToImage": "Σπρώξτε τη συνεδρία σε προσαρμοσμένη εικόνα",
-    "SaveWithoutClose": "Αποθήκευση χωρίς κλείσιμο"
+    "SaveWithoutClose": "Αποθήκευση χωρίς κλείσιμο",
+    "Collapse": "Κατάρρευση",
+    "Expand": "Επεκτείνουν"
   },
   "agent": {
     "Endpoint": "Τελικό σημείο",
@@ -1389,7 +1391,8 @@
     "ImportGitlabRepo": "Εισαγωγή αποθετηρίου GitLab",
     "GitlabRepoWillBeFolder": "Τα εισαγόμενα αποθετήρια GitLab μετατρέπονται σε φακέλους και μπορούν να προσαρτηθούν κατά την έναρξη της συνεδρίας.",
     "GitlabURL": "URL του GitLab",
-    "GitlabDefaultBranch": "Όνομα υποκαταστήματος GitLab"
+    "GitlabDefaultBranch": "Όνομα υποκαταστήματος GitLab",
+    "InvalidNotebookURL": "Μη έγκυρη διεύθυνση URL του Notbook."
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Στατιστικά για αυτόν τον μήνα",

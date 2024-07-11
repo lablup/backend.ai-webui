@@ -1577,17 +1577,26 @@ export default class BackendAISessionList extends BackendAIPage {
    *
    * */
   _setSelectedKernel() {
-    this.selectedKernels = this.compute_sessions
+    const selectedKernel = this.compute_sessions
       .find((session) => session.session_id === this.workDialog.sessionUuid)
-      ?.containers.map((container) => {
-        if (container.role === 'main') {
-          container.role = 'main1';
+      ?.containers.map((container, index) => {
+        if (container?.role) {
+          if (container?.role.includes('main')) {
+            container.role = 'main1';
+          } else {
+            container.role = `sub${container.local_rank}`;
+          }
         } else {
-          container.role = `sub${container.local_rank}`;
+          // workaround for per-kernel log supported UI
+          if (index === 0) container.role = 'main1';
         }
         return container;
       })
       .sort((a, b) => a.role.localeCompare(b.role));
+    // only allow main1 kernel if per-kernel log is not supported
+    this.selectedKernels = this._isPerKernelLogSupported
+      ? selectedKernel
+      : selectedKernel.filter((kernel) => kernel.role.includes('main'));
   }
 
   _updateLogsByKernelId() {
@@ -1600,9 +1609,6 @@ export default class BackendAISessionList extends BackendAIPage {
    * Show logs - work title, session logs, session name, and access key.
    */
   _showLogs() {
-    (
-      this.shadowRoot?.querySelector('#kernel-id-select') as Select
-    ).style.display = this._isPerKernelLogSupported ? 'block' : 'none';
     globalThis.backendaiclient
       .get_logs(
         this.workDialog.sessionUuid,
@@ -1613,17 +1619,15 @@ export default class BackendAISessionList extends BackendAIPage {
       .then((req) => {
         const ansi_up = new AnsiUp();
         const logs = ansi_up.ansi_to_html(req.result.logs);
-        setTimeout(() => {
-          (
-            this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement
-          ).innerHTML =
-            `${this.workDialog.sessionName} (${this.workDialog.sessionUuid})`;
-          (
-            this.shadowRoot?.querySelector('#work-area') as HTMLDivElement
-          ).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
-          // TODO define extended type for custom properties
-          this.workDialog.show();
-        }, 100);
+        (
+          this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement
+        ).innerHTML =
+          `${this.workDialog.sessionName} (${this.workDialog.sessionUuid})`;
+        (
+          this.shadowRoot?.querySelector('#work-area') as HTMLDivElement
+        ).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
+        // TODO define extended type for custom properties
+        this.workDialog.show();
       })
       .catch((err) => {
         if (err && err.message) {
@@ -1646,7 +1650,12 @@ export default class BackendAISessionList extends BackendAIPage {
         : sessionUuid;
     const accessKey = this.workDialog.accessKey;
     globalThis.backendaiclient
-      .get_logs(sessionId, accessKey, 15000)
+      .get_logs(
+        sessionId,
+        accessKey,
+        this.selectedKernelId !== '' ? this.selectedKernelId : null,
+        15000,
+      )
       .then((req) => {
         const logs = req.result.logs;
         globalThis.backendaiutils.exportToTxt(sessionName, logs);
@@ -1675,7 +1684,12 @@ export default class BackendAISessionList extends BackendAIPage {
         : sessionUuid;
     const accessKey = this.workDialog.accessKey;
     globalThis.backendaiclient
-      .get_logs(sessionId, accessKey, 15000)
+      .get_logs(
+        sessionId,
+        accessKey,
+        this.selectedKernelId !== '' ? this.selectedKernelId : null,
+        15000,
+      )
       .then((req) => {
         const ansi_up = new AnsiUp();
         const logs = ansi_up.ansi_to_html(req.result.logs);
@@ -3259,7 +3273,8 @@ ${rowData.item[this.sessionNameField]}</pre
             : html``}
           ${((this._isRunning && !this._isPreparing(rowData.item.status)) ||
             this._APIMajorVersion > 4) &&
-          !this._isPending(rowData.item.status)
+          !this._isPending(rowData.item.status) &&
+          !this._isPreparing(rowData.item.status)
             ? html`
                 <mwc-icon-button
                   class="fg blue controls-running"
@@ -3269,7 +3284,12 @@ ${rowData.item[this.sessionNameField]}</pre
                   @click="${(e) => {
                     this._setSelectedSession(e);
                     this._setSelectedKernel();
-                    this._updateLogsByKernelId();
+                    this.selectedKernelId = this.selectedKernels[0]?.kernel_id;
+                    (
+                      this.shadowRoot?.querySelector(
+                        '#kernel-id-select',
+                      ) as Select
+                    ).value = this.selectedKernelId;
                     this._showLogs();
                   }}"
                 ></mwc-icon-button>
@@ -4449,6 +4469,7 @@ ${rowData.item[this.sessionNameField]}</pre
           <mwc-select
             id="kernel-id-select"
             label="Kernel Role"
+            style="display: ${this._isPerKernelLogSupported ? 'block' : 'none'}"
             @selected=${() => {
               this._updateLogsByKernelId();
               this._showLogs();

@@ -452,7 +452,9 @@
     "Next": "下一页",
     "Previous": "上一页",
     "PushToImage": "將會話推送到自訂鏡像",
-    "SaveWithoutClose": "儲存而不關閉"
+    "SaveWithoutClose": "儲存而不關閉",
+    "Collapse": "坍塌",
+    "Expand": "擴張"
   },
   "agent": {
     "Endpoint": "端點",
@@ -1389,7 +1391,8 @@
     "ImportGitlabRepo": "导入 GitLab 仓库",
     "GitlabRepoWillBeFolder": "导入的 GitLab 资源库会转换为文件夹，并可在会话启动时挂载。",
     "GitlabURL": "GitLab URL",
-    "GitlabDefaultBranch": "GitLab 分支名称"
+    "GitlabDefaultBranch": "GitLab 分支名称",
+    "InvalidNotebookURL": "Notbook URL 无效。"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "本月統計",

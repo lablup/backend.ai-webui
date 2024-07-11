@@ -454,7 +454,9 @@
     "Previous": "Өмнөх",
     "Next": "Дараачийн",
     "PushToImage": "Тохируулсан зураг руу түлхэх сесс",
-    "SaveWithoutClose": "Хаахгүйгээр хадгалах"
+    "SaveWithoutClose": "Хаахгүйгээр хадгалах",
+    "Collapse": "Нурах",
+    "Expand": "Өргөтгөх"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -1390,7 +1392,8 @@
     "ImportGitlabRepo": "GitLab репозиторыг импортлох",
     "GitlabRepoWillBeFolder": "Импортын GitLab репозиторуудыг хавтас болгон хөрвүүлдэг бөгөөд сесс эхлэхэд холбож болно.",
     "GitlabURL": "GitLab URL",
-    "GitlabDefaultBranch": "GitLab салбарын нэр"
+    "GitlabDefaultBranch": "GitLab салбарын нэр",
+    "InvalidNotebookURL": "Зөөврийн компьютерын URL буруу байна."
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Энэ сарын статистик",

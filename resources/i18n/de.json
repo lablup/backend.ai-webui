@@ -452,7 +452,9 @@
     "Next": "Weiter",
     "Previous": "Vorherige",
     "PushToImage": "Push-Sitzung auf benutzerdefiniertes Bild",
-    "SaveWithoutClose": "Speichern ohne Schließen"
+    "SaveWithoutClose": "Speichern ohne Schließen",
+    "Collapse": "Zusammenbruch",
+    "Expand": "Expandieren"
   },
   "agent": {
     "Endpoint": "Endpunkt",
@@ -1389,7 +1391,8 @@
     "ImportGitlabRepo": "GitLab-Repository importieren",
     "GitlabRepoWillBeFolder": "Importierte GitLab-Repositories werden in Ordner umgewandelt und können beim Start der Sitzung gemountet werden.",
     "GitlabURL": "GitLab-URL",
-    "GitlabDefaultBranch": "GitLab-Zweigname"
+    "GitlabDefaultBranch": "GitLab-Zweigname",
+    "InvalidNotebookURL": "Ungültige Notbook-URL."
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistik für diesen Monat",

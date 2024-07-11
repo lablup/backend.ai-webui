@@ -11,7 +11,6 @@ import reactToWebComponent, {
 import { useSuspendedBackendaiClient } from './hooks';
 import { useCurrentResourceGroupValue } from './hooks/useCurrentProject';
 import { ThemeModeProvider } from './hooks/useThemeMode';
-import './index.css';
 import { Provider as JotaiProvider } from 'jotai';
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';

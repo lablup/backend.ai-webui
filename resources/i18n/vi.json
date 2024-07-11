@@ -452,7 +452,9 @@
     "Next": "Kế tiếp",
     "Previous": "Trước",
     "PushToImage": "Đẩy phiên sang hình ảnh tùy chỉnh",
-    "SaveWithoutClose": "Lưu mà không đóng"
+    "SaveWithoutClose": "Lưu mà không đóng",
+    "Collapse": "Sụp đổ",
+    "Expand": "Mở rộng"
   },
   "agent": {
     "Endpoint": "Điểm cuối",
@@ -1389,7 +1391,8 @@
     "ImportGitlabRepo": "Nhập kho lưu trữ GitLab",
     "GitlabRepoWillBeFolder": "Các kho lưu trữ GitLab đã nhập được chuyển đổi thành các thư mục và có thể được gắn kết khi phiên bắt đầu.",
     "GitlabURL": "URL GitLab",
-    "GitlabDefaultBranch": "Tên chi nhánh GitLab"
+    "GitlabDefaultBranch": "Tên chi nhánh GitLab",
+    "InvalidNotebookURL": "URL sổ tay không hợp lệ."
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Số liệu thống kê cho tháng này",

@@ -904,7 +904,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         <backend-ai-import-view
           class="page"
           name="import"
-          ?active="${this._page === 'github' || this._page === 'import'}"
+          ?active="${this._page === 'github'}"
         >
           <mwc-circular-progress indeterminate></mwc-circular-progress>
         </backend-ai-import-view>

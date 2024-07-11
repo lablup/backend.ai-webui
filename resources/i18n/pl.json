@@ -452,7 +452,9 @@
     "Next": "Następny",
     "Previous": "Poprzedni",
     "PushToImage": "Prześlij sesję do spersonalizowanego obrazu",
-    "SaveWithoutClose": "Zapisz bez zamykania"
+    "SaveWithoutClose": "Zapisz bez zamykania",
+    "Collapse": "Zawalić się",
+    "Expand": "Zwiększać"
   },
   "agent": {
     "Endpoint": "Punkt końcowy",
@@ -1389,7 +1391,8 @@
     "ImportGitlabRepo": "Importowanie repozytorium GitLab",
     "GitlabRepoWillBeFolder": "Zaimportowane repozytoria GitLab są konwertowane do folderów i mogą być montowane podczas uruchamiania sesji.",
     "GitlabURL": "Adres URL GitLab",
-    "GitlabDefaultBranch": "Nazwa oddziału GitLab"
+    "GitlabDefaultBranch": "Nazwa oddziału GitLab",
+    "InvalidNotebookURL": "Nieprawidłowy adres URL Notbook."
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statystyki za ten miesiąc",

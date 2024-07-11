@@ -452,7 +452,9 @@
     "Next": "Seterusnya",
     "Previous": "Sebelumnya",
     "PushToImage": "Sesi tolak ke imej tersuai",
-    "SaveWithoutClose": "Simpan Tanpa Tutup"
+    "SaveWithoutClose": "Simpan Tanpa Tutup",
+    "Collapse": "Runtuh",
+    "Expand": "Kembangkan"
   },
   "agent": {
     "Endpoint": "Titik Akhir",
@@ -1389,7 +1391,8 @@
     "ImportGitlabRepo": "Import Repositori GitLab",
     "GitlabRepoWillBeFolder": "Repositori GitLab yang diimport ditukar kepada folder dan boleh dipasang apabila sesi bermula.",
     "GitlabURL": "URL GitLab",
-    "GitlabDefaultBranch": "Nama Cawangan GitLab"
+    "GitlabDefaultBranch": "Nama Cawangan GitLab",
+    "InvalidNotebookURL": "URL Notbook tidak sah."
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistik untuk Bulan Ini",
