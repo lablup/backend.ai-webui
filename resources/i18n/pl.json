@@ -1620,7 +1620,8 @@
     "CloneInfo": "Zostanie on sklonowany jako folder typu użytkownika.",
     "category": "Kategoria",
     "CloneToFolder": "Klonowanie do folderu",
-    "FolderAlreadyExists": "Folder o tej nazwie już istnieje."
+    "FolderAlreadyExists": "Folder o tej nazwie już istnieje.",
+    "FinetuneModel": "Dostosuj model"
   },
   "table": {
     "SettingTable": "Nakrycie stołu",

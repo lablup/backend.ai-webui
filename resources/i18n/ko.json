@@ -1621,7 +1621,8 @@
     "CloneSuccess": "복사 요청이 성공적으로 보내졌습니다.",
     "CloneInfo": "새로운 사용자 폴더로 복제됩니다.",
     "CloneToFolder": "폴더로 복제",
-    "FolderAlreadyExists": "같은 이름의 폴더가 존재합니다."
+    "FolderAlreadyExists": "같은 이름의 폴더가 존재합니다.",
+    "FinetuneModel": "모델 파인튜닝"
   },
   "table": {
     "SettingTable": "테이블 설정",

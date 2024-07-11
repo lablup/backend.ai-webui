@@ -1620,7 +1620,8 @@
     "CloneInfo": "Il sera cloné en tant que dossier de votre type d'utilisateur.",
     "category": "Catégorie",
     "CloneToFolder": "Cloner dans un dossier",
-    "FolderAlreadyExists": "Un dossier portant ce nom existe déjà."
+    "FolderAlreadyExists": "Un dossier portant ce nom existe déjà.",
+    "FinetuneModel": "Modèle de réglage fin"
   },
   "table": {
     "SettingTable": "Paramètre de table",

@@ -1620,7 +1620,8 @@
     "CloneInfo": "ユーザータイプのフォルダとしてクローンされます。",
     "category": "カテゴリー",
     "CloneToFolder": "フォルダへのクローン",
-    "FolderAlreadyExists": "この名前のフォルダはすでに存在する。"
+    "FolderAlreadyExists": "この名前のフォルダはすでに存在する。",
+    "FinetuneModel": "ファインチューンモデル"
   },
   "table": {
     "SettingTable": "テーブルセッティング",

@@ -1622,7 +1622,8 @@
     "CloneInfo": "Se clonará como su carpeta de tipo de usuario.",
     "category": "Categoría",
     "CloneToFolder": "Clonar en una carpeta",
-    "FolderAlreadyExists": "Ya existe una carpeta con este nombre."
+    "FolderAlreadyExists": "Ya existe una carpeta con este nombre.",
+    "FinetuneModel": "Modelo de ajuste fino"
   },
   "table": {
     "SettingTable": "Ajuste de la tabla",

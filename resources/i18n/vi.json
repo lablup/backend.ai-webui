@@ -1620,7 +1620,8 @@
     "CloneInfo": "Nó sẽ được sao chép thành thư mục loại người dùng của bạn.",
     "category": "Loại",
     "CloneToFolder": "Sao chép vào một thư mục",
-    "FolderAlreadyExists": "Một thư mục có tên này đã tồn tại."
+    "FolderAlreadyExists": "Một thư mục có tên này đã tồn tại.",
+    "FinetuneModel": "Mô hình Finetune"
   },
   "table": {
     "SettingTable": "Cài đặt bảng",

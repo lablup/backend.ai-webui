@@ -1620,7 +1620,8 @@
     "CloneInfo": "Verrà clonata come cartella del tipo di utente.",
     "category": "Categoria",
     "CloneToFolder": "Clonare in una cartella",
-    "FolderAlreadyExists": "Una cartella con questo nome esiste già."
+    "FolderAlreadyExists": "Una cartella con questo nome esiste già.",
+    "FinetuneModel": "Modello di messa a punto"
   },
   "table": {
     "SettingTable": "Impostazione della tabella",

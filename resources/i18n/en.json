@@ -1627,7 +1627,8 @@
     "CloneInfo": "It will be cloned as your user type folder.",
     "category": "Category",
     "CloneToFolder": "Clone to a folder",
-    "FolderAlreadyExists": "A folder with this name already exists."
+    "FolderAlreadyExists": "A folder with this name already exists.",
+    "FinetuneModel": "Finetune Model"
   },
   "tourguide": {
     "NeoSessionLauncher": {

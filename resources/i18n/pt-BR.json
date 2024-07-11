@@ -1620,7 +1620,8 @@
     "CloneInfo": "Será clonada como a pasta do seu tipo de utilizador.",
     "category": "Categoria",
     "CloneToFolder": "Clonar para uma pasta",
-    "FolderAlreadyExists": "Já existe uma pasta com este nome."
+    "FolderAlreadyExists": "Já existe uma pasta com este nome.",
+    "FinetuneModel": "Modelo de ajuste fino"
   },
   "table": {
     "SettingTable": "Configuração de mesa",

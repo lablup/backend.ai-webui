@@ -18,6 +18,7 @@ import {
 import graphql from 'babel-plugin-relay/macro';
 import dayjs from 'dayjs';
 import _ from 'lodash';
+import { Cog } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -87,6 +88,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           onClick={() => {
             onRequestClose();
           }}
+          key="close"
         >
           {t('button.Close')}
         </Button>,
@@ -94,7 +96,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
     >
       <Flex
         direction="row"
-        align="center"
+        align="start"
         style={{ marginBottom: token.marginSM }}
         gap={'xs'}
         wrap="wrap"
@@ -148,6 +150,9 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           >
             {t('button.Download')}
           </Button> */}
+          <Button disabled ghost size="small" icon={<Cog />}>
+            {t('modelStore.FinetuneModel')}
+          </Button>
           <Button
             type="primary"
             ghost
@@ -202,8 +207,11 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                   children: (
                     <Flex direction="row" gap={'xs'}>
                       {_.map(
-                        _.castArray(model_card?.framework),
-                        (framework) => {
+                        _.filter(
+                          _.castArray(model_card?.framework),
+                          (v) => !_.isEmpty(v),
+                        ),
+                        (framework, index) => {
                           const targetImageKey = framework?.replace(
                             /\s*\d+\s*$/,
                             '',
@@ -212,8 +220,9 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                             metadata?.imageInfo,
                             (imageInfo) => imageInfo?.name === targetImageKey,
                           );
+                          const uniqueKey = `${framework}-${index}`;
                           return imageInfo?.icon ? (
-                            <Flex gap={'xxs'}>
+                            <Flex gap={'xxs'} key={uniqueKey}>
                               <img
                                 style={{
                                   width: '1em',
@@ -225,7 +234,9 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                               {framework}
                             </Flex>
                           ) : (
-                            <Typography.Text>{framework}</Typography.Text>
+                            <Typography.Text key={uniqueKey}>
+                              {framework}
+                            </Typography.Text>
                           );
                         },
                       )}

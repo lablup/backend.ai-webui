@@ -1620,7 +1620,8 @@
     "Task": "Tehtävä",
     "Version": "Versio",
     "CloneToFolder": "Kloonaa kansioon",
-    "FolderAlreadyExists": "Tämän niminen kansio on jo olemassa."
+    "FolderAlreadyExists": "Tämän niminen kansio on jo olemassa.",
+    "FinetuneModel": "Finetune malli"
   },
   "table": {
     "SettingTable": "Kattaus",

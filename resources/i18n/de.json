@@ -1620,7 +1620,8 @@
     "CloneInfo": "Er wird als Ihr Benutzertyp-Ordner geklont.",
     "category": "Kategorie",
     "CloneToFolder": "In einen Ordner klonen",
-    "FolderAlreadyExists": "Ein Ordner mit diesem Namen existiert bereits."
+    "FolderAlreadyExists": "Ein Ordner mit diesem Namen existiert bereits.",
+    "FinetuneModel": "Feinabstimmung des Modells"
   },
   "table": {
     "SettingTable": "Sitzordnung bei Tisch",

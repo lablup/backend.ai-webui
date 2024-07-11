@@ -1621,7 +1621,8 @@
     "CloneInfo": "它将被克隆为用户类型文件夹。",
     "category": "类别",
     "CloneToFolder": "克隆到文件夹",
-    "FolderAlreadyExists": "该名称的文件夹已经存在。"
+    "FolderAlreadyExists": "该名称的文件夹已经存在。",
+    "FinetuneModel": "微调模型"
   },
   "table": {
     "SettingTable": "桌面设置",

@@ -1620,7 +1620,8 @@
     "CloneInfo": "Ini akan dikloning sebagai folder tipe pengguna Anda.",
     "category": "Kategori",
     "CloneToFolder": "Mengkloning ke folder",
-    "FolderAlreadyExists": "Folder dengan nama ini sudah ada."
+    "FolderAlreadyExists": "Folder dengan nama ini sudah ada.",
+    "FinetuneModel": "Penyempurnaan Model"
   },
   "table": {
     "SettingTable": "Penataan meja",

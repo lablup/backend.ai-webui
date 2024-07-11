@@ -1621,7 +1621,8 @@
     "CloneInfo": "Үүнийг таны хэрэглэгчийн төрлийн хавтас болгон хувилах болно.",
     "category": "Ангилал",
     "CloneToFolder": "Хавтас руу клон хийх",
-    "FolderAlreadyExists": "Ийм нэртэй хавтас аль хэдийн байна."
+    "FolderAlreadyExists": "Ийм нэртэй хавтас аль хэдийн байна.",
+    "FinetuneModel": "Finetune загвар"
   },
   "table": {
     "SettingTable": "Хүснэгтийн тохиргоо",

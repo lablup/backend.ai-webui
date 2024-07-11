@@ -1620,7 +1620,8 @@
     "CloneInfo": "Θα κλωνοποιηθεί ως φάκελος τύπου χρήστη.",
     "category": "Κατηγορία",
     "CloneToFolder": "Κλωνοποίηση σε φάκελο",
-    "FolderAlreadyExists": "Ένας φάκελος με αυτό το όνομα υπάρχει ήδη."
+    "FolderAlreadyExists": "Ένας φάκελος με αυτό το όνομα υπάρχει ήδη.",
+    "FinetuneModel": "Μοντέλο Finetune"
   },
   "table": {
     "SettingTable": "Ρύθμιση πίνακα",

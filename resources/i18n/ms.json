@@ -1620,7 +1620,8 @@
     "CloneInfo": "Ia akan diklonkan sebagai folder jenis pengguna anda.",
     "category": "kategori",
     "CloneToFolder": "Klon ke folder",
-    "FolderAlreadyExists": "Folder dengan nama ini sudah wujud."
+    "FolderAlreadyExists": "Folder dengan nama ini sudah wujud.",
+    "FinetuneModel": "Model Finetune"
   },
   "table": {
     "SelectColumnToDisplay": "Pilih untuk lajur untuk dipaparkan",

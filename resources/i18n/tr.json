@@ -1620,7 +1620,8 @@
     "CloneInfo": "Kullanıcı tipi klasörünüz olarak klonlanacaktır.",
     "category": "Kategori",
     "CloneToFolder": "Bir klasöre klonlama",
-    "FolderAlreadyExists": "Bu isimde bir klasör zaten mevcut."
+    "FolderAlreadyExists": "Bu isimde bir klasör zaten mevcut.",
+    "FinetuneModel": "İnce Ayar Modeli"
   },
   "table": {
     "SettingTable": "Tablo Ayarı",
