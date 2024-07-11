@@ -276,6 +276,7 @@ export const DefaultProvidersForReactRoot: React.FC<
 
   return (
     <>
+      <style>{indexCss}</style>
       {RelayEnvironment && (
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <QueryClientProvider client={queryClient}>
